@@ -517,16 +517,49 @@ build_inherits = function(cl, t, lvl)
     return t
 end
 
+local default_theme = {
+    classes = {
+        regular = {
+            style = "filled",
+            color = "black",
+            fill_color = "white",
+            primary_color = "black",
+            primary_fill_color = "gray"
+        },
+        abstract = {
+            style = "filled",
+            color = "black",
+            fill_color = "white",
+            primary_color = "black",
+            primary_fill_color = "gray"
+        },
+        mixin = {
+            style = "filled",
+            color = "blue",
+            fill_color = "white",
+            primary_color = "blue",
+            primary_fill_color = "skyblue"
+        },
+        interface = {
+            style = "filled",
+            color = "cornflowerblue",
+            fill_color = "white",
+            primary_color = "cornflowerblue",
+            primary_fill_color = "azure"
+        }
+    },
+    node = {
+        shape = "box"
+    },
+    bg_color = "transparent"
+}
 
-local class_to_color = function(cl)
-    local classt_to_color = {
-        [eolian.class_type.REGULAR] = { "black", "gray" },
-        [eolian.class_type.ABSTRACT] = { "black", "gray" },
-        [eolian.class_type.MIXIN] = { "blue", "skyblue" },
-        [eolian.class_type.INTERFACE] = { "cornflowerblue", "azure" }
-    }
-    return classt_to_color[cl:type_get()]
-end
+local classt_to_theme = {
+    [eolian.class_type.REGULAR] = "regular",
+    [eolian.class_type.ABSTRACT] = "abstract",
+    [eolian.class_type.MIXIN] = "mixin",
+    [eolian.class_type.INTERFACE] = "interface"
+}
 
 local class_to_node = function(cl, main)
     local ret = {}
@@ -534,10 +567,12 @@ local class_to_node = function(cl, main)
     ret.label = cl:full_name_get()
     ret.name = ret.label:lower():gsub("%.", "_")
 
-    local clr = class_to_color(cl)
-    ret.style = "filled"
-    ret.color = clr[1]
-    ret.fillcolor = main and clr[2] or "white"
+    local clr = classt_to_theme[cl:type_get()]
+
+    ret.style = default_theme.classes[clr].style
+    ret.color = default_theme.classes[clr][main and "primary_color" or "color"]
+    ret.fillcolor = default_theme.classes[clr][main and "primary_fill_color"
+                                                     or "fill_color"]
 
     -- FIXME: need a dokuwiki graphviz plugin with proper URL support
     -- the existing one only supports raw URLs (no dokuwikí namespaces)
@@ -567,9 +602,9 @@ local build_igraph = function(cl)
         attrs = {
             rankdir = "TB",
             size = "6",
-            bgcolor = "transparent"
+            bgcolor = default_theme.bg_color
         },
-        node = { shape = "box" }
+        node = default_theme.node
     }
 
     local nbuf = {}
