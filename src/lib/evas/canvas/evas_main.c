@@ -251,7 +251,9 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
         del = EINA_FALSE;
         EINA_INLIST_FOREACH(e->layers, lay)
           {
+             Eo *eo_obj;
              Evas_Object_Protected_Data *o;
+             Eina_List *unrefs = NULL;
 
              evas_layer_pre_free(lay);
 
@@ -264,8 +266,20 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
                             ERR("obj(%p, %s) ref count(%d) is bigger than 0. This object couldn't be deleted", o, o->type, eo_ref_get(o->object));
                             continue;
                          }
+                       else
+                         {
+                            unrefs = eina_list_append(unrefs, o->object);
+                         }
                        del = EINA_TRUE;
                     }
+               }
+             EINA_LIST_FREE(unrefs, eo_obj)
+               {
+                  ERR("Killing Zombie Object [%p] ref=%i:%i\n", eo_obj, eo_ref_get(eo_obj), ___eo_ref2_get(eo_obj));
+                  ___eo_ref2_reset(eo_obj);
+                  while (eo_ref_get(eo_obj) > 1) eo_unref(eo_obj);
+                  while (eo_ref_get(eo_obj) < 1) eo_ref(eo_obj);
+                  eo_del(eo_obj);
                }
           }
      }

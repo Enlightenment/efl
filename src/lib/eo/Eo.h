@@ -1132,6 +1132,12 @@ EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const
 /**
  * @}
  */
+
+
+   /* Private for EFL internal use only. Do not use these! */
+EAPI int ___eo_ref2_get(const Eo *obj_id);
+EAPI void ___eo_ref2_reset(const Eo *obj_id);
+
 #ifdef __cplusplus
 }
 #endif
