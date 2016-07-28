@@ -47,5 +47,15 @@ static void _generated_promise_method3(Eo *obj EINA_UNUSED, Generated_Promise_Da
    ck_assert(promise1 != NULL);
 }
 
+static void _generated_promise_method_multiple_args_1(Eo *obj EINA_UNUSED, Generated_Promise_Data *pd EINA_UNUSED,
+                                                      Eina_Promise_Owner *promise1 EINA_UNUSED, void *data EINA_UNUSED)
+{
+}
+
+static void _generated_promise_method_multiple_args_2(Eo *obj EINA_UNUSED, Generated_Promise_Data *pd EINA_UNUSED,
+                                                      void *data EINA_UNUSED,  Eina_Promise_Owner *promise1 EINA_UNUSED)
+{
+}
+
 #include "generated_promise.eo.h"
 #include "generated_promise.eo.c"
