@@ -3625,6 +3625,15 @@ _end_handler_mouse_move_cb(void *data,
      _magnifier_move(data);
 }
 
+static void
+_entry_on_size_evaluate_signal(void *data,
+                               Evas_Object *obj EINA_UNUSED,
+                               const char *emission EINA_UNUSED,
+                               const char *source EINA_UNUSED)
+{
+   elm_entry_calc_force(data);
+}
+
 EOLIAN static void
 _elm_entry_efl_canvas_group_group_add(Eo *obj, Elm_Entry_Data *priv)
 {
@@ -3785,6 +3794,10 @@ _elm_entry_efl_canvas_group_group_add(Eo *obj, Elm_Entry_Data *priv)
 
    if (_elm_config->desktop_entry)
      priv->sel_handler_disabled = EINA_TRUE;
+
+   edje_object_signal_callback_add
+      (priv->entry_edje, "size,eval", "elm",
+       _entry_on_size_evaluate_signal, obj);
 }
 
 static void
@@ -3828,6 +3841,10 @@ _elm_entry_efl_canvas_group_group_del(Eo *obj, Elm_Entry_Data *sd)
         ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
         if (sd->auto_save) _save_do(obj);
      }
+
+   edje_object_signal_callback_del_full
+      (sd->entry_edje, "size,eval", "elm",
+       _entry_on_size_evaluate_signal, obj);
 
    if (sd->scroll)
      elm_interface_scrollable_content_viewport_resize_cb_set(obj, NULL);
