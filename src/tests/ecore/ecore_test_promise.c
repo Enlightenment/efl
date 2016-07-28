@@ -1097,6 +1097,34 @@ START_TEST(efl_test_promise_race)
 }
 END_TEST
 
+START_TEST(efl_test_future_link)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Eo *o;
+
+   ecore_init();
+
+   o = efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get());
+   p = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   efl_future_use(&f, efl_promise_future_get(p));
+   efl_future_link(o, f);
+
+   fail_if(!o || !p || !f);
+   efl_del(o);
+   fail_if(f);
+
+   o = efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get());
+   efl_future_use(&f, efl_promise_future_get(p));
+   efl_future_cancel(f);
+
+   efl_del(o);
+   efl_del(p);
+
+   ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_ecore_promise(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_promise);
@@ -1126,4 +1154,5 @@ void ecore_test_ecore_promise(TCase *tc)
    tcase_add_test(tc, efl_test_promise_future_optional_cancel);
    tcase_add_test(tc, efl_test_promise_all);
    tcase_add_test(tc, efl_test_promise_race);
+   tcase_add_test(tc, efl_test_future_link);
 }
