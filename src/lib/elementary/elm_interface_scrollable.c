@@ -2356,6 +2356,7 @@ _elm_scroll_scroll_to_y(Elm_Scrollable_Smart_Interface_Data *sid,
      }
    t = ecore_loop_time_get();
    elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
+   if (py == pos_y) return;
    sid->scrollto.y.start = py;
    sid->scrollto.y.end = pos_y;
    sid->scrollto.y.t_start = t;
@@ -2399,6 +2400,7 @@ _elm_scroll_scroll_to_x(Elm_Scrollable_Smart_Interface_Data *sid,
      }
    t = ecore_loop_time_get();
    elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
+   if (px == pos_x) return;
    sid->scrollto.x.start = px;
    sid->scrollto.x.end = pos_x;
    sid->scrollto.x.t_start = t;
