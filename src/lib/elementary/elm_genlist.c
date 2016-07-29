@@ -7579,7 +7579,7 @@ _filter_queue_process(Elm_Genlist_Data *sd)
    t0 = ecore_time_get();
    for (n = 0; ((sd->filter_queue) && (sd->processed_count < ITEM_QUEUE_MAX)); n++)
      {
-        it = eina_list_data_get(sd->filter_queue);
+        it = first = eina_list_data_get(sd->filter_queue);
         //FIXME: This is added as a fail safe code for items not yet processed.
         while (it && it->item->queued)
           {
