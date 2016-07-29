@@ -7573,25 +7573,20 @@ static int
 _filter_queue_process(Elm_Genlist_Data *sd)
 {
    int n;
-   Elm_Gen_Item *it, *first;
+   Elm_Gen_Item *it;
    double t0;
 
    t0 = ecore_time_get();
    for (n = 0; ((sd->filter_queue) && (sd->processed_count < ITEM_QUEUE_MAX)); n++)
      {
-        it = first = eina_list_data_get(sd->filter_queue);
+        it = eina_list_data_get(sd->filter_queue);
         //FIXME: This is added as a fail safe code for items not yet processed.
-        while (it && it->item->queued)
+        if (it && it->item->queued)
           {
-             if ((ecore_time_get() - t0) > (ecore_animator_frametime_get()))
-               return n;
              sd->filter_queue = eina_list_remove_list
                               (sd->filter_queue, sd->filter_queue);
              sd->filter_queue = eina_list_append(sd->filter_queue, it);
              it = eina_list_data_get(sd->filter_queue);
-
-             //Do not iterate more than one loop
-             if (it == first) return n;
           }
         sd->filter_queue = eina_list_remove_list(sd->filter_queue, sd->filter_queue);
         _filter_item_internal(it);
