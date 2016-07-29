@@ -34,6 +34,7 @@
 #define MULTI_DOWN_TIME 1.0
 #define SWIPE_TIME 0.4
 #define SCR_HOLD_TIME 0.1
+#define ITEM_QUEUE_MAX 128
 
 #define ERR_ABORT(_msg)                         \
    do {                                         \
@@ -4626,7 +4627,7 @@ _queue_process(Elm_Genlist_Data *sd)
    double t0, t;
 
    t0 = ecore_time_get();
-   for (n = 0; (sd->queue) && (n < 128); n++)
+   for (n = 0; (sd->queue) && (n < ITEM_QUEUE_MAX); n++)
      {
         Elm_Gen_Item *it;
 
@@ -7549,7 +7550,7 @@ _item_filtered_get(Elm_Gen_Item *it)
      {
         l = eina_list_data_find_list(sd->filter_queue, it);
         if (l)
-          sd->filter_queue = eina_list_remove_list(sd->queue, l);
+          sd->filter_queue = eina_list_remove_list(sd->filter_queue, l);
         l = eina_list_data_find_list(sd->queue, it);
         if (l)
           {
@@ -7572,27 +7573,30 @@ static int
 _filter_queue_process(Elm_Genlist_Data *sd)
 {
    int n;
-   Elm_Gen_Item *it;
+   Elm_Gen_Item *it, *first;
    double t0;
 
-   t0 = ecore_loop_time_get();
-   for (n = 0; (sd->filter_queue) && (sd->processed_count < sd->item_count); n++)
+   t0 = ecore_time_get();
+   for (n = 0; ((sd->filter_queue) && (sd->processed_count < ITEM_QUEUE_MAX)); n++)
      {
         it = eina_list_data_get(sd->filter_queue);
         //FIXME: This is added as a fail safe code for items not yet processed.
-        while (it->item->queued)
+        while (it && it->item->queued)
           {
-             if ((ecore_loop_time_get() - t0) > (ecore_animator_frametime_get()))
+             if ((ecore_time_get() - t0) > (ecore_animator_frametime_get()))
                return n;
              sd->filter_queue = eina_list_remove_list
                               (sd->filter_queue, sd->filter_queue);
              sd->filter_queue = eina_list_append(sd->filter_queue, it);
              it = eina_list_data_get(sd->filter_queue);
+
+             //Do not iterate more than one loop
+             if (it == first) return n;
           }
         sd->filter_queue = eina_list_remove_list(sd->filter_queue, sd->filter_queue);
         _filter_item_internal(it);
         it->item->block->changed = EINA_TRUE;
-        if ((ecore_loop_time_get() - t0) > (ecore_animator_frametime_get()))
+        if ((ecore_time_get() - t0) > (ecore_animator_frametime_get()))
           {
              //At least 1 item is filtered by this time, so return n+1 for first loop
              n++;
