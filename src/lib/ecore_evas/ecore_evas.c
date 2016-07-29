@@ -3232,13 +3232,19 @@ EO_CALLBACKS_ARRAY_DEFINE(animator_watch,
                           { EO_EVENT_CALLBACK_DEL, _check_animator_event_catcher_del });
 
 EAPI void
+_ecore_evas_register_animators(Ecore_Evas *ee)
+{
+   eo_event_callback_array_add(ee->evas, animator_watch(), ee);
+}
+
+EAPI void
 _ecore_evas_register(Ecore_Evas *ee)
 {
    ee->registered = 1;
    ecore_evases = (Ecore_Evas *)eina_inlist_prepend
      (EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
 
-   eo_event_callback_array_add(ee->evas, animator_watch(), ee);
+   _ecore_evas_register_animators(ee);
 
    if (_ecore_evas_render_sync) ecore_evas_first = EINA_TRUE;
 }

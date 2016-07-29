@@ -361,6 +361,7 @@ EAPI void _ecore_evas_fps_debug_init(void);
 EAPI void _ecore_evas_fps_debug_shutdown(void);
 EAPI void _ecore_evas_fps_debug_rendertime_add(double t);
 EAPI void _ecore_evas_register(Ecore_Evas *ee);
+EAPI void _ecore_evas_register_animators(Ecore_Evas *ee);
 EAPI void _ecore_evas_free(Ecore_Evas *ee);
 EAPI void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
 EAPI void _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp);
