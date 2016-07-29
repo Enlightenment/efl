@@ -894,6 +894,16 @@ AC_ARG_ENABLE([magic-debug],
    ],
    [have_magic_debug="yes"])
 
+AC_ARG_ENABLE([debug-threads],
+   [AS_HELP_STRING([--enable-debug-threads], [enable debugging of eina threads @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_debug_threads="yes"
+    else
+       want_debug_threads="no"
+    fi
+   ])
+
 EINA_CONFIG([MAGIC_DEBUG], [test "x${have_magic_debug}" = "xyes"])
 
 AC_ARG_WITH([xattr-tests-path],
