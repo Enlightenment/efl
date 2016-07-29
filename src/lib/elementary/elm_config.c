@@ -1850,8 +1850,11 @@ _config_flush_get(void)
 {
    Eina_Bool is_mirrored;
    Eina_Bool translate;
+   double pre_scale;
+
    is_mirrored = _elm_config->is_mirrored;
    translate = _elm_config->translate;
+   pre_scale = _elm_config->scale;
 
    _elm_config_font_overlays_cancel();
    _color_overlays_cancel();
@@ -1869,7 +1872,8 @@ _config_flush_get(void)
    evas_font_reinit();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
-   _elm_rescale();
+   if (pre_scale != _elm_config->scale)
+     _elm_rescale();
    _elm_recache();
    _elm_clouseau_reload();
    _elm_config_key_binding_hash();
