@@ -302,7 +302,7 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win,
                              const char    *class)
 {
    char *class_string, *s;
-   int length_name, length_class = 0;
+   int length_name = 0, length_class = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
