@@ -47,7 +47,7 @@ void
 evas_software_xcb_outbuf_free(Outbuf *buf) 
 {
    SHMPOOL_LOCK();
-   shmmemlimit -= ((buf->w * buf->h * (buf->depth / 8)) * 3) / 2;
+   _shmlimit -= ((buf->w * buf->h * (buf->depth / 8)) * 3) / 2;
    SHMPOOL_UNLOCK();
    eina_spinlock_take(&(buf->priv.lock));
    while (buf->priv.pending_writes) 
@@ -267,7 +267,7 @@ evas_software_xcb_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, xcb_co
    eina_spinlock_new(&(buf->priv.lock));
 
    SHMPOOL_LOCK();
-   shmmemlimit += ((buf->w * buf->h * (buf->depth / 8)) * 3) / 2;
+   _shmlimit += ((buf->w * buf->h * (buf->depth / 8)) * 3) / 2;
    SHMPOOL_UNLOCK();
    return buf;
 }
@@ -1019,11 +1019,11 @@ evas_software_xcb_outbuf_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_
    if ((w == buf->w) && (h == buf->h) && (rot == buf->rot) && 
        (depth == buf->depth)) return;
    SHMPOOL_LOCK();
-   shmmemlimit -= ((buf->w * buf->h * (buf->depth / 8)) * 3) / 2;
+   _shmlimit -= ((buf->w * buf->h * (buf->depth / 8)) * 3) / 2;
    buf->w = w;
    buf->h = h;
    buf->rot = rot;
-   shmmemlimit += ((buf->w * buf->h * (buf->depth / 8)) * 3) / 2;
+   _shmlimit += ((buf->w * buf->h * (buf->depth / 8)) * 3) / 2;
    SHMPOOL_UNLOCK();
    evas_software_xcb_outbuf_idle_flush(buf);
 }
