@@ -52,7 +52,8 @@ _show_status_cb(void *data, Evas_Object *o, void *event_info)
    Evas_Coord x, y, w, h, mx, my;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
 
-   const Eina_List *selected, *l, *realized;
+   const Eina_List *selected, *l;
+   Eina_List *realized;
    printf("\nfirst selected item: %p\n", glit);
 
    selected = elm_genlist_selected_items_get(list);
@@ -63,7 +64,8 @@ _show_status_cb(void *data, Evas_Object *o, void *event_info)
 
    realized = elm_genlist_realized_items_get(list);
    printf("realized items (%d): ", eina_list_count(realized));
-   EINA_LIST_FOREACH(realized, l, glit)
+   // The realized items list should be freed by either eina_list_free() or EINA_LIST_FREE when it is no longer needed
+   EINA_LIST_FREE(realized, glit)
      printf("%p  ", glit);
    printf("\n");
    printf("genlist mode: %d\n", elm_genlist_decorate_mode_get(list));
