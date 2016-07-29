@@ -148,6 +148,7 @@
                     "\\s-*:[^@]+*\\(\\(\\s-+@"
                     (regexp-opt
                      '(
+                       "nonull"
                        "nullable"
                        "optional"
                        ) t)
@@ -337,6 +338,7 @@
                        "double"
                        "bool"
                        "void"
+                       "void_ptr"
                        ) t)
                     "\\>"
                     )
