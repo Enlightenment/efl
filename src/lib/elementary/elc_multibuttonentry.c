@@ -51,7 +51,7 @@ static void _entry_focus_out_cb(void *data, const Eo_Event *event);
 static void _entry_clicked_cb(void *data, const Eo_Event *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
-   { ELM_MULTIBUTTONENTRY_EVENT_CHANGED, _entry_changed_cb },
+   { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
    { ELM_WIDGET_EVENT_FOCUSED, _entry_focus_in_cb },
    { ELM_WIDGET_EVENT_UNFOCUSED, _entry_focus_out_cb },
    { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
