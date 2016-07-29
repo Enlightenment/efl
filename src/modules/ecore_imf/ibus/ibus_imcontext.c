@@ -338,7 +338,7 @@ ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
    if (ibus_bus_is_connected(_bus))
      _ecore_imf_context_ibus_create(ibusimcontext);
 
-   g_signal_connect(_bus, "connected", G_CALLBACK (_ecore_imf_context_ibus_bus_connected_cb), ctx);
+   g_signal_connect(_bus, "connected", G_CALLBACK (_ecore_imf_context_ibus_bus_connected_cb), ibusimcontext);
 }
 
 EAPI void
@@ -353,7 +353,7 @@ ecore_imf_context_ibus_del(Ecore_IMF_Context *ctx)
 
    g_signal_handlers_disconnect_by_func(_bus,
                                         G_CALLBACK(_ecore_imf_context_ibus_bus_connected_cb),
-                                        ctx);
+                                        ibusimcontext);
 
    if (ibusimcontext->ibuscontext)
      ibus_proxy_destroy((IBusProxy *)ibusimcontext->ibuscontext);
@@ -361,6 +361,7 @@ ecore_imf_context_ibus_del(Ecore_IMF_Context *ctx)
    // release preedit
    if (ibusimcontext->preedit_string)
      free(ibusimcontext->preedit_string);
+   ibusimcontext->preedit_string = NULL;
 
    if (ibusimcontext->preedit_attrs)
      {
