@@ -850,7 +850,7 @@ END_TEST
 
 START_TEST(ecore_test_efl_app_version)
 {
-   Efl_Version *ver;
+   const Efl_Version *ver;
    Eo *loop;
 
    ecore_init();
