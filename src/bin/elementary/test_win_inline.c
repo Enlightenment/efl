@@ -211,7 +211,7 @@ create_handles(Evas_Object *obj)
 void
 test_win_inline(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bg, *win2, *win3;
+   Evas_Object *win, *bg, *win2, *win3, *box;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "window-inline", ELM_WIN_BASIC);
@@ -225,16 +225,21 @@ test_win_inline(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
+   box = eo_add(EFL_UI_BOX_CLASS, win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_pack(win, box);
+   evas_object_show(box);
+
    win2 = elm_win_add(win, "inlined", ELM_WIN_INLINED_IMAGE);
    evas_object_event_callback_add(elm_win_inlined_image_object_get(win2), EVAS_CALLBACK_MOUSE_DOWN, cb_mouse_down, NULL);
-   fill(win2, EINA_TRUE);
+   fill(win2, EINA_FALSE);
+   elm_win_alpha_set(win2, EINA_TRUE);
+   evas_object_size_hint_weight_set(elm_win_inlined_image_object_get(win2), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(elm_win_inlined_image_object_get(win2), EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_gfx_size_hint_margin_set(elm_win_inlined_image_object_get(win2), 20, 20, 20, 20);
+   efl_pack(box, elm_win_inlined_image_object_get(win2));
 
-   evas_object_move(win2, 20, 60);
    evas_object_resize(win2, 300, 200);
-   // image object for win2 is unlinked to its pos/size - so manual control
-   // this allows also for using map and other things with it.
-   evas_object_move(elm_win_inlined_image_object_get(win2), 20, 40);
-   evas_object_resize(elm_win_inlined_image_object_get(win2), 200, 320);
    evas_object_show(win2);
 
    win3 = elm_win_add(win, "inlined", ELM_WIN_INLINED_IMAGE);
@@ -243,6 +248,8 @@ test_win_inline(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    fill(win3, EINA_FALSE);
 
    evas_object_resize(win3, 300, 200);
+   // image object for win2 is unlinked to its pos/size - so manual control
+   // this allows also for using map and other things with it.
    evas_object_move(elm_win_inlined_image_object_get(win3), 80, 180);
    evas_object_resize(elm_win_inlined_image_object_get(win3), 300, 200);
    evas_object_show(win3);
