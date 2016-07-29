@@ -107,6 +107,7 @@ eluacoredir = $(datadir)/elua/core
 eluacore_DATA = \
 	scripts/elua/core/gettext.lua \
 	scripts/elua/core/module.lua \
+	scripts/elua/core/serializer.lua \
 	scripts/elua/core/util.lua
 
 EXTRA_DIST2 += $(eluacore_DATA)
