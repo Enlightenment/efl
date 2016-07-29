@@ -320,6 +320,7 @@ START_TEST(eina_test_quaternion_normalized)
 }
 END_TEST
 
+#if 0
 START_TEST(eina_test_matrix_quaternion)
 {
    const Eina_Point_3D rt = { -2, -3, 0 };
@@ -366,6 +367,7 @@ START_TEST(eina_test_matrix_quaternion)
    eina_shutdown();
 }
 END_TEST
+#endif
 
 START_TEST(eina_test_quaternion_f16p16_lerp)
 {
