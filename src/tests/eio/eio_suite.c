@@ -30,8 +30,12 @@ main(int argc, char **argv)
 
    putenv("EFL_RUN_IN_TREE=1");
 
+   eina_init();
+
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
                                            "Eio", etc);
+
+   eina_shutdown();
 
    return (failed_count == 0) ? 0 : 255;
 }
