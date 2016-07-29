@@ -28,6 +28,8 @@ static const char SIG_THEME_CHANGED[] = "theme,changed";
 const char SIG_LAYOUT_FOCUSED[] = "focused";
 const char SIG_LAYOUT_UNFOCUSED[] = "unfocused";
 
+const char SIGNAL_PREFIX[] = "signal/";
+
 /* smart callbacks coming from elm layout objects: */
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_THEME_CHANGED, ""},
@@ -1961,6 +1963,30 @@ _prop_promise_error_cb(void* data, Eina_Error err EINA_UNUSED)
 }
 
 static void
+_view_update(Elm_Layout_Smart_Data *pd, const char *name, const char *property)
+{
+   const char *source;
+   Eina_Strbuf *buf;
+
+   if (strncmp(SIGNAL_PREFIX, name, sizeof(SIGNAL_PREFIX) -1) != 0)
+     {
+         elm_layout_text_set(pd->obj, name, property);
+         return;
+     }
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(pd->obj, wd);
+   source = eo_class_name_get(eo_class_get(pd->model));
+
+   buf = eina_strbuf_new();
+   eina_strbuf_append(buf, name);
+   eina_strbuf_remove(buf, 0, sizeof(SIGNAL_PREFIX)-1);
+   eina_strbuf_replace_all(buf, "%v", property);
+
+   edje_object_signal_emit(wd->resize_obj, eina_strbuf_string_get(buf), source);
+   eina_strbuf_free(buf);
+}
+
+static void
 _prop_promise_then_cb(void* data, void* values)
 {
    Elm_Layout_Sub_Property_Promise *sub_pp = data;
@@ -1980,12 +2006,12 @@ _prop_promise_then_cb(void* data, void* values)
          if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
            {
                eina_value_get(value, &text);
-               elm_layout_text_set(pd->obj, name, text);
+               _view_update(pd, name, text);
            }
          else
            {
                text = eina_value_to_string(value);
-               elm_layout_text_set(pd->obj, name, text);
+               _view_update(pd, name, text);
                free(text);
            }
         eina_stringshare_del(name);

@@ -78,6 +78,16 @@ _label_init(Evas_Object *win, Evas_Object *box, const char *text)
    return widget;
 }
 
+
+static void
+_signal_cb(void *data,
+                      Evas_Object *obj EINA_UNUSED,
+                      const char *emission,
+                      const char *source)
+{
+        printf(">> Signal callback emission='%s' source='%s'\n", emission, source);
+}
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
@@ -136,6 +146,8 @@ elm_main(int argc, char **argv)
    elm_box_pack_end(bxr, priv->bt);
    elm_object_text_set(priv->bt, "update model");
    evas_object_smart_callback_add(priv->bt, "clicked", _update_cb, priv);
+   edje_obj_signal_callback_add(priv->bt, "test*" , "*", _signal_cb, priv);
+   efl_ui_model_connect(priv->bt, "signal/test-%v", "size");
    evas_object_show(priv->bt);
 
    /* Image widget */
