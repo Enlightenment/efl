@@ -2452,6 +2452,15 @@ START_TEST(evas_textblock_geometries)
       free(tr2);
 
    /* Same run different scripts */
+   evas_object_textblock_text_markup_set(tb, "עברית");
+   evas_textblock_cursor_pos_set(main_cur, 4); // last character
+   evas_textblock_cursor_pos_set(cur, 5); // after last character
+
+   rects = evas_textblock_cursor_range_geometry_get(cur, main_cur);
+   fail_if(!rects);
+   EINA_LIST_FREE(rects, tr)
+      free(tr);
+
    evas_object_textblock_text_markup_set(tb, "עבריתenglishрусскийעברית");
 
    evas_textblock_cursor_pos_set(cur, 3);

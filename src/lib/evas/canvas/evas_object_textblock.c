@@ -11772,6 +11772,14 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              return NULL;
           }
 
+#ifdef BIDI_SUPPORT
+        if (ti->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL)
+          {
+             x1 = x1 + w1;
+             x2 = x2 + w2;
+          }
+#endif
+
         /* Make x2 the one on the right */
         if (x2 < x1)
           {
@@ -11779,24 +11787,11 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              tmp = x1;
              x1 = x2;
              x2 = tmp;
-
-             tmp = w1;
-             w1 = w2;
-             w2 = tmp;
           }
 
-#ifdef BIDI_SUPPORT
-        if (ti->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL)
-          {
-             x = x1 + w1;
-             w = x2 + w2 - x;
-          }
-        else
-#endif
-          {
-             x = x1;
-             w = x2 - x1;
-          }
+        x = x1;
+        w = x2 - x1;
+
         if (w > 0)
           {
              tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
