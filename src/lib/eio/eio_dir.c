@@ -742,29 +742,6 @@ _eio_dir_direct_find_heavy(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_dir_stat_find_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
-{
-   Eio_File_Dir_Ls *async = data;
-   Eina_List *pack = msg_data;
-   Eio_File_Direct_Info *info;
-
-   EINA_LIST_FREE(pack, info)
-     {
-        async->ls.common.main.associated = info->associated;
-
-        async->main_cb((void*) async->ls.common.data, &async->ls.common, &info->info);
-
-        if (async->ls.common.main.associated)
-          {
-             eina_hash_free(async->ls.common.main.associated);
-             async->ls.common.main.associated = NULL;
-          }
-
-        eio_direct_info_free(info);
-     }
-}
-
-static void
 _eio_dir_stat_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Ls *async = data;
@@ -919,18 +896,18 @@ eio_dir_unlink(const char *path,
    return &rmrf->progress.common;
 }
 
-EAPI Eio_File *
-eio_dir_stat_ls(const char *dir,
-                Eio_Filter_Direct_Cb filter_cb,
-                Eio_Main_Direct_Cb main_cb,
-                Eio_Done_Cb done_cb,
-                Eio_Error_Cb error_cb,
-                const void *data)
+static Eio_File *
+_eio_dir_stat_internal_ls(const char *dir,
+                          Eio_Filter_Direct_Cb filter_cb,
+                          Eio_Main_Direct_Cb main_cb,
+                          Eio_Array_Cb main_internal_cb,
+                          Eio_Done_Cb done_cb,
+                          Eio_Error_Cb error_cb,
+                          const void *data)
 {
    Eio_File_Dir_Ls *async;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
@@ -942,16 +919,92 @@ eio_dir_stat_ls(const char *dir,
     * where info can be modified, but in our case it's already doing
     * stat() then it shouldn't be needed!
     */
-   async->filter_cb = (Eio_Filter_Dir_Cb)filter_cb;
-   async->main_cb = main_cb;
    async->ls.directory = eina_stringshare_add(dir);
+   async->filter_cb = (Eio_Filter_Dir_Cb)filter_cb;
+   if (main_internal_cb)
+     {
+        async->main_internal_cb = main_internal_cb;
+        async->ls.gather = EINA_TRUE;
+     }
+   else
+     {
+        async->main_cb = main_cb;
+     }
 
    if (!eio_long_file_set(&async->ls.common,
                           done_cb,
                           error_cb,
                           data,
                           _eio_dir_stat_find_heavy,
-                          _eio_dir_stat_find_notify,
+                          _eio_direct_notify,
+                          _eio_dir_stat_done,
+                          _eio_dir_stat_error))
+     return NULL;
+
+   return &async->ls.common;
+}
+
+EAPI Eio_File *
+eio_dir_stat_ls(const char *dir,
+                Eio_Filter_Direct_Cb filter_cb,
+                Eio_Main_Direct_Cb main_cb,
+                Eio_Done_Cb done_cb,
+                Eio_Error_Cb error_cb,
+                const void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
+
+   return _eio_dir_stat_internal_ls(dir, filter_cb, main_cb, NULL, done_cb, error_cb, data);
+}
+
+Eio_File *
+_eio_dir_stat_ls(const char *dir,
+                 Eio_Array_Cb main_internal_cb,
+                 Eio_Done_Cb done_cb,
+                 Eio_Error_Cb error_cb,
+                 const void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_internal_cb, NULL);
+
+   return _eio_dir_stat_internal_ls(dir, NULL, NULL, main_internal_cb, done_cb, error_cb, data);
+}
+
+static Eio_File *
+_eio_dir_direct_internal_ls(const char *dir,
+                            Eio_Filter_Dir_Cb filter_cb,
+                            Eio_Main_Direct_Cb main_cb,
+                            Eio_Array_Cb main_internal_cb,
+                            Eio_Done_Cb done_cb,
+                            Eio_Error_Cb error_cb,
+                            const void *data)
+{
+   Eio_File_Dir_Ls *async;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
+
+   async = malloc(sizeof(Eio_File_Dir_Ls));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
+
+   async->ls.directory = eina_stringshare_add(dir);
+   async->filter_cb = filter_cb;
+   if (main_internal_cb)
+     {
+        async->main_internal_cb = main_internal_cb;
+        async->ls.gather = EINA_TRUE;
+     }
+   else
+     {
+        async->main_cb = main_cb;
+     }
+
+   if (!eio_long_file_set(&async->ls.common,
+                          done_cb,
+                          error_cb,
+                          data,
+                          _eio_dir_direct_find_heavy,
+                          _eio_direct_notify,
                           _eio_dir_stat_done,
                           _eio_dir_stat_error))
      return NULL;
@@ -967,29 +1020,19 @@ eio_dir_direct_ls(const char *dir,
 		  Eio_Error_Cb error_cb,
 		  const void *data)
 {
-   Eio_File_Dir_Ls *async;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   async = malloc(sizeof(Eio_File_Dir_Ls));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
+   return _eio_dir_direct_internal_ls(dir, filter_cb, main_cb, NULL, done_cb, error_cb, data);
+}
 
-   async->filter_cb = filter_cb;
-   async->main_cb = main_cb;
-   async->ls.directory = eina_stringshare_add(dir);
+Eio_File *
+_eio_dir_direct_ls(const char *dir,
+                   Eio_Array_Cb main_internal_cb,
+                   Eio_Done_Cb done_cb,
+                   Eio_Error_Cb error_cb,
+                   const void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_internal_cb, NULL);
 
-   if (!eio_long_file_set(&async->ls.common,
-                          done_cb,
-                          error_cb,
-                          data,
-                          _eio_dir_direct_find_heavy,
-                          _eio_dir_stat_find_notify,
-                          _eio_dir_stat_done,
-                          _eio_dir_stat_error))
-     return NULL;
-
-   return &async->ls.common;
+   return _eio_dir_direct_internal_ls(dir, NULL, NULL, main_internal_cb, done_cb, error_cb, data);
 }
