@@ -3279,6 +3279,85 @@ Edje_Vector_Data * _edje_ref_vector_data(Edje *ed, int svg_id);
 
 EAPI void _edje_svg_node_free(Svg_Node *node);
 
+#ifdef HAVE_EPHYSICS
+Eina_Bool _edje_ephysics_load(void);
+
+typedef struct _Edje_Ephysics Edje_Ephysics;
+
+struct _Edje_Ephysics
+{
+   Eina_Module *mod;
+
+   int (*ephysics_init) (void);
+   int (*ephysics_shutdown) (void);
+   EPhysics_World *(*ephysics_world_new) (void);
+   void (*ephysics_world_del) (EPhysics_World *world);
+   void (*ephysics_world_event_callback_add) (EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func, const void *data);
+   void (*ephysics_world_rate_set) (EPhysics_World *world, double rate);
+   void (*ephysics_world_gravity_set) (EPhysics_World *world, double gx, double gy, double gz);
+   void (*ephysics_world_render_geometry_set) (EPhysics_World *world, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d);
+   void (*ephysics_world_render_geometry_get) (const EPhysics_World *world, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z, Evas_Coord *w, Evas_Coord *h, Evas_Coord *d);
+   void (*ephysics_quaternion_set) (EPhysics_Quaternion *quat, double x, double y, double z, double w);
+   void (*ephysics_quaternion_get) (const EPhysics_Quaternion *quat, double *x, double *y, double *z, double *w);
+   void (*ephysics_quaternion_normalize) (EPhysics_Quaternion *quat);
+   EPhysics_Body *(*ephysics_body_box_add) (EPhysics_World *world);
+   EPhysics_Body *(*ephysics_body_sphere_add) (EPhysics_World *world);
+   EPhysics_Body *(*ephysics_body_cylinder_add) (EPhysics_World *world);
+   EPhysics_Body *(*ephysics_body_soft_box_add) (EPhysics_World *world);
+   EPhysics_Body *(*ephysics_body_soft_sphere_add) (EPhysics_World *world, int granularity);
+   EPhysics_Body *(*ephysics_body_soft_cylinder_add) (EPhysics_World *world);
+   EPhysics_Body *(*ephysics_body_cloth_add) (EPhysics_World *world, unsigned short rows, unsigned short columns);
+   EPhysics_Body *(*ephysics_body_top_boundary_add) (EPhysics_World *world);
+   EPhysics_Body *(*ephysics_body_bottom_boundary_add) (EPhysics_World *world);
+   EPhysics_Body *(*ephysics_body_right_boundary_add) (EPhysics_World *world);
+   EPhysics_Body *(*ephysics_body_left_boundary_add) (EPhysics_World *world);
+   EPhysics_Body *(*ephysics_body_front_boundary_add) (EPhysics_World *world);
+   EPhysics_Body *(*ephysics_body_back_boundary_add) (EPhysics_World *world);
+   void (*ephysics_body_central_impulse_apply) (EPhysics_Body *body, double x, double y, double z);
+   void (*ephysics_body_torque_impulse_apply) (EPhysics_Body *body, double pitch, double yaw, double roll);
+   void (*ephysics_body_central_force_apply) (EPhysics_Body *body, double x, double y, double z);
+   void (*ephysics_body_torque_apply) (EPhysics_Body *body, double torque_x, double torque_y, double torque_z);
+   void (*ephysics_body_forces_clear) (EPhysics_Body *body);
+   void (*ephysics_body_linear_velocity_set) (EPhysics_Body *body, double x, double y, double z);
+   void (*ephysics_body_angular_velocity_set) (EPhysics_Body *body, double x, double y, double z);
+   void (*ephysics_body_stop) (EPhysics_Body *body);
+   void (*ephysics_body_rotation_set) (EPhysics_Body *body, EPhysics_Quaternion *quat);
+   void (*ephysics_body_forces_get) (const EPhysics_Body *body, double *x, double *y, double *z);
+   void (*ephysics_body_torques_get) (const EPhysics_Body *body, double *x, double *y, double *z);
+   void (*ephysics_body_linear_velocity_get) (const EPhysics_Body *body, double *x, double *y, double *z);
+   void (*ephysics_body_angular_velocity_get) (const EPhysics_Body *body, double *x, double *y, double *z);
+   void (*ephysics_body_linear_movement_enable_set) (EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y, Eina_Bool enable_z);
+   void (*ephysics_body_angular_movement_enable_set) (EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y, Eina_Bool enable_z);
+   void (*ephysics_body_move) (EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z);
+   void (*ephysics_body_geometry_get) (const EPhysics_Body *body, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z, Evas_Coord *w, Evas_Coord *h, Evas_Coord *d);
+   void (*ephysics_body_resize) (EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coord d);
+   void (*ephysics_body_material_set) (EPhysics_Body *body, EPhysics_Body_Material material);
+   void (*ephysics_body_density_set) (EPhysics_Body *body, double density);
+   void (*ephysics_body_mass_set) (EPhysics_Body *body, double mass);
+   void (*ephysics_body_soft_body_hardness_set) (EPhysics_Body *body, double hardness);
+   void (*ephysics_body_restitution_set) (EPhysics_Body *body, double restitution);
+   void (*ephysics_body_friction_set) (EPhysics_Body *body, double friction);
+   void (*ephysics_body_damping_set) (EPhysics_Body *body, double linear_damping, double angular_damping);
+   void (*ephysics_body_sleeping_threshold_set) (EPhysics_Body *body, double linear_threshold, double angular_threshold);
+   void (*ephysics_body_light_set) (EPhysics_Body *body, Eina_Bool enable);
+   void (*ephysics_body_back_face_culling_set) (EPhysics_Body *body, Eina_Bool enable);
+   void (*ephysics_body_evas_object_update) (EPhysics_Body *body);
+   void (*ephysics_body_face_evas_object_set) (EPhysics_Body *body, EPhysics_Body_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos);
+   void (*ephysics_body_evas_object_set) (EPhysics_Body *body, Evas_Object *evas_obj, Eina_Bool use_obj_pos);
+   void (*ephysics_body_event_callback_add) (EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func, const void *data);
+   void (*ephysics_body_data_set) (EPhysics_Body *body, void *data);
+   void *(*ephysics_body_data_get) (const EPhysics_Body *body);
+   EPhysics_Quaternion *(*ephysics_body_rotation_get) (const EPhysics_Body *body, EPhysics_Quaternion *rotation);
+};
+
+extern Edje_Ephysics *_edje_ephysics;
+#define EPH_LOAD() _edje_ephysics_load()
+#define EPH_CALL(x) _edje_ephysics->x
+
+#endif
+
+
+
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>
 #endif

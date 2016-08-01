@@ -3357,7 +3357,8 @@ static Eina_Bool
 _edje_physics_world_geometry_check(EPhysics_World *world)
 {
    Evas_Coord w, h, d;
-   ephysics_world_render_geometry_get(world, NULL, NULL, NULL, &w, &h, &d);
+   if (!EPH_LOAD()) return EINA_FALSE;
+   EPH_CALL(ephysics_world_render_geometry_get)(world, NULL, NULL, NULL, &w, &h, &d);
    return w && h && d;
 }
 
@@ -3365,14 +3366,17 @@ static void
 _edje_physics_body_props_update(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *pf,
                                 Eina_Bool pos_update)
 {
-   ephysics_body_linear_movement_enable_set(ep->body,
-                                            pf->physics->mov_freedom.lin.x,
-                                            pf->physics->mov_freedom.lin.y,
-                                            pf->physics->mov_freedom.lin.z);
-   ephysics_body_angular_movement_enable_set(ep->body,
-                                             pf->physics->mov_freedom.ang.x,
-                                             pf->physics->mov_freedom.ang.y,
-                                             pf->physics->mov_freedom.ang.z);
+   if (!EPH_LOAD()) return;
+   EPH_CALL(ephysics_body_linear_movement_enable_set)
+     (ep->body,
+      pf->physics->mov_freedom.lin.x,
+      pf->physics->mov_freedom.lin.y,
+      pf->physics->mov_freedom.lin.z);
+   EPH_CALL(ephysics_body_angular_movement_enable_set)
+     (ep->body,
+      pf->physics->mov_freedom.ang.x,
+      pf->physics->mov_freedom.ang.y,
+      pf->physics->mov_freedom.ang.z);
 
    /* Boundaries geometry and mass shouldn't be changed */
    if (ep->part->physics_body < EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP)
@@ -3381,62 +3385,65 @@ _edje_physics_body_props_update(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *
 
         if (pos_update)
           {
-             ephysics_body_move(ep->body,
-                                ed->x + pf->final.x,
-                                ed->y + pf->final.y,
-                                pf->physics->z);
+             EPH_CALL(ephysics_body_move)
+               (ep->body,
+                ed->x + pf->final.x,
+                ed->y + pf->final.y,
+                pf->physics->z);
              ep->x = pf->final.x;
              ep->y = pf->final.y;
              ep->w = pf->final.w;
              ep->h = pf->final.h;
           }
 
-        ephysics_body_geometry_get(ep->body, &x, &y, &z, &w, &h, &d);
+        EPH_CALL(ephysics_body_geometry_get)(ep->body, &x, &y, &z, &w, &h, &d);
         if ((d) && (d != pf->physics->depth))
-          ephysics_body_resize(ep->body, w, h, pf->physics->depth);
+          EPH_CALL(ephysics_body_resize)(ep->body, w, h, pf->physics->depth);
         if (z != pf->physics->z)
-          ephysics_body_move(ep->body, x, y, pf->physics->z);
+          EPH_CALL(ephysics_body_move)(ep->body, x, y, pf->physics->z);
 
-        ephysics_body_material_set(ep->body, pf->physics->material);
+        EPH_CALL(ephysics_body_material_set)(ep->body, pf->physics->material);
         if (!pf->physics->material)
           {
              if (pf->physics->density)
-               ephysics_body_density_set(ep->body, pf->physics->density);
+               EPH_CALL(ephysics_body_density_set)(ep->body, pf->physics->density);
              else
-               ephysics_body_mass_set(ep->body, pf->physics->mass);
+               EPH_CALL(ephysics_body_mass_set)(ep->body, pf->physics->mass);
           }
 
         if ((ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_BOX) ||
             (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_SPHERE) ||
             (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_CYLINDER) ||
             (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_CLOTH))
-          ephysics_body_soft_body_hardness_set(ep->body,
-                                               pf->physics->hardness * 100);
+          EPH_CALL(ephysics_body_soft_body_hardness_set)
+            (ep->body, pf->physics->hardness * 100);
      }
 
    if (!pf->physics->material)
      {
-        ephysics_body_restitution_set(ep->body, pf->physics->restitution);
-        ephysics_body_friction_set(ep->body, pf->physics->friction);
+        EPH_CALL(ephysics_body_restitution_set)(ep->body, pf->physics->restitution);
+        EPH_CALL(ephysics_body_friction_set)(ep->body, pf->physics->friction);
      }
 
-   ephysics_body_damping_set(ep->body, pf->physics->damping.linear,
-                             pf->physics->damping.angular);
-   ephysics_body_sleeping_threshold_set(ep->body, pf->physics->sleep.linear,
-                                        pf->physics->sleep.angular);
-   ephysics_body_light_set(ep->body, pf->physics->light_on);
-   ephysics_body_back_face_culling_set(ep->body, pf->physics->backcull);
+   EPH_CALL(ephysics_body_damping_set)(ep->body, pf->physics->damping.linear,
+                                       pf->physics->damping.angular);
+   EPH_CALL(ephysics_body_sleeping_threshold_set)(ep->body, pf->physics->sleep.linear,
+                                                  pf->physics->sleep.angular);
+   EPH_CALL(ephysics_body_light_set)(ep->body, pf->physics->light_on);
+   EPH_CALL(ephysics_body_back_face_culling_set)(ep->body, pf->physics->backcull);
 }
 
 static void
 _edje_physics_body_update_cb(void *data, EPhysics_Body *body, void *event_info EINA_UNUSED)
 {
    Edje_Real_Part *rp = data;
-   Edje *ed = ephysics_body_data_get(body);
+   Edje *ed;
 
-   ephysics_body_geometry_get(body, &(rp->x), &(rp->y), NULL,
-                              &(rp->w), &(rp->h), NULL);
-   ephysics_body_evas_object_update(body);
+   if (!EPH_LOAD()) return;
+   ed = EPH_CALL(ephysics_body_data_get(body));
+   EPH_CALL(ephysics_body_geometry_get)(body, &(rp->x), &(rp->y), NULL,
+                                        &(rp->w), &(rp->h), NULL);
+   EPH_CALL(ephysics_body_evas_object_update)(body);
    ed->dirty = EINA_TRUE;
 }
 
@@ -3447,63 +3454,64 @@ _edje_physics_body_add(Edje *ed, Edje_Real_Part *rp, EPhysics_World *world)
    Edje_Physics_Face *pface;
    Eina_List *l;
 
+   if (!EPH_LOAD()) return;
    switch (rp->part->physics_body)
      {
       case EDJE_PART_PHYSICS_BODY_RIGID_BOX:
-        rp->body = ephysics_body_box_add(world);
+        rp->body = EPH_CALL(ephysics_body_box_add)(world);
         break;
 
       case EDJE_PART_PHYSICS_BODY_RIGID_SPHERE:
-        rp->body = ephysics_body_sphere_add(world);
+        rp->body = EPH_CALL(ephysics_body_sphere_add)(world);
         break;
 
       case EDJE_PART_PHYSICS_BODY_RIGID_CYLINDER:
-        rp->body = ephysics_body_cylinder_add(world);
+        rp->body = EPH_CALL(ephysics_body_cylinder_add)(world);
         break;
 
       case EDJE_PART_PHYSICS_BODY_SOFT_BOX:
-        rp->body = ephysics_body_soft_box_add(world);
+        rp->body = EPH_CALL(ephysics_body_soft_box_add)(world);
         break;
 
       case EDJE_PART_PHYSICS_BODY_SOFT_SPHERE:
-        rp->body = ephysics_body_soft_sphere_add(world, 0);
+        rp->body = EPH_CALL(ephysics_body_soft_sphere_add)(world, 0);
         break;
 
       case EDJE_PART_PHYSICS_BODY_SOFT_CYLINDER:
-        rp->body = ephysics_body_soft_cylinder_add(world);
+        rp->body = EPH_CALL(ephysics_body_soft_cylinder_add)(world);
         break;
 
       case EDJE_PART_PHYSICS_BODY_CLOTH:
-        rp->body = ephysics_body_cloth_add(world, 0, 0);
+        rp->body = EPH_CALL(ephysics_body_cloth_add)(world, 0, 0);
         break;
 
       case EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP:
-        rp->body = ephysics_body_top_boundary_add(world);
+        rp->body = EPH_CALL(ephysics_body_top_boundary_add)(world);
         resize = EINA_FALSE;
         break;
 
       case EDJE_PART_PHYSICS_BODY_BOUNDARY_BOTTOM:
-        rp->body = ephysics_body_bottom_boundary_add(world);
+        rp->body = EPH_CALL(ephysics_body_bottom_boundary_add)(world);
         resize = EINA_FALSE;
         break;
 
       case EDJE_PART_PHYSICS_BODY_BOUNDARY_RIGHT:
-        rp->body = ephysics_body_right_boundary_add(world);
+        rp->body = EPH_CALL(ephysics_body_right_boundary_add)(world);
         resize = EINA_FALSE;
         break;
 
       case EDJE_PART_PHYSICS_BODY_BOUNDARY_LEFT:
-        rp->body = ephysics_body_left_boundary_add(world);
+        rp->body = EPH_CALL(ephysics_body_left_boundary_add)(world);
         resize = EINA_FALSE;
         break;
 
       case EDJE_PART_PHYSICS_BODY_BOUNDARY_FRONT:
-        rp->body = ephysics_body_front_boundary_add(world);
+        rp->body = EPH_CALL(ephysics_body_front_boundary_add)(world);
         resize = EINA_FALSE;
         break;
 
       case EDJE_PART_PHYSICS_BODY_BOUNDARY_BACK:
-        rp->body = ephysics_body_back_boundary_add(world);
+        rp->body = EPH_CALL(ephysics_body_back_boundary_add)(world);
         resize = EINA_FALSE;
         break;
 
@@ -3525,15 +3533,15 @@ _edje_physics_body_add(Edje *ed, Edje_Real_Part *rp, EPhysics_World *world)
 
         edje_object_file_set(edje_obj, ed->path, pface->source);
         evas_object_resize(edje_obj, 1, 1);
-        ephysics_body_face_evas_object_set(rp->body, pface->type,
-                                           edje_obj, EINA_FALSE);
+        EPH_CALL(ephysics_body_face_evas_object_set)(rp->body, pface->type,
+                                                     edje_obj, EINA_FALSE);
         rp->body_faces = eina_list_append(rp->body_faces, edje_obj);
      }
 
-   ephysics_body_evas_object_set(rp->body, rp->object, resize);
-   ephysics_body_event_callback_add(rp->body, EPHYSICS_CALLBACK_BODY_UPDATE,
-                                    _edje_physics_body_update_cb, rp);
-   ephysics_body_data_set(rp->body, ed);
+   EPH_CALL(ephysics_body_evas_object_set)(rp->body, rp->object, resize);
+   EPH_CALL(ephysics_body_event_callback_add)(rp->body, EPHYSICS_CALLBACK_BODY_UPDATE,
+                                              _edje_physics_body_update_cb, rp);
+   EPH_CALL(ephysics_body_data_set)(rp->body, ed);
 }
 
 #endif

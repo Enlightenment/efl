@@ -4901,18 +4901,23 @@ EFL_INTERNAL_DEPEND_PKG([EDJE], [emile])
 EFL_INTERNAL_DEPEND_PKG([EDJE], [efreet])
 EFL_INTERNAL_DEPEND_PKG([EDJE], [eio])
 
-EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_physics}], [ephysics])
+if test "x${want_physics}" = "xyes" ; then
+  AC_DEFINE([HAVE_EPHYSICS], [1], [EPhysics Support])
+  EDJE_CFLAGS="-I\$(top_srcdir)/src/lib/ephysics ${EDJE_CFLAGS}"
+fi
+dnl EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_physics}], [ephysics])
+
+if test "x${want_lua_old}" = "xyes"; then
+   EFL_CHECK_LUA_OLD([EDJE_LUA])
+else
+   PKG_CHECK_MODULES([EDJE_LUA], [luajit >= 2.0.0])
+fi
+
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_multisense}], [ecore-audio])
 
 EFL_ADD_FEATURE([EDJE], [physics])
 EFL_ADD_FEATURE([EDJE], [multisense])
 EFL_ADD_FEATURE([EDJE], [lua-old])
-
-if test "${want_lua_old}" = "yes"; then
-   EFL_CHECK_LUA_OLD([EDJE])
-else
-   EFL_DEPEND_PKG([EDJE], [LUAJIT], [luajit >= 2.0.0])
-fi
 
 EFL_ADD_LIBS([EDJE], [-lm])
 

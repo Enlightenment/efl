@@ -503,9 +503,8 @@ static void
 _edje_physics_world_update_cb(void *data, EPhysics_World *world EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Edje *edje = data;
-   _edje_recalc_do(edje);
+   if (EPH_LOAD()) _edje_recalc_do(edje);
 }
-
 #endif
 
 int
@@ -546,10 +545,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
 #ifdef HAVE_EPHYSICS
    /* clear physics world  / shutdown ephysics */
-   if ((ed->collection) && (ed->collection->physics_enabled))
+   if ((ed->collection) && (ed->collection->physics_enabled) && (ed->world))
      {
-        ephysics_world_del(ed->world);
-        ephysics_shutdown();
+        if (EPH_LOAD())
+          {
+             EPH_CALL(ephysics_world_del)(ed->world);
+             EPH_CALL(ephysics_shutdown)();
+          }
      }
 #endif
 
@@ -606,17 +608,20 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
              if (ed->collection->physics_enabled)
 #ifdef HAVE_EPHYSICS
                {
-                  ephysics_init();
-                  ed->world = ephysics_world_new();
-                  ephysics_world_event_callback_add(
-                    ed->world, EPHYSICS_CALLBACK_WORLD_UPDATE,
-                    _edje_physics_world_update_cb, ed);
-                  ephysics_world_rate_set(ed->world,
-                                          ed->collection->physics.world.rate);
-                  ephysics_world_gravity_set(
-                    ed->world, ed->collection->physics.world.gravity.x,
-                    ed->collection->physics.world.gravity.y,
-                    ed->collection->physics.world.gravity.z);
+                  if (EPH_LOAD())
+                    {
+                       EPH_CALL(ephysics_init)();
+                       ed->world = EPH_CALL(ephysics_world_new)();
+                       EPH_CALL(ephysics_world_event_callback_add)
+                         (ed->world, EPHYSICS_CALLBACK_WORLD_UPDATE,
+                          _edje_physics_world_update_cb, ed);
+                       EPH_CALL(ephysics_world_rate_set)
+                         (ed->world, ed->collection->physics.world.rate);
+                       EPH_CALL(ephysics_world_gravity_set)
+                         (ed->world, ed->collection->physics.world.gravity.x,
+                          ed->collection->physics.world.gravity.y,
+                          ed->collection->physics.world.gravity.z);
+                    }
                }
 #else
                ERR("Edje compiled without support to physics.");

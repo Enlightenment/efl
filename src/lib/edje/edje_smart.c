@@ -156,10 +156,13 @@ _edje_object_efl_canvas_group_group_del(Eo *obj, Edje *ed)
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
 #ifdef HAVE_EPHYSICS
    /* clear physics world  / shutdown ephysics */
-   if ((ed->collection) && (ed->collection->physics_enabled))
+   if ((ed->collection) && (ed->collection->physics_enabled) && (ed->world))
      {
-        ephysics_world_del(ed->world);
-        ephysics_shutdown();
+        if (EPH_LOAD())
+          {
+             EPH_CALL(ephysics_world_del)(ed->world);
+             EPH_CALL(ephysics_shutdown)();
+          }
      }
 #endif
    if (ed->persp) edje_object_perspective_set(obj, NULL);
@@ -272,9 +275,12 @@ _edje_object_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_C
    ed->h = h;
 #ifdef HAVE_EPHYSICS
    if ((ed->collection) && (ed->world))
-     ephysics_world_render_geometry_set(
-       ed->world, ed->x, ed->y, ed->collection->physics.world.z,
-       ed->w, ed->h, ed->collection->physics.world.depth);
+     {
+        if (EPH_LOAD())
+          EPH_CALL(ephysics_world_render_geometry_set)
+            (ed->world, ed->x, ed->y, ed->collection->physics.world.z,
+             ed->w, ed->h, ed->collection->physics.world.depth);
+     }
 #endif
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = EINA_TRUE;

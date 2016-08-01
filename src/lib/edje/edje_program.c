@@ -1074,79 +1074,106 @@ low_mem_current:
 
 #ifdef HAVE_EPHYSICS
       case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
-        if (!_edje_physics_action_set(ed, pr, ephysics_body_central_impulse_apply))
-          goto break_prog;
+        if (EPH_LOAD())
+          {
+             if (!_edje_physics_action_set(ed, pr, EPH_CALL(ephysics_body_central_impulse_apply)))
+               goto break_prog;
+          }
         break;
 
       case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
-        if (!_edje_physics_action_set(ed, pr, ephysics_body_torque_impulse_apply))
-          goto break_prog;
+        if (EPH_LOAD())
+          {
+             if (!_edje_physics_action_set(ed, pr, EPH_CALL(ephysics_body_torque_impulse_apply)))
+               goto break_prog;
+          }
         break;
 
       case EDJE_ACTION_TYPE_PHYSICS_FORCE:
-        if (!_edje_physics_action_set(ed, pr, ephysics_body_central_force_apply))
-          goto break_prog;
+        if (EPH_LOAD())
+          {
+             if (!_edje_physics_action_set(ed, pr, EPH_CALL(ephysics_body_central_force_apply)))
+               goto break_prog;
+          }
         break;
 
       case EDJE_ACTION_TYPE_PHYSICS_TORQUE:
-        if (!_edje_physics_action_set(ed, pr, ephysics_body_torque_apply))
-          goto break_prog;
+        if (EPH_LOAD())
+          {
+             if (!_edje_physics_action_set(ed, pr, EPH_CALL(ephysics_body_torque_apply)))
+               goto break_prog;
+          }
         break;
 
       case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
-        if (_edje_block_break(ed))
-          goto break_prog;
-        EINA_LIST_FOREACH(pr->targets, l, pt)
+        if (EPH_LOAD())
           {
-             if (pt->id >= 0)
+             if (_edje_block_break(ed))
+               goto break_prog;
+             EINA_LIST_FOREACH(pr->targets, l, pt)
                {
-                  rp = ed->table_parts[pt->id % ed->table_parts_size];
-                  if ((rp) && (rp->body))
-                    ephysics_body_forces_clear(rp->body);
+                  if (pt->id >= 0)
+                    {
+                       rp = ed->table_parts[pt->id % ed->table_parts_size];
+                       if ((rp) && (rp->body))
+                         EPH_CALL(ephysics_body_forces_clear)(rp->body);
+                    }
                }
           }
         break;
 
       case EDJE_ACTION_TYPE_PHYSICS_VEL_SET:
-        if (!_edje_physics_action_set(ed, pr, ephysics_body_linear_velocity_set))
-          goto break_prog;
+        if (EPH_LOAD())
+          {
+             if (!_edje_physics_action_set(ed, pr, EPH_CALL(ephysics_body_linear_velocity_set)))
+               goto break_prog;
+          }
         break;
 
       case EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET:
-        if (!_edje_physics_action_set(ed, pr, ephysics_body_angular_velocity_set))
-          goto break_prog;
+        if (EPH_LOAD())
+          {
+             if (!_edje_physics_action_set(ed, pr, EPH_CALL(ephysics_body_angular_velocity_set)))
+               goto break_prog;
+          }
         break;
 
       case EDJE_ACTION_TYPE_PHYSICS_STOP:
-        if (_edje_block_break(ed))
-          goto break_prog;
-        EINA_LIST_FOREACH(pr->targets, l, pt)
+        if (EPH_LOAD())
           {
-             if (pt->id >= 0)
+             if (_edje_block_break(ed))
+               goto break_prog;
+             EINA_LIST_FOREACH(pr->targets, l, pt)
                {
-                  rp = ed->table_parts[pt->id % ed->table_parts_size];
-                  if ((rp) && (rp->body))
-                    ephysics_body_stop(rp->body);
+                  if (pt->id >= 0)
+                    {
+                       rp = ed->table_parts[pt->id % ed->table_parts_size];
+                       if ((rp) && (rp->body))
+                         EPH_CALL(ephysics_body_stop)(rp->body);
+                    }
                }
           }
         break;
 
       case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
-        if (_edje_block_break(ed))
-          goto break_prog;
-        EINA_LIST_FOREACH(pr->targets, l, pt)
+        if (EPH_LOAD())
           {
-             if (pt->id >= 0)
+             if (_edje_block_break(ed))
+               goto break_prog;
+             EINA_LIST_FOREACH(pr->targets, l, pt)
                {
-                  rp = ed->table_parts[pt->id % ed->table_parts_size];
-                  if ((rp) && (rp->body))
+                  if (pt->id >= 0)
                     {
-                       EPhysics_Quaternion quat;
-                       ephysics_quaternion_set(&quat, pr->physics.x,
-                                               pr->physics.y, pr->physics.z,
-                                               pr->physics.w);
-                       ephysics_quaternion_normalize(&quat);
-                       ephysics_body_rotation_set(rp->body, &quat);
+                       rp = ed->table_parts[pt->id % ed->table_parts_size];
+                       if ((rp) && (rp->body))
+                         {
+                            EPhysics_Quaternion quat;
+                            EPH_CALL(ephysics_quaternion_set)(&quat, pr->physics.x,
+                                                              pr->physics.y, pr->physics.z,
+                                                              pr->physics.w);
+                            EPH_CALL(ephysics_quaternion_normalize)(&quat);
+                            EPH_CALL(ephysics_body_rotation_set)(rp->body, &quat);
+                         }
                     }
                }
           }

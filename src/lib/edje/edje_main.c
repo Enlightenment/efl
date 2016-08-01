@@ -21,6 +21,11 @@ static const Edje_Calc_Params_Physics default_calc_physics = {
    0.0, 0.0, 0.0, 0.0, 0.0, { 0.0, 0.0 }, { 0.0, 0.0 }, 0, 0, { { 0, 0, 0 }, { 0, 0, 0 } }, 0, 0, 0, 0
 };
 
+#ifdef HAVE_EPHYSICS
+static void _edje_ephysics_clear(void);
+#endif
+
+
 /*============================================================================*
 *                                   API                                      *
 *============================================================================*/
@@ -199,6 +204,10 @@ _edje_shutdown_core(void)
      ecore_imf_shutdown();
 #endif
 
+#ifdef HAVE_EPHYSICS
+   _edje_ephysics_clear();
+#endif
+
    efreet_shutdown();
    evas_shutdown();
    eet_shutdown();
@@ -314,4 +323,132 @@ _edje_need_imf(void)
    ecore_imf_init();
 #endif
 }
+
+#ifdef HAVE_EPHYSICS
+Edje_Ephysics *_edje_ephysics = NULL;
+
+Eina_Bool
+_edje_ephysics_load(void)
+{
+   if (_edje_ephysics)
+     {
+        if (!_edje_ephysics->mod)
+          {
+             ERR("Cannot find libpulse!");
+             return EINA_FALSE;
+          }
+        return EINA_TRUE;
+     }
+   ERR("PHYYYYYYYYYYYYYYZIKS");
+   _edje_ephysics = calloc(1, sizeof(Edje_Ephysics));
+   if (!_edje_ephysics) return EINA_FALSE;
+# define LOAD(x)                                        \
+   if (!_edje_ephysics->mod) {                          \
+      if ((_edje_ephysics->mod = eina_module_new(x))) { \
+         if (!eina_module_load(_edje_ephysics->mod)) {  \
+            eina_module_free(_edje_ephysics->mod);      \
+            _edje_ephysics->mod = NULL;                 \
+         }                                              \
+      }                                                 \
+   }
+# if defined(_WIN32) || defined(__CYGWIN__)
+   LOAD("libephysics-1.dll");
+   LOAD("libephysics.dll");
+# elif defined(__APPLE__) && defined(__MACH__)
+   LOAD("libephysics.1.dylib");
+   LOAD("libephysics.1.so");
+   LOAD("libephysics.so.1");
+# else
+   LOAD("libephysics.so.1");
+# endif
+# undef LOAD
+   if (!_edje_ephysics->mod) return EINA_FALSE;
+# define SYM(x) \
+   if (!(_edje_ephysics->x = eina_module_symbol_get(_edje_ephysics->mod, #x))) { \
+      ERR("libpulse - cannot find %s", #x); \
+      goto err; \
+   }
+   SYM(ephysics_init);
+   SYM(ephysics_shutdown);
+   SYM(ephysics_world_new);
+   SYM(ephysics_world_del);
+   SYM(ephysics_world_event_callback_add)
+   SYM(ephysics_world_rate_set)
+   SYM(ephysics_world_gravity_set)
+   SYM(ephysics_world_render_geometry_set);
+   SYM(ephysics_world_render_geometry_get);
+   SYM(ephysics_quaternion_set)
+   SYM(ephysics_quaternion_get)
+   SYM(ephysics_quaternion_normalize)
+   SYM(ephysics_body_box_add)
+   SYM(ephysics_body_sphere_add)
+   SYM(ephysics_body_cylinder_add)
+   SYM(ephysics_body_soft_box_add)
+   SYM(ephysics_body_soft_sphere_add)
+   SYM(ephysics_body_soft_cylinder_add)
+   SYM(ephysics_body_cloth_add)
+   SYM(ephysics_body_top_boundary_add)
+   SYM(ephysics_body_bottom_boundary_add)
+   SYM(ephysics_body_right_boundary_add)
+   SYM(ephysics_body_left_boundary_add)
+   SYM(ephysics_body_front_boundary_add)
+   SYM(ephysics_body_back_boundary_add)
+   SYM(ephysics_body_central_impulse_apply)
+   SYM(ephysics_body_torque_impulse_apply)
+   SYM(ephysics_body_central_force_apply)
+   SYM(ephysics_body_torque_apply)
+   SYM(ephysics_body_forces_clear)
+   SYM(ephysics_body_linear_velocity_set)
+   SYM(ephysics_body_angular_velocity_set)
+   SYM(ephysics_body_stop)
+   SYM(ephysics_body_rotation_set)
+   SYM(ephysics_body_forces_get)
+   SYM(ephysics_body_torques_get)
+   SYM(ephysics_body_linear_velocity_get)
+   SYM(ephysics_body_angular_velocity_get)
+   SYM(ephysics_body_linear_movement_enable_set)
+   SYM(ephysics_body_angular_movement_enable_set)
+   SYM(ephysics_body_move)
+   SYM(ephysics_body_geometry_get)
+   SYM(ephysics_body_resize)
+   SYM(ephysics_body_material_set)
+   SYM(ephysics_body_density_set)
+   SYM(ephysics_body_mass_set)
+   SYM(ephysics_body_soft_body_hardness_set)
+   SYM(ephysics_body_restitution_set)
+   SYM(ephysics_body_friction_set)
+   SYM(ephysics_body_damping_set)
+   SYM(ephysics_body_sleeping_threshold_set)
+   SYM(ephysics_body_light_set)
+   SYM(ephysics_body_back_face_culling_set)
+   SYM(ephysics_body_evas_object_update)
+   SYM(ephysics_body_face_evas_object_set)
+   SYM(ephysics_body_evas_object_set)
+   SYM(ephysics_body_event_callback_add)
+   SYM(ephysics_body_data_set)
+   SYM(ephysics_body_data_get)
+   SYM(ephysics_body_rotation_get)
+#undef SYM
+   return EINA_TRUE;
+err:
+   if (_edje_ephysics->mod)
+     {
+        eina_module_free(_edje_ephysics->mod);
+        _edje_ephysics->mod = NULL;
+     }
+   return EINA_FALSE;
+}
+
+static void
+_edje_ephysics_clear(void)
+{
+   if (_edje_ephysics)
+     {
+        if (_edje_ephysics->mod)
+          eina_module_free(_edje_ephysics->mod);
+        free(_edje_ephysics);
+        _edje_ephysics = NULL;
+     }
+}
+#endif
 
