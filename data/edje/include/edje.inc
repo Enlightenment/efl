@@ -329,3 +329,4 @@ enum Anim_Param
 
 native       set_tween_state_anim  (part_id, state1[], Float:state1_val, state2[], Float:state2_val, Anim_Param:p, Float:tween, ...);
 native       set_state_anim  (part_id, state[], Float:state1_val, Anim_Param:p, Float:tween, ...);
+native       swallow_has_content (part_id);

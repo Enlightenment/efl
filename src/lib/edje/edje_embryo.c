@@ -4391,6 +4391,30 @@ _edje_embryo_fn_physics_get_rotation(Embryo_Program *ep, Embryo_Cell *params)
 
 #endif
 
+/* swallow_has_content(part_id) */
+static Embryo_Cell
+_edje_embryo_fn_swallow_has_content(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+
+   if ((!rp) ||
+       (!rp->part) ||
+       (rp->part->type != EDJE_PART_TYPE_SWALLOW) ||
+       (!rp->typedata.swallow) ||
+       (!rp->typedata.swallow->swallowed_object))
+      return 0;
+
+   return 1;
+}
+
 void
 _edje_embryo_script_init(Edje_Part_Collection *edc)
 {
@@ -4516,6 +4540,8 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
    embryo_program_native_call_add(ep, "physics_set_rotation", _edje_embryo_fn_physics_set_rotation);
    embryo_program_native_call_add(ep, "physics_get_rotation", _edje_embryo_fn_physics_get_rotation);
 #endif
+
+   embryo_program_native_call_add(ep, "swallow_has_content", _edje_embryo_fn_swallow_has_content);
 }
 
 void
