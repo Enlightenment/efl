@@ -2259,6 +2259,29 @@ START_TEST(evas_textblock_wrapping)
    evas_object_textblock_size_formatted_get(tb, &w, NULL);
    ck_assert_int_eq(bw, w);
 
+#ifdef HAVE_FRIBIDI
+   /* Check the ellipsis is placed at proper place
+    * in RTL text with formats */
+   evas_object_textblock_text_markup_set(tb, ")");
+   evas_object_textblock_size_native_get(tb, &bw, NULL);
+   bw++;
+
+   /* Expect to see: "...)ي" */
+   evas_object_textblock_text_markup_set(tb, "ي(ي)");
+   evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw - bw, nh);
+   evas_object_textblock_size_formatted_get(tb, &bw, NULL);
+
+   /* Expect to see: "...)ي"
+    * But, Evas Textblock could put ellipsis item at wrong place: ")...ي"
+    * Then, formatted size could be different from the case without format. */
+   evas_object_textblock_text_markup_set(tb, "ي<color=#f00>(</color>ي)");
+   evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
+   evas_object_textblock_size_formatted_get(tb, &w, NULL);
+   ck_assert_int_eq(bw, w);
+#endif
+
    END_TB_TEST();
 }
 END_TEST

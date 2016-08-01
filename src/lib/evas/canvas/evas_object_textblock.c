@@ -4869,14 +4869,25 @@ static inline void
 _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
 {
    Evas_Object_Textblock_Text_Item *ti, *ellip_ti;
-   Evas_Object_Textblock_Item *last_it;
-   Evas_Coord save_cx;
+   Evas_Object_Textblock_Item *last_it, *prev_it;
+   Evas_Coord save_cx, save_cw, ellip_w;
    int wrap;
    ellip_ti = _layout_ellipsis_item_new(c, it);
-   last_it = it;
+   prev_it = last_it = it;
 
    save_cx = c->x;
-   c->w -= ellip_ti->parent.w;
+   save_cw = c->w;
+   ellip_w = ellip_ti->parent.w;
+#ifdef BIDI_SUPPORT
+   // XXX: with RTL considerations in mind, we need to take max(adv, w) as the
+   // line may be reordered in a way that the item placement will cause the
+   // formatted width to exceed the width constraints.
+   if (ellip_ti->parent.adv > ellip_ti->parent.w)
+     {
+        ellip_w = ellip_ti->parent.adv;
+     }
+#endif
+   c->w -= ellip_w;
 
    /* If there is no enough space for ellipsis item, remove all of items */
    if (c->w <= 0)
@@ -4901,6 +4912,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
 
              if ((wrap > 0) && !IS_AT_END(ti, (size_t) wrap))
                {
+                  Evas_Object_Textblock_Text_Item *new_ti;
                   Eina_List *l = i;
 
                   while (l)
@@ -4909,12 +4921,14 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
                        if (iit == _ITEM(ti)) break;
                        l = eina_list_prev(l);
                     }
-
-                  _layout_item_text_split_strip_white(c, ti, l, wrap);
+                  new_ti = _layout_item_text_split_strip_white(c, ti, l, wrap);
+                  ellip_ti->parent.text_pos = new_ti->parent.text_pos;
                   break;
                }
              else if (wrap < 0)
                {
+                  // Removal of the previous item left enough space.
+                  ellip_ti->parent.text_pos = prev_it->text_pos;
                   break;
                }
           }
@@ -4936,6 +4950,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
                    EINA_INLIST_GET(last_it)));
           }
 
+        prev_it = last_it;
         last_it = (c->ln->items) ? _ITEM(EINA_INLIST_GET(c->ln->items)->last) : NULL;
 
         if (last_it)
@@ -4954,7 +4969,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
      }
 
    c->x = save_cx;
-   c->w += ellip_ti->parent.w;
+   c->w = save_cw;
    /* If we should add this item, do it */
    if (last_it == it)
      {
