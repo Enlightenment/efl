@@ -102,6 +102,29 @@ _eio_file_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
    Eina_List *pack = msg_data;
    Eio_File_Char *info;
 
+   // Check if it is an internal use
+   if (async->ls.gather)
+     {
+        Eina_Array *gather;
+
+        gather = eina_array_new(eina_list_count(pack));
+        EINA_LIST_FREE(pack, info)
+          {
+             if (!gather)
+               eina_stringshare_del(info->filename);
+             else
+               eina_array_push(gather, info->filename);
+             eio_char_free(info);
+          }
+
+        // transfer ownership to caller
+        async->main_internal_cb((void*) async->ls.common.data,
+                                &async->ls.common,
+                                gather);
+
+        return ;
+     }
+
    EINA_LIST_FREE(pack, info)
      {
         async->ls.common.main.associated = info->associated;
@@ -205,6 +228,23 @@ _eio_file_direct_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_
    Eio_File_Direct_Ls *async = data;
    Eina_List *pack = msg_data;
    Eio_File_Direct_Info *info;
+
+   // Check if it is an internal use
+   if (async->ls.gather)
+     {
+        Eina_Array *gather;
+
+        gather = eina_array_new(eina_list_count(pack));
+        EINA_LIST_FREE(pack, info)
+          eina_array_push(gather, &info->info);
+
+        // transfer ownership to caller
+        async->main_internal_cb((void*) async->ls.common.data,
+                                &async->ls.common,
+                                gather);
+
+        return ;
+     }
 
    EINA_LIST_FREE(pack, info)
      {
@@ -487,28 +527,35 @@ eio_async_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-
-EAPI Eio_File *
-eio_file_ls(const char *dir,
-	    Eio_Filter_Cb filter_cb,
-	    Eio_Main_Cb main_cb,
-	    Eio_Done_Cb done_cb,
-	    Eio_Error_Cb error_cb,
-	    const void *data)
+static Eio_File *
+_eio_file_internal_ls(const char *dir,
+                      Eio_Filter_Cb filter_cb,
+                      Eio_Main_Cb main_cb,
+                      Eio_Array_Cb main_internal_cb,
+                      Eio_Done_Cb done_cb,
+                      Eio_Error_Cb error_cb,
+                      const void *data)
 {
    Eio_File_Char_Ls *async;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = eio_common_alloc(sizeof(Eio_File_Char_Ls));
    EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
-   async->filter_cb = filter_cb;
-   async->main_cb = main_cb;
    async->ls.directory = eina_stringshare_add(dir);
+   async->filter_cb = filter_cb;
+   if (main_internal_cb)
+     {
+        async->main_internal_cb = main_internal_cb;
+        async->ls.gather = EINA_TRUE;
+     }
+   else
+     {
+        async->main_cb = main_cb;
+     }
 
    if (!eio_long_file_set(&async->ls.common,
 			  done_cb,
@@ -524,6 +571,74 @@ eio_file_ls(const char *dir,
 }
 
 EAPI Eio_File *
+eio_file_ls(const char *dir,
+	    Eio_Filter_Cb filter_cb,
+	    Eio_Main_Cb main_cb,
+	    Eio_Done_Cb done_cb,
+	    Eio_Error_Cb error_cb,
+	    const void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
+
+   return _eio_file_internal_ls(dir, filter_cb, main_cb, NULL, done_cb, error_cb, data);
+}
+
+Eio_File *
+_eio_file_ls(const char *dir,
+             Eio_Array_Cb main_internal_cb,
+             Eio_Done_Cb done_cb,
+             Eio_Error_Cb error_cb,
+             const void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_internal_cb, NULL);
+
+   return _eio_file_internal_ls(dir, NULL, NULL, main_internal_cb, done_cb, error_cb, data);
+}
+
+static Eio_File *
+_eio_file_direct_internal_ls(const char *dir,
+                             Eio_Filter_Direct_Cb filter_cb,
+                             Eio_Main_Direct_Cb main_cb,
+                             Eio_Array_Cb main_internal_cb,
+                             Eio_Done_Cb done_cb,
+                             Eio_Error_Cb error_cb,
+                             const void *data)
+{
+   Eio_File_Direct_Ls *async;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
+
+   async = eio_common_alloc(sizeof(Eio_File_Direct_Ls));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
+
+   async->ls.directory = eina_stringshare_add(dir);
+   async->filter_cb = filter_cb;
+   if (main_internal_cb)
+     {
+        async->main_internal_cb = main_internal_cb;
+        async->ls.gather = EINA_TRUE;
+     }
+   else
+     {
+        async->main_cb = main_cb;
+     }
+
+   if (!eio_long_file_set(&async->ls.common,
+			  done_cb,
+			  error_cb,
+			  data,
+			  _eio_file_direct_heavy,
+			  _eio_file_direct_notify,
+			  eio_async_end,
+			  eio_async_error))
+     return NULL;
+
+   return &async->ls.common;
+}
+
+EAPI Eio_File *
 eio_file_direct_ls(const char *dir,
 		   Eio_Filter_Direct_Cb filter_cb,
 		   Eio_Main_Direct_Cb main_cb,
@@ -531,25 +646,58 @@ eio_file_direct_ls(const char *dir,
 		   Eio_Error_Cb error_cb,
 		   const void *data)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
+
+   return _eio_file_direct_internal_ls(dir, filter_cb, main_cb, NULL, done_cb, error_cb, data);
+}
+
+Eio_File *
+_eio_file_direct_ls(const char *dir,
+                    Eio_Array_Cb main_internal_cb,
+                    Eio_Done_Cb done_cb,
+                    Eio_Error_Cb error_cb,
+                    const void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_internal_cb, NULL);
+
+   return _eio_file_direct_internal_ls(dir, NULL, NULL, main_internal_cb, done_cb, error_cb, data);
+}
+
+static Eio_File *
+_eio_file_stat_internal_ls(const char *dir,
+                           Eio_Filter_Direct_Cb filter_cb,
+                           Eio_Main_Direct_Cb main_cb,
+                           Eio_Array_Cb main_internal_cb,
+                           Eio_Done_Cb done_cb,
+                           Eio_Error_Cb error_cb,
+                           const void *data)
+{
    Eio_File_Direct_Ls *async;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = eio_common_alloc(sizeof(Eio_File_Direct_Ls));
    EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
-   async->filter_cb = filter_cb;
-   async->main_cb = main_cb;
    async->ls.directory = eina_stringshare_add(dir);
+   async->filter_cb = filter_cb;
+   if (main_internal_cb)
+     {
+        async->main_internal_cb = main_internal_cb;
+        async->ls.gather = EINA_TRUE;
+     }
+   else
+     {
+        async->main_cb = main_cb;
+     }
 
    if (!eio_long_file_set(&async->ls.common,
 			  done_cb,
 			  error_cb,
 			  data,
-			  _eio_file_direct_heavy,
+			  _eio_file_stat_heavy,
 			  _eio_file_direct_notify,
 			  eio_async_end,
 			  eio_async_error))
@@ -566,31 +714,21 @@ eio_file_stat_ls(const char *dir,
                  Eio_Error_Cb error_cb,
                  const void *data)
 {
-   Eio_File_Direct_Ls *async;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   async = eio_common_alloc(sizeof(Eio_File_Direct_Ls));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
+   return _eio_file_stat_internal_ls(dir, filter_cb, main_cb, NULL, done_cb, error_cb, data);
+}
 
-   async->filter_cb = filter_cb;
-   async->main_cb = main_cb;
-   async->ls.directory = eina_stringshare_add(dir);
+Eio_File *
+_eio_file_stat_ls(const char *dir,
+                 Eio_Array_Cb main_internal_cb,
+                 Eio_Done_Cb done_cb,
+                 Eio_Error_Cb error_cb,
+                 const void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_internal_cb, NULL);
 
-   if (!eio_long_file_set(&async->ls.common,
-			  done_cb,
-			  error_cb,
-			  data,
-			  _eio_file_stat_heavy,
-			  _eio_file_direct_notify,
-			  eio_async_end,
-			  eio_async_error))
-     return NULL;
-
-   return &async->ls.common;
+   return _eio_file_stat_internal_ls(dir, NULL, NULL, main_internal_cb, done_cb, error_cb, data);
 }
 
 EAPI Eina_Bool
