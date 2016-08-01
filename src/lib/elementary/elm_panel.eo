@@ -13,6 +13,7 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
 {
    legacy_prefix: elm_panel;
    eo_prefix: elm_obj_panel;
+   event_prefix: elm_panel;
    methods {
       @property orient {
          set {
@@ -84,4 +85,8 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
       Efl.Part.part;
    }
+   events {
+      toggled;
+   }
+
 }
