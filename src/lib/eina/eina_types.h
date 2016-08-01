@@ -45,12 +45,15 @@
 # else
 #  define EAPI __declspec(dllimport)
 # endif /* ! EFL_EINA_BUILD */
+# define EAPI_WEAK
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_WEAK __attribute__ ((weak))
 #  else
 #   define EAPI
+#   define EAPI_WEAK
 #  endif
 # else
 /**
@@ -60,6 +63,9 @@
 #  define EAPI
 # endif
 #endif
+
+/* Weak symbols part of EFL API - Note: not weak on all platforms */
+#define EWAPI EAPI EAPI_WEAK
 
 #ifdef _WIN32
 # ifdef DLL_EXPORT

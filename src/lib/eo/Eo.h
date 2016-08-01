@@ -12,7 +12,6 @@
 
 /* When used, it indicates that the function is an Eo API. */
 #define EOAPI EAPI EAPI_WEAK
-#define EWAPI EAPI EAPI_WEAK
 
 #ifdef _WIN32
 # ifdef EFL_EO_BUILD
@@ -24,19 +23,15 @@
 # else
 #  define EAPI __declspec(dllimport)
 # endif /* ! EFL_EO_BUILD */
-# define EAPI_WEAK
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EAPI __attribute__ ((visibility("default")))
-#   define EAPI_WEAK __attribute__ ((weak))
 #  else
 #   define EAPI
-#   define EAPI_WEAK
 #  endif
 # else
 #  define EAPI
-#  define EAPI_WEAK
 # endif
 #endif /* ! _WIN32 */
 
