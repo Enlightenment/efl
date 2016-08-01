@@ -167,8 +167,8 @@ bin/edje/edje_cc_handlers.c \
 bin/edje/edje_cc_sources.c \
 bin/edje/edje_multisense_convert.c \
 bin/edje/edje_svg_loader.c
-bin_edje_edje_cc_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
-bin_edje_edje_cc_LDADD =  $(USE_EDJE_BIN_LIBS)
+bin_edje_edje_cc_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS) @EDJE_LUA_CFLAGS@
+bin_edje_edje_cc_LDADD =  $(USE_EDJE_BIN_LIBS) @EDJE_LUA_LIBS@
 bin_edje_edje_cc_DEPENDENCIES = \
 @USE_EDJE_INTERNAL_LIBS@ \
 bin/edje/epp/epp$(EXEEXT) # epp is an artificial dependency because edje_cc will use it at runtime, so we be sure if we depend on edje_cc we get epp.
