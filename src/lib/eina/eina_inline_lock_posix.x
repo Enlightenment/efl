@@ -78,6 +78,8 @@ typedef void (*Eina_Lock_Bt_Func) ();
 #include <time.h>
 #include <sys/time.h>
 
+#include <eina_error.h>
+
 typedef struct _Eina_Lock Eina_Lock;
 typedef struct _Eina_RWLock Eina_RWLock;
 typedef struct _Eina_Condition Eina_Condition;
@@ -514,7 +516,13 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
                                 &(cond->lock->mutex),
                                 &ts);
    if (err == 0) r = EINA_TRUE;
-   else if (err == EPERM || err == ETIMEDOUT) r = EINA_FALSE;
+   else if (err == EPERM)
+     err = EINA_FALSE;
+   else if (err == ETIMEDOUT)
+     {
+        r = EINA_FALSE;
+        if (&EINA_ERROR_TIMEOUT) eina_error_set(EINA_ERROR_TIMEOUT);
+     }
    else EINA_LOCK_ABORT_DEBUG(err, cond_timedwait, cond);
 
 #ifdef EINA_HAVE_DEBUG_THREADS

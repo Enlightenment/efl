@@ -227,6 +227,7 @@ START_TEST(eina_test_rwlock)
    delay = (ts2.tv_sec - ts.tv_sec) * 1000L + (ts2.tv_nsec - ts.tv_nsec) / 1000000L;
    fail_if(delay < 50);
    fail_if(delay > 200);
+   fail_if(eina_error_get() != EINA_ERROR_TIMEOUT);
    fail_if(eina_lock_release(&mtcond) != EINA_LOCK_SUCCEED);
 
    eina_thread_join(thread);

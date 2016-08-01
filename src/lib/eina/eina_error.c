@@ -110,8 +110,10 @@ _eina_error_msg_alloc(void)
  */
 
 EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = 0;
-
 static const char EINA_ERROR_OUT_OF_MEMORY_STR[] = "Out of memory";
+
+EWAPI Eina_Error EINA_ERROR_TIMEOUT = 0;
+static const char EINA_ERROR_TIMEOUT_STR[] = "Timed out";
 
 /**
  * @endcond
@@ -136,6 +138,7 @@ eina_error_init(void)
    /* TODO register the eina's basic errors */
    EINA_ERROR_OUT_OF_MEMORY = eina_error_msg_static_register(
          EINA_ERROR_OUT_OF_MEMORY_STR);
+   EINA_ERROR_TIMEOUT = eina_error_msg_static_register(EINA_ERROR_TIMEOUT_STR);
    if (!eina_tls_new(&_eina_last_key))
      return EINA_FALSE;
    return EINA_TRUE;
