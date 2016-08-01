@@ -361,6 +361,7 @@ _eet_for_polygon_node(void)
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Polygon_Node);
    eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Polygon_Node, "points_count", points_count, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC_VAR_ARRAY(eet, Svg_Polygon_Node, "points", points, EET_T_DOUBLE);
    return eet;
 }
@@ -389,7 +390,7 @@ struct
    { SVG_NODE_CIRCLE, "circle" },
    { SVG_NODE_ELLIPSE, "ellipse" },
    { SVG_NODE_POLYGON, "polygon" },
-   { SVG_NODE_POLYLINE, "polygon" },
+   { SVG_NODE_POLYLINE, "polyline" },
    { SVG_NODE_RECT, "rect" },
    { SVG_NODE_PATH, "path" },
    { SVG_NODE_UNKNOWN, NULL }
@@ -474,6 +475,7 @@ _edje_svg_node_eet(void)
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "rect", _edje_edd_edje_rect_node);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "path", _edje_edd_edje_path_node);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "polygon", _edje_edd_edje_polygon_node);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "polyline", _edje_edd_edje_polygon_node);
 
    EET_DATA_DESCRIPTOR_ADD_UNION(_edje_edd_edje_vg_node, Svg_Node, "node", node, type, eet_union);
 

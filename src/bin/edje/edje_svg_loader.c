@@ -1134,7 +1134,13 @@ static Eina_Bool
 _attr_parse_polygon_node(void *data, const char *key, const char *value)
 {
    Svg_Node *node = data;
-   Svg_Polygon_Node *polygon = &(node->node.polygon);
+   Svg_Polygon_Node *polygon = NULL;
+
+   if (node->type == SVG_NODE_POLYGON)
+     polygon = &(node->node.polygon);
+   else
+     polygon = &(node->node.polyline);
+
 
    if (!strcmp(key, "points"))
      {
@@ -1367,6 +1373,10 @@ _copy_attribute(Svg_Node *to, Svg_Node *from)
         case SVG_NODE_POLYGON:
            to->node.polygon.points_count = from->node.polygon.points_count;
            to->node.polygon.points = calloc(to->node.polygon.points_count, sizeof(double));
+           break;
+        case SVG_NODE_POLYLINE:
+           to->node.polyline.points_count = from->node.polyline.points_count;
+           to->node.polyline.points = calloc(to->node.polyline.points_count, sizeof(double));
            break;
         default:
            break;

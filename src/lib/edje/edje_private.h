@@ -3247,6 +3247,7 @@ struct _Svg_Node
         Svg_Circle_Node circle;
         Svg_Ellipse_Node ellipse;
         Svg_Polygon_Node polygon;
+        Svg_Polygon_Node polyline;
         Svg_Rect_Node rect;
         Svg_Path_Node path;
      }node;

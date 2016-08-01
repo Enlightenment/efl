@@ -2518,7 +2518,8 @@ _create_vg_node(Svg_Node *node, Efl_VG *parent)
            _add_polyline(vg, node->node.polygon.points, node->node.polygon.points_count, EINA_TRUE);
            break;
         case SVG_NODE_POLYLINE:
-           _add_polyline(vg, node->node.polygon.points, node->node.polygon.points_count, EINA_FALSE);
+           vg = evas_vg_shape_add(parent);
+           _add_polyline(vg, node->node.polyline.points, node->node.polyline.points_count, EINA_FALSE);
            break;
         case SVG_NODE_ELLIPSE:
            vg = evas_vg_shape_add(parent);
