@@ -30,7 +30,8 @@ typedef struct _Ecore_Audio_In_Sndfile_Data Ecore_Audio_In_Sndfile_Data;
 EOLIAN static ssize_t
 _ecore_audio_in_sndfile_ecore_audio_in_read_internal(Eo *eo_obj EINA_UNUSED, Ecore_Audio_In_Sndfile_Data *obj, void *data, size_t len)
 {
-  return sf_read_float(obj->handle, data, len/4)*4;
+  if (!ESF_LOAD()) return 0;
+  return ESF_CALL(sf_read_float)(obj->handle, data, len/4)*4;
 }
 
 EOLIAN static double
@@ -38,8 +39,9 @@ _ecore_audio_in_sndfile_ecore_audio_in_seek(Eo *eo_obj EINA_UNUSED, Ecore_Audio_
 {
   sf_count_t count, pos;
 
+  if (!ESF_LOAD()) return 0.0;
   count = offs * obj->sfinfo.samplerate;
-  pos = sf_seek(obj->handle, count, mode);
+  pos = ESF_CALL(sf_seek)(obj->handle, count, mode);
 
   return (double)pos / obj->sfinfo.samplerate;
 }
@@ -50,8 +52,9 @@ _ecore_audio_in_sndfile_ecore_audio_source_set(Eo *eo_obj, Ecore_Audio_In_Sndfil
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
   Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
 
+  if (!ESF_LOAD()) return EINA_FALSE;
   if (obj->handle) {
-    sf_close(obj->handle);
+    ESF_CALL(sf_close)(obj->handle);
     obj->handle = NULL;
   }
 
@@ -60,7 +63,7 @@ _ecore_audio_in_sndfile_ecore_audio_source_set(Eo *eo_obj, Ecore_Audio_In_Sndfil
   if (!ea_obj->source)
     return EINA_FALSE;
 
-  obj->handle = sf_open(ea_obj->source, SFM_READ, &obj->sfinfo);
+  obj->handle = ESF_CALL(sf_open)(ea_obj->source, SFM_READ, &obj->sfinfo);
 
   if (!obj->handle) {
     eina_stringshare_del(ea_obj->source);
@@ -147,8 +150,9 @@ _ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_D
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
   Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
 
+  if (!ESF_LOAD()) return;
   if (obj->handle) {
-    sf_close(obj->handle);
+    ESF_CALL(sf_close)(obj->handle);
     obj->handle = NULL;
   }
 
@@ -170,7 +174,7 @@ _ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_D
   ea_obj->vio->free_func = free_func;
   in_obj->seekable = (vio->seek != NULL);
 
-  obj->handle = sf_open_virtual(&vio_wrapper, SFM_READ, &obj->sfinfo, eo_obj);
+  obj->handle = ESF_CALL(sf_open_virtual)(&vio_wrapper, SFM_READ, &obj->sfinfo, eo_obj);
 
   if (!obj->handle) {
     eina_stringshare_del(ea_obj->source);
@@ -199,8 +203,9 @@ _ecore_audio_in_sndfile_eo_base_destructor(Eo *eo_obj, Ecore_Audio_In_Sndfile_Da
 {
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
+  if (!ESF_LOAD()) return;
   if (obj->handle)
-    sf_close(obj->handle);
+    ESF_CALL(sf_close)(obj->handle);
 
   if (ea_obj->vio)
     _free_vio(ea_obj);

@@ -54,19 +54,19 @@ _ecore_audio_out_pulse_ecore_audio_volume_set(Eo *eo_obj, Ecore_Audio_Out_Pulse_
   pa_cvolume pa_volume;
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
+  if (!EPA_LOAD()) return;
   if (volume < 0)
     volume = 0;
 
-  pa_cvolume_set(&pa_volume, 2, volume * PA_VOLUME_NORM);
+  EPA_CALL(pa_cvolume_set)(&pa_volume, 2, volume * PA_VOLUME_NORM);
 
   ecore_audio_obj_volume_set(eo_super(eo_obj, MY_CLASS), volume);
 
   EINA_LIST_FOREACH(out_obj->inputs, input, in) {
       stream = eo_key_data_get(in, "pulse_data");
-      idx = pa_stream_get_index(stream);
-      pa_operation_unref(pa_context_set_sink_input_volume(class_vars.context, idx, &pa_volume, NULL, NULL));
+      idx = EPA_CALL(pa_stream_get_index)(stream);
+      EPA_CALL(pa_operation_unref)(EPA_CALL(pa_context_set_sink_input_volume)(class_vars.context, idx, &pa_volume, NULL, NULL));
   }
-
 }
 
 static void _write_cb(pa_stream *stream, size_t len, void *data)
@@ -77,14 +77,15 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
   ssize_t bread = 0;
   size_t wlen = len;
 
-  pa_stream_begin_write(stream, &buf, &wlen);
+  if (!EPA_LOAD()) return;
+  EPA_CALL(pa_stream_begin_write)(stream, &buf, &wlen);
 
   bread = ecore_audio_obj_in_read(in, buf, wlen);
 
-  pa_stream_write(stream, buf, bread, NULL, 0, PA_SEEK_RELATIVE);
+  EPA_CALL(pa_stream_write)(stream, buf, bread, NULL, 0, PA_SEEK_RELATIVE);
   if (bread < (int)len)
     {
-      pa_operation_unref(pa_stream_trigger(stream, NULL, NULL));
+      EPA_CALL(pa_operation_unref)(EPA_CALL(pa_stream_trigger)(stream, NULL, NULL));
     }
 }
 
@@ -99,7 +100,7 @@ static void _update_samplerate_cb(void *data EINA_UNUSED, const Eo_Event *event)
 
   stream = eo_key_data_get(event->object, "pulse_data");
 
-  pa_operation_unref(pa_stream_update_sample_rate(stream, samplerate * speed, NULL, NULL));
+  EPA_CALL(pa_operation_unref)(EPA_CALL(pa_stream_update_sample_rate)(stream, samplerate * speed, NULL, NULL));
 }
 
 static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
@@ -111,6 +112,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   Eina_Bool ret = EINA_FALSE;
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
+  if (!EPA_LOAD()) return EINA_FALSE;
   ret = ecore_audio_obj_out_input_attach(eo_super(eo_obj, MY_CLASS), in);
   if (!ret)
     return EINA_FALSE;
@@ -123,7 +125,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
 
   ss.rate = ss.rate * speed;
 
-  stream = pa_stream_new(class_vars.context, name, &ss, NULL);
+  stream = EPA_CALL(pa_stream_new)(class_vars.context, name, &ss, NULL);
   if (!stream) {
       ERR("Could not create stream");
       ecore_audio_obj_out_input_detach(eo_super(eo_obj, MY_CLASS), in);
@@ -135,11 +137,11 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   eo_key_data_set(in, "pulse_data", stream);
 
 
-  pa_stream_set_write_callback(stream, _write_cb, in);
-  pa_stream_connect_playback(stream, NULL, NULL, PA_STREAM_VARIABLE_RATE, NULL, NULL);
+  EPA_CALL(pa_stream_set_write_callback)(stream, _write_cb, in);
+  EPA_CALL(pa_stream_connect_playback)(stream, NULL, NULL, PA_STREAM_VARIABLE_RATE, NULL, NULL);
 
   if (ea_obj->paused)
-    pa_operation_unref(pa_stream_cork(stream, 1, NULL, NULL));
+    EPA_CALL(pa_operation_unref)(EPA_CALL(pa_stream_cork)(stream, 1, NULL, NULL));
 
   return ret;
 }
@@ -169,8 +171,9 @@ _ecore_audio_out_pulse_ecore_audio_out_input_attach(Eo *eo_obj, Ecore_Audio_Out_
 
 static void _drain_cb(pa_stream *stream, int success EINA_UNUSED, void *data EINA_UNUSED)
 {
-  pa_stream_disconnect(stream);
-  pa_stream_unref(stream);
+  if (!EPA_LOAD()) return;
+  EPA_CALL(pa_stream_disconnect)(stream);
+  EPA_CALL(pa_stream_unref)(stream);
 }
 
 EOLIAN static Eina_Bool
@@ -180,21 +183,22 @@ _ecore_audio_out_pulse_ecore_audio_out_input_detach(Eo *eo_obj, Ecore_Audio_Out_
   Eina_Bool ret2 = EINA_FALSE;
   pa_operation *op;
 
+  if (!EPA_LOAD()) return EINA_FALSE;
   ret2 = ecore_audio_obj_out_input_detach(eo_super(eo_obj, MY_CLASS), in);
   if (!ret2)
     return EINA_FALSE;
 
   stream = eo_key_data_get(in, "pulse_data");
 
-  pa_stream_set_write_callback(stream, NULL, NULL);
-  op = pa_stream_drain(stream, _drain_cb, NULL);
+  EPA_CALL(pa_stream_set_write_callback)(stream, NULL, NULL);
+  op = EPA_CALL(pa_stream_drain) (stream, _drain_cb, NULL);
   if (!op)
     {
        ERR("Failed to drain PulseAudio stream.");
        return EINA_FALSE;
     }
 
-  pa_operation_unref(op);
+  EPA_CALL(pa_operation_unref)(op);
   return EINA_TRUE;
 }
 
@@ -204,7 +208,8 @@ static void _state_cb(pa_context *context, void *data EINA_UNUSED)
    Eo *eo_obj;
    pa_context_state_t state;
    
-   state = pa_context_get_state(context);
+   if (!EPA_LOAD()) return;
+   state = EPA_CALL(pa_context_get_state)(context);
    class_vars.state = state;
    
    //ref everything in the list to be sure...
@@ -263,6 +268,7 @@ _ecore_audio_out_pulse_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_Dat
   char **argv;
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
+  if (!EPA_LOAD()) return NULL;
   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
 
   out_obj->need_writer = EINA_FALSE;
@@ -271,12 +277,12 @@ _ecore_audio_out_pulse_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_Dat
     ecore_app_args_get(&argc, &argv);
     if (!argc) {
         DBG("Could not get program name, pulse outputs will be named ecore_audio");
-       class_vars.context = pa_context_new(class_vars.api, "ecore_audio");
+       class_vars.context = EPA_CALL(pa_context_new)(class_vars.api, "ecore_audio");
     } else {
-       class_vars.context = pa_context_new(class_vars.api, basename(argv[0]));
+       class_vars.context = EPA_CALL(pa_context_new)(class_vars.api, basename(argv[0]));
     }
-    pa_context_set_state_callback(class_vars.context, _state_cb, NULL);
-    pa_context_connect(class_vars.context, NULL, PA_CONTEXT_NOFLAGS, NULL);
+    EPA_CALL(pa_context_set_state_callback)(class_vars.context, _state_cb, NULL);
+    EPA_CALL(pa_context_connect)(class_vars.context, NULL, PA_CONTEXT_NOFLAGS, NULL);
   }
 
   class_vars.outputs = eina_list_append(class_vars.outputs, eo_obj);

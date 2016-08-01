@@ -40,21 +40,22 @@ static Eina_Bool _write_cb(void *data)
   ssize_t written, bread = 0;
   float buf[1024];
 
+  if (!ESF_LOAD()) return EINA_FALSE;
   /* TODO: Support mixing of multiple inputs */
   in = eina_list_data_get(out_obj->inputs);
 
   bread = ecore_audio_obj_in_read(in, buf, 4*1024);
 
   if (bread == 0) {
-      sf_write_sync(obj->handle);
+      ESF_CALL(sf_write_sync)(obj->handle);
       ea_obj->paused = EINA_TRUE;
       out_obj->write_idler = NULL;
       return EINA_FALSE;
   }
-  written = sf_write_float(obj->handle, buf, bread/4)*4;
+  written = ESF_CALL(sf_write_float)(obj->handle, buf, bread/4)*4;
 
   if (written != bread)
-    ERR("Short write! (%s)\n", sf_strerror(obj->handle));
+    ERR("Short write! (%s)\n", ESF_CALL(sf_strerror)(obj->handle));
 
   return EINA_TRUE;
 }
@@ -66,6 +67,7 @@ _ecore_audio_out_sndfile_ecore_audio_out_input_attach(Eo *eo_obj, Ecore_Audio_Ou
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
   Eina_Bool ret2 = EINA_FALSE;
 
+  if (!ESF_LOAD()) return EINA_FALSE;
   ret2 = ecore_audio_obj_out_input_attach(eo_super(eo_obj, MY_CLASS), in);
   if (!ret2)
     return EINA_FALSE;
@@ -73,7 +75,7 @@ _ecore_audio_out_sndfile_ecore_audio_out_input_attach(Eo *eo_obj, Ecore_Audio_Ou
   obj->sfinfo.samplerate = ecore_audio_obj_in_samplerate_get(in);
   obj->sfinfo.channels = ecore_audio_obj_in_channels_get(in);
 
-  obj->handle = sf_open(ea_obj->source, SFM_WRITE, &obj->sfinfo);
+  obj->handle = ESF_CALL(sf_open)(ea_obj->source, SFM_WRITE, &obj->sfinfo);
 
   if (!obj->handle) {
     eina_stringshare_del(ea_obj->source);
@@ -97,8 +99,9 @@ _ecore_audio_out_sndfile_ecore_audio_source_set(Eo *eo_obj, Ecore_Audio_Out_Sndf
 {
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
+  if (!ESF_LOAD()) return EINA_FALSE;
   if (obj->handle) {
-    sf_close(obj->handle);
+    ESF_CALL(sf_close)(obj->handle);
     obj->handle = NULL;
   }
 
@@ -177,8 +180,9 @@ _ecore_audio_out_sndfile_eo_base_destructor(Eo *eo_obj, Ecore_Audio_Out_Sndfile_
 {
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
+  if (!ESF_LOAD()) return;
   if (obj->handle)
-    sf_close(obj->handle);
+    ESF_CALL(sf_close)(obj->handle);
   if (out_obj->write_idler)
     ecore_idler_del(out_obj->write_idler);
 

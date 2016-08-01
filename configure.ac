@@ -3932,9 +3932,22 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [emile])
 
 EFL_ADD_LIBS([ECORE_AUDIO], [-lm])
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_alsa}], [ALSA], [alsa])
-EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_pulseaudio}], [PULSE], [libpulse])
-EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_sndfile}], [SNDFILE], [sndfile])
+if test "x${want_alsa}" = "xyes" ; then
+  PKG_CHECK_MODULES([ECORE_AUDIO_ALSA], [alsa])
+  AC_DEFINE([HAVE_ALSA], [1], [Alsa support])
+fi
+if test "x${want_pulseaudio}" = "xyes" ; then
+  PKG_CHECK_MODULES([ECORE_AUDIO_PULSE], [libpulse])
+  AC_DEFINE([HAVE_PULSE], [1], [Pulseaudio support])
+fi
+if test "x${want_sndfile}" = "xyes" ; then
+  PKG_CHECK_MODULES([ECORE_AUDIO_SNDFILE], [sndfile])
+  AC_DEFINE([HAVE_SNDFILE], [1], [Sndfile support])
+fi
+
+dnl EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO_ALSA], [${want_alsa}], [ALSA], [alsa])
+dnl EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO_PULSE], [${want_pulseaudio}], [PULSE], [libpulse])
+dnl EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO_SNDFILE], [${want_sndfile}], [SNDFILE], [sndfile])
 
 EFL_EVAL_PKGS([ECORE_AUDIO])
 
