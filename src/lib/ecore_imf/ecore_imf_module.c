@@ -30,6 +30,22 @@ static Eina_Prefix *pfx = NULL;
 void
 ecore_imf_module_init(void)
 {
+   const char *built_modules[] = {
+#ifdef ENABLE_XIM
+      "xim",
+#endif
+#ifdef BUILD_ECORE_IMF_IBUS
+      "ibus",
+#endif
+#ifdef BUILD_ECORE_IMF_SCIM
+      "scim",
+#endif
+#ifdef BUILD_ECORE_IMF_WAYLAND
+      "wayland",
+#endif
+      NULL
+   };
+   const char *env;
    char buf[PATH_MAX] = "";
 
    pfx = eina_prefix_new(NULL, ecore_imf_init,
@@ -47,40 +63,77 @@ ecore_imf_module_init(void)
                       PACKAGE_BUILD_DIR);
              if (stat(buf, &st) == 0)
                {
-                  const char *built_modules[] = {
-#ifdef ENABLE_XIM
-                     "xim",
-#endif
-#ifdef BUILD_ECORE_IMF_IBUS
-                     "ibus",
-#endif
-#ifdef BUILD_ECORE_IMF_SCIM
-                     "scim",
-#endif
-#ifdef BUILD_ECORE_IMF_WAYLAND
-                     "wayland",
-#endif
-                     NULL
-                  };
                   const char **itr;
-                  for (itr = built_modules; *itr != NULL; itr++)
+                  const char **modules_load;
+                  const char *env;
+                  const char *modules_one[1] = { NULL };
+
+                  modules_load = built_modules;
+                  env = getenv("ECORE_IMF_MODULE");
+                  if (env)
+                    {
+                       modules_one[0] = env;
+                       modules_load = modules_one;
+                    }
+                  for (itr = modules_load; *itr != NULL; itr++)
                     {
                        snprintf(buf, sizeof(buf),
                                 "%s/src/modules/ecore_imf/%s/.libs",
                                 PACKAGE_BUILD_DIR, *itr);
-                       module_list = eina_module_list_get(module_list, buf,
-                                                          EINA_FALSE, NULL, NULL);
+                       module_list = eina_module_list_get
+                         (module_list, buf, EINA_FALSE, NULL, NULL);
                     }
 
-                  if (module_list)
-                    eina_module_list_load(module_list);
+                  if (module_list) eina_module_list_load(module_list);
                   return;
                }
           }
      }
 
-   snprintf(buf, sizeof(buf), "%s/ecore_imf/modules", eina_prefix_lib_get(pfx));
-   module_list = eina_module_arch_list_get(module_list, buf, MODULE_ARCH);
+   env = getenv("ECORE_IMF_MODULE");
+#ifdef BUILD_ECORE_IMF_WAYLAND
+   // if not set and we are sure we're on wayland....
+   if ((!env) && (getenv("WAYLAND_DISPLAY")) && (!getenv("DISPLAY")))
+     env = "wayland";
+#endif
+#ifdef ENABLE_XIM
+   if ((!env) && (!getenv("WAYLAND_DISPLAY")) && (getenv("DISPLAY")))
+     env = "xim";
+#endif
+   if (env)
+     {
+        const char **itr;
+        Eina_Bool ok = EINA_FALSE;
+
+        for (itr = built_modules; *itr != NULL; itr++)
+          {
+             if (!strcmp(env, *itr))
+               {
+                  ok = EINA_TRUE;
+                  break;
+               }
+          }
+        if (ok)
+          {
+             Eina_Module *m;
+
+             snprintf(buf, sizeof(buf),
+                      "%s/ecore_imf/modules/%s/%s/module" SHARED_LIB_SUFFIX,
+                      eina_prefix_lib_get(pfx), env, MODULE_ARCH);
+             m = eina_module_new(buf);
+             if (m)
+               {
+                  module_list = eina_array_new(1);
+                  if (module_list) eina_array_push(module_list, m);
+                  else eina_module_free(m);
+               }
+          }
+     }
+   else
+     {
+        snprintf(buf, sizeof(buf), "%s/ecore_imf/modules", eina_prefix_lib_get(pfx));
+        module_list = eina_module_arch_list_get(module_list, buf, MODULE_ARCH);
+     }
 
    // XXX: MODFIX: do not list ALL modules and load them ALL! this is
    // is wrong - we end up loading BOTH xim ANd scim (and maybe uim too)
