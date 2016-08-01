@@ -70,6 +70,7 @@ _eio_file_close_job(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Map *map = data;
 
+   map->common.length = eina_file_size_get(map->result);
    eina_file_close(map->result);
 }
 

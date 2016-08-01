@@ -347,6 +347,7 @@ eio_long_file_set(Eio_File *common,
    common->error_cb = error_cb;
    common->data = data;
    common->error = 0;
+   common->length = 0;
    common->thread = NULL;
    common->container = NULL;
    common->worker.associated = NULL;
@@ -384,6 +385,7 @@ eio_file_set(Eio_File *common,
    common->error_cb = error_cb;
    common->data = data;
    common->error = 0;
+   common->length = 0;
    common->thread = NULL;
    common->container = NULL;
    common->worker.associated = NULL;

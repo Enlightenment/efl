@@ -102,6 +102,8 @@ _eio_file_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
    Eina_List *pack = msg_data;
    Eio_File_Char *info;
 
+   async->ls.common.length += eina_list_count(pack);
+
    EINA_LIST_FREE(pack, info)
      {
         async->ls.common.main.associated = info->associated;
@@ -205,6 +207,8 @@ _eio_file_direct_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_
    Eio_File_Direct_Ls *async = data;
    Eina_List *pack = msg_data;
    Eio_File_Direct_Info *info;
+
+   async->ls.common.length += eina_list_count(pack);
 
    EINA_LIST_FREE(pack, info)
      {

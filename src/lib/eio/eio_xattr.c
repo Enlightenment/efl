@@ -170,15 +170,19 @@ _eio_file_xattr_set(void *data, Ecore_Thread *thread)
      {
      case EIO_XATTR_DATA:
        failure = !eina_xattr_set(file, attribute, async->todo.xdata.xattr_data, async->todo.xdata.xattr_size, flags);
+       async->common.length = async->todo.xdata.xattr_size;
        break;
      case EIO_XATTR_STRING:
        failure = !eina_xattr_string_set(file, attribute, async->todo.xstring.xattr_string, flags);
+       async->common.length = strlen(async->todo.xstring.xattr_string) + 1;
        break;
      case EIO_XATTR_DOUBLE:
        failure = !eina_xattr_double_set(file, attribute, async->todo.xdouble.xattr_double, flags);
+       async->common.length = sizeof (double);
        break;
      case EIO_XATTR_INT:
        failure = !eina_xattr_int_set(file, attribute, async->todo.xint.xattr_int, flags);
+       async->common.length = sizeof (int);
        break;
      }
 
