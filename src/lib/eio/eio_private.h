@@ -168,6 +168,8 @@ struct _Eio_File
    struct {
       Eina_Hash *associated;
    } worker, main;
+
+   uint64_t length;
 };
 
 struct _Eio_Eet_Simple
