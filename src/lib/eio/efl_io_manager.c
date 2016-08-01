@@ -22,9 +22,11 @@
 # include <config.h>
 #endif
 
-
 #include <Eo.h>
+#include <Ecore.h>
 #include "Eio.h"
+
+#include "eio_private.h"
 
 typedef struct _Efl_Io_Manager_Data Efl_Io_Manager_Data;
 
@@ -50,389 +52,364 @@ struct _Job_Closure
 
 /* Helper functions */
 
-static Job_Closure *
-_job_closure_create(Eo *obj, Efl_Io_Manager_Data *pdata, Eina_Promise_Owner *owner)
+static void
+_no_future(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(owner, NULL);
+   Eio_File *h = data;
 
-   Job_Closure *closure = malloc(sizeof(Job_Closure));
+   eio_file_cancel(h);
+}
 
-   if (!closure)
+static void
+_forced_shutdown(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eio_File *h = data;
+
+   eio_file_cancel(h);
+   // FIXME: handle memory lock here !
+   // Acceptable strategy will be to unlock all thread as
+   // if we were freeing some memory
+   // FIXME: Handle long to finish thread
+   ecore_thread_wait(h->thread, 1.0);
+}
+
+static void
+_progress(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   efl_key_data_set(ev->object, "_eio.progress", (void*) EINA_TRUE);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(promise_progress_handling,
+                           { EFL_PROMISE_EVENT_FUTURE_PROGRESS_SET, _progress },
+                           { EFL_PROMISE_EVENT_FUTURE_NONE, _no_future },
+                           { EFL_EVENT_DEL, _forced_shutdown });
+
+EFL_CALLBACKS_ARRAY_DEFINE(promise_handling,
+                           { EFL_PROMISE_EVENT_FUTURE_NONE, _no_future },
+                           { EFL_EVENT_DEL, _forced_shutdown });
+
+static void
+_file_done_data_cb(void *data, Eio_File *handler, const char *attr_data, unsigned int size)
+{
+   Efl_Promise *p = data;
+   Eina_Binbuf *buf;
+
+   efl_event_callback_array_del(p, promise_handling(), handler);
+
+   buf = eina_binbuf_new();
+   eina_binbuf_append_length(buf, (const unsigned char*) attr_data, size);
+
+   efl_promise_value_set(p, buf, EINA_FREE_CB(eina_binbuf_free));
+
+   efl_del(p);
+}
+
+static void
+_file_error_cb(void *data, Eio_File *handler, int error)
+{
+   Efl_Promise *p = data;
+
+   efl_event_callback_array_del(p, promise_handling(), handler);
+
+   efl_promise_failed(p, error);
+
+   efl_del(p);
+}
+
+static void
+_file_done_cb(void *data, Eio_File *handler)
+{
+   Efl_Promise *p = data;
+   uint64_t *v = calloc(1, sizeof (uint64_t));
+
+   efl_event_callback_array_del(p, promise_handling(), handler);
+
+   if (!v)
      {
-        EINA_LOG_CRIT("Failed to allocate memory.");
-        return 0;
+        efl_promise_failed(p, ENOMEM);
+        goto end;
      }
 
-   closure->object = efl_ref(obj);
-   closure->pdata = pdata;
-   closure->promise = owner;
-   closure->file = NULL; // Will be set once the Eio operation is under way
-   closure->delete_me = EINA_FALSE;
-   closure->delayed_arg = NULL;
-   closure->direct_func = NULL;
+   *v = handler->length;
+   efl_promise_value_set(p, v, free);
 
-   pdata->operations = eina_list_prepend(pdata->operations, closure);
-
-   return closure;
-}
-
-static void
-_job_closure_del(Job_Closure *closure)
-{
-   EINA_SAFETY_ON_NULL_RETURN(closure);
-   Efl_Io_Manager_Data *pdata = closure->pdata;
-   if (pdata)
-     pdata->operations = eina_list_remove(pdata->operations, closure);
-
-   efl_unref(closure->object);
-
-   if (closure->delayed_arg)
-     free(closure->delayed_arg);
-
-   free(closure);
-}
-
-static void
-_file_error_cb(void *data, Eio_File *handler EINA_UNUSED, int error)
-{
-   Job_Closure *operation = data;
-
-   EINA_SAFETY_ON_NULL_RETURN(operation);
-   EINA_SAFETY_ON_NULL_RETURN(operation->promise);
-
-   eina_promise_owner_error_set(operation->promise, error);
-
-   _job_closure_del(operation);
+ end:
+   efl_del(p);
 }
 
 /* Basic listing callbacks */
-
-static Eina_Bool
-_file_ls_filter_cb_helper(const Efl_Event_Description *event, void *data, const char *file)
+static void
+_cleanup_string_progress(void *data)
 {
-   Job_Closure *operation = data;
+   Eina_Array *existing = data;
+   Eina_Stringshare *s;
+   Eina_Array_Iterator it;
+   unsigned int i;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(operation, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(operation->pdata, EINA_FALSE);
-
-   Eio_Filter_Name_Data* event_info = malloc(sizeof(Eio_Filter_Name_Data));
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(event_info, EINA_FALSE);
-
-   event_info->file = file;
-   event_info->filter = EINA_FALSE;
-
-   efl_event_callback_legacy_call(operation->pdata->object, event, event_info);
-
-   Eina_Bool filter = event_info->filter;
-
-   free(event_info);
-
-   return filter;
-}
-
-static Eina_Bool
-_file_ls_filter_xattr_cb(void *data, Eio_File *handler EINA_UNUSED, const char *file)
-{
-   return _file_ls_filter_cb_helper(EFL_IO_MANAGER_EVENT_XATTR, data, file);
-}
-
-static Eina_Bool
-_file_ls_filter_named_cb(void *data, Eio_File *handler EINA_UNUSED, const char *file)
-{
-   return _file_ls_filter_cb_helper(EFL_IO_MANAGER_EVENT_FILTER_NAME, data, file);
+   EINA_ARRAY_ITER_NEXT(existing, i, s, it)
+     eina_stringshare_del(s);
+   eina_array_free(existing);
 }
 
 static void
-_file_ls_main_cb(void *data, Eio_File *handler EINA_UNUSED, const char *file)
+_cleanup_info_progress(void *data)
 {
-   Job_Closure *operation = data;
-   EINA_SAFETY_ON_NULL_RETURN(operation);
-   EINA_SAFETY_ON_NULL_RETURN(operation->promise);
+   Eina_Array *existing = data;
+   Eio_File_Direct_Info *d; // This is a trick because we use the head of the structure
+   Eina_Array_Iterator it;
+   unsigned int i;
 
-   eina_promise_owner_progress(operation->promise, (void*)file);
+   EINA_ARRAY_ITER_NEXT(existing, i, d, it)
+     eio_direct_info_free(d);
+   eina_array_free(existing);
 }
 
 static void
-_file_done_cb(void *data, Eio_File *handler EINA_UNUSED)
+_file_string_cb(void *data, Eio_File *handler, Eina_Array *gather)
 {
-   Job_Closure *operation = data;
+   Efl_Promise *p = data;
+   Eina_Array *existing = efl_key_data_get(p, "_eio.stored");
+   void **tmp;
 
-   EINA_SAFETY_ON_NULL_RETURN(operation);
-   EINA_SAFETY_ON_NULL_RETURN(operation->promise);
+   // If a future is set, but without progress, we should assume
+   // that we should discard all future progress. [[FIXME]]
+   if (existing)
+     {
+        tmp = realloc(existing->data, sizeof (void*) * (existing->count + gather->count));
+        if (!tmp)
+          {
+             eina_array_free(gather);
+             eina_array_free(existing);
+             efl_key_data_set(p, "_eio.stored", NULL);
+             handler->error = ENOMEM;
+             eio_file_cancel(handler);
+             return ;
+          }
 
-   // Placeholder value. We just want the callback to be called.
-   eina_promise_owner_value_set(operation->promise, NULL, NULL);
+        existing->data = tmp;
+        memcpy(existing->data + existing->count, gather->data, gather->count * sizeof (void*));
+        existing->count += gather->count;
+        existing->total = existing->count;
+        eina_array_free(gather);
+     }
+   else
+     {
+        existing = gather;
+     }
 
-   _job_closure_del(operation);
-}
+   if (!efl_key_data_get(p, "_eio.progress"))
+     {
+        efl_key_data_set(p, "_eio.stored", existing);
+        return ;
+     }
 
-static void
-_free_xattr_data(Eio_Xattr_Data *value)
-{
-    EINA_SAFETY_ON_NULL_RETURN(value);
-    if (value->data)
-      free((void*)value->data);
-
-    free(value);
-}
-
-static void
-_file_done_data_cb(void *data, Eio_File *handler EINA_UNUSED, const char *attr_data, unsigned int size)
-{
-   Job_Closure *operation = data;
-   Eio_Xattr_Data *ret_data = NULL;
-
-   EINA_SAFETY_ON_NULL_RETURN(operation);
-   EINA_SAFETY_ON_NULL_RETURN(operation->promise);
-
-   ret_data = calloc(sizeof(Eio_Xattr_Data), 1);
-   ret_data->data = calloc(sizeof(char), size + 1);
-   strcpy((char*)ret_data->data, attr_data);
-   ret_data->size = size;
-
-   eina_promise_owner_value_set(operation->promise, ret_data, (Eina_Promise_Free_Cb)&_free_xattr_data);
-
-   _job_closure_del(operation);
+   efl_promise_progress_set(p, existing);
+   efl_key_data_set(p, "_eio.stored", NULL);
+   _cleanup_string_progress(existing);
 }
 
 /* Direct listing callbacks */
-
-static Eina_Bool
-_file_direct_ls_filter_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_File_Direct_Info *info)
-{
-   Job_Closure *operation = data;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(operation, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(operation->pdata, EINA_FALSE);
-
-   Eio_Filter_Direct_Data event_info;
-
-   event_info.info = info;
-   event_info.filter = EINA_FALSE;
-
-   efl_event_callback_legacy_call(operation->pdata->object, EFL_IO_MANAGER_EVENT_FILTER_DIRECT, &event_info);
-
-   Eina_Bool filter = event_info.filter;
-
-   return filter;
-}
-
 static void
-_file_direct_ls_main_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_File_Direct_Info *info)
+_file_info_cb(void *data, Eio_File *handler, Eina_Array *gather)
 {
-   Job_Closure *operation = data;
-   EINA_SAFETY_ON_NULL_RETURN(operation);
-   EINA_SAFETY_ON_NULL_RETURN(operation->promise);
+   Efl_Promise *p = data;
+   Eina_Array *existing = efl_key_data_get(p, "_eio.stored");
+   void **tmp;
 
-   eina_promise_owner_progress(operation->promise, (void*)info);
-}
-
-static void
-_ls_direct_notify_start(void* data, Eina_Promise_Owner *promise EINA_UNUSED)
-{
-   Job_Closure *operation_data = (Job_Closure*)data;
-   char* path = operation_data->delayed_arg;
-
-   Eio_File *handle = operation_data->direct_func(path,
-         _file_direct_ls_filter_cb,
-         _file_direct_ls_main_cb,
-         _file_done_cb,
-         _file_error_cb,
-         operation_data);
-   operation_data->file = handle;
-}
-
-static void
-_free_notify_start_data(void *data)
-{
-   Job_Closure *operation_data = (Job_Closure*)data;
-   if (!operation_data->delayed_arg)
-     return;
-   free(operation_data->delayed_arg);
-   operation_data->delayed_arg = NULL;
-}
-
-static void
-_ls_notify_start(void *data, Eina_Promise_Owner* promise EINA_UNUSED)
-{
-   Job_Closure *operation_data = (Job_Closure*)data;
-   char* path = operation_data->delayed_arg;
-
-   Eio_File *handle = eio_file_ls(path,
-         _file_ls_filter_named_cb,
-         _file_ls_main_cb,
-         _file_done_cb,
-         _file_error_cb,
-         operation_data);
-   operation_data->file = handle;
-}
-
-static void
-_xattr_notify_start(void *data, Eina_Promise_Owner *promise EINA_UNUSED)
-{
-   Job_Closure *operation_data = (Job_Closure*)data;
-   char* path = operation_data->delayed_arg;
-
-   Eio_File *handle = eio_file_xattr(path,
-         _file_ls_filter_xattr_cb,
-         _file_ls_main_cb,
-         _file_done_cb,
-         _file_error_cb,
-         operation_data);
-   operation_data->file = handle;
-}
-
-static void
-_job_direct_ls_helper(Efl_Io_Manager_Direct_Ls_Func ls_func,
-      Eo* obj,
-      Efl_Io_Manager_Data *pd,
-      const char *path,
-      Eina_Promise_Owner *promise)
-{
-   Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
-
-   if (!operation_data)
+   // If a future is set, but without progress, we should assume
+   // that we should discard all future progress. [[FIXME]]
+   if (existing)
      {
-        EINA_LOG_CRIT("Failed to create eio job operation data.");
-        eina_promise_owner_error_set(promise, eina_error_get());
-        eina_error_set(0);
-        return;
+        tmp = realloc(existing->data, sizeof (void*) * (existing->count + gather->count));
+        if (!tmp)
+          {
+             eina_array_free(gather);
+             eina_array_free(existing);
+             efl_key_data_set(p, "_eio.stored", NULL);
+             handler->error = ENOMEM;
+             eio_file_cancel(handler);
+             return ;
+          }
+        existing->data = tmp;
+        memcpy(existing->data + existing->count, gather->data, gather->count * sizeof (void*));
+        existing->count += gather->count;
+        existing->total = existing->count;
+        eina_array_free(gather);
      }
-
-   operation_data->delayed_arg = (char*)calloc(sizeof(char), strlen(path) + 1);
-   strcpy(operation_data->delayed_arg, path);
-
-   operation_data->direct_func = ls_func;
-
-   eina_promise_owner_progress_notify(promise,
-         _ls_direct_notify_start,
-         operation_data,
-         _free_notify_start_data);
+   else
+     {
+        existing = gather;
+     }
+   if (!efl_key_data_get(p, "_eio.progress"))
+     {
+        efl_key_data_set(p, "_eio.stored", existing);
+        return ;
+     }
+   efl_promise_progress_set(p, existing);
+   efl_key_data_set(p, "_eio.stored", NULL);
+   _cleanup_info_progress(existing);
 }
 
 /* Method implementations */
-
-static Eina_Promise*
-_efl_io_manager_file_direct_ls(Eo *obj,
-      Efl_Io_Manager_Data *pd,
-      const char *path)
+static Efl_Future *
+_efl_io_manager_direct_ls(Eo *obj,
+                          Efl_Io_Manager_Data *pd EINA_UNUSED,
+                          const char *path,
+                          Eina_Bool recursive)
 {
-   Eina_Promise_Owner* promise = eina_promise_add();
-   _job_direct_ls_helper(&eio_file_direct_ls, obj, pd, path, promise);
-   return eina_promise_owner_promise_get(promise);
-}
+   Efl_Promise *p;
+   Eio_File *h;
 
-static Eina_Promise*
-_efl_io_manager_file_stat_ls(Eo *obj,
-      Efl_Io_Manager_Data *pd,
-      const char *path)
-{
-   Eina_Promise_Owner* promise = eina_promise_add();
-   _job_direct_ls_helper(&eio_file_stat_ls, obj, pd, path, promise);
-   return eina_promise_owner_promise_get(promise);
-}
+   p = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!p) return NULL;
 
-static Eina_Promise*
-_efl_io_manager_dir_stat_ls(Eo *obj,
-      Efl_Io_Manager_Data *pd,
-      const char *path)
-{
-   Eina_Promise_Owner* promise = eina_promise_add();
-   _job_direct_ls_helper(&eio_dir_stat_ls, obj, pd, path, promise);
-   return eina_promise_owner_promise_get(promise);
-}
-
-static Eina_Promise*
-_efl_io_manager_dir_direct_ls(Eo *obj,
-                       Efl_Io_Manager_Data *pd,
-                       const char *path)
-{
-   Eina_Promise_Owner* promise = eina_promise_add();
-   // Had to add the cast as dir_direct differs in the filter callback constness of one of
-   // its arguments.
-   _job_direct_ls_helper((Efl_Io_Manager_Direct_Ls_Func)&eio_dir_direct_ls, obj, pd, path, promise);
-   return eina_promise_owner_promise_get(promise);
-}
-
-static Eina_Promise*
-_efl_io_manager_file_ls(Eo *obj,
-      Efl_Io_Manager_Data *pd,
-      const char *path)
-{
-   Eina_Promise_Owner* promise = eina_promise_add();
-   Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
-
-   Eina_Promise* p = eina_promise_owner_promise_get(promise);
-   if (!operation_data)
+   if (!recursive)
      {
-        EINA_LOG_CRIT("Failed to create eio job operation data.");
-        eina_promise_owner_error_set(promise, eina_error_get());
-        eina_error_set(0);
-        return p;
+        h = _eio_file_direct_ls(path,
+                                _file_info_cb,
+                                _file_done_cb,
+                                _file_error_cb,
+                                p);
+     }
+   else
+     {
+        h = _eio_dir_direct_ls(path,
+                               _file_info_cb,
+                               _file_done_cb,
+                               _file_error_cb,
+                               p);
      }
 
-   operation_data->delayed_arg = (char*)calloc(sizeof(char), strlen(path) + 1);
-   strcpy(operation_data->delayed_arg, path);
+   if (!h) goto end;
 
-   eina_promise_owner_progress_notify(promise,
-      _ls_notify_start,
-      operation_data,
-      _free_notify_start_data);
-   return p;
+   efl_event_callback_array_add(p, promise_progress_handling(), h);
+   return efl_promise_future_get(p);
+
+ end:
+   efl_del(p);
+   return NULL;
+}
+
+static Efl_Future *
+_efl_io_manager_stat_ls(Eo *obj,
+                        Efl_Io_Manager_Data *pd EINA_UNUSED,
+                        const char *path,
+                        Eina_Bool recursive)
+{
+   Efl_Promise *p;
+   Eio_File *h;
+
+   p = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!p) return NULL;
+
+   if (!recursive)
+     {
+        h = _eio_file_stat_ls(path,
+                              _file_info_cb,
+                              _file_done_cb,
+                              _file_error_cb,
+                              p);
+     }
+   else
+     {
+        h = _eio_dir_stat_ls(path,
+                             _file_info_cb,
+                             _file_done_cb,
+                             _file_error_cb,
+                             p);
+     }
+
+   if (!h) goto end;
+
+   efl_event_callback_array_add(p, promise_progress_handling(), h);
+   return efl_promise_future_get(p);
+
+ end:
+   efl_del(p);
+   return NULL;
+}
+
+static Efl_Future *
+_efl_io_manager_ls(Eo *obj,
+                   Efl_Io_Manager_Data *pd EINA_UNUSED,
+                   const char *path)
+{
+   Efl_Promise *p;
+   Eio_File *h;
+
+   p = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!p) return NULL;
+
+   h = _eio_file_ls(path,
+                    _file_string_cb,
+                    _file_done_cb,
+                    _file_error_cb,
+                    p);
+   if (!h) goto end;
+
+   efl_event_callback_array_add(p, promise_progress_handling(), h);
+   return efl_promise_future_get(p);
+
+ end:
+   efl_del(p);
+   return NULL;
 }
 
 /* Stat function */
-
 static void
 _file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *stat)
 {
-   Job_Closure *operation = data;
+   Efl_Promise *p = data;
+   Eina_Stat *c;
 
-   EINA_SAFETY_ON_NULL_RETURN(operation);
-   EINA_SAFETY_ON_NULL_RETURN(operation->promise);
-   Eina_Stat *my_stat = calloc(sizeof(Eina_Stat), 1);
-
-   *my_stat = *stat;
-   eina_promise_owner_value_set(operation->promise, my_stat, free);
-
-   _job_closure_del(operation);
-}
-
-static Eina_Promise*
-_efl_io_manager_file_direct_stat(Eo *obj,
-                          Efl_Io_Manager_Data *pd,
-                          const char *path)
-{
-   Eina_Promise_Owner* promise = eina_promise_add();
-   Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
-
-   Eina_Promise* p = eina_promise_owner_promise_get(promise);
-   if (!operation_data)
+   c = calloc(1, sizeof (Eina_Stat));
+   if (!c)
      {
-        EINA_LOG_CRIT("Failed to create eio job operation data.");
-        eina_promise_owner_error_set(promise, eina_error_get());
-        eina_error_set(0);
-        return p;
+        efl_promise_failed(p, ENOMEM);
+        goto end;
      }
 
-   Eio_File *handle = eio_file_direct_stat(path,
-         _file_stat_done_cb,
-         _file_error_cb,
-         operation_data);
-   operation_data->file = handle;
-   return p;
+   memcpy(c, stat, sizeof (Eina_Stat));
+   efl_promise_value_set(p, c, free);
+
+ end:
+   efl_del(p);
+}
+
+static Efl_Future *
+_efl_io_manager_stat(Eo *obj,
+                     Efl_Io_Manager_Data *pd EINA_UNUSED,
+                     const char *path)
+{
+   Efl_Promise *p;
+   Eio_File *h;
+
+   p = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!p) return NULL;
+
+   h = eio_file_direct_stat(path,
+                            _file_stat_done_cb,
+                            _file_error_cb,
+                            p);
+   if (!h) goto end;
+
+   efl_event_callback_array_add(p, promise_handling(), h);
+   return efl_promise_future_get(p);
+
+ end:
+   efl_del(p);
+   return NULL;
 }
 
 /* eXtended attribute manipulation */
 
-static Eina_Promise*
-_efl_io_manager_file_xattr_list_get(Eo *obj,
-                    Efl_Io_Manager_Data *pd,
-                    const char *path)
+static Efl_Future *
+_efl_io_manager_xattr_ls(Eo *obj,
+                         Efl_Io_Manager_Data *pd,
+                         const char *path)
 {
+   // FIXME
+#if 0
    Eina_Promise_Owner *promise = eina_promise_add();
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
@@ -453,149 +430,128 @@ _efl_io_manager_file_xattr_list_get(Eo *obj,
       operation_data,
       _free_notify_start_data);
    return p;
+#endif
 }
 
-static Eina_Promise*
-_efl_io_manager_file_xattr_set(Eo *obj,
-                        Efl_Io_Manager_Data *pd,
-                        const char *path,
-                        const char *attribute,
-                        const char *xattr_data,
-                        unsigned int xattr_size,
-                        Eina_Xattr_Flags flags)
+static Efl_Future *
+_efl_io_manager_xattr_set(Eo *obj,
+                          Efl_Io_Manager_Data *pd EINA_UNUSED,
+                          const char *path,
+                          const char *attribute,
+                          Eina_Binbuf *data,
+                          Eina_Xattr_Flags flags)
 {
-   Eina_Promise_Owner* promise = eina_promise_add();
-   Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
+   Efl_Promise *p;
+   Eio_File *h;
 
-   Eina_Promise* p = eina_promise_owner_promise_get(promise);
+   p = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!p) return NULL;
 
-   if (!operation_data)
-     {
-        EINA_LOG_CRIT("Failed to create eio job operation data.");
-        eina_promise_owner_error_set(promise, eina_error_get());
-        eina_error_set(0);
-        return p;
-     }
+   h = eio_file_xattr_set(path, attribute,
+                          (const char *) eina_binbuf_string_get(data),
+                          eina_binbuf_length_get(data),
+                          flags,
+                          _file_done_cb,
+                          _file_error_cb,
+                          p);
+   if (!h) goto end;
 
-   Eio_File *handle = eio_file_xattr_set(path,
-         attribute,
-         xattr_data,
-         xattr_size,
-         flags,
-         _file_done_cb,
-         _file_error_cb,
-         operation_data);
-   operation_data->file = handle;
-   return p;
+   efl_event_callback_array_add(p, promise_handling(), h);
+   return efl_promise_future_get(p);
+
+ end:
+   efl_del(p);
+   return NULL;
 }
 
-static Eina_Promise*
-_efl_io_manager_file_xattr_get(Eo *obj,
-                        Efl_Io_Manager_Data *pd,
-                        const char *path,
-                        const char *attribute)
+static Efl_Future *
+_efl_io_manager_xattr_get(Eo *obj,
+                          Efl_Io_Manager_Data *pd EINA_UNUSED,
+                          const char *path,
+                          const char *attribute)
 {
-   Eina_Promise_Owner* promise = eina_promise_add();
-   Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
+   Efl_Promise *p;
+   Eio_File *h;
 
-   Eina_Promise* p = eina_promise_owner_promise_get(promise);
-   if (!operation_data)
-     {
-        EINA_LOG_CRIT("Failed to create eio job operation data.");
-        eina_promise_owner_error_set(promise, eina_error_get());
-        eina_error_set(0);
-        return p;
-     }
+   p = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!p) return NULL;
 
-   Eio_File *handle = eio_file_xattr_get(path,
-         attribute,
-         _file_done_data_cb,
-         _file_error_cb,
-         operation_data);
-   operation_data->file = handle;
-   return p;
+   h = eio_file_xattr_get(path, attribute,
+                          _file_done_data_cb,
+                          _file_error_cb,
+                          p);
+   if (!h) goto end;
+
+   efl_event_callback_array_add(p, promise_handling(), h);
+   return efl_promise_future_get(p);
+
+ end:
+   efl_del(p);
+   return NULL;
 }
 
 static void
-_file_open_open_cb(void *data, Eio_File *handler EINA_UNUSED, Eina_File *file)
+_file_open_cb(void *data, Eio_File *handler, Eina_File *file)
 {
-   Job_Closure *operation = data;
-   EINA_SAFETY_ON_NULL_RETURN(operation);
-   EINA_SAFETY_ON_NULL_RETURN(operation->promise);
-   eina_promise_owner_value_set(operation->promise, file, (Eina_Promise_Free_Cb)&eina_file_close);
+   Efl_Promise *p = data;
 
-   _job_closure_del(operation);
+   efl_event_callback_array_del(p, promise_handling(), handler);
+
+   efl_promise_value_set(p, eina_file_dup(file), EINA_FREE_CB(eina_file_close));
+
+   efl_del(p);
 }
 
-static Eina_Promise*
-_efl_io_manager_file_open(Eo *obj,
-                   Efl_Io_Manager_Data *pd,
-                   const char *path,
-                   Eina_Bool shared)
+static Efl_Future *
+_efl_io_manager_open(Eo *obj,
+                     Efl_Io_Manager_Data *pd EINA_UNUSED,
+                     const char *path,
+                     Eina_Bool shared)
 {
-   Eina_Promise_Owner* promise = eina_promise_add();
-   Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
+   Efl_Promise *p;
+   Eio_File *h;
 
-   Eina_Promise* p = eina_promise_owner_promise_get(promise);
-   if (!operation_data)
-     {
-        EINA_LOG_CRIT("Failed to create eio job operation data.");
-        eina_promise_owner_error_set(promise, eina_error_get());
-        eina_error_set(0);
-        return p;
-     }
+   p = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!p) return NULL;
 
-   Eio_File *handle = eio_file_open(path, shared, _file_open_open_cb, _file_error_cb, operation_data);
-   operation_data->file = handle;
-   return p;
+   h = eio_file_open(path, shared,
+                     _file_open_cb,
+                     _file_error_cb,
+                     p);
+
+   if (!h) goto end;
+
+   efl_event_callback_array_add(p, promise_handling(), h);
+   return efl_promise_future_get(p);
+
+ end:
+   efl_del(p);
+   return NULL;
 }
 
-
-static void
-_file_close_done_cb(void *data, Eio_File *handler EINA_UNUSED)
+static Efl_Future *
+_efl_io_manager_close(Eo *obj,
+                      Efl_Io_Manager_Data *pd EINA_UNUSED,
+                      Eina_File *file)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
-   Job_Closure *operation = data;
-   eina_promise_owner_value_set(operation->promise, NULL, NULL);
+   Efl_Promise *p;
+   Eio_File *h;
 
-   _job_closure_del(operation);
-}
+   p = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!p) return NULL;
 
-static void
-_efl_io_manager_file_close(Eo *obj,
-                         Efl_Io_Manager_Data *pd,
-                         Eina_File *file,
-                         Eina_Promise_Owner *promise)
-{
-   Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
+   h = eio_file_close(file,
+                      _file_done_cb,
+                      _file_error_cb,
+                      p);
+   if (!h) goto end;
 
-   if (!operation_data)
-     {
-        EINA_LOG_CRIT("Failed to create eio job operation data.");
-        return;
-     }
+   efl_event_callback_array_add(p, promise_handling(), h);
+   return efl_promise_future_get(p);
 
-   Eio_File *handle = eio_file_close(file, _file_close_done_cb, _file_error_cb, operation_data);
-   operation_data->file = handle;
-}
-
-static Efl_Object*
-_efl_io_manager_efl_object_constructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED)
-{
-   obj = efl_constructor(efl_super(obj, EFL_IO_MANAGER_CLASS));
-
-   pd->object = obj;
-   pd->operations = NULL;
-
-   return obj;
-}
-
-static void
-_efl_io_manager_efl_object_destructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED)
-{
-   efl_destructor(efl_super(obj, EFL_IO_MANAGER_CLASS));
-
-   // FIXME: cancel all pending promise
+ end:
+   efl_del(p);
+   return NULL;
 }
 
 #include "efl_io_manager.eo.c"

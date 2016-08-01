@@ -7,118 +7,75 @@ struct Eio.Data
   size: uint;
 }
 
-// FIXME: all events should be Eo objects not data if we want to modify them
-
-struct Eio.Filter.Direct.Data
-{
-  info: const(Eina.File.Direct.Info)*;
-  filter: bool;
-}
-
-struct Eio.Filter.Name.Data
-{
-  file: string;
-  filter: bool;
-}
-
-struct Eio.Xattr.Data
-{
-  data: string;
-  size: uint;
-}
-
-// FIXME: We should send list of stuff in progress not single item, callback cost is to high
-
-class Efl.Io.Manager (Efl.Object)
+class Efl.Io.Manager (Efl.Loop_User)
 {
   [[Class representing an asynchronous file operation.]]
 
   methods {
-
-    file_ls {
+    ls {
       [[Lists entries in a given path.]]
       params {
         @in path: string;
       }
-      return: promise<int, string>;
+      return: future<uint64, const(array<string>)>;
     }
 
-    file_direct_ls {
+    direct_ls {
       [[Lists entries in a given path with more information.]]
       params {
         @in path: string;
+	@in recursive: bool;
       }
-      return: promise<int, const(Eina_File_Direct_Info)*>;
+      return: future<uint64, const(array<Eina_File_Direct_Info>)>;
     }
 
-    file_stat_ls {
+    stat_ls {
       [[Lists entries in a given path with stat information.]]
       params {
         @in path: string;
+	@in recursive: bool;
       }
-      return: promise<int, const(Eina_File_Direct_Info)*>;
+      return: future<uint64, const(array<Eina_File_Direct_Info>)>;
     }
 
-    dir_stat_ls {
-      [[Recursively list the directory content and its sub content.]]
+    // Extended attributes
+    xattr_ls {
+      [[Lists all extended attributes asynchronously.]]
       params {
-        @in path: string;
+         @in path: string;
       }
-      return: promise<int, const(Eina_File_Direct_Info)*>;
+      return: future<uint64, const(array<string>)>;
     }
 
-    dir_direct_ls {
-      [[Recursively list the directory content and its sub content.]]
-      params {
-        @in path: string;
-      }
-      return: promise<int, const(Eina_File_Direct_Info)*>;
-    }
-
-    file_direct_stat {
+    stat {
       [[Get stat info on a given file/directory.]]
       params {
         @in path: string;
       }
-      return: promise<Eina_Stat>;
+      return: future<Eina_Stat>;
     }
 
-    // Extended attributes
-    @property file_xattr_list {
-      [[Lists all extended attributes asynchronously.]]
-      keys {
-         path: string;
-      }
-      get {
-         return: promise<int, string>;
-      }
-    }
-
-    @property file_xattr {
+    // FIXME: Add helper for Eina.Value to Xattr
+    @property xattr {
       [[Retrieves or sets information of a given extended attribute.]]
       set {
          values {
-            attribute: string;
-            xattr_data: string;
-            xattr_size: uint;
+	    data: Eina.Binbuf *;
             flags: Eina.Xattr.Flags;
          }
-         return: promise<int>;
+         return: future<uint64>;
       }
       get {
-         keys {
-            path: string;
-            attribute: string;
-         }
-         return: promise<Eio.Xattr.Data>;
+         return: future<Eina.Binbuf>;
       }
       keys {
          path: string;
+	 attribute: string;
       }
     }
 
     // helper api
-    file_open {
+    open {
       [[Opens a file.
 
       The fulfilled value in the promise will be the Eina.File*.]]
@@ -126,25 +83,15 @@ class Efl.Io.Manager (Efl.Object)
         @in path: string;
         @in shared: bool;
       }
-      return: promise<Eina.File*>;
+      return: future<Eina.File>;
     }
-    file_close {
+    close {
       [[Closes an open Eina.File.]]
       params {
         @in file: Eina.File*;
         // Here we're just interested whether the promise was fullfilled or not. No value needed.
-        @inout promise: promise<int>;
       }
+      return: future<int>;
     }
-  }
- events {
-    filter,name: Eio.Filter.Name.Data;
-    filter,direct: Eio.Filter.Direct.Data;
-    xattr: Eio.Filter.Name.Data;
- }
-
- implements {
-    Efl.Object.constructor;
-    Efl.Object.destructor;
   }
 }
