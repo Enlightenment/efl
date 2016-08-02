@@ -1,4 +1,5 @@
 
+#define EFL_BETA_API_SUPPORT 1
 #include <Eo.h>
 
 struct Name_Name_Data {};
