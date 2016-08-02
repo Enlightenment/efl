@@ -10,7 +10,7 @@ local writer = require("docgen.writer")
 local keyref = require("docgen.keyref")
 local ser = require("docgen.serializers")
 
-local use_dot
+local use_dot, use_folded
 
 -- eolian to various doc elements conversions
 
@@ -724,7 +724,13 @@ local build_class = function(cl)
     f:write_list(build_inherits(cl))
     f:write_nl()
     if use_dot then
+        if use_folded then
+            f:write_raw("++++ Inheritance graph |\n\n")
+        end
         f:write_graph(build_igraph(cl))
+        if use_folded then
+            f:write_raw("\n\n++++")
+        end
         f:write_nl(2)
     end
 
@@ -1084,7 +1090,8 @@ getopt.parse {
         { "n", "namespace", true, help = "Root namespace of the docs." },
         { nil, "graph-theme", true, help = "Optional graph theme." },
         { nil, "disable-graphviz", false, help = "Disable graphviz usage." },
-        { nil, "disable-notes", false, help = "Disable notes plugin usage." }
+        { nil, "disable-notes", false, help = "Disable notes plugin usage." },
+        { nil, "disable-folded", false, help = "Disable folded plugin usage." }
     },
     error_cb = function(parser, msg)
         io.stderr:write(msg, "\n")
@@ -1098,6 +1105,7 @@ getopt.parse {
             set_theme(opts["graph-theme"])
         end
         use_dot = not opts["disable-graphviz"]
+        use_folded = not opts["disable-folded"]
         local rootns = (not opts["n"] or opts["n"] == "")
             and "efl" or opts["n"]
         local dr
