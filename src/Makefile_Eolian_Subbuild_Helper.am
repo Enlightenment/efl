@@ -1,6 +1,0 @@
-EOLIAN_GEN = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian/eolian_gen${EXEEXT}
-_EOLIAN_GEN_DEP =
-
-EOLIAN_FLAGS += -I$(top_srcdir)/src/
-
-include	$(top_srcdir)/src/Makefile_Eolian_Files_Helper.am
