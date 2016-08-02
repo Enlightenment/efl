@@ -133,7 +133,7 @@ M.Writer = util.Object:clone {
         end
 
         local write_attrs = function(attrs)
-            if not v then
+            if not attrs then
                 return
             end
             self:write_raw(" [")

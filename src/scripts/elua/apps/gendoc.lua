@@ -1,6 +1,8 @@
 local eolian = require("eolian")
 local getopt = require("getopt")
 
+local serializer = require("serializer")
+
 local eomap = require("docgen.mappings")
 local stats = require("docgen.stats")
 local dutil = require("docgen.util")
@@ -557,6 +559,95 @@ local default_theme = {
     bg_color = "transparent"
 }
 
+local current_theme = default_theme
+
+local validate_ctheme = function(tb, name)
+    if type(tb.classes[name]) ~= "table" then
+        return false
+    end
+    local t = tb.classes[name]
+    if type(t.style) ~= "string" then
+        return false
+    end
+    if type(t.color) ~= "string" then
+        return false
+    end
+    if type(t.fill_color) ~= "string" then
+        return false
+    end
+    if not t.primary_color then
+        t.primary_color = t.color
+    end
+    if not t.primary_fill_color then
+        t.primary_fill_color = t.fill_color
+    end
+    if type(t.primary_color) ~= "string" then
+        return false
+    end
+    if type(t.primary_fill_color) ~= "string" then
+        return false
+    end
+    return true
+end
+
+local validate_theme = function(tb)
+    if type(tb) ~= "table" then
+        return false
+    end
+    if type(tb.classes) ~= "table" then
+        return false
+    end
+    if not tb.node then
+        tb.node = default_theme.node
+    end
+    if not tb.edge then
+        tb.edge = default_theme.edge
+    end
+    if not tb.bg_color then
+        tb.bg_color = default_theme.bg_color
+    end
+    if type(tb.node) ~= "table" then
+        return false
+    end
+    if type(tb.edge) ~= "table" then
+        return false
+    end
+    if type(tb.bg_color) ~= "string" then
+        return false
+    end
+    if not validate_ctheme(tb, "regular") then
+        return false
+    end
+    if not validate_ctheme(tb, "abstract") then
+        return false
+    end
+    if not validate_ctheme(tb, "mixin") then
+        return false
+    end
+    if not validate_ctheme(tb, "interface") then
+        return false
+    end
+    return true
+end
+
+local set_theme = function(tname)
+    local tf = io.open(tname)
+    if tf then
+        local cont = tf:read("*all")
+        tf:close()
+        local tb, err = serializer.deserialize(cont)
+        if not tb then
+            error("error parsing theme '" .. tname .. "': " .. err)
+        end
+        if not validate_theme(tb) then
+            error("invalid theme '" .. tname .. "'")
+        end
+        current_theme = tb
+    else
+        error("theme '" .. tname .. "' does not exist")
+    end
+end
+
 local classt_to_theme = {
     [eolian.class_type.REGULAR] = "regular",
     [eolian.class_type.ABSTRACT] = "abstract",
@@ -572,9 +663,9 @@ local class_to_node = function(cl, main)
 
     local clr = classt_to_theme[cl:type_get()]
 
-    ret.style = default_theme.classes[clr].style
-    ret.color = default_theme.classes[clr][main and "primary_color" or "color"]
-    ret.fillcolor = default_theme.classes[clr][main and "primary_fill_color"
+    ret.style = current_theme.classes[clr].style
+    ret.color = current_theme.classes[clr][main and "primary_color" or "color"]
+    ret.fillcolor = current_theme.classes[clr][main and "primary_fill_color"
                                                      or "fill_color"]
 
     -- FIXME: need a dokuwiki graphviz plugin with proper URL support
@@ -605,10 +696,10 @@ local build_igraph = function(cl)
         attrs = {
             rankdir = "TB",
             size = "6",
-            bgcolor = default_theme.bg_color
+            bgcolor = current_theme.bg_color
         },
-        node = default_theme.node,
-        edge = default_theme.edge
+        node = current_theme.node,
+        edge = current_theme.edge
     }
 
     local nbuf = {}
@@ -991,6 +1082,7 @@ getopt.parse {
         { category = "Generator" },
         { "r", "root", true, help = "Root path of the docs." },
         { "n", "namespace", true, help = "Root namespace of the docs." },
+        { nil, "graph-theme", true, help = "Optional graph theme." },
         { nil, "disable-graphviz", false, help = "Disable graphviz usage." },
         { nil, "disable-notes", false, help = "Disable notes plugin usage." }
     },
@@ -1001,6 +1093,9 @@ getopt.parse {
     done_cb = function(parser, opts, args)
         if opts["h"] then
             return
+        end
+        if opts["graph-theme"] then
+            set_theme(opts["graph-theme"])
         end
         use_dot = not opts["disable-graphviz"]
         local rootns = (not opts["n"] or opts["n"] == "")
