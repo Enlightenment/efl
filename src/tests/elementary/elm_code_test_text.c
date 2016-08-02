@@ -14,13 +14,18 @@ START_TEST (elm_code_text_get_test)
    Elm_Code_File *file;
    Elm_Code_Line *line;
 
+   const char *str;
+   int len;
+
    elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
    elm_code_file_line_append(file, "test", 4, NULL);
    line = elm_code_file_line_get(file, 1);
-   ck_assert_str_eq("test", elm_code_line_text_get(line, NULL));
+   str = elm_code_line_text_get(line, &len);
+
+   ck_assert_strn_eq("test", str, len);
    elm_shutdown();
 }
 END_TEST
