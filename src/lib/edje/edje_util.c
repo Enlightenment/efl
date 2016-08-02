@@ -815,6 +815,9 @@ _edje_object_global_color_class_set(Eo_Class *klass EINA_UNUSED, void *pd EINA_U
    Eina_Bool int_ret;
    Eina_Bool need_update = EINA_FALSE;
 
+   if (!_edje_color_class_hash)
+     _edje_color_class_hash = eina_hash_string_superfast_new(NULL);
+
    int_ret = _edje_color_class_set_internal(_edje_color_class_hash, color_class, mode, r, g, b, a, &need_update);
 
    if ((int_ret) && (need_update))
