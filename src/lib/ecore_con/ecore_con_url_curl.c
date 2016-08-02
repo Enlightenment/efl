@@ -32,7 +32,11 @@ _c_init(void)
    long ms = 0;
 
    if (_c) return EINA_TRUE;
-   if (_c_fail) return EINA_FALSE;
+   if (_c_fail)
+     {
+        ERR("Cannot find libcurl at runtime!");
+        return EINA_FALSE;
+     }
    _c = calloc(1, sizeof(Ecore_Con_Curl));
    if (!_c) goto error;
 
@@ -50,32 +54,28 @@ _c_init(void)
    LOAD("libcurl-4.dll"); // try correct dll first
    LOAD("libcurl.dll"); // try 1
    LOAD("curllib.dll"); // if fail try 2
+   if (!_c->mod)
+     ERR("Could not find libcurl-5.dll, libcurl-4.dll, libcurl.dll, curllib.dll");
 #elif defined(__APPLE__) && defined(__MACH__)
    LOAD("libcurl.5.dylib"); // try 1
    LOAD("libcurl.4.dylib"); // try 1
    LOAD("libcurl.so.5"); // if fail try 2
    LOAD("libcurl.so.4"); // if fail try 2
-#elif defined(__OpenBSD__)
-   {
-      char buf[64];
-      int min;
-      int maj = 25;
-
-      for (min = 0; min < 10; min++)
-        {
-           snprintf(buf, sizeof (buf), "libcurl.so.%d.%d", maj, min);
-           LOAD(buf);
-           if (_c->mod) break;
-        }
-   }
+   if (!_c->mod)
+     ERR("Could not find libcurl.5.dylib, libcurl.4.dylib, libcurl.so.5, libcurl.so.4");
 #else
    LOAD("libcurl.so.5"); // try only
    LOAD("libcurl.so.4"); // try only
+   if (!_c->mod)
+     ERR("Could not find libcurl.so.5, libcurl.so.4");
 #endif
    if (!_c->mod) goto error;
 
-#define SYM(x) if (!(_c->x = eina_module_symbol_get(_c->mod, #x))) \
-    goto error
+#define SYM(x) \
+   if (!(_c->x = eina_module_symbol_get(_c->mod, #x))) { \
+      ERR("Cannot find symbol '%s' in'%s", #x, eina_module_file_get(_c->mod)); \
+      goto error; \
+   }
    SYM(curl_global_init);
    SYM(curl_global_cleanup);
    SYM(curl_multi_init);

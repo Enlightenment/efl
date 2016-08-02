@@ -99,7 +99,7 @@ ecore_audio_pulse_lib_load(void)
      {
         if (!ecore_audio_pulse_lib->mod)
           {
-             ERR("Cannot find libpulse!");
+             ERR("Cannot find libpulse at runtime!");
              return EINA_FALSE;
           }
         return EINA_TRUE;
@@ -120,19 +120,25 @@ ecore_audio_pulse_lib_load(void)
    LOAD("libpulse-0.dll");
    LOAD("libpulse.dll");
    LOAD("pulse.dll");
+   if (!ecore_audio_pulse_lib->mod)
+     ERR("Could not find libpulse-0.dll, libpulse.dll, pulse.dll");
 # elif defined(__APPLE__) && defined(__MACH__)
    LOAD("libpulse.0.dylib");
    LOAD("libpulse.0.so");
    LOAD("libpulse.so.0");
+   if (!ecore_audio_pulse_lib->mod)
+     ERR("Could not find libpulse.0.dylib, libpulse.0.so, libpulse.so.0");
 # else
    LOAD("libpulse.so.0");
+   if (!ecore_audio_pulse_lib->mod)
+     ERR("Could not find libpulse.so.0");
 # endif
 # undef LOAD
    if (!ecore_audio_pulse_lib->mod) return EINA_FALSE;
 
 #define SYM(x) \
    if (!(ecore_audio_pulse_lib->x = eina_module_symbol_get(ecore_audio_pulse_lib->mod, #x))) { \
-      ERR("libpulse - cannot find %s", #x); \
+      ERR("Cannot find symbol '%s' in'%s", #x, eina_module_file_get(ecore_audio_pulse_lib->mod)); \
       goto err; \
    }
    SYM(pa_context_new);
@@ -186,7 +192,7 @@ ecore_audio_sndfile_lib_load(void)
      {
         if (!ecore_audio_sndfile_lib->mod)
           {
-             ERR("Cannot find libsndfile!");
+             ERR("Cannot find libsndfile at runtime!");
              return EINA_FALSE;
           }
         return EINA_TRUE;
@@ -219,7 +225,7 @@ ecore_audio_sndfile_lib_load(void)
 
 #define SYM(x) \
    if (!(ecore_audio_sndfile_lib->x = eina_module_symbol_get(ecore_audio_sndfile_lib->mod, #x))) { \
-      ERR("libsndfile - cannot find %s", #x); \
+      ERR("Cannot find symbol '%s' in'%s", #x, eina_module_file_get(ecore_audio_pulse_lib->mod)); \
       goto err; \
    }
    SYM(sf_open);

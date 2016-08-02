@@ -334,12 +334,11 @@ _edje_ephysics_load(void)
      {
         if (!_edje_ephysics->mod)
           {
-             ERR("Cannot find libpulse!");
+             ERR("Cannot find libephysics at runtime!");
              return EINA_FALSE;
           }
         return EINA_TRUE;
      }
-   ERR("PHYYYYYYYYYYYYYYZIKS");
    _edje_ephysics = calloc(1, sizeof(Edje_Ephysics));
    if (!_edje_ephysics) return EINA_FALSE;
 # define LOAD(x)                                        \
@@ -353,19 +352,26 @@ _edje_ephysics_load(void)
    }
 # if defined(_WIN32) || defined(__CYGWIN__)
    LOAD("libephysics-1.dll");
+   LOAD("libephysics1.dll");
    LOAD("libephysics.dll");
+   if (!_edje_ephysics->mod)
+     ERR("Could not find libephysics-1.dll, libephysics1.dll, libephysics.dll");
 # elif defined(__APPLE__) && defined(__MACH__)
    LOAD("libephysics.1.dylib");
    LOAD("libephysics.1.so");
    LOAD("libephysics.so.1");
+   if (!_edje_ephysics->mod)
+     ERR("Could not find libephysics.1.dylib, libephysics.1.so, libephysics.so.1");
 # else
    LOAD("libephysics.so.1");
+   if (!_edje_ephysics->mod)
+     ERR("Could not find libephysics.so.1");
 # endif
 # undef LOAD
    if (!_edje_ephysics->mod) return EINA_FALSE;
 # define SYM(x) \
    if (!(_edje_ephysics->x = eina_module_symbol_get(_edje_ephysics->mod, #x))) { \
-      ERR("libpulse - cannot find %s", #x); \
+      ERR("Cannot find symbol '%s' in'%s", #x, eina_module_file_get(_edje_ephysics->mod)); \
       goto err; \
    }
    SYM(ephysics_init);
