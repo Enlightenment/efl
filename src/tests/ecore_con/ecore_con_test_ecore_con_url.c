@@ -39,7 +39,7 @@ _url_compl_cb(void *data, int type EINA_UNUSED, void *event_info)
    printf("Total downloaded bytes = %d\n",
            ecore_con_url_received_bytes_get(ev->url_con));
 
-   if (info->_tmpfd)
+   if (info && info->_tmpfd)
      {
         status = ecore_con_url_status_code_get(ev->url_con);
         fail_if(status != 220);
@@ -167,7 +167,7 @@ error_user:
 START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
 {
    Ecore_Con_Url *ec_url;
-   url_test *info;
+   url_test *info = NULL;
    int ret;
    char link[] = ECORE_CON_FTP_TEST_URL;
    char url[4096], *username, *password, *file = NULL, *dir = NULL;
@@ -205,7 +205,7 @@ END_TEST
 START_TEST(ecore_con_test_ecore_con_url_post)
 {
    Ecore_Con_Url *ec_url;
-   url_test *info;
+   url_test *info = NULL;
    int ret;
    char link[] = ECORE_CON_HTTP_TEST_URL;
    char url_data[] = "test";
