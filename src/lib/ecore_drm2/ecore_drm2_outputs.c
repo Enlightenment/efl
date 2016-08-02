@@ -234,6 +234,15 @@ _output_crtc_find(const drmModeRes *res, const drmModeConnector *conn, Ecore_Drm
    uint32_t crtc;
    int i = 0, j = 0;
 
+   /* Skip all disconnected connectors...
+    *
+    * When a connector is disconnected it still has an encoder id
+    * which messes up our output selection code later.  When we support
+    * multi-head properly and hotplug becomes a real thing we'll
+    * need to revisit this hack (and the crtc assignment code as well)
+    */
+   if (conn->connection != DRM_MODE_CONNECTED) return -1;
+
    for (j = 0; j < conn->count_encoders; j++)
      {
         enc = drmModeGetEncoder(dev->fd, conn->encoders[j]);
