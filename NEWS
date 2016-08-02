@@ -240,6 +240,7 @@ Features:
    * eo base - add weak object refs as per jpeg needs
    * elput: Add API function to return output name associated with input device
    * Eo refcount: Split the refcount to private and public (user).
+   * ecore-drm2: Add API for vt-switching
 
 Fixes:
 
@@ -754,21 +755,11 @@ Fixes:
    * elm wl cnp - fix paste to not crash anymore
    * elm config - monitor JUST the correct files for profile and cfg change
    * elementary: Fix elementary not compiling
-   * eina_js: Fix documentation generation (T3005)
-   * ecore-wl2: Fix support for nested compositors
    * sys_notify: fix shutdown of elm_sys_notify
    * segment_control: check item disable (T2883)
    * elementary_test: remove wrong usage of EINA_UNUSED.
    * layout: do not unset max size hint during sizing eval
-   * efreet: fix undeclared function
-   * ecore_con: fix compiling on OS X
-   * evas_gl_cocoa: update function parameters
-   * ecore_wayland: set touch_focus window when gets pointer_enter
-   * eina mp: only include malloc.h on linux
-   * js: fix binding after namespace change of connector
    * hide indicator after mouse wheel activation. (T2348)
-   * Edje UI mirroring: Fix UI mirroring for GROUP parts. (T3021)
-   * Edje entry: Fix memory leak.
    * combobox: fix recalc and hover's best_location error
    * js: fix examples functions
    * elm entry: check for null return from eina_rectangle_new
@@ -1183,6 +1174,19 @@ Fixes:
    * evas and ecore_x shm segment management - fix over allocation and perms
    * edje examples - when you cp also just assume success if same file
    * elm cnp win32 - do one side at least of unix newlines to windows newln (T3556)
+   * edje_pick: copy block 'data'
+   * ecore-wl2: Add safety check for valid compositor
+   * efl - ecore-x - work around e's badness in makeing an x image for all wins
+   * edje_edit: avoid such values like 2.77556e-17
+   * elementary: fix legacy path set/get for Fileselector specializations (T4198)
+   * ecore imf - ibus - fix destroy/disconnect handling that crashes
+   * Canvas text: fix range geometry calculation for RTL (T3627)
+   * ecore_audio - save 232k of real RAM by dlopening depednecies (T4227)
+   * edje - reduce memory footrpint by dlopening ephysics on demand (T4227)
+   * ecore-imf - fix stupidity of loading ALL modules even if not needed (T4227)
+   * elm scroller accel was broken by default confgis setting it to 0. fix (T4263)
+   * elementary widget: fix a wrong disabled behavior.
+   * edje_edit: delete swallowed object before unswallowing (for part type GROUP)
 
 Changes since 1.16.0:
 ---------------------
