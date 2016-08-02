@@ -556,7 +556,9 @@ local default_theme = {
     edge = {
         color = "black"
     },
-    bg_color = "transparent"
+    bg_color = "transparent",
+    rank_dir = "TB",
+    size = "6"
 }
 
 local current_theme = default_theme
@@ -606,6 +608,12 @@ local validate_theme = function(tb)
     if not tb.bg_color then
         tb.bg_color = default_theme.bg_color
     end
+    if not tb.rank_dir then
+        tb.rank_dir = default_theme.rank_dir
+    end
+    if not tb.size then
+        tb.size = default_theme.size
+    end
     if type(tb.node) ~= "table" then
         return false
     end
@@ -613,6 +621,12 @@ local validate_theme = function(tb)
         return false
     end
     if type(tb.bg_color) ~= "string" then
+        return false
+    end
+    if type(tb.rank_dir) ~= "string" then
+        return false
+    end
+    if type(tb.size) ~= "string" then
         return false
     end
     if not validate_ctheme(tb, "regular") then
@@ -694,8 +708,8 @@ local build_igraph = function(cl)
     local graph = {
         type = "hierarchy",
         attrs = {
-            rankdir = "TB",
-            size = "6",
+            rankdir = current_theme.rank_dir,
+            size = current_theme.size,
             bgcolor = current_theme.bg_color
         },
         node = current_theme.node,
