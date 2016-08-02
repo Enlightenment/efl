@@ -88,7 +88,12 @@ EAPI extern Evas_Version * evas_version;
  *
  * @since 1.1
  */
+// Support not having eo available
+#ifdef EFL_BETA_API_SUPPORT
 typedef Eo_Callback_Priority Evas_Callback_Priority;
+#else
+typedef short Evas_Callback_Priority;
+#endif
 
 typedef struct _Evas_Coord_Rectangle       Evas_Coord_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Point                 Evas_Point;   /**< integer point */

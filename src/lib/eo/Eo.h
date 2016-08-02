@@ -119,6 +119,11 @@ typedef struct _Eo_Opaque Eo;
 typedef Eo Eo_Class;
 #define _EO_CLASS_EO_CLASS_TYPE
 
+typedef Eo Eo_Base;
+#define _EO_BASE_EO_CLASS_TYPE
+
+#ifdef EFL_BETA_API_SUPPORT
+
 /**
  * @var _eo_class_creation_lock
  * This variable is used for locking purposes in the class_get function
@@ -1137,6 +1142,8 @@ EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const
    /* Private for EFL internal use only. Do not use these! */
 EAPI int ___eo_ref2_get(const Eo *obj_id);
 EAPI void ___eo_ref2_reset(const Eo *obj_id);
+
+#endif
 
 #ifdef __cplusplus
 }

@@ -959,7 +959,10 @@ enum _Ecore_Exe_Win32_Priority
 };
 typedef enum _Ecore_Exe_Win32_Priority Ecore_Exe_Win32_Priority;
 
+#ifdef EFL_BETA_API_SUPPORT
 #include "ecore_exe.eo.h"
+#endif
+#include "ecore_exe.eo.legacy.h"
 
 #define _ECORE_EXE_EO_CLASS_TYPE
 
