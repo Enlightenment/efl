@@ -734,9 +734,6 @@ local build_class = function(cl)
     f:write_h(cl:full_name_get(), 2)
     keyref.add(cl:full_name_get():gsub("%.", "_"), "c")
 
-    f:write_h("Inheritance hierarchy", 3)
-    f:write_list(build_inherits(cl))
-    f:write_nl()
     if use_dot then
         if use_folded then
             f:write_raw("++++ Inheritance graph |\n\n")
@@ -747,6 +744,10 @@ local build_class = function(cl)
         end
         f:write_nl(2)
     end
+
+    f:write_h("Inheritance hierarchy", 3)
+    f:write_list(build_inherits(cl))
+    f:write_nl()
 
     f:write_h("Description", 3)
     write_full_doc(f, cl:documentation_get())
