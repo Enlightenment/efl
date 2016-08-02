@@ -4092,9 +4092,8 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
 
         if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
           {
-             _edje_real_part_swallow_clear(ed, rp);
              evas_object_del(rp->typedata.swallow->swallowed_object);
-             rp->typedata.swallow->swallowed_object = NULL;
+             _edje_real_part_swallow_clear(ed, rp);
           }
         if (source)
           {
