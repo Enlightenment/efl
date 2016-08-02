@@ -100,6 +100,8 @@ _elm_scrollable_is(const Evas_Object *obj)
 }
 
 static void
+elm_widget_disabled_internal(Eo *obj, Eina_Bool disabled);
+static void
 _on_sub_obj_del(void *data, const Eo_Event *event);
 static void
 _on_sub_obj_hide(void *data, const Eo_Event *event);
@@ -1020,8 +1022,7 @@ EOLIAN static Elm_Theme_Apply
 _elm_widget_theme_apply(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    _elm_widget_mirrored_reload(obj);
-
-   elm_widget_disabled_set(obj, elm_widget_disabled_get(obj));
+   elm_widget_disabled_internal(obj, elm_widget_disabled_get(obj));
 
    return ELM_THEME_APPLY_SUCCESS;
 }
@@ -3122,12 +3123,10 @@ _elm_widget_disabled_eval(const Evas_Object *obj, Eina_Bool disabled)
      }
 }
 
-EOLIAN static void
-_elm_widget_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool disabled)
+static void
+elm_widget_disabled_internal(Eo *obj, Eina_Bool disabled)
 {
    Eina_Bool parent_state = EINA_FALSE;
-   if (sd->disabled == disabled) return;
-   sd->disabled = !!disabled;
 
    if (disabled)
      {
@@ -3143,6 +3142,15 @@ _elm_widget_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool disabled)
         elm_obj_widget_disable(obj);
         _elm_widget_disabled_eval(obj, EINA_FALSE);
      }
+}
+
+EOLIAN static void
+_elm_widget_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool disabled)
+{
+   if (sd->disabled == disabled) return;
+   sd->disabled = !!disabled;
+
+   elm_widget_disabled_internal(obj, disabled);
 }
 
 EOLIAN static Eina_Bool
