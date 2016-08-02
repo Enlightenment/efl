@@ -225,7 +225,7 @@ ecore_audio_sndfile_lib_load(void)
 
 #define SYM(x) \
    if (!(ecore_audio_sndfile_lib->x = eina_module_symbol_get(ecore_audio_sndfile_lib->mod, #x))) { \
-      ERR("Cannot find symbol '%s' in'%s", #x, eina_module_file_get(ecore_audio_pulse_lib->mod)); \
+      ERR("Cannot find symbol '%s' in'%s", #x, eina_module_file_get(ecore_audio_sndfile_lib->mod)); \
       goto err; \
    }
    SYM(sf_open);
