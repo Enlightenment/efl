@@ -366,7 +366,5 @@ lib/eina/eina_strbuf_template_c.x \
 lib/eina/eina_binbuf_template_c.x \
 lib/eina/eina_inline_private.h \
 tests/eina/sample.gpx \
-lib/eina/Makefile.am \
-lib/eina/Makefile.in \
 lib/eina/eina_config.h.in \
 $(bin_SCRIPTS)

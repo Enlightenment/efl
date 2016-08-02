@@ -65,8 +65,6 @@ ectoreolianfilesdir = $(datadir)/eolian/include/ector-@VMAJ@
 ectoreolianfiles_DATA = $(ector_eolian_files) $(ector_eolian_type_files)
 
 EXTRA_DIST2 += $(ectoreolianfiles_DATA) \
-lib/ector/Makefile.am \
-lib/ector/Makefile.in \
 lib/ector/Ector.h \
 lib/ector/ector_util.h \
 lib/ector/ector_surface.h \

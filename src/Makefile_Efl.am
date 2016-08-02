@@ -70,8 +70,6 @@ EXTRA_DIST2 += \
       lib/efl/Efl_Config.h \
       lib/efl/Efl_Config.h.in \
       lib/efl/Efl.h \
-      lib/efl/Makefile.am \
-      lib/efl/Makefile.in \
       lib/efl/interfaces/efl_common_internal.h \
       $(efl_eolian_files) \
       $(efl_eolian_type_files)

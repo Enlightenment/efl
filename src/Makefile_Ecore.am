@@ -29,9 +29,7 @@ ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreeolianfiles_DATA = $(ecore_eolian_files) \
                         $(ecore_eolian_type_files)
 
-EXTRA_DIST2 += lib/ecore/Makefile.am \
-	      lib/ecore/Makefile.in \
-              ${ecoreeolianfiles_DATA}
+EXTRA_DIST2 += ${ecoreeolianfiles_DATA}
 
 lib_LTLIBRARIES += lib/ecore/libecore.la
 

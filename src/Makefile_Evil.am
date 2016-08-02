@@ -149,6 +149,4 @@ lib/evil/regex/regerror.ih \
 lib/evil/regex/engine.ih \
 lib/evil/regex/regcomp.ih \
 lib/evil/regex/engine.c \
-bin/evil/memcpy_glibc_i686.S \
-lib/evil/Makefile.am \
-lib/evil/Makefile.in
+bin/evil/memcpy_glibc_i686.S

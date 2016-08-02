@@ -89,6 +89,4 @@ EXTRA_DIST2 += \
 tests/eet/cert.pem \
 tests/eet/key_enc_none.pem \
 tests/eet/key_enc.pem \
-tests/eet/key.pem \
-lib/eet/Makefile.am \
-lib/eet/Makefile.in
+tests/eet/key.pem

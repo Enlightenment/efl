@@ -1397,8 +1397,6 @@ endif
 EXTRA_DIST2 += \
 tests/elementary/elm_suite.h \
 tests/elementary/elm_test_helper.h \
-lib/elementary/Makefile.am \
-lib/elementary/Makefile.in \
 lib/elementary/Elementary.h.in \
 lib/elementary/elm_code_widget_text.c \
 lib/elementary/elm_code_widget_undo.c
