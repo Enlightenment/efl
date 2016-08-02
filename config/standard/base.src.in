@@ -23,6 +23,7 @@ group "Elm_Config" struct {
   value "scroll_smooth_start_enable" uchar: 1;
   value "scroll_smooth_amount" double: 1.0;
   value "scroll_smooth_time_window" double: 0.15;
+  value "scroll_accel_factor" double: 7.0;
   value "focus_autoscroll_mode" uchar: 0;
   value "slider_indicator_visible_mode" int: 0;
   value "scale" double: 1.0;
