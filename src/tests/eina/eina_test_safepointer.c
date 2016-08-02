@@ -27,8 +27,8 @@
 #include "eina_suite.h"
 
 static int test_array[1024] = { 0, 1, 2, 3, 4, 5, 6, 7 };
-static int test_array2[1024] = { 8, 9, 10, 11, 12, 13, 14 };
-static const void *pointers[2048] = { NULL };
+static int test_array2[64] = { 8, 9, 10, 11, 12, 13, 14 };
+static const void *pointers[1088] = { NULL };
 
 START_TEST(eina_test_reusable)
 {
@@ -44,11 +44,6 @@ START_TEST(eina_test_reusable)
         fail_if(&test_array[i] != eina_safepointer_get(pointers[i]));
      }
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
-     {
-        eina_safepointer_unregister(pointers[i]);
-     }
-
    for (i = 0; i < sizeof (test_array2) / sizeof (test_array2[0]); i++)
      {
         pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] = eina_safepointer_register(&test_array2[i]);
@@ -56,6 +51,11 @@ START_TEST(eina_test_reusable)
         fail_if(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] == &test_array2[i]);
         fail_if(&test_array2[i] != eina_safepointer_get(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))]));
         eina_safepointer_unregister(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))]);
+     }
+
+   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+     {
+        eina_safepointer_unregister(pointers[i]);
      }
 
    for (i = 0; i < sizeof (pointers) / sizeof (pointers[0]); i++)
@@ -87,11 +87,6 @@ _thread1(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
         fail_if(pointers[i] == NULL);
         fail_if(pointers[i] == &test_array[i]);
         fail_if(&test_array[i] != eina_safepointer_get(pointers[i]));
-     }
-
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
-     {
-        eina_safepointer_unregister(pointers[i]);
      }
 
    return NULL;
@@ -134,6 +129,11 @@ START_TEST(eina_test_threading)
    // And wait for the outcome !
    eina_thread_join(t1);
    eina_thread_join(t2);
+
+   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+     {
+        eina_safepointer_unregister(pointers[i]);
+     }
 
    eina_barrier_free(&b);
 
