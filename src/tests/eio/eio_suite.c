@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#include <Eina.h>
+
 #include "eio_suite.h"
 #include "../efl_check.h"
 
