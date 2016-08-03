@@ -96,14 +96,6 @@ _elm_theme_file_item_add(Elm_Theme_Files *files, const char *item, Eina_Bool pre
 
         eina_strbuf_append_printf(buf,
                                   "%s/themes/%s.edj",
-                                  getenv("ELM_DATA_DIR"), item);
-        f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
-        _elm_theme_item_finalize(files, item, f, prepend, istheme);
-
-        eina_strbuf_reset(buf);
-
-        eina_strbuf_append_printf(buf,
-                                  "%s/themes/%s.edj",
                                   _elm_data_dir, item);
         f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
         /* Finalize will be done by the common one */
