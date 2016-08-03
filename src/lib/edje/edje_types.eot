@@ -120,9 +120,12 @@ enum Edje.Input_Panel.Layout {
    datetime,        [[Date and time layout
 
                       @since 1.8]]
-   emoticon         [[Emoticon layout
+   emoticon,        [[Emoticon layout
 
                       @since 1.10]]
+   voice            [[Voice layout, but if the IME does not support voice layout, then normal layout will be shown.
+
+                      @since 1.19]]
 }
 
 enum Edje.External.Param_Type {
