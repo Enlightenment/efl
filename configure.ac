@@ -5065,7 +5065,7 @@ fi
 ### Check availability
 
 ## Generic player
-EMOTION_GENERIC_PLAYER([GENERIC_VLC], [yes], [libvlc >= 2.0])
+EMOTION_GENERIC_PLAYER([GENERIC_VLC], [no], [libvlc >= 2.0])
 EFL_ADD_FEATURE([EMOTION], [generic_vlc], [${with_generic_vlc}])
 
 EFL_LIB_END([Emotion])
