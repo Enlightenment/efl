@@ -820,7 +820,6 @@ struct _Evas_Public_Data
      {
         Evas_Coord x, y, w, h;
         Eina_Bool changed : 1;
-        Evas_Object *clip;
      } framespace;
 
    Eina_List        *damages;

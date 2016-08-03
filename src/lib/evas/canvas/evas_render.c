@@ -13,8 +13,8 @@
 #include "evas_render2.h"
 
 /* Enable this for extra verbose rendering debug logs */
-//#define REND_DBG 1
-#define STDOUT_DBG
+#define REND_DBG 1
+//#define STDOUT_DBG
 
 #ifdef REND_DBG
 static FILE *dbf = NULL;
@@ -183,6 +183,25 @@ _accumulate_time(double before, Eina_Bool async)
 #endif
 
 static int _render_busy = 0;
+
+static inline Eina_Bool
+_is_obj_in_framespace(Evas_Object_Protected_Data *obj, int x, int y, int w, int h)
+{
+   Eina_Rectangle crect, orect;
+
+   if (obj->is_frame) return EINA_TRUE;
+
+   EINA_RECTANGLE_SET(&crect, x, y, w, h);
+   EINA_RECTANGLE_SET(&orect, obj->cur->geometry.x, obj->cur->geometry.y,
+                      obj->cur->geometry.w, obj->cur->geometry.h);
+
+   return eina_rectangles_intersect(&crect, &orect);
+   /* if (RECTS_INTERSECT(x, y, w, h, obj->cur->geometry.x, obj->cur->geometry.y, */
+   /*                     obj->cur->geometry.w, obj->cur->geometry.h)) */
+   /*   return EINA_TRUE; */
+
+   /* return EINA_FALSE; */
+}
 
 static void
 _evas_render_cleanup(void)
@@ -1213,6 +1232,12 @@ _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *p
    const Evas_Coord_Rectangle *clip;
    Evas_Object_Protected_Data *clipper;
    int cw, ch;
+   int fx, fy, fw, fh;
+
+   fx = evas->framespace.x;
+   fy = evas->framespace.y;
+   fw = evas->viewport.w - evas->framespace.w;
+   fh = evas->viewport.h - evas->framespace.h;
 
    /* cache.clip can not be relied on, since the evas is frozen, but we need
     * to set the clip. so we recurse from clipper to clipper until we reach
@@ -1226,6 +1251,9 @@ _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *p
                                 obj->cur->cache.clip.x + off_x,
                                 obj->cur->cache.clip.y + off_y,
                                 obj->cur->cache.clip.w, obj->cur->cache.clip.h);
+        if (!_is_obj_in_framespace(obj, fx, fy, fw, fh))
+          ENFN->context_clip_clip(ENDT, ctx, fx, fy, fw, fh);
+
         ENFN->context_clip_get(ENDT, ctx, NULL, NULL, &cw, &ch);
         return ((cw > 0) && (ch > 0));
      }
@@ -1236,6 +1264,8 @@ _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *p
    if (!clipper->cur->visible) return EINA_FALSE;
    clip = &clipper->cur->geometry;
    ENFN->context_clip_clip(ENDT, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
+   if (!_is_obj_in_framespace(obj, fx, fy, fw, fh))
+     ENFN->context_clip_clip(ENDT, ctx, fx, fy, fw, fh);
    ENFN->context_clip_get(ENDT, ctx, NULL, NULL, &cw, &ch);
    if ((cw <= 0) || (ch <= 0)) return EINA_FALSE;
 
@@ -1254,6 +1284,12 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *evas, Evas_Object *eo_obj
 {
    int x, y, w, h;
    Eina_Bool proxy_src_clip = EINA_TRUE;
+   int fx, fy, fw, fh;
+
+   fx = evas->framespace.x;
+   fy = evas->framespace.y;
+   fw = evas->viewport.w - evas->framespace.w;
+   fh = evas->viewport.h - evas->framespace.h;
 
    if (proxy_render_data) proxy_src_clip = proxy_render_data->source_clip;
 
@@ -1271,6 +1307,8 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *evas, Evas_Object *eo_obj
                            obj->cur->clipper->cur->cache.clip.h);
 
         ENFN->context_clip_set(ENDT, ctx, x + off_x, y + off_y, w, h);
+        if (!_is_obj_in_framespace(obj, fx, fy, fw, fh))
+          ENFN->context_clip_clip(ENDT, ctx, fx, fy, fw, fh);
      }
    else if (evas->is_frozen)
      {
@@ -1286,6 +1324,8 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *evas, Evas_Object *eo_obj
              w = obj->cur->clipper->cur->geometry.w;
              h = obj->cur->clipper->cur->geometry.h;
              ENFN->context_clip_clip(ENDT, ctx, x, y, w, h);
+             if (!_is_obj_in_framespace(obj, fx, fy, fw, fh))
+               ENFN->context_clip_clip(ENDT, ctx, fx, fy, fw, fh);
           }
      }
 }
@@ -1302,6 +1342,12 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    Eina_Bool clean_them = EINA_FALSE;
    Eina_Bool proxy_src_clip = EINA_TRUE;
    void *ctx;
+   int fx, fy, fw, fh;
+
+   fx = evas->framespace.x;
+   fy = evas->framespace.y;
+   fw = evas->viewport.w - evas->framespace.w;
+   fh = evas->viewport.h - evas->framespace.h;
 
    if (!proxy_render_data)
      {
@@ -1345,6 +1391,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
       int _c, _cx, _cy, _cw, _ch;
       _c = ENFN->context_clip_get(ENDT, context, &_cx, &_cy, &_cw, &_ch);
       RD(level, "  context clip: [%d] %d,%d %dx%d\n", _c, _cx, _cy, _cw, _ch);
+      RD(level, "\n");
+      RD(level, "Framespace: %d %d %d %d\n", fx, fy, fw, fh);
    }
 #endif
 
@@ -1547,6 +1595,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                      obj->cur->geometry.h);
 
                   ENFN->context_clip_set(ENDT, ctx, x, y, w, h);
+                  if (!_is_obj_in_framespace(obj, fx, fy, fw, fh))
+                    ENFN->context_clip_clip(ENDT, ctx, fx, fy, fw, fh);
+
 #ifdef REND_DBG
                   int _c, _cx, _cy, _cw, _ch;
                   _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
@@ -1620,6 +1671,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                }
           }
         ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
+        if (!_is_obj_in_framespace(obj, fx, fy, fw, fh))
+          ENFN->context_clip_clip(ENDT, ctx, fx, fy, fw, fh);
         if (obj->cur->cache.clip.visible || !proxy_src_clip)
           {
              ENFN->context_multiplier_unset(ENDT, ctx);
@@ -1718,6 +1771,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                {
                   const Evas_Coord_Rectangle *clip = &obj->cur->geometry;
                   ENFN->context_clip_clip(ENDT, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
+                  if (!_is_obj_in_framespace(obj, fx, fy, fw, fh))
+                    ENFN->context_clip_clip(ENDT, ctx, fx, fy, fw, fh);
 
                   if (obj->cur->clipper && (mapped > 1))
                     {
@@ -1793,8 +1848,14 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                           clipper->cur->cache.clip.w,
                                           clipper->cur->cache.clip.h);
                        ENFN->context_clip_set(ENDT, ctx, x + off_x, y + off_y, w, h);
+                       if (!_is_obj_in_framespace(obj, fx, fy, fw, fh))
+                         ENFN->context_clip_clip(ENDT, ctx, fx, fy, fw, fh);
                        if (proxy_src_clip)
-                         ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
+                         {
+                            ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
+                            if (!_is_obj_in_framespace(obj, fx, fy, fw, fh))
+                              ENFN->context_clip_clip(ENDT, ctx, fx, fy, fw, fh);
+                         }
                     }
                   else
                     {
@@ -2267,9 +2328,15 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
    int off_x, off_y;
    unsigned int i, j;
    Eina_Bool clean_them = EINA_FALSE;
+   int fxx, fyy, fw, fh;
 
    eina_evlog("+render_setup", eo_e, 0.0, NULL);
    RD(level, "  [--- UPDATE %i %i %ix%i\n", ux, uy, uw, uh);
+
+   fxx = e->framespace.x;
+   fyy = e->framespace.y;
+   fw = e->viewport.w - e->framespace.w;
+   fh = e->viewport.h - e->framespace.h;
 
    off_x = cx - ux;
    off_y = cy - uy;
@@ -2358,6 +2425,10 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    context,
                                                    x, y, w, h);
+
+                  if (!_is_obj_in_framespace(obj, fxx, fyy, fw, fh))
+                    e->engine.func->context_clip_clip(e->engine.data.output,
+                                                      context, fxx, fyy, fw, fh);
 
                   /* Clipper masks */
                   if (_evas_render_object_is_mask(obj->cur->clipper))
@@ -2458,7 +2529,6 @@ evas_render_updates_internal(Evas *eo_e,
    Evas_Render_Mode render_mode = !do_async ?
      EVAS_RENDER_MODE_SYNC :
      EVAS_RENDER_MODE_ASYNC_INIT;
-   Eina_Rectangle clip_rect;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return EINA_FALSE;
@@ -2518,57 +2588,6 @@ evas_render_updates_internal(Evas *eo_e,
                                                  &e->snapshot_objects,
                                                  &redraw_all);
         eina_evlog("-render_phase1", eo_e, 0.0, NULL);
-     }
-
-   if (!strncmp(e->engine.module->definition->name, "wayland", 7))
-     {
-        evas_event_freeze(eo_e);
-        /* check for master clip */
-        if (!e->framespace.clip)
-          {
-             e->framespace.clip = evas_object_rectangle_add(eo_e);
-             evas_object_color_set(e->framespace.clip, 255, 255, 255, 255);
-             evas_object_move(e->framespace.clip, 0, 0);
-             evas_object_resize(e->framespace.clip, 
-                                e->viewport.w - e->framespace.w, 
-                                e->viewport.h - e->framespace.h);
-             evas_object_pass_events_set(e->framespace.clip, EINA_TRUE);
-             evas_object_layer_set(e->framespace.clip, EVAS_LAYER_MIN);
-             evas_object_show(e->framespace.clip);
-          }
-
-        /* setup master clip rectangle for comparison to objects */
-        EINA_RECTANGLE_SET(&clip_rect, e->framespace.x, e->framespace.y, 
-                           e->viewport.w - e->framespace.w, 
-                           e->viewport.h - e->framespace.h);
-
-        for (i = 0; i < e->render_objects.count; ++i)
-          {
-             Eina_Rectangle obj_rect;
-
-             obj = eina_array_data_get(&e->render_objects, i);
-             if (obj->delete_me) continue;
-             if (obj->is_frame) continue;
-             if (obj->object == e->framespace.clip) continue;
-
-             /* setup object rectangle for comparison to clip rectangle */
-             EINA_RECTANGLE_SET(&obj_rect, 
-                                obj->cur->geometry.x, obj->cur->geometry.y, 
-                                obj->cur->geometry.w, obj->cur->geometry.h);
-
-             /* check if this object intersects with the master clip */
-             if (!eina_rectangles_intersect(&clip_rect, &obj_rect))
-               continue;
-
-             if ((!evas_object_clip_get(obj->object)) && (!obj->smart.parent))
-               {
-                  /* clip this object to the master clip */
-                  evas_object_clip_set(obj->object, e->framespace.clip);
-               }
-          }
-        if (!evas_object_clipees_has(e->framespace.clip))
-          evas_object_hide(e->framespace.clip);
-        evas_event_thaw(eo_e);
      }
 
    /* phase 1.5. check if the video should be inlined or stay in their overlay */
@@ -2633,10 +2652,6 @@ evas_render_updates_internal(Evas *eo_e,
         ERR("viewport size != output size!");
      }
 
-   if (e->framespace.clip && (e->framespace.changed || e->viewport.changed))
-     evas_object_resize(e->framespace.clip,
-                   e->viewport.w - e->framespace.w,
-                   e->viewport.h - e->framespace.h);
    if (e->framespace.changed)
      {
         /* NB: If the framespace changes, we need to add a redraw rectangle
