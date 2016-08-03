@@ -1330,13 +1330,15 @@ gl_symbols(void)
 }
 
 void
-eng_gl_symbols(void)
+eng_gl_symbols(Eina_Bool noext_glXCreatePixmap)
 {
    static int done = 0;
 
    if (done) return;
 
 #ifdef GL_GLES
+   (void) noext_glXCreatePixmap;
+
 #define FINDSYM(dst, sym, typ) \
    if (glsym_eglGetProcAddress) { \
       if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
@@ -1373,6 +1375,16 @@ eng_gl_symbols(void)
    }
 
    glsym_evas_gl_symbols((void*)glsym_glXGetProcAddress);
+
+   if (noext_glXCreatePixmap)
+     {
+        /* Note for nvidia >= 360:
+         * glXBindTexImage{EXT,ARB} should be preferred over glXBindTexImage
+         * glXCreatePixmap should be preferred over glXCreatePixmap{EXT,ARB}
+         */
+        FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", glsym_func_xid);
+        FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", glsym_func_void);
+     }
 
    FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT", glsym_func_void);
    FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB", glsym_func_void);
