@@ -2551,6 +2551,11 @@ eng_image_native_set(void *data, void *image, void *native)
 #ifdef GL_GLES
        if (native)
          {
+            if (!glsym_eglCreateImage)
+              {
+                 ERR("Try eglCreateImage on EGL with no support");
+                 return NULL;
+              }
             n = calloc(1, sizeof(Native));
             if (n)
               {
@@ -2558,8 +2563,6 @@ eng_image_native_set(void *data, void *image, void *native)
                  int config_attrs[20];
                  int num_config, i = 0;
                  int yinvert = 1;
-
-                 eina_hash_add(eng_get_ob(re)->gl_context->shared->native_pm_hash, &pmid, im);
 
                  // assume 32bit pixmap! :)
                  config_attrs[i++] = EGL_RED_SIZE;
@@ -2587,9 +2590,11 @@ eng_image_native_set(void *data, void *image, void *native)
                                       &egl_config, 1, &num_config))
                    {
                       int err = eglGetError();
-                      ERR("eglChooseConfig() failed for pixmap 0x%x, num_config = %i with error %d",
-                                                             (unsigned int)pm, num_config, err);
+                      ERR("eglChooseConfig() failed for pixmap %#lx, "
+                          "num_config = %i with error %d", pm, num_config, err);
                       glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
+                      free(n);
+                      return NULL;
                    }
                  else
                    {
@@ -2603,18 +2608,17 @@ eng_image_native_set(void *data, void *image, void *native)
                  memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
                  n->ns_data.x11.pixmap = pm;
                  n->ns_data.x11.visual = vis;
-                 if (glsym_eglCreateImage)
-                   n->ns_data.x11.surface = glsym_eglCreateImage(eng_get_ob(re)->egl_disp,
-                                                                 EGL_NO_CONTEXT,
-                                                                 EGL_NATIVE_PIXMAP_KHR,
-                                                                 (void *)pm,
-                                                                 NULL);
-                 else
-                   ERR("Try eglCreateImage on EGL with no support");
+                 n->ns_data.x11.surface = glsym_eglCreateImage(eng_get_ob(re)->egl_disp,
+                                                               EGL_NO_CONTEXT,
+                                                               EGL_NATIVE_PIXMAP_KHR,
+                                                               (void *)pm, NULL);
                  if (!n->ns_data.x11.surface)
-                   ERR("eglCreatePixmapSurface() for 0x%x failed", (unsigned int)pm);
+                   {
+                      ERR("eglCreateImage() for Pixmap %#lx failed: %#x", pm, eglGetError());
+                      free(n);
+                      return NULL;
+                   }
                  n->ns_data.x11.config = (void *)egl_config;
-
                  im->native.yinvert     = yinvert;
                  im->native.loose       = 0;
                  im->native.disp        = eng_get_ob(re)->egl_disp;
@@ -2625,6 +2629,7 @@ eng_image_native_set(void *data, void *image, void *native)
                  im->native.func.free   = _native_free_cb;
                  im->native.target      = GL_TEXTURE_2D;
                  im->native.mipmap      = 0;
+                 eina_hash_add(eng_get_ob(re)->gl_context->shared->native_pm_hash, &pmid, im);
                  glsym_evas_gl_common_image_native_enable(im);
              }
          }
