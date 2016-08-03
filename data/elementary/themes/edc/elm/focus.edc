@@ -38,7 +38,6 @@ group { name: "elm/focus_highlight/top/default";
             anim_id = get_int(g_anim_id);
             if (anim_id != 0) {
                cancel_anim(anim_id);
-               animator1(1, 1.0);
             }
 
             x1 = getarg(2);
