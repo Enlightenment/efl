@@ -783,6 +783,8 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
      return;
 
    elm_widget_event_propagate(obj, type, &event_info, event_flags);
+   if (*event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     efl_event_processed_set(event->info, EINA_TRUE);
 }
 
 /**
