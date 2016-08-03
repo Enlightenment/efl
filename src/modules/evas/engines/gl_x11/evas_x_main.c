@@ -542,7 +542,9 @@ try_gles2:
              // ALSO as of some nvidia driver version loose binding is
              // probably not needed
              if (v1 < 195) gw->detected.loose_binding = 1;
+#ifndef GL_GLES
              if (v1 >= 360) gw->detected.noext_glXCreatePixmap = 1;
+#endif
           }
      }
    else
@@ -558,7 +560,12 @@ try_gles2:
    gw->detected.msaa = val;
 #endif
 
+#ifndef GL_GLES
    eng_gl_symbols(gw->detected.noext_glXCreatePixmap);
+#else
+   eng_gl_symbols(EINA_FALSE); // EINA_FALSE is ignored anyway for gl_gles
+#endif
+
    gw->gl_context = glsym_evas_gl_common_context_new();
    if (!gw->gl_context)
      {
