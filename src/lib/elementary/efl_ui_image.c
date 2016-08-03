@@ -544,17 +544,14 @@ _efl_ui_image_edje_file_set(Evas_Object *obj,
 EOLIAN static void
 _efl_ui_image_efl_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool smooth)
 {
-   if (sd->edje) return;
-
+   sd->smooth = smooth;
    evas_object_image_smooth_scale_set(sd->img, smooth);
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_image_efl_image_smooth_scale_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
-   if (sd->edje) return EINA_FALSE;
-
-   return evas_object_image_smooth_scale_get(sd->img);
+   return sd->smooth;
 }
 
 static Eina_Bool
