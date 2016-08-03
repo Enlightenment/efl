@@ -15,7 +15,7 @@ START_TEST (elm_code_text_get_test)
    Elm_Code_Line *line;
 
    const char *str;
-   int len;
+   unsigned int len;
 
    elm_init(1, NULL);
    code = elm_code_create();
@@ -35,6 +35,8 @@ START_TEST (elm_code_text_insert_test)
    Elm_Code *code;
    Elm_Code_File *file;
    Elm_Code_Line *line;
+   const char *text;
+   unsigned int length;
 
    elm_init(1, NULL);
    code = elm_code_create();
@@ -44,7 +46,8 @@ START_TEST (elm_code_text_insert_test)
    line = elm_code_file_line_get(file, 1);
 
    elm_code_line_text_insert(line, 4, "ing", 3);
-   ck_assert_str_eq("testing", elm_code_line_text_get(line, NULL));
+   text = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("testing", text, length);
    elm_shutdown();
 }
 END_TEST
