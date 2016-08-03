@@ -31,7 +31,12 @@
  * Elm_Scrollable_Smart_Interface::extern_pan_set.
  */
 
+#ifdef EFL_EO_API_SUPPORT
 #include "elm_pan.eo.h"
+#endif
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "elm_pan.eo.legacy.h"
+#endif
 
 /**
  * Elementary scroller panning base smart data.
@@ -57,7 +62,12 @@ typedef void      (*Elm_Interface_Scrollable_Resize_Cb)(Evas_Object *obj, Evas_C
 typedef struct _Elm_Scrollable_Smart_Interface_Data
   Elm_Scrollable_Smart_Interface_Data;
 
+#ifdef EFL_EO_API_SUPPORT
 #include "elm_interface_scrollable.eo.h"
+#endif
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "elm_interface_scrollable.eo.legacy.h"
+#endif
 
 struct _Elm_Scrollable_Smart_Interface_Data
 {
