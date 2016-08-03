@@ -1,7 +1,12 @@
 #ifndef ELM_INTEFARCE_FILESELECTOR_H
 #define ELM_INTEFARCE_FILESELECTOR_H
 
+#ifdef EFL_EO_API_SUPPORT
 #include "elm_interface_fileselector.eo.h"
+#endif
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "elm_interface_fileselector.eo.legacy.h"
+#endif
 
 #define ELM_FILESELECTOR_INTERFACE_CHECK(obj, ...) \
   if (EINA_UNLIKELY(!eo_isa(obj, ELM_INTERFACE_FILESELECTOR_INTERFACE))) \
