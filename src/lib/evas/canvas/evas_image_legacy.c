@@ -1130,42 +1130,43 @@ evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *p
 EAPI void
 evas_object_image_alpha_mask_set(Evas_Object *eo_obj EINA_UNUSED, Eina_Bool ismask EINA_UNUSED)
 {
-   DBG("This function is not implemented, has never been and never will be.");
+   WRN("This function is not implemented, has never been and never will be.");
    EVAS_IMAGE_LEGACY_API(eo_obj);
 }
-
-
-/* FIXME: Temporarily allow efl_file_ APIs on Evas.Image.
- * They don't belong here, as only Efl.Canvas.Image should support them.
- * Elm.Image uses them, though, instead of using the legacy APIs...
- */
 
 EOLIAN static Eina_Bool
 _evas_image_efl_file_file_set(Eo *obj, void *pd EINA_UNUSED, const char *file, const char *key)
 {
-   ERR("efl_file_set shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
+   WRN("efl_file_set shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
+   EVAS_IMAGE_API(obj, EINA_FALSE);
    return _evas_image_file_set(obj, file, key);
 }
 
 EOLIAN static void
 _evas_image_efl_file_file_get(Eo *obj, void *pd EINA_UNUSED, const char **file, const char **key)
 {
-   ERR("efl_file_get shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
+   WRN("efl_file_get shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
+   if (file) *file = NULL;
+   if (key) *key = NULL;
+   EVAS_IMAGE_API(obj);
    _evas_image_file_get(obj, file, key);
 }
 
 EOLIAN static Eina_Bool
 _evas_image_efl_file_mmap_set(Eo *obj, void *pd EINA_UNUSED, const Eina_File *f, const char *key)
 {
-   ERR("efl_file_mmap_set shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
+   WRN("efl_file_mmap_set shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
+   EVAS_IMAGE_API(obj, EINA_FALSE);
    return _evas_image_mmap_set(obj, f, key);
 }
-
 
 EOLIAN static void
 _evas_image_efl_file_mmap_get(Eo *obj, void *pd EINA_UNUSED, const Eina_File **f, const char **key)
 {
-   ERR("efl_file_mmap_get shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
+   WRN("efl_file_mmap_get shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
+   if (f) *f = NULL;
+   if (key) *key = NULL;
+   EVAS_IMAGE_API(obj);
    _evas_image_mmap_get(obj, f, key);
 }
 

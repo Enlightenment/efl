@@ -1117,7 +1117,7 @@ _efl_ui_image_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, cons
         return;
      }
 
-   efl_file_get(sd->img, file, key);
+   evas_object_image_file_get(sd->img, file, key);
 }
 
 static Eina_Bool
