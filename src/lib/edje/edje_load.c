@@ -1655,6 +1655,7 @@ _edje_file_del(Edje *ed)
                        rp->typedata.container->anim = NULL;
                     }
                   free(rp->typedata.container);
+                  rp->typedata.container = NULL;
                }
              else if ((rp->type == EDJE_RP_TYPE_TEXT) &&
                       (rp->typedata.text))
@@ -1664,6 +1665,7 @@ _edje_file_del(Edje *ed)
                   eina_stringshare_del(rp->typedata.text->cache.in_str);
                   eina_stringshare_del(rp->typedata.text->cache.out_str);
                   free(rp->typedata.text);
+                  rp->typedata.text = NULL;
                }
              else if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
                       (rp->typedata.swallow))
@@ -1690,6 +1692,7 @@ _edje_file_del(Edje *ed)
                        rp->typedata.swallow->swallowed_object = NULL;
                     }
                   free(rp->typedata.swallow);
+                  rp->typedata.swallow = NULL;
                }
 
              if (rp->object)
