@@ -482,6 +482,8 @@ evas_object_image_native_surface_get(const Evas_Object *eo_obj)
 EAPI void
 evas_object_image_pixels_get_callback_set(Eo *eo_obj, Evas_Object_Image_Pixels_Get_Cb func, void *data)
 {
+   EVAS_IMAGE_API(eo_obj);
+
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
@@ -497,6 +499,8 @@ evas_object_image_pixels_get_callback_set(Eo *eo_obj, Evas_Object_Image_Pixels_G
 EAPI void
 evas_object_image_pixels_dirty_set(Eo *eo_obj, Eina_Bool dirty)
 {
+   EVAS_IMAGE_API(eo_obj);
+
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
@@ -510,6 +514,8 @@ evas_object_image_pixels_dirty_set(Eo *eo_obj, Eina_Bool dirty)
 EAPI Eina_Bool
 evas_object_image_pixels_dirty_get(const Eo *eo_obj)
 {
+   EVAS_IMAGE_API(eo_obj, EINA_FALSE);
+
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
    return (o->dirty_pixels ? 1 : 0);
@@ -518,6 +524,8 @@ evas_object_image_pixels_dirty_get(const Eo *eo_obj)
 EAPI void
 evas_object_image_data_set(Eo *eo_obj, void *data)
 {
+   EVAS_IMAGE_API(eo_obj);
+
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    void *p_data;
@@ -607,6 +615,8 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
 EAPI void*
 evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
 {
+   EVAS_IMAGE_API(eo_obj, NULL);
+
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    int stride = 0;
    void *pixels;
@@ -655,6 +665,8 @@ evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
 EAPI void
 evas_object_image_data_copy_set(Eo *eo_obj, void *data)
 {
+   EVAS_IMAGE_API(eo_obj);
+
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
