@@ -3839,7 +3839,7 @@ EAPI Eina_Bool evas_object_image_smooth_scale_get(const Eo *obj);
  *
  * @param[in] spread One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT,
  */
-EAPI void evas_object_image_fill_spread_set(Evas_Object *obj, Evas_Fill_Spread spread);
+EAPI void evas_object_image_fill_spread_set(Evas_Object *obj, Evas_Fill_Spread spread) EINA_DEPRECATED;
 
 /**
  *
@@ -3849,7 +3849,7 @@ EAPI void evas_object_image_fill_spread_set(Evas_Object *obj, Evas_Fill_Spread s
  * @return  The current spread mode of the image object.
  *
  */
-EAPI Evas_Fill_Spread evas_object_image_fill_spread_get(const Evas_Object *obj);
+EAPI Evas_Fill_Spread evas_object_image_fill_spread_get(const Evas_Object *obj) EINA_DEPRECATED;
 
 /**
  *
