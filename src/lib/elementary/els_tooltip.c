@@ -359,9 +359,9 @@ static void
 _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 {
    Evas_Coord ox, oy, ow, oh, px = 0, py = 0, tx, ty, tw, th;
-   Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
+   Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0, basex = 0, basey = 0;;
    Evas_Coord eminw, eminh, ominw, ominh;
-   double rel_x, rel_y;
+   double rel_x = 0.0, rel_y = 0.0;
    Eina_Bool inside_eventarea;
 
    _elm_tooltip_reconfigure_job_stop(tt);
@@ -489,10 +489,12 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    if (tt->tt_win)
      {
         elm_win_screen_size_get(elm_widget_top_get(tt->owner),
-                                NULL, NULL, &cw, &ch);
+                                &basex, &basey, &cw, &ch);
         elm_win_screen_position_get(elm_widget_top_get(tt->owner),
                                     &cx, &cy);
         evas_canvas_pointer_canvas_xy_get(tt->evas, &px, &py);
+        cx -= basex;
+        cy -= basey;
      }
    else
      {
@@ -511,48 +513,70 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 
    inside_eventarea = ((px >= ox) && (py >= oy) &&
                        (px <= (ox + ow)) && (py <= (oy + oh)));
+
    if (inside_eventarea)
      {
         /* try to position bottom right corner at pointer */
-        tx = cx + px - tw;
-        ty = cy + py - th;
-        if (tx < 0) tx = 0;
-        if (ty < 0) ty = 0;
-        if (tx > cw) tx = cw - tw;
-        if (ty > ch) ty = ch - th;
-
-        if (ow > 1) rel_x = (double)((ox + (ow / 2)) - ((tx - cx) + (tw / 2))) / (double)(ow / 2);
-        else rel_x = 0;
-        if (oh > 1) rel_y = (double)((oy + (oh / 2)) - ((ty - cy) + (th / 2))) / (double)(oh / 2);
-        else rel_y = 0;
+        tx = cx + px - tw - 1;
+        ty = cy + py - th - 1;
+        if (tx < 0)
+          {
+             tx = 0;
+             if (ELM_RECTS_INTERSECT(tx, ty, tw, th, (cx + ox), (cy + oy),
+                                     ow, oh))
+               tx = cx + ox + ow;
+          }
+        if (ty < 0)
+          {
+             ty = 0;
+             if (ELM_RECTS_INTERSECT(tx, ty, tw, th, (cx + ox), (cy + oy),
+                                     ow, oh))
+               ty = cy + oy + oh;
+          }
+        if ((tx + tw) > cw) tx = cw - tw;
+        if ((ty + th) > ch) ty = ch - th;
+        if (tx  < 0) tx = 0;
+        if (ty  < 0) ty = 0;
      }
    else
      {
         /* try centered on middle of eventarea */
-        tx = ox + (ow / 2) - (tw / 2);
+        tx = cx + ox + (ow / 2) - (tw / 2);
         if (py < oy)
           {
-             ty = oy - th;
-             if (ty < 0) ty = oy + oh;
-             if ((ty + th) > ch) ty = ch - th;
+             ty = cx + oy - th;
+             if (ty < cx) ty = cx + oy + oh;
+             if ((ty + th) > (cx + ch)) ty = cy + ch - th;
           }
         else
           {
-             ty = oy + oh;
-             if (ty < 0) ty = 0;
-             if ((ty + th) > ch) ty = oy - th;
+             ty = cy + oy + oh;
+             if (ty < cy) ty = cy;
+             if ((ty + th) > (cy + ch)) ty = cy + oy - th;
           }
-        if (tx < 0) tx = 0;
-        if ((tx + th) > cw) tx = cw - tw;
+        if (tx < cx) tx = cx;
+        if ((tx + th) > (cx + cw)) tx = cy + cw - tw;
 
-        if (ow > 1) rel_x = (double)((ox + (ow / 2)) - (tx + (tw / 2))) / (double)(ow / 2);
-        else rel_x = 0;
-        if (oh > 1) rel_y = (double)((oy + (oh / 2)) - (ty + (th / 2))) / (double)(oh / 2);
-        else rel_y = 0;
-
-        tx += cx;
-        ty += cy;
      }
+   // jf tt is over the pointer even after positiong then screen
+   // limiting, just use the poitner dumbly and choose to theleft or right
+   // above or below depending which has more space/ we're in a mess
+   // anyway
+   if (ELM_RECTS_INTERSECT(tx, ty, tw, th, (cx + px), (cy + py), 1, 1))
+     {
+        if ((px + cx) > (cw / 2)) tx = cx + px - 1 - tw;
+        else tx = cx + px + 1;
+        if ((py + cy) > (ch / 2)) ty = cy + py - 1 - th;
+        else ty = cy + py + 1;
+     }
+   if (ow > 1) rel_x = (double)((ox + (ow / 2)) - ((tx - cx) + (tw / 2))) /
+     (double)(ow / 2);
+   else rel_x = 0.0;
+   if (oh > 1) rel_y = (double)((oy + (oh / 2)) - ((ty - cy) + (th / 2))) /
+     (double)(oh / 2);
+   else rel_y = 0.0;
+   tx += basex;
+   ty += basey;
    // XXX: if this is a window for toolkit this relies on abs positioning
    // and this is not portable to wayland so we need relative positioning
    // implemented lower down for this
