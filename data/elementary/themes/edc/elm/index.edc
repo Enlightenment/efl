@@ -147,6 +147,7 @@ group { name: "elm/index/base/vertical/default";
 
 group { name: "elm/index/item/vertical/default";
    data.item: "stacking" "below";
+   alias: "elm/index/item_odd/vertical/default";
    images {
       image: "darken_rounded_square_half.png" COMP;
    }
@@ -261,6 +262,7 @@ group { name: "elm/index/item/vertical/default";
    }
 }
 
+#if 0
 group { name: "elm/index/item_odd/vertical/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
@@ -374,6 +376,7 @@ group { name: "elm/index/item_odd/vertical/default";
       }
    }
 }
+#endif
 
 group { name: "elm/index/base/horizontal/default";
    parts {
@@ -508,6 +511,7 @@ group { name: "elm/index/base/horizontal/default";
 
 group { name: "elm/index/item/horizontal/default";
    data.item: "stacking" "below";
+   alias: "elm/index/item_odd/horizontal/default";
    images {
       image: "darken_rounded_square_half_h.png" COMP;
    }
@@ -610,6 +614,7 @@ group { name: "elm/index/item/horizontal/default";
    }
 }
 
+#if 0
 group { name: "elm/index/item_odd/horizontal/default";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
@@ -710,3 +715,4 @@ group { name: "elm/index/item_odd/horizontal/default";
       }
    }
 }
+#endif
