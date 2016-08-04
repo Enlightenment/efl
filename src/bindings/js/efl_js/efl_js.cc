@@ -266,6 +266,8 @@ EAPI void init(v8::Handle<v8::Object> exports)
   static char* argv[] = {const_cast<char*>("node")};
   ::elm_init(1, argv);
 
+  ::elm_need_ethumb();
+
   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
   
    try
