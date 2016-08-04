@@ -1024,7 +1024,8 @@ EOLIAN static Elm_Theme_Apply
 _elm_widget_theme_apply(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    _elm_widget_mirrored_reload(obj);
-   elm_widget_disabled_internal(obj, elm_widget_disabled_get(obj));
+   if (elm_widget_disabled_get(obj))
+     elm_widget_disabled_set(obj, elm_widget_disabled_get(obj));
 
    return ELM_THEME_APPLY_SUCCESS;
 }
