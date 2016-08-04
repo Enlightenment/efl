@@ -744,9 +744,7 @@ EAPI Evas_Object *
 elm_hover_parent_get(const Evas_Object *obj)
 {
    ELM_HOVER_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   ret = elm_obj_widget_parent_get((Eo *) obj);
-   return ret;
+   return elm_obj_widget_parent_get((Eo *) obj);
 }
 
 EOLIAN static Evas_Object*

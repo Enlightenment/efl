@@ -101,9 +101,7 @@ _ecore_audio_in_tone_eo_base_key_data_get(Eo *eo_obj, Ecore_Audio_In_Tone_Data *
   if (!strcmp(key, ECORE_AUDIO_ATTR_TONE_FREQ)) {
       return (void *) (intptr_t) obj->freq;
   } else {
-      void *ret = NULL;
-      ret = eo_key_data_get(eo_super(eo_obj, MY_CLASS), key);
-      return ret;
+      return eo_key_data_get(eo_super(eo_obj, MY_CLASS), key);
   }
 }
 

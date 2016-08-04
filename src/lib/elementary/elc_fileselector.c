@@ -2047,9 +2047,7 @@ EAPI Eina_Bool
 elm_fileselector_is_save_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
-   Eina_Bool ret = EINA_FALSE;
-   ret = elm_interface_fileselector_is_save_get((Eo *) obj);
-   return ret;
+   return elm_interface_fileselector_is_save_get((Eo *) obj);
 }
 
 EOLIAN static Eina_Bool
@@ -2082,9 +2080,7 @@ EAPI Eina_Bool
 elm_fileselector_folder_only_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
-   Eina_Bool ret = EINA_FALSE;
-   ret = elm_interface_fileselector_folder_only_get((Eo *) obj);
-   return ret;
+   return elm_interface_fileselector_folder_only_get((Eo *) obj);
 }
 
 EOLIAN static Eina_Bool
@@ -2160,9 +2156,7 @@ EAPI Eina_Bool
 elm_fileselector_expandable_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
-   Eina_Bool ret = EINA_FALSE;
-   ret = elm_interface_fileselector_expandable_get((Eo *) obj);
-   return ret;
+   return elm_interface_fileselector_expandable_get((Eo *) obj);
 }
 
 EOLIAN static Eina_Bool
@@ -2283,9 +2277,7 @@ EAPI Elm_Fileselector_Mode
 elm_fileselector_mode_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, ELM_FILESELECTOR_LAST);
-   Elm_Fileselector_Mode ret = ELM_FILESELECTOR_LAST;
-   ret = elm_interface_fileselector_mode_get((Eo *) obj);
-   return ret;
+   return elm_interface_fileselector_mode_get((Eo *) obj);
 }
 
 EOLIAN static Elm_Fileselector_Mode
@@ -2340,9 +2332,7 @@ EAPI Eina_Bool
 elm_fileselector_multi_select_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
-   Eina_Bool ret = EINA_FALSE;
-   ret = elm_interface_fileselector_multi_select_get((Eo *) obj);
-   return ret;
+   return elm_interface_fileselector_multi_select_get((Eo *) obj);
 }
 
 EOLIAN static Eina_Bool
@@ -2625,9 +2615,7 @@ EAPI Eina_Bool
 elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_type, const char *filter_name)
 {
    ELM_FILESELECTOR_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   ret = elm_interface_fileselector_mime_types_filter_append(obj, mime_type, filter_name);
-   return ret;
+   return elm_interface_fileselector_mime_types_filter_append(obj, mime_type, filter_name);
 }
 
 EOLIAN static Eina_Bool
@@ -2670,9 +2658,7 @@ EAPI Eina_Bool
 elm_fileselector_custom_filter_append(Evas_Object *obj, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
-   Eina_Bool ret = EINA_FALSE;
-   ret = elm_interface_fileselector_custom_filter_append(obj, func, data, filter_name);
-   return ret;
+   return elm_interface_fileselector_custom_filter_append(obj, func, data, filter_name);
 }
 
 EOLIAN static Eina_Bool
@@ -2781,9 +2767,7 @@ EAPI Eina_Bool
 elm_fileselector_hidden_visible_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
-   Eina_Bool ret = EINA_FALSE;
-   ret = elm_interface_fileselector_hidden_visible_get((Eo *) obj);
-   return ret;
+   return elm_interface_fileselector_hidden_visible_get((Eo *) obj);
 }
 
 EOLIAN static Eina_Bool
@@ -2891,10 +2875,7 @@ EAPI Elm_Fileselector_Sort
 elm_fileselector_sort_method_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, ELM_FILESELECTOR_SORT_LAST);
-   Elm_Fileselector_Sort ret = ELM_FILESELECTOR_SORT_LAST;
-   ret = elm_interface_fileselector_sort_method_get((Eo *) obj);
-
-   return ret;
+   return elm_interface_fileselector_sort_method_get((Eo *) obj);
 }
 
 EOLIAN static Elm_Fileselector_Sort

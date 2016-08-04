@@ -1282,9 +1282,7 @@ _efl_ui_image_efl_ui_draggable_drag_target_get(Eo *obj EINA_UNUSED, Efl_Ui_Image
 EAPI Eina_Bool
 elm_image_animated_available_get(const Evas_Object *obj)
 {
-   Eina_Bool ret;
-   ret = efl_player_playable_get(obj);
-   return ret;
+   return efl_player_playable_get(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -1326,8 +1324,6 @@ _efl_ui_image_animated_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool an
         sd->cur_frame = -1;
         sd->frame_duration = -1;
      }
-
-   return;
 }
 
 static Eina_Bool
@@ -1733,11 +1729,8 @@ elm_image_file_get(const Eo *obj, const char **file, const char **group)
 EAPI Eina_Bool
 elm_image_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group)
 {
-   Eina_Bool ret = EINA_FALSE;
-
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
-   ret = efl_file_mmap_set(obj, file, group);
-   return ret;
+   return efl_file_mmap_set(obj, file, group);
 }
 
 EAPI Eina_Bool

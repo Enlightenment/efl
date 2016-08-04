@@ -6915,9 +6915,7 @@ elm_win_window_id_get(const Evas_Object *obj)
 
    ELM_WIN_CHECK(obj) 0;
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd, 0);
-   Ecore_Window ret = 0;
-   ret = _elm_win_window_id_get(sd);
-   return ret;
+   return _elm_win_window_id_get(sd);
 }
 
 EAPI void

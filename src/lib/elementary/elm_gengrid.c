@@ -4951,11 +4951,7 @@ _elm_gengrid_item_elm_widget_item_tooltip_window_mode_set(Eo *eo_it, Elm_Gen_Ite
 {
    it->tooltip.free_size = disable;
    if (VIEW(it))
-     {
-        Eina_Bool ret;
-        ret = elm_wdg_item_tooltip_window_mode_set(eo_super(eo_it, ELM_GENGRID_ITEM_CLASS), disable);
-        return ret;
-     }
+     return elm_wdg_item_tooltip_window_mode_set(eo_super(eo_it, ELM_GENGRID_ITEM_CLASS), disable);
 
    return EINA_TRUE;
 }

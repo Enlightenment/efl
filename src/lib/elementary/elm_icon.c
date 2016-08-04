@@ -638,7 +638,6 @@ elm_icon_memfile_set(Evas_Object *obj,
                      const char *format,
                      const char *key)
 {
-   Eina_Bool int_ret = EINA_FALSE;
    ELM_ICON_CHECK(obj) EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
@@ -649,8 +648,7 @@ elm_icon_memfile_set(Evas_Object *obj,
 
    _edje_signals_free(sd);
 
-   int_ret = elm_image_memfile_set(eo_super(obj, MY_CLASS), img, size, format, key);
-   return int_ret;
+   return elm_image_memfile_set(eo_super(obj, MY_CLASS), img, size, format, key);
 }
 
 EAPI Eina_Bool
@@ -661,9 +659,7 @@ elm_icon_file_set(Evas_Object *obj,
    ELM_ICON_CHECK(obj) EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
-   Eina_Bool ret = EINA_FALSE;
-   ret = efl_file_set(obj, file, group);
-   return ret;
+   return efl_file_set(obj, file, group);
 }
 
 EAPI void

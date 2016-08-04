@@ -42,14 +42,4 @@ _ector_renderer_buffer_buffer_get(Eo *obj EINA_UNUSED, Ector_Renderer_Buffer_Dat
    return pd->eo_buffer;
 }
 
-EOLIAN static Eo_Base *
-_ector_renderer_buffer_eo_base_constructor(Eo *obj, Ector_Renderer_Buffer_Data *pd EINA_UNUSED)
-{
-   Eo_Base *ret;
-
-   ret = eo_constructor(eo_super(obj, MY_CLASS));
-
-   return ret;
-}
-
 #include "ector_renderer_buffer.eo.c"

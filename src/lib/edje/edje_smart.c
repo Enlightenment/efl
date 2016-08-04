@@ -461,9 +461,7 @@ edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group)
 EAPI Eina_Bool
 edje_object_file_set(Edje_Object *obj, const char *file, const char *group)
 {
-   Eina_Bool ret = 0;
-   ret = efl_file_set(obj, file, group);
-   return ret;
+   return efl_file_set(obj, file, group);
 }
 
 EAPI void

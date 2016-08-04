@@ -1057,9 +1057,7 @@ elm_scroller_single_direction_get(const Evas_Object *obj)
 EOLIAN static Elm_Scroller_Single_Direction
 _elm_scroller_elm_interface_scrollable_single_direction_get(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
-   Elm_Scroller_Single_Direction ret = ELM_SCROLLER_SINGLE_DIRECTION_NONE;
-   ret = elm_interface_scrollable_single_direction_get(eo_super(obj, MY_CLASS));
-   return ret;
+   return elm_interface_scrollable_single_direction_get(eo_super(obj, MY_CLASS));
 }
 
 EAPI void

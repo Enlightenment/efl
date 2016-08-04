@@ -1117,7 +1117,6 @@ _elm_widget_on_show_region_hook_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *
 EAPI Eina_Bool
 elm_widget_sub_object_parent_add(Evas_Object *sobj)
 {
-   Eina_Bool ret = EINA_FALSE;
    Eo *parent = NULL;
 
    parent = eo_parent_get(sobj);
@@ -1125,12 +1124,10 @@ elm_widget_sub_object_parent_add(Evas_Object *sobj)
      {
         ERR("You passed a wrong parent parameter (%p %s). "
             "Elementary widget's parent should be an elementary widget.", parent, evas_object_type_get(parent));
-        return ret;
+        return EINA_FALSE;
      }
 
-   ret = elm_obj_widget_sub_object_add(parent, sobj);
-
-   return ret;
+   return elm_obj_widget_sub_object_add(parent, sobj);
 }
 
 /*

@@ -1937,9 +1937,7 @@ evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt,
 EAPI Eina_Bool
 evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
-   Eina_Bool ret = EINA_FALSE;
-   ret = evas_obj_box_option_property_vset(o, opt, property, (va_list *) &args);
-   return ret;
+   return evas_obj_box_option_property_vset(o, opt, property, (va_list *) &args);
 }
 
 EOLIAN static Eina_Bool
@@ -1964,9 +1962,7 @@ evas_object_box_option_property_get(const Evas_Object *o, Evas_Object_Box_Option
 EAPI Eina_Bool
 evas_object_box_option_property_vget(const Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
-   Eina_Bool ret = EINA_FALSE;
-   ret = evas_obj_box_option_property_vget((Eo *)o, opt, property, (va_list *) &args);
-   return ret;
+   return evas_obj_box_option_property_vget((Eo *)o, opt, property, (va_list *) &args);
 }
 
 EOLIAN static Eina_Bool

@@ -1106,9 +1106,7 @@ elm_layout_content_unset(Evas_Object *obj,
                          const char *swallow)
 {
    ELM_LAYOUT_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   ret = efl_content_unset(efl_part(obj, swallow));
-   return ret;
+   return efl_content_unset(efl_part(obj, swallow));
 }
 
 static Evas_Object*

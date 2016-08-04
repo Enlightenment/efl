@@ -4017,10 +4017,7 @@ _elm_toolbar_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, El
 EOLIAN static Elm_Atspi_State_Set
 _elm_toolbar_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Toolbar_Data *sd EINA_UNUSED)
 {
-   Elm_Atspi_State_Set ret;
-   ret = elm_interface_atspi_accessible_state_set_get(eo_super(obj, ELM_TOOLBAR_CLASS));
-
-   return ret;
+   return elm_interface_atspi_accessible_state_set_get(eo_super(obj, ELM_TOOLBAR_CLASS));
 }
 
 EOLIAN int

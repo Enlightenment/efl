@@ -1964,11 +1964,10 @@ _evas_canvas_object_top_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eva
 EAPI Evas_Object *
 evas_object_top_at_pointer_get(const Evas *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Evas_Object *ret = NULL;
+   Evas_Public_Data *e = eo_isa(eo_e, EVAS_CANVAS_CLASS) ?
+            eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS) : NULL;
    if (!e) return NULL;
-   ret = evas_canvas_object_top_at_xy_get((Eo *)eo_e, e->pointer.x, e->pointer.y, EINA_TRUE, EINA_TRUE);
-   return ret;
+   return evas_canvas_object_top_at_xy_get((Eo *)eo_e, e->pointer.x, e->pointer.y, EINA_TRUE, EINA_TRUE);
 }
 
 EOLIAN Evas_Object*

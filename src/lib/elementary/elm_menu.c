@@ -872,9 +872,7 @@ EAPI Evas_Object *
 elm_menu_parent_get(const Evas_Object *obj)
 {
    ELM_MENU_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   ret = elm_obj_widget_parent_get(obj);
-   return ret;
+   return elm_obj_widget_parent_get(obj);
 }
 
 EOLIAN static Evas_Object*
