@@ -525,29 +525,37 @@ local default_theme = {
             style = "filled",
             color = "black",
             fill_color = "white",
+            font_color = "black",
             primary_color = "black",
-            primary_fill_color = "gray"
+            primary_fill_color = "gray",
+            primary_font_color = "black"
         },
         abstract = {
             style = "filled",
             color = "black",
             fill_color = "white",
+            font_color = "black",
             primary_color = "black",
-            primary_fill_color = "gray"
+            primary_fill_color = "gray",
+            primary_font_color = "black"
         },
         mixin = {
             style = "filled",
             color = "blue",
             fill_color = "white",
+            font_color = "black",
             primary_color = "blue",
-            primary_fill_color = "skyblue"
+            primary_fill_color = "skyblue",
+            primary_font_color = "black"
         },
         interface = {
             style = "filled",
             color = "cornflowerblue",
             fill_color = "white",
+            font_color = "black",
             primary_color = "cornflowerblue",
-            primary_fill_color = "azure"
+            primary_fill_color = "azure",
+            primary_font_color = "black"
         }
     },
     node = {
@@ -555,6 +563,56 @@ local default_theme = {
     },
     edge = {
         color = "black"
+    },
+    bg_color = "transparent",
+    rank_dir = "TB",
+    size = "6"
+}
+
+local default_theme_dark = {
+    classes = {
+        regular = {
+            style = "filled",
+            color = "gray15",
+            fill_color = "gray15",
+            font_color = "white",
+            primary_color = "gray15",
+            primary_fill_color = "black",
+            primary_font_color = "white"
+        },
+        abstract = {
+            style = "filled",
+            color = "gray15",
+            fill_color = "gray15",
+            font_color = "white",
+            primary_color = "gray15",
+            primary_fill_color = "black",
+            primary_font_color = "white"
+        },
+        mixin = {
+            style = "filled",
+            color = "deepskyblue",
+            fill_color = "gray15",
+            font_color = "white",
+            primary_color = "deepskyblue",
+            primary_fill_color = "deepskyblue4",
+            primary_font_color = "white"
+        },
+        interface = {
+            style = "filled",
+            color = "cornflowerblue",
+            fill_color = "gray15",
+            font_color = "white",
+            primary_color = "cornflowerblue",
+            primary_fill_color = "dodgerblue4",
+            primary_font_color = "white"
+        }
+    },
+    node = {
+        shape = "box"
+    },
+    edge = {
+        color = "gray35"
     },
     bg_color = "transparent",
     rank_dir = "TB",
@@ -577,16 +635,25 @@ local validate_ctheme = function(tb, name)
     if type(t.fill_color) ~= "string" then
         return false
     end
+    if type(t.font_color) ~= "string" then
+        return false
+    end
     if not t.primary_color then
         t.primary_color = t.color
     end
     if not t.primary_fill_color then
         t.primary_fill_color = t.fill_color
     end
+    if not t.primary_font_color then
+        t.primary_font_color = t.font_color
+    end
     if type(t.primary_color) ~= "string" then
         return false
     end
     if type(t.primary_fill_color) ~= "string" then
+        return false
+    end
+    if type(t.primary_font_color) ~= "string" then
         return false
     end
     return true
@@ -681,6 +748,8 @@ local class_to_node = function(cl, main)
     ret.color = current_theme.classes[clr][main and "primary_color" or "color"]
     ret.fillcolor = current_theme.classes[clr][main and "primary_fill_color"
                                                      or "fill_color"]
+    ret.fontcolor = current_theme.classes[clr][main and "primary_font_color"
+                                                     or "font_color"]
 
     -- FIXME: need a dokuwiki graphviz plugin with proper URL support
     -- the existing one only supports raw URLs (no dokuwikí namespaces)
@@ -1104,6 +1173,7 @@ getopt.parse {
         { "r", "root", true, help = "Root path of the docs." },
         { "n", "namespace", true, help = "Root namespace of the docs." },
         { nil, "graph-theme", true, help = "Optional graph theme." },
+        { nil, "graph-theme-dark", false, help = "Use dark builtin graph theme." },
         { nil, "disable-graphviz", false, help = "Disable graphviz usage." },
         { nil, "disable-notes", false, help = "Disable notes plugin usage." },
         { nil, "disable-folded", false, help = "Disable folded plugin usage." }
@@ -1115,6 +1185,9 @@ getopt.parse {
     done_cb = function(parser, opts, args)
         if opts["h"] then
             return
+        end
+        if opts["graph-theme-dark"] then
+            current_theme = default_theme_dark
         end
         if opts["graph-theme"] then
             set_theme(opts["graph-theme"])
