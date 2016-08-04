@@ -950,9 +950,9 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    if (sd->start_handler)
      {
-        elm_widget_theme_object_set(obj, sd->start_handler,
+        _elm_theme_object_set(obj, sd->start_handler,
                                     "entry", "handler/start", style);
-        elm_widget_theme_object_set(obj, sd->end_handler,
+        _elm_theme_object_set(obj, sd->end_handler,
                                     "entry", "handler/end", style);
      }
 
@@ -2738,16 +2738,16 @@ _item_get(void *data,
           {
              evas_object_del(o);
              o = edje_object_add(evas_object_evas_get(data));
-             elm_widget_theme_object_set
+             _elm_theme_object_set
                (data, o, "entry/emoticon", "wtf", style);
           }
         return o;
      }
 
    o = edje_object_add(evas_object_evas_get(data));
-   if (!elm_widget_theme_object_set
+   if (!_elm_theme_object_set
          (data, o, "entry", item, style))
-     elm_widget_theme_object_set
+     _elm_theme_object_set
        (data, o, "entry/emoticon", "wtf", style);
    return o;
 }
