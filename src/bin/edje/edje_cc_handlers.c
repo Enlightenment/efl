@@ -2330,7 +2330,7 @@ _handle_vector_image(void)
 
    name = parse_str(0);
 
-   ed->vg.id = 0;
+   ed->vg.id = -1;
 
    for (i = 0; i < edje_file->image_dir->vectors_count; ++i)
      {
@@ -2342,7 +2342,7 @@ _handle_vector_image(void)
           }
      }
 
-   if (!ed->vg.id)
+   if (ed->vg.id < 0)
      error_and_abort(NULL, "Failed to find the vector resource :%s", name);
 
    free(name);
@@ -2410,7 +2410,7 @@ st_images_vector(void)
    vector = edje_file->image_dir->vectors + edje_file->image_dir->vectors_count - 1;
 
    vector->entry = tmp;
-   vector->id = edje_file->image_dir->vectors_count;
+   vector->id = edje_file->image_dir->vectors_count - 1;
 }
 
 

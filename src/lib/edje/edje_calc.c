@@ -3269,7 +3269,7 @@ static void
 _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_UNUSED, Edje_Part_Description_Vector *chosen_desc, FLOAT_T pos)
 {
    int w, h;
-   int new_svg = 0;
+   int new_svg = -1;
    Efl_VG *root_vg;
    Eina_Matrix3 matrix;
    Edje_Vector_Data *start, *end;
@@ -3288,7 +3288,7 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
              new_svg = next_state->vg.id;
           }
      }
-   if (new_svg) // animation with svg id change
+   if (new_svg >= 0) // animation with svg id change
      {
         start = _edje_ref_vector_data(ed, chosen_desc->vg.id);
         end = _edje_ref_vector_data(ed, new_svg);
