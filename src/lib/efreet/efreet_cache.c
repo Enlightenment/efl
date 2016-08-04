@@ -319,6 +319,7 @@ efreet_cache_shutdown(void)
 
     icon_cache = efreet_cache_close(icon_cache);
     icon_theme_cache = efreet_cache_close(icon_theme_cache);
+    fallback_cache = efreet_cache_close(fallback_cache);
 
     IF_FREE_HASH(themes);
     IF_FREE_HASH(icons);
