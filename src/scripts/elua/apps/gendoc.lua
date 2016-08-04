@@ -519,7 +519,7 @@ build_inherits = function(cl, t, lvl)
     return t
 end
 
-local default_theme = {
+local default_theme_light = {
     classes = {
         regular = {
             style = "filled",
@@ -619,7 +619,7 @@ local default_theme_dark = {
     size = "6"
 }
 
-local current_theme = default_theme
+local current_theme = default_theme_dark
 
 local validate_ctheme = function(tb, name)
     if type(tb.classes[name]) ~= "table" then
@@ -667,19 +667,19 @@ local validate_theme = function(tb)
         return false
     end
     if not tb.node then
-        tb.node = default_theme.node
+        tb.node = current_theme.node
     end
     if not tb.edge then
-        tb.edge = default_theme.edge
+        tb.edge = current_theme.edge
     end
     if not tb.bg_color then
-        tb.bg_color = default_theme.bg_color
+        tb.bg_color = current_theme.bg_color
     end
     if not tb.rank_dir then
-        tb.rank_dir = default_theme.rank_dir
+        tb.rank_dir = current_theme.rank_dir
     end
     if not tb.size then
-        tb.size = default_theme.size
+        tb.size = current_theme.size
     end
     if type(tb.node) ~= "table" then
         return false
@@ -1173,7 +1173,7 @@ getopt.parse {
         { "r", "root", true, help = "Root path of the docs." },
         { "n", "namespace", true, help = "Root namespace of the docs." },
         { nil, "graph-theme", true, help = "Optional graph theme." },
-        { nil, "graph-theme-dark", false, help = "Use dark builtin graph theme." },
+        { nil, "graph-theme-light", false, help = "Use light builtin graph theme." },
         { nil, "disable-graphviz", false, help = "Disable graphviz usage." },
         { nil, "disable-notes", false, help = "Disable notes plugin usage." },
         { nil, "disable-folded", false, help = "Disable folded plugin usage." }
@@ -1187,7 +1187,7 @@ getopt.parse {
             return
         end
         if opts["graph-theme-dark"] then
-            current_theme = default_theme_dark
+            current_theme = default_theme_light
         end
         if opts["graph-theme"] then
             set_theme(opts["graph-theme"])
