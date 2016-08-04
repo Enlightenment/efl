@@ -11,7 +11,6 @@
 #define GLPIPES 1
 #define FREE(a) do { if (a) { free(a); } a = NULL; } while(0)
 
-static int sym_done = 0;
 static int tbm_sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
 Cutout_Rects *_evas_gl_common_cutout_rects = NULL;
@@ -33,6 +32,8 @@ void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b) = NULL;
 GLboolean  (*glsym_glUnmapBuffer)          (GLenum a) = NULL;
 void       (*glsym_glStartTiling)          (GLuint a, GLuint b, GLuint c, GLuint d, GLuint e) = NULL;
 void       (*glsym_glEndTiling)            (GLuint a) = NULL;
+
+const char *(*glsym_glGetStringi) (GLenum name, GLuint index) = NULL;
 
 #ifdef GL_GLES
 
@@ -79,106 +80,184 @@ sym_missing(void)
    ERR("GL symbols missing!");
 }
 
+static int
+_has_ext(const char *ext, const char **pexts, int *pnum)
+{
+   if (!ext) return EINA_FALSE;
+
+   if (glsym_glGetStringi)
+     {
+        GLint num = *pnum, k;
+        if (!num)
+          {
+             glGetIntegerv(GL_NUM_EXTENSIONS, &num);
+             *pnum = num;
+          }
+        for (k = 0; k < num; k++)
+          {
+             const char *support = glsym_glGetStringi(GL_EXTENSIONS, k);
+             if (support && !strcmp(support, ext))
+               return EINA_TRUE;
+          }
+        return EINA_FALSE;
+     }
+   else
+     {
+        const char *exts = *pexts;
+        if (!exts)
+          {
+             exts = (const char *) glGetString(GL_EXTENSIONS);
+             if (!exts) return EINA_FALSE;
+             *pexts = exts;
+          }
+        return strstr(exts, ext) != NULL;
+     }
+}
+
+/* FIXME: return error if a required symbol was not found */
 EAPI void
 evas_gl_symbols(void *(*GetProcAddress)(const char *name))
 {
-   if (sym_done) return;
-   sym_done = 1;
+   int failed = 0, num = 0;
+   const char *exts = NULL;
 
-#define FINDSYM(dst, sym, typ) \
-   if (GetProcAddress) { \
-      if (!dst) dst = (typ)GetProcAddress(sym); \
-   } else { \
-      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
-   }
-#define FINDSYM2(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
-#define FALLBAK(dst, typ) if (!dst) dst = (typ)sym_missing
+   static int done = 0;
+   if (done) return;
 
-#define SWAP(a, b, tmp) \
-   tmp = *a; \
-   *a = *b; \
-   *b = tmp;
+   /* For all extension functions, we need to match with the extension itself
+    * since GetProcAddress() can return a non-NULL value even when the function
+    * does not exist. Drivers can do a runtime mapping depending on the
+    * context. So, we only trust the return value of GetProcAddress() when
+    * we know for sure that the extension exists.
+    *
+    * Thus, if a symbol exists we will always prefer it rather than relying
+    * on GetProcAddress().
+    *
+    * -- jpeg, 2016/08/04
+    */
+
+   glsym_glGetStringi = dlsym(RTLD_DEFAULT, "glGetStringi");
+
+#define FINDSYM(dst, sym, ext, typ) do { \
+   if (!dst) { \
+      if (_has_ext(ext, &exts, &num) && GetProcAddress) \
+        dst = (typ) GetProcAddress(sym); \
+      if (!dst) \
+        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
+   }} while (0)
+#define FALLBAK(dst, typ) do { \
+   if (!dst) { \
+      ERR("Symbol '%s' could not be found!", (#dst) + 6); \
+      dst = (typ) sym_missing; \
+      failed = EINA_TRUE; \
+   }} while (0)
 
 #ifdef GL_GLES
-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
-   FINDSYM2(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
+
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", NULL, glsym_func_void);
    FALLBAK(glsym_glGenFramebuffers, glsym_func_void);
+
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", NULL, glsym_func_void);
+   FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
+
 #else
-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT", glsym_func_void);
-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB", glsym_func_void);
-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
-   // nvidia tegra3 drivers seem to not expose via getprocaddress, but dlsym finds it
-   FINDSYM2(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
+
+   /*
+   Note about FBO APIs (from ARB_framebuffer_object):
+
+   Framebuffer objects created with the commands defined by the
+   GL_EXT_framebuffer_object extension are defined to be shared, while
+   FBOs created with commands defined by the OpenGL core or
+   GL_ARB_framebuffer_object extension are defined *not* to be shared.
+
+   [...]
+
+   Since the above pairs are aliases, the functions of a pair are
+   equivalent.  Note that the functions BindFramebuffer and
+   BindFramebufferEXT are not aliases and neither are the functions
+   BindRenderbuffer and BindRenderbufferEXT.  Because object creation
+   occurs when the framebuffer object is bound for the first time, a
+   framebuffer object can be shared across contexts only if it was first
+   bound with BindFramebufferEXT.  Framebuffers first bound with
+   BindFramebuffer may not be shared across contexts.  Framebuffer
+   objects created with BindFramebufferEXT may subsequently be bound
+   using BindFramebuffer.  Framebuffer objects created with
+   BindFramebuffer may be bound with BindFramebufferEXT provided they are
+   bound to the same context they were created on.
+
+   Undefined behavior results when using FBOs created by EXT commands
+   through non-EXT interfaces, or vice-versa.
+
+   Thus, I believe core should come first, then ARB and use EXT as fallback.
+   -- jpeg, 2016/08/04
+
+   Old note:
+   nvidia tegra3 drivers seem to not expose via getprocaddress, but dlsym finds it:
+   glGenFramebuffers, glBindFramebuffer, glFramebufferTexture2D, glDeleteFramebuffers
+   */
+
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", NULL, glsym_func_void);
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB", "GL_ARB_framebuffer_object", glsym_func_void);
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT", "GL_EXT_framebuffer_object", glsym_func_void);
    FALLBAK(glsym_glGenFramebuffers, glsym_func_void);
+
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", NULL, glsym_func_void);
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferARB", "GL_ARB_framebuffer_object", glsym_func_void);
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT", "GL_EXT_framebuffer_object", glsym_func_void);
+   FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
+
 #endif
 
-#ifdef GL_GLES
-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", glsym_func_void);
-   FINDSYM2(glsym_glBindFramebuffer, "glBindFramebuffer", glsym_func_void);
-   FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
-#else
-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT", glsym_func_void);
-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferARB", glsym_func_void);
-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", glsym_func_void);
-   // nvidia tegra3 drivers seem to not expose via getprocaddress, but dlsym finds it
-   FINDSYM2(glsym_glBindFramebuffer, "glBindFramebuffer", glsym_func_void);
-   FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
-#endif
-
-   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT", glsym_func_void);
-   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DARB", glsym_func_void);
-   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", glsym_func_void);
-   // nvidia tegra3 drivers seem to not expose via getprocaddress, but dlsym finds it
-   FINDSYM2(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", NULL, glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DARB", "GL_ARB_framebuffer_object", glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT", "GL_EXT_framebuffer_object", glsym_func_void);
    FALLBAK(glsym_glFramebufferTexture2D, glsym_func_void);
 
-   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT", glsym_func_void);
-   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB", glsym_func_void);
-   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", glsym_func_void);
-   // nvidia tegra3 drivers seem to not expose via getprocaddress, but dlsym finds it
-   FINDSYM2(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", glsym_func_void);
+   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", NULL, glsym_func_void);
+   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB", "GL_ARB_framebuffer_object", glsym_func_void);
+   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT", "GL_EXT_framebuffer_object", glsym_func_void);
    FALLBAK(glsym_glDeleteFramebuffers, glsym_func_void);
 
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryOES", glsym_func_void);
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryKHR", glsym_func_void);
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryEXT", glsym_func_void);
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryARB", glsym_func_void);
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinary", glsym_func_void);
+   // Not sure there's an EXT variant
+   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinary", NULL, glsym_func_void);
+   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryOES", "GL_OES_get_program_binary", glsym_func_void);
+   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryEXT", "GL_EXT_get_program_binary", glsym_func_void);
 
-   FINDSYM(glsym_glProgramBinary, "glProgramBinaryOES", glsym_func_void);
-   FINDSYM(glsym_glProgramBinary, "glProgramBinaryKHR", glsym_func_void);
-   FINDSYM(glsym_glProgramBinary, "glProgramBinaryEXT", glsym_func_void);
-   FINDSYM(glsym_glProgramBinary, "glProgramBinaryARB", glsym_func_void);
-   FINDSYM(glsym_glProgramBinary, "glProgramBinary", glsym_func_void);
+   // Not sure there's an EXT variant
+   FINDSYM(glsym_glProgramBinary, "glProgramBinary", NULL, glsym_func_void);
+   FINDSYM(glsym_glProgramBinary, "glProgramBinaryOES", "GL_OES_get_program_binary", glsym_func_void);
+   FINDSYM(glsym_glProgramBinary, "glProgramBinaryEXT", "GL_EXT_get_program_binary", glsym_func_void);
 
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", glsym_func_void);
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", glsym_func_void);
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", glsym_func_void);
+   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
+   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_separate_shader_objects", glsym_func_void);
+   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", "GL_ARB_geometry_shader4", glsym_func_void);
 
-   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompilerEXT", glsym_func_void);
-   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompilerARB", glsym_func_void);
-   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", glsym_func_void);
+   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", NULL, glsym_func_void);
+#ifndef GL_GLES
+   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", "GL_ARB_ES2_compatibility", glsym_func_void);
+#endif
 
-   FINDSYM(glsym_glStartTiling, "glStartTilingQCOM", glsym_func_void);
-   FINDSYM(glsym_glStartTiling, "glStartTiling", glsym_func_void);
-   FINDSYM(glsym_glStartTiling, "glActivateTileQCOM", glsym_func_void);
-
-   FINDSYM(glsym_glEndTiling, "glEndTilingQCOM", glsym_func_void);
-   FINDSYM(glsym_glEndTiling, "glEndTiling", glsym_func_void);
+   // Not sure there's a core variant, glActivateTileQCOM is strange as well
+   FINDSYM(glsym_glStartTiling, "glStartTilingQCOM", "GL_QCOM_tiled_rendering", glsym_func_void);
+   FINDSYM(glsym_glStartTiling, "glStartTiling", NULL, glsym_func_void);
+   FINDSYM(glsym_glStartTiling, "glActivateTileQCOM", NULL, glsym_func_void);
+   FINDSYM(glsym_glEndTiling, "glEndTilingQCOM", "GL_QCOM_tiled_rendering", glsym_func_void);
+   FINDSYM(glsym_glEndTiling, "glEndTiling", NULL, glsym_func_void);
    
    if (!getenv("EVAS_GL_MAPBUFFER_DISABLE"))
      {
-        FINDSYM(glsym_glMapBuffer, "glMapBufferOES", glsym_func_void_ptr);
-        FINDSYM(glsym_glMapBuffer, "glMapBufferEXT", glsym_func_void_ptr);
-        FINDSYM(glsym_glMapBuffer, "glMapBufferARB", glsym_func_void_ptr);
-        FINDSYM(glsym_glMapBuffer, "glMapBufferKHR", glsym_func_void_ptr);
-        FINDSYM(glsym_glMapBuffer, "glMapBuffer", glsym_func_void_ptr);
+        // Not sure there's an EXT variant. (probably no KHR variant)
+        FINDSYM(glsym_glMapBuffer, "glMapBuffer", NULL, glsym_func_void_ptr);
+        FINDSYM(glsym_glMapBuffer, "glMapBufferOES", "GL_OES_mapbuffer", glsym_func_void_ptr);
+        FINDSYM(glsym_glMapBuffer, "glMapBufferARB", "GL_ARB_vertex_buffer_object", glsym_func_void_ptr);
+        FINDSYM(glsym_glMapBuffer, "glMapBufferARB", "GLX_ARB_vertex_buffer_object", glsym_func_void_ptr);
+        FINDSYM(glsym_glMapBuffer, "glMapBufferEXT", NULL, glsym_func_void_ptr);
 
-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferOES", glsym_func_boolean);
-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferEXT", glsym_func_boolean); 
-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", glsym_func_boolean);
-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferKHR", glsym_func_boolean);
-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBuffer", glsym_func_boolean);
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBuffer", NULL, glsym_func_boolean);
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferOES", "GL_OES_mapbuffer", glsym_func_boolean);
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", "GL_ARB_vertex_buffer_object", glsym_func_boolean);
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", "GLX_ARB_vertex_buffer_object", glsym_func_boolean);
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferEXT", NULL, glsym_func_boolean);
      }
 
 #ifdef GL_GLES
@@ -188,36 +267,41 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
 // wrong as this is not x11 (output) layer specific like the native surface
 // stuff. this is generic zero-copy textures for gl
 
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageOES", secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageEXT", secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageARB", secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImage", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImage", NULL, secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageOES", "GL_OES_EGL_image_base", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageOES", "GL_OES_EGL_image", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", "GL_EGL_KHR_image_base", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", "GL_EGL_KHR_image", secsym_func_void_ptr);
 
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageOES", secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageEXT", secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageARB", secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImage", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImage", NULL, secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageOES", "GL_OES_EGL_image_base", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageOES", "GL_OES_EGL_image", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", "GL_EGL_KHR_image_base", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", "GL_EGL_KHR_image", secsym_func_uint);
 
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriOES", glsym_func_void);
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriKHR", glsym_func_void);
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", glsym_func_void);
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", glsym_func_void);
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", glsym_func_void);
+   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
+   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_geometry_shader4", glsym_func_void);
+   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", "GL_ARB_geometry_shader4", glsym_func_void);
 
-   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", glsym_func_void);
+   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
 
-   FINDSYM(secsym_eglMapImageSEC, "eglMapImageSEC", secsym_func_void_ptr);
+   // Old SEC extensions
+   FINDSYM(secsym_eglMapImageSEC, "eglMapImageSEC", NULL, secsym_func_void_ptr);
+   FINDSYM(secsym_eglUnmapImageSEC, "eglUnmapImageSEC", NULL, secsym_func_uint);
+   FINDSYM(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", NULL, secsym_func_uint);
 
-   FINDSYM(secsym_eglUnmapImageSEC, "eglUnmapImageSEC", secsym_func_uint);
-
-   FINDSYM(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", secsym_func_uint);
 #endif
 
 #undef FINDSYM
-#undef FINDSYM2
 #undef FALLBAK
+
+   if (failed)
+     {
+        ERR("Some core GL symbols could not be found, the GL engine will not "
+            "work properly.");
+     }
+
+   done = 1;
 }
 
 static void
@@ -484,8 +568,9 @@ _evas_gl_common_version_check(int *gles_ver)
           *gles_ver = 3;
         else if ((major > 3) || ((major == 3) && (minor >= 3))) /* >= 3.3 */
           {
-             const char *exts = (const char *) glGetString(GL_EXTENSIONS);
-             if (exts && strstr(exts, "GL_ARB_ES3_compatibility"))
+             const char *exts = NULL;
+             int num = 0;
+             if (_has_ext("GL_ARB_ES3_compatibility", &exts, &num))
                *gles_ver = 3;
              else
                *gles_ver = 2;
@@ -669,6 +754,10 @@ evas_gl_common_context_new(void)
         return _evas_gl_common_context;
      }
 #endif
+
+   if (!glsym_glGetStringi)
+     glsym_glGetStringi = dlsym(RTLD_DEFAULT, "glGetStringi");
+
    if (!_evas_gl_common_version_check(&gles_version))
      return NULL;
    gc = calloc(1, sizeof(Evas_Engine_GL_Context));
@@ -1755,6 +1844,11 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
    PUSH_MASK(pn, mtex, mx, my, mw, mh, masksam);
    PUSH_6_COLORS(pn, r, g, b, a);
 }
+
+#define SWAP(a, b, tmp) \
+   tmp = *a; \
+   *a = *b; \
+   *b = tmp;
 
 // 1-2      4-1
 // | |  =>  | |

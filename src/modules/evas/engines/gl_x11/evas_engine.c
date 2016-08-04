@@ -1256,6 +1256,12 @@ static const EVGL_Interface evgl_funcs =
 
 //----------------------------------------------------------//
 
+static inline int
+_has_ext(const char *exts, const char *ext)
+{
+   if (!exts || !ext) return EINA_FALSE;
+   return strstr(exts, ext) != NULL;
+}
 
 static void
 gl_symbols(void)
@@ -1299,125 +1305,123 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_common_current_context_get);
    LINK2GENERIC(evas_gl_common_shaders_flush);
 
+#define FINDSYM(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym);
 #ifdef GL_GLES
-#define FINDSYM(dst, sym, typ) \
-   if (glsym_eglGetProcAddress) { \
-      if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
-   } else { \
-      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
-   }
 
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
-   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
-           glsym_func_uint)
+
 #else
-#define FINDSYM(dst, sym, typ) \
-   if (glsym_glXGetProcAddress) { \
-      if (!dst) dst = (typ)glsym_glXGetProcAddress(sym); \
-   } else { \
-      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
-   }
 
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
+
 #endif
+#undef FINDSYM
 
    done = 1;
 }
 
 void
-eng_gl_symbols(Eina_Bool noext_glXCreatePixmap)
+eng_gl_symbols(Outbuf *ob)
 {
    static int done = 0;
+   const char *exts;
 
    if (done) return;
 
+   /* GetProcAddress() may not return NULL, even if the extension is not
+    * supported. Nvidia drivers since version 360 never return NULL, thus
+    * we need to always match the function name with their full extension
+    * name. Other drivers tend to return NULL for glX/egl prefixed names, but
+    * this could change in the future.
+    *
+    * -- jpeg, 2016/08/04
+    */
+
 #ifdef GL_GLES
-   (void) noext_glXCreatePixmap;
+#define FINDSYM(dst, sym, ext, typ) do { \
+   if (!dst) { \
+      if (_has_ext(exts, ext) && glsym_eglGetProcAddress) \
+        dst = (typ) glsym_eglGetProcAddress(sym); \
+      if (!dst) \
+        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
+   }} while (0)
 
-#define FINDSYM(dst, sym, typ) \
-   if (glsym_eglGetProcAddress) { \
-      if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
-   } else { \
-      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
-   }
-
+   // Find GL extensions
    glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress);
 
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageEXT", glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageARB", glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImage", glsym_func_void_ptr);
+   // Find EGL extensions
+   exts = eglQueryString(ob->egl_disp, EGL_EXTENSIONS);
 
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageEXT", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageARB", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", glsym_func_void);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImage", NULL, glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", "EGL_KHR_image_base", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", "EGL_KHR_image", glsym_func_void_ptr);
 
-   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", NULL, glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image", glsym_func_void);
 
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage", glsym_func_uint);
-   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR", glsym_func_uint);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage", NULL, glsym_func_uint);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", "EGL_EXT_swap_buffers_with_damage", glsym_func_uint);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageKHR", "EGL_KHR_swap_buffers_with_damage", glsym_func_uint);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", "EGL_INTEL_swap_buffers_with_damage", glsym_func_uint);
 
+   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR", "EGL_KHR_partial_update", glsym_func_uint);
+
+   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL", "EGL_WL_bind_wayland_display", glsym_func_uint);
+
+   // This is a GL extension
+   exts = (const char *) glGetString(GL_EXTENSIONS);
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image", glsym_func_void);
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
 
 #else
-#define FINDSYM(dst, sym, typ) \
-   if (glsym_glXGetProcAddress) { \
-      if (!dst) dst = (typ)glsym_glXGetProcAddress(sym); \
-   } else { \
-      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
-   }
 
+#define FINDSYM(dst, sym, ext, typ) do { \
+   if (!dst) { \
+      if (_has_ext(exts, ext) && glsym_glXGetProcAddress) \
+        dst = (typ) glsym_glXGetProcAddress(sym); \
+      if (!dst) \
+        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
+   }} while (0)
+
+   // Find GL extensions
    glsym_evas_gl_symbols((void*)glsym_glXGetProcAddress);
 
-   if (noext_glXCreatePixmap)
-     {
-        /* Note for nvidia >= 360:
-         * glXBindTexImage{EXT,ARB} should be preferred over glXBindTexImage
-         * glXCreatePixmap should be preferred over glXCreatePixmap{EXT,ARB}
-         */
-        FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", glsym_func_xid);
-        FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", glsym_func_void);
-     }
+   // Find GLX extensions
+   exts = glXQueryExtensionsString((Display *) ob->disp, ob->screen);
 
-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT", glsym_func_void);
-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB", glsym_func_void);
-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage", glsym_func_void);
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage", NULL, glsym_func_void);
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT", "GLX_EXT_texture_from_pixmap", glsym_func_void);
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB", "GLX_ARB_render_texture", glsym_func_void);
 
-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT", glsym_func_void);
-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB", glsym_func_void);
-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage", glsym_func_void);
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage", NULL, glsym_func_void);
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT", "GLX_EXT_texture_from_pixmap", glsym_func_void);
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB", "GLX_ARB_render_texture", glsym_func_void);
 
-   FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI", glsym_func_int);
+   FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI", "GLX_SGI_video_sync", glsym_func_int);
+   FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI", "GLX_SGI_video_sync", glsym_func_int);
 
-   FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI", glsym_func_int);
+   // GLX 1.3
+   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", NULL, glsym_func_xid);
+   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", NULL, glsym_func_void);
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", NULL, glsym_func_int);
 
-   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmapEXT", glsym_func_xid);
-   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmapARB", glsym_func_xid);
-   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", glsym_func_xid);
+   // swap interval: MESA and SGI take (interval)
+   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", "GLX_MESA_swap_control", glsym_func_int);
+   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", "GLX_SGI_swap_control", glsym_func_int);
 
-   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapEXT", glsym_func_void);
-   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapARB", glsym_func_void);
-   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", glsym_func_void);
+   // swap interval: EXT takes (dpy, drawable, interval)
+   FINDSYM(glsym_glXSwapIntervalEXT, "glXSwapIntervalEXT", "GLX_EXT_swap_control", glsym_func_void);
 
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", glsym_func_int);
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT", glsym_func_int);
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_int);
-
-   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", glsym_func_int);
-   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", glsym_func_int);
-
-   FINDSYM(glsym_glXSwapIntervalEXT, "glXSwapIntervalEXT", glsym_func_void);
-
-   FINDSYM(glsym_glXReleaseBuffersMESA, "glXReleaseBuffersMESA", glsym_func_void);
+   FINDSYM(glsym_glXReleaseBuffersMESA, "glXReleaseBuffersMESA", "GLX_MESA_release_buffers", glsym_func_void);
 
 #endif
+#undef FINDSYM
 
    done = 1;
 }

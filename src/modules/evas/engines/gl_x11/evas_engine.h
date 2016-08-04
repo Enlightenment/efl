@@ -76,7 +76,6 @@ struct _Outbuf
       unsigned char msaa;
 #ifndef GL_GLES
       Eina_Bool     loose_binding : 1;
-      Eina_Bool     noext_glXCreatePixmap : 1;
 #endif
    } detected;
 
@@ -200,7 +199,7 @@ Evas_Engine_GL_Context *eng_outbuf_gl_context_get(Outbuf *ob);
 void *eng_outbuf_egl_display_get(Outbuf *ob);
 
 Eina_Bool eng_preload_make_current(void *data, void *doit);
-void eng_gl_symbols(Eina_Bool noext_glXCreatePixmap);
+void eng_gl_symbols(Outbuf *ob);
 
 static inline int
 _re_wincheck(Outbuf *ob)
