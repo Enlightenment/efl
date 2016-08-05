@@ -106,6 +106,14 @@ select_allow_check_changed_cb(void *data, Evas_Object *obj, void *event_info EIN
      printf("Entry %p is now unselectable.\n", en);
 }
 
+static void
+entry_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   const char *event = data;
+   printf("Entry '%s' callback called\n", event);
+   
+}
+
 void
 test_entry(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -156,6 +164,8 @@ test_entry(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_object_text_set(en, buf);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(en, "changed", entry_changed_cb, "changed");
+   evas_object_smart_callback_add(en, "changed,user", entry_changed_cb, "changed,user");
    elm_box_pack_end(bx, en);
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
