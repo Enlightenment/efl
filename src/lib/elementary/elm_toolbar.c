@@ -4039,15 +4039,12 @@ EOLIAN Eina_Bool
 _elm_toolbar_elm_interface_atspi_selection_child_select(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
 {
    Elm_Toolbar_Item_Data *item;
-   if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
+   EINA_INLIST_FOREACH(pd->items, item)
      {
-        EINA_INLIST_FOREACH(pd->items, item)
+        if (child_index-- == 0)
           {
-             if (child_index-- == 0)
-               {
-                  elm_toolbar_item_selected_set(EO_OBJ(item), EINA_TRUE);
-                  return EINA_TRUE;
-               }
+             elm_toolbar_item_selected_set(EO_OBJ(item), EINA_TRUE);
+             return EINA_TRUE;
           }
      }
    return EINA_FALSE;
