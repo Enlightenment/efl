@@ -124,7 +124,7 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
    _ece_test_descriptor_init();
 
    svr = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1",
-                              8080, NULL);
+                              12346, NULL);
    fail_if(!svr);
 
    ece_svr = ecore_con_eet_server_new(svr);
@@ -141,7 +141,7 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
                                                 _eet_client_discnct_cb, NULL);
 
    cl = ecore_con_server_connect(ECORE_CON_REMOTE_TCP, "127.0.0.1",
-                                 8080, NULL);
+                                 12346, NULL);
    fail_if(!cl);
 
    ece_cl = ecore_con_eet_client_new(cl);
@@ -206,7 +206,7 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_del)
    _ece_test_descriptor_init();
 
    svr = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1",
-                              8080, NULL);
+                              12346, NULL);
    fail_if(!svr);
 
    ece_svr = ecore_con_eet_server_new(svr);
@@ -219,7 +219,7 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_del)
                                   _eet_svr_raw_data_cb, svr);
 
    cl = ecore_con_server_connect(ECORE_CON_REMOTE_TCP, "127.0.0.1",
-                                 8080, NULL);
+                                 12346, NULL);
    fail_if(!cl);
 
    ece_cl = ecore_con_eet_client_new(cl);
