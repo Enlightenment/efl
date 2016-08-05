@@ -65,8 +65,7 @@ ecore_imf_module_init(void)
                {
                   const char **itr;
                   const char **modules_load;
-                  const char *env;
-                  const char *modules_one[1] = { NULL };
+                  const char *modules_one[2] = { NULL, NULL };
 
                   modules_load = built_modules;
                   env = getenv("ECORE_IMF_MODULE");
