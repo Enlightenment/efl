@@ -482,9 +482,9 @@ eina_thread_queue_pending_get(const Eina_Thread_Queue *thq)
 #ifdef ATOMIC
    __atomic_load(&(thq->pending), &pending, __ATOMIC_RELAXED);
 #else
-   eina_spinlock_take(&(thq->lock_pending));
+   eina_spinlock_take((Eina_Spinlock *)&(thq->lock_pending));
    pending = thq->pending;
-   eina_spinlock_release(&(thq->lock_pending));
+   eina_spinlock_release((Eina_Spinlock *)&(thq->lock_pending));
 #endif
    return pending;
 }
