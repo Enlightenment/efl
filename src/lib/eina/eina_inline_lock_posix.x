@@ -841,12 +841,15 @@ eina_semaphore_new(Eina_Semaphore *sem, int count_init)
    ++_sem_ctr;
    eina_spinlock_release(&_sem_ctr_lock);
 
-   snprintf(sem->name, sizeof(sem->name), "/eina_sem_%u", _sem_ctr);
+   snprintf(sem->name, sizeof(sem->name), "/eina_sem_%x-%x_%x_%x_%x_%x",
+            (unsigned int)getpid(), _sem_ctr,
+            (unsigned int)rand(), (unsigned int)rand(),
+            (unsigned int)rand(), (unsigned int)rand());
    sem_unlink(sem->name);
-   sem->sema = sem_open(sem->name, O_CREAT, 0644, count_init);
+   sem->sema = sem_open(sem->name, O_CREAT | O_EXCL, 0600, count_init);
    return (sem->sema == SEM_FAILED) ? EINA_FALSE : EINA_TRUE;
 #else
-   return (sem_init(sem, 1, count_init) == 0) ? EINA_TRUE : EINA_FALSE;
+   return (sem_init(sem, 0, count_init) == 0) ? EINA_TRUE : EINA_FALSE;
 #endif
 }
 
