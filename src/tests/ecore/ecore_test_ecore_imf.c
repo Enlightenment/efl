@@ -47,6 +47,7 @@ START_TEST(ecore_test_ecore_imf_modules)
    Eina_List *modules;
    const char **itr;
 
+   putenv("ECORE_IMF_MODULE=");
    ecore_imf_init();
    modules = ecore_imf_context_available_ids_get();
 
@@ -64,10 +65,10 @@ END_TEST
 
 START_TEST(ecore_test_ecore_imf_modules_load)
 {
-   const char **itr;
+   const char **itr, *env;
 
+   putenv("ECORE_IMF_MODULE=");
    ecore_imf_init();
-
    for (itr = built_modules; *itr != NULL; itr++)
      {
         Ecore_IMF_Context *ctx = ecore_imf_context_add(*itr);

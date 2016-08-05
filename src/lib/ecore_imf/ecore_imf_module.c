@@ -69,7 +69,7 @@ ecore_imf_module_init(void)
 
                   modules_load = built_modules;
                   env = getenv("ECORE_IMF_MODULE");
-                  if (env)
+                  if ((env) && (env[0]))
                     {
                        modules_one[0] = env;
                        modules_load = modules_one;
@@ -99,7 +99,7 @@ ecore_imf_module_init(void)
    if ((!env) && (!getenv("WAYLAND_DISPLAY")) && (getenv("DISPLAY")))
      env = "xim";
 #endif
-   if (env)
+   if ((env) && (env[0]))
      {
         const char **itr;
         Eina_Bool ok = EINA_FALSE;
