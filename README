@@ -444,7 +444,7 @@ You will find documentation in the doc/ directory.
 REQUIREMENTS
 ------------
 
-EFL requires a C and C++ compiler by default. C++ exists mostly to interface 
+EFL requires a C and C++ compiler by default. C++ exists mostly to interface
 to C++ libraries like Bullet and our C++ bindings.
 
 Required by default:
@@ -452,9 +452,9 @@ Required by default:
   * bullet
   * libpng
   * libjpeg
-  * gstreamer (1.x) (ensure all codecs you want are installed. 0.10 optional)
+  * gstreamer (1.x, 0.10 support optional. Ensure all codecs you want are installed.)
   * zlib
-  * luajit (lua 5.1 or 5.2 optional support)
+  * luajit (lua 5.1 or 5.2 support optional)
   * libtiff
   * openssl
   * curl
@@ -479,41 +479,39 @@ Required by default:
   * libxtst
   * libxcursor
   * libxp
-  * libxi
+  * libxi (2.2 or newer)
   * libgl (opengl/glx or opengl-es2/egl)
   * giflib
   * util-linux (limbount + libblkid)
   * systemd / libudev
+  * poppler
+  * libraw
+  * libspectre
+  * librsvg
 
 Recommended requirements (highly recommended):
 
   * harfbuzz
-  * libxi (2.2 or newer)
   * systemd
   * libwebp
+  * liblz4
+  * vlc (libvlc)
 
 Enable these with configure options:
 
     --enable-xinput22 \
     --enable-systemd \
     --enable-image-loader-webp \
-    --enable-harfbuzz
-
-After you install EFL it is **HIGHLY** recommended to install the Evas
-Generic Loaders package and Emotion Generic Players too. These provide
-external binaries, that are either unstable or GPL licensed that are
-just drop-in utilities for handling image and video codecs. They can
-be added or removed at any time (even runtime) so they could be
-replaced or augmented with other drop-in binaries that do the same job
-and talk the same simple stdin/out and shared memory protocol.
-
+    --enable-harfbuzz \
+    --enable-multisense \
+    --enable-liblz4
 
 COMPILER FLAGS
 --------------
 
 You can affect compilation optimization, debugging and other factors
 by setting your CFLAGS environment variable (and CXXFLAGS). Be aware
-that to ensure ABI stability you should use the exact same CFLAGS / 
+that to ensure ABI stability you should use the exact same CFLAGS /
 CXXFLAGS for all the build of EFL and any applications/libraries that
 depend on them.
 
