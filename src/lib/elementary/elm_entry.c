@@ -3018,7 +3018,7 @@ _chars_add_till_limit(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_entry_edje_object_signal_emit(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source)
+_elm_entry_elm_layout_signal_emit(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source)
 {
    /* always pass to both edje objs */
    edje_object_signal_emit(sd->entry_edje, emission, source);
@@ -3032,7 +3032,7 @@ _elm_entry_edje_object_signal_emit(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, cons
 }
 
 EOLIAN static void
-_elm_entry_edje_object_signal_callback_add(Eo *obj, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+_elm_entry_elm_layout_signal_callback_add (Eo *obj, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
    Evas_Object *ro;
 
@@ -3042,25 +3042,25 @@ _elm_entry_edje_object_signal_callback_add(Eo *obj, Elm_Entry_Data *sd, const ch
 
    wd->resize_obj = sd->entry_edje;
 
-   edje_obj_signal_callback_add
+   elm_obj_layout_signal_callback_add
      (eo_super(obj, MY_CLASS), emission, source, func_cb, data);
 
    if (sd->scr_edje)
      {
         wd->resize_obj = sd->scr_edje;
 
-        edje_obj_signal_callback_add
-          (eo_super(obj, MY_CLASS), emission, source, func_cb, data);
+        elm_obj_layout_signal_callback_add
+              (eo_super(obj, MY_CLASS), emission, source, func_cb, data);
      }
 
    wd->resize_obj = ro;
 }
 
 EOLIAN static void *
-_elm_entry_edje_object_signal_callback_del(Eo *obj, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+_elm_entry_elm_layout_signal_callback_del(Eo *obj, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb)
 {
    Evas_Object *ro;
-   void *data_ptr;
+   void *data = NULL;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
@@ -3068,19 +3068,19 @@ _elm_entry_edje_object_signal_callback_del(Eo *obj, Elm_Entry_Data *sd, const ch
 
    wd->resize_obj = sd->entry_edje;
 
-   data_ptr = edje_obj_signal_callback_del
-                (eo_super(obj, MY_CLASS), emission, source, func_cb, data);
+   data = elm_obj_layout_signal_callback_del
+         (eo_super(obj, MY_CLASS), emission, source, func_cb);
 
    if (sd->scr_edje)
      {
         wd->resize_obj = sd->scr_edje;
 
-        data_ptr = edje_obj_signal_callback_del
-                     (eo_super(obj, MY_CLASS), emission, source, func_cb, data);
+        data = elm_obj_layout_signal_callback_del
+              (eo_super(obj, MY_CLASS), emission, source, func_cb);
      }
 
    wd->resize_obj = ro;
-   return data_ptr;
+   return data;
 }
 
 static Eina_Bool

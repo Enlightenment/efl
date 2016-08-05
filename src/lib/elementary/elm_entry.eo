@@ -116,7 +116,7 @@ enum Elm.Cnp_Mode
 
 class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Elm.Interface.Atspi.Text, Elm.Interface.Atspi.Text.Editable, Efl.File,
-                 Efl.Ui.Selectable, Efl.Ui.Scrollable, Edje.Object)
+                 Efl.Ui.Selectable, Efl.Ui.Scrollable)
 {
    legacy_prefix: elm_entry;
    eo_prefix: elm_obj_entry;
@@ -942,9 +942,6 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_show;
       Efl.Canvas.Group.group_hide;
-      Edje.Object.signal_callback_add;
-      Edje.Object.signal_callback_del;
-      Edje.Object.signal_emit;
       Elm.Widget.activate;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
@@ -956,6 +953,9 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Layout.theme_enable;
       Elm.Layout.sizing_eval;
       Elm.Layout.text.get;
+      Elm.Layout.signal_callback_add;
+      Elm.Layout.signal_callback_del;
+      Elm.Layout.signal_emit;
       Elm.Layout.text.set;
       Elm.Layout.content_aliases.get;
       Elm.Interface_Scrollable.policy.set;

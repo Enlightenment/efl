@@ -17,7 +17,7 @@ struct Elm.Layout_Part_Alias_Description
    real_part: string; [[Target part name for the alias set on Elm.Layout_Part_Proxies_Description::real_part. An example of usage would be "default" on that field, with "elm.content.swallow" on this one]]
 }
 
-class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File, Edje.Object)
+class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
 {
    legacy_prefix: elm_layout;
    eo_prefix: elm_obj_layout;
@@ -123,6 +123,16 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File, Edje.Object)
             @in part_name: string; [[A part from loaded edje group.]]
          }
       }
+      freeze {
+         [[Freezes the Elementary layout object.
+
+           This function puts all changes on hold. Successive freezes will
+           nest, requiring an equal number of thaws.
+
+           See also @.thaw.
+         ]]
+         return: int; [[The frozen state or 0 on error.]]
+      }
       theme_enable {
          legacy: null;
          return: bool;
@@ -196,6 +206,23 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File, Edje.Object)
             text: string @nullable; [[The text to set.]]
          }
       }
+      signal_callback_add {
+         [[Add a callback for a (Edje) signal emitted by a layout widget's
+           underlying Edje object.
+
+           This function connects a callback function to a signal emitted by
+           the underlying Edje object of $obj. Globs are accepted in either
+           the emission or source strings.
+         ]]
+         params {
+            @in emission: string; [[The signal's name string.]]
+            @in source: string; [[The signal's source string.]]
+            @in func: Edje.Signal_Cb; [[The callback function to be executed
+                                        when the signal is emitted.]]
+            @in data: void_ptr @optional; [[A pointer to data to pass in to the
+                                          callback function.]]
+         }
+      }
       part_cursor_set {
          [[Sets a specific cursor for an edje part.]]
          return: bool; [[$true on success or $false on failure, that may be
@@ -215,6 +242,78 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File, Edje.Object)
       sub_object_add_enable {
          legacy: null;
          return: bool;
+      }
+      data_get @const {
+         [[Get the edje data from the given layout.
+
+           This function fetches data specified inside the edje theme of
+           this layout. This function return NULL if data is not found.
+
+           In EDC this comes from a data block within the group block that
+           $obj was loaded from.
+         ]]
+         /* FIXME-doc
+         @code
+         collections {
+         group {
+         name: "a_group";
+         data {
+         item: "key1" "value1";
+         item: "key2" "value2";
+         }
+         }
+         }
+         @endcode
+         */
+         return: string; [[The edje data string.]]
+         params {
+            @in key: string; [[The data key.]]
+         }
+      }
+      signal_callback_del {
+         [[Remove a signal-triggered callback from a given layout widget.
+
+           This function removes the last callback attached to a signal
+           emitted by the undelying Edje object of $obj, with parameters
+           $emission, $source and $func matching exactly those passed to a
+           previous call to @.signal_callback_add. The data pointer that
+           was passed to this call will be returned.
+         ]]
+         return: void_ptr; [[The data pointer of the signal callback (passed on
+                           @.signal_callback_add) or $null on errors.]]
+         params {
+            @in emission: string; [[The signal's name string.]]
+            @in source: string; [[The signal's source string.]]
+            @in func: Edje.Signal_Cb; [[The callback function being executed
+                                        when the signal was emitted.]]
+         }
+      }
+      thaw {
+         [[Thaws the Elementary object.
+
+           This function thaws the given Edje object and the Elementary
+           sizing calc.
+
+           Note: If sucessives freezes were done, an equal number of
+           thaws will be required.
+
+           See also @.freeze.
+         ]]
+         return: int; [[The frozen state or 0 if the object is not frozen or on error.]]
+      }
+      signal_emit {
+         [[Send a (Edje) signal to a given layout widget's underlying Edje
+           object.
+
+           This function sends a signal to the underlying Edje object of
+           $obj. An Edje program on that Edje object's definition can
+           respond to a signal by specifying matching 'signal' and
+           'source' fields.
+         ]]
+         params {
+            @in emission: string; [[The signal's name string.]]
+            @in source: string; [[The signal's source string.]]
+         }
       }
       part_cursor_unset {
          [[Unsets a cursor previously set with @.part_cursor_set.]]
@@ -252,10 +351,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File, Edje.Object)
       Efl.Container.content.get;
       Efl.Container.content_unset;
       Efl.Part.part;
-      Edje.Object.freeze;
-      Edje.Object.thaw;
-      Edje.Object.signal_callback_add;
-      Edje.Object.signal_callback_del;
    }
    events {
       theme,changed;

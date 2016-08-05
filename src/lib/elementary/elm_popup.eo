@@ -23,7 +23,7 @@ enum Elm.Popup.Orient
 }
 
 
-class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Edje.Object)
+class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
    legacy_prefix: elm_popup;
    eo_prefix: elm_obj_popup;
@@ -169,7 +169,6 @@ class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Edje.Object)
       Eo.Base.constructor;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_add;
-      Edje.Object.signal_emit;
       Elm.Widget.focus_direction;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.theme_apply;
@@ -183,6 +182,7 @@ class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Edje.Object)
       Elm.Layout.text.set;
       Elm.Layout.text.get;
       Elm.Layout.sizing_eval;
+      Elm.Layout.signal_emit;
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
       Elm.Interface.Atspi_Accessible.state_set.get;
       Efl.Part.part;
