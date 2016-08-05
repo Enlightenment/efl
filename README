@@ -484,7 +484,7 @@ Required by default:
   * giflib
   * util-linux (limbount + libblkid)
   * systemd / libudev
-  * poppler
+  * poppler / poppler-cpp
   * libraw
   * libspectre
   * librsvg
