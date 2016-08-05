@@ -888,7 +888,11 @@ eina_semaphore_lock(Eina_Semaphore *sem)
         else
           {
              if (errno != EINTR)
-               break;
+               {
+                  if (errno == EDEADLK)
+                    EINA_LOCK_DEADLOCK_DEBUG(sem_wait, sem);
+                  break;
+               }
           }
      }
    return ok;

@@ -116,7 +116,11 @@ _eina_thread_queue_msg_block_new(int size)
    blk = malloc(sizeof(Eina_Thread_Queue_Msg_Block) -
                 sizeof(Eina_Thread_Queue_Msg) +
                 size);
-   if (!blk) return NULL;
+   if (!blk)
+     {
+        ERR("Thread queue block buffer of size %i allocation failed", size);
+        return NULL;
+     }
    blk->next = NULL;
 #ifndef ATOMIC
    eina_spinlock_new(&(blk->lock_ref));
@@ -380,7 +384,11 @@ eina_thread_queue_new(void)
    Eina_Thread_Queue *thq;
 
    thq = calloc(1, sizeof(Eina_Thread_Queue));
-   if (!thq) return NULL;
+   if (!thq)
+     {
+        ERR("Allocation of Thread queue structure failed");
+        return NULL;
+     }
    thq->fd = -1;
    if (!eina_semaphore_new(&(thq->sem), 0))
      {
