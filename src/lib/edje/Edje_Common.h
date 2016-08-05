@@ -1806,6 +1806,8 @@ EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
  * @param glob The group name
  *
  * @return 1 if a Scene is found is found, 0 otherwise
+ *
+ * @since 1.18
  */
 EAPI Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char *group);
 
