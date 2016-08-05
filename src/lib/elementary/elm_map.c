@@ -3390,7 +3390,7 @@ _source_tile_set(Elm_Map_Data *sd,
              break;
           }
      }
-   if (!sd->src_tile)
+   if (!l)
      {
         ERR("source name (%s) is not found", source_name);
         return;
@@ -3431,7 +3431,7 @@ _source_route_set(Elm_Map_Data *sd,
              break;
           }
      }
-   if (!sd->src_route)
+   if (!l)
      {
         ERR("source name (%s) is not found", source_name);
         return;
@@ -3458,7 +3458,7 @@ _source_name_set(Elm_Map_Data *sd,
              break;
           }
      }
-   if (!sd->src_name)
+   if (!l)
      {
         ERR("source name (%s) is not found", source_name);
         return;
