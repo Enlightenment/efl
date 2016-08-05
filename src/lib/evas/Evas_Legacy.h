@@ -687,6 +687,7 @@ EAPI void             evas_object_del(Evas_Object *obj) EINA_ARG_NONNULL(1);
  * @return The type of the object.
  *
  * @ingroup Evas_Object_Group_Basic
+ * @since 1.18
  */
 EAPI const char      *evas_object_type_get(const Evas_Object *obj);
 
