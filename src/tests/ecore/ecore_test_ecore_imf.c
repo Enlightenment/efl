@@ -65,7 +65,7 @@ END_TEST
 
 START_TEST(ecore_test_ecore_imf_modules_load)
 {
-   const char **itr, *env;
+   const char **itr;
 
    putenv("ECORE_IMF_MODULE=");
    ecore_imf_init();
