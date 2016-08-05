@@ -36,6 +36,7 @@ th1_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         usleep((rand() % 10) * 1000);
         msg = eina_thread_queue_send(thq1, sizeof(Msg), &ref);
         msg->value = val;
+        memset(msg->pad, 0x32, 10);
         eina_thread_queue_send_done(thq1, ref);
         if (val == 1000) break;
         val++;
@@ -56,8 +57,10 @@ th2_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         val = msg->value;
         usleep((rand() % 20) * 1000);
         eina_thread_queue_wait_done(thq1, ref);
+
         msg = eina_thread_queue_send(thq2, sizeof(Msg), &ref);
         msg->value = val;
+        memset(msg->pad, 0x32, 10);
         eina_thread_queue_send_done(thq2, ref);
         if (val == 1000) break;
      }
@@ -101,7 +104,7 @@ typedef struct
    int ops[1];
 } Msg2;
 
-static int msgs = 0;
+static volatile int msgs = 0;
 
 static void
 thspeed1_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
@@ -114,8 +117,8 @@ thspeed1_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         msg = eina_thread_queue_wait(thq1, &ref);
         if (msg)
           {
-             eina_thread_queue_wait_done(thq1, ref);
              msgs++;
+             eina_thread_queue_wait_done(thq1, ref);
           }
         if (msgs == 10000000)
           {
