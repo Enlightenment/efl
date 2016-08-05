@@ -207,8 +207,9 @@ ecore_con_info_data_clear(void *info)
 static void
 _ecore_con_info_slave_free(CB_Data *cbdata)
 {
-   info_slaves = (CB_Data *)eina_inlist_remove(EINA_INLIST_GET(info_slaves),
-                                               EINA_INLIST_GET(cbdata));
+   if (info_slaves)
+     info_slaves = (CB_Data *)eina_inlist_remove(EINA_INLIST_GET(info_slaves),
+                                                 EINA_INLIST_GET(cbdata));
    if (cbdata->result) free(cbdata->result);
    cbdata->result = NULL;
    if (cbdata->data) ecore_con_server_infos_del(cbdata->data, cbdata);
