@@ -972,9 +972,12 @@ eina_log_domain_parse_pendings(void)
         level = strtol((char *)(end + 1), &tmp, 10);
         if (tmp == (end + 1))
            goto parse_end;
-
+        // If the name of the log is more than 64k it's silly so give up
+        // as it's pointless and in theory could overflow pointer
+        if ((end - start) > 0xffff)
+           break;
         // Parse name
-        p = malloc(sizeof(Eina_Log_Domain_Level_Pending) + end - start + 1);
+        p = malloc(sizeof(Eina_Log_Domain_Level_Pending) + (end - start) + 1);
         if (!p)
            break;
 
