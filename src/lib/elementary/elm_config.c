@@ -4012,11 +4012,39 @@ _elm_config_reload(void)
 {
    Eina_Bool is_mirrored;
    Eina_Bool translate;
+
+   Eina_Stringshare *ptheme = NULL, *pmodules = NULL, *picon_theme = NULL;
+   double pscale;
+   int pfinger_size, picon_size;
+   unsigned char ppassword_show_last;
+   double ppassword_show_last_timeout;
+   int pweek_start, pweekend_start, pweekend_len, pyear_min, pyear_max;
+
+#define STO(x) if (_elm_config->x) p##x = eina_stringshare_add(_elm_config->x)
+   STO(theme);
+   STO(modules);
+   STO(icon_theme);
+#undef STO
+
+#define STO(x) p##x = _elm_config->x
+   STO(scale);
+   STO(finger_size);
+   STO(icon_size);
+   STO(password_show_last);
+   STO(password_show_last_timeout);
+   STO(week_start);
+   STO(weekend_start);
+   STO(weekend_len);
+   STO(year_min);
+   STO(year_max);
+#undef STO
+
    is_mirrored = _elm_config->is_mirrored;
    translate = _elm_config->translate;
 
    _config_free(_elm_config);
    _elm_config = NULL;
+
    _config_load();
 
    /* restore prev value which is not part of the EET file */
@@ -4026,11 +4054,34 @@ _elm_config_reload(void)
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
-   _elm_rescale();
+#define CMP(x) (p##x != _elm_config->x)
+   if (
+          CMP(scale)
+       || CMP(finger_size)
+       || CMP(icon_size)
+       || CMP(password_show_last)
+       || CMP(password_show_last_timeout)
+       || CMP(week_start)
+       || CMP(weekend_start)
+       || CMP(weekend_len)
+       || CMP(year_min)
+       || CMP(year_max)
+       // these are string ptr compares but this is right because they are
+       // stringshare strings and thus an identical string has the same
+       // exact pointer guaranteed
+       || CMP(theme)
+       || CMP(modules)
+       || CMP(icon_theme)
+      )
+     _elm_rescale();
+#undef CMP
    _elm_recache();
    _elm_clouseau_reload();
    _elm_config_key_binding_hash();
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
+   if (ptheme) eina_stringshare_del(ptheme);
+   if (pmodules) eina_stringshare_del(pmodules);
+   if (picon_theme) eina_stringshare_del(picon_theme);
 }
 
 void
