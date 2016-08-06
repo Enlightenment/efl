@@ -338,7 +338,10 @@ main(int argc, char **argv)
    if (tmpdir)
      {
         if (generated) unlink(generated);
-        rmdir(tmpdir);
+        if (rmdir(tmpdir) < 0)
+          {
+             D("Failed to delete tmpdir %s\n", tmpdir);
+          }
 
         eina_tmpstr_del(tmpdir);
         eina_tmpstr_del(generated);
