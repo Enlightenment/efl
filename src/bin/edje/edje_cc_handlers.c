@@ -2048,6 +2048,7 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
    ep->tone_name = STRDUP(ep2->tone_name);
    ep->duration = ep2->duration;
    ep->speed = ep2->speed;
+   ep->channel = ep2->channel;
 
    EINA_LIST_FOREACH(ep2->targets, l, et2)
      {
