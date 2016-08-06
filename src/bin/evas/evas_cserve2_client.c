@@ -435,6 +435,11 @@ int main(void)
 
         if ((t=recv(s, &size, sizeof(size), MSG_DONTWAIT)) > 0)
           {
+             if (size < 0)
+               {
+                  printf("got a message claiming < 0 size payload!\n");
+                  continue;
+               }
              len = recv(s, msgbuf, size, 0);
              printf("size of received message: %d\n", len);
              if (len != size)
