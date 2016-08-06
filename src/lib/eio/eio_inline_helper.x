@@ -2,7 +2,7 @@
  * Copyright (C) 2010 Enlightenment Developers:
  *           Cedric Bail <cedric.bail@free.fr>
  *           Vincent "caro" Torri  <vtorri at univ-evry dot fr>
- *	     Stephen "okra" Houston <unixtitan@gmail.com>
+ *	     Stephen "okra" Houston <smhouston88@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
