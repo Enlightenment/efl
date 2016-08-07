@@ -256,7 +256,13 @@ struct visitor_generate
         , {"promise", nullptr, nullptr, [&]
            {
              return replace_outer
-             (complex, regular_type_def{" ::efl::eina::future", complex.outer.base_qualifier, {}});
+             (complex, regular_type_def{" ::efl::promise", complex.outer.base_qualifier, {}});
+           }           
+          }
+        , {"future", nullptr, nullptr, [&]
+           {
+             return replace_outer
+             (complex, regular_type_def{" ::efl::shared_future", complex.outer.base_qualifier, {}});
            }           
           }
         , {"iterator", nullptr, nullptr, [&]
