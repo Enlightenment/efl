@@ -353,14 +353,13 @@ evas_common_font_query_size(RGBA_Font *fn, const Evas_Text_Props *text_props, in
              Evas_Coord cur_w = 0;
              if (text_props->len > 1)
                {
-                  cur_w = last_glyph[-1].pen_after;
+                  cur_w = glyph[-1].pen_after;
                   if (text_props->start > 0)
                      cur_w -= first_glyph[-1].pen_after;
                }
-             cur_w += last_glyph->width + last_glyph->x_bear;
+             cur_w += glyph->width + glyph->x_bear;
 #ifdef OT_SUPPORT
-             cur_w += EVAS_FONT_ROUND_26_6_TO_INT(EVAS_FONT_OT_X_OFF_GET(
-                      text_props->info->ot[text_props->start + text_props->len - 1]));
+             cur_w += EVAS_FONT_ROUND_26_6_TO_INT(EVAS_FONT_OT_X_OFF_GET(*ot));
 
              cur_cluster = ot->source_cluster;
              ot--;
