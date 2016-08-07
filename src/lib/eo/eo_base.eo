@@ -442,7 +442,7 @@ abstract Eo.Base ()
       future_link {
            [[Track a future life cycle and cancel it if the object die]]
            params {
-                @in link: future<void_ptr>; [[The future to link with the object]]
+                @in link: future<void>; [[The future to link with the object]]
            }
            return: bool; [[$true if it succeeded on setting up the tracking.]]
       }
