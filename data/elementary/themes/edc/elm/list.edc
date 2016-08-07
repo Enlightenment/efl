@@ -116,7 +116,6 @@
 group { name: "elm/list/item/default";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
-   alias: "elm/list/item_odd/default";
    images.image: "bevel_curved_horiz_out.png" COMP;
    images.image: "shadow_rounded_horiz.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
@@ -137,20 +136,16 @@ group { name: "elm/list/item/default";
             color: 64 64 64 255;
             color_class: "list_item_base";
          }
-#if 0
          description { state: "odd" 0.0;
             color: 56 56 56 255;
             color_class: "list_item_base_odd";
          }
-#endif
       }
-#if 0
       program {
          signal: "elm,state,odd"; source: "elm";
          action: STATE_SET "odd" 1.0;
          target: "base";
       }
-#endif
       program {
          signal: "elm,state,even"; source: "elm";
          action: STATE_SET "default" 0.0;
@@ -406,9 +401,9 @@ group { name: "elm/list/item/default";
       }
    }
 }
-//ODD("elm/list/item_odd/default", "elm/list/item/default")
+ODD("elm/list/item_odd/default", "elm/list/item/default")
 COMPRESS("elm/list/item_compress/default", "elm/list/item/default")
-COMPRESS("elm/list/item_compress_odd/default", "elm/list/item/default")
+COMPRESS_ODD("elm/list/item_compress_odd/default", "elm/list/item/default")
 
 // XXX: DO:
 // elm/list/h_item/default
@@ -432,7 +427,6 @@ COMPRESS("elm/list/item_compress_odd/default", "elm/list/item/default")
 group { name: "elm/list/h_item/default";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
-   alias: "elm/list/h_item_odd/default";
    images.image: "bevel_curved_vert_out.png" COMP;
    images.image: "shadow_rounded_vert.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
@@ -453,20 +447,16 @@ group { name: "elm/list/h_item/default";
             color: 64 64 64 255;
             color_class: "list_item_base";
          }
-#if 0
          description { state: "odd" 0.0;
             color: 56 56 56 255;
             color_class: "list_item_base_odd";
          }
-#endif
       }
-#if 0
       program {
          signal: "elm,state,odd"; source: "elm";
          action: STATE_SET "odd" 1.0;
          target: "base";
       }
-#endif
       program {
          signal: "elm,state,even"; source: "elm";
          action: STATE_SET "default" 0.0;
@@ -722,9 +712,9 @@ group { name: "elm/list/h_item/default";
       }
    }
 }
-//ODD("elm/list/h_item_odd/default", "elm/list/h_item/default")
+ODD("elm/list/h_item_odd/default", "elm/list/h_item/default")
 COMPRESS("elm/list/h_item_compress/default", "elm/list/h_item/default")
-COMPRESS("elm/list/h_item_compress_odd/default", "elm/list/h_item/default")
+COMPRESS_ODD("elm/list/h_item_compress_odd/default", "elm/list/h_item/default")
 
 #undef ODD
 #undef COMPRESS

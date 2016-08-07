@@ -1,7 +1,5 @@
 group { name: "e/fileman/default/list/variable";
    alias: "e/fileman/default/list/fixed";
-   alias: "e/fileman/default/list_odd/variable";
-   alias: "e/fileman/default/list_odd/fixed";
 //   data.item: "stacking" "above";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
@@ -408,7 +406,6 @@ group { name: "e/fileman/default/list/variable";
    }
 }
 
-#if 0
 group { name: "e/fileman/default/list_odd/variable";
    inherit: "e/fileman/default/list/variable";
    alias: "e/fileman/default/list_odd/fixed";
@@ -420,7 +417,6 @@ group { name: "e/fileman/default/list_odd/variable";
       }
    }
 }
-#endif
 
 group { name: "e/fileman/desktop/list/fixed";
    alias: "e/fileman/desktop/list/variable";

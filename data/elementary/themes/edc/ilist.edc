@@ -60,7 +60,6 @@ group { name: "e/ilist";
 }
 
 group { name: "e/widgets/ilist";
-   alias: "e/widgets/ilist";
 //   data.item: "stacking" "above";
    data.item: "stacking" "below";
    data.item: "selectraise" "on";
@@ -288,7 +287,6 @@ group { name: "e/widgets/ilist";
    }
 }
 
-#if 0
 group { name: "e/widgets/ilist_odd";
    inherit: "e/widgets/ilist";
    parts {
@@ -311,7 +309,6 @@ group { name: "e/widgets/ilist_odd";
       }
    }
 }
-#endif
 
 group { name: "e/widgets/ilist_header";
    alias: "e/widgets/ilist_header_odd";
