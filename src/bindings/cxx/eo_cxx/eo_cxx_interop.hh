@@ -55,14 +55,14 @@ struct out_traits<eina::optional<T&>> { typedef eina::optional<T&> type; };
 template <>
 struct out_traits<void*> { typedef void*& type; };
 template <typename T>
-struct out_traits<efl::eina::future<T>> { typedef efl::eina::future<T>& type; };
+struct out_traits<efl::shared_future<T>> { typedef efl::shared_future<T>& type; };
 
 template <typename T>
 struct inout_traits { typedef T& type; };
 template <>
 struct inout_traits<void> { typedef void* type; };
 template <typename T>
-struct inout_traits<efl::eina::future<T>> { typedef efl::eina::future<T>& type; };
+struct inout_traits<efl::shared_future<T>> { typedef efl::shared_future<T>& type; };
 
 template <typename T>
 struct return_traits { typedef T type; };
@@ -126,7 +126,11 @@ void assign_out_impl(T& lhs, Eo const* rhs, tag<T&, Eo const*>
   lhs._reset(const_cast<Eo*>(rhs));
 }
 template <typename T>
-void assign_out_impl(efl::eina::future<T>& /*v*/, Eina_Promise*, tag<efl::eina::future<T>&, Eina_Promise*>)
+void assign_out_impl(efl::promise<T>& /*v*/, Eina_Promise*, tag<efl::promise<T>&, Eina_Promise*>)
+{
+}
+template <typename T>
+void assign_out_impl(efl::shared_future<T>& /*v*/, Efl_Future*, tag<efl::shared_future<T>&, Efl_Future*>)
 {
 }
 template <typename Tag>
@@ -257,7 +261,12 @@ Eo const* convert_inout_impl(T v, tag<T, Eo const*>
   return v._eo_ptr();
 }
 template <typename T>
-Eina_Promise* convert_inout_impl(efl::eina::future<T>& /*v*/, tag<efl::eina::future<T>, Eina_Promise*>)
+Eina_Promise* convert_inout_impl(efl::promise<T>& /*v*/, tag<efl::promise<T>, Eina_Promise*>)
+{
+  return nullptr;
+}
+template <typename T>
+Efl_Future* convert_inout_impl(efl::shared_future<T>& /*v*/, tag<efl::shared_future<T>, Efl_Future*>)
 {
   return nullptr;
 }
@@ -511,7 +520,12 @@ inline const char* convert_to_c_impl(efl::eina::stringshare x, tag<const char*, 
    return eina_stringshare_ref(x.c_str());
 }
 template <typename T>
-Eina_Promise* convert_to_c_impl(efl::eina::future<T> const&, tag<Eina_Promise*, efl::eina::future<T>const&>)
+Eina_Promise* convert_to_c_impl(efl::promise<T> const&, tag<Eina_Promise*, efl::promise<T>const&>)
+{
+  std::abort();
+}
+template <typename T>
+Efl_Future* convert_to_c_impl(efl::shared_future<T> const&, tag<Efl_Future*, efl::shared_future<T>const&>)
 {
   std::abort();
 }
@@ -653,11 +667,13 @@ eina::accessor<T> convert_to_return(Eina_Accessor* value, tag<Eina_Accessor*, ei
   return eina::accessor<T>{ value };
 }
 template <typename T>
-struct is_future : std::false_type {};
+efl::promise<T> convert_to_return(Eina_Promise* /*value*/, tag<Eina_Promise*, efl::promise<T>>)
+{
+  std::abort();
+  return {};
+}
 template <typename T>
-struct is_future<efl::eina::future<T>> : std::true_type {};
-template <typename T>
-T convert_to_return(Eina_Promise* /*value*/, tag<Eina_Promise*, T>, typename std::enable_if<is_future<T>::value>::type* = 0)
+efl::shared_future<T> convert_to_return(Efl_Future* /*value*/, tag<Efl_Future*, efl::shared_future<T>>)
 {
   std::abort();
   return {};

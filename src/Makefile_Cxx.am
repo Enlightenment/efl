@@ -13,6 +13,7 @@ bindings/cxx/eo_cxx/Eo.hh \
 bindings/cxx/eo_cxx/eo_init.hh \
 bindings/cxx/eo_cxx/eo_ops.hh \
 bindings/cxx/eo_cxx/eo_wref.hh \
+bindings/cxx/eo_cxx/eo_promise.hh \
 bindings/cxx/eo_cxx/eo_private.hh
 
 ### Elementary C++
@@ -120,7 +121,8 @@ CLEANFILES += $(edje_eolian_cxx_hh) $(edje_eolian_cxx_impl) lib/edje/Edje.hh
 ### Ecore src/lib/ecore
 installed_ecorecxxheadersdir = $(includedir)/ecore-cxx-@VMAJ@
 dist_installed_ecorecxxheaders_DATA = \
-bindings/cxx/ecore_cxx/Ecore.hh
+bindings/cxx/ecore_cxx/Ecore.hh \
+bindings/cxx/ecore_cxx/Ecore_Manual.hh
 nodist_installed_ecorecxxheaders_DATA = $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl) \
 lib/ecore/Ecore.eo.hh
 
@@ -168,6 +170,7 @@ bindings/cxx/eina_cxx/eina_tuple_unwrap.hh \
 bindings/cxx/eina_cxx/eina_type_traits.hh \
 bindings/cxx/eina_cxx/eina_value.hh \
 bindings/cxx/eina_cxx/eina_workarounds.hh \
+bindings/cxx/eina_cxx/eina_copy_traits.hh \
 bindings/cxx/eina_cxx/Eina.hh
 
 ### Eio
@@ -186,9 +189,9 @@ CLEANFILES += $(eio_eolian_cxx_hh) $(eio_eolian_cxx_impl) lib/eio/Eio.hh
 
 if EFL_ENABLE_TESTS
 
-### Tests for Eina
-check_PROGRAMS += tests/eina_cxx/eina_cxx_suite
-TESTS += tests/eina_cxx/eina_cxx_suite
+### Tests for Eina and Eo
+check_PROGRAMS += tests/eina_cxx/eina_cxx_suite tests/eo_cxx/eo_cxx_suite
+TESTS += tests/eina_cxx/eina_cxx_suite tests/eo_cxx/eo_cxx_suite
 
 tests_eina_cxx_eina_cxx_suite_SOURCES = \
 tests/eina_cxx/eina_cxx_suite.cc \
@@ -232,10 +235,33 @@ tests_eina_cxx_eina_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@ \
 @ECORE_CFLAGS@ \
+@ECORE_CXX_CFLAGS@ \
 @EO_CXX_CFLAGS@ \
 @EINA_CXX_CFLAGS@
 tests_eina_cxx_eina_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@
 tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
+
+tests_eo_cxx_eo_cxx_suite_SOURCES = \
+tests/eo_cxx/eo_cxx_suite.cc \
+tests/eo_cxx/eo_cxx_test_promise.cc
+
+tests_eo_cxx_eo_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eo_cxx\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eo_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eo_cxx\" \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl/interfaces \
+-I$(top_srcdir)/src/bin/eina_cxx \
+-I$(top_builddir)/src/tests/eina_cxx \
+@CHECK_CFLAGS@ \
+@EO_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@ECORE_CXX_CFLAGS@ \
+@EO_CXX_CFLAGS@ \
+@EINA_CXX_CFLAGS@
+tests_eo_cxx_eo_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@ @USE_ECORE_LIBS@
+tests_eo_cxx_eo_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@
 
 ### Tests for ecore
 
