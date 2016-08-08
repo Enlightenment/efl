@@ -594,11 +594,20 @@ EAPI Eina_Bool
 elm_need_efreet(void)
 {
    if (_elm_need_efreet) return EINA_TRUE;
+   if (!efreet_init()) return EINA_FALSE;
+   if (!efreet_mime_init())
+     {
+        efreet_shutdown();
+        return EINA_FALSE;
+     }
+   if (!efreet_trash_init())
+     {
+        efreet_mime_shutdown();
+        efreet_shutdown();
+        return EINA_FALSE;
+     }
    _elm_need_efreet = EINA_TRUE;
-   efreet_init();
-   efreet_mime_init();
-   efreet_trash_init();
-    /*
+   /*
      {
         Eina_List **list;
 
@@ -611,7 +620,7 @@ elm_need_efreet(void)
              *list = eina_list_prepend(*list, (void *)eina_stringshare_add(buf));
           }
      }
-   */
+    */
    return EINA_TRUE;
 }
 
