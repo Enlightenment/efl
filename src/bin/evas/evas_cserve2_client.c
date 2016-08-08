@@ -438,7 +438,7 @@ int main(void)
              if (size < 0)
                {
                   printf("got a message claiming < 0 size payload!\n");
-                  continue;
+                  exit(-1);
                }
              len = recv(s, msgbuf, size, 0);
              printf("size of received message: %d\n", len);
