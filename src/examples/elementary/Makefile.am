@@ -362,10 +362,7 @@ transit_example_04 \
 web_example_01 \
 web_example_02 \
 win_example \
-track_example_01 
-#benchmark3d \
-sphere-hunter \
-evas3d_scene_on_button_example \
+track_example_01 \
 evas3d_object_on_button_example \
 evas3d_map_example \
 efl_thread_1 \
@@ -373,7 +370,10 @@ efl_thread_2 \
 efl_thread_3 \
 efl_thread_4 \
 efl_thread_5 \
-efl_thread_6 
+efl_thread_6
+#evas3d_scene_on_button_example
+#benchmark3d
+#sphere-hunter
 
 # benchmark3d_SOURCES = \
 	performance/performance.c \
