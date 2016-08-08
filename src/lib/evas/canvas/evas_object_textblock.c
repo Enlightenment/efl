@@ -5245,10 +5245,11 @@ _layout_par(Ctxt *c)
       Currently, we assume that ellipsis is at the beginning of the
       paragraph. This is a safe assumption for now, as other usages
       seem a bit unnatural.*/
+   // FIXME: revisit this for multi-line.
      {
         double ellip;
         ellip = it->format->ellipsis;
-        if ((0 <= ellip) && (ellip < 1.0))
+        if ((0 <= ellip) && (ellip < 1.0) && c->line_no == 0)
            _layout_par_ellipsis_items(c, ellip);
      }
 
