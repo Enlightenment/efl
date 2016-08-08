@@ -167,7 +167,7 @@ collections {
                get_state(PART:"elm.text", st, 30, vl);
                if (!strcmp(st, "visible"))
                  set_state(PART:"elm.text", "disabled_visible", 0.0);
-               else
+               else if (!strcmp(st, "default"))
                  set_state(PART:"elm.text", "disabled", 0.0);
             }
          }
@@ -185,7 +185,7 @@ collections {
                get_state(PART:"elm.text", st, 30, vl);
                if (!strcmp(st, "disabled_visible"))
                  set_state(PART:"elm.text", "visible", 0.0);
-               else
+               else if (!strcmp(st, "disabled"))
                  set_state(PART:"elm.text", "default", 0.0);
             }
          }
