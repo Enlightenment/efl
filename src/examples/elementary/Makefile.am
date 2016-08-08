@@ -77,7 +77,6 @@ calendar_example_05.c \
 calendar_example_06.c \
 check_example_01.c \
 clock_example.c \
-codegen_example.edc \
 colorselector_example_01.c \
 conformant_example_01.c \
 conformant_example_02.c \
@@ -112,7 +111,6 @@ index_example_01.c \
 index_example_02.c \
 inwin_example.c \
 label_example_01.c \
-layout_example.edc \
 layout_example_01.c \
 layout_example_02.c \
 layout_example_03.c \
@@ -147,7 +145,6 @@ spinner_example.c \
 scroller_example_01.c \
 table_example_01.c \
 table_example_02.c \
-theme_example.edc \
 theme_example_01.c \
 theme_example_02.c \
 thumb_example_01.c \
@@ -162,10 +159,7 @@ web_example_01.c \
 web_example_02.c \
 win_example.c \
 track_example_01.c \
-twitter_example_01.edc
-# evas3d_scene_on_button_example.c \
 evas3d_object_on_button_example.c \
-evas3d_map_example.edc \
 evas3d_map_example.c \
 efl_thread_1.c \
 efl_thread_2.c \
@@ -177,6 +171,7 @@ efl_thread_win32_1.c \
 efl_thread_win32_2.c \
 efl_thread_win32_3.c \
 efl_thread_win32_4.c 
+# evas3d_scene_on_button_example.c
 
 if HAVE_CXX11
 SRCS += \
@@ -214,6 +209,15 @@ button_cxx_example_01.cc \
 box_cxx_example_02.cc \
 bg_cxx_example_02.cc \
 bg_cxx_example_01.cc 
+
+EDCS = \
+twitter_example_01.edc \
+evas3d_map_example.edc \
+theme_example.edc \
+layout_example.edc \
+codegen_example.edc
+
+EDJS = $(EDCS:%.edc=%.edj)
 
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
@@ -624,7 +628,7 @@ screenshots: examples
 EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc twitter_example_01.edc performance/layout.edc performance/background.png performance/target_texture.png sphere_hunter/sphere_hunter.edc sphere_hunter/score.jpg sphere_hunter/EFL_victory.png sphere_hunter/EFL_defeat.png codegen_example_generated.c codegen_example_generated.h codegen_example.edj prefs_example_01.epc prefs_example_02.epc prefs_example_03.epc prefs_example_03.edc
 
 
-examples: $(examples_PROGRAMS)
+examples: $(examples_PROGRAMS) $(EDJS)
 
 install-examples:
 	$(MKDIR_P) $(DESTDIR)$(datadir)/elementary/examples
