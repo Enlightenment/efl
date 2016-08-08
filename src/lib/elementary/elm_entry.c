@@ -3631,6 +3631,8 @@ _entry_on_size_evaluate_signal(void *data,
                                const char *emission EINA_UNUSED,
                                const char *source EINA_UNUSED)
 {
+   ELM_ENTRY_DATA_GET(data, sd);
+   sd->cur_changed = EINA_TRUE;
    elm_entry_calc_force(data);
 }
 
