@@ -1142,7 +1142,11 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                        break;
                     }
                   an->sel = eina_list_append(an->sel, sel);
-
+                  if (!an->sel)
+                    {
+                       ERR("Running very low on memory");
+                       break;
+                    }
                   if (ed->item_provider.func)
                     {
                        ob = _item_obj_get(an, o, smart, clip);
