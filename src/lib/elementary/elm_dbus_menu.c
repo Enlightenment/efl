@@ -401,8 +401,9 @@ _event_handle(Elm_DBus_Menu *dbus_menu, Eldbus_Message_Iter *iter, int *error_id
    Eldbus_Message_Iter *data;
    unsigned *timestamp;
 
-   eldbus_message_iter_arguments_get(iter, "isvu", &id, &event, &data,
-                                    &timestamp);
+   if (!eldbus_message_iter_arguments_get(iter, "isvu", &id, &event, &data,
+                                          &timestamp))
+     return EINA_FALSE;
    i = id;
    item = eina_hash_find(dbus_menu->elements, &i);
    if (!item)
