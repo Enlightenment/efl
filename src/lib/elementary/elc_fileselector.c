@@ -467,7 +467,8 @@ _filter_child(Elm_Fileselector_Data* sd,
    //Search entry filter
    if ((sd->search_string) && (sd->search_string[0] != '\0'))
      {
-        strcpy(temp_path, path);
+        strncpy(temp_path, path, sizeof(temp_path) - 1);
+        temp_path[sizeof(temp_path) - 1] = 0;
         pch = strchr(temp_path, '/');
         while (pch != NULL)
           {
