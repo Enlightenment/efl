@@ -370,7 +370,11 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
    if (name)
      {
         m = _find_mod(name);
-        if (m) eina_module_load(m);
+        if (m)
+          {
+             if (!eina_module_load(m))
+               ERR("Cannot load module %s", eina_module_file_get(m));
+          }
      }
 
    if (!_emotion_engine_registry)
@@ -380,7 +384,8 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
         if (!m) m = _find_mod("gstreamer");
         if (!m) m = _find_mod("gstreamer1");
         if (!m) m = _find_mod("libvlc");
-        if (m) eina_module_load(m);
+        if (!eina_module_load(m))
+          ERR("Cannot load module %s", eina_module_file_get(m));
      }
 
    if (name)
