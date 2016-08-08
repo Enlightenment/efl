@@ -74,6 +74,8 @@ typedef struct _Eina_Safepointer Eina_Safepointer;
  *
  * @note The returned pointer can be used like a pointer, but can not
  * be touched except with Eina_Safepointer functions.
+ *
+ * @since 1.18
  */
 EAPI const Eina_Safepointer *eina_safepointer_register(const void *target);
 
@@ -83,6 +85,8 @@ EAPI const Eina_Safepointer *eina_safepointer_register(const void *target);
  * @param safe The index to unregister from the mapping.
  *
  * @note This function will ignore the lower 2 bits of the given pointer.
+ *
+ * @since 1.18
  */
 EAPI void  eina_safepointer_unregister(const Eina_Safepointer *safe);
 
