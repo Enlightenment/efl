@@ -2366,7 +2366,7 @@ static void *
 eng_image_native_set(void *data, void *image, void *native)
 {
   Render_Engine *re = (Render_Engine *)data;
-  Evas_Native_Surface *ns = native;
+  const Evas_Native_Surface *ns = native;
   Evas_GL_Image *im = image, *im2 = NULL;
   Visual *vis = NULL;
   Pixmap pm = 0;
