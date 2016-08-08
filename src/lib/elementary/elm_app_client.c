@@ -21,15 +21,17 @@ _sub_path_process(Elm_App_Client *eo, Eldbus_Message_Iter *obj_iter, Elm_App_Cli
    const char *obj_path;
    Eldbus_Message_Iter *array_iface, *iface;
 
-   eldbus_message_iter_arguments_get(obj_iter, "oa{sa{sv}}", &obj_path, &array_iface);
+   if (!eldbus_message_iter_arguments_get(obj_iter, "oa{sa{sv}}", &obj_path, &array_iface))
+     return;
    while (eldbus_message_iter_get_and_next(array_iface, '{', &iface))
      {
         const char *iface_name;
         Eldbus_Message_Iter *array_props;
         Elm_App_Client_View *view;
 
-        eldbus_message_iter_arguments_get(iface, "sa{sv}", &iface_name,
-                                          &array_props);
+        if (!eldbus_message_iter_arguments_get(iface, "sa{sv}", &iface_name,
+                                               &array_props))
+          continue;
         if (strcmp(iface_name, "org.enlightenment.ApplicationView1"))
           continue;
 
