@@ -48,7 +48,14 @@ _efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
         struct stat st;
 
         snprintf(bufhome, sizeof(bufhome), "/tmp/%i", (int)uid);
-        mkdir(bufhome,  S_IRUSR | S_IWUSR | S_IXUSR);
+        if (mkdir(bufhome,  S_IRUSR | S_IWUSR | S_IXUSR) < 0)
+          {
+             if (errno != EEXIST)
+               {
+                  if (stat("/tmp", &st) == 0) home = "/tmp";
+                  else home = "/";
+               }
+          }
         if (stat(bufhome, &st) == 0) home = bufhome;
         else
           {
