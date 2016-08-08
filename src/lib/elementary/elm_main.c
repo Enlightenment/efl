@@ -677,7 +677,8 @@ elm_quicklaunch_init(int    argc,
    if (!ELM_EVENT_PROCESS_FOREGROUND)
      ELM_EVENT_PROCESS_FOREGROUND = ecore_event_type_new();
 
-   ecore_file_init();
+   if (!ecore_file_init())
+     ERR("Elementary cannot init ecore_file");
    eio_init();
 
    _elm_exit_handler =
