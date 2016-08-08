@@ -3112,11 +3112,22 @@ void
 _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
 {
    Entry *en;
+   const char *ptext;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
+   ptext = evas_object_textblock_text_markup_get(rp->object);
+   // some simple "do nothing if the text is the same" logic
+   if (ptext == text) return;
+   // if prev and cur is empty
+   if (!ptext) ptext = "";
+   if (!text) text = "";
+   if ((!ptext[0]) && (!text[0])) return;
+   // same content
+   if (!strcmp(ptext, text)) return;
+
    _edje_entry_imf_context_reset(rp);
    // set text as markup
    _sel_clear(en->ed, en->cursor, rp->object, en);
