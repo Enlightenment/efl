@@ -3,14 +3,16 @@
  */
 #include <Elementary.h>
 
+char edj_path[PATH_MAX];
+
 static void
 _btn_clicked_cb(void *data, Evas_Object *obj, void *ev)
 {
    static int loaded = 1;
    if (loaded)
-     elm_theme_overlay_del(NULL, "./theme_example.edj");
+     elm_theme_overlay_del(NULL, edj_path);
    else
-     elm_theme_overlay_add(NULL, "./theme_example.edj");
+     elm_theme_overlay_add(NULL, edj_path);
    loaded = 1 - loaded;
 }
 
@@ -21,7 +23,20 @@ elm_main(int argc, char *argv[])
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   elm_theme_overlay_add(NULL, "./theme_example.edj");
+#ifdef PACKAGE_DATA_DIR
+   elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
+#endif
+   if (ecore_file_exists("./theme_example.edj"))
+     {
+        strcpy(edj_path, "./theme_example.edj");
+     }
+   else
+     {
+        elm_app_info_set(elm_main, "elementary", "examples/theme_example.edj");
+        snprintf(edj_path, sizeof(edj_path), "%s/examples/theme_example.edj",
+                 elm_app_data_dir_get());
+     }
+   elm_theme_overlay_add(NULL, edj_path);
 
    win = elm_win_util_standard_add("theme", "Theme example");
    elm_win_autodel_set(win, EINA_TRUE);
