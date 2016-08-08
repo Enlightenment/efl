@@ -567,7 +567,10 @@ EAPI void eina_module_list_load(Eina_Array *array)
    EINA_SAFETY_ON_NULL_RETURN(array);
    DBG("array %p, count %u", array, array->count);
    EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
-     eina_module_load(m);
+     {
+        if (!eina_module_load(m))
+          DBG("Cannot load module %s", m->file);
+     }
 }
 
 EAPI void eina_module_list_unload(Eina_Array *array)
