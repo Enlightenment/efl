@@ -499,28 +499,33 @@ _elua_module_system_init(lua_State *L)
    const char       *modpath  = es->moddir;
    const char       *appspath = es->appsdir;
    Eina_Stringshare *data     = NULL;
-   int n = 4;
    if (!corepath || !modpath || !appspath)
      return 0;
    lua_pushvalue(L, 1);
    es->requireref = luaL_ref(L, LUA_REGISTRYINDEX);
    lua_pushvalue(L, 2);
    es->apploadref = luaL_ref(L, LUA_REGISTRYINDEX);
-   lua_pushfstring(L, "%s/?.lua;", corepath);
+
+   /* module path, local directories take priority */
+   int n = 0;
+   lua_pushvalue(L, 3); ++n;
+   lua_pushfstring(L, ";%s/?.lua", corepath); ++n;
    EINA_LIST_FREE(es->lincs, data)
      {
-        lua_pushfstring(L, "%s/?.lua;", data);
+        lua_pushfstring(L, ";%s/?.lua", data);
         eina_stringshare_del(data);
         ++n;
      }
-   lua_pushfstring(L, "%s/?.eo.lua;", modpath);
-   lua_pushfstring(L, "%s/?.lua;", modpath);
-   lua_pushfstring(L, "%s/?.lua;", appspath);
-   lua_pushvalue(L, 3);
-   lua_concat(L, n + 1);
-   lua_pushfstring(L, "%s/?.lua;", appspath);
+   lua_pushfstring(L, ";%s/?.eo.lua", modpath); ++n;
+   lua_pushfstring(L, ";%s/?.lua", modpath); ++n;
+   lua_pushfstring(L, ";%s/?.lua", appspath); ++n;
+   lua_concat(L, n);
+
+   /* apps path, local directory takes priority as well */
    lua_pushvalue(L, 4);
+   lua_pushfstring(L, ";%s/?.lua", appspath);
    lua_concat(L, 2);
+
    return 2;
 }
 
