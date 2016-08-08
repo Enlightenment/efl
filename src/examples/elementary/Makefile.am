@@ -160,6 +160,7 @@ web_example_02.c \
 win_example.c \
 track_example_01.c \
 evas3d_object_on_button_example.c \
+evas3d_scene_on_button_example.c \
 evas3d_map_example.c \
 efl_thread_1.c \
 efl_thread_2.c \
@@ -171,7 +172,6 @@ efl_thread_win32_1.c \
 efl_thread_win32_2.c \
 efl_thread_win32_3.c \
 efl_thread_win32_4.c 
-# evas3d_scene_on_button_example.c
 
 if HAVE_CXX11
 SRCS += \
@@ -364,6 +364,7 @@ web_example_02 \
 win_example \
 track_example_01 \
 evas3d_object_on_button_example \
+evas3d_scene_on_button_example \
 evas3d_map_example \
 efl_thread_1 \
 efl_thread_2 \
@@ -371,7 +372,6 @@ efl_thread_3 \
 efl_thread_4 \
 efl_thread_5 \
 efl_thread_6
-#evas3d_scene_on_button_example
 #benchmark3d
 #sphere-hunter
 
