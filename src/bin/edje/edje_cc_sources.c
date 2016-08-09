@@ -86,7 +86,6 @@ source_fetch_file(const char *fil, const char *filname)
    while (fgets(buf, sizeof(buf), f))
      {
 	char *p, *pp;
-	int got_hash = 0;
 	int forgetit = 0;
 	int haveinclude = 0;
 	char *file = NULL, *fname = NULL;
@@ -94,17 +93,12 @@ source_fetch_file(const char *fil, const char *filname)
 	p = buf;
 	while ((!forgetit) && (*p))
 	  {
-	     if (!got_hash)
-	       {
-		  if (!isspace(*p))
-		    {
-		       if (*p == '#')
-			 got_hash = 1;
-		       else
-			 forgetit = 1;
-		    }
-		  p++;
-	       }
+             if (!isspace(*p))
+               {
+                  if (*p != '#')
+                    forgetit = 1;
+               }
+             p++;
 
 	     if (!haveinclude)
 	       {
@@ -184,9 +178,7 @@ source_fetch_file(const char *fil, const char *filname)
 		    }
 		  else
 		    p++;
-	       }
-
-	     got_hash = 0;
+               }
 	  }
 	if ((file) && (fname))
           source_fetch_file(file, fname);
