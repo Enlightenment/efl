@@ -624,12 +624,12 @@ EAPI void         elm_config_scroll_thumbscroll_smooth_start_set(Eina_Bool enabl
  *
  * @return State of this option
  * 
- * @see elm_config_scroll_animation_disable_set()
+ * @see elm_config_scroll_animation_disabled_set()
  *
  * @since 1.18
  * @ingroup Elm_Scrolling
  */
-EAPI Eina_Bool    elm_config_scroll_animation_disable_get(void);
+EAPI Eina_Bool    elm_config_scroll_animation_disabled_get(void);
 
 /**
  * Set the value for this option
@@ -639,12 +639,12 @@ EAPI Eina_Bool    elm_config_scroll_animation_disable_get(void);
  * 
  * @param disable The state of this option
  * 
- * @see elm_config_scroll_animation_disable_get()
+ * @see elm_config_scroll_animation_disabled_get()
  *
  * @since 1.18
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_animation_disable_set(Eina_Bool enable);
+EAPI void         elm_config_scroll_animation_disabled_set(Eina_Bool enable);
 
 /**
  * Get the value of this option

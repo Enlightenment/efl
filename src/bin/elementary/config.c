@@ -158,10 +158,10 @@ static void
 scroll_animation_disable_change(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Eina_Bool val = elm_check_state_get(obj);
-   Eina_Bool sb = elm_config_scroll_animation_disable_get();
+   Eina_Bool sb = elm_config_scroll_animation_disabled_get();
 
    if (val == sb) return;
-   elm_config_scroll_animation_disable_set(val);
+   elm_config_scroll_animation_disabled_set(val);
    elm_config_all_flush();
 }
 
@@ -3776,7 +3776,7 @@ _status_config_scrolling(Evas_Object *win,
              "immediately instead of animating",
              scroll_animation_disable_change, NULL);
    evas_object_data_set(win, "scroll_animation_disable", ck);
-   elm_check_state_set(ck, elm_config_scroll_animation_disable_get());
+   elm_check_state_set(ck, elm_config_scroll_animation_disabled_get());
 
    /* Bounce */
    _status_config_scrolling_bounce(win, box);

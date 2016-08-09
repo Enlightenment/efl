@@ -3401,13 +3401,13 @@ elm_config_scroll_thumbscroll_smooth_start_set(Eina_Bool enable)
 }
 
 EAPI Eina_Bool
-elm_config_scroll_animation_disable_get(void)
+elm_config_scroll_animation_disabled_get(void)
 {
    return _elm_config->scroll_animation_disable;
 }
 
 EAPI void
-elm_config_scroll_animation_disable_set(Eina_Bool disable)
+elm_config_scroll_animation_disabled_set(Eina_Bool disable)
 {
    _elm_config->scroll_animation_disable = !!disable;
 }
@@ -4518,7 +4518,7 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
    CONFIG_SETD(scroll_thumbscroll_border_friction);
    CONFIG_SETD(scroll_thumbscroll_sensitivity_friction);
    CONFIG_SETB(scroll_thumbscroll_smooth_start);
-   CONFIG_SETB(scroll_animation_disable);
+   CONFIG_SETB(scroll_animation_disabled);
    CONFIG_SETD(scroll_accel_factor);
    CONFIG_SETD(scroll_thumbscroll_smooth_amount);
    CONFIG_SETD(scroll_thumbscroll_smooth_time_window);
@@ -4650,7 +4650,7 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
    CONFIG_GETD(scroll_thumbscroll_border_friction);
    CONFIG_GETD(scroll_thumbscroll_sensitivity_friction);
    CONFIG_GETB(scroll_thumbscroll_smooth_start);
-   CONFIG_GETB(scroll_animation_disable);
+   CONFIG_GETB(scroll_animation_disabled);
    CONFIG_GETD(scroll_accel_factor);
    CONFIG_GETD(scroll_thumbscroll_smooth_amount);
    CONFIG_GETD(scroll_thumbscroll_smooth_time_window);
