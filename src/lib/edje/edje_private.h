@@ -526,6 +526,10 @@ typedef struct _Edje_Signal_Callback_Custom Edje_Signal_Callback_Custom;
 #define FLAG_Y    0x02
 #define FLAG_XY   (FLAG_X | FLAG_Y)
 
+#define EDJE_DESC_NO_RENDER_IS_SET(d) (((d)->no_render & 0x2) != 0)
+#define EDJE_DESC_NO_RENDER_SET(d, v) do { (d)->no_render = (!!v) | 0x2; } while (0)
+#define EDJE_DESC_NO_RENDER_VALUE(d) (((d)->no_render & 0x1) != 0)
+
 /*----------*/
 
 struct _AABB {
@@ -1309,6 +1313,7 @@ struct _Edje_Part_Description_Common
    Edje_3D_Vec       align_3d;
    unsigned char     visible; /* is it shown */
    unsigned char     limit; /* 0 == no, 1 = width, 2 = height, 3 = both */
+   unsigned char     no_render; /* no_render override @since 1.19 */
 };
 
 struct _Edje_Part_Description_Spec_Fill
@@ -1845,7 +1850,7 @@ struct _Edje_Calc_Params
       Edje_Calc_Params_Type_Common *common;
       Edje_Calc_Params_Type_Text *text;
       Edje_Calc_Params_Type_Node *node;
-   } type; // 4/8 
+   } type; // 4/8
    Edje_Calc_Params_Ext *ext; // 4/8
    struct {
       FLOAT_T       x, y, w, h; // 32
@@ -1858,6 +1863,8 @@ struct _Edje_Calc_Params
    unsigned char    mapped : 1;
    unsigned char    visible : 1;
    unsigned char    smooth : 1; // 1
+   unsigned char    no_render : 1;
+   unsigned char    no_render_apply : 1;
 }; // 77/85(rounded up for alignment: 80/88)
 
 struct _Edje_Real_Part_Set

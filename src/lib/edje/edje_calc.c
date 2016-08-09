@@ -2821,6 +2821,18 @@ _edje_part_recalc_single(Edje *ed,
    /* visible */
    params->visible = desc->visible;
 
+   /* no_render override */
+   if (EDJE_DESC_NO_RENDER_IS_SET(desc))
+     {
+        params->no_render = EDJE_DESC_NO_RENDER_VALUE(desc);
+        params->no_render_apply = 1;
+     }
+   else
+     {
+        params->no_render = ep->part->no_render;
+        params->no_render_apply = 0;
+     }
+
    /* clip override */
    if (clip_to)
      {
@@ -4436,6 +4448,24 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                }
           }
 
+        /* and no_render as well */
+        if ((p1->no_render) && (!p2->no_render))
+          {
+             p3->no_render = (pos == FROM_INT(1));
+             p3->no_render_apply = 1;
+          }
+        else if ((!p1->no_render) && (p2->no_render))
+          {
+             p3->no_render = (pos == ZERO);
+             p3->no_render_apply = 1;
+          }
+        else if (p1->no_render != ep->part->no_render)
+          {
+             p3->no_render = p1->no_render;
+             p3->no_render_apply = 1;
+          }
+        else p3->no_render = ep->part->no_render;
+
         p3->smooth = (beginning_pos) ? p1->smooth : p2->smooth;
 
         /* FIXME: do x and y separately base on flag */
@@ -4813,6 +4843,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                        break;
                     }
                   evas_object_show(ep->object);
+                  if (pf->no_render_apply)
+                    efl_canvas_object_no_render_set(ep->object, pf->no_render);
                }
              else if (!pf->visible)
                {
@@ -4830,8 +4862,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   break;
                }
              evas_object_show(ep->object);
-
+             if (pf->no_render_apply)
+               efl_canvas_object_no_render_set(ep->object, pf->no_render);
 #endif
+
            /* move and resize are needed for all previous object => no break here. */
            case EDJE_PART_TYPE_SWALLOW:
            case EDJE_PART_TYPE_GROUP:

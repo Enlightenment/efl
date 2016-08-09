@@ -340,6 +340,7 @@ static void st_collections_group_parts_part_description_link_base(void);
 static void st_collections_group_parts_part_description_source(void);
 static void st_collections_group_parts_part_description_state(void);
 static void st_collections_group_parts_part_description_visible(void);
+static void st_collections_group_parts_part_description_no_render(void);
 static void st_collections_group_parts_part_description_limit(void);
 static void st_collections_group_parts_part_description_align(void);
 static void st_collections_group_parts_part_description_fixed(void);
@@ -830,6 +831,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
      {"collections.group.parts.part.description.limit", st_collections_group_parts_part_description_limit},
+     {"collections.group.parts.part.description.no_render", st_collections_group_parts_part_description_no_render},
      {"collections.group.parts.part.description.align", st_collections_group_parts_part_description_align},
      {"collections.group.parts.part.description.fixed", st_collections_group_parts_part_description_fixed},
      {"collections.group.parts.part.description.min", st_collections_group_parts_part_description_min},
@@ -7862,6 +7864,7 @@ _copied_map_colors_get(Edje_Part_Description_Common *parent)
             step: 0 0;
             aspect: 1 1;
             clip_to: "clip_override_part_name";
+            no_render: 0;
 
             rel1 {
                 ..
@@ -7917,6 +7920,7 @@ ob_collections_group_parts_part_description(void)
 
    ed->visible = 1;
    ed->limit = 0;
+   ed->no_render = 0;
    ed->align.x = FROM_DOUBLE(0.5);
    ed->align.y = FROM_DOUBLE(0.5);
    ed->min.w = 0;
@@ -8472,6 +8476,35 @@ st_collections_group_parts_part_description_hid(void)
      }
 
    current_desc->visible = 0;
+}
+
+/**
+    @page edcref
+    @property
+        visible
+    @parameters
+        [0 or 1]
+    @effect
+        Takes a boolean value specifying whether part is visible (1) or not
+        (0). Non-visible parts do not emit signals. The default value is 1.
+
+    @since 1.19
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_no_render(void)
+{
+   if (current_part->type == EDJE_PART_TYPE_SPACER)
+     {
+       ERR("parse error %s:%i. SPACER part can't be marked as no_render",
+           file_in, line - 1);
+       exit(-1);
+     }
+
+   if (check_range_arg_count(0, 1) == 1)
+     EDJE_DESC_NO_RENDER_SET(current_desc, parse_bool(0));
+   else /* lazEDC form */
+     EDJE_DESC_NO_RENDER_SET(current_desc, 1);
 }
 
 /**

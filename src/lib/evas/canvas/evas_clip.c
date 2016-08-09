@@ -594,6 +594,9 @@ _efl_canvas_object_clipees_has(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Dat
 EOLIAN void
 _efl_canvas_object_no_render_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool enable)
 {
+   enable = !!enable;
+   if (obj->no_render == enable) return;
+
    obj->no_render = enable;
    if (obj->is_smart)
      efl_canvas_group_no_render_set(eo_obj, enable);
