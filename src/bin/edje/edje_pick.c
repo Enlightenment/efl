@@ -1622,7 +1622,7 @@ main(int argc, char **argv)
                   snprintf(buf, sizeof(buf), "edje/sounds/%i",
                            s->id.new_id);
                   eet_write(out_file->ef, buf,
-                            s->data, s->size,EINA_TRUE);
+                            s->data, s->size, EET_COMPRESSION_NONE);
                   VERBOSE(EINA_LOG_INFO("Wrote <%s> sample data <%p> size <%d>\n",
                                  buf, s->data, s->size));
                }
