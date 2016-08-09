@@ -93,10 +93,6 @@ struct _Elm_Layout_Sub_Object_Data
       {
          unsigned short col, row, colspan, rowspan;
       } table;
-      struct
-      {
-         const char *text;
-      } text;
    } p;
 };
 
@@ -233,24 +229,6 @@ _parts_signals_emit(Elm_Layout_Smart_Data *sd)
 }
 
 static void
-_parts_text_fix(Elm_Layout_Smart_Data *sd)
-{
-   const Eina_List *l;
-   Elm_Layout_Sub_Object_Data *sub_d;
-   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
-
-   EINA_LIST_FOREACH(sd->subs, l, sub_d)
-     {
-        if (sub_d->type == TEXT)
-          {
-             edje_object_part_text_escaped_set
-               (wd->resize_obj, sub_d->part,
-               sub_d->p.text.text);
-          }
-     }
-}
-
-static void
 _part_cursor_part_apply(const Elm_Layout_Sub_Object_Cursor *pc)
 {
    elm_object_cursor_set(pc->obj, pc->cursor);
@@ -325,7 +303,6 @@ _visuals_refresh(Evas_Object *obj,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   _parts_text_fix(sd);
    _parts_signals_emit(sd);
    _parts_cursors_apply(sd);
 
@@ -800,10 +777,6 @@ _elm_layout_efl_canvas_group_group_del(Eo *obj, Elm_Layout_Smart_Data *sd)
    EINA_LIST_FREE(sd->subs, sub_d)
      {
         eina_stringshare_del(sub_d->part);
-
-        if (sub_d->type == TEXT)
-          eina_stringshare_del(sub_d->p.text.text);
-
         free(sub_d);
      }
 
@@ -1283,7 +1256,6 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
              if (!text)
                {
                   eina_stringshare_del(sub_d->part);
-                  eina_stringshare_del(sub_d->p.text.text);
                   free(sub_d);
                   edje_object_part_text_escaped_set
                     (wd->resize_obj, part, NULL);
@@ -1293,7 +1265,6 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
              else
                break;
           }
-        sub_d = NULL;
      }
 
    if (!text) return EINA_TRUE;
@@ -1310,8 +1281,6 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
         sub_d->part = eina_stringshare_add(part);
         sd->subs = eina_list_append(sd->subs, sub_d);
      }
-
-   eina_stringshare_replace(&sub_d->p.text.text, text);
 
    _text_signal_emit(sd, sub_d, !!text);
 
