@@ -63,8 +63,6 @@ static Eina_Hash *_window_hash = NULL;
 static Eina_List *_last_events = NULL;
 static double _last_events_timeout = 0.5;
 static Eina_Bool _last_events_enable = EINA_FALSE;
-static Eina_Bool _cancel_events_enable = EINA_FALSE;
-
 
 static Eina_Bool _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e,
                                                 Ecore_Event_Press press,
@@ -490,34 +488,31 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
    //error handle
    // 1. ecore up without ecore down
    // 2. ecore cancel without ecore down
-   if (_cancel_events_enable)
+   if (press != ECORE_DOWN)
      {
-        if (press != ECORE_DOWN)
+        //ECORE_UP or ECORE_CANCEL
+        eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, e->window, EINA_FALSE);
+        if (!eel)
           {
-             //ECORE_UP or ECORE_CANCEL
-             eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, e->window, EINA_FALSE);
-             if (!eel)
-               {
-                 WRN("ButtonEvent has no history.");
-                 return ECORE_CALLBACK_PASS_ON;
-               }
-
-             if ((e->window == eel->win) &&
-                 ((eel->state == ECORE_INPUT_UP) ||
-                 (eel->state == ECORE_INPUT_CANCEL)))
-               {
-                  WRN("ButtonEvent has wrong history. Last state=%d", eel->state);
-                  return ECORE_CALLBACK_PASS_ON;
-               }
+             WRN("ButtonEvent has no history.");
+             return ECORE_CALLBACK_PASS_ON;
           }
 
-        if (!faked)
+        if ((e->window == eel->win) &&
+            ((eel->state == ECORE_INPUT_UP) ||
+             (eel->state == ECORE_INPUT_CANCEL)))
           {
-             Eina_Bool ret = EINA_FALSE;
-             ret = _ecore_event_evas_push_mouse_button(e, press);
-             /* This ButtonEvent is worng */
-             if (!ret) return ECORE_CALLBACK_PASS_ON;
+             WRN("ButtonEvent has wrong history. Last state=%d", eel->state);
+             return ECORE_CALLBACK_PASS_ON;
           }
+     }
+
+   if (!faked)
+     {
+        Eina_Bool ret = EINA_FALSE;
+        ret = _ecore_event_evas_push_mouse_button(e, press);
+        /* This ButtonEvent is worng */
+        if (!ret) return ECORE_CALLBACK_PASS_ON;
      }
 
    if (e->multi.device == 0)
@@ -651,8 +646,6 @@ ecore_event_evas_mouse_button_up(void *data EINA_UNUSED, int type EINA_UNUSED, v
 EAPI Eina_Bool
 ecore_event_evas_mouse_button_cancel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   if (!_cancel_events_enable) return EINA_FALSE;
-
    return _ecore_event_evas_mouse_button_cancel((Ecore_Event_Mouse_Button *)event);
 }
 
@@ -817,10 +810,6 @@ ecore_event_evas_init(void)
         tmp = getenv("ECORE_INPUT_TIMEOUT_FIX");
         if (tmp)
           _last_events_timeout = ((double) atoi(tmp)) / 60;
-     }
-   if (getenv("ECORE_INPUT_CANCEL"))
-     {
-	    _cancel_events_enable = EINA_TRUE;
      }
 
    return _ecore_event_evas_init_count;
