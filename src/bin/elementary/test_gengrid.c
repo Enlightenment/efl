@@ -544,6 +544,29 @@ _btn_show_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info 
    elm_gengrid_item_show(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
 
+static void
+_btn_item_contents_unset_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   Eina_List *l = NULL;
+   Evas_Object *o;
+   Elm_Object_Item *it;
+   
+   if (!api || !api->grid) return;
+
+   it = elm_gengrid_selected_item_get(api->grid);
+   if (!it) return;
+
+   elm_gengrid_item_all_contents_unset(it, &l);
+   EINA_LIST_FREE(l, o)
+   {
+      evas_object_move(o, 0, 0);
+      evas_object_show(o);
+   }
+   // Now all the unsetted object are orphan in the canvas,
+   // the user should do something with them
+}
+
 void
 test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -657,6 +680,12 @@ test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Show");
    evas_object_smart_callback_add(bt, "clicked", _btn_show_clicked_cb, api);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Item contents unset");
+   evas_object_smart_callback_add(bt, "clicked", _btn_item_contents_unset_cb, api);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
