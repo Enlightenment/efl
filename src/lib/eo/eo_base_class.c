@@ -20,14 +20,14 @@ typedef struct
    Eo                        *composite_parent;
    Eina_Inlist               *generic_data;
    Eo                      ***wrefs;
-} Eo_Base_Extension;
+} Efl_Object_Extension;
 
 typedef struct
 {
    Eina_Inlist               *children;
    Eo                        *parent;
 
-   Eo_Base_Extension         *ext;
+   Efl_Object_Extension         *ext;
    Eo_Callback_Description   *callbacks;
 
    Eina_Inlist               *current;
@@ -36,7 +36,7 @@ typedef struct
    unsigned short             event_freeze_count;
    Eina_Bool                  deletions_waiting : 1;
    Eina_Bool                  callback_stopped : 1;
-} Eo_Base_Data;
+} Efl_Object_Data;
 
 typedef enum {
      DATA_PTR,
@@ -61,30 +61,30 @@ typedef struct
 typedef struct
 {
    EINA_INLIST;
-   const Eo_Event_Description *desc;
+   const Efl_Event_Description *desc;
    Eo_Callback_Description *current;
 } Eo_Current_Callback_Description;
 
 static inline void
-_eo_base_extension_free(Eo_Base_Extension *ext)
+_efl_object_extension_free(Efl_Object_Extension *ext)
 {
    free(ext);
 }
 
 static inline void
-_eo_base_extension_need(Eo_Base_Data *pd)
+_efl_object_extension_need(Efl_Object_Data *pd)
 {
    if (pd->ext) return;
-   pd->ext = calloc(1, sizeof(Eo_Base_Extension));
+   pd->ext = calloc(1, sizeof(Efl_Object_Extension));
 }
 
 static inline void
-_eo_base_extension_noneed(Eo_Base_Data *pd)
+_efl_object_extension_noneed(Efl_Object_Data *pd)
 {
-   Eo_Base_Extension *ext = pd->ext;
+   Efl_Object_Extension *ext = pd->ext;
    if ((!ext) || (ext->name) || (ext->comment) || (ext->generic_data) ||
        (ext->wrefs) || (ext->composite_parent)) return;
-   _eo_base_extension_free(pd->ext);
+   _efl_object_extension_free(pd->ext);
    pd->ext = NULL;
 }
 
@@ -98,11 +98,11 @@ _eo_generic_data_node_free(Eo_Generic_Data_Node *node)
       case DATA_PTR:
         break;
       case DATA_OBJ:
-        eo_event_callback_del(node->d.obj, EO_EVENT_DEL, _key_generic_cb_del, node);
+        efl_event_callback_del(node->d.obj, EFL_EVENT_DEL, _key_generic_cb_del, node);
         eo_unref(node->d.obj);
         break;
       case DATA_OBJ_WEAK:
-        eo_event_callback_del(node->d.obj, EO_EVENT_DEL, _key_generic_cb_del, node);
+        efl_event_callback_del(node->d.obj, EFL_EVENT_DEL, _key_generic_cb_del, node);
         break;
       case DATA_VAL:
         eina_value_free(node->d.val);
@@ -113,10 +113,10 @@ _eo_generic_data_node_free(Eo_Generic_Data_Node *node)
 }
 
 static void
-_eo_generic_data_del_all(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+_eo_generic_data_del_all(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    Eo_Generic_Data_Node *node;
-   Eo_Base_Extension *ext = pd->ext;
+   Efl_Object_Extension *ext = pd->ext;
 
    if (!ext) return;
 
@@ -131,9 +131,9 @@ _eo_generic_data_del_all(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
 }
 
 static void
-_eo_key_generic_direct_del(Eo_Base_Data *pd, Eo_Generic_Data_Node *node, Eina_Bool call_free)
+_eo_key_generic_direct_del(Efl_Object_Data *pd, Eo_Generic_Data_Node *node, Eina_Bool call_free)
 {
-   Eo_Base_Extension *ext = pd->ext;
+   Efl_Object_Extension *ext = pd->ext;
 
    ext->generic_data = eina_inlist_remove
      (ext->generic_data, EINA_INLIST_GET(node));
@@ -141,10 +141,10 @@ _eo_key_generic_direct_del(Eo_Base_Data *pd, Eo_Generic_Data_Node *node, Eina_Bo
 }
 
 static void
-_eo_key_generic_del(const Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, Eina_Bool call_free)
+_eo_key_generic_del(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *key, Eina_Bool call_free)
 {
    Eo_Generic_Data_Node *node;
-   Eo_Base_Extension *ext = pd->ext;
+   Efl_Object_Extension *ext = pd->ext;
 
    EINA_INLIST_FOREACH(ext->generic_data, node)
      {
@@ -160,10 +160,10 @@ _eo_key_generic_del(const Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key
 
 /* Return TRUE if the object was newly added. */
 static Eo_Generic_Data_Node *
-_key_generic_set(const Eo *obj, Eo_Base_Data *pd, const char *key, const void *data, Eo_Generic_Data_Node_Type d_type, Eina_Bool call_free)
+_key_generic_set(const Eo *obj, Efl_Object_Data *pd, const char *key, const void *data, Eo_Generic_Data_Node_Type d_type, Eina_Bool call_free)
 {
    Eo_Generic_Data_Node *node;
-   Eo_Base_Extension *ext = pd->ext;
+   Efl_Object_Extension *ext = pd->ext;
 
    if (!key) return NULL;
    if (ext)
@@ -187,7 +187,7 @@ _key_generic_set(const Eo *obj, Eo_Base_Data *pd, const char *key, const void *d
           }
      }
 
-   _eo_base_extension_need(pd);
+   _efl_object_extension_need(pd);
    ext = pd->ext;
    if (ext)
      {
@@ -206,10 +206,10 @@ _key_generic_set(const Eo *obj, Eo_Base_Data *pd, const char *key, const void *d
 }
 
 static void *
-_key_generic_get(const Eo *obj, Eo_Base_Data *pd, const char *key, Eo_Generic_Data_Node_Type d_type)
+_key_generic_get(const Eo *obj, Efl_Object_Data *pd, const char *key, Eo_Generic_Data_Node_Type d_type)
 {
    Eo_Generic_Data_Node *node;
-   Eo_Base_Extension *ext = pd->ext;
+   Efl_Object_Extension *ext = pd->ext;
 
    if (!key) return NULL;
    if (!ext) return NULL;
@@ -238,24 +238,24 @@ static void
 _key_generic_cb_del(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Eo_Generic_Data_Node *node = data;
-   Eo_Base_Data *pd = eo_data_scope_get(node->obj, EO_BASE_CLASS);
+   Efl_Object_Data *pd = eo_data_scope_get(node->obj, EFL_OBJECT_CLASS);
    _eo_key_generic_direct_del(pd, node, EINA_FALSE);
 }
 
 EOLIAN static void
-_eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd, const char *key, const void *data)
+_efl_object_key_data_set(Eo *obj, Efl_Object_Data *pd, const char *key, const void *data)
 {
    _key_generic_set(obj, pd, key, data, DATA_PTR, EINA_TRUE);
 }
 
 EOLIAN static void *
-_eo_base_key_data_get(Eo *obj, Eo_Base_Data *pd, const char *key)
+_efl_object_key_data_get(Eo *obj, Efl_Object_Data *pd, const char *key)
 {
    return _key_generic_get(obj, pd, key, DATA_PTR);
 }
 
 EOLIAN static void
-_eo_base_key_ref_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, const Eo *objdata)
+_efl_object_key_ref_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *key, const Eo *objdata)
 {
    Eo_Generic_Data_Node *node;
 
@@ -263,53 +263,53 @@ _eo_base_key_ref_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, con
    if (node)
      {
         eo_ref(objdata);
-        eo_event_callback_add((Eo *)objdata, EO_EVENT_DEL, _key_generic_cb_del, node);
+        efl_event_callback_add((Eo *)objdata, EFL_EVENT_DEL, _key_generic_cb_del, node);
      }
 }
 
 EOLIAN static Eo *
-_eo_base_key_ref_get(Eo *obj, Eo_Base_Data *pd, const char *key)
+_efl_object_key_ref_get(Eo *obj, Efl_Object_Data *pd, const char *key)
 {
    return _key_generic_get(obj, pd, key, DATA_OBJ);
 }
 
 EOLIAN static void
-_eo_base_key_wref_set(Eo *obj, Eo_Base_Data *pd, const char * key, const Eo_Base *objdata)
+_efl_object_key_wref_set(Eo *obj, Efl_Object_Data *pd, const char * key, const Efl_Object *objdata)
 {
    Eo_Generic_Data_Node *node;
 
    node = _key_generic_set(obj, pd, key, objdata, DATA_OBJ_WEAK, EINA_TRUE);
    if (node)
      {
-        eo_event_callback_add((Eo *)objdata, EO_EVENT_DEL, _key_generic_cb_del, node);
+        efl_event_callback_add((Eo *)objdata, EFL_EVENT_DEL, _key_generic_cb_del, node);
      }
 }
 
 EOLIAN static Eo *
-_eo_base_key_wref_get(Eo *obj, Eo_Base_Data *pd, const char * key)
+_efl_object_key_wref_get(Eo *obj, Efl_Object_Data *pd, const char * key)
 {
    return _key_generic_get(obj, pd, key, DATA_OBJ_WEAK);
 }
 
 EOLIAN static void
-_eo_base_key_value_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, Eina_Value *value)
+_efl_object_key_value_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *key, Eina_Value *value)
 {
    _key_generic_set(obj, pd, key, value, DATA_VAL, EINA_TRUE);
 }
 
 EOLIAN static Eina_Value *
-_eo_base_key_value_get(Eo *obj, Eo_Base_Data *pd, const char *key)
+_efl_object_key_value_get(Eo *obj, Efl_Object_Data *pd, const char *key)
 {
    return _key_generic_get(obj, pd, key, DATA_VAL);
 }
 
 EOLIAN static void
-_eo_base_name_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *name)
+_efl_object_name_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *name)
 {
    if ((name) && (!name[0])) name = NULL;
    if (name)
      {
-        _eo_base_extension_need(pd);
+        _efl_object_extension_need(pd);
         if (pd->ext) eina_stringshare_replace(&(pd->ext->name), name);
      }
    else
@@ -318,13 +318,13 @@ _eo_base_name_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *name)
         if (pd->ext->name)
           {
              eina_stringshare_replace(&(pd->ext->name), name);
-             _eo_base_extension_noneed(pd);
+             _efl_object_extension_noneed(pd);
           }
      }
 }
 
 EOLIAN static const char *
-_eo_base_name_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+_efl_object_name_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    if (!pd->ext) return NULL;
    return pd->ext->name;
@@ -386,8 +386,8 @@ _ismultiglob(const char *match)
    return EINA_FALSE;
 }
 
-EOLIAN static Eo_Base *
-_eo_base_name_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
+EOLIAN static Efl_Object *
+_efl_object_name_find(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *search)
 {
    Eo *child;
    _Eo_Object *child_eo;
@@ -441,13 +441,13 @@ _eo_base_name_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
              EINA_INLIST_FOREACH(pd->children, child_eo)
                {
                   child = _eo_obj_id_get(child_eo);
-                  name = eo_name_get(child);
+                  name = efl_name_get(child);
                   klass_name = eo_class_name_get(eo_class_get(child));
                   if (_name_match(klass, klass_glob, klass_name) &&
                       (((!_matchall(klass)) && (!name) && (_matchall(search_name))) ||
                        ((name) && _name_match(search_name, name_glob, name))))
                     return child;
-                  child = eo_name_find(child, search);
+                  child = efl_name_find(child, search);
                   if (child) return child;
                }
           }
@@ -459,10 +459,10 @@ _eo_base_name_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
                   EINA_INLIST_FOREACH(pd->children, child_eo)
                     {
                        child = _eo_obj_id_get(child_eo);
-                       name = eo_name_get(child);
+                       name = efl_name_get(child);
                        if ((name) && (_name_match(search, EINA_TRUE, name)))
                          return child;
-                       child = eo_name_find(child, search);
+                       child = efl_name_find(child, search);
                        if (child) return child;
                     }
                }
@@ -472,10 +472,10 @@ _eo_base_name_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
                   EINA_INLIST_FOREACH(pd->children, child_eo)
                     {
                        child = _eo_obj_id_get(child_eo);
-                       name = eo_name_get(child);
+                       name = efl_name_get(child);
                        if ((name) && (_name_match(search, EINA_FALSE, name)))
                          return child;
-                       child = eo_name_find(child, search);
+                       child = efl_name_find(child, search);
                        if (child) return child;
                     }
                }
@@ -485,12 +485,12 @@ _eo_base_name_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
 }
 
 EOLIAN static void
-_eo_base_comment_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *comment)
+_efl_object_comment_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *comment)
 {
    if ((comment) && (!comment[0])) comment = NULL;
    if (comment)
      {
-        _eo_base_extension_need(pd);
+        _efl_object_extension_need(pd);
         if (pd->ext) eina_stringshare_replace(&(pd->ext->comment), comment);
      }
    else
@@ -499,24 +499,24 @@ _eo_base_comment_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *comment)
         if (pd->ext->comment)
           {
              eina_stringshare_replace(&(pd->ext->comment), comment);
-             _eo_base_extension_noneed(pd);
+             _efl_object_extension_noneed(pd);
           }
      }
 }
 
 EOLIAN static const char *
-_eo_base_comment_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+_efl_object_comment_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    if (!pd->ext) return NULL;
    return pd->ext->comment;
 }
 
 EOLIAN static void
-_eo_base_del(const Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
+_efl_object_del(const Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 {
-   if (eo_parent_get((Eo *) obj))
+   if (efl_parent_get((Eo *) obj))
      {
-        eo_parent_set((Eo *) obj, NULL);
+        efl_parent_set((Eo *) obj, NULL);
      }
    else
      {
@@ -525,7 +525,7 @@ _eo_base_del(const Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
+_efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 {
    if (pd->parent == parent_id)
      return;
@@ -534,9 +534,9 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
 
    if (pd->parent)
      {
-        Eo_Base_Data *old_parent_pd;
+        Efl_Object_Data *old_parent_pd;
 
-        old_parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
+        old_parent_pd = eo_data_scope_get(pd->parent, EFL_OBJECT_CLASS);
         if (old_parent_pd)
           {
              old_parent_pd->children = eina_inlist_remove(old_parent_pd->children,
@@ -559,8 +559,8 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
    /* Set new parent */
    if (parent_id)
      {
-        Eo_Base_Data *parent_pd = NULL;
-        parent_pd = eo_data_scope_get(parent_id, EO_BASE_CLASS);
+        Efl_Object_Data *parent_pd = NULL;
+        parent_pd = eo_data_scope_get(parent_id, EFL_OBJECT_CLASS);
 
         if (EINA_LIKELY(parent_pd != NULL))
           {
@@ -582,23 +582,23 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
 }
 
 EOLIAN static Eo *
-_eo_base_parent_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+_efl_object_parent_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    return pd->parent;
 }
 
 EOLIAN static Eina_Bool
-_eo_base_finalized_get(Eo *obj_id, Eo_Base_Data *pd EINA_UNUSED)
+_efl_object_finalized_get(Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
 
    return obj->finalized;
 }
 
-EOLIAN static Eo_Base *
-_eo_base_provider_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const Eo_Base *klass)
+EOLIAN static Efl_Object *
+_efl_object_provider_find(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const Efl_Object *klass)
 {
-   if (pd->parent) return eo_provider_find(pd->parent, klass);
+   if (pd->parent) return efl_provider_find(pd->parent, klass);
    return NULL;
 }
 
@@ -614,7 +614,7 @@ struct _Eo_Children_Iterator
 };
 
 static Eina_Bool
-_eo_children_iterator_next(Eo_Children_Iterator *it, void **data)
+_efl_children_iterator_next(Eo_Children_Iterator *it, void **data)
 {
    if (!it->current) return EINA_FALSE;
 
@@ -629,18 +629,18 @@ _eo_children_iterator_next(Eo_Children_Iterator *it, void **data)
 }
 
 static Eo *
-_eo_children_iterator_container(Eo_Children_Iterator *it)
+_efl_children_iterator_container(Eo_Children_Iterator *it)
 {
    return it->obj_id;
 }
 
 static void
-_eo_children_iterator_free(Eo_Children_Iterator *it)
+_efl_children_iterator_free(Eo_Children_Iterator *it)
 {
-   _Eo_Class *klass;
+   _Efl_Class *klass;
    _Eo_Object *obj;
 
-   klass = (_Eo_Class*) it->obj->klass;
+   klass = (_Efl_Class*) it->obj->klass;
    obj = it->obj;
 
    eina_spinlock_take(&klass->iterators.trash_lock);
@@ -659,16 +659,16 @@ _eo_children_iterator_free(Eo_Children_Iterator *it)
 }
 
 EOLIAN static Eina_Iterator *
-_eo_base_children_iterator_new(Eo *obj_id, Eo_Base_Data *pd)
+_efl_object_children_iterator_new(Eo *obj_id, Efl_Object_Data *pd)
 {
-   _Eo_Class *klass;
+   _Efl_Class *klass;
    Eo_Children_Iterator *it;
 
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
 
    if (!pd->children) return NULL;
 
-   klass = (_Eo_Class *) obj->klass;
+   klass = (_Efl_Class *) obj->klass;
 
    eina_spinlock_take(&klass->iterators.trash_lock);
    it = eina_trash_pop(&klass->iterators.trash);
@@ -689,15 +689,15 @@ _eo_base_children_iterator_new(Eo *obj_id, Eo_Base_Data *pd)
    it->obj = _eo_ref(obj);
    it->obj_id = obj_id;
 
-   it->iterator.next = FUNC_ITERATOR_NEXT(_eo_children_iterator_next);
-   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eo_children_iterator_container);
-   it->iterator.free = FUNC_ITERATOR_FREE(_eo_children_iterator_free);
+   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_children_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_efl_children_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_efl_children_iterator_free);
 
    return (Eina_Iterator *)it;
 }
 
 EOLIAN static void
-_eo_base_dbg_info_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd EINA_UNUSED, Eo_Dbg_Info *root_node EINA_UNUSED)
+_efl_object_dbg_info_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd EINA_UNUSED, Efl_Dbg_Info *root_node EINA_UNUSED)
 {  /* No info required in the meantime */
    return;
 }
@@ -705,11 +705,11 @@ _eo_base_dbg_info_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd EINA_UNUSED, Eo_Dbg_
 /* Weak reference. */
 
 static inline size_t
-_wref_count(Eo_Base_Data *pd)
+_wref_count(Efl_Object_Data *pd)
 {
    Eo ***itr;
    size_t count = 0;
-   Eo_Base_Extension *ext = pd->ext;
+   Efl_Object_Extension *ext = pd->ext;
 
    if ((!ext) || (!ext->wrefs)) return 0;
    for (itr = ext->wrefs; *itr; itr++) count++;
@@ -718,16 +718,16 @@ _wref_count(Eo_Base_Data *pd)
 }
 
 EOLIAN static void
-_eo_base_wref_add(Eo *obj, Eo_Base_Data *pd, Eo **wref)
+_efl_object_wref_add(Eo *obj, Efl_Object_Data *pd, Eo **wref)
 {
    size_t count;
    Eo ***tmp;
-   Eo_Base_Extension *ext;
+   Efl_Object_Extension *ext;
 
    count = _wref_count(pd);
    count += 1; /* New wref. */
 
-   _eo_base_extension_need(pd);
+   _efl_object_extension_need(pd);
    ext = pd->ext;
    if (!ext) return;
 
@@ -741,10 +741,10 @@ _eo_base_wref_add(Eo *obj, Eo_Base_Data *pd, Eo **wref)
 }
 
 EOLIAN static void
-_eo_base_wref_del(Eo *obj, Eo_Base_Data *pd, Eo **wref)
+_efl_object_wref_del(Eo *obj, Efl_Object_Data *pd, Eo **wref)
 {
    size_t count;
-   Eo_Base_Extension *ext = pd->ext;
+   Efl_Object_Extension *ext = pd->ext;
 
    if (*wref != obj)
      {
@@ -795,17 +795,17 @@ _eo_base_wref_del(Eo *obj, Eo_Base_Data *pd, Eo **wref)
      {
         free(ext->wrefs);
         ext->wrefs = NULL;
-        _eo_base_extension_noneed(pd);
+        _efl_object_extension_noneed(pd);
      }
 
    *wref = NULL;
 }
 
 static inline void
-_wref_destruct(Eo_Base_Data *pd)
+_wref_destruct(Efl_Object_Data *pd)
 {
    Eo ***itr;
-   Eo_Base_Extension *ext = pd->ext;
+   Efl_Object_Extension *ext = pd->ext;
 
    if ((!ext) || (!ext->wrefs)) return;
    for (itr = ext->wrefs; *itr; itr++) **itr = NULL;
@@ -822,14 +822,14 @@ _wref_destruct(Eo_Base_Data *pd)
 /* XXX: Legacy support, remove when legacy is dead. */
 static Eina_Hash *_legacy_events_hash = NULL;
 
-EAPI const Eo_Event_Description *
-eo_base_legacy_only_event_description_get(const char *_event_name)
+EAPI const Efl_Event_Description *
+efl_object_legacy_only_event_description_get(const char *_event_name)
 {
    Eina_Stringshare *event_name = eina_stringshare_add(_event_name);
-   Eo_Event_Description *event_desc = eina_hash_find(_legacy_events_hash, event_name);
+   Efl_Event_Description *event_desc = eina_hash_find(_legacy_events_hash, event_name);
    if (!event_desc)
      {
-        event_desc = calloc(1, sizeof(Eo_Event_Description));
+        event_desc = calloc(1, sizeof(Efl_Event_Description));
         event_desc->name = event_name;
         event_desc->legacy_is = EINA_TRUE;
         eina_hash_add(_legacy_events_hash, event_name, event_desc);
@@ -843,7 +843,7 @@ eo_base_legacy_only_event_description_get(const char *_event_name)
 }
 
 static inline Eina_Bool
-_legacy_event_desc_is(const Eo_Event_Description *desc)
+_legacy_event_desc_is(const Efl_Event_Description *desc)
 {
    return desc->legacy_is;
 }
@@ -851,7 +851,7 @@ _legacy_event_desc_is(const Eo_Event_Description *desc)
 static void
 _legacy_events_hash_free_cb(void *_desc)
 {
-   Eo_Event_Description *desc = _desc;
+   Efl_Event_Description *desc = _desc;
    eina_stringshare_del(desc->name);
    free(desc);
 }
@@ -864,12 +864,12 @@ struct _Eo_Callback_Description
 
    union
      {
-        Eo_Callback_Array_Item item;
-        const Eo_Callback_Array_Item *item_array;
+        Efl_Callback_Array_Item item;
+        const Efl_Callback_Array_Item *item_array;
      } items;
 
    void *func_data;
-   Eo_Callback_Priority priority;
+   Efl_Callback_Priority priority;
 
    Eina_Bool delete_me : 1;
    Eina_Bool func_array : 1;
@@ -877,7 +877,7 @@ struct _Eo_Callback_Description
 
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
-_eo_callback_remove(Eo_Base_Data *pd, Eo_Callback_Description *cb)
+_eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 {
    Eo_Callback_Description *itr, *pitr = NULL;
 
@@ -909,7 +909,7 @@ _eo_callback_remove(Eo_Base_Data *pd, Eo_Callback_Description *cb)
 
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
-_eo_callback_remove_all(Eo_Base_Data *pd)
+_eo_callback_remove_all(Efl_Object_Data *pd)
 {
    while (pd->callbacks)
      {
@@ -920,7 +920,7 @@ _eo_callback_remove_all(Eo_Base_Data *pd)
 }
 
 static void
-_eo_callbacks_clear(Eo_Base_Data *pd)
+_eo_callbacks_clear(Efl_Object_Data *pd)
 {
    Eo_Callback_Description *cb = NULL;
 
@@ -947,7 +947,7 @@ _eo_callbacks_clear(Eo_Base_Data *pd)
 }
 
 static void
-_eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb)
+_eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 {
    Eo_Callback_Description *itr, *itrp = NULL;
    for (itr = pd->callbacks; itr && (itr->priority < cb->priority);
@@ -969,13 +969,13 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb)
 }
 
 EOLIAN static Eina_Bool
-_eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
-                    const Eo_Event_Description *desc,
-                    Eo_Callback_Priority priority,
-                    Eo_Event_Cb func,
+_efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
+                    const Efl_Event_Description *desc,
+                    Efl_Callback_Priority priority,
+                    Efl_Event_Cb func,
                     const void *user_data)
 {
-   const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
+   const Efl_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
    Eo_Callback_Description *cb;
 
    cb = calloc(1, sizeof(*cb));
@@ -991,15 +991,15 @@ _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
    cb->priority = priority;
    _eo_callbacks_sorted_insert(pd, cb);
 
-   eo_event_callback_call(obj, EO_EVENT_CALLBACK_ADD, (void *)arr);
+   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_eo_base_event_callback_del(Eo *obj, Eo_Base_Data *pd,
-                    const Eo_Event_Description *desc,
-                    Eo_Event_Cb func,
+_efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
+                    const Efl_Event_Description *desc,
+                    Efl_Event_Cb func,
                     const void *user_data)
 {
    Eo_Callback_Description *cb;
@@ -1009,12 +1009,12 @@ _eo_base_event_callback_del(Eo *obj, Eo_Base_Data *pd,
         if (!cb->delete_me && (cb->items.item.desc == desc) &&
               (cb->items.item.func == func) && (cb->func_data == user_data))
           {
-             const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
+             const Efl_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
 
              cb->delete_me = EINA_TRUE;
              pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
-             eo_event_callback_call(obj, EO_EVENT_CALLBACK_DEL, (void *)arr);
+             efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)arr);
              return EINA_TRUE;
           }
      }
@@ -1024,9 +1024,9 @@ _eo_base_event_callback_del(Eo *obj, Eo_Base_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_eo_base_event_callback_array_priority_add(Eo *obj, Eo_Base_Data *pd,
-                          const Eo_Callback_Array_Item *array,
-                          Eo_Callback_Priority priority,
+_efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
+                          const Efl_Callback_Array_Item *array,
+                          Efl_Callback_Priority priority,
                           const void *user_data)
 {
    Eo_Callback_Description *cb;
@@ -1044,14 +1044,14 @@ _eo_base_event_callback_array_priority_add(Eo *obj, Eo_Base_Data *pd,
    cb->func_array = EINA_TRUE;
    _eo_callbacks_sorted_insert(pd, cb);
 
-   eo_event_callback_call(obj, EO_EVENT_CALLBACK_ADD, (void *)array);
+   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)array);
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
-                 const Eo_Callback_Array_Item *array,
+_efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
+                 const Efl_Callback_Array_Item *array,
                  const void *user_data)
 {
    Eo_Callback_Description *cb;
@@ -1065,7 +1065,7 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
              pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
 
-             eo_event_callback_call(obj, EO_EVENT_CALLBACK_DEL, (void *)array);
+             efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)array);
              return EINA_TRUE;
           }
      }
@@ -1075,7 +1075,7 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
 }
 
 static Eina_Bool
-_cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
+_cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b)
 {
    /* If one is legacy and the other is not, strcmp. Else, pointer compare. */
    if (EINA_UNLIKELY(_legacy_event_desc_is(a) != _legacy_event_desc_is(b)))
@@ -1087,8 +1087,8 @@ _cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
 }
 
 EOLIAN static Eina_Bool
-_eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
-            const Eo_Event_Description *desc,
+_efl_object_event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
+            const Efl_Event_Description *desc,
             void *event_info)
 {
    Eina_Bool callback_already_stopped = pd->callback_stopped;
@@ -1138,7 +1138,7 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
           {
              if (cb->func_array)
                {
-                  const Eo_Callback_Array_Item *it;
+                  const Efl_Callback_Array_Item *it;
 
                   for (it = cb->items.item_array; it->func; it++)
                     {
@@ -1205,56 +1205,56 @@ end:
 }
 
 EOLIAN static void
-_eo_base_event_callback_stop(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+_efl_object_event_callback_stop(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    pd->callback_stopped = EINA_TRUE;
 }
 
 static void
-_eo_event_forwarder_callback(void *data, const Eo_Event *event)
+_efl_event_forwarder_callback(void *data, const Eo_Event *event)
 {
    Eo *new_obj = (Eo *) data;
    Eina_Bool ret = EINA_FALSE;
 
-   ret = eo_event_callback_call(new_obj, event->desc, event->info);
+   ret = efl_event_callback_call(new_obj, event->desc, event->info);
 
    if (!ret)
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
      }
 }
 
 /* FIXME: Change default priority? Maybe call later? */
 EOLIAN static void
-_eo_base_event_callback_forwarder_add(Eo *obj, Eo_Base_Data *pd EINA_UNUSED,
-                     const Eo_Event_Description *desc,
+_efl_object_event_callback_forwarder_add(Eo *obj, Efl_Object_Data *pd EINA_UNUSED,
+                     const Efl_Event_Description *desc,
                      Eo *new_obj)
 {
 
    /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
 
-   eo_event_callback_add(obj, desc, _eo_event_forwarder_callback, new_obj);
+   efl_event_callback_add(obj, desc, _efl_event_forwarder_callback, new_obj);
 }
 
 EOLIAN static void
-_eo_base_event_callback_forwarder_del(Eo *obj, Eo_Base_Data *pd EINA_UNUSED,
-                     const Eo_Event_Description *desc,
+_efl_object_event_callback_forwarder_del(Eo *obj, Efl_Object_Data *pd EINA_UNUSED,
+                     const Efl_Event_Description *desc,
                      Eo *new_obj)
 {
 
    /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
 
-   eo_event_callback_del(obj, desc, _eo_event_forwarder_callback, new_obj);
+   efl_event_callback_del(obj, desc, _efl_event_forwarder_callback, new_obj);
 }
 
 EOLIAN static void
-_eo_base_event_freeze(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+_efl_object_event_freeze(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    pd->event_freeze_count++;
 }
 
 EOLIAN static void
-_eo_base_event_thaw(Eo *obj, Eo_Base_Data *pd)
+_efl_object_event_thaw(Eo *obj, Efl_Object_Data *pd)
 {
    if (pd->event_freeze_count > 0)
      {
@@ -1267,19 +1267,19 @@ _eo_base_event_thaw(Eo *obj, Eo_Base_Data *pd)
 }
 
 EOLIAN static int
-_eo_base_event_freeze_count_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+_efl_object_event_freeze_count_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    return pd->event_freeze_count;
 }
 
 EOLIAN static void
-_eo_base_event_global_freeze(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_object_event_global_freeze(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 {
    event_freeze_count++;
 }
 
 EOLIAN static void
-_eo_base_event_global_thaw(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_object_event_global_thaw(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 {
    if (event_freeze_count > 0)
      {
@@ -1292,18 +1292,18 @@ _eo_base_event_global_thaw(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 }
 
 EOLIAN static int
-_eo_base_event_global_freeze_count_get(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_object_event_global_freeze_count_get(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 {
    return event_freeze_count;
 }
 
 EOLIAN static Eina_Bool
-_eo_base_composite_attach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_obj_id)
+_efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo *comp_obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
    EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
 
-   Eo_Base_Data *comp_pd = eo_data_scope_get(comp_obj_id, EO_BASE_CLASS);
+   Efl_Object_Data *comp_pd = eo_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
    /* Don't composite if we already have a composite object of this type */
      {
         Eina_List *itr;
@@ -1316,13 +1316,13 @@ _eo_base_composite_attach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_
           }
      }
 
-   if (eo_composite_part_is(comp_obj_id))
+   if (efl_composite_part_is(comp_obj_id))
      {
-        eo_composite_detach(comp_pd->ext->composite_parent, comp_obj_id);
+        efl_composite_detach(comp_pd->ext->composite_parent, comp_obj_id);
      }
 
    /* Set the parent comp on the child. */
-   _eo_base_extension_need(comp_pd);
+   _efl_object_extension_need(comp_pd);
    comp_pd->ext->composite_parent = parent_id;
 
    parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
@@ -1331,35 +1331,35 @@ _eo_base_composite_attach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_
 }
 
 EOLIAN static Eina_Bool
-_eo_base_composite_detach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_obj_id)
+_efl_object_composite_detach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo *comp_obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
    EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
 
-   if (!eo_composite_part_is(comp_obj_id))
+   if (!efl_composite_part_is(comp_obj_id))
       return EINA_FALSE;
 
    parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
    /* Clear the comp parent on the child. */
      {
-        Eo_Base_Data *comp_pd = eo_data_scope_get(comp_obj_id, EO_BASE_CLASS);
+        Efl_Object_Data *comp_pd = eo_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
         comp_pd->ext->composite_parent = NULL;
 
-        _eo_base_extension_noneed(comp_pd);
+        _efl_object_extension_noneed(comp_pd);
      }
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_eo_base_composite_part_is(Eo *comp_obj_id EINA_UNUSED, Eo_Base_Data *pd)
+_efl_object_composite_part_is(Eo *comp_obj_id EINA_UNUSED, Efl_Object_Data *pd)
 {
    return pd->ext && pd->ext->composite_parent;
 }
 
 /* Eo_Dbg */
 EAPI void
-eo_dbg_info_free(Eo_Dbg_Info *info)
+eo_dbg_info_free(Efl_Dbg_Info *info)
 {
    eina_value_flush(&(info->value));
    free(info);
@@ -1375,7 +1375,7 @@ _eo_dbg_info_setup(const Eina_Value_Type *type, void *mem)
 static Eina_Bool
 _eo_dbg_info_flush(const Eina_Value_Type *type EINA_UNUSED, void *_mem)
 {
-   Eo_Dbg_Info *mem = *(Eo_Dbg_Info **) _mem;
+   Efl_Dbg_Info *mem = *(Efl_Dbg_Info **) _mem;
    eina_stringshare_del(mem->name);
    eina_value_flush(&(mem->value));
    free(mem);
@@ -1385,10 +1385,10 @@ _eo_dbg_info_flush(const Eina_Value_Type *type EINA_UNUSED, void *_mem)
 static Eina_Bool
 _eo_dbg_info_copy(const Eina_Value_Type *type EINA_UNUSED, const void *_src, void *_dst)
 {
-   const Eo_Dbg_Info **src = (const Eo_Dbg_Info **) _src;
-   Eo_Dbg_Info **dst = _dst;
+   const Efl_Dbg_Info **src = (const Efl_Dbg_Info **) _src;
+   Efl_Dbg_Info **dst = _dst;
 
-   *dst = calloc(1, sizeof(Eo_Dbg_Info));
+   *dst = calloc(1, sizeof(Efl_Dbg_Info));
    if (!*dst) return EINA_FALSE;
    (*dst)->name = eina_stringshare_ref((*src)->name);
    eina_value_copy(&((*src)->value), &((*dst)->value));
@@ -1399,7 +1399,7 @@ static Eina_Bool
 _eo_dbg_info_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
 {
    /* FIXME: For the meanwhile, just use the inner type for the value. */
-   const Eo_Dbg_Info **src = (const Eo_Dbg_Info **) type_mem;
+   const Efl_Dbg_Info **src = (const Efl_Dbg_Info **) type_mem;
    if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
        convert == EINA_VALUE_TYPE_STRING)
      {
@@ -1419,7 +1419,7 @@ _eo_dbg_info_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Valu
 static Eina_Bool
 _eo_dbg_info_pset(const Eina_Value_Type *type EINA_UNUSED, void *_mem, const void *_ptr)
 {
-   Eo_Dbg_Info **mem = _mem;
+   Efl_Dbg_Info **mem = _mem;
    if (*mem)
      free(*mem);
    *mem = (void *) _ptr;
@@ -1429,15 +1429,15 @@ _eo_dbg_info_pset(const Eina_Value_Type *type EINA_UNUSED, void *_mem, const voi
 static Eina_Bool
 _eo_dbg_info_pget(const Eina_Value_Type *type EINA_UNUSED, const void *_mem, void *_ptr)
 {
-   Eo_Dbg_Info **ptr = _ptr;
+   Efl_Dbg_Info **ptr = _ptr;
    *ptr = (void *) _mem;
    return EINA_TRUE;
 }
 
 static const Eina_Value_Type _EO_DBG_INFO_TYPE = {
    EINA_VALUE_TYPE_VERSION,
-   sizeof(Eo_Dbg_Info *),
-   "Eo_Dbg_Info_Ptr",
+   sizeof(Efl_Dbg_Info *),
+   "Efl_Dbg_Info_Ptr",
    _eo_dbg_info_setup,
    _eo_dbg_info_flush,
    _eo_dbg_info_copy,
@@ -1454,11 +1454,11 @@ EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
 
 /* EOF event callbacks */
 
-/* EO_BASE_CLASS stuff */
-#define MY_CLASS EO_BASE_CLASS
+/* EFL_OBJECT_CLASS stuff */
+#define MY_CLASS EFL_OBJECT_CLASS
 
 EOLIAN static Eo *
-_eo_base_constructor(Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
+_efl_object_constructor(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 {
    DBG("%p - %s.", obj, eo_class_name_get(obj));
 
@@ -1468,10 +1468,10 @@ _eo_base_constructor(Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
+_efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
 {
    Eo *child;
-   Eo_Base_Extension *ext;
+   Efl_Object_Extension *ext;
 
    DBG("%p - %s.", obj, eo_class_name_get(obj));
 
@@ -1481,7 +1481,7 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    while (pd->children)
      {
         child = _eo_obj_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
-        eo_parent_set(child, NULL);
+        efl_parent_set(child, NULL);
      }
 
    /* If we are a composite object, detach children */
@@ -1491,19 +1491,19 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
         Eo *emb_obj_id;
         EINA_LIST_FOREACH_SAFE(obj_data->composite_objects, itr, next, emb_obj_id)
           {
-             eo_composite_detach(obj, emb_obj_id);
+             efl_composite_detach(obj, emb_obj_id);
           }
      }
 
    if (pd->ext && pd->ext->composite_parent)
      {
-        eo_composite_detach(pd->ext->composite_parent, obj);
+        efl_composite_detach(pd->ext->composite_parent, obj);
      }
 
    if (pd->parent)
      {
         ERR("Object '%p' still has a parent at the time of destruction.", obj);
-        eo_parent_set(obj, NULL);
+        efl_parent_set(obj, NULL);
      }
 
    _eo_generic_data_del_all(obj, pd);
@@ -1517,7 +1517,7 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
         ext->name = NULL;
         eina_stringshare_del(ext->comment);
         ext->comment = NULL;
-        _eo_base_extension_free(ext);
+        _efl_object_extension_free(ext);
         pd->ext = NULL;
      }
 
@@ -1525,22 +1525,22 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
 }
 
 EOLIAN static Eo *
-_eo_base_finalize(Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
+_efl_object_finalize(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 {
    return obj;
 }
 
 EOLIAN static void
-_eo_base_class_constructor(Eo_Class *klass EINA_UNUSED)
+_efl_object_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
    event_freeze_count = 0;
    _legacy_events_hash = eina_hash_stringshared_new(_legacy_events_hash_free_cb);
 }
 
 EOLIAN static void
-_eo_base_class_destructor(Eo_Class *klass EINA_UNUSED)
+_efl_object_class_destructor(Efl_Class *klass EINA_UNUSED)
 {
    eina_hash_free(_legacy_events_hash);
 }
 
-#include "eo_base.eo.c"
+#include "efl_object.eo.c"

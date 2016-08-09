@@ -46,7 +46,7 @@ void _eo_pointer_error(const char *msg);
    } while (0)
 
 #define EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, ret) \
-   _Eo_Class *klass; \
+   _Efl_Class *klass; \
    do { \
         if (!klass_id) return ret; \
         klass = _eo_class_pointer_get(klass_id); \
@@ -57,7 +57,7 @@ void _eo_pointer_error(const char *msg);
    } while (0)
 
 #define EO_CLASS_POINTER_RETURN(klass_id, klass)   \
-   _Eo_Class *klass; \
+   _Efl_Class *klass; \
    do { \
         if (!klass_id) return; \
         klass = _eo_class_pointer_get(klass_id); \
@@ -96,7 +96,7 @@ void _eo_pointer_error(const char *msg);
    } while (0)
 
 #define EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, ret) \
-   _Eo_Class *klass; \
+   _Efl_Class *klass; \
    do { \
         klass = _eo_class_pointer_get(klass_id); \
         if (!klass) return (ret); \
@@ -104,7 +104,7 @@ void _eo_pointer_error(const char *msg);
    } while (0)
 
 #define EO_CLASS_POINTER_RETURN(klass_id, klass)   \
-   _Eo_Class *klass; \
+   _Efl_Class *klass; \
    do { \
         klass = _eo_class_pointer_get(klass_id); \
         if (!klass) return; \

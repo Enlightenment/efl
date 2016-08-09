@@ -1,6 +1,6 @@
 import eina_types;
 
-struct Eo.Event.Description {
+struct Efl.Event.Description {
     [[This struct holds the description of a specific event.]]
     name: string; [[name of the event.]]
     unfreezable: bool; [[Eina_True if the event cannot be frozen.]]
@@ -10,32 +10,32 @@ struct Eo.Event.Description {
 
 struct Eo.Event {
      [[Parameter passed in event callbacks holding extra event parameters]]
-     object: Eo.Base; [[The object the event was called on.]]
-     desc: ref(const(Eo.Event.Description)); [[The event description.]]
+     object: Efl.Object; [[The object the event was called on.]]
+     desc: ref(const(Efl.Event.Description)); [[The event description.]]
      info: void_ptr; [[Extra event information passed by the event caller.]]
 }
 
-type Eo.Event_Cb: __builtin_event_cb; [[An event callback prototype.
+type Efl.Event_Cb: __builtin_event_cb; [[An event callback prototype.
     return $EO_CALLBACK_STOP to stop calling additional callbacks for the event, $EO_CALLBACK_CONTINUE to continue.]]
 
 
-struct Eo.Callback_Array_Item {
+struct Efl.Callback_Array_Item {
     [[An item in an array of callback desc/func.
 
-      See also \@ref eo_event_callback_array_add.
+      See also \@ref efl_event_callback_array_add.
     ]]
-    desc: ref(const(Eo.Event.Description)); [[The event description.]]
-    func: Eo.Event_Cb; [[The callback function.]]
+    desc: ref(const(Efl.Event.Description)); [[The event description.]]
+    func: Efl.Event_Cb; [[The callback function.]]
 }
 
-struct Eo.Dbg_Info {
+struct Efl.Dbg_Info {
      [[The structure for the debug info used by Eo.]]
      name: stringshare; [[The name of the part (stringshare).]]
      value: generic_value; [[The value.]]
 }
 
 
-type Eo.Callback_Priority: short; [[Callback priority value. Range is -32k - 32k.
+type Efl.Callback_Priority: short; [[Callback priority value. Range is -32k - 32k.
                                     The lower the number, the higher the priority.
 
                                     See \@ref EO_CALLBACK_PRIORITY_AFTER,
@@ -43,9 +43,9 @@ type Eo.Callback_Priority: short; [[Callback priority value. Range is -32k - 32k
                                     \@ref EO_CALLBACK_PRIORITY_DEFAULT
                                   ]]
 
-abstract Eo.Base ()
+abstract Efl.Object ()
 {
-   eo_prefix: eo;
+   eo_prefix: efl;
 
    methods {
       @property parent {
@@ -53,7 +53,7 @@ abstract Eo.Base ()
 
            Parents keep references to their children so in order to
            delete objects that have parents you need to set parent to
-           NULL or use eo_del() that does that for you (and also unrefs
+           NULL or use efl_del() that does that for you (and also unrefs
            the object).
 
            The Eo parent is conceptually user set. That means that a parent
@@ -70,13 +70,13 @@ abstract Eo.Base ()
          get {
          }
          values {
-            parent: Eo.Base @nullable; [[the new parent]]
+            parent: Efl.Object @nullable; [[the new parent]]
          }
       }
       del @const {
          [[Unrefs the object and reparents it to NULL.
 
-           Because eo_del() unrefs and reparents to NULL, it doesn't really delete the object.
+           Because efl_del() unrefs and reparents to NULL, it doesn't really delete the object.
 
            This method accepts a const object for convenience, so all objects
            could be passed to it easily.
@@ -156,16 +156,16 @@ abstract Eo.Base ()
           If this is not done the class cannot be found up in the object tree.
         ]]
         params {
-          klass : const(Eo.Base); [[The class identifier to search for]]
+          klass : const(Efl.Object); [[The class identifier to search for]]
         }
-        return : Eo.Base;
+        return : Efl.Object;
       }
       constructor {
          [[Call the object's constructor.
 
            Should not be used with #eo_do. Only use it with #eo_do_super.
          ]]
-         return: Eo.Base; [[The new object created, can be NULL if aborting]]
+         return: Efl.Object; [[The new object created, can be NULL if aborting]]
       }
       destructor {
          [[Call the object's destructor.
@@ -175,7 +175,7 @@ abstract Eo.Base ()
       }
       finalize {
          [[Called at the end of #eo_add. Should not be called, just overridden.]]
-         return: Eo.Base; [[The new object created, can be NULL if aborting]]
+         return: Efl.Object; [[The new object created, can be NULL if aborting]]
       }
       name_find {
          [[Find a child object with the given name and return it.
@@ -188,7 +188,7 @@ abstract Eo.Base ()
          params {
             @in search: string; [[the name search string]]
          }
-         return: Eo.Base; [[the first object found]]
+         return: Efl.Object; [[the first object found]]
       }
       wref_add {
          [[Add a new weak reference to obj.
@@ -200,13 +200,13 @@ abstract Eo.Base ()
            being freed.
          ]]
          params {
-            @in wref: ref(Eo.Base);
+            @in wref: ref(Efl.Object);
          }
       }
       wref_del {
          [[Delete the weak reference passed.]]
          params {
-            @in wref: ref(Eo.Base);
+            @in wref: ref(Efl.Object);
          }
       }
       @property key_data {
@@ -244,12 +244,12 @@ abstract Eo.Base ()
          }
          set {
             values {
-               objdata: const(Eo.Base); [[the object to set]]
+               objdata: const(Efl.Object); [[the object to set]]
             }
          }
          get {
             values {
-               objdata: Eo.Base; [[the object to set]]
+               objdata: Efl.Object; [[the object to set]]
             }
          }
       }
@@ -267,12 +267,12 @@ abstract Eo.Base ()
          }
          set {
             values {
-               objdata: const(Eo.Base); [[the object to set]]
+               objdata: const(Efl.Object); [[the object to set]]
             }
          }
          get {
             values {
-               objdata: Eo.Base; [[the object to set]]
+               objdata: Efl.Object; [[the object to set]]
             }
          }
       }
@@ -325,9 +325,9 @@ abstract Eo.Base ()
          ]]
          return: bool; [[Return true when the callback has been successfully added.]]
          params {
-            @in desc: ref(const(Eo.Event.Description)); [[The description of the event to listen to]]
-            @in priority: Eo.Callback_Priority; [[The priority of the callback]]
-            @in cb: Eo.Event_Cb; [[the callback to call]]
+            @in desc: ref(const(Efl.Event.Description)); [[The description of the event to listen to]]
+            @in priority: Efl.Callback_Priority; [[The priority of the callback]]
+            @in cb: Efl.Event_Cb; [[the callback to call]]
             @in data: const(void_ptr); [[additional data to pass to the callback]]
          }
       }
@@ -335,8 +335,8 @@ abstract Eo.Base ()
          [[Del a callback with a specific data associated to it for an event.]]
          return: bool; [[Return true when the callback has been successfully removed.]]
          params {
-            @in desc: ref(const(Eo.Event.Description)); [[The description of the event to listen to]]
-            @in func: Eo.Event_Cb; [[the callback to delete]]
+            @in desc: ref(const(Efl.Event.Description)); [[The description of the event to listen to]]
+            @in func: Efl.Event_Cb; [[the callback to delete]]
             @in user_data: const(void_ptr); [[The data to compare]]
          }
       }
@@ -348,8 +348,8 @@ abstract Eo.Base ()
          ]]
          return: bool; [[Return true when the callback has been successfully added.]]
          params {
-            @in array: ref(const(Eo.Callback_Array_Item)); [[an #Eo_Callback_Array_Item of events to listen to]]
-            @in priority: Eo.Callback_Priority; [[The priority of the callback]]
+            @in array: ref(const(Efl.Callback_Array_Item)); [[an #Efl_Callback_Array_Item of events to listen to]]
+            @in priority: Efl.Callback_Priority; [[The priority of the callback]]
             @in data: const(void_ptr); [[additional data to pass to the callback]]
          }
       }
@@ -359,14 +359,14 @@ abstract Eo.Base ()
          ]]
          return: bool; [[Return true when the callback has been successfully removed.]]
          params {
-            @in array: ref(const(Eo.Callback_Array_Item)); [[an #Eo_Callback_Array_Item of events to listen to]]
+            @in array: ref(const(Efl.Callback_Array_Item)); [[an #Efl_Callback_Array_Item of events to listen to]]
             @in user_data: const(void_ptr); [[The data to compare]]
          }
       }
       event_callback_call {
          [[Call the callbacks for an event of an object.]]
          params {
-            @in desc: ref(const(Eo.Event.Description)); [[The description of the event to call]]
+            @in desc: ref(const(Efl.Event.Description)); [[The description of the event to call]]
             @in event_info: void_ptr; [[Extra event info to pass to the callbacks]]
          }
          return: bool; [[$false if one of the callbacks aborted the call,
@@ -385,26 +385,26 @@ abstract Eo.Base ()
       event_callback_forwarder_add {
          [[Add an event callback forwarder for an event and an object.]]
          params {
-            @in desc: ref(const(Eo.Event.Description)); [[The description of the event to listen to]]
-            @in new_obj: Eo.Base; [[The object to emit events from]]
+            @in desc: ref(const(Efl.Event.Description)); [[The description of the event to listen to]]
+            @in new_obj: Efl.Object; [[The object to emit events from]]
          }
       }
       event_callback_forwarder_del {
          [[Remove an event callback forwarder for an event and an object.]]
          params {
-            @in desc: ref(const(Eo.Event.Description)); [[The description of the event to listen to]]
-            @in new_obj: Eo.Base; [[The object to emit events from]]
+            @in desc: ref(const(Efl.Event.Description)); [[The description of the event to listen to]]
+            @in new_obj: Efl.Object; [[The object to emit events from]]
          }
       }
       dbg_info_get {
          [[Get dbg information from the object.]]
          params {
-            @in root_node: ref(Eo.Dbg_Info); [[node of the tree]]
+            @in root_node: ref(Efl.Dbg_Info); [[node of the tree]]
          }
       }
       children_iterator_new {
          [[Get an iterator on all childrens]]
-         return: free(own(iterator<Eo.Base>), eina_iterator_free) @warn_unused;
+         return: free(own(iterator<Efl.Object>), eina_iterator_free) @warn_unused;
       }
       composite_attach {
            [[Make an object a composite object of another.
@@ -416,7 +416,7 @@ abstract Eo.Base ()
              See @.composite_detach, @.composite_part_is.
            ]]
            params {
-                @in comp_obj: Eo.Base; [[the object that will be used to composite the parent.]]
+                @in comp_obj: Efl.Object; [[the object that will be used to composite the parent.]]
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }
@@ -428,7 +428,7 @@ abstract Eo.Base ()
              See @.composite_attach, @.composite_part_is.
            ]]
            params {
-                @in comp_obj: Eo.Base; [[the object that will be removed from the parent.]]
+                @in comp_obj: Efl.Object; [[the object that will be removed from the parent.]]
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }

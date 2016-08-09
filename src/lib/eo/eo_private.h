@@ -9,7 +9,7 @@
 #define EO_FREED_EINA_MAGIC 0xa186bb32
 #define EO_FREED_EINA_MAGIC_STR "Eo - Freed object"
 #define EO_CLASS_EINA_MAGIC 0xa186ba32
-#define EO_CLASS_EINA_MAGIC_STR "Eo Class"
+#define EO_CLASS_EINA_MAGIC_STR "Efl Class"
 
 #define EO_MAGIC_RETURN_VAL(d, magic, ret) \
    do { \
@@ -58,7 +58,7 @@ extern int _eo_log_dom;
 #define DBG(...) EINA_LOG_DOM_DBG(_eo_log_dom, __VA_ARGS__)
 
 typedef uintptr_t Eo_Id;
-typedef struct _Eo_Class _Eo_Class;
+typedef struct _Efl_Class _Eo_Class;
 typedef struct _Eo_Header Eo_Header;
 
 /* Retrieves the pointer to the object from the id */
@@ -98,7 +98,7 @@ struct _Eo_Object
 {
      Eo_Header header;
      EINA_INLIST;
-     const _Eo_Class *klass;
+     const _Efl_Class *klass;
 #ifdef EO_DEBUG
      Eina_Inlist *xrefs;
      Eina_Inlist *data_xrefs;
@@ -129,7 +129,7 @@ typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
 typedef struct
 {
    eo_op_func_type func;
-   const _Eo_Class *src;
+   const _Efl_Class *src;
 } op_type_funcs;
 
 struct _Dich_Chain1
@@ -139,23 +139,23 @@ struct _Dich_Chain1
 
 typedef struct
 {
-   const _Eo_Class *klass;
+   const _Efl_Class *klass;
    size_t offset;
 } Eo_Extension_Data_Offset;
 
-struct _Eo_Class
+struct _Efl_Class
 {
    Eo_Header header;
 
-   const _Eo_Class *parent;
-   const Eo_Class_Description *desc;
+   const _Efl_Class *parent;
+   const Efl_Class_Description *desc;
    Eo_Vtable vtable;
 
-   const _Eo_Class **extensions;
+   const _Efl_Class **extensions;
 
    Eo_Extension_Data_Offset *extn_data_off;
 
-   const _Eo_Class **mro;
+   const _Efl_Class **mro;
 
    /* cached object for faster allocation */
    struct {
@@ -200,7 +200,7 @@ Eo *_eo_header_id_get(const Eo_Header *header)
 }
 
 static inline
-Eo_Class *_eo_class_id_get(const _Eo_Class *klass)
+Efl_Class *_eo_class_id_get(const _Eo_Class *klass)
 {
    return _eo_header_id_get((Eo_Header *) klass);
 }
@@ -218,18 +218,18 @@ _eo_condtor_reset(_Eo_Object *obj)
 }
 
 static inline void
-_eo_del_internal(const char *file, int line, _Eo_Object *obj)
+_efl_del_internal(const char *file, int line, _Eo_Object *obj)
 {
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
 
-   const _Eo_Class *klass = obj->klass;
+   const _Efl_Class *klass = obj->klass;
 
-   eo_event_callback_call(_eo_obj_id_get(obj), EO_EVENT_DEL, NULL);
+   efl_event_callback_call(_eo_obj_id_get(obj), EFL_EVENT_DEL, NULL);
 
    _eo_condtor_reset(obj);
 
-   eo_destructor(_eo_obj_id_get(obj));
+   efl_destructor(_eo_obj_id_get(obj));
 
    if (!obj->condtor_done)
      {
@@ -243,7 +243,7 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
         Eo *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
           {
-             eo_composite_detach(_eo_obj_id_get(obj), emb_obj);
+             efl_composite_detach(_eo_obj_id_get(obj), emb_obj);
           }
      }
 
@@ -260,7 +260,7 @@ _obj_is_override(_Eo_Object *obj)
 static inline void
 _eo_free(_Eo_Object *obj)
 {
-   _Eo_Class *klass = (_Eo_Class*) obj->klass;
+   _Efl_Class *klass = (_Eo_Class*) obj->klass;
 
 #ifdef EO_DEBUG
    if (obj->datarefcount)
@@ -331,7 +331,7 @@ _eo_unref(_Eo_Object *obj)
 
         obj->del_triggered = EINA_TRUE;
 
-        _eo_del_internal(__FILE__, __LINE__, obj);
+        _efl_del_internal(__FILE__, __LINE__, obj);
 #ifdef EO_DEBUG
         /* If for some reason it's not empty, clear it. */
         while (obj->xrefs)
