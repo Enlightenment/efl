@@ -61,7 +61,7 @@ START_TEST (elm_config_eoapi)
    CONFIG_CHKD(scroll_thumbscroll_border_friction, 0);
    CONFIG_CHKD(scroll_thumbscroll_sensitivity_friction, 1.0);
    CONFIG_CHKB(scroll_thumbscroll_smooth_start, 0);
-   CONFIG_CHKB(scroll_animation_disable, 0);
+   CONFIG_CHKB(scroll_animation_disabled, 0);
    CONFIG_CHKD(scroll_accel_factor, 0);
    CONFIG_CHKD(scroll_thumbscroll_smooth_amount, 0);
    CONFIG_CHKD(scroll_thumbscroll_smooth_time_window, 0);
