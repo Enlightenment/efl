@@ -2256,7 +2256,7 @@ _edje_object_part_text_style_user_peek(Eo *obj EINA_UNUSED, Edje *ed, const char
 }
 
 static void
-_edje_user_define_string(Edje *ed, const char *part, const char *raw_text)
+_edje_user_define_string(Edje *ed, const char *part, const char *raw_text, Edje_Text_Type type)
 {
    /* NOTE: This one is tricky, text is referenced in rp->typedata.text->text for the life of the
       rp. So on edje_object_file_set, we should first ref it, before destroying the old
@@ -2273,12 +2273,14 @@ _edje_user_define_string(Edje *ed, const char *part, const char *raw_text)
                return;
             }
           eud->u.string.text = raw_text;
+          eud->u.string.type = type;
           return;
        }
 
    eud = _edje_user_definition_new(EDJE_USER_STRING, part, ed);
    if (!eud) return;
    eud->u.string.text = raw_text;
+   eud->u.string.type = type;
 }
 
 EOLIAN Eina_Bool
@@ -2298,7 +2300,7 @@ _edje_object_part_text_set(Eo *obj, Edje *ed, const char *part, const char *text
         return EINA_TRUE;
      }
    int_ret = _edje_object_part_text_raw_set(ed, obj, rp, part, text);
-   _edje_user_define_string(ed, part, rp->typedata.text->text);
+   _edje_user_define_string(ed, part, rp->typedata.text->text, EDJE_TEXT_TYPE_NORMAL);
    return int_ret;
 }
 
@@ -2410,12 +2412,12 @@ _edje_object_part_text_escaped_set(Eo *obj, Edje *ed, const char *part, const ch
              p++;
           }
         int_ret = _edje_object_part_text_raw_set(ed, obj, rp, part, eina_strbuf_string_get(sbuf));
-        _edje_user_define_string(ed, part, rp->typedata.text->text);
+        _edje_user_define_string(ed, part, rp->typedata.text->text, EDJE_TEXT_TYPE_ESCAPED);
         eina_strbuf_free(sbuf);
         return int_ret;
      }
    int_ret = _edje_object_part_text_raw_set(ed, obj, rp, part, text);
-   _edje_user_define_string(ed, part, rp->typedata.text->text);
+   _edje_user_define_string(ed, part, rp->typedata.text->text, EDJE_TEXT_TYPE_ESCAPED);
 
    return int_ret;
 }
@@ -2548,7 +2550,7 @@ _edje_object_part_text_unescaped_set(Eo *obj, Edje *ed, const char *part, const 
         int_ret = _edje_object_part_text_raw_set(ed, obj, rp, part, text);
         free(text);
      }
-   _edje_user_define_string(ed, part, rp->typedata.text->text);
+   _edje_user_define_string(ed, part, rp->typedata.text->text, EDJE_TEXT_TYPE_UNESCAPED);
 
    return int_ret;
 }

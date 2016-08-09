@@ -1369,7 +1369,18 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                             break;
 
                           case EDJE_USER_STRING:
-                            edje_object_part_text_set(obj, eud->part, eud->u.string.text);
+                            switch (eud->u.string.type)
+                              {
+                               case EDJE_TEXT_TYPE_NORMAL:
+                                 edje_object_part_text_set(obj, eud->part, eud->u.string.text);
+                                 break;
+                               case EDJE_TEXT_TYPE_ESCAPED:
+                                 edje_object_part_text_escaped_set(obj, eud->part, eud->u.string.text);
+                                 break;
+                               case EDJE_TEXT_TYPE_UNESCAPED:
+                                 edje_object_part_text_unescaped_set(obj, eud->part, eud->u.string.text);
+                                 break;
+                              }
                             eina_stringshare_del(eud->u.string.text);
                             break;
                          }

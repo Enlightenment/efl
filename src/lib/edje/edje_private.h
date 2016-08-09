@@ -2022,6 +2022,13 @@ struct _Edje_Signal_Callback
    Eina_Bool       propagate : 1;
 };
 
+typedef enum
+{
+   EDJE_TEXT_TYPE_NORMAL,
+   EDJE_TEXT_TYPE_ESCAPED,
+   EDJE_TEXT_TYPE_UNESCAPED
+} Edje_Text_Type;
+
 struct _Edje_Text_Insert_Filter_Callback
 {
    const char  *part;
@@ -2211,6 +2218,7 @@ struct _Edje_User_Defined
    union {
       struct {
          const char *text;
+         Edje_Text_Type type;
       } string;
       struct {
          Evas_Object *child;
