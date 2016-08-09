@@ -19,6 +19,21 @@ local gen_doc_refd = function(str)
     return table.concat(pars, "\n\n")
 end
 
+local add_since = function(str, since)
+    if not since then
+        return str
+    end
+    local buf = writer.Buffer()
+    if not str then
+        buf:write_i("Since " .. since)
+        return buf:finish()
+    end
+    buf:write_raw(str)
+    buf:write_nl(2)
+    buf:write_i("Since " .. since)
+    return buf:finish()
+end
+
 M.Doc = Node:clone {
     __ctor = function(self, doc)
         self.doc = doc
@@ -56,7 +71,7 @@ M.Doc = Node:clone {
         return gen_doc_refd(doc1:summary_get())
     end,
 
-    full_get = function(self, doc2)
+    full_get = function(self, doc2, write_since)
         if not self.doc and (not doc2 or not doc2.doc) then
             return "No description supplied."
         end
@@ -67,6 +82,7 @@ M.Doc = Node:clone {
         local sum1 = doc1:summary_get()
         local desc1 = doc1:description_get()
         local edoc = ""
+        local since
         if doc2 then
             local sum2 = doc2:summary_get()
             local desc2 = doc2:description_get()
@@ -75,11 +91,17 @@ M.Doc = Node:clone {
             else
                 edoc = "\n\n" .. sum2 .. "\n\n" .. desc2
             end
+            if write_since then
+                since = doc2:since_get()
+            end
+        end
+        if not since and write_since then
+            since = doc1:since_get()
         end
         if not desc1 then
-            return gen_doc_refd(sum1 .. edoc)
+            return add_since(gen_doc_refd(sum1 .. edoc), since)
         end
-        return gen_doc_refd(sum1 .. "\n\n" .. desc1 .. edoc)
+        return add_since(gen_doc_refd(sum1 .. "\n\n" .. desc1 .. edoc), since)
     end
 }
 

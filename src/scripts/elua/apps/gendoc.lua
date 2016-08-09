@@ -432,24 +432,9 @@ local build_ref = function()
     f:finish()
 end
 
-local write_full_doc = function(f, doc1, doc2)
-    if not doc2 then
-        doc2 = dtree.Doc()
-    end
-    f:write_raw(doc1:full_get(doc2))
-    local since = doc2:since_get()
-    if not since then
-        since = doc1:since_get()
-    end
-    if since then
-        f:write_nl(2)
-        f:write_i("Since " .. since)
-    end
-end
-
 local write_full_fdoc = function(f, fn, ftype)
-    write_full_doc(f, dtree.Doc(fn:documentation_get(eolian.function_type.METHOD)),
-                   get_fallback_fdoc(fn, ftype))
+    f:write_raw(dtree.Doc(fn:documentation_get(eolian.function_type.METHOD))
+        :full_get(get_fallback_fdoc(fn, ftype), true))
 end
 
 local build_inherits
@@ -774,7 +759,7 @@ local build_class = function(cl)
     f:write_nl()
 
     f:write_h("Description", 3)
-    write_full_doc(f, dtree.Doc(cl:documentation_get()))
+    f:write_raw(dtree.Doc(cl:documentation_get()):full_get(nil, true))
     f:write_nl(2)
 
     build_functable(f, "Methods", "Method name", cl, eolian.function_type.METHOD)
@@ -831,7 +816,7 @@ local build_alias = function(tp)
     write_tsigs(f, tp)
 
     f:write_h("Description", 3)
-    write_full_doc(f, dtree.Doc(tp:documentation_get()))
+    f:write_raw(dtree.Doc(tp:documentation_get()):full_get(nil, true))
     f:write_nl(2)
 
     f:finish()
@@ -844,7 +829,7 @@ local build_struct = function(tp)
     write_tsigs(f, tp)
 
     f:write_h("Description", 3)
-    write_full_doc(f, dtree.Doc(tp:documentation_get()))
+    f:write_raw(dtree.Doc(tp:documentation_get()):full_get(nil, true))
     f:write_nl(2)
 
     f:write_h("Fields", 3)
@@ -869,7 +854,7 @@ local build_enum = function(tp)
     write_tsigs(f, tp)
 
     f:write_h("Description", 3)
-    write_full_doc(f, dtree.Doc(tp:documentation_get()))
+    f:write_raw(dtree.Doc(tp:documentation_get()):full_get(nil, true))
     f:write_nl(2)
 
     f:write_h("Fields", 3)
@@ -987,7 +972,7 @@ build_method = function(fn, cl)
     end
 
     f:write_h("Description", 3)
-    write_full_doc(f, dtree.Doc(fn:documentation_get(eolian.function_type.METHOD)))
+    f:write_raw(dtree.Doc(fn:documentation_get(eolian.function_type.METHOD)):full_get(nil, true))
     f:write_nl()
 
     f:finish()
@@ -1036,7 +1021,7 @@ build_property = function(fn, cl)
     if isget and isset then
         f:write_h("Description", 3)
         if doc or (not gdoc and not sdoc) then
-            write_full_doc(f, dtree.Doc(doc))
+            f:write_raw(dtree.Doc(doc):full_get(nil, true))
         end
         if (isget and gdoc) or (isset and sdoc) then
             f:write_nl(2)
@@ -1049,7 +1034,7 @@ build_property = function(fn, cl)
         else
             f:write_h("Description", 3)
         end
-        write_full_doc(f, dtree.Doc(gdoc))
+        f:write_raw(dtree.Doc(gdoc):full_get(nil, true))
         if isset and sdoc then
             f:write_nl(2)
         end
@@ -1061,7 +1046,7 @@ build_property = function(fn, cl)
         else
             f:write_h("Description", 3)
         end
-        write_full_doc(f, dtree.Doc(sdoc))
+        f:write_raw(dtree.Doc(sdoc):full_get(nil, true))
     end
 
     f:write_nl()
@@ -1109,7 +1094,7 @@ build_event = function(ev, cl)
     f:write_nl()
 
     f:write_h("Description", 3)
-    write_full_doc(f, dtree.Doc(ev:documentation_get()))
+    f:write_raw(dtree.Doc(ev:documentation_get()):full_get(nil, true))
     f:write_nl()
 
     f:finish()
