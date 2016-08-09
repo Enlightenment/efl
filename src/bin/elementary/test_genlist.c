@@ -5392,3 +5392,130 @@ test_genlist_cache(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    explode_win_enable(win);
    evas_object_show(win);
 }
+
+
+/***  Genlist Reusable Contents  *********************************************/
+static char *
+gl_re2_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                      const char *part EINA_UNUSED)
+{
+   int num = (int)(uintptr_t)data;
+   char buf[256];
+
+   snprintf(buf, sizeof(buf), "Item # %d", num);
+   return strdup(buf);
+}
+
+static Evas_Object *
+gl_re2_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   int num = (int)(uintptr_t)data;
+   Evas_Object *cont = NULL;
+   char buf[256];
+
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        cont = elm_icon_add(obj);
+        elm_icon_standard_set(cont, "user-home");
+     }
+   else if (!strcmp(part, "elm.swallow.end"))
+     {
+        printf("Creating NEW content for item # %d\n", num);
+        cont = elm_label_add(obj);
+        snprintf(buf, sizeof(buf), "<warning>Content for item # %d</>", num);
+        elm_object_text_set(cont, buf);
+     }
+
+   return cont;
+}
+
+static Evas_Object *
+gl_re2_reusable_content_get(void *data, Evas_Object *obj,
+                            const char *part, Evas_Object *old)
+{
+   Eina_Bool enabled = (Eina_Bool)(uintptr_t)evas_object_data_get(obj, "reusable_enabled");
+   int num = (int)(uintptr_t)data;
+
+   if (enabled && old && !strcmp(part, "elm.swallow.end"))
+     {
+        printf("REUSING content for item # %d\n", num);
+        return old;
+     }
+
+   return NULL;
+}
+
+static void
+gl_re2_check_changed_cb(void *data, Evas_Object *obj,
+                        void *event_info EINA_UNUSED)
+{
+   Eina_Bool enabled = elm_check_state_get(obj);
+   Evas_Object *gl = data;
+
+   evas_object_data_set(gl, "reusable_enabled", (void*)(uintptr_t)enabled);
+   elm_genlist_realized_items_update(gl);
+}
+
+void
+test_genlist_reusable(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *fr, *lb, *gl, *ck;
+   Elm_Genlist_Item_Class *itc;
+   int i;
+
+   // window
+   win = elm_win_util_standard_add("genlist-reusable", "Genlist Reusable Contents");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_expand_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(bx);
+   evas_object_size_hint_expand_set(fr, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_fill_set(fr, EVAS_HINT_FILL, 0);
+   elm_object_text_set(fr, "Information");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   lb = elm_label_add(fr);
+   elm_object_text_set(lb, "Numbers on the left should always match the one on the right");
+   elm_object_content_set(fr, lb);
+   evas_object_show(lb);
+
+   // genlist
+   gl = elm_genlist_add(bx);
+   elm_genlist_homogeneous_set(gl, EINA_TRUE);
+   evas_object_size_hint_expand_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
+   evas_object_data_set(gl, "reusable_enabled", (void*)EINA_TRUE);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = gl_re2_text_get;
+   itc->func.content_get = gl_re2_content_get;
+   itc->func.reusable_content_get = gl_re2_reusable_content_get;
+
+   for (i = 1; i <= 2000; i++)
+       elm_genlist_item_append(gl, itc, (void*)(uintptr_t)i, NULL,
+                               ELM_GENLIST_ITEM_NONE, NULL, NULL);
+
+   elm_genlist_item_class_free(itc);
+
+   // buttons
+   ck = elm_check_add(bx);
+   elm_object_text_set(ck, "Enable reusable contents");
+   elm_check_state_set(ck, EINA_TRUE);
+   evas_object_smart_callback_add(ck, "changed", gl_re2_check_changed_cb, gl);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   // show everything
+   evas_object_resize(win, 400, 400);
+   explode_win_enable(win);
+   evas_object_show(win);
+}
