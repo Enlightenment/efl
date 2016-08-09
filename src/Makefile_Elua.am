@@ -66,6 +66,7 @@ EXTRA_DIST2 += $(eluaapps_DATA)
 eluadocgendir = $(datadir)/elua/apps/docgen
 
 eluadocgen_DATA = \
+	scripts/elua/apps/docgen/doctree.lua \
 	scripts/elua/apps/docgen/keyref.lua \
 	scripts/elua/apps/docgen/mappings.lua \
 	scripts/elua/apps/docgen/serializers.lua \

@@ -9,21 +9,11 @@ local dutil = require("docgen.util")
 local writer = require("docgen.writer")
 local keyref = require("docgen.keyref")
 local ser = require("docgen.serializers")
+local dtree = require("docgen.doctree")
 
 local use_dot, use_folded
 
 -- eolian to various doc elements conversions
-
-local gen_doc_refd = function(str)
-    if not str then
-        return nil
-    end
-    local pars = dutil.str_split(str, "\n\n")
-    for i = 1, #pars do
-        pars[i] = writer.Buffer():write_par(pars[i]):finish()
-    end
-    return table.concat(pars, "\n\n")
-end
 
 local get_fallback_fdoc = function(f, ftype)
     if not ftype then
@@ -34,54 +24,19 @@ local get_fallback_fdoc = function(f, ftype)
         end
     end
     if ftype then
-        return f:documentation_get(ftype)
+        return dtree.Doc(f:documentation_get(ftype))
     end
     return nil
 end
 
-local get_brief_doc = function(doc1, doc2)
-    if not doc1 and not doc2 then
-        return "No description supplied."
-    end
-    if not doc1 then
-        doc1, doc2 = doc2, doc1
-    end
-    return gen_doc_refd(doc1:summary_get())
-end
-
 local get_brief_fdoc = function(f, ftype)
-    return get_brief_doc(f:documentation_get(eolian.function_type.METHOD),
-                         get_fallback_fdoc(f, ftype))
-end
-
-local get_full_doc = function(doc1, doc2)
-    if not doc1 and not doc2 then
-        return "No description supplied."
-    end
-    if not doc1 then
-        doc1, doc2 = doc2, doc1
-    end
-    local sum1 = doc1:summary_get()
-    local desc1 = doc1:description_get()
-    local edoc = ""
-    if doc2 then
-        local sum2 = doc2:summary_get()
-        local desc2 = doc2:description_get()
-        if not desc2 then
-            if sum2 then edoc = "\n\n" .. sum2 end
-        else
-            edoc = "\n\n" .. sum2 .. "\n\n" .. desc2
-        end
-    end
-    if not desc1 then
-        return gen_doc_refd(sum1 .. edoc)
-    end
-    return gen_doc_refd(sum1 .. "\n\n" .. desc1 .. edoc)
+    return dtree.Doc(f:documentation_get(eolian.function_type.METHOD))
+        :brief_get(get_fallback_fdoc(f, ftype))
 end
 
 local get_full_fdoc = function(f, ftype)
-    return get_full_doc(f:documentation_get(eolian.function_type.METHOD),
-                        get_fallback_fdoc(f, ftype))
+    return dtree.Doc(f:documentation_get(eolian.function_type.METHOD))
+        :full_get(get_fallback_fdoc(f, ftype))
 end
 
 local propt_to_type = {
@@ -395,7 +350,7 @@ local build_reftable = function(f, title, ctitle, ctype, t)
         nt[#nt + 1] = {
             writer.Buffer():write_link(eomap.gen_nsp_eo(v, ctype, true),
                                 v:full_name_get()):finish(),
-            get_brief_doc(v:documentation_get())
+            dtree.Doc(v:documentation_get()):brief_get()
         }
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
@@ -478,12 +433,12 @@ local build_ref = function()
 end
 
 local write_full_doc = function(f, doc1, doc2)
-    f:write_raw(get_full_doc(doc1, doc2))
-    local since
-    if doc2 then
-        since = doc2:since_get()
+    if not doc2 then
+        doc2 = dtree.Doc()
     end
-    if not since and doc1 then
+    f:write_raw(doc1:full_get(doc2))
+    local since = doc2:since_get()
+    if not since then
         since = doc1:since_get()
     end
     if since then
@@ -493,7 +448,7 @@ local write_full_doc = function(f, doc1, doc2)
 end
 
 local write_full_fdoc = function(f, fn, ftype)
-    write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD),
+    write_full_doc(f, dtree.Doc(fn:documentation_get(eolian.function_type.METHOD)),
                    get_fallback_fdoc(fn, ftype))
 end
 
@@ -819,7 +774,7 @@ local build_class = function(cl)
     f:write_nl()
 
     f:write_h("Description", 3)
-    write_full_doc(f, cl:documentation_get())
+    write_full_doc(f, dtree.Doc(cl:documentation_get()))
     f:write_nl(2)
 
     build_functable(f, "Methods", "Method name", cl, eolian.function_type.METHOD)
@@ -836,7 +791,7 @@ local build_class = function(cl)
             local lbuf = writer.Buffer()
             lbuf:write_link(eomap.gen_nsp_ev(ev, cl, true), ev:name_get())
             nt[#nt + 1] = {
-                lbuf:finish(), get_brief_doc(ev:documentation_get())
+                lbuf:finish(), dtree.Doc(ev:documentation_get()):brief_get()
             }
             build_event(ev, cl)
         end
@@ -876,7 +831,7 @@ local build_alias = function(tp)
     write_tsigs(f, tp)
 
     f:write_h("Description", 3)
-    write_full_doc(f, tp:documentation_get())
+    write_full_doc(f, dtree.Doc(tp:documentation_get()))
     f:write_nl(2)
 
     f:finish()
@@ -889,7 +844,7 @@ local build_struct = function(tp)
     write_tsigs(f, tp)
 
     f:write_h("Description", 3)
-    write_full_doc(f, tp:documentation_get())
+    write_full_doc(f, dtree.Doc(tp:documentation_get()))
     f:write_nl(2)
 
     f:write_h("Fields", 3)
@@ -898,7 +853,7 @@ local build_struct = function(tp)
     for fl in tp:struct_fields_get() do
         local buf = writer.Buffer()
         buf:write_b(fl:name_get())
-        buf:write_raw(" - ", get_full_doc(fl:documentation_get()))
+        buf:write_raw(" - ", dtree.Doc(fl:documentation_get()):full_get())
         arr[#arr + 1] = buf:finish()
     end
     f:write_list(arr)
@@ -914,7 +869,7 @@ local build_enum = function(tp)
     write_tsigs(f, tp)
 
     f:write_h("Description", 3)
-    write_full_doc(f, tp:documentation_get())
+    write_full_doc(f, dtree.Doc(tp:documentation_get()))
     f:write_nl(2)
 
     f:write_h("Fields", 3)
@@ -923,7 +878,7 @@ local build_enum = function(tp)
     for fl in tp:enum_fields_get() do
         local buf = writer.Buffer()
         buf:write_b(fl:name_get())
-        buf:write_raw(" - ", get_full_doc(fl:documentation_get()))
+        buf:write_raw(" - ", dtree.Doc(fl:documentation_get()):full_get())
         arr[#arr + 1] = buf:finish()
     end
     f:write_list(arr)
@@ -976,7 +931,7 @@ local build_parlist = function(f, pl, nodir)
             buf:write_raw(" ")
             buf:write_i(eomap.pdir_to_str[p:direction_get()])
         end
-        buf:write_raw(" - ", get_full_doc(p:documentation_get()))
+        buf:write_raw(" - ", dtree.Doc(p:documentation_get()):full_get())
         params[#params + 1] = buf:finish()
     end
     f:write_list(params)
@@ -1032,7 +987,7 @@ build_method = function(fn, cl)
     end
 
     f:write_h("Description", 3)
-    write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD))
+    write_full_doc(f, dtree.Doc(fn:documentation_get(eolian.function_type.METHOD)))
     f:write_nl()
 
     f:finish()
@@ -1081,7 +1036,7 @@ build_property = function(fn, cl)
     if isget and isset then
         f:write_h("Description", 3)
         if doc or (not gdoc and not sdoc) then
-            write_full_doc(f, doc)
+            write_full_doc(f, dtree.Doc(doc))
         end
         if (isget and gdoc) or (isset and sdoc) then
             f:write_nl(2)
@@ -1094,7 +1049,7 @@ build_property = function(fn, cl)
         else
             f:write_h("Description", 3)
         end
-        write_full_doc(f, gdoc)
+        write_full_doc(f, dtree.Doc(gdoc))
         if isset and sdoc then
             f:write_nl(2)
         end
@@ -1106,7 +1061,7 @@ build_property = function(fn, cl)
         else
             f:write_h("Description", 3)
         end
-        write_full_doc(f, sdoc)
+        write_full_doc(f, dtree.Doc(sdoc))
     end
 
     f:write_nl()
@@ -1154,7 +1109,7 @@ build_event = function(ev, cl)
     f:write_nl()
 
     f:write_h("Description", 3)
-    write_full_doc(f, ev:documentation_get())
+    write_full_doc(f, dtree.Doc(ev:documentation_get()))
     f:write_nl()
 
     f:finish()
