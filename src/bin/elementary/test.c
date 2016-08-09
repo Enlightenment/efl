@@ -302,6 +302,10 @@ struct elm_test
    const char *icon;
    const char *category;
    const char *name;
+   Evas_Object *frame;
+   Evas_Object *box;
+   Evas_Object *btn;
+
    void (*cb)(void *, Evas_Object *, void *);
 };
 
@@ -317,7 +321,7 @@ _elm_test_sort(const void *pa, const void *pb)
 static void
 _elm_test_add(Eina_List **p_list, const char *icon, const char *category, const char *name, void (*cb)(void *, Evas_Object *, void *))
 {
-   struct elm_test *t = malloc(sizeof(struct elm_test));
+   struct elm_test *t = calloc(1, sizeof(struct elm_test));
    t->icon = icon;
    t->category = category;
    t->name = name;
@@ -345,6 +349,27 @@ _frame_clicked(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 }
 
 static void
+_clear_menu()
+{
+   Eina_List *child, *children;
+   Evas_Object *box, *obj, *obj1;
+
+   child = elm_box_children_get(tbx);
+   EINA_LIST_FREE(child, obj)
+     {
+        box = elm_object_content_get(obj);
+        children = elm_box_children_get(box);
+        EINA_LIST_FREE(children, obj1)
+          {
+             evas_object_hide(obj1);
+          }
+        elm_box_unpack_all(box);
+        evas_object_hide(obj);
+     }
+   elm_box_unpack_all(tbx);
+}
+
+static void
 _menu_create(const char *option_str)
 {
    struct elm_test *t = NULL;
@@ -353,44 +378,64 @@ _menu_create(const char *option_str)
    char buf[PATH_MAX];
    Eina_List *l;
 
-   elm_box_clear(tbx);
+   _clear_menu();
    EINA_LIST_FOREACH(tests, l, t)
      {
         if (option_str && !strcasestr(t->name, option_str)) continue;
         if ((!pcat) || (strcmp(pcat, t->category)))
           {
-             cfr = elm_frame_add(win);
-             // FIXME: add new style of frame for this
-             evas_object_smart_callback_add(cfr, "clicked", _frame_clicked, NULL);
-             elm_frame_autocollapse_set(cfr, EINA_TRUE);
-             elm_object_text_set(cfr, t->category);
-             evas_object_size_hint_weight_set(cfr, EVAS_HINT_EXPAND, 0.0);
-             evas_object_size_hint_fill_set(cfr, EVAS_HINT_FILL, 0.0);
-             elm_box_pack_end(tbx, cfr);
-             evas_object_show(cfr);
+             if (t->frame)
+               {
+                  elm_box_pack_end(tbx, t->frame);
+                  evas_object_show(t->frame);
+               }
+             else
+               {
+                  cfr = elm_frame_add(win);
+                  // FIXME: add new style of frame for this
+                  evas_object_smart_callback_add(cfr, "clicked", _frame_clicked, NULL);
+                  elm_frame_autocollapse_set(cfr, EINA_TRUE);
+                  elm_object_text_set(cfr, t->category);
+                  evas_object_size_hint_weight_set(cfr, EVAS_HINT_EXPAND, 0.0);
+                  evas_object_size_hint_fill_set(cfr, EVAS_HINT_FILL, 0.0);
+                  elm_box_pack_end(tbx, cfr);
+                  evas_object_show(cfr);
 
-             tbx2 = elm_box_add(win);
-             elm_box_layout_set(tbx2, evas_object_box_layout_flow_horizontal, NULL, NULL);
-             evas_object_size_hint_weight_set(tbx2, EVAS_HINT_EXPAND, 0.0);
-             evas_object_size_hint_align_set(tbx2, EVAS_HINT_FILL, 0.0);
-             elm_box_align_set(tbx2, 0.0, 0.5);
-             elm_object_content_set(cfr, tbx2);
-             evas_object_show(tbx2);
+                  tbx2 = elm_box_add(win);
+                  elm_box_layout_set(tbx2, evas_object_box_layout_flow_horizontal, NULL, NULL);
+                  evas_object_size_hint_weight_set(tbx2, EVAS_HINT_EXPAND, 0.0);
+                  evas_object_size_hint_align_set(tbx2, EVAS_HINT_FILL, 0.0);
+                  elm_box_align_set(tbx2, 0.0, 0.5);
+                  elm_object_content_set(cfr, tbx2);
+                  evas_object_show(tbx2);
+               }
           }
-        bt = elm_button_add(win);
-        // FIXME: add new style of button for this like efm in e17
-        elm_object_text_set(bt, t->name);
-        if (t->icon)
+
+        if (t->btn)
           {
-             ic = elm_icon_add(win);
-             snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), t->icon);
-             elm_image_file_set(ic, buf, NULL);
-             elm_object_part_content_set(bt, "icon", ic);
-             evas_object_show(ic);
+             elm_box_pack_end(t->box, t->btn);
+             evas_object_show(t->btn);
           }
-        elm_box_pack_end(tbx2, bt);
-        evas_object_show(bt);
-        evas_object_smart_callback_add(bt, "clicked", t->cb, win);
+        else
+          {
+             bt = elm_button_add(win);
+             // FIXME: add new style of button for this like efm in e17
+             elm_object_text_set(bt, t->name);
+             if (t->icon)
+               {
+                  ic = elm_icon_add(win);
+                  snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), t->icon);
+                  elm_image_file_set(ic, buf, NULL);
+                  elm_object_part_content_set(bt, "icon", ic);
+                  evas_object_show(ic);
+               }
+             elm_box_pack_end(tbx2, bt);
+             evas_object_show(bt);
+             evas_object_smart_callback_add(bt, "clicked", t->cb, win);
+             t->frame = cfr;
+             t->box = tbx2;
+             t->btn = bt;
+          }
         pcat = t->category;
         if (t == tt) tt = cfr;
      }
