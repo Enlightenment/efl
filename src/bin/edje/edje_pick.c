@@ -564,7 +564,7 @@ _edje_pick_output_prepare(Edje_File *o, Edje_File *edf, char *name)
 }
 
 static Eina_List *
-_edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Edje_Part_Collection_Directory_Entry *ce, int *current_id)
+_edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Eina_List *groups, Edje_Part_Collection_Directory_Entry *ce, int *current_id)
 {
    char buf[1024];
    Edje_Part_Collection *edc;
@@ -582,11 +582,12 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Edje_P
    if (!edc)
      {
         EINA_LOG_ERR("Failed to read group <%s> id <%d>\n", ce->entry, ce->id);
-        return dep_list;
+        goto exit;
      }
 #define GROUP_CHECK_AND_ADD(NAME) \
    if (NAME) \
      { \
+        if (eina_list_search_unsorted(groups, (void *)strcmp, NAME)) goto exit; \
         ce_cor = eina_hash_find(edf->collection, NAME); \
         if ((ce_cor) && (!eina_hash_find(out_file->collection, NAME))) \
           { \
@@ -617,6 +618,7 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Edje_P
           }
      }
 
+exit:
    edje_cache_emp_free(ce);
    return dep_list;
 #undef GROUP_CHECK_AND_ADD
@@ -734,7 +736,7 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
 
                   eina_hash_direct_add(out_file->collection,ce_out->entry,
                         ce_out);
-                  dep_list = _edje_pick_header_dependencies_check(out_file, edf, ce, &current_group_id);
+                  dep_list = _edje_pick_header_dependencies_check(out_file, edf, context.current_file->groups, ce, &current_group_id);
                   if (!deps) deps = dep_list;
                   else deps = eina_list_merge(deps, dep_list);
                }
