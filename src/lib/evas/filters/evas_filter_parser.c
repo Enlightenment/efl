@@ -2202,8 +2202,13 @@ _lua_print(lua_State *L)
         lua_getglobal(L, _lua_errfunc_name);
         lua_getglobal(L, "tostring"); //+1
         lua_pushvalue(L, i); //+1
-        lua_pcall(L, 1, 1, -3); //-2/+1
-        str = lua_tostring(L, -1);
+        if (lua_pcall(L, 1, 1, -3) == 0) //-2/+1
+          str = lua_tostring(L, -1);
+        else
+          {
+             ERR("tostring() failed inside print(): %s", lua_tostring(L, -1));
+             str = "(invalid)";
+          }
         eina_strbuf_append(s, str ? str : "(nil)");
         lua_pop(L, 2);
         eina_strbuf_append_char(s, ' ');
