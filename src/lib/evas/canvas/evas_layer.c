@@ -75,18 +75,17 @@ _evas_layer_free(Evas_Layer *lay)
 void
 _evas_layer_flush_removes(Evas_Layer *lay)
 {
-   if (lay->walking_objects) return;
-   while (lay->removes)
-     {
-        Evas_Object_Protected_Data *obj = lay->removes->data;
+   Evas_Object_Protected_Data *obj;
 
+   if (lay->walking_objects) return;
+   EINA_LIST_FREE(lay->removes, obj)
+     {
         lay->objects = (Evas_Object_Protected_Data *)
           eina_inlist_remove(EINA_INLIST_GET(lay->objects),
                              EINA_INLIST_GET(obj));
-        lay->removes = eina_list_remove_list(lay->removes, lay->removes);
         obj->layer = NULL;
         obj->in_layer = 0;
-        lay->usage--;
+        if (lay->usage > 0) lay->usage--;
      }
    if (lay->usage <= 0)
      {

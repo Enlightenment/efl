@@ -298,7 +298,6 @@ evas_object_smart_member_del(Evas_Object *eo_obj)
    if (!obj) return;
    if (!obj->smart.parent) return;
    Evas_Object *smart_obj = obj->smart.parent;
-
    efl_canvas_group_member_del(smart_obj, eo_obj);
 }
 
@@ -1270,8 +1269,37 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
 
         while (o->contained)
           {
-             Evas_Object *contained_obj = ((Evas_Object_Protected_Data *)o->contained)->object;
-             evas_object_smart_member_del(contained_obj);
+             Evas_Object_Protected_Data *contained =
+               (Evas_Object_Protected_Data *)o->contained;
+             Evas_Object *contained_obj = contained->object;
+
+             if (contained->smart.parent != eo_obj)
+               {
+                  Evas_Layer *lay = obj->layer;
+
+                  ERR("This is bad - object %p in child list for %p has parent %p", contained_obj, eo_obj, contained->smart.parent);
+                  o->contained = eina_inlist_remove
+                    (o->contained, EINA_INLIST_GET(contained));
+                  if (lay)
+                    {
+                       // this SHOULD be eina_inlist_append() BUT seemingly
+                       // if we call this this objetc gets magicaly added
+                       // back to o->conmtaind above NOt lay->objects. this
+                       // is utterly bizzarre and the only explanation i
+                       // can come up with right now is a compiler bug.
+                       lay->objects = (Evas_Object_Protected_Data *)
+                         eina_inlist_prepend(EINA_INLIST_GET(lay->objects),
+                                             EINA_INLIST_GET(contained));
+                       if (contained->layer != lay)
+                         {
+                            if (contained->layer) contained->layer->usage--;
+                            contained->layer = lay;
+                            contained->in_layer = 1;
+                            lay->usage++;
+                         }
+                    }
+               }
+             else evas_object_smart_member_del(contained_obj);
           }
 
         while (o->callbacks)
