@@ -912,13 +912,13 @@ _edje_pick_sounds_add(Edje_File *edf)
              Edje_Sound_Sample *sample = &edf->sound_dir->samples[k];
 
              snprintf(buf, sizeof(buf), "edje/sounds/%i", sample->id);
-             VERBOSE(EINA_LOG_INFO("Trying to read <%s>\n", sample->name));
+             VERBOSE(EINA_LOG_INFO("Trying to read <%s>\n", sample->snd_src));
 
              data = eet_read(edf->ef, buf, &size);
              if (size)
                {
                   Edje_Pick_Data *smpl = malloc(sizeof(*smpl));
-                  smpl->filename = eina_stringshare_add(sample->name);
+                  smpl->filename = eina_stringshare_add(sample->snd_src);
                   smpl->data = data;
                   smpl->size = size;
                   smpl->entry = (void *) sample; /* for output file sound dir */
