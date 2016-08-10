@@ -265,7 +265,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    /* new input events */
    if (eo_event_desc)
      {
-        Efl_Event_Flags *pevflags = NULL;
+        Efl_Event_Flags *pevflags = NULL, evflags;
 
 #define EV_CASE(TYPE, NEWTYPE, Type) \
    case EVAS_CALLBACK_ ## TYPE: \
@@ -288,9 +288,14 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
           }
 #undef EV_CASE
 
-        if (pevflags) efl_event_flags_set(eo_event_info, *pevflags);
+        if (pevflags)
+          {
+             efl_event_flags_set(eo_event_info, *pevflags);
+             evflags = *pevflags;
+          }
         eo_event_callback_call(eo_obj, eo_event_desc, eo_event_info);
-        if (pevflags) *pevflags = efl_event_flags_get(eo_event_info);
+        if (pevflags && (*pevflags != evflags))
+          *pevflags = efl_event_flags_get(eo_event_info);
      }
 
    /* legacy callbacks - relying on Efl.Canvas.Object events */
