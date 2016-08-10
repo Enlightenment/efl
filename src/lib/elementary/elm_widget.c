@@ -721,6 +721,7 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
       Evas_Event_Key_Up up;
       Evas_Event_Mouse_Wheel wheel;
    } event_info = {};
+   Eina_Bool was_hold;
 
    /* FIXME: Avoid this translation to evas struct and use pointer/key events
     * in all of elementary widgets */
@@ -741,6 +742,7 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
         event_info.down.dev = ev->device;
         type = EVAS_CALLBACK_KEY_DOWN;
         event_flags = &event_info.down.event_flags;
+        was_hold = (*event_flags & EVAS_EVENT_FLAG_ON_HOLD) != 0;
      }
    else if (event->desc == EFL_EVENT_KEY_UP)
      {
@@ -759,6 +761,7 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
         event_info.up.dev = ev->device;
         type = EVAS_CALLBACK_KEY_UP;
         event_flags = &event_info.up.event_flags;
+        was_hold = (*event_flags & EVAS_EVENT_FLAG_ON_HOLD) != 0;
      }
    else if (event->desc == EFL_EVENT_POINTER_WHEEL)
      {
@@ -778,12 +781,13 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
         event_info.wheel.dev = ev->device;
         type = EVAS_CALLBACK_MOUSE_WHEEL;
         event_flags = &event_info.wheel.event_flags;
+        was_hold = (*event_flags & EVAS_EVENT_FLAG_ON_HOLD) != 0;
      }
    else
      return;
 
    elm_widget_event_propagate(obj, type, &event_info, event_flags);
-   if (*event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+   if (!was_hold && (*event_flags & EVAS_EVENT_FLAG_ON_HOLD))
      efl_event_processed_set(event->info, EINA_TRUE);
 }
 
