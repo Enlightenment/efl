@@ -5,7 +5,7 @@ local dutil = require("docgen.util")
 
 local M = {}
 
-local root_nspace, use_notes, use_folds
+local root_nspace, use_notes, use_folds, use_dot
 
 M.Writer = util.Object:clone {
     __ctor = function(self, path)
@@ -125,6 +125,9 @@ M.Writer = util.Object:clone {
     end,
 
     write_graph = function(self, tbl)
+        if not use_dot then
+            return self
+        end
         self:write_raw("<graphviz>\n")
         self:write_raw("digraph ", tbl.type, " {\n")
 
@@ -317,6 +320,7 @@ M.Writer = util.Object:clone {
         if use_folds then
             self:write_raw("\n\n++++")
         end
+        return self
     end,
 
     finish = function(self)
@@ -343,10 +347,15 @@ M.Buffer = M.Writer:clone {
     end
 }
 
-M.init = function(root_ns, notes, folds)
+M.init = function(root_ns, notes, folds, dot)
     root_nspace = root_ns
     use_notes = notes
     use_folds = folds
+    use_dot = dot
+end
+
+M.has_dot = function()
+    return use_dot
 end
 
 return M

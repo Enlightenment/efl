@@ -11,8 +11,6 @@ local keyref = require("docgen.keyref")
 local ser = require("docgen.serializers")
 local dtree = require("docgen.doctree")
 
-local use_dot
-
 -- eolian to various doc elements conversions
 
 local get_fallback_fdoc = function(f, ftype)
@@ -743,10 +741,10 @@ local build_class = function(cl)
     f:write_h(cl:full_name_get(), 2)
     keyref.add(cl:full_name_get():gsub("%.", "_"), "c")
 
-    if use_dot then
-        f:write_folded("Inheritance graph", function()
-            f:write_graph(build_igraph(cl))
-        end)
+    f:write_folded("Inheritance graph", function()
+        f:write_graph(build_igraph(cl))
+    end)
+    if writer.has_dot() then
         f:write_nl(2)
     end
 
@@ -1128,8 +1126,6 @@ getopt.parse {
         if opts["graph-theme"] then
             set_theme(opts["graph-theme"])
         end
-        use_dot = not opts["disable-graphviz"]
-        use_folded = not opts["disable-folded"]
         local rootns = (not opts["n"] or opts["n"] == "")
             and "efl" or opts["n"]
         local dr
@@ -1158,7 +1154,12 @@ getopt.parse {
             error("failed parsing eo files")
         end
         stats.init(not not opts["v"])
-        writer.init(rootns, not opts["disable-notes"], not opts["disable-folded"])
+        writer.init(
+            rootns,
+            not opts["disable-notes"],
+            not opts["disable-folded"],
+            not opts["disable-graphviz"]
+        )
         dutil.rm_root()
         dutil.mkdir_r(nil)
         build_ref()
