@@ -11,7 +11,7 @@ local keyref = require("docgen.keyref")
 local ser = require("docgen.serializers")
 local dtree = require("docgen.doctree")
 
-local use_dot, use_folded
+local use_dot
 
 -- eolian to various doc elements conversions
 
@@ -744,13 +744,9 @@ local build_class = function(cl)
     keyref.add(cl:full_name_get():gsub("%.", "_"), "c")
 
     if use_dot then
-        if use_folded then
-            f:write_raw("++++ Inheritance graph |\n\n")
-        end
-        f:write_graph(build_igraph(cl))
-        if use_folded then
-            f:write_raw("\n\n++++")
-        end
+        f:write_folded("Inheritance graph", function()
+            f:write_graph(build_igraph(cl))
+        end)
         f:write_nl(2)
     end
 
@@ -1162,7 +1158,7 @@ getopt.parse {
             error("failed parsing eo files")
         end
         stats.init(not not opts["v"])
-        writer.init(rootns, not opts["disable-notes"])
+        writer.init(rootns, not opts["disable-notes"], not opts["disable-folded"])
         dutil.rm_root()
         dutil.mkdir_r(nil)
         build_ref()

@@ -5,7 +5,7 @@ local dutil = require("docgen.util")
 
 local M = {}
 
-local root_nspace, use_notes
+local root_nspace, use_notes, use_folds
 
 M.Writer = util.Object:clone {
     __ctor = function(self, path)
@@ -309,6 +309,16 @@ M.Writer = util.Object:clone {
         return self
     end,
 
+    write_folded = function(self, title, func)
+        if use_folds then
+            self:write_raw("++++ ", title, " |\n\n")
+        end
+        func(self)
+        if use_folds then
+            self:write_raw("\n\n++++")
+        end
+    end,
+
     finish = function(self)
         self.file:close()
     end
@@ -333,9 +343,10 @@ M.Buffer = M.Writer:clone {
     end
 }
 
-M.init = function(root_ns, notes)
+M.init = function(root_ns, notes, folds)
     root_nspace = root_ns
     use_notes = notes
+    use_folds = folds
 end
 
 return M
