@@ -262,6 +262,9 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
          break;
      }
 
+   /* legacy callbacks - relying on Efl.Canvas.Object events */
+   eo_event_callback_call(eo_obj, _legacy_evas_callback_table(type), event_info);
+
    /* new input events */
    if (eo_event_desc)
      {
@@ -290,11 +293,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
         if (pevflags) efl_event_flags_set(eo_event_info, *pevflags);
         eo_event_callback_call(eo_obj, eo_event_desc, eo_event_info);
-        if (pevflags) *pevflags = efl_event_flags_get(eo_event_info);
      }
-
-   /* legacy callbacks - relying on Efl.Canvas.Object events */
-   eo_event_callback_call(eo_obj, _legacy_evas_callback_table(type), event_info);
 
    if (type == EVAS_CALLBACK_MOUSE_DOWN)
      {
