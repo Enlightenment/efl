@@ -64,8 +64,21 @@ EOLIAN static Eo *
 _efl_event_hold_efl_object_constructor(Eo *obj, Efl_Event_Hold_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   pd->eo = obj;
+   efl_event_reset(obj);
    return obj;
+}
+
+static inline void
+_efl_event_hold_free(Efl_Event_Hold_Data *pd)
+{
+   free(pd->legacy);
+}
+
+EOLIAN static void
+_efl_event_hold_efl_object_destructor(Eo *obj, Efl_Event_Hold_Data *pd)
+{
+   _efl_event_hold_free(pd);
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Efl_Event *
@@ -81,6 +94,7 @@ _efl_event_hold_efl_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_UNU
 EOLIAN static void
 _efl_event_hold_efl_event_reset(Eo *obj, Efl_Event_Hold_Data *pd)
 {
+   _efl_event_hold_free(pd);
    memset(pd, 0, sizeof(*pd));
    pd->eo = obj;
 }
@@ -91,11 +105,14 @@ _efl_event_hold_efl_event_dup(Eo *obj, Efl_Event_Hold_Data *pd)
    Efl_Event_Hold_Data *ev;
    Efl_Event *evt = efl_add(EFL_EVENT_HOLD_CLASS, efl_parent_get(obj));
    ev = efl_data_scope_get(evt, MY_CLASS);
-   if (ev)
-     {
-        memcpy(ev, pd, sizeof(*ev));
-        ev->eo = evt;
-     }
+   if (!ev) return NULL;
+
+   ev->eo = evt;
+   ev->timestamp = pd->timestamp;
+   ev->data = pd->data;
+   ev->hold = pd->hold;
+   ev->device = pd->device; // lacks a proper ref :(
+
    return evt;
 }
 

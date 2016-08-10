@@ -128,6 +128,7 @@ class Efl.Event.Pointer (Efl.Object, Efl.Event, Efl.Input.State, Efl.Event.Input
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.destructor;
       class.destructor;
       Efl.Event.instance_get;
       Efl.Event.reset;

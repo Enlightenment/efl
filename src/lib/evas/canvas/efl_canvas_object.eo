@@ -599,21 +599,9 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Gfx.Map.map_enable.get;
    }
    events {
-       mouse,in @beta; [[Mouse In Event ]]
-       mouse,out @beta; [[Mouse Out Event ]]
-       mouse,down @beta; [[Mouse Button Down Event ]]
-       mouse,up @beta; [[Mouse Button Up Event ]]
-       mouse,move @beta; [[Mouse Move Event ]]
-       mouse,wheel @beta; [[Mouse Wheel Event ]]
-       multi,down @beta; [[Mouse-touch Down Event ]]
-       multi,up @beta; [[Mouse-touch Up Event ]]
-       multi,move @beta; [[Multi-touch Move Event ]]
        free @beta; [[Object Being Freed (Called after Del) ]]
-       key,down @beta; [[Key Press Event ]]
-       key,up @beta; [[Key Release Event ]]
        focus,in; [[Focus In Event ]]
        focus,out; [[Focus Out Event ]]
        del @beta; [[Object Being Deleted (called before Free) ]]
-       hold @beta; [[Events go on/off hold ]]
    }
 }

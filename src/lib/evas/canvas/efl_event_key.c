@@ -79,6 +79,7 @@ _efl_event_key_efl_object_constructor(Eo *obj, Efl_Event_Key_Data *pd EINA_UNUSE
 static inline void
 _efl_event_key_free(Efl_Event_Key_Data *pd)
 {
+   free(pd->legacy);
    eina_stringshare_del(pd->key);
    eina_stringshare_del(pd->keyname);
    eina_stringshare_del(pd->string);
@@ -185,6 +186,7 @@ _efl_event_key_efl_event_dup(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd)
 
    memcpy(ev, pd, sizeof(*ev));
    ev->eo        = evt;
+   ev->legacy    = NULL;
    ev->key       = eina_stringshare_add(pd->key);
    ev->keyname   = eina_stringshare_add(pd->keyname);
    ev->string    = eina_stringshare_add(pd->string);

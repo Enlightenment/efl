@@ -82,15 +82,29 @@ _efl_event_pointer_class_destructor(Efl_Class *klass EINA_UNUSED)
 EOLIAN static Efl_Object *
 _efl_event_pointer_efl_object_constructor(Eo *obj, Efl_Event_Pointer_Data *pd EINA_UNUSED)
 {
-   efl_constructor(efl_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_event_reset(obj);
    return obj;
+}
+
+static inline void
+_efl_event_pointer_free(Efl_Event_Pointer_Data *pd)
+{
+   free(pd->legacy);
+}
+
+EOLIAN static void
+_efl_event_pointer_efl_object_destructor(Eo *obj, Efl_Event_Pointer_Data *pd)
+{
+   _efl_event_pointer_free(pd);
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
 _efl_event_pointer_efl_event_reset(Eo *obj, Efl_Event_Pointer_Data *pd)
 {
    Eina_Bool fake = pd->fake;
+   _efl_event_pointer_free(pd);
    memset(pd, 0, sizeof(*pd));
    pd->eo = obj;
    pd->wheel.dir = EFL_ORIENT_VERTICAL;
@@ -109,6 +123,7 @@ _efl_event_pointer_efl_event_dup(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd
 
    memcpy(ev, pd, sizeof(*ev));
    ev->eo = evt;
+   ev->legacy = NULL;
    ev->evas_done = 0;
    ev->win_fed = 0;
    ev->fake = 1;

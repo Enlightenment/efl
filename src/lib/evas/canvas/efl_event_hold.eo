@@ -11,6 +11,7 @@ class Efl.Event.Hold (Efl.Object, Efl.Event.Input)
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Event.instance_get;
       Efl.Event.reset;
       Efl.Event.dup;

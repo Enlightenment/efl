@@ -724,7 +724,9 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
    Eina_Bool was_hold;
 
    /* FIXME: Avoid this translation to evas struct and use pointer/key events
-    * in all of elementary widgets */
+    * in all of elementary widgets
+    * See also: efl_event_key_legacy_info_fill().
+    */
    if (event->desc == EFL_EVENT_KEY_DOWN)
      {
         Efl_Event_Key_Data *ev = efl_data_scope_get(event->info, EFL_EVENT_KEY_CLASS);

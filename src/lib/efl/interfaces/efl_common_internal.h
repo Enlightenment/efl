@@ -51,6 +51,7 @@ struct _Efl_Event_Pointer_Data
                                               (see input vs. feed: this is "input") */
    Evas_Modifier              *modifiers;
    Evas_Lock                  *locks;
+   void                       *legacy; /* DO NOT TOUCH THIS */
    Eina_Bool                   evas_done : 1; /* set by evas */
    Eina_Bool                   fake : 1;
    Eina_Bool                   win_fed : 1;
@@ -73,6 +74,7 @@ struct _Efl_Event_Key_Data
    Evas_Lock         *locks;
    Efl_Event_Flags    event_flags;
    Efl_Input_Device  *device;
+   void              *legacy; /* DO NOT TOUCH THIS */
    Eina_Bool          evas_done : 1; /* set by evas */
    Eina_Bool          fake : 1;
    Eina_Bool          win_fed : 1;
@@ -97,6 +99,7 @@ struct _Efl_Event_Hold_Data
    double            timestamp;
    Efl_Input_Device *device;
    void             *data;
+   void             *legacy; /* DO NOT TOUCH THIS */
    Eina_Bool         hold : 1;
    Eina_Bool         evas_done : 1; /* set by evas */
 };
