@@ -104,9 +104,6 @@ elm_code_parser_standard_add(Elm_Code *code, Elm_Code_Parser *parser)
    code->parsers = eina_list_append(code->parsers, parser);
 }
 
-EAPI Elm_Code_Parser *
-ELM_CODE_PARSER_STANDARD_DIFF;
-
 static void
 _elm_code_parser_diff_trim_leading(Elm_Code_Line *line, unsigned int count)
 {
