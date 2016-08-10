@@ -5,7 +5,14 @@ local dutil = require("docgen.util")
 
 local M = {}
 
-local root_nspace, use_notes, use_folds, use_dot
+local root_nspace, features
+
+M.has_feature = function(fname)
+    if not features then
+        return false
+    end
+    return not not features[fname]
+end
 
 M.Writer = util.Object:clone {
     __ctor = function(self, path)
@@ -125,7 +132,7 @@ M.Writer = util.Object:clone {
     end,
 
     write_graph = function(self, tbl)
-        if not use_dot then
+        if not M.has_feature("dot") then
             return self
         end
         self:write_raw("<graphviz>\n")
@@ -288,7 +295,7 @@ M.Writer = util.Object:clone {
     end,
 
     write_par = function(self, str)
-        local notetypes = use_notes and {
+        local notetypes = M.has_feature("notes") and {
             ["Note: "] = "<note>\n",
             ["Warning: "] = "<note warning>\n",
             ["Remark: "] = "<note tip>\n",
@@ -313,11 +320,11 @@ M.Writer = util.Object:clone {
     end,
 
     write_folded = function(self, title, func)
-        if use_folds then
+        if M.has_feature("folds") then
             self:write_raw("++++ ", title, " |\n\n")
         end
         func(self)
-        if use_folds then
+        if M.has_feature("folds") then
             self:write_raw("\n\n++++")
         end
         return self
@@ -347,15 +354,9 @@ M.Buffer = M.Writer:clone {
     end
 }
 
-M.init = function(root_ns, notes, folds, dot)
+M.init = function(root_ns, ftrs)
     root_nspace = root_ns
-    use_notes = notes
-    use_folds = folds
-    use_dot = dot
-end
-
-M.has_dot = function()
-    return use_dot
+    features = ftrs
 end
 
 return M

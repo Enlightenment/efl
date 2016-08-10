@@ -744,7 +744,7 @@ local build_class = function(cl)
     f:write_folded("Inheritance graph", function()
         f:write_graph(build_igraph(cl))
     end)
-    if writer.has_dot() then
+    if writer.has_feature("dot") then
         f:write_nl(2)
     end
 
@@ -1154,12 +1154,12 @@ getopt.parse {
             error("failed parsing eo files")
         end
         stats.init(not not opts["v"])
-        writer.init(
-            rootns,
-            not opts["disable-notes"],
-            not opts["disable-folded"],
-            not opts["disable-graphviz"]
-        )
+        local wfeatures = {
+            notes = not opts["disable-notes"],
+            folds = not opts["disable-folded"],
+            dot = not opts["disable-graphviz"]
+        }
+        writer.init(rootns, wfeatures)
         dutil.rm_root()
         dutil.mkdir_r(nil)
         build_ref()
