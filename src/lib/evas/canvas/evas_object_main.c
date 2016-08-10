@@ -2035,7 +2035,17 @@ _evas_canvas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_C
              evas_object_clip_recalc(obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, 1, 1)) &&
                  (!obj->clip.clipees))
-               in = eina_list_prepend(in, eo_obj);
+               {
+                  // evas_object_is_in_output_rect is based on the clip which
+                  // may be larger than the geometry (bounding box)
+                  if (!RECTS_INTERSECT(xx, yy, 1, 1,
+                                       obj->cur->geometry.x,
+                                       obj->cur->geometry.y,
+                                       obj->cur->geometry.w,
+                                       obj->cur->geometry.h))
+                    continue;
+                  in = eina_list_prepend(in, eo_obj);
+               }
           }
      }
    return in;
