@@ -564,7 +564,9 @@ Wayland is also supported fairly solidly in EFL 1.8. It is not
 required by default due to it being new and not that widely spread.
 You can enable Wayland support with:
 
-    --enable-wayland
+    --enable-wayland \
+    --enable-elput \
+    --enable-drm
 
 For faster rendering when dithering down to lower-than 24/32bpp, you
 can try:
