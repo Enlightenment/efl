@@ -137,7 +137,7 @@ _calc_job_cb(void *data)
         sd->minw = minw;
         sd->minh = minh;
 
-        eo_event_callback_call(sd->pan_obj, ELM_PAN_EVENT_CHANGED, NULL);
+        efl_event_callback_call(sd->pan_obj, ELM_PAN_EVENT_CHANGED, NULL);
         _sizing_eval(obj);
      }
    sd->calc_job = NULL;
@@ -258,7 +258,7 @@ _grid_load(Evas_Object *obj,
                        edje_object_signal_emit
                          (wd->resize_obj,
                          "elm,state,busy,start", "elm");
-                       eo_event_callback_call
+                       efl_event_callback_call
                         (obj, ELM_PHOTOCAM_EVENT_LOAD_DETAIL, NULL);
                     }
                }
@@ -270,7 +270,7 @@ _grid_load(Evas_Object *obj,
                        edje_object_signal_emit
                          (wd->resize_obj,
                          "elm,state,busy,stop", "elm");
-                       eo_event_callback_call
+                       efl_event_callback_call
                         (obj, ELM_PHOTOCAM_EVENT_LOADED_DETAIL, NULL);
                     }
                   g->grid[tn].want = 0;
@@ -414,14 +414,14 @@ _elm_photocam_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Elm_Photocam_Pan
 }
 
 EOLIAN static void
-_elm_photocam_pan_eo_base_destructor(Eo *obj, Elm_Photocam_Pan_Data *psd)
+_elm_photocam_pan_efl_object_destructor(Eo *obj, Elm_Photocam_Pan_Data *psd)
 {
    eo_data_unref(psd->wobj, psd->wsd);
-   eo_destructor(eo_super(obj, MY_PAN_CLASS));
+   efl_destructor(eo_super(obj, MY_PAN_CLASS));
 }
 
 EOLIAN static void
-_elm_photocam_pan_class_constructor(Eo_Class *klass)
+_elm_photocam_pan_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
 }
@@ -468,7 +468,7 @@ _grid_clear(Evas_Object *obj,
                        edje_object_signal_emit
                          (wd->resize_obj,
                          "elm,state,busy,stop", "elm");
-                       eo_event_callback_call
+                       efl_event_callback_call
                          (obj, ELM_PHOTOCAM_EVENT_LOAD_DETAIL, NULL);
                     }
                }
@@ -501,7 +501,7 @@ _tile_preloaded_cb(void *data,
              edje_object_signal_emit
                (wd->resize_obj, "elm,state,busy,stop",
                "elm");
-             eo_event_callback_call
+             efl_event_callback_call
                (wd->obj, ELM_PHOTOCAM_EVENT_LOADED_DETAIL, NULL);
           }
      }
@@ -698,13 +698,13 @@ _main_img_preloaded_cb(void *data,
      }
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job_cb, data);
-   eo_event_callback_call(data, ELM_PHOTOCAM_EVENT_LOADED, NULL);
+   efl_event_callback_call(data, ELM_PHOTOCAM_EVENT_LOADED, NULL);
    sd->preload_num--;
    if (!sd->preload_num)
      {
         edje_object_signal_emit
           (wd->resize_obj, "elm,state,busy,stop", "elm");
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, ELM_PHOTOCAM_EVENT_LOADED_DETAIL, NULL);
      }
 }
@@ -786,8 +786,8 @@ _zoom_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
      {
         sd->no_smooth--;
         if (!sd->no_smooth) _smooth_update(data);
-        eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
-        eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
+        efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+        efl_event_callback_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
      }
 }
 
@@ -798,7 +798,7 @@ _long_press_cb(void *data)
 
    sd->long_timer = NULL;
    sd->longpressed = EINA_TRUE;
-   eo_event_callback_call
+   efl_event_callback_call
      (data, EFL_UI_EVENT_LONGPRESSED, NULL);
 
    return ECORE_CALLBACK_CANCEL;
@@ -818,10 +818,10 @@ _mouse_down_cb(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     eo_event_callback_call
+     efl_event_callback_call
        (data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
    else
-     eo_event_callback_call(data, ELM_PHOTOCAM_EVENT_PRESS, NULL);
+     efl_event_callback_call(data, ELM_PHOTOCAM_EVENT_PRESS, NULL);
    sd->longpressed = EINA_FALSE;
    ecore_timer_del(sd->long_timer);
    sd->long_timer = ecore_timer_add
@@ -843,7 +843,7 @@ _mouse_up_cb(void *data,
    else sd->on_hold = EINA_FALSE;
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
    if (!sd->on_hold)
-     eo_event_callback_call
+     efl_event_callback_call
        (data, EFL_UI_EVENT_CLICKED, NULL);
    sd->on_hold = EINA_FALSE;
 }
@@ -889,7 +889,7 @@ static void
 _scroll_animate_start_cb(Evas_Object *obj,
                          void *data EINA_UNUSED)
 {
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
 }
 
@@ -897,7 +897,7 @@ static void
 _scroll_animate_stop_cb(Evas_Object *obj,
                         void *data EINA_UNUSED)
 {
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
 }
 
@@ -905,7 +905,7 @@ static void
 _scroll_drag_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
 }
 
@@ -913,7 +913,7 @@ static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
 }
 
@@ -932,7 +932,7 @@ _scroll_cb(Evas_Object *obj,
    ecore_timer_del(sd->scr_timer);
    sd->scr_timer = ecore_timer_add(0.5, _scroll_timeout_cb, obj);
 
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, EFL_UI_EVENT_SCROLL, NULL);
 }
 
@@ -1077,7 +1077,7 @@ _bounce_eval(void *data, const Eo_Event *event EINA_UNUSED)
 
    elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
 
-   eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+   efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
 }
 
 static void
@@ -1085,7 +1085,7 @@ _elm_photocam_bounce_reset(Eo *obj, Elm_Photocam_Data *sd EINA_UNUSED)
 {
    Eina_Bool r;
 
-   r = eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+   r = efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
    if (r) _zoom_do(obj, 1.0);
 }
 
@@ -1094,13 +1094,13 @@ _elm_photocam_zoom_reset(Eo *obj, Elm_Photocam_Data *sd)
 {
    Eina_Bool r;
 
-   r = eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+   r = efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
    if (r)
      {
         sd->no_smooth--;
         if (!sd->no_smooth) _smooth_update(obj);
         _zoom_do(obj, 1.0);
-        eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
+        efl_event_callback_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
      }
 }
 
@@ -1299,7 +1299,7 @@ _g_layer_zoom_end_cb(void *data,
         sd->g_layer_zoom.bounce.t_end = t +
           _elm_config->page_scroll_friction;
 
-        eo_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+        efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
      }
    else
      {
@@ -1467,8 +1467,8 @@ _elm_photocam_efl_canvas_group_group_del(Eo *obj, Elm_Photocam_Data *sd)
    ecore_job_del(sd->calc_job);
    ecore_timer_del(sd->scr_timer);
    ecore_timer_del(sd->long_timer);
-   eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
-   eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+   efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+   efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
 
    efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
@@ -1508,9 +1508,9 @@ elm_photocam_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_photocam_eo_base_constructor(Eo *obj, Elm_Photocam_Data *_pd EINA_UNUSED)
+_elm_photocam_efl_object_constructor(Eo *obj, Elm_Photocam_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
@@ -1565,13 +1565,13 @@ _internal_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file, Eina_File *
    sd->main_load_pending = EINA_TRUE;
 
    sd->calc_job = ecore_job_add(_calc_job_cb, obj);
-   eo_event_callback_call(obj, ELM_PHOTOCAM_EVENT_LOAD, NULL);
+   efl_event_callback_call(obj, ELM_PHOTOCAM_EVENT_LOAD, NULL);
    sd->preload_num++;
    if (sd->preload_num == 1)
      {
         edje_object_signal_emit
           (wd->resize_obj, "elm,state,busy,start", "elm");
-        eo_event_callback_call(obj, ELM_PHOTOCAM_EVENT_LOAD_DETAIL, NULL);
+        efl_event_callback_call(obj, ELM_PHOTOCAM_EVENT_LOAD_DETAIL, NULL);
      }
 
    tz = sd->zoom;
@@ -1607,12 +1607,12 @@ _elm_photocam_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf *d
 
         free(sd->remote_data);
         sd->remote_data = NULL;
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_ERROR, &err);
      }
    else
      {
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_DONE, NULL);
      }
 
@@ -1626,7 +1626,7 @@ _elm_photocam_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int error)
    Elm_Photocam_Data *sd = eo_data_scope_get(obj, MY_CLASS);
    Elm_Photocam_Error err = { error, EINA_FALSE };
 
-   eo_event_callback_call(obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_ERROR, &err);
+   efl_event_callback_call(obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_ERROR, &err);
 
    sd->remote = NULL;
 }
@@ -1639,7 +1639,7 @@ _elm_photocam_download_progress(void *data, Elm_Url *url EINA_UNUSED, double now
 
    progress.now = now;
    progress.total = total;
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_PROGRESS, &progress);
 }
 
@@ -1680,7 +1680,7 @@ _elm_photocam_file_set_internal(Eo *obj, Elm_Photocam_Data *sd, const char *file
                                         obj);
           if (sd->remote)
             {
-               eo_event_callback_call
+               efl_event_callback_call
                  (obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_START, NULL);
                return ret;
             }
@@ -1936,8 +1936,8 @@ done:
      }
    else
      {
-        an = eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
-        eo_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+        an = efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+        efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
         if (!an)
           {
              sd->no_smooth++;
@@ -1965,12 +1965,12 @@ done:
    if (!sd->paused)
      {
         if (started)
-          eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_START, NULL);
+          efl_event_callback_call(obj, EFL_UI_EVENT_ZOOM_START, NULL);
         if (!an)
-          eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
+          efl_event_callback_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
      }
    if (zoom_changed)
-     eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_CHANGE, NULL);
+     efl_event_callback_call(obj, EFL_UI_EVENT_ZOOM_CHANGE, NULL);
 }
 
 EOLIAN static double
@@ -2191,7 +2191,7 @@ _elm_photocam_gesture_enabled_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
 }
 
 static void
-_elm_photocam_class_constructor(Eo_Class *klass)
+_elm_photocam_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 

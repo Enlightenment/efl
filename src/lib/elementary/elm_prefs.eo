@@ -213,7 +213,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.Canvas.Group.group_del;

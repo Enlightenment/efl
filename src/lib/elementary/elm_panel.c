@@ -1097,7 +1097,7 @@ _elm_panel_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
    if (sd->hidden) _drawer_close(obj, w, h, EINA_FALSE);
    else _drawer_open(obj, w, h, EINA_FALSE);
 
-   eo_event_callback_stop(event->object);
+   efl_event_callback_stop(event->object);
 }
 
 EOLIAN static void
@@ -1127,7 +1127,7 @@ _elm_panel_efl_canvas_group_group_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord
          break;
      }
 
-   eo_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj);
+   efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj);
 }
 
 EOLIAN static void
@@ -1171,9 +1171,9 @@ elm_panel_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_panel_eo_base_constructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
+_elm_panel_efl_object_constructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PANEL);
@@ -1315,7 +1315,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
           }
         break;
      }
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, EFL_UI_EVENT_SCROLL, (void *) &event);
 }
 
@@ -1380,7 +1380,7 @@ _elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *sd, double ratio
          break;
      }
 
-   eo_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj);
+   efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj);
 }
 
 EOLIAN static Eina_Bool
@@ -1511,7 +1511,7 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
 }
 
 static void
-_elm_panel_class_constructor(Eo_Class *klass)
+_elm_panel_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

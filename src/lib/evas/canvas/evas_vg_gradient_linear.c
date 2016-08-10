@@ -89,12 +89,12 @@ _efl_vg_gradient_linear_render_pre(Eo *obj,
 }
 
 static Eo *
-_efl_vg_gradient_linear_eo_base_constructor(Eo *obj,
+_efl_vg_gradient_linear_efl_object_constructor(Eo *obj,
                                             Efl_VG_Gradient_Linear_Data *pd)
 {
    Efl_VG_Data *nd;
 
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    nd = eo_data_scope_get(obj, EFL_VG_CLASS);
    nd->render_pre = _efl_vg_gradient_linear_render_pre;
@@ -104,9 +104,9 @@ _efl_vg_gradient_linear_eo_base_constructor(Eo *obj,
 }
 
 static void
-_efl_vg_gradient_linear_eo_base_destructor(Eo *obj, Efl_VG_Gradient_Linear_Data *pd EINA_UNUSED)
+_efl_vg_gradient_linear_efl_object_destructor(Eo *obj, Efl_VG_Gradient_Linear_Data *pd EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 static void

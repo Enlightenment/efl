@@ -246,7 +246,7 @@ _elm_hover_smt_sub_re_eval(Evas_Object *obj)
    sd->smt_sub->obj = sub;
 
    if (sd->smt_sub != prev)
-     eo_event_callback_call
+     efl_event_callback_call
        (obj, ELM_HOVER_EVENT_SMART_CHANGED, (void *)sd->smt_sub->swallow);
 
    if (elm_widget_mirrored_get(obj))
@@ -534,7 +534,7 @@ _hov_hide_cb(void *data,
    if (dismissstr && !strcmp(dismissstr, "on"))
      {
         evas_object_hide(data);
-        eo_event_callback_call(data, ELM_HOVER_EVENT_DISMISSED, NULL);
+        efl_event_callback_call(data, ELM_HOVER_EVENT_DISMISSED, NULL);
      }
 }
 
@@ -551,15 +551,15 @@ _hov_dismiss_cb(void *data,
    if (dismissstr && !strcmp(dismissstr, "on"))
      {
         _hide_signals_emit(data);
-        eo_event_callback_call
+        efl_event_callback_call
           (data, EFL_UI_EVENT_CLICKED, NULL);
      }
    else
      {
         evas_object_hide(data);
-        eo_event_callback_call
+        efl_event_callback_call
           (data, EFL_UI_EVENT_CLICKED, NULL);
-        eo_event_callback_call(data, ELM_HOVER_EVENT_DISMISSED, NULL);
+        efl_event_callback_call(data, ELM_HOVER_EVENT_DISMISSED, NULL);
      } // for backward compatibility
 }
 
@@ -602,9 +602,9 @@ _elm_hover_efl_canvas_group_group_del(Eo *obj, Elm_Hover_Data *sd)
 
    if (evas_object_visible_get(obj))
      {
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, EFL_UI_EVENT_CLICKED, NULL);
-        eo_event_callback_call(obj, ELM_HOVER_EVENT_DISMISSED, NULL);
+        efl_event_callback_call(obj, ELM_HOVER_EVENT_DISMISSED, NULL);
      }
 
    elm_hover_target_set(obj, NULL);
@@ -668,9 +668,9 @@ elm_hover_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_hover_eo_base_constructor(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
+_elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_POPUP_MENU);
@@ -817,7 +817,7 @@ _elm_hover_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Hover_
 
 
 EOLIAN static void
-_elm_hover_class_constructor(Eo_Class *klass)
+_elm_hover_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

@@ -6,7 +6,7 @@ type @extern Ecore_Con_Eet_Raw_Data_Cb: __undefined_type; /* FIXME: function poi
 struct @extern Eet.Data.Descriptor;
 struct Ecore.Con.Reply;
 
-class Ecore.Con.Eet.Base (Eo.Base) {
+class Ecore.Con.Eet.Base (Efl.Object) {
    [[Ecore Connection Eet Base class.
    
    This class provides Eet data serialization features to Ecore Connection objects.]]
@@ -90,8 +90,8 @@ class Ecore.Con.Eet.Base (Eo.Base) {
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.finalize;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
    }
 }

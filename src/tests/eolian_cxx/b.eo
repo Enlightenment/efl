@@ -2,6 +2,6 @@ class B (A)
 {
    data: B_Data;
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
    }
 }

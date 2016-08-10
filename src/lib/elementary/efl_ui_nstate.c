@@ -31,10 +31,10 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-EOLIAN static Eo_Base *
-_efl_ui_nstate_eo_base_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
+EOLIAN static Efl_Object *
+_efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    //TODO: Add ATSPI call here
@@ -58,7 +58,7 @@ _state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd)
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
    elm_obj_layout_sizing_eval(obj);
-   eo_event_callback_call(obj, EFL_UI_NSTATE_EVENT_STATE_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_NSTATE_EVENT_STATE_CHANGED, NULL);
 }
 
 static void
@@ -177,7 +177,7 @@ _efl_ui_nstate_activate(Eo *obj, Efl_Ui_Nstate_Data *_pd)
 }
 
 EOLIAN static void
-_efl_ui_nstate_class_constructor(Eo_Class *klass)
+_efl_ui_nstate_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }

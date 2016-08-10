@@ -24,7 +24,7 @@ class Efl.Ui.Box.Flow (Efl.Ui.Box, Efl.Pack.Layout)
       }
    }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Pack.Layout.layout_do;
    }
 }

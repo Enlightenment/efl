@@ -13,8 +13,8 @@ class Eldbus.Model.Signal (Eldbus.Model.Arguments) {
         }
     }
     implements {
-        Eo.Base.constructor;
-        Eo.Base.destructor;
+        Efl.Object.constructor;
+        Efl.Object.destructor;
     }
     constructors {
         .constructor;

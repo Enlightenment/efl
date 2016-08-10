@@ -16,10 +16,10 @@ typedef enum _Evas_Canvas3D_Node_Private_Callback_Type
    PRIVATE_CALLBACK_NONE
 } Evas_Canvas3D_Node_Private_Callback_Type;
 
-const Eo_Event_Description evas_canvas3d_node_private_event_desc[] =
+const Efl_Event_Description evas_canvas3d_node_private_event_desc[] =
 {
-   EO_EVENT_DESCRIPTION("clicked,private"),
-   EO_EVENT_DESCRIPTION("collision,private")
+   EFL_EVENT_DESCRIPTION("clicked,private"),
+   EFL_EVENT_DESCRIPTION("collision,private")
 };
 
 /*Private callbacks */
@@ -28,7 +28,7 @@ _evas_canvas3d_node_private_callback_clicked(void *data, const Eo_Event *event);
 static void
 _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event);
 
-Eo_Event_Cb evas_canvas3d_node_private_callback_functions[] =
+Efl_Event_Cb evas_canvas3d_node_private_callback_functions[] =
 {
    _evas_canvas3d_node_private_callback_clicked,
    _evas_canvas3d_node_private_callback_collision,

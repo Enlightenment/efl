@@ -1,4 +1,4 @@
-class Efl.Ui.Layout_Internal.Table (Eo.Base, Efl.Pack.Grid)
+class Efl.Ui.Layout_Internal.Table (Efl.Object, Efl.Pack.Grid)
 {
    [[Represents a Table created as part of a layout.
 
@@ -10,13 +10,13 @@ class Efl.Ui.Layout_Internal.Table (Eo.Base, Efl.Pack.Grid)
       @property real_part @protected {
          set {}
          values {
-            layout: Eo.Base;
+            layout: Efl.Object;
             part: string;
          }
       }
    }
    implements {
-      Eo.Base.destructor;
+      Efl.Object.destructor;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;

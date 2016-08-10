@@ -3,8 +3,8 @@ class Ecore.Con.Eet.Client.Obj (Ecore.Con.Eet.Base) {
 
    eo_prefix: ecore_con_eet_client_obj;
    implements {
-        Eo.Base.constructor;
-        Eo.Base.destructor;
+        Efl.Object.constructor;
+        Efl.Object.destructor;
    }
 }
 

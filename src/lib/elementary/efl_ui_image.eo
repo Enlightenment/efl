@@ -130,7 +130,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.File.mmap.set;

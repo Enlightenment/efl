@@ -166,9 +166,9 @@ elm_grid_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_grid_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
+_elm_grid_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
@@ -266,7 +266,7 @@ _elm_grid_children_get(Eo *obj, void *_pd EINA_UNUSED)
 }
 
 static void
-_elm_grid_class_constructor(Eo_Class *klass)
+_elm_grid_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

@@ -151,11 +151,11 @@ _efl_vg_shape_render_pre(Eo *obj EINA_UNUSED,
 }
 
 static Eo *
-_efl_vg_shape_eo_base_constructor(Eo *obj, Efl_VG_Shape_Data *pd)
+_efl_vg_shape_efl_object_constructor(Eo *obj, Efl_VG_Shape_Data *pd)
 {
    Efl_VG_Data *nd;
 
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    efl_gfx_shape_stroke_scale_set(obj, 1);
    efl_gfx_shape_stroke_location_set(obj, 0.5);
@@ -170,9 +170,9 @@ _efl_vg_shape_eo_base_constructor(Eo *obj, Efl_VG_Shape_Data *pd)
 }
 
 static void
-_efl_vg_shape_eo_base_destructor(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED)
+_efl_vg_shape_efl_object_destructor(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Bool

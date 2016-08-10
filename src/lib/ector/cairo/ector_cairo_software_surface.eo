@@ -8,7 +8,7 @@ class Ector.Cairo.Software.Surface (Ector.Cairo.Surface, Ector.Software.Buffer.B
    methods {}
    implements {
       Ector.Buffer.pixels_set;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
    }
 }

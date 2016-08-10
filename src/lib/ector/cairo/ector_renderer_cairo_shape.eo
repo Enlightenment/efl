@@ -7,8 +7,8 @@ class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo, Ector.Renderer.Shape)
       Ector.Renderer.bounds_get;
       Ector.Renderer.crc.get;
       Ector.Renderer.Cairo.fill;
-      Eo.Base.constructor;
-      Eo.Base.finalize;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
    }
 }

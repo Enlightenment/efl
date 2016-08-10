@@ -6,8 +6,8 @@ class Efl.Vpath.File.Core (Efl.Vpath.File)
    ]]
    eo_prefix: efl_vpath_file_core;
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Vpath.File.do;
       Efl.Vpath.File.wait;
    }

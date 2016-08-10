@@ -362,7 +362,7 @@ _on_slide_end(void *data, Evas_Object *obj EINA_UNUSED,
    if (sd->slide_ellipsis)
      elm_obj_label_ellipsis_set(data, EINA_TRUE);
 
-   eo_event_callback_call(data, ELM_LABEL_EVENT_SLIDE_END, NULL);
+   efl_event_callback_call(data, ELM_LABEL_EVENT_SLIDE_END, NULL);
 }
 
 EOLIAN static void
@@ -412,9 +412,9 @@ elm_label_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_label_eo_base_constructor(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
+_elm_label_efl_object_constructor(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LABEL);
@@ -618,7 +618,7 @@ _elm_label_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Label_
 }
 
 EOLIAN static void
-_elm_label_class_constructor(Eo_Class *klass)
+_elm_label_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

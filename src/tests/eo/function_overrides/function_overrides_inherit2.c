@@ -43,7 +43,7 @@ _print2(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
 }
 
 static Eina_Bool
-_class_print(Eo_Class *klass, void *data EINA_UNUSED)
+_class_print(Efl_Class *klass, void *data EINA_UNUSED)
 {
    Eina_Bool called = EINA_FALSE;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
@@ -59,14 +59,14 @@ _class_print(Eo_Class *klass, void *data EINA_UNUSED)
 EAPI EO_FUNC_BODY(inherit2_print, Eina_Bool, EINA_FALSE);
 EAPI EO_FUNC_BODY(inherit2_print2, Eina_Bool, EINA_FALSE);
 
-static Eo_Op_Description op_descs[] = {
+static Efl_Op_Description op_descs[] = {
      EO_OP_FUNC(inherit2_print, _print),
      EO_OP_FUNC(inherit2_print2, _print2),
      EO_OP_CLASS_FUNC_OVERRIDE(simple_class_print, _class_print),
      EO_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Inherit2",
      EO_CLASS_TYPE_REGULAR,

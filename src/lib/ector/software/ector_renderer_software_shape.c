@@ -692,21 +692,21 @@ _ector_renderer_software_shape_path_changed(void *data, const Eo_Event *event EI
 }
 
 static Eo *
-_ector_renderer_software_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
+_ector_renderer_software_shape_efl_object_constructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
+   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
    if (!obj) return NULL;
 
    pd->public_shape = eo_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
-   eo_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_software_shape_path_changed, pd);
+   efl_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_software_shape_path_changed, pd);
 
    return obj;
 }
 
 static void
-_ector_renderer_software_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
+_ector_renderer_software_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
    //FIXME, As base class  destructor can't call destructor of mixin class.
    // call explicit API to free shape data.
@@ -718,7 +718,7 @@ _ector_renderer_software_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Softwa
    eo_data_xunref(pd->base->surface, pd->surface, obj);
    eo_data_xunref(obj, pd->shape, obj);
    eo_data_xunref(obj, pd->base, obj);
-   eo_destructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
+   efl_destructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
 }
 
 

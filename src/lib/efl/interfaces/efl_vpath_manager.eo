@@ -1,4 +1,4 @@
-class Efl.Vpath.Manager (Eo.Base)
+class Efl.Vpath.Manager (Efl.Object)
 {
    [[ Vpath Manager manages multiple VPath objects that remap/download
 

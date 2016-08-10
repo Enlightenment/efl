@@ -60,7 +60,7 @@ _ector_cairo_surface_symbol_get(Eo *obj EINA_UNUSED,
 static Ector_Renderer *
 _ector_cairo_surface_ector_surface_renderer_factory_new(Eo *obj,
                                                                 Ector_Cairo_Surface_Data *pd EINA_UNUSED,
-                                                                const Eo_Class *type)
+                                                                const Efl_Class *type)
 {
    if (type == ECTOR_RENDERER_SHAPE_MIXIN)
      return eo_add(ECTOR_RENDERER_CAIRO_SHAPE_CLASS, NULL, ector_renderer_surface_set(eo_self, obj));
@@ -115,14 +115,14 @@ _ector_cairo_surface_ector_surface_reference_point_set(Eo *obj EINA_UNUSED,
 }
 
 static Eo *
-_ector_cairo_surface_eo_base_constructor(Eo *obj,
+_ector_cairo_surface_efl_object_constructor(Eo *obj,
                                          Ector_Cairo_Surface_Data *pd)
 {
    USE(obj, cairo_destroy, NULL);
    USE(obj, cairo_image_surface_create, NULL);
    USE(obj, cairo_create, NULL);
 
-   obj = eo_constructor(eo_super(obj, ECTOR_CAIRO_SURFACE_CLASS));
+   obj = efl_constructor(eo_super(obj, ECTOR_CAIRO_SURFACE_CLASS));
    if (!obj) return NULL;
 
    _cairo_count++;
@@ -133,10 +133,10 @@ _ector_cairo_surface_eo_base_constructor(Eo *obj,
 }
 
 static void
-_ector_cairo_surface_eo_base_destructor(Eo *obj EINA_UNUSED,
+_ector_cairo_surface_efl_object_destructor(Eo *obj EINA_UNUSED,
                                         Ector_Cairo_Surface_Data *pd EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, ECTOR_CAIRO_SURFACE_CLASS));
+   efl_destructor(eo_super(obj, ECTOR_CAIRO_SURFACE_CLASS));
 
    if (--_cairo_count) return ;
    if (_cairo_so) eina_module_free(_cairo_so);

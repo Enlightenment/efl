@@ -28,7 +28,7 @@
 #include "eio_sentry_private.h"
 
 
-static const Eo_Event_Description*
+static const Efl_Event_Description*
 _translate_event(int input_event)
 {
    if (input_event == EIO_MONITOR_FILE_CREATED)
@@ -63,7 +63,7 @@ _handle_event(void *data, int type, void *event)
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, ECORE_CALLBACK_PASS_ON);
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, ECORE_CALLBACK_PASS_ON);
 
-   const Eo_Event_Description* translated_event = _translate_event(type);
+   const Efl_Event_Description* translated_event = _translate_event(type);
    Eio_Sentry_Data *pd = (Eio_Sentry_Data *)data;
    Eio_Monitor_Event *monitor_event = (Eio_Monitor_Event *)event;
 
@@ -73,7 +73,7 @@ _handle_event(void *data, int type, void *event)
    event_info->source = eio_monitor_path_get(monitor_event->monitor);
    event_info->trigger = monitor_event->filename;
 
-   eo_event_callback_call(pd->object, translated_event, event_info);
+   efl_event_callback_call(pd->object, translated_event, event_info);
 
    // If event was error, we must delete the monitor.
    if (type == EIO_MONITOR_ERROR)
@@ -145,9 +145,9 @@ _eio_sentry_del(Eo *obj EINA_UNUSED, Eio_Sentry_Data *pd, const char *path)
    eina_hash_del(pd->targets, path, NULL);
 }
 
-Eo_Base * _eio_sentry_eo_base_constructor(Eo *obj, Eio_Sentry_Data *pd)
+Efl_Object * _eio_sentry_efl_object_constructor(Eo *obj, Eio_Sentry_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, EIO_SENTRY_CLASS));
+   obj = efl_constructor(eo_super(obj, EIO_SENTRY_CLASS));
 
    pd->object = obj;
    pd->targets = eina_hash_string_small_new((Eina_Free_Cb)&eio_monitor_del);
@@ -156,11 +156,11 @@ Eo_Base * _eio_sentry_eo_base_constructor(Eo *obj, Eio_Sentry_Data *pd)
    return obj;
 }
 
-void _eio_sentry_eo_base_destructor(Eo *obj, Eio_Sentry_Data *pd)
+void _eio_sentry_efl_object_destructor(Eo *obj, Eio_Sentry_Data *pd)
 {
    eina_hash_free(pd->targets);
 
-   eo_destructor(eo_super(obj, EIO_SENTRY_CLASS));
+   efl_destructor(eo_super(obj, EIO_SENTRY_CLASS));
 }
 
 #include "eio_sentry.eo.c"

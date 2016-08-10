@@ -11,7 +11,7 @@
 static Eo *singleton_obj = NULL;
 
 static Eo *
-_singleton_eo_constructor(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED)
+_singleton_efl_constructor(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    if (!singleton_obj)
      {
@@ -25,11 +25,11 @@ _singleton_eo_constructor(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED)
    return singleton_obj;
 }
 
-static Eo_Op_Description op_descs[] = {
-     EO_OP_FUNC_OVERRIDE(eo_constructor, _singleton_eo_constructor),
+static Efl_Op_Description op_descs[] = {
+     EO_OP_FUNC_OVERRIDE(efl_constructor, _singleton_efl_constructor),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Singleton",
      EO_CLASS_TYPE_REGULAR,

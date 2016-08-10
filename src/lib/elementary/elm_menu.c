@@ -54,7 +54,7 @@ _item_del(Elm_Object_Item *eo_item)
      _item_del(child);
    eina_list_free(item->submenu.items);
 
-   eo_del(eo_item);
+   efl_del(eo_item);
 }
 
 static void
@@ -427,9 +427,9 @@ static void
 _hover_dismissed_cb(void *data, const Eo_Event *event)
 {
    _menu_hide(data, event->object, event->info);
-   eo_event_callback_call
+   efl_event_callback_call
      (data, EFL_UI_EVENT_CLICKED, NULL);
-   eo_event_callback_call(data, ELM_MENU_EVENT_DISMISSED, NULL);
+   efl_event_callback_call(data, ELM_MENU_EVENT_DISMISSED, NULL);
 }
 
 static void
@@ -617,7 +617,7 @@ _item_submenu_obj_create(Elm_Menu_Item_Data *item)
      {
         snprintf(style, sizeof(style), "main_menu_submenu/%s", elm_widget_style_get(WIDGET(item)));
         elm_object_style_set(hv, style);
-        eo_event_callback_add
+        efl_event_callback_add
           (hv, ELM_HOVER_EVENT_DISMISSED, _hover_dismissed_cb, WIDGET(item));
      }
    else
@@ -681,7 +681,7 @@ _elm_menu_efl_canvas_group_group_add(Eo *obj, Elm_Menu_Data *priv)
    elm_widget_mirrored_set(priv->hv, EINA_FALSE);
 
    elm_object_style_set(priv->hv, "menu/default");
-   eo_event_callback_add
+   efl_event_callback_add
      (priv->hv, ELM_HOVER_EVENT_DISMISSED, _hover_dismissed_cb, obj);
 
    priv->bx = elm_box_add(obj);
@@ -756,14 +756,14 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
 
         if (menu_bar)
           {
-             eo_event_callback_add
+             efl_event_callback_add
                (item->submenu.hv, EFL_UI_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
              snprintf(style, sizeof(style), "main_menu_submenu//%s", elm_widget_style_get(obj));
              elm_object_style_set(item->submenu.hv, style);
           }
         else
           {
-             eo_event_callback_del(item->submenu.hv, EFL_UI_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
+             efl_event_callback_del(item->submenu.hv, EFL_UI_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
              snprintf(style, sizeof(style), "submenu/%s", elm_widget_style_get(obj));
              elm_object_style_set(item->submenu.hv, style);
           }
@@ -781,14 +781,14 @@ elm_menu_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_menu_eo_base_constructor(Eo *obj, Elm_Menu_Data *sd)
+_elm_menu_efl_object_constructor(Eo *obj, Elm_Menu_Data *sd)
 {
    Eo *parent = NULL;
 
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   parent = eo_parent_get(obj);
+   parent = efl_parent_get(obj);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_MENU);
 
    elm_menu_parent_set(obj, parent);
@@ -798,23 +798,23 @@ _elm_menu_eo_base_constructor(Eo *obj, Elm_Menu_Data *sd)
        (sd->hv, ELM_HOVER_AXIS_VERTICAL), sd->bx);
 
    _sizing_eval(obj);
-   eo_event_callback_add
+   efl_event_callback_add
      (obj, ELM_MENU_EVENT_ELM_ACTION_BLOCK_MENU, _block_menu, sd);
-   eo_event_callback_add
+   efl_event_callback_add
      (obj, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, _unblock_menu, sd);
 
    return obj;
 }
 
 EOLIAN static void
-_elm_menu_eo_base_destructor(Eo *obj, Elm_Menu_Data *sd)
+_elm_menu_efl_object_destructor(Eo *obj, Elm_Menu_Data *sd)
 {
    Eina_List *itr, *itr2;
    Elm_Object_Item *eo_item;
    EINA_LIST_FOREACH_SAFE(sd->items, itr, itr2, eo_item)
      elm_wdg_item_del(eo_item);
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 EAPI void
@@ -971,7 +971,7 @@ _elm_menu_item_add_helper(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_menu_item_eo_base_destructor(Eo *eo_item, Elm_Menu_Item_Data *item)
+_elm_menu_item_efl_object_destructor(Eo *eo_item, Elm_Menu_Item_Data *item)
 {
    ELM_MENU_DATA_GET(WIDGET(item), sd);
 
@@ -991,13 +991,13 @@ _elm_menu_item_eo_base_destructor(Eo *eo_item, Elm_Menu_Item_Data *item)
    if (sd->dbus_menu)
      _elm_dbus_menu_item_delete(sd->dbus_menu, item->dbus_idx);
 
-   eo_destructor(eo_super(eo_item, ELM_MENU_ITEM_CLASS));
+   efl_destructor(eo_super(eo_item, ELM_MENU_ITEM_CLASS));
 }
 
 EOLIAN static Eo *
-_elm_menu_item_eo_base_constructor(Eo *eo_item, Elm_Menu_Item_Data *item)
+_elm_menu_item_efl_object_constructor(Eo *eo_item, Elm_Menu_Item_Data *item)
 {
-   eo_item = eo_constructor(eo_super(eo_item, ELM_MENU_ITEM_CLASS));
+   eo_item = efl_constructor(eo_super(eo_item, ELM_MENU_ITEM_CLASS));
    item->base = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
 
    return eo_item;
@@ -1267,7 +1267,7 @@ _elm_menu_selected_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 }
 
 static void
-_elm_menu_class_constructor(Eo_Class *klass)
+_elm_menu_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

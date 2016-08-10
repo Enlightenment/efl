@@ -344,7 +344,7 @@ _on_item_title_transition_finished(void *data,
 {
    Elm_Naviframe_Item_Data *it = data;
 
-   eo_event_callback_call
+   efl_event_callback_call
          (WIDGET(it), ELM_NAVIFRAME_EVENT_TITLE_TRANSITION_FINISHED, EO_OBJ(it));
 }
 
@@ -542,7 +542,7 @@ _elm_naviframe_item_elm_widget_item_part_text_get(Eo *nit EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_naviframe_item_eo_base_destructor(Eo *eo_item, Elm_Naviframe_Item_Data *it)
+_elm_naviframe_item_efl_object_destructor(Eo *eo_item, Elm_Naviframe_Item_Data *it)
 {
    Eina_List *l;
    Elm_Naviframe_Op *nfo;
@@ -594,7 +594,7 @@ end:
 
    _item_free(nit);
 
-   eo_destructor(eo_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS));
+   efl_destructor(eo_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS));
 }
 
 static void
@@ -695,8 +695,8 @@ _item_title_prev_btn_unset(Elm_Naviframe_Item_Data *it)
 
    evas_object_event_callback_del
      (content, EVAS_CALLBACK_DEL, _item_title_prev_btn_del_cb);
-   Eo* parent = eo_parent_get(content);
-   eo_event_callback_del(content, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, parent);
+   Eo* parent = efl_parent_get(content);
+   efl_event_callback_del(content, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, parent);
    it->title_prev_btn = NULL;
    if (it->auto_pushed_btn) it->auto_pushed_btn = NULL;
    return content;
@@ -960,7 +960,7 @@ _on_item_back_btn_clicked(void *data, const Eo_Event *event)
       multiple times on some heavy environment. This callback del will
       prevent those scenario and guarantee only one clicked for it's own
       page. */
-   eo_event_callback_del(event->object, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, data);
+   efl_event_callback_del(event->object, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, data);
    elm_naviframe_item_pop(data);
 }
 
@@ -973,7 +973,7 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
    btn = elm_button_add(obj);
 
    if (!btn) return NULL;
-   eo_event_callback_add
+   efl_event_callback_add
          (btn, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, obj);
    snprintf
      (buf, sizeof(buf), "naviframe/back_btn/%s", elm_widget_style_get(obj));
@@ -1089,7 +1089,7 @@ _on_item_title_clicked(void *data,
 {
    Elm_Naviframe_Item_Data *it = data;
 
-   eo_event_callback_call(WIDGET(it), ELM_NAVIFRAME_EVENT_TITLE_CLICKED, EO_OBJ(it));
+   efl_event_callback_call(WIDGET(it), ELM_NAVIFRAME_EVENT_TITLE_CLICKED, EO_OBJ(it));
 }
 
 /* "elm,state,cur,pushed"
@@ -1155,7 +1155,7 @@ _on_item_show_finished(void *data,
 
    it->pushing = EINA_FALSE;
 
-   eo_event_callback_call(WIDGET(it), ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED, EO_OBJ(it));
+   efl_event_callback_call(WIDGET(it), ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED, EO_OBJ(it));
 }
 
 static void
@@ -1190,9 +1190,9 @@ _access_prev_btn_info_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 }
 
 EOLIAN static Eo *
-_elm_naviframe_item_eo_base_constructor(Eo *eo_item, Elm_Naviframe_Item_Data *it)
+_elm_naviframe_item_efl_object_constructor(Eo *eo_item, Elm_Naviframe_Item_Data *it)
 {
-   eo_item = eo_constructor(eo_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS));
+   eo_item = efl_constructor(eo_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS));
    it->base = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
 
    return eo_item;
@@ -1439,7 +1439,7 @@ _deferred(void *data, const Eo_Event *event EINA_UNUSED)
         free(nfo);
      }
 
-   eo_event_callback_del(nfd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, nfd);
+   efl_event_callback_del(nfd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, nfd);
 }
 
 EOLIAN static void
@@ -1491,7 +1491,7 @@ _key_action_top_item_get(Evas_Object *obj, const char *params EINA_UNUSED)
    ///Leave for compatibility.
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_item, it);
    if (it->title_prev_btn)
-     eo_event_callback_call(it->title_prev_btn, EFL_UI_EVENT_CLICKED, NULL);
+     efl_event_callback_call(it->title_prev_btn, EFL_UI_EVENT_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -1523,7 +1523,7 @@ static void
 _schedule_deferred(Elm_Naviframe_Op *nfo, Elm_Naviframe_Data *sd)
 {
    if (!sd->ops)
-     eo_event_callback_add(sd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, sd);
+     efl_event_callback_add(sd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, sd);
 
    sd->ops = eina_list_append(sd->ops, nfo);
 }
@@ -1589,9 +1589,9 @@ elm_naviframe_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_naviframe_eo_base_constructor(Eo *obj, Elm_Naviframe_Data *sd)
+_elm_naviframe_efl_object_constructor(Eo *obj, Elm_Naviframe_Data *sd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
@@ -1726,7 +1726,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
                      Since the item is not popped or deleted here, the deleted
                      callback of the auto pushed button should be restored. */
                   if (it->auto_pushed_btn)
-                    eo_event_callback_add
+                    efl_event_callback_add
                           (it->auto_pushed_btn, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, obj);
                   it->popping = EINA_FALSE;
                }
@@ -1989,7 +1989,7 @@ _elm_naviframe_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Navifra
 }
 
 static void
-_elm_naviframe_class_constructor(Eo_Class *klass)
+_elm_naviframe_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

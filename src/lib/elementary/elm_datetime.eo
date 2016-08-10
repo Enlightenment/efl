@@ -291,7 +291,7 @@ class Elm.Datetime (Elm.Layout)
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;

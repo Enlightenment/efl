@@ -3822,9 +3822,9 @@ elm_gesture_layer_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_gesture_layer_eo_base_constructor(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED)
+_elm_gesture_layer_efl_object_constructor(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
@@ -4154,7 +4154,7 @@ _elm_gesture_layer_tap_finger_size_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Da
 }
 
 static void
-_elm_gesture_layer_class_constructor(Eo_Class *klass)
+_elm_gesture_layer_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

@@ -1,4 +1,4 @@
-class Simple (Eo.Base)
+class Simple (Efl.Object)
 {
    data: null;
    methods {
@@ -13,6 +13,6 @@ class Simple (Eo.Base)
       }
    }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
    }
 }

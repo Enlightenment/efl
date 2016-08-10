@@ -261,9 +261,9 @@ evas_canvas3d_mesh_add(Evas *e)
 }
 
 EOLIAN static Eo *
-_evas_canvas3d_mesh_eo_base_constructor(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_efl_object_constructor(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_MESH);
    _mesh_init(pd);
 
@@ -271,10 +271,10 @@ _evas_canvas3d_mesh_eo_base_constructor(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
 }
 
 EOLIAN static void
-_evas_canvas3d_mesh_eo_base_destructor(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_efl_object_destructor(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
 {
    _mesh_fini(pd);
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

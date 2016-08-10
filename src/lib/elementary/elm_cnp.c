@@ -314,7 +314,7 @@ _dropable_list_geom_find(Evas *evas, Evas_Coord px, Evas_Coord py)
          */
         while (object)
           {
-             dropable = eo_key_data_get(object, "__elm_dropable");
+             dropable = efl_key_data_get(object, "__elm_dropable");
              if (dropable)
                {
                   Eina_Bool exist = EINA_FALSE;
@@ -437,7 +437,7 @@ static void
 _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 {
    Dropable *dropable = NULL;
-   dropable = eo_key_data_get(obj, "__elm_dropable");
+   dropable = efl_key_data_get(obj, "__elm_dropable");
    if (dropable)
      {
         Dropable_Cbs *cbs;
@@ -449,7 +449,7 @@ _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
                                  cbs->poscb, cbs->posdata, cbs->dropcb, cbs->dropdata);
              // If elm_drop_target_del() happened to delete dropabale, then
              // re-fetch it each loop to make sure it didn't
-             dropable = eo_key_data_get(obj, "__elm_dropable");
+             dropable = efl_key_data_get(obj, "__elm_dropable");
              if (!dropable) break;
           }
      }
@@ -1818,7 +1818,7 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
                     {
                        Evas_Object *win = elm_widget_top_get(dragwidget);
                        if (win && eo_isa(win, EFL_UI_WIN_CLASS))
-                         eo_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
+                         efl_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
                     }
                }
 
@@ -2089,7 +2089,7 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    cbs->dropdata = dropdata;
    cbs->types = format;
 
-   dropable = eo_key_data_get(obj, "__elm_dropable");
+   dropable = efl_key_data_get(obj, "__elm_dropable");
    if (!dropable)
      {
         /* Create new drop */
@@ -2099,7 +2099,7 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
         drops = eina_list_append(drops, dropable);
         if (!drops) goto error;
         dropable->obj = obj;
-        eo_key_data_set(obj, "__elm_dropable", dropable);
+        efl_key_data_set(obj, "__elm_dropable", dropable);
      }
    dropable->cbs_list = eina_inlist_append(dropable->cbs_list, EINA_INLIST_GET(cbs));
 
@@ -2274,7 +2274,7 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
         if (win && eo_isa(win, EFL_UI_WIN_CLASS))
           {
              elm_win_rotation_set(dragwin, elm_win_rotation_get(win));
-             eo_event_callback_add(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
+             efl_event_callback_add(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
           }
      }
 
@@ -2713,7 +2713,7 @@ _wl_data_preparer_uri(Wl_Cnp_Selection *sel, Elm_Selection_Data *ddata, Ecore_Wl
 
    cnp_debug("In\n");
 
-   drop = eo_key_data_get(sel->requestwidget, "__elm_dropable");
+   drop = efl_key_data_get(sel->requestwidget, "__elm_dropable");
    if (drop) type = drop->last.type;
 
    if ((type) && (!strcmp(type, "text/uri-list")))
@@ -3076,7 +3076,7 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
           {
              cnp_debug("Found a type: %s\n", _atoms[i].name);
              Dropable *drop;
-             drop = eo_key_data_get(sel->requestwidget, "__elm_dropable");
+             drop = efl_key_data_get(sel->requestwidget, "__elm_dropable");
              if (drop)
                drop->last.type = _atoms[i].name;
              if (_atoms[i].wl_converter)
@@ -3251,7 +3251,7 @@ _wl_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, Elm_Drag_State 
    cbs->dropdata = dropdata;
    cbs->types = format;
 
-   dropable = eo_key_data_get(obj, "__elm_dropable");
+   dropable = efl_key_data_get(obj, "__elm_dropable");
    if (!dropable)
      {
         /* Create new drop */
@@ -3260,7 +3260,7 @@ _wl_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, Elm_Drag_State 
         drops = eina_list_append(drops, dropable);
         if (!drops) goto error;
         dropable->obj = obj;
-        eo_key_data_set(obj, "__elm_dropable", dropable);
+        efl_key_data_set(obj, "__elm_dropable", dropable);
      }
 
    dropable->cbs_list =
@@ -3741,7 +3741,7 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl2_Event_Selection_Data_R
    Ecore_Wl2_Window *win;
 
    cnp_debug("In\n");
-   drop = eo_key_data_get(sel->requestwidget, "__elm_dropable");
+   drop = efl_key_data_get(sel->requestwidget, "__elm_dropable");
    if (drop)
      {
         Cnp_Atom *atom = NULL;
@@ -4391,7 +4391,7 @@ _local_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
 
    _local_elm_cnp_init();
 
-   dropable = eo_key_data_get(obj, "__elm_dropable");
+   dropable = efl_key_data_get(obj, "__elm_dropable");
    if (dropable)
      {
         Eina_Inlist *itr;
@@ -4412,7 +4412,7 @@ _local_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
         if (!dropable->cbs_list)
           {
              drops = eina_list_remove(drops, dropable);
-             eo_key_data_set(obj, "__elm_dropable", NULL);
+             efl_key_data_set(obj, "__elm_dropable", NULL);
              free(dropable);
              dropable = NULL;
              evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
@@ -5661,7 +5661,7 @@ elm_drag_cancel(Evas_Object *obj)
                {
                   Evas_Object *win = elm_widget_top_get(dragwidget);
                   if (win && eo_isa(win, EFL_UI_WIN_CLASS))
-                     eo_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
+                     efl_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
                }
           }
         goto end;

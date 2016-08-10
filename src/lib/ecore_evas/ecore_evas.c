@@ -3110,7 +3110,7 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
         a.update_area = *viewport;
      }
 
-   eo_event_callback_call(ee->evas, EFL_EVENT_ANIMATOR_TICK, &a);
+   efl_event_callback_call(ee->evas, EFL_EVENT_ANIMATOR_TICK, &a);
 
    // FIXME: We do not support partial animator in the subcanvas
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
@@ -3164,7 +3164,7 @@ _ecore_evas_animator_fallback(void *data)
 static void
 _check_animator_event_catcher_add(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item *array = event->info;
    Ecore_Evas *ee = data;
    int i;
 
@@ -3198,7 +3198,7 @@ _check_animator_event_catcher_add(void *data, const Eo_Event *event)
 static void
 _check_animator_event_catcher_del(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item *array = event->info;
    Ecore_Evas *ee = data;
    int i;
 
@@ -3228,13 +3228,13 @@ _check_animator_event_catcher_del(void *data, const Eo_Event *event)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(animator_watch,
-                          { EO_EVENT_CALLBACK_ADD, _check_animator_event_catcher_add },
-                          { EO_EVENT_CALLBACK_DEL, _check_animator_event_catcher_del });
+                          { EFL_EVENT_CALLBACK_ADD, _check_animator_event_catcher_add },
+                          { EFL_EVENT_CALLBACK_DEL, _check_animator_event_catcher_del });
 
 EAPI void
 _ecore_evas_register_animators(Ecore_Evas *ee)
 {
-   eo_event_callback_array_add(ee->evas, animator_watch(), ee);
+   efl_event_callback_array_add(ee->evas, animator_watch(), ee);
 }
 
 EAPI void
@@ -4328,7 +4328,7 @@ _pointer_position_set(Efl_Event_Pointer_Data *ev, Ecore_Evas *ee, int x, int y,
      EVENT_XY_SET(ev, my, ee->w + fh - mx - 1, fx, fy);
 }
 
-static const Eo_Event_Description *
+static const Efl_Event_Description *
 _event_description_get(Efl_Pointer_Action action)
 {
    switch (action)
@@ -4384,9 +4384,9 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
    ev->pressure = info->multi.pressure;
    ev->angle = info->multi.angle - ee->rotation;
 
-   eo_event_callback_call(e, _event_description_get(ev->action), evt);
+   efl_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   eo_del(evt);
+   efl_del(evt);
 
    return processed;
 }
@@ -4442,9 +4442,9 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
    ev->pressure = info->multi.pressure;
    ev->angle = info->multi.angle - ee->rotation;
 
-   eo_event_callback_call(e, _event_description_get(ev->action), evt);
+   efl_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   eo_del(evt);
+   efl_del(evt);
 
    return processed;
 }
@@ -4474,9 +4474,9 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
    ev->wheel.z = info->z;
    ev->wheel.dir = info->direction ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL;
 
-   eo_event_callback_call(e, _event_description_get(ev->action), evt);
+   efl_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   eo_del(evt);
+   efl_del(evt);
 
    return processed;
 }
@@ -4501,9 +4501,9 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
    ev->timestamp = info->timestamp;
    _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
 
-   eo_event_callback_call(e, _event_description_get(ev->action), evt);
+   efl_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   eo_del(evt);
+   efl_del(evt);
 
    return processed;
 }
@@ -4551,12 +4551,12 @@ _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool dow
    ev->device = NULL; /* FIXME */
 
    if (down)
-     eo_event_callback_call(e, EFL_EVENT_KEY_DOWN, evt);
+     efl_event_callback_call(e, EFL_EVENT_KEY_DOWN, evt);
    else
-     eo_event_callback_call(e, EFL_EVENT_KEY_UP, evt);
+     efl_event_callback_call(e, EFL_EVENT_KEY_UP, evt);
 
    processed = ev->evas_done;
-   eo_del(evt);
+   efl_del(evt);
 
    return processed;
 }

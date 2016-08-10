@@ -23,7 +23,7 @@ class Elm.Check (Efl.Ui.Nstate, Elm.Interface.Atspi_Widget_Action)
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Elm.Widget.activate;
       Elm.Widget.theme_apply;

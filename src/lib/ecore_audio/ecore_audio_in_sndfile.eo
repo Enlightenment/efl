@@ -3,7 +3,7 @@ class Ecore.Audio.In.Sndfile (Ecore.Audio.In)
    [[Ecore Audio sndfile input.]]
    eo_prefix: ecore_audio_obj_in_sndfile;
    implements {
-      Eo.Base.destructor;
+      Efl.Object.destructor;
       Ecore.Audio.source.set;
       Ecore.Audio.source.get;
       Ecore.Audio.format.set;

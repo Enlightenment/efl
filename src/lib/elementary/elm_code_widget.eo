@@ -244,8 +244,8 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
-      Eo.Base.finalize;
+      Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Canvas.Group.group_add;
       Elm.Widget.event;
       Elm.Widget.focus_next_manager_is;

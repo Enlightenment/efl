@@ -12,26 +12,26 @@
 
 static struct log_ctx ctx;
 
-const Eo_Class *klass;
+const Efl_Class *klass;
 
 static void _destructor_unref(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, klass));
+   efl_destructor(eo_super(obj, klass));
 
    /* this triggers an eo stack overflow if not correctly protected */
    eo_unref(obj);
 }
 
-START_TEST(eo_destructor_unref)
+START_TEST(efl_destructor_unref)
 {
    eo_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
-   static Eo_Op_Description op_descs [] = {
-        EO_OP_FUNC_OVERRIDE(eo_destructor, _destructor_unref),
+   static Efl_Op_Description op_descs [] = {
+        EO_OP_FUNC_OVERRIDE(efl_destructor, _destructor_unref),
    };
 
-   static Eo_Class_Description class_desc = {
+   static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
@@ -57,12 +57,12 @@ START_TEST(eo_destructor_unref)
 }
 END_TEST
 
-START_TEST(eo_destructor_double_del)
+START_TEST(efl_destructor_double_del)
 {
    eo_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
-   static Eo_Class_Description class_desc = {
+   static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
@@ -81,8 +81,8 @@ START_TEST(eo_destructor_double_del)
    fail_if(!obj);
 
    TEST_EO_ERROR("eo_unref", "Obj:%p. User refcount (%d) < 0. Too many unrefs.");
-   eo_del(obj);
-   eo_del(obj);
+   efl_del(obj);
+   efl_del(obj);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
@@ -92,6 +92,6 @@ END_TEST
 
 void eo_test_class_behaviour_errors(TCase *tc)
 {
-   tcase_add_test(tc, eo_destructor_unref);
-   tcase_add_test(tc, eo_destructor_double_del);
+   tcase_add_test(tc, efl_destructor_unref);
+   tcase_add_test(tc, efl_destructor_double_del);
 }

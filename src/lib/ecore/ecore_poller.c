@@ -173,7 +173,7 @@ _ecore_poller_cb_timer(void *data EINA_UNUSED)
                      {
                         pollers[i] = (Ecore_Poller_Data *)eina_inlist_remove(EINA_INLIST_GET(pollers[i]), EINA_INLIST_GET(poller));
 
-                        eo_parent_set(poller->obj, NULL);
+                        efl_parent_set(poller->obj, NULL);
                         if (eo_destructed_is(poller->obj))
                            eo_manual_free(poller->obj);
                         else
@@ -351,7 +351,7 @@ ecore_poller_del(Ecore_Poller *obj)
    data = poller->data;
    pollers[poller->ibit] = (Ecore_Poller_Data *)eina_inlist_remove(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
 
-   eo_parent_set(poller->obj, NULL);
+   efl_parent_set(poller->obj, NULL);
    if (eo_destructed_is(poller->obj))
       eo_manual_free(obj);
    else
@@ -362,7 +362,7 @@ ecore_poller_del(Ecore_Poller *obj)
 }
 
 EOLIAN static void
-_ecore_poller_eo_base_destructor(Eo *obj, Ecore_Poller_Data *pd)
+_ecore_poller_efl_object_destructor(Eo *obj, Ecore_Poller_Data *pd)
 {
    if (!pd->delete_me)
    {
@@ -370,18 +370,18 @@ _ecore_poller_eo_base_destructor(Eo *obj, Ecore_Poller_Data *pd)
      poller_delete_count++;
    }
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *
-_ecore_poller_eo_base_finalize(Eo *obj, Ecore_Poller_Data *pd)
+_ecore_poller_efl_object_finalize(Eo *obj, Ecore_Poller_Data *pd)
 {
    if (!pd->func)
    {
       return NULL;
    }
 
-   return eo_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(eo_super(obj, MY_CLASS));
 }
 
 void
@@ -395,7 +395,7 @@ _ecore_poller_shutdown(void)
         while ((poller = pollers[i]))
           {
              pollers[i] = (Ecore_Poller_Data *)eina_inlist_remove(EINA_INLIST_GET(pollers[i]), EINA_INLIST_GET(pollers[i]));
-             eo_parent_set(poller->obj, NULL);
+             efl_parent_set(poller->obj, NULL);
              if (eo_destructed_is(poller->obj))
                 eo_manual_free(poller->obj);
              else

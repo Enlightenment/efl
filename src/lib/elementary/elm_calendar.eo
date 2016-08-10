@@ -382,7 +382,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;

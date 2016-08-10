@@ -24,14 +24,14 @@ struct _Efl_Vpath_Core_Data
 
 static Efl_Vpath_Core *vpath_core = NULL;
 
-EOLIAN static Eo_Base *
-_efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
+EOLIAN static Efl_Object *
+_efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
 {
    char buf[PATH_MAX], bufhome[PATH_MAX];
    const char *home, *s;
 
    if (vpath_core) return NULL;
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    pd->meta = eina_hash_string_superfast_new
      ((Eina_Free_Cb)eina_stringshare_del);
    eina_spinlock_new(&(pd->lock));
@@ -206,13 +206,13 @@ _efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
 }
 
 EOLIAN static void
-_efl_vpath_core_eo_base_destructor(Eo *obj, Efl_Vpath_Core_Data *pd)
+_efl_vpath_core_efl_object_destructor(Eo *obj, Efl_Vpath_Core_Data *pd)
 {
    eina_hash_free(pd->meta);
    pd->meta = NULL;
    eina_spinlock_free(&(pd->lock));
    if (vpath_core == obj) vpath_core = NULL;
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Efl_Vpath_Core *

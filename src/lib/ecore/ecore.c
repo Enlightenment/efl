@@ -363,7 +363,7 @@ ecore_shutdown(void)
        }
 #endif
 
-     eo_del(_mainloop_singleton);
+     efl_del(_mainloop_singleton);
      _mainloop_singleton = NULL;
 
      if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
@@ -409,7 +409,7 @@ ecore_shutdown(void)
 
    if (vpath)
      {
-        eo_del(vpath);
+        efl_del(vpath);
         vpath = NULL;
      }
 

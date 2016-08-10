@@ -99,7 +99,7 @@ EAPI void elm_code_free(Elm_Code *code);
  */
 
 
-EAPI void elm_code_callback_fire(Elm_Code *code, const Eo_Event_Description *signal, void *data);
+EAPI void elm_code_callback_fire(Elm_Code *code, const Efl_Event_Description *signal, void *data);
 
 
 /**

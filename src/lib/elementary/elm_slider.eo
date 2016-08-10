@@ -170,7 +170,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;

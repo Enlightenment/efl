@@ -50,7 +50,7 @@ bench_eo_do_two_objs_growing_stack(int request)
    eo_unref(obj2);
 }
 
-static const Eo_Class *cur_klass;
+static const Efl_Class *cur_klass;
 
 static void
 _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
@@ -58,14 +58,14 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
    simple_a_set(eo_super(obj, cur_klass), a);
 }
 
-static Eo_Op_Description op_desc[] = {
+static Efl_Op_Description op_desc[] = {
      EO_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
 };
 
 static void
 bench_eo_do_super(int request)
 {
-   static Eo_Class_Description class_desc = {
+   static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple2",
         EO_CLASS_TYPE_REGULAR,

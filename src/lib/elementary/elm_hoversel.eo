@@ -90,8 +90,8 @@ class Elm.Hoversel (Elm.Button, Efl.Ui.Selectable,
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Canvas.Group.group_hide;
       Efl.Canvas.Group.group_show;
       Efl.Canvas.Group.group_add;

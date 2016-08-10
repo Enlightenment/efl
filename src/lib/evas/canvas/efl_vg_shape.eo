@@ -36,7 +36,7 @@ class Efl.VG.Shape (Efl.VG, Efl.Gfx.Shape)
       Efl.VG.bounds_get;
       Efl.VG.interpolate;
       Efl.VG.dup;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
    }
 }

@@ -10,16 +10,16 @@
 #define MY_CLASS ECTOR_RENDERER_CLASS
 
 static void
-_ector_renderer_eo_base_destructor(Eo *obj, Ector_Renderer_Data *pd)
+_ector_renderer_efl_object_destructor(Eo *obj, Ector_Renderer_Data *pd)
 {
    if (pd->m) free(pd->m);
    eo_unref(pd->surface);
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
-static Eo_Base *
-_ector_renderer_eo_base_finalize(Eo *obj, Ector_Renderer_Data *pd)
+static Efl_Object *
+_ector_renderer_efl_object_finalize(Eo *obj, Ector_Renderer_Data *pd)
 {
    if (!pd->surface)
      {
@@ -27,7 +27,7 @@ _ector_renderer_eo_base_finalize(Eo *obj, Ector_Renderer_Data *pd)
         return NULL;
      }
    pd->finalized = EINA_TRUE;
-   return eo_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(eo_super(obj, MY_CLASS));
 }
 
 static Ector_Surface *

@@ -638,16 +638,16 @@ START_TEST(evas_object_image_defaults)
    fail_if(evas_object_image_filled_get(o));
    evas_object_image_fill_get(o, &x, &y, &w, &h);
    fail_if(x || y || w || h);
-   eo_del(o);
+   efl_del(o);
 
    o = evas_object_image_filled_add(e);
    fail_if(!evas_object_image_filled_get(o));
-   eo_del(o);
+   efl_del(o);
 
    /* test eo defaults */
    o = eo_add(EFL_CANVAS_IMAGE_CLASS, e);
    fail_if(!efl_gfx_fill_auto_get(o));
-   eo_del(o);
+   efl_del(o);
 
    evas_free(e);
    evas_shutdown();

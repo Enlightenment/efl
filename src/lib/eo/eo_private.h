@@ -58,7 +58,7 @@ extern int _eo_log_dom;
 #define DBG(...) EINA_LOG_DOM_DBG(_eo_log_dom, __VA_ARGS__)
 
 typedef uintptr_t Eo_Id;
-typedef struct _Efl_Class _Eo_Class;
+typedef struct _Efl_Class _Efl_Class;
 typedef struct _Eo_Header Eo_Header;
 
 /* Retrieves the pointer to the object from the id */
@@ -200,7 +200,7 @@ Eo *_eo_header_id_get(const Eo_Header *header)
 }
 
 static inline
-Efl_Class *_eo_class_id_get(const _Eo_Class *klass)
+Efl_Class *_eo_class_id_get(const _Efl_Class *klass)
 {
    return _eo_header_id_get((Eo_Header *) klass);
 }
@@ -260,7 +260,7 @@ _obj_is_override(_Eo_Object *obj)
 static inline void
 _eo_free(_Eo_Object *obj)
 {
-   _Efl_Class *klass = (_Eo_Class*) obj->klass;
+   _Efl_Class *klass = (_Efl_Class*) obj->klass;
 
 #ifdef EO_DEBUG
    if (obj->datarefcount)

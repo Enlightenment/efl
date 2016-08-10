@@ -42,7 +42,7 @@ _elm_plug_disconnected(Ecore_Evas *ee)
 {
    Evas_Object *plug = ecore_evas_data_get(ee, PLUG_KEY);
    EINA_SAFETY_ON_NULL_RETURN(plug);
-   eo_event_callback_call(plug, ELM_PLUG_EVENT_IMAGE_DELETED, NULL);
+   efl_event_callback_call(plug, ELM_PLUG_EVENT_IMAGE_DELETED, NULL);
    /* TODO: was a typo. Deprecated, remove in future releases: */
    evas_object_smart_callback_call(plug, "image.deleted", NULL);
 }
@@ -55,7 +55,7 @@ _elm_plug_resized(Ecore_Evas *ee)
    EINA_SAFETY_ON_NULL_RETURN(plug);
 
    ecore_evas_geometry_get(ee, NULL, NULL, &(size.w), &(size.h));
-   eo_event_callback_call(plug, ELM_PLUG_EVENT_IMAGE_RESIZED, &size);
+   efl_event_callback_call(plug, ELM_PLUG_EVENT_IMAGE_RESIZED, &size);
 }
 
 EOLIAN static Eina_Bool
@@ -103,7 +103,7 @@ _on_mouse_up(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   eo_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 EOLIAN static void
@@ -141,9 +141,9 @@ elm_plug_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_plug_eo_base_constructor(Eo *obj, void *sd EINA_UNUSED)
+_elm_plug_efl_object_constructor(Eo *obj, void *sd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
@@ -184,7 +184,7 @@ _elm_plug_connect(Eo *obj, void *sd EINA_UNUSED, const char *svcname, int svcnum
 }
 
 EOLIAN static void
-_elm_plug_class_constructor(Eo_Class *klass)
+_elm_plug_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

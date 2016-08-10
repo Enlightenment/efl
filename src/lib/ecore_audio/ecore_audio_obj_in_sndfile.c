@@ -145,7 +145,7 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
 }
 
 EOLIAN static void
-_ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj, Ecore_Audio_Vio *vio, void *data, eo_key_data_free_func free_func)
+_ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj, Ecore_Audio_Vio *vio, void *data, efl_key_data_free_func free_func)
 {
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
   Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
@@ -199,7 +199,7 @@ _ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_D
 }
 
 EOLIAN static void
-_ecore_audio_in_sndfile_eo_base_destructor(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj)
+_ecore_audio_in_sndfile_efl_object_destructor(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj)
 {
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
@@ -210,7 +210,7 @@ _ecore_audio_in_sndfile_eo_base_destructor(Eo *eo_obj, Ecore_Audio_In_Sndfile_Da
   if (ea_obj->vio)
     _free_vio(ea_obj);
 
-  eo_destructor(eo_super(eo_obj, MY_CLASS));
+  efl_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
 #include "ecore_audio_in_sndfile.eo.c"

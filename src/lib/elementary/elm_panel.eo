@@ -67,7 +67,7 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_del;

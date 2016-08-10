@@ -344,7 +344,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_add;

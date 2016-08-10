@@ -45,7 +45,7 @@ _elm_code_test_line_done_cb(void *data EINA_UNUSED, const Eo_Event *event)
    else if (line->number == 4)
      line->status = ELM_CODE_STATUS_TYPE_ERROR;
 
-   eo_event_callback_stop(event->object);
+   efl_event_callback_stop(event->object);
 }
 
 static Evas_Object *
@@ -57,8 +57,8 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    code = elm_code_create();
    widget = eo_add(ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(eo_self, code));
    elm_obj_code_widget_font_set(widget, NULL, 12);
-   eo_event_callback_add(widget, &ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_test_line_done_cb, NULL);
-   eo_event_callback_add(widget, ELM_OBJ_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code);
+   efl_event_callback_add(widget, &ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_test_line_done_cb, NULL);
+   efl_event_callback_add(widget, ELM_OBJ_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code);
 
    _append_line(code->file, "❤ Hello World, Elm Code! ❤");
    _append_line(code->file, "");

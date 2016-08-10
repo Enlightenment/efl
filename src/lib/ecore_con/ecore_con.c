@@ -108,7 +108,7 @@ static void        _ecore_con_lookup_done(void *data,
 static const char *_ecore_con_pretty_ip(struct sockaddr *client_addr);
 
 #define EO_CONSTRUCTOR_CHECK_RETURN(obj) do { \
-     if (eo_finalized_get(obj)) \
+     if (efl_finalized_get(obj)) \
        { \
           ERR("This function is only allowed during construction."); \
           return; \
@@ -332,7 +332,7 @@ _efl_network_lookup(Eo *kls_obj EINA_UNUSED, void *pd EINA_UNUSED, const char *n
      return EINA_TRUE;
 
    free(lk);
-   eo_del(obj);
+   efl_del(obj);
    return EINA_FALSE;
 }
 
@@ -367,9 +367,9 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 }
 
 EOLIAN static Eo *
-_efl_network_server_eo_base_constructor(Ecore_Con_Server *obj, Efl_Network_Server_Data *svr)
+_efl_network_server_efl_object_constructor(Ecore_Con_Server *obj, Efl_Network_Server_Data *svr)
 {
-   obj = eo_constructor(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
+   obj = efl_constructor(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
 
    svr->fd = -1;
    svr->reject_excess_clients = EINA_FALSE;
@@ -380,12 +380,12 @@ _efl_network_server_eo_base_constructor(Ecore_Con_Server *obj, Efl_Network_Serve
 }
 
 EOLIAN static Eo *
-_efl_network_server_eo_base_finalize(Ecore_Con_Server *obj, Efl_Network_Server_Data *svr)
+_efl_network_server_efl_object_finalize(Ecore_Con_Server *obj, Efl_Network_Server_Data *svr)
 {
    Ecore_Con_Type compl_type = svr->type;
    Ecore_Con_Type type;
 
-   eo_finalize(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
+   efl_finalize(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
 
    svr->created = EINA_TRUE;
    svr->ppid = getpid();
@@ -463,7 +463,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 }
 
 EOLIAN static Eo *
-_efl_network_connector_eo_base_finalize(Ecore_Con_Server *obj, void *pd EINA_UNUSED)
+_efl_network_connector_efl_object_finalize(Ecore_Con_Server *obj, void *pd EINA_UNUSED)
 {
    Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Type compl_type = svr->type;
@@ -471,7 +471,7 @@ _efl_network_connector_eo_base_finalize(Ecore_Con_Server *obj, void *pd EINA_UNU
 
    /* XXX: We intentionally put SERVER class here and not connector, as we'd
     * like to skip that one. */
-   eo_finalize(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
+   efl_finalize(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
 
    svr->use_cert = (compl_type & ECORE_CON_SSL & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT;
    svr->disable_proxy = (compl_type & ECORE_CON_SUPER_SSL & ECORE_CON_NO_PROXY) == ECORE_CON_NO_PROXY;
@@ -1053,7 +1053,7 @@ ecore_con_event_server_add(Ecore_Con_Server *obj)
    if (svr->upgrade) ev = ECORE_CON_EVENT_SERVER_UPGRADE;
    ecore_event_add(ev, e,
                    _ecore_con_event_server_add_free, NULL);
-   eo_event_callback_call(obj, EFL_NETWORK_EVENT_CONNECTION_UPGRADED, NULL);
+   efl_event_callback_call(obj, EFL_NETWORK_EVENT_CONNECTION_UPGRADED, NULL);
    _ecore_con_event_count++;
 }
 
@@ -1132,7 +1132,7 @@ ecore_con_event_server_data(Ecore_Con_Server *obj, unsigned char *buf, int num, 
         Ecore_Con_Event_Data_Received event_info = { NULL, 0 };
         event_info.data = e->data;
         event_info.size = e->size;
-        eo_event_callback_call(obj, EFL_NETWORK_EVENT_DATA_RECEIVED, &event_info);
+        efl_event_callback_call(obj, EFL_NETWORK_EVENT_DATA_RECEIVED, &event_info);
      }
    _ecore_con_event_count++;
 }
@@ -1157,7 +1157,7 @@ ecore_con_event_client_add(Ecore_Con_Client *obj)
    if (cl->upgrade) ev = ECORE_CON_EVENT_CLIENT_UPGRADE;
    ecore_event_add(ev, e,
                    (Ecore_End_Cb)_ecore_con_event_client_add_free, cl->host_server);
-   eo_event_callback_call(obj, EFL_NETWORK_EVENT_CONNECTION_UPGRADED, NULL);
+   efl_event_callback_call(obj, EFL_NETWORK_EVENT_CONNECTION_UPGRADED, NULL);
    _ecore_con_event_count++;
 }
 
@@ -1239,7 +1239,7 @@ ecore_con_event_client_data(Ecore_Con_Client *obj, unsigned char *buf, int num, 
         Ecore_Con_Event_Data_Received event_info = { NULL, 0 };
         event_info.data = e->data;
         event_info.size = e->size;
-        eo_event_callback_call(obj, EFL_NETWORK_EVENT_DATA_RECEIVED, &event_info);
+        efl_event_callback_call(obj, EFL_NETWORK_EVENT_DATA_RECEIVED, &event_info);
      }
    _ecore_con_event_count++;
 }
@@ -1265,7 +1265,7 @@ _ecore_con_event_server_error(Ecore_Con_Server *obj, char *error, Eina_Bool dupl
    DBG("%s", error);
    svr->event_count = eina_list_append(svr->event_count, e);
    ecore_event_add(ECORE_CON_EVENT_SERVER_ERROR, e, (Ecore_End_Cb)_ecore_con_event_server_error_free, NULL);
-   eo_event_callback_call(obj, EFL_NETWORK_EVENT_CONNECTION_ERROR, e->error);
+   efl_event_callback_call(obj, EFL_NETWORK_EVENT_CONNECTION_ERROR, e->error);
    _ecore_con_event_count++;
 }
 
@@ -1286,18 +1286,18 @@ ecore_con_event_client_error(Ecore_Con_Client *obj, const char *error)
    cl->event_count = eina_list_append(cl->event_count, e);
    host_server->event_count = eina_list_append(host_server->event_count, e);
    ecore_event_add(ECORE_CON_EVENT_CLIENT_ERROR, e, (Ecore_End_Cb)_ecore_con_event_client_error_free, cl->host_server);
-   eo_event_callback_call(obj, EFL_NETWORK_EVENT_CONNECTION_ERROR, e->error);
+   efl_event_callback_call(obj, EFL_NETWORK_EVENT_CONNECTION_ERROR, e->error);
    _ecore_con_event_count++;
 }
 
 static void
 _ecore_con_server_free(Ecore_Con_Server *obj)
 {
-   eo_del(obj);
+   efl_del(obj);
 }
 
 EOLIAN static void
-_efl_network_server_eo_base_destructor(Eo *obj, Efl_Network_Server_Data *svr)
+_efl_network_server_efl_object_destructor(Eo *obj, Efl_Network_Server_Data *svr)
 {
    Ecore_Con_Client *cl_obj;
    double t_start, t;
@@ -1373,7 +1373,7 @@ _efl_network_server_eo_base_destructor(Eo *obj, Efl_Network_Server_Data *svr)
    servers = eina_list_remove(servers, obj);
    svr->data = NULL;
 
-   eo_destructor(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
+   efl_destructor(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
 end:
    return;
 }
@@ -1381,11 +1381,11 @@ end:
 static void
 _ecore_con_client_free(Ecore_Con_Client *obj)
 {
-   eo_del(obj);
+   efl_del(obj);
 }
 
 EOLIAN static void
-_efl_network_client_eo_base_destructor(Eo *obj, Efl_Network_Client_Data *cl)
+_efl_network_client_efl_object_destructor(Eo *obj, Efl_Network_Client_Data *cl)
 {
    double t_start, t;
 
@@ -1439,7 +1439,7 @@ _efl_network_client_eo_base_destructor(Eo *obj, Efl_Network_Client_Data *cl)
    eina_stringshare_del(cl->ip);
    cl->data = NULL;
 
-   eo_destructor(eo_super(obj, EFL_NETWORK_CLIENT_CLASS));
+   efl_destructor(eo_super(obj, EFL_NETWORK_CLIENT_CLASS));
 }
 
 static Eina_Bool
@@ -2130,7 +2130,7 @@ error:
            ecore_event_del(ev);
         }
    }
-   eo_del(obj);
+   efl_del(obj);
    if (clerr || errno) ecore_con_event_server_error(svr_obj, clerr ? : strerror(errno));
    return ECORE_CALLBACK_RENEW;
 }

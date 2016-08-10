@@ -20,7 +20,7 @@ sentry_cb(void *data EINA_UNUSED, const Eo_Event *event)
 
     ecore_main_loop_quit();
 
-    eo_event_callback_stop(event->object);
+    efl_event_callback_stop(event->object);
 }
 
 void
@@ -28,7 +28,7 @@ monitor_stuff(void *data)
 {
     const char *path = data;
     Eio_Sentry *sentry = eo_add(EIO_SENTRY_CLASS, NULL);
-    eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Eo_Event_Cb)&sentry_cb, NULL);
+    efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Efl_Event_Cb)&sentry_cb, NULL);
 
     printf("Starting monitoring path %s\n", path);
     eio_sentry_add(sentry, path);

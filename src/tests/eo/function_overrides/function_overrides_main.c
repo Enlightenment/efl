@@ -68,8 +68,8 @@ main(int argc, char *argv[])
    fail_if(called);
 #endif
 
-   eo_constructor(eo_super(obj, SIMPLE_CLASS));
-   eo_destructor(eo_super(obj, SIMPLE_CLASS));
+   efl_constructor(eo_super(obj, SIMPLE_CLASS));
+   efl_destructor(eo_super(obj, SIMPLE_CLASS));
 
    eo_unref(obj);
 

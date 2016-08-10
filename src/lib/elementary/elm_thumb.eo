@@ -7,7 +7,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Efl.Ui.Clickable,
    event_prefix: elm_thumb;
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.Canvas.Group.group_hide;

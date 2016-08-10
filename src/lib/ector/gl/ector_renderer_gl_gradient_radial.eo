@@ -7,8 +7,8 @@ class Ector.Renderer.GL.Gradient.Radial (Ector.Renderer.GL, Ector.Renderer.Gradi
       Ector.Renderer.bounds_get;
       Ector.Renderer.crc.get;
       Ector.Renderer.GL.fill;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Gfx.Gradient.stop.set;
    }
 }

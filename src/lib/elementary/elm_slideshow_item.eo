@@ -29,7 +29,7 @@ class Elm.Slideshow.Item(Elm.Widget.Item)
         }
    }
    implements {
-        Eo.Base.constructor;
-        Eo.Base.destructor;
+        Efl.Object.constructor;
+        Efl.Object.destructor;
    }
 }

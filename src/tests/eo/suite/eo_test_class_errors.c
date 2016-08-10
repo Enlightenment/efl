@@ -17,11 +17,11 @@ START_TEST(eo_inherit_errors)
    eo_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
-   const Eo_Class *klass;
-   const Eo_Class *klass_mixin;
-   const Eo_Class *klass_simple;
+   const Efl_Class *klass;
+   const Efl_Class *klass_mixin;
+   const Efl_Class *klass_simple;
 
-   static const Eo_Class_Description class_desc_simple = {
+   static const Efl_Class_Description class_desc_simple = {
         EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
@@ -32,7 +32,7 @@ START_TEST(eo_inherit_errors)
         NULL
    };
 
-   static const Eo_Class_Description class_desc_mixin = {
+   static const Efl_Class_Description class_desc_mixin = {
         EO_VERSION,
         "Mixin",
         EO_CLASS_TYPE_MIXIN,
@@ -43,7 +43,7 @@ START_TEST(eo_inherit_errors)
         NULL
    };
 
-   static Eo_Class_Description class_desc = {
+   static Efl_Class_Description class_desc = {
         EO_VERSION,
         "General",
         EO_CLASS_TYPE_MIXIN,
@@ -84,12 +84,12 @@ START_TEST(eo_inconsistent_mro)
    eo_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
-   const Eo_Class *klass;
-   const Eo_Class *klass_mixin;
-   const Eo_Class *klass_mixin2;
-   const Eo_Class *klass_mixin3;
+   const Efl_Class *klass;
+   const Efl_Class *klass_mixin;
+   const Efl_Class *klass_mixin2;
+   const Efl_Class *klass_mixin3;
 
-   static const Eo_Class_Description class_desc_simple = {
+   static const Efl_Class_Description class_desc_simple = {
         EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
@@ -100,7 +100,7 @@ START_TEST(eo_inconsistent_mro)
         NULL
    };
 
-   static const Eo_Class_Description class_desc_mixin = {
+   static const Efl_Class_Description class_desc_mixin = {
         EO_VERSION,
         "Mixin",
         EO_CLASS_TYPE_MIXIN,
@@ -111,7 +111,7 @@ START_TEST(eo_inconsistent_mro)
         NULL
    };
 
-   static const Eo_Class_Description class_desc_mixin2 = {
+   static const Efl_Class_Description class_desc_mixin2 = {
         EO_VERSION,
         "Mixin2",
         EO_CLASS_TYPE_MIXIN,
@@ -122,7 +122,7 @@ START_TEST(eo_inconsistent_mro)
         NULL
    };
 
-   static const Eo_Class_Description class_desc_mixin3 = {
+   static const Efl_Class_Description class_desc_mixin3 = {
         EO_VERSION,
         "Mixin3",
         EO_CLASS_TYPE_MIXIN,
@@ -159,16 +159,16 @@ START_TEST(eo_inconsistent_mro)
 }
 END_TEST
 
-static void _stub_class_constructor(Eo_Class *klass EINA_UNUSED) {}
+static void _stub_class_constructor(Efl_Class *klass EINA_UNUSED) {}
 
 START_TEST(eo_bad_interface)
 {
    eo_init();
    eina_log_print_cb_set(eo_test_safety_print_cb, &ctx);
 
-   const Eo_Class *klass;
+   const Efl_Class *klass;
 
-   static Eo_Class_Description class_desc = {
+   static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Interface",
         EO_CLASS_TYPE_INTERFACE,
@@ -215,12 +215,12 @@ START_TEST(eo_null_api)
    eo_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
-   const Eo_Class *klass;
+   const Efl_Class *klass;
 
-   static Eo_Op_Description op_descs[] = {
+   static Efl_Op_Description op_descs[] = {
         EO_OP_FUNC(NULL, _null_fct),
    };
-   static Eo_Class_Description class_desc = {
+   static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
@@ -247,12 +247,12 @@ START_TEST(eo_wrong_override)
    eo_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
-   const Eo_Class *klass;
+   const Efl_Class *klass;
 
-   static Eo_Op_Description op_descs[] = {
+   static Efl_Op_Description op_descs[] = {
         EO_OP_FUNC_OVERRIDE(null_fct, _null_fct),
    };
-   static Eo_Class_Description class_desc = {
+   static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
@@ -279,13 +279,13 @@ START_TEST(eo_api_redefined)
    eo_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
-   const Eo_Class *klass;
+   const Efl_Class *klass;
 
-   static Eo_Op_Description op_descs[] = {
+   static Efl_Op_Description op_descs[] = {
         EO_OP_FUNC(null_fct, _null_fct),
         EO_OP_FUNC(null_fct, NULL),
    };
-   static Eo_Class_Description class_desc = {
+   static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
@@ -312,13 +312,13 @@ START_TEST(eo_dich_func_override)
    eo_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
-   const Eo_Class *klass;
+   const Efl_Class *klass;
 
-   static Eo_Op_Description op_descs[] = {
+   static Efl_Op_Description op_descs[] = {
         EO_OP_FUNC_OVERRIDE(simple_a_set, _null_fct),
         EO_OP_FUNC_OVERRIDE(simple_a_set, NULL),
    };
-   static Eo_Class_Description class_desc = {
+   static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,

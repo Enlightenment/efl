@@ -22,7 +22,7 @@ _pointer_down(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
    td->down = 1;
-   eo_del(td->evdown);
+   efl_del(td->evdown);
    td->evdown = efl_event_dup(ev->info);
 }
 
@@ -30,7 +30,7 @@ static void
 _pointer_move(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
-   eo_del(td->evmove);
+   efl_del(td->evmove);
    td->evmove = efl_event_dup(ev->info);
 }
 
@@ -39,7 +39,7 @@ _pointer_up(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
    td->down = 0;
-   eo_del(td->evup);
+   efl_del(td->evup);
    td->evup = efl_event_dup(ev->info);
 }
 
@@ -64,7 +64,7 @@ _key_down(void *data, const Eo_Event *ev)
 
    if (!efl_event_fake_get(ev->info))
      {
-        eo_del(td->evkeydown);
+        efl_del(td->evkeydown);
         td->evkeydown = efl_event_dup(ev->info);
      }
 }
@@ -98,7 +98,7 @@ _key_up(void *data, const Eo_Event *ev)
 
    if (!efl_event_fake_get(ev->info))
      {
-        eo_del(td->evkeyup);
+        efl_del(td->evkeyup);
         td->evkeyup = efl_event_dup(ev->info);
      }
 
@@ -108,7 +108,7 @@ _key_up(void *data, const Eo_Event *ev)
    // 2bis I need to pass the loop object itself rather than a provider
    // 3. All calls to eina_promise crash if the promise is null
 
-   if (td->timer) eo_del(td->timer);
+   if (td->timer) efl_del(td->timer);
    td->timer = ecore_timer_add(0.5, _ecore_timeout_cb, td);
 }
 
@@ -144,16 +144,16 @@ _clicked_button2(void *data, const Eo_Event *ev EINA_UNUSED)
         efl_event_pointer_position_set(td->evdown, x, y);
         efl_event_pointer_position_set(td->evup, x, y);
 
-        eo_event_callback_call(td->win, EFL_EVENT_POINTER_MOVE, td->evmove);
-        eo_event_callback_call(td->win, EFL_EVENT_POINTER_DOWN, td->evdown);
-        eo_event_callback_call(td->win, EFL_EVENT_POINTER_UP, td->evup);
+        efl_event_callback_call(td->win, EFL_EVENT_POINTER_MOVE, td->evmove);
+        efl_event_callback_call(td->win, EFL_EVENT_POINTER_DOWN, td->evdown);
+        efl_event_callback_call(td->win, EFL_EVENT_POINTER_UP, td->evup);
      }
    else
      {
-        eo_event_callback_call(td->win, EFL_EVENT_KEY_DOWN, td->evkeydown);
-        eo_event_callback_call(td->win, EFL_EVENT_KEY_UP, td->evkeyup);
-        eo_del(td->evkeydown);
-        eo_del(td->evkeyup);
+        efl_event_callback_call(td->win, EFL_EVENT_KEY_DOWN, td->evkeydown);
+        efl_event_callback_call(td->win, EFL_EVENT_KEY_UP, td->evkeyup);
+        efl_del(td->evkeydown);
+        efl_del(td->evkeyup);
         td->evkeydown = NULL;
         td->evkeyup = NULL;
      }
@@ -222,11 +222,11 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack(bx, o);
    evas_object_show(o);
 
-   eo_event_callback_add(td->button, EFL_UI_EVENT_CLICKED, _clicked_button1, td);
-   eo_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _clicked_button2, td);
-   eo_event_callback_add(win, EO_EVENT_DEL, _win_del, td);
-   eo_event_callback_array_add(o, rect_pointer_callbacks(), td);
-   eo_event_callback_array_add(win, win_key_callbacks(), td);
+   efl_event_callback_add(td->button, EFL_UI_EVENT_CLICKED, _clicked_button1, td);
+   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _clicked_button2, td);
+   efl_event_callback_add(win, EFL_EVENT_DEL, _win_del, td);
+   efl_event_callback_array_add(o, rect_pointer_callbacks(), td);
+   efl_event_callback_array_add(win, win_key_callbacks(), td);
 
    evas_object_resize(td->win, 200, 100);
    evas_object_show(td->win);

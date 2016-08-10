@@ -70,8 +70,8 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Elm.Interface.Atspi.Selection)
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Canvas.Group.group_show;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;

@@ -357,7 +357,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
 
    char *tmp = efl_canvas_text_range_text_get(obj, en->sel_start, en->sel_end);
 
-   eo_event_callback_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
 
    free(tmp);
 
@@ -506,7 +506,7 @@ _sel_cursor_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Efl_Canvas_Text_Cursor *obj = data;
 
-   eo_event_callback_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
 }
 
 static void
@@ -515,10 +515,10 @@ _sel_init(Evas_Textblock_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interac
    if (en->have_selection)
       return;
 
-   eo_event_freeze(o);
+   efl_event_freeze(o);
    evas_textblock_cursor_copy(c, en->sel_start);
    evas_textblock_cursor_copy(c, en->sel_end);
-   eo_event_thaw(o);
+   efl_event_thaw(o);
 
    en->have_selection = EINA_FALSE;
    if (en->selection)
@@ -597,7 +597,7 @@ _range_del_emit(Evas_Object *obj, Efl_Canvas_Text_Cursor *cur1, Efl_Canvas_Text_
    tmp = efl_canvas_text_range_text_get(obj, cur1, cur2);
    info.content = tmp;
 
-   eo_event_callback_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
 
    if (tmp) free(tmp);
 
@@ -628,7 +628,7 @@ _delete_emit(Evas_Textblock_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data *en
    info.length = 1;
    info.content = tmp;
 
-   eo_event_callback_call((Eo *) efl_canvas_text_cursor_text_object_get(c),
+   efl_event_callback_call((Eo *) efl_canvas_text_cursor_text_object_get(c),
          EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
    if (tmp) free(tmp);
 
@@ -821,7 +821,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 
              _range_del_emit(obj, cur, tc);
 
-             eo_del(tc);
+             efl_del(tc);
           }
         else if ((alt) && (shift))
           {
@@ -859,7 +859,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 
              _range_del_emit(obj, cur, tc);
 
-             eo_del(tc);
+             efl_del(tc);
           }
         else if (shift)
           {
@@ -1016,7 +1016,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
              info.position = efl_canvas_text_cursor_position_get(cur);
              info.length = eina_unicode_utf8_get_len(string);
 
-             eo_event_callback_call(obj,
+             efl_event_callback_call(obj,
                    EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
 
              efl_canvas_text_cursor_text_insert(cur, string);
@@ -1272,17 +1272,17 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
      }
 }
 
-EOLIAN static Eo_Base *
-_efl_ui_internal_text_interactive_eo_base_constructor(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+EOLIAN static Efl_Object *
+_efl_ui_internal_text_interactive_efl_object_constructor(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    en->select_allow = EINA_TRUE;
    en->multiline = EINA_TRUE;
    en->editable = EINA_TRUE;
-   return eo_constructor(eo_super(obj, MY_CLASS));
+   return efl_constructor(eo_super(obj, MY_CLASS));
 }
 
-EOLIAN static Eo_Base *
-_efl_ui_internal_text_interactive_eo_base_finalize(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+EOLIAN static Efl_Object *
+_efl_ui_internal_text_interactive_efl_object_finalize(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _focus_in_cb, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _focus_out_cb, NULL);
@@ -1294,9 +1294,9 @@ _efl_ui_internal_text_interactive_eo_base_finalize(Eo *obj, Efl_Ui_Internal_Text
    en->sel_start = evas_object_textblock_cursor_new(obj);
    en->sel_end = evas_object_textblock_cursor_new(obj);
 
-   eo_event_callback_add(en->sel_start, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED,
+   efl_event_callback_add(en->sel_start, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED,
          _sel_cursor_changed, obj);
-   eo_event_callback_add(en->sel_end, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED,
+   efl_event_callback_add(en->sel_end, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED,
          _sel_cursor_changed, obj);
 
    en->input_panel_enable = EINA_TRUE;
@@ -1363,7 +1363,7 @@ _efl_ui_internal_text_interactive_eo_base_finalize(Eo *obj, Efl_Ui_Internal_Text
 #endif
 
 done:
-   return eo_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

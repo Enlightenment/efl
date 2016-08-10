@@ -376,7 +376,7 @@ _elm_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
      }
 
    if (ret)
-     eo_event_callback_call(obj, ELM_LAYOUT_EVENT_THEME_CHANGED, NULL);
+     efl_event_callback_call(obj, ELM_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    if (!_visuals_refresh(obj, sd))
      ret = ELM_THEME_APPLY_FAILED;
@@ -421,7 +421,7 @@ _elm_layout_elm_widget_on_focus(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED,
      {
         elm_layout_signal_emit(obj, "elm,action,focus", "elm");
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);
-        eo_event_callback_call(obj, ELM_WIDGET_EVENT_FOCUSED, NULL);
+        efl_event_callback_call(obj, ELM_WIDGET_EVENT_FOCUSED, NULL);
         if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
           elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
      }
@@ -429,7 +429,7 @@ _elm_layout_elm_widget_on_focus(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED,
      {
         elm_layout_signal_emit(obj, "elm,action,unfocus", "elm");
         evas_object_focus_set(wd->resize_obj, EINA_FALSE);
-        eo_event_callback_call(obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
+        efl_event_callback_call(obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
         if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
           elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
      }
@@ -671,9 +671,9 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj EINA_UNUSED,
 static void
 _eo_unparent_helper(Eo *child, Eo *parent)
 {
-   if (eo_parent_get(child) == parent)
+   if (efl_parent_get(child) == parent)
      {
-        eo_parent_set(child, evas_object_evas_get(parent));
+        efl_parent_set(child, evas_object_evas_get(parent));
      }
 }
 
@@ -1049,7 +1049,7 @@ _elm_layout_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Ev
         sub_d->obj = content;
         sd->subs = eina_list_append(sd->subs, sub_d);
 
-        eo_parent_set(content, obj);
+        efl_parent_set(content, obj);
         _icon_signal_emit(sd, sub_d, EINA_TRUE);
      }
 
@@ -1342,7 +1342,7 @@ _layout_box_subobj_init(Elm_Layout_Smart_Data *sd, Elm_Layout_Sub_Object_Data *s
    sub_d->part = eina_stringshare_add(part);
    sub_d->obj = child;
    sd->subs = eina_list_append(sd->subs, sub_d);
-   eo_parent_set(child, sd->obj);
+   efl_parent_set(child, sd->obj);
 }
 
 Eina_Bool
@@ -1590,7 +1590,7 @@ _elm_layout_table_pack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Eva
    sub_d->p.table.colspan = colspan;
    sub_d->p.table.rowspan = rowspan;
    sd->subs = eina_list_append(sd->subs, sub_d);
-   eo_parent_set(child, obj);
+   efl_parent_set(child, obj);
 
    elm_obj_layout_sizing_eval(obj);
 
@@ -1870,14 +1870,14 @@ _elm_layout_edje_object_can_access_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Dat
 }
 
 EOLIAN static void
-_elm_layout_eo_base_dbg_info_get(Eo *eo_obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, Eo_Dbg_Info *root)
+_elm_layout_efl_object_dbg_info_get(Eo *eo_obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, Efl_Dbg_Info *root)
 {
-   eo_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
+   efl_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
    ELM_WIDGET_DATA_GET_OR_RETURN(eo_obj, wd);
 
    if (wd->resize_obj && eo_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
      {
-        Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+        Efl_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
         const char *file, *edje_group;
         Evas_Object *edje_obj = wd->resize_obj;
 
@@ -1904,10 +1904,10 @@ elm_layout_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_layout_eo_base_constructor(Eo *obj, Elm_Layout_Smart_Data *sd)
+_elm_layout_efl_object_constructor(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    sd->obj = obj;
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
@@ -1915,7 +1915,7 @@ _elm_layout_eo_base_constructor(Eo *obj, Elm_Layout_Smart_Data *sd)
    return obj;
 }
 
-EOLIAN static void _elm_layout_class_constructor(Eo_Class *klass)
+EOLIAN static void _elm_layout_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
@@ -2002,7 +2002,7 @@ elm_layout_table_clear(Elm_Layout *obj, const char *part, Eina_Bool clear)
 
 /* Efl.Part implementation */
 
-static EOLIAN Eo_Base *
+static EOLIAN Efl_Object *
 _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd,
                           const char *part)
 {

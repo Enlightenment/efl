@@ -59,11 +59,11 @@ class Efl.Loop.Timer (Efl.Loop_User)
       tick; [[Event triggered when the specified time as passed.]]
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.finalize;
-      Eo.Base.event_freeze;
-      Eo.Base.parent.set;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
+      Efl.Object.event_freeze;
+      Efl.Object.parent.set;
       /* XXX: can't document overridden methods
        * Pauses a running timer.
        *
@@ -78,8 +78,8 @@ class Efl.Loop.Timer (Efl.Loop_User)
        *
        * @see ecore_timer_thaw()
        */
-      Eo.Base.event_freeze_count.get;
-      Eo.Base.event_thaw;
+      Efl.Object.event_freeze_count.get;
+      Efl.Object.event_thaw;
       /* XXX: can't document overridden methods
        * Resumes a frozen (paused) timer.
        *

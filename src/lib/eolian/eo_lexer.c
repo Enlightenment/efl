@@ -80,7 +80,7 @@ static const char * const ctypes[] =
 
    "void *",
 
-   "Eo_Event_Cb",
+   "Efl_Event_Cb",
 };
 
 #undef KW

@@ -7,7 +7,7 @@ enum Ecore.Poller_Type
    core = 0 [[The core poller interval]]
 }
 
-class Ecore.Poller (Eo.Base)
+class Ecore.Poller (Efl.Object)
 {
    [[Ecore poller provides infrastructure for the creation of pollers.
 
@@ -53,8 +53,8 @@ class Ecore.Poller (Eo.Base)
       }
    }
    implements {
-      Eo.Base.destructor;
-      Eo.Base.finalize;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
    }
    constructors {
       .constructor;

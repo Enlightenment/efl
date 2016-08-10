@@ -69,9 +69,9 @@ evas_canvas3d_scene_add(Evas *e)
 }
 
 EOLIAN static Eo *
-_evas_canvas3d_scene_eo_base_constructor(Eo *obj, Evas_Canvas3D_Scene_Data *pd)
+_evas_canvas3d_scene_efl_object_constructor(Eo *obj, Evas_Canvas3D_Scene_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_SCENE);
    evas_color_set(&pd->bg_color, 0.0, 0.0, 0.0, 0.0);
    pd->shadows_enabled = EINA_FALSE;
@@ -628,7 +628,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
    Eina_Array *arr = NULL;
    Eina_Bool update_scene = EINA_FALSE;
    Evas_Canvas3D_Node *picked_node = NULL;
-   const Eo_Event_Description *eo_desc = NULL;
+   const Efl_Event_Description *eo_desc = NULL;
 
    pd_parent = eo_data_scope_get(obj, EVAS_CANVAS3D_OBJECT_CLASS);
    e = eo_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
@@ -686,8 +686,8 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
                             eina_stringshare_del(tmp);
 
                             /*Calling callback clicked*/
-                            eo_desc = eo_base_legacy_only_event_description_get("clicked,private");
-                            eo_event_callback_call(picked_node, eo_desc, picked_node);
+                            eo_desc = efl_object_legacy_only_event_description_get("clicked,private");
+                            efl_event_callback_call(picked_node, eo_desc, picked_node);
 
                             return EINA_TRUE;
                          }
@@ -725,8 +725,8 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
    if (mesh)  *mesh  = data.mesh;
 
    /*Calling callback clicked*/
-   eo_desc = eo_base_legacy_only_event_description_get("clicked,private");
-   eo_event_callback_call(data.node, eo_desc, data.node);
+   eo_desc = efl_object_legacy_only_event_description_get("clicked,private");
+   efl_event_callback_call(data.node, eo_desc, data.node);
 
    return EINA_TRUE;
 }

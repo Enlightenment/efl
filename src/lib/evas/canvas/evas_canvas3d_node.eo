@@ -382,7 +382,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object)
       }
    }
    implements {
-      Eo.Base.destructor;
+      Efl.Object.destructor;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
       Evas.Canvas3D.Object.callback_register;

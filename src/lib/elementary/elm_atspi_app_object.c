@@ -18,11 +18,11 @@ struct _Elm_Atspi_App_Object_Data
 };
 
 EOLIAN static void
-_elm_atspi_app_object_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd)
+_elm_atspi_app_object_efl_object_destructor(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd)
 {
    if (_pd->descr) eina_stringshare_del(_pd->descr);
 
-   eo_destructor(eo_super(obj, ELM_ATSPI_APP_OBJECT_CLASS));
+   efl_destructor(eo_super(obj, ELM_ATSPI_APP_OBJECT_CLASS));
 }
 
 EOLIAN static Eina_List*

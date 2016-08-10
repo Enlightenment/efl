@@ -51,7 +51,7 @@ class Elm.Pan (Efl.Canvas.Group.Clipped)
       }
    }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       class.constructor;
       Efl.Canvas.Group.group_hide;
       Efl.Canvas.Group.group_show;

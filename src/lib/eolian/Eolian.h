@@ -1279,7 +1279,7 @@ EAPI Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class *klass);
 EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
 
 /*
- * @brief Returns the name of the C function used to get the Eo_Class pointer.
+ * @brief Returns the name of the C function used to get the Efl_Class pointer.
  *
  * @param[in] klass the class.
  * @return a stringshare containing the func name or NULL on error.

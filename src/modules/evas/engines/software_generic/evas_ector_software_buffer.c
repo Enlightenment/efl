@@ -27,7 +27,7 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
    RGBA_Image *im = image;
 
    EINA_SAFETY_ON_NULL_RETURN(image);
-   if (eo_finalized_get(obj))
+   if (efl_finalized_get(obj))
      {
         CRI("engine_image must be set at construction time only");
         return;
@@ -65,29 +65,29 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_get(Eo *obj EINA_UNUS
 }
 
 EOLIAN static Eo *
-_evas_ector_software_buffer_eo_base_constructor(Eo *obj, Evas_Ector_Software_Buffer_Data *pd)
+_evas_ector_software_buffer_efl_object_constructor(Eo *obj, Evas_Ector_Software_Buffer_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    pd->base = eo_data_xref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN, obj);
    return obj;
 }
 
 EOLIAN static Eo *
-_evas_ector_software_buffer_eo_base_finalize(Eo *obj, Evas_Ector_Software_Buffer_Data *pd)
+_evas_ector_software_buffer_efl_object_finalize(Eo *obj, Evas_Ector_Software_Buffer_Data *pd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->base, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->image, NULL);
    pd->base->generic->immutable = EINA_TRUE;
-   return eo_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_evas_ector_software_buffer_eo_base_destructor(Eo *obj, Evas_Ector_Software_Buffer_Data *pd)
+_evas_ector_software_buffer_efl_object_destructor(Eo *obj, Evas_Ector_Software_Buffer_Data *pd)
 {
    eo_data_xunref(obj, pd->base, obj);
    evas_cache_image_drop(&pd->image->cache_entry);
    eo_xunref(pd->evas, obj);
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 #include "evas_ector_buffer.eo.c"

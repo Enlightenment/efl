@@ -13,7 +13,7 @@ START_TEST (elm_config_eoapi)
 {
    elm_init(1, NULL);
 
-   Eo *cfg = eo_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
+   Eo *cfg = efl_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
 #define CONFIG_CHK(opt, typ, val) do { \
@@ -150,17 +150,17 @@ START_TEST (elm_config_win)
 {
    elm_init(1, NULL);
 
-   Eo *cfg = eo_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
+   Eo *cfg = efl_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
    Eo *win = eo_add(EFL_UI_WIN_CLASS, NULL);
-   Eo *cfg2 = eo_provider_find(win, EFL_CONFIG_INTERFACE);
+   Eo *cfg2 = efl_provider_find(win, EFL_CONFIG_INTERFACE);
    fail_if(cfg != cfg2);
 
    elm_config_cache_flush_interval_set(42);
    fail_if(efl_config_int_get(win, "cache_flush_interval") != 42);
 
-   eo_del(win);
+   efl_del(win);
    elm_shutdown();
 }
 END_TEST
@@ -185,7 +185,7 @@ START_TEST (elm_config_profiles)
    // this only tests some of the profile APIs. we're not going to mess with
    // the global config during make check :)
 
-   Eo *cfg = eo_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
+   Eo *cfg = efl_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
    for (int hidden = 0; hidden <= 1; hidden++)

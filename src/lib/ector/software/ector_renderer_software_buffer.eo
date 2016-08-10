@@ -13,6 +13,6 @@ class Ector.Renderer.Software.Buffer (Ector.Renderer.Software, Ector.Renderer.Bu
       Ector.Renderer.prepare;
       Ector.Renderer.crc.get;
       Ector.Renderer.Software.fill;
-      Eo.Base.destructor;
+      Efl.Object.destructor;
    }
 }

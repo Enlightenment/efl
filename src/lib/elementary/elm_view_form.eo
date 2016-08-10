@@ -1,4 +1,4 @@
-class Elm.View.Form (Eo.Base)
+class Elm.View.Form (Efl.Object)
 {
     methods {
         model_set {
@@ -22,8 +22,8 @@ class Elm.View.Form (Eo.Base)
         }
     }
     implements {
-        Eo.Base.destructor;
-        Eo.Base.constructor;
+        Efl.Object.destructor;
+        Efl.Object.constructor;
     }
     constructors {
         .model_set;

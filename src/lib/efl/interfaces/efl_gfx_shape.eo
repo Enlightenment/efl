@@ -167,7 +167,7 @@ mixin Efl.Gfx.Shape
           @since 1.14
         ]]
         params {
-          @in dup_from: const(Eo.Base); [[Shape object from where data will be copied.]]
+          @in dup_from: const(Efl.Object); [[Shape object from where data will be copied.]]
         }
       }
       bounds_get {
@@ -369,15 +369,15 @@ mixin Efl.Gfx.Shape
       interpolate {
         return: bool;
         params {
-          @in from: const(Eo.Base);
-          @in to: const(Eo.Base);
+          @in from: const(Efl.Object);
+          @in to: const(Efl.Object);
           @in pos_map: double;
         }
       }
       equal_commands {
         return: bool;
         params {
-          @in with: const(Eo.Base);
+          @in with: const(Efl.Object);
         }
       }
    }

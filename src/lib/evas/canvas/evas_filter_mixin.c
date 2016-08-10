@@ -265,7 +265,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                     {
                        // Post render callback is not required anymore
                        Evas *e = obj->layer->evas->evas;
-                       eo_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
+                       efl_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
                        pd->has_cb = EINA_FALSE;
                     }
 
@@ -325,7 +325,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         if (do_async && !pd->has_cb)
           {
              Evas *e = obj->layer->evas->evas;
-             eo_event_callback_add(e, EFL_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
+             efl_event_callback_add(e, EFL_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
              pd->has_cb = EINA_TRUE;
           }
         evas_filter_context_post_run_callback_set(filter, _filter_cb, eo_obj);
@@ -580,12 +580,12 @@ _efl_canvas_filter_internal_filter_invalid_set(Eo *eo_obj EINA_UNUSED, Evas_Filt
      }
 }
 
-EOLIAN static Eo_Base *
-_efl_canvas_filter_internal_eo_base_constructor(Eo *eo_obj, Evas_Filter_Data *pd)
+EOLIAN static Efl_Object *
+_efl_canvas_filter_internal_efl_object_constructor(Eo *eo_obj, Evas_Filter_Data *pd)
 {
    Eo *obj = NULL;
 
-   obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+   obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
    pd->data = eina_cow_alloc(evas_object_filter_cow);
    SLKI(pd->lck);
 
@@ -593,7 +593,7 @@ _efl_canvas_filter_internal_eo_base_constructor(Eo *eo_obj, Evas_Filter_Data *pd
 }
 
 EOLIAN static void
-_efl_canvas_filter_internal_eo_base_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
+_efl_canvas_filter_internal_efl_object_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Filter_Data_Binding *db;
@@ -626,11 +626,11 @@ finish:
    if (pd->has_cb)
      {
         Evas *e = obj->layer->evas->evas;
-        eo_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
+        efl_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
      }
    SLKD(pd->lck);
 
-   eo_destructor(eo_super(eo_obj, MY_CLASS));
+   efl_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
 EOLIAN static void

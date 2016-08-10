@@ -1,4 +1,4 @@
-class Generated_Promise (Eo.Base)
+class Generated_Promise (Efl.Object)
 {
    methods {
       method1 {

@@ -4,6 +4,6 @@
 EAPI void inherit_prot_print(Eo *obj);
 
 #define INHERIT_CLASS inherit_class_get()
-const Eo_Class *inherit_class_get(void);
+const Efl_Class *inherit_class_get(void);
 
 #endif

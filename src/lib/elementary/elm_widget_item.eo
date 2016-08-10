@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
+class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                       Elm.Interface.Atspi_Component)
 {
       eo_prefix: elm_wdg_item;
@@ -529,8 +529,8 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
            }
       }
       implements {
-           Eo.Base.constructor;
-           Eo.Base.destructor;
+           Efl.Object.constructor;
+           Efl.Object.destructor;
            Elm.Interface.Atspi_Accessible.state_set.get;
            Elm.Interface.Atspi_Component.extents.get;
            Elm.Interface.Atspi_Component.extents.set;

@@ -14,14 +14,14 @@ class Evas.VG (Efl.Canvas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
               @since 1.14]]
          }
          values {
-            container: Eo.Base; [[Root node of the VG canvas.]] /* FIXME: Should be Efl.VG */
+            container: Efl.Object; [[Root node of the VG canvas.]] /* FIXME: Should be Efl.VG */
          }
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.finalize;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
       Efl.Gfx.View.view_size.set;

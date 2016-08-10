@@ -6,10 +6,10 @@ abstract Efl.Canvas.Image.Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Interna
 {
    data: Evas_Image_Data;
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.dbg_info_get;
-      Eo.Base.finalize;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.dbg_info_get;
+      Efl.Object.finalize;
       Efl.File.save;
       Efl.Orientation.orientation.get;
       Efl.Orientation.orientation.set;

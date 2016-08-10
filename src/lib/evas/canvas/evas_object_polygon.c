@@ -88,9 +88,9 @@ evas_object_polygon_add(Evas *e)
 }
 
 EOLIAN static Eo *
-_efl_canvas_polygon_eo_base_constructor(Eo *eo_obj, Efl_Canvas_Polygon_Data *class_data EINA_UNUSED)
+_efl_canvas_polygon_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Polygon_Data *class_data EINA_UNUSED)
 {
-   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
 
    evas_object_polygon_init(eo_obj);
 
@@ -260,12 +260,12 @@ evas_object_polygon_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_polygon_eo_base_destructor(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd EINA_UNUSED)
+_efl_canvas_polygon_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    evas_object_polygon_free(eo_obj, obj, obj->private_data);
-   eo_destructor(eo_super(eo_obj, MY_CLASS));
+   efl_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
 static void

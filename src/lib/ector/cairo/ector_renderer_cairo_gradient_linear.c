@@ -129,12 +129,12 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_bounds_get(Eo *obj,
                       gld->end.y - gld->start.y);
 }
 
-static Eo_Base *
-_ector_renderer_cairo_gradient_linear_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Gradient_Linear_Data *pd EINA_UNUSED)
+static Efl_Object *
+_ector_renderer_cairo_gradient_linear_efl_object_finalize(Eo *obj, Ector_Renderer_Cairo_Gradient_Linear_Data *pd EINA_UNUSED)
 {
    Ector_Renderer_Data *base;
 
-   obj = eo_finalize(eo_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS));
+   obj = efl_finalize(eo_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS));
    if (!obj) return NULL;
 
    base = eo_data_scope_get(obj, ECTOR_RENDERER_CLASS);
@@ -153,7 +153,7 @@ _ector_renderer_cairo_gradient_linear_eo_base_finalize(Eo *obj, Ector_Renderer_C
 }
 
 static void
-_ector_renderer_cairo_gradient_linear_eo_base_destructor(Eo *obj,
+_ector_renderer_cairo_gradient_linear_efl_object_destructor(Eo *obj,
                                                          Ector_Renderer_Cairo_Gradient_Linear_Data *pd)
 {
    Ector_Renderer_Data *base;
@@ -161,7 +161,7 @@ _ector_renderer_cairo_gradient_linear_eo_base_destructor(Eo *obj,
    base = eo_data_scope_get(obj, ECTOR_RENDERER_CLASS);
    eo_data_xunref(base->surface, pd->parent, obj);
 
-   eo_destructor(eo_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS));
+   efl_destructor(eo_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS));
 }
 
 static void

@@ -9,7 +9,7 @@ enum Ector.Quality
    last, [[Sentinel]]
 }
 
-abstract Ector.Renderer (Eo.Base)
+abstract Ector.Renderer (Efl.Object)
 {
    [[Ector renderer abstract interface]]
 
@@ -128,7 +128,7 @@ abstract Ector.Renderer (Eo.Base)
       }
    }
    implements {
-      Eo.Base.destructor;
-      Eo.Base.finalize;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
    }
 }

@@ -74,7 +74,7 @@ class Elm.Button (Elm.Layout, Efl.Ui.Clickable,
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Elm.Widget.activate;
       Elm.Widget.focus_next_manager_is;

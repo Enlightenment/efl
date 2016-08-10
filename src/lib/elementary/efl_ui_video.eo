@@ -61,7 +61,7 @@ class Efl.Ui.Video (Elm.Layout, Efl.File,
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.Canvas.Group.group_add;

@@ -356,9 +356,9 @@ elm_progressbar_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_progressbar_eo_base_constructor(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED)
+_elm_progressbar_efl_object_constructor(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PROGRESS_BAR);
@@ -509,7 +509,7 @@ _elm_progressbar_part_value_set(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, c
 
    _val_set(obj);
    _units_set(obj);
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, ELM_PROGRESSBAR_EVENT_CHANGED, NULL);
 }
 
@@ -647,7 +647,7 @@ _elm_progressbar_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_
 }
 
 EOLIAN static void
-_elm_progressbar_class_constructor(Eo_Class *klass)
+_elm_progressbar_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

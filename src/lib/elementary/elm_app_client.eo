@@ -3,7 +3,7 @@ import eina_types;
 type Elm_App_Client_Open_View_Cb: __undefined_type;
 type Elm_App_Client_Pending: __undefined_type;
 
-class Elm.App.Client (Eo.Base)
+class Elm.App.Client (Efl.Object)
 {
    methods {
       @property views {
@@ -52,8 +52,8 @@ class Elm.App.Client (Eo.Base)
       }
    }
    implements {
-      Eo.Base.destructor;
-      Eo.Base.finalize;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
    }
    constructors {
       .constructor;

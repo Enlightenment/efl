@@ -49,7 +49,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
   static void                                                               \
   _##name##_fwd(void *data, const Eo_Event *ev EINA_UNUSED)                                          \
   {                                                                         \
-     eo_event_callback_call(data, event, ev->info);          \
+     efl_event_callback_call(data, event, ev->info);          \
   }
 SIG_FWD(CHANGED, ELM_FILESELECTOR_ENTRY_EVENT_CHANGED)
 SIG_FWD(PRESS, ELM_FILESELECTOR_ENTRY_EVENT_PRESS)
@@ -94,7 +94,7 @@ _FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
    eina_promise_then(promise, _file_chosen_path_then, NULL, data);
 
    // EVENTS: should not call legacy
-   //eo_event_callback_call
+   //efl_event_callback_call
    //  (data, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event->info);
 }
 
@@ -132,7 +132,7 @@ _ACTIVATED_fwd(void *data, const Eo_Event *event)
          elm_interface_fileselector_model_set(sd->button, model);
      }
 
-   eo_event_callback_call
+   efl_event_callback_call
      (data, ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event->info);
 }
 
@@ -325,7 +325,7 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
      (priv->button, _elm_config->fileselector_expand_enable);
 
 #define SIG_FWD(name, event) \
-  eo_event_callback_add(priv->button, event, _##name##_fwd, obj)
+  efl_event_callback_add(priv->button, event, _##name##_fwd, obj)
    SIG_FWD(CLICKED, EFL_UI_EVENT_CLICKED);
    SIG_FWD(UNPRESSED, EFL_UI_EVENT_UNPRESSED);
    // EVENTS: should not call legacy
@@ -342,7 +342,7 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
    elm_entry_editable_set(priv->entry, EINA_TRUE);
 
 #define SIG_FWD(name, event) \
-  eo_event_callback_add(priv->entry, event, _##name##_fwd, obj)
+  efl_event_callback_add(priv->entry, event, _##name##_fwd, obj)
    SIG_FWD(CHANGED, ELM_ENTRY_EVENT_CHANGED);
    SIG_FWD(ACTIVATED, ELM_ENTRY_EVENT_ACTIVATED);
    SIG_FWD(PRESS, ELM_ENTRY_EVENT_PRESS);
@@ -386,9 +386,9 @@ elm_fileselector_entry_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_fileselector_entry_eo_base_constructor(Eo *obj, Elm_Fileselector_Entry_Data *sd EINA_UNUSED)
+_elm_fileselector_entry_efl_object_constructor(Eo *obj, Elm_Fileselector_Entry_Data *sd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_GROUPING);
@@ -650,7 +650,7 @@ elm_fileselector_entry_inwin_mode_get(const Eo *obj)
 }
 
 EOLIAN static void
-_elm_fileselector_entry_class_constructor(Eo_Class *klass)
+_elm_fileselector_entry_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

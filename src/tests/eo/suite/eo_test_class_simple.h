@@ -15,21 +15,21 @@ EAPI void simple_pure_virtual(Eo *obj);
 EAPI void simple_no_implementation(Eo *obj);
 EAPI Eo *simple_part_get(Eo *obj, const char *name);
 
-extern const Eo_Event_Description _EV_A_CHANGED;
+extern const Efl_Event_Description _EV_A_CHANGED;
 #define EV_A_CHANGED (&(_EV_A_CHANGED))
 
-extern const Eo_Event_Description _EV_A_CHANGED2;
+extern const Efl_Event_Description _EV_A_CHANGED2;
 #define EV_A_CHANGED2 (&(_EV_A_CHANGED2))
 
 #define SIMPLE_CLASS simple_class_get()
-const Eo_Class *simple_class_get(void);
+const Efl_Class *simple_class_get(void);
 
-EAPI int simple2_class_beef_get(const Eo_Class *obj);
+EAPI int simple2_class_beef_get(const Efl_Class *obj);
 
 #define SIMPLE2_CLASS simple2_class_get()
-const Eo_Class *simple2_class_get(void);
+const Efl_Class *simple2_class_get(void);
 
 #define SEARCHABLE_CLASS searchable_class_get()
-const Eo_Class *searchable_class_get(void);
+const Efl_Class *searchable_class_get(void);
 
 #endif

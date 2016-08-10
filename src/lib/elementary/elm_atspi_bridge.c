@@ -144,8 +144,8 @@ static void _on_object_add(void *data, const Eo_Event *event);
 static void _on_object_del(void *data, const Eo_Event *event);
 
 typedef struct {
-     const Eo_Event_Description *desc;
-     const Eo_Event_Cb callback;
+     const Efl_Event_Description *desc;
+     const Efl_Event_Cb callback;
 } Elm_Atspi_Bridge_Event_Handler;
 
 static const Elm_Atspi_Bridge_Event_Handler event_handlers[] = {
@@ -2500,7 +2500,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
    //Get interfaces to match
    while (eldbus_message_iter_get_and_next(ifc_iter, 's', &ifc_name))
      {
-        const Eo_Class *class = NULL;
+        const Efl_Class *class = NULL;
         if (!strcmp(ifc_name, "action"))
           class = ELM_INTERFACE_ATSPI_ACTION_MIXIN;
         else if (!strcmp(ifc_name, "component"))
@@ -2529,7 +2529,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
 static Eina_Bool
 _collection_match_interfaces_helper(Eo *obj, Eina_List *ifcs, Eina_Bool condition, Eina_Bool ret_if_true, Eina_Bool ret_if_false)
 {
-   Eo_Class *class;
+   Efl_Class *class;
    Eina_List *l;
 
    EINA_LIST_FOREACH(ifcs, l, class)
@@ -3792,7 +3792,7 @@ _registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending 
      }
 
    if (!pd->connected)
-      eo_event_callback_call(data, ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL);
+      efl_event_callback_call(data, ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL);
    pd->connected = EINA_TRUE;
 }
 
@@ -3823,14 +3823,14 @@ _state_changed_signal_send(void *data, const Eo_Event *event)
 
    if (!STATE_TYPE_GET(pd->object_state_broadcast_mask, state_data->type))
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
    if ((state_data->type > ELM_ATSPI_STATE_LAST_DEFINED) ||
         (int)state_data->type < 0)
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -3887,13 +3887,13 @@ _property_changed_signal_send(void *data, const Eo_Event *event)
    if (prop == ATSPI_OBJECT_PROPERTY_LAST)
      {
         ERR("Unrecognized property name!");
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
    if (!STATE_TYPE_GET(pd->object_property_broadcast_mask, prop))
      {
         DBG("Masking property %s changed event.", property);
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -3908,7 +3908,7 @@ _visible_data_changed_signal_send(void *data, const Eo_Event *event)
 
    if (!STATE_TYPE_GET(pd->object_children_broadcast_mask, ATSPI_OBJECT_EVENT_VISIBLE_DATA_CHANGED))
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -3927,7 +3927,7 @@ _active_descendant_changed_signal_send(void *data, const Eo_Event *event)
 
    if (!STATE_TYPE_GET(pd->object_children_broadcast_mask, ATSPI_OBJECT_EVENT_ACTIVE_DESCENDANT_CHANGED))
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -3952,7 +3952,7 @@ _children_changed_signal_send(void *data, const Eo_Event *event)
 
    if (!STATE_TYPE_GET(pd->object_children_broadcast_mask, type))
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -3970,7 +3970,7 @@ _children_changed_signal_send(void *data, const Eo_Event *event)
 
    if (!atspi_desc)
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -4002,20 +4002,20 @@ _window_signal_send(void *data, const Eo_Event *event)
      type = ATSPI_WINDOW_EVENT_RESTORE;
    else
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
    if (!STATE_TYPE_GET(pd->window_signal_broadcast_mask, type))
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
    if (!pd->a11y_bus)
      {
         ERR("A11Y connection closed. Unable to send ATSPI event.");
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -4030,7 +4030,7 @@ _selection_signal_send(void *data, const Eo_Event *event)
 
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_SELECTION_CHANGED))
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -4295,7 +4295,7 @@ _a11y_connection_shutdown(Eo *bridge)
    elm_interface_atspi_accessible_event_handler_del(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, pd->event_hdlr);
    pd->event_hdlr = NULL;
 
-   eo_event_callback_call(bridge, ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL);
+   efl_event_callback_call(bridge, ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL);
    pd->connected = EINA_FALSE;
 }
 
@@ -4357,7 +4357,7 @@ _bridge_accessible_event_dispatch(void *data, const Eo_Event *event)
 
    _bridge_object_register(data, event->object);
 
-   Eo_Event_Cb cb = eina_hash_find(pd->event_hash, &event->desc);
+   Efl_Event_Cb cb = eina_hash_find(pd->event_hash, &event->desc);
    return cb ? cb(data, event) : EINA_TRUE;
 }
 
@@ -4495,7 +4495,7 @@ _elm_atspi_bridge_shutdown(void)
 {
    if (_init_count)
      {
-        eo_del(_instance);
+        efl_del(_instance);
         _init_count = 0;
      }
 }
@@ -4677,13 +4677,13 @@ _properties_changed_cb(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
      }
 }
 
-EOLIAN Eo_Base*
-_elm_atspi_bridge_eo_base_constructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
+EOLIAN Efl_Object*
+_elm_atspi_bridge_efl_object_constructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
 {
    Eldbus_Proxy *proxy;
    Eldbus_Pending *req;
 
-   eo_constructor(eo_super(obj, ELM_ATSPI_BRIDGE_CLASS));
+   efl_constructor(eo_super(obj, ELM_ATSPI_BRIDGE_CLASS));
 
    elm_need_eldbus();
 
@@ -4725,14 +4725,14 @@ obj_err:
 }
 
 EOLIAN void
-_elm_atspi_bridge_eo_base_destructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
+_elm_atspi_bridge_efl_object_destructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
 {
    _a11y_connection_shutdown(obj);
 
    if (pd->bus_obj) eldbus_object_unref(pd->bus_obj);
    if (pd->session_bus) eldbus_connection_unref(pd->session_bus);
 
-   eo_destructor(eo_super(obj, ELM_ATSPI_BRIDGE_CLASS));
+   efl_destructor(eo_super(obj, ELM_ATSPI_BRIDGE_CLASS));
 }
 
 #include "elm_atspi_bridge.eo.c"

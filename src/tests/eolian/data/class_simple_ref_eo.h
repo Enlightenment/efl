@@ -19,7 +19,7 @@ typedef Eo Class_Simple;
  */
 #define CLASS_SIMPLE_CLASS class_simple_class_get()
 
-EWAPI const Eo_Class *class_simple_class_get(void);
+EWAPI const Efl_Class *class_simple_class_get(void);
 
 #ifdef CLASS_SIMPLE_BETA
 /**

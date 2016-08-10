@@ -98,7 +98,7 @@ mixin Elm.Interface.Atspi_Component ()
             @in x: int;
             @in y: int;
          }
-         return: Eo.Base;
+         return: Efl.Object;
       }
    }
 }

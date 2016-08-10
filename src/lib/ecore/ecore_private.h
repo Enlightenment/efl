@@ -163,7 +163,7 @@ int          _efl_loop_timers_exists(void);
 
 int          _efl_loop_timer_expired_call(double when);
 
-Ecore_Factorized_Idle *_ecore_factorized_idle_add(const Eo_Callback_Array_Item*desc,
+Ecore_Factorized_Idle *_ecore_factorized_idle_add(const Efl_Callback_Array_Item*desc,
                                                   Ecore_Task_Cb func,
                                                   const void   *data);
 void        *_ecore_factorized_idle_del(Ecore_Idler *idler);
@@ -369,7 +369,7 @@ extern Eo *_mainloop_singleton;
 extern Eo *_ecore_parent;
 extern Efl_Version _app_efl_version;
 #define ECORE_PARENT_CLASS ecore_parent_class_get()
-EAPI const Eo_Class *ecore_parent_class_get(void) EINA_CONST;
+EAPI const Efl_Class *ecore_parent_class_get(void) EINA_CONST;
 
 // access to direct input cb
 #define ECORE_EVAS_INTERNAL

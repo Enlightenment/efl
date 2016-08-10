@@ -67,7 +67,7 @@ _app_view_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
         Elm_App_Client_View *old_view;
 
         old_view = evas_object_data_del(view_props, "view");
-        eo_event_callback_del(old_view, ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED, _app_view_prop_changed_cb, table);
+        efl_event_callback_del(old_view, ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED, _app_view_prop_changed_cb, table);
         elm_list_clear(view_props);
      }
    else
@@ -86,7 +86,7 @@ _app_view_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    progress = elm_app_client_view_progress_get(view);
    new_events = elm_app_client_view_new_events_get(view);
    window = elm_app_client_view_window_get(view);
-   eo_event_callback_add(view, ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED, _app_view_prop_changed_cb, table);
+   efl_event_callback_add(view, ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED, _app_view_prop_changed_cb, table);
 
    snprintf(buffer, sizeof(buffer), "Title=%s", title);
    elm_list_item_append(view_props, buffer, NULL, NULL, NULL, NULL);
@@ -280,7 +280,7 @@ _win_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_
 {
    Elm_App_Client *app;
    EINA_LIST_FREE(apps_list, app)
-     eo_del(app);
+     efl_del(app);
 }
 
 static void
@@ -301,9 +301,9 @@ _app_open(const char *package)
      }
 
    app = eo_add(ELM_APP_CLIENT_CLASS, NULL, elm_app_client_constructor(eo_self, package));
-   eo_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED, _view_list_update_cb, table);
-   eo_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_CREATED, _view_list_update_cb, table);
-   eo_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_DELETED, _view_list_update_cb, table);
+   efl_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED, _view_list_update_cb, table);
+   efl_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_CREATED, _view_list_update_cb, table);
+   efl_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_DELETED, _view_list_update_cb, table);
    apps_list = eina_list_append(apps_list, app);
 }
 

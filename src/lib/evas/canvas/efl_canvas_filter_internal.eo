@@ -1,4 +1,4 @@
-mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Eo.Base)
+mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
 {
    [[Evas internal implementation of filters.]]
 
@@ -60,8 +60,8 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Eo.Base)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Gfx.Filter.filter_program.set;
       Efl.Gfx.Filter.filter_program.get;
       Efl.Gfx.Filter.filter_state.get;

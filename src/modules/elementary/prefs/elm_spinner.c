@@ -26,7 +26,7 @@ elm_prefs_spinner_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
 
    evas_object_data_set(obj, "prefs_type", (void *)type);
 
-   eo_event_callback_add
+   efl_event_callback_add
      (obj, ELM_SPINNER_EVENT_CHANGED, _item_changed_cb, cb);
 
    if (type == ELM_PREFS_TYPE_INT)

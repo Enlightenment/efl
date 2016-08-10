@@ -106,7 +106,7 @@ class Elm.List.Item(Elm.Widget.Item)
            }
       }
       implements {
-           Eo.Base.constructor;
+           Efl.Object.constructor;
            Elm.Widget.Item.disable;
            Elm.Widget.Item.del_pre;
            Elm.Widget.Item.signal_emit;

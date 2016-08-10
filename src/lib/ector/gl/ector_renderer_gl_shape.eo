@@ -7,7 +7,7 @@ class Ector.Renderer.GL.Shape (Ector.Renderer.GL, Ector.Renderer.Shape)
       Ector.Renderer.bounds_get;
       Ector.Renderer.crc.get;
       Ector.Renderer.GL.fill;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
    }
 }

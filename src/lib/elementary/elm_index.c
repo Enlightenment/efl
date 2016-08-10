@@ -534,20 +534,20 @@ _elm_index_elm_layout_sizing_eval(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_index_item_eo_base_destructor(Eo *eo_item EINA_UNUSED, Elm_Index_Item_Data *it)
+_elm_index_item_efl_object_destructor(Eo *eo_item EINA_UNUSED, Elm_Index_Item_Data *it)
 {
    ELM_INDEX_DATA_GET(WIDGET(it), sd);
 
    _item_free(it);
    _index_box_clear(WIDGET(it), sd->level);
 
-   eo_destructor(eo_super(eo_item, ELM_INDEX_ITEM_CLASS));
+   efl_destructor(eo_super(eo_item, ELM_INDEX_ITEM_CLASS));
 }
 
 EOLIAN static Eo *
-_elm_index_item_eo_base_constructor(Eo *obj, Elm_Index_Item_Data *it)
+_elm_index_item_efl_object_constructor(Eo *obj, Elm_Index_Item_Data *it)
 {
-   obj = eo_constructor(eo_super(obj, ELM_INDEX_ITEM_CLASS));
+   obj = efl_constructor(eo_super(obj, ELM_INDEX_ITEM_CLASS));
    it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PUSH_BUTTON);
 
@@ -607,7 +607,7 @@ _delay_change_cb(void *data)
 
    if (item)
      {
-        eo_event_callback_call
+        efl_event_callback_call
               (data, ELM_INDEX_EVENT_DELAY_CHANGED, item);
         ELM_INDEX_ITEM_DATA_GET(item, it);
         _index_priority_change(data, it);
@@ -769,10 +769,10 @@ _sel_eval(Evas_Object *obj,
                     }
 
                   if (om_closest) 
-                    eo_event_callback_call
+                    efl_event_callback_call
                       (obj, ELM_INDEX_EVENT_CHANGED, EO_OBJ(om_closest));
                   else
-                    eo_event_callback_call
+                    efl_event_callback_call
                       (obj, ELM_INDEX_EVENT_CHANGED, EO_OBJ(it));
                   ecore_timer_del(sd->delay);
                   sd->delay = ecore_timer_add(sd->delay_change_time,
@@ -867,9 +867,9 @@ _on_mouse_up(void *data,
    eo_item = elm_index_selected_item_get(data, sd->level);
    if (eo_item)
      {
-        eo_event_callback_call
+        efl_event_callback_call
           (data, EFL_UI_EVENT_CLICKED, eo_item);
-        eo_event_callback_call
+        efl_event_callback_call
           (data, EFL_UI_EVENT_SELECTED, eo_item);
         eo_id_item = eo_item;
         ELM_INDEX_ITEM_DATA_GET(eo_id_item, id_item);
@@ -918,7 +918,7 @@ _on_mouse_move(void *data,
                   sd->level = 1;
                   snprintf(buf, sizeof(buf), "elm,state,level,%i", sd->level);
                   elm_layout_signal_emit(data, buf, "elm");
-                  eo_event_callback_call
+                  efl_event_callback_call
                     (data, ELM_INDEX_EVENT_LEVEL_UP, NULL);
                }
           }
@@ -929,7 +929,7 @@ _on_mouse_move(void *data,
                   sd->level = 0;
                   snprintf(buf, sizeof(buf), "elm,state,level,%i", sd->level);
                   elm_layout_signal_emit(data, buf, "elm");
-                  eo_event_callback_call
+                  efl_event_callback_call
                     (data, ELM_INDEX_EVENT_LEVEL_DOWN, NULL);
                }
           }
@@ -1268,9 +1268,9 @@ EAPI Eina_Bool elm_index_horizontal_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eo *
-_elm_index_eo_base_constructor(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED)
+_elm_index_efl_object_constructor(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SCROLL_BAR);
@@ -1358,9 +1358,9 @@ _elm_index_item_selected_set(Eo *eo_it,
         edje_object_signal_emit(VIEW(it_active), "elm,state,active", "elm");
         edje_object_message_signal_process(VIEW(it_active));
 
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, ELM_INDEX_EVENT_CHANGED, eo_it);
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, EFL_UI_EVENT_SELECTED, eo_it);
         ecore_timer_del(sd->delay);
         sd->delay = ecore_timer_add(sd->delay_change_time,
@@ -1721,7 +1721,7 @@ _elm_index_standard_priority_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 }
 
 static void
-_elm_index_class_constructor(Eo_Class *klass)
+_elm_index_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

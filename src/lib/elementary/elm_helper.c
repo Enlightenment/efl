@@ -47,5 +47,5 @@ elm_validator_regexp_helper(void *data, const Eo_Event *event)
    validator->status = regexec(&validator->regex, vc->text, (size_t)0, NULL, 0) ? ELM_REG_NOMATCH : ELM_REG_NOERROR;
    vc->signal = validator->signal;
    if (validator->status)
-      eo_event_callback_stop(event->object);
+      efl_event_callback_stop(event->object);
 }

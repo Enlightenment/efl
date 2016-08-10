@@ -230,27 +230,27 @@ _evas_ector_gl_image_buffer_ector_buffer_span_free(Eo *obj, Evas_Ector_GL_Image_
 }
 
 
-EOLIAN static Eo_Base *
-_evas_ector_gl_image_buffer_eo_base_constructor(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd)
+EOLIAN static Efl_Object *
+_evas_ector_gl_image_buffer_efl_object_constructor(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    pd->base = eo_data_ref(obj, ECTOR_GL_BUFFER_BASE_MIXIN);
    pd->base->generic = eo_data_ref(obj, ECTOR_BUFFER_MIXIN);
    pd->base->generic->eo = obj;
    return obj;
 }
 
-EOLIAN static Eo_Base *
-_evas_ector_gl_image_buffer_eo_base_finalize(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd)
+EOLIAN static Efl_Object *
+_evas_ector_gl_image_buffer_efl_object_finalize(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->base, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->image, NULL);
    pd->base->generic->immutable = EINA_TRUE;
-   return eo_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_evas_ector_gl_image_buffer_eo_base_destructor(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd)
+_evas_ector_gl_image_buffer_efl_object_destructor(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd)
 {
    Evas_Public_Data *e = eo_data_scope_get(pd->evas, EVAS_CANVAS_CLASS);
 
@@ -258,7 +258,7 @@ _evas_ector_gl_image_buffer_eo_base_destructor(Eo *obj, Evas_Ector_GL_Image_Buff
    eo_data_unref(obj, pd->base);
    ENFN->image_free(ENDT, pd->image);
    eo_xunref(pd->evas, obj);
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 #include "evas_ector_gl_image_buffer.eo.c"

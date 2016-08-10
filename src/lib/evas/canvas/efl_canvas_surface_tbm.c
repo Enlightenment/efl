@@ -8,11 +8,11 @@ typedef struct _Efl_Canvas_Surface_Tbm_Data
 } Efl_Canvas_Surface_Tbm_Data;
 
 EOLIAN static Eo *
-_efl_canvas_surface_tbm_eo_base_constructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd)
+_efl_canvas_surface_tbm_efl_object_constructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd)
 {
    Evas_Object_Protected_Data *obj;
 
-   eo = eo_constructor(eo_super(eo, MY_CLASS));
+   eo = efl_constructor(eo_super(eo, MY_CLASS));
    obj = eo_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return NULL;
 
@@ -28,7 +28,7 @@ _efl_canvas_surface_tbm_eo_base_constructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data 
 }
 
 EOLIAN static void
-_efl_canvas_surface_tbm_eo_base_destructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd)
+_efl_canvas_surface_tbm_efl_object_destructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd)
 {
    Evas_Object_Protected_Data *obj;
 
@@ -36,7 +36,7 @@ _efl_canvas_surface_tbm_eo_base_destructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data *
 
    ENFN->image_native_shutdown(ENDT, EVAS_NATIVE_SURFACE_TBM);
    eo_data_unref(eo, pd->base);
-   eo_destructor(eo);
+   efl_destructor(eo);
 }
 
 EOLIAN static Eina_Bool

@@ -138,10 +138,10 @@ _ector_renderer_gl_shape_ector_renderer_crc_get(Eo *obj, Ector_Renderer_GL_Shape
    return crc;
 }
 
-static Eo_Base *
-_ector_renderer_gl_shape_eo_base_constructor(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
+static Efl_Object *
+_ector_renderer_gl_shape_efl_object_constructor(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS));
+   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS));
 
    if (!obj) return NULL;
 
@@ -149,13 +149,13 @@ _ector_renderer_gl_shape_eo_base_constructor(Eo *obj, Ector_Renderer_GL_Shape_Da
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
 
-   eo_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_gl_shape_path_changed, pd);
+   efl_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_gl_shape_path_changed, pd);
 
    return obj;
 }
 
 static void
-_ector_renderer_gl_shape_eo_base_destructor(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
+_ector_renderer_gl_shape_efl_object_destructor(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
 {
    eo_data_xunref(obj, pd->shape, obj);
    eo_data_xunref(obj, pd->base, obj);

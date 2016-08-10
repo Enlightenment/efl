@@ -2,7 +2,7 @@ import elm_general;
 
 type Elm_App_Client_View_Cb: __undefined_type;
 
-class Elm.App.Client.View (Eo.Base)
+class Elm.App.Client.View (Efl.Object)
 {
    methods {
       @property state {
@@ -112,8 +112,8 @@ class Elm.App.Client.View (Eo.Base)
       }
    }
    implements {
-      Eo.Base.destructor;
-      Eo.Base.finalize;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
    }
    events {
       state,changed; [[State of view changed.]]

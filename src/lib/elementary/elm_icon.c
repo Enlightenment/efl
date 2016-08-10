@@ -112,10 +112,10 @@ _icon_thumb_display(Elm_Icon_Data *sd)
          (sd->obj, sd->thumb.thumb.path, sd->thumb.thumb.key);
 
    if (ret)
-     eo_event_callback_call
+     efl_event_callback_call
        (sd->obj, ELM_ICON_EVENT_THUMB_DONE, NULL);
    else
-     eo_event_callback_call
+     efl_event_callback_call
        (sd->obj, ELM_ICON_EVENT_THUMB_ERROR, NULL);
 
    return ret;
@@ -218,7 +218,7 @@ _icon_thumb_error(Ethumb_Client *client,
    ERR("could not generate thumbnail for %s (key: %s)",
        sd->thumb.file.path, sd->thumb.file.key);
 
-   eo_event_callback_call(sd->obj, ELM_ICON_EVENT_THUMB_ERROR, NULL);
+   efl_event_callback_call(sd->obj, ELM_ICON_EVENT_THUMB_ERROR, NULL);
 
    _icon_thumb_cleanup(client);
 }
@@ -612,9 +612,9 @@ elm_icon_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_icon_eo_base_constructor(Eo *obj, Elm_Icon_Data *sd)
+_elm_icon_efl_object_constructor(Eo *obj, Elm_Icon_Data *sd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -625,7 +625,7 @@ _elm_icon_eo_base_constructor(Eo *obj, Elm_Icon_Data *sd)
 }
 
 static void
-_elm_icon_class_constructor(Eo_Class *klass)
+_elm_icon_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

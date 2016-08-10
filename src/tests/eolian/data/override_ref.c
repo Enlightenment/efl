@@ -53,7 +53,7 @@ static void __eolian_override_base_z_set(Eo *obj EINA_UNUSED, Override_Data *pd 
 }
 
 
-static const Eo_Op_Description _override_op_desc[] = {
+static const Efl_Op_Description _override_op_desc[] = {
      EO_OP_FUNC_OVERRIDE(base_constructor, _override_base_constructor),
      EO_OP_FUNC_OVERRIDE(base_z_get, __eolian_override_base_z_get),
      EO_OP_FUNC_OVERRIDE(base_z_set, __eolian_override_base_z_set),
@@ -67,7 +67,7 @@ static const Eo_Op_Description _override_op_desc[] = {
      EO_OP_FUNC(override_foo, NULL),
 };
 
-static const Eo_Class_Description _override_class_desc = {
+static const Efl_Class_Description _override_class_desc = {
      EO_VERSION,
      "Override",
      EO_CLASS_TYPE_REGULAR,

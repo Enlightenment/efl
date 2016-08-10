@@ -1,6 +1,6 @@
 type @extern Eio_Filter_Direct_Cb: __undefined_type;
 
-class Eio.Model (Eo.Base, Efl.Model)
+class Eio.Model (Efl.Object, Efl.Model)
 {
     [[Eio model class]]
 
@@ -34,9 +34,9 @@ class Eio.Model (Eo.Base, Efl.Model)
        }
     }
     implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.parent.get;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.parent.get;
       Efl.Model.properties.get;
       Efl.Model.property_set;
       Efl.Model.property_get;

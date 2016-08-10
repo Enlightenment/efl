@@ -12,9 +12,9 @@
 
 #define MY_CLASS SIMPLE_CLASS
 
-static Eo *_simple_eo_base_constructor(Eo *obj, void *pd EINA_UNUSED)
+static Eo *_simple_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
-   return eo_constructor(eo_super(obj, MY_CLASS));
+   return efl_constructor(eo_super(obj, MY_CLASS));
 }
 
 #include "simple.eo.c"

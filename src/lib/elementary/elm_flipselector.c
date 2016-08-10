@@ -230,7 +230,7 @@ _on_item_changed(Elm_Flipselector_Data *sd)
 
    if (item->func)
      item->func((void *)WIDGET_ITEM_DATA_GET(eo_item), WIDGET(item), eo_item);
-   eo_event_callback_call
+   efl_event_callback_call
      (sd->obj, EFL_UI_EVENT_SELECTED, eo_item);
 }
 
@@ -251,7 +251,7 @@ _send_msg(Elm_Flipselector_Data *sd,
 }
 
 EOLIAN static void
-_elm_flipselector_item_eo_base_destructor(Eo *eo_item, Elm_Flipselector_Item_Data *item)
+_elm_flipselector_item_efl_object_destructor(Eo *eo_item, Elm_Flipselector_Item_Data *item)
 {
    Elm_Object_Item *eo_item2;
    Eina_List *l;
@@ -290,13 +290,13 @@ _elm_flipselector_item_eo_base_destructor(Eo *eo_item, Elm_Flipselector_Item_Dat
    _sentinel_eval(sd);
    _update_view(sd->obj);
 
-   eo_destructor(eo_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS));
+   efl_destructor(eo_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS));
 }
 
 EOLIAN static Eo *
-_elm_flipselector_item_eo_base_constructor(Eo *obj, Elm_Flipselector_Item_Data *it)
+_elm_flipselector_item_efl_object_constructor(Eo *obj, Elm_Flipselector_Item_Data *it)
 {
-   obj = eo_constructor(eo_super(obj, ELM_FLIPSELECTOR_ITEM_CLASS));
+   obj = efl_constructor(eo_super(obj, ELM_FLIPSELECTOR_ITEM_CLASS));
    it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    return obj;
@@ -367,7 +367,7 @@ _flip_up(Elm_Flipselector_Data *sd)
    if (sd->current == sd->items)
      {
         sd->current = eina_list_last(sd->items);
-        eo_event_callback_call
+        efl_event_callback_call
           (sd->obj, ELM_FLIPSELECTOR_EVENT_UNDERFLOWED, NULL);
      }
    else
@@ -392,7 +392,7 @@ _flip_down(Elm_Flipselector_Data *sd)
    if (!sd->current)
      {
         sd->current = sd->items;
-        eo_event_callback_call
+        efl_event_callback_call
           (sd->obj, ELM_FLIPSELECTOR_EVENT_OVERFLOWED, NULL);
      }
 
@@ -666,9 +666,9 @@ elm_flipselector_first_interval_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eo *
-_elm_flipselector_eo_base_constructor(Eo *obj, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_object_constructor(Eo *obj, Elm_Flipselector_Data *sd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
@@ -890,7 +890,7 @@ _elm_flipselector_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm
 }
 
 EOLIAN static void
-_elm_flipselector_class_constructor(Eo_Class *klass)
+_elm_flipselector_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

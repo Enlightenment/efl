@@ -107,7 +107,7 @@ _selection_done(void *data, const Eo_Event *event)
    evas_object_del(del);
 
    // EVENTS: should not call legacy
-   //eo_event_callback_call
+   //efl_event_callback_call
    //  (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, (void *)model);
 }
 
@@ -135,7 +135,7 @@ _new_window_add(Elm_Fileselector_Button_Data *sd)
    win = elm_win_add(NULL, "fileselector_button", ELM_WIN_DIALOG_BASIC);
    elm_win_title_set(win, sd->window_title);
    elm_win_autodel_set(win, EINA_TRUE);
-   eo_event_callback_add
+   efl_event_callback_add
          (win, EFL_UI_WIN_EVENT_DELETE_REQUEST, _selection_done, sd);
 
    bg = elm_bg_add(win);
@@ -190,7 +190,7 @@ _activate(Elm_Fileselector_Button_Data *sd)
      (sd->fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sd->fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
    // EVENTS: should not call legacy
-   //eo_event_callback_add
+   //efl_event_callback_add
    //      (sd->fs, ELM_FILESELECTOR_EVENT_DONE, _selection_done, sd);
    evas_object_smart_callback_add(sd->fs, "done", _selection_done_path, sd);
    evas_object_show(sd->fs);
@@ -235,7 +235,7 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
 
    elm_widget_mirrored_automatic_set(obj, EINA_FALSE);
 
-   eo_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _button_clicked, priv);
+   efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _button_clicked, priv);
 
    elm_obj_widget_theme_apply(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
@@ -270,9 +270,9 @@ elm_fileselector_button_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_fileselector_button_eo_base_constructor(Eo *obj, Elm_Fileselector_Button_Data *sd)
+_elm_fileselector_button_efl_object_constructor(Eo *obj, Elm_Fileselector_Button_Data *sd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);

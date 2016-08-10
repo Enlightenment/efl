@@ -79,7 +79,7 @@ _on_mouse_up(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (!wd->still_in) return;
 
-   eo_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static Eina_Bool
@@ -381,7 +381,7 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
         ERR("Async open failed for an unknown reason.");
         sd->async_failed = EINA_TRUE;
         eina_spinlock_release(&sd->async.lck);
-        eo_event_callback_call(obj, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
+        efl_event_callback_call(obj, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
         return;
      }
 
@@ -411,7 +411,7 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
         sd->async_failed = EINA_FALSE;
         ELM_SAFE_FREE(sd->async.file, eina_stringshare_del);
         ELM_SAFE_FREE(sd->async.key, eina_stringshare_del);
-        eo_event_callback_call(obj, EFL_FILE_EVENT_ASYNC_OPENED, NULL);
+        efl_event_callback_call(obj, EFL_FILE_EVENT_ASYNC_OPENED, NULL);
         _efl_ui_image_internal_sizing_eval(obj, sd);
      }
    else
@@ -419,7 +419,7 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
         // TODO: Implement Efl.File async,error event_info type
         sd->async_failed = EINA_TRUE;
         // keep file,key around for file_get
-        eo_event_callback_call(obj, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
+        efl_event_callback_call(obj, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
      }
 
    // close f, map and free strings
@@ -566,7 +566,7 @@ _efl_ui_image_drag_n_drop_cb(void *elm_obj,
         DBG("dnd: %s, %s, %s", elm_widget_type_get(elm_obj),
               SIG_DND, (char *)drop->data);
 
-        eo_event_callback_call(elm_obj, EFL_UI_IMAGE_EVENT_DROP, drop->data);
+        efl_event_callback_call(elm_obj, EFL_UI_IMAGE_EVENT_DROP, drop->data);
         return EINA_TRUE;
      }
 
@@ -748,7 +748,7 @@ _efl_ui_image_elm_widget_theme_apply(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED)
 static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
    return EINA_TRUE;
 }
 
@@ -875,9 +875,9 @@ elm_image_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_efl_ui_image_eo_base_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
+_efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
@@ -978,7 +978,7 @@ _efl_ui_image_smart_download_done(void *data, Elm_Url *url, Eina_Binbuf *downloa
 
         free(sd->remote_data);
         sd->remote_data = NULL;
-        eo_event_callback_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_ERROR, &err);
+        efl_event_callback_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_ERROR, &err);
      }
    else
      {
@@ -988,7 +988,7 @@ _efl_ui_image_smart_download_done(void *data, Elm_Url *url, Eina_Binbuf *downloa
              evas_object_image_preload(sd->img, EINA_FALSE);
           }
 
-        eo_event_callback_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_DONE, NULL);
+        efl_event_callback_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_DONE, NULL);
      }
 
    ELM_SAFE_FREE(sd->key, eina_stringshare_del);
@@ -1001,7 +1001,7 @@ _efl_ui_image_smart_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int er
    Efl_Ui_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
    Efl_Ui_Image_Error err = { error, EINA_FALSE };
 
-   eo_event_callback_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_ERROR, &err);
+   efl_event_callback_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_ERROR, &err);
 
    sd->remote = NULL;
    ELM_SAFE_FREE(sd->key, eina_stringshare_del);
@@ -1015,7 +1015,7 @@ _efl_ui_image_smart_download_progress(void *data, Elm_Url *url EINA_UNUSED, doub
 
    progress.now = now;
    progress.total = total;
-   eo_event_callback_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_PROGRESS, &progress);
+   efl_event_callback_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_PROGRESS, &progress);
 }
 
 static const char *remote_uri[] = {
@@ -1050,7 +1050,7 @@ _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file
                                         obj);
           if (sd->remote)
             {
-               eo_event_callback_call
+               efl_event_callback_call
                      (obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_START, NULL);
                eina_stringshare_replace(&sd->key, key);
                return EINA_TRUE;
@@ -1411,7 +1411,7 @@ _efl_ui_image_efl_player_play_get(Eo *obj, Efl_Ui_Image_Data *sd)
 }
 
 static void
-_efl_ui_image_class_constructor(Eo_Class *klass)
+_efl_ui_image_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

@@ -5,6 +5,6 @@ EAPI Eina_Bool inherit2_print(Eo *obj);
 EAPI Eina_Bool inherit2_print2(Eo *obj);
 
 #define INHERIT2_CLASS inherit2_class_get()
-const Eo_Class *inherit2_class_get(void);
+const Efl_Class *inherit2_class_get(void);
 
 #endif

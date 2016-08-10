@@ -1,6 +1,6 @@
 import evas_types;
 
-class Evas.Out (Eo.Base)
+class Evas.Out (Efl.Object)
 {
    eo_prefix: evas_out;
    legacy_prefix: evas_output;
@@ -37,8 +37,8 @@ class Evas.Out (Eo.Base)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
    }
 
 }

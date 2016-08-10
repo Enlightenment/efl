@@ -21,7 +21,7 @@ START_TEST(eo_test_init_shutdown)
    Eo *obj;
 
    fail_if(!eo_init());
-   ck_assert_str_eq("Eo_Base", eo_class_name_get(EO_BASE_CLASS));
+   ck_assert_str_eq("Efl_Object", eo_class_name_get(EFL_OBJECT_CLASS));
 
    /* XXX-1: Essential for the next test to assign the wrong op. */
    obj = eo_add(SIMPLE_CLASS, NULL);
@@ -34,7 +34,7 @@ START_TEST(eo_test_init_shutdown)
    fail_if(eo_shutdown());
 
    fail_if(!eo_init());
-   ck_assert_str_eq("Eo_Base", eo_class_name_get(EO_BASE_CLASS));
+   ck_assert_str_eq("Efl_Object", eo_class_name_get(EFL_OBJECT_CLASS));
 
    /* XXX-1: Verify that the op was not cached. */
    ck_assert_int_eq(0xBEEF, simple2_class_beef_get(SIMPLE2_CLASS));

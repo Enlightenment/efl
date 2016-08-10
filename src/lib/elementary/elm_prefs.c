@@ -136,7 +136,7 @@ _elm_prefs_save(void *data)
      {
         elm_prefs_data_save(sd->prefs_data, NULL, NULL);
 
-        eo_event_callback_call
+        efl_event_callback_call
           (wd->obj, ELM_PREFS_EVENT_PAGE_SAVED, (char *)sd->root->name);
      }
 
@@ -300,7 +300,7 @@ _elm_prefs_item_changed_report(Eo *obj,
 
    snprintf(buf, sizeof(buf), "%s:%s", it->page->name, it->name);
 
-   eo_event_callback_call
+   efl_event_callback_call
      (wd->obj, ELM_PREFS_EVENT_ITEM_CHANGED, buf);
 }
 
@@ -400,7 +400,7 @@ _prefs_data_autosaved_cb(void *cb_data,
    ELM_PREFS_DATA_GET(cb_data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(cb_data, wd);
 
-   eo_event_callback_call
+   efl_event_callback_call
      (wd->obj, ELM_PREFS_EVENT_PAGE_SAVED, event_info);
 
    sd->dirty = EINA_FALSE;
@@ -513,9 +513,9 @@ elm_prefs_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_prefs_eo_base_constructor(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
+_elm_prefs_efl_object_constructor(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _elm_prefs_smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_REDUNDANT_OBJECT);
@@ -555,7 +555,7 @@ _item_changed_cb(Evas_Object *it_obj)
    /* we use the changed cb on ACTION/RESET/SAVE items specially */
    if (it->type == ELM_PREFS_TYPE_ACTION)
      {
-        eo_event_callback_call
+        efl_event_callback_call
           (wd->obj, ELM_PREFS_EVENT_ACTION, buf);
 
         return;
@@ -1174,7 +1174,7 @@ _elm_prefs_efl_file_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, cons
 
    _elm_prefs_values_get_default(sd->root, EINA_FALSE);
 
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, ELM_PREFS_EVENT_PAGE_LOADED, (char *)sd->root->name);
 
    return EINA_TRUE;
@@ -1219,7 +1219,7 @@ _elm_prefs_data_set(Eo *obj, Elm_Prefs_Data *sd, Elm_Prefs_Data *prefs_data)
    sd->values_fetching = EINA_FALSE;
 
 end:
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, ELM_PREFS_EVENT_PAGE_CHANGED, (char *)sd->root->name);
 
    return EINA_TRUE;
@@ -1871,7 +1871,7 @@ _elm_prefs_shutdown(void)
 }
 
 static void
-_elm_prefs_class_constructor(Eo_Class *klass)
+_elm_prefs_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

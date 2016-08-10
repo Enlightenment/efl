@@ -623,7 +623,7 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
      }
    if (o->file_obj)
      {
-        eo_del(o->file_obj);
+        efl_del(o->file_obj);
         o->file_obj = NULL;
      }
 

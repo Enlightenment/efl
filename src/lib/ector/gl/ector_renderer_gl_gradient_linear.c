@@ -66,10 +66,10 @@ _ector_renderer_gl_gradient_linear_ector_renderer_gl_fill(Eo *obj, Ector_Rendere
    return EINA_TRUE;
 }
 
-static Eo_Base *
-_ector_renderer_gl_gradient_linear_eo_base_constructor(Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd)
+static Efl_Object *
+_ector_renderer_gl_gradient_linear_efl_object_constructor(Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_LINEAR_CLASS));
+   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_LINEAR_CLASS));
 
    if (!obj) return NULL;
 
@@ -81,7 +81,7 @@ _ector_renderer_gl_gradient_linear_eo_base_constructor(Eo *obj, Ector_Renderer_G
 }
 
 static void
-_ector_renderer_gl_gradient_linear_eo_base_destructor(Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd)
+_ector_renderer_gl_gradient_linear_efl_object_destructor(Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd)
 {
    eo_data_xunref(obj, pd->base, obj);
    eo_data_xunref(obj, pd->linear, obj);

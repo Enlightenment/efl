@@ -5,8 +5,8 @@
 #include "Eo.h"
 #include "composite_objects_simple.h"
 
-EAPI const Eo_Event_Description _EV_A_CHANGED =
-        EO_EVENT_DESCRIPTION("a,changed");
+EAPI const Efl_Event_Description _EV_A_CHANGED =
+        EFL_EVENT_DESCRIPTION("a,changed");
 
 #define MY_CLASS SIMPLE_CLASS
 
@@ -17,7 +17,7 @@ _a_set(Eo *obj, void *class_data, int a)
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
    pd->a = a;
 
-   eo_event_callback_call(obj, EV_A_CHANGED, &pd->a);
+   efl_event_callback_call(obj, EV_A_CHANGED, &pd->a);
 }
 
 static int
@@ -99,7 +99,7 @@ EAPI EO_VOID_FUNC_BODYV(simple_a_get32, EO_FUNC_CALL(a), int a);
  * op id chain (assuming chain size is as it is at the moment, 32).
  * This is needed in order to properly test some edge cases (see commit message
  * for more info). */
-static Eo_Op_Description op_descs[] = {
+static Efl_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_set1, _a_set),
      EO_OP_FUNC(simple_a_set2, _a_set),
      EO_OP_FUNC(simple_a_set3, _a_set),
@@ -168,12 +168,12 @@ static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_get, _a_get),
 };
 
-static const Eo_Event_Description *event_desc[] = {
+static const Efl_Event_Description *event_desc[] = {
      EV_A_CHANGED,
      NULL
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,

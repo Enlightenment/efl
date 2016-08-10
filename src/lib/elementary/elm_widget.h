@@ -454,7 +454,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     on_translate : 1; /**< This is true when any types of elm translate function is being called. */
    Eina_Bool                     on_create : 1; /**< This is true when the widget is on creation(general widget constructor). */
    Eina_Bool                     on_destroy: 1; /**< This is true when the widget is on destruction(general widget destructor). */
-   Eina_Bool                     provider_lookup : 1; /**< This is true when eo_provider_find is currently walking the tree */
+   Eina_Bool                     provider_lookup : 1; /**< This is true when efl_provider_find is currently walking the tree */
 } Elm_Widget_Smart_Data;
 
 /**
@@ -571,10 +571,10 @@ struct _Elm_Widget_Item_Signal_Data
 };
 
 #define WIDGET_ITEM_DATA_GET(eo_obj) \
-    eo_key_data_get((Eo *) eo_obj, "__elm_widget_item_data")
+    efl_key_data_get((Eo *) eo_obj, "__elm_widget_item_data")
 
 #define WIDGET_ITEM_DATA_SET(eo_obj, data) \
-    eo_key_data_set((Eo *) eo_obj, "__elm_widget_item_data", data)
+    efl_key_data_set((Eo *) eo_obj, "__elm_widget_item_data", data)
 
 struct _Elm_Widget_Item_Data
 {

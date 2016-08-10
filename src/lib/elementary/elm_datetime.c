@@ -889,9 +889,9 @@ elm_datetime_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_datetime_eo_base_constructor(Eo *obj, Elm_Datetime_Data *_pd EINA_UNUSED)
+_elm_datetime_efl_object_constructor(Eo *obj, Elm_Datetime_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_DATE_EDITOR);
@@ -1025,7 +1025,7 @@ _elm_datetime_field_limit_set(Eo *obj, Elm_Datetime_Data *sd, Elm_Datetime_Field
    _apply_field_limits(obj);
 
    if (!_field_cmp(fieldtype, &old_time, &sd->curr_time))
-     eo_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
+     efl_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
 
 }
 
@@ -1052,7 +1052,7 @@ _elm_datetime_value_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *newtime
    _validate_datetime_limits(&sd->max_limit, &sd->curr_time, EINA_TRUE);
    _apply_field_limits(obj);
 
-   eo_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
+   efl_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -1084,7 +1084,7 @@ _elm_datetime_value_min_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *min
    _apply_field_limits(obj);
 
    if (!_date_cmp(&old_time, &sd->curr_time))
-     eo_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
+     efl_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -1116,13 +1116,13 @@ _elm_datetime_value_max_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *max
    _apply_field_limits(obj);
 
    if (!_date_cmp(&old_time, &sd->curr_time))
-     eo_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
+     efl_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
 
    return EINA_TRUE;
 }
 
 EOLIAN static void
-_elm_datetime_class_constructor(Eo_Class *klass)
+_elm_datetime_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

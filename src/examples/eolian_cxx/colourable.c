@@ -27,7 +27,7 @@ struct _Colourable_Data
 typedef struct _Colourable_Data  Colourable_Data;
 
 Eo *
-_ns_colourable_eo_base_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
+_ns_colourable_efl_object_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 {
    if(!_ns_colourable_impl_logdomain)
      {
@@ -35,11 +35,11 @@ _ns_colourable_eo_base_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
           = eina_log_domain_register("colourable", EINA_COLOR_BLUE);
      }
    DBG("_ns_colourable_constructor(%p, %p)\n", obj, MY_CLASS);
-   return eo_constructor(eo_super(obj, MY_CLASS));
+   return efl_constructor(eo_super(obj, MY_CLASS));
 }
 
 void
-_ns_colourable_eo_base_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
+_ns_colourable_efl_object_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 {
    if(_ns_colourable_impl_logdomain)
      {
@@ -47,7 +47,7 @@ _ns_colourable_eo_base_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
         _ns_colourable_impl_logdomain = 0;
      }
    DBG("_ns_colourable_destructor()\n");
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 void

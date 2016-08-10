@@ -105,8 +105,8 @@ START_TEST (elm_image_async_path)
    image = elm_image_add(win);
    one = efl_file_async_get(image);
    efl_file_async_set(image, 1);
-   eo_event_callback_add(image, EFL_FILE_EVENT_ASYNC_ERROR, _async_error_cb, &td);
-   eo_event_callback_add(image, EFL_FILE_EVENT_ASYNC_OPENED, _async_opened_cb, &td);
+   efl_event_callback_add(image, EFL_FILE_EVENT_ASYNC_ERROR, _async_error_cb, &td);
+   efl_event_callback_add(image, EFL_FILE_EVENT_ASYNC_OPENED, _async_opened_cb, &td);
    ok = efl_file_set(image, invalid, NULL);
    two = efl_file_async_get(image);
    ck_assert(!one && two);
@@ -141,8 +141,8 @@ START_TEST (elm_image_async_mmap)
 
    image = elm_image_add(win);
    efl_file_async_set(image, 1);
-   eo_event_callback_add(image, EFL_FILE_EVENT_ASYNC_ERROR, _async_error_cb, &td);
-   eo_event_callback_add(image, EFL_FILE_EVENT_ASYNC_OPENED, _async_opened_cb, &td);
+   efl_event_callback_add(image, EFL_FILE_EVENT_ASYNC_ERROR, _async_error_cb, &td);
+   efl_event_callback_add(image, EFL_FILE_EVENT_ASYNC_OPENED, _async_opened_cb, &td);
    ok = efl_file_mmap_set(image, f, NULL);
    ck_assert(ok);
 

@@ -97,7 +97,7 @@ extern EAPI double _elm_startup_time;
 
 #ifndef ELM_LIB_QUICKLAUNCH
 #define ELM_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); ret = elm_main(argc, argv); elm_shutdown(); return ret; } /**< macro to be used after the elm_main() function */
-#define EFL_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL); ret = efl_loop_begin(ecore_main_loop_get()); elm_shutdown(); return ret; }
+#define EFL_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL); ret = efl_loop_begin(ecore_main_loop_get()); elm_shutdown(); return ret; }
 #else
 /** @deprecated macro to be used after the elm_main() function.
  * Do not define ELM_LIB_QUICKLAUNCH

@@ -5,8 +5,8 @@ class Efl.Ui.Internal.Text.Interactive (Efl.Canvas.Text, Efl.Ui.Text.Interactive
      This object is in charge of processing input, moving the text caret and etc.
    ]]
    implements {
-      Eo.Base.constructor;
-      Eo.Base.finalize;
+      Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Ui.Text.Interactive.selection_allowed;
       Efl.Ui.Text.Interactive.selection_cursors.get;
       Efl.Ui.Text.Interactive.multiline;

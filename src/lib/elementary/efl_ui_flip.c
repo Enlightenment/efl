@@ -1337,7 +1337,7 @@ _flip(Evas_Object *obj)
           sd->state = sd->next_state;
         _configure(obj);
         _flip_show_hide(obj);
-        eo_event_callback_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_DONE, NULL);
+        efl_event_callback_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_DONE, NULL);
 
         // update the new front and back object.
         _update_front_back(obj, sd);
@@ -1521,7 +1521,7 @@ _event_anim(void *data,
    _flip_show_hide(sd->obj);
    _configure(sd->obj);
    sd->animator = NULL;
-   eo_event_callback_call
+   efl_event_callback_call
      (sd->obj, EFL_UI_FLIP_EVENT_ANIMATE_DONE, NULL);
 
    return ECORE_CALLBACK_CANCEL;
@@ -1708,7 +1708,7 @@ _move_cb(void *data,
              evas_smart_objects_calculate(evas_object_evas_get(data));
              _configure(fl);
              // FIXME: end hack
-             eo_event_callback_call(fl, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
+             efl_event_callback_call(fl, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
           }
         else return;
      }
@@ -1869,9 +1869,9 @@ elm_flip_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_efl_ui_flip_eo_base_constructor(Eo *obj, Efl_Ui_Flip_Data *sd)
+_efl_ui_flip_efl_object_constructor(Eo *obj, Efl_Ui_Flip_Data *sd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -1928,7 +1928,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
    evas_smart_objects_calculate(evas_object_evas_get(obj));
    _configure(obj);
    // FIXME: end hack
-   eo_event_callback_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
+   efl_event_callback_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
 
    // set focus to the content object when flip go to is called
    if (elm_object_focus_get(obj))
@@ -2254,7 +2254,7 @@ _efl_ui_flip_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Dat
 }
 
 static void
-_efl_ui_flip_class_constructor(Eo_Class *klass)
+_efl_ui_flip_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

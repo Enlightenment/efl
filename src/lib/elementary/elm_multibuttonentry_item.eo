@@ -24,8 +24,8 @@ class Elm.Multibuttonentry.Item(Elm.Widget.Item,
         }
    }
    implements {
-        Eo.Base.constructor;
-        Eo.Base.destructor;
+        Efl.Object.constructor;
+        Efl.Object.destructor;
         Elm.Widget.Item.signal_emit;
         Elm.Widget.Item.part_text.get;
         Elm.Widget.Item.part_text.set;

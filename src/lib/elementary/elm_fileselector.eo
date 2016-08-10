@@ -33,7 +33,7 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
    implements {
       class.constructor;
       class.destructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.focus_next;

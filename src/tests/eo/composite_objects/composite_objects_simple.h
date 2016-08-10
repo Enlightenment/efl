@@ -74,10 +74,10 @@ EAPI void simple_a_get30(Eo *obj, int a);
 EAPI void simple_a_get31(Eo *obj, int a);
 EAPI void simple_a_get32(Eo *obj, int a);
 
-extern const Eo_Event_Description _EV_A_CHANGED;
+extern const Efl_Event_Description _EV_A_CHANGED;
 #define EV_A_CHANGED (&(_EV_A_CHANGED))
 
 #define SIMPLE_CLASS simple_class_get()
-const Eo_Class *simple_class_get(void);
+const Efl_Class *simple_class_get(void);
 
 #endif

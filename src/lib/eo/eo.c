@@ -801,7 +801,7 @@ eo_class_get(const Eo *eo_id)
    if (_eo_is_a_class(eo_id))
      {
         EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, NULL);
-        return EO_CLASS_CLASS;
+        return EFL_CLASS_CLASS;
      }
 
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
@@ -1765,8 +1765,8 @@ eo_init(void)
                    EINA_LOG_STATE_STOP,
                    EINA_LOG_STATE_INIT);
 
-   /* bootstrap EO_CLASS_CLASS */
-   (void) EO_CLASS_CLASS;
+   /* bootstrap EFL_CLASS_CLASS */
+   (void) EFL_CLASS_CLASS;
 
    return EINA_TRUE;
 }

@@ -94,7 +94,7 @@ _diskselector_cb(void *data EINA_UNUSED, const Eo_Event *event)
    disk_data = (DiskItem_Data *)elm_object_item_data_get(event->info);
    if (!disk_data || !(disk_data->ctx_mod))
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -117,7 +117,7 @@ _ampm_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
    ctx_mod = (Ctxpopup_Module_Data *)data;
    if (!ctx_mod)
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -146,7 +146,7 @@ _field_clicked_cb(void *data, const Eo_Event *event)
    ctx_mod = (Ctxpopup_Module_Data *)data;
    if (!ctx_mod)
      {
-        eo_event_callback_stop(event->object);
+        efl_event_callback_stop(event->object);
         return;
      }
 
@@ -160,12 +160,12 @@ _field_clicked_cb(void *data, const Eo_Event *event)
    evas_object_size_hint_weight_set(ctx_mod->ctxpopup, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ctx_mod->ctxpopup, EVAS_HINT_FILL, 0.5);
-   eo_event_callback_add
+   efl_event_callback_add
      (ctx_mod->ctxpopup, ELM_CTXPOPUP_EVENT_DISMISSED, _ctxpopup_dismissed_cb, ctx_mod);
    elm_ctxpopup_hover_parent_set(ctx_mod->ctxpopup, elm_widget_top_get(event->object));
 
    diskselector = elm_diskselector_add(elm_widget_top_get(ctx_mod->mod_data.base));
-   eo_event_callback_add
+   efl_event_callback_add
      (diskselector, EFL_UI_EVENT_CLICKED, _diskselector_cb, NULL);
    elm_object_style_set(diskselector, buf);
    elm_object_content_set(ctx_mod->ctxpopup, diskselector);
@@ -315,7 +315,7 @@ field_create(Elm_Datetime_Module_Data *module_data, Elm_Datetime_Field_Type  fie
    if (field_type == ELM_DATETIME_AMPM)
      {
         field_obj = elm_button_add(ctx_mod->mod_data.base);
-        eo_event_callback_add
+        efl_event_callback_add
           (field_obj, EFL_UI_EVENT_CLICKED, _ampm_clicked_cb, ctx_mod);
      }
    else
@@ -325,7 +325,7 @@ field_create(Elm_Datetime_Module_Data *module_data, Elm_Datetime_Field_Type  fie
         elm_entry_editable_set(field_obj, EINA_FALSE);
         elm_entry_input_panel_enabled_set(field_obj, EINA_FALSE);
         elm_entry_context_menu_disabled_set(field_obj, EINA_TRUE);
-        eo_event_callback_add
+        efl_event_callback_add
           (field_obj, EFL_UI_EVENT_CLICKED, _field_clicked_cb, ctx_mod);
      }
    evas_object_data_set(field_obj, "_field_type", (void *)field_type);

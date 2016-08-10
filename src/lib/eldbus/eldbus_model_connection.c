@@ -17,10 +17,10 @@ static void _eldbus_model_connection_connect(Eldbus_Model_Connection_Data *);
 static void _eldbus_model_connection_disconnect(Eldbus_Model_Connection_Data *);
 static void _eldbus_model_connection_clear(Eldbus_Model_Connection_Data *);
 
-static Eo_Base*
-_eldbus_model_connection_eo_base_constructor(Eo *obj, Eldbus_Model_Connection_Data *pd)
+static Efl_Object*
+_eldbus_model_connection_efl_object_constructor(Eo *obj, Eldbus_Model_Connection_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->is_listed = EINA_FALSE;
@@ -49,13 +49,13 @@ _eldbus_model_connection_constructor(Eo *obj EINA_UNUSED,
 }
 
 static void
-_eldbus_model_connection_eo_base_destructor(Eo *obj, Eldbus_Model_Connection_Data *pd)
+_eldbus_model_connection_efl_object_destructor(Eo *obj, Eldbus_Model_Connection_Data *pd)
 {
    eina_stringshare_del(pd->address);
 
    _eldbus_model_connection_clear(pd);
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Array const *
@@ -341,7 +341,7 @@ _eldbus_model_connection_names_list_cb(void *data,
    count = eina_list_count(pd->children_list);
 
    if (count)
-     eo_event_callback_call(pd->obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &count);
+     efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &count);
 
    pd->is_listed = EINA_TRUE;
 

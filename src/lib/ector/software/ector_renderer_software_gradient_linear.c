@@ -63,10 +63,10 @@ _ector_renderer_software_gradient_linear_ector_renderer_software_fill(Eo *obj EI
 }
 
 static Eo *
-_ector_renderer_software_gradient_linear_eo_base_constructor(Eo *obj,
+_ector_renderer_software_gradient_linear_efl_object_constructor(Eo *obj,
                                                              Ector_Renderer_Software_Gradient_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS));
+   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS));
    if (!obj) return NULL;
 
    pd->gd  = eo_data_xref(obj, ECTOR_RENDERER_GRADIENT_MIXIN, obj);
@@ -76,7 +76,7 @@ _ector_renderer_software_gradient_linear_eo_base_constructor(Eo *obj,
 }
 
 static void
-_ector_renderer_software_gradient_linear_eo_base_destructor(Eo *obj,
+_ector_renderer_software_gradient_linear_efl_object_destructor(Eo *obj,
                                                             Ector_Renderer_Software_Gradient_Data *pd)
 {
    Ector_Renderer_Data *base;
@@ -89,7 +89,7 @@ _ector_renderer_software_gradient_linear_eo_base_destructor(Eo *obj,
    eo_data_xunref(obj, pd->gd, obj);
    eo_data_xunref(obj, pd->gld, obj);
 
-   eo_destructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS));
+   efl_destructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS));
 }
 
 void

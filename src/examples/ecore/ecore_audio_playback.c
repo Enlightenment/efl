@@ -201,7 +201,7 @@ static void _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
 
   inputs = eina_list_remove(inputs, event->object);
   ret = ecore_audio_obj_out_input_detach(out, event->object);
-  eo_del(event->object);
+  efl_del(event->object);
 
   if (!ret)
     printf("Could not detach input %s\n", name);
@@ -266,7 +266,7 @@ main(int argc, const char *argv[])
               {
                  if (!strncmp(val, "freq=", 5)) {
                    freq = atoi(&val[5]);
-                   eo_key_data_set(in, ECORE_AUDIO_ATTR_TONE_FREQ, &freq);
+                   efl_key_data_set(in, ECORE_AUDIO_ATTR_TONE_FREQ, &freq);
                  } else if (!strncmp(val, "duration=", 9)) {
                    ecore_audio_obj_in_length_set(in, atof(&val[9]));
                  }
@@ -291,7 +291,7 @@ main(int argc, const char *argv[])
               continue;
             }
          }
-       eo_event_callback_add(in, ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL);
+       efl_event_callback_add(in, ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL);
        inputs = eina_list_append(inputs, in);
      }
 

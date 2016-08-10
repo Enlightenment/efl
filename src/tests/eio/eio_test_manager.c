@@ -105,8 +105,8 @@ typedef Eina_Promise* (*Efl_Io_Manager_Test_Stat_Ls_Func)(Eo *job, const char *p
 
 static void
 _do_ls_test(Efl_Io_Manager_Test_Stat_Ls_Func ls_func,
-      const Eo_Event_Description *event,
-      Eo_Event_Cb filter_cb,
+      const Efl_Event_Description *event,
+      Efl_Event_Cb filter_cb,
       Eina_Promise_Progress_Cb progress_cb,
       int expected_test_count,
       const char* test_dirname)
@@ -116,7 +116,7 @@ _do_ls_test(Efl_Io_Manager_Test_Stat_Ls_Func ls_func,
    Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
    Eina_Promise *promise = NULL;
 
-   eo_event_callback_add(job, event, filter_cb, NULL);
+   efl_event_callback_add(job, event, filter_cb, NULL);
    promise = ls_func(job, test_dirname);
    test_count = expected_test_count;
    eina_promise_progress_cb_add(promise, progress_cb, &main_files, NULL);
@@ -136,7 +136,7 @@ _do_direct_ls_test(Efl_Io_Manager_Test_Stat_Ls_Func ls_func,
 {
    _do_ls_test(ls_func,
                EFL_IO_MANAGER_EVENT_FILTER_DIRECT,
-               (Eo_Event_Cb)&_filter_direct_cb,
+               (Efl_Event_Cb)&_filter_direct_cb,
                (Eina_Promise_Progress_Cb)&_main_direct_cb,
                expected_test_count,
                test_dirname);
@@ -209,7 +209,7 @@ START_TEST(efl_io_manager_test_ls_funcs)
 
    _do_ls_test(&efl_io_manager_file_ls,
          EFL_IO_MANAGER_EVENT_FILTER_NAME,
-         (Eo_Event_Cb)&_filter_cb,
+         (Efl_Event_Cb)&_filter_cb,
          (Eina_Promise_Progress_Cb)&_main_cb,
          5,
          test_dirname);
@@ -283,11 +283,11 @@ START_TEST(efl_io_instantiated)
 
    ecore_init();
 
-   fail_if(eo_provider_find(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS) != NULL);
+   fail_if(efl_provider_find(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS) != NULL);
 
    eio_init();
 
-   manager = eo_provider_find(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS);
+   manager = efl_provider_find(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS);
    fail_if(manager == NULL);
    fail_if(!eo_isa(manager, EFL_IO_MANAGER_CLASS));
 

@@ -14,11 +14,11 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
    return obj;
 }
 
-static Eo_Op_Description op_descs[] = {
-     EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),
+static Efl_Op_Description op_descs[] = {
+     EO_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple3",
      EO_CLASS_TYPE_REGULAR,

@@ -52,7 +52,7 @@ void list_files(void *data)
     const char *path = data;
 
     Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
-    eo_event_callback_add(job, EFL_IO_MANAGER_EVENT_FILTER_NAME, (Eo_Event_Cb)&filter_cb, NULL);
+    efl_event_callback_add(job, EFL_IO_MANAGER_EVENT_FILTER_NAME, (Efl_Event_Cb)&filter_cb, NULL);
     promise = efl_io_manager_file_ls(job, path);
     eina_promise_progress_cb_add(promise, (Eina_Promise_Progress_Cb)&progress_cb, NULL, NULL);
     eina_promise_then(promise, &done_cb, &error_cb, job);

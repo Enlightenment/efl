@@ -1,6 +1,6 @@
 type @extern cairo_t: void_ptr;
 
-class Ector.Cairo.Surface (Eo.Base, Ector.Surface)
+class Ector.Cairo.Surface (Efl.Object, Ector.Surface)
 {
    [[Ector surface on a cairo backend
 
@@ -28,7 +28,7 @@ class Ector.Cairo.Surface (Eo.Base, Ector.Surface)
    implements {
       Ector.Surface.renderer_factory_new;
       Ector.Surface.reference_point.set;
-      Eo.Base.destructor;
-      Eo.Base.constructor;
+      Efl.Object.destructor;
+      Efl.Object.constructor;
    }
 }

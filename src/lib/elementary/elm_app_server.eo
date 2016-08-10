@@ -3,7 +3,7 @@ import elm_general;
 
 type Elm_App_Server_Create_View_Cb: __undefined_type;
 
-class Elm.App.Server (Eo.Base)
+class Elm.App.Server (Efl.Object)
 {
    eo_prefix: elm_app_server;
    methods {
@@ -94,8 +94,8 @@ class Elm.App.Server (Eo.Base)
       }
    }
    implements {
-      Eo.Base.destructor;
-      Eo.Base.finalize;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
    }
    constructors {
       .constructor;

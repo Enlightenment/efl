@@ -17,7 +17,7 @@
 EAPI int ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = 0;
 EAPI int ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED      = 0;
 
-typedef const Eo_Class *(*Class_Get_Func)(void);
+typedef const Efl_Class *(*Class_Get_Func)(void);
 
 static Elm_Sys_Notify *_singleton = NULL;
 
@@ -58,8 +58,8 @@ typedef struct
  *                  Constructor/Destructor - Singleton setup                  *
  *============================================================================*/
 
-EOLIAN static Eo_Base *
-_elm_sys_notify_eo_base_constructor(Eo                  *obj,
+EOLIAN static Efl_Object *
+_elm_sys_notify_efl_object_constructor(Eo                  *obj,
                                     Elm_Sys_Notify_Data *sd  EINA_UNUSED)
 {
    if (_singleton != NULL)
@@ -68,17 +68,17 @@ _elm_sys_notify_eo_base_constructor(Eo                  *obj,
         return NULL;
      }
 
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    _singleton = obj;
 
    return obj;
 }
 
 EOLIAN static void
-_elm_sys_notify_eo_base_destructor(Eo                  *obj,
+_elm_sys_notify_efl_object_destructor(Eo                  *obj,
                                    Elm_Sys_Notify_Data *sd  EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
    _singleton = NULL;
 }
 
@@ -155,7 +155,7 @@ _elm_sys_notify_servers_set(Eo                     *obj  EINA_UNUSED,
           {
              /* Delete if server type is not provided */
              if (!(servers & (1 << i)))
-               eo_del(sd->servers[i]);
+               efl_del(sd->servers[i]);
           }
         else
           {
@@ -206,7 +206,7 @@ _elm_sys_notify_singleton_get(Eo   *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_sys_notify_class_constructor(Eo_Class *klass EINA_UNUSED)
+_elm_sys_notify_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
    ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = ecore_event_type_new();
    ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED = ecore_event_type_new();
@@ -223,7 +223,7 @@ _elm_unneed_sys_notify(void)
    if (manager)
      {
         elm_obj_sys_notify_servers_set(manager, ELM_SYS_NOTIFY_SERVER_NONE);
-        eo_del(manager);
+        efl_del(manager);
      }
 }
 

@@ -75,7 +75,7 @@ _activate(Evas_Object *obj)
              _elm_access_say(E_("State: Off"));
      }
 
-   eo_event_callback_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
        elm_interface_atspi_accessible_state_changed_signal_emit(obj,
@@ -251,7 +251,7 @@ _on_check_off(void *data,
    if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
 
    elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-   eo_event_callback_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
        elm_interface_atspi_accessible_state_changed_signal_emit(data,
@@ -272,7 +272,7 @@ _on_check_on(void *data,
    efl_ui_nstate_value_set(obj, 1);
    if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
    elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-   eo_event_callback_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(data,
@@ -364,9 +364,9 @@ elm_check_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_check_eo_base_constructor(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
+_elm_check_efl_object_constructor(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_CHECK_BOX);
@@ -430,7 +430,7 @@ _elm_check_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
 }
 
 static void
-_elm_check_class_constructor(Eo_Class *klass)
+_elm_check_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

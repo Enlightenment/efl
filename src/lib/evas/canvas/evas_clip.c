@@ -327,7 +327,7 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
           state_write->clipper = NULL;
         EINA_COW_STATE_WRITE_END(obj, state_write, cur);
         if (obj->prev->clipper != old_clip)
-          eo_event_callback_del(old_clip->object, EO_EVENT_DEL, _clipper_del_cb, eo_obj);
+          efl_event_callback_del(old_clip->object, EFL_EVENT_DEL, _clipper_del_cb, eo_obj);
      }
 
    /* image object clipper */
@@ -359,7 +359,7 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
      state_write->clipper = clip;
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
    if (obj->prev->clipper != clip)
-     eo_event_callback_add(clip->object, EO_EVENT_DEL, _clipper_del_cb, eo_obj);
+     efl_event_callback_add(clip->object, EFL_EVENT_DEL, _clipper_del_cb, eo_obj);
 
    clip->clip.cache_clipees_answer = eina_list_free(clip->clip.cache_clipees_answer);
    clip->clip.clipees = eina_list_append(clip->clip.clipees, obj);
@@ -457,7 +457,7 @@ _efl_canvas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
           state_write->clipper = NULL;
         EINA_COW_STATE_WRITE_END(obj, state_write, cur);
         if (obj->prev->clipper != old_clip)
-          eo_event_callback_del(old_clip->object, EO_EVENT_DEL, _clipper_del_cb, eo_obj);
+          efl_event_callback_del(old_clip->object, EFL_EVENT_DEL, _clipper_del_cb, eo_obj);
      }
 
    evas_object_update_bounding_box(eo_obj, obj, NULL);
@@ -510,7 +510,7 @@ _efl_canvas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cu
              EINA_COW_STATE_WRITE_END(obj, state_write, prev);
           }
         if (clip != obj->cur->clipper)
-          eo_event_callback_del(clip->object, EO_EVENT_DEL, _clipper_del_cb, obj->object);
+          efl_event_callback_del(clip->object, EFL_EVENT_DEL, _clipper_del_cb, obj->object);
      }
 }
 

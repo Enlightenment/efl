@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout_Internal.Box (Eo.Base, Efl.Canvas.Layout_Internal, Efl.Pack.Linear,
+class Efl.Canvas.Layout_Internal.Box (Efl.Object, Efl.Canvas.Layout_Internal, Efl.Pack.Linear,
                                       Efl.Orientation)
 {
    [[Represents a Box created as part of a layout.
@@ -8,7 +8,7 @@ class Efl.Canvas.Layout_Internal.Box (Eo.Base, Efl.Canvas.Layout_Internal, Efl.P
    ]]
    data: Edje_Box_Data;
    implements {
-      Eo.Base.finalize;
+      Efl.Object.finalize;
       Efl.Canvas.Layout_Internal.real_part.set;
       Efl.Container.content_iterate;
       Efl.Container.content_count;

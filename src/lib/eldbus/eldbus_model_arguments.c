@@ -27,10 +27,10 @@ _eldbus_model_arguments_hash_free(Eina_Value *value)
    eina_value_free(value);
 }
 
-static Eo_Base*
-_eldbus_model_arguments_eo_base_constructor(Eo *obj, Eldbus_Model_Arguments_Data *pd)
+static Efl_Object*
+_eldbus_model_arguments_efl_object_constructor(Eo *obj, Eldbus_Model_Arguments_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->properties_array = NULL;
@@ -58,7 +58,7 @@ _eldbus_model_arguments_constructor(Eo *obj EINA_UNUSED,
 }
 
 static void
-_eldbus_model_arguments_eo_base_destructor(Eo *obj, Eldbus_Model_Arguments_Data *pd)
+_eldbus_model_arguments_efl_object_destructor(Eo *obj, Eldbus_Model_Arguments_Data *pd)
 {
    _eldbus_model_arguments_unload(pd);
 
@@ -67,7 +67,7 @@ _eldbus_model_arguments_eo_base_destructor(Eo *obj, Eldbus_Model_Arguments_Data 
    eina_stringshare_del(pd->name);
    eldbus_proxy_unref(pd->proxy);
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Array const *
@@ -290,7 +290,7 @@ eldbus_model_arguments_process_arguments(Eldbus_Model_Arguments_Data *pd,
    if (eina_array_count(changed_properties))
      {
         Efl_Model_Property_Event evt = {.changed_properties = changed_properties};
-        eo_event_callback_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+        efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
      }
 
    result = EINA_TRUE;

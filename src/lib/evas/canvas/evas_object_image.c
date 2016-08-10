@@ -169,12 +169,12 @@ _init_cow(void)
 }
 
 EOLIAN static Eo *
-_efl_canvas_image_internal_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_object_constructor(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Colorspace cspace;
 
-   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
 
    evas_object_image_init(eo_obj);
 
@@ -199,11 +199,11 @@ _efl_canvas_image_internal_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
 }
 
 EOLIAN static Eo *
-_efl_canvas_image_internal_eo_base_finalize(Eo *eo_obj, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_object_finalize(Eo *eo_obj, Evas_Image_Data *o)
 {
    if (!o->filled_set)
      efl_gfx_fill_auto_set(eo_obj, EINA_TRUE);
-   return eo_finalize(eo_super(eo_obj, MY_CLASS));
+   return efl_finalize(eo_super(eo_obj, MY_CLASS));
 }
 
 void
@@ -262,7 +262,7 @@ _evas_image_init_set(const Eina_File *f, const char *file, const char *key,
      }
    if (o->file_obj)
      {
-        eo_del(o->file_obj);
+        efl_del(o->file_obj);
         o->file_obj = NULL;
      }
    o->load_error = EVAS_LOAD_ERROR_NONE;
@@ -463,10 +463,10 @@ _efl_canvas_image_internal_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Evas_Image
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_eo_base_dbg_info_get(Eo *eo_obj, Evas_Image_Data *o, Eo_Dbg_Info *root)
+_efl_canvas_image_internal_efl_object_dbg_info_get(Eo *eo_obj, Evas_Image_Data *o, Efl_Dbg_Info *root)
 {
-   eo_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
-   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   efl_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
+   Efl_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    const char *file, *key;
    if (o->cur->mmaped_source)
@@ -1371,14 +1371,14 @@ evas_object_image_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_eo_base_destructor(Eo *eo_obj, Evas_Image_Data *o EINA_UNUSED)
+_efl_canvas_image_internal_efl_object_destructor(Eo *eo_obj, Evas_Image_Data *o EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (obj->legacy)
      evas_object_image_video_surface_set(eo_obj, NULL);
    evas_object_image_free(eo_obj, obj);
-   eo_destructor(eo_super(eo_obj, MY_CLASS));
+   efl_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
 void
@@ -1435,7 +1435,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    o->engine_data = NULL;
    if (o->file_obj)
      {
-        eo_del(o->file_obj);
+        efl_del(o->file_obj);
         o->file_obj = NULL;
      }
    if (o->pixels->pixel_updates)
@@ -3336,7 +3336,7 @@ _evas_object_image_preloading_check(Evas_Object *eo_obj)
 }
 
 Evas_Object *
-_evas_object_image_video_parent_get(Evas_Object *eo_obj)
+_evas_object_image_videfl_parent_get(Evas_Object *eo_obj)
 {
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    return o->video_surface ? o->pixels->video.parent : NULL;

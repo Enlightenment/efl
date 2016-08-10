@@ -603,7 +603,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          [[The hardware acceleration preference for this window.
 
            This is a constructor function, and can only be called before
-           @Eo.Base.finalize.
+           @Efl.Object.finalize.
 
            This property overrides the global EFL configuration option
            "accel_preference" for this single window, and accepts the same
@@ -813,8 +813,8 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
-      Eo.Base.finalize;
+      Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Canvas.Group.group_hide;
       Efl.Canvas.Group.group_show;
       Efl.Canvas.Group.group_move;

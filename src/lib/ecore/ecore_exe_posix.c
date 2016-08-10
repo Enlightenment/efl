@@ -228,7 +228,7 @@ _impl_ecore_exe_run_priority_get(void)
 }
 
 Eo *
-_impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
+_impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
    int statusPipe[2] = { -1, -1 };
    int errorPipe[2] = { -1, -1 };
@@ -727,7 +727,7 @@ _impl_ecore_exe_event_data_get(Ecore_Exe      *obj,
 }
 
 void
-_impl_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
+_impl_ecore_exe_efl_object_destructor(Eo *obj, Ecore_Exe_Data *exe)
 {
    void *data;
    int ok = 0;
@@ -1068,7 +1068,7 @@ _ecore_exe_data_generic_handler(void             *data,
    Ecore_Exe *obj = data;
    int child_fd;
    int event_type;
-   const Eo_Event_Description *eo_event = NULL;
+   const Efl_Event_Description *eo_event = NULL;
 
    Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
 
@@ -1167,7 +1167,7 @@ _ecore_exe_data_generic_handler(void             *data,
                        ecore_event_add(event_type, e,
                              _ecore_exe_event_exe_data_free,
                              NULL);
-                       eo_event_callback_call(obj, eo_event, e);
+                       efl_event_callback_call(obj, eo_event, e);
                     }
                }
             }

@@ -50,7 +50,7 @@ typedef struct
    EINA_INLIST;
    Evas_Smart_Cb func;
    void *data;
-   const Eo_Event_Description *event;
+   const Efl_Event_Description *event;
 } _eo_evas_smart_cb_info;
 
 
@@ -350,7 +350,7 @@ EAPI Eina_Bool
 evas_object_smart_type_check(const Evas_Object *eo_obj, const char *type)
 {
    const Evas_Smart_Class *sc;
-   Eo_Class *klass;
+   Efl_Class *klass;
    Eina_Bool type_check = EINA_FALSE;
 
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
@@ -378,7 +378,7 @@ evas_object_smart_type_check(const Evas_Object *eo_obj, const char *type)
 EAPI Eina_Bool
 evas_object_smart_type_check_ptr(const Eo *eo_obj, const char* type)
 {
-   Eo_Class *klass;
+   Efl_Class *klass;
    const Evas_Smart_Class *sc;
    Eina_Bool type_check = EINA_FALSE;
 
@@ -405,7 +405,7 @@ evas_object_smart_type_check_ptr(const Eo *eo_obj, const char* type)
 }
 
 EAPI void
-evas_smart_legacy_type_register(const char *type, const Eo_Class *klass)
+evas_smart_legacy_type_register(const char *type, const Efl_Class *klass)
 {
    eina_hash_set(_evas_smart_class_names_hash_table, type, klass);
 }
@@ -438,7 +438,7 @@ _efl_canvas_group_group_iterator_free(Evas_Object_Smart_Iterator *it)
    free(it);
 }
 
-// Should we have an eo_children_iterator_new API and just inherit from it ?
+// Should we have an efl_children_iterator_new API and just inherit from it ?
 EOLIAN static Eina_Iterator*
 _efl_canvas_group_group_children_iterate(const Eo *eo_obj, Evas_Smart_Data *priv)
 {
@@ -580,7 +580,7 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
 }
 
 EOLIAN static Eo *
-_efl_canvas_group_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EINA_UNUSED)
+_efl_canvas_group_efl_object_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EINA_UNUSED)
 {
    Evas_Smart_Data *smart;
 
@@ -588,7 +588,7 @@ _efl_canvas_group_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EI
    smart->object = eo_obj;
    smart->inherit_paragraph_direction = EINA_TRUE;
 
-   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
    evas_object_smart_init(eo_obj);
 
    efl_canvas_object_type_set(eo_obj, MY_CLASS_NAME_LEGACY);
@@ -753,7 +753,7 @@ evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, 
    if (!event) return;
    if (!func) return;
 
-   const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get(event);
+   const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
    _eo_evas_smart_cb_info *cb_info = calloc(1, sizeof(*cb_info));
    cb_info->func = func;
    cb_info->data = (void *)data;
@@ -762,7 +762,7 @@ evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, 
    o->callbacks = eina_inlist_append(o->callbacks,
         EINA_INLIST_GET(cb_info));
 
-   eo_event_callback_priority_add(eo_obj, eo_desc, priority, _eo_evas_smart_cb, cb_info);
+   efl_event_callback_priority_add(eo_obj, eo_desc, priority, _eo_evas_smart_cb, cb_info);
 }
 
 EAPI void *
@@ -778,14 +778,14 @@ evas_object_smart_callback_del(Evas_Object *eo_obj, const char *event, Evas_Smar
    if (!o) return NULL;
 
    if (!event) return NULL;
-   const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get(event);
+   const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
 
    EINA_INLIST_FOREACH(o->callbacks, info)
      {
         if ((info->func == func) && (info->event == eo_desc))
           {
              void *tmp = info->data;
-             eo_event_callback_del(eo_obj, eo_desc, _eo_evas_smart_cb, info);
+             efl_event_callback_del(eo_obj, eo_desc, _eo_evas_smart_cb, info);
 
              o->callbacks =
                 eina_inlist_remove(o->callbacks, EINA_INLIST_GET(info));
@@ -809,14 +809,14 @@ evas_object_smart_callback_del_full(Evas_Object *eo_obj, const char *event, Evas
    o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return NULL;
 
-   const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get(event);
+   const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
 
    EINA_INLIST_FOREACH(o->callbacks, info)
      {
         if ((info->func == func) && (info->event == eo_desc) && (info->data == data))
           {
              void *tmp = info->data;
-             eo_event_callback_del(eo_obj, eo_desc, _eo_evas_smart_cb, info);
+             efl_event_callback_del(eo_obj, eo_desc, _eo_evas_smart_cb, info);
 
              o->callbacks =
                 eina_inlist_remove(o->callbacks, EINA_INLIST_GET(info));
@@ -835,8 +835,8 @@ evas_object_smart_callback_call(Evas_Object *eo_obj, const char *event, void *ev
    MAGIC_CHECK_END();
 
    if (!event) return;
-   const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get(event);
-   eo_event_callback_call(eo_obj, eo_desc, event_info);
+   const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
+   efl_event_callback_call(eo_obj, eo_desc, event_info);
 }
 
 EAPI Eina_Bool
@@ -1305,7 +1305,7 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
         while (o->callbacks)
           {
              _eo_evas_smart_cb_info *info = (_eo_evas_smart_cb_info *)o->callbacks;
-             eo_event_callback_del(eo_obj, info->event, _eo_evas_smart_cb, info);
+             efl_event_callback_del(eo_obj, info->event, _eo_evas_smart_cb, info);
              o->callbacks = eina_inlist_remove(o->callbacks, EINA_INLIST_GET(info));
              free(info);
           }
@@ -1550,14 +1550,14 @@ static void *evas_object_smart_engine_data_get(Evas_Object *eo_obj)
 }
 
 static void
-_efl_canvas_group_class_constructor(Eo_Class *klass EINA_UNUSED)
+_efl_canvas_group_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
    _evas_smart_class_names_hash_table = eina_hash_string_small_new(NULL);
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 static void
-_efl_canvas_group_class_destructor(Eo_Class *klass EINA_UNUSED)
+_efl_canvas_group_class_destructor(Efl_Class *klass EINA_UNUSED)
 {
    eina_hash_free(_evas_smart_class_names_hash_table);
 }

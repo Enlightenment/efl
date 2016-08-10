@@ -1,4 +1,4 @@
-class Complex (Eo.Base)
+class Complex (Efl.Object)
 {
    data: Complex_Data;
    methods {
@@ -10,7 +10,7 @@ class Complex (Eo.Base)
       }
       inclasscont {
          params {
-           l: list<Eo.Base>;
+           l: list<Efl.Object>;
          }
       }
       inptrptrcont {
@@ -111,7 +111,7 @@ class Complex (Eo.Base)
       }
       outclasscont {
          params {
-           @out l: list<Eo.Base>;
+           @out l: list<Efl.Object>;
          }
       }
       outcontcont {

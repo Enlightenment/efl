@@ -200,14 +200,14 @@ _edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const ch
    int_ret = efl_file_set(eo_super(obj, MY_CLASS), file, group);
    if (!int_ret)
      {
-        eo_del(file_obj);
+        efl_del(file_obj);
         return ret;
      }
 
    eed->program_scripts = eina_hash_int32_new((Eina_Free_Cb)_edje_edit_program_script_free);
 
    ef = eet_open(file, EET_FILE_MODE_READ);
-   eo_del(file_obj);
+   efl_del(file_obj);
 
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%i",
             eed->base->collection->id);
@@ -247,17 +247,17 @@ edje_edit_object_add(Evas *evas)
 }
 
 EOLIAN static Eo *
-_edje_edit_eo_base_constructor(Eo *obj, Edje_Edit *eed)
+_edje_edit_efl_object_constructor(Eo *obj, Edje_Edit *eed)
 {
    eed->base = eo_data_ref(obj, EDJE_OBJECT_CLASS);
 
-   return eo_constructor(eo_super(obj, MY_CLASS));
+   return efl_constructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_edje_edit_eo_base_destructor(Eo *obj, Edje_Edit *class_data EINA_UNUSED)
+_edje_edit_efl_object_destructor(Eo *obj, Edje_Edit *class_data EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
    eo_data_unref(obj, class_data);
 }
 
@@ -353,7 +353,7 @@ _edje_real_part_free(Edje *ed, Edje_Real_Part *rp)
    if ((rp->type == EDJE_RP_TYPE_SWALLOW) && (rp->typedata.swallow)
        && (rp->typedata.swallow->swallowed_object))
      {
-        eo_parent_set(rp->typedata.swallow->swallowed_object, evas_object_evas_get(ed->obj));
+        efl_parent_set(rp->typedata.swallow->swallowed_object, evas_object_evas_get(ed->obj));
         evas_object_smart_member_del(rp->typedata.swallow->swallowed_object);
         evas_object_event_callback_del(rp->typedata.swallow->swallowed_object,
                                        EVAS_CALLBACK_FREE, _edje_object_part_swallow_free_cb);
@@ -3195,7 +3195,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
         evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
         if (ep->type == EDJE_PART_TYPE_SWALLOW)
           {
-             eo_parent_set(rp->object, ed->obj);
+             efl_parent_set(rp->object, ed->obj);
           }
         else if (ep->type != EDJE_PART_TYPE_GROUP)
           {

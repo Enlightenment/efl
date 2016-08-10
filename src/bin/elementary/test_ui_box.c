@@ -240,7 +240,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    chk = o = elm_radio_add(win);
    elm_object_text_set(o, "No weight");
-   eo_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, bottombox);
+   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, NONE);
    efl_pack(bx, o);
@@ -248,7 +248,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "No weight + box fill");
-   eo_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, bottombox);
+   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, NONE_BUT_FILL);
    elm_radio_group_add(o, chk);
@@ -257,7 +257,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Equal weights");
-   eo_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, bottombox);
+   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, EQUAL);
    elm_radio_group_add(o, chk);
@@ -266,7 +266,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "One weight only");
-   eo_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, bottombox);
+   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, ONE);
    elm_radio_group_add(o, chk);
@@ -275,7 +275,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Two weights");
-   eo_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, bottombox);
+   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, TWO);
    elm_radio_group_add(o, chk);
@@ -301,7 +301,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Flow");
-   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, flow_check_cb, bottombox);
+   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, flow_check_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
@@ -309,7 +309,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 1);
    elm_object_text_set(o, "Horizontal");
-   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, horiz_check_cb, bottombox);
+   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, horiz_check_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
@@ -317,7 +317,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Homogenous");
-   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, homo_check_cb, bottombox);
+   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, homo_check_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
@@ -325,7 +325,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Homogenous + Max");
-   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, max_size_check_cb, bottombox);
+   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, max_size_check_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
@@ -333,7 +333,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Align left");
-   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, left_check_cb, bottombox);
+   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, left_check_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
@@ -341,7 +341,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Custom layout");
-   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, custom_check_cb, bottombox);
+   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, custom_check_cb, bottombox);
    efl_gfx_size_hint_align_set(o, 0, 0);
    efl_gfx_size_hint_weight_set(o, 0, 1);
    efl_pack(bx, o);
@@ -367,7 +367,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_horizontal_set(o, 0);
    efl_gfx_size_hint_align_set(o, 0.5, -1);
    efl_gfx_size_hint_weight_set(o, 1, 1);
-   eo_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, user_min_slider_cb, NULL);
+   efl_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, user_min_slider_cb, NULL);
    elm_slider_min_max_set(o, 0, 250);
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 0);
@@ -394,7 +394,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_horizontal_set(o, 0);
    efl_gfx_size_hint_align_set(o, 0.5, -1);
    efl_gfx_size_hint_weight_set(o, 1, 1);
-   eo_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, padding_slider_cb, bottombox);
+   efl_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, padding_slider_cb, bottombox);
    elm_slider_min_max_set(o, 0, 40);
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 10);
@@ -421,7 +421,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_horizontal_set(o, 0);
    efl_gfx_size_hint_align_set(o, 0.5, -1);
    efl_gfx_size_hint_weight_set(o, 1, 1);
-   eo_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, margin_slider_cb, bottombox);
+   efl_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, margin_slider_cb, bottombox);
    elm_slider_min_max_set(o, 0, 40);
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 10);
@@ -448,7 +448,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_horizontal_set(o, 0);
    efl_gfx_size_hint_align_set(o, 0.5, -1);
    efl_gfx_size_hint_weight_set(o, 1, 1);
-   eo_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, alignv_slider_cb, bottombox);
+   efl_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, alignv_slider_cb, bottombox);
    elm_slider_min_max_set(o, -0.1, 1.0);
    elm_slider_step_set(o, 0.1);
    elm_slider_value_set(o, 0.5);
@@ -462,7 +462,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_gfx_size_hint_align_set(o, 0.5, -1);
    efl_gfx_size_hint_weight_set(o, 1, 0);
    efl_gfx_size_hint_min_set(o, 100, 0);
-   eo_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, alignh_slider_cb, bottombox);
+   efl_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, alignh_slider_cb, bottombox);
    elm_slider_min_max_set(o, -0.1, 1.0);
    elm_slider_step_set(o, 0.1);
    elm_slider_value_set(o, 0.5);

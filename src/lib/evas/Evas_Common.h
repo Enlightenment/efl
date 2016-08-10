@@ -90,7 +90,7 @@ EAPI extern Evas_Version * evas_version;
  */
 // Support not having eo available
 #ifdef EFL_BETA_API_SUPPORT
-typedef Eo_Callback_Priority Evas_Callback_Priority;
+typedef Efl_Callback_Priority Evas_Callback_Priority;
 #else
 typedef short Evas_Callback_Priority;
 #endif
@@ -2834,7 +2834,7 @@ EAPI int                               evas_smart_usage_get(const Evas_Smart *s)
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI void evas_smart_legacy_type_register(const char *type, const Eo_Class *klass) EINA_ARG_NONNULL(1, 2);
+EAPI void evas_smart_legacy_type_register(const char *type, const Efl_Class *klass) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @}

@@ -1,4 +1,4 @@
-mixin Efl.Canvas.Surface (Eo.Interface, Efl.Canvas.Image.Internal)
+mixin Efl.Canvas.Surface (Efl.Interface, Efl.Canvas.Image.Internal)
 {
    [[Native surfaces usually bound to an externally-managed buffer.
 
@@ -27,6 +27,6 @@ mixin Efl.Canvas.Surface (Eo.Interface, Efl.Canvas.Image.Internal)
       }
    }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
    }
 }

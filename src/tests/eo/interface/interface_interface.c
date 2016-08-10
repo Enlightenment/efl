@@ -10,11 +10,11 @@
 
 EO_FUNC_BODY(interface_ab_sum_get, int, 0);
 
-static Eo_Op_Description op_descs[] = {
+static Efl_Op_Description op_descs[] = {
      EO_OP_FUNC(interface_ab_sum_get, NULL),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Interface",
      EO_CLASS_TYPE_INTERFACE,

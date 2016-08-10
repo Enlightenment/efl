@@ -146,8 +146,8 @@ create_handles(Evas_Object *obj)
 static void
 _notify_end(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   eo_del(event->object);
-   eo_event_callback_stop(event->object);
+   efl_del(event->object);
+   efl_event_callback_stop(event->object);
 }
 
 static inline void
@@ -161,7 +161,7 @@ _notify_error(Evas_Object *parent, const char *msg)
    evas_object_size_hint_weight_set(notif, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_align_set(notif, 0.5, 1.0);
    elm_notify_timeout_set(notif, 3.0);
-   eo_event_callback_add(notif, ELM_NOTIFY_EVENT_DISMISSED, _notify_end, NULL);
+   efl_event_callback_add(notif, ELM_NOTIFY_EVENT_DISMISSED, _notify_end, NULL);
 
    txt = elm_label_add(notif);
    elm_object_text_set(txt, msg);

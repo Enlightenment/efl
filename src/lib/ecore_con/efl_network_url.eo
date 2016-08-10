@@ -1,4 +1,4 @@
-class Efl.Network.Url (Eo.Base) {
+class Efl.Network.Url (Efl.Object) {
    [[Uniform Resource Locator (URL) base class]]
    eo_prefix: efl_network_url;
    methods {
@@ -15,9 +15,9 @@ class Efl.Network.Url (Eo.Base) {
       }
    }
    implements {
-        Eo.Base.constructor;
-        Eo.Base.destructor;
-        Eo.Base.finalize;
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+        Efl.Object.finalize;
    }
    events {
       data; [[Triggered when data arrives at the socket.]]

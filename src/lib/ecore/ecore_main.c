@@ -2717,7 +2717,7 @@ err :
 Eo *_mainloop_singleton = NULL;
 
 EOLIAN static Efl_Loop *
-_efl_loop_main_get(Eo_Class *klass EINA_UNUSED, void *_pd EINA_UNUSED)
+_efl_loop_main_get(Efl_Class *klass EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    if (!_mainloop_singleton)
      {
@@ -2758,23 +2758,23 @@ _efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, unsigned char
    _ecore_exit_code = exit_code;
 }
 
-EOLIAN static Eo_Base *
-_efl_loop_eo_base_provider_find(Eo *obj, Efl_Loop_Data *pd, const Eo_Base *klass)
+EOLIAN static Efl_Object *
+_efl_loop_efl_object_provider_find(Eo *obj, Efl_Loop_Data *pd, const Efl_Object *klass)
 {
-   Eo_Base *r;
+   Efl_Object *r;
 
    if (klass == EFL_LOOP_CLASS) return obj;
 
    r = eina_hash_find(pd->providers, &klass);
    if (r) return r;
 
-   return eo_provider_find(eo_super(obj, EFL_LOOP_CLASS), klass);
+   return efl_provider_find(eo_super(obj, EFL_LOOP_CLASS), klass);
 }
 
 static void
 _check_event_catcher_add(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item *array = event->info;
    Efl_Loop_Data *pd = data;
    int i;
 
@@ -2790,7 +2790,7 @@ _check_event_catcher_add(void *data, const Eo_Event *event)
 static void
 _check_event_catcher_del(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item *array = event->info;
    Efl_Loop_Data *pd = data;
    int i;
 
@@ -2804,16 +2804,16 @@ _check_event_catcher_del(void *data, const Eo_Event *event)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
-                          { EO_EVENT_CALLBACK_ADD, _check_event_catcher_add },
-                          { EO_EVENT_CALLBACK_DEL, _check_event_catcher_del });
+                          { EFL_EVENT_CALLBACK_ADD, _check_event_catcher_add },
+                          { EFL_EVENT_CALLBACK_DEL, _check_event_catcher_del });
 
-EOLIAN static Eo_Base *
-_efl_loop_eo_base_constructor(Eo *obj, Efl_Loop_Data *pd)
+EOLIAN static Efl_Object *
+_efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, EFL_LOOP_CLASS));
+   obj = efl_constructor(eo_super(obj, EFL_LOOP_CLASS));
    if (!obj) return NULL;
 
-   eo_event_callback_array_add(obj, event_catcher_watch(), pd);
+   efl_event_callback_array_add(obj, event_catcher_watch(), pd);
 
    pd->providers = eina_hash_pointer_new((void*) eo_unref);
 
@@ -2821,9 +2821,9 @@ _efl_loop_eo_base_constructor(Eo *obj, Efl_Loop_Data *pd)
 }
 
 EOLIAN static void
-_efl_loop_eo_base_destructor(Eo *obj, Efl_Loop_Data *pd)
+_efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
 {
-   eo_destructor(eo_super(obj, EFL_LOOP_CLASS));
+   efl_destructor(eo_super(obj, EFL_LOOP_CLASS));
 
    eina_hash_free(pd->providers);
 }
@@ -2873,7 +2873,7 @@ _efl_loop_arguments_send(void *data, void *value EINA_UNUSED)
    arge.initialization = initialization;
    initialization = EINA_FALSE;
 
-   eo_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, &arge);
+   efl_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, &arge);
 
    _efl_loop_arguments_cleanup(arga);
 }
@@ -2907,7 +2907,7 @@ static void _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED);
 
 EO_CALLBACKS_ARRAY_DEFINE(timeout,
                           { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
-                          { EO_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
+                          { EFL_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
 
 /* This event will be triggered when the main loop is destroyed and destroy its timers along */
 static void _efl_loop_internal_cancel(Efl_Internal_Promise *p);
@@ -2925,8 +2925,8 @@ _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
 
    eina_promise_owner_value_set(t->promise, t->data, NULL);
 
-   eo_event_callback_array_del(t->u.timer, timeout(), t);
-   eo_del(t->u.timer);
+   efl_event_callback_array_del(t->u.timer, timeout(), t);
+   efl_del(t->u.timer);
 }
 
 static void
@@ -2947,8 +2947,8 @@ _efl_loop_job_cancel(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
      }
    else
      {
-        eo_event_callback_array_del(j->u.timer, timeout(), j);
-        eo_del(j->u.timer);
+        efl_event_callback_array_del(j->u.timer, timeout(), j);
+        efl_del(j->u.timer);
      }
 
    _efl_loop_internal_cancel(j);
@@ -3009,7 +3009,7 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const voi
    t->job_is = EINA_FALSE;
    t->u.timer = eo_add(EFL_LOOP_TIMER_CLASS, obj,
                        efl_loop_timer_interval_set(eo_self, time),
-                       eo_event_callback_array_add(eo_self, timeout(), t));
+                       efl_event_callback_array_add(eo_self, timeout(), t));
 
    if (!t->u.timer) goto on_error;
 
@@ -3023,7 +3023,7 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const voi
 }
 
 static Eina_Bool
-_efl_loop_register(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Eo_Class *klass, const Eo_Base *provider)
+_efl_loop_register(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
 {
    // The passed object does not provide that said class.
    if (!eo_isa(provider, klass)) return EINA_FALSE;
@@ -3034,7 +3034,7 @@ _efl_loop_register(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Eo_Class *klass
 }
 
 static Eina_Bool
-_efl_loop_unregister(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Eo_Class *klass, const Eo_Base *provider)
+_efl_loop_unregister(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
 {
    return eina_hash_del(pd->providers, &klass, provider);
 }

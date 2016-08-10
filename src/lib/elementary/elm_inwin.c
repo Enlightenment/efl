@@ -103,11 +103,11 @@ elm_win_inwin_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_inwin_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
+_elm_inwin_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    Evas_Object *parent = NULL;
 
-   parent = eo_parent_get(obj);
+   parent = efl_parent_get(obj);
 
    if (parent && !eo_isa(parent, EFL_UI_WIN_CLASS))
      {
@@ -115,7 +115,7 @@ _elm_inwin_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
         return NULL;
      }
 
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_GLASS_PANE);
 
@@ -158,7 +158,7 @@ elm_win_inwin_content_unset(Evas_Object *obj)
 }
 
 static void
-_elm_inwin_class_constructor(Eo_Class *klass)
+_elm_inwin_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

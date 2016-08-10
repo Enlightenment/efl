@@ -63,10 +63,10 @@ _ector_renderer_software_buffer_ector_renderer_crc_get(Eo *obj, Ector_Renderer_S
 }
 
 EOLIAN static void
-_ector_renderer_software_buffer_eo_base_destructor(Eo *obj, Ector_Renderer_Software_Buffer_Data *pd)
+_ector_renderer_software_buffer_efl_object_destructor(Eo *obj, Ector_Renderer_Software_Buffer_Data *pd)
 {
    eo_data_xunref(pd->base->surface, pd->surface, obj);
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 #include "ector_renderer_software_buffer.eo.c"

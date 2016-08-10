@@ -809,7 +809,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
 }
 
 EOLIAN Eina_Bool
-_edje_object_global_color_class_set(Eo_Class *klass EINA_UNUSED, void *pd EINA_UNUSED,
+_edje_object_global_color_class_set(Efl_Class *klass EINA_UNUSED, void *pd EINA_UNUSED,
                                     const char *color_class, Edje_Color_Class_Mode mode, int r, int g, int b, int a)
 {
    Eina_Bool int_ret;
@@ -839,7 +839,7 @@ edje_color_class_get(const char *color_class, int *r, int *g, int *b, int *a, in
 }
 
 EOLIAN Eina_Bool
-_edje_object_global_color_class_get(Eo_Class *klass EINA_UNUSED, void *pd EINA_UNUSED,
+_edje_object_global_color_class_get(Efl_Class *klass EINA_UNUSED, void *pd EINA_UNUSED,
                                     const char *color_class, Edje_Color_Class_Mode mode, int *r, int *g, int *b, int *a)
 {
    Edje_Color_Class *cc;
@@ -5143,7 +5143,7 @@ _edje_child_add(Edje *ed, Edje_Real_Part *rp, Evas_Object *child)
    evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _edje_child_del_cb, rp);
    evas_object_data_set(child, ".edje", ed);
    if (!ed) return;
-   eo_parent_set(child, ed->obj);
+   efl_parent_set(child, ed->obj);
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
@@ -5155,9 +5155,9 @@ _edje_child_add(Edje *ed, Edje_Real_Part *rp, Evas_Object *child)
 static void
 _eo_unparent_helper(Eo *child, Eo *parent)
 {
-   if (eo_parent_get(child) == parent)
+   if (efl_parent_get(child) == parent)
      {
-        eo_parent_set(child, evas_object_evas_get(parent));
+        efl_parent_set(child, evas_object_evas_get(parent));
      }
 }
 
@@ -6587,7 +6587,7 @@ _edje_real_part_swallow(Edje *ed,
 #endif
    if (!obj_swallow) return;
    rp->typedata.swallow->swallowed_object = obj_swallow;
-   eo_parent_set(obj_swallow, ed->obj);
+   efl_parent_set(obj_swallow, ed->obj);
    evas_object_smart_member_add(rp->typedata.swallow->swallowed_object, ed->obj);
    if (rp->part->clip_to_id >= 0)
      {

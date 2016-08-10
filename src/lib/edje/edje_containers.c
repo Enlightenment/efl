@@ -39,7 +39,7 @@ struct _Part_Item_Iterator
 };
 
 #define PROXY_REF(obj, pd) do { if (!(pd->temp++)) eo_ref(obj); } while(0)
-#define PROXY_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) eo_del(obj); } } while(0)
+#define PROXY_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) efl_del(obj); } } while(0)
 #define RETURN_VAL(a) do { typeof(a) _ret = a; PROXY_UNREF(obj, pd); return _ret; } while(0)
 #define RETURN_VOID do { PROXY_UNREF(obj, pd); return; } while(0)
 #define PROXY_CALL(a) ({ PROXY_REF(obj, pd); a; })
@@ -49,8 +49,8 @@ struct _Part_Item_Iterator
 #define PROXY_RESET(type) \
    do { if (_ ## type ## _proxy) \
      { \
-        eo_del_intercept_set(_ ## type ## _proxy, NULL); \
-        eo_del(_ ## type ## _proxy); \
+        efl_del_intercept_set(_ ## type ## _proxy, NULL); \
+        efl_del(_ ## type ## _proxy); \
         _ ## type ## _proxy = NULL; \
      } } while (0)
 
@@ -60,14 +60,14 @@ type ## _del_cb(Eo *proxy) \
 { \
    if (_ ## type ## _proxy) \
      { \
-        eo_del_intercept_set(proxy, NULL); \
-        eo_del(proxy); \
+        efl_del_intercept_set(proxy, NULL); \
+        efl_del(proxy); \
         return; \
      } \
-   if (eo_parent_get(proxy)) \
+   if (efl_parent_get(proxy)) \
      { \
         eo_ref(proxy); \
-        eo_parent_set(proxy, NULL); \
+        efl_parent_set(proxy, NULL); \
      } \
    _ ## type ## _proxy = proxy; \
 }
@@ -112,15 +112,15 @@ _efl_canvas_layout_internal_ ## type ## _efl_canvas_layout_internal_real_part_se
    pd->rp = rp; \
    pd->part = part; \
    pd->temp = 1; \
-   eo_del_intercept_set(obj, type ## _del_cb); \
-   eo_parent_set(obj, pd->ed->obj); \
+   efl_del_intercept_set(obj, type ## _del_cb); \
+   efl_parent_set(obj, pd->ed->obj); \
 } \
 \
-EOLIAN static Eo_Base * \
-_efl_canvas_layout_internal_ ## type ## _eo_base_finalize(Eo *obj, datatype *pd) \
+EOLIAN static Efl_Object * \
+_efl_canvas_layout_internal_ ## type ## _efl_object_finalize(Eo *obj, datatype *pd) \
 { \
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->rp && pd->ed && pd->part, NULL); \
-   return eo_finalize(eo_super(obj, TYPE ## _CLASS)); \
+   return efl_finalize(eo_super(obj, TYPE ## _CLASS)); \
 }
 
 static Eo *_box_proxy = NULL;
@@ -277,7 +277,7 @@ static void
 _part_item_iterator_free(Part_Item_Iterator *it)
 {
    eina_iterator_free(it->real_iterator);
-   eo_wref_del(it->object, &it->object);
+   efl_wref_del(it->object, &it->object);
    free(it);
 }
 
@@ -296,7 +296,7 @@ _part_item_iterator_create(Eo *obj, Eina_Iterator *real_iterator)
    it->iterator.next = FUNC_ITERATOR_NEXT(_part_item_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_part_item_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_part_item_iterator_free);
-   eo_wref_add(obj, &it->object);
+   efl_wref_add(obj, &it->object);
 
    return &it->iterator;
 }
@@ -438,7 +438,7 @@ _table_item_iterator_free(Part_Item_Iterator *it)
 {
    eina_iterator_free(it->real_iterator);
    eina_list_free(it->list);
-   eo_wref_del(it->object, &it->object);
+   efl_wref_del(it->object, &it->object);
    free(it);
 }
 
@@ -479,7 +479,7 @@ _efl_canvas_layout_internal_table_efl_pack_grid_grid_contents_get(Eo *obj, Edje_
    pit->iterator.next = FUNC_ITERATOR_NEXT(_table_item_iterator_next);
    pit->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_table_item_iterator_get_container);
    pit->iterator.free = FUNC_ITERATOR_FREE(_table_item_iterator_free);
-   eo_wref_add(obj, &pit->object);
+   efl_wref_add(obj, &pit->object);
 
    RETURN_VAL(&pit->iterator);
 }

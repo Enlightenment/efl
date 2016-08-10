@@ -46,7 +46,7 @@ struct _Efl_Event_Pointer_Data
    Efl_Pointer_Flags           button_flags;
    Efl_Event_Flags             event_flags;
    void                       *data; /* evas data - whatever that is */
-   const Eo_Event_Description *event_desc;
+   const Efl_Event_Description *event_desc;
    Eina_Bool                   window_pos; /* true if positions are window-relative
                                               (see input vs. feed: this is "input") */
    Evas_Modifier              *modifiers;

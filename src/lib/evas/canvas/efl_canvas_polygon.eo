@@ -15,8 +15,8 @@ class Efl.Canvas.Polygon (Efl.Canvas.Object)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
    }
 
 }

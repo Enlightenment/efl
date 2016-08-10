@@ -1,4 +1,4 @@
-class Efl.Event.Hold (Eo.Base, Efl.Event.Input)
+class Efl.Event.Hold (Efl.Object, Efl.Event.Input)
 {
    [[Event data sent when inputs are put on hold or resumed.]]
    methods {
@@ -10,7 +10,7 @@ class Efl.Event.Hold (Eo.Base, Efl.Event.Input)
       }
    }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Event.instance_get;
       Efl.Event.reset;
       Efl.Event.dup;

@@ -34,8 +34,8 @@ class Ecore.Audio.Out (Ecore.Audio)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Ecore.Audio.vio_set;
    }
 }

@@ -39,8 +39,8 @@ class Efl.Loop.Fd (Efl.Loop_User)
       error;
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.parent.set;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.parent.set;
    }
 }

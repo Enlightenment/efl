@@ -185,8 +185,8 @@ _efl_gfx_shape_path_set(Eo *obj, Efl_Gfx_Shape_Data *pd,
                                 &pd->current_ctrl.x, &pd->current_ctrl.y);
 
  end:
-   eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
 }
 
 static void
@@ -415,8 +415,8 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    efl_gfx_shape_stroke_dash_set(obj, dash, property_to.dash_length);
    efl_gfx_shape_stroke_cap_set(obj, pos_map < 0.5 ? property_from.c : property_to.c);
    efl_gfx_shape_stroke_join_set(obj, pos_map < 0.5 ? property_from.j : property_to.j);
-   eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -450,8 +450,8 @@ _efl_gfx_shape_reset(Eo *obj, Efl_Gfx_Shape_Data *pd)
    pd->current_ctrl.x = 0;
    pd->current_ctrl.y = 0;
    pd->convex = EINA_FALSE;
-   eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
 }
 
 static void
@@ -470,8 +470,8 @@ _efl_gfx_shape_append_move_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    pd->current.x = x;
    pd->current.y = y;
 
-   eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
 }
 
 static void
@@ -490,8 +490,8 @@ _efl_gfx_shape_append_line_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    pd->current.x = x;
    pd->current.y = y;
 
-   eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
 }
 
 static void
@@ -518,8 +518,8 @@ _efl_gfx_shape_append_cubic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    pd->current_ctrl.x = ctrl_x1;
    pd->current_ctrl.y = ctrl_y1;
 
-   eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
 }
 
 static void
@@ -1098,8 +1098,8 @@ _efl_gfx_shape_append_close(Eo *obj, Efl_Gfx_Shape_Data *pd)
    efl_gfx_path_grow(EFL_GFX_PATH_COMMAND_TYPE_CLOSE,
                      pd, &offset_point);
 
-   eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
 }
 
 static void
@@ -1822,8 +1822,8 @@ _efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, const Eo *dup_from)
    _efl_gfx_shape_stroke_dash_set(obj, pd, from->public.stroke.dash, from->public.stroke.dash_length);
    _efl_gfx_shape_path_set(obj, pd, from->commands, from->points);
 
-   eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_GFX_CHANGED, NULL);
 }
 
 #include "interfaces/efl_gfx_shape.eo.c"

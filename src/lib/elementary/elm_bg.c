@@ -119,10 +119,10 @@ elm_bg_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_bg_eo_base_constructor(Eo *obj, Elm_Bg_Data *_pd EINA_UNUSED)
+_elm_bg_efl_object_constructor(Eo *obj, Elm_Bg_Data *_pd EINA_UNUSED)
 {
    elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_DISABLED);
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
@@ -268,7 +268,7 @@ _elm_bg_load_size_set(Eo *obj EINA_UNUSED, Elm_Bg_Data *sd, Evas_Coord w, Evas_C
 }
 
 static void
-_elm_bg_class_constructor(Eo_Class *klass)
+_elm_bg_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

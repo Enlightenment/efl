@@ -3,6 +3,6 @@ class Efl.Network.Connector (Efl.Network.Server) {
    eo_prefix: efl_network_connector_obj;
    data: null;
    implements {
-      Eo.Base.finalize;
+      Efl.Object.finalize;
    }
 }

@@ -11,7 +11,7 @@
 
 EO_CALLBACKS_ARRAY_DEFINE(ecore_idle_enterer_callbacks,
                           { EFL_LOOP_EVENT_IDLE_ENTER, _ecore_factorized_idle_process },
-                          { EO_EVENT_DEL, _ecore_factorized_idle_event_del });
+                          { EFL_EVENT_DEL, _ecore_factorized_idle_event_del });
 
 
 EAPI Ecore_Idle_Enterer *
@@ -30,8 +30,8 @@ ecore_idle_enterer_before_add(Ecore_Task_Cb func,
 
    // This avoid us duplicating code and should only be slightly slower
    // due to a useless cycle of callback registration
-   eo_event_callback_array_del(_mainloop_singleton, ecore_idle_enterer_callbacks(), ie);
-   eo_event_callback_array_priority_add(_mainloop_singleton, ecore_idle_enterer_callbacks(), EO_CALLBACK_PRIORITY_BEFORE, ie);
+   efl_event_callback_array_del(_mainloop_singleton, ecore_idle_enterer_callbacks(), ie);
+   efl_event_callback_array_priority_add(_mainloop_singleton, ecore_idle_enterer_callbacks(), EO_CALLBACK_PRIORITY_BEFORE, ie);
 
    return ie;
 }
@@ -45,5 +45,5 @@ ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
 void
 _ecore_idle_enterer_call(Eo *loop)
 {
-   eo_event_callback_call(loop, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
+   efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
 }

@@ -13,8 +13,8 @@ class Efl.VG.Container (Efl.VG)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.VG.bounds_get;
       Efl.VG.interpolate;
       Efl.VG.dup;

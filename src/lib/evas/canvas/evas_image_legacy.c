@@ -595,7 +595,7 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
         o->engine_data = NULL;
         if (o->file_obj)
           {
-             eo_del(o->file_obj);
+             efl_del(o->file_obj);
              o->file_obj = NULL;
           }
      }
@@ -679,7 +679,7 @@ evas_object_image_data_copy_set(Eo *eo_obj, void *data)
      ENFN->image_free(ENDT, o->engine_data);
    if (o->file_obj)
      {
-        eo_del(o->file_obj);
+        efl_del(o->file_obj);
         o->file_obj = NULL;
      }
    o->engine_data = ENFN->image_new_from_copied_data(ENDT,

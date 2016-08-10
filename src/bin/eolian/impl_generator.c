@@ -292,7 +292,7 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
           {
              printf("Generation of function %s\n", func_name);
              eina_strbuf_append_printf(buffer,
-                   "EOLIAN static void\n_%s_class_constructor(Eo_Class *klass)\n{\n\n}\n\n",
+                   "EOLIAN static void\n_%s_class_constructor(Efl_Class *klass)\n{\n\n}\n\n",
                    class_env.lower_classname);
           }
      }
@@ -304,7 +304,7 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
         if (!_function_exists(func_name, buffer))
           {
              printf("Generation of function %s\n", func_name);
-             eina_strbuf_append_printf(buffer, "EOLIAN static void\n_%s_class_destructor(Eo_Class *klass)\n{\n\n}\n\n",
+             eina_strbuf_append_printf(buffer, "EOLIAN static void\n_%s_class_destructor(Efl_Class *klass)\n{\n\n}\n\n",
                    class_env.lower_classname);
           }
      }

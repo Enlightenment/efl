@@ -445,28 +445,28 @@ EO_CALLBACKS_ARRAY_DEFINE(edje_focus_callbacks,
 void
 _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp)
 {
-   eo_event_callback_array_add(obj, edje_callbacks(), ed);
+   efl_event_callback_array_add(obj, edje_callbacks(), ed);
    evas_object_data_set(obj, "real_part", rp);
 }
 
 void
 _edje_callbacks_del(Evas_Object *obj, Edje *ed)
 {
-   eo_event_callback_array_del(obj, edje_callbacks(), ed);
+   efl_event_callback_array_del(obj, edje_callbacks(), ed);
    evas_object_data_del(obj, "real_part");
 }
 
 void
 _edje_callbacks_focus_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp)
 {
-   eo_event_callback_array_add(obj, edje_focus_callbacks(), ed);
+   efl_event_callback_array_add(obj, edje_focus_callbacks(), ed);
    evas_object_data_set(obj, "real_part", rp);
 }
 
 void
 _edje_callbacks_focus_del(Evas_Object *obj, Edje *ed)
 {
-   eo_event_callback_array_del(obj, edje_focus_callbacks(), ed);
+   efl_event_callback_array_del(obj, edje_focus_callbacks(), ed);
    evas_object_data_del(obj, "real_part");
 }
 

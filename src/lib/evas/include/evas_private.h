@@ -1166,7 +1166,7 @@ struct _Evas_Object_Protected_Data
 
    Eina_Bool                   is_frame : 1;
    Eina_Bool                   child_has_map : 1;
-   Eina_Bool                   eo_del_called : 1;
+   Eina_Bool                   efl_del_called : 1;
    Eina_Bool                   is_smart : 1;
    Eina_Bool                   no_render : 1; // since 1.15
    Eina_Bool                   legacy : 1; // used legacy constructor
@@ -1551,7 +1551,7 @@ void evas_object_clip_across_check(Evas_Object *obj, Evas_Object_Protected_Data 
 void evas_object_clip_across_clippees_check(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_mapped_clip_across_mark(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info);
-void evas_object_event_callback_call(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Callback_Type type, void *event_info, int event_id, const Eo_Event_Description *eo_event_desc, Efl_Event *eo_event_info);
+void evas_object_event_callback_call(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Callback_Type type, void *event_info, int event_id, const Efl_Event_Description *efl_event_desc, Efl_Event *efl_event_info);
 Eina_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
 int evas_mem_free(int mem_required);
 int evas_mem_degrade(int mem_required);
@@ -1571,7 +1571,7 @@ Evas_Object *_evas_object_image_source_get(Evas_Object *obj);
 Eina_Bool _evas_object_image_preloading_get(const Evas_Object *obj);
 void _evas_object_image_preloading_set(Evas_Object *obj, Eina_Bool preloading);
 void _evas_object_image_preloading_check(Evas_Object *obj);
-Evas_Object *_evas_object_image_video_parent_get(Evas_Object *obj);
+Evas_Object *_evas_object_image_videfl_parent_get(Evas_Object *obj);
 void _evas_object_image_video_overlay_show(Evas_Object *obj);
 void _evas_object_image_video_overlay_hide(Evas_Object *obj);
 void _evas_object_image_video_overlay_do(Evas_Object *obj);

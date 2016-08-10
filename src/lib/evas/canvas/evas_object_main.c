@@ -91,14 +91,14 @@ _animator_repeater(void *data, const Eo_Event *event)
 {
    Evas_Object_Protected_Data *obj = data;
 
-   eo_event_callback_call(obj->object, EFL_EVENT_ANIMATOR_TICK, event->info);
+   efl_event_callback_call(obj->object, EFL_EVENT_ANIMATOR_TICK, event->info);
    DBG("Emitting animator tick on %p.", obj->object);
 }
 
 static void
 _check_event_catcher_add(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item *array = event->info;
    Evas_Object_Protected_Data *obj = data;
    int i;
 
@@ -108,7 +108,7 @@ _check_event_catcher_add(void *data, const Eo_Event *event)
           {
              if (obj->animator_ref++ > 0) break;
 
-             eo_event_callback_add(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             efl_event_callback_add(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
              INF("Registering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
@@ -122,7 +122,7 @@ _check_event_catcher_add(void *data, const Eo_Event *event)
 static void
 _check_event_catcher_del(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item *array = event->info;
    Evas_Object_Protected_Data *obj = data;
    int i;
 
@@ -132,7 +132,7 @@ _check_event_catcher_del(void *data, const Eo_Event *event)
           {
              if ((--obj->animator_ref) > 0) break;
 
-             eo_event_callback_del(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             efl_event_callback_del(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
              INF("Unregistering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
@@ -144,20 +144,20 @@ _check_event_catcher_del(void *data, const Eo_Event *event)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
-                          { EO_EVENT_CALLBACK_ADD, _check_event_catcher_add },
-                          { EO_EVENT_CALLBACK_DEL, _check_event_catcher_del });
+                          { EFL_EVENT_CALLBACK_ADD, _check_event_catcher_add },
+                          { EFL_EVENT_CALLBACK_DEL, _check_event_catcher_del });
 
 EOLIAN static Eo *
-_efl_canvas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Eo *parent = NULL;
    Evas *evas;
 
-   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
    efl_canvas_object_type_set(eo_obj, MY_CLASS_NAME);
    eo_manual_free_set(eo_obj, EINA_TRUE);
 
-   parent = eo_parent_get(eo_obj);
+   parent = efl_parent_get(eo_obj);
    evas = evas_object_evas_get(parent);
 
    if (!obj || !_init_cow() || !evas)
@@ -177,7 +177,7 @@ _efl_canvas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *o
 
    evas_object_inject(eo_obj, obj, evas);
 
-   eo_event_callback_array_add(eo_obj, event_catcher_watch(), obj);
+   efl_event_callback_array_add(eo_obj, event_catcher_watch(), obj);
 
    return eo_obj;
 }
@@ -727,20 +727,20 @@ evas_object_del(Evas_Object *eo_obj)
 
    if (!obj) return;
    evas_object_async_block(obj);
-   if (obj->delete_me || obj->eo_del_called) return;
+   if (obj->delete_me || obj->efl_del_called) return;
    if (obj->ref > 0)
      {
         obj->del_ref = EINA_TRUE;
         return;
      }
    evas_object_hide(eo_obj);
-   obj->eo_del_called = EINA_TRUE;
+   obj->efl_del_called = EINA_TRUE;
 
-   eo_del(eo_obj);
+   efl_del(eo_obj);
 }
 
 EOLIAN static void
-_efl_canvas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -830,7 +830,7 @@ end:
    evas_object_event_callback_all_del(eo_obj);
    evas_object_event_callback_cleanup(eo_obj);
 
-   eo_destructor(eo_super(eo_obj, MY_CLASS));
+   efl_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -1771,11 +1771,11 @@ evas_object_render_op_get(const Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Eo_Dbg_Info *root)
+_efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Efl_Dbg_Info *root)
 {
-   eo_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
-   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
-   Eo_Dbg_Info *node;
+   efl_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
+   Efl_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   Efl_Dbg_Info *node;
    const char *name;
    double dblw, dblh;
    double dblx, dbly;
@@ -1797,7 +1797,7 @@ _efl_canvas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *
 
    visible = efl_gfx_visible_get(eo_obj);
    layer = efl_gfx_stack_layer_get(eo_obj);
-   name = eo_name_get(eo_obj); // evas_object_name_get(eo_obj);
+   name = efl_name_get(eo_obj); // evas_object_name_get(eo_obj);
    efl_gfx_position_get(eo_obj, &x, &y);
    efl_gfx_size_get(eo_obj, &w, &h);
    scale = efl_canvas_object_scale_get(eo_obj);
@@ -1895,14 +1895,14 @@ _efl_canvas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *
      {  /* Save map coords count info if object has map */
         node = EO_DBG_INFO_LIST_APPEND(group, "Evas Map");
         int points_count = evas_map_count_get(map);
-        Eo_Dbg_Info *points = EO_DBG_INFO_LIST_APPEND(node, "Points");
-        Eo_Dbg_Info *pointsuv = EO_DBG_INFO_LIST_APPEND(node, "Image UV");
+        Efl_Dbg_Info *points = EO_DBG_INFO_LIST_APPEND(node, "Points");
+        Efl_Dbg_Info *pointsuv = EO_DBG_INFO_LIST_APPEND(node, "Image UV");
         for (int i = 0 ; i < points_count; i++)
           {
                {
                   Evas_Coord px, py, pz;
                   evas_map_point_coord_get(map, i, &px, &py, &pz);
-                  Eo_Dbg_Info *point = EO_DBG_INFO_LIST_APPEND(points, "Points");
+                  Efl_Dbg_Info *point = EO_DBG_INFO_LIST_APPEND(points, "Points");
                   EO_DBG_INFO_APPEND(point, "x", EINA_VALUE_TYPE_INT, px);
                   EO_DBG_INFO_APPEND(point, "y", EINA_VALUE_TYPE_INT, py);
                   EO_DBG_INFO_APPEND(point, "z", EINA_VALUE_TYPE_INT, pz);
@@ -1911,7 +1911,7 @@ _efl_canvas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *
                {
                   double pu, pv;
                   evas_map_point_image_uv_get(map, i, &pu, &pv);
-                  Eo_Dbg_Info *point = EO_DBG_INFO_LIST_APPEND(pointsuv, "Image UV");
+                  Efl_Dbg_Info *point = EO_DBG_INFO_LIST_APPEND(pointsuv, "Image UV");
                   EO_DBG_INFO_APPEND(point, "u", EINA_VALUE_TYPE_DOUBLE, pu);
                   EO_DBG_INFO_APPEND(point, "v", EINA_VALUE_TYPE_DOUBLE, pv);
                }
@@ -1920,14 +1920,14 @@ _efl_canvas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *
 }
 
 EOLIAN static Eo *
-_efl_canvas_object_eo_base_provider_find(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Eo_Class *klass)
+_efl_canvas_object_efl_object_provider_find(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Efl_Class *klass)
 {
    if (klass == EVAS_CANVAS_CLASS)
      {
         if ((obj->delete_me) || (!obj->layer)) return NULL;
         return obj->layer->evas->evas;
      }
-   return eo_provider_find(eo_super(eo_obj, MY_CLASS), klass);
+   return efl_provider_find(eo_super(eo_obj, MY_CLASS), klass);
 }
 
 EOLIAN Evas_Object*
@@ -2106,7 +2106,7 @@ _evas_canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
 EOLIAN static void
 _efl_canvas_object_type_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *type)
 {
-   if (eo_finalized_get(eo_obj))
+   if (efl_finalized_get(eo_obj))
      {
         ERR("This function is only allowed during construction.");
         return;
@@ -2182,7 +2182,7 @@ _efl_canvas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED, Evas_Object_P
 EOLIAN static void
 _efl_canvas_object_legacy_ctor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   EINA_SAFETY_ON_FALSE_RETURN(!eo_finalized_get(eo_obj));
+   EINA_SAFETY_ON_FALSE_RETURN(!efl_finalized_get(eo_obj));
    obj->legacy = EINA_TRUE;
 }
 
@@ -2299,7 +2299,7 @@ evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y)
 EAPI Evas *
 evas_object_evas_get(const Eo *eo_obj)
 {
-   return eo_provider_find((Eo *) eo_obj, EVAS_CANVAS_CLASS);
+   return efl_provider_find((Eo *) eo_obj, EVAS_CANVAS_CLASS);
 }
 
 EAPI void

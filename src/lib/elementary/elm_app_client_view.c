@@ -58,26 +58,26 @@ _prop_changed(void *user_data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info
    Elm_App_Client_View_Data *cdata = eo_data_scope_get(eo, MY_CLASS);
 
    if (!strcmp(prop_event->name, "Title"))
-     eo_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_TITLE_CHANGED, (void *) _string_prop_get(v));
+     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_TITLE_CHANGED, (void *) _string_prop_get(v));
    else if (!strcmp(prop_event->name, "IconName"))
-     eo_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_ICON_CHANGED, (void *) _string_prop_get(v));
+     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_ICON_CHANGED, (void *) _string_prop_get(v));
    else if (!strcmp(prop_event->name, "IconPixels"))
-     eo_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_ICON_PIXELS_CHANGED, NULL);
+     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_ICON_PIXELS_CHANGED, NULL);
    else if (!strcmp(prop_event->name, "NewEvents"))
-     eo_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_NEW_EVENTS_CHANGED, (void *)(uintptr_t)_int_prop_get(v));
+     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_NEW_EVENTS_CHANGED, (void *)(uintptr_t)_int_prop_get(v));
    else if (!strcmp(prop_event->name, "Progress"))
-     eo_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_PROGRESS_CHANGED, (void *)(uintptr_t)_short_prop_get(v));
+     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_PROGRESS_CHANGED, (void *)(uintptr_t)_short_prop_get(v));
    else if (!strcmp(prop_event->name, "State"))
      {
         cdata->state = _string_state_to_id(_string_prop_get(v));
-        eo_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_STATE_CHANGED, (void *)(uintptr_t)cdata->state);
+        efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_STATE_CHANGED, (void *)(uintptr_t)cdata->state);
      }
    else if (!strcmp(prop_event->name, "WindowId"))
-     eo_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_WINDOW_CHANGED, (void *)(uintptr_t)_int_prop_get(v));
+     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_WINDOW_CHANGED, (void *)(uintptr_t)_int_prop_get(v));
    else
       return;
 
-   eo_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED, (void *) prop_event->name);
+   efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED, (void *) prop_event->name);
 }
 
 static void
@@ -115,18 +115,18 @@ elm_app_client_view_internal_state_set(Eo *eo, Elm_App_View_State state)
    cdata->state = state;
    if (!changed)
      return;
-   eo_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_STATE_CHANGED, (void *)(uintptr_t)cdata->state);
+   efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_STATE_CHANGED, (void *)(uintptr_t)cdata->state);
 }
 
 EOLIAN static Eo *
-_elm_app_client_view_eo_base_finalize(Eo *eo, Elm_App_Client_View_Data *data)
+_elm_app_client_view_efl_object_finalize(Eo *eo, Elm_App_Client_View_Data *data)
 {
    Elm_App_Client *parent = NULL;
    const char *package = data->path;
    Eldbus_Connection *conn;
    Eldbus_Object *obj;
 
-   parent = eo_parent_get(eo);
+   parent = efl_parent_get(eo);
    EINA_SAFETY_ON_TRUE_RETURN_VAL((!parent) ||
                             (!eo_isa(parent, ELM_APP_CLIENT_CLASS)), NULL);
 
@@ -147,7 +147,7 @@ _elm_app_client_view_eo_base_finalize(Eo *eo, Elm_App_Client_View_Data *data)
                                    ELDBUS_PROXY_EVENT_PROPERTY_LOADED,
                                    _props_loaded, eo);
 
-   return eo_finalize(eo_super(eo, MY_CLASS));
+   return efl_finalize(eo_super(eo, MY_CLASS));
 }
 
 static void
@@ -265,7 +265,7 @@ _elm_app_client_view_window_get(Eo *eo EINA_UNUSED, Elm_App_Client_View_Data *da
 EOLIAN static void
 _elm_app_client_view_path_set(Eo *eo, Elm_App_Client_View_Data *data, const char *path)
 {
-   if (eo_finalized_get(eo))
+   if (efl_finalized_get(eo))
      {
         ERR("Can't set id after object has been created.");
         return;
@@ -293,7 +293,7 @@ _elm_app_client_view_package_get(Eo *eo EINA_UNUSED, Elm_App_Client_View_Data *d
 }
 
 EOLIAN static void
-_elm_app_client_view_eo_base_destructor(Eo *eo, Elm_App_Client_View_Data *data)
+_elm_app_client_view_efl_object_destructor(Eo *eo, Elm_App_Client_View_Data *data)
 {
    Eldbus_Object *obj;
    Eldbus_Connection *conn;
@@ -309,7 +309,7 @@ _elm_app_client_view_eo_base_destructor(Eo *eo, Elm_App_Client_View_Data *data)
 
    eina_stringshare_del(data->path);
 
-   eo_destructor(eo_super(eo, MY_CLASS));
+   efl_destructor(eo_super(eo, MY_CLASS));
 }
 
 #include "elm_app_client_view.eo.c"

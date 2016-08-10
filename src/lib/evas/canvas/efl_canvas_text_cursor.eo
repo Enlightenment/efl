@@ -4,7 +4,7 @@ enum Efl.Canvas.Text.Cursor.Type
    under
 }
 
-class Efl.Canvas.Text.Cursor (Eo.Base)
+class Efl.Canvas.Text.Cursor (Efl.Object)
 {
    legacy_prefix: evas_textblock_cursor;
    methods {
@@ -200,8 +200,8 @@ class Efl.Canvas.Text.Cursor (Eo.Base)
       }
    }
    implements {
-      Eo.Base.destructor;
-      Eo.Base.finalize;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
    }
    events {
       changed; [[The cursor position has changed]]

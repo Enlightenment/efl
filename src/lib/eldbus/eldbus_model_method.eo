@@ -23,7 +23,7 @@ class Eldbus.Model.Method (Eldbus.Model.Arguments) {
         }
     }
     implements {
-        Eo.Base.constructor;
+        Efl.Object.constructor;
     }
     constructors {
         .constructor;

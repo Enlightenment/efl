@@ -77,9 +77,9 @@ evas_canvas3d_light_add(Evas *e)
 }
 
 EOLIAN static Eo *
-_evas_canvas3d_light_eo_base_constructor(Eo *obj, Evas_Canvas3D_Light_Data *pd)
+_evas_canvas3d_light_efl_object_constructor(Eo *obj, Evas_Canvas3D_Light_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_LIGHT);
    evas_color_set(&pd->ambient, 0.0, 0.0, 0.0, 1.0);
    evas_color_set(&pd->diffuse, 1.0, 1.0, 1.0, 1.0);
@@ -97,7 +97,7 @@ _evas_canvas3d_light_eo_base_constructor(Eo *obj, Evas_Canvas3D_Light_Data *pd)
 }
 
 EOLIAN static void
-_evas_canvas3d_light_eo_base_destructor(Eo *obj, Evas_Canvas3D_Light_Data *pd)
+_evas_canvas3d_light_efl_object_destructor(Eo *obj, Evas_Canvas3D_Light_Data *pd)
 {
    Eina_Iterator *it = NULL;
    void *data = NULL;
@@ -115,7 +115,7 @@ _evas_canvas3d_light_eo_base_destructor(Eo *obj, Evas_Canvas3D_Light_Data *pd)
         eina_hash_free(pd->nodes);
      }
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 

@@ -2037,9 +2037,9 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.dbg_info_get;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.dbg_info_get;
       Efl.Canvas.Object.paragraph_direction.set;
       Efl.Canvas.Group.group_hide;
       Efl.Canvas.Group.group_show;

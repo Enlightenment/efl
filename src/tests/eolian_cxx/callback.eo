@@ -6,7 +6,7 @@ struct Callback_Event
   field2: list<int*>;
 }
 
-class Callback (Eo.Base)
+class Callback (Efl.Object)
 {
    data: Callback_Data;
    events {

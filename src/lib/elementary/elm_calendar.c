@@ -935,9 +935,9 @@ _update_data(Evas_Object *obj, Eina_Bool month,
           sd->selected_time.tm_mday = maxdays;
 
         _fix_selected_time(sd);
-        eo_event_callback_call(obj, ELM_CALENDAR_EVENT_CHANGED, NULL);
+        efl_event_callback_call(obj, ELM_CALENDAR_EVENT_CHANGED, NULL);
      }
-   eo_event_callback_call(obj, ELM_CALENDAR_EVENT_DISPLAY_CHANGED, NULL);
+   efl_event_callback_call(obj, ELM_CALENDAR_EVENT_DISPLAY_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -1221,7 +1221,7 @@ _update_sel_it(Evas_Object *obj,
    sd->selected_time.tm_mday = day;
    _fix_selected_time(sd);
    _select(obj, sel_it);
-   eo_event_callback_call(obj, ELM_CALENDAR_EVENT_CHANGED, NULL);
+   efl_event_callback_call(obj, ELM_CALENDAR_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -1588,9 +1588,9 @@ elm_calendar_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_calendar_eo_base_constructor(Eo *obj, Elm_Calendar_Data *sd)
+_elm_calendar_efl_object_constructor(Eo *obj, Elm_Calendar_Data *sd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -1848,7 +1848,7 @@ _elm_calendar_displayed_time_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *s
 }
 
 static void
-_elm_calendar_class_constructor(Eo_Class *klass)
+_elm_calendar_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 

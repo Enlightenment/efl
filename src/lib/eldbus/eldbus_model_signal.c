@@ -16,10 +16,10 @@ static void _eldbus_model_signal_handler_cb(void *, const Eldbus_Message *);
 static void _eldbus_model_signal_callback_add(Eldbus_Model_Signal_Data *);
 static void _eldbus_model_signal_callback_del(Eldbus_Model_Signal_Data *);
 
-static Eo_Base*
-_eldbus_model_signal_eo_base_constructor(Eo *obj, Eldbus_Model_Signal_Data *pd)
+static Efl_Object*
+_eldbus_model_signal_efl_object_constructor(Eo *obj, Eldbus_Model_Signal_Data *pd)
 {
-   eo_constructor(eo_super(obj, MY_CLASS));
+   efl_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->handler = NULL;
@@ -43,11 +43,11 @@ _eldbus_model_signal_constructor(Eo *obj EINA_UNUSED,
 }
 
 static void
-_eldbus_model_signal_eo_base_destructor(Eo *obj, Eldbus_Model_Signal_Data *pd)
+_eldbus_model_signal_efl_object_destructor(Eo *obj, Eldbus_Model_Signal_Data *pd)
 {
    _eldbus_model_signal_callback_del(pd);
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 

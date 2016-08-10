@@ -1691,7 +1691,7 @@ _config_load(void)
    _efl_config_obj = eo_add(EFL_CONFIG_GLOBAL_CLASS, NULL);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
-   eo_del_intercept_set(_efl_config_obj, _efl_config_obj_del);
+   efl_del_intercept_set(_efl_config_obj, _efl_config_obj_del);
    _elm_config = _config_user_load();
    if (_elm_config)
      {
@@ -4313,10 +4313,10 @@ _elm_config_profile_set(const char *profile)
 void
 _elm_config_shutdown(void)
 {
-   eo_del_intercept_set(_efl_config_obj, NULL);
+   efl_del_intercept_set(_efl_config_obj, NULL);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_INTERFACE, NULL);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, NULL);
-   ELM_SAFE_FREE(_efl_config_obj, eo_del);
+   ELM_SAFE_FREE(_efl_config_obj, efl_del);
    ELM_SAFE_FREE(_elm_config, _config_free);
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
@@ -4808,7 +4808,7 @@ _efl_config_global_profile_iterate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, E
    it->iterator.next = FUNC_ITERATOR_NEXT(_profile_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_profile_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_profile_iterator_free);
-   eo_wref_add(obj, &it->object);
+   efl_wref_add(obj, &it->object);
 
    return &it->iterator;
 }

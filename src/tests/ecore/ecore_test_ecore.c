@@ -291,7 +291,7 @@ START_TEST(ecore_test_efl_loop_fd)
 
    fd = eo_add(EFL_LOOP_FD_CLASS, ecore_main_loop_get(),
                efl_loop_fd_set(eo_self, comm[0]),
-               eo_event_callback_add(eo_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did));
+               efl_event_callback_add(eo_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did));
    fail_if(fd == NULL);
 
    ret = write(comm[1], &did, 1);
@@ -309,7 +309,7 @@ START_TEST(ecore_test_efl_loop_fd)
 END_TEST
 
 static void
-_eo_del_cb(void *data, const Eo_Event *ev EINA_UNUSED)
+_efl_del_cb(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    Eina_Bool *dead = data;
 
@@ -334,8 +334,8 @@ START_TEST(ecore_test_efl_loop_fd_lifecycle)
 
    fd = eo_add(EFL_LOOP_FD_CLASS, ecore_main_loop_get(),
                efl_loop_fd_set(eo_self, comm[0]),
-               eo_event_callback_add(eo_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did),
-               eo_event_callback_add(eo_self, EO_EVENT_DEL, _eo_del_cb, &dead));
+               efl_event_callback_add(eo_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did),
+               efl_event_callback_add(eo_self, EFL_EVENT_DEL, _efl_del_cb, &dead));
    eo_ref(fd);
    fail_if(fd == NULL);
 
@@ -352,7 +352,7 @@ START_TEST(ecore_test_efl_loop_fd_lifecycle)
 
    ret = ecore_shutdown();
 
-   eo_del(fd);
+   efl_del(fd);
    fail_if(dead == EINA_FALSE);
 
    eo_shutdown();
@@ -822,26 +822,26 @@ END_TEST
 
 START_TEST(ecore_test_efl_loop_register)
 {
-   Eo_Base *t, *n;
+   Efl_Object *t, *n;
 
    ecore_init();
 
-   t = eo_provider_find(ecore_main_loop_get(), EFL_LOOP_CLASS);
+   t = efl_provider_find(ecore_main_loop_get(), EFL_LOOP_CLASS);
    fail_if(!eo_isa(t, EFL_LOOP_CLASS));
 
-   t = eo_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
+   t = efl_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
    fail_if(t != NULL);
 
    n = eo_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get());
    efl_loop_register(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS, n);
 
-   t = eo_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
+   t = efl_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
    fail_if(!eo_isa(t, EFL_LOOP_TIMER_CLASS));
    fail_if(t != n);
 
    efl_loop_unregister(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS, n);
 
-   t = eo_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
+   t = efl_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
    fail_if(t != NULL);
 
    ecore_shutdown();

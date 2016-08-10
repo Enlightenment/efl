@@ -2,6 +2,6 @@ class Efl.Ui.Win.Standard (Efl.Ui.Win)
 {
    data: null;
    implements {
-      Eo.Base.finalize;
+      Efl.Object.finalize;
    }
 }

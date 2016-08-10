@@ -19,11 +19,11 @@ static Eina_Hash *_funcs_params_init = NULL;
 
 static const char
 tmpl_eo_ops_desc[] = "\
-static const Eo_Op_Description _@#class_op_desc[] = {@#list_op\n};\n\n";
+static const Efl_Op_Description _@#class_op_desc[] = {@#list_op\n};\n\n";
 
 static const char
 tmpl_events_desc[] = "\
-static const Eo_Event_Description *_@#class_event_desc[] = {@#list_evdesc\n\
+static const Efl_Event_Description *_@#class_event_desc[] = {@#list_evdesc\n\
      NULL\n\
 };\n\n";
 
@@ -35,7 +35,7 @@ tmpl_eo_src[] = "\
 @#dtor_func\
 @#ops_desc\
 @#events_desc\
-static const Eo_Class_Description _@#class_class_desc = {\n\
+static const Efl_Class_Description _@#class_class_desc = {\n\
      EO_VERSION,\n\
      \"@#Class\",\n\
      @#type_class,\n\
@@ -53,7 +53,7 @@ static const char
 tmpl_eo_obj_header[] = "\
 #define @#CLASS_@#CLASSTYPE @#klasstype_get()\n\
 \n\
-EWAPI const Eo_Class *@#klasstype_get(void);\n\
+EWAPI const Efl_Class *@#klasstype_get(void);\n\
 \n\
 ";
 
@@ -231,7 +231,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
           eina_strbuf_append(str_ev, "/**\n * No description\n */\n");
 
         eina_strbuf_append_printf(str_ev, "#define %s (&(_%s))\n", evname, evname);
-        eina_strbuf_append_printf(str_extrn_ev, "EOAPI extern const Eo_Event_Description _%s;\n", evname);
+        eina_strbuf_append_printf(str_extrn_ev, "EOAPI extern const Efl_Event_Description _%s;\n", evname);
         eina_stringshare_del(evname);
 
         if (scope == EOLIAN_SCOPE_PROTECTED)
@@ -657,7 +657,7 @@ eo_source_beginning_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         Eina_Stringshare *evname = eolian_event_c_name_get(event);
 
         eina_strbuf_append_printf(tmpbuf,
-                                  "EOAPI const Eo_Event_Description _%s =\n   EO_EVENT_DESCRIPTION%s%s(\"%s\");\n",
+                                  "EOAPI const Efl_Event_Description _%s =\n   EFL_EVENT_DESCRIPTION%s%s(\"%s\");\n",
                                   evname,
                                   eolian_event_is_hot(event) ? "_HOT" : "",
                                   eolian_event_is_restart(event) ? "_RESTART" : "",
