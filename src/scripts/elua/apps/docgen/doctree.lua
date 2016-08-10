@@ -2,6 +2,7 @@ local util = require("util")
 
 local dutil = require("docgen.util")
 local writer = require("docgen.writer")
+local eomap = require("docgen.mappings")
 
 local M = {}
 
@@ -102,6 +103,55 @@ M.Doc = Node:clone {
             return add_since(gen_doc_refd(sum1 .. edoc), since)
         end
         return add_since(gen_doc_refd(sum1 .. "\n\n" .. desc1 .. edoc), since)
+    end
+}
+
+M.Event = Node:clone {
+    __ctor = function(self, ev)
+        self.event = ev
+        assert(self.event)
+    end,
+
+    name_get = function(self)
+        return self.event:name_get()
+    end,
+
+    type_get = function(self)
+        return self.event:type_get()
+    end,
+
+    doc_get = function(self)
+        return M.Doc(self.event:documentation_get())
+    end,
+
+    scope_get = function(self)
+        return self.event:scope_get()
+    end,
+
+    c_name_get = function(self)
+        return self.event:c_name_get()
+    end,
+
+    is_beta = function(self)
+        return self.event:is_beta()
+    end,
+
+    is_hot = function(self)
+        return self.event:is_hot()
+    end,
+
+    is_restart = function(self)
+        return self.event:is_restart()
+    end,
+
+    nspaces_get = function(self, cl, root)
+        local tbl = eomap.gen_nsp_class(cl)
+        tbl[#tbl + 1] = "event"
+        tbl[#tbl + 1] = self:name_get():lower():gsub(",", "_")
+        if root then
+            tbl[#tbl + 1] = true
+        end
+        return tbl
     end
 }
 

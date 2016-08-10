@@ -767,10 +767,11 @@ local build_class = function(cl)
     else
         local nt = {}
         for i, ev in ipairs(evs) do
+            ev = dtree.Event(ev)
             local lbuf = writer.Buffer()
-            lbuf:write_link(eomap.gen_nsp_ev(ev, cl, true), ev:name_get())
+            lbuf:write_link(ev:nspaces_get(cl, true), ev:name_get())
             nt[#nt + 1] = {
-                lbuf:finish(), dtree.Doc(ev:documentation_get()):brief_get()
+                lbuf:finish(), ev:doc_get():brief_get()
             }
             build_event(ev, cl)
         end
@@ -1048,7 +1049,7 @@ build_property = function(fn, cl)
 end
 
 build_event = function(ev, cl)
-    local f = writer.Writer(eomap.gen_nsp_ev(ev, cl))
+    local f = writer.Writer(ev:nspaces_get(cl))
 
     f:write_h(cl:full_name_get() .. ": " .. ev:name_get(), 2)
 
@@ -1088,7 +1089,7 @@ build_event = function(ev, cl)
     f:write_nl()
 
     f:write_h("Description", 3)
-    f:write_raw(dtree.Doc(ev:documentation_get()):full_get(nil, true))
+    f:write_raw(ev:doc_get():full_get(nil, true))
     f:write_nl()
 
     f:finish()

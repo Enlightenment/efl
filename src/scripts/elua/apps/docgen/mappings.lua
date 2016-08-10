@@ -78,16 +78,6 @@ M.gen_nsp_func = function(fn, cl, root)
     return tbl
 end
 
-M.gen_nsp_ev = function(ev, cl, root)
-    local tbl = M.gen_nsp_class(cl)
-    tbl[#tbl + 1] = "event"
-    tbl[#tbl + 1] = ev:name_get():lower():gsub(",", "_")
-    if root then
-        tbl[#tbl + 1] = true
-    end
-    return tbl
-end
-
 M.gen_nsp_ref = function(str, root)
     local decl = eolian.declaration_get_by_name(str)
     if decl then
