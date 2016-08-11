@@ -338,7 +338,7 @@ end
 
 local build_method, build_property, build_event
 
-local build_reftable = function(f, title, ctitle, ctype, t)
+local build_reftable = function(f, title, ctitle, ctype, t, iscl)
     if not t or #t == 0 then
         return
     end
@@ -348,7 +348,7 @@ local build_reftable = function(f, title, ctitle, ctype, t)
         nt[#nt + 1] = {
             writer.Buffer():write_link(eomap.gen_nsp_eo(v, ctype, true),
                                 v:full_name_get()):finish(),
-            dtree.Doc(v:documentation_get()):brief_get()
+            (iscl and v:doc_get() or dtree.Doc(v:documentation_get())):brief_get()
         }
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
@@ -395,7 +395,7 @@ local build_ref = function()
 
     local clt = eolian.class_type
 
-    for cl in eolian.all_classes_get() do
+    for i, cl in ipairs(dtree.Class.all_get()) do
         local tp = cl:type_get()
         if tp == clt.REGULAR or tp == clt.ABSTRACT then
             classes[#classes + 1] = cl
@@ -408,9 +408,9 @@ local build_ref = function()
         end
     end
 
-    build_reftable(f, "Classes", "Class name", "class", classes)
-    build_reftable(f, "Interfaces", "Interface name", "interface", ifaces)
-    build_reftable(f, "Mixins", "Mixin name", "mixin", mixins)
+    build_reftable(f, "Classes", "Class name", "class", classes, true)
+    build_reftable(f, "Interfaces", "Interface name", "interface", ifaces, true)
+    build_reftable(f, "Mixins", "Mixin name", "mixin", mixins, true)
 
     build_reftable(f, "Aliases", "Alias name", "alias",
         eolian.typedecl_all_aliases_get():to_array())
@@ -448,7 +448,7 @@ build_inherits = function(cl, t, lvl)
     end
     t[#t + 1] = { lvl, lbuf:finish() }
     for cln in cl:inherits_get() do
-        local acl = eolian.class_get_by_name(cln)
+        local acl = dtree.Class.by_name_get(cln)
         if not acl then
             error("error retrieving inherited class " .. cln)
         end
@@ -701,7 +701,7 @@ local build_igraph_r
 build_igraph_r = function(cl, nbuf, ibuf)
     local sn = cl:full_name_get():lower():gsub("%.", "_")
     for cln in cl:inherits_get() do
-        local acl = eolian.class_get_by_name(cln)
+        local acl = dtree.Class.by_name_get(cln)
         if not acl then
             error("error retrieving inherited class " .. cln)
         end
@@ -753,7 +753,7 @@ local build_class = function(cl)
     f:write_nl()
 
     f:write_h("Description", 3)
-    f:write_raw(dtree.Doc(cl:documentation_get()):full_get(nil, true))
+    f:write_raw(cl:doc_get():full_get(nil, true))
     f:write_nl(2)
 
     build_functable(f, "Methods", "Method name", cl, eolian.function_type.METHOD)
@@ -783,7 +783,7 @@ local build_class = function(cl)
 end
 
 local build_classes = function()
-    for cl in eolian.all_classes_get() do
+    for i, cl in ipairs(dtree.Class.all_get()) do
         local ct = cl:type_get()
         if not eomap.classt_to_str[ct] then
             error("unknown class: " .. cl:full_name_get())

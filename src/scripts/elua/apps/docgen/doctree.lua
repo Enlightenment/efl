@@ -1,5 +1,7 @@
 local util = require("util")
 
+local eolian = require("eolian")
+
 local dutil = require("docgen.util")
 local writer = require("docgen.writer")
 local eomap = require("docgen.mappings")
@@ -103,6 +105,91 @@ M.Doc = Node:clone {
             return add_since(gen_doc_refd(sum1 .. edoc), since)
         end
         return add_since(gen_doc_refd(sum1 .. "\n\n" .. desc1 .. edoc), since)
+    end,
+
+    exists = function(self)
+        return not not self.doc
+    end
+}
+
+M.Class = Node:clone {
+    __ctor = function(self, cl)
+        self.class = cl
+        assert(self.class)
+    end,
+
+    full_name_get = function(self)
+        return self.class:full_name_get()
+    end,
+
+    name_get = function(self)
+        return self.class:name_get()
+    end,
+
+    namespaces_get = function(self)
+        return self.class:namespaces_get()--:to_array()
+    end,
+
+    type_get = function(self)
+        return self.class:type_get()
+    end,
+
+    doc_get = function(self)
+        return M.Doc(self.class:documentation_get())
+    end,
+
+    legacy_prefix_get = function(self)
+        return self.class:legacy_prefix_get()
+    end,
+
+    eo_prefix_get = function(self)
+        return self.class:eo_prefix_get()
+    end,
+
+    inherits_get = function(self)
+        return self.class:inherits_get()--:to_array()
+    end,
+
+    functions_get = function(self, ft)
+        return self.class:functions_get(ft)--:to_array()
+    end,
+
+    function_get_by_name = function(self, fn, ft)
+        return self.class:function_get_by_name(fn, ft)
+    end,
+
+    events_get = function(self)
+        return self.class:events_get()--:to_array()
+    end,
+
+    c_get_function_name_get = function(self)
+        return self.class:c_get_function_name_get()
+    end,
+
+    -- static getters
+
+    by_name_get = function(name)
+        local v = eolian.class_get_by_name(name)
+        if not v then
+            return nil
+        end
+        return M.Class(v)
+    end,
+
+    by_file_get = function(name)
+        local v = eolian.class_get_by_file(name)
+        if not v then
+            return nil
+        end
+        return M.Class(v)
+    end,
+
+    all_get = function()
+        local ret = {}
+        for cl in eolian.all_classes_get() do
+            ret[#ret + 1] = M.Class(cl)
+        end
+        return ret
     end
 }
 

@@ -121,7 +121,7 @@ M.check_class = function(cl)
     if not ct then
         return
     end
-    if not cl:documentation_get() then
+    if not cl:doc_get():exists() then
         print_missing(cl:full_name_get(), ct)
         stat_incr(ct, true)
     else
