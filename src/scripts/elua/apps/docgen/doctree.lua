@@ -147,11 +147,11 @@ M.Class = Node:clone {
     end,
 
     inherits_get = function(self)
-        return self.class:inherits_get()--:to_array()
+        return self.class:inherits_get():to_array()
     end,
 
     functions_get = function(self, ft)
-        return self.class:functions_get(ft)--:to_array()
+        return self.class:functions_get(ft):to_array()
     end,
 
     function_get_by_name = function(self, fn, ft)
@@ -159,7 +159,7 @@ M.Class = Node:clone {
     end,
 
     events_get = function(self)
-        return self.class:events_get()--:to_array()
+        return self.class:events_get():to_array()
     end,
 
     c_get_function_name_get = function(self)

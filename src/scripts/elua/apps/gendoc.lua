@@ -359,7 +359,7 @@ local build_reftable = function(f, title, ctitle, ctype, t, iscl)
 end
 
 local build_functable = function(f, title, ctitle, cl, tp)
-    local t = cl:functions_get(tp):to_array()
+    local t = cl:functions_get(tp)
     if #t == 0 then
         return
     end
@@ -449,7 +449,7 @@ build_inherits = function(cl, t, lvl)
         lbuf:write_b(lbuf:finish())
     end
     t[#t + 1] = { lvl, lbuf:finish() }
-    for cln in cl:inherits_get() do
+    for i, cln in ipairs(cl:inherits_get()) do
         local acl = dtree.Class.by_name_get(cln)
         if not acl then
             error("error retrieving inherited class " .. cln)
@@ -702,7 +702,7 @@ end
 local build_igraph_r
 build_igraph_r = function(cl, nbuf, ibuf)
     local sn = cl:full_name_get():lower():gsub("%.", "_")
-    for cln in cl:inherits_get() do
+    for i, cln in ipairs(cl:inherits_get()) do
         local acl = dtree.Class.by_name_get(cln)
         if not acl then
             error("error retrieving inherited class " .. cln)
@@ -763,7 +763,7 @@ local build_class = function(cl)
         cl, eolian.function_type.PROPERTY)
 
     f:write_h("Events", 3)
-    local evs = cl:events_get():to_array()
+    local evs = cl:events_get()
     if #evs == 0 then
         f:write_raw("This class does not define any events.\n")
     else

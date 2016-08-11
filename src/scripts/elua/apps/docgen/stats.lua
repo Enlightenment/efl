@@ -128,7 +128,7 @@ M.check_class = function(cl)
         stat_incr(ct, false)
     end
 
-    for ev in cl:events_get() do
+    for i, ev in ipairs(cl:events_get()) do
         if not ev:documentation_get() then
             print_missing(cl:full_name_get() .. "." .. ev:name_get(), "event")
             stat_incr("event", true)
