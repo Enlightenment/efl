@@ -53,10 +53,6 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
          [[Control how the internal image is scaled.
 
            @since 1.18]]
-         set {
-         }
-         get {
-         }
          values {
             scale_type: Efl.Ui.Image.Scale_Type;
          }
@@ -65,10 +61,6 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
          [[Enable or disable scaling up or down the internal image.
 
            @since 1.18]]
-         set {
-         }
-         get {
-         }
          values {
             scale_up: bool;   [[If $true, the internal image might be scaled up
                                 if necessary according to the scale type.
@@ -84,10 +76,6 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
          [[Control how the internal image is positioned inside an image object.
 
            @since 1.18]]
-         set {
-         }
-         get {
-         }
          values {
             align_x: double; [[Alignment in the horizontal axis (0 <= align_x <= 1).]]
             align_y: double; [[Alignment in the vertical axis (0 <= align_y <= 1).]]

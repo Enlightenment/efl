@@ -1764,29 +1764,6 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
    return EINA_TRUE;
 }
 
-// TODO: use the widget's scale value instead of image's scale value.
-
-EAPI void
-elm_image_scale_set(Evas_Object *obj,
-                     double       scale)
-{
-   EFL_UI_IMAGE_CHECK(obj);
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
-
-   sd->scale = scale;
-
-   _efl_ui_image_internal_sizing_eval(obj, sd);
-}
-
-EAPI double
-elm_image_scale_get(const Evas_Object *obj)
-{
-   EFL_UI_IMAGE_CHECK(obj) -1;
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
-
-   return sd->scale;
-}
-
 EAPI void
 elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 {
@@ -1921,52 +1898,6 @@ elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
 }
 
 EAPI void
-elm_image_scale_down_set(Evas_Object *obj, Eina_Bool scale_down)
-{
-   EFL_UI_IMAGE_CHECK(obj);
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
-
-   scale_down = !!scale_down;
-
-   if (sd->scale_down == scale_down) return;
-
-   sd->scale_down = scale_down;
-
-   _efl_ui_image_internal_sizing_eval(obj, sd);
-}
-
-EAPI Eina_Bool
-elm_image_scale_down_get(const Evas_Object *obj)
-{
-   EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
-   return sd->scale_down;
-}
-
-EAPI void
-elm_image_scale_up_set(Evas_Object *obj, Eina_Bool scale_up)
-{
-   EFL_UI_IMAGE_CHECK(obj);
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
-
-   scale_up = !!scale_up;
-
-   if (sd->scale_up == scale_up) return;
-
-   sd->scale_up = scale_up;
-
-   _efl_ui_image_internal_sizing_eval(obj, sd);
-}
-
-EAPI Eina_Bool
-elm_image_scale_up_get(const Evas_Object *obj)
-{
-   EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
-   return sd->scale_up;
-}
-
-EAPI void
 elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 {
    EFL_UI_IMAGE_CHECK(obj);
@@ -2002,36 +1933,6 @@ elm_image_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *s
    EFL_UI_IMAGE_DATA_GET(obj, sd);
    if (size_up) *size_up = sd->scale_up;
    if (size_down) *size_down = sd->scale_down;
-}
-
-EAPI void
-elm_image_fill_inside_set(Evas_Object *obj, Eina_Bool fill_inside)
-{
-   EFL_UI_IMAGE_CHECK(obj);
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
-   fill_inside = !!fill_inside;
-
-   if (sd->fill_inside == fill_inside) return;
-
-   sd->fill_inside = fill_inside;
-
-   if (sd->aspect_fixed)
-     {
-        if (sd->fill_inside) sd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FIT_INSIDE;
-        else sd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
-     }
-   else
-     sd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FILL;
-
-   _efl_ui_image_sizing_eval(obj);
-}
-
-EAPI Eina_Bool
-elm_image_fill_inside_get(const Evas_Object *obj)
-{
-   EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
-   return sd->fill_inside;
 }
 
 EAPI void
