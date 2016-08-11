@@ -1210,24 +1210,23 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             data: void_ptr; [[The data associated to the callback function.]]
          }
       }
-      part_text_set {
-         [[Sets the text for an object part]]
-
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in part: string; [[The part name]]
-            @in text: string; [[The text string]]
+      @property part_text {
+         set {
+            [[Sets the text for an object part]]
+            return: bool; [[$true on success, $false otherwise]]
          }
-      }
-      part_text_get @const {
-         [[Return the text of the object part.
+         get {
+            [[Return the text of the object part.
 
-           This function returns the text associated to the object part.
+              This function returns the text associated to the object part.
 
-           See also @.part_text_set().]]
-         return: string; [[The text string]]
-         params {
-            @in part: string; [[The part name]]
+              See also @.part_text.set().]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            text: string; [[The text string]]
          }
       }
       @property part_text_escaped {
@@ -1246,33 +1245,31 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             text: string; [[The text string]]
          }
       }
-      part_text_unescaped_set {
-         [[Sets the raw (non escaped) text for an object part.
+      @property part_text_unescaped {
+         set {
+            [[Sets the raw (non escaped) text for an object part.
 
-           This function will not do escape for you if it is a TEXTBLOCK part, that is,
-           if text contain tags, these tags will not be interpreted/parsed by TEXTBLOCK.
+              This function will not do escape for you if it is a TEXTBLOCK part, that is,
+              if text contain tags, these tags will not be interpreted/parsed by TEXTBLOCK.
 
-           See also @.part_text_unescaped_get().]]
-
-         return: bool;
-         params {
-            @in part: string; [[The part name]]
-            @in text_to_escape: string; [[The text string]]
+              See also @.part_text_unescaped.get().]]
+            return: bool;
          }
-      }
-      part_text_unescaped_get @const {
-         [[Returns the text of the object part, without escaping.
+         get {
+            [[Returns the text of the object part, without escaping.
 
-           This function is the counterpart of
-           edje_object_part_text_unescaped_set(). Please notice that the
-           result is newly allocated memory and should be released with free()
-           when done.
+              This function is the counterpart of
+              @.part_text_unescaped.set(). Please notice that the
+              result is newly allocated memory and should be released with free()
+              when done.
 
-           See also @.part_text_unescaped_set().]]
-         return: char *; [[The  allocated text string without escaping, or $null on
-                           problems.]]
-         params {
-            @in part: string; [[The part name]]
+              See also @.part_text_unescaped.set().]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            text_to_escape: string; [[The text string]]
          }
       }
       part_text_append {
@@ -1311,42 +1308,40 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             @in text: string; [[The text string]]
          }
       }
-      part_text_autocapital_type_set {
-         [[Set the autocapitalization type on the immodule.
+      @property part_text_autocapital_type {
+         set {
+            [[Set the autocapitalization type on the immodule.
 
-           @since 1.1.0]]
+              @since 1.1.0]]
+         }
+         get {
+            [[Retrieves the autocapitalization type
 
-         params {
-            @in part: string; [[The part name]]
-            @in autocapital_type: Edje.Text.Autocapital_Type; [[The type of autocapitalization]]
+              @since 1.1.0]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            autocapital_type: Edje.Text.Autocapital_Type; [[The type of autocapitalization]]
          }
       }
-      part_text_autocapital_type_get @const {
-         [[Retrieves the autocapitalization type
+      @property part_text_prediction_allow {
+         set {
+            [[Set whether the prediction is allowed or not.
 
-           @since 1.1.0]]
-         return: Edje.Text.Autocapital_Type; [[The autocapitalization type]]
-         params {
-            @in part: string; [[The part name]]
+              @since 1.2.0]]
          }
-      }
-      part_text_prediction_allow_set {
-         [[Set whether the prediction is allowed or not.
+         get {
+            [[Get whether the prediction is allowed or not.
 
-           @since 1.2.0]]
-
-         params {
-            @in part: string; [[The part name]]
-            @in prediction: bool; [[If true, the prediction feature is allowed.]]
+              @since 1.2.0]]
          }
-      }
-      part_text_prediction_allow_get @const {
-         [[Get whether the prediction is allowed or not.
-
-           @since 1.2.0]]
-         return: bool; [[true if prediction feature is allowed.]]
-         params {
-            @in part: string; [[The part name]]
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            prediction: bool; [[If true, the prediction feature is allowed.]]
          }
       }
       part_text_hide_visible_password {
