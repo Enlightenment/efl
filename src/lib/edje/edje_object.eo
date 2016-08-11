@@ -930,7 +930,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               For the horizontal axis, 0.0 means left if the first parameter of $x in the
               dragable part theme is 1, and right if it is -1.
 
-              See also @.part_drag_value_get()]]
+              See also @.part_drag_value.get()]]
             return: bool;
          }
          get {
@@ -939,7 +939,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               Values for dx and dy are real numbers that range from 0 to 1,
               representing the relative position to the dragable area on that axis.
 
-              See also @.part_drag_value_set()
+              See also @.part_drag_value.set()
 
               Gets the drag location values.]]
             return: bool;
@@ -961,7 +961,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
 
               Sets the size of the dragable object.
 
-              See also @.part_drag_size_get()]]
+              See also @.part_drag_size.get()]]
             return: bool;
          }
          get {
@@ -969,7 +969,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
 
               Gets the dragable object size.
 
-              See also @.part_drag_size_set()]]
+              See also @.part_drag_size.set()]]
             return: bool;
          }
          keys {
@@ -1008,7 +1008,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               representing the relative size of the dragable area on that axis by which the
               part will be moved.
 
-              See also @.part_drag_step_get()]]
+              See also @.part_drag_step.get()]]
             return: bool;
          }
          get {
@@ -1016,7 +1016,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
 
               Gets the x and y step increments for the dragable object.
 
-              See also @.part_drag_step_set()]]
+              See also @.part_drag_step.set()]]
             return: bool;
          }
          keys {
@@ -1031,7 +1031,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
          [[Steps the dragable x,y steps.
 
            Steps x,y where the step increment is the amount set by
-           edje_object_part_drag_step_set.
+           @.part_drag_step.set().
 
            Values for dx and dy are real numbers that range from 0 to 1.
 
@@ -1054,7 +1054,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               representing the relative size of the dragable area on that axis by which the
               part will be moved.
 
-              See also @.part_drag_page_get()]]
+              See also @.part_drag_page.get()]]
             return: bool;
          }
          get {
@@ -1062,7 +1062,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
 
               Gets the x,y page step increments for the dragable object.
 
-              See also @.part_drag_page_set()]]
+              See also @.part_drag_page.set()]]
             return: bool;
          }
          keys {
@@ -1077,7 +1077,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
          [[Pages x,y steps.
 
            Pages x,y where the increment is defined by
-           edje_object_part_drag_page_set.
+           @.part_drag_page.set().
 
            Values for dx and dy are real numbers that range from 0 to 1.
 
