@@ -346,8 +346,10 @@ local build_reftable = function(f, title, ctitle, ctype, t, iscl)
     local nt = {}
     for i, v in ipairs(t) do
         nt[#nt + 1] = {
-            writer.Buffer():write_link(eomap.gen_nsp_eo(v, ctype, true),
-                                v:full_name_get()):finish(),
+            writer.Buffer():write_link(
+                iscl and v:nspaces_get() or eomap.gen_nsp_eo(v, ctype, true),
+                v:full_name_get()
+            ):finish(),
             (iscl and v:doc_get() or dtree.Doc(v:documentation_get())):brief_get()
         }
     end
@@ -440,7 +442,7 @@ build_inherits = function(cl, t, lvl)
     t = t or {}
     lvl = lvl or 0
     local lbuf = writer.Buffer()
-    lbuf:write_link(eomap.gen_nsp_class(cl, true), cl:full_name_get())
+    lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
     lbuf:write_raw(" ")
     lbuf:write_i("(" .. eomap.classt_to_str[cl:type_get()] .. ")")
     if lvl == 0 then
@@ -692,7 +694,7 @@ local class_to_node = function(cl, main)
     -- FIXME: need a dokuwiki graphviz plugin with proper URL support
     -- the existing one only supports raw URLs (no dokuwikí namespaces)
     --ret.URL = ":" .. global_opts.root_nspace .. ":"
-    --              .. table.concat(eomap.gen_nsp_class(cl), ":")
+    --              .. table.concat(cl:nspaces_get(), ":")
 
     return ret
 end
@@ -735,7 +737,7 @@ local build_igraph = function(cl)
 end
 
 local build_class = function(cl)
-    local f = writer.Writer(eomap.gen_nsp_class(cl))
+    local f = writer.Writer(cl:nspaces_get())
     stats.check_class(cl)
 
     f:write_h(cl:full_name_get(), 2)

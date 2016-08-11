@@ -127,7 +127,7 @@ M.Class = Node:clone {
     end,
 
     namespaces_get = function(self)
-        return self.class:namespaces_get()--:to_array()
+        return self.class:namespaces_get():to_array()
     end,
 
     type_get = function(self)
@@ -164,6 +164,19 @@ M.Class = Node:clone {
 
     c_get_function_name_get = function(self)
         return self.class:c_get_function_name_get()
+    end,
+
+    nspaces_get = function(self, root)
+        local tbl = self:namespaces_get()
+        for i = 1, #tbl do
+            tbl[i] = tbl[i]:lower()
+        end
+        table.insert(tbl, 1, eomap.classt_to_str[self.class:type_get()])
+        tbl[#tbl + 1] = self:name_get():lower()
+        if root then
+            tbl[#tbl + 1] = true
+        end
+        return tbl
     end,
 
     -- static getters
@@ -232,7 +245,7 @@ M.Event = Node:clone {
     end,
 
     nspaces_get = function(self, cl, root)
-        local tbl = eomap.gen_nsp_class(cl)
+        local tbl = cl:nspaces_get()
         tbl[#tbl + 1] = "event"
         tbl[#tbl + 1] = self:name_get():lower():gsub(",", "_")
         if root then
