@@ -155,8 +155,6 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 {
    Ecore_Drm2_Fb *fb;
 
-   if (ob->priv.bo[1]) gbm_surface_release_buffer(ob->surface, ob->priv.bo[1]);
-
    /* Repulsive hack:  Right now we don't actually have a proper way to retire
     * buffers because the ticker and the flip handler are out of sync, the
     * flip handler is per output, fbs are submit to multiple outputs and may
