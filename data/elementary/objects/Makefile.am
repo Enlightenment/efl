@@ -7,7 +7,6 @@ elementary/objects/test_prefs.edc \
 elementary/objects/test_prefs.epc \
 elementary/objects/multip.edc \
 elementary/objects/cursors.edc \
-elementary/objects/combobox_multiple.edc \
 elementary/objects/font_preview.edc \
 elementary/objects/postit_ent.edc \
 elementary/objects/multibuttonentry.edc \

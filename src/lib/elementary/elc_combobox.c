@@ -152,8 +152,7 @@ _table_resize(void *data)
         evas_object_geometry_get(elm_object_item_track(sd->item), NULL, NULL,
                                  NULL, &h);
         if (h) sd->item_height = h;
-        evas_object_geometry_get(elm_object_part_content_get(data, "elm.swallow.content"),
-                                 NULL, NULL, &obj_w, NULL);
+        evas_object_geometry_get(sd->entry, NULL, NULL, &obj_w, NULL);
         evas_object_geometry_get(data, NULL, &obj_y, NULL, &obj_h);
         evas_object_geometry_get(sd->hover_parent, NULL, NULL, &hover_parent_w,
                                  &hover_parent_h);
@@ -202,13 +201,8 @@ static void
 _on_item_selected(void *data , Evas_Object *obj EINA_UNUSED, void *event)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
+   elm_object_focus_set(sd->entry, EINA_TRUE);
 
-   if (!sd->multiple_selection) elm_object_focus_set(sd->entry, EINA_TRUE);
-   else
-     {
-        elm_genlist_item_bring_in(sd->item, ELM_GENLIST_ITEM_SCROLLTO_TOP);
-        elm_object_focus_set(sd->mbe, EINA_TRUE);
-     }
    eo_event_callback_call(data, ELM_COMBOBOX_EVENT_ITEM_SELECTED, event);
 }
 
@@ -311,98 +305,6 @@ _elm_combobox_elm_button_admits_autorepeat_get(Eo *obj EINA_UNUSED,
    return EINA_FALSE;
 }
 
-EOLIAN static Eina_Bool
-_elm_combobox_multiple_selection_get(Eo *obj EINA_UNUSED, Elm_Combobox_Data *pd)
-{
-   return pd->multiple_selection;
-}
-
-static void
-_mbe_clicked_cb(void *data EINA_UNUSED, const Eo_Event *event)
-{
-   //Unset the multibuttonentry to contracted mode of single line
-   elm_multibuttonentry_expanded_set(event->object, EINA_TRUE);
-}
-
-static void
-_mbe_focused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
-{
-}
-
-static void
-_mbe_unfocused_cb(void *data EINA_UNUSED, const Eo_Event *event)
-{
-   //Set the multibuttonentry to contracted mode of single line
-   elm_multibuttonentry_expanded_set(event->object, EINA_FALSE);
-}
-
-static void
-_mbe_item_added(void *data, const Eo_Event *event EINA_UNUSED)
-{
-   ELM_COMBOBOX_DATA_GET(data, sd);
-   elm_genlist_filter_set(sd->genlist, NULL);
-}
-
-EO_CALLBACKS_ARRAY_DEFINE(mbe_callbacks,
-       { EFL_UI_EVENT_CLICKED, _mbe_clicked_cb },
-       { ELM_WIDGET_EVENT_FOCUSED, _mbe_focused_cb },
-       { ELM_WIDGET_EVENT_UNFOCUSED, _mbe_unfocused_cb },
-       { ELM_MULTIBUTTONENTRY_EVENT_ITEM_ADDED , _mbe_item_added });
-
-EO_CALLBACKS_ARRAY_DEFINE(entry_callbacks,
-       { ELM_ENTRY_EVENT_CHANGED_USER, _on_changed },
-       { ELM_ENTRY_EVENT_ABORTED, _on_aborted });
-
-EOLIAN static void
-_elm_combobox_multiple_selection_set(Eo *obj, Elm_Combobox_Data *pd,
-                                     Eina_Bool enabled)
-{
-   Evas_Object* scr;
-
-   pd->multiple_selection = enabled;
-
-   if (enabled)
-     {
-        // This is multibuttonentry object that will take over the MBE call
-        pd->mbe = eo_add(ELM_MULTIBUTTONENTRY_CLASS, obj);
-        evas_object_size_hint_weight_set(pd->mbe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(pd->mbe, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        eo_event_callback_array_add(elm_multibuttonentry_entry_get(pd->mbe), entry_callbacks(), obj);
-        eo_event_callback_array_add(pd->mbe, mbe_callbacks(), obj);
-
-        pd->entry = elm_object_part_content_unset(obj, "elm.swallow.content");
-        elm_object_text_set(pd->mbe, elm_object_part_text_get(pd->entry, NULL));
-        elm_object_part_text_set(pd->mbe, "guide", elm_object_part_text_get(pd->entry,
-                                 "guide"));
-        evas_object_hide(pd->entry);
-
-        scr = elm_scroller_add(obj);
-        elm_scroller_bounce_set(scr, EINA_FALSE, EINA_TRUE);
-        elm_scroller_policy_set(scr, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
-        evas_object_size_hint_weight_set(scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(scr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        evas_object_show(scr);
-        elm_object_content_set(scr, pd->mbe);
-        elm_object_part_content_set(obj, "elm.swallow.content", scr);
-        elm_widget_can_focus_set(pd->genlist, EINA_FALSE);
-
-        eo_composite_attach(obj, pd->mbe);
-     }
-   else
-     {
-        scr = elm_object_part_content_unset(obj, "elm.swallow.content");
-        elm_object_part_content_set(obj, "elm.swallow.content", pd->entry);
-        elm_object_text_set(pd->entry, elm_object_part_text_get(pd->mbe, NULL));
-        elm_object_part_text_set(pd->entry, "guide",
-                                 elm_object_part_text_get(pd->mbe, "guide"));
-        elm_widget_can_focus_set(pd->genlist, EINA_TRUE);
-        elm_genlist_item_bring_in(pd->item, ELM_GENLIST_ITEM_SCROLLTO_NONE);
-        evas_object_hide(scr);
-
-        eo_composite_attach(obj, pd->entry);
-     }
-}
-
 EAPI Evas_Object *
 elm_combobox_add(Evas_Object *parent)
 {
@@ -433,6 +335,7 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    sd->hover = eo_add(ELM_HOVER_CLASS, sd->hover_parent);
    elm_widget_mirrored_automatic_set(sd->hover, EINA_FALSE);
    elm_hover_target_set(sd->hover, obj);
+   elm_widget_sub_object_add(obj, sd->hover);
    snprintf(buf, sizeof(buf), "combobox_vertical/%s",
               elm_widget_style_get(obj));
    elm_object_style_set(sd->hover, buf);
@@ -477,7 +380,8 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
                            ELM_SCROLLER_POLICY_OFF);
    elm_entry_scrollable_set(entry, EINA_TRUE);
    elm_entry_single_line_set(entry, EINA_TRUE);
-   eo_event_callback_array_add(entry, entry_callbacks(), obj);
+   eo_event_callback_add(entry, ELM_ENTRY_EVENT_CHANGED_USER, _on_changed, obj);
+   eo_event_callback_add(entry, ELM_ENTRY_EVENT_ABORTED, _on_aborted, obj);
    evas_object_show(entry);
 
    elm_object_part_content_set(obj, "elm.swallow.content", entry);
@@ -493,10 +397,7 @@ EOLIAN static void
 _elm_combobox_hover_begin(Eo *obj, Elm_Combobox_Data *sd)
 {
    if (!sd->hover) return;
-
-   if (sd->multiple_selection)
-     elm_object_focus_set(sd->mbe, EINA_TRUE);
-   else elm_object_focus_set(sd->entry, EINA_TRUE);
+   elm_object_focus_set(sd->entry, EINA_TRUE);
 
    _activate(obj);
 }
@@ -614,15 +515,13 @@ EOLIAN void
 _elm_combobox_elm_widget_part_text_set(Eo *obj EINA_UNUSED, Elm_Combobox_Data *pd,
                                        const char * part, const char *label)
 {
-   if (pd->multiple_selection) elm_object_part_text_set(pd->mbe, part, label);
-   else elm_object_part_text_set(pd->entry, part, label);
+   elm_object_part_text_set(pd->entry, part, label);
 }
 
 EOLIAN const char *
 _elm_combobox_elm_widget_part_text_get(Eo *obj EINA_UNUSED, Elm_Combobox_Data *pd,
                                        const char * part)
 {
-   if (pd->multiple_selection) return elm_object_part_text_get(pd->mbe, part);
    return elm_object_part_text_get(pd->entry, part);
 }
 

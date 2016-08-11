@@ -215,7 +215,6 @@ elementary/objects/test.edj \
 elementary/objects/test_external.edj \
 elementary/objects/multip.edj \
 elementary/objects/cursors.edj \
-elementary/objects/combobox_multiple.edj \
 elementary/objects/font_preview.edj \
 elementary/objects/postit_ent.edj \
 elementary/objects/multibuttonentry.edj \
@@ -242,11 +241,6 @@ elementary/objects/multip.edj: elementary/objects/test_external.edc
 	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
 
 elementary/objects/cursors.edj: elementary/objects/cursors.edc
-	$(AM_V_EDJ) \
-	$(MKDIR_P) elementary/objects/; \
-	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
-
-elementary/objects/combobox_multiple.edj: elementary/objects/combobox_multiple.edc
 	$(AM_V_EDJ) \
 	$(MKDIR_P) elementary/objects/; \
 	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
