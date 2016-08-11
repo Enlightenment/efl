@@ -237,6 +237,8 @@ eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
      {
       case EVAS_NATIVE_SURFACE_TBM:
         return _evas_native_tbm_init();
+      case EVAS_NATIVE_SURFACE_EVASGL:
+        return 1;
       default:
         ERR("Native surface type %d not supported!", type);
         return 0;
@@ -255,6 +257,20 @@ eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
         ERR("Native surface type %d not supported!", type);
         return;
      }
+}
+
+static void
+_native_evasgl_free(void *image)
+{
+   RGBA_Image *im = image;
+   Native *n = im->native.data;
+
+   im->native.data        = NULL;
+   im->native.func.bind   = NULL;
+   im->native.func.unbind = NULL;
+   im->native.func.free   = NULL;
+   //im->image.data         = NULL;
+   free(n);
 }
 
 static void *
@@ -280,14 +296,12 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
           }
       }
 
-   /* FIXME: WTF is this? OPENGL supported here? uh? and x11.visual used???
-    * It looks like this code needs to fail and return NULL. */
-   if ((ns->type == EVAS_NATIVE_SURFACE_OPENGL) &&
-       (ns->version == EVAS_NATIVE_SURFACE_VERSION))
-     im2 = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
-                                               ie->w, ie->h,
-                                               ns->data.x11.visual, 1,
-                                               EVAS_COLORSPACE_ARGB8888);
+   if (ns->type == EVAS_NATIVE_SURFACE_EVASGL)
+     {
+        im2 = (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
+                                                   ie->w, ie->h, ns->data.evasgl.surface, 1,
+                                                   EVAS_COLORSPACE_ARGB8888);
+     }
    else if (ns->type == EVAS_NATIVE_SURFACE_TBM)
      {
         stride = glsym__evas_native_tbm_surface_stride_get(NULL, ns);
@@ -316,7 +330,25 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    im = im2;
 
    if (ns->type == EVAS_NATIVE_SURFACE_TBM)
-      return glsym__evas_native_tbm_surface_image_set(NULL, im, ns);
+     {
+        return glsym__evas_native_tbm_surface_image_set(NULL, im, ns);
+     }
+   else if (ns->type == EVAS_NATIVE_SURFACE_EVASGL)
+     {
+        /* Native contains Evas_Native_Surface. What a mess. */
+        Native *n = calloc(1, sizeof(Native));
+        if (n)
+          {
+             n->ns_data.evasgl.surface = ns->data.evasgl.surface;
+             n->ns.type = EVAS_NATIVE_SURFACE_EVASGL;
+             n->ns.version = EVAS_NATIVE_SURFACE_VERSION;
+             n->ns.data.evasgl.surface = ns->data.evasgl.surface;
+             im->native.data = n;
+             im->native.func.free = _native_evasgl_free;
+             im->native.func.bind = NULL;
+             im->native.func.unbind = NULL;
+          }
+     }
 
    return im;
 }
