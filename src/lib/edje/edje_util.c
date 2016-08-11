@@ -2759,6 +2759,13 @@ _edje_object_part_text_user_insert(Eo *obj EINA_UNUSED, Edje *ed, const char *pa
      _edje_entry_user_insert(rp, text);
 }
 
+EAPI void
+edje_object_part_text_select_allow_set(const Evas_Object *obj, const char *part, Eina_Bool allow)
+{
+   edje_obj_part_text_select_allow_set((Eo *)obj, part, allow);
+}
+
+
 EOLIAN void
 _edje_object_part_text_select_allow_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool allow)
 {

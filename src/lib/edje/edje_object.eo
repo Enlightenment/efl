@@ -419,42 +419,44 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: int; [[The frozen state or 0 if the object is not frozen or on error.]]
       }
-      data_get @const {
-         [[Retrive an EDC data field's value from a given Edje object's group.
+      @property data {
+         get {
+            [[Retrive an EDC data field's value from a given Edje object's group.
 
-           This function fetches an EDC data field's value, which is declared
-           on the objects building EDC file, under its group. EDC data blocks
-           are most commonly used to pass arbitrary parameters from an
-           application's theme to its code.
+              This function fetches an EDC data field's value, which is declared
+              on the objects building EDC file, under its group. EDC data blocks
+              are most commonly used to pass arbitrary parameters from an
+              application's theme to its code.
 
-           EDC data fields always hold  strings as values, hence the return
-           type of this function. Check the complete \@ref edcref "syntax reference"
-           for EDC files.
+              EDC data fields always hold  strings as values, hence the return
+              type of this function. Check the complete \@ref edcref "syntax reference"
+              for EDC files.
 
-           Warning: Do not confuse this call with edje_file_data_get(), which
-           queries for a  global EDC data field on an EDC declaration file.
+              Warning: Do not confuse this call with edje_file_data_get(), which
+              queries for a  global EDC data field on an EDC declaration file.
 
-           \@ref edje_object_file_set()]]
-           /* FIXME-doc
-            * They look like the following:
-            * @code
-            * collections
-            *   {
-            *      group
-            *        {
-            *           name: "a_group";
-            *           data
-            *             {
-            *                item: "key1" "value1";
-            *                item: "key2" "value2";
-            *             }
-            *        }
-            *  }
-            * @endcode
-            */
-         return: string; [[The data's value string. Must not be freed.]]
-         params {
-            @in key: string; [[The data field's key string]]
+              \@ref edje_object_file_set()]]
+              /* FIXME-doc
+               * They look like the following:
+               * @code
+               * collections
+               *   {
+               *      group
+               *        {
+               *           name: "a_group";
+               *           data
+               *             {
+               *                item: "key1" "value1";
+               *                item: "key2" "value2";
+               *             }
+               *        }
+               *  }
+               * @endcode
+               */
+            return: string; [[The data's value string. Must not be freed.]]
+         }
+         keys {
+            key: string; [[The data field's key string]]
          }
       }
       @property message_handler {
@@ -709,13 +711,15 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             a: int; [[Object Alpha value]]
          }
       }
-      color_class_description_get @const {
-         [[Gets the description of an object color class.
+      @property color_class_description {
+         get {
+            [[Gets the description of an object color class.
 
-           This function gets the description of a color class in use by an object.]]
-         return: string; [[The description of the target color class or $null if not found]]
-         params {
-            @in color_class: string;
+              This function gets the description of a color class in use by an object.]]
+            return: string; [[The description of the target color class or $null if not found]]
+         }
+         keys {
+            color_class: string;
          }
       }
       color_class_clear @const {
@@ -863,13 +867,11 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               Note: If the type of Edje part is GROUP, SWALLOW or EXTERNAL,
               returned handle by this function will indicate nothing or transparent
               rectangle for events. Use $.part_swallow_get() in that case.]]
+            return: const(Efl.Canvas.Object); [[A pointer to the Evas object implementing the given part,
+                                                $null on failure (e.g. the given part doesn't exist)]]
          }
          keys {
             part: string; [[The Edje part's name]]
-         }
-         values {
-            o: const(Efl.Canvas.Object); [[A pointer to the Evas object implementing the given part,
-                                           $null on failure (e.g. the given part doesn't exist)]]
          }
       }
       @property part_state {
@@ -987,15 +989,13 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               The dragable directions are defined in the EDC file, inside the \@ref dragable
               section, by the attributes $x and $y. See the \@ref edcref for more
               information.]]
+            return: Edje.Drag_Dir; [[#EDJE_DRAG_DIR_NONE: Not dragable
+                                     #EDJE_DRAG_DIR_X: Dragable in X direction
+                                     #EDJE_DRAG_DIR_Y: Dragable in Y direction
+                                     #EDJE_DRAG_DIR_XY: Dragable in X & Y directions]]
          }
          keys {
             part: string; [[The part name]]
-         }
-         values {
-            dir: Edje.Drag_Dir; [[#EDJE_DRAG_DIR_NONE: Not dragable
-                                  #EDJE_DRAG_DIR_X: Dragable in X direction
-                                  #EDJE_DRAG_DIR_Y: Dragable in Y direction
-                                  #EDJE_DRAG_DIR_XY: Dragable in X & Y directions]]
          }
       }
       @property part_drag_step {
@@ -1095,14 +1095,12 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
       @property part_external_param_type {
          get {
             [[Facility to query the type of the given parameter of the given part.]]
+            return: Edje.External.Param_Type; [[#EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value
+                                                from #Edje_External_Param_Type on success.]]
          }
          keys {
             part: string; [[The part name]]
             param: string; [[the parameter name to use.]]
-         }
-         values {
-            param_type: Edje.External.Param_Type; [[#EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value
-                                                    from #Edje_External_Param_Type on success.]]
          }
       }
       @property part_external_object {
@@ -1119,84 +1117,84 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               Note: Almost all swallow rules apply: you should not move, resize,
               hide, show, set the color or clipper of such part. It's a bit
               more restrictive as one must  never delete this object!]]
+            return: Efl.Canvas.Object; [[The externally created object, or $null if there is none or
+                                         part is not an external.]]
          }
          keys {
             part: string; [[The part name]]
          }
-         values {
-            o: Efl.Canvas.Object; [[The externally created object, or $null if there is none or
-                                    part is not an external.]]
-         }
       }
       @property part_external_content {
-         [[Get an object contained in an part of type EXTERNAL
+         get {
+            [[Get an object contained in an part of type EXTERNAL
 
-           The content string must not be $null. Its actual value depends on the
-           code providing the EXTERNAL.]]
-         get {}
+              The content string must not be $null. Its actual value depends on the
+              code providing the EXTERNAL.]]
+            return: Efl.Canvas.Object;
+         }
          keys {
             part: string; [[The name of the part holding the EXTERNAL]]
             content: string; [[A string identifying which content from the EXTERNAL to get]]
          }
-         values {
-            v: Efl.Canvas.Object;
-         }
       }
-      part_external_param_set {
-         [[Set the parameter for the external part.
+      @property part_external_param {
+         set {
+            [[Set the parameter for the external part.
 
-           Parts of type external may carry extra properties that have
-           meanings defined by the external plugin. For instance, it may be a
-           string that defines a button label and setting this property will
-           change that label on the fly.
+              Parts of type external may carry extra properties that have
+              meanings defined by the external plugin. For instance, it may be a
+              string that defines a button label and setting this property will
+              change that label on the fly.
 
-           Note: external parts have parameters set when they change
-           states. Those parameters will never be changed by this
-           function. The interpretation of how state_set parameters and
-           param_set will interact is up to the external plugin.
+              Note: external parts have parameters set when they change
+              states. Those parameters will never be changed by this
+              function. The interpretation of how state_set parameters and
+              param_set will interact is up to the external plugin.
 
-           Note: this function will not check if parameter value is valid
-           using #Edje_External_Param_Info minimum, maximum, valid
-           choices and others. However these should be checked by the
-           underlying implementation provided by the external
-           plugin. This is done for performance reasons.]]
+              Note: this function will not check if parameter value is valid
+              using #Edje_External_Param_Info minimum, maximum, valid
+              choices and others. However these should be checked by the
+              underlying implementation provided by the external
+              plugin. This is done for performance reasons.]]
 
-         return: bool; [[$true if everything went fine, $false on errors.]]
-         params {
-            @in part: string; [[The part name]]
-            @in param: const(Edje.External.Param)*; [[the parameter details, including its name, type and
-                                                      actual value. This pointer should be valid, and the
-                                                      parameter must exist in
-                                                      #Edje_External_Type.parameters_info, with the exact type,
-                                                      otherwise the operation will fail and $false will be
-                                                      returned.]]
+            return: bool; [[$true if everything went fine, $false on errors.]]
+            values {
+               param: const(Edje.External.Param)*; [[the parameter details, including its name, type and
+                                                     actual value. This pointer should be valid, and the
+                                                     parameter must exist in
+                                                     #Edje_External_Type.parameters_info, with the exact type,
+                                                     otherwise the operation will fail and $false will be
+                                                     returned.]]
+            }
          }
-      }
-      part_external_param_get @const {
-         [[Get the parameter for the external part.
+         get {
+            [[Get the parameter for the external part.
 
-           Parts of type external may carry extra properties that have
-           meanings defined by the external plugin. For instance, it may be a
-           string that defines a button label. This property can be modified by
-           state parameters, by explicit calls to
-           edje_object_part_external_param_set() or getting the actual object
-           with edje_object_part_external_object_get() and calling native
-           functions.
+              Parts of type external may carry extra properties that have
+              meanings defined by the external plugin. For instance, it may be a
+              string that defines a button label. This property can be modified by
+              state parameters, by explicit calls to
+              edje_object_part_external_param_set() or getting the actual object
+              with edje_object_part_external_object_get() and calling native
+              functions.
 
-           This function asks the external plugin what is the current value,
-           independent on how it was set.]]
+              This function asks the external plugin what is the current value,
+              independent on how it was set.]]
 
-         return: bool; [[$true if everything went fine and param members
-                         are filled with information, $false on errors and
-                         param member values are not set or valid.]]
-         params {
-            @in part: string; [[The part name]]
-            @out param: Edje.External.Param; [[the parameter details. It is used as both input and
-                                               output variable. This pointer should be valid, and the
-                                               parameter must exist in
-                                               #Edje_External_Type.parameters_info, with the exact type,
-                                               otherwise the operation will fail and $false will be
-                                               returned.]]
+            return: bool; [[$true if everything went fine and param members
+                            are filled with information, $false on errors and
+                            param member values are not set or valid.]]
+            values {
+               param: Edje.External.Param; [[the parameter details. It is used as both input and
+                                             output variable. This pointer should be valid, and the
+                                             parameter must exist in
+                                             #Edje_External_Type.parameters_info, with the exact type,
+                                             otherwise the operation will fail and $false will be
+                                             returned.]]
+            }
+         }
+         keys {
+            part: string; [[The part name]]
          }
       }
       @property text_change_cb {
@@ -1254,6 +1252,9 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
 
               See also @.part_text_unescaped.get().]]
             return: bool;
+            values {
+               text_to_escape: string; [[The text string]]
+            }
          }
          get {
             [[Returns the text of the object part, without escaping.
@@ -1264,12 +1265,12 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               when done.
 
               See also @.part_text_unescaped.set().]]
+            values {
+               text_to_escape: own(char *); [[The text string]]
+            }
          }
          keys {
             part: string; [[The part name]]
-         }
-         values {
-            text_to_escape: string; [[The text string]]
          }
       }
       part_text_append {
@@ -1495,40 +1496,34 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               \@ref evas_textblock_cursor_content_get
 
               You must free the return (if not $null) after you are done with it.]]
+            return: own(char *); [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
          }
          keys {
             part: string; [[The part name]]
             cur: Edje.Cursor; [[The cursor to use]]
          }
-         values {
-            text: own(char *); [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
-         }
       }
       @property part_text_cursor_is_format {
          get {
             [[Returns whether the cursor points to a format.
-            \@ref evas_textblock_cursor_is_format]]
+              \@ref evas_textblock_cursor_is_format]]
+            return: bool; [[true if it's true, false otherwise.]]
          }
          keys {
             part: string; [[The part name]]
             cur: Edje.Cursor; [[The cursor to adjust.]]
-         }
-         values {
-            is_format: bool; [[true if it's true, false otherwise.]]
          }
       }
       @property part_text_cursor_is_visible_format {
          get {
             [[Return true if the cursor points to a visible format
               For example \\t, \\n, item and etc.
-              @ evas_textblock_cursor_format_is_visible_get]]
+              \@ref evas_textblock_cursor_format_is_visible_get]]
+            return: bool; [[true if it's true, false otherwise.]]
          }
          keys {
             part: string; [[The part name]]
             cur: Edje.Cursor; [[The cursor to adjust.]]
-         }
-         values {
-            is_visible_format: bool;
          }
       }
       @property item_provider {
@@ -1551,6 +1546,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               The default is to  not allow selection. This function only affects user
               selection, functions such as edje_object_part_text_select_all() and
               edje_object_part_text_select_none() are not affected.]]
+            legacy: null;
          }
          keys {
             part: string; [[The part name]]
@@ -1600,12 +1596,10 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               This function returns selection text of the object part.
 
               See also @.part_text_select_all() and @.part_text_select_none()]]
+            return: string; [[The text string]]
          }
          keys {
             part: string; [[The part name]]
-         }
-         values {
-            text: string; [[The text string]]
          }
       }
       @property part_text_imf_context {
@@ -1616,12 +1610,10 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               otherwise, the returned pointer is an Ecore_IMF
 
               @since 1.2.0]]
+            return: void_ptr; [[The input method context (Ecore_IMF_Context *) in entry]]
          }
          keys {
             part: string; [[The part name]]
-         }
-         values {
-            context: void_ptr; [[The input method context (Ecore_IMF_Context *) in entry]]
          }
       }
       part_text_imf_context_reset @const {
@@ -1716,16 +1708,20 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               The size and format of data are defined by the input panel.
 
               @since 1.2.0]]
+            keys {
+               part: string; [[The part name]]
+               data: const(void_ptr); [[The specific data to be set to the input panel.]]
+            }
          }
          get {
             [[Get the specific data of the current active input panel.
 
               @since 1.2.0]]
             return: void;
-         }
-         keys {
-            part: string; [[The part name]]
-            data: const(void_ptr); [[The specific data to be set to the input panel.]]
+            keys {
+               part: string; [[The part name]]
+               data: void_ptr; [[The specific data to be set to the input panel.]]
+            }
          }
          values {
             len: int; [[the length of data, in bytes, to send to the input panel]]
@@ -1887,14 +1883,12 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
 
               This function return a list of Evas_Textblock_Rectangle anchor
               rectangles.]]
+            return: const(list<const(Evas.Textblock_Rectangle)*>); [[The list of anchor rects (const Evas_Textblock_Rectangle
+                                                                     *), do not modify! Geometry is relative to entry part.]]
          }
          keys {
             part: string; [[The part name]]
             anchor: string; [[The anchor name]]
-         }
-         values {
-            rect_list: const(list<const(Evas.Textblock_Rectangle)*>); [[The list of anchor rects (const Evas_Textblock_Rectangle
-                                                                        *), do not modify! Geometry is relative to entry part.]]
          }
       }
       @property part_text_anchor_list {
@@ -1902,12 +1896,10 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             [[Return a list of char anchor names.
 
               This function returns a list of char anchor names.]]
+            return: const(list<string>); [[The list of anchors (const char *), do not modify!]]
          }
          keys {
             part: string; [[The part name]]
-         }
-         values {
-            anchor_list: const(list<string>); [[The list of anchors (const char *), do not modify!]]
          }
       }
       text_insert_filter_callback_add {
@@ -2066,12 +2058,10 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             [[Return a list of char item names.
 
               This function returns a list of char item names.]]
+            return: const(list<string>); [[The list of items (const char *), do not modify!]]
          }
          keys {
             part: string; [[The part name]]
-         }
-         values {
-            item_list: const(list<string>); [[The list of items (const char *), do not modify!]]
          }
       }
    }
