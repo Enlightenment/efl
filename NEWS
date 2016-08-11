@@ -763,56 +763,23 @@ Fixes:
    * combobox: fix recalc and hover's best_location error
    * js: fix examples functions
    * elm entry: check for null return from eina_rectangle_new
-   * eina-cxx: Remove Eo classes defined manually (T2940)
-   * edje: unswallow objects from parent edje when swallowing into new edje
-   * ecore-drm: Call inputs shutdown before eina_shutdown
    * [Hover] Fixed the delaying of hover dismiss on continuous mouse clicks (T3006)
-   * ecore_wayland: send mouse_move when sets touch_focus window in cb_touch_down
    * box: enforce size recalc during unpack_all()
-   * ecore_wayland: move check for pointer capability
-   * ecore_drm/ecore_wl2: logging: remove errant usage of %m
    * config: try to properly update config for popup new align value. (T3008)
    * config: Correct defaults in upgrade of popup conf (T3008)
    * Gengrid: improve item_region_show code
-   * win32: Fix compilation due to recent changes in Evil
-   * embryo: change the log catagory of printf in embryo
-   * ecore imf: fix imf module load hangs when not even configured
-   * ecore-x: add safety checks for _ecore_x_disp in some functions
-   * Eina: Fix eina_file_mk[ds]temp when a path is passed
-   * elua: Fix use of eina_file_mkstemp after previous patch
-   * Evas GL: Also fix surface cap cache
-   * edje/edje_edit: make posible to unset the program filter part and state
    * elementary: Fix elm_win_window_id_get function (T3058)
-   * ecore-drm: Cleanup ecore-drm shutdown routine
-   * ecore-evas-drm: Cleanup drm outputs during shutdown
-   * ecore-drm: Refactor logind code to use tty functions
-   * ecore-drm: Destroy any existing eeze watch when we free the device
-   * ecore-drm: Don't unset logind variable when disconnecting a device
-   * ecore-drm: Unify and cleanup tty code
    * Adjust "context_menu_disabled" configuration.
-   * ector: fix potential crash if cairo is not found on the system. (T2938)
    * genlist : fix tree item floating issue when homoegeneous mode is enabled (T2708)
    * combobox: move responsibility to define filter and content to the user of a combobox
    * combobox: "return" key handled correctly and removed unreachable code. (T3075)
    * Genlist: do not select the item two times in case of a double click.
-   * Ethumb: make the emotion plugin correctly use the edje frame if requested.
-   * ecore_evas_extn: Add safety checks, fixing a crash in elm_test (T2835)
-   * edje: Fix potential NULL pointer dereference (CID1349866)
-   * efreet: reject invalid "" data for Efreet_Desktop->x hash (T3096)
-   * efreet: add locking for efreet_desktop_x_field_get()
-   * evas: Fix segfault when trying to determine overlay usage
    * Elm Image: fix usage of animated gif on the same image object more than one time
    * combobox: fix disabled state (T3075)
    * combobox: fix continuous clicks on hover
-   * evas: Fix explicit NULL dereference (CID1347415)
-   * Evas clip: Fix rare crash in _render_pre_clipper_change
-   * eina: fix invalid prototype
    * [toolbar] don't leak icons into the UI
-   * eeze: Fix eeze_udev_find_by_subsystem_sysname function
    * [toolbar] Adjust icon size along with text etc.
    * genlist/gengrid: Fix focus hilight error (T3122)
-   * eldbus: Correctly read/write boolean to eina_value (T3089)
-   * revise edje_object_size_min_restricted_calc() logic. (T2978)
    * edje: Reduce duplicated item obj creations and deletions.
    * Elm entry: Fix selection using handlers.
    * multibuttonentry: Add item unfocused callback.
@@ -1187,6 +1154,28 @@ Fixes:
    * elm scroller accel was broken by default confgis setting it to 0. fix (T4263)
    * elementary widget: fix a wrong disabled behavior.
    * edje_edit: delete swallowed object before unswallowing (for part type GROUP)
+   * Fix text check in Elm_Code T4264
+   * elm theme - don't use empty env vars eina_prefix handles anyway
+   * glx: Fix black windows in E on nvidia (T3030)
+   * elm focus default theme: fix wrong resizing
+   * Fix further text checks in Elm_Code T4264
+   * Elm.Entry: use proper theme_set function on edje object (T4091)
+   * efreet: free fallback cache on shutdown
+   * eina lock semaphores - do not use shared semaphores and fix osx names
+   * ecore-con - fix complaint about null slave list due to shutdown
+   * embryo_cc - fix coverity complaint about assert (CID1361224)
+   * eina log - keep coverity happy with potential ptr comparison overflow (CID1361220)
+   * eina log - handle possible overflow from high mem (last few bytes) or env (CID1361219)
+   * elm config - dont rescale ui if no config that needs rescale changed (T4296)
+   * edje_cc - fix inheritance of programs and store channel too in copy
+   * efl - edje entry - dont emit changed on markup set unless text changed (T4045)
+   * elm_map: fix wrong check of source search
+   * elm_need_efret() - improve error handling according to coverity (CID1360466)
+   * edje_pick: don't copy dependencies group if they in the import list (T4313)
+   * edje_pick: set the correct file name for copied sample
+   * edje_pick:set the correct compression for sample (T4314)
+   * evas smart obj delete on shutdown - fix weird child with null parent
+   * evas image update calculation - account for clipped color changes (T4246)
 
 Changes since 1.16.0:
 ---------------------
