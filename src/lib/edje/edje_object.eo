@@ -914,151 +914,163 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             h: Evas.Coord; [[A pointer to a variable where to store the part's height]]
          }
       }
-      part_drag_step_set {
-         [[Sets the drag step increment.
+      @property part_drag_value {
+         set {
+            [[Set the dragable object location.
 
-           Sets the x,y step increments for a dragable object.
+              Places the dragable object at the given location.
 
-           Values for dx and dy are real numbers that range from 0 to 1,
-           representing the relative size of the dragable area on that axis by which the
-           part will be moved.
+              Values for dx and dy are real numbers that range from 0 to 1,
+              representing the relative position to the dragable area on that axis.
 
-           See also @.part_drag_step_get()]]
+              This value means, for the vertical axis, that 0.0 will be at the top if the
+              first parameter of $y in the dragable part theme is 1, and at bottom if it
+              is -1.
 
-         return: bool;
-         params {
-            @in part: string; [[The part name]]
-            @in dx: double; [[The x step amount]]
-            @in dy: double; [[The y step amount]]
+              For the horizontal axis, 0.0 means left if the first parameter of $x in the
+              dragable part theme is 1, and right if it is -1.
+
+              See also @.part_drag_value_get()]]
+            return: bool;
+         }
+         get {
+            [[Get the dragable object location.
+
+              Values for dx and dy are real numbers that range from 0 to 1,
+              representing the relative position to the dragable area on that axis.
+
+              See also @.part_drag_value_set()
+
+              Gets the drag location values.]]
+            return: bool;
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            dx: double; [[The x value]]
+            dy: double; [[The y value]]
          }
       }
-      part_drag_step_get @const {
-         [[Gets the drag step increment values.
+      @property part_drag_size {
+         set {
+            [[Set the dragable object size.
 
-           Gets the x and y step increments for the dragable object.
+              Values for dw and dh are real numbers that range from 0 to 1,
+              representing the relative size of the dragable area on that axis.
 
-           See also @.part_drag_step_set()]]
-           return: bool;
-         params {
-            @in part: string; [[The part]]
-            @out dx: double; [[The x step increment pointer]]
-            @out dy: double; [[The y step increment pointer]]
+              Sets the size of the dragable object.
+
+              See also @.part_drag_size_get()]]
+            return: bool;
+         }
+         get {
+            [[Get the dragable object size.
+
+              Gets the dragable object size.
+
+              See also @.part_drag_size_set()]]
+            return: bool;
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            dw: double; [[The drag width]]
+            dh: double; [[The drag height]]
          }
       }
-      part_drag_value_set {
-         [[Set the dragable object location.
+      @property part_drag_dir {
+         get {
+            [[Determine dragable directions.
 
-           Places the dragable object at the given location.
-
-           Values for dx and dy are real numbers that range from 0 to 1,
-           representing the relative position to the dragable area on that axis.
-
-           This value means, for the vertical axis, that 0.0 will be at the top if the
-           first parameter of $y in the dragable part theme is 1, and at bottom if it
-           is -1.
-
-           For the horizontal axis, 0.0 means left if the first parameter of $x in the
-           dragable part theme is 1, and right if it is -1.
-
-           See also @.part_drag_value_get()]]
-
-         return: bool;
-         params {
-            @in part: string; [[The part name]]
-            @in dx: double; [[The x value]]
-            @in dy: double; [[The y value]]
+              The dragable directions are defined in the EDC file, inside the \@ref dragable
+              section, by the attributes $x and $y. See the \@ref edcref for more
+              information.]]
          }
-      }
-      part_drag_value_get @const {
-         [[Get the dragable object location.
-
-           Values for dx and dy are real numbers that range from 0 to 1,
-           representing the relative position to the dragable area on that axis.
-
-           See also @.part_drag_value_set()
-
-           Gets the drag location values.]]
-         return: bool;
-         params {
-            @in part: string; [[The part name]]
-            @out dx: double; [[The X value pointer]]
-            @out dy: double; [[The Y value pointer]]
+         keys {
+            part: string; [[The part name]]
          }
-      }
-      part_drag_page_set {
-         [[Sets the page step increments.
-
-           Sets the x,y page step increment values.
-
-           Values for dx and dy are real numbers that range from 0 to 1,
-           representing the relative size of the dragable area on that axis by which the
-           part will be moved.
-
-           See also @.part_drag_page_get()]]
-
-         return: bool;
-         params {
-            @in part: string; [[The part name]]
-            @in dx: double; [[The x page step increment]]
-            @in dy: double; [[The y page step increment]]
-         }
-      }
-      part_drag_page_get @const {
-         [[Gets the page step increments.
-
-           Gets the x,y page step increments for the dragable object.
-
-           See also @.part_drag_page_set()]]
-         return: bool;
-         params {
-            @in part: string; [[The part name]]
-            @out dx: double; [[The dx page increment pointer]]
-            @out dy: double; [[The dy page increment pointer]]
-         }
-      }
-      part_drag_size_set {
-         [[Set the dragable object size.
-
-           Values for dw and dh are real numbers that range from 0 to 1,
-           representing the relative size of the dragable area on that axis.
-
-           Sets the size of the dragable object.
-
-           See also @.part_drag_size_get()]]
-
-         return: bool;
-         params {
-            @in part: string; [[The part name]]
-            @in dw: double; [[The drag width]]
-            @in dh: double; [[The drag height]]
-         }
-      }
-      part_drag_size_get @const {
-         [[Get the dragable object size.
-
-           Gets the dragable object size.
-
-           See also @.part_drag_size_set()]]
-         return: bool;
-         params {
-            @in part: string; [[The part name]]
-            @out dw: double; [[The drag width pointer]]
-            @out dh: double; [[The drag height pointer]]
-         }
-      }
-      part_drag_dir_get @const {
-         [[Determine dragable directions.
-
-           The dragable directions are defined in the EDC file, inside the \@ref dragable
-           section, by the attributes $x and $y. See the \@ref edcref for more
-           information.]]
-
-         return: Edje.Drag_Dir; [[#EDJE_DRAG_DIR_NONE: Not dragable
+         values {
+            dir: Edje.Drag_Dir; [[#EDJE_DRAG_DIR_NONE: Not dragable
                                   #EDJE_DRAG_DIR_X: Dragable in X direction
                                   #EDJE_DRAG_DIR_Y: Dragable in Y direction
                                   #EDJE_DRAG_DIR_XY: Dragable in X & Y directions]]
+         }
+      }
+      @property part_drag_step {
+         set {
+            [[Sets the drag step increment.
+
+              Sets the x,y step increments for a dragable object.
+
+              Values for dx and dy are real numbers that range from 0 to 1,
+              representing the relative size of the dragable area on that axis by which the
+              part will be moved.
+
+              See also @.part_drag_step_get()]]
+            return: bool;
+         }
+         get {
+            [[Gets the drag step increment values.
+
+              Gets the x and y step increments for the dragable object.
+
+              See also @.part_drag_step_set()]]
+            return: bool;
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            dx: double; [[The x step amount]]
+            dy: double; [[The y step amount]]
+         }
+      }
+      part_drag_step {
+         [[Steps the dragable x,y steps.
+
+           Steps x,y where the step increment is the amount set by
+           edje_object_part_drag_step_set.
+
+           Values for dx and dy are real numbers that range from 0 to 1.
+
+           See also @.part_drag_page()]]
+
+         return: bool;
          params {
             @in part: string; [[The part name]]
+            @in dx: double; [[The x step]]
+            @in dy: double; [[The y step]]
+         }
+      }
+      @property part_drag_page {
+         set {
+            [[Sets the page step increments.
+
+              Sets the x,y page step increment values.
+
+              Values for dx and dy are real numbers that range from 0 to 1,
+              representing the relative size of the dragable area on that axis by which the
+              part will be moved.
+
+              See also @.part_drag_page_get()]]
+            return: bool;
+         }
+         get {
+            [[Gets the page step increments.
+
+              Gets the x,y page step increments for the dragable object.
+
+              See also @.part_drag_page_set()]]
+            return: bool;
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            dx: double; [[The x page step increment]]
+            dy: double; [[The y page step increment]]
          }
       }
       part_drag_page {
@@ -1072,23 +1084,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
            Warning: Paging is bugged!
 
            See also @.part_drag_step()]]
-
-         return: bool;
-         params {
-            @in part: string; [[The part name]]
-            @in dx: double; [[The x step]]
-            @in dy: double; [[The y step]]
-         }
-      }
-      part_drag_step {
-         [[Steps the dragable x,y steps.
-
-           Steps x,y where the step increment is the amount set by
-           edje_object_part_drag_step_set.
-
-           Values for dx and dy are real numbers that range from 0 to 1.
-
-           See also @.part_drag_page()]]
 
          return: bool;
          params {
