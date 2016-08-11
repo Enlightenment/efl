@@ -1608,16 +1608,20 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             text: string; [[The text string]]
          }
       }
-      part_text_imf_context_get @const {
-         [[Get the input method context in entry.
+      @property part_text_imf_context {
+         get {
+            [[Get the input method context in entry.
 
-           If ecore_imf was not available when edje was compiled, this function returns $null
-           otherwise, the returned pointer is an Ecore_IMF
+              If ecore_imf was not available when edje was compiled, this function returns $null
+              otherwise, the returned pointer is an Ecore_IMF
 
-           @since 1.2.0]]
-         return: void_ptr; [[The input method context (Ecore_IMF_Context *) in entry]]
-         params {
-            @in part: string; [[The part name]]
+              @since 1.2.0]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            context: void_ptr; [[The input method context (Ecore_IMF_Context *) in entry]]
          }
       }
       part_text_imf_context_reset @const {
