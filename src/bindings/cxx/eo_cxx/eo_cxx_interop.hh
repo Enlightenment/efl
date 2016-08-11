@@ -746,13 +746,13 @@ template <typename T>
 struct is_callable<T, decltype(std::declval<T>() ())> : std::true_type {};
 
 inline void do_eo_add(Eo*& object, efl::eo::concrete const& parent
-                      , Eo_Class const* klass)
+                      , Efl_Class const* klass)
 {
   object = ::_eo_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
   object = ::_eo_add_end(object, EINA_FALSE, EINA_FALSE);
 }
 template <typename F>
-void do_eo_add(Eo*& object, efl::eo::concrete const& parent, Eo_Class const* klass, F f)
+void do_eo_add(Eo*& object, efl::eo::concrete const& parent, Efl_Class const* klass, F f)
 {
   object = ::_eo_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
   f();

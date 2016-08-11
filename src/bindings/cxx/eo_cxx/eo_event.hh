@@ -16,7 +16,7 @@
 
 namespace efl { namespace eolian {
 
-typedef ::Eo_Callback_Priority callback_priority;
+ typedef ::Efl_Callback_Priority callback_priority;
 namespace callback_priorities
 {
 static const callback_priority before = -100;
@@ -74,7 +74,7 @@ private:
 template <typename F>
 struct _event_deleter
 {
-  _event_deleter(F* data, Eo* eo, ::Eo_Event_Cb cb, Eo_Event_Description const* description)
+  _event_deleter(F* data, Eo* eo, ::Efl_Event_Cb cb, Efl_Event_Description const* description)
     : _data(data), _eo( ::eo_ref(eo)), _cb(cb), _description(description)
   {
   }
@@ -97,7 +97,7 @@ struct _event_deleter
 
   void operator()() const
   {
-    ::eo_event_callback_del(_eo, _description, _cb, _data);
+    ::efl_event_callback_del(_eo, _description, _cb, _data);
     ::ecore_main_loop_thread_safe_call_async(&_deleter_call, _data);
   }
 
@@ -109,12 +109,12 @@ private:
 
   F* _data;
   Eo* _eo;
-  ::Eo_Event_Cb _cb;
-  Eo_Event_Description const* _description;
+  ::Efl_Event_Cb _cb;
+  Efl_Event_Description const* _description;
 };
 
 template <typename F>
-signal_connection make_signal_connection(std::unique_ptr<F>& data, Eo* eo, ::Eo_Event_Cb cb, Eo_Event_Description const* description)
+signal_connection make_signal_connection(std::unique_ptr<F>& data, Eo* eo, ::Efl_Event_Cb cb, Efl_Event_Description const* description)
 {
   signal_connection c(_event_deleter<F>(data.get(), eo, cb, description));
   data.release();
@@ -152,14 +152,14 @@ signal_connection event_add(Event event, Object object, F&& function)
   typedef typename std::remove_reference<F>::type function_type;
   std::unique_ptr<function_type> f(new function_type(std::forward<F>(function)));
 
-  ::eo_event_callback_priority_add
+  ::efl_event_callback_priority_add
       (object._eo_ptr(), event.description(), 0
-       , static_cast<Eo_Event_Cb>
+       , static_cast<Efl_Event_Cb>
        (&_detail::event_callback<Object, typename Event::parameter_type, function_type>)
        , f.get());
   return make_signal_connection
     (f, object._eo_ptr()
-     , static_cast<Eo_Event_Cb>
+     , static_cast<Efl_Event_Cb>
      (&_detail::event_callback<Object, typename Event::parameter_type, function_type>)
      , event.description());
 }

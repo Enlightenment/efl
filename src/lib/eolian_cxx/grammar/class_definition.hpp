@@ -77,7 +77,7 @@ struct class_definition_generator
      if(!as_generator(*(scope_tab << function_declaration))
         .generate(sink, cls.functions, context)) return false;
                                              
-     // static Eo_Class const* _eo_class();
+     // static Efl_Class const* _eo_class();
      std::string suffix;
      switch(cls.type)
        {
@@ -95,7 +95,7 @@ struct class_definition_generator
 
      if(!as_generator
         (
-            scope_tab << "static Eo_Class const* _eo_class()\n"
+            scope_tab << "static Efl_Class const* _eo_class()\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << "return "
         ).generate(sink,  attributes::unused, context)) return false;
@@ -133,7 +133,7 @@ struct class_definition_generator
               *attribute_reorder<1, 2, 0, 1>
               ((scope_tab << "static struct " << string_replace(',', '_') << "_event\n"
                 << scope_tab << "{\n"
-                << scope_tab << scope_tab << "static Eo_Event_Description const* description()\n"
+                << scope_tab << scope_tab << "static Efl_Event_Description const* description()\n"
                 << scope_tab << scope_tab << "{ return " << string << "; }\n"
                 << scope_tab << scope_tab << "typedef "
                 << (attribute_conditional([] (eina::optional<attributes::type_def> t) { return !!t; })

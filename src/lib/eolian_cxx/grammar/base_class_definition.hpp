@@ -36,7 +36,7 @@ struct base_class_definition_generator
      if(!as_generator(*(scope_tab << function_declaration))
         .generate(sink, cls.functions, context)) return false;
 
-     // static Eo_Class const* _eo_class();
+     // static Efl_Class const* _eo_class();
      std::string suffix;
      switch(cls.type)
        {
@@ -54,7 +54,7 @@ struct base_class_definition_generator
 
      if(!as_generator
         (
-            scope_tab << "static Eo_Class const* _eo_class()\n"
+            scope_tab << "static Efl_Class const* _eo_class()\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << "return "
         ).generate(sink,  attributes::unused, context)) return false;
