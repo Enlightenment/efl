@@ -1431,15 +1431,19 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             @in cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
-      part_text_cursor_geometry_get @const {
-         [[Returns the cursor geometry of the part relative to the edje
-           object.]]
-         params {
-            @in part: string; [[The part name]]
-            @out x: Evas.Coord; [[Cursor X position]]
-            @out y: Evas.Coord; [[Cursor Y position]]
-            @out w: Evas.Coord; [[Cursor width]]
-            @out h: Evas.Coord; [[Cursor height]]
+      @property part_text_cursor_geometry {
+         get {
+            [[Returns the cursor geometry of the part relative to the edje
+              object.]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            x: Evas.Coord; [[Cursor X position]]
+            y: Evas.Coord; [[Cursor Y position]]
+            w: Evas.Coord; [[Cursor width]]
+            h: Evas.Coord; [[Cursor height]]
          }
       }
       @property part_text_cursor_coord {
@@ -1457,25 +1461,23 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             y: Evas.Coord; [[Y Coordinate.]]
          }
       }
-      part_text_cursor_pos_set {
-         [[Sets the cursor position to the given value
+      @property part_text_cursor_pos {
+         set {
+            [[Sets the cursor position to the given value
 
-           @since 1.1.0]]
-
-         params {
-            @in part: string; [[The part name]]
-            @in cur: Edje.Cursor; [[The cursor to move]]
-            @in pos: int; [[the position of the cursor]]
+              @since 1.1.0]]
          }
-      }
-      part_text_cursor_pos_get @const {
-         [[Retrieves the current position of the cursor
+         get {
+            [[Retrieves the current position of the cursor
 
-           @since 1.1.0]]
-         return: int; [[The cursor position]]
-         params {
-            @in part: string; [[The part name]]
-            @in cur: Edje.Cursor; [[The cursor to get the position]]
+              @since 1.1.0]]
+         }
+         keys {
+            part: string; [[The part name]]
+            cur: Edje.Cursor; [[The cursor to move]]
+         }
+         values {
+            pos: int; [[the position of the cursor]]
          }
       }
       part_text_cursor_copy {
@@ -1487,36 +1489,46 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             @in dst: Edje.Cursor; [[the cursor to copy to]]
          }
       }
-      part_text_cursor_content_get @const {
-         [[Returns the content (char) at the cursor position.
-           \@ref evas_textblock_cursor_content_get
+      @property part_text_cursor_content {
+         get {
+            [[Returns the content (char) at the cursor position.
+              \@ref evas_textblock_cursor_content_get
 
-           You must free the return (if not $null) after you are done with it.]]
-
-         return: own(char *); [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
-         params {
-            @in part: string; [[The part name]]
-            @in cur: Edje.Cursor; [[The cursor to use]]
+              You must free the return (if not $null) after you are done with it.]]
+         }
+         keys {
+            part: string; [[The part name]]
+            cur: Edje.Cursor; [[The cursor to use]]
+         }
+         values {
+            text: own(char *); [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
          }
       }
-      part_text_cursor_is_format_get @const {
-         [[Returns whether the cursor points to a format.
-         \@ref evas_textblock_cursor_is_format]]
-
-         return: bool; [[true if it's true, false otherwise.]]
-         params {
-            @in part: string; [[The part name]]
-            @in cur: Edje.Cursor; [[The cursor to adjust.]]
+      @property part_text_cursor_is_format {
+         get {
+            [[Returns whether the cursor points to a format.
+            \@ref evas_textblock_cursor_is_format]]
+         }
+         keys {
+            part: string; [[The part name]]
+            cur: Edje.Cursor; [[The cursor to adjust.]]
+         }
+         values {
+            is_format: bool; [[true if it's true, false otherwise.]]
          }
       }
-      part_text_cursor_is_visible_format_get @const {
-         [[Return true if the cursor points to a visible format
-           For example \\t, \\n, item and etc.
-           @ evas_textblock_cursor_format_is_visible_get]]
-         return: bool;
-         params {
-            @in part: string; [[The part name]]
-            @in cur: Edje.Cursor; [[The cursor to adjust.]]
+      @property part_text_cursor_is_visible_format {
+         get {
+            [[Return true if the cursor points to a visible format
+              For example \\t, \\n, item and etc.
+              @ evas_textblock_cursor_format_is_visible_get]]
+         }
+         keys {
+            part: string; [[The part name]]
+            cur: Edje.Cursor; [[The cursor to adjust.]]
+         }
+         values {
+            is_visible_format: bool;
          }
       }
       @property item_provider {
