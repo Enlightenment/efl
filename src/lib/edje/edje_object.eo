@@ -1881,25 +1881,33 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             ondemand: bool; [[If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)]]
          }
       }
-      part_text_anchor_geometry_get @const {
-         [[Return a list of Evas_Textblock_Rectangle anchor rectangles.
+      @property part_text_anchor_geometry {
+         get {
+            [[Return a list of Evas_Textblock_Rectangle anchor rectangles.
 
-           This function return a list of Evas_Textblock_Rectangle anchor
-           rectangles.]]
-         return: const(list<const(Evas.Textblock_Rectangle)*>); [[The list of anchor rects (const Evas_Textblock_Rectangle
-                                                                  *), do not modify! Geometry is relative to entry part.]]
-         params {
-            @in part: string; [[The part name]]
-            @in anchor: string; [[The anchor name]]
+              This function return a list of Evas_Textblock_Rectangle anchor
+              rectangles.]]
+         }
+         keys {
+            part: string; [[The part name]]
+            anchor: string; [[The anchor name]]
+         }
+         values {
+            rect_list: const(list<const(Evas.Textblock_Rectangle)*>); [[The list of anchor rects (const Evas_Textblock_Rectangle
+                                                                        *), do not modify! Geometry is relative to entry part.]]
          }
       }
-      part_text_anchor_list_get @const {
-         [[Return a list of char anchor names.
+      @property part_text_anchor_list {
+         get {
+            [[Return a list of char anchor names.
 
-           This function returns a list of char anchor names.]]
-         return: const(list<string>); [[The list of anchors (const char *), do not modify!]]
-         params {
-            @in part: string; [[The part name]]
+              This function returns a list of char anchor names.]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            anchor_list: const(list<string>); [[The list of anchors (const char *), do not modify!]]
          }
       }
       text_insert_filter_callback_add {
