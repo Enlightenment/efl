@@ -710,7 +710,7 @@ ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
    EINA_SAFETY_ON_NULL_RETURN(display);
 
    _ecore_wl2_display_cleanup(display);
-   if (display->refs <= 0)
+   if (display->refs == 0)
      {
         wl_display_disconnect(display->wl.display);
 
@@ -728,7 +728,7 @@ ecore_wl2_display_destroy(Ecore_Wl2_Display *display)
    EINA_SAFETY_ON_NULL_RETURN(display);
 
    _ecore_wl2_display_cleanup(display);
-   if (display->refs <= 0)
+   if (display->refs == 0)
      {
         wl_display_destroy(display->wl.display);
 

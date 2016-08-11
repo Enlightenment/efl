@@ -282,7 +282,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    Evas_Engine_Info_Wayland_Egl *einfo;
    Ecore_Evas_Interface_Wayland *iface;
    Ecore_Evas_Engine_Wl_Data *wdata;
-   Ecore_Evas *ee;
+   Ecore_Evas *ee = NULL;
    int method = 0;
    int fx = 0, fy = 0, fw = 0, fh = 0;
 
@@ -310,14 +310,14 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
      {
         ERR("Failed to allocate Ecore_Evas");
-        goto ee_err;
+        goto err;
      }
 
    if (!(wdata = calloc(1, sizeof(Ecore_Evas_Engine_Wl_Data))))
      {
         ERR("Failed to allocate Ecore_Evas_Engine_Wl_Data");
 	free(ee);
-        goto ee_err;
+        goto err;
      }
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
@@ -460,9 +460,8 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    return ee;
 
 err:
-   ecore_evas_free(ee);
-ee_err:
-   ecore_wl2_display_disconnect(ewd);
+   if (ee) ecore_evas_free(ee);
+   else ecore_wl2_display_disconnect(ewd);
 conn_err:
    ecore_wl2_shutdown();
    return NULL;

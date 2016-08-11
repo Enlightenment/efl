@@ -3816,6 +3816,7 @@ _elm_config_sub_shutdown(void)
    if (_elm_wl_display)
      {
         ecore_wl2_display_disconnect(_elm_wl_display);
+        _elm_wl_display = NULL;
         ecore_wl2_shutdown();
      }
 #endif
