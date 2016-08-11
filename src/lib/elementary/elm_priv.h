@@ -544,6 +544,7 @@ void                *_elm_icon_signal_callback_del(Evas_Object *obj,
                                                    const char *emission,
                                                    const char *source,
                                                    Edje_Signal_Cb func_cb);
+ void                _elm_image_sizing_eval(Evas_Object *obj);
 /* end of DEPRECATED */
 
 

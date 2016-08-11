@@ -522,14 +522,6 @@ EAPI void elm_image_resize_up_set(Evas_Object *obj, Eina_Bool resize_up);
  */
 EAPI Eina_Bool elm_image_resize_up_get(const Evas_Object *obj);
 
-/** Re-evaluate the object's final geometry.
- *
- * @since 1.7
- *
- * @ingroup Elm_Image
- */
-EAPI void elm_image_sizing_eval(Evas_Object *obj);
-
 /**
  * @brief Control if the object is (up/down) resizable.
  *
