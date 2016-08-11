@@ -5400,7 +5400,7 @@ gl_re2_text_get(void *data, Evas_Object *obj EINA_UNUSED,
                       const char *part EINA_UNUSED)
 {
    int num = (int)(uintptr_t)data;
-   char buf[256];
+   char buf[32];
 
    snprintf(buf, sizeof(buf), "Item # %d", num);
    return strdup(buf);
@@ -5410,23 +5410,29 @@ static Evas_Object *
 gl_re2_content_get(void *data, Evas_Object *obj, const char *part)
 {
    int num = (int)(uintptr_t)data;
-   Evas_Object *cont = NULL;
-   char buf[256];
+   Evas_Object *lb = NULL;
+   char buf[64];
 
    if (!strcmp(part, "elm.swallow.icon"))
      {
-        cont = elm_icon_add(obj);
-        elm_icon_standard_set(cont, "user-home");
+        printf("Creating NEW content (icon) for item # %d\n", num);
+        lb = elm_label_add(obj);
+        evas_object_color_set(lb, 255, 0, 0, 255); // NOTE: never do this in real app
+        snprintf(buf, sizeof(buf), "Content for item # %d", num);
+        elm_object_text_set(lb, buf);
+        return lb;
      }
-   else if (!strcmp(part, "elm.swallow.end"))
+   if (!strcmp(part, "elm.swallow.end"))
      {
-        printf("Creating NEW content for item # %d\n", num);
-        cont = elm_label_add(obj);
-        snprintf(buf, sizeof(buf), "<warning>Content for item # %d</>", num);
-        elm_object_text_set(cont, buf);
+        printf("Creating NEW content (end) for item # %d\n", num);
+        lb = elm_label_add(obj);
+        evas_object_color_set(lb, 0, 255, 0, 255); // NOTE: never do this in real app
+        snprintf(buf, sizeof(buf), "Content for item # %d", num);
+        elm_object_text_set(lb, buf);
+        return lb;
      }
 
-   return cont;
+   return NULL;
 }
 
 static Evas_Object *
@@ -5435,10 +5441,24 @@ gl_re2_reusable_content_get(void *data, Evas_Object *obj,
 {
    Eina_Bool enabled = (Eina_Bool)(uintptr_t)evas_object_data_get(obj, "reusable_enabled");
    int num = (int)(uintptr_t)data;
+   char buf[64];
 
-   if (enabled && old && !strcmp(part, "elm.swallow.end"))
+   if (!enabled || !old)
+     return NULL;
+
+   if (!strcmp(part, "elm.swallow.icon"))
      {
-        printf("REUSING content for item # %d\n", num);
+        printf("REUSING content (icon) for item # %d\n", num);
+        snprintf(buf, sizeof(buf), "Content for item # %d", num);
+        elm_object_text_set(old, buf);
+        return old;
+     }
+
+   if (!strcmp(part, "elm.swallow.end"))
+     {
+        printf("REUSING content (end) for item # %d\n", num);
+        snprintf(buf, sizeof(buf), "Content for item # %d", num);
+        elm_object_text_set(old, buf);
         return old;
      }
 
@@ -5481,7 +5501,9 @@ test_genlist_reusable(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(fr);
 
    lb = elm_label_add(fr);
-   elm_object_text_set(lb, "Numbers on the left should always match the one on the right");
+   elm_object_text_set(lb, "Labels in left content (icon) must be red.<br>"
+                           "Labels in right content (end) must be green.<br>"
+                           "The 3 numbers in one row should always match.");
    elm_object_content_set(fr, lb);
    evas_object_show(lb);
 
