@@ -1092,33 +1092,40 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             @in dy: double; [[The y step]]
          }
       }
-      part_external_param_type_get @const {
-         [[Facility to query the type of the given parameter of the given part.]]
-
-         return: Edje.External.Param_Type; [[#EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value
-                                             from #Edje_External_Param_Type on success.]]
-         params {
-            @in part: string; [[The part name]]
-            @in param: string; [[the parameter name to use.]]
+      @property part_external_param_type {
+         get {
+            [[Facility to query the type of the given parameter of the given part.]]
+         }
+         keys {
+            part: string; [[The part name]]
+            param: string; [[the parameter name to use.]]
+         }
+         values {
+            param_type: Edje.External.Param_Type; [[#EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value
+                                                    from #Edje_External_Param_Type on success.]]
          }
       }
-      part_external_object_get @const {
-         [[Get the object created by this external part.
+      @property part_external_object {
+         get {
+            [[Get the object created by this external part.
 
-           Parts of type external creates the part object using information
-           provided by external plugins. It's somehow like "swallow"
-           (edje_object_part_swallow()), but it's all set automatically.
+              Parts of type external creates the part object using information
+              provided by external plugins. It's somehow like "swallow"
+              (edje_object_part_swallow()), but it's all set automatically.
 
-           This function returns the part created by such external plugins and
-           being currently managed by this Edje.
+              This function returns the part created by such external plugins and
+              being currently managed by this Edje.
 
-           Note: Almost all swallow rules apply: you should not move, resize,
-           hide, show, set the color or clipper of such part. It's a bit
-           more restrictive as one must  never delete this object!]]
-         return: Efl.Canvas.Object; [[The externally created object, or $null if there is none or
-                                  part is not an external.]]
-         params {
-            @in part: string; [[The part name]]
+              Note: Almost all swallow rules apply: you should not move, resize,
+              hide, show, set the color or clipper of such part. It's a bit
+              more restrictive as one must  never delete this object!]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            o: Efl.Canvas.Object; [[The externally created object, or $null if there is none or
+                                    part is not an external.]]
          }
       }
       @property part_external_content {
