@@ -1,4 +1,4 @@
-class Benchmark_Object (Eo.Base)
+class Benchmark_Object (Efl.Object)
 {
    data: null;
    methods {

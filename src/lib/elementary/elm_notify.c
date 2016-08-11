@@ -222,7 +222,7 @@ _block_area_clicked_cb(void *data,
                        const char *emission EINA_UNUSED,
                        const char *source EINA_UNUSED)
 {
-   eo_event_callback_call(data, ELM_NOTIFY_EVENT_BLOCK_CLICKED, NULL);
+   efl_event_callback_call(data, ELM_NOTIFY_EVENT_BLOCK_CLICKED, NULL);
 }
 
 EOLIAN static void
@@ -264,7 +264,7 @@ _timer_cb(void *data)
    if (!evas_object_visible_get(obj)) goto end;
 
    evas_object_hide(obj);
-   eo_event_callback_call(obj, ELM_NOTIFY_EVENT_TIMEOUT, NULL);
+   efl_event_callback_call(obj, ELM_NOTIFY_EVENT_TIMEOUT, NULL);
 
 end:
    return ECORE_CALLBACK_CANCEL;
@@ -448,7 +448,7 @@ _hide_finished_cb(void *data,
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
    efl_canvas_group_hide(eo_super(data, MY_CLASS));
-   eo_event_callback_call(data, ELM_NOTIFY_EVENT_DISMISSED, NULL);
+   efl_event_callback_call(data, ELM_NOTIFY_EVENT_DISMISSED, NULL);
 }
 
 EOLIAN static void
@@ -491,9 +491,9 @@ elm_notify_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_notify_eo_base_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
+_elm_notify_efl_object_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_NOTIFICATION);
 
@@ -709,7 +709,7 @@ _elm_notify_align_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, double *horizont
 }
 
 static void
-_elm_notify_class_constructor(Eo_Class *klass)
+_elm_notify_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

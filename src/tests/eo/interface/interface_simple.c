@@ -56,7 +56,7 @@ _ab_sum_get2(Eo *obj, void *class_data EINA_UNUSED)
    return a + b + 1;
 }
 
-static Eo_Op_Description op_descs[] = {
+static Efl_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_set, _a_set),
      EO_OP_FUNC(simple_a_get, _a_get),
      EO_OP_FUNC(simple_b_set, _b_set),
@@ -65,7 +65,7 @@ static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(interface2_ab_sum_get2, _ab_sum_get2),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,

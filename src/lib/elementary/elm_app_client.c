@@ -42,7 +42,7 @@ _sub_path_process(Elm_App_Client *eo, Eldbus_Message_Iter *obj_iter, Elm_App_Cli
         view = eo_add(ELM_APP_CLIENT_VIEW_CLASS, eo, elm_app_client_view_path_set(eo_self, obj_path));
         eina_hash_add(data->views, obj_path, view);
         if (!loading_list)
-          eo_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_CREATED, view);
+          efl_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_CREATED, view);
      }
 }
 
@@ -61,7 +61,7 @@ _objects_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA
    while (eldbus_message_iter_get_and_next(array_path, '{', &path))
      _sub_path_process(eo, path, cdata, EINA_TRUE);
 
-   eo_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED, NULL);
+   efl_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED, NULL);
 }
 
 static void _iface_add(void *data, const Eldbus_Message *msg)
@@ -105,8 +105,8 @@ _iface_del(void *data, const Eldbus_Message *msg)
           }
 
         eina_hash_del(cdata->views, path, NULL);
-        eo_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_DELETED, view);
-        eo_del(view);
+        efl_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_DELETED, view);
+        efl_del(view);
      }
 }
 
@@ -146,8 +146,8 @@ _pkg_name_owner_changed_cb(void *data, const char *bus EINA_UNUSED, const char *
           }
 
         eina_hash_del(cdata->views, path, NULL);
-        eo_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_DELETED, view);
-        eo_del(view);
+        efl_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_DELETED, view);
+        efl_del(view);
      }
 }
 
@@ -215,7 +215,7 @@ _create_view_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
      {
         view = eo_add(ELM_APP_CLIENT_VIEW_CLASS, eo, elm_app_client_view_path_set(eo_self, view_path));
         eina_hash_add(cdata->views, view_path, view);
-        eo_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_CREATED, view);
+        efl_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_CREATED, view);
      }
 
    if (!view)
@@ -298,15 +298,15 @@ _elm_app_client_view_open_cancel(Eo *eo EINA_UNUSED, Elm_App_Client_Data *_pd EI
 }
 
 EOLIAN static Eo *
-_elm_app_client_eo_base_finalize(Eo *obj, Elm_App_Client_Data *data)
+_elm_app_client_efl_object_finalize(Eo *obj, Elm_App_Client_Data *data)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(data->views, NULL);
 
-   return eo_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_app_client_eo_base_destructor(Eo *eo, Elm_App_Client_Data *data)
+_elm_app_client_efl_object_destructor(Eo *eo, Elm_App_Client_Data *data)
 {
    Eldbus_Object *obj;
    Eldbus_Connection *conn;
@@ -315,7 +315,7 @@ _elm_app_client_eo_base_destructor(Eo *eo, Elm_App_Client_Data *data)
 
    iter = eina_hash_iterator_data_new(data->views);
    EINA_ITERATOR_FOREACH(iter, view)
-     eo_del(view);
+     efl_del(view);
    eina_iterator_free(iter);
    eina_hash_free(data->views);
 
@@ -328,7 +328,7 @@ _elm_app_client_eo_base_destructor(Eo *eo, Elm_App_Client_Data *data)
    eldbus_connection_unref(conn);
    eldbus_shutdown();
 
-   eo_destructor(eo_super(eo, MY_CLASS));
+   efl_destructor(eo_super(eo, MY_CLASS));
 }
 
 #include "elm_app_client.eo.c"

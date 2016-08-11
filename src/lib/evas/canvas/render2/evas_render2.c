@@ -32,10 +32,10 @@ _always_call(Eo *eo_e, Evas_Callback_Type type, void *event_info)
 {
    int freeze_num = 0, i;
 
-   freeze_num = eo_event_freeze_count_get(eo_e);
-   for (i = 0; i < freeze_num; i++) eo_event_thaw(eo_e);
+   freeze_num = efl_event_freeze_count_get(eo_e);
+   for (i = 0; i < freeze_num; i++) efl_event_thaw(eo_e);
    evas_event_callback_call(eo_e, type, event_info);
-   for (i = 0; i < freeze_num; i++) eo_event_freeze(eo_e);
+   for (i = 0; i < freeze_num; i++) efl_event_freeze(eo_e);
 }
 
 // a list of canvases currently rendering

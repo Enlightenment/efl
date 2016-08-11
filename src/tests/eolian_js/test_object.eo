@@ -10,7 +10,7 @@ struct Test.Struct_Ex {
     value_enum: Test.Enum_Ex;
 }
 
-class Test.Object (Eo.Base) {
+class Test.Object (Efl.Object) {
    methods {
        method_integral_in_a_check {
            [[ tests integral in ]]
@@ -333,9 +333,9 @@ class Test.Object (Eo.Base) {
        }
    }
    implements {
-      Eo.Base.finalize;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.finalize;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
    }
    events {
       test;

@@ -356,8 +356,8 @@ _name_owner_changed_cb(void *data EINA_UNUSED,
      _update();
 }
 
-EOLIAN static Eo_Base *
-_elm_sys_notify_dbus_eo_base_constructor(Eo   *obj,
+EOLIAN static Efl_Object *
+_elm_sys_notify_dbus_efl_object_constructor(Eo   *obj,
                                          void *sd  EINA_UNUSED)
 {
    /* Don't create the same object twice (singleton) */
@@ -374,7 +374,7 @@ _elm_sys_notify_dbus_eo_base_constructor(Eo   *obj,
 
         eldbus_name_owner_get(_elm_sysnotif_conn, BUS, _name_owner_get_cb, NULL);
 
-        obj = eo_constructor(eo_super(obj, MY_CLASS));
+        obj = efl_constructor(eo_super(obj, MY_CLASS));
         return obj;
      }
 
@@ -383,14 +383,14 @@ _elm_sys_notify_dbus_eo_base_constructor(Eo   *obj,
 }
 
 EOLIAN static void
-_elm_sys_notify_dbus_eo_base_destructor(Eo   *obj,
+_elm_sys_notify_dbus_efl_object_destructor(Eo   *obj,
                                         void *sd  EINA_UNUSED)
 {
    _release();
 
    eldbus_connection_unref(_elm_sysnotif_conn);
    _elm_sysnotif_conn = NULL;
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 

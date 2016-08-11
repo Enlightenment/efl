@@ -1,4 +1,4 @@
-mixin Efl.Gfx.Map (Eo.Interface, Eo.Base)
+mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
 {
    [[Texture UV mapping for all objects (rotation, perspective, 3d, ...).
 

@@ -295,9 +295,9 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.dbg_info_get;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.dbg_info_get;
       Efl.Canvas.Object.paragraph_direction.set;
       Efl.Canvas.Object.paragraph_direction.get;
       Efl.Text.text.set;

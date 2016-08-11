@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.App.Server.View (Eo.Base)
+class Elm.App.Server.View (Efl.Object)
 {
    eo_prefix: elm_app_server_view;
    methods {
@@ -94,8 +94,8 @@ class Elm.App.Server.View (Eo.Base)
       }
    }
    implements {
-      Eo.Base.destructor;
-      Eo.Base.finalize;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
    }
    events {
       resumed; [[Called when view must be resumed]]

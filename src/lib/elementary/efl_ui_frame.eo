@@ -53,7 +53,7 @@ class Efl.Ui.Frame (Elm.Layout, Efl.Ui.Clickable)
       }
    }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       class.constructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_add;

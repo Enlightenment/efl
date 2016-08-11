@@ -111,7 +111,7 @@ _on_recalc_done(void *data,
    EFL_UI_FRAME_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
-   eo_event_callback_del
+   efl_event_callback_del
      (wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, _recalc, data);
    sd->anim = EINA_FALSE;
 
@@ -131,12 +131,12 @@ _on_frame_clicked(void *data,
 
    if (sd->collapsible)
      {
-        eo_event_callback_add(wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, _recalc, data);
+        efl_event_callback_add(wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, _recalc, data);
         elm_layout_signal_emit(data, "elm,action,toggle", "elm");
         sd->collapsed++;
         sd->anim = EINA_TRUE;
      }
-   eo_event_callback_call
+   efl_event_callback_call
      (data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
@@ -198,9 +198,9 @@ elm_frame_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_efl_ui_frame_eo_base_constructor(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
+_efl_ui_frame_efl_object_constructor(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FRAME);
@@ -246,7 +246,7 @@ _efl_ui_frame_collapse_go(Eo *obj, Efl_Ui_Frame_Data *sd, Eina_Bool collapse)
    if (sd->collapsed == collapse) return;
 
    elm_layout_signal_emit(obj, "elm,action,toggle", "elm");
-   eo_event_callback_call
+   efl_event_callback_call
      (wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, obj);
    sd->collapsed = collapse;
    sd->anim = EINA_TRUE;
@@ -259,7 +259,7 @@ _efl_ui_frame_collapse_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_frame_class_constructor(Eo_Class *klass)
+_efl_ui_frame_class_constructor(Efl_Class *klass)
 {
       evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

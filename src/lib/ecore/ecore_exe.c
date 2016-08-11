@@ -94,15 +94,15 @@ _ecore_exe_command_get(Eo *obj EINA_UNUSED, Ecore_Exe_Data *pd, const char **cmd
 }
 
 EOLIAN static Eo *
-_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
+_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   obj = eo_finalize(eo_super(obj, MY_CLASS));
+   obj = efl_finalize(eo_super(obj, MY_CLASS));
 
    if (!obj)
       return obj;
 
-   return _impl_ecore_exe_eo_base_finalize(obj, exe);
+   return _impl_ecore_exe_efl_object_finalize(obj, exe);
 }
 
 EAPI void
@@ -210,17 +210,17 @@ ecore_exe_free(Ecore_Exe *obj)
       return NULL;
 
    void *data = exe->data;
-   eo_del(obj);
+   efl_del(obj);
 
    return data;
 }
 
 EOLIAN static void
-_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
+_ecore_exe_efl_object_destructor(Eo *obj, Ecore_Exe_Data *exe)
 {
-   eo_destructor(eo_super(obj, ECORE_EXE_CLASS));
+   efl_destructor(eo_super(obj, ECORE_EXE_CLASS));
 
-   _impl_ecore_exe_eo_base_destructor(obj, exe);
+   _impl_ecore_exe_efl_object_destructor(obj, exe);
 }
 
 EAPI void

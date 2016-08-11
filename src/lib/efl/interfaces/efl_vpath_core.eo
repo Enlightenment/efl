@@ -1,4 +1,4 @@
-class Efl.Vpath.Core (Eo.Base, Efl.Vpath)
+class Efl.Vpath.Core (Efl.Object, Efl.Vpath)
 {
    [[ Core EFL implementation of a Vpath system
 
@@ -26,8 +26,8 @@ class Efl.Vpath.Core (Eo.Base, Efl.Vpath)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Vpath.fetch;
    }
 }

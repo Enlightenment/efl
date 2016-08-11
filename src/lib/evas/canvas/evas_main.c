@@ -169,9 +169,9 @@ evas_new(void)
 }
 
 EOLIAN static Eo *
-_evas_canvas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
+_evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
 {
-   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
 
    e->evas = eo_obj;
    e->output.render_method = RENDER_METHOD_INVALID;
@@ -224,7 +224,7 @@ evas_free(Evas *eo_e)
 }
 
 EOLIAN static void
-_evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 {
    Eina_Rectangle *r;
    Evas_Coord_Touch_Point *touch_point;
@@ -279,7 +279,7 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
                   ___eo_ref2_reset(eo_obj);
                   while (eo_ref_get(eo_obj) > 1) eo_unref(eo_obj);
                   while (eo_ref_get(eo_obj) < 1) eo_ref(eo_obj);
-                  eo_del(eo_obj);
+                  efl_del(eo_obj);
                }
           }
      }
@@ -350,7 +350,7 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
    eina_spinlock_free(&(e->render.lock));
 
    e->magic = 0;
-   eo_destructor(eo_super(eo_e, MY_CLASS));
+   efl_destructor(eo_super(eo_e, MY_CLASS));
 }
 
 EOLIAN static Evas_Engine_Info*
@@ -608,12 +608,12 @@ evas_data_argb_unpremul(unsigned int *data, unsigned int len)
 }
 
 EOLIAN static Eo *
-_evas_canvas_eo_base_provider_find(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED,
-                                   const Eo_Class *klass)
+_evas_canvas_efl_object_provider_find(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED,
+                                   const Efl_Class *klass)
 {
    if (klass == EVAS_CANVAS_CLASS)
      return eo_e;
-   return eo_provider_find(eo_super(eo_e, MY_CLASS), klass);
+   return efl_provider_find(eo_super(eo_e, MY_CLASS), klass);
 }
 
 Ector_Surface *

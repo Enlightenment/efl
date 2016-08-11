@@ -12,10 +12,10 @@
 static int _elm_code_init = 0;
 EAPI int _elm_code_lib_log_dom = -1;
 
-EAPI const Eo_Event_Description ELM_CODE_EVENT_LINE_LOAD_DONE =
-    EO_EVENT_DESCRIPTION("line,load,done");
-EAPI const Eo_Event_Description ELM_CODE_EVENT_FILE_LOAD_DONE =
-    EO_EVENT_DESCRIPTION("file,load,done");
+EAPI const Efl_Event_Description ELM_CODE_EVENT_LINE_LOAD_DONE =
+    EFL_EVENT_DESCRIPTION("line,load,done");
+EAPI const Efl_Event_Description ELM_CODE_EVENT_FILE_LOAD_DONE =
+    EFL_EVENT_DESCRIPTION("file,load,done");
 
 
 EAPI int
@@ -102,14 +102,14 @@ elm_code_free(Elm_Code *code)
 }
 
 EAPI void
-elm_code_callback_fire(Elm_Code *code, const Eo_Event_Description *signal, void *data)
+elm_code_callback_fire(Elm_Code *code, const Efl_Event_Description *signal, void *data)
 {
    Eina_List *item;
    Eo *widget;
 
    EINA_LIST_FOREACH(code->widgets, item, widget)
      {
-        eo_event_callback_call(widget, signal, data);
+        efl_event_callback_call(widget, signal, data);
      }
 }
 

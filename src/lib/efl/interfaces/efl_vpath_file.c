@@ -41,7 +41,7 @@ _efl_vpath_file_do(Eo *obj EINA_UNUSED, Efl_Vpath_File_Data *pd)
 {
    if (pd->called) return EINA_FALSE;
    pd->called = EINA_TRUE;
-   eo_event_callback_call(obj, EFL_VPATH_FILE_EVENT_FETCHED, NULL);
+   efl_event_callback_call(obj, EFL_VPATH_FILE_EVENT_FETCHED, NULL);
    return EINA_TRUE;
 }
 
@@ -52,9 +52,9 @@ _efl_vpath_file_wait(Eo *obj EINA_UNUSED, Efl_Vpath_File_Data *pd EINA_UNUSED)
      {
         pd->called = EINA_TRUE;
         if (pd->result)
-          eo_event_callback_call(obj, EFL_VPATH_FILE_EVENT_FETCHED, NULL);
+          efl_event_callback_call(obj, EFL_VPATH_FILE_EVENT_FETCHED, NULL);
         else
-          eo_event_callback_call(obj, EFL_VPATH_FILE_EVENT_FAILED, NULL);
+          efl_event_callback_call(obj, EFL_VPATH_FILE_EVENT_FAILED, NULL);
      }
 }
 

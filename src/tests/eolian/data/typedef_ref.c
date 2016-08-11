@@ -41,7 +41,7 @@ typedef enum
 #endif
 #define TYPEDEF_CLASS typedef_class_get()
 
-EWAPI const Eo_Class *typedef_class_get(void);
+EWAPI const Efl_Class *typedef_class_get(void);
 
 EOAPI char *typedef_foo(Eo *obj, int idx);
 

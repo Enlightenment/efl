@@ -2,7 +2,7 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack.Grid, Efl.Pack.Layout,
                    Efl.Orientation)
 {
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_calculate;

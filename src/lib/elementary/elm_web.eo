@@ -498,7 +498,7 @@ class Elm.Web (Elm.Widget)
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
    }
    events {
       uri,changed;

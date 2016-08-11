@@ -183,7 +183,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
    }
    implements {
       class.constructor;
-      Eo.Base.finalize;
+      Efl.Object.finalize;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_resize;

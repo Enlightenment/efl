@@ -10,14 +10,14 @@ static Eina_Bool outfail = EINA_FALSE;
 static void
 _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   eo_del(event->object);
+   efl_del(event->object);
 }
 
 static void
 _out_fail(void *data EINA_UNUSED, const Eo_Event *event)
 {
    outfail = EINA_TRUE;
-   eo_del(event->object);
+   efl_del(event->object);
    out = NULL;
 }
 
@@ -199,13 +199,13 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
              eet_data->vio.tell = eet_snd_file_tell;
              eet_data->offset = 0;
 
-             in = eo_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL, ecore_audio_obj_name_set(eo_self, snd_id_str), ecore_audio_obj_in_speed_set(eo_self, speed), ecore_audio_obj_vio_set(eo_self, &eet_data->vio, eet_data, _free), eo_event_callback_add(eo_self, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL));
+             in = eo_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL, ecore_audio_obj_name_set(eo_self, snd_id_str), ecore_audio_obj_in_speed_set(eo_self, speed), ecore_audio_obj_vio_set(eo_self, &eet_data->vio, eet_data, _free), efl_event_callback_add(eo_self, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL));
              if (!out)
                {
 #if HAVE_COREAUDIO
                   out = eo_add(ECORE_AUDIO_OUT_CORE_AUDIO_CLASS, NULL);
 #elif HAVE_PULSE
-                  out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, eo_event_callback_add(eo_self, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
+                  out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(eo_self, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
 #endif
                   if (out) outs++;
                }
@@ -216,14 +216,14 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
 #elif HAVE_PULSE
                   ERR("Could not create multisense audio out (pulse)");
 #endif
-                  eo_del(in);
+                  efl_del(in);
                   return EINA_FALSE;
                }
              ret = ecore_audio_obj_out_input_attach(out, in);
              if (!ret)
                {
                   ERR("Could not attach input");
-                  eo_del(in);
+                  efl_del(in);
                   return EINA_FALSE;
                }
           }
@@ -268,16 +268,16 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
           {
              in = eo_add(ECORE_AUDIO_IN_TONE_CLASS, NULL);
              ecore_audio_obj_name_set(in, "tone");
-             eo_key_data_set(in, ECORE_AUDIO_ATTR_TONE_FREQ, &tone->value);
+             efl_key_data_set(in, ECORE_AUDIO_ATTR_TONE_FREQ, &tone->value);
              ecore_audio_obj_in_length_set(in, duration);
-             eo_event_callback_add(in, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL);
+             efl_event_callback_add(in, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL);
 
              if (!out)
                {
 #if HAVE_COREAUDIO
                   out = eo_add(ECORE_AUDIO_OUT_CORE_AUDIO_CLASS, NULL);
 #elif HAVE_PULSE
-                  out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, eo_event_callback_add(eo_self, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
+                  out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(eo_self, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
 #endif
                   if (out) outs++;
                }
@@ -286,7 +286,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
              if (!ret)
                {
                   ERR("Could not attach input");
-                  eo_del(in);
+                  efl_del(in);
                   return EINA_FALSE;
                }
           }
@@ -334,7 +334,7 @@ _edje_multisense_shutdown(void)
    if (out)
      {
         // XXX: this causes an abort inside of pa!!!!!
-        //eo_del(out);
+        //efl_del(out);
         out = NULL;
         outs = 0;
      }

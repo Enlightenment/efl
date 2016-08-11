@@ -18,11 +18,11 @@ _prot_print(Eo *obj, void *class_data EINA_UNUSED)
 
 EAPI EO_VOID_FUNC_BODY(inherit_prot_print);
 
-static Eo_Op_Description op_descs[] = {
+static Efl_Op_Description op_descs[] = {
      EO_OP_FUNC(inherit_prot_print, _prot_print),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Inherit",
      EO_CLASS_TYPE_REGULAR,

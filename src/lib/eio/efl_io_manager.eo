@@ -29,7 +29,7 @@ struct Eio.Xattr.Data
 
 // FIXME: We should send list of stuff in progress not single item, callback cost is to high
 
-class Efl.Io.Manager (Eo.Base)
+class Efl.Io.Manager (Efl.Object)
 {
   [[Class representing an asynchronous file operation.]]
 
@@ -144,7 +144,7 @@ class Efl.Io.Manager (Eo.Base)
  }
 
  implements {
-    Eo.Base.constructor;
-    Eo.Base.destructor;
+    Efl.Object.constructor;
+    Efl.Object.destructor;
   }
 }

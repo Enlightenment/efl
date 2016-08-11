@@ -65,10 +65,10 @@ _error_then_cb(void* data EINA_UNUSED, Eina_Error error)
 }
 
 static void
-_eo_event_quit_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_efl_event_quit_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    ecore_main_loop_quit();
-   eo_event_callback_stop(event->object);
+   efl_event_callback_stop(event->object);
 }
 
 void *
@@ -97,11 +97,11 @@ efl_model_promise_then_u(Eina_Promise *promise)
 }
 
 void
-efl_model_wait_for_event(Eo *obj, const Eo_Event_Description* event)
+efl_model_wait_for_event(Eo *obj, const Efl_Event_Description* event)
 {
-   eo_event_callback_add(obj, event, _eo_event_quit_cb, NULL);
+   efl_event_callback_add(obj, event, _efl_event_quit_cb, NULL);
    ecore_main_loop_begin();
-   eo_event_callback_del(obj, event, _eo_event_quit_cb, NULL);
+   efl_event_callback_del(obj, event, _efl_event_quit_cb, NULL);
 }
 
 Efl_Model *
@@ -359,7 +359,7 @@ end:
 }
 
 static Eldbus_Model_Arguments *
-_eldbus_model_arguments_from_proxy_get(Eldbus_Model_Proxy *proxy, const char *method_name, const Eo_Class *klass)
+_eldbus_model_arguments_from_proxy_get(Eldbus_Model_Proxy *proxy, const char *method_name, const Efl_Class *klass)
 {
    Eina_Accessor *accessor;
    Eina_Promise *promise = NULL;

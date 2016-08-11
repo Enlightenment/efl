@@ -29,7 +29,7 @@ enum Ecore.Con.Type
    socket_activate = (1 << 9)
 }
 
-abstract Efl.Network (Eo.Base) {
+abstract Efl.Network (Efl.Object) {
    [[Abstract base class for all EFL.Network classes]]
 
    legacy_prefix: ecore_con;

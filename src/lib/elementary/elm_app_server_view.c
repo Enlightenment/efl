@@ -43,7 +43,7 @@ _method_close(const Eldbus_Service_Interface *iface, const Eldbus_Message *messa
    Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_CLOSED);
-   eo_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL);
+   efl_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL);
 
    return eldbus_message_method_return_new(message);
 }
@@ -55,7 +55,7 @@ _method_pause(const Eldbus_Service_Interface *iface, const Eldbus_Message *messa
    Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_PAUSED);
-   eo_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL);
+   efl_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL);
 
    return eldbus_message_method_return_new(message);
 }
@@ -67,7 +67,7 @@ _method_resume(const Eldbus_Service_Interface *iface, const Eldbus_Message *mess
    Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_LIVE);
-   eo_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL);
+   efl_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL);
 
    return eldbus_message_method_return_new(message);
 }
@@ -170,28 +170,28 @@ EOLIAN static void
 _elm_app_server_view_resume(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_LIVE);
-   eo_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL);
+   efl_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL);
 }
 
 EOLIAN static void
 _elm_app_server_view_pause(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_PAUSED);
-   eo_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL);
+   efl_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL);
 }
 
 EOLIAN static void
 _elm_app_server_view_close(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_CLOSED);
-   eo_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL);
+   efl_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL);
 }
 
 EOLIAN static void
 _elm_app_server_view_shallow(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_SHALLOW);
-   eo_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_SHALLOW, NULL);
+   efl_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_SHALLOW, NULL);
 }
 
 EOLIAN static Elm_App_View_State
@@ -303,13 +303,13 @@ _elm_app_server_view_id_set(Eo *obj, Elm_App_Server_View_Data *data, const char 
 {
    Elm_App_Server *server = NULL;
 
-   if (eo_finalized_get(obj))
+   if (efl_finalized_get(obj))
      {
         ERR("Can't set id after object has been created.");
         return;
      }
 
-   server = eo_parent_get(obj);
+   server = efl_parent_get(obj);
    EINA_SAFETY_ON_TRUE_RETURN(!server || !eo_isa(server, ELM_APP_SERVER_CLASS));
 
    if (!id)
@@ -339,13 +339,13 @@ _elm_app_server_view_id_set(Eo *obj, Elm_App_Server_View_Data *data, const char 
 }
 
 EOLIAN static Eo *
-_elm_app_server_view_eo_base_finalize(Eo *obj, Elm_App_Server_View_Data *data)
+_elm_app_server_view_efl_object_finalize(Eo *obj, Elm_App_Server_View_Data *data)
 {
    const char *server_path = NULL;
    char view_path[PATH_MAX];
    Elm_App_Server *server = NULL;
 
-   server = eo_parent_get(obj);
+   server = efl_parent_get(obj);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!server || !eo_isa(server, ELM_APP_SERVER_CLASS), NULL);
 
 
@@ -368,11 +368,11 @@ _elm_app_server_view_eo_base_finalize(Eo *obj, Elm_App_Server_View_Data *data)
    data->title = eina_stringshare_add("");
    data->icon_name = eina_stringshare_add("");
 
-   return eo_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_app_server_view_eo_base_destructor(Eo *obj, Elm_App_Server_View_Data *data)
+_elm_app_server_view_efl_object_destructor(Eo *obj, Elm_App_Server_View_Data *data)
 {
    eina_stringshare_del(data->title);
    eina_stringshare_del(data->icon_name);
@@ -382,7 +382,7 @@ _elm_app_server_view_eo_base_destructor(Eo *obj, Elm_App_Server_View_Data *data)
    eldbus_connection_unref(data->conn);
    eldbus_shutdown();
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 #include "elm_app_server_view.eo.c"

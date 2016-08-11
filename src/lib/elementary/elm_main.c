@@ -1134,7 +1134,7 @@ elm_quicklaunch_fork(int    argc,
 
    if (qre_main)
      {
-        eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
+        efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
         ret = efl_loop_begin(ecore_main_loop_get());
         elm_shutdown();
         exit(ret);
@@ -1192,7 +1192,7 @@ efl_quicklaunch_fallback(int    argc,
    elm_quicklaunch_sub_init(argc, argv);
    if (efl_quicklaunch_prepare(argc, argv, getcwd(cwd, sizeof(cwd))))
      {
-        eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
+        efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
         return efl_loop_begin(ecore_main_loop_get());
      }
 

@@ -319,9 +319,9 @@ evas_canvas3d_texture_add(Evas *e)
 
 
 EOLIAN static Eo *
-_evas_canvas3d_texture_eo_base_constructor(Eo *obj, Evas_Canvas3D_Texture_Data *pd EINA_UNUSED)
+_evas_canvas3d_texture_efl_object_constructor(Eo *obj, Evas_Canvas3D_Texture_Data *pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    pd->atlas_enable = EINA_TRUE;
 
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_TEXTURE);
@@ -330,10 +330,10 @@ _evas_canvas3d_texture_eo_base_constructor(Eo *obj, Evas_Canvas3D_Texture_Data *
 }
 
 EOLIAN static void
-_evas_canvas3d_texture_eo_base_destructor(Eo *obj, Evas_Canvas3D_Texture_Data *pd  EINA_UNUSED)
+_evas_canvas3d_texture_efl_object_destructor(Eo *obj, Evas_Canvas3D_Texture_Data *pd  EINA_UNUSED)
 {
    _texture_fini(obj);
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

@@ -25,9 +25,9 @@ evas_canvas3d_primitive_add(Evas *e)
 }
 
 EOLIAN static Eo *
-_evas_canvas3d_primitive_eo_base_constructor(Eo *obj, Evas_Canvas3D_Primitive_Data *pd)
+_evas_canvas3d_primitive_efl_object_constructor(Eo *obj, Evas_Canvas3D_Primitive_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_PRIMITIVE);
    _primitive_init(pd);
 
@@ -35,9 +35,9 @@ _evas_canvas3d_primitive_eo_base_constructor(Eo *obj, Evas_Canvas3D_Primitive_Da
 }
 
 EOLIAN static void
-_evas_canvas3d_primitive_eo_base_destructor(Eo *obj, Evas_Canvas3D_Primitive_Data *pd EINA_UNUSED)
+_evas_canvas3d_primitive_efl_object_destructor(Eo *obj, Evas_Canvas3D_Primitive_Data *pd EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

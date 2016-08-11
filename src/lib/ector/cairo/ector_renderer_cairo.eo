@@ -13,8 +13,8 @@ abstract Ector.Renderer.Cairo (Ector.Renderer)
       Ector.Renderer.draw;
       Ector.Renderer.color.set;
       Ector.Renderer.color.get;
-      Eo.Base.constructor;
-      Eo.Base.finalize;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
    }
 }

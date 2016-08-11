@@ -1,7 +1,7 @@
 import evas_types;
 import efl_text_types;
 
-abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
+abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size.Hint,
                             Efl.Gfx.Map)
 {
@@ -391,7 +391,7 @@ abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       @property render_parent @protected {
          [[Gets the parent smart object of a given Evas object, if it has one.
 
-           This can be different from @Eo.Base.parent because this one is
+           This can be different from @Efl.Object.parent because this one is
            used internally for rendering and the normal parent is what the
            user expects to be the parent.
 
@@ -552,10 +552,10 @@ abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       .type;
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.dbg_info_get;
-      Eo.Base.provider_find;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.dbg_info_get;
+      Efl.Object.provider_find;
       Efl.Gfx.visible.set;
       Efl.Gfx.visible.get;
       Efl.Gfx.color.set;

@@ -41,7 +41,7 @@ enum Efl.Input.Device.Sub_Class
 /* This represents Evas_Device */
 /* FIXME: no parent, no children and no Evas */
 
-class Efl.Input.Device (Eo.Base)
+class Efl.Input.Device (Efl.Object)
 {
    [[Represents a pointing device, such as a touch finger, a pen or a mouse.
 
@@ -84,7 +84,7 @@ class Efl.Input.Device (Eo.Base)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
    }
 }

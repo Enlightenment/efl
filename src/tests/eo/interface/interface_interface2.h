@@ -4,6 +4,6 @@
 EAPI int interface2_ab_sum_get2(Eo *obj);
 
 #define INTERFACE2_CLASS interface2_class_get()
-const Eo_Class *interface2_class_get(void);
+const Efl_Class *interface2_class_get(void);
 
 #endif

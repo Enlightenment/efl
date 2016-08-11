@@ -16,7 +16,7 @@ abstract Ector.Renderer.GL (Ector.Renderer)
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
    }
 }

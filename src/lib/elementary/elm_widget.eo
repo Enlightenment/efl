@@ -650,7 +650,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          return: bool;
          params {
             @in base: const(Efl.Canvas.Object);
-            @in items: const(list<Eo.Base>);
+            @in items: const(list<Efl.Object>);
             @in list_data_get: list_data_get_func_type;
             @in degree: double;
             @out direction: Efl.Canvas.Object;
@@ -744,7 +744,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       focus_list_next_get @const {
          return: bool;
          params {
-            @in items: const(list<Eo.Base>);
+            @in items: const(list<Efl.Object>);
             @in list_data_get: list_data_get_func_type;
             @in dir: Elm.Focus_Direction;
             @out next: Efl.Canvas.Object;
@@ -840,10 +840,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.dbg_info_get;
-      Eo.Base.provider_find;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.dbg_info_get;
+      Efl.Object.provider_find;
       Efl.Canvas.Group.group_hide;
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_clip_unset;

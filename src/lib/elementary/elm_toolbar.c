@@ -159,7 +159,7 @@ _item_unselect(Elm_Toolbar_Item_Data *item)
    elm_layout_signal_emit(VIEW(item), "elm,state,unselected", "elm");
    if (item->icon)
      elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
-   eo_event_callback_call(WIDGET(item), EFL_UI_EVENT_UNSELECTED, EO_OBJ(item));
+   efl_event_callback_call(WIDGET(item), EFL_UI_EVENT_UNSELECTED, EO_OBJ(item));
    if (_elm_config->atspi_mode)
     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(item), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
 }
@@ -633,7 +633,7 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
    focus_raise = elm_layout_data_get(VIEW(it), "focusraise");
    if ((focus_raise) && (!strcmp(focus_raise, "on")))
      evas_object_raise(VIEW(it));
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, ELM_TOOLBAR_EVENT_ITEM_FOCUSED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
@@ -660,7 +660,7 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
    elm_layout_signal_emit
       (VIEW(it), "elm,highlight,off", "elm");
    sd->focused_item = NULL;
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, ELM_TOOLBAR_EVENT_ITEM_UNFOCUSED, eo_it);
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
@@ -1174,7 +1174,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
      {
         if (it->func) it->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(it))), WIDGET(it), EO_OBJ(it));
      }
-   eo_event_callback_call(obj, EFL_UI_EVENT_SELECTED, EO_OBJ(it));
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
 }
@@ -1813,7 +1813,7 @@ _mouse_clicked_cb(Elm_Toolbar_Item_Data *it,
    if (button == 1)
      {
         /* regular left click event */
-        eo_event_callback_call(WIDGET(it), EFL_UI_EVENT_CLICKED, EO_OBJ(it));
+        efl_event_callback_call(WIDGET(it), EFL_UI_EVENT_CLICKED, EO_OBJ(it));
         return;
      }
    snprintf(buf, sizeof(buf), "elm,action,click,%d", button);
@@ -2205,7 +2205,7 @@ _long_press_cb(void *data)
    if (sd->reorder_mode)
      _item_reorder_start(it);
 
-   eo_event_callback_call(WIDGET(it), EFL_UI_EVENT_LONGPRESSED, EO_OBJ(it));
+   efl_event_callback_call(WIDGET(it), EFL_UI_EVENT_LONGPRESSED, EO_OBJ(it));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2238,7 +2238,7 @@ _mouse_down_cb(Elm_Toolbar_Item_Data *it,
 
    if (ev->button != 1) return;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     eo_event_callback_call(WIDGET(it), EFL_UI_EVENT_CLICKED_DOUBLE, EO_OBJ(it));
+     efl_event_callback_call(WIDGET(it), EFL_UI_EVENT_CLICKED_DOUBLE, EO_OBJ(it));
    sd->mouse_down = EINA_TRUE;
    sd->long_press = EINA_FALSE;
    if (sd->long_timer)
@@ -2305,21 +2305,21 @@ static void
 _scroll_cb(Evas_Object *obj,
            void *data EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EFL_UI_EVENT_SCROLL, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SCROLL, NULL);
 }
 
 static void
 _scroll_anim_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
 }
 
 static void
 _scroll_anim_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
 }
 
 static void
@@ -2329,14 +2329,14 @@ _scroll_drag_start_cb(Evas_Object *obj,
    ELM_TOOLBAR_DATA_GET(obj, sd);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
-   eo_event_callback_call(obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
 }
 
 static void
@@ -2385,7 +2385,7 @@ _access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_toolbar_item_eo_base_destructor(Eo *eo_item, Elm_Toolbar_Item_Data *item)
+_elm_toolbar_item_efl_object_destructor(Eo *eo_item, Elm_Toolbar_Item_Data *item)
 {
    Elm_Toolbar_Item_Data *next = NULL;
    Evas_Object *obj;
@@ -2413,7 +2413,7 @@ _elm_toolbar_item_eo_base_destructor(Eo *eo_item, Elm_Toolbar_Item_Data *item)
    if (item != sd->more_item)
       elm_obj_widget_theme_apply(obj);
 
-   eo_destructor(eo_super(eo_item, ELM_TOOLBAR_ITEM_CLASS));
+   efl_destructor(eo_super(eo_item, ELM_TOOLBAR_ITEM_CLASS));
 }
 
 static void
@@ -2452,9 +2452,9 @@ _access_widget_item_register(Elm_Toolbar_Item_Data *it)
 }
 
 EOLIAN static Eo *
-_elm_toolbar_item_eo_base_constructor(Eo *eo_it, Elm_Toolbar_Item_Data *it)
+_elm_toolbar_item_efl_object_constructor(Eo *eo_it, Elm_Toolbar_Item_Data *it)
 {
-   eo_it = eo_constructor(eo_super(eo_it, ELM_TOOLBAR_ITEM_CLASS));
+   eo_it = efl_constructor(eo_super(eo_it, ELM_TOOLBAR_ITEM_CLASS));
    it->base = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
    elm_interface_atspi_accessible_role_set(eo_it, ELM_ATSPI_ROLE_MENU_ITEM);
 
@@ -3091,9 +3091,9 @@ elm_toolbar_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_toolbar_eo_base_constructor(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED)
+_elm_toolbar_efl_object_constructor(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_TOOL_BAR);
@@ -3982,7 +3982,7 @@ _elm_toolbar_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *
 }
 
 EOLIAN static void
-_elm_toolbar_class_constructor(Eo_Class *klass)
+_elm_toolbar_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

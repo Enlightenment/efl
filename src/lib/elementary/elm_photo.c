@@ -109,7 +109,7 @@ _drag_done_cb(void *unused EINA_UNUSED,
    ELM_PHOTO_DATA_GET(obj, sd);
 
    elm_object_scroll_freeze_pop(obj);
-   eo_event_callback_call(obj, EFL_UI_EVENT_DRAG_END, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_DRAG_END, NULL);
    sd->drag_started = EINA_FALSE;
 }
 
@@ -173,7 +173,7 @@ _long_press_cb(void *obj)
                   _drag_done_cb, NULL))
           {
              elm_object_scroll_freeze_push(obj);
-             eo_event_callback_call
+             efl_event_callback_call
                (obj, EFL_UI_EVENT_DRAG_START, NULL);
              sd->drag_started = EINA_TRUE;
           }
@@ -216,7 +216,7 @@ _mouse_up(void *data,
    ELM_SAFE_FREE(sd->long_press_timer, ecore_timer_del);
 
    if (!sd->drag_started)
-     eo_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
+     efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void
@@ -265,7 +265,7 @@ _elm_photo_efl_canvas_group_group_add(Eo *obj, Elm_Photo_Data *priv)
    evas_object_event_callback_add
      (priv->icon, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, obj);
 
-   eo_event_callback_add
+   efl_event_callback_add
      (priv->icon, ELM_ICON_EVENT_THUMB_DONE, _on_thumb_done, obj);
 
    _elm_photo_internal_image_follow(obj);
@@ -301,9 +301,9 @@ elm_photo_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_photo_eo_base_constructor(Eo *obj, Elm_Photo_Data *_pd EINA_UNUSED)
+_elm_photo_efl_object_constructor(Eo *obj, Elm_Photo_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
@@ -329,7 +329,7 @@ _elm_photo_efl_file_file_set(Eo *obj, Elm_Photo_Data *sd, const char *file, cons
 }
 
 static void
-_elm_photo_class_constructor(Eo_Class *klass)
+_elm_photo_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

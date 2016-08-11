@@ -74,8 +74,8 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
         }
    }
    implements {
-        Eo.Base.constructor;
-        Eo.Base.destructor;
+        Efl.Object.constructor;
+        Efl.Object.destructor;
         Elm.Widget.Item.disable;
         Elm.Widget.Item.signal_emit;
         Elm.Widget.Item.part_text.get;

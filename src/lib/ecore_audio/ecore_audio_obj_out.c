@@ -113,7 +113,7 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
 }
 
 EOLIAN static void
-_ecore_audio_out_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Output *_pd EINA_UNUSED, Ecore_Audio_Vio *vio, void *data, eo_key_data_free_func free_func)
+_ecore_audio_out_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Output *_pd EINA_UNUSED, Ecore_Audio_Vio *vio, void *data, efl_key_data_free_func free_func)
 {
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
@@ -130,9 +130,9 @@ _ecore_audio_out_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Output *_pd EINA_UN
 }
 
 EOLIAN static Eo *
-_ecore_audio_out_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Output *obj)
+_ecore_audio_out_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Output *obj)
 {
-  eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+  eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
 
   obj->need_writer = EINA_TRUE;
 
@@ -140,7 +140,7 @@ _ecore_audio_out_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Output *obj)
 }
 
 EOLIAN static void
-_ecore_audio_out_eo_base_destructor(Eo *eo_obj, Ecore_Audio_Output *obj)
+_ecore_audio_out_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Output *obj)
 {
   Eina_List *cur, *tmp;
   Eo *in;
@@ -149,7 +149,7 @@ _ecore_audio_out_eo_base_destructor(Eo *eo_obj, Ecore_Audio_Output *obj)
       ecore_audio_obj_out_input_detach(eo_obj, in);
   }
 
-  eo_destructor(eo_super(eo_obj, MY_CLASS));
+  efl_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
 #include "ecore_audio_out.eo.c"

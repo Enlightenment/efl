@@ -11,7 +11,7 @@ interface Elm.Interface.Atspi.Selection ()
       @property selected_child @protected {
          [[Gets child for given child index]]
          get {
-            return: Eo.Base;
+            return: Efl.Object;
          }
          keys {
             selected_child_index: int; [[index of selected child]]

@@ -116,8 +116,8 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
    }

@@ -79,10 +79,10 @@ _ector_renderer_gl_gradient_radial_ector_renderer_crc_get(Eo *obj, Ector_Rendere
    return crc;
 }
 
-static Eo_Base *
-_ector_renderer_gl_gradient_radial_eo_base_constructor(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd)
+static Efl_Object *
+_ector_renderer_gl_gradient_radial_efl_object_constructor(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS));
+   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS));
 
    if (!obj) return NULL;
 
@@ -94,7 +94,7 @@ _ector_renderer_gl_gradient_radial_eo_base_constructor(Eo *obj, Ector_Renderer_G
 }
 
 static void
-_ector_renderer_gl_gradient_radial_eo_base_destructor(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd)
+_ector_renderer_gl_gradient_radial_efl_object_destructor(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd)
 {
    eo_data_xunref(obj, pd->base, obj);
    eo_data_xunref(obj, pd->radial, obj);

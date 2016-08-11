@@ -8,7 +8,7 @@ evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   eo_key_data_set(obj, key, data);
+   efl_key_data_set(obj, key, data);
 }
 
 EAPI void *
@@ -18,7 +18,7 @@ evas_object_data_get(const Evas_Object *obj, const char *key)
    return NULL;
    MAGIC_CHECK_END();
    void *data = NULL;
-   data = eo_key_data_get((Evas_Object *)obj, key);
+   data = efl_key_data_get((Evas_Object *)obj, key);
    return data;
 }
 
@@ -29,7 +29,7 @@ evas_object_data_del(Evas_Object *obj, const char *key)
    return NULL;
    MAGIC_CHECK_END();
    void *data = NULL;
-   data = eo_key_data_get(obj, key);
-   eo_key_data_set(obj, key, NULL);
+   data = efl_key_data_get(obj, key);
+   efl_key_data_set(obj, key, NULL);
    return data;
 }

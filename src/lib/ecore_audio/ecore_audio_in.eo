@@ -150,8 +150,8 @@ class Ecore.Audio.In (Ecore.Audio)
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Ecore.Audio.vio_set;
    }
    events {

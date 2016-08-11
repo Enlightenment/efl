@@ -5,7 +5,7 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
    event_prefix: elm_fileselector_entry;
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_add;
       Elm.Widget.theme_apply;

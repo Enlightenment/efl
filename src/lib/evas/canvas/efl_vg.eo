@@ -1,6 +1,6 @@
 import eina_types;
 
-abstract Efl.VG (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
+abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
 {
    eo_prefix: efl_vg;
    legacy_prefix: evas_vg_node;
@@ -106,9 +106,9 @@ abstract Efl.VG (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
       }
    }
    implements {
-      Eo.Base.parent.set;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.parent.set;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Gfx.visible.set;
       Efl.Gfx.visible.get;
       Efl.Gfx.color.set;

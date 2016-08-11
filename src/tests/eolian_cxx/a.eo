@@ -1,7 +1,7 @@
-class A (Eo.Base)
+class A (Efl.Object)
 {
    data: A_Data;
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
    }
 }

@@ -215,7 +215,7 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_calculate;

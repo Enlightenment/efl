@@ -18,7 +18,7 @@ typedef struct
 } Thread_Test_Public_Data;
 
 #define THREAD_TEST_CLASS thread_test_class_get()
-const Eo_Class *thread_test_class_get(void);
+const Efl_Class *thread_test_class_get(void);
 
 EO_FUNC_BODY(thread_test_v_get, int, 0);
 EO_VOID_FUNC_BODY(thread_test_try_swap_stack);
@@ -60,13 +60,13 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, int v)
    return obj;
 }
 
-static Eo_Op_Description op_descs[] = {
+static Efl_Op_Description op_descs[] = {
      EO_OP_FUNC(thread_test_constructor, _constructor),
      EO_OP_FUNC(thread_test_v_get, _v_get),
      EO_OP_FUNC(thread_test_try_swap_stack, _try_swap_stack),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Thread Test",
      EO_CLASS_TYPE_REGULAR,

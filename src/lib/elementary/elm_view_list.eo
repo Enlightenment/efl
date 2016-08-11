@@ -1,6 +1,6 @@
 import elm_genlist_item;
 
-class Elm.View.List (Eo.Base)
+class Elm.View.List (Efl.Object)
 {
     methods {
         genlist_set {
@@ -64,7 +64,7 @@ class Elm.View.List (Eo.Base)
     }
 
     implements {
-        Eo.Base.destructor;
+        Efl.Object.destructor;
     }
     constructors {
         .genlist_set;

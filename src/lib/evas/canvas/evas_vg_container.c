@@ -37,14 +37,14 @@ _efl_vg_container_render_pre(Eo *obj EINA_UNUSED,
 }
 
 static Eo *
-_efl_vg_container_eo_base_constructor(Eo *obj,
+_efl_vg_container_efl_object_constructor(Eo *obj,
                                       Efl_VG_Container_Data *pd)
 {
    Efl_VG_Data *nd;
 
    pd->names = eina_hash_stringshared_new(NULL);
 
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    nd = eo_data_scope_get(obj, EFL_VG_CLASS);
    nd->render_pre = _efl_vg_container_render_pre;
@@ -55,10 +55,10 @@ _efl_vg_container_eo_base_constructor(Eo *obj,
 }
 
 static void
-_efl_vg_container_eo_base_destructor(Eo *obj,
+_efl_vg_container_efl_object_destructor(Eo *obj,
                                      Efl_VG_Container_Data *pd EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 
    eina_hash_free(pd->names);
    pd->names = NULL;

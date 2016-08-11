@@ -58,7 +58,7 @@ static void
 _position_update_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    printf(">>> Emotion object first position update.\n");
-   eo_event_callback_del(ev->object, EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb, NULL);
+   efl_event_callback_del(ev->object, EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb, NULL);
    _display_info(ev->object);
 }
 
@@ -66,7 +66,7 @@ static void
 _frame_decode_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    printf(">>> Emotion object first frame decode.\n");
-   eo_event_callback_del(ev->object, EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, NULL);
+   efl_event_callback_del(ev->object, EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, NULL);
    _display_info(ev->object);
 }
 
@@ -144,7 +144,7 @@ main(int argc, const char *argv[])
      fprintf(stderr, "Emotion: \"%s\" module could not be initialized.\n", module);
 
    _display_info(em);
-   eo_event_callback_array_add(em, emotion_object_example_callbacks(), NULL);
+   efl_event_callback_array_add(em, emotion_object_example_callbacks(), NULL);
 
    if (!emotion_object_file_set(em, filename))
      fprintf(stderr, "Emotion: Could not load the file \"%s\"\n", filename);

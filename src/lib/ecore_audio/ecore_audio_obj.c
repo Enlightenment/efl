@@ -55,10 +55,10 @@ _ecore_audio_volume_get(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Object *obj)
 }
 
 EOLIAN static Eo *
-_ecore_audio_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Object *obj)
+_ecore_audio_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Object *obj)
 {
   obj->volume = 1.0;
-  return eo_constructor(eo_super(eo_obj, MY_CLASS));
+  return efl_constructor(eo_super(eo_obj, MY_CLASS));
 }
 
 #include "ecore_audio.eo.c"

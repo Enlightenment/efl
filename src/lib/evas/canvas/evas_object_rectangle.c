@@ -100,9 +100,9 @@ evas_object_rectangle_add(Evas *e)
 }
 
 EOLIAN static Eo *
-_efl_canvas_rectangle_eo_base_constructor(Eo *eo_obj, Efl_Canvas_Rectangle_Data *class_data EINA_UNUSED)
+_efl_canvas_rectangle_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Rectangle_Data *class_data EINA_UNUSED)
 {
-   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
 
    evas_object_rectangle_init(eo_obj);
 

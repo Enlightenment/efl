@@ -1,6 +1,6 @@
 import evas_types;
 
-class Evas.Canvas3D.Object (Eo.Base)
+class Evas.Canvas3D.Object (Efl.Object)
 {
    data: Evas_Canvas3D_Object_Data;
    methods {
@@ -65,10 +65,10 @@ class Evas.Canvas3D.Object (Eo.Base)
    }
 
    implements {
-      Eo.Base.constructor;
-      Eo.Base.event_callback_priority_add;
-      Eo.Base.event_callback_del;
-      Eo.Base.provider_find;
+      Efl.Object.constructor;
+      Efl.Object.event_callback_priority_add;
+      Efl.Object.event_callback_del;
+      Efl.Object.provider_find;
    }
    events {
       clicked; [[Clicked Event.]]

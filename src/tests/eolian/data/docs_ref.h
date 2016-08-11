@@ -77,7 +77,7 @@ typedef struct _Opaque Opaque;
  */
 #define DOCS_CLASS docs_class_get()
 
-EWAPI const Eo_Class *docs_class_get(void);
+EWAPI const Efl_Class *docs_class_get(void);
 
 /**
  * @brief Property common documentation.
@@ -120,7 +120,7 @@ EOAPI int docs_prop_get(const Eo *obj);
  */
 EOAPI int docs_meth(Eo *obj, int a, float *b, long *c);
 
-EOAPI extern const Eo_Event_Description _DOCS_EVENT_CLICKED;
+EOAPI extern const Efl_Event_Description _DOCS_EVENT_CLICKED;
 
 /** Event docs.
  *

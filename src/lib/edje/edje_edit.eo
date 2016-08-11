@@ -8,8 +8,8 @@ class Edje.Edit (Edje.Object)
    legacy_prefix: edje_edit;
    data: Edje_Edit;
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Canvas.Group.group_del;
       Efl.File.file.set;
    }

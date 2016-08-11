@@ -4,7 +4,7 @@ class Elm.Separator (Elm.Layout, Efl.Orientation)
    eo_prefix: elm_obj_separator;
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;

@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout_Internal.Swallow (Eo.Base, Efl.Canvas.Layout_Internal, Efl.Container)
+class Efl.Canvas.Layout_Internal.Swallow (Efl.Object, Efl.Canvas.Layout_Internal, Efl.Container)
 {
    [[Represents a SWALLOW part of an Edje object.
 
@@ -7,7 +7,7 @@ class Efl.Canvas.Layout_Internal.Swallow (Eo.Base, Efl.Canvas.Layout_Internal, E
    ]]
    data: Edje_Swallow_Data;
    implements {
-      Eo.Base.finalize;
+      Efl.Object.finalize;
       Efl.Canvas.Layout_Internal.real_part.set;
       Efl.Container.content.get;
       Efl.Container.content.set;

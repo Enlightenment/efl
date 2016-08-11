@@ -22,10 +22,10 @@ static void _eldbus_model_object_introspect_nodes(Eldbus_Model_Object_Data *, co
 static char *_eldbus_model_object_concatenate_path(const char *, const char *);
 static void _eldbus_model_object_create_children(Eldbus_Model_Object_Data *, Eldbus_Object *, Eina_List *);
 
-static Eo_Base*
-_eldbus_model_object_eo_base_constructor(Eo *obj, Eldbus_Model_Object_Data *pd)
+static Efl_Object*
+_eldbus_model_object_efl_object_constructor(Eo *obj, Eldbus_Model_Object_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->is_listed = EINA_FALSE;
@@ -81,7 +81,7 @@ _eldbus_model_object_connection_constructor(Eo *obj EINA_UNUSED,
 }
 
 static void
-_eldbus_model_object_eo_base_destructor(Eo *obj, Eldbus_Model_Object_Data *pd)
+_eldbus_model_object_efl_object_destructor(Eo *obj, Eldbus_Model_Object_Data *pd)
 {
    eina_stringshare_del(pd->address);
    eina_stringshare_del(pd->bus);
@@ -89,7 +89,7 @@ _eldbus_model_object_eo_base_destructor(Eo *obj, Eldbus_Model_Object_Data *pd)
 
    _eldbus_model_object_clear(pd);
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Array const *

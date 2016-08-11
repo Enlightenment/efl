@@ -1,5 +1,5 @@
 /* FIXME: This definitely shouldn't be here. */
-type Eo_Event_Cb: __undefined_type;
+type Efl_Event_Cb: __undefined_type;
 
 enum Elm.Atspi.Type
 {
@@ -213,7 +213,7 @@ struct Elm.Atspi.Event.Geometry_Changed.Data
 struct Elm.Atspi.Event.Children_Changed.Data
 {
    is_added: bool;
-   child: Eo.Base;
+   child: Efl.Object;
 }
 
 struct Elm.Atspi.Attribute
@@ -225,7 +225,7 @@ struct Elm.Atspi.Attribute
 struct Elm.Atspi.Relation
 {
    type: Elm.Atspi.Relation_Type;
-   objects: list<Eo.Base>;
+   objects: list<Efl.Object>;
 }
 
 type Elm.Atspi.Relation_Set: list<Elm.Atspi.Relation *>;
@@ -335,7 +335,7 @@ mixin Elm.Interface.Atspi_Accessible ()
       event_handler_add @class @protected {
          [[Register accessibility event listener]]
          params {
-              @in cb: Eo_Event_Cb; [[callback]]
+              @in cb: Efl_Event_Cb; [[callback]]
               @in data: void_ptr; [[data]]
          }
          return: Elm.Atspi.Event.Handler*; [[Event handler]]
@@ -349,7 +349,7 @@ mixin Elm.Interface.Atspi_Accessible ()
       event_emit @class @protected {
          params {
             @in accessible: Elm.Interface.Atspi_Accessible; [[Accessibility object.]]
-            @in event: const(Eo.Event.Description)*; [[Accessibility event type.]]
+            @in event: const(Efl.Event.Description)*; [[Accessibility event type.]]
             @in event_info: void_ptr; [[Accessibility event details.]]
          }
       }
@@ -425,7 +425,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          get {
             [[Get root object of accessible object hierarchy]]
             values {
-               ret: Eo.Base;
+               ret: Efl.Object;
             }
          }
       }

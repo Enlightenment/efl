@@ -158,7 +158,7 @@ _ecore_exe_pipe_read_thread_cb(void *data)
              ecore_event_add(ECORE_EXE_EVENT_DATA, event_data,
                              _ecore_exe_event_exe_data_free,
                              NULL);
-             eo_event_callback_call(obj, ECORE_EXE_EVENT_DATA_GET, event_data);
+             efl_event_callback_call(obj, ECORE_EXE_EVENT_DATA_GET, event_data);
           }
 
         current_buf = NULL;
@@ -228,7 +228,7 @@ _ecore_exe_pipe_error_thread_cb(void *data)
              ecore_event_add(ECORE_EXE_EVENT_ERROR, event_data,
                              _ecore_exe_event_exe_data_free,
                              NULL);
-             eo_event_callback_call(obj, ECORE_EXE_EVENT_DATA_ERROR, event_data);
+             efl_event_callback_call(obj, ECORE_EXE_EVENT_DATA_ERROR, event_data);
           }
 
         current_buf = NULL;
@@ -379,7 +379,7 @@ _impl_ecore_exe_run_priority_get(void)
 }
 
 Eo *
-_impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
+_impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
    char exe_cmd_buf[32768];
    SECURITY_ATTRIBUTES sa;
@@ -689,7 +689,7 @@ _impl_ecore_exe_event_data_get(Ecore_Exe      *obj,
 }
 
 void
-_impl_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
+_impl_ecore_exe_efl_object_destructor(Eo *obj, Ecore_Exe_Data *exe)
 {
    void *data;
 

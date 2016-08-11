@@ -97,7 +97,7 @@ interface Efl.Model ()
                 @in count: uint; [[Range size. If count and start are 0 slice is
                                ignored.]]
             }
-            return: promise<accessor<Eo.Base> >; [[Promise of the children]]
+            return: promise<accessor<Efl.Object> >; [[Promise of the children]]
          }
          children_count_get {
                 [[Get children count.
@@ -124,7 +124,7 @@ interface Efl.Model ()
 
               @since 1.14
             ]]
-            return: Eo.Base;
+            return: Efl.Object;
          }
          child_del {
             [[Remove a child.
@@ -137,7 +137,7 @@ interface Efl.Model ()
               @since 1.14
             ]]
             params {
-               @in child: Eo.Base; [[Child to be removed]]
+               @in child: Efl.Object; [[Child to be removed]]
             }
          }
       }

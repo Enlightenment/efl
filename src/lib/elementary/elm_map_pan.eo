@@ -5,7 +5,7 @@ class Elm.Map.Pan (Elm.Pan)
    event_prefix: elm_map_pan;
    implements {
       class.constructor;
-      Eo.Base.destructor;
+      Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_resize;

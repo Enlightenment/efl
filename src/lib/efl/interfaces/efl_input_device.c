@@ -9,16 +9,16 @@
 
 /* Efl Input Device = Evas Device */
 
-EOLIAN static Eo_Base *
-_efl_input_device_eo_base_constructor(Eo *obj, Efl_Input_Device_Data *pd)
+EOLIAN static Efl_Object *
+_efl_input_device_efl_object_constructor(Eo *obj, Efl_Input_Device_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, EFL_INPUT_DEVICE_CLASS));
+   obj = efl_constructor(eo_super(obj, EFL_INPUT_DEVICE_CLASS));
    pd->eo = obj;
    return obj;
 }
 
 EOLIAN static void
-_efl_input_device_eo_base_destructor(Eo *obj, Efl_Input_Device_Data *pd)
+_efl_input_device_efl_object_destructor(Eo *obj, Efl_Input_Device_Data *pd)
 {
    Eo *eo_child;
 
@@ -32,7 +32,7 @@ _efl_input_device_eo_base_destructor(Eo *obj, Efl_Input_Device_Data *pd)
      }
    eo_unref(pd->source);
 
-   return eo_destructor(eo_super(obj, EFL_INPUT_DEVICE_CLASS));
+   return efl_destructor(eo_super(obj, EFL_INPUT_DEVICE_CLASS));
 }
 
 EOLIAN static void

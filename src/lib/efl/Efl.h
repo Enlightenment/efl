@@ -94,8 +94,8 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 /* Core interface */
 #include "interfaces/efl_animator.eo.h"
 
-EAPI extern const Eo_Event_Description _EFL_GFX_CHANGED;
-EAPI extern const Eo_Event_Description _EFL_GFX_PATH_CHANGED;
+EAPI extern const Efl_Event_Description _EFL_GFX_CHANGED;
+EAPI extern const Efl_Event_Description _EFL_GFX_PATH_CHANGED;
 
 #define EFL_GFX_CHANGED (&(_EFL_GFX_CHANGED))
 #define EFL_GFX_PATH_CHANGED (&(_EFL_GFX_PATH_CHANGED))

@@ -5,7 +5,7 @@ struct Efl.Loop.Arguments {
    initialization: bool; [[Set to true when the program should initialize its internal state. This happen once per process instance.]]
 }
 
-class Efl.Loop (Eo.Base)
+class Efl.Loop (Efl.Object)
 {
    [[The Efl Main Loop
 
@@ -86,16 +86,16 @@ class Efl.Loop (Eo.Base)
       register {
          [[Will register a manager of a specific class to be answered by eo.provider_find.]]
          params {
-            @in klass: const(Eo.Class); [[The class provided by the registered provider.]]
-            @in provider: const(Eo.Base); [[The provider for the newly registered class that has to provide that said Eo.Class.]]
+            @in klass: const(Efl.Class); [[The class provided by the registered provider.]]
+            @in provider: const(Efl.Object); [[The provider for the newly registered class that has to provide that said Efl.Class.]]
          }
          return: bool; [[true if successfully register, false otherwise.]]
       }
       unregister {
          [[Will unregister a manager of a specific class that was previously registered and answered by eo.provider_find.]]
          params {
-            @in klass: const(Eo.Class); [[The class provided by the provider to unregister for.]]
-            @in provider: const(Eo.Base); [[The provider for the registered class to unregister.]]
+            @in klass: const(Efl.Class); [[The class provided by the provider to unregister for.]]
+            @in provider: const(Efl.Object); [[The provider for the registered class to unregister.]]
          }
          return: bool; [[true if successfully unregistered, false otherwise.]]
       }
@@ -107,8 +107,8 @@ class Efl.Loop (Eo.Base)
       arguments: Efl.Loop.Arguments; [[Event happens when args are provided to the loop by args_add().]]
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.provider_find;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.provider_find;
    }
 }

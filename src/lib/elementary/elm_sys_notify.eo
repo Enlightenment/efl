@@ -40,7 +40,7 @@ struct Elm.Sys_Notify.Action_Invoked
                                 keys sent over in the list of actions]]
 }
 
-class Elm.Sys_Notify (Eo.Base, Elm.Sys_Notify_Interface)
+class Elm.Sys_Notify (Efl.Object, Elm.Sys_Notify_Interface)
 {
    legacy_prefix: elm_sys_notify;
    eo_prefix: elm_obj_sys_notify;
@@ -85,8 +85,8 @@ class Elm.Sys_Notify (Eo.Base, Elm.Sys_Notify_Interface)
 
    implements {
       class.constructor;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Elm.Sys_Notify_Interface.send;
       Elm.Sys_Notify_Interface.simple_send;
       Elm.Sys_Notify_Interface.close;

@@ -14,11 +14,11 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
    (void) obj;
 }
 
-static Eo_Op_Description op_descs[] = {
-     EO_OP_FUNC_OVERRIDE(eo_destructor, _destructor),
+static Efl_Op_Description op_descs[] = {
+     EO_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple5",
      EO_CLASS_TYPE_REGULAR,

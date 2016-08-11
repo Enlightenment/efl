@@ -31,12 +31,12 @@
     }
 
 #define ELM_ANIMATOR_CONNECT(Obj, Bool, Callback, Data)                 \
-  eo_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
-  eo_event_callback_add(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
+  efl_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
+  efl_event_callback_add(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 1;
 
 #define ELM_ANIMATOR_DISCONNECT(Obj, Bool, Callback, Data)              \
-  eo_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
+  efl_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 0;
 
 static const char SIG_CHANGED[] = "changed";
@@ -135,7 +135,7 @@ _elm_pan_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *
    psd->h = h;
 
    _elm_pan_update(psd);
-   eo_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
+   efl_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -164,7 +164,7 @@ _elm_pan_pos_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord x, Eva
    psd->py = y;
 
    _elm_pan_update(psd);
-   eo_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
+   efl_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -231,9 +231,9 @@ _elm_pan_add(Evas *evas)
 }
 
 EOLIAN static Eo *
-_elm_pan_eo_base_constructor(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
+_elm_pan_efl_object_constructor(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_PAN_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_PAN_CLASS));
    efl_canvas_object_type_set(obj, MY_PAN_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
@@ -252,7 +252,7 @@ _elm_pan_content_del_cb(void *data,
    psd->content = NULL;
    psd->content_w = psd->content_h = psd->px = psd->py =
            psd->prev_cw = psd->prev_ch = psd->delta_posx = psd->delta_posy = 0;
-   eo_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
+   efl_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -272,7 +272,7 @@ _elm_pan_content_resize_cb(void *data,
         psd->content_h = h;
         _elm_pan_update(psd);
      }
-   eo_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
+   efl_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -314,11 +314,11 @@ _elm_pan_content_set(Evas_Object *obj,
    _elm_pan_update(psd);
 
 end:
-   eo_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
+   efl_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static void
-_elm_pan_class_constructor(Eo_Class *klass)
+_elm_pan_class_constructor(Efl_Class *klass)
 {
       evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
 }
@@ -3872,7 +3872,7 @@ _elm_interface_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_Interface_Da
      {
         o = _elm_pan_add(evas_object_evas_get(obj));
         sid->pan_obj = o;
-        eo_event_callback_add
+        efl_event_callback_add
           (o, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
         evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
                                        _elm_scroll_pan_resized_cb, sid);
@@ -3900,7 +3900,7 @@ _elm_interface_scrollable_extern_pan_set(Eo *obj, Elm_Scrollable_Smart_Interface
 
    if (sid->pan_obj)
      {
-        eo_event_callback_del(sid->pan_obj, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
+        efl_event_callback_del(sid->pan_obj, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
         evas_object_event_callback_del(sid->pan_obj, EVAS_CALLBACK_RESIZE,
                                        _elm_scroll_pan_resized_cb);
      }
@@ -3927,7 +3927,7 @@ _elm_interface_scrollable_extern_pan_set(Eo *obj, Elm_Scrollable_Smart_Interface
    sid->pan_obj = pan;
 
    sid->extern_pan = EINA_TRUE;
-   eo_event_callback_add
+   efl_event_callback_add
      (sid->pan_obj, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
    evas_object_event_callback_add(sid->pan_obj, EVAS_CALLBACK_RESIZE,
                                   _elm_scroll_pan_resized_cb, sid);
@@ -4535,7 +4535,7 @@ _elm_interface_scrollable_efl_canvas_group_group_del(Eo *obj, Elm_Scrollable_Sma
 }
 
 EOLIAN static void
-_elm_interface_scrollable_class_constructor(Eo_Class *klass)
+_elm_interface_scrollable_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_SCROLLABLE_INTERFACE_NAME_LEGACY, klass);
 }

@@ -4,5 +4,5 @@
 
 #include "Eo.h"
 
-#include "eo_class.eo.c"
-#include "eo_interface.eo.c"
+#include "efl_class.eo.c"
+#include "efl_interface.eo.c"

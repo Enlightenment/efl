@@ -1,6 +1,6 @@
 import eldbus_types;
 
-class Eldbus.Model.Proxy (Eo.Base, Efl.Model) {
+class Eldbus.Model.Proxy (Efl.Object, Efl.Model) {
     [[Eldbus model proxy class]]
 
     methods {
@@ -22,8 +22,8 @@ class Eldbus.Model.Proxy (Eo.Base, Efl.Model) {
         }
     }
     implements {
-        Eo.Base.constructor;
-        Eo.Base.destructor;
+        Efl.Object.constructor;
+        Efl.Object.destructor;
         Efl.Model.properties.get;
         Efl.Model.property_set;
         Efl.Model.property_get;

@@ -23,31 +23,31 @@ typedef struct _Test_Object_Data Test_Object_Data;
 
 #define MY_CLASS TEST_OBJECT_CLASS
 
-EOLIAN static Eo_Base *
-_test_object_eo_base_constructor(Eo* obj, Test_Object_Data *pd)
+EOLIAN static Efl_Object *
+_test_object_efl_object_constructor(Eo* obj, Test_Object_Data *pd)
 {
-  fprintf(stdout, "_test_object_eo_base_constructor\n");
+  fprintf(stdout, "_test_object_efl_object_constructor\n");
   fflush(stdout);
 
   pd->a = 0;
-  return eo_constructor(eo_super(obj, MY_CLASS));
+  return efl_constructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *
-_test_object_eo_base_finalize(Eo *obj, Test_Object_Data *pd EINA_UNUSED)
+_test_object_efl_object_finalize(Eo *obj, Test_Object_Data *pd EINA_UNUSED)
 {
-  fprintf(stdout, "_test_object_eo_base_finalize\n");
+  fprintf(stdout, "_test_object_efl_object_finalize\n");
   fflush(stdout);
 
-  return eo_finalize(eo_super(obj, MY_CLASS));
+  return efl_finalize(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_test_object_eo_base_destructor(Eo* obj, Test_Object_Data *pd EINA_UNUSED)
+_test_object_efl_object_destructor(Eo* obj, Test_Object_Data *pd EINA_UNUSED)
 {
-  fprintf(stdout, "_test_object_eo_base_destructor\n");
+  fprintf(stdout, "_test_object_efl_object_destructor\n");
   fflush(stdout);
-  eo_destructor(eo_super(obj, MY_CLASS));
+  efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 
@@ -191,9 +191,9 @@ _test_object_event_emit(Eo* obj, Test_Object_Data *pd EINA_UNUSED)
    fprintf(stdout, "_test_object_event_emit()\n");
    fflush(stdout);
    static Test_Struct_Ex s = {42, TEST_ENUM_EX_THIRD};
-   eo_event_callback_call(obj, TEST_OBJECT_EVENT_TEST, NULL);
-   eo_event_callback_call(obj, TEST_OBJECT_EVENT_TEST_STRUCTARG, &s);
-   eo_event_callback_call(obj, TEST_OBJECT_EVENT_TEST_STRINGARG, "foo");
+   efl_event_callback_call(obj, TEST_OBJECT_EVENT_TEST, NULL);
+   efl_event_callback_call(obj, TEST_OBJECT_EVENT_TEST_STRUCTARG, &s);
+   efl_event_callback_call(obj, TEST_OBJECT_EVENT_TEST_STRINGARG, "foo");
 }
 
 EOLIAN static char *

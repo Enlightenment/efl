@@ -13,9 +13,9 @@
 #define MY_CLASS EFL_UI_WIN_STANDARD_CLASS
 
 EOLIAN static Eo *
-_efl_ui_win_standard_eo_base_finalize(Eo *obj, void *pd EINA_UNUSED)
+_efl_ui_win_standard_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
 {
-   obj = eo_finalize(eo_super(obj, MY_CLASS));
+   obj = efl_finalize(eo_super(obj, MY_CLASS));
    if (!obj)
      return NULL;
 

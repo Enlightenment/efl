@@ -56,13 +56,13 @@ _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event
    Eina_List *collision_list = NULL, *l = NULL;
    Evas_Canvas3D_Node *target_node = NULL, *n = NULL;
    Evas_Canvas3D_Node_Data *pd_target = NULL, *pd = NULL;
-   const Eo_Event_Description *eo_desc = NULL;
+   const Efl_Event_Description *eo_desc = NULL;
    Eina_Bool ret = EINA_FALSE;
 
    target_node = (Evas_Canvas3D_Node *)event->info;
    pd_target = eo_data_scope_get(target_node, EVAS_CANVAS3D_NODE_CLASS);
    collision_list = (Eina_List *)data;
-   eo_desc = eo_base_legacy_only_event_description_get("collision");
+   eo_desc = efl_object_legacy_only_event_description_get("collision");
 
    if (collision_list)
      {
@@ -70,14 +70,14 @@ _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event
           {
              pd = eo_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
              if (box_intersection_box(&pd_target->aabb, &pd->aabb))
-               ret = eo_event_callback_call(target_node, eo_desc, n);
+               ret = efl_event_callback_call(target_node, eo_desc, n);
           }
         if (!ret)
           {
              /* XXX: Putting it like this because that's how the logic was,
               * but it seems absolutely wrong that it only checks the last
               * and decides based on that. */
-             eo_event_callback_stop(event->object);
+             efl_event_callback_stop(event->object);
           }
      }
 }
@@ -85,11 +85,11 @@ static void
 _evas_canvas3d_node_private_callback_clicked(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Eina_Bool ret = EINA_FALSE;
-   const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get("clicked");
-   ret = eo_event_callback_call((Eo *)event->info, eo_desc, event->info);
+   const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get("clicked");
+   ret = efl_event_callback_call((Eo *)event->info, eo_desc, event->info);
 
    if (!ret)
-      eo_event_callback_stop(event->object);
+      efl_event_callback_stop(event->object);
 }
 
 static inline Evas_Canvas3D_Node_Mesh *
@@ -205,7 +205,7 @@ _evas_canvas3d_node_evas_canvas3d_object_callback_register(Eo *obj, Evas_Canvas3
    GET_CALLBACK_TYPE(tcb, event)
 
    if (tcb != PRIVATE_CALLBACK_NONE)
-     eo_event_callback_add(obj, &evas_canvas3d_node_private_event_desc[tcb], evas_canvas3d_node_private_callback_functions[tcb], data);
+     efl_event_callback_add(obj, &evas_canvas3d_node_private_event_desc[tcb], evas_canvas3d_node_private_callback_functions[tcb], data);
 
 }
 
@@ -218,7 +218,7 @@ _evas_canvas3d_node_evas_canvas3d_object_callback_unregister(Eo *obj, Evas_Canva
    GET_CALLBACK_TYPE(tcb, event)
 
    if (tcb != PRIVATE_CALLBACK_NONE)
-     eo_event_callback_del(obj, &evas_canvas3d_node_private_event_desc[tcb], evas_canvas3d_node_private_callback_functions[tcb], NULL);
+     efl_event_callback_del(obj, &evas_canvas3d_node_private_event_desc[tcb], evas_canvas3d_node_private_callback_functions[tcb], NULL);
 }
 
 static Eina_Bool
@@ -500,7 +500,7 @@ node_aabb_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
    Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
    Eina_List *current;
    Evas_Canvas3D_Node *datanode;
-   const Eo_Event_Description *eo_desc = NULL;
+   const Efl_Event_Description *eo_desc = NULL;
    if (pd->type != EVAS_CANVAS3D_NODE_TYPE_MESH &&
        pd->type != EVAS_CANVAS3D_NODE_TYPE_NODE)
      return EINA_TRUE;
@@ -513,8 +513,8 @@ node_aabb_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
      }
 
    evas_build_sphere(&pd->aabb, &pd->bsphere);
-   eo_desc = eo_base_legacy_only_event_description_get("collision,private");
-   eo_event_callback_call(node, eo_desc, (void *)node);
+   eo_desc = efl_object_legacy_only_event_description_get("collision,private");
+   efl_event_callback_call(node, eo_desc, (void *)node);
 
    return EINA_TRUE;
 }
@@ -538,7 +538,7 @@ _evas_canvas3d_node_evas_canvas3d_object_update_notify(Eo *obj, Evas_Canvas3D_No
    evas_canvas3d_node_tree_traverse(obj, EVAS_CANVAS3D_TREE_TRAVERSE_ANY_ORDER, EINA_FALSE,
                               _node_billboard_update, NULL);
    /* Update AABB. */
-   if(eo_base_legacy_only_event_description_get("collision,private"))
+   if(efl_object_legacy_only_event_description_get("collision,private"))
    {
       evas_canvas3d_node_tree_traverse(obj, EVAS_CANVAS3D_TREE_TRAVERSE_POST_ORDER, EINA_FALSE,
               node_aabb_update, NULL);
@@ -1065,11 +1065,11 @@ _evas_canvas3d_node_constructor(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canva
 }
 
 EOLIAN static void
-_evas_canvas3d_node_eo_base_destructor(Eo *obj, Evas_Canvas3D_Node_Data *pd EINA_UNUSED)
+_evas_canvas3d_node_efl_object_destructor(Eo *obj, Evas_Canvas3D_Node_Data *pd EINA_UNUSED)
 {
    _node_free(obj);
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Evas_Canvas3D_Node_Type

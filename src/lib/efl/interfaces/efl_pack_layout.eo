@@ -14,8 +14,8 @@ interface Efl.Pack.Layout ()
          set {}
          get {}
          values {
-            /* FIXME: engine is an Eo.Class */
-            engine: const(Eo.Base); [[Must be an $Efl.Pack.Layout subclass.]]
+            /* FIXME: engine is an Efl.Class */
+            engine: const(Efl.Object); [[Must be an $Efl.Pack.Layout subclass.]]
             data: const(void_ptr);     [[Any data to pass along to $Efl.Pack.Layout.layout_do.
                                       Owned by the caller. Depends on the layout engine.]]
          }

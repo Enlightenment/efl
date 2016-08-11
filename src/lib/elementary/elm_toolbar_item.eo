@@ -307,8 +307,8 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
            }
       }
       implements {
-           Eo.Base.constructor;
-           Eo.Base.destructor;
+           Efl.Object.constructor;
+           Efl.Object.destructor;
            Elm.Widget.Item.disable;
            Elm.Widget.Item.focus.set;
            Elm.Widget.Item.focus.get;

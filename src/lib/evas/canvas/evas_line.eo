@@ -27,7 +27,7 @@ class Evas.Line (Efl.Canvas.Object)
       }
    }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
    }
 
 }

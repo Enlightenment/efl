@@ -239,7 +239,7 @@ START_TEST(eio_test_sentry_directory_file_created_notify)
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _create_file, filename);
 
@@ -266,7 +266,7 @@ START_TEST(eio_test_sentry_directory_file_deleted_notify)
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_DELETED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_DELETED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _delete_file, filename);
 
@@ -293,7 +293,7 @@ START_TEST(eio_test_sentry_directory_file_modified_notify)
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
 
@@ -321,7 +321,7 @@ START_TEST(eio_test_sentry_directory_file_closed_notify)
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CLOSED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CLOSED, (Efl_Event_Cb)_target_notified_cb, filename);
    ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
 
    ecore_main_loop_begin();
@@ -346,7 +346,7 @@ START_TEST(eio_test_sentry_directory_directory_created_notify)
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_DIRECTORY_CREATED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_DIRECTORY_CREATED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _create_directory, filename);
 
@@ -373,7 +373,7 @@ START_TEST(eio_test_sentry_directory_directory_deleted_notify)
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_DIRECTORY_DELETED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_DIRECTORY_DELETED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _delete_directory, filename);
 
@@ -400,7 +400,7 @@ START_TEST(eio_test_sentry_directory_directory_modified_notify)
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_DIRECTORY_MODIFIED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_DIRECTORY_MODIFIED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _modify_attrib_file, filename);
 
@@ -422,7 +422,7 @@ START_TEST(eio_test_sentry_directory_directory_self_deleted_notify)
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_SELF_DELETED, (Eo_Event_Cb)_target_notified_cb, dirname);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_SELF_DELETED, (Efl_Event_Cb)_target_notified_cb, dirname);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _delete_directory, dirname);
 
@@ -451,7 +451,7 @@ START_TEST(eio_test_sentry_file_file_modified_notify)
 
    //monitor file
    fail_if(!eio_sentry_add(sentry, filename));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
 
@@ -479,7 +479,7 @@ START_TEST(eio_test_sentry_file_file_attrib_modified_notify)
 
    //monitor file
    fail_if(!eio_sentry_add(sentry, filename));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _modify_attrib_file, filename);
 
@@ -507,7 +507,7 @@ START_TEST(eio_test_sentry_file_file_closed_notify)
 
    //monitor file
    fail_if(!eio_sentry_add(sentry, dirname));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CLOSED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CLOSED, (Efl_Event_Cb)_target_notified_cb, filename);
    ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
 
    ecore_main_loop_begin();
@@ -533,7 +533,7 @@ START_TEST(eio_test_sentry_file_file_self_deleted_notify)
 
    //monitor file
    fail_if(!eio_sentry_add(sentry, filename));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_SELF_DELETED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_SELF_DELETED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _delete_file, filename);
 
@@ -563,7 +563,7 @@ START_TEST(eio_test_sentry_two_monitors_one_event)
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
    fail_if(!eio_sentry_add(sentry, dirname2));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _create_file, filename);
 
@@ -596,7 +596,7 @@ START_TEST(eio_test_sentry_two_monitors_one_removed_one_event)
    fail_if(!eio_sentry_add(sentry, dirname2));
    fail_if(!eio_sentry_add(sentry, dirname));
    eio_sentry_del(sentry, dirname2);
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _create_file, filename);
 
@@ -633,7 +633,7 @@ START_TEST(eio_test_sentry_two_monitors_one_removed_no_event)
    fail_if(!eio_sentry_add(sentry, dirname));
    fail_if(!eio_sentry_add(sentry, dirname2));
    eio_sentry_del(sentry, dirname);
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Eo_Event_Cb)_unexpected_event_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Efl_Event_Cb)_unexpected_event_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _create_file, filename);
    ecore_timer_add(TEST_TIMEOUT_SEC - 1, _test_timeout_expected, NULL);
@@ -666,7 +666,7 @@ START_TEST(eio_test_sentry_two_files_in_same_directory)
    //monitor file
    fail_if(!eio_sentry_add(sentry,filename));
    fail_if(!eio_sentry_add(sentry,filename2));
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Eo_Event_Cb)_target_notified_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
 
@@ -701,7 +701,7 @@ START_TEST(eio_test_sentry_two_files_in_same_directory_one_removed)
    fail_if(!eio_sentry_add(sentry,filename2));
    eio_sentry_del(sentry, filename);
 
-   eo_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Eo_Event_Cb)_unexpected_event_cb, filename);
+   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Efl_Event_Cb)_unexpected_event_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
    ecore_timer_add(TEST_TIMEOUT_SEC - 1, _test_timeout_expected, NULL);

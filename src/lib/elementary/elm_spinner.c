@@ -233,7 +233,7 @@ _delay_change_timer_cb(void *data)
    ELM_SPINNER_DATA_GET(data, sd);
 
    sd->delay_change_timer = NULL;
-   eo_event_callback_call(data, ELM_SPINNER_EVENT_DELAY_CHANGED, NULL);
+   efl_event_callback_call(data, ELM_SPINNER_EVENT_DELAY_CHANGED, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -266,7 +266,7 @@ _value_set(Evas_Object *obj,
    if (new_val == sd->val) return EINA_FALSE;
    sd->val = new_val;
 
-   eo_event_callback_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
+   efl_event_callback_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
    elm_interface_atspi_accessible_value_changed_signal_emit(obj);
    ecore_timer_del(sd->delay_change_timer);
    sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
@@ -349,7 +349,7 @@ _drag_start_cb(void *data,
    sd->drag_prev_pos = 0;
    sd->drag_val_step = 1;
 
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, ELM_SPINNER_EVENT_SPINNER_DRAG_START, NULL);
 }
 
@@ -367,7 +367,7 @@ _drag_stop_cb(void *data,
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", 0.0, 0.0);
 
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, ELM_SPINNER_EVENT_SPINNER_DRAG_STOP, NULL);
 }
 
@@ -406,7 +406,7 @@ _entry_value_apply(Evas_Object *obj)
    if (((*end != '\0') && (!isspace(*end))) || (fabs(val - sd->val) < DBL_EPSILON)) return;
    elm_spinner_value_set(obj, val);
 
-   eo_event_callback_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
+   efl_event_callback_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
    ecore_timer_del(sd->delay_change_timer);
    sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
                                             _delay_change_timer_cb, obj);
@@ -607,7 +607,7 @@ _toggle_entry(Evas_Object *obj)
                     (sd->ent, EVAS_CALLBACK_SHOW, _entry_show_cb, obj);
                }
              elm_entry_single_line_set(sd->ent, EINA_TRUE);
-             eo_event_callback_add
+             efl_event_callback_add
                (sd->ent, ELM_ENTRY_EVENT_ACTIVATED, _entry_activated_cb, obj);
              elm_layout_content_set(obj, "elm.swallow.entry", sd->ent);
              _entry_accept_filter_add(obj);
@@ -1186,7 +1186,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
         priv->inc_button = elm_button_add(obj);
         elm_object_style_set(priv->inc_button, "spinner/increase/default");
 
-        eo_event_callback_array_add(priv->inc_button, _inc_dec_button_cb(), obj);
+        efl_event_callback_array_add(priv->inc_button, _inc_dec_button_cb(), obj);
 
         elm_layout_content_set(obj, "elm.swallow.inc_button", priv->inc_button);
         elm_widget_sub_object_add(obj, priv->inc_button);
@@ -1194,7 +1194,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
         priv->text_button = elm_button_add(obj);
         elm_object_style_set(priv->text_button, "spinner/default");
 
-        eo_event_callback_add
+        efl_event_callback_add
           (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
 
         elm_layout_content_set(obj, "elm.swallow.text_button", priv->text_button);
@@ -1203,7 +1203,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
         priv->dec_button = elm_button_add(obj);
         elm_object_style_set(priv->dec_button, "spinner/decrease/default");
 
-        eo_event_callback_array_add(priv->dec_button, _inc_dec_button_cb(), obj);
+        efl_event_callback_array_add(priv->dec_button, _inc_dec_button_cb(), obj);
 
         elm_layout_content_set(obj, "elm.swallow.dec_button", priv->dec_button);
         elm_widget_sub_object_add(obj, priv->dec_button);
@@ -1464,9 +1464,9 @@ elm_spinner_value_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eo *
-_elm_spinner_eo_base_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
+_elm_spinner_efl_object_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SPIN_BUTTON);
@@ -1696,7 +1696,7 @@ _elm_spinner_round_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 }
 
 EOLIAN static void
-_elm_spinner_class_constructor(Eo_Class *klass)
+_elm_spinner_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 

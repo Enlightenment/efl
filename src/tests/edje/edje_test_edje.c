@@ -363,19 +363,19 @@ START_TEST(edje_test_swallows)
 
    o1 = eo_add(EDJE_OBJECT_CLASS, ly);
    fail_if(!edje_object_part_swallow(ly, "swallow", o1));
-   ck_assert_ptr_eq(eo_parent_get(o1), ly);
+   ck_assert_ptr_eq(efl_parent_get(o1), ly);
 
    edje_object_part_unswallow(ly, o1);
-   ck_assert_ptr_eq(eo_parent_get(o1), evas_object_evas_get(o1));
+   ck_assert_ptr_eq(efl_parent_get(o1), evas_object_evas_get(o1));
 
    fail_if(!edje_object_part_swallow(ly, "swallow", o1));
-   ck_assert_ptr_eq(eo_parent_get(o1), ly);
+   ck_assert_ptr_eq(efl_parent_get(o1), ly);
 
    o2 = eo_add(EDJE_OBJECT_CLASS, ly);
    fail_if(!edje_object_part_swallow(ly, "swallow", o2));
-   ck_assert_ptr_eq(eo_parent_get(o2), ly);
+   ck_assert_ptr_eq(efl_parent_get(o2), ly);
    /* o1 is deleted at this point. */
-   ck_assert_ptr_eq(eo_parent_get(o1), evas_object_evas_get(o1));
+   ck_assert_ptr_eq(efl_parent_get(o1), evas_object_evas_get(o1));
 
    EDJE_TEST_FREE_EVAS();
 }
@@ -394,19 +394,19 @@ START_TEST(edje_test_swallows_eoapi)
 
    o1 = eo_add(EDJE_OBJECT_CLASS, ly);
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
-   ck_assert_ptr_eq(eo_parent_get(o1), ly);
+   ck_assert_ptr_eq(efl_parent_get(o1), ly);
 
    efl_content_remove(ly, o1);
-   ck_assert_ptr_eq(eo_parent_get(o1), evas_object_evas_get(o1));
+   ck_assert_ptr_eq(efl_parent_get(o1), evas_object_evas_get(o1));
 
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
-   ck_assert_ptr_eq(eo_parent_get(o1), ly);
+   ck_assert_ptr_eq(efl_parent_get(o1), ly);
 
    o2 = eo_add(EDJE_OBJECT_CLASS, ly);
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o2));
-   ck_assert_ptr_eq(eo_parent_get(o2), ly);
+   ck_assert_ptr_eq(efl_parent_get(o2), ly);
    /* o1 is deleted at this point. */
-   ck_assert_ptr_eq(eo_parent_get(o1), evas_object_evas_get(o1));
+   ck_assert_ptr_eq(efl_parent_get(o1), evas_object_evas_get(o1));
 
    EDJE_TEST_FREE_EVAS();
 }
@@ -705,7 +705,7 @@ START_TEST(edje_test_table_eoapi)
    fail_if(!efl_pack_clear(proxy));
    fail_if(efl_content_count(efl_part(obj, "table2")) != 1);
    fail_if(efl_content_count(proxy) != 4);
-   eo_del(proxy);
+   efl_del(proxy);
 
    EDJE_TEST_FREE_EVAS();
 }

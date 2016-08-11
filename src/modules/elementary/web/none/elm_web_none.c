@@ -347,7 +347,7 @@ ewm_need_web(void)
    return EINA_TRUE;
 }
 
-EAPI const Eo_Class *
+EAPI const Efl_Class *
 ewm_class_get(void)
 {
    return elm_web_none_class_get();

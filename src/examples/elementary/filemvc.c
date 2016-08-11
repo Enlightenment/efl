@@ -160,7 +160,7 @@ elm_main(int argc, char **argv)
    vpanes = elm_panes_add(win);
    _widget_init(vpanes);
    elm_object_part_content_set(panes, "right", vpanes);
-   eo_event_callback_add(priv.treeview, ELM_VIEW_LIST_EVENT_MODEL_SELECTED, _tree_selected_cb, &priv);
+   efl_event_callback_add(priv.treeview, ELM_VIEW_LIST_EVENT_MODEL_SELECTED, _tree_selected_cb, &priv);
 
    //listview
    genlist = elm_genlist_add(win);
@@ -172,7 +172,7 @@ elm_main(int argc, char **argv)
    _widget_init(genlist);
    elm_object_part_content_set(vpanes, "left", genlist);
 
-   eo_event_callback_add(priv.fileview, ELM_VIEW_LIST_EVENT_MODEL_SELECTED, _list_selected_cb, &priv);
+   efl_event_callback_add(priv.fileview, ELM_VIEW_LIST_EVENT_MODEL_SELECTED, _list_selected_cb, &priv);
 
    //formview
    bxr = elm_box_add(win);

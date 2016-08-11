@@ -1,0 +1,4 @@
+abstract Efl.Class ()
+{
+    data: null;
+}

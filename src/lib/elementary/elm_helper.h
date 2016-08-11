@@ -91,10 +91,10 @@ elm_validator_regexp_status_get(Elm_Validator_Regexp *validator) EINA_ARG_NONNUL
  * //add validator
  * entry = elm_entry_add(parent);
  * re = elm_validator_regexp_add("^[0-9]*$");
- * eo_event_callback_add(entry, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, re);
+ * efl_event_callback_add(entry, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, re);
  *
  * //delete validator
- * eo_event_callback_del(entry, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, re);
+ * efl_event_callback_del(entry, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, re);
  * @endcode
  *
  * @see elm_validator_regexp_add()

@@ -36,23 +36,23 @@ _ab_sum_get(Eo *obj, void *class_data)
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    return obj;
 }
 
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
-static Eo_Op_Description op_descs[] = {
-     EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),
-     EO_OP_FUNC_OVERRIDE(eo_destructor, _destructor),
+static Efl_Op_Description op_descs[] = {
+     EO_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
+     EO_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
      EO_OP_FUNC_OVERRIDE(mixin_ab_sum_get, _ab_sum_get),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Mixin2",
      EO_CLASS_TYPE_MIXIN,

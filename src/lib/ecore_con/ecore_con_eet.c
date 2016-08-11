@@ -577,10 +577,10 @@ _ecore_con_eet_base_register(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, c
    EET_DATA_DESCRIPTOR_ADD_MAPPING(pd->matching, name, edd);
 }
 
-EOLIAN static Eo_Base *
-_ecore_con_eet_server_obj_eo_base_constructor(Eo *obj, Ecore_Con_Eet_Server_Obj_Data *pd EINA_UNUSED)
+EOLIAN static Efl_Object *
+_ecore_con_eet_server_obj_efl_object_constructor(Eo *obj, Ecore_Con_Eet_Server_Obj_Data *pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, ECORE_CON_EET_SERVER_OBJ_CLASS));
+   obj = efl_constructor(eo_super(obj, ECORE_CON_EET_SERVER_OBJ_CLASS));
 
    if (!obj) return NULL;
 
@@ -595,7 +595,7 @@ _ecore_con_eet_server_obj_eo_base_constructor(Eo *obj, Ecore_Con_Eet_Server_Obj_
 }
 
 EOLIAN static void
-_ecore_con_eet_server_obj_eo_base_destructor(Eo *obj, Ecore_Con_Eet_Server_Obj_Data *pd EINA_UNUSED)
+_ecore_con_eet_server_obj_efl_object_destructor(Eo *obj, Ecore_Con_Eet_Server_Obj_Data *pd EINA_UNUSED)
 {
    Ecore_Con_Reply *n;
    Ecore_Con_Eet_Client *c;
@@ -615,13 +615,13 @@ _ecore_con_eet_server_obj_eo_base_destructor(Eo *obj, Ecore_Con_Eet_Server_Obj_D
    ecore_event_handler_del(pd->handler_del);
    ecore_event_handler_del(pd->handler_data);
 
-   eo_destructor(eo_super(obj, ECORE_CON_EET_SERVER_OBJ_CLASS));
+   efl_destructor(eo_super(obj, ECORE_CON_EET_SERVER_OBJ_CLASS));
 }
 
-EOLIAN static Eo_Base *
-_ecore_con_eet_client_obj_eo_base_constructor(Eo *obj, Ecore_Con_Eet_Client_Obj_Data *pd EINA_UNUSED)
+EOLIAN static Efl_Object *
+_ecore_con_eet_client_obj_efl_object_constructor(Eo *obj, Ecore_Con_Eet_Client_Obj_Data *pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, ECORE_CON_EET_CLIENT_OBJ_CLASS));
+   obj = efl_constructor(eo_super(obj, ECORE_CON_EET_CLIENT_OBJ_CLASS));
 
    if (!obj) return NULL;
 
@@ -636,7 +636,7 @@ _ecore_con_eet_client_obj_eo_base_constructor(Eo *obj, Ecore_Con_Eet_Client_Obj_
 }
 
 EOLIAN static void
-_ecore_con_eet_client_obj_eo_base_destructor(Eo *obj, Ecore_Con_Eet_Client_Obj_Data *pd EINA_UNUSED)
+_ecore_con_eet_client_obj_efl_object_destructor(Eo *obj, Ecore_Con_Eet_Client_Obj_Data *pd EINA_UNUSED)
 {
    Ecore_Con_Eet_Server *s;
 
@@ -654,13 +654,13 @@ _ecore_con_eet_client_obj_eo_base_destructor(Eo *obj, Ecore_Con_Eet_Client_Obj_D
    ecore_event_handler_del(pd->handler_del);
    ecore_event_handler_del(pd->handler_data);
 
-   eo_destructor(eo_super(obj, ECORE_CON_EET_CLIENT_OBJ_CLASS));
+   efl_destructor(eo_super(obj, ECORE_CON_EET_CLIENT_OBJ_CLASS));
 }
 
-EOLIAN static Eo_Base *
-_ecore_con_eet_base_eo_base_constructor(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
+EOLIAN static Efl_Object *
+_ecore_con_eet_base_efl_object_constructor(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, ECORE_CON_EET_BASE_CLASS));
+   obj = efl_constructor(eo_super(obj, ECORE_CON_EET_BASE_CLASS));
 
    if (!obj) return NULL;
 
@@ -673,9 +673,9 @@ _ecore_con_eet_base_eo_base_constructor(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 }
 
 EOLIAN static void
-_ecore_con_eet_base_eo_base_destructor(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
+_ecore_con_eet_base_efl_object_destructor(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 {
-   eo_destructor(eo_super(obj, ECORE_CON_EET_BASE_CLASS));
+   efl_destructor(eo_super(obj, ECORE_CON_EET_BASE_CLASS));
 
    eet_data_descriptor_free(pd->edd);
    eet_data_descriptor_free(pd->matching);
@@ -683,8 +683,8 @@ _ecore_con_eet_base_eo_base_destructor(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
    eina_hash_free(pd->raw_data_callbacks);
 }
 
-EOLIAN static Eo_Base *
-_ecore_con_eet_base_eo_base_finalize(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
+EOLIAN static Efl_Object *
+_ecore_con_eet_base_efl_object_finalize(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 {
    if (pd->server) return obj;
 
@@ -742,7 +742,7 @@ ecore_con_eet_client_new(Ecore_Con_Server *server)
 EAPI void
 ecore_con_eet_server_free(Ecore_Con_Eet *r)
 {
-   eo_del(r);
+   efl_del(r);
 }
 
 EAPI void
@@ -918,13 +918,13 @@ ecore_con_eet_server_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_S
 EAPI void
 ecore_con_eet_data_set(Ecore_Con_Eet *ece, const void *data)
 {
-   eo_key_data_set(ece, ECORE_CON_EET_DATA_KEY, data);
+   efl_key_data_set(ece, ECORE_CON_EET_DATA_KEY, data);
 }
 
 EAPI const void *
 ecore_con_eet_data_get(Ecore_Con_Eet *ece)
 {
-   return eo_key_data_get(ece, ECORE_CON_EET_DATA_KEY);
+   return efl_key_data_get(ece, ECORE_CON_EET_DATA_KEY);
 }
 
 EAPI Ecore_Con_Eet *

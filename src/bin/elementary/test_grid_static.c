@@ -42,7 +42,7 @@ set_api_state(api_data *api)
 
       case GRID_UNPACK: /* 1 */
          efl_pack_unpack(dt->grid, dt->child);
-         eo_del(dt->child);
+         efl_del(dt->child);
          break;
 
       case GRID_SIZE: /* 2 */
@@ -108,7 +108,7 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                 efl_ui_win_name_set(eo_self, "grid"),
                 efl_text_set(eo_self, "Grid"),
                 efl_ui_win_autodel_set(eo_self, EINA_TRUE),
-                eo_event_callback_add(eo_self, EO_EVENT_DEL, _win_del, api));
+                efl_event_callback_add(eo_self, EFL_EVENT_DEL, _win_del, api));
 
    static int run_count = 0;
    if (((run_count++) % 2) == 0)
@@ -144,7 +144,7 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Next API function");
-   eo_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _api_bt_clicked, api);
+   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _api_bt_clicked, api);
    efl_pack_grid(gd, bt, 30, 0, 40, 10);
    elm_object_disabled_set(bt, api->state == API_STATE_LAST);
    efl_gfx_visible_set(bt, 1);
@@ -173,7 +173,7 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Change");
    efl_pack_grid(gd, bt, 40, 40, 20, 20);
-   eo_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _ch_grid, gd);
+   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _ch_grid, gd);
    efl_gfx_visible_set(bt, 1);
 
    rc = eo_add(EFL_CANVAS_RECTANGLE_CLASS, win);

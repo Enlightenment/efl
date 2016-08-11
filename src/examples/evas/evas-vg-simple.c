@@ -204,7 +204,7 @@ vector_set(int x, int y, int w, int h)
 
    root_node = evas_object_vg_root_node_get(d.vg);
    // check if the dupe is working properly or not
-   eo_parent_set(beginning, root_node);
+   efl_parent_set(beginning, root_node);
 
    tmp_vg = root;
    root = beginning;

@@ -76,9 +76,9 @@ class Efl.Network.Server (Efl.Network) {
       }
    }
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.finalize;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
       Efl.Network.ip.get;
       Efl.Network.uptime.get;
       Efl.Network.port.set;

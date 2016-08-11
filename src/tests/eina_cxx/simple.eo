@@ -1,7 +1,7 @@
-class Simple (Eo.Base)
+class Simple (Efl.Object)
 {
    data: null;
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
    }
 }

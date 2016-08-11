@@ -25,7 +25,7 @@ edje_object_add(Evas *evas)
 }
 
 EOLIAN static Eo *
-_edje_object_eo_base_constructor(Eo *obj, Edje *ed)
+_edje_object_efl_object_constructor(Eo *obj, Edje *ed)
 {
    Eo *parent;
    Evas *e;
@@ -34,11 +34,11 @@ _edje_object_eo_base_constructor(Eo *obj, Edje *ed)
    ed->base = eo_data_ref(obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
    ed->duration_scale = 1.0;
 
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    _edje_lib_ref();
 
-   parent = eo_parent_get(obj);
+   parent = efl_parent_get(obj);
    e = evas_object_evas_get(parent);
    tmp = ecore_evas_ecore_evas_get(e);
 
@@ -48,22 +48,22 @@ _edje_object_eo_base_constructor(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_eo_base_destructor(Eo *obj, Edje *class_data)
+_edje_object_efl_object_destructor(Eo *obj, Edje *class_data)
 {
    if (class_data->file_obj)
      {
-        eo_del(class_data->file_obj);
+        efl_del(class_data->file_obj);
         class_data->file_obj = NULL;
      }
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
    eo_data_unref(obj, class_data->base);
 }
 
 EOLIAN static void
-_edje_object_eo_base_dbg_info_get(Eo *eo_obj, Edje *_pd EINA_UNUSED, Eo_Dbg_Info *root) EINA_ARG_NONNULL(3)
+_edje_object_efl_object_dbg_info_get(Eo *eo_obj, Edje *_pd EINA_UNUSED, Efl_Dbg_Info *root) EINA_ARG_NONNULL(3)
 {
-   eo_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
-   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   efl_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
+   Efl_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    const char *file, *edje_group;
    efl_file_get(eo_obj, &file, &edje_group);
@@ -372,7 +372,7 @@ _edje_object_efl_file_file_set(Eo *obj, Edje *ed, const char *file, const char *
 
    if (ed->file_obj)
      {
-        eo_del(ed->file_obj);
+        efl_del(ed->file_obj);
         ed->file_obj = NULL;
      }
    if (file)
@@ -388,7 +388,7 @@ _edje_object_efl_file_file_set(Eo *obj, Edje *ed, const char *file, const char *
         f = eina_file_open(file2, EINA_FALSE);
         if (!f)
           {
-             eo_del(ed->file_obj);
+             efl_del(ed->file_obj);
              ed->file_obj = NULL;
              if (ed->path) eina_stringshare_del(ed->path);
              ed->path = NULL;

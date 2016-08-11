@@ -117,7 +117,7 @@ const char* Atspi_Name[] = {
 
 struct _Elm_Atspi_Event_Handler
 {
-   Eo_Event_Cb cb;
+   Efl_Event_Cb cb;
    void *data;
 };
 
@@ -172,7 +172,7 @@ _elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Interface_At
    Eo *parent = obj;
 
    do {
-      parent = eo_parent_get(obj);
+      parent = efl_parent_get(obj);
       if (eo_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
         {
            type = elm_interface_atspi_accessible_type_get(parent);
@@ -281,8 +281,8 @@ _elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Interface_
    Eina_Iterator *iter = NULL;
    Eo *chld;
 
-   // By default use Eo_Base object hierarchy
-   iter = eo_children_iterator_new(obj);
+   // By default use Efl_Object object hierarchy
+   iter = efl_children_iterator_new(obj);
    if (!iter) return NULL;
 
    EINA_ITERATOR_FOREACH(iter, chld)
@@ -319,7 +319,7 @@ EAPI void elm_atspi_attributes_list_free(Eina_List *list)
 }
 
 EOLIAN void
-_elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *accessible, const Eo_Event_Description *event, void *event_info)
+_elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *accessible, const Efl_Event_Description *event, void *event_info)
 {
    Eina_List *l;
    Elm_Atspi_Event_Handler *hdl;
@@ -355,7 +355,7 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
 }
 
 EOLIAN Elm_Atspi_Event_Handler *
-_elm_interface_atspi_accessible_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo_Event_Cb cb, void *data)
+_elm_interface_atspi_accessible_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Event_Cb cb, void *data)
 {
    Elm_Atspi_Event_Handler *ret = calloc(1, sizeof(Elm_Atspi_Event_Handler));
 
@@ -453,7 +453,7 @@ elm_atspi_relation_set_relation_append(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
              if (!eina_list_data_find(rel->objects, rel_obj))
                {
                   rel->objects = eina_list_append(rel->objects, rel_obj);
-                  eo_event_callback_add((Eo *) rel_obj, EO_EVENT_DEL, _on_rel_obj_del, set);
+                  efl_event_callback_add((Eo *) rel_obj, EFL_EVENT_DEL, _on_rel_obj_del, set);
                }
              return EINA_TRUE;
           }
@@ -466,7 +466,7 @@ elm_atspi_relation_set_relation_append(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
    rel->objects = eina_list_append(rel->objects, rel_obj);
    *set = eina_list_append(*set, rel);
 
-   eo_event_callback_add((Eo *) rel_obj, EO_EVENT_DEL, _on_rel_obj_del, set);
+   efl_event_callback_add((Eo *) rel_obj, EFL_EVENT_DEL, _on_rel_obj_del, set);
    return EINA_TRUE;
 }
 
@@ -482,7 +482,7 @@ elm_atspi_relation_set_relation_remove(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
           {
              if (eina_list_data_find(rel->objects, rel_obj))
                {
-                  eo_event_callback_del((Eo *) rel_obj, EO_EVENT_DEL, _on_rel_obj_del, set);
+                  efl_event_callback_del((Eo *) rel_obj, EFL_EVENT_DEL, _on_rel_obj_del, set);
                   rel->objects = eina_list_remove(rel->objects, rel_obj);
                }
              if (!rel->objects)
@@ -507,7 +507,7 @@ elm_atspi_relation_set_relation_type_remove(Elm_Atspi_Relation_Set *set, Elm_Ats
         if (rel->type == type)
           {
              EINA_LIST_FOREACH(rel->objects, l, obj)
-                eo_event_callback_del(obj, EO_EVENT_DEL, _on_rel_obj_del, set);
+                efl_event_callback_del(obj, EFL_EVENT_DEL, _on_rel_obj_del, set);
              *set = eina_list_remove(*set, rel);
              elm_atspi_relation_free(rel);
              return;
@@ -525,7 +525,7 @@ elm_atspi_relation_set_free(Elm_Atspi_Relation_Set set)
    EINA_LIST_FREE(set, rel)
      {
         EINA_LIST_FOREACH(rel->objects, l, obj)
-           eo_event_callback_del(obj, EO_EVENT_DEL, _on_rel_obj_del, set);
+           efl_event_callback_del(obj, EFL_EVENT_DEL, _on_rel_obj_del, set);
         elm_atspi_relation_free(rel);
      }
 }

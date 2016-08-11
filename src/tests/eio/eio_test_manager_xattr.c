@@ -173,7 +173,7 @@ START_TEST(eio_test_job_xattr_set)
 
    num_of_attr = 0;
 
-   eo_event_callback_add(job, EFL_IO_MANAGER_EVENT_XATTR, _filter_cb, NULL);
+   efl_event_callback_add(job, EFL_IO_MANAGER_EVENT_XATTR, _filter_cb, NULL);
    list_promise = efl_io_manager_file_xattr_list_get(job, test_file_path);
    eina_promise_progress_cb_add(list_promise, _main_cb, &num_of_attr, NULL);
    eina_promise_then(list_promise, _done_cb, _error_cb, &num_of_attr);

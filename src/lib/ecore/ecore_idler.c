@@ -14,7 +14,7 @@ struct _Ecore_Factorized_Idle
    Ecore_Task_Cb func;
    void         *data;
 
-   const Eo_Callback_Array_Item *desc;
+   const Efl_Callback_Array_Item *desc;
 
    short         references;
    Eina_Bool     delete_me : 1;
@@ -55,7 +55,7 @@ _ecore_factorized_idle_del(Ecore_Idler *idler)
         return idler->data;
      }
 
-   eo_event_callback_array_del(_mainloop_singleton, idler->desc, idler);
+   efl_event_callback_array_del(_mainloop_singleton, idler->desc, idler);
 
    data = idler->data;
    free(idler);
@@ -63,7 +63,7 @@ _ecore_factorized_idle_del(Ecore_Idler *idler)
 }
 
 Ecore_Factorized_Idle *
-_ecore_factorized_idle_add(const Eo_Callback_Array_Item *desc,
+_ecore_factorized_idle_add(const Efl_Callback_Array_Item *desc,
                            Ecore_Task_Cb func,
                            const void   *data)
 {
@@ -89,7 +89,7 @@ _ecore_factorized_idle_add(const Eo_Callback_Array_Item *desc,
    ret->references = 0;
    ret->delete_me = EINA_FALSE;
 
-   eo_event_callback_array_add(_mainloop_singleton, desc, ret);
+   efl_event_callback_array_add(_mainloop_singleton, desc, ret);
 
    return ret;
 }
@@ -98,7 +98,7 @@ _ecore_factorized_idle_add(const Eo_Callback_Array_Item *desc,
 
 EO_CALLBACKS_ARRAY_DEFINE(ecore_idler_callbacks,
                           { EFL_LOOP_EVENT_IDLE, _ecore_factorized_idle_process },
-                          { EO_EVENT_DEL, _ecore_factorized_idle_event_del });
+                          { EFL_EVENT_DEL, _ecore_factorized_idle_event_del });
 
 EAPI Ecore_Idler *
 ecore_idler_add(Ecore_Task_Cb func,
@@ -116,7 +116,7 @@ ecore_idler_del(Ecore_Idler *idler)
 void
 _ecore_idler_all_call(Eo *loop)
 {
-   eo_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
+   efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
 }
 
 int

@@ -1,4 +1,4 @@
-import eo_base;
+import efl_object;
 
 interface Efl.Event
 {
@@ -35,7 +35,7 @@ interface Efl.Event
       }
       instance_get @class @protected {
          params {
-            @in owner: Eo.Base;
+            @in owner: Efl.Object;
             @out priv: void*;
          }
          return: Efl.Event;

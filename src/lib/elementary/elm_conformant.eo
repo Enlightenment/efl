@@ -5,7 +5,7 @@ class Elm.Conformant (Elm.Layout)
    event_prefix: elm_conformant;
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.widget_parent.set;

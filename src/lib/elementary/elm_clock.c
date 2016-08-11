@@ -73,7 +73,7 @@ _on_clock_val_up(void *data)
    sd->interval = sd->interval / 1.05;
    ecore_timer_interval_set(sd->spin, sd->interval);
    _time_update(data, EINA_FALSE);
-   eo_event_callback_call(data, ELM_CLOCK_EVENT_CHANGED, NULL);
+   efl_event_callback_call(data, ELM_CLOCK_EVENT_CHANGED, NULL);
    return ECORE_CALLBACK_RENEW;
 
 clock_val_up_cancel:
@@ -128,7 +128,7 @@ _on_clock_val_down(void *data)
    sd->interval = sd->interval / 1.05;
    ecore_timer_interval_set(sd->spin, sd->interval);
    _time_update(data, EINA_FALSE);
-   eo_event_callback_call(data, ELM_CLOCK_EVENT_CHANGED, NULL);
+   efl_event_callback_call(data, ELM_CLOCK_EVENT_CHANGED, NULL);
    return ECORE_CALLBACK_RENEW;
 
 clock_val_down_cancel:
@@ -795,9 +795,9 @@ elm_clock_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_clock_eo_base_constructor(Eo *obj, Elm_Clock_Data *_pd EINA_UNUSED)
+_elm_clock_efl_object_constructor(Eo *obj, Elm_Clock_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_TEXT);
@@ -949,7 +949,7 @@ _elm_clock_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Clock_
 }
 
 static void
-_elm_clock_class_constructor(Eo_Class *klass)
+_elm_clock_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 

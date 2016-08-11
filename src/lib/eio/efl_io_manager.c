@@ -110,7 +110,7 @@ _file_error_cb(void *data, Eio_File *handler EINA_UNUSED, int error)
 /* Basic listing callbacks */
 
 static Eina_Bool
-_file_ls_filter_cb_helper(const Eo_Event_Description *event, void *data, const char *file)
+_file_ls_filter_cb_helper(const Efl_Event_Description *event, void *data, const char *file)
 {
    Job_Closure *operation = data;
 
@@ -124,7 +124,7 @@ _file_ls_filter_cb_helper(const Eo_Event_Description *event, void *data, const c
    event_info->file = file;
    event_info->filter = EINA_FALSE;
 
-   eo_event_callback_call(operation->pdata->object, event, event_info);
+   efl_event_callback_call(operation->pdata->object, event, event_info);
 
    Eina_Bool filter = event_info->filter;
 
@@ -213,7 +213,7 @@ _file_direct_ls_filter_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_F
    event_info.info = info;
    event_info.filter = EINA_FALSE;
 
-   eo_event_callback_call(operation->pdata->object, EFL_IO_MANAGER_EVENT_FILTER_DIRECT, &event_info);
+   efl_event_callback_call(operation->pdata->object, EFL_IO_MANAGER_EVENT_FILTER_DIRECT, &event_info);
 
    Eina_Bool filter = event_info.filter;
 
@@ -579,10 +579,10 @@ _efl_io_manager_file_close(Eo *obj,
    operation_data->file = handle;
 }
 
-static Eo_Base*
-_efl_io_manager_eo_base_constructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED)
+static Efl_Object*
+_efl_io_manager_efl_object_constructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, EFL_IO_MANAGER_CLASS));
+   obj = efl_constructor(eo_super(obj, EFL_IO_MANAGER_CLASS));
 
    pd->object = obj;
    pd->operations = NULL;
@@ -591,9 +591,9 @@ _efl_io_manager_eo_base_constructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED
 }
 
 static void
-_efl_io_manager_eo_base_destructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED)
+_efl_io_manager_efl_object_destructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, EFL_IO_MANAGER_CLASS));
+   efl_destructor(eo_super(obj, EFL_IO_MANAGER_CLASS));
 
    // FIXME: cancel all pending promise
 }

@@ -37,14 +37,14 @@ EO_FUNC_BODY(simple_##name##_get, int, 0);
 _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)
 
-static Eo_Op_Description op_descs[] = {
+static Efl_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_set, _a_set),
      EO_OP_FUNC(simple_a_get, _a_get),
      EO_OP_FUNC(simple_b_set, _b_set),
      EO_OP_FUNC(simple_b_get, _b_get),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,

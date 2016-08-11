@@ -13,7 +13,7 @@
 #include "eo_private.h"
 #include "eo_add_fallback.h"
 
-#include "eo_override.eo.c"
+#include "efl_object_override.eo.c"
 
 #define EO_CLASS_IDS_FIRST 1
 #define EO_OP_IDS_FIRST 1
@@ -23,7 +23,7 @@ EAPI Eina_Spinlock _eo_class_creation_lock;
 EAPI unsigned int _eo_init_generation = 1;
 int _eo_log_dom = -1;
 
-static _Eo_Class **_eo_classes = NULL;
+static _Efl_Class **_eo_classes = NULL;
 static Eo_Id _eo_classes_last_id = 0;
 static Eo_Id _eo_classes_alloc = 0;
 static int _eo_init_count = 0;
@@ -35,8 +35,8 @@ static size_t _eo_sz = 0;
 static size_t _eo_class_sz = 0;
 
 static void _eo_condtor_reset(_Eo_Object *obj);
-static inline void *_eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass);
-static inline void *_eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Class *klass, const _Eo_Object *ref_obj);
+static inline void *_eo_data_scope_get(const _Eo_Object *obj, const _Efl_Class *klass);
+static inline void *_eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Efl_Class *klass, const _Eo_Object *ref_obj);
 static inline void _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj);
 
 /* Start of Dich */
@@ -53,7 +53,7 @@ static inline void _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _
  * substraction at compile time. */
 #define _UNMASK_ID(id) ((id) - MASK_CLASS_TAG)
 #define ID_CLASS_GET(id) ({ \
-      (_Eo_Class *) (((_UNMASK_ID(id) <= _eo_classes_last_id) && (_UNMASK_ID(id) > 0)) ? \
+      (_Efl_Class *) (((_UNMASK_ID(id) <= _eo_classes_last_id) && (_UNMASK_ID(id) > 0)) ? \
       (_eo_classes[_UNMASK_ID(id) - 1]) : NULL); \
       })
 
@@ -106,10 +106,10 @@ _vtable_func_get(const Eo_Vtable *vtable, Eo_Op op)
 }
 
 /* XXX: Only used for a debug message below. Doesn't matter that it's slow. */
-static const _Eo_Class *
+static const _Efl_Class *
 _eo_op_class_get(Eo_Op op)
 {
-   _Eo_Class **itr = _eo_classes;
+   _Efl_Class **itr = _eo_classes;
    int mid, max, min;
 
    min = 0;
@@ -130,7 +130,7 @@ _eo_op_class_get(Eo_Op op)
 }
 
 static inline Eina_Bool
-_vtable_func_set(Eo_Vtable *vtable, const _Eo_Class *klass, Eo_Op op, eo_op_func_type func)
+_vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass, Eo_Op op, eo_op_func_type func)
 {
    op_type_funcs *fsrc;
    size_t idx1 = DICH_CHAIN1(op);
@@ -139,7 +139,7 @@ _vtable_func_set(Eo_Vtable *vtable, const _Eo_Class *klass, Eo_Op op, eo_op_func
    fsrc = &chain1->funcs[DICH_CHAIN_LAST(op)];
    if (fsrc->src == klass)
      {
-        const _Eo_Class *op_kls = _eo_op_class_get(op);
+        const _Efl_Class *op_kls = _eo_op_class_get(op);
         ERR("Class '%s': Overriding already set func %p for op %d (%s) with %p.",
               klass->desc->name, fsrc->func, op, op_kls->desc->name, func);
         return EINA_FALSE;
@@ -189,18 +189,18 @@ _eo_is_a_class(const Eo *eo_id)
    return !!(oid & MASK_CLASS_TAG);
 }
 
-static inline _Eo_Class *
-_eo_class_pointer_get(const Eo_Class *klass_id)
+static inline _Efl_Class *
+_eo_class_pointer_get(const Efl_Class *klass_id)
 {
 #ifdef HAVE_EO_ID
    return ID_CLASS_GET((Eo_Id)klass_id);
 #else
-   return (_Eo_Class *) klass_id;
+   return (_Efl_Class *) klass_id;
 #endif
 }
 
 static const char *
-_eo_op_desc_name_get(const Eo_Op_Description *desc)
+_eo_op_desc_name_get(const Efl_Op_Description *desc)
 {
    static const char *fct_name = "unknown";
 
@@ -222,9 +222,9 @@ _eo_op_desc_name_get(const Eo_Op_Description *desc)
 }
 
 static inline const op_type_funcs *
-_eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op)
+_eo_kls_itr_next(const _Efl_Class *orig_kls, const _Efl_Class *cur_klass, Eo_Op op)
 {
-   const _Eo_Class **kls_itr = NULL;
+   const _Efl_Class **kls_itr = NULL;
 
    /* Find the kls itr. */
    kls_itr = orig_kls->mro;
@@ -251,11 +251,11 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
 
 /************************************ EO ************************************/
 
-static const _Eo_Class *_super_class = NULL;
+static const _Efl_Class *_super_class = NULL;
 static Eina_Spinlock _super_class_lock;
 
 EAPI Eo *
-eo_super(const Eo *obj, const Eo_Class *cur_klass)
+eo_super(const Eo *obj, const Efl_Class *cur_klass)
 {
    EO_CLASS_POINTER_RETURN_VAL(cur_klass, klass, NULL);
 
@@ -269,8 +269,8 @@ eo_super(const Eo *obj, const Eo_Class *cur_klass)
 EAPI Eina_Bool
 _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *cache, const char *file, int line)
 {
-   const _Eo_Class *klass, *inputklass, *main_klass;
-   const _Eo_Class *cur_klass = NULL;
+   const _Efl_Class *klass, *inputklass, *main_klass;
+   const _Efl_Class *cur_klass = NULL;
    _Eo_Object *obj = NULL;
    const Eo_Vtable *vtable = NULL;
    const op_type_funcs *func;
@@ -301,9 +301,9 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
         vtable = obj->vtable;
 
         if (_obj_is_override(obj) && cur_klass &&
-              (_eo_class_id_get(cur_klass) == EO_OVERRIDE_CLASS))
+              (_eo_class_id_get(cur_klass) == EFL_OBJECT_OVERRIDE_CLASS))
           {
-             /* Doing a eo_super(obj, EO_OVERRIDE_CLASS) should result in calling
+             /* Doing a eo_super(obj, EFL_OBJECT_OVERRIDE_CLASS) should result in calling
               * as if it's a normal class. */
              vtable = &klass->vtable;
              cur_klass = NULL;
@@ -494,13 +494,13 @@ _eo_api_func_equal(const void *api_func1, const void *api_func2)
 /* api_func should be the pointer to the function on all platforms except windows,
  * in which it should be the the name of the function (string).
  */
-static inline const Eo_Op_Description *
-_eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class **extns)
+static inline const Efl_Op_Description *
+_eo_api_desc_get(const void *api_func, const _Efl_Class *klass, const _Efl_Class **extns)
 {
-   const _Eo_Class *cur_klass;
-   const _Eo_Class **kls_itr = NULL;
-   const Eo_Op_Description *op_desc;
-   const Eo_Op_Description *op_descs;
+   const _Efl_Class *cur_klass;
+   const _Efl_Class **kls_itr = NULL;
+   const Efl_Op_Description *op_desc;
+   const Efl_Op_Description *op_descs;
 
    if (klass)
      {
@@ -555,13 +555,13 @@ _eo_api_op_id_get(const void *api_func)
 /* klass is the klass we are working on. hierarchy_klass is the class whe should
  * use when validating. */
 static Eina_Bool
-_eo_class_funcs_set(Eo_Vtable *vtable, const Eo_Ops *ops, const _Eo_Class *hierarchy_klass, const _Eo_Class *klass, Eina_Bool override_only)
+_eo_class_funcs_set(Eo_Vtable *vtable, const Eo_Ops *ops, const _Efl_Class *hierarchy_klass, const _Efl_Class *klass, Eina_Bool override_only)
 {
    unsigned int i;
    int op_id;
    const void *last_api_func;
-   const Eo_Op_Description *op_desc;
-   const Eo_Op_Description *op_descs;
+   const Efl_Op_Description *op_desc;
+   const Efl_Op_Description *op_descs;
 
    op_id = hierarchy_klass->base_id;
    op_descs = ops->descs;
@@ -610,7 +610,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Eo_Ops *ops, const _Eo_Class *hiera
           }
         else if ((op_desc->op_type == EO_OP_TYPE_REGULAR_OVERRIDE) || (op_desc->op_type == EO_OP_TYPE_CLASS_OVERRIDE))
           {
-             const Eo_Op_Description *api_desc;
+             const Efl_Op_Description *api_desc;
              if (override_only)
                {
                   api_desc = _eo_api_desc_get(op_desc->api_func, hierarchy_klass, NULL);
@@ -649,7 +649,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Eo_Ops *ops, const _Eo_Class *hiera
 }
 
 EAPI Eo *
-_eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id, Eina_Bool ref EINA_UNUSED, Eina_Bool is_fallback)
+_eo_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref EINA_UNUSED, Eina_Bool is_fallback)
 {
    _Eo_Object *obj;
    Eo_Stack_Frame *fptr = NULL;
@@ -700,10 +700,10 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
    eo_ref(eo_id);
 
    /* Reference for the parent if is_ref is done in _eo_add_end */
-   eo_parent_set(eo_id, parent_id);
+   efl_parent_set(eo_id, parent_id);
 
    /* eo_id can change here. Freeing is done on the resolved object. */
-   eo_id = eo_constructor(eo_id);
+   eo_id = efl_constructor(eo_id);
    if (!eo_id)
      {
         ERR("Object of class '%s' - Error while constructing object",
@@ -711,7 +711,7 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 
         /* We have two refs at this point. */
         _eo_unref(obj);
-        eo_del((Eo *) obj->header.id);
+        efl_del((Eo *) obj->header.id);
         return NULL;
      }
    else if (eo_id != _eo_obj_id_get(obj))
@@ -719,7 +719,7 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
         EO_OBJ_POINTER_RETURN_VAL(eo_id, new_obj, NULL);
         /* We have two refs at this point. */
         _eo_unref(obj);
-        eo_del((Eo *) obj->header.id);
+        efl_del((Eo *) obj->header.id);
 
         _eo_ref(new_obj);
      }
@@ -739,7 +739,7 @@ _eo_add_internal_end(Eo *eo_id, Eo *finalized_id)
 
    if (!obj->condtor_done)
      {
-        const _Eo_Class *klass = obj->klass;
+        const _Efl_Class *klass = obj->klass;
 
         ERR("Object of class '%s' - Not all of the object constructors have been executed.",
               klass->desc->name);
@@ -770,17 +770,17 @@ _eo_add_internal_end(Eo *eo_id, Eo *finalized_id)
 
 cleanup:
    _eo_unref(obj);
-   eo_del((Eo *) obj->header.id);
+   efl_del((Eo *) obj->header.id);
    return NULL;
 }
 
 EAPI Eo *
 _eo_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
 {
-   Eo *ret = eo_finalize(eo_id);
+   Eo *ret = efl_finalize(eo_id);
    ret = _eo_add_internal_end(eo_id, ret);
 
-   if (is_ref && eo_parent_get(eo_id))
+   if (is_ref && efl_parent_get(eo_id))
      {
         eo_ref(eo_id);
      }
@@ -795,13 +795,13 @@ _eo_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
 
 /*****************************************************************************/
 
-EAPI const Eo_Class *
+EAPI const Efl_Class *
 eo_class_get(const Eo *eo_id)
 {
    if (_eo_is_a_class(eo_id))
      {
         EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, NULL);
-        return EO_CLASS_CLASS;
+        return EFL_CLASS_CLASS;
      }
 
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
@@ -810,9 +810,9 @@ eo_class_get(const Eo *eo_id)
 }
 
 EAPI const char *
-eo_class_name_get(const Eo_Class *eo_id)
+eo_class_name_get(const Efl_Class *eo_id)
 {
-   const _Eo_Class *klass;
+   const _Efl_Class *klass;
 
    if (_eo_is_a_class(eo_id))
      {
@@ -836,9 +836,9 @@ _vtable_init(Eo_Vtable *vtable, size_t size)
 }
 
 static void
-_eo_class_base_op_init(_Eo_Class *klass)
+_eo_class_base_op_init(_Efl_Class *klass)
 {
-   const Eo_Class_Description *desc = klass->desc;
+   const Efl_Class_Description *desc = klass->desc;
 
    klass->base_id = _eo_ops_last_id;
 
@@ -849,9 +849,9 @@ _eo_class_base_op_init(_Eo_Class *klass)
 
 #ifdef EO_DEBUG
 static Eina_Bool
-_eo_class_mro_has(const _Eo_Class *klass, const _Eo_Class *find)
+_eo_class_mro_has(const _Efl_Class *klass, const _Efl_Class *find)
 {
-   const _Eo_Class **itr;
+   const _Efl_Class **itr;
    for (itr = klass->mro ; *itr ; itr++)
      {
         if (*itr == find)
@@ -892,7 +892,7 @@ _eo_class_list_remove_duplicates(Eina_List* list)
 }
 
 static Eina_List *
-_eo_class_mro_add(Eina_List *mro, const _Eo_Class *klass)
+_eo_class_mro_add(Eina_List *mro, const _Efl_Class *klass)
 {
    if (!klass)
      return mro;
@@ -901,11 +901,11 @@ _eo_class_mro_add(Eina_List *mro, const _Eo_Class *klass)
 
    /* Recursively add MIXINS extensions. */
      {
-        const _Eo_Class **extn_itr;
+        const _Efl_Class **extn_itr;
 
         for (extn_itr = klass->extensions ; *extn_itr ; extn_itr++)
           {
-             const _Eo_Class *extn = *extn_itr;
+             const _Efl_Class *extn = *extn_itr;
              if (extn->desc->type == EO_CLASS_TYPE_MIXIN)
                mro = _eo_class_mro_add(mro, extn);
           }
@@ -917,12 +917,12 @@ _eo_class_mro_add(Eina_List *mro, const _Eo_Class *klass)
 }
 
 static Eina_List *
-_eo_class_mro_init(const Eo_Class_Description *desc, const _Eo_Class *parent, Eina_List *extensions)
+_eo_class_mro_init(const Efl_Class_Description *desc, const _Efl_Class *parent, Eina_List *extensions)
 {
    Eina_List *mro = NULL;
    Eina_List *extn_itr = NULL;
    Eina_List *extn_pos = NULL;
-   const _Eo_Class *extn = NULL;
+   const _Efl_Class *extn = NULL;
 
    /* Add MIXINS extensions. */
    EINA_LIST_FOREACH(extensions, extn_itr, extn)
@@ -969,7 +969,7 @@ _eo_class_mro_init(const Eo_Class_Description *desc, const _Eo_Class *parent, Ei
 }
 
 static void
-_eo_class_constructor(_Eo_Class *klass)
+_eo_class_constructor(_Efl_Class *klass)
 {
    klass->constructed = EINA_TRUE;
 
@@ -978,7 +978,7 @@ _eo_class_constructor(_Eo_Class *klass)
 }
 
 static void
-eo_class_free(_Eo_Class *klass)
+eo_class_free(_Efl_Class *klass)
 {
    void *data;
 
@@ -1015,7 +1015,7 @@ _eo_classes_release(void)
 #ifdef HAVE_MMAP
    size_t size;
 
-   size = _eo_classes_alloc * sizeof(_Eo_Class *);
+   size = _eo_classes_alloc * sizeof(_Efl_Class *);
    if (_eo_classes) munmap(_eo_classes, size);
 #else
    free(_eo_classes);
@@ -1033,10 +1033,10 @@ _eo_classes_expand(void)
 
    _eo_classes_last_id++;
    if (_eo_classes_last_id <= _eo_classes_alloc) return;
-   psize = _eo_classes_alloc * sizeof(_Eo_Class *);
+   psize = _eo_classes_alloc * sizeof(_Efl_Class *);
 #ifdef HAVE_MMAP
-   _eo_classes_alloc += (MEM_PAGE_SIZE / sizeof(_Eo_Class *));
-   newsize = _eo_classes_alloc * sizeof(_Eo_Class *);
+   _eo_classes_alloc += (MEM_PAGE_SIZE / sizeof(_Efl_Class *));
+   newsize = _eo_classes_alloc * sizeof(_Efl_Class *);
    ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
               MAP_PRIVATE | MAP_ANON, -1, 0);
    if (ptr == MAP_FAILED)
@@ -1048,7 +1048,7 @@ _eo_classes_expand(void)
    if (_eo_classes) munmap(_eo_classes, psize);
 #else
    _eo_classes_alloc += 128;
-   newsize = _eo_classes_alloc * sizeof(_Eo_Class *);
+   newsize = _eo_classes_alloc * sizeof(_Efl_Class *);
    ptr = realloc(_eo_classes, newsize);
    if (!ptr)
      {
@@ -1057,13 +1057,13 @@ _eo_classes_expand(void)
      }
 #endif
    memset(ptr + psize, 0, newsize - psize);
-   _eo_classes = (_Eo_Class **)ptr;
+   _eo_classes = (_Efl_Class **)ptr;
 }
 
-EAPI const Eo_Class *
-eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
+EAPI const Efl_Class *
+eo_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...)
 {
-   _Eo_Class *klass;
+   _Efl_Class *klass;
    va_list p_list;
    size_t extn_sz, mro_sz, mixins_sz;
    Eina_List *extn_list, *mro, *mixins;
@@ -1071,7 +1071,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
 
-   _Eo_Class *parent = _eo_class_pointer_get(parent_id);
+   _Efl_Class *parent = _eo_class_pointer_get(parent_id);
 #ifndef HAVE_EO_ID
    if (parent && !EINA_MAGIC_CHECK((Eo_Header *) parent, EO_CLASS_EINA_MAGIC))
      {
@@ -1119,7 +1119,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      {
         DBG("Started building extensions list for class '%s'", desc->name);
         extn_list = NULL;
-        const _Eo_Class *extn = NULL;
+        const _Efl_Class *extn = NULL;
         const Eo_Id *extn_id = NULL;
 
         va_start(p_list, parent_id);
@@ -1127,7 +1127,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         extn_id = va_arg(p_list, Eo_Id *);
         while (extn_id)
           {
-             extn = _eo_class_pointer_get((Eo_Class *)extn_id);
+             extn = _eo_class_pointer_get((Efl_Class *)extn_id);
              switch (extn->desc->type)
                {
                 case EO_CLASS_TYPE_REGULAR_NO_INSTANT:
@@ -1145,7 +1145,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
         extn_list = _eo_class_list_remove_duplicates(extn_list);
 
-        extn_sz = sizeof(_Eo_Class *) * (eina_list_count(extn_list) + 1);
+        extn_sz = sizeof(_Efl_Class *) * (eina_list_count(extn_list) + 1);
 
         DBG("Finished building extensions list for class '%s'", desc->name);
      }
@@ -1161,7 +1161,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              return NULL;
           }
 
-        mro_sz = sizeof(_Eo_Class *) * (eina_list_count(mro) + 1);
+        mro_sz = sizeof(_Efl_Class *) * (eina_list_count(mro) + 1);
 
         DBG("Finished building MRO list for class '%s'", desc->name);
      }
@@ -1169,7 +1169,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    /* Prepare mixins list */
      {
         Eina_List *itr;
-        const _Eo_Class *kls_itr;
+        const _Efl_Class *kls_itr;
 
         DBG("Started building Mixins list for class '%s'", desc->name);
 
@@ -1196,8 +1196,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    eina_spinlock_new(&klass->iterators.trash_lock);
    klass->parent = parent;
    klass->desc = desc;
-   klass->extensions = (const _Eo_Class **) ((char *) klass + _eo_class_sz);
-   klass->mro = (const _Eo_Class **) ((char *) klass->extensions + extn_sz);
+   klass->extensions = (const _Efl_Class **) ((char *) klass + _eo_class_sz);
+   klass->mro = (const _Efl_Class **) ((char *) klass->extensions + extn_sz);
    klass->extn_data_off = (Eo_Extension_Data_Offset *) ((char *) klass->mro + mro_sz);
    if (klass->parent)
      {
@@ -1218,8 +1218,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
    /* Copy the extensions and free the list */
      {
-        const _Eo_Class *extn = NULL;
-        const _Eo_Class **extn_itr = klass->extensions;
+        const _Efl_Class *extn = NULL;
+        const _Efl_Class **extn_itr = klass->extensions;
         EINA_LIST_FREE(extn_list, extn)
           {
              *(extn_itr++) = extn;
@@ -1231,8 +1231,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
    /* Copy the mro and free the list. */
      {
-        const _Eo_Class *kls_itr = NULL;
-        const _Eo_Class **mro_itr = klass->mro;
+        const _Efl_Class *kls_itr = NULL;
+        const _Efl_Class **mro_itr = klass->mro;
         EINA_LIST_FREE(mro, kls_itr)
           {
              *(mro_itr++) = kls_itr;
@@ -1248,7 +1248,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
    /* Feed the mixins data offsets and free the mixins list. */
      {
-        const _Eo_Class *kls_itr = NULL;
+        const _Efl_Class *kls_itr = NULL;
         Eo_Extension_Data_Offset *extn_data_itr = klass->extn_data_off;
         EINA_LIST_FREE(mixins, kls_itr)
           {
@@ -1275,7 +1275,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
    /* Flatten the function array */
      {
-        const _Eo_Class **mro_itr = klass->mro;
+        const _Efl_Class **mro_itr = klass->mro;
         for (  ; *mro_itr ; mro_itr++)
            ;
 
@@ -1288,11 +1288,11 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
    /* Mark which classes we implement */
      {
-        const _Eo_Class **extn_itr;
+        const _Efl_Class **extn_itr;
 
         for (extn_itr = klass->extensions ; *extn_itr ; extn_itr++)
           {
-             const _Eo_Class *extn = *extn_itr;
+             const _Efl_Class *extn = *extn_itr;
              /* Set it in the dich. */
              _vtable_func_set(&klass->vtable, klass, extn->base_id +
                    extn->desc->ops.count, _eo_class_isa_func);
@@ -1341,7 +1341,7 @@ EAPI Eina_Bool
 eo_override(Eo *eo_id, const Eo_Ops *ops)
 {
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
-   EO_CLASS_POINTER_RETURN_VAL(EO_OVERRIDE_CLASS, klass, EINA_FALSE);
+   EO_CLASS_POINTER_RETURN_VAL(EFL_OBJECT_OVERRIDE_CLASS, klass, EINA_FALSE);
    Eo_Vtable *previous = obj->vtable;
 
    if (!ops)
@@ -1377,7 +1377,7 @@ eo_override(Eo *eo_id, const Eo_Ops *ops)
 }
 
 EAPI Eina_Bool
-eo_isa(const Eo *eo_id, const Eo_Class *klass_id)
+eo_isa(const Eo *eo_id, const Efl_Class *klass_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
@@ -1496,7 +1496,7 @@ ___eo_ref2_reset(const Eo *obj_id)
 
 
 EAPI void
-eo_del_intercept_set(Eo *obj_id, Eo_Del_Intercept del_intercept_func)
+efl_del_intercept_set(Eo *obj_id, Eo_Del_Intercept del_intercept_func)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
 
@@ -1504,7 +1504,7 @@ eo_del_intercept_set(Eo *obj_id, Eo_Del_Intercept del_intercept_func)
 }
 
 EAPI Eo_Del_Intercept
-eo_del_intercept_get(const Eo *obj_id)
+efl_del_intercept_get(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
 
@@ -1525,7 +1525,7 @@ _eo_condtor_done(Eo *obj_id)
 }
 
 static inline void *
-_eo_data_scope_safe_get(const _Eo_Object *obj, const _Eo_Class *klass)
+_eo_data_scope_safe_get(const _Eo_Object *obj, const _Efl_Class *klass)
 {
    if (EINA_LIKELY(klass->desc->data_size > 0))
      {
@@ -1536,7 +1536,7 @@ _eo_data_scope_safe_get(const _Eo_Object *obj, const _Eo_Class *klass)
 }
 
 static inline void *
-_eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass)
+_eo_data_scope_get(const _Eo_Object *obj, const _Efl_Class *klass)
 {
    if (EINA_LIKELY(klass->desc->type != EO_CLASS_TYPE_MIXIN))
      return ((char *) obj) + klass->data_offset;
@@ -1564,7 +1564,7 @@ _eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass)
 }
 
 static inline void *
-_eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Class *klass, const _Eo_Object *ref_obj)
+_eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Efl_Class *klass, const _Eo_Object *ref_obj)
 {
    void *data = NULL;
    if (klass != NULL)
@@ -1592,7 +1592,7 @@ static inline void
 _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
 {
 #ifdef EO_DEBUG
-   const _Eo_Class *klass = obj->klass;
+   const _Efl_Class *klass = obj->klass;
    Eina_Bool in_range = (((char *)data >= (((char *) obj) + _eo_sz)) &&
                          ((char *)data < (((char *) obj) + klass->obj_size)));
    if (!in_range)
@@ -1634,7 +1634,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
 }
 
 EAPI void *
-eo_data_scope_get(const Eo *obj_id, const Eo_Class *klass_id)
+eo_data_scope_get(const Eo *obj_id, const Efl_Class *klass_id)
 {
    void *ret;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
@@ -1661,12 +1661,12 @@ eo_data_scope_get(const Eo *obj_id, const Eo_Class *klass_id)
 }
 
 EAPI void *
-eo_data_xref_internal(const char *file, int line, const Eo *obj_id, const Eo_Class *klass_id, const Eo *ref_obj_id)
+eo_data_xref_internal(const char *file, int line, const Eo *obj_id, const Efl_Class *klass_id, const Eo *ref_obj_id)
 {
    void *ret;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
    EO_OBJ_POINTER_RETURN_VAL(ref_obj_id, ref_obj, NULL);
-   _Eo_Class *klass = NULL;
+   _Efl_Class *klass = NULL;
    if (klass_id)
      {
         EO_CLASS_POINTER_RETURN_VAL(klass_id, klass2, NULL);
@@ -1711,7 +1711,7 @@ eo_init(void)
    eina_init();
 
    _eo_sz = EO_ALIGN_SIZE(sizeof(_Eo_Object));
-   _eo_class_sz = EO_ALIGN_SIZE(sizeof(_Eo_Class));
+   _eo_class_sz = EO_ALIGN_SIZE(sizeof(_Efl_Class));
 
    _eo_classes = NULL;
    _eo_classes_last_id = EO_CLASS_IDS_FIRST - 1;
@@ -1765,8 +1765,8 @@ eo_init(void)
                    EINA_LOG_STATE_STOP,
                    EINA_LOG_STATE_INIT);
 
-   /* bootstrap EO_CLASS_CLASS */
-   (void) EO_CLASS_CLASS;
+   /* bootstrap EFL_CLASS_CLASS */
+   (void) EFL_CLASS_CLASS;
 
    return EINA_TRUE;
 }
@@ -1775,7 +1775,7 @@ EAPI Eina_Bool
 eo_shutdown(void)
 {
    size_t i;
-   _Eo_Class **cls_itr = _eo_classes + _eo_classes_last_id - 1;
+   _Efl_Class **cls_itr = _eo_classes + _eo_classes_last_id - 1;
 
    if (--_eo_init_count > 0)
      return EINA_TRUE;

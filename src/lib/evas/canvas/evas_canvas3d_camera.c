@@ -63,17 +63,17 @@ evas_canvas3d_camera_node_del(Evas_Canvas3D_Camera *camera, Evas_Canvas3D_Node *
 }
 
 EOLIAN static Eo *
-_evas_canvas3d_camera_eo_base_constructor(Eo *obj,
+_evas_canvas3d_camera_efl_object_constructor(Eo *obj,
                                        Evas_Canvas3D_Camera_Data *pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_CAMERA);
 
    return obj;
 }
 
 EOLIAN static void
-_evas_canvas3d_camera_eo_base_destructor(Eo *obj,
+_evas_canvas3d_camera_efl_object_destructor(Eo *obj,
                                       Evas_Canvas3D_Camera_Data *pd)
 {
    Eina_Iterator *it = NULL;
@@ -92,7 +92,7 @@ _evas_canvas3d_camera_eo_base_destructor(Eo *obj,
         eina_hash_free(pd->nodes);
      }
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Canvas3D_Camera *

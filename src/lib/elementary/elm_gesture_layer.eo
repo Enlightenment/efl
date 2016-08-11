@@ -154,7 +154,7 @@ class Elm.Gesture_Layer (Elm.Widget)
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.disable;

@@ -8,6 +8,6 @@ class Efl.Canvas.Snapshot (Efl.Canvas.Image.Internal)
    ]]
    data: null;
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
    }
 }

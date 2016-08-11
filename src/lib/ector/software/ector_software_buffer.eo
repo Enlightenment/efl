@@ -1,8 +1,8 @@
-class Ector.Software.Buffer (Eo.Base, Ector.Software.Buffer.Base)
+class Ector.Software.Buffer (Efl.Object, Ector.Software.Buffer.Base)
 {
    data: null;
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
    }
 }

@@ -94,7 +94,7 @@ efl_model_property_changed_notify(Efl_Model *model, const char *property)
    EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
 
    Efl_Model_Property_Event evt = {.changed_properties = changed_properties};
-   eo_event_callback_call(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+   efl_event_callback_call(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
 
 on_error:
    eina_array_free(changed_properties);
@@ -110,7 +110,7 @@ efl_model_property_invalidated_notify(Efl_Model *model, const char *property)
    EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
 
    Efl_Model_Property_Event evt = {.invalidated_properties = invalidated_properties};
-   eo_event_callback_call(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+   efl_event_callback_call(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
 
 on_error:
    eina_array_free(invalidated_properties);

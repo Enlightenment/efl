@@ -99,10 +99,10 @@ _ector_cairo_software_surface_surface_get(Eo *obj EINA_UNUSED, Ector_Cairo_Softw
    if (height) *height = pd->base->generic->h;
 }
 
-static Eo_Base *
-_ector_cairo_software_surface_eo_base_constructor(Eo *obj, Ector_Cairo_Software_Surface_Data *pd)
+static Efl_Object *
+_ector_cairo_software_surface_efl_object_constructor(Eo *obj, Ector_Cairo_Software_Surface_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    if (!obj) return NULL;
    pd->base = eo_data_ref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
@@ -112,10 +112,10 @@ _ector_cairo_software_surface_eo_base_constructor(Eo *obj, Ector_Cairo_Software_
 }
 
 EOLIAN static void
-_ector_cairo_software_surface_eo_base_destructor(Eo *obj, Ector_Cairo_Software_Surface_Data *pd)
+_ector_cairo_software_surface_efl_object_destructor(Eo *obj, Ector_Cairo_Software_Surface_Data *pd)
 {
    eo_data_unref(obj, pd->base);
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 #include "ector_cairo_software_surface.eo.c"

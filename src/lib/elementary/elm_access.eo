@@ -6,7 +6,7 @@ class Elm.Access (Elm.Widget, Elm.Interface.Atspi_Widget_Action)
    data: null;
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Elm.Widget.activate;
       Elm.Widget.on_focus;

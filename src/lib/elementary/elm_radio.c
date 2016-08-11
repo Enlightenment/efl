@@ -118,7 +118,7 @@ _activate(Evas_Object *obj)
 
         if (_elm_config->access_mode)
           _elm_access_say(E_("State: On"));
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, ELM_RADIO_EVENT_CHANGED, NULL);
 
      }
@@ -273,9 +273,9 @@ elm_radio_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_radio_eo_base_constructor(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED)
+_elm_radio_efl_object_constructor(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_RADIO_BUTTON);
@@ -380,7 +380,7 @@ _elm_radio_elm_widget_activate(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED, Elm_Act
 }
 
 EOLIAN static void
-_elm_radio_class_constructor(Eo_Class *klass)
+_elm_radio_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

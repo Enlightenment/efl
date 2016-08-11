@@ -42,7 +42,7 @@ _shader_free(void *s)
 static Ector_Renderer *
 _ector_gl_surface_ector_surface_renderer_factory_new(Eo *obj,
                                                              Ector_GL_Surface_Data *pd EINA_UNUSED,
-                                                             const Eo_Class *type)
+                                                             const Efl_Class *type)
 {
    if (type == ECTOR_RENDERER_SHAPE_MIXIN)
      return eo_add(ECTOR_RENDERER_GL_SHAPE_CLASS, NULL, ector_renderer_surface_set(eo_self, obj));
@@ -327,9 +327,9 @@ _ector_gl_surface_shader_get(Eo *obj EINA_UNUSED, Ector_GL_Surface_Data *pd EINA
 }
 
 static void
-_ector_gl_surface_eo_base_destructor(Eo *obj, Ector_GL_Surface_Data *pd EINA_UNUSED)
+_ector_gl_surface_efl_object_destructor(Eo *obj, Ector_GL_Surface_Data *pd EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, ECTOR_GL_SURFACE_CLASS));
+   efl_destructor(eo_super(obj, ECTOR_GL_SURFACE_CLASS));
 
    eina_hash_free(shader_cache);
    shader_cache = NULL;
@@ -337,12 +337,12 @@ _ector_gl_surface_eo_base_destructor(Eo *obj, Ector_GL_Surface_Data *pd EINA_UNU
    shader_file = NULL;
 }
 
-static Eo_Base *
-_ector_gl_surface_eo_base_constructor(Eo *obj, Ector_GL_Surface_Data *pd EINA_UNUSED)
+static Efl_Object *
+_ector_gl_surface_efl_object_constructor(Eo *obj, Ector_GL_Surface_Data *pd EINA_UNUSED)
 {
    Eina_Strbuf *file_path = NULL;
 
-   obj = eo_constructor(eo_super(obj, ECTOR_GL_SURFACE_CLASS));
+   obj = efl_constructor(eo_super(obj, ECTOR_GL_SURFACE_CLASS));
    if (!obj) return NULL;
 
    if (shader_cache) return obj;

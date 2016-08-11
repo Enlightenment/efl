@@ -243,9 +243,9 @@ emotion_object_add(Evas *evas)
 }
 
 EOLIAN static Eo *
-_emotion_object_eo_base_constructor(Eo *obj, Emotion_Object_Data *pd EINA_UNUSED)
+_emotion_object_efl_object_constructor(Eo *obj, Emotion_Object_Data *pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, E_OBJ_NAME);
 
    return obj;
@@ -1310,7 +1310,7 @@ _eio_load_xattr_done(void *data, Eio_File *handler, double xattr_double)
    Emotion_Object_Data *sd = data;
 
    emotion_object_position_set(evas_object_smart_parent_get(sd->obj), xattr_double);
-   eo_event_callback_call(evas_object_smart_parent_get(sd->obj), EMOTION_OBJECT_EVENT_POSITION_LOAD_SUCCEED, NULL);
+   efl_event_callback_call(evas_object_smart_parent_get(sd->obj), EMOTION_OBJECT_EVENT_POSITION_LOAD_SUCCEED, NULL);
    _eio_load_xattr_cleanup(sd, handler);
 }
 
@@ -1319,7 +1319,7 @@ _eio_load_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 {
    Emotion_Object_Data *sd = data;
 
-   eo_event_callback_call(evas_object_smart_parent_get(sd->obj), EMOTION_OBJECT_EVENT_POSITION_LOAD_FAILED, NULL);
+   efl_event_callback_call(evas_object_smart_parent_get(sd->obj), EMOTION_OBJECT_EVENT_POSITION_LOAD_FAILED, NULL);
    _eio_load_xattr_cleanup(sd, handler);
 }
 #endif
@@ -1354,10 +1354,10 @@ emotion_object_last_position_load(Evas_Object *obj)
    if (eina_xattr_double_get(tmp, "user.e.time_seek", &xattr))
      {
         emotion_object_position_set(obj, xattr);
-        eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_POSITION_LOAD_SUCCEED, NULL);
+        efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_POSITION_LOAD_SUCCEED, NULL);
      }
    else
-     eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_POSITION_LOAD_FAILED, NULL);
+     efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_POSITION_LOAD_FAILED, NULL);
 #endif
 }
 
@@ -1380,7 +1380,7 @@ _eio_save_xattr_done(void *data, Eio_File *handler)
 {
    Emotion_Object_Data *sd = data;
 
-   eo_event_callback_call(sd->obj, EMOTION_OBJECT_EVENT_POSITION_SAVE_SUCCEED, NULL);
+   efl_event_callback_call(sd->obj, EMOTION_OBJECT_EVENT_POSITION_SAVE_SUCCEED, NULL);
    _eio_save_xattr_cleanup(sd, handler);
 }
 
@@ -1389,7 +1389,7 @@ _eio_save_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 {
    Emotion_Object_Data *sd = data;
 
-   eo_event_callback_call(sd->obj, EMOTION_OBJECT_EVENT_POSITION_SAVE_FAILED, NULL);
+   efl_event_callback_call(sd->obj, EMOTION_OBJECT_EVENT_POSITION_SAVE_FAILED, NULL);
    _eio_save_xattr_cleanup(sd, handler);
 }
 #endif
@@ -1419,9 +1419,9 @@ emotion_object_last_position_save(Evas_Object *obj)
                                               sd);
 #else
    if (eina_xattr_double_set(tmp, "user.e.time_seek", emotion_object_position_get(obj), 0))
-     eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_POSITION_SAVE_SUCCEED, NULL);
+     efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_POSITION_SAVE_SUCCEED, NULL);
    else
-     eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_POSITION_SAVE_FAILED, NULL);
+     efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_POSITION_SAVE_FAILED, NULL);
 
 #endif
 }
@@ -1483,7 +1483,7 @@ _emotion_frame_anim(void *data)
    _emotion_video_pos_update(obj,
                              emotion_engine_instance_pos_get(sd->engine_instance),
                              emotion_engine_instance_len_get(sd->engine_instance));
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_FRAME_DECODE, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_FRAME_DECODE, NULL);
    return EINA_FALSE;
 }
 
@@ -1507,8 +1507,8 @@ _emotion_video_pos_update(Evas_Object *obj, double pos, double len)
    if (len != sd->len) nlen = 1;
    sd->pos = pos;
    sd->len = len;
-   if (npos) eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_POSITION_UPDATE, NULL);
-   if (nlen) eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_LENGTH_CHANGE, NULL);
+   if (npos) efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_POSITION_UPDATE, NULL);
+   if (nlen) efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_LENGTH_CHANGE, NULL);
 }
 
 EAPI void
@@ -1537,7 +1537,7 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
    if (changed)
      {
         evas_object_size_hint_request_set(obj, w, h);
-        eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_FRAME_RESIZE, NULL);
+        efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_FRAME_RESIZE, NULL);
         evas_object_geometry_get(obj, NULL, NULL, &w, &h);
         _emotion_object_aspect_border_apply(obj, sd, w, h);
      }
@@ -1561,7 +1561,7 @@ _emotion_decode_stop(Evas_Object *obj)
    if (sd->play)
      {
         sd->play = 0;
-        eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_DECODE_STOP, NULL);
+        efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_DECODE_STOP, NULL);
      }
 }
 
@@ -1577,26 +1577,26 @@ _emotion_open_done(Evas_Object *obj)
      emotion_object_position_set(obj, sd->remember_jump);
    if (sd->remember_play != sd->play)
      emotion_object_play_set(obj, sd->remember_play);
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_OPEN_DONE, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_OPEN_DONE, NULL);
 
 }
 
 EAPI void
 _emotion_playback_started(Evas_Object *obj)
 {
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, NULL);
 }
 
 EAPI void
 _emotion_playback_finished(Evas_Object *obj)
 {
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_PLAYBACK_FINISHED, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_PLAYBACK_FINISHED, NULL);
 }
 
 EAPI void
 _emotion_audio_level_change(Evas_Object *obj)
 {
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_AUDIO_LEVEL_CHANGE, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_AUDIO_LEVEL_CHANGE, NULL);
 }
 
 EAPI void
@@ -1605,7 +1605,7 @@ _emotion_channels_change(Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_CHANNELS_CHANGE, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_CHANNELS_CHANGE, NULL);
 }
 
 EAPI void
@@ -1615,7 +1615,7 @@ _emotion_title_set(Evas_Object *obj, char *title)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    eina_stringshare_replace(&sd->title, title);
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_TITLE_CHANGE, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_TITLE_CHANGE, NULL);
 
 }
 
@@ -1627,7 +1627,7 @@ _emotion_progress_set(Evas_Object *obj, char *info, double st)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    eina_stringshare_replace(&sd->progress.info, info);
    sd->progress.stat = st;
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_PROGRESS_CHANGE, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_PROGRESS_CHANGE, NULL);
 }
 
 EAPI void
@@ -1638,7 +1638,7 @@ _emotion_file_ref_set(Evas_Object *obj, const char *file, int num)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    eina_stringshare_replace(&sd->ref.file, file);
    sd->ref.num = num;
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_REF_CHANGE, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_REF_CHANGE, NULL);
 }
 
 EAPI void
@@ -1648,7 +1648,7 @@ _emotion_spu_button_num_set(Evas_Object *obj, int num)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    sd->spu.button_num = num;
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_BUTTON_NUM_CHANGE, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_BUTTON_NUM_CHANGE, NULL);
 }
 
 EAPI void
@@ -1658,7 +1658,7 @@ _emotion_spu_button_set(Evas_Object *obj, int button)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    sd->spu.button = button;
-   eo_event_callback_call(obj, EMOTION_OBJECT_EVENT_BUTTON_CHANGE, NULL);
+   efl_event_callback_call(obj, EMOTION_OBJECT_EVENT_BUTTON_CHANGE, NULL);
 }
 
 EAPI void

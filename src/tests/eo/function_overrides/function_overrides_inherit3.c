@@ -16,11 +16,11 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
    simple_a_set(eo_super(obj, MY_CLASS), a + 1);
 }
 
-static Eo_Op_Description op_descs[] = {
+static Efl_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Inherit3",
      EO_CLASS_TYPE_REGULAR,

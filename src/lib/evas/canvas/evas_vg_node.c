@@ -25,8 +25,8 @@ _efl_vg_property_changed(void *data, const Eo_Event *event)
 
    if (!pd->flags) pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
 
-   parent = eo_parent_get(event->object);
-   eo_event_callback_call(parent, event->desc, event->info);
+   parent = efl_parent_get(event->object);
+   efl_event_callback_call(parent, event->desc, event->info);
 }
 
 static void
@@ -238,7 +238,7 @@ _efl_vg_parent_checked_get(Eo *obj,
                                 Efl_VG_Container_Data **cd)
 {
    *cd = NULL;
-   *parent = eo_parent_get(obj);
+   *parent = efl_parent_get(obj);
 
    if (eo_isa(*parent, EFL_VG_CONTAINER_CLASS))
      {
@@ -268,20 +268,20 @@ _efl_vg_parent_checked_get(Eo *obj,
 }
 
 static Eo *
-_efl_vg_eo_base_constructor(Eo *obj,
+_efl_vg_efl_object_constructor(Eo *obj,
                                  Efl_VG_Data *pd)
 {
    Efl_VG_Container_Data *cd = NULL;
    Eo *parent;
 
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    if (!_efl_vg_parent_checked_get(obj, &parent, &cd)) {
         ERR("Failed");
         return NULL;
    }
 
-   eo_event_callback_add(obj, EFL_GFX_CHANGED, _efl_vg_property_changed, pd);
+   efl_event_callback_add(obj, EFL_GFX_CHANGED, _efl_vg_property_changed, pd);
    pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
    pd->changed = EINA_TRUE;
 
@@ -289,7 +289,7 @@ _efl_vg_eo_base_constructor(Eo *obj,
 }
 
 static void
-_efl_vg_eo_base_destructor(Eo *obj, Efl_VG_Data *pd)
+_efl_vg_efl_object_destructor(Eo *obj, Efl_VG_Data *pd)
 {
    if (pd->m)
      {
@@ -299,7 +299,7 @@ _efl_vg_eo_base_destructor(Eo *obj, Efl_VG_Data *pd)
 
    if (pd->renderer)
      {
-        eo_del(pd->renderer);
+        efl_del(pd->renderer);
         pd->renderer = NULL;
      }
    if (pd->intp)
@@ -308,7 +308,7 @@ _efl_vg_eo_base_destructor(Eo *obj, Efl_VG_Data *pd)
         pd->intp = NULL;
      }
 
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 static void
@@ -355,7 +355,7 @@ _efl_vg_name_get(Eo *obj EINA_UNUSED, Efl_VG_Data *pd)
 }
 
 static void
-_efl_vg_eo_base_parent_set(Eo *obj,
+_efl_vg_efl_object_parent_set(Eo *obj,
                                 Efl_VG_Data *pd EINA_UNUSED,
                                 Eo *parent)
 {
@@ -392,7 +392,7 @@ _efl_vg_eo_base_parent_set(Eo *obj,
         if (pd->name) eina_hash_del(old_cd->names, pd->name, obj);
      }
 
-   eo_parent_set(eo_super(obj, MY_CLASS), parent);
+   efl_parent_set(eo_super(obj, MY_CLASS), parent);
    if (cd)
      {
         cd->children = eina_list_append(cd->children, obj);
@@ -417,7 +417,7 @@ _efl_vg_efl_gfx_stack_raise(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
    Eina_List *lookup, *next;
    Eo *parent;
 
-   parent = eo_parent_get(obj);
+   parent = efl_parent_get(obj);
    if (!eo_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
    cd = eo_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
 
@@ -447,7 +447,7 @@ _efl_vg_efl_gfx_stack_stack_above(Eo *obj,
    Eina_List *lookup, *ref;
    Eo *parent;
 
-   parent = eo_parent_get(obj);
+   parent = efl_parent_get(obj);
    if (!eo_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
    cd = eo_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
 
@@ -477,7 +477,7 @@ _efl_vg_efl_gfx_stack_stack_below(Eo *obj,
    Eina_List *lookup, *ref;
    Eo *parent;
 
-   parent = eo_parent_get(obj);
+   parent = efl_parent_get(obj);
    if (!eo_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
    cd = eo_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
 
@@ -505,7 +505,7 @@ _efl_vg_efl_gfx_stack_lower(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
    Eina_List *lookup, *prev;
    Eo *parent;
 
-   parent = eo_parent_get(obj);
+   parent = efl_parent_get(obj);
    if (!eo_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
    cd = eo_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
 
@@ -534,7 +534,7 @@ _efl_vg_root_parent_get(Eo *obj)
    if (eo_isa(obj, EFL_VG_ROOT_NODE_CLASS))
      return obj;
 
-   parent = eo_parent_get(obj);
+   parent = efl_parent_get(obj);
 
    if (!parent) return NULL;
    return _efl_vg_root_parent_get(parent);
@@ -682,7 +682,7 @@ _efl_vg_interpolate(Eo *obj,
    tod = eo_data_scope_get(to, EFL_VG_CLASS);
    from_map = 1.0 - pos_map;
 
-   eo_del(pd->renderer);
+   efl_del(pd->renderer);
    pd->renderer = NULL;
 
    if (fromd->m || tod->m)
@@ -772,7 +772,7 @@ _efl_vg_dup(Eo *obj, Efl_VG_Data *pd, const Efl_VG *from)
 
    if (pd->renderer)
      {
-        eo_del(pd->renderer);
+        efl_del(pd->renderer);
         pd->renderer = NULL;
      }
 

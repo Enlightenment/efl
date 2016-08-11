@@ -19,11 +19,11 @@ typedef struct _Constructor_Method_Class_Data Constructor_Method_Class_Data;
 
 #define MY_CLASS CONSTRUCTOR_METHOD_CLASS_CLASS
 
-EOLIAN static Eo_Base *
-_constructor_method_class_eo_base_constructor(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd)
+EOLIAN static Efl_Object *
+_constructor_method_class_efl_object_constructor(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd)
 {
   pd->fail = EINA_FALSE;
-  return eo_constructor(eo_super(obj, MY_CLASS));
+  return efl_constructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -45,12 +45,12 @@ _constructor_method_class_constructor2(Eo* obj EINA_UNUSED, Constructor_Method_C
 }
 
 EOLIAN static Eo *
-_constructor_method_class_eo_base_finalize(Eo *obj, Constructor_Method_Class_Data *pd)
+_constructor_method_class_efl_object_finalize(Eo *obj, Constructor_Method_Class_Data *pd)
 {
   if (pd->fail)
     return NULL;
 
-  return eo_finalize(eo_super(obj, MY_CLASS));
+  return efl_finalize(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Bool

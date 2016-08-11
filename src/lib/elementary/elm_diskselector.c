@@ -89,7 +89,7 @@ _item_select(Elm_Diskselector_Item_Data *it)
    _selected_item_indicate(sd->selected_item);
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
-   eo_event_callback_call
+   efl_event_callback_call
      (WIDGET(it), EFL_UI_EVENT_SELECTED, eo_it);
 }
 
@@ -349,7 +349,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_diskselector_item_eo_base_destructor(Eo *eo_it, Elm_Diskselector_Item_Data *it)
+_elm_diskselector_item_efl_object_destructor(Eo *eo_it, Elm_Diskselector_Item_Data *it)
 {
    Elm_Diskselector_Item_Data *item2, *dit;
    Eina_List *l;
@@ -473,7 +473,7 @@ _elm_diskselector_item_eo_base_destructor(Eo *eo_it, Elm_Diskselector_Item_Data 
 
    _sizing_eval(obj);
 
-   eo_destructor(eo_super(eo_it, ELM_DISKSELECTOR_ITEM_CLASS));
+   efl_destructor(eo_super(eo_it, ELM_DISKSELECTOR_ITEM_CLASS));
 }
 
 EOLIAN static void
@@ -611,7 +611,7 @@ _item_click_cb(void *data,
      }
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
-   eo_event_callback_call
+   efl_event_callback_call
      (WIDGET(it), EFL_UI_EVENT_CLICKED, eo_it);
 }
 
@@ -650,9 +650,9 @@ _access_on_highlight_cb(void *data)
 }
 
 EOLIAN static Eo *
-_elm_diskselector_item_eo_base_constructor(Eo *eo_it, Elm_Diskselector_Item_Data *it)
+_elm_diskselector_item_efl_object_constructor(Eo *eo_it, Elm_Diskselector_Item_Data *it)
 {
-   eo_it = eo_constructor(eo_super(eo_it, ELM_DISKSELECTOR_ITEM_CLASS));
+   eo_it = efl_constructor(eo_super(eo_it, ELM_DISKSELECTOR_ITEM_CLASS));
    it->base = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
 
    return eo_it;
@@ -1098,7 +1098,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
 
    if (!it) return;
    _item_select(it);
-   eo_event_callback_call
+   efl_event_callback_call
      (data, EFL_UI_EVENT_SCROLL_ANIM_STOP, EO_OBJ(it));
 }
 
@@ -1106,7 +1106,7 @@ static void
 _scroll_animate_start_cb(Evas_Object *obj,
                          void *data EINA_UNUSED)
 {
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, EFL_UI_EVENT_SCROLL_ANIM_START, elm_diskselector_selected_item_get(obj));
 }
 
@@ -1114,7 +1114,7 @@ static void
 _scroll_drag_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, EFL_UI_EVENT_SCROLL_DRAG_START, elm_diskselector_selected_item_get(obj));
 }
 
@@ -1122,7 +1122,7 @@ static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, elm_diskselector_selected_item_get(obj));
 }
 
@@ -1131,7 +1131,7 @@ _round_item_del(Elm_Diskselector_Data *sd EINA_UNUSED,
                 Elm_Diskselector_Item_Data *it)
 {
    if (!it) return;
-   eo_del(EO_OBJ(it));
+   efl_del(EO_OBJ(it));
 }
 
 static void
@@ -1362,28 +1362,28 @@ _elm_diskselector_efl_canvas_group_group_del(Eo *obj, Elm_Diskselector_Data *sd)
    if (sd->last)
      {
         evas_object_del(sd->VIEW(last));
-        eo_del(EO_OBJ(sd->last));
+        efl_del(EO_OBJ(sd->last));
         sd->last = NULL;
      }
 
    if (sd->s_last)
      {
         evas_object_del(sd->VIEW(s_last));
-        eo_del(EO_OBJ(sd->s_last));
+        efl_del(EO_OBJ(sd->s_last));
         sd->s_last = NULL;
      }
 
    if (sd->second)
      {
         evas_object_del(sd->VIEW(second));
-        eo_del(EO_OBJ(sd->second));
+        efl_del(EO_OBJ(sd->second));
         sd->second = NULL;
      }
 
    if (sd->first)
      {
         evas_object_del(sd->VIEW(first));
-        eo_del(EO_OBJ(sd->first));
+        efl_del(EO_OBJ(sd->first));
         sd->first = NULL;
      }
 
@@ -1392,7 +1392,7 @@ _elm_diskselector_efl_canvas_group_group_del(Eo *obj, Elm_Diskselector_Data *sd)
         if (it)
           {
              evas_object_del(VIEW(it));
-             eo_del(EO_OBJ(it));
+             efl_del(EO_OBJ(it));
           }
      }
    sd->under_items = eina_list_free(sd->under_items);
@@ -1402,14 +1402,14 @@ _elm_diskselector_efl_canvas_group_group_del(Eo *obj, Elm_Diskselector_Data *sd)
         if (it)
           {
              evas_object_del(VIEW(it));
-             eo_del(EO_OBJ(it));
+             efl_del(EO_OBJ(it));
           }
      }
    sd->over_items = eina_list_free(sd->over_items);
 
    EINA_LIST_FOREACH_SAFE(sd->items, l, l2, it)
      {
-        eo_del(EO_OBJ(it));
+        efl_del(EO_OBJ(it));
      }
    sd->items = eina_list_free(sd->items);
    sd->r_items = eina_list_free(sd->r_items);
@@ -1460,9 +1460,9 @@ elm_diskselector_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_diskselector_eo_base_constructor(Eo *obj, Elm_Diskselector_Data *_pd EINA_UNUSED)
+_elm_diskselector_efl_object_constructor(Eo *obj, Elm_Diskselector_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LIST);
@@ -1636,7 +1636,7 @@ _elm_diskselector_clear(Eo *obj, Elm_Diskselector_Data *sd)
    sd->selected_item = NULL;
    EINA_LIST_FREE(sd->items, it)
      {
-        eo_del(EO_OBJ(it));
+        efl_del(EO_OBJ(it));
      }
 
    _round_items_del(sd);
@@ -1807,7 +1807,7 @@ _elm_diskselector_display_item_num_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Dat
 }
 
 static void
-_elm_diskselector_class_constructor(Eo_Class *klass)
+_elm_diskselector_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 

@@ -7,8 +7,8 @@ class Ector.Renderer.Cairo.Gradient.Linear (Ector.Renderer.Cairo, Ector.Renderer
       Ector.Renderer.bounds_get;
       Ector.Renderer.crc.get;
       Ector.Renderer.Cairo.fill;
-      Eo.Base.finalize;
-      Eo.Base.destructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
       Efl.Gfx.Gradient.stop.set;
    }
 }

@@ -95,7 +95,7 @@ _eio_move_done_cb(void *data, Eio_File *handler EINA_UNUSED)
    eina_array_push(properties, _eio_model_prop_names[EIO_MODEL_PROP_FILENAME]);
    evt.changed_properties = properties;
 
-   eo_event_callback_call(priv->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+   efl_event_callback_call(priv->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
    eina_array_free(properties);
 }
 
@@ -180,7 +180,7 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
    eio_model_children_filter_set(cevt.child, priv->filter_cb, priv->filter_userdata);
    eina_value_flush(&path);
 
-   eo_event_callback_call(priv->obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
+   efl_event_callback_call(priv->obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
 
    return EINA_TRUE;
 }
@@ -213,7 +213,7 @@ _efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
              cevt.index = i;
              cevt.child = cur->data;
 
-             eo_event_callback_call(priv->obj, EFL_MODEL_EVENT_CHILD_REMOVED, &cevt);
+             efl_event_callback_call(priv->obj, EFL_MODEL_EVENT_CHILD_REMOVED, &cevt);
 
              priv->children_list = eina_list_remove_list(priv->children_list, cur);
              eo_unref(cevt.child);
@@ -649,9 +649,9 @@ _eio_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *pri
  * Class definitions
  */
 static Eo *
-_eio_model_eo_base_constructor(Eo *obj, Eio_Model_Data *priv)
+_eio_model_efl_object_constructor(Eo *obj, Eio_Model_Data *priv)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    unsigned int i;
    priv->obj = obj;
    priv->is_listed = priv->is_listing = EINA_FALSE;
@@ -675,7 +675,7 @@ _eio_model_path_set(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, const char *path)
 }
 
 static void
-_eio_model_eo_base_destructor(Eo *obj , Eio_Model_Data *priv)
+_eio_model_efl_object_destructor(Eo *obj , Eio_Model_Data *priv)
 {
    Eo *child;
 
@@ -690,14 +690,14 @@ _eio_model_eo_base_destructor(Eo *obj , Eio_Model_Data *priv)
      eo_unref(child);
 
    eina_stringshare_del(priv->path);
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 
 static Eo *
-_eio_model_eo_base_parent_get(Eo *obj , Eio_Model_Data *priv)
+_eio_model_efl_object_parent_get(Eo *obj , Eio_Model_Data *priv)
 {
-   Eo *model = eo_parent_get(eo_super(obj, MY_CLASS));
+   Eo *model = efl_parent_get(eo_super(obj, MY_CLASS));
 
    if (model == NULL || !eo_isa(model, EFL_MODEL_INTERFACE))
      {

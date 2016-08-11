@@ -16,10 +16,10 @@
 
 static void _eldbus_model_method_call_cb(void *, const Eldbus_Message *, Eldbus_Pending *);
 
-static Eo_Base*
-_eldbus_model_method_eo_base_constructor(Eo *obj, Eldbus_Model_Method_Data *pd)
+static Efl_Object*
+_eldbus_model_method_efl_object_constructor(Eo *obj, Eldbus_Model_Method_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->method = NULL;
@@ -95,7 +95,7 @@ _eldbus_model_method_call_cb(void *data, const Eldbus_Message *msg, Eldbus_Pendi
    Eldbus_Model_Arguments_Data *args_data = eo_data_scope_get(pd->obj, ELDBUS_MODEL_ARGUMENTS_CLASS);
 
    if (eldbus_model_arguments_process_arguments(args_data, msg, pending))
-     eo_event_callback_call(pd->obj, ELDBUS_MODEL_METHOD_EVENT_SUCCESSFUL_CALL, NULL);
+     efl_event_callback_call(pd->obj, ELDBUS_MODEL_METHOD_EVENT_SUCCESSFUL_CALL, NULL);
 }
 
 #include "eldbus_model_method.eo.c"

@@ -49,7 +49,7 @@ evas_device_add(Evas *eo_e)
 
    e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    e->devices = eina_list_append(e->devices, dev);
-   eo_event_callback_add(dev, EO_EVENT_DEL, _del_cb, e);
+   efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
 
    evas_event_callback_call(eo_e, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 

@@ -7,7 +7,7 @@
 
 #define MY_CLASS SIMPLE_CLASS
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
@@ -18,5 +18,5 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_BASE_CLASS, NULL)
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EFL_OBJECT_CLASS, NULL)
 

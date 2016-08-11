@@ -95,7 +95,7 @@ _efl_event_create(Efl_Event *evt, Evas_Callback_Type type, void *ev,
    return evt;
 }
 
-static inline const Eo_Event_Description *
+static inline const Efl_Event_Description *
 _efl_event_desc_get(Evas_Callback_Type type)
 {
    switch (type)
@@ -1232,7 +1232,7 @@ evas_event_freeze(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   eo_event_freeze(eo_e);
+   efl_event_freeze(eo_e);
 }
 
 EAPI void
@@ -1241,22 +1241,22 @@ evas_event_thaw(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   eo_event_thaw(eo_e);
+   efl_event_thaw(eo_e);
 }
 
 EOLIAN void
-_evas_canvas_eo_base_event_freeze(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_efl_object_event_freeze(Eo *eo_e, Evas_Public_Data *e)
 {
-   eo_event_freeze(eo_super(eo_e, EVAS_CANVAS_CLASS));
+   efl_event_freeze(eo_super(eo_e, EVAS_CANVAS_CLASS));
    e->is_frozen = EINA_TRUE;
 }
 
 EOLIAN void
-_evas_canvas_eo_base_event_thaw(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_efl_object_event_thaw(Eo *eo_e, Evas_Public_Data *e)
 {
    int fcount = -1;
-   eo_event_thaw(eo_super(eo_e, EVAS_CANVAS_CLASS));
-   fcount = eo_event_freeze_count_get(eo_super(eo_e, EVAS_CANVAS_CLASS));
+   efl_event_thaw(eo_super(eo_e, EVAS_CANVAS_CLASS));
+   fcount = efl_event_freeze_count_get(eo_super(eo_e, EVAS_CANVAS_CLASS));
    if (0 == fcount)
      {
         Evas_Layer *lay;
@@ -1284,7 +1284,7 @@ evas_event_freeze_get(const Evas *eo_e)
    return 0;
    MAGIC_CHECK_END();
    int ret = 0;
-   ret = eo_event_freeze_count_get((Eo *)eo_e);
+   ret = efl_event_freeze_count_get((Eo *)eo_e);
    return ret;
 }
 
@@ -2794,7 +2794,7 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
                                      unsigned int keycode,
                                      Efl_Event_Key_Data *ke)
 {
-   void *eo_event_info = NULL;
+   void *efl_event_info = NULL;
    Evas_Public_Data *e = _pd;
    int event_id = 0;
 
@@ -2829,7 +2829,7 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
         ke->event_flags = ev.event_flags;
         ke->modifiers = ev.modifiers;
         ke->locks = ev.locks;
-        eo_event_info = ke->eo;
+        efl_event_info = ke->eo;
      }
 
    if (e->grabs)
@@ -2859,7 +2859,7 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
                            !evas_event_freezes_through(g->object, object_obj))
                          {
                             EV_CALL(g->object, object_obj, EVAS_CALLBACK_KEY_DOWN,
-                                    &ev, event_id, eo_event_info, NULL);
+                                    &ev, event_id, efl_event_info, NULL);
                          }
                        if (g->exclusive) exclusive = EINA_TRUE;
                     }
@@ -2886,14 +2886,14 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
                }
           }
      }
-   if (!ke) EV_DEL(eo_event_info);
+   if (!ke) EV_DEL(efl_event_info);
    if ((e->focused) && (!exclusive))
      {
         Evas_Object_Protected_Data *focused_obj = eo_data_scope_get(e->focused, EFL_CANVAS_OBJECT_CLASS);
         if (!e->is_frozen && !evas_event_freezes_through(e->focused, focused_obj))
           {
              EV_CALL(e->focused, focused_obj, EVAS_CALLBACK_KEY_DOWN,
-                     &ev, event_id, eo_event_info, NULL);
+                     &ev, event_id, efl_event_info, NULL);
           }
      }
    _evas_post_event_callback_call(eo_e, e);
@@ -2908,7 +2908,7 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
         ke->locks = NULL;
      }
    else
-     EV_DEL(eo_event_info);
+     EV_DEL(efl_event_info);
 }
 
 static void
@@ -2923,7 +2923,7 @@ _canvas_event_feed_key_up_internal(Eo *eo_e,
                                    unsigned int keycode,
                                    Efl_Event_Key_Data *ke)
 {
-   void *eo_event_info = NULL;
+   void *efl_event_info = NULL;
    Evas_Public_Data *e = _pd;
    int event_id = 0;
    if (!keyname) return;
@@ -2957,7 +2957,7 @@ _canvas_event_feed_key_up_internal(Eo *eo_e,
         ke->event_flags = ev.event_flags;
         ke->modifiers = ev.modifiers;
         ke->locks = ev.locks;
-        eo_event_info = ke->eo;
+        efl_event_info = ke->eo;
      }
 
    if (e->grabs)
@@ -2987,7 +2987,7 @@ _canvas_event_feed_key_up_internal(Eo *eo_e,
                     {
                        evas_object_event_callback_call
                              (g->object, object_obj, EVAS_CALLBACK_KEY_UP,
-                              &ev, event_id, EFL_EVENT_KEY_UP, eo_event_info);
+                              &ev, event_id, EFL_EVENT_KEY_UP, efl_event_info);
                     }
                   if (g->exclusive) exclusive = EINA_TRUE;
                }
@@ -3022,7 +3022,7 @@ _canvas_event_feed_key_up_internal(Eo *eo_e,
           {
              evas_object_event_callback_call
                    (e->focused, focused_obj, EVAS_CALLBACK_KEY_UP,
-                    &ev, event_id, EFL_EVENT_KEY_UP, eo_event_info);
+                    &ev, event_id, EFL_EVENT_KEY_UP, efl_event_info);
           }
      }
    _evas_post_event_callback_call(eo_e, e);
@@ -3539,11 +3539,11 @@ EO_CALLBACKS_ARRAY_DEFINE(_evas_canvas_event_pointer_callbacks,
 void
 _evas_canvas_event_init(Evas *eo_e, Evas_Public_Data *e)
 {
-   eo_event_callback_array_add(eo_e, _evas_canvas_event_pointer_callbacks(), e);
+   efl_event_callback_array_add(eo_e, _evas_canvas_event_pointer_callbacks(), e);
 }
 
 void
 _evas_canvas_event_shutdown(Evas *eo_e, Evas_Public_Data *e)
 {
-   eo_event_callback_array_del(eo_e, _evas_canvas_event_pointer_callbacks(), e);
+   efl_event_callback_array_del(eo_e, _evas_canvas_event_pointer_callbacks(), e);
 }

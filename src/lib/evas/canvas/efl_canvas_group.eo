@@ -72,7 +72,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
            canvas objects.
 
            This returns the list of "smart" children. This might be different
-           from both the $Eo.Base children list as well as the $Efl.Container
+           from both the $Efl.Object children list as well as the $Efl.Container
            content list.
          ]]
          return: free(own(iterator<Efl.Gfx>), eina_iterator_free);
@@ -183,7 +183,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
    implements {
       class.constructor;
       class.destructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Object.paragraph_direction.set;
       Efl.Canvas.Object.paragraph_direction.get;
    }

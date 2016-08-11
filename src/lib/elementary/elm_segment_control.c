@@ -317,7 +317,7 @@ _segment_on(Elm_Segment_Control_Item_Data *it)
    edje_object_signal_emit(VIEW(it), "elm,state,segment,selected", "elm");
 
    sd->selected_item = it;
-   eo_event_callback_call(sd->obj, ELM_SEGMENT_CONTROL_EVENT_CHANGED, EO_OBJ(it));
+   efl_event_callback_call(sd->obj, ELM_SEGMENT_CONTROL_EVENT_CHANGED, EO_OBJ(it));
 }
 
 static void
@@ -492,14 +492,14 @@ _elm_segment_control_item_elm_widget_item_part_content_get(Eo *eo_item EINA_UNUS
 }
 
 EOLIAN static void
-_elm_segment_control_item_eo_base_destructor(Eo *eo_item, Elm_Segment_Control_Item_Data *item)
+_elm_segment_control_item_efl_object_destructor(Eo *eo_item, Elm_Segment_Control_Item_Data *item)
 {
    ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(item), sd);
 
    _item_free(item);
    _update_list(sd);
 
-   eo_destructor(eo_super(eo_item, ELM_SEGMENT_CONTROL_ITEM_CLASS));
+   efl_destructor(eo_super(eo_item, ELM_SEGMENT_CONTROL_ITEM_CLASS));
 }
 
 static char *
@@ -586,13 +586,13 @@ _item_new(Evas_Object *obj,
 }
 
 EOLIAN static Eo *
-_elm_segment_control_item_eo_base_constructor(Eo *obj, Elm_Segment_Control_Item_Data *it)
+_elm_segment_control_item_efl_object_constructor(Eo *obj, Elm_Segment_Control_Item_Data *it)
 {
-   obj = eo_constructor(eo_super(obj, ELM_SEGMENT_CONTROL_ITEM_CLASS));
+   obj = efl_constructor(eo_super(obj, ELM_SEGMENT_CONTROL_ITEM_CLASS));
    it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    Evas_Object *parent;
-   parent = eo_parent_get(obj);
+   parent = efl_parent_get(obj);
 
    VIEW(it) = edje_object_add(evas_object_evas_get(parent));
    edje_object_scale_set(VIEW(it),elm_widget_scale_get(WIDGET(it)) *
@@ -633,7 +633,7 @@ _elm_segment_control_efl_canvas_group_group_del(Eo *obj, Elm_Segment_Control_Dat
 
    EINA_LIST_FREE(sd->items, eo_it)
      {
-        eo_del(eo_it);
+        efl_del(eo_it);
      }
 
    efl_canvas_group_del(eo_super(obj, MY_CLASS));
@@ -702,9 +702,9 @@ elm_segment_control_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_segment_control_eo_base_constructor(Eo *obj, Elm_Segment_Control_Data *sd EINA_UNUSED)
+_elm_segment_control_efl_object_constructor(Eo *obj, Elm_Segment_Control_Data *sd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
@@ -832,7 +832,7 @@ _elm_segment_control_item_index_get(const Eo *eo_it EINA_UNUSED, Elm_Segment_Con
 }
 
 EOLIAN static void
-_elm_segment_control_class_constructor(Eo_Class *klass)
+_elm_segment_control_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 

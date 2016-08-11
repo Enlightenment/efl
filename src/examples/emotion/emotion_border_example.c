@@ -30,7 +30,7 @@ _create_emotion_object(Evas *e)
 
    emotion_object_init(em, "gstreamer1");
 
-   eo_event_callback_add(em, EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _playback_started_cb, NULL);
+   efl_event_callback_add(em, EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _playback_started_cb, NULL);
 
    return em;
 }
@@ -220,7 +220,7 @@ main(int argc, const char *argv[])
 
    ecore_evas_data_set(ee, "emotion", em);
 
-   eo_event_callback_array_add(em, emotion_object_example_callbacks(), NULL);
+   efl_event_callback_array_add(em, emotion_object_example_callbacks(), NULL);
 
    evas_object_event_callback_add(bg, EVAS_CALLBACK_KEY_DOWN, _on_key_down, em);
    evas_object_focus_set(bg, EINA_TRUE);

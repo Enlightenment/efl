@@ -21,7 +21,7 @@ typedef struct _Box_Item_Iterator Box_Item_Iterator;
 
 struct _Efl_Ui_Box_Data
 {
-   const Eo_Class *layout_engine;
+   const Efl_Class *layout_engine;
    const void *layout_data;
 
    Efl_Orient orient;

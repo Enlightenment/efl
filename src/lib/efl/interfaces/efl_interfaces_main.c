@@ -34,11 +34,11 @@
 
 #include "interfaces/efl_screen.eo.c"
 
-EAPI const Eo_Event_Description _EFL_GFX_CHANGED =
-  EO_EVENT_DESCRIPTION("Graphics changed");
+EAPI const Efl_Event_Description _EFL_GFX_CHANGED =
+  EFL_EVENT_DESCRIPTION("Graphics changed");
 
-EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
-  EO_EVENT_DESCRIPTION("Graphics path changed");
+EAPI const Efl_Event_Description _EFL_GFX_PATH_CHANGED =
+  EFL_EVENT_DESCRIPTION("Graphics path changed");
 
 /* Packing & containers */
 #include "interfaces/efl_container.eo.c"

@@ -161,7 +161,7 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object)
       }
 }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
    }

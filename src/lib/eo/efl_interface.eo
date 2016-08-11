@@ -1,7 +1,7 @@
-interface Eo.Interface ()
+interface Efl.Interface ()
 {
    [[An interface for other interfaces to inherit from.
     This is useful when you want to create interfaces and mixins that expose
-    functions from a normal class, like for example @Eo.Base.constructor.]]
+    functions from a normal class, like for example @Efl.Object.constructor.]]
 }
 

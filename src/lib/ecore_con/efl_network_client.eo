@@ -13,7 +13,7 @@ class Efl.Network.Client (Efl.Network) {
       }
    }
    implements {
-      Eo.Base.destructor;
+      Efl.Object.destructor;
       Efl.Network.ip.get;
       Efl.Network.uptime.get;
       Efl.Network.port.get;

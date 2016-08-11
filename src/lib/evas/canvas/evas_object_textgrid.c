@@ -241,12 +241,12 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 EOLIAN static void
-_evas_textgrid_eo_base_destructor(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSED)
+_evas_textgrid_efl_object_destructor(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_textgrid_free(eo_obj, obj);
    eo_data_unref(eo_obj, obj->private_data);
-   eo_destructor(eo_super(eo_obj, MY_CLASS));
+   efl_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
 static void
@@ -900,9 +900,9 @@ evas_object_textgrid_add(Evas *e)
 }
 
 EOLIAN static Eo *
-_evas_textgrid_eo_base_constructor(Eo *eo_obj, Evas_Textgrid_Data *class_data EINA_UNUSED)
+_evas_textgrid_efl_object_constructor(Eo *eo_obj, Evas_Textgrid_Data *class_data EINA_UNUSED)
 {
-   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
 
    evas_object_textgrid_init(eo_obj);
 
@@ -1450,11 +1450,11 @@ _evas_textgrid_update_add(Eo *eo_obj, Evas_Textgrid_Data *o, int x, int y, int w
 }
 
 EOLIAN static void
-_evas_textgrid_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSED, Eo_Dbg_Info *root)
+_evas_textgrid_efl_object_dbg_info_get(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSED, Efl_Dbg_Info *root)
 {
-   eo_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
-   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
-   Eo_Dbg_Info *node;
+   efl_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
+   Efl_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   Efl_Dbg_Info *node;
 
    const char *text;
    int size;

@@ -23,7 +23,7 @@ elm_prefs_check_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
 {
    Evas_Object *obj = elm_check_add(prefs);
 
-   eo_event_callback_add
+   efl_event_callback_add
      (obj, EFL_UI_CHECK_EVENT_CHANGED, _item_changed_cb, cb);
    elm_check_state_set(obj, spec.b.def);
 

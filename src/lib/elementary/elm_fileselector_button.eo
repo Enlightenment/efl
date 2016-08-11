@@ -2,7 +2,7 @@ class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
 {
    event_prefix: elm_fileselector_button;
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;

@@ -29,17 +29,17 @@ _del_hook(Eo *evt)
 {
    if (!s_cached_event)
      {
-        if (eo_parent_get(evt))
+        if (efl_parent_get(evt))
           {
              eo_ref(evt);
-             eo_parent_set(evt, NULL);
+             efl_parent_set(evt, NULL);
           }
         s_cached_event = evt;
      }
    else
      {
-        eo_del_intercept_set(evt, NULL);
-        eo_del(evt);
+        efl_del_intercept_set(evt, NULL);
+        efl_del(evt);
      }
 }
 
@@ -55,12 +55,12 @@ _efl_event_pointer_efl_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_
         evt = s_cached_event;
         s_cached_event = NULL;
         efl_event_reset(evt);
-        eo_parent_set(evt, owner);
+        efl_parent_set(evt, owner);
      }
    else
      {
         evt = eo_add(EFL_EVENT_POINTER_CLASS, owner);
-        eo_del_intercept_set(evt, _del_hook);
+        efl_del_intercept_set(evt, _del_hook);
      }
 
    ev = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
@@ -71,18 +71,18 @@ _efl_event_pointer_efl_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_
 }
 
 EOLIAN static void
-_efl_event_pointer_class_destructor(Eo_Class *klass EINA_UNUSED)
+_efl_event_pointer_class_destructor(Efl_Class *klass EINA_UNUSED)
 {
    // this is a strange situation...
-   eo_del_intercept_set(s_cached_event, NULL);
-   eo_del(s_cached_event);
+   efl_del_intercept_set(s_cached_event, NULL);
+   efl_del(s_cached_event);
    s_cached_event = NULL;
 }
 
-EOLIAN static Eo_Base *
-_efl_event_pointer_eo_base_constructor(Eo *obj, Efl_Event_Pointer_Data *pd EINA_UNUSED)
+EOLIAN static Efl_Object *
+_efl_event_pointer_efl_object_constructor(Eo *obj, Efl_Event_Pointer_Data *pd EINA_UNUSED)
 {
-   eo_constructor(eo_super(obj, MY_CLASS));
+   efl_constructor(eo_super(obj, MY_CLASS));
    efl_event_reset(obj);
    return obj;
 }

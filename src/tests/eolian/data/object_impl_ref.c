@@ -63,13 +63,13 @@ _object_impl_foo2(const Eo *obj, Object_Impl_Data *pd, int a, const char *b)
 }
 
 EOLIAN static void
-_object_impl_class_constructor(Eo_Class *klass)
+_object_impl_class_constructor(Efl_Class *klass)
 {
 
 }
 
 EOLIAN static void
-_object_impl_class_destructor(Eo_Class *klass)
+_object_impl_class_destructor(Efl_Class *klass)
 {
 
 }

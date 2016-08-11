@@ -1,5 +1,5 @@
 type @extern Ecore.Audio.Vio: __undefined_type; /* FIXME: Had function pointer members. */
-type @extern eo_key_data_free_func: __undefined_type; /* FIXME: Function pointers not allowed. */
+type @extern efl_key_data_free_func: __undefined_type; /* FIXME: Function pointers not allowed. */
 
 enum Ecore.Audio.Format {
     auto, [[Automatically detect the format (for inputs)]]
@@ -11,7 +11,7 @@ enum Ecore.Audio.Format {
     last [[Sentinel value, do not use]]
 }
 
-class Ecore.Audio (Eo.Base)
+class Ecore.Audio (Efl.Object)
 {
    [[Convenience audio class.]]
 
@@ -112,7 +112,7 @@ class Ecore.Audio (Eo.Base)
                                         the function callbacks
                                       ]]
               data: void_ptr; [[user data to pass to the VIO functions]]
-              free_func: eo_key_data_free_func; [[this function takes care to
+              free_func: efl_key_data_free_func; [[this function takes care to
                                                   clean up $data when he VIO is
                                                   destroyed. NULL means do
                                                   nothing.
@@ -121,6 +121,6 @@ class Ecore.Audio (Eo.Base)
       }
    }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
    }
 }

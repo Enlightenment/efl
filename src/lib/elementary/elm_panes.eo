@@ -116,7 +116,7 @@ class Elm.Panes (Elm.Layout, Efl.Orientation,
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;

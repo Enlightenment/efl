@@ -5,7 +5,7 @@ class Elm.Player (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
    event_prefix: elm_player;
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;

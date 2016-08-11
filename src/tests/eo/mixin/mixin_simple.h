@@ -7,6 +7,6 @@ EAPI void simple_b_set(Eo *obj, int b);
 EAPI int simple_b_get(Eo *obj);
 
 #define SIMPLE_CLASS simple_class_get()
-const Eo_Class *simple_class_get(void);
+const Efl_Class *simple_class_get(void);
 
 #endif

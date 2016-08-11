@@ -183,9 +183,9 @@ elm_route_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_route_eo_base_constructor(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
+_elm_route_efl_object_constructor(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
@@ -256,7 +256,7 @@ _elm_route_latitude_min_max_get(Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double 
 }
 
 EOLIAN static void
-_elm_route_class_constructor(Eo_Class *klass)
+_elm_route_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

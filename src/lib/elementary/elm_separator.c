@@ -95,9 +95,9 @@ elm_separator_horizontal_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eo *
-_elm_separator_eo_base_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
+_elm_separator_efl_object_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SEPARATOR);
 
@@ -137,7 +137,7 @@ _elm_separator_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Se
 }
 
 EOLIAN static void
-_elm_separator_class_constructor(Eo_Class *klass)
+_elm_separator_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

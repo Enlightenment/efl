@@ -269,13 +269,13 @@ EO_CALLBACKS_ARRAY_DEFINE(evas_object_table_callbacks,
 static void
 _evas_object_table_child_connect(Evas_Object *o, Evas_Object *child)
 {
-   eo_event_callback_array_add(child, evas_object_table_callbacks(), o);
+   efl_event_callback_array_add(child, evas_object_table_callbacks(), o);
 }
 
 static void
 _evas_object_table_child_disconnect(Evas_Object *o, Evas_Object *child)
 {
-   eo_event_callback_array_del(child, evas_object_table_callbacks(), o);
+   efl_event_callback_array_del(child, evas_object_table_callbacks(), o);
 }
 
 static void
@@ -966,9 +966,9 @@ evas_object_table_add(Evas *evas)
 }
 
 EOLIAN static Eo *
-_evas_table_eo_base_constructor(Eo *obj, Evas_Table_Data *class_data EINA_UNUSED)
+_evas_table_efl_object_constructor(Eo *obj, Evas_Table_Data *class_data EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
@@ -1405,7 +1405,7 @@ _evas_table_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mirrored)
 }
 
 EOLIAN static void
-_evas_table_class_constructor(Eo_Class *klass)
+_evas_table_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

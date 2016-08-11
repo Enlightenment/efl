@@ -1242,9 +1242,9 @@ _elm_access_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_access_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
+_elm_access_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
@@ -1447,7 +1447,7 @@ elm_access_highlight_next_set(Evas_Object *obj, Elm_Highlight_Direction dir, Eva
 }
 
 EOLIAN static void
-_elm_access_class_constructor(Eo_Class *klass)
+_elm_access_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

@@ -1,4 +1,4 @@
-import eo_base;
+import efl_object;
 
 interface Efl.Part
 {
@@ -40,7 +40,7 @@ interface Efl.Part
          params {
             name: string; [[The part name.]]
          }
-         return: Eo.Base; [[A (proxy) object, valid for a single call.]]
+         return: Efl.Object; [[A (proxy) object, valid for a single call.]]
       }
    }
 }

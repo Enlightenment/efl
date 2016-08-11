@@ -10,19 +10,19 @@ struct _Efl_Vpath_File_Core_Data
    int dummy;
 };
 
-EOLIAN static Eo_Base *
-_efl_vpath_file_core_eo_base_constructor(Eo *obj, Efl_Vpath_File_Core_Data *pd)
+EOLIAN static Efl_Object *
+_efl_vpath_file_core_efl_object_constructor(Eo *obj, Efl_Vpath_File_Core_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    pd->dummy = 0;
    return obj;
 }
 
 EOLIAN static void
-_efl_vpath_file_core_eo_base_destructor(Eo *obj, Efl_Vpath_File_Core_Data *pd)
+_efl_vpath_file_core_efl_object_destructor(Eo *obj, Efl_Vpath_File_Core_Data *pd)
 {
    pd->dummy = 0;
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Bool

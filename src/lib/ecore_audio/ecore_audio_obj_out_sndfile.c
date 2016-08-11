@@ -162,11 +162,11 @@ _ecore_audio_out_sndfile_ecore_audio_format_get(Eo *eo_obj, Ecore_Audio_Out_Sndf
 }
 
 EOLIAN static Eo *
-_ecore_audio_out_sndfile_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Out_Sndfile_Data *_pd EINA_UNUSED)
+_ecore_audio_out_sndfile_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Out_Sndfile_Data *_pd EINA_UNUSED)
 {
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
-  eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+  eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
 
   ecore_audio_obj_format_set(eo_obj, ECORE_AUDIO_FORMAT_OGG);
 
@@ -176,7 +176,7 @@ _ecore_audio_out_sndfile_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Out_Sndfile
 }
 
 EOLIAN static void
-_ecore_audio_out_sndfile_eo_base_destructor(Eo *eo_obj, Ecore_Audio_Out_Sndfile_Data *obj)
+_ecore_audio_out_sndfile_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Out_Sndfile_Data *obj)
 {
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
@@ -186,7 +186,7 @@ _ecore_audio_out_sndfile_eo_base_destructor(Eo *eo_obj, Ecore_Audio_Out_Sndfile_
   if (out_obj->write_idler)
     ecore_idler_del(out_obj->write_idler);
 
-  eo_destructor(eo_super(eo_obj, MY_CLASS));
+  efl_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
 #include "ecore_audio_out_sndfile.eo.c"

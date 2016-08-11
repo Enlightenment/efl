@@ -65,12 +65,12 @@ _elm_layout_pack_proxy_get(Elm_Layout *obj, Edje_Part_Type type, const char *par
 }
 
 EOLIAN static void
-_efl_ui_layout_internal_box_eo_base_destructor(Eo *obj, Efl_Ui_Layout_Table_Data *pd)
+_efl_ui_layout_internal_box_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Table_Data *pd)
 {
    ELM_PART_HOOK;
    eo_data_xunref(pd->obj, pd->sd, obj);
    eina_stringshare_del(pd->part);
-   eo_destructor(eo_super(obj, BOX_CLASS));
+   efl_destructor(eo_super(obj, BOX_CLASS));
 }
 
 EOLIAN static void
@@ -106,7 +106,7 @@ static void
 _part_item_iterator_free(Part_Item_Iterator *it)
 {
    eina_iterator_free(it->real_iterator);
-   eo_wref_del(it->object, &it->object);
+   efl_wref_del(it->object, &it->object);
    eina_list_free(it->list);
    free(it);
 }
@@ -127,7 +127,7 @@ _part_item_iterator_create(Eo *obj, Eina_Iterator *real_iterator, Eina_List *lis
    it->iterator.next = FUNC_ITERATOR_NEXT(_part_item_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_part_item_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_part_item_iterator_free);
-   eo_wref_add(obj, &it->object);
+   efl_wref_add(obj, &it->object);
 
    return &it->iterator;
 }
@@ -276,12 +276,12 @@ _efl_ui_layout_internal_table_real_part_set(Eo *obj, Efl_Ui_Layout_Table_Data *p
 }
 
 EOLIAN static void
-_efl_ui_layout_internal_table_eo_base_destructor(Eo *obj, Efl_Ui_Layout_Table_Data *pd)
+_efl_ui_layout_internal_table_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Table_Data *pd)
 {
    ELM_PART_HOOK;
    eo_data_xunref(pd->obj, pd->sd, obj);
    eina_stringshare_del(pd->part);
-   eo_destructor(eo_super(obj, TABLE_CLASS));
+   efl_destructor(eo_super(obj, TABLE_CLASS));
 }
 
 EOLIAN static Eina_Iterator *

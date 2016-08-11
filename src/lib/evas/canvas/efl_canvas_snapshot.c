@@ -4,11 +4,11 @@
 #define MY_CLASS EFL_CANVAS_SNAPSHOT_CLASS
 
 EOLIAN static Eo *
-_efl_canvas_snapshot_eo_base_constructor(Eo *eo_obj, void *pd EINA_UNUSED)
+_efl_canvas_snapshot_efl_object_constructor(Eo *eo_obj, void *pd EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj;
 
-   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
    if (!eo_obj) return NULL;
 
    efl_canvas_object_pass_events_set(eo_obj, EINA_TRUE);

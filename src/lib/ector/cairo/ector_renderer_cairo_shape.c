@@ -246,9 +246,9 @@ _ector_renderer_cairo_shape_ector_renderer_bounds_get(Eo *obj,
 }
 
 Eo *
-_ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
+_ector_renderer_cairo_shape_efl_object_constructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS));
+   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS));
 
    if (!obj) return NULL;
 
@@ -256,15 +256,15 @@ _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Sh
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
 
-   eo_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_cairo_shape_path_changed, pd);
+   efl_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_cairo_shape_path_changed, pd);
 
     return obj;
 }
 
-static Eo_Base *
-_ector_renderer_cairo_shape_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
+static Efl_Object *
+_ector_renderer_cairo_shape_efl_object_finalize(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
-   obj = eo_finalize(eo_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS));
+   obj = efl_finalize(eo_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS));
    if (!obj) return NULL;
 
    USE(pd->base, cairo_path_destroy, NULL);
@@ -291,7 +291,7 @@ _ector_renderer_cairo_shape_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Shape
 }
 
 void
-_ector_renderer_cairo_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
+_ector_renderer_cairo_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
    Ector_Renderer_Data *base;
 
@@ -305,7 +305,7 @@ _ector_renderer_cairo_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Sha
    eo_data_xunref(obj, pd->shape, obj);
    eo_data_xunref(obj, pd->base, obj);
 
-   eo_destructor(eo_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS));
+   efl_destructor(eo_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS));
 
    if (pd->path) cairo_path_destroy(pd->path);
 }

@@ -29,7 +29,7 @@ _child_added_cb_proxy(void *data, const Eo_Event *event)
    Evas_Object *box = data;
    Evas_Object_Box_Option *opt = event->info;
 
-   eo_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_ADDED, opt->obj);
+   efl_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_ADDED, opt->obj);
 }
 
 static void
@@ -38,7 +38,7 @@ _child_removed_cb_proxy(void *data, const Eo_Event *event)
    Evas_Object *box = data;
    Evas_Object *child = event->info;
 
-   eo_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_REMOVED, child);
+   efl_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_REMOVED, child);
 }
 
 EOLIAN static Eina_Bool
@@ -151,7 +151,7 @@ EOLIAN static void
 _efl_ui_box_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Data *pd)
 {
    efl_pack_layout_do(pd->layout_engine, obj, pd->layout_data);
-   eo_event_callback_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
+   efl_event_callback_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
 }
 
 EOLIAN static void
@@ -168,7 +168,7 @@ _efl_ui_box_efl_pack_layout_layout_do(Eo *klass EINA_UNUSED,
 
 EOLIAN static void
 _efl_ui_box_efl_pack_layout_layout_engine_set(Eo *obj, Efl_Ui_Box_Data *pd,
-                                              const Eo_Class *klass, const void *data)
+                                              const Efl_Class *klass, const void *data)
 {
    pd->layout_engine = klass ? klass : eo_class_get(obj);
    pd->layout_data = data;
@@ -178,7 +178,7 @@ _efl_ui_box_efl_pack_layout_layout_engine_set(Eo *obj, Efl_Ui_Box_Data *pd,
 
 EOLIAN static void
 _efl_ui_box_efl_pack_layout_layout_engine_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd,
-                                              const Eo_Class **klass, const void **data)
+                                              const Efl_Class **klass, const void **data)
 {
    if (klass) *klass = pd->layout_engine;
    if (data) *data = pd->layout_data;
@@ -211,8 +211,8 @@ _efl_ui_box_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED
    efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   eo_event_callback_add(wd->resize_obj, EVAS_BOX_EVENT_CHILD_ADDED, _child_added_cb_proxy, obj);
-   eo_event_callback_add(wd->resize_obj, EVAS_BOX_EVENT_CHILD_REMOVED, _child_removed_cb_proxy, obj);
+   efl_event_callback_add(wd->resize_obj, EVAS_BOX_EVENT_CHILD_ADDED, _child_added_cb_proxy, obj);
+   efl_event_callback_add(wd->resize_obj, EVAS_BOX_EVENT_CHILD_REMOVED, _child_removed_cb_proxy, obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
@@ -250,10 +250,10 @@ _efl_ui_box_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Box_Data *sd)
 }
 
 EOLIAN static Eo *
-_efl_ui_box_eo_base_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
+_efl_ui_box_efl_object_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
 {
    elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_SKIPPED);
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);

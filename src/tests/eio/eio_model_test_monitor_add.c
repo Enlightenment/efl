@@ -97,8 +97,8 @@ START_TEST(eio_model_test_test_monitor_add)
    filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, tmpdir));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
-   eo_event_callback_add(filemodel, EFL_MODEL_EVENT_CHILD_ADDED, &_children_added_cb, filemodel);
-   eo_event_callback_add(filemodel, EFL_MODEL_EVENT_CHILD_REMOVED, &_children_removed_cb, NULL);
+   efl_event_callback_add(filemodel, EFL_MODEL_EVENT_CHILD_ADDED, &_children_added_cb, filemodel);
+   efl_event_callback_add(filemodel, EFL_MODEL_EVENT_CHILD_REMOVED, &_children_removed_cb, NULL);
 
    Eina_Promise* promise;
    promise = efl_model_children_slice_get(filemodel, 0, 0);

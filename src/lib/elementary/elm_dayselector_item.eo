@@ -2,6 +2,6 @@ class Elm.Dayselector.Item(Elm.Widget.Item)
 {
    eo_prefix: elm_dayselector_item;
    implements {
-        Eo.Base.constructor;
+        Efl.Object.constructor;
    }
 }

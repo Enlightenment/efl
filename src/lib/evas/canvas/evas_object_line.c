@@ -216,11 +216,11 @@ evas_object_line_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static Eo *
-_evas_line_eo_base_constructor(Eo *eo_obj, Evas_Line_Data *class_data EINA_UNUSED)
+_evas_line_efl_object_constructor(Eo *eo_obj, Evas_Line_Data *class_data EINA_UNUSED)
 {
    Evas_Line_Data *o;
 
-   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
 
    evas_object_line_init(eo_obj);
 

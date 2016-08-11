@@ -22,26 +22,26 @@ _a_get(Eo *obj, void *class_data EINA_UNUSED)
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
 
    Eo *simple = eo_add(SIMPLE_CLASS, obj);
-   eo_composite_attach(obj, simple);
-   eo_event_callback_forwarder_add(simple, EV_A_CHANGED, obj);
+   efl_composite_attach(obj, simple);
+   efl_event_callback_forwarder_add(simple, EV_A_CHANGED, obj);
 
-   fail_if(eo_composite_part_is(obj));
-   fail_if(!eo_composite_part_is(simple));
+   fail_if(efl_composite_part_is(obj));
+   fail_if(!efl_composite_part_is(simple));
 
-   eo_key_data_set(obj, "simple-obj", simple);
+   efl_key_data_set(obj, "simple-obj", simple);
 
    return obj;
 }
 
-static Eo_Op_Description op_descs[] = {
-     EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),
+static Efl_Op_Description op_descs[] = {
+     EO_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
      EO_OP_FUNC_OVERRIDE(simple_a_get, _a_get),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Comp",
      EO_CLASS_TYPE_REGULAR,

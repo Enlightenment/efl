@@ -61,16 +61,16 @@ _efl_event_hold_efl_event_input_event_flags_get(Eo *obj EINA_UNUSED, Efl_Event_H
 }
 
 EOLIAN static Eo *
-_efl_event_hold_eo_base_constructor(Eo *obj, Efl_Event_Hold_Data *pd)
+_efl_event_hold_efl_object_constructor(Eo *obj, Efl_Event_Hold_Data *pd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    pd->eo = obj;
    return obj;
 }
 
 EOLIAN static Efl_Event *
 _efl_event_hold_efl_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_UNUSED,
-                                       Eo_Base *owner, void **priv)
+                                       Efl_Object *owner, void **priv)
 {
    // TODO: Implement a cache. Depends only on how many hold events we trigger.
    Efl_Event *evt = eo_add(MY_CLASS, owner);
@@ -89,7 +89,7 @@ EOLIAN static Efl_Event *
 _efl_event_hold_efl_event_dup(Eo *obj, Efl_Event_Hold_Data *pd)
 {
    Efl_Event_Hold_Data *ev;
-   Efl_Event *evt = eo_add(EFL_EVENT_HOLD_CLASS, eo_parent_get(obj));
+   Efl_Event *evt = eo_add(EFL_EVENT_HOLD_CLASS, efl_parent_get(obj));
    ev = eo_data_scope_get(evt, MY_CLASS);
    if (ev)
      {

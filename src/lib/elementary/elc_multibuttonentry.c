@@ -264,7 +264,7 @@ _shrink_mode_set(Evas_Object *obj,
                   evas_object_show(sd->end);
 
                   sd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
-                  eo_event_callback_call
+                  efl_event_callback_call
                     (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)1);
                   break;
                }
@@ -297,7 +297,7 @@ _shrink_mode_set(Evas_Object *obj,
           }
 
         sd->view_state = MULTIBUTTONENTRY_VIEW_NONE;
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)(uintptr_t)sd->shrink);
      }
 
@@ -353,7 +353,7 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
                   elm_entry_input_panel_show(sd->entry);
                }
           }
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, ELM_WIDGET_EVENT_FOCUSED, NULL);
      }
    else
@@ -363,7 +363,7 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
              _view_update(sd);
              elm_entry_input_panel_hide(sd->entry);
           }
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
      }
 
@@ -380,7 +380,7 @@ _item_del(Elm_Multibuttonentry_Item_Data *item)
 
    elm_box_unpack(sd->box, VIEW(item));
 
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, ELM_MULTIBUTTONENTRY_EVENT_ITEM_DELETED, EO_OBJ(item));
 
    if (sd->selected_it == item)
@@ -409,7 +409,7 @@ _current_item_state_change(Evas_Object *obj,
      {
       case MULTIBUTTONENTRY_BUTTON_STATE_SELECTED:
         elm_layout_signal_emit(VIEW(item), "elm,state,focused", "elm");
-        eo_event_callback_call
+        efl_event_callback_call
           (obj, ELM_MULTIBUTTONENTRY_EVENT_ITEM_SELECTED, EO_OBJ(item));
         break;
       case MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT:
@@ -508,7 +508,7 @@ _on_item_clicked(void *data,
    _item_select(WIDGET(it), it);
 
    if (sd->selected_it)
-     eo_event_callback_call
+     efl_event_callback_call
        (WIDGET(it), ELM_MULTIBUTTONENTRY_EVENT_ITEM_CLICKED, eo_it);
 }
 
@@ -557,7 +557,7 @@ _long_press_cb(void *data)
 
    sd->longpress_timer = NULL;
 
-   eo_event_callback_call
+   efl_event_callback_call
      (WIDGET(it), ELM_MULTIBUTTONENTRY_EVENT_ITEM_LONGPRESSED, EO_OBJ(it));
 
    return ECORE_CALLBACK_CANCEL;
@@ -649,14 +649,14 @@ _elm_multibuttonentry_item_elm_widget_item_part_text_get(Eo *eo_item EINA_UNUSED
 }
 
 EOLIAN static void
-_elm_multibuttonentry_item_eo_base_destructor(Eo *eo_it,
+_elm_multibuttonentry_item_efl_object_destructor(Eo *eo_it,
                                               Elm_Multibuttonentry_Item_Data *it)
 {
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_children_changed_del_signal_emit(WIDGET(it), eo_it);
    _item_del(it);
 
-   eo_destructor(eo_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
+   efl_destructor(eo_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
 }
 
 static void
@@ -707,9 +707,9 @@ _access_multibuttonentry_item_register(Evas_Object *obj,
 }
 
 EOLIAN static Eo *
-_elm_multibuttonentry_item_eo_base_constructor(Eo *eo_item, Elm_Multibuttonentry_Item_Data *item)
+_elm_multibuttonentry_item_efl_object_constructor(Eo *eo_item, Elm_Multibuttonentry_Item_Data *item)
 {
-   eo_item = eo_constructor(eo_super(eo_item, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
+   eo_item = efl_constructor(eo_super(eo_item, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
    item->base = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
 
    return eo_item;
@@ -917,7 +917,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
         break;
      }
 
-   eo_event_callback_call
+   efl_event_callback_call
      (obj, ELM_MULTIBUTTONENTRY_EVENT_ITEM_ADDED, eo_item);
 
    if (_elm_config->atspi_mode)
@@ -965,7 +965,7 @@ _mouse_clicked_signal_cb(void *data EINA_UNUSED,
                          const char *emission EINA_UNUSED,
                          const char *source EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void
@@ -985,10 +985,10 @@ _box_resize_cb(void *data,
    elm_box_padding_get(obj, &hpad, NULL);
 
    if (sd->h_box < h)
-     eo_event_callback_call
+     efl_event_callback_call
        (sd->parent, ELM_MULTIBUTTONENTRY_EVENT_EXPANDED, NULL);
    else if (sd->h_box > h)
-     eo_event_callback_call
+     efl_event_callback_call
        (sd->parent, ELM_MULTIBUTTONENTRY_EVENT_CONTRACTED, NULL);
 
    if (sd->items && sd->w_box != w)
@@ -1178,7 +1178,7 @@ _callbacks_register(Evas_Object *obj)
      (sd->entry, EVAS_CALLBACK_KEY_DOWN, _entry_key_down_cb, obj);
    evas_object_event_callback_add
      (sd->entry, EVAS_CALLBACK_RESIZE, _entry_resize_cb, obj);
-   eo_event_callback_array_add(sd->entry, _multi_buttonentry_cb(), obj);
+   efl_event_callback_array_add(sd->entry, _multi_buttonentry_cb(), obj);
 }
 
 static void
@@ -1582,7 +1582,7 @@ _elm_multibuttonentry_efl_canvas_group_group_del(Eo *obj, Elm_Multibuttonentry_D
    Elm_Multibuttonentry_Item_Filter *_item_filter = NULL;
 
    EINA_LIST_FREE(sd->items, eo_item)
-     eo_del(eo_item);
+     efl_del(eo_item);
 
    sd->items = NULL;
 
@@ -1699,9 +1699,9 @@ elm_multibuttonentry_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_multibuttonentry_eo_base_constructor(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSED)
+_elm_multibuttonentry_efl_object_constructor(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ENTRY);
@@ -1986,7 +1986,7 @@ _elm_multibuttonentry_item_filter_remove(Eo *obj EINA_UNUSED, Elm_Multibuttonent
 }
 
 static void
-_elm_multibuttonentry_class_constructor(Eo_Class *klass)
+_elm_multibuttonentry_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 
@@ -2033,7 +2033,7 @@ static Eina_Bool
 _key_action_longpress(Eo *obj, const char *params EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(obj, it);
-   eo_event_callback_call
+   efl_event_callback_call
      (WIDGET(it), ELM_MULTIBUTTONENTRY_EVENT_ITEM_LONGPRESSED, obj);
    return EINA_TRUE;
 }

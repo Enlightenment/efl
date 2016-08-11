@@ -5,7 +5,7 @@ class Ector.Software.Surface (Ector.Software.Buffer, Ector.Surface)
    implements {
       Ector.Surface.renderer_factory_new;
       Ector.Surface.reference_point.set;
-      Eo.Base.destructor;
-      Eo.Base.constructor;
+      Efl.Object.destructor;
+      Efl.Object.constructor;
    }
 }

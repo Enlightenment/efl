@@ -1,4 +1,4 @@
-class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack.Linear,
+class Efl.Ui.Layout_Internal.Box (Efl.Object, Efl.Pack.Linear,
                                   Efl.Orientation)
 {
    [[Represents a Box created as part of a layout.
@@ -11,13 +11,13 @@ class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack.Linear,
       @property real_part @protected {
          set {}
          values {
-            layout: Eo.Base;
+            layout: Efl.Object;
             part: string;
          }
       }
    }
    implements {
-      Eo.Base.destructor;
+      Efl.Object.destructor;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;

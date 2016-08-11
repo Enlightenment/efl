@@ -30,7 +30,7 @@ struct _Elm_Web_Module
                                       Evas_Coord *w,
                                       Evas_Coord *h);
 
-   const Eo_Class *(*class_get)(void);
+   const Efl_Class *(*class_get)(void);
 
    Eina_Module *m;
 };
@@ -83,7 +83,7 @@ elm_web_add(Evas_Object *parent)
    return eo_add(ewm.class_get(), parent);
 }
 
-EAPI const Eo_Class *
+EAPI const Efl_Class *
 elm_web_real_class_get(void)
 {
    if (!ewm.class_get) return NULL;
@@ -92,9 +92,9 @@ elm_web_real_class_get(void)
 }
 
 EOLIAN static Eo *
-_elm_web_eo_base_constructor(Eo *obj, Elm_Web_Data *sd)
+_elm_web_efl_object_constructor(Eo *obj, Elm_Web_Data *sd)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _elm_web_smart_callbacks);
@@ -157,7 +157,7 @@ elm_web_window_features_region_get(const Elm_Web_Window_Features *wf,
 }
 
 static void
-_elm_web_class_constructor(Eo_Class *klass)
+_elm_web_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

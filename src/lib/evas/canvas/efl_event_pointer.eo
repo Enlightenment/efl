@@ -1,7 +1,7 @@
 import efl_orientation;
 import efl_event_types;
 
-class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State, Efl.Event.Input)
+class Efl.Event.Pointer (Efl.Object, Efl.Event, Efl.Input.State, Efl.Event.Input)
 {
    [[Event data carried over with any pointer event (mouse, touch, ...)
 
@@ -88,7 +88,7 @@ class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State, Efl.Event.Input)
            propagation or repetition of the event.
          ]]
          values {
-            src: Eo.Base; [[Source object: $Efl.Gfx]]
+            src: Efl.Object; [[Source object: $Efl.Gfx]]
          }
       }
       @property button_flags {
@@ -127,7 +127,7 @@ class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State, Efl.Event.Input)
       }
    }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       class.destructor;
       Efl.Event.instance_get;
       Efl.Event.reset;

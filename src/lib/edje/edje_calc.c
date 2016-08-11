@@ -902,7 +902,7 @@ _edje_recalc_do(Edje *ed)
    if (!ed->calc_only)
      {
         if (ed->recalc_call)
-          eo_event_callback_call(ed->obj, EDJE_OBJECT_EVENT_RECALC, NULL);
+          efl_event_callback_call(ed->obj, EDJE_OBJECT_EVENT_RECALC, NULL);
      }
    else
      evas_object_smart_need_recalculate_set(ed->obj, need_calc);
@@ -3322,11 +3322,11 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
         else
           {
              if (ep->typedata.vector->cur.vg)
-               eo_del(ep->typedata.vector->cur.vg);
+               efl_del(ep->typedata.vector->cur.vg);
 
              _edje_dupe_vector_data(ed, chosen_desc->vg.id, w, h, &ep->typedata.vector->cur);
 
-             eo_parent_set(ep->typedata.vector->cur.vg, root_vg);
+             efl_parent_set(ep->typedata.vector->cur.vg, root_vg);
           }
      }
 }

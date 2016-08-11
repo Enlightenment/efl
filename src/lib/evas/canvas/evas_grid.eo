@@ -135,6 +135,6 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
       }
    }
    implements {
-      Eo.Base.constructor;
+      Efl.Object.constructor;
    }
 }

@@ -258,7 +258,7 @@ edje_file_collection_list(const char *file)
    lst = edje_mmap_collection_list(f);
 
    eina_file_close(f);
-   eo_del(file_obj);
+   efl_del(file_obj);
    return lst;
 }
 
@@ -1792,7 +1792,7 @@ _edje_file_del(Edje *ed)
           free(runp);
      }
    _edje_animators = eina_list_remove(_edje_animators, ed);
-   eo_event_callback_del(ed->obj, EFL_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
+   efl_event_callback_del(ed->obj, EFL_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
    ecore_animator_del(ed->animator);
    ed->animator = NULL;
 
@@ -2568,7 +2568,7 @@ _edje_vector_data_free(Edje *ed)
 
    EINA_LIST_FREE(ed->vector_cache, vector)
      {
-        if (vector->vg) eo_del(vector->vg);
+        if (vector->vg) efl_del(vector->vg);
         free(vector);
      }
 }

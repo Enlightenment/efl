@@ -9,7 +9,7 @@
 
 #define MY_CLASS SIMPLE4_CLASS
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple4",
      EO_CLASS_TYPE_REGULAR,

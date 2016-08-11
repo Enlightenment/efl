@@ -141,7 +141,7 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_show;
       Efl.Canvas.Group.group_add;

@@ -358,7 +358,7 @@ eio_shutdown(void)
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
-   eo_del(io_manager);
+   efl_del(io_manager);
    io_manager = NULL;
 
    EINA_LIST_FOREACH(tracked_thread, l, f)

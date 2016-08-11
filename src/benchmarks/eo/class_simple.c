@@ -7,8 +7,8 @@
 
 #define MY_CLASS SIMPLE_CLASS
 
-EOAPI const Eo_Event_Description _SIMPLE_FOO = EO_EVENT_DESCRIPTION("foo");
-EOAPI const Eo_Event_Description _SIMPLE_BAR = EO_EVENT_DESCRIPTION("bar");
+EOAPI const Efl_Event_Description _SIMPLE_FOO = EFL_EVENT_DESCRIPTION("foo");
+EOAPI const Efl_Event_Description _SIMPLE_BAR = EFL_EVENT_DESCRIPTION("bar");
 
 static void
 _other_call(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, Eo *other, int times)
@@ -30,12 +30,12 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
 
 EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
 
-static Eo_Op_Description op_desc[] = {
+static Efl_Op_Description op_desc[] = {
      EO_OP_FUNC(simple_a_set, _a_set),
      EO_OP_FUNC(simple_other_call, _other_call),
 };
 
-static const Eo_Class_Description class_desc = {
+static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,

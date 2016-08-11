@@ -40,8 +40,8 @@ class Elm.Index.Item(Elm.Widget.Item, Elm.Interface.Atspi_Widget_Action)
         }
    }
    implements {
-        Eo.Base.constructor;
-        Eo.Base.destructor;
+        Efl.Object.constructor;
+        Efl.Object.destructor;
         Elm.Widget.Item.access_register;
         Elm.Interface.Atspi_Accessible.name.get;
         Elm.Interface.Atspi_Widget_Action.elm_actions.get;

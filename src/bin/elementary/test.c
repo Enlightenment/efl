@@ -1078,7 +1078,7 @@ efl_main(void *data EINA_UNUSED,
      {
         _log_domain = eina_log_domain_register("elementary_test", NULL);
 
-        eo_event_callback_add(ev->object, EO_EVENT_DEL, _main_loop_death, NULL);
+        efl_event_callback_add(ev->object, EFL_EVENT_DEL, _main_loop_death, NULL);
 
         elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 

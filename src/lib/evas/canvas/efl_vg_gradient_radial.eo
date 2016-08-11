@@ -11,7 +11,7 @@ class Efl.VG.Gradient.Radial (Efl.VG.Gradient, Efl.Gfx.Gradient.Radial)
       Efl.VG.bounds_get;
       Efl.VG.interpolate;
       Efl.VG.dup;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
    }
 }

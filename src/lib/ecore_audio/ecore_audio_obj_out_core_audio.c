@@ -293,7 +293,7 @@ _ecore_audio_out_core_audio_ecore_audio_out_input_attach(Eo *obj, void *sd EINA_
      }
 
    /* Keep track of data for deallocation */
-   eo_key_data_set(input, "coreaudio_data", helper);
+   efl_key_data_set(input, "coreaudio_data", helper);
 
    /* Start playing */
    helper->is_playing = EINA_TRUE;
@@ -325,7 +325,7 @@ _ecore_audio_out_core_audio_ecore_audio_out_input_detach(Eo *obj, void *sd EINA_
 
    DBG("Detach");
    /* Free helper */
-   data = eo_key_data_get(input, "coreaudio_data");
+   data = efl_key_data_get(input, "coreaudio_data");
    _core_audio_helper_free(data);
 
    ret = ecore_audio_obj_out_input_detach(eo_super(obj, MY_CLASS), input);

@@ -10,7 +10,7 @@ void check_shutdown(void);
 Eo *create_connection(void);
 Eo *create_object(void);
 
-void efl_model_wait_for_event(Eo *obj, const Eo_Event_Description *event);
+void efl_model_wait_for_event(Eo *obj, const Efl_Event_Description *event);
 Efl_Model *efl_model_nth_child_get(Efl_Model *obj, unsigned int n);
 Efl_Model *efl_model_first_child_get(Efl_Model *efl_model);
 

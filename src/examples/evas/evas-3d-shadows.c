@@ -655,14 +655,14 @@ main(void)
    nodes2 = eina_list_append(nodes2, data.cone.node);
 
    /*Set callbacks*/
-   eo_event_callback_add(data.cube.node, EVAS_CANVAS3D_OBJECT_EVENT_CLICKED, _cb_clicked, NULL);
-   eo_event_callback_add(data.cube.node, EVAS_CANVAS3D_OBJECT_EVENT_COLLISION, _cb_collision, nodes2);
+   efl_event_callback_add(data.cube.node, EVAS_CANVAS3D_OBJECT_EVENT_CLICKED, _cb_clicked, NULL);
+   efl_event_callback_add(data.cube.node, EVAS_CANVAS3D_OBJECT_EVENT_COLLISION, _cb_collision, nodes2);
 
-   eo_event_callback_add(data.model.node, EVAS_CANVAS3D_OBJECT_EVENT_CLICKED, _cb_clicked, NULL);
-   eo_event_callback_add(data.model.node, EVAS_CANVAS3D_OBJECT_EVENT_COLLISION, _cb_collision, nodes1);
+   efl_event_callback_add(data.model.node, EVAS_CANVAS3D_OBJECT_EVENT_CLICKED, _cb_clicked, NULL);
+   efl_event_callback_add(data.model.node, EVAS_CANVAS3D_OBJECT_EVENT_COLLISION, _cb_collision, nodes1);
 
-   eo_event_callback_add(data.billboard.node, EVAS_CANVAS3D_OBJECT_EVENT_CLICKED, _cb_clicked, NULL);
-   eo_event_callback_add(data.billboard.node, EVAS_CANVAS3D_OBJECT_EVENT_COLLISION, _cb_collision, nodes1);
+   efl_event_callback_add(data.billboard.node, EVAS_CANVAS3D_OBJECT_EVENT_CLICKED, _cb_clicked, NULL);
+   efl_event_callback_add(data.billboard.node, EVAS_CANVAS3D_OBJECT_EVENT_COLLISION, _cb_collision, nodes1);
 
    evas_object_event_callback_add(image, EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, &data);
    evas_object_event_callback_add(image, EVAS_CALLBACK_KEY_DOWN, _on_key_down, &data);

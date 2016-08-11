@@ -141,7 +141,7 @@ _on_clicked(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   eo_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void
@@ -161,7 +161,7 @@ _on_pressed(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   eo_event_callback_call(data, ELM_PANES_EVENT_PRESS, NULL);
+   efl_event_callback_call(data, ELM_PANES_EVENT_PRESS, NULL);
 }
 
 static void
@@ -171,11 +171,11 @@ _on_unpressed(void *data,
               const char *source EINA_UNUSED)
 {
    ELM_PANES_DATA_GET(data, sd);
-   eo_event_callback_call(data, ELM_PANES_EVENT_UNPRESS, NULL);
+   efl_event_callback_call(data, ELM_PANES_EVENT_UNPRESS, NULL);
 
    if (sd->double_clicked)
      {
-        eo_event_callback_call(data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+        efl_event_callback_call(data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
         sd->double_clicked = EINA_FALSE;
      }
 }
@@ -328,9 +328,9 @@ elm_panes_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_panes_eo_base_constructor(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
+_elm_panes_efl_object_constructor(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SPLIT_PANE);
@@ -565,7 +565,7 @@ _elm_panes_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *_
 }
 
 static void
-_elm_panes_class_constructor(Eo_Class *klass)
+_elm_panes_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

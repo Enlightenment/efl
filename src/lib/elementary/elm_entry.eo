@@ -934,7 +934,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
    }
    implements {
       class.constructor;
-      Eo.Base.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_add;

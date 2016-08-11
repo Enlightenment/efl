@@ -210,9 +210,9 @@ _finish_thumb_generation(struct _emotion_plugin *_plugin, int success)
 {
    int r = 0;
 
-   eo_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
-   eo_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, _plugin);
-   eo_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_DECODE_STOP, _video_stopped_cb, _plugin);
+   efl_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
+   efl_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, _plugin);
+   efl_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_DECODE_STOP, _video_stopped_cb, _plugin);
 
    emotion_object_play_set(_plugin->video, 0);
 
@@ -256,7 +256,7 @@ _frame_grab_single(void *data)
 
    ethumb_image_save(e);
 
-   eo_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
+   efl_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
 
    emotion_object_play_set(_plugin->video, 0);
 
@@ -399,11 +399,11 @@ _thumb_generate(Ethumb *e)
    _plugin->pcount = 1;
 
    _resize_movie(_plugin);
-   eo_event_callback_add
+   efl_event_callback_add
      (o, EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, _plugin);
-   eo_event_callback_add
+   efl_event_callback_add
      (o, EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
-   eo_event_callback_add
+   efl_event_callback_add
      (o, EMOTION_OBJECT_EVENT_DECODE_STOP, _video_stopped_cb, _plugin);
 
    if (f == ETHUMB_THUMB_EET)
