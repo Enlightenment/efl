@@ -38,7 +38,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static Eina_Bool _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file, const Eina_File *f, const char *key);
-static void _efl_ui_image_sizing_eval(Eo *obj);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -777,8 +776,8 @@ _efl_ui_image_internal_scale_set(Evas_Object *obj, Efl_Ui_Image_Data *sd, double
    _efl_ui_image_internal_sizing_eval(obj, sd);
 }
 
-static void
-_efl_ui_image_sizing_eval(Eo *obj)
+void
+_efl_ui_image_sizing_eval(Evas_Object *obj)
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    int w = 0, h = 0;
@@ -1965,13 +1964,6 @@ elm_image_scale_up_get(const Evas_Object *obj)
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
    EFL_UI_IMAGE_DATA_GET(obj, sd);
    return sd->scale_up;
-}
-
-EAPI void
-elm_image_sizing_eval(Evas_Object *obj)
-{
-   EFL_UI_IMAGE_CHECK(obj);
-   _efl_ui_image_sizing_eval(obj);
 }
 
 EAPI void
