@@ -2188,7 +2188,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    if (is_v != was_v)
      {
         evas_object_render_pre_visible_change(&e->clip_changes, eo_obj, is_v, was_v);
-        if (!o->pixels->pixel_updates) goto done;
+        goto done;
      }
    if (obj->changed_map || obj->changed_src_visible)
      {
@@ -2204,28 +2204,32 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    if (obj->restack)
      {
         evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-        if (!o->pixels->pixel_updates) goto done;
+        goto done;
      }
    /* if it changed color */
    if ((obj->cur->color.r != obj->prev->color.r) ||
        (obj->cur->color.g != obj->prev->color.g) ||
        (obj->cur->color.b != obj->prev->color.b) ||
-       (obj->cur->color.a != obj->prev->color.a))
+       (obj->cur->color.a != obj->prev->color.a) ||
+       (obj->cur->cache.clip.r != obj->prev->cache.clip.r) ||
+       (obj->cur->cache.clip.g != obj->prev->cache.clip.g) ||
+       (obj->cur->cache.clip.b != obj->prev->cache.clip.b) ||
+       (obj->cur->cache.clip.a != obj->prev->cache.clip.a))
      {
         evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-        if (!o->pixels->pixel_updates) goto done;
+        goto done;
      }
    /* if it changed render op */
    if (obj->cur->render_op != obj->prev->render_op)
      {
         evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-        if (!o->pixels->pixel_updates) goto done;
+        goto done;
      }
    /* if it changed anti_alias */
    if (obj->cur->anti_alias != obj->prev->anti_alias)
      {
         evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-        if (!o->pixels->pixel_updates) goto done;
+        goto done;
      }
    if (o->changed)
      {
@@ -2236,7 +2240,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
            )
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             if (!o->pixels->pixel_updates) goto done;
+             goto done;
           }
         if ((o->cur->image.w != o->prev->image.w) ||
             (o->cur->image.h != o->prev->image.h) ||
@@ -2245,7 +2249,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
             (o->cur->smooth_scale != o->prev->smooth_scale))
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             if (!o->pixels->pixel_updates) goto done;
+             goto done;
           }
         if ((o->cur->border.l != o->prev->border.l) ||
             (o->cur->border.r != o->prev->border.r) ||
@@ -2255,7 +2259,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
             (o->cur->border.scale != o->prev->border.scale))
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             if (!o->pixels->pixel_updates) goto done;
+             goto done;
           }
         if (o->dirty_pixels && ENFN->image_native_get)
           {
@@ -2267,18 +2271,18 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
              if (ns && (ns->type == EVAS_NATIVE_SURFACE_EVASGL))
                {
                   evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-                  if (!o->pixels->pixel_updates) goto done;
+                  goto done;
                }
           }
         if (o->cur->frame != o->prev->frame)
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             if (!o->pixels->pixel_updates) goto done;
+             goto done;
           }
         if (o->cur->orient != o->prev->orient)
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             if (!o->pixels->pixel_updates) goto done;
+             goto done;
           }
 
      }
@@ -2289,7 +2293,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
       )
      {
         evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-        if (!o->pixels->pixel_updates) goto done;
+        goto done;
      }
    if (o->changed)
      {
@@ -2299,7 +2303,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
             (o->cur->fill.h != o->prev->fill.h))
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             if (!o->pixels->pixel_updates) goto done;
+             goto done;
           }
         if (o->pixels->pixel_updates)
           {
@@ -2313,7 +2317,9 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                {
                   Eina_Rectangle *rr;
 
-                  if (evas_object_is_opaque(eo_obj, obj))
+                  if ((!o->cur->has_alpha) &&
+                      (evas_object_is_opaque(eo_obj, obj)) &&
+                      (obj->cur->color.a == 255))
                     {
                        Evas_Coord x, y, w, h;
 
@@ -2323,16 +2329,22 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                        h = obj->cur->cache.clip.h;
                        if (obj->cur->clipper)
                          {
-                            RECTS_CLIP_TO_RECT(x, y, w, h,
-                                               obj->cur->clipper->cur->cache.clip.x,
-                                               obj->cur->clipper->cur->cache.clip.y,
-                                               obj->cur->clipper->cur->cache.clip.w,
-                                               obj->cur->clipper->cur->cache.clip.h);
+                            if (obj->cur->clipper->cur->cache.clip.a != 255)
+                              w = 0;
+                            else
+                              {
+                                 RECTS_CLIP_TO_RECT(x, y, w, h,
+                                                    obj->cur->clipper->cur->cache.clip.x,
+                                                    obj->cur->clipper->cur->cache.clip.y,
+                                                    obj->cur->clipper->cur->cache.clip.w,
+                                                    obj->cur->clipper->cur->cache.clip.h);
+                              }
                          }
-                       e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                               x + e->framespace.x,
-                                                               y + e->framespace.y,
-                                                               w, h);
+                       if ((w > 0) && (h > 0))
+                         e->engine.func->output_redraws_rect_del(e->engine.data.output,
+                                                                 x + e->framespace.x,
+                                                                 y + e->framespace.y,
+                                                                 w, h);
                     }
                   EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
                     {
@@ -2397,7 +2409,9 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                     {
                        Eina_Rectangle *rr;
 
-                       if (evas_object_is_opaque(eo_obj, obj))
+                       if ((!o->cur->has_alpha) &&
+                           (evas_object_is_opaque(eo_obj, obj)) &&
+                           (obj->cur->color.a == 255))
                          {
                             Evas_Coord x, y, w, h;
 
@@ -2407,18 +2421,25 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                             h = obj->cur->cache.clip.h;
                             if (obj->cur->clipper)
                               {
-                                 RECTS_CLIP_TO_RECT(x, y, w, h,
-                                                    obj->cur->clipper->cur->cache.clip.x,
-                                                    obj->cur->clipper->cur->cache.clip.y,
-                                                    obj->cur->clipper->cur->cache.clip.w,
-                                                    obj->cur->clipper->cur->cache.clip.h);
+                                 if (obj->cur->clipper->cur->cache.clip.a != 255)
+                                   w = 0;
+                                 else
+                                   {
+                                      RECTS_CLIP_TO_RECT(x, y, w, h,
+                                                         obj->cur->clipper->cur->cache.clip.x,
+                                                         obj->cur->clipper->cur->cache.clip.y,
+                                                         obj->cur->clipper->cur->cache.clip.w,
+                                                         obj->cur->clipper->cur->cache.clip.h);
+                                   }
                               }
-                            e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                                    x + e->framespace.x,
-                                                                    y + e->framespace.y,
-                                                                    w, h);
+                            if ((w > 0) && (h > 0))
+                              e->engine.func->output_redraws_rect_del(e->engine.data.output,
+                                                                      x + e->framespace.x,
+                                                                      y + e->framespace.y,
+                                                                      w, h);
                          }
-                       else if (o->cur->border.fill == EVAS_BORDER_FILL_SOLID)
+                       else if ((o->cur->border.fill == EVAS_BORDER_FILL_SOLID) &&
+                                (obj->cur->color.a == 255))
                          {
                             Evas_Coord x, y, w, h;
 
@@ -2428,16 +2449,22 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                             h = obj->cur->geometry.h - o->cur->border.t - o->cur->border.b;
                             if (obj->cur->clipper)
                               {
-                                 RECTS_CLIP_TO_RECT(x, y, w, h,
-                                                    obj->cur->clipper->cur->cache.clip.x,
-                                                    obj->cur->clipper->cur->cache.clip.y,
-                                                    obj->cur->clipper->cur->cache.clip.w,
-                                                    obj->cur->clipper->cur->cache.clip.h);
+                                 if (obj->cur->clipper->cur->cache.clip.a != 255)
+                                   w = 0;
+                                 else
+                                   {
+                                      RECTS_CLIP_TO_RECT(x, y, w, h,
+                                                         obj->cur->clipper->cur->cache.clip.x,
+                                                         obj->cur->clipper->cur->cache.clip.y,
+                                                         obj->cur->clipper->cur->cache.clip.w,
+                                                         obj->cur->clipper->cur->cache.clip.h);
+                                   }
                               }
-                            e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                                    x + e->framespace.x,
-                                                                    y + e->framespace.y,
-                                                                    w, h);
+                            if ((w > 0) && (h > 0))
+                              e->engine.func->output_redraws_rect_del(e->engine.data.output,
+                                                                      x + e->framespace.x,
+                                                                      y + e->framespace.y,
+                                                                      w, h);
                          }
                        EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
                          {
@@ -2506,6 +2533,19 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
      }
    done:
    evas_object_render_pre_effect_updates(&e->clip_changes, eo_obj, is_v, was_v);
+   if (o->pixels->pixel_updates)
+     {
+        Eina_Rectangle *rr;
+
+        EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+          {
+             EINA_LIST_FREE(pixi_write->pixel_updates, rr)
+               {
+                  eina_rectangle_free(rr);
+               }
+          }
+        EINA_COW_PIXEL_WRITE_END(o, pixi_write);
+     }
 }
 
 static void
