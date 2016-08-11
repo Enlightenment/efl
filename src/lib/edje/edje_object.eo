@@ -2042,28 +2042,36 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             @in data: void_ptr; [[The data passed to the callback function]]
          }
       }
-      part_text_item_geometry_get @const {
-         [[Return item geometry.
+      @property part_text_item_geometry {
+         get {
+            [[Return item geometry.
 
-           This function return a list of Evas_Textblock_Rectangle item
-           rectangles.]]
-         return: bool; [[1 if item exists, 0 if not]]
-         params {
-            @in part: string; [[The part name]]
-            @in item: string; [[The item name]]
-            @out cx: Evas.Coord; [[Item x return (relative to entry part)]]
-            @out cy: Evas.Coord; [[Item y return (relative to entry part)]]
-            @out cw: Evas.Coord; [[Item width return]]
-            @out ch: Evas.Coord; [[Item height return]]
+              This function return a list of Evas_Textblock_Rectangle item
+              rectangles.]]
+            return: bool; [[1 if item exists, 0 if not]]
+         }
+         keys {
+            part: string; [[The part name]]
+            item: string; [[The item name]]
+         }
+         values {
+            cx: Evas.Coord; [[Item x return (relative to entry part)]]
+            cy: Evas.Coord; [[Item y return (relative to entry part)]]
+            cw: Evas.Coord; [[Item width return]]
+            ch: Evas.Coord; [[Item height return]]
          }
       }
-      part_text_item_list_get @const {
-         [[Return a list of char item names.
+      @property part_text_item_list {
+         get {
+            [[Return a list of char item names.
 
-           This function returns a list of char item names.]]
-         return: const(list<string>); [[The list of items (const char *), do not modify!]]
-         params {
-            @in part: string; [[The part name]]
+              This function returns a list of char item names.]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            item_list: const(list<string>); [[The list of items (const char *), do not modify!]]
          }
       }
    }
