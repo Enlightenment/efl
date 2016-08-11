@@ -127,6 +127,7 @@ _efl_event_pointer_efl_event_dup(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd
    ev->evas_done = 0;
    ev->win_fed = 0;
    ev->fake = 1;
+   ev->legacy = NULL;
 
    return evt;
 }

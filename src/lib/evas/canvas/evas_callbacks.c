@@ -17,16 +17,16 @@ extern Eina_Hash* signals_hash_table;
  * Evas events descriptions for Eo.
  */
 #define DEFINE_EVAS_CALLBACKS(FUNC, LAST, ...)                          \
-  static const Efl_Event_Description *FUNC(unsigned int index) \
+  static const Efl_Event_Description *FUNC(unsigned int index)          \
   {                                                                     \
-     static const Efl_Event_Description *internals[LAST] = { NULL };       \
+     static const Efl_Event_Description *internals[LAST] = { NULL };    \
                                                                         \
      if (index >= LAST) return NULL;                                    \
      if (internals[0] == NULL)                                          \
        {                                                                \
           memcpy(internals,                                             \
-                 ((const Efl_Event_Description*[]) { __VA_ARGS__ }),            \
-                 sizeof ((const Efl_Event_Description *[]) { __VA_ARGS__ }));    \
+                 ((const Efl_Event_Description*[]) { __VA_ARGS__ }),    \
+                 sizeof ((const Efl_Event_Description *[]) { __VA_ARGS__ })); \
        }                                                                \
      return internals[index];                                           \
   }

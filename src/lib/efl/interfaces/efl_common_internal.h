@@ -33,9 +33,7 @@ struct _Efl_Event_Pointer_Data
    double          radius, radius_x, radius_y;
    double          pressure;
    double          angle;
-   struct {
-      double       x, y;
-   } cur, prev;
+   Eina_Vector2    cur, prev;
    struct {
       Efl_Orient   dir;
       int          z;

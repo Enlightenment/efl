@@ -267,8 +267,8 @@ _evas_map_util_points_populate(Evas_Map *m, const double x, const double y, cons
 }
 
 Eina_Bool
-evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
-                    Evas_Coord *mx, Evas_Coord *my, int grab)
+evas_map_coords_get(const Evas_Map *m, double x, double y,
+                    double *mx, double *my, int grab)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
    return EINA_FALSE;
@@ -284,14 +284,14 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
 
    int i, j, edges, edge[m->count][2];
    Eina_Bool douv = EINA_FALSE;
-   Evas_Coord xe[2];
+   double xe[2];
    double u[2] = { 0.0, 0.0 };
    double v[2] = { 0.0, 0.0 };
 
 /*
    if (grab)
      {
-        Evas_Coord ymin, ymax;
+        double ymin, ymax;
 
         ymin = m->points[0].y;
         ymax = m->points[0].y;
@@ -324,7 +324,7 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
    if ((mx) || (my)) douv = EINA_TRUE;
    for (i = 0; i < (edges - 1); i+= 2)
      {
-        Evas_Coord yp, yd;
+        double yp, yd;
 
         j = i + 1;
         yd = m->points[edge[i][1]].y - m->points[edge[i][0]].y;
