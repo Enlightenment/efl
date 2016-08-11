@@ -557,12 +557,6 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
 
            Note: Once set, it can NOT be modified afterward.
          ]]
-         /* FIXME-doc
-         Example:
-         @code
-         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_name_set(ELM_WIN_BASIC));
-         @endcode
-         */
          set {
             [[Can only be used at creation time, within \@ref eo_add.]]
             legacy: null;
@@ -582,12 +576,6 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
 
            Note: Once set, it can NOT be modified afterward.
          ]]
-         /* FIXME-doc
-         Example:
-         @code
-         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_type_set(ELM_WIN_BASIC));
-         @endcode
-         */
          set {
             [[Can only be used at creation time, within \@ref eo_add.]]
             legacy: null;

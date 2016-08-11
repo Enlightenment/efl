@@ -6979,4 +6979,19 @@ elm_win_aspect_get(const Eo *obj)
    return _win_aspect_get(sd);
 }
 
+// deprecated
+EAPI void
+elm_win_name_set(Evas_Object *obj, const char *name)
+{
+   ERR("Calling deprecrated function '%s'", __FUNCTION__);
+   efl_ui_win_name_set(obj, name);
+}
+
+EAPI void
+elm_win_type_set(Evas_Object *obj, Elm_Win_Type type)
+{
+   ERR("Calling deprecrated function '%s'", __FUNCTION__);
+   efl_ui_win_type_set(obj, type);
+}
+
 #include "efl_ui_win.eo.c"

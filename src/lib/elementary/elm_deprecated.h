@@ -1640,3 +1640,7 @@ EINA_DEPRECATED EAPI const char *elm_fileselector_entry_selected_get(const Evas_
 //TODO: remvoe below - use elm_access_text_set(); or elm_access_cb_set();
 EINA_DEPRECATED EAPI void elm_access_external_info_set(Evas_Object *obj, const char *text);
 EINA_DEPRECATED EAPI char *elm_access_external_info_get(const Evas_Object *obj);
+
+// elm_win
+EINA_DEPRECATED EAPI void elm_win_type_set(Evas_Object *obj, Elm_Win_Type type);
+EINA_DEPRECATED EAPI void elm_win_name_set(Evas_Object *obj, const char *name);
