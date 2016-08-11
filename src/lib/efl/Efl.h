@@ -34,6 +34,7 @@ extern "C" {
 #endif /* ! _WIN32 */
 
 #define EFL_VERSION_1_18 1
+#define EFL_VERSION_1_19 1
 
 /* Add here all the required ifdef for any @protected method */
 #ifdef EFL_EFL_BUILD
