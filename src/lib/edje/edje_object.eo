@@ -1666,6 +1666,24 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             @in part: string; [[The part name]]
          }
       }
+      @property part_text_input_hint {
+         set {
+            [[Sets the input hint which allows input methods to fine-tune their behavior.
+
+              @since 1.12.0]]
+         }
+         get {
+            [[Gets the value of input hint
+
+              @since 1.12.0]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            input_hints: Edje.Input_Hints; [[input hints]]
+         }
+      }
       part_text_input_panel_show @const {
          [[Show the input panel (virtual keyboard) based on the input panel property such as layout, autocapital types, and so on.
 
@@ -1689,205 +1707,178 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             @in part: string; [[The part name]]
          }
       }
-      part_text_input_panel_imdata_set {
-         [[Set the input panel-specific data to deliver to the input panel.
+      @property part_text_input_panel_imdata {
+         set {
+            [[Set the input panel-specific data to deliver to the input panel.
 
-           This API is used by applications to deliver specific data to the input panel.
-           The data format MUST be negotiated by both application and the input panel.
-           The size and format of data are defined by the input panel.
+              This API is used by applications to deliver specific data to the input panel.
+              The data format MUST be negotiated by both application and the input panel.
+              The size and format of data are defined by the input panel.
 
-           @since 1.2.0]]
+              @since 1.2.0]]
+         }
+         get {
+            [[Get the specific data of the current active input panel.
 
-         params {
-            @in part: string; [[The part name]]
-            @in data: const(void_ptr); [[The specific data to be set to the input panel.]]
-            @in len: int; [[the length of data, in bytes, to send to the input panel]]
+              @since 1.2.0]]
+            return: void;
+         }
+         keys {
+            part: string; [[The part name]]
+            data: const(void_ptr); [[The specific data to be set to the input panel.]]
+         }
+         values {
+            len: int; [[the length of data, in bytes, to send to the input panel]]
          }
       }
-      part_text_input_panel_imdata_get @const {
-         [[Get the specific data of the current active input panel.
+      @property part_text_input_panel_layout {
+         set {
+            [[Set the layout of the input panel.
 
-           @since 1.2.0]]
-         params {
-            @in part: string; [[The part name]]
-            @in data: void_ptr; [[The specific data to be got from the input panel]]
-            @in len: int *; [[The length of data]]
+              The layout of the input panel or virtual keyboard can make it easier or
+              harder to enter content. This allows you to hint what kind of input you
+              are expecting to enter and thus have the input panel automatically
+              come up with the right mode.
+
+              @since 1.1]]
+         }
+         get {
+            [[Get the layout of the input panel.
+
+              See also @.part_text_input_panel_layout.set
+
+              @since 1.1]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            layout: Edje.Input_Panel.Layout; [[Layout type of the input panel]]
          }
       }
-      part_text_input_panel_layout_set {
-         [[Set the layout of the input panel.
+      @property part_text_input_panel_language {
+         set {
+            [[Set the language mode of the input panel.
 
-           The layout of the input panel or virtual keyboard can make it easier or
-           harder to enter content. This allows you to hint what kind of input you
-           are expecting to enter and thus have the input panel automatically
-           come up with the right mode.
+              This API can be used if you want to show the Alphabet keyboard.
 
-           @since 1.1]]
+              @since 1.2.0]]
+         }
+         get {
+            [[Get the language mode of the input panel.
 
-         params {
-            @in part: string; [[The part name]]
-            @in layout: Edje.Input_Panel.Layout; [[layout type]]
+              See also @.part_text_input_panel_language.set for more details.
+
+              @since 1.2.0]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            lang: Edje.Input_Panel.Lang; [[the language to be set to the input panel.]]
          }
       }
-      part_text_input_panel_layout_get @const {
-         [[Get the layout of the input panel.
+      @property part_text_input_panel_layout_variation {
+         set {
+            [[Set the layout variation of the input panel.
 
-           See also @.part_text_input_panel_layout_set
+              The layout variation of the input panel or virtual keyboard can make it easier or
+              harder to enter content. This allows you to hint what kind of input you
+              are expecting to enter and thus have the input panel automatically
+              come up with the right mode.
 
-           @since 1.1]]
-         return: Edje.Input_Panel.Layout; [[Layout type of the input panel]]
-         params {
-            @in part: string; [[The part name]]
+              @since 1.8]]
+         }
+         get {
+            [[Get the layout variation of the input panel.
+
+              See also @.part_text_input_panel_layout_variation.set
+
+              @since 1.8]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            variation: int; [[layout variation type]]
          }
       }
-      part_text_input_panel_language_set {
-         [[Set the language mode of the input panel.
+      @property part_text_input_panel_enabled {
+         set {
+            [[Sets the attribute to show the input panel automatically.
 
-           This API can be used if you want to show the Alphabet keyboard.
+              @since 1.1.0]]
+         }
+         get {
+            [[Retrieve the attribute to show the input panel automatically.
+              See also @.part_text_input_panel_enabled.set
 
-           @since 1.2.0]]
-
-         params {
-            @in part: string; [[The part name]]
-            @in lang: Edje.Input_Panel.Lang; [[the language to be set to the input panel.]]
+              @since 1.1.0]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            enabled: bool; [[If true, the input panel is appeared when entry is clicked or has a focus]]
          }
       }
-      part_text_input_panel_layout_variation_set {
-         [[Set the layout variation of the input panel.
+      @property part_text_input_panel_return_key_disabled {
+         set {
+            [[Set the return key on the input panel to be disabled.
 
-           The layout variation of the input panel or virtual keyboard can make it easier or
-           harder to enter content. This allows you to hint what kind of input you
-           are expecting to enter and thus have the input panel automatically
-           come up with the right mode.
+              @since 1.2.0]]
+         }
+         get {
+            [[Get whether the return key on the input panel should be disabled or not.
 
-           @since 1.8]]
-
-         params {
-            @in part: string; [[The part name]]
-            @in variation: int; [[layout variation type]]
+              @since 1.2.0]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            disabled: bool; [[The state]]
          }
       }
-      part_text_input_panel_layout_variation_get @const {
-         [[Get the layout variation of the input panel.
+      @property part_text_input_panel_return_key_type {
+         set {
+            [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
 
-           See also @.part_text_input_panel_layout_variation_set
+              An input panel displays the string or icon associated with this type
 
-           @since 1.8]]
-         return: int; [[Layout variation type of the input panel]]
-         params {
-            @in part: string; [[The part name]]
+              @since 1.2.0]]
+         }
+         get {
+            [[Get the "return" key type.
+
+              See also @.part_text_input_panel_return_key_type.set() for more details
+
+              @since 1.2.0]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            return_key_type: Edje.Input_Panel.Return_Key_Type; [[The type of "return" key on the input panel]]
          }
       }
-      part_text_input_panel_language_get @const {
-         [[Get the language mode of the input panel.
+      @property part_text_input_panel_show_on_demand {
+         set {
+            [[Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+              It doesn't request to show the input panel even though it has focus.
 
-           See also @.part_text_input_panel_language_set for more details.
-
-           @since 1.2.0]]
-         return: Edje.Input_Panel.Lang; [[input panel language type]]
-         params {
-            @in part: string; [[The part name]]
+              @since 1.9.0]]
          }
-      }
-      part_text_input_panel_enabled_set {
-         [[Sets the attribute to show the input panel automatically.
+         get {
+            [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
 
-           @since 1.1.0]]
-
-         params {
-            @in part: string; [[The part name]]
-            @in enabled: bool; [[If true, the input panel is appeared when entry is clicked or has a focus]]
+              @since 1.9.0]]
          }
-      }
-      part_text_input_panel_enabled_get @const {
-         [[Retrieve the attribute to show the input panel automatically.
-           See also @.part_text_input_panel_enabled_set
-
-           @since 1.1.0]]
-         return: bool; [[true if it supports or false otherwise]]
-         params {
-            @in part: string; [[The part name]]
+         keys {
+            part: string; [[The part name]]
          }
-      }
-      part_text_input_panel_return_key_disabled_set {
-         [[Set the return key on the input panel to be disabled.
-
-           @since 1.2.0]]
-
-         params {
-            @in part: string; [[The part name]]
-            @in disabled: bool; [[The state]]
-         }
-      }
-      part_text_input_panel_return_key_disabled_get @const {
-         [[Get whether the return key on the input panel should be disabled or not.
-
-           @since 1.2.0]]
-         return: bool; [[true if it should be disabled]]
-         params {
-            @in part: string; [[The part name]]
-         }
-      }
-      part_text_input_panel_return_key_type_set {
-         [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
-
-           An input panel displays the string or icon associated with this type
-
-           @since 1.2.0]]
-
-         params {
-            @in part: string; [[The part name]]
-            @in return_key_type: Edje.Input_Panel.Return_Key_Type; [[The type of "return" key on the input panel]]
-         }
-      }
-      part_text_input_panel_return_key_type_get @const {
-         [[Get the "return" key type.
-
-           See also @.part_text_input_panel_return_key_type_set() for more details
-
-           @since 1.2.0]]
-         return: Edje.Input_Panel.Return_Key_Type; [[The type of "return" key on the input panel]]
-         params {
-            @in part: string; [[The part name]]
-         }
-      }
-      part_text_input_panel_show_on_demand_set {
-         [[Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
-           It doesn't request to show the input panel even though it has focus.
-
-           @since 1.9.0]]
-
-         params {
-            @in part: string; [[The part name]]
-            @in ondemand: bool; [[If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)]]
-         }
-      }
-      part_text_input_panel_show_on_demand_get @const {
-         [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
-
-           @since 1.9.0]]
-         return: bool; [[$true if the input panel will be shown in case of only Mouse up event.]]
-         params {
-            @in part: string; [[The part name]]
-         }
-      }
-      part_text_input_hint_set {
-         [[Sets the input hint which allows input methods to fine-tune their behavior.
-
-           @since 1.12.0]]
-
-         params {
-            @in part: string; [[The part name]]
-            @in input_hints: Edje.Input_Hints; [[input hints]]
-         }
-      }
-      part_text_input_hint_get @const {
-         [[Gets the value of input hint
-
-           @since 1.12.0]]
-         return: Edje.Input_Hints; [[The value of input hint]]
-         params {
-            @in part: string; [[The part name]]
+         values {
+            ondemand: bool; [[If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)]]
          }
       }
       part_text_anchor_geometry_get @const {
