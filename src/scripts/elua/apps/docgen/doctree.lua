@@ -119,13 +119,6 @@ M.Doc = Node:clone {
     end
 }
 
-local classt_to_str = {
-    [eolian.class_type.REGULAR] = "class",
-    [eolian.class_type.ABSTRACT] = "class",
-    [eolian.class_type.MIXIN] = "mixin",
-    [eolian.class_type.INTERFACE] = "interface"
-}
-
 M.Class = Node:clone {
     -- class types
     UNKNOWN = eolian.class_type.UNKNOWN,
@@ -156,7 +149,21 @@ M.Class = Node:clone {
     end,
 
     type_str_get = function(self)
-        return classt_to_str[self:type_get()]
+        return ({
+            [eolian.class_type.REGULAR] = "class",
+            [eolian.class_type.ABSTRACT] = "class",
+            [eolian.class_type.MIXIN] = "mixin",
+            [eolian.class_type.INTERFACE] = "interface"
+        })[self:type_get()]
+    end,
+
+    theme_str_get = function(self)
+        return ({
+            [eolian.class_type.REGULAR] = "regular",
+            [eolian.class_type.ABSTRACT] = "abstract",
+            [eolian.class_type.MIXIN] = "mixin",
+            [eolian.class_type.INTERFACE] = "interface"
+        })[self:type_get()]
     end,
 
     doc_get = function(self)

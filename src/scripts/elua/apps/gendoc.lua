@@ -667,20 +667,13 @@ local set_theme = function(tname)
     end
 end
 
-local classt_to_theme = {
-    [dtree.Class.REGULAR] = "regular",
-    [dtree.Class.ABSTRACT] = "abstract",
-    [dtree.Class.MIXIN] = "mixin",
-    [dtree.Class.INTERFACE] = "interface"
-}
-
 local class_to_node = function(cl, main)
     local ret = {}
 
     ret.label = cl:full_name_get()
     ret.name = ret.label:lower():gsub("%.", "_")
 
-    local clr = classt_to_theme[cl:type_get()]
+    local clr = cl:theme_str_get()
 
     ret.style = current_theme.classes[clr].style
     ret.color = current_theme.classes[clr][main and "primary_color" or "color"]
