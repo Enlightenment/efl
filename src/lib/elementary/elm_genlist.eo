@@ -428,10 +428,12 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       filtered_items_count @const {
          [[Return how many items have passed the filter currently.
-         
+
            This behaviour is O(1) and returns the count of items which
            are currently passed by the filter. After "filter,done", the
            call returns total count of the filtered items.
+
+           @since 1.18
          ]]
          return: uint;
       }
