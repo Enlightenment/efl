@@ -207,7 +207,6 @@ elm_prefs_entry_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
    elm_entry_markup_filter_append(obj, elm_entry_filter_limit_size, &limit);
    elm_layout_text_set(obj, NULL, spec.s.placeholder);
 
-   regfree(regex);
    return obj;
 }
 
