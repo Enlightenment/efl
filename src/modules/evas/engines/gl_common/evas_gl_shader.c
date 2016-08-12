@@ -808,13 +808,13 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
           }
      }
 
-   if (mtex)
-     flags |= SHADER_FLAG_MASK;
-
    if (bgra)
      flags |= SHADER_FLAG_BGRA;
 
 end:
+   if (mtex)
+     flags |= SHADER_FLAG_MASK;
+
    if (psam) *psam = sam;
    if (pnomul) *pnomul = nomul;
    if (pmasksam) *pmasksam = masksam;
