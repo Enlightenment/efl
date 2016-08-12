@@ -260,6 +260,15 @@ M.Function = Node:clone {
         return self.func:type_get()
     end,
 
+    type_str_get = function(self)
+        return ({
+            [eolian.function_type.PROPERTY] = "property",
+            [eolian.function_type.PROP_GET] = "property",
+            [eolian.function_type.PROP_SET] = "property",
+            [eolian.function_type.METHOD] = "method"
+        })[self:type_get()]
+    end,
+
     scope_get = function(self, ft)
         return self.func:scope_get(ft)
     end,
@@ -330,6 +339,16 @@ M.Function = Node:clone {
 
     is_const = function(self)
         return self.func:is_const()
+    end,
+
+    nspaces_get = function(self, cl, root)
+        local tbl = cl:nspaces_get()
+        tbl[#tbl + 1] = self:type_str_get()
+        tbl[#tbl + 1] = self:name_get():lower()
+        if root then
+            tbl[#tbl + 1] = true
+        end
+        return tbl
     end
 }
 

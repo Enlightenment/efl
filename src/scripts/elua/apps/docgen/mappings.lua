@@ -58,16 +58,6 @@ M.gen_nsp_eo = function(eobj, subn, root)
     return tbl
 end
 
-M.gen_nsp_func = function(fn, cl, root)
-    local tbl = cl:nspaces_get()
-    tbl[#tbl + 1] = M.funct_to_str[fn:type_get()]
-    tbl[#tbl + 1] = fn:name_get():lower()
-    if root then
-        tbl[#tbl + 1] = true
-    end
-    return tbl
-end
-
 M.gen_nsp_ref = function(str, root)
     local decl = eolian.declaration_get_by_name(str)
     if decl then

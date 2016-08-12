@@ -367,7 +367,7 @@ local build_functable = function(f, title, ctitle, cl, tp)
     local nt = {}
     for i, v in ipairs(t) do
         local lbuf = writer.Buffer()
-        lbuf:write_link(eomap.gen_nsp_func(v, cl, true), v:name_get())
+        lbuf:write_link(v:nspaces_get(cl, true), v:name_get())
         local pt = propt_to_type[v:type_get()]
         if pt then
             lbuf:write_raw(" ")
@@ -937,7 +937,7 @@ local build_vallist = function(f, pg, ps, title)
 end
 
 build_method = function(fn, cl)
-    local f = writer.Writer(eomap.gen_nsp_func(fn, cl))
+    local f = writer.Writer(fn:nspaces_get(cl))
     stats.check_method(fn, cl)
 
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
@@ -965,7 +965,7 @@ build_method = function(fn, cl)
 end
 
 build_property = function(fn, cl)
-    local f = writer.Writer(eomap.gen_nsp_func(fn, cl))
+    local f = writer.Writer(fn:nspaces_get(cl))
 
     local fts = eolian.function_type
     local ft = fn:type_get()
