@@ -370,6 +370,7 @@ EAPI Eina_Bool edje_object_part_box_insert_before(Edje_Object *obj, const char *
  *
  * @return @c true: Successfully added. @c false: An error occurred.
  *
+ * @since 1.18
  * @ingroup Edje_Object
  */
 EAPI Eina_Bool edje_object_part_box_insert_after(Edje_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
