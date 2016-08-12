@@ -3,13 +3,6 @@ local dtree = require("docgen.doctree")
 
 local M = {}
 
-M.funct_to_str = {
-    [eolian.function_type.PROPERTY] = "property",
-    [eolian.function_type.PROP_GET] = "property",
-    [eolian.function_type.PROP_SET] = "property",
-    [eolian.function_type.METHOD] = "method"
-}
-
 M.pdir_to_str = {
     [eolian.parameter_dir.IN] = "(in)",
     [eolian.parameter_dir.OUT] = "(out)",
@@ -115,12 +108,16 @@ M.gen_nsp_ref = function(str, root)
         if fn then ftype = fn:type_get() end
     end
 
-    if not fn or not M.funct_to_str[ftype] then
+    if fn then
+        fn = dtree.Function(fn)
+    end
+
+    if not fn or not fn:type_str_get() then
         error("invalid reference '" .. str .. "'")
     end
 
     local ret = M.gen_nsp_ref(bstr)
-    ret[#ret + 1] = M.funct_to_str[ftype]
+    ret[#ret + 1] = fn:type_str_get()
     ret[#ret + 1] = fn:name_get():lower()
     if root then ret[#ret + 1] = true end
     return ret

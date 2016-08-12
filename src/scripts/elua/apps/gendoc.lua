@@ -376,7 +376,7 @@ local build_functable = function(f, title, ctitle, cl, tp)
         nt[#nt + 1] = {
             lbuf:finish(), get_brief_fdoc(v)
         }
-        if eomap.funct_to_str[v:type_get()] == "property" then
+        if v:type_str_get() == "property" then
             build_property(v, cl)
         else
             build_method(v, cl)
