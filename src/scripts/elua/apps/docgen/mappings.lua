@@ -1,13 +1,7 @@
 local eolian = require("eolian")
+local dtree = require("docgen.doctree")
 
 local M = {}
-
-M.classt_to_str = {
-    [eolian.class_type.REGULAR] = "class",
-    [eolian.class_type.ABSTRACT] = "class",
-    [eolian.class_type.MIXIN] = "mixin",
-    [eolian.class_type.INTERFACE] = "interface"
-}
 
 M.funct_to_str = {
     [eolian.function_type.PROPERTY] = "property",
@@ -40,7 +34,7 @@ local decl_to_nspace = function(decl)
     if ns then
         return ns
     elseif decl:type_get() == dt.CLASS then
-        local ret = M.classt_to_str[decl:class_get():type_get()]
+        local ret = dtree.Class(decl:class_get()):type_str_get()
         if not ret then
             error("unknown class type for class '" .. decl:name_get() .. "'")
         end

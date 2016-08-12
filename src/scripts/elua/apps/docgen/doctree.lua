@@ -3,7 +3,9 @@ local util = require("util")
 local eolian = require("eolian")
 
 local dutil = require("docgen.util")
-local writer = require("docgen.writer")
+
+-- writer has to be loaded late to prevent cycles
+local writer
 
 local M = {}
 
@@ -11,6 +13,9 @@ local Node = util.Object:clone {
 }
 
 local gen_doc_refd = function(str)
+    if not writer then
+        writer = require("docgen.writer")
+    end
     if not str then
         return nil
     end
@@ -22,6 +27,9 @@ local gen_doc_refd = function(str)
 end
 
 local add_since = function(str, since)
+    if not writer then
+        writer = require("docgen.writer")
+    end
     if not since then
         return str
     end
@@ -119,6 +127,13 @@ local classt_to_str = {
 }
 
 M.Class = Node:clone {
+    -- class types
+    UNKNOWN = eolian.class_type.UNKNOWN,
+    REGULAR = eolian.class_type.REGULAR,
+    ABSTRACT = eolian.class_type.ABSTRACT,
+    MIXIN = eolian.class_type.MIXIN,
+    INTERFACE = eolian.class_type.INTERFACE,
+
     __ctor = function(self, cl)
         self.class = cl
         assert(self.class)
@@ -138,6 +153,10 @@ M.Class = Node:clone {
 
     type_get = function(self)
         return self.class:type_get()
+    end,
+
+    type_str_get = function(self)
+        return classt_to_str[self:type_get()]
     end,
 
     doc_get = function(self)
@@ -177,7 +196,7 @@ M.Class = Node:clone {
         for i = 1, #tbl do
             tbl[i] = tbl[i]:lower()
         end
-        table.insert(tbl, 1, classt_to_str[self.class:type_get()])
+        table.insert(tbl, 1, self:type_str_get())
         tbl[#tbl + 1] = self:name_get():lower()
         if root then
             tbl[#tbl + 1] = true

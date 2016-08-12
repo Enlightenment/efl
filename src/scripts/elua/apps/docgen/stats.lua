@@ -117,7 +117,7 @@ local print_missing = function(name, tp)
 end
 
 M.check_class = function(cl)
-    local ct = eomap.classt_to_str[cl:type_get()]
+    local ct = cl:type_str_get()
     if not ct then
         return
     end

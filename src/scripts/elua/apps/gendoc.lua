@@ -395,15 +395,13 @@ local build_ref = function()
     local ifaces = {}
     local mixins = {}
 
-    local clt = eolian.class_type
-
     for i, cl in ipairs(dtree.Class.all_get()) do
         local tp = cl:type_get()
-        if tp == clt.REGULAR or tp == clt.ABSTRACT then
+        if tp == dtree.Class.REGULAR or tp == dtree.Class.ABSTRACT then
             classes[#classes + 1] = cl
-        elseif tp == clt.MIXIN then
+        elseif tp == dtree.Class.MIXIN then
             mixins[#mixins + 1] = cl
-        elseif tp == clt.INTERFACE then
+        elseif tp == dtree.Class.INTERFACE then
             ifaces[#ifaces + 1] = cl
         else
             error("unknown class: " .. cl:full_name_get())
@@ -444,7 +442,7 @@ build_inherits = function(cl, t, lvl)
     local lbuf = writer.Buffer()
     lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
     lbuf:write_raw(" ")
-    lbuf:write_i("(" .. eomap.classt_to_str[cl:type_get()] .. ")")
+    lbuf:write_i("(" .. cl:type_str_get() .. ")")
     if lvl == 0 then
         lbuf:write_b(lbuf:finish())
     end
@@ -670,10 +668,10 @@ local set_theme = function(tname)
 end
 
 local classt_to_theme = {
-    [eolian.class_type.REGULAR] = "regular",
-    [eolian.class_type.ABSTRACT] = "abstract",
-    [eolian.class_type.MIXIN] = "mixin",
-    [eolian.class_type.INTERFACE] = "interface"
+    [dtree.Class.REGULAR] = "regular",
+    [dtree.Class.ABSTRACT] = "abstract",
+    [dtree.Class.MIXIN] = "mixin",
+    [dtree.Class.INTERFACE] = "interface"
 }
 
 local class_to_node = function(cl, main)
@@ -786,8 +784,7 @@ end
 
 local build_classes = function()
     for i, cl in ipairs(dtree.Class.all_get()) do
-        local ct = cl:type_get()
-        if not eomap.classt_to_str[ct] then
+        if not cl:type_str_get() then
             error("unknown class: " .. cl:full_name_get())
         end
         build_class(cl)
