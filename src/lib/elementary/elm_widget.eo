@@ -826,7 +826,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
 	  @property focus_move_policy_automatic {
-         [[Control the widget's focus_move_policy mode setting.]]
+         [[Control the widget's focus_move_policy mode setting.
+           @since 1.18]]
          set {
          }
          get {
@@ -836,6 +837,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
 	  focus_reconfigure {
+           [[@since 1.18]]
+
       }
    }
    implements {
