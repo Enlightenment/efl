@@ -961,6 +961,7 @@ EAPI void   elm_config_scale_set(double scale);
  *
  * @return the icon theme to use
  * @ingroup Elm_Icon
+ * @since 1.18
  */
 EAPI const char *elm_config_icon_theme_get(void);
 
@@ -973,6 +974,7 @@ EAPI const char *elm_config_icon_theme_get(void);
  *
  * @param the name of a freedesktop.org icon theme or ELM_CONFIG_ICON_THEME_ELEMENTARY
  * @ingroup Elm_Icon
+ * @since 1.18
  */
 EAPI void elm_config_icon_theme_set(const char *theme);
 
