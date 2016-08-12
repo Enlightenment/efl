@@ -271,13 +271,14 @@ static Eina_Bool
 _do_tick(void)
 {
    Ecore_Animator *animator;
+   Eina_Inlist *tmp;
 
    EINA_INLIST_FOREACH(animators, animator)
      {
         animator->just_added = EINA_FALSE;
      }
    if (animators) eina_evlog("!FRAME", NULL, ecore_loop_time_get(), NULL);
-   EINA_INLIST_FOREACH(animators, animator)
+   EINA_INLIST_FOREACH_SAFE(animators, tmp, animator)
      {
         if ((!animator->delete_me) &&
             (!animator->suspended) &&
