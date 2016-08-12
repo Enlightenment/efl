@@ -1156,6 +1156,10 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
        (fdesc->weight == EVAS_FONT_WEIGHT_BOOK))
      {
         Evas_Font_Description *bold_desc = evas_font_desc_dup(fdesc);
+
+        eina_stringshare_del(bold_desc->style);
+        bold_desc->style = NULL;
+
         bold_desc->weight = EVAS_FONT_WEIGHT_BOLD;
         _alternate_font_weight_slant(obj, o, &o->font_bold, bold_desc,
                                      "bold");
@@ -1172,6 +1176,9 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
      {
         Evas_Font_Description *italic_desc = evas_font_desc_dup(fdesc);
         int ret;
+
+        eina_stringshare_del(italic_desc->style);
+        italic_desc->style = NULL;
 
         italic_desc->slant = EVAS_FONT_SLANT_ITALIC;
         ret = _alternate_font_weight_slant(obj, o, &o->font_italic,
@@ -1198,6 +1205,9 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
      {
         Evas_Font_Description *bolditalic_desc = evas_font_desc_dup(fdesc);
         int ret;
+
+        eina_stringshare_del(bolditalic_desc->style);
+        bolditalic_desc->style = NULL;
 
         bolditalic_desc->slant = EVAS_FONT_SLANT_ITALIC;
         bolditalic_desc->weight = EVAS_FONT_WEIGHT_BOLD;
