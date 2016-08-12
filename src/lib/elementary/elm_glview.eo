@@ -178,7 +178,10 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
          }
       }
       draw_request {
-         [[Notifies that there has been changes in the GLView.]]
+         [[Notifies that there has been changes in the GLView.
+
+           @since 1.18
+         ]]
       }
    }
    implements {
