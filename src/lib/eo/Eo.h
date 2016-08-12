@@ -120,7 +120,7 @@ typedef Eo Efl_Class;
 #define _EFL_CLASS_EO_CLASS_TYPE
 
 typedef Eo Efl_Object;
-#define _EFL_BASE_EO_CLASS_TYPE
+#define _EFL_OBJECT_EO_CLASS_TYPE
 
 #ifdef EFL_BETA_API_SUPPORT
 
