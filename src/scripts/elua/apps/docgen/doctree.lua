@@ -4,7 +4,6 @@ local eolian = require("eolian")
 
 local dutil = require("docgen.util")
 local writer = require("docgen.writer")
-local eomap = require("docgen.mappings")
 
 local M = {}
 
@@ -112,6 +111,13 @@ M.Doc = Node:clone {
     end
 }
 
+local classt_to_str = {
+    [eolian.class_type.REGULAR] = "class",
+    [eolian.class_type.ABSTRACT] = "class",
+    [eolian.class_type.MIXIN] = "mixin",
+    [eolian.class_type.INTERFACE] = "interface"
+}
+
 M.Class = Node:clone {
     __ctor = function(self, cl)
         self.class = cl
@@ -171,7 +177,7 @@ M.Class = Node:clone {
         for i = 1, #tbl do
             tbl[i] = tbl[i]:lower()
         end
-        table.insert(tbl, 1, eomap.classt_to_str[self.class:type_get()])
+        table.insert(tbl, 1, classt_to_str[self.class:type_get()])
         tbl[#tbl + 1] = self:name_get():lower()
         if root then
             tbl[#tbl + 1] = true
