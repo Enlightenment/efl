@@ -145,23 +145,23 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
          }
       }
       @property range_enabled {
-         set {
-            [[Enables the range. This enables two indicators in slider.]]
-         }
-         get {
-            [[Get whether the range is enabled.]]
-         }
+         [[ This enables two indicators in slider.
+
+           @since 1.18
+         ]]
+         set { }
+         get { }
          values {
             enable: bool;
          }
       }
       @property range {
-         set {
-            [[Set the values of two indicators.]]
-         }
-         get {
-            [[Get the values of two indicators.]]
-         }
+         [[ Sets up a start and end range point for the slider
+
+           @since 1.18
+         ]]
+         set { }
+         get { }
          values {
             from: double; [[range minimum value]]
             to: double; [[range maximum value]]
