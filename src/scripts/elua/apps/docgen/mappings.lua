@@ -82,7 +82,7 @@ M.gen_nsp_ref = function(str, root)
 
     local ftp = eolian.function_type
 
-    local cl = eolian.class_get_by_name(bstr)
+    local cl = dtree.Class.by_name_get(bstr)
     local fn
     local ftype = ftp.UNRESOLVED
     if not cl then
@@ -98,7 +98,7 @@ M.gen_nsp_ref = function(str, root)
                 error("invalid reference '" .. str .. "'")
             end
             bstr = bstr:match("(.+)%.[^.]+")
-            cl = eolian.class_get_by_name(bstr)
+            cl = dtree.Class.by_name_get(bstr)
             if cl then
                 fn = cl:function_get_by_name(mname, ftype)
             end
@@ -106,10 +106,6 @@ M.gen_nsp_ref = function(str, root)
     else
         fn = cl:function_get_by_name(sfx:sub(2), ftype)
         if fn then ftype = fn:type_get() end
-    end
-
-    if fn then
-        fn = dtree.Function(fn)
     end
 
     if not fn or not fn:type_str_get() then
