@@ -113,10 +113,18 @@ _entry_del_cb(void *data EINA_UNUSED,
    Ecore_Timer *timer;
 
    regex = evas_object_data_del(obj, "accept_regex");
-   if (regex) regfree(regex);
+   if (regex)
+     {
+        regfree(regex);
+        free(regex);
+     }
 
    regex = evas_object_data_del(obj, "deny_regex");
-   if (regex) regfree(regex);
+   if (regex)
+     {
+        regfree(regex);
+        free(regex);
+     }
 
    timer = evas_object_data_del(obj, "timer");
    if (timer) ecore_timer_del(timer);
@@ -163,6 +171,7 @@ elm_prefs_entry_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
           {
              regerror(ret, regex, buf, sizeof(buf));
              regfree(regex);
+             free(regex);
              ERR("bad regular expression (%s) on item's 'accept' tag (%s)."
                  " Because of that, the 'accept' tag will be dropped for the "
                  "item.", spec.s.accept, buf);
@@ -182,6 +191,7 @@ elm_prefs_entry_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
           {
              regerror(ret, regex, buf, sizeof(buf));
              regfree(regex);
+             free(regex);
              ERR("bad regular expression (%s) on item's 'deny' tag (%s)."
                  " Because of that, the 'deny' tag will be dropped for the "
                  "item.", spec.s.deny, buf);
