@@ -117,6 +117,23 @@ eina_stringshare_replace_length(Eina_Stringshare **p_str, const char *news, unsi
 }
 
 /**
+ * Return the read-only memory slice for this stringshare.
+ *
+ * @param str the stringshare to get a slice.
+ * @return A read-only slice.
+ */
+static inline Eina_Slice
+eina_stringshare_slice_get(Eina_Stringshare *str)
+{
+   Eina_Slice ret;
+
+   ret.len = eina_stringshare_strlen(str);
+   ret.mem = str;
+
+   return ret;
+}
+
+/**
  * @}
  */
 

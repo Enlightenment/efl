@@ -36,6 +36,7 @@ START_TEST(eina_stringshare_simple)
 {
    const char *t0;
    const char *t1;
+   Eina_Slice slice;
 
    eina_init();
 
@@ -52,6 +53,10 @@ START_TEST(eina_stringshare_simple)
    t0 = eina_stringshare_ref(t0);
    fail_if(t0 == NULL);
    fail_if((int)strlen(TEST0) != eina_stringshare_strlen(t0));
+
+   slice = eina_stringshare_slice_get(t0);
+   fail_if(slice.mem != t0);
+   fail_if(slice.len != strlen(TEST0));
 
    eina_stringshare_del(t0);
    eina_stringshare_del(t0);

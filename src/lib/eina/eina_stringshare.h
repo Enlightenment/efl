@@ -54,6 +54,7 @@
 #include <stdarg.h>
 
 #include "eina_types.h"
+#include "eina_slice.h"
 
 /**
  * @page eina_stringshare_example_01_page
@@ -334,6 +335,8 @@ EAPI void               eina_stringshare_dump(void);
 
 static inline Eina_Bool eina_stringshare_replace(Eina_Stringshare **p_str, const char *news) EINA_ARG_NONNULL(1);
 static inline Eina_Bool eina_stringshare_replace_length(Eina_Stringshare **p_str, const char *news, unsigned int slen) EINA_ARG_NONNULL(1);
+
+static inline Eina_Slice eina_stringshare_slice_get(Eina_Stringshare *str) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
 #include "eina_inline_stringshare.x"
 
