@@ -153,37 +153,31 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
    event_prefix: efl_ui_win;
    methods {
       @property indicator_enabled {
-         set {
-             [[In some environments, like phones, you may have an indicator that
-               shows battery status, reception, time etc. This is the indicator.
+         [[In some environments, like phones, you may have an indicator that
+           shows battery status, reception, time etc. This is the indicator.
 
-               Sometimes you don't want it because you provide the same functionality
-               inside your app, so this will request that the indicator is disabled in
-               this circumstance. The default is depend on the environments.
-               For example, like phones, default is to enable the indicator.
-               But like TV, default is to disable the indicator.
+           Sometimes you don't want it because you provide the same functionality
+           inside your app, so this will request that the indicator is disabled in
+           this circumstance. The default is depend on the environments.
+           For example, like phones, default is to enable the indicator.
+           But like TV, default is to disable the indicator.
 
-               Sets the indicator enable of the window.]]
-            legacy: null;
-         }
-         get {
-            [[Get the indicator enable of the window.]]
-            legacy: null;
-         }
+           @since 1.18
+         ]]
+         set { }
+         get { }
          values {
             enabled: bool; [[If true, the indicator is enabled,
                              If false, the indicator is disabled.]]
          }
       }
       @property indicator_type {
-         set {
-            [[Sets the indicator type of the window.]]
-            legacy: null;
-         }
-         get {
-            [[Get the indicator type of the window.]]
-            legacy: null;
-         }
+         [[The indicator type of the window.
+
+           @since 1.18
+         ]]
+         set { }
+         get { }
          values {
             type: Efl.Ui.Win.Indicator_Type; [[The type, one of #Efl_Ui_Win_Indicator_Type.]]
          }
