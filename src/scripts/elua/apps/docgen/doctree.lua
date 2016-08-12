@@ -183,11 +183,15 @@ M.Class = Node:clone {
     end,
 
     functions_get = function(self, ft)
-        return self.class:functions_get(ft):to_array()
+        local ret = {}
+        for fn in self.class:functions_get(ft) do
+            ret[#ret + 1] = M.Function(fn)
+        end
+        return ret
     end,
 
     function_get_by_name = function(self, fn, ft)
-        return self.class:function_get_by_name(fn, ft)
+        return M.Function(self.class:function_get_by_name(fn, ft))
     end,
 
     events_get = function(self)
@@ -235,6 +239,93 @@ M.Class = Node:clone {
             ret[#ret + 1] = M.Class(cl)
         end
         return ret
+    end
+}
+
+M.Function = Node:clone {
+    __ctor = function(self, fn)
+        self.func = fn
+        assert(self.func)
+    end,
+
+    name_get = function(self)
+        return self.func:name_get()
+    end,
+
+    type_get = function(self)
+        return self.func:type_get()
+    end,
+
+    scope_get = function(self, ft)
+        return self.func:scope_get(ft)
+    end,
+
+    full_c_name_get = function(self, ft, legacy)
+        return self.func:full_c_name_get(ft, legacy)
+    end,
+
+    legacy_get = function(self, ft)
+        return self.func:legacy_get(ft)
+    end,
+
+    doc_get = function(self, ft)
+        return M.Doc(self.func:documentation_get(ft))
+    end,
+
+    is_virtual_pure = function(self, ft)
+        return self.func:is_virtual_pure(ft)
+    end,
+
+    is_auto = function(self, ft)
+        return self.func:is_auto(ft)
+    end,
+
+    is_empty = function(self, ft)
+        return self.func:is_empty(ft)
+    end,
+
+    is_legacy_only = function(self, ft)
+        return self.func:is_legacy_only(ft)
+    end,
+
+    is_class = function(self)
+        return self.func:is_class()
+    end,
+
+    is_c_only = function(self)
+        return self.func:is_c_only()
+    end,
+
+    property_keys_get = function(self, ft)
+        return self.func:property_keys_get(ft)
+    end,
+
+    property_values_get = function(self, ft)
+        return self.func:property_values_get(ft)
+    end,
+
+    parameters_get = function(self)
+        return self.func:parameters_get()
+    end,
+
+    return_type_get = function(self, ft)
+        return self.func:return_type_get(ft)
+    end,
+
+    return_default_value_get = function(self, ft)
+        return self.func:return_default_value_get(ft)
+    end,
+
+    return_doc_get = function(self, ft)
+        return M.Doc(self.func:return_documentation_get(ft))
+    end,
+
+    return_is_warn_unused = function(self, ft)
+        return self.func:return_is_warn_unused(ft)
+    end,
+
+    is_const = function(self)
+        return self.func:is_const()
     end
 }
 

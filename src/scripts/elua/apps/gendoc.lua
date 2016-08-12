@@ -22,18 +22,18 @@ local get_fallback_fdoc = function(f, ftype)
         end
     end
     if ftype then
-        return dtree.Doc(f:documentation_get(ftype))
+        return f:doc_get(ftype)
     end
     return nil
 end
 
 local get_brief_fdoc = function(f, ftype)
-    return dtree.Doc(f:documentation_get(eolian.function_type.METHOD))
+    return f:doc_get(eolian.function_type.METHOD)
         :brief_get(get_fallback_fdoc(f, ftype))
 end
 
 local get_full_fdoc = function(f, ftype)
-    return dtree.Doc(f:documentation_get(eolian.function_type.METHOD))
+    return f:doc_get(eolian.function_type.METHOD)
         :full_get(get_fallback_fdoc(f, ftype))
 end
 
@@ -431,7 +431,7 @@ local build_ref = function()
 end
 
 local write_full_fdoc = function(f, fn, ftype)
-    f:write_raw(dtree.Doc(fn:documentation_get(eolian.function_type.METHOD))
+    f:write_raw(fn:doc_get(eolian.function_type.METHOD)
         :full_get(get_fallback_fdoc(fn, ftype), true))
 end
 
@@ -959,7 +959,7 @@ build_method = function(fn, cl)
     end
 
     f:write_h("Description", 3)
-    f:write_raw(dtree.Doc(fn:documentation_get(eolian.function_type.METHOD)):full_get(nil, true))
+    f:write_raw(fn:doc_get(eolian.function_type.METHOD):full_get(nil, true))
     f:write_nl()
 
     f:finish()
@@ -976,9 +976,9 @@ build_property = function(fn, cl)
     if isget then stats.check_property(fn, cl, fts.PROP_GET) end
     if isset then stats.check_property(fn, cl, fts.PROP_SET) end
 
-    local doc = fn:documentation_get(fts.PROPERTY)
-    local gdoc = fn:documentation_get(fts.PROP_GET)
-    local sdoc = fn:documentation_get(fts.PROP_SET)
+    local doc = fn:doc_get(fts.PROPERTY)
+    local gdoc = fn:doc_get(fts.PROP_GET)
+    local sdoc = fn:doc_get(fts.PROP_SET)
 
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
 
@@ -1007,33 +1007,33 @@ build_property = function(fn, cl)
 
     if isget and isset then
         f:write_h("Description", 3)
-        if doc or (not gdoc and not sdoc) then
-            f:write_raw(dtree.Doc(doc):full_get(nil, true))
+        if doc:exists() or (not gdoc:exists() and not sdoc:exists()) then
+            f:write_raw(doc:full_get(nil, true))
         end
-        if (isget and gdoc) or (isset and sdoc) then
+        if (isget and gdoc:exists()) or (isset and sdoc:exists()) then
             f:write_nl(2)
         end
     end
 
-    if isget and gdoc then
+    if isget and gdoc:exists() then
         if isset then
             f:write_h("Getter", 4)
         else
             f:write_h("Description", 3)
         end
-        f:write_raw(dtree.Doc(gdoc):full_get(nil, true))
-        if isset and sdoc then
+        f:write_raw(gdoc:full_get(nil, true))
+        if isset and sdoc:exists() then
             f:write_nl(2)
         end
     end
 
-    if isset and sdoc then
+    if isset and sdoc:exists() then
         if isget then
             f:write_h("Setter", 4)
         else
             f:write_h("Description", 3)
         end
-        f:write_raw(dtree.Doc(sdoc):full_get(nil, true))
+        f:write_raw(sdoc:full_get(nil, true))
     end
 
     f:write_nl()
