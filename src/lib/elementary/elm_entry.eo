@@ -654,7 +654,10 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       @property select_allow {
          set {
-            [[Allow selection in the entry.]]
+            [[Allow selection in the entry.
+
+              @since 1.18
+            ]]
          }
          get {
             [[Returns whether selection in the entry is allowed.]]
