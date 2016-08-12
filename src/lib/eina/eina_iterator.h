@@ -296,6 +296,7 @@ EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1)
  *
  * Eina_Iterator* iterator = eina_carray_iterator_new((void**)array);
  *
+ * @since 1.18
  */
 EAPI Eina_Iterator* eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
