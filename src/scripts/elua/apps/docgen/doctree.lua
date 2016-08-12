@@ -247,6 +247,13 @@ M.Class = Node:clone {
 }
 
 M.Function = Node:clone {
+    -- function types
+    UNRESOLVED = eolian.function_type.UNRESOLVED,
+    PROPERTY = eolian.function_type.PROPERTY,
+    PROP_SET = eolian.function_type.PROP_SET,
+    PROP_GET = eolian.function_type.PROP_GET,
+    METHOD = eolian.function_type.METHOD,
+
     __ctor = function(self, fn)
         self.func = fn
         assert(self.func)

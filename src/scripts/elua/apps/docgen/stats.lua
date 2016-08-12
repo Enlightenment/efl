@@ -139,17 +139,16 @@ M.check_class = function(cl)
 end
 
 M.check_method = function(fn, cl)
-    local fts = eolian.function_type
     local fulln = cl:full_name_get() .. "." .. fn:name_get()
-    if fn:return_type_get(fts.METHOD) then
-        if not fn:return_doc_get(fts.METHOD):exists() then
+    if fn:return_type_get(fn.METHOD) then
+        if not fn:return_doc_get(fn.METHOD):exists() then
             print_missing(fulln, "method return")
             stat_incr("mret", true)
         else
             stat_incr("mret", false)
         end
     end
-    if not fn:doc_get(fts.METHOD):exists() then
+    if not fn:doc_get(fn.METHOD):exists() then
         print_missing(fulln, "method")
         stat_incr("method", true)
     else
@@ -166,11 +165,9 @@ M.check_method = function(fn, cl)
 end
 
 M.check_property = function(fn, cl, ft)
-    local fts = eolian.function_type
-
     local pfxs = {
-        [fts.PROP_GET] = "g",
-        [fts.PROP_SET] = "s",
+        [fn.PROP_GET] = "g",
+        [fn.PROP_SET] = "s",
     }
     local pfx = pfxs[ft]
 
@@ -184,7 +181,7 @@ M.check_property = function(fn, cl, ft)
         end
     end
 
-    if not fn:doc_get(fts.PROPERTY):exists() and not fn:doc_get(ft):exists() then
+    if not fn:doc_get(fn.PROPERTY):exists() and not fn:doc_get(ft):exists() then
         print_missing(fulln, pfx .. "etter")
         stat_incr(pfx .. "etter", true)
     else

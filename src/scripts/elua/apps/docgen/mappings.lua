@@ -80,19 +80,17 @@ M.gen_nsp_ref = function(str, root)
         end
     end
 
-    local ftp = eolian.function_type
-
     local cl = dtree.Class.by_name_get(bstr)
     local fn
-    local ftype = ftp.UNRESOLVED
+    local ftype = dtree.Function.UNRESOLVED
     if not cl then
         if sfx == ".get" then
-            ftype = ftp.PROP_GET
+            ftype = dtree.Function.PROP_GET
         elseif sfx == ".set" then
-            ftype = ftp.PROP_SET
+            ftype = dtree.Function.PROP_SET
         end
         local mname
-        if ftype ~= ftp.UNRESOLVED then
+        if ftype ~= dtree.Function.UNRESOLVED then
             mname = bstr:match(".+%.([^.]+)")
             if not mname then
                 error("invalid reference '" .. str .. "'")

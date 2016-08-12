@@ -16,8 +16,7 @@ local dtree = require("docgen.doctree")
 local get_fallback_fdoc = function(f, ftype)
     if not ftype then
         local ft = f:type_get()
-        local ftt = eolian.function_type
-        if ft == ftt.PROP_GET or ft == ftt.PROP_SET then
+        if ft == f.PROP_GET or ft == f.PROP_SET then
             ftype = ft
         end
     end
@@ -28,24 +27,18 @@ local get_fallback_fdoc = function(f, ftype)
 end
 
 local get_brief_fdoc = function(f, ftype)
-    return f:doc_get(eolian.function_type.METHOD)
-        :brief_get(get_fallback_fdoc(f, ftype))
+    return f:doc_get(f.METHOD):brief_get(get_fallback_fdoc(f, ftype))
 end
 
 local get_full_fdoc = function(f, ftype)
-    return f:doc_get(eolian.function_type.METHOD)
-        :full_get(get_fallback_fdoc(f, ftype))
+    return f:doc_get(f.METHOD):full_get(get_fallback_fdoc(f, ftype))
 end
 
 local propt_to_type = {
-    [eolian.function_type.PROPERTY] = "(get, set)",
-    [eolian.function_type.PROP_GET] = "(get)",
-    [eolian.function_type.PROP_SET] = "(set)",
+    [dtree.Function.PROPERTY] = "(get, set)",
+    [dtree.Function.PROP_GET] = "(get)",
+    [dtree.Function.PROP_SET] = "(set)",
 }
-
-local gen_func_sig = function(f, ftype)
-    ftype = ftype or eolian.function_type.METHOD
-end
 
 local gen_cparam = function(par, out)
     local part = par:type_get()
@@ -65,19 +58,19 @@ local get_func_csig_part = function(cn, tp)
 end
 
 local gen_func_csig = function(f, ftype)
-    ftype = ftype or eolian.function_type.METHOD
-    assert(ftype ~= eolian.function_type.PROPERTY)
+    ftype = ftype or f.METHOD
+    assert(ftype ~= f.PROPERTY)
 
     local cn = f:full_c_name_get(ftype)
     keyref.add(cn, "c")
     local rtype = f:return_type_get(ftype)
 
     local fparam = "Eo *obj"
-    if f:is_const() or f:is_class() or ftype == eolian.function_type.PROP_GET then
+    if f:is_const() or f:is_class() or ftype == f.PROP_GET then
         fparam = "const Eo *obj"
     end
 
-    if f:type_get() == eolian.function_type.METHOD then
+    if f:type_get() == f.METHOD then
         local pars = f:parameters_get():to_array()
         local cnrt = get_func_csig_part(cn, rtype)
         for i = 1, #pars do
@@ -90,7 +83,7 @@ local gen_func_csig = function(f, ftype)
     local keys = f:property_keys_get(ftype):to_array()
     local vals = f:property_values_get(ftype):to_array()
 
-    if ftype == eolian.function_type.PROP_SET then
+    if ftype == f.PROP_SET then
         local cnrt = get_func_csig_part(cn, rtype)
         local pars = {}
         for i, par in ipairs(keys) do
@@ -134,15 +127,14 @@ local gen_func_namesig = function(fn, cl, buf, isprop, isget, isset)
     buf[#buf + 1] = "."
     buf[#buf + 1] = fn:name_get()
     buf[#buf + 1] = " "
-    local ftt = eolian.function_type
     local obs = eolian.object_scope
     if not isprop then
-        if fn:scope_get(ftt.METHOD) == obs.PROTECTED then
+        if fn:scope_get(fn.METHOD) == obs.PROTECTED then
             buf[#buf + 1] = "@protected "
         end
     elseif isget and isset then
-        if fn:scope_get(ftt.PROP_GET) == obs.PROTECTED and
-           fn:scope_get(ftt.PROP_SET) == obs.PROTECTED then
+        if fn:scope_get(fn.PROP_GET) == obs.PROTECTED and
+           fn:scope_get(fn.PROP_SET) == obs.PROTECTED then
             buf[#buf + 1] = "@protected "
         end
     end
@@ -210,12 +202,12 @@ end
 local gen_method_sig = function(fn, cl)
     local buf = {}
     gen_func_namesig(fn, cl, buf, false, false, false)
-    if fn:is_virtual_pure(eolian.function_type.METHOD) then
+    if fn:is_virtual_pure(fn.METHOD) then
         buf[#buf + 1] = "@virtual_pure "
     end
     buf[#buf + 1] = "{"
     local params = fn:parameters_get():to_array()
-    local rtp = fn:return_type_get(eolian.function_type.METHOD)
+    local rtp = fn:return_type_get(fn.METHOD)
     if #params == 0 and not rtp then
         buf[#buf + 1] = "}"
         return table.concat(buf)
@@ -228,7 +220,7 @@ local gen_method_sig = function(fn, cl)
         end
         buf[#buf + 1] = "    }\n"
     end
-    gen_func_return(fn, eolian.function_type.METHOD, buf)
+    gen_func_return(fn, fn.METHOD, buf)
     buf[#buf + 1] = "}"
     return table.concat(buf)
 end
@@ -260,25 +252,24 @@ end
 local gen_prop_sig = function(fn, cl)
     local buf = {}
     local fnt = fn:type_get()
-    local ftt = eolian.function_type
     local obs = eolian.object_scope
-    local isget = (fnt == ftt.PROPERTY or fnt == ftt.PROP_GET)
-    local isset = (fnt == ftt.PROPERTY or fnt == ftt.PROP_SET)
+    local isget = (fnt == fn.PROPERTY or fnt == fn.PROP_GET)
+    local isset = (fnt == fn.PROPERTY or fnt == fn.PROP_SET)
     gen_func_namesig(fn, cl, buf, true, isget, isset)
 
-    local gvirt = fn:is_virtual_pure(ftt.PROP_GET)
-    local svirt = fn:is_virtual_pure(ftt.PROP_SET)
+    local gvirt = fn:is_virtual_pure(fn.PROP_GET)
+    local svirt = fn:is_virtual_pure(fn.PROP_SET)
 
     if (not isget or gvirt) and (not isset or svirt) then
         buf[#buf + 1] = "@virtual_pure "
     end
 
-    local gkeys = isget and fn:property_keys_get(ftt.PROP_GET):to_array() or {}
-    local skeys = isset and fn:property_keys_get(ftt.PROP_SET):to_array() or {}
-    local gvals = isget and fn:property_values_get(ftt.PROP_GET):to_array() or {}
-    local svals = isget and fn:property_values_get(ftt.PROP_SET):to_array() or {}
-    local grtt = isget and fn:return_type_get(ftt.PROP_GET) or nil
-    local srtt = isset and fn:return_type_get(ftt.PROP_SET) or nil
+    local gkeys = isget and fn:property_keys_get(fn.PROP_GET):to_array() or {}
+    local skeys = isset and fn:property_keys_get(fn.PROP_SET):to_array() or {}
+    local gvals = isget and fn:property_values_get(fn.PROP_GET):to_array() or {}
+    local svals = isget and fn:property_values_get(fn.PROP_SET):to_array() or {}
+    local grtt = isget and fn:return_type_get(fn.PROP_GET) or nil
+    local srtt = isset and fn:return_type_get(fn.PROP_SET) or nil
 
     local keys_same = eovals_check_same(gkeys, skeys)
     local vals_same = eovals_check_same(gvals, svals)
@@ -287,8 +278,8 @@ local gen_prop_sig = function(fn, cl)
 
     if isget then
         buf[#buf + 1] = "    get "
-        if fn:scope_get(ftt.PROP_GET) == obs.PROTECTED and
-           fn:scope_get(ftt.PROP_SET) ~= obs.PROTECTED then
+        if fn:scope_get(fn.PROP_GET) == obs.PROTECTED and
+           fn:scope_get(fn.PROP_SET) ~= obs.PROTECTED then
             buf[#buf + 1] = "@protected "
         end
         buf[#buf + 1] = "{"
@@ -300,7 +291,7 @@ local gen_prop_sig = function(fn, cl)
             if not keys_same then gen_prop_keyvals(gkeys, "keys", buf) end
             if not vals_same then gen_prop_keyvals(gvals, "values", buf) end
             if grtt ~= srtt then
-                gen_func_return(fn, ftt.PROP_GET, buf, 2)
+                gen_func_return(fn, fn.PROP_GET, buf, 2)
             end
             buf[#buf + 1] = "    }\n"
         end
@@ -308,8 +299,8 @@ local gen_prop_sig = function(fn, cl)
 
     if isset then
         buf[#buf + 1] = "    set "
-        if fn:scope_get(ftt.PROP_SET) == obs.PROTECTED and
-           fn:scope_get(ftt.PROP_GET) ~= obs.PROTECTED then
+        if fn:scope_get(fn.PROP_SET) == obs.PROTECTED and
+           fn:scope_get(fn.PROP_GET) ~= obs.PROTECTED then
             buf[#buf + 1] = "@protected "
         end
         buf[#buf + 1] = "{"
@@ -321,7 +312,7 @@ local gen_prop_sig = function(fn, cl)
             if not keys_same then gen_prop_keyvals(skeys, "keys", buf) end
             if not vals_same then gen_prop_keyvals(svals, "values", buf) end
             if grtt ~= srtt then
-                gen_func_return(fn, ftt.PROP_SET, buf, 2)
+                gen_func_return(fn, fn.PROP_SET, buf, 2)
             end
             buf[#buf + 1] = "    }\n"
         end
@@ -431,7 +422,7 @@ local build_ref = function()
 end
 
 local write_full_fdoc = function(f, fn, ftype)
-    f:write_raw(fn:doc_get(eolian.function_type.METHOD)
+    f:write_raw(fn:doc_get(fn.METHOD)
         :full_get(get_fallback_fdoc(fn, ftype), true))
 end
 
@@ -749,9 +740,9 @@ local build_class = function(cl)
     f:write_raw(cl:doc_get():full_get(nil, true))
     f:write_nl(2)
 
-    build_functable(f, "Methods", "Method name", cl, eolian.function_type.METHOD)
+    build_functable(f, "Methods", "Method name", cl, dtree.Function.METHOD)
     build_functable(f, "Properties", "Property name",
-        cl, eolian.function_type.PROPERTY)
+        cl, dtree.Function.PROPERTY)
 
     f:write_h("Events", 3)
     local evs = cl:events_get()
@@ -958,7 +949,7 @@ build_method = function(fn, cl)
     end
 
     f:write_h("Description", 3)
-    f:write_raw(fn:doc_get(eolian.function_type.METHOD):full_get(nil, true))
+    f:write_raw(fn:doc_get(fn.METHOD):full_get(nil, true))
     f:write_nl()
 
     f:finish()
@@ -967,17 +958,16 @@ end
 build_property = function(fn, cl)
     local f = writer.Writer(fn:nspaces_get(cl))
 
-    local fts = eolian.function_type
     local ft = fn:type_get()
-    local isget = (ft == fts.PROP_GET or ft == fts.PROPERTY)
-    local isset = (ft == fts.PROP_SET or ft == fts.PROPERTY)
+    local isget = (ft == fn.PROP_GET or ft == fn.PROPERTY)
+    local isset = (ft == fn.PROP_SET or ft == fn.PROPERTY)
 
-    if isget then stats.check_property(fn, cl, fts.PROP_GET) end
-    if isset then stats.check_property(fn, cl, fts.PROP_SET) end
+    if isget then stats.check_property(fn, cl, fn.PROP_GET) end
+    if isset then stats.check_property(fn, cl, fn.PROP_SET) end
 
-    local doc = fn:doc_get(fts.PROPERTY)
-    local gdoc = fn:doc_get(fts.PROP_GET)
-    local sdoc = fn:doc_get(fts.PROP_SET)
+    local doc = fn:doc_get(fn.PROPERTY)
+    local gdoc = fn:doc_get(fn.PROP_GET)
+    local sdoc = fn:doc_get(fn.PROP_SET)
 
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
 
@@ -988,20 +978,20 @@ build_property = function(fn, cl)
     f:write_h("C signature", 3)
     local codes = {}
     if isget then
-        codes[#codes + 1] = gen_func_csig(fn, fts.PROP_GET)
+        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_GET)
     end
     if isset then
-        codes[#codes + 1] = gen_func_csig(fn, fts.PROP_SET)
+        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_SET)
     end
     f:write_code(table.concat(codes, "\n"), "c")
     f:write_nl()
 
-    local pgkeys = isget and fn:property_keys_get(fts.PROP_GET):to_array() or {}
-    local pskeys = isset and fn:property_keys_get(fts.PROP_SET):to_array() or {}
+    local pgkeys = isget and fn:property_keys_get(fn.PROP_GET):to_array() or {}
+    local pskeys = isset and fn:property_keys_get(fn.PROP_SET):to_array() or {}
     build_vallist(f, pgkeys, pskeys, "Keys")
 
-    local pgvals = isget and fn:property_values_get(fts.PROP_GET):to_array() or {}
-    local psvals = isset and fn:property_values_get(fts.PROP_SET):to_array() or {}
+    local pgvals = isget and fn:property_values_get(fn.PROP_GET):to_array() or {}
+    local psvals = isset and fn:property_values_get(fn.PROP_SET):to_array() or {}
     build_vallist(f, pgvals, psvals, "Values")
 
     if isget and isset then
