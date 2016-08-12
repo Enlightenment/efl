@@ -199,7 +199,10 @@ class Elm.Gengrid.Item(Elm.Widget.Item)
                  This instructs gengrid to release references to contents in the item,
                  meaning that they will no longer be managed by gengrid and are
                  floating "orphans" that can be re-used elsewhere if the user wants
-                 to.]]
+                 to.
+
+                 @since 1.18
+                 ]]
                 params {
                      @out l: own(list<own(Efl.Canvas.Object)>); [[The contents list to return.]]
                 }
