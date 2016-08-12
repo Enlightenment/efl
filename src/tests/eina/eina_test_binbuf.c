@@ -31,7 +31,8 @@ START_TEST(binbuf_simple)
    unsigned char *txt;
    const unsigned char cbuf[] = "Null in the middle \0 and more text afterwards and \0 anotehr null just there and another one \0 here.";
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
-
+   Eina_Slice ro_slice;
+   Eina_Rw_Slice rw_slice;
 
    eina_init();
 
@@ -42,13 +43,24 @@ START_TEST(binbuf_simple)
    fail_if(memcmp(eina_binbuf_string_get(buf), cbuf, size));
    fail_if(size != eina_binbuf_length_get(buf));
 
+   ro_slice = eina_binbuf_slice_get(buf);
+   fail_if(ro_slice.len != size);
+   fail_if(ro_slice.mem != eina_binbuf_string_get(buf));
+
+   rw_slice = eina_binbuf_rw_slice_get(buf);
+   fail_if(rw_slice.len != size);
+   fail_if(rw_slice.mem != eina_binbuf_string_get(buf));
+
    test_buf = eina_binbuf_new();
    fail_if(!test_buf);
    fail_if(!eina_binbuf_append_buffer(test_buf, buf));
    fail_if(memcmp(eina_binbuf_string_get(test_buf), cbuf, size));
    fail_if(size != eina_binbuf_length_get(test_buf));
 
-   eina_binbuf_append_length(buf, cbuf, size);
+   ro_slice.mem = cbuf;
+   ro_slice.len = size;
+
+   eina_binbuf_append_slice(buf, ro_slice);
    fail_if(memcmp(eina_binbuf_string_get(buf), cbuf, size));
    fail_if(memcmp(eina_binbuf_string_get(buf) + size, cbuf, size));
    fail_if(2 * size != eina_binbuf_length_get(buf));

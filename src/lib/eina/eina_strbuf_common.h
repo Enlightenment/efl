@@ -117,6 +117,11 @@ void
 eina_strbuf_common_string_free(size_t csize, Eina_Strbuf *buf);
 size_t
 eina_strbuf_common_length_get(const Eina_Strbuf *buf);
+Eina_Slice
+eina_strbuf_common_slice_get(const Eina_Strbuf *buf);
+Eina_Rw_Slice
+eina_strbuf_common_rw_slice_get(const Eina_Strbuf *buf);
+
 
 Eina_Bool
 _eina_strbuf_common_grow(size_t csize, Eina_Strbuf *buf, size_t size);

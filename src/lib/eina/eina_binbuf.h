@@ -151,6 +151,18 @@ EAPI void eina_binbuf_reset(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const unsigned char *str, size_t length) EINA_ARG_NONNULL(1, 2);
 
 /**
+ * @brief Append a slice to a buffer, reallocating as necessary.
+ *
+ * @param buf The string buffer to append to.
+ * @param slice The slice to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function appends @p slice to @p buf. If @p buf can't append
+ * it, #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ */
+EAPI Eina_Bool eina_binbuf_append_slice(Eina_Binbuf *buf, const Eina_Slice slice) EINA_ARG_NONNULL(1);
+
+/**
  * @brief Append an Eina_Binbuf to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
@@ -203,6 +215,20 @@ EAPI Eina_Bool eina_binbuf_append_char(Eina_Binbuf *buf, unsigned char c) EINA_A
  * @see eina_binbuf_insert_n()
  */
 EAPI Eina_Bool eina_binbuf_insert_length(Eina_Binbuf *buf, const unsigned char *str, size_t length, size_t pos) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief Insert a slice to a buffer, reallocating as necessary.
+ *
+ * @param buf The string buffer to insert to.
+ * @param slice The slice to insert.
+ * @param pos The position to insert the string.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function inserts @p slice to @p buf at position @p pos. If @p
+ * buf can't insert it, #EINA_FALSE is returned, otherwise #EINA_TRUE
+ * is returned.
+ */
+EAPI Eina_Bool eina_binbuf_insert_slice(Eina_Binbuf *buf, const Eina_Slice slice, size_t pos) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Insert a character to a string buffer, reallocating as
@@ -285,6 +311,27 @@ EAPI void eina_binbuf_string_free(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
  * This function returns the length of @p buf.
  */
 EAPI size_t    eina_binbuf_length_get(const Eina_Binbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Get a read-only slice representing the current binbuf contents.
+ *
+ * @param buf the src buffer.
+ * @return a read-only slice for the current contents. It may become
+ *         invalid as soon as the @a buf is changed.
+ *
+ * @since 1.19
+ */
+EAPI Eina_Slice eina_binbuf_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get a read-write slice representing the current binbuf contents.
+ *
+ * @param buf the src buffer.
+ * @return a read-write slice for the current contents. It may become
+ *         invalid as soon as the @a buf is changed with calls such as
+ *         eina_binbuf_append(), eina_binbuf_remove()
+ */
+EAPI Eina_Rw_Slice eina_binbuf_rw_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @}

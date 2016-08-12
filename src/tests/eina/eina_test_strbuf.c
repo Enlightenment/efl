@@ -30,6 +30,8 @@ START_TEST(strbuf_simple)
 {
    Eina_Strbuf *buf;
    char *txt;
+   Eina_Slice ro_slice;
+   Eina_Rw_Slice rw_slice;
 #define TEST_TEXT \
    "This test should be so long that it is longer than the initial size of strbuf"
 
@@ -56,6 +58,14 @@ START_TEST(strbuf_simple)
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(eina_strbuf_length_get(buf) != 0);
    fail_if(!strcmp(eina_strbuf_string_get(buf), TEST_TEXT));
+
+   ro_slice = eina_strbuf_slice_get(buf);
+   fail_if(ro_slice.len != eina_strbuf_length_get(buf));
+   fail_if(ro_slice.mem != eina_strbuf_string_get(buf));
+
+   rw_slice = eina_strbuf_rw_slice_get(buf);
+   fail_if(rw_slice.len != eina_strbuf_length_get(buf));
+   fail_if(rw_slice.mem != eina_strbuf_string_get(buf));
 
    eina_strbuf_string_free(buf);
    fail_if(eina_strbuf_length_get(buf));
@@ -168,6 +178,9 @@ END_TEST
 START_TEST(strbuf_append)
 {
    Eina_Strbuf *buf;
+   Eina_Slice ro_slice = EINA_SLICE_STR_LITERAL("somethingELSE");
+
+   ro_slice.len -= strlen("ELSE");
 
    eina_init();
 
@@ -204,7 +217,7 @@ START_TEST(strbuf_append)
    fail_if(strcmp(eina_strbuf_string_get(buf), "something"));
    eina_strbuf_reset(buf);
 
-   eina_strbuf_append_length(buf, "somethingELSE", strlen("something"));
+   eina_strbuf_append_slice(buf, ro_slice);
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "something"));
    eina_strbuf_reset(buf);
@@ -218,6 +231,9 @@ END_TEST
 START_TEST(strbuf_insert)
 {
    Eina_Strbuf *buf;
+   Eina_Slice ro_slice = EINA_SLICE_STR_LITERAL("EINA");
+
+   ro_slice.len = 2;
 
    eina_init();
 
@@ -244,7 +260,7 @@ START_TEST(strbuf_insert)
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "1ABxyz23abcxyz"));
 
-   eina_strbuf_insert_n(buf, "EINA", 2, 3);
+   eina_strbuf_insert_slice(buf, ro_slice, 3);
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "1ABEIxyz23abcxyz"));
 

@@ -788,6 +788,40 @@ eina_strbuf_common_length_get(const Eina_Strbuf *buf)
 }
 
 /**
+ * @internal
+ * @brief Get a read-only slice representing the current strbuf contents.
+ *
+ * @param buf The string buffer.
+ * @return The current memory read-only slice of the string, in bytes,
+ *         without the trailing null byte.
+ */
+Eina_Slice
+eina_strbuf_common_slice_get(const Eina_Strbuf *buf)
+{
+   Eina_Slice ret;
+   ret.len = buf->len;
+   ret.mem = buf->buf;
+   return ret;
+}
+
+/**
+ * @internal
+ * @brief Get a read-write slice representing the current strbuf contents.
+ *
+ * @param buf The string buffer.
+ * @return The current memory read-write slice of the string, in
+ *         bytes, without the trailing null byte.
+ */
+Eina_Rw_Slice
+eina_strbuf_common_rw_slice_get(const Eina_Strbuf *buf)
+{
+   Eina_Rw_Slice ret;
+   ret.len = buf->len;
+   ret.mem = buf->buf;
+   return ret;
+}
+
+/**
  * @cond LOCAL
  */
 

@@ -108,6 +108,13 @@ _FUNC_EXPAND(append_length)(_STRBUF_STRUCT_NAME *buf, const _STRBUF_DATA_TYPE *s
 }
 
 EAPI Eina_Bool
+_FUNC_EXPAND(append_slice)(_STRBUF_STRUCT_NAME *buf, const Eina_Slice slice)
+{
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
+   return eina_strbuf_common_append_length(_STRBUF_CSIZE, buf, slice.mem, slice.len);
+}
+
+EAPI Eina_Bool
 _FUNC_EXPAND(append_buffer)(_STRBUF_STRUCT_NAME *buf, const _STRBUF_STRUCT_NAME *data)
 {
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
@@ -121,6 +128,13 @@ _FUNC_EXPAND(insert_length)(_STRBUF_STRUCT_NAME *buf, const _STRBUF_DATA_TYPE *s
 {
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
    return eina_strbuf_common_insert_length(_STRBUF_CSIZE, buf, (const void *) str, length, pos);
+}
+
+EAPI Eina_Bool
+_FUNC_EXPAND(insert_slice)(_STRBUF_STRUCT_NAME *buf, const Eina_Slice slice, size_t pos)
+{
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
+   return eina_strbuf_common_insert_length(_STRBUF_CSIZE, buf, slice.mem, slice.len, pos);
 }
 
 EAPI Eina_Bool
@@ -170,4 +184,20 @@ _FUNC_EXPAND(length_get)(const _STRBUF_STRUCT_NAME *buf)
 {
    EINA_MAGIC_CHECK_STRBUF(buf, 0);
    return eina_strbuf_common_length_get(buf);
+}
+
+EAPI Eina_Slice
+_FUNC_EXPAND(slice_get)(const _STRBUF_STRUCT_NAME *buf)
+{
+   Eina_Slice ret = {.len = 0, .mem = NULL};
+   EINA_MAGIC_CHECK_STRBUF(buf, ret);
+   return eina_strbuf_common_slice_get(buf);
+}
+
+EAPI Eina_Rw_Slice
+_FUNC_EXPAND(rw_slice_get)(const _STRBUF_STRUCT_NAME *buf)
+{
+   Eina_Rw_Slice ret = {.len = 0, .mem = NULL};
+   EINA_MAGIC_CHECK_STRBUF(buf, ret);
+   return eina_strbuf_common_rw_slice_get(buf);
 }
