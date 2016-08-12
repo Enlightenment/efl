@@ -43,3 +43,15 @@ enum @extern Eina.Xattr.Flags {
 type @extern Eina.Error: int;
 
 struct @extern @free(eina_binbuf_free) Eina.Binbuf;
+
+struct @extern Eina.Slice {
+    [[A linear, read-only, memory segment]]
+    len: size;
+    mem: const(void_ptr);
+}
+
+struct @extern Eina.Rw_Slice {
+    [[A linear, read-write, memory segment]]
+    len: size;
+    mem: void_ptr;
+}

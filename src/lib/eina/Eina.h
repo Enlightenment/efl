@@ -271,6 +271,7 @@ extern "C" {
 #include <eina_promise.h>
 #include <eina_bezier.h>
 #include <eina_safepointer.h>
+#include <eina_slice.h>
 
 #undef EAPI
 #define EAPI

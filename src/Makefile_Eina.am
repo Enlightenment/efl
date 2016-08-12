@@ -99,7 +99,9 @@ lib/eina/eina_inline_vector.x \
 lib/eina/eina_promise.h \
 lib/eina/eina_bezier.h \
 lib/eina/eina_safepointer.h \
-lib/eina/eina_inline_safepointer.x
+lib/eina/eina_inline_safepointer.x \
+lib/eina/eina_slice.h \
+lib/eina/eina_inline_slice.x
 
 lib_eina_libeina_la_SOURCES = \
 lib/eina/eina_abi.c \
@@ -330,7 +332,8 @@ tests/eina/eina_test_quaternion.c \
 tests/eina/eina_test_vector.c \
 tests/eina/eina_test_promise.c \
 tests/eina/eina_test_bezier.c \
-tests/eina/eina_test_safepointer.c
+tests/eina/eina_test_safepointer.c \
+tests/eina/eina_test_slice.c
 
 tests_eina_eina_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
