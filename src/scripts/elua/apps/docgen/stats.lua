@@ -129,7 +129,7 @@ M.check_class = function(cl)
     end
 
     for i, ev in ipairs(cl:events_get()) do
-        if not ev:documentation_get() then
+        if not ev:doc_get():exists() then
             print_missing(cl:full_name_get() .. "." .. ev:name_get(), "event")
             stat_incr("event", true)
         else

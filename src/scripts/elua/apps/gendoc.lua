@@ -760,7 +760,6 @@ local build_class = function(cl)
     else
         local nt = {}
         for i, ev in ipairs(evs) do
-            ev = dtree.Event(ev)
             local lbuf = writer.Buffer()
             lbuf:write_link(ev:nspaces_get(cl, true), ev:name_get())
             nt[#nt + 1] = {

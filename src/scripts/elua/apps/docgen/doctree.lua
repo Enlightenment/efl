@@ -195,7 +195,11 @@ M.Class = Node:clone {
     end,
 
     events_get = function(self)
-        return self.class:events_get():to_array()
+        local ret = {}
+        for ev in self.class:events_get() do
+            ret[#ret + 1] = M.Event(ev)
+        end
+        return ret
     end,
 
     c_get_function_name_get = function(self)
