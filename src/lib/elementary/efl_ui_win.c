@@ -4918,12 +4918,14 @@ _efl_ui_win_raise(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 EOLIAN static void
 _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
 {
-   int win_w, win_h, screen_w, screen_h, nx, ny;
+   int win_w, win_h, screen_x, screen_y, screen_w, screen_h, nx, ny;
 
    if ((trap) && (trap->center) && (!trap->center(sd->trap_data, obj, h, v)))
      return;
 
-   ecore_evas_screen_geometry_get(sd->ee, NULL, NULL, &screen_w, &screen_h);
+   ecore_evas_screen_geometry_get(sd->ee,
+                                  &screen_x, &screen_y,
+                                  &screen_w, &screen_h);
    if ((!screen_w) || (!screen_h)) return;
 
    evas_object_geometry_get(obj, &nx, &ny, &win_w, &win_h);
@@ -4931,10 +4933,8 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
 
    if (h) nx = win_w >= screen_w ? 0 : (screen_w / 2) - (win_w / 2);
    if (v) ny = win_h >= screen_h ? 0 : (screen_h / 2) - (win_h / 2);
-   if (nx < sd->screen.x) nx = sd->screen.x;
-   if (ny < sd->screen.y) ny = sd->screen.y;
 
-   evas_object_move(obj, nx, ny);
+   evas_object_move(obj, screen_x + nx, screen_y + ny);
 }
 
 EOLIAN static void
