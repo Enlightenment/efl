@@ -6591,6 +6591,8 @@ EAPI void evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled);
  *
  * Note: the preferred method for filters is to edit EDC styles, rather than
  * calling this API directly.
+ * 
+ * @since 1.18
  */
 EAPI void evas_object_text_filter_program_set(Evas_Object *obj, const char *code) EINA_DEPRECATED;
 
@@ -6599,5 +6601,6 @@ EAPI void evas_object_text_filter_program_set(Evas_Object *obj, const char *code
  *
  * Note: the preferred method for filters is to edit EDC styles, rather than
  * calling this API directly.
+ * @since 1.18
  */
 EAPI void evas_object_text_filter_source_set(Evas_Object *obj, const char *name, Evas_Object *source) EINA_DEPRECATED;
