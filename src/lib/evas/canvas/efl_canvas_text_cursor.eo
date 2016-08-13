@@ -160,6 +160,8 @@ class Efl.Canvas.Text.Cursor (Eo.Base)
 
            This is faster than @.compare so it should be used if all we care
            about is equality.
+
+           @since 1.18
          ]]
          return: bool; [[$true if equal]]
          params {
