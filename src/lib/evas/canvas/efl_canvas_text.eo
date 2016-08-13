@@ -261,7 +261,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
            as these are set to the positions of the start and the end of the
            visible range in the text, respectively.
 
-           @since 1.1.
+           @since 1.18
          ]]
          return: bool; [[$true on success, $false otherwise.]]
          params {
