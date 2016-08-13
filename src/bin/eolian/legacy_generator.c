@@ -346,6 +346,8 @@ legacy_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
                continue;
              Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
              const Eolian_Function *fid = eolian_implement_function_get(impl, &ftype);
+             if (eolian_function_is_beta(fid))
+               continue;
              switch (ftype)
                {
                 case EOLIAN_PROP_GET: case EOLIAN_PROP_SET:
@@ -385,6 +387,8 @@ legacy_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
                continue;
              Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
              const Eolian_Function *fid = eolian_implement_function_get(impl, &ftype);
+             if (eolian_function_is_beta(fid))
+               continue;
              switch (ftype)
                {
                 case EOLIAN_PROP_GET: case EOLIAN_PROP_SET:
