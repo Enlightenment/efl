@@ -4,12 +4,12 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 # Саша Петровић <salepetronije@gmail.com>, 2013, 2015.
 #
-#: src/lib/elementary/elm_config.c:3735
+#: src/lib/elementary/elm_config.c:3766
 msgid ""
 msgstr ""
 "Project-Id-Version: а\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-06-09 13:33+0200\n"
+"POT-Creation-Date: 2016-08-13 09:16+0900\n"
 "PO-Revision-Date: 2015-01-31 14:06+0100\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <xfce4@xfce4.org>\n"
@@ -242,36 +242,36 @@ msgstr "Слике"
 msgid "Videos"
 msgstr "Видео снимци"
 
-#: src/lib/elementary/elc_fileselector.c:1878
+#: src/lib/elementary/elc_fileselector.c:1873
 msgid "Up"
 msgstr "Горе"
 
-#: src/lib/elementary/elc_fileselector.c:1892
+#: src/lib/elementary/elc_fileselector.c:1887
 msgid "Home"
 msgstr "Лична фасцикла"
 
-#: src/lib/elementary/elc_fileselector.c:1911
+#: src/lib/elementary/elc_fileselector.c:1906
 msgid "Search"
 msgstr "Тражи"
 
-#: src/lib/elementary/elc_fileselector.c:2113
-#: src/lib/elementary/elm_entry.c:1686 src/lib/elementary/elm_entry.c:1711
+#: src/lib/elementary/elc_fileselector.c:2107
+#: src/lib/elementary/elm_entry.c:1700 src/lib/elementary/elm_entry.c:1725
 msgid "Cancel"
 msgstr "Откажи"
 
-#: src/lib/elementary/elc_fileselector.c:2124
+#: src/lib/elementary/elc_fileselector.c:2117
 msgid "OK"
 msgstr "У реду"
 
-#: src/lib/elementary/elc_multibuttonentry.c:679
+#: src/lib/elementary/elc_multibuttonentry.c:675
 msgid "multi button entry label"
 msgstr "ознака улаза са више дугмади"
 
-#: src/lib/elementary/elc_multibuttonentry.c:701
+#: src/lib/elementary/elc_multibuttonentry.c:697
 msgid "multi button entry item"
 msgstr "ставка улаза са више дугмади"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1585
+#: src/lib/elementary/elc_multibuttonentry.c:1573
 msgid "multi button entry"
 msgstr "улаз са више дугмади"
 
@@ -279,20 +279,20 @@ msgstr "улаз са више дугмади"
 msgid "Title"
 msgstr "Наслов"
 
-#: src/lib/elementary/elc_naviframe.c:986
-#: src/lib/elementary/elc_naviframe.c:1191
+#: src/lib/elementary/elc_naviframe.c:984
+#: src/lib/elementary/elc_naviframe.c:1189
 msgid "Back"
 msgstr "Назад"
 
-#: src/lib/elementary/elc_naviframe.c:1290
+#: src/lib/elementary/elc_naviframe.c:1288
 msgid "Next"
 msgstr "Следеће"
 
-#: src/lib/elementary/elc_popup.c:306 src/lib/elementary/elc_popup.c:976
+#: src/lib/elementary/elc_popup.c:297 src/lib/elementary/elc_popup.c:955
 msgid "Popup Title"
 msgstr "Искачући наслов"
 
-#: src/lib/elementary/elc_popup.c:316 src/lib/elementary/elc_popup.c:1052
+#: src/lib/elementary/elc_popup.c:307 src/lib/elementary/elc_popup.c:1031
 msgid "Popup Body Text"
 msgstr "Тело искачућег текста"
 
@@ -305,7 +305,7 @@ msgid "Clicked"
 msgstr "Кликнуто"
 
 #: src/lib/elementary/elm_button.c:278 src/lib/elementary/elm_check.c:212
-#: src/lib/elementary/elm_gengrid.c:1258 src/lib/elementary/elm_genlist.c:1712
+#: src/lib/elementary/elm_gengrid.c:1258 src/lib/elementary/elm_genlist.c:1715
 #: src/lib/elementary/elm_list.c:2176 src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:527
 #: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2378
@@ -390,35 +390,35 @@ msgstr "Стање: уредиво"
 msgid "Clock"
 msgstr "Сат"
 
-#: src/lib/elementary/elm_colorselector.c:898
+#: src/lib/elementary/elm_colorselector.c:910
 msgid "Pick a color"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:936
+#: src/lib/elementary/elm_colorselector.c:948
 msgid "R:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:938
+#: src/lib/elementary/elm_colorselector.c:950
 msgid "G:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:940
+#: src/lib/elementary/elm_colorselector.c:952
 msgid "B:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:942
+#: src/lib/elementary/elm_colorselector.c:954
 msgid "A:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:1665
+#: src/lib/elementary/elm_colorselector.c:1678
 msgid "color selector palette item"
 msgstr "ставка избирача палете боја"
 
-#: src/lib/elementary/elm_config.c:3751
+#: src/lib/elementary/elm_config.c:3782
 msgid "default:LTR"
 msgstr "задато:слева на десно"
 
-#: src/lib/elementary/elm_dayselector.c:410
+#: src/lib/elementary/elm_dayselector.c:408
 msgid "day selector item"
 msgstr "ставка одабирач дана"
 
@@ -426,23 +426,23 @@ msgstr "ставка одабирач дана"
 msgid "diskselector item"
 msgstr "ставка одабира диска"
 
-#: src/lib/elementary/elm_entry.c:1673
+#: src/lib/elementary/elm_entry.c:1687
 msgid "Copy"
 msgstr "Умножи"
 
-#: src/lib/elementary/elm_entry.c:1678
+#: src/lib/elementary/elm_entry.c:1692
 msgid "Cut"
 msgstr "Исеци"
 
-#: src/lib/elementary/elm_entry.c:1682 src/lib/elementary/elm_entry.c:1705
+#: src/lib/elementary/elm_entry.c:1696 src/lib/elementary/elm_entry.c:1719
 msgid "Paste"
 msgstr "Прилепи"
 
-#: src/lib/elementary/elm_entry.c:1698
+#: src/lib/elementary/elm_entry.c:1712
 msgid "Select"
 msgstr "Изаберите"
 
-#: src/lib/elementary/elm_entry.c:3748
+#: src/lib/elementary/elm_entry.c:3791
 msgid "Entry"
 msgstr "Улаз"
 
@@ -458,7 +458,7 @@ msgstr "Садржина"
 msgid "Index Item"
 msgstr "Ставка садржине"
 
-#: src/lib/elementary/elm_label.c:394
+#: src/lib/elementary/elm_label.c:395
 msgid "Label"
 msgstr "Натпис"
 
