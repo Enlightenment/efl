@@ -629,7 +629,9 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          values {
             accel: string;
          }
-         set {}
+         set {
+            legacy: null;
+         }
          get {
             [[This will return the value of "accel_preference" when the window
               was created.]]
