@@ -1,0 +1,112 @@
+import eina_types;
+
+class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
+    [[Copy from an @Efl.Io.Reader source to @Efl.Io.Writer destination.
+
+      During usage it will keep reference to @.source and
+      @.destination objects, automatically relasing them on
+      destructor.
+
+      By default the read-write process is done based on fixed-size
+      chunks (@.read_chunk_size), however if @.line_delimiter is set,
+      the behavior changes to wait for such delimiter or a maximum
+      buffer limit is reached (@.buffer_limit).
+
+      If @Efl.Io.Closer.close is called, then it will be called on
+      @.source and @.destination if they implement those interfaces.
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property source {
+           get {
+           }
+           set {
+                [[Constructor-only property to set where to read data from]]
+           }
+           values {
+                source: Efl.Io.Reader;
+           }
+        }
+
+        @property destination {
+           get {
+           }
+           set {
+                [[Constructor-only property to set where to write data to]]
+           }
+           values {
+                destination: Efl.Io.Writer;
+           }
+        }
+
+        @property line_delimiter {
+            [[If there is a line delimiter, the reads will buffer/queue up to the line delimiter before calling @Efl.Io.Writer.write on the @.destination and the event line is emitted with current line. The line may include the delimiter, unless it's end-of-stream on @.source or @.buffer_limit was reached.]]
+            get { }
+            set {
+               [[Change line delimiter to use. If NULL or empty, no delimiter is to be used]]
+            }
+            values {
+                slice: const(Eina.Slice)*; [[The contents may contain \0 and will be copied]]
+            }
+        }
+
+        @property buffer_limit {
+           get {
+           }
+           set {
+                [[Constructor-only property to set buffer limit. 0 is unlimited]]
+           }
+           values {
+                size: size; [[Defines a maximum buffer limit, or 0 to allow unlimited amount of bytes]]
+           }
+        }
+
+        @property read_chunk_size {
+           get {
+           }
+           set {
+                [[Set chunk size for each basic @Efl.Io.Reader.read operation.]]
+           }
+           values {
+                size: size; [[This is the chunk size to use for read operations]]
+           }
+        }
+
+        @property progress {
+            get {
+            }
+            values {
+                read: uint64 @optional; [[amount of bytes read from source]]
+                written: uint64 @optional; [[amount of bytes written to destination]]
+                total: uint64 @optional; [[If @.source is an Efl.Io.Sizer, its total size. Otherwise 0 to report unknown size]]
+           }
+        }
+
+        binbuf_steal {
+           [[Steals the internal binbuf and return it to caller.
+
+             The buffer is then owned by caller, which should call
+             eina_binbuf_free() when it's done.
+           ]]
+           return: free(own(Eina.Binbuf*), eina_binbuf_free) @warn_unused;
+        }
+    }
+
+    events {
+        done; [[All available data was copied from source to destination]]
+        error: Eina.Error; [[An error happened and the copy stopped]]
+        progress; [[Total size changed or Data was read/written]]
+        data: const(Eina.Slice)*; [[When data is read to internal buffer, it's emitted in this event. The memory is only valid during event callback dispatched and should not be modified.]]
+        line: const(Eina.Slice)*; [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified.]]
+    }
+
+    implements {
+       Efl.Object.constructor;
+       Efl.Object.destructor;
+       Efl.Object.finalize;
+       Efl.Io.Closer.close;
+       Efl.Io.Closer.closed.get;
+    }
+}

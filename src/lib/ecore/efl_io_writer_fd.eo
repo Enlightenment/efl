@@ -1,0 +1,22 @@
+mixin Efl.Io.Writer.Fd (Efl.Io.Writer) {
+    [[Write fd using write(2).
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property writer_fd {
+            get {}
+            set @protected {}
+            values {
+                fd: int;
+            }
+        }
+    }
+
+    implements {
+        Efl.Io.Writer.write;
+        Efl.Io.Writer.can_write.get;
+        Efl.Io.Writer.can_write.set;
+    }
+}

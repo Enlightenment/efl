@@ -1,0 +1,41 @@
+import eina_types;
+
+enum Efl.Io.Positioner.Whence {
+    start, [[seek from start of the stream/file]]
+    current, [[seek from current position]]
+    end, [[seek from the end of stream/file]]
+}
+
+mixin Efl.Io.Positioner {
+    [[Generic interface for objects that can change or report position.
+
+      @since 1.19
+    ]]
+
+    data: null;
+
+    methods {
+        seek @virtual_pure {
+            params {
+                @in offset: int64; [[offset in byte relative to whence]]
+                @in whence: Efl.Io.Positioner.Whence;
+            }
+            return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
+        }
+
+        @property position {
+            get @virtual_pure { }
+            set {
+                [[Try to set position object, relative to start of file. See @.seek()]]
+                return: bool; [[$true if could reposition, $false if errors.]]
+            }
+            values {
+                position: uint64;
+            }
+        }
+    }
+
+    events {
+        position,changed; [[Notifies position changed]]
+    }
+}

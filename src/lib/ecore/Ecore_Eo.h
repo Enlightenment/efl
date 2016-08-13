@@ -61,6 +61,28 @@ EAPI Eo *ecore_main_loop_get(void);
  * @}
  */
 
+/**
+ * @ingroup Ecore_Fd_Io_Group
+ *
+ * @{
+ */
+
+#include "efl_io_closer_fd.eo.h"
+#include "efl_io_positioner_fd.eo.h"
+#include "efl_io_reader_fd.eo.h"
+#include "efl_io_sizer_fd.eo.h"
+#include "efl_io_writer_fd.eo.h"
+#include "efl_io_stdin.eo.h"
+#include "efl_io_stdout.eo.h"
+#include "efl_io_stderr.eo.h"
+#include "efl_io_file.eo.h"
+#include "efl_io_copier.eo.h"
+
+/**
+ * @}
+ */
+
+
 #ifdef __cplusplus
 }
 #endif

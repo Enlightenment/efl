@@ -1,0 +1,62 @@
+import eina_types;
+
+interface Efl.Io.Writer {
+    [[Generic interface for objects that can write data from a provided memory.
+
+      This interface allows external objects to transparently write
+      data to this object and be notified if more data can be written
+      or it's topped capacity.
+
+      Calls to @.write() may or may not block, that's not up to this
+      interface to specify. The user can check with event
+      "can_write,changed" or property @.can_write to known whenever a write
+      could push more data.
+
+      @since 1.19
+    ]]
+
+    methods {
+        write {
+            [[Writes data from a pre-populated buffer.
+
+              This operation will be executed immediately and may or
+              may not block the caller thread for some time. The
+              details of blocking behavior is to be defined by the
+              implementation and may be subject to other parameters
+              such as non-blocking flags, maximum timeout or even
+              retry attempts.
+
+              You can understand this method as write(2) libc function.
+            ]]
+            params {
+                @inout slice: Eina.Slice @nonull; [[provides a pre-populated memory to be used up to slice.len. The returned slice will be adapted as length will be set to the actually used amount of bytes, which can be smaller than the request.]]
+                @out remaining: Eina.Slice @optional; [[convenience to output the remaining parts of slice that was not written. If the full slice was written, this will be a slice of zero-length.]]
+            }
+            return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
+        }
+
+        @property can_write {
+            [[If $true will notify @.write can be called without blocking or failing.]]
+            get { }
+            set @protected { }
+            values {
+                can_write: bool;
+            }
+        }
+    }
+
+    events {
+        can_write,changed; [[Notifies can_write property changed.
+
+                             If @.can_write is $true there is data to
+                             @.write without blocking/error. If
+                             @.can_write is $false, @.write would
+                             either block or fail.
+
+                             Note that usually this event is
+                             dispatched from inside
+                             @Efl.Io.Writer.write, thus before it
+                             returns.
+                       ]]
+    }
+}

@@ -10,6 +10,16 @@ ecore_eolian_files = \
 	lib/ecore/efl_loop.eo \
 	lib/ecore/efl_loop_user.eo \
 	lib/ecore/efl_loop_fd.eo \
+	lib/ecore/efl_io_closer_fd.eo \
+	lib/ecore/efl_io_positioner_fd.eo \
+	lib/ecore/efl_io_reader_fd.eo \
+	lib/ecore/efl_io_sizer_fd.eo \
+	lib/ecore/efl_io_writer_fd.eo \
+	lib/ecore/efl_io_stdin.eo \
+	lib/ecore/efl_io_stdout.eo \
+	lib/ecore/efl_io_stderr.eo \
+	lib/ecore/efl_io_file.eo \
+        lib/ecore/efl_io_copier.eo \
 	lib/ecore/ecore_parent.eo \
 	$(ecore_eolian_files_legacy)
 
@@ -59,6 +69,16 @@ lib/ecore/ecore_job.c \
 lib/ecore/ecore_main.c \
 lib/ecore/efl_loop_user.c \
 lib/ecore/efl_loop_fd.c \
+lib/ecore/efl_io_closer_fd.c \
+lib/ecore/efl_io_positioner_fd.c \
+lib/ecore/efl_io_reader_fd.c \
+lib/ecore/efl_io_sizer_fd.c \
+lib/ecore/efl_io_writer_fd.c \
+lib/ecore/efl_io_stdin.c \
+lib/ecore/efl_io_stdout.c \
+lib/ecore/efl_io_stderr.c \
+lib/ecore/efl_io_file.c \
+lib/ecore/efl_io_copier.c \
 lib/ecore/ecore_pipe.c \
 lib/ecore/ecore_poller.c \
 lib/ecore/ecore_time.c \

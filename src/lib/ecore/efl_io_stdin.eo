@@ -1,0 +1,14 @@
+class Efl.Io.Stdin (Efl.Loop.Fd, Efl.Io.Reader.Fd) {
+    [[Application's standard input (stdin).
+
+      @since 1.19
+    ]]
+
+    data: null;
+
+    implements {
+        Efl.Object.finalize;
+        Efl.Loop.Fd.fd.set;
+        Efl.Io.Reader.read;
+    }
+}

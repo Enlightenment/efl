@@ -1,0 +1,24 @@
+mixin Efl.Io.Reader.Fd (Efl.Io.Reader) {
+    [[Read fd using read(2).
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property reader_fd {
+            get {}
+            set @protected {}
+            values {
+                fd: int;
+            }
+        }
+    }
+
+    implements {
+        Efl.Io.Reader.read;
+        Efl.Io.Reader.can_read.get;
+        Efl.Io.Reader.can_read.set;
+        Efl.Io.Reader.eos.get;
+        Efl.Io.Reader.eos.set;
+    }
+}

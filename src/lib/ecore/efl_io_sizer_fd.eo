@@ -1,0 +1,21 @@
+mixin Efl.Io.Sizer.Fd (Efl.Io.Sizer) {
+    [[Resize fd usign ftruncate(2).
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property sizer_fd {
+            get {}
+            set @protected {}
+            values {
+                fd: int;
+            }
+        }
+    }
+
+    implements {
+        Efl.Io.Sizer.resize;
+        Efl.Io.Sizer.size.get;
+    }
+}

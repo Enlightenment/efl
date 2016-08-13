@@ -1,0 +1,37 @@
+import eina_types;
+
+mixin Efl.Io.Sizer {
+    [[Generic interface for objects that can resize or report size of themselves.
+
+      This interface allows external objects to transparently resize
+      or report its size.
+
+      @since 1.19
+    ]]
+
+    data: null;
+
+    methods {
+        resize @virtual_pure {
+            params {
+                @in size: uint64;
+            }
+            return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
+        }
+
+        @property size {
+            get @virtual_pure { }
+            set {
+                [[Try to resize the object, check with get if the value was accepted or not.]]
+                return: bool; [[$true if could resize, $false if errors.]]
+            }
+            values {
+                size: uint64;
+            }
+        }
+    }
+
+    events {
+        size,changed; [[Notifies size changed]]
+    }
+}

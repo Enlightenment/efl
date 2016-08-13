@@ -1,0 +1,129 @@
+class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Io.Sizer, Efl.Io.Positioner) {
+    [[Generic In-memory buffer of data to be used as I/O.
+
+      This class offers both input and output, which can be used at
+      the same time since @Efl.Io.Reader.read and @Efl.Io.Writer.write
+      use different offsets/position internally.
+
+      One can get temporary direct access to internal buffer with
+      @.slice_get or steal the buffer with @.binbuf_steal.
+
+      A fixed sized buffer can be implemented by setting @.limit
+      followed by @.preallocate
+
+      See @Efl.Io.File.
+
+      @since 1.19
+    ]]
+
+    methods {
+        preallocate {
+            [[Immediately pre-allocate a buffer of at least a given size.]]
+            params {
+                @in size: size; [[amount of bytes to pre-allocate.]]
+            }
+        }
+
+        @property limit {
+            [[Limit how big the buffer can grow.
+
+              This affects both @.preallocate and how buffer grows
+              when @Efl.Io.Writer.write is called.
+
+              If you want a buffer of an exact size, always set the
+              limit before any further calls that can grow it.
+            ]]
+            get { }
+            set {
+                [[Constructor-only property to set buffer limit. 0 is unlimited]]
+            }
+            values {
+                size: size; [[Defines a maximum buffer size, or 0 to allow unlimited amount of bytes]]
+            }
+        }
+
+        @property position_read {
+            [[The position used by @Efl.Io.Reader.read.
+
+             Note that @Efl.Io.Positioner.seek or
+             @Efl.Io.Positioner.position.set will affect this property
+             and @.position_write.
+
+             @Efl.Io.Positioner.position.get will return the greatest
+             of @.position_read and @.position_write.
+            ]]
+            get { }
+            set {
+                return: bool (false);
+            }
+            values {
+                position: uint64;
+            }
+        }
+
+        @property position_write {
+            [[The position used by @Efl.Io.Writer.write.
+
+             Note that @Efl.Io.Positioner.seek or
+             @Efl.Io.Positioner.position.set will affect this property
+             and @.position_read.
+
+             @Efl.Io.Positioner.position.get will return the greatest
+             of @.position_read and @.position_write.
+            ]]
+            get { }
+            set {
+                return: bool (false);
+            }
+            values {
+                position: uint64;
+            }
+        }
+
+        slice_get { // TODO: property and return of Eina.Slice (not pointer)
+            [[Get a temporary access to buffer's internal memory.
+
+              The memory pointed by slice may be changed by other
+              methods of this class. The event "reallocated" will be
+              called in those situations.
+            ]]
+            params {
+                @out slice: Eina.Slice; [[slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Sizer.resize are called. It is the full slice, not a partial one starting at current position.]]
+            }
+            return: bool (false);
+        }
+
+        binbuf_steal {
+            [[Steals the internal buffer memory and returns it as a binbuf.
+
+              The returned memory must be freed with eina_binbuf_free().
+            ]]
+            return: free(own(Eina.Binbuf*), eina_binbuf_free) @warn_unused;
+        }
+    }
+
+    events {
+       position_read,changed; [[Notifies @.position_read changed]]
+       position_write,changed; [[Notifies @.position_write changed]]
+       reallocated; [[Notifies the internal buffer was reallocated, thus whatever was returned by @.slice_get becomes invalid]]
+    }
+
+    implements {
+        Efl.Object.finalize;
+        Efl.Object.destructor;
+        Efl.Io.Reader.read;
+        Efl.Io.Reader.can_read.get;
+        Efl.Io.Reader.can_read.set;
+        Efl.Io.Reader.eos.get;
+        Efl.Io.Reader.eos.set;
+        Efl.Io.Writer.write;
+        Efl.Io.Writer.can_write.get;
+        Efl.Io.Writer.can_write.set;
+        Efl.Io.Closer.close;
+        Efl.Io.Closer.closed.get;
+        Efl.Io.Sizer.resize;
+        Efl.Io.Sizer.size.get;
+        Efl.Io.Positioner.seek;
+        Efl.Io.Positioner.position.get;
+    }
+}

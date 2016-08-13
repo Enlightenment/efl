@@ -129,6 +129,15 @@ EAPI extern const Efl_Event_Description _EFL_GFX_PATH_CHANGED;
 #include "interfaces/efl_input_interface.eo.h"
 #include "interfaces/efl_event.eo.h"
 
+/* Input and Output */
+#include "interfaces/efl_io_closer.eo.h"
+#include "interfaces/efl_io_reader.eo.h"
+#include "interfaces/efl_io_writer.eo.h"
+#include "interfaces/efl_io_sizer.eo.h"
+#include "interfaces/efl_io_positioner.eo.h"
+
+#include "interfaces/efl_io_buffer.eo.h"
+
 #else
 
 #ifndef EFL_NOLEGACY_API_SUPPORT

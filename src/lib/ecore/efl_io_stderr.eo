@@ -1,0 +1,14 @@
+class Efl.Io.Stderr (Efl.Loop.Fd, Efl.Io.Writer.Fd) {
+    [[Application's standard error (stderr).
+
+      @since 1.19
+    ]]
+
+    data: null;
+
+    implements {
+        Efl.Object.finalize;
+        Efl.Loop.Fd.fd.set;
+        Efl.Io.Writer.write;
+    }
+}

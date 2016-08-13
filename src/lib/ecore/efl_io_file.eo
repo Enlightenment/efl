@@ -1,0 +1,49 @@
+class Efl.Io.File (Efl.Loop.Fd, Efl.File, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io.Closer.Fd, Efl.Io.Sizer.Fd, Efl.Io.Positioner.Fd) {
+    [[File access (open, close, read, write, lseek, ftruncate)
+
+      Files are closed automatically (@Efl.Io.Closer.Fd) on destruction.
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property flags {
+            [[bitwise OR'ed flags to open the file, like O_CREAT, O_CLOEXEC...]]
+            get {
+            }
+
+            set {
+               [[constructor property to define flags to open the file]]
+            }
+
+            values {
+                flags: uint32; [[flags to open file, see man:open(2).]]
+            }
+        }
+
+        @property mode {
+            get {
+            }
+
+            set {
+               [[constructor property to define mode to open the file]]
+            }
+
+            values {
+                mode: uint32; [[mode to open file, see man:open(2).]]
+            }
+        }
+    }
+
+    implements {
+        Efl.Object.destructor;
+        Efl.Object.finalize;
+        Efl.Loop.Fd.fd_file.set;
+        Efl.File.file;
+        Efl.Io.Reader.read;
+        Efl.Io.Writer.write;
+        Efl.Io.Closer.close;
+        Efl.Io.Sizer.resize;
+        Efl.Io.Positioner.seek;
+    }
+}

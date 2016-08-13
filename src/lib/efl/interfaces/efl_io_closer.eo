@@ -1,0 +1,49 @@
+import eina_types;
+
+mixin Efl.Io.Closer {
+    [[Generic interface for objects that can close themselves.
+
+      This interface allows external objects to transparently close an
+      input or output stream, cleaning up its resources.
+
+      Calls to @.close() may or may not block, that's not up to this
+      interface to specify.
+
+      @since 1.19
+    ]]
+
+    data: null;
+
+    methods {
+        close @virtual_pure {
+            [[Closes the Input/Output object.
+
+              This operation will be executed immediately and may or
+              may not block the caller thread for some time. The
+              details of blocking behavior is to be defined by the
+              implementation and may be subject to other parameters
+              such as non-blocking flags, maximum timeout or even
+              retry attempts.
+
+              You can understand this method as close(2) libc function.
+            ]]
+            return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
+        }
+
+        @property closed {
+            [[If true will notify object was closed.]]
+            get @virtual_pure { }
+            set {
+                [[If true, calls close()]]
+                return: bool; [[$true if could close, $false if already closed or errors.]]
+            }
+            values {
+                is_closed: bool;
+            }
+        }
+    }
+
+    events {
+        closed; [[Notifies closed, when property is marked as true]]
+    }
+}

@@ -1,0 +1,21 @@
+mixin Efl.Io.Closer.Fd (Efl.Io.Closer) {
+    [[Close fd using close(2).
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property closer_fd {
+            get {}
+            set @protected {}
+            values {
+                fd: int;
+            }
+        }
+    }
+
+    implements {
+        Efl.Io.Closer.close;
+        Efl.Io.Closer.closed.get;
+    }
+}

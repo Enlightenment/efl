@@ -1,0 +1,21 @@
+mixin Efl.Io.Positioner.Fd (Efl.Io.Positioner) {
+    [[Position fd using lseek(2).
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property positioner_fd {
+            get {}
+            set @protected {}
+            values {
+                fd: int;
+            }
+        }
+    }
+
+    implements {
+        Efl.Io.Positioner.seek;
+        Efl.Io.Positioner.position.get;
+    }
+}

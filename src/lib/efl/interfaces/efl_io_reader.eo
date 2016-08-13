@@ -1,0 +1,80 @@
+import eina_types;
+
+interface Efl.Io.Reader {
+    [[Generic interface for objects that can read data into a provided memory.
+
+      This interface allows external objects to transparently monitor
+      for new data and as it to be read into a provided memory slice.
+
+      Calls to @.read may or may not block, that's not up to this
+      interface to specify. The user can check based on @.eos property
+      and signal if the stream reached an end, with event
+      "can_read,changed" or property @.can_read to known whenever a read
+      would have data to return.
+
+      @since 1.19
+    ]]
+
+    methods {
+        read {
+            [[Reads data into a pre-allocated buffer.
+
+              This operation will be executed immediately and may or
+              may not block the caller thread for some time. The
+              details of blocking behavior is to be defined by the
+              implementation and may be subject to other parameters
+              such as non-blocking flags, maximum timeout or even
+              retry attempts.
+
+              You can understand this method as read(2) libc function.
+            ]]
+            params {
+               @inout rw_slice: Eina.Rw_Slice @nonull; [[provides a pre-allocated memory to be filled up to rw_slice.len. It will be populated and the length will be set to the actually used amount of bytes, which can be smaller than the request.]]
+            }
+            return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
+        }
+
+        @property can_read {
+            [[If $true will notify @.read can be called without blocking or failing.]]
+            get { }
+            set @protected { }
+            values {
+                can_read: bool;
+            }
+        }
+
+        @property eos {
+            [[If $true will notify end of stream.]]
+            get { }
+            set @protected { }
+            values {
+                is_eos: bool;
+            }
+        }
+    }
+
+    events {
+        can_read,changed; [[Notifies can_read property changed.
+
+                            If @.can_read is $true there is data to
+                            @.read without blocking/error. If
+                            @.can_read is $false, @.read would either
+                            block or fail.
+
+                            Note that usually this event is dispatched
+                            from inside @Efl.Io.Reader.read, thus
+                            before it returns.
+                       ]]
+        eos; [[Notifies end of stream, when property is marked as true.
+
+               If this is used alongside with an @Efl.Io.Closer, then
+               it should be emitted before that call.
+
+               It should be emitted only once for an object unless it
+               implements @Efl.Io.Positioner.seek.
+
+               The property @.can_read should change to $false before
+               this event is dispatched.
+             ]]
+    }
+}

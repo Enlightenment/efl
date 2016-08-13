@@ -46,6 +46,12 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_input_interface.eo \
       lib/efl/interfaces/efl_input_state.eo \
       lib/efl/interfaces/efl_screen.eo \
+      lib/efl/interfaces/efl_io_closer.eo \
+      lib/efl/interfaces/efl_io_positioner.eo \
+      lib/efl/interfaces/efl_io_reader.eo \
+      lib/efl/interfaces/efl_io_sizer.eo \
+      lib/efl/interfaces/efl_io_writer.eo \
+      lib/efl/interfaces/efl_io_buffer.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 
@@ -88,6 +94,12 @@ lib/efl/interfaces/efl_vpath_manager.c \
 lib/efl/interfaces/efl_vpath_core.c \
 lib/efl/interfaces/efl_vpath_file_core.c \
 lib/efl/interfaces/efl_input_device.c \
+lib/efl/interfaces/efl_io_closer.c \
+lib/efl/interfaces/efl_io_positioner.c \
+lib/efl/interfaces/efl_io_reader.c \
+lib/efl/interfaces/efl_io_sizer.c \
+lib/efl/interfaces/efl_io_writer.c \
+lib/efl/interfaces/efl_io_buffer.c \
 $(NULL)
 
 lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA
