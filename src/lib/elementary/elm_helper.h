@@ -44,8 +44,7 @@ typedef enum
  * @param signal The part of signal name, which will be emitted to style
  * @return The regex validator
  *
- * @see elm_validator_regexp_del()
- * @see elm_validator_regex_regex_set()
+ * @see elm_validator_regexp_free()
  * @see elm_validator_regexp_status_get()
  * @see elm_validator_regexp_helper()
  *
@@ -59,7 +58,7 @@ elm_validator_regexp_new(const char *pattern, const char *signal) EINA_ARG_NONNU
  *
  * @param validator The given validator
  *
- * @see elm_validator_regexp_add()
+ * @see elm_validator_regexp_new()
  *
  * @since 1.14
  */
@@ -90,15 +89,14 @@ elm_validator_regexp_status_get(Elm_Validator_Regexp *validator) EINA_ARG_NONNUL
  *
  * //add validator
  * entry = elm_entry_add(parent);
- * re = elm_validator_regexp_add("^[0-9]*$");
+ * re = elm_validator_regexp_new("^[0-9]*$", NULL);
  * efl_event_callback_add(entry, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, re);
  *
  * //delete validator
  * efl_event_callback_del(entry, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, re);
  * @endcode
  *
- * @see elm_validator_regexp_add()
- * @see elm_validotor_regex_regex_set()
+ * @see elm_validator_regexp_new()
  * @since 1.14
  */
 EAPI void
