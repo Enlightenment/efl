@@ -1628,6 +1628,8 @@ struct _Edje
 	Evas_Object          *clipper; // a big rect to clip this Edje to
 	Evas                 *evas; // the Evas this Edje belongs to
    */
+   EINA_INLIST;
+
    const char           *path;
    const char           *group;
    const char           *parent;
@@ -2284,7 +2286,7 @@ EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
 
 extern Eina_List       *_edje_animators;
-extern Eina_List       *_edje_edjes;
+extern Eina_Inlist     *_edje_edjes;
 
 extern char            *_edje_fontset_append;
 extern FLOAT_T          _edje_scale;

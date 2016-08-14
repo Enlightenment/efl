@@ -278,11 +278,9 @@ edje_freeze(void)
 #else
 // FIXME: could just have a global freeze instead of per object
 // above i tried.. but this broke some things. notable e17's menus. why?
-   Eina_List *l;
-   Evas_Object *data;
+   Edje *ed;
 
-   EINA_LIST_FOREACH(_edje_edjes, l, data)
-     edje_object_freeze(data);
+   EINA_INLIST_FOREACH(_edje_edjes, ed) edje_object_freeze(ed->obj);
 #endif
 }
 
@@ -384,8 +382,7 @@ _edje_object_language_get(Eo *obj EINA_UNUSED, Edje *ed)
 EAPI void
 edje_language_set(const char *locale)
 {
-   Evas_Object *obj;
-   Eina_List *l;
+   Edje *ed;
    const char *lookup;
    char *signal;
    char *loc;
@@ -402,14 +399,10 @@ edje_language_set(const char *locale)
    signal = alloca(length + 15);
    snprintf(signal, length + 15, "edje,language,%s", loc);
 
-   EINA_LIST_FOREACH(_edje_edjes, l, obj)
+   EINA_INLIST_FOREACH(_edje_edjes, ed)
      {
-        Edje *ed = eo_data_scope_get(obj, EDJE_OBJECT_CLASS);
-
-        if (ed->language)
-          continue;
-
-        _edje_language_signal_emit(ed, obj, signal);
+        if (ed->language) continue;
+        _edje_language_signal_emit(ed, ed->obj, signal);
      }
 }
 
@@ -431,14 +424,9 @@ edje_thaw(void)
           }
      }
 #else
-   Evas_Object *data;
+   Edje *ed;
 
-// FIXME: could just have a global freeze instead of per object
-// comment as above.. why?
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(_edje_edjes, l, data)
-     edje_object_thaw(data);
+   EINA_INLIST_FOREACH(_edje_edjes, ed) edje_object_thaw(ed->obj);
 #endif
 }
 
@@ -459,13 +447,11 @@ edje_fontset_append_get(void)
 EAPI void
 edje_scale_set(double scale)
 {
-   Eina_List *l;
-   Evas_Object *data;
+   Edje *ed;
 
    if (_edje_scale == FROM_DOUBLE(scale)) return;
    _edje_scale = FROM_DOUBLE(scale);
-   EINA_LIST_FOREACH(_edje_edjes, l, data)
-     edje_object_calc_force(data);
+   EINA_INLIST_FOREACH(_edje_edjes, ed) edje_object_calc_force(ed->obj);
 }
 
 EAPI double
@@ -5524,12 +5510,10 @@ edje_perspective_set(Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Co
      }
    if (ps->global)
      {
-        EINA_LIST_FOREACH(_edje_edjes, l, o)
-          {
-             Edje *ed;
+        Edje *ed;
 
-             ed = eo_data_scope_get(o, EDJE_OBJECT_CLASS);
-             if (!ed) continue;
+        EINA_INLIST_FOREACH(_edje_edjes, ed)
+          {
              if (!ed->persp)
                {
                   ed->dirty = EINA_TRUE;
@@ -5543,8 +5527,8 @@ edje_perspective_set(Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Co
 EAPI void
 edje_perspective_global_set(Edje_Perspective *ps, Eina_Bool global)
 {
+   Edje *ed;
    Evas_Object *o;
-   Eina_List *l;
 
    if (!ps) return;
    if (ps->global == global) return;
@@ -5558,12 +5542,8 @@ edje_perspective_global_set(Edje_Perspective *ps, Eina_Bool global)
    else
      evas_object_name_set(ps->obj, NULL);
    ps->global = global;
-   EINA_LIST_FOREACH(_edje_edjes, l, o)
+   EINA_INLIST_FOREACH(_edje_edjes, ed)
      {
-        Edje *ed;
-
-        ed = eo_data_scope_get(o, EDJE_OBJECT_CLASS);
-        if (!ed) continue;
         if (!ed->persp)
           {
              ed->dirty = EINA_TRUE;

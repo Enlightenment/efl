@@ -11,7 +11,7 @@
 #define MY_CLASS_NAME        "Edje"
 #define MY_CLASS_NAME_LEGACY "edje"
 
-Eina_List *_edje_edjes = NULL;
+Eina_Inlist *_edje_edjes = NULL;
 
 /************************** API Routines **************************/
 
@@ -127,21 +127,7 @@ _edje_object_efl_canvas_group_group_add(Eo *obj, Edje *ed)
 
    evas_object_geometry_get(obj, &(ed->x), &(ed->y), &(ed->w), &(ed->h));
    ed->obj = obj;
-   _edje_edjes = eina_list_append(_edje_edjes, obj);
-   /*
-      {
-        Eina_List *l;
-        const void *data;
-
-        printf("--- EDJE DUMP [%i]\n", eina_list_count(_edje_edjes));
-        EINA_LIST_FOREACH(_edge_edges, l, data)
-          {
-             ed = _edje_fetch(data);
-             printf("EDJE: %80s | %80s\n", ed->path, ed->part);
-          }
-        printf("--- EDJE DUMP [%i]\n", eina_list_count(_edje_edjes));
-      }
-    */
+   _edje_edjes = eina_inlist_append(_edje_edjes, EINA_INLIST_GET(ed));
    evas_event_thaw(tev);
    evas_event_thaw_eval(tev);
 }
@@ -151,7 +137,7 @@ _edje_object_efl_canvas_group_group_del(Eo *obj, Edje *ed)
 {
    _edje_block_violate(ed);
    ed->delete_me = 1;
-   _edje_edjes = eina_list_remove(_edje_edjes, obj);
+   _edje_edjes = eina_inlist_remove(_edje_edjes, EINA_INLIST_GET(ed));
    evas_object_smart_data_set(obj, NULL);
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
 #ifdef HAVE_EPHYSICS
