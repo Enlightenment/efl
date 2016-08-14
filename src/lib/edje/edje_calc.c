@@ -20,16 +20,18 @@ static void                          _edje_part_recalc_single(Edje *ed, Edje_Rea
                                                               FLOAT_T pos);
 
 #define EINA_COW_CALC_PHYSICS_BEGIN(Calc, Write) \
-  EINA_COW_WRITE_BEGIN(_edje_calc_params_physics_cow, Calc->physics, Edje_Calc_Params_Physics, Write)
+   _edje_calc_params_need_ext(Calc); \
+   EINA_COW_WRITE_BEGIN(_edje_calc_params_physics_cow, Calc->ext->physics, Edje_Calc_Params_Physics, Write)
 
 #define EINA_COW_CALC_PHYSICS_END(Calc, Write) \
-  EINA_COW_WRITE_END(_edje_calc_params_physics_cow, Calc->physics, Write)
+   EINA_COW_WRITE_END(_edje_calc_params_physics_cow, Calc->ext->physics, Write)
 
 #define EINA_COW_CALC_MAP_BEGIN(Calc, Write) \
-  EINA_COW_WRITE_BEGIN(_edje_calc_params_map_cow, Calc->map, Edje_Calc_Params_Map, Write)
+   _edje_calc_params_need_ext(Calc); \
+   EINA_COW_WRITE_BEGIN(_edje_calc_params_map_cow, Calc->ext->map, Edje_Calc_Params_Map, Write)
 
 #define EINA_COW_CALC_MAP_END(Calc, Write) \
-  EINA_COW_WRITE_END(_edje_calc_params_map_cow, Calc->map, Write);
+   EINA_COW_WRITE_END(_edje_calc_params_map_cow, Calc->ext->map, Write)
 
 #ifdef BUILD_EDJE_FP
 
@@ -90,6 +92,27 @@ static void                          _edje_part_recalc_single(Edje *ed, Edje_Rea
                                                  pd_##type->type.orientation.data[2], \
                                                  pd_##type->type.orientation.data[3]);
 
+
+void
+_edje_calc_params_clear(Edje_Calc_Params *p)
+{
+   // this happens to cover type.common, type.text and type.node
+   if (p->type.common) free(p->type.common);
+   p->type.common = NULL;
+
+   // handle cow stuff in one place
+   if (p->ext)
+     {
+        eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&(p->ext->map));
+        p->ext->map = NULL;
+#ifdef HAVE_EPHYSICS
+        eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&(p->ext->physics));
+        p->ext->physics = NULL;
+#endif
+        free(p->ext);
+        p->ext = NULL;
+     }
+}
 
 void
 _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2, FLOAT_T v3, FLOAT_T v4)
@@ -745,10 +768,6 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
              ep->param2 = eina_mempool_malloc(_edje_real_part_state_mp,
                                               sizeof(Edje_Real_Part_State));
              memset(ep->param2, 0, sizeof(Edje_Real_Part_State));
-             ep->param2->p.map = eina_cow_alloc(_edje_calc_params_map_cow);
-#ifdef HAVE_EPHYSICS
-             ep->param2->p.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
-#endif
           }
         else if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
           {
@@ -772,9 +791,8 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
         if (ep->param2)
           {
              free(ep->param2->set);
-             eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&ep->param2->p.map);
-#ifdef HAVE_EPHYSICS
-             eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&ep->param2->p.physics);
+#ifdef EDJE_CALC_CACHE
+             _edje_calc_params_clear(&(ep->param2->p));
 #endif
           }
         eina_mempool_free(_edje_real_part_state_mp, ep->param2);
@@ -1686,7 +1704,9 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 
    _edje_text_class_font_get(ed, desc, &size, &sfont);
    free(sfont);
-   params->type.text.size = size; /* XXX TODO used by further calcs, go inside recalc_apply? */
+
+   _edje_calc_params_need_type_text(params);
+   params->type.text->size = size; /* XXX TODO used by further calcs, go inside recalc_apply? */
 
    _edje_text_recalc_apply(ed, ep, params, chosen_desc, EINA_TRUE);
 
@@ -2048,6 +2068,7 @@ _edje_part_recalc_single_drag_threshold(Edje_Real_Part *ep,
                                         Edje_Real_Part *threshold,
                                         Edje_Calc_Params *params)
 {
+   _edje_calc_params_need_ext(params);
    if (threshold)
      {
         if (ep->drag->threshold_started_x &&
@@ -2055,14 +2076,14 @@ _edje_part_recalc_single_drag_threshold(Edje_Real_Part *ep,
             TO_INT(params->eval.x) + TO_INT(params->eval.w) < threshold->x + threshold->w)
           {
              // Cancel movement to previous position due to our presence inside the threshold
-             params->eval.x = FROM_INT(params->req_drag.x);
-             params->eval.w = FROM_INT(params->req_drag.w);
+             params->eval.x = FROM_INT(params->ext->req_drag.x);
+             params->eval.w = FROM_INT(params->ext->req_drag.w);
              ep->drag->threshold_x = EINA_TRUE;
           }
         else
           {
-             params->req_drag.x = TO_INT(params->eval.x);
-             params->req_drag.w = TO_INT(params->eval.w);
+             params->ext->req_drag.x = TO_INT(params->eval.x);
+             params->ext->req_drag.w = TO_INT(params->eval.w);
              ep->drag->threshold_started_x = EINA_FALSE;
           }
         if (ep->drag->threshold_started_y &&
@@ -2070,23 +2091,23 @@ _edje_part_recalc_single_drag_threshold(Edje_Real_Part *ep,
             TO_INT(params->eval.y) + TO_INT(params->eval.h) < threshold->y + threshold->h)
           {
              // Cancel movement to previous position due to our presence inside the threshold
-             params->eval.y = FROM_INT(params->req_drag.y);
-             params->eval.h = FROM_INT(params->req_drag.h);
+             params->eval.y = FROM_INT(params->ext->req_drag.y);
+             params->eval.h = FROM_INT(params->ext->req_drag.h);
              ep->drag->threshold_y = EINA_TRUE;
           }
         else
           {
-             params->req_drag.y = TO_INT(params->eval.y);
-             params->req_drag.h = TO_INT(params->eval.h);
+             params->ext->req_drag.y = TO_INT(params->eval.y);
+             params->ext->req_drag.h = TO_INT(params->eval.h);
              ep->drag->threshold_started_y = EINA_FALSE;
           }
      }
    else
      {
-        params->req_drag.x = TO_INT(params->eval.x);
-        params->req_drag.w = TO_INT(params->eval.w);
-        params->req_drag.y = TO_INT(params->eval.y);
-        params->req_drag.h = TO_INT(params->eval.h);
+        params->ext->req_drag.x = TO_INT(params->eval.x);
+        params->ext->req_drag.w = TO_INT(params->eval.w);
+        params->ext->req_drag.y = TO_INT(params->eval.y);
+        params->ext->req_drag.h = TO_INT(params->eval.h);
      }
 }
 
@@ -2195,9 +2216,10 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
    else
      fw = params->final.w;
 
-   params->type.common.fill.x = fill->pos_abs_x
+   _edje_calc_params_need_type_common(params);
+   params->type.common->fill.x = fill->pos_abs_x
      + TO_INT(SCALE(fill->pos_rel_x, fw));
-   params->type.common.fill.w = fill->abs_x
+   params->type.common->fill.w = fill->abs_x
      + TO_INT(SCALE(fill->rel_x, fw));
 
    if (fill->type == EDJE_FILL_TYPE_TILE)
@@ -2205,9 +2227,9 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
    else
      fh = params->final.h;
 
-   params->type.common.fill.y = fill->pos_abs_y
+   params->type.common->fill.y = fill->pos_abs_y
      + TO_INT(SCALE(fill->pos_rel_y, fh));
-   params->type.common.fill.h = fill->abs_y
+   params->type.common->fill.h = fill->abs_y
      + TO_INT(SCALE(fill->rel_y, fh));
 }
 
@@ -2800,7 +2822,11 @@ _edje_part_recalc_single(Edje *ed,
    params->visible = desc->visible;
 
    /* clip override */
-   params->clip_to = clip_to;
+   if (clip_to)
+     {
+        _edje_calc_params_need_ext(params);
+        params->ext->clip_to = clip_to;
+     }
 
    /* set parameters, some are required for recalc_single_text[block] */
    switch (ep->part->type)
@@ -2813,23 +2839,24 @@ _edje_part_recalc_single(Edje *ed,
          _edje_real_part_image_set(ed, ep, &set, pos);
 
          /* border */
-         params->type.common.spec.image.l = img_desc->image.border.l;
-         params->type.common.spec.image.r = img_desc->image.border.r;
+         _edje_calc_params_need_type_common(params);
+         params->type.common->spec.image.l = img_desc->image.border.l;
+         params->type.common->spec.image.r = img_desc->image.border.r;
 
-         params->type.common.spec.image.t = img_desc->image.border.t;
-         params->type.common.spec.image.b = img_desc->image.border.b;
+         params->type.common->spec.image.t = img_desc->image.border.t;
+         params->type.common->spec.image.b = img_desc->image.border.b;
 
-         params->type.common.spec.image.border_scale_by = img_desc->image.border.scale_by;
+         params->type.common->spec.image.border_scale_by = img_desc->image.border.scale_by;
 
          if (set && set->set)
            {
 #define SET_BORDER_DEFINED(Result, Value) Result = Value ? Value : Result;
-              SET_BORDER_DEFINED(params->type.common.spec.image.l, set->entry->border.l);
-              SET_BORDER_DEFINED(params->type.common.spec.image.r, set->entry->border.r);
-              SET_BORDER_DEFINED(params->type.common.spec.image.t, set->entry->border.t);
-              SET_BORDER_DEFINED(params->type.common.spec.image.b, set->entry->border.b);
+              SET_BORDER_DEFINED(params->type.common->spec.image.l, set->entry->border.l);
+              SET_BORDER_DEFINED(params->type.common->spec.image.r, set->entry->border.r);
+              SET_BORDER_DEFINED(params->type.common->spec.image.t, set->entry->border.t);
+              SET_BORDER_DEFINED(params->type.common->spec.image.b, set->entry->border.b);
 
-              SET_BORDER_DEFINED(params->type.common.spec.image.border_scale_by, set->entry->border.scale_by);
+              SET_BORDER_DEFINED(params->type.common->spec.image.border_scale_by, set->entry->border.scale_by);
            }
 
          break;
@@ -2840,33 +2867,34 @@ _edje_part_recalc_single(Edje *ed,
       {
          Edje_Part_Description_Text *text_desc = (Edje_Part_Description_Text *)desc;
 
+         _edje_calc_params_need_type_text(params);
          /* text.align */
-         params->type.text.align.x = text_desc->text.align.x;
-         params->type.text.align.y = text_desc->text.align.y;
-         params->type.text.ellipsis = text_desc->text.ellipsis;
+         params->type.text->align.x = text_desc->text.align.x;
+         params->type.text->align.y = text_desc->text.align.y;
+         params->type.text->ellipsis = text_desc->text.ellipsis;
 
          /* text colors */
          if (cc)
            {
-              params->type.text.color2.r = (((int)cc->r2 + 1) * text_desc->common.color2.r) >> 8;
-              params->type.text.color2.g = (((int)cc->g2 + 1) * text_desc->common.color2.g) >> 8;
-              params->type.text.color2.b = (((int)cc->b2 + 1) * text_desc->common.color2.b) >> 8;
-              params->type.text.color2.a = (((int)cc->a2 + 1) * text_desc->common.color2.a) >> 8;
-              params->type.text.color3.r = (((int)cc->r3 + 1) * text_desc->text.color3.r) >> 8;
-              params->type.text.color3.g = (((int)cc->g3 + 1) * text_desc->text.color3.g) >> 8;
-              params->type.text.color3.b = (((int)cc->b3 + 1) * text_desc->text.color3.b) >> 8;
-              params->type.text.color3.a = (((int)cc->a3 + 1) * text_desc->text.color3.a) >> 8;
+              params->type.text->color2.r = (((int)cc->r2 + 1) * text_desc->common.color2.r) >> 8;
+              params->type.text->color2.g = (((int)cc->g2 + 1) * text_desc->common.color2.g) >> 8;
+              params->type.text->color2.b = (((int)cc->b2 + 1) * text_desc->common.color2.b) >> 8;
+              params->type.text->color2.a = (((int)cc->a2 + 1) * text_desc->common.color2.a) >> 8;
+              params->type.text->color3.r = (((int)cc->r3 + 1) * text_desc->text.color3.r) >> 8;
+              params->type.text->color3.g = (((int)cc->g3 + 1) * text_desc->text.color3.g) >> 8;
+              params->type.text->color3.b = (((int)cc->b3 + 1) * text_desc->text.color3.b) >> 8;
+              params->type.text->color3.a = (((int)cc->a3 + 1) * text_desc->text.color3.a) >> 8;
            }
          else
            {
-              params->type.text.color2.r = text_desc->common.color2.r;
-              params->type.text.color2.g = text_desc->common.color2.g;
-              params->type.text.color2.b = text_desc->common.color2.b;
-              params->type.text.color2.a = text_desc->common.color2.a;
-              params->type.text.color3.r = text_desc->text.color3.r;
-              params->type.text.color3.g = text_desc->text.color3.g;
-              params->type.text.color3.b = text_desc->text.color3.b;
-              params->type.text.color3.a = text_desc->text.color3.a;
+              params->type.text->color2.r = text_desc->common.color2.r;
+              params->type.text->color2.g = text_desc->common.color2.g;
+              params->type.text->color2.b = text_desc->common.color2.b;
+              params->type.text->color2.a = text_desc->common.color2.a;
+              params->type.text->color3.r = text_desc->text.color3.r;
+              params->type.text->color3.g = text_desc->text.color3.g;
+              params->type.text->color3.b = text_desc->text.color3.b;
+              params->type.text->color3.a = text_desc->text.color3.a;
            }
 
          break;
@@ -2887,10 +2915,11 @@ _edje_part_recalc_single(Edje *ed,
       {
          Edje_Part_Description_Light *light_desc = (Edje_Part_Description_Light *)desc;
 
-         params->type.node.data[0] = light_desc->light.orientation.data[0];
-         params->type.node.point.x = light_desc->light.position.point.x;
-         params->type.node.point.y = light_desc->light.position.point.y;
-         params->type.node.point.z = light_desc->light.position.point.z;
+         _edje_calc_params_need_type_node(params);
+         params->type.node->data[0] = light_desc->light.orientation.data[0];
+         params->type.node->point.x = light_desc->light.position.point.x;
+         params->type.node->point.y = light_desc->light.position.point.y;
+         params->type.node->point.z = light_desc->light.position.point.z;
 
          break;
       }
@@ -2899,10 +2928,11 @@ _edje_part_recalc_single(Edje *ed,
       {
          Edje_Part_Description_Camera *camera_desc = (Edje_Part_Description_Camera *)desc;
 
-         params->type.node.data[0] = camera_desc->camera.orientation.data[0];
-         params->type.node.point.x = camera_desc->camera.position.point.x;
-         params->type.node.point.y = camera_desc->camera.position.point.y;
-         params->type.node.point.z = camera_desc->camera.position.point.z;
+         _edje_calc_params_need_type_node(params);
+         params->type.node->data[0] = camera_desc->camera.orientation.data[0];
+         params->type.node->point.x = camera_desc->camera.position.point.x;
+         params->type.node->point.y = camera_desc->camera.position.point.y;
+         params->type.node->point.z = camera_desc->camera.position.point.z;
 
          break;
       }
@@ -2911,14 +2941,15 @@ _edje_part_recalc_single(Edje *ed,
       {
          Edje_Part_Description_Mesh_Node *mesh_desc = (Edje_Part_Description_Mesh_Node *)desc;
 
-         params->type.node.frame = mesh_desc->mesh_node.mesh.frame;
-         params->type.node.data[0] = mesh_desc->mesh_node.orientation.data[0];
-         params->type.node.point.x = mesh_desc->mesh_node.position.point.x;
-         params->type.node.point.y = mesh_desc->mesh_node.position.point.y;
-         params->type.node.point.z = mesh_desc->mesh_node.position.point.z;
-         params->type.node.scale_3d.x = mesh_desc->mesh_node.scale_3d.x;
-         params->type.node.scale_3d.y = mesh_desc->mesh_node.scale_3d.y;
-         params->type.node.scale_3d.z = mesh_desc->mesh_node.scale_3d.z;
+         _edje_calc_params_need_type_node(params);
+         params->type.node->frame = mesh_desc->mesh_node.mesh.frame;
+         params->type.node->data[0] = mesh_desc->mesh_node.orientation.data[0];
+         params->type.node->point.x = mesh_desc->mesh_node.position.point.x;
+         params->type.node->point.y = mesh_desc->mesh_node.position.point.y;
+         params->type.node->point.z = mesh_desc->mesh_node.position.point.z;
+         params->type.node->scale_3d.x = mesh_desc->mesh_node.scale_3d.x;
+         params->type.node->scale_3d.y = mesh_desc->mesh_node.scale_3d.y;
+         params->type.node->scale_3d.z = mesh_desc->mesh_node.scale_3d.z;
 
          break;
       }
@@ -3147,7 +3178,7 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    else
      part_id = chosen_desc->proxy.id;
 
-   if ((p3->type.common.fill.w == 0) || (p3->type.common.fill.h == 0) ||
+   if ((p3->type.common->fill.w == 0) || (p3->type.common->fill.h == 0) ||
        (part_id < 0))
      {
         evas_object_image_source_set(ep->object, NULL);
@@ -3195,7 +3226,7 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
           }
      }
 
-   efl_gfx_fill_set(ep->object, p3->type.common.fill.x, p3->type.common.fill.y, p3->type.common.fill.w, p3->type.common.fill.h);
+   efl_gfx_fill_set(ep->object, p3->type.common->fill.x, p3->type.common->fill.y, p3->type.common->fill.w, p3->type.common->fill.h);
    efl_image_smooth_scale_set(ep->object, p3->smooth);
    evas_object_image_source_visible_set(ep->object, chosen_desc->proxy.source_visible);
    evas_object_image_source_clip_set(ep->object, chosen_desc->proxy.source_clip);
@@ -3213,32 +3244,33 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    _edje_real_part_image_set(ed, ep, &set, pos);
 
    /* border */
-   p3->type.common.spec.image.l = chosen_desc->image.border.l;
-   p3->type.common.spec.image.r = chosen_desc->image.border.r;
+   _edje_calc_params_need_type_common(p3);
+   p3->type.common->spec.image.l = chosen_desc->image.border.l;
+   p3->type.common->spec.image.r = chosen_desc->image.border.r;
 
-   p3->type.common.spec.image.t = chosen_desc->image.border.t;
-   p3->type.common.spec.image.b = chosen_desc->image.border.b;
+   p3->type.common->spec.image.t = chosen_desc->image.border.t;
+   p3->type.common->spec.image.b = chosen_desc->image.border.b;
 
-   p3->type.common.spec.image.border_scale_by = chosen_desc->image.border.scale_by;
+   p3->type.common->spec.image.border_scale_by = chosen_desc->image.border.scale_by;
 
    if (set && set->set)
      {
 #define SET_BORDER_DEFINED(Result, Value) Result = Value ? Value : Result;
-        SET_BORDER_DEFINED(p3->type.common.spec.image.l, set->entry->border.l);
-        SET_BORDER_DEFINED(p3->type.common.spec.image.r, set->entry->border.r);
-        SET_BORDER_DEFINED(p3->type.common.spec.image.t, set->entry->border.t);
-        SET_BORDER_DEFINED(p3->type.common.spec.image.b, set->entry->border.b);
+        SET_BORDER_DEFINED(p3->type.common->spec.image.l, set->entry->border.l);
+        SET_BORDER_DEFINED(p3->type.common->spec.image.r, set->entry->border.r);
+        SET_BORDER_DEFINED(p3->type.common->spec.image.t, set->entry->border.t);
+        SET_BORDER_DEFINED(p3->type.common->spec.image.b, set->entry->border.b);
 
-        SET_BORDER_DEFINED(p3->type.common.spec.image.border_scale_by, set->entry->border.scale_by);
+        SET_BORDER_DEFINED(p3->type.common->spec.image.border_scale_by, set->entry->border.scale_by);
      }
 
-   efl_gfx_fill_set(ep->object, p3->type.common.fill.x, p3->type.common.fill.y, p3->type.common.fill.w, p3->type.common.fill.h);
+   efl_gfx_fill_set(ep->object, p3->type.common->fill.x, p3->type.common->fill.y, p3->type.common->fill.w, p3->type.common->fill.h);
    efl_image_smooth_scale_set(ep->object, p3->smooth);
    if (chosen_desc->image.border.scale)
      {
-        if (p3->type.common.spec.image.border_scale_by > FROM_DOUBLE(0.0))
+        if (p3->type.common->spec.image.border_scale_by > FROM_DOUBLE(0.0))
           {
-             FLOAT_T sc2 = MUL(sc, p3->type.common.spec.image.border_scale_by);
+             FLOAT_T sc2 = MUL(sc, p3->type.common->spec.image.border_scale_by);
              evas_object_image_border_scale_set(ep->object, TO_DOUBLE(sc2));
           }
         else
@@ -3246,14 +3278,14 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      }
    else
      {
-        if (p3->type.common.spec.image.border_scale_by > FROM_DOUBLE(0.0))
+        if (p3->type.common->spec.image.border_scale_by > FROM_DOUBLE(0.0))
           evas_object_image_border_scale_set
-            (ep->object, TO_DOUBLE(p3->type.common.spec.image.border_scale_by));
+            (ep->object, TO_DOUBLE(p3->type.common->spec.image.border_scale_by));
         else
           evas_object_image_border_scale_set(ep->object, 1.0);
      }
-   evas_object_image_border_set(ep->object, p3->type.common.spec.image.l, p3->type.common.spec.image.r,
-                                p3->type.common.spec.image.t, p3->type.common.spec.image.b);
+   evas_object_image_border_set(ep->object, p3->type.common->spec.image.l, p3->type.common->spec.image.r,
+                                p3->type.common->spec.image.t, p3->type.common->spec.image.b);
    if (chosen_desc->image.border.no_fill == 0)
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_DEFAULT);
    else if (chosen_desc->image.border.no_fill == 1)
@@ -3364,16 +3396,17 @@ _edje_physics_body_props_update(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *
                                 Eina_Bool pos_update)
 {
    if (!EPH_LOAD()) return;
+   _edje_calc_params_need_ext(pf);
    EPH_CALL(ephysics_body_linear_movement_enable_set)
      (ep->body,
-      pf->physics->mov_freedom.lin.x,
-      pf->physics->mov_freedom.lin.y,
-      pf->physics->mov_freedom.lin.z);
+      pf->ext->physics->mov_freedom.lin.x,
+      pf->ext->physics->mov_freedom.lin.y,
+      pf->ext->physics->mov_freedom.lin.z);
    EPH_CALL(ephysics_body_angular_movement_enable_set)
      (ep->body,
-      pf->physics->mov_freedom.ang.x,
-      pf->physics->mov_freedom.ang.y,
-      pf->physics->mov_freedom.ang.z);
+      pf->ext->physics->mov_freedom.ang.x,
+      pf->ext->physics->mov_freedom.ang.y,
+      pf->ext->physics->mov_freedom.ang.z);
 
    /* Boundaries geometry and mass shouldn't be changed */
    if (ep->part->physics_body < EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP)
@@ -3386,7 +3419,7 @@ _edje_physics_body_props_update(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *
                (ep->body,
                 ed->x + pf->final.x,
                 ed->y + pf->final.y,
-                pf->physics->z);
+                pf->ext->physics->z);
              ep->x = pf->final.x;
              ep->y = pf->final.y;
              ep->w = pf->final.w;
@@ -3394,18 +3427,18 @@ _edje_physics_body_props_update(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *
           }
 
         EPH_CALL(ephysics_body_geometry_get)(ep->body, &x, &y, &z, &w, &h, &d);
-        if ((d) && (d != pf->physics->depth))
-          EPH_CALL(ephysics_body_resize)(ep->body, w, h, pf->physics->depth);
-        if (z != pf->physics->z)
-          EPH_CALL(ephysics_body_move)(ep->body, x, y, pf->physics->z);
+        if ((d) && (d != pf->ext->physics->depth))
+          EPH_CALL(ephysics_body_resize)(ep->body, w, h, pf->ext->physics->depth);
+        if (z != pf->ext->physics->z)
+          EPH_CALL(ephysics_body_move)(ep->body, x, y, pf->ext->physics->z);
 
-        EPH_CALL(ephysics_body_material_set)(ep->body, pf->physics->material);
-        if (!pf->physics->material)
+        EPH_CALL(ephysics_body_material_set)(ep->body, pf->ext->physics->material);
+        if (!pf->ext->physics->material)
           {
-             if (pf->physics->density)
-               EPH_CALL(ephysics_body_density_set)(ep->body, pf->physics->density);
+             if (pf->ext->physics->density)
+               EPH_CALL(ephysics_body_density_set)(ep->body, pf->ext->physics->density);
              else
-               EPH_CALL(ephysics_body_mass_set)(ep->body, pf->physics->mass);
+               EPH_CALL(ephysics_body_mass_set)(ep->body, pf->ext->physics->mass);
           }
 
         if ((ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_BOX) ||
@@ -3413,21 +3446,21 @@ _edje_physics_body_props_update(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *
             (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_CYLINDER) ||
             (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_CLOTH))
           EPH_CALL(ephysics_body_soft_body_hardness_set)
-            (ep->body, pf->physics->hardness * 100);
+            (ep->body, pf->ext->physics->hardness * 100);
      }
 
-   if (!pf->physics->material)
+   if (!pf->ext->physics->material)
      {
-        EPH_CALL(ephysics_body_restitution_set)(ep->body, pf->physics->restitution);
-        EPH_CALL(ephysics_body_friction_set)(ep->body, pf->physics->friction);
+        EPH_CALL(ephysics_body_restitution_set)(ep->body, pf->ext->physics->restitution);
+        EPH_CALL(ephysics_body_friction_set)(ep->body, pf->ext->physics->friction);
      }
 
-   EPH_CALL(ephysics_body_damping_set)(ep->body, pf->physics->damping.linear,
-                                       pf->physics->damping.angular);
-   EPH_CALL(ephysics_body_sleeping_threshold_set)(ep->body, pf->physics->sleep.linear,
-                                                  pf->physics->sleep.angular);
-   EPH_CALL(ephysics_body_light_set)(ep->body, pf->physics->light_on);
-   EPH_CALL(ephysics_body_back_face_culling_set)(ep->body, pf->physics->backcull);
+   EPH_CALL(ephysics_body_damping_set)(ep->body, pf->ext->physics->damping.linear,
+                                       pf->ext->physics->damping.angular);
+   EPH_CALL(ephysics_body_sleeping_threshold_set)(ep->body, pf->ext->physics->sleep.linear,
+                                                  pf->ext->physics->sleep.angular);
+   EPH_CALL(ephysics_body_light_set)(ep->body, pf->ext->physics->light_on);
+   EPH_CALL(ephysics_body_back_face_culling_set)(ep->body, pf->ext->physics->backcull);
 }
 
 static void
@@ -3559,12 +3592,14 @@ _edje_physics_body_add(Edje *ed, Edje_Real_Part *rp, EPhysics_World *world)
 static void
 _map_colors_free(Edje_Calc_Params *pf)
 {
-   Edje_Map_Color **colors = pf->map->colors;
-   int i;
+   if (pf->ext)
+     {
+        Edje_Map_Color **colors = pf->ext->map->colors;
+        int i;
 
-   for (i = 0; i < (int)pf->map->colors_count; i++)
-     free(colors[i]);
-   free(colors);
+        for (i = 0; i < (int)pf->ext->map->colors_count; i++) free(colors[i]);
+        free(colors);
+     }
 }
 
 static Eina_Bool
@@ -3577,9 +3612,12 @@ _map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
    unsigned char col1_r = 255, col1_g = 255, col1_b = 255, col1_a = 255;
    unsigned char col2_r = 255, col2_g = 255, col2_b = 255, col2_a = 255;
 
-   if ((p1->map->colors_count > 0) || (p2->map->colors_count > 0))
+   _edje_calc_params_need_ext(p1);
+   _edje_calc_params_need_ext(p2);
+
+   if ((p1->ext->map->colors_count > 0) || (p2->ext->map->colors_count > 0))
      {
-        pmap->colors_count = (p1->map->colors_count > p2->map->colors_count ? p1->map->colors_count : p2->map->colors_count);
+        pmap->colors_count = (p1->ext->map->colors_count > p2->ext->map->colors_count ? p1->ext->map->colors_count : p2->ext->map->colors_count);
 
         pmap->colors = (Edje_Map_Color **)malloc(sizeof(Edje_Map_Color *) * (int)pmap->colors_count);
 
@@ -3591,9 +3629,9 @@ _map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
              col3->idx = i; /* we don't care about index position anyway */
 
              /* find color with idx from first */
-             for (j = 0; j < (int)p1->map->colors_count; j++)
+             for (j = 0; j < (int)p1->ext->map->colors_count; j++)
                {
-                  col = p1->map->colors[j];
+                  col = p1->ext->map->colors[j];
                   if (col3->idx == col->idx)
                     {
                        col1_r = col->r;
@@ -3604,9 +3642,9 @@ _map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
                     }
                }
              /* find color from idx from second */
-             for (j = 0; j < (int)p2->map->colors_count; j++)
+             for (j = 0; j < (int)p2->ext->map->colors_count; j++)
                {
-                  col2 = p2->map->colors[j];
+                  col2 = p2->ext->map->colors[j];
                   if (col3->idx == col2->idx)
                     {
                        col2_r = col2->r;
@@ -3638,11 +3676,13 @@ _edje_map_prop_set(Evas_Map *map, const Edje_Calc_Params *pf,
                    Edje_Part_Description_Common *chosen_desc,
                    Edje_Real_Part *ep, Evas_Object *mo)
 {
-   Edje_Map_Color **colors = pf->map->colors;
-   int colors_cnt = pf->map->colors_count;
-   int i;
+   Edje_Map_Color *color, **colors;
+   int colors_cnt, i;
 
-   Edje_Map_Color *color;
+   if (!pf->ext) return;
+
+   colors = pf->ext->map->colors;
+   colors_cnt = pf->ext->map->colors_count;
 
    evas_map_util_points_populate_from_object(map, ep->object);
 
@@ -3681,33 +3721,33 @@ _edje_map_prop_set(Evas_Map *map, const Edje_Calc_Params *pf,
 
    //zoom
    evas_map_util_zoom(map,
-                      pf->map->zoom.x, pf->map->zoom.y,
-                      pf->map->center.x, pf->map->center.y);
+                      pf->ext->map->zoom.x, pf->ext->map->zoom.y,
+                      pf->ext->map->center.x, pf->ext->map->center.y);
 
    //rotate
    evas_map_util_3d_rotate(map,
-                           TO_DOUBLE(pf->map->rotation.x),
-                           TO_DOUBLE(pf->map->rotation.y),
-                           TO_DOUBLE(pf->map->rotation.z),
-                           pf->map->center.x, pf->map->center.y,
-                           pf->map->center.z);
+                           TO_DOUBLE(pf->ext->map->rotation.x),
+                           TO_DOUBLE(pf->ext->map->rotation.y),
+                           TO_DOUBLE(pf->ext->map->rotation.z),
+                           pf->ext->map->center.x, pf->ext->map->center.y,
+                           pf->ext->map->center.z);
 
    // calculate light color & position etc. if there is one
    if (pf->lighted)
      {
-        evas_map_util_3d_lighting(map, pf->map->light.x, pf->map->light.y,
-                                  pf->map->light.z, pf->map->light.r,
-                                  pf->map->light.g, pf->map->light.b,
-                                  pf->map->light.ar, pf->map->light.ag,
-                                  pf->map->light.ab);
+        evas_map_util_3d_lighting(map, pf->ext->map->light.x, pf->ext->map->light.y,
+                                  pf->ext->map->light.z, pf->ext->map->light.r,
+                                  pf->ext->map->light.g, pf->ext->map->light.b,
+                                  pf->ext->map->light.ar, pf->ext->map->light.ag,
+                                  pf->ext->map->light.ab);
      }
 
    // calculate perspective point
    if (chosen_desc->map.persp_on)
      {
         evas_map_util_3d_perspective(map,
-                                     pf->map->persp.x, pf->map->persp.y,
-                                     pf->map->persp.z, pf->map->persp.focal);
+                                     pf->ext->map->persp.x, pf->ext->map->persp.y,
+                                     pf->ext->map->persp.z, pf->ext->map->persp.focal);
      }
 
    // handle backface culling (object is facing away from view
@@ -3836,6 +3876,54 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
    return EINA_FALSE;
 }
 
+static void
+_edje_part_calc_params_memcpy(Edje_Calc_Params *p, Edje_Calc_Params *s, Edje_Part_Type t)
+{
+   if (p->type.common) free(p->type.common);
+   memcpy(p, s, sizeof(Edje_Calc_Params));
+   switch (t)
+     {
+      case EDJE_PART_TYPE_IMAGE:
+          {
+             Edje_Calc_Params_Type_Common *d = malloc(sizeof(*d));
+             if (d)
+               {
+                  memcpy(d, s->type.common, sizeof(*d));
+                  p->type.common = d;
+               }
+             else p->type.common = NULL;
+          }
+        break;
+      case EDJE_PART_TYPE_TEXT:
+      case EDJE_PART_TYPE_TEXTBLOCK:
+          {
+             Edje_Calc_Params_Type_Text *d = malloc(sizeof(*d));
+             if (d)
+               {
+                  memcpy(d, s->type.text, sizeof(*d));
+                  p->type.text = d;
+               }
+             else p->type.text = NULL;
+          }
+        break;
+      case EDJE_PART_TYPE_LIGHT:
+      case EDJE_PART_TYPE_CAMERA:
+      case EDJE_PART_TYPE_MESH_NODE:
+          {
+             Edje_Calc_Params_Type_Node *d = malloc(sizeof(*d));
+             if (d)
+               {
+                  memcpy(d, s->type.node, sizeof(*d));
+                  p->type.node = d;
+               }
+             else p->type.node = NULL;
+          }
+        break;
+      default:
+        break;
+     }
+}
+
 void
 _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *state)
 {
@@ -3869,6 +3957,18 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    Edje_Calc_Params lp3;
    Evas_Coord mmw = 0, mmh = 0;
    Eina_Bool map_colors_free = EINA_FALSE;
+
+#ifdef EDJE_CALC_CACHE
+#else
+   lp1.type.common = NULL;
+   lp1.ext = NULL;
+
+   lp2.type.common = NULL;
+   lp2.ext = NULL;
+#endif
+
+   lp3.type.common = NULL;
+   lp3.ext = NULL;
 
    /* GRADIENT ARE GONE, WE MUST IGNORE IT FROM OLD FILE. */
    if (ep->part->type == EDJE_PART_TYPE_GRADIENT)
@@ -4171,10 +4271,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
 #ifndef EDJE_CALC_CACHE
    p1 = &lp1;
-   p1.map = eina_cow_alloc(_edje_calc_params_map_cow);
-#ifdef HAVE_EPHYSICS
-   p1.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
-#endif
 #else
    p1 = &ep->param1.p;
 #endif
@@ -4217,37 +4313,41 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
         if (ep->current)
           {
+             Eina_Bool needext = EINA_FALSE;
              const Edje_Calc_Params_Map *map;
 #ifdef HAVE_EPHYSICS
              const Edje_Calc_Params_Physics *physics;
 #endif
 
-             map = p1->map;
+             if (p1->ext)
+               {
+                  needext = EINA_TRUE;
+                  map = p1->ext->map;
 #ifdef HAVE_EPHYSICS
-             physics = p1->physics;
+                  physics = p1->ext->physics;
 #endif
+               }
 
-             /* FIXME: except for text, we don't need in that case to recalc p1 at all*/
-             memcpy(p1, ep->current, sizeof (Edje_Calc_Params));
+             _edje_part_calc_params_memcpy(p1, ep->current, ep->part->type);
 
-             p1->map = map;
+             if (needext)
+               {
+                  p1->ext = NULL;
+                  _edje_calc_params_need_ext(p1);
+                  p1->ext->map = map;
 #ifdef HAVE_EPHYSICS
-             p1->physics = physics;
+                  p1->ext->physics = physics;
 #endif
+                  eina_cow_memcpy(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&p1->ext->map, ep->current->ext->map);
+#ifdef HAVE_EPHYSICS
+                  eina_cow_memcpy(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&p1->ext->physics, ep->current->ext->physics);
+#endif
+               }
           }
 
         p3 = &lp3;
-        lp3.map = eina_cow_alloc(_edje_calc_params_map_cow);
-#ifdef HAVE_EPHYSICS
-        lp3.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
-#endif
-
 #ifndef EDJE_CALC_CACHE
         p2 = &lp2;
-        lp2.map = eina_cow_alloc(_edje_calc_params_map_cow);
-#ifdef HAVE_EPHYSICS
-        lp2.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
-#endif
 #else
         p2 = &ep->param2->p;
 
@@ -4296,13 +4396,45 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
         /* clip_to will behave a bit like visible */
         if (pos == ZERO)
-          p3->clip_to = p1->clip_to;
+          {
+             if ((p1->ext) && (p1->ext->clip_to))
+               {
+                  _edje_calc_params_need_ext(p3);
+                  p3->ext->clip_to = p1->ext->clip_to;
+               }
+          }
         else if (pos == FROM_INT(1))
-          p3->clip_to = p2->clip_to;
-        else if (!p1->clip_to)
-          p3->clip_to = p2->clip_to;
+          {
+             if ((p2->ext) && (p2->ext->clip_to))
+               {
+                  _edje_calc_params_need_ext(p3);
+                  p3->ext->clip_to = p2->ext->clip_to;
+               }
+          }
+        else if ((!p1->ext) || (!p1->ext->clip_to))
+          {
+             if ((p2->ext) && (p2->ext->clip_to))
+               {
+                  _edje_calc_params_need_ext(p3);
+                  p3->ext->clip_to = p2->ext->clip_to;
+               }
+             else
+               {
+                  if (p3->ext) p3->ext->clip_to = NULL;
+               }
+          }
         else
-          p3->clip_to = p1->clip_to;
+          {
+             if ((p1->ext) && (p1->ext->clip_to))
+               {
+                  _edje_calc_params_need_ext(p3);
+                  p3->ext->clip_to = p1->ext->clip_to;
+               }
+             else
+               {
+                  if (p3->ext) p3->ext->clip_to = NULL;
+               }
+          }
 
         p3->smooth = (beginning_pos) ? p1->smooth : p2->smooth;
 
@@ -4325,13 +4457,15 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
         if (ep->part->dragable.x)
           {
-             p3->req_drag.x = INTP(p1->req_drag.x, p2->req_drag.x, pos);
-             p3->req_drag.w = INTP(p1->req_drag.w, p2->req_drag.w, pos);
+             _edje_calc_params_need_ext(p3);
+             p3->ext->req_drag.x = INTP(p1->ext->req_drag.x, p2->ext->req_drag.x, pos);
+             p3->ext->req_drag.w = INTP(p1->ext->req_drag.w, p2->ext->req_drag.w, pos);
           }
         if (ep->part->dragable.y)
           {
-             p3->req_drag.y = INTP(p1->req_drag.y, p2->req_drag.y, pos);
-             p3->req_drag.h = INTP(p1->req_drag.h, p2->req_drag.h, pos);
+             _edje_calc_params_need_ext(p3);
+             p3->ext->req_drag.y = INTP(p1->ext->req_drag.y, p2->ext->req_drag.y, pos);
+             p3->ext->req_drag.h = INTP(p1->ext->req_drag.h, p2->ext->req_drag.h, pos);
           }
 
         p3->color.r = INTP(p1->color.r, p2->color.r, pos2);
@@ -4342,58 +4476,60 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #ifdef HAVE_EPHYSICS
         if (ep->part->physics_body || ep->body)
           {
+             _edje_calc_params_need_ext(p1);
+             _edje_calc_params_need_ext(p2);
              EINA_COW_CALC_PHYSICS_BEGIN(p3, p3_write)
              {
-                p3_write->mass = TO_DOUBLE(FINTP(p1->physics->mass, p2->physics->mass,
+                p3_write->mass = TO_DOUBLE(FINTP(p1->ext->physics->mass, p2->ext->physics->mass,
                                                  pos));
-                p3_write->restitution = TO_DOUBLE(FINTP(p1->physics->restitution,
-                                                        p2->physics->restitution,
+                p3_write->restitution = TO_DOUBLE(FINTP(p1->ext->physics->restitution,
+                                                        p2->ext->physics->restitution,
                                                         pos));
-                p3_write->friction = TO_DOUBLE(FINTP(p1->physics->friction,
-                                                     p2->physics->friction, pos));
-                p3_write->density = TO_DOUBLE(FINTP(p1->physics->density,
-                                                    p2->physics->density, pos));
-                p3_write->hardness = TO_DOUBLE(FINTP(p1->physics->hardness,
-                                                     p2->physics->hardness, pos));
+                p3_write->friction = TO_DOUBLE(FINTP(p1->ext->physics->friction,
+                                                     p2->ext->physics->friction, pos));
+                p3_write->density = TO_DOUBLE(FINTP(p1->ext->physics->density,
+                                                    p2->ext->physics->density, pos));
+                p3_write->hardness = TO_DOUBLE(FINTP(p1->ext->physics->hardness,
+                                                     p2->ext->physics->hardness, pos));
 
-                p3_write->damping.linear = TO_DOUBLE(FINTP(p1->physics->damping.linear,
-                                                           p2->physics->damping.linear, pos));
-                p3_write->damping.angular = TO_DOUBLE(FINTP(p1->physics->damping.angular,
-                                                            p2->physics->damping.angular, pos));
+                p3_write->damping.linear = TO_DOUBLE(FINTP(p1->ext->physics->damping.linear,
+                                                           p2->ext->physics->damping.linear, pos));
+                p3_write->damping.angular = TO_DOUBLE(FINTP(p1->ext->physics->damping.angular,
+                                                            p2->ext->physics->damping.angular, pos));
 
-                p3_write->sleep.linear = TO_DOUBLE(FINTP(p1->physics->sleep.linear,
-                                                         p2->physics->sleep.linear, pos));
-                p3_write->sleep.angular = TO_DOUBLE(FINTP(p1->physics->sleep.angular,
-                                                          p2->physics->sleep.angular, pos));
+                p3_write->sleep.linear = TO_DOUBLE(FINTP(p1->ext->physics->sleep.linear,
+                                                         p2->ext->physics->sleep.linear, pos));
+                p3_write->sleep.angular = TO_DOUBLE(FINTP(p1->ext->physics->sleep.angular,
+                                                          p2->ext->physics->sleep.angular, pos));
 
-                p3_write->z = INTP(p1->physics->z, p2->physics->z, pos);
-                p3_write->depth = INTP(p1->physics->depth, p2->physics->depth, pos);
+                p3_write->z = INTP(p1->ext->physics->z, p2->ext->physics->z, pos);
+                p3_write->depth = INTP(p1->ext->physics->depth, p2->ext->physics->depth, pos);
 
-                if ((p1->physics->ignore_part_pos) && (p2->physics->ignore_part_pos))
+                if ((p1->ext->physics->ignore_part_pos) && (p2->ext->physics->ignore_part_pos))
                   p3_write->ignore_part_pos = 1;
                 else
                   p3_write->ignore_part_pos = 0;
 
-                if ((p1->physics->material) && (p2->physics->material))
-                  p3_write->material = p1->physics->material;
+                if ((p1->ext->physics->material) && (p2->ext->physics->material))
+                  p3_write->material = p1->ext->physics->material;
                 else
                   p3_write->material = EPHYSICS_BODY_MATERIAL_CUSTOM;
 
-                p3_write->light_on = p1->physics->light_on || p2->physics->light_on;
-                p3_write->backcull = p1->physics->backcull || p2->physics->backcull;
+                p3_write->light_on = p1->ext->physics->light_on || p2->ext->physics->light_on;
+                p3_write->backcull = p1->ext->physics->backcull || p2->ext->physics->backcull;
 
-                p3_write->mov_freedom.lin.x = p1->physics->mov_freedom.lin.x ||
-                  p2->physics->mov_freedom.lin.x;
-                p3_write->mov_freedom.lin.y = p1->physics->mov_freedom.lin.y ||
-                  p2->physics->mov_freedom.lin.y;
-                p3_write->mov_freedom.lin.z = p1->physics->mov_freedom.lin.z ||
-                  p2->physics->mov_freedom.lin.z;
-                p3_write->mov_freedom.ang.x = p1->physics->mov_freedom.ang.x ||
-                  p2->physics->mov_freedom.ang.x;
-                p3_write->mov_freedom.ang.y = p1->physics->mov_freedom.ang.y ||
-                  p2->physics->mov_freedom.ang.y;
-                p3_write->mov_freedom.ang.z = p1->physics->mov_freedom.ang.z ||
-                  p2->physics->mov_freedom.ang.z;
+                p3_write->mov_freedom.lin.x = p1->ext->physics->mov_freedom.lin.x ||
+                  p2->ext->physics->mov_freedom.lin.x;
+                p3_write->mov_freedom.lin.y = p1->ext->physics->mov_freedom.lin.y ||
+                  p2->ext->physics->mov_freedom.lin.y;
+                p3_write->mov_freedom.lin.z = p1->ext->physics->mov_freedom.lin.z ||
+                  p2->ext->physics->mov_freedom.lin.z;
+                p3_write->mov_freedom.ang.x = p1->ext->physics->mov_freedom.ang.x ||
+                  p2->ext->physics->mov_freedom.ang.x;
+                p3_write->mov_freedom.ang.y = p1->ext->physics->mov_freedom.ang.y ||
+                  p2->ext->physics->mov_freedom.ang.y;
+                p3_write->mov_freedom.ang.z = p1->ext->physics->mov_freedom.ang.z ||
+                  p2->ext->physics->mov_freedom.ang.z;
              }
              EINA_COW_CALC_PHYSICS_END(p3, p3_write);
           }
@@ -4402,63 +4538,68 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         switch (part_type)
           {
            case EDJE_PART_TYPE_IMAGE:
-             p3->type.common.spec.image.l = INTP(p1->type.common.spec.image.l, p2->type.common.spec.image.l, pos);
-             p3->type.common.spec.image.r = INTP(p1->type.common.spec.image.r, p2->type.common.spec.image.r, pos);
-             p3->type.common.spec.image.t = INTP(p1->type.common.spec.image.t, p2->type.common.spec.image.t, pos);
-             p3->type.common.spec.image.b = INTP(p1->type.common.spec.image.b, p2->type.common.spec.image.b, pos);
-             p3->type.common.spec.image.border_scale_by = FFP(p1->type.common.spec.image.border_scale_by, p2->type.common.spec.image.border_scale_by, pos);
+             _edje_calc_params_need_type_common(p3);
+             p3->type.common->spec.image.l = INTP(p1->type.common->spec.image.l, p2->type.common->spec.image.l, pos);
+             p3->type.common->spec.image.r = INTP(p1->type.common->spec.image.r, p2->type.common->spec.image.r, pos);
+             p3->type.common->spec.image.t = INTP(p1->type.common->spec.image.t, p2->type.common->spec.image.t, pos);
+             p3->type.common->spec.image.b = INTP(p1->type.common->spec.image.b, p2->type.common->spec.image.b, pos);
+             p3->type.common->spec.image.border_scale_by = FFP(p1->type.common->spec.image.border_scale_by, p2->type.common->spec.image.border_scale_by, pos);
 
            case EDJE_PART_TYPE_PROXY:
-             p3->type.common.fill.x = INTP(p1->type.common.fill.x, p2->type.common.fill.x, pos);
-             p3->type.common.fill.y = INTP(p1->type.common.fill.y, p2->type.common.fill.y, pos);
-             p3->type.common.fill.w = INTP(p1->type.common.fill.w, p2->type.common.fill.w, pos);
-             p3->type.common.fill.h = INTP(p1->type.common.fill.h, p2->type.common.fill.h, pos);
+             _edje_calc_params_need_type_common(p3);
+             p3->type.common->fill.x = INTP(p1->type.common->fill.x, p2->type.common->fill.x, pos);
+             p3->type.common->fill.y = INTP(p1->type.common->fill.y, p2->type.common->fill.y, pos);
+             p3->type.common->fill.w = INTP(p1->type.common->fill.w, p2->type.common->fill.w, pos);
+             p3->type.common->fill.h = INTP(p1->type.common->fill.h, p2->type.common->fill.h, pos);
              break;
 
            case EDJE_PART_TYPE_TEXT:
-             p3->type.text.size = INTP(p1->type.text.size, p2->type.text.size, pos);
+             _edje_calc_params_need_type_text(p3);
+             p3->type.text->size = INTP(p1->type.text->size, p2->type.text->size, pos);
 
            /* no break as we share code with the TEXTBLOCK type here. Intended fall-through */
            case EDJE_PART_TYPE_TEXTBLOCK:
-             p3->type.text.color2.r = INTP(p1->type.text.color2.r, p2->type.text.color2.r, pos2);
-             p3->type.text.color2.g = INTP(p1->type.text.color2.g, p2->type.text.color2.g, pos2);
-             p3->type.text.color2.b = INTP(p1->type.text.color2.b, p2->type.text.color2.b, pos2);
-             p3->type.text.color2.a = INTP(p1->type.text.color2.a, p2->type.text.color2.a, pos2);
+             _edje_calc_params_need_type_text(p3);
+             p3->type.text->color2.r = INTP(p1->type.text->color2.r, p2->type.text->color2.r, pos2);
+             p3->type.text->color2.g = INTP(p1->type.text->color2.g, p2->type.text->color2.g, pos2);
+             p3->type.text->color2.b = INTP(p1->type.text->color2.b, p2->type.text->color2.b, pos2);
+             p3->type.text->color2.a = INTP(p1->type.text->color2.a, p2->type.text->color2.a, pos2);
 
-             p3->type.text.color3.r = INTP(p1->type.text.color3.r, p2->type.text.color3.r, pos2);
-             p3->type.text.color3.g = INTP(p1->type.text.color3.g, p2->type.text.color3.g, pos2);
-             p3->type.text.color3.b = INTP(p1->type.text.color3.b, p2->type.text.color3.b, pos2);
-             p3->type.text.color3.a = INTP(p1->type.text.color3.a, p2->type.text.color3.a, pos2);
+             p3->type.text->color3.r = INTP(p1->type.text->color3.r, p2->type.text->color3.r, pos2);
+             p3->type.text->color3.g = INTP(p1->type.text->color3.g, p2->type.text->color3.g, pos2);
+             p3->type.text->color3.b = INTP(p1->type.text->color3.b, p2->type.text->color3.b, pos2);
+             p3->type.text->color3.a = INTP(p1->type.text->color3.a, p2->type.text->color3.a, pos2);
 
-             p3->type.text.align.x = FFP(p1->type.text.align.x, p2->type.text.align.x, pos);
-             p3->type.text.align.y = FFP(p1->type.text.align.y, p2->type.text.align.y, pos);
-             p3->type.text.ellipsis = TO_DOUBLE(FINTP(p1->type.text.ellipsis, p2->type.text.ellipsis, pos2));
+             p3->type.text->align.x = FFP(p1->type.text->align.x, p2->type.text->align.x, pos);
+             p3->type.text->align.y = FFP(p1->type.text->align.y, p2->type.text->align.y, pos);
+             p3->type.text->ellipsis = TO_DOUBLE(FINTP(p1->type.text->ellipsis, p2->type.text->ellipsis, pos2));
              break;
            case EDJE_PART_TYPE_MESH_NODE:
-             p3->type.node.frame = INTP(p1->type.node.frame, p2->type.node.frame, pos);
-             p3->type.node.data[0] = INTP(p1->type.node.data[0], p2->type.node.data[0], pos);
+             _edje_calc_params_need_type_node(p3);
+             p3->type.node->frame = INTP(p1->type.node->frame, p2->type.node->frame, pos);
+             p3->type.node->data[0] = INTP(p1->type.node->data[0], p2->type.node->data[0], pos);
 
-             p3->type.node.point.x = FFP(p1->type.node.point.x, p2->type.node.point.x, pos);
-             p3->type.node.point.y = FFP(p1->type.node.point.y, p2->type.node.point.y, pos);
-             p3->type.node.point.z = FFP(p1->type.node.point.z, p2->type.node.point.z, pos);
+             p3->type.node->point.x = FFP(p1->type.node->point.x, p2->type.node->point.x, pos);
+             p3->type.node->point.y = FFP(p1->type.node->point.y, p2->type.node->point.y, pos);
+             p3->type.node->point.z = FFP(p1->type.node->point.z, p2->type.node->point.z, pos);
 
-             p3->type.node.scale_3d.x = FFP(p1->type.node.scale_3d.x, p2->type.node.scale_3d.x, pos);
-             p3->type.node.scale_3d.y = FFP(p1->type.node.scale_3d.y, p2->type.node.scale_3d.y, pos);
-             p3->type.node.scale_3d.z = FFP(p1->type.node.scale_3d.z, p2->type.node.scale_3d.z, pos);
+             p3->type.node->scale_3d.x = FFP(p1->type.node->scale_3d.x, p2->type.node->scale_3d.x, pos);
+             p3->type.node->scale_3d.y = FFP(p1->type.node->scale_3d.y, p2->type.node->scale_3d.y, pos);
+             p3->type.node->scale_3d.z = FFP(p1->type.node->scale_3d.z, p2->type.node->scale_3d.z, pos);
              break;
            case EDJE_PART_TYPE_CAMERA:
-             p3->type.node.data[0] = FFP(p1->type.node.data[0], p2->type.node.data[0], pos);
+             p3->type.node->data[0] = FFP(p1->type.node->data[0], p2->type.node->data[0], pos);
 
-             p3->type.node.point.x = FFP(p1->type.node.point.x, p2->type.node.point.x, pos);
-             p3->type.node.point.y = FFP(p1->type.node.point.y, p2->type.node.point.y, pos);
-             p3->type.node.point.z = FFP(p1->type.node.point.z, p2->type.node.point.z, pos);
+             p3->type.node->point.x = FFP(p1->type.node->point.x, p2->type.node->point.x, pos);
+             p3->type.node->point.y = FFP(p1->type.node->point.y, p2->type.node->point.y, pos);
+             p3->type.node->point.z = FFP(p1->type.node->point.z, p2->type.node->point.z, pos);
              break;
            case EDJE_PART_TYPE_LIGHT:
-             p3->type.node.data[0] = FFP(p1->type.node.data[0], p2->type.node.data[0], pos);
+             p3->type.node->data[0] = FFP(p1->type.node->data[0], p2->type.node->data[0], pos);
 
-             p3->type.node.point.x = FFP(p1->type.node.point.x, p2->type.node.point.x, pos);
-             p3->type.node.point.y = FFP(p1->type.node.point.y, p2->type.node.point.y, pos);
-             p3->type.node.point.z = FFP(p1->type.node.point.z, p2->type.node.point.z, pos);
+             p3->type.node->point.x = FFP(p1->type.node->point.x, p2->type.node->point.x, pos);
+             p3->type.node->point.y = FFP(p1->type.node->point.y, p2->type.node->point.y, pos);
+             p3->type.node->point.z = FFP(p1->type.node->point.z, p2->type.node->point.z, pos);
              break;
           }
 
@@ -4474,19 +4615,22 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         p3->lighted = p3->mapped ? p1->lighted | p2->lighted : 0;
         if (p3->mapped)
           {
+             _edje_calc_params_need_ext(p1);
+             _edje_calc_params_need_ext(p2);
+             _edje_calc_params_need_ext(p3);
              EINA_COW_CALC_MAP_BEGIN(p3, p3_write)
              {
-                p3_write->center.x = INTP(p1->map->center.x, p2->map->center.x, pos);
-                p3_write->center.y = INTP(p1->map->center.y, p2->map->center.y, pos);
-                p3_write->center.z = INTP(p1->map->center.z, p2->map->center.z, pos);
-                p3_write->rotation.x = FFP(p1->map->rotation.x, p2->map->rotation.x, pos);
-                p3_write->rotation.y = FFP(p1->map->rotation.y, p2->map->rotation.y, pos);
-                p3_write->rotation.z = FFP(p1->map->rotation.z, p2->map->rotation.z, pos);
-                p3_write->zoom.x = FFP(p1->map->zoom.x, p2->map->zoom.x, pos);
-                p3_write->zoom.y = FFP(p1->map->zoom.y, p2->map->zoom.y, pos);
+                p3_write->center.x = INTP(p1->ext->map->center.x, p2->ext->map->center.x, pos);
+                p3_write->center.y = INTP(p1->ext->map->center.y, p2->ext->map->center.y, pos);
+                p3_write->center.z = INTP(p1->ext->map->center.z, p2->ext->map->center.z, pos);
+                p3_write->rotation.x = FFP(p1->ext->map->rotation.x, p2->ext->map->rotation.x, pos);
+                p3_write->rotation.y = FFP(p1->ext->map->rotation.y, p2->ext->map->rotation.y, pos);
+                p3_write->rotation.z = FFP(p1->ext->map->rotation.z, p2->ext->map->rotation.z, pos);
+                p3_write->zoom.x = FFP(p1->ext->map->zoom.x, p2->ext->map->zoom.x, pos);
+                p3_write->zoom.y = FFP(p1->ext->map->zoom.y, p2->ext->map->zoom.y, pos);
 
 #define MIX(P1, P2, P3, pos, info) \
-  P3->info = P1->map->info + TO_INT(SCALE(pos, P2->map->info - P1->map->info));
+  P3->info = P1->ext->map->info + TO_INT(SCALE(pos, P2->ext->map->info - P1->ext->map->info));
                 map_colors_free = _map_colors_interp(p1, p2, p3_write, pos);
 
                 if (p1->lighted && p2->lighted)
@@ -4503,11 +4647,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   }
                 else if (p1->lighted)
                   {
-                     memcpy(&p3_write->light, &p1->map->light, sizeof (p1->map->light));
+                     memcpy(&p3_write->light, &p1->ext->map->light, sizeof (p1->ext->map->light));
                   }
                 else if (p2->lighted)
                   {
-                     memcpy(&p3_write->light, &p2->map->light, sizeof (p2->map->light));
+                     memcpy(&p3_write->light, &p2->ext->map->light, sizeof (p2->ext->map->light));
                   }
 
                 if (p1->persp_on && p2->persp_on)
@@ -4519,21 +4663,18 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   }
                 else if (p1->persp_on)
                   {
-                     memcpy(&p3_write->persp, &p1->map->persp, sizeof (p1->map->persp));
+                     memcpy(&p3_write->persp, &p1->ext->map->persp, sizeof (p1->ext->map->persp));
                   }
                 else if (p2->persp_on)
                   {
-                     memcpy(&p3_write->persp, &p2->map->persp, sizeof (p2->map->persp));
+                     memcpy(&p3_write->persp, &p2->ext->map->persp, sizeof (p2->ext->map->persp));
                   }
              }
              EINA_COW_CALC_MAP_END(p3, p3_write);
           }
 
 #ifndef EDJE_CALC_CACHE
-        eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&lp2.map);
-#ifdef HAVE_EPHYSICS
-        eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&lp2.physics);
-#endif
+        _edje_calc_params_clear(&lp2);
 #endif
         pf = p3;
      }
@@ -4586,26 +4727,36 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
    if (state)
      {
+        Eina_Bool needext = EINA_FALSE;
         const Edje_Calc_Params_Map *map;
 #ifdef HAVE_EPHYSICS
         const Edje_Calc_Params_Physics *physics;
 #endif
 
-        map = state->map;
+        if (state->ext)
+          {
+             needext = EINA_TRUE;
+             map = state->ext->map;
 #ifdef HAVE_EPHYSICS
-        physics = state->physics;
+             physics = state->ext->physics;
 #endif
+          }
 
-        memcpy(state, pf, sizeof (Edje_Calc_Params));
+        _edje_part_calc_params_memcpy(state, pf, ep->part->type);
 
-        state->map = map;
+        if (needext)
+          {
+             state->ext = NULL;
+             _edje_calc_params_need_ext(state);
+             state->ext->map = map;
 #ifdef HAVE_EPHYSICS
-        state->physics = physics;
+             state->ext->physics = physics;
 #endif
-        eina_cow_memcpy(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&state->map, pf->map);
+             eina_cow_memcpy(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&state->ext->map, pf->ext->map);
 #ifdef HAVE_EPHYSICS
-        eina_cow_memcpy(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&state->physics, pf->physics);
+             eina_cow_memcpy(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&state->ext->physics, pf->ext->physics);
 #endif
+          }
      }
 
    ep->req = pf->req;
@@ -4701,7 +4852,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   if (((ep->prev_description) &&
                        (chosen_desc != ep->prev_description)) ||
                       (pf != p1))
-                    _edje_physics_body_props_update(ed, ep, pf, !pf->physics->ignore_part_pos);
+                    {
+                       _edje_calc_params_need_ext(pf);
+                       _edje_physics_body_props_update(ed, ep, pf, !pf->ext->physics->ignore_part_pos);
+                    }
                }
              else
                efl_gfx_position_set(ep->object, ed->x + pf->final.x, ed->y + pf->final.y);
@@ -4719,8 +4873,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                _edje_entry_real_part_configure(ed, ep);
 
              /* handle clip overrides */
-             if (pf->clip_to && pf->clip_to->object)
-               evas_object_clip_set(ep->object, pf->clip_to->object);
+             if ((pf->ext) && (pf->ext->clip_to) && (pf->ext->clip_to->object))
+               evas_object_clip_set(ep->object, pf->ext->clip_to->object);
              else if (ep->part->clip_to_id >= 0)
                evas_object_clip_set(ep->object, ed->table_parts[ep->part->clip_to_id % ed->table_parts_size]->object);
              else
@@ -4764,7 +4918,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
                 evas_canvas3d_camera_projection_perspective_set(camera, pd_camera->camera.camera.fovy, pd_camera->camera.camera.aspect, pd_camera->camera.camera.frustum_near, pd_camera->camera.camera.frustum_far);
 
-                evas_canvas3d_node_position_set(ep->node, pf->type.node.point.x, pf->type.node.point.y, pf->type.node.point.z);
+                _edje_calc_params_need_type_node(pf);
+                evas_canvas3d_node_position_set(ep->node, pf->type.node->point.x, pf->type.node->point.y, pf->type.node->point.z);
                 switch (pd_camera->camera.orientation.type)
                   {
                      case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE:
@@ -4801,7 +4956,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 evas_canvas3d_light_directional_set(light_node, EINA_TRUE);
                 evas_canvas3d_light_projection_perspective_set(light_node, pd_light->light.light.fovy, pd_light->light.light.aspect, pd_light->light.light.frustum_near, pd_light->light.light.frustum_far);
 
-                evas_canvas3d_node_position_set(ep->node, pf->type.node.point.x, pf->type.node.point.y, pf->type.node.point.z);
+                _edje_calc_params_need_type_node(pf);
+                evas_canvas3d_node_position_set(ep->node, pf->type.node->point.x, pf->type.node->point.y, pf->type.node->point.z);
                 switch (pd_light->light.orientation.type)
                   {
                      case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE:
@@ -4862,10 +5018,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, ed->base->evas);
                                evas_canvas3d_primitive_form_set(primitive, pd_mesh_node->mesh_node.mesh.primitive);
 
-                               frame_exist = evas_canvas3d_mesh_frame_exist(mesh, pf->type.node.frame);
+                               _edje_calc_params_need_type_node(pf);
+                               frame_exist = evas_canvas3d_mesh_frame_exist(mesh, pf->type.node->frame);
                                if (!frame_exist)
                                  {
-                                    evas_canvas3d_mesh_frame_material_set(mesh, pf->type.node.frame, material);
+                                    evas_canvas3d_mesh_frame_material_set(mesh, pf->type.node->frame, material);
                                  }
                                evas_canvas3d_mesh_from_primitive_set(mesh, 0, primitive);
                                break;
@@ -4892,17 +5049,18 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                             }
                        }
 
-                     frame_exist = evas_canvas3d_mesh_frame_exist(mesh, pf->type.node.frame);
+                     _edje_calc_params_need_type_node(pf);
+                     frame_exist = evas_canvas3d_mesh_frame_exist(mesh, pf->type.node->frame);
                      if (!frame_exist)
                        {
-                          evas_canvas3d_mesh_frame_add(mesh, pf->type.node.frame);
-                          evas_canvas3d_mesh_frame_material_set(mesh, pf->type.node.frame, material);
+                          evas_canvas3d_mesh_frame_add(mesh, pf->type.node->frame);
+                          evas_canvas3d_mesh_frame_material_set(mesh, pf->type.node->frame, material);
                        }
                      evas_canvas3d_mesh_shader_mode_set(mesh, pd_mesh_node->mesh_node.properties.shade);
                      evas_canvas3d_mesh_vertex_assembly_set(mesh, pd_mesh_node->mesh_node.mesh.assembly);
-                     evas_canvas3d_node_mesh_frame_set(ep->node, mesh, pf->type.node.frame);
-                     evas_canvas3d_node_scale_set(ep->node, pf->type.node.scale_3d.x, pf->type.node.scale_3d.y, pf->type.node.scale_3d.z);
-                     evas_canvas3d_node_position_set(ep->node, pf->type.node.point.x, pf->type.node.point.y, pf->type.node.point.z);
+                     evas_canvas3d_node_mesh_frame_set(ep->node, mesh, pf->type.node->frame);
+                     evas_canvas3d_node_scale_set(ep->node, pf->type.node->scale_3d.x, pf->type.node->scale_3d.y, pf->type.node->scale_3d.z);
+                     evas_canvas3d_node_position_set(ep->node, pf->type.node->point.x, pf->type.node->point.y, pf->type.node->point.z);
                      switch (pd_mesh_node->mesh_node.orientation.type)
                        {
                           case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE:
@@ -4980,8 +5138,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              (ep->typedata.swallow)) &&
             (ep->typedata.swallow->swallowed_object))
           {
-             if (pf->clip_to && pf->clip_to->object)
-               evas_object_clip_set(ep->typedata.swallow->swallowed_object, pf->clip_to->object);
+             if ((pf->ext) && (pf->ext->clip_to) && (pf->ext->clip_to->object))
+               evas_object_clip_set(ep->typedata.swallow->swallowed_object, pf->ext->clip_to->object);
              else if (ep->part->clip_to_id >= 0)
                evas_object_clip_set(ep->typedata.swallow->swallowed_object, ed->table_parts[ep->part->clip_to_id % ed->table_parts_size]->object);
              else
@@ -5065,12 +5223,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
    if (pf == &lp3)
      {
-        eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&lp3.map);
-        lp3.map = NULL;
-#ifdef HAVE_EPHYSICS
-        eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&lp3.physics);
-        lp3.physics = NULL;
-#endif
+        _edje_calc_params_clear(&lp3);
      }
 
 #ifdef EDJE_CALC_CACHE
@@ -5080,9 +5233,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         ep->invalidate = EINA_FALSE;
      }
 #else
-   eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&lp1.map);
-#ifdef HAVE_EPHYSICS
-   eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&lp1.physics);
+   _edje_calc_params_clear(&lp1);
 #endif
-#endif
+
 }

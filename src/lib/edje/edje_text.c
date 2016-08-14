@@ -130,12 +130,13 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    *free_text = 0;
    if (sw <= 1) return "";
 
-   if ((params->type.text.ellipsis < 0) || (chosen_desc->text.min_x))
+   _edje_calc_params_need_type_text(params);
+   if ((params->type.text->ellipsis < 0) || (chosen_desc->text.min_x))
      return text;
 
    if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
-   evas_obj_text_ellipsis_set(ep->object, params->type.text.ellipsis);
+   evas_obj_text_ellipsis_set(ep->object, params->type.text->ellipsis);
    efl_text_properties_font_set(ep->object, font, size);
    efl_text_set(ep->object, text);
    efl_gfx_size_set(ep->object, sw, sh);
@@ -293,8 +294,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    sw = TO_INT(params->eval.w);
    sh = TO_INT(params->eval.h);
 
-   if (params->type.text.size)
-     size = params->type.text.size;
+   _edje_calc_params_need_type_text(params);
+   if (params->type.text->size)
+     size = params->type.text->size;
    if (!text) text = "";
 
    if ((text == ep->typedata.text->cache.in_str)
@@ -309,9 +311,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        (ep->typedata.text->cache.in_h == sh) &&
        (ep->typedata.text->cache.in_str) &&
        same_text &&
-       (ep->typedata.text->cache.align_x == params->type.text.align.x) &&
-       (ep->typedata.text->cache.align_y == params->type.text.align.y) &&
-       (ep->typedata.text->cache.ellipsis == params->type.text.ellipsis) &&
+       (ep->typedata.text->cache.align_x == params->type.text->align.x) &&
+       (ep->typedata.text->cache.align_y == params->type.text->align.y) &&
+       (ep->typedata.text->cache.ellipsis == params->type.text->ellipsis) &&
        (ep->typedata.text->cache.fit_x == chosen_desc->text.fit_x) &&
        (ep->typedata.text->cache.fit_y == chosen_desc->text.fit_y) &&
        (ep->typedata.text->cache.in_font == font))
@@ -465,7 +467,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    else if ((ed->file->version >= 3) && (ed->file->minor >= 6))
      {
         evas_object_text_ellipsis_set(ep->object,
-                                      params->type.text.ellipsis);
+                                      params->type.text->ellipsis);
      }
 
    eina_stringshare_replace(&ep->typedata.text->cache.out_str, text);
@@ -473,9 +475,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    ep->typedata.text->cache.in_h = sh;
    ep->typedata.text->cache.in_font = font;
    ep->typedata.text->cache.out_size = size;
-   ep->typedata.text->cache.align_x = params->type.text.align.x;
-   ep->typedata.text->cache.align_y = params->type.text.align.y;
-   ep->typedata.text->cache.ellipsis = params->type.text.ellipsis;
+   ep->typedata.text->cache.align_x = params->type.text->align.x;
+   ep->typedata.text->cache.align_y = params->type.text->align.y;
+   ep->typedata.text->cache.ellipsis = params->type.text->ellipsis;
    ep->typedata.text->cache.fit_x = chosen_desc->text.fit_x;
    ep->typedata.text->cache.fit_y = chosen_desc->text.fit_y;
 arrange_text:
@@ -492,7 +494,7 @@ arrange_text:
    /* Handle alignment */
    {
       FLOAT_T align_x;
-      if (params->type.text.align.x < FROM_INT(0))
+      if (params->type.text->align.x < FROM_INT(0))
         {
            if (evas_object_text_direction_get(ep->object) ==
                EVAS_BIDI_DIRECTION_RTL)
@@ -506,10 +508,10 @@ arrange_text:
         }
       else
         {
-           align_x = params->type.text.align.x;
+           align_x = params->type.text->align.x;
         }
       ep->typedata.text->offset.x = TO_INT(SCALE(align_x, (sw - tw)));
-      ep->typedata.text->offset.y = TO_INT(SCALE(params->type.text.align.y, (sh - th)));
+      ep->typedata.text->offset.y = TO_INT(SCALE(params->type.text->align.y, (sh - th)));
    }
 
    if (!calc_only)
@@ -540,73 +542,73 @@ arrange_text:
          case EDJE_TEXT_EFFECT_OUTLINE:
            style = EVAS_TEXT_STYLE_OUTLINE;
            evas_object_text_outline_color_set(ep->object,
-                                              (params->type.text.color2.r * params->type.text.color2.a) / 255,
-                                              (params->type.text.color2.g * params->type.text.color2.a) / 255,
-                                              (params->type.text.color2.b * params->type.text.color2.a) / 255,
-                                              params->type.text.color2.a);
+                                              (params->type.text->color2.r * params->type.text->color2.a) / 255,
+                                              (params->type.text->color2.g * params->type.text->color2.a) / 255,
+                                              (params->type.text->color2.b * params->type.text->color2.a) / 255,
+                                              params->type.text->color2.a);
            break;
 
          case EDJE_TEXT_EFFECT_SOFT_OUTLINE:
            style = EVAS_TEXT_STYLE_SOFT_OUTLINE;
            evas_object_text_outline_color_set(ep->object,
-                                              (params->type.text.color2.r * params->type.text.color2.a) / 255,
-                                              (params->type.text.color2.g * params->type.text.color2.a) / 255,
-                                              (params->type.text.color2.b * params->type.text.color2.a) / 255,
-                                              params->type.text.color2.a);
+                                              (params->type.text->color2.r * params->type.text->color2.a) / 255,
+                                              (params->type.text->color2.g * params->type.text->color2.a) / 255,
+                                              (params->type.text->color2.b * params->type.text->color2.a) / 255,
+                                              params->type.text->color2.a);
            break;
 
          case EDJE_TEXT_EFFECT_SHADOW:
            style = EVAS_TEXT_STYLE_SHADOW;
            evas_object_text_shadow_color_set(ep->object,
-                                             (params->type.text.color3.r * params->type.text.color3.a) / 255,
-                                             (params->type.text.color3.g * params->type.text.color3.a) / 255,
-                                             (params->type.text.color3.b * params->type.text.color3.a) / 255,
-                                             params->type.text.color3.a);
+                                             (params->type.text->color3.r * params->type.text->color3.a) / 255,
+                                             (params->type.text->color3.g * params->type.text->color3.a) / 255,
+                                             (params->type.text->color3.b * params->type.text->color3.a) / 255,
+                                             params->type.text->color3.a);
            break;
 
          case EDJE_TEXT_EFFECT_SOFT_SHADOW:
            style = EVAS_TEXT_STYLE_SOFT_SHADOW;
            evas_object_text_shadow_color_set(ep->object,
-                                             (params->type.text.color3.r * params->type.text.color3.a) / 255,
-                                             (params->type.text.color3.g * params->type.text.color3.a) / 255,
-                                             (params->type.text.color3.b * params->type.text.color3.a) / 255,
-                                             params->type.text.color3.a);
+                                             (params->type.text->color3.r * params->type.text->color3.a) / 255,
+                                             (params->type.text->color3.g * params->type.text->color3.a) / 255,
+                                             (params->type.text->color3.b * params->type.text->color3.a) / 255,
+                                             params->type.text->color3.a);
            break;
 
          case EDJE_TEXT_EFFECT_OUTLINE_SHADOW:
            style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
-           evas_obj_text_outline_color_set(ep->object, (params->type.text.color2.r * params->type.text.color2.a) / 255, (params->type.text.color2.g * params->type.text.color2.a) / 255, (params->type.text.color2.b * params->type.text.color2.a) / 255, params->type.text.color2.a);
-           evas_obj_text_shadow_color_set(ep->object, (params->type.text.color3.r * params->type.text.color3.a) / 255, (params->type.text.color3.g * params->type.text.color3.a) / 255, (params->type.text.color3.b * params->type.text.color3.a) / 255, params->type.text.color3.a);
+           evas_obj_text_outline_color_set(ep->object, (params->type.text->color2.r * params->type.text->color2.a) / 255, (params->type.text->color2.g * params->type.text->color2.a) / 255, (params->type.text->color2.b * params->type.text->color2.a) / 255, params->type.text->color2.a);
+           evas_obj_text_shadow_color_set(ep->object, (params->type.text->color3.r * params->type.text->color3.a) / 255, (params->type.text->color3.g * params->type.text->color3.a) / 255, (params->type.text->color3.b * params->type.text->color3.a) / 255, params->type.text->color3.a);
            break;
 
          case EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW:
            style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
-           evas_obj_text_outline_color_set(ep->object, (params->type.text.color2.r * params->type.text.color2.a) / 255, (params->type.text.color2.g * params->type.text.color2.a) / 255, (params->type.text.color2.b * params->type.text.color2.a) / 255, params->type.text.color2.a);
-           evas_obj_text_shadow_color_set(ep->object, (params->type.text.color3.r * params->type.text.color3.a) / 255, (params->type.text.color3.g * params->type.text.color3.a) / 255, (params->type.text.color3.b * params->type.text.color3.a) / 255, params->type.text.color3.a);
+           evas_obj_text_outline_color_set(ep->object, (params->type.text->color2.r * params->type.text->color2.a) / 255, (params->type.text->color2.g * params->type.text->color2.a) / 255, (params->type.text->color2.b * params->type.text->color2.a) / 255, params->type.text->color2.a);
+           evas_obj_text_shadow_color_set(ep->object, (params->type.text->color3.r * params->type.text->color3.a) / 255, (params->type.text->color3.g * params->type.text->color3.a) / 255, (params->type.text->color3.b * params->type.text->color3.a) / 255, params->type.text->color3.a);
            break;
 
          case EDJE_TEXT_EFFECT_FAR_SHADOW:
            style = EVAS_TEXT_STYLE_FAR_SHADOW;
            evas_object_text_shadow_color_set(ep->object,
-                                             (params->type.text.color3.r * params->type.text.color3.a) / 255,
-                                             (params->type.text.color3.g * params->type.text.color3.a) / 255,
-                                             (params->type.text.color3.b * params->type.text.color3.a) / 255,
-                                             params->type.text.color3.a);
+                                             (params->type.text->color3.r * params->type.text->color3.a) / 255,
+                                             (params->type.text->color3.g * params->type.text->color3.a) / 255,
+                                             (params->type.text->color3.b * params->type.text->color3.a) / 255,
+                                             params->type.text->color3.a);
            break;
 
          case EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW:
            style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
            evas_object_text_shadow_color_set(ep->object,
-                                             (params->type.text.color3.r * params->type.text.color3.a) / 255,
-                                             (params->type.text.color3.g * params->type.text.color3.a) / 255,
-                                             (params->type.text.color3.b * params->type.text.color3.a) / 255,
-                                             params->type.text.color3.a);
+                                             (params->type.text->color3.r * params->type.text->color3.a) / 255,
+                                             (params->type.text->color3.g * params->type.text->color3.a) / 255,
+                                             (params->type.text->color3.b * params->type.text->color3.a) / 255,
+                                             params->type.text->color3.a);
            break;
 
          case EDJE_TEXT_EFFECT_GLOW:
            style = EVAS_TEXT_STYLE_GLOW;
-           evas_obj_text_glow_color_set(ep->object, (params->type.text.color2.r * params->type.text.color2.a) / 255, (params->type.text.color2.g * params->type.text.color2.a) / 255, (params->type.text.color2.b * params->type.text.color2.a) / 255, params->type.text.color2.a);
-           evas_obj_text_glow2_color_set(ep->object, (params->type.text.color3.r * params->type.text.color3.a) / 255, (params->type.text.color3.g * params->type.text.color3.a) / 255, (params->type.text.color3.b * params->type.text.color3.a) / 255, params->type.text.color3.a);
+           evas_obj_text_glow_color_set(ep->object, (params->type.text->color2.r * params->type.text->color2.a) / 255, (params->type.text->color2.g * params->type.text->color2.a) / 255, (params->type.text->color2.b * params->type.text->color2.a) / 255, params->type.text->color2.a);
+           evas_obj_text_glow2_color_set(ep->object, (params->type.text->color3.r * params->type.text->color3.a) / 255, (params->type.text->color3.g * params->type.text->color3.a) / 255, (params->type.text->color3.b * params->type.text->color3.a) / 255, params->type.text->color3.a);
            break;
 
          default:

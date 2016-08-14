@@ -1794,52 +1794,71 @@ struct _Edje_Calc_Params_Physics
    unsigned char ignore_part_pos; //1
 };
 
+typedef struct _Edje_Calc_Params_Type_Common Edje_Calc_Params_Type_Common;
+typedef struct _Edje_Calc_Params_Type_Text Edje_Calc_Params_Type_Text;
+typedef struct _Edje_Calc_Params_Type_Node Edje_Calc_Params_Type_Node;
+
+struct _Edje_Calc_Params_Type_Common
+{
+   struct {
+      int           x, y, w, h; // 16
+   } fill; // 16
+   union {
+      struct {
+         unsigned short l, r, t, b; // 8
+         FLOAT_T        border_scale_by; // 8
+      } image; // 16
+   } spec; // 16
+}; // 32
+
+struct _Edje_Calc_Params_Type_Text
+{
+   Edje_Alignment align; /* text alignment within bounds */ // 16
+   double         ellipsis; // 8
+   int            size; // 4
+   Edje_Color     color2, color3; // 8
+}; // 36
+
+struct _Edje_Calc_Params_Type_Node
+{
+   FLOAT_T        data[6]; // 48
+   Edje_3D_Vec    point; // 24
+   Edje_3D_Vec    scale_3d; // 24
+   int            frame; // 4
+}; // 100
+
+typedef struct _Edje_Calc_Params_Ext Edje_Calc_Params_Ext;
+
+struct _Edje_Calc_Params_Ext
+{
+   Edje_Rectangle                  req_drag; // 16
+   const Edje_Calc_Params_Map     *map; // 4/8
+#ifdef HAVE_EPHYSICS
+   const Edje_Calc_Params_Physics *physics; // 4/8
+#endif
+   Edje_Real_Part                 *clip_to; /* clip override @since 1.15 */ // 4/8
+};
+
 struct _Edje_Calc_Params
 {
+   union {
+      Edje_Calc_Params_Type_Common *common;
+      Edje_Calc_Params_Type_Text *text;
+      Edje_Calc_Params_Type_Node *node;
+   } type; // 4/8 
+   Edje_Calc_Params_Ext *ext; // 4/8
    struct {
       FLOAT_T       x, y, w, h; // 32
    } eval;
    Edje_Rectangle   final; // 16
    Edje_Rectangle   req; // 16
-   Edje_Rectangle   req_drag; // 16
    Edje_Color       color; // 4
-   union {
-      struct {
-         struct {
-            int           x, y, w, h; // 16
-         } fill; // 16
-
-         union {
-            struct {
-               unsigned short l, r, t, b; // 8
-               FLOAT_T        border_scale_by; // 8
-            } image; // 16
-         } spec; // 16
-      } common; // 32
-      struct {
-         Edje_Alignment align; /* text alignment within bounds */ // 16
-         double         ellipsis; // 8
-         int            size; // 4
-         Edje_Color     color2, color3; // 8
-      } text; // 36
-      struct {
-         FLOAT_T        data[6]; // 48
-         Edje_3D_Vec    point; // 24
-         Edje_3D_Vec    scale_3d; // 24
-         int            frame; // 4
-      } node; // 100
-   } type; // 100
-   const Edje_Calc_Params_Map *map; // 4/8
-#ifdef HAVE_EPHYSICS
-   const Edje_Calc_Params_Physics *physics; // 4/8
-#endif
-   Edje_Real_Part  *clip_to; /* state clip override @since 1.15 */ // 4/8
    unsigned char    persp_on : 1;
    unsigned char    lighted : 1;
    unsigned char    mapped : 1;
    unsigned char    visible : 1;
    unsigned char    smooth : 1; // 1
-}; // 197/209(rounded up for alignment: 200/212)
+}; // 77/85(rounded up for alignment: 80/88)
 
 struct _Edje_Real_Part_Set
 {
@@ -2321,6 +2340,42 @@ EAPI extern Eina_Mempool *_emp_SNAPSHOT;
 EAPI extern Eina_Mempool *_emp_part;
 EAPI extern Eina_Mempool *_emp_VECTOR;
 
+static inline void
+_edje_calc_params_need_type_common(Edje_Calc_Params *p)
+{
+   if (p->type.common) return;
+   p->type.common = calloc(1, sizeof(Edje_Calc_Params_Type_Common));
+}
+
+static inline void
+_edje_calc_params_need_type_text(Edje_Calc_Params *p)
+{
+   if (p->type.text) return;
+   p->type.text = calloc(1, sizeof(Edje_Calc_Params_Type_Text));
+}
+
+static inline void
+_edje_calc_params_need_type_node(Edje_Calc_Params *p)
+{
+   if (p->type.node) return;
+   p->type.node = calloc(1, sizeof(Edje_Calc_Params_Type_Node));
+}
+
+static inline void
+_edje_calc_params_need_ext(Edje_Calc_Params *p)
+{
+   if (p->ext) return;
+   p->ext = calloc(1, sizeof(Edje_Calc_Params_Ext));
+   if (!p->ext) return;
+#ifdef EDJE_CALC_CACHE
+   p->ext->map = eina_cow_alloc(_edje_calc_params_map_cow);
+# ifdef HAVE_EPHYSICS
+   p->ext->physics = eina_cow_alloc(_edje_calc_params_physics_cow);
+# endif
+#endif
+}
+
+void _edje_calc_params_clear(Edje_Calc_Params *p);
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2, FLOAT_T v3, FLOAT_T v4);
 
 /** Find the description of the part by state name and state value.

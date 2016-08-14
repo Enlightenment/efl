@@ -2123,11 +2123,6 @@ case EDJE_PART_TYPE_##Short:                               \
 
    memset(rp->custom, 0, sizeof (Edje_Real_Part_State));
 
-   rp->custom->p.map = eina_cow_alloc(_edje_calc_params_map_cow);
-#ifdef HAVE_EPHYSICS
-   rp->custom->p.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
-#endif
-
    *d = *parent;
 
    d->state.name = (char *)eina_stringshare_add("custom");

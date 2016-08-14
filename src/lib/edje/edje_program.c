@@ -681,17 +681,12 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 
                                  tmp = calloc(1, sizeof(Edje_Calc_Params));
                                  if (!tmp) goto low_mem_current;
-                                 tmp->map = eina_cow_alloc(_edje_calc_params_map_cow);
-#ifdef HAVE_EPHYSICS
-                                 tmp->physics = eina_cow_alloc(_edje_calc_params_physics_cow);
-#endif
                                  _edje_part_recalc(ed, rp, FLAG_XY, tmp);
 
                                  if (rp->current)
                                    {
-                                      eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&rp->current->map);
-#ifdef HAVE_EPHYSICS
-                                      eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&rp->current->physics);
+#ifdef EDJE_CALC_CACHE
+                                      _edje_calc_params_clear(rp->current);
 #endif
                                       free(rp->current);
                                    }
@@ -702,9 +697,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 low_mem_current:
                                  if (rp->current)
                                    {
-                                      eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&rp->current->map);
-#ifdef HAVE_EPHYSICS
-                                      eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&rp->current->physics);
+#ifdef EDJE_CALC_CACHE
+                                      _edje_calc_params_clear(rp->current);
 #endif
                                       free(rp->current);
                                    }

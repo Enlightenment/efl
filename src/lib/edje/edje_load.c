@@ -704,11 +704,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
                   memset(rp, 0, sizeof (Edje_Real_Part));
 
-                  rp->param1.p.map = eina_cow_alloc(_edje_calc_params_map_cow);
-#ifdef HAVE_EPHYSICS
-                  rp->param1.p.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
-#endif
-
                   if ((ep->dragable.x != 0) || (ep->dragable.y != 0))
                     {
                        rp->drag = calloc(1, sizeof (Edje_Real_Part_Drag));
@@ -1724,9 +1719,8 @@ _edje_file_del(Edje *ed)
                {
                   free(rp->param2->set);
                   rp->param2->set = NULL;
-                  eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&rp->param2->p.map);
-#ifdef HAVE_EPHYSICS
-                  eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&rp->param2->p.physics);
+#ifdef EDJE_CALC_CACHE
+                  _edje_calc_params_clear(&(rp->param2->p));
 #endif
                }
              eina_mempool_free(_edje_real_part_state_mp, rp->param2);
@@ -1735,26 +1729,23 @@ _edje_file_del(Edje *ed)
                {
                   free(rp->custom->set);
                   rp->custom->set = NULL;
-                  eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&rp->custom->p.map);
-#ifdef HAVE_EPHYSICS
-                  eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&rp->custom->p.physics);
+#ifdef EDJE_CALC_CACHE
+                  _edje_calc_params_clear(&(rp->custom->p));
 #endif
                }
              eina_mempool_free(_edje_real_part_state_mp, rp->custom);
 
              if (rp->current)
                {
-                  eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&rp->current->map);
-#ifdef HAVE_EPHYSICS
-                  eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&rp->current->physics);
+#ifdef EDJE_CALC_CACHE
+                  _edje_calc_params_clear(rp->current);
 #endif
                   free(rp->current);
                   rp->current = NULL;
                }
              _edje_unref(ed);
-             eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&rp->param1.p.map);
-#ifdef HAVE_EPHYSICS
-             eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&rp->param1.p.physics);
+#ifdef EDJE_CALC_CACHE
+             _edje_calc_params_clear(&(rp->param1.p));
 #endif
              eina_mempool_free(_edje_real_part_mp, rp);
              ed->table_parts[i] = NULL;
