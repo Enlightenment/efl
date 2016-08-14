@@ -2209,9 +2209,6 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
      + TO_INT(SCALE(fill->pos_rel_y, fh));
    params->type.common.fill.h = fill->abs_y
      + TO_INT(SCALE(fill->rel_y, fh));
-
-   params->type.common.fill.angle = fill->angle;
-   params->type.common.fill.spread = fill->spread;
 }
 
 static void

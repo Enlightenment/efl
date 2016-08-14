@@ -378,7 +378,6 @@ static void st_collections_group_parts_part_description_fill_origin_relative(voi
 static void st_collections_group_parts_part_description_fill_origin_offset(void);
 static void st_collections_group_parts_part_description_fill_size_relative(void);
 static void st_collections_group_parts_part_description_fill_size_offset(void);
-static void st_collections_group_parts_part_description_fill_spread(void);
 static void st_collections_group_parts_part_description_fill_type(void);
 static void st_collections_group_parts_part_description_color_class(void);
 static void st_collections_group_parts_part_description_color(void);
@@ -868,7 +867,6 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.fill.origin.offset", st_collections_group_parts_part_description_fill_origin_offset},
      {"collections.group.parts.part.description.fill.size.relative", st_collections_group_parts_part_description_fill_size_relative},
      {"collections.group.parts.part.description.fill.size.offset", st_collections_group_parts_part_description_fill_size_offset},
-     {"collections.group.parts.part.description.fill.spread", st_collections_group_parts_part_description_fill_spread},
      {"collections.group.parts.part.description.fill.type", st_collections_group_parts_part_description_fill_type},
      {"collections.group.parts.part.description.color_class", st_collections_group_parts_part_description_color_class},
      {"collections.group.parts.part.description.color", st_collections_group_parts_part_description_color},
@@ -1640,8 +1638,6 @@ _edje_part_description_fill(Edje_Part_Description_Spec_Fill *fill)
    fill->pos_abs_y = 0;
    fill->rel_y = FROM_DOUBLE(1.0);
    fill->abs_y = 0;
-   fill->angle = 0;
-   fill->spread = 0;
    fill->type = EDJE_FILL_TYPE_SCALE;
 }
 
@@ -9645,54 +9641,6 @@ st_collections_group_parts_part_description_fill_smooth(void)
      }
 
    fill->smooth = parse_bool(0);
-}
-
-/**
-    @page edcref
-
-    @property
-        spread
-    @parameters
-        TODO
-    @effect
-        TODO
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_fill_spread(void)
-{
-#if 0
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description_Image *ed;
-#endif
-
-   check_arg_count(1);
-
-   /* XXX this will need to include IMAGES when spread support is added to evas images */
-   {
-      ERR("parse error %s:%i. fill.spread not supported yet.",
-	  file_in, line - 1);
-      exit(-1);
-   }
-
-#if 0
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-
-   ep = pc->parts[pc->parts_count - 1];
-
-   if (ep->type != EDJE_PART_TYPE_IMAGE)
-     {
-        ERR("parse error %s:%i. image attributes in non-IMAGE part.",
-            file_in, line - 1);
-        exit(-1);
-     }
-
-   ed = (Edje_Part_Description_Image*) ep->default_desc;
-   if (ep->other.desc_count) ed = (Edje_Part_Description_Image*)  ep->other.desc[ep->other.desc_count - 1];
-
-   ed->image.fill.spread = parse_int_range(0, 0, 1);
-#endif
 }
 
 /**

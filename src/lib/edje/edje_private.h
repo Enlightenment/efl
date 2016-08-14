@@ -1321,8 +1321,6 @@ struct _Edje_Part_Description_Spec_Fill
    int            abs_x; /* size of fill added to relative fill */
    int            pos_abs_y; /* fill offset y added to fill offset */
    int            abs_y; /* size of fill added to relative fill */
-   int            angle; /* angle of fill -- currently only used by grads */
-   int            spread; /* spread of fill -- currently only used by grads */
    char           smooth; /* fill with smooth scaling or not */
    unsigned char  type; /* fill coordinate from container (SCALE) or from source image (TILE) */
 };
@@ -1798,7 +1796,6 @@ struct _Edje_Calc_Params_Physics
 
 struct _Edje_Calc_Params
 {
-   //   int              x, y, w, h; // 16
    struct {
       FLOAT_T       x, y, w, h; // 32
    } eval;
@@ -1808,43 +1805,41 @@ struct _Edje_Calc_Params
    Edje_Color       color; // 4
    union {
       struct {
-	 struct {
-	    int           x, y, w, h; // 16
-	    int           angle; // 4
-	    int           spread; // 4
-	 } fill; // 24
+         struct {
+            int           x, y, w, h; // 16
+         } fill; // 16
 
-	 union {
-	    struct {
-	       int           l, r, t, b; // 16
-               FLOAT_T       border_scale_by;
-	    } image; // 16
-	 } spec; // 16
-      } common; // 40
+         union {
+            struct {
+               unsigned short l, r, t, b; // 8
+               FLOAT_T        border_scale_by; // 8
+            } image; // 16
+         } spec; // 16
+      } common; // 32
       struct {
-	 Edje_Alignment align; /* text alignment within bounds */ // 16
-	 double         ellipsis; // 8
-	 int            size; // 4
-	 Edje_Color     color2, color3; // 8
+         Edje_Alignment align; /* text alignment within bounds */ // 16
+         double         ellipsis; // 8
+         int            size; // 4
+         Edje_Color     color2, color3; // 8
       } text; // 36
       struct {
-	 int            frame; //4
-	 FLOAT_T        data[6];
-         Edje_3D_Vec    point;
-         Edje_3D_Vec    scale_3d;
-      } node; // 4
-   } type; // 40
-   const Edje_Calc_Params_Map *map; // 88
+         FLOAT_T        data[6]; // 48
+         Edje_3D_Vec    point; // 24
+         Edje_3D_Vec    scale_3d; // 24
+         int            frame; // 4
+      } node; // 100
+   } type; // 100
+   const Edje_Calc_Params_Map *map; // 4/8
 #ifdef HAVE_EPHYSICS
-   const Edje_Calc_Params_Physics *physics; // 90
+   const Edje_Calc_Params_Physics *physics; // 4/8
 #endif
-   Edje_Real_Part  *clip_to; /* state clip override @since 1.15 */
+   Edje_Real_Part  *clip_to; /* state clip override @since 1.15 */ // 4/8
    unsigned char    persp_on : 1;
    unsigned char    lighted : 1;
    unsigned char    mapped : 1;
    unsigned char    visible : 1;
    unsigned char    smooth : 1; // 1
-}; // 271
+}; // 197/209(rounded up for alignment: 200/212)
 
 struct _Edje_Real_Part_Set
 {

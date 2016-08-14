@@ -6366,8 +6366,6 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
         img->image.fill.pos_abs_y = 0;
         img->image.fill.rel_y = 1.0;
         img->image.fill.abs_y = 0;
-        img->image.fill.angle = 0;
-        img->image.fill.spread = 0;
         img->image.fill.type = EDJE_FILL_TYPE_SCALE;
      }
    else if (rp->part->type == EDJE_PART_TYPE_PROXY)
@@ -6390,8 +6388,6 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
         pro->proxy.fill.pos_abs_y = 0;
         pro->proxy.fill.rel_y = 1.0;
         pro->proxy.fill.abs_y = 0;
-        pro->proxy.fill.angle = 0;
-        pro->proxy.fill.spread = 0;
         pro->proxy.fill.type = EDJE_FILL_TYPE_SCALE;
      }
    else if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)

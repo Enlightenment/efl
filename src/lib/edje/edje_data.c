@@ -1474,8 +1474,6 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.pos_abs_y", image.fill.pos_abs_y, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.rel_y", image.fill.rel_y, EDJE_T_FLOAT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.abs_y", image.fill.abs_y, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.angle", image.fill.angle, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.spread", image.fill.spread, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.type", image.fill.type, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.filter.code", filter.code, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_LIST_STRING(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.filter.sources", filter.sources); // @since 1.15
@@ -1498,8 +1496,6 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.pos_abs_y", proxy.fill.pos_abs_y, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.rel_y", proxy.fill.rel_y, EDJE_T_FLOAT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.abs_y", proxy.fill.abs_y, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.angle", proxy.fill.angle, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.spread", proxy.fill.spread, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.type", proxy.fill.type, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.source_visible", proxy.source_visible, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.source_clip", proxy.source_clip, EET_T_CHAR);
