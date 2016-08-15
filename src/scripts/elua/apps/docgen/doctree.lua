@@ -9,13 +9,31 @@ local writer
 
 local M = {}
 
-local Node = util.Object:clone {
+M.Node = util.Object:clone {
     scope = {
         PUBLIC = eolian.object_scope.PUBLIC,
         PRIVATE = eolian.object_scope.PRIVATE,
         PROTECTED = eolian.object_scope.PROTECTED
-    }
+    },
+
+    nspaces_get = function(self, subn, root)
+        local tbl = self:namespaces_get()
+        -- temporary workaround
+        if type(tbl) ~= "table" then
+            tbl = tbl:to_array()
+        end
+        for i = 1, #tbl do
+            tbl[i] = tbl[i]:lower()
+        end
+        table.insert(tbl, 1, subn)
+        tbl[#tbl + 1] = self:name_get():lower()
+        if root then
+            tbl[#tbl + 1] = true
+        end
+        return tbl
+    end
 }
+local Node = M.Node
 
 local gen_doc_refd = function(str)
     if not writer then
@@ -212,16 +230,7 @@ M.Class = Node:clone {
     end,
 
     nspaces_get = function(self, root)
-        local tbl = self:namespaces_get()
-        for i = 1, #tbl do
-            tbl[i] = tbl[i]:lower()
-        end
-        table.insert(tbl, 1, self:type_str_get())
-        tbl[#tbl + 1] = self:name_get():lower()
-        if root then
-            tbl[#tbl + 1] = true
-        end
-        return tbl
+        return M.Node.nspaces_get(self, self:type_str_get(), root)
     end,
 
     -- static getters

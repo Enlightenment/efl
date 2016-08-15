@@ -315,7 +315,7 @@ local build_reftable = function(f, title, ctitle, ctype, t, iscl)
     for i, v in ipairs(t) do
         nt[#nt + 1] = {
             writer.Buffer():write_link(
-                iscl and v:nspaces_get() or eomap.gen_nsp_eo(v, ctype, true),
+                iscl and v:nspaces_get() or dtree.Node.nspaces_get(v, ctype, true),
                 v:full_name_get()
             ):finish(),
             (iscl and v:doc_get() or dtree.Doc(v:documentation_get())):brief_get()
@@ -760,7 +760,7 @@ local write_tsigs = function(f, tp)
 end
 
 local build_alias = function(tp)
-    local f = writer.Writer(eomap.gen_nsp_eo(tp, "alias"))
+    local f = writer.Writer(dtree.Node.nspaces_get(tp, "alias"))
     stats.check_alias(tp)
 
     write_tsigs(f, tp)
@@ -773,7 +773,7 @@ local build_alias = function(tp)
 end
 
 local build_struct = function(tp)
-    local f = writer.Writer(eomap.gen_nsp_eo(tp, "struct"))
+    local f = writer.Writer(dtree.Node.nspaces_get(tp, "struct"))
     stats.check_struct(tp)
 
     write_tsigs(f, tp)
@@ -798,7 +798,7 @@ local build_struct = function(tp)
 end
 
 local build_enum = function(tp)
-    local f = writer.Writer(eomap.gen_nsp_eo(tp, "enum"))
+    local f = writer.Writer(dtree.Node.nspaces_get(tp, "enum"))
     stats.check_enum(tp)
 
     write_tsigs(f, tp)
@@ -823,7 +823,7 @@ local build_enum = function(tp)
 end
 
 local build_variable = function(v, constant)
-    local f = writer.Writer(eomap.gen_nsp_eo(v, constant and "constant" or "global"))
+    local f = writer.Writer(dtree.Node.nspaces_get(v, constant and "constant" or "global"))
     if constant then
         stats.check_constant(v)
     else

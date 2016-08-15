@@ -38,19 +38,6 @@ local decl_to_nspace = function(decl)
     end
 end
 
-M.gen_nsp_eo = function(eobj, subn, root)
-    local tbl = eobj:namespaces_get():to_array()
-    for i = 1, #tbl do
-        tbl[i] = tbl[i]:lower()
-    end
-    table.insert(tbl, 1, subn)
-    tbl[#tbl + 1] = eobj:name_get():lower()
-    if root then
-        tbl[#tbl + 1] = true
-    end
-    return tbl
-end
-
 M.gen_nsp_ref = function(str, root)
     local decl = eolian.declaration_get_by_name(str)
     if decl then
