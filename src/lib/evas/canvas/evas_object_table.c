@@ -36,6 +36,7 @@ struct _Evas_Object_Table_Option
 
 struct _Evas_Object_Table_Cache
 {
+   int ref;
    struct {
       struct {
          double h, v;
@@ -183,6 +184,7 @@ _evas_object_table_cache_alloc(int cols, int rows)
         return NULL;
      }
 
+   cache->ref = 1;
    cache->weights.h = (double *)(cache + 1);
    cache->weights.v = (double *)(cache->weights.h + cols);
    cache->sizes.h = (Evas_Coord *)(cache->weights.v + rows);
@@ -196,7 +198,8 @@ _evas_object_table_cache_alloc(int cols, int rows)
 static void
 _evas_object_table_cache_free(Evas_Object_Table_Cache *cache)
 {
-   free(cache);
+   cache->ref--;
+   if (cache->ref == 0) free(cache);
 }
 
 static void
@@ -643,6 +646,7 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Table_Data *priv
           return;
      }
    c = priv->cache;
+   c->ref++;
    _evas_object_table_cache_reset(priv);
 
    /* cache interesting data */
@@ -767,7 +771,7 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Table_Data *priv
 
    if ((c->total.min.w > 0) || (c->total.min.h > 0))
      evas_object_size_hint_min_set(o, c->total.min.w, c->total.min.h);
-
+   _evas_object_table_cache_free(c);
    // XXX hint max?
 }
 
@@ -783,6 +787,7 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Table_Data *pri
    c = priv->cache;
    if (!c) return;
 
+   c->ref++;
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
    /* handle horizontal */
@@ -871,6 +876,7 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Table_Data *pri
              if (rows) free(rows);
           }
      }
+   _evas_object_table_cache_free(c);
 }
 
 static void
