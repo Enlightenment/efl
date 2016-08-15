@@ -143,8 +143,8 @@ inline v8::Local<v8::Value>
 get_value_from_c(Eo* v, v8::Isolate* isolate, const char* class_name)
 {
   auto ctor = ::efl::eina::js::get_class_constructor(class_name);
-  auto obj = new_v8_external_instance(ctor, ::eo_ref(v), isolate);
-  efl::eina::js::make_weak(isolate, obj, [v]{ ::eo_unref(v); });
+  auto obj = new_v8_external_instance(ctor, ::efl_ref(v), isolate);
+  efl::eina::js::make_weak(isolate, obj, [v]{ ::efl_unref(v); });
   return obj;
 }
 
@@ -153,8 +153,8 @@ get_value_from_c(const Eo* v, v8::Isolate* isolate, const char* class_name)
 {
   // TODO: implement const objects?
   auto ctor = ::efl::eina::js::get_class_constructor(class_name);
-  auto obj = new_v8_external_instance(ctor, ::eo_ref(v), isolate);
-  efl::eina::js::make_weak(isolate, obj, [v]{ ::eo_unref(v); });
+  auto obj = new_v8_external_instance(ctor, ::efl_ref(v), isolate);
+  efl::eina::js::make_weak(isolate, obj, [v]{ ::efl_unref(v); });
   return obj;
 }
 

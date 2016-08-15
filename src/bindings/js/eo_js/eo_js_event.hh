@@ -97,7 +97,7 @@ inline eina::js::compatibility_return_type on_event(eina::js::compatibility_call
 
           event_callback_information* i = new event_callback_information
             {event, {isolate, eina::js::compatibility_cast<v8::Function>(f)}};
-          eo_event_callback_add(eo, event->event, event->event_callback, i);
+          efl_event_callback_add(eo, event->event, event->event_callback, i);
           efl::eina::js::make_weak(isolate, self, [i]{ delete i; });
         }
       else

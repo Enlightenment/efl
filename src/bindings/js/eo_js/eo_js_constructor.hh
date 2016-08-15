@@ -89,10 +89,10 @@ struct constructor_caller
     template <typename T, std::size_t... I>
     void aux(T function, eina::index_sequence<I...>) const
     {
-      function(obj_eo_self, get_value<T, I>((*args)[I + *current], args->GetIsolate())...);
+      function(obj_efl_self, get_value<T, I>((*args)[I + *current], args->GetIsolate())...);
     }
 
-    Eo* obj_eo_self;
+    Eo* obj_efl_self;
     int* current;
     eina::js::compatibility_callback_info_pointer args;
   };
@@ -106,10 +106,10 @@ struct constructor_caller
           {
             Eo* parent = eina::js::get_value_from_javascript
               (args[0], args.GetIsolate(), "", eina::js::value_tag<Eo*>());
-            Eo* eo = eo_add
+            Eo* eo = efl_add
               (klass
                , parent
-               , eina::_mpl::for_each(constructors, call{eo_self, &current_index, &args})
+               , eina::_mpl::for_each(constructors, call{efl_self, &current_index, &args})
                );
             if (!eo)
               throw std::logic_error("Failed to create object.");
@@ -118,7 +118,7 @@ struct constructor_caller
             efl::eina::js::make_weak(args.GetIsolate(), self
                                      , [eo]
                                      {
-                                       eo_unref(eo);
+                                       efl_unref(eo);
                                      });
           }
         catch(std::logic_error const& error)
@@ -137,12 +137,12 @@ struct constructor_caller
     return eina::js::compatibility_return();
   }
   
-  Eo_Class const* klass;
+  Efl_Class const* klass;
   std::tuple<F...> constructors;
 };
 
 template <typename... F>
-v8::Handle<v8::Value> constructor_data(v8::Isolate* isolate, Eo_Class const* klass, F... f)
+v8::Handle<v8::Value> constructor_data(v8::Isolate* isolate, Efl_Class const* klass, F... f)
 {
   return eina::js::compatibility_new<v8::External>
     (isolate

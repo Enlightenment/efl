@@ -328,7 +328,7 @@ _function_is_generatable(const Eolian_Function *function, Eolian_Function_Type f
         if (!_type_is_generatable(tp, add_pointer))
           return false;
 
-        if (eolian_type_is_ref(tp) && _function_belongs_to(function, "Eo.Base"))
+        if (eolian_type_is_ref(tp) && _function_belongs_to(function, "Efl.Object"))
           return false;
      }
 
@@ -655,7 +655,7 @@ int main(int argc, char** argv)
         , last; first != last; ++first)
      {
         std::stringstream ss;
-        bool should_reject_ref = file_basename == "eo_base.eo";
+        bool should_reject_ref = file_basename == "efl_object.eo";
         bool has_ref_field = false;
 
         auto tpd = &*first;
@@ -669,7 +669,7 @@ int main(int argc, char** argv)
              EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Could not get struct type name";
              continue;
           }
-        else if(strcmp(struct_type_full_name, "Eo.Callback_Array_Item") == 0)
+        else if(strcmp(struct_type_full_name, "Efl.Callback_Array_Item") == 0)
           continue;
         std::string struct_c_name = struct_type_full_name;
         std::replace(struct_c_name.begin(), struct_c_name.end(), '.', '_');

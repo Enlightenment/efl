@@ -72,6 +72,7 @@ EAPI void register_ecore_audio_out_pulse(v8::Handle<v8::Object> global, v8::Isol
 EAPI void register_ecore_audio_out_sndfile(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 
 namespace efl {
+EAPI void register_object(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_animator(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_container(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_control(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -94,11 +95,6 @@ EAPI void register_image(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 namespace efl { namespace ui { namespace win {
 EAPI void register_standard(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }}}
-
-namespace eo {
-EAPI void register_abstract_class(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_base(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-}
 
 namespace efl { namespace canvas {
 EAPI void register_rectangle(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -314,8 +310,7 @@ EAPI void init(v8::Handle<v8::Object> exports)
         efl::register_player(exports, v8::Isolate::GetCurrent());
         efl::register_text(exports, v8::Isolate::GetCurrent());
         // efl::register_text_properties(exports, v8::Isolate::GetCurrent());
-        // eo::register_abstract_class(exports, v8::Isolate::GetCurrent());
-        eo::register_base(exports, v8::Isolate::GetCurrent());
+        efl::register_object(exports, v8::Isolate::GetCurrent());
 #if 1
         // evas::register_box(exports, v8::Isolate::GetCurrent());
         // evas::register_canvas(exports, v8::Isolate::GetCurrent());

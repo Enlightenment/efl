@@ -49,7 +49,7 @@ using efl::eina::js::compatibility_new;
   compatibility_return_type js_benchmark_object_##name##arg(compatibility_callback_info_type) \
   {                                                                     \
     Eina_Counter* counter = eina_counter_new("counter");                \
-    Eo* object = eo_add(BENCHMARK_OBJECT_CLASS, NULL);                  \
+    Eo* object = efl_add(BENCHMARK_OBJECT_CLASS, NULL);                  \
     Eina_List* l = NULL;                                                \
     (void)l;                                                            \
     /* Warm */                                                          \
@@ -65,7 +65,7 @@ using efl::eina::js::compatibility_new;
       }                                                                 \
     eina_counter_stop(counter, 20000);                                  \
     fprintf(stderr, "%s", eina_counter_dump(counter));                  \
-    eo_unref(object);                                                   \
+    efl_unref(object);                                                   \
     return compatibility_return();                                      \
   }
 
@@ -83,7 +83,7 @@ void benchmark_object_module_init(v8::Handle<v8::Object> exports)
   try
     {
        eina_init();
-       eo_init();
+       efl_object_init();
        register_benchmark_object(exports, v8::Isolate::GetCurrent());
 #define JS_BENCHMARK_EXPORT(name)                                       \
        exports->Set(compatibility_new<v8::String>(nullptr, "benchmark_" #name "arg") \

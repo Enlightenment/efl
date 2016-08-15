@@ -185,7 +185,8 @@ lib_efl_js_libefl_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EIO_JS_CFLAGS@ \
 @ETHUMB_JS_CFLAGS@ \
 @EINA_CXX_CFLAGS@ \
-@ELEMENTARY_CFLAGS@
+@ELEMENTARY_CFLAGS@ \
+-D_EO_ADD_FALLBACK_FORCE=1
 lib_efl_js_libefl_js_la_LIBADD = @EFL_JS_LIBS@
 lib_efl_js_libefl_js_la_DEPENDENCIES = @EFL_JS_INTERNAL_LIBS@
 lib_efl_js_libefl_js_la_LIBTOOLFLAGS = --tag=disable-static

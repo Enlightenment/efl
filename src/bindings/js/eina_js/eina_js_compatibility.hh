@@ -158,14 +158,14 @@ T container_wrap(T&& v)
 inline ::efl::eo::concrete container_wrap(Eo* v)
 {
   if(v)
-    eo_ref(v);
+    efl_ref(v);
   return ::efl::eo::concrete{v};
 }
 
 inline ::efl::eo::concrete container_wrap(Eo const* v)
 {
   if (v)
-    eo_ref(v);
+    efl_ref(v);
   return ::efl::eo::concrete{const_cast<Eo*>(v)};
 }
 
@@ -929,8 +929,8 @@ compatibility_return_type cast_function(compatibility_callback_info_type args)
           char* class_name = *str;
 
           auto ctor = ::efl::eina::js::get_class_constructor(class_name);
-          auto obj = new_v8_external_instance(ctor, ::eo_ref(eo), isolate);
-          efl::eina::js::make_weak(isolate, obj, [eo]{ ::eo_unref(eo); });
+          auto obj = new_v8_external_instance(ctor, ::efl_ref(eo), isolate);
+          efl::eina::js::make_weak(isolate, obj, [eo]{ ::efl_unref(eo); });
           return compatibility_return(obj, args);
         }
       else

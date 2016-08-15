@@ -43,7 +43,7 @@ void eolian_js_module_init(v8::Handle<v8::Object> exports)
   try
     {
        eina_init();
-       eo_init();
+       efl_object_init();
        eolian_js_test_register_eolian_js_binding(exports);
        std::cerr << "registered" << std::endl;
     }
