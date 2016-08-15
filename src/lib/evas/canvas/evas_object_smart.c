@@ -219,29 +219,26 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
    Evas_Object_Protected_Data *smart = eo_data_scope_get(smart_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Smart_Data *member_o = NULL;
 
+   if ((!obj) || (!smart)) return;
    if (obj->delete_me)
      {
         CRI("Adding deleted object %p to smart obj %p", eo_obj, smart_obj);
-        abort();
         return;
      }
    if (smart->delete_me)
      {
         CRI("Adding object %p to deleted smart obj %p", eo_obj, smart_obj);
-        abort();
         return;
      }
    if (!smart->layer)
      {
         CRI("No evas surface associated with smart object (%p)", smart_obj);
-        abort();
         return;
      }
    if ((obj->layer && smart->layer) &&
        (obj->layer->evas != smart->layer->evas))
      {
         CRI("Adding object %p from Evas (%p) from another Evas (%p)", eo_obj, obj->layer->evas, smart->layer->evas);
-        abort();
         return;
      }
 
