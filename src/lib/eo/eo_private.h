@@ -123,6 +123,12 @@ struct _Eo_Object
      Eina_Bool manual_free:1;
 };
 
+/* How we search and store the implementations in classes. */
+#define DICH_CHAIN_LAST_BITS 5
+#define DICH_CHAIN_LAST_SIZE (1 << DICH_CHAIN_LAST_BITS)
+#define DICH_CHAIN1(x) ((x) >> DICH_CHAIN_LAST_BITS)
+#define DICH_CHAIN_LAST(x) ((x) & ((1 << DICH_CHAIN_LAST_BITS) - 1))
+
 /* FIXME: Change the type to something generic that makes sense for eo */
 typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
 
@@ -132,9 +138,15 @@ typedef struct
    const _Efl_Class *src;
 } op_type_funcs;
 
+typedef struct _Dich_Chain2
+{
+   op_type_funcs funcs[DICH_CHAIN_LAST_SIZE];
+   unsigned short refcount;
+} Dich_Chain2;
+
 struct _Dich_Chain1
 {
-   op_type_funcs *funcs;
+   Dich_Chain2 *chain2;
 };
 
 typedef struct

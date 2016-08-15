@@ -41,12 +41,6 @@ static inline void _efl_data_xunref_internal(_Eo_Object *obj, void *data, const 
 
 /* Start of Dich */
 
-/* How we search and store the implementations in classes. */
-#define DICH_CHAIN_LAST_BITS 5
-#define DICH_CHAIN_LAST_SIZE (1 << DICH_CHAIN_LAST_BITS)
-#define DICH_CHAIN1(x) ((x) >> DICH_CHAIN_LAST_BITS)
-#define DICH_CHAIN_LAST(x) ((x) & ((1 << DICH_CHAIN_LAST_BITS) - 1))
-
 
 /* We are substracting the mask here instead of "AND"ing because it's a hot path,
  * it should be a valid class at this point, and this lets the compiler do 1
@@ -58,11 +52,86 @@ static inline void _efl_data_xunref_internal(_Eo_Object *obj, void *data, const 
       })
 
 static inline void
+_vtable_chain2_unref(Dich_Chain2 *chain)
+{
+   if (--(chain->refcount) == 0)
+     {
+        free(chain);
+     }
+}
+
+static inline void
 _vtable_chain_alloc(Dich_Chain1 *chain1)
 {
-   if (!chain1->funcs)
+   chain1->chain2 = calloc(1, sizeof(*(chain1->chain2)));
+   chain1->chain2->refcount = 1;
+}
+
+static inline void _vtable_chain_write_prepare(Dich_Chain1 *dst);
+
+static inline void
+_vtable_chain_merge(Dich_Chain1 *dst, const Dich_Chain1 *src)
+{
+   Eina_Bool writeable = EINA_FALSE;
+   size_t j;
+   const op_type_funcs *sf = src->chain2->funcs;
+   op_type_funcs *df = dst->chain2->funcs;
+
+   if (df == sf)
      {
-        chain1->funcs = calloc(DICH_CHAIN_LAST_SIZE, sizeof(*(chain1->funcs)));
+        /* Skip if the chain is the same. */
+        return;
+     }
+
+   for (j = 0 ; j < DICH_CHAIN_LAST_SIZE ; j++, df++, sf++)
+     {
+        if (sf->func && memcmp(df, sf, sizeof(*df)))
+          {
+             if (!writeable)
+               {
+                  _vtable_chain_write_prepare(dst);
+                  df = dst->chain2->funcs + j;
+               }
+
+             memcpy(df, sf, sizeof(*df));
+          }
+     }
+}
+
+static inline void
+_vtable_chain_write_prepare(Dich_Chain1 *dst)
+{
+   if (!dst->chain2)
+     {
+        _vtable_chain_alloc(dst);
+        return;
+     }
+   else if (dst->chain2->refcount == 1)
+     {
+        /* We own it, no need to duplicate */
+        return;
+     }
+
+   Dich_Chain1 old;
+   old.chain2 = dst->chain2;
+
+   _vtable_chain_alloc(dst);
+   _vtable_chain_merge(dst, &old);
+
+   _vtable_chain2_unref(old.chain2);
+}
+
+static inline void
+_vtable_chain_copy_ref(Dich_Chain1 *dst, const Dich_Chain1 *src)
+{
+   if (dst->chain2)
+     {
+        _vtable_chain_merge(dst, src);
+     }
+   else
+     {
+        dst->chain2 = src->chain2;
+        dst->chain2->refcount++;
      }
 }
 
@@ -74,21 +143,9 @@ _vtable_copy_all(Eo_Vtable *dst, const Eo_Vtable *src)
    Dich_Chain1 *dc1 = dst->chain;
    for (i = 0 ; i < src->size ; i++, sc1++, dc1++)
      {
-        if (sc1->funcs)
+        if (sc1->chain2)
           {
-             size_t j;
-
-             _vtable_chain_alloc(dc1);
-
-             const op_type_funcs *sf = sc1->funcs;
-             op_type_funcs *df = dc1->funcs;
-             for (j = 0 ; j < DICH_CHAIN_LAST_SIZE ; j++, df++, sf++)
-               {
-                  if (sf->func)
-                    {
-                       memcpy(df, sf, sizeof(*df));
-                    }
-               }
+             _vtable_chain_copy_ref(dc1, sc1);
           }
      }
 }
@@ -100,9 +157,9 @@ _vtable_func_get(const Eo_Vtable *vtable, Efl_Object_Op op)
    if (EINA_UNLIKELY(idx1 >= vtable->size))
       return NULL;
    Dich_Chain1 *chain1 = &vtable->chain[idx1];
-   if (EINA_UNLIKELY(!chain1->funcs))
+   if (EINA_UNLIKELY(!chain1->chain2))
       return NULL;
-   return &chain1->funcs[DICH_CHAIN_LAST(op)];
+   return &chain1->chain2->funcs[DICH_CHAIN_LAST(op)];
 }
 
 /* XXX: Only used for a debug message below. Doesn't matter that it's slow. */
@@ -135,8 +192,8 @@ _vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass, Efl_Object_Op op, e
    op_type_funcs *fsrc;
    size_t idx1 = DICH_CHAIN1(op);
    Dich_Chain1 *chain1 = &vtable->chain[idx1];
-   _vtable_chain_alloc(chain1);
-   fsrc = &chain1->funcs[DICH_CHAIN_LAST(op)];
+   _vtable_chain_write_prepare(chain1);
+   fsrc = &chain1->chain2->funcs[DICH_CHAIN_LAST(op)];
    if (fsrc->src == klass)
      {
         const _Efl_Class *op_kls = _eo_op_class_get(op);
@@ -159,8 +216,8 @@ _vtable_func_clean_all(Eo_Vtable *vtable)
 
    for (i = 0 ; i < vtable->size ; i++, chain1++)
      {
-        if (chain1->funcs)
-           free(chain1->funcs);
+        if (chain1->chain2)
+           _vtable_chain2_unref(chain1->chain2);
      }
    free(vtable->chain);
    vtable->chain = NULL;
@@ -1849,4 +1906,3 @@ efl_manual_free(Eo *obj_id)
 
    return EINA_TRUE;
 }
-
