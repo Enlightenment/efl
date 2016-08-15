@@ -94,11 +94,11 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts)
    variant_function = [&] (efl::eolian::grammar::attributes::type_def const& type)
      {
        if(efl::eolian::grammar::attributes::klass_name const*
-          name = efl::eolian::grammar::attributes::get<efl::eolian::grammar::attributes::klass_name>
+          name = efl::eina::get<efl::eolian::grammar::attributes::klass_name>
           (&type.original_type))
          klass_name_function(*name);
        else if(efl::eolian::grammar::attributes::complex_type_def const*
-              complex = efl::eolian::grammar::attributes::get<efl::eolian::grammar::attributes::complex_type_def>
+              complex = efl::eina::get<efl::eolian::grammar::attributes::complex_type_def>
                (&type.original_type))
          complex_function(*complex);
      };

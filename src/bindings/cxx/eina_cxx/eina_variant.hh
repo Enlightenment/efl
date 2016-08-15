@@ -1,5 +1,5 @@
-#ifndef EOLIAN_CXX_VARIANT_HH_
-#define EOLIAN_CXX_VARIANT_HH_
+#ifndef EINA_VARIANT_HH_
+#define EINA_VARIANT_HH_
 
 #include <cstddef>
 #include <algorithm>
@@ -7,10 +7,34 @@
 #include <type_traits>
 #include <tuple>
 
-#include "grammar/meta.hpp"
+namespace efl { namespace eina {
 
-namespace efl { namespace eolian { namespace grammar { namespace attributes {
+namespace _impl {
 
+template <typename T, typename U, typename...Others>
+struct is_one_of : std::conditional<std::is_same<T, U>::value
+                                    , std::is_same<T, U>
+                                    , is_one_of<T, Others...> >::type::type
+{};
+
+template <typename T, typename U>
+struct is_one_of<T, U> : std::is_same<T, U>
+{};
+
+
+template <std::size_t size, typename T, typename U, typename...Args>
+struct find_impl : find_impl<size+1, T, Args...>
+{};
+
+template <std::size_t size, typename T, typename...Args>
+struct find_impl<size, T, T, Args...> : std::integral_constant<std::size_t, size> {};
+  
+template <typename T, typename U, typename...Args>
+struct find : find_impl<0u, T, U, Args...>
+{};
+
+}
+    
 template <std::size_t N, std::size_t L, typename Tuple>
 struct call_visitor
 {
@@ -133,9 +157,9 @@ struct variant
 
    template <typename T>
    variant(T object,
-           typename std::enable_if<meta::is_one_of
+           typename std::enable_if<_impl::is_one_of
            <typename std::remove_cv<typename std::remove_reference<T>::type>::type, Args...>::value>::type* = 0)
-     : type(meta::find<typename std::remove_cv<typename std::remove_reference<T>::type>::type, Args...>::value)
+     : type(_impl::find<typename std::remove_cv<typename std::remove_reference<T>::type>::type, Args...>::value)
    {
       construct(object);
    }
@@ -212,11 +236,7 @@ private:
      new (&buffer) T(std::move(object));
    }
   
-   typedef typename std::aligned_storage
-     <
-        meta::max<sizeof(Args)...>::value
-      , meta::max<std::alignment_of<Args>::value...>::value
-     >::type buffer_type;
+   typedef typename std::aligned_union<1, Args...>::type buffer_type;
 
    friend bool operator==(variant<Args...> const& lhs, variant<Args...> const& rhs)
    {
@@ -239,19 +259,19 @@ inline bool operator!=(variant<Args...>const& lhs, variant<Args...> const& rhs)
 }
 
 template <typename T, typename...Args>
-T* get(variant<Args...>* variant, typename std::enable_if<meta::is_one_of
+T* get(variant<Args...>* variant, typename std::enable_if<_impl::is_one_of
        <typename std::remove_cv<typename std::remove_reference<T>::type>::type, Args...>::value>::type* = 0)
 {
    return variant->visit(get_visitor<T>{});
 }
 template <typename T, typename...Args>
-T const* get(variant<Args...>const* variant, typename std::enable_if<meta::is_one_of
+T const* get(variant<Args...>const* variant, typename std::enable_if<_impl::is_one_of
        <typename std::remove_cv<typename std::remove_reference<T>::type>::type, Args...>::value>::type* = 0)
 {
    return variant->visit(get_visitor<T const>{});
 }
 template <typename T, typename...Args>
-T& get(variant<Args...>& variant, typename std::enable_if<meta::is_one_of
+T& get(variant<Args...>& variant, typename std::enable_if<_impl::is_one_of
        <typename std::remove_cv<typename std::remove_reference<T>::type>::type, Args...>::value>::type* = 0)
 {
    T* p = variant.visit(get_visitor<T>{});
@@ -261,7 +281,7 @@ T& get(variant<Args...>& variant, typename std::enable_if<meta::is_one_of
      throw std::logic_error("");
 }
 template <typename T, typename...Args>
-T const& get(variant<Args...>const& variant, typename std::enable_if<meta::is_one_of
+T const& get(variant<Args...>const& variant, typename std::enable_if<_impl::is_one_of
        <typename std::remove_cv<typename std::remove_reference<T>::type>::type, Args...>::value>::type* = 0)
 {
    T const* p = variant.visit(get_visitor<T const>{});
@@ -271,6 +291,6 @@ T const& get(variant<Args...>const& variant, typename std::enable_if<meta::is_on
      throw std::logic_error("");
 }
         
-} } } }
+} }
 
 #endif

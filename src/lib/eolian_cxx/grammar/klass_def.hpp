@@ -2,7 +2,6 @@
 #define EOLIAN_CXX_KLASS_DEF_HH
 
 #include "grammar/type_traits.hpp"
-#include "grammar/variant.hpp"
 #include "grammar/attributes.hpp"
 #include "grammar/qualifier_def.hpp"
 #include "grammar/string.hpp"
@@ -201,7 +200,7 @@ inline bool operator!=(complex_type_def const& lhs, complex_type_def const& rhs)
 
 struct type_def
 {
-   typedef attributes::variant<klass_name, regular_type_def, complex_type_def> variant_type;
+   typedef eina::variant<klass_name, regular_type_def, complex_type_def> variant_type;
    variant_type original_type;
    std::string c_type;
 
