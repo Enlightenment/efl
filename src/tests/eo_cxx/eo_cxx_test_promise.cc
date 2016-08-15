@@ -333,6 +333,541 @@ START_TEST(eo_cxx_future_composite_get)
 }
 END_TEST
 
+START_TEST(eo_cxx_future_composite_then_value)
+{
+
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+
+      Efl_Future *f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p2);
+
+      Efl_Future *f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+
+      Efl_Future *f3 = efl_future_all(f1, f2);
+      fail_if(!f3);
+      
+      efl::shared_future<int, int> future(eo_ref(f3));
+      efl::shared_future<int> rfuture;
+      
+      std::thread thread
+        ([&]
+         {
+            efl::ecore::main_loop_thread_safe_call_sync
+              ([&]
+               {
+                  rfuture = then
+                    (future, [] (int i1, int i2) -> int
+                     {
+                        ck_assert_int_eq(i1, 5);
+                        ck_assert_int_eq(i2, 42);
+                        return 42;
+                     }, [] (std::error_code)
+                     {
+                        throw std::bad_alloc();
+                     });
+               });
+            efl::ecore::main_loop_thread_safe_call_async
+              ([&]
+               {
+                  int* i1 = static_cast<int*>(malloc(sizeof(int)));
+                  *i1 = 5;
+                  efl_promise_value_set(p1, i1, &::free);
+                  int* i2 = static_cast<int*>(malloc(sizeof(int)));
+                  *i2 = 42;
+                  efl_promise_value_set(p2, i2, &::free);
+               });
+
+            int i;
+            i = rfuture.get();
+            ck_assert_int_eq(i, 42);
+            efl::ecore::main_loop_thread_safe_call_sync([] { ecore_main_loop_quit(); });
+         });
+
+      ecore_main_loop_begin();
+      thread.join();
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(eo_cxx_future_all_construct_and_destroy)
+{
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+  
+      Efl_Future *f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+  
+      Efl_Future *f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+
+      Efl_Future *f3 = efl_future_all(f1, f2);
+      fail_if(!f3);
+      
+      efl::shared_future<int> future1(eo_ref(f1))
+        , future2(eo_ref(f2));
+      efl::shared_future<int, int> future3 = all(future1, future2);
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(eo_cxx_future_all_wait)
+{
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+  
+      Efl_Future* f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p2);
+  
+      Efl_Future* f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+
+      efl::shared_future<int> future1(eo_ref(f1))
+        , future2(eo_ref(f2));
+      efl::shared_future<int, int> future3 = all(future1, future2);
+
+      std::thread thread([&]
+                         {
+                            efl::ecore::main_loop_thread_safe_call_sync([]{}); // wait for ecore_main_loop_begin() call to start
+                            efl::ecore::main_loop_thread_safe_call_async
+                              ([&]
+                               {
+                                  int* i1 = static_cast<int*>(malloc(sizeof(int)));
+                                  *i1 = 5;
+                                  efl_promise_value_set(p1, i1, & ::free);
+                                  int* i2 = static_cast<int*>(malloc(sizeof(int)));
+                                  *i2 = 42;
+                                  efl_promise_value_set(p2, i2, & ::free);
+                               });
+
+                            future3.wait();
+                            efl::ecore::main_loop_thread_safe_call_sync([] { ecore_main_loop_quit(); });
+                         });
+
+      ecore_main_loop_begin();
+   
+      thread.join();
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(eo_cxx_future_all_get)
+{
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+  
+      Efl_Future *f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p2);
+  
+      Efl_Future *f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+      
+      efl::shared_future<int> future1(eo_ref(f1))
+        , future2(eo_ref(f2));
+      efl::shared_future<int, int> future3 = all(future1, future2);
+
+      std::thread thread([&]
+                         {
+                            efl::ecore::main_loop_thread_safe_call_sync([]{}); // wait for ecore_main_loop_begin() call to start
+                            efl::ecore::main_loop_thread_safe_call_async
+                              ([&]
+                               {
+                                  int* i1 = static_cast<int*>(malloc(sizeof(int)));
+                                  *i1 = 5;
+                                  efl_promise_value_set(p1, i1, & ::free);
+                                  int* i2 = static_cast<int*>(malloc(sizeof(int)));
+                                  *i2 = 42;
+                                  efl_promise_value_set(p2, i2, & ::free);
+                               });
+                         
+                            std::tuple<int, int> tuple = future3.get();
+                            ck_assert_int_eq(std::get<0>(tuple), 5);
+                            ck_assert_int_eq(std::get<1>(tuple), 42);
+                            efl::ecore::main_loop_thread_safe_call_sync([] { ecore_main_loop_quit(); });
+                         });
+
+      ecore_main_loop_begin();
+   
+      thread.join();
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(eo_cxx_future_all_then_value)
+{
+
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+
+      Efl_Future *f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p2);
+
+      Efl_Future *f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+
+      efl::shared_future<int> future1(eo_ref(f1)), future2(eo_ref(f2));
+      efl::shared_future<int, int> future = all(future1, future2);
+      efl::shared_future<int> rfuture;
+      
+      std::thread thread
+        ([&]
+         {
+            efl::ecore::main_loop_thread_safe_call_sync
+              ([&]
+               {
+                  rfuture = then
+                    (future, [] (int i1, int i2) -> int
+                     {
+                        ck_assert_int_eq(i1, 5);
+                        ck_assert_int_eq(i2, 42);
+                        return 42;
+                     }, [] (std::error_code)
+                     {
+                        throw std::bad_alloc();
+                     });
+               });
+            efl::ecore::main_loop_thread_safe_call_async
+              ([&]
+               {
+                  int* i1 = static_cast<int*>(malloc(sizeof(int)));
+                  *i1 = 5;
+                  efl_promise_value_set(p1, i1, &::free);
+                  int* i2 = static_cast<int*>(malloc(sizeof(int)));
+                  *i2 = 42;
+                  efl_promise_value_set(p2, i2, &::free);
+               });
+
+            int i;
+            i = rfuture.get();
+            ck_assert_int_eq(i, 42);
+            efl::ecore::main_loop_thread_safe_call_sync([] { ecore_main_loop_quit(); });
+         });
+
+      ecore_main_loop_begin();
+      thread.join();
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+// race
+START_TEST(eo_cxx_future_race_construct_and_destroy)
+{
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+  
+      Efl_Future *f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+  
+      Efl_Future *f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+
+      efl::shared_future<int> future1(eo_ref(f1)), future2(eo_ref(f2));
+      efl::shared_future<double> future3(eo_ref(f2));
+      efl::shared_future<int> race1 = race(future1, future2);
+      efl::shared_future<efl::eina::variant<int, double>> race2 = race(future1, future3);
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(eo_cxx_future_race_wait)
+{
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+  
+      Efl_Future* f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p2);
+  
+      Efl_Future* f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+
+      efl::shared_future<int> future1(eo_ref(f1))
+        , future2(eo_ref(f2));
+      efl::shared_future<int> future3 = race(future1, future2);
+
+      std::thread thread([&]
+                         {
+                            efl::ecore::main_loop_thread_safe_call_sync([]{}); // wait for ecore_main_loop_begin() call to start
+                            efl::ecore::main_loop_thread_safe_call_async
+                              ([&]
+                               {
+                                  int* i1 = static_cast<int*>(malloc(sizeof(int)));
+                                  *i1 = 5;
+                                  efl_promise_value_set(p1, i1, & ::free);
+                               });
+
+                            future3.wait();
+                            efl::ecore::main_loop_thread_safe_call_sync([] { ecore_main_loop_quit(); });
+                         });
+
+      ecore_main_loop_begin();
+   
+      thread.join();
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(eo_cxx_future_race_get)
+{
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+  
+      Efl_Future *f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p2);
+  
+      Efl_Future *f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+      
+      efl::shared_future<int> future1(eo_ref(f1))
+        , future2(eo_ref(f2));
+      efl::shared_future<int> future3 = race(future1, future2);
+
+      std::thread thread([&]
+                         {
+                            efl::ecore::main_loop_thread_safe_call_sync([]{}); // wait for ecore_main_loop_begin() call to start
+                            efl::ecore::main_loop_thread_safe_call_async
+                              ([&]
+                               {
+                                  int* i1 = static_cast<int*>(malloc(sizeof(int)));
+                                  *i1 = 5;
+                                  efl_promise_value_set(p1, i1, & ::free);
+                               });
+                         
+                            int value = future3.get();
+                            ck_assert_int_eq(value, 5);
+                            efl::ecore::main_loop_thread_safe_call_sync([] { ecore_main_loop_quit(); });
+                         });
+
+      ecore_main_loop_begin();
+   
+      thread.join();
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(eo_cxx_future_race_then_value)
+{
+
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+
+      Efl_Future *f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p2);
+
+      Efl_Future *f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+
+      efl::shared_future<int> future1(eo_ref(f1)), future2(eo_ref(f2));
+      efl::shared_future<int> future = race(future1, future2);
+      efl::shared_future<int> rfuture;
+      
+      std::thread thread
+        ([&]
+         {
+            efl::ecore::main_loop_thread_safe_call_sync
+              ([&]
+               {
+                  rfuture = then
+                    (future, [] (int i) -> int
+                     {
+                        ck_assert_int_eq(i, 5);
+                        return 42;
+                     }, [] (std::error_code)
+                     {
+                        throw std::bad_alloc();
+                     });
+               });
+            efl::ecore::main_loop_thread_safe_call_async
+              ([&]
+               {
+                  int* i1 = static_cast<int*>(malloc(sizeof(int)));
+                  *i1 = 5;
+                  efl_promise_value_set(p1, i1, &::free);
+               });
+
+            int i;
+            i = rfuture.get();
+            ck_assert_int_eq(i, 42);
+            efl::ecore::main_loop_thread_safe_call_sync([] { ecore_main_loop_quit(); });
+         });
+
+      ecore_main_loop_begin();
+      thread.join();
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(eo_cxx_future_race_variant_get)
+{
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+  
+      Efl_Future *f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p2);
+  
+      Efl_Future *f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+      
+      efl::shared_future<int> future1(eo_ref(f1));
+      efl::shared_future<double> future2(eo_ref(f2));
+      efl::shared_future<efl::eina::variant<int, double>> future3 = race(future1, future2);
+
+      std::thread thread([&]
+                         {
+                            efl::ecore::main_loop_thread_safe_call_sync([]{}); // wait for ecore_main_loop_begin() call to start
+                            efl::ecore::main_loop_thread_safe_call_async
+                              ([&]
+                               {
+                                  int* i1 = static_cast<int*>(malloc(sizeof(int)));
+                                  *i1 = 5;
+                                  efl_promise_value_set(p1, i1, & ::free);
+                               });
+                         
+                            efl::eina::variant<int, double> value = future3.get();
+                            ck_assert(efl::eina::get<int>(&value) != nullptr);
+                            ck_assert_int_eq(efl::eina::get<int>(value), 5);
+                            efl::ecore::main_loop_thread_safe_call_sync([] { ecore_main_loop_quit(); });
+                         });
+
+      ecore_main_loop_begin();
+   
+      thread.join();
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(eo_cxx_future_race_variant_then_value)
+{
+
+   ecore_init();
+
+   {
+      Efl_Promise *p1 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p1);
+
+      Efl_Future *f1 = efl_promise_future_get(p1);
+      fail_if(!f1);
+
+      Efl_Promise *p2 = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      fail_if(!p2);
+
+      Efl_Future *f2 = efl_promise_future_get(p2);
+      fail_if(!f2);
+
+      efl::shared_future<int> future1(eo_ref(f1));
+      efl::shared_future<double> future2(eo_ref(f2));
+      efl::shared_future<efl::eina::variant<int, double>> future = race(future1, future2);
+      efl::shared_future<int> rfuture;
+      
+      std::thread thread
+        ([&]
+         {
+            efl::ecore::main_loop_thread_safe_call_sync
+              ([&]
+               {
+                  rfuture = then
+                    (future, [] (efl::eina::variant<int, double> v) -> int
+                     {
+                        ck_assert(efl::eina::get<int>(&v) != nullptr);
+                        ck_assert_int_eq(efl::eina::get<int>(v), 5);
+                        return 42;
+                     }, [] (std::error_code)
+                     {
+                        throw std::bad_alloc();
+                     });
+               });
+            efl::ecore::main_loop_thread_safe_call_async
+              ([&]
+               {
+                  int* i1 = static_cast<int*>(malloc(sizeof(int)));
+                  *i1 = 5;
+                  efl_promise_value_set(p1, i1, &::free);
+               });
+
+            int i;
+            i = rfuture.get();
+            ck_assert_int_eq(i, 42);
+            efl::ecore::main_loop_thread_safe_call_sync([] { ecore_main_loop_quit(); });
+         });
+
+      ecore_main_loop_begin();
+      thread.join();
+   }
+   ecore_shutdown();
+}
+END_TEST
+
+
 void
 eo_cxx_test_promise(TCase* tc)
 {
@@ -344,4 +879,18 @@ eo_cxx_test_promise(TCase* tc)
   tcase_add_test(tc, eo_cxx_future_composite_construct_and_destroy);
   tcase_add_test(tc, eo_cxx_future_composite_wait);
   tcase_add_test(tc, eo_cxx_future_composite_get);
+  tcase_add_test(tc, eo_cxx_future_composite_then_value);
+
+  tcase_add_test(tc, eo_cxx_future_all_construct_and_destroy);
+  tcase_add_test(tc, eo_cxx_future_all_wait);
+  tcase_add_test(tc, eo_cxx_future_all_get);
+  tcase_add_test(tc, eo_cxx_future_all_then_value);
+
+  tcase_add_test(tc, eo_cxx_future_race_construct_and_destroy);
+  tcase_add_test(tc, eo_cxx_future_race_wait);
+  tcase_add_test(tc, eo_cxx_future_race_get);
+  tcase_add_test(tc, eo_cxx_future_race_then_value);
+
+  tcase_add_test(tc, eo_cxx_future_race_variant_get);
+  tcase_add_test(tc, eo_cxx_future_race_variant_then_value);
 }

@@ -45,8 +45,7 @@ lib/eolian_cxx/grammar/sequence.hpp \
 lib/eolian_cxx/grammar/string.hpp \
 lib/eolian_cxx/grammar/type.hpp \
 lib/eolian_cxx/grammar/type_impl.hpp \
-lib/eolian_cxx/grammar/type_traits.hpp \
-lib/eolian_cxx/grammar/variant.hpp
+lib/eolian_cxx/grammar/type_traits.hpp
 
 ### Binary
 
