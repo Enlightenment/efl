@@ -4,15 +4,15 @@ local dtree = require("docgen.doctree")
 local M = {}
 
 M.pdir_to_str = {
-    [eolian.parameter_dir.IN] = "(in)",
-    [eolian.parameter_dir.OUT] = "(out)",
-    [eolian.parameter_dir.INOUT] = "(inout)"
+    [dtree.Parameter.IN] = "(in)",
+    [dtree.Parameter.OUT] = "(out)",
+    [dtree.Parameter.INOUT] = "(inout)"
 }
 
 M.scope_to_str = {
-    [eolian.object_scope.PUBLIC] = "public",
-    [eolian.object_scope.PRIVATE] = "private",
-    [eolian.object_scope.PROTECTED] = "protected"
+    [dtree.Node.scope.PUBLIC] = "public",
+    [dtree.Node.scope.PRIVATE] = "private",
+    [dtree.Node.scope.PROTECTED] = "protected"
 }
 
 local decl_to_nspace = function(decl)

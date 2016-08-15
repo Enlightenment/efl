@@ -1,4 +1,3 @@
-local eolian = require("eolian")
 local writer = require("docgen.writer")
 
 local M = {}
