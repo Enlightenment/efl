@@ -1092,22 +1092,13 @@ getopt.parse {
         dr = dutil.path_join(dr, dutil.nspace_to_path(rootns))
         dutil.init(dr)
         if #args == 0 then
-            if not dtree.scan_directory() then
-                error("failed scanning system directory")
-            end
+            dtree.scan_directory()
         else
             for i, p in ipairs(args) do
-                if not dtree.scan_directory(p) then
-                    error("failed scanning directory: " .. p)
-                end
+                dtree.scan_directory(p)
             end
         end
-        if not eolian.all_eot_files_parse() then
-            error("failed parsing eo type files")
-        end
-        if not eolian.all_eo_files_parse() then
-            error("failed parsing eo files")
-        end
+        dtree.parse()
         stats.init(not not opts["v"])
         local wfeatures = {
             notes = not opts["disable-notes"],

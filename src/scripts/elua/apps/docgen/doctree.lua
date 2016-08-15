@@ -428,9 +428,23 @@ M.Event = Node:clone {
 
 M.scan_directory = function(dir)
     if not dir then
-        return eolian.system_directory_scan()
+        if not eolian.system_directory_scan() then
+            error("failed scanning system directory")
+        end
+        return
     end
-    return eolian.directory_scan(dir)
+    if not eolian.directory_scan(dir) then
+        error("failed scanning directory: " .. dir)
+    end
+end
+
+M.parse = function()
+    if not eolian.all_eot_files_parse() then
+        error("failed parsing eo type files")
+    end
+    if not eolian.all_eo_files_parse() then
+        error("failed parsing eo files")
+    end
 end
 
 return M
