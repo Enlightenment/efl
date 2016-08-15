@@ -1,5 +1,3 @@
-local eolian = require("eolian")
-
 local is_verbose = false
 
 local M = {}
