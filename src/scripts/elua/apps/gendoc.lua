@@ -13,25 +13,12 @@ local dtree = require("docgen.doctree")
 
 -- eolian to various doc elements conversions
 
-local get_fallback_fdoc = function(f, ftype)
-    if not ftype then
-        local ft = f:type_get()
-        if ft == f.PROP_GET or ft == f.PROP_SET then
-            ftype = ft
-        end
-    end
-    if ftype then
-        return f:doc_get(ftype)
-    end
-    return nil
-end
-
 local get_brief_fdoc = function(f, ftype)
-    return f:doc_get(f.METHOD):brief_get(get_fallback_fdoc(f, ftype))
+    return f:doc_get(f.METHOD):brief_get(f:fallback_doc_get(ftype))
 end
 
 local get_full_fdoc = function(f, ftype)
-    return f:doc_get(f.METHOD):full_get(get_fallback_fdoc(f, ftype))
+    return f:doc_get(f.METHOD):full_get(f:fallback_doc_get(ftype))
 end
 
 local propt_to_type = {
@@ -423,7 +410,7 @@ end
 
 local write_full_fdoc = function(f, fn, ftype)
     f:write_raw(fn:doc_get(fn.METHOD)
-        :full_get(get_fallback_fdoc(fn, ftype), true))
+        :full_get(fn:fallback_doc_get(ftype), true))
 end
 
 local build_inherits

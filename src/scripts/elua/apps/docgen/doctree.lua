@@ -292,6 +292,19 @@ M.Function = Node:clone {
         return M.Doc(self.func:documentation_get(ft))
     end,
 
+    fallback_doc_get = function(self, ft)
+        if not ft then
+            local fft = self:type_get()
+            if fft == self.PROP_GET or fft == self.PROP_SET then
+                ft = fft
+            end
+        end
+        if ft then
+            return self:doc_get(ft)
+        end
+        return nil
+    end,
+
     is_virtual_pure = function(self, ft)
         return self.func:is_virtual_pure(ft)
     end,
