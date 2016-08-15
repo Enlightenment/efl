@@ -9,8 +9,6 @@ local keyref = require("docgen.keyref")
 local ser = require("docgen.serializers")
 local dtree = require("docgen.doctree")
 
--- eolian to various doc elements conversions
-
 local propt_to_type = {
     [dtree.Function.PROPERTY] = "(get, set)",
     [dtree.Function.PROP_GET] = "(get)",
@@ -786,7 +784,7 @@ local build_struct = function(tp)
     for i, fl in ipairs(tp:struct_fields_get()) do
         local buf = writer.Buffer()
         buf:write_b(fl:name_get())
-        buf:write_raw(" - ", dtree.Doc(fl:documentation_get()):full_get())
+        buf:write_raw(" - ", fl:doc_get():full_get())
         arr[#arr + 1] = buf:finish()
     end
     f:write_list(arr)
@@ -811,7 +809,7 @@ local build_enum = function(tp)
     for i, fl in ipairs(tp:enum_fields_get()) do
         local buf = writer.Buffer()
         buf:write_b(fl:name_get())
-        buf:write_raw(" - ", dtree.Doc(fl:documentation_get()):full_get())
+        buf:write_raw(" - ", fl:doc_get():full_get())
         arr[#arr + 1] = buf:finish()
     end
     f:write_list(arr)

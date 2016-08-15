@@ -221,7 +221,7 @@ M.check_struct = function(v)
         stat_incr("struct", false)
     end
     for i, fl in ipairs(v:struct_fields_get()) do
-        if not fl:documentation_get() then
+        if not fl:doc_get():exists() then
             print_missing(v:full_name_get() .. "." .. fl:name_get(), "struct field")
             stat_incr("sfield", true)
         else
@@ -238,7 +238,7 @@ M.check_enum = function(v)
         stat_incr("enum", false)
     end
     for i, fl in ipairs(v:enum_fields_get()) do
-        if not fl:documentation_get() then
+        if not fl:doc_get():exists() then
             print_missing(v:full_name_get() .. "." .. fl:name_get(), "enum field")
             stat_incr("efield", true)
         else

@@ -503,6 +503,48 @@ M.Event = Node:clone {
     end
 }
 
+M.StructField = Node:clone {
+    __ctor = function(self, fl)
+        self.field = fl
+        assert(self.field)
+    end,
+
+    name_get = function(self)
+        return self.field:name_get()
+    end,
+
+    doc_get = function(self)
+        return M.Doc(self.field:documentation_get())
+    end,
+
+    type_get = function(self)
+        return self.field:type_get()
+    end
+}
+
+M.EnumField = Node:clone {
+    __ctor = function(self, fl)
+        self.field = fl
+        assert(self.field)
+    end,
+
+    name_get = function(self)
+        return self.field:name_get()
+    end,
+
+    c_name_get = function(self)
+        return self.field:c_name_get()
+    end,
+
+    doc_get = function(self)
+        return M.Doc(self.field:documentation_get())
+    end,
+
+    value_get = function(self, force)
+        return self.field:value_get(force)
+    end
+}
+
 M.Typedecl = Node:clone {
     UNKNOWN = eolian.typedecl_type.UNKNOWN,
     STRUCT = eolian.typedecl_type.STRUCT,
@@ -530,19 +572,35 @@ M.Typedecl = Node:clone {
     end,
 
     struct_fields_get = function(self)
-        return self.typedecl:struct_fields_get():to_array()
+        local ret = {}
+        for fl in self.typedecl:struct_fields_get() do
+            ret[#ret + 1] = M.StructField(fl)
+        end
+        return ret
     end,
 
     struct_field_get = function(self, name)
-        return self.typedecl:struct_field_get(name)
+        local v = self.typedecl:struct_field_get(name)
+        if not v then
+            return nil
+        end
+        return M.StructField(v)
     end,
 
     enum_fields_get = function(self)
-        return self.typedecl:enum_fields_get():to_array()
+        local ret = {}
+        for fl in self.typedecl:enum_fields_get() do
+            ret[#ret + 1] = M.EnumField(fl)
+        end
+        return ret
     end,
 
     enum_field_get = function(self, name)
-        return self.typedecl:enum_field_get(name)
+        local v = self.typedecl:enum_field_get(name)
+        if not v then
+            return nil
+        end
+        return M.EnumField(v)
     end,
 
     enum_legacy_prefix_get = function(self)
