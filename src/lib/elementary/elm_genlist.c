@@ -4939,6 +4939,9 @@ _item_mouse_up_cb(void *data,
           }
      }
 
+   if (!it->selected && it->highlighted)
+     _item_unhighlight(it);
+
    if ((ev->flags != EVAS_BUTTON_NONE) ||
        (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) ||
        !it->base->still_in ||
