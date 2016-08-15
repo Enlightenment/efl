@@ -305,7 +305,7 @@ struct visitor_generate
             if(v.empty())
               return true;
             else if(attributes::complex_type_def const* complex
-               = attributes::get<attributes::complex_type_def>(&v))
+               = eina::get<attributes::complex_type_def>(&v))
               return default_match(*complex);
             else
               return v.visit(*this);

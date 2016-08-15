@@ -3,7 +3,6 @@
 
 #include "grammar/generator.hpp"
 #include "grammar/meta.hpp"
-#include "grammar/variant.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -11,7 +10,7 @@ template <typename L, typename R>
 struct alternative_generator
 {
    template <typename OutputIterator, typename...Args, typename Context>
-   bool generate(OutputIterator /*sink*/, attributes::variant<Args...> const& /*attribute*/, Context const& /*context*/) const
+   bool generate(OutputIterator /*sink*/, eina::variant<Args...> const& /*attribute*/, Context const& /*context*/) const
    {
       // return grammar::alternative_sequence(left, right, sink, attribute);
       return false;
