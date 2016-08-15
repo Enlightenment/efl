@@ -359,7 +359,7 @@ struct accessor<T, typename std::enable_if<std::is_base_of<::efl::eo::concrete, 
 
     // TODO Do we need to ref this Eo* instance ?
 
-    return mapped_type(::eo_ref(static_cast<Eo*>(p)));
+    return mapped_type(::efl_ref(static_cast<Eo*>(p)));
   }
 
   using _base_type::native_handle;

@@ -75,21 +75,21 @@ template <typename F>
 struct _event_deleter
 {
   _event_deleter(F* data, Eo* eo, ::Efl_Event_Cb cb, Efl_Event_Description const* description)
-    : _data(data), _eo( ::eo_ref(eo)), _cb(cb), _description(description)
+    : _data(data), _eo( ::efl_ref(eo)), _cb(cb), _description(description)
   {
   }
   ~_event_deleter()
   {
-    ::eo_unref(_eo);
+    ::efl_unref(_eo);
   }
   _event_deleter(_event_deleter const& other)
-    : _data(other._data), _eo( ::eo_ref(other._eo)), _cb(other._cb), _description(other._description)
+    : _data(other._data), _eo( ::efl_ref(other._eo)), _cb(other._cb), _description(other._description)
   {}
   _event_deleter& operator=(_event_deleter const& other)
   {
-    ::eo_unref( _eo);
+    ::efl_unref( _eo);
     _data = other._data;
-    _eo = ::eo_ref(other._eo);
+    _eo = ::efl_ref(other._eo);
     _cb = other._cb;
     _description = other._description;
     return *this;
@@ -137,7 +137,7 @@ void really_call_event(T& wrapper, F& f, void *info, std::false_type)
 template <typename T, typename P, typename F>
 void event_callback(void *data, ::Eo_Event const* event)
 {
-   T wrapper(::eo_ref(event->object));
+   T wrapper(::efl_ref(event->object));
    F *f = static_cast<F*>(data);
    _detail::really_call_event<T, P>
      (wrapper, *f, event->info, std::is_void<P>{});

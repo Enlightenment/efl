@@ -68,12 +68,12 @@ struct eo_clone_allocator
 {
   static Eo* allocate_clone(Eo const& v)
   {
-    return ::eo_ref(&v);
+    return ::efl_ref(&v);
   }
 
   static void deallocate_clone(Eo const* p)
   {
-    ::eo_unref(const_cast<Eo*>(p));
+    ::efl_unref(const_cast<Eo*>(p));
   }
 };
 

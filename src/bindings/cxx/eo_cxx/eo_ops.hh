@@ -12,49 +12,49 @@ namespace efl { namespace eo { namespace detail {
 inline void
 init()
 {
-   ::eo_init();
+   ::efl_object_init();
 }
 
 inline void
 shutdown()
 {
-   ::eo_shutdown();
+   ::efl_object_shutdown();
 }
 
 inline Eo*
 ref(Eo *obj)
 {
-   return ::eo_ref(obj);
+   return ::efl_ref(obj);
 }
 
 inline const Eo*
 ref(const Eo *obj)
 {
-   return ::eo_ref(obj);
+   return ::efl_ref(obj);
 }
 
 inline void
 unref(const Eo *obj)
 {
-   ::eo_unref(obj);
+   ::efl_unref(obj);
 }
 
 inline int
 ref_get(const Eo *obj)
 {
-   return ::eo_ref_get(obj);
+   return ::efl_ref_get(obj);
 }
 
 inline Eina_Bool
 isa(const Eo *obj, const Efl_Class *klass)
 {
-   return eo_isa(obj, klass);
+   return efl_isa(obj, klass);
 }
 
 inline Eo*
 add(const Efl_Class *klass, Eo *parent = NULL)
 {
-   Eo *eo = eo_add_ref(klass, parent);
+   Eo *eo = efl_add_ref(klass, parent);
    return eo;
 }
 

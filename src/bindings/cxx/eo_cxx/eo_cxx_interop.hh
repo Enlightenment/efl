@@ -333,7 +333,7 @@ template <typename T>
 Eo* convert_to_c_impl(T v, tag<Eo*, T, true>
                       , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
-  return ::eo_ref(v._eo_ptr());
+  return ::efl_ref(v._eo_ptr());
 }
 template <typename T>
 Eo const* convert_to_c_impl(T v, tag<Eo const*, T>
@@ -556,7 +556,7 @@ struct is_container<efl::eina::array<T>> : std::true_type {};
 template <typename T>
 T convert_to_event(void* value, typename std::enable_if< eo::is_eolian_object<T>::value>::type* = 0)
 {
-  return T{::eo_ref(static_cast<Eo*>(value))};
+  return T{::efl_ref(static_cast<Eo*>(value))};
 }
 template <typename T>
 T convert_to_event(void* value, typename std::enable_if< is_container<T>::value
@@ -748,15 +748,15 @@ struct is_callable<T, decltype(std::declval<T>() ())> : std::true_type {};
 inline void do_eo_add(Eo*& object, efl::eo::concrete const& parent
                       , Efl_Class const* klass)
 {
-  object = ::_eo_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
-  object = ::_eo_add_end(object, EINA_FALSE, EINA_FALSE);
+  object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
+  object = ::_efl_add_end(object, EINA_FALSE, EINA_FALSE);
 }
 template <typename F>
 void do_eo_add(Eo*& object, efl::eo::concrete const& parent, Efl_Class const* klass, F f)
 {
-  object = ::_eo_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
+  object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
   f();
-  object = ::_eo_add_end(object, EINA_FALSE, EINA_FALSE);
+  object = ::_efl_add_end(object, EINA_FALSE, EINA_FALSE);
 }
 
 template <typename D, typename T>

@@ -43,10 +43,10 @@ START_TEST(eina_cxx_eo_accessor_indexing)
 
   efl::eina::list<wrapper> list;
 
-  wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
-  wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
-  wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
-  wrapper const w4(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w1(efl_add(SIMPLE_CLASS, NULL));
+  wrapper const w2(efl_add(SIMPLE_CLASS, NULL));
+  wrapper const w3(efl_add(SIMPLE_CLASS, NULL));
+  wrapper const w4(efl_add(SIMPLE_CLASS, NULL));
 
   list.push_back(w1);
   list.push_back(w2);
@@ -97,10 +97,10 @@ START_TEST(eina_cxx_eo_accessor_iterator)
 
   efl::eina::list<wrapper> list;
 
-  wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
-  wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
-  wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
-  wrapper const w4(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w1(efl_add(SIMPLE_CLASS, NULL));
+  wrapper const w2(efl_add(SIMPLE_CLASS, NULL));
+  wrapper const w3(efl_add(SIMPLE_CLASS, NULL));
+  wrapper const w4(efl_add(SIMPLE_CLASS, NULL));
 
   list.push_back(w1);
   list.push_back(w2);
