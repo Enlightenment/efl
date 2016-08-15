@@ -13,14 +13,6 @@ local dtree = require("docgen.doctree")
 
 -- eolian to various doc elements conversions
 
-local get_brief_fdoc = function(f, ftype)
-    return f:doc_get(f.METHOD):brief_get(f:fallback_doc_get(ftype))
-end
-
-local get_full_fdoc = function(f, ftype)
-    return f:doc_get(f.METHOD):full_get(f:fallback_doc_get(ftype))
-end
-
 local propt_to_type = {
     [dtree.Function.PROPERTY] = "(get, set)",
     [dtree.Function.PROP_GET] = "(get)",
@@ -352,7 +344,8 @@ local build_functable = function(f, title, ctitle, cl, tp)
             lbuf:write_i(pt)
         end
         nt[#nt + 1] = {
-            lbuf:finish(), get_brief_fdoc(v)
+            lbuf:finish(),
+            v:doc_get(v.METHOD):brief_get(v:fallback_doc_get())
         }
         if v:type_str_get() == "property" then
             build_property(v, cl)
@@ -406,11 +399,6 @@ local build_ref = function()
         eolian.variable_all_globals_get():to_array())
 
     f:finish()
-end
-
-local write_full_fdoc = function(f, fn, ftype)
-    f:write_raw(fn:doc_get(fn.METHOD)
-        :full_get(fn:fallback_doc_get(ftype), true))
 end
 
 local build_inherits
