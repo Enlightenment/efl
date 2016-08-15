@@ -10,6 +10,11 @@ local writer
 local M = {}
 
 local Node = util.Object:clone {
+    scope = {
+        PUBLIC = eolian.object_scope.PUBLIC,
+        PRIVATE = eolian.object_scope.PRIVATE,
+        PROTECTED = eolian.object_scope.PROTECTED
+    }
 }
 
 local gen_doc_refd = function(str)

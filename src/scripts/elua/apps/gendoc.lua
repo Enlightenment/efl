@@ -106,14 +106,13 @@ local gen_func_namesig = function(fn, cl, buf, isprop, isget, isset)
     buf[#buf + 1] = "."
     buf[#buf + 1] = fn:name_get()
     buf[#buf + 1] = " "
-    local obs = eolian.object_scope
     if not isprop then
-        if fn:scope_get(fn.METHOD) == obs.PROTECTED then
+        if fn:scope_get(fn.METHOD) == fn.scope.PROTECTED then
             buf[#buf + 1] = "@protected "
         end
     elseif isget and isset then
-        if fn:scope_get(fn.PROP_GET) == obs.PROTECTED and
-           fn:scope_get(fn.PROP_SET) == obs.PROTECTED then
+        if fn:scope_get(fn.PROP_GET) == fn.scope.PROTECTED and
+           fn:scope_get(fn.PROP_SET) == fn.scope.PROTECTED then
             buf[#buf + 1] = "@protected "
         end
     end
@@ -231,7 +230,6 @@ end
 local gen_prop_sig = function(fn, cl)
     local buf = {}
     local fnt = fn:type_get()
-    local obs = eolian.object_scope
     local isget = (fnt == fn.PROPERTY or fnt == fn.PROP_GET)
     local isset = (fnt == fn.PROPERTY or fnt == fn.PROP_SET)
     gen_func_namesig(fn, cl, buf, true, isget, isset)
@@ -257,8 +255,8 @@ local gen_prop_sig = function(fn, cl)
 
     if isget then
         buf[#buf + 1] = "    get "
-        if fn:scope_get(fn.PROP_GET) == obs.PROTECTED and
-           fn:scope_get(fn.PROP_SET) ~= obs.PROTECTED then
+        if fn:scope_get(fn.PROP_GET) == fn.scope.PROTECTED and
+           fn:scope_get(fn.PROP_SET) ~= fn.scope.PROTECTED then
             buf[#buf + 1] = "@protected "
         end
         buf[#buf + 1] = "{"
@@ -278,8 +276,8 @@ local gen_prop_sig = function(fn, cl)
 
     if isset then
         buf[#buf + 1] = "    set "
-        if fn:scope_get(fn.PROP_SET) == obs.PROTECTED and
-           fn:scope_get(fn.PROP_GET) ~= obs.PROTECTED then
+        if fn:scope_get(fn.PROP_SET) == fn.scope.PROTECTED and
+           fn:scope_get(fn.PROP_GET) ~= fn.scope.PROTECTED then
             buf[#buf + 1] = "@protected "
         end
         buf[#buf + 1] = "{"
@@ -1012,9 +1010,9 @@ build_event = function(ev, cl)
     f:write_h("Signature", 3)
     local buf = { ev:name_get() }
 
-    if ev:scope_get() == eolian.object_scope.PRIVATE then
+    if ev:scope_get() == ev.scope.PRIVATE then
         buf[#buf + 1] = " @private"
-    elseif ev:scope_get() == eolian.object_scope.PROTECTED then
+    elseif ev:scope_get() == ev.scope.PROTECTED then
         buf[#buf + 1] = " @protected"
     end
 
