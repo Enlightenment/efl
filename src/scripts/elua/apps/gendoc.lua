@@ -390,10 +390,10 @@ local build_ref = function()
         eolian.typedecl_all_enums_get():to_array())
 
     build_reftable(f, "Constants", "Constant name", "constant",
-        eolian.variable_all_constants_get():to_array())
+        dtree.Variable.all_constants_get())
 
     build_reftable(f, "Globals", "Global name", "global",
-        eolian.variable_all_globals_get():to_array())
+        dtree.Variable.all_globals_get())
 
     f:finish()
 end
