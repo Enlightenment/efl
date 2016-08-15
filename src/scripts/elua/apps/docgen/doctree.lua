@@ -503,6 +503,65 @@ M.Event = Node:clone {
     end
 }
 
+M.Variable = Node:clone {
+    UNKNOWN = eolian.variable_type.UNKNOWN,
+    CONSTANT = eolian.variable_type.CONSTANT,
+    GLOBAL = eolian.variable_type.GLOBAL,
+
+    __ctor = function(self, var)
+        self.variable = var
+        assert(self.variable)
+    end,
+
+    type_get = function(self)
+        return self.variable:type_get()
+    end,
+
+    type_str_get = function(self)
+        local strs = {
+            [eolian.variable_type.CONSTANT] = "constant",
+            [eolian.variable_type.GLOBAL] = "global"
+        }
+        return strs[self:type_get()]
+    end,
+
+    doc_get = function(self)
+        return M.Doc(self.variable:documentation_get())
+    end,
+
+    file_get = function(self)
+        return self.variable:file_get()
+    end,
+
+    base_type_get = function(self)
+        return self.variable:base_type_get()
+    end,
+
+    value_get = function(self)
+        return self.variable:value_get()
+    end,
+
+    name_get = function(self)
+        return self.variable:name_get()
+    end,
+
+    full_name_get = function(self)
+        return self.variable:full_name_get()
+    end,
+
+    namespaces_get = function(self)
+        return self.variable:namespaces_get():to_array()
+    end,
+
+    is_extern = function(self)
+        return self.variable:is_extern()
+    end,
+
+    nspaces_get = function(self, root)
+        return M.Node.nspaces_get(self, self:type_str_get(), root)
+    end
+}
+
 local decl_to_nspace = function(decl)
     local dt = eolian.declaration_type
     local decltypes = {

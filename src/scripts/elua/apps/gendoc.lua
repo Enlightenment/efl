@@ -822,7 +822,7 @@ local build_enum = function(tp)
 end
 
 local build_variable = function(v, constant)
-    local f = writer.Writer(dtree.Node.nspaces_get(v, constant and "constant" or "global"))
+    local f = writer.Writer(v:nspaces_get())
     if constant then
         stats.check_constant(v)
     else
