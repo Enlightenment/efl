@@ -65,7 +65,7 @@ struct _Elm_Slideshow_Data
  */
 
 #define ELM_SLIDESHOW_DATA_GET(o, sd) \
-  Elm_Slideshow_Data * sd = eo_data_scope_get(o, ELM_SLIDESHOW_CLASS)
+  Elm_Slideshow_Data * sd = efl_data_scope_get(o, ELM_SLIDESHOW_CLASS)
 
 #define ELM_SLIDESHOW_DATA_GET_OR_RETURN(o, ptr)     \
   ELM_SLIDESHOW_DATA_GET(o, ptr);                    \
@@ -86,18 +86,18 @@ struct _Elm_Slideshow_Data
     }
 
 #define ELM_SLIDESHOW_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_SLIDESHOW_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_SLIDESHOW_CLASS))) \
     return
 
 #define ELM_SLIDESHOW_ITEM_CHECK(obj)                          \
-  if (EINA_UNLIKELY(!eo_isa(EO_OBJ(obj), ELM_SLIDESHOW_ITEM_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa(EO_OBJ(obj), ELM_SLIDESHOW_ITEM_CLASS))) \
     return
 
 #define ELM_SLIDESHOW_ITEM_CHECK_OR_RETURN(obj, ...)           \
-  if (EINA_UNLIKELY(!eo_isa(EO_OBJ(obj), ELM_SLIDESHOW_ITEM_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa(EO_OBJ(obj), ELM_SLIDESHOW_ITEM_CLASS))) \
     return __VA_ARGS__;
 
 #define ELM_SLIDESHOW_ITEM_DATA_GET(o, sd) \
-  Elm_Slideshow_Item_Data *sd = eo_data_scope_get(o, ELM_SLIDESHOW_ITEM_CLASS)
+  Elm_Slideshow_Item_Data *sd = efl_data_scope_get(o, ELM_SLIDESHOW_ITEM_CLASS)
 
 #endif

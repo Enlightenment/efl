@@ -60,14 +60,14 @@ elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Evas_Object *obj = NULL;
-   obj = eo_add(MY_CLASS, parent, elm_obj_code_widget_code_set(eo_self, code));
+   obj = efl_add(MY_CLASS, parent, elm_obj_code_widget_code_set(efl_self, code));
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_code_widget_efl_object_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, ELM_CODE_WIDGET_CLASS));
+   obj = efl_constructor(efl_super(obj, ELM_CODE_WIDGET_CLASS));
 
    pd->cursor_line = 1;
    pd->cursor_col = 1;
@@ -80,7 +80,7 @@ _elm_code_widget_efl_object_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
 EOLIAN static Eo *
 _elm_code_widget_efl_object_finalize(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   obj = efl_finalize(eo_super(obj, ELM_CODE_WIDGET_CLASS));
+   obj = efl_finalize(efl_super(obj, ELM_CODE_WIDGET_CLASS));
 
    if (pd->code)
      return obj;
@@ -102,7 +102,7 @@ _elm_code_widget_cell_size_get(Elm_Code_Widget *widget, Evas_Coord *width, Evas_
    Evas_Object *grid;
    Evas_Coord w = 0, h = 0;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    grid = eina_list_nth(pd->grids, 0);
    evas_object_textgrid_cell_size_get(grid, &w, &h);
@@ -119,7 +119,7 @@ _elm_code_widget_scroll_by(Elm_Code_Widget *widget, int by_x, int by_y)
    Elm_Code_Widget_Data *pd;
    Evas_Coord x, y, w, h;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    elm_scroller_region_get(pd->scroller, &x, &y, &w, &h);
    x += by_x;
@@ -143,7 +143,7 @@ _elm_code_widget_status_type_get(Elm_Code_Widget *widget, Elm_Code_Line *line, u
 {
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (line->status != ELM_CODE_STATUS_TYPE_DEFAULT)
      return line->status;
@@ -198,7 +198,7 @@ _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
    int gutter, g;
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_code_widget_text_left_gutter_width_get(widget);
 
    if (width < gutter)
@@ -237,7 +237,7 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character
 {
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    if (!pd->show_whitespace)
      {
         if (character== '\t')
@@ -269,7 +269,7 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number,
 {
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (pd->editable && pd->focussed && pd->cursor_line == number)
      {
@@ -286,7 +286,7 @@ _elm_code_widget_fill_selection(Elm_Code_Widget *widget, Elm_Code_Line *line, Ev
    unsigned int x, start, end;
    Elm_Code_Widget_Selection_Data *selection;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    if (!pd->selection)
      return;
 
@@ -320,7 +320,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    Evas_Textgrid_Cell *cells;
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
    if (eina_list_count(pd->grids) < line->number)
      return;
@@ -399,7 +399,7 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, uns
    unsigned int y;
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    _elm_code_widget_resize(widget, newline);
 
    // if called from new line cb, no need to update whole range unless visible
@@ -422,7 +422,7 @@ _elm_code_widget_refresh(Elm_Code_Widget *widget, Elm_Code_Line *line)
 
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    evas_object_geometry_get(widget, NULL, &oy, NULL, NULL);
    elm_scroller_region_get(pd->scroller, NULL, &scroll_y, NULL, &scroll_h);
@@ -443,7 +443,7 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    _elm_code_widget_fill_range(widget, 1, elm_code_file_lines_get(pd->code->file), NULL);
 }
@@ -507,7 +507,7 @@ _elm_code_widget_cursor_key_will_move(Elm_Code_Widget *widget, const char *key)
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
 
    if (!line)
@@ -562,7 +562,7 @@ _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
    Elm_Code_Widget_Data *pd;
    int gutter;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    evas_object_geometry_get(widget, NULL, &oy, NULL, NULL);
    elm_scroller_region_get(pd->scroller, &viewx, &viewy, &vieww, &viewh);
@@ -660,7 +660,7 @@ _elm_code_widget_clicked_gutter_cb(Elm_Code_Widget *widget, unsigned int row)
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    line = elm_code_file_line_get(pd->code->file, row);
    if (!line)
@@ -676,7 +676,7 @@ _elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, unsigned int row, 
    Elm_Code_Line *line;
    unsigned int column_width;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    line = elm_code_file_line_get(pd->code->file, row);
    if (!line)
@@ -697,7 +697,7 @@ _elm_code_widget_clicked_readonly_cb(Elm_Code_Widget *widget, unsigned int row)
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    line = elm_code_file_line_get(pd->code->file, row);
    if (!line)
      return;
@@ -716,7 +716,7 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    int col;
 
    widget = (Elm_Code_Widget *)data;
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    event = (Evas_Event_Mouse_Down *)event_info;
    _elm_code_widget_position_at_coordinates_get(widget, pd, event->canvas.x, event->canvas.y, &row, &col);
 
@@ -747,7 +747,7 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    int col;
 
    widget = (Elm_Code_Widget *)data;
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    event = (Evas_Event_Mouse_Move *)event_info;
 
    _elm_code_widget_position_at_coordinates_get(widget, pd, event->cur.canvas.x, event->cur.canvas.y, &row, &col);
@@ -774,7 +774,7 @@ _elm_code_widget_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
    Eina_Bool hasline;
 
    widget = (Elm_Code_Widget *)data;
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    event = (Evas_Event_Mouse_Up *)event_info;
 
    if (pd->selection)
@@ -805,7 +805,7 @@ _elm_code_widget_cursor_move_home(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    elm_code_widget_selection_clear(widget);
 
    if (pd->cursor_col <= 1)
@@ -821,7 +821,7 @@ _elm_code_widget_cursor_move_end(Elm_Code_Widget *widget)
    Elm_Code_Line *line;
    unsigned int lastcol;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    elm_code_widget_selection_clear(widget);
 
    line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
@@ -839,7 +839,7 @@ _elm_code_widget_cursor_move_up(Elm_Code_Widget *widget)
    Elm_Code_Line *line;
    unsigned int row, col, column_width;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    row = pd->cursor_line;
    col = pd->cursor_col;
    elm_code_widget_selection_clear(widget);
@@ -863,7 +863,7 @@ _elm_code_widget_cursor_move_down(Elm_Code_Widget *widget)
    Elm_Code_Line *line;
    unsigned int row, col, column_width;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    row = pd->cursor_line;
    col = pd->cursor_col;
    elm_code_widget_selection_clear(widget);
@@ -885,7 +885,7 @@ _elm_code_widget_cursor_move_left(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    elm_code_widget_selection_clear(widget);
 
    if (pd->cursor_col <= 1)
@@ -907,7 +907,7 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    elm_code_widget_selection_clear(widget);
 
    line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
@@ -940,7 +940,7 @@ _elm_code_widget_cursor_move_pageup(Elm_Code_Widget *widget)
    Elm_Code_Line *line;
    unsigned int row, col, column_width;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    row = pd->cursor_line;
    col = pd->cursor_col;
 
@@ -968,7 +968,7 @@ _elm_code_widget_cursor_move_pagedown(Elm_Code_Widget *widget)
    Elm_Code_Line *line;
    unsigned int row, col, column_width;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    row = pd->cursor_line;
    col = pd->cursor_col;
 
@@ -994,7 +994,7 @@ _elm_code_widget_delete_selection(Elm_Code_Widget *widget)
    Elm_Code_Widget_Data *pd;
    Elm_Code_Widget_Selection_Data *selection;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (!pd->selection)
      return EINA_FALSE;
@@ -1092,7 +1092,7 @@ _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
    Elm_Code_Widget_Data *pd;
    unsigned int col, row, rem;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    if (!pd->tab_inserts_spaces)
      {
         _elm_code_widget_text_at_cursor_insert(widget, "\t", 1);
@@ -1294,7 +1294,7 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
    Elm_Code_Widget_Data *pd;
 
    widget = (Elm_Code_Widget *)data;
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    Evas_Event_Key_Down *ev = event_info;
 
@@ -1354,7 +1354,7 @@ _elm_code_widget_focused_event_cb(void *data, Evas_Object *obj,
    Elm_Code_Widget_Data *pd;
 
    widget = (Elm_Code_Widget *)data;
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    pd->focussed = EINA_TRUE;
 
@@ -1370,7 +1370,7 @@ _elm_code_widget_unfocused_event_cb(void *data, Evas_Object *obj,
    Elm_Code_Widget_Data *pd;
 
    widget = (Elm_Code_Widget *)data;
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    pd->focussed = EINA_FALSE;
    _elm_code_widget_refresh(obj, NULL);
@@ -1505,7 +1505,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
    int existing, i;
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    existing = eina_list_count(pd->grids);
 
    // trim unneeded rows in our rendering
@@ -1554,7 +1554,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
    unsigned int line_width;
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
 
    if (!pd->code)
@@ -1818,7 +1818,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Evas_Object *background, *gridrows, *scroller;
 
-   efl_canvas_group_add(eo_super(obj, ELM_CODE_WIDGET_CLASS));
+   efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
 
    if (!elm_layout_theme_set(obj, "code", "layout", "default"))

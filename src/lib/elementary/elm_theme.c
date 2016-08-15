@@ -349,7 +349,7 @@ _elm_theme_icon_set(Elm_Theme *th,
    char buf2[1024];
    int w, h;
 
-   if (eo_isa((o), ELM_ICON_CLASS) && elm_icon_standard_get(o) &&
+   if (efl_isa((o), ELM_ICON_CLASS) && elm_icon_standard_get(o) &&
        strcmp(elm_config_icon_theme_get(), ELM_CONFIG_ICON_THEME_ELEMENTARY))
      {
         elm_icon_standard_set(o, elm_icon_standard_get(o));

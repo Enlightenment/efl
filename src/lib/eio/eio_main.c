@@ -319,7 +319,7 @@ eio_init(void)
 
    efreet_mime_init();
 
-   io_manager = eo_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
+   io_manager = efl_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
    efl_loop_register(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS, io_manager);
 
    eina_log_timing(_eio_log_dom_global,

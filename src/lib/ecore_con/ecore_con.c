@@ -123,7 +123,7 @@ int sd_fd_max = 0;
 void
 _ecore_con_client_kill(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (cl->delete_me)
      DBG("Multi kill request for client %p", cl);
    else
@@ -141,7 +141,7 @@ _ecore_con_client_kill(Ecore_Con_Client *obj)
 void
 _ecore_con_server_kill(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (svr->delete_me)
      DBG("Multi kill request for svr %p", svr);
    else
@@ -267,7 +267,7 @@ ecore_con_shutdown(void)
 
    EINA_LIST_FOREACH_SAFE(servers, l, l2, obj)
      {
-        Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+        Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
         Ecore_Con_Event_Server_Add *ev;
 
         if (!svr) continue;
@@ -305,7 +305,7 @@ _efl_network_lookup(Eo *kls_obj EINA_UNUSED, void *pd EINA_UNUSED, const char *n
    if (!name || !done_cb)
      return EINA_FALSE;
 
-   obj = eo_add(EFL_NETWORK_CONNECTOR_CLASS, NULL, efl_network_server_connection_type_set(eo_self, ECORE_CON_REMOTE_TCP), efl_network_server_name_set(eo_self, name), efl_network_port_set(eo_self, 1025));
+   obj = efl_add(EFL_NETWORK_CONNECTOR_CLASS, NULL, efl_network_server_connection_type_set(efl_self, ECORE_CON_REMOTE_TCP), efl_network_server_name_set(efl_self, name), efl_network_port_set(efl_self, 1025));
 
    lk = malloc(sizeof (Ecore_Con_Lookup));
    if (!lk)
@@ -359,7 +359,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
-   obj = eo_add(EFL_NETWORK_SERVER_CLASS, NULL, efl_network_server_connection_type_set(eo_self, compl_type), efl_network_server_name_set(eo_self, name), efl_network_port_set(eo_self, port));
+   obj = efl_add(EFL_NETWORK_SERVER_CLASS, NULL, efl_network_server_connection_type_set(efl_self, compl_type), efl_network_server_name_set(efl_self, name), efl_network_port_set(efl_self, port));
 
    ecore_con_server_data_set(obj, (void *) data);
 
@@ -369,7 +369,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 EOLIAN static Eo *
 _efl_network_server_efl_object_constructor(Ecore_Con_Server *obj, Efl_Network_Server_Data *svr)
 {
-   obj = efl_constructor(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
+   obj = efl_constructor(efl_super(obj, EFL_NETWORK_SERVER_CLASS));
 
    svr->fd = -1;
    svr->reject_excess_clients = EINA_FALSE;
@@ -385,7 +385,7 @@ _efl_network_server_efl_object_finalize(Ecore_Con_Server *obj, Efl_Network_Serve
    Ecore_Con_Type compl_type = svr->type;
    Ecore_Con_Type type;
 
-   efl_finalize(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
+   efl_finalize(efl_super(obj, EFL_NETWORK_SERVER_CLASS));
 
    svr->created = EINA_TRUE;
    svr->ppid = getpid();
@@ -455,7 +455,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
-   obj = eo_add(EFL_NETWORK_CONNECTOR_CLASS, NULL, efl_network_server_connection_type_set(eo_self, compl_type), efl_network_server_name_set(eo_self, name), efl_network_port_set(eo_self, port));
+   obj = efl_add(EFL_NETWORK_CONNECTOR_CLASS, NULL, efl_network_server_connection_type_set(efl_self, compl_type), efl_network_server_name_set(efl_self, name), efl_network_port_set(efl_self, port));
 
    ecore_con_server_data_set(obj, (void *) data);
 
@@ -465,13 +465,13 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 EOLIAN static Eo *
 _efl_network_connector_efl_object_finalize(Ecore_Con_Server *obj, void *pd EINA_UNUSED)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Type compl_type = svr->type;
    Ecore_Con_Type type;
 
    /* XXX: We intentionally put SERVER class here and not connector, as we'd
     * like to skip that one. */
-   efl_finalize(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
+   efl_finalize(efl_super(obj, EFL_NETWORK_SERVER_CLASS));
 
    svr->use_cert = (compl_type & ECORE_CON_SSL & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT;
    svr->disable_proxy = (compl_type & ECORE_CON_SUPER_SSL & ECORE_CON_NO_PROXY) == ECORE_CON_NO_PROXY;
@@ -568,7 +568,7 @@ EAPI void *
 ecore_con_server_del(Ecore_Con_Server *obj)
 {
    if (!obj) return NULL;
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
 
    if (!svr || svr->delete_me)
      return NULL;
@@ -583,7 +583,7 @@ ecore_con_server_del(Ecore_Con_Server *obj)
 EAPI void *
 ecore_con_server_data_get(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr)
       return NULL;
 
@@ -594,7 +594,7 @@ EAPI void *
 ecore_con_server_data_set(Ecore_Con_Server *obj,
                           void *data)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    void *ret = NULL;
 
    if (!svr)
@@ -803,7 +803,7 @@ _efl_network_client_efl_network_send(Eo *obj EINA_UNUSED, Efl_Network_Client_Dat
      ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
 
    if (cl->host_server)
-      host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_CLIENT_CLASS);
+      host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_CLIENT_CLASS);
 
 
    if (cl->host_server && ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP))
@@ -886,7 +886,7 @@ EAPI void *
 ecore_con_client_del(Ecore_Con_Client *obj)
 {
    if (!obj) return NULL;
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (!cl) return NULL;
 
 #ifdef _WIN32
@@ -901,7 +901,7 @@ EAPI void
 ecore_con_client_data_set(Ecore_Con_Client *obj,
                           const void *data)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (!cl)
       return;
 
@@ -911,7 +911,7 @@ ecore_con_client_data_set(Ecore_Con_Client *obj,
 EAPI void *
 ecore_con_client_data_get(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (!cl)
       return NULL;
 
@@ -936,7 +936,7 @@ ecore_con_client_ip_get(const Ecore_Con *obj)
 EOLIAN static int
 _efl_network_client_efl_network_port_get(Eo *obj EINA_UNUSED, Efl_Network_Client_Data *cl)
 {
-   Efl_Network_Server_Data *sd = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *sd = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
    if (sd->type != ECORE_CON_REMOTE_TCP &&
        sd->type != ECORE_CON_REMOTE_MCAST &&
@@ -1017,7 +1017,7 @@ ecore_con_client_fd_get(const Ecore_Con *obj)
 void
 ecore_con_event_proxy_bind(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Event_Proxy_Bind *e;
    int ev = ECORE_CON_EVENT_PROXY_BIND;
 
@@ -1037,7 +1037,7 @@ ecore_con_event_proxy_bind(Ecore_Con_Server *obj)
 void
 ecore_con_event_server_add(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    /* we got our server! */
    Ecore_Con_Event_Server_Add *e;
    int ev = ECORE_CON_EVENT_SERVER_ADD;
@@ -1060,7 +1060,7 @@ ecore_con_event_server_add(Ecore_Con_Server *obj)
 void
 ecore_con_event_server_del(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Event_Server_Del *e;
 
    svr->delete_me = EINA_TRUE;
@@ -1085,7 +1085,7 @@ ecore_con_event_server_del(Ecore_Con_Server *obj)
 void
 ecore_con_event_server_write(Ecore_Con_Server *obj, int num)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Event_Server_Write *e;
 
    e = ecore_con_event_server_write_alloc();
@@ -1103,7 +1103,7 @@ ecore_con_event_server_write(Ecore_Con_Server *obj, int num)
 void
 ecore_con_event_server_data(Ecore_Con_Server *obj, unsigned char *buf, int num, Eina_Bool duplicate)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Event_Server_Data *e;
 
    e = ecore_con_event_server_data_alloc();
@@ -1140,14 +1140,14 @@ ecore_con_event_server_data(Ecore_Con_Server *obj, unsigned char *buf, int num, 
 void
 ecore_con_event_client_add(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    Ecore_Con_Event_Client_Add *e;
    int ev = ECORE_CON_EVENT_CLIENT_ADD;
 
    e = ecore_con_event_client_add_alloc();
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
    cl->event_count = eina_list_append(cl->event_count, e);
    host_server->event_count = eina_list_append(host_server->event_count, e);
@@ -1164,7 +1164,7 @@ ecore_con_event_client_add(Ecore_Con_Client *obj)
 void
 ecore_con_event_client_del(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    Ecore_Con_Event_Client_Del *e;
 
    if (!cl) return;
@@ -1174,7 +1174,7 @@ ecore_con_event_client_del(Ecore_Con_Client *obj)
    EINA_SAFETY_ON_NULL_RETURN(e);
    cl->event_count = eina_list_append(cl->event_count, e);
 
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
    host_server->event_count = eina_list_append(host_server->event_count, e);
    _ecore_con_cl_timer_update(obj);
@@ -1187,13 +1187,13 @@ ecore_con_event_client_del(Ecore_Con_Client *obj)
 void
 ecore_con_event_client_write(Ecore_Con_Client *obj, int num)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    Ecore_Con_Event_Client_Write *e;
 
    e = ecore_con_event_client_write_alloc();
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
    cl->event_count = eina_list_append(cl->event_count, e);
    host_server->event_count = eina_list_append(host_server->event_count, e);
@@ -1207,13 +1207,13 @@ ecore_con_event_client_write(Ecore_Con_Client *obj, int num)
 void
 ecore_con_event_client_data(Ecore_Con_Client *obj, unsigned char *buf, int num, Eina_Bool duplicate)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    Ecore_Con_Event_Client_Data *e;
 
    e = ecore_con_event_client_data_alloc();
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
    cl->event_count = eina_list_append(cl->event_count, e);
    host_server->event_count = eina_list_append(host_server->event_count, e);
@@ -1247,14 +1247,14 @@ ecore_con_event_client_data(Ecore_Con_Client *obj, unsigned char *buf, int num, 
 void
 ecore_con_server_infos_del(Ecore_Con_Server *obj, void *info)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    svr->infos = eina_list_remove(svr->infos, info);
 }
 
 void
 _ecore_con_event_server_error(Ecore_Con_Server *obj, char *error, Eina_Bool duplicate)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Event_Server_Error *e;
 
    e = ecore_con_event_server_error_alloc();
@@ -1272,13 +1272,13 @@ _ecore_con_event_server_error(Ecore_Con_Server *obj, char *error, Eina_Bool dupl
 void
 ecore_con_event_client_error(Ecore_Con_Client *obj, const char *error)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    Ecore_Con_Event_Client_Error *e;
 
    e = ecore_con_event_client_error_alloc();
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
    e->client = obj;
    e->error = strdup(error);
@@ -1335,7 +1335,7 @@ _efl_network_server_efl_object_destructor(Eo *obj, Efl_Network_Server_Data *svr)
 
    EINA_LIST_FREE(svr->clients, cl_obj)
      {
-        Efl_Network_Client_Data *cl = eo_data_scope_get(cl_obj, EFL_NETWORK_CLIENT_CLASS);
+        Efl_Network_Client_Data *cl = efl_data_scope_get(cl_obj, EFL_NETWORK_CLIENT_CLASS);
         Ecore_Con_Event_Server_Add *ev;
 
         /* some pointer hacks here to prevent double frees if people are being stupid */
@@ -1373,7 +1373,7 @@ _efl_network_server_efl_object_destructor(Eo *obj, Efl_Network_Server_Data *svr)
    servers = eina_list_remove(servers, obj);
    svr->data = NULL;
 
-   efl_destructor(eo_super(obj, EFL_NETWORK_SERVER_CLASS));
+   efl_destructor(efl_super(obj, EFL_NETWORK_SERVER_CLASS));
 end:
    return;
 }
@@ -1405,7 +1405,7 @@ _efl_network_client_efl_object_destructor(Eo *obj, Efl_Network_Client_Data *cl)
              break;
           }
      }
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
    if (host_server)
      {
@@ -1439,13 +1439,13 @@ _efl_network_client_efl_object_destructor(Eo *obj, Efl_Network_Client_Data *cl)
    eina_stringshare_del(cl->ip);
    cl->data = NULL;
 
-   efl_destructor(eo_super(obj, EFL_NETWORK_CLIENT_CLASS));
+   efl_destructor(efl_super(obj, EFL_NETWORK_CLIENT_CLASS));
 }
 
 static Eina_Bool
 _ecore_con_server_timer(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    ecore_con_server_del(obj);
 
    svr->until_deletion = NULL;
@@ -1455,7 +1455,7 @@ _ecore_con_server_timer(Ecore_Con_Server *obj)
 static void
 _ecore_con_server_timer_update(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (svr->disconnect_time)
      {
         if (svr->disconnect_time > 0)
@@ -1487,7 +1487,7 @@ _ecore_con_server_timer_update(Ecore_Con_Server *obj)
 static Eina_Bool
 _ecore_con_client_timer(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    ecore_con_client_del(obj);
 
    cl->until_deletion = NULL;
@@ -1497,7 +1497,7 @@ _ecore_con_client_timer(Ecore_Con_Client *obj)
 static void
 _ecore_con_cl_timer_update(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (cl->disconnect_time)
      {
         if (cl->disconnect_time > 0)
@@ -1518,7 +1518,7 @@ _ecore_con_cl_timer_update(Ecore_Con_Client *obj)
      }
    else
      {
-        Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+        Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
         if (host_server && host_server->client_disconnect_time > 0)
           {
@@ -1543,7 +1543,7 @@ _ecore_con_cb_tcp_listen(void *data,
                          Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server *obj = data;
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    struct linger lin;
    const char *memerr = NULL;
 #ifdef _WIN32
@@ -1655,7 +1655,7 @@ _ecore_con_cb_udp_listen(void *data,
                          Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server *obj = data;
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Type type;
    struct ip_mreq mreq;
 #ifdef HAVE_IPV6
@@ -1770,7 +1770,7 @@ _ecore_con_cb_tcp_connect(void *data,
                           Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server *obj = data;
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    int res;
    int curstate = 0;
    const char *memerr = NULL;
@@ -1877,7 +1877,7 @@ _ecore_con_cb_udp_connect(void *data,
    int curstate = 0;
    int broadcast = 1;
    const char *memerr = NULL;
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
 #ifdef _WIN32
    u_long mode = 1;
 #endif
@@ -1940,7 +1940,7 @@ error:
 static Ecore_Con_State
 svr_try_connect_plain(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    int res;
    int so_err = 0;
    socklen_t size = sizeof(int);
@@ -2045,7 +2045,7 @@ _ecore_con_svr_tcp_handler(void *data,
    unsigned char client_addr[256];
    unsigned int client_addr_len;
    const char *clerr = NULL;
-   Efl_Network_Server_Data *svr = eo_data_scope_get(svr_obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(svr_obj, EFL_NETWORK_SERVER_CLASS);
 #ifdef _WIN32
    u_long mode = 1;
 #endif
@@ -2059,8 +2059,8 @@ _ecore_con_svr_tcp_handler(void *data,
 
    /* a new client */
 
-   obj = eo_add(EFL_NETWORK_CLIENT_CLASS, NULL);
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   obj = efl_add(EFL_NETWORK_CLIENT_CLASS, NULL);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (!cl)
      {
         ecore_con_event_server_error(svr_obj, "Memory allocation failure when attempting to add a new client");
@@ -2138,7 +2138,7 @@ error:
 static void
 _ecore_con_cl_read(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    int num = 0;
    Eina_Bool lost_server = EINA_TRUE;
    unsigned char buf[READBUFSIZ];
@@ -2198,7 +2198,7 @@ _ecore_con_cl_handler(void *data,
 {
    Ecore_Con_Server *obj = data;
    Eina_Bool want_read, want_write;
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
 
    if (svr->delete_me)
      return ECORE_CALLBACK_RENEW;
@@ -2260,7 +2260,7 @@ _ecore_con_cl_udp_handler(void *data,
    int num;
    Ecore_Con_Server *obj = data;
    Eina_Bool want_read, want_write;
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
 
    want_read = ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ);
    want_write = ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE);
@@ -2302,7 +2302,7 @@ _ecore_con_svr_udp_handler(void *data,
    u_long mode = 1;
 #endif
 
-   Efl_Network_Server_Data *svr = eo_data_scope_get(svr_obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(svr_obj, EFL_NETWORK_SERVER_CLASS);
    if (svr->delete_me)
      return ECORE_CALLBACK_RENEW;
 
@@ -2334,8 +2334,8 @@ _ecore_con_svr_udp_handler(void *data,
      }
 
 /* Create a new client for use in the client data event */
-   obj = eo_add(EFL_NETWORK_CLIENT_CLASS, NULL);
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   obj = efl_add(EFL_NETWORK_CLIENT_CLASS, NULL);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, ECORE_CALLBACK_RENEW);
 
    cl->host_server = svr_obj;
@@ -2361,7 +2361,7 @@ _ecore_con_svr_udp_handler(void *data,
 static void
 _ecore_con_svr_cl_read(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    int num = 0;
    Eina_Bool lost_client = EINA_TRUE;
    unsigned char buf[READBUFSIZ];
@@ -2379,7 +2379,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *obj)
         _ecore_con_cl_timer_update(obj);
      }
 
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
    if (!(host_server->type & ECORE_CON_SSL) && (!cl->upgrade))
      {
         num = recv(cl->fd, (char *)buf, sizeof(buf), 0);
@@ -2409,7 +2409,7 @@ _ecore_con_svr_cl_handler(void *data,
                           Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Client *obj = data;
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
 
    if (cl->delete_me)
      return ECORE_CALLBACK_RENEW;
@@ -2437,7 +2437,7 @@ _ecore_con_svr_cl_handler(void *data,
 static void
 _ecore_con_server_flush(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    int count;
    size_t num;
    size_t buf_len;
@@ -2575,7 +2575,7 @@ _ecore_con_server_flush(Ecore_Con_Server *obj)
 static void
 _ecore_con_client_flush(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    int count = 0;
    size_t num = 0;
 
@@ -2604,7 +2604,7 @@ _ecore_con_client_flush(Ecore_Con_Client *obj)
         if (!cl->buf) return;
         num = eina_binbuf_length_get(cl->buf) - cl->buf_offset;
         if (num <= 0) return;
-        Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+        Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
         if (!(host_server->type & ECORE_CON_SSL) && (!cl->upgrade))
           count = send(cl->fd, (char *)eina_binbuf_string_get(cl->buf) + cl->buf_offset, num, 0);
         else
@@ -2630,7 +2630,7 @@ _ecore_con_client_flush(Ecore_Con_Client *obj)
         eina_binbuf_free(cl->buf);
         cl->buf = NULL;
 #ifdef TCP_CORK
-        Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+        Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
         if ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK)
           {
              int state = 0;
@@ -2650,13 +2650,13 @@ static void
 _ecore_con_event_client_add_free(Ecore_Con_Server *obj,
                                  void *ev)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Event_Client_Add *e;
 
    e = ev;
    if (e->client)
      {
-        Efl_Network_Client_Data *cl = eo_data_scope_get(e->client, EFL_NETWORK_CLIENT_CLASS);
+        Efl_Network_Client_Data *cl = efl_data_scope_get(e->client, EFL_NETWORK_CLIENT_CLASS);
         Eina_Bool svrfreed = EINA_FALSE;
 
         if ((svr) && (cl))
@@ -2664,7 +2664,7 @@ _ecore_con_event_client_add_free(Ecore_Con_Server *obj,
              cl->event_count = eina_list_remove(cl->event_count, e);
              if (cl->host_server)
                {
-                  Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+                  Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
                   if (host_server)
                     host_server->event_count = eina_list_remove(host_server->event_count, ev);
                   if ((!svr->event_count) && (svr->delete_me))
@@ -2691,13 +2691,13 @@ static void
 _ecore_con_event_client_del_free(Ecore_Con_Server *obj,
                                  void *ev)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Event_Client_Del *e;
 
    e = ev;
    if (e->client)
      {
-        Efl_Network_Client_Data *cl = eo_data_scope_get(e->client, EFL_NETWORK_CLIENT_CLASS);
+        Efl_Network_Client_Data *cl = efl_data_scope_get(e->client, EFL_NETWORK_CLIENT_CLASS);
         Eina_Bool svrfreed = EINA_FALSE;
 
         if ((svr) && (cl))
@@ -2705,7 +2705,7 @@ _ecore_con_event_client_del_free(Ecore_Con_Server *obj,
              cl->event_count = eina_list_remove(cl->event_count, e);
              if (cl->host_server)
                {
-                  Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+                  Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
                   if (host_server)
                     host_server->event_count = eina_list_remove(host_server->event_count, ev);
                   if ((!svr->event_count) && (svr->delete_me))
@@ -2731,10 +2731,10 @@ static void
 _ecore_con_event_client_write_free(Ecore_Con_Server *obj,
                                    Ecore_Con_Event_Client_Write *e)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (e->client)
      {
-        Efl_Network_Client_Data *cl = eo_data_scope_get(e->client, EFL_NETWORK_CLIENT_CLASS);
+        Efl_Network_Client_Data *cl = efl_data_scope_get(e->client, EFL_NETWORK_CLIENT_CLASS);
         Eina_Bool svrfreed = EINA_FALSE;
 
         if ((svr) && (cl))
@@ -2742,7 +2742,7 @@ _ecore_con_event_client_write_free(Ecore_Con_Server *obj,
              cl->event_count = eina_list_remove(cl->event_count, e);
              if (cl->host_server)
                {
-                  Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+                  Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
                   if (host_server)
                     host_server->event_count = eina_list_remove(host_server->event_count, e);
                   if ((!svr->event_count) && (svr->delete_me))
@@ -2753,7 +2753,7 @@ _ecore_con_event_client_write_free(Ecore_Con_Server *obj,
                }
              if (!svrfreed)
                {
-                  Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+                  Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
                   if (((!cl->event_count) && (cl->delete_me)) ||
                       ((cl->host_server &&
                         ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
@@ -2772,13 +2772,13 @@ static void
 _ecore_con_event_client_data_free(Ecore_Con_Server *obj,
                                   void *ev)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_Event_Client_Data *e;
 
    e = ev;
    if (e->client)
      {
-        Efl_Network_Client_Data *cl = eo_data_scope_get(e->client, EFL_NETWORK_CLIENT_CLASS);
+        Efl_Network_Client_Data *cl = efl_data_scope_get(e->client, EFL_NETWORK_CLIENT_CLASS);
         Eina_Bool svrfreed = EINA_FALSE;
 
         if ((svr) && (cl))
@@ -2786,7 +2786,7 @@ _ecore_con_event_client_data_free(Ecore_Con_Server *obj,
              cl->event_count = eina_list_remove(cl->event_count, e);
              if (cl->host_server)
                {
-                  Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+                  Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
                   if (host_server)
                     host_server->event_count = eina_list_remove(host_server->event_count, ev);
                }
@@ -2797,7 +2797,7 @@ _ecore_con_event_client_data_free(Ecore_Con_Server *obj,
                }
              if (!svrfreed)
                {
-                  Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+                  Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
                   if (((!cl->event_count) && (cl->delete_me)) ||
                       ((cl->host_server &&
                         ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
@@ -2822,7 +2822,7 @@ _ecore_con_event_server_add_free(void *data EINA_UNUSED,
    e = ev;
    if (e->server)
      {
-        Efl_Network_Server_Data *svr = eo_data_scope_get(e->server, EFL_NETWORK_SERVER_CLASS);
+        Efl_Network_Server_Data *svr = efl_data_scope_get(e->server, EFL_NETWORK_SERVER_CLASS);
         if (svr)
           {
              svr->event_count = eina_list_remove(svr->event_count, ev);
@@ -2845,7 +2845,7 @@ _ecore_con_event_server_del_free(void *data EINA_UNUSED,
    e = ev;
    if (e->server)
      {
-        Efl_Network_Server_Data *svr = eo_data_scope_get(e->server, EFL_NETWORK_SERVER_CLASS);
+        Efl_Network_Server_Data *svr = efl_data_scope_get(e->server, EFL_NETWORK_SERVER_CLASS);
         if (svr)
           {
              svr->event_count = eina_list_remove(svr->event_count, ev);
@@ -2865,7 +2865,7 @@ _ecore_con_event_server_write_free(void *data EINA_UNUSED,
 {
    if (e->server)
      {
-        Efl_Network_Server_Data *svr = eo_data_scope_get(e->server, EFL_NETWORK_SERVER_CLASS);
+        Efl_Network_Server_Data *svr = efl_data_scope_get(e->server, EFL_NETWORK_SERVER_CLASS);
         if (svr)
           {
              svr->event_count = eina_list_remove(svr->event_count, e);
@@ -2888,7 +2888,7 @@ _ecore_con_event_server_data_free(void *data EINA_UNUSED,
    e = ev;
    if (e->server)
      {
-        Efl_Network_Server_Data *svr = eo_data_scope_get(e->server, EFL_NETWORK_SERVER_CLASS);
+        Efl_Network_Server_Data *svr = efl_data_scope_get(e->server, EFL_NETWORK_SERVER_CLASS);
         if (svr)
           {
              svr->event_count = eina_list_remove(svr->event_count, ev);
@@ -2909,7 +2909,7 @@ _ecore_con_event_server_error_free(void *data EINA_UNUSED, Ecore_Con_Event_Serve
 {
    if (e->server)
      {
-        Efl_Network_Server_Data *svr = eo_data_scope_get(e->server, EFL_NETWORK_SERVER_CLASS);
+        Efl_Network_Server_Data *svr = efl_data_scope_get(e->server, EFL_NETWORK_SERVER_CLASS);
         if (svr)
           {
              svr->event_count = eina_list_remove(svr->event_count, e);
@@ -2927,10 +2927,10 @@ _ecore_con_event_server_error_free(void *data EINA_UNUSED, Ecore_Con_Event_Serve
 static void
 _ecore_con_event_client_error_free(Ecore_Con_Server *obj, Ecore_Con_Event_Client_Error *e)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (e->client)
      {
-        Efl_Network_Client_Data *cl = eo_data_scope_get(e->client, EFL_NETWORK_CLIENT_CLASS);
+        Efl_Network_Client_Data *cl = efl_data_scope_get(e->client, EFL_NETWORK_CLIENT_CLASS);
         Eina_Bool svrfreed = EINA_FALSE;
 
         if ((svr) && (cl))
@@ -2966,7 +2966,7 @@ _ecore_con_lookup_done(void *data,
    Ecore_Con_Server *obj = data;
    Ecore_Con_Lookup *lk;
 
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr) return;
    lk = svr->data;
 

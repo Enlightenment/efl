@@ -71,7 +71,7 @@ evas_model_save_file_ply(const Evas_Canvas3D_Mesh *mesh,
    Evas_Model_Load_Save_Header header;
    Evas_Model_Load_Save_Data data;
 
-   Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
+   Evas_Canvas3D_Mesh_Data *pd = efl_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
    if (!evas_model_save_header_from_mesh(pd, f, &header)) return;
    evas_model_save_data_from_mesh(pd, f, header, &data);
 

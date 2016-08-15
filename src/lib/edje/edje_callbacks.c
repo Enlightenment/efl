@@ -55,7 +55,7 @@ _edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
@@ -74,7 +74,7 @@ _edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
@@ -95,7 +95,7 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
    char buf[256];
    int ignored;
 
-   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
@@ -164,7 +164,7 @@ _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
    char buf[256];
    int ignored;
 
-   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
@@ -236,7 +236,7 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
    Edje_Real_Part *rp;
    int ignored;
 
-   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
@@ -343,7 +343,7 @@ _edje_mouse_wheel_signal_cb(void *data, const Eo_Event *event)
    Edje_Real_Part *rp;
    char buf[256];
 
-   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
@@ -429,7 +429,7 @@ _edje_pending_timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(edje_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(edje_callbacks,
                           { EFL_EVENT_HOLD, _edje_hold_signal_cb },
                           { EFL_EVENT_POINTER_IN, _edje_mouse_in_signal_cb },
                           { EFL_EVENT_POINTER_OUT, _edje_mouse_out_signal_cb },
@@ -438,7 +438,7 @@ EO_CALLBACKS_ARRAY_DEFINE(edje_callbacks,
                           { EFL_EVENT_POINTER_MOVE, _edje_mouse_move_signal_cb },
                           { EFL_EVENT_POINTER_WHEEL, _edje_mouse_wheel_signal_cb });
 
-EO_CALLBACKS_ARRAY_DEFINE(edje_focus_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(edje_focus_callbacks,
                           { EFL_CANVAS_OBJECT_EVENT_FOCUS_IN, _edje_focus_in_signal_cb },
                           { EFL_CANVAS_OBJECT_EVENT_FOCUS_OUT, _edje_focus_out_signal_cb });
 

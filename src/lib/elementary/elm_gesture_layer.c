@@ -56,7 +56,7 @@ _glayer_buf_dup(void *buf, size_t size)
   ((sd->gesture[T]) ? sd->gesture[T]->test : EINA_FALSE)
 
 #define ELM_GESTURE_LAYER_DATA_GET(o, sd) \
-  Elm_Gesture_Layer_Data * sd = eo_data_scope_get(o, MY_CLASS)
+  Elm_Gesture_Layer_Data * sd = efl_data_scope_get(o, MY_CLASS)
 
 #define ELM_GESTURE_LAYER_DATA_GET_OR_RETURN(o, ptr) \
   ELM_GESTURE_LAYER_DATA_GET(o, ptr);                \
@@ -77,7 +77,7 @@ _glayer_buf_dup(void *buf, size_t size)
     }
 
 #define ELM_GESTURE_LAYER_CHECK(obj)                                      \
-  if (!obj || !eo_isa(obj, MY_CLASS)) \
+  if (!obj || !efl_isa(obj, MY_CLASS)) \
     return
 
 /**
@@ -3736,7 +3736,7 @@ _elm_gesture_layer_elm_widget_disable(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_
 EOLIAN static void
 _elm_gesture_layer_efl_canvas_group_group_add(Eo *obj, Elm_Gesture_Layer_Data *priv)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->line_min_length =
@@ -3810,21 +3810,21 @@ _elm_gesture_layer_efl_canvas_group_group_del(Eo *obj, Elm_Gesture_Layer_Data *s
    if (!elm_widget_disabled_get(obj))
      _callbacks_unregister(obj);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
 elm_gesture_layer_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_gesture_layer_efl_object_constructor(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;

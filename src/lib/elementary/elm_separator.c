@@ -26,7 +26,7 @@ _elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
    else
      eina_stringshare_replace(&ld->group, "vertical");
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    return int_ret;
@@ -47,7 +47,7 @@ _elm_separator_elm_layout_sizing_eval(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
 EOLIAN static void
 _elm_separator_efl_canvas_group_group_add(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -64,7 +64,7 @@ EAPI Evas_Object *
 elm_separator_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -97,7 +97,7 @@ elm_separator_horizontal_get(const Evas_Object *obj)
 EOLIAN static Eo *
 _elm_separator_efl_object_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SEPARATOR);
 

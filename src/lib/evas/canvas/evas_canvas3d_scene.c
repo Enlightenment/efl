@@ -37,7 +37,7 @@ _evas_canvas3d_scene_evas_canvas3d_object_change_notify(Eo *eo_obj EINA_UNUSED, 
 
    EINA_LIST_FOREACH(pd->images, l, eo)
      {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
+        Evas_Object_Protected_Data *obj = efl_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
         evas_object_change(eo, obj);
      }
 }
@@ -64,14 +64,14 @@ evas_canvas3d_scene_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   Evas_Object *eo_obj = efl_add(MY_CLASS, e);
    return eo_obj;
 }
 
 EOLIAN static Eo *
 _evas_canvas3d_scene_efl_object_constructor(Eo *obj, Evas_Canvas3D_Scene_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_SCENE);
    evas_color_set(&pd->bg_color, 0.0, 0.0, 0.0, 0.0);
    pd->shadows_enabled = EINA_FALSE;
@@ -92,14 +92,14 @@ _evas_canvas3d_scene_root_node_set(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_C
    if (pd->root_node)
      {
         evas_canvas3d_node_scene_root_del(pd->root_node, obj);
-        eo_unref(pd->root_node);
+        efl_unref(pd->root_node);
      }
 
    pd->root_node = node;
 
    if (node)
      {
-        eo_ref(node);
+        efl_ref(node);
         evas_canvas3d_node_scene_root_add(node, obj);
      }
 
@@ -301,7 +301,7 @@ _pick_data_mesh_add(Evas_Canvas3D_Pick_Data *data, const Evas_Ray3 *ray,
 
    evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD,
                                               &tex0, &tex1, &tex_weight);
-   Evas_Canvas3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
+   Evas_Canvas3D_Mesh_Data *pdmesh = efl_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
    if (pdmesh->indices)
      {
         unsigned int i0, i1, i2;
@@ -561,7 +561,7 @@ _node_pick(Evas_Canvas3D_Node *node, void *data)
    Evas_Ray3            ray;
    Evas_Canvas3D_Pick_Data   *pick = (Evas_Canvas3D_Pick_Data *)data;
    Eina_Matrix4            mvp;
-   Evas_Canvas3D_Node_Data *pd_node = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
+   Evas_Canvas3D_Node_Data *pd_node = efl_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
 
    evas_canvas3d_node_tree_traverse(node, EVAS_CANVAS3D_TREE_TRAVERSE_POST_ORDER, EINA_FALSE,
                                  node_aabb_update, NULL);
@@ -630,8 +630,8 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
    Evas_Canvas3D_Node *picked_node = NULL;
    const Efl_Event_Description *eo_desc = NULL;
 
-   pd_parent = eo_data_scope_get(obj, EVAS_CANVAS3D_OBJECT_CLASS);
-   e = eo_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
+   pd_parent = efl_data_scope_get(obj, EVAS_CANVAS3D_OBJECT_CLASS);
+   e = efl_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
 
    _pick_data_init(&data, e, x, y);
    px = round(x * pd->w / e->viewport.w);
@@ -704,8 +704,8 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
      }
    /* Update the scene graph. */
    evas_canvas3d_object_update((Eo *) obj);
-   pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_CANVAS3D_NODE_CLASS);
-   pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
+   pd_camera_node = efl_data_scope_get(pd->camera_node, EVAS_CANVAS3D_NODE_CLASS);
+   pd_camera = efl_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
    eina_matrix4_multiply(&data.matrix_vp,
                       &pd_camera->projection,
                       &pd_camera_node->data.camera.matrix_world_to_eye);
@@ -740,15 +740,15 @@ _evas_canvas3d_scene_exist(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Rea
    Evas_Canvas3D_Object_Data *pd_parent;
    Evas_Public_Data *e;
 
-   pd_parent = eo_data_scope_get(obj, EVAS_CANVAS3D_OBJECT_CLASS);
-   e = eo_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
+   pd_parent = efl_data_scope_get(obj, EVAS_CANVAS3D_OBJECT_CLASS);
+   e = efl_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
 
    _pick_data_init(&data, e, x, y);
 
    /* Update the scene graph. */
    evas_canvas3d_object_update((Eo *) obj);
-   pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_CANVAS3D_NODE_CLASS);
-   pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
+   pd_camera_node = efl_data_scope_get(pd->camera_node, EVAS_CANVAS3D_NODE_CLASS);
+   pd_camera = efl_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
    eina_matrix4_multiply(&data.matrix_vp,
                       &pd_camera->projection,
                       &pd_camera_node->data.camera.matrix_world_to_eye);

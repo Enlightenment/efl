@@ -92,7 +92,7 @@ _evas_render2(Eo *eo_e, Evas_Public_Data *e)
    // bock any susbequent rneders from doing this walk
    eina_lock_take(&(e->lock_objects));
    // gain a reference
-   eo_ref(eo_e);
+   efl_ref(eo_e);
    // put into the "i'm rendering" pool
    e->rendering = EINA_TRUE;
    _rendering = eina_list_append(_rendering, eo_e);

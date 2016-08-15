@@ -315,7 +315,7 @@ _elm_slideshow_item_efl_object_destructor(Eo *eo_item, Elm_Slideshow_Item_Data *
    if ((VIEW(item)) && (item->itc->func.del))
      item->itc->func.del(elm_object_item_data_get(eo_item), VIEW(item));
 
-   efl_destructor(eo_super(eo_item, ELM_SLIDESHOW_ITEM_CLASS));
+   efl_destructor(efl_super(eo_item, ELM_SLIDESHOW_ITEM_CLASS));
 }
 
 EOLIAN static void
@@ -323,7 +323,7 @@ _elm_slideshow_efl_canvas_group_group_add(Eo *obj, Elm_Slideshow_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->count_item_pre_before = 2;
@@ -374,21 +374,21 @@ _elm_slideshow_efl_canvas_group_group_del(Eo *obj, Elm_Slideshow_Data *sd)
    EINA_LIST_FREE(sd->layout.list, layout)
      eina_stringshare_del(layout);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
 elm_slideshow_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_slideshow_efl_object_constructor(Eo *obj, Elm_Slideshow_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_DOCUMENT_PRESENTATION);
@@ -399,8 +399,8 @@ _elm_slideshow_efl_object_constructor(Eo *obj, Elm_Slideshow_Data *_pd EINA_UNUS
 EOLIAN static Eo *
 _elm_slideshow_item_efl_object_constructor(Eo *obj, Elm_Slideshow_Item_Data *it)
 {
-   obj = efl_constructor(eo_super(obj, ELM_SLIDESHOW_ITEM_CLASS));
-   it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
+   obj = efl_constructor(efl_super(obj, ELM_SLIDESHOW_ITEM_CLASS));
+   it->base = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    return obj;
 }
@@ -410,7 +410,7 @@ _elm_slideshow_item_add(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Slideshow_Ite
 {
    Eo *eo_item;
 
-   eo_item = eo_add(ELM_SLIDESHOW_ITEM_CLASS, obj);
+   eo_item = efl_add(ELM_SLIDESHOW_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_SLIDESHOW_ITEM_DATA_GET(eo_item, item);
@@ -431,7 +431,7 @@ _elm_slideshow_item_sorted_insert(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Sli
 {
    Eo *eo_item;
 
-   eo_item = eo_add(ELM_SLIDESHOW_ITEM_CLASS, obj);
+   eo_item = efl_add(ELM_SLIDESHOW_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_SLIDESHOW_ITEM_DATA_GET(eo_item, item);

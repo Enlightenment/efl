@@ -39,7 +39,7 @@ static int run_pri = NORMAL_PRIORITY_CLASS;
 static void
 _ecore_exe_threads_terminate(Ecore_Exe *obj)
 {
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
    HANDLE threads[2] = { NULL, NULL };
    int i = 0;
 
@@ -68,7 +68,7 @@ _ecore_exe_close_cb(void *data,
 {
    Ecore_Exe_Event_Del *e;
    Ecore_Exe *obj = data;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
    DWORD exit_code = 0;
 
    _ecore_exe_threads_terminate(obj);
@@ -105,7 +105,7 @@ _ecore_exe_pipe_read_thread_cb(void *data)
 {
    char buf[64];
    Ecore_Exe *obj = data;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
    Ecore_Exe_Event_Data *event_data;
    char *current_buf = NULL;
    DWORD size;
@@ -175,7 +175,7 @@ _ecore_exe_pipe_error_thread_cb(void *data)
 {
    char buf[64];
    Ecore_Exe *obj = data;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
    Ecore_Exe_Event_Data *event_data;
    char *current_buf = NULL;
    DWORD size;
@@ -253,7 +253,7 @@ _ecore_exe_enum_windows_procedure(HWND window,
                                   LPARAM data)
 {
    Ecore_Exe *obj = (Ecore_Exe *) data;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
    DWORD thread_id;
 
    thread_id = GetWindowThreadProcessId(window, NULL);

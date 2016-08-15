@@ -30,7 +30,7 @@ _ector_renderer_gl_gradient_radial_ector_renderer_prepare(Eo *obj, Ector_Rendere
 static Eina_Bool
 _ector_renderer_gl_gradient_radial_ector_renderer_draw(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd, Efl_Gfx_Render_Op op, Eina_Array *clips, unsigned int mul_col)
 {
-   ector_renderer_draw(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS), op, clips, mul_col);
+   ector_renderer_draw(efl_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS), op, clips, mul_col);
 
    // FIXME: draw something !
    (void) pd;
@@ -69,7 +69,7 @@ _ector_renderer_gl_gradient_radial_ector_renderer_crc_get(Eo *obj, Ector_Rendere
 {
    unsigned int crc;
 
-   crc = ector_renderer_crc_get(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS));
+   crc = ector_renderer_crc_get(efl_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS));
 
    crc = eina_crc((void*) pd->gradient->s, sizeof (Efl_Gfx_Gradient_Spread), crc, EINA_FALSE);
    if (pd->gradient->colors_count)
@@ -82,13 +82,13 @@ _ector_renderer_gl_gradient_radial_ector_renderer_crc_get(Eo *obj, Ector_Rendere
 static Efl_Object *
 _ector_renderer_gl_gradient_radial_efl_object_constructor(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS));
+   obj = efl_constructor(efl_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS));
 
    if (!obj) return NULL;
 
-   pd->base = eo_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
-   pd->radial = eo_data_xref(obj, ECTOR_RENDERER_GRADIENT_RADIAL_MIXIN, obj);
-   pd->gradient = eo_data_xref(obj, ECTOR_RENDERER_GRADIENT_MIXIN, obj);
+   pd->base = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
+   pd->radial = efl_data_xref(obj, ECTOR_RENDERER_GRADIENT_RADIAL_MIXIN, obj);
+   pd->gradient = efl_data_xref(obj, ECTOR_RENDERER_GRADIENT_MIXIN, obj);
 
    return obj;
 }
@@ -96,15 +96,15 @@ _ector_renderer_gl_gradient_radial_efl_object_constructor(Eo *obj, Ector_Rendere
 static void
 _ector_renderer_gl_gradient_radial_efl_object_destructor(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd)
 {
-   eo_data_xunref(obj, pd->base, obj);
-   eo_data_xunref(obj, pd->radial, obj);
-   eo_data_xunref(obj, pd->gradient, obj);
+   efl_data_xunref(obj, pd->base, obj);
+   efl_data_xunref(obj, pd->radial, obj);
+   efl_data_xunref(obj, pd->gradient, obj);
 }
 
 static void
 _ector_renderer_gl_gradient_radial_efl_gfx_gradient_stop_set(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd EINA_UNUSED, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
 {
-   efl_gfx_gradient_stop_set(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS), colors, length);
+   efl_gfx_gradient_stop_set(efl_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS), colors, length);
 }
 
 #include "ector_renderer_gl_gradient_radial.eo.c"

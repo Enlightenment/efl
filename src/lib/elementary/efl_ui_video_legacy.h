@@ -24,7 +24,7 @@ EAPI Evas_Object         *elm_player_add(Evas_Object *parent);
  *
  * @ingroup Elm_Video
  */
-EAPI Evas_Object         *elm_video_add(Evas_Object *parent);
+EAPI Evas_Object         *elm_videfl_add(Evas_Object *parent);
 
 /**
  *
@@ -35,7 +35,7 @@ EAPI Evas_Object         *elm_video_add(Evas_Object *parent);
  * This function will explicitly define a file or URI as a source
  * for the video of the Elm_Video object.
  *
- * @see elm_video_add()
+ * @see elm_videfl_add()
  * @see elm_player_add()
  *
  * @ingroup Elm_Video

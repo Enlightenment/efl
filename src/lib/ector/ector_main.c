@@ -34,7 +34,7 @@ ector_init(void)
      return ++_ector_main_count;
 
    eina_init();
-   eo_init();
+   efl_object_init();
 
    _ector_log_dom_global = eina_log_domain_register("ector", ECTOR_DEFAULT_LOG_COLOR);
    if (_ector_log_dom_global < 0)
@@ -51,7 +51,7 @@ ector_init(void)
    return _ector_main_count;
 
  on_error:
-   eo_shutdown();
+   efl_object_shutdown();
    eina_shutdown();
 
    return 0;
@@ -239,7 +239,7 @@ ector_shutdown(void)
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
-   eo_shutdown();
+   efl_object_shutdown();
 
    eina_log_domain_unregister(_ector_log_dom_global);
 

@@ -43,20 +43,20 @@ extern int _ector_log_dom_global;
 /* The following macro are internal to Ector only at this stage */
 
 static inline Eo *
-_eo_refplace(Eo **d, const Eo *s)
+_efl_refplace(Eo **d, const Eo *s)
 {
    Eo *tmp = *d;
-   *d = eo_ref(s);
-   if (tmp) eo_unref(tmp);
+   *d = efl_ref(s);
+   if (tmp) efl_unref(tmp);
    return *d;
 }
 
 static inline Eo *
-_eo_xrefplace(Eo **d, Eo *s, const Eo *ref_obj)
+_efl_xrefplace(Eo **d, Eo *s, const Eo *ref_obj)
 {
    Eo *tmp = *d;
-   *d = eo_xref(s, ref_obj);
-   if (tmp) eo_xunref(tmp, ref_obj);
+   *d = efl_xref(s, ref_obj);
+   if (tmp) efl_xunref(tmp, ref_obj);
    return *d;
 }
 

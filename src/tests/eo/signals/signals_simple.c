@@ -31,7 +31,7 @@ _a_set(Eo *obj, void *class_data, int a)
 void
 _cb_added(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Simple_Public_Data *pd = eo_data_scope_get(event->object, MY_CLASS);
+   Simple_Public_Data *pd = efl_data_scope_get(event->object, MY_CLASS);
    const Efl_Callback_Array_Item *callback_array = event->info;
 
    if (callback_array->desc != EV_A_CHANGED)
@@ -45,7 +45,7 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *event)
 void
 _cb_deled(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Simple_Public_Data *pd = eo_data_scope_get(event->object, MY_CLASS);
+   Simple_Public_Data *pd = efl_data_scope_get(event->object, MY_CLASS);
    const Efl_Callback_Array_Item *callback_array = event->info;
 
    if (callback_array->desc != EV_A_CHANGED)
@@ -59,7 +59,7 @@ _cb_deled(void *data EINA_UNUSED, const Eo_Event *event)
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _cb_deled, NULL);
@@ -69,11 +69,11 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
    return obj;
 }
 
-EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
+EAPI EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
 
 static Efl_Op_Description op_descs[] = {
-     EO_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
-     EO_OP_FUNC(simple_a_set, _a_set),
+     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
+     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
 };
 
 
@@ -86,12 +86,12 @@ static const Efl_Event_Description *event_desc[] = {
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(op_descs),
+     EFL_CLASS_TYPE_REGULAR,
+     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      event_desc,
      sizeof(Private_Data),
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL);
+EFL_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL);

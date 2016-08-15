@@ -67,7 +67,7 @@ struct _Elm_Ctxpopup_Data
  */
 
 #define ELM_CTXPOPUP_DATA_GET(o, sd) \
-  Elm_Ctxpopup_Data * sd = eo_data_scope_get(o, ELM_CTXPOPUP_CLASS)
+  Elm_Ctxpopup_Data * sd = efl_data_scope_get(o, ELM_CTXPOPUP_CLASS)
 
 #define ELM_CTXPOPUP_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_CTXPOPUP_DATA_GET(o, ptr);                     \
@@ -88,7 +88,7 @@ struct _Elm_Ctxpopup_Data
     }
 
 #define ELM_CTXPOPUP_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_CTXPOPUP_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_CTXPOPUP_CLASS))) \
     return
 
 #define ELM_CTXPOPUP_ITEM_CHECK_OR_RETURN(it, ...)                 \
@@ -96,6 +96,6 @@ struct _Elm_Ctxpopup_Data
   ELM_CTXPOPUP_CHECK(it->base->widget) __VA_ARGS__;
 
 #define ELM_CTXPOPUP_ITEM_DATA_GET(o, sd) \
-  Elm_Ctxpopup_Item_Data *sd = eo_data_scope_get(o, ELM_CTXPOPUP_ITEM_CLASS)
+  Elm_Ctxpopup_Item_Data *sd = efl_data_scope_get(o, ELM_CTXPOPUP_ITEM_CLASS)
 
 #endif

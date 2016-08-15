@@ -19,7 +19,7 @@ evas_out_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   Evas_Object *eo_obj = efl_add(MY_CLASS, e);
    return eo_obj;
 }
 
@@ -30,10 +30,10 @@ _evas_out_efl_object_constructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
    Evas_Public_Data *e;
 
    eo_parent = efl_parent_get(eo_obj);
-   e = eo_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
+   e = efl_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
    evas_canvas_async_block(e);
 
-   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
    if (!e) return NULL;
    e->outputs = eina_list_append(e->outputs, eo_obj);
@@ -48,7 +48,7 @@ _evas_out_efl_object_constructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
 EAPI void
 evas_output_del(Evas_Out *evo)
 {
-   eo_unref(evo);
+   efl_unref(evo);
 }
 
 EOLIAN static void
@@ -58,7 +58,7 @@ _evas_out_efl_object_destructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
    Evas_Public_Data *e;
 
    eo_parent = efl_parent_get(eo_obj);
-   e = eo_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
+   e = efl_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
    evas_canvas_async_block(e);
    if (!e) return;
    // XXX: need to free output and context one they get allocated one day
@@ -66,7 +66,7 @@ _evas_out_efl_object_destructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
    // e->engine.func->output_free(eo_dat->output);
    e->engine.func->info_free(eo_parent, eo_dat->info);
    e->outputs = eina_list_remove(e->outputs, eo_obj);
-   efl_destructor(eo_super(eo_obj, MY_CLASS));
+   efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -75,7 +75,7 @@ _evas_out_view_set(Eo *eo_e, Evas_Out_Data *eo_dat, Evas_Coord x, Evas_Coord y, 
    Eo *eo_parent = NULL;
    Evas_Public_Data *e;
    eo_parent = efl_parent_get(eo_e);
-   e = eo_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
+   e = efl_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
    evas_canvas_async_block(e);
    eo_dat->x = x;
    eo_dat->y = y;
@@ -100,7 +100,7 @@ _evas_out_engine_info_set(Eo *eo_e, Evas_Out_Data *eo_dat, Evas_Engine_Info *inf
    Eo *eo_parent = NULL;
    Evas_Public_Data *e;
    eo_parent = efl_parent_get(eo_e);
-   e = eo_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
+   e = efl_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
    evas_canvas_async_block(e);
    if (eo_dat->info != info) return EINA_FALSE;
 

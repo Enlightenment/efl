@@ -13,9 +13,9 @@ static void
 _ector_renderer_efl_object_destructor(Eo *obj, Ector_Renderer_Data *pd)
 {
    if (pd->m) free(pd->m);
-   eo_unref(pd->surface);
+   efl_unref(pd->surface);
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static Efl_Object *
@@ -27,7 +27,7 @@ _ector_renderer_efl_object_finalize(Eo *obj, Ector_Renderer_Data *pd)
         return NULL;
      }
    pd->finalized = EINA_TRUE;
-   return efl_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
 static Ector_Surface *
@@ -44,7 +44,7 @@ _ector_renderer_surface_set(Eo *obj EINA_UNUSED, Ector_Renderer_Data *pd, Ector_
         CRI("surface_set can be called during object creation only!");
         return;
      }
-   pd->surface = eo_xref(s, obj);
+   pd->surface = efl_xref(s, obj);
 }
 
 static void
@@ -133,7 +133,7 @@ _ector_renderer_mask_set(Eo *obj EINA_UNUSED,
                                       Ector_Renderer_Data *pd,
                                       Ector_Renderer *r)
 {
-   _eo_refplace(&pd->mask, r);
+   _efl_refplace(&pd->mask, r);
 }
 
 static Ector_Renderer *

@@ -20,7 +20,7 @@ static void _eldbus_model_connection_clear(Eldbus_Model_Connection_Data *);
 static Efl_Object*
 _eldbus_model_connection_efl_object_constructor(Eo *obj, Eldbus_Model_Connection_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->is_listed = EINA_FALSE;
@@ -55,7 +55,7 @@ _eldbus_model_connection_efl_object_destructor(Eo *obj, Eldbus_Model_Connection_
 
    _eldbus_model_connection_clear(pd);
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Array const *
@@ -287,7 +287,7 @@ _eldbus_model_connection_clear(Eldbus_Model_Connection_Data *pd)
    pd->unique_name = NULL;
 
    EINA_LIST_FREE(pd->children_list, child)
-     eo_unref(child);
+     efl_unref(child);
 
    EINA_LIST_FREE(pd->pending_list, pending)
      eldbus_pending_cancel(pending);
@@ -333,7 +333,7 @@ _eldbus_model_connection_names_list_cb(void *data,
      {
         DBG("(%p): bus = %s", pd->obj, bus);
 
-        Eo *child = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_connection_constructor(eo_self, pd->connection, bus, "/"));
+        Eo *child = efl_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_connection_constructor(efl_self, pd->connection, bus, "/"));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }

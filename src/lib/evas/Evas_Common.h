@@ -2825,12 +2825,12 @@ EAPI int                               evas_smart_usage_get(const Evas_Smart *s)
  * This function has been implemented to support legacy mechanism that checks
  * objects types by name.
  * USE IT ONLY FOR LEGACY SUPPORT.
- * Otherwise, it is HIGHLY recommended to use eo_isa.
+ * Otherwise, it is HIGHLY recommended to use efl_isa.
  *
  * @param type The type (name string) to add.
  * @param klass The class to associate to the type.
  *
- * @see eo_isa
+ * @see efl_isa
  *
  * @ingroup Evas_Smart_Object_Group
  */

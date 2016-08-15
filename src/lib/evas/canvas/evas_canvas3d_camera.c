@@ -28,7 +28,7 @@ _evas_canvas3d_camera_evas_canvas3d_object_update_notify(Eo *obj EINA_UNUSED,
 void
 evas_canvas3d_camera_node_add(Evas_Canvas3D_Camera *camera, Evas_Canvas3D_Node *node)
 {
-   Evas_Canvas3D_Camera_Data *pd = eo_data_scope_get(camera, MY_CLASS);
+   Evas_Canvas3D_Camera_Data *pd = efl_data_scope_get(camera, MY_CLASS);
    int count = 0;
 
    if (!pd->nodes)
@@ -48,7 +48,7 @@ evas_canvas3d_camera_node_add(Evas_Canvas3D_Camera *camera, Evas_Canvas3D_Node *
 void
 evas_canvas3d_camera_node_del(Evas_Canvas3D_Camera *camera, Evas_Canvas3D_Node *node)
 {
-   Evas_Canvas3D_Camera_Data *pd = eo_data_scope_get(camera, MY_CLASS);
+   Evas_Canvas3D_Camera_Data *pd = efl_data_scope_get(camera, MY_CLASS);
    int count = 0;
 
    if (!pd->nodes)
@@ -66,7 +66,7 @@ EOLIAN static Eo *
 _evas_canvas3d_camera_efl_object_constructor(Eo *obj,
                                        Evas_Canvas3D_Camera_Data *pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_CAMERA);
 
    return obj;
@@ -85,14 +85,14 @@ _evas_canvas3d_camera_efl_object_destructor(Eo *obj,
         it = eina_hash_iterator_key_new(pd->nodes);
         while (eina_iterator_next(it, &data))
           {
-             node = eo_data_scope_get(data, EVAS_CANVAS3D_NODE_CLASS);
+             node = efl_data_scope_get(data, EVAS_CANVAS3D_NODE_CLASS);
              node->data.camera.camera = NULL;
           }
 
         eina_hash_free(pd->nodes);
      }
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Canvas3D_Camera *
@@ -101,7 +101,7 @@ evas_canvas3d_camera_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   Evas_Object *eo_obj = efl_add(MY_CLASS, e);
    return eo_obj;
 }
 
@@ -161,8 +161,8 @@ _evas_canvas3d_camera_node_visible_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Camera
 {
    Eina_Matrix4 matrix_vp;
    Eina_Quaternion planes[6];
-   Evas_Canvas3D_Node_Data *pd_node = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
-   Evas_Canvas3D_Node_Data *pd_camera = eo_data_scope_get(camera_node, EVAS_CANVAS3D_NODE_CLASS);
+   Evas_Canvas3D_Node_Data *pd_node = efl_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
+   Evas_Canvas3D_Node_Data *pd_camera = efl_data_scope_get(camera_node, EVAS_CANVAS3D_NODE_CLASS);
    Eina_Vector3 central_point;
 
    if (!node || pd_node->type != EVAS_CANVAS3D_NODE_TYPE_MESH)

@@ -8,22 +8,22 @@
 
 #define MY_CLASS INTERFACE_CLASS
 
-EO_FUNC_BODY(interface_ab_sum_get, int, 0);
+EFL_FUNC_BODY(interface_ab_sum_get, int, 0);
 
 static Efl_Op_Description op_descs[] = {
-     EO_OP_FUNC(interface_ab_sum_get, NULL),
+     EFL_OBJECT_OP_FUNC(interface_ab_sum_get, NULL),
 };
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Interface",
-     EO_CLASS_TYPE_INTERFACE,
-     EO_CLASS_DESCRIPTION_OPS(op_descs),
+     EFL_CLASS_TYPE_INTERFACE,
+     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(interface_class_get, &class_desc, NULL, NULL)
+EFL_DEFINE_CLASS(interface_class_get, &class_desc, NULL, NULL)
 

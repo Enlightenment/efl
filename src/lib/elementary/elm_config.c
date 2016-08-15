@@ -1688,7 +1688,7 @@ _efl_config_obj_del(Eo *obj EINA_UNUSED)
 static void
 _config_load(void)
 {
-   _efl_config_obj = eo_add(EFL_CONFIG_GLOBAL_CLASS, NULL);
+   _efl_config_obj = efl_add(EFL_CONFIG_GLOBAL_CLASS, NULL);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
    efl_del_intercept_set(_efl_config_obj, _efl_config_obj_del);

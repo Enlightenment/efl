@@ -389,7 +389,7 @@ _elm_layout_elm_widget_theme_apply(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
    /* The following lines are here to support entry design; the _theme function
     * of entry needs to call directly the widget _theme function */
@@ -433,7 +433,7 @@ _elm_layout_elm_widget_on_focus(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED,
         if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
           elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
      }
-   if (eo_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
+   if (efl_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
      edje_object_message_signal_process(wd->resize_obj);
 
    return EINA_TRUE;
@@ -513,7 +513,7 @@ _elm_layout_elm_widget_sub_object_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_U
 
    if (evas_object_data_get(sobj, "elm-parent") == obj) return EINA_TRUE;
 
-   int_ret = elm_obj_widget_sub_object_add(eo_super(obj, MY_CLASS), sobj);
+   int_ret = elm_obj_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    Eina_Bool enable = EINA_TRUE;
@@ -541,7 +541,7 @@ _elm_layout_elm_widget_sub_object_del(Eo *obj, Elm_Layout_Smart_Data *sd, Evas_O
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
      _on_sub_object_size_hint_change, obj);
 
-   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
+   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
    if (sd->destructed_is) return EINA_TRUE;
 
@@ -774,7 +774,7 @@ _elm_layout_efl_canvas_group_group_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje, EINA_TRUE);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -837,7 +837,7 @@ _elm_layout_efl_canvas_group_group_del(Eo *obj, Elm_Layout_Smart_Data *sd)
 
    sd->destructed_is = EINA_TRUE;
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 /* rewrite or extend this one on your derived class as to suit your
@@ -1178,7 +1178,7 @@ elm_layout_content_swallow_list_get(const Evas_Object *obj)
    ELM_LAYOUT_CHECK(obj) NULL;
    Eina_List *ret = NULL;
    Elm_Layout_Sub_Object_Data *sub_d = NULL;
-   Elm_Layout_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Elm_Layout_Smart_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Eina_List *l = NULL;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
@@ -1872,24 +1872,24 @@ _elm_layout_edje_object_can_access_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Dat
 EOLIAN static void
 _elm_layout_efl_object_dbg_info_get(Eo *eo_obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, Efl_Dbg_Info *root)
 {
-   efl_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
+   efl_dbg_info_get(efl_super(eo_obj, MY_CLASS), root);
    ELM_WIDGET_DATA_GET_OR_RETURN(eo_obj, wd);
 
-   if (wd->resize_obj && eo_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
+   if (wd->resize_obj && efl_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
      {
-        Efl_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+        Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
         const char *file, *edje_group;
         Evas_Object *edje_obj = wd->resize_obj;
 
         efl_file_get(edje_obj, &file, &edje_group);
-        EO_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
-        EO_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
+        EFL_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
+        EFL_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
 
         Edje_Load_Error error = EDJE_LOAD_ERROR_GENERIC;
         error = edje_obj_load_error_get(edje_obj);
         if (error != EDJE_LOAD_ERROR_NONE)
           {
-             EO_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,
+             EFL_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,
                                 edje_load_error_str(error));
           }
      }
@@ -1899,7 +1899,7 @@ EAPI Evas_Object *
 elm_layout_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -1907,7 +1907,7 @@ EOLIAN static Eo *
 _elm_layout_efl_object_constructor(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    sd->obj = obj;
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
@@ -2022,12 +2022,12 @@ _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd,
      return _elm_layout_pack_proxy_get((Eo *) obj, type, part);
 
    // Generic parts (text, anything, ...)
-   proxy = eo_add(ELM_LAYOUT_INTERNAL_PART_CLASS, (Eo *) obj);
-   pd = eo_data_scope_get(proxy, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   proxy = efl_add(ELM_LAYOUT_INTERNAL_PART_CLASS, (Eo *) obj);
+   pd = efl_data_scope_get(proxy, ELM_LAYOUT_INTERNAL_PART_CLASS);
    if (pd)
      {
         pd->obj = (Eo *) obj;
-        pd->sd = eo_data_xref(pd->obj, ELM_LAYOUT_CLASS, proxy);
+        pd->sd = efl_data_xref(pd->obj, ELM_LAYOUT_CLASS, proxy);
         pd->part = part ? strdup(part) : NULL;
         pd->temp = 1;
      }

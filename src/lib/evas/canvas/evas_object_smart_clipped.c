@@ -4,8 +4,8 @@
 #define MY_CLASS EFL_CANVAS_GROUP_CLIPPED_CLASS
 
 #define CSO_DATA_GET(eo_obj, ptr)                                           \
-  Evas_Object_Smart_Clipped_Data *ptr = (eo_isa(eo_obj, MY_CLASS) ?         \
-        eo_data_scope_get(eo_obj, MY_CLASS) :                               \
+  Evas_Object_Smart_Clipped_Data *ptr = (efl_isa(eo_obj, MY_CLASS) ?         \
+        efl_data_scope_get(eo_obj, MY_CLASS) :                               \
         evas_object_smart_data_get(eo_obj));
 
 #define CSO_DATA_GET_OR_RETURN(eo_obj, ptr)                                 \
@@ -40,9 +40,9 @@ evas_object_smart_clipped_clipper_get(const Evas_Object *eo_obj)
 {
    Evas_Object_Smart_Clipped_Data *obj;
 
-   if (!eo_isa(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS))
+   if (!efl_isa(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS))
      return NULL;
-   obj = eo_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
    return obj->clipper;
 }
 
@@ -92,7 +92,7 @@ evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
    _efl_canvas_group_group_members_all_del(eo_obj);
 
    /* If it's a legacy smart object, we should free the cso. */
-   if (!eo_isa(eo_obj, MY_CLASS))
+   if (!efl_isa(eo_obj, MY_CLASS))
       free(cso);
 
    evas_object_smart_data_set(eo_obj, NULL);
@@ -199,7 +199,7 @@ evas_object_smart_clipped_smart_member_add(Evas_Object *eo_obj, Evas_Object *mem
 EOLIAN static void
 _efl_canvas_group_clipped_efl_canvas_group_group_member_add(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *member)
 {
-   efl_canvas_group_member_add(eo_super(eo_obj, MY_CLASS), member);
+   efl_canvas_group_member_add(efl_super(eo_obj, MY_CLASS), member);
    evas_object_smart_clipped_smart_member_add(eo_obj, member);
 }
 
@@ -218,7 +218,7 @@ EOLIAN static void
 _efl_canvas_group_clipped_efl_canvas_group_group_member_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *member)
 {
    evas_object_smart_clipped_smart_member_del(eo_obj, member);
-   efl_canvas_group_member_del(eo_super(eo_obj, MY_CLASS), member);
+   efl_canvas_group_member_del(efl_super(eo_obj, MY_CLASS), member);
 }
 
 EAPI void

@@ -5263,7 +5263,7 @@ _edje_real_part_box_content_at(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, unsigne
    Evas_Object_Box_Option *opt;
    Evas_Object_Box_Data *priv;
 
-   priv = eo_data_scope_get(rp->object, EVAS_BOX_CLASS);
+   priv = efl_data_scope_get(rp->object, EVAS_BOX_CLASS);
    opt = eina_list_nth(priv->children, pos);
    if (!opt) return NULL;
    return opt->obj;
@@ -5286,7 +5286,7 @@ _edje_real_part_box_remove_at(Edje *ed, Edje_Real_Part *rp, unsigned int pos)
    Evas_Object_Box_Data *priv;
    Evas_Object *child_obj;
 
-   priv = eo_data_scope_get(rp->object, EVAS_BOX_CLASS);
+   priv = efl_data_scope_get(rp->object, EVAS_BOX_CLASS);
    opt = eina_list_nth(priv->children, pos);
    if (!opt) return NULL;
    child_obj = opt->obj;
@@ -5446,7 +5446,7 @@ _edje_perspective_obj_del(void *data, EINA_UNUSED Evas *e, EINA_UNUSED Evas_Obje
      {
         Edje *ed;
 
-        ed = eo_data_scope_get(o, EDJE_OBJECT_CLASS);
+        ed = efl_data_scope_get(o, EDJE_OBJECT_CLASS);
         if (!ed) continue;
         ed->persp = NULL;
         ed->dirty = EINA_TRUE;
@@ -5499,7 +5499,7 @@ edje_perspective_set(Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Co
      {
         Edje *ed;
 
-        ed = eo_data_scope_get(o, EDJE_OBJECT_CLASS);
+        ed = efl_data_scope_get(o, EDJE_OBJECT_CLASS);
         if (!ed) continue;
         if (!ed->persp)
           {
@@ -6325,9 +6325,9 @@ _edje_fetch(const Evas_Object *obj)
 {
    Edje *ed;
 
-   if (!obj || !eo_isa(obj, EDJE_OBJECT_CLASS))
+   if (!obj || !efl_isa(obj, EDJE_OBJECT_CLASS))
      return NULL;
-   ed = eo_data_scope_get(obj, EDJE_OBJECT_CLASS);
+   ed = efl_data_scope_get(obj, EDJE_OBJECT_CLASS);
    if ((ed) && (ed->delete_me)) return NULL;
    return ed;
 }
@@ -6421,7 +6421,7 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
    rp->typedata.swallow->swallow_params.min.h = 0;
    rp->typedata.swallow->swallow_params.max.w = -1;
    rp->typedata.swallow->swallow_params.max.h = -1;
-   if (eo_isa(rp->typedata.swallow->swallowed_object, EDJE_OBJECT_CLASS))
+   if (efl_isa(rp->typedata.swallow->swallowed_object, EDJE_OBJECT_CLASS))
      {
         Evas_Coord w = 0, h = 0;
 
@@ -6434,9 +6434,9 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
         rp->typedata.swallow->swallow_params.max.w = w;
         rp->typedata.swallow->swallow_params.max.h = h;
      }
-   else if (eo_isa(rp->typedata.swallow->swallowed_object, EVAS_TEXT_CLASS) ||
-            eo_isa(rp->typedata.swallow->swallowed_object, EFL_CANVAS_POLYGON_CLASS) ||
-            eo_isa(rp->typedata.swallow->swallowed_object, EVAS_LINE_CLASS))
+   else if (efl_isa(rp->typedata.swallow->swallowed_object, EVAS_TEXT_CLASS) ||
+            efl_isa(rp->typedata.swallow->swallowed_object, EFL_CANVAS_POLYGON_CLASS) ||
+            efl_isa(rp->typedata.swallow->swallowed_object, EVAS_LINE_CLASS))
      {
         Evas_Coord w = 0, h = 0;
 
@@ -6591,7 +6591,7 @@ _edje_real_part_swallow(Edje *ed,
    evas_object_data_set(rp->typedata.swallow->swallowed_object, ".edje", ed);
 
    //If the map is enabled, uv should be updated when image size is changed.
-   if (eo_isa(rp->typedata.swallow->swallowed_object, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
+   if (efl_isa(rp->typedata.swallow->swallowed_object, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
      evas_object_event_callback_add(obj_swallow, EVAS_CALLBACK_IMAGE_RESIZE,
                                     _edje_object_part_swallow_image_resize_cb,
                                     rp);
@@ -6635,7 +6635,7 @@ _edje_real_part_swallow_clear(Edje *ed, Edje_Real_Part *rp)
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _edje_object_part_swallow_changed_hints_cb,
                                        rp);
-   if (eo_isa(rp->typedata.swallow->swallowed_object, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
+   if (efl_isa(rp->typedata.swallow->swallowed_object, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
      evas_object_event_callback_del_full(rp->typedata.swallow->swallowed_object,
                                          EVAS_CALLBACK_IMAGE_RESIZE,
                                          _edje_object_part_swallow_image_resize_cb,

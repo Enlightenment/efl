@@ -37,7 +37,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static void
 _model_free_eo_cb(void *eo)
 {
-   eo_unref(eo);
+   efl_unref(eo);
 }
 
 EOLIAN static Elm_Theme_Apply
@@ -57,7 +57,7 @@ _elm_fileselector_button_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Button
    /* file selector button's style has an extra bit */
    eina_stringshare_replace(&(wd->style), buf);
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -95,8 +95,8 @@ _selection_done(void *data, const Eo_Event *event)
      {
         Eina_Promise *promise = NULL;
         if (sd->fsd.model)
-          eo_unref(sd->fsd.model);
-        sd->fsd.model = eo_ref(model);
+          efl_unref(sd->fsd.model);
+        sd->fsd.model = efl_ref(model);
         promise = efl_model_property_get(model, "path");
         eina_promise_then(promise, _replace_path_then, _replace_path_then_error, sd);
      }
@@ -123,7 +123,7 @@ _selection_done_path(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    // EVENTS: code above should not be needed
    Eo_Event e = { NULL, NULL, NULL };
    if (path)
-      e.info = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, path));
+      e.info = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, path));
    _selection_done(data, &e);
 }
 
@@ -150,7 +150,7 @@ _new_window_add(Elm_Fileselector_Button_Data *sd)
 static Evas_Object *
 _parent_win_get(Evas_Object *obj)
 {
-   while (!eo_isa(obj, EFL_UI_WIN_CLASS))
+   while (!efl_isa(obj, EFL_UI_WIN_CLASS))
      obj = elm_object_parent_widget_get(obj);
 
    return obj;
@@ -218,7 +218,7 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
 {
    const char *path;
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
@@ -226,7 +226,7 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
    if (path) priv->fsd.path = eina_stringshare_add(path);
    else priv->fsd.path = eina_stringshare_add("/");
 
-   priv->fsd.model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, priv->fsd.path));
+   priv->fsd.model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, priv->fsd.path));
 
    priv->fsd.expandable = _elm_config->fileselector_expand_enable;
    priv->inwin_mode = _elm_config->inwin_dialogs_enable;
@@ -245,14 +245,14 @@ EOLIAN static void
 _elm_fileselector_button_efl_canvas_group_group_del(Eo *obj, Elm_Fileselector_Button_Data *sd)
 {
    if (sd->fsd.model)
-     eo_unref(sd->fsd.model);
+     efl_unref(sd->fsd.model);
    eina_stringshare_del(sd->window_title);
    eina_stringshare_del(sd->fsd.path);
    if (sd->fsd.selection)
-     eo_unref(sd->fsd.selection);
+     efl_unref(sd->fsd.selection);
    evas_object_del(sd->fsw);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Bool
@@ -265,14 +265,14 @@ EAPI Evas_Object *
 elm_fileselector_button_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_fileselector_button_efl_object_constructor(Eo *obj, Elm_Fileselector_Button_Data *sd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -325,7 +325,7 @@ _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path)
 {
    ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(obj, sd);
 
-   Efl_Model *model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, path));
+   Efl_Model *model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, path));
    if (!model)
      {
         ERR("Efl.Model allocation error");
@@ -333,8 +333,8 @@ _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path)
      }
 
    if (sd->fsd.model)
-     eo_unref(sd->fsd.model);
-   sd->fsd.model = eo_ref(model);
+     efl_unref(sd->fsd.model);
+   sd->fsd.model = efl_ref(model);
 
    eina_stringshare_replace(&sd->fsd.path, path);
 
@@ -352,12 +352,12 @@ EOLIAN static void
 _elm_fileselector_button_elm_interface_fileselector_model_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, Efl_Model *model)
 {
    if (sd->fsd.model)
-     eo_unref(sd->fsd.model);
+     efl_unref(sd->fsd.model);
 
    if (model)
      {
         Eina_Promise *promise = NULL;
-        sd->fsd.model = eo_ref(model);
+        sd->fsd.model = efl_ref(model);
         promise = efl_model_property_get(model, "path");
         eina_promise_then(promise, _replace_path_then, _replace_path_then_error, sd);
      }
@@ -545,7 +545,7 @@ static void
 _selected_model_then(void *data, void *v)
 {
    Eina_Promise_Owner *owner = data;
-   eina_promise_owner_value_set(owner, eo_ref(v), _model_free_eo_cb);
+   eina_promise_owner_value_set(owner, efl_ref(v), _model_free_eo_cb);
 }
 
 static void
@@ -566,8 +566,8 @@ _elm_fileselector_button_elm_interface_fileselector_selected_model_set(Eo *obj E
      }
 
    if (sd->fsd.selection)
-     eo_unref(sd->fsd.selection);
-   sd->fsd.selection = model ? eo_ref(model) : NULL;
+     efl_unref(sd->fsd.selection);
+   sd->fsd.selection = model ? efl_ref(model) : NULL;
 }
 
 EOLIAN static void

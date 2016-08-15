@@ -71,7 +71,7 @@ _set_material_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Eet *eet_mesh,
 {
    int i;
    Evas_Canvas3D_Material_Data *material =
-      eo_data_scope_get(f->material, EVAS_CANVAS3D_MATERIAL_CLASS);
+      efl_data_scope_get(f->material, EVAS_CANVAS3D_MATERIAL_CLASS);
    Evas_Canvas3D_Material_Eet *saved_materials =
       malloc(sizeof(Evas_Canvas3D_Material_Eet));
    Evas_Canvas3D_Color_Eet *saved_colors =
@@ -146,7 +146,7 @@ evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh,
                          const char *file,
                          Evas_Canvas3D_Mesh_Frame *f)
 {
-   Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
+   Evas_Canvas3D_Mesh_Data *pd = efl_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
    Eet_File *ef;
    Evas_Canvas3D_Mesh_Eet* eet_mesh = malloc(sizeof(Evas_Canvas3D_Mesh_Eet));
    Evas_Canvas3D_Header_Eet* eet_header = malloc(sizeof(Evas_Canvas3D_Header_Eet));

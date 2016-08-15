@@ -105,24 +105,24 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
    Eina_List *li;
 
    if (!ctx->has_proxies) return;
-   obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    EINA_LIST_FOREACH(ctx->buffers, li, fb)
      if (fb->source)
        {
           // TODO: Lock current object as proxyrendering (see image obj)
-          source = eo_data_scope_get(fb->source, EFL_CANVAS_OBJECT_CLASS);
+          source = efl_data_scope_get(fb->source, EFL_CANVAS_OBJECT_CLASS);
           _assert(fb->w == source->cur->geometry.w);
           _assert(fb->h == source->cur->geometry.h);
           if (source->proxy->surface && !source->proxy->redraw)
             {
                XDBG("Source already rendered: '%s' of type '%s'",
-                   fb->source_name, eo_class_name_get(eo_class_get(fb->source)));
+                   fb->source_name, efl_class_name_get(efl_class_get(fb->source)));
             }
           else
             {
                XDBG("Source needs to be rendered: '%s' of type '%s' (%s)",
-                   fb->source_name, eo_class_name_get(eo_class_get(fb->source)),
+                   fb->source_name, efl_class_name_get(efl_class_get(fb->source)),
                    source->proxy->redraw ? "redraw" : "no surface");
                evas_render_proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, do_async);
             }

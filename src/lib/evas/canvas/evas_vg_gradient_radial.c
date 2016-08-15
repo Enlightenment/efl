@@ -85,7 +85,7 @@ _efl_vg_gradient_radial_render_pre(Eo *obj,
 
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
-   gd = eo_data_scope_get(obj, EFL_VG_GRADIENT_CLASS);
+   gd = efl_data_scope_get(obj, EFL_VG_GRADIENT_CLASS);
    EFL_VG_COMPUTE_MATRIX(current, parent, nd);
 
    if (!nd->renderer)
@@ -110,9 +110,9 @@ _efl_vg_gradient_radial_efl_object_constructor(Eo *obj, Efl_VG_Gradient_Radial_D
 {
    Efl_VG_Data *nd;
 
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   nd = eo_data_scope_get(obj, EFL_VG_CLASS);
+   nd = efl_data_scope_get(obj, EFL_VG_CLASS);
    nd->render_pre = _efl_vg_gradient_radial_render_pre;
    nd->data = pd;
 
@@ -123,7 +123,7 @@ static void
 _efl_vg_gradient_radial_efl_object_destructor(Eo *obj,
                                            Efl_VG_Gradient_Radial_Data *pd EINA_UNUSED)
 {
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static void
@@ -131,7 +131,7 @@ _efl_vg_gradient_radial_efl_vg_bounds_get(Eo *obj, Efl_VG_Gradient_Radial_Data *
 {
    Efl_VG_Data *nd;
 
-   nd = eo_data_scope_get(obj, EFL_VG_CLASS);
+   nd = efl_data_scope_get(obj, EFL_VG_CLASS);
    EINA_RECTANGLE_SET(r,
                       nd->x + pd->center.x - pd->radius,
                       nd->y + pd->center.y - pd->radius,
@@ -148,12 +148,12 @@ _efl_vg_gradient_radial_efl_vg_interpolate(Eo *obj,
    double from_map;
    Eina_Bool r;
 
-   r = efl_vg_interpolate(eo_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS), from, to, pos_map);
+   r = efl_vg_interpolate(efl_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS), from, to, pos_map);
 
    if (!r) return EINA_FALSE;
 
-   fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_RADIAL_CLASS);
-   tod = eo_data_scope_get(to, EFL_VG_GRADIENT_RADIAL_CLASS);
+   fromd = efl_data_scope_get(from, EFL_VG_GRADIENT_RADIAL_CLASS);
+   tod = efl_data_scope_get(to, EFL_VG_GRADIENT_RADIAL_CLASS);
    from_map = 1.0 - pos_map;
 
 #define INTP(Pd, From, To, Member, From_Map, Pos_Map)   \
@@ -177,9 +177,9 @@ _efl_vg_gradient_radial_efl_vg_dup(Eo *obj,
 {
    Efl_VG_Gradient_Radial_Data *fromd;
 
-   efl_vg_dup(eo_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS), from);
+   efl_vg_dup(efl_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS), from);
 
-   fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_RADIAL_CLASS);
+   fromd = efl_data_scope_get(from, EFL_VG_GRADIENT_RADIAL_CLASS);
 
    efl_gfx_gradient_radial_focal_set(obj, fromd->focal.x, fromd->focal.y);
    efl_gfx_gradient_radial_center_set(obj, fromd->center.x, fromd->center.y);

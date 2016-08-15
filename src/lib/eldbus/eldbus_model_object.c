@@ -25,7 +25,7 @@ static void _eldbus_model_object_create_children(Eldbus_Model_Object_Data *, Eld
 static Efl_Object*
 _eldbus_model_object_efl_object_constructor(Eo *obj, Eldbus_Model_Object_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->is_listed = EINA_FALSE;
@@ -89,7 +89,7 @@ _eldbus_model_object_efl_object_destructor(Eo *obj, Eldbus_Model_Object_Data *pd
 
    _eldbus_model_object_clear(pd);
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Array const *
@@ -333,7 +333,7 @@ _eldbus_model_object_clear(Eldbus_Model_Object_Data *pd)
    pd->unique_name = NULL;
 
    EINA_LIST_FREE(pd->children_list, child)
-     eo_unref(child);
+     efl_unref(child);
 
    EINA_LIST_FREE(pd->pending_list, pending)
      eldbus_pending_cancel(pending);
@@ -517,7 +517,7 @@ _eldbus_model_object_create_children(Eldbus_Model_Object_Data *pd, Eldbus_Object
         WRN("(%p) Creating child: bus = %s, path = %s, interface = %s", pd->obj, pd->bus, current_path, interface->name);
 
         // TODO: increment reference to keep 'interface' in memory
-        child = eo_add_ref(ELDBUS_MODEL_PROXY_CLASS, NULL, eldbus_model_proxy_constructor(eo_self, object, interface));
+        child = efl_add_ref(ELDBUS_MODEL_PROXY_CLASS, NULL, eldbus_model_proxy_constructor(efl_self, object, interface));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }

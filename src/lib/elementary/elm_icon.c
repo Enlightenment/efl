@@ -298,7 +298,7 @@ static void
 _edje_signals_free(Elm_Icon_Data *sd)
 {
    Edje_Signal_Data *esd;
-   Efl_Ui_Image_Data *id = eo_data_scope_get(sd->obj, EFL_UI_IMAGE_CLASS);
+   Efl_Ui_Image_Data *id = efl_data_scope_get(sd->obj, EFL_UI_IMAGE_CLASS);
 
    EINA_LIST_FREE(sd->edje_signals, esd)
      {
@@ -316,7 +316,7 @@ _elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const 
 {
    Evas_Object *pclip;
 
-   Efl_Ui_Image_Data *id = eo_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
+   Efl_Ui_Image_Data *id = efl_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
@@ -328,7 +328,7 @@ _elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const 
    if (!sd->is_video)
      {
         Eina_Bool int_ret = EINA_FALSE;
-        int_ret = efl_file_set(eo_super(obj, MY_CLASS), file, key);
+        int_ret = efl_file_set(efl_super(obj, MY_CLASS), file, key);
         return int_ret;
      }
 
@@ -374,7 +374,7 @@ _elm_icon_elm_widget_theme_apply(Eo *obj, Elm_Icon_Data *sd)
    if (sd->stdicon)
      _elm_theme_object_icon_set(obj, sd->stdicon, elm_widget_style_get(obj));
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    return int_ret;
@@ -492,7 +492,7 @@ _elm_icon_thumb_resize_cb(void *data,
 EOLIAN static void
 _elm_icon_efl_canvas_group_group_add(Eo *obj, Elm_Icon_Data *priv)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->thumb.request = NULL;
@@ -517,7 +517,7 @@ _elm_icon_efl_canvas_group_group_del(Eo *obj, Elm_Icon_Data *sd)
 
    _edje_signals_free(sd);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 /* WARNING: to be deprecated */
@@ -527,7 +527,7 @@ _elm_icon_signal_emit(Evas_Object *obj,
                       const char *source)
 {
 
-   Efl_Ui_Image_Data *id = eo_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
+   Efl_Ui_Image_Data *id = efl_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
 
    if (!id->edje) return;
 
@@ -545,7 +545,7 @@ _elm_icon_signal_callback_add(Evas_Object *obj,
    Edje_Signal_Data *esd;
 
    ELM_ICON_DATA_GET(obj, sd);
-   Efl_Ui_Image_Data *id = eo_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
+   Efl_Ui_Image_Data *id = efl_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
 
    if (!id->edje) return;
 
@@ -576,7 +576,7 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
    Eina_List *l;
 
    ELM_ICON_DATA_GET(obj, sd);
-   Efl_Ui_Image_Data *id = eo_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
+   Efl_Ui_Image_Data *id = efl_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
 
    if (!id->edje) return NULL;
 
@@ -607,14 +607,14 @@ EAPI Evas_Object *
 elm_icon_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_icon_efl_object_constructor(Eo *obj, Elm_Icon_Data *sd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -648,7 +648,7 @@ elm_icon_memfile_set(Evas_Object *obj,
 
    _edje_signals_free(sd);
 
-   return elm_image_memfile_set(eo_super(obj, MY_CLASS), img, size, format, key);
+   return elm_image_memfile_set(efl_super(obj, MY_CLASS), img, size, format, key);
 }
 
 EAPI Eina_Bool

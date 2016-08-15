@@ -136,7 +136,7 @@ _ecore_con_socks_free(Ecore_Con_Socks *ecs)
 static Eina_Bool
 _ecore_con_socks_svr_init_v4(Ecore_Con_Server *obj, Ecore_Con_Socks_v4 *v4)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    size_t addrlen, buflen, ulen = 1;
    unsigned char *sbuf;
 
@@ -176,7 +176,7 @@ _ecore_con_socks_svr_init_v4(Ecore_Con_Server *obj, Ecore_Con_Socks_v4 *v4)
 static Eina_Bool
 _ecore_con_socks_svr_init_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    size_t buflen;
    unsigned int x;
    unsigned char *sbuf;
@@ -230,7 +230,7 @@ _ecore_con_socks_svr_init_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5)
 static void
 _ecore_con_socks_read_v4(Ecore_Con_Server *obj, Ecore_Con_Socks_v4 *v4 EINA_UNUSED, const unsigned char *buf, unsigned int num)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    const unsigned char *data;
    DBG("SOCKS: %d bytes", num);
    ECORE_CON_SOCKS_READ(8);
@@ -289,7 +289,7 @@ error:
 static Eina_Bool
 _ecore_con_socks_auth_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    size_t size;
    unsigned char *data;
    switch (v5->method)
@@ -328,7 +328,7 @@ _ecore_con_socks_auth_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5)
 static void
 _ecore_con_socks_read_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5, const unsigned char *buf, unsigned int num)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    const unsigned char *data;
 
    DBG("SOCKS: %d bytes", num);
@@ -545,7 +545,7 @@ ecore_con_socks_shutdown(void)
 void
 ecore_con_socks_read(Ecore_Con_Server *obj, unsigned char *buf, int num)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    ECORE_CON_SOCKS_VERSION_CHECK(svr->ecs);
    ECORE_CON_SOCKS_CAST(svr->ecs);
 
@@ -558,7 +558,7 @@ ecore_con_socks_read(Ecore_Con_Server *obj, unsigned char *buf, int num)
 Eina_Bool
 ecore_con_socks_svr_init(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    ECORE_CON_SOCKS_VERSION_CHECK_RETURN(svr->ecs, EINA_FALSE);
    ECORE_CON_SOCKS_CAST(svr->ecs);
 
@@ -573,7 +573,7 @@ ecore_con_socks_svr_init(Ecore_Con_Server *obj)
 void
 ecore_con_socks_dns_cb(const char *canonname EINA_UNUSED, const char *ip, struct sockaddr *addr, int addrlen EINA_UNUSED, Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    svr->ip = eina_stringshare_add(ip);
    svr->ecs_state++;
    if (addr->sa_family == AF_INET)

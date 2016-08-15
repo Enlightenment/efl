@@ -68,10 +68,10 @@ ecore_exe_pipe_run(const char     *exe_cmd,
                    const void     *data)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe *ret = eo_add(MY_CLASS, NULL, ecore_obj_exe_command_set(eo_self, exe_cmd, flags));
+   Ecore_Exe *ret = efl_add(MY_CLASS, NULL, ecore_obj_exe_command_set(efl_self, exe_cmd, flags));
    if (ret)
      {
-        Ecore_Exe_Data *pd = eo_data_scope_get(ret, MY_CLASS);
+        Ecore_Exe_Data *pd = efl_data_scope_get(ret, MY_CLASS);
         pd->data = (void *) data;
      }
 
@@ -97,7 +97,7 @@ EOLIAN static Eo *
 _ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   obj = efl_finalize(eo_super(obj, MY_CLASS));
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
 
    if (!obj)
       return obj;
@@ -110,8 +110,8 @@ ecore_exe_callback_pre_free_set(Ecore_Exe   *obj,
                                 Ecore_Exe_Cb func)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return;
    exe->pre_free_cb = func;
 }
@@ -122,8 +122,8 @@ ecore_exe_send(Ecore_Exe  *obj,
                int         size)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return EINA_FALSE;
 
    if (exe->close_stdin)
@@ -140,8 +140,8 @@ EAPI void
 ecore_exe_close_stdin(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return;
 
    exe->close_stdin = 1;
@@ -155,8 +155,8 @@ ecore_exe_auto_limits_set(Ecore_Exe *obj,
                           int        end_lines)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return;
 
    _impl_ecore_exe_auto_limits_set(obj, exe, start_bytes, end_bytes, start_lines, end_lines);
@@ -167,8 +167,8 @@ ecore_exe_event_data_get(Ecore_Exe      *obj,
                          Ecore_Exe_Flags flags)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return NULL;
 
    return _impl_ecore_exe_event_data_get(obj, exe, flags);
@@ -179,8 +179,8 @@ ecore_exe_tag_set(Ecore_Exe  *obj,
                   const char *tag)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return;
 
    IF_FREE(exe->tag);
@@ -194,8 +194,8 @@ EAPI const char *
 ecore_exe_tag_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return NULL;
 
    return exe->tag;
@@ -205,8 +205,8 @@ EAPI void *
 ecore_exe_free(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return NULL;
 
    void *data = exe->data;
@@ -218,7 +218,7 @@ ecore_exe_free(Ecore_Exe *obj)
 EOLIAN static void
 _ecore_exe_efl_object_destructor(Eo *obj, Ecore_Exe_Data *exe)
 {
-   efl_destructor(eo_super(obj, ECORE_EXE_CLASS));
+   efl_destructor(efl_super(obj, ECORE_EXE_CLASS));
 
    _impl_ecore_exe_efl_object_destructor(obj, exe);
 }
@@ -236,8 +236,8 @@ EAPI pid_t
 ecore_exe_pid_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return -1;
 
    return exe->pid;
@@ -258,8 +258,8 @@ EAPI void *
 ecore_exe_data_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return NULL;
 
    return exe->data;
@@ -271,8 +271,8 @@ ecore_exe_data_set(Ecore_Exe *obj,
 {
    void *ret;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return NULL;
 
    ret = exe->data;
@@ -284,8 +284,8 @@ EAPI Ecore_Exe_Flags
 ecore_exe_flags_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return 0;
 
    return exe->flags;
@@ -322,8 +322,8 @@ EAPI void
 ecore_exe_interrupt(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return;
 
    _impl_ecore_exe_interrupt(obj, exe);
@@ -333,8 +333,8 @@ EAPI void
 ecore_exe_quit(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return;
 
    _impl_ecore_exe_quit(obj, exe);
@@ -344,8 +344,8 @@ EAPI void
 ecore_exe_terminate(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return;
 
    _impl_ecore_exe_terminate(obj, exe);
@@ -355,8 +355,8 @@ EAPI void
 ecore_exe_kill(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return;
 
    _impl_ecore_exe_kill(obj, exe);
@@ -367,8 +367,8 @@ ecore_exe_signal(Ecore_Exe *obj,
                  int        num)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return;
 
    _impl_ecore_exe_signal(obj, exe, num);
@@ -378,8 +378,8 @@ EAPI void
 ecore_exe_hup(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!efl_isa(obj, MY_CLASS))
       return;
 
    _impl_ecore_exe_hup(obj, exe);
@@ -411,7 +411,7 @@ _ecore_exe_find(pid_t pid)
 
    EINA_LIST_FOREACH(_ecore_exe_exes, itr, obj)
    {
-      Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+      Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
       if (exe->pid == pid)
         return obj;
    }

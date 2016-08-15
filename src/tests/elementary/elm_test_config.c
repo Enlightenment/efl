@@ -153,7 +153,7 @@ START_TEST (elm_config_win)
    Eo *cfg = efl_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
-   Eo *win = eo_add(EFL_UI_WIN_CLASS, NULL);
+   Eo *win = efl_add(EFL_UI_WIN_CLASS, NULL);
    Eo *cfg2 = efl_provider_find(win, EFL_CONFIG_INTERFACE);
    fail_if(cfg != cfg2);
 

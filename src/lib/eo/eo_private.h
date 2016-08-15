@@ -107,7 +107,7 @@ struct _Eo_Object
      Eo_Vtable *vtable;
 
      Eina_List *composite_objects;
-     Eo_Del_Intercept del_intercept;
+     Efl_Del_Intercept del_intercept;
 
      short refcount;
      short user_refcount;
@@ -291,14 +291,14 @@ _eo_free(_Eo_Object *obj)
 }
 
 static inline _Eo_Object *
-_eo_ref(_Eo_Object *obj)
+_efl_ref(_Eo_Object *obj)
 {
    obj->refcount++;
    return obj;
 }
 
 static inline void
-_eo_unref(_Eo_Object *obj)
+_efl_unref(_Eo_Object *obj)
 {
    --(obj->refcount);
    if (EINA_UNLIKELY(obj->refcount <= 0))
@@ -317,14 +317,14 @@ _eo_unref(_Eo_Object *obj)
 
         if (obj->del_triggered)
           {
-             ERR("Object %p deletion already triggered. You wrongly call eo_unref() within a destructor.", _eo_obj_id_get(obj));
+             ERR("Object %p deletion already triggered. You wrongly call efl_unref() within a destructor.", _eo_obj_id_get(obj));
              return;
           }
 
         if (obj->del_intercept)
           {
              Eo *obj_id = _eo_obj_id_get(obj);
-             eo_ref(obj_id);
+             efl_ref(obj_id);
              obj->del_intercept(obj_id);
              return;
           }
@@ -355,7 +355,7 @@ _eo_unref(_Eo_Object *obj)
         if (!obj->manual_free)
           _eo_free(obj);
         else
-          _eo_ref(obj); /* If we manual free, we keep a phantom ref. */
+          _efl_ref(obj); /* If we manual free, we keep a phantom ref. */
      }
 }
 

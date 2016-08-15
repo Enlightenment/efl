@@ -220,16 +220,16 @@ _elm_view_widget_add(Elm_View_Form_Data *priv, const char *propname, Evas_Object
    w->widget_obj = widget_obj;
    priv->widgets = eina_list_append(priv->widgets, w);
 
-   if(eo_isa(widget_obj, ELM_ENTRY_CLASS))
+   if(efl_isa(widget_obj, ELM_ENTRY_CLASS))
      {
         w->widget_obj_set_cb = _elm_evas_object_text_set_cb;
         evas_object_event_callback_add(w->widget_obj, EVAS_CALLBACK_KEY_DOWN, _elm_evas_object_text_changed_cb, priv);
      }
-   else if(eo_isa(widget_obj, ELM_LABEL_CLASS))
+   else if(efl_isa(widget_obj, ELM_LABEL_CLASS))
      {
         w->widget_obj_set_cb = _elm_evas_object_text_set_cb;
      }
-   else if(eo_isa(widget_obj, ELM_THUMB_CLASS))
+   else if(efl_isa(widget_obj, ELM_THUMB_CLASS))
      {
         w->widget_obj_set_cb = _elm_evas_object_thumb_set_cb;
      }
@@ -261,7 +261,7 @@ _elm_view_form_efl_object_constructor(Eo *obj EINA_UNUSED, Elm_View_Form_Data *_
    Elm_View_Form_Data *priv = (Elm_View_Form_Data *)_pd;
    priv->model_obj = NULL;
 
-   efl_constructor(eo_super(obj, MY_CLASS));
+   efl_constructor(efl_super(obj, MY_CLASS));
 
    return obj;
 }
@@ -281,7 +281,7 @@ _elm_view_form_efl_object_destructor(Eo *obj, Elm_View_Form_Data *priv)
      }
    priv->widgets = NULL;
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 
@@ -291,14 +291,14 @@ _elm_view_form_model_set(Eo *obj EINA_UNUSED, Elm_View_Form_Data *priv, Eo *mode
    if (priv->model_obj != NULL)
      {
         efl_event_callback_del(priv->model_obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, priv);
-        eo_unref(priv->model_obj);
+        efl_unref(priv->model_obj);
      }
 
    priv->model_obj = model;
 
    if (priv->model_obj != NULL)
      {
-        eo_ref(priv->model_obj);
+        efl_ref(priv->model_obj);
         efl_event_callback_add(priv->model_obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, priv);
         _update_model_properties(priv);
      }

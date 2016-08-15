@@ -39,7 +39,7 @@ struct _Elm_Clipper_Data
  */
 
 #define ELM_CLIPPER_DATA_GET(o, sd) \
-  Elm_Clipper_Data * sd = eo_data_scope_get(o, ELM_CLIPPER_CLASS)
+  Elm_Clipper_Data * sd = efl_data_scope_get(o, ELM_CLIPPER_CLASS)
 
 #define ELM_CLIPPER_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_CLIPPER_DATA_GET(o, ptr);                       \
@@ -60,7 +60,7 @@ struct _Elm_Clipper_Data
     }
 
 #define ELM_CLIPPER_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_CLIPPER_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_CLIPPER_CLASS))) \
     return
 
 #endif

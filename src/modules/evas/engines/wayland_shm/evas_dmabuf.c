@@ -382,7 +382,7 @@ _fallback(Dmabuf_Surface *s, int w, int h)
    if (!b->mapping) b->mapping = buffer_manager->map(b);
    if (!b->mapping) goto out;
 
-   epd = eo_data_scope_get(surf->info->evas, EVAS_CANVAS_CLASS);
+   epd = efl_data_scope_get(surf->info->evas, EVAS_CANVAS_CLASS);
    while (epd && epd->rendering) evas_async_events_process_blocking();
 
    old_data = b->mapping;

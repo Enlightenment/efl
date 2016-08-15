@@ -178,10 +178,10 @@ struct _Elm_Gengrid_Pan_Data
 #define GG_IT(_it) (_it->item)
 
 #define ELM_GENGRID_DATA_GET(o, sd) \
-  Elm_Gengrid_Data * sd = eo_data_scope_get(o, ELM_GENGRID_CLASS)
+  Elm_Gengrid_Data * sd = efl_data_scope_get(o, ELM_GENGRID_CLASS)
 
 #define ELM_GENGRID_PAN_DATA_GET(o, sd) \
-  Elm_Gengrid_Pan_Data * sd = eo_data_scope_get(o, ELM_GENGRID_PAN_CLASS)
+  Elm_Gengrid_Pan_Data * sd = efl_data_scope_get(o, ELM_GENGRID_PAN_CLASS)
 
 #define ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd) \
   Elm_Gengrid_Data * sd = GG_IT(it)->wsd
@@ -205,7 +205,7 @@ struct _Elm_Gengrid_Pan_Data
     }
 
 #define ELM_GENGRID_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_GENGRID_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_GENGRID_CLASS))) \
     return
 
 #define ELM_GENGRID_ITEM_CHECK(it)                          \
@@ -218,10 +218,10 @@ struct _Elm_Gengrid_Pan_Data
 
 #define ELM_GENGRID_ITEM_CHECK_OR_GOTO(it, label)              \
   ELM_WIDGET_ITEM_CHECK_OR_GOTO(it->base, label); \
-  if (!it->base->widget || !eo_isa                              \
+  if (!it->base->widget || !efl_isa                              \
         ((it->base->widget), ELM_GENGRID_CLASS)) goto label;
 
 #define ELM_GENGRID_ITEM_DATA_GET(o, sd) \
-  Elm_Gen_Item* sd = eo_data_scope_get(o, ELM_GENGRID_ITEM_CLASS)
+  Elm_Gen_Item* sd = efl_data_scope_get(o, ELM_GENGRID_ITEM_CLASS)
 
 #endif

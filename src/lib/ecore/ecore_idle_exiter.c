@@ -9,7 +9,7 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-EO_CALLBACKS_ARRAY_DEFINE(ecore_idle_exiter_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(ecore_idle_exiter_callbacks,
                           { EFL_LOOP_EVENT_IDLE_EXIT, _ecore_factorized_idle_process },
                           { EFL_EVENT_DEL, _ecore_factorized_idle_event_del });
 

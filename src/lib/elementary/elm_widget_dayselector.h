@@ -48,7 +48,7 @@ struct _Elm_Dayselector_Item_Data
  */
 
 #define ELM_DAYSELECTOR_DATA_GET(o, sd) \
-  Elm_Dayselector_Data * sd = eo_data_scope_get(o, ELM_DAYSELECTOR_CLASS)
+  Elm_Dayselector_Data * sd = efl_data_scope_get(o, ELM_DAYSELECTOR_CLASS)
 
 #define ELM_DAYSELECTOR_DATA_GET_OR_RETURN(o, ptr)   \
   ELM_DAYSELECTOR_DATA_GET(o, ptr);                  \
@@ -69,10 +69,10 @@ struct _Elm_Dayselector_Item_Data
     }
 
 #define ELM_DAYSELECTOR_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_DAYSELECTOR_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_DAYSELECTOR_CLASS))) \
     return
 
 #define ELM_DAYSELECTOR_ITEM_DATA_GET(o, sd) \
-  Elm_Dayselector_Item_Data * sd = eo_data_scope_get(o, ELM_DAYSELECTOR_ITEM_CLASS)
+  Elm_Dayselector_Item_Data * sd = efl_data_scope_get(o, ELM_DAYSELECTOR_ITEM_CLASS)
 
 #endif

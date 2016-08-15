@@ -739,7 +739,7 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
 
    if (edje_object_part_exists(wd->resize_obj, ELM_CALENDAR_BUTTON_LEFT))
      {
-        if (sd->dec_btn_month && eo_isa(sd->dec_btn_month, ELM_ACCESS_CLASS))
+        if (sd->dec_btn_month && efl_isa(sd->dec_btn_month, ELM_ACCESS_CLASS))
           {
              _elm_access_edje_object_part_object_unregister
                (obj, elm_layout_edje_get(obj), "left_bt");
@@ -759,7 +759,7 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
         elm_object_style_set(sd->dec_btn_month, left_buf);
         elm_layout_content_set(obj, ELM_CALENDAR_BUTTON_LEFT, sd->dec_btn_month);
      }
-   else if (sd->dec_btn_month && !eo_isa(sd->dec_btn_month, ELM_ACCESS_CLASS))
+   else if (sd->dec_btn_month && !efl_isa(sd->dec_btn_month, ELM_ACCESS_CLASS))
      {
         evas_object_del(sd->dec_btn_month);
         sd->dec_btn_month = NULL;
@@ -767,7 +767,7 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
 
    if (edje_object_part_exists(wd->resize_obj, ELM_CALENDAR_BUTTON_RIGHT))
      {
-        if (sd->inc_btn_month && eo_isa(sd->inc_btn_month, ELM_ACCESS_CLASS))
+        if (sd->inc_btn_month && efl_isa(sd->inc_btn_month, ELM_ACCESS_CLASS))
           {
              _elm_access_edje_object_part_object_unregister
                (obj, elm_layout_edje_get(obj), "right_bt");
@@ -787,7 +787,7 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
         elm_object_style_set(sd->inc_btn_month, right_buf);
         elm_layout_content_set(obj, ELM_CALENDAR_BUTTON_RIGHT, sd->inc_btn_month);
      }
-   else if (sd->inc_btn_month && !eo_isa(sd->inc_btn_month, ELM_ACCESS_CLASS))
+   else if (sd->inc_btn_month && !efl_isa(sd->inc_btn_month, ELM_ACCESS_CLASS))
      {
         evas_object_del(sd->inc_btn_month);
         sd->inc_btn_month = NULL;
@@ -795,7 +795,7 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
 
    if (edje_object_part_exists(wd->resize_obj, ELM_CALENDAR_BUTTON_YEAR_LEFT))
      {
-        if (sd->dec_btn_year && eo_isa(sd->dec_btn_year, ELM_ACCESS_CLASS))
+        if (sd->dec_btn_year && efl_isa(sd->dec_btn_year, ELM_ACCESS_CLASS))
           {
              _elm_access_edje_object_part_object_unregister
                (obj, elm_layout_edje_get(obj), "left_bt_year");
@@ -815,7 +815,7 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
         elm_object_style_set(sd->dec_btn_year, left_buf);
         elm_layout_content_set(obj, ELM_CALENDAR_BUTTON_YEAR_LEFT, sd->dec_btn_year);
      }
-   else if (sd->dec_btn_year && !eo_isa(sd->dec_btn_year, ELM_ACCESS_CLASS))
+   else if (sd->dec_btn_year && !efl_isa(sd->dec_btn_year, ELM_ACCESS_CLASS))
      {
         evas_object_del(sd->dec_btn_year);
         sd->dec_btn_year = NULL;
@@ -823,7 +823,7 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
 
    if (edje_object_part_exists(wd->resize_obj, ELM_CALENDAR_BUTTON_YEAR_RIGHT))
      {
-        if (sd->inc_btn_year && eo_isa(sd->inc_btn_year, ELM_ACCESS_CLASS))
+        if (sd->inc_btn_year && efl_isa(sd->inc_btn_year, ELM_ACCESS_CLASS))
           {
              _elm_access_edje_object_part_object_unregister
                (obj, elm_layout_edje_get(obj), "right_bt_year");
@@ -843,7 +843,7 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
         elm_object_style_set(sd->inc_btn_year, right_buf);
         elm_layout_content_set(obj, ELM_CALENDAR_BUTTON_YEAR_RIGHT, sd->inc_btn_year);
      }
-   else if (sd->inc_btn_year && !eo_isa(sd->inc_btn_year, ELM_ACCESS_CLASS))
+   else if (sd->inc_btn_year && !efl_isa(sd->inc_btn_year, ELM_ACCESS_CLASS))
      {
         evas_object_del(sd->inc_btn_year);
         sd->inc_btn_year = NULL;
@@ -855,7 +855,7 @@ _elm_calendar_elm_widget_theme_apply(Eo *obj, Elm_Calendar_Data *sd)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _spinner_buttons_add(obj, sd);
@@ -1377,7 +1377,7 @@ _elm_calendar_efl_canvas_group_group_add(Eo *obj, Elm_Calendar_Data *priv)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->first_interval = 0.85;
@@ -1457,7 +1457,7 @@ _elm_calendar_efl_canvas_group_group_del(Eo *obj, Elm_Calendar_Data *sd)
    for (i = 0; i < ELM_DAY_LAST; i++)
      eina_stringshare_del(sd->weekdays[i]);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_calendar_smart_focus_next_enable = EINA_FALSE;
@@ -1538,13 +1538,13 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
                }
           }
 
-        if (sd->dec_btn_month && eo_isa(sd->dec_btn_month, ELM_ACCESS_CLASS))
+        if (sd->dec_btn_month && efl_isa(sd->dec_btn_month, ELM_ACCESS_CLASS))
           {
              _elm_access_edje_object_part_object_unregister
                (obj, elm_layout_edje_get(obj), "left_bt");
              sd->dec_btn_month = NULL;
           }
-        if (sd->inc_btn_month && eo_isa(sd->inc_btn_month, ELM_ACCESS_CLASS))
+        if (sd->inc_btn_month && efl_isa(sd->inc_btn_month, ELM_ACCESS_CLASS))
           {
              _elm_access_edje_object_part_object_unregister
                (obj, elm_layout_edje_get(obj), "right_bt");
@@ -1554,13 +1554,13 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
           _elm_access_edje_object_part_object_unregister
             (obj, elm_layout_edje_get(obj), "month_text");
 
-        if (sd->dec_btn_year && eo_isa(sd->dec_btn_year, ELM_ACCESS_CLASS))
+        if (sd->dec_btn_year && efl_isa(sd->dec_btn_year, ELM_ACCESS_CLASS))
           {
              _elm_access_edje_object_part_object_unregister
                (obj, elm_layout_edje_get(obj), "left_bt_year");
              sd->dec_btn_year = NULL;
           }
-        if (sd->inc_btn_year && eo_isa(sd->inc_btn_year, ELM_ACCESS_CLASS))
+        if (sd->inc_btn_year && efl_isa(sd->inc_btn_year, ELM_ACCESS_CLASS))
           {
              _elm_access_edje_object_part_object_unregister
                (obj, elm_layout_edje_get(obj), "right_bt_year");
@@ -1583,14 +1583,14 @@ EAPI Evas_Object *
 elm_calendar_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_calendar_efl_object_constructor(Eo *obj, Elm_Calendar_Data *sd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);

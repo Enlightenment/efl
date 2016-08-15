@@ -162,7 +162,7 @@ struct _Elm_Fileselector_Filter
  */
 
 #define ELM_FILESELECTOR_DATA_GET(o, sd) \
-  Elm_Fileselector_Data * sd = eo_data_scope_get(o, ELM_FILESELECTOR_CLASS)
+  Elm_Fileselector_Data * sd = efl_data_scope_get(o, ELM_FILESELECTOR_CLASS)
 
 #define ELM_FILESELECTOR_DATA_GET_OR_RETURN(o, ptr)  \
   ELM_FILESELECTOR_DATA_GET(o, ptr);                 \
@@ -183,7 +183,7 @@ struct _Elm_Fileselector_Filter
     }
 
 #define ELM_FILESELECTOR_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_FILESELECTOR_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_FILESELECTOR_CLASS))) \
     return
 
 #endif

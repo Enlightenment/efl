@@ -39,7 +39,7 @@ void
 evas_canvas3d_material_mesh_add(Evas_Canvas3D_Material *material, Evas_Canvas3D_Mesh *mesh)
 {
    int count = 0;
-   Evas_Canvas3D_Material_Data *pd = eo_data_scope_get(material, MY_CLASS);
+   Evas_Canvas3D_Material_Data *pd = efl_data_scope_get(material, MY_CLASS);
 
    if (pd->meshes == NULL)
      {
@@ -61,7 +61,7 @@ void
 evas_canvas3d_material_mesh_del(Evas_Canvas3D_Material *material, Evas_Canvas3D_Mesh *mesh)
 {
    int count = 0;
-   Evas_Canvas3D_Material_Data *pd = eo_data_scope_get(material, MY_CLASS);
+   Evas_Canvas3D_Material_Data *pd = efl_data_scope_get(material, MY_CLASS);
 
    if (pd->meshes == NULL)
      {
@@ -84,14 +84,14 @@ evas_canvas3d_material_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   Evas_Object *eo_obj = efl_add(MY_CLASS, e);
    return eo_obj;
 }
 
 EOLIAN static Eo *
 _evas_canvas3d_material_efl_object_constructor(Eo *obj EINA_UNUSED, Evas_Canvas3D_Material_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_MATERIAL);
 
    evas_color_set(&pd->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT].color, 0.2, 0.2, 0.2, 1.0);
@@ -118,7 +118,7 @@ _evas_canvas3d_material_efl_object_destructor(Eo *obj, Evas_Canvas3D_Material_Da
         it = eina_hash_iterator_key_new(pd->meshes);
         while (eina_iterator_next(it, &data))
           {
-             mesh = eo_data_scope_get(data, EVAS_CANVAS3D_MESH_CLASS);
+             mesh = efl_data_scope_get(data, EVAS_CANVAS3D_MESH_CLASS);
              if (mesh->frames)
                {
                   EINA_LIST_FOREACH(mesh->frames, l, f)
@@ -136,7 +136,7 @@ _evas_canvas3d_material_efl_object_destructor(Eo *obj, Evas_Canvas3D_Material_Da
              evas_canvas3d_texture_material_del(pd->attribs[i].texture, obj);
           }
      }
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -187,12 +187,12 @@ _evas_canvas3d_material_texture_set(Eo *obj, Evas_Canvas3D_Material_Data *pd, Ev
         if (pd->attribs[attrib].texture)
           {
              evas_canvas3d_texture_material_del(pd->attribs[attrib].texture, obj);
-             eo_unref(pd->attribs[attrib].texture);
+             efl_unref(pd->attribs[attrib].texture);
           }
 
         pd->attribs[attrib].texture = texture;
         evas_canvas3d_texture_material_add(texture, obj);
-        eo_ref(texture);
+        efl_ref(texture);
      }
 
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_MATERIAL_TEXTURE, NULL);

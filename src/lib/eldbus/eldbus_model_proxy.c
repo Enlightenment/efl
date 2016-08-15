@@ -49,7 +49,7 @@ _eldbus_model_proxy_hash_free(Eina_Value *value)
 static Efl_Object*
 _eldbus_model_proxy_efl_object_constructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->object = NULL;
@@ -91,7 +91,7 @@ _eldbus_model_proxy_efl_object_destructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
    eina_stringshare_del(pd->name);
    eldbus_object_unref(pd->object);
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Array const *
@@ -296,7 +296,7 @@ _eldbus_model_proxy_create_methods_children(Eldbus_Model_Proxy_Data *pd)
         INF("(%p) Creating method child: bus = %s, path = %s, method = %s::%s",
                        pd->obj, bus, path, interface_name, method_name);
 
-        child = eo_add(ELDBUS_MODEL_METHOD_CLASS, NULL, eldbus_model_method_constructor(eo_self, pd->proxy, method));
+        child = efl_add(ELDBUS_MODEL_METHOD_CLASS, NULL, eldbus_model_method_constructor(efl_self, pd->proxy, method));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }
@@ -331,7 +331,7 @@ _eldbus_model_proxy_create_signals_children(Eldbus_Model_Proxy_Data *pd)
         DBG("(%p) Creating signal child: bus = %s, path = %s, signal = %s::%s",
                        pd->obj, bus, path, interface_name, signal_name);
 
-        child = eo_add(ELDBUS_MODEL_SIGNAL_CLASS, NULL, eldbus_model_signal_constructor(eo_self, pd->proxy, signal));
+        child = efl_add(ELDBUS_MODEL_SIGNAL_CLASS, NULL, eldbus_model_signal_constructor(efl_self, pd->proxy, signal));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }
@@ -390,7 +390,7 @@ _eldbus_model_proxy_unload(Eldbus_Model_Proxy_Data *pd)
    EINA_SAFETY_ON_NULL_RETURN(pd);
 
    EINA_LIST_FREE(pd->children_list, child)
-     eo_unref(child);
+     efl_unref(child);
 
    EINA_LIST_FREE(pd->pending_list, pending)
    {

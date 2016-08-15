@@ -199,13 +199,13 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
              eet_data->vio.tell = eet_snd_file_tell;
              eet_data->offset = 0;
 
-             in = eo_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL, ecore_audio_obj_name_set(eo_self, snd_id_str), ecore_audio_obj_in_speed_set(eo_self, speed), ecore_audio_obj_vio_set(eo_self, &eet_data->vio, eet_data, _free), efl_event_callback_add(eo_self, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL));
+             in = efl_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL, ecore_audio_obj_name_set(efl_self, snd_id_str), ecore_audio_obj_in_speed_set(efl_self, speed), ecore_audio_obj_vio_set(efl_self, &eet_data->vio, eet_data, _free), efl_event_callback_add(efl_self, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL));
              if (!out)
                {
 #if HAVE_COREAUDIO
-                  out = eo_add(ECORE_AUDIO_OUT_CORE_AUDIO_CLASS, NULL);
+                  out = efl_add(ECORE_AUDIO_OUT_CORE_AUDIO_CLASS, NULL);
 #elif HAVE_PULSE
-                  out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(eo_self, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
+                  out = efl_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(efl_self, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
 #endif
                   if (out) outs++;
                }
@@ -266,7 +266,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
         tone = &ed->file->sound_dir->tones[i];
         if (!strcmp(tone->name, tone_name))
           {
-             in = eo_add(ECORE_AUDIO_IN_TONE_CLASS, NULL);
+             in = efl_add(ECORE_AUDIO_IN_TONE_CLASS, NULL);
              ecore_audio_obj_name_set(in, "tone");
              efl_key_data_set(in, ECORE_AUDIO_ATTR_TONE_FREQ, &tone->value);
              ecore_audio_obj_in_length_set(in, duration);
@@ -275,9 +275,9 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
              if (!out)
                {
 #if HAVE_COREAUDIO
-                  out = eo_add(ECORE_AUDIO_OUT_CORE_AUDIO_CLASS, NULL);
+                  out = efl_add(ECORE_AUDIO_OUT_CORE_AUDIO_CLASS, NULL);
 #elif HAVE_PULSE
-                  out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(eo_self, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
+                  out = efl_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(efl_self, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
 #endif
                   if (out) outs++;
                }

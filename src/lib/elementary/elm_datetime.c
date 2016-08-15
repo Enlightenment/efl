@@ -387,7 +387,7 @@ _elm_datetime_elm_widget_translate(Eo *obj, Elm_Datetime_Data *sd)
    if (!sd->user_format) _reload_format(obj);
    else _field_list_display(obj);
 
-   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
+   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
 
    return EINA_TRUE;
 }
@@ -461,7 +461,7 @@ _elm_datetime_elm_widget_on_focus(Eo *obj, Elm_Datetime_Data *sd, Elm_Object_Ite
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_on_focus(eo_super(obj, MY_CLASS), NULL);
+   int_ret = elm_obj_widget_on_focus(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (!elm_widget_focus_get(obj))
@@ -480,7 +480,7 @@ _elm_datetime_elm_widget_disable(Eo *obj, Elm_Datetime_Data *sd)
    unsigned int idx = 0;
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_disable(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_disable(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
@@ -520,7 +520,7 @@ _elm_datetime_elm_widget_theme_apply(Eo *obj, Elm_Datetime_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    if ((!dt_mod) || (!dt_mod->field_value_display)) return int_ret;
@@ -801,7 +801,7 @@ _elm_datetime_efl_canvas_group_group_add(Eo *obj, Elm_Datetime_Data *priv)
    Datetime_Field *field;
    int idx;
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    // module - initialise module for datetime
@@ -877,21 +877,21 @@ _elm_datetime_efl_canvas_group_group_del(Eo *obj, Elm_Datetime_Data *sd)
    if ((dt_mod) && (dt_mod->obj_unhook))
      dt_mod->obj_unhook(sd->mod_data);  // module - unhook
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
 elm_datetime_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_datetime_efl_object_constructor(Eo *obj, Elm_Datetime_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_DATE_EDITOR);

@@ -92,7 +92,7 @@ EOLIAN static void
 _elm_bg_efl_canvas_group_group_add(Eo *obj, Elm_Bg_Data *priv)
 {
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -114,7 +114,7 @@ EAPI Evas_Object *
 elm_bg_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -122,7 +122,7 @@ EOLIAN static Eo *
 _elm_bg_efl_object_constructor(Eo *obj, Elm_Bg_Data *_pd EINA_UNUSED)
 {
    elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_DISABLED);
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;

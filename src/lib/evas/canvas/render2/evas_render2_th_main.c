@@ -4,7 +4,7 @@
    do                                  \
    {                                   \
       eina_array_push(array, obj);     \
-      eo_data_ref(obj->object, NULL);  \
+      efl_data_ref(obj->object, NULL);  \
    } while (0)
 
 #define OBJS_ARRAY_CLEAN(array)                          \
@@ -14,7 +14,7 @@
       Eina_Array_Iterator iterator;                      \
       unsigned int idx;                                  \
       EINA_ARRAY_ITER_NEXT(array, idx, item, iterator)   \
-      eo_data_unref(item->object, item);                 \
+      efl_data_unref(item->object, item);                 \
       eina_array_clean(array);                           \
    } while (0)
 
@@ -297,7 +297,7 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
      {
         EINA_LIST_FREE(updates_list, rect) free(rect);
      }
-   eo_unref(eo_e);
+   efl_unref(eo_e);
 }
 
 static void *

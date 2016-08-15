@@ -6,7 +6,7 @@
 //#define ELM_PART_HOOK do { ERR("%p:%s [%d]", pd->obj, pd->part, (int) pd->temp); } while(0)
 #define ELM_PART_HOOK
 
-#define ELM_PART_REF(obj, pd) do { if (!(pd->temp++)) eo_ref(obj); } while(0)
+#define ELM_PART_REF(obj, pd) do { if (!(pd->temp++)) efl_ref(obj); } while(0)
 #define ELM_PART_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) efl_del(obj); } } while(0)
 #define ELM_PART_RETURN_VAL(a) do { ELM_PART_HOOK; typeof(a) _ret = a; ELM_PART_UNREF(obj, pd); return _ret; } while(0)
 #define ELM_PART_RETURN_VOID do { ELM_PART_HOOK; ELM_PART_UNREF(obj, pd); return; } while(0)
@@ -30,8 +30,8 @@ _ ## type ## _internal_part_efl_object_destructor(Eo *obj, partdata *pd) \
 { \
    ELM_PART_HOOK; \
    free(pd->part); \
-   eo_data_xunref(pd->obj, pd->sd, obj); \
-   efl_destructor(eo_super(obj, TYPE ## _INTERNAL_PART_CLASS)); \
+   efl_data_xunref(pd->obj, pd->sd, obj); \
+   efl_destructor(efl_super(obj, TYPE ## _INTERNAL_PART_CLASS)); \
 } \
 
 // Main part proxy implementation
@@ -43,12 +43,12 @@ _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const cha
    partdata *pd; \
    Eo *proxy; \
 \
-   proxy = eo_add(TYPE ## _INTERNAL_PART_CLASS, (Eo *) obj); \
-   pd = eo_data_scope_get(proxy, TYPE ## _INTERNAL_PART_CLASS); \
+   proxy = efl_add(TYPE ## _INTERNAL_PART_CLASS, (Eo *) obj); \
+   pd = efl_data_scope_get(proxy, TYPE ## _INTERNAL_PART_CLASS); \
    if (pd) \
      { \
         pd->obj = (Eo *) obj; \
-        pd->sd = eo_data_xref(pd->obj, TYPE ## _CLASS, proxy); \
+        pd->sd = efl_data_xref(pd->obj, TYPE ## _CLASS, proxy); \
         pd->part = part ? strdup(part) : NULL; \
         pd->temp = 1; \
      } \
@@ -85,12 +85,12 @@ _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const cha
    partdata *pd; \
    Eo *proxy; \
 \
-   proxy = eo_add(TYPE ## _INTERNAL_PART_CLASS, (Eo *) obj); \
-   pd = eo_data_scope_get(proxy, SUPER ## _INTERNAL_PART_CLASS); \
+   proxy = efl_add(TYPE ## _INTERNAL_PART_CLASS, (Eo *) obj); \
+   pd = efl_data_scope_get(proxy, SUPER ## _INTERNAL_PART_CLASS); \
    if (pd) \
      { \
         pd->obj = (Eo *) obj; \
-        pd->sd = eo_data_xref(pd->obj, SUPER ## _CLASS, proxy); \
+        pd->sd = efl_data_xref(pd->obj, SUPER ## _CLASS, proxy); \
         pd->part = part ? strdup(part) : NULL; \
         pd->temp = 1; \
      } \
@@ -102,8 +102,8 @@ _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const cha
 static EOLIAN Eina_Bool \
 _ ## type ## _internal_part_efl_container_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *content) \
 { \
-   partdata *pd = eo_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
-   typedata *sd = eo_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   partdata *pd = efl_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
+   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _content_set(pd->obj, sd, pd->part, content)); \
 }
 
@@ -111,8 +111,8 @@ _ ## type ## _internal_part_efl_container_content_set(Eo *obj, void *_pd EINA_UN
 static EOLIAN Efl_Gfx * \
 _ ## type ## _internal_part_efl_container_content_get(Eo *obj, void *_pd EINA_UNUSED) \
 { \
-   partdata *pd = eo_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
-   typedata *sd = eo_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   partdata *pd = efl_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
+   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _content_get(pd->obj, sd, pd->part)); \
 }
 
@@ -120,8 +120,8 @@ _ ## type ## _internal_part_efl_container_content_get(Eo *obj, void *_pd EINA_UN
 static EOLIAN Efl_Gfx * \
 _ ## type ## _internal_part_efl_container_content_unset(Eo *obj, void *_pd EINA_UNUSED) \
 { \
-   partdata *pd = eo_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
-   typedata *sd = eo_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   partdata *pd = efl_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
+   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _content_unset(pd->obj, sd, pd->part)); \
 }
 

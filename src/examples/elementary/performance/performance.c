@@ -622,7 +622,7 @@ EAPI_MAIN
    evas_object_show(startexitbox);
 
    evas = evas_object_evas_get(win);
-   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
+   image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
 
    btnstart = elm_button_add(win);
    elm_object_text_set(btnstart, "Apply");

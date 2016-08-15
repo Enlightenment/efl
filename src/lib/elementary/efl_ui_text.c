@@ -147,7 +147,7 @@ struct _Item_Obj
 };
 
 #define EFL_UI_TEXT_DATA_GET(o, sd) \
-  Efl_Ui_Text_Data * sd = eo_data_scope_get(o, EFL_UI_TEXT_CLASS)
+  Efl_Ui_Text_Data * sd = efl_data_scope_get(o, EFL_UI_TEXT_CLASS)
 
 #define EFL_UI_TEXT_DATA_GET_OR_RETURN(o, ptr)         \
   EFL_UI_TEXT_DATA_GET(o, ptr);                        \
@@ -168,7 +168,7 @@ struct _Item_Obj
     }
 
 #define EFL_UI_TEXT_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), EFL_UI_TEXT_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_TEXT_CLASS))) \
     return
 
 struct _Efl_Ui_Text_Rectangle
@@ -523,7 +523,7 @@ _viewport_region_get(Evas_Object *obj)
    parent = elm_widget_parent_get(obj);
    while (parent)
      {
-        if (eo_isa(parent, ELM_INTERFACE_SCROLLABLE_MIXIN))
+        if (efl_isa(parent, ELM_INTERFACE_SCROLLABLE_MIXIN))
           {
              Eina_Rectangle r;
              EINA_RECTANGLE_SET(&r, 0, 0, 0, 0);
@@ -906,7 +906,7 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -1110,7 +1110,7 @@ _efl_ui_text_elm_widget_on_focus(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item 
    if (!sd->editable) return EINA_FALSE;
 
    top = elm_widget_top_get(obj);
-   if (top && eo_isa(top, EFL_UI_WIN_CLASS))
+   if (top && efl_isa(top, EFL_UI_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
    if (elm_widget_focus_get(obj))
@@ -1213,7 +1213,7 @@ _efl_ui_text_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSE
         elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
      }
 
-   ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
+   ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!ret) return EINA_FALSE;
 
    return EINA_TRUE;
@@ -1740,7 +1740,7 @@ _magnifier_move(void *data)
 
    // keep magnifier inside window
    top = elm_widget_top_get(data);
-   if (top && eo_isa(top, EFL_UI_WIN_CLASS))
+   if (top && efl_isa(top, EFL_UI_WIN_CLASS))
      {
         Evas_Coord wh, ww;
         evas_object_geometry_get(top, NULL, NULL, &ww, &wh);
@@ -1938,7 +1938,7 @@ _mouse_up_cb(void *data,
              top = elm_widget_top_get(data);
              if (top)
                {
-                  if (eo_isa(top, EFL_UI_WIN_CLASS))
+                  if (efl_isa(top, EFL_UI_WIN_CLASS))
                     top_is_win = EINA_TRUE;
 
                   if (top_is_win && sd->input_panel_enable && sd->input_panel_show_on_demand &&
@@ -2655,14 +2655,14 @@ _efl_ui_text_elm_layout_signal_callback_add (Eo *obj, Efl_Ui_Text_Data *sd, cons
    wd->resize_obj = sd->entry_edje;
 
    elm_obj_layout_signal_callback_add
-     (eo_super(obj, MY_CLASS), emission, source, func_cb, data);
+     (efl_super(obj, MY_CLASS), emission, source, func_cb, data);
 
    if (sd->scr_edje)
      {
         wd->resize_obj = sd->scr_edje;
 
         elm_obj_layout_signal_callback_add
-              (eo_super(obj, MY_CLASS), emission, source, func_cb, data);
+              (efl_super(obj, MY_CLASS), emission, source, func_cb, data);
      }
 
    wd->resize_obj = ro;
@@ -2681,14 +2681,14 @@ _efl_ui_text_elm_layout_signal_callback_del(Eo *obj, Efl_Ui_Text_Data *sd, const
    wd->resize_obj = sd->entry_edje;
 
    data = elm_obj_layout_signal_callback_del
-         (eo_super(obj, MY_CLASS), emission, source, func_cb);
+         (efl_super(obj, MY_CLASS), emission, source, func_cb);
 
    if (sd->scr_edje)
      {
         wd->resize_obj = sd->scr_edje;
 
         data = elm_obj_layout_signal_callback_del
-              (eo_super(obj, MY_CLASS), emission, source, func_cb);
+              (efl_super(obj, MY_CLASS), emission, source, func_cb);
      }
 
    wd->resize_obj = ro;
@@ -2700,7 +2700,7 @@ static Eina_Bool
 _efl_ui_text_content_set(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
+   int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
    if (!int_ret) return EINA_FALSE;
 
    /* too bad entry does not follow the pattern
@@ -2719,7 +2719,7 @@ static Evas_Object*
 _efl_ui_text_content_unset(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const char *part)
 {
    Evas_Object *ret = NULL;
-   ret = efl_content_unset(efl_part(eo_super(obj, MY_CLASS), part));
+   ret = efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
    if (!ret) return NULL;
 
    /* too bad entry does not follow the pattern
@@ -3204,10 +3204,10 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
    /* XXX: needs to be before efl_canvas_group_add, since the latter will
     * trigger a layout_sizing_eval call and requires the canvas text object to
     * be instantiated. */
-   text_obj = eo_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
+   text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
    efl_composite_attach(obj, text_obj);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->test_bit = EINA_TRUE;
@@ -3491,13 +3491,13 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
    evas_object_event_callback_del_full(sd->entry_edje, EVAS_CALLBACK_MOVE,
          _efl_ui_text_move_cb, obj);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
 _efl_ui_text_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(efl_super(obj, MY_CLASS), x, y);
 
    evas_object_move(sd->hit_rect, x, y);
 
@@ -3509,7 +3509,7 @@ _efl_ui_text_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coo
 EOLIAN static void
 _efl_ui_text_efl_canvas_group_group_resize(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
 
    evas_object_resize(sd->hit_rect, w, h);
    _update_selection_handler(obj);
@@ -3518,7 +3518,7 @@ _efl_ui_text_efl_canvas_group_group_resize(Eo *obj, Efl_Ui_Text_Data *sd, Evas_C
 EOLIAN static void
 _efl_ui_text_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED)
 {
-   efl_canvas_group_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(efl_super(obj, MY_CLASS));
 
    _update_selection_handler(obj);
 }
@@ -3526,7 +3526,7 @@ _efl_ui_text_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUS
 EOLIAN static void
 _efl_ui_text_efl_canvas_group_group_hide(Eo *obj, Efl_Ui_Text_Data *sd)
 {
-   efl_canvas_group_hide(eo_super(obj, MY_CLASS));
+   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
 
    if (sd->have_selection)
      _hide_selection_handler(obj);
@@ -3535,7 +3535,7 @@ _efl_ui_text_efl_canvas_group_group_hide(Eo *obj, Efl_Ui_Text_Data *sd)
 EOLIAN static void
 _efl_ui_text_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *member)
 {
-   efl_canvas_group_member_add(eo_super(obj, MY_CLASS), member);
+   efl_canvas_group_member_add(efl_super(obj, MY_CLASS), member);
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
@@ -3578,7 +3578,7 @@ _cb_deleted(void *data EINA_UNUSED, const Eo_Event *ev)
 EOLIAN static Eo *
 _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ENTRY);
@@ -3593,7 +3593,7 @@ EOLIAN static void
 _efl_ui_text_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd)
 {
    ecore_job_del(pd->deferred_decoration_job);
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -3689,7 +3689,7 @@ _efl_ui_text_entry_insert(Eo *obj, Efl_Ui_Text_Data *sd, const char *entry)
 EOLIAN static void
 _efl_ui_text_efl_ui_text_interactive_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool editable)
 {
-   efl_ui_text_interactive_editable_set(eo_super(obj, MY_CLASS), editable);
+   efl_ui_text_interactive_editable_set(efl_super(obj, MY_CLASS), editable);
    if (sd->editable == editable) return;
    sd->editable = editable;
    elm_obj_widget_theme_apply(obj);
@@ -4022,7 +4022,7 @@ _efl_ui_text_elm_interface_scrollable_policy_set(Eo *obj, Efl_Ui_Text_Data *sd, 
 {
    sd->policy_h = h;
    sd->policy_v = v;
-   elm_interface_scrollable_policy_set(eo_super(obj, MY_CLASS), sd->policy_h, sd->policy_v);
+   elm_interface_scrollable_policy_set(efl_super(obj, MY_CLASS), sd->policy_h, sd->policy_v);
 }
 
 EOLIAN static void
@@ -4030,7 +4030,7 @@ _efl_ui_text_elm_interface_scrollable_bounce_allow_set(Eo *obj, Efl_Ui_Text_Data
 {
    sd->h_bounce = h_bounce;
    sd->v_bounce = v_bounce;
-   elm_interface_scrollable_bounce_allow_set(eo_super(obj, MY_CLASS), h_bounce, v_bounce);
+   elm_interface_scrollable_bounce_allow_set(efl_super(obj, MY_CLASS), h_bounce, v_bounce);
 }
 
 EOLIAN static void
@@ -4862,7 +4862,7 @@ EOLIAN static Elm_Atspi_State_Set
 _efl_ui_text_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
 {
    Elm_Atspi_State_Set ret;
-   ret = elm_interface_atspi_accessible_state_set_get(eo_super(obj, EFL_UI_TEXT_CLASS));
+   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, EFL_UI_TEXT_CLASS));
 
    if (efl_ui_text_interactive_editable_get(obj))
      STATE_TYPE_SET(ret, ELM_ATSPI_STATE_EDITABLE);
@@ -4874,7 +4874,7 @@ EOLIAN static char*
 _efl_ui_text_elm_interface_atspi_accessible_name_get(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    char *name;
-   name = elm_interface_atspi_accessible_name_get(eo_super(obj, EFL_UI_TEXT_CLASS));
+   name = elm_interface_atspi_accessible_name_get(efl_super(obj, EFL_UI_TEXT_CLASS));
    if (name && strncmp("", name, 1)) return name;
    const char *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
    return ret ? strdup(ret) : NULL;
@@ -4884,8 +4884,8 @@ EOLIAN static Efl_Canvas_Text_Cursor *
 _efl_ui_text_cursor_new(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED)
 {
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
-   return eo_add(EFL_CANVAS_TEXT_CURSOR_CLASS, (Eo *) obj,
-         efl_canvas_text_cursor_text_object_set(eo_self, text_obj));
+   return efl_add(EFL_CANVAS_TEXT_CURSOR_CLASS, (Eo *) obj,
+         efl_canvas_text_cursor_text_object_set(efl_self, text_obj));
 }
 
 static void
@@ -4900,7 +4900,7 @@ static inline Eo *
 _decoration_create(Efl_Ui_Text_Data *sd, const char *file,
       const char *source, Eina_Bool above)
 {
-   Eo *ret = eo_add(EDJE_OBJECT_CLASS, sd->entry_edje);
+   Eo *ret = efl_add(EDJE_OBJECT_CLASS, sd->entry_edje);
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    edje_object_file_set(ret, file, source);
    evas_object_smart_member_add(ret, sd->entry_edje);
@@ -5245,10 +5245,10 @@ _anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    _anchors_clear(obj, sd);
 
-   start =  eo_add(EFL_CANVAS_TEXT_CURSOR_CLASS, obj,
-         efl_canvas_text_cursor_text_object_set(eo_self, text_obj));
-   end =  eo_add(EFL_CANVAS_TEXT_CURSOR_CLASS, obj,
-         efl_canvas_text_cursor_text_object_set(eo_self, text_obj));
+   start =  efl_add(EFL_CANVAS_TEXT_CURSOR_CLASS, obj,
+         efl_canvas_text_cursor_text_object_set(efl_self, text_obj));
+   end =  efl_add(EFL_CANVAS_TEXT_CURSOR_CLASS, obj,
+         efl_canvas_text_cursor_text_object_set(efl_self, text_obj));
 
    /* Retrieve all annotations in the text. */
    efl_canvas_text_cursor_paragraph_first(start);
@@ -5470,7 +5470,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, ELM_LAYOUT, Efl_Ui_Text_
 EOLIAN static Eo *
 _efl_ui_text_editable_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_ui_text_interactive_editable_set(obj, EINA_TRUE);
 
    return obj;

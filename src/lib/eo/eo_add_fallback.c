@@ -15,14 +15,14 @@
 
 // 1024 entries == 16k or 32k (32 or 64bit) for eo call stack. that's 1023
 // imbricated/recursive calls it can handle before barfing. i'd say that's ok
-#define EO_CALL_STACK_DEPTH_MIN 1024
+#define EFL_OBJECT_CALL_STACK_DEPTH_MIN 1024
 
-typedef struct _Eo_Call_Stack {
+typedef struct _Efl_Object_Call_Stack {
    Eo_Stack_Frame *frames;
    Eo_Stack_Frame *frame_ptr;
-} Eo_Call_Stack;
+} Efl_Object_Call_Stack;
 
-#define EO_CALL_STACK_SIZE (EO_CALL_STACK_DEPTH_MIN * sizeof(Eo_Stack_Frame))
+#define EFL_OBJECT_CALL_STACK_SIZE (EFL_OBJECT_CALL_STACK_DEPTH_MIN * sizeof(Eo_Stack_Frame))
 
 static Eina_TLS _eo_call_stack_key = 0;
 
@@ -63,16 +63,16 @@ _eo_call_stack_mem_free(void *ptr, size_t size)
 #endif
 }
 
-static Eo_Call_Stack *
+static Efl_Object_Call_Stack *
 _eo_call_stack_create()
 {
-   Eo_Call_Stack *stack;
+   Efl_Object_Call_Stack *stack;
 
-   stack = calloc(1, sizeof(Eo_Call_Stack));
+   stack = calloc(1, sizeof(Efl_Object_Call_Stack));
    if (!stack)
      return NULL;
 
-   stack->frames = _eo_call_stack_mem_alloc(EO_CALL_STACK_SIZE);
+   stack->frames = _eo_call_stack_mem_alloc(EFL_OBJECT_CALL_STACK_SIZE);
    if (!stack->frames)
      {
         free(stack);
@@ -88,24 +88,24 @@ _eo_call_stack_create()
 static void
 _eo_call_stack_free(void *ptr)
 {
-   Eo_Call_Stack *stack = (Eo_Call_Stack *) ptr;
+   Efl_Object_Call_Stack *stack = (Efl_Object_Call_Stack *) ptr;
 
    if (!stack) return;
 
    if (stack->frames)
-     _eo_call_stack_mem_free(stack->frames, EO_CALL_STACK_SIZE);
+     _eo_call_stack_mem_free(stack->frames, EFL_OBJECT_CALL_STACK_SIZE);
 
    free(stack);
 }
 
-static Eo_Call_Stack *main_loop_stack = NULL;
+static Efl_Object_Call_Stack *main_loop_stack = NULL;
 
-#define _EO_CALL_STACK_GET() ((EINA_LIKELY(eina_main_loop_is())) ? main_loop_stack : _eo_call_stack_get_thread())
+#define _EFL_OBJECT_CALL_STACK_GET() ((EINA_LIKELY(eina_main_loop_is())) ? main_loop_stack : _eo_call_stack_get_thread())
 
-static inline Eo_Call_Stack *
+static inline Efl_Object_Call_Stack *
 _eo_call_stack_get_thread(void)
 {
-   Eo_Call_Stack *stack = eina_tls_get(_eo_call_stack_key);
+   Efl_Object_Call_Stack *stack = eina_tls_get(_eo_call_stack_key);
 
    if (stack) return stack;
 
@@ -116,18 +116,18 @@ _eo_call_stack_get_thread(void)
 }
 
 EAPI Eo *
-_eo_self_get(void)
+_efl_self_get(void)
 {
-   return _EO_CALL_STACK_GET()->frame_ptr->obj;
+   return _EFL_OBJECT_CALL_STACK_GET()->frame_ptr->obj;
 }
 
 Eo_Stack_Frame *
-_eo_add_fallback_stack_push(Eo *obj)
+_efl_add_fallback_stack_push(Eo *obj)
 {
-   Eo_Call_Stack *stack = _EO_CALL_STACK_GET();
-   if (stack->frame_ptr == (stack->frames + EO_CALL_STACK_DEPTH_MIN))
+   Efl_Object_Call_Stack *stack = _EFL_OBJECT_CALL_STACK_GET();
+   if (stack->frame_ptr == (stack->frames + EFL_OBJECT_CALL_STACK_DEPTH_MIN))
      {
-        CRI("eo_add fallback stack overflow.");
+        CRI("efl_add fallback stack overflow.");
      }
 
    stack->frame_ptr++;
@@ -137,12 +137,12 @@ _eo_add_fallback_stack_push(Eo *obj)
 }
 
 Eo_Stack_Frame *
-_eo_add_fallback_stack_pop(void)
+_efl_add_fallback_stack_pop(void)
 {
-   Eo_Call_Stack *stack = _EO_CALL_STACK_GET();
+   Efl_Object_Call_Stack *stack = _EFL_OBJECT_CALL_STACK_GET();
    if (stack->frame_ptr == stack->frames)
      {
-        CRI("eo_add fallback stack underflow.");
+        CRI("efl_add fallback stack underflow.");
      }
 
    stack->frame_ptr--;
@@ -151,7 +151,7 @@ _eo_add_fallback_stack_pop(void)
 }
 
 Eina_Bool
-_eo_add_fallback_init(void)
+_efl_add_fallback_init(void)
 {
    if (_eo_call_stack_key != 0)
      WRN("_eo_call_stack_key already set, this should not happen.");
@@ -176,7 +176,7 @@ _eo_add_fallback_init(void)
 }
 
 Eina_Bool
-_eo_add_fallback_shutdown(void)
+_efl_add_fallback_shutdown(void)
 {
    if (_eo_call_stack_key != 0)
      {

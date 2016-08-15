@@ -576,9 +576,9 @@ emotion_engine_instance_format_get(const Emotion_Engine_Instance *inst)
 }
 
 void
-emotion_engine_instance_video_data_size_get(const Emotion_Engine_Instance *inst, int *w, int *h)
+emotion_engine_instance_videfl_data_size_get(const Emotion_Engine_Instance *inst, int *w, int *h)
 {
-   EMOTION_ENGINE_INSTANCE_CALL(inst, video_data_size_get, w, h);
+   EMOTION_ENGINE_INSTANCE_CALL(inst, videfl_data_size_get, w, h);
 }
 
 Eina_Bool

@@ -97,7 +97,7 @@ evas_object_line_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_LINE_CLASS, e);
+   Evas_Object *eo_obj = efl_add(EVAS_LINE_CLASS, e);
    return eo_obj;
 }
 
@@ -113,7 +113,7 @@ _evas_line_xy_set(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord x1, Evas_Coord y1,
    return;
    MAGIC_CHECK_END();
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if ((x1 == (obj->cur->geometry.x + o->cur.x1)) &&
        (y1 == (obj->cur->geometry.y + o->cur.y1)) &&
@@ -197,7 +197,7 @@ _evas_line_xy_get(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord *x1, Evas_Coord *y
    const Evas_Line_Data *o = _pd;
 
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (x1) *x1 = obj->cur->geometry.x + o->cur.x1;
    if (y1) *y1 = obj->cur->geometry.y + o->cur.y1;
    if (x2) *x2 = obj->cur->geometry.x + o->cur.x2;
@@ -208,10 +208,10 @@ _evas_line_xy_get(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord *x1, Evas_Coord *y
 static void
 evas_object_line_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
-   obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
+   obj->private_data = efl_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
 }
 
@@ -220,7 +220,7 @@ _evas_line_efl_object_constructor(Eo *eo_obj, Evas_Line_Data *class_data EINA_UN
 {
    Evas_Line_Data *o;
 
-   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
    evas_object_line_init(eo_obj);
 
@@ -374,21 +374,21 @@ evas_object_line_render_post(Evas_Object *eo_obj,
 
 static unsigned int evas_object_line_id_get(Evas_Object *eo_obj)
 {
-   Evas_Line_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Line_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_LINE;
 }
 
 static unsigned int evas_object_line_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Line_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Line_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
 
 static void *evas_object_line_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Line_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Line_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
 

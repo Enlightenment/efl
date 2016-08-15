@@ -147,7 +147,7 @@ _eio_sentry_del(Eo *obj EINA_UNUSED, Eio_Sentry_Data *pd, const char *path)
 
 Efl_Object * _eio_sentry_efl_object_constructor(Eo *obj, Eio_Sentry_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, EIO_SENTRY_CLASS));
+   obj = efl_constructor(efl_super(obj, EIO_SENTRY_CLASS));
 
    pd->object = obj;
    pd->targets = eina_hash_string_small_new((Eina_Free_Cb)&eio_monitor_del);
@@ -160,7 +160,7 @@ void _eio_sentry_efl_object_destructor(Eo *obj, Eio_Sentry_Data *pd)
 {
    eina_hash_free(pd->targets);
 
-   efl_destructor(eo_super(obj, EIO_SENTRY_CLASS));
+   efl_destructor(efl_super(obj, EIO_SENTRY_CLASS));
 }
 
 #include "eio_sentry.eo.c"

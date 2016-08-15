@@ -2485,16 +2485,16 @@ eng_ector_create(void *data EINA_UNUSED)
    ector_backend = getenv("ECTOR_BACKEND");
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
-        ector = eo_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = efl_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
      }
    else if (ector_backend && !strcasecmp(ector_backend, "experimental"))
      {
-        ector = eo_add(ECTOR_GL_SURFACE_CLASS, NULL);
+        ector = efl_add(ECTOR_GL_SURFACE_CLASS, NULL);
         use_gl = EINA_TRUE;
      }
    else
      {
-        ector = eo_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = efl_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_TRUE;
      }
    return ector;
@@ -2515,13 +2515,13 @@ eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *evas, void *engine_image, Ei
      {
         RGBA_Image *im = engine_image;
 
-        buf = eo_add(EVAS_ECTOR_GL_RGBAIMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(eo_self, evas, im));
+        buf = efl_add(EVAS_ECTOR_GL_RGBAIMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(efl_self, evas, im));
      }
    else
      {
         Evas_GL_Image *im = engine_image;
 
-        buf = eo_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(eo_self, evas, im));
+        buf = efl_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(efl_self, evas, im));
      }
    return buf;
 }
@@ -2532,7 +2532,7 @@ eng_ector_buffer_new(void *data, Evas *evas, void *pixels,
                      Efl_Gfx_Colorspace cspace, Eina_Bool writeable EINA_UNUSED,
                      int l, int r, int t, int b, Ector_Buffer_Flag flags)
 {
-   Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    Render_Engine_GL_Generic *re = e->engine.data.output;
    Evas_Engine_GL_Context *gc = NULL;
    Ector_Buffer *buf = NULL;
@@ -2582,7 +2582,7 @@ eng_ector_buffer_new(void *data, Evas *evas, void *pixels,
 
         gc = re->window_gl_context_get(re->software.ob);
         im = evas_gl_common_image_surface_new(gc, iw, ih, EINA_TRUE);
-        buf = eo_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(eo_self, evas, im));
+        buf = efl_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(efl_self, evas, im));
         im->references--;
      }
    return buf;

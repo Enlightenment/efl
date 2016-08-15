@@ -645,7 +645,7 @@ START_TEST(evas_object_image_defaults)
    efl_del(o);
 
    /* test eo defaults */
-   o = eo_add(EFL_CANVAS_IMAGE_CLASS, e);
+   o = efl_add(EFL_CANVAS_IMAGE_CLASS, e);
    fail_if(!efl_gfx_fill_auto_get(o));
    efl_del(o);
 
@@ -671,7 +671,7 @@ START_TEST(evas_object_image_map_unmap)
 
    const char *imgpath = TESTS_IMG_DIR "/Pic4.png";
 
-   o = eo_add(EFL_CANVAS_IMAGE_CLASS, e);
+   o = efl_add(EFL_CANVAS_IMAGE_CLASS, e);
    efl_file_set(o, imgpath, NULL);
    efl_gfx_view_size_get(o, &w, &h);
    cs = efl_gfx_buffer_colorspace_get(o);
@@ -753,7 +753,7 @@ START_TEST(evas_object_image_map_unmap)
         uint32_t *data2, *orig;
         int x, y;
 
-        o2 = eo_add(EFL_CANVAS_IMAGE_CLASS, e);
+        o2 = efl_add(EFL_CANVAS_IMAGE_CLASS, e);
         efl_file_set(o2, tmp, NULL);
         efl_gfx_view_size_get(o, &w2, &h2);
 

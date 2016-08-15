@@ -234,8 +234,8 @@ evas_model_save_file_obj(const Evas_Canvas3D_Mesh *mesh,
    eina_str_join(_mtl_file_name, len + 1, '.', _without_extention, "mtl");
    free(_without_extention);
 
-   Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
-   mat = eo_data_scope_get(f->material, EVAS_CANVAS3D_MATERIAL_CLASS);
+   Evas_Canvas3D_Mesh_Data *pd = efl_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
+   mat = efl_data_scope_get(f->material, EVAS_CANVAS3D_MATERIAL_CLASS);
 
    if (mat != NULL) _save_material(pd, _mtl_file_name, mat);
    _save_mesh(pd, _obj_file_name, _mtl_file_name, f);

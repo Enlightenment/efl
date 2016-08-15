@@ -161,7 +161,7 @@ _efl_canvas_object_efl_gfx_stack_stack_above(Eo *eo_obj, Evas_Object_Protected_D
      }
    if (eo_obj == eo_above) return;
    if (evas_object_intercept_call_stack_above(eo_obj, obj, eo_above)) return;
-   Evas_Object_Protected_Data *above = eo_data_scope_get(eo_above, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *above = efl_data_scope_get(eo_above, EFL_CANVAS_OBJECT_CLASS);
    if ((EINA_INLIST_GET(obj))->prev == EINA_INLIST_GET(above))
      {
         evas_object_inform_call_restack(eo_obj);
@@ -243,7 +243,7 @@ _efl_canvas_object_efl_gfx_stack_stack_below(Eo *eo_obj, Evas_Object_Protected_D
      }
    if (eo_obj == eo_below) return;
    if (evas_object_intercept_call_stack_below(eo_obj, obj, eo_below)) return;
-   Evas_Object_Protected_Data *below = eo_data_scope_get(eo_below, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *below = efl_data_scope_get(eo_below, EFL_CANVAS_OBJECT_CLASS);
    if ((EINA_INLIST_GET(obj))->next == EINA_INLIST_GET(below))
      {
         evas_object_inform_call_restack(eo_obj);

@@ -1302,7 +1302,7 @@ _elm_colorselector_elm_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    if ((sd->mode == ELM_COLORSELECTOR_PALETTE) ||
@@ -1390,7 +1390,7 @@ _sub_obj_size_hints_set(Evas_Object *sobj,
    Evas_Coord minw = -1, minh = -1;
 
    elm_coords_finger_size_adjust(timesw, &minw, timesh, &minh);
-   if (sobj && eo_isa(sobj, EDJE_OBJECT_CLASS))
+   if (sobj && efl_isa(sobj, EDJE_OBJECT_CLASS))
      edje_object_size_min_restricted_calc(sobj, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(sobj, minw, minh);
    evas_object_size_hint_max_set(sobj, -1, -1);
@@ -1671,7 +1671,7 @@ _elm_color_item_elm_widget_item_access_register(Eo *eo_it, Elm_Color_Item_Data *
    Elm_Access_Info *ai;
 
    Evas_Object *res;
-   res = elm_wdg_item_access_register(eo_super(eo_it, ELM_COLOR_ITEM_CLASS));
+   res = elm_wdg_item_access_register(efl_super(eo_it, ELM_COLOR_ITEM_CLASS));
 
    ai = _elm_access_info_get(it->base->access_obj);
 
@@ -1703,8 +1703,8 @@ _elm_color_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED,
 EOLIAN static Eo *
 _elm_color_item_efl_object_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
 {
-   eo_item = efl_constructor(eo_super(eo_item, ELM_COLOR_ITEM_CLASS));
-   item->base = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
+   eo_item = efl_constructor(efl_super(eo_item, ELM_COLOR_ITEM_CLASS));
+   item->base = efl_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
 
    Evas_Object *obj;
    obj = efl_parent_get(eo_item);
@@ -1749,7 +1749,7 @@ EOLIAN static void
 _elm_color_item_efl_object_destructor(Eo *obj, Elm_Color_Item_Data *item)
 {
    free(item->color);
-   efl_destructor(eo_super(obj, ELM_COLOR_ITEM_CLASS));
+   efl_destructor(efl_super(obj, ELM_COLOR_ITEM_CLASS));
 }
 
 static void
@@ -1793,7 +1793,7 @@ _palette_colors_load(Evas_Object *obj)
 
    EINA_LIST_FOREACH(color_list, elist, color)
      {
-        eo_item = eo_add(ELM_COLOR_ITEM_CLASS, obj);
+        eo_item = efl_add(ELM_COLOR_ITEM_CLASS, obj);
         if (!eo_item) return;
 
         ELM_COLOR_ITEM_DATA_GET(eo_item, item);
@@ -1878,7 +1878,7 @@ _elm_colorselector_efl_canvas_group_group_add(Eo *obj, Elm_Colorselector_Data *p
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -1935,7 +1935,7 @@ _elm_colorselector_efl_canvas_group_group_del(Eo *obj, Elm_Colorselector_Data *s
    /* This cb_data are used during the destruction process of base.del */
    for (i = 0; i < 4; i++)
      tmp[i] = sd->cb_data[i];
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
    for (i = 0; i < 4; i++)
      free(tmp[i]);
 }
@@ -1970,7 +1970,7 @@ _palette_box_vertical_item_get(Eina_List* ref_item, enum Palette_Box_Direction d
    for (l = ref_item; l; l = dir_func(l))
      {
         eo_item = eina_list_data_get(l);
-        item = eo_data_scope_get(eo_item, ELM_COLOR_ITEM_CLASS);
+        item = efl_data_scope_get(eo_item, ELM_COLOR_ITEM_CLASS);
         evas_object_geometry_get(VIEW(item), &x, &y, NULL, NULL);
         if (basey != y) break;
      }
@@ -1981,7 +1981,7 @@ _palette_box_vertical_item_get(Eina_List* ref_item, enum Palette_Box_Direction d
    for (; l; l = dir_func(l))
      {
         eo_item = eina_list_data_get(l);
-        item = eo_data_scope_get(eo_item, ELM_COLOR_ITEM_CLASS);
+        item = efl_data_scope_get(eo_item, ELM_COLOR_ITEM_CLASS);
         evas_object_geometry_get(VIEW(item), &x, &y, NULL, NULL);
         if (basey != y) break;
 
@@ -2158,7 +2158,7 @@ _elm_colorselector_elm_widget_focus_next(Eo *obj, Elm_Colorselector_Data *sd, El
         if (!sd->items) return EINA_FALSE;
         EINA_LIST_FOREACH(sd->items, l, eo_item)
           {
-             Elm_Widget_Item_Data *witem = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
+             Elm_Widget_Item_Data *witem = efl_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
              items = eina_list_append(items, witem->access_obj);
           }
      }
@@ -2229,14 +2229,14 @@ EAPI Evas_Object *
 elm_colorselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_colorselector_efl_object_constructor(Eo *obj, Elm_Colorselector_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_COLOR_CHOOSER);
@@ -2408,7 +2408,7 @@ _elm_colorselector_palette_color_add(Eo *obj, Elm_Colorselector_Data *sd, int r,
         _items_del(sd);
         sd->config_load = EINA_FALSE;
      }
-   eo_item = eo_add(ELM_COLOR_ITEM_CLASS, obj);
+   eo_item = efl_add(ELM_COLOR_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_COLOR_ITEM_DATA_GET(eo_item, item);

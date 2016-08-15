@@ -587,8 +587,8 @@ MAGIC_CHECK_FAILED(o, t, m)
 
 // helper function for legacy EAPI implementations
 #define EVAS_OBJ_GET_OR_RETURN(o, ...) ({ \
-   Evas_Object_Protected_Data *_obj = eo_isa(o, EFL_CANVAS_OBJECT_CLASS) ? \
-     eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS) : NULL; \
+   Evas_Object_Protected_Data *_obj = efl_isa(o, EFL_CANVAS_OBJECT_CLASS) ? \
+     efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS) : NULL; \
    if (!_obj) { MAGIC_CHECK_FAILED(o,0,0) return __VA_ARGS__; } \
    _obj; })
 
@@ -601,19 +601,19 @@ MAGIC_CHECK_FAILED(o, t, m)
 /* DEBUG mode: fail, but normally just ERR(). This also returns if NULL. */
 #ifdef DEBUG
 #define EVAS_OBJECT_LEGACY_API(_eo, ...) \
-   do { Evas_Object_Protected_Data *_o = eo_data_scope_get(_eo, EFL_CANVAS_OBJECT_CLASS); \
+   do { Evas_Object_Protected_Data *_o = efl_data_scope_get(_eo, EFL_CANVAS_OBJECT_CLASS); \
       if (EINA_UNLIKELY(!_o)) return __VA_ARGS__; \
       if (EINA_UNLIKELY(!_o->legacy)) { \
-         char buf[1024]; snprintf(buf, sizeof(buf), "Calling legacy API on EO object '%s' is not permitted!", eo_class_name_get(_o->object)); \
+         char buf[1024]; snprintf(buf, sizeof(buf), "Calling legacy API on EO object '%s' is not permitted!", efl_class_name_get(_o->object)); \
          EINA_SAFETY_ERROR(buf); \
          return __VA_ARGS__; \
    } } while (0)
 #else
 #define EVAS_OBJECT_LEGACY_API(_eo, ...) \
-   do { Evas_Object_Protected_Data *_o = eo_data_scope_get(_eo, EFL_CANVAS_OBJECT_CLASS); \
+   do { Evas_Object_Protected_Data *_o = efl_data_scope_get(_eo, EFL_CANVAS_OBJECT_CLASS); \
       if (EINA_UNLIKELY(!_o)) return __VA_ARGS__; \
       if (EINA_UNLIKELY(!_o->legacy)) { \
-         char buf[1024]; snprintf(buf, sizeof(buf), "Calling legacy API on EO object '%s' is not permitted!", eo_class_name_get(_o->object)); \
+         char buf[1024]; snprintf(buf, sizeof(buf), "Calling legacy API on EO object '%s' is not permitted!", efl_class_name_get(_o->object)); \
          EINA_SAFETY_ERROR(buf); \
    } } while (0)
 #endif

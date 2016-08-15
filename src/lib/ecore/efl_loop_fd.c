@@ -146,14 +146,14 @@ _check_fd_event_catcher_del(void *data, const Eo_Event *event)
      }
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(fd_watch,
+EFL_CALLBACKS_ARRAY_DEFINE(fd_watch,
                           { EFL_EVENT_CALLBACK_ADD, _check_fd_event_catcher_add },
                           { EFL_EVENT_CALLBACK_DEL, _check_fd_event_catcher_del });
 
 static Efl_Object *
 _efl_loop_fd_efl_object_constructor(Eo *obj, Efl_Loop_Fd_Data *pd)
 {
-   efl_constructor(eo_super(obj, MY_CLASS));
+   efl_constructor(efl_super(obj, MY_CLASS));
 
    efl_event_callback_array_add(obj, fd_watch(), pd);
 
@@ -168,7 +168,7 @@ _efl_loop_fd_efl_object_parent_set(Eo *obj, Efl_Loop_Fd_Data *pd, Efl_Object *pa
    if (pd->handler) ecore_main_fd_handler_del(pd->handler);
    pd->handler = NULL;
 
-   efl_parent_set(eo_super(obj, MY_CLASS), parent);
+   efl_parent_set(efl_super(obj, MY_CLASS), parent);
 
    if (parent == NULL) return ;
 
@@ -178,7 +178,7 @@ _efl_loop_fd_efl_object_parent_set(Eo *obj, Efl_Loop_Fd_Data *pd, Efl_Object *pa
 static void
 _efl_loop_fd_efl_object_destructor(Eo *obj, Efl_Loop_Fd_Data *pd)
 {
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 
    ecore_main_fd_handler_del(pd->handler);
 }

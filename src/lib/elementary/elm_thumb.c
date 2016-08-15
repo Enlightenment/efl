@@ -228,7 +228,7 @@ _thumb_finish(Elm_Thumb_Data *sd,
              sd->thumb.retry = EINA_TRUE;
 
              retry = eina_list_append(retry, sd);
-             eo_data_ref(sd->obj, NULL);
+             efl_data_ref(sd->obj, NULL);
              return;
           }
      }
@@ -258,7 +258,7 @@ _thumb_finish(Elm_Thumb_Data *sd,
              sd->thumb.retry = EINA_TRUE;
 
              retry = eina_list_append(retry, sd);
-             eo_data_ref(sd->obj, NULL);
+             efl_data_ref(sd->obj, NULL);
              return;
           }
 
@@ -273,7 +273,7 @@ _thumb_finish(Elm_Thumb_Data *sd,
         if (_thumb_retry(sd))
           {
              retry = eina_list_remove_list(retry, l);
-             eo_data_unref(sd->obj, sd);
+             efl_data_unref(sd->obj, sd);
           }
 
      }
@@ -281,12 +281,12 @@ _thumb_finish(Elm_Thumb_Data *sd,
    if (pending_request == 0)
      EINA_LIST_FREE(retry, sd)
        {
-          eo_data_unref(sd->obj, sd);
+          efl_data_unref(sd->obj, sd);
           ELM_SAFE_FREE(sd->thumb.thumb_path, eina_stringshare_del);
           ELM_SAFE_FREE(sd->thumb.thumb_key, eina_stringshare_del);
           ELM_SAFE_FREE(sd->view, evas_object_del);
 
-          wd = eo_data_scope_get(sd->obj, ELM_WIDGET_CLASS);
+          wd = efl_data_scope_get(sd->obj, ELM_WIDGET_CLASS);
           edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
           efl_event_callback_call(sd->obj, ELM_THUMB_EVENT_LOAD_ERROR, NULL);
        }
@@ -371,7 +371,7 @@ _thumb_start(Elm_Thumb_Data *sd)
    if (sd->thumb.retry)
      {
         retry = eina_list_remove(retry, sd);
-        eo_data_unref(sd->obj, sd);
+        efl_data_unref(sd->obj, sd);
         sd->thumb.retry = EINA_FALSE;
      }
 
@@ -455,7 +455,7 @@ _thumb_show(Elm_Thumb_Data *sd)
 EOLIAN static void
 _elm_thumb_efl_canvas_group_group_show(Eo *obj, Elm_Thumb_Data *sd)
 {
-   efl_canvas_group_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(efl_super(obj, MY_CLASS));
 
    _thumb_show(sd);
 }
@@ -465,7 +465,7 @@ _elm_thumb_efl_canvas_group_group_hide(Eo *obj, Elm_Thumb_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_hide(eo_super(obj, MY_CLASS));
+   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
 
    if (sd->thumb.request)
      {
@@ -479,7 +479,7 @@ _elm_thumb_efl_canvas_group_group_hide(Eo *obj, Elm_Thumb_Data *sd)
    if (sd->thumb.retry)
      {
         retry = eina_list_remove(retry, sd);
-        eo_data_unref(sd->obj, sd);
+        efl_data_unref(sd->obj, sd);
         sd->thumb.retry = EINA_FALSE;
      }
 
@@ -528,7 +528,7 @@ _elm_thumb_efl_canvas_group_group_add(Eo *obj, Elm_Thumb_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "thumb", "base", elm_widget_style_get(obj)))
@@ -553,7 +553,7 @@ _elm_thumb_efl_canvas_group_group_del(Eo *obj, Elm_Thumb_Data *sd)
    if (sd->thumb.retry)
      {
         retry = eina_list_remove(retry, sd);
-        eo_data_unref(sd->obj, sd);
+        efl_data_unref(sd->obj, sd);
         sd->thumb.retry = EINA_FALSE;
      }
    evas_object_event_callback_del_full(sd->view, EVAS_CALLBACK_IMAGE_PRELOADED,
@@ -568,21 +568,21 @@ _elm_thumb_efl_canvas_group_group_del(Eo *obj, Elm_Thumb_Data *sd)
 
    ecore_event_handler_del(sd->eeh);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
 elm_thumb_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_thumb_efl_object_constructor(Eo *obj, Elm_Thumb_Data *sd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, "Elm_Thumb");
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);

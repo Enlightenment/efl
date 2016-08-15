@@ -27,7 +27,7 @@ static Eo *_generic_efl_object_constructor(Eo *obj, Generic_Data *pd)
 {
    pd->req_ctor_a_val = 0;
    pd->opt_ctor_a_val = 0;
-   return efl_constructor(eo_super(obj, MY_CLASS));
+   return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
 static void _generic_required_ctor_a(Eo *obj EINA_UNUSED, Generic_Data *pd, int value)

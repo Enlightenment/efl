@@ -30,10 +30,10 @@ _a_set(Eo *obj, void *class_data, int a)
    efl_event_callback_call(obj, EV_A_CHANGED, &pd->a);
 }
 
-EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
+EAPI EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
 
 static Efl_Op_Description op_descs[] = {
-     EO_OP_FUNC(simple_a_set, _a_set),
+     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
 };
 
 static const Efl_Event_Description *event_desc[] = {
@@ -44,13 +44,13 @@ static const Efl_Event_Description *event_desc[] = {
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(op_descs),
+     EFL_CLASS_TYPE_REGULAR,
+     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      event_desc,
      sizeof(Private_Data),
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL)
+EFL_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL)
 

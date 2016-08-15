@@ -168,7 +168,7 @@ _elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, ELM_CHECK_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, ELM_CHECK_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
@@ -224,7 +224,7 @@ _elm_radio_efl_canvas_group_group_add(Eo *obj, Elm_Radio_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, ELM_CHECK_CLASS));
+   efl_canvas_group_add(efl_super(obj, ELM_CHECK_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "radio", "base", elm_widget_style_get(obj)))
@@ -255,7 +255,7 @@ _elm_radio_efl_canvas_group_group_del(Eo *obj, Elm_Radio_Data *sd)
    sd->group->radios = eina_list_remove(sd->group->radios, obj);
    if (!sd->group->radios) free(sd->group);
 
-   efl_canvas_group_del(eo_super(obj, ELM_CHECK_CLASS));
+   efl_canvas_group_del(efl_super(obj, ELM_CHECK_CLASS));
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
@@ -268,14 +268,14 @@ EAPI Evas_Object *
 elm_radio_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_radio_efl_object_constructor(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_RADIO_BUTTON);
@@ -400,7 +400,7 @@ _elm_radio_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Radio_Data 
 {
    Elm_Atspi_State_Set ret;
 
-   ret = elm_interface_atspi_accessible_state_set_get(eo_super(obj, ELM_RADIO_CLASS));
+   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, ELM_RADIO_CLASS));
    if (obj == elm_radio_selected_object_get(obj))
      STATE_TYPE_SET(ret, ELM_ATSPI_STATE_CHECKED);
 

@@ -110,13 +110,13 @@ _animate_scene(void *data)
 static void
 _camera_setup(Scene_Data *data)
 {
-   data->camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
+   data->camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
 
    evas_canvas3d_camera_projection_perspective_set(data->camera, NEAR, 1.0, 2.0, FAR);
 
    data->camera_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                    evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
    evas_canvas3d_node_camera_set(data->camera_node, data->camera);
    evas_canvas3d_node_position_set(data->camera_node, 0.0, 0.0, 300.0);
    evas_canvas3d_node_look_at_set(data->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0,
@@ -127,14 +127,14 @@ _camera_setup(Scene_Data *data)
 static void
 _light_setup(Scene_Data *data)
 {
-   data->light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
+   data->light = efl_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
    evas_canvas3d_light_ambient_set(data->light, 0.2, 0.2, 0.2, 1.0);
    evas_canvas3d_light_diffuse_set(data->light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_specular_set(data->light, 1.0, 1.0, 1.0, 1.0);
 
    data->light_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                    evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
    evas_canvas3d_node_light_set(data->light_node, data->light);
    evas_canvas3d_node_position_set(data->light_node, 0.0, 0.0, 300.0);
    evas_canvas3d_node_look_at_set(data->light_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0,
@@ -149,7 +149,7 @@ _mesh_setup(Scene_Data *data)
    Evas_Real m_distances[NUMBER_MESHS + 2] = {NEAR, 200.0, 500.0, 500.0};
 
    /* Setup material. */
-   data->material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   data->material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
    evas_canvas3d_material_enable_set(data->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE);
    evas_canvas3d_material_enable_set(data->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE);
    evas_canvas3d_material_enable_set(data->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE);
@@ -159,23 +159,23 @@ _mesh_setup(Scene_Data *data)
    evas_canvas3d_material_shininess_set(data->material, 100.0);
 
    data->lod_mesh_node1 =
-         eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+         efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_position_set(data->lod_mesh_node1, 2.0, 0.0, 0.0);
 
    data->lod_mesh_node2 =
-         eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+         efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
    data->complex_node =
-         eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
+         efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
    evas_canvas3d_node_scale_set(data->complex_node, 30.0, 30.0, 30.0);
 
    /* Setup mesh. One model, two meshes object with dufferent lod distances.*/
    for (i = 0; i <= NUMBER_MESHS; i++)
      {
-        Eo *mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+        Eo *mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);
         Eina_Stringshare *str = eina_stringshare_printf("%s%d%s", model_path,
                                                         i, ".obj");
         efl_file_set(mesh, str, NULL);
@@ -184,7 +184,7 @@ _mesh_setup(Scene_Data *data)
         evas_canvas3d_mesh_lod_boundary_set(mesh, distances[i], distances[i + 1]);
         evas_canvas3d_node_mesh_add(data->lod_mesh_node1, mesh);
 
-        mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+        mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);
         efl_file_set(mesh, str, NULL);
         evas_canvas3d_mesh_frame_material_set(mesh, 0, data->material);
         evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
@@ -203,13 +203,13 @@ _mesh_setup(Scene_Data *data)
 static void
 _scene_setup(Scene_Data *data)
 {
-   data->scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
+   data->scene = efl_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
    evas_canvas3d_scene_size_set(data->scene, WIDTH, HEIGHT);
    evas_canvas3d_scene_background_color_set(data->scene, 0.0, 0.0, 0.0, 0.0);
 
    data->root_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                    evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    _camera_setup(data);
    _light_setup(data);
@@ -251,13 +251,13 @@ main(void)
    _scene_setup(&data);
 
    /* Add a background rectangle objects. */
-   background = eo_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
+   background = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 0, 0, 0, 255);
    efl_gfx_size_set(background, WIDTH, HEIGHT);
    efl_gfx_visible_set(background, EINA_TRUE);
 
    /* Add an image object for 3D scene rendering. */
-   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
+   image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    efl_gfx_size_set(image, WIDTH, HEIGHT);
    efl_gfx_visible_set(image, EINA_TRUE);
    evas_object_focus_set(image, EINA_TRUE);

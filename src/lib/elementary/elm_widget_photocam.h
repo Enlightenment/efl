@@ -142,10 +142,10 @@ struct _Elm_Photocam_Pan_Data
  */
 
 #define ELM_PHOTOCAM_DATA_GET(o, sd) \
-  Elm_Photocam_Data * sd = eo_data_scope_get(o, ELM_PHOTOCAM_CLASS)
+  Elm_Photocam_Data * sd = efl_data_scope_get(o, ELM_PHOTOCAM_CLASS)
 
 #define ELM_PHOTOCAM_PAN_DATA_GET(o, sd) \
-  Elm_Photocam_Pan_Data * sd = eo_data_scope_get(o, ELM_PHOTOCAM_PAN_CLASS)
+  Elm_Photocam_Pan_Data * sd = efl_data_scope_get(o, ELM_PHOTOCAM_PAN_CLASS)
 
 #define ELM_PHOTOCAM_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_PHOTOCAM_DATA_GET(o, ptr);                     \
@@ -166,7 +166,7 @@ struct _Elm_Photocam_Pan_Data
     }
 
 #define ELM_PHOTOCAM_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_PHOTOCAM_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_PHOTOCAM_CLASS))) \
     return
 
 #endif

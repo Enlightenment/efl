@@ -44,8 +44,8 @@
   EINA_ITERATOR_FOREACH(it, file)                                       \
     {                                                                   \
        int set_ok, save_ok;                                             \
-       mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, e);                      \
-       mesh2 = eo_add(EVAS_CANVAS3D_MESH_CLASS, e);                     \
+       mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);                      \
+       mesh2 = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);                     \
        fail_if(mesh == NULL);                                           \
        fail_if(mesh2 == NULL);                                          \
        snprintf(buffer, PATH_MAX, "%s%s", tmp, ext);                    \
@@ -93,12 +93,12 @@ static int _compare_meshes(Evas_Canvas3D_Mesh *mesh1, Evas_Canvas3D_Mesh *mesh2)
    float *src1, *src2;
    Evas_Canvas3D_Vertex_Buffer *vb1, *vb2;
 
-   pd1 = eo_data_scope_get(mesh1, EVAS_CANVAS3D_MESH_CLASS);
+   pd1 = efl_data_scope_get(mesh1, EVAS_CANVAS3D_MESH_CLASS);
    f1 = return_zero_frame(pd1);
    if ((pd1 == NULL) || (f1 == NULL))
       return 1;
 
-   pd2 = eo_data_scope_get(mesh2, EVAS_CANVAS3D_MESH_CLASS);
+   pd2 = efl_data_scope_get(mesh2, EVAS_CANVAS3D_MESH_CLASS);
    f2 = return_zero_frame(pd2);
    if ((pd2 == NULL) || (f2 == NULL))
       return 1;

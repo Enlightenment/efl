@@ -43,7 +43,7 @@ struct _Evas_Object_Grid_Accessor
 };
 
 #define EVAS_OBJECT_GRID_DATA_GET(o, ptr)			\
-  Evas_Grid_Data *ptr = eo_data_scope_get(o, MY_CLASS)
+  Evas_Grid_Data *ptr = efl_data_scope_get(o, MY_CLASS)
 
 #define EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, ptr)			\
   EVAS_OBJECT_GRID_DATA_GET(o, ptr);					\
@@ -166,7 +166,7 @@ _evas_object_grid_smart_add(Evas_Object *o)
    priv = evas_object_smart_data_get(o);
    if (!priv)
      {
-        priv = eo_data_ref(o, MY_CLASS);
+        priv = efl_data_ref(o, MY_CLASS);
         evas_object_smart_data_set(o, priv);
      }
 
@@ -265,14 +265,14 @@ evas_object_grid_add(Evas *evas)
    MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *obj = eo_add(MY_CLASS, evas);
+   Evas_Object *obj = efl_add(MY_CLASS, evas);
    return obj;
 }
 
 EOLIAN static Eo *
 _evas_grid_efl_object_constructor(Eo *obj, Evas_Grid_Data *class_data EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_attach(obj, _evas_object_grid_smart_class_new());
 
    return obj;

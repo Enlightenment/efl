@@ -42,12 +42,12 @@ evas_device_add(Evas *eo_e)
 
    SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
 
-   dev = eo_add(EFL_INPUT_DEVICE_CLASS, eo_e);
+   dev = efl_add(EFL_INPUT_DEVICE_CLASS, eo_e);
 
-   d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    d->evas = eo_e;
 
-   e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    e->devices = eina_list_append(e->devices, dev);
    efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
 
@@ -61,7 +61,7 @@ evas_device_del(Evas_Device *dev)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
-   eo_unref(dev);
+   efl_unref(dev);
 }
 
 EAPI void
@@ -70,13 +70,13 @@ evas_device_push(Evas *eo_e, Evas_Device *dev)
    SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS);
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e->cur_device)
      {
         e->cur_device = eina_array_new(4);
         if (!e->cur_device) return;
      }
-   eo_ref(dev);
+   efl_ref(dev);
    eina_array_push(e->cur_device, dev);
 }
 
@@ -87,9 +87,9 @@ evas_device_pop(Evas *eo_e)
 
    SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS);
 
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    dev = eina_array_pop(e->cur_device);
-   if (dev) eo_unref(dev);
+   if (dev) efl_unref(dev);
 }
 
 EAPI const Eina_List *
@@ -101,11 +101,11 @@ evas_device_list(Evas *eo_e, const Evas_Device *dev)
      {
         SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS, NULL);
 
-        Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+        Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
         return d->children;
      }
 
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    return e->devices;
 }
 
@@ -114,7 +114,7 @@ evas_device_name_set(Evas_Device *dev, const char *name)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
-   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
 
    efl_input_device_name_set(dev, name);
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
@@ -133,7 +133,7 @@ evas_device_description_set(Evas_Device *dev, const char *desc)
 
    efl_input_device_description_set(dev, desc);
 
-   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
@@ -148,8 +148,8 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
-   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-   Evas_Public_Data *e = eo_data_scope_get(d->evas, EVAS_CANVAS_CLASS);
+   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(d->evas, EVAS_CANVAS_CLASS);
    if (parent)
      {
         SAFETY_CHECK(parent, EFL_INPUT_DEVICE_CLASS);
@@ -159,7 +159,7 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
    if (d->parent == parent) return;
    if (d->parent)
      {
-        Efl_Input_Device_Data *p = eo_data_scope_get(d->parent, EFL_INPUT_DEVICE_CLASS);
+        Efl_Input_Device_Data *p = efl_data_scope_get(d->parent, EFL_INPUT_DEVICE_CLASS);
         p->children = eina_list_remove(p->children, dev);
      }
    else if (parent)
@@ -167,7 +167,7 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
    d->parent = parent;
    if (parent)
      {
-        Efl_Input_Device_Data *p = eo_data_scope_get(parent, EFL_INPUT_DEVICE_CLASS);
+        Efl_Input_Device_Data *p = efl_data_scope_get(parent, EFL_INPUT_DEVICE_CLASS);
         p->children = eina_list_append(p->children, dev);
      }
    else
@@ -187,7 +187,7 @@ evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
-   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
 
    efl_input_device_type_set(dev, clas);
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
@@ -203,7 +203,7 @@ EAPI void
 evas_device_subclass_set(Evas_Device *dev, Evas_Device_Subclass clas)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
 
    efl_input_device_subtype_set(dev, clas);
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
@@ -219,7 +219,7 @@ EAPI void
 evas_device_emulation_source_set(Evas_Device *dev, Evas_Device *src)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
 
    efl_input_device_source_set(dev, src);
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
@@ -236,11 +236,11 @@ _evas_device_cleanup(Evas *eo_e)
 {
    Evas_Device *dev;
    
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (e->cur_device)
      {
         while ((dev = eina_array_pop(e->cur_device)))
-          eo_unref(dev);
+          efl_unref(dev);
         eina_array_free(e->cur_device);
         e->cur_device = NULL;
      }
@@ -255,7 +255,7 @@ _evas_device_top_get(const Evas *eo_e)
 {
    int num;
    
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e->cur_device) return NULL;
    num = eina_array_count(e->cur_device);
    if (num < 1) return NULL;

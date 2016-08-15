@@ -51,7 +51,7 @@ Eina_Bool      emotion_engine_instance_audio_handled(Emotion_Engine_Instance *in
 Eina_Bool      emotion_engine_instance_seekable(Emotion_Engine_Instance *inst);
 void           emotion_engine_instance_frame_done(Emotion_Engine_Instance *inst);
 Emotion_Format emotion_engine_instance_format_get(const Emotion_Engine_Instance *inst);
-void           emotion_engine_instance_video_data_size_get(const Emotion_Engine_Instance *inst, int *w, int *h);
+void           emotion_engine_instance_videfl_data_size_get(const Emotion_Engine_Instance *inst, int *w, int *h);
 Eina_Bool      emotion_engine_instance_yuv_rows_get(const Emotion_Engine_Instance *inst, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows);
 Eina_Bool      emotion_engine_instance_bgra_data_get(const Emotion_Engine_Instance *inst, unsigned char **bgra_data);
 void           emotion_engine_instance_event_feed(Emotion_Engine_Instance *inst, int event);

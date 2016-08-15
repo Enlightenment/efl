@@ -20,7 +20,7 @@ struct _Eina_Benchmark_Case
 
 static const Eina_Benchmark_Case etc[] = {
    { "eo_do", eo_bench_eo_do },
-   { "eo_add", eo_bench_eo_add },
+   { "efl_add", eo_bench_efl_add },
    { "eo_callbacks", eo_bench_callbacks },
    { NULL, NULL }
 };
@@ -35,7 +35,7 @@ main(int argc, char **argv)
       return -1;
 
    eina_init();
-   eo_init();
+   efl_object_init();
 
    for (i = 0; etc[i].bench_case; ++i)
      {
@@ -50,7 +50,7 @@ main(int argc, char **argv)
         eina_benchmark_free(test);
      }
 
-   eo_shutdown();
+   efl_object_shutdown();
    eina_shutdown();
 
    return 0;

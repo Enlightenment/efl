@@ -68,7 +68,7 @@ struct _Elm_Menu_Item_Data
  */
 
 #define ELM_MENU_DATA_GET(o, sd) \
-  Elm_Menu_Data * sd = eo_data_scope_get(o, ELM_MENU_CLASS)
+  Elm_Menu_Data * sd = efl_data_scope_get(o, ELM_MENU_CLASS)
 
 #define ELM_MENU_DATA_GET_OR_RETURN(o, ptr)          \
   ELM_MENU_DATA_GET(o, ptr);                         \
@@ -89,18 +89,18 @@ struct _Elm_Menu_Item_Data
     }
 
 #define ELM_MENU_ITEM_DATA_GET(o, sd) \
-  Elm_Menu_Item_Data *sd = eo_data_scope_get(o, ELM_MENU_ITEM_CLASS)
+  Elm_Menu_Item_Data *sd = efl_data_scope_get(o, ELM_MENU_ITEM_CLASS)
 
 #define ELM_MENU_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_MENU_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_MENU_CLASS))) \
     return
 
 #define ELM_MENU_ITEM_CHECK(it)                             \
-  if (EINA_UNLIKELY(!eo_isa((it->base->eo_obj), ELM_MENU_ITEM_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((it->base->eo_obj), ELM_MENU_ITEM_CLASS))) \
     return
 
 #define ELM_MENU_ITEM_CHECK_OR_RETURN(it, ...)             \
-  if (EINA_UNLIKELY(!eo_isa((it->base->eo_obj), ELM_MENU_ITEM_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((it->base->eo_obj), ELM_MENU_ITEM_CLASS))) \
     return __VA_ARGS__;
 
 

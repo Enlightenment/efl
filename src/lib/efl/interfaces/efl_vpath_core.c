@@ -31,7 +31,7 @@ _efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
    const char *home, *s;
 
    if (vpath_core) return NULL;
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->meta = eina_hash_string_superfast_new
      ((Eina_Free_Cb)eina_stringshare_del);
    eina_spinlock_new(&(pd->lock));
@@ -212,14 +212,14 @@ _efl_vpath_core_efl_object_destructor(Eo *obj, Efl_Vpath_Core_Data *pd)
    pd->meta = NULL;
    eina_spinlock_free(&(pd->lock));
    if (vpath_core == obj) vpath_core = NULL;
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Efl_Vpath_Core *
 _efl_vpath_core_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    // no locks here as we expect efl to init this early in main "thread"
-   if (!vpath_core) vpath_core = eo_add(EFL_VPATH_CORE_CLASS, NULL);
+   if (!vpath_core) vpath_core = efl_add(EFL_VPATH_CORE_CLASS, NULL);
    return vpath_core;
 }
 
@@ -250,7 +250,7 @@ _efl_vpath_core_efl_vpath_fetch(Eo *obj, Efl_Vpath_Core_Data *pd EINA_UNUSED, co
 {
    Efl_Vpath_File_Core *file;
 
-   file = eo_add(EFL_VPATH_FILE_CORE_CLASS, obj);
+   file = efl_add(EFL_VPATH_FILE_CORE_CLASS, obj);
    efl_vpath_file_path_set(file, path);
    // XXX: implement parse of path then look up in hash if not just create
    // object where path and result are the same and return that with

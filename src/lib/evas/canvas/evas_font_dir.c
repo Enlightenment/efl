@@ -142,7 +142,7 @@ void
 evas_fonts_zero_free(Evas *eo_evas)
 {
    Fndat *fd;
-   Evas_Public_Data *evas = eo_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
 
    EINA_LIST_FREE(fonts_zero, fd)
      {
@@ -162,7 +162,7 @@ void
 evas_fonts_zero_pressure(Evas *eo_evas)
 {
    Fndat *fd;
-   Evas_Public_Data *evas = eo_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
 
    while (fonts_zero
 	  && eina_list_count(fonts_zero) > 4) /* 4 is arbitrary */
@@ -191,7 +191,7 @@ evas_font_free(Evas *eo_evas, void *font)
 {
    Eina_List *l;
    Fndat *fd;
-   Evas_Public_Data *evas = eo_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
 
    EINA_LIST_FOREACH(fonts_cache, l, fd)
      {
@@ -232,7 +232,7 @@ static Evas_Font_Set *
 _evas_load_fontconfig(Evas_Font_Set *font, Evas *eo_evas, FcFontSet *set, int size,
       Font_Rend_Flags wanted_rend)
 {
-   Evas_Public_Data *evas = eo_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
    int i;
 
    /* Do loading for all in family */
@@ -547,7 +547,7 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
 void *
 evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size)
 {
-   Evas_Public_Data *evas = eo_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
 #ifdef HAVE_FONTCONFIG
    FcPattern *p_nm = NULL;
    FcFontSet *set = NULL;
@@ -912,7 +912,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 void
 evas_font_load_hinting_set(Evas *eo_evas, void *font, int hinting)
 {
-   Evas_Public_Data *evas = eo_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
    evas->engine.func->font_hinting_set(evas->engine.data.output, font,
 				       hinting);
 }
@@ -920,7 +920,7 @@ evas_font_load_hinting_set(Evas *eo_evas, void *font, int hinting)
 Eina_List *
 evas_font_dir_available_list(const Evas *eo_evas)
 {
-   const Evas_Public_Data *evas = eo_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
+   const Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
    Eina_List *l;
    Eina_List *ll;
    Eina_List *available = NULL;
@@ -1433,7 +1433,7 @@ evas_font_path_global_list(void)
 void
 evas_font_object_rehint(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (obj->is_smart)
      {
 	EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj)

@@ -289,9 +289,9 @@ START_TEST(ecore_test_efl_loop_fd)
    ret = pipe(comm);
    fail_if(ret != 0);
 
-   fd = eo_add(EFL_LOOP_FD_CLASS, ecore_main_loop_get(),
-               efl_loop_fd_set(eo_self, comm[0]),
-               efl_event_callback_add(eo_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did));
+   fd = efl_add(EFL_LOOP_FD_CLASS, ecore_main_loop_get(),
+               efl_loop_fd_set(efl_self, comm[0]),
+               efl_event_callback_add(efl_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did));
    fail_if(fd == NULL);
 
    ret = write(comm[1], &did, 1);
@@ -324,7 +324,7 @@ START_TEST(ecore_test_efl_loop_fd_lifecycle)
    int comm[2];
    int ret;
 
-   eo_init();
+   efl_object_init();
 
    ret = ecore_init();
    fail_if(ret < 1);
@@ -332,11 +332,11 @@ START_TEST(ecore_test_efl_loop_fd_lifecycle)
    ret = pipe(comm);
    fail_if(ret != 0);
 
-   fd = eo_add(EFL_LOOP_FD_CLASS, ecore_main_loop_get(),
-               efl_loop_fd_set(eo_self, comm[0]),
-               efl_event_callback_add(eo_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did),
-               efl_event_callback_add(eo_self, EFL_EVENT_DEL, _efl_del_cb, &dead));
-   eo_ref(fd);
+   fd = efl_add(EFL_LOOP_FD_CLASS, ecore_main_loop_get(),
+               efl_loop_fd_set(efl_self, comm[0]),
+               efl_event_callback_add(efl_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did),
+               efl_event_callback_add(efl_self, EFL_EVENT_DEL, _efl_del_cb, &dead));
+   efl_ref(fd);
    fail_if(fd == NULL);
 
    ret = write(comm[1], &did, 1);
@@ -355,7 +355,7 @@ START_TEST(ecore_test_efl_loop_fd_lifecycle)
    efl_del(fd);
    fail_if(dead == EINA_FALSE);
 
-   eo_shutdown();
+   efl_object_shutdown();
 }
 END_TEST
 
@@ -827,16 +827,16 @@ START_TEST(ecore_test_efl_loop_register)
    ecore_init();
 
    t = efl_provider_find(ecore_main_loop_get(), EFL_LOOP_CLASS);
-   fail_if(!eo_isa(t, EFL_LOOP_CLASS));
+   fail_if(!efl_isa(t, EFL_LOOP_CLASS));
 
    t = efl_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
    fail_if(t != NULL);
 
-   n = eo_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get());
+   n = efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get());
    efl_loop_register(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS, n);
 
    t = efl_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
-   fail_if(!eo_isa(t, EFL_LOOP_TIMER_CLASS));
+   fail_if(!efl_isa(t, EFL_LOOP_TIMER_CLASS));
    fail_if(t != n);
 
    efl_loop_unregister(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS, n);
@@ -856,7 +856,7 @@ START_TEST(ecore_test_efl_app_version)
    ecore_init();
 
    loop = efl_loop_main_get(EFL_LOOP_CLASS);
-   fail_if(!eo_isa(loop, EFL_LOOP_CLASS));
+   fail_if(!efl_isa(loop, EFL_LOOP_CLASS));
 
    efl_build_version_set(EFL_VERSION_MAJOR, EFL_VERSION_MINOR, 0, 0, NULL, EFL_BUILD_ID);
    ver = efl_loop_app_efl_version_get(loop);

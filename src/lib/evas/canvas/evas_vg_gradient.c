@@ -63,10 +63,10 @@ _efl_vg_gradient_efl_vg_interpolate(Eo *obj,
    double from_map;
    Eina_Bool r;
 
-   r = efl_vg_interpolate(eo_super(obj, EFL_VG_GRADIENT_CLASS), from, to, pos_map);
+   r = efl_vg_interpolate(efl_super(obj, EFL_VG_GRADIENT_CLASS), from, to, pos_map);
 
-   fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_CLASS);
-   tod = eo_data_scope_get(to, EFL_VG_GRADIENT_CLASS);
+   fromd = efl_data_scope_get(from, EFL_VG_GRADIENT_CLASS);
+   tod = efl_data_scope_get(to, EFL_VG_GRADIENT_CLASS);
    from_map = 1.0 - pos_map;
 
    if (!r) return EINA_FALSE;
@@ -101,9 +101,9 @@ _efl_vg_gradient_efl_vg_dup(Eo *obj,
 {
    Efl_VG_Gradient_Data *fromd;
 
-   efl_vg_dup(eo_super(obj, EFL_VG_GRADIENT_CLASS), from);
+   efl_vg_dup(efl_super(obj, EFL_VG_GRADIENT_CLASS), from);
 
-   fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_CLASS);
+   fromd = efl_data_scope_get(from, EFL_VG_GRADIENT_CLASS);
 
    efl_gfx_gradient_stop_set(obj, fromd->colors, fromd->colors_count);
    efl_gfx_gradient_spread_set(obj, fromd->s);

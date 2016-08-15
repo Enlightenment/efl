@@ -77,7 +77,7 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-EO_CALLBACKS_ARRAY_DEFINE(_emotion_cb,
+EFL_CALLBACKS_ARRAY_DEFINE(_emotion_cb,
    { EMOTION_OBJECT_EVENT_FRAME_DECODE, _update_frame },
    { EMOTION_OBJECT_EVENT_FRAME_RESIZE, _update_slider },
    { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, _update_slider },
@@ -86,7 +86,7 @@ EO_CALLBACKS_ARRAY_DEFINE(_emotion_cb,
    { EMOTION_OBJECT_EVENT_PLAYBACK_FINISHED, _play_finished }
 );
 
-EO_CALLBACKS_ARRAY_DEFINE(_slider_cb,
+EFL_CALLBACKS_ARRAY_DEFINE(_slider_cb,
    { ELM_SLIDER_EVENT_CHANGED, _update_position },
    { ELM_SLIDER_EVENT_SLIDER_DRAG_START, _drag_start },
    { ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, _drag_stop }
@@ -203,7 +203,7 @@ EOLIAN static Elm_Theme_Apply
 _elm_player_elm_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _update_theme_button(obj, sd->forward, "forward");
@@ -543,11 +543,11 @@ _elm_player_content_set(Eo *obj, Elm_Player_Data *sd, const char *part, Evas_Obj
 
    if (part && strcmp(part, "video"))
      {
-        int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
+        int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
         return int_ret;
      }
    if ((!part) || (!strcmp(part, "video"))) part = "elm.swallow.content";
-   int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
+   int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
 
    if (!_elm_video_check(content)) return EINA_FALSE;
    if (sd->video == content) goto end;
@@ -605,7 +605,7 @@ _elm_player_efl_canvas_group_group_add(Eo *obj, Elm_Player_Data *priv)
 {
    char buf[256];
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "player", "base", elm_widget_style_get(obj)))
@@ -666,20 +666,20 @@ _elm_player_efl_canvas_group_group_add(Eo *obj, Elm_Player_Data *priv)
 EOLIAN static void
 _elm_player_efl_canvas_group_group_del(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
 {
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
 elm_player_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return eo_add(MY_CLASS, parent);
+   return efl_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
 _elm_player_efl_object_constructor(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ANIMATION);

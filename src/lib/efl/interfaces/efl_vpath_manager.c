@@ -34,7 +34,7 @@ _efl_vpath_manager_fetch(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const char *
         file = efl_vpath_fetch(entry->vpath, path);
         if (file) return file;
      }
-   file = eo_add(EFL_VPATH_FILE_CLASS, NULL);
+   file = efl_add(EFL_VPATH_FILE_CLASS, NULL);
    if (file)
      {
         efl_vpath_file_path_set(file, path);

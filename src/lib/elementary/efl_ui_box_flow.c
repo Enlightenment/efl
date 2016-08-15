@@ -12,7 +12,7 @@ struct _Efl_Ui_Box_Flow_Data
 EOLIAN static Eo *
 _efl_ui_box_flow_efl_object_constructor(Eo *obj, Efl_Ui_Box_Flow_Data *pd)
 {
-   efl_constructor(eo_super(obj, MY_CLASS));
+   efl_constructor(efl_super(obj, MY_CLASS));
    efl_pack_layout_engine_set(obj, MY_CLASS, &pd->params);
    return obj;
 }
@@ -52,10 +52,10 @@ _efl_ui_box_flow_efl_pack_layout_layout_do(Efl_Class *klass EINA_UNUSED,
    Efl_Ui_Box_Data *pd;
    Eina_Bool homo = EINA_FALSE, maxsize = EINA_FALSE;
 
-   EINA_SAFETY_ON_FALSE_RETURN(eo_isa(obj, EFL_UI_BOX_CLASS));
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(obj, EFL_UI_BOX_CLASS));
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   bd = eo_data_scope_get(wd->resize_obj, EVAS_BOX_CLASS);
-   pd = eo_data_scope_get(obj, EFL_UI_BOX_CLASS);
+   bd = efl_data_scope_get(wd->resize_obj, EVAS_BOX_CLASS);
+   pd = efl_data_scope_get(obj, EFL_UI_BOX_CLASS);
 
    if (params)
      {

@@ -126,7 +126,7 @@ _efl_ui_image_internal_sizing_eval(Evas_Object *obj EINA_UNUSED, Efl_Ui_Image_Da
 {
    if (!sd->img) return;
 
-   if (eo_isa(sd->img, EDJE_OBJECT_CLASS))
+   if (efl_isa(sd->img, EDJE_OBJECT_CLASS))
      {
         evas_object_move(sd->img, sd->img_x, sd->img_y);
         evas_object_resize(sd->img, sd->img_w, sd->img_h);
@@ -575,7 +575,7 @@ _efl_ui_image_drag_n_drop_cb(void *elm_obj,
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
@@ -626,7 +626,7 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
           {
              ERR("Async open thread timed out during cancellation.");
              // skipping all other data free to avoid crashes (this leaks)
-             efl_canvas_group_del(eo_super(obj, MY_CLASS));
+             efl_canvas_group_del(efl_super(obj, MY_CLASS));
              return;
           }
         sd->async.th = NULL;
@@ -637,13 +637,13 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
    eina_stringshare_del(sd->async.file);
    eina_stringshare_del(sd->async.key);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(efl_super(obj, MY_CLASS), x, y);
 
    if ((sd->img_x == x) && (sd->img_y == y)) return;
    sd->img_x = x;
@@ -656,7 +656,7 @@ _efl_ui_image_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Image_Data *sd, Evas_C
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_resize(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
 
    if ((sd->img_w == w) && (sd->img_h == h)) return;
 
@@ -673,7 +673,7 @@ _efl_ui_image_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Image_Data *sd)
    sd->show = EINA_TRUE;
    if (sd->preload_status == EFL_UI_IMAGE_PRELOADING) return;
 
-   efl_canvas_group_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(efl_super(obj, MY_CLASS));
 
    evas_object_show(sd->img);
 
@@ -683,7 +683,7 @@ _efl_ui_image_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Image_Data *sd)
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_hide(Eo *obj, Efl_Ui_Image_Data *sd)
 {
-   efl_canvas_group_hide(eo_super(obj, MY_CLASS));
+   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
 
    sd->show = EINA_FALSE;
    evas_object_hide(sd->img);
@@ -694,7 +694,7 @@ _efl_ui_image_efl_canvas_group_group_hide(Eo *obj, Efl_Ui_Image_Data *sd)
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *member)
 {
-   efl_canvas_group_member_add(eo_super(obj, MY_CLASS), member);
+   efl_canvas_group_member_add(efl_super(obj, MY_CLASS), member);
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
@@ -703,7 +703,7 @@ _efl_ui_image_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Image_Data *sd, 
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_color_set(Eo *obj, Efl_Ui_Image_Data *sd, int r, int g, int b, int a)
 {
-   efl_canvas_group_color_set(eo_super(obj, MY_CLASS), r, g, b, a);
+   efl_canvas_group_color_set(efl_super(obj, MY_CLASS), r, g, b, a);
 
    evas_object_color_set(sd->hit_rect, 0, 0, 0, 0);
    evas_object_color_set(sd->img, r, g, b, a);
@@ -713,7 +713,7 @@ _efl_ui_image_efl_canvas_group_group_color_set(Eo *obj, Efl_Ui_Image_Data *sd, i
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_clip_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *clip)
 {
-   efl_canvas_group_clip_set(eo_super(obj, MY_CLASS), clip);
+   efl_canvas_group_clip_set(efl_super(obj, MY_CLASS), clip);
 
    evas_object_clip_set(sd->img, clip);
    if (sd->prev_img) evas_object_clip_set(sd->prev_img, clip);
@@ -722,7 +722,7 @@ _efl_ui_image_efl_canvas_group_group_clip_set(Eo *obj, Efl_Ui_Image_Data *sd, Ev
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_clip_unset(Eo *obj, Efl_Ui_Image_Data *sd)
 {
-   efl_canvas_group_clip_unset(eo_super(obj, MY_CLASS));
+   efl_canvas_group_clip_unset(efl_super(obj, MY_CLASS));
 
    evas_object_clip_unset(sd->img);
    if (sd->prev_img) evas_object_clip_unset(sd->prev_img);
@@ -736,7 +736,7 @@ _efl_ui_image_elm_widget_theme_apply(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED)
    if (sd->stdicon)
      _elm_theme_object_icon_set(obj, sd->stdicon, elm_widget_style_get(obj));
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _efl_ui_image_sizing_eval(obj);
@@ -869,14 +869,14 @@ EAPI Evas_Object *
 elm_image_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
@@ -956,7 +956,7 @@ static void
 _efl_ui_image_smart_download_done(void *data, Elm_Url *url, Eina_Binbuf *download)
 {
    Eo *obj = data;
-   Efl_Ui_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Eina_File *f;
    size_t length;
    Eina_Bool ret = EINA_FALSE;
@@ -997,7 +997,7 @@ static void
 _efl_ui_image_smart_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int error)
 {
    Eo *obj = data;
-   Efl_Ui_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Efl_Ui_Image_Error err = { error, EINA_FALSE };
 
    efl_event_callback_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_ERROR, &err);
@@ -1158,7 +1158,7 @@ _efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data 
    if (w) *w = 0;
    if (h) *h = 0;
 
-   if (eo_isa(sd->img, EDJE_OBJECT_CLASS))
+   if (efl_isa(sd->img, EDJE_OBJECT_CLASS))
      edje_object_size_min_get(sd->img, &tw, &th);
    else
      evas_object_image_size_get(sd->img, &tw, &th);
@@ -1336,7 +1336,7 @@ _efl_ui_image_animated_get_internal(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data
 EAPI void
 elm_image_animated_set(Evas_Object *obj, Eina_Bool anim)
 {
-   Efl_Ui_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    if (!sd) return;
    _efl_ui_image_animated_set_internal(obj, sd, anim);
 }
@@ -1344,7 +1344,7 @@ elm_image_animated_set(Evas_Object *obj, Eina_Bool anim)
 EAPI Eina_Bool
 elm_image_animated_get(const Evas_Object *obj)
 {
-   Efl_Ui_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    if (!sd) return EINA_FALSE;
    return _efl_ui_image_animated_get_internal(obj, sd);
 }
@@ -1382,7 +1382,7 @@ _efl_ui_image_animated_play_get_internal(const Eo *obj EINA_UNUSED, Efl_Ui_Image
 EAPI void
 elm_image_animated_play_set(Elm_Image *obj, Eina_Bool play)
 {
-   Efl_Ui_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    if (!sd) return;
    _efl_ui_image_animated_play_set_internal(obj, sd, play);
 }
@@ -1390,7 +1390,7 @@ elm_image_animated_play_set(Elm_Image *obj, Eina_Bool play)
 EAPI Eina_Bool
 elm_image_animated_play_get(const Elm_Image *obj)
 {
-   Efl_Ui_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    if (!sd) return EINA_FALSE;
    return _efl_ui_image_animated_play_get_internal(obj, sd);
 }

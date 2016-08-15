@@ -158,7 +158,7 @@ _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, Elm_Interface_Atspi
      }
    if (ret == (int)eina_list_count(children))
      {
-        ERR("Object %s not present in its AT-SPI parents (%s) children list! This should never happen.", eo_class_name_get(eo_class_get(obj)), eo_class_name_get(eo_class_get(parent)));
+        ERR("Object %s not present in its AT-SPI parents (%s) children list! This should never happen.", efl_class_name_get(efl_class_get(obj)), efl_class_name_get(efl_class_get(parent)));
         ret = -1;
      }
    eina_list_free(children);
@@ -173,28 +173,28 @@ _elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Interface_At
 
    do {
       parent = efl_parent_get(obj);
-      if (eo_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+      if (efl_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
         {
            type = elm_interface_atspi_accessible_type_get(parent);
            if (type != ELM_ATSPI_TYPE_SKIPPED) break;
         }
    } while (parent);
 
-   return eo_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? parent : NULL;
+   return efl_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? parent : NULL;
 }
 
 EOLIAN static void
 _elm_interface_atspi_accessible_parent_set(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED, Elm_Interface_Atspi_Accessible *new_parent EINA_UNUSED)
 {
    WRN("The %s object does not implement the \"accessible_parent_set\" function.",
-       eo_class_name_get(eo_class_get(obj)));
+       efl_class_name_get(efl_class_get(obj)));
 }
 
 EOLIAN Eina_List*
 _elm_interface_atspi_accessible_attributes_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
    WRN("The %s object does not implement the \"accessible_attributes_set\" function.",
-       eo_class_name_get(eo_class_get(obj)));
+       efl_class_name_get(efl_class_get(obj)));
    return NULL;
 }
 
@@ -287,7 +287,7 @@ _elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Interface_
 
    EINA_ITERATOR_FOREACH(iter, chld)
      {
-        if (eo_isa(chld, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+        if (efl_isa(chld, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
           children = eina_list_append(children, chld);
      }
    eina_iterator_free(iter);
@@ -325,9 +325,9 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
    Elm_Atspi_Event_Handler *hdl;
    Elm_Atspi_Type type;
 
-   if (!accessible || !event || !eo_isa(accessible, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+   if (!accessible || !event || !efl_isa(accessible, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      {
-        CRI("Invalid parameters, event: %s, obj: %s", event ? event->name : "NULL", accessible ? eo_class_name_get(accessible) : "NULL");
+        CRI("Invalid parameters, event: %s, obj: %s", event ? event->name : "NULL", accessible ? efl_class_name_get(accessible) : "NULL");
         return;
      }
 
@@ -443,7 +443,7 @@ elm_atspi_relation_set_relation_append(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
    Elm_Atspi_Relation *rel;
    Eina_List *l;
 
-   if (!eo_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+   if (!efl_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      return EINA_FALSE;
 
    EINA_LIST_FOREACH(*set, l, rel)
@@ -572,7 +572,7 @@ EOLIAN Eo*
 _elm_interface_atspi_accessible_root_get(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
 {
    if (!root)
-      root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+      root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    return root;
 }

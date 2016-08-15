@@ -32,12 +32,12 @@ START_TEST(elm_layout_swallows)
    elm_init(1, NULL);
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
 
-   ly = eo_add(ELM_LAYOUT_CLASS, win);
+   ly = efl_add(ELM_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
    elm_layout_file_set(ly, buf, "layout");
    evas_object_show(ly);
 
-   bt = eo_add(ELM_BUTTON_CLASS, ly);
+   bt = efl_add(ELM_BUTTON_CLASS, ly);
    fail_if(!efl_content_set(efl_part(ly, "element1"), bt));
    ck_assert_ptr_eq(efl_parent_get(bt), ly);
 
@@ -47,7 +47,7 @@ START_TEST(elm_layout_swallows)
    fail_if(!efl_content_set(efl_part(ly, "element1"), bt));
    ck_assert_ptr_eq(efl_parent_get(bt), ly);
 
-   bt2 = eo_add(ELM_BUTTON_CLASS, ly);
+   bt2 = efl_add(ELM_BUTTON_CLASS, ly);
    fail_if(!efl_content_set(efl_part(ly, "element1"), bt2));
    ck_assert_ptr_eq(efl_parent_get(bt2), ly);
    /* bt is deleted at this point. */

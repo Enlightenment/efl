@@ -17,7 +17,7 @@ typedef struct _B_Data B_Data;
 
 static Eo *_b_efl_object_constructor(Eo *obj EINA_UNUSED, B_Data *pd EINA_UNUSED)
 {
-   return efl_constructor(eo_super(obj, MY_CLASS));
+   return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
 #include "b.eo.c"

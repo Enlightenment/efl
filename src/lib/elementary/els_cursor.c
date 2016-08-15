@@ -440,7 +440,7 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
         Evas_Object *top;
 
         top = elm_widget_top_get(cur->owner);
-        if ((top) && (eo_isa(top, EFL_UI_WIN_CLASS)))
+        if ((top) && (efl_isa(top, EFL_UI_WIN_CLASS)))
           {
 #ifdef HAVE_ELEMENTARY_X
              cur->x.win = elm_win_xwindow_get(top);

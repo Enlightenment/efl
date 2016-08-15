@@ -27,7 +27,7 @@ _elm_code_widget_undo_change_add(Evas_Object *widget,
    Elm_Code_Widget_Change_Info *info_copy;
 
    info_copy = _elm_code_widget_undo_info_copy(info);
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    pd->undo_stack_ptr = eina_list_prepend(pd->undo_stack_ptr, info_copy);
    pd->undo_stack = pd->undo_stack_ptr;

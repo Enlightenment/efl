@@ -30,7 +30,7 @@ _test_object_efl_object_constructor(Eo* obj, Test_Object_Data *pd)
   fflush(stdout);
 
   pd->a = 0;
-  return efl_constructor(eo_super(obj, MY_CLASS));
+  return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *
@@ -39,7 +39,7 @@ _test_object_efl_object_finalize(Eo *obj, Test_Object_Data *pd EINA_UNUSED)
   fprintf(stdout, "_test_object_efl_object_finalize\n");
   fflush(stdout);
 
-  return efl_finalize(eo_super(obj, MY_CLASS));
+  return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -47,7 +47,7 @@ _test_object_efl_object_destructor(Eo* obj, Test_Object_Data *pd EINA_UNUSED)
 {
   fprintf(stdout, "_test_object_efl_object_destructor\n");
   fflush(stdout);
-  efl_destructor(eo_super(obj, MY_CLASS));
+  efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 

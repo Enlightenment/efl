@@ -101,7 +101,7 @@ EOLIAN static Elm_Theme_Apply
 _efl_ui_flip_elm_widget_theme_apply(Eo *obj, Efl_Ui_Flip_Data *sd EINA_UNUSED)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _sizing_eval(obj);
@@ -175,7 +175,7 @@ _efl_ui_flip_elm_widget_sub_object_add(Eo *obj, Efl_Ui_Flip_Data *_pd EINA_UNUSE
    if (evas_object_data_get(sobj, "elm-parent") == obj)
      return EINA_TRUE;
 
-   int_ret = elm_obj_widget_sub_object_add(eo_super(obj, MY_CLASS), sobj);
+   int_ret = elm_obj_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    evas_object_data_set(sobj, "_elm_leaveme", sobj);
@@ -193,7 +193,7 @@ _efl_ui_flip_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Flip_Data *sd, Evas_Objec
    Eina_Bool int_ret = EINA_FALSE;
 
 
-   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
+   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->front.content)
@@ -511,7 +511,7 @@ _slice_obj_vert_color_merge(Slice *s1,
 static int
 _state_update(Evas_Object *obj)
 {
-   Efl_Ui_Flip_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Flip_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Slice *sl;
    Vertex3 *tvo, *tvol;
    Evas_Object *front, *back;
@@ -940,7 +940,7 @@ _map_uv_set(Evas_Object *obj, Evas_Map *map)
    Evas_Coord x, y, w, h;
 
    // FIXME: only handles filled obj
-   if (eo_isa(obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS) &&
+   if (efl_isa(obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS) &&
        !evas_object_image_source_get(obj))
      {
         int iw, ih;
@@ -1532,7 +1532,7 @@ _update_job(void *data)
 {
    Elm_Flip_Mode m = ELM_FLIP_ROTATE_X_CENTER_AXIS;
    Evas_Object *obj = data;
-   Efl_Ui_Flip_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Flip_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    int rev = 0;
    double p;
 
@@ -1811,7 +1811,7 @@ _efl_ui_flip_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *_pd EINA_UNUSE
 EOLIAN static void
 _efl_ui_flip_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Flip_Data *priv)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->clip = evas_object_rectangle_add(evas_object_evas_get(obj));
@@ -1857,21 +1857,21 @@ _efl_ui_flip_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Flip_Data *sd)
    ecore_animator_del(sd->animator);
    _state_slices_clear(sd);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
 elm_flip_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _efl_ui_flip_efl_object_constructor(Eo *obj, Efl_Ui_Flip_Data *sd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);

@@ -20,13 +20,13 @@ main(int argc, char *argv[])
    Eina_Iterator *iter = NULL;
    void *chld;
 
-   eo_init();
+   efl_object_init();
 
-   Eo *parent = eo_add(SIMPLE_CLASS, NULL);
+   Eo *parent = efl_add(SIMPLE_CLASS, NULL);
 
-   Eo *child1 = eo_add(SIMPLE_CLASS, parent);
-   Eo *child2 = eo_add(SIMPLE_CLASS, parent);
-   Eo *child3 = eo_add(SIMPLE_CLASS, parent);
+   Eo *child1 = efl_add(SIMPLE_CLASS, parent);
+   Eo *child2 = efl_add(SIMPLE_CLASS, parent);
+   Eo *child3 = efl_add(SIMPLE_CLASS, parent);
 
    iter = efl_children_iterator_new(parent);
    fail_if(!iter);
@@ -67,8 +67,8 @@ main(int argc, char *argv[])
    iter = efl_children_iterator_new(parent);
    fail_if(iter);
 
-   eo_unref(parent);
+   efl_unref(parent);
 
-   eo_shutdown();
+   efl_object_shutdown();
    return 0;
 }

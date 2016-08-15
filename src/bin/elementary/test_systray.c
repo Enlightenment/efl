@@ -82,7 +82,7 @@ test_systray(void *data EINA_UNUSED,
    elm_menu_item_add(it, it2, NULL, "item 2",  _menu_clicked, "item 2");
 
    // Status Notifier Item Handler
-   item = eo_add(ELM_SYSTRAY_CLASS, win);
+   item = efl_add(ELM_SYSTRAY_CLASS, win);
    elm_obj_systray_icon_name_set(item, "elementary");
    elm_obj_systray_att_icon_name_set(item, "elementary");
    elm_obj_systray_menu_set(item, it);

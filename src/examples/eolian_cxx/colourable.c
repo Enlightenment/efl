@@ -35,7 +35,7 @@ _ns_colourable_efl_object_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED
           = eina_log_domain_register("colourable", EINA_COLOR_BLUE);
      }
    DBG("_ns_colourable_constructor(%p, %p)\n", obj, MY_CLASS);
-   return efl_constructor(eo_super(obj, MY_CLASS));
+   return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
 void
@@ -47,7 +47,7 @@ _ns_colourable_efl_object_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
         _ns_colourable_impl_logdomain = 0;
      }
    DBG("_ns_colourable_destructor()\n");
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 void

@@ -39,7 +39,7 @@ EOLIAN static Elm_Theme_Apply
 _elm_mapbuf_elm_widget_theme_apply(Eo *obj, Elm_Mapbuf_Data *sd EINA_UNUSED)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _sizing_eval(obj);
@@ -78,7 +78,7 @@ EOLIAN static Eina_Bool
 _elm_mapbuf_elm_widget_sub_object_del(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
+   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->content)
@@ -158,7 +158,7 @@ _mapbuf_auto_smooth(Evas_Object *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 EOLIAN static void
 _elm_mapbuf_efl_canvas_group_group_move(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(efl_super(obj, MY_CLASS), x, y);
 
    _mapbuf_auto_eval(obj, sd);
    _mapbuf_auto_smooth(obj, sd);
@@ -168,7 +168,7 @@ _elm_mapbuf_efl_canvas_group_group_move(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord
 EOLIAN static void
 _elm_mapbuf_efl_canvas_group_group_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
 
    if (sd->content) evas_object_resize(sd->content, w, h);
    _mapbuf_auto_eval(obj, sd);
@@ -178,7 +178,7 @@ _elm_mapbuf_efl_canvas_group_group_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coo
 EOLIAN static void
 _elm_mapbuf_efl_canvas_group_group_show(Eo *obj, Elm_Mapbuf_Data *sd)
 {
-   efl_canvas_group_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(efl_super(obj, MY_CLASS));
 
    _mapbuf_auto_eval(obj, sd);
    _configure(obj);
@@ -187,7 +187,7 @@ _elm_mapbuf_efl_canvas_group_group_show(Eo *obj, Elm_Mapbuf_Data *sd)
 EOLIAN static void
 _elm_mapbuf_efl_canvas_group_group_hide(Eo *obj, Elm_Mapbuf_Data *sd)
 {
-   efl_canvas_group_hide(eo_super(obj, MY_CLASS));
+   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
 
    _mapbuf_auto_eval(obj, sd);
    _configure(obj);
@@ -269,7 +269,7 @@ _elm_mapbuf_efl_canvas_group_group_del(Eo *obj, Elm_Mapbuf_Data *priv)
    ELM_SAFE_FREE(priv->idler, ecore_idler_del);
    ELM_SAFE_FREE(priv->map, evas_map_free);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -280,7 +280,7 @@ _elm_mapbuf_efl_canvas_group_group_add(Eo *obj, Elm_Mapbuf_Data *priv)
 
    elm_widget_resize_object_set(obj, rect, EINA_TRUE);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    evas_object_static_clip_set(rect, EINA_TRUE);
@@ -308,14 +308,14 @@ EAPI Evas_Object *
 elm_mapbuf_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_mapbuf_efl_object_constructor(Eo *obj, Elm_Mapbuf_Data *sd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE_MAP);
 

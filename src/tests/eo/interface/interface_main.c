@@ -14,9 +14,9 @@ main(int argc, char *argv[])
 {
    (void) argc;
    (void) argv;
-   eo_init();
+   efl_object_init();
 
-   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, NULL);
 
    simple_a_set(obj, 1);
    simple_b_set(obj, 2);
@@ -35,8 +35,8 @@ main(int argc, char *argv[])
    sum = interface2_ab_sum_get2(obj);
    fail_if(sum != a + b + 1);
 
-   eo_unref(obj);
-   eo_shutdown();
+   efl_unref(obj);
+   efl_object_shutdown();
    return 0;
 }
 

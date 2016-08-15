@@ -13,7 +13,7 @@
 #define MY_PAN_CLASS_NAME_LEGACY "elm_pan"
 
 #define ELM_PAN_DATA_GET_OR_RETURN(o, ptr)                      \
-  Elm_Pan_Smart_Data *ptr = eo_data_scope_get(o, MY_PAN_CLASS);       \
+  Elm_Pan_Smart_Data *ptr = efl_data_scope_get(o, MY_PAN_CLASS);       \
   if (!ptr)                                                     \
     {                                                           \
        CRI("No smart data for object %p (%s)",             \
@@ -22,7 +22,7 @@
     }
 
 #define ELM_PAN_DATA_GET_OR_RETURN_VAL(o, ptr, val)             \
-  Elm_Pan_Smart_Data *ptr = eo_data_scope_get(o, MY_PAN_CLASS);       \
+  Elm_Pan_Smart_Data *ptr = efl_data_scope_get(o, MY_PAN_CLASS);       \
   if (!ptr)                                                     \
     {                                                           \
        CRI("No smart data for object %p (%s)",             \
@@ -106,7 +106,7 @@ _elm_pan_update(Elm_Pan_Smart_Data *psd)
 EOLIAN static void
 _elm_pan_efl_canvas_group_group_add(Eo *obj, Elm_Pan_Smart_Data *priv)
 {
-   efl_canvas_group_add(eo_super(obj, MY_PAN_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_PAN_CLASS));
 
    priv->self = obj;
 }
@@ -116,7 +116,7 @@ _elm_pan_efl_canvas_group_group_del(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED
 {
    _elm_pan_content_set(obj, NULL);
 
-   efl_canvas_group_del(eo_super(obj, MY_PAN_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_PAN_CLASS));
 }
 
 EOLIAN static void
@@ -141,7 +141,7 @@ _elm_pan_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *
 EOLIAN static void
 _elm_pan_efl_canvas_group_group_show(Eo *obj, Elm_Pan_Smart_Data *psd)
 {
-   efl_canvas_group_show(eo_super(obj, MY_PAN_CLASS));
+   efl_canvas_group_show(efl_super(obj, MY_PAN_CLASS));
 
    if (psd->content)
      evas_object_show(psd->content);
@@ -150,7 +150,7 @@ _elm_pan_efl_canvas_group_group_show(Eo *obj, Elm_Pan_Smart_Data *psd)
 EOLIAN static void
 _elm_pan_efl_canvas_group_group_hide(Eo *obj, Elm_Pan_Smart_Data *psd)
 {
-   efl_canvas_group_hide(eo_super(obj, MY_PAN_CLASS));
+   efl_canvas_group_hide(efl_super(obj, MY_PAN_CLASS));
 
    if (psd->content)
      evas_object_hide(psd->content);
@@ -226,14 +226,14 @@ _elm_pan_gravity_get(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, double *x, do
 static Evas_Object *
 _elm_pan_add(Evas *evas)
 {
-   Evas_Object *obj = eo_add(MY_PAN_CLASS, evas);
+   Evas_Object *obj = efl_add(MY_PAN_CLASS, evas);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_pan_efl_object_constructor(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_PAN_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_PAN_CLASS));
    efl_canvas_object_type_set(obj, MY_PAN_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
@@ -333,8 +333,8 @@ _elm_pan_class_constructor(Efl_Class *klass)
 
 #define ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(o, ptr)     \
   Elm_Scrollable_Smart_Interface_Data *ptr =            \
-    (!eo_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :       \
-     eo_data_scope_get(o, MY_SCROLLABLE_INTERFACE));    \
+    (!efl_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :       \
+     efl_data_scope_get(o, MY_SCROLLABLE_INTERFACE));    \
   if (!ptr)                                             \
     {                                                   \
        CRI("No interface data for object %p (%s)", \
@@ -344,8 +344,8 @@ _elm_pan_class_constructor(Efl_Class *klass)
 
 #define ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
   Elm_Scrollable_Smart_Interface_Data *ptr =                 \
-    (!eo_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :            \
-     eo_data_scope_get(o, MY_SCROLLABLE_INTERFACE));         \
+    (!efl_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :            \
+     efl_data_scope_get(o, MY_SCROLLABLE_INTERFACE));         \
   if (!ptr)                                                  \
     {                                                        \
        CRI("No interface data for object %p (%s)",      \
@@ -4512,14 +4512,14 @@ _elm_interface_scrollable_efl_canvas_group_group_add(Eo *obj, Elm_Scrollable_Sma
 
    _elm_scroll_scroll_bar_reset(sid);
 
-   efl_canvas_group_add(eo_super(obj, MY_SCROLLABLE_INTERFACE));
+   efl_canvas_group_add(efl_super(obj, MY_SCROLLABLE_INTERFACE));
 }
 
 EOLIAN static void
 _elm_interface_scrollable_efl_canvas_group_group_del(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
 {
 
-   efl_canvas_group_del(eo_super(obj, MY_SCROLLABLE_INTERFACE));
+   efl_canvas_group_del(efl_super(obj, MY_SCROLLABLE_INTERFACE));
 
    elm_interface_scrollable_content_set(obj, NULL);
    if (!sid->extern_pan) evas_object_del(sid->pan_obj);

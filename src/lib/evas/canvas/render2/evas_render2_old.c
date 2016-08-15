@@ -137,7 +137,7 @@ _evas_render2_updates_clean(Evas_Public_Data *e)
 static void
 _evas_render2_stage_last(Eo *eo_e, Eina_Bool make_updates, Eina_Bool do_async)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Eina_List *ret_updates = NULL;
    Evas_Event_Render_Post post;
 
@@ -364,7 +364,7 @@ Eina_Bool
 _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
                     Eina_Bool do_draw, Eina_Bool do_async)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    // if nothing changed at all since last render - skip this frame
    if (!e->changed) return EINA_FALSE;
@@ -389,7 +389,7 @@ _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
         if (do_async)
           {
              // ref the canvas so it stays while threads work
-             eo_ref(eo_e);
+             efl_ref(eo_e);
              // track canvas in list of things going in the background
              e->rendering = EINA_TRUE;
              _rendering = eina_list_append(_rendering, eo_e);
@@ -423,7 +423,7 @@ _evas_render2_end(Eo *eo_e)
    // or pixel upload if needed here
    _evas_render2_stage_last(eo_e, EINA_TRUE, EINA_TRUE);
    // release canvas object ref
-   eo_unref(eo_e);
+   efl_unref(eo_e);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -432,7 +432,7 @@ _evas_render2_end(Eo *eo_e)
 void
 _evas_render2_idle_flush(Eo *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    // wait for rendering to finish so we don't mess up shared resources
    _evas_render2_wait(eo_e);
@@ -456,7 +456,7 @@ _evas_render2_idle_flush(Eo *eo_e)
 void
 _evas_render2_dump(Eo *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    // freeze core cache system async work
    evas_cache_async_freeze();
@@ -480,6 +480,6 @@ _evas_render2_dump(Eo *eo_e)
 void
 _evas_render2_wait(Eo *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    while (e->rendering) evas_async_events_process_blocking();
 }

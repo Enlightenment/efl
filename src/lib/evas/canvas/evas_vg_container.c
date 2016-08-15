@@ -29,7 +29,7 @@ _efl_vg_container_render_pre(Eo *obj EINA_UNUSED,
      {
         if (flag & EFL_GFX_CHANGE_FLAG_MATRIX)
           {
-             child_nd = eo_data_scope_get(child, EFL_VG_CLASS);
+             child_nd = efl_data_scope_get(child, EFL_VG_CLASS);
              child_nd->flags |= EFL_GFX_CHANGE_FLAG_MATRIX;
           }
         _evas_vg_render_pre(child, s, current);
@@ -44,9 +44,9 @@ _efl_vg_container_efl_object_constructor(Eo *obj,
 
    pd->names = eina_hash_stringshared_new(NULL);
 
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   nd = eo_data_scope_get(obj, EFL_VG_CLASS);
+   nd = efl_data_scope_get(obj, EFL_VG_CLASS);
    nd->render_pre = _efl_vg_container_render_pre;
    nd->data = pd;
    nd->flags = EFL_GFX_CHANGE_FLAG_ALL;
@@ -58,7 +58,7 @@ static void
 _efl_vg_container_efl_object_destructor(Eo *obj,
                                      Efl_VG_Container_Data *pd EINA_UNUSED)
 {
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 
    eina_hash_free(pd->names);
    pd->names = NULL;
@@ -121,11 +121,11 @@ _efl_vg_container_efl_vg_interpolate(Eo *obj,
    Eo *from_child, *to_child, *child;
 
    //1. check if both the object are containers
-   if (!(eo_isa(from, EFL_VG_CONTAINER_CLASS) &&
-         eo_isa(to, EFL_VG_CONTAINER_CLASS)))
+   if (!(efl_isa(from, EFL_VG_CONTAINER_CLASS) &&
+         efl_isa(to, EFL_VG_CONTAINER_CLASS)))
      return EINA_FALSE;
 
-   r = efl_vg_interpolate(eo_super(obj, EFL_VG_CONTAINER_CLASS), from, to, pos_map);
+   r = efl_vg_interpolate(efl_super(obj, EFL_VG_CONTAINER_CLASS), from, to, pos_map);
 
    if (!r) return EINA_FALSE;
 
@@ -135,8 +135,8 @@ _efl_vg_container_efl_vg_interpolate(Eo *obj,
      {
         res &= eina_iterator_next(from_it, (void **)&from_child);
         res &= eina_iterator_next(to_it, (void **)&to_child);
-        if (!res && (eo_class_get(from_child) != eo_class_get(to_child) ||
-            (eo_class_get(child) != eo_class_get(from_child))))
+        if (!res && (efl_class_get(from_child) != efl_class_get(to_child) ||
+            (efl_class_get(child) != efl_class_get(from_child))))
           {
              r = EINA_FALSE;
              break;
@@ -160,25 +160,25 @@ _efl_vg_container_efl_vg_dup(Eo *obj,
    Eina_List *l;
    Eo *child;
 
-   efl_vg_dup(eo_super(obj, EFL_VG_CONTAINER_CLASS), from);
+   efl_vg_dup(efl_super(obj, EFL_VG_CONTAINER_CLASS), from);
 
-   fromd = eo_data_scope_get(from, EFL_VG_CONTAINER_CLASS);
+   fromd = efl_data_scope_get(from, EFL_VG_CONTAINER_CLASS);
 
    EINA_LIST_FREE(pd->children, child)
-     eo_unref(child);
+     efl_unref(child);
 
    EINA_LIST_FOREACH(fromd->children, l, child)
      {
         // By setting parent, we automatically reference
         // this new object as a child of obj. Magic at work !
-        (void) eo_add(eo_class_get(child), obj, efl_vg_dup(eo_self, child));
+        (void) efl_add(efl_class_get(child), obj, efl_vg_dup(efl_self, child));
      }
 }
 
 EAPI Efl_VG*
 evas_vg_container_add(Efl_VG *parent)
 {
-   return eo_add(EFL_VG_CONTAINER_CLASS, parent);
+   return efl_add(EFL_VG_CONTAINER_CLASS, parent);
 }
 
 #include "efl_vg_container.eo.c"

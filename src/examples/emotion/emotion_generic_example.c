@@ -152,7 +152,7 @@ _progress_change_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 	   emotion_object_progress_info_get(ev->object));
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(emotion_object_example_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(emotion_object_example_callbacks,
        { EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb },
        { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, _length_change_cb },
        { EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb },

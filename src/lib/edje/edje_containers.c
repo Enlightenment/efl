@@ -38,7 +38,7 @@ struct _Part_Item_Iterator
    Eo            *object;
 };
 
-#define PROXY_REF(obj, pd) do { if (!(pd->temp++)) eo_ref(obj); } while(0)
+#define PROXY_REF(obj, pd) do { if (!(pd->temp++)) efl_ref(obj); } while(0)
 #define PROXY_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) efl_del(obj); } } while(0)
 #define RETURN_VAL(a) do { typeof(a) _ret = a; PROXY_UNREF(obj, pd); return _ret; } while(0)
 #define RETURN_VOID do { PROXY_UNREF(obj, pd); return; } while(0)
@@ -66,7 +66,7 @@ type ## _del_cb(Eo *proxy) \
      } \
    if (efl_parent_get(proxy)) \
      { \
-        eo_ref(proxy); \
+        efl_ref(proxy); \
         efl_parent_set(proxy, NULL); \
      } \
    _ ## type ## _proxy = proxy; \
@@ -79,7 +79,7 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
    Edje_Box_Data *pd; \
    Eo *proxy; \
    \
-   pd = eo_data_scope_get(_ ## type ## _proxy, TYPE ## _CLASS); \
+   pd = efl_data_scope_get(_ ## type ## _proxy, TYPE ## _CLASS); \
    if (!pd) \
      { \
         if (_ ## type ## _proxy) \
@@ -87,8 +87,8 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
              ERR("Found invalid handle for efl_part. Reset."); \
              _ ## type ## _proxy = NULL; \
           } \
-        return eo_add(TYPE ## _CLASS, ed->obj, \
-                      _edje_real_part_set(eo_self, ed, rp, rp->part->name)); \
+        return efl_add(TYPE ## _CLASS, ed->obj, \
+                      _edje_real_part_set(efl_self, ed, rp, rp->part->name)); \
      } \
    \
    if (EINA_UNLIKELY(pd->temp)) \
@@ -120,7 +120,7 @@ EOLIAN static Efl_Object * \
 _efl_canvas_layout_internal_ ## type ## _efl_object_finalize(Eo *obj, datatype *pd) \
 { \
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->rp && pd->ed && pd->part, NULL); \
-   return efl_finalize(eo_super(obj, TYPE ## _CLASS)); \
+   return efl_finalize(efl_super(obj, TYPE ## _CLASS)); \
 }
 
 static Eo *_box_proxy = NULL;
@@ -242,7 +242,7 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_index_get(Eo *obj, Edje_Box
    Eina_List *l;
    int k = 0;
 
-   priv = eo_data_scope_get(pd->rp->object, EVAS_BOX_CLASS);
+   priv = efl_data_scope_get(pd->rp->object, EVAS_BOX_CLASS);
    if (!priv) RETURN_VAL(-1);
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
@@ -527,7 +527,7 @@ _efl_canvas_layout_internal_swallow_efl_container_content_unset(Eo *obj, Edje_Sw
 #ifdef DEGUG
 #define PART_BOX_GET(obj, part, ...) ({ \
    Eo *__box = efl_part(obj, part); \
-   if (!__box || !eo_isa(__box, EFL_CANVAS_LAYOUT_INTERNAL_BOX_CLASS)) \
+   if (!__box || !efl_isa(__box, EFL_CANVAS_LAYOUT_INTERNAL_BOX_CLASS)) \
      { \
         ERR("No such box part '%s' in layout %p", part, obj); \
         return __VA_ARGS__; \
@@ -604,7 +604,7 @@ edje_object_part_box_remove_all(Edje_Object *obj, const char *part, Eina_Bool cl
 #ifdef DEBUG
 #define PART_TABLE_GET(obj, part, ...) ({ \
    Eo *__table = efl_part(obj, part); \
-   if (!__table || !eo_isa(__table, EFL_CANVAS_LAYOUT_INTERNAL_TABLE_CLASS)) \
+   if (!__table || !efl_isa(__table, EFL_CANVAS_LAYOUT_INTERNAL_TABLE_CLASS)) \
      { \
         ERR("No such table part '%s' in layout %p", part, obj); \
         return __VA_ARGS__; \

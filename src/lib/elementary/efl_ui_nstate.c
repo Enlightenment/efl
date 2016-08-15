@@ -34,7 +34,7 @@ static const Elm_Action key_actions[] = {
 EOLIAN static Efl_Object *
 _efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    //TODO: Add ATSPI call here
@@ -75,7 +75,7 @@ _efl_ui_nstate_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Nstate_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    pd->state = 0;
@@ -92,7 +92,7 @@ _efl_ui_nstate_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Nstate_Data *pd)
 EOLIAN static void
 _efl_ui_nstate_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
 {
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static int
@@ -139,7 +139,7 @@ _efl_ui_nstate_elm_widget_theme_apply(Eo *obj, Efl_Ui_Nstate_Data *pd)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _state_active(obj, pd);

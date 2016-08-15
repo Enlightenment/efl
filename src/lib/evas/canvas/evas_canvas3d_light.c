@@ -29,7 +29,7 @@ void
 evas_canvas3d_light_node_add(Evas_Canvas3D_Light *light, Evas_Canvas3D_Node *node)
 {
    int count = 0;
-   Evas_Canvas3D_Light_Data *pd = eo_data_scope_get(light, MY_CLASS);
+   Evas_Canvas3D_Light_Data *pd = efl_data_scope_get(light, MY_CLASS);
    if (pd->nodes == NULL)
      {
         pd->nodes = eina_hash_pointer_new(NULL);
@@ -50,7 +50,7 @@ void
 evas_canvas3d_light_node_del(Evas_Canvas3D_Light *light, Evas_Canvas3D_Node *node)
 {
    int count = 0;
-   Evas_Canvas3D_Light_Data *pd = eo_data_scope_get(light, MY_CLASS);
+   Evas_Canvas3D_Light_Data *pd = efl_data_scope_get(light, MY_CLASS);
    if (pd->nodes == NULL)
      {
         ERR("No node to delete.");
@@ -72,14 +72,14 @@ evas_canvas3d_light_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   Evas_Object *eo_obj = efl_add(MY_CLASS, e);
    return eo_obj;
 }
 
 EOLIAN static Eo *
 _evas_canvas3d_light_efl_object_constructor(Eo *obj, Evas_Canvas3D_Light_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_LIGHT);
    evas_color_set(&pd->ambient, 0.0, 0.0, 0.0, 1.0);
    evas_color_set(&pd->diffuse, 1.0, 1.0, 1.0, 1.0);
@@ -108,14 +108,14 @@ _evas_canvas3d_light_efl_object_destructor(Eo *obj, Evas_Canvas3D_Light_Data *pd
         it = eina_hash_iterator_key_new(pd->nodes);
         while (eina_iterator_next(it, &data))
           {
-             node = eo_data_scope_get(data, EVAS_CANVAS3D_NODE_CLASS);
+             node = efl_data_scope_get(data, EVAS_CANVAS3D_NODE_CLASS);
              node->data.light.light = NULL;
           }
 
         eina_hash_free(pd->nodes);
      }
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 

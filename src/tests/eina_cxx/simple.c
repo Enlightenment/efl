@@ -14,7 +14,7 @@
 
 static Eo *_simple_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
-   return efl_constructor(eo_super(obj, MY_CLASS));
+   return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
 #include "simple.eo.c"

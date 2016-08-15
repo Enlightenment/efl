@@ -213,7 +213,7 @@ void
 evas_canvas3d_mesh_node_add(Evas_Canvas3D_Mesh *mesh, Evas_Canvas3D_Node *node)
 {
    int count = 0;
-   Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, MY_CLASS);
+   Evas_Canvas3D_Mesh_Data *pd = efl_data_scope_get(mesh, MY_CLASS);
    if (pd->nodes == NULL)
      {
         pd->nodes = eina_hash_pointer_new(NULL);
@@ -234,7 +234,7 @@ void
 evas_canvas3d_mesh_node_del(Evas_Canvas3D_Mesh *mesh, Evas_Canvas3D_Node *node)
 {
    int count = 0;
-   Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, MY_CLASS);
+   Evas_Canvas3D_Mesh_Data *pd = efl_data_scope_get(mesh, MY_CLASS);
    if (pd->nodes == NULL)
      {
         ERR("No node to delete.");
@@ -256,14 +256,14 @@ evas_canvas3d_mesh_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   Evas_Object *eo_obj = efl_add(MY_CLASS, e);
    return eo_obj;
 }
 
 EOLIAN static Eo *
 _evas_canvas3d_mesh_efl_object_constructor(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_MESH);
    _mesh_init(pd);
 
@@ -274,7 +274,7 @@ EOLIAN static void
 _evas_canvas3d_mesh_efl_object_destructor(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
 {
    _mesh_fini(pd);
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -371,11 +371,11 @@ _evas_canvas3d_mesh_frame_material_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, int
    if (f->material)
      {
         evas_canvas3d_material_mesh_del(f->material, obj);
-        eo_unref(f->material);
+        efl_unref(f->material);
      }
 
    f->material = material;
-   eo_ref(material);
+   efl_ref(material);
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_MESH_MATERIAL, NULL);
    evas_canvas3d_material_mesh_add(material, obj);
 }
@@ -920,7 +920,7 @@ _evas_canvas3d_mesh_from_primitive_set(Eo *obj,
 {
    if ((primitive == NULL) || (obj == NULL)) return;
 
-   Evas_Canvas3D_Primitive_Data *ppd = eo_data_scope_get(primitive, EVAS_CANVAS3D_PRIMITIVE_CLASS);
+   Evas_Canvas3D_Primitive_Data *ppd = efl_data_scope_get(primitive, EVAS_CANVAS3D_PRIMITIVE_CLASS);
 
    evas_common_set_model_from_primitive(obj, frame, ppd);
 }
@@ -968,7 +968,7 @@ _mesh_frame_find(Evas_Canvas3D_Mesh *mesh, int frame,
 {
    Eina_List *left, *right;
    Evas_Canvas3D_Mesh_Frame *f0 = NULL, *f1;
-   Evas_Canvas3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
+   Evas_Canvas3D_Mesh_Data *pdmesh = efl_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
 
    left = pdmesh->frames;
    right = eina_list_next(left);

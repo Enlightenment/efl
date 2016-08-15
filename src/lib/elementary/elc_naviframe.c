@@ -87,7 +87,7 @@ _elm_naviframe_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
    EINA_INLIST_FOREACH(sd->stack, it)
      elm_wdg_item_translate(EO_OBJ(it));
 
-   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
+   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
 
    return EINA_TRUE;
 }
@@ -594,7 +594,7 @@ end:
 
    _item_free(nit);
 
-   efl_destructor(eo_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS));
+   efl_destructor(efl_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS));
 }
 
 static void
@@ -1192,8 +1192,8 @@ _access_prev_btn_info_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 EOLIAN static Eo *
 _elm_naviframe_item_efl_object_constructor(Eo *eo_item, Elm_Naviframe_Item_Data *it)
 {
-   eo_item = efl_constructor(eo_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS));
-   it->base = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
+   eo_item = efl_constructor(efl_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS));
+   it->base = efl_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
 
    return eo_item;
 }
@@ -1211,7 +1211,7 @@ _item_new(Evas_Object *obj,
 
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
-   eo_item = eo_add(ELM_NAVIFRAME_ITEM_CLASS, obj);
+   eo_item = efl_add(ELM_NAVIFRAME_ITEM_CLASS, obj);
 
    if (!eo_item)
      {
@@ -1391,7 +1391,7 @@ _elm_naviframe_efl_canvas_group_group_add(Eo *obj, Elm_Naviframe_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->dummy_edje = wd->resize_obj;
@@ -1464,7 +1464,7 @@ _elm_naviframe_efl_canvas_group_group_del(Eo *obj, Elm_Naviframe_Data *sd)
 
    evas_object_del(sd->dummy_edje);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 //Show only the top item view
@@ -1584,14 +1584,14 @@ EAPI Evas_Object *
 elm_naviframe_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_naviframe_efl_object_constructor(Eo *obj, Elm_Naviframe_Data *sd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
@@ -1634,7 +1634,7 @@ _elm_naviframe_item_insert_before(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_It
                   title_label, prev_btn, next_btn, content, item_style);
    if (!eo_it) return NULL;
 
-   it = eo_data_scope_get(eo_it, ELM_NAVIFRAME_ITEM_CLASS);
+   it = efl_data_scope_get(eo_it, ELM_NAVIFRAME_ITEM_CLASS);
 
    sd->stack = eina_inlist_prepend_relative
        (sd->stack, EINA_INLIST_GET(it),
@@ -1713,10 +1713,10 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
    evas_object_ref(obj);
    if (it->pop_cb)
      {
-        eo_ref(eo_item);
+        efl_ref(eo_item);
         if (!it->pop_cb(it->pop_data, eo_item))
           {
-             eo_unref(eo_item);
+             efl_unref(eo_item);
              if (it->delete_me)
                elm_wdg_item_del(eo_item);
              else
@@ -1733,7 +1733,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
              evas_object_unref(obj);
              return NULL;
           }
-        eo_unref(eo_item);
+        efl_unref(eo_item);
      }
    evas_object_unref(obj);
 

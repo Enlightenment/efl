@@ -129,7 +129,7 @@ START_TEST(eio_test_job_xattr_set)
 
    fprintf(stderr, "eio_test_job_xattr_set\n"); fflush(stderr);
 
-   job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
+   job = efl_add(EFL_IO_MANAGER_CLASS, NULL);
 
    test_file_path = get_full_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path,
@@ -184,7 +184,7 @@ START_TEST(eio_test_job_xattr_set)
 
    free(attrib_promises);
 
-   eo_unref(job);
+   efl_unref(job);
    close(fd);
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);

@@ -32,11 +32,11 @@
 #define LOAD_AND_ADD_MESH(extention, number)                                          \
    snprintf(buffer, PATH_MAX, "%s%s", template_path, #extention);                     \
    extention##_file = eina_file_open(buffer , 0);                                     \
-   mesh_##extention = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);                               \
+   mesh_##extention = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);                               \
    efl_file_mmap_set(mesh_##extention, extention##_file, NULL); \
    evas_canvas3d_mesh_frame_material_set(mesh_##extention, 0, material); \
    evas_canvas3d_mesh_shader_mode_set(mesh_##extention, EVAS_CANVAS3D_SHADER_MODE_PHONG);                      \
-   node_##extention = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));          \
+   node_##extention = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));          \
    evas_canvas3d_node_member_add(root_node, node_##extention);                       \
    evas_canvas3d_node_mesh_add(node_##extention, mesh_##extention); \
    evas_canvas3d_node_position_set(node_##extention, initial_node_data[number * 10], \
@@ -181,36 +181,36 @@ main(void)
    evas = ecore_evas_get(ecore_evas);
 
    /* Add a scene object .*/
-   scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
+   scene = efl_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
 
    /* Add the root node for the scene. */
-   root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
+   root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    /* Add the camera. */
-   camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
+   camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
    evas_canvas3d_camera_projection_perspective_set(camera, 10.0, 1.0, 1.0, 500.0);
 
    camera_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
    evas_canvas3d_node_camera_set(camera_node, camera);
    evas_canvas3d_node_member_add(root_node, camera_node);
    evas_canvas3d_node_position_set(camera_node, 0.0, 0.0, 100.0);
    evas_canvas3d_node_look_at_set(camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
    /* Add the light. */
-   light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
+   light = efl_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
    evas_canvas3d_light_ambient_set(light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_diffuse_set(light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_specular_set(light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_directional_set(light, EINA_TRUE);
 
    light_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
    evas_canvas3d_node_light_set(light_node, light);
    evas_canvas3d_node_position_set(light_node, 1.0, 0.0, 100.0);
    evas_canvas3d_node_look_at_set(light_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
    evas_canvas3d_node_member_add(root_node, light_node);
 
-   material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE);
    evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE);
@@ -233,13 +233,13 @@ main(void)
    evas_canvas3d_scene_size_set(scene, WIDTH, HEIGHT);
 
    /* Add a background rectangle objects. */
-   background = eo_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
+   background = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 20, 20, 200, 255);
    efl_gfx_size_set(background, WIDTH, HEIGHT);
    efl_gfx_visible_set(background, EINA_TRUE);
 
    /* Add an image object for 3D scene rendering. */
-   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
+   image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    efl_gfx_size_set(image, WIDTH, HEIGHT);
    efl_gfx_visible_set(image, EINA_TRUE);
 

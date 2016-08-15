@@ -164,7 +164,7 @@ ecore_con_info_get(Ecore_Con_Server *obj,
                    void *data,
                    struct addrinfo *hints)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    CB_Data *cbdata;
 
    if (!svr) return 0;

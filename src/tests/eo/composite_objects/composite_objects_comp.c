@@ -14,7 +14,7 @@ static int
 _a_get(Eo *obj, void *class_data EINA_UNUSED)
 {
    int a = 0;
-   a = simple_a_get(eo_super(obj, MY_CLASS));
+   a = simple_a_get(efl_super(obj, MY_CLASS));
 
    return a;
 }
@@ -22,9 +22,9 @@ _a_get(Eo *obj, void *class_data EINA_UNUSED)
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   Eo *simple = eo_add(SIMPLE_CLASS, obj);
+   Eo *simple = efl_add(SIMPLE_CLASS, obj);
    efl_composite_attach(obj, simple);
    efl_event_callback_forwarder_add(simple, EV_A_CHANGED, obj);
 
@@ -37,21 +37,21 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 }
 
 static Efl_Op_Description op_descs[] = {
-     EO_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
-     EO_OP_FUNC_OVERRIDE(simple_a_get, _a_get),
+     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
+     EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_get, _a_get),
 };
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Comp",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(op_descs),
+     EFL_CLASS_TYPE_REGULAR,
+     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(comp_class_get, &class_desc, EO_CLASS,
+EFL_DEFINE_CLASS(comp_class_get, &class_desc, EO_CLASS,
       SIMPLE_CLASS, NULL);
 

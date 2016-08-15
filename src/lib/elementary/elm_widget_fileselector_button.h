@@ -58,7 +58,7 @@ struct _Elm_Fileselector_Button_Data
  */
 
 #define ELM_FILESELECTOR_BUTTON_DATA_GET(o, sd) \
-  Elm_Fileselector_Button_Data * sd = eo_data_scope_get(o, ELM_FILESELECTOR_BUTTON_CLASS)
+  Elm_Fileselector_Button_Data * sd = efl_data_scope_get(o, ELM_FILESELECTOR_BUTTON_CLASS)
 
 #define ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(o, ptr) \
   ELM_FILESELECTOR_BUTTON_DATA_GET(o, ptr);                \
@@ -79,7 +79,7 @@ struct _Elm_Fileselector_Button_Data
     }
 
 #define ELM_FILESELECTOR_BUTTON_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_FILESELECTOR_BUTTON_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_FILESELECTOR_BUTTON_CLASS))) \
     return
 
 #endif

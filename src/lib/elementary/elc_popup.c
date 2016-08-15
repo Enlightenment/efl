@@ -60,7 +60,7 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-EO_CALLBACKS_ARRAY_DEFINE(_notify_cb,
+EFL_CALLBACKS_ARRAY_DEFINE(_notify_cb,
    { ELM_NOTIFY_EVENT_BLOCK_CLICKED, _block_clicked_cb },
    { ELM_NOTIFY_EVENT_TIMEOUT, _timeout_cb },
    { ELM_NOTIFY_EVENT_DISMISSED, _hide_effect_finished_cb }
@@ -77,7 +77,7 @@ _elm_popup_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd)
    EINA_LIST_FOREACH(sd->items, l, it)
       elm_wdg_item_translate(EO_OBJ(it));
 
-   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
+   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
    elm_obj_widget_translate(sd->main_layout);
 
    return EINA_TRUE;
@@ -268,7 +268,7 @@ _elm_popup_efl_canvas_group_group_del(Eo *obj, Elm_Popup_Data *sd)
    ELM_SAFE_FREE(sd->content, evas_object_del);
    ELM_SAFE_FREE(sd->title_text, eina_stringshare_del);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 static void
@@ -501,7 +501,7 @@ _elm_popup_elm_widget_sub_object_del(Eo *obj, Elm_Popup_Data *sd, Evas_Object *s
    Elm_Popup_Item_Data *it;
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
+   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->title_icon)
@@ -867,7 +867,7 @@ _elm_popup_item_efl_object_destructor(Eo *eo_it, Elm_Popup_Item_Data *it)
         sd->items = NULL;
         _list_del(sd);
      }
-   efl_destructor(eo_super(eo_it, ELM_POPUP_ITEM_CLASS));
+   efl_destructor(efl_super(eo_it, ELM_POPUP_ITEM_CLASS));
 }
 
 EOLIAN static void
@@ -897,8 +897,8 @@ _item_unfocused_cb(void *data, const Eo_Event *event EINA_UNUSED)
 EOLIAN static Eo *
 _elm_popup_item_efl_object_constructor(Eo *eo_it, Elm_Popup_Item_Data *it)
 {
-   eo_it = efl_constructor(eo_super(eo_it, ELM_POPUP_ITEM_CLASS));
-   it->base = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
+   eo_it = efl_constructor(efl_super(eo_it, ELM_POPUP_ITEM_CLASS));
+   it->base = efl_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
 
    return eo_it;
 }
@@ -1487,7 +1487,7 @@ _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
 {
    char style[1024];
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
@@ -1555,7 +1555,7 @@ _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
 
-   if (eo_isa(obj, EFL_UI_WIN_CLASS))
+   if (efl_isa(obj, EFL_UI_WIN_CLASS))
      {
         x = 0;
         y = 0;
@@ -1571,7 +1571,7 @@ _elm_popup_elm_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object
    Evas_Coord x, y, w, h;
    evas_object_geometry_get(parent, &x, &y, &w, &h);
 
-   if (eo_isa(parent, EFL_UI_WIN_CLASS))
+   if (efl_isa(parent, EFL_UI_WIN_CLASS))
      {
         x = 0;
         y = 0;
@@ -1594,7 +1594,7 @@ EAPI Evas_Object *
 elm_popup_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    wd->highlight_root = EINA_TRUE;
@@ -1605,7 +1605,7 @@ elm_popup_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_popup_efl_object_constructor(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_NOTIFICATION);
@@ -1772,7 +1772,7 @@ _elm_popup_item_append(Eo *obj, Elm_Popup_Data *sd, const char *label, Evas_Obje
    Evas_Object *prev_content;
    Eo *eo_it;
 
-   eo_it = eo_add(ELM_POPUP_ITEM_CLASS, obj);
+   eo_it = efl_add(ELM_POPUP_ITEM_CLASS, obj);
    if (!eo_it) return NULL;
    ELM_POPUP_ITEM_DATA_GET(eo_it, it);
    if (sd->content || sd->text_content_obj)
@@ -1873,7 +1873,7 @@ EOLIAN static Elm_Atspi_State_Set
 _elm_popup_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Popup_Data *sd EINA_UNUSED)
 {
    Elm_Atspi_State_Set ret;
-   ret = elm_interface_atspi_accessible_state_set_get(eo_super(obj, MY_CLASS));
+   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, MY_CLASS));
 
    STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MODAL);
 

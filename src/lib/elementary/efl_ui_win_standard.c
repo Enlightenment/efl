@@ -15,11 +15,11 @@
 EOLIAN static Eo *
 _efl_ui_win_standard_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
 {
-   obj = efl_finalize(eo_super(obj, MY_CLASS));
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
    if (!obj)
      return NULL;
 
-   Evas_Object *bg = eo_add(ELM_BG_CLASS, obj);
+   Evas_Object *bg = efl_add(ELM_BG_CLASS, obj);
    if (!bg)
      {
         ERR("Cannot create background.");

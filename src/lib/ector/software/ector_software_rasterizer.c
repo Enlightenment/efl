@@ -559,7 +559,7 @@ void ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasteriz
 void ector_software_rasterizer_buffer_set(Software_Rasterizer *rasterizer,
                                           Ector_Software_Buffer *buffer)
 {
-   rasterizer->fill_data.buffer = eo_data_scope_get(buffer, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
+   rasterizer->fill_data.buffer = efl_data_scope_get(buffer, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
    rasterizer->fill_data.type = Image;
 }
 

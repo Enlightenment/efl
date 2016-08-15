@@ -20,15 +20,15 @@ static void _custom_engine_layout_do(Eo *obj, void *pd, Efl_Pack *pack, const vo
 
 /* Common Efl Class boilerplate. */
 static const Efl_Op_Description custom_engine_op_desc[] = {
-   EO_OP_CLASS_FUNC_OVERRIDE(efl_pack_layout_do, _custom_engine_layout_do),
+   EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(efl_pack_layout_do, _custom_engine_layout_do),
 };
 
 static const Efl_Class_Description custom_engine_class_desc = {
-   EO_VERSION, "Custom Layout Engine", EO_CLASS_TYPE_INTERFACE,
-   EO_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), NULL, 0, NULL, NULL
+   EO_VERSION, "Custom Layout Engine", EFL_CLASS_TYPE_INTERFACE,
+   EFL_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), NULL, 0, NULL, NULL
 };
 
-EO_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_LAYOUT_INTERFACE, NULL)
+EFL_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_LAYOUT_INTERFACE, NULL)
 
 #define CUSTOM_ENGINE_CLASS _test_ui_grid_custom_engine_class_get()
 
@@ -73,7 +73,7 @@ weights_cb(void *data, const Eo_Event *event)
         break;
       case CUSTOM:
         // See also test_ui_box.c for another solution for custom layouts
-        // using eo_override.
+        // using efl_object_override.
         efl_pack_layout_engine_set(grid, CUSTOM_ENGINE_CLASS, NULL);
         break;
      }
@@ -191,7 +191,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_win_autodel_set(win, EINA_TRUE);
    efl_gfx_size_set(win, 600, 400);
 
-   vbox = eo_add(EFL_UI_BOX_CLASS, win);
+   vbox = efl_add(EFL_UI_BOX_CLASS, win);
    efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
    efl_orientation_set(vbox, EFL_ORIENT_DOWN);
    efl_gfx_size_hint_weight_set(vbox, 1, 1);
@@ -201,7 +201,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
 
    // create here to pass in cb
-   grid = eo_add(EFL_UI_GRID_CLASS, win);
+   grid = efl_add(EFL_UI_GRID_CLASS, win);
 
 
    /* controls */
@@ -212,15 +212,15 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_pack(vbox, f);
    efl_gfx_visible_set(f, 1);
 
-   hbox = eo_add(EFL_UI_BOX_CLASS, win);
+   hbox = efl_add(EFL_UI_BOX_CLASS, win);
    elm_object_content_set(f, hbox);
    efl_pack_padding_set(hbox, 10, 0, EINA_TRUE);
    efl_gfx_visible_set(hbox, 1);
 
 
    /* weights radio group */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_pack(hbox, bx);
    efl_gfx_visible_set(bx, 1);
@@ -282,8 +282,8 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
 
    /* min size setter */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0.5, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -309,8 +309,8 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
 
    /* inner box padding */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -336,8 +336,8 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
 
    /* outer margin */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -363,8 +363,8 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
 
    /* button margins */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);
@@ -390,8 +390,8 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
 
    /* ro info */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);
@@ -428,7 +428,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_object_content_set(f, grid);
    efl_gfx_visible_set(grid, 1);
 
-   objects[i++] = o = eo_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   objects[i++] = o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_gfx_size_hint_min_set(o, 10, 10);
@@ -525,7 +525,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_win_autodel_set(win, EINA_TRUE);
    efl_gfx_size_set(win, 600, 400);
 
-   vbox = eo_add(EFL_UI_BOX_CLASS, win);
+   vbox = efl_add(EFL_UI_BOX_CLASS, win);
    efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
    efl_orientation_set(vbox, EFL_ORIENT_DOWN);
    efl_gfx_size_hint_weight_set(vbox, 1, 1);
@@ -535,7 +535,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
 
    // create here to pass in cb
-   grid = eo_add(EFL_UI_GRID_CLASS, win);
+   grid = efl_add(EFL_UI_GRID_CLASS, win);
 
 
    /* controls */
@@ -546,7 +546,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_pack(vbox, f);
    efl_gfx_visible_set(f, 1);
 
-   hbox = eo_add(EFL_UI_BOX_CLASS, win);
+   hbox = efl_add(EFL_UI_BOX_CLASS, win);
    elm_object_content_set(f, hbox);
    efl_pack_padding_set(hbox, 5, 0, EINA_TRUE);
    efl_gfx_visible_set(hbox, 1);
@@ -571,8 +571,8 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
 
    /* ro info */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);

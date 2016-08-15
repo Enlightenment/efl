@@ -65,7 +65,7 @@ _job_closure_create(Eo *obj, Efl_Io_Manager_Data *pdata, Eina_Promise_Owner *own
         return 0;
      }
 
-   closure->object = eo_ref(obj);
+   closure->object = efl_ref(obj);
    closure->pdata = pdata;
    closure->promise = owner;
    closure->file = NULL; // Will be set once the Eio operation is under way
@@ -86,7 +86,7 @@ _job_closure_del(Job_Closure *closure)
    if (pdata)
      pdata->operations = eina_list_remove(pdata->operations, closure);
 
-   eo_unref(closure->object);
+   efl_unref(closure->object);
 
    if (closure->delayed_arg)
      free(closure->delayed_arg);
@@ -582,7 +582,7 @@ _efl_io_manager_file_close(Eo *obj,
 static Efl_Object*
 _efl_io_manager_efl_object_constructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, EFL_IO_MANAGER_CLASS));
+   obj = efl_constructor(efl_super(obj, EFL_IO_MANAGER_CLASS));
 
    pd->object = obj;
    pd->operations = NULL;
@@ -593,7 +593,7 @@ _efl_io_manager_efl_object_constructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNU
 static void
 _efl_io_manager_efl_object_destructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED)
 {
-   efl_destructor(eo_super(obj, EFL_IO_MANAGER_CLASS));
+   efl_destructor(efl_super(obj, EFL_IO_MANAGER_CLASS));
 
    // FIXME: cancel all pending promise
 }

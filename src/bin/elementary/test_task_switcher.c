@@ -300,7 +300,7 @@ _app_open(const char *package)
           return;
      }
 
-   app = eo_add(ELM_APP_CLIENT_CLASS, NULL, elm_app_client_constructor(eo_self, package));
+   app = efl_add(ELM_APP_CLIENT_CLASS, NULL, elm_app_client_constructor(efl_self, package));
    efl_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED, _view_list_update_cb, table);
    efl_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_CREATED, _view_list_update_cb, table);
    efl_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_DELETED, _view_list_update_cb, table);

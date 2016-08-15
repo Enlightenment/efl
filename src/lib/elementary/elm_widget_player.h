@@ -52,7 +52,7 @@ struct _Elm_Player_Data
  */
 
 #define ELM_PLAYER_DATA_GET(o, sd) \
-  Elm_Player_Data * sd = eo_data_scope_get(o, ELM_PLAYER_CLASS)
+  Elm_Player_Data * sd = efl_data_scope_get(o, ELM_PLAYER_CLASS)
 
 #define ELM_PLAYER_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_PLAYER_DATA_GET(o, ptr);                       \
@@ -73,7 +73,7 @@ struct _Elm_Player_Data
     }
 
 #define ELM_PLAYER_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_PLAYER_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_PLAYER_CLASS))) \
     return
 
 #endif

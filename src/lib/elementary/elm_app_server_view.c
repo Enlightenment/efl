@@ -40,7 +40,7 @@ static Eldbus_Message *
 _method_close(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
-   Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_CLOSED);
    efl_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL);
@@ -52,7 +52,7 @@ static Eldbus_Message *
 _method_pause(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
-   Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_PAUSED);
    efl_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL);
@@ -64,7 +64,7 @@ static Eldbus_Message *
 _method_resume(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
-   Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_LIVE);
    efl_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL);
@@ -83,7 +83,7 @@ static Eina_Bool
 _prop_title_get(const Eldbus_Service_Interface *iface, const char *propname EINA_UNUSED, Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED, Eldbus_Message **error EINA_UNUSED)
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
-   Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    eldbus_message_iter_basic_append(iter, 's', data->title);
    return EINA_TRUE;
@@ -93,7 +93,7 @@ static Eina_Bool
 _prop_icon_get(const Eldbus_Service_Interface *iface, const char *propname EINA_UNUSED, Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED, Eldbus_Message **error EINA_UNUSED)
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
-   Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    eldbus_message_iter_basic_append(iter, 's', data->icon_name);
    return EINA_TRUE;
@@ -110,7 +110,7 @@ static Eina_Bool
 _prop_events_get(const Eldbus_Service_Interface *iface, const char *propname EINA_UNUSED, Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED, Eldbus_Message **error EINA_UNUSED)
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
-   Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    eldbus_message_iter_basic_append(iter, 'i', data->new_events);
    return EINA_TRUE;
@@ -120,7 +120,7 @@ static Eina_Bool
 _prop_progress_get(const Eldbus_Service_Interface *iface, const char *propname EINA_UNUSED, Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED, Eldbus_Message **error EINA_UNUSED)
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
-   Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    eldbus_message_iter_basic_append(iter, 'n', data->progress);
    return EINA_TRUE;
@@ -130,7 +130,7 @@ static Eina_Bool
 _prop_state_get(const Eldbus_Service_Interface *iface, const char *propname EINA_UNUSED, Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED, Eldbus_Message **error EINA_UNUSED)
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
-   Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    eldbus_message_iter_basic_append(iter, 's', _state_id_to_string(data->state));
    return EINA_TRUE;
@@ -140,7 +140,7 @@ static Eina_Bool
 _prop_window_get(const Eldbus_Service_Interface *iface, const char *propname EINA_UNUSED, Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED, Eldbus_Message **error EINA_UNUSED)
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
-   Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    eldbus_message_iter_basic_append(iter, 'i', data->window_id);
    return EINA_TRUE;
@@ -310,7 +310,7 @@ _elm_app_server_view_id_set(Eo *obj, Elm_App_Server_View_Data *data, const char 
      }
 
    server = efl_parent_get(obj);
-   EINA_SAFETY_ON_TRUE_RETURN(!server || !eo_isa(server, ELM_APP_SERVER_CLASS));
+   EINA_SAFETY_ON_TRUE_RETURN(!server || !efl_isa(server, ELM_APP_SERVER_CLASS));
 
    if (!id)
      {
@@ -346,7 +346,7 @@ _elm_app_server_view_efl_object_finalize(Eo *obj, Elm_App_Server_View_Data *data
    Elm_App_Server *server = NULL;
 
    server = efl_parent_get(obj);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(!server || !eo_isa(server, ELM_APP_SERVER_CLASS), NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!server || !efl_isa(server, ELM_APP_SERVER_CLASS), NULL);
 
 
    if (!data->id)
@@ -368,7 +368,7 @@ _elm_app_server_view_efl_object_finalize(Eo *obj, Elm_App_Server_View_Data *data
    data->title = eina_stringshare_add("");
    data->icon_name = eina_stringshare_add("");
 
-   return efl_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -382,7 +382,7 @@ _elm_app_server_view_efl_object_destructor(Eo *obj, Elm_App_Server_View_Data *da
    eldbus_connection_unref(data->conn);
    eldbus_shutdown();
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 #include "elm_app_server_view.eo.c"

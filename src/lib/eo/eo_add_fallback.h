@@ -9,10 +9,10 @@ typedef struct _Eo_Stack_Frame
    Eo *obj;
 } Eo_Stack_Frame;
 
-Eina_Bool _eo_add_fallback_init(void);
-Eina_Bool _eo_add_fallback_shutdown(void);
+Eina_Bool _efl_add_fallback_init(void);
+Eina_Bool _efl_add_fallback_shutdown(void);
 
-Eo_Stack_Frame *_eo_add_fallback_stack_push(Eo *obj);
-Eo_Stack_Frame *_eo_add_fallback_stack_pop(void);
+Eo_Stack_Frame *_efl_add_fallback_stack_push(Eo *obj);
+Eo_Stack_Frame *_efl_add_fallback_stack_pop(void);
 
 #endif

@@ -37,7 +37,7 @@ ecore_audio_init(void)
    if (!ecore_init())
      return --_ecore_audio_init_count;
 
-   if (!eo_init()) {
+   if (!efl_object_init()) {
      ecore_shutdown();
      return --_ecore_audio_init_count;
    }
@@ -85,7 +85,7 @@ ecore_audio_shutdown(void)
    eina_log_domain_unregister(_ecore_audio_log_dom);
    _ecore_audio_log_dom = -1;
 
-   eo_shutdown();
+   efl_object_shutdown();
    ecore_shutdown();
 
    return _ecore_audio_init_count;

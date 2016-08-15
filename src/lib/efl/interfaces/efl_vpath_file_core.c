@@ -13,7 +13,7 @@ struct _Efl_Vpath_File_Core_Data
 EOLIAN static Efl_Object *
 _efl_vpath_file_core_efl_object_constructor(Eo *obj, Efl_Vpath_File_Core_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->dummy = 0;
    return obj;
 }
@@ -22,7 +22,7 @@ EOLIAN static void
 _efl_vpath_file_core_efl_object_destructor(Eo *obj, Efl_Vpath_File_Core_Data *pd)
 {
    pd->dummy = 0;
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Bool
@@ -31,7 +31,7 @@ _efl_vpath_file_core_efl_vpath_file_do(Eo *obj, Efl_Vpath_File_Core_Data *pd)
    const char *path;
 
    if (efl_vpath_file_result_get(obj))
-     return efl_vpath_file_do(eo_super(obj, MY_CLASS));
+     return efl_vpath_file_do(efl_super(obj, MY_CLASS));
    // vpath core didn't find a match, so it'ss likely a protocol like
    // http:// etc. etc. so deal with that here
    path = efl_vpath_file_path_get(obj);
@@ -48,7 +48,7 @@ _efl_vpath_file_core_efl_vpath_file_do(Eo *obj, Efl_Vpath_File_Core_Data *pd)
 
    // not a magic path - just set result to path
    efl_vpath_file_result_set(obj, efl_vpath_file_path_get(obj));
-   return efl_vpath_file_do(eo_super(obj, MY_CLASS));
+   return efl_vpath_file_do(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -56,7 +56,7 @@ _efl_vpath_file_core_efl_vpath_file_wait(Eo *obj, Efl_Vpath_File_Core_Data *pd)
 {
    if (efl_vpath_file_result_get(obj))
      {
-        efl_vpath_file_do(eo_super(obj, MY_CLASS));
+        efl_vpath_file_do(efl_super(obj, MY_CLASS));
         return;
      }
    pd->dummy = 0;

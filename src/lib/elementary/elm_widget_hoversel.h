@@ -64,7 +64,7 @@ struct _Elm_Hoversel_Item_Data
  */
 
 #define ELM_HOVERSEL_DATA_GET(o, sd) \
-  Elm_Hoversel_Data * sd = eo_data_scope_get(o, ELM_HOVERSEL_CLASS)
+  Elm_Hoversel_Data * sd = efl_data_scope_get(o, ELM_HOVERSEL_CLASS)
 
 #define ELM_HOVERSEL_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_HOVERSEL_DATA_GET(o, ptr);                     \
@@ -85,18 +85,18 @@ struct _Elm_Hoversel_Item_Data
     }
 
 #define ELM_HOVERSEL_CHECK(obj)                          \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_HOVERSEL_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_HOVERSEL_CLASS))) \
     return
 
 #define ELM_HOVERSEL_ITEM_DATA_GET(o, sd) \
-  Elm_Hoversel_Item_Data *sd = eo_data_scope_get(o, ELM_HOVERSEL_ITEM_CLASS)
+  Elm_Hoversel_Item_Data *sd = efl_data_scope_get(o, ELM_HOVERSEL_ITEM_CLASS)
 
 #define ELM_HOVERSEL_ITEM_CHECK(it)                           \
-  if (EINA_UNLIKELY(!eo_isa(it->base->eo_obj, ELM_HOVERSEL_ITEM_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa(it->base->eo_obj, ELM_HOVERSEL_ITEM_CLASS))) \
     return
 
 #define ELM_HOVERSEL_ITEM_CHECK_OR_RETURN(it, ...)         \
-  if (EINA_UNLIKELY(!eo_isa(it->base->eo_obj, ELM_HOVERSEL_ITEM_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa(it->base->eo_obj, ELM_HOVERSEL_ITEM_CLASS))) \
     return __VA_ARGS__;
 
 #endif

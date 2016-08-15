@@ -9,7 +9,7 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-EO_CALLBACKS_ARRAY_DEFINE(ecore_idle_enterer_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(ecore_idle_enterer_callbacks,
                           { EFL_LOOP_EVENT_IDLE_ENTER, _ecore_factorized_idle_process },
                           { EFL_EVENT_DEL, _ecore_factorized_idle_event_del });
 
@@ -31,7 +31,7 @@ ecore_idle_enterer_before_add(Ecore_Task_Cb func,
    // This avoid us duplicating code and should only be slightly slower
    // due to a useless cycle of callback registration
    efl_event_callback_array_del(_mainloop_singleton, ecore_idle_enterer_callbacks(), ie);
-   efl_event_callback_array_priority_add(_mainloop_singleton, ecore_idle_enterer_callbacks(), EO_CALLBACK_PRIORITY_BEFORE, ie);
+   efl_event_callback_array_priority_add(_mainloop_singleton, ecore_idle_enterer_callbacks(), EFL_CALLBACK_PRIORITY_BEFORE, ie);
 
    return ie;
 }

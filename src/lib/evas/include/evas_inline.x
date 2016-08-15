@@ -95,7 +95,7 @@ evas_event_freezes_through(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protecte
    if (obj->parent_cache.freeze_events_valid)
      return obj->parent_cache.freeze_events;
    if (!obj->smart.parent) return 0;
-   Evas_Object_Protected_Data *smart_parent_pd = eo_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *smart_parent_pd = efl_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
    obj->parent_cache.freeze_events =
       evas_event_freezes_through(obj->smart.parent, smart_parent_pd);
    obj->parent_cache.freeze_events_valid = EINA_TRUE;
@@ -109,7 +109,7 @@ evas_event_passes_through(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected
    if (obj->parent_cache.pass_events_valid)
      return obj->parent_cache.pass_events;
    if (!obj->smart.parent) return 0;
-   Evas_Object_Protected_Data *smart_parent_pd = eo_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *smart_parent_pd = efl_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
    obj->parent_cache.pass_events =
       evas_event_passes_through(obj->smart.parent, smart_parent_pd);
    obj->parent_cache.pass_events_valid = EINA_TRUE;
@@ -127,7 +127,7 @@ evas_object_is_source_invisible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
    if (!obj->smart.parent) return 0;
    if (obj->mask->is_mask) return 0;
    Evas_Object_Protected_Data *smart_parent_pd =
-      eo_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
+      efl_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
    obj->parent_cache.src_invisible =
       evas_object_is_source_invisible(obj->smart.parent, smart_parent_pd);
    obj->parent_cache.src_invisible_valid = EINA_TRUE;
@@ -330,7 +330,7 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
              if (EINA_LIKELY(obj->smart.parent != NULL))
                {
                   Evas_Object_Protected_Data *parent =
-                        eo_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
+                        efl_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
                   if (parent->clip.mask)
                     {
                        if (parent->clip.mask != obj->clip.mask)

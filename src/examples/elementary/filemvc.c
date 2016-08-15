@@ -32,10 +32,10 @@ static void
 _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Efl_Model_Test_Filemvc_Data *priv = (Efl_Model_Test_Filemvc_Data *)data;
-   eo_unref(priv->fileview);
-   eo_unref(priv->treeview);
-   eo_unref(priv->formview);
-   eo_unref(priv->treemodel);
+   efl_unref(priv->fileview);
+   efl_unref(priv->treeview);
+   efl_unref(priv->formview);
+   efl_unref(priv->treemodel);
 }
 
 static Eina_Bool
@@ -65,7 +65,7 @@ _promise_then(void *data, void *value)
    Eo *model;
 
    eina_value_get(value, &path);
-   model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, path));
+   model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, path));
    elm_view_list_model_set(priv->fileview, model);
 }
 
@@ -144,12 +144,12 @@ elm_main(int argc, char **argv)
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
    //treemodel
-   priv.treemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, dirname));
+   priv.treemodel = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, dirname));
    eio_model_children_filter_set(priv.treemodel, _filter_cb, NULL);
 
    //treeview
    genlist = elm_genlist_add(win);
-   priv.treeview = eo_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(eo_self, genlist, ELM_GENLIST_ITEM_TREE, NULL));
+   priv.treeview = efl_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(efl_self, genlist, ELM_GENLIST_ITEM_TREE, NULL));
    elm_view_list_property_connect(priv.treeview, "filename", "elm.text");
    elm_view_list_property_connect(priv.treeview, "icon", "elm.swallow.icon");
    elm_view_list_model_set(priv.treeview, priv.treemodel);
@@ -164,7 +164,7 @@ elm_main(int argc, char **argv)
 
    //listview
    genlist = elm_genlist_add(win);
-   priv.fileview = eo_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(eo_self, genlist, ELM_GENLIST_ITEM_NONE, "double_label"));
+   priv.fileview = efl_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(efl_self, genlist, ELM_GENLIST_ITEM_NONE, "double_label"));
    elm_view_list_property_connect(priv.fileview, "filename", "elm.text");
    elm_view_list_property_connect(priv.fileview, "mime_type", "elm.text.sub");
 
@@ -178,7 +178,7 @@ elm_main(int argc, char **argv)
    bxr = elm_box_add(win);
    _widget_init(bxr);
    elm_object_part_content_set(vpanes, "right", bxr);
-   priv.formview = eo_add(ELM_VIEW_FORM_CLASS, NULL);
+   priv.formview = efl_add(ELM_VIEW_FORM_CLASS, NULL);
 
    /*Label widget */
    elm_view_form_widget_add(priv.formview, "filename", _label_init(win, bxr, "File Name"));

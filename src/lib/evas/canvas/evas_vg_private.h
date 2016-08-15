@@ -75,7 +75,7 @@ _evas_vg_render_pre(Efl_VG *child, Ector_Surface *s, Eina_Matrix3 *m)
 
    // FIXME: Prevent infinite loop
    if (child)
-     child_nd = eo_data_scope_get(child, EFL_VG_CLASS);
+     child_nd = efl_data_scope_get(child, EFL_VG_CLASS);
    if (child_nd)
      child_nd->render_pre(child, m, s, child_nd->data, child_nd);
 
@@ -102,7 +102,7 @@ _efl_vg_realloc(void *from, unsigned int sz)
 static inline void
 _efl_vg_clean_object(Eo **obj)
 {
-   if (*obj) eo_unref(*obj);
+   if (*obj) efl_unref(*obj);
    *obj = NULL;
 }
 

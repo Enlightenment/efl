@@ -17,7 +17,7 @@ void error_cb(void *data, Eina_Error error)
     EINA_LOG_ERR("error: %s", msg);
 
     Efl_Io_Manager *job = data;
-    eo_unref(job);
+    efl_unref(job);
 
     ecore_main_loop_quit();
 }
@@ -31,7 +31,7 @@ void done_closing_cb(void *data, void* value EINA_UNUSED)
     printf("%s closed file.\n", __FUNCTION__);
 
     Efl_Io_Manager *job = data;
-    eo_unref(job);
+    efl_unref(job);
 
     ecore_main_loop_quit();
 }
@@ -74,7 +74,7 @@ void open_file(const char *path, const char *path2)
     Eina_Promise *promise;
     Eina_Promise *tasks[3] = {NULL, NULL, NULL};
 
-    Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
+    Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, NULL);
     tasks[0] = efl_io_manager_file_open(job, path, EINA_FALSE);
     tasks[1] = efl_io_manager_file_open(job, path2, EINA_FALSE);
     promise = eina_promise_all(eina_carray_iterator_new((void**)&tasks[0]));

@@ -67,7 +67,7 @@ evas_object_vg_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   Evas_Object *eo_obj = efl_add(MY_CLASS, e);
 
    // Ask backend to return the main Ector_Surface
 
@@ -88,7 +88,7 @@ _cleanup_reference(void *data, const Eo_Event *event EINA_UNUSED)
 
    /* unref all renderer and may also destroy them async */
    while ((renderer = eina_array_pop(&pd->cleanup)))
-     eo_unref(renderer);
+     efl_unref(renderer);
 }
 
 void
@@ -97,32 +97,32 @@ _evas_vg_efl_object_destructor(Eo *eo_obj, Evas_VG_Data *pd)
    Evas_Object_Protected_Data *obj;
    Evas *e = evas_object_evas_get(eo_obj);
 
-   obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (pd->engine_data)
      obj->layer->evas->engine.func->ector_free(pd->engine_data);
 
    efl_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd);
 
-   eo_unref(pd->root);
+   efl_unref(pd->root);
    pd->root = NULL;
-   efl_destructor(eo_super(eo_obj, MY_CLASS));
+   efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
 Eo *
 _evas_vg_efl_object_constructor(Eo *eo_obj, Evas_VG_Data *pd)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
    /* set up methods (compulsory) */
    obj->func = &object_func;
-   obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
+   obj->private_data = efl_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
 
    /* root node */
-   pd->root = eo_add(EFL_VG_ROOT_NODE_CLASS, eo_obj);
-   eo_ref(pd->root);
+   pd->root = efl_add(EFL_VG_ROOT_NODE_CLASS, eo_obj);
+   efl_ref(pd->root);
 
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
 
@@ -146,13 +146,13 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Evas_VG_Data *vd,
                 void *output, void *context, void *surface, Efl_VG *n,
                 Eina_Array *clips, Eina_Bool do_async)
 {
-   if (eo_isa(n, EFL_VG_CONTAINER_CLASS))
+   if (efl_isa(n, EFL_VG_CONTAINER_CLASS))
      {
         Efl_VG_Container_Data *vc;
         Efl_VG *child;
         Eina_List *l;
 
-        vc = eo_data_scope_get(n, EFL_VG_CONTAINER_CLASS);
+        vc = efl_data_scope_get(n, EFL_VG_CONTAINER_CLASS);
 
         EINA_LIST_FOREACH(vc->children, l, child)
           _evas_vg_render(obj, vd,
@@ -163,12 +163,12 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Evas_VG_Data *vd,
      {
         Efl_VG_Data *nd;
 
-        nd = eo_data_scope_get(n, EFL_VG_CLASS);
+        nd = efl_data_scope_get(n, EFL_VG_CLASS);
 
         obj->layer->evas->engine.func->ector_renderer_draw(output, context, surface, vd->engine_data, nd->renderer, clips, do_async);
 
         if (do_async)
-          eina_array_push(&vd->cleanup, eo_ref(nd->renderer));
+          eina_array_push(&vd->cleanup, efl_ref(nd->renderer));
      }
 }
 
@@ -262,7 +262,7 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
 
    // FIXME: for now the walking Evas_VG_Node tree doesn't trigger any damage
    // So just forcing it here if necessary
-   rnd = eo_data_scope_get(vd->root, EFL_VG_CLASS);
+   rnd = efl_data_scope_get(vd->root, EFL_VG_CLASS);
 
    // Once the destructor has been called, root node will be zero
    // and a full redraw is still necessary.
@@ -372,7 +372,7 @@ evas_object_vg_render_post(Evas_Object *eo_obj,
 static unsigned int
 evas_object_vg_id_get(Evas_Object *eo_obj)
 {
-   Evas_VG_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_VG_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_VG;
 }
@@ -380,7 +380,7 @@ evas_object_vg_id_get(Evas_Object *eo_obj)
 static unsigned int
 evas_object_vg_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_VG_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_VG_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
@@ -388,7 +388,7 @@ evas_object_vg_visual_id_get(Evas_Object *eo_obj)
 static void *
 evas_object_vg_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_VG_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_VG_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
 

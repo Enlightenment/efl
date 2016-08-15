@@ -119,7 +119,7 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
    evas_object_geometry_get(VIEW(parent_it), &x2, &y2, &w2, &h2);
    evas_object_geometry_get(parent_it->submenu.bx, &bx, &by, &bw, &bh);
    evas_object_geometry_get(sd->parent, &px, &py, &pw, &ph);
-   if (eo_isa(sd->parent, EFL_UI_WIN_CLASS))
+   if (efl_isa(sd->parent, EFL_UI_WIN_CLASS))
      {
         px = 0;
         py = 0;
@@ -185,7 +185,7 @@ _sizing_eval(Evas_Object *obj)
 
    evas_object_geometry_get(sd->location, NULL, NULL, &w_p, &h_p);
    evas_object_geometry_get(sd->parent, &x2, &y2, &w2, &h2);
-   if (eo_isa(sd->parent, EFL_UI_WIN_CLASS))
+   if (efl_isa(sd->parent, EFL_UI_WIN_CLASS))
      {
         x2 = 0;
         y2 = 0;
@@ -209,7 +209,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(sd->location, bw, h_p);
    elm_hover_target_set(sd->hv, sd->location);
 
-   hover = eo_data_scope_get(sd->hv, ELM_WIDGET_CLASS);
+   hover = efl_data_scope_get(sd->hv, ELM_WIDGET_CLASS);
    edje_object_part_geometry_get(hover->resize_obj, "bottom", NULL,
                                  NULL, &bw, &bh);
    evas_object_size_hint_min_set(obj, bw, bh);
@@ -231,7 +231,7 @@ _elm_menu_elm_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
    const char *s;
    char style[1024];
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    if (sd->menu_bar)
@@ -668,7 +668,7 @@ _item_submenu_obj_create(Elm_Menu_Item_Data *item)
 EOLIAN static void
 _elm_menu_efl_canvas_group_group_add(Eo *obj, Elm_Menu_Data *priv)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -715,7 +715,7 @@ _elm_menu_efl_canvas_group_group_del(Eo *obj, Elm_Menu_Data *sd)
    evas_object_del(sd->hv);
    evas_object_del(sd->location);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 void
@@ -776,7 +776,7 @@ EAPI Evas_Object *
 elm_menu_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -785,7 +785,7 @@ _elm_menu_efl_object_constructor(Eo *obj, Elm_Menu_Data *sd)
 {
    Eo *parent = NULL;
 
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    parent = efl_parent_get(obj);
@@ -814,7 +814,7 @@ _elm_menu_efl_object_destructor(Eo *obj, Elm_Menu_Data *sd)
    EINA_LIST_FOREACH_SAFE(sd->items, itr, itr2, eo_item)
      elm_wdg_item_del(eo_item);
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EAPI void
@@ -991,14 +991,14 @@ _elm_menu_item_efl_object_destructor(Eo *eo_item, Elm_Menu_Item_Data *item)
    if (sd->dbus_menu)
      _elm_dbus_menu_item_delete(sd->dbus_menu, item->dbus_idx);
 
-   efl_destructor(eo_super(eo_item, ELM_MENU_ITEM_CLASS));
+   efl_destructor(efl_super(eo_item, ELM_MENU_ITEM_CLASS));
 }
 
 EOLIAN static Eo *
 _elm_menu_item_efl_object_constructor(Eo *eo_item, Elm_Menu_Item_Data *item)
 {
-   eo_item = efl_constructor(eo_super(eo_item, ELM_MENU_ITEM_CLASS));
-   item->base = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
+   eo_item = efl_constructor(efl_super(eo_item, ELM_MENU_ITEM_CLASS));
+   item->base = efl_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
 
    return eo_item;
 }
@@ -1013,7 +1013,7 @@ _elm_menu_item_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent, const ch
    elm_interface_atspi_accessible_type_set(icon_obj, ELM_ATSPI_TYPE_DISABLED);
    if (!icon_obj) return NULL;
 
-   eo_item = eo_add(ELM_MENU_ITEM_CLASS, obj);
+   eo_item = efl_add(ELM_MENU_ITEM_CLASS, obj);
    if (!eo_item)
      {
         evas_object_del(icon_obj);
@@ -1024,7 +1024,7 @@ _elm_menu_item_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent, const ch
 
    WIDGET_ITEM_DATA_SET(eo_item, data);
    it->func = func;
-   it->parent = eo_data_scope_get(parent, ELM_MENU_ITEM_CLASS);
+   it->parent = efl_data_scope_get(parent, ELM_MENU_ITEM_CLASS);
    it->content = icon_obj;
 
    _item_obj_create(it);
@@ -1101,10 +1101,10 @@ _elm_menu_item_separator_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *eo_p_i
    ELM_MENU_ITEM_DATA_GET(eo_subitem, subitem);
    if (subitem->separator) return NULL;
 
-   eo_subitem = eo_add(ELM_MENU_ITEM_CLASS, obj);
+   eo_subitem = efl_add(ELM_MENU_ITEM_CLASS, obj);
    if (!eo_subitem) return NULL;
 
-   subitem = eo_data_scope_get(eo_subitem, ELM_MENU_ITEM_CLASS);
+   subitem = efl_data_scope_get(eo_subitem, ELM_MENU_ITEM_CLASS);
 
    subitem->separator = EINA_TRUE;
    _item_separator_obj_create(subitem);
@@ -1276,7 +1276,7 @@ EOLIAN static Eina_List*
 _elm_menu_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_Menu_Data *sd)
 {
    Eina_List *ret;
-   ret = elm_interface_atspi_accessible_children_get(eo_super(obj, ELM_MENU_CLASS));
+   ret = elm_interface_atspi_accessible_children_get(efl_super(obj, ELM_MENU_CLASS));
    return eina_list_merge(eina_list_clone(sd->items), ret);
 }
 
@@ -1302,7 +1302,7 @@ EOLIAN static char*
 _elm_menu_item_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Menu_Item_Data *sd)
 {
    char *ret;
-   ret = elm_interface_atspi_accessible_name_get(eo_super(obj, ELM_MENU_ITEM_CLASS));
+   ret = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_MENU_ITEM_CLASS));
    if (ret) return ret;
    return sd->label ? strdup(sd->label) : NULL;
 }
@@ -1311,7 +1311,7 @@ EOLIAN static Elm_Atspi_State_Set
 _elm_menu_item_elm_interface_atspi_accessible_state_set_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *sd)
 {
    Elm_Atspi_State_Set ret;
-   ret = elm_interface_atspi_accessible_state_set_get(eo_super(obj, ELM_MENU_ITEM_CLASS));
+   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, ELM_MENU_ITEM_CLASS));
 
    STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTABLE);
 

@@ -32,8 +32,8 @@ _efl_vg_shape_fill_set(Eo *obj EINA_UNUSED,
 {
    Efl_VG *tmp = pd->fill;
 
-   pd->fill = eo_ref(f);
-   eo_unref(tmp);
+   pd->fill = efl_ref(f);
+   efl_unref(tmp);
 
    _efl_vg_changed(obj);
 }
@@ -55,7 +55,7 @@ _efl_vg_shape_efl_gfx_color_part_set(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED,
         return EINA_TRUE;
      }
 
-   return efl_gfx_color_part_set(eo_super(obj, EFL_VG_SHAPE_CLASS), part, r, g, b, a);
+   return efl_gfx_color_part_set(efl_super(obj, EFL_VG_SHAPE_CLASS), part, r, g, b, a);
 }
 
 static Eina_Bool
@@ -69,7 +69,7 @@ _efl_vg_shape_efl_gfx_color_part_get(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED,
         return EINA_TRUE;
      }
 
-   return efl_gfx_color_part_get(eo_super(obj, EFL_VG_SHAPE_CLASS), part, r, g, b, a);
+   return efl_gfx_color_part_get(efl_super(obj, EFL_VG_SHAPE_CLASS), part, r, g, b, a);
 }
 
 static void
@@ -79,8 +79,8 @@ _efl_vg_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
 {
    Efl_VG *tmp = pd->fill;
 
-   pd->stroke.fill = eo_ref(f);
-   eo_unref(tmp);
+   pd->stroke.fill = efl_ref(f);
+   efl_unref(tmp);
 
    _efl_vg_changed(obj);
 }
@@ -99,8 +99,8 @@ _efl_vg_shape_stroke_marker_set(Eo *obj EINA_UNUSED,
 {
    Efl_VG *tmp = pd->stroke.marker;
 
-   pd->stroke.marker = eo_ref(m);
-   eo_unref(tmp);
+   pd->stroke.marker = efl_ref(m);
+   efl_unref(tmp);
 
    _efl_vg_changed(obj);
 }
@@ -155,14 +155,14 @@ _efl_vg_shape_efl_object_constructor(Eo *obj, Efl_VG_Shape_Data *pd)
 {
    Efl_VG_Data *nd;
 
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    efl_gfx_shape_stroke_scale_set(obj, 1);
    efl_gfx_shape_stroke_location_set(obj, 0.5);
    efl_gfx_shape_stroke_cap_set(obj, EFL_GFX_CAP_BUTT);
    efl_gfx_shape_stroke_join_set(obj, EFL_GFX_JOIN_MITER);
 
-   nd = eo_data_scope_get(obj, EFL_VG_CLASS);
+   nd = efl_data_scope_get(obj, EFL_VG_CLASS);
    nd->render_pre = _efl_vg_shape_render_pre;
    nd->data = pd;
 
@@ -172,7 +172,7 @@ _efl_vg_shape_efl_object_constructor(Eo *obj, Efl_VG_Shape_Data *pd)
 static void
 _efl_vg_shape_efl_object_destructor(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED)
 {
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Bool
@@ -184,10 +184,10 @@ _efl_vg_shape_efl_vg_interpolate(Eo *obj,
    Efl_VG_Shape_Data *fromd, *tod;
    Eina_Bool r;
 
-   fromd = eo_data_scope_get(from, EFL_VG_SHAPE_CLASS);
-   tod = eo_data_scope_get(to, EFL_VG_SHAPE_CLASS);
+   fromd = efl_data_scope_get(from, EFL_VG_SHAPE_CLASS);
+   tod = efl_data_scope_get(to, EFL_VG_SHAPE_CLASS);
 
-   r = efl_vg_interpolate(eo_super(obj, MY_CLASS), from, to, pos_map);
+   r = efl_vg_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
 
    r &= efl_gfx_shape_interpolate(obj, from, to, pos_map);
 
@@ -213,29 +213,29 @@ _efl_vg_shape_efl_vg_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const Efl_V
    Efl_VG_Shape_Data *fromd;
    Eo *fill = NULL, *stroke_fill = NULL, *stroke_marker = NULL;
 
-   efl_vg_dup(eo_super(obj, MY_CLASS), from);
+   efl_vg_dup(efl_super(obj, MY_CLASS), from);
 
-   fromd = eo_data_scope_get(from, MY_CLASS);
+   fromd = efl_data_scope_get(from, MY_CLASS);
 
    if (fromd->fill)
      {
-        fill = eo_add(eo_class_get(fromd->fill), NULL, efl_vg_dup(eo_self, fromd->fill));
+        fill = efl_add(efl_class_get(fromd->fill), NULL, efl_vg_dup(efl_self, fromd->fill));
         efl_vg_shape_fill_set(obj, fill);
-        eo_unref(fill);
+        efl_unref(fill);
      }
 
    if (fromd->stroke.fill)
      {
-        stroke_fill = eo_add(eo_class_get(fromd->stroke.fill), NULL, efl_vg_dup(eo_self, fromd->stroke.fill));
+        stroke_fill = efl_add(efl_class_get(fromd->stroke.fill), NULL, efl_vg_dup(efl_self, fromd->stroke.fill));
         efl_vg_shape_stroke_fill_set(obj, stroke_fill);
-        eo_unref(stroke_fill);
+        efl_unref(stroke_fill);
      }
 
    if (fromd->stroke.marker)
      {
-        stroke_marker = eo_add(eo_class_get(fromd->stroke.marker), NULL, efl_vg_dup(eo_self, fromd->stroke.marker));
+        stroke_marker = efl_add(efl_class_get(fromd->stroke.marker), NULL, efl_vg_dup(efl_self, fromd->stroke.marker));
         efl_vg_shape_stroke_marker_set(obj, stroke_marker);
-        eo_unref(stroke_marker);
+        efl_unref(stroke_marker);
      }
 
    efl_gfx_shape_dup(obj, from);
@@ -454,7 +454,7 @@ evas_vg_shape_shape_equal_commands(Eo *obj, const Eo *with)
 EAPI Efl_VG*
 evas_vg_shape_add(Efl_VG *parent)
 {
-   return eo_add(EFL_VG_SHAPE_CLASS, parent);
+   return efl_add(EFL_VG_SHAPE_CLASS, parent);
 }
 
 #include "efl_vg_shape.eo.c"

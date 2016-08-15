@@ -107,7 +107,7 @@ _elm_grid_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -127,7 +127,7 @@ _elm_grid_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
    elm_widget_resize_object_set(obj, grid, EINA_TRUE);
    evas_object_grid_size_set(wd->resize_obj, 100, 100);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -154,21 +154,21 @@ _elm_grid_efl_canvas_group_group_del(Eo *obj, void *_pd EINA_UNUSED)
           }
      }
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
 elm_grid_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_grid_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 

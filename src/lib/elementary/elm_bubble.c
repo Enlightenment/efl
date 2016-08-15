@@ -117,7 +117,7 @@ _elm_bubble_elm_layout_text_set(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, const
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_layout_text_set(eo_super(obj, MY_CLASS), part, label);
+   int_ret = elm_obj_layout_text_set(efl_super(obj, MY_CLASS), part, label);
    if (!int_ret) return EINA_FALSE;
 
    if (part && (!strcmp(part, "info") || !strcmp(part, "elm.info")))
@@ -178,7 +178,7 @@ _elm_bubble_efl_canvas_group_group_add(Eo *obj, Elm_Bubble_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->pos = ELM_BUBBLE_POS_TOP_LEFT; //default
@@ -220,14 +220,14 @@ EAPI Evas_Object *
 elm_bubble_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_bubble_efl_object_constructor(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);

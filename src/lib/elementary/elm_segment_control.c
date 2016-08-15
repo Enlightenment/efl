@@ -32,7 +32,7 @@ _elm_segment_control_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Segment_Contr
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
+   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
 
    return EINA_TRUE;
 }
@@ -221,7 +221,7 @@ _elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *s
    Elm_Object_Item *eo_item;
 
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    rtl = elm_widget_mirrored_get(obj);
@@ -246,7 +246,7 @@ EOLIAN static Eina_Bool
 _elm_segment_control_elm_widget_disable(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_disable(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_disable(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _update_list(sd);
@@ -499,7 +499,7 @@ _elm_segment_control_item_efl_object_destructor(Eo *eo_item, Elm_Segment_Control
    _item_free(item);
    _update_list(sd);
 
-   efl_destructor(eo_super(eo_item, ELM_SEGMENT_CONTROL_ITEM_CLASS));
+   efl_destructor(efl_super(eo_item, ELM_SEGMENT_CONTROL_ITEM_CLASS));
 }
 
 static char *
@@ -539,7 +539,7 @@ _elm_segment_control_item_elm_widget_item_access_register(Eo *eo_it EINA_UNUSED,
    Elm_Access_Info *ai;
    Evas_Object *ret;
 
-   ret = elm_wdg_item_access_register(eo_super(eo_it, ELM_SEGMENT_CONTROL_ITEM_CLASS));
+   ret = elm_wdg_item_access_register(efl_super(eo_it, ELM_SEGMENT_CONTROL_ITEM_CLASS));
 
    ai = _elm_access_info_get(it->base->access_obj);
 
@@ -557,7 +557,7 @@ _item_new(Evas_Object *obj,
 {
    Eo *eo_item;
 
-   eo_item = eo_add(ELM_SEGMENT_CONTROL_ITEM_CLASS, obj);
+   eo_item = efl_add(ELM_SEGMENT_CONTROL_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_SEGMENT_ITEM_DATA_GET(eo_item, it);
@@ -588,8 +588,8 @@ _item_new(Evas_Object *obj,
 EOLIAN static Eo *
 _elm_segment_control_item_efl_object_constructor(Eo *obj, Elm_Segment_Control_Item_Data *it)
 {
-   obj = efl_constructor(eo_super(obj, ELM_SEGMENT_CONTROL_ITEM_CLASS));
-   it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
+   obj = efl_constructor(efl_super(obj, ELM_SEGMENT_CONTROL_ITEM_CLASS));
+   it->base = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    Evas_Object *parent;
    parent = efl_parent_get(obj);
@@ -611,7 +611,7 @@ EOLIAN static void
 _elm_segment_control_efl_canvas_group_group_add(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    sd->obj = obj;
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -636,7 +636,7 @@ _elm_segment_control_efl_canvas_group_group_del(Eo *obj, Elm_Segment_Control_Dat
         efl_del(eo_it);
      }
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_segment_control_smart_focus_next_enable = EINA_FALSE;
@@ -697,14 +697,14 @@ EAPI Evas_Object *
 elm_segment_control_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_segment_control_efl_object_constructor(Eo *obj, Elm_Segment_Control_Data *sd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);

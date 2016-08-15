@@ -374,7 +374,7 @@ _elm_sys_notify_dbus_efl_object_constructor(Eo   *obj,
 
         eldbus_name_owner_get(_elm_sysnotif_conn, BUS, _name_owner_get_cb, NULL);
 
-        obj = efl_constructor(eo_super(obj, MY_CLASS));
+        obj = efl_constructor(efl_super(obj, MY_CLASS));
         return obj;
      }
 
@@ -390,7 +390,7 @@ _elm_sys_notify_dbus_efl_object_destructor(Eo   *obj,
 
    eldbus_connection_unref(_elm_sysnotif_conn);
    _elm_sysnotif_conn = NULL;
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 

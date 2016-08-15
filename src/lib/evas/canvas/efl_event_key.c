@@ -20,7 +20,7 @@ _del_hook(Eo *evt)
      {
         if (efl_parent_get(evt))
           {
-             eo_ref(evt);
+             efl_ref(evt);
              efl_parent_set(evt, NULL);
           }
         s_cached_event = evt;
@@ -48,11 +48,11 @@ _efl_event_key_efl_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_UNUS
      }
    else
      {
-        evt = eo_add(EFL_EVENT_KEY_CLASS, owner);
+        evt = efl_add(EFL_EVENT_KEY_CLASS, owner);
         efl_del_intercept_set(evt, _del_hook);
      }
 
-   ev = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
+   ev = efl_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
    ev->fake = EINA_FALSE;
    if (priv) *priv = ev;
 
@@ -71,7 +71,7 @@ _efl_event_key_class_destructor(Efl_Class *klass EINA_UNUSED)
 EOLIAN static Efl_Object *
 _efl_event_key_efl_object_constructor(Eo *obj, Efl_Event_Key_Data *pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_event_reset(obj);
    return obj;
 }

@@ -7,7 +7,7 @@ EOLIAN static Eo *
 _evas_canvas3d_object_efl_object_constructor(Eo *obj, Evas_Canvas3D_Object_Data *pd)
 {
    Eo *e = NULL;
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    e = efl_parent_get(obj);
    pd->evas = e;
    pd->type = EVAS_CANVAS3D_OBJECT_TYPE_INVALID;
@@ -21,7 +21,7 @@ EOLIAN static Evas *
 {
    if (klass == EVAS_CANVAS_CLASS)
      return pd->evas;
-   return efl_provider_find(eo_super(obj, MY_CLASS), klass);
+   return efl_provider_find(efl_super(obj, MY_CLASS), klass);
 }
 
 EOLIAN static void
@@ -76,7 +76,7 @@ _evas_canvas3d_object_efl_object_event_callback_priority_add(Eo *obj,
 {
    Eina_Bool r = EINA_FALSE;
 
-   r = efl_event_callback_priority_add(eo_super(obj, MY_CLASS), desc, priority, func, user_data);
+   r = efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data);
    evas_canvas3d_object_callback_register(obj, desc->name, user_data);
 
    return r;
@@ -89,7 +89,7 @@ _evas_canvas3d_object_efl_object_event_callback_del(Eo *obj, Evas_Canvas3D_Objec
                                            const void *user_data)
 {
    Eina_Bool r = EINA_FALSE;
-   r = efl_event_callback_del(eo_super(obj, MY_CLASS), desc, func, user_data);
+   r = efl_event_callback_del(efl_super(obj, MY_CLASS), desc, func, user_data);
    if (r) evas_canvas3d_object_callback_unregister(obj, desc->name);
    return r;
 }

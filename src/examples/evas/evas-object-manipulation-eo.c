@@ -174,7 +174,7 @@ main(void)
 
    /* Creating object with Eo.
     * Object must be deleted explixitly at the end of program.*/
-   d.bg = eo_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
+   d.bg = efl_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
 
    /* Eo-styled way to perform actions on an object*/
    evas_object_name_set(d.bg, "background rectangle");
@@ -190,7 +190,7 @@ main(void)
    evas_object_event_callback_add(
      d.bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 
-   d.img = eo_add(EFL_CANVAS_IMAGE_CLASS, d.canvas);
+   d.img = efl_add(EFL_CANVAS_IMAGE_CLASS, d.canvas);
 
    /* As soon as 'canvas' object is a parent for 'image' object,
     * 'canvas' keeps reference to 'image'.
@@ -210,11 +210,11 @@ main(void)
         efl_gfx_size_set(d.img, WIDTH, HEIGHT);
         efl_gfx_visible_set(d.img, EINA_TRUE);
         fprintf(stdout, "Image object added, class name is: %s\n",
-                eo_class_name_get(d.img));
+                efl_class_name_get(d.img));
      }
 
    /* border on the image's clipper, here just to emphasize its position */
-   d.clipper_border = eo_add(EFL_CANVAS_IMAGE_CLASS, d.canvas);
+   d.clipper_border = efl_add(EFL_CANVAS_IMAGE_CLASS, d.canvas);
    efl_file_set(d.clipper_border, border_img_path, NULL);
    err = efl_image_load_error_get(d.clipper_border);
 
@@ -233,7 +233,7 @@ main(void)
    /* solid white clipper (note that it's the default color for a
     * rectangle) - it won't change clippees' colors, then (multiplying
     * by 255) */
-   d.clipper = eo_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
+   d.clipper = efl_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
 
    efl_gfx_position_set(d.clipper, WIDTH / 4, HEIGHT / 4);
    efl_gfx_size_set(d.clipper, WIDTH / 2, HEIGHT / 2);

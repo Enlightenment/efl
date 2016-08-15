@@ -12,13 +12,13 @@
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple4",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_NOOPS(),
+     EFL_CLASS_TYPE_REGULAR,
+     EFL_CLASS_DESCRIPTION_NOOPS(),
      NULL,
      0,
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple4_class_get, &class_desc, SIMPLE_CLASS, MIXIN_CLASS, NULL);
+EFL_DEFINE_CLASS(simple4_class_get, &class_desc, SIMPLE_CLASS, MIXIN_CLASS, NULL);
 

@@ -2721,7 +2721,7 @@ _efl_loop_main_get(Efl_Class *klass EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    if (!_mainloop_singleton)
      {
-        _mainloop_singleton = eo_add(EFL_LOOP_CLASS, NULL);
+        _mainloop_singleton = efl_add(EFL_LOOP_CLASS, NULL);
      }
 
    return _mainloop_singleton;
@@ -2768,7 +2768,7 @@ _efl_loop_efl_object_provider_find(Eo *obj, Efl_Loop_Data *pd, const Efl_Object 
    r = eina_hash_find(pd->providers, &klass);
    if (r) return r;
 
-   return efl_provider_find(eo_super(obj, EFL_LOOP_CLASS), klass);
+   return efl_provider_find(efl_super(obj, EFL_LOOP_CLASS), klass);
 }
 
 static void
@@ -2803,19 +2803,19 @@ _check_event_catcher_del(void *data, const Eo_Event *event)
      }
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
+EFL_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
                           { EFL_EVENT_CALLBACK_ADD, _check_event_catcher_add },
                           { EFL_EVENT_CALLBACK_DEL, _check_event_catcher_del });
 
 EOLIAN static Efl_Object *
 _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, EFL_LOOP_CLASS));
+   obj = efl_constructor(efl_super(obj, EFL_LOOP_CLASS));
    if (!obj) return NULL;
 
    efl_event_callback_array_add(obj, event_catcher_watch(), pd);
 
-   pd->providers = eina_hash_pointer_new((void*) eo_unref);
+   pd->providers = eina_hash_pointer_new((void*) efl_unref);
 
    return obj;
 }
@@ -2823,7 +2823,7 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
 EOLIAN static void
 _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
 {
-   efl_destructor(eo_super(obj, EFL_LOOP_CLASS));
+   efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 
    eina_hash_free(pd->providers);
 }
@@ -2905,7 +2905,7 @@ ecore_loop_arguments_send(int argc, const char **argv)
 static void _efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED);
 static void _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED);
 
-EO_CALLBACKS_ARRAY_DEFINE(timeout,
+EFL_CALLBACKS_ARRAY_DEFINE(timeout,
                           { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
                           { EFL_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
 
@@ -3007,9 +3007,9 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const voi
    if (!t) goto on_error;
 
    t->job_is = EINA_FALSE;
-   t->u.timer = eo_add(EFL_LOOP_TIMER_CLASS, obj,
-                       efl_loop_timer_interval_set(eo_self, time),
-                       efl_event_callback_array_add(eo_self, timeout(), t));
+   t->u.timer = efl_add(EFL_LOOP_TIMER_CLASS, obj,
+                       efl_loop_timer_interval_set(efl_self, time),
+                       efl_event_callback_array_add(efl_self, timeout(), t));
 
    if (!t->u.timer) goto on_error;
 
@@ -3026,11 +3026,11 @@ static Eina_Bool
 _efl_loop_register(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
 {
    // The passed object does not provide that said class.
-   if (!eo_isa(provider, klass)) return EINA_FALSE;
+   if (!efl_isa(provider, klass)) return EINA_FALSE;
 
-   // Note: I would prefer to use eo_xref here, but I can't figure a nice way to
-   // call eo_xunref on hash destruction.
-   return eina_hash_add(pd->providers, &klass, eo_ref(provider));
+   // Note: I would prefer to use efl_xref here, but I can't figure a nice way to
+   // call efl_xunref on hash destruction.
+   return eina_hash_add(pd->providers, &klass, efl_ref(provider));
 }
 
 static Eina_Bool

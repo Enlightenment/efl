@@ -99,7 +99,7 @@ _ector_renderer_cairo_ector_renderer_prepare(Eo *obj, Ector_Renderer_Cairo_Data 
 {
    if (!pd->parent)
      {
-        pd->parent = eo_data_xref(pd->generic->surface, ECTOR_CAIRO_SURFACE_CLASS, obj);
+        pd->parent = efl_data_xref(pd->generic->surface, ECTOR_CAIRO_SURFACE_CLASS, obj);
      }
    if (pd->generic->m)
      {
@@ -182,10 +182,10 @@ _ector_renderer_cairo_ector_renderer_draw(Eo *obj EINA_UNUSED,
 static Eo *
 _ector_renderer_cairo_efl_object_constructor(Eo *obj, Ector_Renderer_Cairo_Data *pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_CAIRO_CLASS));
+   obj = efl_constructor(efl_super(obj, ECTOR_RENDERER_CAIRO_CLASS));
    if (!obj) return NULL;
 
-   pd->generic = eo_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
+   pd->generic = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
 
    return obj;
 }
@@ -193,7 +193,7 @@ _ector_renderer_cairo_efl_object_constructor(Eo *obj, Ector_Renderer_Cairo_Data 
 static Efl_Object *
 _ector_renderer_cairo_efl_object_finalize(Eo *obj, Ector_Renderer_Cairo_Data *pd)
 {
-   obj = efl_finalize(eo_super(obj, ECTOR_RENDERER_CAIRO_CLASS));
+   obj = efl_finalize(efl_super(obj, ECTOR_RENDERER_CAIRO_CLASS));
    if (!obj) return NULL;
 
    USE(pd->generic, cairo_matrix_init, NULL);
@@ -217,13 +217,13 @@ _ector_renderer_cairo_efl_object_destructor(Eo *obj, Ector_Renderer_Cairo_Data *
 {
    Ector_Renderer_Data *base;
 
-   base = eo_data_scope_get(obj, ECTOR_RENDERER_CLASS);
-   eo_data_xunref(base->surface, pd->parent, obj);
-   eo_data_xunref(obj, pd->generic, obj);
+   base = efl_data_scope_get(obj, ECTOR_RENDERER_CLASS);
+   efl_data_xunref(base->surface, pd->parent, obj);
+   efl_data_xunref(obj, pd->generic, obj);
 
    free(pd->m);
 
-   efl_destructor(eo_super(obj, ECTOR_RENDERER_CAIRO_CLASS));
+   efl_destructor(efl_super(obj, ECTOR_RENDERER_CAIRO_CLASS));
 }
 
 #include "ector_renderer_cairo.eo.c"

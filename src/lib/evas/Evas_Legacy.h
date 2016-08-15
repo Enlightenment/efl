@@ -2382,7 +2382,7 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  * @code
  * vector = evas_object_vg_add(canvas);
  * root = evas_obj_vg_root_node_get(vector);
- * shape = eo_add(EVAS_VG_SHAPE_CLASS, root);
+ * shape = efl_add(EVAS_VG_SHAPE_CLASS, root);
  * Efl_Gfx_Path_Command *path_cmd = NULL;
  * double *points = NULL;
  * efl_gfx_path_append_circle(&path_cmd, &points);
@@ -5089,7 +5089,7 @@ EAPI void             *evas_object_smart_interface_data_get(const Evas_Object *o
  * If @c obj is not a smart object, this call will fail immediately.
  *
  * This function supports Eo and legacy inheritance mechanisms. However, it is
- * recommended to use @ref eo_isa instead if your object is using Eo from top
+ * recommended to use @ref efl_isa instead if your object is using Eo from top
  * to bottom.
  *
  * The checks use smart classes names and string comparison. There is a version

@@ -47,7 +47,7 @@ struct _Elm_Mapbuf_Data
  */
 
 #define ELM_MAPBUF_DATA_GET(o, sd) \
-  Elm_Mapbuf_Data * sd = eo_data_scope_get(o, ELM_MAPBUF_CLASS)
+  Elm_Mapbuf_Data * sd = efl_data_scope_get(o, ELM_MAPBUF_CLASS)
 
 #define ELM_MAPBUF_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_MAPBUF_DATA_GET(o, ptr);                       \
@@ -68,7 +68,7 @@ struct _Elm_Mapbuf_Data
     }
 
 #define ELM_MAPBUF_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_MAPBUF_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_MAPBUF_CLASS))) \
     return
 
 #endif

@@ -68,7 +68,7 @@ _elm_inwin_elm_widget_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Elm
 EOLIAN static void
 _elm_inwin_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -98,7 +98,7 @@ EAPI Evas_Object *
 elm_win_inwin_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -109,13 +109,13 @@ _elm_inwin_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 
    parent = efl_parent_get(obj);
 
-   if (parent && !eo_isa(parent, EFL_UI_WIN_CLASS))
+   if (parent && !efl_isa(parent, EFL_UI_WIN_CLASS))
      {
         ERR("Failed");
         return NULL;
      }
 
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_GLASS_PANE);
 

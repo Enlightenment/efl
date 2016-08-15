@@ -507,7 +507,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    /* win reports its screen position for x/y;
     * reset to 0 since we expect canvas coords here
     */
-   if (eo_isa(tt->eventarea, EFL_UI_WIN_CLASS))
+   if (efl_isa(tt->eventarea, EFL_UI_WIN_CLASS))
      ox = oy = 0;
    TTDBG("EVENTAREA:  ox=%d,oy=%d,ow=%d,oh=%d\n", ox, oy, ow, oh);
 

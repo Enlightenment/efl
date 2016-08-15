@@ -444,7 +444,7 @@ evas_model_load_file_obj(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
    if (counts.existence_of_tex_point)
      evas_canvas3d_mesh_frame_vertex_data_unmap(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD);
 
-   Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
+   Evas_Canvas3D_Mesh_Data *pd = efl_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
 
    if (!evas_canvas3d_mesh_aabb_add_to_frame(pd, 0, stride_pos))
      {

@@ -45,7 +45,7 @@ _evas_ector_gl_rgbaimage_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas
         return;
      }
 
-   pd->evas = eo_xref(evas, obj);
+   pd->evas = efl_xref(evas, obj);
    evas_cache_image_ref(&im->cache_entry);
    pd->image = im;
 
@@ -57,7 +57,7 @@ _evas_ector_gl_rgbaimage_buffer_evas_ector_buffer_engine_image_get(Eo *obj EINA_
                                                                    Evas_Ector_GL_RGBAImage_Buffer_Data *pd,
                                                                    Evas **evas, void **image)
 {
-   Evas_Public_Data *e = eo_data_scope_get(pd->evas, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(pd->evas, EVAS_CANVAS_CLASS);
    Render_Engine_GL_Generic *re = e->engine.data.output;
    int err = EVAS_LOAD_ERROR_NONE;
    Evas_Engine_GL_Context *gc;
@@ -88,8 +88,8 @@ end:
 EOLIAN static Eo *
 _evas_ector_gl_rgbaimage_buffer_efl_object_constructor(Eo *obj, Evas_Ector_GL_RGBAImage_Buffer_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
-   pd->base = eo_data_xref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN, obj);
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   pd->base = efl_data_xref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN, obj);
    return obj;
 }
 
@@ -99,19 +99,19 @@ _evas_ector_gl_rgbaimage_buffer_efl_object_finalize(Eo *obj, Evas_Ector_GL_RGBAI
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->base, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->image, NULL);
    pd->base->generic->immutable = EINA_TRUE;
-   return efl_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
 _evas_ector_gl_rgbaimage_buffer_efl_object_destructor(Eo *obj, Evas_Ector_GL_RGBAImage_Buffer_Data *pd)
 {
-   Evas_Public_Data *e = eo_data_scope_get(pd->evas, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(pd->evas, EVAS_CANVAS_CLASS);
 
-   eo_data_xunref(obj, pd->base, obj);
+   efl_data_xunref(obj, pd->base, obj);
    ENFN->image_free(ENDT, pd->glim);
    evas_cache_image_drop(&pd->image->cache_entry);
-   eo_xunref(pd->evas, obj);
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_xunref(pd->evas, obj);
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 #include "evas_ector_gl_rgbaimage_buffer.eo.c"

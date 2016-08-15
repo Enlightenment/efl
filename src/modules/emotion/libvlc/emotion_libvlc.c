@@ -803,7 +803,7 @@ em_format_get(void *video EINA_UNUSED)
 }
 
 static void
-em_video_data_size_get(void *video EINA_UNUSED, int *w EINA_UNUSED, int *h EINA_UNUSED)
+em_videfl_data_size_get(void *video EINA_UNUSED, int *w EINA_UNUSED, int *h EINA_UNUSED)
 {
 }
 
@@ -1345,7 +1345,7 @@ static const Emotion_Engine em_engine =
    em_seekable, /* seekable */
    em_frame_done, /* frame_done */
    em_format_get, /* format_get */
-   em_video_data_size_get, /* video_data_size_get */
+   em_videfl_data_size_get, /* videfl_data_size_get */
    em_yuv_rows_get, /* yuv_rows_get */
    em_bgra_data_get, /* bgra_data_get */
    em_event_feed, /* event_feed */

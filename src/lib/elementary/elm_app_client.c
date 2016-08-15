@@ -39,7 +39,7 @@ _sub_path_process(Elm_App_Client *eo, Eldbus_Message_Iter *obj_iter, Elm_App_Cli
         if (view)
           continue;
 
-        view = eo_add(ELM_APP_CLIENT_VIEW_CLASS, eo, elm_app_client_view_path_set(eo_self, obj_path));
+        view = efl_add(ELM_APP_CLIENT_VIEW_CLASS, eo, elm_app_client_view_path_set(efl_self, obj_path));
         eina_hash_add(data->views, obj_path, view);
         if (!loading_list)
           efl_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_CREATED, view);
@@ -50,7 +50,7 @@ static void
 _objects_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    Eo *eo = data;
-   Elm_App_Client_Data *cdata = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Client_Data *cdata = efl_data_scope_get(eo, MY_CLASS);
    Eldbus_Message_Iter *array_path, *path;
 
    if (eldbus_message_error_get(msg, NULL, NULL))
@@ -67,7 +67,7 @@ _objects_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA
 static void _iface_add(void *data, const Eldbus_Message *msg)
 {
    Eo *eo = data;
-   Elm_App_Client_Data *cdata = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Client_Data *cdata = efl_data_scope_get(eo, MY_CLASS);
    Eldbus_Message_Iter *main_iter;
 
    main_iter = eldbus_message_iter_get(msg);
@@ -78,7 +78,7 @@ static void
 _iface_del(void *data, const Eldbus_Message *msg)
 {
    Eo *eo = data;
-   Elm_App_Client_Data *cdata = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Client_Data *cdata = efl_data_scope_get(eo, MY_CLASS);
    const char *path, *iface;
    Eldbus_Message_Iter *array_iface;
 
@@ -114,7 +114,7 @@ static void
 _pkg_name_owner_changed_cb(void *data, const char *bus EINA_UNUSED, const char *old_id EINA_UNUSED, const char *new_id)
 {
    Elm_App_Client *eo = data;
-   Elm_App_Client_Data *cdata = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Client_Data *cdata = efl_data_scope_get(eo, MY_CLASS);
    Eina_Iterator *iter;
    Elm_App_Client_View *view;
    Eina_List *views_list = NULL;
@@ -185,7 +185,7 @@ _create_view_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
    const char *error_name, *error_message, *view_path;
    Elm_App_Client *eo = data;
    Elm_App_Client_View *view;
-   Elm_App_Client_Data *cdata = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Client_Data *cdata = efl_data_scope_get(eo, MY_CLASS);
 
    if (eldbus_message_error_get(msg, &error_name, &error_message))
      {
@@ -213,7 +213,7 @@ _create_view_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
    view = eina_hash_find(cdata->views, view_path);
    if (!view)
      {
-        view = eo_add(ELM_APP_CLIENT_VIEW_CLASS, eo, elm_app_client_view_path_set(eo_self, view_path));
+        view = efl_add(ELM_APP_CLIENT_VIEW_CLASS, eo, elm_app_client_view_path_set(efl_self, view_path));
         eina_hash_add(cdata->views, view_path, view);
         efl_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_CREATED, view);
      }
@@ -302,7 +302,7 @@ _elm_app_client_efl_object_finalize(Eo *obj, Elm_App_Client_Data *data)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(data->views, NULL);
 
-   return efl_finalize(eo_super(obj, MY_CLASS));
+   return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -328,7 +328,7 @@ _elm_app_client_efl_object_destructor(Eo *eo, Elm_App_Client_Data *data)
    eldbus_connection_unref(conn);
    eldbus_shutdown();
 
-   efl_destructor(eo_super(eo, MY_CLASS));
+   efl_destructor(efl_super(eo, MY_CLASS));
 }
 
 #include "elm_app_client.eo.c"

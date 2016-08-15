@@ -16,77 +16,77 @@ const Efl_Class *klass;
 
 static void _destructor_unref(Eo *obj, void *class_data EINA_UNUSED)
 {
-   efl_destructor(eo_super(obj, klass));
+   efl_destructor(efl_super(obj, klass));
 
    /* this triggers an eo stack overflow if not correctly protected */
-   eo_unref(obj);
+   efl_unref(obj);
 }
 
 START_TEST(efl_destructor_unref)
 {
-   eo_init();
+   efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    static Efl_Op_Description op_descs [] = {
-        EO_OP_FUNC_OVERRIDE(efl_destructor, _destructor_unref),
+        EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor_unref),
    };
 
    static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
-        EO_CLASS_TYPE_REGULAR,
-        EO_CLASS_DESCRIPTION_OPS(op_descs),
+        EFL_CLASS_TYPE_REGULAR,
+        EFL_CLASS_DESCRIPTION_OPS(op_descs),
         NULL,
         0,
         NULL,
         NULL
    };
 
-   klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
+   klass = efl_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(!klass);
 
-   Eo *obj = eo_add(klass, NULL);
+   Eo *obj = efl_add(klass, NULL);
    fail_if(!obj);
 
-   TEST_EO_ERROR("eo_unref", "Obj:%p. User refcount (%d) < 0. Too many unrefs.");
-   eo_unref(obj);
+   TEST_EO_ERROR("efl_unref", "Obj:%p. User refcount (%d) < 0. Too many unrefs.");
+   efl_unref(obj);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   eo_shutdown();
+   efl_object_shutdown();
 }
 END_TEST
 
 START_TEST(efl_destructor_double_del)
 {
-   eo_init();
+   efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
-        EO_CLASS_TYPE_REGULAR,
-        EO_CLASS_DESCRIPTION_NOOPS(),
+        EFL_CLASS_TYPE_REGULAR,
+        EFL_CLASS_DESCRIPTION_NOOPS(),
         NULL,
         0,
         NULL,
         NULL
    };
 
-   klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
+   klass = efl_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(!klass);
 
-   Eo *obj = eo_add(klass, NULL);
-   eo_manual_free_set(obj, EINA_TRUE);
+   Eo *obj = efl_add(klass, NULL);
+   efl_manual_free_set(obj, EINA_TRUE);
    fail_if(!obj);
 
-   TEST_EO_ERROR("eo_unref", "Obj:%p. User refcount (%d) < 0. Too many unrefs.");
+   TEST_EO_ERROR("efl_unref", "Obj:%p. User refcount (%d) < 0. Too many unrefs.");
    efl_del(obj);
    efl_del(obj);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   eo_shutdown();
+   efl_object_shutdown();
 }
 END_TEST
 

@@ -513,7 +513,7 @@ ecore_con_ssl_server_prepare(Ecore_Con_Server *svr,
 Ecore_Con_Ssl_Error
 ecore_con_ssl_server_init(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr || !(svr->type & ECORE_CON_SSL))
      return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_server_init) (obj);
@@ -522,7 +522,7 @@ ecore_con_ssl_server_init(Ecore_Con_Server *obj)
 Ecore_Con_Ssl_Error
 ecore_con_ssl_server_shutdown(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr || !(svr->type & ECORE_CON_SSL))
      return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_server_shutdown) (obj);
@@ -547,10 +547,10 @@ ecore_con_ssl_server_write(Ecore_Con_Server *svr,
 Ecore_Con_Ssl_Error
 ecore_con_ssl_client_init(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (!cl)
      return ECORE_CON_SSL_ERROR_NONE;
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
    if (!host_server || !(host_server->type & ECORE_CON_SSL))
      return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_client_init) (obj);
@@ -559,10 +559,10 @@ ecore_con_ssl_client_init(Ecore_Con_Client *obj)
 Ecore_Con_Ssl_Error
 ecore_con_ssl_client_shutdown(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (!cl)
      return ECORE_CON_SSL_ERROR_NONE;
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
    if (!host_server || !(host_server->type & ECORE_CON_SSL))
      return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_client_shutdown) (obj);
@@ -593,7 +593,7 @@ ecore_con_ssl_available_get(void)
 EAPI void
 ecore_con_ssl_server_verify(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr) return;
 
    svr->verify = EINA_TRUE;
@@ -602,7 +602,7 @@ ecore_con_ssl_server_verify(Ecore_Con_Server *obj)
 EAPI void
 ecore_con_ssl_server_verify_basic(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr) return;
 
    svr->verify_basic = EINA_TRUE;
@@ -611,7 +611,7 @@ ecore_con_ssl_server_verify_basic(Ecore_Con_Server *obj)
 EAPI void
 ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *obj, const char *name)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr) return;
 
    eina_stringshare_replace(&svr->verify_name, name);
@@ -620,7 +620,7 @@ ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *obj, const char *name)
 EAPI const char *
 ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr) return NULL;
 
    return svr->verify_name ? : svr->name;
@@ -630,7 +630,7 @@ EAPI Eina_Bool
 ecore_con_ssl_server_cert_add(Ecore_Con_Server *obj,
                               const char *cert)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr) return EINA_FALSE;
 
    if (!svr->ssl_prepared)
@@ -648,7 +648,7 @@ EAPI Eina_Bool
 ecore_con_ssl_server_cafile_add(Ecore_Con_Server *obj,
                                 const char *ca_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr) return EINA_FALSE;
 
    if (!svr->ssl_prepared)
@@ -666,7 +666,7 @@ EAPI Eina_Bool
 ecore_con_ssl_server_privkey_add(Ecore_Con_Server *obj,
                                  const char *key_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr) return EINA_FALSE;
 
    if (!svr->ssl_prepared)
@@ -684,7 +684,7 @@ EAPI Eina_Bool
 ecore_con_ssl_server_crl_add(Ecore_Con_Server *obj,
                              const char *crl_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr) return EINA_FALSE;
 
    if (!svr->ssl_prepared)
@@ -701,7 +701,7 @@ ecore_con_ssl_server_crl_add(Ecore_Con_Server *obj,
 EAPI Eina_Bool
 ecore_con_ssl_server_upgrade(Ecore_Con_Server *obj, Ecore_Con_Type ssl_type)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!svr) return EINA_FALSE;
 #if _ECORE_CON_SSL_AVAILABLE == 0
    return EINA_FALSE;
@@ -723,7 +723,7 @@ ecore_con_ssl_server_upgrade(Ecore_Con_Server *obj, Ecore_Con_Type ssl_type)
 EAPI Eina_Bool
 ecore_con_ssl_client_upgrade(Ecore_Con_Client *obj, Ecore_Con_Type ssl_type)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (!cl)
      {
         return EINA_FALSE;
@@ -732,7 +732,7 @@ ecore_con_ssl_client_upgrade(Ecore_Con_Client *obj, Ecore_Con_Type ssl_type)
    return EINA_FALSE;
 #endif
 
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
    if (!host_server->ssl_prepared)
      {
         if (ecore_con_ssl_server_prepare(cl->host_server, ssl_type))
@@ -761,7 +761,7 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *obj,
                                      int ssl_type)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    int ret;
 
    switch (ssl_type)
@@ -814,7 +814,7 @@ error:
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    const gnutls_datum_t *cert_list;
    unsigned int iter, cert_list_size;
    gnutls_x509_crt_t cert = NULL;
@@ -951,7 +951,7 @@ static Eina_Bool
 _ecore_con_ssl_server_cafile_add_gnutls(Ecore_Con_Server *obj,
                                         const char *ca_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    struct stat st;
    Eina_Iterator *it;
    const char *file;
@@ -987,7 +987,7 @@ static Eina_Bool
 _ecore_con_ssl_server_crl_add_gnutls(Ecore_Con_Server *obj,
                                      const char *crl_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_certificate_set_x509_crl_file(svr->cert, crl_file,
                                                                    GNUTLS_X509_FMT_PEM) < 1);
 
@@ -1001,7 +1001,7 @@ static Eina_Bool
 _ecore_con_ssl_server_privkey_add_gnutls(Ecore_Con_Server *obj,
                                          const char *key_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_certificate_set_x509_key_file(svr->cert, svr->cert_file, key_file,
                                                                    GNUTLS_X509_FMT_PEM));
 
@@ -1015,7 +1015,7 @@ static Eina_Bool
 _ecore_con_ssl_server_cert_add_gnutls(Ecore_Con_Server *obj,
                                       const char *cert_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (!(svr->cert_file = strdup(cert_file)))
      return EINA_FALSE;
 
@@ -1025,7 +1025,7 @@ _ecore_con_ssl_server_cert_add_gnutls(Ecore_Con_Server *obj,
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (svr->session)
      {
         gnutls_bye(svr->session, GNUTLS_SHUT_RDWR);
@@ -1074,7 +1074,7 @@ _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *obj,
                                   unsigned char *buf,
                                   int size)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    int num;
 
    if (svr->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
@@ -1110,7 +1110,7 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *obj,
                                    const unsigned char *buf,
                                    int size)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    int num;
 
    if (svr->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
@@ -1144,8 +1144,8 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *obj,
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
    const gnutls_datum_t *cert_list;
    unsigned int iter, cert_list_size;
    const char *priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT";
@@ -1286,7 +1286,7 @@ error:
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (cl->session)
      {
         gnutls_bye(cl->session, GNUTLS_SHUT_RDWR);
@@ -1305,7 +1305,7 @@ _ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *obj,
                                   unsigned char *buf,
                                   int size)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    int num;
 
    if (cl->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
@@ -1341,7 +1341,7 @@ _ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *obj,
                                    const unsigned char *buf,
                                    int size)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    int num;
 
    if (cl->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
@@ -1380,7 +1380,7 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *obj,
                                       int ssl_type)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    long options;
    int dh = 0;
 
@@ -1446,7 +1446,7 @@ error:
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    int ret = -1;
 
    switch (svr->ssl_state)
@@ -1541,7 +1541,7 @@ static Eina_Bool
 _ecore_con_ssl_server_cafile_add_openssl(Ecore_Con_Server *obj,
                                          const char *ca_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    struct stat st;
 
    if (stat(ca_file, &st)) return EINA_FALSE;
@@ -1560,7 +1560,7 @@ static Eina_Bool
 _ecore_con_ssl_server_crl_add_openssl(Ecore_Con_Server *obj,
                                       const char *crl_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    X509_STORE *st;
    X509_LOOKUP *lu;
    static Eina_Bool flag = EINA_FALSE;
@@ -1585,7 +1585,7 @@ static Eina_Bool
 _ecore_con_ssl_server_privkey_add_openssl(Ecore_Con_Server *obj,
                                           const char *key_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    FILE *fp = NULL;
    EVP_PKEY *privkey = NULL;
 
@@ -1612,7 +1612,7 @@ static Eina_Bool
 _ecore_con_ssl_server_cert_add_openssl(Ecore_Con_Server *obj,
                                        const char *cert_file)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    FILE *fp = NULL;
    X509 *cert = NULL;
 
@@ -1637,7 +1637,7 @@ error:
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_shutdown_openssl(Ecore_Con_Server *obj)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    if (svr->ssl)
      {
         if (!SSL_shutdown(svr->ssl))
@@ -1661,7 +1661,7 @@ _ecore_con_ssl_server_read_openssl(Ecore_Con_Server *obj,
                                    unsigned char *buf,
                                    int size)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    int num;
 
    if (!svr->ssl) return -1;
@@ -1692,7 +1692,7 @@ _ecore_con_ssl_server_write_openssl(Ecore_Con_Server *obj,
                                     const unsigned char *buf,
                                     int size)
 {
-   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    int num;
 
    num = SSL_write(svr->ssl, buf, size);
@@ -1720,8 +1720,8 @@ _ecore_con_ssl_server_write_openssl(Ecore_Con_Server *obj,
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
-   Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Server_Data *host_server = efl_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
    int ret = -1;
    switch (cl->ssl_state)
      {
@@ -1788,7 +1788,7 @@ error:
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_shutdown_openssl(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (cl->ssl)
      {
         if (!SSL_shutdown(cl->ssl))
@@ -1808,7 +1808,7 @@ _ecore_con_ssl_client_read_openssl(Ecore_Con_Client *obj,
                                    unsigned char *buf,
                                    int size)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    int num;
 
    if (!cl->ssl) return -1;
@@ -1839,7 +1839,7 @@ _ecore_con_ssl_client_write_openssl(Ecore_Con_Client *obj,
                                     const unsigned char *buf,
                                     int size)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
+   Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    int num;
 
    num = SSL_write(cl->ssl, buf, size);

@@ -7,7 +7,7 @@
 Eina_Bool
 efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, const void *event_info, Evas_Callback_Type type)
 {
-   Efl_Event_Pointer_Data *ev = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   Efl_Event_Pointer_Data *ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
    if (!ev || !event_info) return EINA_FALSE;
 
    /* FIXME/TODO:
@@ -212,7 +212,7 @@ efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, const void *event_info
 Eina_Bool
 efl_event_key_legacy_info_set(Efl_Event_Key *evt, const void *event_info, Evas_Callback_Type type)
 {
-   Efl_Event_Key_Data *ev = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
+   Efl_Event_Key_Data *ev = efl_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
    if (!ev || !event_info) return EINA_FALSE;
 
    switch (type)
@@ -264,7 +264,7 @@ efl_event_key_legacy_info_set(Efl_Event_Key *evt, const void *event_info, Evas_C
 Eina_Bool
 efl_event_hold_legacy_info_set(Efl_Event_Hold *evt, const void *event_info, Evas_Callback_Type type)
 {
-   Efl_Event_Hold_Data *ev = eo_data_scope_get(evt, EFL_EVENT_HOLD_CLASS);
+   Efl_Event_Hold_Data *ev = efl_data_scope_get(evt, EFL_EVENT_HOLD_CLASS);
    const Evas_Event_Hold *e = event_info;
 
    if (!ev || !event_info) return EINA_FALSE;

@@ -584,7 +584,7 @@ _ector_renderer_software_shape_ector_renderer_prepare(Eo *obj,
 
    // shouldn't that be moved to the software base object
    if (!pd->surface)
-     pd->surface = eo_data_xref(pd->base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
+     pd->surface = efl_data_xref(pd->base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
 
    return EINA_TRUE;
 }
@@ -675,7 +675,7 @@ _ector_renderer_software_shape_efl_gfx_shape_path_set(Eo *obj,
    pd->shape_data = NULL;
    pd->outline_data = NULL;
 
-   efl_gfx_shape_path_set(eo_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS), op, points);
+   efl_gfx_shape_path_set(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS), op, points);
 }
 
 
@@ -694,12 +694,12 @@ _ector_renderer_software_shape_path_changed(void *data, const Eo_Event *event EI
 static Eo *
 _ector_renderer_software_shape_efl_object_constructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
+   obj = efl_constructor(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
    if (!obj) return NULL;
 
-   pd->public_shape = eo_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
-   pd->shape = eo_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
-   pd->base = eo_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
+   pd->public_shape = efl_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
+   pd->shape = efl_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
+   pd->base = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
    efl_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_software_shape_path_changed, pd);
 
    return obj;
@@ -715,10 +715,10 @@ _ector_renderer_software_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Sof
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
    if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
 
-   eo_data_xunref(pd->base->surface, pd->surface, obj);
-   eo_data_xunref(obj, pd->shape, obj);
-   eo_data_xunref(obj, pd->base, obj);
-   efl_destructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
+   efl_data_xunref(pd->base->surface, pd->surface, obj);
+   efl_data_xunref(obj, pd->shape, obj);
+   efl_data_xunref(obj, pd->base, obj);
+   efl_destructor(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
 }
 
 
@@ -728,7 +728,7 @@ _ector_renderer_software_shape_ector_renderer_crc_get(Eo *obj,
 {
    unsigned int crc;
 
-   crc = ector_renderer_crc_get(eo_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
+   crc = ector_renderer_crc_get(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
 
    crc = eina_crc((void*) &pd->shape->stroke.marker,
                   sizeof (pd->shape->stroke.marker),

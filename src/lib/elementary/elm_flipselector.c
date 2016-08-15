@@ -290,14 +290,14 @@ _elm_flipselector_item_efl_object_destructor(Eo *eo_item, Elm_Flipselector_Item_
    _sentinel_eval(sd);
    _update_view(sd->obj);
 
-   efl_destructor(eo_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS));
+   efl_destructor(efl_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS));
 }
 
 EOLIAN static Eo *
 _elm_flipselector_item_efl_object_constructor(Eo *obj, Elm_Flipselector_Item_Data *it)
 {
-   obj = efl_constructor(eo_super(obj, ELM_FLIPSELECTOR_ITEM_CLASS));
-   it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
+   obj = efl_constructor(efl_super(obj, ELM_FLIPSELECTOR_ITEM_CLASS));
+   it->base = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    return obj;
 }
@@ -313,7 +313,7 @@ _item_new(Evas_Object *obj,
 
    ELM_FLIPSELECTOR_DATA_GET(obj, sd);
 
-   eo_item = eo_add(ELM_FLIPSELECTOR_ITEM_CLASS, obj);
+   eo_item = efl_add(ELM_FLIPSELECTOR_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item, it);
@@ -338,7 +338,7 @@ _elm_flipselector_elm_widget_theme_apply(Eo *obj, Elm_Flipselector_Data *sd)
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    max_len = edje_object_data_get(wd->resize_obj, "max_len");
@@ -606,7 +606,7 @@ _signal_val_change_stop(void *data,
 EOLIAN static void
 _elm_flipselector_efl_canvas_group_group_add(Eo *obj, Elm_Flipselector_Data *priv)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -642,14 +642,14 @@ _elm_flipselector_efl_canvas_group_group_del(Eo *obj, Elm_Flipselector_Data *sd)
 
    ecore_timer_del(sd->spin);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
 elm_flipselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -668,7 +668,7 @@ elm_flipselector_first_interval_get(const Evas_Object *obj)
 EOLIAN static Eo *
 _elm_flipselector_efl_object_constructor(Eo *obj, Elm_Flipselector_Data *sd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);

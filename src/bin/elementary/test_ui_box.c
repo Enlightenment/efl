@@ -177,14 +177,14 @@ _custom_layout_update(Eo *pack, const void *data EINA_UNUSED)
 static void
 custom_check_cb(void *data, const Eo_Event *event)
 {
-   EO_OVERRIDE_OPS_DEFINE(custom_layout_ops,
-                          EO_OP_FUNC_OVERRIDE(efl_pack_layout_update, _custom_layout_update));
+   EFL_OBJECT_OVERRIDE_OPS_DEFINE(custom_layout_ops,
+                          EFL_OBJECT_OP_FUNC_OVERRIDE(efl_pack_layout_update, _custom_layout_update));
 
    Eina_Bool chk = elm_check_selected_get(event->object);
    Eo *obj = data;
 
    // Overriding just the one function we need
-   eo_override(obj, chk ? &custom_layout_ops : NULL);
+   efl_object_override(obj, chk ? &custom_layout_ops : NULL);
 
    // Layout request is required as the pack object doesn't know the layout
    // function was just overridden.
@@ -204,7 +204,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_win_autodel_set(win, EINA_TRUE);
    efl_gfx_size_set(win, 600, 400);
 
-   vbox = eo_add(EFL_UI_BOX_CLASS, win);
+   vbox = efl_add(EFL_UI_BOX_CLASS, win);
    efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
    efl_orientation_set(vbox, EFL_ORIENT_DOWN);
    efl_gfx_size_hint_weight_set(vbox, 1, 1);
@@ -214,7 +214,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
 
    // create here to pass in cb
-   bottombox = eo_add(EFL_UI_BOX_CLASS, win);
+   bottombox = efl_add(EFL_UI_BOX_CLASS, win);
 
 
    /* controls */
@@ -225,15 +225,15 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack(vbox, f);
    efl_gfx_visible_set(f, 1);
 
-   hbox = eo_add(EFL_UI_BOX_CLASS, win);
+   hbox = efl_add(EFL_UI_BOX_CLASS, win);
    elm_object_content_set(f, hbox);
    efl_pack_padding_set(hbox, 10, 0, EINA_TRUE);
    efl_gfx_visible_set(hbox, 1);
 
 
    /* weights radio group */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_pack(hbox, bx);
    efl_gfx_visible_set(bx, 1);
@@ -286,8 +286,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
 
    /* misc */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -349,8 +349,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
 
    /* user min size setter */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -376,8 +376,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
 
    /* inner box padding */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -403,8 +403,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
 
    /* outer margin */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -430,8 +430,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
 
    /* Box align */
-   bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);

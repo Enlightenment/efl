@@ -173,7 +173,7 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
                {
                   eina_strbuf_append_printf
                   (super_invok,
-                   "   %s_%s(eo_super(obj, %s_%s)%s);\n",
+                   "   %s_%s(efl_super(obj, %s_%s)%s);\n",
                    impl_env.lower_eo_prefix, eolian_function_name_get(foo),
                    class_env.upper_eo_prefix, class_env.upper_classtype,
                    eina_strbuf_string_get(short_params));

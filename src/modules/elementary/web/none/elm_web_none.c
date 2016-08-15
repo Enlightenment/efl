@@ -52,7 +52,7 @@ _elm_web_none_efl_canvas_group_group_add(Eo *obj, Elm_Web_None_Data *_pd EINA_UN
    elm_object_text_set(resize_obj, "WebKit not supported!");
    elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 }
 

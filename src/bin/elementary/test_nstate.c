@@ -29,7 +29,7 @@ test_nstate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-   nstate = eo_add(EFL_UI_NSTATE_CLASS, win);
+   nstate = efl_add(EFL_UI_NSTATE_CLASS, win);
    efl_ui_nstate_count_set(nstate, 5);
    elm_object_text_set(nstate, "nstate = 0");
    elm_box_pack_end(bx, nstate);

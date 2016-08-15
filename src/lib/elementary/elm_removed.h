@@ -3576,7 +3576,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_item_cursor_engine
  * the player itself.
  *
  * @see elm_player_add()
- * @see elm_video_add()
+ * @see elm_videfl_add()
  * @deprecated use elm_object_part_content_set() instead
  *
  */

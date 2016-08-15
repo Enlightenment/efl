@@ -273,17 +273,17 @@ START_TEST(ecore_test_timer_lifecycle)
    Ecore_Timer *t;
    Eo *et;
 
-   eo_init();
+   efl_object_init();
    ecore_init();
 
    t = ecore_timer_add(1.0, _test_time_cb, &rl);
    efl_event_callback_add((Eo*) t, EFL_EVENT_DEL, _test_death_cb, &dl);
 
-   et = eo_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get(),
-               efl_event_callback_add(eo_self, EFL_LOOP_TIMER_EVENT_TICK, _test_run_cb, &re),
-               efl_event_callback_add(eo_self, EFL_EVENT_DEL, _test_death_cb, &de),
-               efl_loop_timer_interval_set(eo_self, 1.0));
-   eo_ref(et);
+   et = efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get(),
+               efl_event_callback_add(efl_self, EFL_LOOP_TIMER_EVENT_TICK, _test_run_cb, &re),
+               efl_event_callback_add(efl_self, EFL_EVENT_DEL, _test_death_cb, &de),
+               efl_loop_timer_interval_set(efl_self, 1.0));
+   efl_ref(et);
 
    ecore_shutdown();
 
@@ -294,7 +294,7 @@ START_TEST(ecore_test_timer_lifecycle)
    efl_del(et);
    fail_if(de == EINA_FALSE);
 
-   eo_shutdown();
+   efl_object_shutdown();
 }
 END_TEST
 

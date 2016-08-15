@@ -3688,7 +3688,7 @@ _edje_map_prop_set(Evas_Map *map, const Edje_Calc_Params *pf,
 
    if (ep->part->type == EDJE_PART_TYPE_IMAGE ||
        ((ep->part->type == EDJE_PART_TYPE_SWALLOW) &&
-        (eo_isa(mo, EFL_CANVAS_IMAGE_INTERNAL_CLASS) &&
+        (efl_isa(mo, EFL_CANVAS_IMAGE_INTERNAL_CLASS) &&
          (!evas_object_image_source_get(mo))))
        )
      {
@@ -5015,7 +5015,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                           case EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE:
                             {
                                Eo *primitive = NULL;
-                               primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, ed->base->evas);
+                               primitive = efl_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, ed->base->evas);
                                evas_canvas3d_primitive_form_set(primitive, pd_mesh_node->mesh_node.mesh.primitive);
 
                                _edje_calc_params_need_type_node(pf);

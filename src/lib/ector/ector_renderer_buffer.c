@@ -33,7 +33,7 @@ _ector_renderer_buffer_efl_gfx_fill_fill_set(Eo *obj EINA_UNUSED, Ector_Renderer
 EOLIAN static void
 _ector_renderer_buffer_buffer_set(Eo *obj EINA_UNUSED, Ector_Renderer_Buffer_Data *pd, Ector_Buffer *buf)
 {
-   _eo_xrefplace(&pd->eo_buffer, buf, obj);
+   _efl_xrefplace(&pd->eo_buffer, buf, obj);
 }
 
 EOLIAN static Ector_Buffer *

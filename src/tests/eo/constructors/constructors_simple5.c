@@ -15,19 +15,19 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 static Efl_Op_Description op_descs[] = {
-     EO_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
+     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
 };
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple5",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(op_descs),
+     EFL_CLASS_TYPE_REGULAR,
+     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple5_class_get, &class_desc, EO_CLASS, NULL);
+EFL_DEFINE_CLASS(simple5_class_get, &class_desc, EO_CLASS, NULL);
 

@@ -3227,7 +3227,7 @@ _check_animator_event_catcher_del(void *data, const Eo_Event *event)
      }
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(animator_watch,
+EFL_CALLBACKS_ARRAY_DEFINE(animator_watch,
                           { EFL_EVENT_CALLBACK_ADD, _check_animator_event_catcher_add },
                           { EFL_EVENT_CALLBACK_DEL, _check_animator_event_catcher_del });
 

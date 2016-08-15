@@ -166,12 +166,12 @@ _win_del(void *data, const Eo_Event *ev EINA_UNUSED)
    free(td);
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(rect_pointer_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(rect_pointer_callbacks,
 { EFL_EVENT_POINTER_DOWN, _pointer_down },
 { EFL_EVENT_POINTER_MOVE, _pointer_move },
 { EFL_EVENT_POINTER_UP, _pointer_up })
 
-EO_CALLBACKS_ARRAY_DEFINE(win_key_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(win_key_callbacks,
 { EFL_EVENT_KEY_DOWN, _key_down },
 { EFL_EVENT_KEY_UP, _key_up })
 
@@ -186,7 +186,7 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    win = elm_win_util_standard_add("buttons", "Buttons");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   bx = eo_add(EFL_UI_BOX_CLASS, win, efl_orientation_set(eo_self, EFL_ORIENT_VERTICAL));
+   bx = efl_add(EFL_UI_BOX_CLASS, win, efl_orientation_set(efl_self, EFL_ORIENT_VERTICAL));
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, -1, -1);
    efl_pack(win, bx);
@@ -216,7 +216,7 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack(bx, bt);
    evas_object_show(bt);
 
-   o = eo_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, -1, -1);
    efl_pack(bx, o);

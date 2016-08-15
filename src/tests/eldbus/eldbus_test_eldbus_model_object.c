@@ -25,7 +25,7 @@ _setup(void)
 static void
 _teardown(void)
 {
-   eo_unref(object);
+   efl_unref(object);
    check_shutdown();
 }
 

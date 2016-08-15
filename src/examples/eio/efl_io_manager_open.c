@@ -51,10 +51,10 @@ void done_open_cb(void *data, void* value)
 
 void open_file(const char *path)
 {
-    Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
+    Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, NULL);
     eina_promise_then(efl_io_manager_file_open(job, path, EINA_FALSE), &done_open_cb, &error_cb, job);
 
-    eo_unref(job);
+    efl_unref(job);
 }
 
 int main(int argc, char const *argv[])

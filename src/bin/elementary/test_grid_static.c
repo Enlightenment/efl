@@ -104,23 +104,23 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    Eo *win, *gd, *bt, *rc, *en;
    api_data *api = calloc(1, sizeof(*api));
 
-   win = eo_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
-                efl_ui_win_name_set(eo_self, "grid"),
-                efl_text_set(eo_self, "Grid"),
-                efl_ui_win_autodel_set(eo_self, EINA_TRUE),
-                efl_event_callback_add(eo_self, EFL_EVENT_DEL, _win_del, api));
+   win = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
+                efl_ui_win_name_set(efl_self, "grid"),
+                efl_text_set(efl_self, "Grid"),
+                efl_ui_win_autodel_set(efl_self, EINA_TRUE),
+                efl_event_callback_add(efl_self, EFL_EVENT_DEL, _win_del, api));
 
    static int run_count = 0;
    if (((run_count++) % 2) == 0)
      {
-        gd = eo_add(EFL_UI_GRID_STATIC_CLASS, win,
-                    efl_gfx_size_hint_weight_set(eo_self, 1, 1));
+        gd = efl_add(EFL_UI_GRID_STATIC_CLASS, win,
+                    efl_gfx_size_hint_weight_set(efl_self, 1, 1));
      }
    else
      {
-        gd = eo_add(EFL_UI_GRID_CLASS, win,
-                    efl_gfx_size_hint_weight_set(eo_self, 1, 1),
-                    efl_pack_layout_engine_set(eo_self, EFL_UI_GRID_STATIC_CLASS, NULL));
+        gd = efl_add(EFL_UI_GRID_CLASS, win,
+                    efl_gfx_size_hint_weight_set(efl_self, 1, 1),
+                    efl_pack_layout_engine_set(efl_self, EFL_UI_GRID_STATIC_CLASS, NULL));
      }
    efl_pack(win, gd);
    api->data.grid = gd;
@@ -176,27 +176,27 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _ch_grid, gd);
    efl_gfx_visible_set(bt, 1);
 
-   rc = eo_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 128, 0, 0, 128);
    efl_pack_grid(gd, rc, 40, 70, 20, 10);
    efl_gfx_visible_set(rc, 1);
 
-   rc = eo_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 0, 128, 0, 128);
    efl_pack_grid(gd, rc, 60, 70, 10, 10);
    efl_gfx_visible_set(rc, 1);
 
-   rc = eo_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 0, 0, 128, 128);
    efl_pack_grid(gd, rc, 40, 80, 10, 10);
    efl_gfx_visible_set(rc, 1);
 
-   rc = eo_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 128, 0, 128, 128);
    efl_pack_grid(gd, rc, 50, 80, 10, 10);
    efl_gfx_visible_set(rc, 1);
 
-   rc = eo_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 128, 64, 0, 128);
    efl_pack_grid(gd, rc, 60, 80, 10, 10);
    efl_gfx_visible_set(rc, 1);

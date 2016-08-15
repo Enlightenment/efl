@@ -27,7 +27,7 @@ _setup(void)
 
    fake_server = fake_server_start(&fake_server_data);
 
-   fake_server_object = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eo_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
+   fake_server_object = efl_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(efl_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
    ck_assert_ptr_ne(NULL, fake_server_object);
 
    fake_server_proxy = eldbus_model_proxy_from_object_get(fake_server_object, FAKE_SERVER_INTERFACE);
@@ -40,7 +40,7 @@ _setup(void)
 static void
 _teardown(void)
 {
-   eo_unref(fake_server_object);
+   efl_unref(fake_server_object);
 
    fake_server_stop(fake_server);
 

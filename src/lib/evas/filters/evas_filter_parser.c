@@ -2357,7 +2357,7 @@ _filter_program_buffers_set(Evas_Filter_Program *pgm)
                   Evas_Filter_Proxy_Binding *bind = tup->data;
                   Evas_Object_Protected_Data *obj;
 
-                  obj = eo_data_scope_get(bind->eo_source, EFL_CANVAS_OBJECT_CLASS);
+                  obj = efl_data_scope_get(bind->eo_source, EFL_CANVAS_OBJECT_CLASS);
                   buf->w = obj->cur->geometry.w;
                   buf->h = obj->cur->geometry.h;
                }
@@ -2879,7 +2879,7 @@ _buffers_update(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm)
              fb->source_name = eina_stringshare_ref(pb->name);
              fb->ctx->has_proxies = EINA_TRUE;
 
-             source = eo_data_scope_get(fb->source, EFL_CANVAS_OBJECT_CLASS);
+             source = efl_data_scope_get(fb->source, EFL_CANVAS_OBJECT_CLASS);
              if ((source->cur->geometry.w != buf->w) ||
                  (source->cur->geometry.h != buf->h))
                pgm->changed = EINA_TRUE;
@@ -3000,7 +3000,7 @@ evas_filter_program_state_set(Evas_Filter_Program *pgm, Evas_Object *eo_obj,
 
    efl_gfx_color_get(eo_obj, &pgm->state.color.r, &pgm->state.color.g, &pgm->state.color.b, &pgm->state.color.a);
 
-   if (eo_isa(eo_obj, EVAS_TEXT_CLASS))
+   if (efl_isa(eo_obj, EVAS_TEXT_CLASS))
      {
         evas_obj_text_shadow_color_get(eo_obj, &pgm->state.text.shadow.r, &pgm->state.text.shadow.g, &pgm->state.text.shadow.b, &pgm->state.text.shadow.a);
         evas_obj_text_outline_color_get(eo_obj, &pgm->state.text.outline.r, &pgm->state.text.outline.g, &pgm->state.text.outline.b, &pgm->state.text.outline.a);

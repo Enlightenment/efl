@@ -20,9 +20,9 @@ START_TEST(evas_object_various)
    evas_object_unref(obj);
 
    evas = EVAS_TEST_INIT_EVAS();
-   eo_ref(obj);
+   efl_ref(obj);
    evas_free(evas);
-   eo_unref(obj);
+   efl_unref(obj);
 
 
    /* Twice because EVAS_TEST_INIT_EVAS inits it twice. */

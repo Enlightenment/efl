@@ -68,7 +68,7 @@ _elm_sys_notify_efl_object_constructor(Eo                  *obj,
         return NULL;
      }
 
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    _singleton = obj;
 
    return obj;
@@ -78,7 +78,7 @@ EOLIAN static void
 _elm_sys_notify_efl_object_destructor(Eo                  *obj,
                                    Elm_Sys_Notify_Data *sd  EINA_UNUSED)
 {
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
    _singleton = NULL;
 }
 
@@ -169,7 +169,7 @@ _elm_sys_notify_servers_set(Eo                     *obj  EINA_UNUSED,
                        return EINA_FALSE;
                     }
 
-                  sd->servers[i] = eo_add(class_get(), NULL);
+                  sd->servers[i] = efl_add(class_get(), NULL);
                   if (EINA_UNLIKELY(!(sd->servers[i])))
                     {
                        CRI("Failed to create notification server");
@@ -201,7 +201,7 @@ _elm_sys_notify_singleton_get(Eo   *obj EINA_UNUSED,
                               void *sd  EINA_UNUSED)
 {
    if (!_singleton)
-     _singleton = eo_add(MY_CLASS, NULL);
+     _singleton = efl_add(MY_CLASS, NULL);
    return _singleton;
 }
 

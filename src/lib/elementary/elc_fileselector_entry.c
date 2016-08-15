@@ -106,7 +106,7 @@ _FILE_CHOSEN_fwd_path(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
 
    Eo_Event e = { NULL, NULL, NULL };
    if (path)
-     e.info = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, path));
+     e.info = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, path));
    _FILE_CHOSEN_fwd(data, &e);
 }
 
@@ -124,7 +124,7 @@ _ACTIVATED_fwd(void *data, const Eo_Event *event)
    bmodel = elm_interface_fileselector_model_get(sd->button);
    if (bmodel)
      {
-         model = eo_add(eo_class_get(bmodel), NULL);
+         model = efl_add(efl_class_get(bmodel), NULL);
          eina_value_setup(&path, EINA_VALUE_TYPE_STRING);
          eina_value_set(&path, file);
          efl_model_property_set(model, "path", &path, NULL);
@@ -139,7 +139,7 @@ _ACTIVATED_fwd(void *data, const Eo_Event *event)
 static void
 _model_free_eo_cb(void *eo)
 {
-   eo_unref(eo);
+   efl_unref(eo);
 }
 
 EOLIAN static void
@@ -211,7 +211,7 @@ _elm_fileselector_entry_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Entry_D
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
 
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    style = elm_widget_style_get(obj);
@@ -239,7 +239,7 @@ _elm_fileselector_entry_elm_widget_disable(Eo *obj, Elm_Fileselector_Entry_Data 
    Eina_Bool val;
 
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_disable(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_disable(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    val = elm_widget_disabled_get(obj);
@@ -255,7 +255,7 @@ _elm_fileselector_entry_elm_layout_text_set(Eo *obj, Elm_Fileselector_Entry_Data
 {
    if (part && strcmp(part, "default"))
      {
-        return elm_obj_layout_text_set(eo_super(obj, MY_CLASS), part, label);
+        return elm_obj_layout_text_set(efl_super(obj, MY_CLASS), part, label);
      }
 
    elm_object_text_set(sd->button, label);
@@ -268,7 +268,7 @@ _elm_fileselector_entry_elm_layout_text_get(Eo *obj, Elm_Fileselector_Entry_Data
    if (part && strcmp(part, "default"))
      {
         const char *text = NULL;
-        text = elm_obj_layout_text_get(eo_super(obj, MY_CLASS), part);
+        text = elm_obj_layout_text_get(efl_super(obj, MY_CLASS), part);
         return text;
      }
 
@@ -280,7 +280,7 @@ _elm_fileselector_entry_content_set(Eo *obj, Elm_Fileselector_Entry_Data *sd, co
 {
    if (part && strcmp(part, "button icon"))
      {
-        return efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
+        return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
      }
 
    elm_layout_content_set(sd->button, NULL, content);
@@ -293,7 +293,7 @@ _elm_fileselector_entry_content_get(Eo *obj, Elm_Fileselector_Entry_Data *sd, co
 {
    if (part && strcmp(part, "button icon"))
      {
-        return efl_content_get(efl_part(eo_super(obj, MY_CLASS), part));
+        return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
      }
 
    return elm_layout_content_get(sd->button, NULL);
@@ -304,7 +304,7 @@ _elm_fileselector_entry_content_unset(Eo *obj, Elm_Fileselector_Entry_Data *sd, 
 {
    if (part && strcmp(part, "button icon"))
      {
-        return efl_content_unset(efl_part(eo_super(obj, MY_CLASS), part));
+        return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
      }
 
    return elm_layout_content_unset(sd->button, NULL);
@@ -313,7 +313,7 @@ _elm_fileselector_entry_content_unset(Eo *obj, Elm_Fileselector_Entry_Data *sd, 
 EOLIAN static void
 _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Entry_Data *priv)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->button = elm_fileselector_button_add(obj);
@@ -375,20 +375,20 @@ _elm_fileselector_entry_efl_canvas_group_group_del(Eo *obj, Elm_Fileselector_Ent
 {
    free(sd->path);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
 elm_fileselector_entry_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return eo_add(MY_CLASS, parent);
+   return efl_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
 _elm_fileselector_entry_efl_object_constructor(Eo *obj, Elm_Fileselector_Entry_Data *sd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_GROUPING);
@@ -411,7 +411,7 @@ _elm_fileselector_entry_elm_interface_fileselector_selected_model_set(Eo *obj EI
                                                                       Eina_Promise_Owner *promise_owner)
 {
    elm_interface_fileselector_model_set(sd->button, model);
-   eina_promise_owner_value_set(promise_owner, eo_ref(model), _model_free_eo_cb);
+   eina_promise_owner_value_set(promise_owner, efl_ref(model), _model_free_eo_cb);
 }
 
 EINA_DEPRECATED EAPI const char *
@@ -541,7 +541,7 @@ _elm_fileselector_entry_elm_interface_fileselector_model_get(Eo *obj EINA_UNUSED
         return NULL;
      }
 
-   ret = eo_add(eo_class_get(bmodel), NULL);
+   ret = efl_add(efl_class_get(bmodel), NULL);
    free(sd->path);
    sd->path = elm_entry_markup_to_utf8(elm_object_text_get(sd->entry));
    eina_value_setup(&path, EINA_VALUE_TYPE_STRING);

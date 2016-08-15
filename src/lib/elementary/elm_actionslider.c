@@ -116,7 +116,7 @@ _elm_actionslider_elm_widget_theme_apply(Eo *obj, Elm_Actionslider_Data *sd EINA
 
    mirrored = elm_object_mirrored_get(obj);
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    if (elm_object_mirrored_get(obj) != mirrored)
@@ -133,7 +133,7 @@ _drag_button_down_cb(void *data,
                      const char *emission EINA_UNUSED,
                      const char *source EINA_UNUSED)
 {
-   Elm_Actionslider_Data *sd = eo_data_scope_get(data, MY_CLASS);
+   Elm_Actionslider_Data *sd = efl_data_scope_get(data, MY_CLASS);
 
    sd->mouse_down = EINA_TRUE;
 }
@@ -452,7 +452,7 @@ _elm_actionslider_elm_layout_text_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_U
    Eina_Bool int_ret = EINA_FALSE;
 
    _mirrored_part_fix(obj, &part);
-   int_ret = elm_obj_layout_text_set(eo_super(obj, MY_CLASS), part, text);
+   int_ret = elm_obj_layout_text_set(efl_super(obj, MY_CLASS), part, text);
 
    return int_ret;
 }
@@ -464,7 +464,7 @@ _elm_actionslider_elm_layout_text_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_U
 
    _mirrored_part_fix(obj, &part);
 
-   text = elm_obj_layout_text_get(eo_super(obj, MY_CLASS), part);
+   text = elm_obj_layout_text_get(efl_super(obj, MY_CLASS), part);
 
    return text;
 }
@@ -474,7 +474,7 @@ _elm_actionslider_efl_canvas_group_group_add(Eo *obj, Elm_Actionslider_Data *pri
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->enabled_position = ELM_ACTIONSLIDER_ALL;
@@ -532,14 +532,14 @@ EAPI Evas_Object *
 elm_actionslider_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_actionslider_efl_object_constructor(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SLIDER);

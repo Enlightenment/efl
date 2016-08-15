@@ -111,7 +111,7 @@ main_delete_request(Ecore_Evas *ee EINA_UNUSED)
 static void
 bg_setup(void)
 {
-   o_bg = eo_add(EDJE_OBJECT_CLASS, evas);
+   o_bg = efl_add(EDJE_OBJECT_CLASS, evas);
    efl_file_set(o_bg, theme_file, "background");
    efl_gfx_position_set(o_bg, 0, 0);
    efl_gfx_size_set(o_bg, startw, starth);
@@ -573,7 +573,7 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
      }
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(emotion_object_test_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(emotion_object_test_callbacks,
        { EMOTION_OBJECT_EVENT_FRAME_DECODE, video_obj_frame_decode_cb },
        { EMOTION_OBJECT_EVENT_FRAME_RESIZE, video_obj_frame_resize_cb },
        { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, video_obj_length_change_cb },
@@ -617,7 +617,7 @@ init_video_object(const char *module_filename, const char *filename)
    fd = calloc(1, sizeof(Frame_Data));
    if (!fd) exit(1);
 
-   oe = eo_add(EDJE_OBJECT_CLASS, evas);
+   oe = efl_add(EDJE_OBJECT_CLASS, evas);
    efl_event_callback_add(oe, EFL_EVENT_DEL, _oe_free_cb, fd);
    efl_key_data_set(oe, "frame_data", fd);
    efl_file_set(oe, theme_file, reflex ? "video_controller/reflex" : "video_controller");

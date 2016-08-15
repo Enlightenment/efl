@@ -124,7 +124,7 @@ _elm_button_elm_widget_theme_apply(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
    _icon_signal_emit(obj);
 
@@ -139,7 +139,7 @@ _elm_button_elm_widget_sub_object_del(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED,
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
+   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -155,7 +155,7 @@ _elm_button_content_set(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, const char *p
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
+   int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -285,7 +285,7 @@ _elm_button_efl_canvas_group_group_add(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    edje_object_signal_callback_add
@@ -327,14 +327,14 @@ EAPI Evas_Object *
 elm_button_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_button_efl_object_constructor(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PUSH_BUTTON);

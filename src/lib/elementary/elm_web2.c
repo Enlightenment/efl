@@ -80,7 +80,7 @@ elm_web_add(Evas_Object *parent)
 {
    if (!parent || !ewm.class_get) return NULL;
 
-   return eo_add(ewm.class_get(), parent);
+   return efl_add(ewm.class_get(), parent);
 }
 
 EAPI const Efl_Class *
@@ -94,7 +94,7 @@ elm_web_real_class_get(void)
 EOLIAN static Eo *
 _elm_web_efl_object_constructor(Eo *obj, Elm_Web_Data *sd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _elm_web_smart_callbacks);

@@ -30,7 +30,7 @@ test_video(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
-   video = elm_video_add(win);
+   video = elm_videfl_add(win);
    evas_object_size_hint_weight_set(video, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(video);
 

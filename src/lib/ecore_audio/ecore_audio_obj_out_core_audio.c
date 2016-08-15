@@ -209,7 +209,7 @@ EOLIAN static void
 _ecore_audio_out_core_audio_ecore_audio_volume_set(Eo *obj, void *sd EINA_UNUSED, double volume)
 {
    // TODO Change volume of playing inputs
-   ecore_audio_obj_volume_set(eo_super(obj, MY_CLASS), volume);
+   ecore_audio_obj_volume_set(efl_super(obj, MY_CLASS), volume);
 }
 
 EOLIAN static Eina_Bool
@@ -220,7 +220,7 @@ _ecore_audio_out_core_audio_ecore_audio_out_input_attach(Eo *obj, void *sd EINA_
    OSStatus err;
    Eina_Bool chk;
 
-   chk = ecore_audio_obj_out_input_attach(eo_super(obj, MY_CLASS), input);
+   chk = ecore_audio_obj_out_input_attach(efl_super(obj, MY_CLASS), input);
    if (EINA_UNLIKELY(!chk))
      {
         ERR("Failed to attach input (eo_do_super)");
@@ -312,7 +312,7 @@ free_proc_id:
 free_helper:
    free(helper);
 detach:
-   ecore_audio_obj_out_input_detach(eo_super(obj, MY_CLASS), input);
+   ecore_audio_obj_out_input_detach(efl_super(obj, MY_CLASS), input);
 return_failure:
    return EINA_FALSE;
 }
@@ -328,7 +328,7 @@ _ecore_audio_out_core_audio_ecore_audio_out_input_detach(Eo *obj, void *sd EINA_
    data = efl_key_data_get(input, "coreaudio_data");
    _core_audio_helper_free(data);
 
-   ret = ecore_audio_obj_out_input_detach(eo_super(obj, MY_CLASS), input);
+   ret = ecore_audio_obj_out_input_detach(efl_super(obj, MY_CLASS), input);
 
    return ret;
 }

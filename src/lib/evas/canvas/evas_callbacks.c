@@ -125,7 +125,7 @@ _evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e)
 void
 _evas_post_event_callback_free(Evas *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Post_Callback *pc;
 
    EINA_LIST_FREE(e->post_events, pc)
@@ -139,7 +139,7 @@ evas_object_event_callback_all_del(Evas_Object *eo_obj)
 {
    _eo_evas_object_cb_info *info;
    Eina_Inlist *itr;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (!obj) return;
    if (!obj->callbacks) return;
@@ -164,7 +164,7 @@ evas_event_callback_all_del(Evas *eo_e)
 {
    _eo_evas_object_cb_info *info;
    Eina_Inlist *itr;
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    if (!e) return;
    if (!e->callbacks) return;
@@ -316,7 +316,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
               (type <= EVAS_CALLBACK_KEY_UP))
           {
-             Evas_Object_Protected_Data *smart_parent = eo_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
+             Evas_Object_Protected_Data *smart_parent = efl_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
              evas_object_event_callback_call(obj->smart.parent, smart_parent, type, event_info, event_id, efl_event_desc, efl_event_info);
           }
      }
@@ -333,7 +333,7 @@ evas_object_event_callback_add(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 EAPI void
 evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Object_Event_Cb func, const void *data)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -362,7 +362,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (!obj) return NULL;
    if (!func) return NULL;
@@ -393,7 +393,7 @@ evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (!obj) return NULL;
    if (!func) return NULL;
@@ -426,7 +426,7 @@ evas_event_callback_add(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func,
 EAPI void
 evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Event_Cb func, const void *data)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
@@ -448,7 +448,7 @@ evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callb
 EAPI void *
 evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    _eo_evas_cb_info *info;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
@@ -484,7 +484,7 @@ evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    if (!e) return NULL;
    if (!func) return NULL;
@@ -516,7 +516,7 @@ evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const 
    return;
    MAGIC_CHECK_END();
 
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e) return;
    EVAS_MEMPOOL_INIT(_mp_pc, "evas_post_callback", Evas_Post_Callback, 64, );
    pc = EVAS_MEMPOOL_ALLOC(_mp_pc, Evas_Post_Callback);
@@ -539,7 +539,7 @@ evas_post_event_callback_remove(Evas *eo_e, Evas_Object_Event_Post_Cb func)
    return;
    MAGIC_CHECK_END();
 
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e) return;
    EINA_LIST_FOREACH(e->post_events, l, pc)
      {
@@ -561,7 +561,7 @@ evas_post_event_callback_remove_full(Evas *eo_e, Evas_Object_Event_Post_Cb func,
    return;
    MAGIC_CHECK_END();
 
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e) return;
    EINA_LIST_FOREACH(e->post_events, l, pc)
      {

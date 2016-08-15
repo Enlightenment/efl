@@ -321,10 +321,10 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    double *pts;
    unsigned int i, j;
 
-   from_pd = eo_data_scope_get(from, EFL_GFX_SHAPE_MIXIN);
-   to_pd = eo_data_scope_get(to, EFL_GFX_SHAPE_MIXIN);
-   if (!eo_isa(from, EFL_GFX_SHAPE_MIXIN) ||
-       !eo_isa(to, EFL_GFX_SHAPE_MIXIN))
+   from_pd = efl_data_scope_get(from, EFL_GFX_SHAPE_MIXIN);
+   to_pd = efl_data_scope_get(to, EFL_GFX_SHAPE_MIXIN);
+   if (!efl_isa(from, EFL_GFX_SHAPE_MIXIN) ||
+       !efl_isa(to, EFL_GFX_SHAPE_MIXIN))
      return EINA_FALSE;
    if (pd == from_pd || pd == to_pd)
      return EINA_FALSE;
@@ -428,7 +428,7 @@ _efl_gfx_shape_equal_commands(Eo *obj EINA_UNUSED,
 {
    Efl_Gfx_Shape_Data *with_pd;
 
-   with_pd = eo_data_scope_get(with, EFL_GFX_SHAPE_MIXIN);
+   with_pd = efl_data_scope_get(with, EFL_GFX_SHAPE_MIXIN);
    if (!with_pd) return EINA_FALSE;
 
    return _efl_gfx_shape_equal_commands_internal(with_pd, pd);
@@ -1804,7 +1804,7 @@ _efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, const Eo *dup_from)
    Efl_Gfx_Shape_Data *from;
 
    if (obj == dup_from) return ;
-   from = eo_data_scope_get(dup_from, EFL_GFX_SHAPE_MIXIN);
+   from = efl_data_scope_get(dup_from, EFL_GFX_SHAPE_MIXIN);
    if (!from) return ;
 
    pd->public.stroke.scale = from->public.stroke.scale;

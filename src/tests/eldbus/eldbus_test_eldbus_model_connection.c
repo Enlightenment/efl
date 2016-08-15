@@ -25,7 +25,7 @@ _setup(void)
 static void
 _teardown(void)
 {
-   eo_unref(connection);
+   efl_unref(connection);
    check_shutdown();
 }
 

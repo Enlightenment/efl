@@ -96,7 +96,7 @@ START_TEST (elm_code_widget_construct_nocode)
    elm_init(1, NULL);
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, win);
+   widget = efl_add(ELM_CODE_WIDGET_CLASS, win);
    ck_assert(!widget);
 
    elm_shutdown();

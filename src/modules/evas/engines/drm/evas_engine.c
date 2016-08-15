@@ -80,7 +80,7 @@ eng_setup(Evas *evas, void *einfo)
    info = (Evas_Engine_Info_Drm *)einfo;
    if (!info) return 0;
 
-   epd = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
+   epd = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (!epd) return 0;
 
    re = epd->engine.data.output;

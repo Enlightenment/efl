@@ -123,7 +123,7 @@ _elm_index_item_elm_widget_item_access_register(Eo *eo_item, Elm_Index_Item_Data
    Elm_Access_Info *ai;
 
    Evas_Object *ret = NULL;
-   ret = elm_wdg_item_access_register(eo_super(eo_item, ELM_INDEX_ITEM_CLASS));
+   ret = elm_wdg_item_access_register(efl_super(eo_item, ELM_INDEX_ITEM_CLASS));
 
    ai = _elm_access_info_get(it->base->access_obj);
 
@@ -456,7 +456,7 @@ _elm_index_elm_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
    else
      eina_stringshare_replace(&ld->group, "base/vertical");
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -541,14 +541,14 @@ _elm_index_item_efl_object_destructor(Eo *eo_item EINA_UNUSED, Elm_Index_Item_Da
    _item_free(it);
    _index_box_clear(WIDGET(it), sd->level);
 
-   efl_destructor(eo_super(eo_item, ELM_INDEX_ITEM_CLASS));
+   efl_destructor(efl_super(eo_item, ELM_INDEX_ITEM_CLASS));
 }
 
 EOLIAN static Eo *
 _elm_index_item_efl_object_constructor(Eo *obj, Elm_Index_Item_Data *it)
 {
-   obj = efl_constructor(eo_super(obj, ELM_INDEX_ITEM_CLASS));
-   it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
+   obj = efl_constructor(efl_super(obj, ELM_INDEX_ITEM_CLASS));
+   it->base = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PUSH_BUTTON);
 
    return obj;
@@ -564,7 +564,7 @@ _item_new(Evas_Object *obj,
 
    ELM_INDEX_DATA_GET(obj, sd);
 
-   eo_item = eo_add(ELM_INDEX_ITEM_CLASS, obj);
+   eo_item = efl_add(ELM_INDEX_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_INDEX_ITEM_DATA_GET(eo_item, it);
@@ -642,7 +642,7 @@ _sel_eval(Evas_Object *obj,
 
         EINA_LIST_FOREACH(sd->items, l, eo_item)
           {
-             it = eo_data_scope_get(eo_item, ELM_INDEX_ITEM_CLASS);
+             it = efl_data_scope_get(eo_item, ELM_INDEX_ITEM_CLASS);
              if (it->level != i) continue;
              if (it->level != sd->level)
                {
@@ -1051,7 +1051,7 @@ _elm_index_efl_canvas_group_group_add(Eo *obj, Elm_Index_Data *priv)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -1134,7 +1134,7 @@ _elm_index_efl_canvas_group_group_del(Eo *obj, Elm_Index_Data *sd)
 
    ecore_timer_del(sd->delay);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_index_smart_focus_next_enable = EINA_FALSE;
@@ -1241,7 +1241,7 @@ EAPI Evas_Object *
 elm_index_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -1270,7 +1270,7 @@ EAPI Eina_Bool elm_index_horizontal_get(const Evas_Object *obj)
 EOLIAN static Eo *
 _elm_index_efl_object_constructor(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SCROLL_BAR);
@@ -1737,7 +1737,7 @@ EOLIAN static Eina_List*
 _elm_index_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_Index_Data *data)
 {
    Eina_List *ret;
-   ret = elm_interface_atspi_accessible_children_get(eo_super(obj, ELM_INDEX_CLASS));
+   ret = elm_interface_atspi_accessible_children_get(efl_super(obj, ELM_INDEX_CLASS));
    return eina_list_merge(eina_list_clone(data->items), ret);
 }
 
@@ -1745,7 +1745,7 @@ EOLIAN static char*
 _elm_index_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Index_Item_Data *data)
 {
    char *name;
-   name = elm_interface_atspi_accessible_name_get(eo_super(eo_it, ELM_INDEX_ITEM_CLASS));
+   name = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_INDEX_ITEM_CLASS));
    if (name) return name;
 
    return data->letter ? strdup(data->letter) : NULL;

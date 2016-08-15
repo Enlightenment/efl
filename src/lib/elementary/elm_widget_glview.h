@@ -54,7 +54,7 @@ struct _Elm_Glview_Data
  */
 
 #define ELM_GLVIEW_DATA_GET(o, sd) \
-  Elm_Glview_Data * sd = eo_data_scope_get(o, ELM_GLVIEW_CLASS)
+  Elm_Glview_Data * sd = efl_data_scope_get(o, ELM_GLVIEW_CLASS)
 
 #define ELM_GLVIEW_DATA_GET_OR_RETURN(o, ptr)   \
   ELM_GLVIEW_DATA_GET(o, ptr);                  \
@@ -75,7 +75,7 @@ struct _Elm_Glview_Data
     }
 
 #define ELM_GLVIEW_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_GLVIEW_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_GLVIEW_CLASS))) \
     return
 
 #endif

@@ -25,7 +25,7 @@
  */
 
 #define ELM_GRID_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_GRID_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_GRID_CLASS))) \
     return
 
 #endif

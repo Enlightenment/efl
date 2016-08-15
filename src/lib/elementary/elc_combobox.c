@@ -44,7 +44,7 @@ static const Elm_Action key_actions[] = {
 EOLIAN static Eina_Bool
 _elm_combobox_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
 {
-   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
+   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
    elm_obj_widget_translate(sd->genlist);
    elm_obj_widget_translate(sd->entry);
 
@@ -71,7 +71,7 @@ _elm_combobox_elm_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
    /* combobox's style has no extra bit for orientation but could have... */
    eina_stringshare_replace(&(wd->style), buf);
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -266,7 +266,7 @@ _on_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 EOLIAN static void
 _elm_combobox_efl_canvas_group_group_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNUSED)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_mirrored_automatic_set(obj, EINA_FALSE);
@@ -281,20 +281,20 @@ EOLIAN static void
 _elm_combobox_efl_canvas_group_group_del(Eo *obj, Elm_Combobox_Data *sd)
 {
    sd->hover_parent = NULL;
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
 _elm_combobox_efl_canvas_group_group_show(Eo *obj, Elm_Combobox_Data *sd)
 {
-   efl_canvas_group_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(efl_super(obj, MY_CLASS));
    if (sd->expanded) evas_object_show(sd->hover);
 }
 
 EOLIAN static void
 _elm_combobox_efl_canvas_group_group_hide(Eo *obj, Elm_Combobox_Data *sd)
 {
-   efl_canvas_group_hide(eo_super(obj, MY_CLASS));
+   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
    if (sd->hover) evas_object_hide(sd->hover);
 }
 
@@ -309,7 +309,7 @@ EAPI Evas_Object *
 elm_combobox_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -320,7 +320,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    Evas_Object *entry;
    char buf[128];
 
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    sd->first_filter = EINA_TRUE;
 
@@ -332,7 +332,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    sd->hover_parent = elm_object_parent_widget_get(obj);
 
    //hover
-   sd->hover = eo_add(ELM_HOVER_CLASS, sd->hover_parent);
+   sd->hover = efl_add(ELM_HOVER_CLASS, sd->hover_parent);
    elm_widget_mirrored_automatic_set(sd->hover, EINA_FALSE);
    elm_hover_target_set(sd->hover, obj);
    elm_widget_sub_object_add(obj, sd->hover);
@@ -358,7 +358,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
 
    // This is the genlist object that will take over the genlist call
-   sd->genlist = gl = eo_add(ELM_GENLIST_CLASS, obj);
+   sd->genlist = gl = efl_add(ELM_GENLIST_CLASS, obj);
    elm_genlist_filter_set(gl, NULL);
    elm_widget_mirrored_automatic_set(gl, EINA_FALSE);
    elm_widget_mirrored_set(gl, elm_widget_mirrored_get(obj));
@@ -373,7 +373,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    elm_object_style_set(gl, buf);
 
    // This is the entry object that will take over the entry call
-   sd->entry = entry = eo_add(ELM_ENTRY_CLASS, obj);
+   sd->entry = entry = efl_add(ELM_ENTRY_CLASS, obj);
    elm_widget_mirrored_automatic_set(entry, EINA_FALSE);
    elm_widget_mirrored_set(entry, elm_widget_mirrored_get(obj));
    elm_scroller_policy_set(entry, ELM_SCROLLER_POLICY_OFF,
@@ -529,7 +529,7 @@ EOLIAN static void
 _elm_combobox_efl_canvas_group_group_resize(Eo *obj, Elm_Combobox_Data *pd,
                                        Evas_Coord w, Evas_Coord h)
 {
-   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
    if (pd->count > 0) _table_resize(obj);
 }
 #include "elm_combobox.eo.c"

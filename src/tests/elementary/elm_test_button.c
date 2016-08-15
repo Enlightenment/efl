@@ -34,9 +34,9 @@ START_TEST (elm_atspi_interfaces_check)
 
    button = elm_button_add(win);
 
-   ck_assert(eo_isa(button, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN));
-   ck_assert(eo_isa(button, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN));
-   ck_assert(eo_isa(button, ELM_INTERFACE_ATSPI_ACTION_MIXIN));
+   ck_assert(efl_isa(button, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN));
+   ck_assert(efl_isa(button, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN));
+   ck_assert(efl_isa(button, ELM_INTERFACE_ATSPI_ACTION_MIXIN));
 
    elm_shutdown();
 }

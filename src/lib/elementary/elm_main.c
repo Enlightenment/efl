@@ -1516,7 +1516,7 @@ elm_object_focus_set(Evas_Object *obj,
         if (focus == elm_widget_focus_get(obj)) return;
 
         // ugly, but, special case for inlined windows
-        if (eo_isa(obj, EFL_UI_WIN_CLASS))
+        if (efl_isa(obj, EFL_UI_WIN_CLASS))
           {
              Evas_Object *inlined = elm_win_inlined_image_object_get(obj);
 

@@ -16,9 +16,9 @@ main(int argc, char *argv[])
 {
    (void) argc;
    (void) argv;
-   eo_init();
+   efl_object_init();
 
-   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, NULL);
 
    simple_a_set(obj, 1);
    simple_b_set(obj, 2);
@@ -32,22 +32,22 @@ main(int argc, char *argv[])
    sum = mixin_ab_sum_get(obj);
    sum = mixin_ab_sum_get(obj);
 
-   Mixin2_Public_Data *pd2 = eo_data_scope_get(obj, MIXIN2_CLASS);
+   Mixin2_Public_Data *pd2 = efl_data_scope_get(obj, MIXIN2_CLASS);
    fail_if(pd2->count != 6);
 
-   Mixin3_Public_Data *pd3 = eo_data_scope_get(obj, MIXIN3_CLASS);
+   Mixin3_Public_Data *pd3 = efl_data_scope_get(obj, MIXIN3_CLASS);
    fail_if(pd3->count != 9);
 
-   eo_unref(obj);
+   efl_unref(obj);
 
-   obj = eo_add(INHERIT_CLASS, NULL);
+   obj = efl_add(INHERIT_CLASS, NULL);
    simple_a_set(obj, 5);
    a = simple_a_get(obj);
    printf("%d\n", a);
    fail_if(a != 5);
 
-   eo_unref(obj);
-   eo_shutdown();
+   efl_unref(obj);
+   efl_object_shutdown();
    return 0;
 }
 

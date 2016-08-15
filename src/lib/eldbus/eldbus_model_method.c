@@ -19,7 +19,7 @@ static void _eldbus_model_method_call_cb(void *, const Eldbus_Message *, Eldbus_
 static Efl_Object*
 _eldbus_model_method_efl_object_constructor(Eo *obj, Eldbus_Model_Method_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->method = NULL;
@@ -35,7 +35,7 @@ _eldbus_model_method_constructor(Eo *obj EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN(proxy);
    EINA_SAFETY_ON_NULL_RETURN(method);
 
-   eldbus_model_arguments_constructor(eo_super(obj, MY_CLASS), proxy, method->name, method->arguments);
+   eldbus_model_arguments_constructor(efl_super(obj, MY_CLASS), proxy, method->name, method->arguments);
 
    pd->method = method;
 }
@@ -43,7 +43,7 @@ _eldbus_model_method_constructor(Eo *obj EINA_UNUSED,
 static void
 _eldbus_model_method_call(Eo *obj EINA_UNUSED, Eldbus_Model_Method_Data *pd EINA_UNUSED)
 {
-   Eldbus_Model_Arguments_Data *data = eo_data_scope_get(obj, ELDBUS_MODEL_ARGUMENTS_CLASS);
+   Eldbus_Model_Arguments_Data *data = efl_data_scope_get(obj, ELDBUS_MODEL_ARGUMENTS_CLASS);
    Eldbus_Message *msg = eldbus_proxy_method_call_new(data->proxy, data->name);
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(msg);
    const Eldbus_Introspection_Argument *argument;
@@ -92,7 +92,7 @@ static void
 _eldbus_model_method_call_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eldbus_Model_Method_Data *pd = (Eldbus_Model_Method_Data*)data;
-   Eldbus_Model_Arguments_Data *args_data = eo_data_scope_get(pd->obj, ELDBUS_MODEL_ARGUMENTS_CLASS);
+   Eldbus_Model_Arguments_Data *args_data = efl_data_scope_get(pd->obj, ELDBUS_MODEL_ARGUMENTS_CLASS);
 
    if (eldbus_model_arguments_process_arguments(args_data, msg, pending))
      efl_event_callback_call(pd->obj, ELDBUS_MODEL_METHOD_EVENT_SUCCESSFUL_CALL, NULL);

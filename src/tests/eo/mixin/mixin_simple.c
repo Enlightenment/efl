@@ -31,30 +31,30 @@ _##name##_set(Eo *obj EINA_UNUSED, void *class_data, int name) \
    pd->name = name; \
    printf("%s %d\n", __func__, pd->name); \
 } \
-EO_VOID_FUNC_BODYV(simple_##name##_set, EO_FUNC_CALL(name), int name); \
-EO_FUNC_BODY(simple_##name##_get, int, 0);
+EFL_VOID_FUNC_BODYV(simple_##name##_set, EFL_FUNC_CALL(name), int name); \
+EFL_FUNC_BODY(simple_##name##_get, int, 0);
 
 _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)
 
 static Efl_Op_Description op_descs[] = {
-     EO_OP_FUNC(simple_a_set, _a_set),
-     EO_OP_FUNC(simple_a_get, _a_get),
-     EO_OP_FUNC(simple_b_set, _b_set),
-     EO_OP_FUNC(simple_b_get, _b_get),
+     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
+     EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
+     EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
+     EFL_OBJECT_OP_FUNC(simple_b_get, _b_get),
 };
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(op_descs),
+     EFL_CLASS_TYPE_REGULAR,
+     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      sizeof(Private_Data),
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS,
+EFL_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS,
       MIXIN3_CLASS, MIXIN2_CLASS, NULL);
 

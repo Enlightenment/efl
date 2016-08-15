@@ -29,7 +29,7 @@ EOLIAN static ssize_t
 _ecore_audio_in_tone_ecore_audio_in_read_internal(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj, void *data, size_t len)
 {
   size_t i, remain;
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
+  Ecore_Audio_Input *in_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
 
   float *val = data;
 
@@ -50,7 +50,7 @@ EOLIAN static double
 _ecore_audio_in_tone_ecore_audio_in_seek(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj, double offs, int mode)
 {
   int tmp;
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
+  Ecore_Audio_Input *in_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
 
   switch (mode) {
     case SEEK_SET:
@@ -78,7 +78,7 @@ err:
 EOLIAN static void
 _ecore_audio_in_tone_ecore_audio_in_length_set(Eo *eo_obj, Ecore_Audio_In_Tone_Data *_pd EINA_UNUSED, double length)
 {
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
+  Ecore_Audio_Input *in_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
   in_obj->length = length;
 }
 
@@ -90,7 +90,7 @@ _ecore_audio_in_tone_efl_object_key_data_set(Eo *eo_obj, Ecore_Audio_In_Tone_Dat
   if (!strcmp(key, ECORE_AUDIO_ATTR_TONE_FREQ)) {
       obj->freq = *(int *)val;
   } else {
-      efl_key_data_set(eo_super(eo_obj, MY_CLASS), key, val);
+      efl_key_data_set(efl_super(eo_obj, MY_CLASS), key, val);
   }
 
 }
@@ -101,16 +101,16 @@ _ecore_audio_in_tone_efl_object_key_data_get(Eo *eo_obj, Ecore_Audio_In_Tone_Dat
   if (!strcmp(key, ECORE_AUDIO_ATTR_TONE_FREQ)) {
       return (void *) (intptr_t) obj->freq;
   } else {
-      return efl_key_data_get(eo_super(eo_obj, MY_CLASS), key);
+      return efl_key_data_get(efl_super(eo_obj, MY_CLASS), key);
   }
 }
 
 EOLIAN static Eo *
 _ecore_audio_in_tone_efl_object_constructor(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj)
 {
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
+  Ecore_Audio_Input *in_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
 
-  eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
+  eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
   in_obj->channels = 1;
   in_obj->samplerate = 44100;

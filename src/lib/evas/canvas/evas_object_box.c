@@ -39,7 +39,7 @@ static const Evas_Smart_Cb_Description _signals[] =
 static void _sizing_eval(Evas_Object *obj);
 
 #define EVAS_OBJECT_BOX_DATA_GET(o, ptr) \
-   Evas_Object_Box_Data *ptr = eo_data_scope_get(o, MY_CLASS)
+   Evas_Object_Box_Data *ptr = efl_data_scope_get(o, MY_CLASS)
 
 #define EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, ptr)                      \
    EVAS_OBJECT_BOX_DATA_GET(o, ptr);                                    \
@@ -161,7 +161,7 @@ _evas_object_box_option_new(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUS
    return opt;
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(evas_object_box_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(evas_object_box_callbacks,
   { EFL_GFX_EVENT_RESIZE, _on_child_resize },
   { EFL_EVENT_DEL, _on_child_del },
   { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
@@ -382,7 +382,7 @@ _evas_box_efl_canvas_group_group_add(Eo *eo_obj, Evas_Object_Box_Data *priv)
 {
    Evas_Object_Smart_Clipped_Data *cso;
 
-   efl_canvas_group_add(eo_super(eo_obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(eo_obj, MY_CLASS));
    
    evas_object_event_callback_add
      (eo_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_hints_changed, eo_obj);
@@ -397,7 +397,7 @@ _evas_box_efl_canvas_group_group_add(Eo *eo_obj, Evas_Object_Box_Data *priv)
 
    // make sure evas box smart data is fully initialized and set (for legacy)
    // this assumes only box and smart clipped access the smart data
-   cso = eo_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
+   cso = efl_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
    priv->base = *cso;
    evas_object_smart_data_set(eo_obj, priv);
 }
@@ -420,7 +420,7 @@ _evas_box_efl_canvas_group_group_del(Eo *o, Evas_Object_Box_Data *priv)
    if (priv->layout.data && priv->layout.free_data)
      priv->layout.free_data(priv->layout.data);
 
-   efl_canvas_group_del(eo_super(o, MY_CLASS));
+   efl_canvas_group_del(efl_super(o, MY_CLASS));
 }
 
 EOLIAN static void
@@ -459,14 +459,14 @@ evas_object_box_add(Evas *evas)
    MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *obj = eo_add(MY_CLASS, evas);
+   Evas_Object *obj = efl_add(MY_CLASS, evas);
    return obj;
 }
 
 EOLIAN static Eo *
 _evas_box_efl_object_constructor(Eo *obj, Evas_Object_Box_Data *class_data EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 

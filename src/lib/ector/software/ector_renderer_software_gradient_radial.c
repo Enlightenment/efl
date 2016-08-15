@@ -16,8 +16,8 @@ _ector_renderer_software_gradient_radial_ector_renderer_prepare(Eo *obj, Ector_R
      {
         Ector_Renderer_Data *base;
 
-        base = eo_data_scope_get(obj, ECTOR_RENDERER_CLASS);
-        pd->surface = eo_data_xref(base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
+        base = efl_data_scope_get(obj, ECTOR_RENDERER_CLASS);
+        pd->surface = efl_data_xref(base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
      }
 
    update_color_table(pd);
@@ -76,9 +76,9 @@ Eo *
 _ector_renderer_software_gradient_radial_efl_object_constructor(Eo *obj,
                                                              Ector_Renderer_Software_Gradient_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS));
-   pd->gd  = eo_data_xref(obj, ECTOR_RENDERER_GRADIENT_MIXIN, obj);
-   pd->gld = eo_data_xref(obj, ECTOR_RENDERER_GRADIENT_RADIAL_MIXIN, obj);
+   obj = efl_constructor(efl_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS));
+   pd->gd  = efl_data_xref(obj, ECTOR_RENDERER_GRADIENT_MIXIN, obj);
+   pd->gld = efl_data_xref(obj, ECTOR_RENDERER_GRADIENT_RADIAL_MIXIN, obj);
 
    return obj;
 }
@@ -91,19 +91,19 @@ _ector_renderer_software_gradient_radial_efl_object_destructor(Eo *obj,
 
    destroy_color_table(pd);
 
-   base = eo_data_scope_get(obj, ECTOR_RENDERER_CLASS);
-   eo_data_xunref(base->surface, pd->surface, obj);
+   base = efl_data_scope_get(obj, ECTOR_RENDERER_CLASS);
+   efl_data_xunref(base->surface, pd->surface, obj);
 
-   eo_data_xunref(obj, pd->gd, obj);
-   eo_data_xunref(obj, pd->gld, obj);
+   efl_data_xunref(obj, pd->gd, obj);
+   efl_data_xunref(obj, pd->gld, obj);
 
-   efl_destructor(eo_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS));
+   efl_destructor(efl_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS));
 }
 
 void
 _ector_renderer_software_gradient_radial_efl_gfx_gradient_stop_set(Eo *obj, Ector_Renderer_Software_Gradient_Data *pd, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
 {
-   efl_gfx_gradient_stop_set(eo_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS), colors, length);
+   efl_gfx_gradient_stop_set(efl_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS), colors, length);
 
    destroy_color_table(pd);
 }
@@ -113,7 +113,7 @@ _ector_renderer_software_gradient_radial_ector_renderer_crc_get(Eo *obj, Ector_R
 {
    unsigned int crc;
 
-   crc = ector_renderer_crc_get(eo_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS));
+   crc = ector_renderer_crc_get(efl_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS));
 
    crc = eina_crc((void*) pd->gd->s, sizeof (Efl_Gfx_Gradient_Spread), crc, EINA_FALSE);
    if (pd->gd->colors_count)

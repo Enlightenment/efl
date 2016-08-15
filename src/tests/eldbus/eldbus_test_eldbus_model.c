@@ -168,7 +168,7 @@ check_property(Eo *object, const char *property_name, const char *expected_value
 Eo *
 create_connection(void)
 {
-   Eo *connection = eo_add_ref(ELDBUS_MODEL_CONNECTION_CLASS, NULL, eldbus_model_connection_constructor(eo_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE));
+   Eo *connection = efl_add_ref(ELDBUS_MODEL_CONNECTION_CLASS, NULL, eldbus_model_connection_constructor(efl_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE));
    ck_assert_ptr_ne(NULL, connection);
    return connection;
 }
@@ -176,7 +176,7 @@ create_connection(void)
 Eo *
 create_object(void)
 {
-   Eo *object = eo_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eo_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, ELDBUS_FDO_BUS, ELDBUS_FDO_PATH));
+   Eo *object = efl_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(efl_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, ELDBUS_FDO_BUS, ELDBUS_FDO_PATH));
    ck_assert_ptr_ne(NULL, object);
    return object;
 }
@@ -274,7 +274,7 @@ START_TEST(smoke)
    check_init();
 
    Eo *connection = create_connection();
-   eo_unref(connection);
+   efl_unref(connection);
 
    check_shutdown();
 }
@@ -286,7 +286,7 @@ START_TEST(object)
 
    Eo *root = create_object();
 
-   eo_unref(root);
+   efl_unref(root);
 
    check_shutdown();
 }
@@ -316,7 +316,7 @@ START_TEST(proxy)
      }
    eina_promise_unref(promise);
 
-   eo_unref(root);
+   efl_unref(root);
 
    check_shutdown();
 }
@@ -373,7 +373,7 @@ _eldbus_model_arguments_from_proxy_get(Eldbus_Model_Proxy *proxy, const char *me
    unsigned int i;
    EINA_ACCESSOR_FOREACH(accessor, i, child)
      {
-        if (!eo_isa(child, klass))
+        if (!efl_isa(child, klass))
           continue;
 
         const char *name;

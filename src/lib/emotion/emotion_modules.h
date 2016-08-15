@@ -91,7 +91,7 @@ struct _Emotion_Engine
    int            (*seekable) (void *ef);
    void           (*frame_done) (void *ef);
    Emotion_Format (*format_get) (void *ef);
-   void           (*video_data_size_get) (void *ef, int *w, int *h);
+   void           (*videfl_data_size_get) (void *ef, int *w, int *h);
    int            (*yuv_rows_get) (void *ef, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows);
    int            (*bgra_data_get) (void *ef, unsigned char **bgra_data);
    void           (*event_feed) (void *ef, int event);

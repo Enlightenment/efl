@@ -11,22 +11,22 @@
 
 START_TEST(eo_value)
 {
-   eo_init();
+   efl_object_init();
    char *str, *str2;
 
    Eina_Value val2, eo_val;
    void *tmpp = NULL;
    Efl_Dbg_Info *eo_dbg_info;
-   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, NULL);
 
-   eo_dbg_info = EO_DBG_INFO_LIST_APPEND(NULL, "Root");
+   eo_dbg_info = EFL_DBG_INFO_LIST_APPEND(NULL, "Root");
    efl_dbg_info_get(obj, eo_dbg_info);
    fail_if(!eo_dbg_info);
    ck_assert_str_eq(eo_dbg_info->name, "Root");
    str = eina_value_to_string(&eo_dbg_info->value);
    ck_assert_str_eq(str, "[[8]]");
 
-   eina_value_setup(&val2, EO_DBG_INFO_TYPE);
+   eina_value_setup(&val2, EFL_DBG_INFO_TYPE);
    eina_value_copy(&eo_dbg_info->value, &val2);
    str2 = eina_value_to_string(&val2);
    ck_assert_str_eq(str, str2);
@@ -42,10 +42,10 @@ START_TEST(eo_value)
 
    free(str);
    free(str2);
-   eo_dbg_info_free(eo_dbg_info);
-   eo_unref(obj);
+   efl_dbg_info_free(eo_dbg_info);
+   efl_unref(obj);
 
-   eo_shutdown();
+   efl_object_shutdown();
 }
 END_TEST
 

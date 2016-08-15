@@ -60,7 +60,7 @@ _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event
    Eina_Bool ret = EINA_FALSE;
 
    target_node = (Evas_Canvas3D_Node *)event->info;
-   pd_target = eo_data_scope_get(target_node, EVAS_CANVAS3D_NODE_CLASS);
+   pd_target = efl_data_scope_get(target_node, EVAS_CANVAS3D_NODE_CLASS);
    collision_list = (Eina_List *)data;
    eo_desc = efl_object_legacy_only_event_description_get("collision");
 
@@ -68,7 +68,7 @@ _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event
      {
         EINA_LIST_FOREACH(collision_list, l, n)
           {
-             pd = eo_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
+             pd = efl_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
              if (box_intersection_box(&pd_target->aabb, &pd->aabb))
                ret = efl_event_callback_call(target_node, eo_desc, n);
           }
@@ -184,7 +184,7 @@ _evas_canvas3d_node_evas_canvas3d_object_change_notify(Eo *obj, Evas_Canvas3D_No
      EINA_LIST_FOREACH(pd->members, l, n)
        {
           /*Skip change orientation if node is billboard*/
-          Evas_Canvas3D_Node_Data *pdm = eo_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
+          Evas_Canvas3D_Node_Data *pdm = efl_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
           if (pdm->billboard_target)
             continue;
           evas_canvas3d_object_change(n, EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION, obj);
@@ -224,7 +224,7 @@ _evas_canvas3d_node_evas_canvas3d_object_callback_unregister(Eo *obj, Evas_Canva
 static Eina_Bool
 _node_transform_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 {
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, MY_CLASS);
    Eina_Bool transform_dirty = EINA_FALSE, parent_dirty = EINA_FALSE;
 
    transform_dirty = evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION);
@@ -238,7 +238,7 @@ _node_transform_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
      {
         if (pd->parent)
           {
-             Evas_Canvas3D_Node_Data *pdparent = eo_data_scope_get(pd->parent, MY_CLASS);
+             Evas_Canvas3D_Node_Data *pdparent = efl_data_scope_get(pd->parent, MY_CLASS);
              const Eina_Vector3 *scale_parent = &pdparent->scale_world;
              const Eina_Quaternion *orientation_parent = &pdparent->orientation_world;
 
@@ -315,10 +315,10 @@ _node_billboard_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 {
    Eina_Vector3   target;
    Eina_Vector3   up;
-   Evas_Canvas3D_Node_Data *pd_node = eo_data_scope_get(node, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd_node = efl_data_scope_get(node, MY_CLASS);
    if (pd_node->billboard_target)
      {
-        Evas_Canvas3D_Node_Data *pd_target = eo_data_scope_get(pd_node->billboard_target,
+        Evas_Canvas3D_Node_Data *pd_target = efl_data_scope_get(pd_node->billboard_target,
                                                        MY_CLASS);
         eina_vector3_set(&target, pd_target->position.x, pd_target->position.y,
                       pd_target->position.z);
@@ -353,7 +353,7 @@ _node_billboard_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 static Eina_Bool
 _node_item_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 {
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
    if (pd->type == EVAS_CANVAS3D_NODE_TYPE_CAMERA)
      {
         if (pd->data.camera.camera)
@@ -446,7 +446,7 @@ _update_node_shapes(Evas_Canvas3D_Node *node)
    int i;
    int count;
    Eina_Vector3 *vertices = NULL;
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
    Eina_Bool transform_orientation_dirty;
    Eina_Bool transform_position_dirty;
    Eina_Bool transform_scale_dirty;
@@ -497,7 +497,7 @@ _update_node_shapes(Evas_Canvas3D_Node *node)
 Eina_Bool
 node_aabb_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 {
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
    Eina_List *current;
    Evas_Canvas3D_Node *datanode;
    const Efl_Event_Description *eo_desc = NULL;
@@ -507,7 +507,7 @@ node_aabb_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
    _update_node_shapes(node);
    EINA_LIST_FOREACH(pd->members, current, datanode)
      {
-        Evas_Canvas3D_Node_Data *datapd = eo_data_scope_get(datanode, EVAS_CANVAS3D_NODE_CLASS);
+        Evas_Canvas3D_Node_Data *datapd = efl_data_scope_get(datanode, EVAS_CANVAS3D_NODE_CLASS);
         evas_box3_union(&pd->obb, &pd->obb, &datapd->obb);
         evas_box3_union(&pd->aabb, &pd->aabb, &datapd->aabb);
      }
@@ -523,7 +523,7 @@ static Eina_Bool
 _node_update_done(Evas_Canvas3D_Node *obj, void *data EINA_UNUSED)
 {
    //@FIXME
-   Evas_Canvas3D_Object_Data *pdobject = eo_data_scope_get(obj, EVAS_CANVAS3D_OBJECT_CLASS);
+   Evas_Canvas3D_Object_Data *pdobject = efl_data_scope_get(obj, EVAS_CANVAS3D_OBJECT_CLASS);
    memset(&pdobject->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_CANVAS3D_STATE_MAX);
    return EINA_TRUE;
 }
@@ -556,7 +556,7 @@ _evas_canvas3d_node_evas_canvas3d_object_update_notify(Eo *obj, Evas_Canvas3D_No
 static void
 _node_free(Evas_Canvas3D_Object *obj)
 {
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(obj, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
    if (pd->members)
      {
@@ -565,7 +565,7 @@ _node_free(Evas_Canvas3D_Object *obj)
 
         EINA_LIST_FOREACH(pd->members, l, n)
           {
-             eo_unref(n);
+             efl_unref(n);
           }
 
         eina_list_free(pd->members);
@@ -583,7 +583,7 @@ _node_free(Evas_Canvas3D_Object *obj)
 
         EINA_LIST_FOREACH(pd->data.mesh.meshes, l, m)
           {
-             eo_unref(m);
+             efl_unref(m);
           }
 
         eina_list_free(pd->data.mesh.meshes);
@@ -603,7 +603,7 @@ void
 evas_canvas3d_node_scene_root_add(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene)
 {
    int count = 0;
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, MY_CLASS);
    if (pd->scenes_root == NULL)
      {
         pd->scenes_root = eina_hash_pointer_new(NULL);
@@ -624,7 +624,7 @@ void
 evas_canvas3d_node_scene_root_del(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene)
 {
    int count = 0;
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, MY_CLASS);
    if (pd->scenes_root == NULL)
      {
         ERR("No scene to delete.");
@@ -649,7 +649,7 @@ void
 evas_canvas3d_node_scene_camera_add(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene)
 {
    int count = 0;
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, MY_CLASS);
    if (pd->scenes_camera == NULL)
      {
         pd->scenes_camera = eina_hash_pointer_new(NULL);
@@ -670,7 +670,7 @@ void
 evas_canvas3d_node_scene_camera_del(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene)
 {
    int count = 0;
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, MY_CLASS);
    if (pd->scenes_camera == NULL)
      {
         ERR("No scene to delete.");
@@ -707,7 +707,7 @@ evas_canvas3d_node_traverse(Evas_Canvas3D_Node *from, Evas_Canvas3D_Node *to, Ev
 
              if (node == from)
                break;
-             Evas_Canvas3D_Node_Data *pdnode = eo_data_scope_get(node, MY_CLASS);
+             Evas_Canvas3D_Node_Data *pdnode = efl_data_scope_get(node, MY_CLASS);
              node = pdnode->parent;
 
              if (node == NULL)
@@ -723,7 +723,7 @@ evas_canvas3d_node_traverse(Evas_Canvas3D_Node *from, Evas_Canvas3D_Node *to, Ev
 
              if (node == to)
                break;
-             Evas_Canvas3D_Node_Data *pdnode = eo_data_scope_get(node, MY_CLASS);
+             Evas_Canvas3D_Node_Data *pdnode = efl_data_scope_get(node, MY_CLASS);
              node = pdnode->parent;
 
              if (node == NULL)
@@ -771,7 +771,7 @@ evas_canvas3d_node_tree_traverse(Evas_Canvas3D_Node *root, Evas_Canvas3D_Tree_Tr
           {
              /* Dequeue a node. */
              node = eina_list_data_get(nodes);
-             Evas_Canvas3D_Node_Data *pdnode = eo_data_scope_get(node, MY_CLASS);
+             Evas_Canvas3D_Node_Data *pdnode = efl_data_scope_get(node, MY_CLASS);
 
              nodes = eina_list_remove_list(nodes, nodes);
 
@@ -795,7 +795,7 @@ evas_canvas3d_node_tree_traverse(Evas_Canvas3D_Node *root, Evas_Canvas3D_Tree_Tr
           {
              /* Pop a node from the stack. */
              node = eina_list_data_get(nodes);
-             Evas_Canvas3D_Node_Data *pdnode = eo_data_scope_get(node, MY_CLASS);
+             Evas_Canvas3D_Node_Data *pdnode = efl_data_scope_get(node, MY_CLASS);
              nodes = eina_list_remove_list(nodes, nodes);
 
              /* Call node function on the node. */
@@ -825,7 +825,7 @@ evas_canvas3d_node_tree_traverse(Evas_Canvas3D_Node *root, Evas_Canvas3D_Tree_Tr
           {
              /* Peek a node from the stack. */
              node = eina_list_data_get(nodes);
-             Evas_Canvas3D_Node_Data *pdnode = eo_data_scope_get(node, MY_CLASS);
+             Evas_Canvas3D_Node_Data *pdnode = efl_data_scope_get(node, MY_CLASS);
              if (eina_list_count(pdnode->members) == 0)
                {
                   /* The peeked node is a leaf node,
@@ -852,7 +852,7 @@ evas_canvas3d_node_tree_traverse(Evas_Canvas3D_Node *root, Evas_Canvas3D_Tree_Tr
                    * its childs into the stack. */
                    Evas_Canvas3D_Node_Data *pdlast;
                    if (last )
-                     pdlast= eo_data_scope_get(last, MY_CLASS);
+                     pdlast= efl_data_scope_get(last, MY_CLASS);
                   if (last && pdlast->parent == node)
                     {
                        /* Visit the node as it doesn't have any unvisited child node. */
@@ -893,7 +893,7 @@ evas_canvas3d_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
    Evas_Canvas3D_Mesh_Data *mesh_pd;
    Evas_Canvas3D_Mesh_Frame *f;
    Evas_Canvas3D_Scene_Public_Data *scene_data = (Evas_Canvas3D_Scene_Public_Data *)data;
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, MY_CLASS);
    unsigned short int *index;
    int stride, tex_stride, normal_stride;
 
@@ -903,14 +903,14 @@ evas_canvas3d_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
         /*In case LOD calculate distance to the camera node*/
         if (pd->lod)
           {
-              Evas_Canvas3D_Node_Data *pd_camera = eo_data_scope_get(scene_data->camera_node, MY_CLASS);
+              Evas_Canvas3D_Node_Data *pd_camera = efl_data_scope_get(scene_data->camera_node, MY_CLASS);
               scene_data->lod_distance = eina_vector3_distance_get(&pd_camera->position, &pd->position_world);
           }
         /* calculation of tangent space for all meshes */
         list_meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(node);
         EINA_LIST_FOREACH(list_meshes, l, mesh)
           {
-             mesh_pd = eo_data_scope_get(mesh, MY_CLASS);
+             mesh_pd = efl_data_scope_get(mesh, MY_CLASS);
              f = evas_canvas3d_mesh_frame_find(mesh_pd, 0);
              if (!f)
                {
@@ -964,8 +964,8 @@ Eina_Bool
 evas_canvas3d_node_color_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
 {
    Evas_Canvas3D_Scene_Public_Data *scene_data = (Evas_Canvas3D_Scene_Public_Data *)data;
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
-   Evas_Canvas3D_Node_Data *pd_camera = eo_data_scope_get(scene_data->camera_node, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd_camera = efl_data_scope_get(scene_data->camera_node, MY_CLASS);
    Evas_Canvas3D_Camera *camera = (Evas_Canvas3D_Camera*)pd_camera->data.camera.camera;
 
    Eina_List *list_meshes, *l;
@@ -1012,7 +1012,7 @@ Eina_Bool
 evas_canvas3d_node_light_collect(Evas_Canvas3D_Node *node, void *data)
 {
    Evas_Canvas3D_Scene_Public_Data *scene_data = (Evas_Canvas3D_Scene_Public_Data *)data;
-   Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pd = efl_data_scope_get(node, MY_CLASS);
    if (pd->type == EVAS_CANVAS3D_NODE_TYPE_LIGHT)
      scene_data->light_nodes = eina_list_append(scene_data->light_nodes, node);
 
@@ -1025,7 +1025,7 @@ evas_canvas3d_node_add(Evas *e, Evas_Canvas3D_Node_Type type)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e, evas_canvas3d_node_constructor(eo_self, type));
+   Evas_Object *eo_obj = efl_add(MY_CLASS, e, evas_canvas3d_node_constructor(efl_self, type));
    return eo_obj;
 }
 
@@ -1069,7 +1069,7 @@ _evas_canvas3d_node_efl_object_destructor(Eo *obj, Evas_Canvas3D_Node_Data *pd E
 {
    _node_free(obj);
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Evas_Canvas3D_Node_Type
@@ -1086,14 +1086,14 @@ _evas_canvas3d_node_member_add(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
         ERR("Failed to add a member node (adding to itself).");
         return;
      }
-   Evas_Canvas3D_Node_Data *pdmember = eo_data_scope_get(member, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pdmember = efl_data_scope_get(member, MY_CLASS);
    if (!pdmember || pdmember->parent == obj)
      return;
 
    if (pdmember->parent)
      {
         /* Detaching from previous parent. */
-         Evas_Canvas3D_Node_Data *pdmemberparent = eo_data_scope_get(pdmember->parent, MY_CLASS);
+         Evas_Canvas3D_Node_Data *pdmemberparent = efl_data_scope_get(pdmember->parent, MY_CLASS);
         pdmemberparent->members = eina_list_remove(pdmemberparent->members, member);
 
         /* Mark changed. */
@@ -1102,7 +1102,7 @@ _evas_canvas3d_node_member_add(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
    else
      {
         /* Should get a new reference. */
-        eo_ref(member);
+        efl_ref(member);
      }
 
    /* Add the member node. */
@@ -1119,7 +1119,7 @@ _evas_canvas3d_node_member_add(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
 EOLIAN static void
 _evas_canvas3d_node_member_del(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Node *member)
 {
-   Evas_Canvas3D_Node_Data *pdmember = eo_data_scope_get(member, MY_CLASS);
+   Evas_Canvas3D_Node_Data *pdmember = efl_data_scope_get(member, MY_CLASS);
    if (!pdmember || pdmember->parent != obj)
      {
         ERR("Failed to delete a member node (not a member of the given node)");
@@ -1137,7 +1137,7 @@ _evas_canvas3d_node_member_del(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
    evas_canvas3d_object_change(member, EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE, NULL);
 
    /* Decrease reference count. */
-   eo_unref(member);
+   efl_unref(member);
 }
 
 EOLIAN static Evas_Canvas3D_Node *
@@ -1456,11 +1456,11 @@ _evas_canvas3d_node_camera_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
      {
         /* Detach previous camera object. */
         evas_canvas3d_camera_node_del(pd->data.camera.camera, obj);
-        eo_unref(pd->data.camera.camera);
+        efl_unref(pd->data.camera.camera);
      }
 
    pd->data.camera.camera = camera;
-   eo_ref(camera);
+   efl_ref(camera);
 
    /* Register change notification on the camera for this node. */
    evas_canvas3d_camera_node_add(camera, obj);
@@ -1491,11 +1491,11 @@ _evas_canvas3d_node_light_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3
      {
         /* Detach previous light object. */
         evas_canvas3d_light_node_del(pd->data.light.light, obj);
-        eo_unref(pd->data.light.light);
+        efl_unref(pd->data.light.light);
      }
 
    pd->data.light.light = light;
-   eo_ref(light);
+   efl_ref(light);
 
    /* Register change notification on the light for this node. */
    evas_canvas3d_light_node_add(light, obj);
@@ -1542,7 +1542,7 @@ _evas_canvas3d_node_mesh_add(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D
      }
 
    pd->data.mesh.meshes = eina_list_append(pd->data.mesh.meshes, mesh);
-   eo_ref(mesh);
+   efl_ref(mesh);
 
    /* Register change notification. */
    evas_canvas3d_mesh_node_add(mesh, obj);
@@ -1569,7 +1569,7 @@ _evas_canvas3d_node_mesh_del(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D
 
    pd->data.mesh.meshes = eina_list_remove(pd->data.mesh.meshes, mesh);
    evas_canvas3d_mesh_node_del(mesh, obj);
-   eo_unref(mesh);
+   efl_unref(mesh);
 
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY, NULL);
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_MESH_MATERIAL, NULL);

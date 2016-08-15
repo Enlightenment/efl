@@ -47,7 +47,7 @@ elm_code_widget_selection_start(Evas_Object *widget,
    Elm_Code_Widget_Data *pd;
    Elm_Code_Widget_Selection_Data *selection;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    _elm_code_widget_selection_limit(widget, pd, &line, &col);
    if (!pd->selection)
@@ -73,7 +73,7 @@ elm_code_widget_selection_end(Evas_Object *widget,
    Elm_Code_Widget_Data *pd;
    Elm_Code_Widget_Selection_Data *selection;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    _elm_code_widget_selection_limit(widget, pd, &line, &col);
    if (!pd->selection)
@@ -98,7 +98,7 @@ elm_code_widget_selection_normalized_get(Evas_Object *widget)
    Elm_Code_Widget_Selection_Data *selection;
    Eina_Bool reverse;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    selection = _elm_code_widget_selection_new();
 
    if (!pd->selection)
@@ -137,7 +137,7 @@ elm_code_widget_selection_clear(Evas_Object *widget)
 {
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (!pd->selection)
      return;
@@ -234,7 +234,7 @@ elm_code_widget_selection_delete(Evas_Object *widget)
 {
    Elm_Code_Widget_Data *pd;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (!pd->selection)
      return;
@@ -255,7 +255,7 @@ elm_code_widget_selection_select_line(Evas_Object *widget, unsigned int line)
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *lineobj;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    lineobj = elm_code_file_line_get(pd->code->file, line);
 
    if (!lineobj)
@@ -289,7 +289,7 @@ elm_code_widget_selection_select_word(Evas_Object *widget, unsigned int line, un
    unsigned int colpos, length, pos;
    const char *content;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    lineobj = elm_code_file_line_get(pd->code->file, line);
    content = elm_code_line_text_get(lineobj, &length);
 
@@ -324,7 +324,7 @@ elm_code_widget_selection_text_get(Evas_Object *widget)
    Elm_Code_Widget_Selection_Data *selection;
    char *text;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (!pd->selection)
      return strdup("");

@@ -56,9 +56,9 @@ main(int argc, const char *argv[])
 
    ecore_app_args_set(argc, argv);
 
-   out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+   out = efl_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
 
-   in = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
+   in = efl_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
    if (!in)
      {
         printf("error when creating ecore audio source.\n");

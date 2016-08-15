@@ -23,7 +23,7 @@ EOLIAN static Efl_Object *
 _constructor_method_class_efl_object_constructor(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd)
 {
   pd->fail = EINA_FALSE;
-  return efl_constructor(eo_super(obj, MY_CLASS));
+  return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -50,7 +50,7 @@ _constructor_method_class_efl_object_finalize(Eo *obj, Constructor_Method_Class_
   if (pd->fail)
     return NULL;
 
-  return efl_finalize(eo_super(obj, MY_CLASS));
+  return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Bool
@@ -132,7 +132,7 @@ _constructor_method_class_classoutmethod1(Eo* obj EINA_UNUSED, Constructor_Metho
 {
   fprintf(stderr, "classoutmethod1\n");
   fflush(stderr);
-  return eo_add(MY_CLASS, NULL, constructor_method_class_constructor1(eo_self, one), constructor_method_class_constructor2(eo_self, two));
+  return efl_add(MY_CLASS, NULL, constructor_method_class_constructor1(efl_self, one), constructor_method_class_constructor2(efl_self, two));
 }
 
 EOLIAN static void
@@ -140,7 +140,7 @@ _constructor_method_class_classoutmethod2(Eo* obj EINA_UNUSED, Constructor_Metho
 {
   fprintf(stderr, "classoutmethod2\n");
   fflush(stderr);
-  *out_class = eo_add(MY_CLASS, NULL, constructor_method_class_constructor1(eo_self, one), constructor_method_class_constructor2(eo_self, two));
+  *out_class = efl_add(MY_CLASS, NULL, constructor_method_class_constructor1(efl_self, one), constructor_method_class_constructor2(efl_self, two));
 }
 
 

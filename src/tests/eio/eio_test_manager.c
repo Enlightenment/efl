@@ -113,7 +113,7 @@ _do_ls_test(Efl_Io_Manager_Test_Stat_Ls_Func ls_func,
 {
    int main_files = 0;
 
-   Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
+   Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, NULL);
    Eina_Promise *promise = NULL;
 
    efl_event_callback_add(job, event, filter_cb, NULL);
@@ -126,7 +126,7 @@ _do_ls_test(Efl_Io_Manager_Test_Stat_Ls_Func ls_func,
 
    fail_if(main_files != DONE_CALLED);
 
-   eo_unref(job);
+   efl_unref(job);
 }
 
 static void
@@ -160,7 +160,7 @@ START_TEST(efl_io_manager_test_file_direct_stat)
    Eina_Tmpstr *nested_dirname = create_test_dirs(test_dirname);
    Eina_Tmpstr *nested_filename = get_full_path(test_dirname, files[3]);
 
-   Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
+   Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, NULL);
    Eina_Promise *promise = NULL;
    // Start testing
    is_dir = EINA_TRUE;
@@ -173,7 +173,7 @@ START_TEST(efl_io_manager_test_file_direct_stat)
    promise = efl_io_manager_file_direct_stat(job, nested_filename);
    eina_promise_then(promise, &_stat_done_cb, &_error_cb, &is_dir);
    ecore_main_loop_begin();
-   eo_unref(job);
+   efl_unref(job);
 
    // Cleanup
    fail_if(!ecore_file_recursive_rm(test_dirname));
@@ -254,13 +254,13 @@ START_TEST(efl_io_manager_test_open)
    Eina_Tmpstr *nested_filename = get_full_path(test_dirname, files[3]);
 
    opened_file = EINA_FALSE;
-   Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
+   Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, NULL);
    Eina_Promise *promise = NULL;
 
    promise = efl_io_manager_file_open(job, nested_filename, EINA_FALSE);
    eina_promise_then(promise, &_open_done_cb, &_error_cb, &opened_file);
    ecore_main_loop_begin();
-   eo_unref(job);
+   efl_unref(job);
    fail_if(!opened_file);
 
    // Cleanup
@@ -289,7 +289,7 @@ START_TEST(efl_io_instantiated)
 
    manager = efl_provider_find(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS);
    fail_if(manager == NULL);
-   fail_if(!eo_isa(manager, EFL_IO_MANAGER_CLASS));
+   fail_if(!efl_isa(manager, EFL_IO_MANAGER_CLASS));
 
    eio_shutdown();
 

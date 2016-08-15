@@ -25,7 +25,7 @@
  */
 
 #define ELM_TABLE_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_TABLE_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_TABLE_CLASS))) \
     return
 
 #endif

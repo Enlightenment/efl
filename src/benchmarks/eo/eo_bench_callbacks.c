@@ -16,14 +16,14 @@ static void
 bench_eo_callbacks_add(int request)
 {
    int i;
-   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, NULL);
 
    for (i = 0 ; i < request ; i++)
      {
         efl_event_callback_priority_add(obj, SIMPLE_FOO, (short) i, _cb, NULL);
      }
 
-   eo_unref(obj);
+   efl_unref(obj);
 }
 
 static void
@@ -52,7 +52,7 @@ bench_eo_callbacks_call(int request)
    Eo *obj[len];
    for (i = 0 ; i < len ; i++)
      {
-        obj[i] = eo_add(SIMPLE_CLASS, NULL);
+        obj[i] = efl_add(SIMPLE_CLASS, NULL);
 
         for (j = 0 ; j < i ; j++)
           {
@@ -71,7 +71,7 @@ bench_eo_callbacks_call(int request)
 
    for (i = 0 ; i < len ; i++)
      {
-        eo_unref(obj[i]);
+        efl_unref(obj[i]);
      }
 }
 

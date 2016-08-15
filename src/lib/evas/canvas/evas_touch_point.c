@@ -4,7 +4,7 @@
 void
 _evas_touch_point_append(Evas *eo_e, int id, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Coord_Touch_Point *point;
 
    /* create new Evas_Coord_Touch_Point */
@@ -19,7 +19,7 @@ _evas_touch_point_append(Evas *eo_e, int id, Evas_Coord x, Evas_Coord y)
 void
 _evas_touch_point_update(Evas *eo_e, int id, Evas_Coord x, Evas_Coord y, Evas_Touch_Point_State state)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Eina_List *l;
    Evas_Coord_Touch_Point *point = NULL;
 
@@ -38,7 +38,7 @@ _evas_touch_point_update(Evas *eo_e, int id, Evas_Coord x, Evas_Coord y, Evas_To
 void
 _evas_touch_point_remove(Evas *eo_e, int id)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Eina_List *l;
    Evas_Coord_Touch_Point *point = NULL;
 

@@ -15,29 +15,29 @@ _singleton_efl_constructor(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    if (!singleton_obj)
      {
-        singleton_obj = eo_add(SIMPLE_CLASS, NULL);
+        singleton_obj = efl_add(SIMPLE_CLASS, NULL);
      }
    else
      {
-        eo_ref(singleton_obj);
+        efl_ref(singleton_obj);
      }
 
    return singleton_obj;
 }
 
 static Efl_Op_Description op_descs[] = {
-     EO_OP_FUNC_OVERRIDE(efl_constructor, _singleton_efl_constructor),
+     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _singleton_efl_constructor),
 };
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Singleton",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(op_descs),
+     EFL_CLASS_TYPE_REGULAR,
+     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(singleton_class_get, &class_desc, EO_CLASS, NULL)
+EFL_DEFINE_CLASS(singleton_class_get, &class_desc, EO_CLASS, NULL)

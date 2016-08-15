@@ -98,7 +98,7 @@ EOLIAN static ssize_t
 _ecore_audio_in_read(Eo *eo_obj, Ecore_Audio_Input *obj, void *buf, size_t len)
 {
   ssize_t len_read = 0;
-  const Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
+  const Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (ea_obj->paused) {
     memset(buf, 0, len);
@@ -124,7 +124,7 @@ EOLIAN static ssize_t
 _ecore_audio_in_read_internal(Eo *eo_obj, Ecore_Audio_Input *_pd EINA_UNUSED, void *buf, size_t len)
 {
   ssize_t len_read = 0;
-  const Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
+  const Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (ea_obj->vio && ea_obj->vio->vio->read) {
       len_read = ea_obj->vio->vio->read(ea_obj->vio->data, eo_obj, buf, len);
@@ -151,7 +151,7 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
 EOLIAN static void
 _ecore_audio_in_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Input *obj, Ecore_Audio_Vio *vio, void *data, efl_key_data_free_func free_func)
 {
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
+  Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (ea_obj->vio)
     _free_vio(ea_obj);
@@ -173,7 +173,7 @@ _ecore_audio_in_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Input *obj, Ecore_Au
 EOLIAN static Eo *
 _ecore_audio_in_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Input *obj)
 {
-  eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
+  eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
   obj->speed = 1.0;
 
@@ -186,7 +186,7 @@ _ecore_audio_in_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Input *obj)
   if(obj->output)
     ecore_audio_obj_out_input_detach(obj->output, eo_obj);
 
-  efl_destructor(eo_super(eo_obj, MY_CLASS));
+  efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
 #include "ecore_audio_in.eo.c"

@@ -24,22 +24,22 @@
 #define E_SMART_OBJ_GET(smart, o, type) \
      { \
         if (!o) return; \
-        if (!eo_isa(o, MY_CLASS)) { \
+        if (!efl_isa(o, MY_CLASS)) { \
              ERR("Tried calling on a non-emotion object."); \
              return; \
         } \
-        smart = eo_data_scope_get(o, MY_CLASS); \
+        smart = efl_data_scope_get(o, MY_CLASS); \
         if (!smart) return; \
      }
 
 #define E_SMART_OBJ_GET_RETURN(smart, o, type, ret) \
    { \
       if (!o) return ret; \
-      if (!eo_isa(o, MY_CLASS)) { \
+      if (!efl_isa(o, MY_CLASS)) { \
            ERR("Tried calling on a non-emotion object."); \
            return ret; \
       } \
-      smart = eo_data_scope_get(o, MY_CLASS); \
+      smart = efl_data_scope_get(o, MY_CLASS); \
       if (!smart) return ret; \
    }
 
@@ -238,14 +238,14 @@ EAPI Evas_Object *
 emotion_object_add(Evas *evas)
 {
    Evas_Object *e;
-   e = eo_add(MY_CLASS, evas);
+   e = efl_add(MY_CLASS, evas);
    return e;
 }
 
 EOLIAN static Eo *
 _emotion_object_efl_object_constructor(Eo *obj, Emotion_Object_Data *pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, E_OBJ_NAME);
 
    return obj;
@@ -1777,7 +1777,7 @@ _pixels_get(void *data, Evas_Object *obj)
 
    sd = data;
    if (!sd->engine_instance) return;
-   emotion_engine_instance_video_data_size_get(sd->engine_instance, &w, &h);
+   emotion_engine_instance_videfl_data_size_get(sd->engine_instance, &w, &h);
    w = (w >> 1) << 1;
    h = (h >> 1) << 1;
 

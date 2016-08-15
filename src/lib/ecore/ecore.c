@@ -243,17 +243,17 @@ ecore_init(void)
         goto shutdown_log_dom;
      }
 
-   eo_init();
+   efl_object_init();
 
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    if (!ecore_mempool_init()) goto shutdown_mempool;
    _ecore_main_loop_init();
 
-   vpath = eo_add(EFL_VPATH_CORE_CLASS, NULL);
+   vpath = efl_add(EFL_VPATH_CORE_CLASS, NULL);
    if (vpath) efl_vpath_manager_register(EFL_VPATH_MANAGER_CLASS, 0, vpath);
 
-   _mainloop_singleton = eo_add(EFL_LOOP_CLASS, NULL);
+   _mainloop_singleton = efl_add(EFL_LOOP_CLASS, NULL);
 
    _ecore_signal_init();
 #ifndef HAVE_EXOTIC
@@ -277,7 +277,7 @@ ecore_init(void)
 #if defined(GLIB_INTEGRATION_ALWAYS)
    if (_ecore_glib_always_integrate) ecore_main_loop_glib_integrate();
 #endif
-   _ecore_parent = eo_add(ECORE_PARENT_CLASS, NULL);
+   _ecore_parent = efl_add(ECORE_PARENT_CLASS, NULL);
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
    if (getenv("ECORE_MEM_STAT"))
@@ -323,7 +323,7 @@ ecore_init(void)
 
 shutdown_mempool:
    ecore_mempool_shutdown();
-   eo_shutdown();
+   efl_object_shutdown();
 shutdown_log_dom:
    eina_shutdown();
 shutdown_evil:
@@ -439,8 +439,8 @@ ecore_shutdown(void)
      eina_prefix_free(_ecore_pfx);
      _ecore_pfx = NULL;
 
-     eo_unref(_ecore_parent);
-     eo_shutdown();
+     efl_unref(_ecore_parent);
+     efl_object_shutdown();
 
      eina_shutdown();
 #ifdef HAVE_EVIL

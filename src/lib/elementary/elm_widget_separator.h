@@ -34,7 +34,7 @@ struct _Elm_Separator_Data
  */
 
 #define ELM_SEPARATOR_DATA_GET(o, sd) \
-  Elm_Separator_Data * sd = eo_data_scope_get(o, ELM_SEPARATOR_CLASS)
+  Elm_Separator_Data * sd = efl_data_scope_get(o, ELM_SEPARATOR_CLASS)
 
 #define ELM_SEPARATOR_DATA_GET_OR_RETURN(o, ptr)     \
   ELM_SEPARATOR_DATA_GET(o, ptr);                    \
@@ -55,7 +55,7 @@ struct _Elm_Separator_Data
     }
 
 #define ELM_SEPARATOR_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_SEPARATOR_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_SEPARATOR_CLASS))) \
     return
 
 #endif

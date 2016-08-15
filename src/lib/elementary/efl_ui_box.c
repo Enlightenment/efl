@@ -130,7 +130,7 @@ _on_size_hints_changed(void *data, Evas *e EINA_UNUSED,
                        Evas_Object *resizeobj, void *event_info EINA_UNUSED)
 {
    Efl_Ui_Box *obj = data;
-   Efl_Ui_Box_Data *pd = eo_data_scope_get(obj, EFL_UI_BOX_CLASS);
+   Efl_Ui_Box_Data *pd = efl_data_scope_get(obj, EFL_UI_BOX_CLASS);
 
    if (obj == resizeobj)
      efl_pack_layout_request(obj);
@@ -170,7 +170,7 @@ EOLIAN static void
 _efl_ui_box_efl_pack_layout_layout_engine_set(Eo *obj, Efl_Ui_Box_Data *pd,
                                               const Efl_Class *klass, const void *data)
 {
-   pd->layout_engine = klass ? klass : eo_class_get(obj);
+   pd->layout_engine = klass ? klass : efl_class_get(obj);
    pd->layout_data = data;
    efl_pack_layout_request(obj);
    _sizing_eval(obj, pd);
@@ -208,7 +208,7 @@ _efl_ui_box_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED
    evas_object_event_callback_add(wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    efl_event_callback_add(wd->resize_obj, EVAS_BOX_EVENT_CHILD_ADDED, _child_added_cb_proxy, obj);
@@ -246,20 +246,20 @@ _efl_ui_box_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Box_Data *sd)
           }
      }
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *
 _efl_ui_box_efl_object_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
 {
    elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_SKIPPED);
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
    pd->orient = EFL_ORIENT_RIGHT;
-   pd->layout_engine = eo_class_get(obj);
+   pd->layout_engine = efl_class_get(obj);
    pd->align.h = 0.5;
    pd->align.v = 0.5;
 
@@ -499,7 +499,7 @@ _efl_ui_box_efl_pack_linear_pack_index_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNU
 
 end:
    ERR("object %p (%s) is not a child of %p (%s)",
-       subobj, eo_class_name_get(subobj), obj, eo_class_name_get(obj));
+       subobj, efl_class_name_get(subobj), obj, efl_class_name_get(obj));
    return -1;
 }
 

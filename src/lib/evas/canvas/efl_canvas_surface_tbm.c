@@ -12,8 +12,8 @@ _efl_canvas_surface_tbm_efl_object_constructor(Eo *eo, Efl_Canvas_Surface_Tbm_Da
 {
    Evas_Object_Protected_Data *obj;
 
-   eo = efl_constructor(eo_super(eo, MY_CLASS));
-   obj = eo_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
+   eo = efl_constructor(efl_super(eo, MY_CLASS));
+   obj = efl_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return NULL;
 
    if (!ENFN->image_native_init(ENDT, EVAS_NATIVE_SURFACE_TBM))
@@ -22,7 +22,7 @@ _efl_canvas_surface_tbm_efl_object_constructor(Eo *eo, Efl_Canvas_Surface_Tbm_Da
         return NULL;
      }
 
-   pd->base = eo_data_ref(eo, EFL_CANVAS_SURFACE_MIXIN);
+   pd->base = efl_data_ref(eo, EFL_CANVAS_SURFACE_MIXIN);
    pd->base->surf.type = EVAS_NATIVE_SURFACE_TBM;
    return eo;
 }
@@ -32,10 +32,10 @@ _efl_canvas_surface_tbm_efl_object_destructor(Eo *eo, Efl_Canvas_Surface_Tbm_Dat
 {
    Evas_Object_Protected_Data *obj;
 
-   obj = eo_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
+   obj = efl_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
 
    ENFN->image_native_shutdown(ENDT, EVAS_NATIVE_SURFACE_TBM);
-   eo_data_unref(eo, pd->base);
+   efl_data_unref(eo, pd->base);
    efl_destructor(eo);
 }
 

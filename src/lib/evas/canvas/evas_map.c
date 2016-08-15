@@ -6,7 +6,7 @@ static void
 _evas_map_calc_geom_change(Evas_Object *eo_obj)
 {
    int is, was = 0;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return;
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
@@ -37,7 +37,7 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
    const Evas_Map_Point *p, *p_end;
    Eina_Bool ch = EINA_FALSE;
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return;
    if (!obj->map->cur.map) return;
    if (obj->map->prev.map)
@@ -117,7 +117,7 @@ evas_object_map_move_sync(Evas_Object *eo_obj)
    Evas_Coord diff_x, diff_y;
    int i, count;
 
-   obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return;
 
    if ((!obj->map->cur.map->move_sync.enabled) ||
@@ -210,7 +210,7 @@ _evas_map_free(Evas_Object *eo_obj, Evas_Map *m)
 {
    if (eo_obj)
      {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+        Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         if ((obj) && (obj->map->spans))
           {
              obj->layer->evas->engine.func->image_map_clean(obj->layer->evas->engine.data.output, obj->map->spans);
@@ -454,7 +454,7 @@ _evas_object_map_parent_check(Evas_Object *eo_parent)
    const Evas_Object_Protected_Data *o;
 
    if (!eo_parent) return EINA_FALSE;
-   Evas_Object_Protected_Data *parent = eo_data_scope_get(eo_parent, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *parent = efl_data_scope_get(eo_parent, EFL_CANVAS_OBJECT_CLASS);
    if (!parent) return EINA_FALSE;
    list = evas_object_smart_members_get_direct(parent->smart.parent);
    EINA_INLIST_FOREACH(list, o)
@@ -524,7 +524,7 @@ _map_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         Evas_Object_Protected_Data *parents = NULL;
         for (eo_parents = obj->smart.parent; eo_parents; eo_parents = parents->smart.parent)
           {
-             parents = eo_data_scope_get(eo_parents, EFL_CANVAS_OBJECT_CLASS);
+             parents = efl_data_scope_get(eo_parents, EFL_CANVAS_OBJECT_CLASS);
              if (!parents) break;
              parents->child_has_map = EINA_TRUE;
           }
@@ -539,7 +539,7 @@ _map_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 EOLIAN void
 _efl_canvas_object_efl_gfx_map_map_enable_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool enabled)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    _map_map_enable_set(eo_obj, obj, enabled, EINA_TRUE);
 }
@@ -555,7 +555,7 @@ evas_object_map_enable_set(Efl_Gfx_Map *eo_obj, Eina_Bool enabled)
 EOLIAN Eina_Bool
 _efl_canvas_object_efl_gfx_map_map_enable_get(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    return obj->map->cur.usemap;
 }
 
@@ -914,7 +914,7 @@ evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *e
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (!obj) return;
    if (m->count != 4)
@@ -936,7 +936,7 @@ evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *eo_obj
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (!obj) return;
    if (m->count != 4)
@@ -1329,7 +1329,7 @@ evas_object_map_update(Evas_Object *eo_obj,
                        int imagew, int imageh,
                        int uvw, int uvh)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    const Evas_Map_Point *p, *p_end;
    RGBA_Map_Point *pts, *pt;
 

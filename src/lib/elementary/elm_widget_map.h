@@ -504,10 +504,10 @@ struct _Elm_Map_Pan_Data
  */
 
 #define ELM_MAP_DATA_GET(o, sd) \
-  Elm_Map_Data * sd = eo_data_scope_get(o, ELM_MAP_CLASS)
+  Elm_Map_Data * sd = efl_data_scope_get(o, ELM_MAP_CLASS)
 
 #define ELM_MAP_PAN_DATA_GET(o, sd) \
-  Elm_Map_Pan_Data * sd = eo_data_scope_get(o, ELM_MAP_PAN_CLASS)
+  Elm_Map_Pan_Data * sd = efl_data_scope_get(o, ELM_MAP_PAN_CLASS)
 
 #define ELM_MAP_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_MAP_DATA_GET(o, ptr);                     \
@@ -528,7 +528,7 @@ struct _Elm_Map_Pan_Data
     }
 
 #define ELM_MAP_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_MAP_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_MAP_CLASS))) \
     return
 
 #endif

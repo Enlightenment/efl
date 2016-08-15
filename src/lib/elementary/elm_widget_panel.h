@@ -52,7 +52,7 @@ struct _Elm_Panel_Data
  */
 
 #define ELM_PANEL_DATA_GET(o, sd) \
-  Elm_Panel_Data * sd = eo_data_scope_get(o, ELM_PANEL_CLASS)
+  Elm_Panel_Data * sd = efl_data_scope_get(o, ELM_PANEL_CLASS)
 
 #define ELM_PANEL_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_PANEL_DATA_GET(o, ptr);                        \
@@ -73,7 +73,7 @@ struct _Elm_Panel_Data
     }
 
 #define ELM_PANEL_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_PANEL_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_PANEL_CLASS))) \
     return
 
 #endif

@@ -802,7 +802,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
    evas_canvas3d_node_position_set(data->mesh_node_column_c, 10, 9.0, -12);
 
    /* Setup mesh for bounding sphere */
-   data->material_ball = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   data->material_ball = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
    evas_canvas3d_material_enable_set(data->material_ball, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE);
    evas_canvas3d_material_enable_set(data->material_ball, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE);
    evas_canvas3d_material_enable_set(data->material_ball, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE);
@@ -811,7 +811,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
    evas_canvas3d_material_color_set(data->material_ball, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_material_shininess_set(data->material_ball, 50.0);
 
-   data->mesh_ball = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+   data->mesh_ball = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);
 
    _set_ball(data->mesh_ball, 10);
 
@@ -865,7 +865,7 @@ _mesh_setup_column(Scene_Data *data, int index)
 {
    /* Setup mesh for column */
 
-   data->material_column = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   data->material_column = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    evas_canvas3d_material_enable_set(data->material_column, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE);
    evas_canvas3d_material_enable_set(data->material_column, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE);
@@ -876,7 +876,7 @@ _mesh_setup_column(Scene_Data *data, int index)
    evas_canvas3d_material_color_set(data->material_column, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_material_shininess_set(data->material_column, 50.0);
 
-   data->mesh_column[index] = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+   data->mesh_column[index] = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);
 
    SETUP_MESH_NODE(column[index])
 
@@ -886,7 +886,7 @@ _mesh_setup_column(Scene_Data *data, int index)
    evas_canvas3d_mesh_shader_mode_set(data->mesh_column[index], EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh_column[index], 0, data->material_column);
 
-   data->texture_diffuse_column = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
+   data->texture_diffuse_column = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
 
    evas_canvas3d_texture_file_set(data->texture_diffuse_column, red_brick_path, NULL);
    evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_column, EINA_FALSE);
@@ -991,20 +991,20 @@ _scene_setup(Scene_Data *data)
    for (i = 0; i < 4; i++)
       motion_vec[i] = 0;
 
-   data->cube_primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
+   data->cube_primitive = efl_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
    evas_canvas3d_primitive_form_set(data->cube_primitive, EVAS_CANVAS3D_MESH_PRIMITIVE_CUBE);
    evas_canvas3d_primitive_precision_set(data->cube_primitive, 10);
 
-   data->sphere_primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
+   data->sphere_primitive = efl_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
    evas_canvas3d_primitive_form_set(data->sphere_primitive, EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE);
    evas_canvas3d_primitive_precision_set(data->sphere_primitive, 50);
 
-   global_scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
+   global_scene = efl_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
 
    evas_canvas3d_scene_size_set(global_scene, WIDTH, HEIGHT);
    evas_canvas3d_scene_background_color_set(global_scene, 0.5, 0.5, 0.9, 0.0);
 
-   data->root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
+   data->root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    _camera_setup(data);
    _light_setup(data);
@@ -1014,7 +1014,7 @@ _scene_setup(Scene_Data *data)
    for (i = 0; i < 10; i++)
      _mesh_setup_rocket(data, i);
 
-   data->cylinder_primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
+   data->cylinder_primitive = efl_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
    evas_canvas3d_primitive_mode_set(data->cylinder_primitive, EVAS_CANVAS3D_PRIMITIVE_MODE_WITHOUT_BASE);
    evas_canvas3d_primitive_form_set(data->cylinder_primitive, EVAS_CANVAS3D_MESH_PRIMITIVE_CYLINDER);
    evas_canvas3d_primitive_tex_scale_set(data->cylinder_primitive, 1.0, 1.0);
@@ -1069,7 +1069,7 @@ _scene_setup(Scene_Data *data)
           }
      }
 
-   data->carp_mediator_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   data->carp_mediator_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
    evas_canvas3d_node_member_add(data->carp_mediator_node, data->mesh_node_carpet);
 
@@ -1146,7 +1146,7 @@ main(int argc, char *argv[])
    _scene_setup(&data);
 
    /* Add an image object for 3D scene rendering. */
-   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
+   image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    evas_object_move(image, 0, 0);
    evas_object_resize(image, WIDTH, HEIGHT);
    evas_object_show(image);

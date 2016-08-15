@@ -155,7 +155,7 @@ _canvas_resize_cb(Ecore_Evas *ee)
    evas_object_resize(em, w - 20, h - 20);
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(emotion_object_example_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(emotion_object_example_callbacks,
        { EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb },
        { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, _length_change_cb },
        { EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb },

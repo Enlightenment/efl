@@ -84,7 +84,7 @@ _frame_resize_cb(void *data EINA_UNUSED, const Eo_Event *ev)
    _display_info(ev->object);
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(emotion_object_example_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(emotion_object_example_callbacks,
        { EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _playback_started_cb },
        { EMOTION_OBJECT_EVENT_PLAYBACK_FINISHED, _playback_finished_cb },
        { EMOTION_OBJECT_EVENT_OPEN_DONE, _open_done_cb },

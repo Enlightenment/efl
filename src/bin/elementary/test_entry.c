@@ -2991,7 +2991,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-   en = eo_add(EFL_UI_TEXT_CLASS, win);
+   en = efl_add(EFL_UI_TEXT_CLASS, win);
    printf("Added Efl.Ui.Text object\n");
    efl_text_set(en, "Hello world! Goodbye world! This is a test text for the"
          " new UI Text widget.\xE2\x80\xA9This is the next paragraph.\nThis"

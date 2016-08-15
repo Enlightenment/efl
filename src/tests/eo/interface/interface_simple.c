@@ -30,8 +30,8 @@ _##name##_set(Eo *obj EINA_UNUSED, void *class_data, int name) \
    pd->name = name; \
    printf("%s %d\n", __func__, pd->name); \
 } \
-EO_VOID_FUNC_BODYV(simple_##name##_set, EO_FUNC_CALL(name), int name); \
-EO_FUNC_BODY(simple_##name##_get, int, 0);
+EFL_VOID_FUNC_BODYV(simple_##name##_set, EFL_FUNC_CALL(name), int name); \
+EFL_FUNC_BODY(simple_##name##_get, int, 0);
 
 _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)
@@ -42,7 +42,7 @@ _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
    int a = 0, b = 0;
    a = simple_a_get(obj);
    b = simple_b_get(obj);
-   printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
+   printf("%s %s\n", efl_class_name_get(MY_CLASS), __func__);
    return a + b;
 }
 
@@ -52,28 +52,28 @@ _ab_sum_get2(Eo *obj, void *class_data EINA_UNUSED)
    int a = 0, b = 0;
    a = simple_a_get(obj);
    b = simple_b_get(obj);
-   printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
+   printf("%s %s\n", efl_class_name_get(MY_CLASS), __func__);
    return a + b + 1;
 }
 
 static Efl_Op_Description op_descs[] = {
-     EO_OP_FUNC(simple_a_set, _a_set),
-     EO_OP_FUNC(simple_a_get, _a_get),
-     EO_OP_FUNC(simple_b_set, _b_set),
-     EO_OP_FUNC(simple_b_get, _b_get),
-     EO_OP_FUNC_OVERRIDE(interface_ab_sum_get, _ab_sum_get),
-     EO_OP_FUNC_OVERRIDE(interface2_ab_sum_get2, _ab_sum_get2),
+     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
+     EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
+     EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
+     EFL_OBJECT_OP_FUNC(simple_b_get, _b_get),
+     EFL_OBJECT_OP_FUNC_OVERRIDE(interface_ab_sum_get, _ab_sum_get),
+     EFL_OBJECT_OP_FUNC_OVERRIDE(interface2_ab_sum_get2, _ab_sum_get2),
 };
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(op_descs),
+     EFL_CLASS_TYPE_REGULAR,
+     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      sizeof(Private_Data),
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, INTERFACE2_CLASS, NULL);
+EFL_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, INTERFACE2_CLASS, NULL);

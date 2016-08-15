@@ -39,17 +39,17 @@ _ector_renderer_gl_ector_renderer_draw(Eo *obj EINA_UNUSED,
 static Efl_Object *
 _ector_renderer_gl_efl_object_constructor(Eo *obj, Ector_Renderer_GL_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, ECTOR_RENDERER_GL_CLASS));
+   obj = efl_constructor(efl_super(obj, ECTOR_RENDERER_GL_CLASS));
    if (!obj) return NULL;
 
-   pd->base = eo_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
+   pd->base = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
    return obj;
 }
 
 static void
 _ector_renderer_gl_efl_object_destructor(Eo *obj, Ector_Renderer_GL_Data *pd)
 {
-   eo_data_xunref(obj, pd->base, obj);
+   efl_data_xunref(obj, pd->base, obj);
 }
 
 #include "ector_renderer_gl.eo.c"

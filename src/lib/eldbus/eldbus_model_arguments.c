@@ -30,7 +30,7 @@ _eldbus_model_arguments_hash_free(Eina_Value *value)
 static Efl_Object*
 _eldbus_model_arguments_efl_object_constructor(Eo *obj, Eldbus_Model_Arguments_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->properties_array = NULL;
@@ -67,7 +67,7 @@ _eldbus_model_arguments_efl_object_destructor(Eo *obj, Eldbus_Model_Arguments_Da
    eina_stringshare_del(pd->name);
    eldbus_proxy_unref(pd->proxy);
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Array const *

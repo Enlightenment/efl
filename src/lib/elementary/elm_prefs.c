@@ -48,7 +48,7 @@ static Eina_Bool _prefs_item_widget_value_from_self(Elm_Prefs_Item_Node *,
 EOLIAN static void
 _elm_prefs_efl_canvas_group_group_add(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
 {
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 }
 
@@ -469,7 +469,7 @@ _elm_prefs_efl_canvas_group_group_del(Eo *obj, Elm_Prefs_Data *sd)
    eina_stringshare_del(sd->file);
    eina_stringshare_del(sd->page);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Bool
@@ -508,14 +508,14 @@ elm_prefs_add(Evas_Object *parent)
         return NULL;
      }
 
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_prefs_efl_object_constructor(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _elm_prefs_smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_REDUNDANT_OBJECT);

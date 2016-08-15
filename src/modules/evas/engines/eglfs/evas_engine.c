@@ -703,7 +703,7 @@ eng_setup(Evas *evas, void *in)
    if (!(info = (Evas_Engine_Info_Eglfs *)in)) return 0;
 
    /* try to get the evas public data */
-   if (!(epd = eo_data_scope_get(evas, EVAS_CANVAS_CLASS))) return 0;
+   if (!(epd = efl_data_scope_get(evas, EVAS_CANVAS_CLASS))) return 0;
 
    s = getenv("EVAS_GL_SWAP_MODE");
    if (s)

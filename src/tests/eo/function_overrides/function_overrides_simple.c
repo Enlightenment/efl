@@ -16,7 +16,7 @@ static void
 _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
 {
    Simple_Public_Data *pd = class_data;
-   printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
+   printf("%s %d\n", efl_class_name_get(MY_CLASS), a);
    pd->a = a;
 }
 
@@ -24,7 +24,7 @@ static Eina_Bool
 _a_print(Eo *obj EINA_UNUSED, void *class_data)
 {
    Simple_Public_Data *pd = class_data;
-   printf("Print %s %d\n", eo_class_name_get(MY_CLASS), pd->a);
+   printf("Print %s %d\n", efl_class_name_get(MY_CLASS), pd->a);
 
    return EINA_TRUE;
 }
@@ -32,12 +32,12 @@ _a_print(Eo *obj EINA_UNUSED, void *class_data)
 static Eina_Bool
 _class_print(Efl_Class *klass, void *class_data EINA_UNUSED)
 {
-   printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
+   printf("Print %s-%s\n", efl_class_name_get(klass), efl_class_name_get(MY_CLASS));
    Eina_Bool called = EINA_FALSE;
-   called = simple_class_print(eo_super(klass, MY_CLASS));
+   called = simple_class_print(efl_super(klass, MY_CLASS));
    fail_if(called);
 
-   called = simple_class_print2(eo_super(klass, MY_CLASS));
+   called = simple_class_print2(efl_super(klass, MY_CLASS));
    fail_if(called);
 
    return EINA_TRUE;
@@ -46,33 +46,33 @@ _class_print(Efl_Class *klass, void *class_data EINA_UNUSED)
 static Eina_Bool
 _class_print2(Efl_Class *klass, void *class_data EINA_UNUSED)
 {
-   printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
+   printf("Print %s-%s\n", efl_class_name_get(klass), efl_class_name_get(MY_CLASS));
 
    return EINA_TRUE;
 }
 
-EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
-EAPI EO_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
-EAPI EO_FUNC_BODY_CONST(simple_class_print, Eina_Bool, EINA_FALSE);
-EAPI EO_FUNC_BODY_CONST(simple_class_print2, Eina_Bool, EINA_FALSE);
+EAPI EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
+EAPI EFL_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
+EAPI EFL_FUNC_BODY_CONST(simple_class_print, Eina_Bool, EINA_FALSE);
+EAPI EFL_FUNC_BODY_CONST(simple_class_print2, Eina_Bool, EINA_FALSE);
 
 static Efl_Op_Description op_descs[] = {
-     EO_OP_FUNC(simple_a_set, _a_set),
-     EO_OP_FUNC(simple_a_print, _a_print),
-     EO_OP_FUNC(simple_class_print, _class_print),
-     EO_OP_FUNC(simple_class_print2, _class_print2),
+     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
+     EFL_OBJECT_OP_FUNC(simple_a_print, _a_print),
+     EFL_OBJECT_OP_FUNC(simple_class_print, _class_print),
+     EFL_OBJECT_OP_FUNC(simple_class_print2, _class_print2),
 };
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(op_descs),
+     EFL_CLASS_TYPE_REGULAR,
+     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      sizeof(Simple_Public_Data),
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL);
+EFL_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL);
 

@@ -38,22 +38,22 @@
 #define ELM_ATSPI_BRIDGE_CLASS_NAME "__Elm_Atspi_Bridge"
 
 #define ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(obj, sd) \
-   Elm_Atspi_Bridge_Data *sd = eo_data_scope_get(obj, ELM_ATSPI_BRIDGE_CLASS); \
+   Elm_Atspi_Bridge_Data *sd = efl_data_scope_get(obj, ELM_ATSPI_BRIDGE_CLASS); \
    if (!sd) return;
 
 #define ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(obj, sd, val) \
-   Elm_Atspi_Bridge_Data *sd = eo_data_scope_get(obj, ELM_ATSPI_BRIDGE_CLASS); \
+   Elm_Atspi_Bridge_Data *sd = efl_data_scope_get(obj, ELM_ATSPI_BRIDGE_CLASS); \
    if (!sd) return val;
 
 #define ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, class, msg, error) \
-   if (!(obj) || !eo_isa(obj, class)) \
+   if (!(obj) || !efl_isa(obj, class)) \
      { \
         *(error) = _dbus_invalid_ref_error_new(msg); \
         return EINA_FALSE; \
      }
 
 #define ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, class, msg) \
-   if (!(obj) || !eo_isa(obj, class)) \
+   if (!(obj) || !efl_isa(obj, class)) \
      return _dbus_invalid_ref_error_new(msg);
 
 typedef struct Key_Event_Info {
@@ -2040,7 +2040,7 @@ _bridge_object_from_path(Eo *bridge, const char *path)
         return NULL;
      }
 
-   ret = eo_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? eo : NULL;
+   ret = efl_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? eo : NULL;
 
    return ret;
 }
@@ -2534,7 +2534,7 @@ _collection_match_interfaces_helper(Eo *obj, Eina_List *ifcs, Eina_Bool conditio
 
    EINA_LIST_FOREACH(ifcs, l, class)
      {
-        if (eo_isa(obj, class) == condition)
+        if (efl_isa(obj, class) == condition)
           return ret_if_true;
      }
    return ret_if_false;
@@ -3117,26 +3117,26 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
   iter_array = eldbus_message_iter_container_new(iter, 'a', "s");
   if (!iter_array) return;
 
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+  if (efl_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
     {
        eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACCESSIBLE);
        eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COLLECTION);
     }
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_MIXIN))
+  if (efl_isa(obj, ELM_INTERFACE_ATSPI_ACTION_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACTION);
-  if (eo_isa(obj, ELM_ATSPI_APP_OBJECT_CLASS))
+  if (efl_isa(obj, ELM_ATSPI_APP_OBJECT_CLASS))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_APPLICATION);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
+  if (efl_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE))
+  if (efl_isa(obj, ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_EDITABLE_TEXT);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_MIXIN))
+  if (efl_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE))
+  if (efl_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_SELECTION);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
+  if (efl_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_TEXT);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_INTERFACE))
+  if (efl_isa(obj, ELM_INTERFACE_ATSPI_VALUE_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
 
   eldbus_message_iter_container_close(iter, iter_array);
@@ -3145,7 +3145,7 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
 static Eina_Bool
 _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_array)
 {
-  if (!eo_ref_get(data) || eo_destructed_is(data))
+  if (!efl_ref_get(data) || efl_destructed_is(data))
     return EINA_TRUE;
 
   Eldbus_Message_Iter *iter_struct, *iter_sub_array;
@@ -4462,7 +4462,7 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
-   if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+   if (!efl_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      {
         WRN("Unable to register class w/o Elm_Interface_Atspi_Accessible!");
         return;
@@ -4479,7 +4479,7 @@ _elm_atspi_bridge_init(void)
 {
    if (!_init_count)
      {
-        _instance = eo_add(ELM_ATSPI_BRIDGE_CLASS, NULL);
+        _instance = efl_add(ELM_ATSPI_BRIDGE_CLASS, NULL);
         _init_count = 1;
      }
 }
@@ -4683,7 +4683,7 @@ _elm_atspi_bridge_efl_object_constructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
    Eldbus_Proxy *proxy;
    Eldbus_Pending *req;
 
-   efl_constructor(eo_super(obj, ELM_ATSPI_BRIDGE_CLASS));
+   efl_constructor(efl_super(obj, ELM_ATSPI_BRIDGE_CLASS));
 
    elm_need_eldbus();
 
@@ -4732,7 +4732,7 @@ _elm_atspi_bridge_efl_object_destructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
    if (pd->bus_obj) eldbus_object_unref(pd->bus_obj);
    if (pd->session_bus) eldbus_connection_unref(pd->session_bus);
 
-   efl_destructor(eo_super(obj, ELM_ATSPI_BRIDGE_CLASS));
+   efl_destructor(efl_super(obj, ELM_ATSPI_BRIDGE_CLASS));
 }
 
 #include "elm_atspi_bridge.eo.c"

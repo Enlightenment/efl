@@ -72,7 +72,7 @@ efl_model_list_slice(Eina_List *list, unsigned start, unsigned count)
 
    EINA_LIST_FOREACH(ln, l, child)
      {
-        eo_ref(child);
+        efl_ref(child);
         lr = eina_list_append(lr, child);
         if (eina_list_count(lr) == count)
           break;

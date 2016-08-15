@@ -52,7 +52,7 @@ _ecore_audio_out_pulse_ecore_audio_volume_set(Eo *eo_obj, Ecore_Audio_Out_Pulse_
   Eina_List *input;
   uint32_t idx;
   pa_cvolume pa_volume;
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
+  Ecore_Audio_Output *out_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
   if (!EPA_LOAD()) return;
   if (volume < 0)
@@ -60,7 +60,7 @@ _ecore_audio_out_pulse_ecore_audio_volume_set(Eo *eo_obj, Ecore_Audio_Out_Pulse_
 
   EPA_CALL(pa_cvolume_set)(&pa_volume, 2, volume * PA_VOLUME_NORM);
 
-  ecore_audio_obj_volume_set(eo_super(eo_obj, MY_CLASS), volume);
+  ecore_audio_obj_volume_set(efl_super(eo_obj, MY_CLASS), volume);
 
   EINA_LIST_FOREACH(out_obj->inputs, input, in) {
       stream = efl_key_data_get(in, "pulse_data");
@@ -110,10 +110,10 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   double speed = 0;
   pa_stream *stream;
   Eina_Bool ret = EINA_FALSE;
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
+  Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (!EPA_LOAD()) return EINA_FALSE;
-  ret = ecore_audio_obj_out_input_attach(eo_super(eo_obj, MY_CLASS), in);
+  ret = ecore_audio_obj_out_input_attach(efl_super(eo_obj, MY_CLASS), in);
   if (!ret)
     return EINA_FALSE;
 
@@ -128,7 +128,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   stream = EPA_CALL(pa_stream_new)(class_vars.context, name, &ss, NULL);
   if (!stream) {
       ERR("Could not create stream");
-      ecore_audio_obj_out_input_detach(eo_super(eo_obj, MY_CLASS), in);
+      ecore_audio_obj_out_input_detach(efl_super(eo_obj, MY_CLASS), in);
       return EINA_FALSE;
   }
 
@@ -184,7 +184,7 @@ _ecore_audio_out_pulse_ecore_audio_out_input_detach(Eo *eo_obj, Ecore_Audio_Out_
   pa_operation *op;
 
   if (!EPA_LOAD()) return EINA_FALSE;
-  ret2 = ecore_audio_obj_out_input_detach(eo_super(eo_obj, MY_CLASS), in);
+  ret2 = ecore_audio_obj_out_input_detach(efl_super(eo_obj, MY_CLASS), in);
   if (!ret2)
     return EINA_FALSE;
 
@@ -214,7 +214,7 @@ static void _state_cb(pa_context *context, void *data EINA_UNUSED)
    
    //ref everything in the list to be sure...
    EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
-      eo_ref(eo_obj);
+      efl_ref(eo_obj);
    }
    // the callback here can delete things in the list..
    if (state == PA_CONTEXT_READY) {
@@ -232,7 +232,7 @@ static void _state_cb(pa_context *context, void *data EINA_UNUSED)
    }
    // now unref everything safely
    EINA_LIST_FOREACH_SAFE(class_vars.outputs, out, tmp, eo_obj) {
-      eo_unref(eo_obj);
+      efl_unref(eo_obj);
    }
 }
 
@@ -247,7 +247,7 @@ static void _state_job(void *data EINA_UNUSED)
         DBG("PA context fail.");
         //ref everything in the list to be sure...
         EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
-           eo_ref(eo_obj);
+           efl_ref(eo_obj);
         }
         // the callback here can delete things in the list..
         EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
@@ -255,7 +255,7 @@ static void _state_job(void *data EINA_UNUSED)
         }
         // now unref everything safely
         EINA_LIST_FOREACH_SAFE(class_vars.outputs, out, tmp, eo_obj) {
-           eo_unref(eo_obj);
+           efl_unref(eo_obj);
         }
      }
    class_vars.state_job = NULL;
@@ -266,10 +266,10 @@ _ecore_audio_out_pulse_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_
 {
   int argc;
   char **argv;
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
+  Ecore_Audio_Output *out_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
   if (!EPA_LOAD()) return NULL;
-  eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
+  eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
   out_obj->need_writer = EINA_FALSE;
 
@@ -296,7 +296,7 @@ EOLIAN static void
 _ecore_audio_out_pulse_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_Data *_pd EINA_UNUSED)
 {
   class_vars.outputs = eina_list_remove(class_vars.outputs, eo_obj);
-  efl_destructor(eo_super(eo_obj, MY_CLASS));
+  efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
 #include "ecore_audio_out_pulse.eo.c"

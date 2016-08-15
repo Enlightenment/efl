@@ -22,8 +22,8 @@ static Eina_Bool _write_cb(void *data)
   Eo *eo_obj = data;
   Eo *in;
 
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
+  Ecore_Audio_Output *out_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
+  Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   ssize_t written, bread = 0;
   float buf[1024];
@@ -54,9 +54,9 @@ _ecore_audio_out_input_attach(Eo *eo_obj, Ecore_Audio_Output *obj, Eo *input)
 {
   Ecore_Audio_Input *in;
 
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
+  Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
-  in = eo_data_scope_get(input, ECORE_AUDIO_IN_CLASS);
+  in = efl_data_scope_get(input, ECORE_AUDIO_IN_CLASS);
 
   if (in->output == eo_obj)
     return EINA_FALSE;
@@ -81,7 +81,7 @@ _ecore_audio_out_input_detach(Eo *eo_obj, Ecore_Audio_Output *obj, Eo *input)
 {
   Ecore_Audio_Input *in;
 
-  in = eo_data_scope_get(input, ECORE_AUDIO_IN_CLASS);
+  in = efl_data_scope_get(input, ECORE_AUDIO_IN_CLASS);
 
   if (in->output != eo_obj)
     return EINA_FALSE;
@@ -115,7 +115,7 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
 EOLIAN static void
 _ecore_audio_out_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Output *_pd EINA_UNUSED, Ecore_Audio_Vio *vio, void *data, efl_key_data_free_func free_func)
 {
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
+  Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (ea_obj->vio)
     _free_vio(ea_obj);
@@ -132,7 +132,7 @@ _ecore_audio_out_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Output *_pd EINA_UN
 EOLIAN static Eo *
 _ecore_audio_out_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Output *obj)
 {
-  eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
+  eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
   obj->need_writer = EINA_TRUE;
 
@@ -149,7 +149,7 @@ _ecore_audio_out_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Output *obj)
       ecore_audio_obj_out_input_detach(eo_obj, in);
   }
 
-  efl_destructor(eo_super(eo_obj, MY_CLASS));
+  efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
 #include "ecore_audio_out.eo.c"

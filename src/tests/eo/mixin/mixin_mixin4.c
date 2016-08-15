@@ -14,13 +14,13 @@
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Mixin4",
-     EO_CLASS_TYPE_MIXIN,
-     EO_CLASS_DESCRIPTION_NOOPS(),
+     EFL_CLASS_TYPE_MIXIN,
+     EFL_CLASS_DESCRIPTION_NOOPS(),
      NULL,
      0,
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(mixin4_class_get, &class_desc, NULL, NULL);
+EFL_DEFINE_CLASS(mixin4_class_get, &class_desc, NULL, NULL);
 

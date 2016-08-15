@@ -55,7 +55,7 @@ _prop_changed(void *user_data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info
    Eldbus_Proxy_Event_Property_Changed *prop_event = event_info;
    Elm_App_Client_View *eo = user_data;
    const Eina_Value *v = prop_event->value;
-   Elm_App_Client_View_Data *cdata = eo_data_scope_get(eo, MY_CLASS);
+   Elm_App_Client_View_Data *cdata = efl_data_scope_get(eo, MY_CLASS);
 
    if (!strcmp(prop_event->name, "Title"))
      efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_TITLE_CHANGED, (void *) _string_prop_get(v));
@@ -108,9 +108,9 @@ elm_app_client_view_internal_state_set(Eo *eo, Elm_App_View_State state)
    Eina_Bool changed = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN(eo);
-   EINA_SAFETY_ON_FALSE_RETURN(eo_isa(eo, ELM_APP_CLIENT_VIEW_CLASS));
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo, ELM_APP_CLIENT_VIEW_CLASS));
 
-   cdata = eo_data_scope_get(eo, MY_CLASS);
+   cdata = efl_data_scope_get(eo, MY_CLASS);
    changed = cdata->state != state;
    cdata->state = state;
    if (!changed)
@@ -128,7 +128,7 @@ _elm_app_client_view_efl_object_finalize(Eo *eo, Elm_App_Client_View_Data *data)
 
    parent = efl_parent_get(eo);
    EINA_SAFETY_ON_TRUE_RETURN_VAL((!parent) ||
-                            (!eo_isa(parent, ELM_APP_CLIENT_CLASS)), NULL);
+                            (!efl_isa(parent, ELM_APP_CLIENT_CLASS)), NULL);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(data->path, NULL);
 
@@ -147,7 +147,7 @@ _elm_app_client_view_efl_object_finalize(Eo *eo, Elm_App_Client_View_Data *data)
                                    ELDBUS_PROXY_EVENT_PROPERTY_LOADED,
                                    _props_loaded, eo);
 
-   return efl_finalize(eo_super(eo, MY_CLASS));
+   return efl_finalize(efl_super(eo, MY_CLASS));
 }
 
 static void
@@ -309,7 +309,7 @@ _elm_app_client_view_efl_object_destructor(Eo *eo, Elm_App_Client_View_Data *dat
 
    eina_stringshare_del(data->path);
 
-   efl_destructor(eo_super(eo, MY_CLASS));
+   efl_destructor(efl_super(eo, MY_CLASS));
 }
 
 #include "elm_app_client_view.eo.c"

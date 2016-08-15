@@ -39,7 +39,7 @@ typedef struct _Elm_Web_Callback_Proxy_Context Elm_Web_Callback_Proxy_Context;
  */
 
 #define ELM_WEB_DATA_GET(o, sd) \
-  Elm_Web_Data * sd = eo_data_scope_get(o, ELM_WEB_CLASS)
+  Elm_Web_Data * sd = efl_data_scope_get(o, ELM_WEB_CLASS)
 
 #define ELM_WEB_DATA_GET_OR_RETURN(o, ptr)           \
   ELM_WEB_DATA_GET(o, ptr);                          \
@@ -60,7 +60,7 @@ typedef struct _Elm_Web_Callback_Proxy_Context Elm_Web_Callback_Proxy_Context;
     }
 
 #define ELM_WEB_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_WEB_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_WEB_CLASS))) \
     return
 
 #endif

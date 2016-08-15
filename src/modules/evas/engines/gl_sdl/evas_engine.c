@@ -289,7 +289,7 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
 static int
 eng_setup(Evas *eo_e, void *in)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Render_Engine *re = NULL;
    Outbuf *ob = NULL;
    Evas_Engine_Info_GL_SDL *info;

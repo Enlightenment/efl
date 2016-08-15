@@ -99,7 +99,7 @@ _eo_generic_data_node_free(Eo_Generic_Data_Node *node)
         break;
       case DATA_OBJ:
         efl_event_callback_del(node->d.obj, EFL_EVENT_DEL, _key_generic_cb_del, node);
-        eo_unref(node->d.obj);
+        efl_unref(node->d.obj);
         break;
       case DATA_OBJ_WEAK:
         efl_event_callback_del(node->d.obj, EFL_EVENT_DEL, _key_generic_cb_del, node);
@@ -238,7 +238,7 @@ static void
 _key_generic_cb_del(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Eo_Generic_Data_Node *node = data;
-   Efl_Object_Data *pd = eo_data_scope_get(node->obj, EFL_OBJECT_CLASS);
+   Efl_Object_Data *pd = efl_data_scope_get(node->obj, EFL_OBJECT_CLASS);
    _eo_key_generic_direct_del(pd, node, EINA_FALSE);
 }
 
@@ -262,7 +262,7 @@ _efl_object_key_ref_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *ke
    node = _key_generic_set(obj, pd, key, objdata, DATA_OBJ, EINA_TRUE);
    if (node)
      {
-        eo_ref(objdata);
+        efl_ref(objdata);
         efl_event_callback_add((Eo *)objdata, EFL_EVENT_DEL, _key_generic_cb_del, node);
      }
 }
@@ -442,7 +442,7 @@ _efl_object_name_find(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *sear
                {
                   child = _eo_obj_id_get(child_eo);
                   name = efl_name_get(child);
-                  klass_name = eo_class_name_get(eo_class_get(child));
+                  klass_name = efl_class_name_get(efl_class_get(child));
                   if (_name_match(klass, klass_glob, klass_name) &&
                       (((!_matchall(klass)) && (!name) && (_matchall(search_name))) ||
                        ((name) && _name_match(search_name, name_glob, name))))
@@ -520,7 +520,7 @@ _efl_object_del(const Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
      }
    else
      {
-        eo_unref(obj);
+        efl_unref(obj);
      }
 }
 
@@ -536,7 +536,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
      {
         Efl_Object_Data *old_parent_pd;
 
-        old_parent_pd = eo_data_scope_get(pd->parent, EFL_OBJECT_CLASS);
+        old_parent_pd = efl_data_scope_get(pd->parent, EFL_OBJECT_CLASS);
         if (old_parent_pd)
           {
              old_parent_pd->children = eina_inlist_remove(old_parent_pd->children,
@@ -552,7 +552,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
          * the process of deleting the object.*/
         if (!parent_id && !eo_obj->del_triggered)
           {
-             eo_unref(obj);
+             efl_unref(obj);
           }
      }
 
@@ -560,7 +560,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
    if (parent_id)
      {
         Efl_Object_Data *parent_pd = NULL;
-        parent_pd = eo_data_scope_get(parent_id, EFL_OBJECT_CLASS);
+        parent_pd = efl_data_scope_get(parent_id, EFL_OBJECT_CLASS);
 
         if (EINA_LIKELY(parent_pd != NULL))
           {
@@ -655,7 +655,7 @@ _efl_children_iterator_free(Eo_Children_Iterator *it)
      }
    eina_spinlock_release(&klass->iterators.trash_lock);
 
-   _eo_unref(obj);
+   _efl_unref(obj);
 }
 
 EOLIAN static Eina_Iterator *
@@ -686,7 +686,7 @@ _efl_object_children_iterator_new(Eo *obj_id, Efl_Object_Data *pd)
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
    it->current = pd->children;
-   it->obj = _eo_ref(obj);
+   it->obj = _efl_ref(obj);
    it->obj_id = obj_id;
 
    it->iterator.next = FUNC_ITERATOR_NEXT(_efl_children_iterator_next);
@@ -1303,7 +1303,7 @@ _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
    EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
 
-   Efl_Object_Data *comp_pd = eo_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
+   Efl_Object_Data *comp_pd = efl_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
    /* Don't composite if we already have a composite object of this type */
      {
         Eina_List *itr;
@@ -1342,7 +1342,7 @@ _efl_object_composite_detach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
    parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
    /* Clear the comp parent on the child. */
      {
-        Efl_Object_Data *comp_pd = eo_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
+        Efl_Object_Data *comp_pd = efl_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
         comp_pd->ext->composite_parent = NULL;
 
         _efl_object_extension_noneed(comp_pd);
@@ -1359,7 +1359,7 @@ _efl_object_composite_part_is(Eo *comp_obj_id EINA_UNUSED, Efl_Object_Data *pd)
 
 /* Eo_Dbg */
 EAPI void
-eo_dbg_info_free(Efl_Dbg_Info *info)
+efl_dbg_info_free(Efl_Dbg_Info *info)
 {
    eina_value_flush(&(info->value));
    free(info);
@@ -1434,7 +1434,7 @@ _eo_dbg_info_pget(const Eina_Value_Type *type EINA_UNUSED, const void *_mem, voi
    return EINA_TRUE;
 }
 
-static const Eina_Value_Type _EO_DBG_INFO_TYPE = {
+static const Eina_Value_Type _EFL_DBG_INFO_TYPE = {
    EINA_VALUE_TYPE_VERSION,
    sizeof(Efl_Dbg_Info *),
    "Efl_Dbg_Info_Ptr",
@@ -1449,7 +1449,7 @@ static const Eina_Value_Type _EO_DBG_INFO_TYPE = {
    _eo_dbg_info_pget
 };
 
-EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
+EAPI const Eina_Value_Type *EFL_DBG_INFO_TYPE = &_EFL_DBG_INFO_TYPE;
 
 
 /* EOF event callbacks */
@@ -1460,7 +1460,7 @@ EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
 EOLIAN static Eo *
 _efl_object_constructor(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 {
-   DBG("%p - %s.", obj, eo_class_name_get(obj));
+   DBG("%p - %s.", obj, efl_class_name_get(obj));
 
    _eo_condtor_done(obj);
 
@@ -1473,7 +1473,7 @@ _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
    Eo *child;
    Efl_Object_Extension *ext;
 
-   DBG("%p - %s.", obj, eo_class_name_get(obj));
+   DBG("%p - %s.", obj, efl_class_name_get(obj));
 
    // special removal - remove from children list by hand after getting
    // child handle in case unparent method is overridden and does

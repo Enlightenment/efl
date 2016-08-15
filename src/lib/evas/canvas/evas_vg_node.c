@@ -199,8 +199,8 @@ _efl_vg_mask_set(Eo *obj EINA_UNUSED,
 {
    Efl_VG *tmp = pd->mask;
 
-   pd->mask = eo_ref(r);
-   eo_unref(tmp);
+   pd->mask = efl_ref(r);
+   efl_unref(tmp);
 
    _efl_vg_changed(obj);
 }
@@ -240,22 +240,22 @@ _efl_vg_parent_checked_get(Eo *obj,
    *cd = NULL;
    *parent = efl_parent_get(obj);
 
-   if (eo_isa(*parent, EFL_VG_CONTAINER_CLASS))
+   if (efl_isa(*parent, EFL_VG_CONTAINER_CLASS))
      {
-        *cd = eo_data_scope_get(*parent, EFL_VG_CONTAINER_CLASS);
+        *cd = efl_data_scope_get(*parent, EFL_VG_CONTAINER_CLASS);
         if (!*cd)
           {
              ERR("Can't get EFL_VG_CONTAINER_CLASS data.");
              goto on_error;
           }
      }
-   else if (eo_isa(*parent, EVAS_VG_CLASS))
+   else if (efl_isa(*parent, EVAS_VG_CLASS))
      {
         goto on_error;
      }
    else if (*parent != NULL)
      {
-        ERR("Parent of unauthorized class '%s'.", eo_class_name_get(eo_class_get(*parent)));
+        ERR("Parent of unauthorized class '%s'.", efl_class_name_get(efl_class_get(*parent)));
         goto on_error;
      }
 
@@ -274,7 +274,7 @@ _efl_vg_efl_object_constructor(Eo *obj,
    Efl_VG_Container_Data *cd = NULL;
    Eo *parent;
 
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    if (!_efl_vg_parent_checked_get(obj, &parent, &cd)) {
         ERR("Failed");
@@ -308,7 +308,7 @@ _efl_vg_efl_object_destructor(Eo *obj, Efl_VG_Data *pd)
         pd->intp = NULL;
      }
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static void
@@ -363,9 +363,9 @@ _efl_vg_efl_object_parent_set(Eo *obj,
    Efl_VG_Container_Data *old_cd = NULL;
    Eo *old_parent;
 
-   if (eo_isa(parent, EFL_VG_CONTAINER_CLASS))
+   if (efl_isa(parent, EFL_VG_CONTAINER_CLASS))
      {
-        cd = eo_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
+        cd = efl_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
         if (!cd)
           {
              ERR("Can't get EFL_VG_CONTAINER_CLASS data from %p.", parent);
@@ -392,7 +392,7 @@ _efl_vg_efl_object_parent_set(Eo *obj,
         if (pd->name) eina_hash_del(old_cd->names, pd->name, obj);
      }
 
-   efl_parent_set(eo_super(obj, MY_CLASS), parent);
+   efl_parent_set(efl_super(obj, MY_CLASS), parent);
    if (cd)
      {
         cd->children = eina_list_append(cd->children, obj);
@@ -418,8 +418,8 @@ _efl_vg_efl_gfx_stack_raise(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
    Eo *parent;
 
    parent = efl_parent_get(obj);
-   if (!eo_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
-   cd = eo_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
+   if (!efl_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
+   cd = efl_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -448,8 +448,8 @@ _efl_vg_efl_gfx_stack_stack_above(Eo *obj,
    Eo *parent;
 
    parent = efl_parent_get(obj);
-   if (!eo_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
-   cd = eo_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
+   if (!efl_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
+   cd = efl_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -478,8 +478,8 @@ _efl_vg_efl_gfx_stack_stack_below(Eo *obj,
    Eo *parent;
 
    parent = efl_parent_get(obj);
-   if (!eo_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
-   cd = eo_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
+   if (!efl_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
+   cd = efl_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -506,8 +506,8 @@ _efl_vg_efl_gfx_stack_lower(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
    Eo *parent;
 
    parent = efl_parent_get(obj);
-   if (!eo_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
-   cd = eo_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
+   if (!efl_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
+   cd = efl_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -531,7 +531,7 @@ _efl_vg_root_parent_get(Eo *obj)
 {
    Eo *parent;
 
-   if (eo_isa(obj, EFL_VG_ROOT_NODE_CLASS))
+   if (efl_isa(obj, EFL_VG_ROOT_NODE_CLASS))
      return obj;
 
    parent = efl_parent_get(obj);
@@ -550,13 +550,13 @@ _efl_vg_walk_down_at(Eo *root, Eina_Array *a, Eina_Rectangle *r)
 
    eina_array_push(a, root);
 
-   if (eo_isa(root, EFL_VG_CONTAINER_CLASS))
+   if (efl_isa(root, EFL_VG_CONTAINER_CLASS))
      {
         Efl_VG_Container_Data *cd;
         Eina_List *l;
         Eo *child;
 
-        cd = eo_data_scope_get(root, EFL_VG_CONTAINER_CLASS);
+        cd = efl_data_scope_get(root, EFL_VG_CONTAINER_CLASS);
         EINA_LIST_FOREACH(cd->children, l, child)
           _efl_vg_walk_down_at(child, a, r);
      }
@@ -678,8 +678,8 @@ _efl_vg_interpolate(Eo *obj,
    double from_map;
    Eina_Bool r = EINA_TRUE;
 
-   fromd = eo_data_scope_get(from, EFL_VG_CLASS);
-   tod = eo_data_scope_get(to, EFL_VG_CLASS);
+   fromd = efl_data_scope_get(from, EFL_VG_CLASS);
+   tod = efl_data_scope_get(to, EFL_VG_CLASS);
    from_map = 1.0 - pos_map;
 
    efl_del(pd->renderer);
@@ -754,7 +754,7 @@ _efl_vg_dup(Eo *obj, Efl_VG_Data *pd, const Efl_VG *from)
    Efl_VG_Data *fromd;
    Eo *parent = NULL;
 
-   fromd = eo_data_scope_get(from, EFL_VG_CLASS);
+   fromd = efl_data_scope_get(from, EFL_VG_CLASS);
    if (pd->name != fromd->name)
      {
         eina_stringshare_del(pd->name);
@@ -790,7 +790,7 @@ _efl_vg_dup(Eo *obj, Efl_VG_Data *pd, const Efl_VG *from)
    _efl_vg_clean_object(&pd->mask);
    if (fromd->mask)
      {
-        pd->mask = eo_add(eo_class_get(fromd->mask), obj, efl_vg_dup(eo_self, pd->mask));
+        pd->mask = efl_add(efl_class_get(fromd->mask), obj, efl_vg_dup(efl_self, pd->mask));
      }
 
    pd->x = fromd->x;

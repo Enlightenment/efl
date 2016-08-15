@@ -143,7 +143,7 @@ _check_event_catcher_del(void *data, const Eo_Event *event)
      }
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
+EFL_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
                           { EFL_EVENT_CALLBACK_ADD, _check_event_catcher_add },
                           { EFL_EVENT_CALLBACK_DEL, _check_event_catcher_del });
 
@@ -153,9 +153,9 @@ _efl_canvas_object_efl_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data
    Eo *parent = NULL;
    Evas *evas;
 
-   eo_obj = efl_constructor(eo_super(eo_obj, MY_CLASS));
+   eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
    efl_canvas_object_type_set(eo_obj, MY_CLASS_NAME);
-   eo_manual_free_set(eo_obj, EINA_TRUE);
+   efl_manual_free_set(eo_obj, EINA_TRUE);
 
    parent = efl_parent_get(eo_obj);
    evas = evas_object_evas_get(parent);
@@ -185,7 +185,7 @@ _efl_canvas_object_efl_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data
 void
 evas_object_change_reset(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return;
    obj->changed = EINA_FALSE;
    obj->changed_move = EINA_FALSE;
@@ -198,7 +198,7 @@ evas_object_change_reset(Evas_Object *eo_obj)
 void
 evas_object_cur_prev(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return;
    if (!obj->map->prev.valid_map && obj->map->prev.map)
      {
@@ -235,13 +235,13 @@ evas_object_cur_prev(Evas_Object *eo_obj)
 void
 evas_object_free(Evas_Object *eo_obj, int clean_layer)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return;
    obj->clean_layer = clean_layer;
 
    int was_smart_child = 0;
 
-   if (eo_isa(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
+   if (efl_isa(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
      _evas_object_image_free(eo_obj);
    evas_object_map_set(eo_obj, NULL);
    if (obj->map->prev.map) evas_map_free(obj->map->prev.map);
@@ -310,13 +310,13 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    eina_cow_free(evas_object_state_cow, (const Eina_Cow_Data**) &obj->prev);
    eina_cow_free(evas_object_3d_cow, (const Eina_Cow_Data**) &obj->data_3d);
    eina_cow_free(evas_object_mask_cow, (const Eina_Cow_Data**) &obj->mask);
-   eo_data_unref(eo_obj, obj->private_data);
+   efl_data_unref(eo_obj, obj->private_data);
    obj->private_data = NULL;
 
    /* Try to manual free, and if it fails, unset it so the next unref will
     * actually free the object. */
-   if (!eo_manual_free(eo_obj))
-      eo_manual_free_set(eo_obj, EINA_FALSE);
+   if (!efl_manual_free(eo_obj))
+      efl_manual_free_set(eo_obj, EINA_FALSE);
 }
 
 void
@@ -352,7 +352,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_obj2)
      {
-        obj2 = eo_data_scope_get(eo_obj2, MY_CLASS);
+        obj2 = efl_data_scope_get(eo_obj2, MY_CLASS);
 
         if (!obj2) continue;
         evas_object_change(eo_obj2, obj2);
@@ -363,7 +363,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    if (obj->smart.parent)
      {
-        Evas_Object_Protected_Data *smart_parent = eo_data_scope_get(obj->smart.parent, MY_CLASS);
+        Evas_Object_Protected_Data *smart_parent = efl_data_scope_get(obj->smart.parent, MY_CLASS);
         if (!smart_parent) return;
         evas_object_change(obj->smart.parent, smart_parent);
      }
@@ -392,7 +392,7 @@ evas_object_content_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 void
 evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *eo_obj, int is_v, int was_v)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
 
    if (!obj) return;
    if (obj->is_smart) return;
@@ -418,7 +418,7 @@ evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *eo_obj, in
 void
 evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
 
    if (!obj) return;
    if (obj->is_smart) return;
@@ -510,7 +510,7 @@ evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *eo_obj EINA_
 void
 evas_object_clip_changes_clean(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return;
 
    Eina_Rectangle *r;
@@ -522,7 +522,7 @@ evas_object_clip_changes_clean(Evas_Object *eo_obj)
 void
 evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, int is_v, int was_v EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
    Eina_Rectangle *r;
    Eina_List *l;
    unsigned int i;
@@ -679,9 +679,9 @@ evas_object_ref(Evas_Object *eo_obj)
    return;
    MAGIC_CHECK_END();
 
-   eo_ref(eo_obj);
+   efl_ref(eo_obj);
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return;
    obj->ref++;
 }
@@ -693,12 +693,12 @@ evas_object_unref(Evas_Object *eo_obj)
    return;
    MAGIC_CHECK_END();
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return;
 
    if (obj->ref == 0) return;
    obj->ref--;
-   eo_unref(eo_obj);
+   efl_unref(eo_obj);
    if ((obj->del_ref) && (obj->ref == 0)) evas_object_del(eo_obj);
 
 }
@@ -710,7 +710,7 @@ evas_object_ref_get(const Evas_Object *eo_obj)
    return 0;
    MAGIC_CHECK_END();
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return 0;
    return obj->ref;
 }
@@ -723,7 +723,7 @@ evas_object_del(Evas_Object *eo_obj)
    return;
    MAGIC_CHECK_END();
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
 
    if (!obj) return;
    evas_object_async_block(obj);
@@ -773,7 +773,7 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
    if (obj->name) evas_object_name_set(eo_obj, NULL);
    if (!obj->layer)
      {
-        eo_manual_free_set(eo_obj, EINA_FALSE);
+        efl_manual_free_set(eo_obj, EINA_FALSE);
         obj->clean_layer = 1;
         goto end;
      }
@@ -795,9 +795,9 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
    /* FIXME: Proxies should listen to source death */
    EINA_LIST_FOREACH_SAFE(obj->proxy->proxies, l, l2, proxy)
      {
-        if (eo_isa(proxy, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
+        if (efl_isa(proxy, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
           evas_object_image_source_unset(proxy);
-        if (eo_isa(proxy, EFL_GFX_FILTER_INTERFACE))
+        if (efl_isa(proxy, EFL_GFX_FILTER_INTERFACE))
           efl_gfx_filter_source_set(proxy, NULL, eo_obj);
      }
 
@@ -830,7 +830,7 @@ end:
    evas_object_event_callback_all_del(eo_obj);
    evas_object_event_callback_cleanup(eo_obj);
 
-   efl_destructor(eo_super(eo_obj, MY_CLASS));
+   efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -1773,8 +1773,8 @@ evas_object_render_op_get(const Evas_Object *eo_obj)
 EOLIAN static void
 _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Efl_Dbg_Info *root)
 {
-   efl_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
-   Efl_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   efl_dbg_info_get(efl_super(eo_obj, MY_CLASS), root);
+   Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
    Efl_Dbg_Info *node;
    const char *name;
    double dblw, dblh;
@@ -1814,50 +1814,50 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    propagate_event = efl_canvas_object_propagate_events_get(eo_obj);
    clipees_has = efl_canvas_object_clipees_has(eo_obj);
 
-   EO_DBG_INFO_APPEND(group, "Visibility", EINA_VALUE_TYPE_CHAR, visible);
+   EFL_DBG_INFO_APPEND(group, "Visibility", EINA_VALUE_TYPE_CHAR, visible);
 
    if (name)
-      EO_DBG_INFO_APPEND(group, "Name", EINA_VALUE_TYPE_STRING, name);
+      EFL_DBG_INFO_APPEND(group, "Name", EINA_VALUE_TYPE_STRING, name);
 
-   EO_DBG_INFO_APPEND(group, "Layer", EINA_VALUE_TYPE_INT, layer);
+   EFL_DBG_INFO_APPEND(group, "Layer", EINA_VALUE_TYPE_INT, layer);
 
-   node = EO_DBG_INFO_LIST_APPEND(group, "Position");
-   EO_DBG_INFO_APPEND(node, "x", EINA_VALUE_TYPE_INT, x);
-   EO_DBG_INFO_APPEND(node, "y", EINA_VALUE_TYPE_INT, y);
+   node = EFL_DBG_INFO_LIST_APPEND(group, "Position");
+   EFL_DBG_INFO_APPEND(node, "x", EINA_VALUE_TYPE_INT, x);
+   EFL_DBG_INFO_APPEND(node, "y", EINA_VALUE_TYPE_INT, y);
 
-   node = EO_DBG_INFO_LIST_APPEND(group, "Size");
-   EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, w);
-   EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, h);
+   node = EFL_DBG_INFO_LIST_APPEND(group, "Size");
+   EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, w);
+   EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, h);
 
-   EO_DBG_INFO_APPEND(group, "Scale", EINA_VALUE_TYPE_DOUBLE, scale);
+   EFL_DBG_INFO_APPEND(group, "Scale", EINA_VALUE_TYPE_DOUBLE, scale);
 
-   node = EO_DBG_INFO_LIST_APPEND(group, "Min size");
-   EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, minw);
-   EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, minh);
+   node = EFL_DBG_INFO_LIST_APPEND(group, "Min size");
+   EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, minw);
+   EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, minh);
 
-   node = EO_DBG_INFO_LIST_APPEND(group, "Max size");
-   EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, maxw);
-   EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, maxh);
+   node = EFL_DBG_INFO_LIST_APPEND(group, "Max size");
+   EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, maxw);
+   EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, maxh);
 
-   node = EO_DBG_INFO_LIST_APPEND(group, "Request size");
-   EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, requestw);
-   EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, requesth);
+   node = EFL_DBG_INFO_LIST_APPEND(group, "Request size");
+   EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, requestw);
+   EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, requesth);
 
-   node = EO_DBG_INFO_LIST_APPEND(group, "Align");
-   EO_DBG_INFO_APPEND(node, "x", EINA_VALUE_TYPE_DOUBLE, dblx);
-   EO_DBG_INFO_APPEND(node, "y", EINA_VALUE_TYPE_DOUBLE, dbly);
+   node = EFL_DBG_INFO_LIST_APPEND(group, "Align");
+   EFL_DBG_INFO_APPEND(node, "x", EINA_VALUE_TYPE_DOUBLE, dblx);
+   EFL_DBG_INFO_APPEND(node, "y", EINA_VALUE_TYPE_DOUBLE, dbly);
 
-   node = EO_DBG_INFO_LIST_APPEND(group, "Weight");
-   EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_DOUBLE, dblw);
-   EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_DOUBLE, dblh);
+   node = EFL_DBG_INFO_LIST_APPEND(group, "Weight");
+   EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_DOUBLE, dblw);
+   EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_DOUBLE, dblh);
 
-   node = EO_DBG_INFO_LIST_APPEND(group, "Color");
-   EO_DBG_INFO_APPEND(node, "r", EINA_VALUE_TYPE_INT, r);
-   EO_DBG_INFO_APPEND(node, "g", EINA_VALUE_TYPE_INT, g);
-   EO_DBG_INFO_APPEND(node, "b", EINA_VALUE_TYPE_INT, b);
-   EO_DBG_INFO_APPEND(node, "a", EINA_VALUE_TYPE_INT, a);
+   node = EFL_DBG_INFO_LIST_APPEND(group, "Color");
+   EFL_DBG_INFO_APPEND(node, "r", EINA_VALUE_TYPE_INT, r);
+   EFL_DBG_INFO_APPEND(node, "g", EINA_VALUE_TYPE_INT, g);
+   EFL_DBG_INFO_APPEND(node, "b", EINA_VALUE_TYPE_INT, b);
+   EFL_DBG_INFO_APPEND(node, "a", EINA_VALUE_TYPE_INT, a);
 
-   EO_DBG_INFO_APPEND(group, "Has focus", EINA_VALUE_TYPE_CHAR, focus);
+   EFL_DBG_INFO_APPEND(group, "Has focus", EINA_VALUE_TYPE_CHAR, focus);
 
      {
         const char *text = NULL;
@@ -1878,42 +1878,42 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
           }
 
         if (text)
-           EO_DBG_INFO_APPEND(group, "Pointer Mode", EINA_VALUE_TYPE_STRING, text);
+           EFL_DBG_INFO_APPEND(group, "Pointer Mode", EINA_VALUE_TYPE_STRING, text);
      }
 
-   EO_DBG_INFO_APPEND(group, "Pass Events", EINA_VALUE_TYPE_CHAR, pass_event);
-   EO_DBG_INFO_APPEND(group, "Repeat Events", EINA_VALUE_TYPE_CHAR, repeat_event);
-   EO_DBG_INFO_APPEND(group, "Propagate Events", EINA_VALUE_TYPE_CHAR, propagate_event);
-   EO_DBG_INFO_APPEND(group, "Has clipees", EINA_VALUE_TYPE_CHAR, clipees_has);
+   EFL_DBG_INFO_APPEND(group, "Pass Events", EINA_VALUE_TYPE_CHAR, pass_event);
+   EFL_DBG_INFO_APPEND(group, "Repeat Events", EINA_VALUE_TYPE_CHAR, repeat_event);
+   EFL_DBG_INFO_APPEND(group, "Propagate Events", EINA_VALUE_TYPE_CHAR, propagate_event);
+   EFL_DBG_INFO_APPEND(group, "Has clipees", EINA_VALUE_TYPE_CHAR, clipees_has);
 
    Evas_Object *clipper = NULL;
    clipper = efl_canvas_object_clip_get(eo_obj);
-   EO_DBG_INFO_APPEND(group, "Clipper", EINA_VALUE_TYPE_UINT64, (uintptr_t) clipper);
+   EFL_DBG_INFO_APPEND(group, "Clipper", EINA_VALUE_TYPE_UINT64, (uintptr_t) clipper);
 
    const Evas_Map *map = evas_object_map_get(eo_obj);
    if (map)
      {  /* Save map coords count info if object has map */
-        node = EO_DBG_INFO_LIST_APPEND(group, "Evas Map");
+        node = EFL_DBG_INFO_LIST_APPEND(group, "Evas Map");
         int points_count = evas_map_count_get(map);
-        Efl_Dbg_Info *points = EO_DBG_INFO_LIST_APPEND(node, "Points");
-        Efl_Dbg_Info *pointsuv = EO_DBG_INFO_LIST_APPEND(node, "Image UV");
+        Efl_Dbg_Info *points = EFL_DBG_INFO_LIST_APPEND(node, "Points");
+        Efl_Dbg_Info *pointsuv = EFL_DBG_INFO_LIST_APPEND(node, "Image UV");
         for (int i = 0 ; i < points_count; i++)
           {
                {
                   Evas_Coord px, py, pz;
                   evas_map_point_coord_get(map, i, &px, &py, &pz);
-                  Efl_Dbg_Info *point = EO_DBG_INFO_LIST_APPEND(points, "Points");
-                  EO_DBG_INFO_APPEND(point, "x", EINA_VALUE_TYPE_INT, px);
-                  EO_DBG_INFO_APPEND(point, "y", EINA_VALUE_TYPE_INT, py);
-                  EO_DBG_INFO_APPEND(point, "z", EINA_VALUE_TYPE_INT, pz);
+                  Efl_Dbg_Info *point = EFL_DBG_INFO_LIST_APPEND(points, "Points");
+                  EFL_DBG_INFO_APPEND(point, "x", EINA_VALUE_TYPE_INT, px);
+                  EFL_DBG_INFO_APPEND(point, "y", EINA_VALUE_TYPE_INT, py);
+                  EFL_DBG_INFO_APPEND(point, "z", EINA_VALUE_TYPE_INT, pz);
                }
 
                {
                   double pu, pv;
                   evas_map_point_image_uv_get(map, i, &pu, &pv);
-                  Efl_Dbg_Info *point = EO_DBG_INFO_LIST_APPEND(pointsuv, "Image UV");
-                  EO_DBG_INFO_APPEND(point, "u", EINA_VALUE_TYPE_DOUBLE, pu);
-                  EO_DBG_INFO_APPEND(point, "v", EINA_VALUE_TYPE_DOUBLE, pv);
+                  Efl_Dbg_Info *point = EFL_DBG_INFO_LIST_APPEND(pointsuv, "Image UV");
+                  EFL_DBG_INFO_APPEND(point, "u", EINA_VALUE_TYPE_DOUBLE, pu);
+                  EFL_DBG_INFO_APPEND(point, "v", EINA_VALUE_TYPE_DOUBLE, pv);
                }
           }
      }
@@ -1927,7 +1927,7 @@ _efl_canvas_object_efl_object_provider_find(Eo *eo_obj EINA_UNUSED, Evas_Object_
         if ((obj->delete_me) || (!obj->layer)) return NULL;
         return obj->layer->evas->evas;
      }
-   return efl_provider_find(eo_super(eo_obj, MY_CLASS), klass);
+   return efl_provider_find(efl_super(eo_obj, MY_CLASS), klass);
 }
 
 EOLIAN Evas_Object*
@@ -1964,8 +1964,8 @@ _evas_canvas_object_top_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eva
 EAPI Evas_Object *
 evas_object_top_at_pointer_get(const Evas *eo_e)
 {
-   Evas_Public_Data *e = eo_isa(eo_e, EVAS_CANVAS_CLASS) ?
-            eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS) : NULL;
+   Evas_Public_Data *e = efl_isa(eo_e, EVAS_CANVAS_CLASS) ?
+            efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS) : NULL;
    if (!e) return NULL;
    return evas_canvas_object_top_at_xy_get((Eo *)eo_e, e->pointer.x, e->pointer.y, EINA_TRUE, EINA_TRUE);
 }

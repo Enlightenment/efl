@@ -619,7 +619,7 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 
    if (depth == OUTBUF_DEPTH_INHERIT) depth = ob->depth;
 
-   epd = eo_data_scope_get(ob->evas, EVAS_CANVAS_CLASS);
+   epd = efl_data_scope_get(ob->evas, EVAS_CANVAS_CLASS);
    EINA_SAFETY_ON_NULL_RETURN(epd);
 
    re = epd->engine.data.output;

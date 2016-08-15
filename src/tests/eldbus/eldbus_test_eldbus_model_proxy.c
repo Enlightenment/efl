@@ -27,7 +27,7 @@ _setup(void)
 static void
 _teardown(void)
 {
-   eo_unref(dbus_object1);
+   efl_unref(dbus_object1);
    check_shutdown();
 }
 

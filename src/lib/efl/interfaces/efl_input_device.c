@@ -12,7 +12,7 @@
 EOLIAN static Efl_Object *
 _efl_input_device_efl_object_constructor(Eo *obj, Efl_Input_Device_Data *pd)
 {
-   obj = efl_constructor(eo_super(obj, EFL_INPUT_DEVICE_CLASS));
+   obj = efl_constructor(efl_super(obj, EFL_INPUT_DEVICE_CLASS));
    pd->eo = obj;
    return obj;
 }
@@ -26,13 +26,13 @@ _efl_input_device_efl_object_destructor(Eo *obj, Efl_Input_Device_Data *pd)
    eina_stringshare_del(pd->desc);
    EINA_LIST_FREE(pd->children, eo_child)
      {
-        Efl_Input_Device_Data *child = eo_data_scope_get(eo_child, EFL_INPUT_DEVICE_CLASS);
+        Efl_Input_Device_Data *child = efl_data_scope_get(eo_child, EFL_INPUT_DEVICE_CLASS);
         child->parent = NULL;
-        eo_unref(eo_child);
+        efl_unref(eo_child);
      }
-   eo_unref(pd->source);
+   efl_unref(pd->source);
 
-   return efl_destructor(eo_super(obj, EFL_INPUT_DEVICE_CLASS));
+   return efl_destructor(efl_super(obj, EFL_INPUT_DEVICE_CLASS));
 }
 
 EOLIAN static void
@@ -63,8 +63,8 @@ EOLIAN static void
 _efl_input_device_source_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, Efl_Input_Device *src)
 {
    if (pd->source == src) return;
-   eo_unref(pd->source);
-   pd->source = eo_ref(src);
+   efl_unref(pd->source);
+   pd->source = efl_ref(src);
 }
 
 EOLIAN static Efl_Input_Device *

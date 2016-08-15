@@ -143,13 +143,13 @@ evas_gl_new(Evas *e)
    if (!evas_gl) return NULL;
 
    evas_gl->magic = MAGIC_EVAS_GL;
-   evas_gl->evas = eo_data_ref(e, EVAS_CANVAS_CLASS);
+   evas_gl->evas = efl_data_ref(e, EVAS_CANVAS_CLASS);
    LKI(evas_gl->lck);
 
    if (!evas_gl->evas->engine.func->gl_context_create)
      {
         ERR("Evas GL engine not available.");
-        eo_data_unref(e, evas_gl->evas);
+        efl_data_unref(e, evas_gl->evas);
         free(evas_gl);
         return NULL;
      }
@@ -158,7 +158,7 @@ evas_gl_new(Evas *e)
    if (eina_tls_new(&(evas_gl->resource_key)) == EINA_FALSE)
      {
         ERR("Error creating tls key");
-        eo_data_unref(e, evas_gl->evas);
+        efl_data_unref(e, evas_gl->evas);
         free(evas_gl);
         return NULL;
      }
@@ -189,7 +189,7 @@ evas_gl_free(Evas_GL *evas_gl)
    if (_current_evas_gl_key && (evas_gl == eina_tls_get(_current_evas_gl_key)))
      eina_tls_set(_current_evas_gl_key, NULL);
 
-   eo_data_unref(evas_gl->evas->evas, evas_gl->evas);
+   efl_data_unref(evas_gl->evas->evas, evas_gl->evas);
    evas_gl->magic = 0;
    LKD(evas_gl->lck);
    free(evas_gl);

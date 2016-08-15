@@ -889,7 +889,7 @@ _ecore_exe_make_sure_its_dead(void *data)
 
       if ((obj = _ecore_exe_is_it_alive(dead->pid)))
       {
-         Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+         Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
          if (dead->cmd)
            INF("Sending KILL signal to allegedly dead %s (%d).",
                dead->cmd, dead->pid);
@@ -922,7 +922,7 @@ _ecore_exe_make_sure_its_really_dead(void *data)
 
       if ((obj = _ecore_exe_is_it_alive(dead->pid)))
       {
-         Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+         Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
          ERR("RUN!  The zombie wants to eat your brains!  And your CPU!");
          if (dead->cmd)
            INF("%s (%d) is not really dead.", dead->cmd, dead->pid);
@@ -939,7 +939,7 @@ _ecore_exe_make_sure_its_really_dead(void *data)
 Ecore_Timer *
 _ecore_exe_doomsday_clock_get(Ecore_Exe *obj)
 {
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
    return exe->doomsday_clock;
 }
 
@@ -947,7 +947,7 @@ void
 _ecore_exe_doomsday_clock_set(Ecore_Exe   *obj,
                               Ecore_Timer *dc)
 {
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
    exe->doomsday_clock = dc;
 }
 
@@ -1070,7 +1070,7 @@ _ecore_exe_data_generic_handler(void             *data,
    int event_type;
    const Efl_Event_Description *eo_event = NULL;
 
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
 
    /* Sort out what sort of handler we are. */
    if (flags & ECORE_EXE_PIPE_READ)
@@ -1223,7 +1223,7 @@ _ecore_exe_data_write_handler(void             *data,
                               Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    Ecore_Exe *obj = data;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
 
    if ((exe->write_fd_handler) &&
        (ecore_main_fd_handler_active_get
@@ -1253,7 +1253,7 @@ static void
 _ecore_exe_flush(Ecore_Exe *obj)
 {
    int count;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
 
    /* check whether we need to write anything at all. */
    if ((exe->child_fd_write == -1) || (!exe->write_data_buf))
@@ -1291,7 +1291,7 @@ static void
 _ecore_exe_dead_attach(Ecore_Exe *obj)
 {
    struct _ecore_exe_dead_exe *dead;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
 
    if (exe->doomsday_clock_dead) return;
    dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));

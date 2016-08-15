@@ -105,7 +105,7 @@ struct _Efl_Ui_Image_Data
  */
 
 #define EFL_UI_IMAGE_DATA_GET(o, sd) \
-  Efl_Ui_Image_Data * sd = eo_data_scope_get(o, EFL_UI_IMAGE_CLASS)
+  Efl_Ui_Image_Data * sd = efl_data_scope_get(o, EFL_UI_IMAGE_CLASS)
 
 #define EFL_UI_IMAGE_DATA_GET_OR_RETURN(o, ptr)         \
   EFL_UI_IMAGE_DATA_GET(o, ptr);                        \
@@ -126,7 +126,7 @@ struct _Efl_Ui_Image_Data
     }
 
 #define EFL_UI_IMAGE_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), EFL_UI_IMAGE_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_IMAGE_CLASS))) \
     return
 
 #endif

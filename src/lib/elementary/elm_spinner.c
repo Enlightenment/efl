@@ -56,7 +56,7 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-EO_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
+EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
    { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
    { EFL_UI_EVENT_PRESSED, _inc_dec_button_pressed_cb},
    { EFL_UI_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb},
@@ -913,7 +913,7 @@ _elm_spinner_elm_widget_on_focus(Eo *obj, Elm_Spinner_Data *sd, Elm_Object_Item 
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_on_focus(eo_super(obj, MY_CLASS), NULL);
+   int_ret = elm_obj_widget_on_focus(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (!elm_widget_focus_get(obj))
@@ -1159,7 +1159,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    ELM_SPINNER_DATA_GET(obj, sd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->val_max = 100.0;
@@ -1255,7 +1255,7 @@ _elm_spinner_efl_canvas_group_group_del(Eo *obj, Elm_Spinner_Data *sd)
           }
      }
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Elm_Theme_Apply
@@ -1411,7 +1411,7 @@ EAPI Evas_Object *
 elm_spinner_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -1466,7 +1466,7 @@ elm_spinner_value_get(const Evas_Object *obj)
 EOLIAN static Eo *
 _elm_spinner_efl_object_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SPIN_BUTTON);
@@ -1757,7 +1757,7 @@ EOLIAN static char*
 _elm_spinner_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
 {
    char *name;
-   name = elm_interface_atspi_accessible_name_get(eo_super(obj, ELM_SPINNER_CLASS));
+   name = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_SPINNER_CLASS));
    if (name) return name;
    const char *ret = elm_layout_text_get(obj, "elm.text");
    return ret ? strdup(ret) : NULL;

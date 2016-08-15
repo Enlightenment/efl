@@ -788,7 +788,7 @@ EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
 
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr, ...)   \
   Elm_Widget_Smart_Data *ptr;                        \
-  ptr = eo_data_scope_get(o, ELM_WIDGET_CLASS);  \
+  ptr = efl_data_scope_get(o, ELM_WIDGET_CLASS);  \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("no widget data for object %p (%s)",      \
@@ -797,7 +797,7 @@ EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
     }
 
 #define ELM_WIDGET_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_WIDGET_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), ELM_WIDGET_CLASS))) \
     return
 
 #define ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item, ...)              \
@@ -815,7 +815,7 @@ EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
              return __VA_ARGS__;                                \
         }                                                       \
        if ((item)->eo_obj &&                                   \
-           eo_isa((item)->eo_obj, ELM_WIDGET_ITEM_CLASS)) break; \
+           efl_isa((item)->eo_obj, ELM_WIDGET_ITEM_CLASS)) break; \
        if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) {    \
             EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);       \
             return __VA_ARGS__;                                 \
@@ -829,7 +829,7 @@ EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
              goto label;                                        \
         }                                                       \
        if ((item)->eo_obj &&                                    \
-           eo_isa((item)->eo_obj, ELM_WIDGET_ITEM_CLASS)) break; \
+           efl_isa((item)->eo_obj, ELM_WIDGET_ITEM_CLASS)) break; \
        if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) {    \
             EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);       \
             goto label;                                         \

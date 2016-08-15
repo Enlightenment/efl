@@ -56,9 +56,9 @@ static void _contract_request_cb(void *data EINA_UNUSED, const Eo_Event *event);
 static void _contracted_cb(void *data EINA_UNUSED, const Eo_Event *event);
 
 /* --- Genlist Callbacks --- */
-EO_CALLBACKS_ARRAY_DEFINE(model_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(model_callbacks,
                           { EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _efl_model_children_count_change_cb });
-EO_CALLBACKS_ARRAY_DEFINE(genlist_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(genlist_callbacks,
                           { ELM_GENLIST_EVENT_EXPAND_REQUEST, _expand_request_cb },
                           { ELM_GENLIST_EVENT_CONTRACT_REQUEST, _contract_request_cb },
                           { ELM_GENLIST_EVENT_CONTRACTED, _contracted_cb });
@@ -83,7 +83,7 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED)
    efl_event_callback_array_del(idata->model, model_callbacks(), idata);
    efl_event_callback_del(idata->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, idata);
 
-   eo_unref(idata->model);
+   efl_unref(idata->model);
    idata->model = NULL;
    idata->item = NULL;
    idata->parent = NULL;
@@ -280,7 +280,7 @@ _genlist_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_
    if (priv && priv->genlist && priv->genlist == obj)
      {
         efl_event_callback_array_del(priv->genlist, genlist_callbacks(), priv);
-        eo_unref(priv->genlist);
+        efl_unref(priv->genlist);
         priv->genlist = NULL;
      }
 }
@@ -319,7 +319,7 @@ _efl_model_load_children_then(void * data, void* value)
         idata->priv = priv;
         idata->parent = pdata;
         idata->model = child;
-        eo_ref(child);
+        efl_ref(child);
         efl_event_callback_add(child, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, idata);
         idata->item = elm_genlist_item_append(priv->genlist, priv->itc, idata, pdata->item,
                                                        priv->itype, _item_sel_cb, idata);
@@ -358,7 +358,7 @@ _priv_model_set(Elm_View_List_Data *priv, Eo *model)
      {
          efl_event_callback_array_del(priv->model, model_callbacks(), priv->rootdata);
          elm_obj_genlist_clear(priv->genlist);
-         eo_unref(priv->model);
+         efl_unref(priv->model);
          priv->model = NULL;
      }
 
@@ -367,7 +367,7 @@ _priv_model_set(Elm_View_List_Data *priv, Eo *model)
 
    priv->model = model;
    priv->rootdata->model = priv->model;
-   eo_ref(priv->model);
+   efl_ref(priv->model);
 
    efl_event_callback_array_add(priv->model, model_callbacks(), priv->rootdata);
    _efl_model_load_children(priv->rootdata);
@@ -384,7 +384,7 @@ _elm_view_list_genlist_set(Eo *obj, Elm_View_List_Data *priv, Evas_Object *genli
    priv->genlist = genlist;
    priv->itype = itype;
    EINA_SAFETY_ON_NULL_RETURN(priv->genlist);
-   eo_ref(priv->genlist);
+   efl_ref(priv->genlist);
 
    priv->rootdata = calloc(1, sizeof(View_List_ItemData));
    priv->rootdata->priv = priv;
@@ -422,12 +422,12 @@ _elm_view_list_efl_object_destructor(Eo *obj, Elm_View_List_Data *priv)
      {
          evas_object_event_callback_del(priv->genlist, EVAS_CALLBACK_DEL, _genlist_deleted);
          efl_event_callback_array_del(priv->genlist, genlist_callbacks(), priv);
-         eo_unref(priv->genlist);
+         efl_unref(priv->genlist);
      }
 
-   eo_unref(priv->model);
+   efl_unref(priv->model);
 
-   efl_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static void

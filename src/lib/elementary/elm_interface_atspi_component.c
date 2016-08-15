@@ -77,7 +77,7 @@ _elm_interface_atspi_component_accessible_at_point_get(Eo *obj, void *_pd EINA_U
    EINA_LIST_FOREACH(children, l, child)
      {
         Eina_Bool contains;
-        if (eo_isa(child, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
+        if (efl_isa(child, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
           {
               contains = elm_interface_atspi_component_contains(child, screen_coords, x, y);
               if (contains)

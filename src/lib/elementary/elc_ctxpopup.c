@@ -60,7 +60,7 @@ _elm_ctxpopup_elm_widget_translate(Eo *obj, Elm_Ctxpopup_Data *sd)
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
+   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
 
    return EINA_TRUE;
 }
@@ -228,7 +228,7 @@ _base_geometry_calc(Evas_Object *obj,
    evas_object_geometry_get
      (sd->parent, &hover_area.x, &hover_area.y, &hover_area.w,
      &hover_area.h);
-   if (sd->parent && eo_isa(sd->parent, EFL_UI_WIN_CLASS))
+   if (sd->parent && efl_isa(sd->parent, EFL_UI_WIN_CLASS))
      hover_area.x = hover_area.y = 0;
 
    evas_object_geometry_get(obj, &pos.x, &pos.y, NULL, NULL);
@@ -750,7 +750,7 @@ _elm_ctxpopup_elm_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    elm_widget_theme_object_set
@@ -780,7 +780,7 @@ _elm_ctxpopup_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part, Evas
 {
    if ((part) && (strcmp(part, "default")))
      {
-        return efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
+        return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
      }
 
    if (!content) return EINA_FALSE;
@@ -810,7 +810,7 @@ static Evas_Object*
 _elm_ctxpopup_content_get(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
 {
    if ((part) && (strcmp(part, "default")))
-     return efl_content_get(efl_part(eo_super(obj, MY_CLASS), part));
+     return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
 
    return sd->content;
 }
@@ -821,7 +821,7 @@ _elm_ctxpopup_content_unset(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
    Evas_Object *content = NULL;
 
    if ((part) && (strcmp(part, "default")))
-     return efl_content_unset(efl_part(eo_super(obj, MY_CLASS), part));
+     return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
 
    content = sd->content;
    if (!content) return content;
@@ -1049,7 +1049,7 @@ _elm_ctxpopup_item_efl_object_destructor(Eo *eo_ctxpopup_it,
    list = elm_object_item_widget_get(ctxpopup_it->list_item);
 
    if (ctxpopup_it->list_item)
-      eo_unref(ctxpopup_it->list_item);
+      efl_unref(ctxpopup_it->list_item);
    sd->items = eina_list_remove(sd->items, eo_ctxpopup_it);
    if (list && eina_list_count(elm_list_items_get(list)) < 2)
      {
@@ -1060,7 +1060,7 @@ _elm_ctxpopup_item_efl_object_destructor(Eo *eo_ctxpopup_it,
         if (sd->list_visible) elm_layout_sizing_eval(WIDGET(ctxpopup_it));
      }
 
-   efl_destructor(eo_super(eo_ctxpopup_it, ELM_CTXPOPUP_ITEM_CLASS));
+   efl_destructor(efl_super(eo_ctxpopup_it, ELM_CTXPOPUP_ITEM_CLASS));
 }
 
 EOLIAN static Eina_Bool
@@ -1068,7 +1068,7 @@ _elm_ctxpopup_elm_widget_disable(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_disable(eo_super(obj, MY_CLASS));
+   int_ret = elm_obj_widget_disable(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
    if (sd->list)
      elm_object_disabled_set(sd->list, elm_widget_disabled_get(obj));
@@ -1083,7 +1083,7 @@ _elm_ctxpopup_efl_canvas_group_group_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -1124,7 +1124,7 @@ _elm_ctxpopup_efl_canvas_group_group_add(Eo *obj, Elm_Ctxpopup_Data *priv)
      (priv->box, EVAS_CALLBACK_RESIZE, _on_content_resized, obj);
 
    /* box will be our content placeholder, thus the parent's version call */
-   efl_content_set(efl_part(eo_super(obj, MY_CLASS), "elm.swallow.content"), priv->box);
+   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"), priv->box);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _on_hide, NULL);
@@ -1149,7 +1149,7 @@ _elm_ctxpopup_efl_canvas_group_group_del(Eo *obj, Elm_Ctxpopup_Data *sd)
    EINA_LIST_FREE(sd->items, it)
      efl_del(it);
 
-   efl_canvas_group_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -1163,7 +1163,7 @@ EAPI Evas_Object *
 elm_ctxpopup_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
 
    /* access: parent could be any object such as elm_list which does
       not know elc_ctxpopup as its child object in the focus_next(); */
@@ -1176,7 +1176,7 @@ elm_ctxpopup_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_ctxpopup_efl_object_constructor(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED)
 {
-   obj = efl_constructor(eo_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_POPUP_MENU);
@@ -1204,7 +1204,7 @@ _elm_ctxpopup_hover_parent_set(Eo *obj, Elm_Ctxpopup_Data *sd, Evas_Object *pare
 
    //Update Background
    evas_object_geometry_get(parent, &x, &y, &w, &h);
-   if (parent && eo_isa(parent, EFL_UI_WIN_CLASS))
+   if (parent && efl_isa(parent, EFL_UI_WIN_CLASS))
      x = y = 0;
    evas_object_move(sd->bg, x, y);
    evas_object_resize(sd->bg, w, h);
@@ -1250,8 +1250,8 @@ _item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
 EOLIAN static Eo *
 _elm_ctxpopup_item_efl_object_constructor(Eo *obj, Elm_Ctxpopup_Item_Data *it)
 {
-   obj = efl_constructor(eo_super(obj, ELM_CTXPOPUP_ITEM_CLASS));
-   it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
+   obj = efl_constructor(efl_super(obj, ELM_CTXPOPUP_ITEM_CLASS));
+   it->base = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    return obj;
 }
@@ -1261,14 +1261,14 @@ _elm_ctxpopup_item_append(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Eva
 {
    Eo *eo_item;
 
-   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eo_self, func, data));
+   eo_item = efl_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(efl_self, func, data));
    if (!eo_item) return NULL;
 
    ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);
 
    item->list_item =
      elm_list_item_append(sd->list, label, icon, NULL, _item_wrap_cb, item);
-   eo_ref(item->list_item);
+   efl_ref(item->list_item);
    sd->items = eina_list_append(sd->items, eo_item);
 
    if (sd->visible) elm_layout_sizing_eval(obj);
@@ -1354,14 +1354,14 @@ _elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Ev
 {
    Eo *eo_item;
 
-   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eo_self, func, data));
+   eo_item = efl_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(efl_self, func, data));
    if (!eo_item) return NULL;
 
    ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);
 
    item->list_item =
      elm_list_item_prepend(sd->list, label, icon, NULL, _item_wrap_cb, item);
-   eo_ref(item->list_item);
+   efl_ref(item->list_item);
    sd->items = eina_list_prepend(sd->items, eo_item);
 
    if (sd->visible) elm_layout_sizing_eval(obj);
@@ -1407,7 +1407,7 @@ _elm_ctxpopup_item_init(Eo *eo_item,
 {
    Eo *obj;
    obj = efl_parent_get(eo_item);
-   Elm_Ctxpopup_Data *sd = eo_data_scope_get(obj, ELM_CTXPOPUP_CLASS);
+   Elm_Ctxpopup_Data *sd = efl_data_scope_get(obj, ELM_CTXPOPUP_CLASS);
    if (!sd->list)
      {
         sd->list = elm_list_add(obj);
@@ -1468,7 +1468,7 @@ EOLIAN static Elm_Atspi_State_Set
 _elm_ctxpopup_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Ctxpopup_Data *sd EINA_UNUSED)
 {
    Elm_Atspi_State_Set ret;
-   ret = elm_interface_atspi_accessible_state_set_get(eo_super(obj, MY_CLASS));
+   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, MY_CLASS));
 
    STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MODAL);
 

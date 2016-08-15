@@ -1583,7 +1583,7 @@ _re_winfree(Render_Engine *re)
 static int
 eng_setup(Evas *eo_e, void *in)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Render_Engine *re;
    Evas_Engine_Info_GL_X11 *info;
    Render_Engine_Swap_Mode swap_mode = MODE_FULL;
