@@ -1092,12 +1092,12 @@ getopt.parse {
         dr = dutil.path_join(dr, dutil.nspace_to_path(rootns))
         dutil.init(dr)
         if #args == 0 then
-            if not eolian.system_directory_scan() then
+            if not dtree.scan_directory() then
                 error("failed scanning system directory")
             end
         else
             for i, p in ipairs(args) do
-                if not eolian.directory_scan(p) then
+                if not dtree.scan_directory(p) then
                     error("failed scanning directory: " .. p)
                 end
             end

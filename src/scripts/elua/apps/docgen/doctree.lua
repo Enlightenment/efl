@@ -426,4 +426,11 @@ M.Event = Node:clone {
     end
 }
 
+M.scan_directory = function(dir)
+    if not dir then
+        return eolian.system_directory_scan()
+    end
+    return eolian.directory_scan(dir)
+end
+
 return M
