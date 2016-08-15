@@ -864,7 +864,7 @@ local build_parlist = function(f, pl, nodir)
         buf:write_b(p:name_get())
         if not nodir then
             buf:write_raw(" ")
-            buf:write_i(eomap.pdir_to_str[p:direction_get()])
+            buf:write_i("(", p:direction_name_get(), ")")
         end
         buf:write_raw(" - ", p:doc_get():full_get())
         params[#params + 1] = buf:finish()

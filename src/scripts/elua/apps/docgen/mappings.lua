@@ -3,18 +3,6 @@ local dtree = require("docgen.doctree")
 
 local M = {}
 
-M.pdir_to_str = {
-    [dtree.Parameter.IN] = "(in)",
-    [dtree.Parameter.OUT] = "(out)",
-    [dtree.Parameter.INOUT] = "(inout)"
-}
-
-M.scope_to_str = {
-    [dtree.Node.scope.PUBLIC] = "public",
-    [dtree.Node.scope.PRIVATE] = "private",
-    [dtree.Node.scope.PROTECTED] = "protected"
-}
-
 local decl_to_nspace = function(decl)
     local dt = eolian.declaration_type
     local decltypes = {

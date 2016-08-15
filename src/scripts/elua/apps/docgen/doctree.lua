@@ -412,6 +412,15 @@ M.Parameter = Node:clone {
         return self.param:direction_get()
     end,
 
+    direction_name_get = function(self)
+        local dir_to_str = {
+            [self.IN] = "in",
+            [self.OUT] = "out",
+            [self.INOUT] = "inout"
+        }
+        return dir_to_str[self:direction_get()]
+    end,
+
     type_get = function(self)
         return self.param:type_get()
     end,
