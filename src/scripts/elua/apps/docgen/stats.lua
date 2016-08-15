@@ -205,7 +205,7 @@ M.check_property = function(fn, cl, ft)
 end
 
 M.check_alias = function(v)
-    if not v:documentation_get() then
+    if not v:doc_get():exists() then
         print_missing(v:full_name_get(), "alias")
         stat_incr("alias", true)
     else
@@ -214,13 +214,13 @@ M.check_alias = function(v)
 end
 
 M.check_struct = function(v)
-    if not v:documentation_get() then
+    if not v:doc_get():exists() then
         print_missing(v:full_name_get(), "struct")
         stat_incr("struct", true)
     else
         stat_incr("struct", false)
     end
-    for fl in v:struct_fields_get() do
+    for i, fl in ipairs(v:struct_fields_get()) do
         if not fl:documentation_get() then
             print_missing(v:full_name_get() .. "." .. fl:name_get(), "struct field")
             stat_incr("sfield", true)
@@ -231,13 +231,13 @@ M.check_struct = function(v)
 end
 
 M.check_enum = function(v)
-    if not v:documentation_get() then
+    if not v:doc_get():exists() then
         print_missing(v:full_name_get(), "enum")
         stat_incr("enum", true)
     else
         stat_incr("enum", false)
     end
-    for fl in v:enum_fields_get() do
+    for i, fl in ipairs(v:enum_fields_get()) do
         if not fl:documentation_get() then
             print_missing(v:full_name_get() .. "." .. fl:name_get(), "enum field")
             stat_incr("efield", true)
@@ -248,7 +248,7 @@ M.check_enum = function(v)
 end
 
 M.check_constant = function(v)
-    if not v:documentation_get() then
+    if not v:doc_get():exists() then
         print_missing(v:full_name_get(), "constant")
         stat_incr("constant", true)
     else
@@ -257,7 +257,7 @@ M.check_constant = function(v)
 end
 
 M.check_global = function(v)
-    if not v:documentation_get() then
+    if not v:doc_get():exists() then
         print_missing(v:full_name_get(), "global")
         stat_incr("global", true)
     else

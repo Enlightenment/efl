@@ -1,5 +1,6 @@
 local eolian = require("eolian")
 local keyref = require("docgen.keyref")
+local dtree = require("docgen.doctree")
 
 local M = {}
 
@@ -84,19 +85,19 @@ local add_typedecl_attrs = function(tp, buf)
 end
 
 M.get_typedecl_str = function(tp)
-    local tps = eolian.typedecl_type
     local tpt = tp:type_get()
-    if tpt == tps.UNKNOWN then
+    if tpt == dtree.Typedecl.UNKNOWN then
         error("unknown typedecl: " .. tp:full_name_get())
-    elseif tpt == tps.STRUCT or tpt == tps.STRUCT_OPAQUE then
+    elseif tpt == dtree.Typedecl.STRUCT or
+           tpt == dtree.Typedecl.STRUCT_OPAQUE then
         local buf = { "struct " }
         add_typedecl_attrs(tp, buf)
         buf[#buf + 1] = tp:full_name_get()
-        if tpt == tps.STRUCT_OPAQUE then
+        if tpt == dtree.Typedecl.STRUCT_OPAQUE then
             buf[#buf + 1] = ";"
             return table.concat(buf)
         end
-        local fields = tp:struct_fields_get():to_array()
+        local fields = tp:struct_fields_get()
         if #fields == 0 then
             buf[#buf + 1] = " {}"
             return table.concat(buf)
@@ -111,11 +112,11 @@ M.get_typedecl_str = function(tp)
         end
         buf[#buf + 1] = "}"
         return table.concat(buf)
-    elseif tpt == tps.ENUM then
+    elseif tpt == dtree.Typedecl.ENUM then
         local buf = { "enum " }
         add_typedecl_attrs(tp, buf)
         buf[#buf + 1] = tp:full_name_get()
-        local fields = tp:enum_fields_get():to_array()
+        local fields = tp:enum_fields_get()
         if #fields == 0 then
             buf[#buf + 1] = " {}"
             return table.concat(buf)
@@ -137,7 +138,7 @@ M.get_typedecl_str = function(tp)
         end
         buf[#buf + 1] = "}"
         return table.concat(buf)
-    elseif tpt == tps.ALIAS then
+    elseif tpt == dtree.Typedecl.ALIAS then
         local buf = { "type " }
         add_typedecl_attrs(tp, buf)
         buf[#buf + 1] = tp:full_name_get()
@@ -150,20 +151,20 @@ M.get_typedecl_str = function(tp)
 end
 
 M.get_typedecl_cstr = function(tp)
-    local tps = eolian.typedecl_type
     local tpt = tp:type_get()
-    if tpt == tps.UNKNOWN then
+    if tpt == dtree.Typedecl.UNKNOWN then
         error("unknown typedecl: " .. tp:full_name_get())
-    elseif tpt == tps.STRUCT or tpt == tps.STRUCT_OPAQUE then
+    elseif tpt == dtree.Typedecl.STRUCT or
+           tpt == dtree.Typedecl.STRUCT_OPAQUE then
         local buf = { "typedef struct " }
         local fulln = tp:full_name_get():gsub("%.", "_");
         keyref.add(fulln, "c")
         buf[#buf + 1] = "_" .. fulln;
-        if tpt == tps.STRUCT_OPAQUE then
+        if tpt == dtree.Typedecl.STRUCT_OPAQUE then
             buf[#buf + 1] = " " .. fulln .. ";"
             return table.concat(buf)
         end
-        local fields = tp:struct_fields_get():to_array()
+        local fields = tp:struct_fields_get()
         if #fields == 0 then
             buf[#buf + 1] = " {} " .. fulln .. ";"
             return table.concat(buf)
@@ -176,11 +177,11 @@ M.get_typedecl_cstr = function(tp)
         end
         buf[#buf + 1] = "} " .. fulln .. ";"
         return table.concat(buf)
-    elseif tpt == tps.ENUM then
+    elseif tpt == dtree.Typedecl.ENUM then
         local buf = { "typedef enum" }
         local fulln = tp:full_name_get():gsub("%.", "_");
         keyref.add(fulln, "c")
-        local fields = tp:enum_fields_get():to_array()
+        local fields = tp:enum_fields_get()
         if #fields == 0 then
             buf[#buf + 1] = " {} " .. fulln .. ";"
             return table.concat(buf)
@@ -210,7 +211,7 @@ M.get_typedecl_cstr = function(tp)
         end
         buf[#buf + 1] = "} " .. fulln .. ";"
         return table.concat(buf)
-    elseif tpt == tps.ALIAS then
+    elseif tpt == dtree.Typedecl.ALIAS then
         local fulln = tp:full_name_get():gsub("%.", "_");
         keyref.add(fulln, "c")
         return "typedef " .. M.get_ctype_str(tp:base_type_get(), fulln) .. ";"

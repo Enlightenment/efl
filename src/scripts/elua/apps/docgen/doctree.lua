@@ -503,6 +503,171 @@ M.Event = Node:clone {
     end
 }
 
+M.Typedecl = Node:clone {
+    UNKNOWN = eolian.typedecl_type.UNKNOWN,
+    STRUCT = eolian.typedecl_type.STRUCT,
+    STRUCT_OPAQUE = eolian.typedecl_type.STRUCT_OPAQUE,
+    ENUM = eolian.typedecl_type.ENUM,
+    ALIAS = eolian.typedecl_type.ALIAS,
+
+    __ctor = function(self, tp)
+        self.typedecl = tp
+        assert(self.typedecl)
+    end,
+
+    type_get = function(self)
+        return self.typedecl:type_get()
+    end,
+
+    type_str_get = function(self)
+        local strs = {
+            [eolian.typedecl_type.STRUCT] = "struct",
+            [eolian.typedecl_type.STRUCT_OPAQUE] = "struct",
+            [eolian.typedecl_type.ENUM] = "enum",
+            [eolian.typedecl_type.ALIAS] = "alias"
+        }
+        return strs[self:type_get()]
+    end,
+
+    struct_fields_get = function(self)
+        return self.typedecl:struct_fields_get():to_array()
+    end,
+
+    struct_field_get = function(self, name)
+        return self.typedecl:struct_field_get(name)
+    end,
+
+    enum_fields_get = function(self)
+        return self.typedecl:enum_fields_get():to_array()
+    end,
+
+    enum_field_get = function(self, name)
+        return self.typedecl:enum_field_get(name)
+    end,
+
+    enum_legacy_prefix_get = function(self)
+        return self.typedecl:enum_legacy_prefix_get()
+    end,
+
+    doc_get = function(self)
+        return M.Doc(self.typedecl:documentation_get())
+    end,
+
+    file_get = function(self)
+        return self.typedecl:file_get()
+    end,
+
+    base_type_get = function(self)
+        return self.typedecl:base_type_get()
+    end,
+
+    aliased_base_get = function(self)
+        return self.typedecl:aliased_base_get()
+    end,
+
+    is_extern = function(self)
+        return self.typedecl:is_extern()
+    end,
+
+    c_type_get = function(self)
+        return self.typedecl:c_type_get()
+    end,
+
+    name_get = function(self)
+        return self.typedecl:name_get()
+    end,
+
+    full_name_get = function(self)
+        return self.typedecl:full_name_get()
+    end,
+
+    namespaces_get = function(self)
+        return self.typedecl:namespaces_get():to_array()
+    end,
+
+    free_func_get = function(self)
+        return self.typedecl:free_func_get()
+    end,
+
+    nspaces_get = function(self, root)
+        return M.Node.nspaces_get(self, self:type_str_get(), root)
+    end,
+
+    -- static getters
+
+    all_aliases_get = function()
+        local ret = {}
+        for tp in eolian.typedecl_all_aliases_get() do
+            ret[#ret + 1] = M.Typedecl(tp)
+        end
+        return ret
+    end,
+
+    all_structs_get = function()
+        local ret = {}
+        for tp in eolian.typedecl_all_structs_get() do
+            ret[#ret + 1] = M.Typedecl(tp)
+        end
+        return ret
+    end,
+
+    all_enums_get = function()
+        local ret = {}
+        for tp in eolian.typedecl_all_enums_get() do
+            ret[#ret + 1] = M.Typedecl(tp)
+        end
+        return ret
+    end,
+
+    aliases_by_file_get = function(fn)
+        local ret = {}
+        for tp in eolian.typedecl_aliases_get_by_file(fn) do
+            ret[#ret + 1] = M.Typedecl(tp)
+        end
+        return ret
+    end,
+
+    structs_by_file_get = function(fn)
+        local ret = {}
+        for tp in eolian.typedecl_structs_get_by_file(fn) do
+            ret[#ret + 1] = M.Typedecl(tp)
+        end
+        return ret
+    end,
+
+    enums_by_file_get = function(fn)
+        local ret = {}
+        for tp in eolian.typedecl_enums_get_by_file(fn) do
+            ret[#ret + 1] = M.Typedecl(tp)
+        end
+        return ret
+    end,
+
+    alias_by_name_get = function(tn)
+        local v = eolian.typedecl_alias_get_by_name(tn)
+        if not v then
+            return nil
+        end
+        return M.Typedecl(v)
+    end,
+
+    struct_by_name_get = function(tn)
+        local v = eolian.typedecl_struct_get_by_name(tn)
+        if not v then
+            return nil
+        end
+        return M.Typedecl(v)
+    end,
+
+    enum_by_name_get = function(tn)
+        local v = eolian.typedecl_enum_get_by_name(tn)
+        if not v then
+            return nil
+        end
+        return M.Typedecl(v)
+    end
+}
+
 M.Variable = Node:clone {
     UNKNOWN = eolian.variable_type.UNKNOWN,
     CONSTANT = eolian.variable_type.CONSTANT,
@@ -566,7 +731,7 @@ M.Variable = Node:clone {
     all_globals_get = function()
         local ret = {}
         for v in eolian.variable_all_globals_get() do
-            ret[#ret + 1] = v
+            ret[#ret + 1] = M.Variable(v)
         end
         return ret
     end,
@@ -574,7 +739,7 @@ M.Variable = Node:clone {
     all_constants_get = function()
         local ret = {}
         for v in eolian.variable_all_constants_get() do
-            ret[#ret + 1] = v
+            ret[#ret + 1] = M.Variable(v)
         end
         return ret
     end,
@@ -582,7 +747,7 @@ M.Variable = Node:clone {
     globals_by_file_get = function(fn)
         local ret = {}
         for v in eolian.variable_globals_get_by_file(fn) do
-            ret[#ret + 1] = v
+            ret[#ret + 1] = M.Variable(v)
         end
         return ret
     end,
@@ -590,7 +755,7 @@ M.Variable = Node:clone {
     constants_by_file_get = function(fn)
         local ret = {}
         for v in eolian.variable_constants_get_by_file(fn) do
-            ret[#ret + 1] = v
+            ret[#ret + 1] = M.Variable(v)
         end
         return ret
     end,

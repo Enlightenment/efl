@@ -1,4 +1,3 @@
-local eolian = require("eolian")
 local getopt = require("getopt")
 
 local serializer = require("serializer")
@@ -317,7 +316,7 @@ local build_reftable = function(f, title, ctitle, ctype, t, iscl)
                 iscl and v:nspaces_get() or dtree.Node.nspaces_get(v, ctype, true),
                 v:full_name_get()
             ):finish(),
-            (iscl and v:doc_get() or dtree.Doc(v:documentation_get())):brief_get()
+            v:doc_get():brief_get()
         }
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
@@ -381,13 +380,13 @@ local build_ref = function()
     build_reftable(f, "Mixins", "Mixin name", "mixin", mixins, true)
 
     build_reftable(f, "Aliases", "Alias name", "alias",
-        eolian.typedecl_all_aliases_get():to_array())
+        dtree.Typedecl.all_aliases_get())
 
     build_reftable(f, "Structures", "Struct name", "struct",
-        eolian.typedecl_all_structs_get():to_array())
+        dtree.Typedecl.all_structs_get())
 
     build_reftable(f, "Enums", "Enum name", "enum",
-        eolian.typedecl_all_enums_get():to_array())
+        dtree.Typedecl.all_enums_get())
 
     build_reftable(f, "Constants", "Constant name", "constant",
         dtree.Variable.all_constants_get())
@@ -765,7 +764,7 @@ local build_alias = function(tp)
     write_tsigs(f, tp)
 
     f:write_h("Description", 3)
-    f:write_raw(dtree.Doc(tp:documentation_get()):full_get(nil, true))
+    f:write_raw(tp:doc_get():full_get(nil, true))
     f:write_nl(2)
 
     f:finish()
@@ -778,13 +777,13 @@ local build_struct = function(tp)
     write_tsigs(f, tp)
 
     f:write_h("Description", 3)
-    f:write_raw(dtree.Doc(tp:documentation_get()):full_get(nil, true))
+    f:write_raw(tp:doc_get():full_get(nil, true))
     f:write_nl(2)
 
     f:write_h("Fields", 3)
 
     local arr = {}
-    for fl in tp:struct_fields_get() do
+    for i, fl in ipairs(tp:struct_fields_get()) do
         local buf = writer.Buffer()
         buf:write_b(fl:name_get())
         buf:write_raw(" - ", dtree.Doc(fl:documentation_get()):full_get())
@@ -803,13 +802,13 @@ local build_enum = function(tp)
     write_tsigs(f, tp)
 
     f:write_h("Description", 3)
-    f:write_raw(dtree.Doc(tp:documentation_get()):full_get(nil, true))
+    f:write_raw(tp:doc_get():full_get(nil, true))
     f:write_nl(2)
 
     f:write_h("Fields", 3)
 
     local arr = {}
-    for fl in tp:enum_fields_get() do
+    for i, fl in ipairs(tp:enum_fields_get()) do
         local buf = writer.Buffer()
         buf:write_b(fl:name_get())
         buf:write_raw(" - ", dtree.Doc(fl:documentation_get()):full_get())
@@ -833,15 +832,15 @@ local build_variable = function(v, constant)
 end
 
 local build_typedecls = function()
-    for tp in eolian.typedecl_all_aliases_get() do
+    for i, tp in ipairs(dtree.Typedecl.all_aliases_get()) do
         build_alias(tp)
     end
 
-    for tp in eolian.typedecl_all_structs_get() do
+    for i, tp in ipairs(dtree.Typedecl.all_structs_get()) do
         build_struct(tp)
     end
 
-    for tp in eolian.typedecl_all_enums_get() do
+    for i, tp in ipairs(dtree.Typedecl.all_enums_get()) do
         build_enum(tp)
     end
 end
