@@ -21,7 +21,7 @@ local propt_to_type = {
 
 local gen_cparam = function(par, out)
     local part = par:type_get()
-    out = out or (par:direction_get() == eolian.parameter_dir.OUT)
+    out = out or (par:direction_get() == par.OUT)
     local tstr = part:c_type_get()
     if out then
         tstr = ser.get_ctype_str(tstr, "*")
@@ -50,7 +50,7 @@ local gen_func_csig = function(f, ftype)
     end
 
     if f:type_get() == f.METHOD then
-        local pars = f:parameters_get():to_array()
+        local pars = f:parameters_get()
         local cnrt = get_func_csig_part(cn, rtype)
         for i = 1, #pars do
             pars[i] = gen_cparam(pars[i])
@@ -59,8 +59,8 @@ local gen_func_csig = function(f, ftype)
         return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
     end
 
-    local keys = f:property_keys_get(ftype):to_array()
-    local vals = f:property_values_get(ftype):to_array()
+    local keys = f:property_keys_get(ftype)
+    local vals = f:property_values_get(ftype)
 
     if ftype == f.PROP_SET then
         local cnrt = get_func_csig_part(cn, rtype)
@@ -131,9 +131,9 @@ local gen_func_param = function(fp, buf, nodir)
     -- TODO: default value
     buf[#buf + 1] = "        "
     local dirs = {
-        [eolian.parameter_dir.IN] = "@in ",
-        [eolian.parameter_dir.OUT] = "@out ",
-        [eolian.parameter_dir.INOUT] = "@inout ",
+        [dtree.Parameter.IN] = "@in ",
+        [dtree.Parameter.OUT] = "@out ",
+        [dtree.Parameter.INOUT] = "@inout ",
     }
     if not nodir then buf[#buf + 1] = dirs[fp:direction_get()] end
     buf[#buf + 1] = fp:name_get()
@@ -184,7 +184,7 @@ local gen_method_sig = function(fn, cl)
         buf[#buf + 1] = "@virtual_pure "
     end
     buf[#buf + 1] = "{"
-    local params = fn:parameters_get():to_array()
+    local params = fn:parameters_get()
     local rtp = fn:return_type_get(fn.METHOD)
     if #params == 0 and not rtp then
         buf[#buf + 1] = "}"
@@ -241,10 +241,10 @@ local gen_prop_sig = function(fn, cl)
         buf[#buf + 1] = "@virtual_pure "
     end
 
-    local gkeys = isget and fn:property_keys_get(fn.PROP_GET):to_array() or {}
-    local skeys = isset and fn:property_keys_get(fn.PROP_SET):to_array() or {}
-    local gvals = isget and fn:property_values_get(fn.PROP_GET):to_array() or {}
-    local svals = isget and fn:property_values_get(fn.PROP_SET):to_array() or {}
+    local gkeys = isget and fn:property_keys_get(fn.PROP_GET) or {}
+    local skeys = isset and fn:property_keys_get(fn.PROP_SET) or {}
+    local gvals = isget and fn:property_values_get(fn.PROP_GET) or {}
+    local svals = isget and fn:property_values_get(fn.PROP_SET) or {}
     local grtt = isget and fn:return_type_get(fn.PROP_GET) or nil
     local srtt = isset and fn:return_type_get(fn.PROP_SET) or nil
 
@@ -866,7 +866,7 @@ local build_parlist = function(f, pl, nodir)
             buf:write_raw(" ")
             buf:write_i(eomap.pdir_to_str[p:direction_get()])
         end
-        buf:write_raw(" - ", dtree.Doc(p:documentation_get()):full_get())
+        buf:write_raw(" - ", p:doc_get():full_get())
         params[#params + 1] = buf:finish()
     end
     f:write_list(params)
@@ -876,7 +876,7 @@ local build_vallist = function(f, pg, ps, title)
     if #pg == #ps then
         local same = true
         for i = 1, #pg do
-            if pg[i] ~= ps[i] then
+            if not pg[i]:is_same(ps[i]) then
                 same = false
                 break
             end
@@ -914,7 +914,7 @@ build_method = function(fn, cl)
     f:write_code(gen_func_csig(fn), "c")
     f:write_nl()
 
-    local pars = fn:parameters_get():to_array()
+    local pars = fn:parameters_get()
     if #pars > 0 then
         f:write_h("Parameters", 3)
         build_parlist(f, pars)
@@ -959,12 +959,12 @@ build_property = function(fn, cl)
     f:write_code(table.concat(codes, "\n"), "c")
     f:write_nl()
 
-    local pgkeys = isget and fn:property_keys_get(fn.PROP_GET):to_array() or {}
-    local pskeys = isset and fn:property_keys_get(fn.PROP_SET):to_array() or {}
+    local pgkeys = isget and fn:property_keys_get(fn.PROP_GET) or {}
+    local pskeys = isset and fn:property_keys_get(fn.PROP_SET) or {}
     build_vallist(f, pgkeys, pskeys, "Keys")
 
-    local pgvals = isget and fn:property_values_get(fn.PROP_GET):to_array() or {}
-    local psvals = isset and fn:property_values_get(fn.PROP_SET):to_array() or {}
+    local pgvals = isget and fn:property_values_get(fn.PROP_GET) or {}
+    local psvals = isset and fn:property_values_get(fn.PROP_SET) or {}
     build_vallist(f, pgvals, psvals, "Values")
 
     if isget and isset then

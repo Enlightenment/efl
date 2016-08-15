@@ -335,15 +335,27 @@ M.Function = Node:clone {
     end,
 
     property_keys_get = function(self, ft)
-        return self.func:property_keys_get(ft)
+        local ret = {}
+        for par in self.func:property_keys_get(ft) do
+            ret[#ret + 1] = M.Parameter(par)
+        end
+        return ret
     end,
 
     property_values_get = function(self, ft)
-        return self.func:property_values_get(ft)
+        local ret = {}
+        for par in self.func:property_values_get(ft) do
+            ret[#ret + 1] = M.Parameter(par)
+        end
+        return ret
     end,
 
     parameters_get = function(self)
-        return self.func:parameters_get()
+        local ret = {}
+        for par in self.func:parameters_get() do
+            ret[#ret + 1] = M.Parameter(par)
+        end
+        return ret
     end,
 
     return_type_get = function(self, ft)
@@ -374,6 +386,53 @@ M.Function = Node:clone {
             tbl[#tbl + 1] = true
         end
         return tbl
+    end
+}
+
+M.Parameter = Node:clone {
+    IN = eolian.parameter_dir.IN,
+    OUT = eolian.parameter_dir.OUT,
+    INOUT = eolian.parameter_dir.INOUT,
+
+    __ctor = function(self, par)
+        self.param = par
+        assert(self.param)
+    end,
+
+    direction_get = function(self)
+        return self.param:direction_get()
+    end,
+
+    type_get = function(self)
+        return self.param:type_get()
+    end,
+
+    default_value_get = function(self)
+        return self.param:default_value_get()
+    end,
+
+    name_get = function(self)
+        return self.param:name_get()
+    end,
+
+    doc_get = function(self)
+        return M.Doc(self.param:documentation_get())
+    end,
+
+    is_nonull = function(self)
+        return self.param:is_nonull()
+    end,
+
+    is_nullable = function(self)
+        return self.param:is_nullable()
+    end,
+
+    is_optional = function(self)
+        return self.param:is_optional()
+    end,
+
+    is_same = function(self, other)
+        return self.param == other.param
     end
 }
 

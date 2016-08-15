@@ -154,8 +154,8 @@ M.check_method = function(fn, cl)
     else
         stat_incr("method", false)
     end
-    for p in fn:parameters_get() do
-        if not p:documentation_get() then
+    for i, p in ipairs(fn:parameters_get()) do
+        if not p:doc_get():exists() then
             print_missing(fulln .. "." .. p:name_get(), "method parameter")
             stat_incr("param", true)
         else
@@ -188,8 +188,8 @@ M.check_property = function(fn, cl, ft)
         stat_incr(pfx .. "etter", false)
     end
 
-    for p in fn:property_keys_get(ft) do
-        if not p:documentation_get() then
+    for i, p in ipairs(fn:property_keys_get(ft)) do
+        if not p:doc_get():exists() then
             print_missing(fulln .. "." .. p:name_get(), pfx .. "etter key")
             stat_incr(pfx .. "key", true)
         else
@@ -197,8 +197,8 @@ M.check_property = function(fn, cl, ft)
         end
     end
 
-    for p in fn:property_values_get(ft) do
-        if not p:documentation_get() then
+    for i, p in ipairs(fn:property_values_get(ft)) do
+        if not p:doc_get():exists() then
             print_missing(fulln .. "." .. p:name_get(), pfx .. "etter value")
             stat_incr(pfx .. "value", true)
         else
