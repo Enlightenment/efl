@@ -1,7 +1,7 @@
 local util = require("util")
 
-local eomap = require("docgen.mappings")
 local dutil = require("docgen.util")
+local dtree = require("docgen.doctree")
 
 local M = {}
 
@@ -269,7 +269,7 @@ M.Writer = util.Object:clone {
                     end
                     local title = table.concat(rbuf)
                     self:write_raw("%%")
-                    self:write_link(eomap.gen_nsp_ref(title, true), title)
+                    self:write_link(dtree.ref_get(title, true), title)
                     self:write_raw("%%")
                     if ldot then
                         self:write_raw(".")

@@ -1,5 +1,4 @@
 local eolian = require("eolian")
-local eomap = require("docgen.mappings")
 
 local is_verbose = false
 

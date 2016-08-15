@@ -3,7 +3,6 @@ local getopt = require("getopt")
 
 local serializer = require("serializer")
 
-local eomap = require("docgen.mappings")
 local stats = require("docgen.stats")
 local dutil = require("docgen.util")
 local writer = require("docgen.writer")

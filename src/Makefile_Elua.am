@@ -68,7 +68,6 @@ eluadocgendir = $(datadir)/elua/apps/docgen
 eluadocgen_DATA = \
 	scripts/elua/apps/docgen/doctree.lua \
 	scripts/elua/apps/docgen/keyref.lua \
-	scripts/elua/apps/docgen/mappings.lua \
 	scripts/elua/apps/docgen/serializers.lua \
 	scripts/elua/apps/docgen/stats.lua \
 	scripts/elua/apps/docgen/util.lua \
