@@ -559,6 +559,56 @@ M.Variable = Node:clone {
 
     nspaces_get = function(self, root)
         return M.Node.nspaces_get(self, self:type_str_get(), root)
+    end,
+
+    -- static getters
+
+    all_globals_get = function()
+        local ret = {}
+        for v in eolian.variable_all_globals_get() do
+            ret[#ret + 1] = v
+        end
+        return ret
+    end,
+
+    all_constants_get = function()
+        local ret = {}
+        for v in eolian.variable_all_constants_get() do
+            ret[#ret + 1] = v
+        end
+        return ret
+    end,
+
+    globals_by_file_get = function(fn)
+        local ret = {}
+        for v in eolian.variable_globals_get_by_file(fn) do
+            ret[#ret + 1] = v
+        end
+        return ret
+    end,
+
+    constants_by_file_get = function(fn)
+        local ret = {}
+        for v in eolian.variable_constants_get_by_file(fn) do
+            ret[#ret + 1] = v
+        end
+        return ret
+    end,
+
+    global_by_name_get = function(vn)
+        local v = eolian.variable_global_get_by_name(vn)
+        if not v then
+            return nil
+        end
+        return M.Variable(v)
+    end,
+
+    constant_by_name_get = function(vn)
+        local v = eolian.variable_constant_get_by_name(vn)
+        if not v then
+            return nil
+        end
+        return M.Variable(v)
     end
 }
 

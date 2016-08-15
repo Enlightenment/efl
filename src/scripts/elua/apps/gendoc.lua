@@ -847,11 +847,11 @@ local build_typedecls = function()
 end
 
 local build_variables = function()
-    for v in eolian.variable_all_constants_get() do
+    for i, v in ipairs(dtree.Variable.all_constants_get()) do
         build_variable(v, true)
     end
 
-    for v in eolian.variable_all_globals_get() do
+    for i, v in ipairs(dtree.Variable.all_globals_get()) do
         build_variable(v, false)
     end
 end
