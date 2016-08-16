@@ -1176,6 +1176,20 @@ Fixes:
    * edje_pick:set the correct compression for sample (T4314)
    * evas smart obj delete on shutdown - fix weird child with null parent
    * evas image update calculation - account for clipped color changes (T4246)
+   * elm_win: Fix ABI break with missing EAPIs (T4344)
+   * elm_image: Remove EAPI sizing_eval
+   * image: Remove all new EAPI that shouldn't exist (T4343)
+   * evas: Fix shader for text masking (T4338)
+   * evas textgrid: unset style when trying to load bold/italic (T4323)
+   * elementary: fix segmentation faults when using elm_prefs
+   * elm win - fix elm win center to actually center again
+   * evas table - handle recursive access to cols/rows where child frees
+   * evas smart obj - handle invalid object id's when scop data get is NULL
+   * evas gl x11 engine - fix buffer age symbol find and use
+   * glview: Mark draw_request as eo-only
+   * elm: Hide new init APIs behind BETA tag
+   * win: Mark two properties as eo-only
+   * elm: Remove _EFL_APP_VERSION_SET from ELM_MAIN
 
 Changes since 1.16.0:
 ---------------------
