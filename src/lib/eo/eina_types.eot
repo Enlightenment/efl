@@ -41,3 +41,5 @@ enum @extern Eina.Xattr.Flags {
 }
 
 type @extern Eina.Error: int;
+
+struct @extern @free(eina_binbuf_free) Eina.Binbuf;
