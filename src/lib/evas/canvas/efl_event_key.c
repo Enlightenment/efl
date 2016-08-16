@@ -76,6 +76,22 @@ _efl_event_key_eo_base_constructor(Eo *obj, Efl_Event_Key_Data *pd EINA_UNUSED)
    return obj;
 }
 
+static inline void
+_efl_event_key_free(Efl_Event_Key_Data *pd)
+{
+   eina_stringshare_del(pd->key);
+   eina_stringshare_del(pd->keyname);
+   eina_stringshare_del(pd->string);
+   eina_stringshare_del(pd->compose);
+}
+
+EOLIAN static void
+_efl_event_key_eo_base_destructor(Eo *obj, Efl_Event_Key_Data *pd)
+{
+   _efl_event_key_free(pd);
+   eo_destructor(eo_super(obj, MY_CLASS));
+}
+
 EOLIAN static void
 _efl_event_key_pressed_set(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd, Eina_Bool val)
 {
@@ -151,10 +167,7 @@ _efl_event_key_key_code_get(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd)
 EOLIAN static void
 _efl_event_key_efl_event_reset(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd)
 {
-   eina_stringshare_del(pd->key);
-   eina_stringshare_del(pd->keyname);
-   eina_stringshare_del(pd->string);
-   eina_stringshare_del(pd->compose);
+   _efl_event_key_free(pd);
    memset(pd, 0, sizeof(*pd));
    pd->eo = obj;
    pd->fake = EINA_TRUE;
