@@ -579,5 +579,19 @@ EAPI Eina_Bool edje_object_color_class_set(Evas_Object *obj, const char * color_
  */
 EAPI Eina_Bool edje_object_color_class_get(const Evas_Object *obj, const char * color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
 
+/**
+ * @brief Enables selection if the entry is an EXPLICIT selection mode type.
+ *
+ * The default is to  not allow selection. This function only affects user
+ * selection, functions such as edje_object_part_text_select_all() and
+ * edje_object_part_text_select_none() are not affected.
+ *
+ * @param[in] part The part name
+ * @param[in] allow true to enable, false otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_select_allow_set(const Edje_Object *obj, const char *part, Eina_Bool allow);
+
 #include "edje_object.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"
