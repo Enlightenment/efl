@@ -61,7 +61,7 @@ _efl_event_hold_efl_event_input_event_flags_get(Eo *obj EINA_UNUSED, Efl_Event_H
 }
 
 EOLIAN static Eo *
-_efl_event_hold_efl_object_constructor(Eo *obj, Efl_Event_Hold_Data *pd)
+_efl_event_hold_efl_object_constructor(Eo *obj, Efl_Event_Hold_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_event_reset(obj);
