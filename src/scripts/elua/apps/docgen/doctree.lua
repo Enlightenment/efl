@@ -853,28 +853,12 @@ M.Expression = Node:clone {
         assert(self.expr)
     end,
 
-    eval = function(self, mask)
-        return self.expr:eval(mask)
-    end,
-
     eval_enum = function(self)
         return self.expr:eval(eolian.expression_mask.INT)
     end,
 
-    eval_type = function(self, tp)
-        return self.expr:eval_type(tp)
-    end,
-
     serialize = function(self)
         return self.expr:serialize()
-    end,
-
-    type_get = function(self)
-        return self.expr:type_get()
-    end,
-
-    value_get = function(self)
-        return self.expr:value_get()
     end
 }
 
