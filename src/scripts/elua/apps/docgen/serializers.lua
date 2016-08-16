@@ -1,4 +1,3 @@
-local eolian = require("eolian")
 local keyref = require("docgen.keyref")
 local dtree = require("docgen.doctree")
 
@@ -35,17 +34,16 @@ local wrap_type_attrs = function(tp, str)
 end
 
 M.get_type_str = function(tp)
-    local tps = eolian.type_type
     local tpt = tp:type_get()
-    if tpt == tps.UNKNOWN then
+    if tpt == tp.UNKNOWN then
         error("unknown type: " .. tp:full_name_get())
-    elseif tpt == tps.VOID then
+    elseif tpt == tp.VOID then
         return wrap_type_attrs(tp, "void")
-    elseif tpt == tps.UNDEFINED then
+    elseif tpt == tp.UNDEFINED then
         return wrap_type_attrs(tp, "__undefined_type")
-    elseif tpt == tps.REGULAR or tpt == tps.CLASS then
+    elseif tpt == tp.REGULAR or tpt == tp.CLASS then
         return wrap_type_attrs(tp, tp:full_name_get())
-    elseif tpt == tps.COMPLEX then
+    elseif tpt == tp.COMPLEX then
         local stypes = {}
         local stp = tp:base_type_get()
         while stp do
@@ -54,18 +52,18 @@ M.get_type_str = function(tp)
         end
         return wrap_type_attrs(tp, tp:full_name_get() .. "<"
             .. table.concat(stypes, ", ") .. ">")
-    elseif tpt == tps.POINTER then
+    elseif tpt == tp.POINTER then
         local btp = tp:base_type_get()
         local suffix = " *"
-        if btp:type_get() == tps.POINTER then
+        if btp:type_get() == tp.POINTER then
             suffix = "*"
         end
         return wrap_type_attrs(tp, M.get_type_str(btp) .. suffix)
-    elseif tpt == tps.STATIC_ARRAY then
+    elseif tpt == tp.STATIC_ARRAY then
         return wrap_type_attrs(tp, "static_array<"
             .. M.get_type_str(tp:base_type_get()) .. ", "
             .. tp:array_size_get() .. ">")
-    elseif tpt == tps.TERMINATED_ARRAY then
+    elseif tpt == tp.TERMINATED_ARRAY then
         return wrap_type_attrs(tp, "terminated_array<"
             .. M.get_type_str(tp:base_type_get()) .. ">")
     end

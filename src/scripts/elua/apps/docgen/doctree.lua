@@ -368,7 +368,11 @@ M.Function = Node:clone {
     end,
 
     return_type_get = function(self, ft)
-        return self.func:return_type_get(ft)
+        local v = self.func:return_type_get(ft)
+        if not v then
+            return nil
+        end
+        return M.Type(v)
     end,
 
     return_default_value_get = function(self, ft)
@@ -426,7 +430,11 @@ M.Parameter = Node:clone {
     end,
 
     type_get = function(self)
-        return self.param:type_get()
+        local v = self.param:type_get()
+        if not v then
+            return nil
+        end
+        return M.Type(v)
     end,
 
     default_value_get = function(self)
@@ -473,7 +481,11 @@ M.Event = Node:clone {
     end,
 
     type_get = function(self)
-        return self.event:type_get()
+        local v = self.event:type_get()
+        if not v then
+            return nil
+        end
+        return M.Type(v)
     end,
 
     doc_get = function(self)
@@ -526,7 +538,11 @@ M.StructField = Node:clone {
     end,
 
     type_get = function(self)
-        return self.field:type_get()
+        local v = self.field:type_get()
+        if not v then
+            return nil
+        end
+        return M.Type(v)
     end
 }
 
@@ -554,6 +570,103 @@ M.EnumField = Node:clone {
             return nil
         end
         return M.Expression(v)
+    end
+}
+
+M.Type = Node:clone {
+    UNKNOWN = eolian.type_type.UNKNOWN,
+    VOID = eolian.type_type.VOID,
+    REGULAR = eolian.type_type.REGULAR,
+    COMPLEX = eolian.type_type.COMPLEX,
+    POINTER = eolian.type_type.POINTER,
+    CLASS = eolian.type_type.CLASS,
+    STATIC_ARRAY = eolian.type_type.STATIC_ARRAY,
+    TERMINATED_ARRAY = eolian.type_type.TERMINATED_ARRAY,
+    UNDEFINED = eolian.type_type.UNDEFINED,
+
+    __ctor = function(self, tp)
+        self.type = tp
+        assert(self.type)
+    end,
+
+    type_get = function(self)
+        return self.type:type_get()
+    end,
+
+    file_get = function(self)
+        return self.type:file_get()
+    end,
+
+    base_type_get = function(self)
+        local v = self.type:base_type_get()
+        if not v then
+            return nil
+        end
+        return M.Type(v)
+    end,
+
+    next_type_get = function(self)
+        local v = self.type:next_type_get()
+        if not v then
+            return nil
+        end
+        return M.Type(v)
+    end,
+
+    typedecl_get = function(self)
+        local v = self.type:typedecl_get()
+        if not v then
+            return nil
+        end
+        return M.Typedecl(v)
+    end,
+
+    aliased_base_get = function(self)
+        local v = self.type:aliased_base_get()
+        if not v then
+            return nil
+        end
+        return M.Type(v)
+    end,
+
+    class_get = function(self)
+        return self.type:class_get()
+    end,
+
+    array_size_get = function(self)
+        return self.type_array_size_get()
+    end,
+
+    is_own = function(self)
+        return self.type:is_own()
+    end,
+
+    is_const = function(self)
+        return self.type:is_const()
+    end,
+
+    is_ref = function(self)
+        return self.type:is_ref()
+    end,
+
+    c_type_get = function(self)
+        return self.type:c_type_get()
+    end,
+
+    name_get = function(self)
+        return self.type:name_get()
+    end,
+
+    full_name_get = function(self)
+        return self.type:full_name_get()
+    end,
+
+    namespaces_get = function(self)
+        return self.type:namespaces_get()
+    end,
+
+    free_func_get = function(self)
+        return self.type:free_func_get()
     end
 }
 
@@ -628,11 +741,19 @@ M.Typedecl = Node:clone {
     end,
 
     base_type_get = function(self)
-        return self.typedecl:base_type_get()
+        local v = self.typedecl:base_type_get()
+        if not v then
+            return nil
+        end
+        return M.Type(v)
     end,
 
     aliased_base_get = function(self)
-        return self.typedecl:aliased_base_get()
+        local v = self.typedecl:aliased_base_get()
+        if not v then
+            return nil
+        end
+        return M.Type(v)
     end,
 
     is_extern = function(self)
@@ -769,7 +890,11 @@ M.Variable = Node:clone {
     end,
 
     base_type_get = function(self)
-        return self.variable:base_type_get()
+        local v = self.variable:base_type_get()
+        if not v then
+            return nil
+        end
+        return M.Type(v)
     end,
 
     value_get = function(self)
