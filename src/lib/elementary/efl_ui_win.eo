@@ -164,8 +164,12 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
 
            @since 1.18
          ]]
-         set { }
-         get { }
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
          values {
             enabled: bool; [[If true, the indicator is enabled,
                              If false, the indicator is disabled.]]
@@ -176,8 +180,12 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
 
            @since 1.18
          ]]
-         set { }
-         get { }
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
          values {
             type: Efl.Ui.Win.Indicator_Type; [[The type, one of #Efl_Ui_Win_Indicator_Type.]]
          }
