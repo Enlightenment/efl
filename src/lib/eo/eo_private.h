@@ -129,12 +129,11 @@ struct _Eo_Object
 #define DICH_CHAIN1(x) ((x) >> DICH_CHAIN_LAST_BITS)
 #define DICH_CHAIN_LAST(x) ((x) & ((1 << DICH_CHAIN_LAST_BITS) - 1))
 
-/* FIXME: Change the type to something generic that makes sense for eo */
-typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
+typedef void (*Eo_Op_Func_Type)(Eo *, void *class_data);
 
 typedef struct
 {
-   eo_op_func_type func;
+   Eo_Op_Func_Type func;
    const _Efl_Class *src;
 } op_type_funcs;
 

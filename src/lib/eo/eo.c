@@ -187,7 +187,7 @@ _eo_op_class_get(Efl_Object_Op op)
 }
 
 static inline Eina_Bool
-_vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass, Efl_Object_Op op, eo_op_func_type func)
+_vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass, Efl_Object_Op op, Eo_Op_Func_Type func)
 {
    op_type_funcs *fsrc;
    size_t idx1 = DICH_CHAIN1(op);
@@ -1061,7 +1061,7 @@ eo_class_free(_Efl_Class *klass)
 
 /* Not really called, just used for the ptr... */
 static void
-_eo_class_isa_func(Eo *eo_id EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+_eo_class_isa_func(Eo *eo_id EINA_UNUSED, void *class_data EINA_UNUSED)
 {
    /* Do nonthing. */
 }
@@ -1813,7 +1813,7 @@ efl_object_init(void)
 #ifdef EO_DEBUG
    /* Call it just for coverage purposes. Ugly I know, but I like it better than
     * casting everywhere else. */
-   _eo_class_isa_func(NULL, NULL, NULL);
+   _eo_class_isa_func(NULL, NULL);
 #endif
 
    _efl_add_fallback_init();
