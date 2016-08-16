@@ -195,7 +195,7 @@ M.get_typedecl_cstr = function(tp)
             local val = fld:value_get()
             if val then
                 buf[#buf + 1] = " = "
-                local ev = val:eval(eolian.expression_mask.INT)
+                local ev = val:eval_enum()
                 local lit = ev:to_literal()
                 buf[#buf + 1] = lit
                 local ser = val:serialize()

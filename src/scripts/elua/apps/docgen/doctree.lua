@@ -372,7 +372,11 @@ M.Function = Node:clone {
     end,
 
     return_default_value_get = function(self, ft)
-        return self.func:return_default_value_get(ft)
+        local v = self.func:return_default_value_get(ft)
+        if not v then
+            return nil
+        end
+        return M.Expression(v)
     end,
 
     return_doc_get = function(self, ft)
@@ -426,7 +430,11 @@ M.Parameter = Node:clone {
     end,
 
     default_value_get = function(self)
-        return self.param:default_value_get()
+        local v = self.param:default_value_get()
+        if not v then
+            return nil
+        end
+        return M.Expression(v)
     end,
 
     name_get = function(self)
@@ -541,7 +549,11 @@ M.EnumField = Node:clone {
     end,
 
     value_get = function(self, force)
-        return self.field:value_get(force)
+        local v = self.field:value_get(force)
+        if not v then
+            return nil
+        end
+        return M.Expression(v)
     end
 }
 
@@ -832,6 +844,37 @@ M.Variable = Node:clone {
             return nil
         end
         return M.Variable(v)
+    end
+}
+
+M.Expression = Node:clone {
+    __ctor = function(self, expr)
+        self.expr = expr
+        assert(self.expr)
+    end,
+
+    eval = function(self, mask)
+        return self.expr:eval(mask)
+    end,
+
+    eval_enum = function(self)
+        return self.expr:eval(eolian.expression_mask.INT)
+    end,
+
+    eval_type = function(self, tp)
+        return self.expr:eval_type(tp)
+    end,
+
+    serialize = function(self)
+        return self.expr:serialize()
+    end,
+
+    type_get = function(self)
+        return self.expr:type_get()
+    end,
+
+    value_get = function(self)
+        return self.expr:value_get()
     end
 }
 
