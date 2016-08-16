@@ -98,7 +98,7 @@ int      (*glsym_glXGetVideoSync)    (unsigned int *a) = NULL;
 int      (*glsym_glXWaitVideoSync)   (int a, int b, unsigned int *c) = NULL;
 XID      (*glsym_glXCreatePixmap)    (Display *a, void *b, Pixmap c, const int *d) = NULL;
 void     (*glsym_glXDestroyPixmap)   (Display *a, XID b) = NULL;
-void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
+int      (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
 int      (*glsym_glXSwapIntervalSGI) (int a) = NULL;
 void     (*glsym_glXSwapIntervalEXT) (Display *s, GLXDrawable b, int c) = NULL;
 void     (*glsym_glXReleaseBuffersMESA)   (Display *a, XID b) = NULL;
@@ -1406,9 +1406,9 @@ eng_gl_symbols(Eina_Bool noext_glXCreatePixmap)
    FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapARB", glsym_func_void);
    FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", glsym_func_void);
 
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT", glsym_func_void);
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_void);
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", glsym_func_void);
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", glsym_func_int);
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT", glsym_func_int);
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_int);
 
    FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", glsym_func_int);
    FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", glsym_func_int);
