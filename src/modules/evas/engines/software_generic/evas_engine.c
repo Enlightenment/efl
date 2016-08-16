@@ -1694,7 +1694,6 @@ eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int l
 {
    RGBA_Image_Data_Map *map;
    RGBA_Image *im = image;
-   Eina_Bool found = EINA_FALSE;
 
    if (!im || !memory)
      return EINA_FALSE;
@@ -1703,7 +1702,6 @@ eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int l
      {
         if ((map->ptr == memory) && (map->size == length))
           {
-             found = EINA_TRUE;
              if (map->allocated)
                {
                   if (map->mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE)
