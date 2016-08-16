@@ -54,6 +54,7 @@ class Efl.Event.Key (Efl.Object, Efl.Event, Efl.Input.State, Efl.Event.Input)
    implements {
       class.destructor;
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Event.instance_get;
       Efl.Event.reset;
       Efl.Event.dup;
