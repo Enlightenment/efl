@@ -69,6 +69,19 @@ typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas
 
 extern EAPI double _elm_startup_time;
 
+#ifndef ELM_LIB_QUICKLAUNCH
+#define ELM_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); ret = elm_main(argc, argv); elm_shutdown(); return ret; } /**< macro to be used after the elm_main() function */
+#else
+/** @deprecated macro to be used after the elm_main() function.
+ * Do not define ELM_LIB_QUICKLAUNCH
+ * Compile your programs with -fpie and -pie -rdynamic instead, to generate a single binary (linkable executable).
+ */
+#define ELM_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret = elm_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret; }
+#endif
+
+
+#ifdef EFL_BETA_API_SUPPORT
+
 #ifdef EFL_VERSION_MICRO
 # define _EFL_VERSION_MICRO EFL_VERSION_MICRO
 #else
@@ -96,16 +109,17 @@ extern EAPI double _elm_startup_time;
 #define _EFL_APP_VERSION_SET() do { if (efl_build_version_set) efl_build_version_set(EFL_VERSION_MAJOR, EFL_VERSION_MINOR, _EFL_VERSION_MICRO, _EFL_VERSION_REVISION, _EFL_VERSION_FLAVOR, _EFL_BUILD_ID); } while (0)
 
 #ifndef ELM_LIB_QUICKLAUNCH
-#define ELM_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); ret = elm_main(argc, argv); elm_shutdown(); return ret; } /**< macro to be used after the elm_main() function */
 #define EFL_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL); ret = efl_loop_begin(ecore_main_loop_get()); elm_shutdown(); return ret; }
 #else
 /** @deprecated macro to be used after the elm_main() function.
  * Do not define ELM_LIB_QUICKLAUNCH
  * Compile your programs with -fpie and -pie -rdynamic instead, to generate a single binary (linkable executable).
  */
-#define ELM_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret = elm_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret; }
 #define EFL_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret = efl_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret; }
 #endif
+
+#endif /* EFL_BETA_API_SUPPORT */
+
 
 /**************************************************************************/
 /* General calls */
@@ -257,11 +271,13 @@ EAPI void      elm_quicklaunch_cleanup(void);
  */
 EAPI int       elm_quicklaunch_fallback(int argc, char **argv);
 
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * Exposed symbol used only by macros and should not be used by apps
+ * @since 1.18 (as beta)
  */
 EAPI int       efl_quicklaunch_fallback(int argc, char **argv);
-
+#endif
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
