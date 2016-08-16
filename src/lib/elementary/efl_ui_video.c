@@ -272,7 +272,7 @@ _efl_ui_video_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Video_Data *sd)
 }
 
 EAPI Evas_Object *
-elm_videfl_add(Evas_Object *parent)
+elm_video_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Evas_Object *obj = efl_add(MY_CLASS, parent);
