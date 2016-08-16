@@ -182,6 +182,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
 
            @since 1.18
          ]]
+         legacy: null;
       }
    }
    implements {
