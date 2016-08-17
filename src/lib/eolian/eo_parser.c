@@ -1924,7 +1924,14 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
      }
    _parse_dep(ls, fname, iname);
    const Eolian_Class *dep = eolian_class_get_by_name(iname);
-   assert(dep != NULL);
+   if (!dep)
+     {
+        char ebuf[PATH_MAX];
+        eo_lexer_context_restore(ls);
+        snprintf(ebuf, sizeof(ebuf), "unknown inherit '%s'. Incorrect case?", iname);
+        eo_lexer_syntax_error(ls, ebuf);
+        return;
+     }
    if (check_inherit) switch (type)
      {
       case EOLIAN_CLASS_REGULAR:
