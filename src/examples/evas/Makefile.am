@@ -450,6 +450,15 @@ shooter/assets/models/snake.md2 \
 shooter/assets/models/soldier_jump.md2 \
 shooter/assets/models/soldier.md2 \
 shooter/assets/models/tommy.ply \
+filters/filter_blend.lua \
+filters/filter_blur.lua \
+filters/filter_bump.lua \
+filters/filter_curve.lua \
+filters/filter_example_1.lua \
+filters/filter_grow.lua \
+filters/filter_mask.lua \
+filters/filter_padding.lua \
+filters/filter_transform.lua \
 Makefile.examples \
 evas-common.h
 
