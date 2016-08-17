@@ -585,32 +585,38 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
 
 static void
 _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
-                                     Evas_Event_Mouse_Move *ev, int event_id,
-                                     Efl_Event_Pointer *parent_pe)
+                                     Efl_Event_Pointer *parent_ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
    Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Evas_Coord_Point canvas = ev->cur.canvas;
-   Efl_Event_Pointer *pe = NULL;
+   Evas_Object_Protected_Data *child;
+   Evas_Object *eo_child;
+   Eina_List *l;
+   Efl_Event_Pointer_Data *ev;
+   Efl_Event_Pointer *evt;
+   Eina_Vector2 curpt, curpt_real, prevpt, prevpt_real;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   _transform_to_src_space(obj, src, &ev->cur.canvas.x, &ev->cur.canvas.y);
+   evt = efl_event_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   if (!ev) return;
 
-   ev->event_src = eo_obj;
-
-   //FIXME: transform previous coords also.
-   Eina_List *l;
-   Evas_Object *eo_child;
-   Evas_Object_Protected_Data *child;
-   Evas_Coord_Point point = ev->cur.canvas;
+   curpt_real = ev->cur;
+   prevpt_real = ev->prev;
+   _transform_to_src_space_f(obj, src, &ev->cur);
+   _transform_to_src_space_f(obj, src, &ev->prev);
+   curpt = ev->cur;
+   prevpt = ev->prev;
+   ev->source = eo_obj;
 
    if (e->pointer.mouse_grabbed)
      {
         Eina_List *outs = NULL;
         Eina_List *copy = evas_event_list_copy(src->proxy->src_event_in);
+
         EINA_LIST_FOREACH(copy, l, eo_child)
           {
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
@@ -621,11 +627,14 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                (!evas_event_freezes_through(eo_child, child)) &&
                (!child->clip.clipees))
                {
-                  ev->cur.canvas = point;
-                  _evas_event_havemap_adjust(eo_child, child, &ev->cur.canvas.x,
-                                             &ev->cur.canvas.y,
-                                             child->mouse_grabbed);
-                  EV_CALL(eo_child, child, EVAS_CALLBACK_MOUSE_MOVE, ev, event_id, pe, parent_pe);
+                  ev->cur = curpt;
+                  ev->prev = prevpt;
+                  _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, child->mouse_grabbed);
+                  _evas_event_havemap_adjust_f(eo_child, child, &ev->prev, child->mouse_grabbed);
+
+                  ev->action = EFL_POINTER_ACTION_MOVE;
+                  evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_MOVE, NULL,
+                                                  event_id, EFL_EVENT_POINTER_MOVE, evt);
                }
              else
                outs = eina_list_append(outs, eo_child);
@@ -633,28 +642,24 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
              //FIXME: take care nograb object 
           }
         eina_list_free(copy);
-        EV_RESET(pe);
 
-        while (outs)
+        EINA_LIST_FREE(outs, eo_child)
           {
-             eo_child = outs->data;
-             outs = eina_list_remove(outs, eo_child);
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
              if ((child->mouse_grabbed == 0) && (!e->delete_me))
                {
-                  if (child->mouse_in) continue;
+                  if (child->mouse_in) continue; /* FIXME: dubious logic! */
                   child->mouse_in = 0;
                   if (child->delete_me || e->is_frozen) continue;
-                  ev->cur.canvas = canvas;
-                  _evas_event_havemap_adjust(eo_child, child, &ev->cur.canvas.x,
-                                             &ev->cur.canvas.y,
-                                             child->mouse_grabbed);
-
+                  ev->cur = curpt_real;
+                  _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, child->mouse_grabbed);
                   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
                     proxy_write->src_event_in = eina_list_remove(proxy_write->src_event_in, eo_child);
                   EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
 
-                  EV_CALL(eo_child, child, EVAS_CALLBACK_MOUSE_OUT, ev, event_id, pe, parent_pe);
+                  ev->action = EFL_POINTER_ACTION_OUT;
+                  evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_OUT, NULL,
+                                                  event_id, EFL_EVENT_POINTER_OUT, evt);
                }
           }
      }
@@ -666,7 +671,8 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
         if (src->is_smart)
           {
              int no_rep = 0;
-             ins = _evas_event_object_list_raw_in_get(eo_e, ins, evas_object_smart_members_get_direct(eo_src), NULL, ev->cur.canvas.x, ev->cur.canvas.y, &no_rep, EINA_TRUE);
+             ins = _evas_event_object_list_raw_in_get(eo_e, ins, evas_object_smart_members_get_direct(eo_src),
+                                                      NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
           }
         else
           ins = eina_list_append(ins, eo_src);
@@ -675,11 +681,9 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
           {
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
 
-             ev->cur.canvas = point;
-
+             ev->cur = curpt;
              if (evas_object_is_in_output_rect(eo_child, child,
-                                               ev->cur.canvas.x,
-                                               ev->cur.canvas.y, 1, 1) &&
+                                               ev->cur.x, ev->cur.y, 1, 1) &&
                 (evas_object_clippers_is_visible(eo_child, child) ||
                  child->mouse_grabbed) &&
                 eina_list_data_find(ins, eo_child) &&
@@ -687,27 +691,22 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                (!evas_event_freezes_through(eo_child, child)) &&
                (!child->clip.clipees) &&
                ((!child->precise_is_inside) ||
-                evas_object_is_inside(eo_child, child, ev->cur.canvas.x,
-                                      ev->cur.canvas.y)))
+                evas_object_is_inside(eo_child, child, ev->cur.x, ev->cur.y)))
                {
-                  _evas_event_havemap_adjust(eo_child, child, &ev->cur.canvas.x,
-                                             &ev->cur.canvas.y,
-                                             child->mouse_grabbed);
-                  EV_CALL(eo_child, child, EVAS_CALLBACK_MOUSE_MOVE, ev, event_id, pe, parent_pe);
-                  EV_RESET(pe);
+                  ev->action = EFL_POINTER_ACTION_MOVE;
+                  _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, child->mouse_grabbed);
+                  evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_MOVE, NULL,
+                                                  event_id, EFL_EVENT_POINTER_MOVE, evt);
                }
              else if (child->mouse_in)
                {
                   child->mouse_in = 0;
                   if (e->is_frozen) continue;
-                  ev->cur.canvas = point;
-                  _evas_event_havemap_adjust(eo_child, child,
-                                             &ev->cur.canvas.x,
-                                             &ev->cur.canvas.y,
-                                             child->mouse_grabbed);
-                  // note: Mouse_Move and Mouse_Out are compatible (bad!)
-                  EV_CALL(eo_child, child, EVAS_CALLBACK_MOUSE_OUT, ev, event_id, pe, parent_pe);
-                  EV_RESET(pe);
+                  ev->cur = curpt;
+                  _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, child->mouse_grabbed);
+                  ev->action = EFL_POINTER_ACTION_OUT;
+                  evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_OUT, NULL,
+                                                  event_id, EFL_EVENT_POINTER_OUT, evt);
                   if (e->delete_me) break;
 
                }
@@ -726,13 +725,11 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                      {
                         child->mouse_in = 1;
                         if (e->is_frozen) continue;
-                        ev->cur.canvas = point;
-                        _evas_event_havemap_adjust(eo_child, child,
-                                                   &ev->cur.canvas.x,
-                                                   &ev->cur.canvas.y,
-                                                   child->mouse_grabbed);
-                        // note: Mouse_Move and Mouse_In are compatible (bad!)
-                        EV_CALL(eo_child, child, EVAS_CALLBACK_MOUSE_IN, ev, event_id2, pe, parent_pe);
+                        ev->cur = curpt;
+                        _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, child->mouse_grabbed);
+                        ev->action = EFL_POINTER_ACTION_IN;
+                        evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_IN, NULL,
+                                                        event_id2, EFL_EVENT_POINTER_IN, evt);
                         if (e->delete_me) break;
                      }
                 }
@@ -752,8 +749,8 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
              if (ins) eina_list_free(ins);
           }
      }
-   ev->cur.canvas = canvas;
-   EV_DEL(pe);
+
+   efl_del(evt);
 }
 
 static void
@@ -1885,7 +1882,7 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, Evas_Public_Data *e, int x, int
                          {
                             EV_CALL(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id, pemove, parent_pe);
                             if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
-                              _evas_event_source_mouse_move_events(eo_obj, eo_e, &ev, event_id, pemove);
+                              _evas_event_source_mouse_move_events(eo_obj, eo_e, pemove, event_id);
                          }
                     }
                   else
@@ -2039,7 +2036,7 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, Evas_Public_Data *e, int x, int
                        _evas_event_havemap_adjust(eo_obj, obj, &ev.cur.canvas.x, &ev.cur.canvas.y, obj->mouse_grabbed);
                        EV_CALL(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id, pemove, parent_pe);
                        if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
-                         _evas_event_source_mouse_move_events(eo_obj, eo_e, &ev, event_id, pemove);
+                         _evas_event_source_mouse_move_events(eo_obj, eo_e, pemove, event_id);
                     }
                }
              /* otherwise it has left the object */
@@ -2227,7 +2224,7 @@ nogrep:
                        _evas_event_havemap_adjust(eo_obj, obj, &ev.cur.canvas.x, &ev.cur.canvas.y, obj->mouse_grabbed);
                        EV_CALL(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id, pemove, parent_pe);
                        if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
-                         _evas_event_source_mouse_move_events(eo_obj, eo_e, &ev, event_id, pemove);
+                         _evas_event_source_mouse_move_events(eo_obj, eo_e, pemove, event_id);
                     }
                }
              /* otherwise it has left the object */
