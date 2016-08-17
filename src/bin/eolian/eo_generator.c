@@ -23,7 +23,7 @@ static const Efl_Op_Description _@#class_op_desc[] = {@#list_op\n};\n\n";
 
 static const char
 tmpl_events_desc[] = "\
-static const Efl_Event_Description *_@#class_event_desc[] = {@#list_evdesc\n\
+static const Efl_Event_Description * const _@#class_event_desc[] = {@#list_evdesc\n\
      NULL\n\
 };\n\n";
 
