@@ -3245,7 +3245,7 @@ EAPI void                          evas_object_image_memfile_set(Evas_Object *ob
  * Magic version number to know what the native surface struct looks like
  */
 
-#define EVAS_NATIVE_SURFACE_VERSION 3
+#define EVAS_NATIVE_SURFACE_VERSION 4
 
 /**
  * Native surface types that image object supports
@@ -3300,6 +3300,7 @@ typedef struct _Evas_Native_Surface
       {
          void         *visual; /**< visual of the pixmap to use (Visual) */
          unsigned long pixmap; /**< pixmap id to use (Pixmap) */
+         unsigned int  multiple_buffer; /**< From version 4. 1 if pixmap is multiple buffer pixmap such as named pixmap created by enlightenment. driver dependent. @since 1.19 */
       } x11; /**< Set this struct fields if surface data is X11 based. */
 
       struct

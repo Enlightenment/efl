@@ -2037,6 +2037,31 @@ _native_bind_cb(void *image)
 #ifdef GL_GLES
        if (n->ns_data.x11.surface)
          {
+            if (n->ns_data.x11.multiple_buffer)
+              {
+                 EGLint err;
+                 if (!glsym_eglDestroyImage || !glsym_eglCreateImage)
+                   {
+                      ERR("Try eglDestroyImage()/eglCreateImage() on EGL with no support");
+                      return;
+                   }
+
+                 glsym_eglDestroyImage(im->native.disp, n->ns_data.x11.surface);
+                 if ((err = eglGetError()) != EGL_SUCCESS)
+                   {
+                      ERR("eglDestroyImage() failed.");
+                      glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
+                   }
+
+                 n->ns_data.x11.surface = glsym_eglCreateImage(im->native.disp,
+                                                       EGL_NO_CONTEXT,
+                                                       EGL_NATIVE_PIXMAP_KHR,
+                                                       (void *)n->ns_data.x11.pixmap,
+                                                       NULL);
+                 if (!n->ns_data.x11.surface)
+                   ERR("eglCreateImage() for Pixmap 0x%#lx failed: %#x", n->ns_data.x11.pixmap, eglGetError());
+
+              }
             if (glsym_glEGLImageTargetTexture2DOES)
               {
                  glsym_glEGLImageTargetTexture2DOES(im->native.target, n->ns_data.x11.surface);
@@ -2628,6 +2653,13 @@ eng_image_native_set(void *data, void *image, void *native)
                                                                EGL_NO_CONTEXT,
                                                                EGL_NATIVE_PIXMAP_KHR,
                                                                (void *)pm, NULL);
+
+                 if ((ns->version < 4) ||
+                     ((ns->version == 4) && !(ns->data.x11.multiple_buffer == 1)))
+                   n->ns_data.x11.multiple_buffer = 0;
+                 else
+                   n->ns_data.x11.multiple_buffer = 1;
+
                  if (!n->ns_data.x11.surface)
                    {
                       ERR("eglCreateImage() for Pixmap %#lx failed: %#x", pm, eglGetError());
