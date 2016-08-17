@@ -867,6 +867,68 @@ START_TEST(eo_cxx_future_race_variant_then_value)
 }
 END_TEST
 
+template <typename...Args>
+void eo_cxx_promise_construct_and_destroy_impl()
+{
+   ecore_init();
+
+   {
+      efl::promise<Args...> promise;
+      efl::shared_future<Args...> f = promise.get_future();
+   }
+   ecore_shutdown();
+}
+
+START_TEST(eo_cxx_promise_construct_and_destroy)
+{
+  eo_cxx_promise_construct_and_destroy_impl<int>();
+}
+END_TEST
+
+template <typename T>
+struct test_value_get;
+
+template <>
+struct test_value_get<int>
+{
+  static int get() { return 5; }
+};
+
+template <typename T>
+void eo_cxx_promise_value_set_impl()
+{
+   ecore_init();
+
+   {
+      efl::promise<T> promise;
+      efl::shared_future<T> f = promise.get_future();
+
+      std::thread thread
+        ([&] {
+          efl::ecore::main_loop_thread_safe_call_sync([]{}); // wait for ecore_main_loop_begin() call to start
+          efl::ecore::main_loop_thread_safe_call_async
+            ([&]
+             {
+                promise.set_value(test_value_get<T>::get());
+             });
+
+          T value = f.get();
+          ck_assert_int_eq(value, test_value_get<T>::get());
+          efl::ecore::main_loop_thread_safe_call_sync([] { ecore_main_loop_quit(); });
+        });
+
+      ecore_main_loop_begin();
+      
+      thread.join();
+   }
+   ecore_shutdown();
+}
+
+START_TEST(eo_cxx_promise_value_set)
+{
+  eo_cxx_promise_value_set_impl<int>();
+}
+END_TEST
 
 void
 eo_cxx_test_promise(TCase* tc)
@@ -893,4 +955,7 @@ eo_cxx_test_promise(TCase* tc)
 
   tcase_add_test(tc, eo_cxx_future_race_variant_get);
   tcase_add_test(tc, eo_cxx_future_race_variant_then_value);
+
+  tcase_add_test(tc, eo_cxx_promise_construct_and_destroy);
+  tcase_add_test(tc, eo_cxx_promise_value_set);
 }

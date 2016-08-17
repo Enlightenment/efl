@@ -1,5 +1,5 @@
 ///
-/// @file eo_concrete.hh
+/// @file eo_promise.hh
 ///
 
 #ifndef EFL_CXX_EO_PROMISE_HH
@@ -14,270 +14,12 @@
 #include <condition_variable>
 
 #include <eina_tuple.hh>
+#include <eo_promise_meta.hh>
 
 namespace efl {
 
 template <typename...Args>
 struct shared_future;
-  
-namespace _impl {
-
-template <typename...Futures>
-struct all_result_type;
-
-template <typename...Args>
-struct all_result_type<shared_future<Args...>>
-{
-  typedef shared_future<Args...> type;
-};
-
-template <typename...Args1, typename...Args2>
-struct all_result_type<shared_future<Args1...>, shared_future<Args2...>>
-{
-  typedef shared_future<Args1..., Args2...> type;
-};
-
-template <typename...Args1, typename...Args2, typename...OtherFutures>
-struct all_result_type<shared_future<Args1...>, shared_future<Args2...>, OtherFutures...>
-{
-  typedef typename all_result_type<shared_future<Args1..., Args2...>, OtherFutures...>::type type;
-};
-
-template <typename...Futures>
-typename all_result_type<Futures...>::type
-all_impl(Futures const& ... futures)
-{
-  Efl_Future* future = ::efl_future_all_internal(futures.native_handle()..., NULL);
-  return typename all_result_type<Futures...>::type{ ::efl_ref(future)};
-}
-
-template <typename...Futures>
-struct race_result_type;
-
-template <typename...Args>
-struct race_result_type<shared_future<Args...>>
-{
-  typedef shared_future<Args...> type;
-};
-
-template <typename T, typename...Args>
-struct race_compose_impl;
-
-template <typename T, typename A0, typename...Args>
-struct race_compose_impl<T, A0, Args...>
-{
-  typedef typename std::conditional<eina::_mpl::tuple_contains<A0, T>::value
-                                    , typename race_compose_impl<T, Args...>::type
-                                    , typename race_compose_impl<typename eina::_mpl::push_back<T, A0>::type, Args...>::type
-                                    >::type type;
-};
-
-template <typename T>
-struct race_compose_impl<T>
-{
-   typedef T type;
-};
-
-template <typename T>
-struct variant_from_tuple;
-
-template <typename...Args>
-struct variant_from_tuple<std::tuple<Args...>>
-{
-  typedef eina::variant<Args...> type;
-};
-  
-template <typename...Args>
-struct race_variant
-{
-  typedef typename variant_from_tuple<typename race_compose_impl<std::tuple<>, Args...>::type>::type type;
-};
-  
-template <typename A0>
-struct race_result_type<shared_future<A0>>
-{
-  typedef shared_future<A0> type;
-};
-
-template <typename A0>
-struct race_result_type<shared_future<eina::variant<A0>>>
-{
-  typedef shared_future<A0> type;
-};
-  
-template <typename...Args1, typename...Args2>
-struct race_result_type<shared_future<Args1...>, shared_future<Args2...>>
-{
-  typedef typename race_result_type<shared_future<typename race_variant<Args1..., Args2...>::type>>::type type;
-};
-
-template <typename...Args1, typename...Args2, typename...OtherFutures>
-struct race_result_type<shared_future<Args1...>, shared_future<Args2...>, OtherFutures...>
-{
-  typedef typename race_result_type<shared_future<typename race_variant<Args1..., Args2...>::type>
-                                    , OtherFutures...>::type type;
-};
-
-template <typename...Futures>
-typename race_result_type<Futures...>::type
-race_impl(Futures const& ... futures)
-{
-  Efl_Future* future = ::efl_future_race_internal(futures.native_handle()..., NULL);
-  return typename race_result_type<Futures...>::type{ ::efl_ref(future)};
-}
-
-template <typename T, typename Enabler = void>
-struct future_copy_traits
-{
-   static void copy(T* storage, Efl_Future_Event_Success const* info)
-   {
-      eina::copy_from_c_traits<T>::copy_to_unitialized
-        (storage, info->value);
-   }
-};
-
-template <typename...Args>
-struct future_copy_traits<eina::variant<Args...>>
-{
-   template <std::size_t I>
-   static void copy_impl(eina::variant<Args...>*, void const*, int, std::integral_constant<std::size_t, I>
-                         , std::integral_constant<std::size_t, I>)
-   {
-     std::abort();
-   }
-
-   template <std::size_t I, std::size_t N>
-   static void copy_impl(eina::variant<Args...>* storage, void const* value, int index, std::integral_constant<std::size_t, I>
-                         , std::integral_constant<std::size_t, N> max
-                         , typename std::enable_if<I != N>::type* = 0)
-   {
-     if(I == index)
-       {
-         eina::copy_from_c_traits<eina::variant<Args...>>::copy_to_unitialized
-           (storage, static_cast<typename std::tuple_element<I, std::tuple<Args...>>::type const*>
-            (static_cast<void const*>(value)));
-       }
-     else
-       copy_impl(storage, value, index, std::integral_constant<std::size_t, I+1>{}, max);
-   }
-   
-   static void copy(eina::variant<Args...>* storage, Efl_Future_Event_Success const* other_info)
-   {
-      Efl_Future_Race_Success const* info = static_cast<Efl_Future_Race_Success const*>
-        (static_cast<void const*>(other_info));
-      copy_impl(storage, info->value, info->index, std::integral_constant<std::size_t, 0ul>{}
-                , std::integral_constant<std::size_t, sizeof...(Args)>{});
-   }
-};
-  
-template <typename A0, typename F>
-typename std::enable_if
-<
-  !std::is_same<A0, void>::value
-  && !std::is_same<typename std::result_of<F(A0)>::type, void>::value
->::type
-future_invoke(F f, Efl_Event const* event)
-{
-   Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
-   try
-     {
-        typename std::aligned_storage<sizeof(A0), alignof(A0)>::type storage;
-        future_copy_traits<A0>::copy(static_cast<A0*>(static_cast<void*>(&storage)), info);
-        auto r = f(*static_cast<A0*>(static_cast<void*>(&storage)));
-        typedef decltype(r) result_type;
-        typedef typename eina::alloc_to_c_traits<result_type>::c_type c_type;
-        c_type* c_value = eina::alloc_to_c_traits<result_type>::copy_alloc(r);
-        efl_promise_value_set(info->next, c_value, & eina::alloc_to_c_traits<result_type>::free_alloc);
-     }
-   catch(...)
-     {
-     }
-}
-
-template <typename A0, typename F>
-typename std::enable_if<std::is_same<A0, void>::value>::type
-future_invoke(F f, Efl_Event const* event)
-{
-   Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
-   try
-     {
-        f();
-     }
-   catch(...)
-     {
-     }
-}
-
-template <std::size_t N, typename...Args, typename...StorageArgs>
-static void future_invoke_impl_read_accessor
-  (Eina_Accessor*, std::tuple<StorageArgs...>&, std::tuple<Args...>*, std::true_type)
-{
-}
-
-template <std::size_t N, typename...Args, typename...StorageArgs>
-static void future_invoke_impl_read_accessor
-  (Eina_Accessor* accessor
-   , std::tuple<StorageArgs...>& storage_tuple
-   , std::tuple<Args...>* args
-   , std::false_type)
-{
-   typedef std::tuple<Args...> tuple_type;
-   typedef typename std::tuple_element<N, tuple_type>::type type;
-   void* value;
-   if(eina_accessor_data_get(accessor, N, &value))
-     {
-        eina::copy_from_c_traits<type>::copy_to_unitialized
-          (static_cast<type*>(static_cast<void*>(&std::get<N>(storage_tuple))), value);
-
-        _impl::future_invoke_impl_read_accessor<N+1>
-          (accessor, storage_tuple, args
-           , std::integral_constant<bool, (N+1 == sizeof...(Args))>());
-     }
-   else
-     {
-        std::abort();
-        // some error
-     }
-}
-  
-template <typename F, typename...Args, std::size_t...I>
-void future_invoke_impl(F f, Efl_Event const* event, std::tuple<Args...>* arguments_dummy, eina::index_sequence<I...>)
-{
-   Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
-   try
-     {
-        typedef std::tuple<Args...> arguments;
-        typedef std::tuple<typename std::aligned_storage<sizeof(Args), alignof(Args)>::type...>
-          storage_tuple_type;
-        storage_tuple_type storage_tuple;
-
-        future_invoke_impl_read_accessor<0ul>
-          (static_cast<Eina_Accessor*>(info->value)
-           , storage_tuple
-           , arguments_dummy, std::false_type{});
-
-        auto r = f(*static_cast<typename std::tuple_element<I, arguments>::type*>
-                   (static_cast<void*>(&std::get<I>(storage_tuple)))...);
-
-        typedef decltype(r) result_type;
-        typedef typename eina::alloc_to_c_traits<result_type>::c_type c_type;
-        c_type* c_value = eina::alloc_to_c_traits<result_type>::copy_alloc(r);
-        efl_promise_value_set(info->next, c_value, & eina::alloc_to_c_traits<result_type>::free_alloc);
-     }
-   catch(...)
-     {
-     }
-}
-  
-template <typename A0, typename A1, typename...OtherArgs, typename F>
-void
-future_invoke(F f, Efl_Event const* event)
-{
-  std::tuple<A0, A1, OtherArgs...>* p = nullptr;
-  _impl::future_invoke_impl(f, event, p, eina::make_index_sequence<sizeof...(OtherArgs) + 2>{});
-}
-  
-}
   
 template <typename T>
 struct progress;
@@ -609,13 +351,119 @@ race(shared_future<Args1...> future1, shared_future<Args2...> future2, Futures..
 {
   return _impl::race_impl(future1, future2, futures...);
 }
-  
-template <typename...Args>
-struct promise
+
+namespace _impl {
+
+struct promise_common
 {
+   explicit promise_common(Efl_Promise* _promise) : _promise(_promise) {}
+   explicit promise_common(std::nullptr_t) : _promise(nullptr) {}
+   promise_common()
+   {
+      _promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   }
+   ~promise_common()
+   {
+      if(_promise)
+        ::efl_unref(_promise);
+   }
+   promise_common(promise_common const& other)
+     : _promise( ::efl_ref(other._promise))
+   {
+   }
+   promise_common(promise_common&& other)
+     : _promise(nullptr)
+   {
+     std::swap(*this, other);
+   }
+   promise_common& operator=(promise_common const& other)
+   {
+      _promise =  ::efl_ref(other._promise);
+      return *this;
+   }
+   promise_common& operator=(promise_common&& other)
+   {
+      std::swap(*this, other);
+      return *this;
+   }
+   bool valid() const
+   {
+     return _promise != nullptr;
+   }
+   void swap(promise_common& other)
+   {
+      std::swap(*this, other);
+   }
+   void set_exception(std::exception_ptr /*p*/)
+   {
+   }
   
+   Efl_Promise* _promise;
 };
-    
+  
+template <typename T>
+struct promise_1_type : promise_common
+{
+   typedef promise_common _base_type;
+   using _base_type::_base_type;
+   using _base_type::swap;
+   using _base_type::set_exception;
+  
+   void set_value(T const& v)
+   {
+      typedef typename eina::alloc_to_c_traits<T>::c_type c_type;
+      c_type* c_value = eina::alloc_to_c_traits<T>::copy_alloc(v);
+      efl_promise_value_set(this->_promise, c_value, & eina::alloc_to_c_traits<T>::free_alloc);
+   }
+   void set_value(T&& v)
+   {
+      typedef typename eina::alloc_to_c_traits<T>::c_type c_type;
+      c_type* c_value = eina::alloc_to_c_traits<T>::copy_alloc(std::move(v));
+      efl_promise_value_set(this->_promise, c_value, & eina::alloc_to_c_traits<T>::free_alloc);
+   }
+};
+
+template <>
+struct promise_1_type<void> : promise_common
+{
+   typedef promise_common _base_type;
+   using _base_type::_base_type;
+   using _base_type::swap;
+   using _base_type::set_exception;
+  
+   void set_value()
+   {
+      efl_promise_value_set(this->_promise, nullptr, nullptr);
+   }
+};
+  
+}
+  
+template <typename T, typename Progress = void>
+struct promise : private _impl::promise_1_type<T>
+{
+   typedef _impl::promise_1_type<T> _base_type;
+   using _base_type::_base_type;
+   using _base_type::set_value;
+   using _base_type::set_exception;
+
+   shared_future<T> get_future()
+   {
+      return shared_future<T>{ ::efl_ref( ::efl_promise_future_get(this->_promise)) };
+   }
+
+   void swap(promise<T>& other)
+   {
+      _base_type::swap(other);
+   }
+};
+
+template <typename...Args>
+void swap(promise<Args...>& lhs, promise<Args...>& rhs)
+{
+   lhs.swap(rhs);
+}
+
 }
 
 #endif
