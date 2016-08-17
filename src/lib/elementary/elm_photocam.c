@@ -567,21 +567,22 @@ _grid_create(Evas_Object *obj)
              int tn;
 
              tn = (y * g->gw) + x;
-             g->grid[tn].src.x = x * g->tsize;
+             g->grid[tn].out.x = x * g->tsize;
              if (x == (g->gw - 1))
-               g->grid[tn].src.w = g->w - ((g->gw - 1) * g->tsize);
+               g->grid[tn].out.w = g->w - ((g->gw - 1) * g->tsize);
              else
-               g->grid[tn].src.w = g->tsize;
-             g->grid[tn].src.y = y * g->tsize;
+               g->grid[tn].out.w = g->tsize;
+             g->grid[tn].out.y = y * g->tsize;
              if (y == (g->gh - 1))
-               g->grid[tn].src.h = g->h - ((g->gh - 1) * g->tsize);
+               g->grid[tn].out.h = g->h - ((g->gh - 1) * g->tsize);
              else
-               g->grid[tn].src.h = g->tsize;
+               g->grid[tn].out.h = g->tsize;
 
-             g->grid[tn].out.x = g->grid[tn].src.x;
-             g->grid[tn].out.y = g->grid[tn].src.y;
-             g->grid[tn].out.w = g->grid[tn].src.w;
-             g->grid[tn].out.h = g->grid[tn].src.h;
+             if (g->zoom <= 0) g->zoom = 1;
+             g->grid[tn].src.x = g->grid[tn].out.x * g->zoom;
+             g->grid[tn].src.y = g->grid[tn].out.y * g->zoom;
+             g->grid[tn].src.w = g->grid[tn].out.w * g->zoom;
+             g->grid[tn].src.h = g->grid[tn].out.h * g->zoom;
 
              g->grid[tn].obj = obj;
              g->grid[tn].img =
