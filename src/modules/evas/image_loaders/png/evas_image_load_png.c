@@ -156,7 +156,27 @@ evas_image_load_file_head_png(void *loader_data,
 	  *error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
-   if (opts->scale_down_by > 1)
+
+   if (opts->region.w > 0 && opts->region.h > 0)
+     {
+        if ((w32 < opts->region.x + opts->region.w) ||
+            (h32 < opts->region.y + opts->region.h))
+          {
+             *error = EVAS_LOAD_ERROR_GENERIC;
+             goto close_file;
+          }
+        if(opts->scale_down_by > 1)
+          {
+             prop->w = opts->region.w / opts->scale_down_by;
+             prop->h = opts->region.h / opts->scale_down_by;
+          }
+        else
+          {
+             prop->w = opts->region.w;
+             prop->h = opts->region.h;
+          }
+     }
+   else if (opts->scale_down_by > 1)
      {
         prop->w = (int) w32 / opts->scale_down_by;
         prop->h = (int) h32 / opts->scale_down_by;
@@ -222,6 +242,7 @@ evas_image_load_file_data_png(void *loader_data,
    char passes;
    int i, j, p, k;
    volatile int scale_ratio = 1;
+   volatile int region_set = 0;
    int image_w = 0, image_h = 0;
    volatile Eina_Bool r = EINA_FALSE;
 
@@ -287,11 +308,20 @@ evas_image_load_file_data_png(void *loader_data,
         w32 /= scale_ratio;
         h32 /= scale_ratio;
      }
+
+   if ((opts->region.w > 0 && opts->region.h > 0) &&
+       (opts->region.w != image_w || opts->region.h != image_h))
+     {
+        w32 = opts->region.w / scale_ratio;
+        h32 = opts->region.h / scale_ratio;
+        region_set = 1;
+     }
+
    if (prop->w != w32 ||
        prop->h != h32)
      {
-	*error = EVAS_LOAD_ERROR_GENERIC;
-	goto close_file;
+      *error = EVAS_LOAD_ERROR_GENERIC;
+      goto close_file;
      }
 
    surface = pixels;
@@ -354,7 +384,7 @@ evas_image_load_file_data_png(void *loader_data,
    passes = png_set_interlace_handling(png_ptr);
    
    /* we read image line by line if scale down was set */
-   if (scale_ratio == 1)
+   if (scale_ratio == 1 && region_set == 0)
      {
         for (p = 0; p < passes; p++)
           {
@@ -366,15 +396,26 @@ evas_image_load_file_data_png(void *loader_data,
    else
      {
         unsigned char *src_ptr, *dst_ptr;
-
+        int skip_row = 0, region_x = 0, region_y = 0;
         dst_ptr = surface;
+
+        if (region_set)
+          {
+             region_x = opts->region.x;
+             region_y = opts->region.y;
+          }
+
         if (passes == 1)
           {
              tmp_line = (unsigned char *) alloca(image_w * pack_offset);
+
+             for (skip_row = 0; skip_row < region_y; skip_row++)
+               png_read_row(png_ptr, tmp_line, NULL);
+
              for (i = 0; i < h; i++)
                {
                   png_read_row(png_ptr, tmp_line, NULL);
-                  src_ptr = tmp_line;
+                  src_ptr = tmp_line + region_x * pack_offset;
                   for (j = 0; j < w; j++)
                     {
                        for (k = 0; k < (int)pack_offset; k++)
@@ -385,6 +426,8 @@ evas_image_load_file_data_png(void *loader_data,
                   for (j = 0; j < (scale_ratio - 1); j++)
                     png_read_row(png_ptr, tmp_line, NULL);
                }
+             for (skip_row = region_y + h * scale_ratio; skip_row < image_h; skip_row++)
+               png_read_row(png_ptr, tmp_line, NULL);
           }
         else
           {
@@ -397,17 +440,18 @@ evas_image_load_file_data_png(void *loader_data,
                        for (i = 0; i < image_h; i++)
                          png_read_row(png_ptr, pixels2 + (i * image_w * pack_offset), NULL);
                     }
-                  
+
+                  src_ptr = pixels2 + (region_y * image_w * pack_offset) + region_x * pack_offset;
+
                   for (i = 0; i < h; i++)
                     {
-                       src_ptr = pixels2 + (i * scale_ratio * image_w * pack_offset);
                        for (j = 0; j < w; j++)
                          {
                             for (k = 0; k < (int)pack_offset; k++)
-                              dst_ptr[k] = src_ptr[k];
-                            src_ptr += scale_ratio * pack_offset;
+                              dst_ptr[k] = src_ptr[k + scale_ratio * j * pack_offset];
                             dst_ptr += pack_offset;
                          }
+                       src_ptr += scale_ratio * image_w * pack_offset;
                     }
                   free(pixels2);
                }
