@@ -3,60 +3,6 @@ local dtree = require("docgen.doctree")
 
 local M = {}
 
-local wrap_type_attrs = function(tp, str)
-    if tp:is_const() then
-        str = "const(" .. str .. ")"
-    end
-    if tp:is_own() then
-        str = "own(" .. str .. ")"
-    end
-    local ffunc = tp:free_func_get()
-    if ffunc then
-        str = "free(" .. str .. ", " .. ffunc .. ")"
-    end
-    if tp:is_ref() then
-        str = "ref(" .. str .. ")"
-    end
-    return str
-end
-
-M.get_type_str = function(tp)
-    local tpt = tp:type_get()
-    if tpt == tp.UNKNOWN then
-        error("unknown type: " .. tp:full_name_get())
-    elseif tpt == tp.VOID then
-        return wrap_type_attrs(tp, "void")
-    elseif tpt == tp.UNDEFINED then
-        return wrap_type_attrs(tp, "__undefined_type")
-    elseif tpt == tp.REGULAR or tpt == tp.CLASS then
-        return wrap_type_attrs(tp, tp:full_name_get())
-    elseif tpt == tp.COMPLEX then
-        local stypes = {}
-        local stp = tp:base_type_get()
-        while stp do
-            stypes[#stypes + 1] = M.get_type_str(stp)
-            stp = stp:next_type_get()
-        end
-        return wrap_type_attrs(tp, tp:full_name_get() .. "<"
-            .. table.concat(stypes, ", ") .. ">")
-    elseif tpt == tp.POINTER then
-        local btp = tp:base_type_get()
-        local suffix = " *"
-        if btp:type_get() == tp.POINTER then
-            suffix = "*"
-        end
-        return wrap_type_attrs(tp, M.get_type_str(btp) .. suffix)
-    elseif tpt == tp.STATIC_ARRAY then
-        return wrap_type_attrs(tp, "static_array<"
-            .. M.get_type_str(tp:base_type_get()) .. ", "
-            .. tp:array_size_get() .. ">")
-    elseif tpt == tp.TERMINATED_ARRAY then
-        return wrap_type_attrs(tp, "terminated_array<"
-            .. M.get_type_str(tp:base_type_get()) .. ">")
-    end
-    error("unhandled type type: " .. tpt)
-end
-
 local add_typedecl_attrs = function(tp, buf)
     if tp:is_extern() then
         buf[#buf + 1] = "@extern "
@@ -92,7 +38,7 @@ M.get_typedecl_str = function(tp)
             buf[#buf + 1] = "    "
             buf[#buf + 1] = fld:name_get()
             buf[#buf + 1] = ": "
-            buf[#buf + 1] = M.get_type_str(fld:type_get())
+            buf[#buf + 1] = fld:type_get():serialize()
             buf[#buf + 1] = ";\n"
         end
         buf[#buf + 1] = "}"
@@ -128,7 +74,7 @@ M.get_typedecl_str = function(tp)
         add_typedecl_attrs(tp, buf)
         buf[#buf + 1] = tp:full_name_get()
         buf[#buf + 1] = ": "
-        buf[#buf + 1] = M.get_type_str(tp:base_type_get())
+        buf[#buf + 1] = tp:base_type_get():serialize()
         buf[#buf + 1] = ";"
         return table.concat(buf)
     end

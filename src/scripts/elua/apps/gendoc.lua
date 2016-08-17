@@ -134,7 +134,7 @@ local gen_func_param = function(fp, buf, nodir)
     if not nodir then buf[#buf + 1] = dirs[fp:direction_get()] end
     buf[#buf + 1] = fp:name_get()
     buf[#buf + 1] = ": "
-    buf[#buf + 1] = ser.get_type_str(fp:type_get())
+    buf[#buf + 1] = fp:type_get():serialize()
     local dval = fp:default_value_get()
     if dval then
         buf[#buf + 1] = " ("
@@ -160,7 +160,7 @@ local gen_func_return = function(fp, ftype, buf, indent)
     end
     buf[#buf + 1] = indent and ("    "):rep(indent) or "    "
     buf[#buf + 1] = "return: "
-    buf[#buf + 1] = ser.get_type_str(rett)
+    buf[#buf + 1] = rett:serialize()
     local dval = fp:return_default_value_get(ftype)
     if dval then
         buf[#buf + 1] = " ("
@@ -1025,7 +1025,7 @@ build_event = function(ev, cl)
     local etp = ev:type_get()
     if etp then
         buf[#buf + 1] = ": "
-        buf[#buf + 1] = ser.get_type_str(etp)
+        buf[#buf + 1] = etp:serialize()
     end
 
     buf[#buf + 1] = ";"

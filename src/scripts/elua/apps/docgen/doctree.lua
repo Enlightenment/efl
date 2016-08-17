@@ -573,6 +573,23 @@ M.EnumField = Node:clone {
     end
 }
 
+local wrap_type_attrs = function(tp, str)
+    if tp:is_const() then
+        str = "const(" .. str .. ")"
+    end
+    if tp:is_own() then
+        str = "own(" .. str .. ")"
+    end
+    local ffunc = tp:free_func_get()
+    if ffunc then
+        str = "free(" .. str .. ", " .. ffunc .. ")"
+    end
+    if tp:is_ref() then
+        str = "ref(" .. str .. ")"
+    end
+    return str
+end
+
 M.Type = Node:clone {
     UNKNOWN = eolian.type_type.UNKNOWN,
     VOID = eolian.type_type.VOID,
@@ -667,6 +684,45 @@ M.Type = Node:clone {
 
     free_func_get = function(self)
         return self.type:free_func_get()
+    end,
+
+    -- utils
+
+    serialize = function(self)
+        local tpt = self:type_get()
+        if tpt == self.UNKNOWN then
+            error("unknown type: " .. self:full_name_get())
+        elseif tpt == self.VOID then
+            return wrap_type_attrs(self, "void")
+        elseif tpt == self.UNDEFINED then
+            return wrap_type_attrs(self, "__undefined_type")
+        elseif tpt == self.REGULAR or tpt == self.CLASS then
+            return wrap_type_attrs(self, self:full_name_get())
+        elseif tpt == self.COMPLEX then
+            local stypes = {}
+            local stp = self:base_type_get()
+            while stp do
+                stypes[#stypes + 1] = stp:serialize()
+                stp = stp:next_type_get()
+            end
+            return wrap_type_attrs(self, self:full_name_get() .. "<"
+                .. table.concat(stypes, ", ") .. ">")
+        elseif tpt == self.POINTER then
+            local btp = self:base_type_get()
+            local suffix = " *"
+            if btp:type_get() == self.POINTER then
+                suffix = "*"
+            end
+            return wrap_type_attrs(self, btp:serialize() .. suffix)
+        elseif tpt == self.STATIC_ARRAY then
+            return wrap_type_attrs(self, "static_array<"
+                .. self:base_type_get():serialize() .. ", "
+                .. self:array_size_get() .. ">")
+        elseif tpt == self.TERMINATED_ARRAY then
+            return wrap_type_attrs(self, "terminated_array<"
+                .. self:base_type_get():serialize() .. ">")
+        end
+        error("unhandled type type: " .. tpt)
     end
 }
 
