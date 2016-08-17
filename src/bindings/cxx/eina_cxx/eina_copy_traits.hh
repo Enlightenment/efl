@@ -7,6 +7,15 @@
 
 namespace efl { namespace eina {
 
+namespace _impl {
+template<bool...> struct bool_pack;
+template <bool...Args>
+struct and_ : std::is_same<bool_pack<Args..., true>, bool_pack<true, Args...>> {};
+}
+    
+template <typename... Args>
+struct variant;
+
 template <typename T, typename Enable = void>
 struct copy_from_c_traits;
 
@@ -19,6 +28,18 @@ struct copy_from_c_traits<T, typename std::enable_if<std::is_fundamental<T>::val
   }
 };
 
+template <typename...Args>
+struct copy_from_c_traits<eina::variant<Args...>,
+                          typename std::enable_if<_impl::and_<std::is_fundamental<Args>::value...>::value>::type>
+{
+  template <typename T>
+  static void copy_to_unitialized(eina::variant<Args...>* storage, T const* data)
+  {
+     new (storage) eina::variant<Args...>{*data};
+  }
+};
+    
+    
 template <typename T, typename Enable = void>
 struct alloc_to_c_traits;
 
@@ -37,7 +58,7 @@ struct alloc_to_c_traits<T, typename std::enable_if<std::is_fundamental<T>::valu
     ::free(data);
   }
 };
-    
+
 } }
 
 #endif
