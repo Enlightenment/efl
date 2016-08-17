@@ -80,6 +80,7 @@ static inline void
 _efl_event_key_free(Efl_Event_Key_Data *pd)
 {
    free(pd->legacy);
+   if (pd->no_stringshare) return;
    eina_stringshare_del(pd->key);
    eina_stringshare_del(pd->keyname);
    eina_stringshare_del(pd->string);

@@ -2837,54 +2837,23 @@ evas_event_feed_multi_move(Eo *eo_e, int d, int x, int y, double rad, double rad
 }
 
 static void
-_canvas_event_feed_key_down_internal(Eo *eo_e,
-                                     void *_pd,
-                                     const char *keyname,
-                                     const char *key,
-                                     const char *string,
-                                     const char *compose,
-                                     unsigned int timestamp,
-                                     const void *data,
-                                     unsigned int keycode,
-                                     Efl_Event_Key_Data *ke)
+_canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Event_Key_Data *ev)
 {
-   void *efl_event_info = NULL;
-   Evas_Public_Data *e = _pd;
+   Eina_Bool exclusive = EINA_FALSE;
    int event_id = 0;
 
-   if (!keyname) return;
+   if (!e || !ev) return;
    if (e->is_frozen) return;
-   e->last_timestamp = timestamp;
+   e->last_timestamp = ev->timestamp;
    _evas_walk(e);
 
-   Evas_Event_Key_Down ev;
-   Eina_Bool exclusive;
-
    _evas_object_event_new();
-
    event_id = _evas_event_counter;
-   exclusive = EINA_FALSE;
-   ev.keyname = (char *)keyname;
-   ev.data = (void *)data;
-   ev.modifiers = &(e->modifiers);
-   ev.locks = &(e->locks);
-   ev.key = key;
-   ev.string = string;
-   ev.compose = compose;
-   ev.timestamp = timestamp;
-   ev.event_flags = e->default_event_flags;
-   ev.dev = _evas_device_top_get(eo_e);
-   ev.keycode = keycode;
-   if (ev.dev) efl_ref(ev.dev);
 
-   if (ke)
-     {
-        ke->device = ev.dev;
-        ke->event_flags = ev.event_flags;
-        ke->modifiers = ev.modifiers;
-        ke->locks = ev.locks;
-        efl_event_info = ke->eo;
-     }
+   ev->modifiers = &(e->modifiers);
+   ev->locks = &(e->locks);
+   ev->event_flags = e->default_event_flags;
+   if (ev->device) efl_ref(ev->device);
 
    if (e->grabs)
      {
@@ -2904,7 +2873,7 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
              if (!g->is_active) continue;
              if (((e->modifiers.mask & g->modifiers) ||
                   (g->modifiers == e->modifiers.mask)) &&
-                 (!strcmp(keyname, g->keyname)))
+                 (!strcmp(ev->keyname, g->keyname)))
                {
                   if (!(e->modifiers.mask & g->not_modifiers))
                     {
@@ -2912,8 +2881,8 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
                        if (!e->is_frozen &&
                            !evas_event_freezes_through(g->object, object_obj))
                          {
-                            EV_CALL(g->object, object_obj, EVAS_CALLBACK_KEY_DOWN,
-                                    &ev, event_id, efl_event_info, NULL);
+                            evas_object_event_callback_call(g->object, object_obj, EVAS_CALLBACK_KEY_DOWN, NULL,
+                                                            event_id, EFL_EVENT_KEY_DOWN, ev->eo);
                          }
                        if (g->exclusive) exclusive = EINA_TRUE;
                     }
@@ -2940,79 +2909,39 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
                }
           }
      }
-   if (!ke) EV_DEL(efl_event_info);
    if ((e->focused) && (!exclusive))
      {
         Evas_Object_Protected_Data *focused_obj = efl_data_scope_get(e->focused, EFL_CANVAS_OBJECT_CLASS);
         if (!e->is_frozen && !evas_event_freezes_through(e->focused, focused_obj))
           {
-             EV_CALL(e->focused, focused_obj, EVAS_CALLBACK_KEY_DOWN,
-                     &ev, event_id, efl_event_info, NULL);
+             evas_object_event_callback_call(e->focused, focused_obj, EVAS_CALLBACK_KEY_DOWN, NULL,
+                                             event_id, EFL_EVENT_KEY_DOWN, ev->eo);
           }
      }
-   _evas_post_event_callback_call(eo_e, e);
-   if (ev.dev) efl_unref(ev.dev);
+   _evas_post_event_callback_call(e->evas, e);
    _evas_unwalk(e);
 
-   if (ke)
-     {
-        ke->device = NULL;
-        ke->event_flags = 0;
-        ke->modifiers = NULL;
-        ke->locks = NULL;
-     }
-   else
-     EV_DEL(efl_event_info);
+   if (ev->device) efl_unref(ev->device);
 }
 
 static void
-_canvas_event_feed_key_up_internal(Eo *eo_e,
-                                   void *_pd,
-                                   const char *keyname,
-                                   const char *key,
-                                   const char *string,
-                                   const char *compose,
-                                   unsigned int timestamp,
-                                   const void *data,
-                                   unsigned int keycode,
-                                   Efl_Event_Key_Data *ke)
+_canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Event_Key_Data *ev)
 {
-   void *efl_event_info = NULL;
-   Evas_Public_Data *e = _pd;
+   Eina_Bool exclusive = EINA_FALSE;
    int event_id = 0;
-   if (!keyname) return;
+
+   if (!e || !ev) return;
    if (e->is_frozen) return;
-   e->last_timestamp = timestamp;
+   e->last_timestamp = ev->timestamp;
    _evas_walk(e);
 
-   Evas_Event_Key_Up ev;
-   Eina_Bool exclusive;
-
    _evas_object_event_new();
-
    event_id = _evas_event_counter;
-   exclusive = EINA_FALSE;
-   ev.keyname = (char *)keyname;
-   ev.data = (void *)data;
-   ev.modifiers = &(e->modifiers);
-   ev.locks = &(e->locks);
-   ev.key = key;
-   ev.string = string;
-   ev.compose = compose;
-   ev.timestamp = timestamp;
-   ev.event_flags = e->default_event_flags;
-   ev.dev = _evas_device_top_get(eo_e);
-   ev.keycode = keycode;
-   if (ev.dev) efl_ref(ev.dev);
 
-   if (ke)
-     {
-        ke->device = ev.dev;
-        ke->event_flags = ev.event_flags;
-        ke->modifiers = ev.modifiers;
-        ke->locks = ev.locks;
-        efl_event_info = ke->eo;
-     }
+   ev->modifiers = &(e->modifiers);
+   ev->locks = &(e->locks);
+   ev->event_flags = e->default_event_flags;
+   if (ev->device) efl_ref(ev->device);
 
    if (e->grabs)
      {
@@ -3033,15 +2962,15 @@ _canvas_event_feed_key_up_internal(Eo *eo_e,
              if (((e->modifiers.mask & g->modifiers) ||
                   (g->modifiers == e->modifiers.mask)) &&
                  (!(e->modifiers.mask & g->not_modifiers)) &&
-                 (!strcmp(keyname, g->keyname)))
+                 (!strcmp(ev->keyname, g->keyname)))
                {
                   Evas_Object_Protected_Data *object_obj = efl_data_scope_get(g->object, EFL_CANVAS_OBJECT_CLASS);
                   if (!e->is_frozen &&
                         !evas_event_freezes_through(g->object, object_obj))
                     {
                        evas_object_event_callback_call
-                             (g->object, object_obj, EVAS_CALLBACK_KEY_UP,
-                              &ev, event_id, EFL_EVENT_KEY_UP, efl_event_info);
+                             (g->object, object_obj, EVAS_CALLBACK_KEY_UP, NULL,
+                              event_id, EFL_EVENT_KEY_UP, ev->eo);
                     }
                   if (g->exclusive) exclusive = EINA_TRUE;
                }
@@ -3075,53 +3004,79 @@ _canvas_event_feed_key_up_internal(Eo *eo_e,
         if (!e->is_frozen && !evas_event_freezes_through(e->focused, focused_obj))
           {
              evas_object_event_callback_call
-                   (e->focused, focused_obj, EVAS_CALLBACK_KEY_UP,
-                    &ev, event_id, EFL_EVENT_KEY_UP, efl_event_info);
+                   (e->focused, focused_obj, EVAS_CALLBACK_KEY_UP, NULL,
+                    event_id, EFL_EVENT_KEY_UP, ev->eo);
           }
      }
-   _evas_post_event_callback_call(eo_e, e);
-   if (ev.dev) efl_unref(ev.dev);
+   _evas_post_event_callback_call(e->evas, e);
    _evas_unwalk(e);
 
-   if (ke)
-     {
-        ke->device = NULL;
-        ke->event_flags = 0;
-        ke->modifiers = NULL;
-        ke->locks = NULL;
-     }
+   if (ev->device) efl_unref(ev->device);
+}
+
+static void
+_canvas_event_feed_key_legacy(Eo *eo_e, Evas_Public_Data *e,
+                              const char *keyname, const char *key,
+                              const char *string, const char *compose,
+                              unsigned int timestamp, const void *data,
+                              unsigned int keycode, Eina_Bool down)
+{
+   Efl_Event_Key_Data *ev = NULL;
+   Efl_Event_Key *evt;
+
+   if (!keyname) return;
+
+   evt = efl_event_instance_get(EFL_EVENT_KEY_CLASS, eo_e, (void **) &ev);
+   if (!ev) return;
+
+   ev->keyname = (char *) keyname;
+   ev->data = (void *) data;
+   ev->key = key;
+   ev->string = string;
+   ev->compose = compose;
+   ev->timestamp = timestamp;
+   ev->keycode = keycode;
+   ev->no_stringshare = EINA_TRUE;
+   ev->device = _evas_device_top_get(e->evas);
+
+   if (down)
+     _canvas_event_feed_key_down_internal(e, ev);
+   else
+     _canvas_event_feed_key_up_internal(e, ev);
+
+   efl_del(evt);
 }
 
 EAPI void
 evas_event_feed_key_down(Eo *eo_e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   _canvas_event_feed_key_down_internal(eo_e, e, keyname, key, string,
-                                        compose, timestamp, data, 0, NULL);
+   _canvas_event_feed_key_legacy(eo_e, e, keyname, key, string,
+                                 compose, timestamp, data, 0, 1);
 }
 
 EAPI void
 evas_event_feed_key_up(Eo *eo_e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   _canvas_event_feed_key_up_internal(eo_e, e, keyname, key, string,
-                                      compose, timestamp, data, 0, NULL);
+   _canvas_event_feed_key_legacy(eo_e, e, keyname, key, string,
+                                 compose, timestamp, data, 0, 0);
 }
 
 EAPI void
 evas_event_feed_key_down_with_keycode(Eo *eo_e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data, unsigned int keycode)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   _canvas_event_feed_key_down_internal(eo_e, e, keyname, key, string,
-                                        compose, timestamp, data, keycode, NULL);
+   _canvas_event_feed_key_legacy(eo_e, e, keyname, key, string,
+                                 compose, timestamp, data, keycode, 1);
 }
 
 EAPI void
 evas_event_feed_key_up_with_keycode(Eo *eo_e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data, unsigned int keycode)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   _canvas_event_feed_key_up_internal(eo_e, e, keyname, key, string,
-                                      compose, timestamp, data, keycode, NULL);
+   _canvas_event_feed_key_legacy(eo_e, e, keyname, key, string,
+                                 compose, timestamp, data, keycode, 0);
 }
 
 EAPI void
@@ -3140,7 +3095,7 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
    _evas_object_event_new();
    event_id = _evas_event_counter;
 
-   evt = efl_event_instance_get(EFL_EVENT_HOLD_CLASS, eo_e, &ev);
+   evt = efl_event_instance_get(EFL_EVENT_HOLD_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->hold = !!hold;
@@ -3557,25 +3512,23 @@ _evas_canvas_event_key_cb(void *data, const Eo_Event *event)
    Efl_Event_Key *evt = event->info;
    Evas_Public_Data *e = data;
    Efl_Event_Key_Data *ev;
+   Eina_Bool nodev = 0;
 
    ev = efl_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
    if (!ev) return;
 
-   if (ev->pressed)
+   if (!ev->device)
      {
-        _canvas_event_feed_key_down_internal(e->evas, e, ev->keyname, ev->key,
-                                             ev->string, ev->compose,
-                                             ev->timestamp, ev->data,
-                                             ev->keycode, ev);
-     }
-   else
-     {
-        _canvas_event_feed_key_up_internal(e->evas, e, ev->keyname, ev->key,
-                                           ev->string, ev->compose,
-                                           ev->timestamp, ev->data,
-                                           ev->keycode, ev);
+        nodev = 1;
+        ev->device = _evas_device_top_get(e->evas);
      }
 
+   if (ev->pressed)
+     _canvas_event_feed_key_down_internal(e, ev);
+   else
+     _canvas_event_feed_key_up_internal(e, ev);
+
+   if (nodev) ev->device = NULL;
    ev->evas_done = EINA_TRUE;
 }
 

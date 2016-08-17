@@ -44,7 +44,6 @@ struct _Efl_Event_Pointer_Data
    Efl_Pointer_Flags           button_flags;
    Efl_Event_Flags             event_flags;
    void                       *data; /* evas data - whatever that is */
-   const Efl_Event_Description *event_desc;
    Eina_Bool                   window_pos; /* true if positions are window-relative
                                               (see input vs. feed: this is "input") */
    Evas_Modifier              *modifiers;
@@ -76,6 +75,7 @@ struct _Efl_Event_Key_Data
    Eina_Bool          evas_done : 1; /* set by evas */
    Eina_Bool          fake : 1;
    Eina_Bool          win_fed : 1;
+   Eina_Bool          no_stringshare : 1;
 };
 
 struct _Efl_Input_Device_Data
