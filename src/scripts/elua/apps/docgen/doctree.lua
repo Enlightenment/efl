@@ -2,6 +2,7 @@ local util = require("util")
 
 local eolian = require("eolian")
 
+local keyref = require("docgen.keyref")
 local dutil = require("docgen.util")
 
 -- writer has to be loaded late to prevent cycles
@@ -739,6 +740,18 @@ M.type_cstr_get = function(tp, suffix)
     end
 end
 
+local add_typedecl_attrs = function(tp, buf)
+    if tp:is_extern() then
+        buf[#buf + 1] = "@extern "
+    end
+    local ffunc = tp:free_func_get()
+    if ffunc then
+        buf[#buf + 1] = "@free("
+        buf[#buf + 1] = ffunc
+        buf[#buf + 1] = ") "
+    end
+end
+
 M.Typedecl = Node:clone {
     UNKNOWN = eolian.typedecl_type.UNKNOWN,
     STRUCT = eolian.typedecl_type.STRUCT,
@@ -925,6 +938,144 @@ M.Typedecl = Node:clone {
             return nil
         end
         return M.Typedecl(v)
+    end,
+
+    -- utils
+
+    serialize = function(self)
+        local tpt = self:type_get()
+        if tpt == self.UNKNOWN then
+            error("unknown typedecl: " .. self:full_name_get())
+        elseif tpt == self.STRUCT or
+               tpt == self.STRUCT_OPAQUE then
+            local buf = { "struct " }
+            add_typedecl_attrs(self, buf)
+            buf[#buf + 1] = self:full_name_get()
+            if tpt == self.STRUCT_OPAQUE then
+                buf[#buf + 1] = ";"
+                return table.concat(buf)
+            end
+            local fields = self:struct_fields_get()
+            if #fields == 0 then
+                buf[#buf + 1] = " {}"
+                return table.concat(buf)
+            end
+            buf[#buf + 1] = " {\n"
+            for i, fld in ipairs(fields) do
+                buf[#buf + 1] = "    "
+                buf[#buf + 1] = fld:name_get()
+                buf[#buf + 1] = ": "
+                buf[#buf + 1] = fld:type_get():serialize()
+                buf[#buf + 1] = ";\n"
+            end
+            buf[#buf + 1] = "}"
+            return table.concat(buf)
+        elseif tpt == self.ENUM then
+            local buf = { "enum " }
+            add_typedecl_attrs(self, buf)
+            buf[#buf + 1] = self:full_name_get()
+            local fields = self:enum_fields_get()
+            if #fields == 0 then
+                buf[#buf + 1] = " {}"
+                return table.concat(buf)
+            end
+            buf[#buf + 1] = " {\n"
+            for i, fld in ipairs(fields) do
+                buf[#buf + 1] = "    "
+                buf[#buf + 1] = fld:name_get()
+                local val = fld:value_get()
+                if val then
+                    buf[#buf + 1] = ": "
+                    buf[#buf + 1] = val:serialize()
+                end
+                if i == #fields then
+                    buf[#buf + 1] = "\n"
+                else
+                    buf[#buf + 1] = ",\n"
+                end
+            end
+            buf[#buf + 1] = "}"
+            return table.concat(buf)
+        elseif tpt == self.ALIAS then
+            local buf = { "type " }
+            add_typedecl_attrs(self, buf)
+            buf[#buf + 1] = self:full_name_get()
+            buf[#buf + 1] = ": "
+            buf[#buf + 1] = self:base_type_get():serialize()
+            buf[#buf + 1] = ";"
+            return table.concat(buf)
+        end
+        error("unhandled typedecl type: " .. tpt)
+    end,
+
+    serialize_c = function(self)
+        local tpt = self:type_get()
+        if tpt == self.UNKNOWN then
+            error("unknown typedecl: " .. self:full_name_get())
+        elseif tpt == self.STRUCT or
+               tpt == self.STRUCT_OPAQUE then
+            local buf = { "typedef struct " }
+            local fulln = self:full_name_get():gsub("%.", "_");
+            keyref.add(fulln, "c")
+            buf[#buf + 1] = "_" .. fulln;
+            if tpt == self.STRUCT_OPAQUE then
+                buf[#buf + 1] = " " .. fulln .. ";"
+                return table.concat(buf)
+            end
+            local fields = self:struct_fields_get()
+            if #fields == 0 then
+                buf[#buf + 1] = " {} " .. fulln .. ";"
+                return table.concat(buf)
+            end
+            buf[#buf + 1] = " {\n"
+            for i, fld in ipairs(fields) do
+                buf[#buf + 1] = "    "
+                buf[#buf + 1] = M.type_cstr_get(fld:type_get(), fld:name_get())
+                buf[#buf + 1] = ";\n"
+            end
+            buf[#buf + 1] = "} " .. fulln .. ";"
+            return table.concat(buf)
+        elseif tpt == self.ENUM then
+            local buf = { "typedef enum" }
+            local fulln = self:full_name_get():gsub("%.", "_");
+            keyref.add(fulln, "c")
+            local fields = self:enum_fields_get()
+            if #fields == 0 then
+                buf[#buf + 1] = " {} " .. fulln .. ";"
+                return table.concat(buf)
+            end
+            buf[#buf + 1] = " {\n"
+            for i, fld in ipairs(fields) do
+                buf[#buf + 1] = "    "
+                local cn = fld:c_name_get()
+                buf[#buf + 1] = cn
+                keyref.add(cn, "c")
+                local val = fld:value_get()
+                if val then
+                    buf[#buf + 1] = " = "
+                    local ev = val:eval_enum()
+                    local lit = ev:to_literal()
+                    buf[#buf + 1] = lit
+                    local ser = val:serialize()
+                    if ser and ser ~= lit then
+                        buf[#buf + 1] = " /* " .. ser .. " */"
+                    end
+                end
+                if i == #fields then
+                    buf[#buf + 1] = "\n"
+                else
+                    buf[#buf + 1] = ",\n"
+                end
+            end
+            buf[#buf + 1] = "} " .. fulln .. ";"
+            return table.concat(buf)
+        elseif tpt == self.ALIAS then
+            local fulln = self:full_name_get():gsub("%.", "_");
+            keyref.add(fulln, "c")
+            return "typedef "
+                .. M.type_cstr_get(self:base_type_get(), fulln) .. ";"
+        end
+        error("unhandled typedecl type: " .. tpt)
     end
 }
 

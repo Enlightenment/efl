@@ -6,7 +6,6 @@ local stats = require("docgen.stats")
 local dutil = require("docgen.util")
 local writer = require("docgen.writer")
 local keyref = require("docgen.keyref")
-local ser = require("docgen.serializers")
 local dtree = require("docgen.doctree")
 
 local propt_to_type = {
@@ -747,11 +746,11 @@ local write_tsigs = function(f, tp)
     f:write_h(tp:full_name_get(), 2)
 
     f:write_h("Signature", 3)
-    f:write_code(ser.get_typedecl_str(tp))
+    f:write_code(tp:serialize())
     f:write_nl()
 
     f:write_h("C signature", 3)
-    f:write_code(ser.get_typedecl_cstr(tp), "c")
+    f:write_code(tp:serialize_c(), "c")
     f:write_nl()
 end
 

@@ -1,5 +1,3 @@
-local writer = require("docgen.writer")
-
 local M = {}
 
 local key_refs = {}
@@ -15,7 +13,7 @@ end
 
 M.build = function()
     for lang, rfs in pairs(key_refs) do
-        local f = writer.Writer({ "ref", lang, "keyword-list" })
+        local f = require("docgen.writer").Writer({ "ref", lang, "keyword-list" })
         local arr = {}
         for refn, v in pairs(rfs) do
             arr[#arr + 1] = refn
