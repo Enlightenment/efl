@@ -48,16 +48,15 @@ _efl_event_hold_efl_event_timestamp_set(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data
 }
 
 EOLIAN static void
-_efl_event_hold_efl_event_input_event_flags_set(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd EINA_UNUSED, Efl_Event_Flags flags EINA_UNUSED)
+_efl_event_hold_efl_event_input_event_flags_set(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd, Efl_Event_Flags flags)
 {
-   // ignore
+   pd->event_flags = flags;
 }
 
 EOLIAN static Efl_Event_Flags
-_efl_event_hold_efl_event_input_event_flags_get(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd EINA_UNUSED)
+_efl_event_hold_efl_event_input_event_flags_get(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd)
 {
-   // ignore
-   return 0;
+   return pd->event_flags;
 }
 
 EOLIAN static Eo *

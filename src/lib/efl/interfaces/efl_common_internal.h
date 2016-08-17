@@ -95,6 +95,7 @@ struct _Efl_Event_Hold_Data
 {
    Eo               *eo;
    double            timestamp;
+   Efl_Event_Flags   event_flags;
    Efl_Input_Device *device;
    void             *data;
    void             *legacy; /* DO NOT TOUCH THIS */

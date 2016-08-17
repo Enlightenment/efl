@@ -543,6 +543,8 @@ efl_event_hold_legacy_info_set(Efl_Event_Hold *evt, const void *event_info, Evas
    ev->timestamp = e->timestamp;
    ev->device = e->dev;
    ev->hold = !!e->hold;
+   ev->event_flags = e->event_flags;
+   ev->data = e->data;
 
    return EINA_TRUE;
 }
@@ -559,7 +561,7 @@ efl_event_hold_legacy_info_fill(Efl_Event_Hold *evt, Evas_Event_Flags **pflags)
    e->timestamp = ev->timestamp;
    e->dev = ev->device;
    e->hold = ev->hold;
-   e->event_flags = 0; // FIXME?
+   e->event_flags = ev->event_flags;
    if (pflags) *pflags = &e->event_flags;
    ev->legacy = e;
 

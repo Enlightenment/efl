@@ -813,14 +813,12 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
 }
 
 static void
-_evas_event_source_hold_events(Evas_Object *eo_obj, Evas *eo_e EINA_UNUSED, void *ev,
-                               int event_id, Efl_Event_Hold *parent_he)
+_evas_event_source_hold_events(Evas_Object *eo_obj, int event_id, Efl_Event_Hold *evt)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
    Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *child;
-   Efl_Event_Hold *he = NULL;
    Evas_Object *eo_child;
    Eina_List *l;
 
@@ -830,11 +828,10 @@ _evas_event_source_hold_events(Evas_Object *eo_obj, Evas *eo_e EINA_UNUSED, void
      {
         if (src->delete_me) return;
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-        EV_CALL(eo_child, child, EVAS_CALLBACK_HOLD, ev, event_id, he, parent_he);
+        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HOLD, NULL,
+                                        event_id, EFL_EVENT_HOLD, evt);
         if (src->layer->evas->delete_me) break;
      }
-
-   EV_DEL(he);
 }
 
 static void
@@ -3131,9 +3128,9 @@ EAPI void
 evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *data)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Efl_Event_Hold *he = NULL;
+   Efl_Event_Hold_Data *ev = NULL;
+   Efl_Event_Hold *evt;
    Eina_List *l, *copy;
-   Evas_Event_Hold ev;
    Evas_Object *eo_obj;
    int event_id = 0;
 
@@ -3141,14 +3138,16 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
    e->last_timestamp = timestamp;
 
    _evas_object_event_new();
-
    event_id = _evas_event_counter;
-   ev.hold = hold;
-   ev.data = (void *)data;
-   ev.timestamp = timestamp;
-   ev.event_flags = e->default_event_flags;
-   ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) efl_ref(ev.dev);
+
+   evt = efl_event_instance_get(EFL_EVENT_HOLD_CLASS, eo_e, &ev);
+   if (!ev) return;
+
+   ev->hold = !!hold;
+   ev->data = (void *) data;
+   ev->timestamp = timestamp;
+   ev->event_flags = e->default_event_flags;
+   ev->device = efl_ref(_evas_device_top_get(eo_e));
 
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
@@ -3157,19 +3156,20 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         if ( !evas_event_freezes_through(eo_obj, obj))
           {
-             EV_CALL(eo_obj, obj, EVAS_CALLBACK_HOLD, &ev, event_id, he, NULL);
+             evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HOLD, NULL,
+                                             event_id, EFL_EVENT_HOLD, evt);
              if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
-               _evas_event_source_hold_events(eo_obj, eo_e, &ev, event_id, he);
+               _evas_event_source_hold_events(eo_obj, event_id, evt);
           }
         if (e->delete_me || e->is_frozen) break;
      }
    eina_list_free(copy);
    _evas_post_event_callback_call(eo_e, e);
-   if (ev.dev) efl_unref(ev.dev);
    _evas_unwalk(e);
    _evas_object_event_new();
 
-   EV_DEL(he);
+   efl_unref(ev->device);
+   efl_del(evt);
 }
 
 void
