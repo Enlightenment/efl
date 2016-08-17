@@ -499,6 +499,7 @@ evas_image_load_file_data_bmp(void *loader_data,
    if (!_evas_image_load_file_header(map, fsize, &position, &image_size, &header, error))
      goto close_file;
 
+   *error = EVAS_LOAD_ERROR_GENERIC;
    if (header.height < 0)
      {
         header.height = -header.height;
@@ -511,7 +512,7 @@ evas_image_load_file_data_bmp(void *loader_data,
           *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         else
           *error = EVAS_LOAD_ERROR_GENERIC;
-	goto close_file;
+        goto close_file;
      }
    image_w = region_w = header.width;
    image_h = region_h = header.height;
@@ -553,7 +554,7 @@ evas_image_load_file_data_bmp(void *loader_data,
    if ((header.width != (int)prop->w) || (header.height != (int)prop->h))
      {
 	*error = EVAS_LOAD_ERROR_GENERIC;
-	goto close_file;
+        goto close_file;
      }
 
    row_size = ceil((double)(image_w * header.bit_count) / 32) * 4;
@@ -563,6 +564,9 @@ evas_image_load_file_data_bmp(void *loader_data,
 
    if (image_size > row_size * header.height)
      image_size = row_size * header.height;
+
+   if (region_set)
+     read_line = region_y;
 
    if (header.bit_count < 16)
      {
