@@ -424,7 +424,7 @@ struct function_def
               values.push_back(&*param_iterator);
            }
 
-         if(type == EOLIAN_PROP_GET && values.size() == 1 && return_type == void_)
+         if(!r_type && type == EOLIAN_PROP_GET && values.size() == 1)
            {
              return_type = values[0].type;
            }

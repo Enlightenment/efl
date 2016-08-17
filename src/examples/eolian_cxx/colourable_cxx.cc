@@ -24,14 +24,14 @@ _colourable_eo_base_constructor(Eo *obj, Colourable_Data *self)
 {
    EINA_CXX_DOM_LOG_DBG(domain) << __func__ << std::endl;
    self->r = self->g = self->b = 0;
-   return eo_constructor(eo_super(obj, MY_CLASS));
+   return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
 void
 _colourable_eo_base_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 {
    EINA_CXX_DOM_LOG_DBG(domain) << __func__ << std::endl;
-   eo_destructor(eo_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 void
