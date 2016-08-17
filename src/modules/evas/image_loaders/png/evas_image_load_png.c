@@ -159,8 +159,8 @@ evas_image_load_file_head_png(void *loader_data,
 
    if (opts->region.w > 0 && opts->region.h > 0)
      {
-        if ((w32 < opts->region.x + opts->region.w) ||
-            (h32 < opts->region.y + opts->region.h))
+        if (((int) w32 < opts->region.x + opts->region.w) ||
+            ((int) h32 < opts->region.y + opts->region.h))
           {
              *error = EVAS_LOAD_ERROR_GENERIC;
              goto close_file;

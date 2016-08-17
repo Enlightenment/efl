@@ -1562,6 +1562,13 @@ _emile_jpeg_head(Emile_Image *image,
                             prop->w, prop->h,
                             degree, prop->flipped);
           }
+        if (prop->scale > 1)
+          {
+             load_region_x /= prop->scale;
+             load_region_y /= prop->scale;
+             load_region_w /= prop->scale;
+             load_region_h /= prop->scale;
+          }
         RECTS_CLIP_TO_RECT(load_region_x, load_region_y,
                            load_region_w, load_region_h,
                            0, 0, prop->w, prop->h);
