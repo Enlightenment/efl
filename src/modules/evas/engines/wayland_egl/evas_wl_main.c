@@ -388,6 +388,7 @@ eng_outbuf_swap_mode_get(Outbuf *ob)
         return swap_mode;
      }
 
+   if (ob->swap_mode == MODE_AUTO) return MODE_FULL;
    return ob->swap_mode;
 }
 
