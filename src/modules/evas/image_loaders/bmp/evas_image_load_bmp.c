@@ -368,6 +368,19 @@ evas_image_load_file_head_bmp(void *loader_data,
           *error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
+
+   if (load_opts->region.w > 0 && load_opts->region.h > 0)
+     {
+        if ((load_opts->region.w + load_opts->region.x > header.width) ||
+            (load_opts->region.h + load_opts->region.y > header.height))
+          {
+             *error = EVAS_LOAD_ERROR_GENERIC;
+             goto close_file;
+          }
+        header.width = load_opts->region.w;
+        header.height = load_opts->region.h;
+     }
+
    /* It is not bad idea that bmp loader support scale down decoding 
     * because of memory issue in mobile world.*/
    if (load_opts->scale_down_by > 1)
@@ -465,6 +478,7 @@ evas_image_load_file_data_bmp(void *loader_data,
    /* for scale decoding */
    unsigned int *scale_surface = NULL, *scale_pix = NULL;
    int scale_ratio = 1, image_w = 0, image_h = 0;
+   int region_set = 0, region_x = 0, region_y = 0, region_w, region_h;
    int row_size = 0; /* Row size is rounded up to a multiple of 4bytes */
    int read_line = 0; /* total read line */
 
@@ -499,12 +513,30 @@ evas_image_load_file_data_bmp(void *loader_data,
           *error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
+   image_w = region_w = header.width;
+   image_h = region_h = header.height;
+
+   if (opts->region.w > 0 && opts->region.h > 0)
+     {
+        if ((opts->region.w + opts->region.x > header.width) ||
+            (opts->region.h + opts->region.y > header.height))
+          {
+             *error = EVAS_LOAD_ERROR_GENERIC;
+             goto close_file;
+          }
+        region_set = 1;
+        region_x = opts->region.x;
+        region_y = image_h - (opts->region.h + opts->region.y);
+        region_w = opts->region.w;
+        region_h = opts->region.h;
+
+        header.width = opts->region.w;
+        header.height = opts->region.h;
+     }
    /* It is not bad idea that bmp loader support scale down decoding 
     * because of memory issue in mobile world. */
    if (opts->scale_down_by > 1)
      scale_ratio = opts->scale_down_by;
-   image_w = header.width;
-   image_h = header.height;
 
    if (scale_ratio > 1)
      {
@@ -566,7 +598,7 @@ evas_image_load_file_data_bmp(void *loader_data,
           }
         position = header.offset;
 
-        if ((scale_ratio == 1) || (header.comp !=0))
+        if ((!region_set && scale_ratio == 1) || (header.comp != 0))
           {
              if (image_size < (int)(fsize - position))
                image_size = fsize - position;
@@ -588,20 +620,20 @@ evas_image_load_file_data_bmp(void *loader_data,
              *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
              goto close_file;
           }
-        if ((scale_ratio == 1) || (header.comp !=0))
-          buffer_end = buffer + image_size;
-        else
-          buffer_end = buffer + row_size;
-        p = buffer;
-
-        if ((scale_ratio == 1) || (header.comp !=0))
+        if ((!region_set && scale_ratio == 1) || (header.comp != 0))
           {
+             buffer_end = buffer + image_size;
              if (!read_mem(map, fsize, &position, buffer, image_size)) goto close_file;
           }
         else
           {
+             if (region_set)
+               position += row_size * region_y;
+
              if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+             buffer_end = buffer + row_size;
           }
+        p = buffer;
 
         if (header.bit_count == 1)
           {
@@ -612,7 +644,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                   for (y = 0; y < header.height; y++)
                     {
                        if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
-                       if (scale_ratio > 1) pix = scale_surface; // one line decoding
+                       if (scale_ratio > 1 || region_set) pix = scale_surface; // one line decoding
 
                        for (x = 0; x < image_w; x++)
                          {
@@ -653,12 +685,16 @@ evas_image_load_file_data_bmp(void *loader_data,
                             pix++;
                          }
 
-                       if (scale_ratio > 1)
+                       if (scale_ratio > 1 || region_set)
                          {
                             if (!right_way_up) scale_pix = surface + ((header.height - 1 - y) * header.width);
                             else scale_pix = surface + (y * header.width);
 
-                            pix = scale_surface;
+                            if (region_set)
+                              pix = scale_surface + region_x;
+                            else
+                              pix = scale_surface;
+
                             for (x = 0; x < header.width; x++)
                               {
                                  *scale_pix = *pix;
@@ -693,7 +729,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                   for (y = 0; y < header.height; y++)
                     {
                        if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
-                       if (scale_ratio > 1) pix = scale_surface; // one line decoding
+                       if (scale_ratio > 1 || region_set) pix = scale_surface; // one line decoding
                        for (x = 0; x < image_w; x++)
                          {
                             if ((x & 0x1) == 0x1)
@@ -708,12 +744,16 @@ evas_image_load_file_data_bmp(void *loader_data,
                             if (p >= buffer_end) break;
                             pix++;
                          }
-                       if (scale_ratio > 1)
+                       if (scale_ratio > 1 || region_set)
                          {
                             if (!right_way_up) scale_pix = surface + ((header.height - 1 - y) * header.width);
                             else scale_pix = surface + (y * header.width);
 
-                            pix = scale_surface;
+                            if (region_set)
+                              pix = scale_surface + region_x;
+                            else
+                              pix = scale_surface;
+
                             for (x = 0; x < header.width; x++)
                               {
                                  *scale_pix = *pix;
@@ -744,6 +784,8 @@ evas_image_load_file_data_bmp(void *loader_data,
                   Eina_Bool scale_down_line = EINA_TRUE;
 
                   pix = surface;
+                  if (region_set && region_y > 0) scale_down_line = EINA_FALSE;
+
                   if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
                   wpad = ((image_w + 1) / 2) * 2;
                   while (p < buffer_end)
@@ -762,7 +804,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                                         {
                                            if (x < header.width)
                                              {
-                                                if (((x % scale_ratio) == 0) && (scale_x < header.width))
+                                                if ((x >= region_x) && ((x % scale_ratio) == 0) && (scale_x < header.width))
                                                   {
                                                      *pix = col1;
                                                      pix++;
@@ -772,7 +814,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                                              }
                                            if (x < header.width)
                                              {
-                                                if (((x % scale_ratio) == 0) && (scale_x < header.width))
+                                                if ((x >= region_x) && ((x % scale_ratio) == 0) && (scale_x < header.width))
                                                   {
                                                      *pix = col2;
                                                      pix++;
@@ -784,7 +826,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                                         }
                                       if (p[0] & 0x1)
                                         {
-                                           if (((x % scale_ratio) == 0) && (scale_x < header.width))
+                                           if ((x >= region_x) && ((x % scale_ratio) == 0) && (scale_x < header.width))
                                              {
                                                 *pix = col1;
                                                 pix++;
@@ -804,7 +846,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                                   x = 0;
                                   scale_x = 0;
                                   y++;
-                                  if ((y % scale_ratio) == 0)
+                                  if (y >= region_y && (y % scale_ratio) == 0)
                                     {
                                        scale_y++;
                                        scale_down_line = EINA_TRUE;
@@ -852,14 +894,14 @@ evas_image_load_file_data_bmp(void *loader_data,
                                   count /= 2;
                                   while (count > 0)
                                     {
-                                       if (((x % scale_ratio) == 0) && (scale_x < header.width))
+                                       if ((y >= region_y) && (x >= region_x) && ((x % scale_ratio) == 0) && (scale_x < header.width))
                                          {
                                             *pix = pal[*p >> 4];
                                             pix++;
                                             scale_x++;
                                          }
                                        x++;
-                                       if (((x % scale_ratio) == 0) && (scale_x < header.width))
+                                       if ((y >= region_y) && (x >= region_x) && ((x % scale_ratio) == 0) && (scale_x < header.width))
                                          {
                                             *pix = pal[*p & 0xf];
                                             pix++;
@@ -873,7 +915,7 @@ evas_image_load_file_data_bmp(void *loader_data,
 
                                   if (done & 0x1)
                                     {
-                                       if (((x % scale_ratio) == 0) && (scale_x < header.width))
+                                       if (((y >= region_y) && (x >= region_x) && (x % scale_ratio) == 0) && (scale_x < header.width))
                                          {
                                             *pix = pal[*p >> 4];
                                             scale_x++;
@@ -901,6 +943,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                   for (y = 0; y < header.height; y++)
                     {
                        if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       if (region_set) p += region_x;
                        for (x = 0; x < header.width; x++)
                          {
                             *pix = pal[*p];
@@ -908,7 +951,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                             if (p >= buffer_end) break;
                             pix++;
                          }
-                       if (scale_ratio > 1)
+                       if (scale_ratio > 1 || region_set)
                          {
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
@@ -931,8 +974,10 @@ evas_image_load_file_data_bmp(void *loader_data,
                   int count = 0, done = 0;
                   int scale_x = 0, scale_y = 0;
                   Eina_Bool scale_down_line = EINA_TRUE;
-
                   pix = surface;
+                  if (region_set && 0 < region_y)
+                    scale_down_line = EINA_FALSE;
+
                   if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
 
                   while (p < buffer_end)
@@ -948,7 +993,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                                       count = p[0];
                                       while (count > 0)
                                         {
-                                           if (((x % scale_ratio) == 0) && (scale_x < header.width))
+                                           if ((x >= region_x) && ((x % scale_ratio) == 0) && (scale_x < header.width))
                                              {
                                                 *pix = col;
                                                 pix++;
@@ -969,7 +1014,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                                   x = 0;
                                   scale_x = 0;
                                   y++;
-                                  if ((y % scale_ratio) == 0)
+                                  if (y >= region_y && (y % scale_ratio) == 0)
                                     {
                                        scale_y++;
                                        scale_down_line = EINA_TRUE;
@@ -1017,7 +1062,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                                   done = count;
                                   while (count > 0)
                                     {
-                                       if (((x % scale_ratio) == 0) && (scale_x < header.width))
+                                       if ((x >= region_x) && ((x % scale_ratio) == 0) && (scale_x < header.width))
                                          {
                                             *pix = pal[*p];
                                             pix++;
@@ -1042,7 +1087,7 @@ evas_image_load_file_data_bmp(void *loader_data,
         if (header.comp == 0) // no compression
           {
              position = header.offset;
-             if (scale_ratio == 1)
+             if (!region_set && scale_ratio == 1)
                buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
              else
                buffer = malloc(row_size); // scale down is usually set because of memory issue, so read line by line
@@ -1051,18 +1096,19 @@ evas_image_load_file_data_bmp(void *loader_data,
                   *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                   goto close_file;
                }
-             if (scale_ratio == 1)
+             if (!region_set && scale_ratio == 1)
                buffer_end = buffer + image_size;
              else
                buffer_end = buffer + row_size;
 
              p = buffer;
-             if (scale_ratio == 1)
+             if (!region_set && scale_ratio == 1)
                {
                   if (!read_mem(map, fsize, &position, buffer, image_size)) goto close_file;
                }
              else
                {
+                  if (region_set) position += row_size * region_y;
                   if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                }
              if (header.bit_count == 16)
@@ -1073,6 +1119,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                   for (y = 0; y < header.height; y++)
                     {
                        if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       if (region_set) p += 2 * region_x;
                        for (x = 0; x < header.width; x++)
                          {
                             tmp = *((unsigned short *)(p));
@@ -1087,7 +1134,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                             if (p >= buffer_end) break;
                             pix++;
                          }
-                       if (scale_ratio > 1)
+                       if (scale_ratio > 1 || region_set)
                          {
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
@@ -1111,6 +1158,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                   for (y = 0; y < header.height; y++)
                     {
                        if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       if (region_set) p += 3 * region_x;
                        for (x = 0; x < header.width; x++)
                          {
                             b = p[0];
@@ -1121,7 +1169,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                             if (p >= buffer_end) break;
                             pix++;
                          }
-                       if (scale_ratio > 1)
+                       if (scale_ratio > 1 || region_set)
                          {
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
@@ -1146,6 +1194,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                   for (y = 0; y < header.height; y++)
                     {
                        if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       if (region_set) p += 4 * region_x;
                        for (x = 0; x < header.width; x++)
                          {
                             b = p[0];
@@ -1160,7 +1209,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                             if (p >= buffer_end) break;
                             pix++;
                          }
-                       if (scale_ratio > 1)
+                       if (scale_ratio > 1 || region_set)
                          {
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
@@ -1194,12 +1243,8 @@ evas_image_load_file_data_bmp(void *loader_data,
           }
         else if (header.comp == 3) // bit field
           {
-             if (!read_uint(map, fsize, &position, &header.rmask)) goto close_file;
-             if (!read_uint(map, fsize, &position, &header.gmask)) goto close_file;
-             if (!read_uint(map, fsize, &position, &header.bmask)) goto close_file;
-
              position = header.offset;
-             if (scale_ratio == 1)
+             if (!region_set && scale_ratio == 1)
                buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
              else
                buffer = malloc(row_size); // scale down is usually set because of memory issue, so read line by line
@@ -1209,18 +1254,20 @@ evas_image_load_file_data_bmp(void *loader_data,
                   *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                   goto close_file;
                }
-             if (scale_ratio == 1)
+             if (!region_set && scale_ratio == 1)
                buffer_end = buffer + image_size;
              else
                buffer_end = buffer + row_size;
 
              p = buffer;
-             if (scale_ratio == 1)
+             if (!region_set && scale_ratio == 1)
                {
                   if (!read_mem(map, fsize, &position, buffer, image_size)) goto close_file;
                }
              else
                {
+                  if (region_set)
+                       position += row_size * region_y;
                   if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                }
 
@@ -1234,6 +1281,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                   for (y = 0; y < header.height; y++)
                     {
                        if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       if (region_set) p += 2 * region_x;
                        for (x = 0; x < header.width; x++)
                          {
                             tmp = *((unsigned short *)(p));
@@ -1248,7 +1296,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                             if (p >= buffer_end) break;
                             pix++;
                          }
-                       if (scale_ratio > 1)
+                       if (scale_ratio > 1 || region_set)
                          {
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
@@ -1275,6 +1323,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                   for (y = 0; y < header.height; y++)
                     {
                        if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       if (region_set) p += 2 * region_x;
                        for (x = 0; x < header.width; x++)
                          {
                             tmp = *((unsigned short *)(p));
@@ -1288,13 +1337,13 @@ evas_image_load_file_data_bmp(void *loader_data,
                             if (p >= buffer_end) break;
                             pix++;
                          }
-                       if (scale_ratio > 1)
+                       if (scale_ratio > 1 || region_set)
                          {
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
 
                             position += row_size * (scale_ratio - 1);
-                            if (!read_mem(map, fsize, &position, buffer_end, row_size)) goto close_file;
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                             p = buffer;
                             buffer_end = buffer + row_size;
                          }
@@ -1312,6 +1361,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                   for (y = 0; y < header.height; y++)
                     {
                        if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       if (region_set) p += 4 * region_x;
                        for (x = 0; x < header.width; x++)
                          {
                             b = p[0];
@@ -1326,7 +1376,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                             if (p >= buffer_end) break;
                             pix++;
                          }
-                       if (scale_ratio > 1)
+                       if (scale_ratio > 1 || region_set)
                          {
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
