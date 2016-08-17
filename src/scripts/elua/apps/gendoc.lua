@@ -20,16 +20,16 @@ local gen_cparam = function(par, out)
     out = out or (par:direction_get() == par.OUT)
     local tstr = part:c_type_get()
     if out then
-        tstr = ser.get_ctype_str(tstr, "*")
+        tstr = dtree.type_cstr_get(tstr, "*")
     end
-    return ser.get_ctype_str(tstr, par:name_get())
+    return dtree.type_cstr_get(tstr, par:name_get())
 end
 
 local get_func_csig_part = function(cn, tp)
     if not tp then
         return "void " .. cn
     end
-    return ser.get_ctype_str(tp, cn)
+    return dtree.type_cstr_get(tp, cn)
 end
 
 local gen_func_csig = function(f, ftype)
@@ -1035,7 +1035,7 @@ build_event = function(ev, cl)
     f:write_h("C signature", 3)
     local cn = ev:c_name_get()
     keyref.add(cn, "c")
-    f:write_code(ser.get_ctype_str(etp, cn) .. ";", "c")
+    f:write_code(dtree.type_cstr_get(etp, cn) .. ";", "c")
     f:write_nl()
 
     f:write_h("Description", 3)

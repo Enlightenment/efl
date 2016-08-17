@@ -3,19 +3,6 @@ local dtree = require("docgen.doctree")
 
 local M = {}
 
-M.get_ctype_str = function(tp, suffix)
-    tp = tp or "void"
-    local ct = (type(tp) == "string") and tp or tp:c_type_get()
-    if not suffix then
-        return ct
-    end
-    if ct:sub(#ct) == "*" then
-        return ct .. suffix
-    else
-        return ct .. " " .. suffix
-    end
-end
-
 local wrap_type_attrs = function(tp, str)
     if tp:is_const() then
         str = "const(" .. str .. ")"
@@ -170,7 +157,7 @@ M.get_typedecl_cstr = function(tp)
         buf[#buf + 1] = " {\n"
         for i, fld in ipairs(fields) do
             buf[#buf + 1] = "    "
-            buf[#buf + 1] = M.get_ctype_str(fld:type_get(), fld:name_get())
+            buf[#buf + 1] = dtree.type_cstr_get(fld:type_get(), fld:name_get())
             buf[#buf + 1] = ";\n"
         end
         buf[#buf + 1] = "} " .. fulln .. ";"
@@ -212,7 +199,7 @@ M.get_typedecl_cstr = function(tp)
     elseif tpt == dtree.Typedecl.ALIAS then
         local fulln = tp:full_name_get():gsub("%.", "_");
         keyref.add(fulln, "c")
-        return "typedef " .. M.get_ctype_str(tp:base_type_get(), fulln) .. ";"
+        return "typedef " .. dtree.type_cstr_get(tp:base_type_get(), fulln) .. ";"
     end
     error("unhandled typedecl type: " .. tpt)
 end

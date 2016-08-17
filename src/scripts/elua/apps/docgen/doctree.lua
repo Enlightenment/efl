@@ -670,6 +670,19 @@ M.Type = Node:clone {
     end
 }
 
+M.type_cstr_get = function(tp, suffix)
+    tp = tp or "void"
+    local ct = (type(tp) == "string") and tp or tp:c_type_get()
+    if not suffix then
+        return ct
+    end
+    if ct:sub(#ct) == "*" then
+        return ct .. suffix
+    else
+        return ct .. " " .. suffix
+    end
+end
+
 M.Typedecl = Node:clone {
     UNKNOWN = eolian.typedecl_type.UNKNOWN,
     STRUCT = eolian.typedecl_type.STRUCT,
