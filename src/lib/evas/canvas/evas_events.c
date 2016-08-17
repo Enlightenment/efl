@@ -119,6 +119,8 @@ _efl_event_desc_get(Evas_Callback_Type type)
         return EFL_EVENT_KEY_DOWN;
       case EVAS_CALLBACK_KEY_UP:
         return EFL_EVENT_KEY_UP;
+      case EVAS_CALLBACK_HOLD:
+        return EFL_EVENT_HOLD;
       default:
         return NULL;
      }
