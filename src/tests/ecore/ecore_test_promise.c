@@ -1052,8 +1052,7 @@ static void
 _then_race(void *data, const Eo_Event *ev)
 {
    Future_Ok *fo = data;
-   Efl_Future_Event_Success *s = ev->info;
-   Efl_Future_Race_Success *rs = s->value;
+   Efl_Future_Race_Success *rs = ev->info;
 
    fail_if(rs->index != 1);
    fail_if(rs->value != &value[0]);

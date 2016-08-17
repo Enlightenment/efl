@@ -78,9 +78,10 @@ typedef struct _Efl_Future_Composite_Progress Efl_Future_Race_Progress;
 
 struct _Efl_Future_Race_Success
 {
-   Efl_Future *winner;
+   Efl_Promise *next;
    void *value;
 
+   Efl_Future *winner;
    unsigned int index;
 };
 

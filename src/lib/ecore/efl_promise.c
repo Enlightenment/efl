@@ -17,6 +17,9 @@ struct _Efl_Promise_Msg
    Eina_Free_Cb free_cb;
 
    Eina_Error error;
+
+   Efl_Future_Event_Success* success;
+   Efl_Future_Event_Failure* failure;
 };
 
 struct _Efl_Promise_Data
@@ -38,6 +41,8 @@ _efl_promise_msg_free(Efl_Promise_Msg *msg)
 {
    if (msg->free_cb)
      msg->free_cb(msg->value);
+   if(msg->success)
+     free(msg->success);
    free(msg);
 }
 
@@ -82,27 +87,32 @@ static void
 _efl_loop_future_success(Eo_Event *ev, Efl_Loop_Future_Data *pd, void *value)
 {
    Efl_Loop_Future_Callback *cb;
-   Efl_Future_Event_Success chain_success;
+   Efl_Future_Event_Success chain_success_tmp, *chain_success;
 
-   ev->info = &chain_success;
+   if(!pd->message || !pd->message->success)
+     chain_success = &chain_success_tmp;
+   else
+     chain_success = pd->message->success;
+
+   ev->info = chain_success;
    ev->desc = EFL_FUTURE_EVENT_SUCCESS;
 
-   chain_success.value = value;
+   chain_success->value = value;
 
    EINA_INLIST_FREE(pd->callbacks, cb)
      {
         if (cb->next)
           {
-             chain_success.next = cb->next;
+             chain_success->next = cb->next;
 
              cb->success((void*) cb->data, ev);
           }
         else
           {
-             chain_success.next = NULL;
-             chain_success.value = pd->message;
+             chain_success->next = NULL;
+             chain_success->value = pd->message;
              cb->success((void*) cb->data, ev);
-             chain_success.value = value;
+             chain_success->value = value;
           }
 
         pd->callbacks = eina_inlist_remove(pd->callbacks, pd->callbacks);
@@ -470,6 +480,53 @@ _efl_promise_value_set(Eo *obj, Efl_Promise_Data *pd, void *v, Eina_Free_Cb free
 
    message->value = v;
    message->free_cb = free_cb;
+
+   EINA_REFCOUNT_INIT(message);
+   pd->message = message;
+
+   // Send it to all futures
+   EINA_LIST_FOREACH_SAFE(pd->futures, l, ln, f)
+     {
+        EINA_REFCOUNT_REF(message);
+        f->message = message;
+
+        // Trigger the callback
+        _efl_loop_future_propagate(f->self, f);
+     }
+
+   // Now, we may die.
+   eo_unref(obj);
+}
+
+static void
+_efl_promise_value_race_set(Eo *obj, Efl_Promise_Data *pd, void *v, Eina_Free_Cb free_cb,
+                            Efl_Future* winner, unsigned int index)
+{
+   Efl_Promise_Msg *message;
+   Efl_Loop_Future_Data *f;
+   Eina_List *l, *ln;
+
+   if (pd->message)
+     {
+        ERR("This promise has already been fulfilled. You can can't set a value twice nor can you set a value after it has been cancelled.");
+        return ;
+     }
+
+   // By triggering this message, we are likely going to kill all future
+   // And a user of the promise may want to attach an event handler on the promise
+   // and destroy it, so delay that to after the loop is done.
+   eo_ref(obj);
+
+   // Create a refcounted structure where refcount == number of future + one
+   message = _efl_promise_message_new(pd);
+   if (!message) return ;
+
+   message->value = v;
+   message->free_cb = free_cb;
+   Efl_Future_Race_Success* success = calloc(1, sizeof(Efl_Future_Race_Success));
+   message->success = success;
+   success->winner = winner;
+   success->index = index;
 
    EINA_REFCOUNT_INIT(message);
    pd->message = message;
@@ -981,14 +1038,8 @@ _then_race(void *data, const Eo_Event *ev)
 
         if (f == ev->object)
           {
-             Efl_Future_Race_Success *success = calloc(1, sizeof (Efl_Future_Race_Success));
-
-             if (!success) continue ;
-             success->winner = f;
-             success->value = d->value;
-             success->index = i;
-
-             efl_promise_value_set(race->promise, success, free);
+             void* pd = eo_data_scope_get(race->promise, EFL_PROMISE_CLASS);
+             _efl_promise_value_race_set(race->promise, pd, d->value, NULL, f, i);
           }
         else
           {
