@@ -558,42 +558,7 @@ eng_setup(Evas *evas, void *info)
                  (!strcasecmp(s, "4")))
           swap_mode = MODE_QUADRUPLE;
      }
-   else
-     {
-// in most gl implementations - egl and glx here that we care about the TEND
-// to either swap or copy backbuffer and front buffer, but strictly that is
-// not true. technically backbuffer content is totally undefined after a swap
-// and thus you MUST re-render all of it, thus MODE_FULL
-        swap_mode = MODE_FULL;
-// BUT... reality is that lmost every implementation copies or swaps so
-// triple buffer mode can be used as it is a superset of double buffer and
-// copy (though using those explicitly is more efficient). so let's play with
-// triple buffer mdoe as a default and see.
-//        re->mode = MODE_TRIPLE;
-// XXX: note - the above seems to break on some older intel chipsets and
-// drivers. it seems we CANT depend on backbuffer staying around. bugger!
-        switch (inf->swap_mode)
-          {
-           case EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_FULL:
-             swap_mode = MODE_FULL;
-             break;
-           case EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_COPY:
-             swap_mode = MODE_COPY;
-             break;
-           case EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_DOUBLE:
-             swap_mode = MODE_DOUBLE;
-             break;
-           case EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_TRIPLE:
-             swap_mode = MODE_TRIPLE;
-             break;
-           case EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_QUADRUPLE:
-             swap_mode = MODE_QUADRUPLE;
-             break;
-           default:
-             swap_mode = MODE_AUTO;
-             break;
-          }
-     }
+   else swap_mode = MODE_AUTO;
 
    if (!(re = epd->engine.data.output))
      {
