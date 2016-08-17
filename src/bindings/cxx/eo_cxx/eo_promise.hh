@@ -125,6 +125,50 @@ race_impl(Futures const& ... futures)
   Efl_Future* future = ::efl_future_race_internal(futures.native_handle()..., NULL);
   return typename race_result_type<Futures...>::type{ ::eo_ref(future)};
 }
+
+template <typename T, typename Enabler = void>
+struct future_copy_traits
+{
+   static void copy(T* storage, Efl_Future_Event_Success const* info)
+   {
+      eina::copy_from_c_traits<T>::copy_to_unitialized
+        (storage, info->value);
+   }
+};
+
+template <typename...Args>
+struct future_copy_traits<eina::variant<Args...>>
+{
+   template <std::size_t I>
+   static void copy_impl(eina::variant<Args...>*, void const*, int, std::integral_constant<std::size_t, I>
+                         , std::integral_constant<std::size_t, I>)
+   {
+     std::abort();
+   }
+
+   template <std::size_t I, std::size_t N>
+   static void copy_impl(eina::variant<Args...>* storage, void const* value, int index, std::integral_constant<std::size_t, I>
+                         , std::integral_constant<std::size_t, N> max
+                         , typename std::enable_if<I != N>::type* = 0)
+   {
+     if(I == index)
+       {
+         eina::copy_from_c_traits<eina::variant<Args...>>::copy_to_unitialized
+           (storage, static_cast<typename std::tuple_element<I, std::tuple<Args...>>::type const*>
+            (static_cast<void const*>(value)));
+       }
+     else
+       copy_impl(storage, value, index, std::integral_constant<std::size_t, I+1>{}, max);
+   }
+   
+   static void copy(eina::variant<Args...>* storage, Efl_Future_Event_Success const* other_info)
+   {
+      Efl_Future_Race_Success const* info = static_cast<Efl_Future_Race_Success const*>
+        (static_cast<void const*>(other_info));
+      copy_impl(storage, info->value, info->index, std::integral_constant<std::size_t, 0ul>{}
+                , std::integral_constant<std::size_t, sizeof...(Args)>{});
+   }
+};
   
 template <typename A0, typename F>
 typename std::enable_if
@@ -138,8 +182,7 @@ future_invoke(F f, Eo_Event const* event)
    try
      {
         typename std::aligned_storage<sizeof(A0), alignof(A0)>::type storage;
-        eina::copy_from_c_traits<A0>::copy_to_unitialized
-          (static_cast<A0*>(static_cast<void*>(&storage)), info->value);
+        future_copy_traits<A0>::copy(static_cast<A0*>(static_cast<void*>(&storage)), info);
         auto r = f(*static_cast<A0*>(static_cast<void*>(&storage)));
         typedef decltype(r) result_type;
         typedef typename eina::alloc_to_c_traits<result_type>::c_type c_type;
@@ -375,8 +418,7 @@ struct shared_future_1_type : private shared_future_common
       Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
 
       std::unique_lock<std::mutex> l(wait_state->mutex);
-      eina::copy_from_c_traits<T>::copy_to_unitialized
-        (static_cast<T*>(static_cast<void*>(&wait_state->storage)), info->value);
+      _impl::future_copy_traits<T>::copy(static_cast<T*>(static_cast<void*>(&wait_state->storage)), info);
       wait_state->available = true;
       wait_state->cv.notify_one();
    }
