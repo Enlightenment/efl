@@ -245,7 +245,8 @@ eo_tutorial.dox \
 ephysics_examples.dox \
 evas_examples.dox \
 main.dox \
-pkgconfig.dox
+pkgconfig.dox \
+shot.sh
 
 include images.mk
 
