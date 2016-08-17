@@ -505,28 +505,30 @@ _transform_to_src_space_f(Evas_Object_Protected_Data *obj, Evas_Object_Protected
 
 static void
 _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
-                                     Evas_Event_Mouse_Down *ev, int event_id,
-                                     Efl_Event_Pointer *parent_pe)
+                                     Efl_Event_Pointer *parent_ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
    Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Evas_Coord_Point canvas = ev->canvas;
    Evas_Object_Protected_Data *child;
-   Efl_Event_Pointer *pe = NULL;
    Evas_Object *eo_child;
-   Eina_List *l;
-   int no_rep = 0;
+   Eina_List *copy, *l;
+   Efl_Event_Pointer_Data *ev;
+   Efl_Event_Pointer *evt;
+   Eina_Vector2 point;
    int addgrab = 0;
-   Evas_Coord_Point point;
-   Eina_List *copy;
+   int no_rep = 0;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   _transform_to_src_space(obj, src, &ev->canvas.x, &ev->canvas.y);
+   evt = efl_event_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   if (!ev) return;
 
-   ev->event_src = eo_obj;
+   _transform_to_src_space_f(obj, src, &ev->cur);
+   point = ev->cur;
+   ev->source = eo_obj;
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
      {
@@ -538,7 +540,7 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
              proxy_write->src_event_in = _evas_event_object_list_raw_in_get
                (eo_e, proxy_write->src_event_in,
                 evas_object_smart_members_get_direct(eo_src),
-                NULL, ev->canvas.x, ev->canvas.y, &no_rep, EINA_TRUE);
+                NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
          }
        else
          proxy_write->src_event_in = eina_list_append(proxy_write->src_event_in, eo_src);
@@ -564,23 +566,21 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
           }
      }
 
-   point = ev->canvas;
    copy = evas_event_list_copy(src->proxy->src_event_in);
    EINA_LIST_FOREACH(copy, l, eo_child)
      {
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-        ev->canvas = point;
-        _evas_event_havemap_adjust(eo_child, child, &ev->canvas.x,
-                                   &ev->canvas.y,
-                                   child->mouse_grabbed);
-        EV_CALL(eo_child, child, EVAS_CALLBACK_MOUSE_DOWN, ev, event_id, pe, parent_pe);
+        ev->cur = point;
+        _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, child->mouse_grabbed);
+        evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_DOWN, NULL,
+                                        event_id, EFL_EVENT_POINTER_DOWN, evt);
         if (e->delete_me) break;
         if (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
           break;
      }
    eina_list_free(copy);
-   ev->canvas = canvas;
-   EV_DEL(pe);
+
+   efl_del(evt);
 }
 
 static void
@@ -758,28 +758,30 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
 
 static void
 _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
-                                   Evas_Event_Mouse_Up *ev, int event_id,
-                                   Efl_Event_Pointer *parent_pe)
+                                   Efl_Event_Pointer *parent_ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
    Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Evas_Coord_Point canvas = ev->canvas;
-   Efl_Event_Pointer *pe = NULL;
+   Evas_Object_Protected_Data *child;
+   Evas_Object *eo_child;
+   Eina_List *copy, *l;
+   Efl_Event_Pointer_Data *ev;
+   Efl_Event_Pointer *evt;
+   Eina_Vector2 point;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   _transform_to_src_space(obj, src, &ev->canvas.x, &ev->canvas.y);
+   evt = efl_event_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   if (!ev) return;
 
-   ev->event_src = eo_obj;
+   _transform_to_src_space_f(obj, src, &ev->cur);
+   point = ev->cur;
+   ev->source = eo_obj;
 
-   Eina_List *l;
-   Evas_Object *eo_child;
-   Evas_Object_Protected_Data *child;
-   Evas_Coord_Point point = ev->canvas;
-
-   Eina_List *copy = evas_event_list_copy(src->proxy->src_event_in);
+   copy = evas_event_list_copy(src->proxy->src_event_in);
    EINA_LIST_FOREACH(copy, l, eo_child)
      {
         if (src->delete_me) break;
@@ -792,12 +794,10 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
              e->pointer.mouse_grabbed--;
           }
 
-        ev->canvas = point;
-        _evas_event_havemap_adjust(eo_child, child,
-                                   &ev->canvas.x,
-                                   &ev->canvas.y,
-                                   child->mouse_grabbed);
-        EV_CALL(eo_child, child, EVAS_CALLBACK_MOUSE_UP, ev, event_id, pe, parent_pe);
+        ev->cur = point;
+        _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, child->mouse_grabbed);
+        evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_UP, NULL,
+                                        event_id, EFL_EVENT_POINTER_UP, evt);
         if (e->delete_me) break;
         if (obj->pointer_mode ==
             EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
@@ -808,8 +808,7 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
      }
    eina_list_free(copy);
 
-   ev->canvas = canvas;
-   EV_DEL(pe);
+   efl_del(evt);
 }
 
 static void
@@ -853,8 +852,11 @@ _evas_event_source_wheel_events(Evas_Object *eo_obj, Evas *eo_e,
 
    evt = efl_event_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   if (!ev) return;
+
    _transform_to_src_space_f(obj, src, &ev->cur);
    point = ev->cur;
+   ev->source = eo_obj;
 
    copy = evas_event_list_copy(src->proxy->src_event_in);
    EINA_LIST_FOREACH(copy, l, eo_child)
@@ -868,7 +870,8 @@ _evas_event_source_wheel_events(Evas_Object *eo_obj, Evas *eo_e,
         if (e->delete_me) break;
      }
    eina_list_free(copy);
-   EV_DEL(evt);
+
+   efl_del(evt);
 }
 
 static void
@@ -1349,47 +1352,41 @@ evas_event_thaw_eval(Evas *eo_e)
 }
 
 static void
-_canvas_event_feed_mouse_down_internal(Eo *eo_e, int b, Evas_Button_Flags flags,
-                                       unsigned int timestamp, const void *data,
-                                       Efl_Event_Pointer *parent_pe)
+_canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
 {
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Efl_Event_Pointer *pe = NULL;
    Eina_List *l, *copy;
-   Evas_Event_Mouse_Down ev;
    Evas_Object *eo_obj;
+   int event_id, b;
+   Evas *eo_e;
    int addgrab = 0;
-   int event_id = 0;
 
-   INF("ButtonEvent:down time=%u x=%d y=%d button=%d downs=%d", timestamp, e->pointer.x, e->pointer.y, b, e->pointer.downs);
+   if (!e || !ev) return;
+
+   b = ev->button;
+   DBG("ButtonEvent:down time=%u x=%d y=%d button=%d downs=%d",
+       ev->timestamp, e->pointer.x, e->pointer.y, b, e->pointer.downs);
    if ((b < 1) || (b > 32)) return;
 
    e->pointer.button |= (1u << (b - 1));
    e->pointer.downs++;
 
    if (e->is_frozen) return;
-   e->last_timestamp = timestamp;
+   e->last_timestamp = ev->timestamp;
+   eo_e = e->evas;
 
    _evas_object_event_new();
-
    event_id = _evas_event_counter;
-   ev.button = b;
-   ev.output.x = e->pointer.x;
-   ev.output.y = e->pointer.y;
-   ev.canvas.x = e->pointer.x;
-   ev.canvas.y = e->pointer.y;
-   ev.data = (void *)data;
-   ev.modifiers = &(e->modifiers);
-   ev.locks = &(e->locks);
-   ev.flags = flags;
-   ev.timestamp = timestamp;
-   ev.event_flags = e->default_event_flags;
-   ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) efl_ref(ev.dev);
+
+   ev->cur.x = e->pointer.x;
+   ev->cur.y = e->pointer.y;
+   ev->modifiers = &(e->modifiers);
+   ev->locks = &(e->locks);
+   ev->event_flags = e->default_event_flags;
+   if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
    /* append new touch point to the touch point list */
-   _evas_touch_point_append(eo_e, 0, e->pointer.x, e->pointer.y);
+   _evas_touch_point_append(e->evas, 0, e->pointer.x, e->pointer.y);
    /* If this is the first finger down, i.e no other fingers pressed,
     * get a new event list, otherwise, keep the current grabbed list. */
    if (e->pointer.mouse_grabbed == 0)
@@ -1426,12 +1423,14 @@ _canvas_event_feed_mouse_down_internal(Eo *eo_e, int b, Evas_Button_Flags flags,
      {
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         if (obj->delete_me) continue;
-        ev.canvas.x = e->pointer.x;
-        ev.canvas.y = e->pointer.y;
-        _evas_event_havemap_adjust(eo_obj, obj, &ev.canvas.x, &ev.canvas.y, obj->mouse_grabbed);
-        EV_CALL(eo_obj, obj, EVAS_CALLBACK_MOUSE_DOWN, &ev, event_id, pe, parent_pe);
+        ev->cur.x = e->pointer.x;
+        ev->cur.y = e->pointer.y;
+        _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj->mouse_grabbed);
+        evas_object_event_callback_call
+              (eo_obj, obj, EVAS_CALLBACK_MOUSE_DOWN, NULL,
+               event_id, EFL_EVENT_POINTER_DOWN, ev->eo);
         if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
-          _evas_event_source_mouse_down_events(eo_obj, eo_e, &ev, event_id, pe);
+          _evas_event_source_mouse_down_events(eo_obj, eo_e, ev->eo, event_id);
         if (e->is_frozen || e->delete_me)  break;
         if (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
           break;
@@ -1441,44 +1440,32 @@ _canvas_event_feed_mouse_down_internal(Eo *eo_e, int b, Evas_Button_Flags flags,
    _evas_post_event_callback_call(eo_e, e);
    /* update touch point's state to EVAS_TOUCH_POINT_STILL */
    _evas_touch_point_update(eo_e, 0, e->pointer.x, e->pointer.y, EVAS_TOUCH_POINT_STILL);
-   if (ev.dev) efl_unref(ev.dev);
    _evas_unwalk(e);
-   EV_DEL(pe);
-}
 
-EAPI void
-evas_event_feed_mouse_down(Eo *eo_e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
-{
-   _canvas_event_feed_mouse_down_internal(eo_e, b, flags, timestamp, data, NULL);
+   if (ev->device) efl_unref(ev->device);
 }
 
 static int
-_post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data,
-                Efl_Event_Pointer *parent_pe)
+_post_up_handle(Evas_Public_Data *e, Efl_Event_Pointer *parent_ev)
 {
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Efl_Event_Pointer *pe = NULL;
    Eina_List *l, *copy, *ins, *ll;
-   Evas_Event_Mouse_Out ev;
+   Efl_Event_Pointer_Data *ev;
+   Efl_Event_Pointer *evt;
    Evas_Object *eo_obj;
+   Evas *eo_e = e->evas;
    int post_called = 0;
    int event_id = 0;
 
    _evas_object_event_new();
-
    event_id = _evas_event_counter;
-   ev.buttons = e->pointer.button;
-   ev.output.x = e->pointer.x;
-   ev.output.y = e->pointer.y;
-   ev.canvas.x = e->pointer.x;
-   ev.canvas.y = e->pointer.y;
-   ev.data = (void *)data;
-   ev.modifiers = &(e->modifiers);
-   ev.locks = &(e->locks);
-   ev.timestamp = timestamp;
-   ev.event_flags = e->default_event_flags;
-   ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) efl_ref(ev.dev);
+
+   /* Duplicating UP event */
+   evt = efl_event_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   if (!ev) return 0;
+
+   /* Actually we want an OUT */
+   ev->action = EFL_POINTER_ACTION_OUT;
 
    /* get new list of ins */
    ins = evas_event_objects_event_list(eo_e, NULL, e->pointer.x, e->pointer.y);
@@ -1493,40 +1480,33 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data,
              obj->mouse_in = 0;
              if (!e->is_frozen)
                {
-                  ev.canvas.x = e->pointer.x;
-                  ev.canvas.y = e->pointer.y;
-                  _evas_event_havemap_adjust(eo_obj, obj, &ev.canvas.x,
-                                             &ev.canvas.y, obj->mouse_grabbed);
-                  EV_CALL(eo_obj, obj, EVAS_CALLBACK_MOUSE_OUT, &ev, event_id, pe, parent_pe);
+                  ev->cur.x = e->pointer.x;
+                  ev->cur.y = e->pointer.y;
+                  _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj->mouse_grabbed);
+                  evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_OUT, NULL,
+                                                  event_id, EFL_EVENT_POINTER_OUT, evt);
                   if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
-                    _evas_event_source_mouse_out_events(eo_obj, eo_e, &ev, event_id, pe);
+                    {
+                       // FIXME: TEMPORARY
+                       void *ev_out = efl_event_pointer_legacy_info_fill(evt, EVAS_CALLBACK_MOUSE_IN, NULL);
+                       _evas_event_source_mouse_out_events(eo_obj, eo_e, ev_out, event_id, evt);
+                    }
                   if (e->delete_me) break;
                }
           }
      }
    _evas_post_event_callback_call(eo_e, e);
-   EV_DEL(pe);
 
    eina_list_free(copy);
 
    if (e->pointer.inside)
      {
-        Evas_Event_Mouse_In ev_in;
         Evas_Object *eo_obj_itr;
 
         _evas_object_event_new();
-
         event_id = _evas_event_counter;
-        ev_in.buttons = e->pointer.button;
-        ev_in.output.x = e->pointer.x;
-        ev_in.output.y = e->pointer.y;
-        ev_in.canvas.x = e->pointer.x;
-        ev_in.canvas.y = e->pointer.y;
-        ev_in.data = (void *)data;
-        ev_in.modifiers = &(e->modifiers);
-        ev_in.locks = &(e->locks);
-        ev_in.timestamp = timestamp;
-        ev_in.event_flags = e->default_event_flags;
+
+        ev->action = EFL_POINTER_ACTION_IN;
 
         EINA_LIST_FOREACH(ins, l, eo_obj_itr)
           {
@@ -1536,15 +1516,18 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data,
                   if (obj_itr->mouse_in) continue;
                   obj_itr->mouse_in = 1;
                   if (e->is_frozen) continue;
-                  ev_in.canvas.x = e->pointer.x;
-                  ev_in.canvas.y = e->pointer.y;
-                  _evas_event_havemap_adjust(eo_obj_itr, obj_itr,
-                                             &ev_in.canvas.x, &ev_in.canvas.y,
-                                             obj_itr->mouse_grabbed);
-                  EV_CALL(eo_obj_itr, obj_itr, EVAS_CALLBACK_MOUSE_IN, &ev_in, event_id, pe, parent_pe);
+                  ev->cur.x = e->pointer.x;
+                  ev->cur.y = e->pointer.y;
+                  _evas_event_havemap_adjust_f(eo_obj_itr, obj_itr, &ev->cur, obj_itr->mouse_grabbed);
+                  evas_object_event_callback_call(eo_obj_itr, obj_itr, EVAS_CALLBACK_MOUSE_IN, NULL,
+                                                  event_id, EFL_EVENT_POINTER_IN, evt);
                   if ((obj_itr->proxy->is_proxy) &&
                       (obj_itr->proxy->src_events))
-                    _evas_event_source_mouse_in_events(eo_obj_itr, eo_e, &ev_in, event_id, pe);
+                    {
+                       // FIXME: TEMPORARY
+                       void *ev_in = efl_event_pointer_legacy_info_fill(evt, EVAS_CALLBACK_MOUSE_IN, NULL);
+                       _evas_event_source_mouse_in_events(eo_obj_itr, eo_e, ev_in, event_id, evt);
+                    }
                   if (e->delete_me) break;
                }
           }
@@ -1569,23 +1552,26 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data,
         eina_list_free(ins);
      }
    if (e->pointer.inside)
-     _canvas_event_feed_mouse_move_internal(eo_e, e, e->pointer.x, e->pointer.y, timestamp, data, pe);
-   if (ev.dev) efl_unref(ev.dev);
-   EV_DEL(pe);
+     _canvas_event_feed_mouse_move_internal(eo_e, e, e->pointer.x, e->pointer.y, ev->timestamp, ev->data, evt);
+
+   efl_del(evt);
 
    return post_called;
 }
 
 static void
-_canvas_event_feed_mouse_up_internal(Eo *eo_e, int b, Evas_Button_Flags flags,
-                                     unsigned int timestamp, const void *data,
-                                     Efl_Event_Pointer *parent_pe)
+_canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
 {
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Efl_Event_Pointer *pe = NULL;
    Eina_List *l, *copy;
+   Evas_Object *eo_obj;
+   int event_id, b;
+   Evas *eo_e;
 
-   INF("ButtonEvent:up time=%u x=%d y=%d button=%d downs=%d", timestamp, e->pointer.x, e->pointer.y, b, e->pointer.downs);
+   if (!e || !ev) return;
+
+   b = ev->button;
+   DBG("ButtonEvent:up time=%u x=%d y=%d button=%d downs=%d",
+       ev->timestamp, e->pointer.x, e->pointer.y, b, e->pointer.downs);
    if ((b < 1) || (b > 32)) return;
    if (e->pointer.downs <= 0) return;
 
@@ -1593,76 +1579,60 @@ _canvas_event_feed_mouse_up_internal(Eo *eo_e, int b, Evas_Button_Flags flags,
    e->pointer.downs--;
 
    if (e->is_frozen) return;
-   e->last_timestamp = timestamp;
+   e->last_timestamp = ev->timestamp;
+   eo_e = e->evas;
 
+   _evas_object_event_new();
+   event_id = _evas_event_counter;
+
+   ev->cur.x = e->pointer.x;
+   ev->cur.y = e->pointer.y;
+   ev->modifiers = &(e->modifiers);
+   ev->locks = &(e->locks);
+   ev->event_flags = e->default_event_flags;
+   if (ev->device) efl_ref(ev->device);
+
+   _evas_walk(e);
+   /* update released touch point */
+   _evas_touch_point_update(eo_e, 0, e->pointer.x, e->pointer.y, EVAS_TOUCH_POINT_UP);
+   copy = evas_event_list_copy(e->pointer.object.in);
+   EINA_LIST_FOREACH(copy, l, eo_obj)
      {
-        Evas_Event_Mouse_Up ev;
-        Evas_Object *eo_obj;
-        int event_id = 0;
-
-        _evas_object_event_new();
-
-        event_id = _evas_event_counter;
-        ev.button = b;
-        ev.output.x = e->pointer.x;
-        ev.output.y = e->pointer.y;
-        ev.canvas.x = e->pointer.x;
-        ev.canvas.y = e->pointer.y;
-        ev.data = (void *)data;
-        ev.modifiers = &(e->modifiers);
-        ev.locks = &(e->locks);
-        ev.flags = flags;
-        ev.timestamp = timestamp;
-        ev.event_flags = e->default_event_flags;
-        ev.dev = _evas_device_top_get(eo_e);
-        if (ev.dev) efl_ref(ev.dev);
-
-        _evas_walk(e);
-        /* update released touch point */
-        _evas_touch_point_update(eo_e, 0, e->pointer.x, e->pointer.y, EVAS_TOUCH_POINT_UP);
-        copy = evas_event_list_copy(e->pointer.object.in);
-        EINA_LIST_FOREACH(copy, l, eo_obj)
+        Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+        if (((obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) ||
+             (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) &&
+            (obj->mouse_grabbed > 0))
           {
-             Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-             if (((obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) ||
-                 (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) &&
-                 (obj->mouse_grabbed > 0))
+             obj->mouse_grabbed--;
+             e->pointer.mouse_grabbed--;
+          }
+        if (!obj->delete_me)
+          {
+             if ((!e->is_frozen) &&
+                 (!evas_event_freezes_through(eo_obj, obj)))
                {
-                  obj->mouse_grabbed--;
-                  e->pointer.mouse_grabbed--;
-               }
-             if (!obj->delete_me)
-               {
-                  if ((!e->is_frozen) &&
-                      (!evas_event_freezes_through(eo_obj, obj)))
-                    {
-                       ev.canvas.x = e->pointer.x;
-                       ev.canvas.y = e->pointer.y;
-                       _evas_event_havemap_adjust(eo_obj, obj, &ev.canvas.x,
-                                                  &ev.canvas.y,
-                                                  obj->mouse_grabbed);
-                       EV_CALL(eo_obj, obj, EVAS_CALLBACK_MOUSE_UP, &ev, event_id, pe, parent_pe);
-                       if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
-                         _evas_event_source_mouse_up_events(eo_obj, eo_e, &ev, event_id, pe);
-                       if (e->delete_me) break;
-                    }
-               }
-             if (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
-               {
-                  if (e->pointer.nogrep > 0) e->pointer.nogrep--;
-                  break;
+                  ev->cur.x = e->pointer.x;
+                  ev->cur.y = e->pointer.y;
+                  _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj->mouse_grabbed);
+                  evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_UP, NULL,
+                                                  event_id, EFL_EVENT_POINTER_UP, ev->eo);
+                  if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
+                    _evas_event_source_mouse_up_events(eo_obj, eo_e, ev->eo, event_id);
+                  if (e->delete_me) break;
                }
           }
-        eina_list_free(copy);
-        e->last_mouse_up_counter++;
-        _evas_post_event_callback_call(eo_e, e);
-        if (ev.dev) efl_unref(ev.dev);
+        if (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
+          {
+             if (e->pointer.nogrep > 0) e->pointer.nogrep--;
+             break;
+          }
      }
+   eina_list_free(copy);
+   e->last_mouse_up_counter++;
+   _evas_post_event_callback_call(eo_e, e);
 
    if (e->pointer.mouse_grabbed == 0)
-     {
-        _post_up_handle(eo_e, timestamp, data, parent_pe);
-     }
+     _post_up_handle(e, ev->eo);
 
    if (e->pointer.mouse_grabbed < 0)
      {
@@ -1671,15 +1641,61 @@ _canvas_event_feed_mouse_up_internal(Eo *eo_e, int b, Evas_Button_Flags flags,
      }
    /* remove released touch point from the touch point list */
    _evas_touch_point_remove(eo_e, 0);
-
    _evas_unwalk(e);
-   EV_DEL(pe);
+
+   if (ev->device) efl_unref(ev->device);
+}
+
+static void
+_canvas_event_feed_mouse_updown_legacy(Eo *eo_e, int b, Evas_Button_Flags flags,
+                                       unsigned int timestamp, const void *data,
+                                       Eina_Bool down)
+{
+   Efl_Event_Pointer_Data *ev = NULL;
+   Efl_Event_Pointer *evt;
+   Evas_Public_Data *e;
+
+   e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   if (!e) return;
+
+   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, eo_e, (void **) &ev);
+   if (!ev) return;
+
+   ev->data = (void *) data;
+   ev->timestamp = timestamp;
+   ev->device = _evas_device_top_get(eo_e);
+   ev->action = down ? EFL_POINTER_ACTION_DOWN : EFL_POINTER_ACTION_UP;
+   ev->button = b;
+   ev->button_flags = flags;
+   ev->device = _evas_device_top_get(e->evas);
+   ev->radius = 1;
+   ev->radius_x = 1;
+   ev->radius_y = 1;
+   ev->pressure = 1;
+   ev->angle = 0;
+   //ev->window_pos = ?;
+   //ev->fake = 1;
+
+   if (down)
+     _canvas_event_feed_mouse_down_internal(e, ev);
+   else
+     _canvas_event_feed_mouse_up_internal(e, ev);
+
+   efl_del(evt);
+}
+
+EAPI void
+evas_event_feed_mouse_down(Eo *eo_e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
+   _canvas_event_feed_mouse_updown_legacy(eo_e, b, flags, timestamp, data, 1);
 }
 
 EAPI void
 evas_event_feed_mouse_up(Eo *eo_e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
-   _canvas_event_feed_mouse_up_internal(eo_e, b, flags, timestamp, data, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
+   _canvas_event_feed_mouse_updown_legacy(eo_e, b, flags, timestamp, data, 0);
 }
 
 static void
@@ -1702,7 +1718,7 @@ _canvas_event_feed_mouse_cancel_internal(Eo *eo_e, unsigned int timestamp, const
    for (i = 0; i < 32; i++)
      {
         if ((e->pointer.button & (1u << i)))
-          _canvas_event_feed_mouse_up_internal(eo_e, i + 1, 0, timestamp, data, parent_pe);
+          _canvas_event_feed_mouse_updown_legacy(eo_e, i + 1, 0, timestamp, data, 0);
      }
    EINA_LIST_FOREACH_SAFE(e->touch_points, l, ll, point)
      {
@@ -2616,7 +2632,7 @@ _canvas_event_feed_multi_up_internal(Evas *eo_e, void *_pd,
         if (e->delete_me || e->is_frozen) break;
      }
    eina_list_free(copy);
-   if ((e->pointer.mouse_grabbed == 0) && !_post_up_handle(eo_e, timestamp, data, parent_pe))
+   if ((e->pointer.mouse_grabbed == 0) && !_post_up_handle(e, parent_pe))
       _evas_post_event_callback_call(eo_e, e);
    /* remove released touch point from the touch point list */
    _evas_touch_point_remove(eo_e, d);
@@ -3428,12 +3444,19 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
    Efl_Event_Pointer_Data *ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    Evas_Public_Data *e = data;
    Evas *eo_e = event->object;
+   Eina_Bool nodev = 0;
 
    if (!ev) return;
 
    ev->evas_done = EINA_TRUE;
    ev->modifiers = &e->modifiers;
    ev->locks = &e->locks;
+
+   if (!ev->device)
+     {
+        nodev = 1;
+        ev->device = _evas_device_top_get(e->evas);
+     }
 
    switch (ev->action)
      {
@@ -3455,9 +3478,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
 
       case EFL_POINTER_ACTION_DOWN:
         if (ev->finger == 0)
-          {
-             _canvas_event_feed_mouse_down_internal(eo_e, ev->button, ev->button_flags, ev->timestamp, ev->data, ev->eo);
-          }
+          _canvas_event_feed_mouse_down_internal(e, ev);
         else
           {
              _canvas_event_feed_multi_down_internal(eo_e, e, ev->finger, ev->cur.x, ev->cur.y,
@@ -3470,9 +3491,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
 
       case EFL_POINTER_ACTION_UP:
         if (ev->finger == 0)
-          {
-             _canvas_event_feed_mouse_up_internal(eo_e, ev->button, ev->button_flags, ev->timestamp, ev->data, ev->eo);
-          }
+          _canvas_event_feed_mouse_up_internal(e, ev);
         else
           {
              _canvas_event_feed_multi_up_internal(eo_e, e, ev->finger, ev->cur.x, ev->cur.y,
@@ -3504,6 +3523,8 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
         ev->evas_done = EINA_FALSE;
         break;
      }
+
+   if (nodev) ev->device = NULL;
 }
 
 static void

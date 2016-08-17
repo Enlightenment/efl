@@ -261,6 +261,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
                                 const Efl_Event_Description *efl_event_desc, Efl_Event *efl_event_info)
 {
    /* MEM OK */
+   const Evas_Button_Flags mask = EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
    Evas_Public_Data *e;
 
@@ -286,44 +287,15 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    if ((type == EVAS_CALLBACK_MOVE) && (obj->move_ref == 0))
      goto nothing_here;
 
-   switch (type)
+   if ((type == EVAS_CALLBACK_MOUSE_DOWN) || (type == EVAS_CALLBACK_MOUSE_UP))
      {
-      case EVAS_CALLBACK_MOUSE_DOWN:
-           {
-              Evas_Event_Mouse_Down *ev = event_info;
-
-              flags = ev->flags;
-              if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
-                {
-                   if (obj->last_mouse_down_counter < (e->last_mouse_down_counter - 1))
-                     ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
-                }
-              obj->last_mouse_down_counter = e->last_mouse_down_counter;
-              if (efl_event_info)
-                {
-                   efl_event_pointer_button_flags_set(efl_event_info, ev->flags);
-                }
-              break;
-           }
-      case EVAS_CALLBACK_MOUSE_UP:
-           {
-              Evas_Event_Mouse_Up *ev = event_info;
-
-              flags = ev->flags;
-              if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
-                {
-                   if (obj->last_mouse_up_counter < (e->last_mouse_up_counter - 1))
-                     ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
-                }
-              obj->last_mouse_up_counter = e->last_mouse_up_counter;
-              if (efl_event_info)
-                {
-                   efl_event_pointer_button_flags_set(efl_event_info, ev->flags);
-                }
-              break;
-           }
-      default:
-         break;
+        flags = efl_event_pointer_button_flags_get(efl_event_info);
+        if (flags & mask)
+          {
+             if (obj->last_mouse_down_counter < (e->last_mouse_down_counter - 1))
+               efl_event_pointer_button_flags_set(efl_event_info, flags & ~mask);
+          }
+        obj->last_mouse_down_counter = e->last_mouse_down_counter;
      }
 
    if (_evas_event_efl_event_info_exists(type))
@@ -332,28 +304,12 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
      }
    else
      {
-        /* legacy callbacks - relying on Efl.Canvas.Object events */
         efl_event_callback_call(eo_obj, _legacy_evas_callback_table(type), event_info);
-
-        /* new input events - unlikely */
-        if (efl_event_desc)
-          efl_event_callback_call(eo_obj, efl_event_desc, efl_event_info);
+        if (efl_event_desc) CRI("Internal error with events!"); // FIXME
      }
 
-   if (type == EVAS_CALLBACK_MOUSE_DOWN)
-     {
-        Evas_Event_Mouse_Down *ev = event_info;
-        ev->flags = flags;
-        if (efl_event_info)
-          efl_event_pointer_button_flags_set(efl_event_info, ev->flags);
-     }
-   else if (type == EVAS_CALLBACK_MOUSE_UP)
-     {
-        Evas_Event_Mouse_Up *ev = event_info;
-        ev->flags = flags;
-        if (efl_event_info)
-          efl_event_pointer_button_flags_set(efl_event_info, ev->flags);
-     }
+   if ((type == EVAS_CALLBACK_MOUSE_DOWN) || (type == EVAS_CALLBACK_MOUSE_UP))
+     efl_event_pointer_button_flags_set(efl_event_info, flags);
 
  nothing_here:
    if (!obj->no_propagate)
