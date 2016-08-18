@@ -890,25 +890,32 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
                }
              if (itr && (itr != start_ellip_it))
                {
-                  int cut = 1 + ENFN->font_last_up_to_pos(ENDT,
+                  int cut = ENFN->font_last_up_to_pos(ENDT,
                         o->font,
                         &itr->text_props,
                         ellipsis_coord - (advance + l + r),
                         0);
-                  if (cut > 0)
+                  if (cut >= 0)
                     {
-
                        start_ellip_it->text_pos = itr->text_pos;
-                       start_ellip_it->visual_pos = itr->visual_pos;
-                       if (!_layout_text_item_trim(obj, o, itr, cut, EINA_FALSE))
+
+                       if (itr->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL)
+                         start_ellip_it->visual_pos = itr->visual_pos + cut + 1;
+                       else
+                         start_ellip_it->visual_pos = itr->visual_pos;
+
+                       if (!_layout_text_item_trim(obj, o, itr, cut + 1, EINA_FALSE))
                          {
                             _evas_object_text_item_del(o, itr);
                          }
                     }
                }
 
-             o->items = (Evas_Object_Text_Item *) eina_inlist_remove(EINA_INLIST_GET(o->items), EINA_INLIST_GET(start_ellip_it));
-             o->items = (Evas_Object_Text_Item *) eina_inlist_prepend(EINA_INLIST_GET(o->items), EINA_INLIST_GET(start_ellip_it));
+             if (!o->bidi_par_props)
+               {
+                  o->items = (Evas_Object_Text_Item *) eina_inlist_remove(EINA_INLIST_GET(o->items), EINA_INLIST_GET(start_ellip_it));
+                  o->items = (Evas_Object_Text_Item *) eina_inlist_prepend(EINA_INLIST_GET(o->items), EINA_INLIST_GET(start_ellip_it));
+               }
           }
 
         if (end_ellip_it)
@@ -946,7 +953,12 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
                   if (cut >= 0)
                     {
                        end_ellip_it->text_pos = itr->text_pos + cut;
-                       end_ellip_it->visual_pos = itr->visual_pos + cut;
+
+                        if (itr->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL)
+                         end_ellip_it->visual_pos = itr->visual_pos - 1;
+                        else
+                         end_ellip_it->visual_pos = itr->visual_pos + cut;
+
                        if (_layout_text_item_trim(obj, o, itr, cut, EINA_TRUE))
                          {
                             itr = (Evas_Object_Text_Item *) EINA_INLIST_GET(itr)->next;
