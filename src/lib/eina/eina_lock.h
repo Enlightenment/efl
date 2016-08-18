@@ -100,8 +100,10 @@ typedef void (*Eina_TLS_Delete_Cb)(void *ptr);
 /**
  * @brief Error set when a blocking function timed out.
  * @since 1.19
+ *
+ * @deprecated Use ETIMEDOUT instead.
  */
-EWAPI extern Eina_Error EINA_ERROR_TIMEOUT;
+EWAPI extern Eina_Error EINA_ERROR_TIMEOUT EINA_DEPRECATED; /* use ETIMEDOUT */
 
 # include "eina_inline_lock_posix.x"
 
@@ -257,7 +259,7 @@ static inline Eina_Bool eina_condition_wait(Eina_Condition *cond);
  * @param[in] t The maximum amount of time to wait, in seconds.
  *
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise. If the operation
- *         timed out, eina error will be set to #EINA_ERROR_TIMEOUT.
+ *         timed out, eina error will be set to #ETIMEDOUT.
  *
  * @details This function makes a thread block until either a signal is sent to it via
  *          @p cond or @p t seconds have passed.

@@ -84,6 +84,10 @@ START_TEST(eina_error_errno)
    eina_error_set(test);
    fail_if(eina_error_get() != test);
 
+   eina_error_set(EBADF);
+   ck_assert_int_eq(eina_error_get(), EBADF);
+   ck_assert_str_eq(eina_error_msg_get(EBADF), strerror(EBADF));
+
    eina_shutdown();
 }
 END_TEST
@@ -186,6 +190,7 @@ END_TEST
 START_TEST(eina_error_test_failures)
 {
    struct log_ctx ctx;
+   Eina_Error local_error;
 
    eina_init();
 
@@ -206,17 +211,31 @@ START_TEST(eina_error_test_failures)
    ck_assert_int_eq(eina_error_msg_static_register(NULL), 0);
    fail_unless(ctx.did);
 
+   TEST_MAGIC_SAFETY("eina_error_msg_modify",
+                     "safety check failed: EINA_ERROR_REGISTERED_CHECK(error) is false");
    ck_assert_int_eq(eina_error_msg_modify(0, "X"), EINA_FALSE);
+
+   TEST_MAGIC_SAFETY("eina_error_msg_modify",
+                     "safety check failed: EINA_ERROR_REGISTERED_CHECK(error) is false");
    ck_assert_int_eq(eina_error_msg_modify(4096, "X"), EINA_FALSE);
 
    TEST_MAGIC_SAFETY("eina_error_msg_modify",
                      "safety check failed: msg == NULL");
-   ck_assert_int_eq(eina_error_msg_modify(EINA_ERROR_OUT_OF_MEMORY, NULL),
+   ck_assert_int_eq(eina_error_msg_modify(ENOMEM, NULL),
                     EINA_FALSE);
    fail_unless(ctx.did);
 
-   ck_assert_str_eq(eina_error_msg_get(EINA_ERROR_OUT_OF_MEMORY),
-                    "Out of memory");
+   local_error = eina_error_msg_static_register("Local error for test");
+   ck_assert_int_ne(local_error, 0);
+
+   TEST_MAGIC_SAFETY("eina_error_msg_modify",
+                     "safety check failed: msg == NULL");
+   ck_assert_int_eq(eina_error_msg_modify(local_error, NULL),
+                    EINA_FALSE);
+   fail_unless(ctx.did);
+
+   ck_assert_str_eq(eina_error_msg_get(ENOMEM),
+                    "Cannot allocate memory");
 
    TEST_MAGIC_SAFETY("eina_error_find",
                      "safety check failed: msg == NULL");

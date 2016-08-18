@@ -33,12 +33,12 @@ END_TEST
 
 void promise_error_thread(const void* data EINA_UNUSED, Eina_Promise_Owner* promise, Ecore_Thread* thread EINA_UNUSED)
 {
-  eina_promise_owner_error_set(promise, EINA_ERROR_OUT_OF_MEMORY);
+  eina_promise_owner_error_set(promise, ENOMEM);
 }
 
 void promise_error_callback(void* data EINA_UNUSED, Eina_Error error)
 {
-  ck_assert(error == EINA_ERROR_OUT_OF_MEMORY);
+  ck_assert(error == ENOMEM);
   ecore_main_loop_quit();
 }
 

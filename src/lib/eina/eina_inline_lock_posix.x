@@ -521,7 +521,7 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
    else if (err == ETIMEDOUT)
      {
         r = EINA_FALSE;
-        if (&EINA_ERROR_TIMEOUT) eina_error_set(EINA_ERROR_TIMEOUT);
+        eina_error_set(ETIMEDOUT);
      }
    else EINA_LOCK_ABORT_DEBUG(err, cond_timedwait, cond);
 
