@@ -2729,6 +2729,7 @@ _item_get(void *data,
         const char *fname = item + 7;
 
         o = evas_object_image_filled_add(evas_object_evas_get(data));
+        evas_object_image_load_orientation_set(o, EINA_TRUE);
         evas_object_image_file_set(o, fname, NULL);
         if (evas_object_image_load_error_get(o) == EVAS_LOAD_ERROR_NONE)
           {
