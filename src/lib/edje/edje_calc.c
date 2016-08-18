@@ -1949,7 +1949,7 @@ _edje_part_recalc_single_min(Edje_Part_Description_Common *desc,
    FLOAT_T h;
 
    w = params->eval.w ? params->eval.w : FROM_INT(99999);
-   h = params->eval.h ? params->eval.h : 99999;
+   h = params->eval.h ? params->eval.h : FROM_INT(99999);
 
    switch (aspect)
      {
