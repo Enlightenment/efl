@@ -15,6 +15,11 @@ M.has_feature = function(fname)
 end
 
 M.Writer = util.Object:clone {
+    INCLUDE_PAGE = 0,
+    INCLUDE_SECTION = 1,
+    INCLUDE_NAMESPACE = 2,
+    INCLUDE_TAG = 3,
+
     __ctor = function(self, path)
         local subs
         if type(path) == "table" then
@@ -39,6 +44,37 @@ M.Writer = util.Object:clone {
     write_h = function(self, heading, level, nonl)
         local s = ("="):rep(7 - level)
         self:write_raw(s, " ", heading, " ", s, "\n")
+        if not nonl then
+            self:write_nl()
+        end
+        return self
+    end,
+
+    write_include = function(self, tp, name, flags, nonl)
+        local it_to_tp = {
+            [self.INCLUDE_PAGE] = "page",
+            [self.INCLUDE_SECTION] = "section",
+            [self.INCLUDE_NAMESPACE] = "namespace",
+            [self.INCLUDE_TAG] = "tagtopic"
+        }
+        self:write_raw("{{", it_to_tp[tp], ">", name);
+        if flags then
+            if tp == self.INCLUDE_SECTION and flags.section then
+                self:write_raw("#", flags.section)
+            end
+            flags.section = nil
+            local flstr = {}
+            for k, v in ipairs(flags) do
+                if v then
+                    flstr[#flstr + 1] = k
+                end
+            end
+            flstr = table.concat(flstr, "&")
+            if #flstr > 0 then
+                self:write_raw("&", flstr)
+            end
+        end
+        self:write_raw("}}")
         if not nonl then
             self:write_nl()
         end
