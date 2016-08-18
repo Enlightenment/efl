@@ -4,6 +4,34 @@
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
 
+typedef union {
+   Evas_Event_Mouse_Down down;
+   Evas_Event_Mouse_Up up;
+   Evas_Event_Mouse_In in;
+   Evas_Event_Mouse_Out out;
+   Evas_Event_Mouse_Move move;
+   Evas_Event_Mouse_Wheel wheel;
+   Evas_Event_Multi_Down mdown;
+   Evas_Event_Multi_Up mup;
+   Evas_Event_Multi_Move mmove;
+   Evas_Event_Key_Down kdown;
+   Evas_Event_Key_Up kup;
+   Evas_Event_Hold hold;
+   Evas_Event_Axis_Update axis;
+} Evas_Event_Any;
+
+#define EV_SIZE sizeof(Evas_Event_Any)
+
+static inline void *
+_event_alloc(void *old)
+{
+   if (old)
+     memset(old, 0, EV_SIZE);
+   else
+     old = calloc(1, EV_SIZE);
+   return old;
+}
+
 Eina_Bool
 efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, const void *event_info, Evas_Callback_Type type)
 {
@@ -223,7 +251,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
       case EFL_POINTER_ACTION_IN:
         TYPE_CHK(MOUSE_IN);
         {
-           Evas_Event_Mouse_In *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+           Evas_Event_Mouse_In *e = _event_alloc(ev->legacy);
            e->canvas.x = ev->cur.x;
            e->canvas.y = ev->cur.y;
            COORD_DUP(e);
@@ -242,7 +270,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
       case EFL_POINTER_ACTION_OUT:
         TYPE_CHK(MOUSE_OUT);
         {
-           Evas_Event_Mouse_Out *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+           Evas_Event_Mouse_Out *e = _event_alloc(ev->legacy);
            e->canvas.x = ev->cur.x;
            e->canvas.y = ev->cur.y;
            COORD_DUP(e);
@@ -262,7 +290,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
         if (ev->finger == 0)
           {
              TYPE_CHK(MOUSE_DOWN);
-             Evas_Event_Mouse_Down *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+             Evas_Event_Mouse_Down *e = _event_alloc(ev->legacy);
              e->button = ev->button;
              e->canvas.x = ev->cur.x;
              e->canvas.y = ev->cur.y;
@@ -282,7 +310,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
         else
           {
              TYPE_CHK(MULTI_DOWN);
-             Evas_Event_Multi_Down *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+             Evas_Event_Multi_Down *e = _event_alloc(ev->legacy);
              e->device = ev->finger;
              e->radius = ev->radius;
              e->radius_x = ev->radius_x;
@@ -310,7 +338,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
         if (ev->finger == 0)
           {
              TYPE_CHK(MOUSE_UP);
-             Evas_Event_Mouse_Up *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+             Evas_Event_Mouse_Up *e = _event_alloc(ev->legacy);
              e->button = ev->button;
              e->canvas.x = ev->cur.x;
              e->canvas.y = ev->cur.y;
@@ -330,7 +358,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
         else
           {
              TYPE_CHK(MULTI_UP);
-             Evas_Event_Multi_Up *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+             Evas_Event_Multi_Up *e = _event_alloc(ev->legacy);
              e->device = ev->finger;
              e->radius = ev->radius;
              e->radius_x = ev->radius_x;
@@ -358,7 +386,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
         if (ev->finger == 0)
           {
              TYPE_CHK(MOUSE_MOVE);
-             Evas_Event_Mouse_Move *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+             Evas_Event_Mouse_Move *e = _event_alloc(ev->legacy);
              e->buttons = ev->pressed_buttons;
              e->cur.canvas.x = ev->cur.x;
              e->cur.canvas.y = ev->cur.y;
@@ -380,7 +408,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
         else
           {
              TYPE_CHK(MULTI_MOVE);
-             Evas_Event_Multi_Move *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+             Evas_Event_Multi_Move *e = _event_alloc(ev->legacy);
              e->device = ev->finger;
              e->radius = ev->radius;
              e->radius_x = ev->radius_x;
@@ -406,7 +434,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
       case EFL_POINTER_ACTION_WHEEL:
         {
            TYPE_CHK(MOUSE_WHEEL);
-           Evas_Event_Mouse_Wheel *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+           Evas_Event_Mouse_Wheel *e = _event_alloc(ev->legacy);
            e->direction =  (ev->wheel.dir == EFL_ORIENT_HORIZONTAL) ? 1 : 0;
            e->z = ev->wheel.z;
            e->canvas.x = ev->cur.x;
@@ -490,7 +518,7 @@ efl_event_key_legacy_info_fill(Efl_Event_Key *evt, Evas_Event_Flags **pflags)
 
    if (ev->pressed)
      {
-        Evas_Event_Key_Down *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+        Evas_Event_Key_Down *e = _event_alloc(ev->legacy);
         e->timestamp = ev->timestamp;
         e->keyname = (char *) ev->keyname;
         e->key = ev->key;
@@ -508,7 +536,7 @@ efl_event_key_legacy_info_fill(Efl_Event_Key *evt, Evas_Event_Flags **pflags)
      }
    else
      {
-        Evas_Event_Key_Up *e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+        Evas_Event_Key_Up *e = _event_alloc(ev->legacy);
         e->timestamp = ev->timestamp;
         e->keyname = (char *) ev->keyname;
         e->key = ev->key;
@@ -557,7 +585,7 @@ efl_event_hold_legacy_info_fill(Efl_Event_Hold *evt, Evas_Event_Flags **pflags)
 
    if (!ev) return NULL;
 
-   e = ev->legacy ? ev->legacy : calloc(1, sizeof(*e));
+   e = _event_alloc(ev->legacy);
    e->timestamp = ev->timestamp;
    e->dev = ev->device;
    e->hold = ev->hold;
