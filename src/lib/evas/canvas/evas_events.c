@@ -28,33 +28,6 @@ static void
 _canvas_event_feed_mouse_move_legacy(Evas *eo_e, Evas_Public_Data *e, int x, int y,
                                      unsigned int timestamp, const void *data);
 
-/* FIXME: remove this */
-static void
-_evas_event_havemap_adjust(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *x, Evas_Coord *y, Eina_Bool mouse_grabbed)
-{
-   double tx = *x, ty = *y;
-
-   if (obj->smart.parent)
-     {
-        Evas_Object_Protected_Data *smart_parent_obj = efl_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
-        _evas_event_havemap_adjust(obj->smart.parent, smart_parent_obj, x, y, mouse_grabbed);
-     }
-
-   if ((!obj->map->cur.usemap) || (!obj->map->cur.map) ||
-       (obj->map->cur.map->count != 4))
-      return;
-
-   //FIXME: Unless map_coords_get() supports grab mode and extrapolate coords
-   //outside map, this should check the return value for outside case.
-   if (evas_map_coords_get(obj->map->cur.map, tx, ty, &tx, &ty, mouse_grabbed))
-     {
-        tx += obj->cur->geometry.x;
-        ty += obj->cur->geometry.y;
-        *x = tx;
-        *y = ty;
-     }
-}
-
 static void
 _evas_event_havemap_adjust_f(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Vector2 *point, Eina_Bool mouse_grabbed)
 {
@@ -76,94 +49,6 @@ _evas_event_havemap_adjust_f(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
         point->y += obj->cur->geometry.y;
      }
 }
-
-static inline Efl_Event *
-_efl_event_create(Efl_Event *evt, Evas_Callback_Type type, void *ev,
-                  Efl_Event *parentev, Efl_Event_Flags **pflags)
-{
-   if (!ev) return NULL;
-
-   /* This function converts an existing evas info struct to the efl pointer
-    * event. All pointers must be valid.
-    *
-    * See also evas_callbacks.c: _pointer_event_get()
-    *
-    * FIXME: evas event logic should not use legacy structs anymore... this
-    * should be temporary code. Should be.
-    */
-
-#define EV_CASE(TYPE, Type, OBJTYP, objtyp) \
-   case EVAS_CALLBACK_ ## TYPE: \
-     if (!evt) evt = efl_event_instance_get(EFL_EVENT_ ## OBJTYP ## _CLASS, parentev, NULL); \
-     efl_event_ ## objtyp ## _legacy_info_set(evt, ev, type); \
-     if (pflags) *pflags = &(((Evas_Event_ ## Type *) ev)->event_flags); \
-     break;
-
-   switch (type)
-     {
-      EV_CASE(MOUSE_MOVE, Mouse_Move, POINTER, pointer);
-      EV_CASE(MOUSE_OUT, Mouse_Out, POINTER, pointer);
-      EV_CASE(MOUSE_IN, Mouse_In, POINTER, pointer);
-      EV_CASE(MOUSE_DOWN, Mouse_Down, POINTER, pointer);
-      EV_CASE(MOUSE_UP, Mouse_Up, POINTER, pointer);
-      EV_CASE(MULTI_MOVE, Multi_Move, POINTER, pointer);
-      EV_CASE(MULTI_DOWN, Multi_Down, POINTER, pointer);
-      EV_CASE(MULTI_UP, Multi_Up, POINTER, pointer);
-      EV_CASE(MOUSE_WHEEL, Mouse_Wheel, POINTER, pointer);
-      EV_CASE(KEY_DOWN, Key_Down, KEY, key);
-      EV_CASE(KEY_UP, Key_Up, KEY, key);
-      EV_CASE(HOLD, Hold, HOLD, hold);
-
-      default:
-        DBG("Support for event type %d not implemented yet.", type);
-        break;
-     }
-
-#undef EV_CASE
-
-   return evt;
-}
-
-static inline const Efl_Event_Description *
-_efl_event_desc_get(Evas_Callback_Type type)
-{
-   switch (type)
-     {
-      case EVAS_CALLBACK_MOUSE_IN:
-        return EFL_EVENT_POINTER_IN;
-      case EVAS_CALLBACK_MOUSE_OUT:
-        return EFL_EVENT_POINTER_OUT;
-      case EVAS_CALLBACK_MOUSE_DOWN:
-      case EVAS_CALLBACK_MULTI_DOWN:
-        return EFL_EVENT_POINTER_DOWN;
-      case EVAS_CALLBACK_MOUSE_UP:
-      case EVAS_CALLBACK_MULTI_UP:
-        return EFL_EVENT_POINTER_UP;
-      case EVAS_CALLBACK_MOUSE_MOVE:
-      case EVAS_CALLBACK_MULTI_MOVE:
-        return EFL_EVENT_POINTER_MOVE;
-      case EVAS_CALLBACK_MOUSE_WHEEL:
-        return EFL_EVENT_POINTER_WHEEL;
-      case EVAS_CALLBACK_KEY_DOWN:
-        return EFL_EVENT_KEY_DOWN;
-      case EVAS_CALLBACK_KEY_UP:
-        return EFL_EVENT_KEY_UP;
-      case EVAS_CALLBACK_HOLD:
-        return EFL_EVENT_HOLD;
-      default:
-        return NULL;
-     }
-}
-
-#define EV_CALL(_eo_obj, _obj, _typ, _info, _id, _eoev, _parent_ev) do { \
-   Efl_Event_Flags *_info_pflags = NULL; \
-   _eoev = _efl_event_create(_eoev, _typ, _info, _parent_ev, &_info_pflags); \
-   evas_object_event_callback_call(_eo_obj, _obj, _typ, _info, _id, \
-                                   _efl_event_desc_get(_typ), _eoev); \
-   if (_info_pflags) *_info_pflags = efl_event_flags_get(_eoev); \
-   } while (0)
-#define EV_RESET(a) do { if (a) efl_event_reset(a); } while (0)
-#define EV_DEL(a) do { if (a) { efl_unref(a); } a = NULL; } while (0)
 
 #if 0
 # define DDD_DO 1
@@ -458,29 +343,6 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
    spaces--;
 #endif
    return in;
-}
-
-/* FIXME: remove this */
-static void
-_transform_to_src_space(Evas_Object_Protected_Data *obj, Evas_Object_Protected_Data *src, Evas_Coord *x, Evas_Coord *y)
-{
-   Evas_Coord obj_w = obj->cur->geometry.w, obj_h = obj->cur->geometry.h;
-   Evas_Coord src_w = src->cur->geometry.w, src_h = src->cur->geometry.h;
-   Evas_Coord tmp_x = *x;
-   Evas_Coord tmp_y = *y;
-
-   tmp_x -= obj->cur->geometry.x;
-   tmp_y -= obj->cur->geometry.y;
-
-   if (obj_w != src_w)
-     tmp_x = (Evas_Coord) ((float)tmp_x * ((float)src_w / (float)obj_w));
-   if (obj_h != src_h)
-     tmp_y = (Evas_Coord) ((float)tmp_y * ((float)src_h / (float)obj_h));
-
-   tmp_x += src->cur->geometry.x;
-   tmp_y += src->cur->geometry.y;
-   *x = tmp_x;
-   *y = tmp_y;
 }
 
 static void
