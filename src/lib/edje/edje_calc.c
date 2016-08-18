@@ -103,11 +103,13 @@ _edje_calc_params_clear(Edje_Calc_Params *p)
    // handle cow stuff in one place
    if (p->ext)
      {
+#ifdef EDJE_CALC_CACHE
         eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&(p->ext->map));
         p->ext->map = NULL;
-#ifdef HAVE_EPHYSICS
+# ifdef HAVE_EPHYSICS
         eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&(p->ext->physics));
         p->ext->physics = NULL;
+# endif
 #endif
         free(p->ext);
         p->ext = NULL;
@@ -3891,8 +3893,23 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
 static void
 _edje_part_calc_params_memcpy(Edje_Calc_Params *p, Edje_Calc_Params *s, Edje_Part_Type t)
 {
-   if (p->type.common) free(p->type.common);
+   _edje_calc_params_clear(p);
    memcpy(p, s, sizeof(Edje_Calc_Params));
+   if (s->ext)
+     {
+        p->ext = NULL;
+        _edje_calc_params_need_ext(p);
+#ifdef EDJE_CALC_CACHE
+        eina_cow_memcpy(_edje_calc_params_map_cow,
+                        (const Eina_Cow_Data **)&(p->ext->map),
+                        s->ext->map);
+# ifdef HAVE_EPHYSICS
+        eina_cow_memcpy(_edje_calc_params_physics_cow,
+                        (const Eina_Cow_Data **)&(p->ext->physics),
+                        s->ext->physics);
+# endif
+#endif
+     }
    switch (t)
      {
       case EDJE_PART_TYPE_IMAGE:
@@ -3966,7 +3983,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    Edje_Real_Part *confine_to = NULL;
    Edje_Real_Part *threshold = NULL;
    FLOAT_T pos = ZERO, pos2;
-   Edje_Calc_Params lp3;
+   Edje_Calc_Params lp3 = { 0 };
    Evas_Coord mmw = 0, mmh = 0;
    Eina_Bool map_colors_free = EINA_FALSE;
 
@@ -4325,36 +4342,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
         if (ep->current)
           {
-             Eina_Bool needext = EINA_FALSE;
-             const Edje_Calc_Params_Map *map;
-#ifdef HAVE_EPHYSICS
-             const Edje_Calc_Params_Physics *physics;
-#endif
-
-             if (p1->ext)
-               {
-                  needext = EINA_TRUE;
-                  map = p1->ext->map;
-#ifdef HAVE_EPHYSICS
-                  physics = p1->ext->physics;
-#endif
-               }
-
+             _edje_calc_params_clear(p1);
              _edje_part_calc_params_memcpy(p1, ep->current, ep->part->type);
-
-             if (needext)
-               {
-                  p1->ext = NULL;
-                  _edje_calc_params_need_ext(p1);
-                  p1->ext->map = map;
-#ifdef HAVE_EPHYSICS
-                  p1->ext->physics = physics;
-#endif
-                  eina_cow_memcpy(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&p1->ext->map, ep->current->ext->map);
-#ifdef HAVE_EPHYSICS
-                  eina_cow_memcpy(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&p1->ext->physics, ep->current->ext->physics);
-#endif
-               }
           }
 
         p3 = &lp3;
@@ -4757,36 +4746,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
    if (state)
      {
-        Eina_Bool needext = EINA_FALSE;
-        const Edje_Calc_Params_Map *map;
-#ifdef HAVE_EPHYSICS
-        const Edje_Calc_Params_Physics *physics;
-#endif
-
-        if (state->ext)
-          {
-             needext = EINA_TRUE;
-             map = state->ext->map;
-#ifdef HAVE_EPHYSICS
-             physics = state->ext->physics;
-#endif
-          }
-
+        _edje_calc_params_clear(state);
         _edje_part_calc_params_memcpy(state, pf, ep->part->type);
-
-        if (needext)
-          {
-             state->ext = NULL;
-             _edje_calc_params_need_ext(state);
-             state->ext->map = map;
-#ifdef HAVE_EPHYSICS
-             state->ext->physics = physics;
-#endif
-             eina_cow_memcpy(_edje_calc_params_map_cow, (const Eina_Cow_Data **)&state->ext->map, pf->ext->map);
-#ifdef HAVE_EPHYSICS
-             eina_cow_memcpy(_edje_calc_params_physics_cow, (const Eina_Cow_Data **)&state->ext->physics, pf->ext->physics);
-#endif
-          }
      }
 
    ep->req = pf->req;
