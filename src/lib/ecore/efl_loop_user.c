@@ -21,7 +21,10 @@ static void
 _efl_loop_user_efl_object_parent_set(Eo *obj, Efl_Loop_User_Data *pd EINA_UNUSED, Efl_Object *parent)
 {
    if (parent != NULL && efl_provider_find(parent, EFL_LOOP_CLASS) == NULL)
-     return ;
+     {
+        ERR("parent=%p is not a provider of EFL_LOOP_CLASS!", parent);
+        return;
+     }
 
    efl_parent_set(efl_super(obj, EFL_LOOP_USER_CLASS), parent);
 }
