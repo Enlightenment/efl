@@ -373,4 +373,6 @@ void ecore_con_mempool_shutdown(void);
 
 #undef GENERIC_ALLOC_FREE_HEADER
 
+Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr);
+
 #endif

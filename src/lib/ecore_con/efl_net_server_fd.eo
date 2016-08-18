@@ -1,0 +1,103 @@
+class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
+    [[A generic server based on file descriptors.
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property family {
+            [[The address family (AF_*) family of this socket.
+
+              It will be one of AF_INET (IPv4), AF_INET6 (IPv6),
+              AF_UNIX...
+
+              It must be set before the @Efl.Loop.Fd.fd.set is called
+              with a valid file descriptor.
+            ]]
+            get { }
+            set @protected { }
+            values {
+                family: int;
+            }
+        }
+
+        @property close_on_exec {
+            [[Controls Close-on-Exec() using FD_CLOEXEC.
+
+              Children socket will inherit the server's setting by
+              default. One can change the behavior using each instance
+              @Efl.Net.Socket.Fd.close_on_exec.set.
+            ]]
+            get { }
+            set {
+                return: bool (false); [[$true on success]]
+            }
+            values {
+                close_on_exec: bool;
+            }
+        }
+
+        @property reuse_address {
+            [[Controls address reuse() using SO_REUSEADDR]]
+            get { }
+            set {
+                return: bool (false); [[$true on success]]
+            }
+            values {
+                reuse_address: bool;
+            }
+        }
+
+        @property reuse_port {
+            [[Controls port reuse() using SO_REUSEPORT (since linux 3.9)]]
+            get { }
+            set {
+                return: bool (false); [[$true on success]]
+            }
+            values {
+                reuse_port: bool;
+            }
+        }
+
+        client_add @protected @virtual_pure {
+            [[Accept a new client, should emit "client,add".
+
+              Remember to create the client object with a callback to
+              EFL_IO_CLOSER_EVENT_CLOSED during the construction and
+              decrease @Efl.Net.Server.clients_count as well as unref
+              the client and remove yourself as parent.
+
+              The new clients should have the server as parent and
+              increase the @Efl.Net.Server.clients_count.
+
+              Whenever this function fails, it must close the given
+              client file descriptor.
+            ]]
+            params {
+                client_fd: int; [[The file descriptor of the client socket. It comes preconfigured with close_on_exec. On failure, remember to close this socket]]
+            }
+        }
+
+        client_reject @protected @virtual_pure {
+            [[Reject a new client, should emit "client,rejected".
+
+              Must always close the client socket when it's done.
+            ]]
+            params {
+                client_fd: int; [[The file descriptor of the client socket. It comes preconfigured with close_on_exec and should be closed once it's not needed anymore]]
+            }
+        }
+    }
+
+    implements {
+        Efl.Object.finalize;
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+        Efl.Loop.Fd.fd.set;
+        Efl.Net.Server.address;
+        Efl.Net.Server.clients_count;
+        Efl.Net.Server.clients_limit;
+        Efl.Net.Server.serving;
+        Efl.Net.Server.serve;
+    }
+}

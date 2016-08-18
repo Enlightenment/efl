@@ -1,0 +1,50 @@
+interface Efl.Net.Socket (Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
+    [[The basic socket interface.
+
+      It is built upon the three core Input/Output interfaces:
+        - @Efl.Io.Reader: to receive data.
+        - @Efl.Io.Writer: to send data.
+        - @Efl.Io.Closer: to close the socket for further operations.
+
+      Thus it can be used with utilities like @Efl.Io.Copier.
+
+      @since 1.19
+    ]]
+    methods {
+        @property address_local {
+            [[The local address, similar to getsockname().
+
+              The actual value depends on the type of socket, like an
+              IPv4 (ip:port) or IPv6 ([ip]:port) formatted for a
+              TCP/UDP socket, the path if an Unix Local...
+
+              It's always resolved, then if operations are working
+              with domain names or URL, this is the values the kernel
+              reports. It's similar to getsockname() in behavior.
+            ]]
+            get { }
+            set @protected { }
+            values {
+                address: string;
+            }
+        }
+
+        @property address_remote {
+            [[The remote address, similar to getpeername().
+
+              The actual value depends on the type of socket, like an
+              IPv4 (ip:port) or IPv6 ([ip]:port) formatted for a
+              TCP/UDP socket, the path if an Unix Local...
+
+              It's always resolved, then if operations are working
+              with domain names or URL, this is the values the kernel
+              reports. It's similar to getpeername() in behavior.
+            ]]
+            get { }
+            set @protected { }
+            values {
+                address: string;
+            }
+        }
+    }
+}

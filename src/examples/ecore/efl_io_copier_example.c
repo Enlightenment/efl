@@ -1,6 +1,7 @@
 #define EFL_BETA_API_SUPPORT 1
 #define EFL_EO_API_SUPPORT 1
 #include <Ecore.h>
+#include <Ecore_Con.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
 
@@ -57,6 +58,36 @@ _output_buffer_reallocated(void *data EINA_UNUSED, const Eo_Event *event)
 EFL_CALLBACKS_ARRAY_DEFINE(output_buffer_cbs,
                            { EFL_IO_BUFFER_EVENT_REALLOCATED, _output_buffer_reallocated });
 
+
+static void
+_dialer_resolved(void *data EINA_UNUSED, const Eo_Event *event)
+{
+   fprintf(stderr, "INFO: dialer resolved '%s' to '%s'\n",
+           efl_net_dialer_address_dial_get(event->object),
+           efl_net_socket_address_remote_get(event->object));
+}
+
+static void
+_dialer_error(void *data EINA_UNUSED, const Eo_Event *event)
+{
+   const Eina_Error *perr = event->info;
+   fprintf(stderr, "INFO: error: %d\n", *perr);
+   retval = EXIT_FAILURE;
+   /* no need to quit as copier will get a "eos" event and emit "done" */
+}
+
+static void
+_dialer_connected(void *data EINA_UNUSED, const Eo_Event *event)
+{
+   fprintf(stderr, "INFO: dialer connected to '%s' (%s)\n",
+           efl_net_dialer_address_dial_get(event->object),
+           efl_net_socket_address_remote_get(event->object));
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
+                           { EFL_NET_DIALER_EVENT_RESOLVED, _dialer_resolved },
+                           { EFL_NET_DIALER_EVENT_ERROR, _dialer_error },
+                           { EFL_NET_DIALER_EVENT_CONNECTED, _dialer_connected });
 
 /* copier events are of interest, you should hook to at least "done"
  * and "error"
@@ -240,7 +271,10 @@ static const Ecore_Getopt options = {
     ECORE_GETOPT_HELP('h', "help"),
 
     ECORE_GETOPT_STORE_METAVAR_STR(0, NULL,
-                                   "The input file name or ':stdin:' to read from stdin.",
+                                   "The input file name or:\n"
+                                   ":stdin: to read from stdin.\n"
+                                   "tcp://IP:PORT to connect using TCP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
+                                   "",
                                    "input-file"),
     ECORE_GETOPT_STORE_METAVAR_STR(0, NULL,
                                    "The output file name or:\n"
@@ -248,6 +282,7 @@ static const Ecore_Getopt options = {
                                    ":stderr: to write to stderr.\n"
                                    ":memory: to write to a memory buffer.\n"
                                    ":none: to not use a destination object.\n"
+                                   "tcp://IP:PORT to connect using TCP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
                                    "",
                                    "output-file"),
     ECORE_GETOPT_SENTINEL
@@ -285,6 +320,7 @@ main(int argc, char **argv)
    Eina_Slice line_delm_slice = EINA_SLICE_STR_LITERAL("");
 
    ecore_init();
+   ecore_con_init();
 
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
@@ -321,6 +357,33 @@ main(int argc, char **argv)
              fprintf(stderr, "ERROR: could not open stdin.\n");
              retval = EXIT_FAILURE;
              goto end;
+          }
+     }
+   else if (strncmp(input_fname, "tcp://", strlen("tcp://")) == 0)
+     {
+        /*
+         * Since Efl.Net.Socket implements the required interfaces,
+         * they can be used here as well.
+         */
+        const char *address = input_fname + strlen("tcp://");
+        Eina_Error err;
+        input = efl_add(EFL_NET_DIALER_TCP_CLASS, NULL,
+                        efl_event_callback_array_add(efl_self, input_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_self, dialer_cbs(), NULL) /* optional */
+                        );
+        if (!input)
+          {
+             fprintf(stderr, "ERROR: could not create TCP Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end;
+          }
+
+        err = efl_net_dialer_dial(input, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not TCP dial %s: %s\n",
+                     address, eina_error_msg_get(err));
+             goto end_input;
           }
      }
    else
@@ -403,6 +466,33 @@ main(int argc, char **argv)
          */
         output = NULL;
      }
+   else if (strncmp(output_fname, "tcp://", strlen("tcp://")) == 0)
+     {
+        /*
+         * Since Efl.Net.Socket implements the required interfaces,
+         * they can be used here as well.
+         */
+        const char *address = output_fname + strlen("tcp://");
+        Eina_Error err;
+        output = efl_add(EFL_NET_DIALER_TCP_CLASS, NULL,
+                         efl_event_callback_array_add(efl_self, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_self, dialer_cbs(), NULL) /* optional */
+                         );
+        if (!output)
+          {
+             fprintf(stderr, "ERROR: could not create TCP Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end_input;
+          }
+
+        err = efl_net_dialer_dial(output, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not TCP dial %s: %s\n",
+                     address, eina_error_msg_get(err));
+             goto end_output;
+          }
+     }
    else
      {
         /* regular file, open with flags: write-only, close-on-exec,
@@ -470,6 +560,7 @@ main(int argc, char **argv)
    input = NULL;
 
  end:
+   ecore_con_shutdown();
    ecore_shutdown();
 
    return retval;

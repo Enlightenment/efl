@@ -6,6 +6,14 @@ ecore_con_eolian_files = \
 	lib/ecore_con/efl_network_client.eo \
 	lib/ecore_con/efl_network_server.eo \
 	lib/ecore_con/efl_network_connector.eo \
+        lib/ecore_con/efl_net_socket.eo \
+        lib/ecore_con/efl_net_socket_fd.eo \
+        lib/ecore_con/efl_net_socket_tcp.eo \
+        lib/ecore_con/efl_net_dialer.eo \
+        lib/ecore_con/efl_net_dialer_tcp.eo \
+        lib/ecore_con/efl_net_server.eo \
+        lib/ecore_con/efl_net_server_fd.eo \
+        lib/ecore_con/efl_net_server_tcp.eo \
 	lib/ecore_con/ecore_con_eet_base.eo \
 	lib/ecore_con/ecore_con_eet_server_obj.eo \
 	lib/ecore_con/ecore_con_eet_client_obj.eo \
@@ -52,7 +60,15 @@ lib/ecore_con/ecore_con_url_curl.h \
 static_libs/http-parser/http_parser.c \
 static_libs/http-parser/http_parser.h \
 lib/ecore_con/ecore_con_private.h \
-lib/ecore_con/ecore_con_info.c
+lib/ecore_con/ecore_con_info.c \
+lib/ecore_con/efl_net_socket.c \
+lib/ecore_con/efl_net_socket_fd.c \
+lib/ecore_con/efl_net_socket_tcp.c \
+lib/ecore_con/efl_net_dialer.c \
+lib/ecore_con/efl_net_dialer_tcp.c \
+lib/ecore_con/efl_net_server.c \
+lib/ecore_con/efl_net_server_fd.c \
+lib/ecore_con/efl_net_server_tcp.c
 
 EXTRA_DIST2 += lib/ecore_con/ecore_con_legacy.c
 

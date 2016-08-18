@@ -1,0 +1,113 @@
+interface Efl.Net.Server {
+    [[The basic server interface.
+
+      It will start serving and accepting clients once @.serve is
+      called and the "serving" event is dispatched.
+
+      When new clients are accepted, then "client,add" event is
+      dispatched with a child object implementing @Efl.Net.Socket
+      interface. These implement the standard @Efl.Io.Reader,
+      @Efl.Io.Writer and @Efl.Io.Closer interfaces, thus can be used
+      with utilities such as @Efl.Io.Copier.
+
+      @since 1.19
+    ]]
+
+    events {
+        client,add @hot: Efl.Net.Socket; [[A new client socket was created.
+
+                                           The socket will have the
+                                           server as parent and can be
+                                           closed by both the server
+                                           or the user using
+                                           @Efl.Io.Closer.
+                                         ]]
+        client,rejected: string; [[Notifies a client was rejected due
+                                   excess, see @.clients_limit.
+                                 ]]
+
+        error: Eina.Error; [[Some error happened and the server needs
+                             to be stopped.
+                           ]]
+        serving; [[Notifies the server is ready to accept clients.
+                   See property @.serving]]
+    }
+
+    methods {
+        serve {
+            [[Starts serving requests.
+
+              This method starts the server, resolving address and
+              then proceeding to the actual listen(2)/bind(2)
+              equivalent..
+
+              Once the connection is fully setup, "serving" event is
+              dispatched.
+            ]]
+            params {
+                address: string @nonull;
+            }
+            return: Eina.Error;
+        }
+
+        @property address {
+            [[The address the server is bound to.
+
+              The actual value depends on the type of server, like an
+              IPv4 (ip:port) or IPv6 ([ip]:port) formatted for a
+              TCP/UDP server, the path if an Unix Local...
+
+              It's always resolved, then if operations are working
+              with domain names or URL, this is the values the kernel
+              reports. It's similar to getsockname() in behavior.
+            ]]
+            get { }
+            set @protected { }
+            values {
+                address: string;
+            }
+        }
+
+        @property clients_count {
+            [[Number of concurrent clients accepted by this server.]]
+            get { }
+            set @protected { }
+            values {
+                count: uint;
+            }
+        }
+
+        @property clients_limit {
+            [[Number of maximum concurrent clients allowed by this server.
+
+              If reject_excess is set to true, then the connection
+              will be accepted and immediately closed.
+
+              If reject_excess is set to false (default), then
+              accept(2) won't be called and clients will be queued at
+              the kernel side, usually up to 4096 pending clients.
+
+              Whenever changed, this property will only apply to new
+              connections, that is, if the current connection count
+              alredy exceeds the limit, no connections will be closed.
+            ]]
+            values {
+                limit: uint;
+                reject_excess: bool @optional;
+            }
+        }
+
+        @property serving {
+            [[Returns whenever the server is ready to accept clients or not.
+
+              Whenever this property becomes true, "serving" event
+              should be dispatched.
+            ]]
+            get { }
+            set @protected { }
+            values {
+                serving: bool;
+            }
+        }
+    }
+}

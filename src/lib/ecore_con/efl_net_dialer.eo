@@ -1,0 +1,93 @@
+interface Efl.Net.Dialer (Efl.Net.Socket) {
+    [[Creates a client socket to reach a remote peer.
+
+      The connection process starts when @.dial is executed, this
+      allows implementations to request more complex setup that would
+      require a live object handle that is not possible during
+      construction.
+
+      The socket should be considered connected and ready to use only
+      when "connected" event is dispatched, by then
+      @Efl.Io.Reader.can_read and @Efl.Io.Writer.can_write should
+      change accordingly.
+
+      Once the socket is closed, @Efl.Io.Closer.closed will be called
+      and the "closed" event is dispatched.
+
+      @since 1.19
+    ]]
+    methods {
+        dial {
+            [[Dials to the remote peer.
+
+              This method starts the connection process, resolving
+              address and then proceeding to the actual connection.
+
+              Once the connection is fully setup, "connected" event is
+              dispatched.
+            ]]
+            params {
+                address: string @nonull;
+            }
+            return: Eina.Error;
+        }
+
+        @property address_dial {
+            [[Return the address given to @.dial.
+
+              If the resolved address is desired, then listen to
+              "resolved" event and use the
+              @Efl.Net.Socket.address_remote property.
+            ]]
+            get { }
+            set @protected { }
+            values {
+                address: string;
+            }
+        }
+
+        @property connected {
+            [[Returns whenever the socket is connected or not.
+
+              Whenever this property becomes true, "connected" event
+              should be dispatched.
+            ]]
+            get { }
+            set @protected { }
+            values {
+                connected: bool;
+            }
+        }
+
+        @property timeout_dial {
+            [[The timeout in seconds to use for dialing/connecting.
+
+              This should be set before dialing.
+            ]]
+            get { }
+            set { }
+            values {
+                seconds: double;
+            }
+        }
+    }
+
+    events {
+        resolved: string; [[Notifies @.address_dial was resolved to
+                            @Efl.Net.Socket.address_remote.
+
+                            This is emitted before "connected" and may
+                            be emitted from @Efl.Object.finalize, thus
+                            be sure to connect the callbacks during
+                            the object construction.
+
+                            Some protocols allows redirects and this
+                            may be emitted multiple times, such as
+                            HTTP.
+                          ]]
+        error: Eina.Error; [[Some error happened and the socket
+                             stopped working.
+                           ]]
+        connected; [[Notifies the socket is connected to the remote peer.]]
+    }
+}

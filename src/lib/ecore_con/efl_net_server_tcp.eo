@@ -1,0 +1,14 @@
+class Efl.Net.Server.Tcp (Efl.Net.Server.Fd) {
+    [[A TCP server.
+
+      @since 1.19
+    ]]
+
+    data: null;
+
+    implements {
+        Efl.Net.Server.serve;
+        Efl.Net.Server.Fd.client_add;
+        Efl.Net.Server.Fd.client_reject;
+    }
+}

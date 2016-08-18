@@ -2984,3 +2984,55 @@ _ecore_con_lookup_done(void *data,
 #include "efl_network_client.eo.c"
 #include "efl_network_server.eo.c"
 #include "efl_network_connector.eo.c"
+
+Eina_Bool
+efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr)
+{
+   char p[INET6_ADDRSTRLEN];
+   const void *mem;
+   unsigned short port;
+   int r;
+
+   if (addr->sa_family == AF_INET)
+     {
+        const struct sockaddr_in *a = (const struct sockaddr_in *)addr;
+        mem = &a->sin_addr;
+        port = ntohs(a->sin_port);
+     }
+   else if (addr->sa_family == AF_INET6)
+     {
+        const struct sockaddr_in6 *a = (const struct sockaddr_in6 *)addr;
+        mem = &a->sin6_addr;
+        port = ntohs(a->sin6_port);
+     }
+   else
+     {
+        ERR("unsupported address family: %d", addr->sa_family);
+        return EINA_FALSE;
+     }
+
+   if (!inet_ntop(addr->sa_family, mem, p, sizeof(p)))
+     {
+        ERR("inet_ntop(%d, %p, %p, %zd): %s",
+            addr->sa_family, mem, p, sizeof(p), strerror(errno));
+        return EINA_FALSE;
+     }
+
+   if (addr->sa_family == AF_INET)
+     r = snprintf(buf, buflen, "%s:%hu", p, port);
+   else
+     r = snprintf(buf, buflen, "[%s]:%hu", p, port);
+
+   if (r < 0)
+     {
+        ERR("could not snprintf(): %s", strerror(errno));
+        return EINA_FALSE;
+     }
+   else if (r > buflen)
+     {
+        ERR("buffer is too small: %d, required %d", buflen, r);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}

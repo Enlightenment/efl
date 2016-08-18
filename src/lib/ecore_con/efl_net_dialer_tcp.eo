@@ -1,0 +1,15 @@
+class Efl.Net.Dialer.Tcp (Efl.Net.Socket.Tcp, Efl.Net.Dialer) {
+    [[Connects to a remote TCP server.
+
+      @since 1.19
+    ]]
+
+    implements {
+        Efl.Object.destructor;
+        Efl.Net.Dialer.dial;
+        Efl.Net.Dialer.address_dial;
+        Efl.Net.Dialer.connected;
+        Efl.Net.Dialer.timeout_dial;
+        Efl.Io.Closer.close;
+    }
+}
