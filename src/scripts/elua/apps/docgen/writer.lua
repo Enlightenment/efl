@@ -14,6 +14,34 @@ M.has_feature = function(fname)
     return not not features[fname]
 end
 
+local allowed_incflags = {
+    noheader = { "noheader", "showheader" },
+    firstseconly = { "firstseconly", "fullpage" },
+    readmore = { "readmore", "noreadmore" },
+    footer = { "footer", "nofooter" },
+    link = { "link", "nolink" },
+    permalink = { "permalink", "nopermalink" },
+    date = { "date", "nodate" },
+    mdate = { "mdate", "nomdate" },
+    user = { "user", "nouser" },
+    comments = { "comments", "nocomments" },
+    linkbacks = { "linkbacks", "nolinkbacks" },
+    tags = { "tags", "notags" },
+    editbutton = { "editbtn", "noeditbtn" },
+    redirect = { "redirect", "noredirect" },
+    indent = { "indent", "noindent" },
+    linkonly = { "linkonly", "nolinkonly" },
+    title = { "title", "notitle" },
+    pageexists = { "pageexists", "nopageexists" },
+    parlink = { "parlink", "noparlink" },
+    order = { { "id", "title", "created", "modified", "indexmenu", "custom" } },
+    rsort = { "rsort", "sort" },
+    depth = 0,
+    inline = true,
+    beforeeach = "",
+    aftereach = ""
+}
+
 M.Writer = util.Object:clone {
     INCLUDE_PAGE = 0,
     INCLUDE_SECTION = 1,
@@ -65,8 +93,39 @@ M.Writer = util.Object:clone {
             flags.section = nil
             local flstr = {}
             for k, v in ipairs(flags) do
-                if v then
-                    flstr[#flstr + 1] = k
+                local allow = allowed_incflags[k]
+                if allow ~= nil then
+                    if type(allow) == "boolean" then
+                        flstr[#flstr + 1] = k
+                    elseif type(allow) == "number" or type(allow) == "string" then
+                        if type(v) ~= type(allow) then
+                            error("invalid value type for flag " .. k)
+                        end
+                        flstr[#flstr + 1] = k .. "=" .. v
+                    elseif type(allow) == "table" then
+                        if type(allow[1]) == "table" then
+                            local valid = false
+                            for i, vv in ipairs(allow[1]) do
+                                if v == vv then
+                                    flstr[#flstr + 1] = k .. "=" .. v
+                                    valid = true
+                                    break
+                                end
+                            end
+                            if not valid then
+                                error("invalid value " .. v .. " for flag " .. k)
+                            end
+                        elseif type(allow[1]) == "string" and
+                               type(allow[2]) == "string" then
+                            if v then
+                                flstr[#flstr + 1] = allow[1]
+                            else
+                                flstr[#flstr + 1] = allow[2]
+                            end
+                        end
+                    end
+                else
+                    error("invalid include flag: " .. tostring(k))
                 end
             end
             flstr = table.concat(flstr, "&")
