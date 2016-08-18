@@ -420,18 +420,15 @@ _evas_text_efl_text_properties_font_set(Eo *eo_obj, Evas_Text_Data *o, const cha
    if ((!font) || (size <= 0)) return;
 
    evas_object_async_block(obj);
-   if (!(o->cur.font && !strcmp(font, o->cur.font)))
-     {
-        fdesc = evas_font_desc_new();
 
-        /* Set default language according to locale. */
-        eina_stringshare_replace(&(fdesc->lang), evas_font_lang_normalize("auto"));
-        evas_font_name_parse(fdesc, font);
-     }
-   else
-     {
-        fdesc = evas_font_desc_ref(o->cur.fdesc);
-     }
+   /* We can't assume the given font is same with current fdesc by comparing string.
+      Since Evas starts to supporting "auto" for language,
+      the given font string should be parsed once before comparing it. */
+   fdesc = evas_font_desc_new();
+
+   /* Set default language according to locale. */
+   eina_stringshare_replace(&(fdesc->lang), evas_font_lang_normalize("auto"));
+   evas_font_name_parse(fdesc, font);
 
    if (o->cur.fdesc && !evas_font_desc_cmp(fdesc, o->cur.fdesc) &&
        (size == o->cur.size))
