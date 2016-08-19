@@ -26,6 +26,7 @@ _render_engine_setup(Evas_Engine_Info_Drm *info, int w, int h)
                                                  _outbuf_rotation_get,
                                                  _outbuf_reconfigure,
                                                  NULL,
+                                                 NULL,
                                                  _outbuf_update_region_new,
                                                  _outbuf_update_region_push,
                                                  _outbuf_update_region_free,

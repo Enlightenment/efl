@@ -46,6 +46,7 @@ typedef struct _Outbuf Outbuf;
 typedef Render_Engine_Swap_Mode (*Outbuf_Swap_Mode_Get)(Outbuf *ob);
 typedef void (*Outbuf_Reconfigure)(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
 typedef Eina_Bool (*Outbuf_Region_First_Rect)(Outbuf *ob);
+typedef void (*Outbuf_Damage_Region_Set)(Outbuf *ob, Tilebuf_Rect *rects);
 typedef void *(*Outbuf_New_Region_For_Update)(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 typedef void (*Outbuf_Push_Updated_Region)(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 typedef void (*Outbuf_Idle_Flush)(Outbuf *ob);
@@ -66,6 +67,7 @@ struct _Render_Engine_Software_Generic
    Outbuf_Get_Rot outbuf_get_rot;
    Outbuf_Reconfigure outbuf_reconfigure;
    Outbuf_Region_First_Rect outbuf_region_first_rect;
+   Outbuf_Damage_Region_Set outbuf_damage_region_set;
    Outbuf_New_Region_For_Update outbuf_new_region_for_update;
    Outbuf_Push_Updated_Region outbuf_push_updated_region;
    Outbuf_Idle_Flush outbuf_idle_flush;
@@ -90,6 +92,7 @@ evas_render_engine_software_generic_init(Render_Engine_Software_Generic *re,
                                          Outbuf_Get_Rot outbuf_get_rot,
                                          Outbuf_Reconfigure outbuf_reconfigure,
                                          Outbuf_Region_First_Rect outbuf_region_first_rect,
+                                         Outbuf_Damage_Region_Set outbuf_damage_region_set,
                                          Outbuf_New_Region_For_Update outbuf_new_region_for_update,
                                          Outbuf_Push_Updated_Region outbuf_push_updated_region,
                                          Outbuf_Free_Region_For_Update outbuf_free_region_for_update,
@@ -105,6 +108,7 @@ evas_render_engine_software_generic_init(Render_Engine_Software_Generic *re,
    re->outbuf_get_rot = outbuf_get_rot;
    re->outbuf_reconfigure = outbuf_reconfigure;
    re->outbuf_region_first_rect = outbuf_region_first_rect;
+   re->outbuf_damage_region_set = outbuf_damage_region_set;
    re->outbuf_new_region_for_update = outbuf_new_region_for_update;
    re->outbuf_push_updated_region = outbuf_push_updated_region;
    re->outbuf_idle_flush = outbuf_idle_flush;

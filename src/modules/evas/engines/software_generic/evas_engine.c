@@ -3951,6 +3951,8 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
           }
         evas_common_tilebuf_clear(re->tb);
         re->cur_rect = EINA_INLIST_GET(re->rects);
+        if (re->cur_rect && re->outbuf_damage_region_set)
+          re->outbuf_damage_region_set(re->ob, re->rects);
      }
    if (!re->cur_rect) return NULL;
    rect = (Tilebuf_Rect *)re->cur_rect;

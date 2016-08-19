@@ -117,6 +117,7 @@ void eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth dept
 int eng_outbuf_rotation_get(Outbuf *ob);
 Render_Engine_Swap_Mode eng_outbuf_swap_mode_get(Outbuf *ob);
 Eina_Bool eng_outbuf_region_first_rect(Outbuf *ob);
+void eng_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage);
 void *eng_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void eng_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void eng_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
