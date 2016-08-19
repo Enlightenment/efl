@@ -85,6 +85,15 @@ M.Writer = util.Object:clone {
             [self.INCLUDE_NAMESPACE] = "namespace",
             [self.INCLUDE_TAG] = "tagtopic"
         }
+        if type(name) == "table" then
+            if name[#name] == true then
+                name[#name] = nil
+                name = ":" .. root_nspace .. ":"
+                           .. table.concat(name, ":")
+            else
+                name = table.concat(name, ":")
+            end
+        end
         self:write_raw("{{", it_to_tp[tp], ">", name);
         if flags then
             if tp == self.INCLUDE_SECTION and flags.section then

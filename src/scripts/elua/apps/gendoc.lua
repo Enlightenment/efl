@@ -31,12 +31,12 @@ local get_func_csig_part = function(cn, tp)
     return dtree.type_cstr_get(tp, cn)
 end
 
-local gen_func_csig = function(f, ftype)
+local gen_func_csig = function(f, ns, ftype)
     ftype = ftype or f.METHOD
     assert(ftype ~= f.PROPERTY)
 
     local cn = f:full_c_name_get(ftype)
-    keyref.add(cn, "c")
+    keyref.add(cn, ns, "c")
     local rtype = f:return_type_get(ftype)
 
     local fparam = "Eo *obj"
@@ -688,11 +688,12 @@ local build_igraph = function(cl)
 end
 
 local build_class = function(cl)
-    local f = writer.Writer(cl:nspaces_get())
+    local cln = cl:nspaces_get()
+    local f = writer.Writer(cln)
     stats.check_class(cl)
 
     f:write_h(cl:full_name_get(), 2)
-    keyref.add(cl:full_name_get():gsub("%.", "_"), "c")
+    keyref.add(cl:full_name_get():gsub("%.", "_"), cln, "c")
 
     f:write_folded("Inheritance graph", function()
         f:write_graph(build_igraph(cl))
@@ -743,7 +744,7 @@ local build_classes = function()
     end
 end
 
-local write_tsigs = function(f, tp)
+local write_tsigs = function(f, tp, ns)
     f:write_h(tp:full_name_get(), 2)
 
     f:write_h("Signature", 3)
@@ -751,15 +752,16 @@ local write_tsigs = function(f, tp)
     f:write_nl()
 
     f:write_h("C signature", 3)
-    f:write_code(tp:serialize_c(), "c")
+    f:write_code(tp:serialize_c(ns), "c")
     f:write_nl()
 end
 
 local build_alias = function(tp)
-    local f = writer.Writer(dtree.Node.nspaces_get(tp, "alias"))
+    local ns = dtree.Node.nspaces_get(tp, "alias")
+    local f = writer.Writer(ns)
     stats.check_alias(tp)
 
-    write_tsigs(f, tp)
+    write_tsigs(f, tp, ns)
 
     f:write_h("Description", 3)
     f:write_raw(tp:doc_get():full_get(nil, true))
@@ -769,10 +771,11 @@ local build_alias = function(tp)
 end
 
 local build_struct = function(tp)
-    local f = writer.Writer(dtree.Node.nspaces_get(tp, "struct"))
+    local ns = dtree.Node.nspaces_get(tp, "struct")
+    local f = writer.Writer(ns)
     stats.check_struct(tp)
 
-    write_tsigs(f, tp)
+    write_tsigs(f, tp, ns)
 
     f:write_h("Description", 3)
     f:write_raw(tp:doc_get():full_get(nil, true))
@@ -794,10 +797,11 @@ local build_struct = function(tp)
 end
 
 local build_enum = function(tp)
-    local f = writer.Writer(dtree.Node.nspaces_get(tp, "enum"))
+    local ns = dtree.Node.nspaces_get(tp, "enum")
+    local f = writer.Writer(ns)
     stats.check_enum(tp)
 
-    write_tsigs(f, tp)
+    write_tsigs(f, tp, ns)
 
     f:write_h("Description", 3)
     f:write_raw(tp:doc_get():full_get(nil, true))
@@ -897,7 +901,8 @@ local build_vallist = function(f, pg, ps, title)
 end
 
 build_method = function(fn, cl)
-    local f = writer.Writer(fn:nspaces_get(cl))
+    local mns = fn:nspaces_get(cl)
+    local f = writer.Writer(mns)
     stats.check_method(fn, cl)
 
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
@@ -907,7 +912,7 @@ build_method = function(fn, cl)
     f:write_nl()
 
     f:write_h("C signature", 3)
-    f:write_code(gen_func_csig(fn), "c")
+    f:write_code(gen_func_csig(fn, mns), "c")
     f:write_nl()
 
     local pars = fn:parameters_get()
@@ -925,7 +930,8 @@ build_method = function(fn, cl)
 end
 
 build_property = function(fn, cl)
-    local f = writer.Writer(fn:nspaces_get(cl))
+    local pns = fn:nspaces_get(cl)
+    local f = writer.Writer(pns)
 
     local ft = fn:type_get()
     local isget = (ft == fn.PROP_GET or ft == fn.PROPERTY)
@@ -947,10 +953,10 @@ build_property = function(fn, cl)
     f:write_h("C signature", 3)
     local codes = {}
     if isget then
-        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_GET)
+        codes[#codes + 1] = gen_func_csig(fn, pns, fn.PROP_GET)
     end
     if isset then
-        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_SET)
+        codes[#codes + 1] = gen_func_csig(fn, pns, fn.PROP_SET)
     end
     f:write_code(table.concat(codes, "\n"), "c")
     f:write_nl()
@@ -999,7 +1005,8 @@ build_property = function(fn, cl)
 end
 
 build_event = function(ev, cl)
-    local f = writer.Writer(ev:nspaces_get(cl))
+    local evn = ev:nspaces_get(cl)
+    local f = writer.Writer(evn)
 
     f:write_h(cl:full_name_get() .. ": " .. ev:name_get(), 2)
 
@@ -1034,7 +1041,7 @@ build_event = function(ev, cl)
 
     f:write_h("C signature", 3)
     local cn = ev:c_name_get()
-    keyref.add(cn, "c")
+    keyref.add(cn, evn, "c")
     f:write_code(dtree.type_cstr_get(etp, cn) .. ";", "c")
     f:write_nl()
 
@@ -1085,9 +1092,8 @@ getopt.parse {
         else
             dr = opts["r"]
         end
-        local pns = dutil.nspace_to_path(rootns)
-        dr = dutil.path_join(dr, pns)
-        dutil.init(dr, pns)
+        dr = dutil.path_join(dr, dutil.nspace_to_path(rootns))
+        dutil.init(dr, rootns)
         if #args == 0 then
             dtree.scan_directory()
         else

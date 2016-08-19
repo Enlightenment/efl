@@ -1008,7 +1008,7 @@ M.Typedecl = Node:clone {
         error("unhandled typedecl type: " .. tpt)
     end,
 
-    serialize_c = function(self)
+    serialize_c = function(self, ns)
         local tpt = self:type_get()
         if tpt == self.UNKNOWN then
             error("unknown typedecl: " .. self:full_name_get())
@@ -1016,7 +1016,7 @@ M.Typedecl = Node:clone {
                tpt == self.STRUCT_OPAQUE then
             local buf = { "typedef struct " }
             local fulln = self:full_name_get():gsub("%.", "_");
-            keyref.add(fulln, "c")
+            keyref.add(fulln, ns, "c")
             buf[#buf + 1] = "_" .. fulln;
             if tpt == self.STRUCT_OPAQUE then
                 buf[#buf + 1] = " " .. fulln .. ";"
@@ -1038,7 +1038,7 @@ M.Typedecl = Node:clone {
         elseif tpt == self.ENUM then
             local buf = { "typedef enum" }
             local fulln = self:full_name_get():gsub("%.", "_");
-            keyref.add(fulln, "c")
+            keyref.add(fulln, ns, "c")
             local fields = self:enum_fields_get()
             if #fields == 0 then
                 buf[#buf + 1] = " {} " .. fulln .. ";"
@@ -1049,7 +1049,7 @@ M.Typedecl = Node:clone {
                 buf[#buf + 1] = "    "
                 local cn = fld:c_name_get()
                 buf[#buf + 1] = cn
-                keyref.add(cn, "c")
+                keyref.add(cn, ns, "c")
                 local val = fld:value_get()
                 if val then
                     buf[#buf + 1] = " = "
@@ -1071,7 +1071,7 @@ M.Typedecl = Node:clone {
             return table.concat(buf)
         elseif tpt == self.ALIAS then
             local fulln = self:full_name_get():gsub("%.", "_");
-            keyref.add(fulln, "c")
+            keyref.add(fulln, ns, "c")
             return "typedef "
                 .. M.type_cstr_get(self:base_type_get(), fulln) .. ";"
         end

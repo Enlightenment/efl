@@ -26,7 +26,7 @@ M.make_page = function(path)
     return M.path_join(doc_root, path .. ".txt")
 end
 
-M.get_root = function()
+M.get_root_ns = function()
     return root_ns
 end
 
@@ -64,7 +64,7 @@ end
 
 M.init = function(root, rns)
     doc_root = root:gsub(rep_sep, path_sep)
-    root_ns = rns:gsub(rep_sep, path_sep)
+    root_ns = rns
 end
 
 return M
