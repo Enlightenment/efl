@@ -578,3 +578,70 @@ evas_post_event_callback_remove_full(Evas *eo_e, Evas_Object_Event_Post_Cb func,
           }
      }
 }
+
+static void
+_animator_repeater(void *data, const Eo_Event *event)
+{
+   Evas_Object_Protected_Data *obj = data;
+
+   efl_event_callback_call(obj->object, EFL_EVENT_ANIMATOR_TICK, event->info);
+   DBG("Emitting animator tick on %p.", obj->object);
+}
+
+static void
+_check_event_catcher_add(void *data, const Eo_Event *event)
+{
+   const Efl_Callback_Array_Item *array = event->info;
+   Evas_Object_Protected_Data *obj = data;
+   int i;
+
+   for (i = 0; array[i].desc != NULL; i++)
+     {
+        if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
+          {
+             if (obj->animator_ref++ > 0) break;
+
+             efl_event_callback_add(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             INF("Registering an animator tick on canvas %p for object %p.",
+                 obj->layer->evas->evas, obj->object);
+          }
+        else if (array[i].desc == EFL_GFX_EVENT_MOVE)
+          {
+             obj->move_ref++;
+          }
+     }
+}
+
+static void
+_check_event_catcher_del(void *data, const Eo_Event *event)
+{
+   const Efl_Callback_Array_Item *array = event->info;
+   Evas_Object_Protected_Data *obj = data;
+   int i;
+
+   for (i = 0; array[i].desc != NULL; i++)
+     {
+        if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
+          {
+             if ((--obj->animator_ref) > 0) break;
+
+             efl_event_callback_del(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             INF("Unregistering an animator tick on canvas %p for object %p.",
+                 obj->layer->evas->evas, obj->object);
+          }
+        else if (array[i].desc == EFL_GFX_EVENT_MOVE)
+          {
+             obj->move_ref--;
+          }
+     }
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
+                          { EFL_EVENT_CALLBACK_ADD, _check_event_catcher_add },
+                          { EFL_EVENT_CALLBACK_DEL, _check_event_catcher_del });
+
+void
+evas_object_callback_init(Efl_Canvas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   efl_event_callback_array_add(eo_obj, event_catcher_watch(), obj);
+}
