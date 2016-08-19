@@ -591,7 +591,7 @@ eng_setup(Evas *evas, void *info)
                                                 eng_outbuf_rotation_get,
                                                 eng_outbuf_reconfigure,
                                                 eng_outbuf_region_first_rect,
-                                                NULL,
+                                                eng_outbuf_damage_region_set,
                                                 eng_outbuf_update_region_new,
                                                 eng_outbuf_update_region_push,
                                                 eng_outbuf_update_region_free,
