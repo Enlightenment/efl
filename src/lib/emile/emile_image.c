@@ -1731,22 +1731,6 @@ _emile_jpeg_data(Emile_Image *image,
      {
         region = 1;
 
-        if (prop->rotated)
-          {
-             unsigned int load_region_x = 0, load_region_y = 0;
-             unsigned int load_region_w = 0, load_region_h = 0;
-
-             load_region_x = opts->region.x;
-             load_region_y = opts->region.y;
-             load_region_w = opts->region.w;
-             load_region_h = opts->region.h;
-             _rotate_region(&opts_region.x, &opts_region.y,
-                            &opts_region.w, &opts_region.h,
-                            load_region_x, load_region_y,
-                            load_region_w, load_region_h,
-                            w, h, degree, prop->flipped);
-          }
-
          /* scale value already applied when decompress.
             When access to decoded image, have to apply scale value to region value */
         if (prop->scale > 1)
@@ -1763,6 +1747,23 @@ _emile_jpeg_data(Emile_Image *image,
              opts_region.y = opts->region.y;
              opts_region.w = opts->region.w;
              opts_region.h = opts->region.h;
+          }
+
+
+        if (prop->rotated)
+          {
+             unsigned int load_region_x = 0, load_region_y = 0;
+             unsigned int load_region_w = 0, load_region_h = 0;
+
+             load_region_x = opts_region.x;
+             load_region_y = opts_region.y;
+             load_region_w = opts_region.w;
+             load_region_h = opts_region.h;
+             _rotate_region(&opts_region.x, &opts_region.y,
+                            &opts_region.w, &opts_region.h,
+                            load_region_x, load_region_y,
+                            load_region_w, load_region_h,
+                            w, h, degree, prop->flipped);
           }
 
      }
