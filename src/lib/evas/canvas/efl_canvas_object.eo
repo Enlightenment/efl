@@ -599,9 +599,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Gfx.Map.map_enable.get;
    }
    events {
-       free @beta; [[Object Being Freed (Called after Del) ]]
        focus,in; [[Focus In Event ]]
        focus,out; [[Focus Out Event ]]
-       del @beta; [[Object Being Deleted (called before Free) ]]
    }
 }

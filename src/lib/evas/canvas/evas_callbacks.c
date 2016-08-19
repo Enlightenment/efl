@@ -11,6 +11,12 @@ EVAS_MEMPOOL(_mp_pc);
 
 extern Eina_Hash* signals_hash_table;
 
+/* Legacy events, do not use anywhere */
+static const Efl_Event_Description _EVAS_OBJECT_EVENT_FREE = EFL_EVENT_DESCRIPTION("free");
+static const Efl_Event_Description _EVAS_OBJECT_EVENT_DEL = EFL_EVENT_DESCRIPTION("del");
+#define EVAS_OBJECT_EVENT_FREE (&(_EVAS_OBJECT_EVENT_FREE))
+#define EVAS_OBJECT_EVENT_DEL (&(_EVAS_OBJECT_EVENT_DEL))
+
 /**
  * Evas events descriptions for Eo.
  */
@@ -39,7 +45,7 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EFL_EVENT_POINTER_DOWN,
                       EFL_EVENT_POINTER_UP,
                       EFL_EVENT_POINTER_MOVE,
-                      EFL_CANVAS_OBJECT_EVENT_FREE,
+                      EVAS_OBJECT_EVENT_FREE,
                       EFL_EVENT_KEY_DOWN,
                       EFL_EVENT_KEY_UP,
                       EFL_CANVAS_OBJECT_EVENT_FOCUS_IN,
@@ -49,7 +55,7 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EFL_GFX_EVENT_MOVE,
                       EFL_GFX_EVENT_RESIZE,
                       EFL_GFX_EVENT_RESTACK,
-                      EFL_CANVAS_OBJECT_EVENT_DEL,
+                      EVAS_OBJECT_EVENT_DEL,
                       EFL_EVENT_HOLD,
                       EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
                       EFL_IMAGE_EVENT_PRELOAD,
