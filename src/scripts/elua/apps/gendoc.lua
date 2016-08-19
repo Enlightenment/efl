@@ -1085,8 +1085,9 @@ getopt.parse {
         else
             dr = opts["r"]
         end
-        dr = dutil.path_join(dr, dutil.nspace_to_path(rootns))
-        dutil.init(dr)
+        local pns = dutil.nspace_to_path(rootns)
+        dr = dutil.path_join(dr, pns)
+        dutil.init(dr, pns)
         if #args == 0 then
             dtree.scan_directory()
         else

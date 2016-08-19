@@ -3,7 +3,7 @@ local ffi = require("ffi")
 
 local M = {}
 
-local doc_root
+local doc_root, root_ns
 
 local path_sep, rep_sep = "/", "\\"
 if ffi.os == "Windows" then
@@ -11,7 +11,7 @@ if ffi.os == "Windows" then
 end
 
 M.path_join = function(...)
-    return table.concat({ ... }, path_sep):gsub(rep_sep, path_sep)
+    return (table.concat({ ... }, path_sep):gsub(rep_sep, path_sep))
 end
 
 M.path_to_nspace = function(p)
@@ -24,6 +24,10 @@ end
 
 M.make_page = function(path)
     return M.path_join(doc_root, path .. ".txt")
+end
+
+M.get_root = function()
+    return root_ns
 end
 
 M.mkdir_r = function(dirn)
@@ -58,8 +62,9 @@ M.str_split = function(str, delim)
     return t
 end
 
-M.init = function(root)
+M.init = function(root, rns)
     doc_root = root:gsub(rep_sep, path_sep)
+    root_ns = rns:gsub(rep_sep, path_sep)
 end
 
 return M
