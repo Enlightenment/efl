@@ -31,7 +31,7 @@ START_TEST(eina_cxx_get_error)
   efl::eina::error_code ec3 = efl::eina::get_error_code();
   ck_assert(!!ec3);
 
-  ck_assert(ec3.message() == "Out of memory");
+  ck_assert(ec3.message() == strerror(ENOMEM));
 }
 END_TEST
 
