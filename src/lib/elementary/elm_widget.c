@@ -109,10 +109,10 @@ static void
 _propagate_event(void *data, const Eo_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
-                          { EFL_CANVAS_OBJECT_EVENT_DEL, _on_sub_obj_del },
+                          { EFL_EVENT_DEL, _on_sub_obj_del },
                           { EFL_GFX_EVENT_HIDE, _on_sub_obj_hide });
 EFL_CALLBACKS_ARRAY_DEFINE(efl_subitems_callbacks,
-                          { EFL_CANVAS_OBJECT_EVENT_DEL, _on_sub_obj_del });
+                          { EFL_EVENT_DEL, _on_sub_obj_del });
 EFL_CALLBACKS_ARRAY_DEFINE(focus_callbacks,
                           { EFL_EVENT_KEY_DOWN, _propagate_event },
                           { EFL_EVENT_KEY_UP, _propagate_event },
@@ -4444,7 +4444,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
                           { EFL_GFX_EVENT_MOVE, _track_obj_view_update },
                           { EFL_GFX_EVENT_SHOW, _track_obj_view_update },
                           { EFL_GFX_EVENT_HIDE, _track_obj_view_update },
-                          { EFL_CANVAS_OBJECT_EVENT_DEL, _track_obj_view_del });
+                          { EFL_EVENT_DEL, _track_obj_view_del });
 
 static void
 _track_obj_view_del(void *data, const Eo_Event *event EINA_UNUSED)

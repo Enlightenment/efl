@@ -7633,7 +7633,7 @@ _obstacle_del_cb(void *data, const Eo_Event *event)
 static void
 _obstacle_clear(Eo *eo_obj, Evas_Textblock_Obstacle *obs)
 {
-   efl_event_callback_del(obs->eo_obs, EFL_CANVAS_OBJECT_EVENT_DEL, _obstacle_del_cb, eo_obj);
+   efl_event_callback_del(obs->eo_obs, EFL_EVENT_DEL, _obstacle_del_cb, eo_obj);
 }
 
 static void
@@ -7669,7 +7669,7 @@ _efl_canvas_text_obstacle_add(Eo *eo_obj,
    if (!obs) return EINA_FALSE;
 
    obs->eo_obs = eo_obs;
-   efl_event_callback_add(eo_obs, EFL_CANVAS_OBJECT_EVENT_DEL, _obstacle_del_cb, eo_obj);
+   efl_event_callback_add(eo_obs, EFL_EVENT_DEL, _obstacle_del_cb, eo_obj);
 
    obj->obstacles = eina_list_append(obj->obstacles, obs);
    _obstacle_update(obs, eo_obj);

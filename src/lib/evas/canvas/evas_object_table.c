@@ -265,7 +265,7 @@ _on_child_hints_changed(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(evas_object_table_callbacks,
-  { EFL_CANVAS_OBJECT_EVENT_DEL, _on_child_del },
+  { EFL_EVENT_DEL, _on_child_del },
   { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
 );
 
