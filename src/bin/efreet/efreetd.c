@@ -8,6 +8,9 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include <Ecore.h>
 #include <Ecore_File.h>
@@ -55,13 +58,20 @@ main(int argc, char *argv[])
      hostname_str = "";
    else
      hostname_str = buf;
-   snprintf(path, sizeof(path), "%s/efreetd_%s_XXXXXX.log",
-            log_file_dir, hostname_str);
-   fd = eina_file_mkstemp(path, NULL);
-   if (fd < 0)
+   if (getenv("EFREETD_LOG"))
      {
-        ERR("Can't create log file '%s'\b", path);;
-        goto tmp_error;
+        snprintf(path, sizeof(path), "%s/efreetd_%s_XXXXXX.log",
+                 log_file_dir, hostname_str);
+        fd = eina_file_mkstemp(path, NULL);
+        if (fd < 0)
+          {
+             ERR("Can't create log file '%s'\b", path);;
+             goto tmp_error;
+          }
+     }
+   else
+     {
+        fd = open("/dev/null", O_WRONLY);
      }
    log = fdopen(fd, "wb");
    if (!log) goto tmp_error;
