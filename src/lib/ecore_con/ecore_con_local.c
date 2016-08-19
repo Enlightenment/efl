@@ -170,7 +170,8 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
      }
    else
      {
-        strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+        strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path) - 1);
+        socket_unix.sun_path[sizeof(socket_unix.sun_path) - 1] = '\0';
         socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
      }
 
@@ -330,7 +331,8 @@ start:
    else
      {
         abstract_socket = EINA_FALSE;
-        strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+        strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path) - 1);
+        socket_unix.sun_path[sizeof(socket_unix.sun_path) - 1] = '\0';
         socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
      }
 
