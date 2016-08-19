@@ -310,7 +310,8 @@ local build_reftable = function(f, title, ctitle, ctype, t, iscl)
     for i, v in ipairs(t) do
         nt[#nt + 1] = {
             writer.Buffer():write_link(
-                iscl and v:nspaces_get() or dtree.Node.nspaces_get(v, ctype, true),
+                iscl and v:nspaces_get(true)
+                      or dtree.Node.nspaces_get(v, ctype, true),
                 v:full_name_get()
             ):finish(),
             v:doc_get():brief_get()
