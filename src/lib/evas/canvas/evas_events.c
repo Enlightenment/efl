@@ -6,6 +6,8 @@
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
 
+int _evas_event_counter = 0;
+
 static Eina_List *
 _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
                                const Eina_Inlist *list, Evas_Object *stop,
@@ -578,8 +580,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
           }
         eina_list_free(copy);
 
-        _evas_object_event_new();
-        int event_id2 = _evas_event_counter;
+        int event_id2 = _evas_object_event_new();
         EINA_LIST_FOREACH(ins, l, eo_child)
           {
               child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
@@ -858,9 +859,8 @@ _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Publi
    ev->source = obj->object;
    ev->action = EFL_POINTER_ACTION_UP;
 
-   /* FIXME: Why a new event id here? Other 'source' events keep the same id. */
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   /* Why a new event id here? Other 'source' events keep the same id. */
+   event_id = _evas_object_event_new();
 
    if (e->pointer.mouse_grabbed > 0)
      {
@@ -1224,8 +1224,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
    e->last_timestamp = ev->timestamp;
    eo_e = e->evas;
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    ev->cur.x = e->pointer.x;
    ev->cur.y = e->pointer.y;
@@ -1304,10 +1303,9 @@ _post_up_handle(Evas_Public_Data *e, Efl_Event_Pointer *parent_ev)
    Evas_Object *eo_obj;
    Evas *eo_e = e->evas;
    int post_called = 0;
-   int event_id = 0;
+   int event_id;
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    /* Duplicating UP event */
    evt = efl_event_dup(parent_ev);
@@ -1349,9 +1347,7 @@ _post_up_handle(Evas_Public_Data *e, Efl_Event_Pointer *parent_ev)
      {
         Evas_Object *eo_obj_itr;
 
-        _evas_object_event_new();
-        event_id = _evas_event_counter;
-
+        event_id = _evas_object_event_new();
         ev->action = EFL_POINTER_ACTION_IN;
 
         EINA_LIST_FOREACH(ins, l, eo_obj_itr)
@@ -1424,8 +1420,7 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data
    e->last_timestamp = ev->timestamp;
    eo_e = e->evas;
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    ev->cur.x = e->pointer.x;
    ev->cur.y = e->pointer.y;
@@ -1617,8 +1612,7 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Event_Pointer_Data *pe)
    if (e->is_frozen) return;
    e->last_timestamp = pe->timestamp;
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    evt = efl_event_dup(pe->eo);
    ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
@@ -1725,8 +1719,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
         /* Send normal mouse move events */
         ev->action = EFL_POINTER_ACTION_MOVE;
 
-        _evas_object_event_new();
-        event_id = _evas_event_counter;
+        event_id = _evas_object_event_new();
 
         /* go thru old list of in objects */
         copy = evas_event_list_copy(e->pointer.object.in);
@@ -1771,8 +1764,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
         /* Send mouse out events */
         ev->action = EFL_POINTER_ACTION_OUT;
 
-        _evas_object_event_new();
-        event_id = _evas_event_counter;
+        event_id = _evas_object_event_new();
 
         EINA_LIST_FREE(outs, eo_obj)
           {
@@ -1797,8 +1789,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
      {
         Eina_List *ins;
 
-        _evas_object_event_new();
-        event_id = _evas_event_counter;
+        event_id = _evas_object_event_new();
 
         /* get all new in objects */
         ins = evas_event_objects_event_list(eo_e, NULL, x, y);
@@ -1856,8 +1847,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
         _evas_post_event_callback_call(eo_e, e);
 
         /* new event id for mouse in */
-        _evas_object_event_new();
-        event_id = _evas_event_counter;
+        event_id = _evas_object_event_new();
 
         /* go thru our current list of ins */
         EINA_LIST_FOREACH(ins, l, eo_obj)
@@ -1903,8 +1893,7 @@ nogrep:
         Eina_List *ins = NULL, *newin = NULL, *lst = NULL;
         Evas_Object *eo_below_obj;
 
-        _evas_object_event_new();
-        event_id = _evas_event_counter;
+        event_id = _evas_object_event_new();
 
         /* go thru old list of in objects */
         copy = evas_event_list_copy(e->pointer.object.in);
@@ -1988,8 +1977,7 @@ nogrep:
         eina_list_free(copy);
         _evas_post_event_callback_call(eo_e, e);
 
-        _evas_object_event_new();
-        event_id = _evas_event_counter;
+        event_id = _evas_object_event_new();
 
         /* go thru our current list of ins */
         EINA_LIST_FOREACH(newin, l, eo_obj)
@@ -2086,8 +2074,7 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Event_Pointer_Data *ev)
    ev->event_flags = e->default_event_flags;
    if (ev->device) efl_ref(ev->device);
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    _evas_walk(e);
    /* get new list of ins */
@@ -2134,8 +2121,7 @@ _canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Event_Pointer_Data *ev)
    if (e->is_frozen) return;
    e->last_timestamp = ev->timestamp;
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    ev->action = EFL_POINTER_ACTION_OUT;
    ev->pressed_buttons = e->pointer.button;
@@ -2232,8 +2218,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
    if (e->is_frozen) return;
    e->last_timestamp = ev->timestamp;
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    point = ev->cur;
    ev->action = EFL_POINTER_ACTION_DOWN;
@@ -2299,8 +2284,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data
    if (e->is_frozen) return;
    e->last_timestamp = ev->timestamp;
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    point = ev->cur;
    ev->action = EFL_POINTER_ACTION_UP;
@@ -2442,8 +2426,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
    if (!e || !ev) return;
 
    eo_e = e->evas;
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    if (e->is_frozen) return;
    e->last_timestamp = ev->timestamp;
@@ -2580,8 +2563,7 @@ _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Event_Key_Data *ev
    e->last_timestamp = ev->timestamp;
    _evas_walk(e);
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
@@ -2668,8 +2650,7 @@ _canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Event_Key_Data *ev)
    e->last_timestamp = ev->timestamp;
    _evas_walk(e);
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
@@ -2825,8 +2806,7 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
    if (e->is_frozen) return;
    e->last_timestamp = timestamp;
 
-   _evas_object_event_new();
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
 
    evt = efl_event_instance_get(EFL_EVENT_HOLD_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
@@ -2871,9 +2851,8 @@ _canvas_event_feed_axis_update_internal(Evas *eo_e, Evas_Public_Data *e, unsigne
    if (e->is_frozen) return;
    e->last_timestamp = timestamp;
 
-   _evas_object_event_new();
+   event_id = _evas_object_event_new();
 
-   event_id = _evas_event_counter;
    ev.data = (void *)data;
    ev.timestamp = timestamp;
    ev.device = device;

@@ -7,8 +7,6 @@
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
 
-int _evas_event_counter = 0;
-
 EVAS_MEMPOOL(_mp_pc);
 
 extern Eina_Hash* signals_hash_table;

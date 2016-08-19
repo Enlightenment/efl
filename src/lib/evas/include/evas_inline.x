@@ -16,10 +16,10 @@ _evas_render_can_map(Evas_Object_Protected_Data *obj)
    return obj->func->can_map(obj->object);
 }
 
-static inline void
+static inline int
 _evas_object_event_new(void)
 {
-   _evas_event_counter++;
+   return (++_evas_event_counter);
 }
 
 static inline int

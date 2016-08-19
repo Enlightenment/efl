@@ -16,9 +16,7 @@ _efl_canvas_object_key_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Ei
    return;
    MAGIC_CHECK_END();
 
-   _evas_object_event_new();
-
-   event_id = _evas_event_counter;
+   event_id = _evas_object_event_new();
    if (obj->focused == focus) goto end;
    if (evas_object_intercept_call_focus_set(eo_obj, obj, focus)) goto end;
    if (focus)
