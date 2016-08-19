@@ -3,18 +3,42 @@ interface Efl.Input.Interface ()
    [[An object implementing this interface can send pointer events.
 
      Windows and canvas objects may send input events.
+
+     A "pointer" refers to the main pointing device, which could be a mouse,
+     trackpad, finger, pen, etc... In other words, the finger id in any
+     pointer event will always be 0.
+
+     A "finger" refers to a single point of input, usually in an absolute
+     coordinates input device, and that can support more than one input
+     position at at time (think multi-touch screens). The first finger (id 0)
+     is sent along with a pointer event, so be careful to not handle those
+     events twice. Note that if the input device can support "hovering", it
+     is entirely possible to receive move events without down coming first.
+
+     A "key" is a key press from a keyboard or equivalent type of input device.
+     Long, repeated, key presses will always happen like this:
+     down...up,down...up,down...up (not down...up or down...down...down...up).
+
+     @since 1.19
    ]]
    event_prefix: efl;
    events {
-      pointer,move: Efl.Event.Pointer;
-      pointer,down: Efl.Event.Pointer;
-      pointer,up: Efl.Event.Pointer;
-      pointer,cancel: Efl.Event.Pointer;
-      pointer,in: Efl.Event.Pointer;
-      pointer,out: Efl.Event.Pointer;
-      pointer,wheel: Efl.Event.Pointer;
-      key,down: Efl.Event.Key;
-      key,up: Efl.Event.Key;
+      pointer,move: Efl.Event.Pointer;   [[Main pointer move (current and previous positions are known).]]
+      pointer,down: Efl.Event.Pointer;   [[Main pointer button pressed (button id is known).]]
+      pointer,up: Efl.Event.Pointer;     [[Main pointer button released (button id is known).]]
+      pointer,cancel: Efl.Event.Pointer; [[Main pointer button press was cancelled (button id is known).
+                                           This can happen in rare cases when the window manager passes
+                                           the focus to a more urgent window, for instance. You probably
+                                           don't need to listen to this event, as it will be accompanied
+                                           by an up event.]]
+      pointer,in: Efl.Event.Pointer;     [[Pointer entered a window or a widget.]]
+      pointer,out: Efl.Event.Pointer;    [[Pointer left a window or a widget.]]
+      pointer,wheel: Efl.Event.Pointer;  [[Mouse wheel event.]]
+      finger,move: Efl.Event.Pointer;    [[Finger moved (current and previous positions are known).]]
+      finger,down: Efl.Event.Pointer;    [[Finger pressed (finger id is known).]]
+      finger,up: Efl.Event.Pointer;      [[Finger released (finger id is known).]]
+      key,down: Efl.Event.Key;           [[Keyboard key press.]]
+      key,up: Efl.Event.Key;             [[Keyboard key release.]]
       hold: Efl.Event.Hold; [[All input events are on hold or resumed.]]
    }
 }

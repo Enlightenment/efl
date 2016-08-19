@@ -84,6 +84,9 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
       case EFL_POINTER_ACTION_DOWN:
         if (ev->finger == 0)
           {
+             // filter out MULTI with finger 0, valid for eo, invalid for legacy
+             if (type == EVAS_CALLBACK_MULTI_DOWN)
+               return NULL;
              TYPE_CHK(MOUSE_DOWN);
              Evas_Event_Mouse_Down *e = _event_alloc(ev->legacy);
              e->button = ev->button;
@@ -132,6 +135,9 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
       case EFL_POINTER_ACTION_UP:
         if (ev->finger == 0)
           {
+             // filter out MULTI with finger 0, valid for eo, invalid for legacy
+             if (type == EVAS_CALLBACK_MULTI_UP)
+               return NULL;
              TYPE_CHK(MOUSE_UP);
              Evas_Event_Mouse_Up *e = _event_alloc(ev->legacy);
              e->button = ev->button;
@@ -180,6 +186,9 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
       case EFL_POINTER_ACTION_MOVE:
         if (ev->finger == 0)
           {
+             // filter out MULTI with finger 0, valid for eo, invalid for legacy
+             if (type == EVAS_CALLBACK_MULTI_MOVE)
+               return NULL;
              TYPE_CHK(MOUSE_MOVE);
              Evas_Event_Mouse_Move *e = _event_alloc(ev->legacy);
              e->buttons = ev->pressed_buttons;
