@@ -1323,7 +1323,13 @@ ecore_evas_ews_engine_set(const char *engine, const char *options)
    _ews_options = options ? strdup(options) : NULL;
 
    if ((engine) && (!_ews_engine)) return EINA_FALSE;
-   if ((options) && (!_ews_options)) return EINA_FALSE;
+   if ((options) && (!_ews_options))
+     {
+        free(_ews_engine);
+        _ews_engine = NULL;
+        _ews_defaults_engine = EINA_TRUE;
+        return EINA_FALSE;
+     }
 
    _ews_defaults_engine = EINA_FALSE;
    return EINA_TRUE;
