@@ -638,7 +638,7 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    Dmabuf_Buffer *out;
    struct zwp_linux_buffer_params_v1 *dp;
    Buffer_Manager *bm = _buffer_manager_get();
-   uint32_t flags = ZWP_LINUX_BUFFER_PARAMS_V1_FLAGS_Y_INVERT;
+   uint32_t flags = 0;
 
    if (!bm) return NULL;
 
