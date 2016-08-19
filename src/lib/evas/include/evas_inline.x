@@ -22,6 +22,12 @@ _evas_object_event_new(void)
    return (++_evas_event_counter);
 }
 
+static inline Eina_Bool
+_evas_object_callback_has_by_type(Evas_Object_Protected_Data *obj, Evas_Callback_Type type)
+{
+   return (obj->callback_mask & (1 << type)) != 0;
+}
+
 static inline int
 evas_object_was_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
