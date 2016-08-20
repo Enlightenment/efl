@@ -1,0 +1,314 @@
+import efl_net_http_types;
+
+enum Efl.Net.Dialer.Http.Primary_Mode {
+    auto,
+    download,
+    upload,
+}
+
+class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Sizer) { /* TODO: reader/writer should be from dialer->socket, but are being missed somehow... */
+    [[HTTP Dialer (Client).
+
+      The effective URL in use, if @.allow_redirects is $true will be
+      available as @Efl.Net.Socket.address_remote. The
+      @Efl.Net.Socket.address_local is an IP:PORT pair.
+
+      The dialer can do bi-directional information exchange. It can
+      also do a PUT and upload a file, or GET and download one. Anoter
+      case is to do a POST with some form values, including a file,
+      and retrieve its headers and response body. To make usage more
+      streamlined, choose your primary interest with @.primary_mode
+      then get some properties such as @Efl.Io.Sizer.size to report or
+      use what matters to your use case.
+
+      If @.allow_redirects is $true, multiple "connected" and
+      "resolved" signals will be dispatched, one for each
+      connection. Then @.response_status and @.response_headers_get
+      will keep changing. Using @.response_headers_all_get one can see
+      the whole history of headers and connections.
+
+      To enable debugging use EINA_LOG_LEVELS=ecore_con:4 environment
+      variable.
+
+      @since 1.19
+    ]]
+    methods {
+        @property method {
+            [[The HTTP method to use.
+
+              A string representing the HTTP method to use, such as
+              GET, POST, HEAD, PUT, DELETE...
+
+              This should be set before dialing.
+            ]]
+            get { }
+            set { }
+            values {
+                method: string;
+            }
+        }
+
+        @property primary_mode {
+            [[Is this request primarily a download or upload?
+
+              This property will change the behavior of @Efl.Io.Sizer:
+
+               - if @Efl.Net.Dialer.Http.Primary_Mode.auto, then
+                 @Efl.Net.Dialer.Http.Primary_Mode.download or
+                 @Efl.Net.Dialer.Http.Primary_Mode.upload will be
+                 choosen based on the @.method: if "PUT", then it's
+                 upload, otherwise it's download.
+
+               - if @Efl.Net.Dialer.Http.Primary_Mode.upload, applying
+                 a new size with @Efl.Io.Sizer.resize or
+                 @Efl.Io.Sizer.size.set will specify the
+                 "Content-Length" to upload. If no size is previously
+                 set, then the upload will happen in
+                 "Transfer-encoding: chunked".
+
+               - if @Efl.Net.Dialer.Http.Primary_Mode.download, then
+                 @Efl.Io.Sizer.size.get will report the
+                 "Content-Length" provided by the server, if any.
+
+               If is worth to mention that one can provide and
+               retrieve these values using @.request_headers_get (to
+               send) and @.response_headers_get (what was received),
+               as well as using the specific properties
+               @.request_content_length (upload) and
+               @.response_content_length (download).
+            ]]
+            get {
+                [[The effective primary mode.
+
+                  This will return one of
+                  @Efl.Net.Dialer.Http.Primary_Mode.download or
+                  @Efl.Net.Dialer.Http.Primary_Mode.upload. If "auto"
+                  was set (the default), then it will pick the best
+                  based on the @.method in use.
+                ]]
+            }
+            set { }
+            values {
+                primary_mode: Efl.Net.Dialer.Http.Primary_Mode;
+            }
+        }
+
+        @property user_agent {
+            [[The User-Agent to specify.
+
+              This should be set before dialing.
+            ]]
+            get { }
+            set { }
+            values {
+                user_agent: string;
+            }
+        }
+
+        @property http_version {
+            [[The HTTP version to use.
+
+              This should be set before dialing.
+
+              Once connected, it will change to the actual connection
+              HTTP version, so check after "connected" event.
+            ]]
+            get { }
+            set { }
+            values {
+                http_version: Efl.Net.Http.Version;
+            }
+        }
+
+        @property authentication {
+            [[HTTP authentication to use.
+
+              This should be set before dialing.
+            ]]
+            get { }
+            set { }
+            values {
+                username: string;
+                password: string;
+                method: Efl.Net.Http.Authentication_Method @optional; [[authentication method to use, defaults to @Efl.Net.Http.Authentication_Method.basic]]
+                restricted: bool @optional; [[restrict method]]
+            }
+        }
+
+        @property allow_redirects {
+            [[Allow HTTP redirects to be followed.
+
+              This should be set before dialing.
+            ]]
+            get { }
+            set { }
+            values {
+                allow_redirects: bool;
+            }
+        }
+
+        request_header_add {
+            [[Add a request header 'key: value'.
+
+              See @.request_headers_clear
+
+              This should be called before dialing.
+            ]]
+            params {
+                @in key: string;
+                @in value: string;
+            }
+        }
+
+        request_headers_clear {
+            [[Clear all request headers.
+
+              See @.request_header_add
+
+              This should be called before dialing.
+            ]]
+        }
+
+        request_headers_get {
+            [[Return an iterator to the key-value pairs for request headers]]
+            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused;
+        }
+
+        @property request_content_length {
+            [["Content-Length:" Header used for uploading/sending.
+
+              To unset use -1
+            ]]
+            get { }
+            set { }
+            values {
+                length: int64;
+            }
+        }
+
+        @property response_content_length {
+            [["Content-Length:" Header used for downloading/receiving.
+
+              If unset is -1.
+            ]]
+            get { }
+            set @protected { }
+            values {
+                length: int64;
+            }
+        }
+
+        @property response_content_type {
+            [["Content-Type:" Header used for downloading/receiving]]
+            get { }
+            set @protected { }
+            values {
+                content_type: string;
+            }
+        }
+
+        @property response_status {
+            [[The HTTP response status of this request.
+
+              It will be 0 if not connected, otherwise will be what is
+              returned by the server, such as.
+
+              See https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+
+              This will be usable after "connected" event is dispatched.
+            ]]
+            get { }
+            values {
+                status_code: Efl.Net.Http.Status;
+            }
+        }
+
+        response_headers_get {
+            [[Return an iterator to the key-value pairs for the last response headers.
+
+              Since multiple requests can happen if @.allow_redirects
+              is true, then all headers will be accumulated. This
+              method returns only the headers for the last request.
+
+              To know all the headers, check @.response_headers_all_get.
+
+              This will be usable after "headers,done" event is dispatched.
+            ]]
+            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused;
+        }
+
+        response_headers_all_get {
+            [[Return an iterator to the key-value pairs for all response headers.
+
+              Since multiple requests can happen if @.allow_redirects
+              is true, then all headers will be accumulated. To know
+              when new request is started, check for headers with keys
+              being NULL, the value will be the "HTTP/VERSION RESPONSE"
+              string received from the host, such as:
+
+                - key=NULL, value="HTTP/1.1 302 Found"
+                - key="Location", value="http://someredirect.com"
+                - key=NULL, value="HTTP/1.1 200 Ok"
+                - key="Content-Type", value="text/html"
+
+              Which mean the original request had a redirect to
+              http://someredirect.com.
+
+              To receive an iterator to just the last request, use
+              @.response_headers_get
+
+              This will be usable after "headers,done" event is dispatched.
+            ]]
+            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused;
+        }
+
+        response_headers_clear {
+            [[Save some memory by disposing the received headers]]
+        }
+
+        @property progress_download {
+            [[How many bytes were downloaded and how much was expected.]]
+            get { }
+            values {
+                downloaded: uint64 @optional;
+                total: uint64 @optional; [[0 if unknown]]
+            }
+        }
+
+        @property progress_upload {
+            [[How many bytes were uploaded and how much was expected.]]
+            get { }
+            values {
+                uploaded: uint64 @optional;
+                total: uint64 @optional; [[0 if unknown]]
+            }
+        }
+    }
+
+    events {
+        headers,done; [[Notifies all headers were parsed and are available.]]
+    }
+
+    implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+        Efl.Net.Dialer.dial;
+        Efl.Net.Dialer.address_dial;
+        Efl.Net.Dialer.connected;
+        Efl.Net.Dialer.timeout_dial;
+        Efl.Net.Socket.address_local;
+        Efl.Net.Socket.address_remote;
+        Efl.Io.Reader.read;
+        Efl.Io.Reader.can_read.get;
+        Efl.Io.Reader.can_read.set;
+        Efl.Io.Reader.eos.get;
+        Efl.Io.Reader.eos.set;
+        Efl.Io.Writer.write;
+        Efl.Io.Writer.can_write.get;
+        Efl.Io.Writer.can_write.set;
+        Efl.Io.Closer.close;
+        Efl.Io.Closer.closed.get;
+        Efl.Io.Sizer.resize;
+        Efl.Io.Sizer.size.get;
+    }
+}

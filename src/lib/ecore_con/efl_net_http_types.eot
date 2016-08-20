@@ -1,0 +1,176 @@
+import eina_types;
+
+enum Efl.Net.Http.Version {
+    v1_0 = 100, [[1.0]]
+    v1_1 = 101, [[1.1]]
+    v2_0 = 200, [[2.0]]
+}
+
+enum Efl.Net.Http.Authentication_Method {
+    none = 0,
+    basic = (1 << 0),
+    digest = (1 << 1),
+    negotiate = (1 << 2),
+    ntlm = (1 << 3),
+    ntlm_winbind = (1 << 4),
+    any_safe = Efl.Net.Http.Authentication_Method.digest | Efl.Net.Http.Authentication_Method.negotiate | Efl.Net.Http.Authentication_Method.ntlm | Efl.Net.Http.Authentication_Method.ntlm_winbind,
+    any = Efl.Net.Http.Authentication_Method.any_safe | Efl.Net.Http.Authentication_Method.basic,
+}
+
+enum Efl.Net.Http.Status {
+    [[Common HTTP status codes]]
+
+    unknown = 0, [[unknown status, likely not connected]]
+
+    /* Informational: 1xx */
+    continue = 100,
+    switching_protocols = 101,
+    checkpoint = 103, /* unofficial extension */
+    processing = 102,
+
+    /* success: 2xx */
+    ok = 200,
+    created = 201,
+    accepted = 202,
+    non_authoritative_information = 203,
+    no_content = 204,
+    reset_content = 205,
+    partial_content = 206,
+    multi_status = 207,
+    already_reported = 208,
+    im_used = 226,
+
+    /* redirection: 3xx */
+    multiple_choices = 300,
+    moved_permanently = 301,
+    found = 302,
+    see_other = 303,
+    not_modified = 304,
+    use_proxy = 305,
+    switch_proxy = 306,
+    temporary_redirect = 307,
+    permanent_redirect = 308,
+
+    /* client error: 4xx */
+    bad_request = 400,
+    unauthorized = 401,
+    payment_required = 402,
+    forbidden = 403,
+    not_found = 404,
+    method_not_allowed = 405,
+    not_acceptable = 406,
+    proxy_authentication_required = 407,
+    request_timeout = 408,
+    conflict = 409,
+    gone = 410,
+    length_required = 411,
+    precondition_failed = 412,
+    payload_too_large = 413,
+    uri_too_long = 414,
+    unsupported_media_type = 415,
+    range_not_satisfiable = 416,
+    expectation_failed = 417,
+    misdirected_request = 421,
+    unprocessable_entity = 422,
+    locked = 423,
+    failed_dependency = 424,
+    upgrade_required = 426,
+    precondition_required = 428,
+    too_many_requests = 429,
+    request_header_fields_too_large = 431,
+    login_timeout = 440, /* unofficial extension */
+    no_response = 444, /* unofficial extension */
+    retry_with = 449, /* unofficial extension */
+    blocked_by_windows_parental_controls = 450, /* unofficial extension */
+    unavailable_for_legal_reasons = 451,
+    ssl_certificate_error = 495, /* unofficial extension */
+    ssl_certificate_required = 496, /* unofficial extension */
+    http_request_sent_to_https_port = 497, /* unofficial extension */
+    request_has_been_forbidden_by_antivirus = 499,
+
+    /* server error: 5xx */
+    internal_server_error = 500,
+    not_implemented = 501,
+    bad_gateway = 502,
+    service_unavailable = 503,
+    gateway_timeout = 504,
+    http_version_not_supported = 505,
+    variant_also_negotiates = 506,
+    insufficient_storage = 507,
+    loop_detected = 508,
+    bandwidth_limit_exceeded = 509, /* unofficial extension */
+    not_extended = 510,
+    network_authentication_required = 511,
+}
+
+struct Efl.Net.Http.Header {
+    [[An HTTP Header.
+
+      Do not assume strings are Eina_Stringshare and they may be
+      NULL. The key and value should not include any trailing
+      whitespace.
+
+      There is a special case for response headers when
+      "allow_redirects" is enabled, in that case
+      efl_net_dialer_http_response_headers_all_get() will return some
+      items with key being NULL, that notifies of a new request as
+      described in the value "HTTP/1.1 200 Ok".
+    ]]
+    key: string; [[for response headers this may be null to indicate a new request response, then the value will be a line such as 'HTTP/1.1 200 Ok']]
+    value: string;
+}
+
+var @extern Efl.Net.Http.Error.BAD_CONTENT_ENCODING: Eina.Error;
+var @extern Efl.Net.Http.Error.BAD_DOWNLOAD_RESUME: Eina.Error;
+var @extern Efl.Net.Http.Error.BAD_FUNCTION_ARGUMENT: Eina.Error;
+var @extern Efl.Net.Http.Error.CHUNK_FAILED: Eina.Error;
+var @extern Efl.Net.Http.Error.CONV_FAILED: Eina.Error;
+var @extern Efl.Net.Http.Error.CONV_REQD: Eina.Error;
+var @extern Efl.Net.Http.Error.COULDNT_CONNECT: Eina.Error;
+var @extern Efl.Net.Http.Error.COULDNT_RESOLVE_HOST: Eina.Error;
+var @extern Efl.Net.Http.Error.COULDNT_RESOLVE_PROXY: Eina.Error;
+var @extern Efl.Net.Http.Error.FAILED_INIT: Eina.Error;
+var @extern Efl.Net.Http.Error.FILE_COULDNT_READ_FILE: Eina.Error;
+var @extern Efl.Net.Http.Error.FILESIZE_EXCEEDED: Eina.Error;
+var @extern Efl.Net.Http.Error.FUNCTION_NOT_FOUND: Eina.Error;
+var @extern Efl.Net.Http.Error.GOT_NOTHING: Eina.Error;
+var @extern Efl.Net.Http.Error.HTTP2: Eina.Error;
+var @extern Efl.Net.Http.Error.HTTP2_STREAM: Eina.Error;
+var @extern Efl.Net.Http.Error.HTTP_POST_ERROR: Eina.Error;
+var @extern Efl.Net.Http.Error.HTTP_RETURNED_ERROR: Eina.Error;
+var @extern Efl.Net.Http.Error.INTERFACE_FAILED: Eina.Error;
+var @extern Efl.Net.Http.Error.LOGIN_DENIED: Eina.Error;
+var @extern Efl.Net.Http.Error.NO_CONNECTION_AVAILABLE: Eina.Error;
+var @extern Efl.Net.Http.Error.NOT_BUILT_IN: Eina.Error;
+var @extern Efl.Net.Http.Error.OPERATION_TIMEDOUT: Eina.Error;
+var @extern Efl.Net.Http.Error.PARTIAL_FILE: Eina.Error;
+var @extern Efl.Net.Http.Error.PEER_FAILED_VERIFICATION: Eina.Error;
+var @extern Efl.Net.Http.Error.RANGE_ERROR: Eina.Error;
+var @extern Efl.Net.Http.Error.READ_ERROR: Eina.Error;
+var @extern Efl.Net.Http.Error.RECV_ERROR: Eina.Error;
+var @extern Efl.Net.Http.Error.REMOTE_ACCESS_DENIED: Eina.Error;
+var @extern Efl.Net.Http.Error.REMOTE_DISK_FULL: Eina.Error;
+var @extern Efl.Net.Http.Error.REMOTE_FILE_EXISTS: Eina.Error;
+var @extern Efl.Net.Http.Error.REMOTE_FILE_NOT_FOUND: Eina.Error;
+var @extern Efl.Net.Http.Error.SEND_ERROR: Eina.Error;
+var @extern Efl.Net.Http.Error.SEND_FAIL_REWIND: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_CACERT: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_CACERT_BADFILE: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_CERTPROBLEM: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_CIPHER: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_CONNECT_ERROR: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_CRL_BADFILE: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_ENGINE_INITFAILED: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_ENGINE_NOTFOUND: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_ENGINE_SETFAILED: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_INVALIDCERTSTATUS: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_ISSUER_ERROR: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_PINNEDPUBKEYNOTMATCH: Eina.Error;
+var @extern Efl.Net.Http.Error.SSL_SHUTDOWN_FAILED: Eina.Error;
+var @extern Efl.Net.Http.Error.TOO_MANY_REDIRECTS: Eina.Error;
+var @extern Efl.Net.Http.Error.UNKNOWN_OPTION: Eina.Error;
+var @extern Efl.Net.Http.Error.UNSUPPORTED_PROTOCOL: Eina.Error;
+var @extern Efl.Net.Http.Error.UPLOAD_FAILED: Eina.Error;
+var @extern Efl.Net.Http.Error.URL_MALFORMAT: Eina.Error;
+var @extern Efl.Net.Http.Error.USE_SSL_FAILED: Eina.Error;
+var @extern Efl.Net.Http.Error.WRITE_ERROR: Eina.Error;

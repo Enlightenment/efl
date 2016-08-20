@@ -11,6 +11,7 @@ ecore_con_eolian_files = \
         lib/ecore_con/efl_net_socket_tcp.eo \
         lib/ecore_con/efl_net_dialer.eo \
         lib/ecore_con/efl_net_dialer_tcp.eo \
+        lib/ecore_con/efl_net_dialer_http.eo \
         lib/ecore_con/efl_net_server.eo \
         lib/ecore_con/efl_net_server_fd.eo \
         lib/ecore_con/efl_net_server_tcp.eo \
@@ -19,8 +20,13 @@ ecore_con_eolian_files = \
 	lib/ecore_con/ecore_con_eet_client_obj.eo \
 	lib/ecore_con/efl_network_url.eo
 
+ecore_con_eolian_type_files = \
+        lib/ecore_con/efl_net_http_types.eot
+
+
 ecore_con_eolian_c = $(ecore_con_eolian_files:%.eo=%.eo.c)
 ecore_con_eolian_h = $(ecore_con_eolian_files:%.eo=%.eo.h) \
+                     $(ecore_con_eolian_type_files:%.eot=%.eot.h) \
                      $(ecore_con_eolian_files:%.eo=%.eo.legacy.h)
 
 BUILT_SOURCES += \
@@ -29,10 +35,12 @@ BUILT_SOURCES += \
 
 ecoreconeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreconeolianfiles_DATA = \
-                           $(ecore_con_eolian_files)
+                           $(ecore_con_eolian_files) \
+			   $(ecore_con_eolian_type_files)
 
 EXTRA_DIST2 += \
               ${ecoreconeolianfiles_DATA}
+
 
 lib_LTLIBRARIES += lib/ecore_con/libecore_con.la
 
@@ -66,6 +74,7 @@ lib/ecore_con/efl_net_socket_fd.c \
 lib/ecore_con/efl_net_socket_tcp.c \
 lib/ecore_con/efl_net_dialer.c \
 lib/ecore_con/efl_net_dialer_tcp.c \
+lib/ecore_con/efl_net_dialer_http.c \
 lib/ecore_con/efl_net_server.c \
 lib/ecore_con/efl_net_server_fd.c \
 lib/ecore_con/efl_net_server_tcp.c

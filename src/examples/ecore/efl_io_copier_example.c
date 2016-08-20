@@ -89,6 +89,63 @@ EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
                            { EFL_NET_DIALER_EVENT_ERROR, _dialer_error },
                            { EFL_NET_DIALER_EVENT_CONNECTED, _dialer_connected });
 
+static void
+_http_headers_done(void *data EINA_UNUSED, const Eo_Event *event)
+{
+   Eina_Iterator *itr;
+   Efl_Net_Http_Header *h;
+   Efl_Net_Http_Version ver = efl_net_dialer_http_version_get(event->object);
+   const char *response_content_type;
+   int64_t response_content_length;
+
+   fprintf(stderr, "INFO: HTTP/%d.%d connected to '%s', code=%d, headers:\n",
+           ver / 100, ver % 100,
+           efl_net_dialer_address_dial_get(event->object),
+           efl_net_dialer_http_response_status_get(event->object));
+
+   /* this is only for the last request, if allow_redirects and you want
+    * all of the headers, use efl_net_dialer_http_response_headers_all_get()
+    */
+   itr = efl_net_dialer_http_response_headers_get(event->object);
+
+   EINA_ITERATOR_FOREACH(itr, h)
+     fprintf(stderr, "INFO: Header '%s: %s'\n", h->key, h->value);
+
+   eina_iterator_free(itr);
+
+   /* be nice to memory, we do not need these anymore */
+   efl_net_dialer_http_response_headers_clear(event->object);
+
+   response_content_length = efl_net_dialer_http_response_content_length_get(event->object);
+   response_content_type = efl_net_dialer_http_response_content_type_get(event->object);
+   fprintf(stderr, "INFO: Download %" PRId64 " bytes of type %s\n",
+           response_content_length, response_content_type);
+
+   if (efl_net_dialer_http_primary_mode_get(event->object) == EFL_NET_DIALER_HTTP_PRIMARY_MODE_UPLOAD)
+     {
+        int64_t request_content_type = efl_net_dialer_http_request_content_length_get(event->object);
+        fprintf(stderr, "INFO: Upload %" PRId64 " bytes\n",
+                request_content_type);
+     }
+}
+
+static void
+_http_closed(void *data EINA_UNUSED, const Eo_Event *event)
+{
+   uint64_t dn, dt, un, ut;
+
+   efl_net_dialer_http_progress_download_get(event->object, &dn, &dt);
+   efl_net_dialer_http_progress_upload_get(event->object, &un, &ut);
+   fprintf(stderr, "INFO: http transfer info: "
+           "download=%" PRIu64 "/%" PRIu64 " "
+           "upload=%" PRIu64 "/%" PRIu64 "\n",
+           dn, dt, un, ut);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(http_cbs,
+                           { EFL_NET_DIALER_HTTP_EVENT_HEADERS_DONE, _http_headers_done },
+                           { EFL_IO_CLOSER_EVENT_CLOSED, _http_closed });
+
 /* copier events are of interest, you should hook to at least "done"
  * and "error"
  */
@@ -274,6 +331,7 @@ static const Ecore_Getopt options = {
                                    "The input file name or:\n"
                                    ":stdin: to read from stdin.\n"
                                    "tcp://IP:PORT to connect using TCP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
+                                   "http://address to do a GET request\n"
                                    "",
                                    "input-file"),
     ECORE_GETOPT_STORE_METAVAR_STR(0, NULL,
@@ -283,6 +341,7 @@ static const Ecore_Getopt options = {
                                    ":memory: to write to a memory buffer.\n"
                                    ":none: to not use a destination object.\n"
                                    "tcp://IP:PORT to connect using TCP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
+                                   "http://address to do a PUT request\n"
                                    "",
                                    "output-file"),
     ECORE_GETOPT_SENTINEL
@@ -321,6 +380,7 @@ main(int argc, char **argv)
 
    ecore_init();
    ecore_con_init();
+   ecore_con_url_init();
 
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
@@ -383,6 +443,32 @@ main(int argc, char **argv)
           {
              fprintf(stderr, "ERROR: could not TCP dial %s: %s\n",
                      address, eina_error_msg_get(err));
+             goto end_input;
+          }
+     }
+   else if (strncmp(input_fname, "http://", strlen("http://")) == 0 ||
+            strncmp(input_fname, "https://", strlen("https://")) == 0)
+     {
+        Eina_Error err;
+
+        input = efl_add(EFL_NET_DIALER_HTTP_CLASS, ecore_main_loop_get(),
+                        efl_net_dialer_http_method_set(efl_self, "GET"),
+                        efl_event_callback_array_add(efl_self, input_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_self, dialer_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_self, http_cbs(), NULL) /* optional */
+                        );
+        if (!input)
+          {
+             fprintf(stderr, "ERROR: could not create HTTP Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end;
+          }
+
+        err = efl_net_dialer_dial(input, input_fname);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not HTTP dial %s: %s\n",
+                     input_fname, eina_error_msg_get(err));
              goto end_input;
           }
      }
@@ -493,6 +579,32 @@ main(int argc, char **argv)
              goto end_output;
           }
      }
+   else if (strncmp(output_fname, "http://", strlen("http://")) == 0 ||
+            strncmp(output_fname, "https://", strlen("https://")) == 0)
+     {
+        Eina_Error err;
+
+        output = efl_add(EFL_NET_DIALER_HTTP_CLASS, ecore_main_loop_get(),
+                         efl_net_dialer_http_method_set(efl_self, "PUT"),
+                         efl_event_callback_array_add(efl_self, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_self, dialer_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_self, http_cbs(), NULL) /* optional */
+                         );
+        if (!output)
+          {
+             fprintf(stderr, "ERROR: could not create HTTP Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end_input;
+          }
+
+        err = efl_net_dialer_dial(output, output_fname);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not HTTP dial %s: %s\n",
+                     output_fname, eina_error_msg_get(err));
+             goto end_output;
+          }
+     }
    else
      {
         /* regular file, open with flags: write-only, close-on-exec,
@@ -560,6 +672,7 @@ main(int argc, char **argv)
    input = NULL;
 
  end:
+   ecore_con_url_shutdown();
    ecore_con_shutdown();
    ecore_shutdown();
 
