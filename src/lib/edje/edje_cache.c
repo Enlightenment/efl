@@ -79,6 +79,7 @@ edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce)
   eina_mempool_del(ce->mp_rtl.MESH_NODE);
   eina_mempool_del(ce->mp_rtl.LIGHT);
   eina_mempool_del(ce->mp_rtl.CAMERA);
+  eina_mempool_del(ce->mp_rtl.VECTOR);
   memset(&ce->mp_rtl, 0, sizeof (ce->mp_rtl));
   ce->ref = NULL;
 }

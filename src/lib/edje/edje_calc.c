@@ -309,6 +309,7 @@ case EDJE_PART_TYPE_##Short:                                          \
         POPULATE_MEMSIZE_RTL(CAMERA, Camera);
         POPULATE_MEMSIZE_RTL(LIGHT, Light);
         POPULATE_MEMSIZE_RTL(MESH_NODE, Mesh_Node);
+        POPULATE_MEMSIZE_RTL(VECTOR, Vector);
      }
 #undef POPULATE_MEMSIZE_RTL
 

@@ -2110,6 +2110,7 @@ case EDJE_PART_TYPE_##Short:                               \
         ALLOC_COPY_DESC(BOX, Box, d, box);
         ALLOC_COPY_DESC(TABLE, Table, d, table);
         ALLOC_COPY_DESC(EXTERNAL, External, d, external_params);
+        ALLOC_COPY_DESC(VECTOR, Vector, d, vg);
      }
 
    if (!d) return 0;
