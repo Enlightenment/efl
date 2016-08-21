@@ -884,19 +884,10 @@ struct _Edje_Limit
       TYPE      SNAPSHOT;         \
       TYPE      VECTOR;
 
-struct _Edje_Part_Collection_Directory_Entry
+typedef struct _Edje_Part_Collection_Directory_Entry_Mp Edje_Part_Collection_Directory_Entry_Mp;
+
+struct _Edje_Part_Collection_Directory_Entry_Mp
 {
-   const char *entry; /* the nominal name of the part collection */
-   Edje_Part_Collection *ref;
-
-   struct
-   {
-      PART_TYPE_FIELDS(int)
-      int      part;
-   } count;
-
-   int         id; /* the id of this named part collection */
-
    struct
    {
       PART_TYPE_FIELDS(Eina_Mempool *)
@@ -907,6 +898,22 @@ struct _Edje_Part_Collection_Directory_Entry
    {
       PART_TYPE_FIELDS(Eina_Mempool *)
    } mp_rtl; /* For Right To Left interface */
+};
+
+struct _Edje_Part_Collection_Directory_Entry
+{
+   const char *entry; /* the nominal name of the part collection */
+   Edje_Part_Collection *ref;
+
+   Edje_Part_Collection_Directory_Entry_Mp *mp;
+
+   struct
+   {
+      PART_TYPE_FIELDS(int)
+      int      part;
+   } count;
+
+   int         id; /* the id of this named part collection */
 
    Eina_Bool group_alias;
 };

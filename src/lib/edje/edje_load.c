@@ -2035,7 +2035,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
         // technically need this - but we ASSUME we use "one_big" so everything gets
         // freed in one go lower down when we del the mempool... but what if pool goes
         // "over"?
-        eina_mempool_free(ce->mp.part, ep);
+        eina_mempool_free(ce->mp->mp.part, ep);
      }
    free(ec->parts);
    ec->parts = NULL;
@@ -2141,9 +2141,9 @@ _edje_collection_free_part_description_free(int type,
                                             Edje_Part_Collection_Directory_Entry *ce,
                                             Eina_Bool free_strings)
 {
-#define FREE_POOL(Type, Ce, Desc)                                 \
-case EDJE_PART_TYPE_##Type: eina_mempool_free(Ce->mp.Type, Desc); \
-  ce->count.Type--;                                               \
+#define FREE_POOL(Type, Ce, Desc)                                     \
+case EDJE_PART_TYPE_##Type: eina_mempool_free(ce->mp->mp.Type, Desc); \
+  ce->count.Type--;                                                   \
   break;
 
    _edje_collection_free_part_description_clean(type, desc, free_strings);

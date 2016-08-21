@@ -9,18 +9,22 @@ static int _edje_collection_cache_size = 16;
 
 EAPI void
 edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce)
-{  /* Init Eina Mempools this is also used in edje_pick.c */
-  char *buffer;
-#define INIT_EMP(Tp, Sz, Ce)                                                        \
-  buffer = alloca(strlen(ce->entry) + strlen(#Tp) + 2);                             \
-  sprintf(buffer, "%s/%s", ce->entry, #Tp);                                         \
-  Ce->mp.Tp = eina_mempool_add("one_big", buffer, NULL, sizeof (Sz), Ce->count.Tp); \
-  _emp_##Tp = Ce->mp.Tp;
+{
+   /* Init Eina Mempools this is also used in edje_pick.c */
+   char *buffer;
+   ce->mp = calloc(1, sizeof(Edje_Part_Collection_Directory_Entry_Mp));
+   if (!ce->mp) return;
 
-#define INIT_EMP_BOTH(Tp, Sz, Ce)                           \
-  INIT_EMP(Tp, Sz, Ce)                                      \
-  Ce->mp_rtl.Tp = eina_mempool_add("one_big", buffer, NULL, \
-                                   sizeof (Sz), Ce->count.Tp);
+#define INIT_EMP(Tp, Sz, Ce) \
+  buffer = alloca(strlen(ce->entry) + strlen(#Tp) + 2); \
+  sprintf(buffer, "%s/%s", ce->entry, #Tp); \
+  Ce->mp->mp.Tp = eina_mempool_add("one_big", buffer, NULL, sizeof (Sz), Ce->count.Tp); \
+  _emp_##Tp = Ce->mp->mp.Tp;
+
+#define INIT_EMP_BOTH(Tp, Sz, Ce) \
+  INIT_EMP(Tp, Sz, Ce) \
+  Ce->mp->mp_rtl.Tp = eina_mempool_add("one_big", buffer, NULL, \
+                                       sizeof(Sz), Ce->count.Tp);
 
   INIT_EMP_BOTH(RECTANGLE, Edje_Part_Description_Common, ce);
   INIT_EMP_BOTH(TEXT, Edje_Part_Description_Text, ce);
@@ -45,42 +49,44 @@ EAPI void
 edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce)
 {  /* Free Eina Mempools this is also used in edje_pick.c */
    /* Destroy all part and description. */
-  eina_mempool_del(ce->mp.RECTANGLE);
-  eina_mempool_del(ce->mp.TEXT);
-  eina_mempool_del(ce->mp.IMAGE);
-  eina_mempool_del(ce->mp.PROXY);
-  eina_mempool_del(ce->mp.SWALLOW);
-  eina_mempool_del(ce->mp.TEXTBLOCK);
-  eina_mempool_del(ce->mp.GROUP);
-  eina_mempool_del(ce->mp.BOX);
-  eina_mempool_del(ce->mp.TABLE);
-  eina_mempool_del(ce->mp.EXTERNAL);
-  eina_mempool_del(ce->mp.SPACER);
-  eina_mempool_del(ce->mp.SNAPSHOT);
-  eina_mempool_del(ce->mp.MESH_NODE);
-  eina_mempool_del(ce->mp.LIGHT);
-  eina_mempool_del(ce->mp.CAMERA);
-  eina_mempool_del(ce->mp.VECTOR);
-  eina_mempool_del(ce->mp.part);
-  memset(&ce->mp, 0, sizeof (ce->mp));
+   ce->ref = NULL;
 
-  eina_mempool_del(ce->mp_rtl.RECTANGLE);
-  eina_mempool_del(ce->mp_rtl.TEXT);
-  eina_mempool_del(ce->mp_rtl.IMAGE);
-  eina_mempool_del(ce->mp_rtl.PROXY);
-  eina_mempool_del(ce->mp_rtl.SWALLOW);
-  eina_mempool_del(ce->mp_rtl.TEXTBLOCK);
-  eina_mempool_del(ce->mp_rtl.GROUP);
-  eina_mempool_del(ce->mp_rtl.BOX);
-  eina_mempool_del(ce->mp_rtl.TABLE);
-  eina_mempool_del(ce->mp_rtl.EXTERNAL);
-  eina_mempool_del(ce->mp_rtl.SPACER);
-  eina_mempool_del(ce->mp_rtl.SNAPSHOT);
-  eina_mempool_del(ce->mp_rtl.MESH_NODE);
-  eina_mempool_del(ce->mp_rtl.LIGHT);
-  eina_mempool_del(ce->mp_rtl.CAMERA);
-  memset(&ce->mp_rtl, 0, sizeof (ce->mp_rtl));
-  ce->ref = NULL;
+   if (!ce->mp) return;
+   eina_mempool_del(ce->mp->mp.RECTANGLE);
+   eina_mempool_del(ce->mp->mp.TEXT);
+   eina_mempool_del(ce->mp->mp.IMAGE);
+   eina_mempool_del(ce->mp->mp.PROXY);
+   eina_mempool_del(ce->mp->mp.SWALLOW);
+   eina_mempool_del(ce->mp->mp.TEXTBLOCK);
+   eina_mempool_del(ce->mp->mp.GROUP);
+   eina_mempool_del(ce->mp->mp.BOX);
+   eina_mempool_del(ce->mp->mp.TABLE);
+   eina_mempool_del(ce->mp->mp.EXTERNAL);
+   eina_mempool_del(ce->mp->mp.SPACER);
+   eina_mempool_del(ce->mp->mp.SNAPSHOT);
+   eina_mempool_del(ce->mp->mp.MESH_NODE);
+   eina_mempool_del(ce->mp->mp.LIGHT);
+   eina_mempool_del(ce->mp->mp.CAMERA);
+   eina_mempool_del(ce->mp->mp.VECTOR);
+   eina_mempool_del(ce->mp->mp.part);
+   memset(&ce->mp->mp, 0, sizeof(ce->mp->mp));
+
+   eina_mempool_del(ce->mp->mp_rtl.RECTANGLE);
+   eina_mempool_del(ce->mp->mp_rtl.TEXT);
+   eina_mempool_del(ce->mp->mp_rtl.IMAGE);
+   eina_mempool_del(ce->mp->mp_rtl.PROXY);
+   eina_mempool_del(ce->mp->mp_rtl.SWALLOW);
+   eina_mempool_del(ce->mp->mp_rtl.TEXTBLOCK);
+   eina_mempool_del(ce->mp->mp_rtl.GROUP);
+   eina_mempool_del(ce->mp->mp_rtl.BOX);
+   eina_mempool_del(ce->mp->mp_rtl.TABLE);
+   eina_mempool_del(ce->mp->mp_rtl.EXTERNAL);
+   eina_mempool_del(ce->mp->mp_rtl.SPACER);
+   eina_mempool_del(ce->mp->mp_rtl.SNAPSHOT);
+   eina_mempool_del(ce->mp->mp_rtl.MESH_NODE);
+   eina_mempool_del(ce->mp->mp_rtl.LIGHT);
+   eina_mempool_del(ce->mp->mp_rtl.CAMERA);
+   memset(&ce->mp->mp_rtl, 0, sizeof(ce->mp->mp_rtl));
 }
 
 void

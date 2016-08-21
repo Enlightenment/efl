@@ -381,7 +381,7 @@ _edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src
 case EDJE_PART_TYPE_##Short:                                          \
 {                                                                     \
    Edje_Part_Description_##Type * Name;                               \
-   Name = eina_mempool_malloc(ce->mp_rtl.Short,                       \
+   Name = eina_mempool_malloc(ce->mp->mp_rtl.Short,                   \
                               sizeof (Edje_Part_Description_##Type)); \
    desc_rtl = &Name->common;                                          \
    memsize = sizeof(Edje_Part_Description_##Type);                    \
@@ -393,35 +393,35 @@ case EDJE_PART_TYPE_##Short:                                          \
    switch (type)
      {
       case EDJE_PART_TYPE_RECTANGLE:
-        desc_rtl = eina_mempool_malloc(ce->mp_rtl.RECTANGLE,
+        desc_rtl = eina_mempool_malloc(ce->mp->mp_rtl.RECTANGLE,
                                        sizeof (Edje_Part_Description_Common));
         ce->count.RECTANGLE++;
         memsize = sizeof(Edje_Part_Description_Common);
         break;
 
       case EDJE_PART_TYPE_SNAPSHOT:
-        desc_rtl = eina_mempool_malloc(ce->mp_rtl.SNAPSHOT,
+        desc_rtl = eina_mempool_malloc(ce->mp->mp_rtl.SNAPSHOT,
                                        sizeof (Edje_Part_Description_Snapshot));
         ce->count.SNAPSHOT++;
         memsize = sizeof(Edje_Part_Description_Snapshot);
         break;
 
       case EDJE_PART_TYPE_SWALLOW:
-        desc_rtl = eina_mempool_malloc(ce->mp_rtl.SWALLOW,
+        desc_rtl = eina_mempool_malloc(ce->mp->mp_rtl.SWALLOW,
                                        sizeof (Edje_Part_Description_Common));
         ce->count.SWALLOW++;
         memsize = sizeof(Edje_Part_Description_Common);
         break;
 
       case EDJE_PART_TYPE_GROUP:
-        desc_rtl = eina_mempool_malloc(ce->mp_rtl.GROUP,
+        desc_rtl = eina_mempool_malloc(ce->mp->mp_rtl.GROUP,
                                        sizeof (Edje_Part_Description_Common));
         ce->count.GROUP++;
         memsize = sizeof(Edje_Part_Description_Common);
         break;
 
       case EDJE_PART_TYPE_SPACER:
-        desc_rtl = eina_mempool_malloc(ce->mp_rtl.SPACER,
+        desc_rtl = eina_mempool_malloc(ce->mp->mp_rtl.SPACER,
                                        sizeof (Edje_Part_Description_Common));
         ce->count.SPACER++;
         memsize = sizeof(Edje_Part_Description_Common);

@@ -1600,9 +1600,9 @@ static void
 _mempools_add(Edje_Part_Collection_Directory_Entry *de)
 {
 #define EDIT_EMN(Tp, Sz, Ce) \
-  Ce->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
+  Ce->mp->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
 #define EDIT_EMNP(Tp, Sz, Ce) \
-  Ce->mp_rtl.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
+  Ce->mp->mp_rtl.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
 
    EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
    EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
@@ -3081,7 +3081,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    ce = eina_hash_find(ed->file->collection, ed->group);
 
    /* Alloc Edje_Part or return */
-   ep = eina_mempool_malloc(ce->mp.part, sizeof(Edje_Part));
+   ep = eina_mempool_malloc(ce->mp->mp.part, sizeof(Edje_Part));
    if (!ep) return EINA_FALSE;
    memset(ep, 0, sizeof(Edje_Part));
 
@@ -3089,7 +3089,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    rp = eina_mempool_malloc(_edje_real_part_mp, sizeof(Edje_Real_Part));
    if (!rp)
      {
-        eina_mempool_free(ce->mp.part, ep);
+        eina_mempool_free(ce->mp->mp.part, ep);
         return EINA_FALSE;
      }
    memset(rp, 0, sizeof(Edje_Real_Part));
@@ -3100,7 +3100,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    tmp = realloc(pc->parts, (pc->parts_count + 1) * sizeof (Edje_Part *));
    if (!tmp)
      {
-        eina_mempool_free(ce->mp.part, ep);
+        eina_mempool_free(ce->mp->mp.part, ep);
         eina_mempool_free(_edje_real_part_mp, rp);
         return EINA_FALSE;
      }
@@ -3241,7 +3241,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
         _edje_if_string_free(ed, &ep->name);
         if (source)
           _edje_if_string_free(ed, &ep->source);
-        eina_mempool_free(ce->mp.part, ep);
+        eina_mempool_free(ce->mp->mp.part, ep);
         eina_mempool_free(_edje_real_part_mp, rp);
         return EINA_FALSE;
      }
@@ -3347,7 +3347,7 @@ edje_edit_part_del(Evas_Object *obj, const char *part)
      _edje_collection_free_part_description_free(ep->type, ep->other.desc[k], ce, 0);
 
    free(ep->other.desc);
-   eina_mempool_free(ce->mp.part, ep);
+   eina_mempool_free(ce->mp->mp.part, ep);
 
    /* Free Edje_Real_Part */
    _edje_real_part_free(ed, rp);
@@ -6197,22 +6197,22 @@ _edje_edit_state_alloc(int type, Edje *ed)
    switch (type)
      {
       case EDJE_PART_TYPE_RECTANGLE:
-        pd = eina_mempool_malloc(ce->mp.RECTANGLE, sizeof (Edje_Part_Description_Common));
+        pd = eina_mempool_malloc(ce->mp->mp.RECTANGLE, sizeof (Edje_Part_Description_Common));
         ce->count.RECTANGLE++;
         break;
 
       case EDJE_PART_TYPE_SPACER:
-        pd = eina_mempool_malloc(ce->mp.SPACER, sizeof (Edje_Part_Description_Common));
+        pd = eina_mempool_malloc(ce->mp->mp.SPACER, sizeof (Edje_Part_Description_Common));
         ce->count.SPACER++;
         break;
 
       case EDJE_PART_TYPE_SWALLOW:
-        pd = eina_mempool_malloc(ce->mp.SWALLOW, sizeof (Edje_Part_Description_Common));
+        pd = eina_mempool_malloc(ce->mp->mp.SWALLOW, sizeof (Edje_Part_Description_Common));
         ce->count.SWALLOW++;
         break;
 
       case EDJE_PART_TYPE_GROUP:
-        pd = eina_mempool_malloc(ce->mp.GROUP, sizeof (Edje_Part_Description_Common));
+        pd = eina_mempool_malloc(ce->mp->mp.GROUP, sizeof (Edje_Part_Description_Common));
         ce->count.GROUP++;
         break;
 
@@ -6221,7 +6221,7 @@ case EDJE_PART_TYPE_##Short:                                          \
 {                                                                     \
    Edje_Part_Description_##Type * Name;                               \
                                                                       \
-   Name = eina_mempool_malloc(ce->mp.Short,                           \
+   Name = eina_mempool_malloc(ce->mp->mp.Short,                       \
                               sizeof (Edje_Part_Description_##Type)); \
    memset(Name, 0, sizeof(Edje_Part_Description_##Type));             \
    pd = &Name->common;                                                \
