@@ -647,7 +647,7 @@ _edje_eina_hash_add_alloc(Eina_Hash *hash,
    if (!hash)
      return NULL;
 
-   eina_hash_add(hash, key, data);
+   eina_hash_direct_add(hash, key, data);
    return hash;
 }
 
