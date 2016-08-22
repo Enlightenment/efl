@@ -38,6 +38,7 @@
 #include "eina_error.h"
 #include "eina_stringshare.h"
 #include "eina_lock.h"
+#include "eina_str.h"
 #ifdef EINA_HAVE_THREADS
 #include "eina_hash.h"
 #endif
@@ -321,6 +322,16 @@ eina_error_msg_get(Eina_Error error)
 # else /* STRERROR_R_CHAR_P */
              str = strerror_r(error, buf, sizeof(buf)); /* GNU */
 # endif /* ! STRERROR_R_CHAR_P */
+#else
+              /* not so good fallback. Usually strerror(err) will
+               * return a const string if a known error (what we use),
+               * and will return a pointer to a global modified string
+               * formatted with "Unknown error XXXX".. which we just
+               * ignore... so while it's not super-correct, this
+               * should work well.
+               */
+             eina_strlcpy(buf, strerror(error), sizeof(buf));
+             str = buf;
 #endif /* HAVE_STRERROR_R */
 
              if (!str)
