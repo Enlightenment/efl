@@ -3110,7 +3110,7 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
         a.update_area = *viewport;
      }
 
-   efl_event_callback_call(ee->evas, EFL_EVENT_ANIMATOR_TICK, &a);
+   efl_event_callback_legacy_call(ee->evas, EFL_EVENT_ANIMATOR_TICK, &a);
 
    // FIXME: We do not support partial animator in the subcanvas
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
@@ -4386,7 +4386,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
    ev->pressure = info->multi.pressure;
    ev->angle = info->multi.angle - ee->rotation;
 
-   efl_event_callback_call(e, _event_description_get(ev->action), evt);
+   efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
    efl_del(evt);
 
@@ -4444,7 +4444,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
    ev->pressure = info->multi.pressure;
    ev->angle = info->multi.angle - ee->rotation;
 
-   efl_event_callback_call(e, _event_description_get(ev->action), evt);
+   efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
    efl_del(evt);
 
@@ -4476,7 +4476,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
    ev->wheel.z = info->z;
    ev->wheel.dir = info->direction ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL;
 
-   efl_event_callback_call(e, _event_description_get(ev->action), evt);
+   efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
    efl_del(evt);
 
@@ -4503,7 +4503,7 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
    ev->timestamp = info->timestamp;
    _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
 
-   efl_event_callback_call(e, _event_description_get(ev->action), evt);
+   efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
    efl_del(evt);
 
@@ -4610,7 +4610,7 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
      }
    _pointer_position_set(ev, ee, x, y, x, y);
 
-   efl_event_callback_call(e, _event_description_get(ev->action), evt);
+   efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
    efl_del(evt);
 
@@ -4648,9 +4648,9 @@ _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool dow
    ev->device = NULL; /* FIXME */
 
    if (down)
-     efl_event_callback_call(e, EFL_EVENT_KEY_DOWN, evt);
+     efl_event_callback_legacy_call(e, EFL_EVENT_KEY_DOWN, evt);
    else
-     efl_event_callback_call(e, EFL_EVENT_KEY_UP, evt);
+     efl_event_callback_legacy_call(e, EFL_EVENT_KEY_UP, evt);
 
    processed = ev->evas_done;
    efl_del(evt);

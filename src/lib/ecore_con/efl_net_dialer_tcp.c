@@ -115,7 +115,7 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
    if (efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&addr))
      {
         efl_net_socket_address_remote_set(o, buf);
-        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+        efl_event_callback_legacy_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
      }
 
    fd = efl_net_socket4(addr.ss_family, SOCK_STREAM, IPPROTO_TCP, efl_net_socket_fd_close_on_exec_get(o));
@@ -187,7 +187,7 @@ _efl_net_dialer_tcp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Tcp_Data 
 {
    if (pd->connected == connected) return;
    pd->connected = connected;
-   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
+   if (connected) efl_event_callback_legacy_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
 }
 
 EOLIAN static Eina_Bool

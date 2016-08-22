@@ -315,21 +315,21 @@ _forward(void *data, const Eo_Event *event EINA_UNUSED)
    elm_video_play_position_set(sd->video, pos);
 
    elm_layout_signal_emit(data, "elm,button,forward", "elm");
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_FORWARD_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_FORWARD_CLICKED, NULL);
 }
 
 static void
 _info(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,info", "elm");
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_INFO_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_INFO_CLICKED, NULL);
 }
 
 static void
 _next(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,next", "elm");
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_NEXT_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_NEXT_CLICKED, NULL);
 }
 
 static void
@@ -339,7 +339,7 @@ _pause(void *data, const Eo_Event *event EINA_UNUSED)
 
    elm_layout_signal_emit(data, "elm,player,pause", "elm");
    elm_video_pause(sd->video);
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_PAUSE_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_PAUSE_CLICKED, NULL);
 }
 
 static void
@@ -349,13 +349,13 @@ _play(void *data, const Eo_Event *event EINA_UNUSED)
 
    elm_layout_signal_emit(data, "elm,player,play", "elm");
    elm_video_play(sd->video);
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_PLAY_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_PLAY_CLICKED, NULL);
 }
 
 static void
 _prev(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_PREV_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_PREV_CLICKED, NULL);
    elm_layout_signal_emit(data, "elm,button,prev", "elm");
 }
 
@@ -371,14 +371,14 @@ _rewind(void *data, const Eo_Event *event EINA_UNUSED)
    elm_video_play_position_set(sd->video, pos);
 
    elm_layout_signal_emit(data, "elm,button,rewind", "elm");
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_REWIND_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_REWIND_CLICKED, NULL);
 }
 
 static void
 _stop(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,stop", "elm");
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_QUALITY_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_QUALITY_CLICKED, NULL);
 }
 
 static void
@@ -388,7 +388,7 @@ _eject(void *data, const Eo_Event *event EINA_UNUSED)
 
    elm_layout_signal_emit(data, "elm,button,eject", "elm");
    emotion_object_eject(elm_video_emotion_get(sd->video));
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_EJECT_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_EJECT_CLICKED, NULL);
 }
 
 static void
@@ -413,7 +413,7 @@ _volume(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,volume", "elm");
    _mute_toggle(data);
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_VOLUME_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_VOLUME_CLICKED, NULL);
 }
 
 static void
@@ -421,7 +421,7 @@ _mute(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,mute", "elm");
    _mute_toggle(data);
-   efl_event_callback_call(data, ELM_PLAYER_EVENT_MUTE_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_MUTE_CLICKED, NULL);
 }
 
 static void

@@ -272,7 +272,7 @@ _on_slideshow_end(void *data,
    elm_layout_signal_emit(data, "anim,end", "slideshow");
 
    if (emission != NULL)
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (data, ELM_SLIDESHOW_EVENT_TRANSITION_END, EO_OBJ(sd->current));
 }
 
@@ -481,7 +481,7 @@ _elm_slideshow_item_show(Eo *eo_item EINA_UNUSED, Elm_Slideshow_Item_Data *item)
 
    sd->previous = sd->current;
    sd->current = next;
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (WIDGET(item), ELM_SLIDESHOW_EVENT_CHANGED, EO_OBJ(sd->current));
 }
 
@@ -519,7 +519,7 @@ _elm_slideshow_next(Eo *obj, Elm_Slideshow_Data *sd)
 
    sd->previous = sd->current;
    sd->current = next;
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, ELM_SLIDESHOW_EVENT_CHANGED, EO_OBJ(sd->current));
 }
 
@@ -557,7 +557,7 @@ _elm_slideshow_previous(Eo *obj, Elm_Slideshow_Data *sd)
 
    sd->previous = sd->current;
    sd->current = prev;
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, ELM_SLIDESHOW_EVENT_CHANGED, EO_OBJ(sd->current));
 }
 

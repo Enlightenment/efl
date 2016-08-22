@@ -624,7 +624,7 @@ _signal_first(Listing_Request *lreq)
      }
 
    // EVENTS: should not call legacy
-   //efl_event_callback_call
+   //efl_event_callback_legacy_call
    //  (lreq->obj, ELM_FILESELECTOR_EVENT_DIRECTORY_OPEN, (void *)lreq->model);
 
    evas_object_smart_callback_call(lreq->obj, "directory,open", (void *)lreq->path);
@@ -1052,7 +1052,7 @@ _on_item_activated(void *data, const Eo_Event *event)
    if (!it_data->is_dir)
      {
         // EVENTS: should not call legacy
-        //efl_event_callback_call
+        //efl_event_callback_legacy_call
         //  (data, ELM_FILESELECTOR_EVENT_ACTIVATED, (void *)it_data->model);
         evas_object_smart_callback_call(data, "activated", (void *)it_data->path);
         return;
@@ -1138,7 +1138,7 @@ _on_item_selected(void *data, const Eo_Event *event)
           elm_object_text_set(sd->name_entry, it_data->filename);
 
         // EVENTS: should not call legacy
-        //efl_event_callback_call
+        //efl_event_callback_legacy_call
         //  (data, EFL_UI_EVENT_SELECTED, (void *)it_data->model);
         evas_object_smart_callback_call(data, "selected", (void *)it_data->path);
      }
@@ -1282,7 +1282,7 @@ _ok(void *data, const Eo_Event *event EINA_UNUSED)
    if (!sd->model || !sd->path)
      {
         // EVENTS: should not call legacy
-        //efl_event_callback_call(fs, ELM_FILESELECTOR_EVENT_DONE, NULL);
+        //efl_event_callback_legacy_call(fs, ELM_FILESELECTOR_EVENT_DONE, NULL);
         evas_object_smart_callback_call(fs, "done", NULL);
         return;
      }
@@ -1301,7 +1301,7 @@ _ok(void *data, const Eo_Event *event EINA_UNUSED)
         _model_str_property_set(selected_model, "path", selection, NULL);
 
         // EVENTS: should not call legacy
-        //efl_event_callback_call
+        //efl_event_callback_legacy_call
         //  (fs, ELM_FILESELECTOR_EVENT_DONE, selected_model);
         evas_object_smart_callback_call(fs, "done", (void *) selection);
 
@@ -1314,12 +1314,12 @@ _ok(void *data, const Eo_Event *event EINA_UNUSED)
         if (it_data)
           {
              // EVENTS: should not call legacy
-             //efl_event_callback_call
+             //efl_event_callback_legacy_call
              //  (fs, ELM_FILESELECTOR_EVENT_DONE, it_data->model);
              evas_object_smart_callback_call(fs, "done", (void *) it_data->path);
           }
         // EVENTS: should not call legacy
-        //efl_event_callback_call
+        //efl_event_callback_legacy_call
         //  (fs, ELM_FILESELECTOR_EVENT_DONE, sd->model);
         evas_object_smart_callback_call(fs, "done", (void *) sd->path);
      }
@@ -1331,7 +1331,7 @@ _canc(void *data, const Eo_Event *event EINA_UNUSED)
    Evas_Object *fs = data;
 
    // EVENTS: should not call legacy
-   //efl_event_callback_call(fs, ELM_FILESELECTOR_EVENT_DONE, NULL);
+   //efl_event_callback_legacy_call(fs, ELM_FILESELECTOR_EVENT_DONE, NULL);
    evas_object_smart_callback_call(fs, "done", NULL);
 }
 
@@ -1368,7 +1368,7 @@ _text_activated_is_dir_then(void *data, void *value)
         if (sd->only_folder)
           {
              // EVENTS: should not call legacy
-             //efl_event_callback_call
+             //efl_event_callback_legacy_call
              //  (fs, EFL_UI_EVENT_SELECTED, (void *)model);
              evas_object_smart_callback_call(fs, "selected", (void *) str);
           }
@@ -1387,7 +1387,7 @@ _text_activated_is_dir_then(void *data, void *value)
              if (sd->only_folder)
                {
                   // EVENTS: should not call legacy
-                  //efl_event_callback_call
+                  //efl_event_callback_legacy_call
                   //  (fs, EFL_UI_EVENT_SELECTED, (void *)model);
                   evas_object_smart_callback_call(fs, "selected", (void *) str);
                }
@@ -1426,12 +1426,12 @@ _on_text_activated_set_path_then_error(void *data, Eina_Error err EINA_UNUSED)
    Eina_Stringshare *str = efl_key_data_get(fs, _text_activated_path_key);
 
    // EVENTS: should not call legacy
-   //efl_event_callback_call
+   //efl_event_callback_legacy_call
    //  (fs, EFL_UI_EVENT_SELECTED, (void *)model);
    evas_object_smart_callback_call(fs, "selected", (void *)str);
 
    // EVENTS: should not call legacy
-   //efl_event_callback_call
+   //efl_event_callback_legacy_call
    //  (fs, ELM_FILESELECTOR_EVENT_SELECTED_INVALID, (void *)model);
    evas_object_smart_callback_call(fs, "selected,invalid", (void *)str);
 

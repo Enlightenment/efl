@@ -69,7 +69,7 @@ _activate(Evas_Object *obj)
           _elm_access_say(E_("Clicked"));
         if (!elm_widget_disabled_get(obj) &&
             !evas_object_freeze_events_get(obj))
-          efl_event_callback_call
+          efl_event_callback_legacy_call
             (obj, EFL_UI_EVENT_CLICKED, NULL);
      }
 }
@@ -93,7 +93,7 @@ _elm_button_elm_widget_activate(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, Elm_A
    if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
    if (evas_object_freeze_events_get(obj)) return EINA_FALSE;
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, EFL_UI_EVENT_CLICKED, NULL);
    elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
 
@@ -201,7 +201,7 @@ _autorepeat_send(void *data)
 {
    ELM_BUTTON_DATA_GET_OR_RETURN_VAL(data, sd, ECORE_CALLBACK_CANCEL);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_REPEATED, NULL);
    if (!sd->repeating)
      {
@@ -242,7 +242,7 @@ _on_pressed_signal(void *data,
               (sd->ar_initial_timeout, _autorepeat_initial_send, data);
      }
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_PRESSED, NULL);
 }
 
@@ -256,7 +256,7 @@ _on_unpressed_signal(void *data,
 
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->repeating = EINA_FALSE;
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_UNPRESSED, NULL);
 }
 

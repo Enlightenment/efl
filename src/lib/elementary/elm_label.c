@@ -362,7 +362,7 @@ _on_slide_end(void *data, Evas_Object *obj EINA_UNUSED,
    if (sd->slide_ellipsis)
      elm_obj_label_ellipsis_set(data, EINA_TRUE);
 
-   efl_event_callback_call(data, ELM_LABEL_EVENT_SLIDE_END, NULL);
+   efl_event_callback_legacy_call(data, ELM_LABEL_EVENT_SLIDE_END, NULL);
 }
 
 EOLIAN static void

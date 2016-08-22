@@ -119,7 +119,7 @@ _hover_end_finished(void *data,
      {
         sd->expanded = EINA_FALSE;
         evas_object_hide(sd->hover);
-        efl_event_callback_call(data, ELM_COMBOBOX_EVENT_DISMISSED, NULL);
+        efl_event_callback_legacy_call(data, ELM_COMBOBOX_EVENT_DISMISSED, NULL);
      }
 }
 
@@ -194,7 +194,7 @@ _activate(Evas_Object *obj)
    evas_object_show(sd->genlist);
    elm_genlist_item_selected_set(sd->item, EINA_TRUE);
    evas_object_show(sd->hover);
-   efl_event_callback_call(obj, ELM_COMBOBOX_EVENT_EXPANDED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_COMBOBOX_EVENT_EXPANDED, NULL);
 }
 
 static void
@@ -203,13 +203,13 @@ _on_item_selected(void *data , Evas_Object *obj EINA_UNUSED, void *event)
    ELM_COMBOBOX_DATA_GET(data, sd);
    elm_object_focus_set(sd->entry, EINA_TRUE);
 
-   efl_event_callback_call(data, ELM_COMBOBOX_EVENT_ITEM_SELECTED, event);
+   efl_event_callback_legacy_call(data, ELM_COMBOBOX_EVENT_ITEM_SELECTED, event);
 }
 
 static void
 _on_item_pressed(void *data , Evas_Object *obj EINA_UNUSED, void *event)
 {
-   efl_event_callback_call(data, ELM_COMBOBOX_EVENT_ITEM_PRESSED, event);
+   efl_event_callback_legacy_call(data, ELM_COMBOBOX_EVENT_ITEM_PRESSED, event);
 }
 
 static void
@@ -226,7 +226,7 @@ _gl_filter_finished_cb(void *data, const Eo_Event *event)
         return;
      }
 
-   efl_event_callback_call(data, ELM_COMBOBOX_EVENT_FILTER_DONE, event->info);
+   efl_event_callback_legacy_call(data, ELM_COMBOBOX_EVENT_FILTER_DONE, event->info);
 
    if (sd->count > 0)
      {
@@ -254,7 +254,7 @@ _on_aborted(void *data, const Eo_Event *event EINA_UNUSED)
 static void
 _on_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   efl_event_callback_call(data, ELM_ENTRY_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -415,7 +415,7 @@ _elm_combobox_hover_end(Eo *obj, Elm_Combobox_Data *sd)
      {
         sd->expanded = EINA_FALSE;
         evas_object_hide(sd->hover);
-        efl_event_callback_call(obj, ELM_COMBOBOX_EVENT_DISMISSED, NULL);
+        efl_event_callback_legacy_call(obj, ELM_COMBOBOX_EVENT_DISMISSED, NULL);
      } // for backward compatibility
 }
 
@@ -461,7 +461,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
      elm_combobox_hover_begin(obj);
    else
      {
-        efl_event_callback_call(sd->genlist, EFL_UI_EVENT_PRESSED, sd->item);
+        efl_event_callback_legacy_call(sd->genlist, EFL_UI_EVENT_PRESSED, sd->item);
         elm_entry_cursor_end_set(sd->entry);
      }
    return EINA_TRUE;

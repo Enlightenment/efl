@@ -264,7 +264,7 @@ _shrink_mode_set(Evas_Object *obj,
                   evas_object_show(sd->end);
 
                   sd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
-                  efl_event_callback_call
+                  efl_event_callback_legacy_call
                     (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)1);
                   break;
                }
@@ -297,7 +297,7 @@ _shrink_mode_set(Evas_Object *obj,
           }
 
         sd->view_state = MULTIBUTTONENTRY_VIEW_NONE;
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)(uintptr_t)sd->shrink);
      }
 
@@ -353,7 +353,7 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
                   elm_entry_input_panel_show(sd->entry);
                }
           }
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, ELM_WIDGET_EVENT_FOCUSED, NULL);
      }
    else
@@ -363,7 +363,7 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
              _view_update(sd);
              elm_entry_input_panel_hide(sd->entry);
           }
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
      }
 
@@ -380,7 +380,7 @@ _item_del(Elm_Multibuttonentry_Item_Data *item)
 
    elm_box_unpack(sd->box, VIEW(item));
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, ELM_MULTIBUTTONENTRY_EVENT_ITEM_DELETED, EO_OBJ(item));
 
    if (sd->selected_it == item)
@@ -409,7 +409,7 @@ _current_item_state_change(Evas_Object *obj,
      {
       case MULTIBUTTONENTRY_BUTTON_STATE_SELECTED:
         elm_layout_signal_emit(VIEW(item), "elm,state,focused", "elm");
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, ELM_MULTIBUTTONENTRY_EVENT_ITEM_SELECTED, EO_OBJ(item));
         break;
       case MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT:
@@ -508,7 +508,7 @@ _on_item_clicked(void *data,
    _item_select(WIDGET(it), it);
 
    if (sd->selected_it)
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (WIDGET(it), ELM_MULTIBUTTONENTRY_EVENT_ITEM_CLICKED, eo_it);
 }
 
@@ -557,7 +557,7 @@ _long_press_cb(void *data)
 
    sd->longpress_timer = NULL;
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (WIDGET(it), ELM_MULTIBUTTONENTRY_EVENT_ITEM_LONGPRESSED, EO_OBJ(it));
 
    return ECORE_CALLBACK_CANCEL;
@@ -917,7 +917,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
         break;
      }
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, ELM_MULTIBUTTONENTRY_EVENT_ITEM_ADDED, eo_item);
 
    if (_elm_config->atspi_mode)
@@ -965,7 +965,7 @@ _mouse_clicked_signal_cb(void *data EINA_UNUSED,
                          const char *emission EINA_UNUSED,
                          const char *source EINA_UNUSED)
 {
-   efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void
@@ -985,10 +985,10 @@ _box_resize_cb(void *data,
    elm_box_padding_get(obj, &hpad, NULL);
 
    if (sd->h_box < h)
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (sd->parent, ELM_MULTIBUTTONENTRY_EVENT_EXPANDED, NULL);
    else if (sd->h_box > h)
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (sd->parent, ELM_MULTIBUTTONENTRY_EVENT_CONTRACTED, NULL);
 
    if (sd->items && sd->w_box != w)
@@ -2033,7 +2033,7 @@ static Eina_Bool
 _key_action_longpress(Eo *obj, const char *params EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(obj, it);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (WIDGET(it), ELM_MULTIBUTTONENTRY_EVENT_ITEM_LONGPRESSED, obj);
    return EINA_TRUE;
 }

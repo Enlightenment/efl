@@ -499,7 +499,7 @@ _panel_toggle(void *data EINA_UNUSED,
         edje_object_message_signal_process(wd->resize_obj);
      }
 
-   efl_event_callback_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
 }
 
 static Eina_Bool
@@ -575,7 +575,7 @@ _state_sync(Evas_Object *obj)
         if (sd->hidden)
           {
              sd->hidden = EINA_FALSE;
-             efl_event_callback_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
+             efl_event_callback_legacy_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
           }
         elm_interface_scrollable_single_direction_set
               (obj, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
@@ -596,7 +596,7 @@ _state_sync(Evas_Object *obj)
         if (!sd->hidden)
           {
              sd->hidden = EINA_TRUE;
-             efl_event_callback_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
+             efl_event_callback_legacy_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
           }
 
         if (horizontal)
@@ -1327,7 +1327,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
           }
         break;
      }
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, EFL_UI_EVENT_SCROLL, (void *) &event);
 }
 

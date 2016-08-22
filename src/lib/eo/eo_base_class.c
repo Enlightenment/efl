@@ -1075,10 +1075,10 @@ _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
 }
 
 static Eina_Bool
-_cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b)
+_cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b, Eina_Bool legacy_compare)
 {
    /* If one is legacy and the other is not, strcmp. Else, pointer compare. */
-   if (EINA_UNLIKELY(_legacy_event_desc_is(a) != _legacy_event_desc_is(b)))
+   if (EINA_UNLIKELY(legacy_compare && (_legacy_event_desc_is(a) != _legacy_event_desc_is(b))))
      {
         return !strcmp(a->name, b->name);
      }
@@ -1086,10 +1086,11 @@ _cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b)
    return (a == b);
 }
 
-EOLIAN static Eina_Bool
-_efl_object_event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
+static inline Eina_Bool
+_event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
             const Efl_Event_Description *desc,
-            void *event_info)
+            void *event_info,
+            Eina_Bool legacy_compare)
 {
    Eina_Bool callback_already_stopped = pd->callback_stopped;
    Eina_Bool ret = EINA_TRUE;
@@ -1142,7 +1143,7 @@ _efl_object_event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
 
                   for (it = cb->items.item_array; it->func; it++)
                     {
-                       if (!_cb_desc_match(it->desc, desc))
+                       if (!_cb_desc_match(it->desc, desc, legacy_compare))
                           continue;
                        if (!it->desc->unfreezable &&
                            (event_freeze_count || pd->event_freeze_count))
@@ -1165,7 +1166,7 @@ _efl_object_event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
                }
              else
                {
-                  if (!_cb_desc_match(cb->items.item.desc, desc))
+                  if (!_cb_desc_match(cb->items.item.desc, desc, legacy_compare))
                     continue;
                   if (!cb->items.item.desc->unfreezable &&
                       (event_freeze_count || pd->event_freeze_count))
@@ -1202,6 +1203,22 @@ end:
    pd->callback_stopped = callback_already_stopped;
 
    return ret;
+}
+
+EOLIAN static Eina_Bool
+_efl_object_event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
+            const Efl_Event_Description *desc,
+            void *event_info)
+{
+   return _event_callback_call(obj_id, pd, desc, event_info, EINA_FALSE);
+}
+
+EOLIAN static Eina_Bool
+_efl_object_event_callback_legacy_call(Eo *obj_id, Efl_Object_Data *pd,
+            const Efl_Event_Description *desc,
+            void *event_info)
+{
+   return _event_callback_call(obj_id, pd, desc, event_info, EINA_TRUE);
 }
 
 EOLIAN static void

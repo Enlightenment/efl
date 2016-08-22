@@ -509,7 +509,7 @@ _elm_progressbar_part_value_set(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, c
 
    _val_set(obj);
    _units_set(obj);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, ELM_PROGRESSBAR_EVENT_CHANGED, NULL);
 }
 

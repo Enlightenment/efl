@@ -65,7 +65,7 @@ static const Elm_Win_Trap *trap = NULL;
          {                                                      \
             edje_object_signal_emit(cursd->edje, \
                         "elm,action,hide_blocker", "elm");      \
-            efl_event_callback_call(cursd->main_menu, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, NULL); \
+            efl_event_callback_legacy_call(cursd->main_menu, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, NULL); \
          }                                                      \
     }
 
@@ -81,7 +81,7 @@ static const Elm_Win_Trap *trap = NULL;
          {                                                      \
             edje_object_signal_emit(cursd->edje, \
                              "elm,action,show_blocker", "elm"); \
-            efl_event_callback_call(cursd->main_menu, EFL_UI_WIN_EVENT_ELM_ACTION_BLOCK_MENU, NULL); \
+            efl_event_callback_legacy_call(cursd->main_menu, EFL_UI_WIN_EVENT_ELM_ACTION_BLOCK_MENU, NULL); \
          }                                                      \
     }
 
@@ -840,7 +840,7 @@ _elm_win_move(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    sd->screen.x = x;
    sd->screen.y = y;
-   efl_event_callback_call(sd->obj, EFL_GFX_EVENT_MOVE, NULL);
+   efl_event_callback_legacy_call(sd->obj, EFL_GFX_EVENT_MOVE, NULL);
    evas_nochange_push(evas_object_evas_get(sd->obj));
    sd->response++;
    evas_object_move(sd->obj, x, y);
@@ -1293,7 +1293,7 @@ _elm_win_profile_update(Efl_Ui_Win_Data *sd)
    EINA_LIST_FOREACH(sub, l, ee2)
      ecore_evas_window_profile_set(ee2, sd->profile.name);
 
-   efl_event_callback_call(sd->obj, EFL_UI_WIN_EVENT_PROFILE_CHANGED, NULL);
+   efl_event_callback_legacy_call(sd->obj, EFL_UI_WIN_EVENT_PROFILE_CHANGED, NULL);
 }
 
 #ifdef HAVE_ELEMENTARY_WL2
@@ -1446,16 +1446,16 @@ _elm_win_state_change(Ecore_Evas *ee)
    if ((ch_withdrawn) || (ch_iconified))
      {
         if (sd->withdrawn)
-          efl_event_callback_call(obj, EFL_UI_WIN_EVENT_WITHDRAWN, NULL);
+          efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_WITHDRAWN, NULL);
         else if (sd->iconified)
           {
-             efl_event_callback_call(obj, EFL_UI_WIN_EVENT_ICONIFIED, NULL);
+             efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_ICONIFIED, NULL);
              if (_elm_config->atspi_mode)
                elm_interface_atspi_window_minimized_signal_emit(obj);
           }
         else
           {
-             efl_event_callback_call(obj, EFL_UI_WIN_EVENT_NORMAL, NULL);
+             efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_NORMAL, NULL);
              if (_elm_config->atspi_mode)
                elm_interface_atspi_window_restored_signal_emit(obj);
           }
@@ -1463,9 +1463,9 @@ _elm_win_state_change(Ecore_Evas *ee)
    if (ch_sticky)
      {
         if (sd->sticky)
-          efl_event_callback_call(obj, EFL_UI_WIN_EVENT_STICK, NULL);
+          efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_STICK, NULL);
         else
-          efl_event_callback_call(obj, EFL_UI_WIN_EVENT_UNSTICK, NULL);
+          efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_UNSTICK, NULL);
      }
    if (ch_fullscreen)
      {
@@ -1489,7 +1489,7 @@ _elm_win_state_change(Ecore_Evas *ee)
              if (need_frame)
                sd->wl.opaque_dirty = 1;
 #endif
-             efl_event_callback_call
+             efl_event_callback_legacy_call
                (obj, EFL_UI_WIN_EVENT_FULLSCREEN, NULL);
           }
         else
@@ -1501,7 +1501,7 @@ _elm_win_state_change(Ecore_Evas *ee)
                   _elm_win_frame_obj_update(sd);
                }
 #endif
-             efl_event_callback_call
+             efl_event_callback_legacy_call
                (obj, EFL_UI_WIN_EVENT_UNFULLSCREEN, NULL);
           }
      }
@@ -1509,13 +1509,13 @@ _elm_win_state_change(Ecore_Evas *ee)
      {
         if (sd->maximized)
           {
-             efl_event_callback_call(obj, EFL_UI_WIN_EVENT_MAXIMIZED, NULL);
+             efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_MAXIMIZED, NULL);
              if (_elm_config->atspi_mode)
                elm_interface_atspi_window_maximized_signal_emit(obj);
           }
         else
           {
-             efl_event_callback_call(obj, EFL_UI_WIN_EVENT_UNMAXIMIZED, NULL);
+             efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_UNMAXIMIZED, NULL);
              if (_elm_config->atspi_mode)
                elm_interface_atspi_window_restored_signal_emit(obj);
           }
@@ -1534,9 +1534,9 @@ _elm_win_state_change(Ecore_Evas *ee)
         _elm_win_xwin_update(sd);
 #endif
         elm_widget_orientation_set(obj, sd->rot);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, EFL_UI_WIN_EVENT_WM_ROTATION_CHANGED, NULL);
      }
 }
@@ -1678,7 +1678,7 @@ _evas_event_key_cb(void *data, const Eo_Event *ev)
    if (evas_focus_get(evas_object_evas_get(win)) == win)
      return;
 
-   efl_event_callback_call(win, ev->desc, evt);
+   efl_event_callback_legacy_call(win, ev->desc, evt);
 }
 
 static void
@@ -1692,7 +1692,7 @@ _evas_event_pointer_cb(void *data, const Eo_Event *ev)
    if (!evdata || evdata->win_fed)
      return;
 
-   efl_event_callback_call(win, ev->desc, evt);
+   efl_event_callback_legacy_call(win, ev->desc, evt);
 }
 
 /* feed events from the window to evas - for fake inputs */
@@ -1711,7 +1711,7 @@ _evas_event_key_feed_fake_cb(void *data, const Eo_Event *ev)
      return;
    evdata->win_fed = EINA_TRUE;
 
-   efl_event_callback_call(evas, ev->desc, evt);
+   efl_event_callback_legacy_call(evas, ev->desc, evt);
    evdata->win_fed = EINA_FALSE;
    evdata->evas_done = EINA_FALSE;
 }
@@ -1731,7 +1731,7 @@ _evas_event_pointer_feed_fake_cb(void *data, const Eo_Event *ev)
      return;
    evdata->win_fed = EINA_TRUE;
 
-   efl_event_callback_call(evas, ev->desc, evt);
+   efl_event_callback_legacy_call(evas, ev->desc, evt);
    evdata->win_fed = EINA_FALSE;
    evdata->evas_done = EINA_FALSE;
 }
@@ -1756,7 +1756,7 @@ _elm_win_evas_render_post(void *data,
    Efl_Gfx_Event_Render_Post *ev = event_info;
    Eo *win = data;
 
-   efl_event_callback_call(win, EFL_CANVAS_EVENT_RENDER_POST, ev);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_RENDER_POST, ev);
 }
 
 static void
@@ -1768,7 +1768,7 @@ _elm_win_evas_render_pre(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_call(win, EFL_CANVAS_EVENT_RENDER_PRE, NULL);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_RENDER_PRE, NULL);
 }
 
 static void
@@ -1780,7 +1780,7 @@ _elm_win_evas_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_call(win, EFL_CANVAS_EVENT_FOCUS_IN, NULL);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_FOCUS_IN, NULL);
 }
 
 static void
@@ -1791,7 +1791,7 @@ _elm_win_evas_focus_out(void *data,
 {
    Eo *win = data;
 
-   efl_event_callback_call(win, EFL_CANVAS_EVENT_FOCUS_OUT, NULL);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_FOCUS_OUT, NULL);
 }
 
 static void
@@ -1804,7 +1804,7 @@ _elm_win_evas_object_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_call(win, EFL_CANVAS_EVENT_OBJECT_FOCUS_IN, object);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_OBJECT_FOCUS_IN, object);
 }
 
 static void
@@ -1816,7 +1816,7 @@ _elm_win_evas_object_focus_out(void *data,
    Eo *object = event_info;
    Eo *win = data;
 
-   efl_event_callback_call(win, EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT, object);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT, object);
 }
 
 static void
@@ -1828,7 +1828,7 @@ _elm_win_evas_device_changed(void *data,
    Eo *device = event_info;
    Eo *win = data;
 
-   efl_event_callback_call(win, EFL_CANVAS_EVENT_DEVICE_CHANGED, device);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_DEVICE_CHANGED, device);
 }
 
 static void
@@ -2594,7 +2594,7 @@ _efl_ui_win_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord
           {
              sd->screen.x = x;
              sd->screen.y = y;
-             efl_event_callback_call(obj, EFL_GFX_EVENT_MOVE, NULL);
+             efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_MOVE, NULL);
           }
         return;
      }
@@ -2610,7 +2610,7 @@ _efl_ui_win_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord
      {
         sd->screen.x = x;
         sd->screen.y = y;
-        efl_event_callback_call(obj, EFL_GFX_EVENT_MOVE, NULL);
+        efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_MOVE, NULL);
      }
    if (sd->frame_obj)
      {
@@ -2664,7 +2664,7 @@ _elm_win_delete_request(Ecore_Evas *ee)
    int autodel = sd->autodel;
    sd->autodel_clear = &autodel;
    evas_object_ref(obj);
-   efl_event_callback_call(obj, EFL_UI_WIN_EVENT_DELETE_REQUEST, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_DELETE_REQUEST, NULL);
    if (sd->autohide)
      evas_object_hide(obj);
    // FIXME: if above callback deletes - then the below will be invalid
@@ -3228,7 +3228,7 @@ _elm_win_property_change(void *data,
         if (e->win == sd->x.xwin)
           {
              sd->indmode = (Elm_Win_Indicator_Mode)ecore_x_e_illume_indicator_state_get(e->win);
-             efl_event_callback_call
+             efl_event_callback_legacy_call
                (sd->obj, EFL_UI_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL);
           }
      }
@@ -3589,7 +3589,7 @@ _elm_win_frame_cb_close(void *data,
    int autodel = sd->autodel;
    sd->autodel_clear = &autodel;
    evas_object_ref(win);
-   efl_event_callback_call(win, EFL_UI_WIN_EVENT_DELETE_REQUEST, NULL);
+   efl_event_callback_legacy_call(win, EFL_UI_WIN_EVENT_DELETE_REQUEST, NULL);
    if (sd->autohide)
      evas_object_hide(win);
    // FIXME: if above callback deletes - then the below will be invalid
@@ -3841,7 +3841,7 @@ _elm_x_io_err(void *data EINA_UNUSED)
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
-     efl_event_callback_call(obj, EFL_UI_WIN_EVENT_IOERR, NULL);
+     efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_IOERR, NULL);
    elm_exit();
 }
 #endif
@@ -5354,7 +5354,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
 #endif
    _elm_win_frame_obj_update(sd);
    elm_widget_orientation_set(obj, rotation);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
 }
 
@@ -5610,7 +5610,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
    edje_object_scale_set(sd->edje,
                          elm_widget_scale_get(obj) * elm_config_scale_get());
 
-   efl_event_callback_call(obj, EFL_UI_WIN_EVENT_THEME_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_THEME_CHANGED, NULL);
    ret = elm_obj_widget_disable(obj);
 
    if (!ret) int_ret = ELM_THEME_APPLY_FAILED;
@@ -6297,7 +6297,7 @@ elm_win_indicator_mode_set(Evas_Object *obj, Elm_Win_Indicator_Mode mode)
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
      }
 #endif
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, EFL_UI_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL);
 }
 
@@ -6333,7 +6333,7 @@ elm_win_indicator_opacity_set(Evas_Object *obj, Elm_Win_Indicator_Opacity_Mode m
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSPARENT);
      }
 #endif
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, EFL_UI_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL);
 }
 

@@ -107,7 +107,7 @@ _selection_done(void *data, const Eo_Event *event)
    evas_object_del(del);
 
    // EVENTS: should not call legacy
-   //efl_event_callback_call
+   //efl_event_callback_legacy_call
    //  (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, (void *)model);
 }
 

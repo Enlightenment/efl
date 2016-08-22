@@ -49,7 +49,7 @@ _restart_2_cb(void *data, const Eo_Event *event)
    fail_if(inside);
 
    inside = EINA_TRUE;
-   efl_event_callback_call(event->object, event->desc, data);
+   efl_event_callback_legacy_call(event->object, event->desc, data);
    inside = EINA_FALSE;
 
    called++;
@@ -199,7 +199,7 @@ main(int argc, char *argv[])
 
    efl_event_callback_priority_add(obj, EV_RESTART, EFL_CALLBACK_PRIORITY_DEFAULT, _restart_1_cb, NULL);
    efl_event_callback_priority_add(obj, EV_RESTART, EFL_CALLBACK_PRIORITY_BEFORE, _restart_2_cb, NULL);
-   efl_event_callback_call(obj, EV_RESTART, NULL);
+   efl_event_callback_legacy_call(obj, EV_RESTART, NULL);
    fail_if(inside);
    fail_if(called != 2);
 

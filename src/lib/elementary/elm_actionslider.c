@@ -155,13 +155,13 @@ _drag_button_move_cb(void *data,
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.drag_button_base", &pos, NULL);
    if (pos == 0.0)
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, !elm_widget_mirrored_get(obj) ? "left" : "right");
    else if (pos == 1.0)
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, !elm_widget_mirrored_get(obj) ? "right" : "left");
    else if (pos >= 0.45 && pos <= 0.55)
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center");
 }
 
@@ -232,15 +232,15 @@ _button_animator(void *data)
 
         if ((!sd->final_position) &&
             (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
-          efl_event_callback_call
+          efl_event_callback_legacy_call
             (obj, EFL_UI_EVENT_SELECTED, (char *)left);
         else if ((sd->final_position == 0.5) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_CENTER))
-          efl_event_callback_call
+          efl_event_callback_legacy_call
             (obj, EFL_UI_EVENT_SELECTED, (char *)center);
         else if ((sd->final_position == 1) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
-          efl_event_callback_call
+          efl_event_callback_legacy_call
             (obj, EFL_UI_EVENT_SELECTED, (char *)right);
 
         sd->button_animator = NULL;
@@ -278,7 +278,7 @@ _drag_button_up_cb(void *data,
         (elm_widget_mirrored_get(obj) && position == 1.0)))
      {
         sd->final_position = 0;
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, EFL_UI_EVENT_SELECTED, (char *)left);
 
         return;
@@ -288,7 +288,7 @@ _drag_button_up_cb(void *data,
        (sd->enabled_position & ELM_ACTIONSLIDER_CENTER))
      {
         sd->final_position = 0.5;
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, EFL_UI_EVENT_SELECTED, (char *)center);
 
         ecore_animator_del(sd->button_animator);
@@ -302,7 +302,7 @@ _drag_button_up_cb(void *data,
         (elm_widget_mirrored_get(obj) && position == 0.0)))
      {
         sd->final_position = 1;
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, EFL_UI_EVENT_SELECTED, (char *)right);
         return;
      }
@@ -372,13 +372,13 @@ _track_move_cb(void *data,
           {
              if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
                {
-                  efl_event_callback_call
+                  efl_event_callback_legacy_call
                     (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center");
                   sd->final_position = 0.5;
                }
              else if (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT)
                {
-                  efl_event_callback_call
+                  efl_event_callback_legacy_call
                     (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "right");
                   sd->final_position = 1.0;
                }
@@ -386,7 +386,7 @@ _track_move_cb(void *data,
         else if ((sd->final_position == 0.5) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
           {
-             efl_event_callback_call
+             efl_event_callback_legacy_call
                (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "right");
              sd->final_position = 1.0;
           }
@@ -395,7 +395,7 @@ _track_move_cb(void *data,
      {
         if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
           {
-             efl_event_callback_call
+             efl_event_callback_legacy_call
                (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center");
              sd->final_position = 0.5;
           }
@@ -406,13 +406,13 @@ _track_move_cb(void *data,
           {
              if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
                {
-                  efl_event_callback_call
+                  efl_event_callback_legacy_call
                     (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center");
                   sd->final_position = 0.5;
                }
              else if (sd->enabled_position & ELM_ACTIONSLIDER_LEFT)
                {
-                  efl_event_callback_call
+                  efl_event_callback_legacy_call
                     (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "left");
                   sd->final_position = 0.0;
                }
@@ -420,7 +420,7 @@ _track_move_cb(void *data,
         else if (sd->final_position == 0.5 &&
                 (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
           {
-             efl_event_callback_call
+             efl_event_callback_legacy_call
                (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "left");
              sd->final_position = 0.0;
           }

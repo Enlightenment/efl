@@ -109,7 +109,7 @@ _drag_done_cb(void *unused EINA_UNUSED,
    ELM_PHOTO_DATA_GET(obj, sd);
 
    elm_object_scroll_freeze_pop(obj);
-   efl_event_callback_call(obj, EFL_UI_EVENT_DRAG_END, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_DRAG_END, NULL);
    sd->drag_started = EINA_FALSE;
 }
 
@@ -173,7 +173,7 @@ _long_press_cb(void *obj)
                   _drag_done_cb, NULL))
           {
              elm_object_scroll_freeze_push(obj);
-             efl_event_callback_call
+             efl_event_callback_legacy_call
                (obj, EFL_UI_EVENT_DRAG_START, NULL);
              sd->drag_started = EINA_TRUE;
           }
@@ -216,7 +216,7 @@ _mouse_up(void *data,
    ELM_SAFE_FREE(sd->long_press_timer, ecore_timer_del);
 
    if (!sd->drag_started)
-     efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
+     efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void

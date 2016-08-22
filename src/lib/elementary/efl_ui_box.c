@@ -29,7 +29,7 @@ _child_added_cb_proxy(void *data, const Eo_Event *event)
    Evas_Object *box = data;
    Evas_Object_Box_Option *opt = event->info;
 
-   efl_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_ADDED, opt->obj);
+   efl_event_callback_legacy_call(box, EFL_CONTAINER_EVENT_CONTENT_ADDED, opt->obj);
 }
 
 static void
@@ -38,7 +38,7 @@ _child_removed_cb_proxy(void *data, const Eo_Event *event)
    Evas_Object *box = data;
    Evas_Object *child = event->info;
 
-   efl_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_REMOVED, child);
+   efl_event_callback_legacy_call(box, EFL_CONTAINER_EVENT_CONTENT_REMOVED, child);
 }
 
 EOLIAN static Eina_Bool
@@ -151,7 +151,7 @@ EOLIAN static void
 _efl_ui_box_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Data *pd)
 {
    efl_pack_layout_do(pd->layout_engine, obj, pd->layout_data);
-   efl_event_callback_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
 }
 
 EOLIAN static void

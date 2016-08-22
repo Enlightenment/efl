@@ -95,7 +95,7 @@ _eio_move_done_cb(void *data, Eio_File *handler EINA_UNUSED)
    eina_array_push(properties, _eio_model_prop_names[EIO_MODEL_PROP_FILENAME]);
    evt.changed_properties = properties;
 
-   efl_event_callback_call(priv->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+   efl_event_callback_legacy_call(priv->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
    eina_array_free(properties);
 }
 
@@ -180,7 +180,7 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
    eio_model_children_filter_set(cevt.child, priv->filter_cb, priv->filter_userdata);
    eina_value_flush(&path);
 
-   efl_event_callback_call(priv->obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
+   efl_event_callback_legacy_call(priv->obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
 
    return EINA_TRUE;
 }
@@ -213,7 +213,7 @@ _efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
              cevt.index = i;
              cevt.child = cur->data;
 
-             efl_event_callback_call(priv->obj, EFL_MODEL_EVENT_CHILD_REMOVED, &cevt);
+             efl_event_callback_legacy_call(priv->obj, EFL_MODEL_EVENT_CHILD_REMOVED, &cevt);
 
              priv->children_list = eina_list_remove_list(priv->children_list, cur);
              efl_unref(cevt.child);

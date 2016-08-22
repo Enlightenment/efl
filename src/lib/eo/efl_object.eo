@@ -373,6 +373,22 @@ abstract Efl.Object ()
                          $true otherwise
                        ]]
       }
+      event_callback_legacy_call {
+         [[Call the callbacks for an event of an object.
+
+           Like @.event_callback_call, but also call legacy smart callbacks
+           that have the same name of the given event.
+
+           @since 1.19
+         ]]
+         params {
+            @in desc: ref(const(Efl.Event.Description)); [[The description of the event to call]]
+            @in event_info: void_ptr; [[Extra event info to pass to the callbacks]]
+         }
+         return: bool; [[$false if one of the callbacks aborted the call,
+                         $true otherwise
+                       ]]
+      }
       event_callback_stop {
          [[Stop the current callback call.
 

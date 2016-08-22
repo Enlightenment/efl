@@ -607,7 +607,7 @@ _delay_change_cb(void *data)
 
    if (item)
      {
-        efl_event_callback_call
+        efl_event_callback_legacy_call
               (data, ELM_INDEX_EVENT_DELAY_CHANGED, item);
         ELM_INDEX_ITEM_DATA_GET(item, it);
         _index_priority_change(data, it);
@@ -769,10 +769,10 @@ _sel_eval(Evas_Object *obj,
                     }
 
                   if (om_closest) 
-                    efl_event_callback_call
+                    efl_event_callback_legacy_call
                       (obj, ELM_INDEX_EVENT_CHANGED, EO_OBJ(om_closest));
                   else
-                    efl_event_callback_call
+                    efl_event_callback_legacy_call
                       (obj, ELM_INDEX_EVENT_CHANGED, EO_OBJ(it));
                   ecore_timer_del(sd->delay);
                   sd->delay = ecore_timer_add(sd->delay_change_time,
@@ -867,9 +867,9 @@ _on_mouse_up(void *data,
    eo_item = elm_index_selected_item_get(data, sd->level);
    if (eo_item)
      {
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (data, EFL_UI_EVENT_CLICKED, eo_item);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (data, EFL_UI_EVENT_SELECTED, eo_item);
         eo_id_item = eo_item;
         ELM_INDEX_ITEM_DATA_GET(eo_id_item, id_item);
@@ -918,7 +918,7 @@ _on_mouse_move(void *data,
                   sd->level = 1;
                   snprintf(buf, sizeof(buf), "elm,state,level,%i", sd->level);
                   elm_layout_signal_emit(data, buf, "elm");
-                  efl_event_callback_call
+                  efl_event_callback_legacy_call
                     (data, ELM_INDEX_EVENT_LEVEL_UP, NULL);
                }
           }
@@ -929,7 +929,7 @@ _on_mouse_move(void *data,
                   sd->level = 0;
                   snprintf(buf, sizeof(buf), "elm,state,level,%i", sd->level);
                   elm_layout_signal_emit(data, buf, "elm");
-                  efl_event_callback_call
+                  efl_event_callback_legacy_call
                     (data, ELM_INDEX_EVENT_LEVEL_DOWN, NULL);
                }
           }
@@ -1358,9 +1358,9 @@ _elm_index_item_selected_set(Eo *eo_it,
         edje_object_signal_emit(VIEW(it_active), "elm,state,active", "elm");
         edje_object_message_signal_process(VIEW(it_active));
 
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, ELM_INDEX_EVENT_CHANGED, eo_it);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (obj, EFL_UI_EVENT_SELECTED, eo_it);
         ecore_timer_del(sd->delay);
         sd->delay = ecore_timer_add(sd->delay_change_time,

@@ -70,7 +70,7 @@ _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event
           {
              pd = efl_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
              if (box_intersection_box(&pd_target->aabb, &pd->aabb))
-               ret = efl_event_callback_call(target_node, eo_desc, n);
+               ret = efl_event_callback_legacy_call(target_node, eo_desc, n);
           }
         if (!ret)
           {
@@ -86,7 +86,7 @@ _evas_canvas3d_node_private_callback_clicked(void *data EINA_UNUSED, const Eo_Ev
 {
    Eina_Bool ret = EINA_FALSE;
    const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get("clicked");
-   ret = efl_event_callback_call((Eo *)event->info, eo_desc, event->info);
+   ret = efl_event_callback_legacy_call((Eo *)event->info, eo_desc, event->info);
 
    if (!ret)
       efl_event_callback_stop(event->object);
@@ -514,7 +514,7 @@ node_aabb_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 
    evas_build_sphere(&pd->aabb, &pd->bsphere);
    eo_desc = efl_object_legacy_only_event_description_get("collision,private");
-   efl_event_callback_call(node, eo_desc, (void *)node);
+   efl_event_callback_legacy_call(node, eo_desc, (void *)node);
 
    return EINA_TRUE;
 }

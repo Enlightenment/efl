@@ -73,7 +73,7 @@ _on_clock_val_up(void *data)
    sd->interval = sd->interval / 1.05;
    ecore_timer_interval_set(sd->spin, sd->interval);
    _time_update(data, EINA_FALSE);
-   efl_event_callback_call(data, ELM_CLOCK_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(data, ELM_CLOCK_EVENT_CHANGED, NULL);
    return ECORE_CALLBACK_RENEW;
 
 clock_val_up_cancel:
@@ -128,7 +128,7 @@ _on_clock_val_down(void *data)
    sd->interval = sd->interval / 1.05;
    ecore_timer_interval_set(sd->spin, sd->interval);
    _time_update(data, EINA_FALSE);
-   efl_event_callback_call(data, ELM_CLOCK_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(data, ELM_CLOCK_EVENT_CHANGED, NULL);
    return ECORE_CALLBACK_RENEW;
 
 clock_val_down_cancel:

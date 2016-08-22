@@ -161,7 +161,7 @@ _on_item_clicked(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
    ELM_HOVERSEL_DATA_GET(obj2, sd);
 
    if (item->func) item->func((void *)WIDGET_ITEM_DATA_GET(eo_it), obj2, eo_it);
-   efl_event_callback_call(obj2, EFL_UI_EVENT_SELECTED, eo_it);
+   efl_event_callback_legacy_call(obj2, EFL_UI_EVENT_SELECTED, eo_it);
 
    evas_object_event_callback_add(sd->hover, EVAS_CALLBACK_DEL, _auto_update, item);
 
@@ -173,7 +173,7 @@ _item_focused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
-   efl_event_callback_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
+   efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
 }
 
 static void
@@ -181,7 +181,7 @@ _item_unfocused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
-   efl_event_callback_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
+   efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
 }
 
 static void
@@ -349,7 +349,7 @@ _hover_del(Evas_Object *obj)
    sd->scr = NULL;
    sd->last_location = NULL;
 
-   efl_event_callback_call(obj, ELM_HOVERSEL_EVENT_DISMISSED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_HOVERSEL_EVENT_DISMISSED, NULL);
 }
 
 static void
@@ -429,7 +429,7 @@ _activate(Evas_Object *obj)
    _resizing_eval(obj, sd);
    elm_object_part_content_set(sd->hover, sd->last_location, sd->tbl);
 
-   efl_event_callback_call(obj, ELM_HOVERSEL_EVENT_EXPANDED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_HOVERSEL_EVENT_EXPANDED, NULL);
    evas_object_show(sd->hover);
 }
 

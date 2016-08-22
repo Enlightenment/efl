@@ -25,7 +25,7 @@ _a_set(Eo *obj, void *class_data, int a)
    pd->a = a;
    printf("%s %d\n", __func__, pd->a);
 
-   efl_event_callback_call(obj, EV_A_CHANGED, &pd->a);
+   efl_event_callback_legacy_call(obj, EV_A_CHANGED, &pd->a);
 }
 
 void

@@ -253,7 +253,7 @@ _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
                   DBG("HTTP dialer=%p error: #%d '%s'",
                       dialer, err, eina_error_msg_get(err));
                   pd->error = err;
-                  efl_event_callback_call(dialer, EFL_NET_DIALER_EVENT_ERROR, &err);
+                  efl_event_callback_legacy_call(dialer, EFL_NET_DIALER_EVENT_ERROR, &err);
                }
 
              if (msg->msg != CURLMSG_DONE) continue;
@@ -754,7 +754,7 @@ _efl_net_dialer_http_headers_done(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    efl_net_dialer_http_response_content_type_set(o, s);
 
    pd->pending_headers_done = EINA_FALSE;
-   efl_event_callback_call(o, EFL_NET_DIALER_HTTP_EVENT_HEADERS_DONE, NULL);
+   efl_event_callback_legacy_call(o, EFL_NET_DIALER_HTTP_EVENT_HEADERS_DONE, NULL);
 }
 
 /* take data from internal buffer filled with efl_io_writer_write()
@@ -1071,7 +1071,7 @@ _efl_net_dialer_http_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Http_Dat
     * allow_redirects will trigger more than once
     */
    pd->connected = connected;
-   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
+   if (connected) efl_event_callback_legacy_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -1135,7 +1135,7 @@ EOLIAN static void
 _efl_net_dialer_http_efl_net_socket_address_remote_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, const char *address)
 {
    if (eina_stringshare_replace(&pd->address_remote, address))
-     efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+     efl_event_callback_legacy_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
 }
 
 EOLIAN static const char *
@@ -1198,7 +1198,7 @@ _efl_net_dialer_http_efl_io_reader_can_read_set(Eo *o, Efl_Net_Dialer_Http_Data 
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
-   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -1215,7 +1215,7 @@ _efl_net_dialer_http_efl_io_reader_eos_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, 
    pd->eos = is_eos;
    if (is_eos) pd->connected = EINA_FALSE;
    if (is_eos)
-     efl_event_callback_call(o, EFL_IO_READER_EVENT_EOS, NULL);
+     efl_event_callback_legacy_call(o, EFL_IO_READER_EVENT_EOS, NULL);
 }
 
 EOLIAN static Eina_Error
@@ -1289,7 +1289,7 @@ _efl_net_dialer_http_efl_io_writer_can_write_set(Eo *o, Efl_Net_Dialer_Http_Data
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
-   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Error
@@ -1319,7 +1319,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    efl_io_reader_eos_set(o, EINA_FALSE);
    efl_net_dialer_connected_set(o, EINA_FALSE);
    pd->closed = EINA_TRUE;
-   efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
    return err;
 }
 
@@ -1631,7 +1631,7 @@ _efl_net_dialer_http_request_content_length_set(Eo *o, Efl_Net_Dialer_Http_Data 
 
    pm = _efl_net_dialer_http_primary_mode_effective_get(pd);
    if (pm == EFL_NET_DIALER_HTTP_PRIMARY_MODE_UPLOAD)
-     efl_event_callback_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
+     efl_event_callback_legacy_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
 }
 
 EOLIAN static int64_t
@@ -1651,7 +1651,7 @@ _efl_net_dialer_http_response_content_length_set(Eo *o, Efl_Net_Dialer_Http_Data
 
    pm = _efl_net_dialer_http_primary_mode_effective_get(pd);
    if (pm == EFL_NET_DIALER_HTTP_PRIMARY_MODE_DOWNLOAD)
-     efl_event_callback_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
+     efl_event_callback_legacy_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
 }
 
 EOLIAN static int64_t

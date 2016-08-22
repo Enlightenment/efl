@@ -136,7 +136,7 @@ _elm_prefs_save(void *data)
      {
         elm_prefs_data_save(sd->prefs_data, NULL, NULL);
 
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (wd->obj, ELM_PREFS_EVENT_PAGE_SAVED, (char *)sd->root->name);
      }
 
@@ -300,7 +300,7 @@ _elm_prefs_item_changed_report(Eo *obj,
 
    snprintf(buf, sizeof(buf), "%s:%s", it->page->name, it->name);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (wd->obj, ELM_PREFS_EVENT_ITEM_CHANGED, buf);
 }
 
@@ -400,7 +400,7 @@ _prefs_data_autosaved_cb(void *cb_data,
    ELM_PREFS_DATA_GET(cb_data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(cb_data, wd);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (wd->obj, ELM_PREFS_EVENT_PAGE_SAVED, event_info);
 
    sd->dirty = EINA_FALSE;
@@ -555,7 +555,7 @@ _item_changed_cb(Evas_Object *it_obj)
    /* we use the changed cb on ACTION/RESET/SAVE items specially */
    if (it->type == ELM_PREFS_TYPE_ACTION)
      {
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (wd->obj, ELM_PREFS_EVENT_ACTION, buf);
 
         return;
@@ -1174,7 +1174,7 @@ _elm_prefs_efl_file_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, cons
 
    _elm_prefs_values_get_default(sd->root, EINA_FALSE);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, ELM_PREFS_EVENT_PAGE_LOADED, (char *)sd->root->name);
 
    return EINA_TRUE;
@@ -1219,7 +1219,7 @@ _elm_prefs_data_set(Eo *obj, Elm_Prefs_Data *sd, Elm_Prefs_Data *prefs_data)
    sd->values_fetching = EINA_FALSE;
 
 end:
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, ELM_PREFS_EVENT_PAGE_CHANGED, (char *)sd->root->name);
 
    return EINA_TRUE;

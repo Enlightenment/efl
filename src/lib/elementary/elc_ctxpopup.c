@@ -670,7 +670,7 @@ _elm_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elm_Ctxpopup_Data *sd)
 
    _show_signals_emit(obj, sd->dir);
 
-   efl_event_callback_call(obj, ELM_CTXPOPUP_EVENT_GEOMETRY_UPDATE, &rect);
+   efl_event_callback_legacy_call(obj, ELM_CTXPOPUP_EVENT_GEOMETRY_UPDATE, &rect);
 }
 
 static void
@@ -708,7 +708,7 @@ _on_parent_resize(void *data,
         sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
         evas_object_hide(data);
-        efl_event_callback_call(data, ELM_CTXPOPUP_EVENT_DISMISSED, NULL);
+        efl_event_callback_legacy_call(data, ELM_CTXPOPUP_EVENT_DISMISSED, NULL);
      }
    else
      {
@@ -1011,7 +1011,7 @@ _hide_finished_cb(void *data,
                   const char *source EINA_UNUSED)
 {
    evas_object_hide(data);
-   efl_event_callback_call(data, ELM_CTXPOPUP_EVENT_DISMISSED, NULL);
+   efl_event_callback_legacy_call(data, ELM_CTXPOPUP_EVENT_DISMISSED, NULL);
 }
 
 static void

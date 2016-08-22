@@ -44,7 +44,7 @@ _efl_io_positioner_fd_efl_io_positioner_seek(Eo *o, Efl_Io_Positioner_Fd_Data *p
    int fd = efl_io_positioner_fd_positioner_fd_get(o);
    if (lseek(fd, (off_t)offset, _efl_io_positioner_whence_convert(whence)) < 0)
      return errno;
-   efl_event_callback_call(o, EFL_IO_POSITIONER_EVENT_POSITION_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_POSITIONER_EVENT_POSITION_CHANGED, NULL);
    return 0;
 }
 

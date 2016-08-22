@@ -233,7 +233,7 @@ _delay_change_timer_cb(void *data)
    ELM_SPINNER_DATA_GET(data, sd);
 
    sd->delay_change_timer = NULL;
-   efl_event_callback_call(data, ELM_SPINNER_EVENT_DELAY_CHANGED, NULL);
+   efl_event_callback_legacy_call(data, ELM_SPINNER_EVENT_DELAY_CHANGED, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -266,7 +266,7 @@ _value_set(Evas_Object *obj,
    if (new_val == sd->val) return EINA_FALSE;
    sd->val = new_val;
 
-   efl_event_callback_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
    elm_interface_atspi_accessible_value_changed_signal_emit(obj);
    ecore_timer_del(sd->delay_change_timer);
    sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
@@ -349,7 +349,7 @@ _drag_start_cb(void *data,
    sd->drag_prev_pos = 0;
    sd->drag_val_step = 1;
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, ELM_SPINNER_EVENT_SPINNER_DRAG_START, NULL);
 }
 
@@ -367,7 +367,7 @@ _drag_stop_cb(void *data,
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", 0.0, 0.0);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, ELM_SPINNER_EVENT_SPINNER_DRAG_STOP, NULL);
 }
 
@@ -406,7 +406,7 @@ _entry_value_apply(Evas_Object *obj)
    if (((*end != '\0') && (!isspace(*end))) || (fabs(val - sd->val) < DBL_EPSILON)) return;
    elm_spinner_value_set(obj, val);
 
-   efl_event_callback_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
    ecore_timer_del(sd->delay_change_timer);
    sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
                                             _delay_change_timer_cb, obj);

@@ -290,7 +290,7 @@ evas_event_callback_cleanup(Evas *eo_e)
 void
 evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 {
-   efl_event_callback_call(eo_e, _legacy_evas_callback_table(type), event_info);
+   efl_event_callback_legacy_call(eo_e, _legacy_evas_callback_table(type), event_info);
 }
 
 void
@@ -342,7 +342,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         efl_event_desc = _legacy_evas_callback_table(type);
      }
 
-   efl_event_callback_call(eo_obj, efl_event_desc, event_info);
+   efl_event_callback_legacy_call(eo_obj, efl_event_desc, event_info);
 
    if ((type == EVAS_CALLBACK_MOUSE_DOWN) || (type == EVAS_CALLBACK_MOUSE_UP))
      efl_input_pointer_button_flags_set(event_info, flags);
@@ -589,7 +589,7 @@ _animator_repeater(void *data, const Eo_Event *event)
 {
    Evas_Object_Protected_Data *obj = data;
 
-   efl_event_callback_call(obj->object, EFL_EVENT_ANIMATOR_TICK, event->info);
+   efl_event_callback_legacy_call(obj->object, EFL_EVENT_ANIMATOR_TICK, event->info);
    DBG("Emitting animator tick on %p.", obj->object);
 }
 

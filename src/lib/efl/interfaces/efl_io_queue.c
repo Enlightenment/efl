@@ -180,7 +180,7 @@ _efl_io_queue_limit_set(Eo *o, Efl_Io_Queue_Data *pd, size_t limit)
      }
 
    _efl_io_queue_adjust_and_realloc_if_needed(o, pd);
-   efl_event_callback_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
 
  end:
    _efl_io_queue_update_cans(o, pd);
@@ -216,7 +216,7 @@ _efl_io_queue_clear(Eo *o, Efl_Io_Queue_Data *pd)
    pd->position_read = 0;
    pd->position_write = 0;
    efl_io_reader_can_read_set(o, EINA_FALSE);
-   efl_event_callback_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
    if (pd->pending_eos)
      efl_io_reader_eos_set(o, EINA_TRUE);
 }
@@ -285,7 +285,7 @@ _efl_io_queue_efl_io_reader_read(Eo *o, Efl_Io_Queue_Data *pd, Eina_Rw_Slice *rw
    pd->position_read += ro_slice.len;
 
    efl_io_reader_can_read_set(o, pd->position_read < pd->position_write);
-   efl_event_callback_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
 
    if ((pd->pending_eos) && (efl_io_queue_usage_get(o) == 0))
      efl_io_reader_eos_set(o, EINA_TRUE);
@@ -309,7 +309,7 @@ _efl_io_queue_efl_io_reader_can_read_set(Eo *o, Efl_Io_Queue_Data *pd, Eina_Bool
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
-   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -327,7 +327,7 @@ _efl_io_queue_efl_io_reader_eos_set(Eo *o, Efl_Io_Queue_Data *pd EINA_UNUSED, Ei
    if (is_eos)
      {
         pd->pending_eos = EINA_FALSE;
-        efl_event_callback_call(o, EFL_IO_READER_EVENT_EOS, NULL);
+        efl_event_callback_legacy_call(o, EFL_IO_READER_EVENT_EOS, NULL);
      }
 }
 
@@ -384,7 +384,7 @@ _efl_io_queue_efl_io_writer_write(Eo *o, Efl_Io_Queue_Data *pd, Eina_Slice *slic
    pd->position_write += todo;
 
    _efl_io_queue_adjust_and_realloc_if_needed(o, pd);
-   efl_event_callback_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
    _efl_io_queue_update_cans(o, pd);
 
    return 0;
@@ -407,7 +407,7 @@ _efl_io_queue_efl_io_writer_can_write_set(Eo *o, Efl_Io_Queue_Data *pd, Eina_Boo
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
-   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Error
@@ -417,7 +417,7 @@ _efl_io_queue_efl_io_closer_close(Eo *o, Efl_Io_Queue_Data *pd)
    efl_io_queue_eos_mark(o);
    efl_io_queue_clear(o);
    pd->closed = EINA_TRUE;
-   efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
    return 0;
 }
 

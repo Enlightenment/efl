@@ -26,7 +26,7 @@ _efl_vg_property_changed(void *data, const Eo_Event *event)
    if (!pd->flags) pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
 
    parent = efl_parent_get(event->object);
-   efl_event_callback_call(parent, event->desc, event->info);
+   efl_event_callback_legacy_call(parent, event->desc, event->info);
 }
 
 static void

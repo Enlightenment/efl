@@ -833,7 +833,7 @@ evas_object_smart_callback_call(Evas_Object *eo_obj, const char *event, void *ev
 
    if (!event) return;
    const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
-   efl_event_callback_call(eo_obj, eo_desc, event_info);
+   efl_event_callback_legacy_call(eo_obj, eo_desc, event_info);
 }
 
 EAPI Eina_Bool

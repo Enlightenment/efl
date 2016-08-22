@@ -124,7 +124,7 @@ _file_ls_filter_cb_helper(const Efl_Event_Description *event, void *data, const 
    event_info->file = file;
    event_info->filter = EINA_FALSE;
 
-   efl_event_callback_call(operation->pdata->object, event, event_info);
+   efl_event_callback_legacy_call(operation->pdata->object, event, event_info);
 
    Eina_Bool filter = event_info->filter;
 
@@ -213,7 +213,7 @@ _file_direct_ls_filter_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_F
    event_info.info = info;
    event_info.filter = EINA_FALSE;
 
-   efl_event_callback_call(operation->pdata->object, EFL_IO_MANAGER_EVENT_FILTER_DIRECT, &event_info);
+   efl_event_callback_legacy_call(operation->pdata->object, EFL_IO_MANAGER_EVENT_FILTER_DIRECT, &event_info);
 
    Eina_Bool filter = event_info.filter;
 

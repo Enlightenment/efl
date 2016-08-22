@@ -109,7 +109,7 @@ elm_code_callback_fire(Elm_Code *code, const Efl_Event_Description *signal, void
 
    EINA_LIST_FOREACH(code->widgets, item, widget)
      {
-        efl_event_callback_call(widget, signal, data);
+        efl_event_callback_legacy_call(widget, signal, data);
      }
 }
 

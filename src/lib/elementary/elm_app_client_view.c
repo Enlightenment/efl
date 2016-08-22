@@ -58,26 +58,26 @@ _prop_changed(void *user_data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info
    Elm_App_Client_View_Data *cdata = efl_data_scope_get(eo, MY_CLASS);
 
    if (!strcmp(prop_event->name, "Title"))
-     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_TITLE_CHANGED, (void *) _string_prop_get(v));
+     efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_VIEW_EVENT_TITLE_CHANGED, (void *) _string_prop_get(v));
    else if (!strcmp(prop_event->name, "IconName"))
-     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_ICON_CHANGED, (void *) _string_prop_get(v));
+     efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_VIEW_EVENT_ICON_CHANGED, (void *) _string_prop_get(v));
    else if (!strcmp(prop_event->name, "IconPixels"))
-     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_ICON_PIXELS_CHANGED, NULL);
+     efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_VIEW_EVENT_ICON_PIXELS_CHANGED, NULL);
    else if (!strcmp(prop_event->name, "NewEvents"))
-     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_NEW_EVENTS_CHANGED, (void *)(uintptr_t)_int_prop_get(v));
+     efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_VIEW_EVENT_NEW_EVENTS_CHANGED, (void *)(uintptr_t)_int_prop_get(v));
    else if (!strcmp(prop_event->name, "Progress"))
-     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_PROGRESS_CHANGED, (void *)(uintptr_t)_short_prop_get(v));
+     efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_VIEW_EVENT_PROGRESS_CHANGED, (void *)(uintptr_t)_short_prop_get(v));
    else if (!strcmp(prop_event->name, "State"))
      {
         cdata->state = _string_state_to_id(_string_prop_get(v));
-        efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_STATE_CHANGED, (void *)(uintptr_t)cdata->state);
+        efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_VIEW_EVENT_STATE_CHANGED, (void *)(uintptr_t)cdata->state);
      }
    else if (!strcmp(prop_event->name, "WindowId"))
-     efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_WINDOW_CHANGED, (void *)(uintptr_t)_int_prop_get(v));
+     efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_VIEW_EVENT_WINDOW_CHANGED, (void *)(uintptr_t)_int_prop_get(v));
    else
       return;
 
-   efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED, (void *) prop_event->name);
+   efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED, (void *) prop_event->name);
 }
 
 static void
@@ -115,7 +115,7 @@ elm_app_client_view_internal_state_set(Eo *eo, Elm_App_View_State state)
    cdata->state = state;
    if (!changed)
      return;
-   efl_event_callback_call(eo, ELM_APP_CLIENT_VIEW_EVENT_STATE_CHANGED, (void *)(uintptr_t)cdata->state);
+   efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_VIEW_EVENT_STATE_CHANGED, (void *)(uintptr_t)cdata->state);
 }
 
 EOLIAN static Eo *

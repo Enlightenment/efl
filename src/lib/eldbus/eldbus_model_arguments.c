@@ -290,7 +290,7 @@ eldbus_model_arguments_process_arguments(Eldbus_Model_Arguments_Data *pd,
    if (eina_array_count(changed_properties))
      {
         Efl_Model_Property_Event evt = {.changed_properties = changed_properties};
-        efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+        efl_event_callback_legacy_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
      }
 
    result = EINA_TRUE;
