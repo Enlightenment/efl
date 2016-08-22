@@ -310,6 +310,7 @@ eng_setup(Evas *eo_e, void *in)
                                            _outbuf_get_rot,
                                            _outbuf_reconfigure,
                                            _outbuf_region_first_rect,
+                                           NULL,
                                            _outbuf_new_region_for_update,
                                            _outbuf_push_updated_region,
                                            _outbuf_free_region_for_update,
