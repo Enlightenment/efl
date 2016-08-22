@@ -178,8 +178,10 @@ efreet_pictures_dir_get(void)
 EAPI const char *
 efreet_videos_dir_get(void)
 {
+   printf("0: %s\n", xdg_videos_dir);
     if (xdg_videos_dir) return xdg_videos_dir;
     xdg_videos_dir = efreet_user_dir_get("XDG_VIDEOS_DIR", _("Videos"));
+   printf("1: %s\n", xdg_videos_dir);
     return xdg_videos_dir;
 }
 
@@ -480,9 +482,12 @@ efreet_user_dir_get(const char *key, const char *fallback)
     Eina_File *file = NULL;
     Eina_File_Line *line;
     Eina_Iterator *it = NULL;
-    const char *config_home;
+    const char *config_home, *env;
     char path[PATH_MAX];
     char *ret = NULL;
+
+    env = getenv(key);
+    if (env) return env;
 
     config_home = efreet_config_home_get();
     snprintf(path, sizeof(path), "%s/user-dirs.dirs", config_home);
