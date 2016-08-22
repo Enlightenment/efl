@@ -175,6 +175,7 @@ typedef struct
    Ecore_Fd_Handler *fdhandler;
    Eina_Stringshare *address_dial;
    Eina_Stringshare *proxy;
+   Eina_Stringshare *cookie_jar;
    Eina_Stringshare *address_local;
    Eina_Stringshare *address_remote;
    Eina_Stringshare *method;
@@ -992,6 +993,7 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 
    eina_stringshare_replace(&pd->address_dial, NULL);
    eina_stringshare_replace(&pd->proxy, NULL);
+   eina_stringshare_replace(&pd->cookie_jar, NULL);
    eina_stringshare_replace(&pd->address_local, NULL);
    eina_stringshare_replace(&pd->address_remote, NULL);
    eina_stringshare_replace(&pd->method, NULL);
@@ -1024,8 +1026,6 @@ _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, co
             o, curl_easy_strerror(r));
         return EINVAL;
      }
-
-   // TODO cookies
 
    // TODO: move this to be per-loop once multiple mainloops are supported
    // this would need to attach something to the loop
@@ -1711,6 +1711,56 @@ _efl_net_dialer_http_progress_upload_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_
 {
    if (now) *now = pd->progress.upload.now;
    if (total) *total = pd->progress.upload.total;
+}
+
+EOLIAN static void
+_efl_net_dialer_http_cookie_jar_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, const char *path)
+{
+   CURLcode r;
+
+   if (pd->cookie_jar)
+     {
+        r = curl_easy_setopt(pd->easy, CURLOPT_COOKIELIST, "FLUSH");
+        if (r != CURLE_OK)
+          ERR("dialer=%p could not flush cookie_jar to '%s': %s",
+              o, pd->cookie_jar, curl_easy_strerror(r));
+
+        r = curl_easy_setopt(pd->easy, CURLOPT_COOKIELIST, "ALL");
+        if (r != CURLE_OK)
+          ERR("dialer=%p could not empty cookie_jar: %s",
+              o, curl_easy_strerror(r));
+
+        r = curl_easy_setopt(pd->easy, CURLOPT_COOKIEFILE, NULL);
+        if (r != CURLE_OK)
+          ERR("dialer=%p could not unset cookie_jar (read): %s",
+              o, curl_easy_strerror(r));
+
+        r = curl_easy_setopt(pd->easy, CURLOPT_COOKIEJAR, NULL);
+        if (r != CURLE_OK)
+          ERR("dialer=%p could not unset cookie_jar (write): %s",
+              o, curl_easy_strerror(r));
+     }
+
+   if (!path) goto end;
+
+   r = curl_easy_setopt(pd->easy, CURLOPT_COOKIEFILE, path);
+   if (r != CURLE_OK)
+     ERR("dialer=%p could not set cookie_jar (read) to '%s': %s",
+         o, path, curl_easy_strerror(r));
+
+   r = curl_easy_setopt(pd->easy, CURLOPT_COOKIEJAR, path);
+   if (r != CURLE_OK)
+     ERR("dialer=%p could not set cookie_jar (write) to '%s': %s",
+         o, path, curl_easy_strerror(r));
+
+ end:
+   eina_stringshare_replace(&pd->cookie_jar, path);
+}
+
+EOLIAN static const char *
+_efl_net_dialer_http_cookie_jar_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+{
+   return pd->cookie_jar;
 }
 
 #include "efl_net_dialer_http.eo.c"

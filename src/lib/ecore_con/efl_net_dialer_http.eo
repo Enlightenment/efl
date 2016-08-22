@@ -283,6 +283,39 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Reader, Efl.Io.
                 total: uint64 @optional; [[0 if unknown]]
             }
         }
+
+        @property cookie_jar {
+            [[This property sets the filename where to read and write cookies.
+
+              By setting a file to load and persist cookies to, the
+              internal cookie system will be activated, automatically
+              handling HTTP headers such as 'Set-cookie:' and sending
+              the appropriate cookies for a server.
+
+              If a new, empty session is to be used, start with an
+              empty or non-existent file such as created with
+              mkstemp() or tmpfile(). An alternative is to use an
+              empty string ("") to keep it in memory.
+
+              If it is desired to start from a pre-existent cookie jar
+              but do not want to modify that, first copy that file and
+              then pass the new, temporary file.
+
+              Likewise, if it's desired to fill some cookies to the
+              system, create a cookie jar and pass its path to this
+              property.
+
+              \@note that whenever this property is set, even if to the
+              same value, it will flush all cookies to the previously
+              set file, then erase all known cookies, then use the new
+              file (if any).
+            ]]
+            get { }
+            set { }
+            values {
+                path: string;
+            }
+        }
     }
 
     events {
