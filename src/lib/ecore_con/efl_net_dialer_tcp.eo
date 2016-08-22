@@ -9,6 +9,7 @@ class Efl.Net.Dialer.Tcp (Efl.Net.Socket.Tcp, Efl.Net.Dialer) {
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial;
         Efl.Net.Dialer.connected;
+        Efl.Net.Dialer.proxy;
         Efl.Net.Dialer.timeout_dial;
         Efl.Io.Closer.close;
     }

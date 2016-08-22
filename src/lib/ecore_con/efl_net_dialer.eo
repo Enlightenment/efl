@@ -59,6 +59,26 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
             }
         }
 
+        @property proxy {
+            [[Controls/retrieve if the dialer should use a proxy.
+
+              The proxy is an URL in the form such as:
+                - http://username:password\@proxyserver:port
+                - http://username\@proxyserver:port
+                - http://proxyserver:port
+                - http://proxyserver  (default port)
+                - socks5://username:password\@proxyserver:port
+                - socks5://username\@proxyserver:port
+                - socks5://proxyserver:port
+                - socks5://proxyserver (default port)
+            ]]
+            get { }
+            set { }
+            values {
+                proxy_url: string; [[may be empty or NULL to unset]]
+            }
+        }
+
         @property timeout_dial {
             [[The timeout in seconds to use for dialing/connecting.
 

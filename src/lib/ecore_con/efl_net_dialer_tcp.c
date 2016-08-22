@@ -32,6 +32,7 @@
 typedef struct _Efl_Net_Dialer_Tcp_Data
 {
    Eina_Stringshare *address_dial;
+   Eina_Stringshare *proxy;
    Eina_Bool connected;
    double timeout_dial;
 } Efl_Net_Dialer_Tcp_Data;
@@ -42,6 +43,7 @@ _efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
    efl_destructor(efl_super(o, MY_CLASS));
 
    eina_stringshare_replace(&pd->address_dial, NULL);
+   eina_stringshare_replace(&pd->proxy, NULL);
 }
 
 EOLIAN static Eina_Error
@@ -158,9 +160,22 @@ _efl_net_dialer_tcp_efl_net_dialer_address_dial_get(Eo *o EINA_UNUSED, Efl_Net_D
 }
 
 EOLIAN static void
+_efl_net_dialer_tcp_efl_net_dialer_proxy_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd, const char *proxy_url)
+{
+   // TODO: apply proxy
+   eina_stringshare_replace(&pd->proxy, proxy_url);
+}
+
+EOLIAN static const char *
+_efl_net_dialer_tcp_efl_net_dialer_proxy_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd)
+{
+   return pd->proxy;
+}
+
+EOLIAN static void
 _efl_net_dialer_tcp_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd, double seconds)
 {
-   ERR("TODO: when using ecore_con_info/threads, set timeout");
+   // TODO: when using ecore_con_info/threads, set timeout
    pd->timeout_dial = seconds;
 }
 
