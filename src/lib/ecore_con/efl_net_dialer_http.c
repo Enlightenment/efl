@@ -174,6 +174,7 @@ typedef struct
    Efl_Net_Dialer_Http_Curlm *cm;
    Ecore_Fd_Handler *fdhandler;
    Eina_Stringshare *address_dial;
+   Eina_Stringshare *proxy;
    Eina_Stringshare *address_local;
    Eina_Stringshare *address_remote;
    Eina_Stringshare *method;
@@ -777,8 +778,6 @@ _efl_net_dialer_http_send_data(char *buffer, size_t count, size_t nitems, void *
    pd->send.slice.len -= rw_slice.len;
    pd->send.slice.bytes += rw_slice.len;
 
-   static int i = 0; i++; if (i % 5 == 0) return 0x10000000;
-
    if (rw_slice.len == 0)
      {
         pd->pause |= CURLPAUSE_SEND;
@@ -992,6 +991,7 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
      }
 
    eina_stringshare_replace(&pd->address_dial, NULL);
+   eina_stringshare_replace(&pd->proxy, NULL);
    eina_stringshare_replace(&pd->address_local, NULL);
    eina_stringshare_replace(&pd->address_remote, NULL);
    eina_stringshare_replace(&pd->method, NULL);
@@ -1016,8 +1016,6 @@ _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, co
    pd->pending_headers_done = EINA_FALSE;
 
    efl_net_dialer_address_dial_set(o, address);
-
-   // TODO: proxy
 
    r = curl_easy_setopt(pd->easy, CURLOPT_HTTPHEADER, pd->request.headers);
    if (r != CURLE_OK)
@@ -1080,6 +1078,25 @@ EOLIAN static Eina_Bool
 _efl_net_dialer_http_efl_net_dialer_connected_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->connected;
+}
+
+EOLIAN static void
+_efl_net_dialer_http_efl_net_dialer_proxy_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, const char *proxy_url)
+{
+   CURLcode r;
+
+   r = curl_easy_setopt(pd->easy, CURLOPT_PROXY, proxy_url);
+   if (r != CURLE_OK)
+     ERR("dialer=%p could not set proxy to '%s': %s",
+         o, proxy_url, curl_easy_strerror(r));
+
+   eina_stringshare_replace(&pd->proxy, proxy_url);
+}
+
+EOLIAN static const char *
+_efl_net_dialer_http_efl_net_dialer_proxy_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+{
+   return pd->proxy;
 }
 
 EOLIAN static void

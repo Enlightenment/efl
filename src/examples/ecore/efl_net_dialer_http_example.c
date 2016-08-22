@@ -183,7 +183,7 @@ static const Ecore_Getopt options = {
     ECORE_GETOPT_STORE_BOOL('r', "allow-redirects", "allow redirections by following 'Location:' headers"),
     ECORE_GETOPT_STORE_DOUBLE('t', "connect-timeout", "timeout in seconds for the connection phase"),
     ECORE_GETOPT_APPEND('H', "header", "Add custom headers. Format must be 'Key: Value'", ECORE_GETOPT_TYPE_STR),
-    ECORE_GETOPT_APPEND('F', "form", "Add form field. Format must be 'key=value'", ECORE_GETOPT_TYPE_STR),
+    ECORE_GETOPT_STORE_STR('X', "proxy", "Set a specific proxy for the connection"),
     ECORE_GETOPT_STORE_STR('i', "input-file", "Input file to use when uploading"),
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
@@ -210,12 +210,12 @@ main(int argc, char **argv)
    char *address = NULL;
    char *output_fname = NULL;
    char *input_fname = NULL;
+   char *proxy = NULL;
    Eina_Bool quit_option = EINA_FALSE;
    Eina_Bool authentication_restricted = EINA_FALSE;
    Eina_Bool allow_redirects = EINA_TRUE;
    double timeout_dial = 30.0;
    Eina_List *headers = NULL;
-   Eina_List *form_fields = NULL;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(method),
      ECORE_GETOPT_VALUE_STR(primary_mode_str),
@@ -227,7 +227,7 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(allow_redirects),
      ECORE_GETOPT_VALUE_DOUBLE(timeout_dial),
      ECORE_GETOPT_VALUE_LIST(headers),
-     ECORE_GETOPT_VALUE_LIST(form_fields),
+     ECORE_GETOPT_VALUE_STR(proxy),
      ECORE_GETOPT_VALUE_STR(input_fname),
 
      /* standard block to provide version, copyright, license and help */
@@ -316,6 +316,7 @@ main(int argc, char **argv)
                     efl_net_dialer_http_version_set(efl_self, http_version),
                     efl_net_dialer_http_authentication_set(efl_self, username, password, authentication_method, authentication_restricted),
                     efl_net_dialer_http_allow_redirects_set(efl_self, allow_redirects),
+                    efl_net_dialer_proxy_set(efl_self, proxy),
                     efl_net_dialer_timeout_dial_set(efl_self, timeout_dial),
                     efl_event_callback_array_add(efl_self, dialer_cbs(), NULL));
 
@@ -330,12 +331,6 @@ main(int argc, char **argv)
                p++;
           }
         efl_net_dialer_http_request_header_add(dialer, str, p);
-        free(str);
-     }
-
-   EINA_LIST_FREE(form_fields, str)
-     {
-        fprintf(stderr, "TODO: form_field %s", str);
         free(str);
      }
 
@@ -377,13 +372,15 @@ main(int argc, char **argv)
            "INFO:  - version=%d\n"
            "INFO:  - allow_redirects=%d\n"
            "INFO:  - timeout_dial=%fs\n"
+           "INFO:  - proxy=%s\n"
            "INFO:  - request headers:\n",
            efl_net_dialer_address_dial_get(dialer),
            efl_net_dialer_http_method_get(dialer),
            efl_net_dialer_http_primary_mode_get(dialer),
            efl_net_dialer_http_version_get(dialer),
            efl_net_dialer_http_allow_redirects_get(dialer),
-           efl_net_dialer_timeout_dial_get(dialer));
+           efl_net_dialer_timeout_dial_get(dialer),
+           efl_net_dialer_proxy_get(dialer));
 
    itr = efl_net_dialer_http_request_headers_get(dialer);
    EINA_ITERATOR_FOREACH(itr, header)

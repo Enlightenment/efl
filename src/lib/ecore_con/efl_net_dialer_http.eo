@@ -295,6 +295,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Reader, Efl.Io.
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial;
         Efl.Net.Dialer.connected;
+        Efl.Net.Dialer.proxy;
         Efl.Net.Dialer.timeout_dial;
         Efl.Net.Socket.address_local;
         Efl.Net.Socket.address_remote;
