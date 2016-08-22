@@ -27,7 +27,7 @@ _a_set(Eo *obj, void *class_data, int a)
    pd->protected.protected_x1 = a + 1;
    pd->protected.public.public_x2 = a + 2;
 
-   efl_event_callback_call(obj, EV_A_CHANGED, &pd->a);
+   efl_event_callback_legacy_call(obj, EV_A_CHANGED, &pd->a);
 }
 
 EAPI EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);

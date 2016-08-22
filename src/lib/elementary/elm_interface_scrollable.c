@@ -135,7 +135,7 @@ _elm_pan_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *
    psd->h = h;
 
    _elm_pan_update(psd);
-   efl_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -164,7 +164,7 @@ _elm_pan_pos_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord x, Eva
    psd->py = y;
 
    _elm_pan_update(psd);
-   efl_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -252,7 +252,7 @@ _elm_pan_content_del_cb(void *data,
    psd->content = NULL;
    psd->content_w = psd->content_h = psd->px = psd->py =
            psd->prev_cw = psd->prev_ch = psd->delta_posx = psd->delta_posy = 0;
-   efl_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -272,7 +272,7 @@ _elm_pan_content_resize_cb(void *data,
         psd->content_h = h;
         _elm_pan_update(psd);
      }
-   efl_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -314,7 +314,7 @@ _elm_pan_content_set(Evas_Object *obj,
    _elm_pan_update(psd);
 
 end:
-   efl_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static void

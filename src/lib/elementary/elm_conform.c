@@ -760,7 +760,7 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
         _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
         if (!sd->clipboard_state)
           elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
-        efl_event_callback_call(obj, ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_OFF, NULL);
+        efl_event_callback_legacy_call(obj, ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_OFF, NULL);
      }
    else if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_ON)
      {
@@ -768,7 +768,7 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
         _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_COMPRESS);
         _autoscroll_objects_update(obj);
-        efl_event_callback_call(obj, ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_ON, NULL);
+        efl_event_callback_legacy_call(obj, ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_ON, NULL);
      }
 }
 
@@ -798,13 +798,13 @@ _clipboard_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
         evas_object_size_hint_max_set(sd->clipboard, -1, 0);
         if (!sd->vkb_state)
           elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
-        efl_event_callback_call(obj, ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_OFF, NULL);
+        efl_event_callback_legacy_call(obj, ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_OFF, NULL);
      }
    else if (state == ECORE_X_ILLUME_CLIPBOARD_STATE_ON)
      {
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_COMPRESS);
         _autoscroll_objects_update(obj);
-        efl_event_callback_call(obj, ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_ON, NULL);
+        efl_event_callback_legacy_call(obj, ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_ON, NULL);
      }
 }
 

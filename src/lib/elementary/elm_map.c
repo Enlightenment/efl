@@ -599,7 +599,7 @@ _loaded_timeout_cb(void *data)
 
    sd->loaded_timer = NULL;
    if (!(sd->download_num) && !(sd->download_idler))
-      efl_event_callback_call
+      efl_event_callback_legacy_call
         (sd->obj, ELM_MAP_EVENT_LOADED, NULL);
    return ECORE_CALLBACK_CANCEL;
 }
@@ -751,7 +751,7 @@ _downloaded_cb(void *data,
 
         _grid_item_update(gi);
         gi->wsd->finish_num++;
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           ((gi->wsd)->obj, ELM_MAP_EVENT_TILE_LOADED, NULL);
      }
    else
@@ -760,7 +760,7 @@ _downloaded_cb(void *data,
 
         ecore_file_remove(gi->file);
         gi->file_have = EINA_FALSE;
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           ((gi->wsd)->obj, ELM_MAP_EVENT_TILE_LOADED_FAIL, NULL);
      }
 
@@ -809,7 +809,7 @@ _download_job(void *data)
            sd->download_list = eina_list_remove(sd->download_list, gi);
            sd->try_num++;
            sd->download_num++;
-           efl_event_callback_call
+           efl_event_callback_legacy_call
              (obj, ELM_MAP_EVENT_TILE_LOAD, NULL);
            if (sd->download_num == 1)
              edje_object_signal_emit(wd->resize_obj,
@@ -1070,7 +1070,7 @@ _zoom_timeout_cb(void *data)
 
    _smooth_update(sd);
    sd->zoom_timer = NULL;
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
 
    return ECORE_CALLBACK_CANCEL;
@@ -1132,15 +1132,15 @@ _zoom_do(Elm_Map_Data *sd,
         sd->zoom_timer = NULL;
      }
    else
-      efl_event_callback_call
+      efl_event_callback_legacy_call
         (sd->obj, EFL_UI_EVENT_ZOOM_START, NULL);
 
    if (sd->obj)
      sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, ELM_MAP_EVENT_ZOOM_CHANGE, NULL);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->pan_obj, ELM_PAN_EVENT_CHANGED, NULL);
    evas_object_smart_changed(sd->pan_obj);
 }
@@ -1280,7 +1280,7 @@ _scr_timeout_cb(void *data)
 
    _smooth_update(sd);
    sd->scr_timer = NULL;
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
 
    return ECORE_CALLBACK_CANCEL;
@@ -1294,11 +1294,11 @@ _scroll_cb(Evas_Object *obj,
 
    if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
    else
-      efl_event_callback_call
+      efl_event_callback_legacy_call
         (sd->obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
    sd->scr_timer = ecore_timer_add(0.25, _scr_timeout_cb, obj);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, EFL_UI_EVENT_SCROLL, NULL);
 }
 
@@ -1308,7 +1308,7 @@ _scroll_animate_start_cb(Evas_Object *obj,
 {
    ELM_MAP_DATA_GET(obj, sd);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
 }
 
@@ -1318,7 +1318,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
 {
    ELM_MAP_DATA_GET(obj, sd);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
 }
 
@@ -1328,7 +1328,7 @@ _long_press_cb(void *data)
    ELM_MAP_DATA_GET(data, sd);
 
    sd->long_timer = NULL;
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, EFL_UI_EVENT_LONGPRESSED, &sd->ev);
 
    return ECORE_CALLBACK_CANCEL;
@@ -1348,10 +1348,10 @@ _mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (sd->obj, EFL_UI_EVENT_CLICKED_DOUBLE, ev);
    else
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (sd->obj, ELM_MAP_EVENT_PRESS, ev);
 
    ecore_timer_del(sd->long_timer);
@@ -1379,7 +1379,7 @@ _mouse_up_cb(void *data,
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
    if (!sd->on_hold)
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, EFL_UI_EVENT_CLICKED, ev);
    sd->on_hold = EINA_FALSE;
 }
@@ -1491,7 +1491,7 @@ _overlay_clicked_cb(void *data,
 
    EINA_SAFETY_ON_NULL_RETURN(data);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      ((overlay->wsd)->obj, ELM_MAP_EVENT_OVERLAY_CLICKED, overlay);
    if (overlay->cb)
      overlay->cb(overlay->cb_data, (overlay->wsd)->obj, overlay);
@@ -3078,14 +3078,14 @@ _route_cb(void *data,
         INF("Route request success from (%lf, %lf) to (%lf, %lf)",
             route->flon, route->flat, route->tlon, route->tlat);
         if (route->cb) route->cb(route->data, sd->obj, route);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (sd->obj, ELM_MAP_EVENT_ROUTE_LOADED, NULL);
      }
    else
      {
         ERR("Route request failed: %d", status);
         if (route->cb) route->cb(route->data, sd->obj, NULL);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (sd->obj, ELM_MAP_EVENT_ROUTE_LOADED_FAIL, NULL);
      }
 
@@ -3115,14 +3115,14 @@ _name_cb(void *data,
         INF("Name request success address:%s, lon:%lf, lat:%lf",
             name->address, name->lon, name->lat);
         if (name->cb) name->cb(name->data, sd->obj, name);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (sd->obj, ELM_MAP_EVENT_NAME_LOADED, NULL);
      }
    else
      {
         ERR("Name request failed: %d", status);
         if (name->cb) name->cb(name->data, sd->obj, NULL);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (sd->obj, ELM_MAP_EVENT_NAME_LOADED_FAIL, NULL);
      }
    edje_object_signal_emit(wd->resize_obj,
@@ -3152,7 +3152,7 @@ _name_list_cb(void *data,
         if (name_list->cb)
           name_list->cb(name_list->data, wd->obj,
                         name_list->names);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (wd->obj, ELM_MAP_EVENT_NAME_LOADED, NULL);
      }
    else
@@ -3160,7 +3160,7 @@ _name_list_cb(void *data,
         ERR("Name List request failed: %d", status);
         if (name_list->cb)
           name_list->cb(name_list->data, wd->obj, NULL);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (wd->obj, ELM_MAP_EVENT_NAME_LOADED_FAIL, NULL);
      }
 
@@ -3238,7 +3238,7 @@ _name_request(const Evas_Object *obj,
    free(fname);
 
    sd->names = eina_list_append(sd->names, name);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, ELM_MAP_EVENT_NAME_LOAD, name);
    edje_object_signal_emit(wd->resize_obj,
                            "elm,state,busy,start", "elm");
@@ -3292,7 +3292,7 @@ _name_list_request(const Evas_Object *obj,
    free(url);
    free(fname);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (wd->obj, ELM_MAP_EVENT_NAME_LOAD, name_list->names);
    edje_object_signal_emit(wd->resize_obj,
                            "elm,state,busy,start", "elm");
@@ -4579,7 +4579,7 @@ _elm_map_route_add(Eo *obj, Elm_Map_Data *sd, Elm_Map_Route_Type type, Elm_Map_R
    free(url);
 
    sd->routes = eina_list_append(sd->routes, route);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, ELM_MAP_EVENT_ROUTE_LOAD, route);
    edje_object_signal_emit(wd->resize_obj,
                            "elm,state,busy,start", "elm");
@@ -4748,7 +4748,7 @@ elm_map_overlay_del(Elm_Map_Overlay *overlay)
    EINA_SAFETY_ON_NULL_RETURN(overlay->wsd);
    ELM_MAP_CHECK((overlay->wsd)->obj);
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      ((overlay->wsd)->obj, ELM_MAP_EVENT_OVERLAY_DEL, overlay);
    if (overlay->del_cb)
      overlay->del_cb

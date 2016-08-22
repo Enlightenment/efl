@@ -136,7 +136,7 @@ _on_frame_clicked(void *data,
         sd->collapsed++;
         sd->anim = EINA_TRUE;
      }
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
@@ -246,7 +246,7 @@ _efl_ui_frame_collapse_go(Eo *obj, Efl_Ui_Frame_Data *sd, Eina_Bool collapse)
    if (sd->collapsed == collapse) return;
 
    elm_layout_signal_emit(obj, "elm,action,toggle", "elm");
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, obj);
    sd->collapsed = collapse;
    sd->anim = EINA_TRUE;

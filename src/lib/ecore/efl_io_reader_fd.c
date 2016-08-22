@@ -78,7 +78,7 @@ _efl_io_reader_fd_efl_io_reader_can_read_set(Eo *o, Efl_Io_Reader_Fd_Data *pd, E
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_reader_fd_reader_fd_get(o) < 0);
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
-   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -94,7 +94,7 @@ _efl_io_reader_fd_efl_io_reader_eos_set(Eo *o, Efl_Io_Reader_Fd_Data *pd, Eina_B
    if (pd->eos == is_eos) return;
    pd->eos = is_eos;
    if (is_eos)
-     efl_event_callback_call(o, EFL_IO_READER_EVENT_EOS, NULL);
+     efl_event_callback_legacy_call(o, EFL_IO_READER_EVENT_EOS, NULL);
 }
 
 #include "efl_io_reader_fd.eo.c"

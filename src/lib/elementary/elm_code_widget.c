@@ -595,7 +595,7 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
    if (!was_key)
      _elm_code_widget_update_focus_directions(widget);
 
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CURSOR_CHANGED, widget);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CURSOR_CHANGED, widget);
    _elm_code_widget_cursor_ensure_visible(widget);
 
    if (oldrow != pd->cursor_line)
@@ -666,7 +666,7 @@ _elm_code_widget_clicked_gutter_cb(Elm_Code_Widget *widget, unsigned int row)
    if (!line)
      return;
 
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_LINE_GUTTER_CLICKED, line);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_LINE_GUTTER_CLICKED, line);
 }
 
 static void
@@ -702,7 +702,7 @@ _elm_code_widget_clicked_readonly_cb(Elm_Code_Widget *widget, unsigned int row)
    if (!line)
      return;
 
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_LINE_CLICKED, line);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_LINE_CLICKED, line);
 }
 
 static void
@@ -1064,7 +1064,7 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
    // a workaround for when the cursor position would be off the line width
    _elm_code_widget_resize(widget, line);
    elm_obj_code_widget_cursor_position_set(widget, col + col_width, row);
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    if (undo)
      {
@@ -1143,7 +1143,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
 
    indent = elm_obj_code_widget_line_text_column_width_to_position(widget, line, leading);
    elm_obj_code_widget_cursor_position_set(widget, indent, row + 1);
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    change = _elm_code_widget_change_create(width + 1, row, indent - 1, row + 1, "\n", 1, EINA_TRUE);
    _elm_code_widget_undo_change_add(widget, change);
@@ -1176,7 +1176,7 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
         elm_obj_code_widget_cursor_position_set(widget, position, row - 1);
      }
 // TODO construct and pass a change object
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
 void
@@ -1215,7 +1215,7 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    elm_code_line_text_remove(line, position - char_width, char_width);
    elm_obj_code_widget_cursor_position_set(widget, start_col, row);
 
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    change = _elm_code_widget_change_create(start_col, row, end_col, row, text, char_width, EINA_FALSE);
    _elm_code_widget_undo_change_add(widget, change);
@@ -1256,7 +1256,7 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    text = elm_code_widget_text_between_positions_get(widget, start_col, row, end_col, row);
    elm_code_line_text_remove(line, position, char_width);
    elm_obj_code_widget_cursor_position_set(widget, start_col, row);
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    change = _elm_code_widget_change_create(start_col, row, col, row, text, char_width, EINA_FALSE);
    _elm_code_widget_undo_change_add(widget, change);
@@ -1283,7 +1283,7 @@ _elm_code_widget_control_key_down_cb(Elm_Code_Widget *widget, const char *key)
      elm_code_widget_undo(widget);
 
    // TODO construct and pass a change object for cut and paste
-         efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
+         efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
 static void

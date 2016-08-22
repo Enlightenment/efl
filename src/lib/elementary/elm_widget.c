@@ -942,7 +942,7 @@ elm_widget_access(Evas_Object *obj,
      }
 
    elm_obj_widget_access(obj, is_access);
-   efl_event_callback_call(obj, ELM_WIDGET_EVENT_ACCESS_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_ACCESS_CHANGED, NULL);
 
    return ret;
 }
@@ -3666,7 +3666,7 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSE
         sd->on_translate = EINA_FALSE;
      }
 #endif
-   efl_event_callback_call(obj, ELM_WIDGET_EVENT_LANGUAGE_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_LANGUAGE_CHANGED, NULL);
    return EINA_TRUE;
 }
 
@@ -5867,7 +5867,7 @@ _elm_widget_on_focus(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item *item E
 
    if (!sd->resize_obj)
      evas_object_focus_set(obj, focused);
-   efl_event_callback_call(obj, desc, NULL);
+   efl_event_callback_legacy_call(obj, desc, NULL);
 
    if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
      elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, focused);

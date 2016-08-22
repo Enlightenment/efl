@@ -130,7 +130,7 @@ _method_terminate(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
 
-   efl_event_callback_call(eo, ELM_APP_SERVER_EVENT_TERMINATE, NULL);
+   efl_event_callback_legacy_call(eo, ELM_APP_SERVER_EVENT_TERMINATE, NULL);
 
    return eldbus_message_method_return_new(message);
 }
@@ -304,7 +304,7 @@ _elm_app_server_save(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
         icon_name = elm_app_server_view_icon_get(view);
         new_events = elm_app_server_view_new_events_get(view);
         progress = elm_app_server_view_progress_get(view);
-        efl_event_callback_call(view, ELM_APP_SERVER_VIEW_EVENT_SAVE, NULL);
+        efl_event_callback_legacy_call(view, ELM_APP_SERVER_VIEW_EVENT_SAVE, NULL);
 
         view_props = elm_app_server_view_props_new(id, title, icon_name,
                                                    new_events, progress);

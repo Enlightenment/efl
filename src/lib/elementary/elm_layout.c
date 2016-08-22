@@ -353,7 +353,7 @@ _elm_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
      }
 
    if (ret)
-     efl_event_callback_call(obj, ELM_LAYOUT_EVENT_THEME_CHANGED, NULL);
+     efl_event_callback_legacy_call(obj, ELM_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    if (!_visuals_refresh(obj, sd))
      ret = ELM_THEME_APPLY_FAILED;
@@ -398,7 +398,7 @@ _elm_layout_elm_widget_on_focus(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED,
      {
         elm_layout_signal_emit(obj, "elm,action,focus", "elm");
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);
-        efl_event_callback_call(obj, ELM_WIDGET_EVENT_FOCUSED, NULL);
+        efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_FOCUSED, NULL);
         if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
           elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
      }
@@ -406,7 +406,7 @@ _elm_layout_elm_widget_on_focus(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED,
      {
         elm_layout_signal_emit(obj, "elm,action,unfocus", "elm");
         evas_object_focus_set(wd->resize_obj, EINA_FALSE);
-        efl_event_callback_call(obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
+        efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
         if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
           elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
      }

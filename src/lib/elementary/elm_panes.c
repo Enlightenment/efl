@@ -141,7 +141,7 @@ _on_clicked(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void
@@ -161,7 +161,7 @@ _on_pressed(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   efl_event_callback_call(data, ELM_PANES_EVENT_PRESS, NULL);
+   efl_event_callback_legacy_call(data, ELM_PANES_EVENT_PRESS, NULL);
 }
 
 static void
@@ -171,11 +171,11 @@ _on_unpressed(void *data,
               const char *source EINA_UNUSED)
 {
    ELM_PANES_DATA_GET(data, sd);
-   efl_event_callback_call(data, ELM_PANES_EVENT_UNPRESS, NULL);
+   efl_event_callback_legacy_call(data, ELM_PANES_EVENT_UNPRESS, NULL);
 
    if (sd->double_clicked)
      {
-        efl_event_callback_call(data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+        efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
         sd->double_clicked = EINA_FALSE;
      }
 }

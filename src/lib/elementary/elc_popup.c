@@ -104,20 +104,20 @@ _visuals_set(Evas_Object *obj)
 static void
 _block_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   efl_event_callback_call(data, ELM_POPUP_EVENT_BLOCK_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_POPUP_EVENT_BLOCK_CLICKED, NULL);
 }
 
 static void
 _timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    evas_object_hide(data);
-   efl_event_callback_call(data, ELM_POPUP_EVENT_TIMEOUT, NULL);
+   efl_event_callback_legacy_call(data, ELM_POPUP_EVENT_TIMEOUT, NULL);
 }
 
 static void
 _hide_effect_finished_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   efl_event_callback_call(data, ELM_POPUP_EVENT_DISMISSED, NULL);
+   efl_event_callback_legacy_call(data, ELM_POPUP_EVENT_DISMISSED, NULL);
 }
 
 
@@ -883,7 +883,7 @@ _item_focused_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
-   efl_event_callback_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it));
+   efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it));
 }
 
 static void
@@ -891,7 +891,7 @@ _item_unfocused_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
-   efl_event_callback_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
+   efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
 }
 
 EOLIAN static Eo *
@@ -1855,7 +1855,7 @@ _elm_popup_class_constructor(Efl_Class *klass)
 static Eina_Bool
 _action_dismiss(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   efl_event_callback_call(obj, ELM_POPUP_EVENT_BLOCK_CLICKED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_POPUP_EVENT_BLOCK_CLICKED, NULL);
    return EINA_TRUE;
 }
 

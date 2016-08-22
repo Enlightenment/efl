@@ -427,9 +427,9 @@ static void
 _hover_dismissed_cb(void *data, const Eo_Event *event)
 {
    _menu_hide(data, event->object, event->info);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_CLICKED, NULL);
-   efl_event_callback_call(data, ELM_MENU_EVENT_DISMISSED, NULL);
+   efl_event_callback_legacy_call(data, ELM_MENU_EVENT_DISMISSED, NULL);
 }
 
 static void

@@ -95,7 +95,7 @@ _eldbus_model_method_call_cb(void *data, const Eldbus_Message *msg, Eldbus_Pendi
    Eldbus_Model_Arguments_Data *args_data = efl_data_scope_get(pd->obj, ELDBUS_MODEL_ARGUMENTS_CLASS);
 
    if (eldbus_model_arguments_process_arguments(args_data, msg, pending))
-     efl_event_callback_call(pd->obj, ELDBUS_MODEL_METHOD_EVENT_SUCCESSFUL_CALL, NULL);
+     efl_event_callback_legacy_call(pd->obj, ELDBUS_MODEL_METHOD_EVENT_SUCCESSFUL_CALL, NULL);
 }
 
 #include "eldbus_model_method.eo.c"

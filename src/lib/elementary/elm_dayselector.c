@@ -199,7 +199,7 @@ _item_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Dayselector_Item_Data *it = data;
 
-   efl_event_callback_call(WIDGET(it), EFL_UI_CHECK_EVENT_CHANGED, (void *)it->day);
+   efl_event_callback_legacy_call(WIDGET(it), EFL_UI_CHECK_EVENT_CHANGED, (void *)it->day);
 }
 
 static Elm_Dayselector_Item_Data *

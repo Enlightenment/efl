@@ -70,7 +70,7 @@ _item_sel_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
 
    EINA_SAFETY_ON_NULL_RETURN(idata);
 
-   efl_event_callback_call(idata->priv->view, ELM_VIEW_LIST_EVENT_MODEL_SELECTED, idata->model);
+   efl_event_callback_legacy_call(idata->priv->view, ELM_VIEW_LIST_EVENT_MODEL_SELECTED, idata->model);
 }
 
 static void

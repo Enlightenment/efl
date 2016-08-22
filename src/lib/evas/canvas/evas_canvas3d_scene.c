@@ -687,7 +687,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
 
                             /*Calling callback clicked*/
                             eo_desc = efl_object_legacy_only_event_description_get("clicked,private");
-                            efl_event_callback_call(picked_node, eo_desc, picked_node);
+                            efl_event_callback_legacy_call(picked_node, eo_desc, picked_node);
 
                             return EINA_TRUE;
                          }
@@ -726,7 +726,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
 
    /*Calling callback clicked*/
    eo_desc = efl_object_legacy_only_event_description_get("clicked,private");
-   efl_event_callback_call(data.node, eo_desc, data.node);
+   efl_event_callback_legacy_call(data.node, eo_desc, data.node);
 
    return EINA_TRUE;
 }

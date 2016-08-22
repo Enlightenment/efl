@@ -49,7 +49,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
   static void                                                               \
   _##name##_fwd(void *data, const Eo_Event *ev EINA_UNUSED)                                          \
   {                                                                         \
-     efl_event_callback_call(data, event, ev->info);          \
+     efl_event_callback_legacy_call(data, event, ev->info);          \
   }
 SIG_FWD(CHANGED, ELM_FILESELECTOR_ENTRY_EVENT_CHANGED)
 SIG_FWD(PRESS, ELM_FILESELECTOR_ENTRY_EVENT_PRESS)
@@ -94,7 +94,7 @@ _FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
    eina_promise_then(promise, _file_chosen_path_then, NULL, data);
 
    // EVENTS: should not call legacy
-   //efl_event_callback_call
+   //efl_event_callback_legacy_call
    //  (data, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event->info);
 }
 
@@ -132,7 +132,7 @@ _ACTIVATED_fwd(void *data, const Eo_Event *event)
          elm_interface_fileselector_model_set(sd->button, model);
      }
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (data, ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event->info);
 }
 

@@ -222,7 +222,7 @@ _block_area_clicked_cb(void *data,
                        const char *emission EINA_UNUSED,
                        const char *source EINA_UNUSED)
 {
-   efl_event_callback_call(data, ELM_NOTIFY_EVENT_BLOCK_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_NOTIFY_EVENT_BLOCK_CLICKED, NULL);
 }
 
 EOLIAN static void
@@ -264,7 +264,7 @@ _timer_cb(void *data)
    if (!evas_object_visible_get(obj)) goto end;
 
    evas_object_hide(obj);
-   efl_event_callback_call(obj, ELM_NOTIFY_EVENT_TIMEOUT, NULL);
+   efl_event_callback_legacy_call(obj, ELM_NOTIFY_EVENT_TIMEOUT, NULL);
 
 end:
    return ECORE_CALLBACK_CANCEL;
@@ -448,7 +448,7 @@ _hide_finished_cb(void *data,
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
    efl_canvas_group_hide(efl_super(data, MY_CLASS));
-   efl_event_callback_call(data, ELM_NOTIFY_EVENT_DISMISSED, NULL);
+   efl_event_callback_legacy_call(data, ELM_NOTIFY_EVENT_DISMISSED, NULL);
 }
 
 EOLIAN static void

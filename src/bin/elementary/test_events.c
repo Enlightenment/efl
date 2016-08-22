@@ -144,14 +144,14 @@ _clicked_button2(void *data, const Eo_Event *ev EINA_UNUSED)
         efl_event_pointer_position_set(td->evdown, x, y);
         efl_event_pointer_position_set(td->evup, x, y);
 
-        efl_event_callback_call(td->win, EFL_EVENT_POINTER_MOVE, td->evmove);
-        efl_event_callback_call(td->win, EFL_EVENT_POINTER_DOWN, td->evdown);
-        efl_event_callback_call(td->win, EFL_EVENT_POINTER_UP, td->evup);
+        efl_event_callback_legacy_call(td->win, EFL_EVENT_POINTER_MOVE, td->evmove);
+        efl_event_callback_legacy_call(td->win, EFL_EVENT_POINTER_DOWN, td->evdown);
+        efl_event_callback_legacy_call(td->win, EFL_EVENT_POINTER_UP, td->evup);
      }
    else
      {
-        efl_event_callback_call(td->win, EFL_EVENT_KEY_DOWN, td->evkeydown);
-        efl_event_callback_call(td->win, EFL_EVENT_KEY_UP, td->evkeyup);
+        efl_event_callback_legacy_call(td->win, EFL_EVENT_KEY_DOWN, td->evkeydown);
+        efl_event_callback_legacy_call(td->win, EFL_EVENT_KEY_UP, td->evkeyup);
         efl_del(td->evkeydown);
         efl_del(td->evkeyup);
         td->evkeydown = NULL;

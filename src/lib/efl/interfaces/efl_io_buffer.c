@@ -39,7 +39,7 @@ _efl_io_buffer_realloc(Eo *o, Efl_Io_Buffer_Data *pd, size_t size)
 
         /* no efl_io_sizer_size_set() since it could recurse! */
         pd->used = size;
-        efl_event_callback_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
+        efl_event_callback_legacy_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
      }
 
    if (size == 0)
@@ -55,7 +55,7 @@ _efl_io_buffer_realloc(Eo *o, Efl_Io_Buffer_Data *pd, size_t size)
 
    pd->bytes = tmp;
    pd->allocated = size;
-   efl_event_callback_call(o, EFL_IO_BUFFER_EVENT_REALLOCATED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_BUFFER_EVENT_REALLOCATED, NULL);
    return EINA_TRUE;
 }
 
@@ -127,7 +127,7 @@ _efl_io_buffer_binbuf_steal(Eo *o, Efl_Io_Buffer_Data *pd)
 
    pd->bytes = NULL;
    pd->allocated = 0;
-   efl_event_callback_call(o, EFL_IO_BUFFER_EVENT_REALLOCATED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_BUFFER_EVENT_REALLOCATED, NULL);
    efl_io_sizer_resize(o, 0);
 
    return ret;
@@ -213,7 +213,7 @@ _efl_io_buffer_efl_io_reader_can_read_set(Eo *o, Efl_Io_Buffer_Data *pd, Eina_Bo
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
-   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -228,7 +228,7 @@ _efl_io_buffer_efl_io_reader_eos_set(Eo *o, Efl_Io_Buffer_Data *pd EINA_UNUSED, 
 {
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (is_eos)
-     efl_event_callback_call(o, EFL_IO_READER_EVENT_EOS, NULL);
+     efl_event_callback_legacy_call(o, EFL_IO_READER_EVENT_EOS, NULL);
 }
 
 EOLIAN static Eina_Error
@@ -273,7 +273,7 @@ _efl_io_buffer_efl_io_writer_write(Eo *o, Efl_Io_Buffer_Data *pd, Eina_Slice *sl
    if (pd->used < write_pos + todo)
      {
         pd->used = write_pos + todo;
-        efl_event_callback_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
+        efl_event_callback_legacy_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
         efl_io_reader_can_read_set(o, pd->position_read < pd->used);
      }
    efl_io_buffer_position_write_set(o, write_pos + todo);
@@ -298,7 +298,7 @@ _efl_io_buffer_efl_io_writer_can_write_set(Eo *o, Efl_Io_Buffer_Data *pd, Eina_B
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
-   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Error
@@ -307,7 +307,7 @@ _efl_io_buffer_efl_io_closer_close(Eo *o, Efl_Io_Buffer_Data *pd)
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EINVAL);
    efl_io_sizer_resize(o, 0);
    pd->closed = EINA_TRUE;
-   efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
    return 0;
 }
 
@@ -359,9 +359,9 @@ _efl_io_buffer_efl_io_sizer_resize(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t size)
         efl_io_writer_can_write_set(o, (limit == 0) || (pos_write < limit));
      }
 
-   efl_event_callback_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
    if (reallocated)
-     efl_event_callback_call(o, EFL_IO_BUFFER_EVENT_REALLOCATED, NULL);
+     efl_event_callback_legacy_call(o, EFL_IO_BUFFER_EVENT_REALLOCATED, NULL);
 
    return ret;
 }
@@ -437,9 +437,9 @@ _efl_io_buffer_position_read_set(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t positio
    changed = efl_io_positioner_position_get(o) != position;
 
    pd->position_read = position;
-   efl_event_callback_call(o, EFL_IO_BUFFER_EVENT_POSITION_READ_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_BUFFER_EVENT_POSITION_READ_CHANGED, NULL);
    if (changed)
-     efl_event_callback_call(o, EFL_IO_POSITIONER_EVENT_POSITION_CHANGED, NULL);
+     efl_event_callback_legacy_call(o, EFL_IO_POSITIONER_EVENT_POSITION_CHANGED, NULL);
 
    efl_io_reader_can_read_set(o, position < size);
    efl_io_reader_eos_set(o, position >= size);
@@ -469,9 +469,9 @@ _efl_io_buffer_position_write_set(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t positi
    changed = efl_io_positioner_position_get(o) != position;
 
    pd->position_write = position;
-   efl_event_callback_call(o, EFL_IO_BUFFER_EVENT_POSITION_WRITE_CHANGED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_BUFFER_EVENT_POSITION_WRITE_CHANGED, NULL);
    if (changed)
-     efl_event_callback_call(o, EFL_IO_POSITIONER_EVENT_POSITION_CHANGED, NULL);
+     efl_event_callback_legacy_call(o, EFL_IO_POSITIONER_EVENT_POSITION_CHANGED, NULL);
 
    limit = efl_io_buffer_limit_get(o);
    efl_io_writer_can_write_set(o, (limit == 0) || (position < limit));

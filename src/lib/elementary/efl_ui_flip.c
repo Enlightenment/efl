@@ -1337,7 +1337,7 @@ _flip(Evas_Object *obj)
           sd->state = sd->next_state;
         _configure(obj);
         _flip_show_hide(obj);
-        efl_event_callback_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_DONE, NULL);
+        efl_event_callback_legacy_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_DONE, NULL);
 
         // update the new front and back object.
         _update_front_back(obj, sd);
@@ -1521,7 +1521,7 @@ _event_anim(void *data,
    _flip_show_hide(sd->obj);
    _configure(sd->obj);
    sd->animator = NULL;
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, EFL_UI_FLIP_EVENT_ANIMATE_DONE, NULL);
 
    return ECORE_CALLBACK_CANCEL;
@@ -1708,7 +1708,7 @@ _move_cb(void *data,
              evas_smart_objects_calculate(evas_object_evas_get(data));
              _configure(fl);
              // FIXME: end hack
-             efl_event_callback_call(fl, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
+             efl_event_callback_legacy_call(fl, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
           }
         else return;
      }
@@ -1928,7 +1928,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
    evas_smart_objects_calculate(evas_object_evas_get(obj));
    _configure(obj);
    // FIXME: end hack
-   efl_event_callback_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
 
    // set focus to the content object when flip go to is called
    if (elm_object_focus_get(obj))

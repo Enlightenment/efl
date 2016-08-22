@@ -139,7 +139,7 @@ static void
 _eo_signals_a_changed_within_cb(void *_data EINA_UNUSED, const Eo_Event *event)
 {
    int a = 3;
-   efl_event_callback_call(event->object, EV_A_CHANGED, &a);
+   efl_event_callback_legacy_call(event->object, EV_A_CHANGED, &a);
    _eo_signals_cb_flag = 0x8;
 }
 
@@ -242,13 +242,13 @@ START_TEST(eo_signals)
         int a = 3;
         _eo_signals_cb_current = 0;
         _eo_signals_cb_flag = 0;
-        efl_event_callback_call(obj, a_desc, &a);
+        efl_event_callback_legacy_call(obj, a_desc, &a);
         ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
 
         /* Stop event within event. */
         _eo_signals_cb_current = 0;
         _eo_signals_cb_flag = 0;
-        fail_if(!efl_event_callback_call(obj, EV_A_CHANGED2, &a));
+        fail_if(!efl_event_callback_legacy_call(obj, EV_A_CHANGED2, &a));
         ck_assert_int_eq(_eo_signals_cb_flag, 0x8);
         fail_if(!r);
      }

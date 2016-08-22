@@ -3792,7 +3792,7 @@ _registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending 
      }
 
    if (!pd->connected)
-      efl_event_callback_call(data, ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL);
+      efl_event_callback_legacy_call(data, ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL);
    pd->connected = EINA_TRUE;
 }
 
@@ -4295,7 +4295,7 @@ _a11y_connection_shutdown(Eo *bridge)
    elm_interface_atspi_accessible_event_handler_del(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, pd->event_hdlr);
    pd->event_hdlr = NULL;
 
-   efl_event_callback_call(bridge, ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL);
+   efl_event_callback_legacy_call(bridge, ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL);
    pd->connected = EINA_FALSE;
 }
 

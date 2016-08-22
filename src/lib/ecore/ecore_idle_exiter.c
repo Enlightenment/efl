@@ -29,5 +29,5 @@ ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
 void
 _ecore_idle_exiter_call(Eo *loop)
 {
-   efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
+   efl_event_callback_legacy_call(loop, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
 }

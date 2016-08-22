@@ -252,7 +252,7 @@ evas_event_callback_cleanup(Evas *eo_e)
 void
 evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 {
-   efl_event_callback_call(eo_e, _legacy_evas_callback_table(type), event_info);
+   efl_event_callback_legacy_call(eo_e, _legacy_evas_callback_table(type), event_info);
 }
 
 void
@@ -328,16 +328,16 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
    if (_evas_event_efl_event_info_exists(type))
      {
-        efl_event_callback_call(eo_obj, efl_event_desc, efl_event_info);
+        efl_event_callback_legacy_call(eo_obj, efl_event_desc, efl_event_info);
      }
    else
      {
         /* legacy callbacks - relying on Efl.Canvas.Object events */
-        efl_event_callback_call(eo_obj, _legacy_evas_callback_table(type), event_info);
+        efl_event_callback_legacy_call(eo_obj, _legacy_evas_callback_table(type), event_info);
 
         /* new input events - unlikely */
         if (efl_event_desc)
-          efl_event_callback_call(eo_obj, efl_event_desc, efl_event_info);
+          efl_event_callback_legacy_call(eo_obj, efl_event_desc, efl_event_info);
      }
 
    if (type == EVAS_CALLBACK_MOUSE_DOWN)

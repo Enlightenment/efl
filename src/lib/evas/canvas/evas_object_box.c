@@ -214,7 +214,7 @@ _evas_box_internal_append(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *child)
 
    priv->children = eina_list_append(priv->children, opt);
    priv->children_changed = EINA_TRUE;
-   efl_event_callback_call(o, EVAS_BOX_EVENT_CHILD_ADDED, opt);
+   efl_event_callback_legacy_call(o, EVAS_BOX_EVENT_CHILD_ADDED, opt);
 
    return opt;
 }
@@ -230,7 +230,7 @@ _evas_box_internal_prepend(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *child
 
    priv->children = eina_list_prepend(priv->children, opt);
    priv->children_changed = EINA_TRUE;
-   efl_event_callback_call(o, EVAS_BOX_EVENT_CHILD_ADDED, opt);
+   efl_event_callback_legacy_call(o, EVAS_BOX_EVENT_CHILD_ADDED, opt);
 
    return opt;
 }
@@ -254,7 +254,7 @@ _evas_box_internal_insert_before(Eo *o, Evas_Object_Box_Data *priv, Evas_Object 
              priv->children = eina_list_prepend_relative
                 (priv->children, new_opt, opt);
              priv->children_changed = EINA_TRUE;
-             efl_event_callback_call(o, EVAS_BOX_EVENT_CHILD_ADDED, new_opt);
+             efl_event_callback_legacy_call(o, EVAS_BOX_EVENT_CHILD_ADDED, new_opt);
              return new_opt;
           }
      }
@@ -281,7 +281,7 @@ _evas_box_internal_insert_after(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *
              priv->children = eina_list_append_relative
                 (priv->children, new_opt, opt);
              priv->children_changed = EINA_TRUE;
-             efl_event_callback_call(o, EVAS_BOX_EVENT_CHILD_ADDED, new_opt);
+             efl_event_callback_legacy_call(o, EVAS_BOX_EVENT_CHILD_ADDED, new_opt);
              return new_opt;
           }
      }
@@ -304,7 +304,7 @@ _evas_box_internal_insert_at(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *chi
 
         priv->children = eina_list_prepend(priv->children, new_opt);
         priv->children_changed = EINA_TRUE;
-        efl_event_callback_call(o, EVAS_BOX_EVENT_CHILD_ADDED, new_opt);
+        efl_event_callback_legacy_call(o, EVAS_BOX_EVENT_CHILD_ADDED, new_opt);
         return new_opt;
      }
 
@@ -323,7 +323,7 @@ _evas_box_internal_insert_at(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *chi
              priv->children = eina_list_prepend_relative
                 (priv->children, new_opt, opt);
              priv->children_changed = EINA_TRUE;
-             efl_event_callback_call(o, EVAS_BOX_EVENT_CHILD_ADDED, new_opt);
+             efl_event_callback_legacy_call(o, EVAS_BOX_EVENT_CHILD_ADDED, new_opt);
              return new_opt;
           }
      }
@@ -345,7 +345,7 @@ _evas_box_internal_remove(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *child)
              priv->children = eina_list_remove(priv->children, opt);
              evas_obj_box_internal_option_free(o, opt);
              priv->children_changed = EINA_TRUE;
-             efl_event_callback_call(o, EVAS_BOX_EVENT_CHILD_REMOVED, obj);
+             efl_event_callback_legacy_call(o, EVAS_BOX_EVENT_CHILD_REMOVED, obj);
 
              return obj;
           }
@@ -373,7 +373,7 @@ _evas_box_internal_remove_at(Eo *o, Evas_Object_Box_Data *priv, unsigned int pos
    priv->children = eina_list_remove_list(priv->children, node);
    evas_obj_box_internal_option_free(o, opt);
    priv->children_changed = EINA_TRUE;
-   efl_event_callback_call(o, EVAS_BOX_EVENT_CHILD_REMOVED, obj);
+   efl_event_callback_legacy_call(o, EVAS_BOX_EVENT_CHILD_REMOVED, obj);
    return obj;
 }
 

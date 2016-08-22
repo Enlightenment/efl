@@ -43,7 +43,7 @@ _method_close(const Eldbus_Service_Interface *iface, const Eldbus_Message *messa
    Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_CLOSED);
-   efl_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL);
+   efl_event_callback_legacy_call(eo, ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL);
 
    return eldbus_message_method_return_new(message);
 }
@@ -55,7 +55,7 @@ _method_pause(const Eldbus_Service_Interface *iface, const Eldbus_Message *messa
    Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_PAUSED);
-   efl_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL);
+   efl_event_callback_legacy_call(eo, ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL);
 
    return eldbus_message_method_return_new(message);
 }
@@ -67,7 +67,7 @@ _method_resume(const Eldbus_Service_Interface *iface, const Eldbus_Message *mess
    Elm_App_Server_View_Data *data = efl_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_LIVE);
-   efl_event_callback_call(eo, ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL);
+   efl_event_callback_legacy_call(eo, ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL);
 
    return eldbus_message_method_return_new(message);
 }
@@ -170,28 +170,28 @@ EOLIAN static void
 _elm_app_server_view_resume(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_LIVE);
-   efl_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL);
 }
 
 EOLIAN static void
 _elm_app_server_view_pause(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_PAUSED);
-   efl_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL);
 }
 
 EOLIAN static void
 _elm_app_server_view_close(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_CLOSED);
-   efl_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL);
 }
 
 EOLIAN static void
 _elm_app_server_view_shallow(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_SHALLOW);
-   efl_event_callback_call(obj, ELM_APP_SERVER_VIEW_EVENT_SHALLOW, NULL);
+   efl_event_callback_legacy_call(obj, ELM_APP_SERVER_VIEW_EVENT_SHALLOW, NULL);
 }
 
 EOLIAN static Elm_App_View_State

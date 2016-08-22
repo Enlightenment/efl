@@ -91,7 +91,7 @@ _animator_repeater(void *data, const Eo_Event *event)
 {
    Evas_Object_Protected_Data *obj = data;
 
-   efl_event_callback_call(obj->object, EFL_EVENT_ANIMATOR_TICK, event->info);
+   efl_event_callback_legacy_call(obj->object, EFL_EVENT_ANIMATOR_TICK, event->info);
    DBG("Emitting animator tick on %p.", obj->object);
 }
 

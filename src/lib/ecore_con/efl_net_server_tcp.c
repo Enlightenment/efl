@@ -135,7 +135,7 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, void *pd EINA_UNUSED, const char
  error_listen:
    close(fd);
  error_socket:
-   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+   efl_event_callback_legacy_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
    return err;
 }
 
@@ -171,7 +171,7 @@ _efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, void *pd EINA_UNUSED, in
      }
 
    efl_net_server_clients_count_set(o, efl_net_server_clients_count_get(o) + 1);
-   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_CLIENT_ADD, client);
+   efl_event_callback_legacy_call(o, EFL_NET_SERVER_EVENT_CLIENT_ADD, client);
 
    if (efl_ref_get(client) == 1) /* users must take a reference themselves */
      {
@@ -195,7 +195,7 @@ _efl_net_server_tcp_efl_net_server_fd_client_reject(Eo *o, void *pd EINA_UNUSED,
      efl_net_ip_port_fmt(str, sizeof(str), (struct sockaddr *)&addr);
 
    close(client_fd);
-   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_CLIENT_REJECTED, str);
+   efl_event_callback_legacy_call(o, EFL_NET_SERVER_EVENT_CLIENT_REJECTED, str);
 }
 
 #include "efl_net_server_tcp.eo.c"

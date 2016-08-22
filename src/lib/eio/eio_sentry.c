@@ -73,7 +73,7 @@ _handle_event(void *data, int type, void *event)
    event_info->source = eio_monitor_path_get(monitor_event->monitor);
    event_info->trigger = monitor_event->filename;
 
-   efl_event_callback_call(pd->object, translated_event, event_info);
+   efl_event_callback_legacy_call(pd->object, translated_event, event_info);
 
    // If event was error, we must delete the monitor.
    if (type == EIO_MONITOR_ERROR)

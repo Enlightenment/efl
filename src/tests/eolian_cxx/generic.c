@@ -100,23 +100,23 @@ static void _generic_out_optional_ctor_b(Eo *obj EINA_UNUSED, Generic_Data* pd, 
 
 static void _generic_call_event1(Eo *obj, Generic_Data* pd EINA_UNUSED)
 {
-  efl_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT1, NULL);
+  efl_event_callback_legacy_call(obj, GENERIC_EVENT_PREFIX_EVENT1, NULL);
 }
 static void _generic_call_event2(Eo *obj, Generic_Data* pd EINA_UNUSED)
 {
-  efl_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT2, obj);
+  efl_event_callback_legacy_call(obj, GENERIC_EVENT_PREFIX_EVENT2, obj);
 }
 static void _generic_call_event3(Eo *obj, Generic_Data* pd EINA_UNUSED)
 {
   int p = 42;
-  efl_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT3, &p);
+  efl_event_callback_legacy_call(obj, GENERIC_EVENT_PREFIX_EVENT3, &p);
 }
 static void _generic_call_event4(Eo *obj, Generic_Data* pd EINA_UNUSED)
 {
   int i = 42;
   Eina_List* p = eina_list_append(NULL, &i);
   ck_assert(p != NULL);
-  efl_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT4, p);
+  efl_event_callback_legacy_call(obj, GENERIC_EVENT_PREFIX_EVENT4, p);
   eina_list_free(p);
 }
 static void _generic_call_event5(Eo *obj, Generic_Data* pd EINA_UNUSED)
@@ -125,7 +125,7 @@ static void _generic_call_event5(Eo *obj, Generic_Data* pd EINA_UNUSED)
   Eina_List* p = eina_list_append(NULL, &i);
 
   Generic_Event e = {.field1 = 42, .field2 = p};
-  efl_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT5, &e);
+  efl_event_callback_legacy_call(obj, GENERIC_EVENT_PREFIX_EVENT5, &e);
   eina_list_free(p);
 }
 static void _generic_protected_method1(Eo *obj EINA_UNUSED, Generic_Data* pd EINA_UNUSED)

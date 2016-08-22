@@ -344,7 +344,7 @@ _on_item_title_transition_finished(void *data,
 {
    Elm_Naviframe_Item_Data *it = data;
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
          (WIDGET(it), ELM_NAVIFRAME_EVENT_TITLE_TRANSITION_FINISHED, EO_OBJ(it));
 }
 
@@ -1089,7 +1089,7 @@ _on_item_title_clicked(void *data,
 {
    Elm_Naviframe_Item_Data *it = data;
 
-   efl_event_callback_call(WIDGET(it), ELM_NAVIFRAME_EVENT_TITLE_CLICKED, EO_OBJ(it));
+   efl_event_callback_legacy_call(WIDGET(it), ELM_NAVIFRAME_EVENT_TITLE_CLICKED, EO_OBJ(it));
 }
 
 /* "elm,state,cur,pushed"
@@ -1155,7 +1155,7 @@ _on_item_show_finished(void *data,
 
    it->pushing = EINA_FALSE;
 
-   efl_event_callback_call(WIDGET(it), ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED, EO_OBJ(it));
+   efl_event_callback_legacy_call(WIDGET(it), ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED, EO_OBJ(it));
 }
 
 static void
@@ -1491,7 +1491,7 @@ _key_action_top_item_get(Evas_Object *obj, const char *params EINA_UNUSED)
    ///Leave for compatibility.
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_item, it);
    if (it->title_prev_btn)
-     efl_event_callback_call(it->title_prev_btn, EFL_UI_EVENT_CLICKED, NULL);
+     efl_event_callback_legacy_call(it->title_prev_btn, EFL_UI_EVENT_CLICKED, NULL);
 
    return EINA_TRUE;
 }

@@ -71,7 +71,7 @@ _on_mouse_up(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      return;
 
-   efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 /* overriding layout's focus_next() in order to just cycle through the

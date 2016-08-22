@@ -81,7 +81,7 @@ _efl_io_copier_job(void *data, void *value EINA_UNUSED)
    if (pd->destination && efl_io_writer_can_write_get(pd->destination))
      _efl_io_copier_write(o, pd);
 
-   efl_event_callback_call(o, EFL_IO_COPIER_EVENT_PROGRESS, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_PROGRESS, NULL);
 
    if (!pd->source || efl_io_reader_eos_get(pd->source))
      {
@@ -89,7 +89,7 @@ _efl_io_copier_job(void *data, void *value EINA_UNUSED)
             ((!pd->destination) || (eina_binbuf_length_get(pd->buf) == 0)))
           {
              pd->done = EINA_TRUE;
-             efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
+             efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
           }
      }
 }
@@ -125,7 +125,7 @@ _efl_io_copier_dispatch_data_events(Eo *o, Efl_Io_Copier_Data *pd, Eina_Slice sl
 
    offset = slice_of_binbuf.bytes - tmp.bytes;
 
-   efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DATA, &slice_of_binbuf);
+   efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_DATA, &slice_of_binbuf);
    /* user may have modified pd->buf, like calling
     * efl_io_copier_buffer_limit_set()
     */
@@ -141,7 +141,7 @@ _efl_io_copier_dispatch_data_events(Eo *o, Efl_Io_Copier_Data *pd, Eina_Slice sl
 
    if (pd->line_delimiter.len > 0)
      {
-        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_LINE, &slice_of_binbuf);
+        efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_LINE, &slice_of_binbuf);
         /* user may have modified pd->buf, like calling
          * efl_io_copier_buffer_limit_set()
          */
@@ -191,7 +191,7 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
    err = efl_io_reader_read(pd->source, &rw_slice);
    if (err)
      {
-        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
+        efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
         return;
      }
 
@@ -199,7 +199,7 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
    if (!eina_binbuf_append_slice(pd->buf, ro_slice))
      {
         err = ENOMEM;
-        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
+        efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
         return;
      }
 
@@ -262,7 +262,7 @@ _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd)
    if (err)
      {
         if (err != EAGAIN)
-          efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
+          efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
         return;
      }
    pd->progress.written += ro_slice.len;
@@ -277,7 +277,7 @@ _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd)
    if (!eina_binbuf_remove(pd->buf, 0, ro_slice.len))
      {
         err = ENOMEM;
-        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
+        efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
         return;
      }
 
@@ -320,7 +320,7 @@ _efl_io_copier_source_size_apply(Eo *o, Efl_Io_Copier_Data *pd)
    if (pd->destination && efl_isa(pd->destination, EFL_IO_SIZER_MIXIN))
      efl_io_sizer_resize(pd->destination, pd->progress.total);
 
-   efl_event_callback_call(o, EFL_IO_COPIER_EVENT_PROGRESS, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_PROGRESS, NULL);
 }
 
 static void
@@ -424,13 +424,13 @@ _efl_io_copier_destination_closed(void *data, const Eo_Event *event EINA_UNUSED)
         if (!pd->done)
           {
              pd->done = EINA_TRUE;
-             efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
+             efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
           }
      }
    else
      {
         Eina_Error err = EBADF;
-        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
+        efl_event_callback_legacy_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
      }
 }
 
@@ -601,7 +601,7 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
      }
 
    pd->closed = EINA_TRUE;
-   efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
 
    if (pd->buf)
      {

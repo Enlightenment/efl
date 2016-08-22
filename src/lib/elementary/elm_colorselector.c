@@ -575,8 +575,8 @@ _update_hsla_from_colorbar(Evas_Object *obj, Color_Type type, double x)
    _update_colorbars(sd);
    if ((sd->mode == ELM_COLORSELECTOR_ALL) || (sd->mode == ELM_COLORSELECTOR_PICKER))
      _color_picker_init(sd);
-   efl_event_callback_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED, NULL);
-   efl_event_callback_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
 }
 
 static void
@@ -633,7 +633,7 @@ _colors_set(Evas_Object *obj,
    if ((sd->mode == ELM_COLORSELECTOR_ALL) || (sd->mode == ELM_COLORSELECTOR_PICKER))
      _color_picker_init(sd);
    if (!mode_change)
-     efl_event_callback_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED, NULL);
+     efl_event_callback_legacy_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -678,7 +678,7 @@ _spinner_changed_cb(void *data, const Eo_Event *event)
          break;
      }
    evas_object_data_del(event->object, "_changed");
-   efl_event_callback_call(parent, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(parent, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
 }
 
 #ifdef HAVE_ELEMENTARY_X
@@ -766,7 +766,7 @@ _mouse_up_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 
    _unselect_selected_item(sd);
    _colors_set(o, r, g, b, 0xFF, EINA_FALSE);
-   efl_event_callback_call(o, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(o, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
 
    return EINA_TRUE;
 }
@@ -1538,7 +1538,7 @@ _on_color_long_press(void *data)
 
    sd->longpress_timer = NULL;
 
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LONGPRESSED, EO_OBJ(item));
 
    return ECORE_CALLBACK_CANCEL;
@@ -1613,7 +1613,7 @@ _on_color_released(void *data,
    elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
    elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
                                item->color->b, item->color->a);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, EO_OBJ(item));
 
    eo_temp_item = eina_list_data_get(sd->selected);
@@ -2099,7 +2099,7 @@ _key_action_move(Evas_Object *obj, const char *params)
         elm_colorselector_color_set
           (WIDGET(item), item->color->r, item->color->g, item->color->b,
           item->color->a);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, eo_item);
         elm_obj_color_item_selected_set(eo_item, EINA_TRUE);
      }

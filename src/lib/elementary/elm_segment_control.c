@@ -317,7 +317,7 @@ _segment_on(Elm_Segment_Control_Item_Data *it)
    edje_object_signal_emit(VIEW(it), "elm,state,segment,selected", "elm");
 
    sd->selected_item = it;
-   efl_event_callback_call(sd->obj, ELM_SEGMENT_CONTROL_EVENT_CHANGED, EO_OBJ(it));
+   efl_event_callback_legacy_call(sd->obj, ELM_SEGMENT_CONTROL_EVENT_CHANGED, EO_OBJ(it));
 }
 
 static void

@@ -36,7 +36,7 @@ _efl_io_closer_fd_efl_io_closer_close(Eo *o, Efl_Io_Closer_Fd_Data *pd EINA_UNUS
 
    efl_io_closer_fd_closer_fd_set(o, -1);
    if (close(fd) < 0) err = errno;
-   efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
+   efl_event_callback_legacy_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
    return err;
 }
 

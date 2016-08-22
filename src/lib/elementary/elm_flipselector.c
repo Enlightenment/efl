@@ -230,7 +230,7 @@ _on_item_changed(Elm_Flipselector_Data *sd)
 
    if (item->func)
      item->func((void *)WIDGET_ITEM_DATA_GET(eo_item), WIDGET(item), eo_item);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (sd->obj, EFL_UI_EVENT_SELECTED, eo_item);
 }
 
@@ -367,7 +367,7 @@ _flip_up(Elm_Flipselector_Data *sd)
    if (sd->current == sd->items)
      {
         sd->current = eina_list_last(sd->items);
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (sd->obj, ELM_FLIPSELECTOR_EVENT_UNDERFLOWED, NULL);
      }
    else
@@ -392,7 +392,7 @@ _flip_down(Elm_Flipselector_Data *sd)
    if (!sd->current)
      {
         sd->current = sd->items;
-        efl_event_callback_call
+        efl_event_callback_legacy_call
           (sd->obj, ELM_FLIPSELECTOR_EVENT_OVERFLOWED, NULL);
      }
 

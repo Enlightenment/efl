@@ -89,7 +89,7 @@ _item_select(Elm_Diskselector_Item_Data *it)
    _selected_item_indicate(sd->selected_item);
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (WIDGET(it), EFL_UI_EVENT_SELECTED, eo_it);
 }
 
@@ -611,7 +611,7 @@ _item_click_cb(void *data,
      }
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (WIDGET(it), EFL_UI_EVENT_CLICKED, eo_it);
 }
 
@@ -1098,7 +1098,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
 
    if (!it) return;
    _item_select(it);
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SCROLL_ANIM_STOP, EO_OBJ(it));
 }
 
@@ -1106,7 +1106,7 @@ static void
 _scroll_animate_start_cb(Evas_Object *obj,
                          void *data EINA_UNUSED)
 {
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, EFL_UI_EVENT_SCROLL_ANIM_START, elm_diskselector_selected_item_get(obj));
 }
 
@@ -1114,7 +1114,7 @@ static void
 _scroll_drag_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, EFL_UI_EVENT_SCROLL_DRAG_START, elm_diskselector_selected_item_get(obj));
 }
 
@@ -1122,7 +1122,7 @@ static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   efl_event_callback_call
+   efl_event_callback_legacy_call
      (obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, elm_diskselector_selected_item_get(obj));
 }
 

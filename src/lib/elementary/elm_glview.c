@@ -128,7 +128,7 @@ _render_cb(void *obj, const Eo_Event *event EINA_UNUSED)
    if (!sd->initialized)
      {
         //TODO:will be optimized
-        efl_event_callback_call(obj, ELM_GLVIEW_EVENT_CREATED, NULL);
+        efl_event_callback_legacy_call(obj, ELM_GLVIEW_EVENT_CREATED, NULL);
         if (sd->init_func) sd->init_func(obj);
         sd->initialized = EINA_TRUE;
      }
@@ -136,7 +136,7 @@ _render_cb(void *obj, const Eo_Event *event EINA_UNUSED)
    if (sd->resized)
      {
         //TODO:will be optimized
-        efl_event_callback_call(obj, ELM_GLVIEW_EVENT_RESIZED, NULL);
+        efl_event_callback_legacy_call(obj, ELM_GLVIEW_EVENT_RESIZED, NULL);
         if (sd->resize_func) sd->resize_func(obj);
         sd->resized = EINA_FALSE;
      }
@@ -146,7 +146,7 @@ _render_cb(void *obj, const Eo_Event *event EINA_UNUSED)
    // Call the render function
    if (sd->render_func) sd->render_func(obj);
    //TODO:will be optimized
-   efl_event_callback_call(obj, ELM_GLVIEW_EVENT_RENDER, NULL);
+   efl_event_callback_legacy_call(obj, ELM_GLVIEW_EVENT_RENDER, NULL);
 
    // Depending on the policy return true or false
    if (sd->render_policy == ELM_GLVIEW_RENDER_POLICY_ON_DEMAND)
@@ -297,7 +297,7 @@ _elm_glview_efl_canvas_group_group_del(Eo *obj, Elm_Glview_Data *sd)
         sd->del_func(obj);
      }
    //TODO:will be optimised
-   efl_event_callback_call(obj, ELM_GLVIEW_EVENT_DESTROYED, NULL);
+   efl_event_callback_legacy_call(obj, ELM_GLVIEW_EVENT_DESTROYED, NULL);
 
    efl_event_callback_del(ecore_main_loop_get(),
                          EFL_LOOP_EVENT_IDLE_ENTER,

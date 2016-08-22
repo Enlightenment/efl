@@ -112,10 +112,10 @@ _icon_thumb_display(Elm_Icon_Data *sd)
          (sd->obj, sd->thumb.thumb.path, sd->thumb.thumb.key);
 
    if (ret)
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (sd->obj, ELM_ICON_EVENT_THUMB_DONE, NULL);
    else
-     efl_event_callback_call
+     efl_event_callback_legacy_call
        (sd->obj, ELM_ICON_EVENT_THUMB_ERROR, NULL);
 
    return ret;
@@ -218,7 +218,7 @@ _icon_thumb_error(Ethumb_Client *client,
    ERR("could not generate thumbnail for %s (key: %s)",
        sd->thumb.file.path, sd->thumb.file.key);
 
-   efl_event_callback_call(sd->obj, ELM_ICON_EVENT_THUMB_ERROR, NULL);
+   efl_event_callback_legacy_call(sd->obj, ELM_ICON_EVENT_THUMB_ERROR, NULL);
 
    _icon_thumb_cleanup(client);
 }

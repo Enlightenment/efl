@@ -7027,7 +7027,7 @@ _cursor_emit_if_changed(Efl_Canvas_Text_Cursor *cur_obj)
    if (cur->changed)
      {
         cur->changed = EINA_FALSE;
-        efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+        efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
      }
 }
 
@@ -7100,11 +7100,11 @@ evas_object_textblock_text_markup_set(Eo *eo_obj, const char *text)
         EINA_LIST_FOREACH(o->cursors, l, data)
           {
              efl_event_thaw(data);
-             efl_event_callback_call(data, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+             efl_event_callback_legacy_call(data, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
           }
      }
    efl_event_thaw(o->cursor);
-   efl_event_callback_call(o->cursor, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(o->cursor, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 
     o->markup_text = text;
 }
@@ -8301,7 +8301,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_paragraph_first(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
 {
    _canvas_text_cursor_paragraph_first(cur);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 
@@ -8332,7 +8332,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_paragraph_last(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
 {
    _canvas_text_cursor_paragraph_last(cur);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 static Eina_Bool
@@ -8371,7 +8371,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_paragraph_next(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
 {
    _evas_textblock_cursor_paragraph_next(cur);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 static Eina_Bool
@@ -8414,7 +8414,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_paragraph_prev(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
 {
    _evas_textblock_cursor_paragraph_prev(cur);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 EAPI void
@@ -8571,7 +8571,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_word_start(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur EINA_UNUSED)
 {
    evas_textblock_cursor_word_start(cur_obj);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 EAPI Eina_Bool
@@ -8633,7 +8633,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_word_end(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur EINA_UNUSED)
 {
    evas_textblock_cursor_word_end(cur_obj);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 static Eina_Bool
@@ -8688,7 +8688,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_char_next(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
 {
    _evas_textblock_cursor_char_next(cur);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 static Eina_Bool
@@ -8718,7 +8718,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_char_prev(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
 {
    _evas_textblock_cursor_char_prev(cur);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -8734,7 +8734,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_paragraph_char_first(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
 {
    _evas_textblock_cursor_paragraph_char_first(cur);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -8762,7 +8762,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
 {
    _evas_textblock_cursor_paragraph_char_last(cur);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -8811,7 +8811,7 @@ _efl_canvas_text_cursor_line_char_first(Evas_Textblock_Cursor *cur_obj, Efl_Canv
    if (!ln) return;
 
    _cursor_line_first_char_get(ln, cur, o);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -8866,7 +8866,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_line_char_last(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
 {
    _evas_textblock_cursor_line_char_last(cur);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 /**
@@ -9377,7 +9377,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_position_set(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur, int _pos)
 {
    _evas_textblock_cursor_pos_set(cur, _pos);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 EAPI Eina_Bool
@@ -9447,7 +9447,7 @@ _efl_canvas_text_cursor_line_jump_by(Eo *c, Efl_Canvas_Text_Cursor_Data *pd EINA
 	   evas_textblock_cursor_line_char_last(c);
      }
 
-   efl_event_callback_call(c, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(c, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 static int
@@ -9529,7 +9529,7 @@ _efl_canvas_text_cursor_copy(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur,
    if (!efl_canvas_text_cursor_equal(cur_obj, src_obj))
      {
         _evas_textblock_cursor_copy(cur, src);
-        efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+        efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
      }
 }
 
@@ -9909,7 +9909,7 @@ _efl_canvas_text_cursor_text_insert(Eo *cur_obj,
       Efl_Canvas_Text_Cursor_Data *cur, const char *_text)
 {
    int len = _efl_canvas_text_cursor_text_append(cur, _text);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
    return len;
 }
 
@@ -10336,7 +10336,7 @@ EOLIAN static void
 _efl_canvas_text_cursor_char_delete(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
 {
    _evas_textblock_cursor_char_delete(cur);
-   efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 EAPI void
@@ -11533,7 +11533,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur_obj,  Evas_Coord
 end:
    if (ret)
      {
-        efl_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+        efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
      }
    return ret;
 }
@@ -13966,7 +13966,7 @@ _efl_canvas_text_cursor_object_item_insert(Eo *cur_obj EINA_UNUSED,
    Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
    Efl_Canvas_Text_Annotation *ret =
       _textblock_annotation_insert(cur->obj, o, cur, cur, format, EINA_TRUE);
-   efl_event_callback_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
    return ret;
 }
 

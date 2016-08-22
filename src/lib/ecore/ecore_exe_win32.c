@@ -158,7 +158,7 @@ _ecore_exe_pipe_read_thread_cb(void *data)
              ecore_event_add(ECORE_EXE_EVENT_DATA, event_data,
                              _ecore_exe_event_exe_data_free,
                              NULL);
-             efl_event_callback_call(obj, ECORE_EXE_EVENT_DATA_GET, event_data);
+             efl_event_callback_legacy_call(obj, ECORE_EXE_EVENT_DATA_GET, event_data);
           }
 
         current_buf = NULL;
@@ -228,7 +228,7 @@ _ecore_exe_pipe_error_thread_cb(void *data)
              ecore_event_add(ECORE_EXE_EVENT_ERROR, event_data,
                              _ecore_exe_event_exe_data_free,
                              NULL);
-             efl_event_callback_call(obj, ECORE_EXE_EVENT_DATA_ERROR, event_data);
+             efl_event_callback_legacy_call(obj, ECORE_EXE_EVENT_DATA_ERROR, event_data);
           }
 
         current_buf = NULL;

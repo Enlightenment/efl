@@ -62,7 +62,7 @@ elm_code_widget_selection_start(Evas_Object *widget,
 
    pd->selection->start_line = line;
    pd->selection->start_col = col;
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
    elm_obj_code_widget_cursor_position_set(widget, col, line);
 }
 
@@ -88,7 +88,7 @@ elm_code_widget_selection_end(Evas_Object *widget,
 
    pd->selection->end_line = line;
    pd->selection->end_col = col;
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
 }
 
 EAPI Elm_Code_Widget_Selection_Data *
@@ -144,7 +144,7 @@ elm_code_widget_selection_clear(Evas_Object *widget)
 
    free(pd->selection);
    pd->selection = NULL;
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
 }
 
 static void
@@ -246,7 +246,7 @@ elm_code_widget_selection_delete(Evas_Object *widget)
 
    free(pd->selection);
    pd->selection = NULL;
-   efl_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
 }
 
 EAPI void

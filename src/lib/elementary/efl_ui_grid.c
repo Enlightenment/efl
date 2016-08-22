@@ -127,7 +127,7 @@ _efl_ui_grid_elm_widget_theme_apply(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 static void
 _layout_updated_emit(Efl_Ui_Grid *obj)
 {
-   efl_event_callback_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
 }
 
 static void
@@ -408,7 +408,7 @@ _pack_at(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx *subobj,
 
         efl_key_data_set(subobj, GRID_ITEM_KEY, gi);
         elm_widget_sub_object_add(obj, subobj);
-        efl_event_callback_call(obj, EFL_CONTAINER_EVENT_CONTENT_ADDED, subobj);
+        efl_event_callback_legacy_call(obj, EFL_CONTAINER_EVENT_CONTENT_ADDED, subobj);
         efl_event_callback_array_add(subobj, subobj_callbacks(), obj);
      }
 
@@ -514,7 +514,7 @@ _item_remove(Efl_Ui_Grid *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx *subobj)
      }
 
 end:
-   efl_event_callback_call(obj, EFL_CONTAINER_EVENT_CONTENT_REMOVED, subobj);
+   efl_event_callback_legacy_call(obj, EFL_CONTAINER_EVENT_CONTENT_REMOVED, subobj);
    pd->items = (Grid_Item *)
          eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
    pd->count--;

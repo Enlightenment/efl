@@ -69,7 +69,7 @@ _ector_software_buffer_base_pixels_clear(Eo *obj, Ector_Software_Buffer_Base_Dat
         return;
      }
 
-   efl_event_callback_call(obj, ECTOR_BUFFER_EVENT_DETACHED, pd->pixels.u8);
+   efl_event_callback_legacy_call(obj, ECTOR_BUFFER_EVENT_DETACHED, pd->pixels.u8);
    if (!pd->nofree)
      {
         free(pd->pixels.u8);
