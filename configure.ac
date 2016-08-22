@@ -650,6 +650,7 @@ pause \
 
 AC_FUNC_ALLOCA
 AC_FUNC_MMAP
+AC_FUNC_STRERROR_R
 
 EFL_CHECK_FUNCS([EFLALL], [fnmatch gettimeofday dirfd fcntl sched_getcpu])
 

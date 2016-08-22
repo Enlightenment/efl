@@ -312,16 +312,17 @@ eina_error_msg_get(Eina_Error error)
         if (!msg)
           {
              char buf[256] = "";
-             const char *str;
+             const char *str = NULL;
 
-#if (_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE
+#ifdef HAVE_STRERROR_R
+# ifndef STRERROR_R_CHAR_P
              if (strerror_r(error, buf, sizeof(buf)) == 0) /* XSI */
                str = buf;
-             else
-               str = NULL;
-#else
+# else /* STRERROR_R_CHAR_P */
              str = strerror_r(error, buf, sizeof(buf)); /* GNU */
-#endif
+# endif /* ! STRERROR_R_CHAR_P */
+#endif /* HAVE_STRERROR_R */
+
              if (!str)
                EINA_SAFETY_ERROR("strerror_r() failed");
              else
