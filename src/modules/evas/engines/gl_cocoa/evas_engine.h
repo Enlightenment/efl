@@ -10,6 +10,8 @@
 #include "evas_gl_common.h"
 #include "Evas_Engine_GL_Cocoa.h"
 
+extern Evas_Gl_Symbols glsym_evas_gl_symbols;
+
 extern int _evas_engine_gl_cocoa_log_dom;
 
 #ifdef ERR

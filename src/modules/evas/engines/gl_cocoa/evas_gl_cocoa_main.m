@@ -1,4 +1,5 @@
 #include <Cocoa/Cocoa.h>
+#include <dlfcn.h>
 
 #include "evas_engine.h"
 
@@ -76,6 +77,12 @@ static NSOpenGLContext *_evas_gl_cocoa_shared_context = NULL;
 
 @end
 
+static void *
+_dlsym(const char *sym)
+{
+   return dlsym(RTLD_DEFAULT, sym);
+}
+
 
 Evas_GL_Cocoa_Window *
 eng_window_new(void *window,
@@ -92,6 +99,8 @@ eng_window_new(void *window,
    gw->view = [[EvasGLView alloc] initWithFrame:NSMakeRect(0,0,w,h)];
    NSOpenGLContext *ctx = [(NSOpenGLView*)gw->view openGLContext];
    [ctx makeCurrentContext];
+
+   glsym_evas_gl_symbols(_dlsym);
    gw->gl_context = evas_gl_common_context_new();
 
    if (!gw->gl_context)

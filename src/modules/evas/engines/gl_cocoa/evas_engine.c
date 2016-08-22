@@ -1304,12 +1304,6 @@ eng_image_load_error_get(void *data EINA_UNUSED, void *image)
    return im->im->cache_entry.load_error;
 }
 
-static void *
-_dlsym(const char *sym)
-{
-   return dlsym(RTLD_DEFAULT, sym);
-}
-
 static int
 module_open(Evas_Module *em)
 {
@@ -1396,7 +1390,6 @@ module_open(Evas_Module *em)
    glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
 
    LINK2GENERIC(evas_gl_symbols);
-   glsym_evas_gl_symbols(_dlsym);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);
