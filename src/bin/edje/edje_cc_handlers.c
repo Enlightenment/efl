@@ -1561,6 +1561,7 @@ New_Object_Handler object_handlers_short[] =
      {"collections.group.parts.external", ob_collections_group_parts_part_short},
      {"collections.group.parts.proxy", ob_collections_group_parts_part_short},
      {"collections.group.parts.spacer", ob_collections_group_parts_part_short},
+     {"collections.group.parts.snapshot", ob_collections_group_parts_part_short},
      {"collections.group.parts.part.desc", ob_collections_group_parts_part_desc},
      {"collections.group.parts.vector", ob_collections_group_parts_part_short},
 };
