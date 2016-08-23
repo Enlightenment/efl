@@ -74,6 +74,8 @@ _replace_path_then(void *data, void *value)
    const char *path = NULL;
    eina_value_get(value, &path);
    eina_stringshare_replace(&sd->fsd.path, path);
+   _event_to_legacy_call
+     (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, (void *)path);
 }
 
 static void
@@ -82,6 +84,8 @@ _replace_path_then_error(void *data, Eina_Error err EINA_UNUSED)
    Elm_Fileselector_Button_Data *sd = data;
    ERR("could not get information from Efl.Model");
    eina_stringshare_replace(&sd->fsd.path, NULL);
+   _event_to_legacy_call
+     (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, NULL);
 }
 
 static void
@@ -99,32 +103,19 @@ _selection_done(void *data, const Eo_Event *event)
         sd->fsd.model = efl_ref(model);
         promise = efl_model_property_get(model, "path");
         eina_promise_then(promise, _replace_path_then, _replace_path_then_error, sd);
+        efl_event_callback_call
+          (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, model);
+     }
+   else
+     {
+        _model_event_call
+          (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, NULL, NULL);
      }
 
    del = sd->fsw;
    sd->fs = NULL;
    sd->fsw = NULL;
    evas_object_del(del);
-
-   // EVENTS: should not call legacy
-   //efl_event_callback_legacy_call
-   //  (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, (void *)model);
-}
-
-
-static void
-_selection_done_path(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-   Elm_Fileselector_Button_Data *sd = data;
-   const char *path = event_info;
-
-   evas_object_smart_callback_call(sd->obj, "file,chosen", (void *) path);
-
-   // EVENTS: code above should not be needed
-   Eo_Event e = { NULL, NULL, NULL };
-   if (path)
-      e.info = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, path));
-   _selection_done(data, &e);
 }
 
 static Evas_Object *
@@ -189,10 +180,8 @@ _activate(Elm_Fileselector_Button_Data *sd)
    evas_object_size_hint_weight_set
      (sd->fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sd->fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   // EVENTS: should not call legacy
-   //efl_event_callback_add
-   //      (sd->fs, ELM_FILESELECTOR_EVENT_DONE, _selection_done, sd);
-   evas_object_smart_callback_add(sd->fs, "done", _selection_done_path, sd);
+   efl_event_callback_add
+     (sd->fs, ELM_FILESELECTOR_EVENT_DONE, _selection_done, sd);
    evas_object_show(sd->fs);
 
    if (is_inwin)

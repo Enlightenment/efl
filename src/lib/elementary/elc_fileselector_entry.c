@@ -33,6 +33,7 @@ EAPI const char ELM_FILESELECTOR_ENTRY_SMART_NAME[] = "elm_fileselector_entry";
    cmd(SIG_SELECTION_COPY, "selection,copy", "") \
    cmd(SIG_SELECTION_CUT, "selection,cut", "") \
    cmd(SIG_UNPRESSED, "unpressed", "") \
+   cmd(SIG_FILE_CHOSEN, "file,chosen", "s") \
 
 ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
@@ -67,19 +68,32 @@ SIG_FWD(UNPRESSED, EFL_UI_EVENT_UNPRESSED)
 static void
 _file_chosen_path_then(void *data, void *v)
 {
+   Eina_Array *args = data;
    const char *file = NULL;
    char *s;
+   Eo *fs = eina_array_data_get(args, 0);
+   Efl_Model *model = eina_array_data_get(args, 1);
+
+   eina_array_free(args);
 
    eina_value_get(v, &file);
 
    if (!file) return;
-   ELM_FILESELECTOR_ENTRY_DATA_GET(data, sd);
+   ELM_FILESELECTOR_ENTRY_DATA_GET(fs, sd);
 
    s = elm_entry_utf8_to_markup(file);
    elm_object_text_set(sd->entry, s);
    free(s);
 
-   evas_object_smart_callback_call(data, "file,chosen", (void *) file);
+   _model_event_call
+     (fs, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, model, file);
+}
+
+static void
+_file_chosen_path_then_error(void *data, Eina_Error err)
+{
+   ERR("Efl.Model property \"path\" error: %s", eina_error_msg_get(err));
+   eina_array_free(data);
 }
 
 static void
@@ -87,27 +101,17 @@ _FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
 {
    Efl_Model *model = event->info;
    Eina_Promise *promise = NULL;
+   Eina_Array *args = NULL;
 
    if (!model) return;
 
+   args = eina_array_new(2);
+   eina_array_push(args, data);
+   eina_array_push(args, model);
+
    promise = efl_model_property_get(model, "path");
-   eina_promise_then(promise, _file_chosen_path_then, NULL, data);
-
-   // EVENTS: should not call legacy
-   //efl_event_callback_legacy_call
-   //  (data, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event->info);
-}
-
-// EVENTS: should not need this function
-static void
-_FILE_CHOSEN_fwd_path(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-   const char *path = event_info;
-
-   Eo_Event e = { NULL, NULL, NULL };
-   if (path)
-     e.info = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, path));
-   _FILE_CHOSEN_fwd(data, &e);
+   eina_promise_then
+     (promise, _file_chosen_path_then, _file_chosen_path_then_error, args);
 }
 
 static void
@@ -328,11 +332,8 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
   efl_event_callback_add(priv->button, event, _##name##_fwd, obj)
    SIG_FWD(CLICKED, EFL_UI_EVENT_CLICKED);
    SIG_FWD(UNPRESSED, EFL_UI_EVENT_UNPRESSED);
-   // EVENTS: should not call legacy
-   //SIG_FWD(FILE_CHOSEN, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN);
+   SIG_FWD(FILE_CHOSEN, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN);
 #undef SIG_FWD
-   // EVENTS: should not need this "callback_add"
-   evas_object_smart_callback_add(priv->button, "file,chosen", _FILE_CHOSEN_fwd_path, obj);
 
    priv->entry = elm_entry_add(obj);
    elm_entry_scrollable_set(priv->entry, EINA_TRUE);

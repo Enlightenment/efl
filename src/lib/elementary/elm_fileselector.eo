@@ -34,6 +34,7 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
       class.constructor;
       class.destructor;
       Efl.Object.constructor;
+      Efl.Object.event_callback_legacy_call;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.focus_next;
