@@ -97,14 +97,6 @@ typedef enum
  */
 typedef void (*Eina_TLS_Delete_Cb)(void *ptr);
 
-/**
- * @brief Error set when a blocking function timed out.
- * @since 1.19
- *
- * @deprecated Use ETIMEDOUT instead.
- */
-EWAPI extern Eina_Error EINA_ERROR_TIMEOUT EINA_DEPRECATED; /* use ETIMEDOUT */
-
 # include "eina_inline_lock_posix.x"
 
 /**

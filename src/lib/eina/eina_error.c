@@ -126,8 +126,6 @@ _eina_error_msg_alloc(void)
 
 EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = ENOMEM;
 
-EWAPI Eina_Error EINA_ERROR_TIMEOUT = ETIMEDOUT;
-
 /**
  * @endcond
  */
