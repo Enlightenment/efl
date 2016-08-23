@@ -43,7 +43,6 @@ static const Efl_Class_Description class_desc = {
      "Mixin",
      EFL_CLASS_TYPE_MIXIN,
      EFL_CLASS_DESCRIPTION_OPS(op_descs),
-     NULL,
      0,
      NULL,
      NULL

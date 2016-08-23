@@ -22,25 +22,17 @@ tmpl_eo_ops_desc[] = "\
 static const Efl_Op_Description _@#class_op_desc[] = {@#list_op\n};\n\n";
 
 static const char
-tmpl_events_desc[] = "\
-static const Efl_Event_Description * const _@#class_event_desc[] = {@#list_evdesc\n\
-     NULL\n\
-};\n\n";
-
-static const char
 tmpl_eo_src[] = "\
 @#functions_body\
 \n\
 @#ctor_func\
 @#dtor_func\
 @#ops_desc\
-@#events_desc\
 static const Efl_Class_Description _@#class_class_desc = {\n\
      EO_VERSION,\n\
      \"@#Class\",\n\
      @#type_class,\n\
      @#eo_class_desc_ops,\n\
-     @#Events_Desc,\n\
      @#SizeOfData,\n\
      @#ctor_name,\n\
      @#dtor_name\n\
@@ -684,7 +676,6 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    Eina_Bool ret = EINA_FALSE;
    Eina_Iterator *itr;
    Eolian_Implement *impl_desc;
-   Eolian_Event *event;
    const char *inherit_name;
 
    const char *str_classtype = NULL;
@@ -717,7 +708,6 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    Eina_Strbuf *tmpbuf = eina_strbuf_new();
    Eina_Strbuf *str_op = eina_strbuf_new();
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
-   Eina_Strbuf *str_ev = eina_strbuf_new();
 
    _template_fill(str_end, tmpl_eo_src, class, NULL, NULL, EINA_TRUE);
 
@@ -876,32 +866,6 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         eina_iterator_free(itr);
      }
 
-   itr = eolian_class_events_get(class);
-   EINA_ITERATOR_FOREACH(itr, event)
-     {
-        Eina_Stringshare *evname = eolian_event_c_name_get(event);
-        eina_strbuf_append_printf(str_ev, "\n     %s,", evname);
-        eina_stringshare_del(evname);
-     }
-   eina_iterator_free(itr);
-
-   eina_strbuf_reset(tmpbuf);
-   if (eina_strbuf_length_get(str_ev))
-     {
-        Eina_Strbuf *events_desc = eina_strbuf_new();
-        _template_fill(events_desc, tmpl_events_desc, class, NULL, NULL, EINA_TRUE);
-        eina_strbuf_replace_all(events_desc, "@#list_evdesc", eina_strbuf_string_get(str_ev));
-        eina_strbuf_replace_all(str_end, "@#events_desc", eina_strbuf_string_get(events_desc));
-        eina_strbuf_free(events_desc);
-        eina_strbuf_append_printf(tmpbuf, "_%s_event_desc", class_env.lower_classname);
-     }
-   else
-     {
-        eina_strbuf_append_printf(tmpbuf, "NULL");
-        eina_strbuf_replace_all(str_end, "@#events_desc", "");
-     }
-   eina_strbuf_replace_all(str_end, "@#Events_Desc", eina_strbuf_string_get(tmpbuf));
-
    eina_strbuf_reset(tmpbuf);
    itr = eolian_class_inherits_get(class);
    EINA_ITERATOR_FOREACH(itr, inherit_name)
@@ -959,7 +923,6 @@ end:
    eina_strbuf_free(str_op);
    eina_strbuf_free(str_bodyf);
    eina_strbuf_free(str_end);
-   eina_strbuf_free(str_ev);
 
    return ret;
 }

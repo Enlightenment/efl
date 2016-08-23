@@ -168,17 +168,11 @@ static Efl_Op_Description op_descs[] = {
      EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
 };
 
-static const Efl_Event_Description *event_desc[] = {
-     EV_A_CHANGED,
-     NULL
-};
-
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EFL_CLASS_TYPE_REGULAR,
      EFL_CLASS_DESCRIPTION_OPS(op_descs),
-     event_desc,
      sizeof(Simple_Public_Data),
      NULL,
      NULL

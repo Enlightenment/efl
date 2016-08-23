@@ -71,7 +71,6 @@ static const Efl_Class_Description class_desc = {
      "Thread Test",
      EFL_CLASS_TYPE_REGULAR,
      EFL_CLASS_DESCRIPTION_OPS(op_descs),
-     NULL,
      sizeof(Thread_Test_Public_Data),
      NULL,
      NULL

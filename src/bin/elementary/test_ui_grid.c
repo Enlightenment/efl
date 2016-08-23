@@ -25,7 +25,7 @@ static const Efl_Op_Description custom_engine_op_desc[] = {
 
 static const Efl_Class_Description custom_engine_class_desc = {
    EO_VERSION, "Custom Layout Engine", EFL_CLASS_TYPE_INTERFACE,
-   EFL_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), NULL, 0, NULL, NULL
+   EFL_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), 0, NULL, NULL
 };
 
 EFL_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_LAYOUT_INTERFACE, NULL)

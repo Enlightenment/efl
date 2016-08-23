@@ -70,7 +70,6 @@ static const Efl_Class_Description class_desc = {
      "Simple",
      EFL_CLASS_TYPE_REGULAR,
      EFL_CLASS_DESCRIPTION_OPS(op_descs),
-     NULL,
      sizeof(Private_Data),
      NULL,
      NULL
