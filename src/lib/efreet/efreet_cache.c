@@ -203,6 +203,8 @@ _icon_desktop_cache_update_event_add(int event_type)
    ecore_event_add(event_type, ev, icon_cache_update_free, l);
 }
 
+EAPI void (*_efreet_mime_update_func) (void) = NULL;
+
 static Eina_Bool
 _cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -222,6 +224,10 @@ _cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    else if (e->major == 3) // desktop cache update
      {
         _icon_desktop_cache_update_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE);
+     }
+   else if (e->major == 4) // mime cache update
+     {
+        if (_efreet_mime_update_func) _efreet_mime_update_func();
      }
    return ECORE_CALLBACK_DONE;
 }

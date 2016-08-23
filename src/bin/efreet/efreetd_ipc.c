@@ -190,6 +190,12 @@ send_signal_desktop_cache_build(void)
    _broadcast(ipc, 1 /* desktop cache build */, 1, NULL, 0);
 }
 
+void
+send_signal_mime_cache_build(void)
+{
+   _broadcast(ipc, 4 /* mime cache build */, 1, NULL, 0);
+}
+
 Eina_Bool
 ipc_init(void)
 {

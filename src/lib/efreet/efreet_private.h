@@ -251,6 +251,8 @@ EAPI void efreet_fsetowner(int fd);
 
 EAPI extern int efreet_cache_update;
 
+EAPI extern void (*_efreet_mime_update_func) (void);
+
 #undef EAPI
 #define EAPI
 

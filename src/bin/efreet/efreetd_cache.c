@@ -71,6 +71,13 @@ static Eet_Data_Descriptor *subdir_dir_edd = NULL;
 static Subdir_Cache        *subdir_cache = NULL;
 static Eina_Bool            subdir_need_save = EINA_FALSE;
 
+static Eina_Hash *mime_monitors = NULL;
+static Ecore_Timer *mime_update_timer = NULL;
+static Ecore_Exe *mime_cache_exe = NULL;
+
+static void mime_cache_init(void);
+static void mime_cache_shutdown(void);
+
 static void
 subdir_cache_dir_free(Subdir_Cache_Dir *cd)
 {
@@ -756,6 +763,10 @@ cache_exe_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         if ((ev->lines) && (*ev->lines->line == 'c')) update = EINA_TRUE;
         send_signal_icon_cache_update(update);
      }
+   else if (ev->exe == mime_cache_exe)
+     {
+        // XXX: ZZZ: handle stdout here from cache updater... if needed
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -773,6 +784,11 @@ cache_exe_del_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      {
         icon_cache_exe = NULL;
         if (icon_queue) cache_icon_update(EINA_FALSE);
+     }
+   else if (ev->exe == mime_cache_exe)
+     {
+        mime_cache_exe = NULL;
+        send_signal_mime_cache_build();
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -838,6 +854,111 @@ cache_desktop_exists(void)
    return desktop_exists;
 }
 
+static void
+mime_update_launch(void)
+{
+   char file[PATH_MAX];
+
+   snprintf(file, sizeof(file),
+            "%s/efreet/" MODULE_ARCH "/efreet_mime_cache_create",
+            eina_prefix_lib_get(pfx));
+   mime_cache_exe = ecore_exe_pipe_run(file,
+                                       ECORE_EXE_PIPE_READ |
+                                       ECORE_EXE_PIPE_READ_LINE_BUFFERED,
+                                       NULL);
+}
+
+static Eina_Bool
+mime_update_cache_cb(void *data EINA_UNUSED)
+{
+   mime_update_timer = NULL;
+   if (mime_cache_exe)
+     {
+        ecore_exe_kill(mime_cache_exe);
+        ecore_exe_free(mime_cache_exe);
+     }
+   mime_update_launch();
+   return EINA_FALSE;
+}
+
+static void
+mime_changes_cb(void *data EINA_UNUSED, Ecore_File_Monitor *em EINA_UNUSED,
+                Ecore_File_Event event, const char *path EINA_UNUSED)
+{
+   switch (event)
+     {
+      case ECORE_FILE_EVENT_NONE:
+         /* noop */
+         break;
+
+      case ECORE_FILE_EVENT_CREATED_FILE:
+      case ECORE_FILE_EVENT_DELETED_FILE:
+      case ECORE_FILE_EVENT_MODIFIED:
+      case ECORE_FILE_EVENT_CLOSED:
+      case ECORE_FILE_EVENT_DELETED_DIRECTORY:
+      case ECORE_FILE_EVENT_CREATED_DIRECTORY:
+      case ECORE_FILE_EVENT_DELETED_SELF:
+        mime_cache_shutdown();
+        mime_cache_init();
+        if (mime_update_timer) ecore_timer_del(mime_update_timer);
+        mime_update_timer = ecore_timer_add(0.2, mime_update_cache_cb, NULL);
+        break;
+     }
+}
+
+static void
+mime_cache_init(void)
+{
+   Ecore_File_Monitor *mon;
+   Eina_List *datadirs, *l;
+   const char *s;
+   char buf[PATH_MAX];
+
+   mime_monitors = eina_hash_string_superfast_new(NULL);
+
+   mon = ecore_file_monitor_add("/etc/mime.types", mime_changes_cb, NULL);
+   if (mon) eina_hash_add(mime_monitors, "/etc/mime.types", mon);
+   mon = ecore_file_monitor_add("/usr/share/mime/globs", mime_changes_cb, NULL);
+   if (mon) eina_hash_add(mime_monitors, "/usr/share/mime/globs", mon);
+
+   datadirs = efreet_data_dirs_get();
+   EINA_LIST_FOREACH(datadirs, l, s)
+     {
+        snprintf(buf, sizeof(buf), "%s/mime/globs", s);
+        if (!eina_hash_find(mime_monitors, buf))
+          {
+             mon = ecore_file_monitor_add(buf, mime_changes_cb, NULL);
+             if (mon) eina_hash_add(mime_monitors, buf, mon);
+          }
+     }
+}
+
+static Eina_Bool
+mime_cache_monitor_del(const Eina_Hash *hash EINA_UNUSED,
+                       const void *key EINA_UNUSED, void *value,
+                       void *data EINA_UNUSED)
+{
+   Ecore_File_Monitor *mon = value;
+   ecore_file_monitor_del(mon);
+   return EINA_TRUE;
+}
+
+static void
+mime_cache_shutdown(void)
+{
+   if (mime_update_timer)
+     {
+        ecore_timer_del(mime_update_timer);
+        mime_update_timer = NULL;
+     }
+   if (mime_monitors)
+     {
+        eina_hash_foreach(mime_monitors, mime_cache_monitor_del, NULL);
+        eina_hash_free(mime_monitors);
+        mime_monitors = NULL;
+     }
+}
+
 Eina_Bool
 cache_init(void)
 {
@@ -875,6 +996,8 @@ cache_init(void)
    efreet_cache_update = 0;
    if (!efreet_init()) goto error;
    subdir_cache_init();
+   mime_cache_init();
+   mime_update_launch();
    read_lists();
    /* TODO: Should check if system dirs has changed and handles extra_dirs */
    desktop_system_dirs = efreet_default_dirs_get(efreet_data_home_get(),
@@ -906,6 +1029,7 @@ cache_shutdown(void)
    eina_prefix_free(pfx);
    pfx = NULL;
 
+   mime_cache_shutdown();
    subdir_cache_shutdown();
    efreet_shutdown();
 

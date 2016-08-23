@@ -90,7 +90,8 @@ bin_efreet_efreetd_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
 efreetinternal_bindir=$(libdir)/efreet/$(MODULE_ARCH)
 efreetinternal_bin_PROGRAMS = \
 bin/efreet/efreet_desktop_cache_create \
-bin/efreet/efreet_icon_cache_create
+bin/efreet/efreet_icon_cache_create \
+bin/efreet/efreet_mime_cache_create
 
 bin_efreet_efreet_desktop_cache_create_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
 bin_efreet_efreet_desktop_cache_create_LDADD = $(USE_EFREET_BIN_LIBS)
@@ -101,6 +102,11 @@ bin_efreet_efreet_icon_cache_create_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(E
 bin_efreet_efreet_icon_cache_create_LDADD = $(USE_EFREET_BIN_LIBS)
 bin_efreet_efreet_icon_cache_create_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
 bin_efreet_efreet_icon_cache_create_SOURCES = bin/efreet/efreet_icon_cache_create.c
+
+bin_efreet_efreet_mime_cache_create_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+bin_efreet_efreet_mime_cache_create_LDADD = $(USE_EFREET_BIN_LIBS)
+bin_efreet_efreet_mime_cache_create_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+bin_efreet_efreet_mime_cache_create_SOURCES = bin/efreet/efreet_mime_cache_create.c
 
 ### Unit tests
 
