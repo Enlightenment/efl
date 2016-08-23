@@ -635,6 +635,16 @@ eng_setup(Evas *evas, void *info)
      {
         re = epd->engine.data.output;
         ob = eng_get_ob(re);
+
+        if (!inf->info.surface && (ob->egl_surface[0] != EGL_NO_SURFACE))
+          {
+             eglDestroySurface(ob->egl_disp, ob->egl_surface[0]);
+             eglMakeCurrent(ob->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE,
+                            EGL_NO_CONTEXT);
+             ob->egl_surface[0] = EGL_NO_SURFACE;
+             return 1;
+          }
+
         if ((ob) && (_re_wincheck(ob)))
           {
              ob->info = inf;
