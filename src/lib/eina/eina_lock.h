@@ -194,8 +194,6 @@ static inline Eina_Lock_Result eina_lock_release(Eina_Lock *mutex);
  *          lock state, thread number and a backtrace.
  *
  * @note If @c EINA_HAVE_DEBUG_THREADS is not defined, this function does nothing.
- * @note This function is implemented on Win32 or WinCE, but it does not
- *       not produce any output, regardless of @c EINA_HAVE_DEBUG_THREADS being set.
  */
 static inline void eina_lock_debug(const Eina_Lock *mutex);
 
@@ -459,8 +457,6 @@ static inline Eina_Bool eina_tls_set(Eina_TLS key, const void *data);
  *
  * @details This function initializes an unnamed #Eina_Semaphore with appropriate values.
  *          These values are platform dependent.
- *
- * @note Semaphores are not avialable on the WinCE platform.
  *
  * @see eina_semaphore_free()
  */
