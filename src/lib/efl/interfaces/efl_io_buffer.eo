@@ -11,8 +11,6 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
       A fixed sized buffer can be implemented by setting @.limit
       followed by @.preallocate
 
-      See @Efl.Io.File.
-
       @since 1.19
     ]]
 
