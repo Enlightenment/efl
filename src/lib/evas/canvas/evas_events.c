@@ -395,7 +395,7 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
    _transform_to_src_space_f(obj, src, &ev->cur);
    point = ev->cur;
    ev->source = eo_obj;
-   ev->finger = 0;
+   ev->tool = 0;
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
      {
@@ -480,7 +480,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
    curpt = ev->cur;
    prevpt = ev->prev;
    ev->source = eo_obj;
-   ev->finger = 0;
+   ev->tool = 0;
 
    if (e->pointer.mouse_grabbed)
      {
@@ -650,7 +650,7 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
    _transform_to_src_space_f(obj, src, &ev->cur);
    point = ev->cur;
    ev->source = eo_obj;
-   ev->finger = 0;
+   ev->tool = 0;
 
    copy = evas_event_list_copy(src->proxy->src_event_in);
    EINA_LIST_FOREACH(copy, l, eo_child)
@@ -1242,7 +1242,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
-   ev->finger = 0;
+   ev->tool = 0;
    if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
@@ -1440,7 +1440,7 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
-   ev->finger = 0;
+   ev->tool = 0;
    if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
@@ -1721,7 +1721,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
    ev->pressed_buttons = e->pointer.button;
-   ev->finger = 0;
+   ev->tool = 0;
    if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
@@ -2236,7 +2236,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
 
    eo_e = e->evas;
    DBG("ButtonEvent:multi down time=%u x=%.1f y=%.1f button=%d downs=%d",
-       ev->timestamp, ev->cur.x, ev->cur.y, ev->finger, e->pointer.downs);
+       ev->timestamp, ev->cur.x, ev->cur.y, ev->tool, e->pointer.downs);
    e->pointer.downs++;
    if (e->is_frozen) return;
    e->last_timestamp = ev->timestamp;
@@ -2252,7 +2252,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
 
    _evas_walk(e);
    /* append new touch point to the touch point list */
-   _evas_touch_point_append(eo_e, ev->finger, ev->cur.x, ev->cur.y);
+   _evas_touch_point_append(eo_e, ev->tool, ev->cur.x, ev->cur.y);
    if (e->pointer.mouse_grabbed == 0)
      {
         if (e->pointer.downs > 1) addgrab = e->pointer.downs - 1;
@@ -2282,7 +2282,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
 
    _evas_post_event_callback_call(eo_e, e);
    /* update touch point's state to EVAS_TOUCH_POINT_STILL */
-   _evas_touch_point_update(eo_e, ev->finger, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_STILL);
+   _evas_touch_point_update(eo_e, ev->tool, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_STILL);
    _evas_unwalk(e);
 
    if (ev->device) efl_unref(ev->device);
@@ -2301,7 +2301,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data
 
    eo_e = e->evas;
    DBG("ButtonEvent:multi up time=%u x=%.1f y=%.1f device=%d downs=%d",
-       ev->timestamp, ev->cur.x, ev->cur.y, ev->finger, e->pointer.downs);
+       ev->timestamp, ev->cur.x, ev->cur.y, ev->tool, e->pointer.downs);
    if (e->pointer.downs <= 0) return;
    e->pointer.downs--;
    if (e->is_frozen) return;
@@ -2318,7 +2318,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data
 
    _evas_walk(e);
    /* update released touch point */
-   _evas_touch_point_update(eo_e, ev->finger, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_UP);
+   _evas_touch_point_update(eo_e, ev->tool, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_UP);
    copy = evas_event_list_copy(e->pointer.object.in);
    EINA_LIST_FOREACH(copy, l, eo_obj)
      {
@@ -2342,7 +2342,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data
    if ((e->pointer.mouse_grabbed == 0) && !_post_up_handle(e, ev->eo))
       _evas_post_event_callback_call(eo_e, e);
    /* remove released touch point from the touch point list */
-   _evas_touch_point_remove(eo_e, ev->finger);
+   _evas_touch_point_remove(eo_e, ev->tool);
    _evas_unwalk(e);
 
    if (ev->device) efl_unref(ev->device);
@@ -2368,7 +2368,7 @@ _canvas_event_feed_multi_internal(Evas *eo_e, Evas_Public_Data *e,
    if (!fy) fy = y;
 
    ev->action = action;
-   ev->finger = d;
+   ev->tool = d;
    ev->cur.x = fx;
    ev->cur.y = fy;
    ev->pressure = pres;
@@ -2468,7 +2468,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
 
    _evas_walk(e);
    /* update moved touch point */
-   _evas_touch_point_update(eo_e, ev->finger, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_MOVE);
+   _evas_touch_point_update(eo_e, ev->tool, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_MOVE);
    /* if our mouse button is grabbed to any objects */
    if (e->pointer.mouse_grabbed > 0)
      {
@@ -3179,21 +3179,21 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
    switch (ev->action)
      {
       case EFL_POINTER_ACTION_MOVE:
-        if (ev->finger == 0)
+        if (ev->tool == 0)
           _canvas_event_feed_mouse_move_internal(e, ev);
         else
           _canvas_event_feed_multi_move_internal(e, ev);
         break;
 
       case EFL_POINTER_ACTION_DOWN:
-        if (ev->finger == 0)
+        if (ev->tool == 0)
           _canvas_event_feed_mouse_down_internal(e, ev);
         else
           _canvas_event_feed_multi_down_internal(e, ev);
         break;
 
       case EFL_POINTER_ACTION_UP:
-        if (ev->finger == 0)
+        if (ev->tool == 0)
           _canvas_event_feed_mouse_up_internal(e, ev);
         else
           _canvas_event_feed_multi_up_internal(e, ev);

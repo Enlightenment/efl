@@ -29,7 +29,7 @@ struct _Efl_Event_Pointer_Data
    unsigned int    timestamp; /* FIXME: store as double? */
    int             button;
    unsigned int    pressed_buttons;
-   int             finger;
+   int             tool; /* finger or tool ID */
    double          radius, radius_x, radius_y;
    double          pressure;
    double          angle;
@@ -49,6 +49,7 @@ struct _Efl_Event_Pointer_Data
    Evas_Modifier              *modifiers;
    Evas_Lock                  *locks;
    void                       *legacy; /* DO NOT TOUCH THIS */
+   uint32_t                    value_flags;
    Eina_Bool                   evas_done : 1; /* set by evas */
    Eina_Bool                   fake : 1;
    Eina_Bool                   win_fed : 1;

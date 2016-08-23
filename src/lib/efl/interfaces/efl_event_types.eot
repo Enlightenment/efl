@@ -65,3 +65,57 @@ enum Efl.Event.Object_Pointer_Mode {
                               @since 1.2
                             ]]
 }
+
+enum Efl.Input.Value {
+   [[Keys for the generic values of all events.
+
+     @since 1.19
+   ]]
+   none,       [[Not a valid value type.]]
+   timestamp,  [[Timestamp of this event in seconds.]]
+   button,     [[ID of the button that triggered this event (unsigned int).
+                 Prefer the method $button to read this value. Default: 0.]]
+   buttons_pressed, [[32-bit bit mask (unsigned int). Prefer the
+                      method $buttons_pressed to read this value. Default: 0.]]
+   tool,       [[ID of the finger or tool (eg. pen) that triggered this event.
+                 Prefer the property $tool to read this value. Default: 0.]]
+   x,          [[Absolute X position where this event occurred, in pixels.
+                 Relative to the window. Default: last known position.]]
+   y,          [[Absolute Y position where this event occurred, in pixels.
+                 Relative to the window. Default: last known position.]]
+   dx,         [[Relative X movement, in pixels. Range: unbounded. Default: 0.]]
+   dy,         [[Relative Y movement, in pixels. Range: unbounded. Default: 0.]]
+   previous_x, [[Previous X position of the pointer, in pixels.
+                 Default: last known position, may be equal to x.]]
+   previous_y, [[Previous Y position of the pointer, in pixels.
+                 Default: last known position, may be equal to y.]]
+   radius,     [[Average radius of the pressed area under a finger or tool,
+                 in pixels. Default is 1.]]
+   radius_x,   [[Spread over X of the pressed area under a finger or tool,
+                 in pixels. Default is 1.]]
+   radius_y,   [[Spread over Y of the pressed area under a finger or tool,
+                 in pixels. Default is 1.]]
+   pressure,   [[Pressure applied to the button, touch or pen tip.
+                 Range: [0, 1]. Default is 1.]]
+   distance,   [[Relative distance along physical Z axis. Range: [0, 1].
+                 Default is 0.]]
+   azimuth,    [[Angle of tool about the Z axis from positive X axis.
+                 Range: [-PI, PI]. Unit: Radians.]]
+   tilt,       [[Angle of tool about plane of sensor from positive Z axis.
+                 Range: [0.0, PI]. Unit: Radians.]]
+   tilt_x,     [[Current tilt along the X axis of the tablet's current logical
+                 orientation, in radians off the tablet's Z axis.
+                 Range: [-PI, PI]. Unit: Radians.]]
+   tilt_y,     [[Current tilt along the Y axis of the tablet's current logical
+                 orientation, in radians off the tablet's Z axis.
+                 Range: [-PI, PI]. Unit: Radians.]]
+   twist,      [[Rotation of tool about its major axis from its "natural"
+                 position. Range: [-PI, PI] Unit: Radians.]]
+   wheel_delta, [[Delta movement of the wheel in discrete steps (int).
+                  Default: 0.]]
+   wheel_angle, [[Delta movement of the wheel in radians. Default: 0.]]
+   wheel_direction, [[Direction of the wheel (horizontal = 1 or vertical = 0).
+                      Default: 0. Prefer the property $wheel_direction to read.]]
+   slider,     [[Current position of the slider on the tool. Range: [-1, 1].
+                 Default: 0.]]
+}

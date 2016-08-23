@@ -190,20 +190,6 @@ _efl_event_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd,
 }
 
 EOLIAN static void
-_efl_event_pointer_position_precise_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, double x, double y)
-{
-   pd->cur.x = x;
-   pd->cur.y = y;
-}
-
-EOLIAN static void
-_efl_event_pointer_position_precise_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, double *x, double *y)
-{
-   if (x) *x = pd->cur.x;
-   if (y) *y = pd->cur.y;
-}
-
-EOLIAN static void
 _efl_event_pointer_previous_position_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, int x, int y)
 {
    pd->prev.x = (double) x;
@@ -218,17 +204,11 @@ _efl_event_pointer_previous_position_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_
 }
 
 EOLIAN static void
-_efl_event_pointer_previous_position_precise_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, double x, double y)
+_efl_event_pointer_delta_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, int *dx, int *dy)
 {
-   pd->prev.x = x;
-   pd->prev.y = y;
-}
-
-EOLIAN static void
-_efl_event_pointer_previous_position_precise_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, double *x, double *y)
-{
-   if (x) *x = pd->prev.x;
-   if (y) *y = pd->prev.y;
+   // Using (int) twice to return the same as previous_position - position
+   if (dx) *dx = (int) pd->prev.x - (int) pd->cur.x;
+   if (dy) *dy = (int) pd->prev.y - (int) pd->cur.y;
 }
 
 EOLIAN static void
@@ -306,47 +286,27 @@ _efl_event_pointer_wheel_direction_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Da
 }
 
 EOLIAN static void
-_efl_event_pointer_wheel_distance_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, int dist)
+_efl_event_pointer_wheel_delta_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, int dist)
 {
    pd->wheel.z = dist;
 }
 
 EOLIAN static int
-_efl_event_pointer_wheel_distance_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
+_efl_event_pointer_wheel_delta_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
 {
    return pd->wheel.z;
 }
 
 EOLIAN static int
-_efl_event_pointer_finger_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
+_efl_event_pointer_tool_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
 {
-   return pd->finger;
+   return pd->tool;
 }
 
 EOLIAN static void
-_efl_event_pointer_finger_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, int id)
+_efl_event_pointer_tool_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, int id)
 {
-   pd->finger = id;
-}
-
-EOLIAN static void
-_efl_event_pointer_touch_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, double *r, double *rx, double *ry, double *press, double *angle)
-{
-   if (r) *r = pd->radius;
-   if (rx) *rx = pd->radius_x;
-   if (ry) *ry = pd->radius_y;
-   if (press) *press = pd->pressure;
-   if (angle) *angle = pd->angle;
-}
-
-EOLIAN static void
-_efl_event_pointer_touch_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, double r, double rx, double ry, double press, double angle)
-{
-   pd->radius = r;
-   pd->radius_x = rx;
-   pd->radius_y = ry;
-   pd->pressure = press;
-   pd->angle = angle;
+   pd->tool = id;
 }
 
 EOLIAN static Eina_Bool
@@ -398,6 +358,198 @@ _efl_event_pointer_efl_event_input_fake_get(Eo *obj EINA_UNUSED, Efl_Event_Point
 {
    // read-only
    return pd->fake;
+}
+
+EOLIAN static Eina_Bool
+_efl_event_pointer_value_has_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Efl_Input_Value key)
+{
+   // read-only
+   if ((key <= EFL_INPUT_VALUE_NONE) || (key > EFL_INPUT_VALUE_SLIDER))
+     return EINA_FALSE;
+   return (pd->value_flags & (1 << (int) key)) != 0;
+}
+
+EOLIAN static Eina_Bool
+_efl_event_pointer_value_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Efl_Input_Value key, double val)
+{
+   if ((key <= EFL_INPUT_VALUE_NONE) || (key > EFL_INPUT_VALUE_SLIDER))
+     return EINA_FALSE;
+
+   // note: not a fan of setting ints based on a double...
+   switch (key)
+     {
+      case EFL_INPUT_VALUE_TIMESTAMP:
+        pd->timestamp = (unsigned int) (val * 1000.0);
+        break;
+
+      case EFL_INPUT_VALUE_BUTTON:
+        pd->button = (int) val;
+        break;
+
+      case EFL_INPUT_VALUE_BUTTONS_PRESSED:
+        pd->pressed_buttons = (int) val;
+        break;
+
+      case EFL_INPUT_VALUE_TOOL:
+        pd->tool = (int) val;
+        break;
+
+      case EFL_INPUT_VALUE_X:
+        pd->cur.x = val;
+        break;
+
+      case EFL_INPUT_VALUE_Y:
+        pd->cur.y = val;
+        break;
+
+      case EFL_INPUT_VALUE_DX:
+      case EFL_INPUT_VALUE_DY:
+        return EINA_FALSE;
+
+      case EFL_INPUT_VALUE_PREVIOUS_X:
+        pd->prev.x = val;
+        break;
+
+      case EFL_INPUT_VALUE_PREVIOUS_Y:
+        pd->prev.y = val;
+        break;
+
+      case EFL_INPUT_VALUE_RADIUS:
+        pd->radius = val;
+        break;
+
+      case EFL_INPUT_VALUE_RADIUS_X:
+        pd->radius_x = val;
+        break;
+
+      case EFL_INPUT_VALUE_RADIUS_Y:
+        pd->radius_y = val;
+        break;
+
+      case EFL_INPUT_VALUE_PRESSURE:
+        return pd->pressure;
+
+      case EFL_INPUT_VALUE_DISTANCE:
+        return EINA_FALSE; // TODO
+
+      case EFL_INPUT_VALUE_AZIMUTH:
+        return EINA_FALSE; // TODO
+
+      case EFL_INPUT_VALUE_TILT:
+        return EINA_FALSE; // TODO
+
+      case EFL_INPUT_VALUE_TILT_X:
+        return EINA_FALSE; // TODO
+
+      case EFL_INPUT_VALUE_TILT_Y:
+        return EINA_FALSE; // TODO
+
+      case EFL_INPUT_VALUE_TWIST:
+        return EINA_FALSE; // TODO
+
+      case EFL_INPUT_VALUE_WHEEL_DELTA:
+        pd->wheel.z = (int) val;
+        break;
+
+      case EFL_INPUT_VALUE_WHEEL_ANGLE:
+        return EINA_FALSE; // TODO
+
+      case EFL_INPUT_VALUE_WHEEL_DIRECTION:
+        pd->wheel.dir = val ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL;
+        break;
+
+      case EFL_INPUT_VALUE_SLIDER:
+        return EINA_FALSE; // TODO
+
+      case EFL_INPUT_VALUE_NONE:
+      default:
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+EOLIAN static double
+_efl_event_pointer_value_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Efl_Input_Value key)
+{
+   switch (key)
+     {
+      case EFL_INPUT_VALUE_TIMESTAMP:
+        return (double) pd->timestamp / 1000.0;
+
+      case EFL_INPUT_VALUE_BUTTON:
+        return (double) pd->button;
+
+      case EFL_INPUT_VALUE_BUTTONS_PRESSED:
+        return (double) pd->pressed_buttons;
+
+      case EFL_INPUT_VALUE_TOOL:
+        return (double) pd->tool;
+
+      case EFL_INPUT_VALUE_X:
+        return pd->cur.x;
+
+      case EFL_INPUT_VALUE_Y:
+        return pd->cur.y;
+
+      case EFL_INPUT_VALUE_DX:
+        return pd->cur.x - pd->prev.x;
+
+      case EFL_INPUT_VALUE_DY:
+        return pd->cur.y - pd->prev.y;
+
+      case EFL_INPUT_VALUE_PREVIOUS_X:
+        return pd->prev.x;
+
+      case EFL_INPUT_VALUE_PREVIOUS_Y:
+        return pd->prev.y;
+
+      case EFL_INPUT_VALUE_RADIUS:
+        return pd->radius;
+
+      case EFL_INPUT_VALUE_RADIUS_X:
+        return pd->radius_x;
+
+      case EFL_INPUT_VALUE_RADIUS_Y:
+        return pd->radius_y;
+
+      case EFL_INPUT_VALUE_PRESSURE:
+        return pd->pressure;
+
+      case EFL_INPUT_VALUE_DISTANCE:
+        return 0.0; // TODO
+
+      case EFL_INPUT_VALUE_AZIMUTH:
+        return 0.0; // TODO
+
+      case EFL_INPUT_VALUE_TILT:
+        return 0.0; // TODO
+
+      case EFL_INPUT_VALUE_TILT_X:
+        return 0.0; // TODO
+
+      case EFL_INPUT_VALUE_TILT_Y:
+        return 0.0; // TODO
+
+      case EFL_INPUT_VALUE_TWIST:
+        return 0.0; // TODO
+
+      case EFL_INPUT_VALUE_WHEEL_DELTA:
+        return (double) pd->wheel.z;
+
+      case EFL_INPUT_VALUE_WHEEL_ANGLE:
+        return 0.0; // TODO (emulate??)
+
+      case EFL_INPUT_VALUE_WHEEL_DIRECTION:
+        return (pd->wheel.dir == EFL_ORIENT_HORIZONTAL) ? 1.0 : 0.0;
+
+      case EFL_INPUT_VALUE_SLIDER:
+        return 0.0; // TODO
+
+      case EFL_INPUT_VALUE_NONE:
+      default:
+        return 0;
+     }
 }
 
 #include "efl_event_pointer.eo.c"

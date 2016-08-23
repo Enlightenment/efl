@@ -3,7 +3,7 @@ import efl_event_types;
 
 class Efl.Event.Pointer (Efl.Object, Efl.Event, Efl.Input.State, Efl.Event.Input)
 {
-   [[Event data carried over with any pointer event (mouse, touch, ...)
+   [[Event data carried over with any pointer event (mouse, touch, pen, ...)
 
      @since 1.18
    ]]
@@ -14,14 +14,52 @@ class Efl.Event.Pointer (Efl.Object, Efl.Event, Efl.Input.State, Efl.Event.Input
             act: Efl.Pointer.Action;
          }
       }
+      @property value_has {
+         [[$true if this event carries a valid value for the specified $key.]]
+         get {}
+         keys {
+            key: Efl.Input.Value;
+         }
+         values {
+            has: bool;
+         }
+      }
+      @property value {
+         [[Represents a generic value for this event.
+
+           Refer to the documentation of @Efl.Input.Value for each value's
+           meaning, type and range. Call @.value_has.get to determine whether
+           the returned value is valid or not for this event.
+
+           Most values are precise floating point values, usually in pixels,
+           radians, or in a range of [-1, 1] or [0, 1]. Some values are
+           discrete values (integers) and thus should preferably be queried
+           with the other methods of this class.
+         ]]
+         set {
+            return: bool; [[$false if the value could not be set (eg. delta).]]
+         }
+         get {}
+         keys {
+            key: Efl.Input.Value;
+         }
+         values {
+            val: double;
+         }
+      }
       @property button {
-         [[The mouse button that triggered the event.]]
+         [[The mouse button that triggered the event.
+
+           Valid if and only if @.value_has($button) is $true.
+         ]]
          values {
             but: int; [[1 to 32, 0 if not a button event.]]
          }
       }
       @property button_pressed {
-         [[Whether a mouse button is pressed at the moment of the event.]]
+         [[Whether a mouse button is pressed at the moment of the event.
+
+           Valid if and only if @.value_has($button_pressed) is $true.]]
          keys {
             button: int;
          }
@@ -30,57 +68,51 @@ class Efl.Event.Pointer (Efl.Object, Efl.Event, Efl.Input.State, Efl.Event.Input
          }
       }
       @property position {
-         [[Position where the event happened, relative to the window.]]
+         [[Position where the event happened, relative to the window.
+
+           This position, in integers, is an approximation of
+           @.value.get($x), @.value.get($y). Use @.position if you need
+           simple pixel positions, but prefer the generic interface
+           if you need precise coordinates.
+         ]]
          values {
             x: int;
             y: int;
-         }
-      }
-      @property position_precise  {
-         [[Position where the event happened, with subpixel precision
-
-           Note: Same value as @.position, relative to the window.
-         ]]
-         values {
-            x: double;
-            y: double;
          }
       }
       @property previous_position {
          [[Position of the previous event, valid for move events.
 
-           Relative to the window. May be equal to @.position.
+           Relative to the window. May be equal to @.position (by default).
+
+           This position, in integers, is an approximation of
+           @.value.get($previous_x), @.value.get($previous_y).
+           Use @.previous_position if you need simple pixel positions,
+           but prefer the generic interface if you need precise coordinates.
          ]]
          values {
             x: int;
             y: int;
          }
       }
-      @property previous_position_precise {
-         [[Position of the previous event, with subpixel precision.
+      @property delta {
+         [[Position delta, or movement, since the last event.
 
-           Valid for move events, may not be valid for other events.
-           Relative to the window. May be equal to @.position_precise.
+           This position, in integers, is an approximation of
+           @.value.get($dx), @.value.get($dy). Use @.delta if you need
+           simple pixel positions, but prefer the generic interface
+           if you need precise coordinates.
          ]]
+         get {}
          values {
-            x: double;
-            y: double;
+            dx: int;
+            dy: int;
          }
       }
-      @property finger {
-         [[Finger ID in case of a multi touch event.]]
+      @property tool {
+         [[ID of the tool (eg. pen) that triggered this event.]]
          values {
             id: int;
-         }
-      }
-      @property touch {
-         [[Touch information about a specific finger or pointer.]]
-         values {
-            radius: double;
-            rad_x: double;
-            rad_y: double;
-            pressure: double;
-            angle: double;
          }
       }
       @property source {
@@ -116,11 +148,13 @@ class Efl.Event.Pointer (Efl.Object, Efl.Event, Efl.Input.State, Efl.Event.Input
          }
       }
       @property wheel_direction {
+         [[Direction of the wheel.]]
          values {
             dir: Efl.Orient; [[Horizontal or Vertical only.]]
          }
       }
-      @property wheel_distance {
+      @property wheel_delta {
+         [[Delta movement of the wheel in discrete steps.]]
          values {
             dist: int;
          }

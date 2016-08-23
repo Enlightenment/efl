@@ -4376,7 +4376,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
    if (info->double_click) ev->button_flags |= EFL_POINTER_FLAGS_DOUBLE_CLICK;
    if (info->triple_click) ev->button_flags |= EFL_POINTER_FLAGS_TRIPLE_CLICK;
    ev->timestamp = info->timestamp;
-   ev->finger = info->multi.device;
+   ev->tool = info->multi.device;
    _pointer_position_set(ev, ee, info->x, info->y, info->multi.x, info->multi.y);
    ev->radius = info->multi.radius;
    ev->radius_x = info->multi.radius_x;
@@ -4433,7 +4433,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
 
    ev->action = EFL_POINTER_ACTION_MOVE;
    ev->timestamp = info->timestamp;
-   ev->finger = info->multi.device;
+   ev->tool = info->multi.device;
    _pointer_position_set(ev, ee, info->x, info->y, info->multi.x, info->multi.y);
 
    ev->radius = info->multi.radius;

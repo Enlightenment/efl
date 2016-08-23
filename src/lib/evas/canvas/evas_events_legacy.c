@@ -82,7 +82,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
         }
 
       case EFL_POINTER_ACTION_DOWN:
-        if (ev->finger == 0)
+        if (ev->tool == 0)
           {
              // filter out MULTI with finger 0, valid for eo, invalid for legacy
              if (type == EVAS_CALLBACK_MULTI_DOWN)
@@ -109,7 +109,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
           {
              TYPE_CHK(MULTI_DOWN);
              Evas_Event_Multi_Down *e = _event_alloc(ev->legacy);
-             e->device = ev->finger;
+             e->device = ev->tool;
              e->radius = ev->radius;
              e->radius_x = ev->radius_x;
              e->radius_y = ev->radius_y;
@@ -133,7 +133,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
           }
 
       case EFL_POINTER_ACTION_UP:
-        if (ev->finger == 0)
+        if (ev->tool == 0)
           {
              // filter out MULTI with finger 0, valid for eo, invalid for legacy
              if (type == EVAS_CALLBACK_MULTI_UP)
@@ -160,7 +160,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
           {
              TYPE_CHK(MULTI_UP);
              Evas_Event_Multi_Up *e = _event_alloc(ev->legacy);
-             e->device = ev->finger;
+             e->device = ev->tool;
              e->radius = ev->radius;
              e->radius_x = ev->radius_x;
              e->radius_y = ev->radius_y;
@@ -184,7 +184,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
           }
 
       case EFL_POINTER_ACTION_MOVE:
-        if (ev->finger == 0)
+        if (ev->tool == 0)
           {
              // filter out MULTI with finger 0, valid for eo, invalid for legacy
              if (type == EVAS_CALLBACK_MULTI_MOVE)
@@ -213,7 +213,7 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
           {
              TYPE_CHK(MULTI_MOVE);
              Evas_Event_Multi_Move *e = _event_alloc(ev->legacy);
-             e->device = ev->finger;
+             e->device = ev->tool;
              e->radius = ev->radius;
              e->radius_x = ev->radius_x;
              e->radius_y = ev->radius_y;
