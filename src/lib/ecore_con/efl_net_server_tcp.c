@@ -11,6 +11,9 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
+#ifdef HAVE_FCNTL
+# include <fcntl.h>
+#endif
 #ifdef HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
 #endif
@@ -34,7 +37,7 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, void *pd EINA_UNUSED, const char
 {
    struct sockaddr_storage addr = {};
    char *str, *host, *port;
-   int r, fd, extra_flags = 0;
+   int r, fd;
    socklen_t addrlen;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
    Eina_Error err = 0;
@@ -97,16 +100,25 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, void *pd EINA_UNUSED, const char
    if (efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&addr))
      efl_net_server_address_set(o, buf);
 
-   if (efl_net_server_fd_close_on_exec_get(o))
-     extra_flags |= SOCK_CLOEXEC;
 
-   fd = socket(addr.ss_family, SOCK_STREAM | extra_flags, IPPROTO_TCP);
+   fd = socket(addr.ss_family, SOCK_STREAM, IPPROTO_TCP);
    if (fd < 0)
      {
         err = errno;
-        ERR("socket(%d, SOCK_STREAM | %#x, IPPROTO_TCP): %s",
-            addr.ss_family, extra_flags, strerror(errno));
+        ERR("socket(%d, SOCK_STREAM, IPPROTO_TCP): %s",
+            addr.ss_family, strerror(errno));
         goto error_socket;
+     }
+
+   if (efl_net_server_fd_close_on_exec_get(o))
+     {
+        r = fcntl(fd, F_SETFD, FD_CLOEXEC);
+        if (EINA_UNLIKELY(r < 0))
+          {
+             const int err = errno;
+             ERR("fcntl(F_SETFD, FD_CLOEXEC): %s", strerror(err));
+             goto error_listen;
+          }
      }
 
    efl_loop_fd_set(o, fd);
