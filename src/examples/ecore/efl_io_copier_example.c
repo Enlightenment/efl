@@ -427,7 +427,7 @@ main(int argc, char **argv)
          */
         const char *address = input_fname + strlen("tcp://");
         Eina_Error err;
-        input = efl_add(EFL_NET_DIALER_TCP_CLASS, NULL,
+        input = efl_add(EFL_NET_DIALER_TCP_CLASS, ecore_main_loop_get(),
                         efl_event_callback_array_add(efl_self, input_cbs(), NULL), /* optional */
                         efl_event_callback_array_add(efl_self, dialer_cbs(), NULL) /* optional */
                         );
@@ -560,7 +560,7 @@ main(int argc, char **argv)
          */
         const char *address = output_fname + strlen("tcp://");
         Eina_Error err;
-        output = efl_add(EFL_NET_DIALER_TCP_CLASS, NULL,
+        output = efl_add(EFL_NET_DIALER_TCP_CLASS, ecore_main_loop_get(),
                          efl_event_callback_array_add(efl_self, output_cbs(), NULL), /* optional */
                          efl_event_callback_array_add(efl_self, dialer_cbs(), NULL) /* optional */
                          );
