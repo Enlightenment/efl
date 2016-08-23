@@ -4347,6 +4347,8 @@ _event_description_get(Efl_Pointer_Action action)
         return EFL_EVENT_POINTER_OUT;
       case EFL_POINTER_ACTION_WHEEL:
         return EFL_EVENT_POINTER_WHEEL;
+      case EFL_POINTER_ACTION_AXIS:
+        return EFL_EVENT_POINTER_AXIS;
       default: return NULL;
      }
 }
@@ -4521,6 +4523,74 @@ _direct_mouse_out_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info)
 }
 
 static Eina_Bool
+_direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
+{
+   Efl_Event_Pointer_Data *ev;
+   Efl_Event_Pointer *evt;
+   Evas *e = ee->evas;
+   Eina_Bool processed;
+   double x = 0, y = 0;
+   int n;
+
+   /* Unused information:
+    * window, root_window, event_window
+    */
+
+   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
+   if (!ev) return EINA_FALSE;
+
+   ev->action = EFL_POINTER_ACTION_AXIS;
+   ev->timestamp = info->timestamp;
+   ev->tool = info->toolid;
+
+   // see also evas_events.c
+   for (n = 0; n < info->naxis; n++)
+     {
+        const Ecore_Axis *axis = &(info->axis[n]);
+        switch (axis->label)
+          {
+           case EVAS_AXIS_LABEL_X:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_X);
+             x = axis->value;
+             break;
+
+           case EVAS_AXIS_LABEL_Y:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
+             y = axis->value;
+             break;
+
+           case EVAS_AXIS_LABEL_PRESSURE:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_PRESSURE);
+             ev->pressure = axis->value;
+             break;
+
+           case EVAS_AXIS_LABEL_DISTANCE:
+           case EVAS_AXIS_LABEL_AZIMUTH:
+           case EVAS_AXIS_LABEL_TILT:
+           case EVAS_AXIS_LABEL_TWIST:
+             // TODO
+
+           case EVAS_AXIS_LABEL_UNKNOWN:
+           case EVAS_AXIS_LABEL_TOUCH_WIDTH_MAJOR:
+           case EVAS_AXIS_LABEL_TOUCH_WIDTH_MINOR:
+           case EVAS_AXIS_LABEL_TOOL_WIDTH_MAJOR:
+           case EVAS_AXIS_LABEL_TOOL_WIDTH_MINOR:
+           default:
+             DBG("Unsupported axis label %d, value %f (discarded)",
+                 axis->label, axis->value);
+             break;
+          }
+     }
+   _pointer_position_set(ev, ee, x, y, x, y);
+
+   efl_event_callback_call(e, _event_description_get(ev->action), evt);
+   processed = ev->evas_done;
+   efl_del(evt);
+
+   return processed;
+}
+
+static Eina_Bool
 _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool down)
 {
    Efl_Event_Key_Data *ev;
@@ -4559,13 +4629,6 @@ _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool dow
    efl_del(evt);
 
    return processed;
-}
-
-static Eina_Bool
-_direct_axis_update_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Axis_Update *info EINA_UNUSED)
-{
-   /* TODO: Add joystick event type. */
-   return EINA_FALSE;
 }
 
 EAPI Eina_Bool

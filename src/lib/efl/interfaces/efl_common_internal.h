@@ -104,4 +104,16 @@ struct _Efl_Event_Hold_Data
    Eina_Bool         evas_done : 1; /* set by evas */
 };
 
+static inline Eina_Bool
+_efl_input_value_has(const Efl_Event_Pointer_Data *pd, Efl_Input_Value key)
+{
+   return (pd->value_flags & (1 << (int) key)) != 0;
+}
+
+static inline void
+_efl_input_value_mark(Efl_Event_Pointer_Data *pd, Efl_Input_Value key)
+{
+   pd->value_flags |= (1 << (int) key);
+}
+
 #endif

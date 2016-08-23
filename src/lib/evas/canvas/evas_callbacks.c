@@ -70,7 +70,7 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EFL_CANVAS_EVENT_RENDER_POST,
                       EFL_IMAGE_EVENT_RESIZE,
                       EFL_CANVAS_EVENT_DEVICE_CHANGED,
-                      EVAS_CANVAS_EVENT_AXIS_UPDATE,
+                      EFL_EVENT_POINTER_AXIS,
                       EVAS_CANVAS_EVENT_VIEWPORT_RESIZE );
 
 static inline Evas_Callback_Type
@@ -123,6 +123,7 @@ _evas_event_efl_event_info_exists(Evas_Callback_Type type)
       case EVAS_CALLBACK_MULTI_DOWN:
       case EVAS_CALLBACK_MULTI_UP:
       case EVAS_CALLBACK_MULTI_MOVE:
+      case EVAS_CALLBACK_AXIS_UPDATE:
         return EFL_EVENT_TYPE_POINTER;
       case EVAS_CALLBACK_KEY_DOWN:
       case EVAS_CALLBACK_KEY_UP:

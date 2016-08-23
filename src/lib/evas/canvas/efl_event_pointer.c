@@ -363,10 +363,9 @@ _efl_event_pointer_efl_event_input_fake_get(Eo *obj EINA_UNUSED, Efl_Event_Point
 EOLIAN static Eina_Bool
 _efl_event_pointer_value_has_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Efl_Input_Value key)
 {
-   // read-only
-   if ((key <= EFL_INPUT_VALUE_NONE) || (key > EFL_INPUT_VALUE_SLIDER))
+   if (!pd || (key <= EFL_INPUT_VALUE_NONE) || (key > EFL_INPUT_VALUE_SLIDER))
      return EINA_FALSE;
-   return (pd->value_flags & (1 << (int) key)) != 0;
+   return _efl_input_value_has(pd, key);
 }
 
 EOLIAN static Eina_Bool

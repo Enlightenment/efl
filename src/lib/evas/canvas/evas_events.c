@@ -2864,26 +2864,23 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
 }
 
 void
-_canvas_event_feed_axis_update_internal(Evas *eo_e, Evas_Public_Data *e, unsigned int timestamp, int device, int toolid, int naxis, const Evas_Axis *axis, const void *data)
+_canvas_event_feed_axis_update_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
 {
    Eina_List *l, *copy;
-   Evas_Event_Axis_Update ev;
    Evas_Object *eo_obj;
    int event_id = 0;
+   Evas *eo_e;
 
+   if (!e || !ev) return;
    if (e->is_frozen) return;
-   e->last_timestamp = timestamp;
 
+   eo_e = e->evas;
+   e->last_timestamp = ev->timestamp;
+
+   ev->action = EFL_POINTER_ACTION_AXIS;
    event_id = _evas_object_event_new();
 
-   ev.data = (void *)data;
-   ev.timestamp = timestamp;
-   ev.device = device;
-   ev.toolid = toolid;
-   ev.naxis = naxis;
-   ev.axis = (Evas_Axis *)axis;
-   ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) efl_ref(ev.dev);
+   if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
@@ -2894,8 +2891,8 @@ _canvas_event_feed_axis_update_internal(Evas *eo_e, Evas_Public_Data *e, unsigne
         if (!evas_event_freezes_through(eo_obj, obj))
           {
              evas_object_event_callback_call(eo_obj, obj,
-                                             EVAS_CALLBACK_AXIS_UPDATE, &ev,
-                                             event_id, NULL, NULL);
+                                             EVAS_CALLBACK_AXIS_UPDATE, NULL,
+                                             event_id, EFL_EVENT_POINTER_AXIS, ev->eo);
              if (e->delete_me || e->is_frozen) break;
           }
      }
@@ -2903,13 +2900,69 @@ _canvas_event_feed_axis_update_internal(Evas *eo_e, Evas_Public_Data *e, unsigne
    _evas_post_event_callback_call(eo_e, e);
 
    _evas_unwalk(e);
+   if (ev->device) efl_unref(ev->device);
 }
 
 EAPI void
-evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int toolid, int naxis, const Evas_Axis *axis, const void *data)
+evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int toolid, int naxis, const Evas_Axis *axes, const void *data)
 {
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   _canvas_event_feed_axis_update_internal(eo_e, e, timestamp, device, toolid, naxis, axis, data);
+   Efl_Event_Pointer_Data *ev = NULL;
+   Efl_Event_Pointer *evt;
+   int n;
+
+   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, eo_e, (void **) &ev);
+   if (!ev) return;
+
+   ev->data = (void *) data;
+   ev->timestamp = timestamp;
+   ev->action = EFL_POINTER_ACTION_AXIS;
+   ev->device = _evas_device_top_get(eo_e); // FIXME
+   ev->tool = toolid;
+
+   // see also ecore_evas.c
+   for (n = 0; n < naxis; n++)
+     {
+        const Evas_Axis *axis = &(axes[n]);
+        switch (axis->label)
+          {
+           case EVAS_AXIS_LABEL_X:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_X);
+             ev->cur.x = axis->value;
+             break;
+
+           case EVAS_AXIS_LABEL_Y:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
+             ev->cur.y = axis->value;
+             break;
+
+           case EVAS_AXIS_LABEL_PRESSURE:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_PRESSURE);
+             ev->pressure = axis->value;
+             break;
+
+           case EVAS_AXIS_LABEL_DISTANCE:
+           case EVAS_AXIS_LABEL_AZIMUTH:
+           case EVAS_AXIS_LABEL_TILT:
+           case EVAS_AXIS_LABEL_TWIST:
+             // TODO
+
+           case EVAS_AXIS_LABEL_UNKNOWN:
+           case EVAS_AXIS_LABEL_TOUCH_WIDTH_MAJOR:
+           case EVAS_AXIS_LABEL_TOUCH_WIDTH_MINOR:
+           case EVAS_AXIS_LABEL_TOOL_WIDTH_MAJOR:
+           case EVAS_AXIS_LABEL_TOOL_WIDTH_MINOR:
+           default:
+             DBG("Unsupported axis label %d, value %f (discarded)",
+                 axis->label, axis->value);
+             break;
+          }
+     }
+
+   _canvas_event_feed_axis_update_internal(e, ev);
+
+   efl_del(evt);
 }
 
 static void
@@ -3215,6 +3268,10 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
         _canvas_event_feed_mouse_wheel_internal(eo_e, ev);
         break;
 
+      case EFL_POINTER_ACTION_AXIS:
+        _canvas_event_feed_axis_update_internal(e, ev);
+        break;
+
       default:
         ERR("unsupported event type: %d", ev->action);
         ev->evas_done = EINA_FALSE;
@@ -3259,6 +3316,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_evas_canvas_event_pointer_callbacks,
 { EFL_EVENT_POINTER_OUT, _evas_canvas_event_pointer_cb },
 { EFL_EVENT_POINTER_CANCEL, _evas_canvas_event_pointer_cb },
 { EFL_EVENT_POINTER_WHEEL, _evas_canvas_event_pointer_cb },
+{ EFL_EVENT_POINTER_AXIS, _evas_canvas_event_pointer_cb },
 { EFL_EVENT_KEY_DOWN, _evas_canvas_event_key_cb },
 { EFL_EVENT_KEY_UP, _evas_canvas_event_key_cb })
 

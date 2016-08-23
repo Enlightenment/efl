@@ -255,6 +255,40 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
            return e;
         }
 
+      case EFL_POINTER_ACTION_AXIS:
+        {
+           TYPE_CHK(AXIS_UPDATE);
+           Evas_Event_Axis_Update *e = ev->legacy;
+           Evas_Axis *tmp_axis;
+           if (e && e->axis) free(e->axis);
+           e = _event_alloc(ev->legacy);
+           e->data = ev->data;
+           e->timestamp = ev->timestamp;
+           e->dev = ev->device;
+           /* FIXME: Get device id from above device object. 0 for now. */
+           e->device = 0;
+           e->toolid = ev->tool;
+           e->axis = malloc(sizeof(Evas_Axis) * 3);
+           e->axis[e->naxis].label = EVAS_AXIS_LABEL_X;
+           e->axis[e->naxis].value = ev->cur.x;
+           e->naxis++;
+           e->axis[e->naxis].label = EVAS_AXIS_LABEL_Y;
+           e->axis[e->naxis].value = ev->cur.y;
+           e->naxis++;
+           if (_efl_input_value_has(ev, EFL_INPUT_VALUE_PRESSURE))
+             {
+                e->axis[e->naxis].label = EVAS_AXIS_LABEL_PRESSURE;
+                e->axis[e->naxis].value = ev->pressure;
+                e->naxis++;
+             }
+           // TODO: distance, azimuth, tild, twist
+           tmp_axis = realloc(e->axis, e->naxis * sizeof(Evas_Axis));
+           if (tmp_axis) e->axis = tmp_axis;
+           if (pflags) *pflags = NULL;
+           ev->legacy = e;
+           return e;
+        }
+
       default:
         return NULL;
      }

@@ -34,6 +34,7 @@ interface Efl.Input.Interface ()
       pointer,in: Efl.Event.Pointer;     [[Pointer entered a window or a widget.]]
       pointer,out: Efl.Event.Pointer;    [[Pointer left a window or a widget.]]
       pointer,wheel: Efl.Event.Pointer;  [[Mouse wheel event.]]
+      pointer,axis: Efl.Event.Pointer;   [[Pen or other axis event update.]]
       finger,move: Efl.Event.Pointer;    [[Finger moved (current and previous positions are known).]]
       finger,down: Efl.Event.Pointer;    [[Finger pressed (finger id is known).]]
       finger,up: Efl.Event.Pointer;      [[Finger released (finger id is known).]]
