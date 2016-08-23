@@ -234,6 +234,25 @@ _append_since(const char *since, int indent, int curl, Eina_Strbuf *buf)
    return curl;
 }
 
+static int
+_append_extra(const char *el, int indent, int curl, Eina_Bool nl, Eina_Strbuf *buf)
+{
+   if (el)
+     {
+        eina_strbuf_append_char(buf, '\n');
+        if (nl)
+          {
+             _indent_line(buf, indent);
+             eina_strbuf_append(buf, " *\n");
+          }
+        curl = _indent_line(buf, indent);
+        eina_strbuf_append(buf, " * ");
+        eina_strbuf_append(buf, el);
+        curl += strlen(el) + sizeof(" * ") - 1;
+     }
+   return curl;
+}
+
 static char *
 _sanitize_group(const char *group)
 {
@@ -257,13 +276,15 @@ _append_group(Eina_Strbuf *buf, char *sgrp, int indent)
 
 static void
 _gen_doc_brief(const char *summary, const char *since, const char *group,
-               int indent, Eina_Strbuf *buf, Eina_Bool use_legacy)
+               const char *el, int indent, Eina_Strbuf *buf,
+               Eina_Bool use_legacy)
 {
    int curl = 4 + indent;
    Eina_Strbuf *wbuf = eina_strbuf_new();
    eina_strbuf_append(buf, "/** ");
    curl = _append_section(summary, indent, curl, buf, wbuf, use_legacy);
    eina_strbuf_free(wbuf);
+   curl = _append_extra(el, indent, curl, EINA_FALSE, buf);
    curl = _append_since(since, indent, curl, buf);
    char *sgrp = _sanitize_group(group);
    if (((curl + 3) > DOC_LIMIT(indent)) || sgrp)
@@ -283,7 +304,8 @@ _gen_doc_brief(const char *summary, const char *since, const char *group,
 
 static void
 _gen_doc_full(const char *summary, const char *description, const char *since,
-              const char *group, int indent, Eina_Strbuf *buf, Eina_Bool use_legacy)
+              const char *group, const char *el, int indent, Eina_Strbuf *buf,
+              Eina_Bool use_legacy)
 {
    int curl = 0;
    Eina_Strbuf *wbuf = eina_strbuf_new();
@@ -298,6 +320,7 @@ _gen_doc_full(const char *summary, const char *description, const char *since,
    curl = _indent_line(buf, indent);
    eina_strbuf_append(buf, " * ");
    _append_section(description, indent, curl + 3, buf, wbuf, use_legacy);
+   curl = _append_extra(el, indent, curl, EINA_TRUE, buf);
    curl = _append_since(since, indent, curl, buf);
    eina_strbuf_append_char(buf, '\n');
    _indent_line(buf, indent);
@@ -312,9 +335,9 @@ _gen_doc_full(const char *summary, const char *description, const char *since,
    eina_strbuf_free(wbuf);
 }
 
-Eina_Strbuf *
-docs_generate_full(const Eolian_Documentation *doc, const char *group,
-                   int indent, Eina_Bool use_legacy)
+static Eina_Strbuf *
+_gen_doc_buf(const Eolian_Documentation *doc, const char *group,
+             const char *el, int indent, Eina_Bool use_legacy)
 {
    if (!doc) return NULL;
 
@@ -324,10 +347,52 @@ docs_generate_full(const Eolian_Documentation *doc, const char *group,
 
    Eina_Strbuf *buf = eina_strbuf_new();
    if (!desc)
-     _gen_doc_brief(sum, since, group, indent, buf, use_legacy);
+     _gen_doc_brief(sum, since, group, el, indent, buf, use_legacy);
    else
-     _gen_doc_full(sum, desc, since, group, indent, buf, use_legacy);
+     _gen_doc_full(sum, desc, since, group, el, indent, buf, use_legacy);
    return buf;
+}
+
+Eina_Strbuf *
+docs_generate_full(const Eolian_Documentation *doc, const char *group,
+                   int indent, Eina_Bool use_legacy)
+{
+   return _gen_doc_buf(doc, group, NULL, indent, use_legacy);
+}
+
+Eina_Strbuf *
+docs_generate_event(const Eolian_Event *ev, const char *group)
+{
+   if (!ev) return NULL;
+
+   const Eolian_Documentation *doc = eolian_event_documentation_get(ev);
+
+   char buf[1024];
+   const Eolian_Type *rt = eolian_event_type_get(ev);
+   const char *p = NULL;
+   if (rt)
+     {
+        p = buf;
+        Eina_Stringshare *rts = eolian_type_c_type_get(rt);
+        snprintf(buf, sizeof(buf), "@return %s", rts);
+        eina_stringshare_del(rts);
+     }
+
+   if (!doc)
+     {
+        Eina_Strbuf *bufs = eina_strbuf_new();
+        eina_strbuf_append(bufs, "/**\n * No description\n");
+        if (p)
+          {
+             eina_strbuf_append(bufs, " * ");
+             eina_strbuf_append(bufs, p);
+             eina_strbuf_append_char(bufs, '\n');
+          }
+        eina_strbuf_append(bufs, " */");
+        return bufs;
+     }
+
+   return _gen_doc_buf(doc, group, p, 0, EINA_FALSE);
 }
 
 Eina_Strbuf *
@@ -443,7 +508,7 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype,
    if (!desc && !par && !vpar && !rdoc && (ftype == EOLIAN_METHOD || !pdoc))
      {
         _gen_doc_brief(sum ? sum : "No description supplied.", since, group,
-                       indent, buf, use_legacy);
+                       NULL, indent, buf, use_legacy);
         return buf;
      }
 

@@ -198,7 +198,6 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    EINA_ITERATOR_FOREACH(itr, event)
      {
         Eina_Stringshare *evname = eolian_event_c_name_get(event);
-        const Eolian_Documentation *evdoc = eolian_event_documentation_get(event);
         Eolian_Object_Scope scope = eolian_event_scope_get(event);
 
         if (scope == EOLIAN_SCOPE_PRIVATE)
@@ -220,15 +219,10 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         if (!eolian_event_is_beta(event) && scope == EOLIAN_SCOPE_PUBLIC)
           eina_strbuf_append_char(str_ev, '\n');
 
-        if (evdoc)
-          {
-             Eina_Strbuf *evdbuf = docs_generate_full(evdoc, eolian_class_full_name_get(class), 0, EINA_FALSE);
-             eina_strbuf_append(str_ev, eina_strbuf_string_get(evdbuf));
-             eina_strbuf_append_char(str_ev, '\n');
-             eina_strbuf_free(evdbuf);
-          }
-        else
-          eina_strbuf_append(str_ev, "/**\n * No description\n */\n");
+        Eina_Strbuf *evdbuf = docs_generate_event(event, eolian_class_full_name_get(class));
+        eina_strbuf_append(str_ev, eina_strbuf_string_get(evdbuf));
+        eina_strbuf_append_char(str_ev, '\n');
+        eina_strbuf_free(evdbuf);
 
         eina_strbuf_append_printf(str_ev, "#define %s (&(_%s))\n", evname, evname);
         eina_strbuf_append_printf(str_extrn_ev, "EOAPI extern const Efl_Event_Description _%s;\n", evname);
