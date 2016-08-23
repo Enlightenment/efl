@@ -110,7 +110,7 @@ EAPI extern int ELPUT_EVENT_SESSION_ACTIVE;
  * @brief Ecore functions for dealing with libinput
  *
  * @defgroup Elput_Group Elput - libinput integration
- * @ingrup Ecore
+ * @ingroup Ecore
  *
  * Elput provides a wrapper and functions for using libinput
  *
