@@ -137,6 +137,7 @@ EAPI extern const Efl_Event_Description _EFL_GFX_PATH_CHANGED;
 #include "interfaces/efl_io_positioner.eo.h"
 
 #include "interfaces/efl_io_buffer.eo.h"
+#include "interfaces/efl_io_queue.eo.h"
 
 #else
 

@@ -1,0 +1,94 @@
+class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
+    [[Generic In-memory queue of data to be used as I/O.
+
+      This class is to be used to receive temporary data using
+      @Efl.Io.Writer.write and hold it until someone calls
+      @Efl.Io.Reader.read to consume it.
+
+      A fixed sized queue can be implemented by setting @.limit
+      followed by @.preallocate
+
+      @since 1.19
+    ]]
+
+    methods {
+        preallocate {
+            [[Immediately pre-allocate a buffer of at least a given size.]]
+            params {
+                @in size: size; [[amount of bytes to pre-allocate.]]
+            }
+        }
+
+        @property limit {
+            [[Limit how big the buffer can grow.
+
+              This affects both @.preallocate and how buffer grows
+              when @Efl.Io.Writer.write is called.
+
+              If you want a buffer of an exact size, always set the
+              limit before any further calls that can grow it.
+            ]]
+            get { }
+            set {
+                [[Constructor-only property to set buffer limit. 0 is unlimited]]
+            }
+            values {
+                size: size; [[Defines a maximum buffer size, or 0 to allow unlimited amount of bytes]]
+            }
+        }
+
+        @property usage {
+            [[How many bytes are available for read]]
+            get { }
+            values {
+                usage: size;
+            }
+        }
+
+        slice_get { // TODO: property and return of Eina.Slice (not pointer)
+            [[Get a temporary access to queue's internal read memory.
+
+              The memory pointed by slice may be changed by other
+              methods of this class. The event "slice,changed" will be
+              called in those situations.
+            ]]
+            params {
+                @out slice: Eina.Slice; [[slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full slice available for reading.]]
+            }
+            return: bool (false);
+        }
+
+        clear {
+            [[Clear the queue. Same as reading all data]]
+        }
+
+        eos_mark {
+            [[Mark this end-of-stream.
+
+              That will set @Efl.Io.Reader.eos to $true and forbid any
+              further writes.
+
+              Unlike @Efl.Io.Closer.close, this won't clear anything.
+            ]]
+        }
+    }
+
+    events {
+        slice,changed; [[The read-slice returned by @.slice_get may have changed.]]
+    }
+
+    implements {
+        Efl.Object.finalize;
+        Efl.Object.destructor;
+        Efl.Io.Reader.read;
+        Efl.Io.Reader.can_read.get;
+        Efl.Io.Reader.can_read.set;
+        Efl.Io.Reader.eos.get;
+        Efl.Io.Reader.eos.set;
+        Efl.Io.Writer.write;
+        Efl.Io.Writer.can_write.get;
+        Efl.Io.Writer.can_write.set;
+        Efl.Io.Closer.close;
+        Efl.Io.Closer.closed.get;
+    }
+}
