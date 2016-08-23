@@ -70,7 +70,6 @@ bench_eo_do_super(int request)
         "Simple2",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_OPS(op_desc),
-        NULL,
         0,
         NULL,
         NULL

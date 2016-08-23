@@ -36,7 +36,6 @@ START_TEST(efl_destructor_unref)
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_OPS(op_descs),
-        NULL,
         0,
         NULL,
         NULL
@@ -67,7 +66,6 @@ START_TEST(efl_destructor_double_del)
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         0,
         NULL,
         NULL

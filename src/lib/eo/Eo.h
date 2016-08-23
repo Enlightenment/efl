@@ -411,7 +411,6 @@ struct _Efl_Class_Description
    const char *name; /**< The name of the class. */
    Efl_Class_Type type; /**< The type of the class. */
    Efl_Object_Ops ops;  /**< The ops description, should be filled using #EFL_CLASS_DESCRIPTION_OPS (later sorted by Eo). */
-   const Efl_Event_Description * const *events; /**< The event descriptions for this class. */
    size_t data_size; /**< The size of data (private + protected + public) this class needs per object. */
    void (*class_constructor)(Efl_Class *klass); /**< The constructor of the class. */
    void (*class_destructor)(Efl_Class *klass); /**< The destructor of the class. */

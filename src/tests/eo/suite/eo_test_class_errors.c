@@ -26,7 +26,6 @@ START_TEST(eo_inherit_errors)
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         0,
         NULL,
         NULL
@@ -37,7 +36,6 @@ START_TEST(eo_inherit_errors)
         "Mixin",
         EFL_CLASS_TYPE_MIXIN,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         0,
         NULL,
         NULL
@@ -48,7 +46,6 @@ START_TEST(eo_inherit_errors)
         "General",
         EFL_CLASS_TYPE_MIXIN,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         0,
         NULL,
         NULL
@@ -94,7 +91,6 @@ START_TEST(eo_inconsistent_mro)
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         0,
         NULL,
         NULL
@@ -105,7 +101,6 @@ START_TEST(eo_inconsistent_mro)
         "Mixin",
         EFL_CLASS_TYPE_MIXIN,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         0,
         NULL,
         NULL
@@ -116,7 +111,6 @@ START_TEST(eo_inconsistent_mro)
         "Mixin2",
         EFL_CLASS_TYPE_MIXIN,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         0,
         NULL,
         NULL
@@ -127,7 +121,6 @@ START_TEST(eo_inconsistent_mro)
         "Mixin3",
         EFL_CLASS_TYPE_MIXIN,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         0,
         NULL,
         NULL
@@ -173,7 +166,6 @@ START_TEST(eo_bad_interface)
         "Interface",
         EFL_CLASS_TYPE_INTERFACE,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         10,
         NULL,
         NULL
@@ -225,7 +217,6 @@ START_TEST(eo_null_api)
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_OPS(op_descs),
-        NULL,
         0,
         NULL,
         NULL
@@ -257,7 +248,6 @@ START_TEST(eo_wrong_override)
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_OPS(op_descs),
-        NULL,
         0,
         NULL,
         NULL
@@ -290,7 +280,6 @@ START_TEST(eo_api_redefined)
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_OPS(op_descs),
-        NULL,
         0,
         NULL,
         NULL
@@ -323,7 +312,6 @@ START_TEST(eo_dich_func_override)
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_OPS(op_descs),
-        NULL,
         0,
         NULL,
         NULL

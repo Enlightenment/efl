@@ -268,7 +268,6 @@ START_TEST(efl_data_fetch)
         "Simple2",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         10,
         NULL,
         NULL
@@ -311,7 +310,6 @@ START_TEST(efl_isa_tests)
              "Iface",
              EFL_CLASS_TYPE_INTERFACE,
              EFL_CLASS_DESCRIPTION_NOOPS(),
-             NULL,
              0,
              NULL,
              NULL
@@ -328,7 +326,6 @@ START_TEST(efl_isa_tests)
              "Mixin",
              EFL_CLASS_TYPE_MIXIN,
              EFL_CLASS_DESCRIPTION_NOOPS(),
-             NULL,
              0,
              NULL,
              NULL
@@ -345,7 +342,6 @@ START_TEST(efl_isa_tests)
              "Simple2",
              EFL_CLASS_TYPE_REGULAR,
              EFL_CLASS_DESCRIPTION_NOOPS(),
-             NULL,
              10,
              NULL,
              NULL
@@ -445,7 +441,6 @@ START_TEST(eo_man_free)
         "Simple2",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_OPS(op_descs),
-        NULL,
         10,
         NULL,
         NULL
@@ -994,7 +989,6 @@ START_TEST(eo_multiple_do)
         "Inherit",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_OPS(_multi_do_op_descs),
-        NULL,
         0,
         NULL,
         NULL
@@ -1070,7 +1064,6 @@ START_TEST(eo_pointers_indirection)
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         0,
         NULL,
         NULL
@@ -1168,7 +1161,6 @@ START_TEST(efl_add_failures)
         "Simple2",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_OPS(_efl_add_failures_op_descs),
-        NULL,
         0,
         NULL,
         NULL
@@ -1206,7 +1198,6 @@ START_TEST(efl_del_intercept)
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
         EFL_CLASS_DESCRIPTION_NOOPS(),
-        NULL,
         0,
         NULL,
         NULL

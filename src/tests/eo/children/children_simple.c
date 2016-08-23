@@ -12,7 +12,6 @@ static const Efl_Class_Description class_desc = {
      "Simple",
      EFL_CLASS_TYPE_REGULAR,
      EFL_CLASS_DESCRIPTION_NOOPS(),
-     NULL,
      0,
      NULL,
      NULL

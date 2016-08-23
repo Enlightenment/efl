@@ -56,7 +56,6 @@ static const Efl_Class_Description class_desc = {
      "Mixin3",
      EFL_CLASS_TYPE_MIXIN,
      EFL_CLASS_DESCRIPTION_OPS(op_descs),
-     NULL,
      sizeof(Mixin3_Public_Data),
      NULL,
      NULL

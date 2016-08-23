@@ -171,7 +171,7 @@ static const Efl_Op_Description custom_table_op_desc[] = {
 
 static const Efl_Class_Description custom_table_class_desc = {
    EO_VERSION, "Efl.Ui.Grid.Internal", EFL_CLASS_TYPE_REGULAR,
-   EFL_CLASS_DESCRIPTION_OPS(custom_table_op_desc), NULL,
+   EFL_CLASS_DESCRIPTION_OPS(custom_table_op_desc),
    sizeof(Custom_Table_Data), NULL, NULL
 };
 
