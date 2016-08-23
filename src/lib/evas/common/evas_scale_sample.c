@@ -871,15 +871,30 @@ evas_common_scale_sample_init(void)
    if (eina_cpu_count() <= 2) return ;
 
    thread_queue = eina_thread_queue_new();
+   if (EINA_UNLIKELY(!thread_queue))
+     {
+        ERR("Failed to create thread queue");
+        goto cleanup;
+     }
    main_queue = eina_thread_queue_new();
+   if (EINA_UNLIKELY(!thread_queue))
+     {
+        ERR("Failed to create thread queue");
+        goto cleanup;
+     }
 
    if (!eina_thread_create(&scaling_thread, EINA_THREAD_NORMAL, -1,
                            _evas_common_scale_sample_thread, NULL))
      {
-        return;
+        goto cleanup;
      }
 
    use_thread = EINA_TRUE;
+   return;
+
+cleanup:
+   if (thread_queue) eina_thread_queue_free(thread_queue);
+   if (main_queue) eina_thread_queue_free(main_queue);
 }
 
 EAPI void
