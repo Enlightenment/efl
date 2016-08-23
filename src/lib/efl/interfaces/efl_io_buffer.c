@@ -90,7 +90,7 @@ _efl_io_buffer_limit_set(Eo *o, Efl_Io_Buffer_Data *pd, size_t limit)
    if (pd->limit == limit) return;
    pd->limit = limit;
 
-   if (pd->allocated > limit)
+   if ((limit > 0) && (pd->allocated > limit))
      _efl_io_buffer_realloc(o, pd, limit);
 
    efl_io_reader_can_read_set(o, efl_io_buffer_position_read_get(o) < efl_io_sizer_size_get(o));
