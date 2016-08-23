@@ -35,4 +35,10 @@ _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path);
 const char *
 _elm_fileselector_button_path_get_internal(const Evas_Object *obj);
 
+void
+_event_to_legacy_call(Eo *obj, const Efl_Event_Description *evt_desc, void *event_info);
+
+void
+_model_event_call(Eo *obj, const Efl_Event_Description *evt_desc, Efl_Model *model, const char *path);
+
 #endif
