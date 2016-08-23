@@ -209,6 +209,59 @@ START_TEST(eina_test_slice_print)
 }
 END_TEST
 
+START_TEST(eina_test_slice_find)
+{
+    Eina_Slice slice = EINA_SLICE_STR_LITERAL("abcdef");
+    const char *p;
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("a"));
+    fail_if(p == NULL);
+    ck_assert_str_eq(p, (const char *)slice.bytes);
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("ab"));
+    fail_if(p == NULL);
+    ck_assert_str_eq(p, (const char *)slice.bytes);
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("abc"));
+    fail_if(p == NULL);
+    ck_assert_str_eq(p, (const char *)slice.bytes);
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("f"));
+    fail_if(p == NULL);
+    ck_assert_str_eq(p, (const char *)slice.bytes + strlen("abcde"));
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("ef"));
+    fail_if(p == NULL);
+    ck_assert_str_eq(p, (const char *)slice.bytes + strlen("abcd"));
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("def"));
+    fail_if(p == NULL);
+    ck_assert_str_eq(p, (const char *)slice.bytes + strlen("abc"));
+
+    p = eina_slice_find(slice, slice);
+    fail_if(p == NULL);
+    ck_assert_str_eq(p, (const char *)slice.bytes);
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("x"));
+    fail_unless(p == NULL);
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("xyz"));
+    fail_unless(p == NULL);
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("xa"));
+    fail_unless(p == NULL);
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("xb"));
+    fail_unless(p == NULL);
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("abcdefgh"));
+    fail_unless(p == NULL);
+
+    p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL(""));
+    fail_unless(p == NULL);
+}
+END_TEST
+
 void
 eina_test_slice(TCase *tc)
 {
@@ -216,4 +269,5 @@ eina_test_slice(TCase *tc)
    tcase_add_test(tc, eina_test_slice_ro);
    tcase_add_test(tc, eina_test_slice_rw);
    tcase_add_test(tc, eina_test_slice_print);
+   tcase_add_test(tc, eina_test_slice_find);
 }

@@ -155,13 +155,13 @@ eina_slice_find(const Eina_Slice slice, const Eina_Slice needle)
    if (slice.len == 0) return NULL;
    if (needle.len == 0) return NULL;
    if (slice.len < needle.len) return NULL;
-   if (slice.len == 1) return eina_slice_strchr(slice, needle.bytes[0]);
+   if (needle.len == 1) return eina_slice_strchr(slice, needle.bytes[0]);
    if ((slice.len == needle.len) &&
        (memcmp(slice.mem, needle.mem, needle.len) == 0))
      return slice.mem;
 
    s.mem = slice.mem;
-   s.len = slice.len - needle.len;
+   s.len = slice.len - (needle.len - 1);
 
    c = needle.bytes[0];
    n.mem = (const void *)(needle.bytes + 1);
