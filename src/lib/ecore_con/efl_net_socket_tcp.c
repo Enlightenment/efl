@@ -177,11 +177,30 @@ _efl_net_socket_tcp_no_delay_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
    return pd->no_delay;
 }
 
+static inline int
+_cork_option_get(void)
+{
+#if defined(HAVE_TCP_CORK)
+   return TCP_CORK;
+#elif defined(HAVE_TCP_NOPUSH)
+   return TCP_NOPUSH;
+#else
+   return -1;
+#endif
+}
+
 EOLIAN static Eina_Bool
 _efl_net_socket_tcp_cork_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool cork)
 {
-   int value, fd;
+   int value, fd, option;
    Eina_Bool old = pd->cork;
+
+   option = _cork_option_get();
+   if (EINA_UNLIKELY(option < 0))
+     {
+        ERR("Could not find a TCP_CORK equivalent on your system");
+        return EINA_FALSE;
+     }
 
    pd->cork = cork;
 
@@ -189,10 +208,10 @@ _efl_net_socket_tcp_cork_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool cork)
    if (fd < 0) return EINA_TRUE; /* postpone until fd_set() */
 
    value = cork;
-   if (setsockopt(fd, IPPROTO_TCP, TCP_CORK, &value, sizeof(value)) < 0)
+   if (setsockopt(fd, IPPROTO_TCP, option, &value, sizeof(value)) < 0)
      {
-        ERR("setsockopt(%d, IPPROTO_TCP, TCP_CORK, %d): %s",
-            fd, value, strerror(errno));
+        ERR("setsockopt(%d, IPPROTO_TCP, 0x%x, %d): %s",
+            fd, option, value, strerror(errno));
         pd->cork = old;
         return EINA_FALSE;
      }
@@ -205,6 +224,14 @@ _efl_net_socket_tcp_cork_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
 {
    int value = 0, fd;
    socklen_t valuelen;
+   int option;
+
+   option = _cork_option_get();
+   if (EINA_UNLIKELY(option < 0))
+     {
+        ERR("Could not find a TCP_CORK equivalent on your system");
+        return EINA_FALSE;
+     }
 
    fd = efl_loop_fd_get(o);
    if (fd < 0) return pd->cork;
@@ -213,10 +240,10 @@ _efl_net_socket_tcp_cork_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, IPPROTO_TCP, TCP_CORK, &value, &valuelen) < 0)
+   if (getsockopt(fd, IPPROTO_TCP, option, &value, &valuelen) < 0)
      {
-        ERR("getsockopt(%d, IPPROTO_TCP, TCP_CORK): %s",
-            fd, strerror(errno));
+        ERR("getsockopt(%d, IPPROTO_TCP, 0x%x): %s",
+            fd, option, strerror(errno));
         return EINA_FALSE;
      }
 

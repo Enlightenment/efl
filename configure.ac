@@ -452,6 +452,11 @@ netinet/in.h \
 
 EFL_CHECK_PATH_MAX
 
+#### Checks for defines in headers
+
+EFL_CHECK_DEFINE(TCP_CORK, netinet/tcp.h)
+EFL_CHECK_DEFINE(TCP_NOPUSH, netinet/tcp.h)
+
 #### Checks for types
 
 # wchar_t
