@@ -72,7 +72,6 @@ static const Efl_Class_Description _override_class_desc = {
      "Override",
      EFL_CLASS_TYPE_REGULAR,
      EFL_CLASS_DESCRIPTION_OPS(_override_op_desc),
-     NULL,
      sizeof(Override_Data),
      NULL,
      NULL

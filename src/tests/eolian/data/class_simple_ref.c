@@ -36,7 +36,6 @@ static const Efl_Class_Description _class_simple_class_desc = {
      "Class_Simple",
      EFL_CLASS_TYPE_REGULAR,
      EFL_CLASS_DESCRIPTION_OPS(_class_simple_op_desc),
-     NULL,
      sizeof(Evas_Simple_Data),
      NULL,
      NULL
