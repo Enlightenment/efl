@@ -47,5 +47,6 @@
 /ecore_buffer_consumer_example
 /ecore_buffer_provider_example
 /efl_io_copier_example
+/efl_io_copier_simple_example
 /efl_net_server_example
 /efl_net_dialer_http_example

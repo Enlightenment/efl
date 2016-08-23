@@ -78,6 +78,7 @@ ecore_getopt_example \
 ecore_con_eet_client_example \
 ecore_con_eet_server_example \
 efl_io_copier_example \
+efl_io_copier_simple_example \
 efl_net_server_example \
 efl_net_dialer_http_example
 
@@ -283,6 +284,9 @@ $(top_builddir)/src/lib/eet/libeet.la
 efl_io_copier_example_SOURCES = efl_io_copier_example.c
 efl_io_copier_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
+efl_io_copier_simple_example_SOURCES = efl_io_copier_simple_example.c
+efl_io_copier_simple_example_LDADD = $(ECORE_COMMON_LDADD)
+
 efl_net_server_example_SOURCES = efl_net_server_example.c
 efl_net_server_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
@@ -336,6 +340,7 @@ ecore_con_eet_client_example.c \
 ecore_con_eet_server_example.c \
 ecore_con_eet_descriptor_example.c \
 efl_io_copier_example.c \
+efl_io_copier_simple_example.c \
 efl_net_server_example.c \
 efl_net_dialer_http_example.c
 
