@@ -422,6 +422,8 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
 
               An input panel displays the string or icon associated with this type.
+
+              Regardless of return key type, "activated" event will be generated when pressing return key in single line entry.
             ]]
          }
          get {
