@@ -216,7 +216,7 @@ _efl_vpath_core_efl_object_destructor(Eo *obj, Efl_Vpath_Core_Data *pd)
 }
 
 EOLIAN static Efl_Vpath_Core *
-_efl_vpath_core_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_vpath_core_core_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    // no locks here as we expect efl to init this early in main "thread"
    if (!vpath_core) vpath_core = efl_add(EFL_VPATH_CORE_CLASS, NULL);

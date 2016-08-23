@@ -6,7 +6,7 @@ class Efl.Vpath.Core (Efl.Object, Efl.Vpath)
    ]]
    eo_prefix: efl_vpath_core;
    methods {
-      get @class {
+      core_get @class {
          [[ This gets the global EFL Core Vpath class - only 1 - singleton ]]
          return: Efl.Vpath.Core; [[ Get the singleton core vpath ]]
       }

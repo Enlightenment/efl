@@ -1351,6 +1351,11 @@ parse_property(Eo_Lexer *ls)
    FILL_BASE(prop->base, ls, ls->line_number, ls->column);
    ls->tmp.kls->properties = eina_list_append(ls->tmp.kls->properties, prop);
    check(ls, TOK_VALUE);
+   if (ls->t.kw == KW_get || ls->t.kw == KW_set)
+     {
+        eo_lexer_syntax_error(ls, "reserved keyword as property name");
+        return;
+     }
    prop->name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
    for (;;) switch (ls->t.kw)
@@ -1431,6 +1436,11 @@ parse_method(Eo_Lexer *ls)
    FILL_BASE(meth->base, ls, ls->line_number, ls->column);
    ls->tmp.kls->methods = eina_list_append(ls->tmp.kls->methods, meth);
    check(ls, TOK_VALUE);
+   if (ls->t.kw == KW_get || ls->t.kw == KW_set)
+     {
+        eo_lexer_syntax_error(ls, "reserved keyword as method name");
+        return;
+     }
    meth->name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
    for (;;) switch (ls->t.kw)
