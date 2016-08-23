@@ -1658,7 +1658,8 @@ EAPI void                          ecore_imf_context_input_panel_imdata_get(Ecor
 /**
  * Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
  *
- * An input panel displays the string or icon associated with this type
+ * An input panel displays the string or icon associated with this type.@n
+ * Regardless of return key type, return key event will be generated when pressing return key.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param return_key_type The type of "return" key on the input panel
