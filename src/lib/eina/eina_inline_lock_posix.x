@@ -94,22 +94,13 @@ typedef Eina_Lock Eina_Spinlock;
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
 /* OSX supports only named semaphores.
  * So, we need to be able to generate a unique string identifier for each
- * semaphore we want to create.
- * It seems reasonable to use a counter, which is incremented each time a
- * semaphore is created. However, it needs to be atomic...
- * It would be easier if we were using C11 with stdatomic, but I guess it
- * will just be fine without.
- * That's why there are two static variables below the struct */
+ * semaphore we want to create. */
 struct _Eina_Semaphore
 {
    sem_t       *sema;
-   char         name[16];
+   char         name[32];
 };
 typedef struct _Eina_Semaphore Eina_Semaphore;
-
-static unsigned int _sem_ctr = 0;
-static Eina_Spinlock _sem_ctr_lock = 0; // 0: not locked
-
 #else
 typedef sem_t Eina_Semaphore;
 #endif
@@ -840,14 +831,9 @@ eina_semaphore_new(Eina_Semaphore *sem, int count_init)
 
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
    /* Atomic increment to generate the unique identifier */
-   eina_spinlock_take(&_sem_ctr_lock);
-   ++_sem_ctr;
-   eina_spinlock_release(&_sem_ctr_lock);
-
-   snprintf(sem->name, sizeof(sem->name), "/eina_sem_%x-%x_%x_%x_%x_%x",
-            (unsigned int)getpid(), _sem_ctr,
-            (unsigned int)rand(), (unsigned int)rand(),
-            (unsigned int)rand(), (unsigned int)rand());
+   snprintf(sem->name, sizeof(sem->name), "/eina%x%x%x",
+            (unsigned int)getpid(), (unsigned int)rand(), (unsigned int)rand());
+   sem->name[sizeof(sem->name) - 1] = '\0';
    sem_unlink(sem->name);
    sem->sema = sem_open(sem->name, O_CREAT | O_EXCL, 0600, count_init);
    return (sem->sema == SEM_FAILED) ? EINA_FALSE : EINA_TRUE;
@@ -863,8 +849,9 @@ eina_semaphore_free(Eina_Semaphore *sem)
      return EINA_FALSE;
 
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
-   return ((sem_close(sem->sema) == 0) &&
-           (sem_unlink(sem->name)) == 0) ? EINA_TRUE : EINA_FALSE;
+   const int closed = sem_close(sem->sema);
+   const int unlinked = sem_unlink(sem->name);
+   return ((closed == 0) && (unlinked == 0)) ? EINA_TRUE : EINA_FALSE;
 #else
    return (sem_destroy(sem) == 0) ? EINA_TRUE : EINA_FALSE;
 #endif
