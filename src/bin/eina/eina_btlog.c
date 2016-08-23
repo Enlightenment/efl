@@ -51,7 +51,8 @@ struct _Bt
    int line;
 };
 
-typedef Eina_Bool (*Translate_Func)(const char *bin_dir,
+typedef Eina_Bool (*Translate_Func)(const char *prog,
+                                    const char *bin_dir,
                                     const char *bin_name,
                                     unsigned long long addr,
                                     char **file_dir,
@@ -66,9 +67,11 @@ struct _Translation_Desc
    const char *name;
    const char *test;
    Translate_Func func;
+   const char *prog;
 };
 
 static Translate_Func _translate = NULL;
+static const char *_prog = NULL;
 static Eina_Bool color = EINA_TRUE;
 
 static void
@@ -102,7 +105,7 @@ path_split(const char *path, char **dir, char **file)
 }
 
 static Eina_Bool
-_addr2line(const char *bin_dir, const char *bin_name, unsigned long long addr,
+_addr2line(const char *prog, const char *bin_dir, const char *bin_name, unsigned long long addr,
            char **file_dir, char **file_name, char **func_name, int *file_line)
 {
    char buf[4096], func[4096], *f1 = NULL, *f2 = NULL;
@@ -110,8 +113,8 @@ _addr2line(const char *bin_dir, const char *bin_name, unsigned long long addr,
    int line;
    FILE *p;
 
-   snprintf(buf, sizeof(buf), "addr2line -f -e %s/%s -C -a 0x%llx",
-            bin_dir, bin_name, addr);
+   snprintf(buf, sizeof(buf), "%s -f -e %s/%s -C -a 0x%llx",
+            prog, bin_dir, bin_name, addr);
    p = popen(buf, "r");
    if (!p) return EINA_FALSE;
    if ((fscanf(p, "%4095s\n", buf) == 1) &&
@@ -145,7 +148,7 @@ _addr2line(const char *bin_dir, const char *bin_name, unsigned long long addr,
 
 #ifdef ATOS_COMPATIBLE
 static Eina_Bool
-_atos(const char *bin_dir, const char *bin_name, unsigned long long addr,
+_atos(const char *prog, const char *bin_dir, const char *bin_name, unsigned long long addr,
       char **file_dir, char **file_name, char **func_name, int *file_line)
 {
    char buf[4096];
@@ -166,7 +169,7 @@ _atos(const char *bin_dir, const char *bin_name, unsigned long long addr,
    // WARNING! Objective-C methods:
    // -[EcoreCocoaWindow windowDidResize:] (in libecore_cocoa.1.dylib) (ecore_cocoa_window.m:97)
 
-   snprintf(buf, sizeof(buf), "atos -o %s/%s 0x%llx", bin_dir, bin_name, addr);
+   snprintf(buf, sizeof(buf), "%s -o %s/%s 0x%llx", prog, bin_dir, bin_name, addr);
    p = popen(buf, "r");
    if (!p) goto end;
 
@@ -245,11 +248,11 @@ bt_append(Eina_List *btl, const char *btline)
         path_split(bin, &(bt->bin_dir), &(bt->bin_name));
         if (!bt->bin_dir) bt->bin_dir = strdup("");
         if (!bt->bin_name) bt->bin_name = strdup("");
-        if (!_translate(bt->bin_dir, bt->bin_name, offset - base,
+        if (!_translate(_prog, bt->bin_dir, bt->bin_name, offset - base,
                         &(bt->file_dir), &(bt->file_name),
                         &(bt->func_name), &(bt->line)))
           {
-             if (!_translate(bt->bin_dir, bt->bin_name, offset,
+             if (!_translate(_prog, bt->bin_dir, bt->bin_name, offset,
                              &(bt->file_dir), &(bt->file_name),
                              &(bt->func_name), &(bt->line)))
                {
@@ -281,6 +284,7 @@ _translation_function_detect(const Translation_Desc *desc)
               if (ret == 0)
                 {
                    _translate = d->func;
+                   _prog = d->prog;
                    break;
                 }
            }
@@ -302,18 +306,27 @@ main(int argc, char **argv)
         { /* Mac OS X */
            .name = "atos",
            .test = "atos --help &> /dev/null",
-           .func = _atos
+           .func = _atos,
+           .prog = "atos"
+        },
+        { /* Mac OS X */
+           .name = "atos (old)",
+           .test = "xcrun atos --help &> /dev/null",
+           .func = _atos,
+           .prog = "xcrun atos"
         },
 #endif
         { /* GNU binutils */
            .name = "addr2line",
            .test = "addr2line --help &> /dev/null",
-           .func = _addr2line
+           .func = _addr2line,
+           .prog = "addr2line"
         },
         { /* For imported GNU binutils */
            .name = "GNU addr2line",
            .test = "gaddr2line --help &> /dev/null",
-           .func = _addr2line
+           .func = _addr2line,
+           .prog = "addr2line"
         },
         { NULL, NULL, NULL } /* Sentinel */
    };
