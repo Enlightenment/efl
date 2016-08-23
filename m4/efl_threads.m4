@@ -18,7 +18,6 @@ EFL_PTHREAD_CFLAGS="-D_REENTRANT"
 EFL_PTHREAD_LIBS=""
 
 _efl_have_posix_threads="no"
-_efl_have_win32_threads="no"
 
 dnl Use generic infrastructure for pthread detection (What a hell of a mess !)
 gl_LOCK
@@ -89,18 +88,6 @@ fi
 AC_MSG_CHECKING([which threads API is used])
 if test "x${_efl_have_posix_threads}" = "xyes" ; then
    efl_have_threads="POSIX"
-else
-   if test "x${_efl_have_win32_threads}" = "xyes" ; then
-      efl_have_threads="Windows"
-      efl_have_pthread_affinity="no"
-      efl_have_pthread_barrier="no"
-      efl_have_pthread_setname="no"
-   else
-      efl_have_threads="no"
-      efl_have_pthread_affinity="no"
-      efl_have_pthread_barrier="no"
-      efl_have_pthread_setname="no"
-   fi
 fi
 AC_MSG_RESULT([${efl_have_threads}])
 
@@ -167,7 +154,7 @@ fi
 
 
 
-AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"],
+AS_IF([test "x$_efl_have_posix_threads" = "xyes"],
    [$1],
    [m4_if([$2], [$2], [AC_MSG_ERROR([Threads are required.])])])
 
