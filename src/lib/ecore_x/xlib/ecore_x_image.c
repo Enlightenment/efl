@@ -194,6 +194,10 @@ ecore_x_image_new(int w,
    im->h = h;
    im->vis = vis;
    im->depth = depth;
+   if (depth <= 8) im->bpp = 1;
+   else if (depth <= 16) im->bpp = 2;
+   else if (depth <= 24) im->bpp = 3;
+   else im->bpp = 4;
    _ecore_x_image_shm_check();
    im->shm = _ecore_x_image_shm_can;
    return im;
