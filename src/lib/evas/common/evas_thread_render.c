@@ -137,7 +137,9 @@ evas_thread_init(void)
       CRI("Could not create draw thread condition");
     if (!eina_thread_create(&evas_thread_worker, EINA_THREAD_NORMAL, 0,
           evas_thread_worker_func, NULL))
-      CRI("Could not create draw thread");
+      if (!eina_thread_create(&evas_thread_worker, EINA_THREAD_NORMAL, -1,
+            evas_thread_worker_func, NULL))
+        CRI("Could not create draw thread");
 }
 
 void
