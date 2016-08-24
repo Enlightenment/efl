@@ -7,11 +7,7 @@
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
 
-
-
 typedef struct _Render_Engine Render_Engine;
-typedef struct _Render_Engine_GL_Surface    Render_Engine_GL_Surface;
-typedef struct _Render_Engine_GL_Context    Render_Engine_GL_Context;
 
 Evas_Gl_Symbols glsym_evas_gl_symbols = NULL;
 
@@ -20,38 +16,6 @@ struct _Render_Engine
    Evas_GL_Cocoa_Window *win;
    int                  end;
 };
-
-
-struct _Render_Engine_GL_Surface
-{
-   int     initialized;
-   int     fbo_attached;
-   int     w, h;
-   int     depth_bits;
-   int     stencil_bits;
-
-   // Render target texture/buffers
-   GLuint  rt_tex;
-   GLint   rt_internal_fmt;
-   GLenum  rt_fmt; 
-   GLuint  rb_depth;
-   GLenum  rb_depth_fmt;
-   GLuint  rb_stencil;
-   GLenum  rb_stencil_fmt;
-
-   Render_Engine_GL_Context   *current_ctx;
-};
-
-struct _Render_Engine_GL_Context
-{
-   int         initialized;
-   //   EGLContext  context;
-
-   GLuint      fbo;     
-   
-   Render_Engine_GL_Surface   *current_sfc;
-};
-
 
 int _evas_engine_gl_cocoa_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
