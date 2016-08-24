@@ -99,12 +99,13 @@ _ecore_x_input_get_axis_label(char *axis_name)
      {
         "Abs X", "Abs Y", "Abs Pressure",
         "Abs Distance", "Abs Rotary Z",
-        "Abs Wheel", "Abs Tilt X", "Abs Tilt Y"
+        "Abs Wheel", "Abs Tilt X", "Abs Tilt Y",
+        "Rel X", "Rel Y", "Rel Dial", "Rel Horiz Wheel", "Rel Vert Wheel"
      };
    int n = sizeof(names) / sizeof(names[0]);
    int i;
 
-   if (atoms == NULL)
+   if (EINA_UNLIKELY(atoms == NULL))
      {
         atoms = calloc(n, sizeof(Atom));
         if (!atoms) return 0;
@@ -501,6 +502,7 @@ _ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
    Ecore_Axis *axis = calloc(n, sizeof(Ecore_Axis));
    if (!axis) return;
    Ecore_Axis *axis_ptr = axis;
+   Ecore_Axis *shrunk_axis;
 
    for (i = 0; i < dev->num_classes; i++)
      {
@@ -562,6 +564,15 @@ _ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
                        compute_tilt = EINA_TRUE;
                        /* don't increment axis_ptr */
                     }
+                  else if ((inf->label == _ecore_x_input_get_axis_label("Rel X")) ||
+                           (inf->label == _ecore_x_input_get_axis_label("Rel Y")) ||
+                           (inf->label == _ecore_x_input_get_axis_label("Rel Vert Wheel")) ||
+                           (inf->label == _ecore_x_input_get_axis_label("Rel Horiz Wheel")) ||
+                           (inf->label == _ecore_x_input_get_axis_label("Rel Dial")))
+                    {
+                       /* Ignore those: mouse. Values are in fact not relative.
+                        * No idea what is a "dial" event. */
+                    }
                   else
                     {
                        axis_ptr->label = ECORE_AXIS_LABEL_UNKNOWN;
@@ -589,13 +600,16 @@ _ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
 
    /* update n to reflect actual count and realloc array to free excess */
    n = (axis_ptr - axis);
-   Ecore_Axis *shrunk_axis = realloc(axis, n * sizeof(Ecore_Axis));
-   if (shrunk_axis != NULL) axis = shrunk_axis;
-
    if (n > 0)
-     _ecore_x_axis_update(evd->child ? evd->child : evd->event,
-                          evd->event, evd->root, evd->time, evd->deviceid,
-                          evd->detail, n, axis);
+     {
+        shrunk_axis = realloc(axis, n * sizeof(Ecore_Axis));
+        if (shrunk_axis != NULL) axis = shrunk_axis;
+        _ecore_x_axis_update(evd->child ? evd->child : evd->event,
+                             evd->event, evd->root, evd->time, evd->deviceid,
+                             evd->detail, n, axis);
+     }
+   else
+     free(axis);
 }
 #endif /* ifdef ECORE_XI2 */
 
