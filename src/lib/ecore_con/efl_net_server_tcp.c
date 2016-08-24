@@ -34,7 +34,7 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, void *pd EINA_UNUSED, const char
 {
    struct sockaddr_storage addr = {};
    char *str, *host, *port;
-   int r, fd, extra_flags = 0;
+   int r, fd;
    socklen_t addrlen;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
    Eina_Error err = 0;
@@ -97,15 +97,13 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, void *pd EINA_UNUSED, const char
    if (efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&addr))
      efl_net_server_address_set(o, buf);
 
-   if (efl_net_server_fd_close_on_exec_get(o))
-     extra_flags |= SOCK_CLOEXEC;
-
-   fd = socket(addr.ss_family, SOCK_STREAM | extra_flags, IPPROTO_TCP);
+   fd = efl_net_socket4(addr.ss_family, SOCK_STREAM, IPPROTO_TCP,
+                        efl_net_server_fd_close_on_exec_get(o));
    if (fd < 0)
      {
         err = errno;
-        ERR("socket(%d, SOCK_STREAM | %#x, IPPROTO_TCP): %s",
-            addr.ss_family, extra_flags, strerror(errno));
+        ERR("socket(%d, SOCK_STREAM, IPPROTO_TCP): %s",
+            addr.ss_family, strerror(errno));
         goto error_socket;
      }
 

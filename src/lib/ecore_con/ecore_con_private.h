@@ -375,4 +375,6 @@ void ecore_con_mempool_shutdown(void);
 
 Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr);
 
+int efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec);
+
 #endif

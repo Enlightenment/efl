@@ -51,7 +51,7 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
 {
    struct sockaddr_storage addr = {};
    char *str, *host, *port;
-   int r, fd, extra_flags = 0;
+   int r, fd;
    socklen_t addrlen;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
 
@@ -118,14 +118,11 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
      }
 
-   if (efl_net_socket_fd_close_on_exec_get(o))
-     extra_flags |= SOCK_CLOEXEC;
-
-   fd = socket(addr.ss_family, SOCK_STREAM | extra_flags, IPPROTO_TCP);
+   fd = efl_net_socket4(addr.ss_family, SOCK_STREAM, IPPROTO_TCP, efl_net_socket_fd_close_on_exec_get(o));
    if (fd < 0)
      {
-        ERR("socket(%d, SOCK_STREAM | %#x, IPPROTO_TCP): %s",
-            addr.ss_family, extra_flags, strerror(errno));
+        ERR("socket(%d, SOCK_STREAM, IPPROTO_TCP): %s",
+            addr.ss_family, strerror(errno));
         return errno;
      }
 

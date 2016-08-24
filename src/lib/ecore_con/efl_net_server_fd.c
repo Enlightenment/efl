@@ -32,6 +32,32 @@ typedef struct _Efl_Net_Server_Fd_Data
    Eina_Bool reuse_port;
 } Efl_Net_Server_Fd_Data;
 
+static int
+efl_net_accept4(int fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool close_on_exec)
+{
+#ifdef HAVE_ACCEPT4
+   int flags = 0;
+   if (close_on_exec) flags |= SOCK_CLOEXEC;
+   return accept4(fd, addr, addrlen, flags);
+#else
+   int client = accept(fd, addr, addrlen);
+   if (client < 0) return client;
+
+   if (close_on_exec)
+     {
+        if (fcntl(client, F_SETFD, FD_CLOEXEC) < 0)
+          {
+             int errno_bkp = errno;
+             ERR("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", client, strerror(errno));
+             close(client);
+             errno = errno_bkp;
+             return -1;
+          }
+     }
+   return client;
+#endif
+}
+
 static void
 _efl_net_server_fd_event_read(void *data EINA_UNUSED, const Eo_Event *event)
 {
@@ -39,7 +65,7 @@ _efl_net_server_fd_event_read(void *data EINA_UNUSED, const Eo_Event *event)
    unsigned int count, limit;
    Eina_Bool reject_excess, do_reject = EINA_FALSE;
    struct sockaddr_storage addr;
-   int client, fd, flags = 0;
+   int client, fd;
    socklen_t addrlen;
 
    count = efl_net_server_clients_count_get(o);
@@ -57,15 +83,9 @@ _efl_net_server_fd_event_read(void *data EINA_UNUSED, const Eo_Event *event)
 
    fd = efl_loop_fd_get(o);
 
-   if (efl_net_server_fd_close_on_exec_get(o))
-     flags |= SOCK_CLOEXEC;
-
    addrlen = sizeof(addr);
-#ifdef HAVE_ACCEPT4
-   client = accept4(fd, (struct sockaddr *)&addr, &addrlen, flags);
-#else
-   client = accept(fd, (struct sockaddr *)&addr, &addrlen);
-#endif
+   client = efl_net_accept4(fd, (struct sockaddr *)&addr, &addrlen,
+                            efl_net_server_fd_close_on_exec_get(o));
    if (client < 0)
      {
         Eina_Error err = errno;
@@ -73,11 +93,6 @@ _efl_net_server_fd_event_read(void *data EINA_UNUSED, const Eo_Event *event)
         efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
         return;
      }
-
-#ifndef HAVE_ACCEPT4
-   if (fcntl(fd, F_SETFD, flags) < 0)
-     ERR("fcntl(%d, F_SETFD, %#x): %s", fd, flags, strerror(errno));
-#endif
 
    if (do_reject)
      efl_net_server_fd_client_reject(o, client);

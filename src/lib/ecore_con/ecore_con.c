@@ -3036,3 +3036,32 @@ efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr)
 
    return EINA_TRUE;
 }
+
+int
+efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec)
+{
+   int fd;
+
+#ifdef SOCK_CLOEXEC
+   if (close_on_exec) type |= SOCK_CLOEXEC;
+#endif
+
+   fd = socket(domain, type, protocol);
+   if (fd < 0) return fd;
+
+#ifndef SOCK_CLOEXEC
+   if (close_on_exec)
+     {
+        if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0)
+          {
+             int errno_bkp = errno;
+             ERR("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", fd, strerror(errno));
+             close(fd);
+             errno = errno_bkp;
+             return -1;
+          }
+     }
+#endif
+
+   return fd;
+}
