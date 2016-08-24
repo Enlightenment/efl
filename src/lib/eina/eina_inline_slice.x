@@ -186,6 +186,23 @@ eina_slice_find(const Eina_Slice slice, const Eina_Slice needle)
    return NULL;
 }
 
+static inline Eina_Bool
+eina_slice_startswith(const Eina_Slice slice, const Eina_Slice prefix)
+{
+   if (prefix.len == 0) return EINA_FALSE;
+   if (slice.len < prefix.len) return EINA_FALSE;
+   return memcmp(slice.mem, prefix.mem, prefix.len) == 0;
+}
+
+static inline Eina_Bool
+eina_slice_endswith(const Eina_Slice slice, const Eina_Slice suffix)
+{
+   if (suffix.len == 0) return EINA_FALSE;
+   if (slice.len < suffix.len) return EINA_FALSE;
+   return memcmp(slice.bytes + slice.len - suffix.len,
+                 suffix.mem, suffix.len) == 0;
+}
+
 static inline void *
 eina_rw_slice_strchr(const Eina_Rw_Slice rw_slice, int c)
 {
@@ -197,6 +214,23 @@ static inline void *
 eina_rw_slice_find(const Eina_Rw_Slice rw_slice, const Eina_Slice needle)
 {
    return (void *)eina_slice_find(eina_rw_slice_slice_get(rw_slice), needle);
+}
+
+static inline Eina_Bool
+eina_rw_slice_startswith(const Eina_Rw_Slice rw_slice, const Eina_Slice prefix)
+{
+   if (prefix.len == 0) return EINA_FALSE;
+   if (rw_slice.len < prefix.len) return EINA_FALSE;
+   return memcmp(rw_slice.mem, prefix.mem, prefix.len) == 0;
+}
+
+static inline Eina_Bool
+eina_rw_slice_endswith(const Eina_Rw_Slice rw_slice, const Eina_Slice suffix)
+{
+   if (suffix.len == 0) return EINA_FALSE;
+   if (rw_slice.len < suffix.len) return EINA_FALSE;
+   return memcmp(rw_slice.bytes + rw_slice.len - suffix.len,
+                 suffix.mem, suffix.len) == 0;
 }
 
 static inline const void *

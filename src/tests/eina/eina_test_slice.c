@@ -55,6 +55,7 @@ START_TEST(eina_test_slice_ro)
    Eina_Slice slice = EINA_SLICE_STR_LITERAL("hi there");
    Eina_Slice a, needle;
    Eina_Rw_Slice dup;
+   Eina_Bool r;
    const void *p;
    char *str;
 
@@ -112,6 +113,24 @@ START_TEST(eina_test_slice_ro)
    needle = (Eina_Slice)EINA_SLICE_STR_LITERAL("WORLD"); /* would go out of boundaries */
    p = eina_slice_find(slice, needle);
    fail_unless(p == NULL);
+
+   r = eina_slice_startswith(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("HEL"));
+   fail_unless(r == EINA_TRUE);
+
+   r = eina_slice_startswith(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("WORLD"));
+   fail_unless(r == EINA_FALSE);
+
+   r = eina_slice_startswith(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL(""));
+   fail_unless(r == EINA_FALSE);
+
+   r = eina_slice_endswith(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("WO"));
+   fail_unless(r == EINA_TRUE);
+
+   r = eina_slice_endswith(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("WORLD"));
+   fail_unless(r == EINA_FALSE);
+
+   r = eina_slice_endswith(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL(""));
+   fail_unless(r == EINA_FALSE);
 }
 END_TEST
 
@@ -121,6 +140,7 @@ START_TEST(eina_test_slice_rw)
    Eina_Rw_Slice rw_slice = EINA_SLICE_ARRAY(buf);
    Eina_Slice ro_slice;
    Eina_Rw_Slice a;
+   Eina_Bool r;
    const void *p;
    char *str;
 
@@ -191,6 +211,24 @@ START_TEST(eina_test_slice_rw)
    fail_unless(p == NULL);
 
    fail_unless(buf[sizeof(buf) - 1] == 0xff);
+
+   r = eina_rw_slice_startswith(rw_slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("HEL"));
+   fail_unless(r == EINA_TRUE);
+
+   r = eina_rw_slice_startswith(rw_slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("WORLD"));
+   fail_unless(r == EINA_FALSE);
+
+   r = eina_rw_slice_startswith(rw_slice, (Eina_Slice)EINA_SLICE_STR_LITERAL(""));
+   fail_unless(r == EINA_FALSE);
+
+   r = eina_rw_slice_endswith(rw_slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("WO"));
+   fail_unless(r == EINA_TRUE);
+
+   r = eina_rw_slice_endswith(rw_slice, (Eina_Slice)EINA_SLICE_STR_LITERAL("WORLD"));
+   fail_unless(r == EINA_FALSE);
+
+   r = eina_rw_slice_endswith(rw_slice, (Eina_Slice)EINA_SLICE_STR_LITERAL(""));
+   fail_unless(r == EINA_FALSE);
 }
 END_TEST
 

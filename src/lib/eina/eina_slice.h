@@ -253,6 +253,28 @@ static inline const void *eina_slice_strchr(const Eina_Slice slice, int c);
 static inline const void *eina_slice_find(const Eina_Slice slice, const Eina_Slice needle);
 
 /**
+ * @brief Checks if the slice starts with a prefix.
+ *
+ * @param slice the reference memory.
+ * @param prefix the slice to check if @a slice ends with.
+ * @return #EINA_TRUE if @a slice ends with @a prefix, #EINA_FALSE otherwise.
+ *
+ * @since 1.19
+ */
+static inline Eina_Bool eina_slice_startswith(const Eina_Slice slice, const Eina_Slice prefix);
+
+/**
+ * @brief Checks if the slice ends with a suffix.
+ *
+ * @param slice the reference memory.
+ * @param suffix the slice to check if @a slice ends with.
+ * @return #EINA_TRUE if @a slice ends with @a suffix, #EINA_FALSE otherwise.
+ *
+ * @since 1.19
+ */
+static inline Eina_Bool eina_slice_endswith(const Eina_Slice slice, const Eina_Slice suffix);
+
+/**
  * @brief Find a character inside the slice, similar to memchr().
  *
  * @param rw_slice the reference memory.
@@ -273,6 +295,28 @@ static inline void *eina_rw_slice_strchr(const Eina_Rw_Slice rw_slice, int c);
  * @since 1.19
  */
 static inline void *eina_rw_slice_find(const Eina_Rw_Slice rw_slice, const Eina_Slice needle);
+
+/**
+ * @brief Checks if the slice starts with a prefix.
+ *
+ * @param slice the reference memory.
+ * @param prefix the slice to check if @a slice ends with.
+ * @return #EINA_TRUE if @a slice ends with @a prefix, #EINA_FALSE otherwise.
+ *
+ * @since 1.19
+ */
+static inline Eina_Bool eina_rw_slice_startswith(const Eina_Rw_Slice slice, const Eina_Slice prefix);
+
+/**
+ * @brief Checks if the slice ends with a suffix.
+ *
+ * @param slice the reference memory.
+ * @param suffix the slice to check if @a slice ends with.
+ * @return #EINA_TRUE if @a slice ends with @a suffix, #EINA_FALSE otherwise.
+ *
+ * @since 1.19
+ */
+static inline Eina_Bool eina_rw_slice_endswith(const Eina_Rw_Slice slice, const Eina_Slice suffix);
 
 /**
  * @brief The memory position where the slice ends.
