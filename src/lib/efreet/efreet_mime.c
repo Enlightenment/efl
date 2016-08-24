@@ -454,6 +454,7 @@ efreet_mime_type_get(const char *file)
    const char *type = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+   if (!mimedb_ptr) return NULL;
 
    if ((type = efreet_mime_special_check(file)))
      return type;
@@ -586,6 +587,7 @@ efreet_mime_globs_type_get(const char *file)
    unsigned int i, n;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+   if (!mimedb_ptr) return NULL;
 
    /* Check in the extension hash for the type */
    ext = strchr(file, '.');
