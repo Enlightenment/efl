@@ -1311,11 +1311,16 @@ module_open(Evas_Module *em)
    if (!evas_gl_common_module_open()) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
-   _evas_engine_gl_cocoa_log_dom = eina_log_domain_register("evas-gl_cocoa", EVAS_DEFAULT_LOG_COLOR);
-   if(_evas_engine_gl_cocoa_log_dom < 0)
+
+   if (_evas_engine_gl_cocoa_log_dom < 0)
      {
-        EINA_LOG_ERR("Impossible to create a log domain for GL (Cocoa) engine.");
-        return 0;
+        _evas_engine_gl_cocoa_log_dom =
+           eina_log_domain_register("evas-gl_cocoa", EVAS_DEFAULT_LOG_COLOR);
+        if (EINA_UNLIKELY(_evas_engine_gl_cocoa_log_dom < 0))
+          {
+             EINA_LOG_ERR("Cannot create a module log domain");
+             return 0;
+          }
      }
    /* store it for later use */
    func = pfunc;
@@ -1399,20 +1404,24 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
-   eina_log_domain_unregister(_evas_engine_gl_cocoa_log_dom);
+   if (_evas_engine_gl_cocoa_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_evas_engine_gl_cocoa_log_dom);
+        _evas_engine_gl_cocoa_log_dom = -1;
+     }
    evas_gl_common_module_close();
 }
 
 static Evas_Module_Api evas_modapi =
-  {
-    EVAS_MODULE_API_VERSION,
-    "gl_cocoa",
-    "none",
-    {
+{
+   EVAS_MODULE_API_VERSION,
+   "gl_cocoa",
+   "none",
+   {
       module_open,
       module_close
-    }
-  };
+   }
+};
 
 EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, gl_cocoa);
 
