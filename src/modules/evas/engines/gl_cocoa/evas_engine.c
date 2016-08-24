@@ -60,6 +60,7 @@ static Evas_Func func, pfunc;
 /* Function table for GL APIs */
 static Evas_GL_API gl_funcs;
 
+static Eina_Bool _initted = EINA_FALSE;
 Eina_Bool _need_context_restore = EINA_FALSE;
 
 void
@@ -92,19 +93,38 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
 static int
 eng_setup(Evas *eo_e, void *in)
 {
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Render_Engine            *re;
-   Evas_Engine_Info_GL_Cocoa *info;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, 0);
+
+   Evas_Engine_Info_GL_Cocoa *const info = in;
+   Evas_Public_Data *e;
+   Render_Engine *re;
 
    DBG("Engine Setup");
+   e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   if (EINA_UNLIKELY(!e))
+     {
+        CRI("Failed to get evas public data");
+        goto err;
+     }
 
-   info = (Evas_Engine_Info_GL_Cocoa *)in;
+   // TODO SWAP MODE
+
    if (!e->engine.data.output)
      {
-	re = calloc(1, sizeof(Render_Engine));
-	if (!re) return 0;
+        if (!_initted)
+          {
+             evas_common_init();
+             // TODO gl_preload_init()
+             _initted = EINA_TRUE;
+          }
 
-	e->engine.data.output = re;
+	re = calloc(1, sizeof(*re));
+	if (EINA_UNLIKELY(!re))
+          {
+             CRI("Failed to allocate memory");
+             goto err;
+          }
+
 	re->win = eng_window_new(info->window,
                                  e->output.w,
                                  e->output.h);
@@ -115,8 +135,7 @@ eng_setup(Evas *eo_e, void *in)
 	     e->engine.data.output = NULL;
 	     return 0;
 	  }
-
-        evas_common_init();
+        e->engine.data.output = re;
      }
    else
      {
@@ -135,6 +154,8 @@ eng_setup(Evas *eo_e, void *in)
    eng_window_use(re->win);
 
    return 1;
+err:
+   return 0;
 }
 
 static void
@@ -147,7 +168,12 @@ eng_output_free(void *data)
    eng_window_free(re->win);
    free(re);
 
-   evas_common_shutdown();
+   if (_initted)
+     {
+        // TODO gl_preload_shutdown
+        evas_common_shutdown();
+        _initted = EINA_FALSE;
+     }
 }
 
 static void
