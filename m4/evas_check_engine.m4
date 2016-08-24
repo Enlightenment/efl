@@ -393,6 +393,7 @@ window = [[NSWindow alloc]
    [
     have_dep="yes"
     evas_engine_[]$1[]_libs="-framework Cocoa -framework OpenGL"
+    evas_engine_gl_common_libs="$evas_engine_[]$1[]_libdirs"
    ],
    [have_dep="no"])
 LIBS="$LIBS_save"

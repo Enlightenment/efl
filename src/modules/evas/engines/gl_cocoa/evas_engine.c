@@ -13,22 +13,113 @@ Evas_GL_Common_Context_New glsym_evas_gl_common_context_new = NULL;
 Evas_GL_Common_Context_Call glsym_evas_gl_common_context_free = NULL;
 Evas_GL_Common_Context_Call glsym_evas_gl_common_context_flush = NULL;
 Evas_GL_Common_Context_Call glsym_evas_gl_common_context_use = NULL;
+Evas_GL_Common_Context_Call glsym_evas_gl_common_context_done = NULL;
 Evas_GL_Common_Context_Resize_Call glsym_evas_gl_common_context_resize = NULL;
+Evas_GL_Common_Context_Call glsym_evas_gl_common_context_newframe = NULL;
+Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
+Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
+static Evas_GL_Preload glsym_evas_gl_preload_init = NULL;
+static Evas_GL_Preload glsym_evas_gl_preload_shutdown = NULL;
 
 int _evas_engine_gl_cocoa_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
-/* Function table for GL APIs */
-static Evas_GL_API gl_funcs;
-
 static Eina_Bool _initted = EINA_FALSE;
-Eina_Bool _need_context_restore = EINA_FALSE;
+static int _gl_wins = 0;
 
-void
-_context_restore(void)
+
+static void *
+evgl_eng_native_window_create(void *data EINA_UNUSED)
 {
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(NULL);
 }
+
+static int
+evgl_eng_native_window_destroy(void *data          EINA_UNUSED,
+                               void *native_window EINA_UNUSED)
+{
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(1);
+}
+
+static void *
+evgl_eng_window_surface_create(void *data          EINA_UNUSED,
+                               void *native_window EINA_UNUSED)
+{
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(NULL);
+}
+
+static int
+evgl_eng_window_surface_destroy(void *data EINA_UNUSED,
+                                void *surface EINA_UNUSED)
+{
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(1);
+}
+
+static void *
+evgl_eng_context_create(void                    *data      EINA_UNUSED,
+                        void                    *share_ctx EINA_UNUSED,
+                        Evas_GL_Context_Version  version   EINA_UNUSED)
+{
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(NULL);
+}
+
+static int
+evgl_eng_context_destroy(void *data    EINA_UNUSED,
+                         void *context EINA_UNUSED)
+{
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(1);
+}
+
+static int
+evgl_eng_make_current(void *data    EINA_UNUSED,
+                      void *surface EINA_UNUSED,
+                      void *context EINA_UNUSED,
+                      int   flush   EINA_UNUSED)
+{
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(EINA_FALSE);
+}
+
+static void *
+evgl_eng_proc_address_get(const char *name EINA_UNUSED)
+{
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(NULL);
+}
+
+static const char *
+evgl_eng_string_get(void *data EINA_UNUSED)
+{
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(NULL);
+}
+
+static int
+evgl_eng_rotation_angle_get(void *data EINA_UNUSED)
+{
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(0);
+}
+
+static const EVGL_Interface evgl_funcs =
+{
+   NULL,
+   NULL,
+   evgl_eng_native_window_create,
+   evgl_eng_native_window_destroy,
+   evgl_eng_window_surface_create,
+   evgl_eng_window_surface_destroy,
+   evgl_eng_context_create,
+   evgl_eng_context_destroy,
+   evgl_eng_make_current,
+   evgl_eng_proc_address_get,
+   evgl_eng_string_get,
+   evgl_eng_rotation_angle_get,
+   NULL, // PBuffer
+   NULL, // PBuffer
+   NULL, // OpenGL-ES 1
+   NULL, // OpenGL-ES 1
+   NULL, // OpenGL-ES 1
+   NULL, // native_win_surface_config_get
+};
+
 
 static void *
 eng_info(Evas *e EINA_UNUSED)
@@ -38,7 +129,7 @@ eng_info(Evas *e EINA_UNUSED)
    info = calloc(1, sizeof(*info));
    if (EINA_UNLIKELY(!info))
      {
-        CRI("Faield to allocate memory");
+        CRI("Failed to allocate memory");
         return NULL;
      }
    info->magic.magic = rand();
@@ -61,8 +152,8 @@ eng_setup(Evas *evas, void *in)
    Evas_Public_Data *e;
    Render_Engine *re = NULL;
    Outbuf *ob;
+   Eina_Bool chk;
 
-   DBG("Engine Setup");
    e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (EINA_UNLIKELY(!e))
      {
@@ -77,7 +168,7 @@ eng_setup(Evas *evas, void *in)
         if (!_initted)
           {
              evas_common_init();
-             // TODO gl_preload_init()
+             glsym_evas_gl_preload_init();
              _initted = EINA_TRUE;
           }
 
@@ -88,29 +179,56 @@ eng_setup(Evas *evas, void *in)
              goto err;
           }
 
-	ob = evas_outbuf_new(info,
-                                 e->output.w,
-                                 e->output.h);
+        ob = evas_outbuf_new(info,
+                             e->output.w,
+                             e->output.h);
 	if (EINA_UNLIKELY(!ob))
 	  {
              CRI("Failed to create outbuf");
 	     goto err;
 	  }
-        re->win = ob; // FIXME REMVOE ME
+
         ob->evas = evas;
 	info->view = ob->ns_gl_view;
+
+        chk = evas_render_engine_gl_generic_init(&re->generic, ob,
+                                                evas_outbuf_buffer_state_get,
+                                                evas_outbuf_rot_get,
+                                                evas_outbuf_reconfigure,
+                                                evas_outbuf_update_region_first_rect,
+                                                NULL,
+                                                evas_outbuf_update_region_new,
+                                                evas_outbuf_update_region_push,
+                                                evas_outbuf_update_region_free,
+                                                NULL,
+                                                evas_outbuf_flush,
+                                                evas_outbuf_free,
+                                                evas_outbuf_use,
+                                                evas_outbuf_gl_context_get,
+                                                evas_outbuf_egl_display_get,
+                                                evas_outbuf_gl_context_new,
+                                                evas_outbuf_gl_context_use,
+                                                &evgl_funcs, ob->w, ob->h);
+        if (EINA_UNLIKELY(!ob))
+          {
+             CRI("Failed to initialize gl_generic");
+             evas_outbuf_free(re->win);
+             goto err;
+          }
+        re->win = ob;
         e->engine.data.output = re;
+        _gl_wins++;
      }
    else
      {
-	re = e->engine.data.output;
-	evas_outbuf_free(re->win);
-	re->win = evas_outbuf_new(info,
-                                 e->output.w,
-                                 e->output.h);
-	info->view = re->win->ns_gl_view;
+        CRI("ALREADY A DATA OUTPUT. THIS PART IS NOT IMPLEMENTED YET. PLEASE REPORT.");
+        return 0;
      }
-   if (!e->engine.data.output) return 0;
+   if (EINA_UNLIKELY(!e->engine.data.output))
+     {
+        CRI("Failed to create a data output");
+        return 0;
+     }
 
    if (!e->engine.data.context)
      e->engine.data.context =
@@ -126,1184 +244,63 @@ err:
 static void
 eng_output_free(void *data)
 {
-   Render_Engine *re;
+   Render_Engine *const re = data;
 
-   DBG("Output free");
-   re = (Render_Engine *)data;
    evas_outbuf_free(re->win);
    free(re);
 
-   if (_initted)
+   _gl_wins--;
+   if (_initted && (_gl_wins == 0))
      {
-        // TODO gl_preload_shutdown
+        glsym_evas_gl_preload_shutdown();
         evas_common_shutdown();
         _initted = EINA_FALSE;
      }
 }
 
-static void
-eng_output_resize(void *data, int w, int h)
-{
-   Render_Engine *re;
-
-   DBG("Output Resize %d %d", w, h);
-
-   re = (Render_Engine *)data;
-   re->win->width = w;
-   re->win->height = h;
-   
-   evas_gl_common_context_resize(re->win->gl_context, w, h, 0);
-   evas_outbuf_resize(re->win, w, h);
-}
-
-static void
-eng_output_tile_size_set(void *data EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
-{
-   DBG("tile size set");
-}
-
-static void
-eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
-{
-   Render_Engine *re;
-
-   DBG("Redraw rect %d %d %d %d", x, y, w, h);
-   re = (Render_Engine *)data;
-   evas_outbuf_lock_focus(re->win);
-   evas_gl_common_context_resize(re->win->gl_context, re->win->width, re->win->height, 0);
-   /* simple bounding box */
-   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, re->win->width, re->win->height);
-   if ((w <= 0) || (h <= 0)) goto end;
-   if (!re->win->draw.redraw)
-     {
-#if 0
-	re->win->draw.x1 = x;
-	re->win->draw.y1 = y;
-	re->win->draw.x2 = x + w - 1;
-	re->win->draw.y2 = y + h - 1;
-#else
-	re->win->draw.x1 = 0;
-	re->win->draw.y1 = 0;
-	re->win->draw.x2 = re->win->width - 1;
-	re->win->draw.y2 = re->win->height - 1;
-#endif
-     }
-   else
-     {
-	if (x < re->win->draw.x1) re->win->draw.x1 = x;
-	if (y < re->win->draw.y1) re->win->draw.y1 = y;
-	if ((x + w - 1) > re->win->draw.x2) re->win->draw.x2 = x + w - 1;
-	if ((y + h - 1) > re->win->draw.y2) re->win->draw.y2 = y + h - 1;
-     }
-   re->win->draw.redraw = 1;
-end:
-   evas_outbuf_unlock_focus(re->win);
-}
-
-static void
-eng_output_redraws_rect_del(void *data EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
-{
-}
-
-static void
-eng_output_redraws_clear(void *data)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   re->win->draw.redraw = 0;
-}
-
-//#define SLOW_GL_COPY_RECT 1
-/* vsync games - not for now though */
-#define VSYNC_TO_SCREEN 1
-
-static void *
-eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_gl_common_context_flush(re->win->gl_context);
-   evas_gl_common_context_newframe(re->win->gl_context);
-   /* get the upate rect surface - return engine data as dummy */
-   if (!re->win->draw.redraw)
-     {
-        //	printf("GL: NO updates!\n");
-	return NULL;
-     }
-   //   printf("GL: update....!\n");
-#ifdef SLOW_GL_COPY_RECT
-   /* if any update - just return the whole canvas - works with swap
-    * buffers then */
-   if (x) *x = 0;
-   if (y) *y = 0;
-   if (w) *w = re->win->width;
-   if (h) *h = re->win->height;
-   if (cx) *cx = 0;
-   if (cy) *cy = 0;
-   if (cw) *cw = re->win->width;
-   if (ch) *ch = re->win->height;
-#else
-   /* 1 update - INCREDIBLY SLOW if combined with swap_rect in flush. a gl
-    * problem where there just is no hardware path for somethnig that
-    * obviously SHOULD be there */
-   /* only 1 update to minimise gl context games and rendering multiple update
-    * regions as evas does with other engines
-    */
-   if (x) *x = re->win->draw.x1;
-   if (y) *y = re->win->draw.y1;
-   if (w) *w = re->win->draw.x2 - re->win->draw.x1 + 1;
-   if (h) *h = re->win->draw.y2 - re->win->draw.y1 + 1;
-   if (cx) *cx = re->win->draw.x1;
-   if (cy) *cy = re->win->draw.y1;
-   if (cw) *cw = re->win->draw.x2 - re->win->draw.x1 + 1;
-   if (ch) *ch = re->win->draw.y2 - re->win->draw.y1 + 1;
-#endif
-   // clear buffer. only needed for dest alpha
-   //   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-   //   glClear(GL_COLOR_BUFFER_BIT);
-   //x//   printf("frame -> new\n");
-   return re->win->gl_context->def_surface;
-}
-
-static void
-eng_output_redraws_next_update_push(void *data, void *surface EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, Evas_Render_Mode render_mode)
-{
-   Render_Engine *re;
-
-   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
-
-   re = (Render_Engine *)data;
-   /* put back update surface.. in this case just unflag redraw */
-   re->win->draw.redraw = 0;
-   re->win->draw.drew = 1;
-   evas_gl_common_context_flush(re->win->gl_context);
-}
-
-static void
-eng_output_flush(void *data, Evas_Render_Mode render_mode)
-{
-   Render_Engine *re;
-
-   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
-
-   re = (Render_Engine *)data;
-   if (!re->win->draw.drew) return;
-
-   re->win->draw.drew = 0;
-   evas_outbuf_use(re->win);
-
-#ifdef VSYNC_TO_SCREEN
-   evas_outbuf_vsync_set(1);
-#endif
-   evas_outbuf_lock_focus(re->win);
-   evas_outbuf_swap_buffers(re->win);
-   evas_outbuf_unlock_focus(re->win);
-}
-
-static void
-eng_context_cutout_add(void *data EINA_UNUSED, void *context, int x, int y, int w, int h)
-{
-   evas_common_draw_context_add_cutout(context, x, y, w, h);
-}
-
-static void
-eng_context_cutout_clear(void *data EINA_UNUSED, void *context)
-{
-   evas_common_draw_context_clear_cutouts(context);
-}
-
-static void
-eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async EINA_UNUSED)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_outbuf_use(re->win);
-   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
-   re->win->gl_context->dc = context;
-   evas_gl_common_rect_draw(re->win->gl_context, x, y, w, h);
-}
-
-static void
-eng_line_draw(void *data, void *context, void *surface, int p1x, int p1y, int p2x, int p2y, Eina_Bool do_async EINA_UNUSED)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_outbuf_use(re->win);
-   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
-   re->win->gl_context->dc = context;
-   evas_gl_common_line_draw(re->win->gl_context, p1x, p1y, p2x, p2y);
-}
-
-static void *
-eng_polygon_point_add(void *data, void *context EINA_UNUSED, void *polygon, int x, int y)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   return evas_gl_common_poly_point_add(polygon, x, y);
-}
-
-static void *
-eng_polygon_points_clear(void *data, void *context EINA_UNUSED, void *polygon)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   return evas_gl_common_poly_points_clear(polygon);
-}
-
-static void
-eng_polygon_draw(void *data, void *context, void *surface EINA_UNUSED, void *polygon, int x, int y, Eina_Bool do_async EINA_UNUSED)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_outbuf_use(re->win);
-   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
-   re->win->gl_context->dc = context;
-   evas_gl_common_poly_draw(re->win->gl_context, polygon, x, y);
-}
-
-static int
-eng_image_alpha_get(void *data EINA_UNUSED, void *image)
-{
-   Evas_GL_Image *im;
-
-   if (!image) return 1;
-   im = image;
-   return im->alpha;
-}
-
-static Evas_Colorspace
-eng_image_colorspace_get(void *data EINA_UNUSED, void *image)
-{
-   Evas_GL_Image *im;
-
-   if (!image) return EVAS_COLORSPACE_ARGB8888;
-   im = image;
-   return im->cs.space;
-}
-
-static void *
-eng_image_alpha_set(void *data, void *image, int has_alpha)
-{
-   Render_Engine *re;
-   Evas_GL_Image *im;
-
-   re = (Render_Engine *)data;
-   if (!image) return NULL;
-   im = image;
-   if (im->alpha == has_alpha) return image;
-   if (im->native.data)
-     {
-        im->alpha = has_alpha;
-        return image;
-     }
-   evas_outbuf_use(re->win);
-   if ((im->tex) && (im->tex->pt->dyn.img))
-     {
-        im->alpha = has_alpha;
-        im->tex->alpha = im->alpha;
-        return image;
-     }
-   /* FIXME: can move to gl_common */
-   if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return im;
-   if ((has_alpha) && (im->im->cache_entry.flags.alpha)) return image;
-   else if ((!has_alpha) && (!im->im->cache_entry.flags.alpha)) return image;
-   if (im->references > 1)
-     {
-        Evas_GL_Image *im_new;
-        
-        if (!im->im->image.data)
-          evas_cache_image_load_data(&im->im->cache_entry);
-        evas_gl_common_image_alloc_ensure(im);
-        im_new = evas_gl_common_image_new_from_copied_data
-          (im->gc, im->im->cache_entry.w, im->im->cache_entry.h, 
-           im->im->image.data,
-           eng_image_alpha_get(data, image),
-           eng_image_colorspace_get(data, image));
-        if (!im_new) return im;
-        evas_gl_common_image_free(im);
-        im = im_new;
-     }
-   else
-     evas_gl_common_image_dirty(im, 0, 0, 0, 0);
-   return evas_gl_common_image_alpha_set(im, has_alpha ? 1 : 0);
-   //   im->im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
-   //   return image;
-}
-
-static Evas_Colorspace
-eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
-{
-   Evas_GL_Image *im = image;
-
-   if (!im || !im->im) return EVAS_COLORSPACE_ARGB8888;
-   if (im->im->cache_entry.cspaces)
-     return im->im->cache_entry.cspaces[0];
-   return im->im->cache_entry.space;
-}
-
-static void *
-eng_image_data_direct(void *data EINA_UNUSED, void *image, Evas_Colorspace *cspace)
-{
-   Evas_GL_Image *im = image;
-
-   if (!im || !im->im) return NULL;
-   if (cspace) *cspace = im->im->cache_entry.space;
-   return im->im->image.data;
-}
-
-static void
-eng_image_colorspace_set(void *data, void *image, Evas_Colorspace cspace)
-{
-   Render_Engine *re;
-   Evas_GL_Image *im;
-
-   re = (Render_Engine *)data;
-   if (!image) return;
-   im = image;
-   if (im->native.data) return;
-   /* FIXME: can move to gl_common */
-   if (im->cs.space == cspace) return;
-   evas_outbuf_use(re->win);
-   evas_gl_common_image_alloc_ensure(im);
-   evas_cache_image_colorspace(&im->im->cache_entry, cspace);
-   switch (cspace)
-     {
-      case EVAS_COLORSPACE_ARGB8888:
-         if (im->cs.data)
-           {
-              if (!im->cs.no_free) free(im->cs.data);
-              im->cs.data = NULL;
-              im->cs.no_free = 0;
-           }
-         break;
-      case EVAS_COLORSPACE_YCBCR422P601_PL:
-      case EVAS_COLORSPACE_YCBCR422P709_PL:
-      case EVAS_COLORSPACE_YCBCR422601_PL:
-      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
-      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-         if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
-         im->tex = NULL;
-         if (im->cs.data)
-           {
-              if (!im->cs.no_free) free(im->cs.data);
-           }
-         if (im->im->cache_entry.h > 0)
-           im->cs.data = 
-             calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
-         else
-           im->cs.data = NULL;
-         im->cs.no_free = 0;
-         break;
-      default:
-         abort();
-         break;
-     }
-   im->cs.space = cspace;
-}
-
-/////////////////////////////////////////////////////////////////////////
-//
-//
-
-// FIXME: this is enabled so updates happen - but its SLOOOOOOOOOOOOOOOW
-// (i am sure this is the reason)  not to mention seemingly superfluous. but
-// i need to enable it for it to work on fglrx at least. havent tried nvidia.
-// 
-// why is this the case? does anyone know? has anyone tried it on other gfx
-// drivers?
-// 
-//#define GLX_TEX_PIXMAP_RECREATE 1
-
-//
-//
-/////////////////////////////////////////////////////////////////////////
-
-static void *
-eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   *error = EVAS_LOAD_ERROR_NONE;
-   evas_outbuf_use(re->win);
-   return evas_gl_common_image_load(re->win->gl_context, file, key, lo, error);
-}
-
-static void *
-eng_image_mmap(void *data, Eina_File *f, const char *key, int *error, Evas_Image_Load_Opts *lo)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   *error = EVAS_LOAD_ERROR_NONE;
-   evas_outbuf_use(re->win);
-   return evas_gl_common_image_mmap(re->win->gl_context, f, key, lo, error);
-}
-
-static void *
-eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_outbuf_use(re->win);
-   return evas_gl_common_image_new_from_data(re->win->gl_context, w, h, image_data, alpha, cspace);
-}
-
-static void *
-eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_outbuf_use(re->win);
-   return evas_gl_common_image_new_from_copied_data(re->win->gl_context, w, h, image_data, alpha, cspace);
-}
-
-static void
-eng_image_free(void *data, void *image)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   if (!image) return;
-   evas_outbuf_use(re->win);
-   evas_gl_common_image_unref(image);
-}
-
-static void
-eng_image_size_get(void *data EINA_UNUSED, void *image, int *w, int *h)
-{
-   if (!image)
-     {
-	*w = 0;
-	*h = 0;
-	return;
-     }
-   if (w) *w = ((Evas_GL_Image *)image)->w;
-   if (h) *h = ((Evas_GL_Image *)image)->h;
-}
-
-static void *
-eng_image_size_set(void *data, void *image, int w, int h)
-{
-   Render_Engine *re;
-   Evas_GL_Image *im = image;
-   Evas_GL_Image *im_old;
-   
-   re = (Render_Engine *)data;
-   if (!im) return NULL;
-   if (im->native.data)
-     {
-        im->w = w;
-        im->h = h;
-        return image;
-     }
-   evas_outbuf_use(re->win);
-   if ((im->tex) && (im->tex->pt->dyn.img))
-     {
-        evas_gl_common_texture_free(im->tex, EINA_TRUE);
-        im->tex = NULL;
-        im->w = w;
-        im->h = h;
-        im->tex = evas_gl_common_texture_dynamic_new(im->gc, im);
-        return image;
-     }
-   im_old = image;
-
-   switch (eng_image_colorspace_get(data, image))
-     {
-      case EVAS_COLORSPACE_YCBCR422P601_PL:
-      case EVAS_COLORSPACE_YCBCR422P709_PL:
-      case EVAS_COLORSPACE_YCBCR422601_PL:
-      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
-      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-         w &= ~0x1;
-      default:
-         break;
-     }
-
-   evas_gl_common_image_alloc_ensure(im_old);
-   if ((im_old->im) &&
-       ((int)im_old->im->cache_entry.w == w) &&
-       ((int)im_old->im->cache_entry.h == h))
-     return image;
-
-   im = evas_gl_common_image_new(re->win->gl_context, w, h,
-                                 eng_image_alpha_get(data, image),
-                                 eng_image_colorspace_get(data, image));
-   evas_gl_common_image_free(im_old);
-
-   return im;
-}
-
-static void *
-eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
-{
-   Render_Engine *re;
-   Evas_GL_Image *im = image;
-
-   re = (Render_Engine *)data;
-   if (!image) return NULL;
-   if (im->native.data) return image;
-   evas_outbuf_use(re->win);
-   evas_gl_common_image_dirty(image, x, y, w, h);
-   return image;
-}
-
-static void *
-eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree EINA_UNUSED)
-{
-   Render_Engine *re;
-   Evas_GL_Image *im;
-   int error;
-
-   re = (Render_Engine *)data;
-   if (!image)
-     {
-	*image_data = NULL;
-        if (err) *err = EVAS_LOAD_ERROR_GENERIC;
-	return NULL;
-     }
-   im = image;
-   if (im->native.data)
-     {
-        *image_data = NULL;
-        if (err) *err = EVAS_LOAD_ERROR_NONE;
-        return im;
-     }
-   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
-     {
-        *image_data = im->tex->pt->dyn.data;
-        if (err) *err = EVAS_LOAD_ERROR_NONE;
-        return im;
-     }
-   evas_outbuf_use(re->win);
-   error = evas_cache_image_load_data(&im->im->cache_entry);
-   evas_gl_common_image_alloc_ensure(im);
-   switch (im->cs.space)
-     {
-      case EVAS_COLORSPACE_ARGB8888:
-         if (to_write)
-           {
-              if (im->references > 1)
-                {
-                   Evas_GL_Image *im_new;
-
-                   im_new = evas_gl_common_image_new_from_copied_data
-                     (im->gc, im->im->cache_entry.w, im->im->cache_entry.h,
-                      im->im->image.data,
-                      eng_image_alpha_get(data, image),
-                      eng_image_colorspace_get(data, image));
-                   if (!im_new)
-                     {
-                        *image_data = NULL;
-                        if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-                        return im;
-                     }
-                   evas_gl_common_image_free(im);
-                   im = im_new;
-                }
-              else
-                evas_gl_common_image_dirty(im, 0, 0, 0, 0);
-           }
-         *image_data = im->im->image.data;
-         break;
-      case EVAS_COLORSPACE_YCBCR422P601_PL:
-      case EVAS_COLORSPACE_YCBCR422P709_PL:
-      case EVAS_COLORSPACE_YCBCR422601_PL:
-      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
-      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-         *image_data = im->cs.data;
-         break;
-      default:
-         abort();
-         break;
-     }
-   if (err) *err = error;
-   return im;
-}
-
-static void *
-eng_image_data_put(void *data, void *image, DATA32 *image_data)
-{
-   Render_Engine *re;
-   Evas_GL_Image *im, *im2;
-
-   re = (Render_Engine *)data;
-   if (!image) return NULL;
-   im = image;
-   if (im->native.data) return image;
-   evas_outbuf_use(re->win);
-   evas_gl_common_image_alloc_ensure(im);
-   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
-     {
-        if (im->tex->pt->dyn.data == image_data)
-          {
-             return image;
-          }
-        else
-          {
-	     int w, h;
-
-	     w = im->im->cache_entry.w;
-	     h = im->im->cache_entry.h;
-	     im2 = eng_image_new_from_data(data, w, h, image_data,
-					   eng_image_alpha_get(data, image),
-					   eng_image_colorspace_get(data, image));
-   	     if (!im2) return im;
-   	     evas_gl_common_image_free(im);
-   	     im = im2;
-             evas_gl_common_image_dirty(im, 0, 0, 0, 0);
-             return im;
-          }
-     }
-   switch (im->cs.space)
-     {
-      case EVAS_COLORSPACE_ARGB8888:
-         if (image_data != im->im->image.data)
-           {
-              int w, h;
-
-              w = im->im->cache_entry.w;
-              h = im->im->cache_entry.h;
-              im2 = eng_image_new_from_data(data, w, h, image_data,
-                                            eng_image_alpha_get(data, image),
-                                            eng_image_colorspace_get(data, image));
-              if (!im2) return im;
-              evas_gl_common_image_free(im);
-              im = im2;
-           }
-         break;
-      case EVAS_COLORSPACE_YCBCR422P601_PL:
-      case EVAS_COLORSPACE_YCBCR422P709_PL:
-         if (image_data != im->cs.data)
-           {
-              if (im->cs.data)
-                {
-                   if (!im->cs.no_free) free(im->cs.data);
-                }
-              im->cs.data = image_data;
-           }
-         break;
-      default:
-         abort();
-         break;
-     }
-   /* hmmm - but if we wrote... why bother? */
-   evas_gl_common_image_dirty(im, 0, 0, 0, 0);
-   return im;
-}
-
-static void
-eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *target)
-{
-   Evas_GL_Image *gim = image;
-   RGBA_Image *im;
-
-   if (!gim) return;
-   if (gim->native.data) return;
-   im = (RGBA_Image *)gim->im;
-   if (!im) return;
-   evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL, NULL);
-}
-
-static void
-eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *target)
-{
-   Evas_GL_Image *gim = image;
-   RGBA_Image *im;
-
-   if (!gim) return;
-   if (gim->native.data) return;
-   im = (RGBA_Image *)gim->im;
-   if (!im) return;
-   evas_cache_image_preload_cancel(&im->cache_entry, target);
-}
-
-static Eina_Bool
-eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async EINA_UNUSED)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   if (!image) return EINA_FALSE;
-   evas_outbuf_use(re->win);
-   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
-   re->win->gl_context->dc = context;
-   evas_gl_common_image_draw(re->win->gl_context, image,
-                             src_x, src_y, src_w, src_h,
-                             dst_x, dst_y, dst_w, dst_h,
-                             smooth);
-   return EINA_FALSE;
-}
-
-static void
-eng_image_scale_hint_set(void *data EINA_UNUSED, void *image, int hint)
-{
-   if (image) evas_gl_common_image_scale_hint_set(image, hint);
-}
-
-static int
-eng_image_scale_hint_get(void *data EINA_UNUSED, void *image)
-{
-   Evas_GL_Image *gim = image;
-   if (!gim) return EVAS_IMAGE_SCALE_HINT_NONE;
-   return gim->scale_hint;
-}
-
-static Eina_Bool
-eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async)
-{
-   Evas_GL_Image *gim = image;
-   Render_Engine *re;
-   
-   re = (Render_Engine *)data;
-   if (!image) return EINA_FALSE;
-   evas_outbuf_use(re->win);
-   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
-   re->win->gl_context->dc = context;
-   if (m->count != 4)
-     {
-        // FIXME: nash - you didn't fix this
-        abort();
-     }
-   if ((m->pts[0].x == m->pts[3].x) &&
-       (m->pts[1].x == m->pts[2].x) &&
-       (m->pts[0].y == m->pts[1].y) &&
-       (m->pts[3].y == m->pts[2].y) &&
-       (m->pts[0].x <= m->pts[1].x) &&
-       (m->pts[0].y <= m->pts[2].y) &&
-       (m->pts[0].u == 0) &&
-       (m->pts[0].v == 0) &&
-       (m->pts[1].u == (gim->w << FP)) &&
-       (m->pts[1].v == 0) &&
-       (m->pts[2].u == (gim->w << FP)) &&
-       (m->pts[2].v == (gim->h << FP)) &&
-       (m->pts[3].u == 0) &&
-       (m->pts[3].v == (gim->h << FP)) &&
-       (m->pts[0].col == 0xffffffff) &&
-       (m->pts[1].col == 0xffffffff) &&
-       (m->pts[2].col == 0xffffffff) &&
-       (m->pts[3].col == 0xffffffff))
-     {
-        int dx, dy, dw, dh;
-
-        dx = m->pts[0].x >> FP;
-        dy = m->pts[0].y >> FP;
-        dw = (m->pts[2].x >> FP) - dx;
-        dh = (m->pts[2].y >> FP) - dy;
-        eng_image_draw(data, context, surface, image,
-                       0, 0, gim->w, gim->h, dx, dy, dw, dh, smooth, do_async);
-     }
-   else
-     {
-        evas_gl_common_image_map_draw(re->win->gl_context, image, m->count, &m->pts[0],
-                                      smooth, level);
-     }
-
-   return EINA_FALSE;
-}
-
-static void *
-eng_image_map_surface_new(void *data EINA_UNUSED, int w, int h, int alpha)
-{
-   Render_Engine *re;
-   
-   re = (Render_Engine *)data;
-   return evas_gl_common_image_surface_new(re->win->gl_context, w, h, alpha);
-}
-
-static void
-eng_image_content_hint_set(void *data, void *image, int hint)
-{
-   Render_Engine *re;
-   re = (Render_Engine *)data;
-
-   if (re) evas_outbuf_use(re->win);
-   if (image) evas_gl_common_image_content_hint_set(image, hint);
-}
-
-static int
-eng_image_content_hint_get(void *data EINA_UNUSED, void *image)
-{
-   Evas_GL_Image *gim = image;
-   if (!gim) return EVAS_IMAGE_CONTENT_HINT_NONE;
-   return gim->content_hint;
-}
-
-static void
-eng_image_cache_flush(void *data EINA_UNUSED)
-{
-   Render_Engine *re;
-   int tmp_size;
-   
-   re = (Render_Engine *)data;
-   
-   tmp_size = evas_common_image_get_cache();
-   evas_common_image_set_cache(0);
-   evas_common_rgba_image_scalecache_flush();
-   evas_gl_common_image_cache_flush(re->win->gl_context);
-   evas_common_image_set_cache(tmp_size);
-}
-
-static void
-eng_image_cache_set(void *data EINA_UNUSED, int bytes)
-{
-   Render_Engine *re;
-   
-   re = (Render_Engine *)data;
-   evas_common_image_set_cache(bytes);
-   evas_common_rgba_image_scalecache_size_set(bytes);
-   evas_gl_common_image_cache_flush(re->win->gl_context);
-}
-
-static int
-eng_image_cache_get(void *data EINA_UNUSED)
-{
-   Render_Engine *re;
-   
-   re = (Render_Engine *)data;
-   return evas_common_image_get_cache();
-}
-
-
-static void
-eng_image_stride_get(void *data EINA_UNUSED, void *image, int *stride)
-{
-   Evas_GL_Image *im = image;
-   *stride = im->w * 4;
-   if ((im->tex) && (im->tex->pt->dyn.img))
-     {
-        *stride = im->tex->pt->dyn.w * 4;
-        // FIXME: for other image formats (yuv etc.) different stride needed
-     }
-}
-
-static Eina_Bool
-eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *intl_props, Eina_Bool do_async EINA_UNUSED)
-{
-   Render_Engine *re = data;
-   evas_outbuf_use(re->win);
-
-   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
-   re->win->gl_context->dc = context;
-   {
-      if (!re->win->gl_context->font_surface)
-        re->win->gl_context->font_surface = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
-      re->win->gl_context->font_surface->cache_entry.w = re->win->gl_context->shared->w;
-      re->win->gl_context->font_surface->cache_entry.h = re->win->gl_context->shared->h;
-
-      evas_common_draw_context_font_ext_set(context,
-                                            re->win->gl_context,
-                                            evas_gl_font_texture_new,
-                                            evas_gl_font_texture_free,
-                                            evas_gl_font_texture_draw,
-                                            NULL,
-                                            NULL,
-                                            NULL);
-      evas_common_font_draw_prepare(intl_props);
-      evas_common_font_draw(re->win->gl_context->font_surface, context, x, y, intl_props->glyphs);
-      evas_common_draw_context_font_ext_set(context,
-                                            NULL,
-                                            NULL,
-                                            NULL,
-                                            NULL,
-                                            NULL,
-                                            NULL,
-                                            NULL);
-   }
-
-   return EINA_FALSE;
-}
-
-
 static Eina_Bool
 eng_canvas_alpha_get(void *data EINA_UNUSED, void *info EINA_UNUSED)
 {
-   // FIXME: support ARGB gl targets!!!
-   return EINA_FALSE;
-}
-
-
-#if 1
-static void
-evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
-{
-   // Add logic to take care when framebuffer=0
-   glBindFramebuffer(target, framebuffer);
+   return EINA_TRUE;
 }
 
 static void
-evgl_glBindRenderbuffer(GLenum target, GLuint renderbuffer)
+_gl_symbols(void)
 {
-   // Add logic to take care when renderbuffer=0
-   glBindRenderbuffer(target, renderbuffer);
+   static Eina_Bool done = EINA_FALSE;
+
+   if (done) return;
+
+#define LINK2GENERIC(sym) \
+   glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
+
+   LINK2GENERIC(evas_gl_common_context_new);
+   LINK2GENERIC(evas_gl_common_context_flush);
+   LINK2GENERIC(evas_gl_common_context_free);
+   LINK2GENERIC(evas_gl_common_context_use);
+   LINK2GENERIC(evas_gl_common_context_done);
+   LINK2GENERIC(evas_gl_common_context_resize);
+   LINK2GENERIC(evas_gl_common_context_newframe);
+   LINK2GENERIC(evas_gl_preload_render_lock);
+   LINK2GENERIC(evas_gl_preload_render_unlock);
+   LINK2GENERIC(evas_gl_preload_init);
+   LINK2GENERIC(evas_gl_preload_shutdown);
+
+   LINK2GENERIC(evas_gl_symbols);
+
+#undef LINK2GENERIC
+
+   done = EINA_TRUE;
 }
 
-static void
-evgl_glClearDepthf(GLclampf depth)
-{
-#ifdef GL_GLES
-   glClearDepthf(depth);
-#else
-   glClearDepth(depth);
-#endif
-}
-
-static void
-evgl_glDepthRangef(GLclampf zNear, GLclampf zFar)
-{
-#ifdef GL_GLES
-   glDepthRangef(zNear, zFar);
-#else
-   glDepthRange(zNear, zFar);
-#endif
-}
-
-static void
-evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision)
-{
-#ifdef GL_GLES
-   glGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
-#else
-   if (range)
-     {
-        range[0] = -126; // floor(log2(FLT_MIN))
-        range[1] = 127; // floor(log2(FLT_MAX))
-     }
-   if (precision)
-     {
-        precision[0] = 24; // floor(-log2((1.0/16777218.0)));
-     }
-   return;
-   shadertype = precisiontype = 0;
-#endif
-}
-
-static void
-evgl_glReleaseShaderCompiler(void)
-{
-#ifdef GL_GLES
-   glReleaseShaderCompiler();
-#else
-#endif
-}
-
-static void
-evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length)
-{
-#ifdef GL_GLES
-   glShaderBinary(n, shaders, binaryformat, binary, length);
-#else
-   // FIXME: need to dlsym/getprocaddress for this
-   return;
-   n = binaryformat = length = 0;
-   shaders = binary = 0;
-#endif
-}
-
-#endif 
-
-static void
-eng_output_idle_flush(void *data EINA_UNUSED)
-{
-}
-
-static void *
-eng_gl_api_get(void *data, int version EINA_UNUSED)
-{
-   Render_Engine *re;
-
-   re  = (Render_Engine *)data;
-
-   gl_funcs.version = EVAS_GL_API_VERSION;
-#if 1
-#define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, )
-   ORD(glActiveTexture);
-   ORD(glAttachShader);
-   ORD(glBindAttribLocation);
-   ORD(glBindBuffer);
-   ORD(glBindTexture);
-   ORD(glBlendColor);
-   ORD(glBlendEquation);
-   ORD(glBlendEquationSeparate);
-   ORD(glBlendFunc);
-   ORD(glBlendFuncSeparate);
-   ORD(glBufferData);
-   ORD(glBufferSubData);
-   ORD(glCheckFramebufferStatus);
-   ORD(glClear);
-   ORD(glClearColor);
-   //   ORD(glClearDepthf);
-   ORD(glClearStencil);
-   ORD(glColorMask);
-   ORD(glCompileShader);
-   ORD(glCompressedTexImage2D);
-   ORD(glCompressedTexSubImage2D);
-   ORD(glCopyTexImage2D);
-   ORD(glCopyTexSubImage2D);
-   ORD(glCreateProgram);
-   ORD(glCreateShader);
-   ORD(glCullFace);
-   ORD(glDeleteBuffers);
-   ORD(glDeleteFramebuffers);
-   ORD(glDeleteProgram);
-   ORD(glDeleteRenderbuffers);
-   ORD(glDeleteShader);
-   ORD(glDeleteTextures);
-   ORD(glDepthFunc);
-   ORD(glDepthMask);
-   //   ORD(glDepthRangef);
-   ORD(glDetachShader);
-   ORD(glDisable);
-   ORD(glDisableVertexAttribArray);
-   ORD(glDrawArrays);
-   ORD(glDrawElements);
-   ORD(glEnable);
-   ORD(glEnableVertexAttribArray);
-   ORD(glFinish);
-   ORD(glFlush);
-   ORD(glFramebufferRenderbuffer);
-   ORD(glFramebufferTexture2D);
-   ORD(glFrontFace);
-   ORD(glGenBuffers);
-   ORD(glGenerateMipmap);
-   ORD(glGenFramebuffers);
-   ORD(glGenRenderbuffers);
-   ORD(glGenTextures);
-   ORD(glGetActiveAttrib);
-   ORD(glGetActiveUniform);
-   ORD(glGetAttachedShaders);
-   ORD(glGetAttribLocation);
-   ORD(glGetBooleanv);
-   ORD(glGetBufferParameteriv);
-   ORD(glGetError);
-   ORD(glGetFloatv);
-   ORD(glGetFramebufferAttachmentParameteriv);
-   ORD(glGetIntegerv);
-   ORD(glGetProgramiv);
-   ORD(glGetProgramInfoLog);
-   ORD(glGetRenderbufferParameteriv);
-   ORD(glGetShaderiv);
-   ORD(glGetShaderInfoLog);
-   //   ORD(glGetShaderPrecisionFormat);
-   ORD(glGetShaderSource);
-   ORD(glGetString);
-   ORD(glGetTexParameterfv);
-   ORD(glGetTexParameteriv);
-   ORD(glGetUniformfv);
-   ORD(glGetUniformiv);
-   ORD(glGetUniformLocation);
-   ORD(glGetVertexAttribfv);
-   ORD(glGetVertexAttribiv);
-   ORD(glGetVertexAttribPointerv);
-   ORD(glHint);
-   ORD(glIsBuffer);
-   ORD(glIsEnabled);
-   ORD(glIsFramebuffer);
-   ORD(glIsProgram);
-   ORD(glIsRenderbuffer);
-   ORD(glIsShader);
-   ORD(glIsTexture);
-   ORD(glLineWidth);
-   ORD(glLinkProgram);
-   ORD(glPixelStorei);
-   ORD(glPolygonOffset);
-   ORD(glReadPixels);
-   //   ORD(glReleaseShaderCompiler);
-   ORD(glRenderbufferStorage);
-   ORD(glSampleCoverage);
-   ORD(glScissor);
-   //   ORD(glShaderBinary);
-   ORD(glShaderSource);
-   ORD(glStencilFunc);
-   ORD(glStencilFuncSeparate);
-   ORD(glStencilMask);
-   ORD(glStencilMaskSeparate);
-   ORD(glStencilOp);
-   ORD(glStencilOpSeparate);
-   ORD(glTexImage2D);
-   ORD(glTexParameterf);
-   ORD(glTexParameterfv);
-   ORD(glTexParameteri);
-   ORD(glTexParameteriv);
-   ORD(glTexSubImage2D);
-   ORD(glUniform1f);
-   ORD(glUniform1fv);
-   ORD(glUniform1i);
-   ORD(glUniform1iv);
-   ORD(glUniform2f);
-   ORD(glUniform2fv);
-   ORD(glUniform2i);
-   ORD(glUniform2iv);
-   ORD(glUniform3f);
-   ORD(glUniform3fv);
-   ORD(glUniform3i);
-   ORD(glUniform3iv);
-   ORD(glUniform4f);
-   ORD(glUniform4fv);
-   ORD(glUniform4i);
-   ORD(glUniform4iv);
-   ORD(glUniformMatrix2fv);
-   ORD(glUniformMatrix3fv);
-   ORD(glUniformMatrix4fv);
-   ORD(glUseProgram);
-   ORD(glValidateProgram);
-   ORD(glVertexAttrib1f);
-   ORD(glVertexAttrib1fv);
-   ORD(glVertexAttrib2f);
-   ORD(glVertexAttrib2fv);
-   ORD(glVertexAttrib3f);
-   ORD(glVertexAttrib3fv);
-   ORD(glVertexAttrib4f);
-   ORD(glVertexAttrib4fv);
-   ORD(glVertexAttribPointer);
-   ORD(glViewport);
-#undef ORD
-
-   // Override functions wrapped by Evas_GL
-#define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, evgl_)
-   ORD(glBindFramebuffer);         
-   ORD(glBindRenderbuffer);        
-   
-   // GLES2.0 API compat on top of desktop gl
-   ORD(glClearDepthf);
-   ORD(glDepthRangef);
-   ORD(glGetShaderPrecisionFormat);
-   ORD(glReleaseShaderCompiler);
-   ORD(glShaderBinary);
-#undef ORD
-
-#endif 
-
-   return &gl_funcs;
-}
-
-static int
-eng_image_load_error_get(void *data EINA_UNUSED, void *image)
-{
-   Evas_GL_Image *im;
-   
-   if (!image) return EVAS_LOAD_ERROR_NONE;
-   im = image;
-   return im->im->cache_entry.load_error;
-}
 
 static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
-   if (!evas_gl_common_module_open()) return 0;
+
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "gl_generic")) return 0;
 
    if (_evas_engine_gl_cocoa_log_dom < 0)
      {
@@ -1315,8 +312,10 @@ module_open(Evas_Module *em)
              return 0;
           }
      }
+
    /* store it for later use */
    func = pfunc;
+
    /* now to override methods */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
    ORD(info);
@@ -1324,75 +323,8 @@ module_open(Evas_Module *em)
    ORD(setup);
    ORD(canvas_alpha_get);
    ORD(output_free);
-   ORD(output_resize);
-   ORD(output_tile_size_set);
-   ORD(output_redraws_rect_add);
-   ORD(output_redraws_rect_del);
-   ORD(output_redraws_clear);
-   ORD(output_redraws_next_update_get);
-   ORD(output_redraws_next_update_push);
-   ORD(context_cutout_add);
-   ORD(context_cutout_clear);
-   ORD(output_flush);
-   ORD(output_idle_flush);
-   //   ORD(output_dump);
-   ORD(rectangle_draw);
-   ORD(line_draw);
-   ORD(polygon_point_add);
-   ORD(polygon_points_clear);
-   ORD(polygon_draw);
 
-   ORD(image_load);
-   ORD(image_mmap);
-   ORD(image_new_from_data);
-   ORD(image_new_from_copied_data);
-   ORD(image_free);
-   ORD(image_size_get);
-   ORD(image_size_set);
-   ORD(image_dirty_region);
-   ORD(image_data_get);
-   ORD(image_data_put);
-   ORD(image_data_direct);
-   ORD(image_data_preload_request);
-   ORD(image_data_preload_cancel);
-   ORD(image_alpha_set);
-   ORD(image_alpha_get);
-   ORD(image_draw);
-   ORD(image_colorspace_set);
-   ORD(image_colorspace_get);
-   ORD(image_file_colorspace_get);
-   //   ORD(image_native_set);
-   //   ORD(image_native_get);
-   
-   ORD(font_draw);
-   
-   ORD(image_scale_hint_set);
-   ORD(image_scale_hint_get);
-   ORD(image_stride_get);
-   
-   ORD(image_map_draw);
-   ORD(image_map_surface_new);
-   
-   ORD(image_content_hint_set);
-   ORD(image_content_hint_get);
-
-   ORD(image_cache_flush);
-   ORD(image_cache_set);
-   ORD(image_cache_get);
-
-   ORD(gl_api_get); 
-
-   ORD(image_load_error_get);    
-
-#define LINK2GENERIC(sym) \
-   glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
-
-   LINK2GENERIC(evas_gl_common_context_new);
-   LINK2GENERIC(evas_gl_common_context_flush);
-   LINK2GENERIC(evas_gl_common_context_free);
-   LINK2GENERIC(evas_gl_common_context_use);
-   LINK2GENERIC(evas_gl_common_context_resize);
-   LINK2GENERIC(evas_gl_symbols);
+   _gl_symbols();
 
    /* now advertise out own api */
    em->functions = (void *)(&func);
@@ -1407,7 +339,6 @@ module_close(Evas_Module *em EINA_UNUSED)
         eina_log_domain_unregister(_evas_engine_gl_cocoa_log_dom);
         _evas_engine_gl_cocoa_log_dom = -1;
      }
-   evas_gl_common_module_close();
 }
 
 static Evas_Module_Api evas_modapi =
