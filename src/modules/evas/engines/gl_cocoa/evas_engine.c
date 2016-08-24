@@ -71,9 +71,13 @@ static void *
 eng_info(Evas *e EINA_UNUSED)
 {
    Evas_Engine_Info_GL_Cocoa *info;
-   info = calloc(1, sizeof(Evas_Engine_Info_GL_Cocoa));
-   DBG("Info %p", info);
-   if (!info) return NULL;
+
+   info = calloc(1, sizeof(*info));
+   if (EINA_UNLIKELY(!info))
+     {
+        CRI("Faield to allocate memory");
+        return NULL;
+     }
    info->magic.magic = rand();
    return info;
 }
@@ -81,9 +85,7 @@ eng_info(Evas *e EINA_UNUSED)
 static void
 eng_info_free(Evas *e EINA_UNUSED, void *info)
 {
-   Evas_Engine_Info_GL_Cocoa *in;
-
-   in = (Evas_Engine_Info_GL_Cocoa *)info;
+   Evas_Engine_Info_GL_Cocoa *const in = info;
    free(in);
 }
 
