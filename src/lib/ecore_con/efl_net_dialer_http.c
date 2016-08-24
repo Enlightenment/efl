@@ -890,6 +890,8 @@ _efl_net_dialer_http_receive_header(const char *buffer, size_t count, size_t nit
 
    if ((!h->key[0]) && (!h->value || !h->value[0]))
      {
+        if (!pd->connected) _efl_net_dialer_http_connected(o, pd);
+        if (pd->pending_headers_done) _efl_net_dialer_http_headers_done(o, pd);
         free(h);
         return len;
      }
