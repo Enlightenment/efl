@@ -7,15 +7,13 @@
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
 
-typedef struct _Render_Engine Render_Engine;
 
 Evas_Gl_Symbols glsym_evas_gl_symbols = NULL;
-
-struct _Render_Engine
-{
-   Evas_GL_Cocoa_Window *win;
-   int                  end;
-};
+Evas_GL_Common_Context_New glsym_evas_gl_common_context_new = NULL;
+Evas_GL_Common_Context_Call glsym_evas_gl_common_context_free = NULL;
+Evas_GL_Common_Context_Call glsym_evas_gl_common_context_flush = NULL;
+Evas_GL_Common_Context_Call glsym_evas_gl_common_context_use = NULL;
+Evas_GL_Common_Context_Resize_Call glsym_evas_gl_common_context_resize = NULL;
 
 int _evas_engine_gl_cocoa_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
@@ -55,16 +53,17 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
 }
 
 static int
-eng_setup(Evas *eo_e, void *in)
+eng_setup(Evas *evas, void *in)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(in, 0);
 
    Evas_Engine_Info_GL_Cocoa *const info = in;
    Evas_Public_Data *e;
-   Render_Engine *re;
+   Render_Engine *re = NULL;
+   Outbuf *ob;
 
    DBG("Engine Setup");
-   e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (EINA_UNLIKELY(!e))
      {
         CRI("Failed to get evas public data");
@@ -89,36 +88,38 @@ eng_setup(Evas *eo_e, void *in)
              goto err;
           }
 
-	re->win = eng_window_new(info->window,
+	ob = evas_outbuf_new(info,
                                  e->output.w,
                                  e->output.h);
-	info->view = re->win->view;
-	if (!re->win)
+	if (EINA_UNLIKELY(!ob))
 	  {
-	     free(re);
-	     e->engine.data.output = NULL;
-	     return 0;
+             CRI("Failed to create outbuf");
+	     goto err;
 	  }
+        re->win = ob; // FIXME REMVOE ME
+        ob->evas = evas;
+	info->view = ob->ns_gl_view;
         e->engine.data.output = re;
      }
    else
      {
 	re = e->engine.data.output;
-	eng_window_free(re->win);
-	re->win = eng_window_new(info->window,
+	evas_outbuf_free(re->win);
+	re->win = evas_outbuf_new(info,
                                  e->output.w,
                                  e->output.h);
-	info->view = re->win->view;
+	info->view = re->win->ns_gl_view;
      }
    if (!e->engine.data.output) return 0;
 
    if (!e->engine.data.context)
      e->engine.data.context =
        e->engine.func->context_new(e->engine.data.output);
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
 
    return 1;
 err:
+   free(re);
    return 0;
 }
 
@@ -129,7 +130,7 @@ eng_output_free(void *data)
 
    DBG("Output free");
    re = (Render_Engine *)data;
-   eng_window_free(re->win);
+   evas_outbuf_free(re->win);
    free(re);
 
    if (_initted)
@@ -152,7 +153,7 @@ eng_output_resize(void *data, int w, int h)
    re->win->height = h;
    
    evas_gl_common_context_resize(re->win->gl_context, w, h, 0);
-   eng_window_resize(re->win, w, h);
+   evas_outbuf_resize(re->win, w, h);
 }
 
 static void
@@ -168,7 +169,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 
    DBG("Redraw rect %d %d %d %d", x, y, w, h);
    re = (Render_Engine *)data;
-   eng_window_lock_focus(re->win);
+   evas_outbuf_lock_focus(re->win);
    evas_gl_common_context_resize(re->win->gl_context, re->win->width, re->win->height, 0);
    /* simple bounding box */
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, re->win->width, re->win->height);
@@ -196,7 +197,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
      }
    re->win->draw.redraw = 1;
 end:
-   eng_window_unlock_focus(re->win);
+   evas_outbuf_unlock_focus(re->win);
 }
 
 static void
@@ -291,14 +292,14 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    if (!re->win->draw.drew) return;
 
    re->win->draw.drew = 0;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
 
 #ifdef VSYNC_TO_SCREEN
-   eng_window_vsync_set(1);
+   evas_outbuf_vsync_set(1);
 #endif
-   eng_window_lock_focus(re->win);
-   eng_window_swap_buffers(re->win);
-   eng_window_unlock_focus(re->win);
+   evas_outbuf_lock_focus(re->win);
+   evas_outbuf_swap_buffers(re->win);
+   evas_outbuf_unlock_focus(re->win);
 }
 
 static void
@@ -319,7 +320,7 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
    evas_gl_common_rect_draw(re->win->gl_context, x, y, w, h);
@@ -331,7 +332,7 @@ eng_line_draw(void *data, void *context, void *surface, int p1x, int p1y, int p2
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
    evas_gl_common_line_draw(re->win->gl_context, p1x, p1y, p2x, p2y);
@@ -361,7 +362,7 @@ eng_polygon_draw(void *data, void *context, void *surface EINA_UNUSED, void *pol
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
    evas_gl_common_poly_draw(re->win->gl_context, polygon, x, y);
@@ -402,7 +403,7 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
         im->alpha = has_alpha;
         return image;
      }
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    if ((im->tex) && (im->tex->pt->dyn.img))
      {
         im->alpha = has_alpha;
@@ -469,7 +470,7 @@ eng_image_colorspace_set(void *data, void *image, Evas_Colorspace cspace)
    if (im->native.data) return;
    /* FIXME: can move to gl_common */
    if (im->cs.space == cspace) return;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    evas_gl_common_image_alloc_ensure(im);
    evas_cache_image_colorspace(&im->im->cache_entry, cspace);
    switch (cspace)
@@ -531,7 +532,7 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
 
    re = (Render_Engine *)data;
    *error = EVAS_LOAD_ERROR_NONE;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    return evas_gl_common_image_load(re->win->gl_context, file, key, lo, error);
 }
 
@@ -542,7 +543,7 @@ eng_image_mmap(void *data, Eina_File *f, const char *key, int *error, Evas_Image
 
    re = (Render_Engine *)data;
    *error = EVAS_LOAD_ERROR_NONE;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    return evas_gl_common_image_mmap(re->win->gl_context, f, key, lo, error);
 }
 
@@ -552,7 +553,7 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha,
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    return evas_gl_common_image_new_from_data(re->win->gl_context, w, h, image_data, alpha, cspace);
 }
 
@@ -562,7 +563,7 @@ eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    return evas_gl_common_image_new_from_copied_data(re->win->gl_context, w, h, image_data, alpha, cspace);
 }
 
@@ -573,7 +574,7 @@ eng_image_free(void *data, void *image)
 
    re = (Render_Engine *)data;
    if (!image) return;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    evas_gl_common_image_unref(image);
 }
 
@@ -605,7 +606,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
         im->h = h;
         return image;
      }
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    if ((im->tex) && (im->tex->pt->dyn.img))
      {
         evas_gl_common_texture_free(im->tex, EINA_TRUE);
@@ -652,7 +653,7 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
    re = (Render_Engine *)data;
    if (!image) return NULL;
    if (im->native.data) return image;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    evas_gl_common_image_dirty(image, x, y, w, h);
    return image;
 }
@@ -684,7 +685,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if (err) *err = EVAS_LOAD_ERROR_NONE;
         return im;
      }
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    error = evas_cache_image_load_data(&im->im->cache_entry);
    evas_gl_common_image_alloc_ensure(im);
    switch (im->cs.space)
@@ -740,7 +741,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    if (!image) return NULL;
    im = image;
    if (im->native.data) return image;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    evas_gl_common_image_alloc_ensure(im);
    if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
      {
@@ -834,7 +835,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 
    re = (Render_Engine *)data;
    if (!image) return EINA_FALSE;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
    evas_gl_common_image_draw(re->win->gl_context, image,
@@ -866,7 +867,7 @@ eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_M
    
    re = (Render_Engine *)data;
    if (!image) return EINA_FALSE;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
    if (m->count != 4)
@@ -926,7 +927,7 @@ eng_image_content_hint_set(void *data, void *image, int hint)
    Render_Engine *re;
    re = (Render_Engine *)data;
 
-   if (re) eng_window_use(re->win);
+   if (re) evas_outbuf_use(re->win);
    if (image) evas_gl_common_image_content_hint_set(image, hint);
 }
 
@@ -990,7 +991,7 @@ static Eina_Bool
 eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *intl_props, Eina_Bool do_async EINA_UNUSED)
 {
    Render_Engine *re = data;
-   eng_window_use(re->win);
+   evas_outbuf_use(re->win);
 
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
@@ -1386,6 +1387,11 @@ module_open(Evas_Module *em)
 #define LINK2GENERIC(sym) \
    glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
 
+   LINK2GENERIC(evas_gl_common_context_new);
+   LINK2GENERIC(evas_gl_common_context_flush);
+   LINK2GENERIC(evas_gl_common_context_free);
+   LINK2GENERIC(evas_gl_common_context_use);
+   LINK2GENERIC(evas_gl_common_context_resize);
    LINK2GENERIC(evas_gl_symbols);
 
    /* now advertise out own api */

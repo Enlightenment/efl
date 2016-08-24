@@ -914,7 +914,7 @@ if BUILD_ENGINE_GL_COCOA
 dist_installed_evasmainheaders_DATA += modules/evas/engines/gl_cocoa/Evas_Engine_GL_Cocoa.h
 GL_COCOA_SOURCES = \
 modules/evas/engines/gl_cocoa/evas_engine.c \
-modules/evas/engines/gl_cocoa/evas_gl_cocoa_main.m \
+modules/evas/engines/gl_cocoa/evas_outbuf.m \
 modules/evas/engines/gl_cocoa/evas_engine.h
 if EVAS_STATIC_BUILD_GL_COCOA
 lib_evas_libevas_la_SOURCES += $(GL_COCOA_SOURCES)
