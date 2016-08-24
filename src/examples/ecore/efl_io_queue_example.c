@@ -48,13 +48,14 @@ _receiver_data(void *data EINA_UNUSED, const Eo_Event *event)
     */
    if (slice.len == 0) return;
 
-   if (slice.len < line_delimiter.len)
-     {
-        fprintf(stderr, "ERROR: received short line '" EINA_SLICE_STR_FMT "'\n",
-           EINA_SLICE_STR_PRINT(slice));
-     }
-   else if (memcmp(slice.bytes + slice.len - line_delimiter.len,
-                   line_delimiter.bytes, line_delimiter.len) != 0)
+   /*
+    * If the server didn't send us the line terminator and closed the
+    * connection (ie: efl_io_reader_eos_get() == true) or if the
+    * efl_io_copier_buffer_limit_set() was reached (note we do not set
+    * it in this example), then we may have a line without a trailing
+    * delimiter. Check for that.
+    */
+   if (!eina_slice_endswith(slice,  line_delimiter))
      {
         fprintf(stderr, "WARNING: received without line-delimiter '"
                 EINA_SLICE_STR_FMT "'\n",
