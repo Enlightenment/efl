@@ -185,8 +185,10 @@ struct _Efl_Class
    unsigned int obj_size; /**< size of an object of this class */
    unsigned int base_id;
    unsigned int data_offset; /* < Offset of the data within object data. */
+   unsigned int ops_count; /* < Offset of the data within object data. */
 
    Eina_Bool constructed : 1;
+   Eina_Bool functions_set : 1;
    /* [extensions*] + NULL */
    /* [mro*] + NULL */
    /* [extensions data offset] + NULL */
