@@ -774,7 +774,17 @@ _process_child_error_cb(void *data, Eina_Error err EINA_UNUSED)
 
    ERR("Failed to access to a model property");
 
-   lreq->item_total--;
+   ++(lreq->item_processed_count);
+   if (lreq->item_processed_count >= lreq->item_total)
+     {
+        if (!lreq->valid)
+          {
+             _listing_request_cleanup(lreq);
+             return;
+          }
+        _signal_first(lreq);
+        _process_last(lreq);
+     }
 }
 
 static void
@@ -800,8 +810,7 @@ _process_children_cb(void *data, void *values)
    Elm_Fileselector_Item_Data *it_data = NULL;
    const char *path = NULL;
    const char *selected_path = NULL;
-   void *child = NULL;
-   unsigned int i = 0;
+   unsigned int count = 0;
    Elm_Fileselector_Data *sd = lreq->sd;
 
    if (!lreq->valid)
@@ -829,7 +838,16 @@ _process_children_cb(void *data, void *values)
         lreq->path = eina_stringshare_add(path);
         if (children_accessor)
           {
-             EINA_ACCESSOR_FOREACH(children_accessor, i, child)
+             Eina_List *children = NULL;
+             void *child = NULL;
+             EINA_ACCESSOR_FOREACH(children_accessor, count, child)
+               {
+                  children = eina_list_append(children, child);
+               }
+
+             lreq->item_total = count;
+
+             EINA_LIST_FREE(children, child)
                {
                   Eina_Promise *promises[7];
                   Eina_Promise *promise_all = NULL;
@@ -862,11 +880,13 @@ _process_children_cb(void *data, void *values)
                   promises[6] = NULL;
 
                   promise_all = eina_promise_all(eina_carray_iterator_new((void**)promises));
-                  ++(lreq->item_total);
                   eina_promise_then(promise_all, _process_child_cb, _process_child_error_cb, it_data);
                }
+
+             // NOTE: lreq may have been deallocated in the previous loop
+             lreq = NULL;
           }
-        if (lreq->item_total == 0)
+        if (count == 0)
           {
              _signal_first(lreq);
              _process_last(lreq);
