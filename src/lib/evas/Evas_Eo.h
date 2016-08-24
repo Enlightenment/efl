@@ -65,7 +65,7 @@
 #include "canvas/efl_canvas_object.eo.h"
 #endif /* EFL_EO_API_SUPPORT */
 
-#ifdef EFL_BETA_API_SUPPORT
+#if defined(EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)
  /**
  * @defgroup Evas_3D Evas 3D Extensions
  *
@@ -281,7 +281,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_gfx_map.eo.h"
 #endif /* EFL_EO_API_SUPPORT */
 
-#ifdef EFL_BETA_API_SUPPORT
+#if defined(EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)
 /**
  * @ingroup Evas_Object_VG
  *

@@ -89,7 +89,7 @@ EAPI extern Evas_Version * evas_version;
  * @since 1.1
  */
 // Support not having eo available
-#ifdef EFL_BETA_API_SUPPORT
+#if defined (EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)
 typedef Efl_Callback_Priority Evas_Callback_Priority;
 #else
 typedef short Evas_Callback_Priority;
