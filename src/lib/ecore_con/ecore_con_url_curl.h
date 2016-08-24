@@ -14,8 +14,18 @@
 // defined here. see curl headers to get them from
 typedef enum
 {
-   CURLM_CALL_MULTI_PERFORM = -1,
-   CURLM_OK = 0
+  CURLM_CALL_MULTI_PERFORM = -1, /* please call curl_multi_perform() or
+                                    curl_multi_socket*() soon */
+  CURLM_OK,
+  CURLM_BAD_HANDLE,      /* the passed-in handle is not a valid CURLM handle */
+  CURLM_BAD_EASY_HANDLE, /* an easy handle was not good/valid */
+  CURLM_OUT_OF_MEMORY,   /* if you ever get this, you're in deep sh*t */
+  CURLM_INTERNAL_ERROR,  /* this is a libcurl bug */
+  CURLM_BAD_SOCKET,      /* the passed in socket argument did not match */
+  CURLM_UNKNOWN_OPTION,  /* curl_multi_setopt() with unsupported option */
+  CURLM_ADDED_ALREADY,   /* an easy handle already added to a multi handle was
+                            attempted to get added - again */
+  CURLM_LAST
 } CURLMcode;
 
 #ifndef curl_socket_typedef
@@ -421,5 +431,6 @@ extern double _c_timeout;
 Eina_Bool _c_init(void);
 void _c_shutdown(void);
 Eina_Error _curlcode_to_eina_error(const CURLcode code);
+Eina_Error _curlmcode_to_eina_error(const CURLMcode code);
 
 #endif

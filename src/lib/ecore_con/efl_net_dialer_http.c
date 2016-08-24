@@ -1222,7 +1222,8 @@ EOLIAN static Eina_Error
 _efl_net_dialer_http_efl_io_writer_write(Eo *o, Efl_Net_Dialer_Http_Data *pd, Eina_Slice *slice, Eina_Slice *remaining)
 {
    Eina_Error err = EINVAL;
-   CURLMcode r;
+   CURLMcode rm;
+   CURLcode re;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINVAL);
    EINA_SAFETY_ON_TRUE_GOTO(efl_io_closer_closed_get(o), error);
@@ -1232,22 +1233,22 @@ _efl_net_dialer_http_efl_io_writer_write(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ei
    pd->send.slice = *slice;
    efl_io_writer_can_write_set(o, EINA_FALSE);
    pd->pause &= ~CURLPAUSE_SEND;
-   r = curl_easy_pause(pd->easy, pd->pause);
-   if (r != CURLM_OK)
+   re = curl_easy_pause(pd->easy, pd->pause);
+   if (re != CURLE_OK)
      {
-        err = _curlcode_to_eina_error(r);
+        err = _curlcode_to_eina_error(re);
         ERR("dialer=%p could not unpause send (flags=%#x): %s",
             o, pd->pause, eina_error_msg_get(err));
         goto error;
      }
 
    pd->error = 0;
-   r = curl_multi_socket_action(pd->cm->multi,
-                                ecore_main_fd_handler_fd_get(pd->fdhandler),
-                                CURL_CSELECT_OUT, &pd->cm->running);
-   if (r != CURLM_OK)
+   rm = curl_multi_socket_action(pd->cm->multi,
+                                 ecore_main_fd_handler_fd_get(pd->fdhandler),
+                                 CURL_CSELECT_OUT, &pd->cm->running);
+   if (rm != CURLM_OK)
      {
-        err = _curlcode_to_eina_error(r);
+        err = _curlcode_to_eina_error(rm);
         ERR("dialer=%p could not trigger socket=%d action: %s",
             o, ecore_main_fd_handler_fd_get(pd->fdhandler),
             eina_error_msg_get(err));

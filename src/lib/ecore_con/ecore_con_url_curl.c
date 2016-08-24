@@ -149,8 +149,28 @@ _curlcode_to_eina_error(const CURLcode code)
 #undef _MAP
 
     default:
-       ERR("unexpected error CURcode=%d '%s', not mapped",
+       ERR("unexpected error CURLcode=%d '%s', not mapped",
            code, _c->curl_easy_strerror(code));
+       return EINVAL;
+   }
+}
+
+Eina_Error
+_curlmcode_to_eina_error(const CURLMcode code)
+{
+   switch (code) {
+    case CURLM_OK: return 0;
+    case CURLM_BAD_HANDLE: return EBADF;
+    case CURLM_BAD_EASY_HANDLE: return EBADF;
+    case CURLM_OUT_OF_MEMORY: return ENOMEM;
+    case CURLM_INTERNAL_ERROR: EIO; /* not exact, but the error should happen so not much of a problem */
+    case CURLM_BAD_SOCKET: return ENOTSOCK;
+    case CURLM_UNKNOWN_OPTION: return EINVAL;
+    case CURLM_ADDED_ALREADY: return EALREADY;
+
+    default:
+       ERR("unexpected error CURLMcode=%d '%s', not mapped",
+           code, _c->curl_multi_strerror(code));
        return EINVAL;
    }
 }
