@@ -11,9 +11,6 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
-#ifdef HAVE_FCNTL
-# include <fcntl.h>
-#endif
 #ifdef HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
 #endif
@@ -54,7 +51,7 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
 {
    struct sockaddr_storage addr = {};
    char *str, *host, *port;
-   int r, fd;
+   int r, fd, extra_flags = 0;
    socklen_t addrlen;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
 
@@ -121,24 +118,15 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
      }
 
-   fd = socket(addr.ss_family, SOCK_STREAM, IPPROTO_TCP);
+   if (efl_net_socket_fd_close_on_exec_get(o))
+     extra_flags |= SOCK_CLOEXEC;
+
+   fd = socket(addr.ss_family, SOCK_STREAM | extra_flags, IPPROTO_TCP);
    if (fd < 0)
      {
         ERR("socket(%d, SOCK_STREAM | %#x, IPPROTO_TCP): %s",
-            addr.ss_family, strerror(errno));
+            addr.ss_family, extra_flags, strerror(errno));
         return errno;
-     }
-
-   if (efl_net_socket_fd_close_on_exec_get(o))
-     {
-        r = fcntl(fd, F_SETFD, FD_CLOEXEC);
-        if (EINA_UNLIKELY(r < 0))
-          {
-             const int err = errno;
-             ERR("fcntl(F_SETFD, FD_CLOEXEC): %s", strerror(err));
-             close(fd);
-             return err;
-          }
      }
 
    r = connect(fd, (struct sockaddr *)&addr, addrlen);
