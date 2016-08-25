@@ -1531,7 +1531,7 @@ _anchor_clicked(void *data, const Eo_Event *event)
 static void
 _files_key_down(void *data, const Eo_Event *event)
 {
-     Efl_Event_Key *ev = event->info;
+     Efl_Input_Key *ev = event->info;
      Evas_Object *par, *searchbar;
      const char *string, *key;
 
@@ -1540,13 +1540,13 @@ _files_key_down(void *data, const Eo_Event *event)
 
      if (!searchbar) return;
 
-     key = efl_event_key_get(ev);
-     string = efl_event_key_string_get(ev);
+     key = efl_input_key_get(ev);
+     string = efl_input_key_string_get(ev);
      if (string && *(string) && (isalpha(*string) || isdigit(*string)))
        {
 
           elm_entry_entry_append(searchbar, string);
-          efl_event_processed_set(ev, EINA_TRUE);
+          efl_input_processed_set(ev, EINA_TRUE);
        }
      else if (key && *(key) && !strcmp(key, "BackSpace"))
        {
@@ -1558,7 +1558,7 @@ _files_key_down(void *data, const Eo_Event *event)
                memmove(buf, en, strlen(en) -1);
                buf[strlen(en) -1] = '\0';
                elm_entry_entry_set(searchbar, buf);
-               efl_event_processed_set(ev, EINA_TRUE);
+               efl_input_processed_set(ev, EINA_TRUE);
             }
        }
 }

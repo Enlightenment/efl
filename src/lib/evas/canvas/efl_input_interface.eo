@@ -23,23 +23,23 @@ interface Efl.Input.Interface ()
    ]]
    event_prefix: efl;
    events {
-      pointer,move: Efl.Event.Pointer;   [[Main pointer move (current and previous positions are known).]]
-      pointer,down: Efl.Event.Pointer;   [[Main pointer button pressed (button id is known).]]
-      pointer,up: Efl.Event.Pointer;     [[Main pointer button released (button id is known).]]
-      pointer,cancel: Efl.Event.Pointer; [[Main pointer button press was cancelled (button id is known).
+      pointer,move: Efl.Input.Pointer;   [[Main pointer move (current and previous positions are known).]]
+      pointer,down: Efl.Input.Pointer;   [[Main pointer button pressed (button id is known).]]
+      pointer,up: Efl.Input.Pointer;     [[Main pointer button released (button id is known).]]
+      pointer,cancel: Efl.Input.Pointer; [[Main pointer button press was cancelled (button id is known).
                                            This can happen in rare cases when the window manager passes
                                            the focus to a more urgent window, for instance. You probably
                                            don't need to listen to this event, as it will be accompanied
                                            by an up event.]]
-      pointer,in: Efl.Event.Pointer;     [[Pointer entered a window or a widget.]]
-      pointer,out: Efl.Event.Pointer;    [[Pointer left a window or a widget.]]
-      pointer,wheel: Efl.Event.Pointer;  [[Mouse wheel event.]]
-      pointer,axis: Efl.Event.Pointer;   [[Pen or other axis event update.]]
-      finger,move: Efl.Event.Pointer;    [[Finger moved (current and previous positions are known).]]
-      finger,down: Efl.Event.Pointer;    [[Finger pressed (finger id is known).]]
-      finger,up: Efl.Event.Pointer;      [[Finger released (finger id is known).]]
-      key,down: Efl.Event.Key;           [[Keyboard key press.]]
-      key,up: Efl.Event.Key;             [[Keyboard key release.]]
-      hold: Efl.Event.Hold; [[All input events are on hold or resumed.]]
+      pointer,in: Efl.Input.Pointer;     [[Pointer entered a window or a widget.]]
+      pointer,out: Efl.Input.Pointer;    [[Pointer left a window or a widget.]]
+      pointer,wheel: Efl.Input.Pointer;  [[Mouse wheel event.]]
+      pointer,axis: Efl.Input.Pointer;   [[Pen or other axis event update.]]
+      finger,move: Efl.Input.Pointer;    [[Finger moved (current and previous positions are known).]]
+      finger,down: Efl.Input.Pointer;    [[Finger pressed (finger id is known).]]
+      finger,up: Efl.Input.Pointer;      [[Finger released (finger id is known).]]
+      key,down: Efl.Input.Key;           [[Keyboard key press.]]
+      key,up: Efl.Input.Key;             [[Keyboard key release.]]
+      hold: Efl.Input.Hold; [[All input events are on hold or resumed.]]
    }
 }

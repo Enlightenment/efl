@@ -725,11 +725,11 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
 
    /* FIXME: Avoid this translation to evas struct and use pointer/key events
     * in all of elementary widgets
-    * See also: efl_event_key_legacy_info_fill().
+    * See also: efl_input_key_legacy_info_fill().
     */
    if (event->desc == EFL_EVENT_KEY_DOWN)
      {
-        Efl_Event_Key_Data *ev = efl_data_scope_get(event->info, EFL_EVENT_KEY_CLASS);
+        Efl_Input_Key_Data *ev = efl_data_scope_get(event->info, EFL_INPUT_KEY_CLASS);
         if (!ev) return;
         event_info.down.timestamp = ev->timestamp;
         event_info.down.keyname = (char*) ev->keyname;
@@ -748,7 +748,7 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
      }
    else if (event->desc == EFL_EVENT_KEY_UP)
      {
-        Efl_Event_Key_Data *ev = efl_data_scope_get(event->info, EFL_EVENT_KEY_CLASS);
+        Efl_Input_Key_Data *ev = efl_data_scope_get(event->info, EFL_INPUT_KEY_CLASS);
         if (!ev) return;
         event_info.up.timestamp = ev->timestamp;
         event_info.up.keyname = (char*) ev->keyname;
@@ -767,7 +767,7 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
      }
    else if (event->desc == EFL_EVENT_POINTER_WHEEL)
      {
-        Efl_Event_Pointer_Data *ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+        Efl_Input_Pointer_Data *ev = efl_data_scope_get(event->info, EFL_INPUT_POINTER_CLASS);
         if (!ev) return;
         event_info.wheel.direction = (ev->wheel.dir != EFL_ORIENT_HORIZONTAL) ? 1 : 0;
         event_info.wheel.z = ev->wheel.z;
@@ -790,7 +790,7 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
 
    elm_widget_event_propagate(obj, type, &event_info, event_flags);
    if (!was_hold && (*event_flags & EVAS_EVENT_FLAG_ON_HOLD))
-     efl_event_processed_set(event->info, EINA_TRUE);
+     efl_input_processed_set(event->info, EINA_TRUE);
 }
 
 /**

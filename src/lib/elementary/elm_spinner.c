@@ -884,10 +884,10 @@ _text_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 static void
 _inc_dec_button_mouse_move_cb(void *data, const Eo_Event *event)
 {
-   Efl_Event_Pointer *ev = event->info;
+   Efl_Input_Pointer *ev = event->info;
    ELM_SPINNER_DATA_GET(data, sd);
 
-   if (efl_event_processed_get(ev) && sd->longpress_timer)
+   if (efl_input_processed_get(ev) && sd->longpress_timer)
      {
         ecore_timer_del(sd->longpress_timer);
         sd->longpress_timer = NULL;

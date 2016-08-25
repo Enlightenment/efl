@@ -1,7 +1,7 @@
 import efl_orientation;
-import efl_event_types;
+import efl_input_types;
 
-class Efl.Event.Pointer (Efl.Object, Efl.Event, Efl.Input.State, Efl.Event.Input)
+class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State, Efl.Input.Event)
 {
    [[Event data carried over with any pointer event (mouse, touch, pen, ...)
 
@@ -164,16 +164,16 @@ class Efl.Event.Pointer (Efl.Object, Efl.Event, Efl.Input.State, Efl.Event.Input
       Efl.Object.constructor;
       Efl.Object.destructor;
       class.destructor;
-      Efl.Event.instance_get;
-      Efl.Event.reset;
-      Efl.Event.dup;
-      Efl.Event.timestamp.set;
-      Efl.Event.timestamp.get;
-      Efl.Event.Input.fake.get;
-      Efl.Event.Input.event_flags.set;
-      Efl.Event.Input.event_flags.get;
-      Efl.Event.Input.device.set;
-      Efl.Event.Input.device.get;
+      Efl.Input.Event.instance_get;
+      Efl.Input.Event.reset;
+      Efl.Input.Event.dup;
+      Efl.Input.Event.timestamp.set;
+      Efl.Input.Event.timestamp.get;
+      Efl.Input.Event.fake.get;
+      Efl.Input.Event.event_flags.set;
+      Efl.Input.Event.event_flags.get;
+      Efl.Input.Event.device.set;
+      Efl.Input.Event.device.get;
       Efl.Input.State.modifier_enabled.get;
       Efl.Input.State.lock_enabled.get;
    }

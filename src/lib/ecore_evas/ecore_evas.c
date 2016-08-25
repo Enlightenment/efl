@@ -3,7 +3,7 @@
 #endif
 
 #define ECORE_EVAS_INTERNAL
-#define EFL_EVENT_PROTECTED
+#define EFL_INPUT_EVENT_PROTECTED
 
 #include <stdlib.h>
 #include <string.h>
@@ -4306,7 +4306,7 @@ ecore_evas_psl1ght_new(const char* name, int w, int h)
    } while (0)
 
 static inline void
-_pointer_position_set(Efl_Event_Pointer_Data *ev, Ecore_Evas *ee, int x, int y,
+_pointer_position_set(Efl_Input_Pointer_Data *ev, Ecore_Evas *ee, int x, int y,
                       double mx, double my)
 {
    int fx, fy, fw, fh;
@@ -4356,8 +4356,8 @@ _event_description_get(Efl_Pointer_Action action)
 static Eina_Bool
 _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_Pointer_Action action)
 {
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Evas *e = ee->evas;
    Eina_Bool processed;
 
@@ -4370,7 +4370,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
     * modifiers (already passed to evas, no need to do anything)
     */
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, e, (void **) &ev);
    if (!evt) return EINA_FALSE;
 
    ev->action = action;
@@ -4414,8 +4414,8 @@ _direct_mouse_cancel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info)
 static Eina_Bool
 _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
 {
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Evas *e = ee->evas;
    Eina_Bool processed;
 
@@ -4430,7 +4430,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
     * modifiers (already passed to evas, no need to do anything)
     */
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, e, (void **) &ev);
    if (!evt) return EINA_FALSE;
 
    ev->action = EFL_POINTER_ACTION_MOVE;
@@ -4454,8 +4454,8 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
 static Eina_Bool
 _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
 {
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Evas *e = ee->evas;
    Eina_Bool processed;
 
@@ -4467,7 +4467,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
     * modifiers (already passed to evas, no need to do anything)
     */
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, e, (void **) &ev);
    if (!evt) return EINA_FALSE;
 
    ev->action = EFL_POINTER_ACTION_WHEEL;
@@ -4486,8 +4486,8 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
 static Eina_Bool
 _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointer_Action action)
 {
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Evas *e = ee->evas;
    Eina_Bool processed;
 
@@ -4496,7 +4496,7 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
     * modifiers (already passed to evas, no need to do anything)
     */
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, e, (void **) &ev);
    if (!evt) return EINA_FALSE;
 
    ev->action = action;
@@ -4526,8 +4526,8 @@ static Eina_Bool
 _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
 {
    Eina_Bool haswinx = 0, haswiny = 0;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Evas *e = ee->evas;
    Eina_Bool processed;
    double x = 0, y = 0;
@@ -4537,7 +4537,7 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
     * window, root_window, event_window
     */
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, e, (void **) &ev);
    if (!ev) return EINA_FALSE;
 
    ev->action = EFL_POINTER_ACTION_AXIS;
@@ -4620,8 +4620,8 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
 static Eina_Bool
 _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool down)
 {
-   Efl_Event_Key_Data *ev;
-   Efl_Event_Key *evt;
+   Efl_Input_Key_Data *ev;
+   Efl_Input_Key *evt;
    Evas *e = ee->evas;
    Eina_Bool processed;
 
@@ -4633,7 +4633,7 @@ _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool dow
     * modifiers (already passed to evas, no need to do anything)
     */
 
-   evt = efl_event_instance_get(EFL_EVENT_KEY_CLASS, e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_KEY_CLASS, e, (void **) &ev);
    if (!evt || !ev) return EINA_FALSE;
 
    ev->timestamp = info->timestamp;

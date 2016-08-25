@@ -23,7 +23,7 @@ _pointer_down(void *data, const Eo_Event *ev)
    testdata *td = data;
    td->down = 1;
    efl_del(td->evdown);
-   td->evdown = efl_event_dup(ev->info);
+   td->evdown = efl_input_dup(ev->info);
 }
 
 static void
@@ -31,7 +31,7 @@ _pointer_move(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
    efl_del(td->evmove);
-   td->evmove = efl_event_dup(ev->info);
+   td->evmove = efl_input_dup(ev->info);
 }
 
 static void
@@ -40,7 +40,7 @@ _pointer_up(void *data, const Eo_Event *ev)
    testdata *td = data;
    td->down = 0;
    efl_del(td->evup);
-   td->evup = efl_event_dup(ev->info);
+   td->evup = efl_input_dup(ev->info);
 }
 
 static void
@@ -56,16 +56,16 @@ _key_down(void *data, const Eo_Event *ev)
    // 2. ecore_evas -> evas -> focussed obj (elm_win) -> here
 
    sprintf(str, "key=%s keyname=%s string=%s compose=%s",
-           efl_event_key_get(ev->info),
-           efl_event_key_name_get(ev->info),
-           efl_event_key_string_get(ev->info),
-           efl_event_key_compose_get(ev->info));
+           efl_input_key_get(ev->info),
+           efl_input_key_name_get(ev->info),
+           efl_input_key_string_get(ev->info),
+           efl_input_key_compose_get(ev->info));
    elm_object_text_set(td->text, str);
 
-   if (!efl_event_fake_get(ev->info))
+   if (!efl_input_fake_get(ev->info))
      {
         efl_del(td->evkeydown);
-        td->evkeydown = efl_event_dup(ev->info);
+        td->evkeydown = efl_input_dup(ev->info);
      }
 }
 
@@ -96,10 +96,10 @@ _key_up(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
 
-   if (!efl_event_fake_get(ev->info))
+   if (!efl_input_fake_get(ev->info))
      {
         efl_del(td->evkeyup);
-        td->evkeyup = efl_event_dup(ev->info);
+        td->evkeyup = efl_input_dup(ev->info);
      }
 
    // FIXME: how to use efl_loop_timeout?
@@ -119,7 +119,7 @@ _clicked_button1(void *data, const Eo_Event *ev EINA_UNUSED)
    Eo *txt = td->text;
    char buf[256];
 
-   // Note: can't do efl_event_fake_get(ev->info) because this is a click evt
+   // Note: can't do efl_input_fake_get(ev->info) because this is a click evt
 
    td->id++;
    sprintf(buf, "Button was clicked %d time%s", td->id, td->id > 1 ? "s" : "");
@@ -140,9 +140,9 @@ _clicked_button2(void *data, const Eo_Event *ev EINA_UNUSED)
 
         x = x + w / 2;
         y = y + h / 2;
-        efl_event_pointer_position_set(td->evmove, x, y);
-        efl_event_pointer_position_set(td->evdown, x, y);
-        efl_event_pointer_position_set(td->evup, x, y);
+        efl_input_pointer_position_set(td->evmove, x, y);
+        efl_input_pointer_position_set(td->evdown, x, y);
+        efl_input_pointer_position_set(td->evup, x, y);
 
         efl_event_callback_call(td->win, EFL_EVENT_POINTER_MOVE, td->evmove);
         efl_event_callback_call(td->win, EFL_EVENT_POINTER_DOWN, td->evdown);

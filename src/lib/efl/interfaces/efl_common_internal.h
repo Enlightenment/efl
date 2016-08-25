@@ -13,17 +13,17 @@
 
 #include <Efl.h>
 
-typedef struct _Efl_Event_Pointer_Data  Efl_Event_Pointer_Data;
-typedef struct _Efl_Event_Key_Data      Efl_Event_Key_Data;
+typedef struct _Efl_Input_Pointer_Data  Efl_Input_Pointer_Data;
+typedef struct _Efl_Input_Key_Data      Efl_Input_Key_Data;
 typedef struct _Efl_Input_Device_Data   Efl_Input_Device_Data;
-typedef struct _Efl_Event_Hold_Data     Efl_Event_Hold_Data;
+typedef struct _Efl_Input_Hold_Data     Efl_Input_Hold_Data;
 
 #ifndef _EVAS_TYPES_EOT_H_
 typedef struct _Evas_Modifier Evas_Modifier;
 typedef struct _Evas_Lock Evas_Lock;
 #endif
 
-struct _Efl_Event_Pointer_Data
+struct _Efl_Input_Pointer_Data
 {
    Eo             *eo;
    unsigned int    timestamp; /* FIXME: store as double? */
@@ -42,7 +42,7 @@ struct _Efl_Event_Pointer_Data
    Efl_Input_Device           *device;
    Efl_Pointer_Action          action;
    Efl_Pointer_Flags           button_flags;
-   Efl_Event_Flags             event_flags;
+   Efl_Input_Flags             event_flags;
    void                       *data; /* evas data - whatever that is */
    Eina_Bool                   window_pos; /* true if positions are window-relative
                                               (see input vs. feed: this is "input") */
@@ -55,7 +55,7 @@ struct _Efl_Event_Pointer_Data
    Eina_Bool                   win_fed : 1;
 };
 
-struct _Efl_Event_Key_Data
+struct _Efl_Input_Key_Data
 {
    Eo                *eo;
    unsigned int       timestamp; /* FIXME: store as double? */
@@ -70,7 +70,7 @@ struct _Efl_Event_Key_Data
    void              *data;
    Evas_Modifier     *modifiers;
    Evas_Lock         *locks;
-   Efl_Event_Flags    event_flags;
+   Efl_Input_Flags    event_flags;
    Efl_Input_Device  *device;
    void              *legacy; /* DO NOT TOUCH THIS */
    Eina_Bool          evas_done : 1; /* set by evas */
@@ -92,11 +92,11 @@ struct _Efl_Input_Device_Data
    Efl_Input_Device_Sub_Class subclass;
 };
 
-struct _Efl_Event_Hold_Data
+struct _Efl_Input_Hold_Data
 {
    Eo               *eo;
    double            timestamp;
-   Efl_Event_Flags   event_flags;
+   Efl_Input_Flags   event_flags;
    Efl_Input_Device *device;
    void             *data;
    void             *legacy; /* DO NOT TOUCH THIS */
@@ -105,13 +105,13 @@ struct _Efl_Event_Hold_Data
 };
 
 static inline Eina_Bool
-_efl_input_value_has(const Efl_Event_Pointer_Data *pd, Efl_Input_Value key)
+_efl_input_value_has(const Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
 {
    return (pd->value_flags & (1 << (int) key)) != 0;
 }
 
 static inline void
-_efl_input_value_mark(Efl_Event_Pointer_Data *pd, Efl_Input_Value key)
+_efl_input_value_mark(Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
 {
    pd->value_flags |= (1 << (int) key);
 }

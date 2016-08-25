@@ -42,10 +42,12 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_surface_wayland.eo \
 	lib/evas/canvas/efl_canvas_filter_internal.eo \
 	lib/evas/canvas/efl_canvas_group_clipped.eo \
-	lib/evas/canvas/efl_event_input.eo \
-	lib/evas/canvas/efl_event_key.eo \
-	lib/evas/canvas/efl_event_pointer.eo \
-	lib/evas/canvas/efl_event_hold.eo \
+	lib/evas/canvas/efl_input_state.eo \
+	lib/evas/canvas/efl_input_interface.eo \
+	lib/evas/canvas/efl_input_event.eo \
+	lib/evas/canvas/efl_input_key.eo \
+	lib/evas/canvas/efl_input_pointer.eo \
+	lib/evas/canvas/efl_input_hold.eo \
 	lib/evas/canvas/efl_gfx_map.eo \
 	$(NULL)
 
@@ -202,10 +204,10 @@ lib/evas/canvas/efl_canvas_surface.c \
 lib/evas/canvas/efl_canvas_surface_tbm.c \
 lib/evas/canvas/efl_canvas_surface_x11.c \
 lib/evas/canvas/efl_canvas_surface_wayland.c \
-lib/evas/canvas/efl_event_input.c \
-lib/evas/canvas/efl_event_key.c \
-lib/evas/canvas/efl_event_pointer.c \
-lib/evas/canvas/efl_event_hold.c \
+lib/evas/canvas/efl_input_event.c \
+lib/evas/canvas/efl_input_key.c \
+lib/evas/canvas/efl_input_pointer.c \
+lib/evas/canvas/efl_input_hold.c \
 $(NULL)
 
 EXTRA_DIST2 += \

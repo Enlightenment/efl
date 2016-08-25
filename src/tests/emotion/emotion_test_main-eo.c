@@ -134,10 +134,10 @@ broadcast_event(Emotion_Event ev)
 static void
 bg_key_down(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Efl_Event_Key *ev = event->info;
+   Efl_Input_Key *ev = event->info;
    Eina_List *l;
    Evas_Object *o;
-   const char *keyname = efl_event_key_name_get(ev);
+   const char *keyname = efl_input_key_name_get(ev);
 
    if (!keyname) return;
 

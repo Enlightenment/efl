@@ -356,11 +356,11 @@ typedef Efl_Pointer_Flags                  Evas_Button_Flags;
 #define EVAS_BUTTON_DOUBLE_CLICK           EFL_POINTER_FLAGS_DOUBLE_CLICK
 #define EVAS_BUTTON_TRIPLE_CLICK           EFL_POINTER_FLAGS_TRIPLE_CLICK
 
-typedef Efl_Event_Flags                    Evas_Event_Flags;
+typedef Efl_Input_Flags                    Evas_Event_Flags;
 
-#define EVAS_EVENT_FLAG_NONE               EFL_EVENT_FLAGS_NONE
-#define EVAS_EVENT_FLAG_ON_HOLD            EFL_EVENT_FLAGS_PROCESSED
-#define EVAS_EVENT_FLAG_ON_SCROLL          EFL_EVENT_FLAGS_SCROLLING
+#define EVAS_EVENT_FLAG_NONE               EFL_INPUT_FLAGS_NONE
+#define EVAS_EVENT_FLAG_ON_HOLD            EFL_INPUT_FLAGS_PROCESSED
+#define EVAS_EVENT_FLAG_ON_SCROLL          EFL_INPUT_FLAGS_SCROLLING
 
 typedef Efl_Gfx_Size_Hint_Aspect           Evas_Aspect_Control; /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set */
 
@@ -385,11 +385,11 @@ typedef Efl_Text_Bidirectional_Type        Evas_BiDi_Direction;
 #define EVAS_BIDI_DIRECTION_RTL            EFL_TEXT_BIDIRECTIONAL_TYPE_RTL
 #define EVAS_BIDI_DIRECTION_INHERIT        EFL_TEXT_BIDIRECTIONAL_TYPE_INHERIT
 
-typedef Efl_Event_Object_Pointer_Mode      Evas_Object_Pointer_Mode;
+typedef Efl_Input_Object_Pointer_Mode      Evas_Object_Pointer_Mode;
 
-#define EVAS_OBJECT_POINTER_MODE_AUTOGRAB EFL_EVENT_OBJECT_POINTER_MODE_AUTO_GRAB
-#define EVAS_OBJECT_POINTER_MODE_NOGRAB   EFL_EVENT_OBJECT_POINTER_MODE_NO_GRAB
-#define EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN EFL_EVENT_OBJECT_POINTER_MODE_NO_GRAB_NO_REPEAT_UPDOWN
+#define EVAS_OBJECT_POINTER_MODE_AUTOGRAB  EFL_INPUT_OBJECT_POINTER_MODE_AUTO_GRAB
+#define EVAS_OBJECT_POINTER_MODE_NOGRAB    EFL_INPUT_OBJECT_POINTER_MODE_NO_GRAB
+#define EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN EFL_INPUT_OBJECT_POINTER_MODE_NO_GRAB_NO_REPEAT_UPDOWN
 
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {

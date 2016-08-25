@@ -1665,9 +1665,9 @@ _evas_event_key_cb(void *data, const Eo_Event *ev)
 {
    Eo *win = data;
    Eo *evt = ev->info;
-   Efl_Event_Key_Data *evdata;
+   Efl_Input_Key_Data *evdata;
 
-   evdata = efl_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
+   evdata = efl_data_scope_get(evt, EFL_INPUT_KEY_CLASS);
    if (!evdata || evdata->win_fed)
      return;
 
@@ -1683,9 +1683,9 @@ _evas_event_pointer_cb(void *data, const Eo_Event *ev)
 {
    Eo *win = data;
    Eo *evt = ev->info;
-   Efl_Event_Pointer_Data *evdata;
+   Efl_Input_Pointer_Data *evdata;
 
-   evdata = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evdata = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!evdata || evdata->win_fed)
      return;
 
@@ -1697,13 +1697,13 @@ static void
 _evas_event_key_feed_fake_cb(void *data, const Eo_Event *ev)
 {
    Eo *evas = data;
-   Efl_Event *evt = ev->info;
-   Efl_Event_Key_Data *evdata;
+   Efl_Input_Event *evt = ev->info;
+   Efl_Input_Key_Data *evdata;
 
-   if (!efl_event_fake_get(evt))
+   if (!efl_input_fake_get(evt))
      return;
 
-   evdata = efl_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
+   evdata = efl_data_scope_get(evt, EFL_INPUT_KEY_CLASS);
    if (!evdata || evdata->win_fed)
      return;
    evdata->win_fed = EINA_TRUE;
@@ -1717,13 +1717,13 @@ static void
 _evas_event_pointer_feed_fake_cb(void *data, const Eo_Event *ev)
 {
    Eo *evas = data;
-   Efl_Event *evt = ev->info;
-   Efl_Event_Pointer_Data *evdata;
+   Efl_Input_Event *evt = ev->info;
+   Efl_Input_Pointer_Data *evdata;
 
-   if (!efl_event_fake_get(evt))
+   if (!efl_input_fake_get(evt))
      return;
 
-   evdata = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evdata = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!evdata || evdata->win_fed)
      return;
    evdata->win_fed = EINA_TRUE;

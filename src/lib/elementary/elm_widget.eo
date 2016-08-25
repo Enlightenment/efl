@@ -1,6 +1,6 @@
 import edje_types;
 import elm_general;
-import efl_event_types;
+import efl_input_types;
 
 /* FIXME: This shouldn't be here. */
 type list_data_get_func_type: __undefined_type;
@@ -624,7 +624,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          params {
             @in type: Evas.Callback_Type;
             @in event_info: void_ptr;
-            @in event_flags: Efl.Event.Flags *;
+            @in event_flags: Efl.Input.Flags *;
          }
       }
       signal_callback_add {

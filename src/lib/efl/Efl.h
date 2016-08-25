@@ -39,7 +39,6 @@ extern "C" {
 /* Add here all the required ifdef for any @protected method */
 #ifdef EFL_EFL_BUILD
 # define EFL_PACK_LAYOUT_PROTECTED
-# define EFL_EVENT_PROTECTED
 # define EFL_GFX_SIZE_HINT_PROTECTED
 #endif
 
@@ -123,11 +122,8 @@ EAPI extern const Efl_Event_Description _EFL_GFX_PATH_CHANGED;
 #include "interfaces/efl_pack_grid.eo.h"
 
 /* Input events */
-#include "interfaces/efl_event_types.eot.h"
+#include "interfaces/efl_input_types.eot.h"
 #include "interfaces/efl_input_device.eo.h"
-#include "interfaces/efl_input_state.eo.h"
-#include "interfaces/efl_input_interface.eo.h"
-#include "interfaces/efl_event.eo.h"
 
 /* Input and Output */
 #include "interfaces/efl_io_closer.eo.h"
@@ -143,7 +139,7 @@ EAPI extern const Efl_Event_Description _EFL_GFX_PATH_CHANGED;
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "interfaces/efl_gfx_types.eot.h"
-#include "interfaces/efl_event_types.eot.h"
+#include "interfaces/efl_input_types.eot.h"
 #include "interfaces/efl_gfx_fill.eo.legacy.h"
 #include "interfaces/efl_gfx.eo.legacy.h"
 #include "interfaces/efl_image.eo.legacy.h"

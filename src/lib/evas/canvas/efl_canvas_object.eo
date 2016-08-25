@@ -26,19 +26,19 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
            This function has a direct effect on event callbacks related to
            pointers (mouse, ...).
 
-           If the value is @Efl.Event.Object_Pointer_Mode.auto_grab (default),
+           If the value is @Efl.Input.Object_Pointer_Mode.auto_grab (default),
            then when mouse is pressed down over this object, events will be
            restricted to it as source, mouse moves, for example, will be
            emitted even when the pointer goes outside this objects
            geometry.
 
-           If the value is @Efl.Event.Object_Pointer_Mode.no_grab, then events
+           If the value is @Efl.Input.Object_Pointer_Mode.no_grab, then events
            will be emitted just when inside this object area.
 
-           The default value is @Efl.Event.Object_Pointer_Mode.auto_grab.
+           The default value is @Efl.Input.Object_Pointer_Mode.auto_grab.
          ]]
          values {
-            pointer_mode: Efl.Event.Object_Pointer_Mode;
+            pointer_mode: Efl.Input.Object_Pointer_Mode;
          }
       }
       @property render_op {

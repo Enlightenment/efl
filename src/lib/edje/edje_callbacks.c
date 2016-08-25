@@ -6,7 +6,7 @@
 static void
 _edje_hold_signal_cb(void *data, const Eo_Event *event)
 {
-   Efl_Event_Hold *ev;
+   Efl_Input_Hold *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
@@ -14,7 +14,7 @@ _edje_hold_signal_cb(void *data, const Eo_Event *event)
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
-   if (efl_event_hold_get(ev))
+   if (efl_input_hold_get(ev))
      _edje_emit(ed, "hold,on", rp->part->name);
    else
      _edje_emit(ed, "hold,off", rp->part->name);
@@ -51,11 +51,11 @@ _edje_focus_out_signal_cb(void *data, const Eo_Event *event)
 static void
 _edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
 {
-   Efl_Event_Pointer_Data *ev;
+   Efl_Input_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_INPUT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
@@ -70,11 +70,11 @@ _edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
 static void
 _edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
 {
-   Efl_Event_Pointer_Data *ev;
+   Efl_Input_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_INPUT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
@@ -89,13 +89,13 @@ _edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
 static void
 _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
 {
-   Efl_Event_Pointer_Data *ev;
+   Efl_Input_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
    char buf[256];
    int ignored;
 
-   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_INPUT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
@@ -158,13 +158,13 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
 static void
 _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
 {
-   Efl_Event_Pointer_Data *ev;
+   Efl_Input_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
    char buf[256];
    int ignored;
 
-   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_INPUT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
@@ -231,12 +231,12 @@ _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
 static void
 _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
 {
-   Efl_Event_Pointer_Data *ev;
+   Efl_Input_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
    int ignored;
 
-   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_INPUT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
@@ -338,12 +338,12 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
 static void
 _edje_mouse_wheel_signal_cb(void *data, const Eo_Event *event)
 {
-   Efl_Event_Pointer_Data *ev;
+   Efl_Input_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
    char buf[256];
 
-   ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   ev = efl_data_scope_get(event->info, EFL_INPUT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)

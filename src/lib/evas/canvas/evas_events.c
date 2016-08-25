@@ -1,4 +1,4 @@
-#define EFL_EVENT_PROTECTED
+#define EFL_INPUT_EVENT_PROTECTED
 
 #include "evas_common_private.h"
 #include "evas_private.h"
@@ -18,13 +18,13 @@ static Eina_List *
 evas_event_list_copy(Eina_List *list);
 
 static void
-_canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev);
+_canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev);
 
 static void
-_canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev);
+_canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev);
 
 static void
-_canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev);
+_canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev);
 
 static void
 _canvas_event_feed_mouse_move_legacy(Evas *eo_e, Evas_Public_Data *e, int x, int y,
@@ -371,7 +371,7 @@ _transform_to_src_space_f(Evas_Object_Protected_Data *obj, Evas_Object_Protected
 
 static void
 _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
-                                     Efl_Event_Pointer *parent_ev, int event_id)
+                                     Efl_Input_Pointer *parent_ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
@@ -380,16 +380,16 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
    Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *copy, *l;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Eina_Vector2 point;
    int addgrab = 0;
    int no_rep = 0;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_event_dup(parent_ev);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
    _transform_to_src_space_f(obj, src, &ev->cur);
@@ -454,7 +454,7 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
 
 static void
 _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
-                                     Efl_Event_Pointer *parent_ev, int event_id)
+                                     Efl_Input_Pointer *parent_ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
@@ -463,14 +463,14 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
    Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *l;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Eina_Vector2 curpt, curpt_real, prevpt, prevpt_real;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_event_dup(parent_ev);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
    curpt_real = ev->cur;
@@ -628,7 +628,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
 
 static void
 _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
-                                   Efl_Event_Pointer *parent_ev, int event_id)
+                                   Efl_Input_Pointer *parent_ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
@@ -637,14 +637,14 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
    Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *copy, *l;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Eina_Vector2 point;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_event_dup(parent_ev);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
    _transform_to_src_space_f(obj, src, &ev->cur);
@@ -685,7 +685,7 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
 }
 
 static void
-_evas_event_source_hold_events(Evas_Object *eo_obj, int event_id, Efl_Event_Hold *evt)
+_evas_event_source_hold_events(Evas_Object *eo_obj, int event_id, Efl_Input_Hold *evt)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
@@ -708,7 +708,7 @@ _evas_event_source_hold_events(Evas_Object *eo_obj, int event_id, Efl_Event_Hold
 
 static void
 _evas_event_source_wheel_events(Evas_Object *eo_obj, Evas *eo_e,
-                                Efl_Event_Pointer *parent_ev, int event_id)
+                                Efl_Input_Pointer *parent_ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
@@ -717,14 +717,14 @@ _evas_event_source_wheel_events(Evas_Object *eo_obj, Evas *eo_e,
    Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *copy, *l;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Eina_Vector2 point;
 
    if (obj->delete_me || src->delete_me || obj->layer->evas->is_frozen) return;
 
-   evt = efl_event_dup(parent_ev);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
    _transform_to_src_space_f(obj, src, &ev->cur);
@@ -749,22 +749,22 @@ _evas_event_source_wheel_events(Evas_Object *eo_obj, Evas *eo_e,
 
 static void
 _evas_event_source_multi_down_events(Evas_Object_Protected_Data *obj, Evas_Public_Data *e,
-                                     Efl_Event_Pointer *parent_ev, int event_id)
+                                     Efl_Input_Pointer *parent_ev, int event_id)
 {
    Evas_Object *eo_src = _evas_object_image_source_get(obj->object);
    Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *copy, *l;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Eina_Vector2 point;
    int addgrab = 0;
 
    if (obj->delete_me || src->delete_me || obj->layer->evas->is_frozen) return;
 
-   evt = efl_event_dup(parent_ev);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
    _transform_to_src_space_f(obj, src, &ev->cur);
@@ -801,21 +801,21 @@ _evas_event_source_multi_down_events(Evas_Object_Protected_Data *obj, Evas_Publi
 
 static void
 _evas_event_source_multi_up_events(Evas_Object_Protected_Data *obj, Evas_Public_Data *e,
-                                   Efl_Event_Pointer *parent_ev, int event_id)
+                                   Efl_Input_Pointer *parent_ev, int event_id)
 {
    Evas_Object *eo_src = _evas_object_image_source_get(obj->object);
    Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *copy, *l;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Eina_Vector2 point;
 
    if (obj->delete_me || src->delete_me || obj->layer->evas->is_frozen) return;
 
-   evt = efl_event_dup(parent_ev);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
    _transform_to_src_space_f(obj, src, &ev->cur);
@@ -847,22 +847,22 @@ _evas_event_source_multi_up_events(Evas_Object_Protected_Data *obj, Evas_Public_
 
 static void
 _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Public_Data *e,
-                                     Efl_Event_Pointer *parent_ev, int event_id)
+                                     Efl_Input_Pointer *parent_ev, int event_id)
 {
    Evas_Object *eo_src = _evas_object_image_source_get(obj->object);
    Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *copy, *l;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Eina_Vector2 point;
    Evas *eo_e = e->evas;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_event_dup(parent_ev);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
    _transform_to_src_space_f(obj, src, &ev->cur);
@@ -950,7 +950,7 @@ _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Publi
 
 static void
 _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,
-                                   Efl_Event_Pointer *parent_ev, int event_id)
+                                   Efl_Input_Pointer *parent_ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
@@ -959,14 +959,14 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,
    Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *ins = NULL, *l;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Eina_Vector2 point;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_event_dup(parent_ev);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
    _transform_to_src_space_f(obj, src, &ev->cur);
@@ -1011,7 +1011,7 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,
 
 static void
 _evas_event_source_mouse_out_events(Evas_Object *eo_obj, Evas *eo_e,
-                                    Efl_Event_Pointer *parent_ev, int event_id)
+                                    Efl_Input_Pointer *parent_ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
@@ -1020,14 +1020,14 @@ _evas_event_source_mouse_out_events(Evas_Object *eo_obj, Evas *eo_e,
    Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *copy, *l;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Eina_Vector2 point;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_event_dup(parent_ev);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
    _transform_to_src_space_f(obj, src, &ev->cur);
@@ -1213,9 +1213,9 @@ evas_event_thaw_eval(Evas *eo_e)
 }
 
 static void
-_canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
+_canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev)
 {
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    Eina_List *l, *copy;
    Evas_Object *eo_obj;
    int event_id, b;
@@ -1310,11 +1310,11 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
 }
 
 static int
-_post_up_handle(Evas_Public_Data *e, Efl_Event_Pointer *parent_ev)
+_post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev)
 {
    Eina_List *l, *copy, *ins, *ll;
-   Efl_Event_Pointer_Data *ev;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
    Evas_Object *eo_obj;
    Evas *eo_e = e->evas;
    int post_called = 0;
@@ -1323,8 +1323,8 @@ _post_up_handle(Evas_Public_Data *e, Efl_Event_Pointer *parent_ev)
    event_id = _evas_object_event_new();
 
    /* Duplicating UP event */
-   evt = efl_event_dup(parent_ev);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(parent_ev);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return 0;
 
    /* Actually we want an OUT */
@@ -1413,9 +1413,9 @@ _post_up_handle(Evas_Public_Data *e, Efl_Event_Pointer *parent_ev)
 }
 
 static void
-_canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
+_canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev)
 {
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    Eina_List *l, *copy;
    Evas_Object *eo_obj;
    int event_id, b;
@@ -1508,14 +1508,14 @@ _canvas_event_feed_mouse_updown_legacy(Eo *eo_e, int b, Evas_Button_Flags flags,
                                        unsigned int timestamp, const void *data,
                                        Eina_Bool down)
 {
-   Efl_Event_Pointer_Data *ev = NULL;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev = NULL;
+   Efl_Input_Pointer *evt;
    Evas_Public_Data *e;
 
    e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e) return;
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->data = (void *) data;
@@ -1556,10 +1556,10 @@ evas_event_feed_mouse_up(Eo *eo_e, int b, Evas_Button_Flags flags, unsigned int 
 }
 
 static void
-_canvas_event_feed_mouse_cancel_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
+_canvas_event_feed_mouse_cancel_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev)
 {
    Evas_Coord_Touch_Point *point;
-   Efl_Event_Pointer_Data save;
+   Efl_Input_Pointer_Data save;
    Eina_List *l, *ll;
    Evas_Event_Flags flags;
    Evas *eo_e;
@@ -1604,10 +1604,10 @@ evas_event_feed_mouse_cancel(Eo *eo_e, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Efl_Event_Pointer_Data *ev = NULL;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev = NULL;
+   Efl_Input_Pointer *evt;
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->timestamp = timestamp;
@@ -1620,11 +1620,11 @@ evas_event_feed_mouse_cancel(Eo *eo_e, unsigned int timestamp, const void *data)
 }
 
 static void
-_canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Event_Pointer_Data *pe)
+_canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Efl_Event_Pointer_Data *ev = NULL;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev = NULL;
+   Efl_Input_Pointer *evt;
    Eina_List *l, *copy;
    Evas_Object *eo_obj;
    int event_id = 0;
@@ -1634,8 +1634,8 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Event_Pointer_Data *pe)
 
    event_id = _evas_object_event_new();
 
-   evt = efl_event_dup(pe->eo);
-   ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   evt = efl_input_dup(pe->eo);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
    // adjust missing data based on evas state
@@ -1676,8 +1676,8 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Event_Pointer_Data *pe)
 EAPI void
 evas_event_feed_mouse_wheel(Eo *eo_e, int direction, int z, unsigned int timestamp, const void *data)
 {
-   Efl_Event_Pointer_Data *ev = NULL;
-   Efl_Event_Pointer *evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, eo_e, (void **) &ev);
+   Efl_Input_Pointer_Data *ev = NULL;
+   Efl_Input_Pointer *evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
 
    if (!ev) return;
 
@@ -1691,11 +1691,11 @@ evas_event_feed_mouse_wheel(Eo *eo_e, int direction, int z, unsigned int timesta
 }
 
 static void
-_canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
+_canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev)
 {
    Evas_Object *nogrep_obj = NULL;
    Evas_Object_Protected_Data *obj;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    Eina_List *l, *copy;
    Evas_Object *eo_obj;
    Eina_Vector2 point;
@@ -2042,10 +2042,10 @@ static void
 _canvas_event_feed_mouse_move_legacy(Evas *eo_e, Evas_Public_Data *e, int x, int y,
                                      unsigned int timestamp, const void *data)
 {
-   Efl_Event_Pointer_Data *ev = NULL;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev = NULL;
+   Efl_Input_Pointer *evt;
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->data = (void *) data;
@@ -2076,10 +2076,10 @@ evas_event_feed_mouse_move(Eo *eo_e, int x, int y, unsigned int timestamp, const
 }
 
 static void
-_canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Event_Pointer_Data *ev)
+_canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    Eina_List *ins;
    Eina_List *l;
    Evas_Object *eo_obj;
@@ -2137,10 +2137,10 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Event_Pointer_Data *ev)
 }
 
 static void
-_canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Event_Pointer_Data *ev)
+_canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    Eina_List *l, *copy;
    Evas_Object *eo_obj;
    int event_id;
@@ -2200,10 +2200,10 @@ static void
 _canvas_event_feed_mouse_inout_legacy(Eo *eo_e, unsigned int timestamp,
                                       const void *data, Eina_Bool in)
 {
-   Efl_Event_Pointer_Data *ev = NULL;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev = NULL;
+   Efl_Input_Pointer *evt;
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->timestamp = timestamp;
@@ -2231,9 +2231,9 @@ evas_event_feed_mouse_out(Eo *eo_e, unsigned int timestamp, const void *data)
 }
 
 static void
-_canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
+_canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev)
 {
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    Eina_List *l, *copy;
    Evas_Object *eo_obj;
    Eina_Vector2 point;
@@ -2299,9 +2299,9 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Event_Pointer_Da
 }
 
 static void
-_canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
+_canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev)
 {
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    Eina_List *l, *copy;
    Evas_Object *eo_obj;
    Eina_Vector2 point;
@@ -2370,10 +2370,10 @@ _canvas_event_feed_multi_internal(Evas *eo_e, Evas_Public_Data *e,
                                   unsigned int timestamp,
                                   const void *data, Efl_Pointer_Action action)
 {
-   Efl_Event_Pointer_Data *ev = NULL;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer_Data *ev = NULL;
+   Efl_Input_Pointer *evt;
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!e || !ev) return;
 
    if (!fx) fx = x;
@@ -2450,9 +2450,9 @@ evas_event_feed_multi_up(Eo *eo_e, int d, int x, int y, double rad, double radx,
 }
 
 static void
-_canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
+_canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev)
 {
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    Eina_List *l, *copy;
    Evas_Object *eo_obj;
    Eina_Vector2 point;
@@ -2590,10 +2590,10 @@ evas_event_feed_multi_move(Eo *eo_e, int d, int x, int y, double rad, double rad
 }
 
 static void
-_canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Event_Key_Data *ev)
+_canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
 {
    Eina_Bool exclusive = EINA_FALSE;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    int event_id = 0;
 
    if (!e || !ev) return;
@@ -2679,10 +2679,10 @@ _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Event_Key_Data *ev
 }
 
 static void
-_canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Event_Key_Data *ev)
+_canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
 {
    Eina_Bool exclusive = EINA_FALSE;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    int event_id = 0;
 
    if (!e || !ev) return;
@@ -2776,12 +2776,12 @@ _canvas_event_feed_key_legacy(Eo *eo_e, Evas_Public_Data *e,
                               unsigned int timestamp, const void *data,
                               unsigned int keycode, Eina_Bool down)
 {
-   Efl_Event_Key_Data *ev = NULL;
-   Efl_Event_Key *evt;
+   Efl_Input_Key_Data *ev = NULL;
+   Efl_Input_Key *evt;
 
    if (!keyname) return;
 
-   evt = efl_event_instance_get(EFL_EVENT_KEY_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_KEY_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->keyname = (char *) keyname;
@@ -2838,8 +2838,8 @@ EAPI void
 evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *data)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Efl_Event_Hold_Data *ev = NULL;
-   Efl_Event_Hold *evt;
+   Efl_Input_Hold_Data *ev = NULL;
+   Efl_Input_Hold *evt;
    Eina_List *l, *copy;
    Evas_Object *eo_obj;
    int event_id = 0;
@@ -2849,7 +2849,7 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
 
    event_id = _evas_object_event_new();
 
-   evt = efl_event_instance_get(EFL_EVENT_HOLD_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_HOLD_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->hold = !!hold;
@@ -2882,9 +2882,9 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
 }
 
 void
-_canvas_event_feed_axis_update_internal(Evas_Public_Data *e, Efl_Event_Pointer_Data *ev)
+_canvas_event_feed_axis_update_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data *ev)
 {
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    Eina_List *l, *copy;
    Evas_Object *eo_obj;
    int event_id = 0;
@@ -2928,13 +2928,13 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Efl_Event_Pointer_Data *ev = NULL;
+   Efl_Input_Pointer_Data *ev = NULL;
    Eina_Bool haswinx = 0, haswiny = 0;
-   Efl_Event_Pointer *evt;
+   Efl_Input_Pointer *evt;
    double x = 0, y = 0;
    int n;
 
-   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->data = (void *) data;
@@ -3266,7 +3266,7 @@ _evas_canvas_event_down_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 static void
 _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
 {
-   Efl_Event_Pointer_Data *ev = efl_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+   Efl_Input_Pointer_Data *ev = efl_data_scope_get(event->info, EFL_INPUT_POINTER_CLASS);
    Evas_Public_Data *e = data;
    Evas *eo_e = event->object;
    Eina_Bool nodev = 0;
@@ -3338,12 +3338,12 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
 static void
 _evas_canvas_event_key_cb(void *data, const Eo_Event *event)
 {
-   Efl_Event_Key *evt = event->info;
+   Efl_Input_Key *evt = event->info;
    Evas_Public_Data *e = data;
-   Efl_Event_Key_Data *ev;
+   Efl_Input_Key_Data *ev;
    Eina_Bool nodev = 0;
 
-   ev = efl_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
+   ev = efl_data_scope_get(evt, EFL_INPUT_KEY_CLASS);
    if (!ev) return;
 
    if (!ev->device)

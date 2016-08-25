@@ -1,0 +1,25 @@
+class Efl.Input.Hold (Efl.Object, Efl.Input.Event)
+{
+   [[Event data sent when inputs are put on hold or resumed.]]
+   methods {
+      @property hold {
+         [[$true if inputs are now on hold.]]
+         values {
+            val: bool;
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Input.Event.instance_get;
+      Efl.Input.Event.reset;
+      Efl.Input.Event.dup;
+      Efl.Input.Event.timestamp.get;
+      Efl.Input.Event.timestamp.set;
+      Efl.Input.Event.event_flags.set;
+      Efl.Input.Event.event_flags.get;
+      Efl.Input.Event.device.set;
+      Efl.Input.Event.device.get;
+   }
+}

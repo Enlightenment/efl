@@ -1,5 +1,5 @@
 import evas_types;
-import efl_event_types;
+import efl_input_types;
 
 class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 {
@@ -44,7 +44,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             ]]
          }
          values {
-            flags: Efl.Event.Flags; [[The default flags to use.]]
+            flags: Efl.Input.Flags; [[The default flags to use.]]
          }
       }
       @property font_cache {

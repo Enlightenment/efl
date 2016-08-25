@@ -1,9 +1,8 @@
-/* FIXME: Do we need this? Or just use the Eo Event Description as a type? */
 enum Efl.Pointer.Action
 {
-   [[Pointer event type.
+   [[Pointer event type. Represents which kind of event this is.
 
-     @since 1.18
+     @since 1.19
    ]]
    none,   [[Not a valid event.]]
    move,   [[Mouse or equivalent pointer moved.]]
@@ -20,15 +19,21 @@ enum Efl.Pointer.Action
 
 enum Efl.Pointer.Flags
 {
-   /* Evas.Button_Flags */
+   [[Pointer flags indicating whether a double or triple click is under way.
+
+     @since 1.19
+   ]]
    none = 0,                [[No extra mouse button data]]
    double_click = (1 << 0), [[This mouse button press was the 2nd press of a double click]]
    triple_click = (1 << 1), [[This mouse button press was the 3rd press of a triple click]]
 }
 
-enum Efl.Event.Flags
+enum Efl.Input.Flags
 {
-   /* Evas.Event_Flags */
+   [[Special flags set during an input event propagation.
+
+     @since 1.19
+   ]]
    none = 0,             [[No fancy flags set]]
    processed = (1 << 0), [[This event is being delivered and has been processed,
                            so it should be put "on hold" until the flag is unset.
@@ -42,7 +47,7 @@ enum Efl.Event.Flags
                            actually perform anything.]]
 }
 
-enum Efl.Event.Object_Pointer_Mode {
+enum Efl.Input.Object_Pointer_Mode {
    [[How the mouse pointer should be handled by EFL.
 
      In the mode $autograb, when a mouse button is pressed down over an
@@ -54,6 +59,8 @@ enum Efl.Event.Object_Pointer_Mode {
 
      In the mode $nograb, the pointer will always be bound to the object
      right below it.
+
+     @since 1.19
    ]]
    auto_grab, [[Default, X11-like.]]
    no_grab,   [[Pointer always bound to the object right below it.]]

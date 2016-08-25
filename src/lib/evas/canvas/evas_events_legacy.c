@@ -33,9 +33,9 @@ _event_alloc(void *old)
 }
 
 void *
-efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, Evas_Event_Flags **pflags)
+efl_input_pointer_legacy_info_fill(Efl_Input_Key *evt, Evas_Callback_Type type, Evas_Event_Flags **pflags)
 {
-   Efl_Event_Pointer_Data *ev = efl_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   Efl_Input_Pointer_Data *ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return NULL;
 
 #define COORD_DUP(e) do { (e)->output.x = (e)->canvas.x; (e)->output.y = (e)->canvas.y; } while (0)
@@ -295,11 +295,11 @@ efl_event_pointer_legacy_info_fill(Efl_Event_Key *evt, Evas_Callback_Type type, 
 }
 
 void *
-efl_event_key_legacy_info_fill(Efl_Event_Key *evt, Evas_Event_Flags **pflags)
+efl_input_key_legacy_info_fill(Efl_Input_Key *evt, Evas_Event_Flags **pflags)
 {
-   Efl_Event_Key_Data *ev;
+   Efl_Input_Key_Data *ev;
 
-   ev = efl_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
+   ev = efl_data_scope_get(evt, EFL_INPUT_KEY_CLASS);
    if (!ev) return NULL;
 
    if (ev->pressed)
@@ -341,9 +341,9 @@ efl_event_key_legacy_info_fill(Efl_Event_Key *evt, Evas_Event_Flags **pflags)
 }
 
 void *
-efl_event_hold_legacy_info_fill(Efl_Event_Hold *evt, Evas_Event_Flags **pflags)
+efl_input_hold_legacy_info_fill(Efl_Input_Hold *evt, Evas_Event_Flags **pflags)
 {
-   Efl_Event_Hold_Data *ev = efl_data_scope_get(evt, EFL_EVENT_HOLD_CLASS);
+   Efl_Input_Hold_Data *ev = efl_data_scope_get(evt, EFL_INPUT_HOLD_CLASS);
    Evas_Event_Hold *e;
 
    if (!ev) return NULL;
