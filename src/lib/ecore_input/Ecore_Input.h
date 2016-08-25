@@ -319,7 +319,11 @@ extern "C" {
         ECORE_AXIS_LABEL_TOUCH_WIDTH_MAJOR,   /**< Length of contact ellipse along AZIMUTH. Range: Unbounded: Unit: Same as ECORE_AXIS_LABEL_{X,Y}. @since 1.13 */
         ECORE_AXIS_LABEL_TOUCH_WIDTH_MINOR,   /**< Length of contact ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as ECORE_AXIS_LABEL_{X,Y}. @since 1.13 */
         ECORE_AXIS_LABEL_TOOL_WIDTH_MAJOR,    /**< Length of tool ellipse along AZIMUTH. Range: Unbounded. Unit: Same as ECORE_AXIS_LABEL_{X,Y}. @since 1.13 */
-        ECORE_AXIS_LABEL_TOOL_WIDTH_MINOR     /**< Length of tool ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as ECORE_AXIS_LABEL_{X,Y}. @since 1.13 */
+        ECORE_AXIS_LABEL_TOOL_WIDTH_MINOR,    /**< Length of tool ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as ECORE_AXIS_LABEL_{X,Y}. @since 1.13 */
+        ECORE_AXIS_LABEL_WINDOW_X,      /**< X coordinate mapped to the window. @since 1.19 */
+        ECORE_AXIS_LABEL_WINDOW_Y,      /**< Y coordinate mapped to the window. @since 1.19 */
+        ECORE_AXIS_LABEL_NORMAL_X,      /**< X normalized to the [0, 1] range. @since 1.19 */
+        ECORE_AXIS_LABEL_NORMAL_Y,      /**< Y normalized to the [0, 1] range. @since 1.19 */
    } Ecore_Axis_Label; /**< @since 1.13 */
 
    struct _Ecore_Axis

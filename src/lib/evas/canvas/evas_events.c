@@ -2929,7 +2929,9 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Efl_Event_Pointer_Data *ev = NULL;
+   Eina_Bool haswinx = 0, haswiny = 0;
    Efl_Event_Pointer *evt;
+   double x = 0, y = 0;
    int n;
 
    evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, eo_e, (void **) &ev);
@@ -2946,14 +2948,40 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
         const Evas_Axis *axis = &(axes[n]);
         switch (axis->label)
           {
-           case EVAS_AXIS_LABEL_X:
+           case EVAS_AXIS_LABEL_WINDOW_X:
              _efl_input_value_mark(ev, EFL_INPUT_VALUE_X);
-             ev->cur.x = axis->value;
+             x = axis->value;
+             haswinx = EINA_TRUE;
+             break;
+
+           case EVAS_AXIS_LABEL_WINDOW_Y:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
+             y = axis->value;
+             haswiny = EINA_TRUE;
+             break;
+
+           case EVAS_AXIS_LABEL_X:
+             if (!haswinx)
+               {
+                  _efl_input_value_mark(ev, EFL_INPUT_VALUE_X);
+                  x = axis->value;
+               }
              break;
 
            case EVAS_AXIS_LABEL_Y:
-             _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
-             ev->cur.y = axis->value;
+             if (!haswiny)
+               {
+                  _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
+                  y = axis->value;
+               }
+             break;
+
+           case EVAS_AXIS_LABEL_NORMAL_X:
+             ev->raw.x = axis->value;
+             break;
+
+           case EVAS_AXIS_LABEL_NORMAL_Y:
+             ev->raw.y = axis->value;
              break;
 
            case EVAS_AXIS_LABEL_PRESSURE:
@@ -2978,6 +3006,9 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
              break;
           }
      }
+
+   ev->cur.x = x;
+   ev->cur.y = y;
 
    /* FIXME: set proper device based on the device id (X or WL specific) */
    ev->device = _evas_device_top_get(eo_e); // FIXME

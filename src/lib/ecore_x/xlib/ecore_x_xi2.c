@@ -494,7 +494,7 @@ _ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
 {
    if (xevent->type != GenericEvent) return;
    XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
-   unsigned int n = _ecore_x_count_bits(*evd->valuators.mask);
+   unsigned int n = _ecore_x_count_bits(*evd->valuators.mask) + 4;
    int i;
    int j = 0;
    double tiltx = 0, tilty = 0;
@@ -514,15 +514,29 @@ _ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
                {
                   if (inf->label == _ecore_x_input_get_axis_label("Abs X"))
                     {
+                       int x = evd->valuators.values[j];
                        axis_ptr->label = ECORE_AXIS_LABEL_X;
-                       axis_ptr->value = evd->valuators.values[j];
+                       axis_ptr->value = x;
                        axis_ptr++;
+                       if (inf->max > inf->min)
+                         {
+                            axis_ptr->label = ECORE_AXIS_LABEL_NORMAL_X;
+                            axis_ptr->value = (x - inf->min) / (inf->max - inf->min);
+                            axis_ptr++;
+                         }
                     }
                   else if (inf->label == _ecore_x_input_get_axis_label("Abs Y"))
                     {
+                       int y = evd->valuators.values[j];
                        axis_ptr->label = ECORE_AXIS_LABEL_Y;
-                       axis_ptr->value = evd->valuators.values[j];
+                       axis_ptr->value = y;
                        axis_ptr++;
+                       if (inf->max > inf->min)
+                         {
+                            axis_ptr->label = ECORE_AXIS_LABEL_NORMAL_Y;
+                            axis_ptr->value = (y - inf->min) / (inf->max - inf->min);
+                            axis_ptr++;
+                         }
                     }
                   else if (inf->label == _ecore_x_input_get_axis_label("Abs Pressure"))
                     {
@@ -602,6 +616,15 @@ _ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
    n = (axis_ptr - axis);
    if (n > 0)
      {
+        /* event position in the window - most useful */
+        axis_ptr->label = ECORE_AXIS_LABEL_WINDOW_X;
+        axis_ptr->value = evd->event_x;
+        axis_ptr++;
+        axis_ptr->label = ECORE_AXIS_LABEL_WINDOW_Y;
+        axis_ptr->value = evd->event_y;
+        axis_ptr++;
+        n += 2;
+
         shrunk_axis = realloc(axis, n * sizeof(Ecore_Axis));
         if (shrunk_axis != NULL) axis = shrunk_axis;
         _ecore_x_axis_update(evd->child ? evd->child : evd->event,

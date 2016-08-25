@@ -607,7 +607,11 @@ typedef enum _Evas_Axis_Label
    EVAS_AXIS_LABEL_TOUCH_WIDTH_MAJOR,   /**< Length of contact ellipse along AZIMUTH. Range: Unbounded: Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
    EVAS_AXIS_LABEL_TOUCH_WIDTH_MINOR,   /**< Length of contact ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
    EVAS_AXIS_LABEL_TOOL_WIDTH_MAJOR,    /**< Length of tool ellipse along AZIMUTH. Range: Unbounded. Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
-   EVAS_AXIS_LABEL_TOOL_WIDTH_MINOR     /**< Length of tool ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
+   EVAS_AXIS_LABEL_TOOL_WIDTH_MINOR,    /**< Length of tool ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
+   EVAS_AXIS_LABEL_WINDOW_X,      /**< X coordinate mapped to the window. @since 1.19 */
+   EVAS_AXIS_LABEL_WINDOW_Y,      /**< Y coordinate mapped to the window. @since 1.19 */
+   EVAS_AXIS_LABEL_NORMAL_X,      /**< X normalized to the [0, 1] range. @since 1.19 */
+   EVAS_AXIS_LABEL_NORMAL_Y,      /**< Y normalized to the [0, 1] range. @since 1.19 */
 } Evas_Axis_Label; /**< Types of recognized device axes @since 1.13 */
 
 struct _Evas_Axis

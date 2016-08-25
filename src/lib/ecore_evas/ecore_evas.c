@@ -4525,6 +4525,7 @@ _direct_mouse_out_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info)
 static Eina_Bool
 _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
 {
+   Eina_Bool haswinx = 0, haswiny = 0;
    Efl_Event_Pointer_Data *ev;
    Efl_Event_Pointer *evt;
    Evas *e = ee->evas;
@@ -4549,14 +4550,40 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
         const Ecore_Axis *axis = &(info->axis[n]);
         switch (axis->label)
           {
-           case EVAS_AXIS_LABEL_X:
+           case EVAS_AXIS_LABEL_WINDOW_X:
              _efl_input_value_mark(ev, EFL_INPUT_VALUE_X);
              x = axis->value;
+             haswinx = EINA_TRUE;
+             break;
+
+           case EVAS_AXIS_LABEL_WINDOW_Y:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
+             y = axis->value;
+             haswiny = EINA_TRUE;
+             break;
+
+           case EVAS_AXIS_LABEL_X:
+             if (!haswinx)
+               {
+                  _efl_input_value_mark(ev, EFL_INPUT_VALUE_X);
+                  x = axis->value;
+               }
              break;
 
            case EVAS_AXIS_LABEL_Y:
-             _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
-             y = axis->value;
+             if (!haswiny)
+               {
+                  _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
+                  y = axis->value;
+               }
+             break;
+
+           case EVAS_AXIS_LABEL_NORMAL_X:
+             ev->raw.x = axis->value;
+             break;
+
+           case EVAS_AXIS_LABEL_NORMAL_Y:
+             ev->raw.y = axis->value;
              break;
 
            case EVAS_AXIS_LABEL_PRESSURE:
