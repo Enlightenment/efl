@@ -87,13 +87,22 @@ _legacy_evas_callback_type(const Efl_Event_Description *desc)
    return EVAS_CALLBACK_LAST;
 }
 
+typedef enum {
+   EFL_EVENT_TYPE_NULL,
+   EFL_EVENT_TYPE_OBJECT,
+   EFL_EVENT_TYPE_STRUCT,
+   EFL_EVENT_TYPE_POINTER,
+   EFL_EVENT_TYPE_KEY,
+   EFL_EVENT_TYPE_HOLD
+} Efl_Event_Info_Type;
+
 typedef struct
 {
    EINA_INLIST;
    Evas_Object_Event_Cb func;
    void *data;
    Evas_Callback_Type type;
-   int efl_event_info; // for key, pointer and hold
+   Efl_Event_Info_Type efl_event_type;
 } _eo_evas_object_cb_info;
 
 typedef struct
@@ -104,13 +113,8 @@ typedef struct
    Evas_Callback_Type type;
 } _eo_evas_cb_info;
 
-#define EFL_EVENT_TYPE_LEGACY  0
-#define EFL_EVENT_TYPE_POINTER 1
-#define EFL_EVENT_TYPE_KEY     2
-#define EFL_EVENT_TYPE_HOLD    3
-
 static int
-_evas_event_efl_event_info_exists(Evas_Callback_Type type)
+_evas_event_efl_event_info_type(Evas_Callback_Type type)
 {
    switch (type)
      {
@@ -125,13 +129,26 @@ _evas_event_efl_event_info_exists(Evas_Callback_Type type)
       case EVAS_CALLBACK_MULTI_MOVE:
       case EVAS_CALLBACK_AXIS_UPDATE:
         return EFL_EVENT_TYPE_POINTER;
+
       case EVAS_CALLBACK_KEY_DOWN:
       case EVAS_CALLBACK_KEY_UP:
         return EFL_EVENT_TYPE_KEY;
+
       case EVAS_CALLBACK_HOLD:
         return EFL_EVENT_TYPE_HOLD;
+
+      case EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN:
+      case EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT: /* Efl.Canvas.Object */
+        return EFL_EVENT_TYPE_OBJECT;
+
+      case EVAS_CALLBACK_RENDER_POST: /* Efl_Gfx_Event_Render_Post */
+        return EFL_EVENT_TYPE_STRUCT;
+
+      case EVAS_CALLBACK_DEVICE_CHANGED: /* Efl.Input.Device */
+        return EFL_EVENT_TYPE_OBJECT;
+
       default:
-        return EFL_EVENT_TYPE_LEGACY;
+        return EFL_EVENT_TYPE_NULL;
      }
 }
 
@@ -144,10 +161,10 @@ _eo_evas_object_cb(void *data, const Eo_Event *event)
    void *event_info;
    Evas *evas;
 
+   if (!info->func) return;
    evas = evas_object_evas_get(event->object);
 
-   if (!info->func) return;
-   switch (info->efl_event_info)
+   switch (info->efl_event_type)
      {
       case EFL_EVENT_TYPE_POINTER:
         event_info = efl_event_pointer_legacy_info_fill(efl_event_info, info->type, &event_flags);
@@ -161,7 +178,9 @@ _eo_evas_object_cb(void *data, const Eo_Event *event)
         event_info = efl_event_hold_legacy_info_fill(efl_event_info, &event_flags);
         break;
 
-      case EFL_EVENT_TYPE_LEGACY:
+      case EFL_EVENT_TYPE_NULL:
+      case EFL_EVENT_TYPE_STRUCT:
+      case EFL_EVENT_TYPE_OBJECT:
         info->func(info->data, evas, event->object, event->info);
         return;
 
@@ -277,7 +296,7 @@ evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 void
 evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                                 Evas_Callback_Type type, void *event_info, int event_id,
-                                const Efl_Event_Description *efl_event_desc, Efl_Event *efl_event_info)
+                                const Efl_Event_Description *efl_event_desc)
 {
    /* MEM OK */
    const Evas_Button_Flags mask = EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK;
@@ -308,27 +327,25 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
    if ((type == EVAS_CALLBACK_MOUSE_DOWN) || (type == EVAS_CALLBACK_MOUSE_UP))
      {
-        flags = efl_event_pointer_button_flags_get(efl_event_info);
+        flags = efl_event_pointer_button_flags_get(event_info);
         if (flags & mask)
           {
              if (obj->last_mouse_down_counter < (e->last_mouse_down_counter - 1))
-               efl_event_pointer_button_flags_set(efl_event_info, flags & ~mask);
+               efl_event_pointer_button_flags_set(event_info, flags & ~mask);
           }
         obj->last_mouse_down_counter = e->last_mouse_down_counter;
      }
 
-   if (_evas_event_efl_event_info_exists(type))
+   if (!efl_event_desc)
      {
-        efl_event_callback_call(eo_obj, efl_event_desc, efl_event_info);
-     }
-   else
-     {
-        efl_event_callback_call(eo_obj, _legacy_evas_callback_table(type), event_info);
-        if (efl_event_desc) CRI("Internal error with events!"); // FIXME
+        /* This can happen for DEL and FREE which are defined only in here */
+        efl_event_desc = _legacy_evas_callback_table(type);
      }
 
+   efl_event_callback_call(eo_obj, efl_event_desc, event_info);
+
    if ((type == EVAS_CALLBACK_MOUSE_DOWN) || (type == EVAS_CALLBACK_MOUSE_UP))
-     efl_event_pointer_button_flags_set(efl_event_info, flags);
+     efl_event_pointer_button_flags_set(event_info, flags);
 
 nothing_here:
    if (!obj->no_propagate)
@@ -337,7 +354,7 @@ nothing_here:
               (type <= EVAS_CALLBACK_KEY_UP))
           {
              Evas_Object_Protected_Data *smart_parent = efl_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
-             evas_object_event_callback_call(obj->smart.parent, smart_parent, type, event_info, event_id, efl_event_desc, efl_event_info);
+             evas_object_event_callback_call(obj->smart.parent, smart_parent, type, event_info, event_id, efl_event_desc);
           }
      }
    _evas_unwalk(e);
@@ -366,7 +383,7 @@ evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type 
    cb_info->func = func;
    cb_info->data = (void *)data;
    cb_info->type = type;
-   cb_info->efl_event_info = _evas_event_efl_event_info_exists(type);
+   cb_info->efl_event_type = _evas_event_efl_event_info_type(type);
 
    const Efl_Event_Description *desc = _legacy_evas_callback_table(type);
    efl_event_callback_priority_add(eo_obj, desc, priority, _eo_evas_object_cb, cb_info);

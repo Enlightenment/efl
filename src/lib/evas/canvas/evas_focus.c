@@ -27,7 +27,7 @@ _efl_canvas_object_key_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Ei
         if (obj->layer->evas->focused) goto end;
         obj->focused = 1;
         obj->layer->evas->focused = eo_obj;
-        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_IN, NULL, event_id, NULL, NULL);
+        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_IN, NULL, event_id, EFL_CANVAS_OBJECT_EVENT_FOCUS_IN);
         evas_event_callback_call(obj->layer->evas->evas,
                                  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN, eo_obj);
      }
@@ -35,7 +35,7 @@ _efl_canvas_object_key_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Ei
      {
         obj->focused = 0;
         obj->layer->evas->focused = NULL;
-        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_OUT, NULL, event_id, NULL, NULL);
+        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_OUT, NULL, event_id, EFL_CANVAS_OBJECT_EVENT_FOCUS_OUT);
         evas_event_callback_call(obj->layer->evas->evas,
                                  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT, eo_obj);
      }
