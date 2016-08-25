@@ -2119,7 +2119,13 @@ AC_ARG_ENABLE([elput],
        want_elput="no"
     fi
    ],
-   [want_elput="no"])
+   [
+    if test "x${want_wayland}" = "xyes" ; then
+       want_elput="yes"
+    else
+       want_elput="no"
+    fi
+   ])
 
 # Drm
 AC_ARG_ENABLE([drm],
