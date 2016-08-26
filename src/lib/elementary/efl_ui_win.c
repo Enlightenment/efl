@@ -1102,9 +1102,12 @@ the_end:
    _elm_win_focus_highlight_visible_set(sd, common_visible);
    sd->focus_highlight.geometry_changed = EINA_FALSE;
    sd->focus_highlight.prev = sd->focus_highlight.cur;
-   evas_object_event_callback_add
-     (sd->focus_highlight.prev.target,
-      EVAS_CALLBACK_DEL, _elm_win_focus_prev_target_del, data);
+   if (sd->focus_highlight.prev.target)
+     {
+        evas_object_event_callback_add
+              (sd->focus_highlight.prev.target,
+               EVAS_CALLBACK_DEL, _elm_win_focus_prev_target_del, data);
+     }
 }
 
 static void

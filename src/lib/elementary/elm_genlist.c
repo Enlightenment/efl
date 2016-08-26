@@ -1523,6 +1523,7 @@ _item_cache_free(Item_Cache *itc)
 static void
 _item_cache_clean(Elm_Genlist_Data *sd)
 {
+   if (!sd->obj) return;
    evas_event_freeze(evas_object_evas_get(sd->obj));
 
    while ((sd->item_cache) && (sd->item_cache_count > sd->item_cache_max))

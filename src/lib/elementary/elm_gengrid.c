@@ -4116,7 +4116,8 @@ _internal_elm_gengrid_clear(Evas_Object *obj,
 
              if (next) itn = ELM_GEN_ITEM_FROM_INLIST(next);
              if (itn) itn->walking++;  /* prevent early death of subitem */
-             _item_mouse_callbacks_del(it, VIEW(it));
+             if (VIEW(it))
+               _item_mouse_callbacks_del(it, VIEW(it));
              it->del_cb(it);
              efl_del(EO_OBJ(it));
              if (itn) itn->walking--;
