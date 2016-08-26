@@ -774,17 +774,7 @@ _process_child_error_cb(void *data, Eina_Error err EINA_UNUSED)
 
    WRN("could not get data from child Efl.Model");
 
-   ++(lreq->item_processed_count);
-   if (lreq->item_processed_count >= lreq->item_total)
-     {
-        if (!lreq->valid)
-          {
-             _listing_request_cleanup(lreq);
-             return;
-          }
-        _signal_first(lreq);
-        _process_last(lreq);
-     }
+   lreq->item_total--;
 }
 
 static void
