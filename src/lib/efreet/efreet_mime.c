@@ -204,7 +204,7 @@ _efreet_mimedb_update(void)
         if (mimedb_ptr)
           {
              mimedb_size = eina_file_size_get(mimedb);
-             if ((mimedb_size > (16 + 4  + 4  + 4) &&
+             if ((mimedb_size >= (16 + 4  + 4  + 4) &&
                  (!strncmp((char *)mimedb_ptr, "EfrEeT-MiMeS-001", 16))))
                {
                   // load ok - magic fine. more sanity checks?
