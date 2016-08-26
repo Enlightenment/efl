@@ -859,6 +859,7 @@ _process_children_cb(void *data, void *values)
                   promises[3] = efl_model_property_get(child, "size");
                   promises[4] = efl_model_property_get(child, "mtime");
                   promises[5] = efl_model_property_get(child, "mime_type");
+                  promises[6] = NULL;
 
                   promise_all = eina_promise_all(eina_carray_iterator_new((void**)promises));
                   ++(lreq->item_total);
