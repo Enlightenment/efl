@@ -1433,17 +1433,31 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
    return EINA_TRUE;
 }
 
+const Eo *cached_isa_id = NULL;
+
+static const Efl_Class *cached_klass = NULL;
+static Eina_Bool cached_isa = EINA_FALSE;
+
 EAPI Eina_Bool
 efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
 {
+   if (cached_isa_id == eo_id && cached_klass == klass_id)
+     return cached_isa;
+
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
    const op_type_funcs *func = _vtable_func_get(obj->vtable,
          klass->base_id + klass->desc->ops.count);
 
+   // Caching the result as we do a lot of serial efl_isa due to evas_object_image using it.
+   cached_isa_id = eo_id;
+   cached_klass = klass_id;
+
    /* Currently implemented by reusing the LAST op id. Just marking it with
     * _eo_class_isa_func. */
-   return (func && (func->func == _eo_class_isa_func));
+   cached_isa = (func && (func->func == _eo_class_isa_func));
+
+   return cached_isa;
 }
 
 EAPI Eo *

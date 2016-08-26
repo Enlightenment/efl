@@ -445,6 +445,8 @@ _eo_id_allocate(const _Eo_Object *obj)
 #endif
 }
 
+extern const Eo *cached_isa_id;
+
 static inline void
 _eo_id_release(const Eo_Id obj_id)
 {
@@ -494,6 +496,7 @@ _eo_id_release(const Eo_Id obj_id)
              // In case an object is destroyed, wipe out the cache
              cached_id = 0;
              cached_object = NULL;
+             cached_isa_id = NULL;
 
              return;
           }
