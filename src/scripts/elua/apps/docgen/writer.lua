@@ -48,7 +48,7 @@ M.Writer = util.Object:clone {
     INCLUDE_NAMESPACE = 2,
     INCLUDE_TAG = 3,
 
-    __ctor = function(self, path)
+    __ctor = function(self, path, title)
         local subs
         if type(path) == "table" then
             subs = dutil.path_join(unpack(path))
@@ -57,6 +57,10 @@ M.Writer = util.Object:clone {
         end
         dutil.mkdir_p(subs)
         self.file = assert(io.open(dutil.make_page(subs), "w"))
+        if title then
+            self:write_raw("~~Title: ", title, " ~~")
+            self:write_nl()
+        end
     end,
 
     write_raw = function(self, ...)
