@@ -353,7 +353,7 @@ local build_functable = function(f, title, ctitle, cl, tp)
 end
 
 local build_ref = function()
-    local f = writer.Writer("reference")
+    local f = writer.Writer("reference", "EFL Reference")
     f:write_h("EFL Reference", 2)
 
     local classes = {}
@@ -689,7 +689,7 @@ end
 
 local build_class = function(cl)
     local cln = cl:nspaces_get()
-    local f = writer.Writer(cln)
+    local f = writer.Writer(cln, cl:full_name_get())
     stats.check_class(cl)
 
     f:write_h(cl:full_name_get(), 2)
@@ -758,7 +758,7 @@ end
 
 local build_alias = function(tp)
     local ns = dtree.Node.nspaces_get(tp, "alias")
-    local f = writer.Writer(ns)
+    local f = writer.Writer(ns, tp:full_name_get())
     stats.check_alias(tp)
 
     write_tsigs(f, tp, ns)
@@ -772,7 +772,7 @@ end
 
 local build_struct = function(tp)
     local ns = dtree.Node.nspaces_get(tp, "struct")
-    local f = writer.Writer(ns)
+    local f = writer.Writer(ns, tp:full_name_get())
     stats.check_struct(tp)
 
     write_tsigs(f, tp, ns)
@@ -798,7 +798,7 @@ end
 
 local build_enum = function(tp)
     local ns = dtree.Node.nspaces_get(tp, "enum")
-    local f = writer.Writer(ns)
+    local f = writer.Writer(ns, tp:full_name_get())
     stats.check_enum(tp)
 
     write_tsigs(f, tp, ns)
@@ -823,7 +823,7 @@ local build_enum = function(tp)
 end
 
 local build_variable = function(v, constant)
-    local f = writer.Writer(v:nspaces_get())
+    local f = writer.Writer(v:nspaces_get(), v:full_name_get())
     if constant then
         stats.check_constant(v)
     else
@@ -902,7 +902,7 @@ end
 
 build_method = function(fn, cl)
     local mns = fn:nspaces_get(cl)
-    local f = writer.Writer(mns)
+    local f = writer.Writer(mns, cl:full_name_get() .. "." .. fn:name_get())
     stats.check_method(fn, cl)
 
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
@@ -931,7 +931,7 @@ end
 
 build_property = function(fn, cl)
     local pns = fn:nspaces_get(cl)
-    local f = writer.Writer(pns)
+    local f = writer.Writer(pns, cl:full_name_get() .. "." .. fn:name_get())
 
     local ft = fn:type_get()
     local isget = (ft == fn.PROP_GET or ft == fn.PROPERTY)
@@ -1006,7 +1006,7 @@ end
 
 build_event = function(ev, cl)
     local evn = ev:nspaces_get(cl)
-    local f = writer.Writer(evn)
+    local f = writer.Writer(evn, cl:full_name_get() .. ": " .. ev:name_get())
 
     f:write_h(cl:full_name_get() .. ": " .. ev:name_get(), 2)
 
