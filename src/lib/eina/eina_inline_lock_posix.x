@@ -42,6 +42,10 @@
 # include <libkern/OSAtomic.h>
 #endif
 
+#ifdef EINA_HAVE_OSX_SEMAPHORE
+# include <mach/mach.h>
+#endif
+
 #include <semaphore.h>
 
 #include <sys/time.h>
@@ -94,15 +98,7 @@ typedef Eina_Lock Eina_Spinlock;
 #endif
 
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
-/* OSX supports only named semaphores.
- * So, we need to be able to generate a unique string identifier for each
- * semaphore we want to create. */
-struct _Eina_Semaphore
-{
-   sem_t       *sema;
-   char         name[32];
-};
-typedef struct _Eina_Semaphore Eina_Semaphore;
+typedef semaphore_t Eina_Semaphore;
 #else
 typedef sem_t Eina_Semaphore;
 #endif
@@ -838,13 +834,10 @@ eina_semaphore_new(Eina_Semaphore *sem, int count_init)
      return EINA_FALSE;
 
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
-   /* Atomic increment to generate the unique identifier */
-   snprintf(sem->name, sizeof(sem->name), "/eina%x%x%x",
-            (unsigned int)getpid(), (unsigned int)rand(), (unsigned int)rand());
-   sem->name[sizeof(sem->name) - 1] = '\0';
-   sem_unlink(sem->name);
-   sem->sema = sem_open(sem->name, O_CREAT | O_EXCL, 0600, count_init);
-   return (sem->sema == SEM_FAILED) ? EINA_FALSE : EINA_TRUE;
+   kern_return_t kr;
+
+   kr = semaphore_create(mach_task_self(), sem, SYNC_POLICY_FIFO, count_init);
+   return (kr == KERN_SUCCESS) ? EINA_TRUE : EINA_FALSE;
 #else
    return (sem_init(sem, 0, count_init) == 0) ? EINA_TRUE : EINA_FALSE;
 #endif
@@ -857,9 +850,8 @@ eina_semaphore_free(Eina_Semaphore *sem)
      return EINA_FALSE;
 
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
-   const int closed = sem_close(sem->sema);
-   const int unlinked = sem_unlink(sem->name);
-   return ((closed == 0) && (unlinked == 0)) ? EINA_TRUE : EINA_FALSE;
+   return (semaphore_destroy(*sem, mach_task_self()) == KERN_SUCCESS)
+      ? EINA_TRUE : EINA_FALSE;
 #else
    return (sem_destroy(sem) == 0) ? EINA_TRUE : EINA_FALSE;
 #endif
@@ -877,7 +869,7 @@ eina_semaphore_lock(Eina_Semaphore *sem)
      {
         if (
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
-            sem_wait(sem->sema)
+            semaphore_wait(*sem)
 #else
             sem_wait(sem)
 #endif
@@ -906,7 +898,7 @@ eina_semaphore_release(Eina_Semaphore *sem, int count_release EINA_UNUSED)
      return EINA_FALSE;
 
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
-   return (sem_post(sem->sema) == 0) ? EINA_TRUE : EINA_FALSE;
+   return (semaphore_signal(*sem) == KERN_SUCCESS) ? EINA_TRUE : EINA_FALSE;
 #else
    return (sem_post(sem) == 0) ? EINA_TRUE : EINA_FALSE;
 #endif
