@@ -284,6 +284,7 @@ _ecore_cocoa_feed_events(void *anEvent)
                 old_flags = flags;
                 break;
              }
+           free(evUp);
 
            break;
         }
