@@ -381,6 +381,26 @@ group { "genlist_top"; inherit_only: 1; nomouse; program_source: "elm";
     }
 }
 
+group { "genlist_noarrow"; inherit_only: 1; program_source: "elm";
+   parts { 
+      rect { "arrow"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            min: 15 15;
+            aspect: 1.0 1.0;
+            align: 0.0 0.5;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -2 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -2 -3;
+            color: 0 0 0 0;
+         }
+      }
+   }
+}
+
 group { "elm/genlist/item/default/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
@@ -778,6 +798,31 @@ group { "elm/genlist/item/default_style/default"; nomouse;
 ODD("elm/genlist/item_odd/default_style/default", "elm/genlist/item/default_style/default")
 COMPRESS("elm/genlist/item_compress/default_style/default", "elm/genlist/item/default_style/default")
 COMPRESS_ODD("elm/genlist/item_compress_odd/default_style/default", "elm/genlist/item/default_style/default")
+
+group { "elm/genlist/item/indent/default"; nomouse;
+   inherit: "elm/genlist/item/default/default";
+   parts {
+      swallow { "elm.swallow.icon";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+      }
+   }
+   inherit: "genlist_noarrow";
+}
+
+ODD("elm/genlist/item_odd/indent/default", "elm/genlist/item/indent/default")
+COMPRESS("elm/genlist/item_compress/indent/default", "elm/genlist/item/indent/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/indent/default", "elm/genlist/item/indent/default")
 
 group { "elm/genlist/item/one_icon/default"; nomouse;
    data.item: "selectraise" "on";
