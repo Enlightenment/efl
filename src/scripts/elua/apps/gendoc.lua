@@ -327,7 +327,7 @@ local build_functable = function(f, title, ctitle, cl, tp)
     if #t == 0 then
         return
     end
-    f:write_h(title, 3)
+    f:write_h(title, 2)
     local nt = {}
     for i, v in ipairs(t) do
         local lbuf = writer.Buffer()
@@ -354,7 +354,6 @@ end
 
 local build_ref = function()
     local f = writer.Writer("reference", "EFL Reference")
-    f:write_h("EFL Reference", 2)
 
     local classes = {}
     local ifaces = {}
@@ -692,7 +691,6 @@ local build_class = function(cl)
     local f = writer.Writer(cln, cl:full_name_get())
     stats.check_class(cl)
 
-    f:write_h(cl:full_name_get(), 2)
     keyref.add(cl:full_name_get():gsub("%.", "_"), cln, "c")
 
     f:write_folded("Inheritance graph", function()
@@ -702,11 +700,11 @@ local build_class = function(cl)
         f:write_nl(2)
     end
 
-    f:write_h("Inheritance hierarchy", 3)
+    f:write_h("Inheritance hierarchy", 2)
     f:write_list(build_inherits(cl))
     f:write_nl()
 
-    f:write_h("Description", 3)
+    f:write_h("Description", 2)
     f:write_raw(cl:doc_get():full_get(nil, true))
     f:write_nl(2)
 
@@ -714,7 +712,7 @@ local build_class = function(cl)
     build_functable(f, "Properties", "Property name",
         cl, dtree.Function.PROPERTY)
 
-    f:write_h("Events", 3)
+    f:write_h("Events", 2)
     local evs = cl:events_get()
     if #evs == 0 then
         f:write_raw("This class does not define any events.\n")
@@ -745,13 +743,11 @@ local build_classes = function()
 end
 
 local write_tsigs = function(f, tp, ns)
-    f:write_h(tp:full_name_get(), 2)
-
-    f:write_h("Signature", 3)
+    f:write_h("Signature", 2)
     f:write_code(tp:serialize())
     f:write_nl()
 
-    f:write_h("C signature", 3)
+    f:write_h("C signature", 2)
     f:write_code(tp:serialize_c(ns), "c")
     f:write_nl()
 end
@@ -763,7 +759,7 @@ local build_alias = function(tp)
 
     write_tsigs(f, tp, ns)
 
-    f:write_h("Description", 3)
+    f:write_h("Description", 2)
     f:write_raw(tp:doc_get():full_get(nil, true))
     f:write_nl(2)
 
@@ -777,11 +773,11 @@ local build_struct = function(tp)
 
     write_tsigs(f, tp, ns)
 
-    f:write_h("Description", 3)
+    f:write_h("Description", 2)
     f:write_raw(tp:doc_get():full_get(nil, true))
     f:write_nl(2)
 
-    f:write_h("Fields", 3)
+    f:write_h("Fields", 2)
 
     local arr = {}
     for i, fl in ipairs(tp:struct_fields_get()) do
@@ -803,11 +799,11 @@ local build_enum = function(tp)
 
     write_tsigs(f, tp, ns)
 
-    f:write_h("Description", 3)
+    f:write_h("Description", 2)
     f:write_raw(tp:doc_get():full_get(nil, true))
     f:write_nl(2)
 
-    f:write_h("Fields", 3)
+    f:write_h("Fields", 2)
 
     local arr = {}
     for i, fl in ipairs(tp:enum_fields_get()) do
@@ -884,16 +880,16 @@ local build_vallist = function(f, pg, ps, title)
         if same then ps = {} end
     end
     if #pg > 0 or #ps > 0 then
-        f:write_h(title, 3)
+        f:write_h(title, 2)
         if #pg > 0 then
             if #ps > 0 then
-                f:write_h("Getter", 4)
+                f:write_h("Getter", 3)
             end
             build_parlist(f, pg, true)
         end
         if #ps > 0 then
             if #pg > 0 then
-                f:write_h("Setter", 4)
+                f:write_h("Setter", 3)
             end
             build_parlist(f, ps, true)
         end
@@ -905,24 +901,22 @@ build_method = function(fn, cl)
     local f = writer.Writer(mns, cl:full_name_get() .. "." .. fn:name_get())
     stats.check_method(fn, cl)
 
-    f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
-
-    f:write_h("Signature", 3)
+    f:write_h("Signature", 2)
     f:write_code(gen_method_sig(fn, cl))
     f:write_nl()
 
-    f:write_h("C signature", 3)
+    f:write_h("C signature", 2)
     f:write_code(gen_func_csig(fn, mns), "c")
     f:write_nl()
 
     local pars = fn:parameters_get()
     if #pars > 0 then
-        f:write_h("Parameters", 3)
+        f:write_h("Parameters", 2)
         build_parlist(f, pars)
         f:write_nl()
     end
 
-    f:write_h("Description", 3)
+    f:write_h("Description", 2)
     f:write_raw(fn:doc_get(fn.METHOD):full_get(nil, true))
     f:write_nl()
 
@@ -944,13 +938,11 @@ build_property = function(fn, cl)
     local gdoc = fn:doc_get(fn.PROP_GET)
     local sdoc = fn:doc_get(fn.PROP_SET)
 
-    f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
-
-    f:write_h("Signature", 3)
+    f:write_h("Signature", 2)
     f:write_code(gen_prop_sig(fn, cl))
     f:write_nl()
 
-    f:write_h("C signature", 3)
+    f:write_h("C signature", 2)
     local codes = {}
     if isget then
         codes[#codes + 1] = gen_func_csig(fn, pns, fn.PROP_GET)
@@ -970,7 +962,7 @@ build_property = function(fn, cl)
     build_vallist(f, pgvals, psvals, "Values")
 
     if isget and isset then
-        f:write_h("Description", 3)
+        f:write_h("Description", 2)
         if doc:exists() or (not gdoc:exists() and not sdoc:exists()) then
             f:write_raw(doc:full_get(nil, true))
         end
@@ -981,9 +973,9 @@ build_property = function(fn, cl)
 
     if isget and gdoc:exists() then
         if isset then
-            f:write_h("Getter", 4)
+            f:write_h("Getter", 3)
         else
-            f:write_h("Description", 3)
+            f:write_h("Description", 2)
         end
         f:write_raw(gdoc:full_get(nil, true))
         if isset and sdoc:exists() then
@@ -993,9 +985,9 @@ build_property = function(fn, cl)
 
     if isset and sdoc:exists() then
         if isget then
-            f:write_h("Setter", 4)
+            f:write_h("Setter", 3)
         else
-            f:write_h("Description", 3)
+            f:write_h("Description", 2)
         end
         f:write_raw(sdoc:full_get(nil, true))
     end
@@ -1008,9 +1000,7 @@ build_event = function(ev, cl)
     local evn = ev:nspaces_get(cl)
     local f = writer.Writer(evn, cl:full_name_get() .. ": " .. ev:name_get())
 
-    f:write_h(cl:full_name_get() .. ": " .. ev:name_get(), 2)
-
-    f:write_h("Signature", 3)
+    f:write_h("Signature", 2)
     local buf = { ev:name_get() }
 
     if ev:scope_get() == ev.scope.PRIVATE then
@@ -1039,13 +1029,13 @@ build_event = function(ev, cl)
     f:write_code(table.concat(buf))
     f:write_nl()
 
-    f:write_h("C signature", 3)
+    f:write_h("C signature", 2)
     local cn = ev:c_name_get()
     keyref.add(cn, evn, "c")
     f:write_code(dtree.type_cstr_get(etp, cn) .. ";", "c")
     f:write_nl()
 
-    f:write_h("Description", 3)
+    f:write_h("Description", 2)
     f:write_raw(ev:doc_get():full_get(nil, true))
     f:write_nl()
 
