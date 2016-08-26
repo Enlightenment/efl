@@ -772,7 +772,7 @@ _process_child_error_cb(void *data, Eina_Error err EINA_UNUSED)
    efl_unref(it_data->model);
    free(it_data);
 
-   WRN("could not get data from child Efl.Model");
+   ERR("Failed to access to a model property");
 
    lreq->item_total--;
 }
@@ -831,8 +831,14 @@ _process_children_cb(void *data, void *values)
           {
              EINA_ACCESSOR_FOREACH(children_accessor, i, child)
                {
-                  Eina_Promise *promises[7] = {NULL,};
+                  Eina_Promise *promises[7];
                   Eina_Promise *promise_all = NULL;
+                  const char *prop[6] = {
+                     "path", "filename", "is_dir", "size", "mtime", "mime_type"
+                  };
+                  unsigned int i;
+                  Eina_Error error;
+
                   it_data = calloc(1, sizeof(Elm_Fileselector_Item_Data));
                   if (!it_data)
                     {
@@ -843,12 +849,16 @@ _process_children_cb(void *data, void *values)
                   it_data->model = efl_ref(child);
                   it_data->user_data = lreq;
 
-                  promises[0] = efl_model_property_get(child, "path");
-                  promises[1] = efl_model_property_get(child, "filename");
-                  promises[2] = efl_model_property_get(child, "is_dir");
-                  promises[3] = efl_model_property_get(child, "size");
-                  promises[4] = efl_model_property_get(child, "mtime");
-                  promises[5] = efl_model_property_get(child, "mime_type");
+                  for (i = 0; i <= 5; i++)
+                    {
+                       promises[i] = efl_model_property_get(child, prop[i]);
+                       error = eina_promise_error_get(promises[i]);
+                       if (error)
+                         {
+                            ERR("Error with property \"%s\": %s", prop[i],
+                                eina_error_msg_get(error));
+                         }
+                    }
                   promises[6] = NULL;
 
                   promise_all = eina_promise_all(eina_carray_iterator_new((void**)promises));
