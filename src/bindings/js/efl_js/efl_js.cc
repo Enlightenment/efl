@@ -97,6 +97,8 @@ EAPI void register_standard(v8::Handle<v8::Object> global, v8::Isolate* isolate)
 }}}
 
 namespace efl { namespace canvas {
+EAPI void register_object(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_group(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_rectangle(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }}
 
@@ -322,7 +324,8 @@ EAPI void init(v8::Handle<v8::Object> exports)
         // evas::register_grid(exports, v8::Isolate::GetCurrent());
         // evas::register_image(exports, v8::Isolate::GetCurrent());
         // evas::register_line(exports, v8::Isolate::GetCurrent());
-        // evas::register_object(exports, v8::Isolate::GetCurrent());
+        efl::canvas::register_object(exports, v8::Isolate::GetCurrent());
+        efl::canvas::register_group(exports, v8::Isolate::GetCurrent());
         // evas::register_object_smart(exports, v8::Isolate::GetCurrent());
         // evas::register_out(exports, v8::Isolate::GetCurrent());
         efl::canvas::register_rectangle(exports, v8::Isolate::GetCurrent());
