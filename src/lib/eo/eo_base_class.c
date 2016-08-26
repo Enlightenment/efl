@@ -11,6 +11,9 @@
 
 static int event_freeze_count = 0;
 
+_Eo_Object *cached_object = NULL;
+Eo_Id cached_id = 0;
+
 typedef struct _Eo_Callback_Description Eo_Callback_Description;
 
 typedef struct

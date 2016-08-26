@@ -269,6 +269,9 @@ extern Generation_Counter _eo_generation_counter;
 /* Macro used for readability */
 #define TABLE_FROM_IDS _eo_ids_tables[mid_table_id][table_id]
 
+extern _Eo_Object *cached_object;
+extern Eo_Id cached_id;
+
 static inline _Eo_Object *
 _eo_obj_pointer_get(const Eo_Id obj_id)
 {
@@ -289,6 +292,10 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
         DBG("obj_id is not a valid object id.");
         return NULL;
      }
+   else if (obj_id == cached_id)
+     {
+        return cached_object;
+     }
 
    EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
@@ -297,7 +304,13 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
      {
         entry = &(TABLE_FROM_IDS->entries[entry_id]);
         if (entry && entry->active && (entry->generation == generation))
-          return entry->ptr;
+          {
+             // Cache the result of that lookup
+             cached_object = entry->ptr;
+             cached_id = obj_id;
+
+             return entry->ptr;
+          }
      }
 
    ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.",
@@ -477,6 +490,11 @@ _eo_id_release(const Eo_Id obj_id)
                   if (_current_table == table)
                     _current_table = NULL;
                }
+
+             // In case an object is destroyed, wipe out the cache
+             cached_id = 0;
+             cached_object = NULL;
+
              return;
           }
      }
