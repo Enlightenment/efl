@@ -15,5 +15,7 @@
 
 - (BOOL)isFullScreen;
 
+- (BOOL) requestResize: (NSSize) size;
+
 @end
 
