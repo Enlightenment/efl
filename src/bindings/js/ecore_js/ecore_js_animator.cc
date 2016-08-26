@@ -477,6 +477,7 @@ void register_animator_timeline_add(v8::Isolate *isolate,
                                     v8::Handle<v8::String> name)
 {
     using v8::Handle;
+    using v8::HandleScope;
     using v8::Local;
     using v8::Value;
     using v8::Undefined;
@@ -498,6 +499,7 @@ void register_animator_timeline_add(v8::Isolate *isolate,
               = reinterpret_cast<efl::eina::js::global_ref<Value>*>(data);
             auto o = persistent->handle();
             auto isolate = v8::Isolate::GetCurrent();
+            HandleScope handle_scope(isolate);
 
             Handle<Value> args = compatibility_new<Number>(isolate, pos);
 
