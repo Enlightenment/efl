@@ -63,6 +63,7 @@ EAPI int         efreet_mime_shutdown(void);
  * @param file The file to find the mime type
  * @return Mime type as a string or NULL if the file doesn't exist.
  * @brief Retrieve the mime type of a file
+ * @note The return value of this function is not guaranteed to be stringshared.
  */
 EAPI const char *efreet_mime_type_get(const char *file);
 
