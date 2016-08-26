@@ -1058,7 +1058,8 @@ getopt.parse {
         { nil, "graph-theme-light", false, help = "Use light builtin graph theme." },
         { nil, "disable-graphviz", false, help = "Disable graphviz usage." },
         { nil, "disable-notes", false, help = "Disable notes plugin usage." },
-        { nil, "disable-folded", false, help = "Disable folded plugin usage." }
+        { nil, "disable-folded", false, help = "Disable folded plugin usage." },
+        { nil, "disable-title", false, help = "Disable title plugin usage." }
     },
     error_cb = function(parser, msg)
         io.stderr:write(msg, "\n")
@@ -1096,7 +1097,8 @@ getopt.parse {
         local wfeatures = {
             notes = not opts["disable-notes"],
             folds = not opts["disable-folded"],
-            dot = not opts["disable-graphviz"]
+            dot = not opts["disable-graphviz"],
+            title = not opts["disable-title"]
         }
         writer.init(rootns, wfeatures)
         dutil.rm_root()

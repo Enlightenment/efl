@@ -58,8 +58,12 @@ M.Writer = util.Object:clone {
         dutil.mkdir_p(subs)
         self.file = assert(io.open(dutil.make_page(subs), "w"))
         if title then
-            self:write_raw("<title>", title, "</title>")
-            self:write_nl()
+            if M.has_feature("title") then
+                self:write_raw("<title>", title, "</title>")
+                self:write_nl()
+            else
+                self:write_h(title, 1)
+            end
         end
     end,
 
