@@ -151,7 +151,7 @@ _elm_code_widget_status_type_get(Elm_Code_Widget *widget, Elm_Code_Line *line, u
    if (pd->editable && pd->focussed && pd->cursor_line == line->number)
      return ELM_CODE_STATUS_TYPE_CURRENT;
 
-   if (pd->line_width_marker == col)
+   if (pd->line_width_marker == col-1)
      return ELM_CODE_WIDGET_COLOR_GUTTER_BG;
 
    return ELM_CODE_STATUS_TYPE_DEFAULT;
