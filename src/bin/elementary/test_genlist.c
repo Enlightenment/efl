@@ -1639,6 +1639,13 @@ test_genlist6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    api->itc2->func.state_get = gl4_state_get;
    api->itc2->func.del = gl4_del;
 
+   api->itc = elm_genlist_item_class_new();
+   api->itc->item_style = "indent";
+   api->itc->func.text_get = gl4_text_get;
+   api->itc->func.content_get = gl4_content_get;
+   api->itc->func.state_get = gl4_state_get;
+   api->itc->func.del = gl4_del;
+
    elm_genlist_item_append(gl, api->itc2,
                            (void *)1/* item data */, NULL/* parent */,
                            ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
@@ -1647,13 +1654,18 @@ test_genlist6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                            (void *)2/* item data */, NULL/* parent */,
                            ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, api->itc1,
+   elm_genlist_item_append(gl, api->itc,
                            (void *)3/* item data */, NULL/* parent */,
+                           ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
+                           NULL/* func data */);
+   elm_genlist_item_append(gl, api->itc1,
+                           (void *)4/* item data */, NULL/* parent */,
                            ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
                            NULL/* func data */);
 
    elm_genlist_item_class_free(api->itc1);
    elm_genlist_item_class_free(api->itc2);
+   elm_genlist_item_class_free(api->itc);
 
    evas_object_smart_callback_add(gl, "expand,request", gl4_exp_req, api);
    evas_object_smart_callback_add(gl, "contract,request", gl4_con_req, api);
