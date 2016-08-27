@@ -294,10 +294,15 @@ _obj_mouse_down(void *data,
                 Evas_Object *obj EINA_UNUSED,
                 void *event_info)
 {
+   Evas_Object *top;
+
    ELM_WIDGET_DATA_GET(data, sd);
    Evas_Event_Mouse_Down *ev = event_info;
-   if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
-     sd->still_in = EINA_TRUE;
+   if ((ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)) return;
+
+   top = elm_widget_top_get(data);
+   if (top && efl_isa(top, EFL_UI_WIN_CLASS)) _elm_win_focus_auto_hide(top);
+   sd->still_in = EINA_TRUE;
 }
 
 static void
@@ -4059,12 +4064,9 @@ elm_widget_focus_mouse_up_handle(Evas_Object *obj)
 EOLIAN static void
 _elm_widget_focus_mouse_up_handle(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
-   Evas_Object *top;
-
    if (!obj) return;
    if (!_is_focusable(obj)) return;
-   top = elm_widget_top_get(obj);
-   if (top && efl_isa(top, EFL_UI_WIN_CLASS)) _elm_win_focus_auto_hide(top);
+
    elm_widget_focus_steal(obj, NULL);
 }
 
