@@ -75,11 +75,11 @@ _file_chosen_path_then(void *data, void *v)
    if (!file) return;
    ELM_FILESELECTOR_ENTRY_DATA_GET(data, sd);
 
-   evas_object_smart_callback_call(data, "file,chosen", (void *) file);
-
    s = elm_entry_utf8_to_markup(file);
    elm_object_text_set(sd->entry, s);
    free(s);
+
+   evas_object_smart_callback_call(data, "file,chosen", (void *) file);
 }
 
 static void
