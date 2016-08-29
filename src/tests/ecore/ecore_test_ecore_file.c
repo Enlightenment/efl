@@ -32,35 +32,33 @@ _writeToFile(const char *filePath, char *text)
    fclose(f);
 }
 
-static Eina_Tmpstr*
+static char *
 get_tmp_dir(void)
 {
    Eina_Tmpstr *tmp_dir;
+   char *realpath;
 
    Eina_Bool created = eina_file_mkdtemp("EcoreFileTestXXXXXX", &tmp_dir);
+   if (!created) return NULL;
 
-   if (!created)
-     {
-        return NULL;
-     }
-
-   return tmp_dir;
+   realpath = ecore_file_realpath(tmp_dir);
+   eina_tmpstr_del(tmp_dir);
+   return realpath;
 }
 
-static Eina_Tmpstr*
+static char *
 get_tmp_file(void)
 {
    Eina_Tmpstr *tmp_file;
+   char *realpath;
 
    int fd = eina_file_mkstemp("EcoreFileTestXXXXXX", &tmp_file);
-
-   if (fd < 0)
-     {
-        return NULL;
-     }
-
+   if (fd < 0) return NULL;
    close(fd);
-   return tmp_file;
+
+   realpath = ecore_file_realpath(tmp_file);
+   eina_tmpstr_del(tmp_file);
+   return realpath;
 }
 
 static void
@@ -147,7 +145,7 @@ START_TEST(ecore_test_ecore_file_operations)
    Eina_Bool res;
    Eina_List *list;
 
-   tmpdir = eina_environment_tmp_get();
+   tmpdir = ecore_file_realpath(eina_environment_tmp_get());
 
    ret = ecore_file_init();
    fail_if(ret != 1);
