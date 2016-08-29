@@ -57,9 +57,9 @@ EAPI void elm_object_tooltip_move_freeze_push(Evas_Object *obj);
 EAPI void elm_object_tooltip_move_freeze_pop(Evas_Object *obj);
 
 /**
- * Get the movement freeze by 1
+ * Get the movement freeze count
  *
- * This gets the movement freeze count by one.
+ * This gets the movement freeze count.
  *
  * @param obj The tooltip's anchor object
  * @return The movement freeze count
