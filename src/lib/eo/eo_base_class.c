@@ -878,35 +878,67 @@ struct _Eo_Callback_Description
    Eina_Bool func_array : 1;
 };
 
+static int _eo_callbacks                  = 0;
+static Eina_Mempool *_eo_callback_mempool = NULL;
+
+static void
+_eo_callback_free(Eo_Callback_Description *cb)
+{
+   if (!cb) return;
+   eina_mempool_free(_eo_callback_mempool, cb);
+   _eo_callbacks--;
+   if (_eo_callbacks == 0)
+     {
+        eina_mempool_del(_eo_callback_mempool);
+        _eo_callback_mempool = NULL;
+     }
+}
+
+static Eo_Callback_Description *
+_eo_callback_new(void)
+{
+   Eo_Callback_Description *cb;
+   if (!_eo_callback_mempool)
+     {
+        _eo_callback_mempool = eina_mempool_add
+          ("chained_mempool",
+           NULL, NULL,
+           sizeof(Eo_Callback_Description), 256);
+        if (!_eo_callback_mempool) return NULL;
+     }
+   cb = eina_mempool_calloc(_eo_callback_mempool,
+                            sizeof(Eo_Callback_Description));
+   if (!cb)
+     {
+        if (_eo_callbacks == 0)
+          {
+             eina_mempool_del(_eo_callback_mempool);
+             _eo_callback_mempool = NULL;
+          }
+        return NULL;
+     }
+   _eo_callbacks++;
+   return cb;
+}
+
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
 _eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 {
    Eo_Callback_Description *itr, *pitr = NULL;
 
-   itr = pd->callbacks;
-
-   for ( ; itr; )
+   for (itr = pd->callbacks; itr; )
      {
         Eo_Callback_Description *titr = itr;
         itr = itr->next;
 
         if (titr == cb)
           {
-             if (pitr)
-               {
-                  pitr->next = titr->next;
-               }
-             else
-               {
-                  pd->callbacks = titr->next;
-               }
-             free(titr);
+             if (pitr) pitr->next = titr->next;
+             else pd->callbacks = titr->next;
+             _eo_callback_free(titr);
           }
-        else
-          {
-             pitr = titr;
-          }
+        else pitr = titr;
      }
 }
 
@@ -917,7 +949,7 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
    while (pd->callbacks)
      {
         Eo_Callback_Description *next = pd->callbacks->next;
-        free(pd->callbacks);
+        _eo_callback_free(pd->callbacks);
         pd->callbacks = next;
      }
 }
@@ -928,12 +960,10 @@ _eo_callbacks_clear(Efl_Object_Data *pd)
    Eo_Callback_Description *cb = NULL;
 
    /* If there are no deletions waiting. */
-   if (!pd->deletions_waiting)
-      return;
+   if (!pd->deletions_waiting) return;
 
    /* Abort if we are currently walking the list. */
-   if (pd->walking_list > 0)
-      return;
+   if (pd->walking_list > 0) return;
 
    pd->deletions_waiting = EINA_FALSE;
 
@@ -942,10 +972,7 @@ _eo_callbacks_clear(Efl_Object_Data *pd)
         Eo_Callback_Description *titr = cb;
         cb = cb->next;
 
-        if (titr->delete_me)
-          {
-             _eo_callback_remove(pd, titr);
-          }
+        if (titr->delete_me) _eo_callback_remove(pd, titr);
      }
 }
 
@@ -953,11 +980,10 @@ static void
 _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 {
    Eo_Callback_Description *itr, *itrp = NULL;
+
    for (itr = pd->callbacks; itr && (itr->priority < cb->priority);
          itr = itr->next)
-     {
-        itrp = itr;
-     }
+     itrp = itr;
 
    if (itrp)
      {
@@ -979,13 +1005,12 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
                     const void *user_data)
 {
    const Efl_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
-   Eo_Callback_Description *cb;
+   Eo_Callback_Description *cb = _eo_callback_new();
 
-   cb = calloc(1, sizeof(*cb));
    if (!cb || !desc || !func)
      {
         ERR("Tried adding callback with invalid values: cb: %p desc: %p func: %p\n", cb, desc, func);
-        free(cb);
+        _eo_callback_free(cb);
         return EINA_FALSE;
      }
    cb->items.item.desc = desc;
@@ -1005,9 +1030,9 @@ _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
                     Efl_Event_Cb func,
                     const void *user_data)
 {
-   Eo_Callback_Description *cb;
+   Eo_Callback_Description *cb, *pcb;
 
-   for (cb = pd->callbacks; cb; cb = cb->next)
+   for (pcb = NULL, cb = pd->callbacks; cb; pcb = cb, cb = cb->next)
      {
         if (!cb->delete_me && (cb->items.item.desc == desc) &&
               (cb->items.item.func == func) && (cb->func_data == user_data))
@@ -1015,8 +1040,14 @@ _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
              const Efl_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
 
              cb->delete_me = EINA_TRUE;
-             pd->deletions_waiting = EINA_TRUE;
-             _eo_callbacks_clear(pd);
+             if (pd->walking_list > 0)
+               pd->deletions_waiting = EINA_FALSE;
+             else
+               {
+                  if (pcb) pcb->next = cb->next;
+                  else pd->callbacks = cb->next;
+                  _eo_callback_free(cb);
+               }
              efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)arr);
              return EINA_TRUE;
           }
@@ -1032,13 +1063,12 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
                           Efl_Callback_Priority priority,
                           const void *user_data)
 {
-   Eo_Callback_Description *cb;
+   Eo_Callback_Description *cb = _eo_callback_new();
 
-   cb = calloc(1, sizeof(*cb));
    if (!cb || !array)
      {
         ERR("Tried adding array of callbacks with invalid values: cb: %p array: %p\n", cb, array);
-        free(cb);
+        _eo_callback_free(cb);
         return EINA_FALSE;
      }
    cb->func_data = (void *) user_data;
@@ -1057,17 +1087,22 @@ _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
                  const Efl_Callback_Array_Item *array,
                  const void *user_data)
 {
-   Eo_Callback_Description *cb;
+   Eo_Callback_Description *cb, *pcb;
 
-   for (cb = pd->callbacks; cb; cb = cb->next)
+   for (pcb = NULL, cb = pd->callbacks; cb; pcb = cb, cb = cb->next)
      {
         if (!cb->delete_me &&
               (cb->items.item_array == array) && (cb->func_data == user_data))
           {
              cb->delete_me = EINA_TRUE;
-             pd->deletions_waiting = EINA_TRUE;
-             _eo_callbacks_clear(pd);
-
+             if (pd->walking_list > 0)
+               pd->deletions_waiting = EINA_FALSE;
+             else
+               {
+                  if (pcb) pcb->next = cb->next;
+                  else pd->callbacks = cb->next;
+                  _eo_callback_free(cb);
+               }
              efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)array);
              return EINA_TRUE;
           }
