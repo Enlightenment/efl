@@ -2464,8 +2464,6 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    if ((!e->pointer.inside) && (e->pointer.mouse_grabbed == 0)) return;
 
    evt = ev->eo;
-   ev->cur.x = e->pointer.x;
-   ev->cur.y = e->pointer.y;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
