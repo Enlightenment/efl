@@ -522,6 +522,9 @@ static void
 _efl_net_dialer_http_curlm_remove(Efl_Net_Dialer_Http_Curlm *cm, Eo *o, CURL *handle)
 {
    CURLMcode r = curl_multi_remove_handle(cm->multi, handle);
+
+   DBG("removed handle cm=%p multi=%p easy=%p: %s",
+       cm, cm->multi, handle, curl_multi_strerror(r));
    if (r != CURLM_OK)
      {
         ERR("could not unregister curl multi handle %p: %s",
@@ -531,8 +534,15 @@ _efl_net_dialer_http_curlm_remove(Efl_Net_Dialer_Http_Curlm *cm, Eo *o, CURL *ha
    cm->users = eina_list_remove(cm->users, o);
    if (!cm->users)
      {
+        DBG("cleaned up cm=%p multi=%p", cm, cm->multi);
         curl_multi_cleanup(cm->multi);
         cm->multi = NULL;
+
+        if (cm->timer)
+          {
+             efl_del(cm->timer);
+             cm->timer = NULL;
+          }
      }
 }
 
