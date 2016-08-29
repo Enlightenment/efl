@@ -1378,25 +1378,65 @@ _efl_net_dialer_http_efl_io_sizer_size_get(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    return len;
 }
 
-EOLIAN static void
-_efl_net_dialer_http_method_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, const char *method)
+static void
+_efl_net_dialer_http_request_apply(Eo *o, Efl_Net_Dialer_Http_Data *pd, const char *method, Efl_Net_Dialer_Http_Primary_Mode primary_mode)
 {
    CURLcode r;
 
-   EINA_SAFETY_ON_NULL_RETURN(method);
+   if (primary_mode == EFL_NET_DIALER_HTTP_PRIMARY_MODE_UPLOAD)
+     {
+        if (strcasecmp(method, "PUT") == 0)
+          r = curl_easy_setopt(pd->easy, CURLOPT_PUT, 1L);
+        else
+          {
+             /* upload with non PUT method:
+              *  1 - set CURLOPT_UPLOAD = 1, this forces httpreq = PUT
+              *  2 - set CURLOPT_CUSTOMREQUEST = method, this overrides
+              *      the string to send.
+              */
+             r = curl_easy_setopt(pd->easy, CURLOPT_UPLOAD, 1L);
+             if (r != CURLE_OK)
+               ERR("dialer=%p could not configure upload mode: %s",
+                   o, curl_easy_strerror(r));
 
-   if (strcasecmp(method, "GET") == 0)
-     r = curl_easy_setopt(pd->easy, CURLOPT_HTTPGET, 1L);
-   else if (strcasecmp(method, "POST") == 0)
-     r = curl_easy_setopt(pd->easy, CURLOPT_POST, 1L);
-   else if (strcasecmp(method, "PUT") == 0)
-     r = curl_easy_setopt(pd->easy, CURLOPT_PUT, 1L);
+             r = curl_easy_setopt(pd->easy, CURLOPT_CUSTOMREQUEST, method);
+          }
+     }
    else
-     r = curl_easy_setopt(pd->easy, CURLOPT_CUSTOMREQUEST, method);
+     {
+        if (strcasecmp(method, "GET") == 0)
+          r = curl_easy_setopt(pd->easy, CURLOPT_HTTPGET, 1L);
+        else if (strcasecmp(method, "POST") == 0)
+          r = curl_easy_setopt(pd->easy, CURLOPT_POST, 1L);
+        else if (strcasecmp(method, "PUT") == 0)
+          {
+             if (primary_mode == EFL_NET_DIALER_HTTP_PRIMARY_MODE_AUTO)
+               r = curl_easy_setopt(pd->easy, CURLOPT_PUT, 1L);
+             else
+               {
+                  r = curl_easy_setopt(pd->easy, CURLOPT_UPLOAD, 0L);
+                  if (r != CURLE_OK)
+                    ERR("dialer=%p could not configure no-upload mode: %s",
+                        o, curl_easy_strerror(r));
+
+                  r = curl_easy_setopt(pd->easy, CURLOPT_CUSTOMREQUEST, method);
+               }
+          }
+        else
+          r = curl_easy_setopt(pd->easy, CURLOPT_CUSTOMREQUEST, method);
+     }
+
    if (r != CURLE_OK)
      ERR("dialer=%p could not configure HTTP method: %s: %s",
          o, method, curl_easy_strerror(r));
+}
 
+EOLIAN static void
+_efl_net_dialer_http_method_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, const char *method)
+{
+   EINA_SAFETY_ON_NULL_RETURN(method);
+
+   _efl_net_dialer_http_request_apply(o, pd, method, pd->primary_mode);
    eina_stringshare_replace(&pd->method, method);
 }
 
@@ -1407,8 +1447,9 @@ _efl_net_dialer_http_method_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_dialer_http_primary_mode_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, Efl_Net_Dialer_Http_Primary_Mode primary_mode)
+_efl_net_dialer_http_primary_mode_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, Efl_Net_Dialer_Http_Primary_Mode primary_mode)
 {
+   _efl_net_dialer_http_request_apply(o, pd, pd->method, primary_mode);
    pd->primary_mode = primary_mode;
 }
 
