@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-08-13 09:16+0900\n"
+"POT-Creation-Date: 2016-08-29 09:31+0900\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -235,28 +235,28 @@ msgstr "Müzik"
 msgid "Pictures"
 msgstr "Resimler"
 
-#: src/lib/efreet/efreet_base.c:182
+#: src/lib/efreet/efreet_base.c:183
 msgid "Videos"
 msgstr "Videolar"
 
-#: src/lib/elementary/elc_fileselector.c:1873
+#: src/lib/elementary/elc_fileselector.c:1894
 msgid "Up"
 msgstr "Yukarı"
 
-#: src/lib/elementary/elc_fileselector.c:1887
+#: src/lib/elementary/elc_fileselector.c:1908
 msgid "Home"
 msgstr "Ev"
 
-#: src/lib/elementary/elc_fileselector.c:1906
+#: src/lib/elementary/elc_fileselector.c:1927
 msgid "Search"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:2107
+#: src/lib/elementary/elc_fileselector.c:2128
 #: src/lib/elementary/elm_entry.c:1700 src/lib/elementary/elm_entry.c:1725
 msgid "Cancel"
 msgstr "İptal"
 
-#: src/lib/elementary/elc_fileselector.c:2117
+#: src/lib/elementary/elc_fileselector.c:2138
 msgid "OK"
 msgstr "Tamam"
 
@@ -302,7 +302,7 @@ msgid "Clicked"
 msgstr "Tıklanmış"
 
 #: src/lib/elementary/elm_button.c:278 src/lib/elementary/elm_check.c:212
-#: src/lib/elementary/elm_gengrid.c:1258 src/lib/elementary/elm_genlist.c:1715
+#: src/lib/elementary/elm_gengrid.c:1258 src/lib/elementary/elm_genlist.c:1716
 #: src/lib/elementary/elm_list.c:2176 src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:527
 #: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2378
@@ -439,7 +439,7 @@ msgstr "Yapıştır"
 msgid "Select"
 msgstr "Seç"
 
-#: src/lib/elementary/elm_entry.c:3791
+#: src/lib/elementary/elm_entry.c:3792
 msgid "Entry"
 msgstr "Girdi"
 
@@ -459,23 +459,23 @@ msgstr "fihrist öğesi"
 msgid "Label"
 msgstr "Etiket"
 
-#: src/lib/elementary/elm_panel.c:74
+#: src/lib/elementary/elm_panel.c:76
 msgid "state: opened"
 msgstr "durum: açık"
 
-#: src/lib/elementary/elm_panel.c:75
+#: src/lib/elementary/elm_panel.c:77
 msgid "state: closed"
 msgstr "durum: kapalı"
 
-#: src/lib/elementary/elm_panel.c:115
+#: src/lib/elementary/elm_panel.c:117
 msgid "A panel is open"
 msgstr ""
 
-#: src/lib/elementary/elm_panel.c:117
+#: src/lib/elementary/elm_panel.c:119
 msgid "Double tap to close panel menu"
 msgstr ""
 
-#: src/lib/elementary/elm_panel.c:169
+#: src/lib/elementary/elm_panel.c:171
 msgid "panel button"
 msgstr "panel düğmesi"
 
