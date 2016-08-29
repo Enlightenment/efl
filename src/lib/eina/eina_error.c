@@ -315,8 +315,13 @@ eina_error_msg_get(Eina_Error error)
 
 #ifdef HAVE_STRERROR_R
 # ifndef STRERROR_R_CHAR_P
-             if (strerror_r(error, buf, sizeof(buf)) == 0) /* XSI */
+             int ret;
+
+             ret = strerror_r(error, buf, sizeof(buf)); /* XSI */
+             if (ret == 0)
                str = buf;
+             else if (ret == EINVAL)
+               return NULL;
 # else /* STRERROR_R_CHAR_P */
              str = strerror_r(error, buf, sizeof(buf)); /* GNU */
 # endif /* ! STRERROR_R_CHAR_P */
