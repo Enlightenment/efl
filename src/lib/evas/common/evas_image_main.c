@@ -115,7 +115,9 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
                                      Evas_Colorspace cspace,
                                      /* inout */ int *l, int *r, int *t, int *b)
 {
-#define PAGE_SIZE (4 * 1024)
+#ifndef PAGE_SIZE
+# define PAGE_SIZE (4 * 1024)
+#endif
 #define HUGE_PAGE_SIZE (2 * 1024 * 1024)
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
 # define ALIGN_TO_PAGE(Siz) (((Siz / PAGE_SIZE) + (Siz % PAGE_SIZE ? 1 : 0)) * PAGE_SIZE)
