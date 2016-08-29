@@ -4417,22 +4417,42 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_
                        for (itr = plain_text; itr && *itr; ++itr)
                          *itr = '*';
                     }
-
-                  *text = strdup(plain_text);
+                  if (en->have_selection)
+                    {
+                       if (en->sel_start)
+                         {
+                            *text = strndup(plain_text,
+                                  evas_textblock_cursor_pos_get(en->sel_start));
+                         }
+                       else
+                         {
+                            *text = strdup(plain_text);
+                         }
+                    }
+                  else
+                    {
+                       *text = strdup(plain_text);
+                    }
 
                   free(plain_text);
                   plain_text = NULL;
                }
              else
-               *text = strdup("");
+               {
+                  *text = strdup("");
+               }
           }
         else
-          *text = strdup("");
+          {
+             *text = strdup("");
+          }
      }
 
    if (cursor_pos)
      {
-        if (en->cursor)
+        if (en->have_selection && en->sel_start)
+          *cursor_pos = evas_textblock_cursor_pos_get(en->sel_start);
+        else if (en->cursor)
           *cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
         else
           *cursor_pos = 0;
