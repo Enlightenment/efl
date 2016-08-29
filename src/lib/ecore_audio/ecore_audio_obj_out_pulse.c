@@ -220,12 +220,12 @@ static void _state_cb(pa_context *context, void *data EINA_UNUSED)
    if (state == PA_CONTEXT_READY) {
       DBG("PA context ready.");
       EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
-         efl_event_callback_legacy_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, NULL);
+         efl_event_callback_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, NULL);
       }
    } else if ((state == PA_CONTEXT_FAILED) || (state == PA_CONTEXT_TERMINATED)) {
       DBG("PA context fail.");
       EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
-         efl_event_callback_legacy_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL);
+         efl_event_callback_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL);
       }
    } else {
       DBG("Connection state %i", state);
@@ -251,7 +251,7 @@ static void _state_job(void *data EINA_UNUSED)
         }
         // the callback here can delete things in the list..
         EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
-           efl_event_callback_legacy_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL);
+           efl_event_callback_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL);
         }
         // now unref everything safely
         EINA_LIST_FOREACH_SAFE(class_vars.outputs, out, tmp, eo_obj) {

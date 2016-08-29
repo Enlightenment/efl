@@ -191,9 +191,9 @@ _test_object_event_emit(Eo* obj, Test_Object_Data *pd EINA_UNUSED)
    fprintf(stdout, "_test_object_event_emit()\n");
    fflush(stdout);
    static Test_Struct_Ex s = {42, TEST_ENUM_EX_THIRD};
-   efl_event_callback_legacy_call(obj, TEST_OBJECT_EVENT_TEST, NULL);
-   efl_event_callback_legacy_call(obj, TEST_OBJECT_EVENT_TEST_STRUCTARG, &s);
-   efl_event_callback_legacy_call(obj, TEST_OBJECT_EVENT_TEST_STRINGARG, "foo");
+   efl_event_callback_call(obj, TEST_OBJECT_EVENT_TEST, NULL);
+   efl_event_callback_call(obj, TEST_OBJECT_EVENT_TEST_STRUCTARG, &s);
+   efl_event_callback_call(obj, TEST_OBJECT_EVENT_TEST_STRINGARG, "foo");
 }
 
 EOLIAN static char *

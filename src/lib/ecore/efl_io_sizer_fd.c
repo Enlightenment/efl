@@ -31,7 +31,7 @@ _efl_io_sizer_fd_efl_io_sizer_resize(Eo *o, Efl_Io_Sizer_Fd_Data *pd EINA_UNUSED
 {
    int fd = efl_io_sizer_fd_sizer_fd_get(o);
    if (ftruncate(fd, size) < 0) return errno;
-   efl_event_callback_legacy_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
    return 0;
 }
 

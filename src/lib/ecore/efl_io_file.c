@@ -46,7 +46,7 @@ _efl_io_file_state_update(Eo *o, Efl_Io_File_Data *pd)
    if (pd->last_position != pos)
      {
         pd->last_position = pos;
-        efl_event_callback_legacy_call(o, EFL_IO_POSITIONER_EVENT_POSITION_CHANGED, NULL);
+        efl_event_callback_call(o, EFL_IO_POSITIONER_EVENT_POSITION_CHANGED, NULL);
      }
 }
 

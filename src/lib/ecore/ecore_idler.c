@@ -116,7 +116,7 @@ ecore_idler_del(Ecore_Idler *idler)
 void
 _ecore_idler_all_call(Eo *loop)
 {
-   efl_event_callback_legacy_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
+   efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
 }
 
 int

@@ -2873,7 +2873,7 @@ _efl_loop_arguments_send(void *data, void *value EINA_UNUSED)
    arge.initialization = initialization;
    initialization = EINA_FALSE;
 
-   efl_event_callback_legacy_call(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, &arge);
+   efl_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, &arge);
 
    _efl_loop_arguments_cleanup(arga);
 }

@@ -65,7 +65,7 @@ bench_eo_callbacks_call(int request)
         for (j = 0 ; j < (int) (distribution[i] * request) ; j++)
           {
              /* Miss finding the callbacks on purpose, so we measure worst case scenario. */
-             efl_event_callback_legacy_call(obj[i], SIMPLE_BAR, NULL);
+             efl_event_callback_call(obj[i], SIMPLE_BAR, NULL);
           }
      }
 

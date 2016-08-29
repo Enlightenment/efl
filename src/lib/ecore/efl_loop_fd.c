@@ -31,15 +31,15 @@ _efl_loop_fd_read_cb(void *data, Ecore_Fd_Handler *fd_handler)
 
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
-        efl_event_callback_legacy_call(obj, EFL_LOOP_FD_EVENT_READ, NULL);
+        efl_event_callback_call(obj, EFL_LOOP_FD_EVENT_READ, NULL);
      }
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
      {
-        efl_event_callback_legacy_call(obj, EFL_LOOP_FD_EVENT_WRITE, NULL);
+        efl_event_callback_call(obj, EFL_LOOP_FD_EVENT_WRITE, NULL);
      }
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
      {
-        efl_event_callback_legacy_call(obj, EFL_LOOP_FD_EVENT_ERROR, NULL);
+        efl_event_callback_call(obj, EFL_LOOP_FD_EVENT_ERROR, NULL);
      }
 
    return ECORE_CALLBACK_RENEW;

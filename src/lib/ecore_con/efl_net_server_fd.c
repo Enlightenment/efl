@@ -90,7 +90,7 @@ _efl_net_server_fd_event_read(void *data EINA_UNUSED, const Efl_Event *event)
      {
         Eina_Error err = errno;
         ERR("accept(%d): %s", fd, strerror(errno));
-        efl_event_callback_legacy_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
         return;
      }
 
@@ -107,7 +107,7 @@ _efl_net_server_fd_event_error(void *data EINA_UNUSED, const Efl_Event *event)
    Eina_Error err = EBADF;
 
    efl_net_server_serving_set(o, EINA_FALSE);
-   efl_event_callback_legacy_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
 }
 
 EOLIAN static Efl_Object *
@@ -205,7 +205,7 @@ _efl_net_server_fd_efl_net_server_serving_set(Eo *o EINA_UNUSED, Efl_Net_Server_
    if (pd->serving == serving) return;
    pd->serving = serving;
    if (serving)
-     efl_event_callback_legacy_call(o, EFL_NET_SERVER_EVENT_SERVING, NULL);
+     efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVING, NULL);
 }
 
 EOLIAN static Eina_Error

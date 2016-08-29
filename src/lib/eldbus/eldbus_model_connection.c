@@ -341,7 +341,7 @@ _eldbus_model_connection_names_list_cb(void *data,
    count = eina_list_count(pd->children_list);
 
    if (count)
-     efl_event_callback_legacy_call(pd->obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &count);
+     efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &count);
 
    pd->is_listed = EINA_TRUE;
 

@@ -620,7 +620,7 @@ _eldbus_model_proxy_property_get_all_cb(void *data,
           .changed_properties = changed_properties
         };
 
-        efl_event_callback_legacy_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+        efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
      }
 
    eina_array_free(changed_properties);
@@ -686,7 +686,7 @@ _eldbus_model_proxy_property_set_cb(void *data,
                          .changed_properties = pd->properties_array
                        };
 
-               efl_event_callback_legacy_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+               efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
                efl_model_property_changed_notify(pd->obj, property_set_data->property);
 
            }

@@ -658,7 +658,7 @@ _efl_loop_timer_expired_call(double when)
 
         efl_ref(timer->object);
         eina_evlog("+timer", timer, 0.0, NULL);
-        efl_event_callback_legacy_call(timer->object, EFL_LOOP_TIMER_EVENT_TICK, NULL);
+        efl_event_callback_call(timer->object, EFL_LOOP_TIMER_EVENT_TICK, NULL);
         eina_evlog("-timer", timer, 0.0, NULL);
 
         /* may have changed in recursive main loops */
