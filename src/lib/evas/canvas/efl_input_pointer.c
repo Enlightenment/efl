@@ -147,6 +147,7 @@ _efl_input_pointer_action_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 EOLIAN static void
 _efl_input_pointer_button_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int but)
 {
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_BUTTON);
    pd->button = but;
 }
 
@@ -161,6 +162,7 @@ _efl_input_pointer_button_pressed_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Dat
 {
    if (button < 0) return;
    if (button > 31) return;
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_BUTTONS_PRESSED);
    if (pressed)
      pd->button_flags |= (1 << button);
    else
@@ -178,6 +180,8 @@ _efl_input_pointer_button_pressed_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Dat
 EOLIAN static void
 _efl_input_pointer_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int x, int y)
 {
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_X);
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_Y);
    pd->cur.x = (double) x;
    pd->cur.y = (double) y;
 }
@@ -192,6 +196,8 @@ _efl_input_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd,
 EOLIAN static void
 _efl_input_pointer_previous_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int x, int y)
 {
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_PREVIOUS_X);
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_PREVIOUS_Y);
    pd->prev.x = (double) x;
    pd->prev.y = (double) y;
 }
@@ -264,6 +270,7 @@ _efl_input_pointer_efl_input_event_event_flags_get(Eo *obj EINA_UNUSED, Efl_Inpu
 EOLIAN static void
 _efl_input_pointer_efl_input_event_timestamp_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, double ms)
 {
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_TIMESTAMP);
    pd->timestamp = (unsigned int) ms;
 }
 
@@ -276,6 +283,7 @@ _efl_input_pointer_efl_input_event_timestamp_get(Eo *obj EINA_UNUSED, Efl_Input_
 EOLIAN static void
 _efl_input_pointer_wheel_direction_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Efl_Orient dir)
 {
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_WHEEL_DIRECTION);
    pd->wheel.dir = dir;
 }
 
@@ -288,6 +296,7 @@ _efl_input_pointer_wheel_direction_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Da
 EOLIAN static void
 _efl_input_pointer_wheel_delta_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int dist)
 {
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_WHEEL_DELTA);
    pd->wheel.z = dist;
 }
 
@@ -306,6 +315,7 @@ _efl_input_pointer_tool_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 EOLIAN static void
 _efl_input_pointer_tool_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int id)
 {
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_TOOL);
    pd->tool = id;
 }
 
@@ -465,6 +475,7 @@ _efl_input_pointer_value_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Ef
         return EINA_FALSE;
      }
 
+   _efl_input_value_mark(pd, key);
    return EINA_TRUE;
 }
 

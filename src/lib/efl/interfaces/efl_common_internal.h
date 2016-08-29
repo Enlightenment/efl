@@ -107,13 +107,15 @@ struct _Efl_Input_Hold_Data
 static inline Eina_Bool
 _efl_input_value_has(const Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
 {
-   return (pd->value_flags & (1 << (int) key)) != 0;
+   return (pd->value_flags & (1u << (int) key)) != 0;
 }
 
 static inline void
 _efl_input_value_mark(Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
 {
-   pd->value_flags |= (1 << (int) key);
+   pd->value_flags |= (1u << (int) key);
 }
+
+#define _efl_input_value_mask(key) (1u << (int) key)
 
 #endif

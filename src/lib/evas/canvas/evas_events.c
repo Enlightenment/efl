@@ -1209,6 +1209,13 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    Evas *eo_e;
    int addgrab = 0;
 
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_TOOL) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_BUTTON);
+
    if (!e || !ev) return;
 
    b = ev->button;
@@ -1232,6 +1239,8 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
    ev->tool = 0;
+   ev->action = EFL_POINTER_ACTION_DOWN;
+   ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
@@ -1408,6 +1417,13 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
    int event_id, b;
    Evas *eo_e;
 
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_TOOL) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_BUTTON);
+
    if (!e || !ev) return;
 
    b = ev->button;
@@ -1432,6 +1448,7 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
    ev->tool = 0;
+   ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
@@ -1552,6 +1569,12 @@ _canvas_event_feed_mouse_cancel_internal(Evas_Public_Data *e, Efl_Input_Pointer_
    Evas *eo_e;
    int i;
 
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_TOOL);
+
    if (!e || !ev) return;
    if (e->is_frozen) return;
 
@@ -1568,13 +1591,15 @@ _canvas_event_feed_mouse_cancel_internal(Evas_Public_Data *e, Efl_Input_Pointer_
           _canvas_event_feed_mouse_updown_legacy(eo_e, i + 1, 0, ev->timestamp, ev->data, 0);
      }
 
+   ev->action = EFL_POINTER_ACTION_CANCEL;
+   ev->value_flags |= value_flags;
    ev->event_flags = flags;
    EINA_LIST_FOREACH_SAFE(e->touch_points, l, ll, point)
      {
         if ((point->state == EVAS_TOUCH_POINT_DOWN) ||
             (point->state == EVAS_TOUCH_POINT_MOVE))
           {
-             ev->button = point->id;
+             ev->tool = point->id;
              ev->cur.x = point->x;
              ev->cur.y = point->y;
              _canvas_event_feed_multi_up_internal(e, ev);
@@ -1616,6 +1641,13 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
    Evas_Object *eo_obj;
    int event_id = 0;
 
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_WHEEL_DELTA) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_WHEEL_DIRECTION);
+
    if (e->is_frozen) return;
    e->last_timestamp = pe->timestamp;
 
@@ -1633,6 +1665,7 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
    ev->event_flags = e->default_event_flags;
    ev->device = efl_ref(_evas_device_top_get(eo_e));
    ev->action = EFL_POINTER_ACTION_WHEEL;
+   ev->value_flags |= value_flags;
 
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
@@ -1691,6 +1724,18 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    int event_id;
    int x, y, px, py;
 
+   // inform which values are valid
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_PREVIOUS_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_PREVIOUS_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_DX) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_DY) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_BUTTONS_PRESSED) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_TOOL);
+
    if (!e || !ev) return;
    if (e->is_frozen) return;
 
@@ -1714,6 +1759,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    ev->event_flags = e->default_event_flags;
    ev->pressed_buttons = e->pointer.button;
    ev->tool = 0;
+   ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
@@ -2073,6 +2119,13 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
    Evas_Object *eo_obj;
    int event_id;
 
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_BUTTONS_PRESSED) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_TOOL);
+
    if (!e || !ev) return;
 
    e->pointer.inside = 1;
@@ -2089,6 +2142,7 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
+   ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
    event_id = _evas_object_event_new();
@@ -2133,6 +2187,13 @@ _canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
    Evas_Object *eo_obj;
    int event_id;
 
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_BUTTONS_PRESSED) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_TOOL);
+
    if (!e || !ev) return;
    e->pointer.inside = 0;
 
@@ -2149,6 +2210,7 @@ _canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
+   ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
@@ -2231,6 +2293,13 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    int event_id;
    int addgrab = 0;
 
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_TOOL) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_BUTTON);
+
    if (!e || !ev) return;
 
    eo_e = e->evas;
@@ -2248,6 +2317,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
+   ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
@@ -2298,6 +2368,12 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
    Evas *eo_e;
    int event_id;
 
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_TOOL);
+
    if (!e || !ev) return;
 
    eo_e = e->evas;
@@ -2316,6 +2392,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
+   ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
    _evas_walk(e);
@@ -2453,6 +2530,13 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    Evas *eo_e;
    int event_id;
 
+   /* FIXME: Add previous x,y information (from evas touch point list) */
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_X) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
+         _efl_input_value_mask(EFL_INPUT_VALUE_TOOL);
+
    if (!e || !ev) return;
 
    eo_e = e->evas;
@@ -2468,6 +2552,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
    ev->action = EFL_POINTER_ACTION_MOVE;
+   ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
    point = ev->cur;
@@ -2886,6 +2971,9 @@ _canvas_event_feed_axis_update_internal(Evas_Public_Data *e, Efl_Input_Pointer_D
    int event_id = 0;
    Evas *eo_e;
 
+   static const int value_flags =
+         _efl_input_value_mask(EFL_INPUT_VALUE_TIMESTAMP);
+
    if (!e || !ev) return;
    if (e->is_frozen) return;
 
@@ -2893,6 +2981,7 @@ _canvas_event_feed_axis_update_internal(Evas_Public_Data *e, Efl_Input_Pointer_D
    e->last_timestamp = ev->timestamp;
 
    ev->action = EFL_POINTER_ACTION_AXIS;
+   ev->value_flags |= value_flags;
    event_id = _evas_object_event_new();
    evt = ev->eo;
 
