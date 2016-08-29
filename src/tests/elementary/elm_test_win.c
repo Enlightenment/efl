@@ -5,7 +5,9 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #include <Elementary.h>
-#include <Ecore_X.h>
+#ifdef HAVE_ELEMENTARY_X
+# include <Ecore_X.h>
+#endif
 #include "elm_suite.h"
 
 static const double _timeout1 = 0.1;
