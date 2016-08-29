@@ -125,14 +125,51 @@ emile_hmac_sha1(const void    *key,
 }
 
 EAPI Eina_Bool
-emile_binbuf_sha1(const char *key,
-                  unsigned int key_len,
-                  const Eina_Binbuf *data,
-                  unsigned char digest[20])
+emile_binbuf_hmac_sha1(const char *key,
+                       unsigned int key_len,
+                       const Eina_Binbuf *data,
+                       unsigned char digest[20])
 {
    return emile_hmac_sha1(key, key_len,
                           eina_binbuf_string_get(data), eina_binbuf_length_get(data),
                           digest);
+}
+
+static inline Eina_Bool
+emile_sha1(const void    *data,
+           size_t         data_len,
+           unsigned char *res)
+{
+   size_t hlen = gcry_md_get_algo_dlen(GCRY_MD_SHA1);
+   gcry_md_hd_t mdh;
+   unsigned char *hash;
+   gpg_error_t err;
+
+   err = gcry_md_open(&mdh, GCRY_MD_SHA1, 0);
+   if (err != GPG_ERR_NO_ERROR)
+     return EINA_FALSE;
+
+   gcry_md_write(mdh, data, data_len);
+
+   hash = gcry_md_read(mdh, GCRY_MD_SHA1);
+   if (!hash)
+     {
+        gcry_md_close(mdh);
+        return EINA_FALSE;
+     }
+
+   memcpy(res, hash, hlen);
+
+   gcry_md_close(mdh);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+emile_binbuf_sha1(const Eina_Binbuf * data, unsigned char digest[20])
+{
+   Eina_Slice slice = eina_binbuf_slice_get(data);
+   return emile_sha1(data.mem, data.len, digest);
 }
 
 EAPI Eina_Binbuf *

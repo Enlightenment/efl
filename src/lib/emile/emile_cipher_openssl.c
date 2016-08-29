@@ -58,15 +58,32 @@ _emile_cipher_init(void)
 }
 
 EAPI Eina_Bool
-emile_binbuf_sha1(const char *key,
-                  unsigned int key_len,
-                  const Eina_Binbuf *data,
-                  unsigned char digest[20])
+emile_binbuf_hmac_sha1(const char *key,
+                       unsigned int key_len,
+                       const Eina_Binbuf *data,
+                       unsigned char digest[20])
 {
    HMAC(EVP_sha1(),
         key, key_len,
         eina_binbuf_string_get(data), eina_binbuf_length_get(data),
         digest, NULL);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+emile_binbuf_sha1(const Eina_Binbuf * data, unsigned char digest[20])
+{
+   const EVP_MD *md = EVP_sha1();
+   Eina_Slice slice = eina_binbuf_slice_get(data);
+   EVP_MD_CTX ctx;
+
+   EVP_MD_CTX_init(&ctx);
+   EVP_DigestInit_ex(&ctx, md, NULL);
+
+   EVP_DigestUpdate(&ctx, slice.mem, slice.len);
+   EVP_DigestFinal_ex(&ctx, digest, NULL);
+
+   EVP_MD_CTX_cleanup(&ctx);
    return EINA_TRUE;
 }
 

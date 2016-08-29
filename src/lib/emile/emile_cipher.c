@@ -14,10 +14,16 @@ Eina_Bool _emile_cipher_init(void)
 }
 
 EAPI Eina_Bool
-emile_binbuf_sha1(const char *key EINA_UNUSED,
-                  unsigned int key_len EINA_UNUSED,
-                  const Eina_Binbuf *data EINA_UNUSED,
-                  unsigned char digest[20] EINA_UNUSED)
+emile_binbuf_hmac_sha1(const char *key EINA_UNUSED,
+                       unsigned int key_len EINA_UNUSED,
+                       const Eina_Binbuf *data EINA_UNUSED,
+                       unsigned char digest[20] EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+emile_binbuf_sha1(const Eina_Binbuf * data, unsigned char digest[20])
 {
    return EINA_FALSE;
 }

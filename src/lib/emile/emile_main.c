@@ -154,14 +154,14 @@ emile_pbkdf2_sha1(const char *key, unsigned int key_len, const unsigned char *sa
         memcpy(buf, salt, salt_len);
         memcpy(buf + salt_len, tab, 4);
 
-        if (!emile_binbuf_sha1(key, key_len, step1, digest))
+        if (!emile_binbuf_hmac_sha1(key, key_len, step1, digest))
           return EINA_FALSE;
 
         memcpy(p, digest, tmp_len);
 
         for (j = 1; j < iter; j++)
           {
-             if (!emile_binbuf_sha1(key, key_len, step2, digest))
+             if (!emile_binbuf_hmac_sha1(key, key_len, step2, digest))
                return EINA_FALSE;
              for (k = 0; k < tmp_len; k++)
                p[k] ^= digest[k];

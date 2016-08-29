@@ -102,7 +102,9 @@ typedef enum
   EMILE_WANT_WRITE = 3
 } Emile_Want_Type;
 
-EAPI Eina_Bool emile_binbuf_sha1(const char *key, unsigned int key_len, const Eina_Binbuf * data, unsigned char digest[20]);
+EAPI Eina_Bool emile_binbuf_hmac_sha1(const char *key, unsigned int key_len, const Eina_Binbuf * data, unsigned char digest[20]);
+
+EAPI Eina_Bool emile_binbuf_sha1(const Eina_Binbuf * data, unsigned char digest[20]);
 
 
 EAPI Emile_SSL *emile_cipher_server_listen(Emile_Cipher_Type t);
