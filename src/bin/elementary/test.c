@@ -1053,7 +1053,7 @@ colorclass_list_cb(void)
 
 static void
 _main_loop_death(void *data EINA_UNUSED,
-                 const Eo_Event *ev EINA_UNUSED)
+                 const Efl_Event *ev EINA_UNUSED)
 {
    struct elm_test *t;
 
@@ -1068,7 +1068,7 @@ _main_loop_death(void *data EINA_UNUSED,
  * efl_main and not be static - must be a visible symbol with EAPI_MAIN infront */
 EAPI_MAIN void
 efl_main(void *data EINA_UNUSED,
-         const Eo_Event *ev)
+         const Efl_Event *ev)
 {
    Efl_Loop_Arguments *arge = ev->info;
    Eina_Bool test_win_only = EINA_FALSE;

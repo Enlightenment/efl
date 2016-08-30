@@ -49,10 +49,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 static void _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
-static void _block_clicked_cb(void *data, const Eo_Event *event);
-static void _timeout_cb(void *data, const Eo_Event *event);
+static void _block_clicked_cb(void *data, const Efl_Event *event);
+static void _timeout_cb(void *data, const Efl_Event *event);
 
-static void _hide_effect_finished_cb(void *data, const Eo_Event *event);
+static void _hide_effect_finished_cb(void *data, const Efl_Event *event);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -102,20 +102,20 @@ _visuals_set(Evas_Object *obj)
 }
 
 static void
-_block_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_block_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    efl_event_callback_legacy_call(data, ELM_POPUP_EVENT_BLOCK_CLICKED, NULL);
 }
 
 static void
-_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_timeout_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    evas_object_hide(data);
    efl_event_callback_legacy_call(data, ELM_POPUP_EVENT_TIMEOUT, NULL);
 }
 
 static void
-_hide_effect_finished_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_hide_effect_finished_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    efl_event_callback_legacy_call(data, ELM_POPUP_EVENT_DISMISSED, NULL);
 }
@@ -879,7 +879,7 @@ _elm_popup_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Popup_Ite
 }
 
 static void
-_item_focused_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_item_focused_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
@@ -887,7 +887,7 @@ _item_focused_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_item_unfocused_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_item_unfocused_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 

@@ -11,7 +11,7 @@ static Eina_Bool echo = EINA_FALSE;
 /* NOTE: client i/o events are only used as debug, you can omit these */
 
 static void
-_client_can_read_changed(void *data EINA_UNUSED, const Eo_Event *event)
+_client_can_read_changed(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: client %s can_read=%d\n",
            efl_net_socket_address_remote_get(event->object),
@@ -19,7 +19,7 @@ _client_can_read_changed(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_client_can_write_changed(void *data EINA_UNUSED, const Eo_Event *event)
+_client_can_write_changed(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: client %s can_write=%d\n",
            efl_net_socket_address_remote_get(event->object),
@@ -27,14 +27,14 @@ _client_can_write_changed(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_client_eos(void *data EINA_UNUSED, const Eo_Event *event)
+_client_eos(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: client %s eos.\n",
            efl_net_socket_address_remote_get(event->object));
 }
 
 static void
-_client_closed(void *data EINA_UNUSED, const Eo_Event *event)
+_client_closed(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: client %s closed.\n",
            efl_net_socket_address_remote_get(event->object));
@@ -54,7 +54,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(client_cbs,
 /* echo copier is about the same socket, you can close it right away */
 
 static void
-_echo_copier_done(void *data EINA_UNUSED, const Eo_Event *event)
+_echo_copier_done(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *copier = event->object;
    fprintf(stderr, "INFO: echo copier done, close and del %p\n", copier);
@@ -63,7 +63,7 @@ _echo_copier_done(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_echo_copier_error(void *data EINA_UNUSED, const Eo_Event *event)
+_echo_copier_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *copier = event->object;
    const Eina_Error *perr = event->info;
@@ -128,7 +128,7 @@ _send_recv_done(Send_Recv_Data *d, Eo *copier)
 }
 
 static void
-_send_copier_done(void *data, const Eo_Event *event)
+_send_copier_done(void *data, const Efl_Event *event)
 {
    Eo *copier = event->object;
    Eo *buffer = efl_io_copier_source_get(copier);
@@ -153,7 +153,7 @@ _send_copier_done(void *data, const Eo_Event *event)
 }
 
 static void
-_send_copier_error(void *data, const Eo_Event *event)
+_send_copier_error(void *data, const Efl_Event *event)
 {
    Eo *copier = event->object;
    Eo *buffer = efl_io_copier_source_get(copier);
@@ -201,7 +201,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(send_copier_cbs,
                            { EFL_IO_COPIER_EVENT_ERROR, _send_copier_error});
 
 static void
-_recv_copier_done(void *data, const Eo_Event *event)
+_recv_copier_done(void *data, const Efl_Event *event)
 {
    Eo *copier = event->object;
    Eo *client = efl_io_copier_source_get(copier);
@@ -234,7 +234,7 @@ _recv_copier_done(void *data, const Eo_Event *event)
 }
 
 static void
-_recv_copier_error(void *data, const Eo_Event *event)
+_recv_copier_error(void *data, const Efl_Event *event)
 {
    Eo *copier = event->object;
    Eo *buffer = efl_io_copier_source_get(copier);
@@ -275,7 +275,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(recv_copier_cbs,
  * the string with socket identification.
  */
 static void
-_server_client_add(void *data EINA_UNUSED, const Eo_Event *event)
+_server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Net_Socket *client = event->info;
 
@@ -377,14 +377,14 @@ _server_client_add(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_server_client_rejected(void *data EINA_UNUSED, const Eo_Event *event)
+_server_client_rejected(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const char *client_address = event->info;
    fprintf(stderr, "INFO: rejected client %s\n", client_address);
 }
 
 static void
-_server_error(void *data EINA_UNUSED, const Eo_Event *event)
+_server_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "INFO: error: %d\n", *perr);
@@ -393,7 +393,7 @@ _server_error(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_server_serving(void *data EINA_UNUSED, const Eo_Event *event)
+_server_serving(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: serving at %s\n",
            efl_net_server_address_get(event->object));

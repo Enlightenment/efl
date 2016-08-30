@@ -35,20 +35,20 @@ typedef struct _Efl_Net_Socket_Fd_Data
 } Efl_Net_Socket_Fd_Data;
 
 static void
-_efl_net_socket_fd_event_read(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_net_socket_fd_event_read(void *data EINA_UNUSED, const Efl_Event *event)
 {
    efl_io_reader_can_read_set(event->object, EINA_TRUE);
    efl_io_reader_eos_set(event->object, EINA_FALSE);
 }
 
 static void
-_efl_net_socket_fd_event_write(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_net_socket_fd_event_write(void *data EINA_UNUSED, const Efl_Event *event)
 {
    efl_io_writer_can_write_set(event->object, EINA_TRUE);
 }
 
 static void
-_efl_net_socket_fd_event_error(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_net_socket_fd_event_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    efl_io_writer_can_write_set(event->object, EINA_FALSE);
    efl_io_reader_can_read_set(event->object, EINA_FALSE);

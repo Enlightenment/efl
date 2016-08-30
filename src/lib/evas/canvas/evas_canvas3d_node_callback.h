@@ -24,9 +24,9 @@ const Efl_Event_Description evas_canvas3d_node_private_event_desc[] =
 
 /*Private callbacks */
 static void
-_evas_canvas3d_node_private_callback_clicked(void *data, const Eo_Event *event);
+_evas_canvas3d_node_private_callback_clicked(void *data, const Efl_Event *event);
 static void
-_evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event);
+_evas_canvas3d_node_private_callback_collision(void *data, const Efl_Event *event);
 
 Efl_Event_Cb evas_canvas3d_node_private_callback_functions[] =
 {

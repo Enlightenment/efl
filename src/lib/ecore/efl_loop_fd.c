@@ -93,7 +93,7 @@ _efl_loop_fd_fd_file_get(Eo *obj EINA_UNUSED, Efl_Loop_Fd_Data *pd)
 }
 
 static void
-_check_fd_event_catcher_add(void *data, const Eo_Event *event)
+_check_fd_event_catcher_add(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
    Efl_Loop_Fd_Data *fd = data;
@@ -120,7 +120,7 @@ _check_fd_event_catcher_add(void *data, const Eo_Event *event)
 }
 
 static void
-_check_fd_event_catcher_del(void *data, const Eo_Event *event)
+_check_fd_event_catcher_del(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
    Efl_Loop_Fd_Data *fd = data;

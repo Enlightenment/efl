@@ -37,7 +37,7 @@ _command_next(void)
 }
 
 static void
-_receiver_data(void *data EINA_UNUSED, const Eo_Event *event)
+_receiver_data(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eina_Slice slice;
 
@@ -73,7 +73,7 @@ _receiver_data(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_dialer_connected(void *data EINA_UNUSED, const Eo_Event *event)
+_dialer_connected(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: connected to %s (%s)\n",
            efl_net_dialer_address_dial_get(event->object),
@@ -83,7 +83,7 @@ _dialer_connected(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_copier_done(void *data EINA_UNUSED, const Eo_Event *event)
+_copier_done(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: %s done\n", efl_name_get(event->object));
 
@@ -93,7 +93,7 @@ _copier_done(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_copier_error(void *data EINA_UNUSED, const Eo_Event *event)
+_copier_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "INFO: %s error: #%d '%s'\n",

@@ -224,7 +224,7 @@ _store_item_eval(void *data)
 }
 
 static void
-_store_genlist_item_realized(void *data, const Eo_Event *event)
+_store_genlist_item_realized(void *data, const Efl_Event *event)
 {
    Elm_Store *st = data;
    Elm_Object_Item *gli = event->info;
@@ -237,7 +237,7 @@ _store_genlist_item_realized(void *data, const Eo_Event *event)
 }
 
 static void
-_store_genlist_item_unrealized(void *data, const Eo_Event *event)
+_store_genlist_item_unrealized(void *data, const Efl_Event *event)
 {
    Elm_Store *st = data;
    Elm_Object_Item *gli = event->info;

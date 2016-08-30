@@ -18,7 +18,7 @@ static int test_count = 0;
 static int DONE_CALLED = 0xdeadbeef;
 
 static void
-_filter_direct_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_filter_direct_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eio_Filter_Direct_Data *event_info = event->info;
    char *last_slash = strrchr(event_info->info->path, '/');
@@ -40,7 +40,7 @@ _main_direct_cb(void *data, const Eina_File_Direct_Info *info)
 }
 
 static void
-_filter_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_filter_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eio_Filter_Name_Data *event_info = event->info;
    char *last_slash = strrchr(event_info->file, '/');

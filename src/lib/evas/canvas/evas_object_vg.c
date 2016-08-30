@@ -81,7 +81,7 @@ _evas_vg_root_node_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd)
 }
 
 static void
-_cleanup_reference(void *data, const Eo_Event *event EINA_UNUSED)
+_cleanup_reference(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_VG_Data *pd = data;
    Eo *renderer;

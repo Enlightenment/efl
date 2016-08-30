@@ -42,13 +42,13 @@ static Eina_Bool _key_action_spin(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_toggle(Evas_Object *obj, const char *params);
 
 static void
-_inc_dec_button_clicked_cb(void *data, const Eo_Event *event);
+_inc_dec_button_clicked_cb(void *data, const Efl_Event *event);
 static void
-_inc_dec_button_pressed_cb(void *data, const Eo_Event *event);
+_inc_dec_button_pressed_cb(void *data, const Efl_Event *event);
 static void
-_inc_dec_button_unpressed_cb(void *data, const Eo_Event *event);
+_inc_dec_button_unpressed_cb(void *data, const Efl_Event *event);
 static void
-_inc_dec_button_mouse_move_cb(void *data, const Eo_Event *event);
+_inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event);
 
 static const Elm_Action key_actions[] = {
    {"spin", _key_action_spin},
@@ -413,7 +413,7 @@ _entry_value_apply(Evas_Object *obj)
 }
 
 static void
-_entry_activated_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_entry_activated_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _entry_value_apply(data);
 }
@@ -831,7 +831,7 @@ _button_inc_dec_stop_cb(void *data,
 }
 
 static void
-_inc_dec_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_inc_dec_button_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
@@ -845,7 +845,7 @@ _inc_dec_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_inc_dec_button_pressed_cb(void *data, const Eo_Event *event)
+_inc_dec_button_pressed_cb(void *data, const Efl_Event *event)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
@@ -862,7 +862,7 @@ _inc_dec_button_pressed_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_inc_dec_button_unpressed_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_inc_dec_button_unpressed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
@@ -876,13 +876,13 @@ _inc_dec_button_unpressed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_text_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_text_button_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _toggle_entry(data);
 }
 
 static void
-_inc_dec_button_mouse_move_cb(void *data, const Eo_Event *event)
+_inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event)
 {
    Efl_Input_Pointer *ev = event->info;
    ELM_SPINNER_DATA_GET(data, sd);

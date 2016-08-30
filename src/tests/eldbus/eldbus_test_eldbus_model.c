@@ -65,7 +65,7 @@ _error_then_cb(void* data EINA_UNUSED, Eina_Error error)
 }
 
 static void
-_efl_event_quit_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_efl_event_quit_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    ecore_main_loop_quit();
    efl_event_callback_stop(event->object);

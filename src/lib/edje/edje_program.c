@@ -10,7 +10,7 @@ static double _edje_transition_duration_scale = 0;
 static Eina_Bool
 _edje_animator_cb(void *data)
 {
-   const Eo_Event event = { NULL, NULL, NULL };
+   const Efl_Event event = { NULL, NULL, NULL };
    _edje_timer_cb(data, &event);
    return EINA_TRUE;
 }

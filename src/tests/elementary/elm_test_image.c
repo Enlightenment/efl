@@ -35,7 +35,7 @@ START_TEST (elm_atspi_role_get)
 END_TEST
 
 static void
-_async_error_cb(void *data, const Eo_Event *event)
+_async_error_cb(void *data, const Efl_Event *event)
 {
    Test_Data *td = data;
    char path[PATH_MAX];
@@ -44,7 +44,7 @@ _async_error_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_async_opened_cb(void *data, const Eo_Event *event)
+_async_opened_cb(void *data, const Efl_Event *event)
 {
    Test_Data *td = data;
    const char *ff, *kk, *r1, *r2;

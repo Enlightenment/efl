@@ -8,13 +8,13 @@ static int outs = 0;
 static Eina_Bool outfail = EINA_FALSE;
 
 static void
-_play_finished(void *data EINA_UNUSED, const Eo_Event *event)
+_play_finished(void *data EINA_UNUSED, const Efl_Event *event)
 {
    efl_del(event->object);
 }
 
 static void
-_out_fail(void *data EINA_UNUSED, const Eo_Event *event)
+_out_fail(void *data EINA_UNUSED, const Efl_Event *event)
 {
    outfail = EINA_TRUE;
    efl_del(event->object);

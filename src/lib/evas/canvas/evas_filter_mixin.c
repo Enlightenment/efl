@@ -73,7 +73,7 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
 }
 
 static void
-_render_post_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_render_post_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *eo_obj = data;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);

@@ -47,7 +47,7 @@ _filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const Eina_Fil
 }
 
 static void
-_list_selected_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_list_selected_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
    Eo *child = event->info;
@@ -75,7 +75,7 @@ _promise_error(void *data, const Eina_Error err)
 }
 
 static void
-_tree_selected_cb(void *data, const Eo_Event *event)
+_tree_selected_cb(void *data, const Efl_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
    Eo *child = event->info;

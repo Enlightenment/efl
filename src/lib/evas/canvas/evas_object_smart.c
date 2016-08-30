@@ -64,7 +64,7 @@ struct _Evas_Object_Smart_Iterator
 };
 
 static void
-_eo_evas_smart_cb(void *data, const Eo_Event *event)
+_eo_evas_smart_cb(void *data, const Efl_Event *event)
 {
    _eo_evas_smart_cb_info *info = data;
    if (info->func) info->func(info->data, event->object, event->info);

@@ -767,7 +767,7 @@ _zoom_do(Evas_Object *obj,
 }
 
 static void
-_zoom_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_zoom_anim_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    double t;
    Evas_Object *obj = data;
@@ -1034,7 +1034,7 @@ _elm_photocam_elm_widget_event(Eo *obj, Elm_Photocam_Data *_pd EINA_UNUSED, Evas
 }
 
 static void
-_bounce_eval(void *data, const Eo_Event *event EINA_UNUSED)
+_bounce_eval(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *obj = data;
    ELM_PHOTOCAM_DATA_GET(obj, sd);
@@ -1950,7 +1950,7 @@ done:
    if (an)
      {
         // FIXME: If one day we do support partial animator in photocam, this would require change
-        Eo_Event event = {};
+        Efl_Event event = {};
         event.object = evas_object_evas_get(obj);
         _zoom_anim_cb(obj, &event);
         // FIXME: Unhandled.

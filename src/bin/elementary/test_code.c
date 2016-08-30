@@ -24,7 +24,7 @@ static void _append_line(Elm_Code_File *file, const char *line)
 }
 
 static void
-_elm_code_test_line_clicked_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_elm_code_test_line_clicked_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Elm_Code_Line *line;
 
@@ -34,7 +34,7 @@ _elm_code_test_line_clicked_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_elm_code_test_line_done_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_elm_code_test_line_done_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Elm_Code_Line *line;
 

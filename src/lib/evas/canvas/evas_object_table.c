@@ -249,14 +249,14 @@ _evas_object_table_option_del(Evas_Object *o)
 }
 
 static void
-_on_child_del(void *data, const Eo_Event *event)
+_on_child_del(void *data, const Efl_Event *event)
 {
    Evas_Object *table = data;
    evas_object_table_unpack(table, event->object);
 }
 
 static void
-_on_child_hints_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *table = data;
    EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(table, priv);

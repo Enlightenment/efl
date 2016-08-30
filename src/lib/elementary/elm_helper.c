@@ -39,7 +39,7 @@ elm_validator_regexp_status_get(Elm_Validator_Regexp *validator)
 }
 
 EAPI void
-elm_validator_regexp_helper(void *data, const Eo_Event *event)
+elm_validator_regexp_helper(void *data, const Efl_Event *event)
 {
    Elm_Validate_Content *vc = event->info;
    Elm_Validator_Regexp *validator = (Elm_Validator_Regexp *)data;

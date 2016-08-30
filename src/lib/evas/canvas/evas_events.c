@@ -3350,7 +3350,7 @@ _evas_canvas_event_down_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 static void
-_evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
+_evas_canvas_event_pointer_cb(void *data, const Efl_Event *event)
 {
    Efl_Input_Pointer_Data *ev = efl_data_scope_get(event->info, EFL_INPUT_POINTER_CLASS);
    Evas_Public_Data *e = data;
@@ -3422,7 +3422,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_evas_canvas_event_key_cb(void *data, const Eo_Event *event)
+_evas_canvas_event_key_cb(void *data, const Efl_Event *event)
 {
    Efl_Input_Key *evt = event->info;
    Evas_Public_Data *e = data;

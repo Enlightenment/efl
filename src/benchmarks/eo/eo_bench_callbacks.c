@@ -7,7 +7,7 @@
 #include "class_simple.h"
 
 static void
-_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
 }
 

@@ -42,7 +42,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static void _on_item_back_btn_clicked(void *data, const Eo_Event *event);
+static void _on_item_back_btn_clicked(void *data, const Efl_Event *event);
 
 static Eina_Bool _key_action_top_item_get(Evas_Object *obj, const char *params);
 
@@ -954,7 +954,7 @@ _elm_naviframe_elm_layout_sizing_eval(Eo *obj, Elm_Naviframe_Data *sd)
 }
 
 static void
-_on_item_back_btn_clicked(void *data, const Eo_Event *event)
+_on_item_back_btn_clicked(void *data, const Efl_Event *event)
 {
    /* Since edje has the event queue, clicked event could be happened
       multiple times on some heavy environment. This callback del will
@@ -1414,7 +1414,7 @@ _send_signal(Elm_Naviframe_Item_Data *it, const char *sig)
 }
 
 static void
-_deferred(void *data, const Eo_Event *event EINA_UNUSED)
+_deferred(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Naviframe_Data *nfd = data;
    Elm_Naviframe_Op *nfo;

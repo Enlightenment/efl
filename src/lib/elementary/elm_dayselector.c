@@ -195,7 +195,7 @@ _item_signal_emit_cb(void *data,
 }
 
 static void
-_item_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_item_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Dayselector_Item_Data *it = data;
 

@@ -5,14 +5,14 @@
 static int retval = EXIT_SUCCESS;
 
 static void
-_copier_done(void *data, const Eo_Event *event)
+_copier_done(void *data, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: done\n");
    ecore_main_loop_quit();
 }
 
 static void
-_copier_error(void *data, const Eo_Event *event)
+_copier_error(void *data, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "INFO: error: #%d '%s'\n", *perr, eina_error_msg_get(*perr));

@@ -59,13 +59,13 @@ _elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
                                       Evas_Coord x,
                                       Evas_Coord y);
 
-static void _elm_scroll_hold_animator(void *data, const Eo_Event *event);
-static void _elm_scroll_on_hold_animator(void *data, const Eo_Event *event);
-static void _elm_scroll_scroll_to_y_animator(void *data, const Eo_Event *event);
-static void _elm_scroll_scroll_to_x_animator(void *data, const Eo_Event *event);
-static void _elm_scroll_bounce_y_animator(void *data, const Eo_Event *event);
-static void _elm_scroll_bounce_x_animator(void *data, const Eo_Event *event);
-static void _elm_scroll_momentum_animator(void *data, const Eo_Event *event);
+static void _elm_scroll_hold_animator(void *data, const Efl_Event *event);
+static void _elm_scroll_on_hold_animator(void *data, const Efl_Event *event);
+static void _elm_scroll_scroll_to_y_animator(void *data, const Efl_Event *event);
+static void _elm_scroll_scroll_to_x_animator(void *data, const Efl_Event *event);
+static void _elm_scroll_bounce_y_animator(void *data, const Efl_Event *event);
+static void _elm_scroll_bounce_x_animator(void *data, const Efl_Event *event);
+static void _elm_scroll_momentum_animator(void *data, const Efl_Event *event);
 
 static double
 _round(double value, int pos)
@@ -1302,7 +1302,7 @@ _elm_scroll_momentum_end(Elm_Scrollable_Smart_Interface_Data *sid)
 }
 
 static void
-_elm_scroll_bounce_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_scroll_bounce_x_animator(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(data, sid);
    Evas_Coord x, y, dx, w, odx, ed, md;
@@ -1356,7 +1356,7 @@ _elm_scroll_bounce_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_elm_scroll_bounce_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_scroll_bounce_y_animator(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(data, sid);
    Evas_Coord x, y, dy, h, ody, ed, md;
@@ -2087,7 +2087,7 @@ _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid)
 }
 
 static void
-_elm_scroll_momentum_animator(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_scroll_momentum_animator(void *data, const Efl_Event *event EINA_UNUSED)
 {
    double t, at, dt, p, r;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
@@ -2264,7 +2264,7 @@ _elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid,
 }
 
 static void
-_elm_scroll_scroll_to_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_scroll_scroll_to_x_animator(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Coord px, py;
@@ -2301,7 +2301,7 @@ _elm_scroll_scroll_to_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_elm_scroll_scroll_to_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_scroll_scroll_to_y_animator(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Coord px, py;
@@ -3097,7 +3097,7 @@ _elm_scroll_hold_enterer(void *data)
 }
 
 static void
-_elm_scroll_hold_animator(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_scroll_hold_animator(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -3107,7 +3107,7 @@ _elm_scroll_hold_animator(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_elm_scroll_on_hold_animator(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_scroll_on_hold_animator(void *data, const Efl_Event *event EINA_UNUSED)
 {
    double t, td;
    double vx, vy;
@@ -3812,7 +3812,7 @@ _elm_scroll_pan_resized_cb(void *data,
 
 /* even external pan objects get this */
 static void
-_elm_scroll_pan_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_scroll_pan_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Coord w = 0, h = 0;
    Elm_Scrollable_Smart_Interface_Data *sid = data;

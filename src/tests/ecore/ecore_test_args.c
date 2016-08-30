@@ -11,7 +11,7 @@ static const char *args[] = {
 };
 
 static void
-_cb_args1(void *data EINA_UNUSED, const Eo_Event *event)
+_cb_args1(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Loop_Arguments *arge = event->info;
    unsigned int i;
@@ -36,7 +36,7 @@ START_TEST(ecore_test_args1)
 END_TEST
 
 static void
-_cb_args2(void *data EINA_UNUSED, const Eo_Event *event)
+_cb_args2(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Loop_Arguments *arge = event->info;
 
@@ -61,7 +61,7 @@ START_TEST(ecore_test_args2)
 END_TEST
 
 static void
-_cb_args3(void *data EINA_UNUSED, const Eo_Event *event)
+_cb_args3(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Loop_Arguments *arge = event->info;
 

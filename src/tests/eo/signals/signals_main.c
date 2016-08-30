@@ -10,12 +10,12 @@
 static int cb_count = 0;
 
 static void
-_null_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_null_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
 }
 
 static void
-_a_changed_cb(void *data, const Eo_Event *event)
+_a_changed_cb(void *data, const Efl_Event *event)
 {
    int new_a = *((int *) event->info);
    printf("%s event_info:'%d' data:'%d'\n", __func__, new_a, (int) (intptr_t) data);
@@ -34,7 +34,7 @@ static Eina_Bool inside = EINA_FALSE;
 static int called = 0;
 
 static void
-_restart_1_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_restart_1_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    fprintf(stderr, "restart 1 inside: %i\n", inside);
    fail_if(!inside);
@@ -43,7 +43,7 @@ _restart_1_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_restart_2_cb(void *data, const Eo_Event *event)
+_restart_2_cb(void *data, const Efl_Event *event)
 {
    fprintf(stderr, "restart 2 inside: %i\n", inside);
    fail_if(inside);

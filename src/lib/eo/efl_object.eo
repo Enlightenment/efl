@@ -8,7 +8,7 @@ struct Efl.Event.Description {
     restart: bool; [[Eina_True if when the event is triggered again from a callback, it should start from where it was]]
 }
 
-struct Eo.Event {
+struct Efl.Event {
      [[Parameter passed in event callbacks holding extra event parameters]]
      object: Efl.Object; [[The object the event was called on.]]
      desc: ref(const(Efl.Event.Description)); [[The event description.]]

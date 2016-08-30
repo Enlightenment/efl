@@ -21,7 +21,7 @@ struct _Ector_Renderer_GL_Shape_Data
 };
 
 static void
-_ector_renderer_gl_shape_path_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_ector_renderer_gl_shape_path_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Ector_Renderer_GL_Shape_Data *pd = data;
 

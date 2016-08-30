@@ -11,14 +11,14 @@
 #define MY_CLASS EFL_IO_STDIN_CLASS
 
 static void
-_efl_io_stdin_event_read(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_io_stdin_event_read(void *data EINA_UNUSED, const Efl_Event *event)
 {
    efl_io_reader_can_read_set(event->object, EINA_TRUE);
    efl_io_reader_eos_set(event->object, EINA_FALSE);
 }
 
 static void
-_efl_io_stdin_event_error(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_io_stdin_event_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    efl_io_reader_can_read_set(event->object, EINA_FALSE);
    efl_io_reader_eos_set(event->object, EINA_TRUE);

@@ -153,7 +153,7 @@ _evas_event_efl_event_info_type(Evas_Callback_Type type)
 }
 
 static void
-_eo_evas_object_cb(void *data, const Eo_Event *event)
+_eo_evas_object_cb(void *data, const Efl_Event *event)
 {
    Evas_Event_Flags *event_flags = NULL, evflags = EVAS_EVENT_FLAG_NONE;
    Efl_Input_Event *efl_event_info = event->info;
@@ -195,7 +195,7 @@ _eo_evas_object_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_eo_evas_cb(void *data, const Eo_Event *event)
+_eo_evas_cb(void *data, const Efl_Event *event)
 {
    _eo_evas_cb_info *info = data;
    if (info->func) info->func(info->data, event->object, event->info);
@@ -585,7 +585,7 @@ evas_post_event_callback_remove_full(Evas *eo_e, Evas_Object_Event_Post_Cb func,
 }
 
 static void
-_animator_repeater(void *data, const Eo_Event *event)
+_animator_repeater(void *data, const Efl_Event *event)
 {
    Evas_Object_Protected_Data *obj = data;
 
@@ -594,7 +594,7 @@ _animator_repeater(void *data, const Eo_Event *event)
 }
 
 static void
-_check_event_catcher_add(void *data, const Eo_Event *event)
+_check_event_catcher_add(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
    Evas_Object_Protected_Data *obj = data;
@@ -619,7 +619,7 @@ _check_event_catcher_add(void *data, const Eo_Event *event)
 }
 
 static void
-_check_event_catcher_del(void *data, const Eo_Event *event)
+_check_event_catcher_del(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
    Evas_Object_Protected_Data *obj = data;

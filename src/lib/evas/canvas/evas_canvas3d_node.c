@@ -51,7 +51,7 @@ _generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_Canvas3D_
 }
 
 static void
-_evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event)
+_evas_canvas3d_node_private_callback_collision(void *data, const Efl_Event *event)
 {
    Eina_List *collision_list = NULL, *l = NULL;
    Evas_Canvas3D_Node *target_node = NULL, *n = NULL;
@@ -82,7 +82,7 @@ _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event
      }
 }
 static void
-_evas_canvas3d_node_private_callback_clicked(void *data EINA_UNUSED, const Eo_Event *event)
+_evas_canvas3d_node_private_callback_clicked(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eina_Bool ret = EINA_FALSE;
    const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get("clicked");

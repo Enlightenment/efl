@@ -34,7 +34,7 @@ _diskselector_item_free_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event
 }
 
 static void
-_ctxpopup_dismissed_cb(void *data, const Eo_Event *event)
+_ctxpopup_dismissed_cb(void *data, const Efl_Event *event)
 {
    Ctxpopup_Module_Data *ctx_mod;
    ctx_mod = (Ctxpopup_Module_Data *)data;
@@ -85,7 +85,7 @@ _field_value_get(struct tm *tim, Elm_Datetime_Field_Type  field_type)
 }
 
 static void
-_diskselector_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_diskselector_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    DiskItem_Data *disk_data;
    struct tm curr_time;
@@ -109,7 +109,7 @@ _diskselector_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_ampm_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_ampm_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Ctxpopup_Module_Data *ctx_mod;
    struct tm curr_time;
@@ -128,7 +128,7 @@ _ampm_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_field_clicked_cb(void *data, const Eo_Event *event)
+_field_clicked_cb(void *data, const Efl_Event *event)
 {
    Ctxpopup_Module_Data *ctx_mod;
    Evas_Object *diskselector;

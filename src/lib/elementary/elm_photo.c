@@ -235,7 +235,7 @@ _elm_photo_internal_image_follow(Evas_Object *obj)
 }
 
 static void
-_on_thumb_done(void *data, const Eo_Event *event EINA_UNUSED)
+_on_thumb_done(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _elm_photo_internal_image_follow(data);
 }

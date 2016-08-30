@@ -60,13 +60,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    { NULL, NULL }
 };
 
-static void _update_frame(void *data, const Eo_Event *event);
-static void _update_slider(void *data, const Eo_Event *event);
-static void _play_started(void *data, const Eo_Event *event);
-static void _play_finished(void *data, const Eo_Event *event);
-static void _update_position(void *data, const Eo_Event *event);
-static void _drag_start(void *data, const Eo_Event *event);
-static void _drag_stop(void *data, const Eo_Event *event);
+static void _update_frame(void *data, const Efl_Event *event);
+static void _update_slider(void *data, const Efl_Event *event);
+static void _play_started(void *data, const Efl_Event *event);
+static void _play_finished(void *data, const Efl_Event *event);
+static void _update_position(void *data, const Efl_Event *event);
+static void _drag_start(void *data, const Efl_Event *event);
+static void _drag_stop(void *data, const Efl_Event *event);
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_play(Evas_Object *obj, const char *params);
@@ -238,7 +238,7 @@ _elm_player_elm_layout_sizing_eval(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
 }
 
 static void
-_update_slider(void *data, const Eo_Event *event EINA_UNUSED)
+_update_slider(void *data, const Efl_Event *event EINA_UNUSED)
 {
    double pos, length;
    Eina_Bool seekable;
@@ -259,7 +259,7 @@ _update_slider(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_update_frame(void *data, const Eo_Event *event)
+_update_frame(void *data, const Efl_Event *event)
 {
    ELM_PLAYER_DATA_GET(data, sd);
    if (!sd) return;
@@ -267,7 +267,7 @@ _update_frame(void *data, const Eo_Event *event)
 }
 
 static void
-_update_position(void *data, const Eo_Event *event EINA_UNUSED)
+_update_position(void *data, const Efl_Event *event EINA_UNUSED)
 {
    double pos;
    ELM_PLAYER_DATA_GET(data, sd);
@@ -278,21 +278,21 @@ _update_position(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_drag_start(void *data, const Eo_Event *event EINA_UNUSED)
+_drag_start(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
    sd->dragging = EINA_TRUE;
 }
 
 static void
-_drag_stop(void *data, const Eo_Event *event EINA_UNUSED)
+_drag_stop(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
    sd->dragging = EINA_FALSE;
 }
 
 static void
-_update_volume(void *data, const Eo_Event *event EINA_UNUSED)
+_update_volume(void *data, const Efl_Event *event EINA_UNUSED)
 {
    double vol;
    ELM_PLAYER_DATA_GET(data, sd);
@@ -303,7 +303,7 @@ _update_volume(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_forward(void *data, const Eo_Event *event EINA_UNUSED)
+_forward(void *data, const Efl_Event *event EINA_UNUSED)
 {
    double pos, length;
    ELM_PLAYER_DATA_GET(data, sd);
@@ -319,21 +319,21 @@ _forward(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_info(void *data, const Eo_Event *event EINA_UNUSED)
+_info(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,info", "elm");
    efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_INFO_CLICKED, NULL);
 }
 
 static void
-_next(void *data, const Eo_Event *event EINA_UNUSED)
+_next(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,next", "elm");
    efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_NEXT_CLICKED, NULL);
 }
 
 static void
-_pause(void *data, const Eo_Event *event EINA_UNUSED)
+_pause(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
@@ -343,7 +343,7 @@ _pause(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_play(void *data, const Eo_Event *event EINA_UNUSED)
+_play(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
@@ -353,14 +353,14 @@ _play(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_prev(void *data, const Eo_Event *event EINA_UNUSED)
+_prev(void *data, const Efl_Event *event EINA_UNUSED)
 {
    efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_PREV_CLICKED, NULL);
    elm_layout_signal_emit(data, "elm,button,prev", "elm");
 }
 
 static void
-_rewind(void *data, const Eo_Event *event EINA_UNUSED)
+_rewind(void *data, const Efl_Event *event EINA_UNUSED)
 {
    double pos;
    ELM_PLAYER_DATA_GET(data, sd);
@@ -375,14 +375,14 @@ _rewind(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_stop(void *data, const Eo_Event *event EINA_UNUSED)
+_stop(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,stop", "elm");
    efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_QUALITY_CLICKED, NULL);
 }
 
 static void
-_eject(void *data, const Eo_Event *event EINA_UNUSED)
+_eject(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
@@ -409,7 +409,7 @@ _mute_toggle(Evas_Object *obj)
 }
 
 static void
-_volume(void *data, const Eo_Event *event EINA_UNUSED)
+_volume(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,volume", "elm");
    _mute_toggle(data);
@@ -417,7 +417,7 @@ _volume(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_mute(void *data, const Eo_Event *event EINA_UNUSED)
+_mute(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,mute", "elm");
    _mute_toggle(data);
@@ -425,13 +425,13 @@ _mute(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_play_started(void *data, const Eo_Event *event EINA_UNUSED)
+_play_started(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,player,play", "elm");
 }
 
 static void
-_play_finished(void *data, const Eo_Event *event EINA_UNUSED)
+_play_finished(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,player,pause", "elm");
 }

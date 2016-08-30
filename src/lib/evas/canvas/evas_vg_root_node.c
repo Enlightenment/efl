@@ -33,7 +33,7 @@ _evas_vg_root_node_render_pre(Eo *obj EINA_UNUSED,
 }
 
 static void
-_evas_vg_root_node_changed(void *data, const Eo_Event *event)
+_evas_vg_root_node_changed(void *data, const Efl_Event *event)
 {
    Efl_VG_Root_Node_Data *pd = data;
    Efl_VG_Data *bd = efl_data_scope_get(event->object, EFL_VG_CLASS);

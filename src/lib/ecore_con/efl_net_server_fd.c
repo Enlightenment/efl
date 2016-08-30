@@ -59,7 +59,7 @@ efl_net_accept4(int fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool clo
 }
 
 static void
-_efl_net_server_fd_event_read(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_net_server_fd_event_read(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *o = event->object;
    unsigned int count, limit;
@@ -101,7 +101,7 @@ _efl_net_server_fd_event_read(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_efl_net_server_fd_event_error(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_net_server_fd_event_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *o = event->object;
    Eina_Error err = EBADF;

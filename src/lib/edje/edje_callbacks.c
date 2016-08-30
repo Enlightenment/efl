@@ -4,7 +4,7 @@
 #include "interfaces/efl_common_internal.h"
 
 static void
-_edje_hold_signal_cb(void *data, const Eo_Event *event)
+_edje_hold_signal_cb(void *data, const Efl_Event *event)
 {
    Efl_Input_Hold *ev;
    Edje *ed;
@@ -21,7 +21,7 @@ _edje_hold_signal_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_edje_focus_in_signal_cb(void *data, const Eo_Event *event)
+_edje_focus_in_signal_cb(void *data, const Efl_Event *event)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -35,7 +35,7 @@ _edje_focus_in_signal_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_edje_focus_out_signal_cb(void *data, const Eo_Event *event)
+_edje_focus_out_signal_cb(void *data, const Efl_Event *event)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -49,7 +49,7 @@ _edje_focus_out_signal_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
+_edje_mouse_in_signal_cb(void *data, const Efl_Event *event)
 {
    Efl_Input_Pointer_Data *ev;
    Edje *ed;
@@ -68,7 +68,7 @@ _edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
+_edje_mouse_out_signal_cb(void *data, const Efl_Event *event)
 {
    Efl_Input_Pointer_Data *ev;
    Edje *ed;
@@ -87,7 +87,7 @@ _edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
+_edje_mouse_down_signal_cb(void *data, const Efl_Event *event)
 {
    Efl_Input_Pointer_Data *ev;
    Edje *ed;
@@ -156,7 +156,7 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
+_edje_mouse_up_signal_cb(void *data, const Efl_Event *event)
 {
    Efl_Input_Pointer_Data *ev;
    Edje *ed;
@@ -229,7 +229,7 @@ _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
+_edje_mouse_move_signal_cb(void *data, const Efl_Event *event)
 {
    Efl_Input_Pointer_Data *ev;
    Edje *ed;
@@ -336,7 +336,7 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_edje_mouse_wheel_signal_cb(void *data, const Eo_Event *event)
+_edje_mouse_wheel_signal_cb(void *data, const Efl_Event *event)
 {
    Efl_Input_Pointer_Data *ev;
    Edje *ed;
@@ -361,7 +361,7 @@ _edje_mouse_wheel_signal_cb(void *data, const Eo_Event *event)
 }
 
 void
-_edje_timer_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_edje_timer_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    double t;
    Eina_List *l;

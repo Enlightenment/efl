@@ -253,7 +253,7 @@ _test_time_cb(void *data)
 }
 
 static void
-_test_death_cb(void *data, const Eo_Event *ev EINA_UNUSED)
+_test_death_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eina_Bool *die = data;
 
@@ -261,7 +261,7 @@ _test_death_cb(void *data, const Eo_Event *ev EINA_UNUSED)
 }
 
 static void
-_test_run_cb(void *data, const Eo_Event *ev EINA_UNUSED)
+_test_run_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    _test_time_cb(data);
 }

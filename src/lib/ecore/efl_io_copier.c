@@ -285,7 +285,7 @@ _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd)
 }
 
 static void
-_efl_io_copier_source_can_read_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_io_copier_source_can_read_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *o = data;
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);
@@ -298,7 +298,7 @@ _efl_io_copier_source_can_read_changed(void *data, const Eo_Event *event EINA_UN
 }
 
 static void
-_efl_io_copier_source_eos(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_io_copier_source_eos(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *o = data;
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);
@@ -324,7 +324,7 @@ _efl_io_copier_source_size_apply(Eo *o, Efl_Io_Copier_Data *pd)
 }
 
 static void
-_efl_io_copier_source_resized(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_io_copier_source_resized(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *o = data;
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);
@@ -332,7 +332,7 @@ _efl_io_copier_source_resized(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_efl_io_copier_source_closed(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_io_copier_source_closed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *o = data;
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);
@@ -398,7 +398,7 @@ _efl_io_copier_source_set(Eo *o, Efl_Io_Copier_Data *pd, Efl_Io_Reader *source)
 }
 
 static void
-_efl_io_copier_destination_can_write_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_io_copier_destination_can_write_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *o = data;
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);
@@ -411,7 +411,7 @@ _efl_io_copier_destination_can_write_changed(void *data, const Eo_Event *event E
 }
 
 static void
-_efl_io_copier_destination_closed(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_io_copier_destination_closed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *o = data;
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);

@@ -11,7 +11,7 @@
 static int cb_called = EINA_FALSE;
 
 static void
-_a_changed_cb(void *data, const Eo_Event *event)
+_a_changed_cb(void *data, const Efl_Event *event)
 {
    int new_a = *((int *) event->info);
    printf("%s event_info:'%d' data:'%s'\n", __func__, new_a, (const char *) data);

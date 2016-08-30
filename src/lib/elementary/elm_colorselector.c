@@ -649,7 +649,7 @@ _unselect_selected_item(Elm_Colorselector_Data *sd)
 }
 
 static void
-_spinner_changed_cb(void *data, const Eo_Event *event)
+_spinner_changed_cb(void *data, const Efl_Event *event)
 {
    Elm_Colorselector_Data *sd = data;
    Evas_Object *parent;
@@ -708,7 +708,7 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
 }
 
 static void
-_start_grab_pick_cb(void *data, const Eo_Event *event)
+_start_grab_pick_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *o = data;
 
@@ -1028,7 +1028,7 @@ _colorbar_move_cb(void *data,
 }
 
 static void
-_button_clicked_cb(void *data, const Eo_Event *event)
+_button_clicked_cb(void *data, const Efl_Event *event)
 {
    Color_Bar_Data *cb_data = data;
    double x, y, step;
@@ -1072,7 +1072,7 @@ _button_clicked_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_button_repeat_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_button_repeat_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
    double x, y, step;
@@ -2018,7 +2018,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
-             Eo_Event event = {};
+             Efl_Event event = {};
              event.object = sd->cb_data[sd->sel_color_type]->lbt;
              _button_clicked_cb(sd->cb_data[sd->sel_color_type], &event);
           }
@@ -2032,7 +2032,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
-             Eo_Event event = {};
+             Efl_Event event = {};
              event.object = sd->cb_data[sd->sel_color_type]->rbt;
              _button_clicked_cb(sd->cb_data[sd->sel_color_type], &event);
           }

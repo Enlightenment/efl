@@ -11,7 +11,7 @@
 #include <Ecore.h>
 
 void
-sentry_cb(void *data EINA_UNUSED, const Eo_Event *event)
+sentry_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
     Eio_Sentry_Event *event_info = event->info;
 

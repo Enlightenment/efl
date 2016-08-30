@@ -9,7 +9,7 @@
 #include "elm_priv.h"
 
 static void
-_free_desc_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_free_desc_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    eina_stringshare_del(data);
 }

@@ -1146,7 +1146,7 @@ _zoom_do(Elm_Map_Data *sd,
 }
 
 static void
-_zoom_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_zoom_anim_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(data, sd);
 
@@ -1165,7 +1165,7 @@ _zoom_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_zoom_bring_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_zoom_bring_anim_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(data, sd);
 

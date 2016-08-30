@@ -51,7 +51,7 @@ _register_sort_cb(Efl_Vpath_Manager_Entry *e1, Efl_Vpath_Manager_Entry *e2)
 }
 
 static void
-_cb_vpath_del(void *data, const Eo_Event *event)
+_cb_vpath_del(void *data, const Efl_Event *event)
 {
    efl_vpath_manager_unregister(EFL_VPATH_MANAGER_CLASS, event->object);
    efl_event_callback_del(event->object, EFL_EVENT_DEL, _cb_vpath_del, data);

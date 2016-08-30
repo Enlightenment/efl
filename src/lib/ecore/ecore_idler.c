@@ -21,13 +21,13 @@ struct _Ecore_Factorized_Idle
 };
 
 void
-_ecore_factorized_idle_event_del(void *data, const Eo_Event *event EINA_UNUSED)
+_ecore_factorized_idle_event_del(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _ecore_factorized_idle_del(data);
 }
 
 void
-_ecore_factorized_idle_process(void *data, const Eo_Event *event EINA_UNUSED)
+_ecore_factorized_idle_process(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Ecore_Factorized_Idle *idler = data;
 

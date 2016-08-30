@@ -24,7 +24,7 @@ _efl_ui_box_list_data_get(const Eina_List *list)
 }
 
 static void
-_child_added_cb_proxy(void *data, const Eo_Event *event)
+_child_added_cb_proxy(void *data, const Efl_Event *event)
 {
    Evas_Object *box = data;
    Evas_Object_Box_Option *opt = event->info;
@@ -33,7 +33,7 @@ _child_added_cb_proxy(void *data, const Eo_Event *event)
 }
 
 static void
-_child_removed_cb_proxy(void *data, const Eo_Event *event)
+_child_removed_cb_proxy(void *data, const Efl_Event *event)
 {
    Evas_Object *box = data;
    Evas_Object *child = event->info;

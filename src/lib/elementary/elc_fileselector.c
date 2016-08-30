@@ -73,14 +73,14 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-static void _ok(void *data, const Eo_Event *event);
-static void _canc(void *data, const Eo_Event *event);
-static void _on_dir_up(void *data, const Eo_Event *event);
+static void _ok(void *data, const Efl_Event *event);
+static void _canc(void *data, const Efl_Event *event);
+static void _on_dir_up(void *data, const Efl_Event *event);
 static void _populate(Evas_Object *obj, Efl_Model *model, Elm_Object_Item *parent_it, Efl_Model *selected);
 static Elm_Fileselector_Item_Data *_selected_item_data_get(Elm_Fileselector_Data *sd);
 
-static void _resource_created(void *, const Eo_Event *);
-static void _resource_deleted(void *, const Eo_Event *);
+static void _resource_created(void *, const Efl_Event *);
+static void _resource_deleted(void *, const Efl_Event *);
 static void _listing_request_cleanup(Listing_Request *);
 
 EFL_CALLBACKS_ARRAY_DEFINE(monitoring_callbacks,
@@ -243,7 +243,7 @@ _elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
 static Eina_Bool
 _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   Eo_Event event = {};
+   Efl_Event event = {};
    _ok(obj, &event);
    return EINA_TRUE;
 }
@@ -251,7 +251,7 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 static Eina_Bool
 _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   Eo_Event event = {};
+   Efl_Event event = {};
    _canc(obj, &event);
    return EINA_TRUE;
 }
@@ -1008,7 +1008,7 @@ _populate(Evas_Object *obj,
 }
 
 static void
-_on_list_expanded(void *data, const Eo_Event *event)
+_on_list_expanded(void *data, const Efl_Event *event)
 {
    Elm_Object_Item *it = event->info;
    const Elm_Fileselector_Item_Data *it_data = elm_object_item_data_get(it);
@@ -1017,7 +1017,7 @@ _on_list_expanded(void *data, const Eo_Event *event)
 }
 
 static void
-_on_list_contracted(void *data EINA_UNUSED, const Eo_Event *event)
+_on_list_contracted(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Elm_Object_Item *it = event->info;
 
@@ -1025,7 +1025,7 @@ _on_list_contracted(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_on_list_expand_req(void *data EINA_UNUSED, const Eo_Event *event)
+_on_list_expand_req(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Elm_Object_Item *it = event->info;
 
@@ -1033,7 +1033,7 @@ _on_list_expand_req(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_on_list_contract_req(void *data EINA_UNUSED, const Eo_Event *event)
+_on_list_contract_req(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Elm_Object_Item *it = event->info;
 
@@ -1088,7 +1088,7 @@ _schedule_populate(Evas_Object *fs,
 }
 
 static void
-_on_item_activated(void *data, const Eo_Event *event)
+_on_item_activated(void *data, const Efl_Event *event)
 {
    //This event_info could be a list or gengrid item
    Elm_Object_Item *it = event->info;
@@ -1140,7 +1140,7 @@ _clear_selections(Elm_Fileselector_Data *sd, Elm_Object_Item *last_selected)
 }
 
 static void
-_on_item_selected(void *data, const Eo_Event *event)
+_on_item_selected(void *data, const Efl_Event *event)
 {
    //This event_info could be a list or gengrid item
    Elm_Object_Item *it = event->info;
@@ -1231,7 +1231,7 @@ _on_item_selected(void *data, const Eo_Event *event)
 }
 
 static void
-_on_item_unselected(void *data, const Eo_Event *event)
+_on_item_unselected(void *data, const Efl_Event *event)
 {
    Eina_List *li, *l;
    const Elm_Fileselector_Item_Data *it_data;
@@ -1273,7 +1273,7 @@ _on_item_unselected(void *data, const Eo_Event *event)
 }
 
 static void
-_on_dir_up(void *data, const Eo_Event *event EINA_UNUSED)
+_on_dir_up(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *fs = data;
    Efl_Model *parent = NULL;
@@ -1287,7 +1287,7 @@ _on_dir_up(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_home(void *data, const Eo_Event *event EINA_UNUSED)
+_home(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *fs = data;
    ELM_FILESELECTOR_DATA_GET(fs, sd);
@@ -1318,7 +1318,7 @@ _current_filter_changed(void *data,
 }
 
 static void
-_ok(void *data, const Eo_Event *event EINA_UNUSED)
+_ok(void *data, const Efl_Event *event EINA_UNUSED)
 {
    const char *name;
    const char *selection = NULL;
@@ -1367,7 +1367,7 @@ _ok(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_canc(void *data, const Eo_Event *event EINA_UNUSED)
+_canc(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *fs = data;
 
@@ -1470,7 +1470,7 @@ _on_text_activated_set_path_then_error(void *data, Eina_Error err EINA_UNUSED)
 }
 
 static void
-_on_text_activated(void *data, const Eo_Event *event)
+_on_text_activated(void *data, const Efl_Event *event)
 {
    Evas_Object *fs = data;
    const char *path;
@@ -1515,7 +1515,7 @@ _anchors_undo(void *data)
 }
 
 static void
-_on_text_focused(void *data, const Eo_Event *event EINA_UNUSED)
+_on_text_focused(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
@@ -1524,14 +1524,14 @@ _on_text_focused(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_on_text_unfocused(void *data, const Eo_Event *event EINA_UNUSED)
+_on_text_unfocused(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
    _anchors_do(data, sd->path);
 }
 
 static void
-_anchor_clicked(void *data, const Eo_Event *event)
+_anchor_clicked(void *data, const Efl_Event *event)
 {
    Elm_Entry_Anchor_Info *info = event->info;
    Evas_Object *fs = data;
@@ -1560,7 +1560,7 @@ _anchor_clicked(void *data, const Eo_Event *event)
 }
 
 static void
-_files_key_down(void *data, const Eo_Event *event)
+_files_key_down(void *data, const Efl_Event *event)
 {
      Efl_Input_Key *ev = event->info;
      Evas_Object *par, *searchbar;
@@ -1736,7 +1736,7 @@ cancel:
 }
 
 static void
-_resource_created(void *data, const Eo_Event *event)
+_resource_created(void *data, const Efl_Event *event)
 {
    Elm_Fileselector *fs = data;
    Efl_Model_Children_Event* evt = event->info;
@@ -1775,7 +1775,7 @@ _resource_created(void *data, const Eo_Event *event)
 }
 
 static void
-_resource_deleted(void *data, const Eo_Event *event)
+_resource_deleted(void *data, const Efl_Event *event)
 {
    Evas_Object *obj = data;
    Efl_Model_Children_Event* evt = event->info;
@@ -1858,7 +1858,7 @@ _resource_deleted(void *data, const Eo_Event *event)
 }
 
 static void
-_preedit_cb(void *data, const Eo_Event *event)
+_preedit_cb(void *data, const Efl_Event *event)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 

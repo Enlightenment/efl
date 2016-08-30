@@ -144,7 +144,7 @@ create_handles(Evas_Object *obj)
 }
 
 static void
-_notify_end(void *data EINA_UNUSED, const Eo_Event *event)
+_notify_end(void *data EINA_UNUSED, const Efl_Event *event)
 {
    efl_del(event->object);
    efl_event_callback_stop(event->object);

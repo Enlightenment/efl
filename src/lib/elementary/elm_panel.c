@@ -1098,7 +1098,7 @@ _elm_panel_efl_canvas_group_group_move(Eo *obj, Elm_Panel_Data *sd, Evas_Coord x
 // FIXME: This is definitively not an animator, but a pre calc function
 // Not sure if I can hook on smart calc or on RENDER_PRE, will be left for later
 static void
-_elm_panel_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_panel_anim_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *obj = data;
    ELM_PANEL_DATA_GET(obj, sd);

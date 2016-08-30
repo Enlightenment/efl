@@ -128,7 +128,7 @@ _colorclass_select(void *data, Evas_Object *obj EINA_UNUSED, const char *sig, co
 }
 
 static void
-_colorclass_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_colorclass_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Colorclass_UI *cc = data;
 
@@ -151,7 +151,7 @@ _colorclass_changed(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_colorclass_reset(void *data, const Eo_Event *event EINA_UNUSED)
+_colorclass_reset(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Colorclass_UI *cc = data;
    Colorclass color;
@@ -193,7 +193,7 @@ _colorclass_reset(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_colorclass_activate(void *data, const Eo_Event *event)
+_colorclass_activate(void *data, const Efl_Event *event)
 {
    Colorclass_UI *cc = data;
    Elm_Object_Item *it = event->info;

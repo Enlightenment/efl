@@ -142,7 +142,7 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, void *pd EINA_UNUSED, const char
 static Efl_Callback_Array_Item *_efl_net_server_tcp_client_cbs(void);
 
 static void
-_efl_net_server_tcp_client_event_closed(void *data, const Eo_Event *event)
+_efl_net_server_tcp_client_event_closed(void *data, const Efl_Event *event)
 {
    Eo *server = data;
    Eo *client = event->object;

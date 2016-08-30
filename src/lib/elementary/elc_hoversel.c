@@ -110,7 +110,7 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
 }
 
 static void
-_on_hover_clicked(void *data, const Eo_Event *event)
+_on_hover_clicked(void *data, const Efl_Event *event)
 {
    const char *dismissstr;
 
@@ -152,7 +152,7 @@ _auto_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 static void
-_on_item_clicked(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_on_item_clicked(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *item = data;
    Evas_Object *obj2 = WIDGET(item);
@@ -169,7 +169,7 @@ _on_item_clicked(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_item_focused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_item_focused_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
@@ -177,7 +177,7 @@ _item_focused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_item_unfocused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_item_unfocused_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
@@ -434,13 +434,13 @@ _activate(Evas_Object *obj)
 }
 
 static void
-_on_clicked(void *data, const Eo_Event *event EINA_UNUSED)
+_on_clicked(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _activate(data);
 }
 
 static void
-_on_parent_del(void *data, const Eo_Event *ev EINA_UNUSED)
+_on_parent_del(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    elm_hoversel_hover_parent_set(data, NULL);
 }
@@ -540,7 +540,7 @@ _on_move_resize(void * data,
 }
 
 static void
-_on_parent_resize(void *data, const Eo_Event *ev EINA_UNUSED)
+_on_parent_resize(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Evas_Object *obj = (Evas_Object *)data;
    ELM_HOVERSEL_DATA_GET(obj, sd);

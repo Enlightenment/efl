@@ -18,7 +18,7 @@ static const Efl_VG_Interpolation interpolation_identity = {
 };
 
 static void
-_efl_vg_property_changed(void *data, const Eo_Event *event)
+_efl_vg_property_changed(void *data, const Efl_Event *event)
 {
    Efl_VG_Data *pd = data;
    Eo *parent;

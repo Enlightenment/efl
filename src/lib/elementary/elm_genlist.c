@@ -2016,7 +2016,7 @@ _item_realize(Elm_Gen_Item *it,
 }
 
 static void
-_tree_effect_animator_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_tree_effect_animator_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    int in = 0;
    const Eina_List *l;

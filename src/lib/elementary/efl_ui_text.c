@@ -256,9 +256,9 @@ static void _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd, c
 static void _magnifier_move(void *data);
 static void _update_decorations(Eo *obj);
 static void _create_text_cursors(Efl_Ui_Text_Data *sd);
-static void _efl_ui_text_changed_cb(void *data EINA_UNUSED, const Eo_Event *event);
-static void _efl_ui_text_selection_changed_cb(void *data EINA_UNUSED, const Eo_Event *event);
-static void _efl_ui_text_cursor_changed_cb(void *data EINA_UNUSED, const Eo_Event *event);
+static void _efl_ui_text_changed_cb(void *data EINA_UNUSED, const Efl_Event *event);
+static void _efl_ui_text_selection_changed_cb(void *data EINA_UNUSED, const Efl_Event *event);
+static void _efl_ui_text_cursor_changed_cb(void *data EINA_UNUSED, const Efl_Event *event);
 static void _efl_ui_text_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static void _efl_ui_text_select_none(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
 static void _efl_ui_text_anchor_hover_end(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
@@ -1259,7 +1259,7 @@ _hover_del_job(void *data)
 }
 
 static void
-_hover_dismissed_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_hover_dismissed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
 
@@ -2260,7 +2260,7 @@ _anchor_hover_del_cb(void *data,
 }
 
 static void
-_anchor_hover_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_anchor_hover_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
    _efl_ui_text_anchor_hover_end(data, sd);
@@ -3554,7 +3554,7 @@ _efl_ui_text_elm_layout_theme_enable(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd E
 }
 
 static void
-_cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
+_cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    const Efl_Callback_Array_Item *event = ev->info;
 
@@ -3564,7 +3564,7 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
 }
 
 static void
-_cb_deleted(void *data EINA_UNUSED, const Eo_Event *ev)
+_cb_deleted(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    const Efl_Callback_Array_Item *event = ev->info;
 
@@ -5398,14 +5398,14 @@ _decoration_defer_all(Eo *obj)
 }
 
 static void
-_efl_ui_text_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_ui_text_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _decoration_defer_all(data);
    _entry_changed_handle(data, EFL_UI_TEXT_EVENT_CHANGED);
 }
 
 static void
-_efl_ui_text_cursor_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_ui_text_cursor_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
    sd->cur_changed = EINA_TRUE;
@@ -5415,7 +5415,7 @@ _efl_ui_text_cursor_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_efl_ui_text_selection_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *obj = data;
    Eo *start, *end;

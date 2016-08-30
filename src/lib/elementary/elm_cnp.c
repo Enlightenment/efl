@@ -1773,7 +1773,7 @@ _x11_dnd_status(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 }
 
 static void
-_x11_win_rotation_changed_cb(void *data, const Eo_Event *event)
+_x11_win_rotation_changed_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *win = data;
    int rot = elm_win_rotation_get(event->object);

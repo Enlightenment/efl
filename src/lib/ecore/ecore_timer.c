@@ -75,7 +75,7 @@ ecore_timer_precision_set(double value)
 }
 
 static void
-_check_timer_event_catcher_add(void *data, const Eo_Event *event)
+_check_timer_event_catcher_add(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
    Efl_Loop_Timer_Data *timer = data;
@@ -95,7 +95,7 @@ _check_timer_event_catcher_add(void *data, const Eo_Event *event)
 }
 
 static void
-_check_timer_event_catcher_del(void *data, const Eo_Event *event)
+_check_timer_event_catcher_del(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
    Efl_Loop_Timer_Data *timer = data;
@@ -152,7 +152,7 @@ struct _Ecore_Timer_Legacy
 };
 
 static void
-_ecore_timer_legacy_del(void *data, const Eo_Event *event EINA_UNUSED)
+_ecore_timer_legacy_del(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Ecore_Timer_Legacy *legacy = data;
 
@@ -160,7 +160,7 @@ _ecore_timer_legacy_del(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_ecore_timer_legacy_tick(void *data, const Eo_Event *event)
+_ecore_timer_legacy_tick(void *data, const Efl_Event *event)
 {
    Ecore_Timer_Legacy *legacy = data;
 

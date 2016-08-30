@@ -90,7 +90,7 @@ typedef struct _Scene_Data
 } Scene_Data;
 
 void
-_cb_clicked(void *data EINA_UNUSED, const Eo_Event *event)
+_cb_clicked(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eina_List *meshes = NULL, *l;
    Evas_Canvas3D_Mesh *m;
@@ -116,7 +116,7 @@ _cb_clicked(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 void
-_cb_collision(void *data EINA_UNUSED, const Eo_Event *event)
+_cb_collision(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eina_List *meshes = NULL, *l;
    Evas_Canvas3D_Mesh *m;

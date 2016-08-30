@@ -203,7 +203,7 @@ _atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
      {
         eina_strbuf_append(buf, "void (*");
         _append_name(tp, buf);
-        eina_strbuf_append(buf, ")(void *data, const Eo_Event *event)");
+        eina_strbuf_append(buf, ")(void *data, const Efl_Event *event)");
         return;
      }
 

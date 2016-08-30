@@ -7612,7 +7612,7 @@ _obstacle_find(Efl_Canvas_Text_Data *obj, Eo *eo_obs)
 }
 
 void
-_obstacle_del_cb(void *data, const Eo_Event *event)
+_obstacle_del_cb(void *data, const Efl_Event *event)
 {
    Eo *eo_obj = data;
    Efl_Canvas_Text_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);

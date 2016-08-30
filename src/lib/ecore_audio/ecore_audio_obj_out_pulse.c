@@ -89,7 +89,7 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
     }
 }
 
-static void _update_samplerate_cb(void *data EINA_UNUSED, const Eo_Event *event)
+static void _update_samplerate_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
   pa_stream *stream = NULL;
   int samplerate = 0;
@@ -146,7 +146,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   return ret;
 }
 
-static void _delayed_attach_cb(void *data, const Eo_Event *event)
+static void _delayed_attach_cb(void *data, const Efl_Event *event)
 {
   Eo *in = data;
   efl_event_callback_del(event->object, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, _delayed_attach_cb, in);

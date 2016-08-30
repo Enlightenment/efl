@@ -300,7 +300,7 @@ evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_
 }
 
 static void
-_evas_gl_preload_target_die(void *data, const Eo_Event *event)
+_evas_gl_preload_target_die(void *data, const Efl_Event *event)
 {
    Evas_GL_Texture *tex = data;
 

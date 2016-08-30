@@ -115,18 +115,18 @@ static Eo *_instance;
 static int _init_count = 0;
 
 // Object Event handlers
-static void _state_changed_signal_send(void *data, const Eo_Event *event);
-static void _bounds_changed_signal_send(void *data, const Eo_Event *event);
-static void _property_changed_signal_send(void *data, const Eo_Event *event);
-static void _children_changed_signal_send(void *data, const Eo_Event *event);
-static void _window_signal_send(void *data, const Eo_Event *event);
-static void _visible_data_changed_signal_send(void *data, const Eo_Event *event);
-static void _active_descendant_changed_signal_send(void *data, const Eo_Event *event);
-static void _selection_signal_send(void *data, const Eo_Event *event);
-static void _text_text_inserted_send(void *data, const Eo_Event *event);
-static void _text_text_removed_send(void *data, const Eo_Event *event);
-static void _text_caret_moved_send(void *data, const Eo_Event *event);
-static void _text_selection_changed_send(void *data, const Eo_Event *event);
+static void _state_changed_signal_send(void *data, const Efl_Event *event);
+static void _bounds_changed_signal_send(void *data, const Efl_Event *event);
+static void _property_changed_signal_send(void *data, const Efl_Event *event);
+static void _children_changed_signal_send(void *data, const Efl_Event *event);
+static void _window_signal_send(void *data, const Efl_Event *event);
+static void _visible_data_changed_signal_send(void *data, const Efl_Event *event);
+static void _active_descendant_changed_signal_send(void *data, const Efl_Event *event);
+static void _selection_signal_send(void *data, const Efl_Event *event);
+static void _text_text_inserted_send(void *data, const Efl_Event *event);
+static void _text_text_removed_send(void *data, const Efl_Event *event);
+static void _text_caret_moved_send(void *data, const Efl_Event *event);
+static void _text_selection_changed_send(void *data, const Efl_Event *event);
 
 // bridge private methods
 static void _bridge_object_register(Eo *bridge, Eo *obj);
@@ -140,8 +140,8 @@ static void _bridge_iter_object_reference_append(Eo *bridge, Eldbus_Message_Iter
 static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
 static Eina_Bool _elm_atspi_bridge_key_filter(void *data, void *loop, int type, void *event);
 static void _object_desktop_reference_append(Eldbus_Message_Iter *iter);
-static void _on_object_add(void *data, const Eo_Event *event);
-static void _on_object_del(void *data, const Eo_Event *event);
+static void _on_object_add(void *data, const Efl_Event *event);
+static void _on_object_del(void *data, const Efl_Event *event);
 
 typedef struct {
      const Efl_Event_Description *desc;
@@ -3815,7 +3815,7 @@ _handle_listener_change(void *data, const Eldbus_Message *msg EINA_UNUSED)
 }
 
 static void
-_state_changed_signal_send(void *data, const Eo_Event *event)
+_state_changed_signal_send(void *data, const Efl_Event *event)
 {
    Elm_Atspi_Event_State_Changed_Data *state_data = event->info;
    const char *type_desc;
@@ -3841,7 +3841,7 @@ _state_changed_signal_send(void *data, const Eo_Event *event)
 }
 
 static void
-_bounds_changed_signal_send(void *data, const Eo_Event *event)
+_bounds_changed_signal_send(void *data, const Efl_Event *event)
 {
    Elm_Atspi_Event_Geometry_Changed_Data *geo_data = event->info;
 
@@ -3851,7 +3851,7 @@ _bounds_changed_signal_send(void *data, const Eo_Event *event)
 }
 
 static void
-_property_changed_signal_send(void *data, const Eo_Event *event)
+_property_changed_signal_send(void *data, const Efl_Event *event)
 {
    const char *property = event->info;
    char *atspi_desc;
@@ -3902,7 +3902,7 @@ _property_changed_signal_send(void *data, const Eo_Event *event)
 }
 
 static void
-_visible_data_changed_signal_send(void *data, const Eo_Event *event)
+_visible_data_changed_signal_send(void *data, const Efl_Event *event)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
 
@@ -3918,7 +3918,7 @@ _visible_data_changed_signal_send(void *data, const Eo_Event *event)
 }
 
 static void
-_active_descendant_changed_signal_send(void *data, const Eo_Event *event)
+_active_descendant_changed_signal_send(void *data, const Efl_Event *event)
 {
    Eo *child = event->info;
    int idx;
@@ -3939,7 +3939,7 @@ _active_descendant_changed_signal_send(void *data, const Eo_Event *event)
 }
 
 static void
-_children_changed_signal_send(void *data, const Eo_Event *event)
+_children_changed_signal_send(void *data, const Efl_Event *event)
 {
    const char *atspi_desc = NULL;
    Elm_Atspi_Event_Children_Changed_Data *ev_data = event->info;
@@ -3980,7 +3980,7 @@ _children_changed_signal_send(void *data, const Eo_Event *event)
 }
 
 static void
-_window_signal_send(void *data, const Eo_Event *event)
+_window_signal_send(void *data, const Efl_Event *event)
 {
    enum _Atspi_Window_Signals type;
 
@@ -4024,7 +4024,7 @@ _window_signal_send(void *data, const Eo_Event *event)
 }
 
 static void
-_selection_signal_send(void *data, const Eo_Event *event)
+_selection_signal_send(void *data, const Efl_Event *event)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
 
@@ -4122,7 +4122,7 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
 }
 
 static void
-_text_caret_moved_send(void *data, const Eo_Event *event)
+_text_caret_moved_send(void *data, const Efl_Event *event)
 {
    int cursor_pos = 0;
 
@@ -4138,7 +4138,7 @@ _text_caret_moved_send(void *data, const Eo_Event *event)
 }
 
 static void
-_text_text_inserted_send(void *data, const Eo_Event *event)
+_text_text_inserted_send(void *data, const Efl_Event *event)
 {
    Elm_Atspi_Text_Change_Info *info = event->info;
 
@@ -4152,7 +4152,7 @@ _text_text_inserted_send(void *data, const Eo_Event *event)
 }
 
 static void
-_text_text_removed_send(void *data, const Eo_Event *event)
+_text_text_removed_send(void *data, const Efl_Event *event)
 {
    Elm_Atspi_Text_Change_Info *info = event->info;
 
@@ -4166,7 +4166,7 @@ _text_text_removed_send(void *data, const Eo_Event *event)
 }
 
 static void
-_text_selection_changed_send(void *data, const Eo_Event *event)
+_text_selection_changed_send(void *data, const Efl_Event *event)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
 
@@ -4200,7 +4200,7 @@ _bridge_object_unregister(Eo *bridge, Eo *obj)
 }
 
 static void
-_on_object_add(void *data, const Eo_Event *event)
+_on_object_add(void *data, const Efl_Event *event)
 {
    Eldbus_Message *sig;
    Eldbus_Message_Iter *iter;
@@ -4215,7 +4215,7 @@ _on_object_add(void *data, const Eo_Event *event)
 }
 
 static void
-_on_object_del(void *data, const Eo_Event *event)
+_on_object_del(void *data, const Efl_Event *event)
 {
    Eldbus_Message *sig;
 
@@ -4351,7 +4351,7 @@ _interfaces_register(Eo *bridge)
 }
 
 static void
-_bridge_accessible_event_dispatch(void *data, const Eo_Event *event)
+_bridge_accessible_event_dispatch(void *data, const Efl_Event *event)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
 

@@ -28,17 +28,17 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 
 static void
-_on_open_done(void *data, const Eo_Event *event);
+_on_open_done(void *data, const Efl_Event *event);
 static void
-_on_playback_started(void *data, const Eo_Event *event);
+_on_playback_started(void *data, const Efl_Event *event);
 static void
-_on_playback_finished(void *data, const Eo_Event *event);
+_on_playback_finished(void *data, const Efl_Event *event);
 static void
-_on_aspect_ratio_updated(void *data, const Eo_Event *event);
+_on_aspect_ratio_updated(void *data, const Efl_Event *event);
 static void
-_on_title_changed(void *data, const Eo_Event *event);
+_on_title_changed(void *data, const Efl_Event *event);
 static void
-_on_audio_level_changed(void *data, const Eo_Event *event);
+_on_audio_level_changed(void *data, const Efl_Event *event);
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_play(Evas_Object *obj, const char *params);
@@ -158,13 +158,13 @@ _on_size_hints_changed(void *data EINA_UNUSED,
 }
 
 static void
-_on_open_done(void *data, const Eo_Event *event EINA_UNUSED)
+_on_open_done(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,video,open", "elm");
 }
 
 static void
-_on_playback_started(void *data, const Eo_Event *event EINA_UNUSED)
+_on_playback_started(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,video,play", "elm");
 
@@ -173,7 +173,7 @@ _on_playback_started(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_on_playback_finished(void *data, const Eo_Event *event EINA_UNUSED)
+_on_playback_finished(void *data, const Efl_Event *event EINA_UNUSED)
 {
    EFL_UI_VIDEO_DATA_GET(data, sd);
    emotion_object_play_set(sd->emotion, EINA_FALSE);
@@ -181,13 +181,13 @@ _on_playback_finished(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_on_aspect_ratio_updated(void *data, const Eo_Event *event EINA_UNUSED)
+_on_aspect_ratio_updated(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
 
 static void
-_on_title_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_on_title_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    const char *title;
 
@@ -199,7 +199,7 @@ _on_title_changed(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_on_audio_level_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_on_audio_level_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    (void)data;
 }

@@ -36,7 +36,7 @@ static const char *attr_data[] =
 int total_attributes = sizeof(attribute)/sizeof(attribute[0]);
 
 static void
-_filter_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_filter_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eio_Filter_Name_Data *event_info = event->info;
 

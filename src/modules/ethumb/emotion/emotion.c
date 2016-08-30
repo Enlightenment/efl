@@ -81,7 +81,7 @@ _resize_movie(struct _emotion_plugin *_plugin)
 }
 
 static void
-_frame_decode_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_frame_decode_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    struct _emotion_plugin *_plugin = data;
 
@@ -94,13 +94,13 @@ _frame_decode_cb(void *data, const Eo_Event *event EINA_UNUSED)
  }
 
 static void
-_frame_resized_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_frame_resized_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _resize_movie(data);
 }
 
 static void
-_video_stopped_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_video_stopped_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    struct _emotion_plugin *_plugin = data;
 

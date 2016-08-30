@@ -97,7 +97,7 @@ _efl_ui_frame_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data 
 }
 
 static void
-_recalc(void *data, const Eo_Event *event EINA_UNUSED)
+_recalc(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }

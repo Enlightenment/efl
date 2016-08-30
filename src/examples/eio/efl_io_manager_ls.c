@@ -28,7 +28,7 @@ void error_cb(void *data, Eina_Error error)
     efl_unref(job);
 }
 
-void filter_cb(void *data EINA_UNUSED, const Eo_Event *event)
+void filter_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
     Eio_Filter_Name_Data *event_info = event->info;
     static Eina_Bool should_filter = EINA_FALSE;

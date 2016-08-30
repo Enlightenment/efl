@@ -110,7 +110,7 @@ _elm_glview_efl_canvas_group_group_resize(Eo *obj, Elm_Glview_Data *sd, Evas_Coo
 }
 
 static void
-_render_cb(void *obj, const Eo_Event *event EINA_UNUSED)
+_render_cb(void *obj, const Efl_Event *event EINA_UNUSED)
 {
    ELM_GLVIEW_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, );
@@ -318,7 +318,7 @@ _elm_glview_efl_canvas_group_group_del(Eo *obj, Elm_Glview_Data *sd)
 }
 
 static void
-_cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
+_cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    const Efl_Callback_Array_Item *event = ev->info;
 

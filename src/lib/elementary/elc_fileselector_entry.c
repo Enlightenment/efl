@@ -48,7 +48,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
 
 #define SIG_FWD(name, event)                                                      \
   static void                                                               \
-  _##name##_fwd(void *data, const Eo_Event *ev EINA_UNUSED)                                          \
+  _##name##_fwd(void *data, const Efl_Event *ev EINA_UNUSED)                                          \
   {                                                                         \
      efl_event_callback_legacy_call(data, event, ev->info);          \
   }
@@ -97,7 +97,7 @@ _file_chosen_path_then_error(void *data, Eina_Error err)
 }
 
 static void
-_FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
+_FILE_CHOSEN_fwd(void *data, const Efl_Event *event)
 {
    Efl_Model *model = event->info;
    Eina_Promise *promise = NULL;
@@ -115,7 +115,7 @@ _FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
 }
 
 static void
-_ACTIVATED_fwd(void *data, const Eo_Event *event)
+_ACTIVATED_fwd(void *data, const Efl_Event *event)
 {
    const char *file;
    Efl_Model *bmodel, *model;

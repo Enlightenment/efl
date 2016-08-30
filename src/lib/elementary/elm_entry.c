@@ -1386,7 +1386,7 @@ _hover_del_job(void *data)
 }
 
 static void
-_hover_dismissed_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_hover_dismissed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -2493,7 +2493,7 @@ _anchor_hover_del_cb(void *data,
 }
 
 static void
-_anchor_hover_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_anchor_hover_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_entry_anchor_hover_end(data);
 }
@@ -3980,7 +3980,7 @@ elm_entry_add(Evas_Object *parent)
 }
 
 static void
-_cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
+_cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    const Efl_Callback_Array_Item *event = ev->info;
 
@@ -3990,7 +3990,7 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
 }
 
 static void
-_cb_deleted(void *data EINA_UNUSED, const Eo_Event *ev)
+_cb_deleted(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    const Efl_Callback_Array_Item *event = ev->info;
 

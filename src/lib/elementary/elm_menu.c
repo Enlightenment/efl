@@ -424,7 +424,7 @@ _menu_hide(void *data,
 }
 
 static void
-_hover_dismissed_cb(void *data, const Eo_Event *event)
+_hover_dismissed_cb(void *data, const Efl_Event *event)
 {
    _menu_hide(data, event->object, event->info);
    efl_event_callback_legacy_call
@@ -519,7 +519,7 @@ _menu_item_inactivate_cb(void *data,
 }
 
 static void
-_block_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
+_block_menu(void *_sd, const Efl_Event *event EINA_UNUSED)
 {
    const Eina_List *l;
    Elm_Object_Item *eo_current;
@@ -535,7 +535,7 @@ _block_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_unblock_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
+_unblock_menu(void *_sd, const Efl_Event *event EINA_UNUSED)
 {
    const Eina_List *l;
    Elm_Object_Item *eo_current;

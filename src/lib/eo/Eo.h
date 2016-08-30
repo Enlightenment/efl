@@ -86,7 +86,7 @@ extern "C" {
  *
  * @li @ref Efl_Class_Base
  * @li @ref Efl_Class
- * @li @ref Eo_Events
+ * @li @ref Efl_Events
  * @li @ref Eo_Composite_Objects
  *
  * @section eo_main_intro_example Introductory Example
@@ -252,7 +252,7 @@ typedef unsigned int Efl_Object_Op;
 #define EFL_NOOP ((Efl_Object_Op) 0)
 
 /**
- * @addtogroup Eo_Events Eo's Event Handling
+ * @addtogroup Efl_Events Eo's Event Handling
  * @{
  */
 
@@ -1041,7 +1041,7 @@ typedef void (*efl_key_data_free_func)(void *);
 #define efl_wref_del_safe(wref) efl_weak_unref(wref)
 
 /**
- * @addtogroup Eo_Events Eo's Event Handling
+ * @addtogroup Efl_Events Eo's Event Handling
  * @{
  */
 

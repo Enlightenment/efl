@@ -2772,7 +2772,7 @@ _efl_loop_efl_object_provider_find(Eo *obj, Efl_Loop_Data *pd, const Efl_Object 
 }
 
 static void
-_check_event_catcher_add(void *data, const Eo_Event *event)
+_check_event_catcher_add(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
    Efl_Loop_Data *pd = data;
@@ -2788,7 +2788,7 @@ _check_event_catcher_add(void *data, const Eo_Event *event)
 }
 
 static void
-_check_event_catcher_del(void *data, const Eo_Event *event)
+_check_event_catcher_del(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
    Efl_Loop_Data *pd = data;
@@ -2902,8 +2902,8 @@ ecore_loop_arguments_send(int argc, const char **argv)
    eina_promise_then(job, _efl_loop_arguments_send, _efl_loop_arguments_cancel, arga);
 }
 
-static void _efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED);
-static void _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED);
+static void _efl_loop_timeout_force_cancel_cb(void *data, const Efl_Event *event EINA_UNUSED);
+static void _efl_loop_timeout_cb(void *data, const Efl_Event *event EINA_UNUSED);
 
 EFL_CALLBACKS_ARRAY_DEFINE(timeout,
                           { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
@@ -2913,13 +2913,13 @@ EFL_CALLBACKS_ARRAY_DEFINE(timeout,
 static void _efl_loop_internal_cancel(Efl_Internal_Promise *p);
 
 static void
-_efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_loop_timeout_force_cancel_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _efl_loop_internal_cancel(data);
 }
 
 static void
-_efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_loop_timeout_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Efl_Internal_Promise *t = data;
 

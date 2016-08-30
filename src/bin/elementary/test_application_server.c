@@ -40,7 +40,7 @@ _window_create(App_View_Context *ctx)
 }
 
 static void
-_close_cb(void *data, const Eo_Event *event)
+_close_cb(void *data, const Efl_Event *event)
 {
    App_View_Context *ctx = data;
    if (ctx->win)
@@ -49,14 +49,14 @@ _close_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_pause_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_pause_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    App_View_Context *ctx = data;
    _text_update(ctx, "paused");
 }
 
 static void
-_resume_cb(void *data, const Eo_Event *event)
+_resume_cb(void *data, const Efl_Event *event)
 {
    App_View_Context *ctx = data;
 
@@ -71,7 +71,7 @@ _resume_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_view_del_cb(void *data, const Eo_Event *event)
+_view_del_cb(void *data, const Efl_Event *event)
 {
    App_View_Context *ctx = data;
 
@@ -117,7 +117,7 @@ _create_view_cb(Elm_App_Server *app_server, const Eina_Value *args EINA_UNUSED, 
 }
 
 static void
-_terminate_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_terminate_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const char *title = NULL;
 
@@ -163,7 +163,7 @@ test_application_server_common(const char *pkg)
 }
 
 static void
-_server_del_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_server_del_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_App_Server **server = data;
    *server = NULL;

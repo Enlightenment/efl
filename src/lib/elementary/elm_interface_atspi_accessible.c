@@ -343,7 +343,7 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
           return;
      }
 
-   Eo_Event ev;
+   Efl_Event ev;
    ev.object = accessible;
    ev.desc = event;
    ev.info = event_info;
@@ -415,7 +415,7 @@ elm_atspi_relation_clone(const Elm_Atspi_Relation *relation)
 }
 
 static void
-_on_rel_obj_del(void *data, const Eo_Event *event)
+_on_rel_obj_del(void *data, const Efl_Event *event)
 {
    Elm_Atspi_Relation_Set *set = data;
    Elm_Atspi_Relation *rel;

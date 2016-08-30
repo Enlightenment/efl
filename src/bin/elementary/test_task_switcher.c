@@ -34,7 +34,7 @@ static void _btn_resume_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event
 }
 
 static void
-_app_view_prop_changed_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_app_view_prop_changed_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Elm_App_View_State state = ELM_APP_VIEW_STATE_UNKNOWN;
 
@@ -269,7 +269,7 @@ _app_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
 }
 
 static void
-_view_list_update_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_view_list_update_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    if (app_selected == event->object)
      _app_clicked(event->object, NULL, NULL);

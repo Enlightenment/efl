@@ -102,11 +102,11 @@ _elm_scrollable_is(const Evas_Object *obj)
 static void
 elm_widget_disabled_internal(Eo *obj, Eina_Bool disabled);
 static void
-_on_sub_obj_del(void *data, const Eo_Event *event);
+_on_sub_obj_del(void *data, const Efl_Event *event);
 static void
-_on_sub_obj_hide(void *data, const Eo_Event *event);
+_on_sub_obj_hide(void *data, const Efl_Event *event);
 static void
-_propagate_event(void *data, const Eo_Event *event);
+_propagate_event(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
                           { EFL_EVENT_DEL, _on_sub_obj_del },
@@ -249,13 +249,13 @@ _parents_unfocus(Evas_Object *obj)
 }
 
 static void
-_on_sub_obj_hide(void *data EINA_UNUSED, const Eo_Event *event)
+_on_sub_obj_hide(void *data EINA_UNUSED, const Efl_Event *event)
 {
    elm_widget_focus_hide_handle(event->object);
 }
 
 static void
-_on_sub_obj_del(void *data, const Eo_Event *event)
+_on_sub_obj_del(void *data, const Efl_Event *event)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(data, sd);
 
@@ -715,7 +715,7 @@ _propagate_y_drag_lock(Evas_Object *obj,
 }
 
 static void
-_propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
+_propagate_event(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *obj = event->object;
    INTERNAL_ENTRY;
@@ -4432,14 +4432,14 @@ _track_obj_update(Evas_Object *track, Evas_Object *obj)
 }
 
 static void
-_track_obj_view_update(void *data, const Eo_Event *event)
+_track_obj_view_update(void *data, const Efl_Event *event)
 {
    Elm_Widget_Item_Data *item = data;
    _track_obj_update(item->track_obj, event->object);
 }
 
 static void
-_track_obj_view_del(void *data, const Eo_Event *event);
+_track_obj_view_del(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
                           { EFL_GFX_EVENT_RESIZE, _track_obj_view_update },
@@ -4449,7 +4449,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
                           { EFL_EVENT_DEL, _track_obj_view_del });
 
 static void
-_track_obj_view_del(void *data, const Eo_Event *event EINA_UNUSED)
+_track_obj_view_del(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Widget_Item_Data *item = data;
 
@@ -4510,7 +4510,7 @@ _elm_widget_item_signal_callback_list_get(Elm_Widget_Item_Data *item, Eina_List 
 #define ERR_NOT_SUPPORTED(item, method)  ERR("%s does not support %s API.", elm_widget_type_get(item->widget), method);
 
 static void
-_efl_del_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_del_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Elm_Widget_Item_Data *item = efl_data_scope_get(event->object, ELM_WIDGET_ITEM_CLASS);
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);

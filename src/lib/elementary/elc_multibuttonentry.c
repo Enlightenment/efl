@@ -45,10 +45,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static void _entry_changed_cb(void *data, const Eo_Event *event);
-static void _entry_focus_in_cb(void *data, const Eo_Event *event);
-static void _entry_focus_out_cb(void *data, const Eo_Event *event);
-static void _entry_clicked_cb(void *data, const Eo_Event *event);
+static void _entry_changed_cb(void *data, const Efl_Event *event);
+static void _entry_focus_in_cb(void *data, const Efl_Event *event);
+static void _entry_focus_out_cb(void *data, const Efl_Event *event);
+static void _entry_clicked_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
@@ -1036,7 +1036,7 @@ _entry_resize_cb(void *data,
 }
 
 static void
-_entry_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_entry_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    const char *str;
@@ -1046,7 +1046,7 @@ _entry_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_entry_focus_in_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_entry_focus_in_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Multibuttonentry_Item_Data *item = NULL;
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
@@ -1060,7 +1060,7 @@ _entry_focus_in_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_entry_focus_out_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_entry_focus_out_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    const char *str;
@@ -1071,7 +1071,7 @@ _entry_focus_out_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_entry_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_entry_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 

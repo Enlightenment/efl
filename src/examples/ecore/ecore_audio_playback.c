@@ -191,7 +191,7 @@ handle_input(void *data EINA_UNUSED, Ecore_Fd_Handler *handler)
    return EINA_TRUE;
 }
 
-static void _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
+static void _play_finished(void *data EINA_UNUSED, const Efl_Event *event)
 {
   const char *name;
   Eina_Bool ret;

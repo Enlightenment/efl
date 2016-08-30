@@ -110,7 +110,7 @@ _evas_object_box_accessor_free(Evas_Object_Box_Accessor *it)
 }
 
 static void
-_on_child_resize(void *data, const Eo_Event *event EINA_UNUSED)
+_on_child_resize(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *box = data;
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(box, priv);
@@ -118,7 +118,7 @@ _on_child_resize(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_on_child_del(void *data, const Eo_Event *event)
+_on_child_del(void *data, const Efl_Event *event)
 {
    Evas_Object *box = data;
 
@@ -130,7 +130,7 @@ _on_child_del(void *data, const Eo_Event *event)
 }
 
 static void
-_on_child_hints_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *box = data;
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(box, priv);

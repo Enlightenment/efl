@@ -120,7 +120,7 @@ static int _eo_signals_cb_current = 0;
 static int _eo_signals_cb_flag = 0;
 
 static void
-_eo_signals_a_changed_cb(void *_data, const Eo_Event *event EINA_UNUSED)
+_eo_signals_a_changed_cb(void *_data, const Efl_Event *event EINA_UNUSED)
 {
    int data = (intptr_t) _data;
    _eo_signals_cb_current++;
@@ -129,14 +129,14 @@ _eo_signals_a_changed_cb(void *_data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_eo_signals_a_changed_cb2(void *_data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_eo_signals_a_changed_cb2(void *_data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    _eo_signals_cb_flag |= 0x2;
    efl_event_callback_stop(event->object);
 }
 
 static void
-_eo_signals_a_changed_within_cb(void *_data EINA_UNUSED, const Eo_Event *event)
+_eo_signals_a_changed_within_cb(void *_data EINA_UNUSED, const Efl_Event *event)
 {
    int a = 3;
    efl_event_callback_legacy_call(event->object, EV_A_CHANGED, &a);
@@ -144,20 +144,20 @@ _eo_signals_a_changed_within_cb(void *_data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_eo_signals_a_changed_never(void *_data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_eo_signals_a_changed_never(void *_data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    /* This one should never be called. */
    fail_if(1);
 }
 
 static void
-_eo_signals_efl_del_cb(void *_data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_eo_signals_efl_del_cb(void *_data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    _eo_signals_cb_flag |= 0x4;
 }
 
 void
-_eo_signals_cb_added_deled(void *data, const Eo_Event *event)
+_eo_signals_cb_added_deled(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *callback_array = event->info;
    const Efl_Callback_Array_Item *(*callback_data)(void) = data;

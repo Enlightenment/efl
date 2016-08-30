@@ -502,7 +502,7 @@ _entry_selection_get(Efl_Ui_Internal_Text_Interactive *obj, Efl_Ui_Internal_Text
 }
 
 static void
-_sel_cursor_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_sel_cursor_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Efl_Canvas_Text_Cursor *obj = data;
 

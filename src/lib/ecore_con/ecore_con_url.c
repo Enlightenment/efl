@@ -162,7 +162,7 @@ ecore_con_url_pipeline_get(void)
 extern Ecore_Con_Socks *_ecore_con_proxy_global;
 
 static void
-_efl_network_url_event_complete_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_network_url_event_complete_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Ecore_Con_Event_Url_Complete *e, *f = event->info;
 
@@ -182,7 +182,7 @@ _efl_network_url_event_complete_cb(void *data EINA_UNUSED, const Eo_Event *event
 }
 
 static void
-_efl_network_url_event_data_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_network_url_event_data_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Ecore_Con_Event_Url_Data *e;
    Efl_Network_Event_Url_Data *f = event->info;
@@ -199,7 +199,7 @@ _efl_network_url_event_data_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_efl_network_url_event_progress_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_network_url_event_progress_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Ecore_Con_Event_Url_Progress *e, *f = event->info;
 

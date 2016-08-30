@@ -1664,7 +1664,7 @@ _efl_ui_win_elm_widget_event(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Evas_Obj
 
 /* forward events sent to evas to the window */
 static void
-_evas_event_key_cb(void *data, const Eo_Event *ev)
+_evas_event_key_cb(void *data, const Efl_Event *ev)
 {
    Eo *win = data;
    Eo *evt = ev->info;
@@ -1682,7 +1682,7 @@ _evas_event_key_cb(void *data, const Eo_Event *ev)
 }
 
 static void
-_evas_event_pointer_cb(void *data, const Eo_Event *ev)
+_evas_event_pointer_cb(void *data, const Efl_Event *ev)
 {
    Eo *win = data;
    Eo *evt = ev->info;
@@ -1697,7 +1697,7 @@ _evas_event_pointer_cb(void *data, const Eo_Event *ev)
 
 /* feed events from the window to evas - for fake inputs */
 static void
-_evas_event_key_feed_fake_cb(void *data, const Eo_Event *ev)
+_evas_event_key_feed_fake_cb(void *data, const Efl_Event *ev)
 {
    Eo *evas = data;
    Efl_Input_Event *evt = ev->info;
@@ -1717,7 +1717,7 @@ _evas_event_key_feed_fake_cb(void *data, const Eo_Event *ev)
 }
 
 static void
-_evas_event_pointer_feed_fake_cb(void *data, const Eo_Event *ev)
+_evas_event_pointer_feed_fake_cb(void *data, const Efl_Event *ev)
 {
    Eo *evas = data;
    Efl_Input_Event *evt = ev->info;
@@ -1832,7 +1832,7 @@ _elm_win_evas_device_changed(void *data,
 }
 
 static void
-_win_event_add_cb(void *data, const Eo_Event *ev)
+_win_event_add_cb(void *data, const Efl_Event *ev)
 {
    const Efl_Callback_Array_Item *array = ev->info;
    Efl_Ui_Win_Data *sd = data;
@@ -1941,7 +1941,7 @@ _win_event_add_cb(void *data, const Eo_Event *ev)
 }
 
 static void
-_win_event_del_cb(void *data, const Eo_Event *ev)
+_win_event_del_cb(void *data, const Efl_Event *ev)
 {
    const Efl_Callback_Array_Item *array = ev->info;
    Efl_Ui_Win_Data *sd = data;
@@ -5797,7 +5797,7 @@ _elm_win_focus_auto_hide(Evas_Object *obj)
 }
 
 static void
-_on_atspi_bus_connected(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *win;
    Eina_List *l;

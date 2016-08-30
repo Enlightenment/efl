@@ -48,12 +48,12 @@ struct _View_List_ValueItem
 };
 
 static void _efl_model_load_children(View_List_ItemData *);
-static void _efl_model_children_count_change_cb(void *, const Eo_Event *event);
-static void _efl_model_properties_change_cb(void *, const Eo_Event *event);
+static void _efl_model_children_count_change_cb(void *, const Efl_Event *event);
+static void _efl_model_properties_change_cb(void *, const Efl_Event *event);
 
-static void _expand_request_cb(void *data EINA_UNUSED, const Eo_Event *event);
-static void _contract_request_cb(void *data EINA_UNUSED, const Eo_Event *event);
-static void _contracted_cb(void *data EINA_UNUSED, const Eo_Event *event);
+static void _expand_request_cb(void *data EINA_UNUSED, const Efl_Event *event);
+static void _contract_request_cb(void *data EINA_UNUSED, const Efl_Event *event);
+static void _contracted_cb(void *data EINA_UNUSED, const Efl_Event *event);
 
 /* --- Genlist Callbacks --- */
 EFL_CALLBACKS_ARRAY_DEFINE(model_callbacks,
@@ -243,7 +243,7 @@ _item_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 }
 
 static void
-_expand_request_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_expand_request_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Elm_Object_Item *item = event->info;
    View_List_ItemData *idata = elm_object_item_data_get(item);
@@ -256,7 +256,7 @@ _expand_request_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_contract_request_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_contract_request_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Elm_Object_Item *item = event->info;
    View_List_ItemData *idata = elm_object_item_data_get(item);
@@ -266,7 +266,7 @@ _contract_request_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_contracted_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_contracted_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Elm_Object_Item *glit = event->info;
    elm_genlist_item_subitems_clear(glit);
@@ -287,7 +287,7 @@ _genlist_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_
 
 /* --- Efl_Model Callbacks --- */
 static void
-_efl_model_properties_change_cb(void *data, const Eo_Event *event)
+_efl_model_properties_change_cb(void *data, const Efl_Event *event)
 {
    View_List_ItemData *idata = data;
    Efl_Model_Property_Event *evt = event->info;
@@ -339,7 +339,7 @@ _efl_model_load_children(View_List_ItemData *pdata)
 }
 
 static void
-_efl_model_children_count_change_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_efl_model_children_count_change_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    View_List_ItemData *idata = data;
    EINA_SAFETY_ON_NULL_RETURN(idata);

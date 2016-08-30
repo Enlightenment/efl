@@ -91,7 +91,7 @@ _efl_object_extension_noneed(Efl_Object_Data *pd)
    pd->ext = NULL;
 }
 
-static void _key_generic_cb_del(void *data, const Eo_Event *event);
+static void _key_generic_cb_del(void *data, const Efl_Event *event);
 
 static void
 _eo_generic_data_node_free(Eo_Generic_Data_Node *node)
@@ -238,7 +238,7 @@ _key_generic_get(const Eo *obj, Efl_Object_Data *pd, const char *key, Eo_Generic
 }
 
 static void
-_key_generic_cb_del(void *data, const Eo_Event *event EINA_UNUSED)
+_key_generic_cb_del(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo_Generic_Data_Node *node = data;
    Efl_Object_Data *pd = efl_data_scope_get(node->obj, EFL_OBJECT_CLASS);
@@ -1135,7 +1135,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    Eo_Callback_Description *cb;
    Eo_Current_Callback_Description *lookup = NULL;
    Eo_Current_Callback_Description saved;
-   Eo_Event ev;
+   Efl_Event ev;
 
    ev.object = obj_id;
    ev.desc = desc;
@@ -1266,7 +1266,7 @@ _efl_object_event_callback_stop(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 }
 
 static void
-_efl_event_forwarder_callback(void *data, const Eo_Event *event)
+_efl_event_forwarder_callback(void *data, const Efl_Event *event)
 {
    Eo *new_obj = (Eo *) data;
    Eina_Bool ret = EINA_FALSE;

@@ -104,7 +104,7 @@ static Eina_Bool _modify_attrib_file(void *data)
 
 /////// helper functions
 
-static void _check_event_path(void *data, const Eo_Event *event)
+static void _check_event_path(void *data, const Efl_Event *event)
 {
    Eio_Sentry_Event *event_info = event->info;
    ck_assert_str_eq((const char*)data, event_info->trigger);
@@ -217,7 +217,7 @@ START_TEST(eio_test_sentry_add_add_remove_remove)
 }
 END_TEST
 
-static void _target_notified_cb(void *data, const Eo_Event *event)
+static void _target_notified_cb(void *data, const Efl_Event *event)
 {
    _check_event_path(data, event);
    _cancel_timeout();
@@ -609,7 +609,7 @@ START_TEST(eio_test_sentry_two_monitors_one_removed_one_event)
 }
 END_TEST
 
-static void _unexpected_event_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+static void _unexpected_event_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    ck_abort_msg("unexpected event");
 }

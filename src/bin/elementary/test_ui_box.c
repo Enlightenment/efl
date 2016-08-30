@@ -19,7 +19,7 @@ typedef enum {
 } Weight_Mode;
 
 static void
-weights_cb(void *data, const Eo_Event *event)
+weights_cb(void *data, const Efl_Event *event)
 {
    Weight_Mode mode = elm_radio_state_value_get(event->object);
 
@@ -61,28 +61,28 @@ weights_cb(void *data, const Eo_Event *event)
 }
 
 static void
-user_min_slider_cb(void *data EINA_UNUSED, const Eo_Event *event)
+user_min_slider_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    efl_gfx_size_hint_min_set(objects[3], val, val);
 }
 
 static void
-padding_slider_cb(void *data, const Eo_Event *event)
+padding_slider_cb(void *data, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    efl_pack_padding_set(data, val, val, EINA_TRUE);
 }
 
 static void
-margin_slider_cb(void *data, const Eo_Event *event)
+margin_slider_cb(void *data, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    efl_gfx_size_hint_margin_set(data, val, val, val, val);
 }
 
 static void
-alignh_slider_cb(void *data, const Eo_Event *event)
+alignh_slider_cb(void *data, const Efl_Event *event)
 {
    double av, val;
    val = elm_slider_value_get(event->object);
@@ -91,7 +91,7 @@ alignh_slider_cb(void *data, const Eo_Event *event)
 }
 
 static void
-alignv_slider_cb(void *data, const Eo_Event *event)
+alignv_slider_cb(void *data, const Efl_Event *event)
 {
    double ah, val;
    val = elm_slider_value_get(event->object);
@@ -103,21 +103,21 @@ static Efl_Ui_Box_Flow_Params s_flow_params = { 0, 0 };
 static Eina_Bool flow = EINA_FALSE;
 
 static void
-flow_check_cb(void *data, const Eo_Event *event)
+flow_check_cb(void *data, const Efl_Event *event)
 {
    flow = elm_check_selected_get(event->object);
    efl_pack_layout_engine_set(data, flow ? EFL_UI_BOX_FLOW_CLASS : NULL, &s_flow_params);
 }
 
 static void
-horiz_check_cb(void *data, const Eo_Event *event)
+horiz_check_cb(void *data, const Efl_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
    efl_orientation_set(data, chk ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL);
 }
 
 static void
-homo_check_cb(void *data, const Eo_Event *event)
+homo_check_cb(void *data, const Efl_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
    s_flow_params.homogenous = chk;
@@ -125,7 +125,7 @@ homo_check_cb(void *data, const Eo_Event *event)
 }
 
 static void
-max_size_check_cb(void *data, const Eo_Event *event)
+max_size_check_cb(void *data, const Efl_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
    s_flow_params.max_size = chk;
@@ -133,7 +133,7 @@ max_size_check_cb(void *data, const Eo_Event *event)
 }
 
 static void
-left_check_cb(void *data, const Eo_Event *event)
+left_check_cb(void *data, const Efl_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
    if (chk)
@@ -175,7 +175,7 @@ _custom_layout_update(Eo *pack, const void *data EINA_UNUSED)
 }
 
 static void
-custom_check_cb(void *data, const Eo_Event *event)
+custom_check_cb(void *data, const Efl_Event *event)
 {
    EFL_OBJECT_OVERRIDE_OPS_DEFINE(custom_layout_ops,
                           EFL_OBJECT_OP_FUNC_OVERRIDE(efl_pack_layout_update, _custom_layout_update));

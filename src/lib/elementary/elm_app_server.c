@@ -29,7 +29,7 @@ typedef struct
 } Elm_App_Server_Data;
 
 static void
-_view_del_cb(void *data, const Eo_Event *event)
+_view_del_cb(void *data, const Efl_Event *event)
 {
    Elm_App_Server_Data *cdata = data;
    eina_hash_del(cdata->views, NULL, event->object);

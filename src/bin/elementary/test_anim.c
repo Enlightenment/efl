@@ -11,7 +11,7 @@ static const char *names[] =
 };
 
 static void
-_anim_tick(void *data EINA_UNUSED, const Eo_Event *event)
+_anim_tick(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Evas_Object *bub, *sh;
    Evas_Coord x, y, w, h, vw, vh;

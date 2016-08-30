@@ -22,7 +22,7 @@ struct _pair
 };
 
 static void
-_children_removed_cb(void *data EINA_UNUSED, const Eo_Event* event)
+_children_removed_cb(void *data EINA_UNUSED, const Efl_Event* event)
 {
    fprintf(stderr, __FILE__ ":%d %s\n", __LINE__, __func__);
    if(children_deleted)
@@ -42,7 +42,7 @@ _children_removed_cb(void *data EINA_UNUSED, const Eo_Event* event)
 }
 
 static void
-_children_added_cb(void *data EINA_UNUSED, const Eo_Event* event)
+_children_added_cb(void *data EINA_UNUSED, const Efl_Event* event)
 {
    fprintf(stderr, __FILE__ ":%d %s\n", __LINE__, __func__);
    Efl_Model_Children_Event* evt = event->info;

@@ -268,7 +268,7 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler)
 END_TEST
 
 static void
-_eo_read_cb(void *data, const Eo_Event *info EINA_UNUSED)
+_eo_read_cb(void *data, const Efl_Event *info EINA_UNUSED)
 {
    Eina_Bool *did = data;
 
@@ -309,7 +309,7 @@ START_TEST(ecore_test_efl_loop_fd)
 END_TEST
 
 static void
-_efl_del_cb(void *data, const Eo_Event *ev EINA_UNUSED)
+_efl_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eina_Bool *dead = data;
 

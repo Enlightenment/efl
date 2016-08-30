@@ -353,7 +353,7 @@ _land_indicator_connect_cb(void *data)
 }
 
 static void
-_land_indicator_disconnected(void *data, const Eo_Event *event EINA_UNUSED)
+_land_indicator_disconnected(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *conform = data;
 
@@ -364,7 +364,7 @@ _land_indicator_disconnected(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_port_indicator_disconnected(void *data, const Eo_Event *event EINA_UNUSED)
+_port_indicator_disconnected(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *conform = data;
 
@@ -509,7 +509,7 @@ _indicator_opacity_set(Evas_Object *conformant, Elm_Win_Indicator_Opacity_Mode i
 }
 
 static void
-_on_indicator_mode_changed(void *data, const Eo_Event *event)
+_on_indicator_mode_changed(void *data, const Efl_Event *event)
 {
    Evas_Object *conformant = data;
    Evas_Object *win = event->object;
@@ -528,7 +528,7 @@ _on_indicator_mode_changed(void *data, const Eo_Event *event)
 }
 
 static void
-_on_rotation_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_on_rotation_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    int rot = 0;
    Evas_Object *win = event->object;
@@ -1000,7 +1000,7 @@ _elm_conformant_efl_object_constructor(Eo *obj, Elm_Conformant_Data *sd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
-   Eo_Event event = {};
+   Efl_Event event = {};
    event.object = sd->win;
    sd->win = elm_widget_top_get(obj);
    _on_indicator_mode_changed(obj, &event);

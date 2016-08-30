@@ -449,7 +449,7 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
 }
 
 static void
-_elm_code_widget_line_cb(void *data, const Eo_Event *event)
+_elm_code_widget_line_cb(void *data, const Efl_Event *event)
 {
    Elm_Code_Line *line;
    Elm_Code_Widget *widget;
@@ -461,7 +461,7 @@ _elm_code_widget_line_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_elm_code_widget_file_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_code_widget_file_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
 
@@ -471,7 +471,7 @@ _elm_code_widget_file_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_elm_code_widget_selection_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_code_widget_selection_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
 
@@ -481,7 +481,7 @@ _elm_code_widget_selection_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_elm_code_widget_selection_clear_cb(void *data, const Eo_Event *event EINA_UNUSED)
+_elm_code_widget_selection_clear_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
 

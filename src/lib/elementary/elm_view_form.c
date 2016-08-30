@@ -92,7 +92,7 @@ _efl_model_promise_error_cb(void* data, Eina_Error error EINA_UNUSED)
 }
 
 static void
-_efl_model_properties_change_cb(void *data, const Eo_Event *event)
+_efl_model_properties_change_cb(void *data, const Efl_Event *event)
 {
    const Efl_Model_Property_Event *evt = event->info;
    Eina_Promise *promise;

@@ -33,7 +33,7 @@ EFL_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_des
 #define CUSTOM_ENGINE_CLASS _test_ui_grid_custom_engine_class_get()
 
 static void
-weights_cb(void *data, const Eo_Event *event)
+weights_cb(void *data, const Efl_Event *event)
 {
    Weight_Mode mode = elm_radio_state_value_get(event->object);
    Eo *grid = data;
@@ -80,7 +80,7 @@ weights_cb(void *data, const Eo_Event *event)
 }
 
 static void
-user_min_slider_cb(void *data EINA_UNUSED, const Eo_Event *event)
+user_min_slider_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    for (int i = 0; i < 6; i++)
@@ -88,21 +88,21 @@ user_min_slider_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-padding_slider_cb(void *data, const Eo_Event *event)
+padding_slider_cb(void *data, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    efl_pack_padding_set(data, val, val, EINA_TRUE);
 }
 
 static void
-margin_slider_cb(void *data, const Eo_Event *event)
+margin_slider_cb(void *data, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    efl_gfx_size_hint_margin_set(data, val, val, val, val);
 }
 
 static void
-btnmargins_slider_cb(void *data, const Eo_Event *event)
+btnmargins_slider_cb(void *data, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    for (int i = 1; i < 7; i++)
@@ -110,7 +110,7 @@ btnmargins_slider_cb(void *data, const Eo_Event *event)
 }
 
 static void
-layout_updated_cb(void *data, const Eo_Event *event)
+layout_updated_cb(void *data, const Efl_Event *event)
 {
    Elm_Label *o = data;
    char buf[64];
@@ -123,7 +123,7 @@ layout_updated_cb(void *data, const Eo_Event *event)
 }
 
 static void
-child_evt_cb(void *data, const Eo_Event *event)
+child_evt_cb(void *data, const Efl_Event *event)
 {
    Elm_Label *o = data;
    Efl_Gfx *it = event->info;
@@ -491,13 +491,13 @@ btn_text(const char *str)
 }
 
 static void
-remove_cb(void *data EINA_UNUSED, const Eo_Event *ev)
+remove_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    efl_del(ev->object);
 }
 
 static void
-append_cb(void *data, const Eo_Event *ev EINA_UNUSED)
+append_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *grid = data;
    Eo *o = elm_button_add(grid);
@@ -509,7 +509,7 @@ append_cb(void *data, const Eo_Event *ev EINA_UNUSED)
 }
 
 static void
-clear_cb(void *data, const Eo_Event *ev EINA_UNUSED)
+clear_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *grid = data;
    efl_pack_clear(grid);

@@ -369,7 +369,7 @@ _end_hide_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
 }
 
 static void
-_context_menu_show_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_context_menu_show_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    elm_entry_context_menu_clear(event->object);
    elm_entry_context_menu_item_add(event->object, "MenuD1", NULL, ELM_ICON_NONE, _item_cb, NULL);
@@ -695,7 +695,7 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 }
 
 static void
-my_pop_dismissed(void *data EINA_UNUSED, const Eo_Event *ev)
+my_pop_dismissed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    efl_del(ev->object);
 }

@@ -11,13 +11,13 @@
 #define MY_CLASS EFL_IO_STDOUT_CLASS
 
 static void
-_efl_io_stdout_event_write(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_io_stdout_event_write(void *data EINA_UNUSED, const Efl_Event *event)
 {
    efl_io_writer_can_write_set(event->object, EINA_TRUE);
 }
 
 static void
-_efl_io_stdout_event_error(void *data EINA_UNUSED, const Eo_Event *event)
+_efl_io_stdout_event_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    efl_io_writer_can_write_set(event->object, EINA_FALSE);
 }

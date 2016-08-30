@@ -25,7 +25,7 @@
  */
 
 static void
-_del_cb(void *data, const Eo_Event *ev)
+_del_cb(void *data, const Efl_Event *ev)
 {
    Evas_Public_Data *e = data;
 

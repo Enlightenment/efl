@@ -100,7 +100,7 @@ elm_validator_regexp_status_get(Elm_Validator_Regexp *validator) EINA_ARG_NONNUL
  * @since 1.14
  */
 EAPI void
-elm_validator_regexp_helper(void *data, const Eo_Event *event);
+elm_validator_regexp_helper(void *data, const Efl_Event *event);
 #endif
 
 /**

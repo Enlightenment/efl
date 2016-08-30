@@ -29,7 +29,7 @@ _a_set(Eo *obj, void *class_data, int a)
 }
 
 void
-_cb_added(void *data EINA_UNUSED, const Eo_Event *event)
+_cb_added(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Simple_Public_Data *pd = efl_data_scope_get(event->object, MY_CLASS);
    const Efl_Callback_Array_Item *callback_array = event->info;
@@ -43,7 +43,7 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 void
-_cb_deled(void *data EINA_UNUSED, const Eo_Event *event)
+_cb_deled(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Simple_Public_Data *pd = efl_data_scope_get(event->object, MY_CLASS);
    const Efl_Callback_Array_Item *callback_array = event->info;

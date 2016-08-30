@@ -213,7 +213,7 @@ _efl_canvas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
 extern const char *o_rect_type;
 extern const char *o_image_type;
 
-static void _clipper_del_cb(void *data, const Eo_Event *event);
+static void _clipper_del_cb(void *data, const Efl_Event *event);
 
 EOLIAN void
 _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
@@ -480,7 +480,7 @@ _efl_canvas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static void
-_clipper_del_cb(void *data, const Eo_Event *event)
+_clipper_del_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *eo_obj = data;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);

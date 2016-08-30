@@ -268,7 +268,7 @@ _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
 }
 
 static void
-_efl_net_dialer_http_curlm_timer_do(void *data, const Eo_Event *ev EINA_UNUSED)
+_efl_net_dialer_http_curlm_timer_do(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Net_Dialer_Http_Curlm *cm = data;
    CURLMcode r;
@@ -312,7 +312,7 @@ _efl_net_dialer_http_curlm_timer_schedule(CURLM *multi EINA_UNUSED, long timeout
 // it seems the Eo_Loop_Fd isn't working properly when we change connections...
 // as it's still built on top of Ecore_Fd_Handler, then use it directly.
 static void
-_efl_net_dialer_http_curlm_event_fd_read(void *data, const Eo_Event *event)
+_efl_net_dialer_http_curlm_event_fd_read(void *data, const Efl_Event *event)
 {
    Efl_Net_Dialer_Http_Curlm *cm = data;
    int fd = efl_loop_fd_get(event->object);
@@ -327,7 +327,7 @@ _efl_net_dialer_http_curlm_event_fd_read(void *data, const Eo_Event *event)
 }
 
 static void
-_efl_net_dialer_http_curlm_event_fd_write(void *data, const Eo_Event *event)
+_efl_net_dialer_http_curlm_event_fd_write(void *data, const Efl_Event *event)
 {
    Efl_Net_Dialer_Http_Curlm *cm = data;
    int fd = efl_loop_fd_get(event->object);

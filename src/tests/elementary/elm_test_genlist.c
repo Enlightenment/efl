@@ -81,7 +81,7 @@ START_TEST(elm_atspi_children_get2)
 END_TEST
 
 static void
-_children_changed_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_children_changed_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    if (event->desc != ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED)
      return;

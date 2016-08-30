@@ -89,7 +89,7 @@ _replace_path_then_error(void *data, Eina_Error err EINA_UNUSED)
 }
 
 static void
-_selection_done(void *data, const Eo_Event *event)
+_selection_done(void *data, const Efl_Event *event)
 {
    Elm_Fileselector_Button_Data *sd = data;
    Efl_Model *model = event->info;
@@ -197,7 +197,7 @@ _activate(Elm_Fileselector_Button_Data *sd)
 }
 
 static void
-_button_clicked(void *data, const Eo_Event *event EINA_UNUSED)
+_button_clicked(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _activate(data);
 }

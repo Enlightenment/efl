@@ -65,7 +65,7 @@ set_api_state(api_data *api)
 }
 
 static void
-_api_bt_clicked(void *data, const Eo_Event *ev)
+_api_bt_clicked(void *data, const Efl_Event *ev)
 {  /* Will add here a SWITCH command containing code to modify test-object */
    /* in accordance a->state value. */
    api_data *a = data;
@@ -80,7 +80,7 @@ _api_bt_clicked(void *data, const Eo_Event *ev)
 }
 
 static void
-_ch_grid(void *data, const Eo_Event *ev)
+_ch_grid(void *data, const Efl_Event *ev)
 {
    Eo *gd = data;
    int x, y, w, h;
@@ -93,7 +93,7 @@ _ch_grid(void *data, const Eo_Event *ev)
 }
 
 static void
-_win_del(void *data, const Eo_Event *ev EINA_UNUSED)
+_win_del(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    free(data);
 }

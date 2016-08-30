@@ -18,7 +18,7 @@ typedef struct {
 } testdata;
 
 static void
-_pointer_down(void *data, const Eo_Event *ev)
+_pointer_down(void *data, const Efl_Event *ev)
 {
    testdata *td = data;
    td->down = 1;
@@ -27,7 +27,7 @@ _pointer_down(void *data, const Eo_Event *ev)
 }
 
 static void
-_pointer_move(void *data, const Eo_Event *ev)
+_pointer_move(void *data, const Efl_Event *ev)
 {
    testdata *td = data;
    efl_del(td->evmove);
@@ -35,7 +35,7 @@ _pointer_move(void *data, const Eo_Event *ev)
 }
 
 static void
-_pointer_up(void *data, const Eo_Event *ev)
+_pointer_up(void *data, const Efl_Event *ev)
 {
    testdata *td = data;
    td->down = 0;
@@ -44,7 +44,7 @@ _pointer_up(void *data, const Eo_Event *ev)
 }
 
 static void
-_key_down(void *data, const Eo_Event *ev)
+_key_down(void *data, const Efl_Event *ev)
 {
    testdata *td = data;
    char str[1024];
@@ -92,7 +92,7 @@ _ecore_timeout_cb(void *data)
 #endif
 
 static void
-_key_up(void *data, const Eo_Event *ev)
+_key_up(void *data, const Efl_Event *ev)
 {
    testdata *td = data;
 
@@ -113,7 +113,7 @@ _key_up(void *data, const Eo_Event *ev)
 }
 
 static void
-_clicked_button1(void *data, const Eo_Event *ev EINA_UNUSED)
+_clicked_button1(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    testdata *td = data;
    Eo *txt = td->text;
@@ -127,7 +127,7 @@ _clicked_button1(void *data, const Eo_Event *ev EINA_UNUSED)
 }
 
 static void
-_clicked_button2(void *data, const Eo_Event *ev EINA_UNUSED)
+_clicked_button2(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    testdata *td = data;
    Eo *bt = td->button;
@@ -160,7 +160,7 @@ _clicked_button2(void *data, const Eo_Event *ev EINA_UNUSED)
 }
 
 static void
-_win_del(void *data, const Eo_Event *ev EINA_UNUSED)
+_win_del(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    testdata *td = data;
    free(td);

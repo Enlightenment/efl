@@ -8,7 +8,7 @@
 
 typedef struct _Custom_Table_Data Custom_Table_Data;
 
-static void _subobj_del_cb(void *data, const Eo_Event *event);
+static void _subobj_del_cb(void *data, const Efl_Event *event);
 static void _item_remove(Efl_Ui_Grid *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx *subobj);
 
 struct _Custom_Table_Data
@@ -338,7 +338,7 @@ _efl_ui_grid_efl_pack_pack_padding_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED
 }
 
 static void
-_subobj_del_cb(void *data, const Eo_Event *event)
+_subobj_del_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_Grid *obj = data;
    Efl_Ui_Grid_Data *pd = efl_data_scope_get(obj, EFL_UI_GRID_CLASS);

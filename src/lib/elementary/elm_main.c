@@ -853,7 +853,7 @@ static void *qr_handle = NULL;
 static int (*qr_main)(int    argc,
                       char **argv) = NULL;
 static void (*qre_main)(void *data,
-                        const Eo_Event *ev) = NULL;
+                        const Efl_Event *ev) = NULL;
 
 EAPI Eina_Bool
 elm_quicklaunch_prepare(int    argc,

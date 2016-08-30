@@ -96,7 +96,7 @@ _elm_combobox_elm_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
 }
 
 static void
-_on_hover_clicked(void *data, const Eo_Event *event)
+_on_hover_clicked(void *data, const Efl_Event *event)
 {
    const char *dismissstr;
 
@@ -213,7 +213,7 @@ _on_item_pressed(void *data , Evas_Object *obj EINA_UNUSED, void *event)
 }
 
 static void
-_gl_filter_finished_cb(void *data, const Eo_Event *event)
+_gl_filter_finished_cb(void *data, const Efl_Event *event)
 {
    char buf[1024];
    ELM_COMBOBOX_DATA_GET(data, sd);
@@ -245,20 +245,20 @@ _gl_filter_finished_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_on_aborted(void *data, const Eo_Event *event EINA_UNUSED)
+_on_aborted(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
    if (sd->expanded) elm_combobox_hover_end(data);
 }
 
 static void
-_on_changed(void *data, const Eo_Event *event EINA_UNUSED)
+_on_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_CHANGED, NULL);
 }
 
 static void
-_on_clicked(void *data, const Eo_Event *event EINA_UNUSED)
+_on_clicked(void *data, const Efl_Event *event EINA_UNUSED)
 {
    elm_combobox_hover_begin(data);
 }
