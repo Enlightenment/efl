@@ -81,7 +81,9 @@ efl_io_copier_example \
 efl_io_copier_simple_example \
 efl_io_queue_example \
 efl_net_server_example \
-efl_net_dialer_http_example
+efl_net_dialer_http_example \
+efl_net_dialer_websocket_example \
+efl_net_dialer_websocket_autobahntestee
 
 ECORE_COMMON_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
@@ -297,6 +299,12 @@ efl_net_server_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 efl_net_dialer_http_example_SOURCES = efl_net_dialer_http_example.c
 efl_net_dialer_http_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
+efl_net_dialer_websocket_example_SOURCES = efl_net_dialer_websocket_example.c
+efl_net_dialer_websocket_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
+efl_net_dialer_websocket_autobahntestee_SOURCES = efl_net_dialer_websocket_autobahntestee.c
+efl_net_dialer_websocket_autobahntestee_LDADD = $(ECORE_CON_COMMON_LDADD)
+
 SRCS = \
 ecore_animator_example.c \
 ecore_buffer_example.c \
@@ -347,7 +355,9 @@ efl_io_copier_example.c \
 efl_io_copier_simple_example.c \
 efl_io_queue_example.c \
 efl_net_server_example.c \
-efl_net_dialer_http_example.c
+efl_net_dialer_http_example.c \
+efl_net_dialer_websocket_example.c \
+efl_net_dialer_websocket_autobahntestee.c
 
 DATA_FILES = red.png Makefile.examples
 

@@ -71,7 +71,7 @@ static void
 _dialer_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
-   fprintf(stderr, "INFO: error: %d\n", *perr);
+   fprintf(stderr, "INFO: error: %d '%s'\n", *perr, eina_error_msg_get(*perr));
    retval = EXIT_FAILURE;
    /* no need to quit as copier will get a "eos" event and emit "done" */
 }
@@ -217,7 +217,7 @@ static void
 _copier_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
-   fprintf(stderr, "INFO: error: %d\n", *perr);
+   fprintf(stderr, "INFO: error: %d '%s'\n", *perr, eina_error_msg_get(*perr));
    retval = EXIT_FAILURE;
    ecore_main_loop_quit();
 }
@@ -332,6 +332,7 @@ static const Ecore_Getopt options = {
                                    ":stdin: to read from stdin.\n"
                                    "tcp://IP:PORT to connect using TCP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
                                    "http://address to do a GET request\n"
+                                   "ws://address or wss:// to do WebSocket request (must send some data once connected)\n"
                                    "",
                                    "input-file"),
     ECORE_GETOPT_STORE_METAVAR_STR(0, NULL,
@@ -342,6 +343,7 @@ static const Ecore_Getopt options = {
                                    ":none: to not use a destination object.\n"
                                    "tcp://IP:PORT to connect using TCP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
                                    "http://address to do a PUT request\n"
+                                   "ws://address or wss:// to do WebSocket request\n"
                                    "",
                                    "output-file"),
     ECORE_GETOPT_SENTINEL
@@ -468,6 +470,31 @@ main(int argc, char **argv)
         if (err)
           {
              fprintf(stderr, "ERROR: could not HTTP dial %s: %s\n",
+                     input_fname, eina_error_msg_get(err));
+             goto end_input;
+          }
+     }
+   else if (strncmp(input_fname, "ws://", strlen("ws://")) == 0 ||
+            strncmp(input_fname, "wss://", strlen("wss://")) == 0)
+     {
+        Eina_Error err;
+
+        input = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, ecore_main_loop_get(),
+                         efl_net_dialer_websocket_streaming_mode_set(efl_self, EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_TEXT),
+                        efl_event_callback_array_add(efl_self, input_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_self, dialer_cbs(), NULL) /* optional */
+                        );
+        if (!input)
+          {
+             fprintf(stderr, "ERROR: could not create WebSocket Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end;
+          }
+
+        err = efl_net_dialer_dial(input, input_fname);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not WebSocket dial %s: %s\n",
                      input_fname, eina_error_msg_get(err));
              goto end_input;
           }
@@ -601,6 +628,31 @@ main(int argc, char **argv)
         if (err)
           {
              fprintf(stderr, "ERROR: could not HTTP dial %s: %s\n",
+                     output_fname, eina_error_msg_get(err));
+             goto end_output;
+          }
+     }
+   else if (strncmp(output_fname, "ws://", strlen("ws://")) == 0 ||
+            strncmp(output_fname, "wss://", strlen("wss://")) == 0)
+     {
+        Eina_Error err;
+
+        output = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, ecore_main_loop_get(),
+                         efl_net_dialer_websocket_streaming_mode_set(efl_self, EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_TEXT),
+                         efl_event_callback_array_add(efl_self, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_self, dialer_cbs(), NULL) /* optional */
+                         );
+        if (!output)
+          {
+             fprintf(stderr, "ERROR: could not create WebSocket Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end_input;
+          }
+
+        err = efl_net_dialer_dial(output, output_fname);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not WebSocket dial %s: %s\n",
                      output_fname, eina_error_msg_get(err));
              goto end_output;
           }

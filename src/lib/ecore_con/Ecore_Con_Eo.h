@@ -73,3 +73,4 @@ extern Eina_Error EFL_NET_HTTP_ERROR_USE_SSL_FAILED;
 extern Eina_Error EFL_NET_HTTP_ERROR_WRITE_ERROR;
 
 #include "efl_net_dialer_http.eo.h"
+#include "efl_net_dialer_websocket.eo.h"

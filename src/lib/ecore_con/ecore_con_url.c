@@ -30,6 +30,7 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 #include "ecore_con_url_curl.h"
+#include "Emile.h"
 
 #define MY_CLASS EFL_NETWORK_URL_CLASS
 
@@ -114,11 +115,20 @@ EAPI int
 ecore_con_url_init(void)
 {
    if (++_init_count > 1) return _init_count;
-   if (!ecore_init()) return --_init_count;
+   if (!ecore_init()) goto ecore_init_failed;
+   if (!emile_init()) goto emile_init_failed;
+   if (!emile_cipher_init()) goto emile_cipher_init_failed;
    ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
    ECORE_CON_EVENT_URL_COMPLETE = ecore_event_type_new();
    ECORE_CON_EVENT_URL_PROGRESS = ecore_event_type_new();
    return _init_count;
+
+ emile_cipher_init_failed:
+   emile_shutdown();
+ emile_init_failed:
+   ecore_shutdown();
+ ecore_init_failed:
+   return --_init_count;
 }
 
 EAPI int
@@ -139,6 +149,7 @@ ecore_con_url_shutdown(void)
    EINA_LIST_FREE(_fd_hd_list, fd_handler)
      ecore_main_fd_handler_del(fd_handler);
    _c_shutdown();
+   emile_shutdown(); /* no emile_cipher_shutdown(), handled here */
    ecore_shutdown();
    return 0;
 }
