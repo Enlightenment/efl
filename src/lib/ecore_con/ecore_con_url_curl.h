@@ -40,6 +40,22 @@ typedef int curl_socket_t;
 #define curl_socket_typedef
 #endif /* curl_socket_typedef */
 
+typedef enum  {
+  CURLSOCKTYPE_IPCXN,  /* socket created for a specific IP connection */
+  CURLSOCKTYPE_ACCEPT, /* socket created by accept() call */
+  CURLSOCKTYPE_LAST    /* never use */
+} curlsocktype;
+
+struct curl_sockaddr {
+  int family;
+  int socktype;
+  int protocol;
+  unsigned int addrlen; /* addrlen was a socklen_t type before 7.18.0 but it
+                           turned really ugly and painful on the systems that
+                           lack this type */
+  struct sockaddr addr;
+};
+
 #define CURL_POLL_NONE   0
 #define CURL_POLL_IN     1
 #define CURL_POLL_OUT    2
@@ -243,8 +259,12 @@ typedef enum
    CINIT(INFILESIZE_LARGE, OFF_T, 115),
    CINIT(POSTFIELDSIZE_LARGE, OFF_T, 120),
    CINIT(COOKIELIST, OBJECTPOINT, 135),
+   CINIT(OPENSOCKETFUNCTION, FUNCTIONPOINT, 163),
+   CINIT(OPENSOCKETDATA, OBJECTPOINT, 164),
    CINIT(USERNAME, OBJECTPOINT, 173),
    CINIT(PASSWORD, OBJECTPOINT, 174),
+   CINIT(CLOSESOCKETFUNCTION, FUNCTIONPOINT, 208),
+   CINIT(CLOSESOCKETDATA, OBJECTPOINT, 209),
    CINIT(XFERINFOFUNCTION, FUNCTIONPOINT, 219),
 #define CURLOPT_XFERINFODATA CURLOPT_PROGRESSDATA
 } CURLoption;

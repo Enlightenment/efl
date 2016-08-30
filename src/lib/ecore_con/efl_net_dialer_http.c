@@ -200,6 +200,7 @@ typedef struct
       Efl_Net_Http_Authentication_Method method;
       Eina_Bool restricted;
    } authentication;
+   int fd;
    Eina_Error error;
    Efl_Net_Http_Version version;
    Efl_Net_Dialer_Http_Primary_Mode primary_mode;
@@ -928,6 +929,37 @@ _efl_net_dialer_http_receive_header(const char *buffer, size_t count, size_t nit
    return len;
 }
 
+static curl_socket_t
+_efl_net_dialer_http_socket_open(void *data, curlsocktype purpose EINA_UNUSED, struct curl_sockaddr *addr)
+{
+   Eo *o = data;
+   Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
+
+   pd->fd = socket(addr->family, addr->socktype, addr->protocol);
+   if (pd->fd < 0)
+     ERR("could not create curl socket family=%d, type=%d, protocol=%d",
+         addr->family, addr->socktype, addr->protocol);
+   else
+     DBG("socket(%d, %d, %d) = %d",
+         addr->family, addr->socktype, addr->protocol, pd->fd);
+
+   return pd->fd;
+}
+
+static void
+_efl_net_dialer_http_socket_close(void *data, curl_socket_t fd)
+{
+   Eo *o = data;
+   Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
+
+   EINA_SAFETY_ON_TRUE_RETURN(pd->fd != fd);
+
+   DBG("close(%d)", fd);
+
+   close(fd);
+   pd->fd = -1;
+}
+
 EOLIAN static Efl_Object *
 _efl_net_dialer_http_efl_object_constructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 {
@@ -960,6 +992,12 @@ _efl_net_dialer_http_efl_object_constructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    curl_easy_setopt(pd->easy, CURLOPT_WRITEDATA, o);
    curl_easy_setopt(pd->easy, CURLOPT_READFUNCTION, _efl_net_dialer_http_send_data);
    curl_easy_setopt(pd->easy, CURLOPT_READDATA, o);
+
+   curl_easy_setopt(pd->easy, CURLOPT_OPENSOCKETFUNCTION, _efl_net_dialer_http_socket_open);
+   curl_easy_setopt(pd->easy, CURLOPT_OPENSOCKETDATA, o);
+
+   curl_easy_setopt(pd->easy, CURLOPT_CLOSESOCKETFUNCTION, _efl_net_dialer_http_socket_close);
+   curl_easy_setopt(pd->easy, CURLOPT_CLOSESOCKETDATA, o);
 
    curl_easy_setopt(pd->easy, CURLOPT_NOPROGRESS, 0L);
 
@@ -1256,14 +1294,13 @@ _efl_net_dialer_http_efl_io_writer_write(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ei
 
    pd->error = 0;
    rm = curl_multi_socket_action(pd->cm->multi,
-                                 ecore_main_fd_handler_fd_get(pd->fdhandler),
+                                 pd->fd,
                                  CURL_CSELECT_OUT, &pd->cm->running);
    if (rm != CURLM_OK)
      {
         err = _curlcode_to_eina_error(rm);
-        ERR("dialer=%p could not trigger socket=%d action: %s",
-            o, ecore_main_fd_handler_fd_get(pd->fdhandler),
-            eina_error_msg_get(err));
+        ERR("dialer=%p could not trigger socket=%d (fdhandler=%p) action: %s",
+            o, pd->fd, pd->fdhandler, eina_error_msg_get(err));
         goto error;
      }
    _efl_net_dialer_http_curlm_check(pd->cm);
@@ -1315,6 +1352,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 
    if (pd->cm)
      {
+        DBG("close dialer=%p, cm=%p, easy=%p", o, pd->cm, pd->easy);
         _efl_net_dialer_http_curlm_remove(pd->cm, o, pd->easy);
         pd->cm = NULL;
      }
