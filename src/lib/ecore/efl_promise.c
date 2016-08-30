@@ -31,6 +31,8 @@ struct _Efl_Promise_Data
       Eina_Bool progress : 1;
       Eina_Bool progress_triggered : 1;
    } set;
+
+   Eina_Bool optional : 1;
 };
 
 static void
@@ -218,16 +220,24 @@ _efl_loop_future_then(Eo *obj, Efl_Loop_Future_Data *pd,
                       Efl_Event_Cb success, Efl_Event_Cb failure, Efl_Event_Cb progress, const void *data)
 {
    Efl_Loop_Future_Callback *cb;
+   Efl_Promise_Data *epd;
    Efl_Future *f;
 
    cb = _efl_loop_future_then_internal(pd, success, failure, progress, data);
    if (!cb) return NULL;
 
+   efl_ref(obj);
+
    cb->next = efl_add(EFL_PROMISE_CLASS, obj);
+   epd = efl_data_scope_get(cb->next, EFL_PROMISE_CLASS);
+   epd->optional = EINA_TRUE;
+
    f = efl_promise_future_get(cb->next);
 
    _efl_loop_future_prepare_events(pd, !!progress, EINA_FALSE);
    _efl_loop_future_fulfilling(obj, pd);
+
+   efl_unref(obj);
 
    return f;
 }
@@ -242,8 +252,12 @@ _efl_loop_future_internal_then(Efl_Future *f,
    cb = _efl_loop_future_then_internal(pd, success, failure, progress, data);
    if (!cb) return EINA_FALSE;
 
+   efl_ref(f);
+
    _efl_loop_future_prepare_events(pd, !!progress, EINA_TRUE);
    _efl_loop_future_fulfilling(f, pd);
+
+   efl_unref(f);
 
    return EINA_FALSE;
 }
@@ -292,9 +306,13 @@ _efl_loop_future_cancel(Eo *obj, Efl_Loop_Future_Data *pd)
    pd->fulfilled = EINA_TRUE;
 
    // Trigger failure
+   efl_ref(obj);
+
    _efl_loop_future_propagate(obj, pd);
 
    _efl_loop_future_disconnect(obj, pd);
+
+   efl_unref(obj);
 }
 
 static void
@@ -574,7 +592,7 @@ _efl_promise_efl_object_destructor(Eo *obj, Efl_Promise_Data *pd)
    // Unref refcounted structure
    if (!pd->message && pd->futures)
      {
-        ERR("This promise has not been fulfilled. Forcefully cancelling %p.", obj);
+        if (!pd->optional) ERR("This promise has not been fulfilled. Forcefully cancelling %p.", obj);
         efl_promise_failed(obj, EINA_ERROR_FUTURE_CANCEL);
      }
 
