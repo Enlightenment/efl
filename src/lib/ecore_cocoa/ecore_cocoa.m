@@ -277,7 +277,7 @@ _ecore_cocoa_feed_events(void *anEvent)
 
            if (evUp->key)
              {
-                evUp->keyname = evDown->key;
+                evUp->keyname = evUp->key;
                 evUp->timestamp = time;
                 evUp->string = NULL;
                 ecore_event_add(ECORE_EVENT_KEY_UP, evUp, NULL, NULL);
