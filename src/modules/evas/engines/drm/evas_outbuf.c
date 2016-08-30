@@ -445,7 +445,7 @@ _outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *
 
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, ob->w, ob->h);
 
-   if ((ob->rotation == 0))// && (ob->depth == 32))
+   if (ob->rotation == 0) // && (ob->depth == 32))
      {
         Eina_Rectangle *rect;
 
