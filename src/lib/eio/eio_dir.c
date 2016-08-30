@@ -791,7 +791,7 @@ eio_dir_copy(const char *source,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   copy = malloc(sizeof(Eio_Dir_Copy));
+   copy = eio_common_alloc(sizeof(Eio_Dir_Copy));
    EINA_SAFETY_ON_NULL_RETURN_VAL(copy, NULL);
 
    copy->progress.op = EIO_DIR_COPY;
@@ -832,7 +832,7 @@ eio_dir_move(const char *source,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   move = malloc(sizeof(Eio_Dir_Copy));
+   move = eio_common_alloc(sizeof(Eio_Dir_Copy));
    EINA_SAFETY_ON_NULL_RETURN_VAL(move, NULL);
 
    move->progress.op = EIO_DIR_MOVE;
@@ -871,7 +871,7 @@ eio_dir_unlink(const char *path,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   rmrf = malloc(sizeof(Eio_Dir_Copy));
+   rmrf = eio_common_alloc(sizeof(Eio_Dir_Copy));
    EINA_SAFETY_ON_NULL_RETURN_VAL(rmrf, NULL);
 
    rmrf->progress.op = EIO_UNLINK;
@@ -911,7 +911,7 @@ _eio_dir_stat_internal_ls(const char *dir,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   async = malloc(sizeof(Eio_File_Dir_Ls));
+   async = eio_common_alloc(sizeof(Eio_File_Dir_Ls));
    EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
    /* Eio_Filter_Direct_Cb must be casted to Eio_Filter_Dir_Cb here
@@ -984,7 +984,7 @@ _eio_dir_direct_internal_ls(const char *dir,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   async = malloc(sizeof(Eio_File_Dir_Ls));
+   async = eio_common_alloc(sizeof(Eio_File_Dir_Ls));
    EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
    async->ls.directory = eina_stringshare_add(dir);
