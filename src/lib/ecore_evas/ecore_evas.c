@@ -175,6 +175,13 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
           {
              if (ee->engine.func->fn_render)
                rend |= ee->engine.func->fn_render(ee);
+              /*
+               * Some engines that generate their own ticks based on hardware
+               * events need to know that render has been considered, and
+               * whether it will actually generate a new image or not
+               */
+             if (ee->engine.func->fn_evas_changed)
+               ee->engine.func->fn_evas_changed(ee, rend);
           }
 #ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
         if ((ee->in_async_render) && (ee->async_render_start <= 0.0))

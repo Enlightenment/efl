@@ -156,6 +156,8 @@ struct _Ecore_Evas_Engine_Func
 
    void (*fn_animator_register)  (Ecore_Evas *ee);
    void (*fn_animator_unregister)(Ecore_Evas *ee);
+
+   void (*fn_evas_changed)(Ecore_Evas *ee, Eina_Bool changed);
 };
 
 struct _Ecore_Evas_Interface

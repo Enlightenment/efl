@@ -663,7 +663,9 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, // aux_hints_set
 
    NULL, // animator_register
-   NULL // animator_unregister
+   NULL, // animator_unregister
+
+   NULL // evas_changed
 };
 
 EAPI Ecore_Evas *

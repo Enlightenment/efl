@@ -606,6 +606,8 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 
      NULL, // fn_animator_register
      NULL, // fn_animator_unregister
+
+     NULL, // fn_evas_changed
 };
 
 static void *

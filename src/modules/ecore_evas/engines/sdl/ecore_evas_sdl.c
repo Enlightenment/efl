@@ -552,7 +552,9 @@ static Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
    NULL, // aux_hints_set
 
    NULL, // fn_animator_register
-   NULL  // fn_animator_unregister
+   NULL, // fn_animator_unregister
+
+   NULL, // fn_evas_changed
 };
 
 static Ecore_Evas*

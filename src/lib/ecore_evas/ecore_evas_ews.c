@@ -719,6 +719,8 @@ static const Ecore_Evas_Engine_Func _ecore_ews_engine_func =
 
      NULL, // fn_animator_register
      NULL, // fn_animator_unregister
+
+     NULL, // fn_evas_changed
 };
 
 void

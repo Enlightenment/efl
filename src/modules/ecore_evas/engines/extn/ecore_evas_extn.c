@@ -913,7 +913,9 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
    NULL, // aux_hints_set
 
    NULL, // fn_animator_register
-   NULL  // fn_animator_unregister
+   NULL, // fn_animator_unregister
+
+   NULL, // fn_evas_changed
 };
 
 static Eina_Bool
@@ -2078,6 +2080,8 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
 
    NULL, // fn_animator_register
    NULL, // fn_animator_unregister
+
+   NULL, // fn_evas_changed
 };
 
 EAPI Ecore_Evas *

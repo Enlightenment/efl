@@ -115,7 +115,9 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // aux_hints_set
 
    NULL, // fn_animator_register
-   NULL  // fn_animator_unregister
+   NULL, // fn_animator_unregister
+
+   NULL, // fn_evas_changed
 };
 
 /* external variables */
