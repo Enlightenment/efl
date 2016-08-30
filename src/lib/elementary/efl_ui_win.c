@@ -2308,13 +2308,16 @@ _elm_win_object_focus_in(void *data,
 
    target = _elm_win_focus_target_get(obj);
    sd->focus_highlight.cur.target = target;
-   if (target && elm_widget_highlight_in_theme_get(target))
-     sd->focus_highlight.cur.in_theme = EINA_TRUE;
-   else
-     _elm_win_focus_target_callbacks_add(sd);
 
-   evas_object_event_callback_add
-     (target, EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd->obj);
+   if (target)
+     {
+        if (elm_widget_highlight_in_theme_get(target))
+          sd->focus_highlight.cur.in_theme = EINA_TRUE;
+        else
+          _elm_win_focus_target_callbacks_add(sd);
+        evas_object_event_callback_add
+              (target, EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd->obj);
+     }
 
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 }
