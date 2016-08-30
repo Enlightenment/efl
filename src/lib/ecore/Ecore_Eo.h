@@ -70,6 +70,7 @@ struct _Efl_Future_Composite_Progress
 };
 
 EAPI Efl_Future *efl_future_all_internal(Efl_Future *f1, ...);
+EAPI Efl_Future *efl_future_iterator_all(Eina_Iterator *it);
 
 #define efl_future_all(...) efl_future_all_internal(__VA_ARGS__, NULL)
 

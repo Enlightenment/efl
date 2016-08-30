@@ -934,9 +934,32 @@ efl_future_all_internal(Efl_Future *f1, ...)
 
    return _efl_future_all_done(all);
 
+ on_error:
+   _efl_promise_all_die(all, NULL);
+   return NULL;
+}
 
+EAPI Efl_Future *
+efl_future_iterator_all(Eina_Iterator *it)
+{
+   Efl_Promise_All *all = NULL;
+   Efl_Future *fn;
+
+   if (!it) return NULL;
+
+   EINA_ITERATOR_FOREACH(it, fn)
+     {
+        if (!all) _efl_future_all_new(fn);
+        if (!all) goto on_error;
+        if (!_efl_future_all_append(all, fn))
+          goto on_error;
+     }
+   eina_iterator_free(it);
+
+   return _efl_future_all_done(all);
 
  on_error:
+   eina_iterator_free(it);
    _efl_promise_all_die(all, NULL);
    return NULL;
 }
