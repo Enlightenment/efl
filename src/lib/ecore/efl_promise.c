@@ -67,6 +67,7 @@ struct _Efl_Loop_Future_Data
    Eina_Inlist *callbacks;
 
    Efl_Future *self;
+   Efl_Loop *loop;
    Efl_Promise_Msg  *message;
    Efl_Promise_Data *promise;
 
@@ -344,6 +345,8 @@ _efl_loop_future_efl_object_constructor(Eo *obj, Efl_Loop_Future_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, EFL_LOOP_FUTURE_CLASS));
 
+   pd->loop = efl_ref(efl_provider_find(obj, EFL_LOOP_CLASS));
+
    pd->self = obj;
    pd->optional = EINA_TRUE;
 
@@ -357,6 +360,8 @@ _efl_loop_future_efl_object_constructor(Eo *obj, Efl_Loop_Future_Data *pd)
 static void
 _efl_loop_future_efl_object_destructor(Eo *obj, Efl_Loop_Future_Data *pd)
 {
+   Eo *promise = NULL;
+
    if (!pd->fulfilled)
      {
         ERR("Lost reference to a future without fulfilling it. Forcefully cancelling it.");
@@ -385,10 +390,16 @@ _efl_loop_future_efl_object_destructor(Eo *obj, Efl_Loop_Future_Data *pd)
         ecore_loop_future_unregister(efl_provider_find(pd->self, EFL_LOOP_CLASS), pd->self);
      }
 
+   if (pd->promise) promise = efl_ref(pd->promise->promise);
+
    efl_destructor(efl_super(obj, EFL_LOOP_FUTURE_CLASS));
 
    // Disconnect from the promise
    _efl_loop_future_disconnect(obj, pd);
+
+   efl_unref(promise);
+
+   efl_unref(pd->loop);
 }
 
 #ifndef NDEBUG
@@ -409,10 +420,26 @@ _efl_future_wref_del(Eo *obj, Efl_Loop_Future_Data *pd, Eo **wref)
 }
 #endif
 
+static Efl_Object *
+_efl_loop_future_efl_object_provider_find(Eo *obj EINA_UNUSED, Efl_Loop_Future_Data *pd, const Efl_Object *klass)
+{
+   Efl_Object *r = NULL;
+
+   if (pd->loop) r = efl_provider_find(pd->loop, klass);
+   if (r) return r;
+
+   return efl_provider_find(efl_super(obj, EFL_LOOP_FUTURE_CLASS), klass);
+}
+
 static Eina_Bool
 _efl_loop_future_class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
+#ifndef NDEBUG
+                  EFL_OBJECT_OP_FUNC(efl_wref_add, _efl_future_wref_add),
+                  EFL_OBJECT_OP_FUNC(efl_wref_del, _efl_future_wref_del),
+#endif
+                  EFL_OBJECT_OP_FUNC(efl_provider_find, _efl_loop_future_efl_object_provider_find),
                   EFL_OBJECT_OP_FUNC(efl_future_then, _efl_loop_future_then),
                   EFL_OBJECT_OP_FUNC(efl_future_cancel, _efl_loop_future_cancel),
                   EFL_OBJECT_OP_FUNC(efl_constructor, _efl_loop_future_efl_object_constructor),
@@ -440,7 +467,7 @@ _efl_promise_future_get(Eo *obj, Efl_Promise_Data *pd EINA_UNUSED)
    Efl_Loop_Future_Data *fd;
 
    // Build a new future, attach it and return it
-   f = efl_add(EFL_LOOP_FUTURE_CLASS, NULL);
+   f = efl_add(EFL_LOOP_FUTURE_CLASS, obj);
    if (!f) return NULL;
 
    fd = efl_data_scope_get(f, EFL_LOOP_FUTURE_CLASS);
