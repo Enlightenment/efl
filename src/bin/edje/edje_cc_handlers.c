@@ -4646,7 +4646,7 @@ st_collections_group_inherit(void)
 
    if (pc2->alias)
      {
-        char *key, *alias;
+        char *key;
 
         memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
         eina_hash_foreach(pc2->alias,
@@ -4654,8 +4654,9 @@ st_collections_group_inherit(void)
         if (!pc->alias) pc->alias = eina_hash_string_small_new(free);
         EINA_LIST_FREE(fdata.list, key)
           {
-             alias = eina_hash_find(pc2->alias, key);
-             eina_hash_direct_add(pc->alias, key, alias);
+             char *tmp;
+             tmp = eina_hash_find(pc2->alias, key);
+             eina_hash_direct_add(pc->alias, key, tmp);
           }
      }
    if (pc2->aliased)
