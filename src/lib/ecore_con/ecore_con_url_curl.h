@@ -8,6 +8,7 @@
  */
 #include <curl/curl.h>
 #else
+#include <sys/socket.h>
 
 // all the types, defines, enums etc. from curl that we actually USE.
 // we have to add to this if we use more things from curl not already
