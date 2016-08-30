@@ -1599,6 +1599,9 @@ edje_edit_sound_samplesource_get(Evas_Object *obj, const char *sample_name)
 static void
 _mempools_add(Edje_Part_Collection_Directory_Entry *de)
 {
+   de->mp = calloc(1, sizeof(Edje_Part_Collection_Directory_Entry_Mp));
+   if (!de->mp)
+     return;
 #define EDIT_EMN(Tp, Sz, Ce) \
   Ce->mp->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
 #define EDIT_EMNP(Tp, Sz, Ce) \
