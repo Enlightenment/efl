@@ -1154,7 +1154,22 @@ efl_future_race_internal(Efl_Future *f1, ...)
         eina_array_push(&race->members, fn);
      }
 
+   return _efl_future_race_done(race);
+}
 
+EAPI Efl_Future *
+efl_future_iterator_race(Eina_Iterator *it)
+{
+   Efl_Promise_Race *race = NULL;
+   Efl_Future *fn;
+
+   if (!it) return NULL;
+
+   EINA_ITERATOR_FOREACH(it, fn)
+     {
+        if (!race) race = _efl_future_race_new(fn);
+        if (race) eina_array_push(&race->members, fn);
+     }
 
    return _efl_future_race_done(race);
 }

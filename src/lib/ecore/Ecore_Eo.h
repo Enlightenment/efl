@@ -86,6 +86,7 @@ struct _Efl_Future_Race_Success
 };
 
 EAPI Efl_Future *efl_future_race_internal(Efl_Future *f1, ...);
+EAPI Efl_Future *efl_future_iterator_race(Eina_Iterator *it);
 
 #define efl_future_race(...) efl_future_race_internal(__VA_ARGS__, NULL)
 
