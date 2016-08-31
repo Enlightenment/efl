@@ -708,6 +708,11 @@ local build_class = function(cl)
     f:write_raw(cl:doc_get():full_get(nil, true))
     f:write_nl(2)
 
+    cln[#cln + 1] = "description"
+    cln[#cln + 1] = false
+    f:write_include(f.INCLUDE_PAGE, cln)
+    f:write_nl()
+
     build_functable(f, "Methods", "Method name", cl, dtree.Function.METHOD)
     build_functable(f, "Properties", "Property name",
         cl, dtree.Function.PROPERTY)
