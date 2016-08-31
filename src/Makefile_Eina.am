@@ -101,7 +101,8 @@ lib/eina/eina_bezier.h \
 lib/eina/eina_safepointer.h \
 lib/eina/eina_inline_safepointer.x \
 lib/eina/eina_slice.h \
-lib/eina/eina_inline_slice.x
+lib/eina/eina_inline_slice.x \
+lib/eina/eina_inline_modinfo.x
 
 lib_eina_libeina_la_SOURCES = \
 lib/eina/eina_abi.c \
@@ -267,6 +268,17 @@ bin_eina_eina_btlog_CPPFLAGS =  -I$(top_builddir)/src/lib/efl \
 
 bin_eina_eina_btlog_LDADD = @USE_EINA_LIBS@
 bin_eina_eina_btlog_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
+
+bin_PROGRAMS += bin/eina/eina_modinfo
+
+bin_eina_eina_modinfo_SOURCES = bin/eina/eina_modinfo.c
+bin_eina_eina_modinfo_CPPFLAGS =  -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/eina\" \
+@EINA_CFLAGS@
+
+bin_eina_eina_modinfo_LDADD = @USE_EINA_LIBS@
 
 ### Script
 

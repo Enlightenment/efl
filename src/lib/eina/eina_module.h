@@ -22,6 +22,7 @@
 #include "eina_types.h"
 #include "eina_array.h"
 #include "eina_error.h"
+#include "eina_inline_modinfo.x"
 
 /**
  * @addtogroup Eina_Module_Group Module

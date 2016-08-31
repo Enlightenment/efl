@@ -47,5 +47,10 @@ _module_shutdown(void)
 {
 }
 
+EINA_MODULE_VERSION("0.1");
+EINA_MODULE_AUTHOR("Enlightenment Community");
+EINA_MODULE_DESCRIPTION("Entry test");
+EINA_MODULE_LICENSE("GPLv2");
+
 EINA_MODULE_INIT(_module_init);
 EINA_MODULE_SHUTDOWN(_module_shutdown);
