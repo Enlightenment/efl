@@ -96,7 +96,11 @@ M.Writer = util.Object:clone {
         if type(name) == "table" then
             if name[#name] == true then
                 name[#name] = nil
-                name = ":" .. root_nspace .. ":"
+                name = ":" .. root_nspace .. ":auto:"
+                           .. table.concat(name, ":")
+            elseif name[#name] == false then
+                name[#name] = nil
+                name = ":" .. root_nspace .. ":user:"
                            .. table.concat(name, ":")
             else
                 name = table.concat(name, ":")
@@ -222,7 +226,11 @@ M.Writer = util.Object:clone {
         if type(target) == "table" then
             if target[#target] == true then
                 target[#target] = nil
-                target = ":" .. root_nspace .. ":"
+                target = ":" .. root_nspace .. ":auto:"
+                             .. table.concat(target, ":")
+            elseif target[#target] == false then
+                target[#target] = nil
+                target = ":" .. root_nspace .. ":user:"
                              .. table.concat(target, ":")
             else
                 target = table.concat(target, ":")

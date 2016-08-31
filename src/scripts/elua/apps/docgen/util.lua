@@ -23,7 +23,7 @@ M.nspace_to_path = function(ns)
 end
 
 M.make_page = function(path)
-    return M.path_join(doc_root, path .. ".txt")
+    return M.path_join(doc_root, "auto", path .. ".txt")
 end
 
 M.get_root_ns = function()
@@ -31,7 +31,7 @@ M.get_root_ns = function()
 end
 
 M.mkdir_r = function(dirn)
-    assert(cutil.file_mkpath(dirn and M.path_join(doc_root, dirn) or doc_root))
+    assert(cutil.file_mkpath(M.path_join(doc_root, "auto", dirn)))
 end
 
 M.mkdir_p = function(path)
@@ -39,7 +39,7 @@ M.mkdir_p = function(path)
 end
 
 M.rm_root = function()
-    cutil.file_rmrf(doc_root)
+    cutil.file_rmrf(M.path_join(doc_root, "auto"))
 end
 
 M.str_split = function(str, delim)

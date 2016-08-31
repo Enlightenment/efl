@@ -29,7 +29,7 @@ M.build = function()
         f:finish()
         local lf = writer.Writer({ "ref", lang, "keyword-link" })
         lf:write_raw("/", dutil.path_join(
-            dutil.nspace_to_path(dutil.get_root_ns()),
+            dutil.nspace_to_path(dutil.get_root_ns()), "auto",
             "ref", lang, "key", "{FNAME}"
         ))
         lf:write_nl()

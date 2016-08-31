@@ -1076,7 +1076,7 @@ getopt.parse {
             set_theme(opts["graph-theme"])
         end
         local rootns = (not opts["n"] or opts["n"] == "")
-            and "docs:efl:auto" or opts["n"]
+            and "docs:efl" or opts["n"]
         local dr
         if not opts["r"] or opts["r"] == "" then
             dr = "dokuwiki/data/pages"
