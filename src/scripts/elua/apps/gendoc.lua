@@ -710,7 +710,9 @@ local build_class = function(cl)
 
     cln[#cln + 1] = "description"
     cln[#cln + 1] = false
-    f:write_include(f.INCLUDE_PAGE, cln)
+    f:write_include(f.INCLUDE_PAGE, cln, {
+        date = false, user = false, link = false
+    })
     f:write_nl()
 
     build_functable(f, "Methods", "Method name", cl, dtree.Function.METHOD)
