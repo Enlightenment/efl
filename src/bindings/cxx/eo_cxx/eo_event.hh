@@ -135,7 +135,7 @@ void really_call_event(T& wrapper, F& f, void *info, std::false_type)
 }
 
 template <typename T, typename P, typename F>
-void event_callback(void *data, ::Eo_Event const* event)
+void event_callback(void *data, ::Efl_Event const* event)
 {
    T wrapper(::efl_ref(event->object));
    F *f = static_cast<F*>(data);
