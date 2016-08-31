@@ -74,6 +74,7 @@ _efl_io_copier_job(void *data, void *value EINA_UNUSED)
    pd->job = NULL;
 
    _COPIER_DBG(o, pd);
+   efl_ref(o);
 
    if (pd->source && efl_io_reader_can_read_get(pd->source))
      _efl_io_copier_read(o, pd);
@@ -92,6 +93,8 @@ _efl_io_copier_job(void *data, void *value EINA_UNUSED)
              efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
           }
      }
+
+   efl_unref(o);
 }
 
 static void
