@@ -113,7 +113,7 @@ M.Writer = util.Object:clone {
             end
             flags.section = nil
             local flstr = {}
-            for k, v in ipairs(flags) do
+            for k, v in pairs(flags) do
                 local allow = allowed_incflags[k]
                 if allow ~= nil then
                     if type(allow) == "boolean" then
@@ -159,6 +159,17 @@ M.Writer = util.Object:clone {
             self:write_nl()
         end
         return self
+    end,
+
+    write_editable = function(self, ns, name)
+        ns[#ns + 1] = name
+        ns[#ns + 1] = false
+        self:write_include(self.INCLUDE_PAGE, ns, {
+            date = false, user = false, link = false
+        })
+        -- restore the table for later reuse
+        ns[#ns] = nil
+        ns[#ns] = nil
     end,
 
     write_fmt = function(self, fmt1, fmt2, ...)
