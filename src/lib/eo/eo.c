@@ -1927,3 +1927,9 @@ efl_manual_free(Eo *obj_id)
 
    return EINA_TRUE;
 }
+
+EAPI int
+efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_Array_Item *b)
+{
+   return (const unsigned char *) a->desc - (const unsigned char *) b->desc;
+}

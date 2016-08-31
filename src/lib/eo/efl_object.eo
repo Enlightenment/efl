@@ -341,7 +341,9 @@ abstract Efl.Object ()
          }
       }
       event_callback_array_priority_add {
-         [[Add a callback array for an event with a specific priority.
+         [[Add an array of callbacks created by \@ref EFL_CALLBACKS_ARRAY_DEFINE for an event
+	   with a specific priority. The array need to be sorted with \@ref efl_callbacks_cmp
+	   if you are not using the \@ref EFL_CALLBACKS_ARRAY_DEFINE macro.
 
            callbacks of the same priority are called in reverse order of
            creation.

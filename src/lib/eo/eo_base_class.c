@@ -1065,13 +1065,31 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
                           const void *user_data)
 {
    Eo_Callback_Description *cb = _eo_callback_new();
+#ifdef EO_DEBUG
+   const Efl_Callback_Array_Item *it;
+   const Efl_Callback_Array_Item *prev;
+#endif
 
    if (!cb || !array)
      {
-        ERR("Tried adding array of callbacks with invalid values: cb: %p array: %p\n", cb, array);
+        ERR("Tried adding array of callbacks with invalid values: cb: %p array: %p.", cb, array);
         _eo_callback_free(cb);
         return EINA_FALSE;
      }
+
+#ifdef EO_DEBUG
+   prev = array;
+   for (it = prev + 1; prev->func && it->func; it++, prev++)
+     {
+        if (efl_callbacks_cmp(prev, it) > 0)
+          {
+             ERR("Trying to insert a non sorted array callbacks (%p).", array);
+             _eo_callback_free(cb);
+             return EINA_FALSE;
+          }
+     }
+#endif
+
    cb->func_data = (void *) user_data;
    cb->priority = priority;
    cb->items.item_array = array;
@@ -1182,6 +1200,10 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
 
                   for (it = cb->items.item_array; it->func; it++)
                     {
+                       // Array callbacks are sorted, break if we are getting to high.
+                       if (!legacy_compare &&
+                           ((const unsigned char *) desc - (const unsigned char *) it->desc) < 0)
+                         break;
                        if (!_cb_desc_match(it->desc, desc, legacy_compare))
                           continue;
                        if (!it->desc->unfreezable &&

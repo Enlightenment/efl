@@ -1070,23 +1070,33 @@ EAPI const Efl_Event_Description *efl_object_legacy_only_event_description_get(c
 #define EFL_CALLBACK_PRIORITY_AFTER 100
 
 /**
+ * Helper for sorting callbacks array. Automatically used by
+ * @ref EFL_CALLBACKS_ARRAY_DEFINE
+ */
+EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_Array_Item *b);
+
+/**
  * Helper for creating global callback arrays.
  * The problem is on windows where you can't declare a static array with
  * external symbols in it, because the addresses are only known at runtime.
+ * This also open up the possibility to automatically sort them for better
+ * performance.
  */
-#define EFL_CALLBACKS_ARRAY_DEFINE(Name, ...)                            \
-  static Efl_Callback_Array_Item *                                       \
+#define EFL_CALLBACKS_ARRAY_DEFINE(Name, ...)                           \
+  static Efl_Callback_Array_Item *                                      \
   Name(void)                                                            \
   {                                                                     \
      static Efl_Callback_Array_Item internal[sizeof ((Efl_Callback_Array_Item[]) { __VA_ARGS__ }) / \
                                             sizeof (Efl_Callback_Array_Item) + \
-                                            1] = { { 0, 0 } };          \
+                                             1] = { { 0, 0 } };         \
      if (internal[0].desc == NULL)                                      \
        {                                                                \
           memcpy(internal,                                              \
                  ((Efl_Callback_Array_Item[]) { __VA_ARGS__, { NULL, NULL } }), \
-                 sizeof (Efl_Callback_Array_Item) +                      \
-                 sizeof ((Efl_Callback_Array_Item[]) { __VA_ARGS__ }));  \
+                 sizeof (Efl_Callback_Array_Item) +                     \
+                 sizeof ((Efl_Callback_Array_Item[]) { __VA_ARGS__ })); \
+          qsort(internal, sizeof (internal) / sizeof (internal[0]) - 1, sizeof (internal[0]), \
+                (void*) efl_callbacks_cmp);                              \
        }                                                                \
      return internal;                                                   \
   }
@@ -1108,11 +1118,15 @@ EAPI const Efl_Event_Description *efl_object_legacy_only_event_description_get(c
 
 /**
  * @def efl_event_callback_array_add(obj, desc, cb, data)
- * Add a callback array for an event.
+ * Add an array of callbacks for an event.
+ *
  * @param[in] array an #Efl_Callback_Array_Item of events to listen to.
  * @param[in] data additional data to pass to the callback.
  *
- * callbacks of the same priority are called in reverse order of creation.
+ * Callbacks of the same priority are called in reverse order of creation.
+ * The array should have been created by @ref EFL_CALLBACKS_ARRAY_DEFINE. If
+ * that wasn't the case, be careful of portability issue and make sure that
+ * it is properly sorted with @ref efl_callbacks_cmp.
  *
  * @see efl_event_callback_array_priority_add()
  */
