@@ -42,9 +42,9 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EFL_EVENT_POINTER_UP,
                       EFL_EVENT_POINTER_MOVE,
                       EFL_EVENT_POINTER_WHEEL,
-                      EFL_EVENT_POINTER_DOWN,
-                      EFL_EVENT_POINTER_UP,
-                      EFL_EVENT_POINTER_MOVE,
+                      EFL_EVENT_FINGER_DOWN,
+                      EFL_EVENT_FINGER_UP,
+                      EFL_EVENT_FINGER_MOVE,
                       EVAS_OBJECT_EVENT_FREE,
                       EFL_EVENT_KEY_DOWN,
                       EFL_EVENT_KEY_UP,
@@ -299,7 +299,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
                                 const Efl_Event_Description *efl_event_desc)
 {
    /* MEM OK */
-   const Evas_Button_Flags mask = EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK;
+   const Evas_Button_Flags CLICK_MASK = EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
    Evas_Public_Data *e;
 
@@ -328,10 +328,10 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    if ((type == EVAS_CALLBACK_MOUSE_DOWN) || (type == EVAS_CALLBACK_MOUSE_UP))
      {
         flags = efl_input_pointer_button_flags_get(event_info);
-        if (flags & mask)
+        if (flags & CLICK_MASK)
           {
              if (obj->last_mouse_down_counter < (e->last_mouse_down_counter - 1))
-               efl_input_pointer_button_flags_set(event_info, flags & ~mask);
+               efl_input_pointer_button_flags_set(event_info, flags & ~CLICK_MASK);
           }
         obj->last_mouse_down_counter = e->last_mouse_down_counter;
      }
@@ -344,8 +344,24 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
    efl_event_callback_legacy_call(eo_obj, efl_event_desc, event_info);
 
-   if ((type == EVAS_CALLBACK_MOUSE_DOWN) || (type == EVAS_CALLBACK_MOUSE_UP))
-     efl_input_pointer_button_flags_set(event_info, flags);
+   /* multi events with finger 0 - only for eo callbacks */
+   if (type == EVAS_CALLBACK_MOUSE_DOWN)
+     {
+        if (_evas_object_callback_has_by_type(obj, EVAS_CALLBACK_MULTI_DOWN))
+          efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_DOWN, event_info);
+        efl_input_pointer_button_flags_set(event_info, flags);
+     }
+   else if (type == EVAS_CALLBACK_MOUSE_UP)
+     {
+        if (_evas_object_callback_has_by_type(obj, EVAS_CALLBACK_MULTI_UP))
+          efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_UP, event_info);
+        efl_input_pointer_button_flags_set(event_info, flags);
+     }
+   else if (type == EVAS_CALLBACK_MOUSE_MOVE)
+     {
+        if (_evas_object_callback_has_by_type(obj, EVAS_CALLBACK_MULTI_MOVE))
+          efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_MOVE, event_info);
+     }
 
 nothing_here:
    if (!obj->no_propagate)

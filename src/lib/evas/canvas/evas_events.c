@@ -441,8 +441,6 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
         _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, child->mouse_grabbed);
         evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_DOWN, evt,
                                         event_id, EFL_EVENT_POINTER_DOWN);
-        evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MULTI_DOWN, evt,
-                                        event_id, EFL_EVENT_FINGER_DOWN);
         if (e->delete_me) break;
         if (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
           break;
@@ -505,8 +503,6 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                   ev->action = EFL_POINTER_ACTION_MOVE;
                   evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_MOVE, evt,
                                                   event_id, EFL_EVENT_POINTER_MOVE);
-                  evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MULTI_MOVE, evt,
-                                                  event_id, EFL_EVENT_FINGER_MOVE);
                }
              else
                outs = eina_list_append(outs, eo_child);
@@ -569,8 +565,6 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                   _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, child->mouse_grabbed);
                   evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_MOVE, evt,
                                                   event_id, EFL_EVENT_POINTER_MOVE);
-                  evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MULTI_MOVE, evt,
-                                                  event_id, EFL_EVENT_FINGER_MOVE);
                }
              else if (child->mouse_in)
                {
@@ -669,8 +663,6 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
         _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, child->mouse_grabbed);
         evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_UP, evt,
                                         event_id, EFL_EVENT_POINTER_UP);
-        evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MULTI_UP, evt,
-                                        event_id, EFL_EVENT_FINGER_UP);
         if (e->delete_me) break;
         if (obj->pointer_mode ==
             EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
@@ -1287,8 +1279,6 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
         _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj->mouse_grabbed);
         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_DOWN, evt,
                                         event_id, EFL_EVENT_POINTER_DOWN);
-        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_DOWN, evt,
-                                        event_id, EFL_EVENT_FINGER_DOWN);
         if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
           _evas_event_source_mouse_down_events(eo_obj, eo_e, evt, event_id);
         if (e->is_frozen || e->delete_me)  break;
@@ -1475,8 +1465,6 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
                   _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj->mouse_grabbed);
                   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_UP, evt,
                                                   event_id, EFL_EVENT_POINTER_UP);
-                  evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_UP, evt,
-                                                  event_id, EFL_EVENT_FINGER_UP);
                   if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
                     _evas_event_source_mouse_up_events(eo_obj, eo_e, evt, event_id);
                   if (e->delete_me) break;
@@ -1796,8 +1784,6 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                        _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj->mouse_grabbed);
                        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, evt,
                                                        event_id, EFL_EVENT_POINTER_MOVE);
-                       evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, evt,
-                                                       event_id, EFL_EVENT_FINGER_MOVE);
                        if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
                          _evas_event_source_mouse_move_events(eo_obj, eo_e, evt, event_id);
                     }
@@ -1881,8 +1867,6 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                        ev->action = EFL_POINTER_ACTION_MOVE;
                        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, evt,
                                                        event_id, EFL_EVENT_POINTER_MOVE);
-                       evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, evt,
-                                                       event_id, EFL_EVENT_FINGER_MOVE);
                        if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
                          _evas_event_source_mouse_move_events(eo_obj, eo_e, evt, event_id);
                     }
@@ -2013,8 +1997,6 @@ nogrep:
                        ev->action = EFL_POINTER_ACTION_MOVE;
                        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, evt,
                                                        event_id, EFL_EVENT_POINTER_MOVE);
-                       evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, evt,
-                                                       event_id, EFL_EVENT_FINGER_MOVE);
                        if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
                          _evas_event_source_mouse_move_events(eo_obj, eo_e, evt, event_id);
                     }
