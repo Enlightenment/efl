@@ -268,20 +268,61 @@ efl_input_pointer_legacy_info_fill(Efl_Input_Key *evt, Evas_Callback_Type type, 
            /* FIXME: Get device id from above device object. 0 for now. */
            e->device = 0;
            e->toolid = ev->tool;
-           e->axis = malloc(sizeof(Evas_Axis) * 3);
-           e->axis[e->naxis].label = EVAS_AXIS_LABEL_X;
+           e->axis = malloc(sizeof(Evas_Axis) * 11);
+           e->axis[e->naxis].label = EVAS_AXIS_LABEL_WINDOW_X;
            e->axis[e->naxis].value = ev->cur.x;
            e->naxis++;
-           e->axis[e->naxis].label = EVAS_AXIS_LABEL_Y;
+           e->axis[e->naxis].label = EVAS_AXIS_LABEL_WINDOW_Y;
            e->axis[e->naxis].value = ev->cur.y;
            e->naxis++;
+           if (ev->has_raw)
+             {
+                e->axis[e->naxis].label = EVAS_AXIS_LABEL_X;
+                e->axis[e->naxis].value = ev->raw.x;
+                e->naxis++;
+                e->axis[e->naxis].label = EVAS_AXIS_LABEL_Y;
+                e->axis[e->naxis].value = ev->raw.y;
+                e->naxis++;
+             }
+           if (ev->has_norm)
+             {
+                e->axis[e->naxis].label = EVAS_AXIS_LABEL_NORMAL_X;
+                e->axis[e->naxis].value = ev->norm.x;
+                e->naxis++;
+                e->axis[e->naxis].label = EVAS_AXIS_LABEL_NORMAL_Y;
+                e->axis[e->naxis].value = ev->norm.y;
+                e->naxis++;
+             }
            if (_efl_input_value_has(ev, EFL_INPUT_VALUE_PRESSURE))
              {
                 e->axis[e->naxis].label = EVAS_AXIS_LABEL_PRESSURE;
                 e->axis[e->naxis].value = ev->pressure;
                 e->naxis++;
              }
-           // TODO: distance, azimuth, tild, twist
+           if (_efl_input_value_has(ev, EFL_INPUT_VALUE_DISTANCE))
+             {
+                e->axis[e->naxis].label = EVAS_AXIS_LABEL_DISTANCE;
+                e->axis[e->naxis].value = ev->distance;
+                e->naxis++;
+             }
+           if (_efl_input_value_has(ev, EFL_INPUT_VALUE_AZIMUTH))
+             {
+                e->axis[e->naxis].label = EVAS_AXIS_LABEL_AZIMUTH;
+                e->axis[e->naxis].value = ev->azimuth;
+                e->naxis++;
+             }
+           if (_efl_input_value_has(ev, EFL_INPUT_VALUE_TILT))
+             {
+                e->axis[e->naxis].label = EVAS_AXIS_LABEL_TILT;
+                e->axis[e->naxis].value = ev->tilt;
+                e->naxis++;
+             }
+           if (_efl_input_value_has(ev, EFL_INPUT_VALUE_TWIST))
+             {
+                e->axis[e->naxis].label = EVAS_AXIS_LABEL_TWIST;
+                e->axis[e->naxis].value = ev->twist;
+                e->naxis++;
+             }
            tmp_axis = realloc(e->axis, e->naxis * sizeof(Evas_Axis));
            if (tmp_axis) e->axis = tmp_axis;
            if (pflags) *pflags = NULL;

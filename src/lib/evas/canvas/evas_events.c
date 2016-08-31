@@ -3033,6 +3033,8 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
                   _efl_input_value_mark(ev, EFL_INPUT_VALUE_X);
                   x = axis->value;
                }
+             ev->raw.x = axis->value;
+             ev->has_raw = EINA_TRUE;
              break;
 
            case EVAS_AXIS_LABEL_Y:
@@ -3041,14 +3043,18 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
                   _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
                   y = axis->value;
                }
+             ev->raw.y = axis->value;
+             ev->has_raw = EINA_TRUE;
              break;
 
            case EVAS_AXIS_LABEL_NORMAL_X:
-             ev->raw.x = axis->value;
+             ev->norm.x = axis->value;
+             ev->has_norm = EINA_TRUE;
              break;
 
            case EVAS_AXIS_LABEL_NORMAL_Y:
-             ev->raw.y = axis->value;
+             ev->norm.y = axis->value;
+             ev->has_norm = EINA_TRUE;
              break;
 
            case EVAS_AXIS_LABEL_PRESSURE:
@@ -3057,10 +3063,24 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
              break;
 
            case EVAS_AXIS_LABEL_DISTANCE:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_DISTANCE);
+             ev->distance = axis->value;
+             break;
+
            case EVAS_AXIS_LABEL_AZIMUTH:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_AZIMUTH);
+             ev->azimuth = axis->value;
+             break;
+
            case EVAS_AXIS_LABEL_TILT:
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_TILT);
+             ev->tilt = axis->value;
+             break;
+
            case EVAS_AXIS_LABEL_TWIST:
-             // TODO
+             _efl_input_value_mark(ev, EFL_INPUT_VALUE_TWIST);
+             ev->twist = axis->value;
+             break;
 
            case EVAS_AXIS_LABEL_UNKNOWN:
            case EVAS_AXIS_LABEL_TOUCH_WIDTH_MAJOR:

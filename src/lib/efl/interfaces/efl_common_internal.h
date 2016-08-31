@@ -31,9 +31,9 @@ struct _Efl_Input_Pointer_Data
    unsigned int    pressed_buttons;
    int             tool; /* finger or tool ID */
    double          radius, radius_x, radius_y;
-   double          pressure;
+   double          pressure, distance, azimuth, tilt, twist;
    double          angle;
-   Eina_Vector2    cur, prev, raw;
+   Eina_Vector2    cur, prev, raw, norm;
    struct {
       Efl_Orient   dir;
       int          z;
@@ -50,6 +50,8 @@ struct _Efl_Input_Pointer_Data
    Evas_Lock                  *locks;
    void                       *legacy; /* DO NOT TOUCH THIS */
    uint32_t                    value_flags;
+   Eina_Bool                   has_norm : 1; /* not in value_flags */
+   Eina_Bool                   has_raw : 1; /* not in value_flags */
    Eina_Bool                   evas_done : 1; /* set by evas */
    Eina_Bool                   fake : 1;
    Eina_Bool                   win_fed : 1;

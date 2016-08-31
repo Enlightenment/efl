@@ -262,7 +262,7 @@ _axis_update_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EI
 {
    Evas_Event_Axis_Update *ev = event_info;
    float twist = 0, azimuth = 0, tilt = 0;
-   float pressure = 1;
+   float pressure = 1, distance = 0;
    int i;
 
    for (i = 0; i < ev->naxis; i++)
@@ -274,10 +274,13 @@ _axis_update_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EI
           case EVAS_AXIS_LABEL_TWIST:    twist    = val; break;
           case EVAS_AXIS_LABEL_AZIMUTH:  azimuth  = val; break;
           case EVAS_AXIS_LABEL_TILT:     tilt     = val; break;
+          case EVAS_AXIS_LABEL_DISTANCE: distance = val; break;
           default: break;
           }
      }
 
+    printf("distance %.2f, pressure %.2f, twist %.2f, azimuth %.2f, tilt %.2f\n",
+            distance, pressure, twist, azimuth, tilt);
     _mouse_update_handle(ev->toolid, azimuth, tilt, twist, pressure);
 }
 
