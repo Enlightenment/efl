@@ -60,7 +60,8 @@ _evas_canvas_touch_point_list_count(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 EOLIAN void
-_evas_canvas_touch_point_list_nth_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int n, Evas_Coord *x, Evas_Coord *y)
+_evas_canvas_touch_point_list_nth_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
+                                         unsigned int n, double *x, double *y)
 {
    Evas_Coord_Touch_Point *point = NULL;
 
@@ -73,6 +74,16 @@ _evas_canvas_touch_point_list_nth_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data 
      }
    if (x) *x = point->x;
    if (y) *y = point->y;
+}
+
+EAPI void
+evas_touch_point_list_nth_xy_get(Evas_Canvas *obj, unsigned int n, Evas_Coord *x, Evas_Coord *y)
+{
+   double X = 0, Y = 0;
+
+   evas_canvas_touch_point_list_nth_xy_get(obj, n, &X, &Y);
+   if (x) *x = X;
+   if (y) *y = Y;
 }
 
 EOLIAN int

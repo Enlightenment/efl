@@ -1590,6 +1590,7 @@ _canvas_event_feed_mouse_cancel_internal(Evas_Public_Data *e, Efl_Input_Pointer_
              ev->tool = point->id;
              ev->cur.x = point->x;
              ev->cur.y = point->y;
+             ev->prev = ev->cur;
              _canvas_event_feed_multi_up_internal(e, ev);
           }
      }
@@ -3459,6 +3460,9 @@ EFL_CALLBACKS_ARRAY_DEFINE(_evas_canvas_event_pointer_callbacks,
 { EFL_EVENT_POINTER_CANCEL, _evas_canvas_event_pointer_cb },
 { EFL_EVENT_POINTER_WHEEL, _evas_canvas_event_pointer_cb },
 { EFL_EVENT_POINTER_AXIS, _evas_canvas_event_pointer_cb },
+{ EFL_EVENT_FINGER_MOVE, _evas_canvas_event_pointer_cb },
+{ EFL_EVENT_FINGER_DOWN, _evas_canvas_event_pointer_cb },
+{ EFL_EVENT_FINGER_UP, _evas_canvas_event_pointer_cb },
 { EFL_EVENT_KEY_DOWN, _evas_canvas_event_key_cb },
 { EFL_EVENT_KEY_UP, _evas_canvas_event_key_cb })
 

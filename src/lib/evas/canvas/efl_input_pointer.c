@@ -80,9 +80,10 @@ _efl_input_pointer_class_destructor(Efl_Class *klass EINA_UNUSED)
 }
 
 EOLIAN static Efl_Object *
-_efl_input_pointer_efl_object_constructor(Eo *obj, Efl_Input_Pointer_Data *pd EINA_UNUSED)
+_efl_input_pointer_efl_object_constructor(Eo *obj, Efl_Input_Pointer_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   pd->fake = 1;
    efl_input_reset(obj);
    return obj;
 }
@@ -375,6 +376,16 @@ _efl_input_pointer_value_has_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd
 {
    if (!pd || (key <= EFL_INPUT_VALUE_NONE) || (key > EFL_INPUT_VALUE_SLIDER))
      return EINA_FALSE;
+   if (key == EFL_INPUT_VALUE_DX)
+     {
+        return _efl_input_value_has(pd, EFL_INPUT_VALUE_X) &&
+              _efl_input_value_has(pd, EFL_INPUT_VALUE_PREVIOUS_X);
+     }
+   if (key == EFL_INPUT_VALUE_DY)
+     {
+        return _efl_input_value_has(pd, EFL_INPUT_VALUE_Y) &&
+              _efl_input_value_has(pd, EFL_INPUT_VALUE_PREVIOUS_Y);
+     }
    return _efl_input_value_has(pd, key);
 }
 

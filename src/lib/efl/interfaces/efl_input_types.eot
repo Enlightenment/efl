@@ -4,7 +4,8 @@ enum Efl.Pointer.Action
 
      @since 1.19
    ]]
-   none,   [[Not a valid event.]]
+   none,   [[Not a valid event, or nothing new happened (eg. when querying
+             current state of touch points).]]
    move,   [[Mouse or equivalent pointer moved.]]
    down,   [[Mouse button or equivalent pointer pressed down.
              Always followed by up or cancel.]]

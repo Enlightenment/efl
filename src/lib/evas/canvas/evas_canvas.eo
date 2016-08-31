@@ -597,16 +597,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
            evas and point is removed whenever removing touched point from
            the evas.
          ]]
-         /* FIXME-doc
-         Example:
-         @code
-         extern Evas *evas;
-         int count;
-
-         count = evas_touch_point_list_count(evas);
-         printf("The count of touch points: %i\n", count);
-         @endcode
-         */
          return: uint; [[The number of touched point on the evas.]]
       }
       nochange_pop {
@@ -753,19 +743,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
            which comes from Multi Event has $id that is same as Multi
            Event's device id.
          ]]
-         /* FIXME-doc
-         Example:
-         @code
-         extern Evas *evas;
-         int id;
-
-         if (evas_touch_point_list_count(evas))
-         {
-         id = evas_touch_point_nth_id_get(evas, 0);
-         printf("The first touch point's id: %i\n", id);
-         }
-         @endcode
-         */
          return: int; [[id of nth touch point, if the call succeeded, -1 otherwise.]]
          params {
             @in n: uint; [[The number of the touched point (0 being the first).]]
@@ -786,24 +763,13 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
            Touch point's coordinates is updated whenever moving that point
            on the canvas.
          ]]
-         /* FIXME-doc
-         Example:
-         @code
-         extern Evas *evas;
-         Evas_Coord x, y;
-
-         if (evas_touch_point_list_count(evas))
-         {
-         evas_touch_point_nth_xy_get(evas, 0, &x, &y);
-         printf("The first touch point's coordinate: (%i, %i)\n", x, y);
-         }
-         @endcode
-         */
          params {
             @in n: uint; [[The number of the touched point (0 being the first).]]
-            @out x: Evas.Coord; [[The pointer to a Evas_Coord to be filled in.]]
-            @out y: Evas.Coord; [[The pointer to a Evas_Coord to be filled in.]]
+            @out x: double; [[Last known X position in window coordinates]]
+            @out y: double; [[Last known Y position in window coordinates]]
          }
+          /* Legacy uses int. */
+         legacy: null;
       }
       key_lock_del {
          [[Removes the $keyname key from the current list of lock keys on
@@ -945,19 +911,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
            EVAS_TOUCH_POINT_MOVE when moved at least once after pressed and
            EVAS_TOUCH_POINT_UP when released.
          ]]
-         /* FIXME-doc
-         Example:
-         @code
-         extern Evas *evas;
-         Evas_Touch_Point_State state;
-
-         if (evas_touch_point_list_count(evas))
-         {
-         state = evas_touch_point_nth_state_get(evas, 0);
-         printf("The first touch point's state: %i\n", state);
-         }
-         @endcode
-         */
          return: Evas.Touch_Point_State; [[
             $state of nth touch point, if the call succeeded,
             EVAS_TOUCH_POINT_CANCEL otherwise.

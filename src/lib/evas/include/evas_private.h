@@ -646,7 +646,7 @@ MAGIC_CHECK_FAILED(o, t, m)
 
 struct _Evas_Coord_Touch_Point
 {
-   Evas_Coord x, y; // point's x, y position
+   double x, y;
    int id; // id in order to distinguish each point
    Evas_Touch_Point_State state;
 };
@@ -1767,11 +1767,6 @@ void _canvas_render_dump(Eo *obj, void *_pd, va_list *list);
 
 void _canvas_object_bottom_get(Eo *e, void *_pd, va_list *list);
 void _canvas_object_top_get(Eo *e, void *_pd, va_list *list);
-
-void _canvas_touch_point_list_count(Eo *obj, void *_pd, va_list *list);
-void _canvas_touch_point_list_nth_xy_get(Eo *obj, void *_pd, va_list *list);
-void _canvas_touch_point_list_nth_id_get(Eo *obj, void *_pd, va_list *list);
-void _canvas_touch_point_list_nth_state_get(Eo *obj, void *_pd, va_list *list);
 
 void _canvas_image_cache_flush(Eo *e, void *_pd, va_list *list);
 void _canvas_image_cache_reload(Eo *e, void *_pd, va_list *list);
