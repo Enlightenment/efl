@@ -200,6 +200,8 @@ typedef struct
       Efl_Net_Http_Authentication_Method method;
       Eina_Bool restricted;
    } authentication;
+   Eina_Promise *pending_close;
+   unsigned int in_curl_callback;
    int fd;
    Eina_Error error;
    Efl_Net_Http_Version version;
@@ -232,10 +234,39 @@ typedef struct
 } Efl_Net_Dialer_Http_Data;
 
 static void
+_efl_net_dialer_http_curlm_check_finished_object_deleted(void *data, const Efl_Event *event)
+{
+   Eina_List **p_finished = data;
+   *p_finished = eina_list_remove(*p_finished, event->object);
+}
+
+static void
+_efl_net_dialer_http_curlm_check_finished_object_add(Eina_List **p_finished, Eo *dialer)
+{
+   if (eina_list_data_find(*p_finished, dialer)) return;
+
+   efl_event_callback_add(dialer, EFL_EVENT_DEL,
+                          _efl_net_dialer_http_curlm_check_finished_object_deleted,
+                          p_finished);
+   *p_finished = eina_list_append(*p_finished, dialer);
+}
+
+static void
+_efl_net_dialer_http_curlm_check_finished_object_remove(Eina_List **p_finished, Eo *dialer)
+{
+   efl_event_callback_del(dialer, EFL_EVENT_DEL,
+                          _efl_net_dialer_http_curlm_check_finished_object_deleted,
+                          p_finished);
+   *p_finished = eina_list_remove(*p_finished, dialer);
+}
+
+static void
 _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
 {
    CURLMsg *msg;
    int remaining;
+   Eina_List *finished = NULL;
+   Eo *dialer;
 
    while ((msg = curl_multi_info_read(cm->multi, &remaining)))
      {
@@ -243,9 +274,9 @@ _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
         char *priv; /* CURLINFO_PRIVATE checks for this type */
 
         re = curl_easy_getinfo(msg->easy_handle, CURLINFO_PRIVATE, &priv);
-        if (re == CURLE_OK)
+        if ((re == CURLE_OK) && (priv))
           {
-             Eo *dialer = (Eo *)priv;
+             dialer = (Eo *)priv;
 
              if (msg->data.result != CURLE_OK)
                {
@@ -254,16 +285,35 @@ _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
                   DBG("HTTP dialer=%p error: #%d '%s'",
                       dialer, err, eina_error_msg_get(err));
                   pd->error = err;
-                  efl_event_callback_call(dialer, EFL_NET_DIALER_EVENT_ERROR, &err);
+                  _efl_net_dialer_http_curlm_check_finished_object_add(&finished, dialer);
                }
 
              if (msg->msg != CURLMSG_DONE) continue;
 
              if (!efl_io_closer_closed_get(dialer))
-               efl_io_reader_eos_set(dialer, EINA_TRUE);
+               {
+                  DBG("HTTP dialer=%p eos", dialer);
+                  _efl_net_dialer_http_curlm_check_finished_object_add(&finished, dialer);
+               }
              else
                DBG("HTTP dialer=%p already closed", dialer);
           }
+     }
+
+   while (finished)
+     {
+        Efl_Net_Dialer_Http_Data *pd;
+
+        dialer = finished->data;
+        efl_ref(dialer);
+        pd = efl_data_scope_get(dialer, MY_CLASS);
+        if (pd->error)
+          efl_event_callback_call(dialer, EFL_NET_DIALER_EVENT_ERROR, &pd->error);
+        else
+          efl_io_reader_eos_set(dialer, EINA_TRUE);
+        efl_io_closer_close(dialer);
+        _efl_net_dialer_http_curlm_check_finished_object_remove(&finished, dialer);
+        efl_unref(dialer);
      }
 }
 
@@ -352,6 +402,7 @@ _efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, vo
 
    re = curl_easy_getinfo(e, CURLINFO_PRIVATE, &priv);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(re != CURLE_OK, -1);
+   if (!priv) return -1;
    dialer = (Eo *)priv;
    pd = efl_data_scope_get(dialer, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, -1);
@@ -452,6 +503,7 @@ _efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, vo
 
    re = curl_easy_getinfo(e, CURLINFO_PRIVATE, &priv);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(re != CURLE_OK, -1);
+   if (!priv) return -1;
    dialer = (Eo *)priv;
    pd = efl_data_scope_get(dialer, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, -1);
@@ -772,12 +824,8 @@ _efl_net_dialer_http_headers_done(Eo *o, Efl_Net_Dialer_Http_Data *pd)
  * and send to curl.
  */
 static size_t
-_efl_net_dialer_http_send_data(char *buffer, size_t count, size_t nitems, void *data)
+_efl_net_dialer_http_send_data_safe(Eo *o, Efl_Net_Dialer_Http_Data *pd, Eina_Rw_Slice rw_slice)
 {
-   Eo *o = data;
-   Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
-   Eina_Rw_Slice rw_slice = {.mem = buffer, .len = count * nitems};
-
    if (pd->pending_headers_done) _efl_net_dialer_http_headers_done(o, pd);
    if ((!pd->send.slice.mem) || (pd->send.slice.len == 0))
      {
@@ -799,21 +847,90 @@ _efl_net_dialer_http_send_data(char *buffer, size_t count, size_t nitems, void *
    return rw_slice.len;
 }
 
+static CURL *
+_efl_net_dialer_http_curl_safe_begin(Eo *o, Efl_Net_Dialer_Http_Data *pd)
+{
+   if (!o || !pd)
+     return NULL;
+   if (efl_io_closer_closed_get(o))
+     return NULL;
+
+   pd->in_curl_callback++;
+   efl_ref(o);
+
+   return pd->easy;
+}
+
+static void
+_efl_net_dialer_http_curl_cleanup(void *data, void *value EINA_UNUSED)
+{
+   CURL *easy = data;
+   DBG("cleanup curl=%p", easy);
+   curl_easy_cleanup(easy);
+}
+
+static void
+_efl_net_dialer_http_curl_cleanup_error(void *data, Eina_Error err)
+{
+   CURL *easy = data;
+   DBG("cleanup curl=%p, promise error=%d '%s'", easy, err, eina_error_msg_get(err));
+   curl_easy_cleanup(easy);
+}
+
+static void
+_efl_net_dialer_http_curl_safe_end(Eo *o, Efl_Net_Dialer_Http_Data *pd, CURL *easy)
+{
+   Eina_Promise *p;
+   int refs;
+
+   refs = efl_ref_get(o);
+   efl_unref(o);
+   if (refs > 1)
+     {
+        pd->in_curl_callback--;
+        return;
+     }
+
+   /* object deleted from CURL callback, CURL* easy was
+    * dissociated and we must delete it ourselves.
+    */
+   p = efl_loop_job(ecore_main_loop_get(), easy);
+   eina_promise_then(p,
+                     _efl_net_dialer_http_curl_cleanup,
+                     _efl_net_dialer_http_curl_cleanup_error,
+                     easy);
+   DBG("dialer=%p deleted from CURL callback, cleanup curl from job=%p.", o, p);
+}
+
+static size_t
+_efl_net_dialer_http_send_data(char *buffer, size_t count, size_t nitems, void *data)
+{
+   Eo *o = data;
+   Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Eina_Rw_Slice rw_slice = {.mem = buffer, .len = count * nitems};
+   CURL *easy;
+   size_t ret;
+
+   easy = _efl_net_dialer_http_curl_safe_begin(o, pd);
+   if (!easy) return CURL_READFUNC_PAUSE;
+
+   ret = _efl_net_dialer_http_send_data_safe(o, pd, rw_slice);
+
+   _efl_net_dialer_http_curl_safe_end(o, pd, easy);
+   DBG("dialer=%p in=%zd used=%zd", o, rw_slice.len, ret);
+
+   return ret;
+}
+
 /* take data from curl into our internal buffer until
  * efl_io_reader_read() consumes it
  */
 static size_t
-_efl_net_dialer_http_receive_data(const void *buffer, size_t count, size_t nitems, void *data)
+_efl_net_dialer_http_receive_data_safe(Eo *o, Efl_Net_Dialer_Http_Data *pd, Eina_Slice ro_slice)
 {
-   Eo *o = data;
-   Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eina_Rw_Slice rw_slice = {
      .bytes = pd->recv.bytes + pd->recv.used,
      .len = pd->recv.limit - pd->recv.used,
-   };
-   Eina_Slice ro_slice = {
-     .bytes = buffer,
-     .len = count * nitems,
    };
 
    if (pd->pending_headers_done) _efl_net_dialer_http_headers_done(o, pd);
@@ -848,30 +965,50 @@ _efl_net_dialer_http_receive_data(const void *buffer, size_t count, size_t nitem
 }
 
 static size_t
-_efl_net_dialer_http_receive_header(const char *buffer, size_t count, size_t nitems, void *data)
+_efl_net_dialer_http_receive_data(const void *buffer, size_t count, size_t nitems, void *data)
 {
    Eo *o = data;
    Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
-   size_t len = count * nitems;
+   Eina_Slice ro_slice = {
+     .bytes = buffer,
+     .len = count * nitems,
+   };
+   CURL *easy;
+   size_t ret;
+
+   easy = _efl_net_dialer_http_curl_safe_begin(o, pd);
+   if (!easy) return CURL_WRITEFUNC_PAUSE;
+
+   ret = _efl_net_dialer_http_receive_data_safe(o, pd, ro_slice);
+
+   _efl_net_dialer_http_curl_safe_end(o, pd, easy);
+   DBG("dialer=%p in=%zd used=%zd", o, ro_slice.len, ret);
+
+   return ret;
+}
+
+static size_t
+_efl_net_dialer_http_receive_header_safe(Eo *o, Efl_Net_Dialer_Http_Data *pd, Eina_Slice ro_slice)
+{
    Efl_Net_Http_Header *h;
    char *p;
 
-   if (len == 0)
+   if (ro_slice.len == 0)
      {
         if (!pd->connected) _efl_net_dialer_http_connected(o, pd);
         return 0;
      }
 
-   h = malloc(sizeof(Efl_Net_Http_Header) + len + 1);
+   h = malloc(sizeof(Efl_Net_Http_Header) + ro_slice.len + 1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(h, 0);
 
    h->key = p = (char *)h + sizeof(Efl_Net_Http_Header);
-   memcpy(p, buffer, len);
-   p[len] = '\0';
+   memcpy(p, ro_slice.mem, ro_slice.len);
+   p[ro_slice.len] = '\0';
 
    h->value = p = strchr(p, ':');
    if (!p)
-     p = (char *)h->key + len - 1;
+     p = (char *)h->key + ro_slice.len - 1;
    else
      {
         char *t;
@@ -882,7 +1019,7 @@ _efl_net_dialer_http_receive_header(const char *buffer, size_t count, size_t nit
         while (h->value[0] && isspace(h->value[0]))
           h->value++;
 
-        t = (char *)h->key + len - 1;
+        t = (char *)h->key + ro_slice.len - 1;
         while ((t > h->value) && isspace(t[0]))
           {
              t[0] = '\0';
@@ -904,13 +1041,13 @@ _efl_net_dialer_http_receive_header(const char *buffer, size_t count, size_t nit
         if (!pd->connected) _efl_net_dialer_http_connected(o, pd);
         if (pd->pending_headers_done) _efl_net_dialer_http_headers_done(o, pd);
         free(h);
-        return len;
+        return ro_slice.len;
      }
 
    if (!h->value)
      {
         if (strncmp(h->key, "HTTP/", strlen("HTTP/")) != 0)
-          WRN("unexpected header '%.*s'", (int)len, buffer);
+          DBG("unexpected header '" EINA_SLICE_STR_FMT "'", EINA_SLICE_STR_PRINT(ro_slice));
         else
           {
              h->value = h->key;
@@ -926,7 +1063,30 @@ _efl_net_dialer_http_receive_header(const char *buffer, size_t count, size_t nit
    if (!h->key)
      pd->response.last_request_header = eina_list_last(pd->response.headers);
 
-   return len;
+   return ro_slice.len;
+}
+
+static size_t
+_efl_net_dialer_http_receive_header(const char *buffer, size_t count, size_t nitems, void *data)
+{
+   Eo *o = data;
+   Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Eina_Slice ro_slice = {
+     .mem = buffer,
+     .len = count * nitems,
+   };
+   CURL *easy;
+   size_t ret;
+
+   easy = _efl_net_dialer_http_curl_safe_begin(o, pd);
+   if (!easy) return 0;
+
+   ret = _efl_net_dialer_http_receive_header_safe(o, pd, ro_slice);
+
+   _efl_net_dialer_http_curl_safe_end(o, pd, easy);
+   DBG("dialer=%p in=%zd used=%zd", o, ro_slice.len, ret);
+
+   return ret;
 }
 
 static curl_socket_t
@@ -944,20 +1104,6 @@ _efl_net_dialer_http_socket_open(void *data, curlsocktype purpose EINA_UNUSED, s
          addr->family, addr->socktype, addr->protocol, pd->fd);
 
    return pd->fd;
-}
-
-static void
-_efl_net_dialer_http_socket_close(void *data, curl_socket_t fd)
-{
-   Eo *o = data;
-   Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
-
-   EINA_SAFETY_ON_TRUE_RETURN(pd->fd != fd);
-
-   DBG("close(%d)", fd);
-
-   close(fd);
-   pd->fd = -1;
 }
 
 EOLIAN static Efl_Object *
@@ -996,9 +1142,6 @@ _efl_net_dialer_http_efl_object_constructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    curl_easy_setopt(pd->easy, CURLOPT_OPENSOCKETFUNCTION, _efl_net_dialer_http_socket_open);
    curl_easy_setopt(pd->easy, CURLOPT_OPENSOCKETDATA, o);
 
-   curl_easy_setopt(pd->easy, CURLOPT_CLOSESOCKETFUNCTION, _efl_net_dialer_http_socket_close);
-   curl_easy_setopt(pd->easy, CURLOPT_CLOSESOCKETDATA, o);
-
    curl_easy_setopt(pd->easy, CURLOPT_NOPROGRESS, 0L);
 
    curl_easy_setopt(pd->easy, CURLOPT_VERBOSE, (long)(eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG)));
@@ -1016,13 +1159,44 @@ _efl_net_dialer_http_efl_object_constructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 EOLIAN static void
 _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 {
-   if (!efl_io_closer_closed_get(o))
+   if (pd->in_curl_callback)
+     {
+        DBG("deleting HTTP dialer=%p from CURL callback.", o);
+        curl_easy_setopt(pd->easy, CURLOPT_PRIVATE, NULL);
+        curl_easy_setopt(pd->easy, CURLOPT_DEBUGFUNCTION, NULL);
+        curl_easy_setopt(pd->easy, CURLOPT_DEBUGDATA, NULL);
+        curl_easy_setopt(pd->easy, CURLOPT_XFERINFOFUNCTION, NULL);
+        curl_easy_setopt(pd->easy, CURLOPT_XFERINFODATA, NULL);
+
+        curl_easy_setopt(pd->easy, CURLOPT_HEADERFUNCTION, NULL);
+        curl_easy_setopt(pd->easy, CURLOPT_HEADERDATA, NULL);
+        curl_easy_setopt(pd->easy, CURLOPT_WRITEFUNCTION, NULL);
+        curl_easy_setopt(pd->easy, CURLOPT_WRITEDATA, NULL);
+        curl_easy_setopt(pd->easy, CURLOPT_READFUNCTION, NULL);
+        curl_easy_setopt(pd->easy, CURLOPT_READDATA, NULL);
+
+        curl_easy_setopt(pd->easy, CURLOPT_OPENSOCKETFUNCTION, NULL);
+        curl_easy_setopt(pd->easy, CURLOPT_OPENSOCKETDATA, NULL);
+
+        curl_easy_setopt(pd->easy, CURLOPT_NOPROGRESS, 1L);
+        curl_easy_setopt(pd->easy, CURLOPT_VERBOSE, 0L);
+
+        pd->easy = NULL;
+     }
+   else if (pd->pending_close)
+     {
+        eina_promise_cancel(pd->pending_close);
+        pd->pending_close = NULL;
+        efl_io_closer_close(o);
+     }
+   else if (!efl_io_closer_closed_get(o))
      efl_io_closer_close(o);
 
    efl_net_dialer_http_response_headers_clear(o);
 
    if (pd->easy)
      {
+        DBG("cleanup curl=%p", pd->easy);
         curl_easy_cleanup(pd->easy);
         pd->easy = NULL;
      }
@@ -1341,12 +1515,27 @@ _efl_net_dialer_http_efl_io_writer_can_write_set(Eo *o, Efl_Net_Dialer_Http_Data
    efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
 }
 
+static void _efl_net_dialer_http_pending_close(void *data, void *value);
+
 EOLIAN static Eina_Error
 _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 {
    Eina_Error err = 0;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EBADF);
+
+   pd->fd = -1;
+
+   if (pd->in_curl_callback)
+     {
+        if (!pd->pending_close)
+          {
+             pd->pending_close = efl_loop_job(efl_loop_user_loop_get(o), o);
+             eina_promise_then(pd->pending_close, _efl_net_dialer_http_pending_close, NULL, o);
+             DBG("dialer=%p closed from CURL callback, schedule close job=%p", o, pd->pending_close);
+          }
+        return 0;
+     }
 
    if (!pd->easy) goto end;
 
@@ -1373,10 +1562,20 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    return err;
 }
 
+static void
+_efl_net_dialer_http_pending_close(void *data, void *value EINA_UNUSED)
+{
+   Eo *o = data;
+   Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
+
+   pd->pending_close = NULL;
+   _efl_net_dialer_http_efl_io_closer_close(o, pd);
+}
+
 EOLIAN static Eina_Bool
 _efl_net_dialer_http_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
-   return pd->closed;
+   return pd->closed || (!!pd->pending_close);
 }
 
 EOLIAN static Eina_Error
