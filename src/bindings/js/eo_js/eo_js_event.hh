@@ -17,8 +17,8 @@ namespace efl { namespace eo { namespace js {
 struct event_information
 {
   eina::js::global_ref<v8::Function>* constructor;
-  Eo_Event_Description const* event;
-  Eo_Event_Cb event_callback;
+  Efl_Event_Description const* event;
+  Efl_Event_Cb event_callback;
   const char* class_name;
 };
 
@@ -54,7 +54,7 @@ inline v8::Local<v8::Value> get_event_info<void>(void*, v8::Isolate* isolate, co
 }
 
 template <typename T>
-inline Eina_Bool event_callback(void* data, Eo_Event const* eo_event)
+inline Eina_Bool event_callback(void* data, Efl_Event const* eo_event)
 {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope handle_scope(isolate);
