@@ -2146,13 +2146,13 @@ _efl_ui_win_efl_canvas_group_group_hide(Eo *obj, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_efl_canvas_pointer_canvas_xy_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *x, int *y)
+_efl_ui_win_efl_input_interface_pointer_xy_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *x, int *y)
 {
    evas_pointer_canvas_xy_get(sd->evas, x, y);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_canvas_pointer_inside_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_input_interface_pointer_inside_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return evas_pointer_inside_get(sd->evas);
 }

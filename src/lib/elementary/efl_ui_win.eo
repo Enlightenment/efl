@@ -844,8 +844,8 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Efl.Gfx.Size.Hint.hint_aspect.get;
       Efl.Text.text.set;
       Efl.Text.text.get;
-      Efl.Canvas.pointer_canvas_xy.get;
-      Efl.Canvas.pointer_inside.get;
+      Efl.Input.Interface.pointer_xy.get;
+      Efl.Input.Interface.pointer_inside.get;
       Efl.Canvas.image_max_size.get;
       Efl.Canvas.smart_objects_calculate;
       Efl.Canvas.objects_at_xy_get;

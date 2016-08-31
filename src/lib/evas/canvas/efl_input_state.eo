@@ -2,7 +2,6 @@ interface Efl.Input.State ()
 {
    eo_prefix: efl_input;
    methods {
-      /* FIXME: legacy name was 'modifier_is_set' */
       @property modifier_enabled {
          [[Indicates whether a key modifier is on, such as Ctrl, Shift,...]]
          get {}

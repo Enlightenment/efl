@@ -1,7 +1,7 @@
 import efl_orientation;
 import efl_input_types;
 
-class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State, Efl.Input.Event)
+class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
 {
    [[Event data carried over with any pointer event (mouse, touch, pen, ...)
 

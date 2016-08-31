@@ -21,7 +21,43 @@ interface Efl.Input.Interface ()
 
      @since 1.19
    ]]
+   eo_prefix: efl_input;
    event_prefix: efl;
+   methods {
+      @property pointer_xy {
+         get {
+            [[This function returns the current known pointer coordinates
+
+              This function returns the current known canvas unit
+              coordinates of the mouse pointer and sets the contents of
+              the Evas_Coords pointed to by $x and $y to contain these
+              coordinates.
+            ]]
+         }
+         values {
+            x: int; [[The pointer to hold the return value of pointer's x position.]]
+            y: int; [[The pointer to hold the return value of pointer's y position.]]
+         }
+      }
+      @property pointer_inside {
+         get {
+            [[Returns whether the mouse pointer is logically inside the
+              canvas.
+
+              When this function is called it will return a value of either
+              $false or $true, depending on whether a pointer,in or pointer,out
+              event has been called previously.
+
+              A return value of $true indicates the mouse is logically
+              inside the canvas, and $false implies it is logically
+              outside the canvas.
+
+              A canvas begins with the mouse being assumed outside ($false).
+            ]]
+            return: bool;
+         }
+      }
+   }
    events {
       pointer,move: Efl.Input.Pointer;   [[Main pointer move (current and previous positions are known).]]
       pointer,down: Efl.Input.Pointer;   [[Main pointer button pressed (button id is known).]]
