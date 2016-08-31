@@ -28,8 +28,8 @@ M.Node = util.Object:clone {
         end
         table.insert(tbl, 1, subn)
         tbl[#tbl + 1] = self:name_get():lower()
-        if root then
-            tbl[#tbl + 1] = true
+        if root ~= nil then
+            tbl[#tbl + 1] = not not root
         end
         return tbl
     end
@@ -400,8 +400,8 @@ M.Function = Node:clone {
         local tbl = cl:nspaces_get()
         tbl[#tbl + 1] = self:type_str_get()
         tbl[#tbl + 1] = self:name_get():lower()
-        if root then
-            tbl[#tbl + 1] = true
+        if root ~= nil then
+            tbl[#tbl + 1] = not not root
         end
         return tbl
     end
@@ -517,8 +517,8 @@ M.Event = Node:clone {
         local tbl = cl:nspaces_get()
         tbl[#tbl + 1] = "event"
         tbl[#tbl + 1] = self:name_get():lower():gsub(",", "_")
-        if root then
-            tbl[#tbl + 1] = true
+        if root ~= nil then
+            tbl[#tbl + 1] = not not root
         end
         return tbl
     end
@@ -1237,7 +1237,7 @@ M.ref_get = function(str, root)
         for tok in str:gmatch("[^%.]+") do
             t[#t + 1] = tok:lower()
         end
-        if root then t[#t + 1] = true end
+        if root ~= nil then t[#t + 1] = not not root end
         return t
     end
 
@@ -1292,7 +1292,7 @@ M.ref_get = function(str, root)
     local ret = M.ref_get(bstr)
     ret[#ret + 1] = fn:type_str_get()
     ret[#ret + 1] = fn:name_get():lower()
-    if root then ret[#ret + 1] = true end
+    if root ~= nil then ret[#ret + 1] = not not root end
     return ret
 end
 
