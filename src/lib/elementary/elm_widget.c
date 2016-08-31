@@ -298,7 +298,7 @@ _obj_mouse_down(void *data,
 
    ELM_WIDGET_DATA_GET(data, sd);
    Evas_Event_Mouse_Down *ev = event_info;
-   if ((ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    top = elm_widget_top_get(data);
    if (top && efl_isa(top, EFL_UI_WIN_CLASS)) _elm_win_focus_auto_hide(top);
