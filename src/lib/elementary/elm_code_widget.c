@@ -316,7 +316,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    Eina_Unicode unichr;
    unsigned int length, x, charwidth, i, w;
    int chrpos, gutter;
-   Evas_Object *grid, *status;
+   Evas_Object *grid;
    Evas_Textgrid_Cell *cells;
    Elm_Code_Widget_Data *pd;
 
@@ -365,30 +365,8 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    if (line->number < elm_code_file_lines_get(line->file))
      _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
+   elm_object_tooltip_text_set(grid, line->status_text);
    evas_object_textgrid_update_add(grid, 0, 0, w, 1);
-
-   // add a status below the line if needed (and remove those no longer needed)
-   status = evas_object_data_get(grid, "status");
-   if (line->status_text)
-     {
-        if (!status)
-          {
-             status = elm_label_add(pd->gridbox);
-             evas_object_size_hint_weight_set(status, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-             evas_object_size_hint_align_set(status, 0.05, EVAS_HINT_FILL);
-             evas_object_show(status);
-
-             elm_box_pack_after(pd->gridbox, status, grid);
-             evas_object_data_set(grid, "status", status);
-          }
-        elm_object_text_set(status, line->status_text);
-     }
-   else if (status)
-     {
-        elm_box_unpack(pd->gridbox, status);
-        evas_object_hide(status);
-        evas_object_data_set(grid, "status", NULL);
-     }
 }
 
 static void
@@ -655,6 +633,36 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
 }
 
 static void
+_elm_code_widget_status_toggle(Elm_Code_Widget *widget, Elm_Code_Line *line)
+{
+   Evas_Object *status, *grid;
+   Elm_Code_Widget_Data *pd;
+
+   // add a status below the line if needed (and remove those no longer needed)
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   grid = eina_list_nth(pd->grids, line->number - 1);
+   status = evas_object_data_get(grid, "status");
+
+   if (status)
+     {
+        elm_box_unpack(pd->gridbox, status);
+        evas_object_hide(status);
+        evas_object_data_set(grid, "status", NULL);
+     }
+   else
+     {
+        status = elm_label_add(pd->gridbox);
+        evas_object_size_hint_weight_set(status, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(status, 0.05, EVAS_HINT_FILL);
+        evas_object_show(status);
+
+        elm_box_pack_after(pd->gridbox, status, grid);
+        evas_object_data_set(grid, "status", status);
+        elm_object_text_set(status, line->status_text);
+     }
+}
+
+static void
 _elm_code_widget_clicked_gutter_cb(Elm_Code_Widget *widget, unsigned int row)
 {
    Elm_Code_Widget_Data *pd;
@@ -665,6 +673,12 @@ _elm_code_widget_clicked_gutter_cb(Elm_Code_Widget *widget, unsigned int row)
    line = elm_code_file_line_get(pd->code->file, row);
    if (!line)
      return;
+
+   if (line->status_text)
+     {
+       _elm_code_widget_status_toggle(widget, line);
+       return;
+     }
 
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_LINE_GUTTER_CLICKED, line);
 }
