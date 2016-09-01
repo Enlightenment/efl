@@ -338,6 +338,7 @@ ecore_poller_del(Ecore_Poller *obj)
    if (!obj) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    Ecore_Poller_Data *poller = efl_data_scope_get(obj, MY_CLASS);
+   if (!poller) return NULL;
    /* we are walking the poller list - a bad idea to remove from it while
     * walking it, so just flag it as delete_me and come back to it after
     * the loop has finished */
