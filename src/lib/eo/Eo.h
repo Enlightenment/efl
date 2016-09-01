@@ -466,13 +466,13 @@ EAPI Eina_Bool efl_object_override(Eo *obj, const Efl_Object_Ops *ops);
  *
  * This can be used as follows:
  * @code
- * EFL_OBJECT_OVERRIDE_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC_OVERRIDE(public_func, _my_func));
+ * EFL_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC_OVERRIDE(public_func, _my_func));
  * efl_object_override(obj, &ops);
  * @endcode
  *
  * @see efl_object_override
  */
-#define EFL_OBJECT_OVERRIDE_OPS_DEFINE(ops, ...) \
+#define EFL_OPS_DEFINE(ops, ...) \
    const Efl_Op_Description _##ops##_descs[] = { __VA_ARGS__ }; \
    const Efl_Object_Ops ops = { _##ops##_descs, EINA_C_ARRAY_LENGTH(_##ops##_descs) }
 

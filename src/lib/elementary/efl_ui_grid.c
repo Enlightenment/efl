@@ -165,8 +165,14 @@ _table_size_hints_changed(void *data, Evas *e EINA_UNUSED,
 /* Custom table class: overrides smart_calculate. */
 static void _custom_table_calc(Eo *obj, Custom_Table_Data *pd);
 
-static const Efl_Op_Description custom_table_op_desc[] = {
-   EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(efl_canvas_group_calculate, _custom_table_calc),
+static Eina_Bool
+_custom_table_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(efl_canvas_group_calculate, _custom_table_calc)
+   );
+
+   return efl_class_functions_set(klass, &ops);
 };
 
 static const Efl_Class_Description custom_table_class_desc = {

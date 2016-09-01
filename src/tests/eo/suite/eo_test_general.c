@@ -73,7 +73,7 @@ START_TEST(efl_object_override_tests)
     * make sure we don't cache. */
    ck_assert_int_eq(simple_a_get(obj), 0);
 
-   EFL_OBJECT_OVERRIDE_OPS_DEFINE(
+   EFL_OPS_DEFINE(
             overrides,
             EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_get, _simple_obj_override_a_get));
    fail_if(!efl_object_override(obj, &overrides));
@@ -85,7 +85,7 @@ START_TEST(efl_object_override_tests)
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + OVERRIDE_A_SIMPLE);
 
    /* Override again. */
-   EFL_OBJECT_OVERRIDE_OPS_DEFINE(
+   EFL_OPS_DEFINE(
             overrides2,
             EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _simple_obj_override_a_double_set));
    fail_if(!efl_object_override(obj, NULL));
@@ -99,7 +99,7 @@ START_TEST(efl_object_override_tests)
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A_SIMPLE * 2);
 
    /* Try introducing a new function */
-   EFL_OBJECT_OVERRIDE_OPS_DEFINE(
+   EFL_OPS_DEFINE(
             overrides3,
             EFL_OBJECT_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set));
    fail_if(!efl_object_override(obj, NULL));

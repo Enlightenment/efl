@@ -22,7 +22,7 @@ tmpl_eo_ops_desc[] = "\
 static Eina_Bool\n\
 _@#class_class_initializer(Efl_Class *klass)\n\
 {\n\
-   EFL_OBJECT_OVERRIDE_OPS_DEFINE(ops,@#list_op\n\
+   EFL_OPS_DEFINE(ops,@#list_op\n\
    );\n\
 \n\
    return efl_class_functions_set(klass, &ops);\n\

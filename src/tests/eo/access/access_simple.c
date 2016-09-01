@@ -32,9 +32,15 @@ _a_set(Eo *obj, void *class_data, int a)
 
 EAPI EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
