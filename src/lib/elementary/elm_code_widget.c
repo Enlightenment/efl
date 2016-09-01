@@ -1431,13 +1431,13 @@ _elm_code_widget_setup_palette(Evas_Object *o)
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_IGNORED,
                                     36, 36, 36, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_NOTE,
-                                    255, 153, 0, 255);
+                                    221, 119, 17, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_WARNING,
-                                    255, 153, 0, 255);
+                                    221, 119, 17, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_ERROR,
-                                    205, 54, 54, 255);
+                                    204, 17, 17, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_FATAL,
-                                    205, 54, 54, 255);
+                                    204, 17, 17, 255);
 
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_ADDED,
                                     36, 96, 36, 255);
@@ -1452,7 +1452,7 @@ _elm_code_widget_setup_palette(Evas_Object *o)
                                     96, 54, 54, 255);
 
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_TODO,
-                                    54, 54, 96, 255);
+                                    51, 85, 187, 255);
 
    // setup token colors
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_DEFAULT,
