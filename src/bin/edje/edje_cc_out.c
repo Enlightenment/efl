@@ -3181,7 +3181,7 @@ copied_program_lookup_delete(Edje_Part_Collection *pc, const char *name)
      }
 }
 
-void
+Eina_Bool
 data_queue_copied_program_lookup(Edje_Part_Collection *pc, int *src, int *dest)
 {
    Eina_List *l;
@@ -3190,8 +3190,12 @@ data_queue_copied_program_lookup(Edje_Part_Collection *pc, int *src, int *dest)
    EINA_LIST_FOREACH(program_lookups, l, pl)
      {
         if (pl->dest == src)
-          data_queue_program_lookup(pc, pl->u.name, dest);
+          {
+             data_queue_program_lookup(pc, pl->u.name, dest);
+             return EINA_TRUE;
+          }
      }
+   return EINA_FALSE;
 }
 
 void

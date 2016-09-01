@@ -2093,7 +2093,8 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
         ep->after = eina_list_append(ep->after, pa);
         copy = (char*) (pa + 1);
         memcpy(copy, name, strlen(name) + 1);
-        data_queue_copied_program_lookup(pc, &(pa2->id), &(pa->id));
+        if (!data_queue_copied_program_lookup(pc, &(pa2->id), &(pa->id)))
+          data_queue_program_lookup(pc, copy, &(pa->id));
      }
 
    ep->api.name = STRDUP(ep2->api.name);
