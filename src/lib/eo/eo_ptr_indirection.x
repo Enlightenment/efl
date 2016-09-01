@@ -271,51 +271,70 @@ extern Generation_Counter _eo_generation_counter;
 
 extern _Eo_Object *cached_object;
 extern Eo_Id cached_id;
+extern Eina_Spinlock _eoid_lock;
 
 static inline _Eo_Object *
 _eo_obj_pointer_get(const Eo_Id obj_id)
 {
 #ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry;
+   _Eo_Object *ptr;
    Generation_Counter generation;
    Table_Index mid_table_id, table_id, entry_id;
+   Eo_Id tag_bit;
 
    // NULL objects will just be sensibly ignored. not worth complaining
    // every single time.
+
+   eina_spinlock_take(&_eoid_lock);
+   if (obj_id == cached_id)
+     {
+        ptr = cached_object;
+        eina_spinlock_release(&_eoid_lock);
+        return ptr;
+     }
+
+   // get tag bit to check later down below - pipelining
+   tag_bit = (obj_id) & MASK_OBJ_TAG;
    if (!obj_id)
      {
+        eina_spinlock_release(&_eoid_lock);
         DBG("obj_id is NULL. Possibly unintended access?");
         return NULL;
      }
-   else if (!(obj_id & MASK_OBJ_TAG))
+   else if (!tag_bit)
      {
+        eina_spinlock_release(&_eoid_lock);
         DBG("obj_id is not a valid object id.");
         return NULL;
-     }
-   else if (obj_id == cached_id)
-     {
-        return cached_object;
      }
 
    EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
    /* Check the validity of the entry */
-   if (_eo_ids_tables[mid_table_id] && TABLE_FROM_IDS)
+   if (_eo_ids_tables[mid_table_id])
      {
-        entry = &(TABLE_FROM_IDS->entries[entry_id]);
-        if (entry && entry->active && (entry->generation == generation))
-          {
-             // Cache the result of that lookup
-             cached_object = entry->ptr;
-             cached_id = obj_id;
+        _Eo_Ids_Table *tab = TABLE_FROM_IDS;
 
-             return entry->ptr;
+        if (tab)
+          {
+             entry = &(tab->entries[entry_id]);
+             if (entry->active && (entry->generation == generation))
+               {
+                  // Cache the result of that lookup
+                  cached_object = entry->ptr;
+                  cached_id = obj_id;
+                  ptr = cached_object;
+                  eina_spinlock_release(&_eoid_lock);
+                  return ptr;
+               }
           }
      }
 
    ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.",
-         (void *)obj_id);
+       (void *)obj_id);
 
+   eina_spinlock_release(&_eoid_lock);
    return NULL;
 #else
    return (_Eo_Object *) obj_id;
@@ -416,6 +435,7 @@ _eo_id_allocate(const _Eo_Object *obj)
 #ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry = NULL;
 
+   eina_spinlock_take(&_eoid_lock);
    if (_current_table)
      entry = _get_available_entry(_current_table);
 
@@ -425,7 +445,10 @@ _eo_id_allocate(const _Eo_Object *obj)
      }
 
    if (!_current_table || !entry)
-      return 0;
+     {
+        eina_spinlock_release(&_eoid_lock);
+        return 0;
+     }
 
    /* [1;max-1] thus we never generate an Eo_Id equal to 0 */
    _eo_generation_counter++;
@@ -436,6 +459,7 @@ _eo_id_allocate(const _Eo_Object *obj)
    entry->active = 1;
    entry->generation = _eo_generation_counter;
    PROTECT(_current_table);
+   eina_spinlock_release(&_eoid_lock);
    return EO_COMPOSE_FINAL_ID(_current_table->partial_id,
                               (entry - _current_table->entries),
                               entry->generation);
@@ -457,6 +481,7 @@ _eo_id_release(const Eo_Id obj_id)
    Table_Index mid_table_id, table_id, entry_id;
    EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
+   eina_spinlock_take(&_eoid_lock);
    /* Check the validity of the entry */
    if (_eo_ids_tables[mid_table_id] && (table = TABLE_FROM_IDS))
      {
@@ -494,13 +519,18 @@ _eo_id_release(const Eo_Id obj_id)
                }
 
              // In case an object is destroyed, wipe out the cache
-             cached_id = 0;
-             cached_object = NULL;
+             if (cached_id == obj_id)
+               {
+                  cached_id = 0;
+                  cached_object = NULL;
+               }
              cached_isa_id = NULL;
 
+             eina_spinlock_release(&_eoid_lock);
              return;
           }
      }
+   eina_spinlock_release(&_eoid_lock);
 
    ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.", (void *)obj_id);
 #else

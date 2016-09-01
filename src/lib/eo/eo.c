@@ -1794,6 +1794,11 @@ efl_object_init(void)
         return EINA_FALSE;
      }
 
+   if (!eina_spinlock_new(&_eoid_lock))
+     {
+        EINA_LOG_ERR("Could not init lock.");
+        return EINA_FALSE;
+     }
    if (!eina_spinlock_new(&_efl_class_creation_lock))
      {
         EINA_LOG_ERR("Could not init lock.");
@@ -1874,6 +1879,8 @@ efl_object_shutdown(void)
    eina_spinlock_free(&_efl_class_creation_lock);
 
    _eo_free_ids_tables();
+
+   eina_spinlock_free(&_eoid_lock);
 
    eina_log_domain_unregister(_eo_log_dom);
    _eo_log_dom = -1;
