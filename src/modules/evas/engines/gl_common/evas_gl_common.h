@@ -491,8 +491,8 @@ struct _Evas_GL_Image_Data_Map
    EINA_INLIST;
    Evas_GL_Texture *tex; // one or the other
    RGBA_Image      *im; // one or the other
-   unsigned char   *ptr;
-   int              size, stride; // in bytes
+   Eina_Rw_Slice    slice;
+   int              stride; // in bytes
    int              rx, ry, rw, rh; // actual map region
    Evas_Colorspace  cspace;
    Efl_Gfx_Buffer_Access_Mode mode;

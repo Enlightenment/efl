@@ -840,8 +840,9 @@ struct _RGBA_Pipe_Thread_Info
 
 struct _RGBA_Image_Data_Map {
    EINA_INLIST;
-   unsigned char  *ptr, *baseptr;
-   int             size, stride; // in bytes
+   unsigned char  *baseptr;
+   Eina_Rw_Slice   slice;
+   int             stride; // in bytes
    int             rx, ry, rw, rh; // actual map region
    int             plane;
    Evas_Colorspace cspace;

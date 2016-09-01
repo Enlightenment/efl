@@ -1453,10 +1453,9 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    return im;
 }
 
-static void *
+static const Eina_Rw_Slice *
 eng_image_data_map(void *engdata EINA_UNUSED, void **image,
-                   int *length, int *stride,
-                   int x, int y, int w, int h,
+                   int *stride, int x, int y, int w, int h,
                    Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode)
 {
    Eina_Bool cow = EINA_FALSE, to_write = EINA_FALSE;
@@ -1592,8 +1591,8 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
         map->rw = rw;
         map->mode = mode;
         map->baseptr = data;
-        map->ptr = map->baseptr + dst_offset;
-        map->size = dst_len;
+        map->slice.mem = map->baseptr + dst_offset;
+        map->slice.len = dst_len;
         map->stride = dst_stride;
      }
    else
@@ -1607,8 +1606,8 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
              if (!map) return NULL;
 
              map->baseptr = im->image.data8;
-             map->ptr = im->image.data8 + src_offset;
-             map->size = end_offset - src_offset;
+             map->slice.mem = im->image.data8 + src_offset;
+             map->slice.len = end_offset - src_offset;
           }
         else
           {
@@ -1626,8 +1625,8 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
 
              map->allocated = EINA_TRUE;
              map->baseptr = data;
-             map->ptr = data;
-             map->size = size;
+             map->slice.mem = data;
+             map->slice.len = size;
           }
         map->cspace = cspace;
         map->rx = x;
@@ -1639,9 +1638,8 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
 
    im->maps = (RGBA_Image_Data_Map *)
      eina_inlist_prepend(EINA_INLIST_GET(im->maps), EINA_INLIST_GET(map));
-   if (length) *length = map->size;
    if (stride) *stride = map->stride;
-   return map->ptr;
+   return &map->slice;
 }
 
 static void
@@ -1658,13 +1656,13 @@ _image_data_commit(RGBA_Image *im, RGBA_Image_Data_Map *map)
         if (dst_stride == (int) map->stride)
           {
              DBG("unmap commit: single memcpy");
-             memcpy(dst, map->ptr, dst_stride * map->rh);
+             memcpy(dst, map->slice.bytes, dst_stride * map->rh);
           }
         else
           {
              DBG("unmap commit: multiple memcpy");
              for (int k = 0; k < dst_stride; k++)
-               memcpy(dst + k * dst_stride, map->ptr + k * dst_stride, dst_stride);
+               memcpy(dst + k * dst_stride, map->slice.bytes + k * dst_stride, dst_stride);
           }
      }
    else
@@ -1678,7 +1676,7 @@ _image_data_commit(RGBA_Image *im, RGBA_Image_Data_Map *map)
         DBG("unmap commit: convert func (%p)", cs_func);
         if (can_region)
           {
-             cs_func(dst, map->ptr, map->rw, map->rh, map->stride, dst_stride,
+             cs_func(dst, map->slice.mem, map->rw, map->rh, map->stride, dst_stride,
                      ie->flags.alpha, map->cspace, ie->space);
           }
         else
@@ -1690,17 +1688,17 @@ _image_data_commit(RGBA_Image *im, RGBA_Image_Data_Map *map)
 }
 
 static Eina_Bool
-eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int length)
+eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, const Eina_Rw_Slice *slice)
 {
    RGBA_Image_Data_Map *map;
    RGBA_Image *im = image;
 
-   if (!im || !memory)
+   if (!im || !slice)
      return EINA_FALSE;
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(im->maps), map)
      {
-        if ((map->ptr == memory) && (map->size == length))
+        if ((map->slice.len == slice->len) && (map->slice.mem == slice->mem))
           {
              if (map->allocated)
                {
@@ -1715,12 +1713,12 @@ eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int l
           }
      }
 
-   ERR("failed to unmap region %p (%u bytes)", memory, length);
+   ERR("failed to unmap region %p (%zu bytes)", slice->mem, slice->len);
    return EINA_FALSE;
 }
 
 static int
-eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, void **maps, int *lengths)
+eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, const Eina_Rw_Slice **slices)
 {
    RGBA_Image_Data_Map *map;
    const RGBA_Image *im = image;
@@ -1728,15 +1726,11 @@ eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, void **map
 
    if (!im) return -1;
 
-   if (!maps || !lengths)
+   if (!slices)
      return eina_inlist_count(EINA_INLIST_GET(im->maps));
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(im->maps), map)
-     {
-        maps[k] = map->ptr;
-        lengths[k] = map->size;
-        k++;
-     }
+     slices[k++] = &map->slice;
 
    return k;
 }

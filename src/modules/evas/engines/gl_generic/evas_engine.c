@@ -2794,16 +2794,15 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
      }
 }
 
-static void *
+static const Eina_Rw_Slice *
 eng_image_data_map(void *engdata EINA_UNUSED, void **image,
-                   int *length, int *stride,
-                   int x, int y, int w, int h,
+                   int *stride, int x, int y, int w, int h,
                    Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode)
 {
    Eina_Bool cow = EINA_FALSE, to_write = EINA_FALSE;
    Evas_GL_Image_Data_Map *map = NULL;
+   const Eina_Rw_Slice *slice = NULL;
    Evas_GL_Image *im;
-   void *ret;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(image && *image, NULL);
    im = *image;
@@ -2816,12 +2815,12 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
 
    if (im->im)
      {
-        int len = 0, strid = 0;
+        int strid = 0;
 
         // Call sw generic implementation. Should work for simple cases.
-        ret = pfunc.image_data_map(NULL, (void **) &im->im, &len, &strid,
-                                   x, y, w, h, cspace, mode);
-        if (ret)
+        slice = pfunc.image_data_map(NULL, (void **) &im->im, &strid,
+                                     x, y, w, h, cspace, mode);
+        if (slice)
           {
              map = calloc(1, sizeof(*map));
              map->cspace = cspace;
@@ -2830,15 +2829,13 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
              map->rw = w;
              map->rh = h;
              map->mode = mode;
-             map->size = len;
+             map->slice = *slice;
              map->stride = strid;
              map->im = im->im; // ref?
-             map->ptr = ret;
              im->maps = eina_inlist_prepend(im->maps, EINA_INLIST_GET(map));
           }
-        if (length) *length = len;
         if (stride) *stride = strid;
-        return ret;
+        return &map->slice;
      }
 
    // TODO: glReadPixels from FBO if possible
@@ -2847,22 +2844,22 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
 }
 
 static Eina_Bool
-eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int length)
+eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, const Eina_Rw_Slice *slice)
 {
    Evas_GL_Image_Data_Map *map;
    Evas_GL_Image *im = image;
    Eina_Bool found = EINA_FALSE;
 
-   if (!im || !memory)
+   if (!im || !slice)
      return EINA_FALSE;
 
    EINA_INLIST_FOREACH(im->maps, map)
      {
-        if ((map->ptr == memory) && (map->size == length))
+        if ((map->slice.len == slice->len) && (map->slice.mem == slice->mem))
           {
              found = EINA_TRUE;
              if (map->im)
-               found = pfunc.image_data_unmap(NULL, map->im, memory, length);
+               found = pfunc.image_data_unmap(NULL, map->im, slice);
              if (found)
                {
                   if (im->im && im->tex &&
@@ -2875,12 +2872,12 @@ eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int l
           }
      }
 
-   ERR("failed to unmap region %p (%u bytes)", memory, length);
+   ERR("failed to unmap region %p (%zu bytes)", slice->mem, slice->len);
    return EINA_FALSE;
 }
 
 static int
-eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, void **maps, int *lengths)
+eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, const Eina_Rw_Slice **slices)
 {
    Evas_GL_Image_Data_Map *map;
    const Evas_GL_Image *im = image;
@@ -2888,15 +2885,11 @@ eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, void **map
 
    if (!im) return -1;
 
-   if (!maps || !lengths)
+   if (!slices)
      return eina_inlist_count(im->maps);
 
    EINA_INLIST_FOREACH(im->maps, map)
-     {
-        maps[k] = map->ptr;
-        lengths[k] = map->size;
-        k++;
-     }
+     slices[k++] = &map->slice;
 
    return k;
 }

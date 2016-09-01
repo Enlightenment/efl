@@ -269,6 +269,7 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    int len = 0, s = 0, width = 0, height = 0;
+   const Eina_Rw_Slice *slice = NULL;
    void *image, *data = NULL;
 
    if (!ENFN->image_data_map)
@@ -302,8 +303,13 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
         goto end;
      }
 
-   data = ENFN->image_data_map(ENDT, &image, &len, &s, x, y, w, h, cspace, mode);
-   DBG("map(%p, %d,%d %dx%d) -> %p (%d bytes)", eo_obj, x, y, w, h, data, len);
+   slice = ENFN->image_data_map(ENDT, &image, &s, x, y, w, h, cspace, mode);
+   if (slice)
+     {
+        DBG("map(%p, %d,%d %dx%d) -> %p (%zu bytes)", eo_obj, x, y, w, h,
+            slice->mem, slice->len);
+     }
+   else DBG("map(%p, %d,%d %dx%d) -> (null)", eo_obj, x, y, w, h);
 
 end:
    if (length) *length = len;
@@ -317,11 +323,14 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   Eina_Rw_Slice slice;
 
    if (!ENFN->image_data_unmap || !o->engine_data)
      return EINA_FALSE;
 
-   if (!ENFN->image_data_unmap(ENDT, o->engine_data, data, length))
+   slice.mem = data;
+   slice.len = length;
+   if (!ENFN->image_data_unmap(ENDT, o->engine_data, &slice))
      return EINA_FALSE;
 
    return EINA_TRUE;
