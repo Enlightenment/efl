@@ -3033,7 +3033,15 @@ _key_action_move(Evas_Object *obj, const char *params)
         it = elm_genlist_first_item_get(obj);
         if (it)
           {
-             elm_genlist_item_selected_set(it, EINA_TRUE);
+             if (_elm_config->item_select_on_focus_disable)
+               {
+                  elm_object_item_focus_set(it, EINA_TRUE);
+                  elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_TOP);
+               }
+             else
+               {
+                  elm_genlist_item_selected_set(it, EINA_TRUE);
+               }
              return EINA_TRUE;
           }
      }
@@ -3042,7 +3050,15 @@ _key_action_move(Evas_Object *obj, const char *params)
         it = elm_genlist_last_item_get(obj);
         if (it)
           {
-             elm_genlist_item_selected_set(it, EINA_TRUE);
+             if (_elm_config->item_select_on_focus_disable)
+               {
+                  elm_object_item_focus_set(it, EINA_TRUE);
+                  elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_BOTTOM);
+               }
+             else
+               {
+                  elm_genlist_item_selected_set(it, EINA_TRUE);
+               }
              return EINA_TRUE;
           }
      }
