@@ -1145,6 +1145,7 @@ _efl_net_dialer_http_efl_object_constructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    curl_easy_setopt(pd->easy, CURLOPT_OPENSOCKETDATA, o);
 
    curl_easy_setopt(pd->easy, CURLOPT_NOPROGRESS, 0L);
+   curl_easy_setopt(pd->easy, CURLOPT_NOSIGNAL, 1L);
 
    curl_easy_setopt(pd->easy, CURLOPT_VERBOSE, (long)(eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG)));
 
