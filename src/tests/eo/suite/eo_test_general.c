@@ -124,6 +124,7 @@ _eo_signals_a_changed_cb(void *_data, const Efl_Event *event EINA_UNUSED)
 {
    int data = (intptr_t) _data;
    _eo_signals_cb_current++;
+
    ck_assert_int_eq(data, _eo_signals_cb_current);
    _eo_signals_cb_flag |= 0x1;
 }

@@ -32,9 +32,11 @@ typedef struct
    Eo                        *parent;
 
    Efl_Object_Extension         *ext;
-   Eo_Callback_Description   *callbacks;
 
    Eina_Inlist               *current;
+
+   Eo_Callback_Description  **callbacks;
+   unsigned int               callbacks_count;
 
    unsigned short             walking_list;
    unsigned short             event_freeze_count;
@@ -66,7 +68,7 @@ typedef struct
 {
    EINA_INLIST;
    const Efl_Event_Description *desc;
-   Eo_Callback_Description *current;
+   unsigned int current;
 } Eo_Current_Callback_Description;
 
 static inline void
@@ -864,8 +866,6 @@ _legacy_events_hash_free_cb(void *_desc)
 
 struct _Eo_Callback_Description
 {
-   Eo_Callback_Description *next;
-
    union
      {
         Efl_Callback_Array_Item item;
@@ -924,41 +924,34 @@ _eo_callback_new(void)
 
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
-_eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description *cb)
+_eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description **cb)
 {
-   Eo_Callback_Description *itr, *pitr = NULL;
+   unsigned int length;
 
-   for (itr = pd->callbacks; itr; )
-     {
-        Eo_Callback_Description *titr = itr;
-        itr = itr->next;
+   _eo_callback_free(*cb);
 
-        if (titr == cb)
-          {
-             if (pitr) pitr->next = titr->next;
-             else pd->callbacks = titr->next;
-             _eo_callback_free(titr);
-          }
-        else pitr = titr;
-     }
+   length = pd->callbacks_count - (cb - pd->callbacks);
+   if (length > 1) memmove(cb, cb + 1, (length - 1) * sizeof (Eo_Callback_Description*));
+   pd->callbacks_count--;
 }
 
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
 _eo_callback_remove_all(Efl_Object_Data *pd)
 {
-   while (pd->callbacks)
-     {
-        Eo_Callback_Description *next = pd->callbacks->next;
-        _eo_callback_free(pd->callbacks);
-        pd->callbacks = next;
-     }
+   unsigned int i;
+
+   for (i = 0; i < pd->callbacks_count; i++)
+     _eo_callback_free(pd->callbacks[i]);
+
+   free(pd->callbacks);
+   pd->callbacks_count = 0;
 }
 
 static void
 _eo_callbacks_clear(Efl_Object_Data *pd)
 {
-   Eo_Callback_Description *cb = NULL;
+   unsigned int i = 0;
 
    /* If there are no deletions waiting. */
    if (!pd->deletions_waiting) return;
@@ -968,34 +961,91 @@ _eo_callbacks_clear(Efl_Object_Data *pd)
 
    pd->deletions_waiting = EINA_FALSE;
 
-   for (cb = pd->callbacks; cb; )
+   while (i < pd->callbacks_count)
      {
-        Eo_Callback_Description *titr = cb;
-        cb = cb->next;
+        Eo_Callback_Description **itr;
 
-        if (titr->delete_me) _eo_callback_remove(pd, titr);
+        itr = pd->callbacks + i;
+
+        if ((*itr)->delete_me) _eo_callback_remove(pd, itr);
+        else i++;
      }
+}
+
+static inline unsigned int
+_eo_callback_search_sorted_near(const Efl_Object_Data *pd, const Eo_Callback_Description *look)
+{
+   unsigned int start, last, middle;
+
+   if (pd->callbacks_count == 0)
+     {
+        return 0;
+     }
+   else if (pd->callbacks_count == 1)
+     {
+        return 0;
+     }
+
+   start = 0;
+   last = pd->callbacks_count - 1;
+   do
+     {
+        const Eo_Callback_Description *p;
+        int cmp;
+
+        middle = start + (last - start) / 2;
+        p = pd->callbacks[middle];
+
+        cmp = p->priority - look->priority;
+        if (cmp == 0)
+          return middle;
+        else if (cmp > 0)
+          start = middle + 1;
+        else if (middle > 0)
+          last = middle - 1;
+        else
+          break ;
+     }
+   while (start <= last);
+   return middle;
 }
 
 static void
 _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 {
-   Eo_Callback_Description *itr, *itrp = NULL;
+   Eo_Callback_Description **itr;
+   unsigned int length, j;
 
-   for (itr = pd->callbacks; itr && (itr->priority < cb->priority);
-         itr = itr->next)
-     itrp = itr;
+   // Do a dichotomic searh
+   j = _eo_callback_search_sorted_near(pd, cb);
 
-   if (itrp)
+   // Adjust for both case of length == 0 and when priority is equal.
+   while (j < pd->callbacks_count &&
+          pd->callbacks[j]->priority >= cb->priority)
+     j++;
+
+
+   // Increase the callbacks storage by 16 entries at a time
+   if ((pd->callbacks_count & 0xF) == 0x0)
      {
-        cb->next = itrp->next;
-        itrp->next = cb;
+        Eo_Callback_Description **tmp;
+        unsigned int length = (pd->callbacks_count | 0xF) + 1;
+
+        tmp = realloc(pd->callbacks, length * sizeof (Eo_Callback_Description*));
+        if (!tmp) return ;
+        pd->callbacks = tmp;
      }
-   else
-     {
-        cb->next = pd->callbacks;
-        pd->callbacks = cb;
-     }
+
+   // FIXME: Potential improvement, merge single callback description of the same priority
+   // into an array when possible
+
+   itr = pd->callbacks + j;
+   length = pd->callbacks_count - j;
+   if (length > 0) memmove(itr + 1, itr, length * sizeof (Eo_Callback_Description*));
+
+   *itr = cb;
+
+   pd->callbacks_count++;
 }
 
 EOLIAN static Eina_Bool
@@ -1031,24 +1081,26 @@ _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
                     Efl_Event_Cb func,
                     const void *user_data)
 {
-   Eo_Callback_Description *cb, *pcb;
+   Eo_Callback_Description **cb;
+   unsigned int i;
 
-   for (pcb = NULL, cb = pd->callbacks; cb; pcb = cb, cb = cb->next)
+   for (cb = pd->callbacks, i = 0;
+        i < pd->callbacks_count;
+        cb++, i++)
      {
-        if (!cb->delete_me && (cb->items.item.desc == desc) &&
-              (cb->items.item.func == func) && (cb->func_data == user_data))
+        if (!(*cb)->delete_me &&
+            ((*cb)->items.item.desc == desc) &&
+            ((*cb)->items.item.func == func) &&
+            ((*cb)->func_data == user_data))
           {
              const Efl_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
 
-             cb->delete_me = EINA_TRUE;
+             (*cb)->delete_me = EINA_TRUE;
              if (pd->walking_list > 0)
                pd->deletions_waiting = EINA_FALSE;
              else
-               {
-                  if (pcb) pcb->next = cb->next;
-                  else pd->callbacks = cb->next;
-                  _eo_callback_free(cb);
-               }
+               _eo_callback_remove(pd, cb);
+
              efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)arr);
              return EINA_TRUE;
           }
@@ -1106,22 +1158,23 @@ _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
                  const Efl_Callback_Array_Item *array,
                  const void *user_data)
 {
-   Eo_Callback_Description *cb, *pcb;
+   Eo_Callback_Description **cb;
+   unsigned int i;
 
-   for (pcb = NULL, cb = pd->callbacks; cb; pcb = cb, cb = cb->next)
+   for (cb = pd->callbacks, i = 0;
+        i < pd->callbacks_count;
+        cb++, i++)
      {
-        if (!cb->delete_me &&
-              (cb->items.item_array == array) && (cb->func_data == user_data))
+        if (!(*cb)->delete_me &&
+            ((*cb)->items.item_array == array) &&
+            ((*cb)->func_data == user_data))
           {
-             cb->delete_me = EINA_TRUE;
+             (*cb)->delete_me = EINA_TRUE;
              if (pd->walking_list > 0)
                pd->deletions_waiting = EINA_FALSE;
              else
-               {
-                  if (pcb) pcb->next = cb->next;
-                  else pd->callbacks = cb->next;
-                  _eo_callback_free(cb);
-               }
+               _eo_callback_remove(pd, cb);
+
              efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)array);
              return EINA_TRUE;
           }
@@ -1149,16 +1202,19 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
             void *event_info,
             Eina_Bool legacy_compare)
 {
-   Eina_Bool callback_already_stopped = pd->callback_stopped;
-   Eina_Bool ret = EINA_TRUE;
-   Eo_Callback_Description *cb;
+   Eo_Callback_Description **cb;
    Eo_Current_Callback_Description *lookup = NULL;
    Eo_Current_Callback_Description saved;
    Efl_Event ev;
+   unsigned int idx;
+   Eina_Bool callback_already_stopped = pd->callback_stopped;
+   Eina_Bool ret = EINA_TRUE;
 
    ev.object = obj_id;
    ev.desc = desc;
    ev.info = event_info;
+
+   if (pd->callbacks_count == 0) return EINA_FALSE;
 
    pd->walking_list++;
 
@@ -1174,7 +1230,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
           {
              // This following trick get us a zero allocation list
              saved.desc = desc;
-             saved.current = NULL;
+             saved.current = 0;
              lookup = &saved;
              // Ideally there will most of the time be only one item in this list
              // But just to speed up things, prepend so we find it fast at the end
@@ -1182,23 +1238,24 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
              pd->current = eina_inlist_prepend(pd->current, EINA_INLIST_GET(lookup));
           }
 
-        if (!lookup->current) lookup->current = pd->callbacks;
-        cb = lookup->current;
+        if (!lookup->current) lookup->current = pd->callbacks_count;
+        idx = lookup->current;
      }
    else
      {
-        cb = pd->callbacks;
+        idx = pd->callbacks_count;
      }
 
-   for (; cb; cb = cb->next)
+   for (; idx > 0; idx--)
      {
-        if (!cb->delete_me)
+        cb = pd->callbacks + idx - 1;
+        if (!(*cb)->delete_me)
           {
-             if (cb->func_array)
+             if ((*cb)->func_array)
                {
                   const Efl_Callback_Array_Item *it;
 
-                  for (it = cb->items.item_array; it->func; it++)
+                  for (it = (*cb)->items.item_array; it->func; it++)
                     {
                        // Array callbacks are sorted, break if we are getting to high.
                        if (!legacy_compare &&
@@ -1211,8 +1268,8 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
                           continue;
 
                        // Handle nested restart of walking list
-                       if (lookup) lookup->current = cb->next;
-                       it->func((void *) cb->func_data, &ev);
+                       if (lookup) lookup->current = idx - 1;
+                       it->func((void *) (*cb)->func_data, &ev);
                        /* Abort callback calling if the func says so. */
                        if (pd->callback_stopped)
                          {
@@ -1221,21 +1278,21 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
                          }
                        // We have actually walked this list during a nested call
                        if (lookup &&
-                           lookup->current == NULL)
+                           lookup->current == 0)
                          goto end;
                     }
                }
              else
                {
-                  if (!_cb_desc_match(cb->items.item.desc, desc, legacy_compare))
+                  if (!_cb_desc_match((*cb)->items.item.desc, desc, legacy_compare))
                     continue;
-                  if (!cb->items.item.desc->unfreezable &&
+                  if (!(*cb)->items.item.desc->unfreezable &&
                       (event_freeze_count || pd->event_freeze_count))
                     continue;
 
                   // Handle nested restart of walking list
-                  if (lookup) lookup->current = cb->next;
-                  cb->items.item.func((void *) cb->func_data, &ev);
+                  if (lookup) lookup->current = idx - 1;
+                  (*cb)->items.item.func((void *) (*cb)->func_data, &ev);
                   /* Abort callback calling if the func says so. */
                   if (pd->callback_stopped)
                     {
@@ -1244,7 +1301,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
                     }
                   // We have actually walked this list during a nested call
                   if (lookup &&
-                      lookup->current == NULL)
+                      lookup->current == 0)
                     goto end;
                }
           }
@@ -1252,7 +1309,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
 
 end:
    // Handling restarting list walking complete exit.
-   if (lookup) lookup->current = NULL;
+   if (lookup) lookup->current = 0;
    if (lookup == &saved)
      {
         pd->current = eina_inlist_remove(pd->current, EINA_INLIST_GET(lookup));
