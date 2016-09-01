@@ -942,8 +942,12 @@ _efl_net_dialer_http_receive_data_safe(Eo *o, Efl_Net_Dialer_Http_Data *pd, Eina
         return ro_slice.len;
      }
 
-   if (rw_slice.len == 0)
+   if (rw_slice.len < ro_slice.len)
      {
+        /* throttle CURL and let users read */
+        DBG("dialer=%p in=%zd, available %zd (limit=%zd)",
+            o, ro_slice.len, pd->recv.limit - pd->recv.used, pd->recv.limit);
+        efl_io_reader_can_read_set(o, EINA_TRUE);
         pd->pause |= CURLPAUSE_RECV;
         return CURL_WRITEFUNC_PAUSE;
       }
@@ -954,12 +958,6 @@ _efl_net_dialer_http_receive_data_safe(Eo *o, Efl_Net_Dialer_Http_Data *pd, Eina
    // with  pd->tmp_buf + pd->tmp_buflen that is read after
    // pd->buf.recv inside _efl_io_reader_read()
    efl_io_reader_can_read_set(o, EINA_TRUE);
-
-   if (rw_slice.len == 0)
-     {
-        pd->pause |= CURLPAUSE_RECV;
-        return CURL_WRITEFUNC_PAUSE;
-     }
 
    return rw_slice.len;
 }
@@ -982,7 +980,10 @@ _efl_net_dialer_http_receive_data(const void *buffer, size_t count, size_t nitem
    ret = _efl_net_dialer_http_receive_data_safe(o, pd, ro_slice);
 
    _efl_net_dialer_http_curl_safe_end(o, pd, easy);
-   DBG("dialer=%p in=%zd used=%zd", o, ro_slice.len, ret);
+   if (ret == CURL_WRITEFUNC_PAUSE)
+     DBG("dialer=%p in=%zd is now paused", o, ro_slice.len);
+   else
+     DBG("dialer=%p in=%zd used=%zd", o, ro_slice.len, ret);
 
    return ret;
 }
@@ -1136,6 +1137,7 @@ _efl_net_dialer_http_efl_object_constructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    curl_easy_setopt(pd->easy, CURLOPT_HEADERDATA, o);
    curl_easy_setopt(pd->easy, CURLOPT_WRITEFUNCTION, _efl_net_dialer_http_receive_data);
    curl_easy_setopt(pd->easy, CURLOPT_WRITEDATA, o);
+   curl_easy_setopt(pd->easy, CURLOPT_BUFFERSIZE, (long)pd->recv.limit);
    curl_easy_setopt(pd->easy, CURLOPT_READFUNCTION, _efl_net_dialer_http_send_data);
    curl_easy_setopt(pd->easy, CURLOPT_READDATA, o);
 
@@ -1368,6 +1370,34 @@ _efl_net_dialer_http_efl_net_socket_address_remote_get(Eo *o EINA_UNUSED, Efl_Ne
    return pd->address_remote;
 }
 
+static Eina_Error
+_efl_net_dialer_http_pause_reset(Eo *o, Efl_Net_Dialer_Http_Data *pd)
+{
+   CURLcode re;
+   CURLMcode rm;
+   Eina_Error err;
+
+   re = curl_easy_pause(pd->easy, pd->pause);
+   if (re != CURLE_OK)
+     {
+        err = _curlcode_to_eina_error(re);
+        ERR("dialer=%p could not unpause receive (flags=%#x): %s",
+            o, pd->pause, eina_error_msg_get(err));
+        return err;
+     }
+
+   rm = curl_multi_socket_action(pd->cm->multi, CURL_SOCKET_TIMEOUT, 0, &pd->cm->running);
+   if (rm != CURLM_OK)
+     {
+        err = _curlmcode_to_eina_error(rm);
+        ERR("dialer=%p could trigger timeout action: %s",
+            o, eina_error_msg_get(err));
+        return err;
+     }
+
+   return 0;
+}
+
 EOLIAN static Eina_Error
 _efl_net_dialer_http_efl_io_reader_read(Eo *o, Efl_Net_Dialer_Http_Data *pd, Eina_Rw_Slice *rw_slice)
 {
@@ -1395,16 +1425,11 @@ _efl_net_dialer_http_efl_io_reader_read(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ein
 
    if ((pd->pause & CURLPAUSE_RECV) && (pd->recv.used < pd->recv.limit))
      {
-        CURLcode r;
+        Eina_Error err;
         pd->pause &= ~CURLPAUSE_RECV;
-        r = curl_easy_pause(pd->easy, pd->pause);
-        if (r != CURLE_OK)
-          {
-             Eina_Error err = _curlcode_to_eina_error(r);
-             ERR("dialer=%p could not unpause receive (flags=%#x): %s",
-                 o, pd->pause, eina_error_msg_get(err));
-             return err;
-          }
+        err = _efl_net_dialer_http_pause_reset(o, pd);
+        if (err)
+          return err;
      }
 
    return 0;
@@ -1447,7 +1472,6 @@ _efl_net_dialer_http_efl_io_writer_write(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ei
 {
    Eina_Error err = EINVAL;
    CURLMcode rm;
-   CURLcode re;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINVAL);
    EINA_SAFETY_ON_TRUE_GOTO(efl_io_closer_closed_get(o), error);
@@ -1457,14 +1481,8 @@ _efl_net_dialer_http_efl_io_writer_write(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ei
    pd->send.slice = *slice;
    efl_io_writer_can_write_set(o, EINA_FALSE);
    pd->pause &= ~CURLPAUSE_SEND;
-   re = curl_easy_pause(pd->easy, pd->pause);
-   if (re != CURLE_OK)
-     {
-        err = _curlcode_to_eina_error(re);
-        ERR("dialer=%p could not unpause send (flags=%#x): %s",
-            o, pd->pause, eina_error_msg_get(err));
-        goto error;
-     }
+   err = _efl_net_dialer_http_pause_reset(o, pd);
+   if (err) goto error;
 
    pd->error = 0;
    rm = curl_multi_socket_action(pd->cm->multi,
