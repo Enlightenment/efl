@@ -16,6 +16,8 @@ typedef struct _Elm_Params_Progressbar
    Eina_Bool horizontal_exists:1;
    Eina_Bool pulse:1;
    Eina_Bool pulse_exists:1;
+   Eina_Bool pulsing:1;
+   Eina_Bool pulsing_exists:1;
 } Elm_Params_Progressbar;
 
 static void
@@ -45,6 +47,8 @@ external_progressbar_state_set(void *data EINA_UNUSED, Evas_Object *obj,
      elm_progressbar_unit_format_set(obj, p->unit);
    if (p->pulse_exists)
      elm_progressbar_pulse_set(obj, p->pulse);
+   if  (p->pulsing_exists)
+     elm_progressbar_pulse(obj, p->pulsing);
 }
 
 static Eina_Bool
@@ -85,11 +89,19 @@ external_progressbar_param_set(void *data EINA_UNUSED, Evas_Object *obj,
              return EINA_TRUE;
           }
      }
-   else if (!strcmp(param->name, "pulse"))
+  else if (!strcmp(param->name, "pulse"))
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              elm_progressbar_pulse_set(obj, param->i);
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "pulsing"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             elm_progressbar_pulse(obj, param->i);
              return EINA_TRUE;
           }
      }
@@ -162,6 +174,14 @@ external_progressbar_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              param->i = elm_progressbar_pulse_get(obj);
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "pulsing"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             param->i = elm_progressbar_is_pulsing_get(obj);
              return EINA_TRUE;
           }
      }
@@ -238,6 +258,11 @@ external_progressbar_params_parse(void *data EINA_UNUSED,
              mem->pulse = !!param->i;
              mem->pulse_exists = EINA_TRUE;
           }
+        else if (!strcmp(param->name, "pulsing"))
+          {
+             mem->pulsing = !!param->i;
+             mem->pulsing_exists = EINA_TRUE;
+          }
         else if (!strcmp(param->name, "unit format"))
           mem->unit = eina_stringshare_add(param->s);
         else if (!strcmp(param->name, "label"))
@@ -274,6 +299,7 @@ static Edje_External_Param_Info external_progressbar_params[] = {
      EDJE_EXTERNAL_PARAM_INFO_DOUBLE("value"),
      EDJE_EXTERNAL_PARAM_INFO_BOOL("horizontal"),
      EDJE_EXTERNAL_PARAM_INFO_BOOL("pulse"),
+     EDJE_EXTERNAL_PARAM_INFO_BOOL("pulsing"),
      EDJE_EXTERNAL_PARAM_INFO_BOOL("inverted"),
      EDJE_EXTERNAL_PARAM_INFO_INT("span"),
      EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("unit format", "%1.2f"),

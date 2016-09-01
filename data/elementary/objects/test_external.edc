@@ -735,6 +735,18 @@ embryo script and from C code.";
          }
          program { name: "disable_button3";
             action: PARAM_SET "ext_button3" "disabled" 1;
+            after: "start_pulsing1";
+         }
+         program { name: "start_pulsing1";
+            action: PARAM_SET "ext_pbar2" "pulsing" 1;
+            after: "start_pulsing2";
+         }
+         program { name: "start_pulsing2";
+            action: PARAM_SET "ext_pbar5" "pulsing" 1;
+            after: "start_pulsing3";
+         }
+         program { name: "start_pulsing3";
+            action: PARAM_SET "ext_pbar7" "pulsing" 1;
             after: "anim_0";
          }
          program { name: "anim_0";
@@ -801,6 +813,18 @@ embryo script and from C code.";
          }
          program { name: "reenable_button3";
             action: PARAM_SET "ext_button3" "disabled" 0;
+            after: "stop_pulsing1";
+         }
+         program { name: "stop_pulsing1";
+            action: PARAM_SET "ext_pbar2" "pulsing" 0;
+            after: "stop_pulsing2";
+         }
+         program { name: "stop_pulsing2";
+            action: PARAM_SET "ext_pbar5" "pulsing" 0;
+            after: "stop_pulsing3";
+         }
+         program { name: "stop_pulsing3";
+            action: PARAM_SET "ext_pbar7" "pulsing" 0;
          }
          script {
             public my_value;
@@ -819,6 +843,9 @@ embryo script and from C code.";
                   external_param_set_bool(PART:"ext_button1", "disabled", 0);
                   external_param_set_bool(PART:"ext_button2", "disabled", 0);
                   external_param_set_bool(PART:"ext_button3", "disabled", 0);
+                  external_param_set_bool(PART:"ext_pbar2", "pulsing", 0);
+                  external_param_set_bool(PART:"ext_pbar5", "pulsing", 0);
+                  external_param_set_bool(PART:"ext_pbar7", "pulsing", 0);
                }
             }
          }
@@ -830,6 +857,9 @@ embryo script and from C code.";
                external_param_set_bool(PART:"ext_button1", "disabled", 1);
                external_param_set_bool(PART:"ext_button2", "disabled", 1);
                external_param_set_bool(PART:"ext_button3", "disabled", 1);
+               external_param_set_bool(PART:"ext_pbar2", "pulsing", 1);
+               external_param_set_bool(PART:"ext_pbar5", "pulsing", 1);
+               external_param_set_bool(PART:"ext_pbar7", "pulsing", 1);
                timer_cb(0);
             }
          }

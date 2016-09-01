@@ -477,6 +477,12 @@ _elm_progressbar_pulse(Eo *obj, Elm_Progressbar_Data *sd, Eina_Bool state)
      elm_layout_signal_emit(obj, "elm,state,pulse,stop", "elm");
 }
 
+EOLIAN static Eina_Bool
+_elm_progressbar_is_pulsing_get(const Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd)
+{
+   return (sd->pulse_state && sd->pulse);
+}
+
 EOLIAN static void
 _elm_progressbar_part_value_set(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, const char *part_name, double val)
 {

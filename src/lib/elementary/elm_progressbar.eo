@@ -53,6 +53,11 @@ class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
             @in state: bool; [[$true, to start the pulsing animation, $false to stop it]]
          }
       }
+      is_pulsing_get @const {
+         [[Get the pulsing state on a given progressbar widget. ]]
+
+         return: bool; [[$true if the $obj is currently pulsing ]]
+      }
    }
    implements {
       class.constructor;
