@@ -18,8 +18,6 @@
 #define MY_CLASS_NAME "Elm_Fileselector_Entry"
 #define MY_CLASS_NAME_LEGACY "elm_fileselector_entry"
 
-EAPI const char ELM_FILESELECTOR_ENTRY_SMART_NAME[] = "elm_fileselector_entry";
-
 #define ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS(cmd) \
    cmd(SIG_CHANGED, "changed", "") \
    cmd(SIG_ACTIVATED, "activated", "") \

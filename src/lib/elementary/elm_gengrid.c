@@ -36,9 +36,6 @@
 
 #define CACHE_MAX 40
 
-EAPI const char ELM_GENGRID_SMART_NAME[] = "elm_gengrid";
-EAPI const char ELM_GENGRID_PAN_SMART_NAME[] = "elm_gengrid_pan";
-
 #define ELM_PRIV_GENGRID_SIGNALS(cmd) \
    cmd(SIG_ACTIVATED, "activated", "") \
    cmd(SIG_CLICKED_DOUBLE, "clicked,double", "") \

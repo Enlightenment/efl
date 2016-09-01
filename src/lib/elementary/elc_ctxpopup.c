@@ -21,8 +21,6 @@
 #define MY_CLASS_NAME "Elm_Ctxpopup"
 #define MY_CLASS_NAME_LEGACY "elm_ctxpopup"
 
-EAPI const char ELM_CTXPOPUP_SMART_NAME[] = "elm_ctxpopup";
-
 #define ELM_PRIV_CTXPOPUP_SIGNALS(cmd) \
    cmd(SIG_DISMISSED, "dismissed", "") \
    cmd(SIG_GEOMETRY_UPDATE, "geometry,update", "") \
