@@ -33,6 +33,10 @@ struct _Efl_Input_Pointer_Data
    double          radius, radius_x, radius_y;
    double          pressure, distance, azimuth, tilt, twist;
    double          angle;
+   /* current, previous positions in window coordinates.
+    * raw can be either un-smoothed, un-predicted x,y or a tablet's raw input.
+    * norm is the normalized value in [0..1] for tablet input.
+    */
    Eina_Vector2    cur, prev, raw, norm;
    struct {
       Efl_Orient   dir;

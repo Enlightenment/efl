@@ -88,15 +88,25 @@ enum Efl.Input.Value {
    tool,       [[ID of the finger or tool (eg. pen) that triggered this event.
                  Prefer the property $tool to read this value. Default: 0.]]
    x,          [[Absolute X position where this event occurred, in pixels.
-                 Relative to the window. Default: last known position.]]
+                 Relative to the window. Default: last known position.
+                 This value may be smoothed out or even extrapolated by EFL.]]
    y,          [[Absolute Y position where this event occurred, in pixels.
-                 Relative to the window. Default: last known position.]]
+                 Relative to the window. Default: last known position.
+                 This value may be smoothed out or even extrapolated by EFL.]]
    dx,         [[Relative X movement, in pixels. Range: unbounded. Default: 0.]]
    dy,         [[Relative Y movement, in pixels. Range: unbounded. Default: 0.]]
    previous_x, [[Previous X position of the pointer, in pixels.
                  Default: last known position, may be equal to x.]]
    previous_y, [[Previous Y position of the pointer, in pixels.
                  Default: last known position, may be equal to y.]]
+   raw_x,      [[Absolute X position where this event occurred. Default: 0.
+                 This value will be set from the hardware input without any
+                 smoothing or extrapolation. For an axis input event, this is
+                 the raw value set by the driver (undefined range and unit).]]
+   raw_y,      [[Absolute X position where this event occurred. Default: 0.
+                 This value will be set from the hardware input without any
+                 smoothing or extrapolation. For an axis input event, this is
+                 the raw value set by the driver (undefined range and unit).]]
    radius,     [[Average radius of the pressed area under a finger or tool,
                  in pixels. Default is 1.]]
    radius_x,   [[Spread over X of the pressed area under a finger or tool,

@@ -525,6 +525,16 @@ _efl_input_pointer_value_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Ef
       case EFL_INPUT_VALUE_PREVIOUS_Y:
         return pd->prev.y;
 
+      case EFL_INPUT_VALUE_RAW_X:
+        if (!_efl_input_value_has(pd, EFL_INPUT_VALUE_RAW_X))
+          return pd->cur.x;
+        return pd->raw.x;
+
+      case EFL_INPUT_VALUE_RAW_Y:
+        if (!_efl_input_value_has(pd, EFL_INPUT_VALUE_RAW_Y))
+          return pd->cur.y;
+        return pd->raw.y;
+
       case EFL_INPUT_VALUE_RADIUS:
         return pd->radius;
 
