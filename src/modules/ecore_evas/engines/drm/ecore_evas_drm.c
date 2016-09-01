@@ -796,6 +796,9 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
    Ecore_Evas_Engine_Drm_Data *edata;
    int method, mw, mh;
 
+   dlopen("libglapi.so.0", RTLD_LAZY | RTLD_GLOBAL);
+   if (dlerror()) return NULL;
+
    method = evas_render_method_lookup("gl_drm");
    if (!method) return NULL;
 
@@ -816,14 +819,6 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
    edata->depth = 24; // FIXME: Remove hardcode
    edata->bpp = 32; // FIXME: Remove hardcode
    edata->format = DRM_FORMAT_XRGB8888;
-
-   dlopen("libglapi.so.0", RTLD_LAZY | RTLD_GLOBAL);
-   if (dlerror())
-     {
-        free(edata);
-        free(ee);
-        return NULL;
-     }
 
    if (_ecore_evas_drm_init(edata, device) < 1)
      {
