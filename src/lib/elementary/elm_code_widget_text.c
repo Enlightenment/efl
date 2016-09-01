@@ -50,7 +50,7 @@ _elm_code_widget_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *p
 
    line = elm_code_file_line_get(pd->code->file, start_line);
    start = elm_code_widget_line_text_position_for_column_get(widget, line, start_col);
-   first = elm_code_line_text_substr(line, start, line->length - start + 1);
+   first = elm_code_line_text_substr(line, start, line->length - start);
 
    line = elm_code_file_line_get(pd->code->file, end_line);
    end = elm_code_widget_line_text_position_for_column_get(widget, line, end_col + 1);
@@ -58,7 +58,7 @@ _elm_code_widget_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *p
 
    ret_len = strlen(first) + strlen(last) + newline_len;
 
-   for (row = pd->selection->start_line + 1; row < end_line; row++)
+   for (row = start_line + 1; row < end_line; row++)
      {
         line = elm_code_file_line_get(pd->code->file, row);
         ret_len += line->length + newline_len;
@@ -74,10 +74,8 @@ _elm_code_widget_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *p
    for (row = start_line + 1; row < end_line; row++)
      {
         line = elm_code_file_line_get(pd->code->file, row);
-        if (line->modified)
-          snprintf(ptr, line->length + 1, "%s", line->modified);
-        else
-          snprintf(ptr, line->length + 1, "%s", line->content);
+        snprintf(ptr, line->length + 1, "%s",
+                 elm_code_line_text_get(line, NULL));
 
         snprintf(ptr + line->length, newline_len + 1, "%s", newline);
         ptr += line->length + newline_len;
@@ -165,7 +163,7 @@ _elm_code_widget_line_text_position_for_column_get(Eo *obj, Elm_Code_Widget_Data
    int index = 0;
    const char *chars;
 
-   if (line->length == 0 || column == 1)
+   if (!line || line->length == 0 || column == 1)
      return 0;
 
    if (line->modified)

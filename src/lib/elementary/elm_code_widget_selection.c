@@ -233,19 +233,24 @@ EAPI void
 elm_code_widget_selection_delete(Evas_Object *widget)
 {
    Elm_Code_Widget_Data *pd;
+   Elm_Code_Widget_Selection_Data *selection;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (!pd->selection)
      return;
 
-   if (pd->selection->start_line == pd->selection->end_line)
+   selection = elm_code_widget_selection_normalized_get(widget);
+   if (selection->start_line == selection->end_line)
      _elm_code_widget_selection_delete_single(widget, pd);
    else
      _elm_code_widget_selection_delete_multi(widget, pd);
+   elm_code_widget_cursor_position_set(widget, selection->start_col, selection->start_line);
 
    free(pd->selection);
    pd->selection = NULL;
+   free(selection);
+
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
 }
 
