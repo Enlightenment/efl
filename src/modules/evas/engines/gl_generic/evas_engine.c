@@ -2794,17 +2794,18 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
      }
 }
 
-static const Eina_Rw_Slice *
-eng_image_data_map(void *engdata EINA_UNUSED, void **image,
+static Eina_Bool
+eng_image_data_map(void *engdata EINA_UNUSED, void **image, Eina_Rw_Slice *slice,
                    int *stride, int x, int y, int w, int h,
-                   Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode)
+                   Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode,
+                   int plane)
 {
    Eina_Bool cow = EINA_FALSE, to_write = EINA_FALSE;
    Evas_GL_Image_Data_Map *map = NULL;
-   const Eina_Rw_Slice *slice = NULL;
    Evas_GL_Image *im;
+   Eina_Bool ok;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(image && *image, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(image && *image && slice, EINA_FALSE);
    im = *image;
 
    if (mode & EFL_GFX_BUFFER_ACCESS_MODE_COW)
@@ -2818,9 +2819,9 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
         int strid = 0;
 
         // Call sw generic implementation. Should work for simple cases.
-        slice = pfunc.image_data_map(NULL, (void **) &im->im, &strid,
-                                     x, y, w, h, cspace, mode);
-        if (slice)
+        ok = pfunc.image_data_map(NULL, (void **) &im->im, slice, &strid,
+                                  x, y, w, h, cspace, mode, plane);
+        if (ok)
           {
              map = calloc(1, sizeof(*map));
              map->cspace = cspace;
@@ -2835,12 +2836,12 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
              im->maps = eina_inlist_prepend(im->maps, EINA_INLIST_GET(map));
           }
         if (stride) *stride = strid;
-        return &map->slice;
+        return ok;
      }
 
    // TODO: glReadPixels from FBO if possible
 
-   return NULL;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -2850,7 +2851,7 @@ eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, const Eina_Rw_Slice
    Evas_GL_Image *im = image;
    Eina_Bool found = EINA_FALSE;
 
-   if (!im || !slice)
+   if (!(image && slice))
      return EINA_FALSE;
 
    EINA_INLIST_FOREACH(im->maps, map)

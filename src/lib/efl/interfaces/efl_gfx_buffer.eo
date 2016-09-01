@@ -1,4 +1,5 @@
 import efl_gfx_types;
+import eina_types;
 
 /* FIXME: this is very very low level. expose to apps? */
 enum Efl.Gfx.Buffer.Access_Mode {
@@ -7,6 +8,8 @@ enum Efl.Gfx.Buffer.Access_Mode {
    write     = 0x2,
    cow       = 0x4,  [[Forces copy-on-write if already mapped as read-only. Requires write.]]
 }
+
+/* FIXME: YUV and other planar formats are not properly handled in this API! */
 
 interface Efl.Gfx.Buffer ()
 {
@@ -129,7 +132,7 @@ interface Efl.Gfx.Buffer ()
            be negative.
          ]]
          params {
-            @out length: int @nonull; [[Accessible buffer size in bytes, should not be $null.]]
+            @out slice: Eina.Rw_Slice; [[Pointer to the top-left pixel data.]]
             @in mode: Efl.Gfx.Buffer.Access_Mode; [[Specifies whether to map for read-only,
                                                     write-only or read-write access (OR combinaison of flags).]]
             @in x: int @optional;  [[X position of the top-left pixel to map, defaults to 0.]]
@@ -139,48 +142,25 @@ interface Efl.Gfx.Buffer ()
             @in cspace: Efl.Gfx.Colorspace @optional; [[Requested colorspace. If differen from the internal cspace,
                                                         map should try to convert the data into a new buffer.
                                                         argb8888 by default.]]
+            @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
             @out stride: int @optional; [[Returns the length in bytes of a mapped line]]
          }
-         return: void_ptr @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
+         return: bool;
       }
       buffer_unmap {
          [[Unmap a region of this buffer, and update the internal data if needed.
 
            EFL will update the internal image if the map had write access.
+
+           Note: The $slice struct does not need to be the one returned
+           by @.buffer_map, only its contents ($mem and $len) must match. But
+           after a call to @.buffer_unmap the original $slice structure is not
+           valid anymore.
          ]]
          params {
-            @in data: void_ptr; [[Data pointer returned by a previous call to map]]
-            @in length: int; [[Must be the same as returned by map.]]
+            @in slice: const(Eina.Rw_Slice)*; [[Data slice returned by a previous call to map.]]
          }
-         return: bool; [[This will return $false in case of failure (invalid
-                         parameters or state of the object).]]
-      }
-
-      /* FIXME: naming: buffer_set, buffer_attach, external_data_set, ...? */
-      buffer_data_set {
-         [[Set the pixels for this buffer, or allocate a new memory region.
-
-           EFL will use $pixels directly, and update the GPU-side texture
-           if required. This will mark the image as dirty.
-
-           If $pixels is $null, then a new empty buffer will be allocated.
-           If the buffer already had pixel data, the previous image data will
-           be dropped. This is the same as @.buffer_copy_set.
-
-           The memory buffer $pixels must be large enough to hold
-           $width x $height pixels encoded in the colorspace $cspace.
-
-           See also @.buffer_copy_set if you want EFL to copy the input buffer
-           internally.
-         ]]
-         params {
-            @in pixels: void_ptr @nullable; [[If $null, allocates an empty buffer]]
-            @in width: int;
-            @in height: int;
-            @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
-            @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
-         }
-         return: bool @warn_unused; [[This function returns $false in case of failure.]]
+         return: bool;
       }
       buffer_copy_set {
          [[Set the pixels for this buffer by copying them, or allocate
@@ -192,32 +172,61 @@ interface Efl.Gfx.Buffer ()
 
            If $pixels is $null, then a new empty buffer will be allocated.
            If the buffer already had pixel data, the previous image data will
-           be dropped. This is the same as @.buffer_data_set.
+           be dropped. This is the same as @.buffer_managed_set.
 
            The memory buffer $pixels must be large enough to hold
            $width x $height pixels encoded in the colorspace $cspace.
 
-           $pixels should not be the return value of @.buffer_data_get.
+           $slice should not be the return value of @.buffer_managed_get.
          ]]
          params {
-            @in pixels: const(void_ptr) @nullable; [[If $null, allocates an empty buffer]]
+            @in slice: const(Eina.Slice)* @nullable; [[If $null, allocates an empty buffer]]
             @in width: int;
             @in height: int;
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
+            @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
          }
-         return: bool @warn_unused; [[This function returns $false in case of failure.]]
+         return: bool;
       }
-      buffer_data_get {
+      buffer_managed_set {
+         [[Set the pixels for this buffer, managed externally by the client.
+
+           EFL will use the pixel data directly, and update the GPU-side
+           texture if required. This will mark the image as dirty. If $slice
+           is $null, this will detach the pixel data.
+
+           If the buffer already had pixel data, the previous image data will
+           be dropped. This is the same as @.buffer_copy_set.
+
+           The memory buffer $pixels must be large enough to hold
+           $width x $height pixels encoded in the colorspace $cspace.
+
+           See also @.buffer_copy_set if you want EFL to copy the input buffer
+           internally.
+         ]]
+         params {
+            @in slice: const(Eina.Slice)* @nullable; [[If $null, detaches the previous buffer.]]
+            @in width: int;
+            @in height: int;
+            @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
+            @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
+            @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
+         }
+         return: bool;
+      }
+      buffer_managed_get {
          [[Get a direct pointer to the internal pixel data, if available.
 
-           This will return $null unless @.buffer_data_set was used to pass in an
-           external data pointer.
-
-           Note: This is different from the legacy API data, which is now
-           replaced by map/unmap.
+           This will return $null unless @.buffer_managed_set was used to pass
+           in an external data pointer. The returned @Eina.Slice struct must be
+           freed by the caller.
          ]]
-         return: void_ptr @warn_unused;
+         params {
+            @out slice: Eina.Slice;
+            @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
+         }
+         return: bool;
       }
       /* Note: border, span and buffer flags not imported from ector buffer */
    }

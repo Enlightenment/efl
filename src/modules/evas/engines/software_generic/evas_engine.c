@@ -1453,10 +1453,11 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    return im;
 }
 
-static const Eina_Rw_Slice *
-eng_image_data_map(void *engdata EINA_UNUSED, void **image,
+static Eina_Bool
+eng_image_data_map(void *engdata EINA_UNUSED, void **image, Eina_Rw_Slice *slice,
                    int *stride, int x, int y, int w, int h,
-                   Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode)
+                   Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode,
+                   int plane)
 {
    Eina_Bool cow = EINA_FALSE, to_write = EINA_FALSE;
    RGBA_Image_Data_Map *map;
@@ -1465,17 +1466,26 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
    int src_stride, src_offset;
    void *data;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(image && *image, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(image && *image && slice, EINVAL);
    im = *image;
    ie = &im->cache_entry;
 
+   slice->len = 0;
+   slice->mem = NULL;
+
    // FIXME: implement planes support (YUV, RGB565, ETC1+Alpha)
    // FIXME: implement YUV support (im->cs.data)
+   if (plane)
+     {
+        ERR("planar formats support not implemented yet!");
+        return EINA_FALSE;
+     }
+
    if (!im->image.data)
      {
         int error = evas_cache_image_load_data(ie);
         if (error != EVAS_LOAD_ERROR_NONE)
-          return NULL;
+          return EINA_FALSE;
      }
 
    if (mode & EFL_GFX_BUFFER_ACCESS_MODE_COW)
@@ -1490,7 +1500,7 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
      {
         ERR("invalid region for colorspace %d: %dx%d + %d,%d, image: %dx%d",
             cspace, w, h, x, y, ie->w, ie->h);
-        return NULL;
+        return EINA_FALSE;
      }
 
    src_stride = _evas_common_rgba_image_data_offset(ie->w, 0, 0, 0, 0, im);
@@ -1502,7 +1512,7 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
           {
              ERR("can't map shared image data multiple times with "
                  "different COW flag");
-             return NULL;
+             return EINA_FALSE;
           }
      }
 
@@ -1510,7 +1520,7 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
    if (cow)
      {
         ie = evas_cache_image_alone(ie);
-        if (!ie) return NULL;
+        if (!ie) return EINA_FALSE;
         im = (RGBA_Image *) ie;
         *image = im;
      }
@@ -1519,7 +1529,7 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
         if (to_write && (ie->references > 1))
           {
              ERR("write map requires COW flag for shared images");
-             return NULL;
+             return EINA_FALSE;
           }
      }
 
@@ -1535,11 +1545,11 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
         int dst_stride, dst_len, dst_offset = 0;
 
         cs_func = efl_draw_convert_func_get(ie->space, cspace, &can_region);
-        if (!cs_func) return NULL;
+        if (!cs_func) return EINA_FALSE;
 
         // make sure we can convert back, if map for writing
         if (to_write && !efl_draw_convert_func_get(cspace, ie->space, NULL))
-          return NULL;
+          return EINA_FALSE;
 
         if (can_region)
           {
@@ -1568,20 +1578,20 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
         dst_len = rh * dst_stride;
 
         data = malloc(dst_len);
-        if (!data) return NULL;
+        if (!data) return EINA_FALSE;
 
         if (!cs_func(data, src_data, rw, rh, src_stride, dst_stride, ie->flags.alpha, ie->space, cspace))
           {
              ERR("color conversion failed");
              free(data);
-             return NULL;
+             return EINA_FALSE;
           }
 
         map = calloc(1, sizeof(*map));
         if (!map)
           {
              free(data);
-             return NULL;
+             return EINA_FALSE;
           }
         map->allocated = EINA_TRUE;
         map->cspace = cspace;
@@ -1603,7 +1613,7 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
              // no copy
              int end_offset = _evas_common_rgba_image_data_offset(x + w, y + h, 0, 0, 0, im) - src_stride;
              map = calloc(1, sizeof(*map));
-             if (!map) return NULL;
+             if (!map) return EINA_FALSE;
 
              map->baseptr = im->image.data8;
              map->slice.mem = im->image.data8 + src_offset;
@@ -1614,12 +1624,12 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
              // copy
              int size = _evas_common_rgba_image_data_offset(w, h, 0, 0, 0, im);
              data = malloc(size);
-             if (!data) return NULL;
+             if (!data) return EINA_FALSE;
              map = calloc(1, sizeof(*map));
              if (!map)
                {
                   free(data);
-                  return NULL;
+                  return EINA_FALSE;
                }
              memcpy(data, im->image.data8 + src_offset, size);
 
@@ -1639,7 +1649,9 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
    im->maps = (RGBA_Image_Data_Map *)
      eina_inlist_prepend(EINA_INLIST_GET(im->maps), EINA_INLIST_GET(map));
    if (stride) *stride = map->stride;
-   return &map->slice;
+   slice->mem = map->slice.mem;
+   slice->len = map->slice.len;
+   return EINA_TRUE;
 }
 
 static void
@@ -1693,7 +1705,7 @@ eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, const Eina_Rw_Slice
    RGBA_Image_Data_Map *map;
    RGBA_Image *im = image;
 
-   if (!im || !slice)
+   if (!(image && slice))
      return EINA_FALSE;
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(im->maps), map)

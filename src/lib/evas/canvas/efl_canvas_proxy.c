@@ -259,25 +259,37 @@ _proxy_image_get(Evas_Image_Data *o)
      return source->proxy->surface;
 }
 
-EOLIAN static void *
+EOLIAN static Eina_Bool
 _efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
-                                            int *length,
+                                            Eina_Rw_Slice *slice,
                                             Efl_Gfx_Buffer_Access_Mode mode,
                                             int x, int y, int w, int h,
-                                            Efl_Gfx_Colorspace cspace, int *stride)
+                                            Efl_Gfx_Colorspace cspace, int plane,
+                                            int *stride)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-   int len = 0, s = 0, width = 0, height = 0;
-   const Eina_Rw_Slice *slice = NULL;
-   void *image, *data = NULL;
+   int s = 0, width = 0, height = 0;
+   Eina_Bool ret = EINA_FALSE;
+   void *image;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINA_FALSE);
+
+   slice->len = 0;
+   slice->mem = NULL;
 
    if (!ENFN->image_data_map)
      goto end; // not implemented
 
+   if (plane)
+     {
+        ERR("invalid plane id for proxy object");
+        goto end;
+     }
+
    if (mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE)
      {
-        ERR("invalid map mode for Proxy object");
+        ERR("invalid map mode for proxy object");
         goto end;
      }
 
@@ -303,34 +315,30 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
         goto end;
      }
 
-   slice = ENFN->image_data_map(ENDT, &image, &s, x, y, w, h, cspace, mode);
-   if (slice)
+   if (ENFN->image_data_map(ENDT, &o->engine_data, slice, &s, x, y, w, h, cspace, mode, plane))
      {
-        DBG("map(%p, %d,%d %dx%d) -> %p (%zu bytes)", eo_obj, x, y, w, h,
-            slice->mem, slice->len);
+        DBG("map(%p, %d,%d %dx%d plane:%d) -> " EINA_SLICE_FMT,
+            eo_obj, x, y, w, h, plane, EINA_SLICE_PRINT(*slice));
+        ret = EINA_TRUE;
      }
-   else DBG("map(%p, %d,%d %dx%d) -> (null)", eo_obj, x, y, w, h);
+   else DBG("map(%p, %d,%d %dx%d plane:%d) -> (null)", eo_obj, x, y, w, h, plane);
 
 end:
-   if (length) *length = len;
    if (stride) *stride = s;
-   return data;
+   return ret;
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_proxy_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
-                                              void *data, int length)
+                                              const Eina_Rw_Slice *slice)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-   Eina_Rw_Slice slice;
 
-   if (!ENFN->image_data_unmap || !o->engine_data)
+   if (!slice || !ENFN->image_data_unmap || !o->engine_data)
      return EINA_FALSE;
 
-   slice.mem = data;
-   slice.len = length;
-   if (!ENFN->image_data_unmap(ENDT, o->engine_data, &slice))
+   if (!ENFN->image_data_unmap(ENDT, o->engine_data, slice))
      return EINA_FALSE;
 
    return EINA_TRUE;

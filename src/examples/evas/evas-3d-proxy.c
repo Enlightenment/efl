@@ -26,8 +26,8 @@
 #define  IMG_WIDTH       256
 #define  IMG_HEIGHT      256
 
-// TODO: remove this when map/unmap are fully supported (GL engine)
-#undef USE_EO_IMAGE
+// undef this to test the legacy API for images
+#define USE_EO_IMAGE
 
 typedef struct _Scene_Data
 {
@@ -73,7 +73,7 @@ _animate_scene(void *data)
    static float angle = 0.0f;
    Scene_Data *scene = (Scene_Data *)data;
    unsigned int *pixels;
-   int i, j, stride, length;
+   int i, j, stride;
 
    angle += 0.5;
 
@@ -83,11 +83,12 @@ _animate_scene(void *data)
    if (angle > 360.0) angle -= 360.0f;
 
 #ifdef USE_EO_IMAGE
-   pixels = efl_gfx_buffer_map(source, &length, EFL_GFX_BUFFER_ACCESS_MODE_WRITE, 0, 0, 0, 0,
-                               EFL_GFX_COLORSPACE_ARGB8888, &stride);
-   if (!pixels) return EINA_TRUE;
+   Eina_Rw_Slice slice;
+   if (!efl_gfx_buffer_map(source, &slice, EFL_GFX_BUFFER_ACCESS_MODE_WRITE, 0, 0, 0, 0,
+                           EFL_GFX_COLORSPACE_ARGB8888, 0, &stride))
+     return EINA_TRUE;
+   pixels = slice.mem;
 #else
-   (void) length;
    pixels = evas_object_image_data_get(source, EINA_TRUE);
    stride = evas_object_image_stride_get(source);
 #endif
@@ -103,7 +104,7 @@ _animate_scene(void *data)
      }
 
 #ifdef USE_EO_IMAGE
-   efl_gfx_buffer_unmap(source, pixels, length);
+   efl_gfx_buffer_unmap(source, &slice);
    efl_gfx_buffer_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
 #else
    evas_object_image_data_set(source, pixels);
@@ -226,7 +227,7 @@ main(void)
    /* Add a background image. */
 #ifdef USE_EO_IMAGE
    source = efl_add(EFL_CANVAS_IMAGE_CLASS, evas);
-   efl_gfx_buffer_data_set(source, NULL, WIDTH, HEIGHT, 0, EFL_GFX_COLORSPACE_ARGB8888);
+   efl_gfx_buffer_copy_set(source, NULL, IMG_WIDTH, IMG_HEIGHT, 0, EFL_GFX_COLORSPACE_ARGB8888, 0);
    efl_gfx_position_set(source, (WIDTH / 2), (HEIGHT / 2));
    efl_gfx_size_set(source, (WIDTH / 2), (HEIGHT / 2));
    efl_gfx_visible_set(source, EINA_TRUE);

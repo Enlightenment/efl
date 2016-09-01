@@ -10,8 +10,8 @@ class Efl.Canvas.Image (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer,
    ]]
    data: null;
    implements {
-      Efl.Gfx.Buffer.buffer_data_get;
-      Efl.Gfx.Buffer.buffer_data_set;
+      Efl.Gfx.Buffer.buffer_managed_get;
+      Efl.Gfx.Buffer.buffer_managed_set;
       Efl.Gfx.Buffer.buffer_copy_set;
       Efl.Gfx.Buffer.buffer_size.get;
       Efl.Gfx.Buffer.buffer_map;

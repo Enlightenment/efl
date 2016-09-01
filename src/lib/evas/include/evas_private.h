@@ -1369,7 +1369,7 @@ struct _Evas_Func
    Eina_Bool (*image_can_region_get)       (void *data, void *image);
 
    /* image data map/unmap: direct or indirect access to pixels data */
-   const Eina_Rw_Slice *(*image_data_map)  (void *data, void **image, int *stride, int x, int y, int w, int h, Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode);
+   Eina_Bool (*image_data_map)             (void *data, void **image, Eina_Rw_Slice *slice, int *stride, int x, int y, int w, int h, Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode, int plane);
    Eina_Bool (*image_data_unmap)           (void *data, void *image, const Eina_Rw_Slice *slice);
    int (*image_data_maps_get)              (void *data, const void *image, const Eina_Rw_Slice **slices);
 
