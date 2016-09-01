@@ -692,7 +692,7 @@ EAPI void eina_matrix3_array_set(Eina_Matrix3 *m, const double *v);
  */
 EAPI void eina_matrix3_copy(Eina_Matrix3 *dst, const Eina_Matrix3 *src);
 
-/*
+/**
  * @brief Multiply two matrix
  *
  * @param out The resulting matrix
