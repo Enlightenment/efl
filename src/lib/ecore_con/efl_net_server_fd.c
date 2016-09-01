@@ -332,6 +332,7 @@ _efl_net_server_fd_reuse_port_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Bool r
    fd = efl_loop_fd_get(o);
    if (fd < 0) return EINA_TRUE; /* postpone until fd_set() */
 
+#ifdef SO_REUSEPORT
    value = reuse_port;
    if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, sizeof(value)) < 0)
      {
@@ -340,8 +341,11 @@ _efl_net_server_fd_reuse_port_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Bool r
         pd->reuse_port = old;
         return EINA_FALSE;
      }
-
    return EINA_TRUE;
+#else
+   pd->reuse_port = EINA_FALSE;
+   return EINA_FALSE;
+#endif
 }
 
 EOLIAN static Eina_Bool
@@ -356,6 +360,7 @@ _efl_net_server_fd_reuse_port_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
    /* if there is a fd, always query it directly as it may be modified
     * elsewhere by nasty users.
     */
+#ifdef SO_REUSEPORT
    valuelen = sizeof(value);
    if (getsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, &valuelen) < 0)
      {
@@ -366,6 +371,9 @@ _efl_net_server_fd_reuse_port_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
 
    pd->reuse_port = !!value; /* sync */
    return pd->reuse_port;
+#else
+   return EINA_FALSE;
+#endif
 }
 
 EOLIAN static void
