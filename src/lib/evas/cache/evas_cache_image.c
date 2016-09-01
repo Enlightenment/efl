@@ -250,6 +250,12 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
 {
    Image_Entry  *ie;
 
+   if (!cache)
+     {
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        return NULL;
+     }
+
    ie = cache->func.alloc();
    if (!ie)
      {
