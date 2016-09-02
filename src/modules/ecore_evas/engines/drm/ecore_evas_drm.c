@@ -55,6 +55,7 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    Ecore_Fd_Handler *hdlr;
    Ecore_Drm2_Device *dev;
    Ecore_Drm2_Output *output;
+   Eina_Bool pending : 1;
    Eina_Bool ticking : 1;
 } Ecore_Evas_Engine_Drm_Data;
 
@@ -611,55 +612,36 @@ _cb_drm_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 }
 
 static void
-_tick_schedule(int fd, Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Drm_Data *edata;
-
-   edata = ee->engine.data;
-   if (!edata->ticking) return;
-
-   drmVBlank vbl =
-     {
-        .request.type = DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT,
-        .request.sequence = 1,
-        .request.signal = (unsigned long)ee,
-     };
-
-   /* FIXME: On some systems this can fail, breaking ticking forever. */
-   drmWaitVBlank(fd, &vbl);
-}
-
-static void
 _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Drm_Data *edata;
-   Ecore_Drm2_Fb *next;
+   int ret;
 
    ee = data;
    edata = ee->engine.data;
 
-   ecore_drm2_fb_flip_complete(edata->output);
+   ret = ecore_drm2_fb_flip_complete(edata->output);
 
-   next = ecore_drm2_output_next_fb_get(edata->output);
-   if (next)
+   edata->pending = EINA_FALSE;
+
+   if (edata->ticking)
      {
-        ecore_drm2_output_next_fb_set(edata->output, NULL);
-        ecore_drm2_fb_flip(next, edata->output);
+        ecore_evas_animator_tick(ee, NULL);
+        ecore_drm2_fb_flip(NULL, edata->output);
      }
+   else if (ret) ecore_drm2_fb_flip(NULL, edata->output);
 }
 
 static void
-_cb_vblank(int fd, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
+_drm_evas_changed(Ecore_Evas *ee, Eina_Bool changed)
 {
-   Ecore_Evas *ee;
    Ecore_Evas_Engine_Drm_Data *edata;
 
-   ee = data;
-   edata = ee->engine.data;
+   if (changed) return;
 
-   ecore_evas_animator_tick(ee, NULL);
-   if (edata->ticking) _tick_schedule(fd, ee);
+   edata = ee->engine.data;
+   if (edata->ticking && !edata->pending) ecore_drm2_fb_flip(NULL, edata->output);
 }
 
 static void
@@ -669,7 +651,7 @@ _drm_animator_register(Ecore_Evas *ee)
 
    edata = ee->engine.data;
    edata->ticking = EINA_TRUE;
-   _tick_schedule(edata->fd, ee);
+   if (!edata->pending) ecore_drm2_fb_flip(NULL, edata->output);
 }
 
 static void
@@ -760,7 +742,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _drm_animator_register, // animator_register
    _drm_animator_unregister, // animator_unregister
 
-   NULL // evas_changed
+   _drm_evas_changed, // evas_changed
 };
 
 static Ecore_Evas *
@@ -906,7 +888,6 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    /* setup vblank handler */
    memset(&edata->ctx, 0, sizeof(edata->ctx));
    edata->ctx.version = DRM_EVENT_CONTEXT_VERSION;
-   edata->ctx.vblank_handler = _cb_vblank;
    edata->ctx.page_flip_handler = _cb_pageflip;
 
    edata->hdlr =
