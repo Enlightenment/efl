@@ -920,11 +920,12 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
           }
      }
 
-   if (!ENFN->image_data_direct)
+   if (!ENFN->image_data_direct_get)
      pixels = ENFN->image_data_get(ENDT, pixels, 0, &data, &o->load_error, &tofree);
    else
      {
-        if (ENFN->image_data_direct(ENDT, pixels, &cspace))
+        Eina_Slice slice;
+        if (ENFN->image_data_direct_get(ENDT, pixels, 0, &slice, &cspace))
           {
              if ((want_cspace != (int) cspace) && (want_cspace != -1))
                cspace = EVAS_COLORSPACE_ARGB8888;

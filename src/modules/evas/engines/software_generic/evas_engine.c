@@ -1067,14 +1067,16 @@ eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
    return im->cache_entry.space;
 }
 
-static void *
-eng_image_data_direct(void *data EINA_UNUSED, void *image, Evas_Colorspace *cspace)
+static Eina_Bool
+eng_image_data_direct_get(void *data EINA_UNUSED, void *image, int plane, Eina_Slice *slice, Evas_Colorspace *cspace)
 {
    RGBA_Image *im = image;
 
-   if (!im) return NULL;
+   if (!slice || !im)
+     return EINA_FALSE;
+
    if (cspace) *cspace = im->cache_entry.space;
-   return im->image.data;
+   return _evas_common_rgba_image_plane_get(im, plane, slice);
 }
 
 static void
@@ -4432,7 +4434,7 @@ static Evas_Func func =
      eng_image_dirty_region,
      eng_image_data_get,
      eng_image_data_put,
-     eng_image_data_direct,
+     eng_image_data_direct_get,
      eng_image_data_preload_request,
      eng_image_data_preload_cancel,
      eng_image_alpha_set,

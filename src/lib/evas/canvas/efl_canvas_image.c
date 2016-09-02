@@ -732,33 +732,16 @@ _efl_canvas_image_efl_gfx_buffer_buffer_managed_get(Eo *eo_obj, void *_pd EINA_U
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Colorspace cspace = EVAS_COLORSPACE_ARGB8888;
-   int w = 0, h = 0;
-   void *pixels;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINA_FALSE);
 
    slice->len = 0;
    slice->mem = NULL;
 
-   if (plane)
-     {
-        ERR("planar formats not supported yet!");
-        return EINA_FALSE;
-     }
-
-   if (!o->buffer_data_set || !o->engine_data || !ENFN->image_data_direct)
+   if (!o->buffer_data_set || !o->engine_data || !ENFN->image_data_direct_get)
      return EINA_FALSE;
 
-   pixels = ENFN->image_data_direct(ENDT, o->engine_data, &cspace);
-   if (!pixels) return EINA_FALSE;
-
-   slice->mem = pixels;
-
-   // note: length may not be same as what was originally given
-   ENFN->image_size_get(ENDT, o->engine_data, &w, &h);
-   slice->len = _evas_common_rgba_image_surface_size(w, h, cspace, NULL, NULL, NULL, NULL);
-
-   return EINA_TRUE;
+   return ENFN->image_data_direct_get(ENDT, o->engine_data, plane, slice, &cspace);
 }
 
 EOLIAN static Eina_Bool

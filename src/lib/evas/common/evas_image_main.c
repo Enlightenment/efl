@@ -181,6 +181,161 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
 #undef ALIGN_TO_PAGE
 }
 
+EAPI Eina_Bool
+_evas_common_rgba_image_plane_get(const RGBA_Image *im, int plane, Eina_Slice *slice)
+{
+   unsigned char **csdata;
+   Evas_Colorspace cs;
+   int w, h;
+
+   if (!im || !slice) return EINA_FALSE;
+   cs = im->cache_entry.space;
+   w = im->cache_entry.w;
+   h = im->cache_entry.h;
+
+   switch (cs)
+     {
+    case EVAS_COLORSPACE_YCBCR422P601_PL:
+    case EVAS_COLORSPACE_YCBCR422P709_PL:
+    case EVAS_COLORSPACE_YCBCR422601_PL:
+    case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+    case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+        if (!im->cs.data)
+          return EINA_FALSE;
+        csdata = im->cs.data;
+        break;
+
+      default:
+        if (!im->image.data)
+          return EINA_FALSE;
+        break;
+     }
+
+   switch (cs)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+        if (plane != 0) return EINA_FALSE;
+        slice->len = w * h * 4;
+        slice->mem = im->image.data;
+        return EINA_TRUE;
+
+      case EVAS_COLORSPACE_AGRY88:
+        if (plane != 0) return EINA_FALSE;
+        slice->len = w * h * 2;
+        slice->mem = im->image.data;
+        return EINA_TRUE;
+
+      case EVAS_COLORSPACE_GRY8:
+        if (plane != 0) return EINA_FALSE;
+        slice->len = w * h;
+        slice->mem = im->image.data;
+        return EINA_TRUE;
+
+      case EVAS_COLORSPACE_RGB565_A5P:
+        if (plane == 0)
+          {
+             slice->mem = im->image.data;
+             slice->len = w * h * 2;
+             return EINA_TRUE;
+          }
+        else if (plane == 1)
+          {
+             slice->mem = im->image.data8 + (w * h * 2);
+             slice->len = w * h;
+             return EINA_TRUE;
+          }
+        return EINA_FALSE;
+
+        // YUV, assume contiguous memory within a plane (and no padding)
+        // single interleaved plane
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+        if (plane != 0) return EINA_FALSE;
+        slice->mem = csdata[0];
+        slice->len = (w * h * 3) / 2;
+        return EINA_TRUE;
+
+        // 2 planes
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+        if (plane == 0)
+          {
+             slice->mem = csdata[0];
+             slice->len = w * h;
+             return EINA_TRUE;
+          }
+        else if (plane == 1)
+          {
+             slice->mem = csdata[h];
+             slice->len = w * h / 4;
+             return EINA_TRUE;
+          }
+        return EINA_FALSE;
+
+        // 3 planes
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+        if (plane == 0)
+          {
+             slice->mem = csdata[0];
+             slice->len = w * h;
+             return EINA_TRUE;
+          }
+        else if (plane == 1)
+          {
+             slice->mem = csdata[h];
+             slice->len = w * h / 4;
+             return EINA_TRUE;
+          }
+        else if (plane == 2)
+          {
+             slice->mem = csdata[2 * h];
+             slice->len = w * h / 4;
+             return EINA_TRUE;
+          }
+        return EINA_FALSE;
+
+        // ETC1/2 RGB, S3TC RGB
+      case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+        if (plane != 0) return EINA_FALSE;
+        slice->mem = im->image.data;
+        slice->len = (w * h * 8) / 16;
+        return EINA_TRUE;
+
+        // ETC2 ARGB, S3TC ARGB
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
+        if (plane != 0) return EINA_FALSE;
+        slice->mem = im->image.data;
+        slice->len = (w * h * 16) / 16;
+        return EINA_TRUE;
+
+        // ETC1+Alpha
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        if (plane == 0)
+          {
+             slice->mem = im->image.data;
+             slice->len = (w * h * 8) / 16;
+             return EINA_TRUE;
+          }
+        else if (plane == 1)
+          {
+             slice->mem = im->image.data8 + (w * h * 8) / 16;
+             slice->len = (w * h * 8) / 16;
+             return EINA_TRUE;
+          }
+        return EINA_FALSE;
+
+      default:
+        return EINA_FALSE;
+     }
+}
+
 EAPI int
 _evas_common_rgba_image_data_offset(int rx, int ry, int rw, int rh, int plane, const RGBA_Image *im)
 {
