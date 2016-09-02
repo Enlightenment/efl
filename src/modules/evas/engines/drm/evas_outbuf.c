@@ -91,7 +91,7 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
    ob = data;
 
    ofb = ob->priv.display;
-   if (ofb) ofb->busy = EINA_FALSE;
+   if (ofb) ecore_drm2_fb_busy_set(ofb->fb, EINA_FALSE);
 
    next = ecore_drm2_output_next_fb_get(ob->priv.output);
    if (next)
@@ -135,7 +135,7 @@ _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    if (next)
      {
         next_ofb = _outbuf_fb_find(ob, next);
-        next_ofb->busy = EINA_FALSE;
+        ecore_drm2_fb_busy_set(next_ofb->fb, EINA_FALSE);
         ecore_drm2_output_next_fb_set(ob->priv.output, NULL);
      }
 
@@ -143,7 +143,7 @@ _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    if (ecore_drm2_fb_flip(ofb->fb, ob->priv.output, ob) == 0)
      ob->priv.display = ofb;
 
-   ofb->busy = EINA_TRUE;
+   ecore_drm2_fb_busy_set(ofb->fb, EINA_TRUE);
    ofb->drawn = EINA_TRUE;
    ofb->age = 0;
 
@@ -192,7 +192,6 @@ _outbuf_fb_create(Outbuf *ob, Outbuf_Fb *ofb)
    if (!ofb->fb) return EINA_FALSE;
 
    ofb->age = 0;
-   ofb->busy = EINA_FALSE;
    ofb->drawn = EINA_FALSE;
    ofb->valid = EINA_TRUE;
 
@@ -206,7 +205,6 @@ _outbuf_fb_destroy(Outbuf_Fb *ofb)
 
    memset(ofb, 0, sizeof(*ofb));
    ofb->valid = EINA_FALSE;
-   ofb->busy = EINA_FALSE;
    ofb->drawn = EINA_FALSE;
    ofb->age = 0;
 }
@@ -370,7 +368,7 @@ _outbuf_fb_wait(Outbuf *ob)
         for (i = 0; i < ob->priv.num; i++)
           {
              if (&ob->priv.ofb[i] == ob->priv.display) continue;
-             if (ob->priv.ofb[i].busy) continue;
+             if (ecore_drm2_fb_busy_get(ob->priv.ofb[i].fb)) continue;
              if (ob->priv.ofb[i].valid) return &(ob->priv.ofb[i]);
           }
 
@@ -394,7 +392,7 @@ _outbuf_fb_assign(Outbuf *ob)
           {
              if (ob->priv.ofb[i].valid)
                {
-                  ob->priv.ofb[i].busy = 0;
+                  ecore_drm2_fb_busy_set(ob->priv.ofb[i].fb, EINA_FALSE);
                   ob->priv.ofb[i].age = 0;
                   ob->priv.ofb[i].drawn = EINA_FALSE;
                }

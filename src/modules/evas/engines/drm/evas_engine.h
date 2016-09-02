@@ -48,7 +48,6 @@ typedef struct _Outbuf_Fb
 
    Eina_Bool valid : 1;
    Eina_Bool drawn : 1;
-   Eina_Bool busy : 1;
 } Outbuf_Fb;
 
 struct _Outbuf
