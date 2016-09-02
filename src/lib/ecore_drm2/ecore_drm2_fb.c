@@ -272,3 +272,15 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output, void *data)
    output->current = fb;
    return 0;
 }
+
+EAPI Eina_Bool
+ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb)
+{
+   return fb->busy;
+}
+
+EAPI void
+ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy)
+{
+   fb->busy = busy;
+}

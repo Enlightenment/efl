@@ -94,6 +94,7 @@ struct _Ecore_Drm2_Fb
    uint32_t format;
 
    Eina_Bool gbm : 1;
+   Eina_Bool busy : 1;
 
    void *mmap;
 };

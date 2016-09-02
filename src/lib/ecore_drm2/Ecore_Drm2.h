@@ -779,6 +779,29 @@ EAPI void ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned
  */
 EAPI int ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output, void *data);
 
+/**
+ * Return the Ecore_Drm2_Fb's busy status
+ *
+ * @param fb
+ *
+ * @return The busy status
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb);
+
+/**
+ * Change the Ecore_Drm2_Fb's busy status
+ *
+ * @param fb
+ * @param busy The new busy status
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.19
+ */
+EAPI void ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy);
+
 # endif
 
 #endif
