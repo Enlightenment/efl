@@ -19,6 +19,8 @@
 # include <dlfcn.h>
 #endif
 
+#include <xf86drm.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -49,14 +51,17 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    int x, y, w, h;
    int depth, bpp;
    unsigned int format;
+   drmEventContext ctx;
+   Ecore_Fd_Handler *hdlr;
    Ecore_Drm2_Device *dev;
    Ecore_Drm2_Output *output;
+   Eina_Bool ticking : 1;
 } Ecore_Evas_Engine_Drm_Data;
 
 static int _drm_init_count = 0;
 
 static int
-_ecore_evas_drm_init(Ecore_Evas_Engine_Drm_Data *edata, const char *device)
+_ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const char *device)
 {
    if (++_drm_init_count != 1) return _drm_init_count;
 
@@ -92,8 +97,8 @@ _ecore_evas_drm_init(Ecore_Evas_Engine_Drm_Data *edata, const char *device)
      }
 
    edata->output = ecore_drm2_output_find(edata->dev, edata->x, edata->y);
-   if (!edata->output)
-     WRN("Could not find output at %d %d", edata->x, edata->y);
+   if (edata->output) ecore_drm2_output_user_data_set(edata->output, ee);
+   else WRN("Could not find output at %d %d", edata->x, edata->y);
 
    ecore_event_evas_init();
 
@@ -586,6 +591,97 @@ _ecore_evas_drm_interface_new(void)
    return iface;
 }
 
+static Eina_Bool
+_cb_drm_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+{
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Drm_Data *edata;
+   int ret;
+
+   ee = data;
+   edata = ee->engine.data;
+   ret = drmHandleEvent(edata->fd, &edata->ctx);
+   if (ret)
+     {
+        WRN("drmHandleEvent failed to read an event");
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static void
+_tick_schedule(int fd, Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   edata = ee->engine.data;
+   if (!edata->ticking) return;
+
+   drmVBlank vbl =
+     {
+        .request.type = DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT,
+        .request.sequence = 1,
+        .request.signal = (unsigned long)ee,
+     };
+
+   /* FIXME: On some systems this can fail, breaking ticking forever. */
+   drmWaitVBlank(fd, &vbl);
+}
+
+static void
+_cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
+{
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Drm_Data *edata;
+   Ecore_Drm2_Fb *current, *next;
+
+   ee = data;
+   edata = ee->engine.data;
+
+   current = ecore_drm2_output_current_fb_get(edata->output);
+   if (current) ecore_drm2_fb_busy_set(current, EINA_FALSE);
+
+   next = ecore_drm2_output_next_fb_get(edata->output);
+   if (next)
+     {
+        ecore_drm2_output_next_fb_set(edata->output, NULL);
+        ecore_drm2_fb_flip(next, edata->output);
+     }
+}
+
+static void
+_cb_vblank(int fd, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
+{
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   ee = data;
+   edata = ee->engine.data;
+
+   ecore_evas_animator_tick(ee, NULL);
+   if (edata->ticking) _tick_schedule(fd, ee);
+}
+
+static void
+_drm_animator_register(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   edata = ee->engine.data;
+   edata->ticking = EINA_TRUE;
+   _tick_schedule(edata->fd, ee);
+}
+
+static void
+_drm_animator_unregister(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   edata = ee->engine.data;
+   edata->ticking = EINA_FALSE;
+}
+
 static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
 {
    _drm_free,
@@ -662,8 +758,8 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
 
    NULL, // aux_hints_set
 
-   NULL, // animator_register
-   NULL, // animator_unregister
+   _drm_animator_register, // animator_register
+   _drm_animator_unregister, // animator_unregister
 
    NULL // evas_changed
 };
@@ -700,7 +796,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    edata->bpp = 32; // FIXME: Remove hardcode
    edata->format = DRM_FORMAT_XRGB8888;
 
-   if (_ecore_evas_drm_init(edata, device) < 1)
+   if (_ecore_evas_drm_init(ee, edata, device) < 1)
      {
         free(edata);
         free(ee);
@@ -808,6 +904,15 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    ecore_drm2_device_pointer_max_set(edata->dev, mw, mh);
    ecore_drm2_device_pointer_warp(edata->dev, mw / 2, mh / 2);
 
+   /* setup vblank handler */
+   memset(&edata->ctx, 0, sizeof(edata->ctx));
+   edata->ctx.version = DRM_EVENT_CONTEXT_VERSION;
+   edata->ctx.vblank_handler = _cb_vblank;
+   edata->ctx.page_flip_handler = _cb_pageflip;
+
+   edata->hdlr =
+     ecore_main_fd_handler_add(edata->fd, ECORE_FD_READ, _cb_drm_event, ee,
+                               NULL, NULL);
    return ee;
 
 eng_err:

@@ -63,9 +63,6 @@ struct _Outbuf
         Eina_List *pending;
      } priv;
 
-   drmEventContext ctx;
-   Ecore_Fd_Handler *hdlr;
-
    Eina_Bool alpha : 1;
    Eina_Bool vsync : 1;
 };

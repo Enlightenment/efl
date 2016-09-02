@@ -5,85 +5,11 @@
 static Outbuf *_evas_gl_drm_window = NULL;
 static EGLContext context = EGL_NO_CONTEXT;
 static int win_count = 0;
-static Eina_Bool ticking = EINA_FALSE;
 
 #ifdef EGL_MESA_platform_gbm
 static PFNEGLGETPLATFORMDISPLAYEXTPROC dlsym_eglGetPlatformDisplayEXT = NULL;
 static PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC dlsym_eglCreatePlatformWindowSurfaceEXT = NULL;
 #endif
-
-static void
-_outbuf_tick_schedule(int fd, void *data)
-{
-   if (!ticking) return;
-
-   drmVBlank vbl =
-     {
-        .request.type = DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT,
-        .request.sequence = 1,
-        .request.signal = (unsigned long)data,
-     };
-
-   drmWaitVBlank(fd, &vbl);
-}
-
-static void
-_outbuf_tick_begin(void *data)
-{
-   Outbuf *ob;
-
-   ob = data;
-   ticking = EINA_TRUE;
-   if (ob) _outbuf_tick_schedule(ob->fd, ob);
-}
-
-static void
-_outbuf_tick_end(void *data EINA_UNUSED)
-{
-   ticking = EINA_FALSE;
-}
-
-static void
-_outbuf_tick_source_set(Outbuf *ob)
-{
-   if (ob)
-     {
-        ecore_animator_custom_source_tick_begin_callback_set
-          (_outbuf_tick_begin, ob);
-        ecore_animator_custom_source_tick_end_callback_set
-          (_outbuf_tick_end, ob);
-        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
-     }
-   else
-     {
-        ecore_animator_custom_source_tick_begin_callback_set(NULL, NULL);
-        ecore_animator_custom_source_tick_end_callback_set(NULL, NULL);
-        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
-     }
-}
-
-void
-evas_outbuf_vblank(void *data, int fd)
-{
-   ecore_animator_custom_tick();
-   if (ticking) _outbuf_tick_schedule(fd, data);
-}
-
-void
-evas_outbuf_page_flip(void *data, int fd EINA_UNUSED)
-{
-   Outbuf *ob;
-   Ecore_Drm2_Fb *next;
-
-   ob = data;
-   next = ecore_drm2_output_next_fb_get(ob->priv.output);
-   if (next)
-     {
-        ecore_drm2_output_next_fb_set(ob->priv.output, NULL);
-        if (ecore_drm2_fb_flip(next, ob->priv.output) < 0)
-          _outbuf_tick_source_set(NULL);
-     }
-}
 
 static void
 _evas_outbuf_gbm_surface_destroy(Outbuf *ob)
@@ -176,8 +102,7 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    if (fb)
      {
         ecore_drm2_fb_dirty(fb, rects, count);
-        if (ecore_drm2_fb_flip(fb, ob->priv.output) < 0)
-          _outbuf_tick_source_set(NULL);
+        ecore_drm2_fb_flip(fb, ob->priv.output);
 
         /* Ecore_Drm2_Plane *plane; */
 
@@ -479,9 +404,6 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
         evas_outbuf_free(ob);
         return NULL;
      }
-
-   ecore_drm2_output_user_data_set(ob->priv.output, ob);
-   _outbuf_tick_source_set(ob);
 
    return ob;
 }
