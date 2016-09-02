@@ -8,43 +8,19 @@
 #define GREEN_MASK 0x00ff00
 #define BLUE_MASK 0x0000ff
 
-Outbuf_Fb *
-_outbuf_fb_find(Outbuf *ob, Ecore_Drm2_Fb *key)
-{
-   int i;
-
-   for (i = 0; i < ob->priv.num; i++)
-     if (key == ob->priv.ofb[i].fb) return &ob->priv.ofb[i];
-
-   return NULL;
-}
-
 static void
 _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 {
    /* Ecore_Drm2_Plane *plane; */
-   Outbuf_Fb *ofb, *next_ofb;
-   Ecore_Drm2_Fb *next;
+   Outbuf_Fb *ofb;
 
    ofb = ob->priv.draw;
    if (!ofb) return;
-
-   /* If there's a next buffer set, we just dump it back into
-    * the available buffers and it becomes a dropped frame
-    */
-   next = ecore_drm2_output_next_fb_get(ob->priv.output);
-   if (next)
-     {
-        next_ofb = _outbuf_fb_find(ob, next);
-        ecore_drm2_fb_busy_set(next_ofb->fb, EINA_FALSE);
-        ecore_drm2_output_next_fb_set(ob->priv.output, NULL);
-     }
 
    ecore_drm2_fb_dirty(ofb->fb, rects, count);
    if (ecore_drm2_fb_flip(ofb->fb, ob->priv.output) == 0)
      ob->priv.display = ofb;
 
-   ecore_drm2_fb_busy_set(ofb->fb, EINA_TRUE);
    ofb->drawn = EINA_TRUE;
    ofb->age = 0;
 

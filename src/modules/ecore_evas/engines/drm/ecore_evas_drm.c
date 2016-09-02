@@ -634,13 +634,10 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
 {
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Drm_Data *edata;
-   Ecore_Drm2_Fb *current, *next;
+   Ecore_Drm2_Fb *next;
 
    ee = data;
    edata = ee->engine.data;
-
-   current = ecore_drm2_output_current_fb_get(edata->output);
-   if (current) ecore_drm2_fb_busy_set(current, EINA_FALSE);
 
    next = ecore_drm2_output_next_fb_get(edata->output);
    if (next)

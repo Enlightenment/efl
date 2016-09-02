@@ -235,7 +235,10 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    if (!output->enabled) return -1;
 
    if (output->next)
-     WRN("Fb reused too soon, tearing may be visible");
+     {
+        output->next->busy = EINA_FALSE;
+        output->next = NULL;
+     }
 
    if ((!output->current) ||
        (output->current->stride != fb->stride))
@@ -266,10 +269,13 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
         DBG("Pageflip Failed for Crtc %u on Connector %u: %m",
             output->crtc_id, output->conn_id);
         output->next = fb;
+        fb->busy = EINA_TRUE;
         return ret;
      }
 
+   if (output->current) output->current->busy = EINA_FALSE;
    output->current = fb;
+   fb->busy = EINA_TRUE;
    return 0;
 }
 
