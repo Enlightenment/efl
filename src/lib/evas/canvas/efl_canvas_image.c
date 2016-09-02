@@ -595,18 +595,10 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
                   int w, int h, int stride, Efl_Gfx_Colorspace cspace, int plane,
                   Eina_Bool copy)
 {
-   Eina_Bool resized = EINA_FALSE, ret = EINA_FALSE, easy_copy = EINA_FALSE;
+   Eina_Bool resized = EINA_FALSE, ret = EINA_FALSE;
    int int_stride = 0;
-   void *pixels = NULL;
 
    // FIXME: buffer border support is not implemented
-   // FIXME: implement YUV support
-
-   if (plane)
-     {
-        ERR("planar formats not supported yet");
-        return EINA_FALSE;
-     }
 
    if (ENFN->image_data_maps_get)
      {
@@ -620,117 +612,60 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
    if (o->pixels_checked_out)
      {
         // is there anything to do?
-        ERR("Calling buffer_data_set after evas_object_image_data_get is not "
-            "valid. Discarding previous data pointer.");
-        o->pixels_checked_out = 0;
+        ERR("Calling efl_gfx_buffer_%s_set after evas_object_image_data_get is "
+            "not valid.", copy ? "copy" : "managed");
+        return EINA_FALSE;
      }
 
-   if (o->engine_data)
-     {
-        ENFN->image_free(ENDT, o->engine_data);
-        o->engine_data = NULL;
-     }
    if (o->file_obj)
      {
         efl_del(o->file_obj);
         o->file_obj = NULL;
      }
 
-   if (!slice && !copy)
+   if (o->engine_data)
      {
-        ret = EINA_TRUE;
-        goto end;
-     }
+        Evas_Colorspace ics;
+        int iw = 0, ih = 0;
+        Eina_Bool alpha;
 
-   switch (cspace)
-     {
-      case EVAS_COLORSPACE_ARGB8888:
-      case EVAS_COLORSPACE_AGRY88:
-      case EVAS_COLORSPACE_GRY8:
-        easy_copy = EINA_TRUE;
-        break;
-      default:
-        break;
-     }
-
-   // FIXME: Properly handle YUV and other planar formats
-   if (slice && easy_copy)
-     {
-        size_t len;
-
-        pixels = (void *) slice->mem;
-        len = _evas_common_rgba_image_surface_size(w, h, cspace, NULL, NULL, NULL, NULL);
-        if ((stride && (slice->len < (size_t) (stride * h))) || (slice->len < len))
+        ENFN->image_size_get(ENDT, o->engine_data, &iw, &ih);
+        ics = ENFN->image_colorspace_get(ENDT, o->engine_data);
+        alpha = ENFN->image_alpha_get(ENDT, o->engine_data);
+        if ((w != iw) || (h != ih) || (ics != cspace) || (alpha != o->cur->has_alpha))
           {
-             ERR("data slice is too short! (%zub, %dx%d)", slice->len, w, h);
-             goto end;
+             ENFN->image_free(ENDT, o->engine_data);
+             o->engine_data = NULL;
           }
      }
 
-   int_stride = _evas_common_rgba_image_surface_size(w, 1, cspace, NULL, NULL, NULL, NULL);
-   if (!stride) stride = int_stride;
-
-   if (!copy && (int_stride != stride))
+   if (copy && !slice)
      {
-        // FIXME: Add proper support for stride inside the engines
-        ERR("Unable to create an image with stride %d, got %d", stride, int_stride);
-        return EINA_FALSE;
+        if (o->engine_data)
+          ENFN->image_free(ENDT, o->engine_data);
+        o->engine_data = ENFN->image_new_from_copied_data(ENDT, w, h, NULL, o->cur->has_alpha, cspace);
+     }
+   else if (copy)
+     {
+#warning TODO
+        CRI("NOT IMPLEMENTED YET");
+        //o->engine_data = ENFN->image_copy_slice(ENDT, o->engine_data, slice, w, h, stride, cspace, plane, o->cur->has_alpha)
+     }
+   else
+     {
+#warning TODO
+        CRI("NOT IMPLEMENTED YET");
+        //o->engine_data = ENFN->image_set_slice(ENDT, o->engine_data, slice, w, h, stride, cspace, plane, o->cur->has_alpha);
      }
 
    if ((o->cur->image.w != w) || (o->cur->image.h != h))
      resized = EINA_TRUE;
 
-   o->buffer_data_set = EINA_FALSE;
-   if (pixels && !copy)
-     {
-        // direct use
-        o->engine_data = ENFN->image_new_from_data(ENDT, w, h, pixels, o->cur->has_alpha, cspace);
-        o->buffer_data_set = (o->engine_data != NULL);
-     }
-   else if (stride == int_stride)
-     {
-        // simple copy
-        o->engine_data = ENFN->image_new_from_copied_data(ENDT, w, h, pixels, o->cur->has_alpha, cspace);
-     }
-   else if (easy_copy)
-     {
-        // copy each line. ouch.
-        o->engine_data = ENFN->image_new_from_copied_data(ENDT, w, h, NULL, o->cur->has_alpha, cspace);
-        if (o->engine_data)
-          {
-             uint8_t *data = NULL, *pixels_iter = pixels;
-             void *engine_data;
-             int y;
-
-             engine_data = ENFN->image_data_get(ENDT, o->engine_data, 0, (DATA32 **) &data, &o->load_error, NULL);
-             if (!engine_data || !data)
-               {
-                  ERR("Failed to copy image!");
-                  goto end;
-               }
-             o->engine_data = engine_data;
-             for (y = 0; y < h; y++)
-               {
-                  memcpy(data + (y * int_stride), pixels_iter, int_stride);
-                  pixels_iter += stride;
-               }
-             o->engine_data = ENFN->image_data_put(ENDT, o->engine_data, (DATA32 *) data);
-          }
-     }
-   else
-     {
-        // quite unlikely: non-standard cspace + stride
-        ERR("Can not copy colorspace %d with stride %d", cspace, stride);
-        goto end;
-     }
-
    if (!o->engine_data)
      {
-        ERR("Failed to create internal image (%dx%d, cspace: %d, pixels: %p)",
-            w, h, cspace, pixels);
+        ERR("Failed to create internal image");
         goto end;
      }
-
 
    if (ENFN->image_scale_hint_set)
      ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
