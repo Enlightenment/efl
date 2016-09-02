@@ -151,6 +151,8 @@ struct _Ecore_Drm2_Output
 
    Eina_List *planes;
 
+   void *user_data;
+
    Eina_Bool connected : 1;
    Eina_Bool primary : 1;
    Eina_Bool cloned : 1;

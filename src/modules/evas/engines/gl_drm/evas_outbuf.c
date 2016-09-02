@@ -80,7 +80,7 @@ evas_outbuf_page_flip(void *data, int fd EINA_UNUSED)
    if (next)
      {
         ecore_drm2_output_next_fb_set(ob->priv.output, NULL);
-        if (ecore_drm2_fb_flip(next, ob->priv.output, ob) < 0)
+        if (ecore_drm2_fb_flip(next, ob->priv.output) < 0)
           _outbuf_tick_source_set(NULL);
      }
 }
@@ -176,7 +176,7 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    if (fb)
      {
         ecore_drm2_fb_dirty(fb, rects, count);
-        if (ecore_drm2_fb_flip(fb, ob->priv.output, ob) < 0)
+        if (ecore_drm2_fb_flip(fb, ob->priv.output) < 0)
           _outbuf_tick_source_set(NULL);
 
         /* Ecore_Drm2_Plane *plane; */
@@ -480,6 +480,7 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
         return NULL;
      }
 
+   ecore_drm2_output_user_data_set(ob->priv.output, ob);
    _outbuf_tick_source_set(ob);
 
    return ob;

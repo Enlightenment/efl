@@ -224,7 +224,7 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
 }
 
 EAPI int
-ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output, void *data)
+ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 {
    int ret = 0;
 
@@ -260,7 +260,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output, void *data)
 
    ret =
      drmModePageFlip(fb->fd, output->crtc_id, fb->id,
-                     DRM_MODE_PAGE_FLIP_EVENT, data);
+                     DRM_MODE_PAGE_FLIP_EVENT, output->user_data);
    if (ret < 0)
      {
         DBG("Pageflip Failed for Crtc %u on Connector %u: %m",

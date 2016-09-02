@@ -770,14 +770,13 @@ EAPI void ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned
  *
  * @param fb
  * @param output
- * @param data
  *
  * @return The result of drmModePageFlip function call
  *
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.18
  */
-EAPI int ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output, void *data);
+EAPI int ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output);
 
 /**
  * Return the Ecore_Drm2_Fb's busy status
@@ -801,6 +800,17 @@ EAPI Eina_Bool ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb);
  * @since 1.19
  */
 EAPI void ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy);
+
+/**
+ * Set the user data for the output's page flip handler
+ *
+ * @param output The output to update user data for
+ * @param data The new user data pointer
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.19
+ */
+EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
 
 # endif
 

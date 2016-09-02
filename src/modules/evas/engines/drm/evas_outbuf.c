@@ -97,7 +97,7 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
    if (next)
      {
         ecore_drm2_output_next_fb_set(ob->priv.output, NULL);
-        ecore_drm2_fb_flip(next, ob->priv.output, ob);
+        ecore_drm2_fb_flip(next, ob->priv.output);
      }
 }
 
@@ -140,7 +140,7 @@ _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
      }
 
    ecore_drm2_fb_dirty(ofb->fb, rects, count);
-   if (ecore_drm2_fb_flip(ofb->fb, ob->priv.output, ob) == 0)
+   if (ecore_drm2_fb_flip(ofb->fb, ob->priv.output) == 0)
      ob->priv.display = ofb;
 
    ecore_drm2_fb_busy_set(ofb->fb, EINA_TRUE);
@@ -255,6 +255,8 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    ob->ctx.version = DRM_EVENT_CONTEXT_VERSION;
    ob->ctx.vblank_handler = _cb_vblank;
    ob->ctx.page_flip_handler = _cb_pageflip;
+
+   ecore_drm2_output_user_data_set(ob->priv.output, ob);
 
    ob->hdlr =
      ecore_main_fd_handler_add(ob->fd, ECORE_FD_READ, _cb_drm_event, ob,
