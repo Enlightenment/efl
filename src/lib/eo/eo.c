@@ -1441,13 +1441,20 @@ static Eina_Bool cached_isa = EINA_FALSE;
 EAPI Eina_Bool
 efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
 {
+   eina_spinlock_take(&_eoid_lock);
    if (cached_isa_id == eo_id && cached_klass == klass_id)
-     return cached_isa;
+     {
+        eina_spinlock_release(&_eoid_lock);
+        return cached_isa;
+     }
+   eina_spinlock_release(&_eoid_lock);
 
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
    const op_type_funcs *func = _vtable_func_get(obj->vtable,
          klass->base_id + klass->desc->ops.count);
+
+   eina_spinlock_take(&_eoid_lock);
 
    // Caching the result as we do a lot of serial efl_isa due to evas_object_image using it.
    cached_isa_id = eo_id;
@@ -1456,6 +1463,8 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
    /* Currently implemented by reusing the LAST op id. Just marking it with
     * _eo_class_isa_func. */
    cached_isa = (func && (func->func == _eo_class_isa_func));
+
+   eina_spinlock_release(&_eoid_lock);
 
    return cached_isa;
 }
