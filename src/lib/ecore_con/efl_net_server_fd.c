@@ -236,6 +236,7 @@ _efl_net_server_fd_close_on_exec_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
    if (flags < 0)
      {
         ERR("fcntl(%d, F_GETFD): %s", fd, strerror(errno));
+        pd->close_on_exec = old;
         return EINA_FALSE;
      }
    if (close_on_exec)
