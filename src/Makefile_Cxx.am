@@ -346,8 +346,9 @@ tests_elementary_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elementary_cxx\" \
 @CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @ELEMENTARY_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
 @ECORE_CFLAGS@ @EINA_CFLAGS@ @EVAS_CFLAGS@ @ELEMENTARY_CFLAGS@ @EO_CFLAGS@
-tests_elementary_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
-tests_elementary_cxx_cxx_compile_test_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+# No function is called, so we don't need to link to elementary
+tests_elementary_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@
+tests_elementary_cxx_cxx_compile_test_DEPENDENCIES = 
 
 endif
 
