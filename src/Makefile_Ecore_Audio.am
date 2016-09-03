@@ -8,16 +8,10 @@ ecore_audio_eolian_files = \
 	lib/ecore_audio/ecore_audio_out.eo \
 	lib/ecore_audio/ecore_audio_in_sndfile.eo \
 	lib/ecore_audio/ecore_audio_out_sndfile.eo \
+	lib/ecore_audio/ecore_audio_out_pulse.eo \
+	lib/ecore_audio/ecore_audio_out_core_audio.eo \
 	lib/ecore_audio/ecore_audio_in_tone.eo
 
-
-if HAVE_ECORE_AUDIO_PULSE
-ecore_audio_eolian_files += lib/ecore_audio/ecore_audio_out_pulse.eo
-endif
-
-if HAVE_ECORE_AUDIO_CORE_AUDIO
-ecore_audio_eolian_files += lib/ecore_audio/ecore_audio_out_core_audio.eo
-endif
 
 ecore_audio_eolian_c = $(ecore_audio_eolian_files:%.eo=%.eo.c)
 ecore_audio_eolian_h = $(ecore_audio_eolian_files:%.eo=%.eo.h)
