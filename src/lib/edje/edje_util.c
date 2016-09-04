@@ -772,6 +772,8 @@ _edje_color_class_apply(const char *color_class, const char *parent)
         _edje_recalc(er->ed);
         _edje_emit(er->ed, "color_class,set", parent);
 
+        if (!er->ed->file) continue;
+
         EINA_LIST_FOREACH(er->ed->file->color_tree, l, ctn)
           {
              if ((!strcmp(ctn->name, color_class)) && (ctn->color_classes))
@@ -901,7 +903,7 @@ _edje_color_class_active_iterator_next(Eina_Iterator *it, void **data)
    Eina_Hash_Tuple *tuple = NULL;
    Edje_Refcount *er = NULL;
    Eina_Iterator *ith;
-   Edje_Color_Class *cc;
+   Edje_Color_Class *cc = NULL;
    Eina_Bool r = EINA_FALSE;
 
    if (!eina_iterator_next(et->classes, (void **)&tuple)) return EINA_FALSE;
@@ -923,7 +925,8 @@ _edje_color_class_active_iterator_next(Eina_Iterator *it, void **data)
       Any of the Edje object referenced should have a file with a valid
       description for this color class. Let's bet on that for now.
     */
-   cc = eina_hash_find(er->ed->file->color_hash, tuple->key);
+   if (er->ed->file)
+     cc = eina_hash_find(er->ed->file->color_hash, tuple->key);
    if (!cc) goto on_error;
    et->cc.desc = cc->desc;
 
@@ -6083,7 +6086,8 @@ _edje_color_class_find(const Edje *ed, const char *color_class)
    if (cc) return cc;
 
    /* finally, look through the file scope */
-   cc = eina_hash_find(ed->file->color_hash, color_class);
+   if (ed->file)
+     cc = eina_hash_find(ed->file->color_hash, color_class);
    if (cc) return cc;
 
    return NULL;
@@ -6098,7 +6102,7 @@ _edje_color_class_recursive_find_helper(const Edje *ed, Eina_Hash *hash, const c
 
    cc = _edje_hash_find_helper(hash, color_class);
    if (cc) return cc;
-   else
+   else if (ed->file)
      {
         parent = color_class;
         while ((ctn = eina_hash_find(ed->file->color_tree_hash, parent)))
@@ -6127,7 +6131,8 @@ _edje_color_class_recursive_find(const Edje *ed, const char *color_class)
    if (cc) return cc;
 
    /* finally, look through the file scope */
-   cc = _edje_color_class_recursive_find_helper(ed, ed->file->color_hash, color_class);
+   if (ed->file)
+     cc = _edje_color_class_recursive_find_helper(ed, ed->file->color_hash, color_class);
    if (cc) return cc;
 
    return NULL;
@@ -6208,7 +6213,8 @@ _edje_text_class_find(Edje *ed, const char *text_class)
    if (tc) return tc;
 
    /* finally, look through the file scope */
-   tc = eina_hash_find(ed->file->text_hash, text_class);
+   if (ed->file)
+     tc = eina_hash_find(ed->file->text_hash, text_class);
    if (tc) return tc;
 
    return NULL;
@@ -6277,7 +6283,8 @@ _edje_size_class_find(Edje *ed, const char *size_class)
    if (sc) return sc;
 
    /* finally, look through the file scope */
-   sc = eina_hash_find(ed->file->size_hash, size_class);
+   if (ed->file)
+     sc = eina_hash_find(ed->file->size_hash, size_class);
    if (sc) return sc;
 
    return NULL;
