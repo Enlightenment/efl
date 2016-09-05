@@ -1094,10 +1094,12 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
   static Efl_Callback_Array_Item *                                      \
   Name(void)                                                            \
   {                                                                     \
-     static Efl_Callback_Array_Item internal[] = { __VA_ARGS__, \
-            { 0, 0 } };         \
+     Efl_Callback_Array_Item tmp[] = { __VA_ARGS__ }; \
+     static Efl_Callback_Array_Item internal[EINA_C_ARRAY_LENGTH(tmp) + 1] = \
+       { { 0, 0 } };         \
      if (internal[0].desc == NULL)                                      \
        {                                                                \
+          memcpy(internal, tmp, sizeof(tmp)); \
           qsort(internal, EINA_C_ARRAY_LENGTH(internal) - 1, sizeof (internal[0]), \
                 (void*) efl_callbacks_cmp);                              \
        }                                                                \
