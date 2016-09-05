@@ -116,7 +116,7 @@ _eo_call_stack_get_thread(void)
 }
 
 EAPI Eo *
-_efl_self_get(void)
+_efl_added_get(void)
 {
    return _EFL_OBJECT_CALL_STACK_GET()->frame_ptr->obj;
 }

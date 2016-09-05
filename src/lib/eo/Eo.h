@@ -694,29 +694,29 @@ EAPI Eo *efl_super(const Eo *obj, const Efl_Class *cur_klass);
  */
 EAPI const Efl_Class *efl_class_get(const Eo *obj);
 
-EAPI Eo *_efl_self_get(void);
+EAPI Eo *_efl_added_get(void);
 
 /* Check if GCC compatible (both GCC and clang define this) */
 #if defined(__GNUC__) && !defined(_EO_ADD_FALLBACK_FORCE)
 
-# define efl_self __efl_self
+# define efl_added __efl_added
 
 # define _efl_add_common(klass, parent, is_ref, ...) \
    ({ \
-     Eo * const __efl_self = _efl_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref, EINA_FALSE); \
+     Eo * const __efl_added = _efl_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref, EINA_FALSE); \
      (void) ((void)0, ##__VA_ARGS__);                                   \
-     (Eo *) _efl_add_end(efl_self, is_ref, EINA_FALSE); \
+     (Eo *) _efl_add_end(efl_added, is_ref, EINA_FALSE); \
     })
 
 #else
 
-# define efl_self _efl_self_get()
+# define efl_added _efl_added_get()
 
 # define _efl_add_common(klass, parent, is_ref, ...) \
    ( \
      _efl_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref, EINA_TRUE), \
      ##__VA_ARGS__, \
-     (Eo *) _efl_add_end(efl_self, is_ref, EINA_TRUE) \
+     (Eo *) _efl_add_end(efl_added, is_ref, EINA_TRUE) \
    )
 
 #endif

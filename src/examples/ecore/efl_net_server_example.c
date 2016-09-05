@@ -303,9 +303,9 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
          * source and destination.
          */
         Eo *echo_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
-                                  efl_io_copier_source_set(efl_self, client),
-                                  efl_io_copier_destination_set(efl_self, client),
-                                  efl_event_callback_array_add(efl_self, echo_copier_cbs(), client)
+                                  efl_io_copier_source_set(efl_added, client),
+                                  efl_io_copier_destination_set(efl_added, client),
+                                  efl_event_callback_array_add(efl_added, echo_copier_cbs(), client)
                                   );
 
         fprintf(stderr, "INFO: using an echo copier=%p for client %s\n",
@@ -344,9 +344,9 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
 
         /* an input copier that takes data from send_buffer and pushes to client */
         d->send_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
-                                 efl_io_copier_source_set(efl_self, send_buffer),
-                                 efl_io_copier_destination_set(efl_self, client),
-                                 efl_event_callback_array_add(efl_self, send_copier_cbs(), d)
+                                 efl_io_copier_source_set(efl_added, send_buffer),
+                                 efl_io_copier_destination_set(efl_added, client),
+                                 efl_event_callback_array_add(efl_added, send_copier_cbs(), d)
                                  );
 
         fprintf(stderr, "INFO: using sender buffer %p with copier %p for client %s\n",
@@ -359,9 +359,9 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
 
         /* an output copier that takes data from socket and pushes to recv_buffer. */
         d->recv_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
-                                 efl_io_copier_source_set(efl_self, client),
-                                 efl_io_copier_destination_set(efl_self, recv_buffer),
-                                 efl_event_callback_array_add(efl_self, recv_copier_cbs(), d)
+                                 efl_io_copier_source_set(efl_added, client),
+                                 efl_io_copier_destination_set(efl_added, recv_buffer),
+                                 efl_event_callback_array_add(efl_added, recv_copier_cbs(), d)
                                  );
 
         fprintf(stderr, "INFO: using receiver buffer %p with copier %p for client %s\n",
@@ -503,13 +503,13 @@ main(int argc, char **argv)
      }
 
    server = efl_add(cls, ecore_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
-                    efl_net_server_fd_close_on_exec_set(efl_self, EINA_TRUE), /* recommended */
-                    efl_net_server_fd_reuse_address_set(efl_self, EINA_TRUE), /* optional, but nice for testing */
-                    efl_net_server_fd_reuse_port_set(efl_self, EINA_TRUE), /* optional, but nice for testing... not secure unless you know what you're doing */
-                    efl_net_server_clients_limit_set(efl_self,
+                    efl_net_server_fd_close_on_exec_set(efl_added, EINA_TRUE), /* recommended */
+                    efl_net_server_fd_reuse_address_set(efl_added, EINA_TRUE), /* optional, but nice for testing */
+                    efl_net_server_fd_reuse_port_set(efl_added, EINA_TRUE), /* optional, but nice for testing... not secure unless you know what you're doing */
+                    efl_net_server_clients_limit_set(efl_added,
                                                      clients_limit,
                                                      clients_reject_excess), /* optional */
-                    efl_event_callback_array_add(efl_self, server_cbs(), NULL)); /* mandatory to have "client,add" in order to be useful */
+                    efl_event_callback_array_add(efl_added, server_cbs(), NULL)); /* mandatory to have "client,add" in order to be useful */
    if (!server)
      {
         fprintf(stderr, "ERROR: could not create class %p (%s)\n",

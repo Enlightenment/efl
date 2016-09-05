@@ -302,13 +302,13 @@ main(int argc, char **argv)
      cookie_jar = "";
 
    dialer = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, loop,
-                    efl_name_set(efl_self, "dialer"),
-                    efl_net_dialer_websocket_authentication_set(efl_self, username, password, authentication_method, authentication_restricted),
-                    efl_net_dialer_websocket_allow_redirects_set(efl_self, allow_redirects),
-                    efl_net_dialer_websocket_cookie_jar_set(efl_self, cookie_jar),
-                    efl_net_dialer_proxy_set(efl_self, proxy),
-                    efl_net_dialer_timeout_dial_set(efl_self, timeout_dial),
-                    efl_event_callback_array_add(efl_self, dialer_cbs(), NULL));
+                    efl_name_set(efl_added, "dialer"),
+                    efl_net_dialer_websocket_authentication_set(efl_added, username, password, authentication_method, authentication_restricted),
+                    efl_net_dialer_websocket_allow_redirects_set(efl_added, allow_redirects),
+                    efl_net_dialer_websocket_cookie_jar_set(efl_added, cookie_jar),
+                    efl_net_dialer_proxy_set(efl_added, proxy),
+                    efl_net_dialer_timeout_dial_set(efl_added, timeout_dial),
+                    efl_event_callback_array_add(efl_added, dialer_cbs(), NULL));
    if (!dialer)
      {
         retval = EXIT_FAILURE;

@@ -254,7 +254,7 @@ _elm_app_server_constructor(Eo *obj, Elm_App_Server_Data *data, const char *pkg,
              new_events = elm_app_server_view_props_new_events_get(view_eet_props);
              progress = elm_app_server_view_props_progress_get(view_eet_props);
 
-             view = efl_add(ELM_APP_SERVER_VIEW_CLASS, obj, elm_app_server_view_id_set(efl_self, view_id));
+             view = efl_add(ELM_APP_SERVER_VIEW_CLASS, obj, elm_app_server_view_id_set(efl_added, view_id));
              if (!view)
                continue;
 

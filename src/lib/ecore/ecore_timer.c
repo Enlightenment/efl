@@ -191,9 +191,9 @@ ecore_timer_add(double        in,
    legacy->func = func;
    legacy->data = data;
    timer = efl_add(MY_CLASS, ecore_main_loop_get(),
-                  efl_event_callback_array_add(efl_self, legacy_timer(), legacy),
-                  efl_key_data_set(efl_self, "_legacy", legacy),
-                  efl_loop_timer_interval_set(efl_self, in));
+                  efl_event_callback_array_add(efl_added, legacy_timer(), legacy),
+                  efl_key_data_set(efl_added, "_legacy", legacy),
+                  efl_loop_timer_interval_set(efl_added, in));
 
    return timer;
 }
@@ -213,10 +213,10 @@ ecore_timer_loop_add(double        in,
    legacy->func = func;
    legacy->data = data;
    timer = efl_add(MY_CLASS, ecore_main_loop_get(),
-                  efl_event_callback_array_add(efl_self, legacy_timer(), legacy),
-                  efl_key_data_set(efl_self, "_legacy", legacy),
-                  efl_loop_timer_loop_reset(efl_self),
-                  efl_loop_timer_interval_set(efl_self, in));
+                  efl_event_callback_array_add(efl_added, legacy_timer(), legacy),
+                  efl_key_data_set(efl_added, "_legacy", legacy),
+                  efl_loop_timer_loop_reset(efl_added),
+                  efl_loop_timer_interval_set(efl_added, in));
 
    return timer;
 }

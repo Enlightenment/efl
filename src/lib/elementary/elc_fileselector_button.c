@@ -215,7 +215,7 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
    if (path) priv->fsd.path = eina_stringshare_add(path);
    else priv->fsd.path = eina_stringshare_add("/");
 
-   priv->fsd.model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, priv->fsd.path));
+   priv->fsd.model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, priv->fsd.path));
 
    priv->fsd.expandable = _elm_config->fileselector_expand_enable;
    priv->inwin_mode = _elm_config->inwin_dialogs_enable;
@@ -314,7 +314,7 @@ _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path)
 {
    ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(obj, sd);
 
-   Efl_Model *model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, path));
+   Efl_Model *model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, path));
    if (!model)
      {
         ERR("Efl.Model allocation error");

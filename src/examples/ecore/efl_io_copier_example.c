@@ -413,7 +413,7 @@ main(int argc, char **argv)
    if (strcmp(input_fname, ":stdin:") == 0)
      {
         input = efl_add(EFL_IO_STDIN_CLASS, NULL,
-                        efl_event_callback_array_add(efl_self, input_cbs(), NULL));
+                        efl_event_callback_array_add(efl_added, input_cbs(), NULL));
         if (!input)
           {
              fprintf(stderr, "ERROR: could not open stdin.\n");
@@ -430,8 +430,8 @@ main(int argc, char **argv)
         const char *address = input_fname + strlen("tcp://");
         Eina_Error err;
         input = efl_add(EFL_NET_DIALER_TCP_CLASS, ecore_main_loop_get(),
-                        efl_event_callback_array_add(efl_self, input_cbs(), NULL), /* optional */
-                        efl_event_callback_array_add(efl_self, dialer_cbs(), NULL) /* optional */
+                        efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                         );
         if (!input)
           {
@@ -454,10 +454,10 @@ main(int argc, char **argv)
         Eina_Error err;
 
         input = efl_add(EFL_NET_DIALER_HTTP_CLASS, ecore_main_loop_get(),
-                        efl_net_dialer_http_method_set(efl_self, "GET"),
-                        efl_event_callback_array_add(efl_self, input_cbs(), NULL), /* optional */
-                        efl_event_callback_array_add(efl_self, dialer_cbs(), NULL), /* optional */
-                        efl_event_callback_array_add(efl_self, http_cbs(), NULL) /* optional */
+                        efl_net_dialer_http_method_set(efl_added, "GET"),
+                        efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_added, dialer_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_added, http_cbs(), NULL) /* optional */
                         );
         if (!input)
           {
@@ -480,9 +480,9 @@ main(int argc, char **argv)
         Eina_Error err;
 
         input = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, ecore_main_loop_get(),
-                         efl_net_dialer_websocket_streaming_mode_set(efl_self, EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_TEXT),
-                        efl_event_callback_array_add(efl_self, input_cbs(), NULL), /* optional */
-                        efl_event_callback_array_add(efl_self, dialer_cbs(), NULL) /* optional */
+                         efl_net_dialer_websocket_streaming_mode_set(efl_added, EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_TEXT),
+                        efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                         );
         if (!input)
           {
@@ -503,9 +503,9 @@ main(int argc, char **argv)
      {
         /* regular file, open with flags: read-only and close-on-exec */
         input = efl_add(EFL_IO_FILE_CLASS, NULL,
-                        efl_file_set(efl_self, input_fname, NULL), /* mandatory */
-                        efl_io_file_flags_set(efl_self, O_RDONLY | O_CLOEXEC), /* recommended */
-                        efl_event_callback_array_add(efl_self, input_cbs(), NULL) /* optional */
+                        efl_file_set(efl_added, input_fname, NULL), /* mandatory */
+                        efl_io_file_flags_set(efl_added, O_RDONLY | O_CLOEXEC), /* recommended */
+                        efl_event_callback_array_add(efl_added, input_cbs(), NULL) /* optional */
                         );
         if (!input)
           {
@@ -519,7 +519,7 @@ main(int argc, char **argv)
    if (strcmp(output_fname, ":stdout:") == 0)
      {
         output = efl_add(EFL_IO_STDOUT_CLASS, NULL,
-                         efl_event_callback_array_add(efl_self, output_cbs(), NULL) /* optional */
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL) /* optional */
                          );
         if (!output)
           {
@@ -531,7 +531,7 @@ main(int argc, char **argv)
    else if (strcmp(output_fname, ":stderr:") == 0)
      {
         output = efl_add(EFL_IO_STDERR_CLASS, NULL,
-                         efl_event_callback_array_add(efl_self, output_cbs(), NULL) /* optional */
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL) /* optional */
                          );
         if (!output)
           {
@@ -558,8 +558,8 @@ main(int argc, char **argv)
          * _copier_done().
          */
         output = efl_add(EFL_IO_BUFFER_CLASS, NULL,
-                         efl_event_callback_array_add(efl_self, output_cbs(), NULL), /* optional */
-                         efl_event_callback_array_add(efl_self, output_buffer_cbs(), NULL) /* optional */
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_added, output_buffer_cbs(), NULL) /* optional */
                          );
         if (!output)
           {
@@ -588,8 +588,8 @@ main(int argc, char **argv)
         const char *address = output_fname + strlen("tcp://");
         Eina_Error err;
         output = efl_add(EFL_NET_DIALER_TCP_CLASS, ecore_main_loop_get(),
-                         efl_event_callback_array_add(efl_self, output_cbs(), NULL), /* optional */
-                         efl_event_callback_array_add(efl_self, dialer_cbs(), NULL) /* optional */
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                          );
         if (!output)
           {
@@ -612,10 +612,10 @@ main(int argc, char **argv)
         Eina_Error err;
 
         output = efl_add(EFL_NET_DIALER_HTTP_CLASS, ecore_main_loop_get(),
-                         efl_net_dialer_http_method_set(efl_self, "PUT"),
-                         efl_event_callback_array_add(efl_self, output_cbs(), NULL), /* optional */
-                         efl_event_callback_array_add(efl_self, dialer_cbs(), NULL), /* optional */
-                         efl_event_callback_array_add(efl_self, http_cbs(), NULL) /* optional */
+                         efl_net_dialer_http_method_set(efl_added, "PUT"),
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_added, http_cbs(), NULL) /* optional */
                          );
         if (!output)
           {
@@ -638,9 +638,9 @@ main(int argc, char **argv)
         Eina_Error err;
 
         output = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, ecore_main_loop_get(),
-                         efl_net_dialer_websocket_streaming_mode_set(efl_self, EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_TEXT),
-                         efl_event_callback_array_add(efl_self, output_cbs(), NULL), /* optional */
-                         efl_event_callback_array_add(efl_self, dialer_cbs(), NULL) /* optional */
+                         efl_net_dialer_websocket_streaming_mode_set(efl_added, EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_TEXT),
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                          );
         if (!output)
           {
@@ -663,10 +663,10 @@ main(int argc, char **argv)
          * create if did not exist and truncate if exist.
          */
         output = efl_add(EFL_IO_FILE_CLASS, NULL,
-                         efl_file_set(efl_self, output_fname, NULL), /* mandatory */
-                         efl_io_file_flags_set(efl_self, O_WRONLY | O_CLOEXEC | O_CREAT | O_TRUNC), /* mandatory for write */
-                         efl_io_file_mode_set(efl_self, 0644), /* mandatory for write */
-                         efl_event_callback_array_add(efl_self, output_cbs(), NULL) /* optional */
+                         efl_file_set(efl_added, output_fname, NULL), /* mandatory */
+                         efl_io_file_flags_set(efl_added, O_WRONLY | O_CLOEXEC | O_CREAT | O_TRUNC), /* mandatory for write */
+                         efl_io_file_mode_set(efl_added, 0644), /* mandatory for write */
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL) /* optional */
                          );
         if (!output)
           {
@@ -688,12 +688,12 @@ main(int argc, char **argv)
      line_delm_slice = (Eina_Slice)EINA_SLICE_STR(line_delimiter);
 
    copier = efl_add(EFL_IO_COPIER_CLASS, ecore_main_loop_get(),
-                    efl_io_copier_source_set(efl_self, input), /* mandatory */
-                    efl_io_copier_destination_set(efl_self, output), /* optional, see :none: */
-                    efl_io_copier_line_delimiter_set(efl_self, &line_delm_slice), /* optional */
-                    efl_io_copier_buffer_limit_set(efl_self, buffer_limit), /* optional, defaults to unlimited */
-                    efl_io_copier_read_chunk_size_set(efl_self, read_chunk_size), /* optional, defaults to 4096 */
-                    efl_event_callback_array_add(efl_self, copier_cbs(), NULL) /* recommended, at least EFL_IO_COPIER_EVENT_DONE. */
+                    efl_io_copier_source_set(efl_added, input), /* mandatory */
+                    efl_io_copier_destination_set(efl_added, output), /* optional, see :none: */
+                    efl_io_copier_line_delimiter_set(efl_added, &line_delm_slice), /* optional */
+                    efl_io_copier_buffer_limit_set(efl_added, buffer_limit), /* optional, defaults to unlimited */
+                    efl_io_copier_read_chunk_size_set(efl_added, read_chunk_size), /* optional, defaults to 4096 */
+                    efl_event_callback_array_add(efl_added, copier_cbs(), NULL) /* recommended, at least EFL_IO_COPIER_EVENT_DONE. */
                     );
    if (!copier)
      {

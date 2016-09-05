@@ -290,8 +290,8 @@ START_TEST(ecore_test_efl_loop_fd)
    fail_if(ret != 0);
 
    fd = efl_add(EFL_LOOP_FD_CLASS, ecore_main_loop_get(),
-               efl_loop_fd_set(efl_self, comm[0]),
-               efl_event_callback_add(efl_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did));
+               efl_loop_fd_set(efl_added, comm[0]),
+               efl_event_callback_add(efl_added, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did));
    fail_if(fd == NULL);
 
    ret = write(comm[1], &did, 1);
@@ -333,9 +333,9 @@ START_TEST(ecore_test_efl_loop_fd_lifecycle)
    fail_if(ret != 0);
 
    fd = efl_add(EFL_LOOP_FD_CLASS, ecore_main_loop_get(),
-               efl_loop_fd_set(efl_self, comm[0]),
-               efl_event_callback_add(efl_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did),
-               efl_event_callback_add(efl_self, EFL_EVENT_DEL, _efl_del_cb, &dead));
+               efl_loop_fd_set(efl_added, comm[0]),
+               efl_event_callback_add(efl_added, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did),
+               efl_event_callback_add(efl_added, EFL_EVENT_DEL, _efl_del_cb, &dead));
    efl_ref(fd);
    fail_if(fd == NULL);
 

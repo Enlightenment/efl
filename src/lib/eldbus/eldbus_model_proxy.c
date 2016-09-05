@@ -296,7 +296,7 @@ _eldbus_model_proxy_create_methods_children(Eldbus_Model_Proxy_Data *pd)
         INF("(%p) Creating method child: bus = %s, path = %s, method = %s::%s",
                        pd->obj, bus, path, interface_name, method_name);
 
-        child = efl_add(ELDBUS_MODEL_METHOD_CLASS, NULL, eldbus_model_method_constructor(efl_self, pd->proxy, method));
+        child = efl_add(ELDBUS_MODEL_METHOD_CLASS, NULL, eldbus_model_method_constructor(efl_added, pd->proxy, method));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }
@@ -331,7 +331,7 @@ _eldbus_model_proxy_create_signals_children(Eldbus_Model_Proxy_Data *pd)
         DBG("(%p) Creating signal child: bus = %s, path = %s, signal = %s::%s",
                        pd->obj, bus, path, interface_name, signal_name);
 
-        child = efl_add(ELDBUS_MODEL_SIGNAL_CLASS, NULL, eldbus_model_signal_constructor(efl_self, pd->proxy, signal));
+        child = efl_add(ELDBUS_MODEL_SIGNAL_CLASS, NULL, eldbus_model_signal_constructor(efl_added, pd->proxy, signal));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }

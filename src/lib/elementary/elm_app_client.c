@@ -39,7 +39,7 @@ _sub_path_process(Elm_App_Client *eo, Eldbus_Message_Iter *obj_iter, Elm_App_Cli
         if (view)
           continue;
 
-        view = efl_add(ELM_APP_CLIENT_VIEW_CLASS, eo, elm_app_client_view_path_set(efl_self, obj_path));
+        view = efl_add(ELM_APP_CLIENT_VIEW_CLASS, eo, elm_app_client_view_path_set(efl_added, obj_path));
         eina_hash_add(data->views, obj_path, view);
         if (!loading_list)
           efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_EVENT_VIEW_CREATED, view);
@@ -213,7 +213,7 @@ _create_view_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
    view = eina_hash_find(cdata->views, view_path);
    if (!view)
      {
-        view = efl_add(ELM_APP_CLIENT_VIEW_CLASS, eo, elm_app_client_view_path_set(efl_self, view_path));
+        view = efl_add(ELM_APP_CLIENT_VIEW_CLASS, eo, elm_app_client_view_path_set(efl_added, view_path));
         eina_hash_add(cdata->views, view_path, view);
         efl_event_callback_legacy_call(eo, ELM_APP_CLIENT_EVENT_VIEW_CREATED, view);
      }

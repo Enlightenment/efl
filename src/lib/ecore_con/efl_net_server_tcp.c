@@ -161,8 +161,8 @@ static void
 _efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, void *pd EINA_UNUSED, int client_fd)
 {
    Eo *client = efl_add(EFL_NET_SOCKET_TCP_CLASS, o,
-                        efl_event_callback_array_add(efl_self, _efl_net_server_tcp_client_cbs(), o),
-                        efl_loop_fd_set(efl_self, client_fd));
+                        efl_event_callback_array_add(efl_added, _efl_net_server_tcp_client_cbs(), o),
+                        efl_loop_fd_set(efl_added, client_fd));
    if (!client)
      {
         ERR("could not create client object fd=%d", client_fd);

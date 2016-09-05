@@ -3008,8 +3008,8 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const voi
 
    t->job_is = EINA_FALSE;
    t->u.timer = efl_add(EFL_LOOP_TIMER_CLASS, obj,
-                       efl_loop_timer_interval_set(efl_self, time),
-                       efl_event_callback_array_add(efl_self, timeout(), t));
+                       efl_loop_timer_interval_set(efl_added, time),
+                       efl_event_callback_array_add(efl_added, timeout(), t));
 
    if (!t->u.timer) goto on_error;
 

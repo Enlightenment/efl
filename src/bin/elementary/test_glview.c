@@ -637,9 +637,9 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    eina_stringshare_del(accel);
 #else
    win = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
-                efl_ui_win_name_set(efl_self, "glview"),
-                efl_text_set(efl_self, "GLView"),
-                efl_ui_win_accel_preference_set(efl_self, "gl:depth"));
+                efl_ui_win_name_set(efl_added, "glview"),
+                efl_text_set(efl_added, "GLView"),
+                efl_ui_win_accel_preference_set(efl_added, "gl:depth"));
    elm_win_autodel_set(win, EINA_TRUE);
 #endif
 

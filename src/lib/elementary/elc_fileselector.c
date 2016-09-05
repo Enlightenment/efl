@@ -1296,7 +1296,7 @@ _home(void *data, const Efl_Event *event EINA_UNUSED)
    if (!sd->model || efl_isa(sd->model, EIO_MODEL_CLASS))
      {
         Eio_Model *model = efl_add(EIO_MODEL_CLASS, NULL,
-                                  eio_model_path_set(efl_self, eina_environment_home_get()));
+                                  eio_model_path_set(efl_added, eina_environment_home_get()));
         _populate(fs, model, NULL, NULL);
         efl_unref(model);
      }
@@ -2308,7 +2308,7 @@ elm_fileselector_path_set(Evas_Object *obj,
 void
 _elm_fileselector_path_set_internal(Evas_Object *obj, const char *_path)
 {
-   Eio_Model *model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, _path));
+   Eio_Model *model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, _path));
    if (!model)
      {
         ERR("Efl.Model allocation error");
@@ -2528,7 +2528,7 @@ elm_fileselector_selected_set(Evas_Object *obj,
 
    if (ecore_file_is_dir(path))
      {
-         model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, path));
+         model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, path));
          if (!model)
            {
               ERR("Efl.Model allocation error");
@@ -2546,7 +2546,7 @@ elm_fileselector_selected_set(Evas_Object *obj,
              goto clean_up;
           }
 
-        model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, path));
+        model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, path));
         if (!model)
           {
              ERR("Efl.Model allocation error");
@@ -2554,7 +2554,7 @@ elm_fileselector_selected_set(Evas_Object *obj,
           }
 
         dir = ecore_file_dir_get(path);
-        parent = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, dir));
+        parent = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, dir));
         if (parent)
           {
              _schedule_populate(obj, sd, parent, model);

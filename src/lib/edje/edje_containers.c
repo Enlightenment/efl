@@ -88,7 +88,7 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
              _ ## type ## _proxy = NULL; \
           } \
         return efl_add(TYPE ## _CLASS, ed->obj, \
-                      _edje_real_part_set(efl_self, ed, rp, rp->part->name)); \
+                      _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
      } \
    \
    if (EINA_UNLIKELY(pd->temp)) \

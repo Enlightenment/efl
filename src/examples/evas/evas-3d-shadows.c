@@ -209,7 +209,7 @@ _sphere_setup(Body_3D *sphere)
 
    _body_material_set(sphere, 1, 0.0, 0.0);
 
-   sphere->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH), evas_canvas3d_node_position_set(efl_self, 3.0, 3.0, 0.0));
+   sphere->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH), evas_canvas3d_node_position_set(efl_added, 3.0, 3.0, 0.0));
    evas_canvas3d_node_mesh_add(sphere->node, sphere->mesh);
 }
 
@@ -226,7 +226,7 @@ _cone_setup(Body_3D *cone)
    _body_material_set(cone, 0.8, 0.5, 0.5);
 
    cone->node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_mesh_add(cone->node, cone->mesh);
    evas_canvas3d_node_orientation_angle_axis_set(cone->node, -90.0, 1.0, 0.0, 0.0);
    evas_canvas3d_node_position_set(cone->node, -4.0, 0.0, -3.0);
@@ -245,7 +245,7 @@ _cylinder_setup(Body_3D *cylinder)
    _body_material_set(cylinder, 0.0, 0.0, 1.0);
 
    cylinder->node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_mesh_add(cylinder->node, cylinder->mesh);
    evas_canvas3d_node_orientation_angle_axis_set(cylinder->node, -90.0, 1.0, 0.0, 0.0);
    evas_canvas3d_node_position_set(cylinder->node, -2.0, 3.0, 1.0);
@@ -293,7 +293,7 @@ _fence_setup(Body_3D *fence)
    evas_canvas3d_mesh_alpha_test_enable_set(fence->mesh, EINA_TRUE);
    evas_canvas3d_mesh_shader_mode_set(fence->mesh, EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP);
    fence->node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_mesh_add(fence->node, fence->mesh);
    evas_canvas3d_node_orientation_angle_axis_set(fence->node, -90.0, 1.0, 0.0, 0.0);
    evas_canvas3d_node_scale_set(fence->node, 10.0, 10.0, 5.0);
@@ -312,7 +312,7 @@ _square_setup(Body_3D *square)
    _body_material_set(square, 0.4, 0.4, 0.4);
 
    square->node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_mesh_add(square->node, square->mesh);
    evas_canvas3d_node_position_set(square->node, 0.0, -1.0, 0.0);
    evas_canvas3d_node_scale_set(square->node, 30.0, 30.0, 30.0);
@@ -330,7 +330,7 @@ _box_setup(Body_3D *box)
 
    _body_material_set(box, 0, 1, 0);
 
-   box->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   box->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_mesh_add(box->node, box->mesh);
    evas_canvas3d_node_position_set(box->node, 3.0, 0.0, -3.0);
 }
@@ -358,7 +358,7 @@ _model_setup(Body_3D *model)
    evas_canvas3d_mesh_shader_mode_set(model->mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
 
    model->node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_mesh_add(model->node, model->mesh);
    evas_canvas3d_node_scale_set(model->node, 0.1, 0.1, 0.1);
    evas_canvas3d_node_orientation_angle_axis_set(model->node, 120.0, -0.577, -0.577, -0.577);
@@ -389,7 +389,7 @@ _billboard_setup(Scene_Data *data)
    evas_canvas3d_mesh_blending_enable_set(data->billboard.mesh, EINA_TRUE);
    evas_canvas3d_mesh_blending_func_set(data->billboard.mesh, EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA, EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA);
 
-   data->billboard.node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   data->billboard.node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_mesh_add(data->billboard.node, data->billboard.mesh);
    evas_canvas3d_node_position_set(data->billboard.node, 0.0, 2.0, 0.0);
    evas_canvas3d_node_scale_set(data->billboard.node, 2.2, 4.6, 4.0);
@@ -401,12 +401,12 @@ static void
 _camera_setup(Scene_Data *data)
 {
    data->camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
-   data->mediator = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
+   data->mediator = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    evas_canvas3d_camera_projection_perspective_set(data->camera, 50.0, 1.0, 2.0, 100.0);
 
   data->camera_node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
 
   evas_canvas3d_node_camera_set(data->camera_node, data->camera);
 
@@ -429,7 +429,7 @@ _light_setup(Scene_Data *data)
    evas_canvas3d_light_projection_perspective_set(data->light, 40.0, 1.0, 2.0, 1000.0);
 
    data->light_node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
    evas_canvas3d_node_light_set(data->light_node, data->light);
    evas_canvas3d_node_position_set(data->light_node, 50.0, 50.0, 70.0);
    evas_canvas3d_node_look_at_set(data->light_node, EVAS_CANVAS3D_SPACE_PARENT, 15.0, 0.0, -5.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 1.0);
@@ -447,7 +447,7 @@ _scene_setup(Scene_Data *data)
    evas_canvas3d_scene_background_color_set(data->scene, BG_COLOR, 1);
 
    data->root_node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
 
    _camera_setup(data);

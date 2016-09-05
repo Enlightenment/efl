@@ -60,7 +60,7 @@ elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Evas_Object *obj = NULL;
-   obj = efl_add(MY_CLASS, parent, elm_obj_code_widget_code_set(efl_self, code));
+   obj = efl_add(MY_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code));
    return obj;
 }
 

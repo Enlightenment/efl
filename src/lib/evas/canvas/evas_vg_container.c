@@ -171,7 +171,7 @@ _efl_vg_container_efl_vg_dup(Eo *obj,
      {
         // By setting parent, we automatically reference
         // this new object as a child of obj. Magic at work !
-        (void) efl_add(efl_class_get(child), obj, efl_vg_dup(efl_self, child));
+        (void) efl_add(efl_class_get(child), obj, efl_vg_dup(efl_added, child));
      }
 }
 

@@ -262,8 +262,8 @@ _websocket_new(const char *name)
    Eo *dialer;
 
    dialer = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, ecore_main_loop_get(),
-                    efl_name_set(efl_self, name),
-                    efl_event_callback_array_add(efl_self, dialer_cbs(), NULL));
+                    efl_name_set(efl_added, name),
+                    efl_event_callback_array_add(efl_added, dialer_cbs(), NULL));
    if (!dialer)
      {
         retval = EXIT_FAILURE;

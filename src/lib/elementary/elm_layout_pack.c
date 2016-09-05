@@ -56,10 +56,10 @@ _elm_layout_pack_proxy_get(Elm_Layout *obj, Edje_Part_Type type, const char *par
 {
    if (type == EDJE_PART_TYPE_BOX)
      return efl_add(BOX_CLASS, obj,
-                   efl_ui_layout_internal_box_real_part_set(efl_self, obj, part));
+                   efl_ui_layout_internal_box_real_part_set(efl_added, obj, part));
    else if (type == EDJE_PART_TYPE_TABLE)
      return efl_add(TABLE_CLASS, obj,
-                   efl_ui_layout_internal_table_real_part_set(efl_self, obj, part));
+                   efl_ui_layout_internal_table_real_part_set(efl_added, obj, part));
    else
      return NULL;
 }

@@ -4082,7 +4082,7 @@ eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image, Eina_
 
    if (!ie) return NULL;
 
-   buf = efl_add(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, e, evas_ector_buffer_engine_image_set(efl_self, e, ie));
+   buf = efl_add(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, e, evas_ector_buffer_engine_image_set(efl_added, e, ie));
 
    return buf;
 }
@@ -4101,7 +4101,7 @@ eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, void *pixels,
 
    if ((flags & (ECTOR_BUFFER_FLAG_RENDERABLE | ECTOR_BUFFER_FLAG_DRAWABLE)) == 0)
      {
-        buf = efl_add(ECTOR_SOFTWARE_BUFFER_CLASS, evas, ector_buffer_pixels_set(efl_self, pixels, width, height, stride, cspace, writeable, l, r, t, b));
+        buf = efl_add(ECTOR_SOFTWARE_BUFFER_CLASS, evas, ector_buffer_pixels_set(efl_added, pixels, width, height, stride, cspace, writeable, l, r, t, b));
      }
    else
      {

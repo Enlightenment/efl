@@ -105,22 +105,22 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    api_data *api = calloc(1, sizeof(*api));
 
    win = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
-                efl_ui_win_name_set(efl_self, "grid"),
-                efl_text_set(efl_self, "Grid"),
-                efl_ui_win_autodel_set(efl_self, EINA_TRUE),
-                efl_event_callback_add(efl_self, EFL_EVENT_DEL, _win_del, api));
+                efl_ui_win_name_set(efl_added, "grid"),
+                efl_text_set(efl_added, "Grid"),
+                efl_ui_win_autodel_set(efl_added, EINA_TRUE),
+                efl_event_callback_add(efl_added, EFL_EVENT_DEL, _win_del, api));
 
    static int run_count = 0;
    if (((run_count++) % 2) == 0)
      {
         gd = efl_add(EFL_UI_GRID_STATIC_CLASS, win,
-                    efl_gfx_size_hint_weight_set(efl_self, 1, 1));
+                    efl_gfx_size_hint_weight_set(efl_added, 1, 1));
      }
    else
      {
         gd = efl_add(EFL_UI_GRID_CLASS, win,
-                    efl_gfx_size_hint_weight_set(efl_self, 1, 1),
-                    efl_pack_layout_engine_set(efl_self, EFL_UI_GRID_STATIC_CLASS, NULL));
+                    efl_gfx_size_hint_weight_set(efl_added, 1, 1),
+                    efl_pack_layout_engine_set(efl_added, EFL_UI_GRID_STATIC_CLASS, NULL));
      }
    efl_pack(win, gd);
    api->data.grid = gd;

@@ -233,7 +233,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* weights radio group */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_pack(hbox, bx);
    efl_gfx_visible_set(bx, 1);
@@ -287,7 +287,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* misc */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -350,7 +350,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* user min size setter */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -377,7 +377,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* inner box padding */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -404,7 +404,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* outer margin */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -431,7 +431,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* Box align */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);

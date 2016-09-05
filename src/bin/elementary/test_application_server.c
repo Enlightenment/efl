@@ -96,7 +96,7 @@ _create_view_cb(Elm_App_Server *app_server, const Eina_Value *args EINA_UNUSED, 
         return NULL;
      }
 
-   view = efl_add(ELM_APP_SERVER_VIEW_CLASS, app_server, elm_app_server_view_id_set(efl_self, NULL));
+   view = efl_add(ELM_APP_SERVER_VIEW_CLASS, app_server, elm_app_server_view_id_set(efl_added, NULL));
 
    id = elm_app_server_view_id_get(view);
    pkg = elm_app_server_package_get(app_server);
@@ -136,7 +136,7 @@ test_application_server_common(const char *pkg)
    Elm_App_Server_View *view;
    Elm_App_Server *server;
 
-   server = efl_add(ELM_APP_SERVER_CLASS, NULL, elm_app_server_constructor(efl_self, pkg, _create_view_cb));
+   server = efl_add(ELM_APP_SERVER_CLASS, NULL, elm_app_server_constructor(efl_added, pkg, _create_view_cb));
    elm_app_server_title_set(server, pkg);
    views_iter = elm_app_server_views_get(server);
    efl_event_callback_add(server, ELM_APP_SERVER_EVENT_TERMINATE, _terminate_cb, NULL);

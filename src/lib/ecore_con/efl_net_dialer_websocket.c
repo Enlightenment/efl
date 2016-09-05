@@ -932,10 +932,10 @@ _efl_net_dialer_websocket_efl_object_constructor(Eo *o, Efl_Net_Dialer_Websocket
    EINA_SAFETY_ON_NULL_RETURN_VAL(o, NULL);
 
    pd->http = efl_add(EFL_NET_DIALER_HTTP_CLASS, o,
-                      efl_net_dialer_http_version_set(efl_self, EFL_NET_HTTP_VERSION_V1_1),
-                      efl_net_dialer_http_method_set(efl_self, "GET"),
-                      efl_net_dialer_http_primary_mode_set(efl_self, EFL_NET_DIALER_HTTP_PRIMARY_MODE_UPLOAD),
-                      efl_event_callback_array_add(efl_self, _efl_net_dialer_websocket_http_cbs(), o));
+                      efl_net_dialer_http_version_set(efl_added, EFL_NET_HTTP_VERSION_V1_1),
+                      efl_net_dialer_http_method_set(efl_added, "GET"),
+                      efl_net_dialer_http_primary_mode_set(efl_added, EFL_NET_DIALER_HTTP_PRIMARY_MODE_UPLOAD),
+                      efl_event_callback_array_add(efl_added, _efl_net_dialer_websocket_http_cbs(), o));
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->http, NULL);
 
    return o;
@@ -1483,8 +1483,8 @@ _efl_net_dialer_websocket_close_request(Eo *o, Efl_Net_Dialer_Websocket_Data *pd
    else
      {
         pd->close_timer = efl_add(EFL_LOOP_TIMER_CLASS, efl_loop_user_loop_get(o),
-                                  efl_loop_timer_interval_set(efl_self, 2.0),
-                                  efl_event_callback_add(efl_self, EFL_LOOP_TIMER_EVENT_TICK, _efl_net_dialer_websocket_close_request_timeout, o));
+                                  efl_loop_timer_interval_set(efl_added, 2.0),
+                                  efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _efl_net_dialer_websocket_close_request_timeout, o));
      }
    efl_io_writer_can_write_set(o, EINA_FALSE);
 

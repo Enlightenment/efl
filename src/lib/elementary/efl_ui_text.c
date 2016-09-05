@@ -4885,7 +4885,7 @@ _efl_ui_text_cursor_new(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED)
 {
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    return efl_add(EFL_CANVAS_TEXT_CURSOR_CLASS, (Eo *) obj,
-         efl_canvas_text_cursor_text_object_set(efl_self, text_obj));
+         efl_canvas_text_cursor_text_object_set(efl_added, text_obj));
 }
 
 static void
@@ -5246,9 +5246,9 @@ _anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
    _anchors_clear(obj, sd);
 
    start =  efl_add(EFL_CANVAS_TEXT_CURSOR_CLASS, obj,
-         efl_canvas_text_cursor_text_object_set(efl_self, text_obj));
+         efl_canvas_text_cursor_text_object_set(efl_added, text_obj));
    end =  efl_add(EFL_CANVAS_TEXT_CURSOR_CLASS, obj,
-         efl_canvas_text_cursor_text_object_set(efl_self, text_obj));
+         efl_canvas_text_cursor_text_object_set(efl_added, text_obj));
 
    /* Retrieve all annotations in the text. */
    efl_canvas_text_cursor_paragraph_first(start);

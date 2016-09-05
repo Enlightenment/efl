@@ -65,7 +65,7 @@ _promise_then(void *data, void *value)
    Eo *model;
 
    eina_value_get(value, &path);
-   model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, path));
+   model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, path));
    elm_view_list_model_set(priv->fileview, model);
 }
 
@@ -144,12 +144,12 @@ elm_main(int argc, char **argv)
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
    //treemodel
-   priv.treemodel = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, dirname));
+   priv.treemodel = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, dirname));
    eio_model_children_filter_set(priv.treemodel, _filter_cb, NULL);
 
    //treeview
    genlist = elm_genlist_add(win);
-   priv.treeview = efl_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(efl_self, genlist, ELM_GENLIST_ITEM_TREE, NULL));
+   priv.treeview = efl_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_TREE, NULL));
    elm_view_list_property_connect(priv.treeview, "filename", "elm.text");
    elm_view_list_property_connect(priv.treeview, "icon", "elm.swallow.icon");
    elm_view_list_model_set(priv.treeview, priv.treemodel);
@@ -164,7 +164,7 @@ elm_main(int argc, char **argv)
 
    //listview
    genlist = elm_genlist_add(win);
-   priv.fileview = efl_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(efl_self, genlist, ELM_GENLIST_ITEM_NONE, "double_label"));
+   priv.fileview = efl_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, "double_label"));
    elm_view_list_property_connect(priv.fileview, "filename", "elm.text");
    elm_view_list_property_connect(priv.fileview, "mime_type", "elm.text.sub");
 

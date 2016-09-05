@@ -114,7 +114,7 @@ START_TEST(eio_model_test_test_file)
    fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
    fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
 
-   filemodel = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_self, EFL_MODEL_TEST_FILENAME_PATH));
+   filemodel = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, EFL_MODEL_TEST_FILENAME_PATH));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
    handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, NULL);

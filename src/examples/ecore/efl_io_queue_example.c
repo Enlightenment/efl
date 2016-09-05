@@ -245,8 +245,8 @@ main(int argc, char **argv)
     * write another.
     */
    send_queue = efl_add(EFL_IO_QUEUE_CLASS, NULL,
-                        efl_name_set(efl_self, "send_queue"),
-                        efl_io_queue_limit_set(efl_self, buffer_limit));
+                        efl_name_set(efl_added, "send_queue"),
+                        efl_io_queue_limit_set(efl_added, buffer_limit));
    if (!send_queue)
      {
         fprintf(stderr, "ERROR: could not create Efl_Io_Queue (send)\n");
@@ -267,9 +267,9 @@ main(int argc, char **argv)
     * clear().
     */
    receive_queue = efl_add(EFL_IO_QUEUE_CLASS, NULL,
-                           efl_name_set(efl_self, "receive_queue"),
-                           efl_io_queue_limit_set(efl_self, buffer_limit),
-                           efl_event_callback_add(efl_self, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, _receiver_data, NULL));
+                           efl_name_set(efl_added, "receive_queue"),
+                           efl_io_queue_limit_set(efl_added, buffer_limit),
+                           efl_event_callback_add(efl_added, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, _receiver_data, NULL));
    if (!receive_queue)
      {
         fprintf(stderr, "ERROR: could not create Efl_Io_Queue (receive)\n");
@@ -291,8 +291,8 @@ main(int argc, char **argv)
 
    /* The TCP client to use to send/receive network data */
    dialer = efl_add(EFL_NET_DIALER_TCP_CLASS, loop,
-                    efl_name_set(efl_self, "dialer"),
-                    efl_event_callback_add(efl_self, EFL_NET_DIALER_EVENT_CONNECTED, _dialer_connected, NULL));
+                    efl_name_set(efl_added, "dialer"),
+                    efl_event_callback_add(efl_added, EFL_NET_DIALER_EVENT_CONNECTED, _dialer_connected, NULL));
    if (!dialer)
      {
         fprintf(stderr, "ERROR: could not create Efl_Net_Dialer_Tcp\n");
@@ -302,11 +302,11 @@ main(int argc, char **argv)
 
    /* sender: send_queue->network */
    sender = efl_add(EFL_IO_COPIER_CLASS, loop,
-                    efl_name_set(efl_self, "sender"),
-                    efl_io_copier_line_delimiter_set(efl_self, &line_delimiter),
-                    efl_io_copier_source_set(efl_self, send_queue),
-                    efl_io_copier_destination_set(efl_self, dialer),
-                    efl_event_callback_array_add(efl_self, copier_cbs(), NULL));
+                    efl_name_set(efl_added, "sender"),
+                    efl_io_copier_line_delimiter_set(efl_added, &line_delimiter),
+                    efl_io_copier_source_set(efl_added, send_queue),
+                    efl_io_copier_destination_set(efl_added, dialer),
+                    efl_event_callback_array_add(efl_added, copier_cbs(), NULL));
    if (!sender)
      {
         fprintf(stderr, "ERROR: could not create Efl_Io_Copier (sender)\n");
@@ -316,11 +316,11 @@ main(int argc, char **argv)
 
    /* receiver: network->receive_queue */
    receiver = efl_add(EFL_IO_COPIER_CLASS, loop,
-                      efl_name_set(efl_self, "receiver"),
-                      efl_io_copier_line_delimiter_set(efl_self, &line_delimiter),
-                      efl_io_copier_source_set(efl_self, dialer),
-                      efl_io_copier_destination_set(efl_self, receive_queue),
-                      efl_event_callback_array_add(efl_self, copier_cbs(), NULL));
+                      efl_name_set(efl_added, "receiver"),
+                      efl_io_copier_line_delimiter_set(efl_added, &line_delimiter),
+                      efl_io_copier_source_set(efl_added, dialer),
+                      efl_io_copier_destination_set(efl_added, receive_queue),
+                      efl_event_callback_array_add(efl_added, copier_cbs(), NULL));
    if (!receiver)
      {
         fprintf(stderr, "ERROR: could not create Efl_Io_Copier (receiver)\n");

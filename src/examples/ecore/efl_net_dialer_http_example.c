@@ -282,30 +282,30 @@ main(int argc, char **argv)
    if ((!input_fname) || (strcmp(input_fname, ":stdin:") == 0))
      {
         input = efl_add(EFL_IO_STDIN_CLASS, loop,
-                        efl_name_set(efl_self, "stdin"),
-                        efl_event_callback_add(efl_self, EFL_IO_READER_EVENT_EOS, _eos, NULL));
+                        efl_name_set(efl_added, "stdin"),
+                        efl_event_callback_add(efl_added, EFL_IO_READER_EVENT_EOS, _eos, NULL));
      }
    else
      {
         input = efl_add(EFL_IO_FILE_CLASS, loop,
-                        efl_name_set(efl_self, "input"),
-                        efl_file_set(efl_self, input_fname, NULL),
-                        efl_io_file_flags_set(efl_self, O_RDONLY | O_CLOEXEC),
-                        efl_event_callback_add(efl_self, EFL_IO_READER_EVENT_EOS, _eos, NULL));
+                        efl_name_set(efl_added, "input"),
+                        efl_file_set(efl_added, input_fname, NULL),
+                        efl_io_file_flags_set(efl_added, O_RDONLY | O_CLOEXEC),
+                        efl_event_callback_add(efl_added, EFL_IO_READER_EVENT_EOS, _eos, NULL));
      }
 
    if ((!output_fname) || (strcmp(output_fname, ":stdout:") == 0))
      {
         output = efl_add(EFL_IO_STDOUT_CLASS, loop,
-                         efl_name_set(efl_self, "stdout"));
+                         efl_name_set(efl_added, "stdout"));
      }
    else
      {
         output = efl_add(EFL_IO_FILE_CLASS, loop,
-                         efl_name_set(efl_self, "output"),
-                         efl_file_set(efl_self, output_fname, NULL),
-                         efl_io_file_mode_set(efl_self, 0644),
-                         efl_io_file_flags_set(efl_self, O_WRONLY | O_CLOEXEC | O_TRUNC | O_CREAT));
+                         efl_name_set(efl_added, "output"),
+                         efl_file_set(efl_added, output_fname, NULL),
+                         efl_io_file_mode_set(efl_added, 0644),
+                         efl_io_file_flags_set(efl_added, O_WRONLY | O_CLOEXEC | O_TRUNC | O_CREAT));
      }
 
    primary_mode = _parse_primary_mode(primary_mode_str);
@@ -316,16 +316,16 @@ main(int argc, char **argv)
      cookie_jar = "";
 
    dialer = efl_add(EFL_NET_DIALER_HTTP_CLASS, loop,
-                    efl_name_set(efl_self, "dialer"),
-                    efl_net_dialer_http_method_set(efl_self, method),
-                    efl_net_dialer_http_primary_mode_set(efl_self, primary_mode),
-                    efl_net_dialer_http_version_set(efl_self, http_version),
-                    efl_net_dialer_http_authentication_set(efl_self, username, password, authentication_method, authentication_restricted),
-                    efl_net_dialer_http_allow_redirects_set(efl_self, allow_redirects),
-                    efl_net_dialer_http_cookie_jar_set(efl_self, cookie_jar),
-                    efl_net_dialer_proxy_set(efl_self, proxy),
-                    efl_net_dialer_timeout_dial_set(efl_self, timeout_dial),
-                    efl_event_callback_array_add(efl_self, dialer_cbs(), NULL));
+                    efl_name_set(efl_added, "dialer"),
+                    efl_net_dialer_http_method_set(efl_added, method),
+                    efl_net_dialer_http_primary_mode_set(efl_added, primary_mode),
+                    efl_net_dialer_http_version_set(efl_added, http_version),
+                    efl_net_dialer_http_authentication_set(efl_added, username, password, authentication_method, authentication_restricted),
+                    efl_net_dialer_http_allow_redirects_set(efl_added, allow_redirects),
+                    efl_net_dialer_http_cookie_jar_set(efl_added, cookie_jar),
+                    efl_net_dialer_proxy_set(efl_added, proxy),
+                    efl_net_dialer_timeout_dial_set(efl_added, timeout_dial),
+                    efl_event_callback_array_add(efl_added, dialer_cbs(), NULL));
 
    EINA_LIST_FREE(headers, str)
      {
@@ -346,20 +346,20 @@ main(int argc, char **argv)
      waiting++;
 
    sender = efl_add(EFL_IO_COPIER_CLASS, loop,
-                    efl_name_set(efl_self, "sender"),
-                    efl_io_copier_source_set(efl_self, input),
-                    efl_io_copier_destination_set(efl_self, dialer),
-                    efl_event_callback_array_add(efl_self, copier_cbs(), NULL));
+                    efl_name_set(efl_added, "sender"),
+                    efl_io_copier_source_set(efl_added, input),
+                    efl_io_copier_destination_set(efl_added, dialer),
+                    efl_event_callback_array_add(efl_added, copier_cbs(), NULL));
 
    fprintf(stderr, "INFO: sending %s->%s\n",
            efl_name_get(input),
            efl_name_get(dialer));
 
    receiver = efl_add(EFL_IO_COPIER_CLASS, loop,
-                      efl_name_set(efl_self, "receiver"),
-                      efl_io_copier_source_set(efl_self, dialer),
-                      efl_io_copier_destination_set(efl_self, output),
-                      efl_event_callback_array_add(efl_self, copier_cbs(), NULL));
+                      efl_name_set(efl_added, "receiver"),
+                      efl_io_copier_source_set(efl_added, dialer),
+                      efl_io_copier_destination_set(efl_added, output),
+                      efl_event_callback_array_add(efl_added, copier_cbs(), NULL));
    fprintf(stderr, "INFO: receiving %s->%s\n",
            efl_name_get(dialer),
            efl_name_get(output));

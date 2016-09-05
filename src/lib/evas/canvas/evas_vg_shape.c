@@ -219,21 +219,21 @@ _efl_vg_shape_efl_vg_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const Efl_V
 
    if (fromd->fill)
      {
-        fill = efl_add(efl_class_get(fromd->fill), NULL, efl_vg_dup(efl_self, fromd->fill));
+        fill = efl_add(efl_class_get(fromd->fill), NULL, efl_vg_dup(efl_added, fromd->fill));
         efl_vg_shape_fill_set(obj, fill);
         efl_unref(fill);
      }
 
    if (fromd->stroke.fill)
      {
-        stroke_fill = efl_add(efl_class_get(fromd->stroke.fill), NULL, efl_vg_dup(efl_self, fromd->stroke.fill));
+        stroke_fill = efl_add(efl_class_get(fromd->stroke.fill), NULL, efl_vg_dup(efl_added, fromd->stroke.fill));
         efl_vg_shape_stroke_fill_set(obj, stroke_fill);
         efl_unref(stroke_fill);
      }
 
    if (fromd->stroke.marker)
      {
-        stroke_marker = efl_add(efl_class_get(fromd->stroke.marker), NULL, efl_vg_dup(efl_self, fromd->stroke.marker));
+        stroke_marker = efl_add(efl_class_get(fromd->stroke.marker), NULL, efl_vg_dup(efl_added, fromd->stroke.marker));
         efl_vg_shape_stroke_marker_set(obj, stroke_marker);
         efl_unref(stroke_marker);
      }

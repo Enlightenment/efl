@@ -134,7 +134,7 @@ main(int argc, char **argv EINA_UNUSED)
    if (argc > 1) bus = argv[1];
    if (argc > 2) path = argv[2];
 
-   root = efl_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(efl_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, bus, path));
+   root = efl_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, bus, path));
 
    Eina_Promise *promises[] = { NULL, NULL, NULL};
    promises[0] = efl_model_children_slice_get(root, 0, 0);

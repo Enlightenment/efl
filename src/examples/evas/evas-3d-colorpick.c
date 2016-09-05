@@ -274,13 +274,13 @@ _init_scene(const char *texture)
 
    globalscene.scene = efl_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
 
-   globalscene.root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
+   globalscene.root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    globalscene.camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
    evas_canvas3d_camera_projection_perspective_set(globalscene.camera, 30.0, 1.0, 1.0, 1000.0);
 
    globalscene.camera_node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
    evas_canvas3d_node_camera_set(globalscene.camera_node, globalscene.camera);
    evas_canvas3d_node_member_add(globalscene.root_node, globalscene.camera_node);
    evas_canvas3d_node_position_set(globalscene.camera_node, 0.0, 30.0, 800.0);
@@ -292,7 +292,7 @@ _init_scene(const char *texture)
    evas_canvas3d_light_directional_set(globalscene.light, EINA_TRUE);
 
    globalscene.light_node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
    evas_canvas3d_node_light_set(globalscene.light_node, globalscene.light);
    evas_canvas3d_node_position_set(globalscene.light_node, 100.0, 50.0, 300.0);
    evas_canvas3d_node_look_at_set(globalscene.light_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 1.0, 1.0, 1.0);
@@ -313,7 +313,7 @@ _init_scene(const char *texture)
              m->material = spheretmp->material;
              m->texture = spheretmp->texture;
           }
-        m->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+        m->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
         m->speed = tmp;
         m->sphere_animate = _animate_sphere;
         m->animate = ecore_timer_add(m->speed, m->sphere_animate, m);

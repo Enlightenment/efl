@@ -237,7 +237,7 @@ ecore_poller_add(Ecore_Poller_Type type EINA_UNUSED,
                  const void       *data)
 {
    Ecore_Poller *poller;
-   poller = efl_add(MY_CLASS, _ecore_parent, ecore_poller_constructor(efl_self, type, interval, func, data));
+   poller = efl_add(MY_CLASS, _ecore_parent, ecore_poller_constructor(efl_added, type, interval, func, data));
    return poller;
 }
 

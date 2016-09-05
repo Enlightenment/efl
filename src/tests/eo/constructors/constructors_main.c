@@ -76,14 +76,14 @@ main(int argc, char *argv[])
    fail_if(a != 0);
 
    my_init_count = 0;
-   obj = efl_add(SIMPLE_CLASS, NULL, simple_a_set(efl_self, 7));
+   obj = efl_add(SIMPLE_CLASS, NULL, simple_a_set(efl_added, 7));
    fail_if(!obj);
    fail_if(my_init_count != 2);
    a = simple_a_get(obj);
    fail_if(a != 7);
 
    my_init_count = 0;
-   obj = efl_add(SIMPLE_CLASS, NULL, simple_b_set(efl_self, 6), simple_a_set(efl_self, -1), b = simple_b_get(efl_self));
+   obj = efl_add(SIMPLE_CLASS, NULL, simple_b_set(efl_added, 6), simple_a_set(efl_added, -1), b = simple_b_get(efl_added));
    fail_if(obj);
    fail_if(b != 6);
    fail_if(my_init_count != 0);

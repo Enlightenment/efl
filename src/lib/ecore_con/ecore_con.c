@@ -305,7 +305,7 @@ _efl_network_lookup(Eo *kls_obj EINA_UNUSED, void *pd EINA_UNUSED, const char *n
    if (!name || !done_cb)
      return EINA_FALSE;
 
-   obj = efl_add(EFL_NETWORK_CONNECTOR_CLASS, NULL, efl_network_server_connection_type_set(efl_self, ECORE_CON_REMOTE_TCP), efl_network_server_name_set(efl_self, name), efl_network_port_set(efl_self, 1025));
+   obj = efl_add(EFL_NETWORK_CONNECTOR_CLASS, NULL, efl_network_server_connection_type_set(efl_added, ECORE_CON_REMOTE_TCP), efl_network_server_name_set(efl_added, name), efl_network_port_set(efl_added, 1025));
 
    lk = malloc(sizeof (Ecore_Con_Lookup));
    if (!lk)
@@ -359,7 +359,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
-   obj = efl_add(EFL_NETWORK_SERVER_CLASS, NULL, efl_network_server_connection_type_set(efl_self, compl_type), efl_network_server_name_set(efl_self, name), efl_network_port_set(efl_self, port));
+   obj = efl_add(EFL_NETWORK_SERVER_CLASS, NULL, efl_network_server_connection_type_set(efl_added, compl_type), efl_network_server_name_set(efl_added, name), efl_network_port_set(efl_added, port));
 
    ecore_con_server_data_set(obj, (void *) data);
 
@@ -455,7 +455,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
-   obj = efl_add(EFL_NETWORK_CONNECTOR_CLASS, NULL, efl_network_server_connection_type_set(efl_self, compl_type), efl_network_server_name_set(efl_self, name), efl_network_port_set(efl_self, port));
+   obj = efl_add(EFL_NETWORK_CONNECTOR_CLASS, NULL, efl_network_server_connection_type_set(efl_added, compl_type), efl_network_server_name_set(efl_added, name), efl_network_port_set(efl_added, port));
 
    ecore_con_server_data_set(obj, (void *) data);
 

@@ -1039,24 +1039,24 @@ START_TEST(efl_add_do_and_custom)
    Eo *obj = NULL;
    efl_object_init();
 
-   obj = efl_add(SIMPLE_CLASS, NULL, efl_constructor(efl_self));
+   obj = efl_add(SIMPLE_CLASS, NULL, efl_constructor(efl_added));
    fail_if(!obj);
    efl_unref(obj);
 
-   obj = efl_add(SIMPLE_CLASS, NULL, simple_a_set(efl_self, 7));
+   obj = efl_add(SIMPLE_CLASS, NULL, simple_a_set(efl_added, 7));
    fail_if(!obj);
    pd = efl_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 7);
    efl_unref(obj);
 
-   obj = efl_add(SIMPLE_CLASS, NULL, efl_constructor(efl_self), simple_a_set(efl_self, 7));
+   obj = efl_add(SIMPLE_CLASS, NULL, efl_constructor(efl_added), simple_a_set(efl_added, 7));
    fail_if(!obj);
    pd = efl_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 7);
    efl_unref(obj);
 
    Eina_Bool finalized;
-   obj = efl_add(SIMPLE_CLASS, NULL, finalized = efl_finalized_get(efl_self));
+   obj = efl_add(SIMPLE_CLASS, NULL, finalized = efl_finalized_get(efl_added));
    fail_if(finalized);
 
    finalized = efl_finalized_get(obj);

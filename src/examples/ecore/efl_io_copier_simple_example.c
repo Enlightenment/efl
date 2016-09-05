@@ -34,9 +34,9 @@ int main(int argc, char *argv[])
    input = efl_add(EFL_IO_STDIN_CLASS, loop);
    output = efl_add(EFL_IO_STDOUT_CLASS, loop);
    copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                    efl_io_copier_source_set(efl_self, input), /* mandatory */
-                    efl_io_copier_destination_set(efl_self, output), /* optional */
-                    efl_event_callback_array_add(efl_self, copier_cbs(), NULL) /* recommended, at least EFL_IO_COPIER_EVENT_DONE. */
+                    efl_io_copier_source_set(efl_added, input), /* mandatory */
+                    efl_io_copier_destination_set(efl_added, output), /* optional */
+                    efl_event_callback_array_add(efl_added, copier_cbs(), NULL) /* recommended, at least EFL_IO_COPIER_EVENT_DONE. */
                     );
 
    ecore_main_loop_begin();

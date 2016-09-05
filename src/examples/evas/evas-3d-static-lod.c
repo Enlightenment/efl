@@ -116,7 +116,7 @@ _camera_setup(Scene_Data *data)
 
    data->camera_node =
       efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+                    evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
    evas_canvas3d_node_camera_set(data->camera_node, data->camera);
    evas_canvas3d_node_position_set(data->camera_node, 0.0, 0.0, 300.0);
    evas_canvas3d_node_look_at_set(data->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0,
@@ -134,7 +134,7 @@ _light_setup(Scene_Data *data)
 
    data->light_node =
       efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+                    evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
    evas_canvas3d_node_light_set(data->light_node, data->light);
    evas_canvas3d_node_position_set(data->light_node, 0.0, 0.0, 300.0);
    evas_canvas3d_node_look_at_set(data->light_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0,
@@ -160,16 +160,16 @@ _mesh_setup(Scene_Data *data)
 
    data->lod_mesh_node1 =
          efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+                evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_position_set(data->lod_mesh_node1, 2.0, 0.0, 0.0);
 
    data->lod_mesh_node2 =
          efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
+                evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
    data->complex_node =
          efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
+                evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
    evas_canvas3d_node_scale_set(data->complex_node, 30.0, 30.0, 30.0);
 
    /* Setup mesh. One model, two meshes object with dufferent lod distances.*/
@@ -209,7 +209,7 @@ _scene_setup(Scene_Data *data)
 
    data->root_node =
       efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(efl_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
+                    evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    _camera_setup(data);
    _light_setup(data);

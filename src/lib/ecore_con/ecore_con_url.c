@@ -236,7 +236,7 @@ EAPI Ecore_Con_Url *
 ecore_con_url_new(const char *url)
 {
    Ecore_Con_Url *url_obj;
-   url_obj = efl_add(EFL_NETWORK_URL_CLASS, NULL, efl_network_url_set(efl_self, url));
+   url_obj = efl_add(EFL_NETWORK_URL_CLASS, NULL, efl_network_url_set(efl_added, url));
 
    efl_event_callback_array_add(url_obj, efl_network_url_event_table_callbacks(), NULL);
 

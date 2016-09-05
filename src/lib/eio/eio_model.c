@@ -171,7 +171,7 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
         eina_stringshare_del(spath);
      }
 
-   cevt.child = efl_add_ref(EIO_MODEL_CLASS, priv->obj, eio_model_path_set(efl_self, evt->filename));
+   cevt.child = efl_add_ref(EIO_MODEL_CLASS, priv->obj, eio_model_path_set(efl_added, evt->filename));
    priv->children_list = eina_list_append(priv->children_list, cevt.child);
    cevt.index = eina_list_count(priv->children_list);
 
@@ -497,7 +497,7 @@ _eio_main_children_load_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina
    Eio_Model_Data *priv = data;
    EINA_SAFETY_ON_NULL_RETURN(priv);
 
-   child = efl_add_ref(MY_CLASS, priv->obj, eio_model_path_set(efl_self, info->path));
+   child = efl_add_ref(MY_CLASS, priv->obj, eio_model_path_set(efl_added, info->path));
    eina_spinlock_take(&priv->filter_lock);
    if (priv->filter_cb)
      eio_model_children_filter_set(child, priv->filter_cb, priv->filter_userdata);
@@ -704,7 +704,7 @@ _eio_model_efl_object_parent_get(Eo *obj , Eio_Model_Data *priv)
         char *path = ecore_file_dir_get(priv->path);
         if (path != NULL && strcmp(priv->path, "/") != 0)
           {
-             model = efl_add(MY_CLASS, NULL, eio_model_path_set(efl_self, path));
+             model = efl_add(MY_CLASS, NULL, eio_model_path_set(efl_added, path));
           }
         else
           model = NULL;
