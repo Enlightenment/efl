@@ -1373,6 +1373,9 @@ struct _Evas_Func
    Eina_Bool (*image_data_unmap)           (void *data, void *image, const Eina_Rw_Slice *slice);
    int (*image_data_maps_get)              (void *data, const void *image, const Eina_Rw_Slice **slices);
 
+   /* new api for direct data set (not put) */
+   void *(*image_data_slice_add)           (void *data, void *image, const Eina_Slice *slice, Eina_Bool copy, int w, int h, int stride, Evas_Colorspace space, int plane, Eina_Bool alpha);
+
    int (*image_native_init)                (void *data, Evas_Native_Surface_Type type);
    void (*image_native_shutdown)           (void *data, Evas_Native_Surface_Type type);
    void *(*image_native_set)               (void *data, void *image, void *native);

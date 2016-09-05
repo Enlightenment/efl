@@ -246,12 +246,12 @@ _evas_common_rgba_image_plane_get(const RGBA_Image *im, int plane, Eina_Slice *s
           }
         return EINA_FALSE;
 
-        // YUV, assume contiguous memory within a plane (and no padding)
-        // single interleaved plane
+        // YUV, assume contiguous memory within a plane - padding ok
+        // 1 plane
       case EVAS_COLORSPACE_YCBCR422601_PL:
         if (plane != 0) return EINA_FALSE;
         slice->mem = csdata[0];
-        slice->len = (w * h * 3) / 2;
+        slice->len = (h > 1) ? ((size_t) (csdata[1] - csdata[0]) * h * 2) : (w * 2);
         return EINA_TRUE;
 
         // 2 planes
@@ -260,13 +260,13 @@ _evas_common_rgba_image_plane_get(const RGBA_Image *im, int plane, Eina_Slice *s
         if (plane == 0)
           {
              slice->mem = csdata[0];
-             slice->len = w * h;
+             slice->len = (h > 1) ? ((size_t) (csdata[1] - csdata[0]) * h) : w;
              return EINA_TRUE;
           }
         else if (plane == 1)
           {
              slice->mem = csdata[h];
-             slice->len = w * h / 4;
+             slice->len = (h > 1) ? ((size_t) (csdata[h+1] - csdata[h]) * h / 2) : w / 2;
              return EINA_TRUE;
           }
         return EINA_FALSE;
@@ -277,19 +277,19 @@ _evas_common_rgba_image_plane_get(const RGBA_Image *im, int plane, Eina_Slice *s
         if (plane == 0)
           {
              slice->mem = csdata[0];
-             slice->len = w * h;
+             slice->len = (h > 1) ? ((size_t) (csdata[1] - csdata[0]) * h) : w;
              return EINA_TRUE;
           }
         else if (plane == 1)
           {
              slice->mem = csdata[h];
-             slice->len = w * h / 4;
+             slice->len = (h > 1) ? ((size_t) (csdata[h+1] - csdata[h]) * h / 2) : w / 2;
              return EINA_TRUE;
           }
         else if (plane == 2)
           {
-             slice->mem = csdata[2 * h];
-             slice->len = w * h / 4;
+             slice->mem = csdata[h + h / 2];
+             slice->len = (h > 1) ? ((size_t) (csdata[h+h/2+1] - csdata[h+h/2]) * h / 2) : w / 2;
              return EINA_TRUE;
           }
         return EINA_FALSE;

@@ -639,33 +639,29 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
           }
      }
 
-   if (copy && !slice)
+   if (!slice || !slice->mem)
      {
+        // note: we release all planes at once
         if (o->engine_data)
           ENFN->image_free(ENDT, o->engine_data);
         o->engine_data = ENFN->image_new_from_copied_data(ENDT, w, h, NULL, o->cur->has_alpha, cspace);
      }
-   else if (copy)
-     {
-#warning TODO
-        CRI("NOT IMPLEMENTED YET");
-        //o->engine_data = ENFN->image_copy_slice(ENDT, o->engine_data, slice, w, h, stride, cspace, plane, o->cur->has_alpha)
-     }
    else
      {
-#warning TODO
-        CRI("NOT IMPLEMENTED YET");
-        //o->engine_data = ENFN->image_set_slice(ENDT, o->engine_data, slice, w, h, stride, cspace, plane, o->cur->has_alpha);
+        o->buffer_data_set = EINA_TRUE;
+        o->engine_data = ENFN->image_data_slice_add(ENDT, o->engine_data,
+                                                    slice, copy, w, h, stride,
+                                                    cspace, plane, o->cur->has_alpha);
      }
-
-   if ((o->cur->image.w != w) || (o->cur->image.h != h))
-     resized = EINA_TRUE;
 
    if (!o->engine_data)
      {
         ERR("Failed to create internal image");
         goto end;
      }
+
+   if ((o->cur->image.w != w) || (o->cur->image.h != h))
+     resized = EINA_TRUE;
 
    if (ENFN->image_scale_hint_set)
      ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
@@ -698,6 +694,7 @@ end:
    if (resized)
      evas_object_inform_call_image_resize(obj->object);
 
+   efl_gfx_buffer_update_add(obj->object, 0, 0, w, h);
    return ret;
 }
 

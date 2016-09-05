@@ -376,6 +376,8 @@ extern EAPI int _evas_log_dom_global;
 
 #define TILE_CACHE_LINE_SIZE      64
 
+#define RGBA_PLANE_MAX 3
+
 /*****************************************************************************/
 
 #define UNROLL2(op...) op op
@@ -422,7 +424,6 @@ typedef struct _RGBA_Pipe             RGBA_Pipe;
 typedef struct _RGBA_Pipe_Thread_Info RGBA_Pipe_Thread_Info;
 #endif
 typedef struct _RGBA_Image            RGBA_Image;
-typedef struct _RGBA_Image_Span       RGBA_Image_Span;
 typedef struct _RGBA_Draw_Context     RGBA_Draw_Context;
 typedef struct _RGBA_Polygon_Point    RGBA_Polygon_Point;
 typedef struct _RGBA_Map_Point        RGBA_Map_Point;

@@ -360,13 +360,11 @@ evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, u
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
-        if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
-	im->tex = NULL;
 	im->cs.data = data;
 	im->cs.no_free = 1;
 	break;
       default:
-	abort();
+        ERR("color space not supported: %d", cspace);
 	break;
      }
    return im;
@@ -414,16 +412,13 @@ evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned i
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
-        if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
-        im->tex = NULL;
-        im->cs.no_free = 0;
         if (im->im->cache_entry.h > 0)
           im->cs.data = calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
         if ((data) && (im->cs.data))
           memcpy(im->cs.data, data, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
         break;
       default:
-        abort();
+        ERR("color space not supported: %d", cspace);
         break;
      }
    return im;

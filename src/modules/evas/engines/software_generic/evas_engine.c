@@ -1749,6 +1749,194 @@ eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, const Eina
    return k;
 }
 
+static inline Eina_Bool
+_is_yuv(Efl_Gfx_Colorspace cspace)
+{
+   switch (cspace)
+     {
+      case EFL_GFX_COLORSPACE_YCBCR422P601_PL:
+      case EFL_GFX_COLORSPACE_YCBCR422P709_PL:
+      case EFL_GFX_COLORSPACE_YCBCR422601_PL:
+      case EFL_GFX_COLORSPACE_YCBCR420NV12601_PL:
+      case EFL_GFX_COLORSPACE_YCBCR420TM12601_PL:
+        return EINA_TRUE;
+
+      default:
+        return EINA_FALSE;
+     }
+}
+
+static void *
+eng_image_data_slice_add(void *engdata, void *image,
+                         const Eina_Slice *slice, Eina_Bool copy,
+                         int w, int h, int stride, Evas_Colorspace cspace,
+                         int plane, Eina_Bool alpha)
+{
+   const Eina_Bool use_cs = _is_yuv(cspace);
+   const unsigned char **cs_data;
+   RGBA_Image *im = image;
+   int bpp = 0;
+
+   // Note: This code is not very robust by choice. It should NOT be used
+   // in conjunction with data_put/data_get. Ever.
+   // Assume w,h,cspace,alpha to be correct.
+   // We still use cs.data for YUV.
+   // 'image' may be NULL, in that case create a new one. Otherwise, it must
+   // have been created by a previous call to this function.
+
+   if ((plane < 0) || (plane >= RGBA_PLANE_MAX)) goto fail;
+   if (!slice || !slice->mem) goto fail;
+   copy = !!copy;
+
+   // not implemented
+   if (use_cs && copy)
+     {
+        // To implement this, we should switch the internals to slices first,
+        // as this would give 3 planes rather than N rows of datas
+        ERR("Evas can not copy YUV data (not implemented yet).");
+        goto fail;
+     }
+
+   // alloc
+   if (!im)
+     {
+        switch (cspace)
+          {
+           case EFL_GFX_COLORSPACE_ARGB8888:
+           case EFL_GFX_COLORSPACE_AGRY88:
+           case EFL_GFX_COLORSPACE_GRY8:
+             if (plane != 0) goto fail;
+             if (copy)
+               im = eng_image_new_from_copied_data(engdata, w, h, NULL, alpha, cspace);
+             else
+               im = eng_image_new_from_data(engdata, w, h, NULL, alpha, cspace);
+             break;
+
+           case EFL_GFX_COLORSPACE_YCBCR422P601_PL:
+           case EFL_GFX_COLORSPACE_YCBCR422P709_PL:
+           case EFL_GFX_COLORSPACE_YCBCR422601_PL:
+           case EFL_GFX_COLORSPACE_YCBCR420NV12601_PL:
+             // Use 'copied' to allocate the RGBA buffer
+             im = eng_image_new_from_copied_data(engdata, w, h, NULL, alpha, cspace);
+             break;
+
+           default:
+             // TODO: ETC, S3TC, YCBCR420TM12 (aka ST12 or tiled NV12)
+             goto fail;
+          }
+        if (!im) goto fail;
+     }
+   else
+     {
+        im = (RGBA_Image *) evas_cache_image_alone(&im->cache_entry);
+        if (!im) goto fail;
+     }
+
+   if (use_cs && (!im->cs.data || im->cs.no_free))
+     {
+        im->cs.data = calloc(1, h * sizeof(void *) * 2);
+        if (!im->cs.data) goto fail;
+        im->cs.no_free = EINA_FALSE;
+     }
+
+   // assign
+   switch (cspace)
+     {
+      case EFL_GFX_COLORSPACE_ARGB8888:
+        bpp = 4;
+      case EFL_GFX_COLORSPACE_AGRY88:
+        if (!bpp) bpp = 2;
+      case EFL_GFX_COLORSPACE_GRY8:
+        if (!bpp) bpp = 1;
+        if (plane != 0) goto fail;
+        if (!stride) stride = w * bpp;
+        if (copy)
+          {
+             for (int y = 0; y < h; y++)
+               {
+                  const unsigned char *src = slice->bytes + h * stride;
+                  unsigned char *dst = im->image.data8 + bpp * w;
+                  memcpy(dst, src, w * bpp);
+               }
+          }
+        else
+          {
+             if (stride != (bpp * w))
+               {
+                  ERR("invalid stride for zero-copy data set");
+                  goto fail;
+               }
+             im->image.data = (DATA32 *) slice->mem;
+             im->image.no_free = EINA_TRUE;
+          }
+        break;
+
+      case EFL_GFX_COLORSPACE_YCBCR422P601_PL:
+      case EFL_GFX_COLORSPACE_YCBCR422P709_PL:
+        /* YCbCr 4:2:2 Planar: Y rows, then the Cb, then Cr rows. */
+        cs_data = im->cs.data;
+        if (plane == 0)
+          {
+             if (!stride) stride = w;
+             for (int y = 0; y < h; y++)
+               cs_data[y] = slice->bytes + (y * stride);
+          }
+        else if (plane == 1)
+          {
+             if (!stride) stride = w / 2;
+             for (int y = 0; y < (h / 2); y++)
+               cs_data[h + y] = slice->bytes + (y * stride);
+          }
+        else if (plane == 2)
+          {
+             if (!stride) stride = w / 2;
+             for (int y = 0; y < (h / 2); y++)
+               cs_data[h + (h / 2) + y] = slice->bytes + (y * stride);
+          }
+        else goto fail;
+        evas_common_image_colorspace_dirty(im);
+        break;
+
+      case EFL_GFX_COLORSPACE_YCBCR422601_PL:
+        /* YCbCr 4:2:2: lines of Y,Cb,Y,Cr bytes. */
+        if (plane != 0) goto fail;
+        if (!stride) stride = w * 2;
+        cs_data = im->cs.data;
+        for (int y = 0; y < h; y++)
+          cs_data[y] = slice->bytes + (y * stride);
+        evas_common_image_colorspace_dirty(im);
+        break;
+
+      case EFL_GFX_COLORSPACE_YCBCR420NV12601_PL:
+        /* YCbCr 4:2:0: Y rows, then the Cb,Cr rows. */
+        if (!stride) stride = w;
+        cs_data = im->cs.data;
+        if (plane == 0)
+          {
+             for (int y = 0; y < h; y++)
+               cs_data[y] = slice->bytes + (y * stride);
+          }
+        else if (plane == 1)
+          {
+             for (int y = 0; y < (h / 2); y++)
+               cs_data[h + y] = slice->bytes + (y * stride);
+          }
+        evas_common_image_colorspace_dirty(im);
+        break;
+
+        // ETC, S3TC, YCBCR420TM12 (aka ST12 or tiled NV12)
+      default:
+        ERR("unsupported color space %d", cspace);
+        goto fail;
+     }
+
+   return im;
+
+fail:
+   if (im) eng_image_free(engdata, im);
+   return NULL;
+}
+
 static void
 _image_flip_horizontal(DATA32 *pixels_out, const DATA32 *pixels_in,
                        int iw, int ih)
@@ -4449,6 +4637,7 @@ static Evas_Func func =
      eng_image_data_map,
      eng_image_data_unmap,
      eng_image_data_maps_get,
+     eng_image_data_slice_add,
      eng_image_native_init,
      eng_image_native_shutdown,
      eng_image_native_set,
