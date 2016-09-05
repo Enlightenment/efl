@@ -15,8 +15,7 @@ struct Efl.Event {
      info: void_ptr; [[Extra event information passed by the event caller.]]
 }
 
-type Efl.Event_Cb: __builtin_event_cb; [[An event callback prototype.
-    return $EO_CALLBACK_STOP to stop calling additional callbacks for the event, $EO_CALLBACK_CONTINUE to continue.]]
+type Efl.Event_Cb: __builtin_event_cb; [[An event callback prototype.]]
 
 
 struct Efl.Callback_Array_Item {
