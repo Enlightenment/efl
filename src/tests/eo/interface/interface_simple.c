@@ -56,21 +56,27 @@ _ab_sum_get2(Eo *obj, void *class_data EINA_UNUSED)
    return a + b + 1;
 }
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
-     EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
-     EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
-     EFL_OBJECT_OP_FUNC(simple_b_get, _b_get),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(interface_ab_sum_get, _ab_sum_get),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(interface2_ab_sum_get2, _ab_sum_get2),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
+         EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
+         EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
+         EFL_OBJECT_OP_FUNC(simple_b_get, _b_get),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(interface_ab_sum_get, _ab_sum_get),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(interface2_ab_sum_get2, _ab_sum_get2),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      sizeof(Private_Data),
+     _class_initializer,
      NULL,
      NULL
 };

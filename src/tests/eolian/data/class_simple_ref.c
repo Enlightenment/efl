@@ -25,18 +25,24 @@ int * _class_simple_bar(Eo *obj, Evas_Simple_Data *pd, int x);
 
 EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_bar, int *, 0, EFL_FUNC_CALL(x), int x);
 
-static const Efl_Op_Description _class_simple_op_desc[] = {
-     EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_a_set, _class_simple_a_set),
-     EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_a_get, _class_simple_a_get),
-     EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_foo, __eolian_class_simple_foo),
-};
+static Eina_Bool
+_class_simple_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+      EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_a_set, _class_simple_a_set),
+      EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_a_get, _class_simple_a_get),
+      EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_foo, __eolian_class_simple_foo)
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description _class_simple_class_desc = {
      EO_VERSION,
      "Class_Simple",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(_class_simple_op_desc),
      sizeof(Evas_Simple_Data),
+     _class_simple_class_initializer,
      NULL,
      NULL
 };

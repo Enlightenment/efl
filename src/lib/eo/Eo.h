@@ -410,8 +410,8 @@ struct _Efl_Class_Description
    unsigned int version; /**< The current version of eo, use #EO_VERSION */
    const char *name; /**< The name of the class. */
    Efl_Class_Type type; /**< The type of the class. */
-   Efl_Object_Ops ops;  /**< The ops description, should be filled using #EFL_CLASS_DESCRIPTION_OPS (later sorted by Eo). */
    size_t data_size; /**< The size of data (private + protected + public) this class needs per object. */
+   Eina_Bool (*class_initializer)(Efl_Class *klass); /**< The initializer for the class */
    void (*class_constructor)(Efl_Class *klass); /**< The constructor of the class. */
    void (*class_destructor)(Efl_Class *klass); /**< The destructor of the class. */
 };
@@ -435,6 +435,18 @@ typedef struct _Efl_Class_Description Efl_Class_Description;
  * @see #EFL_DEFINE_CLASS
  */
 EAPI const Efl_Class *efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent, ...);
+
+/**
+ * @brief Set the functions of a class
+ * @param klass_id the class whose functions we are setting.
+ * @param ops The function structure we are setting.
+ * @return True on success, False otherwise.
+ *
+ * This should only be called from within the initializer function.
+ *
+ * @see #EFL_DEFINE_CLASS
+ */
+EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *ops);
 
 /**
  * @brief Override Eo functions of this object.
@@ -466,13 +478,13 @@ EAPI Eina_Bool efl_object_override(Eo *obj, const Efl_Object_Ops *ops);
  *
  * This can be used as follows:
  * @code
- * EFL_OBJECT_OVERRIDE_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC_OVERRIDE(public_func, _my_func));
+ * EFL_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC_OVERRIDE(public_func, _my_func));
  * efl_object_override(obj, &ops);
  * @endcode
  *
  * @see efl_object_override
  */
-#define EFL_OBJECT_OVERRIDE_OPS_DEFINE(ops, ...) \
+#define EFL_OPS_DEFINE(ops, ...) \
    const Efl_Op_Description _##ops##_descs[] = { __VA_ARGS__ }; \
    const Efl_Object_Ops ops = { _##ops##_descs, EINA_C_ARRAY_LENGTH(_##ops##_descs) }
 
@@ -514,10 +526,6 @@ EAPI Eina_Bool efl_object_init(void);
  * @see efl_object_init()
  */
 EAPI Eina_Bool efl_object_shutdown(void);
-
-// Helpers macro to help populating #Efl_Class_Description.
-#define EFL_CLASS_DESCRIPTION_NOOPS() { NULL, 0}
-#define EFL_CLASS_DESCRIPTION_OPS(op_descs) { op_descs, EINA_C_ARRAY_LENGTH(op_descs) }
 
 // to fetch internal function and object data at once
 typedef struct _Efl_Object_Op_Call_Data

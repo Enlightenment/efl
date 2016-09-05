@@ -177,7 +177,7 @@ _custom_layout_update(Eo *pack, const void *data EINA_UNUSED)
 static void
 custom_check_cb(void *data, const Efl_Event *event)
 {
-   EFL_OBJECT_OVERRIDE_OPS_DEFINE(custom_layout_ops,
+   EFL_OPS_DEFINE(custom_layout_ops,
                           EFL_OBJECT_OP_FUNC_OVERRIDE(efl_pack_layout_update, _custom_layout_update));
 
    Eina_Bool chk = elm_check_selected_get(event->object);

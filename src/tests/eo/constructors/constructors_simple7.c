@@ -18,16 +18,22 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
    return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
-static Efl_Op_Description op_descs [] = {
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple7",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      0,
+     _class_initializer,
      NULL,
      NULL
 };

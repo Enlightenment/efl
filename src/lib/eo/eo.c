@@ -38,6 +38,7 @@ static void _eo_condtor_reset(_Eo_Object *obj);
 static inline void *_efl_data_scope_get(const _Eo_Object *obj, const _Efl_Class *klass);
 static inline void *_efl_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Efl_Class *klass, const _Eo_Object *ref_obj);
 static inline void _efl_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj);
+static void _vtable_init(Eo_Vtable *vtable, size_t size);
 
 /* Start of Dich */
 
@@ -175,7 +176,7 @@ _eo_op_class_get(Efl_Object_Op op)
      {
         mid = (min + max) / 2;
 
-        if (itr[mid]->base_id + itr[mid]->desc->ops.count < op)
+        if (itr[mid]->base_id + itr[mid]->ops_count < op)
            min = mid + 1;
         else if (itr[mid]->base_id  > op)
            max = mid - 1;
@@ -548,48 +549,6 @@ _eo_api_func_equal(const void *api_func1, const void *api_func2)
 #endif
 }
 
-/* api_func should be the pointer to the function on all platforms except windows,
- * in which it should be the the name of the function (string).
- */
-static inline const Efl_Op_Description *
-_eo_api_desc_get(const void *api_func, const _Efl_Class *klass, const _Efl_Class **extns)
-{
-   const _Efl_Class *cur_klass;
-   const _Efl_Class **kls_itr = NULL;
-   const Efl_Op_Description *op_desc;
-   const Efl_Op_Description *op_descs;
-
-   if (klass)
-     {
-        for (kls_itr = klass->mro ; *kls_itr ; kls_itr++)
-          {
-             unsigned int i;
-             cur_klass = *kls_itr;
-             op_descs = cur_klass->desc->ops.descs;
-
-             for (i = 0, op_desc = op_descs; i < cur_klass->desc->ops.count; i++, op_desc++)
-               {
-                  if (_eo_api_func_equal(op_desc->api_func, api_func))
-                    {
-                       return op_desc;
-                    }
-               }
-          }
-     }
-
-   if (extns)
-     {
-        for (kls_itr = extns ; *kls_itr ; kls_itr++)
-          {
-             cur_klass = *kls_itr;
-             op_desc = _eo_api_desc_get(api_func, cur_klass, NULL);
-             if (op_desc) return op_desc;
-          }
-     }
-
-   return NULL;
-}
-
 EAPI Efl_Object_Op
 _efl_object_api_op_id_get(const void *api_func)
 {
@@ -667,23 +626,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
           }
         else if ((op_desc->op_type == EFL_OBJECT_OP_TYPE_REGULAR_OVERRIDE) || (op_desc->op_type == EFL_OBJECT_OP_TYPE_CLASS_OVERRIDE))
           {
-             const Efl_Op_Description *api_desc;
-             if (override_only)
-               {
-                  api_desc = _eo_api_desc_get(op_desc->api_func, hierarchy_klass, NULL);
-               }
-             else
-               {
-                  api_desc = _eo_api_desc_get(op_desc->api_func, hierarchy_klass->parent, hierarchy_klass->extensions);
-               }
-
-             if (api_desc == NULL)
-               {
-                  ERR("Class '%s': Can't find api func description in class hierarchy (%p->%p) (%s).",
-                      hierarchy_klass->desc->name, op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
-                  return EINA_FALSE;
-               }
-
+             /* We allow any overrides, we don't check if in hierarchy. */
              op = _efl_object_api_op_id_get(op_desc->api_func);
           }
 
@@ -703,6 +646,47 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
      }
 
    return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *ops)
+{
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
+   Efl_Object_Ops empty_ops = { 0 };
+   if (klass->functions_set)
+     {
+        ERR("Class %s already had its functions set..", klass->desc->name);
+        return EINA_FALSE;
+     }
+   klass->functions_set = EINA_TRUE;
+
+   if (!ops)
+     {
+        ops = &empty_ops;
+     }
+
+   klass->ops_count = ops->count;
+
+   klass->base_id = _eo_ops_last_id;
+   _eo_ops_last_id += klass->ops_count + 1;
+
+   _vtable_init(&klass->vtable, DICH_CHAIN1(_eo_ops_last_id) + 1);
+
+
+   /* Flatten the function array */
+     {
+        const _Efl_Class **mro_itr = klass->mro;
+        for (  ; *mro_itr ; mro_itr++)
+           ;
+
+        /* Skip ourselves. */
+        for ( mro_itr-- ; mro_itr > klass->mro ; mro_itr--)
+          {
+             _vtable_copy_all(&klass->vtable, &(*mro_itr)->vtable);
+          }
+     }
+
+   return _eo_class_funcs_set(&klass->vtable, ops, klass, klass, EINA_FALSE);
 }
 
 EAPI Eo *
@@ -892,18 +876,6 @@ _vtable_init(Eo_Vtable *vtable, size_t size)
    vtable->chain = calloc(vtable->size, sizeof(*vtable->chain));
 }
 
-static void
-_eo_class_base_op_init(_Efl_Class *klass)
-{
-   const Efl_Class_Description *desc = klass->desc;
-
-   klass->base_id = _eo_ops_last_id;
-
-   _eo_ops_last_id += desc->ops.count + 1;
-
-   _vtable_init(&klass->vtable, DICH_CHAIN1(_eo_ops_last_id) + 1);
-}
-
 #ifdef EO_DEBUG
 static Eina_Bool
 _eo_class_mro_has(const _Efl_Class *klass, const _Efl_Class *find)
@@ -1023,6 +995,15 @@ _eo_class_mro_init(const Efl_Class_Description *desc, const _Efl_Class *parent, 
    mro = eina_list_prepend(mro, NULL);
 
    return mro;
+}
+
+static Eina_Bool
+_eo_class_initializer(_Efl_Class *klass)
+{
+   if (klass->desc->class_initializer)
+     return klass->desc->class_initializer(_eo_class_id_get(klass));
+
+   return EINA_TRUE;
 }
 
 static void
@@ -1256,6 +1237,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    klass->extensions = (const _Efl_Class **) ((char *) klass + _eo_class_sz);
    klass->mro = (const _Efl_Class **) ((char *) klass->extensions + extn_sz);
    klass->extn_data_off = (Eo_Extension_Data_Offset *) ((char *) klass->mro + mro_sz);
+
    if (klass->parent)
      {
         /* FIXME: Make sure this alignment is enough. */
@@ -1328,19 +1310,27 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
                 desc->name, klass->obj_size);
      }
 
-   _eo_class_base_op_init(klass);
-
-   /* Flatten the function array */
      {
-        const _Efl_Class **mro_itr = klass->mro;
-        for (  ; *mro_itr ; mro_itr++)
-           ;
+        Eo_Id new_id;
 
-        /* Skip ourselves. */
-        for ( mro_itr-- ; mro_itr > klass->mro ; mro_itr--)
-          {
-             _vtable_copy_all(&klass->vtable, &(*mro_itr)->vtable);
-          }
+        eina_spinlock_take(&_efl_class_creation_lock);
+        new_id = (_eo_classes_last_id + 1) | MASK_CLASS_TAG;
+        _eo_classes_expand();
+        _eo_classes[_UNMASK_ID(new_id) - 1] = klass;
+        eina_spinlock_release(&_efl_class_creation_lock);
+
+        klass->header.id = new_id;
+     }
+
+   if (!_eo_class_initializer(klass))
+     {
+        return NULL;
+     }
+
+   /* If functions haven't been set, invoke it with an empty ops structure. */
+   if (!klass->functions_set)
+     {
+        efl_class_functions_set(_eo_class_id_get(klass), NULL);
      }
 
    /* Mark which classes we implement */
@@ -1352,39 +1342,18 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
              const _Efl_Class *extn = *extn_itr;
              /* Set it in the dich. */
              _vtable_func_set(&klass->vtable, klass, extn->base_id +
-                   extn->desc->ops.count, _eo_class_isa_func);
+                   extn->ops_count, _eo_class_isa_func);
           }
 
-        _vtable_func_set(&klass->vtable, klass, klass->base_id + klass->desc->ops.count,
+        _vtable_func_set(&klass->vtable, klass, klass->base_id + klass->ops_count,
               _eo_class_isa_func);
 
         if (klass->parent)
           {
              _vtable_func_set(&klass->vtable, klass,
-                   klass->parent->base_id + klass->parent->desc->ops.count,
+                   klass->parent->base_id + klass->parent->ops_count,
                    _eo_class_isa_func);
           }
-     }
-
-   if (!_eo_class_funcs_set(&klass->vtable, &(klass->desc->ops), klass, klass, EINA_FALSE))
-     {
-        eina_spinlock_free(&klass->objects.trash_lock);
-        eina_spinlock_free(&klass->iterators.trash_lock);
-        _vtable_func_clean_all(&klass->vtable);
-        free(klass);
-        return NULL;
-     }
-
-     {
-        Eo_Id new_id;
-
-        eina_spinlock_take(&_efl_class_creation_lock);
-        new_id = (_eo_classes_last_id + 1) | MASK_CLASS_TAG;
-        _eo_classes_expand();
-        _eo_classes[_UNMASK_ID(new_id) - 1] = klass;
-        eina_spinlock_release(&_efl_class_creation_lock);
-
-        klass->header.id = new_id;
      }
 
    _eo_class_constructor(klass);
@@ -1452,7 +1421,7 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
    const op_type_funcs *func = _vtable_func_get(obj->vtable,
-         klass->base_id + klass->desc->ops.count);
+         klass->base_id + klass->ops_count);
 
    eina_spinlock_take(&_eoid_lock);
 

@@ -18,16 +18,22 @@ _prot_print(Eo *obj, void *class_data EINA_UNUSED)
 
 EAPI EFL_VOID_FUNC_BODY(inherit_prot_print);
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC(inherit_prot_print, _prot_print),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+        EFL_OBJECT_OP_FUNC(inherit_prot_print, _prot_print),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Inherit",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      0,
+     _class_initializer,
      NULL,
      NULL
 };

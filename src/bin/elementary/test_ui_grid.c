@@ -19,13 +19,19 @@ typedef enum {
 static void _custom_engine_layout_do(Eo *obj, void *pd, Efl_Pack *pack, const void *data);
 
 /* Common Efl Class boilerplate. */
-static const Efl_Op_Description custom_engine_op_desc[] = {
-   EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(efl_pack_layout_do, _custom_engine_layout_do),
-};
+static Eina_Bool
+_custom_engine_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(efl_pack_layout_do, _custom_engine_layout_do),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description custom_engine_class_desc = {
    EO_VERSION, "Custom Layout Engine", EFL_CLASS_TYPE_INTERFACE,
-   EFL_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), 0, NULL, NULL
+   0, _custom_engine_class_initializer, NULL, NULL
 };
 
 EFL_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_LAYOUT_INTERFACE, NULL)

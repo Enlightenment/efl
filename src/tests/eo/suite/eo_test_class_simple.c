@@ -88,23 +88,29 @@ EFL_FUNC_BODY_CONST(simple_class_hi_print, Eina_Bool, EINA_FALSE);
 EFL_VOID_FUNC_BODY(simple_pure_virtual);
 EFL_VOID_FUNC_BODY(simple_no_implementation);
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
-     EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
-     EFL_OBJECT_OP_FUNC(simple_a_print, _a_print),
-     EFL_OBJECT_OP_CLASS_FUNC(simple_class_hi_print, _class_hi_print),
-     EFL_OBJECT_OP_FUNC(simple_recursive, _recursive),
-     EFL_OBJECT_OP_FUNC(simple_part_get, _part_get),
-     EFL_OBJECT_OP_FUNC(simple_pure_virtual, NULL),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_dbg_info_get, _dbg_info_get),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
+         EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
+         EFL_OBJECT_OP_FUNC(simple_a_print, _a_print),
+         EFL_OBJECT_OP_CLASS_FUNC(simple_class_hi_print, _class_hi_print),
+         EFL_OBJECT_OP_FUNC(simple_recursive, _recursive),
+         EFL_OBJECT_OP_FUNC(simple_part_get, _part_get),
+         EFL_OBJECT_OP_FUNC(simple_pure_virtual, NULL),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_dbg_info_get, _dbg_info_get),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      sizeof(Simple_Public_Data),
+     _class_initializer,
      NULL,
      NULL
 };
@@ -120,16 +126,22 @@ _beef_get(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
 
 EFL_FUNC_BODY_CONST(simple2_class_beef_get, int, 0);
 
-static Efl_Op_Description op_descs2[] = {
-     EFL_OBJECT_OP_CLASS_FUNC(simple2_class_beef_get, _beef_get),
-};
+static Eina_Bool
+_class_initializer2(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_CLASS_FUNC(simple2_class_beef_get, _beef_get),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc2 = {
      EO_VERSION,
      "Simple2",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs2),
      0,
+     _class_initializer2,
      NULL,
      NULL
 };
@@ -144,16 +156,22 @@ _interface_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const Efl_Object *klas
    return efl_provider_find(efl_super(obj, SEARCHABLE_CLASS), klass);
 }
 
-static Efl_Op_Description op_descs_searchable[] = {
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_provider_find, _interface_get)
-};
+static Eina_Bool
+_searchable_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_provider_find, _interface_get)
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc_searchable = {
      EO_VERSION,
      "Searchable",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs_searchable),
      0,
+     _searchable_class_initializer,
      NULL,
      NULL
 };

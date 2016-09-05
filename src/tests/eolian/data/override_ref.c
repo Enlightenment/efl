@@ -53,26 +53,32 @@ static void __eolian_override_base_z_set(Eo *obj EINA_UNUSED, Override_Data *pd 
 }
 
 
-static const Efl_Op_Description _override_op_desc[] = {
-     EFL_OBJECT_OP_FUNC_OVERRIDE(base_constructor, _override_base_constructor),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(base_z_get, __eolian_override_base_z_get),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(base_z_set, __eolian_override_base_z_set),
-     EFL_OBJECT_OP_FUNC(override_b_set, __eolian_override_b_set),
-     EFL_OBJECT_OP_FUNC(override_bar, __eolian_override_bar),
-     EFL_OBJECT_OP_FUNC(override_c_get, __eolian_override_c_get),
-     EFL_OBJECT_OP_FUNC(override_a_set, NULL),
-     EFL_OBJECT_OP_FUNC(override_a_get, _override_a_get),
-     EFL_OBJECT_OP_FUNC(override_b_get, _override_b_get),
-     EFL_OBJECT_OP_FUNC(override_c_set, _override_c_set),
-     EFL_OBJECT_OP_FUNC(override_foo, NULL),
-};
+static Eina_Bool
+_override_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+      EFL_OBJECT_OP_FUNC_OVERRIDE(base_constructor, _override_base_constructor),
+      EFL_OBJECT_OP_FUNC_OVERRIDE(base_z_get, __eolian_override_base_z_get),
+      EFL_OBJECT_OP_FUNC_OVERRIDE(base_z_set, __eolian_override_base_z_set),
+      EFL_OBJECT_OP_FUNC(override_b_set, __eolian_override_b_set),
+      EFL_OBJECT_OP_FUNC(override_bar, __eolian_override_bar),
+      EFL_OBJECT_OP_FUNC(override_c_get, __eolian_override_c_get),
+      EFL_OBJECT_OP_FUNC(override_a_set, NULL),
+      EFL_OBJECT_OP_FUNC(override_a_get, _override_a_get),
+      EFL_OBJECT_OP_FUNC(override_b_get, _override_b_get),
+      EFL_OBJECT_OP_FUNC(override_c_set, _override_c_set),
+      EFL_OBJECT_OP_FUNC(override_foo, NULL)
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description _override_class_desc = {
      EO_VERSION,
      "Override",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(_override_op_desc),
      sizeof(Override_Data),
+     _override_class_initializer,
      NULL,
      NULL
 };

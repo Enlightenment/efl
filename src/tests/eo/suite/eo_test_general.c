@@ -73,7 +73,7 @@ START_TEST(efl_object_override_tests)
     * make sure we don't cache. */
    ck_assert_int_eq(simple_a_get(obj), 0);
 
-   EFL_OBJECT_OVERRIDE_OPS_DEFINE(
+   EFL_OPS_DEFINE(
             overrides,
             EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_get, _simple_obj_override_a_get));
    fail_if(!efl_object_override(obj, &overrides));
@@ -85,7 +85,7 @@ START_TEST(efl_object_override_tests)
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + OVERRIDE_A_SIMPLE);
 
    /* Override again. */
-   EFL_OBJECT_OVERRIDE_OPS_DEFINE(
+   EFL_OPS_DEFINE(
             overrides2,
             EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _simple_obj_override_a_double_set));
    fail_if(!efl_object_override(obj, NULL));
@@ -99,7 +99,7 @@ START_TEST(efl_object_override_tests)
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A_SIMPLE * 2);
 
    /* Try introducing a new function */
-   EFL_OBJECT_OVERRIDE_OPS_DEFINE(
+   EFL_OPS_DEFINE(
             overrides3,
             EFL_OBJECT_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set));
    fail_if(!efl_object_override(obj, NULL));
@@ -268,8 +268,8 @@ START_TEST(efl_data_fetch)
         EO_VERSION,
         "Simple2",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         10,
+        NULL,
         NULL,
         NULL
    };
@@ -310,8 +310,8 @@ START_TEST(efl_isa_tests)
              EO_VERSION,
              "Iface",
              EFL_CLASS_TYPE_INTERFACE,
-             EFL_CLASS_DESCRIPTION_NOOPS(),
              0,
+             NULL,
              NULL,
              NULL
         };
@@ -326,8 +326,8 @@ START_TEST(efl_isa_tests)
              EO_VERSION,
              "Mixin",
              EFL_CLASS_TYPE_MIXIN,
-             EFL_CLASS_DESCRIPTION_NOOPS(),
              0,
+             NULL,
              NULL,
              NULL
         };
@@ -342,8 +342,8 @@ START_TEST(efl_isa_tests)
              EO_VERSION,
              "Simple2",
              EFL_CLASS_TYPE_REGULAR,
-             EFL_CLASS_DESCRIPTION_NOOPS(),
              10,
+             NULL,
              NULL,
              NULL
         };
@@ -427,10 +427,16 @@ _man_des(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
       efl_manual_free_set(obj, EINA_FALSE);
 }
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _man_con),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _man_des),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _man_con),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _man_des),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 START_TEST(eo_man_free)
 {
@@ -441,8 +447,8 @@ START_TEST(eo_man_free)
         EO_VERSION,
         "Simple2",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_OPS(op_descs),
         10,
+        _class_initializer,
         NULL,
         NULL
    };
@@ -975,10 +981,16 @@ _class_hi_print(Efl_Class *klass EINA_UNUSED, void *class_data EINA_UNUSED)
 EFL_FUNC_BODY(multi_a_print, Eina_Bool, EINA_FALSE);
 EFL_FUNC_BODY_CONST(multi_class_hi_print, Eina_Bool, EINA_FALSE);
 
-static Efl_Op_Description _multi_do_op_descs[] = {
-     EFL_OBJECT_OP_FUNC(multi_a_print, _a_print),
-     EFL_OBJECT_OP_FUNC(multi_class_hi_print, _class_hi_print),
-};
+static Eina_Bool
+_multi_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(multi_a_print, _a_print),
+         EFL_OBJECT_OP_FUNC(multi_class_hi_print, _class_hi_print),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 START_TEST(eo_multiple_do)
 {
@@ -989,8 +1001,8 @@ START_TEST(eo_multiple_do)
         EO_VERSION,
         "Inherit",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_OPS(_multi_do_op_descs),
         0,
+        _multi_class_initializer,
         NULL,
         NULL
    };
@@ -1064,8 +1076,8 @@ START_TEST(eo_pointers_indirection)
         EO_VERSION,
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         0,
+        NULL,
         NULL,
         NULL
    };
@@ -1149,9 +1161,15 @@ _efl_add_failures_finalize(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
    return NULL;
 }
 
-static Efl_Op_Description _efl_add_failures_op_descs[] = {
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_finalize, _efl_add_failures_finalize),
-};
+static Eina_Bool
+_add_failures_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_finalize, _efl_add_failures_finalize),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 START_TEST(efl_add_failures)
 {
@@ -1161,8 +1179,8 @@ START_TEST(efl_add_failures)
         EO_VERSION,
         "Simple2",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_OPS(_efl_add_failures_op_descs),
         0,
+        _add_failures_class_initializer,
         NULL,
         NULL
    };
@@ -1198,8 +1216,8 @@ START_TEST(efl_del_intercept)
         EO_VERSION,
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         0,
+        NULL,
         NULL,
         NULL
    };
