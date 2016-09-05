@@ -236,7 +236,6 @@ END_TEST
 START_TEST(eo_wrong_override)
 {
    efl_object_init();
-   eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Efl_Class *klass;
 
@@ -253,12 +252,8 @@ START_TEST(eo_wrong_override)
         NULL
    };
 
-   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': Can't find api func description in class hierarchy (%p->%p) (%s).");
    klass = efl_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
-   fail_unless(ctx.did);
-
-   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
    efl_object_shutdown();
 }
