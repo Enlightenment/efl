@@ -61,7 +61,7 @@ START_TEST(ecore_cxx_safe_call_async)
       std::cout << "waited" << std::endl;
     }
 
-  ck_assert( ::eina_error_get() == ::EINA_ERROR_OUT_OF_MEMORY);
+  ck_assert( ::eina_error_get() == ENOMEM);
   ::eina_error_set(0);
   std::cout << "end of ecore_cxx_safe_call_async" << std::endl;
 }
@@ -163,7 +163,7 @@ void call_sync_int()
         (
          [] () -> int
          {
-           ::eina_error_set( ::EINA_ERROR_OUT_OF_MEMORY);
+           ::eina_error_set(ENOMEM);
            return 0;
          }
          );

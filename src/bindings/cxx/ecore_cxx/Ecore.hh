@@ -32,7 +32,7 @@ void _ecore_main_loop_thread_safe_call_async_callback(void* data)
     }
   catch(std::bad_alloc const& e)
     {
-      eina_error_set( ::EINA_ERROR_OUT_OF_MEMORY);
+      eina_error_set(ENOMEM);
     }
   catch(std::system_error const& e)
     {
