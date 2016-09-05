@@ -22,21 +22,27 @@ static void _destructor_unref(Eo *obj, void *class_data EINA_UNUSED)
    efl_unref(obj);
 }
 
+static Eina_Bool
+_destructor_unref_class_initializer(Efl_Class *klass2)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor_unref),
+   );
+
+   return efl_class_functions_set(klass2, &ops);
+}
+
 START_TEST(efl_destructor_unref)
 {
    efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
-   static Efl_Op_Description op_descs [] = {
-        EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor_unref),
-   };
-
    static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_OPS(op_descs),
         0,
+        _destructor_unref_class_initializer,
         NULL,
         NULL
    };
@@ -65,8 +71,8 @@ START_TEST(efl_destructor_double_del)
         EO_VERSION,
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         0,
+        NULL,
         NULL,
         NULL
    };

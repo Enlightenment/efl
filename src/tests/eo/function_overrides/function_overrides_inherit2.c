@@ -59,19 +59,25 @@ _class_print(Efl_Class *klass, void *data EINA_UNUSED)
 EAPI EFL_FUNC_BODY(inherit2_print, Eina_Bool, EINA_FALSE);
 EAPI EFL_FUNC_BODY(inherit2_print2, Eina_Bool, EINA_FALSE);
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC(inherit2_print, _print),
-     EFL_OBJECT_OP_FUNC(inherit2_print2, _print2),
-     EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(simple_class_print, _class_print),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(inherit2_print, _print),
+         EFL_OBJECT_OP_FUNC(inherit2_print2, _print2),
+         EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(simple_class_print, _class_print),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Inherit2",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      0,
+     _class_initializer,
      NULL,
      NULL
 };

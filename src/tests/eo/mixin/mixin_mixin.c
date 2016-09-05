@@ -32,18 +32,24 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED)
 
 EAPI EFL_FUNC_BODY(mixin_ab_sum_get, int, 0);
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
-     EFL_OBJECT_OP_FUNC(mixin_ab_sum_get, _ab_sum_get),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
+         EFL_OBJECT_OP_FUNC(mixin_ab_sum_get, _ab_sum_get),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Mixin",
      EFL_CLASS_TYPE_MIXIN,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      0,
+     _class_initializer,
      NULL,
      NULL
 };

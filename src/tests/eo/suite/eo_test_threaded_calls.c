@@ -60,18 +60,24 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, int v)
    return obj;
 }
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC(thread_test_constructor, _constructor),
-     EFL_OBJECT_OP_FUNC(thread_test_v_get, _v_get),
-     EFL_OBJECT_OP_FUNC(thread_test_try_swap_stack, _try_swap_stack),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(thread_test_constructor, _constructor),
+         EFL_OBJECT_OP_FUNC(thread_test_v_get, _v_get),
+         EFL_OBJECT_OP_FUNC(thread_test_try_swap_stack, _try_swap_stack),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Thread Test",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      sizeof(Thread_Test_Public_Data),
+     _class_initializer,
      NULL,
      NULL
 };

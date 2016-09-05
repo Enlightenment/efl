@@ -177,8 +177,7 @@ _custom_table_initializer(Efl_Class *klass)
 
 static const Efl_Class_Description custom_table_class_desc = {
    EO_VERSION, "Efl.Ui.Grid.Internal", EFL_CLASS_TYPE_REGULAR,
-   EFL_CLASS_DESCRIPTION_OPS(custom_table_op_desc),
-   sizeof(Custom_Table_Data), NULL, NULL
+   sizeof(Custom_Table_Data), _custom_table_initializer, NULL, NULL
 };
 
 EFL_DEFINE_CLASS(_efl_ui_grid_custom_table_class_get, &custom_table_class_desc,

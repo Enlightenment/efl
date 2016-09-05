@@ -37,19 +37,25 @@ EFL_FUNC_BODY(simple_##name##_get, int, 0);
 _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
-     EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
-     EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
-     EFL_OBJECT_OP_FUNC(simple_b_get, _b_get),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
+         EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
+         EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
+         EFL_OBJECT_OP_FUNC(simple_b_get, _b_get),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      sizeof(Private_Data),
+     _class_initializer,
      NULL,
      NULL
 };

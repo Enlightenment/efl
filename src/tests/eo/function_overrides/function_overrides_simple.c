@@ -56,19 +56,25 @@ EAPI EFL_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
 EAPI EFL_FUNC_BODY_CONST(simple_class_print, Eina_Bool, EINA_FALSE);
 EAPI EFL_FUNC_BODY_CONST(simple_class_print2, Eina_Bool, EINA_FALSE);
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
-     EFL_OBJECT_OP_FUNC(simple_a_print, _a_print),
-     EFL_OBJECT_OP_FUNC(simple_class_print, _class_print),
-     EFL_OBJECT_OP_FUNC(simple_class_print2, _class_print2),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
+         EFL_OBJECT_OP_FUNC(simple_a_print, _a_print),
+         EFL_OBJECT_OP_FUNC(simple_class_print, _class_print),
+         EFL_OBJECT_OP_FUNC(simple_class_print2, _class_print2),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      sizeof(Simple_Public_Data),
+     _class_initializer,
      NULL,
      NULL
 };

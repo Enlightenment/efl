@@ -37,18 +37,24 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED)
 
 EAPI EFL_VOID_FUNC_BODYV(mixin_add_and_print, EFL_FUNC_CALL(x), int x);
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC(mixin_add_and_print, _add_and_print_set),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(mixin_add_and_print, _add_and_print_set),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Mixin",
      EFL_CLASS_TYPE_MIXIN,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      0,
+     _class_initializer,
      NULL,
      NULL
 };

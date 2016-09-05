@@ -25,8 +25,8 @@ START_TEST(eo_inherit_errors)
         EO_VERSION,
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         0,
+        NULL,
         NULL,
         NULL
    };
@@ -35,8 +35,8 @@ START_TEST(eo_inherit_errors)
         EO_VERSION,
         "Mixin",
         EFL_CLASS_TYPE_MIXIN,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         0,
+        NULL,
         NULL,
         NULL
    };
@@ -45,8 +45,8 @@ START_TEST(eo_inherit_errors)
         EO_VERSION,
         "General",
         EFL_CLASS_TYPE_MIXIN,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         0,
+        NULL,
         NULL,
         NULL
    };
@@ -90,8 +90,8 @@ START_TEST(eo_inconsistent_mro)
         EO_VERSION,
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         0,
+        NULL,
         NULL,
         NULL
    };
@@ -100,8 +100,8 @@ START_TEST(eo_inconsistent_mro)
         EO_VERSION,
         "Mixin",
         EFL_CLASS_TYPE_MIXIN,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         0,
+        NULL,
         NULL,
         NULL
    };
@@ -110,8 +110,8 @@ START_TEST(eo_inconsistent_mro)
         EO_VERSION,
         "Mixin2",
         EFL_CLASS_TYPE_MIXIN,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         0,
+        NULL,
         NULL,
         NULL
    };
@@ -120,8 +120,8 @@ START_TEST(eo_inconsistent_mro)
         EO_VERSION,
         "Mixin3",
         EFL_CLASS_TYPE_MIXIN,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         0,
+        NULL,
         NULL,
         NULL
    };
@@ -165,8 +165,8 @@ START_TEST(eo_bad_interface)
         EO_VERSION,
         "Interface",
         EFL_CLASS_TYPE_INTERFACE,
-        EFL_CLASS_DESCRIPTION_NOOPS(),
         10,
+        NULL,
         NULL,
         NULL
    };
@@ -202,6 +202,16 @@ END_TEST
 static void _null_fct(Eo *eo_obj EINA_UNUSED, void *d EINA_UNUSED) { }
 void null_fct (void) {}
 
+static Eina_Bool
+_null_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(NULL, _null_fct),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
+
 START_TEST(eo_null_api)
 {
    efl_object_init();
@@ -209,15 +219,12 @@ START_TEST(eo_null_api)
 
    const Efl_Class *klass;
 
-   static Efl_Op_Description op_descs[] = {
-        EFL_OBJECT_OP_FUNC(NULL, _null_fct),
-   };
    static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_OPS(op_descs),
         0,
+        _null_class_initializer,
         NULL,
         NULL
    };
@@ -233,21 +240,28 @@ START_TEST(eo_null_api)
 }
 END_TEST
 
+static Eina_Bool
+_wrong_override_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC_OVERRIDE(null_fct, _null_fct),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
+
 START_TEST(eo_wrong_override)
 {
    efl_object_init();
 
    const Efl_Class *klass;
 
-   static Efl_Op_Description op_descs[] = {
-        EFL_OBJECT_OP_FUNC_OVERRIDE(null_fct, _null_fct),
-   };
    static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_OPS(op_descs),
         0,
+        _wrong_override_class_initializer,
         NULL,
         NULL
    };
@@ -259,6 +273,17 @@ START_TEST(eo_wrong_override)
 }
 END_TEST
 
+static Eina_Bool
+_redefined_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(null_fct, _null_fct),
+         EFL_OBJECT_OP_FUNC(null_fct, NULL),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
+
 START_TEST(eo_api_redefined)
 {
    efl_object_init();
@@ -266,16 +291,12 @@ START_TEST(eo_api_redefined)
 
    const Efl_Class *klass;
 
-   static Efl_Op_Description op_descs[] = {
-        EFL_OBJECT_OP_FUNC(null_fct, _null_fct),
-        EFL_OBJECT_OP_FUNC(null_fct, NULL),
-   };
    static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_OPS(op_descs),
         0,
+        _redefined_class_initializer,
         NULL,
         NULL
    };
@@ -291,6 +312,17 @@ START_TEST(eo_api_redefined)
 }
 END_TEST
 
+static Eina_Bool
+_dich_func_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _null_fct),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, NULL),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
+
 START_TEST(eo_dich_func_override)
 {
    efl_object_init();
@@ -298,16 +330,12 @@ START_TEST(eo_dich_func_override)
 
    const Efl_Class *klass;
 
-   static Efl_Op_Description op_descs[] = {
-        EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _null_fct),
-        EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, NULL),
-   };
    static Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_OPS(op_descs),
         0,
+        _dich_func_class_initializer,
         NULL,
         NULL
    };

@@ -13,8 +13,8 @@ static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple4",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_NOOPS(),
      0,
+     NULL,
      NULL,
      NULL
 };

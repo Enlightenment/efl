@@ -85,22 +85,28 @@ _class_destructor(Efl_Class *klass EINA_UNUSED)
 
 EFL_VOID_FUNC_BODYV(simple_constructor, EFL_FUNC_CALL(a), int a);
 
-static Efl_Op_Description op_descs[] = {
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
-     EFL_OBJECT_OP_FUNC_OVERRIDE(efl_finalize, _finalize),
-     EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
-     EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
-     EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
+         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_finalize, _finalize),
+         EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
+         EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
+         EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
      EFL_OBJECT_OP_FUNC(simple_b_get, _b_get),
-};
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static const Efl_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EFL_CLASS_TYPE_REGULAR,
-     EFL_CLASS_DESCRIPTION_OPS(op_descs),
      sizeof(Private_Data),
+     _class_initializer,
      _class_constructor,
      _class_destructor
 };
