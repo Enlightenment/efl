@@ -2538,8 +2538,10 @@ _edje_part_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
           }
         else
           {
-             if ((en->have_selection) && (shift))
-               _sel_extend(en->ed, en->cursor, rp->object, en);
+             if (shift)
+               {
+                  _sel_extend(en->ed, en->cursor, rp->object, en);
+               }
              else
                {
                   en->selecting = EINA_TRUE;
