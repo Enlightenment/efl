@@ -182,6 +182,7 @@ _ecore_promise_quit(void *data, void *value)
    double *start = value;
    double delta = ecore_loop_time_get() - *start;
 
+   fprintf(stderr, "Ecore promise timeout took %f (should be <= 0.01)\n", delta - 0.2);
    fail_if(delta - 0.2 > 0.01);
 
    *bob = EINA_TRUE;
