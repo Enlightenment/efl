@@ -1029,9 +1029,9 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
    if ((pd->callbacks_count & 0xF) == 0x0)
      {
         Eo_Callback_Description **tmp;
-        unsigned int length = (pd->callbacks_count | 0xF) + 1;
+        unsigned int new_len = (pd->callbacks_count | 0xF) + 1;
 
-        tmp = realloc(pd->callbacks, length * sizeof (Eo_Callback_Description*));
+        tmp = realloc(pd->callbacks, new_len * sizeof (Eo_Callback_Description*));
         if (!tmp) return ;
         pd->callbacks = tmp;
      }
