@@ -1042,9 +1042,10 @@ evas_object_smart_changed_get(Evas_Object *eo_obj)
 
    //b. Object clipper visibility
    if ((obj->prev->clipper && obj->cur->clipper) &&
-       (!obj->prev->clipper->cur->visible && !obj->cur->clipper->cur->visible ||
-       ((obj->prev->clipper->cur->color.a == 0) &&
-        (obj->cur->clipper->cur->color.a == 0))))
+       ((!obj->prev->clipper->cur->visible &&
+         !obj->cur->clipper->cur->visible) ||
+        ((obj->prev->clipper->cur->color.a == 0) &&
+         (obj->cur->clipper->cur->color.a == 0))))
      return EINA_FALSE;
 
    if (!obj->clip.clipees)
