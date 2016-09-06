@@ -391,7 +391,6 @@ typedef struct _Efl_Op_Description
  * @struct _Efl_Object_Ops
  *
  * This struct holds the ops and the size of the ops.
- * Please use the #EFL_CLASS_DESCRIPTION_OPS macro when populating it.
  */
 typedef struct _Efl_Object_Ops
 {
@@ -403,7 +402,6 @@ typedef struct _Efl_Object_Ops
  * @struct _Efl_Class_Description
  * This struct holds the description of a class.
  * This description should be passed to efl_class_new.
- * Please use the #EFL_CLASS_DESCRIPTION_OPS macro when populating it.
  */
 struct _Efl_Class_Description
 {
