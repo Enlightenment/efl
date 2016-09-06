@@ -249,6 +249,9 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
       case EEZE_UDEV_TYPE_GRAPHICS:
 	udev_enumerate_add_match_subsystem(en, "graphics");
         break;
+      case EEZE_UDEV_TYPE_GPIO:
+        udev_enumerate_add_match_subsystem(en, "gpio");
+        break;
 
       default:
         break;

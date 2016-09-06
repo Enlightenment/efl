@@ -278,7 +278,11 @@ typedef enum
    /** - Graphics
     * @since 1.18
     */
-   EEZE_UDEV_TYPE_GRAPHICS
+   EEZE_UDEV_TYPE_GRAPHICS,
+   /** - GPIOS (includes gpioN and gpiochipN)
+    * @since 1.19
+    */
+   EEZE_UDEV_TYPE_GPIO
 } Eeze_Udev_Type;
 /**@}*/
 

@@ -262,6 +262,11 @@ _get_syspath_from_watch(void             *data,
             || (strcmp(test, "graphics")))
           goto error;
         break;
+      case EEZE_UDEV_TYPE_GPIO:
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "gpio")))
+          goto error;
+        break;
 
       default:
         break;
@@ -349,6 +354,9 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
 
       case EEZE_UDEV_TYPE_GRAPHICS:
         udev_monitor_filter_add_match_subsystem_devtype(mon, "graphics", NULL);
+        break;
+      case EEZE_UDEV_TYPE_GPIO:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "gpio", NULL);
         break;
 
       default:

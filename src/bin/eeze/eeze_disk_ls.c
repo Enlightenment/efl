@@ -54,5 +54,18 @@ main(void)
         eeze_disk_free(disk);
         eina_stringshare_del(syspath);
      }
+
+   disks = eeze_udev_find_by_type(EEZE_UDEV_TYPE_GPIO, NULL);
+   printf("Found the following GPIO(s):\n");
+   EINA_LIST_FREE(disks, syspath)
+     {
+        Eeze_Disk *disk;
+
+        disk = eeze_disk_new(syspath);
+        printf("\t%s - %s:%s\n", syspath, eeze_disk_devpath_get(disk), eeze_disk_mount_point_get(disk));
+        eeze_disk_free(disk);
+        eina_stringshare_del(syspath);
+     }
+
    return 0;
 }

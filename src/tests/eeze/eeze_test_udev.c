@@ -74,6 +74,7 @@ START_TEST(eeze_test_udev_watch)
    watch = eeze_udev_watch_add(EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR, (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE), catch_events, NULL);
    watch = eeze_udev_watch_add(EEZE_UDEV_TYPE_V4L, (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE), catch_events, NULL);
    watch = eeze_udev_watch_add(EEZE_UDEV_TYPE_BLUETOOTH, (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE), catch_events, NULL);
+   watch = eeze_udev_watch_add(EEZE_UDEV_TYPE_GPIO, (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE), catch_events, NULL);
    watch = eeze_udev_watch_add(EEZE_UDEV_TYPE_NONE, (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE), catch_events, NULL);
    eeze_udev_watch_del(watch);
 
