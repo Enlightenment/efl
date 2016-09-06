@@ -680,23 +680,16 @@ _efl_canvas_group_group_clip_unset(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_canvas_group_group_no_render_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Eina_Bool hide)
+_efl_canvas_group_efl_canvas_object_no_render_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Eina_Bool enable)
 {
    Evas_Object_Protected_Data *obj2;
-   Evas_Object_Smart_Clipped_Data *cso;
-   Evas_Object *cso_clipper;
 
-   if (efl_isa(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS))
-     cso = efl_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
-   else
-     cso = evas_object_smart_data_get(eo_obj);
-   cso_clipper = cso ? cso->clipper : NULL;
+   enable = !!enable;
+   if (efl_canvas_object_no_render_get(eo_obj) == enable) return;
+   efl_canvas_object_no_render_set(efl_super(eo_obj, MY_CLASS), enable);
 
    EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj2)
-     {
-        if (cso_clipper != obj2->object)
-          efl_canvas_object_no_render_set(obj2->object, hide);
-     }
+     efl_canvas_object_no_render_set(obj2->object, enable);
 }
 
 void

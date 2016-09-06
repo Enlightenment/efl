@@ -329,16 +329,17 @@ _edje_object_efl_canvas_group_group_hide(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_efl_canvas_group_group_no_render_set(Eo *obj, Edje *ed, Eina_Bool hide)
+_edje_object_efl_canvas_object_no_render_set(Eo *obj, Edje *ed, Eina_Bool enable)
 {
    Eina_List *l;
    Edje *edg;
 
-   efl_canvas_group_no_render_set(efl_super(obj, MY_CLASS), hide);
-   if (efl_canvas_object_no_render_get(obj) == hide) return;
+   enable = !!enable;
+   if (efl_canvas_object_no_render_get(obj) == enable) return;
+   efl_canvas_object_no_render_set(efl_super(obj, MY_CLASS), enable);
 
    EINA_LIST_FOREACH(ed->groups, l, edg)
-     if (edg != ed) efl_canvas_group_no_render_set(edg->obj, hide);
+     if (edg != ed) efl_canvas_object_no_render_set(edg->obj, enable);
 }
 
 EOLIAN static void

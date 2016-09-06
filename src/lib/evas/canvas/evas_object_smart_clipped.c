@@ -146,6 +146,15 @@ _efl_canvas_group_clipped_efl_canvas_group_group_hide(Eo *eo_obj, Evas_Object_Sm
    evas_object_smart_clipped_group_hide(eo_obj);
 }
 
+EOLIAN static void
+_efl_canvas_group_clipped_efl_canvas_object_no_render_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *cso, Eina_Bool enable)
+{
+   enable = !!enable;
+   if (efl_canvas_object_no_render_get(eo_obj) == enable) return;
+   efl_canvas_object_no_render_set(efl_super(eo_obj, MY_CLASS), enable);
+   efl_canvas_object_no_render_set(cso->clipper, 1);
+}
+
 static void
 evas_object_smart_clipped_smart_color_set(Evas_Object *eo_obj, int r, int g, int b, int a)
 {

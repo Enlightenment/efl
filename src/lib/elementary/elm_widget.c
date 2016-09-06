@@ -574,10 +574,14 @@ _elm_widget_efl_canvas_group_group_color_set(Eo *obj, Elm_Widget_Smart_Data *_pd
 }
 
 EOLIAN static void
-_elm_widget_efl_canvas_group_group_no_render_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eina_Bool hide)
+_elm_widget_efl_canvas_object_no_render_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eina_Bool hide)
 {
    Eina_Iterator *it;
    Evas_Object *o;
+
+   hide = !!hide;
+   if (efl_canvas_object_no_render_get(obj) == hide)
+     return;
 
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)
@@ -586,6 +590,9 @@ _elm_widget_efl_canvas_group_group_no_render_set(Eo *obj, Elm_Widget_Smart_Data 
        efl_canvas_object_no_render_set(o, hide);
      }
    eina_iterator_free(it);
+
+   // bypass implementation in Efl.Canvas.Group
+   efl_canvas_object_no_render_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), hide);
 }
 
 EOLIAN static void
