@@ -502,14 +502,12 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
    err = pthread_cond_timedwait(&(cond->condition),
                                 &(cond->lock->mutex),
                                 &ts);
-   if (err == 0) r = EINA_TRUE;
+   if (err == 0)
+      r = EINA_TRUE;
    else if (err == EPERM)
-     err = EINA_FALSE;
+      eina_error_set(EPERM);
    else if (err == ETIMEDOUT)
-     {
-        r = EINA_FALSE;
-        eina_error_set(ETIMEDOUT);
-     }
+      eina_error_set(ETIMEDOUT);
    else EINA_LOCK_ABORT_DEBUG(err, cond_timedwait, cond);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
