@@ -119,11 +119,6 @@ interface Efl.File {
                                        none).]]
          }
       }
-      eject @const {
-           [[Eject the represented object.
-
-             Get rid of and clean the pointed resource.]]
-      }
       async_wait @const {
          [[Block and wait until all asynchronous operations are completed. Unless
            the async flag was set on this object, this method has no effect.]]
