@@ -664,6 +664,20 @@ _populate(Evas_Object *obj)
                   ((mtime->tm_year == year) && (mtime->tm_mon <= month))))
                _cit_mark(obj, maxdays + sd->first_day_it - 1, mark->mark_type);
              break;
+
+           case ELM_CALENDAR_REVERSE_DAILY:
+             if (((mtime->tm_year == year) && (mtime->tm_mon > month)) ||
+                 (mtime->tm_year > year))
+               day = maxdays;
+             else if ((mtime->tm_year == year) && (mtime->tm_mon == month))
+               day = mtime->tm_mday - 1;
+             else
+               break;
+             for (; day >= 1; day--)
+               _cit_mark(obj, day + sd->first_day_it - 1,
+                         mark->mark_type);
+             break;
+
           }
      }
    sd->filling = EINA_FALSE;

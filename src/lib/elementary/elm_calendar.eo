@@ -18,9 +18,9 @@ enum Elm.Calendar.Mark.Repeat.Type
    weekly, [[Marks will be displayed every week after event day (inclusive) - i.e. each seven days.]]
    monthly, [[Marks will be displayed every month day that coincides to event day. E.g.: if an event is set to 30th Jan, no marks will be displayed on Feb, but will be displayed on 30th Mar.]]
    annually, [[Marks will be displayed every year that coincides to event day (and month). E.g. an event added to 30th Jan 2012 will be repeated on 30th Jan 2013.]]
-   last_day_of_month [[Marks will be displayed every last day of month after event day (inclusive). 
-
+   last_day_of_month, [[Marks will be displayed every last day of month after event day (inclusive).
                        @since 1.7]]
+   reverse_daily [[Marks will be displayed every day before event day. @since 1.19]]
 }
 
 enum Elm.Calendar.Weekday
