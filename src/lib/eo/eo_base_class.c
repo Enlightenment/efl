@@ -945,6 +945,7 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
      _eo_callback_free(pd->callbacks[i]);
 
    free(pd->callbacks);
+   pd->callbacks = NULL;
    pd->callbacks_count = 0;
 }
 
