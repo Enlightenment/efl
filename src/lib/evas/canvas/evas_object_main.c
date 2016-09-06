@@ -1511,35 +1511,18 @@ EOLIAN static void
 _efl_canvas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                      int r, int g, int b, int a)
 {
+   int prev_a;
+
    if (obj->delete_me) return;
-   if (r > 255) r = 255;
-   if (r < 0) r = 0;
-   if (g > 255) g = 255;
-   if (g < 0) g = 0;
-   if (b > 255) b = 255;
-   if (b < 0) b = 0;
-   if (a > 255) a = 255;
-   if (a < 0) a = 0;
-   if (r > a)
-     {
-        r = a;
-        ERR("Evas only handles pre multiplied colors!");
-     }
-   if (g > a)
-     {
-        g = a;
-        ERR("Evas only handles pre multiplied colors!");
-     }
-   if (b > a)
-     {
-        b = a;
-        ERR("Evas only handles pre multiplied colors!");
-     }
+
+   if (EVAS_COLOR_SANITIZE(r, g, b, a))
+     ERR("Evas only handles premultiplied colors (0 <= R,G,B <= A <= 255)");
 
    evas_object_async_block(obj);
    if (evas_object_intercept_call_color_set(eo_obj, obj, r, g, b, a)) return;
    if (obj->is_smart)
      {
+        // FIXME: why is this here, before the state check?
         efl_canvas_group_color_set(eo_obj, r, g, b, a);
      }
    if ((obj->cur->color.r == r) &&
@@ -1547,22 +1530,18 @@ _efl_canvas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
        (obj->cur->color.b == b) &&
        (obj->cur->color.a == a)) return;
 
+   prev_a = obj->cur->color.a;
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
         state_write->color.r = r;
         state_write->color.g = g;
         state_write->color.b = b;
+        state_write->color.a = a;
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
    evas_object_clip_dirty(eo_obj, obj);
-   if ((obj->cur->color.a == 0) && (a == 0) && (obj->cur->render_op == EVAS_RENDER_BLEND)) return;
-
-   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-     {
-        state_write->color.a = a;
-     }
-   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+   if ((prev_a == 0) && (a == 0) && (obj->cur->render_op == EVAS_RENDER_BLEND)) return;
 
    obj->changed_color = EINA_TRUE;
    evas_object_change(eo_obj, obj);

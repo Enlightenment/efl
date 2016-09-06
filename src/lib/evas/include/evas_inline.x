@@ -414,4 +414,16 @@ evas_canvas_async_block(Evas_Public_Data *e)
      }
 }
 
+#define _EVAS_COLOR_CLAMP(x, y) do { \
+   if (x > y) { x = y; bad = 1; } \
+   if (x < 0) { x = 0; bad = 1; } } while (0)
+
+#define EVAS_COLOR_SANITIZE(r, g, b, a) \
+   ({ int bad = 0; \
+   _EVAS_COLOR_CLAMP(a, 255); \
+   _EVAS_COLOR_CLAMP(r, a); \
+   _EVAS_COLOR_CLAMP(g, a); \
+   _EVAS_COLOR_CLAMP(b, a); \
+   bad; })
+
 #endif
