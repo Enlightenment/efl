@@ -8,7 +8,11 @@
  */
 #include <curl/curl.h>
 #else
-#include <sys/socket.h>
+#ifdef __WIN32__
+# include <winsock2.h>
+#else
+# include <sys/socket.h>
+#endif
 
 // all the types, defines, enums etc. from curl that we actually USE.
 // we have to add to this if we use more things from curl not already
