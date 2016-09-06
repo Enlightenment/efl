@@ -58,9 +58,15 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
    simple_a_set(efl_super(obj, cur_klass), a);
 }
 
-static Efl_Op_Description op_desc[] = {
-     EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
-};
+static Eina_Bool
+_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
+   );
+
+   return efl_class_functions_set(klass, &ops);
+}
 
 static void
 bench_eo_do_super(int request)
@@ -69,8 +75,8 @@ bench_eo_do_super(int request)
         EO_VERSION,
         "Simple2",
         EFL_CLASS_TYPE_REGULAR,
-        EFL_CLASS_DESCRIPTION_OPS(op_desc),
         0,
+        _class_initializer,
         NULL,
         NULL
    };
