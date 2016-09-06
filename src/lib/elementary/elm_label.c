@@ -141,8 +141,12 @@ _label_slide_change(Evas_Object *obj)
         // calculate speed or duration
         if (!strcmp(elm_object_style_get(obj), "slide_long"))
           w = tb_w + w;
-        else // slide_short or slide_bounce
+        else if (!strcmp(elm_object_style_get(obj), "slide_short") ||
+                 !strcmp(elm_object_style_get(obj), "slide_bounce")) // slide_short or slide_bounce
           w = tb_w - w;
+        else
+          w = tb_w;
+
         if (sd->use_slide_speed)
           {
              if (sd->slide_speed <= 0) sd->slide_speed = 1;
