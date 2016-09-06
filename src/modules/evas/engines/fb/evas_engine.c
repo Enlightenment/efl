@@ -53,6 +53,7 @@ _output_setup(int w, int h, int rot, int vt, int dev, int refresh)
                                                  evas_fb_outbuf_fb_free_region_for_update,
                                                  NULL,
                                                  NULL,
+                                                 NULL,
                                                  evas_fb_outbuf_fb_free,
                                                  evas_fb_outbuf_fb_get_width(ob),
                                                  evas_fb_outbuf_fb_get_height(ob)))

@@ -793,6 +793,7 @@ eng_setup(Evas *evas, void *in)
                                                 evas_outbuf_update_region_free,
                                                 NULL,
                                                 evas_outbuf_flush,
+                                                NULL,
                                                 evas_outbuf_free,
                                                 evas_outbuf_use,
                                                 evas_outbuf_gl_context_get,

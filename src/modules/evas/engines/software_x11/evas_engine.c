@@ -186,6 +186,7 @@ _output_xlib_setup(int w, int h, int rot, Display *disp, Drawable draw,
                                                  evas_software_xlib_outbuf_free_region_for_update,
                                                  evas_software_xlib_outbuf_idle_flush,
                                                  evas_software_xlib_outbuf_flush,
+                                                 NULL,
                                                  evas_software_xlib_outbuf_free,
                                                  w, h))
      goto on_error;
@@ -247,6 +248,7 @@ _output_swapbuf_setup(int w, int h, int rot, Display *disp, Drawable draw,
                                                  evas_software_xlib_swapbuf_free_region_for_update,
                                                  evas_software_xlib_swapbuf_idle_flush,
                                                  evas_software_xlib_swapbuf_flush,
+                                                 NULL,
                                                  evas_software_xlib_swapbuf_free,
                                                  w, h))
      goto on_error;
@@ -305,6 +307,7 @@ _output_xcb_setup(int w, int h, int rot, xcb_connection_t *conn,
                                                  evas_software_xcb_outbuf_free_region_for_update,
                                                  evas_software_xcb_outbuf_idle_flush,
                                                  evas_software_xcb_outbuf_flush,
+                                                 NULL,
                                                  evas_software_xcb_outbuf_free,
                                                  w, h))
      goto on_error;

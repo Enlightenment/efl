@@ -103,6 +103,7 @@ _output_setup(int w,
                                                  evas_buffer_outbuf_buf_free_region_for_update,
                                                  NULL,
                                                  evas_buffer_outbuf_buf_switch_buffer,
+                                                 NULL,
                                                  evas_buffer_outbuf_buf_free,
                                                  w, h))
      goto on_error;

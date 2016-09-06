@@ -1727,6 +1727,7 @@ eng_setup(Evas *eo_e, void *in)
                                                 eng_outbuf_push_free_region_for_update,
                                                 eng_outbuf_idle_flush,
                                                 eng_outbuf_flush,
+                                                NULL,
                                                 eng_window_free,
                                                 eng_window_use,
                                                 eng_outbuf_gl_context_get,

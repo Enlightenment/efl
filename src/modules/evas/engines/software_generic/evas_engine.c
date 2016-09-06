@@ -3877,6 +3877,7 @@ eng_output_redraws_clear(void *data)
 
    re = (Render_Engine_Software_Generic *)data;
    evas_common_tilebuf_clear(re->tb);
+   if (re->outbuf_redraws_clear) re->outbuf_redraws_clear(re->ob);
 }
 
 static Tilebuf_Rect *

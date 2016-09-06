@@ -54,6 +54,7 @@ typedef void (*Outbuf_Free_Region_For_Update)(Outbuf *ob, RGBA_Image *update);
 typedef void (*Outbuf_Free)(Outbuf *ob);
 typedef int (*Outbuf_Get_Rot)(Outbuf *ob);
 typedef void (*Outbuf_Flush)(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
+typedef void (*Outbuf_Redraws_Clear)(Outbuf *ob);
 
 struct _Render_Engine_Software_Generic
 {
@@ -74,6 +75,7 @@ struct _Render_Engine_Software_Generic
    Outbuf_Free_Region_For_Update outbuf_free_region_for_update;
    Outbuf_Free outbuf_free;
    Outbuf_Flush outbuf_flush;
+   Outbuf_Redraws_Clear outbuf_redraws_clear;
 
    unsigned int w, h;
 
@@ -98,6 +100,7 @@ evas_render_engine_software_generic_init(Render_Engine_Software_Generic *re,
                                          Outbuf_Free_Region_For_Update outbuf_free_region_for_update,
                                          Outbuf_Idle_Flush outbuf_idle_flush,
                                          Outbuf_Flush outbuf_flush,
+                                         Outbuf_Redraws_Clear outbuf_redraws_clear,
                                          Outbuf_Free outbuf_free,
                                          int w, int h)
 {
@@ -115,6 +118,7 @@ evas_render_engine_software_generic_init(Render_Engine_Software_Generic *re,
    re->outbuf_free_region_for_update = outbuf_free_region_for_update;
    re->outbuf_free = outbuf_free;
    re->outbuf_flush = outbuf_flush;
+   re->outbuf_redraws_clear = outbuf_redraws_clear;
 
    re->rects = NULL;
    for (i = 0; i < 4; i++)

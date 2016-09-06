@@ -53,6 +53,7 @@ _output_setup(int  width,
                                                  evas_software_ddraw_outbuf_free_region_for_update,
                                                  evas_software_ddraw_outbuf_idle_flush,
                                                  evas_software_ddraw_outbuf_flush,
+                                                 NULL,
                                                  evas_software_ddraw_outbuf_free,
                                                  width, height))
      goto on_error;

@@ -597,6 +597,7 @@ eng_setup(Evas *evas, void *info)
                                                 eng_outbuf_update_region_free,
                                                 NULL,
                                                 eng_outbuf_flush,
+                                                NULL,
                                                 eng_window_free,
                                                 eng_window_use,
                                                 eng_outbuf_gl_context_get,
