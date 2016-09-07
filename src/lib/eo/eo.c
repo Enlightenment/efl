@@ -2094,7 +2094,12 @@ efl_domain_data_return(Efl_Id_Domain domain)
 EAPI Eina_Bool
 efl_compatible(const Eo *obj, const Eo *obj_target)
 {
-   return _eo_id_domain_compatible(obj, obj_target);
+   Efl_Id_Domain domain1 = ((Eo_Id)obj >> SHIFT_DOMAIN) & MASK_DOMAIN;
+   Efl_Id_Domain domain2 = ((Eo_Id)obj_target >> SHIFT_DOMAIN) & MASK_DOMAIN;
+   if (domain1 == domain2) return EINA_TRUE;
+   DBG("Object %p and %p are not compatible. Domain %i and %i do not match",
+       obj, obj_target, domain1, domain2);
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool

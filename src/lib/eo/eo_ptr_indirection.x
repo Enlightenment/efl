@@ -370,13 +370,10 @@ _eo_id_domain_compatible(const Eo *o1, const Eo *o2)
 {
    Efl_Id_Domain domain1 = ((Eo_Id)o1 >> SHIFT_DOMAIN) & MASK_DOMAIN;
    Efl_Id_Domain domain2 = ((Eo_Id)o2 >> SHIFT_DOMAIN) & MASK_DOMAIN;
-   if (domain1 != domain2)
-     {
-        ERR("Object %p and %p are not compatible. Domain %i and %i do not match",
-            o1, o2, domain1, domain2);
-        return EINA_FALSE;
-     }
-   return EINA_TRUE;
+   if (domain1 == domain2) return EINA_TRUE;
+   ERR("Object %p and %p are not compatible. Domain %i and %i do not match",
+       o1, o2, domain1, domain2);
+   return EINA_FALSE;
 }
 
 //////////////////////////////////////////////////////////////////////////
