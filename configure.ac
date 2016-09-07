@@ -233,6 +233,7 @@ case "$host_os" in
    linux*)
       have_linux="yes"
       have_systemd_pkg="auto"
+      want_systemd="yes"
       ELM_UNIX_DEF="#define"
    ;;
    *)
@@ -700,8 +701,6 @@ AC_ARG_ENABLE([systemd],
     else
        want_systemd="no"
     fi
-   ], [
-    want_systemd="no"
    ])
 
 systemd_dbus_prefix="# "
