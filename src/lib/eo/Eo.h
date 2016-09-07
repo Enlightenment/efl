@@ -760,9 +760,15 @@ typedef struct _Efl_Object_Call_Cache
 # define EFL_FUNC_COMMON_OP_FUNC(Name) ((const void *) #Name)
 #endif
 
+#ifdef _MSC_VER
+# define EFL_FUNC_TLS __declspec(thread)
+#else
+# define EFL_FUNC_TLS __thread
+#endif
+
 // cache OP id, get real fct and object data then do the call
 #define EFL_FUNC_COMMON_OP(Obj, Name, DefRet)                                 \
-     static Efl_Object_Call_Cache ___cache; /* static 0 by default */           \
+     static EFL_FUNC_TLS Efl_Object_Call_Cache ___cache; /* static 0 by default */ \
      Efl_Object_Op_Call_Data ___call;                                           \
      if (EINA_UNLIKELY((___cache.op == EFL_NOOP) ||                      \
                        (___cache.generation != _efl_object_init_generation)))   \
