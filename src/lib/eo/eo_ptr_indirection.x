@@ -269,6 +269,8 @@ struct _Eo_Id_Table_Data
    Generation_Counter  generation;
    /* Optional lock around objects and eoid table - only used if shared */
    Eina_Spinlock       lock;
+   /* Optional lock around all objects in eoid table - only used if shared */
+   Eina_Lock           obj_lock;
    /* are we shared so we need lock/unlock? */
    Eina_Bool           shared : 1;
 };
@@ -298,6 +300,12 @@ _eo_table_data_table_new(Efl_Id_Domain domain)
              free(tdata);
              return NULL;
           }
+        if (!eina_lock_recursive_new(&(tdata->obj_lock)))
+          {
+             eina_spinlock_free(&(tdata->lock));
+             free(tdata);
+             return NULL;
+          }
         tdata->shared = EINA_TRUE;
      }
    // XXX: randomize generation count and allocation methods
@@ -324,7 +332,11 @@ _eo_table_data_new(Efl_Id_Domain domain)
 static void
 _eo_table_data_table_free(Eo_Id_Table_Data *tdata)
 {
-   if (tdata->shared) eina_spinlock_free(&(tdata->lock));
+   if (tdata->shared)
+     {
+        eina_spinlock_free(&(tdata->lock));
+        eina_lock_free(&(tdata->obj_lock));
+     }
    free(tdata);
 }
 

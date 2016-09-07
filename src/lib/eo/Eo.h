@@ -714,10 +714,15 @@ EAPI Eina_Bool        efl_compatible(const Eo *obj, const Eo *obj_target);
 // to fetch internal function and object data at once
 typedef struct _Efl_Object_Op_Call_Data
 {
-   Eo *eo_id;
-   _Eo_Object *obj;
-   void     *func;
-   void     *data;
+   Eo           *eo_id;
+   _Eo_Object   *obj;
+   void         *func;
+   void         *data;
+   void         *lock_data;
+   void         *extn1; // for the future to avoid ABI issues
+   void         *extn2; // for the future to avoid ABI issues
+   void         *extn3; // for the future to avoid ABI issues
+   void         *extn4; // for the future to avoid ABI issues
 } Efl_Object_Op_Call_Data;
 
 #define EFL_OBJECT_CALL_CACHE_SIZE 1

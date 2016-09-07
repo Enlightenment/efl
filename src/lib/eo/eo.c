@@ -334,6 +334,8 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
    const op_type_funcs *func;
    Eina_Bool is_obj;
    Eina_Bool is_override = EINA_FALSE;
+   Eo_Id_Data *data;
+   Efl_Id_Domain domain = 0;
 
    if (((Eo_Id) eo_id) & MASK_SUPER_TAG)
      {
@@ -348,18 +350,21 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
       return EINA_FALSE;
 
    call->eo_id = eo_id;
+   call->lock_data = NULL;
 
    is_obj = _eo_is_a_obj(eo_id);
 
    if (is_obj)
      {
         EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
+        domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
+
         obj = _obj;
         klass = _obj->klass;
         vtable = obj->vtable;
 
         if (_obj_is_override(obj) && cur_klass &&
-              (_eo_class_id_get(cur_klass) == EFL_OBJECT_OVERRIDE_CLASS))
+            (_eo_class_id_get(cur_klass) == EFL_OBJECT_OVERRIDE_CLASS))
           {
              /* Doing a efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS) should result in calling
               * as if it's a normal class. */
@@ -370,38 +375,36 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
         is_override = _obj_is_override(obj) && (cur_klass == NULL);
 
         call->obj = obj;
+        if (EINA_UNLIKELY(domain == EFL_ID_DOMAIN_SHARED))
+          {
+             // YES this is a goto with a label to return. this is a
+             // micro-optimization to move infrequent code out of the
+             // hot path of the function
+             goto ok_lock;
+          }
+ok_lock_back:
         _efl_ref(_obj);
      }
    else
      {
-        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
-        klass = _klass;
-        vtable = &klass->vtable;
-        call->obj = NULL;
-        call->data = NULL;
+        // YES this is a goto with a label to return. this is a
+        // micro-optimization to move infrequent code out of the
+        // hot path of the function
+        goto ok_klass;
      }
+ok_klass_back:
 
    inputklass = main_klass =  klass;
 
-
-   if (!cache->op)
-     {
-        ERR("%s:%d: unable to resolve %s api func '%s' in class '%s'.",
-            file, line, (!is_obj ? "class" : "regular"),
-            func_name, klass->desc->name);
-
-        return EINA_FALSE;
-     }
+   if (!cache->op) goto err_cache_op;
 
    /* If we have a current class, we need to itr to the next. */
    if (cur_klass)
      {
-        func = _eo_kls_itr_next(klass, cur_klass, cache->op);
-
-        if (!func)
-          goto end;
-
-        klass = func->src;
+        // YES this is a goto with a label to return. this is a
+        // micro-optimization to move infrequent code out of the
+        // hot path of the function
+        goto ok_cur_klass;
      }
    else
      {
@@ -421,29 +424,22 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
                        func = (const op_type_funcs *)cache->entry[i].func;
                        call->func = func->func;
                        if (is_obj)
-                         {
-                            call->data = (char *) obj + cache->off[i].off;
-                         }
+                         call->data = (char *)obj + cache->off[i].off;
                        return EINA_TRUE;
                     }
                }
           }
 #endif
-
         func = _vtable_func_get(vtable, cache->op);
-
-        if (!func)
-          goto end;
+        if (!func) goto end;
      }
+ok_cur_klass_back:
 
    if (EINA_LIKELY(func->func && func->src))
      {
         call->func = func->func;
 
-        if (is_obj)
-          {
-             call->data = _efl_data_scope_get(obj, func->src);
-          }
+        if (is_obj) call->data = _efl_data_scope_get(obj, func->src);
 
 # if EFL_OBJECT_CALL_CACHE_SIZE > 0
         if (!cur_klass && !is_override)
@@ -461,17 +457,10 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
 # endif
           }
 #endif
-
         return EINA_TRUE;
      }
 
-   if (func->src != NULL)
-     {
-        ERR("in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.",
-            file, line, func_name, cache->op, klass->desc->name);
-        return EINA_FALSE;
-     }
-
+   if (func->src != NULL) goto err_func_src;
 
 end:
    /* Try composite objects */
@@ -483,12 +472,10 @@ end:
           {
              _Eo_Object *emb_obj = _eo_obj_pointer_get((Eo_Id)emb_obj_id);
 
-             if (!emb_obj)
-               continue;
+             if (!emb_obj) continue;
 
              func = _vtable_func_get(emb_obj->vtable, cache->op);
-             if (func == NULL)
-               continue;
+             if (func == NULL) continue;
 
              if (EINA_LIKELY(func->func && func->src))
                {
@@ -496,30 +483,68 @@ end:
                   call->obj = _efl_ref(emb_obj);
                   call->func = func->func;
                   call->data = _efl_data_scope_get(emb_obj, func->src);
-
                   /* We reffed it above, but no longer need/use it. */
                   _efl_unref(obj);
-
                   return EINA_TRUE;
                }
           }
      }
 
+   /* If it's a do_super call. */
+   if (cur_klass)
      {
-        /* If it's a do_super call. */
-        if (cur_klass)
-          {
-             ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.",
-                 file, line, func_name, cache->op, main_klass->desc->name,
-                 cur_klass->desc->name);
-          }
-        else
-          {
-             /* we should not be able to take this branch */
-             ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s'.",
-                 file, line, func_name, cache->op, main_klass->desc->name);
-          }
+        ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.",
+            file, line, func_name, cache->op, main_klass->desc->name,
+            cur_klass->desc->name);
+        goto err;
      }
+   else
+     {
+        /* we should not be able to take this branch */
+        ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s'.",
+            file, line, func_name, cache->op, main_klass->desc->name);
+        goto err;
+     }
+err_cache_op:
+   ERR("%s:%d: unable to resolve %s api func '%s' in class '%s'.",
+       file, line, (!is_obj ? "class" : "regular"),
+       func_name, klass->desc->name);
+   goto err;
+err_func_src:
+   ERR("in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.",
+       file, line, func_name, cache->op, klass->desc->name);
+err:
+   if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED)) return EINA_FALSE;
+   eina_lock_take(&(data->tables[EFL_ID_DOMAIN_SHARED]->obj_lock));
+   return EINA_FALSE;
+
+   // yes - special "move out of hot path" code blobs with goto's for
+   // speed reasons to have intr prefetches work better and miss less
+ok_cur_klass:
+     {
+        func = _eo_kls_itr_next(klass, cur_klass, cache->op);
+        if (!func) goto end;
+        klass = func->src;
+     }
+   goto ok_cur_klass_back;
+
+ok_klass:
+     {
+        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
+        klass = _klass;
+        vtable = &klass->vtable;
+        call->obj = NULL;
+        call->data = NULL;
+     }
+   goto ok_klass_back;
+
+ok_lock:
+     {
+        data = call->lock_data = _eo_table_data_get();
+        eina_lock_take(&(data->tables[EFL_ID_DOMAIN_SHARED]->obj_lock));
+     }
+   goto ok_lock_back;
+
    return EINA_FALSE;
 }
 
@@ -529,6 +554,10 @@ _efl_object_call_end(Efl_Object_Op_Call_Data *call)
    if (EINA_LIKELY(!!call->obj))
      {
         _efl_unref(call->obj);
+        if (EINA_LIKELY(!call->lock_data)) return;
+
+        Eo_Id_Data *data = call->lock_data;
+        eina_lock_release(&(data->tables[EFL_ID_DOMAIN_SHARED]->obj_lock));
      }
 }
 
