@@ -565,16 +565,16 @@ static inline Eina_Bool
 _eo_api_func_equal(const void *api_func1, const void *api_func2)
 {
 #ifndef _WIN32
-                  return (api_func1 == api_func2);
+   return (api_func1 == api_func2);
 #else
-                  /* On Windows, DLL API's will be exported using the dllexport flag.
-                   * When used by another library or executable, they will be declared
-                   * using the dllimport flag. What happens really is that two symbols are
-                   * created, at two different addresses. So it's impossible to match
-                   * them. We fallback to plain string comparison based on the
-                   * function name itself. Slow, but this should rarely happen.
-                   */
-                  return (api_func2 && api_func1 && !strcmp(api_func2, api_func1));
+   /* On Windows, DLL API's will be exported using the dllexport flag.
+    * When used by another library or executable, they will be declared
+    * using the dllimport flag. What happens really is that two symbols are
+    * created, at two different addresses. So it's impossible to match
+    * them. We fallback to plain string comparison based on the
+    * function name itself. Slow, but this should rarely happen.
+    */
+   return (api_func2 && api_func1 && !strcmp(api_func2, api_func1));
 #endif
 }
 
