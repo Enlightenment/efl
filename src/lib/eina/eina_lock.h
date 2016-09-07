@@ -120,6 +120,22 @@ EAPI extern Eina_Error EINA_ERROR_NOT_MAIN_LOOP;
 static inline Eina_Bool eina_lock_new(Eina_Lock *mutex);
 
 /**
+ * @brief Initializes a new #Eina_Lock that is recursive.
+ *
+ * @param[in] mutex The #Eina_Lock structure to be initialized
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise
+ *
+ * @details This function initializes an #Eina_Lock with appropriate values.
+ *          These values are platform dependent as is the structure of the
+ *          #Eina_Lock itself.
+ *
+ * @see eina_lock_new()
+ * @see eina_lock_free()
+ * @since 1.19
+ */
+static inline Eina_Bool eina_lock_recursive_new(Eina_Lock *mutex);
+
+/**
  * @brief Deallocates an #Eina_Lock
  *
  * @param[in] mutex The #Eina_Lock structure to be deallocated

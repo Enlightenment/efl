@@ -186,6 +186,35 @@ fail_release:
    return ok;
 }
 
+static inline Eina_Bool
+eina_lock_recursive_new(Eina_Lock *mutex)
+{
+   pthread_mutexattr_t attr;
+   Eina_Bool ok = EINA_FALSE;
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (!_eina_threads_activated)
+     assert(pthread_equal(_eina_main_loop, pthread_self()));
+#endif
+
+   if (pthread_mutexattr_init(&attr) != 0)
+     return EINA_FALSE;
+   if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0)
+     goto fail_release;
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK) != 0)
+     goto fail_release;
+   memset(mutex, 0, sizeof(Eina_Lock));
+#endif
+   if (pthread_mutex_init(&(mutex->mutex), &attr) != 0)
+     goto fail_release;
+
+   ok = EINA_TRUE;
+fail_release:
+   pthread_mutexattr_destroy(&attr);
+   return ok;
+}
+
 static inline void
 eina_lock_free(Eina_Lock *mutex)
 {
