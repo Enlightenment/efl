@@ -1520,11 +1520,6 @@ _efl_canvas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
 
    evas_object_async_block(obj);
    if (evas_object_intercept_call_color_set(eo_obj, obj, r, g, b, a)) return;
-   if (obj->is_smart)
-     {
-        // FIXME: why is this here, before the state check?
-        efl_canvas_group_color_set(eo_obj, r, g, b, a);
-     }
    if ((obj->cur->color.r == r) &&
        (obj->cur->color.g == g) &&
        (obj->cur->color.b == b) &&
@@ -1539,6 +1534,9 @@ _efl_canvas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
         state_write->color.a = a;
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
+   if (obj->is_smart)
+     efl_canvas_group_color_set(eo_obj, r, g, b, a);
 
    evas_object_clip_dirty(eo_obj, obj);
    if ((prev_a == 0) && (a == 0) && (obj->cur->render_op == EVAS_RENDER_BLEND)) return;
