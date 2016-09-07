@@ -155,12 +155,6 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    res = stat(monitor->path, &st);
    if (res) goto error;
 
-   if (S_ISDIR(st.st_mode)) // let poller handle directories
-     {
-        eio_monitor_fallback_add(monitor);
-        goto error;
-     }
-
    fd = open(monitor->path, O_RDONLY);
    if (fd < 0) goto error;
 
