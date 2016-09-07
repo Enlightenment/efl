@@ -33,10 +33,16 @@ _eio_ls_xattr_heavy(void *data, Ecore_Thread *thread)
 {
    Eio_File_Char_Ls *async = data;
    Eina_Iterator *it;
+   Eina_List *pack = NULL;
    const char *tmp;
+   double start;
 
    it = eina_xattr_ls(async->ls.directory);
    if (!it) return;
+
+   eio_file_container_set(&async->ls.common, eina_iterator_container_get(it));
+
+   start = ecore_time_get();
 
    EINA_ITERATOR_FOREACH(it, tmp)
      {
@@ -49,22 +55,38 @@ _eio_ls_xattr_heavy(void *data, Ecore_Thread *thread)
                                        tmp);
           }
 
-        if (filter) ecore_thread_feedback(thread, eina_stringshare_add(tmp));
+        if (filter)
+          {
+             Eio_File_Char *send_fc;
+
+             send_fc = eio_char_malloc();
+             if (!send_fc) goto on_error;
+
+             send_fc->filename = eina_stringshare_add(tmp);
+             send_fc->associated = async->ls.common.worker.associated;
+             async->ls.common.worker.associated = NULL;
+
+             pack = eina_list_append(pack, send_fc);
+          }
+        else
+          {
+          on_error:
+             if (async->ls.common.worker.associated)
+               {
+                  eina_hash_free(async->ls.common.worker.associated);
+                  async->ls.common.worker.associated = NULL;
+               }
+          }
+
+        pack = eio_pack_send(thread, pack, &start);
 
         if (ecore_thread_check(thread))
           break;
      }
 
-   eina_iterator_free(it);
-}
+   if (pack) ecore_thread_feedback(thread, pack);
 
-static void
-_eio_ls_xattr_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
-{
-   Eio_File_Char_Ls *async = data;
-   const char *xattr = msg_data;
-
-   async->main_cb((void*) async->ls.common.data, &async->ls.common, xattr);
+   async->ls.ls = it;
 }
 
 static void
@@ -310,7 +332,7 @@ eio_file_xattr(const char *path,
                          error_cb,
                          data,
                          _eio_ls_xattr_heavy,
-                         _eio_ls_xattr_notify,
+                         _eio_string_notify,
                          eio_async_end,
                          eio_async_error))
     return NULL;
