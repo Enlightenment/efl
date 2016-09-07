@@ -243,13 +243,11 @@ _async_open_data_free(Async_Open_Data *data)
 static void
 _efl_ui_image_async_open_do(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
-   Evas_Object *obj = data;
+   Efl_Ui_Image_Data * sd = data;
    Eina_File *f;
    Async_Open_Data *todo, *done;
    void *map = NULL;
    unsigned int buf;
-
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
 
    eina_spinlock_take(&sd->async.lck);
    todo = sd->async.todo;
@@ -332,8 +330,7 @@ begin:
 static void
 _efl_ui_image_async_open_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
-   Evas_Object *obj = data;
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
+   Efl_Ui_Image_Data * sd = data;
 
    DBG("Async open thread was canceled");
    sd->async.th = NULL;
@@ -345,14 +342,12 @@ _efl_ui_image_async_open_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 static void
 _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
-   Evas_Object *obj = data;
+   Efl_Ui_Image_Data * sd = data;
    Eina_Stringshare *file, *key;
    Async_Open_Data *done;
    Eina_Bool ok;
    Eina_File *f;
    void *map;
-
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
 
    // async open thread can't be running now
    // locking anyways to be sure (memory barrier), see CID 1343345
@@ -366,7 +361,7 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
         eina_spinlock_release(&sd->async.lck);
         sd->async.th = ecore_thread_run(_efl_ui_image_async_open_do,
                                         _efl_ui_image_async_open_done,
-                                        _efl_ui_image_async_open_cancel, obj);
+                                        _efl_ui_image_async_open_cancel, sd);
 
         return;
      }
@@ -380,7 +375,7 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
         ERR("Async open failed for an unknown reason.");
         sd->async_failed = EINA_TRUE;
         eina_spinlock_release(&sd->async.lck);
-        efl_event_callback_legacy_call(obj, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
+        efl_event_callback_legacy_call(sd->self, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
         return;
      }
 
@@ -401,7 +396,7 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
         if (sd->edje)
           ok = edje_object_mmap_set(sd->img, f, key);
         else
-          ok = _efl_ui_image_smart_internal_file_set(obj, sd, file, f, key);
+          ok = _efl_ui_image_smart_internal_file_set(sd->self, sd, file, f, key);
      }
 
    if (ok)
@@ -410,15 +405,15 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
         sd->async_failed = EINA_FALSE;
         ELM_SAFE_FREE(sd->async.file, eina_stringshare_del);
         ELM_SAFE_FREE(sd->async.key, eina_stringshare_del);
-        efl_event_callback_legacy_call(obj, EFL_FILE_EVENT_ASYNC_OPENED, NULL);
-        _efl_ui_image_internal_sizing_eval(obj, sd);
+        efl_event_callback_legacy_call(sd->self, EFL_FILE_EVENT_ASYNC_OPENED, NULL);
+        _efl_ui_image_internal_sizing_eval(sd->self, sd);
      }
    else
      {
         // TODO: Implement Efl.File async,error event_info type
         sd->async_failed = EINA_TRUE;
         // keep file,key around for file_get
-        efl_event_callback_legacy_call(obj, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
+        efl_event_callback_legacy_call(sd->self, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
      }
 
    // close f, map and free strings
@@ -426,8 +421,8 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static Eina_Bool
-_efl_ui_image_async_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
-                          const char *file, const Eina_File *f, const char *key)
+_efl_ui_image_async_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd,
+                             const char *file, const Eina_File *f, const char *key)
 {
    Async_Open_Data *todo;
    Eina_Bool was_running;
@@ -448,7 +443,7 @@ _efl_ui_image_async_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
         was_running = EINA_FALSE;
         sd->async.th = ecore_thread_run(_efl_ui_image_async_open_do,
                                         _efl_ui_image_async_open_done,
-                                        _efl_ui_image_async_open_cancel, obj);
+                                        _efl_ui_image_async_open_cancel, sd);
      }
    else was_running = EINA_TRUE;
 
@@ -882,6 +877,7 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
 
    pd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FIT_INSIDE;
+   pd->self = obj;
 
    return obj;
 }

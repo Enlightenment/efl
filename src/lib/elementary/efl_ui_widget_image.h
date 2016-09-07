@@ -43,6 +43,7 @@ typedef enum
 typedef struct _Efl_Ui_Image_Data Efl_Ui_Image_Data;
 struct _Efl_Ui_Image_Data
 {
+   Eo                   *self;
    Evas_Object          *hit_rect;
    Evas_Object          *img;
    Evas_Object          *prev_img;
