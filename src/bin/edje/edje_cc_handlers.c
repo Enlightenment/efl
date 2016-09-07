@@ -4455,6 +4455,8 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
         item->row = item2->row;
         item->colspan = item2->colspan;
         item->rowspan = item2->rowspan;
+        item->spread.w = item2->spread.w;
+        item->spread.h = item2->spread.h;
 
         pitem = (Edje_Pack_Element_Parser *)item;
         pitem->can_override = EINA_TRUE;
