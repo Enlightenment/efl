@@ -405,32 +405,28 @@ _efl_io_manager_stat(Eo *obj,
 
 static Efl_Future *
 _efl_io_manager_xattr_ls(Eo *obj,
-                         Efl_Io_Manager_Data *pd,
+                         Efl_Io_Manager_Data *pd EINA_UNUSED,
                          const char *path)
 {
-   // FIXME
-#if 0
-   Eina_Promise_Owner *promise = eina_promise_add();
-   Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
+   Efl_Promise *p;
+   Eio_File *h;
 
-   Eina_Promise* p = eina_promise_owner_promise_get(promise);
-   if (!operation_data)
-     {
-        EINA_LOG_CRIT("Failed to create eio job operation data.");
-        eina_promise_owner_error_set(promise, eina_error_get());
-        eina_error_set(0);
-        return p;
-     }
+   p = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!p) return NULL;
 
-   operation_data->delayed_arg = (char*)calloc(sizeof(char), strlen(path) + 1);
-   strcpy(operation_data->delayed_arg, path);
+   h = _eio_file_xattr(path,
+                       _file_string_cb,
+                       _file_done_cb,
+                       _file_error_cb,
+                       p);
+   if (!h) goto end;
 
-   eina_promise_owner_progress_notify(promise,
-      _xattr_notify_start,
-      operation_data,
-      _free_notify_start_data);
-   return p;
-#endif
+   efl_event_callback_array_add(p, promise_progress_handling(), h);
+   return efl_promise_future_get(p);
+
+ end:
+   efl_del(p);
+   return NULL;
 }
 
 static Efl_Future *
