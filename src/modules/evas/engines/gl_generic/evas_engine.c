@@ -2803,19 +2803,12 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image, Eina_Rw_Slice *slice
                    Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode,
                    int plane)
 {
-   Eina_Bool cow = EINA_FALSE, to_write = EINA_FALSE;
    Evas_GL_Image_Data_Map *map = NULL;
    Evas_GL_Image *im;
    Eina_Bool ok;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(image && *image && slice, EINA_FALSE);
    im = *image;
-
-   if (mode & EFL_GFX_BUFFER_ACCESS_MODE_COW)
-     cow = EINA_TRUE;
-
-   if (mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE)
-     to_write = EINA_TRUE;
 
    if (im->im)
      {
