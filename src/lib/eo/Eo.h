@@ -574,11 +574,11 @@ typedef struct _Efl_Domain_Data Efl_Domain_Data;
 EAPI Efl_Id_Domain    efl_domain_get(void);
 
 /**
- * @brief Get the native domain for the current thread
+ * @brief Switch the native domain for the current thread
  * @param domain The domain to switch to
  * @return EINA_TRUE if the switch succeeds, and EINA_FALSE if it fails
  *
- * Permanently switch the native domain for allocated objects for the calling
+ * Permanently switch the native domain for new objects for the calling
  * thread. All objects created on this thread UNLESS it has switched to a
  * new domain temporarily with efl_domain_current_set(),
  * efl_domain_current_push() or efl_domain_current_pop(),
@@ -607,8 +607,9 @@ EAPI Efl_Id_Domain    efl_domain_current_get(void);
  *
  * Temporarily switch the current domain being used for allocation. There
  * is actually a stack of domans to use you can alter via
- * efl_domain_current_push() and efl_domain_current_pop(). This only applies
- * to the calling thread.
+ * efl_domain_current_push() and efl_domain_current_pop(). The current
+ * domain is the one ont he top of the stack, so this entry is altered
+ * without pushing or popping. This only applies to the calling thread.
  * 
  * @see efl_domain_get()
  */
@@ -699,7 +700,7 @@ EAPI Eina_Bool        efl_domain_data_return(Efl_Id_Domain domain);
  * @return EINA_TRUE if compatible, EINA_FALSE if not
  *
  * This checks to see if 2 objects are compatible and could be parent or
- * children of eachoter, could reference eachoter etc.. There is only a
+ * children of eachother, could reference eachother etc.. There is only a
  * need to call this if you got objects from multiple domains (an
  * adopted domain with efl_domain_data_adopt() or the shared domain
  * EFL_ID_DOMAIN_SHARED where objects may be accessed by any thread).
