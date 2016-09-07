@@ -79,7 +79,8 @@ struct _Ecore_Safe_Call
    Eina_Lock      m;
    Eina_Condition c;
 
-   int            current_id;
+   Efl_Domain_Data *eo_domain_data;
+   int              current_id;
 
    Eina_Bool      sync : 1;
    Eina_Bool      suspend : 1;
@@ -610,6 +611,8 @@ ecore_main_loop_thread_safe_call_wait(double wait)
    ecore_pipe_wait(_thread_call, 1, wait);
 }
 
+static Efl_Id_Domain _ecore_main_domain = EFL_ID_DOMAIN_INVALID;
+
 EAPI int
 ecore_thread_main_loop_begin(void)
 {
@@ -635,12 +638,22 @@ ecore_thread_main_loop_begin(void)
    eina_lock_new(&order->m);
    eina_condition_new(&order->c, &order->m);
    order->suspend = EINA_TRUE;
+   order->eo_domain_data = NULL;
 
    _ecore_main_loop_thread_safe_call(order);
 
    eina_lock_take(&order->m);
    while (order->current_id != _thread_id)
      eina_condition_wait(&order->c);
+
+   if (order->eo_domain_data)
+     {
+        _ecore_main_domain =
+          efl_domain_data_adopt(order->eo_domain_data);
+        if (_ecore_main_domain == EFL_ID_DOMAIN_INVALID)
+          ERR("Cannot adopt mainloop eo domain");
+     }
+
    eina_lock_release(&order->m);
 
    eina_main_loop_define();
@@ -671,6 +684,12 @@ ecore_thread_main_loop_end(void)
    _thread_loop--;
    if (_thread_loop > 0)
      return _thread_loop;
+
+   if (_ecore_main_domain != EFL_ID_DOMAIN_INVALID)
+     {
+        efl_domain_data_return(_ecore_main_domain);
+        _ecore_main_domain = EFL_ID_DOMAIN_INVALID;
+     }
 
    current_id = _thread_id;
 
@@ -974,6 +993,7 @@ _ecore_main_call_flush(void)
 
              eina_lock_take(&call->m);
              _thread_id = call->current_id;
+             call->eo_domain_data = efl_domain_data_get();
              eina_condition_broadcast(&call->c);
              eina_lock_release(&call->m);
 

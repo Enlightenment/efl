@@ -61,8 +61,9 @@
 /* 32 bits */
 # define BITS_MID_TABLE_ID        5
 # define BITS_TABLE_ID            5
-# define BITS_ENTRY_ID           12
-# define BITS_GENERATION_COUNTER  8
+# define BITS_ENTRY_ID           11
+# define BITS_GENERATION_COUNTER  7
+# define BITS_DOMAIN              2
 # define REF_TAG_SHIFT           30
 # define SUPER_TAG_SHIFT         31
 # define DROPPED_TABLES           0
@@ -73,8 +74,9 @@ typedef uint16_t Generation_Counter;
 /* 64 bits */
 # define BITS_MID_TABLE_ID       11
 # define BITS_TABLE_ID           11
-# define BITS_ENTRY_ID           12
-# define BITS_GENERATION_COUNTER 28
+# define BITS_ENTRY_ID           11
+# define BITS_GENERATION_COUNTER 27
+# define BITS_DOMAIN              2
 # define REF_TAG_SHIFT           62
 # define SUPER_TAG_SHIFT         63
 # define DROPPED_TABLES           2
@@ -84,6 +86,8 @@ typedef uint32_t Generation_Counter;
 #endif
 
 /* Shifts macros to manipulate the Eo id */
+#define SHIFT_DOMAIN          (BITS_MID_TABLE_ID + BITS_TABLE_ID + \
+                               BITS_ENTRY_ID + BITS_GENERATION_COUNTER)
 #define SHIFT_MID_TABLE_ID    (BITS_TABLE_ID + \
                                BITS_ENTRY_ID + BITS_GENERATION_COUNTER)
 #define SHIFT_TABLE_ID        (BITS_ENTRY_ID + BITS_GENERATION_COUNTER)
@@ -91,12 +95,14 @@ typedef uint32_t Generation_Counter;
 
 /* Maximum ranges - a few tables and entries are dropped to minimize the amount
  * of wasted bytes, see _eo_id_mem_alloc */
+#define MAX_DOMAIN            (1 << BITS_DOMAIN)
 #define MAX_MID_TABLE_ID      (1 << BITS_MID_TABLE_ID)
 #define MAX_TABLE_ID          ((1 << BITS_TABLE_ID) - DROPPED_TABLES )
 #define MAX_ENTRY_ID          ((1 << BITS_ENTRY_ID) - DROPPED_ENTRIES)
 #define MAX_GENERATIONS       (1 << BITS_GENERATION_COUNTER)
 
 /* Masks */
+#define MASK_DOMAIN           (MAX_DOMAIN - 1)
 #define MASK_MID_TABLE_ID     (MAX_MID_TABLE_ID - 1)
 #define MASK_TABLE_ID         ((1 << BITS_TABLE_ID) - 1)
 #define MASK_ENTRY_ID         ((1 << BITS_ENTRY_ID) - 1)
@@ -236,110 +242,155 @@ typedef struct
    _Eo_Id_Entry entries[MAX_ENTRY_ID];
 } _Eo_Ids_Table;
 
-/* Tables handling pointers indirection */
-extern _Eo_Ids_Table **_eo_ids_tables[MAX_MID_TABLE_ID];
+//////////////////////////////////////////////////////////////////////////
 
-/* Current table used for following allocations */
-extern _Eo_Ids_Table *_current_table;
+typedef struct _Eo_Id_Data       Eo_Id_Data;
+typedef struct _Eo_Id_Table_Data Eo_Id_Table_Data;
 
-/* Spare empty table */
-extern _Eo_Ids_Table *_empty_table;
+struct _Eo_Id_Table_Data
+{
+   /* Tables handling pointers indirection */
+   _Eo_Ids_Table     **eo_ids_tables[MAX_MID_TABLE_ID];
+   /* Current table used for following allocations */
+   _Eo_Ids_Table      *current_table;
+   /* Spare empty table */
+   _Eo_Ids_Table      *empty_table;
+   /* Cached eoid lookups */
+   struct
+     {
+        Eo_Id             id;
+        _Eo_Object       *object;
+        const Eo         *isa_id;
+        const Efl_Class  *klass;
+        Eina_Bool         isa;
+     }
+   cache;
+   /* Next generation to use when assigning a new entry to a Eo pointer */
+   Generation_Counter  generation;
+   /* Optional lock around objects and eoid table - only used if shared */
+   Eina_Spinlock       lock;
+   /* are we shared so we need lock/unlock? */
+   Eina_Bool           shared : 1;
+};
 
-/* Next generation to use when assigning a new entry to a Eo pointer */
-extern Generation_Counter _eo_generation_counter;
+struct _Eo_Id_Data
+{
+   Eo_Id_Table_Data   *tables[4];
+   unsigned char       local_domain;
+   unsigned char       stack_top;
+   unsigned char       domain_stack[255 - (sizeof(void *) * 4) - 2];
+};
+
+extern Eina_TLS    _eo_table_data;
+extern Eo_Id_Data *_eo_table_data_shared;
+
+static inline Eo_Id_Table_Data *
+_eo_table_data_table_new(Efl_Id_Domain domain)
+{
+   Eo_Id_Table_Data *tdata;
+
+   tdata = calloc(1, sizeof(Eo_Id_Table_Data));
+   if (!tdata) return NULL;
+   if (domain == EFL_ID_DOMAIN_SHARED)
+     {
+        if (!eina_spinlock_new(&(tdata->lock)))
+          {
+             free(tdata);
+             return NULL;
+          }
+        tdata->shared = EINA_TRUE;
+     }
+   // XXX: randomize generation count and allocation methods
+   return tdata;
+}
+
+static inline Eo_Id_Data *
+_eo_table_data_new(Efl_Id_Domain domain)
+{
+   Eo_Id_Data *data;
+
+   data = calloc(1, sizeof(Eo_Id_Data));
+   if (!data) return NULL;
+   data->local_domain = domain;
+   data->domain_stack[data->stack_top] = data->local_domain;
+   data->tables[data->local_domain] =
+     _eo_table_data_table_new(data->local_domain);
+   if (domain != EFL_ID_DOMAIN_SHARED)
+     data->tables[EFL_ID_DOMAIN_SHARED] =
+     _eo_table_data_shared->tables[EFL_ID_DOMAIN_SHARED];
+   return data;
+}
+
+static void
+_eo_table_data_table_free(Eo_Id_Table_Data *tdata)
+{
+   if (tdata->shared) eina_spinlock_free(&(tdata->lock));
+   free(tdata);
+}
+
+static inline Eo_Id_Data *
+_eo_table_data_get(void)
+{
+   Eo_Id_Data *data = eina_tls_get(_eo_table_data);
+   if (EINA_LIKELY(data != NULL)) return data;
+
+   data = _eo_table_data_new(EFL_ID_DOMAIN_THREAD);
+   if (!data) return NULL;
+
+   eina_tls_set(_eo_table_data, data);
+   return data;
+}
+
+static inline Eo_Id_Table_Data *
+_eo_table_data_current_table_get(Eo_Id_Data *data)
+{
+   return data->tables[data->domain_stack[data->stack_top]];
+}
+
+static inline Eo_Id_Table_Data *
+_eo_table_data_table_get(Eo_Id_Data *data, Efl_Id_Domain domain)
+{
+   return data->tables[domain];
+}
+
+static inline Eina_Bool
+_eo_id_domain_compatible(const Eo *o1, const Eo *o2)
+{
+   Efl_Id_Domain domain1 = ((Eo_Id)o1 >> SHIFT_DOMAIN) & MASK_DOMAIN;
+   Efl_Id_Domain domain2 = ((Eo_Id)o2 >> SHIFT_DOMAIN) & MASK_DOMAIN;
+   if (domain1 != domain2)
+     {
+        ERR("Object %p and %p are not compatible. Domain %i and %i do not match",
+            o1, o2, domain1, domain2);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 
 /* Macro used to compose an Eo id */
-#define EO_COMPOSE_PARTIAL_ID(MID_TABLE, TABLE)                         \
-   (((Eo_Id) 0x1 << REF_TAG_SHIFT)                                   |  \
-    ((Eo_Id)(MID_TABLE & MASK_MID_TABLE_ID) << SHIFT_MID_TABLE_ID)   |  \
+#define EO_COMPOSE_PARTIAL_ID(MID_TABLE, TABLE)                      \
+   (((Eo_Id) 0x1 << REF_TAG_SHIFT)                                 | \
+    ((Eo_Id)(MID_TABLE & MASK_MID_TABLE_ID) << SHIFT_MID_TABLE_ID) | \
     ((Eo_Id)(TABLE & MASK_TABLE_ID) << SHIFT_TABLE_ID))
 
-#define EO_COMPOSE_FINAL_ID(PARTIAL_ID, ENTRY, GENERATION)     \
-    (PARTIAL_ID                                             |  \
-     ((ENTRY & MASK_ENTRY_ID) << SHIFT_ENTRY_ID)            |  \
+#define EO_COMPOSE_FINAL_ID(PARTIAL_ID, ENTRY, DOMAIN, GENERATION)  \
+    (PARTIAL_ID                                                   | \
+     (((Eo_Id)DOMAIN & MASK_DOMAIN) << SHIFT_DOMAIN)              | \
+     ((ENTRY & MASK_ENTRY_ID) << SHIFT_ENTRY_ID)                  | \
      (GENERATION & MASK_GENERATIONS ))
 
 /* Macro to extract from an Eo id the indexes of the tables */
-#define EO_DECOMPOSE_ID(ID, MID_TABLE, TABLE, ENTRY, GENERATION)  \
-   MID_TABLE = (ID >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;    \
-   TABLE = (ID >> SHIFT_TABLE_ID) & MASK_TABLE_ID;                \
-   ENTRY = (ID >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;                \
+#define EO_DECOMPOSE_ID(ID, MID_TABLE, TABLE, ENTRY, GENERATION) \
+   MID_TABLE = (ID >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;   \
+   TABLE = (ID >> SHIFT_TABLE_ID) & MASK_TABLE_ID;               \
+   ENTRY = (ID >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;               \
    GENERATION = ID & MASK_GENERATIONS;
 
 /* Macro used for readability */
-#define TABLE_FROM_IDS _eo_ids_tables[mid_table_id][table_id]
-
-extern _Eo_Object *cached_object;
-extern Eo_Id cached_id;
-extern Eina_Spinlock _eoid_lock;
-
-static inline _Eo_Object *
-_eo_obj_pointer_get(const Eo_Id obj_id)
-{
-#ifdef HAVE_EO_ID
-   _Eo_Id_Entry *entry;
-   _Eo_Object *ptr;
-   Generation_Counter generation;
-   Table_Index mid_table_id, table_id, entry_id;
-   Eo_Id tag_bit;
-
-   // NULL objects will just be sensibly ignored. not worth complaining
-   // every single time.
-
-   eina_spinlock_take(&_eoid_lock);
-   if (obj_id == cached_id)
-     {
-        ptr = cached_object;
-        eina_spinlock_release(&_eoid_lock);
-        return ptr;
-     }
-
-   // get tag bit to check later down below - pipelining
-   tag_bit = (obj_id) & MASK_OBJ_TAG;
-   if (!obj_id)
-     {
-        eina_spinlock_release(&_eoid_lock);
-        DBG("obj_id is NULL. Possibly unintended access?");
-        return NULL;
-     }
-   else if (!tag_bit)
-     {
-        eina_spinlock_release(&_eoid_lock);
-        DBG("obj_id is not a valid object id.");
-        return NULL;
-     }
-
-   EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
-
-   /* Check the validity of the entry */
-   if (_eo_ids_tables[mid_table_id])
-     {
-        _Eo_Ids_Table *tab = TABLE_FROM_IDS;
-
-        if (tab)
-          {
-             entry = &(tab->entries[entry_id]);
-             if (entry->active && (entry->generation == generation))
-               {
-                  // Cache the result of that lookup
-                  cached_object = entry->ptr;
-                  cached_id = obj_id;
-                  ptr = cached_object;
-                  eina_spinlock_release(&_eoid_lock);
-                  return ptr;
-               }
-          }
-     }
-
-   ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.",
-       (void *)obj_id);
-
-   eina_spinlock_release(&_eoid_lock);
-   return NULL;
-#else
-   return (_Eo_Object *) obj_id;
-#endif
-}
+#define TABLE_FROM_IDS tdata->eo_ids_tables[mid_table_id][table_id]
 
 static inline _Eo_Id_Entry *
 _get_available_entry(_Eo_Ids_Table *table)
@@ -370,17 +421,18 @@ _get_available_entry(_Eo_Ids_Table *table)
 }
 
 static inline _Eo_Id_Entry *
-_search_tables(void)
+_search_tables(Eo_Id_Table_Data *tdata)
 {
    _Eo_Ids_Table *table;
    _Eo_Id_Entry *entry;
 
+   if (!tdata) return NULL;
    for (Table_Index mid_table_id = 0; mid_table_id < MAX_MID_TABLE_ID; mid_table_id++)
      {
-        if (!_eo_ids_tables[mid_table_id])
+        if (!tdata->eo_ids_tables[mid_table_id])
           {
              /* Allocate a new intermediate table */
-             _eo_ids_tables[mid_table_id] = _eo_id_mem_calloc(MAX_TABLE_ID, sizeof(_Eo_Ids_Table*));
+             tdata->eo_ids_tables[mid_table_id] = _eo_id_mem_calloc(MAX_TABLE_ID, sizeof(_Eo_Ids_Table*));
           }
 
         for (Table_Index table_id = 0; table_id < MAX_TABLE_ID; table_id++)
@@ -389,11 +441,11 @@ _search_tables(void)
 
              if (!table)
                {
-                  if (_empty_table)
+                  if (tdata->empty_table)
                     {
                        /* Recycle the available empty table */
-                       table = _empty_table;
-                       _empty_table = NULL;
+                       table = tdata->empty_table;
+                       tdata->empty_table = NULL;
                        UNPROTECT(table);
                     }
                   else
@@ -407,9 +459,9 @@ _search_tables(void)
                   table->fifo_head = table->fifo_tail = -1;
                   table->partial_id = EO_COMPOSE_PARTIAL_ID(mid_table_id, table_id);
                   entry = &(table->entries[0]);
-                  UNPROTECT(_eo_ids_tables[mid_table_id]);
+                  UNPROTECT(tdata->eo_ids_tables[mid_table_id]);
                   TABLE_FROM_IDS = table;
-                  PROTECT(_eo_ids_tables[mid_table_id]);
+                  PROTECT(tdata->eo_ids_tables[mid_table_id]);
                }
              else
                entry = _get_available_entry(table);
@@ -417,59 +469,98 @@ _search_tables(void)
              if (entry)
                {
                   /* Store table info into current table */
-                  _current_table = table;
+                  tdata->current_table = table;
                   return entry;
                }
           }
      }
 
    ERR("no more available entries to store eo objects");
-   _current_table = NULL;
+   tdata->current_table = NULL;
    return NULL;
 }
 
 /* Gives a fake id that serves as a marker if eo id is off. */
 static inline Eo_Id
-_eo_id_allocate(const _Eo_Object *obj)
+_eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id)
 {
 #ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry = NULL;
+   Eo_Id_Data *data;
+   Eo_Id_Table_Data *tdata;
+   Eo_Id id;
 
-   eina_spinlock_take(&_eoid_lock);
-   if (_current_table)
-     entry = _get_available_entry(_current_table);
-
-   if (!entry)
+   data = _eo_table_data_get();
+   if (parent_id)
      {
-        entry = _search_tables();
+        Efl_Id_Domain domain = ((Eo_Id)parent_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
+        tdata = _eo_table_data_table_get(data, domain);
      }
+   else tdata = _eo_table_data_current_table_get(data);
+   if (!tdata) return 0;
 
-   if (!_current_table || !entry)
+   if (EINA_LIKELY(!tdata->shared))
      {
-        eina_spinlock_release(&_eoid_lock);
-        return 0;
-     }
+        if (tdata->current_table)
+          entry = _get_available_entry(tdata->current_table);
 
-   /* [1;max-1] thus we never generate an Eo_Id equal to 0 */
-   _eo_generation_counter++;
-   if (_eo_generation_counter == MAX_GENERATIONS)
-     _eo_generation_counter = 1;
-   /* Fill the entry and return it's Eo Id */
-   entry->ptr = (_Eo_Object *)obj;
-   entry->active = 1;
-   entry->generation = _eo_generation_counter;
-   PROTECT(_current_table);
-   eina_spinlock_release(&_eoid_lock);
-   return EO_COMPOSE_FINAL_ID(_current_table->partial_id,
-                              (entry - _current_table->entries),
-                              entry->generation);
+        if (!entry) entry = _search_tables(tdata);
+
+        if (!tdata->current_table || !entry)
+          {
+             return 0;
+          }
+
+        UNPROTECT(tdata->current_table);
+        /* [1;max-1] thus we never generate an Eo_Id equal to 0 */
+        tdata->generation++;
+        if (tdata->generation == MAX_GENERATIONS) tdata->generation = 1;
+        /* Fill the entry and return it's Eo Id */
+        entry->ptr = (_Eo_Object *)obj;
+        entry->active = 1;
+        entry->generation = tdata->generation;
+        PROTECT(tdata->current_table);
+        id = EO_COMPOSE_FINAL_ID(tdata->current_table->partial_id,
+                                 (entry - tdata->current_table->entries),
+                                 data->domain_stack[data->stack_top],
+                                 entry->generation);
+     }
+   else
+     {
+        eina_spinlock_take(&(tdata->lock));
+        if (tdata->current_table)
+          entry = _get_available_entry(tdata->current_table);
+
+        if (!entry) entry = _search_tables(tdata);
+
+        if (!tdata->current_table || !entry)
+          {
+             id = 0;
+             goto shared_err;
+          }
+
+        UNPROTECT(tdata->current_table);
+        /* [1;max-1] thus we never generate an Eo_Id equal to 0 */
+        tdata->generation++;
+        if (tdata->generation == MAX_GENERATIONS) tdata->generation = 1;
+        /* Fill the entry and return it's Eo Id */
+        entry->ptr = (_Eo_Object *)obj;
+        entry->active = 1;
+        entry->generation = tdata->generation;
+        PROTECT(tdata->current_table);
+        id = EO_COMPOSE_FINAL_ID(tdata->current_table->partial_id,
+                                 (entry - tdata->current_table->entries),
+                                 data->domain_stack[data->stack_top],
+                                 entry->generation);
+shared_err:
+        eina_spinlock_release(&(tdata->lock));
+     }
+   return id;
 #else
    (void) obj;
    return MASK_OBJ_TAG;
 #endif
 }
-
-extern const Eo *cached_isa_id;
 
 static inline void
 _eo_id_release(const Eo_Id obj_id)
@@ -479,59 +570,118 @@ _eo_id_release(const Eo_Id obj_id)
    _Eo_Id_Entry *entry;
    Generation_Counter generation;
    Table_Index mid_table_id, table_id, entry_id;
+   Efl_Id_Domain domain;
+   Eo_Id_Data *data;
+   Eo_Id_Table_Data *tdata;
+
+   domain = (obj_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
+   data = _eo_table_data_get();
+   tdata = _eo_table_data_table_get(data, domain);
+   if (!tdata) return;
+
    EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
-   eina_spinlock_take(&_eoid_lock);
-   /* Check the validity of the entry */
-   if (_eo_ids_tables[mid_table_id] && (table = TABLE_FROM_IDS))
+   if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED))
      {
-        entry = &(table->entries[entry_id]);
-        if (entry && entry->active && (entry->generation == generation))
+        // Check the validity of the entry
+        if (tdata->eo_ids_tables[mid_table_id] && (table = TABLE_FROM_IDS))
           {
-             UNPROTECT(table);
-             table->free_entries++;
-             /* Disable the entry */
-             entry->active = 0;
-             entry->next_in_fifo = -1;
-             /* Push the entry into the fifo */
-             if (table->fifo_tail == -1)
+             entry = &(table->entries[entry_id]);
+             if (entry && entry->active && (entry->generation == generation))
                {
-                  table->fifo_head = table->fifo_tail = entry_id;
-               }
-             else
-               {
-                  table->entries[table->fifo_tail].next_in_fifo = entry_id;
-                  table->fifo_tail = entry_id;
-               }
-             PROTECT(table);
-             if (table->free_entries == MAX_ENTRY_ID)
-               {
-                  UNPROTECT(_eo_ids_tables[mid_table_id]);
-                  TABLE_FROM_IDS = NULL;
-                  PROTECT(_eo_ids_tables[mid_table_id]);
-                  /* Recycle or free the empty table */
-                  if (!_empty_table)
-                    _empty_table = table;
+                  UNPROTECT(table);
+                  table->free_entries++;
+                  // Disable the entry
+                  entry->active = 0;
+                  entry->next_in_fifo = -1;
+                  // Push the entry into the fifo
+                  if (table->fifo_tail == -1)
+                    table->fifo_head = table->fifo_tail = entry_id;
                   else
-                    _eo_id_mem_free(table);
-                  if (_current_table == table)
-                    _current_table = NULL;
+                    {
+                       table->entries[table->fifo_tail].next_in_fifo = entry_id;
+                       table->fifo_tail = entry_id;
+                    }
+                  PROTECT(table);
+                  if (table->free_entries == MAX_ENTRY_ID)
+                    {
+                       UNPROTECT(tdata->eo_ids_tables[mid_table_id]);
+                       TABLE_FROM_IDS = NULL;
+                       PROTECT(tdata->eo_ids_tables[mid_table_id]);
+                       // Recycle or free the empty table
+                       if (!tdata->empty_table) tdata->empty_table = table;
+                       else _eo_id_mem_free(table);
+                       if (tdata->current_table == table)
+                         tdata->current_table = NULL;
+                    }
+                  // In case an object is destroyed, wipe out the cache
+                  if (tdata->cache.id == obj_id)
+                    {
+                       tdata->cache.id = 0;
+                       tdata->cache.object = NULL;
+                    }
+                  if ((Eo_Id)tdata->cache.isa_id == obj_id)
+                    {
+                       tdata->cache.isa_id = NULL;
+                       tdata->cache.klass = NULL;;
+                       tdata->cache.isa = EINA_FALSE;
+                    }
+                  return;
                }
-
-             // In case an object is destroyed, wipe out the cache
-             if (cached_id == obj_id)
-               {
-                  cached_id = 0;
-                  cached_object = NULL;
-               }
-             cached_isa_id = NULL;
-
-             eina_spinlock_release(&_eoid_lock);
-             return;
           }
      }
-   eina_spinlock_release(&_eoid_lock);
-
+   else
+     {
+        eina_spinlock_take(&(tdata->lock));
+        // Check the validity of the entry
+        if (tdata->eo_ids_tables[mid_table_id] && (table = TABLE_FROM_IDS))
+          {
+             entry = &(table->entries[entry_id]);
+             if (entry && entry->active && (entry->generation == generation))
+               {
+                  UNPROTECT(table);
+                  table->free_entries++;
+                  // Disable the entry
+                  entry->active = 0;
+                  entry->next_in_fifo = -1;
+                  // Push the entry into the fifo
+                  if (table->fifo_tail == -1)
+                    table->fifo_head = table->fifo_tail = entry_id;
+                  else
+                    {
+                       table->entries[table->fifo_tail].next_in_fifo = entry_id;
+                       table->fifo_tail = entry_id;
+                    }
+                  PROTECT(table);
+                  if (table->free_entries == MAX_ENTRY_ID)
+                    {
+                       UNPROTECT(tdata->eo_ids_tables[mid_table_id]);
+                       TABLE_FROM_IDS = NULL;
+                       PROTECT(tdata->eo_ids_tables[mid_table_id]);
+                       // Recycle or free the empty table
+                       if (!tdata->empty_table) tdata->empty_table = table;
+                       else _eo_id_mem_free(table);
+                       if (tdata->current_table == table)
+                         tdata->current_table = NULL;
+                    }
+                  // In case an object is destroyed, wipe out the cache
+                  if (tdata->cache.id == obj_id)
+                    {
+                       tdata->cache.id = 0;
+                       tdata->cache.object = NULL;
+                    }
+                  if ((Eo_Id)tdata->cache.isa_id == obj_id)
+                    {
+                       tdata->cache.isa_id = NULL;
+                       tdata->cache.klass = NULL;;
+                       tdata->cache.isa = EINA_FALSE;
+                    }
+                  eina_spinlock_release(&(tdata->lock));
+                  return;
+               }
+          }
+        eina_spinlock_release(&(tdata->lock));
+     }
    ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.", (void *)obj_id);
 #else
    EINA_MAGIC_SET((Eo_Header *) obj_id, EO_FREED_EINA_MAGIC);
@@ -539,11 +689,15 @@ _eo_id_release(const Eo_Id obj_id)
 }
 
 static inline void
-_eo_free_ids_tables(void)
+_eo_free_ids_tables(Eo_Id_Data *data)
 {
+   Eo_Id_Table_Data *tdata;
+
+   if (!data) return;
+   tdata = data->tables[data->local_domain];
    for (Table_Index mid_table_id = 0; mid_table_id < MAX_MID_TABLE_ID; mid_table_id++)
      {
-        if (_eo_ids_tables[mid_table_id])
+        if (tdata->eo_ids_tables[mid_table_id])
           {
              for (Table_Index table_id = 0; table_id < MAX_TABLE_ID; table_id++)
                {
@@ -552,23 +706,27 @@ _eo_free_ids_tables(void)
                        _eo_id_mem_free(TABLE_FROM_IDS);
                     }
                }
-             _eo_id_mem_free(_eo_ids_tables[mid_table_id]);
+             _eo_id_mem_free(tdata->eo_ids_tables[mid_table_id]);
           }
-        _eo_ids_tables[mid_table_id] = NULL;
+        tdata->eo_ids_tables[mid_table_id] = NULL;
      }
-   if (_empty_table) _eo_id_mem_free(_empty_table);
-   _empty_table = _current_table = NULL;
+   if (tdata->empty_table) _eo_id_mem_free(tdata->empty_table);
+   tdata->empty_table = tdata->current_table = NULL;
+   _eo_table_data_table_free(tdata);
+   data->tables[data->local_domain] = NULL;
+   free(data);
 }
 
 #ifdef EFL_DEBUG
 static inline void
-_eo_print(void)
+_eo_print(Eo_Id_Table_Data *tdata)
 {
    _Eo_Id_Entry *entry;
    unsigned long obj_number = 0;
+
    for (Table_Index mid_table_id = 0; mid_table_id < MAX_MID_TABLE_ID; mid_table_id++)
      {
-        if (_eo_ids_tables[mid_table_id])
+        if (tdata->eo_ids_tables[mid_table_id])
           {
              for (Table_Index table_id = 0; table_id < MAX_TABLE_ID; table_id++)
                {

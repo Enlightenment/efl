@@ -525,6 +525,192 @@ EAPI Eina_Bool efl_object_init(void);
  */
 EAPI Eina_Bool efl_object_shutdown(void);
 
+
+/**
+ * The virtual allocation domain where an object lives
+ *
+ * You cannot mix objects between domains in the object tree or as direct
+ * or indirect references unless you explicitly handle it and ensure the
+ * other domain is adopted into your local thread space
+ */
+typedef enum
+{
+   EFL_ID_DOMAIN_INVALID = -1, /**< Invalid */
+   EFL_ID_DOMAIN_MAIN    =  0, /**< The main loop domain where eo_init() is called */
+   EFL_ID_DOMAIN_SHARED  =  1, /**< A special shared domain that all threads can see but has extra locking and unlocking costs to access */
+   EFL_ID_DOMAIN_THREAD, /**< The normal domain for threads so they can adopt the main loop domain at times */
+   EFL_ID_DOMAIN_OTHER /**< A 'spare extra domain that regular threads can talk to or even set themselves to be */
+} Efl_Id_Domain;
+
+/**
+ * @typedef Efl_Domain_Data
+ * An opaque handle for private domain data
+ */
+typedef struct _Efl_Domain_Data Efl_Domain_Data;
+
+/**
+ * @brief Get the native domain for the current thread
+ *
+ * @return The native domain
+ *
+ * This will return the native eo object allocation domain for the current
+ * thread. This can only be changed with efl_domain_switch() and this can
+ * only be called before any objects are created/allocated on the thread
+ * where it is called. Calling it after this point will result in
+ * undefined behavior, so be sure to call this immediaetly after a thread
+ * begins to execute, before anything else. You must not change the domain
+ * of the main thread.
+ * 
+ * @see efl_domain_switch()
+ * @see efl_domain_current_get()
+ * @see efl_domain_current_set()
+ * @see efl_domain_current_push()
+ * @see efl_domain_current_pop()
+ * @see efl_domain_data_get()
+ * @see efl_domain_data_adopt()
+ * @see efl_domain_data_return()
+ * @see efl_compatible()
+ */
+EAPI Efl_Id_Domain    efl_domain_get(void);
+
+/**
+ * @brief Get the native domain for the current thread
+ * @param domain The domain to switch to
+ * @return EINA_TRUE if the switch succeeds, and EINA_FALSE if it fails
+ *
+ * Permanently switch the native domain for allocated objects for the calling
+ * thread. All objects created on this thread UNLESS it has switched to a
+ * new domain temporarily with efl_domain_current_set(),
+ * efl_domain_current_push() or efl_domain_current_pop(),
+ * efl_domain_data_adopt() and efl_domain_data_return().
+ * 
+ * @see efl_domain_get()
+ */
+EAPI Eina_Bool        efl_domain_switch(Efl_Id_Domain domain);
+
+/**
+ * @brief Get the current domain used for allocating new objects
+ * @return The current domain
+ *
+ * Get the currently used domain that is at the top of the domain stack.
+ * There is actually a stack of domans to use you can alter via
+ * efl_domain_current_push() and efl_domain_current_pop(). This only gets
+ * the domain for the current thread.
+ * 
+ * @see efl_domain_get()
+ */
+EAPI Efl_Id_Domain    efl_domain_current_get(void);
+
+/**
+ * @brief Set the current domain used for allocating new objects
+ * @return EINA_TRUE if it succeeds, and EINA_FALSE on failure
+ *
+ * Temporarily switch the current domain being used for allocation. There
+ * is actually a stack of domans to use you can alter via
+ * efl_domain_current_push() and efl_domain_current_pop(). This only applies
+ * to the calling thread.
+ * 
+ * @see efl_domain_get()
+ */
+EAPI Eina_Bool        efl_domain_current_set(Efl_Id_Domain domain);
+
+/**
+ * @brief Push a new domain onto the domain stack
+ * @param domain The domain to push
+ * @return EINA_TRUE if it succeeds, and EINA_FALSE on failure
+ *
+ * This pushes a domain on the domain stack that can be popped later with
+ * efl_domain_current_pop(). If the stack is full this may fail and return
+ * EINA_FALSE in that case. This applies only to the calling thread.
+ * 
+ * @see efl_domain_get()
+ */
+EAPI Eina_Bool        efl_domain_current_push(Efl_Id_Domain domain);
+
+/**
+ * @brief Pop a previously pushed domain from the domain stack
+ *
+ * This pops the top domain off the domain stack for the calling thread
+ * that was pushed with efl_domain_current_push().
+ * 
+ * @see efl_domain_get()
+ */
+EAPI void             efl_domain_current_pop(void);
+
+/**
+ * @brief Get an opaque handle to the local native domain eoid data
+ * @return A handle to the local native domain data or NULl on failure
+ *
+ * This gets a handle to the domain data for the current thread, intended
+ * to be used by another thread to adopt with efl_domain_data_adopt().
+ * Once you use efl_domain_data_adopt() the thread that called
+ * efl_domain_data_get() should suspend and not execute anything
+ * related to eo or efl objects until the thread that adopted the data
+ * called efl_domain_data_return() to return the data to its owner and
+ * stop making it available to that thread.
+ *
+ * @see efl_domain_get()
+ */
+EAPI Efl_Domain_Data *efl_domain_data_get(void);
+
+/**
+ * @brief Adopt a single extra domain to be the current domain
+ * @param datas_in The domain data to adopt
+ * @return The domain that was adopted or EFL_ID_DOMAIN_INVALID on failure
+ *
+ * This will adopt the given domain data pointed to by @p data_in
+ * as an extra domain locally. The adopted domain must have a domain ID
+ * that is not the same as the current thread domain or local domain. You
+ * may not adopt a domain that clashes with the current domain. If you
+ * set, push or pop domains so these might clash (be the same) then
+ * undefined behaviour will occur.
+ *
+ * This will also push the adopted domain as the current domain so that
+ * all newly created objects (unless their parent is of a differing domain)
+ * will be part of this adopted domain. You can still access objects from
+ * your local domain as well, but be aware that creation will require
+ * some switch of domain by push, pop or set. Return the domain with
+ * efl_domain_data_return() when done.
+ * 
+ * @see efl_domain_get()
+ */
+EAPI Efl_Id_Domain    efl_domain_data_adopt(Efl_Domain_Data *data_in);
+
+/**
+ * @brief Return a domain to its original owning thread
+ * @param domain The domain to return
+ * @return EINA_TRUE on success EINA_FALSE on failure
+ *
+ * This returns the domain specified by @p domain to the thread it came
+ * from, allowing that thread after this to continue execution. This
+ * will implicitly pop the current domain from the stack, assuming that
+ * the current domain is the same one pushed implicitly by
+ * efl_domain_data_adopt(). You cannot return your own native local
+ * domain, only the one that was adopted by efl_domain_data_adopt().
+ * 
+ * @see efl_domain_get()
+ */
+EAPI Eina_Bool        efl_domain_data_return(Efl_Id_Domain domain);
+
+/**
+ * @prief Check if 2 objects are compatible
+ * @param obj The basic object
+ * @param obj_target The alternat object that may be referenced by @p obj
+ * @return EINA_TRUE if compatible, EINA_FALSE if not
+ *
+ * This checks to see if 2 objects are compatible and could be parent or
+ * children of eachoter, could reference eachoter etc.. There is only a
+ * need to call this if you got objects from multiple domains (an
+ * adopted domain with efl_domain_data_adopt() or the shared domain
+ * EFL_ID_DOMAIN_SHARED where objects may be accessed by any thread).
+ * 
+ * @see efl_domain_get()
+ */
+EAPI Eina_Bool        efl_compatible(const Eo *obj, const Eo *obj_target);
+
+
+
+
 // to fetch internal function and object data at once
 typedef struct _Efl_Object_Op_Call_Data
 {

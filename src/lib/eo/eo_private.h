@@ -61,17 +61,11 @@ typedef uintptr_t Eo_Id;
 typedef struct _Efl_Class _Efl_Class;
 typedef struct _Eo_Header Eo_Header;
 
-/* Retrieves the pointer to the object from the id */
-static inline _Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id);
-
 /* Allocates an entry for the given object */
-static inline Eo_Id _eo_id_allocate(const _Eo_Object *obj);
+static inline Eo_Id _eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id);
 
 /* Releases an entry by the object id */
 static inline void _eo_id_release(const Eo_Id obj_id);
-
-/* Free all the entries and the tables */
-static inline void _eo_free_ids_tables(void);
 
 void _eo_condtor_done(Eo *obj);
 
@@ -211,6 +205,9 @@ Eo *_eo_header_id_get(const Eo_Header *header)
    return (Eo *) header;
 #endif
 }
+
+/* Retrieves the pointer to the object from the id */
+_Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id);
 
 static inline
 Efl_Class *_eo_class_id_get(const _Efl_Class *klass)

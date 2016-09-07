@@ -11,10 +11,6 @@
 
 static int event_freeze_count = 0;
 
-Eina_Spinlock _eoid_lock;
-_Eo_Object *cached_object = NULL;
-Eo_Id cached_id = 0;
-
 typedef struct _Eo_Callback_Description Eo_Callback_Description;
 
 typedef struct
@@ -265,6 +261,7 @@ _efl_object_key_ref_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *ke
 {
    Eo_Generic_Data_Node *node;
 
+   if (!_eo_id_domain_compatible(obj, objdata)) return;
    node = _key_generic_set(obj, pd, key, objdata, DATA_OBJ, EINA_TRUE);
    if (node)
      {
@@ -284,6 +281,7 @@ _efl_object_key_wref_set(Eo *obj, Efl_Object_Data *pd, const char * key, const E
 {
    Eo_Generic_Data_Node *node;
 
+   if (!_eo_id_domain_compatible(obj, objdata)) return;
    node = _key_generic_set(obj, pd, key, objdata, DATA_OBJ_WEAK, EINA_TRUE);
    if (node)
      {
@@ -535,6 +533,10 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 {
    if (pd->parent == parent_id)
      return;
+   if (parent_id)
+     {
+        if (!_eo_id_domain_compatible(parent_id, obj)) return;
+     }
 
    EO_OBJ_POINTER(obj, eo_obj);
 

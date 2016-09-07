@@ -103,7 +103,11 @@ void _eo_pointer_error(const char *msg);
 void _eo_print();
 #endif
 
+extern Eina_TLS _eo_table_data;
+
 #include "eo_ptr_indirection.x"
+
+extern Eo_Id_Data *_eo_table_data_shared;
 
 #endif
 
