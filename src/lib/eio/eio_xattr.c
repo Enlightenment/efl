@@ -305,27 +305,36 @@ _eio_file_xattr_setup_set(Eio_File_Xattr *async,
  *                                   API                                      *
  *============================================================================*/
 
-EAPI Eio_File *
-eio_file_xattr(const char *path,
-	       Eio_Filter_Cb filter_cb,
-	       Eio_Main_Cb main_cb,
-	       Eio_Done_Cb done_cb,
-	       Eio_Error_Cb error_cb,
-	       const void *data)
+static Eio_File *
+_eio_file_internal_xattr(const char *path,
+                         Eio_Filter_Cb filter_cb,
+                         Eio_Main_Cb main_cb,
+                         Eio_Array_Cb main_internal_cb,
+                         Eio_Done_Cb done_cb,
+                         Eio_Error_Cb error_cb,
+                         const void *data)
 {
   Eio_File_Char_Ls *async;
 
   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
-  EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-  async = calloc(1, sizeof (Eio_File_Char_Ls));
+  async = eio_common_alloc(sizeof (Eio_File_Char_Ls));
   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
-  async->filter_cb = filter_cb;
-  async->main_cb = main_cb;
   async->ls.directory = eina_stringshare_add(path);
+  async->filter_cb = filter_cb;
+
+  if (main_internal_cb)
+    {
+       async->main_internal_cb = main_internal_cb;
+       async->ls.gather = EINA_TRUE;
+    }
+  else
+    {
+       async->main_cb = main_cb;
+    }
 
   if (!eio_long_file_set(&async->ls.common,
                          done_cb,
@@ -338,6 +347,31 @@ eio_file_xattr(const char *path,
     return NULL;
 
   return &async->ls.common;
+}
+
+EAPI Eio_File *
+eio_file_xattr(const char *path,
+               Eio_Filter_Cb filter_cb,
+               Eio_Main_Cb main_cb,
+               Eio_Done_Cb done_cb,
+               Eio_Error_Cb error_cb,
+               const void *data)
+{
+  EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
+
+  return _eio_file_internal_xattr(path, filter_cb, main_cb, NULL, done_cb, error_cb, data);
+}
+
+Eio_File *
+_eio_file_xattr(const char *path,
+                Eio_Array_Cb main_internal_cb,
+                Eio_Done_Cb done_cb,
+                Eio_Error_Cb error_cb,
+                const void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_internal_cb, NULL);
+
+   return _eio_file_internal_xattr(path, NULL, NULL, main_internal_cb, done_cb, error_cb, data);
 }
 
 EAPI Eio_File *

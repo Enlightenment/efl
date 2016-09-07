@@ -545,6 +545,11 @@ Eio_File * _eio_dir_stat_ls(const char *dir,
                             Eio_Done_Cb done_cb,
                             Eio_Error_Cb error_cb,
                             const void *data);
+Eio_File * _eio_file_xattr(const char *path,
+                           Eio_Array_Cb main_internal_cb,
+                           Eio_Done_Cb done_cb,
+                           Eio_Error_Cb error_cb,
+                           const void *data);
 
 // Sharing notifier between recursive and non recursive code.
 void _eio_string_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data);
