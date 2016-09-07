@@ -681,6 +681,7 @@ _evas_event_source_hold_events(Evas_Object *eo_obj, int event_id, Efl_Input_Hold
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
    Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object *eo_child;
    Eina_List *l;
 
    if (obj->layer->evas->is_frozen) return;
