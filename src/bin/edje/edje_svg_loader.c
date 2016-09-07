@@ -1853,6 +1853,7 @@ _evas_svg_loader_parser(void *data, Eina_Simple_XML_Type type,
          break;
       case EINA_SIMPLE_XML_OPEN_EMPTY:
          _evas_svg_loader_xml_open_parser(loader, content, length);
+         break;
       case EINA_SIMPLE_XML_CLOSE:
          _evas_svg_loader_xml_close_parser(loader, content, length);
          break;
