@@ -227,28 +227,30 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
                 break;
        */
       case EEZE_UDEV_TYPE_V4L:
-	udev_enumerate_add_match_subsystem(en, "video4linux");
+        udev_enumerate_add_match_subsystem(en, "video4linux");
         break;
+
       case EEZE_UDEV_TYPE_BLUETOOTH:
-	udev_enumerate_add_match_subsystem(en, "bluetooth");
+        udev_enumerate_add_match_subsystem(en, "bluetooth");
         break;
 
       case EEZE_UDEV_TYPE_DRM:
-	udev_enumerate_add_match_subsystem(en, "drm");
-	udev_enumerate_add_match_subsystem(en, "card[0-9]*");
+        udev_enumerate_add_match_subsystem(en, "drm");
+        udev_enumerate_add_match_subsystem(en, "card[0-9]*");
         break;
 
       case EEZE_UDEV_TYPE_BACKLIGHT:
-	udev_enumerate_add_match_subsystem(en, "backlight");
+        udev_enumerate_add_match_subsystem(en, "backlight");
         break;
 
       case EEZE_UDEV_TYPE_LEDS:
-	udev_enumerate_add_match_subsystem(en, "leds");
+        udev_enumerate_add_match_subsystem(en, "leds");
         break;
 
       case EEZE_UDEV_TYPE_GRAPHICS:
-	udev_enumerate_add_match_subsystem(en, "graphics");
+        udev_enumerate_add_match_subsystem(en, "graphics");
         break;
+
       case EEZE_UDEV_TYPE_GPIO:
         udev_enumerate_add_match_subsystem(en, "gpio");
         break;
