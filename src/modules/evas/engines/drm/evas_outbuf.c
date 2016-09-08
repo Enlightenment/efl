@@ -408,7 +408,7 @@ _outbuf_fb_assign(Outbuf *ob)
         if ((ob->priv.ofb[i].valid) && (ob->priv.ofb[i].drawn))
           {
              ob->priv.ofb[i].age++;
-             if (ob->priv.ofb[i].age > ob->priv.num)
+             if (ob->priv.ofb[i].age > 4)
                {
                   ob->priv.ofb[i].age = 0;
                   ob->priv.ofb[i].drawn = EINA_FALSE;
