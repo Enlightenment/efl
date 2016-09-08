@@ -228,17 +228,24 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 {
    int ret = 0;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(output->current_mode, -1);
 
    if (!output->enabled) return -1;
+
+   if (!fb) fb = output->next;
+
+   /* So we can generate a tick by flipping to the current fb */
+   if (!fb) fb = output->current;
 
    if (output->next)
      {
         output->next->busy = EINA_FALSE;
         output->next = NULL;
      }
+
+   /* If we don't have an fb to set by now, BAIL! */
+   if (!fb) return -1;
 
    if ((!output->current) ||
        (output->current->stride != fb->stride))
