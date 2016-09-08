@@ -377,4 +377,78 @@ Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr
 
 int efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec);
 
+static inline Eina_Error
+efl_net_socket_error_get(void)
+{
+#ifndef _WIN32
+   return errno;
+#else
+   Eina_Error err = WSAGetLastError();
+
+   if (0) { }
+
+   /* used by send() */
+#if defined(WSAEACCES) && (WSAEACCES != EACCES)
+   else if (err == WSAEACCES) err = EACCES;
+#endif
+#if defined(WSAEWOULDBLOCK) && (WSAEWOULDBLOCK != EAGAIN)
+   else if (err == WSAEWOULDBLOCK) err = EAGAIN;
+#endif
+#if defined(WSAEBADF) && (WSAEBADF != EBADF)
+   else if (err == WSAEBADF) err = EBADF;
+#endif
+#if defined(WSAECONNRESET) && (WSAECONNRESET != ECONNRESET)
+   else if (err == WSAECONNRESET) err = ECONNRESET;
+#endif
+#if defined(WSAEDESTADDRREQ) && (WSAEDESTADDRREQ != EDESTADDRREQ)
+   else if (err == WSAEDESTADDRREQ) err = EDESTADDRREQ;
+#endif
+#if defined(WSAEFAULT) && (WSAEFAULT != EFAULT)
+   else if (err == WSAEFAULT) err = EFAULT;
+#endif
+#if defined(WSAEINTR) && (WSAEINTR != EINTR)
+   else if (err == WSAEINTR) err = EINTR;
+#endif
+#if defined(WSAEINVAL) && (WSAEINVAL != EINVAL)
+   else if (err == WSAEINVAL) err = EINVAL;
+#endif
+#if defined(WSAEISCONN) && (WSAEISCONN != EISCONN)
+   else if (err == WSAEISCONN) err = EISCONN;
+#endif
+#if defined(WSAEMSGSIZE) && (WSAEMSGSIZE != EMSGSIZE)
+   else if (err == WSAEMSGSIZE) err = EMSGSIZE;
+#endif
+#if defined(WSAENOBUFS) && (WSAENOBUFS != ENOBUFS)
+   else if (err == WSAENOBUFS) err = ENOBUFS;
+#endif
+#if defined(WSA_NOT_ENOUGH_MEMORY) && (WSA_NOT_ENOUGH_MEMORY != ENOMEM)
+   else if (err == WSA_NOT_ENOUGH_MEMORY) err = ENOMEM;
+#endif
+#if defined(WSAENOTCONN) && (WSAENOTCONN != ENOTCONN)
+   else if (err == WSAENOTCONN) err = ENOTCONN;
+#endif
+#if defined(WSAENOTSOCK) && (WSAENOTSOCK != ENOTSOCK)
+   else if (err == WSAENOTSOCK) err = ENOTSOCK;
+#endif
+#if defined(WSAEOPNOTSUPP) && (WSAEOPNOTSUPP != EOPNOTSUPP)
+   else if (err == WSAEOPNOTSUPP) err = EOPNOTSUPP;
+#endif
+#if defined(WSAESHUTDOWN) && (WSAESHUTDOWN != EPIPE)
+   else if (err == WSAESHUTDOWN) err = EPIPE;
+#endif
+
+   /* extras used by recv() */
+#if defined(WSAECONNREFUSED) && (WSAECONNREFUSED != ECONNREFUSED)
+   else if (err == WSAECONNREFUSED) err = ECONNREFUSED;
+#endif
+
+   /* extras used by getsockopt() */
+#if defined(WSAENOPROTOOPT) && (WSAENOPROTOOPT != ENOPROTOOPT)
+   else if (err == WSAENOPROTOOPT) err = ENOPROTOOPT;
+#endif
+
+   return err;
+#endif
+}
+
 #endif

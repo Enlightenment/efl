@@ -120,7 +120,7 @@ _efl_net_socket_fd_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, int fd)
         struct sockaddr_storage addr;
         socklen_t addrlen = sizeof(addr);
         if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) < 0)
-          ERR("getsockname(%d): %s", fd, strerror(errno));
+          ERR("getsockname(%d): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         else
           efl_net_socket_fd_family_set(o, addr.ss_family);
      }
@@ -157,25 +157,84 @@ _efl_net_socket_fd_efl_io_closer_close(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
 EOLIAN static Eina_Error
 _efl_net_socket_fd_efl_io_reader_read(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED, Eina_Rw_Slice *rw_slice)
 {
-   Eina_Error ret;
+   int fd = efl_io_reader_fd_reader_fd_get(o);
+   ssize_t r;
 
-   ret = efl_io_reader_read(efl_super(o, MY_CLASS), rw_slice);
-   if (rw_slice && rw_slice->len > 0)
-     efl_io_reader_can_read_set(o, EINA_FALSE); /* wait Efl.Loop.Fd "read" */
+   EINA_SAFETY_ON_NULL_RETURN_VAL(rw_slice, EINVAL);
+   if (fd < 0) goto error;
+   do
+     {
+        r = recv(fd, rw_slice->mem, rw_slice->len, 0);
+        if (r < 0)
+          {
+             Eina_Error err = efl_net_socket_error_get();
 
-   return ret;
+             if (err == EINTR) continue;
+
+             rw_slice->len = 0;
+             rw_slice->mem = NULL;
+
+             if (err == EAGAIN) efl_io_reader_can_read_set(o, EINA_FALSE);
+             return err;
+          }
+     }
+   while (r < 0);
+
+   rw_slice->len = r;
+   efl_io_reader_can_read_set(o, EINA_FALSE); /* wait Efl.Loop.Fd "read" */
+   if (r == 0)
+     efl_io_reader_eos_set(o, EINA_TRUE);
+
+   return 0;
+
+ error:
+   rw_slice->len = 0;
+   rw_slice->mem = NULL;
+   return EINVAL;
 }
 
 EOLIAN static Eina_Error
 _efl_net_socket_fd_efl_io_writer_write(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED, Eina_Slice *ro_slice, Eina_Slice *remaining)
 {
-   Eina_Error ret;
+   int fd = efl_io_writer_fd_writer_fd_get(o);
+   ssize_t r;
 
-   ret = efl_io_writer_write(efl_super(o, MY_CLASS), ro_slice, remaining);
-   if (ro_slice && ro_slice->len > 0)
-     efl_io_writer_can_write_set(o, EINA_FALSE); /* wait Efl.Loop.Fd "write" */
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ro_slice, EINVAL);
+   if (fd < 0) goto error;
 
-   return ret;
+   do
+     {
+        r = send(fd, ro_slice->mem, ro_slice->len, 0);
+        if (r < 0)
+          {
+             Eina_Error err = efl_net_socket_error_get();
+
+             if (err == EINTR) continue;
+
+             if (remaining) *remaining = *ro_slice;
+             ro_slice->len = 0;
+             ro_slice->mem = NULL;
+             if (err == EAGAIN) efl_io_writer_can_write_set(o, EINA_FALSE);
+             return err;
+          }
+     }
+   while (r < 0);
+
+   if (remaining)
+     {
+        remaining->len = ro_slice->len - r;
+        remaining->bytes = ro_slice->bytes + r;
+     }
+   ro_slice->len = r;
+   efl_io_writer_can_write_set(o, EINA_FALSE); /* wait Efl.Loop.Fd "write" */
+
+   return 0;
+
+ error:
+   if (remaining) *remaining = *ro_slice;
+   ro_slice->len = 0;
+   ro_slice->mem = NULL;
+   return EINVAL;
 }
 
 EOLIAN static void
@@ -205,6 +264,11 @@ _efl_net_socket_fd_efl_net_socket_address_remote_get(Eo *o EINA_UNUSED, Efl_Net_
 EOLIAN static Eina_Bool
 _efl_net_socket_fd_close_on_exec_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, Eina_Bool close_on_exec)
 {
+#ifdef _WIN32
+   DBG("close on exec is not supported on windows");
+   pd->close_on_exec = close_on_exec;
+   return EINA_FALSE;
+#else
    int flags, fd;
 
    pd->close_on_exec = close_on_exec;
@@ -229,11 +293,16 @@ _efl_net_socket_fd_close_on_exec_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, Eina_Boo
      }
 
    return EINA_TRUE;
+#endif
 }
 
 EOLIAN static Eina_Bool
 _efl_net_socket_fd_close_on_exec_get(Eo *o, Efl_Net_Socket_Fd_Data *pd)
 {
+#ifdef _WIN32
+   DBG("close on exec is not supported on windows");
+   return pd->close_on_exec;
+#else
    int flags, fd;
 
    fd = efl_loop_fd_get(o);
@@ -251,6 +320,7 @@ _efl_net_socket_fd_close_on_exec_get(Eo *o, Efl_Net_Socket_Fd_Data *pd)
 
    pd->close_on_exec = !!(flags & FD_CLOEXEC); /* sync */
    return pd->close_on_exec;
+#endif
 }
 
 EOLIAN static void
