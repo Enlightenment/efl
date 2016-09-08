@@ -9,6 +9,7 @@
 #include "eo_suite.h"
 #include "eo_test_class_simple.h"
 #include "eo_test_class_singleton.h"
+#include "eo_test_domain.h"
 
 /* Loading this internal header for testing purposes. */
 #include "eo_ptr_indirection.h"
@@ -1354,6 +1355,71 @@ START_TEST(eo_rec_interface)
 }
 END_TEST
 
+START_TEST(eo_domain)
+{
+   Eo *obj, *objs;
+
+   printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+   efl_object_init();
+
+   fail_if(efl_domain_get() != EFL_ID_DOMAIN_MAIN);
+
+   fail_if(efl_domain_switch(EFL_ID_DOMAIN_THREAD) != EINA_TRUE);
+
+   fail_if(efl_domain_get() != EFL_ID_DOMAIN_THREAD);
+
+   fail_if(efl_domain_switch(EFL_ID_DOMAIN_MAIN) != EINA_TRUE);
+
+   fail_if(efl_domain_get() != EFL_ID_DOMAIN_MAIN);
+
+   fail_if(efl_domain_current_get() != EFL_ID_DOMAIN_MAIN);
+
+   fail_if(efl_domain_current_set(EFL_ID_DOMAIN_SHARED) != EINA_TRUE);
+
+   fail_if(efl_domain_current_get() != EFL_ID_DOMAIN_SHARED);
+
+   fail_if(efl_domain_current_set(EFL_ID_DOMAIN_MAIN) != EINA_TRUE);
+
+   fail_if(efl_domain_current_get() != EFL_ID_DOMAIN_MAIN);
+
+   fail_if(efl_domain_current_push(EFL_ID_DOMAIN_SHARED) != EINA_TRUE);
+
+   fail_if(efl_domain_current_get() != EFL_ID_DOMAIN_SHARED);
+
+   fail_if(efl_domain_current_push(EFL_ID_DOMAIN_THREAD) != EINA_TRUE);
+
+   fail_if(efl_domain_current_get() != EFL_ID_DOMAIN_THREAD);
+
+   efl_domain_current_pop();
+
+   fail_if(efl_domain_current_get() != EFL_ID_DOMAIN_SHARED);
+
+   efl_domain_current_pop();
+
+   fail_if(efl_domain_current_get() != EFL_ID_DOMAIN_MAIN);
+
+   objs = efl_add(DOMAIN_CLASS, NULL);
+
+   efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
+   obj = efl_add(DOMAIN_CLASS, NULL);
+   efl_domain_current_pop();
+
+   fail_if(efl_compatible(objs, obj) == EINA_TRUE);
+
+   domain_a_set(obj, 1234);
+   fail_if(domain_a_get(obj) != 1234);
+
+   domain_a_set(objs, 1234);
+   fail_if(domain_a_get(objs) != 1234);
+
+   efl_del(obj);
+   efl_del(objs);
+
+   efl_object_shutdown();
+   printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -1376,4 +1442,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, efl_name);
    tcase_add_test(tc, eo_comment);
    tcase_add_test(tc, eo_rec_interface);
+   tcase_add_test(tc, eo_domain);
 }
