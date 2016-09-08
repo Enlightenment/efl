@@ -4298,6 +4298,7 @@ skip_if_group(cpp_reader * pfile, int any)
 			  validate_else(pfile,
 					kt->type ==
 					T_ELSE ? "#else" : "#endif");
+                       /* this fall through is intened */
 		    case T_ELIF:
 		       if (pfile->if_stack == CPP_BUFFER(pfile)->if_stack)
 			 {
