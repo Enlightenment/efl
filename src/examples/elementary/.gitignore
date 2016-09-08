@@ -154,3 +154,5 @@
 /thumb_cxx_example_01
 /benchmark3d
 /sphere-hunter
+/codegen_example_generated.c
+/codegen_example_generated.h
