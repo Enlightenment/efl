@@ -58,7 +58,7 @@ struct _Outbuf
    struct
      {
         int num;
-        Outbuf_Fb ofb[4], *draw, *display;
+        Outbuf_Fb ofb[4], *draw;
         Ecore_Drm2_Output *output;
         Eina_List *pending;
         Eina_Rectangle *rects;

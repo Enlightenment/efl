@@ -18,9 +18,7 @@ _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    if (!ofb) return;
 
    ecore_drm2_fb_dirty(ofb->fb, rects, count);
-   if (ecore_drm2_fb_flip(ofb->fb, ob->priv.output) == 0)
-     ob->priv.display = ofb;
-
+   ecore_drm2_fb_flip(ofb->fb, ob->priv.output);
    ofb->drawn = EINA_TRUE;
    ofb->age = 0;
 
@@ -231,7 +229,6 @@ _outbuf_fb_wait(Outbuf *ob)
     */
    for (i = 0; i < ob->priv.num; i++)
      {
-        if (&ob->priv.ofb[i] == ob->priv.display) continue;
         if (ecore_drm2_fb_busy_get(ob->priv.ofb[i].fb)) continue;
         if (ob->priv.ofb[i].valid && (ob->priv.ofb[i].age > best_age))
           {
