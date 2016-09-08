@@ -681,6 +681,7 @@ _evas_event_source_hold_events(Evas_Object *eo_obj, int event_id, Efl_Input_Hold
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
    Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *l;
 
@@ -689,7 +690,9 @@ _evas_event_source_hold_events(Evas_Object *eo_obj, int event_id, Efl_Input_Hold
    EINA_LIST_FOREACH(src->proxy->src_event_in, l, eo_child)
      {
         if (src->delete_me) return;
-        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HOLD, evt,
+        child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
+        evas_object_event_callback_call(eo_child, child,
+                                        EVAS_CALLBACK_HOLD, evt,
                                         event_id, EFL_EVENT_HOLD);
         if (src->layer->evas->delete_me) break;
      }
