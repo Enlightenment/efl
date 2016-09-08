@@ -271,13 +271,17 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    ret =
      drmModePageFlip(fb->fd, output->crtc_id, fb->id,
                      DRM_MODE_PAGE_FLIP_EVENT, output->user_data);
-   if (ret < 0)
+   if ((ret < 0) && (errno != EBUSY))
      {
         DBG("Pageflip Failed for Crtc %u on Connector %u: %m",
             output->crtc_id, output->conn_id);
-        output->next = fb;
-        fb->busy = EINA_TRUE;
         return ret;
+     }
+   else if (ret < 0)
+     {
+        output->next = fb;
+        output->next->busy = EINA_TRUE;
+        return 0;
      }
 
    if (output->current) output->current->busy = EINA_FALSE;
