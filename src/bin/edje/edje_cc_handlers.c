@@ -6095,6 +6095,17 @@ _program_remove(const char *name, Edje_Program **pgrms, unsigned int count)
        {
           Edje_Program *pr = pgrms[i];
 
+          if (pr->after)
+            {
+               Eina_List *l;
+               Edje_Program_After *pa;
+
+               EINA_LIST_FOREACH(pr->after, l, pa)
+                 {
+                    copied_program_lookup_delete(pc, (char *)(pa + 1));
+                 }
+            }
+
           _edje_program_remove(pc, pr);
 
           if (pr->action == EDJE_ACTION_TYPE_SCRIPT)
