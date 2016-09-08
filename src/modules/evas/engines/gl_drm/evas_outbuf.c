@@ -77,7 +77,7 @@ _evas_outbuf_fb_get(Outbuf *ob, struct gbm_bo *bo)
 }
 
 static void
-_evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
+_evas_outbuf_buffer_swap(Outbuf *ob)
 {
    Ecore_Drm2_Fb *fb;
 
@@ -101,7 +101,6 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    fb = _evas_outbuf_fb_get(ob, ob->priv.bo[0]);
    if (fb)
      {
-        ecore_drm2_fb_dirty(fb, rects, count);
         ecore_drm2_fb_flip(fb, ob->priv.output);
 
         /* Ecore_Drm2_Plane *plane; */
@@ -763,28 +762,7 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
    if (ob->info->callback.post_swap)
      ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
 
-   if (rects)
-     {
-        Tilebuf_Rect *r;
-        Eina_Rectangle *res;
-        int num, i = 0;
-
-        num = eina_inlist_count(EINA_INLIST_GET(rects));
-        res = alloca(sizeof(Eina_Rectangle) * num);
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
-          {
-             res[i].x = r->x;
-             res[i].y = r->y;
-             res[i].w = r->w;
-             res[i].h = r->h;
-             i++;
-          }
-
-        _evas_outbuf_buffer_swap(ob, res, num);
-     }
-   else
-     //Flush GL Surface data to Framebuffer
-     _evas_outbuf_buffer_swap(ob, NULL, 0);
+   _evas_outbuf_buffer_swap(ob);
 
 end:
    //TODO: Need render unlock after drm page flip?
