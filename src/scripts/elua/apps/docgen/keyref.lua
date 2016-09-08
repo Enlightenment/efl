@@ -22,6 +22,7 @@ M.build = function()
             local rf = writer.Writer({ "ref", lang, "key", refn })
             v[#v + 1] = true
             rf:write_include(rf.INCLUDE_PAGE, v)
+            rf:finish()
         end
         table.sort(arr)
         f:write_raw(table.concat(arr, "\n"))
