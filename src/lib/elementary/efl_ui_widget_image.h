@@ -9,7 +9,6 @@
  * IT AT RUNTIME.
  */
 
-typedef struct _Async_Open_Data Async_Open_Data;
 typedef enum
   {
      EFL_UI_IMAGE_PRELOAD_ENABLED,
@@ -69,9 +68,8 @@ struct _Efl_Ui_Image_Data
 
    struct {
       Ecore_Thread      *th;
-      Async_Open_Data   *todo, *done;
       Eina_Stringshare  *file, *key; // only for file_get()
-      Eina_Spinlock      lck;
+      void              *todo; // opaque internal
    } async;
 
    Efl_Ui_Image_Preload_Status preload_status;
@@ -95,8 +93,6 @@ struct _Efl_Ui_Image_Data
    Eina_Bool             anim : 1;
    Eina_Bool             play : 1;
    Eina_Bool             async_enable : 1;
-   Eina_Bool             async_opening : 1;
-   Eina_Bool             async_failed : 1;
    Eina_Bool             scale_up : 1;
    Eina_Bool             scale_down : 1;
 };

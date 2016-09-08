@@ -44,12 +44,15 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-struct _Async_Open_Data {
+typedef struct _Async_Open_Data Async_Open_Data;
+
+struct _Async_Open_Data
+{
+   Eo               *obj;
    Eina_Stringshare *file, *key;
-   Eina_File *f_set, *f_open;
-   void *map;
-   Eina_Bool cancel;
-   Eina_Bool failed;
+   Eina_File        *f_set, *f_open;
+   void             *map;
+   unsigned char     sum;
 };
 
 static void
@@ -241,243 +244,186 @@ _async_open_data_free(Async_Open_Data *data)
 }
 
 static void
-_efl_ui_image_async_open_do(void *data, Ecore_Thread *thread EINA_UNUSED)
+_efl_ui_image_async_open_do(void *data, Ecore_Thread *thread)
 {
-   Efl_Ui_Image_Data * sd = data;
+   Async_Open_Data *todo = data;
    Eina_File *f;
-   Async_Open_Data *todo, *done;
    void *map = NULL;
-   unsigned int buf;
+   unsigned char *p, sum = 0;
+   size_t i, size;
 
-   eina_spinlock_take(&sd->async.lck);
-   todo = sd->async.todo;
-   done = sd->async.done;
-   sd->async.todo = NULL;
-   sd->async.done = NULL;
+   if (ecore_thread_check(thread)) return;
 
-   if (done) _async_open_data_free(done);
-   if (!todo)
-     {
-        eina_spinlock_release(&sd->async.lck);
-        return;
-     }
-
-begin:
-   if (todo->f_set)
-     f = todo->f_set;
+   if (todo->f_set) f = todo->f_set;
    else if (todo->file)
      {
         // blocking
         f = eina_file_open(todo->file, EINA_FALSE);
-        if (!f)
-          {
-             todo->failed = EINA_TRUE;
-             sd->async.done = todo;
-             eina_spinlock_release(&sd->async.lck);
-             return;
-          }
+        if (!f) return;
      }
    else
      {
         CRI("Async open has no input file!");
-        eina_spinlock_release(&sd->async.lck);
         return;
      }
-
-   if (ecore_thread_check(sd->async.th))
+   if (ecore_thread_check(thread))
      {
         if (!todo->f_set) eina_file_close(f);
-        _async_open_data_free(todo);
-        eina_spinlock_release(&sd->async.lck);
         return;
      }
 
    // Read just enough data for map to actually do something.
-   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
-   if (map && (eina_file_size_get(f) >= sizeof(buf)))
-     memcpy(&buf, map, sizeof(buf));
+   p = map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   size = eina_file_size_get(f);
+   // Read and ensure all pages are in memory for sure first just
+   // 1 byte per page will do. also keep a limit on how much we will
+   // blindly load in here to let's say 512M
+   if (size > (512 * 1024 * 1024)) size = 512 * 1024 * 1024;
+   for (i = 0; i < size; i += 4096)
+     {
+        if (ecore_thread_check(thread)) break;
+        sum += p[i];
+     }
 
-   if (ecore_thread_check(sd->async.th))
+   if (ecore_thread_check(thread))
      {
         if (map) eina_file_map_free(f, map);
         if (!todo->f_set) eina_file_close(f);
-        _async_open_data_free(todo);
-        eina_spinlock_release(&sd->async.lck);
         return;
      }
-
-   done = todo;
-   todo = NULL;
-   done->cancel = EINA_FALSE;
-   done->failed = EINA_FALSE;
-   done->f_set = NULL;
-   done->f_open = f;
-   done->map = map;
-
-   todo = sd->async.todo;
-   sd->async.todo = NULL;
-   if (!todo) sd->async.done = done;
-
-   if (todo)
-     {
-        DBG("Async open got a new command before finishing");
-        _async_open_data_free(done);
-        goto begin;
-     }
-   eina_spinlock_release(&sd->async.lck);
+   todo->f_open = f;
+   todo->map = map;
+   todo->sum = sum;
 }
 
 static void
-_efl_ui_image_async_open_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
+_async_clear(Efl_Ui_Image_Data *sd)
 {
-   Efl_Ui_Image_Data * sd = data;
+   sd->async.th = NULL;
+   sd->async.todo = NULL;
+   eina_stringshare_del(sd->async.file);
+   eina_stringshare_del(sd->async.key);
+   sd->async.file = NULL;
+   sd->async.key = NULL;
+}
+
+static void
+_async_cancel(Efl_Ui_Image_Data *sd)
+{
+   if (sd->async.th)
+     {
+        ecore_thread_cancel(sd->async.th);
+        ((Async_Open_Data *)(sd->async.todo))->obj = NULL;
+        _async_clear(sd);
+     }
+}
+
+static void
+_efl_ui_image_async_open_cancel(void *data, Ecore_Thread *thread)
+{
+   Async_Open_Data *todo = data;
 
    DBG("Async open thread was canceled");
-   sd->async.th = NULL;
-   sd->async_opening = EINA_FALSE;
-   sd->async_failed = EINA_TRUE;
-   // keep file, key for file_get()
+   if (todo->obj)
+     {
+        EFL_UI_IMAGE_DATA_GET(todo->obj, sd);
+        if (sd)
+          {
+             if (thread == sd->async.th) _async_clear(sd);
+          }
+     }
+   _async_open_data_free(todo);
 }
 
 static void
-_efl_ui_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
+_efl_ui_image_async_open_done(void *data, Ecore_Thread *thread)
 {
-   Efl_Ui_Image_Data * sd = data;
+   Async_Open_Data *todo = data;
    Eina_Stringshare *file, *key;
-   Async_Open_Data *done;
    Eina_Bool ok;
    Eina_File *f;
    void *map;
 
-   // async open thread can't be running now
-   // locking anyways to be sure (memory barrier), see CID 1343345
-   eina_spinlock_take(&sd->async.lck);
-
-   sd->async.th = NULL;
-   sd->async_failed = EINA_FALSE;
-
-   if (sd->async.todo)
+   if (todo->obj)
      {
-        eina_spinlock_release(&sd->async.lck);
-        sd->async.th = ecore_thread_run(_efl_ui_image_async_open_do,
-                                        _efl_ui_image_async_open_done,
-                                        _efl_ui_image_async_open_cancel, sd);
+        EFL_UI_IMAGE_DATA_GET(todo->obj, sd);
+        if (sd)
+          {
+             if (thread == sd->async.th)
+               {
+                  DBG("Async open succeeded");
+                  _async_clear(sd);
+                  key = todo->key;
+                  map = todo->map;
+                  f = todo->f_open;
+                  ok = f && map;
+                  if (todo->file) file = todo->file;
+                  else file = f ? eina_file_filename_get(f) : NULL;
 
-        return;
+                  if (ok)
+                    {
+                       if (sd->edje)
+                         ok = edje_object_mmap_set(sd->img, f, key);
+                       else
+                         ok = _efl_ui_image_smart_internal_file_set
+                           (sd->self, sd, file, f, key);
+                    }
+                  if (ok)
+                    {
+                       // TODO: Implement Efl.File async,opened event_info type
+                       efl_event_callback_legacy_call
+                         (sd->self, EFL_FILE_EVENT_ASYNC_OPENED, NULL);
+                       _efl_ui_image_internal_sizing_eval(sd->self, sd);
+                    }
+                  else
+                    {
+                       // keep file,key around for file_get
+                       efl_event_callback_legacy_call
+                         (sd->self, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
+                    }
+               }
+          }
      }
-
-   sd->async_opening = EINA_FALSE;
-
-   done = sd->async.done;
-   if (!done)
-     {
-        // done should be NULL only after cancel... not here
-        ERR("Async open failed for an unknown reason.");
-        sd->async_failed = EINA_TRUE;
-        eina_spinlock_release(&sd->async.lck);
-        efl_event_callback_legacy_call(sd->self, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
-        return;
-     }
-
-   DBG("Async open succeeded");
-   sd->async.done = NULL;
-   eina_spinlock_release(&sd->async.lck);
-   key = done->key;
-   map = done->map;
-   f = done->f_open;
-   ok = f && map;
-   if (done->file)
-     file = done->file;
-   else
-     file = f ? eina_file_filename_get(f) : NULL;
-
-   if (ok)
-     {
-        if (sd->edje)
-          ok = edje_object_mmap_set(sd->img, f, key);
-        else
-          ok = _efl_ui_image_smart_internal_file_set(sd->self, sd, file, f, key);
-     }
-
-   if (ok)
-     {
-        // TODO: Implement Efl.File async,opened event_info type
-        sd->async_failed = EINA_FALSE;
-        ELM_SAFE_FREE(sd->async.file, eina_stringshare_del);
-        ELM_SAFE_FREE(sd->async.key, eina_stringshare_del);
-        efl_event_callback_legacy_call(sd->self, EFL_FILE_EVENT_ASYNC_OPENED, NULL);
-        _efl_ui_image_internal_sizing_eval(sd->self, sd);
-     }
-   else
-     {
-        // TODO: Implement Efl.File async,error event_info type
-        sd->async_failed = EINA_TRUE;
-        // keep file,key around for file_get
-        efl_event_callback_legacy_call(sd->self, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
-     }
-
    // close f, map and free strings
-   _async_open_data_free(done);
+   _async_open_data_free(todo);
 }
 
 static Eina_Bool
-_efl_ui_image_async_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd,
-                             const char *file, const Eina_File *f, const char *key)
+_efl_ui_image_async_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file,
+                             const Eina_File *f, const char *key)
 {
    Async_Open_Data *todo;
-   Eina_Bool was_running;
 
-   if (sd->async_opening &&
+   if (sd->async.th &&
        ((file == sd->async.file) ||
         (file && sd->async.file && !strcmp(file, sd->async.file))) &&
        ((key == sd->async.key) ||
         (key && sd->async.key && !strcmp(key, sd->async.key))))
      return EINA_TRUE;
 
-   sd->async_opening = EINA_TRUE;
-   eina_stringshare_replace(&sd->async.file, file);
-   eina_stringshare_replace(&sd->async.key, key);
-
-   if (!sd->async.th)
-     {
-        was_running = EINA_FALSE;
-        sd->async.th = ecore_thread_run(_efl_ui_image_async_open_do,
-                                        _efl_ui_image_async_open_done,
-                                        _efl_ui_image_async_open_cancel, sd);
-     }
-   else was_running = EINA_TRUE;
-
-   if (!sd->async.th)
-     {
-        DBG("Could not spawn an async thread!");
-        sd->async_failed = EINA_TRUE;
-        return EINA_FALSE;
-     }
-
    todo = calloc(1, sizeof(Async_Open_Data));
-   if (!todo)
-     {
-        sd->async_failed = EINA_TRUE;
-        return EINA_FALSE;
-     }
+   if (!todo) return EINA_FALSE;
 
+   _async_cancel(sd);
+
+   todo->obj = obj;
    todo->file = eina_stringshare_add(file);
    todo->key = eina_stringshare_add(key);
    todo->f_set = f ? eina_file_dup(f) : NULL;
-   if (!was_running)
-     sd->async.todo = todo;
-   else
-     {
-        Async_Open_Data *prev;
-        eina_spinlock_take(&sd->async.lck);
-        prev = sd->async.todo;
-        sd->async.todo = todo;
-        eina_spinlock_release(&sd->async.lck);
-        _async_open_data_free(prev);
-     }
 
-   sd->async_failed = EINA_FALSE;
-   return EINA_TRUE;
+   eina_stringshare_replace(&sd->async.file, file);
+   eina_stringshare_replace(&sd->async.key, key);
+
+   sd->async.todo = todo;
+   sd->async.th = ecore_thread_run(_efl_ui_image_async_open_do,
+                                   _efl_ui_image_async_open_done,
+                                   _efl_ui_image_async_open_cancel, todo);
+   if (sd->async.th) return EINA_TRUE;
+
+   _async_open_data_free(todo);
+   _async_clear(sd);
+   DBG("Could not spawn an async thread!");
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -503,6 +449,8 @@ _efl_ui_image_edje_file_set(Evas_Object *obj,
         if (sd->show) evas_object_show(sd->img);
         evas_object_clip_set(sd->img, pclip);
      }
+
+   _async_cancel(sd);
 
    sd->edje = EINA_TRUE;
    if (!sd->async_enable)
@@ -597,7 +545,6 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
    priv->scale_down = EINA_TRUE;
    priv->align_x = 0.5;
    priv->align_y = 0.5;
-   eina_spinlock_new(&priv->async.lck);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -613,25 +560,7 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
    if (sd->remote) _elm_url_cancel(sd->remote);
    free(sd->remote_data);
    eina_stringshare_del(sd->key);
-
-   if (sd->async.th)
-     {
-        if (!ecore_thread_cancel(sd->async.th) &&
-            !ecore_thread_wait(sd->async.th, 1.0))
-          {
-             ERR("Async open thread timed out during cancellation.");
-             // skipping all other data free to avoid crashes (this leaks)
-             efl_canvas_group_del(efl_super(obj, MY_CLASS));
-             return;
-          }
-        sd->async.th = NULL;
-     }
-
-   _async_open_data_free(sd->async.done);
-   _async_open_data_free(sd->async.todo);
-   eina_stringshare_del(sd->async.file);
-   eina_stringshare_del(sd->async.key);
-
+   _async_cancel(sd);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
@@ -891,6 +820,8 @@ _efl_ui_image_efl_file_mmap_set(Eo *obj, Efl_Ui_Image_Data *sd,
    if (sd->remote) _elm_url_cancel(sd->remote);
    sd->remote = NULL;
 
+   _async_cancel(sd);
+
    if (!sd->async_enable)
      ret = _efl_ui_image_smart_internal_file_set(obj, sd, eina_file_filename_get(file), file, key);
    else
@@ -1053,6 +984,8 @@ _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file
           break;
        }
 
+   _async_cancel(sd);
+
    if (!sd->async_enable)
      ret = _efl_ui_image_smart_internal_file_set(obj, sd, file, NULL, key);
    else
@@ -1105,13 +1038,12 @@ _efl_ui_image_edje_object_size_min_calc(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *
 EOLIAN static void
 _efl_ui_image_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char **file, const char **key)
 {
-   if (sd->async_enable && (sd->async_opening || sd->async_failed))
+   if (sd->async.th)
      {
         if (file) *file = sd->async.file;
         if (key) *key = sd->async.key;
         return;
      }
-
    evas_object_image_file_get(sd->img, file, key);
 }
 
@@ -1119,7 +1051,6 @@ static Eina_Bool
 _efl_ui_image_efl_file_async_wait(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
 {
    Eina_Bool ok = EINA_TRUE;
-   if (!pd->async_enable) return ok;
    if (!pd->async.th) return ok;
    if (!ecore_thread_wait(pd->async.th, 1.0))
      {
@@ -1130,14 +1061,11 @@ _efl_ui_image_efl_file_async_wait(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *
 }
 
 EOLIAN static void
-_efl_ui_image_efl_file_async_set(Eo *obj, Efl_Ui_Image_Data *pd, Eina_Bool async)
+_efl_ui_image_efl_file_async_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Eina_Bool async)
 {
-   if (pd->async_enable == async)
-     return;
-
+   if (pd->async_enable == async) return;
    pd->async_enable = async;
-   if (!async)
-     _efl_ui_image_efl_file_async_wait(obj, pd);
+   if (!async) _async_cancel(pd);
 }
 
 EOLIAN static Eina_Bool
