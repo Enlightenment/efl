@@ -945,10 +945,12 @@ ecore_drm2_output_next_fb_set(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
 }
 
 EAPI Ecore_Drm2_Fb *
-ecore_drm2_output_current_fb_get(Ecore_Drm2_Output *output)
+ecore_drm2_output_latest_fb_get(Ecore_Drm2_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
-   return output->current;
+   if (output->pending) return output->pending;
+   if (output->current) return output->current;
+   return output->next;
 }
 
 EAPI void

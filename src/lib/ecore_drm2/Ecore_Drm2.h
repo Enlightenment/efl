@@ -456,16 +456,20 @@ EAPI unsigned int ecore_drm2_output_crtc_get(Ecore_Drm2_Output *output);
 EAPI Ecore_Drm2_Fb *ecore_drm2_output_next_fb_get(Ecore_Drm2_Output *output);
 
 /**
- * Return the current Ecore_Drm2_Fb used on a given output
+ * Return the most recently set Ecore_Drm2_Fb for a given output
+ *
+ * This may be the currently scanned out buffer, a buffer currently being
+ * flipped to scanout, or a buffer that has been submit but may not
+ * actually ever hit scanout at all.
  *
  * @param output
  *
- * @return The current Ecore_Drm2_Fb used on this output, or NULL otherwise
+ * @return The latest Ecore_Drm2_Fb submit for this output, or NULL otherwise
  *
  * @ingroup Ecore_Drm2_Output_Group
- * @since 1.18
+ * @since 1.19
  */
-EAPI Ecore_Drm2_Fb *ecore_drm2_output_current_fb_get(Ecore_Drm2_Output *output);
+EAPI Ecore_Drm2_Fb *ecore_drm2_output_latest_fb_get(Ecore_Drm2_Output *output);
 
 /**
  * Set the next Ecore_Drm2_Fb to be used on a given output
