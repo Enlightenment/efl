@@ -128,7 +128,7 @@ typedef Eo Efl_Object;
  * Don't touch it if you don't know what you are doing.
  * @internal
  */
-EAPI extern Eina_Spinlock _efl_class_creation_lock;
+EAPI extern Eina_Lock _efl_class_creation_lock;
 
 /**
  * @var _efl_object_init_generation
@@ -320,39 +320,25 @@ const Efl_Class * \
 class_get_func_name(void) \
 { \
    const Efl_Class *_tmp_parent_class; \
-   static volatile unsigned char lk_init = 0; \
-   static Eina_Spinlock _my_lock; \
    static const Efl_Class * volatile _my_class = NULL; \
    static unsigned int _my_init_generation = 1; \
    if (EINA_UNLIKELY(_efl_object_init_generation != _my_init_generation)) \
      { \
         _my_class = NULL; /* It's freed in efl_object_shutdown(). */ \
-        lk_init = 0; \
      } \
    if (EINA_LIKELY(!!_my_class)) return _my_class; \
    \
-   eina_spinlock_take(&_efl_class_creation_lock); \
-   if (!lk_init) \
-      eina_spinlock_new(&_my_lock); \
-   if (lk_init < 2) eina_spinlock_take(&_my_lock); \
-   if (!lk_init) \
-      lk_init = 1; \
-   else \
+   eina_lock_take(&_efl_class_creation_lock); \
+   if (!!_my_class) \
      { \
-        if (lk_init < 2) eina_spinlock_release(&_my_lock); \
-        eina_spinlock_release(&_efl_class_creation_lock); \
+        eina_lock_release(&_efl_class_creation_lock); \
         return _my_class; \
      } \
-   eina_spinlock_release(&_efl_class_creation_lock); \
    _tmp_parent_class = parent_class; \
    _my_class = efl_class_new(class_desc, _tmp_parent_class, __VA_ARGS__); \
    _my_init_generation = _efl_object_init_generation; \
-   eina_spinlock_release(&_my_lock); \
+   eina_lock_release(&_efl_class_creation_lock); \
    \
-   eina_spinlock_take(&_efl_class_creation_lock); \
-   eina_spinlock_free(&_my_lock); \
-   lk_init = 2; \
-   eina_spinlock_release(&_efl_class_creation_lock); \
    return _my_class; \
 }
 

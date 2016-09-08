@@ -19,7 +19,7 @@
 #define EFL_OBJECT_OP_IDS_FIRST 1
 
 /* Used inside the class_get functions of classes, see #EFL_DEFINE_CLASS */
-EAPI Eina_Spinlock _efl_class_creation_lock;
+EAPI Eina_Lock _efl_class_creation_lock;
 EAPI unsigned int _efl_object_init_generation = 1;
 int _eo_log_dom = -1;
 
@@ -1342,11 +1342,11 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
      {
         Eo_Id new_id;
 
-        eina_spinlock_take(&_efl_class_creation_lock);
+        eina_lock_take(&_efl_class_creation_lock);
         new_id = (_eo_classes_last_id + 1) | MASK_CLASS_TAG;
         _eo_classes_expand();
         _eo_classes[_UNMASK_ID(new_id) - 1] = klass;
-        eina_spinlock_release(&_efl_class_creation_lock);
+        eina_lock_release(&_efl_class_creation_lock);
 
         klass->header.id = new_id;
      }
@@ -1837,7 +1837,7 @@ efl_object_init(void)
         return EINA_FALSE;
      }
 
-   if (!eina_spinlock_new(&_efl_class_creation_lock))
+   if (!eina_lock_recursive_new(&_efl_class_creation_lock))
      {
         EINA_LOG_ERR("Could not init lock.");
         return EINA_FALSE;
@@ -1927,15 +1927,15 @@ efl_object_shutdown(void)
           eo_class_free(*cls_itr);
      }
 
-   eina_spinlock_take(&_efl_class_creation_lock);
+   eina_lock_take(&_efl_class_creation_lock);
    _eo_classes_release();
-   eina_spinlock_release(&_efl_class_creation_lock);
+   eina_lock_release(&_efl_class_creation_lock);
 
    eina_hash_free(_ops_storage);
 
    eina_spinlock_free(&_super_class_lock);
    eina_spinlock_free(&_ops_storage_lock);
-   eina_spinlock_free(&_efl_class_creation_lock);
+   eina_lock_free(&_efl_class_creation_lock);
 
    _eo_free_ids_tables(_eo_table_data_get());
    eina_tls_free(_eo_table_data);
