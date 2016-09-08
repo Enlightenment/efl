@@ -768,6 +768,9 @@ EAPI void ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned
 /**
  * Schedule a pageflip to the given Ecore_Drm2_Fb
  *
+ * The caller is responsible for running a page flip handler
+ * and calling ecore_drm2_fb_flip_complete() when it completes.
+ *
  * @param fb
  * @param output
  *
@@ -777,6 +780,18 @@ EAPI void ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned
  * @since 1.18
  */
 EAPI int ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output);
+
+/**
+ * Must be called by a page flip handler when the flip completes.
+ *
+ * @param output
+ *
+ * @return Whether there's an undisplayed buffer still in the queue.
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output);
 
 /**
  * Return the Ecore_Drm2_Fb's busy status

@@ -639,6 +639,8 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
    ee = data;
    edata = ee->engine.data;
 
+   ecore_drm2_fb_flip_complete(edata->output);
+
    next = ecore_drm2_output_next_fb_get(edata->output);
    if (next)
      {

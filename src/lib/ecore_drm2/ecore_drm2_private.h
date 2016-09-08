@@ -138,7 +138,7 @@ struct _Ecore_Drm2_Output
 
    drmModeCrtcPtr ocrtc;
 
-   Ecore_Drm2_Fb *current, *next;
+   Ecore_Drm2_Fb *current, *next, *pending;
 
    Eina_Matrix4 matrix, inverse;
    Ecore_Drm2_Transform transform;

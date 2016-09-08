@@ -223,6 +223,19 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
 #endif
 }
 
+EAPI Eina_Bool
+ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
+{
+   if (output->current) output->current->busy = EINA_FALSE;
+   output->current = output->pending;
+   output->pending = NULL;
+
+   /* In case they were the same buffer... */
+   if (output->current) output->current->busy = EINA_TRUE;
+
+   return !!output->next;
+}
+
 EAPI int
 ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 {
@@ -233,6 +246,13 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 
    if (!output->enabled) return -1;
 
+   if (output->pending)
+     {
+        if (output->next) output->next->busy = EINA_FALSE;
+        output->next = fb;
+        if (output->next) output->next->busy = EINA_TRUE;
+        return 0;
+     }
    if (!fb) fb = output->next;
 
    /* So we can generate a tick by flipping to the current fb */
@@ -262,7 +282,9 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
              return ret;
           }
 
+        if (output->current) output->current->busy = EINA_FALSE;
         output->current = fb;
+        output->current->busy = EINA_TRUE;
         output->next = NULL;
 
         return 0;
@@ -284,9 +306,8 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
         return 0;
      }
 
-   if (output->current) output->current->busy = EINA_FALSE;
-   output->current = fb;
-   fb->busy = EINA_TRUE;
+   output->pending = fb;
+   output->pending->busy = EINA_TRUE;
    return 0;
 }
 
