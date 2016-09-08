@@ -111,7 +111,7 @@ _file_error_cb(void *data, Eio_File *handler, int error)
 
    efl_event_callback_array_del(p, promise_handling(), handler);
 
-   efl_promise_failed(p, error);
+   efl_promise_failed_set(p, error);
 
    efl_del(p);
 }
@@ -126,7 +126,7 @@ _file_done_cb(void *data, Eio_File *handler)
 
    if (!v)
      {
-        efl_promise_failed(p, ENOMEM);
+        efl_promise_failed_set(p, ENOMEM);
         goto end;
      }
 
@@ -365,7 +365,7 @@ _file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *st
    c = calloc(1, sizeof (Eina_Stat));
    if (!c)
      {
-        efl_promise_failed(p, ENOMEM);
+        efl_promise_failed_set(p, ENOMEM);
         goto end;
      }
 

@@ -3,32 +3,53 @@ import eina_types;
 class Efl.Promise (Efl.Loop_User)
 {
    methods {
-      @property progress {
-         set {
-         }
-         values {
-            p: void_ptr;
+      progress_set {
+         [[Update the progress and send it immediately to all connected Efl_Future.
+
+           The progress is not kept and when the function return it will not be accessed
+           anymore. The pointer is owned by the caller and will remain so after the return
+	   of the function call.
+	 ]]
+         params {
+            @in p: const(void_ptr);
 	 }
       }
       @property future {
+         [[Request a new future linked to this promise.
+
+	   Efl_Future are optional and will be automatically deleted if no then callback have
+	   been set before the next iteration of the main loop.
+	 ]]
          get {
-	    [[The returned future is optional and if no then/chain_then are registered before it goes back to run in the main loop, it will be destroyed.]]
+	    [[The returned new future.]]
          }
          values {
-            f: future<void_ptr>;
+            f: future<void_ptr, void_ptr>; [[Return a future where the value will be set by calling value_set while the progress will be updated by progress_set.]]
          }
       }
       @property value {
+      	 [[The value expected by all connected future.]]
          set {
+	    [[
+              This function can be called only once and you can not call #failed.set after that.
+              The value will be owned by the promise until it is destroyed. The value will be cleaned
+              when the promise and all the future depending on it are destroyed.
+            ]]
 	 }
 	 values {
-	    v: void_ptr;
-	    free_cb: __builtin_free_cb;
+	    v: void_ptr; [[The pointer to the value.]]
+	    free_cb: __builtin_free_cb; [[The function to call to free the value.]]
 	 }
       }
-      failed {
-         params {
-	    @in err: Eina.Error;
+      @property failed {
+         [[Define the failure state of this promise.]]
+	 set {
+	    [[
+              This function can be called only once and you can not call #value.set after that.
+	    ]]
+	 }
+         values {
+	    err: Eina.Error; [[The reason for failure of this promise.]]
          }
       }
    }

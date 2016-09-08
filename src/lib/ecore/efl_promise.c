@@ -535,7 +535,7 @@ _efl_promise_value_set(Eo *obj, Efl_Promise_Data *pd, void *v, Eina_Free_Cb free
 }
 
 static void
-_efl_promise_failed(Eo *obj, Efl_Promise_Data *pd, Eina_Error err)
+_efl_promise_failed_set(Eo *obj, Efl_Promise_Data *pd, Eina_Error err)
 {
    Efl_Promise_Msg *message;
    Efl_Loop_Future_Data *f;
@@ -576,7 +576,7 @@ _efl_promise_failed(Eo *obj, Efl_Promise_Data *pd, Eina_Error err)
 }
 
 static void
-_efl_promise_progress_set(Eo *obj, Efl_Promise_Data *pd, void *p)
+_efl_promise_progress_set(Eo *obj, Efl_Promise_Data *pd, const void *p)
 {
    Efl_Loop_Future_Data *f;
    Eina_List *l, *ln;
@@ -620,7 +620,7 @@ _efl_promise_efl_object_destructor(Eo *obj, Efl_Promise_Data *pd)
    if (!pd->message && pd->futures)
      {
         if (!pd->optional) ERR("This promise has not been fulfilled. Forcefully cancelling %p.", obj);
-        efl_promise_failed(obj, EINA_ERROR_FUTURE_CANCEL);
+        efl_promise_failed_set(obj, EINA_ERROR_FUTURE_CANCEL);
      }
 
    if (pd->message)
@@ -916,7 +916,7 @@ _fail_all(void *data, const Efl_Event *ev)
           }
      }
 
-   efl_promise_failed(all->promise, fail->error);
+   efl_promise_failed_set(all->promise, fail->error);
    _efl_promise_all_free(all);
    efl_unref(all->promise);
 }
@@ -1128,7 +1128,7 @@ _fail_race(void *data, const Efl_Event *ev)
           }
      }
 
-   efl_promise_failed(race->promise, fail->error);
+   efl_promise_failed_set(race->promise, fail->error);
    _efl_promise_all_free(race);
    efl_unref(race->promise);
 }

@@ -605,7 +605,7 @@ _chain_fail(void *data, const Efl_Event *ev)
 
    fo->cancel = EINA_TRUE;
 
-   efl_promise_failed(f->next, f->error);
+   efl_promise_failed_set(f->next, f->error);
 }
 
 static void
