@@ -65,8 +65,8 @@ _class_initializer(Efl_Class *klass)
    EFL_OPS_DEFINE(ops,
          EFL_OBJECT_OP_FUNC(inherit2_print, _print),
          EFL_OBJECT_OP_FUNC(inherit2_print2, _print2),
-         EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(simple_class_print, _class_print),
-         EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
+         EFL_OBJECT_OP_CLASS_FUNC(simple_class_print, _class_print),
+         EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
    );
 
    return efl_class_functions_set(klass, &ops);

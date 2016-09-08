@@ -578,8 +578,8 @@ _eo_api_func_equal(const void *api_func1, const void *api_func2)
 #endif
 }
 
-EAPI Efl_Object_Op
-_efl_object_api_op_id_get(const void *api_func)
+static inline Efl_Object_Op
+_efl_object_api_op_id_get_internal(const void *api_func)
 {
    eina_spinlock_take(&_ops_storage_lock);
 #ifndef _WIN32
@@ -588,6 +588,14 @@ _efl_object_api_op_id_get(const void *api_func)
    Efl_Object_Op op = (uintptr_t) eina_hash_find(_ops_storage, api_func);
 #endif
    eina_spinlock_release(&_ops_storage_lock);
+
+   return op;
+}
+
+EAPI Efl_Object_Op
+_efl_object_api_op_id_get(const void *api_func)
+{
+   Efl_Object_Op op = _efl_object_api_op_id_get_internal(api_func);
 
    if (op == EFL_NOOP)
      {
@@ -600,7 +608,7 @@ _efl_object_api_op_id_get(const void *api_func)
 /* klass is the klass we are working on. hierarchy_klass is the class whe should
  * use when validating. */
 static Eina_Bool
-_eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Class *hierarchy_klass, const _Efl_Class *klass, Eina_Bool override_only)
+_eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Class *hierarchy_klass, const _Efl_Class *klass, Eina_Bool override_only EINA_UNUSED)
 {
    unsigned int i;
    int op_id;
@@ -629,12 +637,6 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
 
         if ((op_desc->op_type == EFL_OBJECT_OP_TYPE_REGULAR) || (op_desc->op_type == EFL_OBJECT_OP_TYPE_CLASS))
           {
-             if (override_only)
-               {
-                  ERR("Creation of new functions is not allowed when overriding an object's vtable.");
-                  return EINA_FALSE;
-               }
-
              if (_eo_api_func_equal(op_desc->api_func, last_api_func))
                {
                   ERR("Class '%s': API previously defined (%p->%p '%s').",
@@ -642,21 +644,21 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
                   return EINA_FALSE;
                }
 
-             op = op_id;
-             eina_spinlock_take(&_ops_storage_lock);
-#ifndef _WIN32
-             eina_hash_add(_ops_storage, &op_desc->api_func, (void *) (uintptr_t) op);
-#else
-             eina_hash_add(_ops_storage, op_desc->api_func, (void *) (uintptr_t) op);
-#endif
-             eina_spinlock_release(&_ops_storage_lock);
+             op = _efl_object_api_op_id_get_internal(op_desc->api_func);
 
-             op_id++;
-          }
-        else if ((op_desc->op_type == EFL_OBJECT_OP_TYPE_REGULAR_OVERRIDE) || (op_desc->op_type == EFL_OBJECT_OP_TYPE_CLASS_OVERRIDE))
-          {
-             /* We allow any overrides, we don't check if in hierarchy. */
-             op = _efl_object_api_op_id_get(op_desc->api_func);
+             if (op == EFL_NOOP)
+               {
+                  op = op_id;
+                  eina_spinlock_take(&_ops_storage_lock);
+#ifndef _WIN32
+                  eina_hash_add(_ops_storage, &op_desc->api_func, (void *) (uintptr_t) op);
+#else
+                  eina_hash_add(_ops_storage, op_desc->api_func, (void *) (uintptr_t) op);
+#endif
+                  eina_spinlock_release(&_ops_storage_lock);
+
+                  op_id++;
+               }
           }
 
         if (op == EFL_NOOP)

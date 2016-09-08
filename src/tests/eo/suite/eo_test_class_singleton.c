@@ -29,7 +29,7 @@ static Eina_Bool
 _class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _singleton_efl_constructor),
+         EFL_OBJECT_OP_FUNC(efl_constructor, _singleton_efl_constructor),
    );
 
    return efl_class_functions_set(klass, &ops);

@@ -23,7 +23,7 @@ static Eina_Bool
 _custom_engine_class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(efl_pack_layout_do, _custom_engine_layout_do),
+         EFL_OBJECT_OP_CLASS_FUNC(efl_pack_layout_do, _custom_engine_layout_do),
    );
 
    return efl_class_functions_set(klass, &ops);

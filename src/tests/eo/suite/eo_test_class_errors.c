@@ -241,39 +241,6 @@ START_TEST(eo_null_api)
 END_TEST
 
 static Eina_Bool
-_wrong_override_class_initializer(Efl_Class *klass)
-{
-   EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_FUNC_OVERRIDE(null_fct, _null_fct),
-   );
-
-   return efl_class_functions_set(klass, &ops);
-}
-
-START_TEST(eo_wrong_override)
-{
-   efl_object_init();
-
-   const Efl_Class *klass;
-
-   static Efl_Class_Description class_desc = {
-        EO_VERSION,
-        "Simple",
-        EFL_CLASS_TYPE_REGULAR,
-        0,
-        _wrong_override_class_initializer,
-        NULL,
-        NULL
-   };
-
-   klass = efl_class_new(&class_desc, NULL, NULL);
-   fail_if(klass);
-
-   efl_object_shutdown();
-}
-END_TEST
-
-static Eina_Bool
 _redefined_class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
@@ -316,8 +283,8 @@ static Eina_Bool
 _dich_func_class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _null_fct),
-         EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, NULL),
+         EFL_OBJECT_OP_FUNC(simple_a_set, _null_fct),
+         EFL_OBJECT_OP_FUNC(simple_a_set, NULL),
    );
 
    return efl_class_functions_set(klass, &ops);
@@ -340,7 +307,7 @@ START_TEST(eo_dich_func_override)
         NULL
    };
 
-   TEST_EO_ERROR("_vtable_func_set", "Class '%s': Overriding already set func %p for op %d (%s) with %p.");
+   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': API previously defined (%p->%p '%s').");
    klass = efl_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
@@ -360,7 +327,6 @@ void eo_test_class_errors(TCase *tc)
    /* This test is not relevant for WIN32. */
    tcase_add_test(tc, eo_null_api);
 #endif
-   tcase_add_test(tc, eo_wrong_override);
    tcase_add_test(tc, eo_api_redefined);
    tcase_add_test(tc, eo_dich_func_override);
 }

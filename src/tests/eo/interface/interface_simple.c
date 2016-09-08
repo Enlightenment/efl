@@ -64,8 +64,8 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
          EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
          EFL_OBJECT_OP_FUNC(simple_b_get, _b_get),
-         EFL_OBJECT_OP_FUNC_OVERRIDE(interface_ab_sum_get, _ab_sum_get),
-         EFL_OBJECT_OP_FUNC_OVERRIDE(interface2_ab_sum_get2, _ab_sum_get2),
+         EFL_OBJECT_OP_FUNC(interface_ab_sum_get, _ab_sum_get),
+         EFL_OBJECT_OP_FUNC(interface2_ab_sum_get2, _ab_sum_get2),
    );
 
    return efl_class_functions_set(klass, &ops);

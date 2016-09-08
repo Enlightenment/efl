@@ -99,7 +99,7 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(simple_recursive, _recursive),
          EFL_OBJECT_OP_FUNC(simple_part_get, _part_get),
          EFL_OBJECT_OP_FUNC(simple_pure_virtual, NULL),
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_dbg_info_get, _dbg_info_get),
+         EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _dbg_info_get),
    );
 
    return efl_class_functions_set(klass, &ops);
@@ -160,7 +160,7 @@ static Eina_Bool
 _searchable_class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_provider_find, _interface_get)
+         EFL_OBJECT_OP_FUNC(efl_provider_find, _interface_get)
    );
 
    return efl_class_functions_set(klass, &ops);

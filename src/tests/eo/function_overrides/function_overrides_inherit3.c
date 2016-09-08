@@ -20,7 +20,7 @@ static Eina_Bool
 _class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
+         EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
    );
 
    return efl_class_functions_set(klass, &ops);

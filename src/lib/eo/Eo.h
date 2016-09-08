@@ -148,8 +148,6 @@ enum _Efl_Object_Op_Type
    EFL_OBJECT_OP_TYPE_INVALID = -1, /**< Invalid op. */
    EFL_OBJECT_OP_TYPE_REGULAR = 0, /**< Regular op. */
    EFL_OBJECT_OP_TYPE_CLASS, /**< Class op - a class op. Like static in Java/C++. */
-   EFL_OBJECT_OP_TYPE_REGULAR_OVERRIDE, /**< Regular op override (previously defined) */
-   EFL_OBJECT_OP_TYPE_CLASS_OVERRIDE, /**< Class op override (previously defined) */
 };
 
 /**
@@ -458,11 +456,11 @@ EAPI Eina_Bool efl_object_override(Eo *obj, const Efl_Object_Ops *ops);
  * @brief Define an array of override functions for @ref efl_object_override
  * @param ops A name for the Efl_Object_Ops local variable to define
  * @param ... A comma separated list of Efl_Object_Op overrides, using
- *            #EFL_OBJECT_OP_FUNC_OVERRIDE or #EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE
+ *            #EFL_OBJECT_OP_FUNC or #EFL_OBJECT_OP_CLASS_FUNC
  *
  * This can be used as follows:
  * @code
- * EFL_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC_OVERRIDE(public_func, _my_func));
+ * EFL_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC(public_func, _my_func));
  * efl_object_override(obj, &ops);
  * @endcode
  *
@@ -848,8 +846,6 @@ typedef struct _Efl_Object_Call_Cache
 
 #define EFL_OBJECT_OP_FUNC(_api, _private) { _EFL_OBJECT_OP_API_ENTRY(_api), (void*)_private, EFL_OBJECT_OP_TYPE_REGULAR }
 #define EFL_OBJECT_OP_CLASS_FUNC(_api, _private) { _EFL_OBJECT_OP_API_ENTRY(_api), (void*)_private, EFL_OBJECT_OP_TYPE_CLASS }
-#define EFL_OBJECT_OP_FUNC_OVERRIDE(_api, _private) { _EFL_OBJECT_OP_API_ENTRY(_api), (void*)_private, EFL_OBJECT_OP_TYPE_REGULAR_OVERRIDE }
-#define EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(_api, _private) { _EFL_OBJECT_OP_API_ENTRY(_api), (void*)_private, EFL_OBJECT_OP_TYPE_CLASS_OVERRIDE }
 
 // returns the OP id corresponding to the given api_func
 EAPI Efl_Object_Op _efl_object_api_op_id_get(const void *api_func);

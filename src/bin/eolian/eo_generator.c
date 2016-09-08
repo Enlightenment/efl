@@ -822,7 +822,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
               if (ftype != EOLIAN_PROP_GET)
                 {
                    Eina_Stringshare *rets = eolian_function_full_c_name_get(fnid, EOLIAN_PROP_SET, EINA_FALSE);
-                   eina_strbuf_append_printf(str_op, "\n      EFL_OBJECT_OP_%sFUNC_OVERRIDE(%s, %s_%s_set),",
+                   eina_strbuf_append_printf(str_op, "\n      EFL_OBJECT_OP_%sFUNC(%s, %s_%s_set),",
                          class_str, rets, implname, funcname);
                    eo_bind_func_generate(class, fnid, EOLIAN_PROP_SET, str_bodyf, impl_desc, &impl_env);
                    eina_stringshare_del(rets);
@@ -831,7 +831,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
               if (ftype != EOLIAN_PROP_SET)
                 {
                    Eina_Stringshare *rets = eolian_function_full_c_name_get(fnid, EOLIAN_PROP_GET, EINA_FALSE);
-                   eina_strbuf_append_printf(str_op, "\n      EFL_OBJECT_OP_%sFUNC_OVERRIDE(%s, %s_%s_get),",
+                   eina_strbuf_append_printf(str_op, "\n      EFL_OBJECT_OP_%sFUNC(%s, %s_%s_get),",
                          class_str, rets, implname, funcname);
                    eo_bind_func_generate(class, fnid, EOLIAN_PROP_GET, str_bodyf, impl_desc, &impl_env);
                    eina_stringshare_del(rets);
@@ -840,7 +840,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
            default:
              {
                 Eina_Stringshare *rets = eolian_function_full_c_name_get(fnid, ftype, EINA_FALSE);
-                eina_strbuf_append_printf(str_op, "\n      EFL_OBJECT_OP_%sFUNC_OVERRIDE(%s, %s_%s),",
+                eina_strbuf_append_printf(str_op, "\n      EFL_OBJECT_OP_%sFUNC(%s, %s_%s),",
                       class_str, rets, implname, funcname);
                 eo_bind_func_generate(class, fnid, ftype, str_bodyf, impl_desc, &impl_env);
                 eina_stringshare_del(rets);

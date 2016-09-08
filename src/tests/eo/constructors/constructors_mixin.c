@@ -42,8 +42,8 @@ _class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
          EFL_OBJECT_OP_FUNC(mixin_add_and_print, _add_and_print_set),
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
+         EFL_OBJECT_OP_FUNC(efl_constructor, _constructor),
+         EFL_OBJECT_OP_FUNC(efl_destructor, _destructor),
    );
 
    return efl_class_functions_set(klass, &ops);

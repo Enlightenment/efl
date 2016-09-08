@@ -26,7 +26,7 @@ static Eina_Bool
 _destructor_unref_class_initializer(Efl_Class *klass2)
 {
    EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor_unref),
+         EFL_OBJECT_OP_FUNC(efl_destructor, _destructor_unref),
    );
 
    return efl_class_functions_set(klass2, &ops);

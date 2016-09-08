@@ -76,7 +76,7 @@ START_TEST(efl_object_override_tests)
 
    EFL_OPS_DEFINE(
             overrides,
-            EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_get, _simple_obj_override_a_get));
+            EFL_OBJECT_OP_FUNC(simple_a_get, _simple_obj_override_a_get));
    fail_if(!efl_object_override(obj, &overrides));
 
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A);
@@ -88,7 +88,7 @@ START_TEST(efl_object_override_tests)
    /* Override again. */
    EFL_OPS_DEFINE(
             overrides2,
-            EFL_OBJECT_OP_FUNC_OVERRIDE(simple_a_set, _simple_obj_override_a_double_set));
+            EFL_OBJECT_OP_FUNC(simple_a_set, _simple_obj_override_a_double_set));
    fail_if(!efl_object_override(obj, NULL));
    fail_if(!efl_object_override(obj, &overrides2));
 
@@ -104,7 +104,7 @@ START_TEST(efl_object_override_tests)
             overrides3,
             EFL_OBJECT_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set));
    fail_if(!efl_object_override(obj, NULL));
-   fail_if(efl_object_override(obj, &overrides3));
+   fail_if(!efl_object_override(obj, &overrides3));
 
    /* Test override reset */
    fail_if(!efl_object_override(obj, NULL));
@@ -432,8 +432,8 @@ static Eina_Bool
 _class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _man_con),
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _man_des),
+         EFL_OBJECT_OP_FUNC(efl_constructor, _man_con),
+         EFL_OBJECT_OP_FUNC(efl_destructor, _man_des),
    );
 
    return efl_class_functions_set(klass, &ops);
@@ -1166,7 +1166,7 @@ static Eina_Bool
 _add_failures_class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_finalize, _efl_add_failures_finalize),
+         EFL_OBJECT_OP_FUNC(efl_finalize, _efl_add_failures_finalize),
    );
 
    return efl_class_functions_set(klass, &ops);

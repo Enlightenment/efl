@@ -169,7 +169,7 @@ static Eina_Bool
 _custom_table_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_CLASS_FUNC_OVERRIDE(efl_canvas_group_calculate, _custom_table_calc)
+         EFL_OBJECT_OP_CLASS_FUNC(efl_canvas_group_calculate, _custom_table_calc)
    );
 
    return efl_class_functions_set(klass, &ops);

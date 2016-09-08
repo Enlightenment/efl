@@ -89,9 +89,9 @@ static Eina_Bool
 _class_initializer(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_constructor, _constructor),
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_destructor, _destructor),
-         EFL_OBJECT_OP_FUNC_OVERRIDE(efl_finalize, _finalize),
+         EFL_OBJECT_OP_FUNC(efl_constructor, _constructor),
+         EFL_OBJECT_OP_FUNC(efl_destructor, _destructor),
+         EFL_OBJECT_OP_FUNC(efl_finalize, _finalize),
          EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
          EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
          EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
