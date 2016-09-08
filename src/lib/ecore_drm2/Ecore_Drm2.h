@@ -444,18 +444,6 @@ EAPI void ecore_drm2_output_geometry_get(Ecore_Drm2_Output *output, int *x, int 
 EAPI unsigned int ecore_drm2_output_crtc_get(Ecore_Drm2_Output *output);
 
 /**
- * Return the next Ecore_Drm2_Fb to be used on a given output
- *
- * @param output
- *
- * @return The next Ecore_Drm2_Fb which is scheduled to to be flipped, or NULL otherwise
- *
- * @ingroup Ecore_Drm2_Output_Group
- * @since 1.18
- */
-EAPI Ecore_Drm2_Fb *ecore_drm2_output_next_fb_get(Ecore_Drm2_Output *output);
-
-/**
  * Return the most recently set Ecore_Drm2_Fb for a given output
  *
  * This may be the currently scanned out buffer, a buffer currently being
@@ -470,17 +458,6 @@ EAPI Ecore_Drm2_Fb *ecore_drm2_output_next_fb_get(Ecore_Drm2_Output *output);
  * @since 1.19
  */
 EAPI Ecore_Drm2_Fb *ecore_drm2_output_latest_fb_get(Ecore_Drm2_Output *output);
-
-/**
- * Set the next Ecore_Drm2_Fb to be used on a given output
- *
- * @param output
- * @param fb
- *
- * @ingroup Ecore_Drm2_Output_Group
- * @since 1.18
- */
-EAPI void ecore_drm2_output_next_fb_set(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb);
 
 /**
  * Get the size of the crtc for a given output
