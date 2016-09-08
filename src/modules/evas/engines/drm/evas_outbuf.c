@@ -224,15 +224,23 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
 static Outbuf_Fb *
 _outbuf_fb_wait(Outbuf *ob)
 {
-   int i = 0;
+   int i = 0, best = -1, best_age = -1;
 
+   /* We pick the oldest available buffer to avoid using the same two
+    * repeatedly and then having the third be stale when we need it
+    */
    for (i = 0; i < ob->priv.num; i++)
      {
         if (&ob->priv.ofb[i] == ob->priv.display) continue;
         if (ecore_drm2_fb_busy_get(ob->priv.ofb[i].fb)) continue;
-        if (ob->priv.ofb[i].valid) return &(ob->priv.ofb[i]);
+        if (ob->priv.ofb[i].valid && (ob->priv.ofb[i].age > best_age))
+          {
+             best = i;
+             best_age = ob->priv.ofb[i].age;
+          }
      }
 
+   if (best >= 0) return &(ob->priv.ofb[best]);
    return NULL;
 }
 
