@@ -494,17 +494,20 @@ _outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode rend
 {
    Eina_Rectangle *r;
    RGBA_Image *img;
-   unsigned int n = 0, i = 0;
+   unsigned int i = 0;
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
+   if (ob->priv.rect_count) free(ob->priv.rects);
+
    /* get number of pending writes */
-   n = eina_list_count(ob->priv.pending);
-   if (n == 0) return;
+   ob->priv.rect_count = eina_list_count(ob->priv.pending);
+   if (ob->priv.rect_count == 0) return;
 
    /* allocate rectangles */
-   r = alloca(n * sizeof(Eina_Rectangle));
-   if (!r) return;
+   ob->priv.rects = malloc(ob->priv.rect_count * sizeof(Eina_Rectangle));
+   if (!ob->priv.rects) return;
+   r = ob->priv.rects;
 
    /* loop the pending writes */
    EINA_LIST_FREE(ob->priv.pending, img)
@@ -562,7 +565,14 @@ _outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode rend
 
         i++;
      }
+}
 
-   /* force a buffer swap */
-   _outbuf_buffer_swap(ob, r, n);
+void
+_outbuf_redraws_clear(Outbuf *ob)
+{
+   if (!ob->priv.rect_count) return;
+
+   _outbuf_buffer_swap(ob, ob->priv.rects, ob->priv.rect_count);
+   free(ob->priv.rects);
+   ob->priv.rect_count = 0;
 }

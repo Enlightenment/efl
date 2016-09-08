@@ -32,7 +32,7 @@ _render_engine_setup(Evas_Engine_Info_Drm *info, int w, int h)
                                                  _outbuf_update_region_free,
                                                  NULL,
                                                  _outbuf_flush,
-                                                 NULL,
+                                                 _outbuf_redraws_clear,
                                                  _outbuf_free,
                                                  ob->w, ob->h))
      goto init_err;

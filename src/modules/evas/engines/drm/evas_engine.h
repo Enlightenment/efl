@@ -61,6 +61,8 @@ struct _Outbuf
         Outbuf_Fb ofb[4], *draw, *display;
         Ecore_Drm2_Output *output;
         Eina_List *pending;
+        Eina_Rectangle *rects;
+        unsigned int rect_count;
      } priv;
 
    Eina_Bool alpha : 1;
@@ -76,5 +78,6 @@ void *_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx,
 void _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void _outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void _outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
+void _outbuf_redraws_clear(Outbuf *ob);
 
 #endif
