@@ -88,14 +88,12 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
    ecore_event_add(ECORE_COCOA_EVENT_WINDOW_DESTROY, event, NULL, NULL);
 }
 
-/* IS THIS OSX <= 10.10 ONLY? */
-- (void)windowDidEnterFullScreen:(NSNotification *) notif EINA_UNUSED
+- (void)windowDidEnterFullScreen:(NSNotification *) EINA_UNUSED notif
 {
    [self requestResize: self.frame.size];
 }
 
-/* IS THIS OSX <= 10.10 ONLY? */
-- (void)windowDidExitFullScreen:(NSNotification *) notif EINA_UNUSED
+- (void)windowDidExitFullScreen:(NSNotification *) EINA_UNUSED notif
 {
    [self requestResize: self.frame.size];
 }
