@@ -104,7 +104,7 @@ START_TEST(efl_object_override_tests)
             overrides3,
             EFL_OBJECT_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set));
    fail_if(!efl_object_override(obj, NULL));
-   fail_if(!efl_object_override(obj, &overrides3));
+   fail_if(efl_object_override(obj, &overrides3));
 
    /* Test override reset */
    fail_if(!efl_object_override(obj, NULL));

@@ -648,6 +648,12 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
 
              if (op == EFL_NOOP)
                {
+                  if (override_only)
+                    {
+                       ERR("Class '%s': Tried overriding a previously undefined function.", klass->desc->name);
+                       return EINA_FALSE;
+                    }
+
                   op = op_id;
                   eina_spinlock_take(&_ops_storage_lock);
 #ifndef _WIN32
