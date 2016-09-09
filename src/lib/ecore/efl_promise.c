@@ -685,6 +685,15 @@ _efl_promise_race_future_get(void *item)
 static void
 _efl_promise_all_free(Efl_Promise_All *all)
 {
+   Efl_Future_All *fa;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+     {
+        EINA_REFCOUNT_UNREF(fa->d)
+          _efl_promise_msg_free(fa->d);
+     }
    efl_del(all->promise);
    all->promise = NULL;
 }
@@ -821,6 +830,9 @@ static Eina_Bool
 _efl_accessor_all_get_at(Efl_Accessor_All *ac, unsigned int pos, void **data)
 {
    Efl_Future_All *fa;
+
+   if (eina_array_count(&ac->all->members) <= pos)
+     return EINA_FALSE;
 
    fa = eina_array_data_get(&ac->all->members, pos);
    if (!fa) return EINA_FALSE;
@@ -965,7 +977,7 @@ _efl_future_all_new(Eo *provider)
 
    eina_array_step_set(&all->members, sizeof (Eina_Array), 8);
    all->future_get = _efl_promise_all_future_get;
-   all->promise = efl_add(EFL_PROMISE_CLASS, NULL);
+   all->promise = efl_add(EFL_PROMISE_CLASS, loop);
    if (!all->promise) goto on_error;
 
    return all;
@@ -1046,7 +1058,7 @@ efl_future_iterator_all(Eina_Iterator *it)
 
    EINA_ITERATOR_FOREACH(it, fn)
      {
-        if (!all) _efl_future_all_new(fn);
+        if (!all) all = _efl_future_all_new(fn);
         if (!all) goto on_error;
         if (!_efl_future_all_append(all, fn))
           goto on_error;
@@ -1057,7 +1069,7 @@ efl_future_iterator_all(Eina_Iterator *it)
 
  on_error:
    eina_iterator_free(it);
-   _efl_promise_all_die(all, NULL);
+   if (all) _efl_promise_all_die(all, NULL);
    return NULL;
 }
 
@@ -1213,10 +1225,16 @@ efl_future_iterator_race(Eina_Iterator *it)
    EINA_ITERATOR_FOREACH(it, fn)
      {
         if (!race) race = _efl_future_race_new(fn);
-        if (race) eina_array_push(&race->members, fn);
+        if (!race) goto on_error;
+        eina_array_push(&race->members, fn);
      }
+   eina_iterator_free(it);
 
    return _efl_future_race_done(race);
+
+ on_error:
+   eina_iterator_free(it);
+   return NULL;
 }
 
 #include "efl_promise.eo.c"
