@@ -224,7 +224,8 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
 #endif
 }
 
-static void _release_buffer(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *b)
+static void
+_release_buffer(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *b)
 {
    b->busy = EINA_FALSE;
    if (output->release_cb) output->release_cb(output->release_data, b);
@@ -233,6 +234,8 @@ static void _release_buffer(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *b)
 EAPI Eina_Bool
 ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+
    if (output->current && (output->current != output->pending))
      _release_buffer(output, output->current);
    output->current = output->pending;
@@ -319,18 +322,22 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 EAPI Eina_Bool
 ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
    return fb->busy;
 }
 
 EAPI void
 ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy)
 {
+   EINA_SAFETY_ON_NULL_RETURN(fb);
    fb->busy = busy;
 }
 
 EAPI void
 ecore_drm2_output_fb_release(Ecore_Drm2_Output *o)
 {
+   EINA_SAFETY_ON_NULL_RETURN(o);
+
    if (o->next)
      {
         _release_buffer(o, o->next);
@@ -358,7 +365,8 @@ ecore_drm2_output_fb_release(Ecore_Drm2_Output *o)
 }
 
 EAPI void *
-ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *f)
+ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb)
 {
-   return f->gbm_bo;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, NULL);
+   return fb->gbm_bo;
 }
