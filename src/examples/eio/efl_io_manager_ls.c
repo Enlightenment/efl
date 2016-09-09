@@ -10,69 +10,71 @@
 #include <Eio.h>
 #include <Ecore.h>
 
-void done_cb(void *data, void *value EINA_UNUSED)
+void leave(Efl_Io_Manager *job)
 {
-    Efl_Io_Manager *job = data;
-    printf("%s done listing files.\n", __FUNCTION__);
-    ecore_main_loop_quit();
-    efl_unref(job);
+   ecore_main_loop_quit();
 }
 
-void error_cb(void *data, Eina_Error error)
+void done_cb(void *data, const Efl_Event *ev)
 {
-    Efl_Io_Manager *job = data;
-    const char *msg = eina_error_msg_get(error);
-    printf("%s error: %s\n", __FUNCTION__, msg);
-    ecore_main_loop_quit();
+   Efl_Future_Event_Success *success = ev->info;
+   uint64_t *count = success->value;
 
-    efl_unref(job);
+   printf("%s done listing files %i.\n", __FUNCTION__, *count);
+
+   leave(data);
 }
 
-void filter_cb(void *data EINA_UNUSED, const Efl_Event *event)
+void error_cb(void *data, const Efl_Event *ev)
 {
-    Eio_Filter_Name_Data *event_info = event->info;
-    static Eina_Bool should_filter = EINA_FALSE;
+   Efl_Future_Event_Failure *failure = ev->info;
+   const char *msg = eina_error_msg_get(failure->error);
 
-    printf("Filtering file %s\n", event_info->file);
+   printf("%s error: %s\n", __FUNCTION__, msg);
 
-    should_filter = !should_filter;
-    event_info->filter = should_filter;
+   leave(data);
 }
 
 // Progress used to be the "Eio_Main_Cb" family of callbacks in the legacy API.
-void progress_cb(void *data EINA_UNUSED, const char *filename)
+void progress_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-    EINA_SAFETY_ON_NULL_RETURN(filename);
-    printf("%s listing filename: %s\n", __FUNCTION__, filename);
+   Efl_Future_Event_Progress *p = ev->info;
+   const Eina_Array *batch = p->progress;
+   Eina_Iterator *it;
+   const char *filename;
+
+   it = eina_array_iterator_new(batch);
+   EINA_ITERATOR_FOREACH(it, filename)
+     printf("%s listing filename: %s\n", __FUNCTION__, filename);
+   eina_iterator_free(it);
 }
 
 void list_files(void *data)
 {
-    Eina_Promise *promise;
-    const char *path = data;
+   Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
+   const char *path = data;
 
-    Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, NULL);
-    efl_event_callback_add(job, EFL_IO_MANAGER_EVENT_FILTER_NAME, (Efl_Event_Cb)&filter_cb, NULL);
-    promise = efl_io_manager_file_ls(job, path);
-    eina_promise_progress_cb_add(promise, (Eina_Promise_Progress_Cb)&progress_cb, NULL, NULL);
-    eina_promise_then(promise, &done_cb, &error_cb, job);
+   efl_future_then(efl_io_manager_ls(job, path), &done_cb, &error_cb, &progress_cb, job);
 }
 
 int main(int argc, char const *argv[])
 {
-    eio_init();
-    ecore_init();
+   const char *path;
+   Ecore_Job *job;
 
-    const char *path = getenv("HOME");
+   eio_init();
+   ecore_init();
 
-    if (argc > 1)
-        path = argv[1];
+   path = getenv("HOME");
 
-    Ecore_Job *job = ecore_job_add(&list_files, path);
+   if (argc > 1)
+     path = argv[1];
 
-    ecore_main_loop_begin();
+   job = ecore_job_add(&list_files, path);
 
-    ecore_shutdown();
-    eio_shutdown();
-    return 0;
+   ecore_main_loop_begin();
+
+   ecore_shutdown();
+   eio_shutdown();
+   return 0;
 }

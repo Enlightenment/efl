@@ -9,96 +9,82 @@
 #include <Eio.h>
 #include <Ecore.h>
 
-void error_cb(void *data, Eina_Error error)
+void error_cb(void *data, const Efl_Event *ev)
 {
-    EINA_SAFETY_ON_NULL_RETURN(data);
+   Efl_Future_Event_Failure *failure = ev->info;
+   const char *msg = eina_error_msg_get(failure->error);
+   Efl_Io_Manager *job = data;
 
-    const char *msg = eina_error_msg_get(error);
-    EINA_LOG_ERR("error: %s", msg);
+   EINA_LOG_ERR("error: %s", msg);
 
-    Efl_Io_Manager *job = data;
-    efl_unref(job);
-
-    ecore_main_loop_quit();
+   ecore_main_loop_quit();
 }
 
-void done_closing_cb(void *data, void* value EINA_UNUSED)
+void done_closing_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-    EINA_SAFETY_ON_NULL_RETURN(data);
+   Efl_Io_Manager *job = data;
 
-    Eina_Iterator* result = value;
+   printf("%s closed all files.\n", __FUNCTION__);
 
-    printf("%s closed file.\n", __FUNCTION__);
-
-    Efl_Io_Manager *job = data;
-    efl_unref(job);
-
-    ecore_main_loop_quit();
+   ecore_main_loop_quit();
 }
 
-void closing_job(Efl_Io_Manager *job, Eina_File *file1, Eina_File *file2)
+void done_open_cb(void *data, const Efl_Event *ev)
 {
-    Eina_Promise *promise;
-    Eina_Promise *tasks[3] = {NULL, NULL, NULL};
+   Efl_Future_Event_Success *s = ev->info;
+   Efl_Io_Manager *job = data;
+   Eina_Accessor *ac = s->value;
+   Eina_Iterator *it;
+   Eina_Array stack;
+   Eina_File *f;
+   unsigned int i;
 
-    printf("%s Closing files.\n", __FUNCTION__);
-    efl_io_manager_file_close(job, file1, &tasks[0]);
-    efl_io_manager_file_close(job, file2, &tasks[1]);
-    promise = eina_promise_all(eina_carray_iterator_new((void**)&tasks[0]));
-    eina_promise_then(promise, &done_closing_cb, &error_cb, job);
+   eina_array_step_set(&stack, sizeof (Eina_Array), 4);
+
+   EINA_ACCESSOR_FOREACH(ac, i, f)
+     {
+        printf("%s opened file %s [%i]\n", __FUNCTION__, eina_file_filename_get(f), i);
+        eina_array_push(&stack, efl_io_manager_close(job, f));
+     }
+
+   it = eina_array_iterator_new(&stack);
+   efl_future_then(efl_future_iterator_all(it), &done_closing_cb, &error_cb, NULL, job);
+
+   eina_array_flush(&stack);
 }
 
-void done_open_cb(void *data, Eina_Iterator **iterator)
+Efl_Future *open_file(Efl_Io_Manager *job, const char *path)
 {
-    EINA_SAFETY_ON_NULL_RETURN(data);
-    EINA_SAFETY_ON_NULL_RETURN(iterator);
-    EINA_SAFETY_ON_NULL_RETURN(*iterator);
-    Efl_Io_Manager *job = data;
-
-    Eina_File **file = NULL;
-    Eina_File **files = calloc(sizeof(Eina_File*),2);
-    int i = 0;
-    while (eina_iterator_next(*iterator, (void**)&file))
-    {
-        files[i] = *file;
-        const char *name = eina_file_filename_get(*file);
-        printf("%s opened file %s\n", __FUNCTION__, name);
-        i++;
-    }
-    closing_job(job, files[0], files[1]);
-    free(files);
-}
-
-void open_file(const char *path, const char *path2)
-{
-    Eina_Promise *promise;
-    Eina_Promise *tasks[3] = {NULL, NULL, NULL};
-
-    Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, NULL);
-    tasks[0] = efl_io_manager_file_open(job, path, EINA_FALSE);
-    tasks[1] = efl_io_manager_file_open(job, path2, EINA_FALSE);
-    promise = eina_promise_all(eina_carray_iterator_new((void**)&tasks[0]));
-    eina_promise_then(promise, (Eina_Promise_Cb)&done_open_cb, (Eina_Promise_Error_Cb)&error_cb, job);
+   return efl_io_manager_open(job, path, EINA_FALSE);
 }
 
 int main(int argc, char const *argv[])
 {
-    eio_init();
-    ecore_init();
+   Efl_Io_Manager *job;
+   const char *path;
+   const char *path2;
 
-    const char *path = getenv("HOME");
-    const char *path2 = "./";
+   eio_init();
+   ecore_init();
 
-    if (argc > 1)
-        path = argv[1];
-    if (argc > 2)
-        path2 = argv[2];
+   job = efl_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
 
-    open_file(path, path2);
+   path = getenv("HOME");
+   path2 = "./";
 
-    ecore_main_loop_begin();
+   if (argc > 1)
+     path = argv[1];
+   if (argc > 2)
+     path2 = argv[2];
 
-    ecore_shutdown();
-    eio_shutdown();
-    return 0;
+   efl_future_then(efl_future_all(open_file(job, path), open_file(job, path2)),
+                   &done_open_cb, &error_cb, NULL, job);
+
+   ecore_main_loop_begin();
+
+   efl_del(job);
+
+   ecore_shutdown();
+   eio_shutdown();
+   return 0;
 }
