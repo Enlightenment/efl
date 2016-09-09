@@ -64,7 +64,7 @@ _evas_outbuf_fb_get(Outbuf *ob, struct gbm_bo *bo)
 
    fb =
      ecore_drm2_fb_gbm_create(ob->fd, w, h, ob->depth, ob->bpp,
-                              format, hdl, stride);
+                              format, hdl, stride, bo);
    if (!fb)
      {
         ERR("Failed to create FBO");

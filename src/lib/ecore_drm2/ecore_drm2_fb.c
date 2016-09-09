@@ -106,7 +106,7 @@ err:
 }
 
 EAPI Ecore_Drm2_Fb *
-ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride)
+ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo)
 {
    struct drm_mode_map_dumb marg;
    Ecore_Drm2_Fb *fb;
@@ -118,6 +118,7 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
    if (!fb) return NULL;
 
    fb->gbm = EINA_TRUE;
+   fb->gbm_bo = bo;
 
    fb->fd = fd;
    fb->w = width;
@@ -321,4 +322,10 @@ EAPI void
 ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy)
 {
    fb->busy = busy;
+}
+
+EAPI void *
+ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *f)
+{
+   return f->gbm_bo;
 }

@@ -686,7 +686,7 @@ EAPI Eina_Bool ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, un
  */
 EAPI Ecore_Drm2_Fb *ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned int format);
 
-EAPI Ecore_Drm2_Fb *ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride);
+EAPI Ecore_Drm2_Fb *ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo);
 
 /**
  * Destroy a framebuffer object
@@ -807,6 +807,18 @@ EAPI void ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy);
  * @since 1.19
  */
 EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
+
+/**
+ * Get the Framebuffer's gbm buffer object
+ *
+ * @param fb The framebuffer to query
+ *
+ * @return The gbm bo for the framebuffer
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.19
+ */
+EAPI void *ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb);
 
 # endif
 

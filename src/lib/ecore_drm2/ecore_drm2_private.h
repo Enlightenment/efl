@@ -93,6 +93,8 @@ struct _Ecore_Drm2_Fb
    uint32_t stride, size;
    uint32_t format;
 
+   void *gbm_bo;
+
    Eina_Bool gbm : 1;
    Eina_Bool busy : 1;
 
