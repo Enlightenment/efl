@@ -328,6 +328,35 @@ ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy)
    fb->busy = busy;
 }
 
+EAPI void
+ecore_drm2_output_fb_release(Ecore_Drm2_Output *o)
+{
+   if (o->next)
+     {
+        _release_buffer(o, o->next);
+        o->next = NULL;
+        return;
+     }
+
+   WRN("Buffer release request when no next buffer");
+   /* If we have to release these we're going to see tearing.
+    * Try to reclaim in decreasing order of visual awfulness
+    */
+   if (o->current)
+     {
+        _release_buffer(o, o->current);
+        o->current = NULL;
+        return;
+     }
+
+   if (o->pending)
+     {
+        _release_buffer(o, o->pending);
+        o->pending = NULL;
+        return;
+     }
+}
+
 EAPI void *
 ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *f)
 {
