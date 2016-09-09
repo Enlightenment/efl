@@ -154,6 +154,8 @@ struct _Ecore_Drm2_Output
    Eina_List *planes;
 
    void *user_data;
+   Ecore_Drm2_Release_Handler release_cb;
+   void *release_data;
 
    Eina_Bool connected : 1;
    Eina_Bool primary : 1;

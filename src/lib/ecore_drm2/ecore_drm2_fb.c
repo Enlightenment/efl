@@ -224,15 +224,19 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
 #endif
 }
 
+static void _release_buffer(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *b)
+{
+   b->busy = EINA_FALSE;
+   if (output->release_cb) output->release_cb(output->release_data, b);
+}
+
 EAPI Eina_Bool
 ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 {
-   if (output->current) output->current->busy = EINA_FALSE;
+   if (output->current && (output->current != output->pending))
+     _release_buffer(output, output->current);
    output->current = output->pending;
    output->pending = NULL;
-
-   /* In case they were the same buffer... */
-   if (output->current) output->current->busy = EINA_TRUE;
 
    return !!output->next;
 }
@@ -249,7 +253,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 
    if (output->pending)
      {
-        if (output->next) output->next->busy = EINA_FALSE;
+        if (output->next) _release_buffer(output, output->next);
         output->next = fb;
         if (output->next) output->next->busy = EINA_TRUE;
         return 0;
@@ -283,7 +287,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
              return ret;
           }
 
-        if (output->current) output->current->busy = EINA_FALSE;
+        if (output->current) _release_buffer(output, output->current);
         output->current = fb;
         output->current->busy = EINA_TRUE;
         output->next = NULL;

@@ -61,6 +61,8 @@ typedef struct _Ecore_Drm2_Event_Activate
 EAPI extern int ECORE_DRM2_EVENT_OUTPUT_CHANGED;
 EAPI extern int ECORE_DRM2_EVENT_ACTIVATE;
 
+typedef void (*Ecore_Drm2_Release_Handler)(void *data, Ecore_Drm2_Fb *b);
+
 /**
  * @file
  * @brief Ecore functions for dealing with drm, virtual terminals
@@ -807,6 +809,20 @@ EAPI void ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy);
  * @since 1.19
  */
 EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
+
+/**
+ * Register a callback for the buffer release handler
+ *
+ * When a flip completes ecore_drm2 may release a buffer.  Use this callback
+ * if you need to do bookkeeping or locking on buffer release.
+ *
+ * @param output The output to register the callback on
+ * @param handler The function to handle the callback
+ * @param data The user data to pass to the callback
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.19
+ */
+EAPI void ecore_drm2_output_release_handler_set(Ecore_Drm2_Output *output, Ecore_Drm2_Release_Handler handler, void *data);
 
 /**
  * Get the Framebuffer's gbm buffer object

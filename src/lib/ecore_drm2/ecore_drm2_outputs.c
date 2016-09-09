@@ -1202,3 +1202,10 @@ ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data)
 {
    o->user_data = data;
 }
+
+EAPI void
+ecore_drm2_output_release_handler_set(Ecore_Drm2_Output *o, Ecore_Drm2_Release_Handler cb, void *data)
+{
+   o->release_data = data;
+   o->release_cb = cb;
+}
