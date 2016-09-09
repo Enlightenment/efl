@@ -64,6 +64,7 @@
 # define BITS_ENTRY_ID           11
 # define BITS_GENERATION_COUNTER  6
 # define BITS_DOMAIN              2
+# define BITS_CLASS               1
 # define REF_TAG_SHIFT           30
 # define SUPER_TAG_SHIFT         31
 # define DROPPED_TABLES           0
@@ -77,6 +78,7 @@ typedef uint16_t Generation_Counter;
 # define BITS_ENTRY_ID           11
 # define BITS_GENERATION_COUNTER 26
 # define BITS_DOMAIN              2
+# define BITS_CLASS               1
 # define REF_TAG_SHIFT           62
 # define SUPER_TAG_SHIFT         63
 # define DROPPED_TABLES           2
@@ -308,7 +310,7 @@ _eo_table_data_table_new(Efl_Id_Domain domain)
           }
         tdata->shared = EINA_TRUE;
      }
-   // XXX: randomize generation count and allocation methods
+   tdata->generation = rand() % MAX_GENERATIONS;
    return tdata;
 }
 
@@ -389,7 +391,7 @@ _eo_id_domain_compatible(const Eo *o1, const Eo *o2)
     (PARTIAL_ID                                                   | \
      (((Eo_Id)DOMAIN & MASK_DOMAIN) << SHIFT_DOMAIN)              | \
      ((ENTRY & MASK_ENTRY_ID) << SHIFT_ENTRY_ID)                  | \
-     (GENERATION & MASK_GENERATIONS ))
+     (GENERATION & MASK_GENERATIONS))
 
 /* Macro to extract from an Eo id the indexes of the tables */
 #define EO_DECOMPOSE_ID(ID, MID_TABLE, TABLE, ENTRY, GENERATION) \
@@ -523,7 +525,7 @@ _eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id)
         UNPROTECT(tdata->current_table);
         /* [1;max-1] thus we never generate an Eo_Id equal to 0 */
         tdata->generation++;
-        if (tdata->generation == MAX_GENERATIONS) tdata->generation = 1;
+        if (tdata->generation >= MAX_GENERATIONS) tdata->generation = 1;
         /* Fill the entry and return it's Eo Id */
         entry->ptr = (_Eo_Object *)obj;
         entry->active = 1;
@@ -559,7 +561,7 @@ _eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id)
         PROTECT(tdata->current_table);
         id = EO_COMPOSE_FINAL_ID(tdata->current_table->partial_id,
                                  (entry - tdata->current_table->entries),
-                                 data->domain_stack[data->stack_top],
+                                 EFL_ID_DOMAIN_SHARED,
                                  entry->generation);
 shared_err:
         eina_spinlock_release(&(tdata->lock));
