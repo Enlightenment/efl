@@ -5,14 +5,14 @@
 static int retval = EXIT_SUCCESS;
 
 static void
-_copier_done(void *data, const Efl_Event *event)
+_copier_done(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    fprintf(stderr, "INFO: done\n");
    ecore_main_loop_quit();
 }
 
 static void
-_copier_error(void *data, const Efl_Event *event)
+_copier_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "INFO: error: #%d '%s'\n", *perr, eina_error_msg_get(*perr));
@@ -24,7 +24,8 @@ EFL_CALLBACKS_ARRAY_DEFINE(copier_cbs,
                            { EFL_IO_COPIER_EVENT_DONE, _copier_done },
                            { EFL_IO_COPIER_EVENT_ERROR, _copier_error });
 
-int main(int argc, char *argv[])
+int
+main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
    Eo *input, *output, *copier, *loop;
 
