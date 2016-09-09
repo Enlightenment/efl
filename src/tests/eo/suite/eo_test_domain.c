@@ -50,14 +50,6 @@ _recursive(Eo *obj, void *class_data EINA_UNUSED, int n)
      count = 0;
 }
 
-static void
-_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, Efl_Dbg_Info *root)
-{
-   efl_dbg_info_get(efl_super(eo_obj, MY_CLASS), root);
-   Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, "Test list");
-   EFL_DBG_INFO_APPEND(group, "Test", EINA_VALUE_TYPE_INT, 8);
-}
-
 EFL_VOID_FUNC_BODYV(domain_a_set, EFL_FUNC_CALL(a), int a);
 EFL_FUNC_BODY(domain_a_get, int, 0);
 EFL_FUNC_BODY(domain_a_print, Eina_Bool, EINA_FALSE);

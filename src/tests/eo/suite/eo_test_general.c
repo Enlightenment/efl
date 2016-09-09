@@ -1355,6 +1355,61 @@ START_TEST(eo_rec_interface)
 }
 END_TEST
 
+typedef struct
+{
+   Eo *obj, *objs;
+   Efl_Domain_Data *dat;
+} Data;
+
+static void *
+thr1(void *data, Eina_Thread t EINA_UNUSED)
+{
+   Data *d = data;
+   Efl_Id_Domain dom;
+
+   fail_if(efl_domain_switch(EFL_ID_DOMAIN_THREAD) != EINA_TRUE);
+   fail_if(efl_domain_get() != EFL_ID_DOMAIN_THREAD);
+   printf("ADD2\n");
+   Eo *obj = efl_add(DOMAIN_CLASS, NULL);
+   printf("ADD2 DONE = %p\n", obj);
+
+   printf("SET ON LOCAL\n");
+   domain_a_set(obj, 1234);
+   fail_if(domain_a_get(obj) != 1234);
+   printf("SET ON LOCAL DONE\n");
+
+   printf("SET ON SHARED\n");
+   domain_a_set(d->objs, 1234);
+   fail_if(domain_a_get(d->objs) != 1234);
+   printf("SET ON SHARED DONE\n");
+
+   printf("FAAAAIL check %p\n", d->obj);
+   domain_a_set(d->obj, 1234);
+   int v = domain_a_get(d->obj);
+   printf("........ v = %i\n", v);
+   fail_if(v == 1234);
+   sleep(1);
+   printf("FAAAAIL DONE\n");
+
+   printf("ADOPT...\n");
+   dom = efl_domain_data_adopt(d->dat);
+   fail_if(dom != EFL_ID_DOMAIN_MAIN);
+   printf("SUCCEED check %p\n", d->obj);
+   domain_a_set(d->obj, 8910);
+   v = domain_a_get(d->obj);
+   printf("........ v = %i\n", v);
+   fail_if(v != 8910);
+   sleep(1);
+   printf("SUCCEED DONE\n");
+
+   printf("RETURN DOMAIN DATA\n");
+   fail_if(efl_domain_data_return(dom) != EINA_TRUE);
+   printf("RETURN DOMAIN DATA DONE\n");
+
+   efl_del(obj);
+   return NULL;
+}
+
 START_TEST(eo_domain)
 {
    Eo *obj, *objs;
@@ -1398,10 +1453,14 @@ START_TEST(eo_domain)
 
    fail_if(efl_domain_current_get() != EFL_ID_DOMAIN_MAIN);
 
-   objs = efl_add(DOMAIN_CLASS, NULL);
+   printf("ADD1\n");
+   obj = efl_add(DOMAIN_CLASS, NULL);
+   printf("ADD1 DONE = %p\n", obj);
 
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
-   obj = efl_add(DOMAIN_CLASS, NULL);
+   printf("ADDS\n");
+   objs = efl_add(DOMAIN_CLASS, NULL);
+   printf("ADDS DONE = %p\n", objs);
    efl_domain_current_pop();
 
    fail_if(efl_compatible(objs, obj) == EINA_TRUE);
@@ -1411,6 +1470,19 @@ START_TEST(eo_domain)
 
    domain_a_set(objs, 1234);
    fail_if(domain_a_get(objs) != 1234);
+
+   Eina_Thread t;
+   Data data;
+   data.obj = obj;
+   data.objs = objs;
+   printf("GET DOMAIN DATA\n");
+   data.dat = efl_domain_data_get();
+   fail_if(data.dat == NULL);
+   printf("THR CREATE\n");
+   fail_if(!eina_thread_create(&t, EINA_THREAD_NORMAL, -1, thr1, &data));
+   printf("JOIN\n");
+   eina_thread_join(t);
+   printf("JOIN DONE\n");
 
    efl_del(obj);
    efl_del(objs);
