@@ -11,6 +11,7 @@
  * The type of Efl Promise used in asynchronous operation, the write side of a promise.
  */
 typedef Eo Efl_Promise;
+#define _EFL_PROMISE_EO_CLASS_TYPE
 
 #define EFL_FUTURE_CLASS efl_future_class_get()
 EWAPI const Efl_Class *efl_future_class_get(void);
