@@ -22,11 +22,11 @@ static void _custom_engine_layout_do(Eo *obj, void *pd, Efl_Pack *pack, const vo
 static Eina_Bool
 _custom_engine_class_initializer(Efl_Class *klass)
 {
-   EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_CLASS_FUNC(efl_pack_layout_do, _custom_engine_layout_do),
+   EFL_OPS_DEFINE(class_ops,
+         EFL_OBJECT_OP_FUNC(efl_pack_layout_do, _custom_engine_layout_do),
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, NULL, &class_ops);
 }
 
 static const Efl_Class_Description custom_engine_class_desc = {

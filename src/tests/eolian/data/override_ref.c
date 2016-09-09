@@ -70,7 +70,7 @@ _override_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(override_foo, NULL)
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 static const Efl_Class_Description _override_class_desc = {

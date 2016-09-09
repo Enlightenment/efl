@@ -95,14 +95,16 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
          EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
          EFL_OBJECT_OP_FUNC(simple_a_print, _a_print),
-         EFL_OBJECT_OP_CLASS_FUNC(simple_class_hi_print, _class_hi_print),
          EFL_OBJECT_OP_FUNC(simple_recursive, _recursive),
          EFL_OBJECT_OP_FUNC(simple_part_get, _part_get),
          EFL_OBJECT_OP_FUNC(simple_pure_virtual, NULL),
          EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _dbg_info_get),
    );
+   EFL_OPS_DEFINE(cops,
+         EFL_OBJECT_OP_FUNC(simple_class_hi_print, _class_hi_print),
+   );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, &cops);
 }
 
 static const Efl_Class_Description class_desc = {
@@ -129,11 +131,11 @@ EFL_FUNC_BODY_CONST(simple2_class_beef_get, int, 0);
 static Eina_Bool
 _class_initializer2(Efl_Class *klass)
 {
-   EFL_OPS_DEFINE(ops,
-         EFL_OBJECT_OP_CLASS_FUNC(simple2_class_beef_get, _beef_get),
+   EFL_OPS_DEFINE(cops,
+         EFL_OBJECT_OP_FUNC(simple2_class_beef_get, _beef_get),
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, NULL, &cops);
 }
 
 static const Efl_Class_Description class_desc2 = {
@@ -163,7 +165,7 @@ _searchable_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(efl_provider_find, _interface_get)
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 static const Efl_Class_Description class_desc_searchable = {

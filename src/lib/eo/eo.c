@@ -608,15 +608,15 @@ _efl_object_api_op_id_get(const void *api_func)
 /* klass is the klass we are working on. hierarchy_klass is the class whe should
  * use when validating. */
 static Eina_Bool
-_eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Class *hierarchy_klass, const _Efl_Class *klass, Eina_Bool override_only EINA_UNUSED)
+_eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Class *hierarchy_klass, const _Efl_Class *klass, Efl_Object_Op id_offset, Eina_Bool override_only)
 {
    unsigned int i;
-   int op_id;
+   Efl_Object_Op op_id;
    const void *last_api_func;
    const Efl_Op_Description *op_desc;
    const Efl_Op_Description *op_descs;
 
-   op_id = hierarchy_klass->base_id;
+   op_id = hierarchy_klass->base_id + id_offset;
    op_descs = ops->descs;
 
    DBG("Set functions for class '%s':%p", klass->desc->name, klass);
@@ -635,7 +635,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
              return EINA_FALSE;
           }
 
-        if ((op_desc->op_type == EFL_OBJECT_OP_TYPE_REGULAR) || (op_desc->op_type == EFL_OBJECT_OP_TYPE_CLASS))
+        /* Get the opid for the function. */
           {
              if (_eo_api_func_equal(op_desc->api_func, last_api_func))
                {
@@ -667,13 +667,6 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
                }
           }
 
-        if (op == EFL_NOOP)
-          {
-             ERR("Class '%s': Invalid op 'EFL_NOOP' (%p->%p '%s').",
-                 klass->desc->name, op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
-             return EINA_FALSE;
-          }
-
         DBG("%p->%p '%s'", op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
 
         if (!_vtable_func_set(vtable, klass, op, op_desc->func))
@@ -686,10 +679,11 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
 }
 
 EAPI Eina_Bool
-efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *ops)
+efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops)
 {
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
    Efl_Object_Ops empty_ops = { 0 };
+
    if (klass->functions_set)
      {
         ERR("Class %s already had its functions set..", klass->desc->name);
@@ -697,12 +691,17 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *ops)
      }
    klass->functions_set = EINA_TRUE;
 
-   if (!ops)
+   if (!object_ops)
      {
-        ops = &empty_ops;
+        object_ops = &empty_ops;
      }
 
-   klass->ops_count = ops->count;
+   if (!class_ops)
+     {
+        class_ops = &empty_ops;
+     }
+
+   klass->ops_count = object_ops->count + class_ops->count;
 
    klass->base_id = _eo_ops_last_id;
    _eo_ops_last_id += klass->ops_count + 1;
@@ -723,7 +722,8 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *ops)
           }
      }
 
-   return _eo_class_funcs_set(&klass->vtable, ops, klass, klass, EINA_FALSE);
+   return _eo_class_funcs_set(&klass->vtable, object_ops, klass, klass, 0, EINA_FALSE) &&
+      _eo_class_funcs_set(&klass->vtable, class_ops, klass, klass, object_ops->count, EINA_FALSE);
 }
 
 EAPI Eo *
@@ -1374,7 +1374,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    /* If functions haven't been set, invoke it with an empty ops structure. */
    if (!klass->functions_set)
      {
-        efl_class_functions_set(_eo_class_id_get(klass), NULL);
+        efl_class_functions_set(_eo_class_id_get(klass), NULL, NULL);
      }
 
    /* Mark which classes we implement */
@@ -1437,7 +1437,7 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
         return EINA_FALSE;
      }
 
-   if (!_eo_class_funcs_set(obj->vtable, ops, obj->klass, klass, EINA_TRUE))
+   if (!_eo_class_funcs_set(obj->vtable, ops, obj->klass, klass, 0, EINA_TRUE))
      {
         ERR("Failed to override functions for %p", eo_id);
         return EINA_FALSE;
