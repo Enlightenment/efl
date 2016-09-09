@@ -38,7 +38,7 @@ struct Efl.Net.Dialer.Websocket.Closed_Reason {
     message: string;
 }
 
-class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Reader, Efl.Io.Writer) { /* TODO: reader/writer should be from dialer->socket, but are being missed somehow... */
+class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
     [[WebSocket Dialer (Client).
 
       The WebSocket Protocol (https://tools.ietf.org/html/rfc6455) is

@@ -6,7 +6,7 @@ enum Efl.Net.Dialer.Http.Primary_Mode {
     upload,
 }
 
-class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Sizer) { /* TODO: reader/writer should be from dialer->socket, but are being missed somehow... */
+class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
     [[HTTP Dialer (Client).
 
       The effective URL in use, if @.allow_redirects is $true will be
