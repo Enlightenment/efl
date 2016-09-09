@@ -1,3 +1,7 @@
+var @extern Efl.Net.Dialer.Error.COULDNT_CONNECT: Eina.Error;
+var @extern Efl.Net.Dialer.Error.COULDNT_RESOLVE_PROXY: Eina.Error;
+var @extern Efl.Net.Dialer.Error.COULDNT_RESOLVE_HOST: Eina.Error;
+
 interface Efl.Net.Dialer (Efl.Net.Socket) {
     [[Creates a client socket to reach a remote peer.
 

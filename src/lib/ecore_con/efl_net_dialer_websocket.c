@@ -831,7 +831,7 @@ _efl_net_dialer_websocket_http_headers_done(void *data, const Efl_Event *event E
    status = efl_net_dialer_http_response_status_get(pd->http);
    if (status != EFL_NET_HTTP_STATUS_SWITCHING_PROTOCOLS)
      {
-        Eina_Error err = EFL_NET_HTTP_ERROR_COULDNT_CONNECT;
+        Eina_Error err = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
         if ((status >= 300) && (status < 400))
           return;
         WRN("failed WebSocket handshake: HTTP status=%d, expected=%d",
@@ -871,7 +871,7 @@ _efl_net_dialer_websocket_http_headers_done(void *data, const Efl_Event *event E
 
    if ((!upgraded) || (!connection_websocket) || (!accepted))
      {
-        Eina_Error err = EFL_NET_HTTP_ERROR_COULDNT_CONNECT;
+        Eina_Error err = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
         WRN("failed WebSocket handshake: upgraded=%d, connection_websocket=%d, accepted=%d",
             upgraded, connection_websocket, accepted);
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);

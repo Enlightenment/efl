@@ -175,6 +175,10 @@ EAPI int ECORE_CON_EVENT_CLIENT_ERROR = 0;
 EAPI int ECORE_CON_EVENT_SERVER_ERROR = 0;
 EAPI int ECORE_CON_EVENT_PROXY_BIND = 0;
 
+EAPI Eina_Error EFL_NET_DIALER_ERROR_COULDNT_CONNECT = 0;
+EAPI Eina_Error EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_PROXY = 0;
+EAPI Eina_Error EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST = 0;
+
 static Eina_List *servers = NULL;
 static int _ecore_con_init_count = 0;
 static int _ecore_con_event_count = 0;
@@ -214,6 +218,10 @@ ecore_con_init(void)
    ECORE_CON_EVENT_CLIENT_ERROR = ecore_event_type_new();
    ECORE_CON_EVENT_SERVER_ERROR = ecore_event_type_new();
    ECORE_CON_EVENT_PROXY_BIND = ecore_event_type_new();
+
+   EFL_NET_DIALER_ERROR_COULDNT_CONNECT = eina_error_msg_static_register("Couldn't connect to server");
+   EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_PROXY = eina_error_msg_static_register("Couldn't resolve proxy name");
+   EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST = eina_error_msg_static_register("Couldn't resolve host name");
 
    eina_magic_string_set(ECORE_MAGIC_CON_SERVER, "Ecore_Con_Server");
    eina_magic_string_set(ECORE_MAGIC_CON_CLIENT, "Ecore_Con_Client");
@@ -3037,6 +3045,46 @@ efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr)
    return EINA_TRUE;
 }
 
+Eina_Bool
+efl_net_ip_port_split(char *buf, const char **p_host, const char **p_port)
+{
+   char *host, *port;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(p_host, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(p_port, EINA_FALSE);
+
+   host = buf;
+   if (host[0] == '[')
+     {
+        /* IPv6 is: [IP]:port */
+        host++;
+        port = strchr(host, ']');
+        if (!port) return EINA_FALSE;
+        *port = '\0';
+        port++;
+
+        if (port[0] == ':')
+          port++;
+        else
+          port = NULL;
+     }
+   else
+     {
+        port = strchr(host, ':');
+        if (port)
+          {
+             *port = '\0';
+             port++;
+          }
+     }
+
+   *p_host = host;
+   *p_port = port;
+   return EINA_TRUE;
+}
+
+
 int
 efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec)
 {
@@ -3064,4 +3112,218 @@ efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec)
 #endif
 
    return fd;
+}
+
+typedef struct _Efl_Net_Resolve_Async_Data
+{
+   Efl_Net_Resolve_Async_Cb cb;
+   const void *data;
+   char *host;
+   char *port;
+   struct addrinfo *result;
+   struct addrinfo *hints;
+   int gai_error;
+} Efl_Net_Resolve_Async_Data;
+
+static void
+_efl_net_resolve_async_run(void *data, Ecore_Thread *thread)
+{
+   Efl_Net_Resolve_Async_Data *d = data;
+
+   while (!ecore_thread_check(thread))
+     {
+        DBG("resolving host='%s' port='%s'", d->host, d->port);
+        d->gai_error = getaddrinfo(d->host, d->port, d->hints, &d->result);
+        if (d->gai_error == 0) break;
+        if (d->gai_error == EAI_AGAIN) continue;
+
+        DBG("getaddrinfo(\"%s\", \"%s\") failed: %s", d->host, d->port, gai_strerror(d->gai_error));
+        break;
+     }
+
+   if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
+     {
+        char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
+        const struct addrinfo *addrinfo;
+        for (addrinfo = d->result; addrinfo != NULL; addrinfo = addrinfo->ai_next)
+          {
+             if (efl_net_ip_port_fmt(buf, sizeof(buf), addrinfo->ai_addr))
+               DBG("resolved host='%s' port='%s': %s", d->host, d->port, buf);
+          }
+     }
+}
+
+static void
+_efl_net_resolve_async_data_free(Efl_Net_Resolve_Async_Data *d)
+{
+   free(d->hints);
+   free(d->host);
+   free(d->port);
+   free(d);
+}
+
+static void
+_efl_net_resolve_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Efl_Net_Resolve_Async_Data *d = data;
+   d->cb((void *)d->data, d->host, d->port, d->hints, d->result, d->gai_error);
+   _efl_net_resolve_async_data_free(d);
+}
+
+static void
+_efl_net_resolve_async_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Efl_Net_Resolve_Async_Data *d = data;
+   if (d->result) freeaddrinfo(d->result);
+   _efl_net_resolve_async_data_free(d);
+}
+
+Ecore_Thread *
+efl_net_resolve_async_new(const char *host, const char *port, const struct addrinfo *hints, Efl_Net_Resolve_Async_Cb cb, const void *data)
+{
+   Efl_Net_Resolve_Async_Data *d;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(host, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(port, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cb, NULL);
+
+   d = malloc(sizeof(Efl_Net_Resolve_Async_Data));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
+
+   d->cb = cb;
+   d->data = data;
+   d->host = strdup(host);
+   EINA_SAFETY_ON_NULL_GOTO(d->host, failed_host);
+   d->port = strdup(port);
+   EINA_SAFETY_ON_NULL_GOTO(d->port, failed_port);
+
+   if (!hints) d->hints = NULL;
+   else
+     {
+        d->hints = malloc(sizeof(struct addrinfo));
+        EINA_SAFETY_ON_NULL_GOTO(d->hints, failed_hints);
+        memcpy(d->hints, hints, sizeof(struct addrinfo));
+     }
+
+   d->result = NULL;
+
+   return ecore_thread_run(_efl_net_resolve_async_run,
+                           _efl_net_resolve_async_end,
+                           _efl_net_resolve_async_cancel,
+                           d);
+
+ failed_hints:
+   free(d->port);
+ failed_port:
+   free(d->host);
+ failed_host:
+   free(d);
+   return NULL;
+}
+
+typedef struct _Efl_Net_Connect_Async_Data
+{
+   Efl_Net_Connect_Async_Cb cb;
+   const void *data;
+   socklen_t addrlen;
+   Eina_Bool close_on_exec;
+   int type;
+   int protocol;
+   int sockfd;
+   Eina_Error error;
+   struct sockaddr addr[];
+} Efl_Net_Connect_Async_Data;
+
+static void
+_efl_net_connect_async_run(void *data, Ecore_Thread *thread)
+{
+   Efl_Net_Connect_Async_Data *d = data;
+   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
+   int r;
+
+   d->error = 0;
+
+   d->sockfd = efl_net_socket4(d->addr->sa_family, d->type, d->protocol, d->close_on_exec);
+   if (d->sockfd < 0)
+     {
+        d->error = errno;
+        DBG("socket(%d, %d, %d) failed: %s", d->addr->sa_family, d->type, d->protocol, strerror(errno));
+        return;
+     }
+
+   if (ecore_thread_check(thread))
+     {
+        d->error = ECANCELED;
+        close(d->sockfd);
+        d->sockfd = -1;
+        return;
+     }
+
+   if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
+     efl_net_ip_port_fmt(buf, sizeof(buf), d->addr);
+
+   DBG("connecting fd=%d to %s", d->sockfd, buf);
+
+   r = connect(d->sockfd, d->addr, d->addrlen);
+   if (r < 0)
+     {
+        d->error = errno;
+        close(d->sockfd);
+        d->sockfd = -1;
+        DBG("connect(%d, %s) failed: %s", d->sockfd, buf, strerror(errno));
+        return;
+     }
+
+   DBG("connected fd=%d to %s", d->sockfd, buf);
+}
+
+static void
+_efl_net_connect_async_data_free(Efl_Net_Connect_Async_Data *d)
+{
+   free(d);
+}
+
+static void
+_efl_net_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Efl_Net_Connect_Async_Data *d = data;
+   d->cb((void *)d->data, d->addr, d->addrlen, d->sockfd, d->error);
+   _efl_net_connect_async_data_free(d);
+}
+
+static void
+_efl_net_connect_async_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Efl_Net_Connect_Async_Data *d = data;
+   if (d->sockfd >= 0) close(d->sockfd);
+   _efl_net_connect_async_data_free(d);
+}
+
+Ecore_Thread *
+efl_net_connect_async_new(const struct sockaddr *addr, socklen_t addrlen, int type, int protocol, Eina_Bool close_on_exec, Efl_Net_Connect_Async_Cb cb, const void *data)
+{
+   Efl_Net_Connect_Async_Data *d;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(addr, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(addrlen < 1, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cb, NULL);
+
+   d = malloc(sizeof(Efl_Net_Connect_Async_Data) + addrlen);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
+
+   d->cb = cb;
+   d->data = data;
+   d->addrlen = addrlen;
+   d->close_on_exec = close_on_exec;
+   d->type = type;
+   d->protocol = protocol;
+   memcpy(d->addr, addr, addrlen);
+
+   d->sockfd = -1;
+   d->error = 0;
+
+   return ecore_thread_run(_efl_net_connect_async_run,
+                           _efl_net_connect_async_end,
+                           _efl_net_connect_async_cancel,
+                           d);
 }

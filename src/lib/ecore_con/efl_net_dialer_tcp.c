@@ -31,117 +31,203 @@
 
 typedef struct _Efl_Net_Dialer_Tcp_Data
 {
+   struct {
+      Ecore_Thread *thread;
+      struct addrinfo *names;
+      struct addrinfo *current;
+   } resolve;
+   struct {
+      Ecore_Thread *thread;
+   } connect;
    Eina_Stringshare *address_dial;
    Eina_Stringshare *proxy;
    Eina_Bool connected;
+   Eina_Bool closed;
    double timeout_dial;
 } Efl_Net_Dialer_Tcp_Data;
 
 EOLIAN static void
 _efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
 {
+   if (pd->connect.thread)
+     {
+        ecore_thread_cancel(pd->connect.thread);
+        pd->connect.thread = NULL;
+     }
+
+   if (pd->resolve.thread)
+     {
+        ecore_thread_cancel(pd->resolve.thread);
+        pd->resolve.thread = NULL;
+     }
+
+   pd->resolve.current = NULL;
+   if (pd->resolve.names)
+     {
+        freeaddrinfo(pd->resolve.names);
+        pd->resolve.names = NULL;
+     }
+
    efl_destructor(efl_super(o, MY_CLASS));
 
    eina_stringshare_replace(&pd->address_dial, NULL);
    eina_stringshare_replace(&pd->proxy, NULL);
 }
 
+static void
+_efl_net_dialer_tcp_connected(void *data, const struct sockaddr *addr EINA_UNUSED, socklen_t addrlen EINA_UNUSED, int fd, Eina_Error err)
+{
+   Eo *o = data;
+   Efl_Net_Dialer_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   const struct addrinfo *addrinfo;
+
+   pd->connect.thread = NULL;
+
+   if (!err)
+     {
+        freeaddrinfo(pd->resolve.names);
+        pd->resolve.names = NULL;
+        pd->resolve.current = NULL;
+        efl_loop_fd_set(o, fd);
+        efl_net_dialer_connected_set(o, EINA_TRUE);
+        return;
+     }
+
+   if (!pd->resolve.current) return;
+
+   pd->resolve.current = pd->resolve.current->ai_next;
+   if (!pd->resolve.current)
+     {
+        freeaddrinfo(pd->resolve.names);
+        pd->resolve.names = NULL;
+        if (err)
+          efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+        else
+          {
+             err = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
+             efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+          }
+        return;
+     }
+
+   addrinfo = pd->resolve.current;
+   pd->connect.thread = efl_net_connect_async_new(addrinfo->ai_addr,
+                                                  addrinfo->ai_addrlen,
+                                                  SOCK_STREAM,
+                                                  IPPROTO_TCP,
+                                                  efl_net_socket_fd_close_on_exec_get(o),
+                                                  _efl_net_dialer_tcp_connected,
+                                                  o);
+}
+
+static void
+_efl_net_dialer_tcp_connect(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
+{
+   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
+   const struct addrinfo *addrinfo;
+
+   if (pd->closed || !pd->resolve.current) return;
+
+   efl_ref(o); /* we're emitting callbacks then continuing the workflow */
+
+   addrinfo = pd->resolve.current;
+
+   efl_net_socket_fd_family_set(o, addrinfo->ai_family);
+   if (efl_net_ip_port_fmt(buf, sizeof(buf), addrinfo->ai_addr))
+     {
+        efl_net_socket_address_remote_set(o, buf);
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+     }
+
+   if (pd->closed) goto end; /* maybe closed from resolved event callback */
+
+   if (pd->connect.thread)
+     ecore_thread_cancel(pd->connect.thread);
+
+   pd->connect.thread = efl_net_connect_async_new(addrinfo->ai_addr,
+                                                  addrinfo->ai_addrlen,
+                                                  SOCK_STREAM,
+                                                  IPPROTO_TCP,
+                                                  efl_net_socket_fd_close_on_exec_get(o),
+                                                  _efl_net_dialer_tcp_connected,
+                                                  o);
+ end:
+   efl_unref(o);
+}
+
+static void
+_efl_net_dialer_tcp_resolved(void *data, const char *host EINA_UNUSED, const char *port EINA_UNUSED, const struct addrinfo *hints EINA_UNUSED, struct addrinfo *result, int gai_error)
+{
+   Eo *o = data;
+   Efl_Net_Dialer_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
+
+   pd->resolve.thread = NULL;
+
+   if (gai_error)
+     {
+        Eina_Error err = EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST;
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+        if (result) freeaddrinfo(result);
+        return;
+     }
+
+   if (pd->resolve.names) freeaddrinfo(pd->resolve.names);
+   pd->resolve.names = result;
+   pd->resolve.current = result;
+
+   _efl_net_dialer_tcp_connect(o, pd);
+}
+
 EOLIAN static Eina_Error
 _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_UNUSED, const char *address)
 {
-   struct sockaddr_storage addr = {};
-   char *str, *host, *port;
-   int r, fd;
-   socklen_t addrlen;
-   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
+   const char *host, *port;
+   struct addrinfo hints = {
+     .ai_socktype = SOCK_STREAM,
+     .ai_protocol = IPPROTO_TCP,
+   };
+   char *str;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_net_dialer_connected_get(o), EISCONN);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EBADF);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_loop_fd_get(o) >= 0, EALREADY);
 
-   // TODO: change to getaddrinfo() and move to a thread...
-   str = host = strdup(address);
+   str = strdup(address);
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, ENOMEM);
 
-   if (host[0] == '[')
+   if (!efl_net_ip_port_split(str, &host, &port))
      {
-        struct sockaddr_in6 *a = (struct sockaddr_in6 *)&addr;
-        /* IPv6 is: [IP]:port */
-        host++;
-        port = strchr(host, ']');
-        if (!port)
-          {
-             ERR("missing ']' in IPv6 address: %s", address);
-             goto invalid_address;
-          }
-        *port = '\0';
-        port++;
-
-        if (port[0] == ':')
-          port++;
-        else
-          port = NULL;
-        a->sin6_family = AF_INET6;
-        a->sin6_port = htons(port ? atoi(port) : 0);
-        r = inet_pton(AF_INET6, host, &(a->sin6_addr));
-        addrlen = sizeof(*a);
+        ERR("could not parse IP:PORT '%s'", address);
+        free(str);
+        return EINVAL;
      }
-   else
+   if (strchr(host, ':')) hints.ai_family = AF_INET6;
+   if (!port) port = "0";
+
+   if (pd->connect.thread)
      {
-        struct sockaddr_in *a = (struct sockaddr_in *)&addr;
-        port = strchr(host, ':');
-        if (port)
-          {
-             *port = '\0';
-             port++;
-          }
-        a->sin_family = AF_INET;
-        a->sin_port = htons(port ? atoi(port) : 0);
-        r = inet_pton(AF_INET, host, &(a->sin_addr));
-        addrlen = sizeof(*a);
+        ecore_thread_cancel(pd->connect.thread);
+        pd->connect.thread = NULL;
      }
 
-   if (r != 1)
+   if (pd->resolve.names)
      {
-        ERR("could not parse IP '%s' (%s)", host, address);
-        goto invalid_address;
+        freeaddrinfo(pd->resolve.names);
+        pd->resolve.names = NULL;
      }
+   pd->resolve.current = NULL;
+
+   if (pd->resolve.thread)
+     ecore_thread_cancel(pd->resolve.thread);
+
+   pd->resolve.thread = efl_net_resolve_async_new(host, port, &hints, _efl_net_dialer_tcp_resolved, o);
    free(str);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->resolve.thread, EINVAL);
 
-   efl_net_socket_fd_family_set(o, addr.ss_family);
    efl_net_dialer_address_dial_set(o, address);
 
-   if (efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&addr))
-     {
-        efl_net_socket_address_remote_set(o, buf);
-        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
-     }
-
-   fd = efl_net_socket4(addr.ss_family, SOCK_STREAM, IPPROTO_TCP, efl_net_socket_fd_close_on_exec_get(o));
-   if (fd < 0)
-     {
-        ERR("socket(%d, SOCK_STREAM, IPPROTO_TCP): %s",
-            addr.ss_family, strerror(errno));
-        return errno;
-     }
-
-   r = connect(fd, (struct sockaddr *)&addr, addrlen);
-   if (r < 0)
-     {
-        int errno_bkp = errno;
-        ERR("connect(%d, %s): %s", fd, address, strerror(errno));
-        close(fd);
-        return errno_bkp;
-     }
-
-   efl_loop_fd_set(o, fd);
-   efl_net_dialer_connected_set(o, EINA_TRUE);
    return 0;
-
- invalid_address:
-   free(str);
-   return EINVAL;
 }
 
 EOLIAN static void
@@ -197,8 +283,9 @@ _efl_net_dialer_tcp_efl_net_dialer_connected_get(Eo *o EINA_UNUSED, Efl_Net_Dial
 }
 
 EOLIAN static Eina_Error
-_efl_net_dialer_tcp_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_UNUSED)
+_efl_net_dialer_tcp_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
 {
+   pd->closed = EINA_TRUE;
    efl_net_dialer_connected_set(o, EINA_FALSE);
    return efl_io_closer_close(efl_super(o, MY_CLASS));
 }

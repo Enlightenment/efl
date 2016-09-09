@@ -16,6 +16,12 @@
 #include "efl_net_server_tcp.eo.h"
 
 #include "efl_net_http_types.eot.h"
+
+/* TODO: should be generated from 'var Efl.Net.Dialer.Error.*' */
+extern Eina_Error EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
+extern Eina_Error EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_PROXY;
+extern Eina_Error EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST;
+
 /* TODO: should be generated from 'var Efl.Net.Http.Error.*' */
 extern Eina_Error EFL_NET_HTTP_ERROR_BAD_CONTENT_ENCODING;
 extern Eina_Error EFL_NET_HTTP_ERROR_BAD_DOWNLOAD_RESUME;
@@ -23,9 +29,6 @@ extern Eina_Error EFL_NET_HTTP_ERROR_BAD_FUNCTION_ARGUMENT;
 extern Eina_Error EFL_NET_HTTP_ERROR_CHUNK_FAILED;
 extern Eina_Error EFL_NET_HTTP_ERROR_CONV_FAILED;
 extern Eina_Error EFL_NET_HTTP_ERROR_CONV_REQD;
-extern Eina_Error EFL_NET_HTTP_ERROR_COULDNT_CONNECT;
-extern Eina_Error EFL_NET_HTTP_ERROR_COULDNT_RESOLVE_HOST;
-extern Eina_Error EFL_NET_HTTP_ERROR_COULDNT_RESOLVE_PROXY;
 extern Eina_Error EFL_NET_HTTP_ERROR_FAILED_INIT;
 extern Eina_Error EFL_NET_HTTP_ERROR_FILE_COULDNT_READ_FILE;
 extern Eina_Error EFL_NET_HTTP_ERROR_FILESIZE_EXCEEDED;

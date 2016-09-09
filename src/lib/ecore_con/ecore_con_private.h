@@ -375,7 +375,69 @@ void ecore_con_mempool_shutdown(void);
 
 Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr);
 
+/**
+ * @brief splits an address in the format "host:port" in two
+ * null-terminated strings.
+ *
+ * The address may be 'server.com:1234', 'server.com:http',
+ * 'server.com' (@c *p_port will be NULL), IPv4 127.0.0.1:456 or
+ * IPv6 [::1]:456
+ *
+ * @param[inout] buf contains the string to be split and will be modified.
+ * @param[out] p_host returns a pointer inside @a buf with
+ *             null-terminated host part.
+ * @param[out] p_port returns a pointer with null-terminated port
+ *             part. The pointer may be inside @a buf if port was
+ *             specified or #NULL if it wasn't specified.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on errors.
+ *
+ * @internal
+ */
+Eina_Bool efl_net_ip_port_split(char *buf, const char **p_host, const char **p_port);
+
 int efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec);
+
+/**
+ * @brief callback to notify of resolved address.
+ *
+ * The callback is given the ownership of the result, thus must free
+ * it with freeaddrinfo().
+ *
+ * @internal
+ */
+typedef void (*Efl_Net_Resolve_Async_Cb)(void *data, const char *host, const char *port, const struct addrinfo *hints, struct addrinfo *result, int gai_error);
+
+/**
+ * @brief asynchronously resolve a host and port using getaddrinfo().
+ *
+ * This will call getaddrinfo() in a thread, taking care to return the
+ * result to the main loop and calling @a cb with given user @a data.
+ *
+ * @internal
+ */
+Ecore_Thread *efl_net_resolve_async_new(const char *host, const char *port, const struct addrinfo *hints, Efl_Net_Resolve_Async_Cb cb, const void *data);
+
+/**
+ * @brief callback to notify of connection.
+ *
+ * The callback is given the ownership of the socket (sockfd), thus
+ * must close().
+ *
+ * @internal
+ */
+typedef void (*Efl_Net_Connect_Async_Cb)(void *data, const struct sockaddr *addr, socklen_t addrlen, int sockfd, Eina_Error error);
+
+/**
+ * @brief asynchronously create a socket and connect to the address.
+ *
+ * This will call socket() and connect() in a thread, taking care to
+ * return the result to the main loop and calling @a cb with given
+ * user @a data.
+ *
+ * @internal
+ */
+Ecore_Thread *efl_net_connect_async_new(const struct sockaddr *addr, socklen_t addrlen, int type, int protocol, Eina_Bool close_on_exec, Efl_Net_Connect_Async_Cb cb, const void *data);
 
 static inline Eina_Error
 efl_net_socket_error_get(void)
