@@ -445,7 +445,7 @@ _efl_loop_future_class_initializer(Efl_Class *klass)
                   EFL_OBJECT_OP_FUNC(efl_constructor, _efl_loop_future_efl_object_constructor),
                   EFL_OBJECT_OP_FUNC(efl_destructor, _efl_loop_future_efl_object_destructor));
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 };
 
 static const Efl_Class_Description _efl_loop_future_class_desc = {

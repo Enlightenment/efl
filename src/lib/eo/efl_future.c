@@ -23,7 +23,7 @@ _efl_future_class_initializer(Efl_Class *klass)
                   EFL_OBJECT_OP_FUNC(efl_future_then, NULL),
                   EFL_OBJECT_OP_FUNC(efl_future_cancel, NULL));
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 static const Efl_Class_Description _efl_future_class_desc = {
