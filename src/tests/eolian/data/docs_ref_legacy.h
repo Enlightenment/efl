@@ -29,9 +29,9 @@ typedef Eo Docs;
  */
 typedef struct _Foo
 {
-  int field1; /** Field documentation. */
+  int field1; /**< Field documentation. */
   float field2;
-  short field3; /** Another field documentation. */
+  short field3; /**< Another field documentation. */
 } Foo;
 
 /** Docs for enum Bar.
@@ -41,8 +41,8 @@ typedef struct _Foo
 typedef enum
 {
   BAR_BLAH = 0,
-  BAR_FOO = 1, /** Docs for foo. */
-  BAR_BAR = 2 /** Docs for bar. */
+  BAR_FOO = 1, /**< Docs for foo. */
+  BAR_BAR = 2 /**< Docs for bar. */
 } Bar;
 
 /**
