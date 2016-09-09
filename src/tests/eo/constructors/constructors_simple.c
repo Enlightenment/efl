@@ -95,10 +95,10 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
          EFL_OBJECT_OP_FUNC(simple_a_get, _a_get),
          EFL_OBJECT_OP_FUNC(simple_b_set, _b_set),
-     EFL_OBJECT_OP_FUNC(simple_b_get, _b_get),
+         EFL_OBJECT_OP_FUNC(simple_b_get, _b_get),
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 static const Efl_Class_Description class_desc = {

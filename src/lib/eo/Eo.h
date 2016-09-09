@@ -140,24 +140,6 @@ EAPI extern Eina_Lock _efl_class_creation_lock;
 EAPI extern unsigned int _efl_object_init_generation;
 
 /**
- * @internal
- * An enum representing the possible types of an Op.
- */
-enum _Efl_Object_Op_Type
-{
-   EFL_OBJECT_OP_TYPE_INVALID = -1, /**< Invalid op. */
-   EFL_OBJECT_OP_TYPE_REGULAR = 0, /**< Regular op. */
-   EFL_OBJECT_OP_TYPE_CLASS, /**< Class op - a class op. Like static in Java/C++. */
-};
-
-/**
- * @internal
- * @typedef Efl_Object_Op_Type
- * A convenience typedef for #_Efl_Object_Op_Type.
- */
-typedef enum _Efl_Object_Op_Type Efl_Object_Op_Type;
-
-/**
  * @typedef Efl_Del_Intercept
  *
  * A function to be called on object deletion/destruction instead of normal
@@ -374,7 +356,6 @@ typedef struct _Efl_Op_Description
 {
    void *api_func;         /**< The EAPI function offering this op. (The name of the func on windows) */
    void *func;             /**< The static function to call for the op. */
-   Efl_Object_Op_Type op_type;     /**< The type of the Op. */
 } Efl_Op_Description;
 
 /**
@@ -427,14 +408,15 @@ EAPI const Efl_Class *efl_class_new(const Efl_Class_Description *desc, const Efl
 /**
  * @brief Set the functions of a class
  * @param klass_id the class whose functions we are setting.
- * @param ops The function structure we are setting.
+ * @param object_ops The function structure we are setting for object functions
+ * @param class_ops The function structure we are setting for class functions
  * @return True on success, False otherwise.
  *
  * This should only be called from within the initializer function.
  *
  * @see #EFL_DEFINE_CLASS
  */
-EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *ops);
+EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops);
 
 /**
  * @brief Override Eo functions of this object.
@@ -850,8 +832,7 @@ typedef struct _Efl_Object_Call_Cache
 # define _EFL_OBJECT_OP_API_ENTRY(a) #a
 #endif
 
-#define EFL_OBJECT_OP_FUNC(_api, _private) { _EFL_OBJECT_OP_API_ENTRY(_api), (void*)_private, EFL_OBJECT_OP_TYPE_REGULAR }
-#define EFL_OBJECT_OP_CLASS_FUNC(_api, _private) { _EFL_OBJECT_OP_API_ENTRY(_api), (void*)_private, EFL_OBJECT_OP_TYPE_CLASS }
+#define EFL_OBJECT_OP_FUNC(_api, _private) { _EFL_OBJECT_OP_API_ENTRY(_api), (void*)_private }
 
 // returns the OP id corresponding to the given api_func
 EAPI Efl_Object_Op _efl_object_api_op_id_get(const void *api_func);

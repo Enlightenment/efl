@@ -65,11 +65,13 @@ _class_initializer(Efl_Class *klass)
    EFL_OPS_DEFINE(ops,
          EFL_OBJECT_OP_FUNC(inherit2_print, _print),
          EFL_OBJECT_OP_FUNC(inherit2_print2, _print2),
-         EFL_OBJECT_OP_CLASS_FUNC(simple_class_print, _class_print),
          EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
    );
+   EFL_OPS_DEFINE(cops,
+         EFL_OBJECT_OP_FUNC(simple_class_print, _class_print),
+   );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, &cops);
 }
 
 static const Efl_Class_Description class_desc = {

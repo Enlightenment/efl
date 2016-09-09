@@ -34,7 +34,7 @@ _class_simple_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_foo, __eolian_class_simple_foo)
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 static const Efl_Class_Description _class_simple_class_desc = {

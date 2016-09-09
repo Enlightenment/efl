@@ -436,7 +436,7 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(efl_destructor, _man_des),
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 START_TEST(eo_man_free)
@@ -990,7 +990,7 @@ _multi_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(multi_class_hi_print, _class_hi_print),
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 START_TEST(eo_multiple_do)
@@ -1169,7 +1169,7 @@ _add_failures_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(efl_finalize, _efl_add_failures_finalize),
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 START_TEST(efl_add_failures)

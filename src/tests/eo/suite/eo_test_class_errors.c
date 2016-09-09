@@ -209,7 +209,7 @@ _null_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(NULL, _null_fct),
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 START_TEST(eo_null_api)
@@ -248,7 +248,7 @@ _redefined_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(null_fct, NULL),
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 START_TEST(eo_api_redefined)
@@ -287,7 +287,7 @@ _dich_func_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(simple_a_set, NULL),
    );
 
-   return efl_class_functions_set(klass, &ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 START_TEST(eo_dich_func_override)

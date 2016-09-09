@@ -18,14 +18,24 @@ static _eolian_class_vars class_env;
 static Eina_Hash *_funcs_params_init = NULL;
 
 static const char
+tmpl_eo_ops_def[] = "\
+   EFL_OPS_DEFINE(ops,@#list_op\n\
+   );\n";
+
+static const char
+tmpl_eo_cops_def[] = "\
+   EFL_OPS_DEFINE(cops,@#list_cop\n\
+   );\n";
+
+static const char
 tmpl_eo_ops_desc[] = "\
 static Eina_Bool\n\
 _@#class_class_initializer(Efl_Class *klass)\n\
 {\n\
-   EFL_OPS_DEFINE(ops,@#list_op\n\
-   );\n\
+@#list_ops\
+@#list_cops\
 \n\
-   return efl_class_functions_set(klass, &ops);\n\
+   return efl_class_functions_set(klass, @#ref_ops, @#ref_cops);\n\
 }\n\n";
 
 static const char
@@ -620,9 +630,7 @@ eo_op_desc_generate(const Eolian_Class *class, const Eolian_Function *fid, Eolia
    if (ftype == EOLIAN_PROP_GET) suffix = "_get";
    if (ftype == EOLIAN_PROP_SET) suffix = "_set";
    Eina_Bool is_virtual_pure = eolian_function_is_virtual_pure(fid, ftype);
-   const char *class_str = "";
-   if (eolian_function_is_class(fid)) class_str = "CLASS_";
-   eina_strbuf_append_printf(buf, "\n      EFL_OBJECT_OP_%sFUNC(%s, ", class_str, func_env.lower_eo_func);
+   eina_strbuf_append_printf(buf, "\n      EFL_OBJECT_OP_FUNC(%s, ", func_env.lower_eo_func);
    if (!is_virtual_pure)
      {
         Eolian_Function_Type ftype2 = (Eolian_Function_Type) eina_hash_find(_funcs_params_init, funcname);
@@ -714,6 +722,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    Eina_Strbuf *str_end = eina_strbuf_new();
    Eina_Strbuf *tmpbuf = eina_strbuf_new();
    Eina_Strbuf *str_op = eina_strbuf_new();
+   Eina_Strbuf *str_cop = eina_strbuf_new();
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
 
    _template_fill(str_end, tmpl_eo_src, class, NULL, NULL, EINA_TRUE);
@@ -813,8 +822,8 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
              goto end;
           }
 
-        const char *class_str = "";
-        if (eolian_function_is_class(fnid)) class_str = "CLASS_";
+        Eina_Strbuf *wbuf = str_op;
+        if (eolian_function_is_class(fnid)) wbuf = str_cop;
 
         switch (ftype)
           {
@@ -822,8 +831,8 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
               if (ftype != EOLIAN_PROP_GET)
                 {
                    Eina_Stringshare *rets = eolian_function_full_c_name_get(fnid, EOLIAN_PROP_SET, EINA_FALSE);
-                   eina_strbuf_append_printf(str_op, "\n      EFL_OBJECT_OP_%sFUNC(%s, %s_%s_set),",
-                         class_str, rets, implname, funcname);
+                   eina_strbuf_append_printf(wbuf, "\n      EFL_OBJECT_OP_FUNC(%s, %s_%s_set),",
+                         rets, implname, funcname);
                    eo_bind_func_generate(class, fnid, EOLIAN_PROP_SET, str_bodyf, impl_desc, &impl_env);
                    eina_stringshare_del(rets);
                 }
@@ -831,8 +840,8 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
               if (ftype != EOLIAN_PROP_SET)
                 {
                    Eina_Stringshare *rets = eolian_function_full_c_name_get(fnid, EOLIAN_PROP_GET, EINA_FALSE);
-                   eina_strbuf_append_printf(str_op, "\n      EFL_OBJECT_OP_%sFUNC(%s, %s_%s_get),",
-                         class_str, rets, implname, funcname);
+                   eina_strbuf_append_printf(wbuf, "\n      EFL_OBJECT_OP_FUNC(%s, %s_%s_get),",
+                         rets, implname, funcname);
                    eo_bind_func_generate(class, fnid, EOLIAN_PROP_GET, str_bodyf, impl_desc, &impl_env);
                    eina_stringshare_del(rets);
                 }
@@ -840,8 +849,8 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
            default:
              {
                 Eina_Stringshare *rets = eolian_function_full_c_name_get(fnid, ftype, EINA_FALSE);
-                eina_strbuf_append_printf(str_op, "\n      EFL_OBJECT_OP_%sFUNC(%s, %s_%s),",
-                      class_str, rets, implname, funcname);
+                eina_strbuf_append_printf(wbuf, "\n      EFL_OBJECT_OP_FUNC(%s, %s_%s),",
+                      rets, implname, funcname);
                 eo_bind_func_generate(class, fnid, ftype, str_bodyf, impl_desc, &impl_env);
                 eina_stringshare_del(rets);
                 break;
@@ -860,15 +869,18 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
              Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
              const Eolian_Function *fid = eolian_implement_function_get(impl, &ftype);
 
+             Eina_Strbuf *wbuf = str_op;
+             if (eolian_function_is_class(fid)) wbuf = str_cop;
+
              Eina_Bool prop_read  = (ftype == EOLIAN_PROPERTY || ftype == EOLIAN_PROP_GET);
              Eina_Bool prop_write = (ftype == EOLIAN_PROPERTY || ftype == EOLIAN_PROP_SET);
 
              if (!prop_read && !prop_write && !eolian_function_is_legacy_only(fid, EOLIAN_METHOD))
-               _desc_generate(class, fid, EOLIAN_METHOD, tmpbuf, str_op);
+               _desc_generate(class, fid, EOLIAN_METHOD, tmpbuf, wbuf);
              if (prop_write && !eolian_function_is_legacy_only(fid, EOLIAN_PROP_SET))
-               _desc_generate(class, fid, EOLIAN_PROP_SET, tmpbuf, str_op);
+               _desc_generate(class, fid, EOLIAN_PROP_SET, tmpbuf, wbuf);
              if (prop_read && !eolian_function_is_legacy_only(fid, EOLIAN_PROP_GET))
-               _desc_generate(class, fid, EOLIAN_PROP_GET, tmpbuf, str_op);
+               _desc_generate(class, fid, EOLIAN_PROP_GET, tmpbuf, wbuf);
           }
         eina_iterator_free(itr);
      }
@@ -889,14 +901,50 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    if (eina_strbuf_length_get(tmpbuf) == 0) eina_strbuf_append(tmpbuf, "NULL, ");
    eina_strbuf_replace_all(str_end, "@#list_inherit", eina_strbuf_string_get(tmpbuf));
 
+   Eina_Strbuf *ops_buf = eina_strbuf_new(), *cops_buf = eina_strbuf_new();
+
    if (eina_strbuf_length_get(str_op))
      {
         size_t stroplen = eina_strbuf_length_get(str_op);
         if (eina_strbuf_string_get(str_op)[stroplen - 1] == ',')
           eina_strbuf_remove(str_op, stroplen - 1, stroplen);
+        _template_fill(ops_buf, tmpl_eo_ops_def, class, NULL, NULL, EINA_TRUE);
+        eina_strbuf_replace_all(ops_buf, "@#list_op", eina_strbuf_string_get(str_op));
+     }
+
+   if (eina_strbuf_length_get(str_cop))
+     {
+        size_t strcoplen = eina_strbuf_length_get(str_cop);
+        if (eina_strbuf_string_get(str_cop)[strcoplen - 1] == ',')
+          eina_strbuf_remove(str_cop, strcoplen - 1, strcoplen);
+        _template_fill(cops_buf, tmpl_eo_cops_def, class, NULL, NULL, EINA_TRUE);
+        eina_strbuf_replace_all(cops_buf, "@#list_cop", eina_strbuf_string_get(str_cop));
+     }
+
+   if (eina_strbuf_length_get(ops_buf) || eina_strbuf_length_get(cops_buf))
+     {
         Eina_Strbuf *ops_desc = eina_strbuf_new();
         _template_fill(ops_desc, tmpl_eo_ops_desc, class, NULL, NULL, EINA_TRUE);
-        eina_strbuf_replace_all(ops_desc, "@#list_op", eina_strbuf_string_get(str_op));
+        if (eina_strbuf_length_get(ops_buf))
+          {
+             eina_strbuf_replace_all(ops_desc, "@#list_ops", eina_strbuf_string_get(ops_buf));
+             eina_strbuf_replace_all(ops_desc, "@#ref_ops", "&ops");
+          }
+        else
+          {
+             eina_strbuf_replace_all(ops_desc, "@#list_ops", "");
+             eina_strbuf_replace_all(ops_desc, "@#ref_ops", "NULL");
+          }
+        if (eina_strbuf_length_get(cops_buf))
+          {
+             eina_strbuf_replace_all(ops_desc, "@#list_cops", eina_strbuf_string_get(cops_buf));
+             eina_strbuf_replace_all(ops_desc, "@#ref_cops", "&cops");
+          }
+        else
+          {
+             eina_strbuf_replace_all(ops_desc, "@#list_cops", "");
+             eina_strbuf_replace_all(ops_desc, "@#ref_cops", "NULL");
+          }
         eina_strbuf_replace_all(str_end, "@#ops_desc", eina_strbuf_string_get(ops_desc));
         eina_strbuf_free(ops_desc);
         eina_strbuf_reset(tmpbuf);
@@ -908,6 +956,9 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         eina_strbuf_replace_all(str_end, "@#ops_desc", "");
         eina_strbuf_replace_all(str_end, "@#init_name", "NULL");
      }
+
+   eina_strbuf_free(ops_buf);
+   eina_strbuf_free(cops_buf);
 
    eina_strbuf_replace_all(str_end, "@#functions_body", eina_strbuf_string_get(str_bodyf));
 
@@ -929,6 +980,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 end:
    eina_strbuf_free(tmpbuf);
    eina_strbuf_free(str_op);
+   eina_strbuf_free(str_cop);
    eina_strbuf_free(str_bodyf);
    eina_strbuf_free(str_end);
 
