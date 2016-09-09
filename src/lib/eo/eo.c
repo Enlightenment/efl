@@ -1335,7 +1335,14 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
      }
 
    klass->obj_size = extn_data_off;
-   if (getenv("EO_DEBUG"))
+   static unsigned char _eo_debug = 0;
+
+   if (_eo_debug == 0)
+     {
+        if (getenv("EO_DEBUG")) _eo_debug = 2;
+        else _eo_debug = 1;
+     }
+   if (_eo_debug == 2)
      {
         fprintf(stderr, "Eo class '%s' will take %u bytes per object.\n",
                 desc->name, klass->obj_size);
