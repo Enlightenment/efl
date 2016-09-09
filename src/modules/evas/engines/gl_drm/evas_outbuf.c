@@ -76,29 +76,31 @@ _evas_outbuf_fb_get(Outbuf *ob, struct gbm_bo *bo)
    return fb;
 }
 
+void
+_evas_outbuf_release_fb(void *ob_v, Ecore_Drm2_Fb *fb)
+{
+   struct gbm_bo *bo;
+   Outbuf *ob;
+
+   ob = ob_v;
+   bo = ecore_drm2_fb_bo_get(fb);
+   gbm_surface_release_buffer(ob->surface, bo);
+}
+
 static void
 _evas_outbuf_buffer_swap(Outbuf *ob)
 {
-   Ecore_Drm2_Fb *fb;
+   struct gbm_bo *bo;
+   Ecore_Drm2_Fb *fb = NULL;
 
-   /* Repulsive hack:  Right now we don't actually have a proper way to retire
-    * buffers because the ticker and the flip handler are out of sync, the
-    * flip handler is per output, fbs are submit to multiple outputs and may
-    * be denied (and re-queued) by any output they're supposed to be on.
-    * This will all be magically fixed when evas supports multiple target
-    * regions, but until then we do this:
-    * always have 2 buffers locked
-    */
-   if (ob->priv.bo[1]) gbm_surface_release_buffer(ob->surface, ob->priv.bo[1]);
-   ob->priv.bo[1] = ob->priv.bo[0];
-   ob->priv.bo[0] = gbm_surface_lock_front_buffer(ob->surface);
-   if (!ob->priv.bo[0])
+   bo = gbm_surface_lock_front_buffer(ob->surface);
+   if (!bo)
      {
-        WRN("Could not lock front buffer: %m");
-        return;
+        ecore_drm2_output_fb_release(ob->priv.output);
+        bo = gbm_surface_lock_front_buffer(ob->surface);
      }
+   if (bo) fb = _evas_outbuf_fb_get(ob, bo);
 
-   fb = _evas_outbuf_fb_get(ob, ob->priv.bo[0]);
    if (fb)
      {
         ecore_drm2_fb_flip(fb, ob->priv.output);
@@ -389,6 +391,10 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
    ob->bpp = info->info.bpp;
    ob->format = info->info.format;
    ob->priv.output = info->info.output;
+
+   ecore_drm2_output_release_handler_set(ob->priv.output,
+                                         _evas_outbuf_release_fb,
+                                         ob);
 
    /* if ((num = getenv("EVAS_GL_DRM_VSYNC"))) */
    /*   ob->vsync = atoi(num); */
