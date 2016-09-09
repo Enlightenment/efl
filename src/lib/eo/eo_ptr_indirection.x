@@ -62,7 +62,7 @@
 # define BITS_MID_TABLE_ID        5
 # define BITS_TABLE_ID            5
 # define BITS_ENTRY_ID           11
-# define BITS_GENERATION_COUNTER  7
+# define BITS_GENERATION_COUNTER  6
 # define BITS_DOMAIN              2
 # define REF_TAG_SHIFT           30
 # define SUPER_TAG_SHIFT         31
@@ -75,7 +75,7 @@ typedef uint16_t Generation_Counter;
 # define BITS_MID_TABLE_ID       11
 # define BITS_TABLE_ID           11
 # define BITS_ENTRY_ID           11
-# define BITS_GENERATION_COUNTER 27
+# define BITS_GENERATION_COUNTER 26
 # define BITS_DOMAIN              2
 # define REF_TAG_SHIFT           62
 # define SUPER_TAG_SHIFT         63
