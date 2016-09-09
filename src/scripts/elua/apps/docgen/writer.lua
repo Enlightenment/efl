@@ -168,7 +168,7 @@ M.Writer = util.Object:clone {
             date = false, user = false, link = false
         })
         -- restore the table for later reuse
-        ns[#ns] = nil
+        -- the false gets deleted by write_include
         ns[#ns] = nil
     end,
 
