@@ -826,6 +826,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
                              _drm_render_updates, ee);
 
    tinfo = evas_engine_info_get(ee->evas);
+#ifdef BUILD_ECORE_EVAS_GL_DRM
    if (tinfo && gl)
      {
         char *num;
@@ -849,7 +850,9 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
              goto eng_err;
           }
      }
-   else if (tinfo)
+   else
+#endif
+   if (tinfo)
      {
         Evas_Engine_Info_Drm *einfo = tinfo;
 
