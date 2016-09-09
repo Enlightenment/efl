@@ -355,6 +355,9 @@ end
 local build_ref = function()
     local f = writer.Writer("reference", "EFL Reference")
 
+    f:write_editable({ "reference" }, "general")
+    f:write_nl()
+
     local classes = {}
     local ifaces = {}
     local mixins = {}
@@ -766,6 +769,9 @@ local build_alias = function(tp)
     f:write_raw(tp:doc_get():full_get(nil, true))
     f:write_nl(2)
 
+    f:write_editable(ns, "description")
+    f:write_nl()
+
     f:finish()
 end
 
@@ -780,7 +786,13 @@ local build_struct = function(tp)
     f:write_raw(tp:doc_get():full_get(nil, true))
     f:write_nl(2)
 
+    f:write_editable(ns, "description")
+    f:write_nl()
+
     f:write_h("Fields", 2)
+
+    f:write_editable(ns, "fields")
+    f:write_nl()
 
     local arr = {}
     for i, fl in ipairs(tp:struct_fields_get()) do
@@ -806,7 +818,13 @@ local build_enum = function(tp)
     f:write_raw(tp:doc_get():full_get(nil, true))
     f:write_nl(2)
 
+    f:write_editable(ns, "description")
+    f:write_nl()
+
     f:write_h("Fields", 2)
+
+    f:write_editable(ns, "fields")
+    f:write_nl()
 
     local arr = {}
     for i, fl in ipairs(tp:enum_fields_get()) do
@@ -923,6 +941,9 @@ build_method = function(fn, cl)
     f:write_raw(fn:doc_get(fn.METHOD):full_get(nil, true))
     f:write_nl()
 
+    f:write_editable(mns, "description")
+    f:write_nl()
+
     f:finish()
 end
 
@@ -972,6 +993,8 @@ build_property = function(fn, cl)
         if (isget and gdoc:exists()) or (isset and sdoc:exists()) then
             f:write_nl(2)
         end
+        f:write_editable(pns, "description")
+        f:write_nl()
     end
 
     if isget and gdoc:exists() then
@@ -984,6 +1007,10 @@ build_property = function(fn, cl)
         if isset and sdoc:exists() then
             f:write_nl(2)
         end
+        if isset then
+            f:write_editable(pns, "getter_description")
+            f:write_nl()
+        end
     end
 
     if isset and sdoc:exists() then
@@ -993,9 +1020,18 @@ build_property = function(fn, cl)
             f:write_h("Description", 2)
         end
         f:write_raw(sdoc:full_get(nil, true))
+        if isget then
+            f:write_editable(pns, "getter_description")
+            f:write_nl()
+        end
     end
 
     f:write_nl()
+    if not isget or not isset then
+        f:write_editable(pns, "description")
+        f:write_nl()
+    end
+
     f:finish()
 end
 
@@ -1040,6 +1076,9 @@ build_event = function(ev, cl)
 
     f:write_h("Description", 2)
     f:write_raw(ev:doc_get():full_get(nil, true))
+    f:write_nl()
+
+    f:write_editable(evn, "description")
     f:write_nl()
 
     f:finish()
