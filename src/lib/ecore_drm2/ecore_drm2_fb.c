@@ -334,7 +334,7 @@ ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy)
 }
 
 EAPI void
-ecore_drm2_output_fb_release(Ecore_Drm2_Output *o)
+ecore_drm2_fb_release(Ecore_Drm2_Output *o)
 {
    EINA_SAFETY_ON_NULL_RETURN(o);
 

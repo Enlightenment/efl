@@ -800,6 +800,20 @@ EAPI Eina_Bool ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb);
 EAPI void ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy);
 
 /**
+ * Try to force a framebuffer release for an output
+ *
+ * This tries to release the next, pending, or current buffer from
+ * the output.  If successful there will be a release callback to
+ * the registered handler, and the fb will no longer be flagged busy.
+ *
+ * @param output The output to force release
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.19
+ */
+EAPI void ecore_drm2_fb_release(Ecore_Drm2_Output *o);
+
+/**
  * Set the user data for the output's page flip handler
  *
  * @param output The output to update user data for
@@ -823,20 +837,6 @@ EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
  * @since 1.19
  */
 EAPI void ecore_drm2_output_release_handler_set(Ecore_Drm2_Output *output, Ecore_Drm2_Release_Handler handler, void *data);
-
-/**
- * Try to force a framebuffer release for an output
- *
- * This tries to release the next, pending, or current buffer from
- * the output.  If successful there will be a release callback to
- * the registered handler, and the fb will no longer be flagged busy.
- *
- * @param output The output to force release
- *
- * @ingroup Ecore_Drm2_Output_Group
- * @since 1.19
- */
-EAPI void ecore_drm2_output_fb_release(Ecore_Drm2_Output *o);
 
 /**
  * Get the Framebuffer's gbm buffer object
