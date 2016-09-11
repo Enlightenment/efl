@@ -863,6 +863,7 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    Elm_Code_Widget *widget;
    Elm_Code_Widget_Data *pd;
    Evas_Event_Mouse_Down *event;
+   Eina_Bool ctrl;
    unsigned int row;
    int col;
 
@@ -871,7 +872,8 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    event = (Evas_Event_Mouse_Down *)event_info;
    _elm_code_widget_position_at_coordinates_get(widget, pd, event->canvas.x, event->canvas.y, &row, &col);
 
-   if (event->button == 3)
+   ctrl = evas_key_modifier_is_set(event->modifiers, "Control");
+   if (event->button == 3 && !ctrl)
      {
         _popup_menu_show(widget, event->canvas.x, event->canvas.y);
         return;
