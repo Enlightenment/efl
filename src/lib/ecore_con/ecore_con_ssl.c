@@ -744,7 +744,7 @@ ecore_con_ssl_client_upgrade(Ecore_Con_Client *obj, Ecore_Con_Type ssl_type)
    host_server->upgrade = EINA_TRUE;
    cl->handshaking = EINA_TRUE;
    cl->ssl_state = ECORE_CON_SSL_STATE_INIT;
-   return SSL_SUFFIX(_ecore_con_ssl_client_init) (obj);
+   return !SSL_SUFFIX(_ecore_con_ssl_client_init) (obj);
 }
 
 /**
