@@ -663,6 +663,143 @@ _elm_code_widget_status_toggle(Elm_Code_Widget *widget, Elm_Code_Line *line)
 }
 
 static void
+_popup_menu_dismissed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+
+   widget = (Elm_Code_Widget *)data;
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (pd->hoversel) evas_object_hide(pd->hoversel);
+}
+
+static void
+_popup_menu_cut_cb(void *data,
+        Evas_Object *obj EINA_UNUSED,
+        void *event_info EINA_UNUSED)
+{
+   Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+
+   widget = (Elm_Code_Widget *)data;
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   elm_code_widget_selection_cut(widget);
+   if (pd->hoversel) evas_object_hide(pd->hoversel);
+}
+
+static void
+_popup_menu_copy_cb(void *data,
+         Evas_Object *obj EINA_UNUSED,
+         void *event_info EINA_UNUSED)
+{
+   Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+
+   widget = (Elm_Code_Widget *)data;
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   elm_code_widget_selection_copy(widget);
+   if (pd->hoversel) evas_object_hide(pd->hoversel);
+}
+
+static void
+_popup_menu_paste_cb(void *data,
+          Evas_Object *obj EINA_UNUSED,
+          void *event_info EINA_UNUSED)
+{
+   Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+
+   widget = (Elm_Code_Widget *)data;
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   elm_code_widget_selection_paste(widget);
+   if (pd->hoversel) evas_object_hide(pd->hoversel);
+}
+
+static void
+_popup_menu_cancel_cb(void *data,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+
+   widget = (Elm_Code_Widget *)data;
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   elm_code_widget_selection_clear(widget);
+   if (pd->hoversel) evas_object_hide(pd->hoversel);
+}
+
+static void
+_popup_menu_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+{
+   Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+   Evas_Object *top;
+
+   widget = (Elm_Code_Widget *)obj;
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (pd->hoversel) evas_object_del(pd->hoversel);
+
+   pd->hoversel = elm_hoversel_add(obj);
+   elm_widget_sub_object_add(obj, pd->hoversel);
+   top = elm_widget_top_get(obj);
+
+   if (top) elm_hoversel_hover_parent_set(pd->hoversel, top);
+
+   efl_event_callback_add
+     (pd->hoversel, ELM_HOVERSEL_EVENT_DISMISSED, _popup_menu_dismissed_cb, obj);
+   if (pd->selection)
+     {
+        if (pd->editable)
+          {
+             elm_hoversel_item_add
+                (pd->hoversel, "Cut", NULL, ELM_ICON_NONE,
+                 _popup_menu_cut_cb, obj);
+          }
+        elm_hoversel_item_add
+           (pd->hoversel, "Copy", NULL, ELM_ICON_NONE,
+            _popup_menu_copy_cb, obj);
+        if (pd->editable)
+          {	
+             elm_hoversel_item_add
+                (pd->hoversel, "Paste", NULL, ELM_ICON_NONE,
+                 _popup_menu_paste_cb, obj);
+          }
+        elm_hoversel_item_add
+          (pd->hoversel, "Cancel", NULL, ELM_ICON_NONE,
+           _popup_menu_cancel_cb, obj);
+     }
+   else
+     {
+        if (pd->editable)
+          {
+             if (pd->editable)
+               elm_hoversel_item_add
+                 (pd->hoversel, "Paste", NULL, ELM_ICON_NONE,
+                 _popup_menu_paste_cb, obj);
+
+          }
+        else
+          elm_hoversel_item_add
+             (pd->hoversel, "Cancel", NULL, ELM_ICON_NONE,
+              _popup_menu_cancel_cb, obj);
+     }
+
+   if (pd->hoversel)
+     {
+        evas_object_move(pd->hoversel, x, y);
+        evas_object_show(pd->hoversel);
+        elm_hoversel_hover_begin(pd->hoversel);
+     }
+}
+
+static void
 _elm_code_widget_clicked_gutter_cb(Elm_Code_Widget *widget, unsigned int row)
 {
    Elm_Code_Widget_Data *pd;
@@ -733,6 +870,12 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    event = (Evas_Event_Mouse_Down *)event_info;
    _elm_code_widget_position_at_coordinates_get(widget, pd, event->canvas.x, event->canvas.y, &row, &col);
+
+   if (event->button == 3)
+     {
+        _popup_menu_show(widget, event->canvas.x, event->canvas.y);
+        return;
+     }
 
    elm_code_widget_selection_clear(widget);
    if (event->flags & EVAS_BUTTON_TRIPLE_CLICK)

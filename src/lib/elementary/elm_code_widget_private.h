@@ -32,6 +32,8 @@ typedef struct
    /* Undo stack */
    Eina_List *undo_stack;
    Eina_List *undo_stack_ptr;
+
+   Evas_Object *hoversel;
 } Elm_Code_Widget_Data;
 
 typedef struct
