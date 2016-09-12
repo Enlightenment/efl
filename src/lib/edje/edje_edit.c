@@ -1655,6 +1655,7 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
    int count, script_count;
    void *data;
    char **keys, **c;
+   Eina_Bool save_status = EINA_FALSE;
 
    GET_ED_OR_RETURN(EINA_FALSE);
    if (!ed->file || !ed->file->collection)
@@ -1747,11 +1748,12 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
         free(keys);
      }
 
-   _edje_edit_edje_file_save(eetf, ed->file);
+   save_status = _edje_edit_edje_file_save(eetf, ed->file);
+
    _edje_collection_free(ed->file, epc, de);
    eet_close(eetf);
 
-   return EINA_TRUE;
+   return save_status;
 }
 
 EAPI Eina_Bool
