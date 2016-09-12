@@ -183,8 +183,15 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              edge_h = (p[e2].y - p[e1].y) >> FP;  //edge height
              if (edge_h < 1) edge_h = 1;
              t = (((y << FP) + (FP1 / 2) - 1) - p[e1].y) >> FP;
-             x= p[e2].x - p[e1].x;  //edge width
-             x = p[e1].x + ((x * t) / edge_h); // intersected x point
+             x = p[e2].x - p[e1].x;  //edge width
+
+             FPc temp = (x * t);
+
+             // TODO: prevent data overflow. We can remove this exception if FPc type is more than integer.
+             if (temp < 0) temp = (((x >> FP) * t) / edge_h) << FP;
+             else temp /= edge_h;
+
+             x = p[e1].x + temp; // intersected x point
 
 /*             
              // FIXME: 3d accuracy here
