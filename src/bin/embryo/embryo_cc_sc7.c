@@ -454,7 +454,7 @@ matchsequence(char *start, char *end, char *pattern,
 	      char symbols[_maxoptvars][_aliasmax + 1], int *match_length)
 {
    int                 var, i;
-   char                str[_aliasmax + 1];
+   char                str[_aliasmax + 2];
    char               *start_org = start;
 
    *match_length = 0;
