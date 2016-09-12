@@ -243,6 +243,7 @@ tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_IN
 
 tests_eo_cxx_eo_cxx_suite_SOURCES = \
 tests/eo_cxx/eo_cxx_suite.cc \
+tests/eo_cxx/eo_cxx_suite.h \
 tests/eo_cxx/eo_cxx_test_promise.cc
 
 tests_eo_cxx_eo_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
