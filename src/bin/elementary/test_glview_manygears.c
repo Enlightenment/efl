@@ -928,7 +928,7 @@ test_glview_manygears(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
         elm_object_text_set(lb, "<align=left> GL backend engine is not supported.<br/>"
                             " 1. Check your back-end engine or<br/>"
                             " 2. Run elementary_test with engine option or<br/>"
-                            "    ex) $ <b>ELM_ENGINE=gl</b> elementary_test<br/>"
+                            "    ex) $ <b>ELM_ACCEL=gl</b> elementary_test<br/>"
                             " 3. Change your back-end engine from elementary_config.<br/></align>");
         evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
