@@ -26,6 +26,8 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/bindings/cxx/eo_cxx \
 -I$(top_srcdir)/src/bindings/cxx/eldbus_cxx \
 -I$(top_builddir)/src/bindings/cxx/eldbus_cxx \
+-I$(top_srcdir)/src/bindings/cxx/ecore_cxx \
+-I$(top_builddir)/src/bindings/cxx/ecore_cxx \
 -I$(top_srcdir)/src/lib/ector \
 -I$(top_builddir)/src/lib/ector \
 -I$(top_srcdir)/src/lib/evas \
