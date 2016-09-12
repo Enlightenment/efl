@@ -24,6 +24,7 @@
 #include "ecore_con_url_curl.h"
 
 #include <ctype.h>
+#include <fcntl.h>
 
 /* improve usage of lazy-loaded library in _c-> */
 #define curl_easy_strerror(...) _c->curl_easy_strerror(__VA_ARGS__)
@@ -210,6 +211,8 @@ typedef struct
    uint8_t pause;
    Eina_Bool connected;
    Eina_Bool closed;
+   Eina_Bool close_on_exec;
+   Eina_Bool close_on_destructor;
    Eina_Bool eos;
    Eina_Bool can_read;
    Eina_Bool can_write;
@@ -1096,7 +1099,7 @@ _efl_net_dialer_http_socket_open(void *data, curlsocktype purpose EINA_UNUSED, s
    Eo *o = data;
    Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
-   pd->fd = socket(addr->family, addr->socktype, addr->protocol);
+   pd->fd = efl_net_socket4(addr->family, addr->socktype, addr->protocol, pd->close_on_exec);
    if (pd->fd < 0)
      ERR("could not create curl socket family=%d, type=%d, protocol=%d",
          addr->family, addr->socktype, addr->protocol);
@@ -1192,7 +1195,8 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
         pd->pending_close = NULL;
         efl_io_closer_close(o);
      }
-   else if (!efl_io_closer_closed_get(o))
+   else if (efl_io_closer_close_on_destructor_get(o) &&
+            (!efl_io_closer_closed_get(o)))
      efl_io_closer_close(o);
 
    efl_net_dialer_http_response_headers_clear(o);
@@ -1595,6 +1599,61 @@ EOLIAN static Eina_Bool
 _efl_net_dialer_http_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->closed || (!!pd->pending_close);
+}
+
+EOLIAN static Eina_Bool
+_efl_net_dialer_http_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, Eina_Bool close_on_exec)
+{
+#ifdef _WIN32
+   DBG("close on exec is not supported on windows");
+   pd->close_on_exec = close_on_exec;
+   return EINA_FALSE;
+#else
+   int flags;
+   Eina_Bool old = pd->close_on_exec;
+
+   pd->close_on_exec = close_on_exec;
+
+   if (pd->fd < 0) return EINA_TRUE; /* postpone until _efl_net_dialer_http_socket_open */
+
+   flags = fcntl(pd->fd, F_GETFD);
+   if (flags < 0)
+     {
+        ERR("fcntl(%d, F_GETFD): %s", pd->fd, strerror(errno));
+        pd->close_on_exec = old;
+        return EINA_FALSE;
+     }
+   if (close_on_exec)
+     flags |= FD_CLOEXEC;
+   else
+     flags &= (~FD_CLOEXEC);
+   if (fcntl(pd->fd, F_SETFD, flags) < 0)
+     {
+        ERR("fcntl(%d, F_SETFD, %#x): %s", pd->fd, flags, strerror(errno));
+        pd->close_on_exec = old;
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+#endif
+}
+
+EOLIAN static Eina_Bool
+_efl_net_dialer_http_efl_io_closer_close_on_exec_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+{
+   return pd->close_on_exec;
+}
+
+EOLIAN static void
+_efl_net_dialer_http_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, Eina_Bool close_on_destructor)
+{
+   pd->close_on_destructor = close_on_destructor;
+}
+
+EOLIAN static Eina_Bool
+_efl_net_dialer_http_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+{
+   return pd->close_on_destructor;
 }
 
 EOLIAN static Eina_Error

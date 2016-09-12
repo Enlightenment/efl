@@ -23,6 +23,8 @@ typedef struct _Efl_Io_Copier_Data
    } progress;
    Eina_Bool closed;
    Eina_Bool done;
+   Eina_Bool close_on_exec;
+   Eina_Bool close_on_destructor;
 } Efl_Io_Copier_Data;
 
 static void _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd);
@@ -394,6 +396,8 @@ _efl_io_copier_source_set(Eo *o, Efl_Io_Copier_Data *pd, Efl_Io_Reader *source)
 
         if (efl_isa(pd->source, EFL_IO_CLOSER_MIXIN))
           {
+             efl_io_closer_close_on_exec_set(pd->source, efl_io_closer_close_on_exec_get(o));
+             efl_io_closer_close_on_destructor_set(pd->source, efl_io_closer_close_on_destructor_get(o));
              efl_event_callback_add(pd->source, EFL_IO_CLOSER_EVENT_CLOSED,
                                      _efl_io_copier_source_closed, o);
           }
@@ -471,6 +475,8 @@ _efl_io_copier_destination_set(Eo *o, Efl_Io_Copier_Data *pd, Efl_Io_Writer *des
 
         if (efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN))
           {
+             efl_io_closer_close_on_exec_set(pd->destination, efl_io_closer_close_on_exec_get(o));
+             efl_io_closer_close_on_destructor_set(pd->destination, efl_io_closer_close_on_destructor_get(o));
              efl_event_callback_add(pd->destination, EFL_IO_CLOSER_EVENT_CLOSED,
                                      _efl_io_copier_destination_closed, o);
           }
@@ -648,6 +654,8 @@ EOLIAN static Eo *
 _efl_io_copier_efl_object_constructor(Eo *o, Efl_Io_Copier_Data *pd)
 {
    pd->buf = eina_binbuf_new();
+   pd->close_on_exec = EINA_TRUE;
+   pd->close_on_destructor = EINA_TRUE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->buf, NULL);
 
@@ -680,6 +688,10 @@ _efl_io_copier_efl_object_destructor(Eo *o, Efl_Io_Copier_Data *pd)
 {
    _COPIER_DBG(o, pd);
 
+   if (efl_io_closer_close_on_destructor_get(o) &&
+       (!efl_io_closer_closed_get(o)))
+     efl_io_closer_close(o);
+
    efl_io_copier_source_set(o, NULL);
    efl_io_copier_destination_set(o, NULL);
 
@@ -710,6 +722,46 @@ _efl_io_copier_efl_object_destructor(Eo *o, Efl_Io_Copier_Data *pd)
         pd->line_delimiter.mem = NULL;
         pd->line_delimiter.len = 0;
      }
+}
+
+EOLIAN static Eina_Bool
+_efl_io_copier_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd, Eina_Bool close_on_exec)
+{
+   if (pd->close_on_exec == close_on_exec) return EINA_TRUE;
+   pd->close_on_exec = close_on_exec;
+
+   if (pd->source && efl_isa(pd->source, EFL_IO_CLOSER_MIXIN))
+     efl_io_closer_close_on_exec_set(pd->source, close_on_exec);
+
+   if (pd->destination && efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN))
+     efl_io_closer_close_on_exec_set(pd->destination, close_on_exec);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_io_copier_efl_io_closer_close_on_exec_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+{
+   return pd->close_on_exec;
+}
+
+EOLIAN static void
+_efl_io_copier_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd, Eina_Bool close_on_destructor)
+{
+   if (pd->close_on_destructor == close_on_destructor) return;
+   pd->close_on_destructor = close_on_destructor;
+
+   if (pd->source && efl_isa(pd->source, EFL_IO_CLOSER_MIXIN))
+     efl_io_closer_close_on_destructor_set(pd->source, close_on_destructor);
+
+   if (pd->destination && efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN))
+     efl_io_closer_close_on_destructor_set(pd->destination, close_on_destructor);
+}
+
+EOLIAN static Eina_Bool
+_efl_io_copier_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+{
+   return pd->close_on_destructor;
 }
 
 #include "efl_io_copier.eo.c"

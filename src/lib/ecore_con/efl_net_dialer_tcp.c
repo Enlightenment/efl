@@ -49,6 +49,10 @@ typedef struct _Efl_Net_Dialer_Tcp_Data
 EOLIAN static void
 _efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
 {
+   if (efl_io_closer_close_on_destructor_get(o) &&
+       (!efl_io_closer_closed_get(o)))
+     efl_io_closer_close(o);
+
    if (pd->connect.thread)
      {
         ecore_thread_cancel(pd->connect.thread);
@@ -115,7 +119,7 @@ _efl_net_dialer_tcp_connected(void *data, const struct sockaddr *addr EINA_UNUSE
                                                   addrinfo->ai_addrlen,
                                                   SOCK_STREAM,
                                                   IPPROTO_TCP,
-                                                  efl_net_socket_fd_close_on_exec_get(o),
+                                                  efl_io_closer_close_on_exec_get(o),
                                                   _efl_net_dialer_tcp_connected,
                                                   o);
 }
@@ -148,7 +152,7 @@ _efl_net_dialer_tcp_connect(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
                                                   addrinfo->ai_addrlen,
                                                   SOCK_STREAM,
                                                   IPPROTO_TCP,
-                                                  efl_net_socket_fd_close_on_exec_get(o),
+                                                  efl_io_closer_close_on_exec_get(o),
                                                   _efl_net_dialer_tcp_connected,
                                                   o);
  end:

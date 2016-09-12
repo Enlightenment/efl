@@ -90,5 +90,7 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
         Efl.Io.Writer.can_write.set;
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.close_on_exec;
+        Efl.Io.Closer.close_on_destructor;
     }
 }

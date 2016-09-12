@@ -1,14 +1,24 @@
 class Efl.Io.File (Efl.Loop.Fd, Efl.File, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io.Closer.Fd, Efl.Io.Sizer.Fd, Efl.Io.Positioner.Fd) {
     [[File access (open, close, read, write, lseek, ftruncate)
 
-      Files are closed automatically (@Efl.Io.Closer.Fd) on destruction.
+      @Efl.Io.Closer.close_on_exec and
+      @Efl.Io.Closer.close_on_destructor are respected and default to
+      $true. @Efl.Io.Closer.close_on_exec.set sets flag O_CLOEXEC.
 
       @since 1.19
     ]]
 
     methods {
         @property flags {
-            [[bitwise OR'ed flags to open the file, like O_CREAT, O_CLOEXEC...]]
+            [[bitwise OR'ed flags to open the file, like O_CREAT, O_APPEND...
+
+              Defaults to O_RDONLY | O_CLOEXEC.
+
+              The flag O_CLOEXEC will be also managed by
+              @Efl.Io.Closer.close_on_exec.set. Setting the property
+              after the file is opened will change its blocking
+              behavior.
+            ]]
             get {
             }
 
@@ -36,6 +46,7 @@ class Efl.Io.File (Efl.Loop.Fd, Efl.File, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Ef
     }
 
     implements {
+        Efl.Object.constructor;
         Efl.Object.destructor;
         Efl.Object.finalize;
         Efl.Loop.Fd.fd_file.set;
@@ -43,6 +54,7 @@ class Efl.Io.File (Efl.Loop.Fd, Efl.File, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Ef
         Efl.Io.Reader.read;
         Efl.Io.Writer.write;
         Efl.Io.Closer.close;
+        Efl.Io.Closer.close_on_exec.set;
         Efl.Io.Sizer.resize;
         Efl.Io.Positioner.seek;
     }

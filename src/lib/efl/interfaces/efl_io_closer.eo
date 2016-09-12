@@ -41,6 +41,36 @@ mixin Efl.Io.Closer {
                 is_closed: bool;
             }
         }
+
+        @property close_on_exec {
+            [[If true will automatically close resources on exec() calls.
+
+              When using file descriptors this should set FD_CLOEXEC
+              so they are not inherited by the processes (children or
+              self) doing exec().
+            ]]
+            get @virtual_pure { }
+            set @virtual_pure {
+                [[If true, will close on exec() call.]]
+                return: bool; [[$true if could set, $false if not supported or failed.]]
+            }
+            values {
+                close_on_exec: bool;
+            }
+        }
+
+        @property close_on_destructor {
+            [[If true will automatically close() on object destructor.
+
+              If the object was deleted without close, this property
+              will state whenever it should be closed or not.
+            ]]
+            get @virtual_pure { }
+            set @virtual_pure { }
+            values {
+                close_on_destructor: bool;
+            }
+        }
     }
 
     events {

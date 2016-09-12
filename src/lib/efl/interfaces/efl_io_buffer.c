@@ -317,6 +317,31 @@ _efl_io_buffer_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *p
    return pd->closed;
 }
 
+EOLIAN static Eina_Bool
+_efl_io_buffer_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd EINA_UNUSED, Eina_Bool close_on_exec)
+{
+   if (!close_on_exec) return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_io_buffer_efl_io_closer_close_on_exec_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN static void
+_efl_io_buffer_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd EINA_UNUSED, Eina_Bool close_on_destructor EINA_UNUSED)
+{
+}
+
+EOLIAN static Eina_Bool
+_efl_io_buffer_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Error
 _efl_io_buffer_efl_io_sizer_resize(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t size)
 {

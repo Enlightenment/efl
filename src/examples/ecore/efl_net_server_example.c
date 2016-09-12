@@ -58,8 +58,7 @@ _echo_copier_done(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *copier = event->object;
    fprintf(stderr, "INFO: echo copier done, close and del %p\n", copier);
-   efl_io_closer_close(copier);
-   efl_del(copier);
+   efl_del(copier); /* set to close_on_destructor, will auto close copier and client */
 }
 
 static void
@@ -73,7 +72,6 @@ _echo_copier_error(void *data EINA_UNUSED, const Efl_Event *event)
    fprintf(stderr, "ERROR: echo copier %p failed %d, close and del.\n",
            copier, *perr);
 
-   efl_io_closer_close(copier);
    efl_del(copier);
 }
 
@@ -123,7 +121,7 @@ _send_recv_done(Send_Recv_Data *d, Eo *copier)
 
    efl_del(copier);
    if (d->send_copier || d->recv_copier) return;
-   efl_io_closer_close(d->client);
+   efl_io_closer_close(d->client); /* manually close once both copiers are done */
    _send_recv_free(d);
 }
 
@@ -305,7 +303,8 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
         Eo *echo_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
                                   efl_io_copier_source_set(efl_added, client),
                                   efl_io_copier_destination_set(efl_added, client),
-                                  efl_event_callback_array_add(efl_added, echo_copier_cbs(), client)
+                                  efl_event_callback_array_add(efl_added, echo_copier_cbs(), client),
+                                  efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
                                   );
 
         fprintf(stderr, "INFO: using an echo copier=%p for client %s\n",
@@ -346,7 +345,8 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
         d->send_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
                                  efl_io_copier_source_set(efl_added, send_buffer),
                                  efl_io_copier_destination_set(efl_added, client),
-                                 efl_event_callback_array_add(efl_added, send_copier_cbs(), d)
+                                 efl_event_callback_array_add(efl_added, send_copier_cbs(), d),
+                                 efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
                                  );
 
         fprintf(stderr, "INFO: using sender buffer %p with copier %p for client %s\n",
@@ -361,7 +361,8 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
         d->recv_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
                                  efl_io_copier_source_set(efl_added, client),
                                  efl_io_copier_destination_set(efl_added, recv_buffer),
-                                 efl_event_callback_array_add(efl_added, recv_copier_cbs(), d)
+                                 efl_event_callback_array_add(efl_added, recv_copier_cbs(), d),
+                                 efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
                                  );
 
         fprintf(stderr, "INFO: using receiver buffer %p with copier %p for client %s\n",

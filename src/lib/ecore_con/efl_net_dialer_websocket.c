@@ -953,8 +953,6 @@ _efl_net_dialer_websocket_efl_object_destructor(Eo *o, Efl_Net_Dialer_Websocket_
         pd->close_timer = NULL;
      }
 
-   if (!efl_io_closer_closed_get(pd->http))
-     efl_io_closer_close(pd->http);
    efl_del(pd->http);
    pd->http = NULL;
 
@@ -1353,6 +1351,30 @@ EOLIAN static Eina_Bool
 _efl_net_dialer_websocket_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd)
 {
    return pd->close_requested || efl_io_closer_closed_get(pd->http);
+}
+
+EOLIAN static Eina_Bool
+_efl_net_dialer_websocket_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd, Eina_Bool close_on_exec)
+{
+   return efl_io_closer_close_on_exec_set(pd->http, close_on_exec);
+}
+
+EOLIAN static Eina_Bool
+_efl_net_dialer_websocket_efl_io_closer_close_on_exec_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd)
+{
+   return efl_io_closer_close_on_exec_get(pd->http);
+}
+
+EOLIAN static void
+_efl_net_dialer_websocket_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd, Eina_Bool close_on_destructor)
+{
+   efl_io_closer_close_on_destructor_set(pd->http, close_on_destructor);
+}
+
+EOLIAN static Eina_Bool
+_efl_net_dialer_websocket_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd)
+{
+   return efl_io_closer_close_on_destructor_get(pd->http);
 }
 
 EOLIAN static void

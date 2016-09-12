@@ -305,5 +305,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         Efl.Io.Writer.can_write.set;
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.close_on_exec;
+        Efl.Io.Closer.close_on_destructor;
     }
 }

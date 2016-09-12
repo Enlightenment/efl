@@ -31,7 +31,6 @@ typedef struct _Efl_Net_Socket_Fd_Data
    Eina_Stringshare *address_local;
    Eina_Stringshare *address_remote;
    int family;
-   Eina_Bool close_on_exec;
 } Efl_Net_Socket_Fd_Data;
 
 static void
@@ -73,12 +72,21 @@ EOLIAN static Efl_Object *
 _efl_net_socket_fd_efl_object_constructor(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED)
 {
    pd->family = AF_UNSPEC;
-   return efl_constructor(efl_super(o, MY_CLASS));
+   o = efl_constructor(efl_super(o, MY_CLASS));
+
+   efl_io_closer_close_on_exec_set(o, EINA_TRUE);
+   efl_io_closer_close_on_destructor_set(o, EINA_TRUE);
+
+   return o;
 }
 
 EOLIAN static void
 _efl_net_socket_fd_efl_object_destructor(Eo *o, Efl_Net_Socket_Fd_Data *pd)
 {
+   if (efl_io_closer_close_on_destructor_get(o) &&
+       (!efl_io_closer_closed_get(o)))
+     efl_io_closer_close(o);
+
    efl_destructor(efl_super(o, MY_CLASS));
 
    eina_stringshare_replace(&pd->address_local, NULL);
@@ -88,12 +96,13 @@ _efl_net_socket_fd_efl_object_destructor(Eo *o, Efl_Net_Socket_Fd_Data *pd)
 static void
 _efl_net_socket_fd_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, int fd)
 {
+   Eina_Bool close_on_exec = efl_io_closer_close_on_exec_get(o); /* get cached value, otherwise will query from set fd */
    efl_io_reader_fd_reader_fd_set(o, fd);
    efl_io_writer_fd_writer_fd_set(o, fd);
    efl_io_closer_fd_closer_fd_set(o, fd);
 
    /* apply postponed values */
-   efl_net_socket_fd_close_on_exec_set(o, pd->close_on_exec);
+   efl_io_closer_close_on_exec_set(o, close_on_exec);
    if (pd->family == AF_UNSPEC)
      {
         ERR("efl_loop_fd_set() must be called after efl_net_server_fd_family_set()");
@@ -259,68 +268,6 @@ EOLIAN static const char *
 _efl_net_socket_fd_efl_net_socket_address_remote_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Fd_Data *pd)
 {
    return pd->address_remote;
-}
-
-EOLIAN static Eina_Bool
-_efl_net_socket_fd_close_on_exec_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, Eina_Bool close_on_exec)
-{
-#ifdef _WIN32
-   DBG("close on exec is not supported on windows");
-   pd->close_on_exec = close_on_exec;
-   return EINA_FALSE;
-#else
-   int flags, fd;
-
-   pd->close_on_exec = close_on_exec;
-
-   fd = efl_loop_fd_get(o);
-   if (fd < 0) return EINA_TRUE; /* postpone until fd_set() */
-
-   flags = fcntl(fd, F_GETFD);
-   if (flags < 0)
-     {
-        ERR("fcntl(%d, F_GETFD): %s", fd, strerror(errno));
-        return EINA_FALSE;
-     }
-   if (close_on_exec)
-     flags |= FD_CLOEXEC;
-   else
-     flags &= (~FD_CLOEXEC);
-   if (fcntl(fd, F_SETFD, flags) < 0)
-     {
-        ERR("fcntl(%d, F_SETFD, %#x): %s", fd, flags, strerror(errno));
-        return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
-#endif
-}
-
-EOLIAN static Eina_Bool
-_efl_net_socket_fd_close_on_exec_get(Eo *o, Efl_Net_Socket_Fd_Data *pd)
-{
-#ifdef _WIN32
-   DBG("close on exec is not supported on windows");
-   return pd->close_on_exec;
-#else
-   int flags, fd;
-
-   fd = efl_loop_fd_get(o);
-   if (fd < 0) return pd->close_on_exec;
-
-   /* if there is a fd, always query it directly as it may be modified
-    * elsewhere by nasty users.
-    */
-   flags = fcntl(fd, F_GETFD);
-   if (flags < 0)
-     {
-        ERR("fcntl(%d, F_GETFD): %s", fd, strerror(errno));
-        return EINA_FALSE;
-     }
-
-   pd->close_on_exec = !!(flags & FD_CLOEXEC); /* sync */
-   return pd->close_on_exec;
-#endif
 }
 
 EOLIAN static void

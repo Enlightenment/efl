@@ -17,5 +17,7 @@ mixin Efl.Io.Closer.Fd (Efl.Io.Closer) {
     implements {
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.close_on_exec;
+        Efl.Io.Closer.close_on_destructor;
     }
 }

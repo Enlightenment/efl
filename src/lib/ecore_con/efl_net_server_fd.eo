@@ -26,7 +26,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
 
               Children socket will inherit the server's setting by
               default. One can change the behavior using each instance
-              @Efl.Net.Socket.Fd.close_on_exec.set.
+              @Efl.Io.Closer.close_on_exec.set.
             ]]
             get { }
             set {

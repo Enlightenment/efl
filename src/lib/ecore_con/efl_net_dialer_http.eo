@@ -342,6 +342,8 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         Efl.Io.Writer.can_write.set;
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.close_on_exec;
+        Efl.Io.Closer.close_on_destructor;
         Efl.Io.Sizer.resize;
         Efl.Io.Sizer.size.get;
     }

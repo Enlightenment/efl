@@ -4,6 +4,10 @@ class Efl.Net.Socket.Fd (Efl.Loop.Fd, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io
       This is the common class and takes an existing FD, usually
       created by an dialer or server.
 
+      @Efl.Io.Closer.close_on_exec and
+      @Efl.Io.Closer.close_on_destructor are respected and default to
+      $true.
+
       @since 1.19
     ]]
 
@@ -21,17 +25,6 @@ class Efl.Net.Socket.Fd (Efl.Loop.Fd, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io
             set @protected { }
             values {
                 family: int;
-            }
-        }
-
-        @property close_on_exec {
-            [[Controls Close-on-Exec() using FD_CLOEXEC]]
-            get { }
-            set {
-                return: bool (false); [[$true on success]]
-            }
-            values {
-                close_on_exec: bool;
             }
         }
     }

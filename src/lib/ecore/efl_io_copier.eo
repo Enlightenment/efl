@@ -15,6 +15,10 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
       If @Efl.Io.Closer.close is called, then it will be called on
       @.source and @.destination if they implement those interfaces.
 
+      @Efl.Io.Closer.close_on_exec and
+      @Efl.Io.Closer.close_on_destructor are respected and applied to
+      both source and destination. Both default to $true.
+
       @since 1.19
     ]]
 
@@ -108,5 +112,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
        Efl.Object.finalize;
        Efl.Io.Closer.close;
        Efl.Io.Closer.closed.get;
+       Efl.Io.Closer.close_on_exec;
+       Efl.Io.Closer.close_on_destructor;
     }
 }

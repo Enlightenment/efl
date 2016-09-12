@@ -162,6 +162,8 @@ _efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, void *pd EINA_UNUSED, in
 {
    Eo *client = efl_add(EFL_NET_SOCKET_TCP_CLASS, o,
                         efl_event_callback_array_add(efl_added, _efl_net_server_tcp_client_cbs(), o),
+                        efl_io_closer_close_on_exec_set(efl_added, efl_net_server_fd_close_on_exec_get(o)),
+                        efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
                         efl_loop_fd_set(efl_added, client_fd));
    if (!client)
      {
@@ -177,7 +179,7 @@ _efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, void *pd EINA_UNUSED, in
      {
         DBG("client %s was not handled, closing it...",
             efl_net_socket_address_remote_get(client));
-        efl_io_closer_close(client);
+        efl_del(client);
      }
 }
 

@@ -65,8 +65,15 @@ _efl_io_file_efl_loop_fd_fd_file_set(Eo *o, Efl_Io_File_Data *pd, int fd)
 EOLIAN static void
 _efl_io_file_flags_set(Eo *o, Efl_Io_File_Data *pd, uint32_t flags)
 {
+   Eina_Bool close_on_exec;
+
    EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(o));
+
    pd->flags = flags;
+
+   close_on_exec = !!(flags & O_CLOEXEC);
+   if (close_on_exec != efl_io_closer_close_on_exec_get(o))
+     efl_io_closer_close_on_exec_set(o, close_on_exec);
 }
 
 EOLIAN static uint32_t
@@ -88,10 +95,24 @@ _efl_io_file_mode_get(Eo *o EINA_UNUSED, Efl_Io_File_Data *pd)
    return pd->mode;
 }
 
+EOLIAN static Eo *
+_efl_io_file_efl_object_constructor(Eo *o, Efl_Io_File_Data *pd)
+{
+   pd->flags = O_RDONLY | O_CLOEXEC;
+
+   o = efl_constructor(efl_super(o, MY_CLASS));
+
+   efl_io_closer_close_on_exec_set(o, EINA_TRUE);
+   efl_io_closer_close_on_destructor_set(o, EINA_TRUE);
+
+   return o;
+}
+
 EOLIAN static void
 _efl_io_file_efl_object_destructor(Eo *o, Efl_Io_File_Data *pd)
 {
-   if (!efl_io_closer_closed_get(o))
+   if (efl_io_closer_close_on_destructor_get(o) &&
+       (!efl_io_closer_closed_get(o)))
      efl_io_closer_close(o);
 
    efl_destructor(efl_super(o, MY_CLASS));
@@ -190,6 +211,17 @@ _efl_io_file_efl_io_positioner_seek(Eo *o, Efl_Io_File_Data *pd, int64_t offset,
    if (err) return err;
    _efl_io_file_state_update(o, pd);
    return 0;
+}
+
+EOLIAN static Eina_Bool
+_efl_io_file_efl_io_closer_close_on_exec_set(Eo *o, Efl_Io_File_Data *pd, Eina_Bool close_on_exec)
+{
+   if (close_on_exec)
+     pd->flags |= O_CLOEXEC;
+   else
+     pd->flags &= (~O_CLOEXEC);
+
+   return efl_io_closer_close_on_exec_set(efl_super(o, MY_CLASS), close_on_exec);
 }
 
 #include "efl_io_file.eo.c"
