@@ -5,26 +5,18 @@
 #include "evas_cs2_private.h"
 #endif
 
-#define MY_CLASS EVAS_OUT_CLASS
-typedef struct _Evas_Out_Data Evas_Out_Data;
-struct _Evas_Out_Data
+#include "efl_canvas_output.eo.h"
+
+#define MY_CLASS EFL_CANVAS_OUTPUT_CLASS
+typedef struct _Efl_Canvas_Output_Data Efl_Canvas_Output_Data;
+struct _Efl_Canvas_Output_Data
 {
    void *info;/*, *context, *output;*/
    Evas_Coord x, y, w, h;
 };
 
-EAPI Evas_Out *
-evas_out_add(Evas *e)
-{
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *eo_obj = efl_add(MY_CLASS, e);
-   return eo_obj;
-}
-
 EOLIAN static Eo *
-_evas_out_efl_object_constructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
+_efl_canvas_output_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Output_Data *eo_dat)
 {
    Eo *eo_parent = NULL;
    Evas_Public_Data *e;
@@ -46,13 +38,13 @@ _evas_out_efl_object_constructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
 }
 
 EAPI void
-evas_output_del(Evas_Out *evo)
+efl_canvas_outputput_del(Efl_Canvas_Output *evo)
 {
    efl_unref(evo);
 }
 
 EOLIAN static void
-_evas_out_efl_object_destructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
+_efl_canvas_output_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Output_Data *eo_dat)
 {
    Eo *eo_parent = NULL;
    Evas_Public_Data *e;
@@ -70,7 +62,7 @@ _evas_out_efl_object_destructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
 }
 
 EOLIAN static void
-_evas_out_view_set(Eo *eo_e, Evas_Out_Data *eo_dat, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_efl_canvas_output_view_set(Eo *eo_e, Efl_Canvas_Output_Data *eo_dat, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Eo *eo_parent = NULL;
    Evas_Public_Data *e;
@@ -86,7 +78,7 @@ _evas_out_view_set(Eo *eo_e, Evas_Out_Data *eo_dat, Evas_Coord x, Evas_Coord y, 
 }
 
 EOLIAN static void
-_evas_out_view_get(Eo *eo_e EINA_UNUSED, Evas_Out_Data *eo_dat, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_efl_canvas_output_view_get(Eo *eo_e EINA_UNUSED, Efl_Canvas_Output_Data *eo_dat, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    if (x) *x = eo_dat->x;
    if (y) *y = eo_dat->y;
@@ -95,7 +87,7 @@ _evas_out_view_get(Eo *eo_e EINA_UNUSED, Evas_Out_Data *eo_dat, Evas_Coord *x, E
 }
 
 EOLIAN static Eina_Bool
-_evas_out_engine_info_set(Eo *eo_e, Evas_Out_Data *eo_dat, Evas_Engine_Info *info)
+_efl_canvas_output_engine_info_set(Eo *eo_e, Efl_Canvas_Output_Data *eo_dat, Evas_Engine_Info *info)
 {
    Eo *eo_parent = NULL;
    Evas_Public_Data *e;
@@ -105,14 +97,24 @@ _evas_out_engine_info_set(Eo *eo_e, Evas_Out_Data *eo_dat, Evas_Engine_Info *inf
    if (eo_dat->info != info) return EINA_FALSE;
 
    // XXX: handle setting of engine info here
-  
+
    return EINA_TRUE;
 }
 
 EOLIAN static Evas_Engine_Info*
-_evas_out_engine_info_get(Eo *eo_e EINA_UNUSED, Evas_Out_Data *eo_dat)
+_efl_canvas_output_engine_info_get(Eo *eo_e EINA_UNUSED, Efl_Canvas_Output_Data *eo_dat)
 {
    return eo_dat->info;
 }
 
-#include "canvas/evas_out.eo.c"
+static Eina_Bool
+_efl_canvas_output_lock(Eo *obj, Efl_Canvas_Output_Data *pd)
+{
+}
+
+static Eina_Bool
+_efl_canvas_output_unlock(Eo *obj, Efl_Canvas_Output_Data *pd)
+{
+}
+
+#include "canvas/efl_canvas_output.eo.c"

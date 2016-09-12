@@ -49,6 +49,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_input_pointer.eo \
 	lib/evas/canvas/efl_input_hold.eo \
 	lib/evas/canvas/efl_gfx_map.eo \
+	lib/evas/canvas/efl_canvas_output.eo \
 	$(NULL)
 
 evas_eolian_legacy_files = \
@@ -56,7 +57,6 @@ evas_eolian_legacy_files = \
 	lib/evas/canvas/evas_table.eo \
 	lib/evas/canvas/evas_grid.eo \
 	lib/evas/canvas/evas_box.eo\
-	lib/evas/canvas/evas_out.eo \
 	lib/evas/canvas/evas_text.eo \
 	lib/evas/canvas/evas_textgrid.eo \
 	lib/evas/canvas/evas_image.eo \

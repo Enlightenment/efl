@@ -1,9 +1,7 @@
 import evas_types;
 
-class Evas.Out (Efl.Object)
+class Efl.Canvas.Output (Efl.Object)
 {
-   eo_prefix: evas_out;
-   legacy_prefix: evas_output;
    methods {
       @property view {
          set {
@@ -22,6 +20,14 @@ class Evas.Out (Efl.Object)
             w: Evas.Coord;
             h: Evas.Coord;
          }
+      }
+      lock {
+         [[Lock this output and will prevent rendering any buffer associated to it.]]
+         return: bool;
+      }
+      unlock {
+         [[Unlock this output and will rendering of this buffer during next call to evas_render.]]
+         return: bool;
       }
       @property engine_info {
          set {

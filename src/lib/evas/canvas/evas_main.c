@@ -305,7 +305,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    evas_event_callback_all_del(eo_e);
    evas_event_callback_cleanup(eo_e);
 
-   EINA_LIST_FREE(e->outputs, evo) evas_output_del(evo);
+   EINA_LIST_FREE(e->outputs, evo) efl_del(evo);
 
    if (e->engine.func)
      {
