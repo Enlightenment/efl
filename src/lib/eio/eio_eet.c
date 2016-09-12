@@ -159,7 +159,7 @@ _eio_eet_image_write_free(Eio_Eet_Image_Write *eiw)
 {
    eina_stringshare_del(eiw->name);
    eina_stringshare_del(eiw->cipher_key);
-   free(eiw);
+   eio_file_free(&eiw->common);
 }
 
 static void
@@ -225,7 +225,7 @@ _eio_eet_read_free(Eio_Eet_Read *er)
 {
    eina_stringshare_del(er->name);
    eina_stringshare_del(er->cipher_key);
-   free(er);
+   eio_file_free(&er->common);
 }
 
 static void
