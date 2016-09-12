@@ -731,7 +731,10 @@ _efl_net_dialer_websocket_job_receive(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
        pd->recv.done, pd->recv.needed,
        pd->recv.current.used_len, pd->recv.current.total_len,
        eina_error_msg_get(err));
+   efl_ref(o);
+   efl_io_closer_close(pd->http);
    efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+   efl_unref(o);
 }
 
 static void
@@ -792,6 +795,7 @@ _efl_net_dialer_websocket_http_closed(void *data, const Efl_Event *event EINA_UN
 {
    Eo *o = data;
    Efl_Net_Dialer_Websocket_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   efl_ref(o);
    if (!pd->close_requested)
      {
         Efl_Net_Dialer_Websocket_Closed_Reason reason = {
@@ -801,7 +805,11 @@ _efl_net_dialer_websocket_http_closed(void *data, const Efl_Event *event EINA_UN
         pd->close_requested = EINA_TRUE;
         efl_event_callback_call(o, EFL_NET_DIALER_WEBSOCKET_EVENT_CLOSED_REASON, &reason);
      }
+   if ((!pd->recv.pending_read) &&
+       (pd->streaming_mode != EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_DISABLED))
+     efl_event_callback_call(o, EFL_IO_READER_EVENT_EOS, NULL);
    efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
+   efl_unref(o);
 }
 
 static void
@@ -812,7 +820,10 @@ _efl_net_dialer_websocket_http_error(void *data, const Efl_Event *event)
    Eina_Error *perr = event->info;
    if ((pd->close_requested) && (*perr == EFL_NET_HTTP_ERROR_RECV_ERROR))
      return;
+   efl_ref(o);
+   if (!efl_io_closer_closed_get(o)) efl_io_closer_close(o);
    efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, perr);
+   efl_unref(o);
 }
 
 static void
@@ -836,7 +847,10 @@ _efl_net_dialer_websocket_http_headers_done(void *data, const Efl_Event *event E
           return;
         WRN("failed WebSocket handshake: HTTP status=%d, expected=%d",
             status, EFL_NET_HTTP_STATUS_SWITCHING_PROTOCOLS);
+        efl_ref(o);
+        efl_io_closer_close(pd->http);
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+        efl_unref(o);
         return;
      }
 
@@ -874,7 +888,10 @@ _efl_net_dialer_websocket_http_headers_done(void *data, const Efl_Event *event E
         Eina_Error err = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
         WRN("failed WebSocket handshake: upgraded=%d, connection_websocket=%d, accepted=%d",
             upgraded, connection_websocket, accepted);
+        efl_ref(o);
+        efl_io_closer_close(pd->http);
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+        efl_unref(o);
         return;
      }
 
