@@ -1578,7 +1578,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
  end:
    efl_io_writer_can_write_set(o, EINA_FALSE);
    efl_io_reader_can_read_set(o, EINA_FALSE);
-   efl_io_reader_eos_set(o, EINA_FALSE);
+   efl_io_reader_eos_set(o, EINA_TRUE);
    efl_net_dialer_connected_set(o, EINA_FALSE);
    pd->closed = EINA_TRUE;
    efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
