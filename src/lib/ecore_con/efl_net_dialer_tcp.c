@@ -2,6 +2,7 @@
 #define EFL_NET_DIALER_PROTECTED 1
 #define EFL_NET_SOCKET_FD_PROTECTED 1
 #define EFL_NET_SOCKET_PROTECTED 1
+#define EFL_IO_READER_PROTECTED 1
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -104,6 +105,7 @@ _efl_net_dialer_tcp_connected(void *data, const struct sockaddr *addr EINA_UNUSE
      {
         freeaddrinfo(pd->resolve.names);
         pd->resolve.names = NULL;
+        efl_io_reader_eos_set(o, EINA_TRUE);
         if (err)
           efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
         else
@@ -170,6 +172,7 @@ _efl_net_dialer_tcp_resolved(void *data, const char *host EINA_UNUSED, const cha
    if (gai_error)
      {
         Eina_Error err = EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST;
+        efl_io_reader_eos_set(o, EINA_TRUE);
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
         if (result) freeaddrinfo(result);
         return;
