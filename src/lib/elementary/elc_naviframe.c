@@ -45,9 +45,11 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static void _on_item_back_btn_clicked(void *data, const Efl_Event *event);
 
 static Eina_Bool _key_action_top_item_get(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_item_pop(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
    {"top_item_get", _key_action_top_item_get},
+   {"item_pop", _key_action_item_pop},
    {NULL, NULL}
 };
 
@@ -1496,6 +1498,22 @@ _key_action_top_item_get(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_key_action_item_pop(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   Elm_Object_Item *eo_item = NULL;
+   eo_item = elm_naviframe_top_item_get(obj);
+   if (!eo_item) return EINA_FALSE;
+
+   ELM_NAVIFRAME_ITEM_DATA_GET(eo_item, it);
+
+   if (it->pushing || it->popping) return EINA_FALSE;
+
+   elm_naviframe_item_pop(obj);
+
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
 _elm_naviframe_elm_widget_event(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -1999,6 +2017,7 @@ _elm_naviframe_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 {
    static Elm_Atspi_Action atspi_actions[] = {
           { "top_item_get", "top_item_get", NULL, _key_action_top_item_get },
+          { "item_pop", "item_pop", NULL, _key_action_item_pop },
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
