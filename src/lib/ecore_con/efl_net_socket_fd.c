@@ -145,6 +145,8 @@ _efl_net_socket_fd_efl_io_closer_close(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
 {
    Eina_Error ret;
 
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EBADF);
+
    efl_io_writer_can_write_set(o, EINA_FALSE);
    efl_io_reader_can_read_set(o, EINA_FALSE);
    efl_io_reader_eos_set(o, EINA_TRUE);
