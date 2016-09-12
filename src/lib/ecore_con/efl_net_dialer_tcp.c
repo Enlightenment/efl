@@ -39,6 +39,7 @@ typedef struct _Efl_Net_Dialer_Tcp_Data
    } resolve;
    struct {
       Ecore_Thread *thread;
+      Eo *timer;
    } connect;
    Eina_Stringshare *address_dial;
    Eina_Stringshare *proxy;
@@ -47,12 +48,28 @@ typedef struct _Efl_Net_Dialer_Tcp_Data
    double timeout_dial;
 } Efl_Net_Dialer_Tcp_Data;
 
+EOLIAN static Eo*
+_efl_net_dialer_tcp_efl_object_constructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_UNUSED)
+{
+   o = efl_constructor(efl_super(o, MY_CLASS));
+   if (!o) return NULL;
+
+   efl_net_dialer_timeout_dial_set(o, 30.0);
+   return o;
+}
+
 EOLIAN static void
 _efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
 {
    if (efl_io_closer_close_on_destructor_get(o) &&
        (!efl_io_closer_closed_get(o)))
      efl_io_closer_close(o);
+
+   if (pd->connect.timer)
+     {
+        efl_del(pd->connect.timer);
+        pd->connect.timer = NULL;
+     }
 
    if (pd->connect.thread)
      {
@@ -185,6 +202,39 @@ _efl_net_dialer_tcp_resolved(void *data, const char *host EINA_UNUSED, const cha
    _efl_net_dialer_tcp_connect(o, pd);
 }
 
+static void
+_efl_net_dialer_tcp_connect_timeout(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Eo *o = data;
+   Efl_Net_Dialer_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Eina_Error err = ETIMEDOUT;
+
+   pd->connect.timer = NULL;
+
+   if (pd->resolve.thread)
+     {
+        ecore_thread_cancel(pd->resolve.thread);
+        pd->resolve.thread = NULL;
+     }
+   if (pd->resolve.names)
+     {
+        freeaddrinfo(pd->resolve.names);
+        pd->resolve.names = NULL;
+     }
+   pd->resolve.current = NULL;
+
+   if (pd->connect.thread)
+     {
+        ecore_thread_cancel(pd->connect.thread);
+        pd->connect.thread = NULL;
+     }
+
+   efl_ref(o);
+   efl_io_reader_eos_set(o, EINA_TRUE);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+   efl_unref(o);
+}
+
 EOLIAN static Eina_Error
 _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_UNUSED, const char *address)
 {
@@ -234,6 +284,18 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
 
    efl_net_dialer_address_dial_set(o, address);
 
+   if (pd->connect.timer)
+     {
+        efl_del(pd->connect.timer);
+        pd->connect.timer = NULL;
+     }
+   if (pd->timeout_dial > 0.0)
+     {
+        pd->connect.timer = efl_add(EFL_LOOP_TIMER_CLASS, efl_loop_user_loop_get(o),
+                                    efl_loop_timer_interval_set(efl_added, pd->timeout_dial),
+                                    efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _efl_net_dialer_tcp_connect_timeout, o));
+     }
+
    return 0;
 }
 
@@ -265,8 +327,18 @@ _efl_net_dialer_tcp_efl_net_dialer_proxy_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_T
 EOLIAN static void
 _efl_net_dialer_tcp_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd, double seconds)
 {
-   // TODO: when using ecore_con_info/threads, set timeout
    pd->timeout_dial = seconds;
+   if (pd->connect.timer)
+     {
+        efl_del(pd->connect.timer);
+        pd->connect.timer = NULL;
+     }
+   if (pd->timeout_dial > 0.0)
+     {
+        pd->connect.timer = efl_add(EFL_LOOP_TIMER_CLASS, efl_loop_user_loop_get(o),
+                                    efl_loop_timer_interval_set(efl_added, pd->timeout_dial),
+                                    efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _efl_net_dialer_tcp_connect_timeout, o));
+     }
 }
 
 EOLIAN static double
@@ -278,6 +350,11 @@ _efl_net_dialer_tcp_efl_net_dialer_timeout_dial_get(Eo *o EINA_UNUSED, Efl_Net_D
 EOLIAN static void
 _efl_net_dialer_tcp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Tcp_Data *pd, Eina_Bool connected)
 {
+   if (pd->connect.timer)
+     {
+        efl_del(pd->connect.timer);
+        pd->connect.timer = NULL;
+     }
    if (pd->connected == connected) return;
    pd->connected = connected;
    if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);

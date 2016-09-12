@@ -5,6 +5,7 @@ class Efl.Net.Dialer.Tcp (Efl.Net.Socket.Tcp, Efl.Net.Dialer) {
     ]]
 
     implements {
+        Efl.Object.constructor;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial;
