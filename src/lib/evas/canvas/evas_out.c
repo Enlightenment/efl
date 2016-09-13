@@ -37,12 +37,6 @@ _efl_canvas_output_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Output_Data *eo
    return eo_obj;
 }
 
-EAPI void
-efl_canvas_outputput_del(Efl_Canvas_Output *evo)
-{
-   efl_unref(evo);
-}
-
 EOLIAN static void
 _efl_canvas_output_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Output_Data *eo_dat)
 {
