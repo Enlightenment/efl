@@ -5695,8 +5695,6 @@ EAPI void evas_output_size_set(Evas *e, int w, int h);
  */
 EAPI void evas_output_size_get(const Evas *e, int *w, int *h);
 
-#include "canvas/evas_out.eo.legacy.h"
-
 typedef struct _Evas_Map Evas_Map;
 
 /**
