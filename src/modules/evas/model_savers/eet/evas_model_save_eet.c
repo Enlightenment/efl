@@ -161,6 +161,14 @@ evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh,
 
    eet_file = _evas_canvas3d_eet_file_new();
 
+   if (!eet_file)
+     {
+        free(eet_mesh);
+        free(eet_header);
+        eet_shutdown();
+        return;
+     }
+
    eet_mesh->materials_count = 1;
    eet_header->materials_count = 1;
    eet_mesh->frames_count = 1;
