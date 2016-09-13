@@ -108,12 +108,12 @@ _efl_canvas_output_engine_info_get(Eo *eo_e EINA_UNUSED, Efl_Canvas_Output_Data 
 }
 
 static Eina_Bool
-_efl_canvas_output_lock(Eo *obj, Efl_Canvas_Output_Data *pd)
+_efl_canvas_output_lock(Eo *obj EINA_UNUSED, Efl_Canvas_Output_Data *pd EINA_UNUSED)
 {
 }
 
 static Eina_Bool
-_efl_canvas_output_unlock(Eo *obj, Efl_Canvas_Output_Data *pd)
+_efl_canvas_output_unlock(Eo *obj EINA_UNUSED, Efl_Canvas_Output_Data *pd EINA_UNUSED)
 {
 }
 
