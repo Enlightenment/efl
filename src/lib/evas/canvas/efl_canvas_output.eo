@@ -45,6 +45,8 @@ class Efl.Canvas.Output (Efl.Object, Efl.Gfx.Buffer)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.parent.set;
+      Efl.Object.finalize;
    }
    events {
       pixels,ready;

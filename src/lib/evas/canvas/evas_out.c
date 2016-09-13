@@ -13,26 +13,14 @@ struct _Efl_Canvas_Output_Data
 {
    void *info;/*, *context, *output;*/
    Evas_Coord x, y, w, h;
+
+   Eina_Bool finalized : 1;
 };
 
 EOLIAN static Eo *
-_efl_canvas_output_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Output_Data *eo_dat)
+_efl_canvas_output_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Output_Data *data EINA_UNUSED)
 {
-   Eo *eo_parent = NULL;
-   Evas_Public_Data *e;
-
-   eo_parent = efl_parent_get(eo_obj);
-   e = efl_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
-   evas_canvas_async_block(e);
-
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
-
-   if (!e) return NULL;
-   e->outputs = eina_list_append(e->outputs, eo_obj);
-   if (e->engine.func->info) eo_dat->info = e->engine.func->info(eo_parent);
-   // XXX: context and output are currently held in the core engine and are
-   // allocated by engine specific internal code. this all needs a new engine
-   // api to make it work
 
    return eo_obj;
 }
@@ -46,6 +34,7 @@ _efl_canvas_output_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Output_Data *eo_
    eo_parent = efl_parent_get(eo_obj);
    e = efl_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
    evas_canvas_async_block(e);
+
    if (!e) return;
    // XXX: need to free output and context one they get allocated one day
    // e->engine.func->context_free(eo_dat->output, eo_dat->context);
@@ -111,6 +100,39 @@ static Eina_Bool
 _efl_canvas_output_unlock(Eo *obj EINA_UNUSED, Efl_Canvas_Output_Data *pd EINA_UNUSED)
 {
    return EINA_FALSE;
+}
+
+static void
+_efl_canvas_output_efl_object_parent_set(Eo *obj, Efl_Canvas_Output_Data *pd, Efl_Object *parent)
+{
+   if (parent != NULL && pd->finalized) return ;
+
+   efl_parent_set(efl_super(obj, EFL_CANVAS_OUTPUT_CLASS), parent);
+}
+
+static Efl_Object *
+_efl_canvas_output_efl_object_finalize(Eo *obj, Efl_Canvas_Output_Data *pd)
+{
+   Eo *eo_parent = NULL;
+   Evas_Public_Data *e;
+
+   eo_parent = efl_parent_get(obj);
+
+   if (!eo_parent || !efl_isa(eo_parent, EVAS_CANVAS_CLASS)) return NULL;
+   e = efl_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
+   evas_canvas_async_block(e);
+
+   if (!e) return NULL;
+
+   e->outputs = eina_list_append(e->outputs, obj);
+   if (e->engine.func->info) pd->info = e->engine.func->info(eo_parent);
+   // XXX: context and output are currently held in the core engine and are
+   // allocated by engine specific internal code. this all needs a new engine
+   // api to make it work
+
+   pd->finalized = EINA_TRUE;
+
+   return obj;
 }
 
 #include "canvas/efl_canvas_output.eo.c"
