@@ -159,7 +159,7 @@ typedef struct _Efl_Net_Dialer_Websocket_Pending_Read {
 
 typedef struct _Efl_Net_Dialer_Websocket_Data {
    Eo *http;
-   Eo *close_timer;
+   Eina_Promise *close_timeout;
    Eina_Promise *job;
    Eina_Stringshare *address_dial; /* must rewrite ws->http, wss->https */
    Eina_Stringshare *address_remote; /* must rewrite ws->http, wss->https */
@@ -543,10 +543,10 @@ _efl_net_dialer_websocket_job_dispatch_frame(Eo *o, Efl_Net_Dialer_Websocket_Dat
              efl_io_closer_close(o);
            else
              efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
-           if (pd->close_timer)
+           if (pd->close_timeout)
              {
-                efl_del(pd->close_timer);
-                pd->close_timer = NULL;
+                eina_promise_cancel(pd->close_timeout);
+                pd->close_timeout = NULL;
              }
            break;
         }
@@ -964,10 +964,10 @@ _efl_net_dialer_websocket_efl_object_destructor(Eo *o, Efl_Net_Dialer_Websocket_
    Eina_Stringshare *str;
 
    efl_event_callback_array_del(pd->http, _efl_net_dialer_websocket_http_cbs(), o);
-   if (pd->close_timer)
+   if (pd->close_timeout)
      {
-        efl_del(pd->close_timer);
-        pd->close_timer = NULL;
+        eina_promise_cancel(pd->close_timeout);
+        pd->close_timeout = NULL;
      }
 
    efl_del(pd->http);
@@ -1495,13 +1495,12 @@ _efl_net_dialer_websocket_binary_send(Eo *o, Efl_Net_Dialer_Websocket_Data *pd, 
 }
 
 static void
-_efl_net_dialer_websocket_close_request_timeout(void *data, const Efl_Event *event)
+_efl_net_dialer_websocket_close_request_timeout(void *data, void *result EINA_UNUSED)
 {
    Eo *o = data;
    Efl_Net_Dialer_Websocket_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
-   efl_del(event->object);
-   pd->close_timer = NULL;
+   pd->close_timeout = NULL;
    DBG("server did not close the TCP socket, timeout");
    efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
 }
@@ -1514,17 +1513,12 @@ _efl_net_dialer_websocket_close_request(Eo *o, Efl_Net_Dialer_Websocket_Data *pd
    size_t len;
    EINA_SAFETY_ON_TRUE_RETURN(pd->close_requested);
 
-   if (pd->close_timer)
-     {
-        efl_loop_timer_interval_set(pd->close_timer, 2.0);
-        efl_loop_timer_reset(pd->close_timer);
-     }
-   else
-     {
-        pd->close_timer = efl_add(EFL_LOOP_TIMER_CLASS, efl_loop_user_loop_get(o),
-                                  efl_loop_timer_interval_set(efl_added, 2.0),
-                                  efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _efl_net_dialer_websocket_close_request_timeout, o));
-     }
+   if (pd->close_timeout)
+     eina_promise_cancel(pd->close_timeout);
+
+   pd->close_timeout = efl_loop_timeout(efl_loop_user_loop_get(o), 2.0, o);
+   eina_promise_then(pd->close_timeout, _efl_net_dialer_websocket_close_request_timeout, NULL, o);
+
    efl_io_writer_can_write_set(o, EINA_FALSE);
 
    if ((!reason) || (reason == EFL_NET_DIALER_WEBSOCKET_CLOSE_REASON_NO_REASON))
