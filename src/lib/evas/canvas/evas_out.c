@@ -110,11 +110,13 @@ _efl_canvas_output_engine_info_get(Eo *eo_e EINA_UNUSED, Efl_Canvas_Output_Data 
 static Eina_Bool
 _efl_canvas_output_lock(Eo *obj EINA_UNUSED, Efl_Canvas_Output_Data *pd EINA_UNUSED)
 {
+   return EINA_FALSE;
 }
 
 static Eina_Bool
 _efl_canvas_output_unlock(Eo *obj EINA_UNUSED, Efl_Canvas_Output_Data *pd EINA_UNUSED)
 {
+   return EINA_FALSE;
 }
 
 #include "canvas/efl_canvas_output.eo.c"
