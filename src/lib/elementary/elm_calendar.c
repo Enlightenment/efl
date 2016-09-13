@@ -697,15 +697,8 @@ _set_headers(Evas_Object *obj)
    elm_layout_freeze(obj);
 
    sd->filling = EINA_TRUE;
-   if (sd->weekdays_set)
-     {
-        for (i = 0; i < ELM_DAY_LAST; i++)
-          {
-             part[3] = i + '0';
-             elm_layout_text_set(obj, part, sd->weekdays[(i + sd->first_week_day) % ELM_DAY_LAST]);
-          }
-     }
-   else
+
+   if (!sd->weekdays_set)
      {
         for (i = 0; i < ELM_DAY_LAST; i++)
           {
@@ -730,11 +723,17 @@ _set_headers(Evas_Object *obj)
                            _days_abbrev[i]);
                     }
                }
-             part[3] = i + '0';
-             elm_layout_text_set(obj, part, sd->weekdays[(i + sd->first_week_day) % ELM_DAY_LAST]);
+
              weekday += 86400; /* Advance by a day */
           }
-    }
+     }
+
+   for (i = 0; i < ELM_DAY_LAST; i++)
+     {
+        part[3] = i + '0';
+        elm_layout_text_set(obj, part, sd->weekdays[(i + sd->first_week_day) % ELM_DAY_LAST]);
+     }
+
    sd->filling = EINA_FALSE;
 
    elm_layout_thaw(obj);
