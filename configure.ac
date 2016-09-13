@@ -157,6 +157,7 @@ efl_deprecated_option="no"
 EFL_WITH_BIN([eet], [eet-eet])
 EFL_WITH_BIN([edje], [edje-cc])
 EFL_WITH_BIN([eolian], [eolian-gen])
+EFL_WITH_BIN([eolian2], [eolian-gen2])
 EFL_WITH_BIN([eolian_cxx], [eolian-cxx])
 EFL_WITH_BIN([eolian-js], [eolian-js])
 EFL_WITH_BIN_SUFFIX([elua], [elua], [_bin])
