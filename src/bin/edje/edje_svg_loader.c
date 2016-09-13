@@ -1114,6 +1114,7 @@ _attr_parse_polygon_points(const char *str, double **points, int *point_count)
              point_array = realloc(point_array, (count + tmp_count) * sizeof(double));
              memcpy(&point_array[count], tmp, tmp_count * sizeof(double));
              count += tmp_count;
+             tmp_count = 0;
           }
      }
 
