@@ -1,6 +1,20 @@
 ==========
-EFL 1.18.0
+EFL 1.18.1
 ==========
+
+Changes since 1.18.0:
+---------------------
+
+Fixes:
+
+   * doc: put shot.sh into dist to allow make doc run from tarball
+   * examples: evas: ensure filter example lua files land in tarball
+   * elm: Install elm test images in the right place
+   * FDO icon theme: correct Inherits value
+   * edje - fix missing vector field frees, copies, handling etc.
+   * FDO icons: correctly list the intl icons in theme description file
+   * Fix elementary build when xkbcommon is in a non standard location (T4413)
+   * ecore_audio: fix distribution of eolian files
 
 Changes since 1.17.0:
 ---------------------
