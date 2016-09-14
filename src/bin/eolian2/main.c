@@ -107,6 +107,31 @@ static void _fill_all_outs(char **outs, const char *val)
    }
 }
 
+static Eina_Strbuf *
+_include_guard(const char *fname, const char *gname, Eina_Strbuf *buf)
+{
+   if (!buf || !eina_strbuf_string_get(buf))
+     return buf;
+
+   if (!gname)
+     gname = "";
+
+   char iname[256] = {0};
+   strncpy(iname, fname, sizeof(iname) - 1);
+   char *inamep = iname;
+   eina_str_toupper(&inamep);
+
+   Eina_Strbuf *g = eina_strbuf_new();
+   eina_strbuf_append_printf(g, "#ifndef _%s_%s\n", iname, gname);
+   eina_strbuf_append_printf(g, "#define _%s_%s\n\n", iname, gname);
+
+   eina_strbuf_replace_all(g, ".", "_");
+   eina_strbuf_append(g, eina_strbuf_string_get(buf));
+   eina_strbuf_append(g, "\n#endif\n");
+   eina_strbuf_free(buf);
+   return g;
+}
+
 static Eina_Bool
 _write_file(const char *fname, const Eina_Strbuf *buf, Eina_Bool append)
 {
