@@ -4,8 +4,9 @@
 
 #include <unistd.h>
 
-#include <Eina.h>
-#include <Eolian.h>
+#include "main.h"
+
+int _eolian_gen_log_dom = -1;
 
 enum
 {
@@ -113,6 +114,16 @@ main(int argc, char **argv)
    eina_init();
    eolian_init();
 
+   const char *dom = "eolian_gen";
+   _eolian_gen_log_dom = eina_log_domain_register(dom, EINA_COLOR_GREEN);
+   if (_eolian_gen_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register log domain: %s", dom);
+        goto end;
+     }
+
+   eina_log_timing(_eolian_gen_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
+
    char *outs[5] = { NULL, NULL, NULL, NULL, NULL };
 
    int gen_what = 0;
@@ -216,6 +227,8 @@ main(int argc, char **argv)
 
    pret = 0;
 end:
+   eina_log_timing(_eolian_gen_log_dom, EINA_LOG_STATE_START, EINA_LOG_STATE_SHUTDOWN);
+   eina_log_domain_unregister(_eolian_gen_log_dom);
    for (size_t i = 0; i < (sizeof(_dexts) / sizeof(char *)); ++i)
      free(outs[i]);
    eolian_shutdown();
