@@ -254,7 +254,7 @@ _efl_ui_image_async_open_do(void *data, Ecore_Thread *thread)
 
    if (ecore_thread_check(thread)) return;
 
-   if (todo->f_set) f = todo->f_set;
+   if (todo->f_set) f = eina_file_dup(todo->f_set);
    else if (todo->file)
      {
         // blocking
