@@ -25,7 +25,7 @@ START_TEST (elm_atspi_role_get)
 END_TEST
 
 static void
-_directory_open_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_ready_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
     Eina_Bool *ret = data;
     *ret = EINA_TRUE;
@@ -38,7 +38,7 @@ START_TEST (elm_fileselector_selected)
    Eina_Stringshare *exist, *no_exist;
    FILE *fp;
    char *path;
-   Eina_Bool selected;
+   Eina_Bool open, selected;
 
    elm_init(1, NULL);
 
@@ -60,13 +60,14 @@ START_TEST (elm_fileselector_selected)
    win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
 
    fileselector = elm_fileselector_add(win);
-   evas_object_smart_callback_add(fileselector, "directory,open", _directory_open_cb, &selected);
+   evas_object_smart_callback_add(fileselector, "directory,open", _ready_cb, &open);
+   evas_object_smart_callback_add(fileselector, "selected", _ready_cb, &selected);
 
    ck_assert(!elm_fileselector_selected_set(fileselector, no_exist));
 
-   selected = EINA_FALSE;
+   open = EINA_FALSE;
    ck_assert(elm_fileselector_selected_set(fileselector, path));
-   ck_assert(elm_test_helper_wait_flag(10, &selected));
+   ck_assert(elm_test_helper_wait_flag(10, &open));
 
    ck_assert_str_eq(elm_fileselector_selected_get(fileselector), path);
 
