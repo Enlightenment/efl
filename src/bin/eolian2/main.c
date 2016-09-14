@@ -106,6 +106,82 @@ static void _fill_all_outs(char **outs, const char *val)
    }
 }
 
+static Eina_Bool
+_write_file(const char *fname, const Eina_Strbuf *buf, Eina_Bool append)
+{
+   FILE *f = fopen(fname, append ? "ab" : "wb");
+   if (!f)
+     {
+        fprintf(stderr, "eolian: could not open '%s' (%s)\n",
+                fname, strerror(errno));
+        return EINA_FALSE;
+     }
+
+   Eina_Bool fret = EINA_TRUE;
+
+   size_t bl = eina_strbuf_length_get(buf);
+   if (!bl)
+     goto end;
+
+   if (fwrite(eina_strbuf_string_get(buf), 1, bl, f) != bl)
+     {
+        fprintf(stderr, "eolian: could not write '%s' (%s)\n",
+                fname, strerror(errno));
+        fret = EINA_FALSE;
+     }
+
+end:
+   fclose(f);
+   return fret;
+}
+
+static Eina_Bool
+_write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
+{
+   INF("generating header: %s (legacy: %d)", ofname, legacy);
+   Eina_Strbuf *buf = eina_strbuf_new();
+
+   Eina_Bool ret = _write_file(ofname, buf, EINA_FALSE);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
+static Eina_Bool
+_write_stub_header(const char *ofname, const char *ifname)
+{
+   INF("generating stuv header: %s", ofname);
+   Eina_Strbuf *buf = eina_strbuf_new();
+
+   Eina_Bool ret = _write_file(ofname, buf, EINA_FALSE);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
+static Eina_Bool
+_write_source(const char *ofname, const char *ifname)
+{
+   INF("generating source: %s", ofname);
+   Eina_Strbuf *ebuf = eina_strbuf_new(),
+               *lbuf = eina_strbuf_new();
+
+   Eina_Bool ret = _write_file(ofname, ebuf, EINA_FALSE) &&
+                   _write_file(ofname, lbuf, EINA_TRUE);
+   eina_strbuf_free(ebuf);
+   eina_strbuf_free(lbuf);
+   return ret;
+}
+
+static Eina_Bool
+_write_impl(const char *ofname, const char *ifname)
+{
+   INF("generating impl: %s", ofname);
+   Eina_Strbuf *buf = eina_strbuf_new();
+
+   Eina_Bool ret = _write_file(ofname, buf, EINA_FALSE);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -133,13 +209,11 @@ main(int argc, char **argv)
         case 0:
           break;
         case 'I':
-          printf("including file: '%s'\n", optarg);
           if (!eolian_directory_scan(optarg))
             {
                fprintf(stderr, "eolian: could not scan '%s'\n", optarg);
                goto end;
             }
-          printf("include: %s\n", optarg);
           break;
         case 'g':
           for (const char *wstr = optarg; *wstr; ++wstr)
@@ -213,17 +287,20 @@ main(int argc, char **argv)
    if (!gen_what)
      gen_what = GEN_H | GEN_H_LEGACY | GEN_C;
 
-   printf("generating\n");
+   Eina_Bool succ = EINA_TRUE;
    if (gen_what & GEN_H)
-     printf("generating header: %s\n", outs[_get_bit_pos(GEN_H)]);
-   if (gen_what & GEN_H_LEGACY)
-     printf("generating legacy header: %s\n", outs[_get_bit_pos(GEN_H_LEGACY)]);
-   if (gen_what & GEN_H_STUB)
-     printf("generating header stub: %s\n", outs[_get_bit_pos(GEN_H_STUB)]);
-   if (gen_what & GEN_C)
-     printf("generating source: %s\n", outs[_get_bit_pos(GEN_C)]);
-   if (gen_what & GEN_C_IMPL)
-     printf("generating impl: %s\n", outs[_get_bit_pos(GEN_C_IMPL)]);
+     succ = _write_header(outs[_get_bit_pos(GEN_H)], input, EINA_FALSE);
+   if (succ && (gen_what & GEN_H_LEGACY))
+     succ = _write_header(outs[_get_bit_pos(GEN_H_LEGACY)], input, EINA_TRUE);
+   if (succ && (gen_what & GEN_H_STUB))
+     succ = _write_stub_header(outs[_get_bit_pos(GEN_H_STUB)], input);
+   if (succ && (gen_what & GEN_C))
+     succ = _write_source(outs[_get_bit_pos(GEN_C)], input);
+   if (succ && (gen_what & GEN_C_IMPL))
+     succ = _write_impl(outs[_get_bit_pos(GEN_C_IMPL)], input);
+
+   if (!succ)
+     goto end;
 
    pret = 0;
 end:
