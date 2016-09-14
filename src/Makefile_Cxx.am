@@ -13,7 +13,9 @@ bindings/cxx/eo_cxx/Eo.hh \
 bindings/cxx/eo_cxx/eo_init.hh \
 bindings/cxx/eo_cxx/eo_ops.hh \
 bindings/cxx/eo_cxx/eo_wref.hh \
+bindings/cxx/eo_cxx/eo_future.hh \
 bindings/cxx/eo_cxx/eo_promise.hh \
+bindings/cxx/eo_cxx/eo_promise_meta.hh \
 bindings/cxx/eo_cxx/eo_private.hh
 
 ### Elementary C++
@@ -171,6 +173,7 @@ bindings/cxx/eina_cxx/eina_type_traits.hh \
 bindings/cxx/eina_cxx/eina_value.hh \
 bindings/cxx/eina_cxx/eina_workarounds.hh \
 bindings/cxx/eina_cxx/eina_copy_traits.hh \
+bindings/cxx/eina_cxx/eina_variant.hh \
 bindings/cxx/eina_cxx/Eina.hh
 
 ### Eio
