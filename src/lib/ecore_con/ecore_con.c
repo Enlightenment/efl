@@ -3126,11 +3126,19 @@ typedef struct _Efl_Net_Resolve_Async_Data
 } Efl_Net_Resolve_Async_Data;
 
 static void
-_efl_net_resolve_async_run(void *data, Ecore_Thread *thread)
+_efl_net_resolve_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Efl_Net_Resolve_Async_Data *d = data;
 
-   while (!ecore_thread_check(thread))
+   /* allows ecore_thread_cancel() to cancel at some points, see
+    * man:pthreads(7).
+    *
+    * no need to set cleanup functions since the main thread will
+    * handle that with _efl_net_resolve_async_cancel().
+    */
+   eina_thread_cancellable_set(EINA_TRUE, NULL);
+
+   while (EINA_TRUE)
      {
         DBG("resolving host='%s' port='%s'", d->host, d->port);
         d->gai_error = getaddrinfo(d->host, d->port, d->hints, &d->result);
@@ -3140,6 +3148,8 @@ _efl_net_resolve_async_run(void *data, Ecore_Thread *thread)
         DBG("getaddrinfo(\"%s\", \"%s\") failed: %s", d->host, d->port, gai_strerror(d->gai_error));
         break;
      }
+
+   eina_thread_cancellable_set(EINA_FALSE, NULL);
 
    if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
      {
@@ -3235,11 +3245,19 @@ typedef struct _Efl_Net_Connect_Async_Data
 } Efl_Net_Connect_Async_Data;
 
 static void
-_efl_net_connect_async_run(void *data, Ecore_Thread *thread)
+_efl_net_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Efl_Net_Connect_Async_Data *d = data;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
    int r;
+
+   /* allows ecore_thread_cancel() to cancel at some points, see
+    * man:pthreads(7).
+    *
+    * no need to set cleanup functions since the main thread will
+    * handle that with _efl_net_connect_async_cancel().
+    */
+   eina_thread_cancellable_set(EINA_TRUE, NULL);
 
    d->error = 0;
 
@@ -3251,14 +3269,6 @@ _efl_net_connect_async_run(void *data, Ecore_Thread *thread)
         return;
      }
 
-   if (ecore_thread_check(thread))
-     {
-        d->error = ECANCELED;
-        close(d->sockfd);
-        d->sockfd = -1;
-        return;
-     }
-
    if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
      efl_net_ip_port_fmt(buf, sizeof(buf), d->addr);
 
@@ -3267,10 +3277,15 @@ _efl_net_connect_async_run(void *data, Ecore_Thread *thread)
    r = connect(d->sockfd, d->addr, d->addrlen);
    if (r < 0)
      {
+        int fd = d->sockfd;
         d->error = errno;
-        close(d->sockfd);
         d->sockfd = -1;
-        DBG("connect(%d, %s) failed: %s", d->sockfd, buf, strerror(errno));
+        /* close() is a cancellation point, thus unset sockfd before
+         * closing, so the main thread _efl_net_connect_async_cancel()
+         * won't close it again.
+         */
+        close(fd);
+        DBG("connect(%d, %s) failed: %s", fd, buf, strerror(errno));
         return;
      }
 

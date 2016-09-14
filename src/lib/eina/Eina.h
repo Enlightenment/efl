@@ -243,7 +243,6 @@ extern "C" {
 #include <eina_cpu.h>
 #include <eina_sched.h>
 #include <eina_tiler.h>
-#include <eina_thread.h>
 #include <eina_hamster.h>
 #include <eina_matrixsparse.h>
 #include <eina_str.h>
@@ -254,6 +253,7 @@ extern "C" {
 #include <eina_quadtree.h>
 #include <eina_simple_xml_parser.h>
 #include <eina_lock.h>
+#include <eina_thread.h> /* after eina_lock.h since it will include pthread.h with proper flags */
 #include <eina_prefix.h>
 #include <eina_refcount.h>
 #include <eina_mmap.h>

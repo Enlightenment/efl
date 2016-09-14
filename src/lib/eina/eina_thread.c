@@ -23,6 +23,7 @@
 #include <stdlib.h>
 
 #include "eina_config.h"
+#include "eina_lock.h" /* it will include pthread.h with proper flags */
 #include "eina_thread.h"
 #include "eina_sched.h"
 #include "eina_cpu.h"
@@ -225,6 +226,37 @@ eina_thread_name_set(Eina_Thread t, const char *name)
 #endif
    return EINA_FALSE;
 }
+
+EAPI Eina_Bool
+eina_thread_cancel(Eina_Thread t)
+{
+   return pthread_cancel((pthread_t)t) == 0;
+}
+
+EAPI Eina_Bool
+eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable)
+{
+   int state = cancellable ? PTHREAD_CANCEL_ENABLE : PTHREAD_CANCEL_DISABLE;
+   int old = 0;
+   int r;
+
+   /* enforce deferred in case users changed to asynchronous themselves */
+   pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &old);
+
+   r = pthread_setcancelstate(state, &old);
+   if (was_cancellable && r == 0)
+     *was_cancellable = (old == PTHREAD_CANCEL_ENABLE);
+
+   return r == 0;
+}
+
+EAPI void
+eina_thread_cancel_checkpoint(void)
+{
+   pthread_testcancel();
+}
+
+EAPI const void *EINA_THREAD_JOIN_CANCELED = PTHREAD_CANCELED;
 
 Eina_Bool
 eina_thread_init(void)

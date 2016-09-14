@@ -1794,6 +1794,17 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy, Ecore_T
  * ecore_thread_reschedule().
  * @li The function is prepared to leave early by checking if
  * ecore_thread_check() returns @c EINA_TRUE.
+
+ * @li The function marks the thread as cancellable using
+ * eina_thread_cancellable_set(), allowing the thread to be terminated
+ * at explicit cancellation points defined with
+ * eina_thread_cancel_checkpoint() or with syscalls mentioned at
+ * man:pthreads(7). This allows blocking operations such as network or
+ * disk access to be stopped without polling
+ * ecore_thread_check(). Note that a cancelled thread may leak
+ * resources if no cleanup function is registered with
+ * EINA_THREAD_CLEANUP_PUSH(). Consider running such code using
+ * eina_thread_cancellable_run().
  *
  * The user function can cancel itself by calling ecore_thread_cancel(), but
  * it should always use the ::Ecore_Thread handle passed to it and never
@@ -1804,6 +1815,7 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy, Ecore_T
  * returns @c EINA_TRUE or after the @c func_cancel callback returns.
  *
  * @see ecore_thread_check()
+ * @see eina_thread_cancellable_run()
  */
 EAPI Eina_Bool ecore_thread_cancel(Ecore_Thread *thread);
 

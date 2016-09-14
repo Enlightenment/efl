@@ -202,6 +202,7 @@ _ecore_thread_data_free(void *data)
 static void
 _ecore_thread_join(PH(thread))
 {
+   DBG("joining thread=%" PRIu64, (uint64_t)thread);
    PHJ(thread);
 }
 
@@ -320,6 +321,31 @@ _ecore_message_notify_handler(void *data)
 }
 
 static void
+_ecore_short_job_cleanup(void *data)
+{
+   Ecore_Pthread_Worker *work = data;
+
+   DBG("cleanup work=%p, thread=%" PRIu64, work, (uint64_t)work->self);
+
+   SLKL(_ecore_running_job_mutex);
+   _ecore_running_job = eina_list_remove(_ecore_running_job, work);
+   SLKU(_ecore_running_job_mutex);
+
+   if (work->reschedule)
+     {
+        work->reschedule = EINA_FALSE;
+
+        SLKL(_ecore_pending_job_threads_mutex);
+        _ecore_pending_job_threads = eina_list_append(_ecore_pending_job_threads, work);
+        SLKU(_ecore_pending_job_threads_mutex);
+     }
+   else
+     {
+        ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
+     }
+}
+
+static void
 _ecore_short_job(PH(thread))
 {
    Ecore_Pthread_Worker *work;
@@ -346,19 +372,31 @@ _ecore_short_job(PH(thread))
    cancel = work->cancel;
    SLKU(work->cancel_mutex);
    work->self = thread;
+
+   EINA_THREAD_CLEANUP_PUSH(_ecore_short_job_cleanup, work);
    if (!cancel)
      work->u.short_run.func_blocking((void *) work->data, (Ecore_Thread*) work);
+   eina_thread_cancellable_set(EINA_FALSE, NULL);
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
+}
+
+static void
+_ecore_feedback_job_cleanup(void *data)
+{
+   Ecore_Pthread_Worker *work = data;
+
+   DBG("cleanup work=%p, thread=%" PRIu64, work, (uint64_t)work->self);
 
    SLKL(_ecore_running_job_mutex);
    _ecore_running_job = eina_list_remove(_ecore_running_job, work);
    SLKU(_ecore_running_job_mutex);
-   
+
    if (work->reschedule)
      {
         work->reschedule = EINA_FALSE;
-        
+
         SLKL(_ecore_pending_job_threads_mutex);
-        _ecore_pending_job_threads = eina_list_append(_ecore_pending_job_threads, work);
+        _ecore_pending_job_threads_feedback = eina_list_append(_ecore_pending_job_threads_feedback, work);
         SLKU(_ecore_pending_job_threads_mutex);
      }
    else
@@ -393,51 +431,68 @@ _ecore_feedback_job(PH(thread))
    cancel = work->cancel;
    SLKU(work->cancel_mutex);
    work->self = thread;
+
+   EINA_THREAD_CLEANUP_PUSH(_ecore_feedback_job_cleanup, work);
    if (!cancel)
      work->u.feedback_run.func_heavy((void *) work->data, (Ecore_Thread *) work);
+   eina_thread_cancellable_set(EINA_FALSE, NULL);
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
+}
 
-   SLKL(_ecore_running_job_mutex);
-   _ecore_running_job = eina_list_remove(_ecore_running_job, work);
-   SLKU(_ecore_running_job_mutex);
+static void
+_ecore_direct_worker_cleanup(void *data)
+{
+   Ecore_Pthread_Worker *work = data;
 
-   if (work->reschedule)
-     {
-        work->reschedule = EINA_FALSE;
-        
-        SLKL(_ecore_pending_job_threads_mutex);
-        _ecore_pending_job_threads_feedback = eina_list_append(_ecore_pending_job_threads_feedback, work);
-        SLKU(_ecore_pending_job_threads_mutex);
-     }
-   else
-     {
-        ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
-     }
+   DBG("cleanup work=%p, thread=%" PRIu64 " (should join)", work, (uint64_t)work->self);
+
+   ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
+
+   ecore_main_loop_thread_safe_call_async((Ecore_Cb) _ecore_thread_join,
+                                          (void*)(intptr_t)PHS());
 }
 
 static void *
 _ecore_direct_worker(Ecore_Pthread_Worker *work)
 {
+   eina_thread_cancellable_set(EINA_FALSE, NULL);
    eina_thread_name_set(eina_thread_self(), "Ethread-feedback");
    work->self = PHS();
+
+   EINA_THREAD_CLEANUP_PUSH(_ecore_direct_worker_cleanup, work);
    if (work->message_run)
      work->u.message_run.func_main((void *) work->data, (Ecore_Thread *) work);
    else
      work->u.feedback_run.func_heavy((void *) work->data, (Ecore_Thread *) work);
-
-   ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
-
-   ecore_main_loop_thread_safe_call_async((Ecore_Cb) _ecore_thread_join, 
-					  (void*)(intptr_t)PHS());
+   eina_thread_cancellable_set(EINA_FALSE, NULL);
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
 
    return NULL;
+}
+
+static void
+_ecore_thread_worker_cleanup(void *data EINA_UNUSED)
+{
+   DBG("cleanup thread=%" PRIu64 " (should join)", PHS());
+   SLKL(_ecore_pending_job_threads_mutex);
+   _ecore_thread_count--;
+   SLKU(_ecore_pending_job_threads_mutex);
+   ecore_main_loop_thread_safe_call_async((Ecore_Cb) _ecore_thread_join,
+                                          (void*)(intptr_t)PHS());
 }
 
 static void *
 _ecore_thread_worker(void *data EINA_UNUSED)
 {
+   eina_thread_cancellable_set(EINA_FALSE, NULL);
+   EINA_THREAD_CLEANUP_PUSH(_ecore_thread_worker_cleanup, NULL);
 restart:
+
+   /* these 2 are cancellation points as user cb may enable */
    _ecore_short_job(PHS());
    _ecore_feedback_job(PHS());
+
+   /* from here on, cancellations are guaranteed to be disabled */
 
    /* FIXME: Check if there is feedback running task todo, and switch to feedback run handler. */
    eina_thread_name_set(eina_thread_self(), "Ethread-worker");
@@ -463,11 +518,9 @@ restart:
         SLKU(_ecore_pending_job_threads_mutex);
         goto restart;
      }
-   _ecore_thread_count--;
-
-   ecore_main_loop_thread_safe_call_async((Ecore_Cb) _ecore_thread_join,
-					  (void*)(intptr_t)PHS());
    SLKU(_ecore_pending_job_threads_mutex);
+
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
 
    return NULL;
 }
@@ -728,6 +781,7 @@ ecore_thread_cancel(Ecore_Thread *thread)
 
    /* Delay the destruction */
  on_exit:
+   eina_thread_cancel(work->self); /* noop unless eina_thread_cancellable_set() was used by user */
    SLKL(work->cancel_mutex);
    work->cancel = EINA_TRUE;
    SLKU(work->cancel_mutex);

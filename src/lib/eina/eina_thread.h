@@ -100,6 +100,20 @@ EAPI Eina_Bool eina_thread_create(Eina_Thread *t,
                                   Eina_Thread_Cb func, const void *data) EINA_ARG_NONNULL(1, 4) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * The return value of eina_thread_join() if it was canceled with
+ * eina_thread_cancel().
+ *
+ * A thread must be explicitly flagged as cancellable with
+ * eina_thread_cancellable_set(), by default it's not and this value
+ * shouldn't be returned.
+ *
+ * @see eina_thread_join()
+ *
+ * @since 1.19
+ */
+EAPI extern const void *EINA_THREAD_JOIN_CANCELED;
+
+/**
  * Join a currently running thread, waiting until it finishes.
  *
  * This function will block the current thread until @a t
@@ -110,6 +124,8 @@ EAPI Eina_Bool eina_thread_create(Eina_Thread *t,
  * @param t thread identifier to wait.
  * @return value returned by @a t creation function @c func() or
  *         @c NULL on errors. Check error with @ref Eina_Error_Group.
+ *         If the thread was canceled, it will return
+ *         EINA_THREAD_JOIN_CANCELED.
  * @since 1.8
  */
 EAPI void *eina_thread_join(Eina_Thread t);
@@ -130,6 +146,209 @@ EAPI void *eina_thread_join(Eina_Thread t);
  * @since 1.16
  */
 EAPI Eina_Bool eina_thread_name_set(Eina_Thread t, const char *name);
+
+/**
+ * Attempt to cancel a running thread.
+ *
+ * This function sends a cancellation request to the thread, however
+ * that request is only fulfilled if the thread is cancellable
+ * (eina_thread_cancellable_set() with EINA_TRUE as first paramter)
+ * and it will wait for a cancellation point, be
+ * eina_thread_cancel_checkpoint() or some syscall as defined in
+ * man:pthreads(7).
+ *
+ * A thread that was canceled will return EINA_THREAD_JOIN_CANCELED
+ * when eina_thread_join() is called.
+ *
+ * @param t thread to cancel.
+ *
+ * @return EINA_FALSE if thread was not running, EINA_TRUE
+ *         otherwise. Note that if a thread is not cancellable and it
+ *         is running, this function will return EINA_TRUE!
+ *
+ * @since 1.19
+ */
+EAPI Eina_Bool eina_thread_cancel(Eina_Thread t);
+
+/**
+ * Enable or disable if the current thread can be canceled.
+ *
+ * By default eina_thread_create() will return a thread with
+ * cancellation disabled. One can enable the cancellation by using
+ * EINA_TRUE in @a cancellable.
+ *
+ * Eina threads follow pthread_setcanceltype()
+ * PTHREAD_CANCEL_DEFERRED, that is, the actual termination will wait
+ * for a cancellation point, usually a syscall defined in
+ * man:pthreads(7) or an explicit cancellation point defined with
+ * eina_thread_cancel_checkpoint().
+ *
+ * In order to provide cleanup around critical blocks use
+ * EINA_THREAD_CLEANUP_PUSH() and EINA_THREAD_CLEANUP_POP() macros
+ * (which maps to pthread_cleanup_push() and pthread_cleanup_pop()),
+ * or the helper function eina_thread_cancellable_run() which does the
+ * pair for you.
+ *
+ * @param cancellable if EINA_TRUE, this thread will be accept
+ *        cancellation requests. If EINA_FALSE -- the default, it will
+ *        ignore cancellation requests.
+ * @param was_cancellable if non-NULL, will return the previous state,
+ *        shall you want to restore.
+ *
+ * @return EINA_TRUE if it succeeds in setting the cancellable state
+ *        or EINA_FALSE otherwise.
+ *
+ * @see eina_thread_cancel_checkpoint()
+ * @see EINA_THREAD_CLEANUP_PUSH()
+ * @see EINA_THREAD_CLEANUP_POP()
+ * @see eina_thread_cancellable_run()
+ * @see eina_thread_cancel()
+ *
+ * @since 1.19
+ */
+EAPI Eina_Bool eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable);
+
+/**
+ * If the current thread is cancellable, this introduces a
+ * cancellation check point. Otherwise it's a no-operation.
+ *
+ * Eina threads follow pthread_setcanceltype()
+ * PTHREAD_CANCEL_DEFERRED, that is, the actual termination will wait
+ * for a cancellation point, usually a syscall defined in
+ * man:pthreads(7) or an explicit cancellation point defined with this
+ * function.
+ *
+ * @see eina_thread_cancel_checkpoint()
+ *
+ * @since 1.19
+ */
+EAPI void eina_thread_cancel_checkpoint(void);
+
+/**
+ * @def EINA_THREAD_CLEANUP_PUSH(cleanup, data)
+ *
+ * @brief Push a cleanup function to be executed when the thread is
+ * canceled.
+ *
+ * This macro will schedule a function cleanup(data) to be executed if
+ * the thread is canceled with eina_thread_cancel() and the thread
+ * was previously marked as cancellable with
+ * eina_thread_cancellable_set().
+ *
+ * It @b must be paired with EINA_THREAD_CLEANUP_POP() in the same
+ * code block as they will expand to do {} while ()!
+ *
+ * The cleanup function may also be executed if
+ * EINA_THREAD_CLEANUP_POP(EINA_TRUE) is used.
+ *
+ * @note If the block within EINA_THREAD_CLEANUP_PUSH() and
+ *       EINA_THREAD_CLEANUP_POP() returns, the cleanup callback will
+ *       @b not be executed! To avoid problems prefer to use
+ *       eina_thread_cancellable_run()!
+ *
+ * @param cleanup the function to execute on cancellation.
+ * @param data the context to give to cleanup function.
+ *
+ * @see eina_thread_cancellable_run()
+ *
+ * @since 1.19
+ */
+#define EINA_THREAD_CLEANUP_PUSH(cleanup, data) \
+  pthread_cleanup_push(cleanup, data)
+
+/**
+ * @def EINA_THREAD_CLEANUP_POP(exec_cleanup)
+ *
+ * @brief Pop a cleanup function to be executed when the thread is
+ * canceled.
+ *
+ * This macro will remove a previously pushed cleanup function, thus
+ * if the thread is canceled with eina_thread_cancel() and the thread
+ * was previously marked as cancellable with
+ * eina_thread_cancellable_set(), that cleanup won't be executed
+ * anymore.
+ *
+ * It @b must be paired with EINA_THREAD_CLEANUP_PUSH() in the same
+ * code block as they will expand to do {} while ()!
+ *
+ * @note If the block within EINA_THREAD_CLEANUP_PUSH() and
+ *       EINA_THREAD_CLEANUP_POP() returns, the cleanup callback will
+ *       @b not be executed even if exec_cleanup is EINA_TRUE! To
+ *       avoid problems prefer to use eina_thread_cancellable_run()!
+ *
+ * @param exec_cleanup if EINA_TRUE, the function registered with
+ *        EINA_THREAD_CLEANUP_PUSH() will be executed.
+ *
+ * @see eina_thread_cancellable_run()
+ *
+ * @since 1.19
+ */
+#define EINA_THREAD_CLEANUP_POP(exec_cleanup) \
+  pthread_cleanup_pop(exec_cleanup)
+
+/**
+ * @typedef Eina_Thread_Cancellable_Run_Cb
+ * Type for the definition of a cancellable callback to run.
+ *
+ * @since 1.19
+ */
+typedef void *(*Eina_Thread_Cancellable_Run_Cb)(void *data);
+
+/**
+ * This function will setup cleanup callback, turn the thread
+ * cancellable, execute the given callback, reset the cancellable
+ * state to its old value, run the cleanup callback and then return
+ * the callback return value.
+ *
+ * @note cleanup_cb is configured @b before the thread is made
+ *       cancellable, thus it @b will be executed while @a cb may not
+ *       in the case the thread was already canceled and that was
+ *       pending.
+ *
+ * This helper does exactly the following code. Shall you need a
+ * slightly different behavior, use the base calls yourself.
+ *
+ * @code
+ *    Eina_Bool old = EINA_FALSE;
+ *    void *ret;
+ *
+ *    EINA_THREAD_CLEANUP_PUSH(cleanup_cb, data);
+ *    eina_thread_cancellable_set(EINA_TRUE, &old); // is a cancellation point
+ *    ret = cb(data); // may not run if was previously canceled
+ *    EINA_THREAD_CLEANUP_POP(EINA_TRUE);
+ *    eina_thread_cancellable_set(old, NULL);
+ *    return ret;
+ * @endcode
+ *
+ * @param cb a cancellable callback to possibly run. The callback @b
+ *        may not be executed if the thread had a pending cancellation
+ *        request. During its execution the callback may be canceled
+ *        at explicit cancellation points using
+ *        eina_thread_cancel_checkpoint(), as well as some syscalls
+ *        defined in man:pthreads(7).
+ * @param cleanup_cb a cleanup callback to be executed regardless of
+ *        the thread being canceled or not. This function will be
+ *        executed even if @a cb wasn't.
+ * @param data context to give to both @a cb and @a cleanup_cb.
+ *
+ * @return the return value of @a cb. If the thread was canceled,
+ *         this function will not return.
+ *
+ * @since 1.19
+ */
+static inline void *
+eina_thread_cancellable_run(Eina_Thread_Cancellable_Run_Cb cb, Eina_Free_Cb cleanup_cb, void *data)
+{
+   Eina_Bool old = EINA_FALSE;
+   void *ret;
+
+   EINA_THREAD_CLEANUP_PUSH(cleanup_cb, data);
+   eina_thread_cancellable_set(EINA_TRUE, &old); // is a cancellation point
+   ret = cb(data); // may not run if was previously canceled
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
+   eina_thread_cancellable_set(old, NULL);
+   return ret;
+}
 
 /**
  * @}
