@@ -159,7 +159,7 @@ struct future_copy_traits<eina::variant<Args...>>
      else
        copy_impl(storage, value, index, std::integral_constant<std::size_t, I+1>{}, max);
    }
-   static void copy(eina::variant<Args...>* storage, Efl_Future_Event_Success const* other_info)
+   static void copy(eina::variant<Args...>*, Efl_Future_Event_Success const*)
    {
      std::abort();
    }
@@ -246,7 +246,7 @@ static void future_invoke_impl_read_accessor
 }
   
 template <typename F, typename...Args, std::size_t...I, bool IsRace>
-void future_invoke_impl(F f, Efl_Event const* event, std::tuple<Args...>* arguments_dummy, std::integral_constant<bool, IsRace> race, eina::index_sequence<I...>)
+void future_invoke_impl(F f, Efl_Event const* event, std::tuple<Args...>* arguments_dummy, std::integral_constant<bool, IsRace>, eina::index_sequence<I...>)
 {
    Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
    try

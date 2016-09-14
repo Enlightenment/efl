@@ -129,7 +129,7 @@ START_TEST(eo_cxx_future_get_error)
                             efl::ecore::main_loop_thread_safe_call_async
                               ([&]
                                {
-                                  efl_promise_failed_set(p, EINA_ERROR_OUT_OF_MEMORY);
+                                  efl_promise_failed_set(p, ENOMEM);
                                });
 
                             try {
