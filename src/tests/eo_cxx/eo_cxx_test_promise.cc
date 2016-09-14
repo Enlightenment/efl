@@ -605,8 +605,8 @@ START_TEST(eo_cxx_future_race_construct_and_destroy)
 
       efl::shared_future<int> future1(efl_ref(f1)), future2(efl_ref(f2));
       efl::shared_future<double> future3(efl_ref(f2));
-      efl::shared_future<int> race1 = race(future1, future2);
-      efl::shared_future<efl::eina::variant<int, double>> race2 = race(future1, future3);
+      efl::shared_race_future<int> race1 = race(future1, future2);
+      efl::shared_race_future<efl::eina::variant<int, double>> race2 = race(future1, future3);
    }
    ecore_shutdown();
 }
@@ -631,7 +631,7 @@ START_TEST(eo_cxx_future_race_wait)
 
       efl::shared_future<int> future1(efl_ref(f1))
         , future2(efl_ref(f2));
-      efl::shared_future<int> future3 = race(future1, future2);
+      efl::shared_race_future<int> future3 = race(future1, future2);
 
       std::thread thread([&]
                          {
@@ -675,7 +675,7 @@ START_TEST(eo_cxx_future_race_get)
       
       efl::shared_future<int> future1(efl_ref(f1))
         , future2(efl_ref(f2));
-      efl::shared_future<int> future3 = race(future1, future2);
+      efl::shared_race_future<int> future3 = race(future1, future2);
 
       std::thread thread([&]
                          {
@@ -720,7 +720,7 @@ START_TEST(eo_cxx_future_race_then_value)
       fail_if(!f2);
 
       efl::shared_future<int> future1(efl_ref(f1)), future2(efl_ref(f2));
-      efl::shared_future<int> future = race(future1, future2);
+      efl::shared_race_future<int> future = race(future1, future2);
       efl::shared_future<int> rfuture;
       
       std::thread thread
@@ -779,7 +779,7 @@ START_TEST(eo_cxx_future_race_variant_get)
       
       efl::shared_future<int> future1(efl_ref(f1));
       efl::shared_future<double> future2(efl_ref(f2));
-      efl::shared_future<efl::eina::variant<int, double>> future3 = race(future1, future2);
+      efl::shared_race_future<efl::eina::variant<int, double>> future3 = race(future1, future2);
 
       std::thread thread([&]
                          {
@@ -826,7 +826,7 @@ START_TEST(eo_cxx_future_race_variant_then_value)
 
       efl::shared_future<int> future1(efl_ref(f1));
       efl::shared_future<double> future2(efl_ref(f2));
-      efl::shared_future<efl::eina::variant<int, double>> future = race(future1, future2);
+      efl::shared_race_future<efl::eina::variant<int, double>> future = race(future1, future2);
       efl::shared_future<int> rfuture;
       
       std::thread thread

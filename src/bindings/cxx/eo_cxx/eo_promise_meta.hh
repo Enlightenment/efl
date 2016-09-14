@@ -10,6 +10,9 @@ namespace efl {
 template <typename...Args>
 struct shared_future;
 
+template <typename...Args>
+struct shared_race_future;
+
 namespace _impl {
 
 template <typename...Futures>
@@ -47,7 +50,7 @@ struct race_result_type;
 template <typename...Args>
 struct race_result_type<shared_future<Args...>>
 {
-  typedef shared_future<Args...> type;
+  typedef shared_race_future<Args...> type;
 };
 
 template <typename T, typename...Args>
@@ -86,13 +89,13 @@ struct race_variant
 template <typename A0>
 struct race_result_type<shared_future<A0>>
 {
-  typedef shared_future<A0> type;
+  typedef shared_race_future<A0> type;
 };
 
 template <typename A0>
 struct race_result_type<shared_future<eina::variant<A0>>>
 {
-  typedef shared_future<A0> type;
+  typedef shared_race_future<A0> type;
 };
   
 template <typename...Args1, typename...Args2>
@@ -124,6 +127,12 @@ struct future_copy_traits
       eina::copy_from_c_traits<T>::copy_to_unitialized
         (storage, info->value);
    }
+   static void copy_race(T* storage, Efl_Future_Event_Success const* info)
+   {
+      Efl_Future_Race_Success const* race = static_cast<Efl_Future_Race_Success const*>(info->value);
+      eina::copy_from_c_traits<T>::copy_to_unitialized
+        (storage, race->value);
+   }
 };
 
 template <typename...Args>
@@ -150,29 +159,35 @@ struct future_copy_traits<eina::variant<Args...>>
      else
        copy_impl(storage, value, index, std::integral_constant<std::size_t, I+1>{}, max);
    }
-   
    static void copy(eina::variant<Args...>* storage, Efl_Future_Event_Success const* other_info)
    {
+     std::abort();
+   }
+   static void copy_race(eina::variant<Args...>* storage, Efl_Future_Event_Success const* other_info)
+   {
       Efl_Future_Race_Success const* info = static_cast<Efl_Future_Race_Success const*>
-        (static_cast<void const*>(other_info));
+        (static_cast<void const*>(other_info->value));
       copy_impl(storage, info->value, info->index, std::integral_constant<std::size_t, 0ul>{}
                 , std::integral_constant<std::size_t, sizeof...(Args)>{});
    }
 };
   
-template <typename A0, typename F>
+template <typename A0, typename F, bool IsRace>
 typename std::enable_if
 <
   !std::is_same<A0, void>::value
   && !std::is_same<typename std::result_of<F(A0)>::type, void>::value
 >::type
-future_invoke(F f, Efl_Event const* event)
+future_invoke(F f, Efl_Event const* event, std::integral_constant<bool, IsRace> /* is_race */)
 {
    Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
    try
      {
         typename std::aligned_storage<sizeof(A0), alignof(A0)>::type storage;
-        future_copy_traits<A0>::copy(static_cast<A0*>(static_cast<void*>(&storage)), info);
+        if(IsRace)
+          future_copy_traits<A0>::copy_race(static_cast<A0*>(static_cast<void*>(&storage)), info);
+        else
+          future_copy_traits<A0>::copy(static_cast<A0*>(static_cast<void*>(&storage)), info);
         auto r = f(*static_cast<A0*>(static_cast<void*>(&storage)));
         typedef decltype(r) result_type;
         typedef typename eina::alloc_to_c_traits<result_type>::c_type c_type;
@@ -184,9 +199,9 @@ future_invoke(F f, Efl_Event const* event)
      }
 }
 
-template <typename A0, typename F>
+template <typename A0, typename F, bool IsRace>
 typename std::enable_if<std::is_same<A0, void>::value>::type
-future_invoke(F f, Efl_Event const* event)
+future_invoke(F f, Efl_Event const* event, std::integral_constant<bool, IsRace>)
 {
    Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
    try
@@ -230,8 +245,8 @@ static void future_invoke_impl_read_accessor
      }
 }
   
-template <typename F, typename...Args, std::size_t...I>
-void future_invoke_impl(F f, Efl_Event const* event, std::tuple<Args...>* arguments_dummy, eina::index_sequence<I...>)
+template <typename F, typename...Args, std::size_t...I, bool IsRace>
+void future_invoke_impl(F f, Efl_Event const* event, std::tuple<Args...>* arguments_dummy, std::integral_constant<bool, IsRace> race, eina::index_sequence<I...>)
 {
    Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
    try
@@ -259,12 +274,12 @@ void future_invoke_impl(F f, Efl_Event const* event, std::tuple<Args...>* argume
      }
 }
   
-template <typename A0, typename A1, typename...OtherArgs, typename F>
+template <typename A0, typename A1, typename...OtherArgs, typename F, bool IsRace>
 void
-future_invoke(F f, Efl_Event const* event)
+future_invoke(F f, Efl_Event const* event, std::integral_constant<bool, IsRace> race)
 {
   std::tuple<A0, A1, OtherArgs...>* p = nullptr;
-  _impl::future_invoke_impl(f, event, p, eina::make_index_sequence<sizeof...(OtherArgs) + 2>{});
+  _impl::future_invoke_impl(f, event, p, race, eina::make_index_sequence<sizeof...(OtherArgs) + 2>{});
 }
   
 } }
