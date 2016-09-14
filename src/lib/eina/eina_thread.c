@@ -230,6 +230,7 @@ eina_thread_name_set(Eina_Thread t, const char *name)
 EAPI Eina_Bool
 eina_thread_cancel(Eina_Thread t)
 {
+   if (!t) return EINA_FALSE;
    return pthread_cancel((pthread_t)t) == 0;
 }
 
