@@ -3,6 +3,7 @@
 #endif
 
 #include <unistd.h>
+#include <libgen.h>
 
 #include "main.h"
 
@@ -279,25 +280,35 @@ main(int argc, char **argv)
         goto end;
      }
 
+   if (!eolian_file_parse(input))
+     {
+        fprintf(stderr, "eolian: could not parse file '%s'\n", input);
+        goto end;
+     }
+
    char *inoext = strdup(input);
    inoext[ext - input] = '\0';
    _fill_all_outs(outs, inoext);
-   free(inoext);
+
+   inoext[ext - input] = '.';
+   char *eobn = basename(inoext);
 
    if (!gen_what)
      gen_what = GEN_H | GEN_H_LEGACY | GEN_C;
 
    Eina_Bool succ = EINA_TRUE;
    if (gen_what & GEN_H)
-     succ = _write_header(outs[_get_bit_pos(GEN_H)], input, EINA_FALSE);
+     succ = _write_header(outs[_get_bit_pos(GEN_H)], eobn, EINA_FALSE);
    if (succ && (gen_what & GEN_H_LEGACY))
-     succ = _write_header(outs[_get_bit_pos(GEN_H_LEGACY)], input, EINA_TRUE);
+     succ = _write_header(outs[_get_bit_pos(GEN_H_LEGACY)], eobn, EINA_TRUE);
    if (succ && (gen_what & GEN_H_STUB))
-     succ = _write_stub_header(outs[_get_bit_pos(GEN_H_STUB)], input);
+     succ = _write_stub_header(outs[_get_bit_pos(GEN_H_STUB)], eobn);
    if (succ && (gen_what & GEN_C))
-     succ = _write_source(outs[_get_bit_pos(GEN_C)], input);
+     succ = _write_source(outs[_get_bit_pos(GEN_C)], eobn);
    if (succ && (gen_what & GEN_C_IMPL))
-     succ = _write_impl(outs[_get_bit_pos(GEN_C_IMPL)], input);
+     succ = _write_impl(outs[_get_bit_pos(GEN_C_IMPL)], eobn);
+
+   free(inoext);
 
    if (!succ)
      goto end;
