@@ -73,7 +73,9 @@ bin_PROGRAMS += \
 
 bin_eolian2_eolian_gen2_SOURCES = \
                 bin/eolian2/main.c \
-                bin/eolian2/main.h
+                bin/eolian2/main.h \
+                bin/eolian2/types.c \
+                bin/eolian2/types.h
 
 bin_eolian2_eolian_gen2_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@
 bin_eolian2_eolian_gen2_LDADD = @USE_EOLIAN_LIBS@

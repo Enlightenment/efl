@@ -31,4 +31,6 @@ extern int _eolian_gen_log_dom;
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_eolian_gen_log_dom, __VA_ARGS__)
 
+char *eo_gen_class_full_name_get(const Eolian_Class *cl);
+
 #endif
