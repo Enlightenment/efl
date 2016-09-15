@@ -161,6 +161,46 @@ end:
    return fret;
 }
 
+static Eina_Strbuf *
+_read_file(const char *fname)
+{
+   FILE *f = fopen(fname, "rb");
+   if (!f)
+     return NULL;
+
+   fseek(f, 0, SEEK_END);
+   long fs = ftell(f);
+   if (fs < 0)
+     {
+        fprintf(stderr, "eolian: could not get length of '%s'\n", fname);
+        fclose(f);
+        return NULL;
+     }
+   fseek(f, 0, SEEK_SET);
+
+   char *cont = malloc(fs + 1);
+   if (!cont)
+     {
+        fprintf(stderr, "eolian: could not allocate memory for '%s'\n", fname);
+        fclose(f);
+        return NULL;
+     }
+
+   long as = fread(cont, 1, fs, f);
+   if (as != fs)
+     {
+        fprintf(stderr, "eolian: could not read %ld bytes from '%s' (got %ld)\n",
+                fs, fname, as);
+        free(cont);
+        fclose(f);
+        return NULL;
+     }
+
+   cont[fs] = '\0';
+   fclose(f);
+   return eina_strbuf_manage_new_length(cont, fs);
+}
+
 static Eina_Bool
 _write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
 {
