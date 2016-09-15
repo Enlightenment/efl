@@ -221,12 +221,15 @@ _write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
    INF("generating header: %s (legacy: %d)", ofname, legacy);
    Eina_Strbuf *buf = eina_strbuf_new();
 
+   eo_gen_types_header_gen(ifname, buf, EINA_TRUE, legacy);
+   buf = _include_guard(ifname, "TYPES", buf);
+
    Eina_Strbuf *cltd = eo_gen_class_typedef_gen(ifname);
    if (cltd)
      {
         cltd = _include_guard(ifname, "CLASS_TYPE", cltd);
-        eina_strbuf_append(buf, eina_strbuf_string_get(cltd));
-        eina_strbuf_append_char(buf, '\n');
+        eina_strbuf_prepend_char(buf, '\n');
+        eina_strbuf_prepend(buf, eina_strbuf_string_get(cltd));
         eina_strbuf_free(cltd);
      }
 
