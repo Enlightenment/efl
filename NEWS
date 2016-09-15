@@ -15,6 +15,7 @@ Fixes:
    * FDO icons: correctly list the intl icons in theme description file
    * Fix elementary build when xkbcommon is in a non standard location (T4413)
    * ecore_audio: fix distribution of eolian files
+   * eina: overhaul Mac OS X semaphores (T4423)
 
 Changes since 1.17.0:
 ---------------------
