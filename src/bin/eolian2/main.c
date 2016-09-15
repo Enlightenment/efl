@@ -111,7 +111,7 @@ static void _fill_all_outs(char **outs, const char *val)
 static Eina_Strbuf *
 _include_guard(const char *fname, const char *gname, Eina_Strbuf *buf)
 {
-   if (!buf || !eina_strbuf_string_get(buf))
+   if (!buf || !eina_strbuf_length_get(buf))
      return buf;
 
    if (!gname)
