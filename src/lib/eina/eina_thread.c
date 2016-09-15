@@ -70,12 +70,9 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
      {
 #ifdef EINA_HAVE_PTHREAD_AFFINITY
         cpu_set_t cpu;
-        int cpunum;
-
-        cpunum = eina_cpu_count();
 
         CPU_ZERO(&cpu);
-        CPU_SET(affinity % cpunum, &cpu);
+        CPU_SET(affinity, &cpu);
         pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
 #endif
      }
