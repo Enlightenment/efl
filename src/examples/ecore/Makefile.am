@@ -60,6 +60,7 @@ ecore_evas_callbacks \
 ecore_evas_ews_example \
 ecore_evas_object_example \
 ecore_evas_window_sizes_example \
+ecore_evas_vnc \
 ecore_event_example_01 \
 ecore_event_example_02 \
 ecore_exe_example \
@@ -203,6 +204,9 @@ ecore_evas_object_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 ecore_evas_window_sizes_example_SOURCES = ecore_evas_window_sizes_example.c
 ecore_evas_window_sizes_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 
+ecore_evas_vnc_SOURCES = ecore_evas_vnc.c
+ecore_evas_vnc_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+
 ecore_event_example_01_SOURCES = ecore_event_example_01.c
 ecore_event_example_01_LDADD = $(ECORE_COMMON_LDADD)
 
@@ -330,6 +334,7 @@ ecore_evas_callbacks.c \
 ecore_evas_ews_example.c \
 ecore_evas_object_example.c \
 ecore_evas_window_sizes_example.c \
+ecore_evas_vnc.c \
 ecore_event_example_01.c \
 ecore_event_example_02.c \
 ecore_exe_example.c \
