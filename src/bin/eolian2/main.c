@@ -202,12 +202,11 @@ _read_file(const char *fname)
    return eina_strbuf_manage_new_length(cont, fs);
 }
 
-char *eo_gen_class_full_name_get(const Eolian_Class *cl)
+char *eo_gen_c_full_name_get(const char *nm)
 {
-   Eina_Stringshare *cln = eolian_class_full_name_get(cl);
-   if (!cln)
+   if (!nm)
      return NULL;
-   char *buf = strdup(cln);
+   char *buf = strdup(nm);
    if (!buf)
      return NULL;
    for (char *p = strchr(buf, '.'); p; p = strchr(p, '.'))
