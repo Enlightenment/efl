@@ -244,6 +244,18 @@ _write_stub_header(const char *ofname, const char *ifname)
    INF("generating stuv header: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
 
+   eo_gen_types_header_gen(ifname, buf, EINA_FALSE, EINA_FALSE);
+
+   Eina_Strbuf *cltd = eo_gen_class_typedef_gen(ifname);
+   if (cltd)
+     {
+        eina_strbuf_prepend_char(buf, '\n');
+        eina_strbuf_prepend(buf, eina_strbuf_string_get(cltd));
+        eina_strbuf_free(cltd);
+     }
+
+   buf = _include_guard(ifname, "STUBS", buf);
+
    Eina_Bool ret = _write_file(ofname, buf, EINA_FALSE);
    eina_strbuf_free(buf);
    return ret;
