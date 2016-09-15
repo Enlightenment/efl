@@ -399,8 +399,15 @@ EINA_DEPRECATED EAPI void
 elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   ELM_FILESELECTOR_ENTRY_DATA_GET_OR_RETURN(obj, sd);
-   _elm_fileselector_button_path_set_internal(sd->button, path);
+   elm_fileselector_selected_set(obj, path);
+}
+
+Eina_Bool
+_elm_fileselector_entry_selected_set_internal(Evas_Object *obj, const char *path)
+{
+   ELM_FILESELECTOR_ENTRY_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   elm_fileselector_path_set(sd->button, path);
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -417,8 +424,14 @@ EINA_DEPRECATED EAPI const char *
 elm_fileselector_entry_selected_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
+   return elm_fileselector_selected_get((Eo *) obj);
+}
+
+const char *
+_elm_fileselector_entry_selected_get_internal(const Evas_Object *obj)
+{
    ELM_FILESELECTOR_ENTRY_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
-   return _elm_fileselector_button_path_get_internal(sd->button);
+   return elm_fileselector_path_get(sd->button);
 }
 
 EOLIAN static Efl_Model *
@@ -466,21 +479,23 @@ elm_fileselector_entry_path_set(Evas_Object *obj,
                                 const char *path)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   _elm_fileselector_entry_path_set_internal(obj, path);
+   elm_fileselector_path_set(obj, path);
 }
 
 void
 _elm_fileselector_entry_path_set_internal(Evas_Object *obj, const char *path)
 {
    ELM_FILESELECTOR_ENTRY_DATA_GET_OR_RETURN(obj, sd);
-   char *s = elm_entry_utf8_to_markup(path);
+   char *s;
+
+   elm_fileselector_path_set(sd->button, path);
+
+   s = elm_entry_utf8_to_markup(path);
    if (s)
      {
         elm_object_text_set(sd->entry, s);
         free(s);
      }
-
-   _elm_fileselector_button_path_set_internal(sd->button, path);
 }
 
 static void
@@ -516,7 +531,7 @@ EINA_DEPRECATED EAPI const char *
 elm_fileselector_entry_path_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
-   return _elm_fileselector_entry_path_get_internal(obj);
+   return elm_fileselector_path_get(obj);
 }
 
 const char *

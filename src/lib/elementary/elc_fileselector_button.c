@@ -239,6 +239,7 @@ _elm_fileselector_button_efl_canvas_group_group_del(Eo *obj, Elm_Fileselector_Bu
    eina_stringshare_del(sd->fsd.path);
    if (sd->fsd.selection)
      efl_unref(sd->fsd.selection);
+   eina_stringshare_del(sd->fsd.selection_path);
    evas_object_del(sd->fsw);
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
@@ -334,7 +335,7 @@ EINA_DEPRECATED EAPI void
 elm_fileselector_button_path_set(Evas_Object *obj, const char *path)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   _elm_fileselector_button_path_set_internal(obj, path);
+   elm_fileselector_path_set(obj, path);
 }
 
 EOLIAN static void
@@ -370,7 +371,7 @@ EINA_DEPRECATED EAPI const char *
 elm_fileselector_button_path_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
-   return _elm_fileselector_button_path_get_internal(obj);
+   return elm_fileselector_path_get(obj);
 }
 
 EOLIAN static Efl_Model *
@@ -514,6 +515,16 @@ _elm_fileselector_button_elm_interface_fileselector_multi_select_get(Eo *obj EIN
    return sd->fsd.multi;
 }
 
+const Eina_List *
+_elm_fileselector_button_selected_paths_get_internal(const Evas_Object *obj)
+{
+   ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+
+   if (sd->fs) return elm_fileselector_selected_paths_get(sd->fs);
+
+   return NULL;
+}
+
 EOLIAN static const Eina_List*
 _elm_fileselector_button_elm_interface_fileselector_selected_models_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd)
 {
@@ -522,12 +533,45 @@ _elm_fileselector_button_elm_interface_fileselector_selected_models_get(Eo *obj 
    return NULL;
 }
 
+const char *
+_elm_fileselector_button_selected_get_internal(const Evas_Object *obj)
+{
+   ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+
+   if (sd->fs) return elm_fileselector_selected_get(sd->fs);
+
+   return sd->fsd.selection_path;
+}
+
 EOLIAN static Efl_Model *
 _elm_fileselector_button_elm_interface_fileselector_selected_model_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd)
 {
    if (sd->fs) return elm_interface_fileselector_selected_model_get(sd->fs);
 
-   return NULL;
+   return sd->fsd.selection;
+}
+
+Eina_Bool
+_elm_fileselector_button_selected_set_internal(Evas_Object *obj, const char *_path)
+{
+   ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_TRUE;
+
+   if (sd->fs) ret = elm_fileselector_selected_set(sd->fs, _path);
+   else
+     {
+        char *path = ecore_file_realpath(_path);
+        if (!ecore_file_is_dir(path) && !ecore_file_exists(path))
+          {
+             free(path);
+             return EINA_FALSE;
+          }
+        free(path);
+     }
+
+   eina_stringshare_replace(&sd->fsd.selection_path, _path);
+
+   return ret;
 }
 
 static void

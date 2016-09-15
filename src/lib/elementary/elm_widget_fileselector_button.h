@@ -40,6 +40,7 @@ struct _Elm_Fileselector_Button_Data
       Efl_Model              *model;
       const char             *path;
       Efl_Model              *selection;
+      const char             *selection_path;
       Evas_Coord_Size         thumbnail_size;
       Elm_Fileselector_Mode   mode;
       Elm_Fileselector_Sort   sort_type;

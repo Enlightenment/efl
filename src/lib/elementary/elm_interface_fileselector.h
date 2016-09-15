@@ -23,17 +23,44 @@ _elm_fileselector_path_set_internal(Evas_Object *obj, const char *path);
 const char *
 _elm_fileselector_path_get_internal(const Evas_Object *obj);
 
+Eina_Bool
+_elm_fileselector_selected_set_internal(Evas_Object *obj, const char *_path);
+
+const char *
+_elm_fileselector_selected_get_internal(const Evas_Object *obj);
+
+const Eina_List *
+_elm_fileselector_selected_paths_get_internal(const Evas_Object* obj);
+
+
 void
 _elm_fileselector_entry_path_set_internal(Evas_Object *obj, const char *path);
 
 const char *
 _elm_fileselector_entry_path_get_internal(const Evas_Object *obj);
 
+Eina_Bool
+_elm_fileselector_entry_selected_set_internal(Evas_Object *obj, const char *path);
+
+const char *
+_elm_fileselector_entry_selected_get_internal(const Evas_Object *obj);
+
+
 void
 _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path);
 
 const char *
 _elm_fileselector_button_path_get_internal(const Evas_Object *obj);
+
+Eina_Bool
+_elm_fileselector_button_selected_set_internal(Evas_Object *obj, const char *_path);
+
+const char *
+_elm_fileselector_button_selected_get_internal(const Evas_Object *obj);
+
+const Eina_List *
+_elm_fileselector_button_selected_paths_get_internal(const Evas_Object *obj);
+
 
 void
 _event_to_legacy_call(Eo *obj, const Efl_Event_Description *evt_desc, void *event_info);

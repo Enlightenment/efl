@@ -2487,6 +2487,24 @@ EAPI const char *
 elm_fileselector_selected_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
+
+   const Efl_Class *cls = efl_class_get(obj);
+   if (cls == ELM_FILESELECTOR_CLASS)
+     return _elm_fileselector_selected_get_internal(obj);
+   else if (cls == ELM_FILESELECTOR_ENTRY_CLASS)
+     return _elm_fileselector_entry_selected_get_internal(obj);
+   else if (cls == ELM_FILESELECTOR_BUTTON_CLASS)
+     return _elm_fileselector_button_selected_get_internal(obj);
+   else
+     {
+        ERR("Unknown Elm.Fileselector class");
+        return NULL;
+     }
+}
+
+const char *
+_elm_fileselector_selected_get_internal(const Evas_Object *obj)
+{
    ELM_FILESELECTOR_DATA_GET(obj, sd);
    if (!sd->path) return NULL;
 
@@ -2515,6 +2533,25 @@ _elm_fileselector_elm_interface_fileselector_selected_model_get(Eo *fs EINA_UNUS
 EAPI Eina_Bool
 elm_fileselector_selected_set(Evas_Object *obj,
                               const char *_path)
+{
+   ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
+
+   const Efl_Class *cls = efl_class_get(obj);
+   if (cls == ELM_FILESELECTOR_CLASS)
+     return _elm_fileselector_selected_set_internal(obj, _path);
+   else if (cls == ELM_FILESELECTOR_ENTRY_CLASS)
+     return _elm_fileselector_entry_selected_set_internal(obj, _path);
+   else if (cls == ELM_FILESELECTOR_BUTTON_CLASS)
+     return _elm_fileselector_button_selected_set_internal(obj, _path);
+   else
+     {
+        ERR("Unknown Elm.Fileselector class");
+        return EINA_FALSE;
+     }
+}
+
+Eina_Bool
+_elm_fileselector_selected_set_internal(Evas_Object *obj, const char *_path)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
@@ -2650,6 +2687,21 @@ _elm_fileselector_elm_interface_fileselector_selected_model_set(Eo *obj, Elm_Fil
 
 EAPI const Eina_List *
 elm_fileselector_selected_paths_get(const Evas_Object* obj)
+{
+   ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
+
+   const Efl_Class *cls = efl_class_get(obj);
+   if (cls == ELM_FILESELECTOR_CLASS)
+     return _elm_fileselector_selected_paths_get_internal(obj);
+   else if (cls == ELM_FILESELECTOR_BUTTON_CLASS)
+     return _elm_fileselector_button_selected_paths_get_internal(obj);
+   else
+     ERR("Unknown Elm.Fileselector class");
+   return NULL;
+}
+
+const Eina_List *
+_elm_fileselector_selected_paths_get_internal(const Evas_Object* obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
    Eina_List *l;
