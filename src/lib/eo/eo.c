@@ -22,6 +22,7 @@
 EAPI Eina_Lock _efl_class_creation_lock;
 EAPI unsigned int _efl_object_init_generation = 1;
 int _eo_log_dom = -1;
+Eina_Thread _efl_object_main_thread;
 
 static _Efl_Class **_eo_classes = NULL;
 static Eo_Id _eo_classes_last_id = 0;
@@ -1827,6 +1828,8 @@ efl_object_init(void)
 
    eina_init();
 
+   _efl_object_main_thread = eina_thread_self();
+
    _eo_sz = EO_ALIGN_SIZE(sizeof(_Eo_Object));
    _eo_class_sz = EO_ALIGN_SIZE(sizeof(_Efl_Class));
 
@@ -1891,6 +1894,7 @@ efl_object_init(void)
         return EINA_FALSE;
      }
    eina_tls_set(_eo_table_data, data);
+   _efl_object_main_thread = eina_thread_self();
 
 #ifdef EO_DEBUG
    /* Call it just for coverage purposes. Ugly I know, but I like it better than
