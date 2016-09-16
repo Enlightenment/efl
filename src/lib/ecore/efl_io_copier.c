@@ -12,7 +12,7 @@ typedef struct _Efl_Io_Copier_Data
 {
    Efl_Io_Reader *source;
    Efl_Io_Writer *destination;
-   Eina_Promise *job;
+   Efl_Future *job;
    Eina_Binbuf *buf;
    uint8_t *read_chunk; /* TODO: method to grow Eina_Binbuf so we can expand it and read directly to that */
    Eina_Slice line_delimiter;
@@ -68,7 +68,7 @@ static void _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd);
   while (0)
 
 static void
-_efl_io_copier_job(void *data, void *value EINA_UNUSED)
+_efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *o = data;
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);
@@ -105,7 +105,7 @@ _efl_io_copier_job_schedule(Eo *o, Efl_Io_Copier_Data *pd)
    if (pd->job) return;
 
    pd->job = efl_loop_job(efl_loop_user_loop_get(o), o);
-   eina_promise_then(pd->job, _efl_io_copier_job, NULL, o);
+   efl_future_then(pd->job, _efl_io_copier_job, NULL, NULL, o);
 }
 
 /* NOTE: the returned slice may be smaller than requested since the
