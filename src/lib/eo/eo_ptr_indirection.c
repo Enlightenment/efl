@@ -17,6 +17,39 @@ _eo_pointer_error(const char *msg)
    ERR("%s", msg);
 }
 
+#ifdef HAVE_EO_ID
+static void
+_eo_obj_pointer_invalid(const Eo_Id obj_id,
+                        Eo_Id_Data *data,
+                        unsigned char domain)
+{
+   const char *type = "object";
+   if (obj_id & ((Eo_Id)1 << (REF_TAG_SHIFT - 1))) type = "class";
+   ERR("EOID %p is not a valid %s. "
+       "EOID domain=%i, current_domain=%i, local_domain=%i. "
+       "EOID generation=%lx, id=%lx, ref=%i, super=%i. "
+       "Thread self=%lu. "
+       "Available domains [%s %s %s %s]. "
+       "Maybe it has been deleted or does not belong to your thread?",
+
+       (void *)obj_id,
+       type,
+       (int)domain,
+       (int)data->domain_stack[data->stack_top],
+       (int)data->local_domain,
+       (unsigned long)(obj_id & MASK_GENERATIONS),
+       (unsigned long)(obj_id >> SHIFT_ENTRY_ID) & (MAX_ENTRY_ID | MAX_TABLE_ID | MAX_MID_TABLE_ID),
+       (int)(obj_id >> REF_TAG_SHIFT) & 0x1,
+       (int)(obj_id >> SUPER_TAG_SHIFT) & 0x1,
+       (unsigned long)eina_thread_self(),
+       (data->tables[0]) ? "0" : " ",
+       (data->tables[1]) ? "1" : " ",
+       (data->tables[2]) ? "2" : " ",
+       (data->tables[3]) ? "3" : " "
+      );
+}
+#endif
+
 _Eo_Object *
 _eo_obj_pointer_get(const Eo_Id obj_id)
 {
@@ -119,8 +152,7 @@ err_null:
    return NULL;
 err_invalid:
 err:
-   ERR("obj_id %p is not a valid object. Maybe it has been freed or does not belong to your thread?",
-       (void *)obj_id);
+   _eo_obj_pointer_invalid(obj_id, data, domain);
    return NULL;
 #else
    return (_Eo_Object *) obj_id;
