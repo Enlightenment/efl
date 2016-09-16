@@ -574,7 +574,7 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
 
    if (pd->job)
      {
-        eina_promise_cancel(pd->job);
+        efl_future_cancel(pd->job);
         pd->job = NULL;
      }
 
@@ -697,7 +697,7 @@ _efl_io_copier_efl_object_destructor(Eo *o, Efl_Io_Copier_Data *pd)
 
    if (pd->job)
      {
-        eina_promise_cancel(pd->job);
+        efl_future_cancel(pd->job);
         pd->job = NULL;
      }
 

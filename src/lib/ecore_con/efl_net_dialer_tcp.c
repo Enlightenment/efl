@@ -67,7 +67,7 @@ _efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
 
    if (pd->connect.timeout)
      {
-        eina_promise_cancel(pd->connect.timeout);
+        efl_future_cancel(pd->connect.timeout);
         pd->connect.timeout = NULL;
      }
 
@@ -286,7 +286,7 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
 
    if (pd->connect.timeout)
      {
-        eina_promise_cancel(pd->connect.timeout);
+        efl_future_cancel(pd->connect.timeout);
         pd->connect.timeout = NULL;
      }
    if (pd->timeout_dial > 0.0)
@@ -329,7 +329,7 @@ _efl_net_dialer_tcp_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_Net_D
    pd->timeout_dial = seconds;
    if (pd->connect.timeout)
      {
-        eina_promise_cancel(pd->connect.timeout);
+        efl_future_cancel(pd->connect.timeout);
         pd->connect.timeout = NULL;
      }
    if (pd->timeout_dial > 0.0)
@@ -350,7 +350,7 @@ _efl_net_dialer_tcp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Tcp_Data 
 {
    if (pd->connect.timeout)
      {
-        eina_promise_cancel(pd->connect.timeout);
+        efl_future_cancel(pd->connect.timeout);
         pd->connect.timeout = NULL;
      }
    if (pd->connected == connected) return;
