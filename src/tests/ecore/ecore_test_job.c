@@ -6,9 +6,11 @@
 #include "ecore_suite.h"
 
 static void
-_ecore_promise_quit(void *data, void *value)
+_ecore_promise_quit(void *data, const Efl_Event *ev)
 {
+   Efl_Future_Event_Success *success = ev->info;
    Eina_Bool *bob = data;
+   void *value = success->value;
 
    fail_if(data != value);
    *bob = EINA_TRUE;
@@ -21,8 +23,8 @@ START_TEST(ecore_test_job_promise)
 
    ecore_init();
 
-   Eina_Promise *promise = efl_loop_job(ecore_main_loop_get(), &bob);
-   eina_promise_then(promise, &_ecore_promise_quit, NULL, &bob);
+   Efl_Object *promise = efl_loop_job(ecore_main_loop_get(), &bob);
+   efl_future_then(promise, &_ecore_promise_quit, NULL, NULL, &bob);
 
    ecore_main_loop_begin();
 

@@ -176,10 +176,11 @@ START_TEST(ecore_test_timers)
 END_TEST
 
 static void
-_ecore_promise_quit(void *data, void *value)
+_ecore_promise_quit(void *data, const Efl_Event *ev)
 {
+   Efl_Future_Event_Success *success = ev->info;
    Eina_Bool *bob = data;
-   double *start = value;
+   double *start = success->value;
    double delta = ecore_loop_time_get() - *start;
 
    fprintf(stderr, "Ecore promise timeout took %f (should be <= 0.01)\n", delta - 0.2);
@@ -191,7 +192,7 @@ _ecore_promise_quit(void *data, void *value)
 
 START_TEST(ecore_test_timeout)
 {
-   Eina_Promise *timeout = NULL;
+   Efl_Future *timeout = NULL;
    Eina_Bool bob = EINA_FALSE;
    double start;
 
@@ -199,7 +200,7 @@ START_TEST(ecore_test_timeout)
 
    start = ecore_time_get();
    timeout = efl_loop_timeout(ecore_main_loop_get(), 0.2, &start);
-   eina_promise_then(timeout, &_ecore_promise_quit, NULL, &bob);
+   efl_future_then(timeout, &_ecore_promise_quit, NULL, NULL, &bob);
 
    ecore_main_loop_begin();
 
@@ -216,17 +217,18 @@ _ecore_promise_then(void *data EINA_UNUSED, void *value EINA_UNUSED)
 }
 
 static void
-_ecore_promise_cancel(void *data, Eina_Error error)
+_ecore_promise_cancel(void *data, const Efl_Event *ev)
 {
+   Efl_Future_Event_Failure *failure = ev->info;
    Eina_Bool *bob = data;
 
-   fail_if(error != EINA_ERROR_PROMISE_CANCEL);
+   fail_if(failure->error != EINA_ERROR_FUTURE_CANCEL);
    *bob = EINA_TRUE;
 }
 
 START_TEST(ecore_test_timeout_cancel)
 {
-   Eina_Promise *timeout = NULL;
+   Efl_Future *timeout = NULL;
    Eina_Bool bob = EINA_FALSE;
    double start;
 
@@ -234,8 +236,8 @@ START_TEST(ecore_test_timeout_cancel)
 
    start = ecore_time_get();
    timeout = efl_loop_timeout(ecore_main_loop_get(), 0.2, &start);
-   eina_promise_then(timeout, &_ecore_promise_then, &_ecore_promise_cancel, &bob);
-   eina_promise_cancel(timeout);
+   efl_future_then(timeout, &_ecore_promise_then, &_ecore_promise_cancel, NULL, &bob);
+   efl_future_cancel(timeout);
 
    fail_if(bob != EINA_TRUE);
 
