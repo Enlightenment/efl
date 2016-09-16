@@ -2842,7 +2842,7 @@ struct _Efl_Internal_Promise
       Ecore_Job *job;
       Efl_Loop_Timer *timer;
    } u;
-   Eina_Promise_Owner *promise;
+   Efl_Promise *promise;
 
    const void *data;
 
@@ -2854,7 +2854,7 @@ _efl_loop_job_cb(void *data)
 {
    Efl_Internal_Promise *j = data;
 
-   eina_promise_owner_value_set(j->promise, j->data, NULL);
+   efl_promise_value_set(j->promise, (void*) j->data, NULL);
 
    free(j);
 }
@@ -2870,7 +2870,7 @@ _efl_loop_arguments_cleanup(Eina_Array *arga)
 }
 
 static void
-_efl_loop_arguments_send(void *data, void *value EINA_UNUSED)
+_efl_loop_arguments_send(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    static Eina_Bool initialization = EINA_TRUE;
    Efl_Loop_Arguments arge;
@@ -2886,7 +2886,7 @@ _efl_loop_arguments_send(void *data, void *value EINA_UNUSED)
 }
 
 static void
-_efl_loop_arguments_cancel(void *data, Eina_Error err EINA_UNUSED)
+_efl_loop_arguments_cancel(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    _efl_loop_arguments_cleanup(data);
 }
@@ -2897,7 +2897,7 @@ _efl_loop_arguments_cancel(void *data, Eina_Error err EINA_UNUSED)
 EAPI void
 ecore_loop_arguments_send(int argc, const char **argv)
 {
-   Eina_Promise *job;
+   Efl_Future *job;
    Eina_Array *arga;
    int i = 0;
 
@@ -2906,7 +2906,7 @@ ecore_loop_arguments_send(int argc, const char **argv)
      eina_array_push(arga, eina_stringshare_add(argv[i]));
 
    job = efl_loop_job(ecore_main_loop_get(), NULL);
-   eina_promise_then(job, _efl_loop_arguments_send, _efl_loop_arguments_cancel, arga);
+   efl_future_then(job, _efl_loop_arguments_send, _efl_loop_arguments_cancel, NULL, arga);
 }
 
 static void _efl_loop_timeout_force_cancel_cb(void *data, const Efl_Event *event EINA_UNUSED);
@@ -2939,12 +2939,15 @@ _efl_loop_timeout_force_cancel_cb(void *data, const Efl_Event *event EINA_UNUSED
    _efl_loop_internal_cancel(data);
 }
 
+static void _efl_loop_job_cancel(void* data, const Efl_Event *ev EINA_UNUSED);
+
 static void
 _efl_loop_timeout_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Efl_Internal_Promise *t = data;
 
-   eina_promise_owner_value_set(t->promise, t->data, NULL);
+   efl_promise_value_set(t->promise, (void*) t->data, NULL);
+   efl_del(t->promise);
 
    efl_event_callback_array_del(t->u.timer, timeout(), t);
    efl_del(t->u.timer);
@@ -2953,12 +2956,13 @@ _efl_loop_timeout_cb(void *data, const Efl_Event *event EINA_UNUSED)
 static void
 _efl_loop_internal_cancel(Efl_Internal_Promise *p)
 {
-   eina_promise_owner_error_set(p->promise, EINA_ERROR_PROMISE_CANCEL);
+   efl_promise_failed_set(p->promise, EINA_ERROR_FUTURE_CANCEL);
+   efl_del(p->promise);
    free(p);
 }
 
 static void
-_efl_loop_job_cancel(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
+_efl_loop_job_cancel(void* data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Internal_Promise *j = data;
 
@@ -2976,27 +2980,28 @@ _efl_loop_job_cancel(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
 }
 
 static Efl_Internal_Promise *
-_efl_internal_promise_new(Eina_Promise_Owner* promise, const void *data)
+_efl_internal_promise_new(Efl_Promise* promise, const void *data)
 {
    Efl_Internal_Promise *p;
 
    p = calloc(1, sizeof (Efl_Internal_Promise));
    if (!p) return NULL;
 
-   eina_promise_owner_default_cancel_cb_add(promise, &_efl_loop_job_cancel, p, NULL);
+   efl_event_callback_add(promise, EFL_PROMISE_EVENT_FUTURE_NONE, _efl_loop_job_cancel, p);
+
    p->promise = promise;
    p->data = data;
 
    return p;
 }
 
-static Eina_Promise *
-_efl_loop_job(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, const void *data)
+static Efl_Future *
+_efl_loop_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const void *data)
 {
    Efl_Internal_Promise *j;
-   Eina_Promise_Owner *promise;
+   Efl_Object *promise;
 
-   promise = eina_promise_add();
+   promise = efl_add(EFL_PROMISE_CLASS, obj);
    if (!promise) return NULL;
 
    j = _efl_internal_promise_new(promise, data);
@@ -3006,22 +3011,22 @@ _efl_loop_job(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, const void *da
    j->u.job = ecore_job_add(_efl_loop_job_cb, j);
    if (!j->u.job) goto on_error;
 
-   return eina_promise_owner_promise_get(promise);
+   return efl_promise_future_get(promise);
 
  on_error:
-   eina_promise_unref(eina_promise_owner_promise_get(promise));
+   efl_del(promise);
    free(j);
 
    return NULL;
 }
 
-static Eina_Promise *
+static Efl_Future *
 _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const void *data)
 {
    Efl_Internal_Promise *t;
-   Eina_Promise_Owner *promise;
+   Efl_Object *promise;
 
-   promise = eina_promise_add();
+   promise = efl_add(EFL_PROMISE_CLASS, obj);
    if (!promise) return NULL;
 
    t = _efl_internal_promise_new(promise, data);
@@ -3029,15 +3034,15 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const voi
 
    t->job_is = EINA_FALSE;
    t->u.timer = efl_add(EFL_LOOP_TIMER_CLASS, obj,
-                       efl_loop_timer_interval_set(efl_added, time),
-                       efl_event_callback_array_add(efl_added, timeout(), t));
+                        efl_loop_timer_interval_set(efl_added, time),
+                        efl_event_callback_array_add(efl_added, timeout(), t));
 
    if (!t->u.timer) goto on_error;
 
-   return eina_promise_owner_promise_get(promise);
+   return efl_promise_future_get(promise);
 
  on_error:
-   eina_promise_unref(eina_promise_owner_promise_get(promise));
+   efl_del(promise);
    free(t);
 
    return NULL;
