@@ -1,0 +1,463 @@
+enum Efl.Net.Control.Access_Point.State {
+    [[Provides the access point state.
+
+      @since 1.19
+    ]]
+    idle, [[nothing is happening with this access point]]
+    association, [[the access point is trying to associate itself, this is the first state after a connection attempt]]
+    configuration, [[the access point is configuring itself, such as DHCP]]
+    local, [[the access point is connected, but the internet connection wasn't validated]]
+    online, [[the access point is connected and the internet connected was validated]]
+    disconnect, [[the access point is disconnecting]]
+    failure, [[a connection attempt failed, @Efl.Net.Control.Access_Point.error will provide more details]]
+}
+
+enum Efl.Net.Control.Access_Point.Error {
+    [[The connection error reason.
+
+      @since 1.19
+    ]]
+    none, [[all right, no errors]]
+    out_of_range, [[wireless device is out of range]]
+    pin_missing, [[PIN was required and is missing]]
+    dhcp_failed, [[DHCP failed to provide configuration]]
+    connect_failed, [[couldn't connect to access point]]
+    login_failed, [[login or authentication information was incorrect, agent_request_input event may be emitted]]
+}
+
+enum Efl.Net.Control.Access_Point.Security {
+    [[Bitwise-able securities supported by an access point.
+
+      @since 1.19
+    ]]
+    unknow = 0,
+    none = (1 << 0), [[open access, no security]]
+    wep = (1 << 1), [[WEP]]
+    psk = (1 << 2), [[PSK (Pre Shared Key), such as WPA or RSN]]
+    ieee802_1x = (1 << 3), [[IEEE 802.1X]]
+}
+
+enum Efl.Net.Control.Access_Point.Ipv4_Method {
+    [[The method used to configure IPv4
+
+      @since 1.19
+    ]]
+    off, [[IPv4 is disabled]]
+    dhcp, [[IPv4 is configured using DHCP]]
+    manual, [[IPv4 is manually set using address, netmask and gateway]]
+    unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_ipv4]]
+}
+
+enum Efl.Net.Control.Access_Point.Ipv6_Method {
+    [[The method used to configure IPv6
+
+      @since 1.19
+    ]]
+    off, [[IPv6 is disabled]]
+    fixed, [[IPv6 is fixed by operator and cannot be changed]]
+    manual, [[IPv6 is manually set using address, netmask and gateway]]
+    auto_privacy_none, [[IPv6 is set using dhcp or using a tunnel6to4, no privacy extensions should be used]]
+    auto_privacy_public, [[IPv6 is set using dhcp or using a tunnel6to4, privacy extensions are used and the system prefers a public IP address over temporary addresses]]
+    auto_privacy_temporary, [[IPv6 is set using dhcp or using a tunnel6to4, privacy extensions are used and the system prefers a temporary IP address over public addresses]]
+    tunnel6to4, [[IPv6 was configured using a 6-to-4 tunnel. This cannot be set by the user, which is expected to set "auto" instead]]
+    unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_ipv6]]
+}
+
+enum Efl.Net.Control.Access_Point.Proxy_Method {
+    [[The method used to configure Proxy.
+
+      @since 1.19
+    ]]
+    off, [[direct connection to the internet, no proxy to be used]]
+    auto, [[proxy is autoconfigured using Proxy-Auto-Configuration (PAC) using given URL]]
+    manual, [[proxy is configured manually using servers and excludes]]
+    unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_proxy]]
+}
+
+class Efl.Net.Control.Access_Point (Efl.Loop_User) {
+    [[An access point for network connectivity.
+
+      The @Efl.Net.Control is composed of multiple technologies, each
+      create access points to allow configuration and connection.
+
+      An application willing to just get a network connection should
+      prefer to use the \@Efl.Net.Session instead.
+
+      @since 1.19
+    ]]
+
+    events {
+        changed; [[Some properties were changed.]]
+    }
+
+    methods {
+        connect {
+            [[Connect to this access point.
+
+              This connection will happen asynchronously in the
+              background, with results being delivered by events in
+              the access point object, such as the "changed".
+
+              Successful connections will remember the device and set
+              it to auto-connect using the property @.auto_connect.
+
+              See @.forget, @.remembered, @.auto_connect and
+              @.disconnect
+
+              The future may fail with non-fatal errors such as
+              EINPROGRESS (the connection was already ongoing) and
+              EALREADY (the connection was already stablished).
+            ]]
+            return: future<void_ptr>; /* NOTE: This should be future<void> */
+        }
+
+        disconnect {
+            [[Disconnect from this access point.
+
+              When disconnected a previously connected access point it
+              won't be forgotten. The configuration and other details
+              such as priority and passphrase will be available for a
+              future re-connection with call to @.connect. If it is
+              desired to disconnect and forget all access point
+              information, use @.forget instead.
+            ]]
+        }
+
+        forget {
+            [[Disconnect and forget about this access point.
+
+              Successful @.connect will always remember the access
+              point for future re-connections. This method reverts
+              that by disconnecting and forgetting about the access
+              point and its configuration, which will set the
+              @.remembered to $false.
+            ]]
+        }
+
+        @property state {
+            [[The current state of this access point.
+
+              Whenever the state changes, "changed" will be emitted.
+            ]]
+            get { }
+            values {
+                state: Efl.Net.Control.Access_Point.State;
+            }
+        }
+
+        @property error {
+            [[If the access point is in error state, this states the error.]]
+            get { }
+            values {
+                error: Efl.Net.Control.Access_Point.Error;
+            }
+        }
+
+        @property name {
+            [[The user-friendly access point name.
+
+              For hidden WiFi networks, this is empty.
+            ]]
+            get { }
+            values {
+                name: string;
+            }
+        }
+
+        @property priority {
+            [[The access point priority in the current access point listing.
+
+              This property is dynamic and reflects the index of the
+              access point in the current access points list. As
+              access points may come and go, the value may change at
+              any time and notified with "changed" event.
+
+              If set, then it will reoder priorities, moving all other
+              services at equal or higher priority up. To move as the
+              first (most priority), then use 0. To move as the last
+              priority, use UINT32_MAX or the last known priority + 1.
+
+              \@note Only remembered access points may be reordered
+              among themselves. Those that are not remembered will
+              always come last in random order defined by the backend.
+            ]]
+            get { }
+            set { }
+            values {
+                priority: uint;
+            }
+        }
+
+        @property technology {
+            [[The technology that generated this access point]]
+            get { }
+            values {
+                technology: Efl.Net.Control.Technology;
+            }
+        }
+
+        @property strength {
+            [[Signal strength percentage in 0-100]]
+            get { }
+            values {
+                strength: uint8;
+            }
+        }
+
+        @property roaming {
+            [[If it's a cellular access point and it's on roaming.]]
+            get { }
+            values {
+                roaming: bool;
+            }
+        }
+
+        @property auto_connect {
+            [[Whenever to auto-connect to this access point if no other is connected.
+
+              By default successfully connected access points are
+              remembered and set to auto-connect. This behavior can be
+              changed with this property.
+
+              An access point is only connected automatically if there
+              are no other connected and if it is not on roaming.
+            ]]
+            get { }
+            set { }
+            values {
+                auto_connect: bool;
+            }
+        }
+
+        @property remembered {
+            [[Successfully connected access points are remembered.
+
+              To forget about this access point, call @.forget.
+            ]]
+            get { }
+            values {
+                remembered: bool;
+            }
+        }
+
+        @property immutable {
+            [[Immutable access points are those defined in configuration files and its properties can't be changed using API.]]
+            get { }
+            values {
+                immutable: bool;
+            }
+        }
+
+        @property security {
+            [[Security options such as wep, wps, psk or none (open).]]
+            get { }
+            values {
+                security: Efl.Net.Control.Access_Point.Security; [[Bitwise OR of security supported by this access point]]
+            }
+        }
+
+        @property name_servers {
+            [[DNS (Domain Name Servers) in use for this access point.
+
+              These are the actual values in use, configure them using
+              @.configuration_name_servers, which may generate change
+              to this property, being notified with the "changed"
+              event.
+            ]]
+            get { }
+            values {
+                name_servers: free(own(iterator<string>), eina_iterator_free);
+            }
+        }
+
+        @property time_servers {
+            [[NTP (Time Server) in use for this access point.
+
+              These are the actual values in use, configure them using
+              @.configuration_time_servers, which may generate change
+              to this property, being notified with the "changed"
+              event.
+            ]]
+            get { }
+            values {
+                time_servers: free(own(iterator<string>), eina_iterator_free);
+            }
+        }
+
+        @property domains {
+            [[Search domains in use for this access point.
+
+              These are the actual values in use, configure them using
+              @.configuration_domains, which may generate change
+              to this property, being notified with the "changed"
+              event.
+            ]]
+            get { }
+            values {
+                domains: free(own(iterator<string>), eina_iterator_free);
+            }
+        }
+
+        @property ipv4 {
+            [[IPv4 in use for this access point.
+
+              These are the actual values in use, configure them using
+              @.configuration_ipv4, which may generate change
+              to this property, being notified with the "changed"
+              event.
+            ]]
+            get { }
+            values {
+                method: Efl.Net.Control.Access_Point.Ipv4_Method;
+                address: string;
+                netmask: string;
+                gateway: string;
+            }
+        }
+
+        @property ipv6 {
+            [[IPv6 in use for this access point.
+
+              These are the actual values in use, configure them using
+              @.configuration_ipv6, which may generate change
+              to this property, being notified with the "changed"
+              event.
+            ]]
+            get { }
+            values {
+                method: Efl.Net.Control.Access_Point.Ipv6_Method;
+                address: string;
+                prefix_length: uint8;
+                netmask: string;
+                gateway: string;
+            }
+        }
+
+        @property proxy {
+            [[Proxy in use for this access point.
+
+              These are the actual values in use, configure them using
+              @.configuration_proxy, which may generate change
+              to this property, being notified with the "changed"
+              event.
+            ]]
+            get { }
+            values {
+                method: Efl.Net.Control.Access_Point.Proxy_Method;
+                url: string; [[if @Efl.Net.Control.Access_Point.Proxy_Method.auto, then states the URL to use for proxy auto-configuration]]
+                servers: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the URI with proxy servers to use, like "http://proxy.domain.com:911"]]
+                excludes: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the hosts or patterns to exclude from proxy access, such as "localhost", ".domain.com", or "10.0.0.0..."]]
+            }
+        }
+
+        @property configuration_name_servers {
+            [[DNS (Domain Name Servers) configured by user for this access point.
+
+              These are the user configured values, that will be
+              applied by the backend system and in turn may result in
+              "changed" event to notify of @.name_servers property
+              with the actual value in use, which may differ from
+              this.
+            ]]
+            set { }
+            get { }
+            values {
+                name_servers: free(own(iterator<string>), eina_iterator_free);
+            }
+        }
+
+        @property configuration_time_servers {
+            [[NTP (Time Server) configured by user for this access point.
+
+              These are the user configured values, that will be
+              applied by the backend system and in turn may result in
+              "changed" event to notify of @.time_servers property
+              with the actual value in use, which may differ from
+              this.
+            ]]
+            set { }
+            get { }
+            values {
+                time_servers: free(own(iterator<string>), eina_iterator_free);
+            }
+        }
+
+        @property configuration_domains {
+            [[Search domains configured by user for this access point.
+
+              These are the user configured values, that will be
+              applied by the backend system and in turn may result in
+              "changed" event to notify of @.domains property
+              with the actual value in use, which may differ from
+              this.
+            ]]
+            set { }
+            get { }
+            values {
+                domains: free(own(iterator<string>), eina_iterator_free);
+            }
+        }
+
+        @property configuration_ipv4 {
+            [[IPv4 configured by user for this access point.
+
+              These are the user configured values, that will be
+              applied by the backend system and in turn may result in
+              "changed" event to notify of @.ipv4 property
+              with the actual value in use, which may differ from
+              this.
+            ]]
+            set { }
+            get { }
+            values {
+                method: Efl.Net.Control.Access_Point.Ipv4_Method;
+                address: string;
+                netmask: string;
+                gateway: string;
+            }
+        }
+
+        @property configuration_ipv6 {
+            [[IPv6 configured by user for this access point.
+
+              These are the user configured values, that will be
+              applied by the backend system and in turn may result in
+              "changed" event to notify of @.ipv6 property
+              with the actual value in use, which may differ from
+              this.
+            ]]
+            set { }
+            get { }
+            values {
+                method: Efl.Net.Control.Access_Point.Ipv6_Method;
+                address: string;
+                prefix_length: uint8;
+                netmask: string;
+                gateway: string;
+            }
+        }
+
+        @property configuration_proxy {
+            [[Proxy configured by user for this access point.
+
+              These are the user configured values, that will be
+              applied by the backend system and in turn may result in
+              "changed" event to notify of @.proxy property
+              with the actual value in use, which may differ from
+              this.
+            ]]
+            set { }
+            get { }
+            values {
+                method: Efl.Net.Control.Access_Point.Proxy_Method;
+                url: string; [[if @Efl.Net.Control.Access_Point.Proxy_Method.auto, then states the URL to use for proxy auto-configuration]]
+                servers: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the URI with proxy servers to use, like "http://proxy.domain.com:911"]]
+                excludes: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the hosts or patterns to exclude from proxy access, such as "localhost", ".domain.com", or "10.0.0.0..."]]
+            }
+        }
+    }
+
+    implements {
+        Efl.Object.destructor;
+    }
+}

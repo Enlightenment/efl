@@ -1,0 +1,137 @@
+enum Efl.Net.Session.State {
+    [[Provides the session connectivity state.
+
+      @since 1.19
+    ]]
+    offline, [[no access point is connected]]
+    local, [[at least one access point was connected and the internet connectio wasn't verified]]
+    online, [[at least one access point was connected and the internet was verified]]
+}
+
+/* keep in sync with efl_net_control_technology.eo, comment what doesn't make sense */
+enum Efl.Net.Session.Technology {
+    [[Bitwise-able technologies to allow for a network session.
+
+      @since 1.19
+    ]]
+    unknown = 0,
+/*    system = (1 << 0), */
+    ethernet = (1 << 1),
+    wifi = (1 << 2),
+    bluetooth = (1 << 3),
+    cellular = (1 << 4),
+/*    gps = (1 << 5), */
+    vpn = (1 << 6),
+    gadget = (1 << 7),
+/*    p2p = (1 << 8), */
+    all = (Efl.Net.Session.Technology.ethernet | Efl.Net.Session.Technology.wifi | Efl.Net.Session.Technology.bluetooth | Efl.Net.Session.Technology.cellular | Efl.Net.Session.Technology.vpn | Efl.Net.Session.Technology.gadget),
+}
+
+class Efl.Net.Session (Efl.Loop_User) {
+    [[Used by application to request network connectivity.
+
+      This API is targeted at applications that need access to the
+      network, specifying the allowed bearer technologies to connect
+      to the internet, as well as if just local networking is enough
+      or validated internet access is required.
+
+      \@note the @.connect method is subject to backend policy. For
+      instance, ConnMan uses
+      https://github.com/aldebaran/connman/blob/master/doc/session-policy-format.txt
+
+      @since 1.19
+    ]]
+    events {
+        changed; [[Some properties were changed.]]
+    }
+
+    methods {
+        connect {
+            [[Asks the session to be connected.
+
+              This method doesn't need to be called if all an
+              application want is to monitor the connectivity state,
+              like a poller that will only try to access the
+              webservice when there is an existing connection without
+              triggering one.
+
+              This method is subject to backend policy. For instance,
+              ConnMan uses
+              https://github.com/aldebaran/connman/blob/master/doc/session-policy-format.txt
+            ]]
+            params {
+                online_required: bool; [[if $false, access points with local state are enough. If $true, the access point must be in online state, with a validated internet connection]]
+                technologies_allowed: Efl.Net.Session.Technology; [[Bitwise OR of technologies to allow]]
+            }
+        }
+
+        disconnect {
+            [[Indicates this session doesn't need a connection anymore.
+
+              This reverses the effect of @.connect, let the system
+              disconnect if nothing else needs a connection. One may
+              still use the session object to monitor the connectivity
+              state via properties and "changed" event.
+            ]]
+        }
+
+        @property name {
+            [[The user-friendly access point name.]]
+            get { }
+            values {
+                name: string;
+            }
+        }
+
+        @property state {
+            [[If the session connectivity is offline, local or online.]]
+            get { }
+            values {
+                state: Efl.Net.Session.State;
+            }
+        }
+
+        @property technology {
+            [[The access point technology that backs this session]]
+            get { }
+            values {
+                technology: Efl.Net.Session.Technology;
+            }
+        }
+
+        @property interface {
+            [[The interface allows the application to assign the socket to a given device using SO_BINDTODEVICE]]
+            get { }
+            values {
+                interface: string;
+            }
+        }
+
+        @property ipv4 {
+            [[IPv4 in use for this session.]]
+            get { }
+            values {
+                address: string;
+                netmask: string;
+                gateway: string;
+            }
+        }
+
+        @property ipv6 {
+            [[IPv6 in use for this session.]]
+            get { }
+            values {
+                address: string;
+                prefix_length: uint8;
+                netmask: string;
+                gateway: string;
+            }
+        }
+    }
+
+    implements {
+        Efl.Object.destructor;
+        Efl.Object.constructor;
+        Efl.Object.finalize;
+    }
+}

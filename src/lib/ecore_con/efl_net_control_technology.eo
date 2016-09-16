@@ -1,0 +1,106 @@
+enum Efl.Net.Control.Technology.Type {
+    [[Technology types
+
+      @since 1.19
+    ]]
+    unknown,
+    system,
+    ethernet,
+    wifi,
+    bluetooth,
+    cellular,
+    gps,
+    vpn,
+    gadget,
+    p2p,
+}
+
+class Efl.Net.Control.Technology (Efl.Loop_User) {
+    [[A technology that enables network access points to be controlled.
+
+      The @Efl.Net.Control is composed of multiple technologies, each
+      can be disabled/enabled with @.powered property.
+
+      When powered, the technology will dynamically add and delete
+      access points to be available in
+      @Efl.Net.Control.access_points.
+
+      @since 1.19
+    ]]
+    events {
+        changed; [[Some properties were changed.]]
+    }
+
+    methods {
+        @property powered {
+            [[If $true the technology is available. If $false technology is disabled and if possible rfkill is used.]]
+            get { }
+            set { }
+            values {
+                powered: bool;
+            }
+        }
+
+        @property tethering {
+            [[Tethering allows the default access point to be bridged to all clients connected through the technology.
+
+              A common case is to use the device as a router, such as
+              a phone doing tethering allows a laptop to connect to 4G
+              network.
+            ]]
+            get { }
+            set { }
+            values {
+                enabled: bool; [[Whenever to enable or disable tethering for this technology]]
+                identifier: string @optional; [[The name to identify this tethering, in WiFi it will translate to SSID.]]
+                passphrase: string @optional; [[The passphrase for this tethering access, in WiFi it will translate to WPA passphrase.]]
+            }
+        }
+
+        @property connected {
+            [[If $true the technology has at least one access point connected.]]
+            get { }
+            values {
+                connected: bool;
+            }
+        }
+
+        @property name {
+            [[The user-friendly technology name]]
+            get { }
+            values {
+                name: string;
+            }
+        }
+
+        @property type {
+            [[The technology type, such as "ethernet" or "wifi"]]
+            get { }
+            values {
+                type: Efl.Net.Control.Technology.Type;
+            }
+        }
+
+        scan {
+            [[Explicitly trigger a scan.
+
+              The scan will happen asynchronously in the background,
+              with the results being delivered by events in the
+              technology, @Efl.Net.Control or @Efl.Net.Control.Access_Point
+              associated with the technology. For example, scan on
+              WiFi will add and delete access points.
+
+              It is worth to mention that explicit scans should be
+              avoided. Rare cases are when user requested them, like
+              entering a configuration dialog which demands fresh
+              state. Otherwise prefer to let the system passively do
+              scans in a timely manner.
+            ]]
+            return: future<void_ptr>; /* NOTE: This should be future<void> */
+        }
+    }
+
+    implements {
+        Efl.Object.destructor;
+    }
+}

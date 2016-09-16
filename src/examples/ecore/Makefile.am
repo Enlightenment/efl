@@ -88,7 +88,9 @@ efl_net_dialer_websocket_example \
 efl_net_dialer_websocket_autobahntestee \
 efl_net_dialer_udp_example \
 efl_net_socket_ssl_dialer_example \
-efl_net_socket_ssl_server_example
+efl_net_socket_ssl_server_example \
+efl_net_session_example \
+efl_net_control_example
 
 
 ECORE_COMMON_LDADD = \
@@ -334,6 +336,12 @@ efl_net_socket_ssl_dialer_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 efl_net_socket_ssl_server_example_SOURCES = efl_net_socket_ssl_server_example.c
 efl_net_socket_ssl_server_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
+efl_net_session_example_SOURCES = efl_net_session_example.c
+efl_net_session_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
+efl_net_control_example_SOURCES = efl_net_control_example.c
+efl_net_control_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
 SRCS = \
 ecore_animator_example.c \
 ecore_buffer_example.c \
@@ -391,7 +399,9 @@ efl_net_dialer_websocket_example.c \
 efl_net_dialer_websocket_autobahntestee.c \
 efl_net_dialer_udp_example.c \
 efl_net_socket_ssl_dialer_example.c \
-efl_net_socket_ssl_server_example.c
+efl_net_socket_ssl_server_example.c \
+efl_net_session_example.c \
+efl_net_control_example.c
 
 %.pem:
 	echo -e "US\nOR\nPortland\nXPTO Ltd\n\nlocalhost\nroot@localhost\n" | openssl req -new -x509 -days 30 -nodes -out $@ -keyout $@

@@ -61,3 +61,5 @@
 /efl_net_socket_ssl_dialer_example
 /efl_net_socket_ssl_server_example
 /*.pem
+/efl_net_session_example
+/efl_net_control_example
