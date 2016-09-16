@@ -16,6 +16,15 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#ifndef O_CLOEXEC
+/* If a platform doesn't define O_CLOEXEC, then use 0 as we'll "| 0"
+ * and "& ~0", which have no effect.
+ *
+ * This should be the case on _WIN32.
+ */
+#define O_CLOEXEC (0)
+#endif
+
 #define MY_CLASS EFL_IO_FILE_CLASS
 
 typedef struct _Efl_Io_File_Data
