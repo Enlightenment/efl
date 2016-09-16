@@ -303,6 +303,7 @@ eina_init(void)
           }
      }
 
+   eina_cpu_init();
    eina_cpu_count_internal();
 
    eina_log_timing(_eina_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
@@ -339,6 +340,7 @@ eina_shutdown(void)
              _mt_enabled = 0;
           }
 #endif
+        eina_cpu_shutdown();
      }
 
    return _eina_main_count;
