@@ -22,7 +22,7 @@ static void
 _progress_cb(void *data, const Efl_Event *ev)
 {
    Efl_Future_Event_Progress *p = ev->info;
-   Eina_Array *batch = p->progress;
+   const Eina_Array *batch = p->progress;
    uint64_t *number_of_listed_files = data;
 
    (*number_of_listed_files) += eina_array_count(batch);
