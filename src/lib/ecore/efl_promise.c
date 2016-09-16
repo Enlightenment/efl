@@ -275,7 +275,8 @@ _efl_loop_future_disconnect(Eo *obj, Efl_Loop_Future_Data *pd)
    pd->promise->futures = eina_list_remove(pd->promise->futures, pd);
 
    // Notify that there is no more future
-   if (!pd->promise->futures)
+   if (!pd->promise->futures &&
+       !pd->promise->message)
      {
         efl_event_callback_call(pd->promise->promise, EFL_PROMISE_EVENT_FUTURE_NONE, NULL);
      }
