@@ -247,21 +247,10 @@ _outbuf_fb_assign(Outbuf *ob)
    int i;
 
    ob->priv.draw = _outbuf_fb_wait(ob);
-
-   if (!ob->priv.draw)
+   while (!ob->priv.draw)
      {
-        WRN("No Free Buffers. Dropping a frame");
-        for (i = 0; i < ob->priv.num; i++)
-          {
-             if (ob->priv.ofb[i].valid)
-               {
-                  ecore_drm2_fb_busy_set(ob->priv.ofb[i].fb, EINA_FALSE);
-                  ob->priv.ofb[i].age = 0;
-                  ob->priv.ofb[i].drawn = EINA_FALSE;
-               }
-          }
-
-        return EINA_FALSE;
+        ecore_drm2_fb_release(ob->priv.output);
+        ob->priv.draw = _outbuf_fb_wait(ob);
      }
 
    for (i = 0; i < ob->priv.num; i++)
