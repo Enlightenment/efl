@@ -449,6 +449,8 @@ sys/types.h \
 sys/param.h \
 sys/mman.h \
 netinet/in.h \
+sys/auxv.h \
+asm/hwcap.h \
 ])
 
 EFL_CHECK_PATH_MAX

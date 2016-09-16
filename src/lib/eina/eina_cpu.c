@@ -53,6 +53,11 @@
 
 #include "eina_cpu_private.h"
 
+#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+# include <sys/auxv.h>
+# include <asm/hwcap.h>
+#endif
+
 /*============================================================================*
 *                                  Local                                     *
 *============================================================================*/
@@ -129,6 +134,19 @@ void _x86_simd(Eina_Cpu_Features *features)
 }
 #endif
 
+#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+static void
+_arm_cpu_features(Eina_Cpu_Features *features)
+{
+   unsigned long aux;
+
+   aux = getauxval(AT_HWCAP);
+
+   if (aux & HWCAP_NEON)
+     *features |= EINA_CPU_NEON;
+}
+#endif
+
 /*============================================================================*
 *                                 Global                                     *
 *============================================================================*/
@@ -147,8 +165,9 @@ eina_cpu_init(void)
 {
 #if defined(__i386__) || defined(__x86_64__)
    _x86_simd(&eina_cpu_features);
+#elif defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+   _arm_cpu_features(&eina_cpu_features);
 #endif
-   // FIXME: Handle NEON and friends
 
    // Figure out the page size for this system
    _eina_page_size();
