@@ -945,7 +945,7 @@ _progress(void *data, const Efl_Event *ev)
    unsigned int i;
 
    a.inprogress = ev->object;
-   a.progress = p->progress;
+   a.progress = (Efl_Object *) p->progress;
 
    EINA_ARRAY_ITER_NEXT(&all->members, i, item, iterator)
      {
