@@ -409,7 +409,7 @@ static void
 _progress(void *data, const Efl_Event *ev)
 {
    Efl_Future_Event_Progress *p = ev->info;
-   int *value = p->progress;
+   const int *value = p->progress;
    Future_Ok *fo = data;
 
    fail_if(*value != 7);
