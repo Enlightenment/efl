@@ -137,6 +137,8 @@ _eina_internal_call(void *context)
    pthread_t self;
 #endif
 
+   EINA_THREAD_CLEANUP_PUSH(free, c);
+
    if (c->prio == EINA_THREAD_BACKGROUND ||
        c->prio == EINA_THREAD_IDLE)
      eina_sched_prio_drop();
@@ -144,13 +146,14 @@ _eina_internal_call(void *context)
 #ifdef EINA_HAVE_DEBUG
    self = pthread_self();
    _eina_debug_thread_add(&self);
+   EINA_THREAD_CLEANUP_PUSH(_eina_debug_thread_del, &self);
 #endif
    r = c->func((void*) c->data, eina_thread_self());
 #ifdef EINA_HAVE_DEBUG
-   _eina_debug_thread_del(&self);
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
 #endif
 
-   free(c);
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
 
    return r;
 }
