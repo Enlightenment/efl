@@ -312,8 +312,7 @@ _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
         pd = efl_data_scope_get(dialer, MY_CLASS);
         if (pd->error)
           efl_event_callback_call(dialer, EFL_NET_DIALER_EVENT_ERROR, &pd->error);
-        else
-          efl_io_reader_eos_set(dialer, EINA_TRUE);
+        efl_io_reader_eos_set(dialer, EINA_TRUE);
         efl_io_closer_close(dialer);
         _efl_net_dialer_http_curlm_check_finished_object_remove(&finished, dialer);
         efl_unref(dialer);
