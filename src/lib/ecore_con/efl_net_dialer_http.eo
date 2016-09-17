@@ -30,6 +30,23 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
       To enable debugging use EINA_LOG_LEVELS=ecore_con:4 environment
       variable.
 
+      If the proxy is NULL (default), then the system proxy will be
+      used. On UNIX that's the environment variable $http_proxy (or
+      '$all_proxy') is used if the given address doesn't match
+      $no_proxy patterns. To disable proxy use an empty string. If
+      provided proxy must be one of the protocols:
+
+       - http://username:password\@proxyserver:port
+       - http://username\@proxyserver:port
+       - http://proxyserver:port
+       - http://proxyserver  (default port 1080)
+       - socks5://username:password\@proxyserver:port (SOCKSv5)
+       - socks5h://username\@proxyserver:port (let socks server to resolve domain)
+       - socks5://proxyserver:port
+       - socks5://proxyserver (default port 1080)
+       - socks4a://proxyserver:port (SOCKSv4 and let socks server to resolve domain)
+       - socks4://proxyserver:port (SOCKSv4)
+
       @since 1.19
     ]]
     methods {

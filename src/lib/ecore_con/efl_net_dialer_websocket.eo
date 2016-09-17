@@ -2,7 +2,10 @@ import eina_types;
 import efl_net_http_types;
 
 enum Efl.Net.Dialer.Websocket.Streaming_Mode {
-    [[How to map WebSocket to EFL I/O Interfaces.]]
+    [[How to map WebSocket to EFL I/O Interfaces.
+
+      @since 1.19
+    ]]
     disabled, [[@Efl.Io.Writer.write and @Efl.Io.Reader.read will fail by returning ENOSTR]]
     binary, [[@Efl.Io.Writer.write will result in @Efl.Net.Dialer.Websocket.binary_send]]
     text, [[@Efl.Io.Writer.write will result in @Efl.Net.Dialer.Websocket.text_send]]
@@ -15,6 +18,8 @@ enum Efl.Net.Dialer.Websocket.Close_Reason {
       using "_start" and "end" suffixes.
 
       See https://tools.ietf.org/html/rfc6455#section-7.4.1
+
+      @since 1.19
     ]]
     normal = 1000, [[indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled.]]
     going_away = 1001, [[indicates that an endpoint is "going away", such as a server going down or a browser having navigated away from a page.]]
@@ -34,6 +39,10 @@ enum Efl.Net.Dialer.Websocket.Close_Reason {
 }
 
 struct Efl.Net.Dialer.Websocket.Closed_Reason {
+    [[Close reason event payload.
+
+      @since 1.19
+    ]]
     reason: Efl.Net.Dialer.Websocket.Close_Reason;
     message: string;
 }
@@ -48,6 +57,23 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
       It's worth to note that although it uses the HTTP dialer, it's
       not a subclass and thus not all HTTP features are exposed as the
       WebSocket has strict requirements that must be respected.
+
+      If the proxy is NULL (default), then the system proxy will be
+      used. On UNIX that's the environment variable $http_proxy (or
+      '$all_proxy') is used if the given address doesn't match
+      $no_proxy patterns. To disable proxy use an empty string. If
+      provided proxy must be one of the protocols:
+
+       - http://username:password\@proxyserver:port
+       - http://username\@proxyserver:port
+       - http://proxyserver:port
+       - http://proxyserver  (default port 1080)
+       - socks5://username:password\@proxyserver:port (SOCKSv5)
+       - socks5h://username\@proxyserver:port (let socks server to resolve domain)
+       - socks5://proxyserver:port
+       - socks5://proxyserver (default port 1080)
+       - socks4a://proxyserver:port (SOCKSv4 and let socks server to resolve domain)
+       - socks4://proxyserver:port (SOCKSv4)
 
       @since 1.19
     ]]

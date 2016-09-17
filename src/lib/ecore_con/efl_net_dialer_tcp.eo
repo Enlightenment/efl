@@ -1,6 +1,24 @@
 class Efl.Net.Dialer.Tcp (Efl.Net.Socket.Tcp, Efl.Net.Dialer) {
     [[Connects to a remote TCP server.
 
+      If the proxy is NULL (default), then the system proxy will be
+      used. On UNIX that's the environment variable $socks_proxy (or
+      '$proxy' or '$all_proxy') is used if the given address doesn't
+      match $no_proxy patterns. To disable proxy use an empty string.
+
+      If the proxy is NULL (default), then the system proxy will be
+      used. On UNIX that's the environment variable $socks_proxy (or
+      '$all_proxy') is used if the given address doesn't match
+      $no_proxy patterns. To disable proxy use an empty string. If
+      provided proxy must be one of the protocols:
+
+       - socks5://username:password\@proxyserver:port (SOCKSv5)
+       - socks5h://username\@proxyserver:port (let socks server to resolve domain)
+       - socks5://proxyserver:port
+       - socks5://proxyserver (default port 1080)
+       - socks4a://proxyserver:port (SOCKSv4 and let socks server to resolve domain)
+       - socks4://proxyserver:port (SOCKSv4)
+
       @since 1.19
     ]]
 
