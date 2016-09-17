@@ -1683,19 +1683,17 @@ _menu_call(Evas_Object *obj)
           {
              if (!sd->password)
                {
+                  if (sd->editable)
+                    elm_hoversel_item_add
+                       (sd->hoversel, E_("Cut"), NULL, ELM_ICON_NONE,
+                        _cut_cb, obj);
                   elm_hoversel_item_add
                      (sd->hoversel, E_("Copy"), NULL, ELM_ICON_NONE,
                       _copy_cb, obj);
-                  if (sd->editable)
-                    {
-                       elm_hoversel_item_add
-                          (sd->hoversel, E_("Cut"), NULL, ELM_ICON_NONE,
-                           _cut_cb, obj);
-                       if (ownersel)
-                         elm_hoversel_item_add
-                            (sd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,
-                             _paste_cb, obj);
-                    }
+                  if (sd->editable && ownersel)
+                    elm_hoversel_item_add
+                       (sd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,
+                        _paste_cb, obj);
                   elm_hoversel_item_add
                     (sd->hoversel, E_("Cancel"), NULL, ELM_ICON_NONE,
                     _hover_cancel_cb, obj);
