@@ -73,8 +73,6 @@ _efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *o = data;
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
-   pd->job = NULL;
-
    _COPIER_DBG(o, pd);
    efl_ref(o);
 
@@ -104,7 +102,7 @@ _efl_io_copier_job_schedule(Eo *o, Efl_Io_Copier_Data *pd)
 {
    if (pd->job) return;
 
-   pd->job = efl_loop_job(efl_loop_user_loop_get(o), o);
+   efl_future_use(&pd->job, efl_loop_job(efl_loop_user_loop_get(o), o));
    efl_future_then(pd->job, _efl_io_copier_job, NULL, NULL, o);
 }
 
@@ -573,10 +571,7 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
    _COPIER_DBG(o, pd);
 
    if (pd->job)
-     {
-        efl_future_cancel(pd->job);
-        pd->job = NULL;
-     }
+     efl_future_cancel(pd->job);
 
    if (pd->source)
      {
@@ -696,10 +691,7 @@ _efl_io_copier_efl_object_destructor(Eo *o, Efl_Io_Copier_Data *pd)
    efl_io_copier_destination_set(o, NULL);
 
    if (pd->job)
-     {
-        efl_future_cancel(pd->job);
-        pd->job = NULL;
-     }
+     efl_future_cancel(pd->job);
 
    efl_destructor(efl_super(o, MY_CLASS));
 

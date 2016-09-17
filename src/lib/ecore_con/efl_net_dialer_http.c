@@ -1194,7 +1194,6 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    else if (pd->pending_close)
      {
         efl_future_cancel(pd->pending_close);
-        pd->pending_close = NULL;
         efl_io_closer_close(o);
      }
    else if (efl_io_closer_close_on_destructor_get(o) &&
@@ -1555,7 +1554,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
      {
         if (!pd->pending_close)
           {
-             pd->pending_close = efl_loop_job(efl_loop_user_loop_get(o), o);
+             efl_future_use(&pd->pending_close, efl_loop_job(efl_loop_user_loop_get(o), o));
              efl_future_then(pd->pending_close, _efl_net_dialer_http_pending_close, NULL, NULL, o);
              DBG("dialer=%p closed from CURL callback, schedule close job=%p", o, pd->pending_close);
           }
@@ -1593,7 +1592,6 @@ _efl_net_dialer_http_pending_close(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *o = data;
    Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
-   pd->pending_close = NULL;
    _efl_net_dialer_http_efl_io_closer_close(o, pd);
 }
 

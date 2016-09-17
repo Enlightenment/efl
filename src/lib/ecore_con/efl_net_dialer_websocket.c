@@ -544,10 +544,7 @@ _efl_net_dialer_websocket_job_dispatch_frame(Eo *o, Efl_Net_Dialer_Websocket_Dat
            else
              efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
            if (pd->close_timeout)
-             {
-                efl_future_cancel(pd->close_timeout);
-                pd->close_timeout = NULL;
-             }
+             efl_future_cancel(pd->close_timeout);
            break;
         }
 
@@ -768,7 +765,7 @@ _efl_net_dialer_websocket_job_schedule(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
 
    loop = efl_loop_user_loop_get(o);
    if (!loop) return;
-   pd->job = efl_loop_job(loop, o);
+   efl_future_use(&pd->job, efl_loop_job(loop, o));
    efl_future_then(pd->job, _efl_net_dialer_websocket_job, NULL, NULL, o);
 }
 
@@ -964,11 +961,9 @@ _efl_net_dialer_websocket_efl_object_destructor(Eo *o, Efl_Net_Dialer_Websocket_
    Eina_Stringshare *str;
 
    efl_event_callback_array_del(pd->http, _efl_net_dialer_websocket_http_cbs(), o);
+
    if (pd->close_timeout)
-     {
-        efl_future_cancel(pd->close_timeout);
-        pd->close_timeout = NULL;
-     }
+     efl_future_cancel(pd->close_timeout);
 
    efl_del(pd->http);
    pd->http = NULL;
@@ -1500,7 +1495,6 @@ _efl_net_dialer_websocket_close_request_timeout(void *data, const Efl_Event *ev 
    Eo *o = data;
    Efl_Net_Dialer_Websocket_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
-   pd->close_timeout = NULL;
    DBG("server did not close the TCP socket, timeout");
    efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
 }
@@ -1516,7 +1510,7 @@ _efl_net_dialer_websocket_close_request(Eo *o, Efl_Net_Dialer_Websocket_Data *pd
    if (pd->close_timeout)
      efl_future_cancel(pd->close_timeout);
 
-   pd->close_timeout = efl_loop_timeout(efl_loop_user_loop_get(o), 2.0, o);
+   efl_future_use(&pd->close_timeout, efl_loop_timeout(efl_loop_user_loop_get(o), 2.0, o));
    efl_future_then(pd->close_timeout, _efl_net_dialer_websocket_close_request_timeout, NULL, NULL, o);
 
    efl_io_writer_can_write_set(o, EINA_FALSE);

@@ -66,10 +66,7 @@ _efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
      efl_io_closer_close(o);
 
    if (pd->connect.timeout)
-     {
-        efl_future_cancel(pd->connect.timeout);
-        pd->connect.timeout = NULL;
-     }
+     efl_future_cancel(pd->connect.timeout);
 
    if (pd->connect.thread)
      {
@@ -209,8 +206,6 @@ _efl_net_dialer_tcp_connect_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
    Efl_Net_Dialer_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eina_Error err = ETIMEDOUT;
 
-   pd->connect.timeout = NULL;
-
    if (pd->resolve.thread)
      {
         ecore_thread_cancel(pd->resolve.thread);
@@ -285,13 +280,10 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
    efl_net_dialer_address_dial_set(o, address);
 
    if (pd->connect.timeout)
-     {
-        efl_future_cancel(pd->connect.timeout);
-        pd->connect.timeout = NULL;
-     }
+     efl_future_cancel(pd->connect.timeout);
    if (pd->timeout_dial > 0.0)
      {
-        pd->connect.timeout = efl_loop_timeout(efl_loop_user_loop_get(o), pd->timeout_dial, o);
+        efl_future_use(&pd->connect.timeout, efl_loop_timeout(efl_loop_user_loop_get(o), pd->timeout_dial, o));
         efl_future_then(pd->connect.timeout, _efl_net_dialer_tcp_connect_timeout, NULL, NULL, o);
      }
 
@@ -328,13 +320,10 @@ _efl_net_dialer_tcp_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_Net_D
 {
    pd->timeout_dial = seconds;
    if (pd->connect.timeout)
-     {
-        efl_future_cancel(pd->connect.timeout);
-        pd->connect.timeout = NULL;
-     }
+     efl_future_cancel(pd->connect.timeout);
    if (pd->timeout_dial > 0.0)
      {
-        pd->connect.timeout = efl_loop_timeout(efl_loop_user_loop_get(o), pd->timeout_dial, o);
+        efl_future_use(&pd->connect.timeout, efl_loop_timeout(efl_loop_user_loop_get(o), pd->timeout_dial, o));
         efl_future_then(pd->connect.timeout, _efl_net_dialer_tcp_connect_timeout, NULL, NULL, o);
      }
 }
@@ -349,10 +338,7 @@ EOLIAN static void
 _efl_net_dialer_tcp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Tcp_Data *pd, Eina_Bool connected)
 {
    if (pd->connect.timeout)
-     {
-        efl_future_cancel(pd->connect.timeout);
-        pd->connect.timeout = NULL;
-     }
+     efl_future_cancel(pd->connect.timeout);
    if (pd->connected == connected) return;
    pd->connected = connected;
    if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
