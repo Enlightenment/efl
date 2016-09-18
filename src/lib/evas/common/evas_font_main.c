@@ -16,6 +16,7 @@
 #include FT_OUTLINE_H
 #include FT_SYNTHESIS_H
 #include FT_BITMAP_H
+#include FT_TRUETYPE_DRIVER_H
 
 FT_Library      evas_ft_lib = 0;
 static int      initialised = 0;
@@ -29,11 +30,14 @@ evas_common_font_init(void)
 {
    int error;
    const char *s;
+   FT_UInt interpreter_version = TT_INTERPRETER_VERSION_35;
 
    initialised++;
    if (initialised != 1) return;
    error = FT_Init_FreeType(&evas_ft_lib);
    if (error) return;
+   FT_Property_Set(evas_ft_lib,
+         "truetype", "interpreter-version", &interpreter_version);
    evas_common_font_load_init();
    evas_common_font_draw_init();
    s = getenv("EVAS_FONT_DPI");
