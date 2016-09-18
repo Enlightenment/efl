@@ -38,10 +38,8 @@ eina_slice_dup(const Eina_Slice slice)
    if (ret.len == 0) return ret;
 
    ret.mem = malloc(ret.len);
-   if (!ret.mem)
-     ret.len = 0;
-   else
-     memcpy(ret.mem, slice.mem, ret.len);
+   if (ret.mem) memcpy(ret.mem, slice.mem, ret.len);
+   else ret.len = 0;
 
    return ret;
 }
@@ -99,16 +97,13 @@ eina_slice_seek(const Eina_Slice slice, ssize_t offset, int whence)
         offset += slice.len;
      }
 
-   if (whence != SEEK_SET)
-     return ret;
-
-   if (offset < 0)
-     offset = 0;
-   else if ((size_t)offset > slice.len)
-     offset = slice.len;
-
-   ret.len = slice.len - offset;
-   ret.mem = (const void *)(slice.bytes + offset);
+   if (whence == SEEK_SET)
+     {
+        if ((size_t)offset > slice.len) offset = slice.len;
+        else if (offset < 0) offset = 0;
+        ret.len = slice.len - offset;
+        ret.mem = (const void *)(slice.bytes + offset);
+     }
    return ret;
 }
 
@@ -126,25 +121,23 @@ eina_rw_slice_seek(const Eina_Rw_Slice rw_slice, ssize_t offset, int whence)
         offset += rw_slice.len;
      }
 
-   if (whence != SEEK_SET)
-     return ret;
-
-   if (offset < 0)
-     offset = 0;
-   else if ((size_t)offset > rw_slice.len)
-     offset = rw_slice.len;
-
-   ret.len = rw_slice.len - offset;
-   ret.mem = (void *)(rw_slice.bytes + offset);
+   if (whence == SEEK_SET)
+     {
+        if ((size_t)offset > rw_slice.len) offset = rw_slice.len;
+        else if (offset < 0) offset = 0;
+        ret.len = rw_slice.len - offset;
+        ret.mem = (void *)(rw_slice.bytes + offset);
+     }
    return ret;
 }
 
 static inline const void *
 eina_slice_strchr(const Eina_Slice slice, int c)
 {
-   if (slice.len == 0) return NULL;
-   return memchr(slice.mem, c, slice.len);
+   if (slice.len != 0) return memchr(slice.mem, c, slice.len);
+   return NULL;
 }
+
 
 static inline const void *
 eina_slice_find(const Eina_Slice slice, const Eina_Slice needle)
@@ -152,62 +145,64 @@ eina_slice_find(const Eina_Slice slice, const Eina_Slice needle)
    Eina_Slice s, n;
    uint8_t c;
 
-   if (slice.len == 0) return NULL;
-   if (needle.len == 0) return NULL;
-   if (slice.len < needle.len) return NULL;
-   if (needle.len == 1) return eina_slice_strchr(slice, needle.bytes[0]);
-   if ((slice.len == needle.len) &&
-       (memcmp(slice.mem, needle.mem, needle.len) == 0))
-     return slice.mem;
-
-   s.mem = slice.mem;
-   s.len = slice.len - (needle.len - 1);
-
-   c = needle.bytes[0];
-   n.mem = (const void *)(needle.bytes + 1);
-   n.len = needle.len - 1;
-
-   while (s.len > 0)
+   if ((slice.len != 0) && (needle.len != 0) && (slice.len >= needle.len))
      {
-        const uint8_t *p = (const uint8_t *)eina_slice_strchr(s, c);
-        size_t offset;
+        if (needle.len == 1) return eina_slice_strchr(slice, needle.bytes[0]);
+        if ((slice.len == needle.len) &&
+            (memcmp(slice.mem, needle.mem, needle.len) == 0))
+          return slice.mem;
 
-        if (!p) return NULL;
+        s.mem = slice.mem;
+        s.len = slice.len - (needle.len - 1);
 
-        p++;
-        if (memcmp(p, n.mem, n.len) == 0)
-          return (const void *)(p - 1);
+        c = needle.bytes[0];
+        n.mem = (const void *)(needle.bytes + 1);
+        n.len = needle.len - 1;
 
-        offset = p - s.bytes;
-        s.bytes += offset;
-        s.len -= offset;
+        while (s.len > 0)
+          {
+             const uint8_t *p = (const uint8_t *)eina_slice_strchr(s, c);
+             size_t offset;
+
+             if (p)
+               {
+                  p++;
+                  if (memcmp(p, n.mem, n.len) == 0)
+                    return (const void *)(p - 1);
+
+                  offset = p - s.bytes;
+                  s.bytes += offset;
+                  s.len -= offset;
+                  continue;
+               }
+             break;
+          }
      }
-
    return NULL;
 }
 
 static inline Eina_Bool
 eina_slice_startswith(const Eina_Slice slice, const Eina_Slice prefix)
 {
-   if (prefix.len == 0) return EINA_FALSE;
-   if (slice.len < prefix.len) return EINA_FALSE;
-   return memcmp(slice.mem, prefix.mem, prefix.len) == 0;
+   if ((prefix.len != 0) && (slice.len >= prefix.len))
+     return memcmp(slice.mem, prefix.mem, prefix.len) == 0;
+   return EINA_FALSE;
 }
 
 static inline Eina_Bool
 eina_slice_endswith(const Eina_Slice slice, const Eina_Slice suffix)
 {
-   if (suffix.len == 0) return EINA_FALSE;
-   if (slice.len < suffix.len) return EINA_FALSE;
-   return memcmp(slice.bytes + slice.len - suffix.len,
-                 suffix.mem, suffix.len) == 0;
+   if ((suffix.len != 0) && (slice.len > suffix.len))
+     return memcmp(slice.bytes + slice.len - suffix.len,
+                   suffix.mem, suffix.len) == 0;
+   return EINA_FALSE;
 }
 
 static inline void *
 eina_rw_slice_strchr(const Eina_Rw_Slice rw_slice, int c)
 {
-   if (rw_slice.len == 0) return NULL;
-   return memchr(rw_slice.mem, c, rw_slice.len);
+   if (rw_slice.len != 0) return memchr(rw_slice.mem, c, rw_slice.len);
+   return NULL;
 }
 
 static inline void *
@@ -219,18 +214,18 @@ eina_rw_slice_find(const Eina_Rw_Slice rw_slice, const Eina_Slice needle)
 static inline Eina_Bool
 eina_rw_slice_startswith(const Eina_Rw_Slice rw_slice, const Eina_Slice prefix)
 {
-   if (prefix.len == 0) return EINA_FALSE;
-   if (rw_slice.len < prefix.len) return EINA_FALSE;
-   return memcmp(rw_slice.mem, prefix.mem, prefix.len) == 0;
+   if ((prefix.len != 0) && (rw_slice.len >= prefix.len))
+     return memcmp(rw_slice.mem, prefix.mem, prefix.len) == 0;
+   return EINA_FALSE;
 }
 
 static inline Eina_Bool
 eina_rw_slice_endswith(const Eina_Rw_Slice rw_slice, const Eina_Slice suffix)
 {
-   if (suffix.len == 0) return EINA_FALSE;
-   if (rw_slice.len < suffix.len) return EINA_FALSE;
-   return memcmp(rw_slice.bytes + rw_slice.len - suffix.len,
-                 suffix.mem, suffix.len) == 0;
+   if ((suffix.len != 0) && (rw_slice.len >= suffix.len))
+     return memcmp(rw_slice.bytes + rw_slice.len - suffix.len,
+                   suffix.mem, suffix.len) == 0;
+   return EINA_FALSE;
 }
 
 static inline const void *
@@ -248,19 +243,17 @@ eina_rw_slice_end_get(const Eina_Rw_Slice rw_slice)
 static inline char *
 eina_slice_strdup(const Eina_Slice slice)
 {
-   if (slice.len == 0)
-     return strdup("");
-   else
+   if (slice.len != 0)
      return strndup((const char *)slice.mem, slice.len);
+   return strdup("");
 }
 
 static inline char *
 eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice)
 {
-   if (rw_slice.len == 0)
-     return strdup("");
-   else
+   if (rw_slice.len != 0)
      return strndup((const char *)rw_slice.mem, rw_slice.len);
+   return strdup("");
 }
 
 #endif /* _EINA_INLINE_SLICE_H */

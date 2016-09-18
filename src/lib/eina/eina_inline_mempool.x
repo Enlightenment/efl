@@ -94,16 +94,14 @@ static inline void *
 eina_mempool_calloc(Eina_Mempool *mp, unsigned int size)
 {
    void *r = mp->backend.alloc(mp->backend_data, size);
-   if (!r) return NULL;
-   memset(r, 0, size);
+   if (r) memset(r, 0, size);
    return r;
 }
 
 static inline void
 eina_mempool_free(Eina_Mempool *mp, void *element)
 {
-   if (!element) return ;
-   mp->backend.free(mp->backend_data, element);
+   if (element) mp->backend.free(mp->backend_data, element);
 }
 
 static inline unsigned int
@@ -111,31 +109,33 @@ eina_mempool_alignof(unsigned int size)
 {
    unsigned int align;
 
-   if (EINA_UNLIKELY(size <= 2))
-     {
-        align = 2;
-     }
-   else if (EINA_UNLIKELY(size < 8))
-     {
-        align = 4;
-     }
-   else
 #if __WORDSIZE == 32
+   if (size >= 8)
      {
         align = 8;
+calc:
+        return ((size / align) + (size % align ? 1 : 0)) * align;
      }
-#else
-   if (EINA_UNLIKELY(size < 16))
-     {
-        align = 8;
-     }
-   else
+#else // __WORDSIZE == 64
+   if (size >= 16)
      {
         align = 16;
+calc:
+        return ((size / align) + (size % align ? 1 : 0)) * align;
+     }
+   else if (size >= 8)
+     {
+        align = 8;
+        goto calc;
      }
 #endif
-
-   return ((size / align) + (size % align ? 1 : 0)) * align;
+   else if (size >= 4)
+     {
+        align = 4;
+        goto calc;
+     }
+   align = 2;
+   goto calc;
 }
 
 #endif

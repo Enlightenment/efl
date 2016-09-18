@@ -136,6 +136,7 @@ lib/eina/eina_inlist.c \
 lib/eina/eina_iterator.c \
 lib/eina/eina_lalloc.c \
 lib/eina/eina_list.c \
+lib/eina/eina_lock.c \
 lib/eina/eina_log.c \
 lib/eina/eina_magic.c \
 lib/eina/eina_main.c \

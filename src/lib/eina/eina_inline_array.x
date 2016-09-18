@@ -44,29 +44,26 @@ EAPI Eina_Bool eina_array_grow(Eina_Array *array);
 static inline Eina_Bool
 eina_array_push(Eina_Array *array, const void *data)
 {
-   if (!data) return EINA_FALSE;
+   if (data)
+     {
+        if (EINA_UNLIKELY((array->count + 1) > array->total)) goto do_grow;
+do_grow_back:
 
-   if (EINA_UNLIKELY((array->count + 1) > array->total))
-     if (!eina_array_grow(array))
-       return EINA_FALSE;
+        array->data[array->count++] = (void*) data;
 
-   array->data[array->count++] = (void*) data;
-
-   return EINA_TRUE;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+do_grow:
+   if (!eina_array_grow(array)) return EINA_FALSE;
+   goto do_grow_back;
 }
 
 static inline void *
 eina_array_pop(Eina_Array *array)
 {
-   void *ret = NULL;
-
-   if (array->count <= 0)
-     goto on_empty;
-
-   ret = array->data[--array->count];
-
- on_empty:
-   return ret;
+   if (array->count > 0) return array->data[--array->count];
+   return NULL;
 }
 
 static inline void *
@@ -104,12 +101,11 @@ eina_array_foreach(Eina_Array *array, Eina_Each_Cb cb, void *fdata)
    Eina_Bool ret = EINA_TRUE;
 
    EINA_ARRAY_ITER_NEXT(array, i, data, iterator)
-     if (cb(array, data, fdata) != EINA_TRUE)
-       {
-	  ret = EINA_FALSE;
-	  break;
-       }
-
+     {
+        if (cb(array, data, fdata) == EINA_TRUE) continue;
+        ret = EINA_FALSE;
+        break;
+     }
    return ret;
 }
 

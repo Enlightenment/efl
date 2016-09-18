@@ -211,7 +211,7 @@ static inline Eina_Lock_Result eina_lock_release(Eina_Lock *mutex);
  *
  * @note If @c EINA_HAVE_DEBUG_THREADS is not defined, this function does nothing.
  */
-static inline void eina_lock_debug(const Eina_Lock *mutex);
+EAPI void eina_lock_debug(const Eina_Lock *mutex);
 
 /**
  * @brief Initializes a new condition variable.

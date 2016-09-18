@@ -92,8 +92,7 @@ static inline Eina_Bool
 eina_streq(const char *a, const char *b)
 {
    if (a == b) return EINA_TRUE;
-   if (!a) return EINA_FALSE;
-   if (!b) return EINA_FALSE;
+   if ((!a) || (!b)) return EINA_FALSE;
    return !strcmp(a, b);
 }
 

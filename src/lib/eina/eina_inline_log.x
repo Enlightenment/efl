@@ -84,9 +84,9 @@ static inline Eina_Bool
 eina_log_domain_level_check(int domain, int level)
 {
    int dom_level = eina_log_domain_registered_level_get(domain);
-   if (EINA_UNLIKELY(dom_level == EINA_LOG_LEVEL_UNKNOWN))
-     return EINA_FALSE;
-   return dom_level >= level;
+   if (EINA_LIKELY(dom_level != EINA_LOG_LEVEL_UNKNOWN))
+     return dom_level >= level;
+   return EINA_FALSE;
 }
 
 /**

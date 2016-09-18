@@ -22,9 +22,8 @@
 static inline Eina_Bool
 eina_rectangle_is_valid(const Eina_Rectangle *r)
 {
-	if (r->w <= 0 || r->h <= 0)
-		return EINA_FALSE;
-	return EINA_TRUE;
+   if ((r->w > 0) && (r->h > 0)) return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static inline int
@@ -36,7 +35,7 @@ eina_spans_intersect(int c1, int l1, int c2, int l2)
 static inline Eina_Bool
 eina_rectangle_is_empty(const Eina_Rectangle *r)
 {
-	return ((r->w < 1) || (r->h < 1)) ? EINA_TRUE : EINA_FALSE;
+   return !eina_rectangle_is_valid(r);
 }
 
 static inline void
@@ -98,39 +97,34 @@ eina_rectangle_union(Eina_Rectangle *dst, const Eina_Rectangle *src)
 static inline Eina_Bool
 eina_rectangle_intersection(Eina_Rectangle *dst, const Eina_Rectangle *src)
 {
-	if (!(eina_rectangle_is_valid(dst)) || !(eina_rectangle_is_valid(src)))
-		return EINA_FALSE;
+   if (eina_rectangle_is_valid(dst) && eina_rectangle_is_valid(src) &&
+       eina_rectangles_intersect(dst, src))
+     {
+        /* left */
+        if (dst->x < src->x)
+          {
+           dst->w += dst->x - src->x;
+           dst->x = src->x;
+           if (dst->w < 0) dst->w = 0;
+          }
+        /* right */
+        if ((dst->x + dst->w) > (src->x + src->w))
+          dst->w = src->x + src->w - dst->x;
+        /* top */
+        if (dst->y < src->y)
+          {
+             dst->h += dst->y - src->y;
+             dst->y = src->y;
+             if (dst->h < 0) dst->h = 0;
+          }
+        /* bottom */
+        if ((dst->y + dst->h) > (src->y + src->h))
+          dst->h = src->y + src->h - dst->y;
 
-	if (!(eina_rectangles_intersect(dst, src)))
-		return EINA_FALSE;
-
-	/* left */
-	if (dst->x < src->x)
-	{
-		dst->w += dst->x - src->x;
-		dst->x = src->x;
-		if (dst->w < 0)
-			dst->w = 0;
-	}
-	/* right */
-	if ((dst->x + dst->w) > (src->x + src->w))
-		dst->w = src->x + src->w - dst->x;
-	/* top */
-	if (dst->y < src->y)
-	{
-		dst->h += dst->y - src->y;
-		dst->y = src->y;
-		if (dst->h < 0)
-			dst->h = 0;
-	}
-	/* bottom */
-	if ((dst->y + dst->h) > (src->y + src->h))
-		dst->h = src->y + src->h - dst->y;
-
-	if (dst->w == 0 || dst->h == 0)
-		return EINA_FALSE;
-
-	return EINA_TRUE;
+        if ((dst->w == 0) || (dst->h == 0)) return EINA_FALSE;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 static inline void
@@ -218,57 +212,57 @@ eina_rectangle_height_cut(Eina_Rectangle *thiz, Eina_Rectangle *slice, Eina_Rect
 static inline Eina_Bool
 eina_rectangle_subtract(Eina_Rectangle *thiz, Eina_Rectangle *other, Eina_Rectangle out[4])
 {
-	Eina_Rectangle intersection;
-	Eina_Rectangle leftover = EINA_RECTANGLE_INIT;
-	Eina_Rectangle tmp;
-	int cut = 0;
+   Eina_Rectangle intersection;
+   Eina_Rectangle leftover = EINA_RECTANGLE_INIT;
+   Eina_Rectangle tmp;
+   int cut = 0;
 
-	if (!eina_rectangle_is_valid(thiz))
-		return EINA_FALSE;
+   if (eina_rectangle_is_valid(thiz))
+     {
+        eina_rectangle_coords_from(&out[0], 0, 0, 0, 0);
+        eina_rectangle_coords_from(&out[1], 0, 0, 0, 0);
+        eina_rectangle_coords_from(&out[2], 0, 0, 0, 0);
+        eina_rectangle_coords_from(&out[3], 0, 0, 0, 0);
+        intersection = *thiz;
+        if (!eina_rectangle_intersection(&intersection, other))
+          {
+             out[0] = *thiz;
+             return EINA_TRUE;
+          }
 
-	eina_rectangle_coords_from(&out[0], 0, 0, 0, 0);
-	eina_rectangle_coords_from(&out[1], 0, 0, 0, 0);
-	eina_rectangle_coords_from(&out[2], 0, 0, 0, 0);
-	eina_rectangle_coords_from(&out[3], 0, 0, 0, 0);
-	intersection = *thiz;
-	if (!eina_rectangle_intersection(&intersection, other))
-	{
-		out[0] = *thiz;
-		return EINA_TRUE;
-	}
-
-	/* cut in height */
-	{
-		cut = thiz->h - (intersection.y - thiz->y);
-		if (cut > thiz->h) { cut = thiz->h; }
-		eina_rectangle_height_cut(thiz, &leftover, &out[0], cut);
-	}
-	/* cut in y */
-	tmp = leftover;
-	if (eina_rectangle_intersection(&tmp, &intersection))
-	{
-		cut = leftover.h - (eina_rectangle_max_y(&leftover) - eina_rectangle_max_y(&tmp));
-		if (cut > leftover.h) { cut = leftover.h; }
-		eina_rectangle_y_cut(&leftover, &leftover, &out[1], cut);
-	}
-	/* cut in width */
-	tmp = leftover;
-	if (eina_rectangle_intersection(&tmp, &intersection))
-	{
-		cut = leftover.w - (tmp.x - leftover.x);
-		if (cut > leftover.w) { cut = leftover.w; }
-		eina_rectangle_width_cut(&leftover, &leftover, &out[2], cut);
-	}
-	/* cut in x */
-	tmp = leftover;
-	if (eina_rectangle_intersection(&tmp, &intersection))
-	{
-		cut = leftover.w - (eina_rectangle_max_x(&leftover) - eina_rectangle_max_x(&tmp));
-		if (cut > leftover.w) { cut = leftover.w; }
-		eina_rectangle_x_cut(&leftover, &leftover, &out[3], cut);
-	}
-
-	return EINA_TRUE;
+        /* cut in height */
+          {
+             cut = thiz->h - (intersection.y - thiz->y);
+             if (cut > thiz->h) cut = thiz->h;
+             eina_rectangle_height_cut(thiz, &leftover, &out[0], cut);
+          }
+        /* cut in y */
+        tmp = leftover;
+        if (eina_rectangle_intersection(&tmp, &intersection))
+          {
+             cut = leftover.h - (eina_rectangle_max_y(&leftover) - eina_rectangle_max_y(&tmp));
+             if (cut > leftover.h) cut = leftover.h;
+             eina_rectangle_y_cut(&leftover, &leftover, &out[1], cut);
+          }
+        /* cut in width */
+        tmp = leftover;
+        if (eina_rectangle_intersection(&tmp, &intersection))
+          {
+             cut = leftover.w - (tmp.x - leftover.x);
+             if (cut > leftover.w) cut = leftover.w;
+             eina_rectangle_width_cut(&leftover, &leftover, &out[2], cut);
+          }
+        /* cut in x */
+        tmp = leftover;
+        if (eina_rectangle_intersection(&tmp, &intersection))
+          {
+             cut = leftover.w - (eina_rectangle_max_x(&leftover) - eina_rectangle_max_x(&tmp));
+             if (cut > leftover.w) cut = leftover.w;
+             eina_rectangle_x_cut(&leftover, &leftover, &out[3], cut);
+          }
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 #endif

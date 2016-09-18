@@ -24,11 +24,12 @@ eina_inlist_first(const Eina_Inlist *list)
 {
    Eina_Inlist *l;
 
-   if (!list) return NULL;
-
-   for (l = (Eina_Inlist*)list; l->prev; l = l->prev);
-
-   return l;
+   if (list)
+     {
+        for (l = (Eina_Inlist*)list; l->prev; l = l->prev);
+        return l;
+     }
+   return NULL;
 }
 
 static inline Eina_Inlist *
@@ -36,11 +37,12 @@ eina_inlist_last(const Eina_Inlist *list)
 {
    Eina_Inlist *l;
 
-   if (!list) return NULL;
-
-   for (l = (Eina_Inlist*)list; l->next; l = l->next);
-
-   return l;
+   if (list)
+     {
+        for (l = (Eina_Inlist*)list; l->next; l = l->next);
+        return l;
+     }
+   return NULL;
 }
 
 #endif /* EINA_INLIST_INLINE_H_ */

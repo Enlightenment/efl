@@ -22,53 +22,55 @@
 static inline Eina_List *
 eina_list_last(const Eina_List *list)
 {
-   if (!list) return NULL;
-   return list->accounting->last;
+   if (list) return list->accounting->last;
+   return NULL;
 }
 
 static inline Eina_List *
 eina_list_next(const Eina_List *list)
 {
-   if (!list) return NULL;
-   return list->next;
+   if (list) return list->next;
+   return NULL;
 }
 
 static inline Eina_List *
 eina_list_prev(const Eina_List *list)
 {
-   if (!list) return NULL;
-   return list->prev;
+   if (list) return list->prev;
+   return NULL;
 }
 
 static inline void *
 eina_list_data_get(const Eina_List *list)
 {
-   if (!list) return NULL;
-   return list->data;
+   if (list) return list->data;
+   return NULL;
 }
 
 static inline void *
 eina_list_data_set(Eina_List *list, const void *data)
 {
-   void *tmp;
-   if (!list) return NULL;
-   tmp = list->data;
-   list->data = (void*) data;
-   return tmp;
+   if (list)
+     {
+        void *tmp = list->data;
+        list->data = (void *) data;
+        return tmp;
+     }
+   return NULL;
 }
 
 static inline unsigned int
 eina_list_count(const Eina_List *list)
 {
-   if (!list) return 0;
-   return list->accounting->count;
+   if (list) return list->accounting->count;
+   return 0;
 }
 
 static inline void *
 eina_list_last_data_get(const Eina_List *list)
 {
-   if (!list) return NULL;
-   return eina_list_data_get(eina_list_last(list));
+   if (list) return eina_list_data_get(eina_list_last(list));
+   return NULL;
 }
 
 #endif /* EINA_LIST_INLINE_H_ */
