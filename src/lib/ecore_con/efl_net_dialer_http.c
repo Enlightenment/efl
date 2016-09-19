@@ -181,6 +181,9 @@ typedef struct
    Eina_Stringshare *address_remote;
    Eina_Stringshare *method;
    Eina_Stringshare *user_agent;
+#ifdef HAVE_LIBPROXY
+   Ecore_Thread *libproxy_thread;
+#endif
    struct {
       struct curl_slist *headers;
       int64_t content_length;
@@ -1166,6 +1169,13 @@ _efl_net_dialer_http_efl_object_constructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 EOLIAN static void
 _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 {
+#ifdef HAVE_LIBPROXY
+   if (pd->libproxy_thread)
+     {
+        ecore_thread_cancel(pd->libproxy_thread);
+        pd->libproxy_thread = NULL;
+     }
+#endif
    if (pd->in_curl_callback)
      {
         DBG("deleting HTTP dialer=%p from CURL callback.", o);
@@ -1234,10 +1244,99 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    _secure_free(&pd->authentication.password);
 }
 
+static void
+_efl_net_dialer_http_curl_start(Eo *o, Efl_Net_Dialer_Http_Data *pd)
+{
+   Efl_Net_Dialer_Http_Curlm *cm;
+
+   // TODO: move this to be per-loop once multiple mainloops are supported
+   // this would need to attach something to the loop
+   cm = &_cm_global;
+   if (!cm->loop) cm->loop = efl_loop_user_loop_get(o);
+   if (!_efl_net_dialer_http_curlm_add(cm, o, pd->easy))
+     {
+        ERR("dialer=%p could not add curl easy handle to multi manager", o);
+        return;
+     }
+
+   pd->cm = cm;
+   DBG("started curl request easy=%p, cm=%p", pd->easy, pd->cm);
+}
+
+#ifdef HAVE_LIBPROXY
+typedef struct _Efl_Net_Dialer_Http_Libproxy_Context {
+   Eo *o;
+   char *url;
+   char *proxy;
+} Efl_Net_Dialer_Http_Libproxy_Context;
+
+static void
+_efl_net_dialer_http_libproxy_run(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Efl_Net_Dialer_Http_Libproxy_Context *ctx = data;
+   char **proxies = px_proxy_factory_get_proxies(_ecore_con_libproxy_factory, ctx->url);
+   char **itr;
+
+   if (!proxies) return;
+
+   for (itr = proxies; *itr != NULL; itr++)
+     {
+        if (itr != proxies) free(*itr);
+        else
+          {
+             if (strcmp(*itr, "direct://") != 0) ctx->proxy = *itr;
+             else
+               {
+                  /* NULL not "" so we let curl use envvars */
+                  ctx->proxy = NULL;
+                  free(*itr);
+               }
+          }
+     }
+   free(proxies);
+}
+
+static void
+_efl_net_dialer_http_libproxy_context_free(Efl_Net_Dialer_Http_Libproxy_Context *ctx)
+{
+   free(ctx->proxy);
+   free(ctx->url);
+   free(ctx);
+}
+
+static void
+_efl_net_dialer_http_libproxy_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Efl_Net_Dialer_Http_Libproxy_Context *ctx = data;
+   Eo *o = ctx->o;
+   Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
+
+   if (ctx->proxy)
+     {
+        CURLcode r = curl_easy_setopt(pd->easy, CURLOPT_PROXY, ctx->proxy);
+        if (r != CURLE_OK)
+          ERR("dialer=%p could not set proxy to '%s': %s",
+              o, ctx->proxy, curl_easy_strerror(r));
+        else
+          DBG("libproxy said %s for %s", ctx->proxy, pd->address_dial);
+     }
+
+   _efl_net_dialer_http_libproxy_context_free(ctx);
+
+   _efl_net_dialer_http_curl_start(o, pd);
+}
+
+static void
+_efl_net_dialer_http_libproxy_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Efl_Net_Dialer_Http_Libproxy_Context *ctx = data;
+   _efl_net_dialer_http_libproxy_context_free(ctx);
+}
+#endif
+
 EOLIAN static Eina_Error
 _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, const char *address)
 {
-   Efl_Net_Dialer_Http_Curlm *cm;
    CURLcode r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
@@ -1258,17 +1357,46 @@ _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, co
         return EINVAL;
      }
 
-   // TODO: move this to be per-loop once multiple mainloops are supported
-   // this would need to attach something to the loop
-   cm = &_cm_global;
-   if (!cm->loop) cm->loop = efl_loop_user_loop_get(o);
-   if (!_efl_net_dialer_http_curlm_add(cm, o, pd->easy))
+#ifdef HAVE_LIBPROXY
+   if (!pd->proxy)
      {
-        ERR("dialer=%p could not add curl easy handle to multi manager", o);
-        return ENOSYS;
-     }
+        Efl_Net_Dialer_Http_Libproxy_Context *ctx;
 
-   pd->cm = cm;
+        if (!_ecore_con_libproxy_factory)
+          _ecore_con_libproxy_factory = px_proxy_factory_new();
+
+        if (pd->libproxy_thread)
+          ecore_thread_cancel(pd->libproxy_thread);
+
+        ctx = calloc(1, sizeof(Efl_Net_Dialer_Http_Libproxy_Context));
+        EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, ENOMEM);
+
+        if (strstr(address, "://")) ctx->url = strdup(address);
+        else
+          {
+             ctx->url = malloc(strlen("http://") + strlen(address) + 1);
+             if (ctx->url)
+               {
+                  memcpy(ctx->url, "http://", strlen("http://"));
+                  memcpy(ctx->url + strlen("http://"), address, strlen(address) + 1);
+               }
+          }
+        EINA_SAFETY_ON_NULL_GOTO(ctx->url, url_error);
+
+        ctx->o = o;
+
+        pd->libproxy_thread = ecore_thread_run(_efl_net_dialer_http_libproxy_run,
+                                               _efl_net_dialer_http_libproxy_end,
+                                               _efl_net_dialer_http_libproxy_cancel,
+                                               ctx);
+        return 0;
+     url_error:
+        free(ctx);
+        return ENOMEM;
+     }
+#endif
+
+   _efl_net_dialer_http_curl_start(o, pd);
 
    DBG("HTTP dialer=%p, curl_easy=%p, address='%s'",
        o, pd->easy, pd->address_dial);
