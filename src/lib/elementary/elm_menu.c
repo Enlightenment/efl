@@ -701,10 +701,13 @@ _elm_menu_efl_canvas_group_group_del(Eo *obj, Elm_Menu_Data *sd)
 
    _elm_dbus_menu_unregister(obj);
 
-   evas_object_event_callback_del_full
-     (sd->parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
-   evas_object_event_callback_del_full
-     (sd->parent, EVAS_CALLBACK_DEL, _parent_del_cb, obj);
+   if (sd->parent)
+     {
+        evas_object_event_callback_del_full
+           (sd->parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
+        evas_object_event_callback_del_full
+           (sd->parent, EVAS_CALLBACK_DEL, _parent_del_cb, obj);
+     }
 
    EINA_LIST_FREE(sd->items, eo_item)
      _item_del(eo_item);
