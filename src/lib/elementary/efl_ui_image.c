@@ -52,7 +52,6 @@ struct _Async_Open_Data
    Eina_Stringshare *file, *key;
    Eina_File        *f_set, *f_open;
    void             *map;
-   unsigned char     sum;
 };
 
 static void
@@ -249,7 +248,7 @@ _efl_ui_image_async_open_do(void *data, Ecore_Thread *thread)
    Async_Open_Data *todo = data;
    Eina_File *f;
    void *map = NULL;
-   size_t i, size;
+   size_t size;
 
    if (ecore_thread_check(thread)) return;
 
@@ -288,7 +287,6 @@ _efl_ui_image_async_open_do(void *data, Ecore_Thread *thread)
      }
    todo->f_open = f;
    todo->map = map;
-   todo->sum = sum;
 }
 
 static void
