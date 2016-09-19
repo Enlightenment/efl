@@ -37,9 +37,9 @@ struct Efl.Dbg_Info {
 type Efl.Callback_Priority: short; [[Callback priority value. Range is -32k - 32k.
                                     The lower the number, the higher the priority.
 
-                                    See \@ref EO_CALLBACK_PRIORITY_AFTER,
-                                    \@ref EO_CALLBACK_PRIORITY_BEFORE
-                                    \@ref EO_CALLBACK_PRIORITY_DEFAULT
+                                    See \@ref EFL_CALLBACK_PRIORITY_AFTER,
+                                    \@ref EFL_CALLBACK_PRIORITY_BEFORE
+                                    \@ref EFL_CALLBACK_PRIORITY_DEFAULT
                                   ]]
 
 abstract Efl.Object ()
