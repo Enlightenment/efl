@@ -10263,6 +10263,7 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
    Edje_Part_Image_Id **tmp;
    Edje_Part_Image_Id *i;
    int id;
+   Eina_Bool set = EINA_FALSE;
 
    GET_PD_OR_RETURN(EINA_FALSE);
 
@@ -10270,12 +10271,19 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
      return EINA_FALSE;
 
    id = _edje_image_id_find(eed, tween);
+   if (id < EINA_FALSE)
+     {
+        set = EINA_TRUE;
+        id = _edje_set_id_find(eed, tween);
+     }
+
    if (id < EINA_FALSE) return 0;
 
    /* alloc Edje_Part_Image_Id */
    i = _alloc(sizeof(Edje_Part_Image_Id));
    if (!i) return EINA_FALSE;
    i->id = id;
+   i->set = set;
 
    img = (Edje_Part_Description_Image *)pd;
 
@@ -10361,7 +10369,10 @@ edje_edit_state_tween_del(Evas_Object *obj, const char *part, const char *state,
 
    if (!img->image.tweens_count) return EINA_FALSE;
 
-   search = _edje_image_id_find(eed, tween);
+   search = _edje_set_id_find(eed, tween);
+   if (search < 0)
+     search = _edje_image_id_find(eed, tween);
+
    if (search < 0) return EINA_FALSE;
 
    for (i = 0; i < img->image.tweens_count; ++i)
