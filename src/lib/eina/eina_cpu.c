@@ -323,6 +323,7 @@ eina_cpu_map_init(void)
    fastest_core_speed = -1;
 
 #if defined (__linux__) || defined(__GLIBC__)
+   FILE *f = NULL;
    Eina_Iterator *it;
    Eina_Strbuf *fname;
    const Eina_File_Direct_Info *f_info;
@@ -339,7 +340,6 @@ eina_cpu_map_init(void)
             eina_str_has_prefix(f_info->path,
                                 "/sys/devices/system/cpu/cpufreq/policy"))
           {
-             FILE *f;
              int num, speed;
 
              eina_strbuf_append_printf(fname, "%s%s", f_info->path, "/cpuinfo_max_freq");
@@ -349,6 +349,7 @@ eina_cpu_map_init(void)
              speed = -1;
              num = fscanf(f, "%d", &speed);
              fclose(f);
+             f = NULL;
              if ((num != 1) || (speed == -1)) goto err;
 
              slowest_core_speed = MIN(speed, slowest_core_speed);
@@ -370,15 +371,17 @@ eina_cpu_map_init(void)
                     {
                        corelist = malloc(sizeof(*corelist));
                        if (!corelist) goto err;
-                       *corelist = 1 << core;
+                       *corelist = 1LL << core;
                        eina_hash_add(cpu_hash, &speed, corelist);
                     }
-                  *corelist |= 1 << core;
+                  *corelist |= 1LL << core;
                } while (num != EOF);
              fclose(f);
+             f = NULL;
           }
      }
 err:
+   if (f) fclose(f);
    eina_strbuf_free(fname);
    eina_iterator_free(it);
 #endif
