@@ -211,7 +211,7 @@ START_TEST(ecore_test_timeout)
 END_TEST
 
 static void
-_ecore_promise_then(void *data EINA_UNUSED, void *value EINA_UNUSED)
+_ecore_promise_then(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    abort();
 }
