@@ -1,5 +1,4 @@
 #include "evas_common_private.h"
-#include "eina_cpu_private.h"
 
 #include <assert.h>
 
@@ -126,8 +125,6 @@ out:
 void
 evas_thread_init(void)
 {
-    int core;
-
     if (init_count++) return;
 
     eina_threads_init();
@@ -138,9 +135,7 @@ evas_thread_init(void)
       CRI("Could not create draw thread lock");
     if (!eina_condition_new(&evas_thread_queue_condition, &evas_thread_queue_lock))
       CRI("Could not create draw thread condition");
-
-    core = _eina_cpu_fast_core_get();
-    if (!eina_thread_create(&evas_thread_worker, EINA_THREAD_NORMAL, core,
+    if (!eina_thread_create(&evas_thread_worker, EINA_THREAD_NORMAL, 0,
           evas_thread_worker_func, NULL))
       if (!eina_thread_create(&evas_thread_worker, EINA_THREAD_NORMAL, -1,
             evas_thread_worker_func, NULL))
