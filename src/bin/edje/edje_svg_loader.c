@@ -1734,7 +1734,7 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
    const char *attrs = NULL;
    int attrs_length = 0;
    int sz = length;
-   char tag_name[20];
+   char tag_name[20] = "";
    Factory_Method method;
    Gradient_Factory_Method gradient_method;
    Svg_Node *node = NULL, *parent;
