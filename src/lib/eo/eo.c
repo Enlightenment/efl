@@ -1708,7 +1708,7 @@ _efl_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj
                          ((char *)data < (((char *) obj) + klass->obj_size)));
    if (!in_range)
      {
-        ERR("Data %p is not in the data range of the object %p (%s).", data, (Eo *)obj->headr.id, obj->klass->desc->name);
+        ERR("Data %p is not in the data range of the object %p (%s).", data, (Eo *)obj->header.id, obj->klass->desc->name);
      }
 #else
    (void) obj;
