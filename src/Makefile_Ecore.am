@@ -19,8 +19,7 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_io_stdout.eo \
 	lib/ecore/efl_io_stderr.eo \
 	lib/ecore/efl_io_file.eo \
-        lib/ecore/efl_io_copier.eo \
-	lib/ecore/ecore_parent.eo
+        lib/ecore/efl_io_copier.eo
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_public) \

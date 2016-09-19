@@ -59,8 +59,6 @@ static FILE *_ecore_memory_statistic_file = NULL;
 
 static Eina_Bool _no_system_modules = EINA_FALSE;
 
-Eo *_ecore_parent = NULL;
-
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
 static int _ecore_init_count_threshold = 0;
@@ -278,7 +276,6 @@ ecore_init(void)
 #if defined(GLIB_INTEGRATION_ALWAYS)
    if (_ecore_glib_always_integrate) ecore_main_loop_glib_integrate();
 #endif
-   _ecore_parent = efl_add(ECORE_PARENT_CLASS, NULL);
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
    if (getenv("ECORE_MEM_STAT"))
@@ -440,7 +437,6 @@ ecore_shutdown(void)
      eina_prefix_free(_ecore_pfx);
      _ecore_pfx = NULL;
 
-     efl_unref(_ecore_parent);
      efl_object_shutdown();
 
      eina_shutdown();
@@ -1063,5 +1059,3 @@ ecore_memory_state_set(Ecore_Memory_State state)
    _ecore_memory_state = state;
    ecore_event_add(ECORE_EVENT_MEMORY_STATE, NULL, NULL, NULL);
 }
-
-#include "ecore_parent.eo.c"

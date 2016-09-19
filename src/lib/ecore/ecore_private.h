@@ -366,10 +366,7 @@ GENERIC_ALLOC_FREE_HEADER(Ecore_Win32_Handler, ecore_win32_handler);
 #undef GENERIC_ALLOC_FREE_HEADER
 
 extern Eo *_mainloop_singleton;
-extern Eo *_ecore_parent;
 extern Efl_Version _app_efl_version;
-#define ECORE_PARENT_CLASS ecore_parent_class_get()
-EAPI const Efl_Class *ecore_parent_class_get(void) EINA_CONST;
 
 void ecore_loop_future_register(Efl_Loop *l EINA_UNUSED, Efl_Future *f);
 void ecore_loop_future_unregister(Efl_Loop *l EINA_UNUSED, Efl_Future *f);
