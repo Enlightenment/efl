@@ -254,6 +254,11 @@ extern int sd_fd_index;
 extern int sd_fd_max;
 #endif
 
+#ifdef HAVE_LIBPROXY
+# include <proxy.h>
+extern pxProxyFactory *_ecore_con_libproxy_factory;
+#endif
+
 extern Ecore_Con_Socks *_ecore_con_proxy_once;
 extern Ecore_Con_Socks *_ecore_con_proxy_global;
 void ecore_con_socks_init(void);

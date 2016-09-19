@@ -191,6 +191,10 @@ int _ecore_con_log_dom = -1;
 Ecore_Con_Socks *_ecore_con_proxy_once = NULL;
 Ecore_Con_Socks *_ecore_con_proxy_global = NULL;
 
+#ifdef HAVE_LIBPROXY
+pxProxyFactory *_ecore_con_libproxy_factory = NULL;
+#endif
+
 EAPI int
 ecore_con_init(void)
 {
@@ -274,6 +278,14 @@ ecore_con_shutdown(void)
      }
    if (--_ecore_con_init_count != 0)
      return _ecore_con_init_count;
+
+#ifdef HAVE_LIBPROXY
+   if (_ecore_con_libproxy_factory)
+     {
+        px_proxy_factory_free(_ecore_con_libproxy_factory);
+        _ecore_con_libproxy_factory = NULL;
+     }
+#endif
 
    eina_log_timing(_ecore_con_log_dom,
                    EINA_LOG_STATE_START,
@@ -4432,12 +4444,32 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
    EINA_THREAD_CLEANUP_POP(EINA_TRUE); /* free(str) */
 }
 
+#ifdef HAVE_LIBPROXY
+static void
+_cleanup_proxies(void *data)
+{
+   char **proxies = data;
+   char **itr;
+
+   if (!proxies) return;
+
+   for (itr = proxies; *itr != NULL; itr++)
+     free(*itr);
+   free(proxies);
+}
+#endif
+
 static void
 _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Efl_Net_Ip_Connect_Async_Data *d = data;
    const char *host, *port, *proxy;
    char *addrcopy;
+#ifdef HAVE_LIBPROXY
+   char **proxies = NULL;
+   int proxies_idx = 0;
+   Eina_Bool is_libproxy = EINA_FALSE;
+#endif
 
    addrcopy = strdup(d->address);
    if (!addrcopy)
@@ -4453,8 +4485,52 @@ _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
         return;
      }
    if (!port) port = "0";
+   EINA_THREAD_CLEANUP_PUSH(free, addrcopy);
 
    proxy = d->proxy;
+
+#ifdef HAVE_LIBPROXY
+   if ((!proxy) && (_ecore_con_libproxy_factory))
+     {
+        /* libproxy is thread-safe but not cancellable.  the provided
+         * parameter must be a URL with schema, otherwise it won't
+         * return anything.
+         */
+        char *url;
+
+        asprintf(&url, "%s://%s:%s", d->protocol == IPPROTO_UDP ? "udp" : "tcp", host, port);
+        proxies = px_proxy_factory_get_proxies(_ecore_con_libproxy_factory, url);
+        free(url);
+     }
+
+   EINA_THREAD_CLEANUP_PUSH(_cleanup_proxies, proxies);
+ next_proxy:
+   if ((!proxy) && (proxies) && (proxies_idx >= 0))
+     {
+        proxy = proxies[proxies_idx];
+        if (!proxy)
+          {
+             is_libproxy = EINA_FALSE;
+             proxies_idx = -1;
+          }
+        else
+          {
+             if (strcmp(proxy, "direct://") == 0)
+               {
+                  /* give a chance to try envvars */
+                  proxy = NULL;
+                  is_libproxy = EINA_FALSE;
+               }
+             else
+               {
+                  DBG("libproxy said %s for host='%s' port='%s'", proxy, host, port);
+                  is_libproxy = EINA_TRUE;
+               }
+             proxies_idx++;
+          }
+     }
+#endif
+
    if (!proxy)
      {
         proxy = d->proxy_env;
@@ -4464,10 +4540,11 @@ _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
           {
              if (_efl_net_ip_no_proxy(host, d->no_proxy_strv))
                proxy = "";
+             else
+               DBG("using proxy %s from envvar", proxy);
           }
      }
 
-   EINA_THREAD_CLEANUP_PUSH(free, addrcopy);
    /* allows ecore_thread_cancel() to cancel at some points, see
     * man:pthreads(7).
     */
@@ -4483,6 +4560,12 @@ _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
      _efl_net_ip_connect_async_run_socks4a(d, host, port, proxy + strlen("socks4a://"));
    else if (eina_str_has_prefix(proxy, "socks5h://"))
      _efl_net_ip_connect_async_run_socks5h(d, host, port, proxy + strlen("socks5h://"));
+   else if (eina_str_has_prefix(proxy, "socks://"))
+     {
+        _efl_net_ip_connect_async_run_socks5(d, host, port, proxy + strlen("socks://"));
+        if (d->error)
+          _efl_net_ip_connect_async_run_socks4(d, host, port, proxy + strlen("socks://"));
+     }
    else if (!strstr(proxy, "://"))
      {
         _efl_net_ip_connect_async_run_socks5(d, host, port, proxy);
@@ -4498,6 +4581,14 @@ _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
           }
         else
           {
+#ifdef HAVE_LIBPROXY
+             if (is_libproxy)
+               {
+                  DBG("libproxy said %s but it's not supported, try next proxy", proxy);
+                  proxy = NULL;
+                  goto next_proxy;
+               }
+#endif
              /* maybe bogus envvar, ignore it */
              WRN("proxy protocol not supported '%s', connect directly", proxy);
              _efl_net_ip_connect_async_run_direct(d, host, port);
@@ -4506,11 +4597,23 @@ _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    if ((d->error) && (!d->proxy) && (proxy[0] != '\0'))
      {
+#ifdef HAVE_LIBPROXY
+        if (is_libproxy)
+          {
+             DBG("libproxy said %s but it failed, try next proxy", proxy);
+             proxy = NULL;
+             goto next_proxy;
+          }
+#endif
+
         WRN("error using proxy '%s' from environment, try direct connect", proxy);
         _efl_net_ip_connect_async_run_direct(d, host, port);
      }
 
    eina_thread_cancellable_set(EINA_FALSE, NULL);
+#ifdef HAVE_LIBPROXY
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
+#endif
    EINA_THREAD_CLEANUP_POP(EINA_TRUE);
 }
 
@@ -4610,6 +4713,11 @@ efl_net_ip_connect_async_new(const char *address, const char *proxy, const char 
 
    d->sockfd = -1;
    d->error = 0;
+
+#ifdef HAVE_LIBPROXY
+   if (!_ecore_con_libproxy_factory)
+     _ecore_con_libproxy_factory = px_proxy_factory_new();
+#endif
 
    return ecore_thread_run(_efl_net_ip_connect_async_run,
                            _efl_net_ip_connect_async_end,
