@@ -399,26 +399,6 @@ Eina_Bool efl_net_ip_port_split(char *buf, const char **p_host, const char **p_p
 int efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec);
 
 /**
- * @brief callback to notify of resolved address.
- *
- * The callback is given the ownership of the result, thus must free
- * it with freeaddrinfo().
- *
- * @internal
- */
-typedef void (*Efl_Net_Resolve_Async_Cb)(void *data, const char *host, const char *port, const struct addrinfo *hints, struct addrinfo *result, int gai_error);
-
-/**
- * @brief asynchronously resolve a host and port using getaddrinfo().
- *
- * This will call getaddrinfo() in a thread, taking care to return the
- * result to the main loop and calling @a cb with given user @a data.
- *
- * @internal
- */
-Ecore_Thread *efl_net_resolve_async_new(const char *host, const char *port, const struct addrinfo *hints, Efl_Net_Resolve_Async_Cb cb, const void *data);
-
-/**
  * @brief callback to notify of connection.
  *
  * The callback is given the ownership of the socket (sockfd), thus
@@ -435,9 +415,45 @@ typedef void (*Efl_Net_Connect_Async_Cb)(void *data, const struct sockaddr *addr
  * return the result to the main loop and calling @a cb with given
  * user @a data.
  *
+ * For name resolution and proxy support use
+ * efl_net_ip_connect_async_new()
+ *
  * @internal
  */
 Ecore_Thread *efl_net_connect_async_new(const struct sockaddr *addr, socklen_t addrlen, int type, int protocol, Eina_Bool close_on_exec, Efl_Net_Connect_Async_Cb cb, const void *data);
+
+/**
+ * @brief asynchronously create a socket and connect to the IP address.
+ *
+ * This wil resolve the address using getaddrinfo(), create a socket
+ * and connect in a thread.
+ *
+ * If a @a proxy is given, then it's always used. Otherwise the
+ * environment variable @a proxy_env is used unless it matches @a
+ * no_proxy_env. Some systems may do special queries for proxy from
+ * the thread.
+ *
+ * @param address the host:port to connect. Host may be a name or an
+ *        IP address, IPv6 addresses should be enclosed in braces.
+ * @param proxy a mandatory proxy to use. If "" (empty string), it's
+ *        disabled. If NULL, then @a proxy_env is used unless it
+ *        matches @a no_proxy_env.
+ * @param proxy_env if @a proxy is NULL, then this will be used as the
+ *        proxy unless it matches @a no_proxy_env.
+ * @param no_proxy_env a comma-separated list of matches that will
+ *        avoid using @a proxy_env. "server.com" will inhibit proxy
+ *        for "server.com", "host.server.com" but not "xserver.com".
+ * @param type the socket type, such as SOCK_STREAM or SOCK_DGRAM.
+ * @param protocol the socket protocol, such as IPPROTO_TCP.
+ * @param close_on_exec if EINA_TRUE, will set SOCK_CLOEXEC.
+ * @param cb the callback to report connection
+ * @param data data to give to callback
+ *
+ * @return an Ecore_Thread that will execute the connection.
+ *
+ * @internal
+ */
+Ecore_Thread *efl_net_ip_connect_async_new(const char *address, const char *proxy, const char *proxy_env, const char *no_proxy_env, int type, int protocol, Eina_Bool close_on_exec, Efl_Net_Connect_Async_Cb cb, const void *data);
 
 static inline Eina_Error
 efl_net_socket_error_get(void)
