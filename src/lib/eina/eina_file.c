@@ -333,12 +333,14 @@ _eina_file_map_populate(char *map, unsigned int size, Eina_Bool hugetlb)
    unsigned int i;
    unsigned int s;
 
+   if (size == 0) return 0;
+
    s = hugetlb ? EINA_HUGE_PAGE : EINA_SMALL_PAGE;
 
    for (i = 0; i < size; i += s)
      r ^= map[i];
 
-   r ^= map[size];
+   r ^= map[size - 1];
 
    return r;
 }
