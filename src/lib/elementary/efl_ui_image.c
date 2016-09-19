@@ -249,7 +249,6 @@ _efl_ui_image_async_open_do(void *data, Ecore_Thread *thread)
    Async_Open_Data *todo = data;
    Eina_File *f;
    void *map = NULL;
-   unsigned char *p, sum = 0;
    size_t i, size;
 
    if (ecore_thread_check(thread)) return;
@@ -273,17 +272,13 @@ _efl_ui_image_async_open_do(void *data, Ecore_Thread *thread)
      }
 
    // Read just enough data for map to actually do something.
-   p = map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    size = eina_file_size_get(f);
    // Read and ensure all pages are in memory for sure first just
    // 1 byte per page will do. also keep a limit on how much we will
-   // blindly load in here to let's say 512M
-   if (size > (512 * 1024 * 1024)) size = 512 * 1024 * 1024;
-   for (i = 0; i < size; i += 4096)
-     {
-        if (ecore_thread_check(thread)) break;
-        sum += p[i];
-     }
+   // blindly load in here to let's say 32KB (Should be enough to get
+   // image headers without getting to much data from the hard drive).
+   size = size > 32 * 1024 ? 32 * 1024 : size;
+   map = eina_file_map_new(f, EINA_FILE_POPULATE, 0, size);
 
    if (ecore_thread_check(thread))
      {
