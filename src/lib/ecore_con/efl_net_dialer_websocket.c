@@ -1493,7 +1493,6 @@ static void
 _efl_net_dialer_websocket_close_request_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *o = data;
-   Efl_Net_Dialer_Websocket_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
    DBG("server did not close the TCP socket, timeout");
    efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
