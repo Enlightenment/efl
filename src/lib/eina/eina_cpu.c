@@ -396,6 +396,9 @@ _eina_cpu_fast_core_get(void)
 
    if (fastest_core_speed == 0) eina_cpu_map_init();
 
+   /* Check again now that it's actually set up */
+   if (fastest_core_speed == -1) return -1;
+
    corelist = eina_hash_find(cpu_hash, &fastest_core_speed);
    cores = *corelist;
    bit = rand() % __builtin_popcount(cores);
