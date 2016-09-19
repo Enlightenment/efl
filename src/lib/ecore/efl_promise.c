@@ -98,13 +98,13 @@ _efl_loop_future_success(Efl_Event *ev, Efl_Loop_Future_Data *pd, void *value)
           {
              chain_success.next = cb->next;
 
-             cb->success((void*) cb->data, ev);
+             if (cb->success) cb->success((void*) cb->data, ev);
           }
         else
           {
              chain_success.next = NULL;
              chain_success.value = pd->message;
-             cb->success((void*) cb->data, ev);
+             if (cb->success) cb->success((void*) cb->data, ev);
              chain_success.value = value;
           }
 
@@ -128,7 +128,7 @@ _efl_loop_future_failure(Efl_Event *ev, Efl_Loop_Future_Data *pd, Eina_Error err
      {
         chain_fail.next = cb->next;
 
-        cb->failure((void*) cb->data, ev);
+        if (cb->failure) cb->failure((void*) cb->data, ev);
 
         pd->callbacks = eina_inlist_remove(pd->callbacks, pd->callbacks);
         free(cb);
@@ -600,7 +600,7 @@ _efl_promise_progress_set(Eo *obj, Efl_Promise_Data *pd, const void *p)
                {
                   chain_progress.next = cb->next;
 
-                  cb->progress((void*) cb->data, &ev);
+                  if (cb->progress) cb->progress((void*) cb->data, &ev);
                }
           }
      }
