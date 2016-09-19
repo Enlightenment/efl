@@ -7,6 +7,7 @@
 
 #include "main.h"
 #include "types.h"
+#include "headers.h"
 
 int _eolian_gen_log_dom = -1;
 
@@ -133,6 +134,27 @@ _include_guard(const char *fname, const char *gname, Eina_Strbuf *buf)
    return g;
 }
 
+static const char *
+_get_filename(const char *path)
+{
+   if (!path)
+     return NULL;
+   const char *ret1 = strrchr(path, '/');
+   const char *ret2 = strrchr(path, '\\');
+   if (!ret1 && !ret2)
+     return path;
+   if (ret1 && ret2)
+     {
+        if (ret1 > ret2)
+          return ret1 + 1;
+        else
+          return ret2 + 1;
+     }
+   if (ret1)
+     return ret1 + 1;
+   return ret2 + 1;
+}
+
 static Eina_Bool
 _write_file(const char *fname, const Eina_Strbuf *buf, Eina_Bool append)
 {
@@ -232,9 +254,19 @@ _write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
         eina_strbuf_free(cltd);
      }
 
-   Eina_Bool ret = _write_file(ofname, buf, EINA_FALSE);
-   eina_strbuf_free(buf);
-   return ret;
+   const Eolian_Class *cl = eolian_class_get_by_file(ifname);
+   eo_gen_header_gen(cl, buf, legacy);
+   if (cl || !legacy)
+     {
+        buf = _include_guard(_get_filename(ofname), NULL, buf);
+        if (_write_file(ofname, buf, EINA_FALSE))
+          {
+             eina_strbuf_free(buf);
+             return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -391,9 +423,9 @@ main(int argc, char **argv)
    char *inoext = strdup(input);
    inoext[ext - input] = '\0';
    _fill_all_outs(outs, inoext);
+   free(inoext);
 
-   inoext[ext - input] = '.';
-   char *eobn = basename(inoext);
+   const char *eobn = _get_filename(input);
 
    if (!gen_what)
      gen_what = GEN_H | GEN_H_LEGACY | GEN_C;
