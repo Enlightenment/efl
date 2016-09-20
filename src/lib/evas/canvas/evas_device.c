@@ -36,19 +36,36 @@ _del_cb(void *data, const Efl_Event *ev)
 EAPI Evas_Device *
 evas_device_add(Evas *eo_e)
 {
+   return evas_device_full_add(eo_e, NULL, NULL, NULL, NULL,
+                               EVAS_DEVICE_CLASS_NONE,
+                               EVAS_DEVICE_SUBCLASS_NONE);
+}
+
+EAPI Evas_Device *
+evas_device_full_add(Evas *eo_e, const char *name, const char *desc,
+                     Evas_Device *parent_dev, Evas_Device *emulation_dev,
+                     Evas_Device_Class clas, Evas_Device_Subclass sub_clas)
+{
    Efl_Input_Device_Data *d;
    Evas_Public_Data *e;
    Evas_Device *dev;
 
    SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
 
-   dev = efl_add(EFL_INPUT_DEVICE_CLASS, eo_e);
+   dev = efl_add(EFL_INPUT_DEVICE_CLASS, eo_e,
+                 efl_input_device_name_set(efl_added, name),
+                 efl_input_device_description_set(efl_added, desc),
+                 efl_input_device_type_set(efl_added, clas),
+                 efl_input_device_subtype_set(efl_added, sub_clas),
+                 efl_input_device_source_set(efl_added, emulation_dev),
+                 efl_input_device_parent_set(efl_added, parent_dev));
 
    d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    d->evas = eo_e;
 
    e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   e->devices = eina_list_append(e->devices, dev);
+   if (!parent_dev)
+     e->devices = eina_list_append(e->devices, dev);
    efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
 
    evas_event_callback_call(eo_e, EVAS_CALLBACK_DEVICE_CHANGED, dev);

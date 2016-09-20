@@ -1126,9 +1126,37 @@ EAPI void              evas_render_updates_free(Eina_List *updates);
  * @return the device node created or NULL if an error occurred.
  *
  * @see evas_device_del
+ * @see evas_device_full_add
  * @since 1.8
  */
 EAPI Evas_Device *evas_device_add(Evas *e);
+
+/**
+ * Add a new device type
+ *
+ * @param e The canvas to create the device node for.
+ * @param name The name of the device.
+ * @param desc The description of the device.
+ * @param parent_dev The parent device.
+ * @param emulation_dev The source device.
+ * @param clas The device class.
+ * @param sub_class  The device subclass.
+ *
+ * Adds a new device node to the given canvas @p e. All devices created as
+ * part of the canvas @p e will automatically be deleted when the canvas
+ * is freed.
+ *
+ * @return the device node created or NULL if an error occurred.
+ *
+ * @see evas_device_del
+ * @since 1.19
+ */
+EAPI Evas_Device *evas_device_full_add(Evas *eo_e, const char *name,
+                                       const char *desc,
+                                       Evas_Device *parent_dev,
+                                       Evas_Device *emulation_dev,
+                                       Evas_Device_Class clas,
+                                       Evas_Device_Subclass sub_clas);
 
 /**
  * Delete a new device type
