@@ -101,6 +101,8 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
    Evas_Filter_Data *pd = efl_data_scope_get(eo_obj, MY_CLASS);
    Evas_Filter_Post_Render_Data *post_data;
 
+   if (!pd)
+     return;
    if (!pd->data->async)
      {
         _filter_end_sync(ctx, obj, pd, success);
