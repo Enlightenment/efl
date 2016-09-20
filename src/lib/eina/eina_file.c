@@ -310,10 +310,10 @@ _eina_file_map_close(Eina_File_Map *map)
 
 #ifndef MAP_POPULATE
 static unsigned int
-_eina_file_map_populate(char *map, unsigned int size, Eina_Bool hugetlb)
+_eina_file_map_populate(char *map, unsigned long int size, Eina_Bool hugetlb)
 {
    unsigned int r = 0xDEADBEEF;
-   unsigned int i;
+   unsigned long int i;
    unsigned int s;
 
    if (size == 0) return 0;
