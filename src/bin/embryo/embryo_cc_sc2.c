@@ -1005,7 +1005,7 @@ command(void)
 			    int                 i;
 
 			    for (i = 0; 
-                                 (i < (int)(sizeof(name))) && 
+                                 (i < (int)(sizeof(name)) - 1) && 
                                  (alphanum(*lptr));
 				 i++, lptr++)
 			       name[i] = *lptr;
