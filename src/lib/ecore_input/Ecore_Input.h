@@ -9,6 +9,8 @@
 
 #include <Eina.h>
 
+#include <Eo.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -209,6 +211,8 @@ extern "C" {
         unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
 
         void            *data; /**< User data associated with an Ecore_Event_Key @since 1.10 */
+
+        Eo *dev; /**< The Efl_Input_Device that originated the event @since 1.19 */
      };
 
    /**
@@ -245,6 +249,8 @@ extern "C" {
               double     x, y;
            } root; /**< same as root.x, root.y, but with sub-pixel precision, if available */
         } multi;
+
+        Eo *dev; /**< The Efl_Input_Device that originated the event @since 1.19 */
      };
 
    /**
@@ -270,6 +276,8 @@ extern "C" {
            int           x;
            int           y;
         } root; /**< Coordinates relative to root window */
+
+        Eo *dev; /**< The Efl_Input_Device that originated the event @since 1.19 */
      };
 
    /**
@@ -304,6 +312,8 @@ extern "C" {
               double     x, y;
            } root;
         } multi;
+
+        Eo *dev; /**< The Efl_Input_Device that originated the event @since 1.19 */
      };
 
    typedef enum _Ecore_Axis_Label
@@ -344,6 +354,8 @@ extern "C" {
 
         int naxis;
         Ecore_Axis *axis;
+
+        Eo *dev; /**< The Efl_Input_Device that originated the event @since 1.19 */
      };
 
    /**
@@ -360,6 +372,8 @@ extern "C" {
         
         int              x; /**< x coordinate relative to window where event happened */
         int              y; /**< y coordinate relative to window where event happened */
+
+        Eo *dev; /**< The Efl_Input_Device that originated the event @since 1.19 */
      };
 
    /**
@@ -396,6 +410,8 @@ extern "C" {
                   double       value; /* [0.0 .. 1.0] 0.0 == fully unpressed, 1.0 == fully pressed */
                } button;
           };
+
+        Eo *dev; /**< The Efl_Input_Device that originated the event @since 1.19 */
      };
 
    /**
