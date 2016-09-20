@@ -29,7 +29,7 @@ _get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir)
 
 static void
 _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
-          Eina_Strbuf *buf, char *cnameu, Eina_Bool legacy)
+          Eina_Strbuf *buf, char *cname, char *cnameu, Eina_Bool legacy)
 {
    Eina_Stringshare *fcn = eolian_function_full_c_name_get(fid, ftype, legacy);
    if (!fcn)
@@ -51,12 +51,14 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
 
    Eolian_Object_Scope fsc = eolian_function_scope_get(fid, ftype);
 
+   /* this one will never be satisfied in legacy */
    if (eolian_function_is_beta(fid))
      eina_strbuf_append_printf(buf, "#ifdef %s_BETA\n", cnameu);
-   if (fsc == EOLIAN_SCOPE_PROTECTED)
+   /* XXX: is this right? we expose potentially internal stuff into legacy */
+   if (!legacy && (fsc == EOLIAN_SCOPE_PROTECTED))
      eina_strbuf_append_printf(buf, "#ifdef %s_PROTECTED\n", cnameu);
 
-   eina_strbuf_append(buf, "EOAPI ");
+   eina_strbuf_append(buf, legacy ? "EAPI " : "EOAPI ");
    if (rtp)
      {
         Eina_Stringshare *rtps = eolian_type_c_type_get(rtp);
@@ -71,13 +73,24 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
    eina_strbuf_append(buf, fcn);
    eina_stringshare_del(fcn);
 
+   Eina_Bool first = EINA_TRUE;
+   Eina_Strbuf *flagbuf = NULL;
+   int nidx = !legacy || !eolian_function_is_class(fid);
+
    eina_strbuf_append_char(buf, '(');
-   if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid)
-       || eolian_function_is_class(fid))
+   if (nidx)
      {
-        eina_strbuf_append(buf, "const ");
+        if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid)
+            || eolian_function_is_class(fid))
+          {
+             eina_strbuf_append(buf, "const ");
+          }
+        if (legacy)
+          eina_strbuf_append_printf(buf, "%s *obj", cname);
+        else
+          eina_strbuf_append(buf, "Eo *obj");
+        first = EINA_FALSE;
      }
-   eina_strbuf_append(buf, "Eo *obj");
 
    {
       Eolian_Function_Parameter *pr = NULL;
@@ -87,8 +100,21 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
            const Eolian_Type *prt = eolian_parameter_type_get(pr);
            const char *prn = eolian_parameter_name_get(pr);
            Eina_Stringshare *prtn = eolian_type_c_type_get(prt);
-           eina_strbuf_append_printf(buf, ", %s %s", prtn, prn);
+           ++nidx;
+           if (!first)
+             eina_strbuf_append(buf, ", ");
+           eina_strbuf_append_printf(buf, "%s %s", prtn, prn);
            eina_stringshare_del(prtn);
+           first = EINA_FALSE;
+           if (!eolian_parameter_is_nonull(pr))
+             continue;
+           if (!flagbuf)
+             {
+                flagbuf = eina_strbuf_new();
+                eina_strbuf_append_printf(flagbuf, " EINA_ARG_NONNULL(%d", nidx);
+             }
+           else
+             eina_strbuf_append_printf(flagbuf, ", %d", nidx);
         }
       eina_iterator_free(itr);
    }
@@ -108,7 +134,9 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
              const char *prn = eolian_parameter_name_get(pr);
              Eina_Stringshare *prtn = eolian_type_c_type_get(prt);
 
-             eina_strbuf_append(buf, ", ");
+             ++nidx;
+             if (!first)
+               eina_strbuf_append(buf, ", ");
              eina_strbuf_append(buf, prtn);
              if (!strchr(prtn, '*'))
                eina_strbuf_append_char(buf, ' ');
@@ -116,16 +144,41 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
                  _get_add_star(ftype, eolian_parameter_direction_get(pr)));
              eina_strbuf_append(buf, prn);
              eina_stringshare_del(prtn);
+             first = EINA_FALSE;
+             if (!eolian_parameter_is_nonull(pr))
+               continue;
+             if (!flagbuf)
+               {
+                  flagbuf = eina_strbuf_new();
+                  eina_strbuf_append_printf(flagbuf, " EINA_ARG_NONNULL(%d", nidx);
+               }
+             else
+               eina_strbuf_append_printf(flagbuf, ", %d", nidx);
           }
 
         eina_iterator_free(itr);
      }
 
-   eina_strbuf_append(buf, ");\n");
+   if (flagbuf)
+     eina_strbuf_append_char(flagbuf, ')');
+
+   eina_strbuf_append(buf, ")");
+   if (eolian_function_return_is_warn_unused(fid, ftype))
+     {
+        if (!flagbuf)
+          flagbuf = eina_strbuf_new();
+        eina_strbuf_prepend(flagbuf, " EINA_WARN_UNUSED_RESULT");
+     }
+   if (flagbuf)
+     {
+        eina_strbuf_append(buf, eina_strbuf_string_get(flagbuf));
+        eina_strbuf_free(flagbuf);
+     }
+   eina_strbuf_append(buf, ";\n");
 
    if (eolian_function_is_beta(fid))
      eina_strbuf_append_printf(buf, "#endif\n");
-   if (fsc == EOLIAN_SCOPE_PROTECTED)
+   if (!legacy && (fsc == EOLIAN_SCOPE_PROTECTED))
      eina_strbuf_append_printf(buf, "#endif\n");
 }
 
@@ -153,12 +206,15 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
 
    /* class definition */
 
-   eina_strbuf_append_printf(buf, "#define %s_%s %s_%s_get()\n\n",
-                             cnameu, _cl_type_str_get(cl, EINA_TRUE),
-                             cnamel, _cl_type_str_get(cl, EINA_FALSE));
+   if (!legacy)
+     {
+        eina_strbuf_append_printf(buf, "#define %s_%s %s_%s_get()\n\n",
+                                  cnameu, _cl_type_str_get(cl, EINA_TRUE),
+                                  cnamel, _cl_type_str_get(cl, EINA_FALSE));
 
-   eina_strbuf_append_printf(buf, "EWAPI const Efl_Class *%s_%s_get(void);\n\n",
-                             cnamel, _cl_type_str_get(cl, EINA_FALSE));
+        eina_strbuf_append_printf(buf, "EWAPI const Efl_Class *%s_%s_get(void);\n\n",
+                                  cnamel, _cl_type_str_get(cl, EINA_FALSE));
+     }
 
    /* method section */
    {
@@ -173,18 +229,21 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
              continue;
            Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
            const Eolian_Function *fid = eolian_implement_function_get(imp, &ftype);
+           /* beta can only exist for eo api */
+           if (legacy && eolian_function_is_beta(fid))
+             continue;
            switch (ftype)
              {
               case EOLIAN_PROP_GET:
               case EOLIAN_PROP_SET:
-                _gen_func(fid, ftype, buf, cnameu, legacy);
+                _gen_func(fid, ftype, buf, cname, cnameu, legacy);
                 break;
               case EOLIAN_PROPERTY:
-                _gen_func(fid, EOLIAN_PROP_SET, buf, cnameu, legacy);
-                _gen_func(fid, EOLIAN_PROP_GET, buf, cnameu, legacy);
+                _gen_func(fid, EOLIAN_PROP_SET, buf, cname, cnameu, legacy);
+                _gen_func(fid, EOLIAN_PROP_GET, buf, cname, cnameu, legacy);
                 break;
               default:
-                _gen_func(fid, EOLIAN_UNRESOLVED, buf, cnameu, legacy);
+                _gen_func(fid, EOLIAN_UNRESOLVED, buf, cname, cnameu, legacy);
              }
         }
       eina_iterator_free(itr);
@@ -192,44 +251,45 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
 
 events:
    /* event section */
-   {
-      Eina_Iterator *itr = eolian_class_events_get(cl);
-      Eolian_Event *ev;
-      EINA_ITERATOR_FOREACH(itr, ev)
-        {
-           Eina_Stringshare *evn = eolian_event_c_name_get(ev);
-           Eolian_Object_Scope evs = eolian_event_scope_get(ev);
+   if (!legacy)
+     {
+        Eina_Iterator *itr = eolian_class_events_get(cl);
+        Eolian_Event *ev;
+        EINA_ITERATOR_FOREACH(itr, ev)
+          {
+             Eina_Stringshare *evn = eolian_event_c_name_get(ev);
+             Eolian_Object_Scope evs = eolian_event_scope_get(ev);
 
-           if (evs == EOLIAN_SCOPE_PRIVATE)
-             continue;
+             if (evs == EOLIAN_SCOPE_PRIVATE)
+               continue;
 
-           if (eolian_event_is_beta(ev))
-             {
-                eina_strbuf_append_printf(buf, "\n#ifdef %s_BETA\n", cnameu);
-             }
-           if (evs == EOLIAN_SCOPE_PROTECTED)
-             {
-                if (!eolian_event_is_beta(ev))
-                  eina_strbuf_append_char(buf, '\n');
-                eina_strbuf_append_printf(buf, "#ifdef %s_PROTECTED\n", cnameu);
-             }
+             if (eolian_event_is_beta(ev))
+               {
+                  eina_strbuf_append_printf(buf, "\n#ifdef %s_BETA\n", cnameu);
+               }
+             if (evs == EOLIAN_SCOPE_PROTECTED)
+               {
+                  if (!eolian_event_is_beta(ev))
+                    eina_strbuf_append_char(buf, '\n');
+                  eina_strbuf_append_printf(buf, "#ifdef %s_PROTECTED\n", cnameu);
+               }
 
-           if (!eolian_event_is_beta(ev) && evs == EOLIAN_SCOPE_PUBLIC)
-             eina_strbuf_append_char(buf, '\n');
+             if (!eolian_event_is_beta(ev) && evs == EOLIAN_SCOPE_PUBLIC)
+               eina_strbuf_append_char(buf, '\n');
 
-           eina_strbuf_append_printf(buf, "EOAPI extern const "
-                                     "Efl_Event_Description _%s;\n", evn);
-           eina_strbuf_append_printf(buf, "#define %s (&(_%s))\n", evn, evn);
+             eina_strbuf_append_printf(buf, "EOAPI extern const "
+                                       "Efl_Event_Description _%s;\n", evn);
+             eina_strbuf_append_printf(buf, "#define %s (&(_%s))\n", evn, evn);
 
-           if (evs == EOLIAN_SCOPE_PROTECTED)
-             eina_strbuf_append(buf, "#endif\n");
-           if (eolian_event_is_beta(ev))
-             eina_strbuf_append(buf, "#endif\n");
+             if (evs == EOLIAN_SCOPE_PROTECTED)
+               eina_strbuf_append(buf, "#endif\n");
+             if (eolian_event_is_beta(ev))
+               eina_strbuf_append(buf, "#endif\n");
 
-           eina_stringshare_del(evn);
-        }
-      eina_iterator_free(itr);
-   }
+             eina_stringshare_del(evn);
+          }
+        eina_iterator_free(itr);
+     }
 
 end:
    free(cname);
