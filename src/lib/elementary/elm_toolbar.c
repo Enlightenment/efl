@@ -2492,6 +2492,9 @@ _item_new(Evas_Object *obj,
 
    icon_obj = elm_icon_add(VIEW(it));
 
+   if (_elm_config->atspi_mode)
+       if (icon_obj) elm_interface_atspi_accessible_parent_set(icon_obj, eo_it);
+
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _access_widget_item_register(it);
 
