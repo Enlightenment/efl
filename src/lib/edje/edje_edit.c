@@ -1675,6 +1675,11 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
      }
    snprintf(buf, sizeof(buf), "edje/collections/%d", e->id);
    epc = eet_data_read(eetf, _edje_edd_edje_part_collection, buf);
+   if (!epc)
+     {
+        eet_close(eetf);
+        return EINA_FALSE;
+     }
 
    /* Search first free id */
    id = -1;
@@ -1703,7 +1708,11 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
 
    /* Create structs */
    de = _alloc(sizeof(Edje_Part_Collection_Directory_Entry));
-   if (!de) return EINA_FALSE;
+   if (!de)
+     {
+        eet_close(eetf);
+        return EINA_FALSE;
+     }
 
    /* Init Edje_Part_Collection_Directory_Entry */
    de->id = id;
