@@ -29,6 +29,7 @@
 #ifdef ENABLE_VNC_SERVER
 # include <rfb/rfb.h>
 # include <rfb/rfbregion.h>
+# include <rfb/keysym.h>
 #endif
 
 #ifdef EAPI
@@ -172,6 +173,13 @@ static void _rotation_do(Ecore_Evas *, int, int);
 
 typedef struct _Ecore_Evas_X11_Vnc_Client_Data {
    Ecore_Fd_Handler *handler;
+   unsigned int key_modifiers;
+   time_t last_mouse_button_down;
+   Eina_Bool double_click;
+   Eina_Bool triple_click;
+   Evas_Device *keyboard;
+   Evas_Device *mouse;
+   Evas_Device *seat;
 } Ecore_Evas_X11_Vnc_Client_Data;
 
 static unsigned int _available_seat = 1;
@@ -200,7 +208,8 @@ _ecore_evas_x11_update_vnc_clients(rfbScreenInfoPtr vnc_screen)
         {
            Ecore_Evas_X11_Vnc_Client_Data *cdata = client->clientData;
 
-           WRN("Could not update the VNC client on seat '%p'\n", cdata);
+           WRN("Could not update the VNC client on seat '%s'\n",
+               evas_device_name_get(cdata->seat));
         }
 
       //Client disconnected
@@ -5290,9 +5299,12 @@ _ecore_evas_x11_client_gone(rfbClientRec *client)
 {
    Ecore_Evas_X11_Vnc_Client_Data *cdata = client->clientData;
 
-   EDBG("VNC client on seat '%p' gone", cdata);
+   EDBG("VNC client on seat '%s' gone", evas_device_name_get(cdata->seat));
 
    ecore_main_fd_handler_del(cdata->handler);
+   evas_device_del(cdata->keyboard);
+   evas_device_del(cdata->mouse);
+   evas_device_del(cdata->seat);
    free(cdata);
    _available_seat--;
 }
@@ -5326,6 +5338,7 @@ _ecore_evas_x11_vnc_client_connection_new(rfbClientRec *client)
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Data_X11 *edata;
    Ecore_Evas_X11_Vnc_Client_Data *cdata;
+   char buf[32];
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(_available_seat == UINT_MAX,
                                   RFB_CLIENT_REFUSE);
@@ -5344,33 +5357,266 @@ _ecore_evas_x11_vnc_client_connection_new(rfbClientRec *client)
                                               client, NULL, NULL);
    EINA_SAFETY_ON_NULL_GOTO(cdata->handler, err_handler);
 
+   snprintf(buf, sizeof(buf), "seat-%u", _available_seat);
+
+   cdata->seat = evas_device_full_add(ee->evas, buf,
+                                          "A remote VNC seat",
+                                          NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
+                                          EVAS_DEVICE_SUBCLASS_NONE);
+   EINA_SAFETY_ON_NULL_GOTO(cdata->seat, err_handler);
+   cdata->keyboard = evas_device_full_add(ee->evas, "Keyboard",
+                                          "A remote VNC keyboard",
+                                          cdata->seat, NULL,
+                                          EVAS_DEVICE_CLASS_KEYBOARD,
+                                          EVAS_DEVICE_SUBCLASS_NONE);
+   EINA_SAFETY_ON_NULL_GOTO(cdata->keyboard, err_dev);
+   cdata->mouse = evas_device_full_add(ee->evas, "Mouse",
+                                       "A remote VNC mouse",
+                                       cdata->seat, NULL,
+                                       EVAS_DEVICE_CLASS_MOUSE,
+                                       EVAS_DEVICE_SUBCLASS_NONE);
+   EINA_SAFETY_ON_NULL_GOTO(cdata->mouse, err_mouse);
    client->clientGoneHook = _ecore_evas_x11_client_gone;
    client->clientData = cdata;
 
    EDBG("New VNC client on seat '%u'", _available_seat);
-
    _available_seat++;
+
    return RFB_CLIENT_ACCEPT;
 
+ err_mouse:
+   evas_device_del(cdata->keyboard);
+ err_dev:
+   evas_device_del(cdata->seat);
  err_handler:
    free(cdata);
    return RFB_CLIENT_REFUSE;
 }
 
-static void
-_ecore_evas_x11_vnc_client_keyboard_event(rfbBool down EINA_UNUSED,
-                                          rfbKeySym keySym EINA_UNUSED,
-                                          rfbClientRec *client EINA_UNUSED)
+static unsigned int
+_ecore_evas_x11_vnc_vnc_modifier_to_ecore_x_modifier(int mod)
 {
-   EDBG("Keyboard event\n");
+   if (mod == XK_Shift_L || mod == XK_Shift_R)
+     return ECORE_EVENT_MODIFIER_SHIFT;
+   if (mod == XK_Control_L || mod == XK_Control_R)
+     return ECORE_EVENT_MODIFIER_CTRL;
+   if (mod == XK_Alt_L || mod == XK_Alt_R)
+     return ECORE_EVENT_MODIFIER_ALT;
+   if (mod == XK_Super_L || mod == XK_Super_R)
+     return ECORE_EVENT_MODIFIER_WIN;
+   if (mod == XK_Scroll_Lock)
+     return ECORE_EVENT_LOCK_SCROLL;
+   if (mod == XK_Num_Lock)
+     return ECORE_EVENT_LOCK_NUM;
+   if (mod == XK_Caps_Lock)
+     return ECORE_EVENT_LOCK_CAPS;
+   if (mod == XK_Shift_Lock)
+     return ECORE_EVENT_LOCK_SHIFT;
+   return 0;
 }
 
 static void
-_ecore_evas_x11_vnc_client_pointer_event(int buttonMask EINA_UNUSED,
-                                         int x EINA_UNUSED, int y EINA_UNUSED,
-                                         rfbClientPtr client EINA_UNUSED)
+_ecore_evas_x11_ecore_event_generic_free(void *user_data,
+                                         void *func_data)
 {
-   EDBG("Pointer event\n");
+   efl_unref(user_data);
+   free(func_data);
+}
+
+static void
+_ecore_evas_x11_vnc_client_keyboard_event(rfbBool down,
+                                          rfbKeySym key,
+                                          rfbClientRec *client)
+{
+   Ecore_Event_Key *e;
+   Ecore_Evas_X11_Vnc_Client_Data *cdata = client->clientData;
+   rfbScreenInfoPtr screen = client->screen;
+   Ecore_Evas *ee = screen->screenData;
+   const char *key_string;
+   char buf[10];
+
+   if (key >= XK_Shift_L && key <= XK_Hyper_R)
+     {
+        int mod = _ecore_evas_x11_vnc_vnc_modifier_to_ecore_x_modifier(key);
+
+        if (down)
+          cdata->key_modifiers |= mod;
+        else
+          cdata->key_modifiers &= ~mod;
+     }
+
+   if (ee->ignore_events)
+     return;
+
+   key_string = ecore_x_keysym_string_get(key);
+   EINA_SAFETY_ON_NULL_RETURN(key_string);
+
+   snprintf(buf, sizeof(buf), "%lc", key);
+
+   e = calloc(1, sizeof(Ecore_Event_Key) + strlen(buf) + 1);
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   e->timestamp = (unsigned int)time(NULL);
+   e->modifiers = cdata->key_modifiers;
+   e->same_screen = 1;
+   e->window = e->root_window = e->event_window = ee->prop.window;
+   e->dev = cdata->keyboard;
+   efl_ref(cdata->keyboard);
+   e->keycode = ecore_x_keysym_keycode_get(key_string);
+   e->keyname = e->key = key_string;
+   e->compose = (char *)(e + 1);
+   strcpy((char *)e->compose, buf);
+   e->string = e->compose;
+
+   ecore_event_add(down ? ECORE_EVENT_KEY_DOWN : ECORE_EVENT_KEY_UP,
+                   e, _ecore_evas_x11_ecore_event_generic_free,
+                   cdata->keyboard);
+}
+
+static int
+_ecore_evas_x11_vnc_pointer_button_get(int mask)
+{
+    int i;
+    for (i = 0; i < 32; i++)
+        if (mask >> i & 1)
+            return i + 1;
+    return 0;
+}
+
+static void
+_ecore_evas_x11_vnc_client_pointer_event(int button_mask,
+                                         int x, int y,
+                                         rfbClientPtr client)
+{
+   Ecore_Evas_X11_Vnc_Client_Data *cdata = client->clientData;
+   rfbScreenInfoPtr screen = client->screen;
+   Ecore_Evas *ee = screen->screenData;
+   Ecore_Event_Mouse_Move *move_event;
+   Ecore_Event_Mouse_Button *button_event;
+   Ecore_Event_Mouse_Wheel *wheel_event;
+   int button_changed, button, event, z = 0, direction = 0;
+   time_t now = time(NULL);
+
+   if (ee->ignore_events)
+     return;
+
+   if (client->lastPtrX != x || client->lastPtrY != y)
+     {
+        move_event = calloc(1, sizeof(Ecore_Event_Mouse_Move));
+        EINA_SAFETY_ON_NULL_RETURN(move_event);
+
+        move_event->x = move_event->multi.x = x;
+        move_event->y = move_event->multi.y = y;
+        move_event->same_screen = 1;
+        move_event->timestamp = (unsigned int)now;
+        move_event->window = move_event->event_window =
+          move_event->root_window = ee->prop.window;
+        move_event->multi.pressure = 1.0;
+        move_event->modifiers = cdata->key_modifiers;
+        move_event->dev = cdata->mouse;
+        efl_ref(cdata->mouse);
+        ecore_event_add(ECORE_EVENT_MOUSE_MOVE, move_event,
+                        _ecore_evas_x11_ecore_event_generic_free, cdata->mouse);
+        client->lastPtrX = x;
+        client->lastPtrY = y;
+     }
+
+   button_changed = button_mask - client->lastPtrButtons;
+
+   if (button_changed > 0)
+     {
+        button = _ecore_evas_x11_vnc_pointer_button_get(button_changed);
+
+        switch (button)
+          {
+           case 4:
+              event = ECORE_EVENT_MOUSE_WHEEL;
+              direction = 0; //Vertical
+              z = -1; //Up
+              break;
+           case 5:
+              event = ECORE_EVENT_MOUSE_WHEEL;
+              direction = 0;
+              z = 1; //Down
+              break;
+           case 6:
+              event = ECORE_EVENT_MOUSE_WHEEL;
+              direction = 1; //Horizontal
+              z = -1;
+              break;
+           case 7:
+              event = ECORE_EVENT_MOUSE_WHEEL;
+              direction = 1;
+              z = 1;
+              break;
+           default:
+              event = ECORE_EVENT_MOUSE_BUTTON_DOWN;
+          }
+
+        if (now - cdata->last_mouse_button_down <= 1000 * ecore_x_double_click_time_get())
+          cdata->double_click = EINA_TRUE;
+        else
+          cdata->double_click = cdata->triple_click = EINA_FALSE;
+
+        if (now - cdata->last_mouse_button_down <= 2000 * ecore_x_double_click_time_get())
+          cdata->triple_click = EINA_TRUE;
+        else
+          cdata->triple_click = EINA_FALSE;
+
+        cdata->last_mouse_button_down = now;
+     }
+   else if (button_changed < 0)
+     {
+        button = _ecore_evas_x11_vnc_pointer_button_get(-button_changed);
+        //Ignore, it was already report.
+        if (button > 3 && button < 8)
+          return;
+        event = ECORE_EVENT_MOUSE_BUTTON_UP;
+     }
+   else
+     return;
+
+   if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN ||
+       event == ECORE_EVENT_MOUSE_BUTTON_UP)
+     {
+        button_event = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+        EINA_SAFETY_ON_NULL_RETURN(button_event);
+
+        button_event->timestamp = (unsigned int)now;
+        button_event->window = button_event->event_window =
+          button_event->root_window = ee->prop.window;
+        button_event->x = button_event->multi.x = x;
+        button_event->y = button_event->multi.y = y;
+        button_event->multi.pressure = 1.0;
+        button_event->same_screen = 1;
+        button_event->buttons = button;
+        button_event->modifiers = cdata->key_modifiers;
+        button_event->double_click = cdata->double_click ? 1 : 0;
+        button_event->triple_click = cdata->triple_click ? 1 : 0;
+        button_event->dev = cdata->mouse;
+        efl_ref(cdata->mouse);
+
+        ecore_event_add(event, button_event,
+                        _ecore_evas_x11_ecore_event_generic_free, cdata->mouse);
+        return;
+     }
+
+   //Mouse wheel
+   wheel_event = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
+   EINA_SAFETY_ON_NULL_RETURN(wheel_event);
+   wheel_event->dev = cdata->mouse;
+   efl_ref(cdata->mouse);
+   wheel_event->window = wheel_event->event_window =
+     wheel_event->root_window = ee->prop.window;
+   wheel_event->same_screen = 1;
+   wheel_event->modifiers = cdata->key_modifiers;
+   wheel_event->x = x;
+   wheel_event->y = y;
+   wheel_event->direction = direction;
+   wheel_event->z = z;
+
+   ecore_event_add(event, wheel_event,
+                   _ecore_evas_x11_ecore_event_generic_free, cdata->mouse);
 }
 #endif
 
