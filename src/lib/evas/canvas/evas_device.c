@@ -31,6 +31,8 @@ _del_cb(void *data, const Efl_Event *ev)
 
    // can not be done in std destructor
    e->devices = eina_list_remove(e->devices, ev->object);
+   efl_event_callback_call(e->evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+                           ev->object);
 }
 
 EAPI Evas_Device *
@@ -68,6 +70,8 @@ evas_device_full_add(Evas *eo_e, const char *name, const char *desc,
      e->devices = eina_list_append(e->devices, dev);
    efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
 
+   efl_event_callback_call(eo_e, EFL_CANVAS_EVENT_DEVICE_ADDED, dev);
+   // Keeping this event to do not break things...
    evas_event_callback_call(eo_e, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 
    return dev;
