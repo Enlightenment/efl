@@ -221,6 +221,8 @@ efreet_xml_parse(char **data, int *size, int *error)
     Efreet_Xml *xml, *sub_xml;
     const char *tag = NULL;
 
+    if (*size <= 0) return NULL;
+
     /* parse this tag */
     if (!efreet_xml_tag_parse(data, size, &(tag), error)) return NULL;
     xml = NEW(Efreet_Xml, 1);
