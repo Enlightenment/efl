@@ -143,14 +143,14 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
      return 0;
 
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
-     return 0;
+     goto error;
 
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0)
-     return 0;
+     goto error;
 
    if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate,
                   sizeof(curstate)) < 0)
-     return 0;
+     goto error;
 
    socket_unix.sun_family = AF_UNIX;
 
@@ -165,7 +165,7 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
                                                          svr->name);
 #else
         WRN("Your system does not support abstract sockets!");
-        return 0;
+        goto error;
 #endif
      }
    else
@@ -179,12 +179,12 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
                socket_unix_len) < 0)
      {
         DBG("local connection failed: %s", strerror(errno));
-        return 0;
+        goto error;
      }
 
    svr->path = strdup(buf);
    if (!svr->path)
-     return 0;
+     goto error;
 
    if (svr->type & ECORE_CON_SSL)
      {
@@ -195,11 +195,15 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
                                cb_done, obj, NULL, NULL);
    if (!svr->fd_handler)
-     return 0;
+     goto error;
 
    if (!svr->delete_me) ecore_con_event_server_add(obj);
 
    return 1;
+error:
+   if (svr->fd) close(svr->fd);
+   svr->fd = -1;
+   return 0;
 #endif
 }
 
