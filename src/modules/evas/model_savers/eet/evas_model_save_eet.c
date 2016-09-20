@@ -156,6 +156,14 @@ evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh,
    eet_init();
 
    ef = eet_open(file, EET_FILE_MODE_WRITE);
+   if (ef == NULL)
+     {
+        ERR("Opening of file is failed.");
+        free(eet_mesh);
+        free(eet_header);
+        eet_shutdown();
+        return;
+     }
 
    _file_descriptor = _evas_canvas3d_eet_file_get();
 
@@ -180,15 +188,6 @@ evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh,
    _set_geometry_to_eet_file_from_mesh(pd, eet_mesh, eet_header, f);
    _set_material_to_eet_file_from_mesh(eet_mesh, eet_header, f);
    _set_frame_to_eet_file_from_mesh(eet_mesh);
-
-   if (ef == NULL)
-     {
-        ERR("Opening of file is failed.");
-        free(eet_mesh);
-        free(eet_header);
-
-        goto on_error;
-     }
 
    eet_file->mesh = eet_mesh;
    eet_file->header = eet_header;
