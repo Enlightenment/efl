@@ -53,7 +53,7 @@ _print_usage(const char *progn, FILE *outf)
                  "  c: C source file (.eo.c)\n"
                  "  i: Implementation file (added into .eo.c)\n"
                  "\n"
-                 "By default, the 'hcl' set is used.\n"
+                 "By default, the 'hc' set is used.\n"
                  "Output filenames are determined from input .eo filename.\n");
 }
 
@@ -428,7 +428,7 @@ main(int argc, char **argv)
    const char *eobn = _get_filename(input);
 
    if (!gen_what)
-     gen_what = GEN_H | GEN_H_LEGACY | GEN_C;
+     gen_what = GEN_H | GEN_C;
 
    Eina_Bool succ = EINA_TRUE;
    if (gen_what & GEN_H)
