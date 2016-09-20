@@ -224,7 +224,6 @@ case "$host_os" in
    ;;
    freebsd*)
       have_freebsd="yes"
-      want_libproxy="yes"
       ELM_UNIX_DEF="#define"
    ;;
    darwin*)
@@ -235,7 +234,6 @@ case "$host_os" in
       have_linux="yes"
       have_systemd_pkg="auto"
       want_systemd="yes"
-      want_libproxy="yes"
       ELM_UNIX_DEF="#define"
    ;;
    *)
@@ -3034,16 +3032,6 @@ EFL_LIB_START([Ecore_Con])
 
 ### Default values
 
-AC_ARG_ENABLE([libproxy],
-   [AS_HELP_STRING([--enable-libproxy],[Enable libproxy support. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_libproxy="yes"
-    else
-       want_libproxy="no"
-    fi
-   ])
-
 want_ecore_con_local_sockets="yes"
 want_ecore_con_abstract_sockets="yes"
 
@@ -3080,7 +3068,6 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [emile])
 EFL_ADD_LIBS([ECORE_CON], [-lm])
 
 EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_systemd}], [SYSTEMD], [libsystemd])
-EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_libproxy}], [LIBPROXY], [libproxy-1.0])
 
 EFL_ADD_FEATURE([ECORE_CON], [local-sockets], [${want_ecore_con_local_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [abstract-sockets], [${want_ecore_con_abstract_sockets}])

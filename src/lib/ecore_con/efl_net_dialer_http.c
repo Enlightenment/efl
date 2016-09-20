@@ -181,9 +181,7 @@ typedef struct
    Eina_Stringshare *address_remote;
    Eina_Stringshare *method;
    Eina_Stringshare *user_agent;
-#ifdef HAVE_LIBPROXY
    Ecore_Thread *libproxy_thread;
-#endif
    struct {
       struct curl_slist *headers;
       int64_t content_length;
@@ -1169,13 +1167,12 @@ _efl_net_dialer_http_efl_object_constructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 EOLIAN static void
 _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 {
-#ifdef HAVE_LIBPROXY
    if (pd->libproxy_thread)
      {
         ecore_thread_cancel(pd->libproxy_thread);
         pd->libproxy_thread = NULL;
      }
-#endif
+
    if (pd->in_curl_callback)
      {
         DBG("deleting HTTP dialer=%p from CURL callback.", o);
@@ -1263,7 +1260,6 @@ _efl_net_dialer_http_curl_start(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    DBG("started curl request easy=%p, cm=%p", pd->easy, pd->cm);
 }
 
-#ifdef HAVE_LIBPROXY
 typedef struct _Efl_Net_Dialer_Http_Libproxy_Context {
    Eo *o;
    char *url;
@@ -1274,7 +1270,7 @@ static void
 _efl_net_dialer_http_libproxy_run(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Efl_Net_Dialer_Http_Libproxy_Context *ctx = data;
-   char **proxies = px_proxy_factory_get_proxies(_ecore_con_libproxy_factory, ctx->url);
+   char **proxies = ecore_con_libproxy_proxies_get(ctx->url);
    char **itr;
 
    if (!proxies) return;
@@ -1332,7 +1328,6 @@ _efl_net_dialer_http_libproxy_cancel(void *data, Ecore_Thread *thread EINA_UNUSE
    Efl_Net_Dialer_Http_Libproxy_Context *ctx = data;
    _efl_net_dialer_http_libproxy_context_free(ctx);
 }
-#endif
 
 EOLIAN static Eina_Error
 _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, const char *address)
@@ -1357,13 +1352,9 @@ _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, co
         return EINVAL;
      }
 
-#ifdef HAVE_LIBPROXY
-   if (!pd->proxy)
+   if ((!pd->proxy) && (ecore_con_libproxy_init()))
      {
         Efl_Net_Dialer_Http_Libproxy_Context *ctx;
-
-        if (!_ecore_con_libproxy_factory)
-          _ecore_con_libproxy_factory = px_proxy_factory_new();
 
         if (pd->libproxy_thread)
           ecore_thread_cancel(pd->libproxy_thread);
@@ -1394,7 +1385,6 @@ _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, co
         free(ctx);
         return ENOMEM;
      }
-#endif
 
    _efl_net_dialer_http_curl_start(o, pd);
 
