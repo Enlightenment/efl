@@ -1591,7 +1591,7 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler      *fd_handler,
    ret = _ecore_main_fdh_poll_modify(fd_handler);
    if (ret < 0)
      {
-        ERR("Failed to mod epoll fd %d: %s!", fd_handler->fd, strerror(ret));
+        ERR("Failed to mod epoll fd %d: %s!", fd_handler->fd, strerror(errno));
      }
 }
 
