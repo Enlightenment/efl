@@ -1584,7 +1584,7 @@ _files_key_down(void *data, const Efl_Event *event)
           char buf[PATH_MAX];
           const char *en;
           en = elm_entry_entry_get(searchbar);
-          if (strlen(en) > 0)
+          if (en && strlen(en) > 0)
             {
                memmove(buf, en, strlen(en) -1);
                buf[strlen(en) -1] = '\0';
