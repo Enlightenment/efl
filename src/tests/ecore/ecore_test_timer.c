@@ -183,8 +183,7 @@ _ecore_promise_quit(void *data, const Efl_Event *ev)
    double *start = success->value;
    double delta = ecore_loop_time_get() - *start;
 
-   fprintf(stderr, "Ecore promise timeout took %f (should be <= 0.02)\n", delta - 0.2);
-   fail_if(delta - 0.2 > 0.02);
+   ck_assert_msg(delta - 0.2 <= 0.02, "Ecore promise timeout took %f (should be <= 0.02)\n", delta - 0.2);
 
    *bob = EINA_TRUE;
    ecore_main_loop_quit();
