@@ -855,6 +855,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
         etc_block_size = 8;
         num_planes = 2; // RGB and Alpha
         header[5] = 3;
+        alpha_texture = EINA_TRUE;
         codec = "ETC1+Alpha";
         break;
       default: abort();
