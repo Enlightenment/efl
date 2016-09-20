@@ -49,24 +49,11 @@
 #include "eina_log.h"
 #include "eina_cpu.h"
 
-#include <Eina.h>
-
-#include "eina_cpu_private.h"
-
-#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
-# include <sys/auxv.h>
-# include <asm/hwcap.h>
-#endif
-
 /*============================================================================*
 *                                  Local                                     *
 *============================================================================*/
 
 static void _eina_page_size(void);
-
-static int fastest_core_speed = 0;
-static int slowest_core_speed = INT_MAX;
-static Eina_Hash *cpu_hash = NULL;
 
 /* FIXME this ifdefs should be replaced */
 #if defined(__i386__) || defined(__x86_64__)
@@ -178,9 +165,6 @@ eina_cpu_init(void)
 Eina_Bool
 eina_cpu_shutdown(void)
 {
-   eina_hash_free(cpu_hash);
-   cpu_hash = NULL;
-   fastest_core_speed = 0;
    return EINA_TRUE;
 }
 
@@ -315,105 +299,4 @@ void eina_cpu_count_internal(void)
      _cpu_count = atoi(getenv("EINA_CPU_FAKE"));
    else
      _cpu_count = _eina_cpu_count_internal();
-}
-
-static void
-eina_cpu_map_init(void)
-{
-   fastest_core_speed = -1;
-
-#if defined (__linux__) || defined(__GLIBC__)
-   FILE *f = NULL;
-   Eina_Iterator *it;
-   Eina_Strbuf *fname;
-   const Eina_File_Direct_Info *f_info;
-
-   it = eina_file_stat_ls("/sys/devices/system/cpu/cpufreq");
-   if (!it) return;
-
-   cpu_hash = eina_hash_int32_new(free);
-
-   fname = eina_strbuf_new();
-   EINA_ITERATOR_FOREACH(it, f_info)
-     {
-        if ((f_info->type == EINA_FILE_DIR) &&
-            eina_str_has_prefix(f_info->path,
-                                "/sys/devices/system/cpu/cpufreq/policy"))
-          {
-             int num, speed;
-
-             eina_strbuf_append_printf(fname, "%s%s", f_info->path, "/cpuinfo_max_freq");
-             f = fopen(eina_strbuf_string_get(fname), "r");
-             eina_strbuf_reset(fname);
-             if (!f) goto err;
-             speed = -1;
-             num = fscanf(f, "%d", &speed);
-             fclose(f);
-             f = NULL;
-             if ((num != 1) || (speed == -1)) goto err;
-
-             slowest_core_speed = MIN(speed, slowest_core_speed);
-             fastest_core_speed = MAX(speed, fastest_core_speed);
-
-             eina_strbuf_append_printf(fname, "%s%s", f_info->path, "/affected_cpus");
-             f = fopen(eina_strbuf_string_get(fname), "r");
-             eina_strbuf_reset(fname);
-             if (!f) goto err;
-             do
-               {
-                  int core;
-                  uint64_t *corelist;
-                  num = fscanf(f, "%d", &core);
-                  if ((num == EOF) || (core > 63)) break;
-
-                  corelist = eina_hash_find(cpu_hash, &speed);
-                  if (!corelist)
-                    {
-                       corelist = malloc(sizeof(*corelist));
-                       if (!corelist) goto err;
-                       *corelist = 1LL << core;
-                       eina_hash_add(cpu_hash, &speed, corelist);
-                    }
-                  *corelist |= 1LL << core;
-               } while (num != EOF);
-             fclose(f);
-             f = NULL;
-          }
-     }
-err:
-   if (f) fclose(f);
-   eina_strbuf_free(fname);
-   eina_iterator_free(it);
-#endif
-}
-
-EAPI int
-_eina_cpu_fast_core_get(void)
-{
-#if defined (__linux__) || defined(__GLIBC__)
-   uint64_t *corelist;
-   uint64_t cores;
-   int bit, place = 0;
-
-   if (fastest_core_speed == -1) return -1;
-
-   if (fastest_core_speed == 0) eina_cpu_map_init();
-
-   /* Check again now that it's actually set up */
-   if (fastest_core_speed == -1) return -1;
-
-   corelist = eina_hash_find(cpu_hash, &fastest_core_speed);
-   cores = *corelist;
-   bit = rand() % __builtin_popcount(cores);
-   while (bit || !(cores & 1))
-     {
-        if (cores & 1) bit--;
-        cores = cores >> 1;
-        place++;
-     }
-
-   return place;
-#else
-   return 0;
-#endif
 }
