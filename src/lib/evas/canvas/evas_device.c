@@ -155,24 +155,11 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
         SAFETY_CHECK(parent, EFL_INPUT_DEVICE_CLASS);
      }
 
-   /* FIXME: move this to Efl.Input.Device */
-   if (d->parent == parent) return;
-   if (d->parent)
-     {
-        Efl_Input_Device_Data *p = efl_data_scope_get(d->parent, EFL_INPUT_DEVICE_CLASS);
-        p->children = eina_list_remove(p->children, dev);
-     }
-   else if (parent)
-     e->devices = eina_list_remove(e->devices, dev);
-   d->parent = parent;
+   efl_input_device_parent_set(dev, parent);
    if (parent)
-     {
-        Efl_Input_Device_Data *p = efl_data_scope_get(parent, EFL_INPUT_DEVICE_CLASS);
-        p->children = eina_list_append(p->children, dev);
-     }
+     e->devices = eina_list_remove(e->devices, dev);
    else
      e->devices = eina_list_append(e->devices, dev);
-   
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 

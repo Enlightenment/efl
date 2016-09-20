@@ -39,7 +39,7 @@ enum Efl.Input.Device.Sub_Class
 
 
 /* This represents Evas_Device */
-/* FIXME: no parent, no children and no Evas */
+/* FIXME: no children and no Evas */
 
 class Efl.Input.Device (Efl.Object)
 {
@@ -75,7 +75,7 @@ class Efl.Input.Device (Efl.Object)
          }
       }
       @property parent {
-         /* set {} */
+         set {}
          get {}
          values {
             parent: Efl.Input.Device;

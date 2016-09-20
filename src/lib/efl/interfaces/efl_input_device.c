@@ -103,4 +103,23 @@ _efl_input_device_parent_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
    return pd->parent;
 }
 
+EOLIAN static void
+_efl_input_device_parent_set(Eo *obj, Efl_Input_Device_Data *pd, Efl_Input_Device *parent)
+{
+   if (pd->parent == parent) return;
+   if (pd->parent)
+     {
+        Efl_Input_Device_Data *p = efl_data_scope_get(pd->parent, EFL_INPUT_DEVICE_CLASS);
+        p->children = eina_list_remove(p->children, obj);
+        efl_unref(obj);
+     }
+   pd->parent = parent;
+   if (parent)
+     {
+        Efl_Input_Device_Data *p = efl_data_scope_get(parent, EFL_INPUT_DEVICE_CLASS);
+        p->children = eina_list_append(p->children, obj);
+        efl_ref(obj);
+     }
+}
+
 #include "interfaces/efl_input_device.eo.c"
