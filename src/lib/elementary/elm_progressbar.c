@@ -211,7 +211,7 @@ _elm_progressbar_elm_widget_theme_apply(Eo *obj, Elm_Progressbar_Data *sd)
    if (sd->pulse_state)
      elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
 
-   if ((sd->units) && (!sd->pulse))
+   if (((sd->units) || (sd->unit_format_func)) && (!sd->pulse))
      elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
 
    if (_is_horizontal(sd->orientation))
@@ -439,19 +439,13 @@ _elm_progressbar_efl_ui_progress_progress_value_get(Eo *obj EINA_UNUSED, Elm_Pro
 EOLIAN static void
 _elm_progressbar_efl_ui_progress_unit_format_set(Eo *obj, Elm_Progressbar_Data *sd, const char *units)
 {
+   const char *sig;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eina_stringshare_replace(&sd->units, units);
-   if (units)
-     {
-        elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
-        edje_object_message_signal_process(wd->resize_obj);
-     }
-   else
-     {
-        elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
-        edje_object_message_signal_process(wd->resize_obj);
-     }
+   sig = (units) ? "elm,state,units,visible" : "elm,state,units,hidden";
+   elm_layout_signal_emit(obj, sig, "elm");
+   edje_object_message_signal_process(wd->resize_obj);
 
    _units_set(obj);
    elm_layout_sizing_eval(obj);
@@ -572,10 +566,15 @@ elm_progressbar_unit_format_get(const Elm_Progressbar *obj)
 EAPI void
 elm_progressbar_unit_format_function_set(Elm_Progressbar *obj, progressbar_func_type func, progressbar_freefunc_type free_func)
 {
+   const char *sig;
    ELM_PROGRESSBAR_DATA_GET(obj, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    sd->unit_format_func = func;
    sd->unit_format_free = free_func;
+   sig = (func) ? "elm,state,units,visible" : "elm,state,units,hidden";
+   elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+   edje_object_message_signal_process(wd->resize_obj);
 
    _units_set(obj);
    elm_layout_sizing_eval(obj);
