@@ -13,17 +13,17 @@
 /*
  * Sets a particilar state type for given state set.
  */
-#define STATE_TYPE_SET(state_set, type)   (state_set|= (1L << type))
+#define STATE_TYPE_SET(state_set, type)   (state_set|= (1ULL << type))
 
 /**
  * Unsets a particilar state type for given state set.
  */
-#define STATE_TYPE_UNSET(state_set, type) (state_set &= ~(1L << type))
+#define STATE_TYPE_UNSET(state_set, type) (state_set &= ~(1ULL << type))
 
 /**
  * Gets value of a particilar state type for given state set.
  */
-#define STATE_TYPE_GET(state_set, type)   (state_set & (1L << type))
+#define STATE_TYPE_GET(state_set, type)   (state_set & (1ULL << type))
 
 /**
  * Free Elm_Atspi_Attributes_List
