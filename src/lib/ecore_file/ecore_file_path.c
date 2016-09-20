@@ -97,7 +97,7 @@ ecore_file_path_dir_exists(const char *in_dir)
    if (!__ecore_file_path_bin) return EINA_FALSE;
    EINA_LIST_FOREACH(__ecore_file_path_bin, l, dir)
      {
-        if (strcmp(dir, in_dir))
+        if (!strcmp(dir, in_dir))
           return EINA_TRUE;
      }
 
