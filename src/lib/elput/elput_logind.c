@@ -276,7 +276,19 @@ _logind_device_release(Elput_Manager *em, uint32_t major, uint32_t minor)
 static void
 _logind_pipe_write_fd(Elput_Manager *em, int fd)
 {
-   write(em->input.pipe, &fd, sizeof(int));
+   int ret;
+
+   while (1)
+     {
+        ret = write(em->input.pipe, &fd, sizeof(int));
+        if (ret < 0)
+          {
+             if ((errno == EAGAIN) || (errno == EINTR))
+               continue;
+             WRN("Failed to write to input pipe");
+          }
+        break;
+     }
    close(em->input.pipe);
    em->input.pipe = -1;
 }

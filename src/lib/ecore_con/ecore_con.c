@@ -4487,11 +4487,18 @@ _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
          * parameter must be a URL with schema, otherwise it won't
          * return anything.
          */
-        char *url;
+        Eina_Stringshare *url;
 
-        asprintf(&url, "%s://%s:%s", d->protocol == IPPROTO_UDP ? "udp" : "tcp", host, port);
-        proxies = ecore_con_libproxy_proxies_get(url);
-        free(url);
+        url = eina_stringshare_printf("%s://%s:%s", d->protocol == IPPROTO_UDP ? "udp" : "tcp", host, port);
+        if (!url)
+          {
+             ERR("Could not assemble URL");
+          }
+        else
+          {
+             proxies = ecore_con_libproxy_proxies_get(url);
+             eina_stringshare_del(url);
+          }
      }
 
    EINA_THREAD_CLEANUP_PUSH((Eina_Free_Cb)ecore_con_libproxy_proxies_free, proxies);
