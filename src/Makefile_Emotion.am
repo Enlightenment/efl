@@ -1,7 +1,7 @@
 ### Library
 
 emotion_eolian_files = \
-	lib/emotion/emotion_object.eo
+	lib/emotion/efl_canvas_video.eo
 
 emotion_eolian_c = $(emotion_eolian_files:%.eo=%.eo.c)
 emotion_eolian_h = $(emotion_eolian_files:%.eo=%.eo.h) \

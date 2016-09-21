@@ -210,9 +210,9 @@ _finish_thumb_generation(struct _emotion_plugin *_plugin, int success)
 {
    int r = 0;
 
-   efl_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
-   efl_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, _plugin);
-   efl_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_DECODE_STOP, _video_stopped_cb, _plugin);
+   efl_event_callback_del(_plugin->video, EFL_CANVAS_VIDEO_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
+   efl_event_callback_del(_plugin->video, EFL_CANVAS_VIDEO_EVENT_FRAME_DECODE, _frame_decode_cb, _plugin);
+   efl_event_callback_del(_plugin->video, EFL_CANVAS_VIDEO_EVENT_PLAYBACK_STOP, _video_stopped_cb, _plugin);
 
    emotion_object_play_set(_plugin->video, 0);
 
@@ -243,8 +243,8 @@ _frame_grab_single(void *data)
 
    if (_plugin->len <= 0)
      {
-	_video_pos_set(_plugin);
-	return EINA_TRUE;
+        _video_pos_set(_plugin);
+        return EINA_TRUE;
      }
 
    p = emotion_object_position_get(_plugin->video);
@@ -256,7 +256,7 @@ _frame_grab_single(void *data)
 
    ethumb_image_save(e);
 
-   efl_event_callback_del(_plugin->video, EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
+   efl_event_callback_del(_plugin->video, EFL_CANVAS_VIDEO_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
 
    emotion_object_play_set(_plugin->video, 0);
 
@@ -376,10 +376,10 @@ _thumb_generate(Ethumb *e)
    if (!r)
      {
         ERR("Could not initialize emotion object.");
-	evas_object_del(o);
-	ethumb_finished_callback_call(e, 0);
-	free(_plugin);
-	return NULL;
+        evas_object_del(o);
+        ethumb_finished_callback_call(e, 0);
+        free(_plugin);
+        return NULL;
      }
 
    _plugin->video = o;
@@ -400,15 +400,15 @@ _thumb_generate(Ethumb *e)
 
    _resize_movie(_plugin);
    efl_event_callback_add
-     (o, EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, _plugin);
+     (o, EFL_CANVAS_VIDEO_EVENT_FRAME_DECODE, _frame_decode_cb, _plugin);
    efl_event_callback_add
-     (o, EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
+     (o, EFL_CANVAS_VIDEO_EVENT_FRAME_RESIZE, _frame_resized_cb, _plugin);
    efl_event_callback_add
-     (o, EMOTION_OBJECT_EVENT_DECODE_STOP, _video_stopped_cb, _plugin);
+     (o, EFL_CANVAS_VIDEO_EVENT_PLAYBACK_STOP, _video_stopped_cb, _plugin);
 
    if (f == ETHUMB_THUMB_EET)
      {
-	_generate_animated_thumb(_plugin);
+        _generate_animated_thumb(_plugin);
      }
 
    _video_pos_set(_plugin);

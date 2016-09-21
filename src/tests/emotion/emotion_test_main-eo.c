@@ -574,17 +574,17 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(emotion_object_test_callbacks,
-       { EMOTION_OBJECT_EVENT_FRAME_DECODE, video_obj_frame_decode_cb },
-       { EMOTION_OBJECT_EVENT_FRAME_RESIZE, video_obj_frame_resize_cb },
-       { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, video_obj_length_change_cb },
-       { EMOTION_OBJECT_EVENT_POSITION_UPDATE, video_obj_position_update_cb },
-       { EMOTION_OBJECT_EVENT_DECODE_STOP, video_obj_stopped_cb },
-       { EMOTION_OBJECT_EVENT_CHANNELS_CHANGE, video_obj_channels_cb },
-       { EMOTION_OBJECT_EVENT_TITLE_CHANGE, video_obj_title_cb },
-       { EMOTION_OBJECT_EVENT_PROGRESS_CHANGE, video_obj_progress_cb },
-       { EMOTION_OBJECT_EVENT_REF_CHANGE, video_obj_ref_cb },
-       { EMOTION_OBJECT_EVENT_BUTTON_NUM_CHANGE, video_obj_button_num_cb },
-       { EMOTION_OBJECT_EVENT_BUTTON_CHANGE, video_obj_button_cb }
+       { EFL_CANVAS_VIDEO_EVENT_FRAME_DECODE, video_obj_frame_decode_cb },
+       { EFL_CANVAS_VIDEO_EVENT_FRAME_RESIZE, video_obj_frame_resize_cb },
+       { EFL_CANVAS_VIDEO_EVENT_LENGTH_CHANGE, video_obj_length_change_cb },
+       { EFL_CANVAS_VIDEO_EVENT_POSITION_CHANGE, video_obj_position_update_cb },
+       { EFL_CANVAS_VIDEO_EVENT_PLAYBACK_STOP, video_obj_stopped_cb },
+       { EFL_CANVAS_VIDEO_EVENT_CHANNELS_CHANGE, video_obj_channels_cb },
+       { EFL_CANVAS_VIDEO_EVENT_TITLE_CHANGE, video_obj_title_cb },
+       { EFL_CANVAS_VIDEO_EVENT_PROGRESS_CHANGE, video_obj_progress_cb },
+       { EFL_CANVAS_VIDEO_EVENT_REF_CHANGE, video_obj_ref_cb },
+       { EFL_CANVAS_VIDEO_EVENT_BUTTON_NUM_CHANGE, video_obj_button_num_cb },
+       { EFL_CANVAS_VIDEO_EVENT_BUTTON_CHANGE, video_obj_button_cb }
 );
 
 static void

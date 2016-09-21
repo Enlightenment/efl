@@ -1,7 +1,4 @@
-class Emotion.Object (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.Image.Load) {
-   legacy_prefix: emotion_object;
-   eo_prefix: emotion_obj;
-   event_prefix: emotion_object;
+class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.Image.Load) {
    methods {
         @property option {
              set {
@@ -70,10 +67,10 @@ class Emotion.Object (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.Ima
         Efl.Player.position.set;
         Efl.Player.position.get;
         Efl.Player.progress.get;
-        Efl.Player.audio_volume.set;
-        Efl.Player.audio_volume.get;
-        Efl.Player.audio_mute.set;
-        Efl.Player.audio_mute.get;
+        Efl.Player.volume.set;
+        Efl.Player.volume.get;
+        Efl.Player.mute.set;
+        Efl.Player.mute.get;
         Efl.Player.length.get;
         Efl.Player.seekable.get;
         Efl.Image.Load.load_size.get;
@@ -82,25 +79,24 @@ class Emotion.Object (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.Ima
         Efl.Image.smooth_scale.get;
    }
    events {
-        frame_decode;
-        position_update;
-        length_change;
-        frame_resize;
-        decode_stop;
-        playback_started;
-        playback_finished;
-        audio_level_change;
-        channels_change;
-        title_change;
-        progress_change;
-        ref_change;
-        button_num_change;
-        button_change;
-        open_done;
-        position_save,succeed;
-        position_save,failed;
-        position_load,succeed;
-        position_load,failed;
+        frame,decode;
+        position,change;
+        length,change;
+        frame,resize;
+        playback,start;
+        playback,stop;
+        volume,change;
+        channels,change;
+        title,change;
+        progress,change;
+        ref,change;
+        button,num,change;
+        button,change;
+        open,done;
+        position,save,done;
+        position,save,fail;
+        position,load,done;
+        position,load,fail;
    }
 }
 

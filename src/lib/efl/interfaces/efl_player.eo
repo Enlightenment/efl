@@ -71,7 +71,7 @@ interface Efl.Player {
                   speed: double; [[The play speed in the [0, infinity) range.]]
              }
         }
-        @property audio_volume {
+        @property volume {
              [[Control the audio volume.
 
                Controls the audio volume of the stream being played. This has
@@ -88,7 +88,7 @@ interface Efl.Player {
                   volume: double; [[The volume level]]
              }
         }
-        @property audio_mute {
+        @property mute {
              [[This property controls the audio mute state.]]
              set {
              }

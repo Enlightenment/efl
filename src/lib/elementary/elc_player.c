@@ -78,12 +78,12 @@ static const Elm_Action key_actions[] = {
 };
 
 EFL_CALLBACKS_ARRAY_DEFINE(_emotion_cb,
-   { EMOTION_OBJECT_EVENT_FRAME_DECODE, _update_frame },
-   { EMOTION_OBJECT_EVENT_FRAME_RESIZE, _update_slider },
-   { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, _update_slider },
-   { EMOTION_OBJECT_EVENT_POSITION_UPDATE, _update_frame },
-   { EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _play_started },
-   { EMOTION_OBJECT_EVENT_PLAYBACK_FINISHED, _play_finished }
+   { EFL_CANVAS_VIDEO_EVENT_FRAME_DECODE, _update_frame },
+   { EFL_CANVAS_VIDEO_EVENT_FRAME_RESIZE, _update_slider },
+   { EFL_CANVAS_VIDEO_EVENT_LENGTH_CHANGE, _update_slider },
+   { EFL_CANVAS_VIDEO_EVENT_POSITION_CHANGE, _update_frame },
+   { EFL_CANVAS_VIDEO_EVENT_PLAYBACK_START, _play_started },
+   { EFL_CANVAS_VIDEO_EVENT_PLAYBACK_STOP, _play_finished }
 );
 
 EFL_CALLBACKS_ARRAY_DEFINE(_slider_cb,

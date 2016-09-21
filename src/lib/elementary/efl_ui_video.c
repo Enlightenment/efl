@@ -50,12 +50,12 @@ static const Elm_Action key_actions[] = {
 };
 
 EFL_CALLBACKS_ARRAY_DEFINE(_video_cb,
-   { EMOTION_OBJECT_EVENT_OPEN_DONE, _on_open_done },
-   { EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _on_playback_started },
-   { EMOTION_OBJECT_EVENT_PLAYBACK_FINISHED, _on_playback_finished },
-   { EMOTION_OBJECT_EVENT_FRAME_RESIZE, _on_aspect_ratio_updated },
-   { EMOTION_OBJECT_EVENT_TITLE_CHANGE, _on_title_changed },
-   { EMOTION_OBJECT_EVENT_AUDIO_LEVEL_CHANGE, _on_audio_level_changed }
+   { EFL_CANVAS_VIDEO_EVENT_OPEN_DONE, _on_open_done },
+   { EFL_CANVAS_VIDEO_EVENT_PLAYBACK_START, _on_playback_started },
+   { EFL_CANVAS_VIDEO_EVENT_PLAYBACK_STOP, _on_playback_finished },
+   { EFL_CANVAS_VIDEO_EVENT_FRAME_RESIZE, _on_aspect_ratio_updated },
+   { EFL_CANVAS_VIDEO_EVENT_TITLE_CHANGE, _on_title_changed },
+   { EFL_CANVAS_VIDEO_EVENT_VOLUME_CHANGE, _on_audio_level_changed }
 );
 
 static Eina_Bool
@@ -426,25 +426,25 @@ elm_video_file_get(Eo *obj, const char **filename)
 EAPI void
 elm_video_audio_level_set(Evas_Object *obj, double volume)
 {
-   efl_player_audio_volume_set(obj, volume);
+   efl_player_volume_set(obj, volume);
 }
 
 EAPI double
 elm_video_audio_level_get(const Evas_Object *obj)
 {
-   return efl_player_audio_volume_get(obj);
+   return efl_player_volume_get(obj);
 }
 
 EAPI void
 elm_video_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
-   efl_player_audio_mute_set(obj, mute);
+   efl_player_mute_set(obj, mute);
 }
 
 EAPI Eina_Bool
 elm_video_audio_mute_get(const Evas_Object *obj)
 {
-   return efl_player_audio_mute_get(obj);
+   return efl_player_mute_get(obj);
 }
 
 EAPI double
