@@ -391,7 +391,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
              l = sscanf(tmpstr, "%*s %i \"%[^\"]\"", &nm, fl);
              if (l == 2)
                {
-                  strcpy(file_buf, fl);
+                  strncpy(file_buf, fl, sizeof(file_buf));
                   line = nm;
                   file_in = file_buf;
                }
