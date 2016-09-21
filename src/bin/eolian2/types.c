@@ -1,10 +1,18 @@
 #include "main.h"
+#include "docs.h"
 
 static Eina_Strbuf *
 _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool legacy)
 {
+   char *grp = strdup(eolian_typedecl_full_name_get(tp));
+   char *p = strrchr(grp, '.');
+   if (p) *p = '\0';
+   Eina_Strbuf *buf = eo_gen_docs_full_gen(eolian_typedecl_documentation_get(tp),
+                                           grp, 0, legacy);
+   free(grp);
+   if (!buf) buf = eina_strbuf_new();
+   else eina_strbuf_append_char(buf, '\n');
    Eolian_Typedecl_Type tpt = eolian_typedecl_type_get(tp);
-   Eina_Strbuf *buf = eina_strbuf_new();
    switch (tpt)
      {
       case EOLIAN_TYPEDECL_ALIAS:
@@ -47,6 +55,21 @@ _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool legacy)
                         eolian_typedecl_struct_field_name_get(memb));
                   }
                 eina_stringshare_del(ct);
+                const Eolian_Documentation *fdoc
+                   = eolian_typedecl_struct_field_documentation_get(memb);
+                 if (fdoc)
+                   {
+                      const char *nl = strrchr(eina_strbuf_string_get(buf), '\n');
+                      if (nl)
+                        {
+                           Eina_Strbuf *fbuf = eo_gen_docs_full_gen(fdoc, NULL,
+                              strlen(nl), legacy);
+                           if (fbuf)
+                             eina_strbuf_append_printf(buf, " %s",
+                                eina_strbuf_string_get(fbuf));
+                           eina_strbuf_free(fbuf);
+                        }
+                   }
                 eina_strbuf_append(buf, "\n");
              }
            eina_iterator_free(membs);
@@ -83,9 +106,24 @@ _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool legacy)
                      eina_stringshare_del(lit);
                   }
                 eina_stringshare_del(membn);
+                const Eolian_Documentation *fdoc
+                   = eolian_typedecl_enum_field_documentation_get(memb);
                 next = eina_iterator_next(membs, (void **)&memb);
                 if (next)
                   eina_strbuf_append(buf, ",");
+                if (fdoc)
+                  {
+                     const char *nl = strrchr(eina_strbuf_string_get(buf), '\n');
+                     if (nl)
+                       {
+                          Eina_Strbuf *fbuf = eo_gen_docs_full_gen(fdoc, NULL,
+                             strlen(nl), legacy);
+                          if (fbuf)
+                            eina_strbuf_append_printf(buf, " %s",
+                               eina_strbuf_string_get(fbuf));
+                          eina_strbuf_free(fbuf);
+                       }
+                  }
                 eina_strbuf_append(buf, "\n");
              }
            eina_iterator_free(membs);
