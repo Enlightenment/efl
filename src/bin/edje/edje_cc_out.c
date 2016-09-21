@@ -4036,9 +4036,10 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
    int quote, escape;
 
    keyl = strlen(prefix) + 2;
-   key = alloca(keyl + 1);
+   int key_len = keyl + 1;
+   key = alloca(key_len);
    if (!key) return;
-   strcpy(key, prefix);
+   strncpy(key, prefix, key_len);
    strcat(key, ":\"");
    quote = 0;
    escape = 0;
