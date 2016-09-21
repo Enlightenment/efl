@@ -930,6 +930,45 @@ START_TEST(eo_cxx_promise_value_set)
 }
 END_TEST
 
+template <typename T>
+void eo_cxx_promise_progress_set_impl()
+{
+   ecore_init();
+
+   {
+      efl::promise<int, T> promise;
+      efl::shared_future<int, efl::progress<T>> f = promise.get_future();
+
+      on_progress
+        (f, [&] (T const& value)
+         {
+            ck_assert_int_eq(value, test_value_get<T>::get());
+            ecore_main_loop_quit();
+         });
+      
+      std::thread thread
+        ([&] {
+          efl::ecore::main_loop_thread_safe_call_sync([]{}); // wait for ecore_main_loop_begin() call to start
+          efl::ecore::main_loop_thread_safe_call_async
+            ([&]
+             {
+                promise.set_progress(test_value_get<T>::get());
+             });
+        });
+
+      ecore_main_loop_begin();
+      
+      thread.join();
+   }
+   ecore_shutdown();
+}
+
+START_TEST(eo_cxx_promise_progress_set)
+{
+  eo_cxx_promise_progress_set_impl<int>();
+}
+END_TEST
+
 void
 eo_cxx_test_promise(TCase* tc)
 {
@@ -958,4 +997,5 @@ eo_cxx_test_promise(TCase* tc)
 
   tcase_add_test(tc, eo_cxx_promise_construct_and_destroy);
   tcase_add_test(tc, eo_cxx_promise_value_set);
+  tcase_add_test(tc, eo_cxx_promise_progress_set);
 }

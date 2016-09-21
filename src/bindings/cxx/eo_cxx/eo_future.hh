@@ -116,17 +116,15 @@ struct shared_future_common
    Efl_Future* _future;
 };
   
-template <typename T>
-struct shared_future_1_type : private shared_future_common
+template <typename T, typename Progress = void>
+struct shared_future_1_type : shared_future_common
 {
    typedef shared_future_common _base_type;
 
    using _base_type::_base_type;
-   using _base_type::swap;
-   using _base_type::valid;
-   using _base_type::native_handle;
-   using _base_type::wait;
-   typedef _base_type::native_handle_type native_handle_type;
+   shared_future_1_type() = default;
+   shared_future_1_type(shared_future_common const& other)
+     : _base_type(other) {}
 
    T get() const
    {
@@ -162,20 +160,17 @@ struct shared_future_1_type : private shared_future_common
       wait_state->cv.notify_one();
    }
 
-   typedef shared_future_1_type<T> _self_type;
+   typedef shared_future_1_type<T, Progress> _self_type;
 };
 
 template <typename T>
-struct shared_race_future_1_type : private shared_future_common
+struct shared_race_future_1_type : shared_future_common
 {
    typedef shared_future_common _base_type;
 
    using _base_type::_base_type;
-   using _base_type::swap;
-   using _base_type::valid;
-   using _base_type::native_handle;
-   using _base_type::wait;
-   typedef _base_type::native_handle_type native_handle_type;
+   shared_race_future_1_type(_base_type const& other)
+     : _base_type(other) {}
 
    T get() const
    {
@@ -211,20 +206,18 @@ struct shared_race_future_1_type : private shared_future_common
       wait_state->cv.notify_one();
    }
 
-   typedef shared_future_1_type<T> _self_type;
+   typedef shared_race_future_1_type<T> _self_type;
 };
-  
+
 template <typename...Args>
-struct shared_future_varargs_type : private shared_future_common
+struct shared_future_varargs_type : shared_future_common
 {
    typedef shared_future_common _base_type;
 
    using _base_type::_base_type;
-   using _base_type::swap;
-   using _base_type::valid;
-   using _base_type::native_handle;
-   using _base_type::wait;
-   typedef _base_type::native_handle_type native_handle_type;
+   shared_future_varargs_type() = default;
+   shared_future_varargs_type(_base_type const& other)
+     : _base_type(other) {}
 
    typedef std::tuple<Args...> tuple_type;
 
@@ -314,17 +307,59 @@ struct shared_future_varargs_type : private shared_future_common
 }
 
 template <typename...Args>
-struct shared_future : private std::conditional<sizeof...(Args) == 1, _impl::shared_future_1_type<typename std::tuple_element<0u, std::tuple<Args...>>::type>, _impl::shared_future_varargs_type<Args...>>::type
+struct shared_future : private
+  std::conditional
+  <
+    sizeof...(Args) == 1
+    , _impl::shared_future_1_type<typename std::tuple_element<0u, std::tuple<Args...>>::type>
+    , typename std::conditional
+      <_impl::is_progress<typename std::tuple_element<sizeof...(Args) - 1, std::tuple<Args...>>::type>::value
+      , typename std::conditional
+        <sizeof...(Args) == 2
+        , _impl::shared_future_1_type<Args...>
+         , _impl::shared_future_varargs_type<Args...>
+         >::type
+       , _impl::shared_future_varargs_type<Args...>
+       >::type
+  >::type
 {
-   typedef typename std::conditional<sizeof...(Args) == 1, _impl::shared_future_1_type<typename std::tuple_element<0u, std::tuple<Args...>>::type>, _impl::shared_future_varargs_type<Args...>>::type _base_type;
-
+   typedef typename
+  std::conditional
+  <
+    sizeof...(Args) == 1
+    , _impl::shared_future_1_type<Args...>
+    , typename std::conditional
+      <_impl::is_progress<typename std::tuple_element<sizeof...(Args) - 1, std::tuple<Args...>>::type>::value
+      , typename std::conditional
+        <sizeof...(Args) == 2
+        , _impl::shared_future_1_type<Args...>
+         , _impl::shared_future_varargs_type<Args...>
+         >::type
+       , _impl::shared_future_varargs_type<Args...>
+       >::type
+  >::type
+     _base_type;
+   typedef typename _impl::progress_param<Args...>::type progress_param_type;
+   typedef typename _impl::progress_type<progress_param_type>::type progress_type;
+   typedef typename _base_type::native_handle_type native_handle_type;
    using _base_type::_base_type;
    using _base_type::swap;
    using _base_type::valid;
    using _base_type::get;
    using _base_type::wait;
    using _base_type::native_handle;
-   typedef typename _base_type::native_handle_type native_handle_type;
+
+   shared_future() = default;
+   template <typename...OtherArgs>
+   shared_future(shared_future<OtherArgs...> const& other
+                 , typename std::enable_if<_impl::is_progress_param_compatible
+                 <progress_param_type, typename _impl::progress_param<OtherArgs...>::type>::value>::type* = nullptr)
+     : _base_type(static_cast< _impl::shared_future_common const&>(other))
+   {
+   }
+
+   template <typename...OtherArgs>
+   friend struct shared_future;
 };
 
 template <typename...Args>
@@ -350,7 +385,119 @@ template <typename...Args>
 struct is_race_future<shared_race_future<Args...>> : std::true_type {};
 
 }
+
+template <template <typename...> class Future, typename...Args, typename F>
+typename std::enable_if
+<
+   !std::is_same<typename Future<Args...>::progress_type, void>::value
+>::type on_progress(Future<Args...> future, F function)
+{
+  struct private_data
+  {
+    F progress_cb;
+    Future<Args...> future;
+  };
+  private_data* pdata = new private_data
+    {std::move(function), std::move(future)};
+
+  typedef typename Future<Args...>::progress_type progress_type;
   
+  Efl_Event_Cb raw_progress_cb =
+    [] (void* data, Efl_Event const* event)
+    {
+       private_data* pdata = static_cast<private_data*>(data);
+       try
+         {
+           Efl_Future_Event_Progress const* info = static_cast<Efl_Future_Event_Progress const*>(event->info);
+           pdata->progress_cb(*static_cast<progress_type const*>(info->progress));
+         }
+       catch(...)
+         {
+           // what should happen if progress_cb fails?
+         }
+    };
+  Efl_Event_Cb raw_delete_cb =
+    [] (void* data, Efl_Event const*)
+    {
+       private_data* pdata = static_cast<private_data*>(data);
+       delete pdata;
+    };
+
+  assert(pdata->future.valid());
+  efl_future_then(pdata->future.native_handle(), raw_delete_cb, raw_delete_cb, raw_progress_cb, pdata);
+}   
+
+template <template <typename...> class Future, typename...Args, typename Success, typename Error>
+shared_future
+<
+  typename std::enable_if
+  <
+    !std::is_same<void, typename std::tuple_element<0, std::tuple<Args...>>::type>::value
+    && !std::is_same<void, typename std::result_of<Success(Args...)>::type>::value
+    , typename std::result_of<Success(Args...)>::type
+  >::type
+> then(Future<Args...> future, Success success_cb, Error error_cb)
+{
+  struct private_data
+  {
+    Success success_cb;
+    Error error_cb;
+    Future<Args...> future;
+  };
+  private_data* pdata = new private_data
+    {std::move(success_cb), std::move(error_cb), std::move(future)};
+     
+  Efl_Event_Cb raw_success_cb =
+    [] (void* data, Efl_Event const* event)
+    {
+       private_data* pdata = static_cast<private_data*>(data);
+       try
+         {
+           _impl::future_invoke<Args...>(pdata->success_cb, event, _impl::is_race_future<Future<Args...>>{});
+           // should value_set the next promise
+         }
+       catch(...)
+         {
+           // should fail the next promise
+         }
+       delete pdata;
+    };
+  Efl_Event_Cb raw_error_cb =
+    [] (void* data, Efl_Event const* event)
+    {
+       private_data* pdata = static_cast<private_data*>(data);
+       Efl_Future_Event_Failure* info = static_cast<Efl_Future_Event_Failure*>(event->info);
+       pdata->error_cb(eina::error_code(info->error, eina::eina_error_category()));
+       // should error the next promise (or should the promise do that for me automatically?)
+       delete pdata;
+    };
+  
+      assert(pdata->future.valid());
+  Efl_Future* new_future
+    = efl_future_then(pdata->future.native_handle(), raw_success_cb, raw_error_cb, nullptr, pdata);
+  return shared_future<typename std::result_of<Success(Args...)>::type>{efl_ref(new_future)};
+}
+  
+template <typename...Args, typename F>
+void then(shared_future<Args...> future, F function)
+{
+  
+}
+
+template <typename...Args1, typename...Args2, typename...Futures>
+typename _impl::all_result_type<shared_future<Args1...>, shared_future<Args2...>, Futures...>::type
+all(shared_future<Args1...> future1, shared_future<Args2...> future2, Futures...futures)
+{
+  return _impl::all_impl(future1, future2, futures...);
+}
+
+template <typename...Args1, typename...Args2, typename...Futures>
+typename _impl::race_result_type<shared_future<Args1...>, shared_future<Args2...>, Futures...>::type
+race(shared_future<Args1...> future1, shared_future<Args2...> future2, Futures...futures)
+{
+  return _impl::race_impl(future1, future2, futures...);
+}
+
 }
 
 #endif

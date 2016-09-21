@@ -13,8 +13,52 @@ struct shared_future;
 template <typename...Args>
 struct shared_race_future;
 
+template <typename T>
+struct progress;
+  
 namespace _impl {
 
+template <typename T>
+struct is_progress : std::false_type {};
+
+template <typename T>
+struct is_progress<progress<T>> : std::true_type {};
+
+template <typename L, typename R>
+struct is_progress_param_compatible : std::false_type {};
+
+template <typename T>
+struct is_progress_param_compatible<T, T> : std::true_type {};
+  
+template <>
+struct is_progress_param_compatible<void, progress<void>> : std::true_type {};
+
+template <>
+struct is_progress_param_compatible<progress<void>, void> : std::true_type {};
+
+template <typename...Args>
+struct progress_param : std::conditional
+ <is_progress<typename std::tuple_element<sizeof...(Args) - 1, std::tuple<Args...>>::type>::value
+  , typename std::tuple_element<sizeof...(Args) - 1, std::tuple<Args...>>::type
+  , void>
+{
+};
+
+template <typename T>
+struct progress_type;
+
+template <typename T>
+struct progress_type<progress<T>>
+{
+  typedef T type;
+};
+
+template <>
+struct progress_type<void>
+{
+   typedef void type;
+};
+  
 template <typename...Futures>
 struct all_result_type;
 

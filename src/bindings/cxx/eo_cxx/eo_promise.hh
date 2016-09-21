@@ -22,80 +22,6 @@ namespace efl {
 template <typename...Args>
 struct shared_future;
   
-template <typename T>
-struct progress;
-
-template <template <typename...> class Future, typename...Args, typename Success, typename Error>
-shared_future
-<
-  typename std::enable_if
-  <
-    !std::is_same<void, typename std::tuple_element<0, std::tuple<Args...>>::type>::value
-    && !std::is_same<void, typename std::result_of<Success(Args...)>::type>::value
-    , typename std::result_of<Success(Args...)>::type
-  >::type
-> then(Future<Args...> future, Success success_cb, Error error_cb)
-{
-  struct private_data
-  {
-    Success success_cb;
-    Error error_cb;
-    Future<Args...> future;
-  };
-  private_data* pdata = new private_data
-    {std::move(success_cb), std::move(error_cb), std::move(future)};
-     
-  Efl_Event_Cb raw_success_cb =
-    [] (void* data, Efl_Event const* event)
-    {
-       private_data* pdata = static_cast<private_data*>(data);
-       try
-         {
-           _impl::future_invoke<Args...>(pdata->success_cb, event, _impl::is_race_future<Future<Args...>>{});
-           // should value_set the next promise
-         }
-       catch(...)
-         {
-           // should fail the next promise
-         }
-       delete pdata;
-    };
-  Efl_Event_Cb raw_error_cb =
-    [] (void* data, Efl_Event const* event)
-    {
-       private_data* pdata = static_cast<private_data*>(data);
-       Efl_Future_Event_Failure* info = static_cast<Efl_Future_Event_Failure*>(event->info);
-       pdata->error_cb(eina::error_code(info->error, eina::eina_error_category()));
-       // should error the next promise (or should the promise do that for me automatically?)
-       delete pdata;
-    };
-  
-      assert(pdata->future.valid());
-  Efl_Future* new_future
-    = efl_future_then(pdata->future.native_handle(), raw_success_cb, raw_error_cb, nullptr, pdata);
-  return shared_future<typename std::result_of<Success(Args...)>::type>{efl_ref(new_future)};
-}
-  
-template <typename...Args, typename F>
-void then(shared_future<Args...> future, F function)
-{
-  
-}
-
-template <typename...Args1, typename...Args2, typename...Futures>
-typename _impl::all_result_type<shared_future<Args1...>, shared_future<Args2...>, Futures...>::type
-all(shared_future<Args1...> future1, shared_future<Args2...> future2, Futures...futures)
-{
-  return _impl::all_impl(future1, future2, futures...);
-}
-
-template <typename...Args1, typename...Args2, typename...Futures>
-typename _impl::race_result_type<shared_future<Args1...>, shared_future<Args2...>, Futures...>::type
-race(shared_future<Args1...> future1, shared_future<Args2...> future2, Futures...futures)
-{
-  return _impl::race_impl(future1, future2, futures...);
-}
-
 namespace _impl {
 
 struct promise_common
@@ -144,15 +70,28 @@ struct promise_common
   
    Efl_Promise* _promise;
 };
-  
-template <typename T>
-struct promise_1_type : promise_common
+
+template <typename P>
+struct promise_progress : promise_common
 {
-   typedef promise_common _base_type;
-   using _base_type::_base_type;
-   using _base_type::swap;
-   using _base_type::set_exception;
+   void set_progress(P const& progress)
+   {
+      efl_promise_progress_set(this->_promise, &progress);
+   }
+};
+
+template <>
+struct promise_progress<void> : promise_common
+{
+   void set_progress()
+   {
+      efl_promise_progress_set(this->_promise, nullptr);
+   }
+};
   
+template <typename T, typename Progress>
+struct promise_1_type : promise_progress<Progress>
+{
    void set_value(T const& v)
    {
       typedef typename eina::alloc_to_c_traits<T>::c_type c_type;
@@ -167,14 +106,9 @@ struct promise_1_type : promise_common
    }
 };
 
-template <>
-struct promise_1_type<void> : promise_common
+template <typename Progress>
+struct promise_1_type<void, Progress> : promise_progress<Progress>
 {
-   typedef promise_common _base_type;
-   using _base_type::_base_type;
-   using _base_type::swap;
-   using _base_type::set_exception;
-  
    void set_value()
    {
       efl_promise_value_set(this->_promise, nullptr, nullptr);
@@ -184,19 +118,20 @@ struct promise_1_type<void> : promise_common
 }
   
 template <typename T, typename Progress = void>
-struct promise : private _impl::promise_1_type<T>
+struct promise : private _impl::promise_1_type<T, Progress>
 {
-   typedef _impl::promise_1_type<T> _base_type;
+   typedef _impl::promise_1_type<T, Progress> _base_type;
    using _base_type::_base_type;
    using _base_type::set_value;
+   using _base_type::set_progress;
    using _base_type::set_exception;
 
-   shared_future<T> get_future()
+   shared_future<T, progress<Progress>> get_future()
    {
-      return shared_future<T>{ ::efl_ref( ::efl_promise_future_get(this->_promise)) };
+      return shared_future<T, progress<Progress>>{ ::efl_ref( ::efl_promise_future_get(this->_promise)) };
    }
 
-   void swap(promise<T>& other)
+   void swap(promise<T, progress<Progress>>& other)
    {
       _base_type::swap(other);
    }
