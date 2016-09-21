@@ -1,4 +1,5 @@
 #include "main.h"
+#include "docs.h"
 
 static const char *
 _cl_type_str_get(const Eolian_Class *cl, Eina_Bool uc)
@@ -58,6 +59,15 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
    if (!legacy && (fsc == EOLIAN_SCOPE_PROTECTED))
      eina_strbuf_append_printf(buf, "#ifdef %s_PROTECTED\n", cnameu);
 
+   Eina_Bool hasdoc = eolian_function_documentation_get(fid, EOLIAN_UNRESOLVED) ||
+                      eolian_function_documentation_get(fid, ftype);
+   if (hasdoc)
+     {
+        Eina_Strbuf *dbuf = eo_gen_docs_func_gen(fid, ftype, 0, legacy);
+        eina_strbuf_append(buf, eina_strbuf_string_get(dbuf));
+        eina_strbuf_append_char(buf, '\n');
+        eina_strbuf_free(dbuf);
+     }
    eina_strbuf_append(buf, legacy ? "EAPI " : "EOAPI ");
    if (rtp)
      {
@@ -208,6 +218,18 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
 
    if (!legacy)
      {
+        const Eolian_Documentation *doc = eolian_class_documentation_get(cl);
+        if (doc)
+          {
+             Eina_Strbuf *cdoc = eo_gen_docs_full_gen(doc,
+                eolian_class_full_name_get(cl), 0, EINA_FALSE);
+             if (cdoc)
+               {
+                  eina_strbuf_append(buf, eina_strbuf_string_get(cdoc));
+                  eina_strbuf_append_char(buf, '\n');
+                  eina_strbuf_free(cdoc);
+               }
+          }
         eina_strbuf_append_printf(buf, "#define %s_%s %s_%s_get()\n\n",
                                   cnameu, _cl_type_str_get(cl, EINA_TRUE),
                                   cnamel, _cl_type_str_get(cl, EINA_FALSE));
@@ -278,7 +300,13 @@ events:
                eina_strbuf_append_char(buf, '\n');
 
              eina_strbuf_append_printf(buf, "EOAPI extern const "
-                                       "Efl_Event_Description _%s;\n", evn);
+                                       "Efl_Event_Description _%s;\n\n", evn);
+
+             Eina_Strbuf *evdbuf = eo_gen_docs_event_gen(ev,
+                eolian_class_full_name_get(cl));
+             eina_strbuf_append(buf, eina_strbuf_string_get(evdbuf));
+             eina_strbuf_append_char(buf, '\n');
+             eina_strbuf_free(evdbuf);
              eina_strbuf_append_printf(buf, "#define %s (&(_%s))\n", evn, evn);
 
              if (evs == EOLIAN_SCOPE_PROTECTED)
