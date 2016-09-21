@@ -48,8 +48,6 @@ struct _Elm_Pan_Smart_Data
    Evas_Object                   *content;
    Evas_Coord                     x, y, w, h;
    Evas_Coord                     content_w, content_h, px, py;
-   double                         gravity_x, gravity_y;
-   Evas_Coord                     prev_cw, prev_ch, delta_posx, delta_posy;
 };
 
 /**
@@ -209,6 +207,10 @@ struct _Elm_Scrollable_Smart_Interface_Data
    unsigned char size_adjust_recurse;
    unsigned char size_count;
    void         *event_info;
+
+   double                         gravity_x, gravity_y;
+   Evas_Coord                     prev_cw, prev_ch;
+
    Eina_Bool  size_adjust_recurse_abort : 1;
 
    Eina_Bool  momentum_animator_disabled : 1;

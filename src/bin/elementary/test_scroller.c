@@ -593,6 +593,15 @@ _append_items(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
 }
 
 static void
+_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+	Evas_Object *sl = data;
+	double val = elm_slider_value_get(obj);
+	elm_scroller_gravity_set(sl, 0.0, val);
+	printf("Gravity change to %lf\n",val);
+}
+
+static void
 _win_del_cb(void *data EINA_UNUSED,
 		Evas *e EINA_UNUSED,
 		Evas_Object *obj EINA_UNUSED,
@@ -605,7 +614,7 @@ _win_del_cb(void *data EINA_UNUSED,
 void
 test_scroller3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bt, *bt2, *bt3, *bx, *bx2, *bx3, *bx4, *sc;
+   Evas_Object *win, *bt, *bt2, *bt3, *bx, *bx2, *bx3, *bx4, *sc, *sl;
    _count = 0;
 
    win = elm_win_util_standard_add("scroller3", "Scroller 3");
@@ -639,9 +648,20 @@ test_scroller3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    elm_box_pack_end(bx2, bt3);
    evas_object_show(bt3);
 
+   sl = elm_slider_add(bx);
+   elm_object_text_set(sl, "Gravity");
+   elm_slider_unit_format_set(sl, "%1.1f");
+   elm_slider_indicator_format_set(sl, "%1.1f");
+   elm_slider_min_max_set(sl, 0, 1);
+   elm_slider_value_set(sl, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.1);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
    bx3 = elm_box_add(bx);
    evas_object_size_hint_align_set(bx3, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, 0.9);
+   evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, 0.8);
    elm_box_pack_end(bx, bx3);
    evas_object_show(bx3);
 
@@ -660,6 +680,7 @@ test_scroller3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_smart_callback_add(bt, "clicked", _append_item, bx4);
    evas_object_smart_callback_add(bt2, "clicked", _prepend_item, bx4);
    evas_object_smart_callback_add(bt3, "clicked", _append_items, bx4);
+   evas_object_smart_callback_add(sl, "changed", _changed_cb, sc);
 
    evas_object_resize(win, 500, 500);
    evas_object_show(win);

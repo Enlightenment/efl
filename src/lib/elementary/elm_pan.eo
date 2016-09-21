@@ -5,16 +5,6 @@ class Elm.Pan (Efl.Canvas.Group.Clipped)
    event_prefix: elm_pan;
    data: Elm_Pan_Smart_Data;
    methods {
-      @property gravity {
-         set {
-         }
-         get {
-         }
-         values {
-            x: double;
-            y: double;
-         }
-      }
       @property pos {
          set {
          }

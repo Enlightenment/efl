@@ -82,25 +82,7 @@ _round(double value, int pos)
 static void
 _elm_pan_update(Elm_Pan_Smart_Data *psd)
 {
-   if (!psd->gravity_x && !psd->gravity_y)
-     {
-        evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
-        return;
-     }
-
-   if ((!psd->px) && (!psd->py))
-     {
-        psd->px = psd->delta_posx * psd->gravity_x;
-        psd->py = psd->delta_posy * psd->gravity_y;
-     }
-   psd->delta_posx += psd->content_w - psd->prev_cw;
-   psd->prev_cw = psd->content_w;
-   psd->delta_posy += psd->content_h - psd->prev_ch;
-   psd->prev_ch = psd->content_h;
-
    evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
-   psd->px = psd->delta_posx * psd->gravity_x;
-   psd->py = psd->delta_posy * psd->gravity_y;
 }
 
 EOLIAN static void
@@ -205,24 +187,6 @@ _elm_pan_content_size_get(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coo
    if (h) *h = psd->content_h;
 }
 
-EOLIAN static void
-_elm_pan_gravity_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, double x, double y)
-{
-   psd->gravity_x = x;
-   psd->gravity_y = y;
-   psd->prev_cw = psd->content_w;
-   psd->prev_ch = psd->content_h;
-   psd->delta_posx = 0;
-   psd->delta_posy = 0;
-}
-
-EOLIAN static void
-_elm_pan_gravity_get(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, double *x, double *y)
-{
-   if (x) *x = psd->gravity_x;
-   if (y) *y = psd->gravity_y;
-}
-
 static Evas_Object *
 _elm_pan_add(Evas *evas)
 {
@@ -250,8 +214,7 @@ _elm_pan_content_del_cb(void *data,
 
    psd = data;
    psd->content = NULL;
-   psd->content_w = psd->content_h = psd->px = psd->py =
-           psd->prev_cw = psd->prev_ch = psd->delta_posx = psd->delta_posy = 0;
+   psd->content_w = psd->content_h = psd->px = psd->py = 0;
    efl_event_callback_legacy_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
@@ -1872,6 +1835,12 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
         ww = sid->ww;
         wh = sid->wh;
      }
+
+   wx += (sid->content_info.w - sid->prev_cw) * sid->gravity_x;
+   sid->wy += (sid->content_info.h - sid->prev_ch) * sid->gravity_y;
+
+   sid->prev_cw = sid->content_info.w;
+   sid->prev_ch = sid->content_info.h;
 
    elm_interface_scrollable_content_region_set(obj, wx, sid->wy, ww, wh);
 }
@@ -4427,17 +4396,17 @@ _elm_interface_scrollable_region_bring_in(Eo *obj, Elm_Scrollable_Smart_Interfac
 EOLIAN static void
 _elm_interface_scrollable_gravity_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, double x, double y)
 {
-   if (!sid->pan_obj) return;
-
-   elm_obj_pan_gravity_set(sid->pan_obj, x, y);
+   sid->gravity_x = x;
+   sid->gravity_y = y;
+   sid->prev_cw = sid->content_info.w;
+   sid->prev_ch = sid->content_info.h;
 }
 
 EOLIAN static void
 _elm_interface_scrollable_gravity_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, double *x, double *y)
 {
-   if (!sid->pan_obj) return;
-
-   elm_obj_pan_gravity_get(sid->pan_obj, x, y);
+   if (x) *x = sid->gravity_x;
+   if (y) *y = sid->gravity_y;
 }
 
 EOLIAN static void
