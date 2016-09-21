@@ -60,9 +60,6 @@ _efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
        (!efl_io_closer_closed_get(o)))
      efl_io_closer_close(o);
 
-   if (pd->connect.timeout)
-     efl_future_cancel(pd->connect.timeout);
-
    if (pd->connect.thread)
      {
         ecore_thread_cancel(pd->connect.thread);
@@ -81,8 +78,6 @@ _efl_net_dialer_tcp_connect_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *o = data;
    Efl_Net_Dialer_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eina_Error err = ETIMEDOUT;
-
-   pd->connect.timeout = NULL;
 
    if (pd->connect.thread)
      {
@@ -175,6 +170,7 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
      {
         efl_future_use(&pd->connect.timeout, efl_loop_timeout(efl_loop_user_loop_get(o), pd->timeout_dial, o));
         efl_future_then(pd->connect.timeout, _efl_net_dialer_tcp_connect_timeout, NULL, NULL, o);
+        efl_future_link(o, pd->connect.timeout);
      }
 
    return 0;

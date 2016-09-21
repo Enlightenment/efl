@@ -104,6 +104,7 @@ _efl_io_copier_job_schedule(Eo *o, Efl_Io_Copier_Data *pd)
 
    efl_future_use(&pd->job, efl_loop_job(efl_loop_user_loop_get(o), o));
    efl_future_then(pd->job, _efl_io_copier_job, NULL, NULL, o);
+   efl_future_link(o, pd->job);
 }
 
 /* NOTE: the returned slice may be smaller than requested since the
@@ -689,9 +690,6 @@ _efl_io_copier_efl_object_destructor(Eo *o, Efl_Io_Copier_Data *pd)
 
    efl_io_copier_source_set(o, NULL);
    efl_io_copier_destination_set(o, NULL);
-
-   if (pd->job)
-     efl_future_cancel(pd->job);
 
    efl_destructor(efl_super(o, MY_CLASS));
 

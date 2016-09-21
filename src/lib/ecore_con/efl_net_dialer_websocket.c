@@ -740,8 +740,6 @@ _efl_net_dialer_websocket_job(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *o = data;
    Efl_Net_Dialer_Websocket_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
-   pd->job = NULL;
-
    efl_ref(o);
 
    if (efl_io_reader_can_read_get(pd->http))
@@ -767,6 +765,7 @@ _efl_net_dialer_websocket_job_schedule(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
    if (!loop) return;
    efl_future_use(&pd->job, efl_loop_job(loop, o));
    efl_future_then(pd->job, _efl_net_dialer_websocket_job, NULL, NULL, o);
+   efl_future_link(o, pd->job);
 }
 
 static void
@@ -962,17 +961,8 @@ _efl_net_dialer_websocket_efl_object_destructor(Eo *o, Efl_Net_Dialer_Websocket_
 
    efl_event_callback_array_del(pd->http, _efl_net_dialer_websocket_http_cbs(), o);
 
-   if (pd->close_timeout)
-     efl_future_cancel(pd->close_timeout);
-
    efl_del(pd->http);
    pd->http = NULL;
-
-   if (pd->job)
-     {
-        efl_future_cancel(pd->job);
-        pd->job = NULL;
-     }
 
    efl_destructor(efl_super(o, MY_CLASS));
 
@@ -1511,6 +1501,7 @@ _efl_net_dialer_websocket_close_request(Eo *o, Efl_Net_Dialer_Websocket_Data *pd
 
    efl_future_use(&pd->close_timeout, efl_loop_timeout(efl_loop_user_loop_get(o), 2.0, o));
    efl_future_then(pd->close_timeout, _efl_net_dialer_websocket_close_request_timeout, NULL, NULL, o);
+   efl_future_link(o, pd->close_timeout);
 
    efl_io_writer_can_write_set(o, EINA_FALSE);
 
