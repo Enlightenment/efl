@@ -41,6 +41,7 @@ struct _Evas_Engine_Info_Software_X11
         void *(*best_visual_get) (int backend, void *connection, int screen);
         unsigned int (*best_colormap_get) (int backend, void *connection, int screen);
         int (*best_depth_get) (int backend, void *connection, int screen);
+        void (*region_push_hook)(Evas *e, int x, int y, int w, int h, const void *pixels);
      } func;
 
    unsigned char mask_changed : 1;

@@ -32,6 +32,8 @@
 # include <dlfcn.h>
 #endif
 
+#include <Ecore.h>
+
 Evas_Native_Tbm_Surface_Image_Set_Call  glsym__evas_native_tbm_surface_image_set = NULL;
 Evas_Native_Tbm_Surface_Stride_Get_Call  glsym__evas_native_tbm_surface_stride_get = NULL;
 int _evas_engine_soft_x11_log_dom = -1;
@@ -132,6 +134,22 @@ _output_egl_setup(int w, int h, int rot, Display *disp, Drawable draw,
    debug = 0;
 }
 */
+
+
+void
+evas_software_x11_region_push_hook_call(Outbuf *buf, int x, int y, int w, int h,
+                                        const void *pixels)
+{
+   int err;
+
+   if (!buf->region_push_hook.cb)
+     return;
+
+   err = ecore_thread_main_loop_begin();
+   EINA_SAFETY_ON_TRUE_RETURN(err == -1);
+   buf->region_push_hook.cb(buf->region_push_hook.evas, x, y, w, h, pixels);
+   ecore_thread_main_loop_end();
+}
 
 static void
 _output_egl_shutdown(Render_Engine *re)
@@ -526,6 +544,8 @@ eng_setup(Evas *eo_e, void *in)
                                           info->info.destination_alpha);
                   re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
                }
+             re->generic.ob->region_push_hook.cb = info->func.region_push_hook;
+             re->generic.ob->region_push_hook.evas = eo_e;
           }
 #endif
 
@@ -621,6 +641,8 @@ eng_setup(Evas *eo_e, void *in)
         if (ob)
           {
              evas_render_engine_software_generic_update(&re->generic, ob, e->output.w, e->output.h);
+             ob->region_push_hook.cb = info->func.region_push_hook;
+             ob->region_push_hook.evas = eo_e;
           }
 
         /* if ((re) && (re->ob)) re->ob->onebuf = ponebuf; */

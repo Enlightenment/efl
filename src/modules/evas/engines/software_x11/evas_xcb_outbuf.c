@@ -680,9 +680,14 @@ evas_software_xcb_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Eva
                                 pixman_region_n_rects(&tmpr), 
                                 (const xcb_rectangle_t *)pixman_region_rectangles(&tmpr, NULL));
         if (obr->xcbob)
-          evas_software_xcb_output_buffer_paste(obr->xcbob, 
-                                                buf->priv.x11.xcb.win, 
-                                                buf->priv.x11.xcb.gc, 0, 0, 0);
+          {
+             evas_software_x11_region_push_hook_call(buf, 0, 0, obr->xcbob->xim->width,
+                                                     obr->xcbob->xim->height,
+                                                     evas_software_xcb_output_buffer_data(obr->xcbob, NULL));
+             evas_software_xcb_output_buffer_paste(obr->xcbob,
+                                                   buf->priv.x11.xcb.win,
+                                                   buf->priv.x11.xcb.gc, 0, 0, 0);
+          }
         if (obr->mask) 
           {
              xcb_set_clip_rectangles(buf->priv.x11.xcb.conn, 
@@ -709,10 +714,16 @@ evas_software_xcb_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Eva
                evas_software_xcb_outbuf_debug_show(buf, buf->priv.x11.xcb.win, 
                                                    obr->x, obr->y, obr->w, obr->h);
              if (obr->xcbob)
-               evas_software_xcb_output_buffer_paste(obr->xcbob, 
-                                                     buf->priv.x11.xcb.win, 
-                                                     buf->priv.x11.xcb.gc, 
-                                                     obr->x, obr->y, 0);
+               {
+                  evas_software_x11_region_push_hook_call(buf, obr->x, obr->y,
+                                                          obr->xcbob->xim->width,
+                                                          obr->xcbob->xim->height,
+                                                          evas_software_xcb_output_buffer_data(obr->xcbob, NULL));
+                  evas_software_xcb_output_buffer_paste(obr->xcbob,
+                                                        buf->priv.x11.xcb.win,
+                                                        buf->priv.x11.xcb.gc,
+                                                        obr->x, obr->y, 0);
+               }
              if (obr->mask)
                evas_software_xcb_output_buffer_paste(obr->mask, 
                                                      buf->priv.x11.xcb.mask, 
@@ -959,10 +970,16 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
           evas_software_xcb_outbuf_debug_show(buf, buf->priv.x11.xcb.win, 
                                               obr->x, obr->y, obr->w, obr->h);
         if (obr->xcbob)
-          evas_software_xcb_output_buffer_paste(obr->xcbob, 
-                                                buf->priv.x11.xcb.win, 
-                                                buf->priv.x11.xcb.gc, 
-                                                obr->x, obr->y, 0);
+          {
+             evas_software_x11_region_push_hook_call(buf, obr->x, obr->y,
+                                                     obr->xcbob->xim->width,
+                                                     obr->xcbob->xim->height,
+                                                     evas_software_xcb_output_buffer_data(obr->xcbob, NULL));
+             evas_software_xcb_output_buffer_paste(obr->xcbob,
+                                                   buf->priv.x11.xcb.win,
+                                                   buf->priv.x11.xcb.gc,
+                                                   obr->x, obr->y, 0);
+          }
      }
 #endif
    if (obr->mask) 

@@ -113,9 +113,16 @@ struct _Outbuf
         unsigned char debug : 1;
         unsigned char synced : 1;
      } priv;
+   struct
+     {
+        void (*cb)(Evas *e, int x, int y, int w, int h, const void *pixels);
+        Evas *evas;
+     } region_push_hook;
 };
 
 void evas_software_xlib_x_init(void);
 void evas_software_xcb_init(void);
+
+void evas_software_x11_region_push_hook_call(Outbuf *buf, int x, int y, int w, int h, const void *pixels);
 
 #endif
