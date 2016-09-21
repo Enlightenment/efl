@@ -1724,8 +1724,9 @@ eng_gl_surface_direct_renderable_get(void *data, Evas_Native_Surface *ns, Eina_B
    Evas_Engine_GL_Context *gl_context;
    Evas_GL_Image *sfc = surface;
 
+   if (!re) return EINA_FALSE;
    EVGLINIT(data, EINA_FALSE);
-   if (!re || !ns) return EINA_FALSE;
+   if (!ns) return EINA_FALSE;
    if (!evgl_native_surface_direct_opts_get(ns, &direct_render, &client_side_rotation, override))
      return EINA_FALSE;
 
