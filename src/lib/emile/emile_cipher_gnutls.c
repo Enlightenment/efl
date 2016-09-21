@@ -169,7 +169,7 @@ EAPI Eina_Bool
 emile_binbuf_sha1(const Eina_Binbuf * data, unsigned char digest[20])
 {
    Eina_Slice slice = eina_binbuf_slice_get(data);
-   return emile_sha1(data.mem, data.len, digest);
+   return emile_sha1(slice.mem, slice.len, digest);
 }
 
 EAPI Eina_Binbuf *
