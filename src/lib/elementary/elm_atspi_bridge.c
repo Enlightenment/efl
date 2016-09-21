@@ -3968,12 +3968,6 @@ _children_changed_signal_send(void *data, const Efl_Event *event)
         break;
     }
 
-   if (!atspi_desc)
-     {
-        efl_event_callback_stop(event->object);
-        return;
-     }
-
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
                        &_event_obj_signals[ATSPI_OBJECT_EVENT_CHILDREN_CHANGED], atspi_desc,
                        idx, 0, "(so)", eldbus_connection_unique_name_get(pd->a11y_bus), ev_data->child);
