@@ -199,7 +199,6 @@ evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh,
                   EINA_TRUE);
    eet_close(ef);
 
- on_error:
    _evas_canvas3d_eet_file_free(eet_file);
 
    eet_shutdown();
