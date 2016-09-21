@@ -258,7 +258,8 @@ _inputs_timer2_cb(void *data)
    Efl_Input_Pointer *ptr;
    Eina_Iterator *it;
    Eo *win = data;
-   size_t i = 0, cnt = 0;
+   size_t cnt = 0;
+   int i = 0;
 
    it = efl_input_pointer_iterate(win, 0);
    EINA_ITERATOR_FOREACH(it, ptr)
@@ -319,7 +320,8 @@ _inputs_timer3_cb(void *data)
    Efl_Input_Pointer *ptr;
    Eina_Iterator *it;
    Eo *win = data;
-   size_t i = 0, cnt = 0;
+   size_t cnt = 0;
+   int i = 0;
 
    it = efl_input_pointer_iterate(win, 0);
    EINA_ITERATOR_FOREACH(it, ptr)
