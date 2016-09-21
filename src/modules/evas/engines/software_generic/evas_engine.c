@@ -3655,14 +3655,18 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
 
    _tls_check();
 
-   if ((!sfc) || (!ctx))
+   if ((!sfc) ^ (!ctx))
      {
         ERR("Evas GL on SW engine does not support surfaceless contexts.");
+        return 0;
+     }
 
-        // Unset surface/context
+   // Unset surface/context
+   if ((!sfc) && (!ctx))
+     {
         eina_tls_set(gl_current_ctx_key, NULL);
         eina_tls_set(gl_current_sfc_key, NULL);
-        return 0;
+        return 1;
      }
 
    // Initialize Context if it hasn't been.
