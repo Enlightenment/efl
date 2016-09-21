@@ -2869,6 +2869,7 @@ eng_image_map_surface_new(void *data EINA_UNUSED, int w, int h, int alpha)
         surface = evas_cache2_image_copied_data(evas_common_image_cache2_get(),
                                                 w, h, NULL, alpha,
                                                 EVAS_COLORSPACE_ARGB8888);
+        if (!surface) return NULL;
         evas_cache2_image_pixels(surface);
         return surface;
      }
@@ -2876,6 +2877,7 @@ eng_image_map_surface_new(void *data EINA_UNUSED, int w, int h, int alpha)
    surface = evas_cache_image_copied_data(evas_common_image_cache_get(), 
                                           w, h, NULL, alpha, 
                                           EVAS_COLORSPACE_ARGB8888);
+   if (!surface) return NULL;
    evas_cache_image_pixels(surface);
    return surface;
 }
