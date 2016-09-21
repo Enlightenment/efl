@@ -77,7 +77,9 @@ bin_eolian2_eolian_gen2_SOURCES = \
                 bin/eolian2/types.c \
                 bin/eolian2/types.h \
                 bin/eolian2/headers.c \
-                bin/eolian2/headers.h
+                bin/eolian2/headers.h \
+                bin/eolian2/docs.c \
+                bin/eolian2/docs.h
 
 bin_eolian2_eolian_gen2_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@
 bin_eolian2_eolian_gen2_LDADD = @USE_EOLIAN_LIBS@

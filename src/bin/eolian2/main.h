@@ -1,6 +1,10 @@
 #ifndef EOLIAN_GEN_MAIN_H
 #define EOLIAN_GEN_MAIN_H
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <Eina.h>
 #include <Eolian.h>
 
