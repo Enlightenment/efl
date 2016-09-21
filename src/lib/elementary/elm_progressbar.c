@@ -573,7 +573,7 @@ elm_progressbar_unit_format_function_set(Elm_Progressbar *obj, progressbar_func_
    sd->unit_format_func = func;
    sd->unit_format_free = free_func;
    sig = (func) ? "elm,state,units,visible" : "elm,state,units,hidden";
-   elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+   elm_layout_signal_emit(obj, sig, "elm");
    edje_object_message_signal_process(wd->resize_obj);
 
    _units_set(obj);
