@@ -1553,9 +1553,10 @@ _edje_embryo_fn_get_text(Embryo_Program *ep, Embryo_Cell *params)
           }
         else
           {
-             int size = strlen(s) + 1;
-             char *ss = alloca(size);
-             strncpy(ss, s, size);
+             char *ss;
+
+             ss = alloca(strlen(s) + 1);
+             strcpy(ss, s);
              ss[params[3] - 1] = 0;
              SETSTR(ss, params[2]);
           }
