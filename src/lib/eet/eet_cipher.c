@@ -679,7 +679,6 @@ eet_identity_check(const void   *data_base,
    gnutls_datum_t datum;
    gnutls_datum_t signature;
    gnutls_pubkey_t pubkey;
-   gnutls_digest_algorithm_t hash_algo;
    unsigned char *hash;
    gcry_md_hd_t md;
    int err;
@@ -717,10 +716,10 @@ eet_identity_check(const void   *data_base,
    if (gnutls_pubkey_import_x509(pubkey, cert, 0) < 0)
      goto on_error;
 
-   if (gnutls_pubkey_get_verify_algorithm(pubkey, &signature, &hash_algo) < 0)
-     goto on_error;
-
-   if (gnutls_pubkey_verify_hash(pubkey, 0, &datum, &signature) < 0)
+   if (gnutls_pubkey_verify_hash2(pubkey,
+                                  gnutls_x509_crt_get_signature_algorithm(cert),
+                                  0,
+                                  &datum, &signature) < 0)
      goto on_error;
 
    if (sha1)
