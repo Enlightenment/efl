@@ -3772,9 +3772,10 @@ _translation_init(void)
     * en_/C where translating only parts of the interface make some
     * sense).
     */
-   _elm_config->translate = !(strcmp (cur_dom, "messages") &&
-         !*trans_comment && strncmp (msg_locale, "en_", 3) &&
-         strcmp (msg_locale, "C"));
+   if (msg_locale)
+     _elm_config->translate = !(strcmp (cur_dom, "messages") &&
+           !*trans_comment && strncmp (msg_locale, "en_", 3) &&
+           strcmp (msg_locale, "C"));
    /* Get RTL orientation from system */
    if (_elm_config->translate)
      {
