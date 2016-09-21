@@ -26,6 +26,11 @@
 #include "ecore_evas_private.h"
 #include "ecore_evas_x11.h"
 
+#ifdef ENABLE_VNC_SERVER
+# include <rfb/rfb.h>
+# include <rfb/rfbregion.h>
+#endif
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -131,6 +136,17 @@ struct _Ecore_Evas_Engine_Data_X11 {
         unsigned long colormap; // store colormap used to create pixmap
      } pixmap;
    Eina_Bool destroyed : 1; // X window has been deleted and cannot be used
+
+#ifdef ENABLE_VNC_SERVER
+   char *frame_buffer;
+   rfbScreenInfoPtr vnc_screen;
+   Ecore_Fd_Handler *vnc_listen_handler;
+   Ecore_Fd_Handler *vnc_listen6_handler;
+   Ecore_Evas_Vnc_Client_Accept_Cb accept_cb;
+   void *accept_cb_data;
+   int last_w;
+   int last_h;
+#endif
 };
 
 static Ecore_Evas_Interface_X11 * _ecore_evas_x_interface_x11_new(void);
@@ -151,6 +167,123 @@ static void _alpha_do(Ecore_Evas *, int);
 static void _transparent_do(Ecore_Evas *, int);
 static void _avoid_damage_do(Ecore_Evas *, int);
 static void _rotation_do(Ecore_Evas *, int, int);
+
+#ifdef ENABLE_VNC_SERVER
+
+typedef struct _Ecore_Evas_X11_Vnc_Client_Data {
+   Ecore_Fd_Handler *handler;
+} Ecore_Evas_X11_Vnc_Client_Data;
+
+static unsigned int _available_seat = 1;
+
+#define VNC_BITS_PER_SAMPLE (8)
+#define VNC_SAMPLES_PER_PIXEL (3)
+#define VNC_BYTES_PER_PIXEL (4)
+
+static void
+_ecore_evas_x11_update_vnc_clients(rfbScreenInfoPtr vnc_screen)
+{
+   rfbClientIteratorPtr itr;
+   rfbClientRec *client;
+
+   itr = rfbGetClientIterator(vnc_screen);
+
+   //No clients.
+   if (!itr) return;
+
+   while ((client = rfbClientIteratorNext(itr))) {
+      rfbBool r;
+
+      r = rfbUpdateClient(client);
+
+      if (!r)
+        {
+           Ecore_Evas_X11_Vnc_Client_Data *cdata = client->clientData;
+
+           WRN("Could not update the VNC client on seat '%p'\n", cdata);
+        }
+
+      //Client disconnected
+      if (client->sock == -1) rfbClientConnectionGone(client);
+   }
+
+   rfbReleaseClientIterator(itr);
+}
+
+static void
+_ecore_evas_x11_vnc_server_format_setup(Ecore_Evas_Engine_Data_X11 *edata)
+{
+   int aux;
+
+   //FIXME: Using BGR - Is there a better way to do this?
+   aux = edata->vnc_screen->serverFormat.redShift;
+   edata->vnc_screen->serverFormat.redShift = edata->vnc_screen->serverFormat.blueShift;
+   edata->vnc_screen->serverFormat.blueShift = aux;
+}
+
+static void
+_ecore_evas_x11_region_push_hook(Evas *e, int x, int y, int w, int h,
+                                 const void *pixels)
+{
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Data_X11 *edata;
+   size_t size;
+
+   ee = evas_data_attach_get(e);
+   edata = ee->engine.data;
+
+   if (!edata->frame_buffer || edata->last_w != ee->w || edata->last_h != ee->h)
+     {
+        char *new_fb;
+
+        size = ee->w * ee->h * VNC_BYTES_PER_PIXEL;
+        new_fb = malloc(size);
+        EINA_SAFETY_ON_NULL_RETURN(new_fb);
+        free(edata->frame_buffer);
+        memcpy(new_fb, pixels, size);
+        edata->frame_buffer = new_fb;
+        edata->last_w = ee->w;
+        edata->last_h = ee->h;
+        if (edata->vnc_screen)
+          {
+             rfbNewFramebuffer(edata->vnc_screen, edata->frame_buffer, ee->w,
+                               ee->h, VNC_BITS_PER_SAMPLE, VNC_SAMPLES_PER_PIXEL,
+                               VNC_BYTES_PER_PIXEL);
+             _ecore_evas_x11_vnc_server_format_setup(edata);
+          }
+     }
+   else
+     {
+        //Partial update
+        int dy;
+        const int src_stride = w * VNC_BYTES_PER_PIXEL;
+
+        for (dy = 0; dy < h; dy++)
+          {
+             memcpy(edata->frame_buffer + (x * VNC_BYTES_PER_PIXEL)
+                    + ((dy + y) * (edata->last_w * VNC_BYTES_PER_PIXEL)),
+                    (char *)pixels + (dy * src_stride), src_stride);
+          }
+     }
+
+   if (edata->vnc_screen)
+     {
+        rfbMarkRectAsModified(edata->vnc_screen, x, y, x+w, y+h);
+        _ecore_evas_x11_update_vnc_clients(edata->vnc_screen);
+     }
+}
+
+#else
+
+static void
+_ecore_evas_x11_region_push_hook(Evas *e EINA_UNUSED, int x EINA_UNUSED,
+                                 int y EINA_UNUSED, int w EINA_UNUSED,
+                                 int h EINA_UNUSED,
+                                 const void *pixels EINA_UNUSED)
+{
+}
+
+#endif //ENABLE_VNC_SERVER
 
 static void
 _ecore_evas_x_hints_update(Ecore_Evas *ee)
@@ -2059,6 +2192,16 @@ _ecore_evas_x_free(Ecore_Evas *ee)
         ecore_timer_del(edata->outdelay);
         edata->outdelay = NULL;
      }
+#ifdef ENABLE_VNC_SERVER
+   if (edata->vnc_screen)
+     {
+        ecore_main_fd_handler_del(edata->vnc_listen6_handler);
+        ecore_main_fd_handler_del(edata->vnc_listen_handler);
+        free(edata->frame_buffer);
+        rfbScreenCleanup(edata->vnc_screen);
+        edata->vnc_screen = NULL;
+     }
+#endif
    free(edata);
    _ecore_evas_x_shutdown();
    ecore_x_shutdown();
@@ -4110,6 +4253,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
         einfo->info.screen = NULL;
 # endif
         einfo->info.drawable = ee->prop.window;
+        einfo->func.region_push_hook = _ecore_evas_x11_region_push_hook;
 
         if (argb)
           {
@@ -4298,6 +4442,7 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
                }
           }
 
+        einfo->func.region_push_hook = _ecore_evas_x11_region_push_hook;
         einfo->info.destination_alpha = argb;
 
         if (redraw_debug < 0)
@@ -5131,6 +5276,211 @@ _ecore_evas_x11_shape_input_apply(Ecore_Evas *ee)
    ecore_x_window_shape_input_window_set(ee->prop.window, edata->win_shaped_input);
 }
 
+#ifdef ENABLE_VNC_SERVER
+static Eina_Bool
+_ecore_evas_x11_vnc_socket_listen_activity(void *data,
+                                           Ecore_Fd_Handler *fd_handler EINA_UNUSED)
+{
+   rfbProcessNewConnection(data);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_ecore_evas_x11_client_gone(rfbClientRec *client)
+{
+   Ecore_Evas_X11_Vnc_Client_Data *cdata = client->clientData;
+
+   EDBG("VNC client on seat '%p' gone", cdata);
+
+   ecore_main_fd_handler_del(cdata->handler);
+   free(cdata);
+   _available_seat--;
+}
+
+static Eina_Bool
+_ecore_evas_x11_client_activity(void *data,
+                                Ecore_Fd_Handler *fd_handler EINA_UNUSED)
+{
+   Eina_Bool r = ECORE_CALLBACK_RENEW;
+   rfbClientRec *client = data;
+
+   rfbProcessClientMessage(client);
+
+   //macro from rfb.h
+   if (FB_UPDATE_PENDING(client))
+     rfbSendFramebufferUpdate(client, client->modifiedRegion);
+
+   //Client disconnected.
+   if (client->sock == -1)
+     {
+        rfbClientConnectionGone(client);
+        r = ECORE_CALLBACK_DONE;
+     }
+
+   return r;
+}
+
+static enum rfbNewClientAction
+_ecore_evas_x11_vnc_client_connection_new(rfbClientRec *client)
+{
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Data_X11 *edata;
+   Ecore_Evas_X11_Vnc_Client_Data *cdata;
+
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(_available_seat == UINT_MAX,
+                                  RFB_CLIENT_REFUSE);
+
+   ee = client->screen->screenData;
+   edata = ee->engine.data;
+
+   if (!edata->accept_cb(edata->accept_cb_data, ee, client->host))
+     return RFB_CLIENT_REFUSE;
+
+   cdata = calloc(1, sizeof(Ecore_Evas_X11_Vnc_Client_Data));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cdata, RFB_CLIENT_REFUSE);
+
+   cdata->handler = ecore_main_fd_handler_add(client->sock, ECORE_FD_READ,
+                                              _ecore_evas_x11_client_activity,
+                                              client, NULL, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(cdata->handler, err_handler);
+
+   client->clientGoneHook = _ecore_evas_x11_client_gone;
+   client->clientData = cdata;
+
+   EDBG("New VNC client on seat '%u'", _available_seat);
+
+   _available_seat++;
+   return RFB_CLIENT_ACCEPT;
+
+ err_handler:
+   free(cdata);
+   return RFB_CLIENT_REFUSE;
+}
+
+static void
+_ecore_evas_x11_vnc_client_keyboard_event(rfbBool down EINA_UNUSED,
+                                          rfbKeySym keySym EINA_UNUSED,
+                                          rfbClientRec *client EINA_UNUSED)
+{
+   EDBG("Keyboard event\n");
+}
+
+static void
+_ecore_evas_x11_vnc_client_pointer_event(int buttonMask EINA_UNUSED,
+                                         int x EINA_UNUSED, int y EINA_UNUSED,
+                                         rfbClientPtr client EINA_UNUSED)
+{
+   EDBG("Pointer event\n");
+}
+#endif
+
+static Eina_Bool
+_ecore_evas_x11_vnc_start(Ecore_Evas *ee, const char *addr, int port,
+                          Ecore_Evas_Vnc_Client_Accept_Cb cb, void *data)
+{
+#ifdef ENABLE_VNC_SERVER
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   Eina_Bool can_listen = EINA_FALSE;
+
+   if (edata->vnc_screen)
+     return EINA_FALSE;
+
+   edata->vnc_screen = rfbGetScreen(0, NULL, ee->w, ee->h, VNC_BITS_PER_SAMPLE,
+                                    VNC_SAMPLES_PER_PIXEL, VNC_BYTES_PER_PIXEL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edata->vnc_screen, EINA_FALSE);
+
+   edata->vnc_screen->newClientHook = _ecore_evas_x11_vnc_client_connection_new;
+   edata->vnc_screen->kbdAddEvent = _ecore_evas_x11_vnc_client_keyboard_event;
+   edata->vnc_screen->ptrAddEvent = _ecore_evas_x11_vnc_client_pointer_event;
+
+   //This enables multiple client connections at the same time.
+   edata->vnc_screen->alwaysShared = TRUE;
+   edata->vnc_screen->frameBuffer = edata->frame_buffer;
+
+   _ecore_evas_x11_vnc_server_format_setup(edata);
+
+   if (port > 0)
+     edata->vnc_screen->port = edata->vnc_screen->ipv6port= port;
+
+   if (addr)
+     {
+        int err;
+
+        //rfbStringToAddr() does not change the addr contents.
+        err = rfbStringToAddr((char *)addr, &edata->vnc_screen->listenInterface);
+        EINA_SAFETY_ON_TRUE_GOTO(err == 0, err_screen);
+     }
+
+   rfbInitServer(edata->vnc_screen);
+   if (edata->vnc_screen->listenSock >= 0)
+     {
+        edata->vnc_listen_handler = ecore_main_fd_handler_add(edata->vnc_screen->listenSock,
+                                                              ECORE_FD_READ,
+                                                              _ecore_evas_x11_vnc_socket_listen_activity,
+                                                              edata->vnc_screen, NULL,
+                                                              NULL);
+        EINA_SAFETY_ON_NULL_GOTO(edata->vnc_listen_handler, err_listen);
+        can_listen = EINA_TRUE;
+     }
+
+   if (edata->vnc_screen->listen6Sock >= 0)
+     {
+        edata->vnc_listen6_handler = ecore_main_fd_handler_add(edata->vnc_screen->listen6Sock,
+                                                               ECORE_FD_READ,
+                                                               _ecore_evas_x11_vnc_socket_listen_activity,
+                                                               edata->vnc_screen,
+                                                               NULL, NULL);
+        EINA_SAFETY_ON_NULL_GOTO(edata->vnc_listen6_handler, err_listen6);
+        can_listen = EINA_TRUE;
+     }
+
+   //rfbInitServer() failed and could not setup the sockets.
+   EINA_SAFETY_ON_FALSE_GOTO(can_listen, err_listen);
+
+   edata->vnc_screen->screenData = ee;
+   edata->accept_cb_data = data;
+   edata->accept_cb = cb;
+
+   return EINA_TRUE;
+
+ err_listen6:
+   ecore_main_fd_handler_del(edata->vnc_listen_handler);
+   edata->vnc_listen_handler = NULL;
+ err_listen:
+   rfbScreenCleanup(edata->vnc_screen);
+   edata->vnc_screen = NULL;
+ err_screen:
+   return EINA_FALSE;
+#else
+   (void)ee;
+   (void)addr;
+   (void)port;
+   (void)cb;
+   (void)data;
+   return EINA_FALSE;
+#endif
+}
+
+static Eina_Bool
+_ecore_evas_x11_vnc_stop(Ecore_Evas *ee)
+{
+#ifdef ENABLE_VNC_SERVER
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+
+   if (!edata->vnc_screen)
+     return EINA_FALSE;
+
+   ecore_main_fd_handler_del(edata->vnc_listen6_handler);
+   ecore_main_fd_handler_del(edata->vnc_listen_handler);
+   rfbScreenCleanup(edata->vnc_screen);
+   edata->vnc_screen = NULL;
+   return EINA_TRUE;
+#else
+   (void)ee;
+   return EINA_FALSE;
+#endif
+}
+
 static Ecore_Evas_Interface_X11 *
 _ecore_evas_x_interface_x11_new(void)
 {
@@ -5151,6 +5501,8 @@ _ecore_evas_x_interface_x11_new(void)
    iface->shape_input_empty = _ecore_evas_x11_shape_input_empty;
    iface->shape_input_reset = _ecore_evas_x11_shape_input_reset;
    iface->shape_input_apply = _ecore_evas_x11_shape_input_apply;
+   iface->vnc_start = _ecore_evas_x11_vnc_start;
+   iface->vnc_stop = _ecore_evas_x11_vnc_stop;
 
    return iface;
 }
@@ -5205,3 +5557,4 @@ _ecore_evas_x_interface_gl_x11_new(void)
    return iface;
 }
 #endif
+
