@@ -189,6 +189,28 @@ _output_edid_parse(Ecore_Drm2_Output *output, const uint8_t *data, size_t len)
    return 0;
 }
 
+#ifdef HAVE_ATOMIC_DRM
+static void
+_output_edid_atomic_find(Ecore_Drm2_Output *output)
+{
+   Ecore_Drm2_Connector_State *cstate;
+   int ret = 0;
+
+   cstate = output->conn_state;
+
+   ret = _output_edid_parse(output, cstate->edid.data, cstate->edid.len);
+   if (!ret)
+     {
+        if (output->edid.pnp[0] != '\0')
+          eina_stringshare_replace(&output->make, output->edid.pnp);
+        if (output->edid.monitor[0] != '\0')
+          eina_stringshare_replace(&output->model, output->edid.monitor);
+        if (output->edid.serial[0] != '\0')
+          eina_stringshare_replace(&output->serial, output->edid.serial);
+     }
+}
+#endif
+
 static void
 _output_edid_find(Ecore_Drm2_Output *output, const drmModeConnector *conn)
 {
@@ -386,6 +408,42 @@ _output_dpms_property_get(int fd, const drmModeConnector *conn)
    return NULL;
 }
 
+#ifdef HAVE_ATOMIC_DRM
+static Eina_Bool
+_output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
+{
+   Ecore_Drm2_Crtc_State *cstate;
+   drmModeAtomicReq *req = NULL;
+   Eina_Bool ret = EINA_TRUE;
+
+   req = drmModeAtomicAlloc();
+   if (!req) return EINA_FALSE;
+
+   drmModeAtomicSetCursor(req, 0);
+
+   cstate = output->crtc_state;
+
+   if (drmModeAtomicAddProperty(req, cstate->obj_id,
+                                cstate->active.id, level) < 0)
+     {
+        ERR("Failed to add connector property DPMS");
+        ret = EINA_FALSE;
+        goto err;
+     }
+
+   if (drmModeAtomicCommit(output->fd, req, 0, NULL))
+     {
+        ERR("Could not set dpms property: %m");
+        ret = EINA_FALSE;
+     }
+
+err:
+   drmModeAtomicFree(req);
+
+   return ret;
+}
+#endif
+
 static void
 _output_backlight_init(Ecore_Drm2_Output *output, unsigned int conn_type)
 {
@@ -525,6 +583,98 @@ _output_matrix_update(Ecore_Drm2_Output *output)
    eina_matrix4_inverse(&output->inverse, &output->matrix);
 }
 
+#ifdef HAVE_ATOMIC_DRM
+static Ecore_Drm2_Crtc_State *
+_atomic_state_crtc_duplicate(Ecore_Drm2_Crtc_State *state)
+{
+   Ecore_Drm2_Crtc_State *cstate;
+
+   cstate = calloc(1, sizeof(Ecore_Drm2_Crtc_State));
+   if (!cstate) return NULL;
+
+   memcpy(cstate, state, sizeof(Ecore_Drm2_Crtc_State));
+
+   return cstate;
+}
+
+static Ecore_Drm2_Crtc_State *
+_output_crtc_state_get(Ecore_Drm2_Atomic_State *state, unsigned int id)
+{
+   Ecore_Drm2_Crtc_State *cstate;
+   int i = 0;
+
+   for (; i < state->crtcs; i++)
+     {
+        cstate = &state->crtc_states[i];
+        if (cstate->obj_id != id) continue;
+        return _atomic_state_crtc_duplicate(cstate);
+     }
+
+   return NULL;
+}
+
+static Ecore_Drm2_Connector_State *
+_atomic_state_conn_duplicate(Ecore_Drm2_Connector_State *state)
+{
+   Ecore_Drm2_Connector_State *cstate;
+
+   cstate = calloc(1, sizeof(Ecore_Drm2_Connector_State));
+   if (!cstate) return NULL;
+
+   memcpy(cstate, state, sizeof(Ecore_Drm2_Connector_State));
+
+   return cstate;
+}
+
+static Ecore_Drm2_Connector_State *
+_output_conn_state_get(Ecore_Drm2_Atomic_State *state, unsigned int id)
+{
+   Ecore_Drm2_Connector_State *cstate;
+   int i = 0;
+
+   for (; i < state->conns; i++)
+     {
+        cstate = &state->conn_states[i];
+        if (cstate->obj_id != id) continue;
+        return _atomic_state_conn_duplicate(cstate);
+     }
+
+   return NULL;
+}
+
+static Ecore_Drm2_Plane_State *
+_atomic_state_plane_duplicate(Ecore_Drm2_Plane_State *state)
+{
+   Ecore_Drm2_Plane_State *pstate;
+
+   pstate = calloc(1, sizeof(Ecore_Drm2_Plane_State));
+   if (!pstate) return NULL;
+
+   memcpy(pstate, state, sizeof(Ecore_Drm2_Plane_State));
+
+   return pstate;
+}
+
+/* NB: For now, this function will only return primary planes.
+ * We may need to adjust this later to pass in a desired plane type */
+static Ecore_Drm2_Plane_State *
+_output_plane_state_get(Ecore_Drm2_Atomic_State *state, unsigned int id)
+{
+   Ecore_Drm2_Plane_State *pstate;
+   int i = 0;
+
+   for (; i < state->planes; i++)
+     {
+        pstate = &state->plane_states[i];
+        if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
+        if (pstate->cid.value != id) continue;
+        return _atomic_state_plane_duplicate(pstate);
+     }
+
+   return NULL;
+}
+#endif
+
 static Eina_Bool
 _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConnector *conn, int x, int y, int *w, Eina_Bool cloned)
 {
@@ -588,7 +738,19 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    output->ocrtc = drmModeGetCrtc(dev->fd, output->crtc_id);
 
-   output->dpms = _output_dpms_property_get(dev->fd, conn);
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     {
+        output->crtc_state =
+          _output_crtc_state_get(dev->state, output->crtc_id);
+        output->conn_state =
+          _output_conn_state_get(dev->state, output->conn_id);
+        output->plane_state =
+          _output_plane_state_get(dev->state, output->crtc_id);
+     }
+   else
+#endif
+     output->dpms = _output_dpms_property_get(dev->fd, conn);
 
    _output_backlight_init(output, conn->connector_type);
 
@@ -596,7 +758,12 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    _output_modes_create(dev, output, conn);
 
-   _output_edid_find(output, conn);
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     _output_edid_atomic_find(output);
+   else
+#endif
+     _output_edid_find(output, conn);
 
    if (output->connected) output->enabled = EINA_TRUE;
 
@@ -845,8 +1012,13 @@ ecore_drm2_output_dpms_set(Ecore_Drm2_Output *output, int level)
    EINA_SAFETY_ON_NULL_RETURN(output);
    EINA_SAFETY_ON_TRUE_RETURN(!output->enabled);
 
-   drmModeConnectorSetProperty(output->fd, output->conn_id,
-                               output->dpms->prop_id, level);
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     _output_dpms_atomic_set(output, level);
+   else
+#endif
+     drmModeConnectorSetProperty(output->fd, output->conn_id,
+                                 output->dpms->prop_id, level);
 }
 
 EAPI char *
@@ -856,9 +1028,16 @@ ecore_drm2_output_edid_get(Ecore_Drm2_Output *output)
    unsigned char *blob;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(output->edid.blob, NULL);
 
-   blob = output->edid.blob;
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     blob = output->conn_state->edid.data;
+   else
+#endif
+     {
+        EINA_SAFETY_ON_NULL_RETURN_VAL(output->edid.blob, NULL);
+        blob = output->edid.blob;
+     }
 
    edid_str = malloc((128 * 2) + 1);
    if (edid_str)

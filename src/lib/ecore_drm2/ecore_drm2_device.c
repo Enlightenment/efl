@@ -8,6 +8,12 @@
 # define DRM_CAP_CURSOR_HEIGHT 0x9
 #endif
 
+#ifdef HAVE_ATOMIC_DRM
+# include <sys/utsname.h>
+#endif
+
+Eina_Bool _ecore_drm2_use_atomic = EINA_FALSE;
+
 static Eina_Bool
 _cb_session_active(void *data, int type EINA_UNUSED, void *event)
 {
@@ -143,6 +149,418 @@ out:
    return ret;
 }
 
+#ifdef HAVE_ATOMIC_DRM
+static Eina_Bool
+_drm2_atomic_usable(int fd)
+{
+   drmVersion *drmver;
+   Eina_Bool ret = EINA_FALSE;
+
+   drmver = drmGetVersion(fd);
+   if (!drmver) return EINA_FALSE;
+
+   /* detect driver */
+   if ((!strcmp(drmver->name, "i915")) &&
+       (!strcmp(drmver->desc, "Intel Graphics")))
+     {
+        FILE *fp;
+
+        /* detect kernel version
+         * NB: In order for atomic modesetting to work properly for Intel,
+         * we need to be using a kernel >= 4.8.0 */
+
+        fp = fopen("/proc/sys/kernel/osrelease", "rb");
+        if (fp)
+          {
+             char buff[512];
+             int maj = 0, min = 0;
+
+             if (fgets(buff, sizeof(buff), fp))
+               {
+                  if (sscanf(buff, "%i.%i.%*s", &maj, &min) == 2)
+                    {
+                       if ((maj >= 4) && (min >= 8))
+                         ret = EINA_TRUE;
+                    }
+               }
+             fclose(fp);
+          }
+     }
+
+   drmFreeVersion(drmver);
+
+   return ret;
+}
+
+static void
+_drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
+{
+   drmModeObjectPropertiesPtr oprops;
+   unsigned int i = 0;
+
+   DBG("Atomic State Crtc Fill");
+
+   oprops =
+     drmModeObjectGetProperties(fd, cstate->obj_id, DRM_MODE_OBJECT_CRTC);
+   if (!oprops) return;
+
+   DBG("\tCrtc %d", cstate->obj_id);
+
+   for (i = 0; i < oprops->count_props; i++)
+     {
+        drmModePropertyPtr prop;
+
+        prop = drmModeGetProperty(fd, oprops->props[i]);
+        if (!prop) continue;
+
+        DBG("\t\tProperty: %s %d", prop->name, i);
+
+        if (!strcmp(prop->name, "MODE_ID"))
+          {
+             drmModePropertyBlobPtr bp;
+
+             cstate->mode.id = prop->prop_id;
+             cstate->mode.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->mode.value);
+
+             if (!cstate->mode.value)
+               {
+                  cstate->mode.len = 0;
+                  goto cont;
+               }
+
+             bp = drmModeGetPropertyBlob(fd, cstate->mode.value);
+             if (!bp) goto cont;
+
+             if ((!cstate->mode.data) ||
+                 memcmp(cstate->mode.data, bp->data, bp->length) != 0)
+               {
+                  cstate->mode.data =
+                    eina_memdup(bp->data, bp->length, 1);
+               }
+
+             cstate->mode.len = bp->length;
+
+             if (cstate->mode.value != 0)
+               drmModeCreatePropertyBlob(fd, bp->data, bp->length,
+                                         &cstate->mode.value);
+
+             drmModeFreePropertyBlob(bp);
+          }
+        else if (!strcmp(prop->name, "ACTIVE"))
+          {
+             cstate->active.id = prop->prop_id;
+             cstate->active.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->active.value);
+          }
+
+cont:
+        drmModeFreeProperty(prop);
+     }
+
+   drmModeFreeObjectProperties(oprops);
+}
+
+static void
+_drm2_atomic_state_conn_fill(Ecore_Drm2_Connector_State *cstate, int fd)
+{
+   drmModeObjectPropertiesPtr oprops;
+   unsigned int i = 0;
+
+   DBG("Atomic State Connector Fill");
+
+   oprops =
+     drmModeObjectGetProperties(fd, cstate->obj_id, DRM_MODE_OBJECT_CONNECTOR);
+   if (!oprops) return;
+
+   DBG("\tConnector: %d", cstate->obj_id);
+
+   for (i = 0; i < oprops->count_props; i++)
+     {
+        drmModePropertyPtr prop;
+
+        prop = drmModeGetProperty(fd, oprops->props[i]);
+        if (!prop) continue;
+
+        DBG("\t\tProperty: %s", prop->name);
+
+        if (!strcmp(prop->name, "CRTC_ID"))
+          {
+             cstate->crtc.id = prop->prop_id;
+             cstate->crtc.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->crtc.value);
+          }
+        else if (!strcmp(prop->name, "DPMS"))
+          {
+             cstate->dpms.id = prop->prop_id;
+             cstate->dpms.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->dpms.value);
+          }
+        else if (!strcmp(prop->name, "EDID"))
+          {
+             drmModePropertyBlobPtr bp;
+
+             cstate->edid.id = oprops->prop_values[i];
+             if (!cstate->edid.id)
+               {
+                  cstate->edid.len = 0;
+                  goto cont;
+               }
+
+             bp = drmModeGetPropertyBlob(fd, cstate->edid.id);
+             if (!bp) goto cont;
+
+             if ((!cstate->edid.data) ||
+                 memcmp(cstate->edid.data, bp->data, bp->length) != 0)
+               {
+                  cstate->edid.data =
+                    eina_memdup(bp->data, bp->length, 1);
+               }
+
+             cstate->edid.len = bp->length;
+
+             if (cstate->edid.id != 0)
+               drmModeCreatePropertyBlob(fd, bp->data, bp->length,
+                                         &cstate->edid.id);
+
+             drmModeFreePropertyBlob(bp);
+          }
+        else if (!strcmp(prop->name, "aspect ratio"))
+          {
+             cstate->aspect.id = prop->prop_id;
+             cstate->aspect.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->aspect.value);
+          }
+        else if (!strcmp(prop->name, "scaling mode"))
+          {
+             cstate->scaling.id = prop->prop_id;
+             cstate->scaling.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->scaling.value);
+          }
+
+cont:
+        drmModeFreeProperty(prop);
+     }
+
+   drmModeFreeObjectProperties(oprops);
+}
+
+static void
+_drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
+{
+   drmModeObjectPropertiesPtr oprops;
+   unsigned int i = 0;
+   int k = 0;
+
+   DBG("Atomic State Plane Fill");
+
+   oprops =
+     drmModeObjectGetProperties(fd, pstate->obj_id, DRM_MODE_OBJECT_PLANE);
+   if (!oprops) return;
+
+   DBG("\tPlane: %d", pstate->obj_id);
+
+   for (i = 0; i < oprops->count_props; i++)
+     {
+        drmModePropertyPtr prop;
+
+        prop = drmModeGetProperty(fd, oprops->props[i]);
+        if (!prop) continue;
+
+        DBG("\t\tProperty: %s", prop->name);
+
+        if (!strcmp(prop->name, "CRTC_ID"))
+          {
+             pstate->cid.id = prop->prop_id;
+             pstate->cid.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", pstate->cid.value);
+          }
+        else if (!strcmp(prop->name, "FB_ID"))
+          {
+             pstate->fid.id = prop->prop_id;
+             pstate->fid.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", pstate->fid.value);
+         }
+        else if (!strcmp(prop->name, "CRTC_X"))
+          {
+             pstate->cx.id = prop->prop_id;
+             pstate->cx.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "CRTC_Y"))
+          {
+             pstate->cy.id = prop->prop_id;
+             pstate->cy.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "CRTC_W"))
+          {
+             pstate->cw.id = prop->prop_id;
+             pstate->cw.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "CRTC_H"))
+          {
+             pstate->ch.id = prop->prop_id;
+             pstate->ch.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "SRC_X"))
+          {
+             pstate->sx.id = prop->prop_id;
+             pstate->sx.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "SRC_Y"))
+          {
+             pstate->sy.id = prop->prop_id;
+             pstate->sy.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "SRC_W"))
+          {
+             pstate->sw.id = prop->prop_id;
+             pstate->sw.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "SRC_H"))
+          {
+             pstate->sh.id = prop->prop_id;
+             pstate->sh.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "type"))
+          {
+             pstate->type.id = prop->prop_id;
+             pstate->type.value = oprops->prop_values[i];
+             switch (pstate->type.value)
+               {
+                case DRM_PLANE_TYPE_OVERLAY:
+                  DBG("\t\t\tOverlay Plane");
+                  break;
+                case DRM_PLANE_TYPE_PRIMARY:
+                  DBG("\t\t\tPrimary Plane");
+                  break;
+                case DRM_PLANE_TYPE_CURSOR:
+                  DBG("\t\t\tCursor Plane");
+                  break;
+                default:
+                  DBG("\t\t\tValue: %d", pstate->type.value);
+                  break;
+               }
+          }
+        else if (!strcmp(prop->name, "rotation"))
+          {
+             pstate->rotation.id = prop->prop_id;
+             pstate->rotation.value = oprops->prop_values[i];
+
+             for (k = 0; k < prop->count_enums; k++)
+               {
+                  int r = -1;
+
+                  if (!strcmp(prop->enums[k].name, "rotate-0"))
+                    r = ECORE_DRM2_ROTATION_NORMAL;
+                  else if (!strcmp(prop->enums[k].name, "rotate-90"))
+                    r = ECORE_DRM2_ROTATION_90;
+                  else if (!strcmp(prop->enums[k].name, "rotate-180"))
+                    r = ECORE_DRM2_ROTATION_180;
+                  else if (!strcmp(prop->enums[k].name, "rotate-270"))
+                    r = ECORE_DRM2_ROTATION_270;
+                  else if (!strcmp(prop->enums[k].name, "reflect-x"))
+                    r = ECORE_DRM2_ROTATION_REFLECT_X;
+                  else if (!strcmp(prop->enums[k].name, "reflect-y"))
+                    r = ECORE_DRM2_ROTATION_REFLECT_Y;
+
+                  if (r != -1)
+                    {
+                       pstate->supported_rotations |= r;
+                       pstate->rotation_map[ffs(r)] =
+                         1 << prop->enums[k].value;
+                    }
+               }
+          }
+
+        drmModeFreeProperty(prop);
+     }
+
+   drmModeFreeObjectProperties(oprops);
+}
+
+static void
+_drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
+{
+   int i = 0;
+   drmModeResPtr res;
+   drmModePlaneResPtr pres;
+
+   res = drmModeGetResources(fd);
+   if (!res) return;
+
+   pres = drmModeGetPlaneResources(fd);
+   if (!pres) goto err;
+
+   state->crtcs = res->count_crtcs;
+   state->crtc_states = calloc(state->crtcs, sizeof(Ecore_Drm2_Crtc_State));
+   if (state->crtc_states)
+     {
+        for (i = 0; i < state->crtcs; i++)
+          {
+             Ecore_Drm2_Crtc_State *cstate;
+
+             cstate = &state->crtc_states[i];
+             cstate->obj_id = res->crtcs[i];
+             cstate->index = i;
+
+             _drm2_atomic_state_crtc_fill(cstate, fd);
+          }
+     }
+
+   state->conns = res->count_connectors;
+   state->conn_states =
+     calloc(state->conns, sizeof(Ecore_Drm2_Connector_State));
+   if (state->conn_states)
+     {
+        for (i = 0; i < state->conns; i++)
+          {
+             Ecore_Drm2_Connector_State *cstate;
+
+             cstate = &state->conn_states[i];
+             cstate->obj_id = res->connectors[i];
+
+             _drm2_atomic_state_conn_fill(cstate, fd);
+          }
+     }
+
+   state->planes = pres->count_planes;
+   state->plane_states = calloc(state->planes, sizeof(Ecore_Drm2_Plane_State));
+   if (state->plane_states)
+     {
+        for (i = 0; i < state->planes; i++)
+          {
+             drmModePlanePtr plane;
+             Ecore_Drm2_Plane_State *pstate;
+
+             plane = drmModeGetPlane(fd, pres->planes[i]);
+             if (!plane) continue;
+
+             pstate = &state->plane_states[i];
+             pstate->obj_id = pres->planes[i];
+             pstate->mask = plane->possible_crtcs;
+
+             drmModeFreePlane(plane);
+
+             _drm2_atomic_state_plane_fill(pstate, fd);
+          }
+     }
+
+   drmModeFreePlaneResources(pres);
+
+err:
+   drmModeFreeResources(res);
+}
+
+static void
+_drm2_atomic_state_free(Ecore_Drm2_Atomic_State *state)
+{
+   free(state->plane_states);
+   free(state->conn_states);
+   free(state->crtc_states);
+   free(state);
+}
+#endif
+
 EAPI Ecore_Drm2_Device *
 ecore_drm2_device_find(const char *seat, unsigned int tty)
 {
@@ -191,6 +609,32 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    DBG("Device Path: %s", device->path);
    DBG("Device Fd: %d", device->fd);
 
+#ifdef HAVE_ATOMIC_DRM
+   /* check that this system can do atomic */
+   _ecore_drm2_use_atomic = _drm2_atomic_usable(device->fd);
+   if (_ecore_drm2_use_atomic)
+     {
+        if (drmSetClientCap(device->fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0)
+          {
+             WRN("Could not enable Atomic Modesetting support");
+             _ecore_drm2_use_atomic = EINA_FALSE;
+          }
+        else
+          {
+             if (drmSetClientCap(device->fd,
+                                 DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
+               WRN("Could not enable Universal Plane support");
+             else
+               {
+                  /* atomic & planes are usable */
+                  device->state = calloc(1, sizeof(Ecore_Drm2_Atomic_State));
+                  if (device->state)
+                    _drm2_atomic_state_fill(device->state, device->fd);
+               }
+          }
+     }
+#endif
+
    device->active_hdlr =
      ecore_event_handler_add(ELPUT_EVENT_SESSION_ACTIVE,
                              _cb_session_active, device);
@@ -198,10 +642,6 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    device->device_change_hdlr =
      ecore_event_handler_add(ELPUT_EVENT_DEVICE_CHANGE,
                              _cb_device_change, device);
-
-   /* NB: Not going to enable planes if we don't support atomic */
-   /* if (drmSetClientCap(device->fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0) */
-   /*   ERR("Could not set Universal Plane support: %m"); */
 
    return device->fd;
 
@@ -225,6 +665,11 @@ EAPI void
 ecore_drm2_device_free(Ecore_Drm2_Device *device)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);
+
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     _drm2_atomic_state_free(device->state);
+#endif
 
    ecore_event_handler_del(device->active_hdlr);
    ecore_event_handler_del(device->device_change_hdlr);
