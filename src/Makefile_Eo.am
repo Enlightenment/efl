@@ -14,7 +14,8 @@ BUILT_SOURCES += \
                  $(eo_eolian_c) \
                  $(eo_eolian_h)
 
-lib_LTLIBRARIES += lib/eo/libeo.la
+lib_LTLIBRARIES += lib/eo/libeo.la \
+                   lib/eo/libeo_dbg.la
 
 installed_eomainheadersdir = $(includedir)/eo-@VMAJ@
 dist_installed_eomainheaders_DATA = lib/eo/Eo.h lib/eo/efl_future.h
@@ -37,6 +38,17 @@ lib_eo_libeo_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
 lib_eo_libeo_la_LIBADD = @EO_LIBS@
 lib_eo_libeo_la_DEPENDENCIES = @EO_INTERNAL_LIBS@
 lib_eo_libeo_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### The Eo debug build
+lib_eo_libeo_dbg_la_SOURCES = $(lib_eo_libeo_la_SOURCES)
+lib_eo_libeo_dbg_la_CPPFLAGS = $(lib_eo_libeo_la_CPPFLAGS) -DEO_DEBUG
+lib_eo_libeo_dbg_la_LIBADD = $(lib_eo_libeo_la_LIBADD)
+lib_eo_libeo_dbg_la_DEPENDENCIES = $(lib_eo_libeo_la_DEPENDENCIES)
+lib_eo_libeo_dbg_la_LDFLAGS = $(lib_eo_libeo_la_LDFLAGS)
+
+bin_SCRIPTS += scripts/eo/eo_debug
+
+######
 
 eoeolianfilesdir = $(datadir)/eolian/include/eo-@VMAJ@
 eoeolianfiles_DATA = \
