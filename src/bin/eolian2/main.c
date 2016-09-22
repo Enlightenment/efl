@@ -4,6 +4,7 @@
 #include "main.h"
 #include "types.h"
 #include "headers.h"
+#include "sources.h"
 
 int _eolian_gen_log_dom = -1;
 
@@ -262,6 +263,7 @@ _write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
           }
      }
 
+   eina_strbuf_free(buf);
    return EINA_FALSE;
 }
 
@@ -292,14 +294,21 @@ static Eina_Bool
 _write_source(const char *ofname, const char *ifname)
 {
    INF("generating source: %s", ofname);
-   Eina_Strbuf *ebuf = eina_strbuf_new(),
-               *lbuf = eina_strbuf_new();
+   Eina_Strbuf *buf = eina_strbuf_new();
 
-   Eina_Bool ret = _write_file(ofname, ebuf, EINA_FALSE) &&
-                   _write_file(ofname, lbuf, EINA_TRUE);
-   eina_strbuf_free(ebuf);
-   eina_strbuf_free(lbuf);
-   return ret;
+   const Eolian_Class *cl = eolian_class_get_by_file(ifname);
+   eo_gen_source_gen(cl, buf);
+   if (cl)
+     {
+        if (_write_file(ofname, buf, EINA_FALSE))
+          {
+             eina_strbuf_free(buf);
+             return EINA_TRUE;
+          }
+     }
+
+   eina_strbuf_free(buf);
+   return EINA_FALSE;
 }
 
 static Eina_Bool
