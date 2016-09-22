@@ -8,6 +8,12 @@
 # define DRM_CAP_CURSOR_HEIGHT 0x9
 #endif
 
+#ifdef HAVE_ATOMIC_DRM
+# include <sys/utsname.h>
+#endif
+
+Eina_Bool _ecore_drm2_use_atomic = EINA_FALSE;
+
 static Eina_Bool
 _cb_session_active(void *data, int type EINA_UNUSED, void *event)
 {
@@ -143,6 +149,50 @@ out:
    return ret;
 }
 
+#ifdef HAVE_ATOMIC_DRM
+static Eina_Bool
+_ecore_drm2_atomic_usable(int fd)
+{
+   drmVersion *drmver;
+   Eina_Bool ret = EINA_FALSE;
+
+   drmver = drmGetVersion(fd);
+   if (!drmver) return EINA_FALSE;
+
+   /* detect driver */
+   if ((!strcmp(drmver->name, "i915")) &&
+       (!strcmp(drmver->desc, "Intel Graphics")))
+     {
+        FILE *fp;
+
+        /* detect kernel version
+         * NB: In order for atomic modesetting to work properly for Intel,
+         * we need to be using a kernel >= 4.8.0 */
+
+        fp = fopen("/proc/sys/kernel/osrelease", "rb");
+        if (fp)
+          {
+             char buff[512];
+             int maj = 0, min = 0;
+
+             if (fgets(buff, sizeof(buff), fp))
+               {
+                  if (sscanf(buff, "%i.%i.%*s", &maj, &min) == 2)
+                    {
+                       if ((maj >= 4) && (min >= 8))
+                         ret = EINA_TRUE;
+                    }
+               }
+             fclose(fp);
+          }
+     }
+
+   drmFreeVersion(drmver);
+
+   return ret;
+}
+#endif
+
 EAPI Ecore_Drm2_Device *
 ecore_drm2_device_find(const char *seat, unsigned int tty)
 {
@@ -191,6 +241,11 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    DBG("Device Path: %s", device->path);
    DBG("Device Fd: %d", device->fd);
 
+#ifdef HAVE_ATOMIC_DRM
+   /* check that this system can do atomic */
+   _ecore_drm2_use_atomic = _ecore_drm2_atomic_usable(device->fd);
+#endif
+
    device->active_hdlr =
      ecore_event_handler_add(ELPUT_EVENT_SESSION_ACTIVE,
                              _cb_session_active, device);
@@ -198,10 +253,6 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    device->device_change_hdlr =
      ecore_event_handler_add(ELPUT_EVENT_DEVICE_CHANGE,
                              _cb_device_change, device);
-
-   /* NB: Not going to enable planes if we don't support atomic */
-   /* if (drmSetClientCap(device->fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0) */
-   /*   ERR("Could not set Universal Plane support: %m"); */
 
    return device->fd;
 
