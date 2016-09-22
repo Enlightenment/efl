@@ -357,7 +357,8 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
      {
         Ecore_Drm2_Plane_State *pstate;
         uint32_t flags =
-          DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT;
+          DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
+          DRM_MODE_ATOMIC_ALLOW_MODSET;
 
         pstate = output->plane_state;
 
@@ -372,26 +373,6 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
         pstate->cy.value = output->y;
         pstate->cw.value = output->current_mode->width;
         pstate->ch.value = output->current_mode->height;
-
-        if ((!output->current) ||
-            (output->current->stride != fb->stride))
-          {
-             flags = DRM_MODE_ATOMIC_ALLOW_MODESET;
-
-             ret = _fb_atomic_flip(output, pstate, flags);
-             if (ret < 0)
-               {
-                  ERR("\tCrtc: %d FB: %d", output->crtc_id, fb->id);
-                  return ret;
-               }
-
-             if (output->current) _release_buffer(output, output->current);
-             output->current = fb;
-             output->current->busy = EINA_TRUE;
-             output->next = NULL;
-
-             return 0;
-          }
 
         ret = _fb_atomic_flip(output, pstate, flags);
         if ((ret < 0) && (errno != EBUSY))
