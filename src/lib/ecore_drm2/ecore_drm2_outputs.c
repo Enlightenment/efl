@@ -583,6 +583,38 @@ _output_conn_state_get(Ecore_Drm2_Atomic_State *state, unsigned int id)
 
    return NULL;
 }
+
+static Ecore_Drm2_Plane_State *
+_atomic_state_plane_duplicate(Ecore_Drm2_Plane_State *state)
+{
+   Ecore_Drm2_Plane_State *pstate;
+
+   pstate = calloc(1, sizeof(Ecore_Drm2_Plane_State));
+   if (!pstate) return NULL;
+
+   memcpy(pstate, state, sizeof(Ecore_Drm2_Plane_State));
+
+   return pstate;
+}
+
+/* NB: For now, this function will only return primary planes.
+ * We may need to adjust this later to pass in a desired plane type */
+static Ecore_Drm2_Plane_State *
+_output_plane_state_get(Ecore_Drm2_Atomic_State *state, unsigned int id)
+{
+   Ecore_Drm2_Plane_State *pstate;
+   int i = 0;
+
+   for (; i < state->planes; i++)
+     {
+        pstate = &state->plane_states[i];
+        if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
+        if (pstate->cid.value != id) continue;
+        return _atomic_state_plane_duplicate(pstate);
+     }
+
+   return NULL;
+}
 #endif
 
 static Eina_Bool
@@ -655,6 +687,8 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
           _output_crtc_state_get(dev->state, output->crtc_id);
         output->conn_state =
           _output_conn_state_get(dev->state, output->conn_id);
+        output->plane_state =
+          _output_plane_state_get(dev->state, output->crtc_id);
      }
    else
 #endif
