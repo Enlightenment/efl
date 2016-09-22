@@ -7,6 +7,8 @@
 #include <type_traits>
 #include <tuple>
 
+#include <eina_aligned_union.hh>
+
 namespace efl { namespace eina {
 
 namespace _impl {
@@ -236,7 +238,7 @@ private:
      new (&buffer) T(std::move(object));
    }
   
-   typedef typename std::aligned_union<1, Args...>::type buffer_type;
+   typedef typename eina::aligned_union<1, Args...>::type buffer_type;
 
    friend bool operator==(variant<Args...> const& lhs, variant<Args...> const& rhs)
    {
