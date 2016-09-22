@@ -262,6 +262,90 @@ cont:
 }
 
 static void
+_drm2_atomic_state_conn_fill(Ecore_Drm2_Connector_State *cstate, int fd)
+{
+   drmModeObjectPropertiesPtr oprops;
+   unsigned int i = 0;
+
+   DBG("Atomic State Connector Fill");
+
+   oprops =
+     drmModeObjectGetProperties(fd, cstate->obj_id, DRM_MODE_OBJECT_CONNECTOR);
+   if (!oprops) return;
+
+   DBG("\tConnector: %d", cstate->obj_id);
+
+   for (i = 0; i < oprops->count_props; i++)
+     {
+        drmModePropertyPtr prop;
+
+        prop = drmModeGetProperty(fd, oprops->props[i]);
+        if (!prop) continue;
+
+        DBG("\t\tProperty: %s", prop->name);
+
+        if (!strcmp(prop->name, "CRTC_ID"))
+          {
+             cstate->crtc.id = prop->prop_id;
+             cstate->crtc.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->crtc.value);
+          }
+        else if (!strcmp(prop->name, "DPMS"))
+          {
+             cstate->dpms.id = prop->prop_id;
+             cstate->dpms.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->dpms.value);
+          }
+        else if (!strcmp(prop->name, "EDID"))
+          {
+             drmModePropertyBlobPtr bp;
+
+             cstate->edid.id = oprops->prop_values[i];
+             if (!cstate->edid.id)
+               {
+                  cstate->edid.len = 0;
+                  goto cont;
+               }
+
+             bp = drmModeGetPropertyBlob(fd, cstate->edid.id);
+             if (!bp) goto cont;
+
+             if ((!cstate->edid.data) ||
+                 memcmp(cstate->edid.data, bp->data, bp->length) != 0)
+               {
+                  cstate->edid.data =
+                    eina_memdup(bp->data, bp->length, 1);
+               }
+
+             cstate->edid.len = bp->length;
+
+             if (cstate->edid.id != 0)
+               drmModeCreatePropertyBlob(fd, bp->data, bp->length,
+                                         &cstate->edid.id);
+
+             drmModeFreePropertyBlob(bp);
+          }
+        else if (!strcmp(prop->name, "aspect ratio"))
+          {
+             cstate->aspect.id = prop->prop_id;
+             cstate->aspect.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->aspect.value);
+          }
+        else if (!strcmp(prop->name, "scaling mode"))
+          {
+             cstate->scaling.id = prop->prop_id;
+             cstate->scaling.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->scaling.value);
+          }
+
+cont:
+        drmModeFreeProperty(prop);
+     }
+
+   drmModeFreeObjectProperties(oprops);
+}
+
+static void
 _drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
 {
    int i = 0;
@@ -283,6 +367,22 @@ _drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
              cstate->index = i;
 
              _drm2_atomic_state_crtc_fill(cstate, fd);
+          }
+     }
+
+   state->conns = res->count_connectors;
+   state->conn_states =
+     calloc(state->conns, sizeof(Ecore_Drm2_Connector_State));
+   if (state->conn_states)
+     {
+        for (i = 0; i < state->conns; i++)
+          {
+             Ecore_Drm2_Connector_State *cstate;
+
+             cstate = &state->conn_states[i];
+             cstate->obj_id = res->connectors[i];
+
+             _drm2_atomic_state_conn_fill(cstate, fd);
           }
      }
 
