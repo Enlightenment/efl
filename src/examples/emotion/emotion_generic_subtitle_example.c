@@ -78,7 +78,7 @@ main(int argc, const char *argv[])
      emotion_object_video_subtitle_file_set(em, subtitle_filename);
 
    efl_event_callback_add
-     (em, EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _playback_started_cb, NULL);
+     (em, EFL_CANVAS_VIDEO_EVENT_PLAYBACK_START, _playback_started_cb, NULL);
 
    emotion_object_file_set(em, filename);
 

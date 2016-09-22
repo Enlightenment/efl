@@ -30,7 +30,7 @@ _create_emotion_object(Evas *e)
 
    emotion_object_init(em, "gstreamer1");
 
-   efl_event_callback_add(em, EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _playback_started_cb, NULL);
+   efl_event_callback_add(em, EFL_CANVAS_VIDEO_EVENT_PLAYBACK_START, _playback_started_cb, NULL);
 
    return em;
 }
@@ -156,11 +156,11 @@ _canvas_resize_cb(Ecore_Evas *ee)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(emotion_object_example_callbacks,
-       { EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb },
-       { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, _length_change_cb },
-       { EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb },
-       { EMOTION_OBJECT_EVENT_PROGRESS_CHANGE, _progress_change_cb },
-       { EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resize_cb });
+       { EFL_CANVAS_VIDEO_EVENT_FRAME_DECODE, _frame_decode_cb },
+       { EFL_CANVAS_VIDEO_EVENT_LENGTH_CHANGE, _length_change_cb },
+       { EFL_CANVAS_VIDEO_EVENT_POSITION_CHANGE, _position_update_cb },
+       { EFL_CANVAS_VIDEO_EVENT_PROGRESS_CHANGE, _progress_change_cb },
+       { EFL_CANVAS_VIDEO_EVENT_FRAME_RESIZE, _frame_resize_cb });
 
 int
 main(int argc, const char *argv[])
