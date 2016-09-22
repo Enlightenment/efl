@@ -525,6 +525,37 @@ _output_matrix_update(Ecore_Drm2_Output *output)
    eina_matrix4_inverse(&output->inverse, &output->matrix);
 }
 
+#ifdef HAVE_ATOMIC_DRM
+static Ecore_Drm2_Crtc_State *
+_atomic_state_crtc_duplicate(Ecore_Drm2_Crtc_State *state)
+{
+   Ecore_Drm2_Crtc_State *cstate;
+
+   cstate = calloc(1, sizeof(Ecore_Drm2_Crtc_State));
+   if (!cstate) return NULL;
+
+   memcpy(cstate, state, sizeof(Ecore_Drm2_Crtc_State));
+
+   return cstate;
+}
+
+static Ecore_Drm2_Crtc_State *
+_output_crtc_state_get(Ecore_Drm2_Atomic_State *state, unsigned int id)
+{
+   Ecore_Drm2_Crtc_State *cstate;
+   int i = 0;
+
+   for (; i < state->crtcs; i++)
+     {
+        cstate = &state->crtc_states[i];
+        if (cstate->obj_id != id) continue;
+        return _atomic_state_crtc_duplicate(cstate);
+     }
+
+   return NULL;
+}
+#endif
+
 static Eina_Bool
 _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConnector *conn, int x, int y, int *w, Eina_Bool cloned)
 {
@@ -588,7 +619,15 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    output->ocrtc = drmModeGetCrtc(dev->fd, output->crtc_id);
 
-   output->dpms = _output_dpms_property_get(dev->fd, conn);
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     {
+        output->crtc_state =
+          _output_crtc_state_get(dev->state, output->crtc_id);
+     }
+   else
+#endif
+     output->dpms = _output_dpms_property_get(dev->fd, conn);
 
    _output_backlight_init(output, conn->connector_type);
 
