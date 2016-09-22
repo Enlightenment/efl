@@ -3610,6 +3610,16 @@ _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Elm_Xdnd_Action
+_wl_to_elm(Ecore_Wl2_Drag_Action action)
+{
+   #define CONV(wl, elm) if (action == wl) return elm;
+   CONV(ECORE_WL2_DRAG_ACTION_COPY, ELM_XDND_ACTION_COPY);
+   CONV(ECORE_WL2_DRAG_ACTION_MOVE, ELM_XDND_ACTION_MOVE);
+   CONV(ECORE_WL2_DRAG_ACTION_ASK, ELM_XDND_ACTION_ASK);
+   #undef CONV
+   return ELM_XDND_ACTION_UNKNOWN;
+}
 
 static Eina_Bool
 _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
@@ -3628,6 +3638,11 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
            Ecore_Wl2_Drag_Action action;
 
            action = ecore_wl2_offer_action_get(ev->offer);
+           if (action == ECORE_WL2_DRAG_ACTION_ASK)
+             ecore_wl2_offer_actions_set(ev->offer, ECORE_WL2_DRAG_ACTION_COPY, ECORE_WL2_DRAG_ACTION_COPY);
+           action = ecore_wl2_offer_action_get(ev->offer);
+
+           wl_cnp_selection.action = _wl_to_elm(action);
 
            _wl_dropable_data_handle(&wl_cnp_selection, ev);
            evas_object_event_callback_del_full(wl_cnp_selection.requestwidget,
