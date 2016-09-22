@@ -376,7 +376,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
         if ((!output->current) ||
             (output->current->stride != fb->stride))
           {
-             flags |= DRM_MODE_ATOMIC_ALLOW_MODESET;
+             flags = DRM_MODE_ATOMIC_ALLOW_MODESET;
 
              ret = _fb_atomic_flip(output, pstate, flags);
              if (ret < 0)
