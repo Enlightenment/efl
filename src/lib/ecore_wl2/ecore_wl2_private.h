@@ -413,10 +413,7 @@ struct _Ecore_Wl2_Input
         Eina_Bool repeating : 1;
      } repeat;
 
-   struct
-     {
-        Ecore_Wl2_Dnd_Source *source;
-     } drag, selection;
+   Ecore_Wl2_Offer *drag, *selection;
 
    unsigned int seat_version;
 };
@@ -462,6 +459,8 @@ void _ecore_wl2_subsurf_free(Ecore_Wl2_Subsurface *subsurf);
 
 void _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window);
 void _ecore_wl2_window_www_surface_init(Ecore_Wl2_Window *window);
+
+void _ecore_wl2_offer_unref(Ecore_Wl2_Offer *offer);
 
 EAPI extern int _ecore_wl2_event_window_www;
 EAPI extern int _ecore_wl2_event_window_www_drag;
