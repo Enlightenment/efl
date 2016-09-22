@@ -15,6 +15,7 @@
 Makefile
 Makefile.in
 tags
+.clang_complete
 .DS_Store
 .deps
 .libs
