@@ -24,6 +24,7 @@
 # include <drm_fourcc.h>
 
 extern int _ecore_drm2_log_dom;
+extern Eina_Bool _ecore_drm2_use_atomic;
 
 # ifdef ECORE_DRM2_DEFAULT_LOG_COLOR
 #  undef ECORE_DRM2_DEFAULT_LOG_COLOR
@@ -54,6 +55,63 @@ extern int _ecore_drm2_log_dom;
 #  undef CRIT
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm2_log_dom, __VA_ARGS__)
+
+# ifdef HAVE_ATOMIC_DRM
+typedef struct _Ecore_Drm2_Atomic_State Ecore_Drm2_Atomic_State;
+
+typedef struct _Ecore_Drm2_Atomic_Blob
+{
+   uint32_t id, value;
+   size_t len;
+   void *data;
+} Ecore_Drm2_Atomic_Blob;
+
+typedef struct _Ecore_Drm2_Atomic_Property
+{
+   uint32_t id, value;
+} Ecore_Drm2_Atomic_Property;
+
+typedef struct _Ecore_Drm2_Connector_State
+{
+   uint32_t obj_id;
+   Ecore_Drm2_Atomic_Property crtc;
+   Ecore_Drm2_Atomic_Property dpms;
+   Ecore_Drm2_Atomic_Property aspect;
+   Ecore_Drm2_Atomic_Property scaling;
+   Ecore_Drm2_Atomic_Blob edid;
+} Ecore_Drm2_Connector_State;
+
+typedef struct _Ecore_Drm2_Crtc_State
+{
+   uint32_t obj_id;
+   int index;
+   Ecore_Drm2_Atomic_Property active;
+   Ecore_Drm2_Atomic_Blob mode;
+} Ecore_Drm2_Crtc_State;
+
+typedef struct _Ecore_Drm2_Plane_State
+{
+   uint32_t obj_id, mask;
+   Ecore_Drm2_Atomic_Property type;
+   Ecore_Drm2_Atomic_Property cid, fid;
+   Ecore_Drm2_Atomic_Property sx, sy, sw, sh;
+   Ecore_Drm2_Atomic_Property cx, cy, cw, ch;
+   Ecore_Drm2_Atomic_Property rotation;
+
+   /* these are not part of an atomic state, but we store these here
+    * so that we do not have to refetch properties when iterating planes */
+   uint32_t rotation_map[6];
+   uint32_t supported_rotations;
+} Ecore_Drm2_Plane_State;
+
+struct _Ecore_Drm2_Atomic_State
+{
+   int crtcs, conns, planes;
+   Ecore_Drm2_Crtc_State *crtc_states;
+   Ecore_Drm2_Connector_State *conn_states;
+   Ecore_Drm2_Plane_State *plane_states;
+};
+# endif
 
 typedef enum _Ecore_Drm2_Backlight_Type
 {
@@ -157,6 +215,12 @@ struct _Ecore_Drm2_Output
    Ecore_Drm2_Release_Handler release_cb;
    void *release_data;
 
+# ifdef HAVE_ATOMIC_DRM
+   Ecore_Drm2_Crtc_State *crtc_state;
+   Ecore_Drm2_Connector_State *conn_state;
+   Ecore_Drm2_Plane_State *plane_state;
+# endif
+
    Eina_Bool connected : 1;
    Eina_Bool primary : 1;
    Eina_Bool cloned : 1;
@@ -186,6 +250,10 @@ struct _Ecore_Drm2_Device
    Eeze_Udev_Watch *watch;
    Ecore_Event_Handler *active_hdlr;
    Ecore_Event_Handler *device_change_hdlr;
+
+# ifdef HAVE_ATOMIC_DRM
+   Ecore_Drm2_Atomic_State *state;
+# endif
 
    Eina_List *outputs;
 };
