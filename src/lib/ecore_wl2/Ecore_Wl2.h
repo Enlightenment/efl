@@ -859,28 +859,73 @@ EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
  * Wayland Drag-n-Drop
  */
 
-/* TODO: doxy */
-/** @since 1.17 */
+/**
+ * Set the types which are supported by a possible drag and drop operation.
+ * This call initializes a data source and offeres the given mimetypes
+ *
+ * @param input the input where to add on the data source
+ *
+ * @param types a null-terminated array of mimetypes
+ *
+ * @since 1.17
+ */
 EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types);
 
-/* TODO: doxy */
-/** @since 1.17 */
+/**
+ * Start a drag on the given input
+ *
+ * @param input the input to use
+ *
+ * @param window the window which is the origin of the drag operation
+ *
+ * @param drag_window the window which is used as window of the visible hint.
+ *
+ * @since 1.17
+ */
 EAPI void ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window);
 
-/* TODO: doxy */
-/** @since 1.17 */
+/**
+ * End a drag started by a call to ecore_wl2_dnd_drag_start
+ *
+ * @param input the input object on which the drag was started
+ *
+ * @since 1.17
+ */
 EAPI void ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input);
 
-/* TODO: doxy */
-/** @since 1.17 */
+/**
+ * Get the offer which is currently resposible for the clipboard
+ *
+ * @param input the input object to use
+ *
+ * @since 1.19
+ */
 EAPI Ecore_Wl2_Offer* ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input);
 
-/* TODO: doxy */
-/** @since 1.17 */
+/**
+ * Set the types which are available from this client
+ * Later the event ECORE_WL2_EVENT_DATA_SOURCE_SEND is emitted,
+ * where the caller of this api must write the data (encoded in the given mimetype) to the fd
+ *
+ * @param input the input to provice this types on
+ *
+ * @param types a null-terminated array of mimetypes supported by the client
+ *
+ * @return 1 on success 0 on failure
+ *
+ * @since 1.17
+ */
 EAPI Eina_Bool ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types);
 
-/* TODO: doxy */
-/** @since 1.17 */
+/**
+ * Clear the selection currently setted on this input.
+ *
+ * @param input the input to clear
+ *
+ * @return 1 on sucess 0 on failure
+ *
+ * @since 1.17
+ */
 EAPI Eina_Bool ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
 
 /**
