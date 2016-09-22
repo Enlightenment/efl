@@ -530,4 +530,17 @@ EAPI void elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
  */
 EAPI Eina_Bool elm_image_aspect_fixed_get(const Evas_Object *obj);
 
+/**
+ * @brief Enable asynchronous file I/O for elm_image_file_set.
+ *
+ * If @c true, this will make elm_image_file_set() an asynchronous operation.
+ * Use of this function is not recommended and the standard EO-based
+ * asynchronous I/O API should be preferred instead.
+ *
+ * @since 1.19
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_async_open_set(Evas_Object *obj, Eina_Bool async);
+
 #include "efl_ui_image.eo.legacy.h"

@@ -122,9 +122,6 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.File.mmap.set;
-      Efl.File.async.set;
-      Efl.File.async.get;
-      Efl.File.async_wait;
       Efl.Gfx.View.view_size.get;
       Efl.Image.Load.load_size.set;
       Efl.Image.Load.load_size.get;

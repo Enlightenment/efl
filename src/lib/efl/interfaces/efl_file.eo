@@ -79,24 +79,6 @@ interface Efl.File {
                                  $null, otherwise.]]
          }
       }
-      @property async {
-         set {
-            [[If true, file open will happen asynchronously allowing for better
-              performance in some situations. The file will be opened from a
-              different thread. Classes implementing async open might then block
-              and wait when querying information from the file (eg. image size).
-
-              Only a few objects implement this feature, and this flag may
-              be ignored by EFL. In that case, get() will always return false.]]
-         }
-         get {
-            [[Retrieves the asynchronous open flag, which will be true only if
-              enabled and supported by the object.]]
-         }
-         values {
-            async: bool; [[Flag for asynchronous open.]]
-         }
-      }
       save @const {
          [[Save the given image object's contents to an (image) file.
 
@@ -119,16 +101,5 @@ interface Efl.File {
                                        none).]]
          }
       }
-      async_wait @const {
-         [[Block and wait until all asynchronous operations are completed. Unless
-           the async flag was set on this object, this method has no effect.]]
-
-         return: bool;[[$false if an error occurred, else $true]]
-      }
-   }
-   events {
-      /* FIXME - remove Efl.File events: async,{opened,error} */
-      async,opened; [[The file was successfully opened asynchronously]]
-      async,error; [[Error occurred in asynchronous file operation]]
    }
 }

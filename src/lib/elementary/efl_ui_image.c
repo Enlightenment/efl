@@ -26,6 +26,10 @@ static const char SIG_DOWNLOAD_START[] = "download,start";
 static const char SIG_DOWNLOAD_PROGRESS[] = "download,progress";
 static const char SIG_DOWNLOAD_DONE[] = "download,done";
 static const char SIG_DOWNLOAD_ERROR[] = "download,error";
+static const char SIG_LOAD_OPEN[] = "load,open";
+static const char SIG_LOAD_READY[] = "load,ready";
+static const char SIG_LOAD_ERROR[] = "load,error";
+static const char SIG_LOAD_CANCEL[] = "load,cancel";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DND, ""},
    {SIG_CLICKED, ""},
@@ -33,6 +37,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DOWNLOAD_PROGRESS, ""},
    {SIG_DOWNLOAD_DONE, ""},
    {SIG_DOWNLOAD_ERROR, ""},
+   {SIG_LOAD_OPEN, "Triggered when the file has been opened (image size is known)"},
+   {SIG_LOAD_READY, "Triggered when the image file is ready for display"},
+   {SIG_LOAD_ERROR, "Triggered whenener an I/O or decoding error occured"},
+   {SIG_LOAD_CANCEL, "Triggered whenener async I/O was cancelled"},
    {NULL, NULL}
 };
 
@@ -61,9 +69,14 @@ _on_image_preloaded(void *data,
                     void *event EINA_UNUSED)
 {
    Efl_Ui_Image_Data *sd = data;
+   Evas_Load_Error err;
+
    sd->preload_status = EFL_UI_IMAGE_PRELOADED;
    if (sd->show) evas_object_show(obj);
    ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+   err = evas_object_image_load_error_get(obj);
+   if (!err) evas_object_smart_callback_call(sd->self, SIG_LOAD_READY, NULL);
+   else evas_object_smart_callback_call(sd->self, SIG_LOAD_ERROR, NULL);
 }
 
 static void
@@ -322,6 +335,7 @@ _efl_ui_image_async_open_cancel(void *data, Ecore_Thread *thread)
         EFL_UI_IMAGE_DATA_GET(todo->obj, sd);
         if (sd)
           {
+             evas_object_smart_callback_call(todo->obj, SIG_LOAD_CANCEL, NULL);
              if (thread == sd->async.th) _async_clear(sd);
           }
      }
@@ -361,19 +375,8 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread)
                          ok = _efl_ui_image_smart_internal_file_set
                            (sd->self, sd, file, f, key);
                     }
-                  if (ok)
-                    {
-                       // TODO: Implement Efl.File async,opened event_info type
-                       efl_event_callback_legacy_call
-                         (sd->self, EFL_FILE_EVENT_ASYNC_OPENED, NULL);
-                       _efl_ui_image_internal_sizing_eval(sd->self, sd);
-                    }
-                  else
-                    {
-                       // keep file,key around for file_get
-                       efl_event_callback_legacy_call
-                         (sd->self, EFL_FILE_EVENT_ASYNC_ERROR, NULL);
-                    }
+                  if (ok) evas_object_smart_callback_call(sd->self, SIG_LOAD_OPEN, NULL);
+                  else evas_object_smart_callback_call(sd->self, SIG_LOAD_ERROR, NULL);
                }
           }
      }
@@ -1038,6 +1041,8 @@ _efl_ui_image_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, cons
    evas_object_image_file_get(sd->img, file, key);
 }
 
+#if 0
+// Kept for reference: wait for async open to complete - probably unused.
 static Eina_Bool
 _efl_ui_image_efl_file_async_wait(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
 {
@@ -1050,19 +1055,22 @@ _efl_ui_image_efl_file_async_wait(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *
      }
    return ok;
 }
+#endif
 
-EOLIAN static void
-_efl_ui_image_efl_file_async_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Eina_Bool async)
+/* Legacy style async API. While legacy only, this is new from 1.19.
+ * Tizen has used elm_image_async_open_set() internally for a while, despite
+ * EFL upstream not exposing a proper async API. */
+
+EAPI void
+elm_image_async_open_set(Eo *obj, Eina_Bool async)
 {
+   Efl_Ui_Image_Data *pd;
+
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(obj, MY_CLASS));
+   pd = efl_data_scope_get(obj, MY_CLASS);
    if (pd->async_enable == async) return;
    pd->async_enable = async;
    if (!async) _async_cancel(pd);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_image_efl_file_async_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
-{
-   return sd->async_enable;
 }
 
 EOLIAN static void
