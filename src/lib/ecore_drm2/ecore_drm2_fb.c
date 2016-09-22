@@ -358,7 +358,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
         Ecore_Drm2_Plane_State *pstate;
         uint32_t flags =
           DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
-          DRM_MODE_ATOMIC_ALLOW_MODSET;
+          DRM_MODE_ATOMIC_ALLOW_MODESET;
 
         pstate = output->plane_state;
 
