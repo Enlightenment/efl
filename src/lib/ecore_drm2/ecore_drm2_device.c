@@ -373,12 +373,14 @@ _drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
           {
              pstate->cid.id = prop->prop_id;
              pstate->cid.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", pstate->cid.value);
           }
         else if (!strcmp(prop->name, "FB_ID"))
           {
              pstate->fid.id = prop->prop_id;
              pstate->fid.value = oprops->prop_values[i];
-          }
+             DBG("\t\t\tValue: %d", pstate->fid.value);
+         }
         else if (!strcmp(prop->name, "CRTC_X"))
           {
              pstate->cx.id = prop->prop_id;
@@ -426,13 +428,13 @@ _drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
              switch (pstate->type.value)
                {
                 case DRM_PLANE_TYPE_OVERLAY:
-                  DBG("\t\t\tOverlay Type");
+                  DBG("\t\t\tOverlay Plane");
                   break;
                 case DRM_PLANE_TYPE_PRIMARY:
-                  DBG("\t\t\tPrimary Type");
+                  DBG("\t\t\tPrimary Plane");
                   break;
                 case DRM_PLANE_TYPE_CURSOR:
-                  DBG("\t\t\tCursor Type");
+                  DBG("\t\t\tCursor Plane");
                   break;
                 default:
                   DBG("\t\t\tValue: %d", pstate->type.value);
@@ -548,6 +550,15 @@ _drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
 err:
    drmModeFreeResources(res);
 }
+
+static void
+_drm2_atomic_state_free(Ecore_Drm2_Atomic_State *state)
+{
+   free(state->plane_states);
+   free(state->conn_states);
+   free(state->crtc_states);
+   free(state);
+}
 #endif
 
 EAPI Ecore_Drm2_Device *
@@ -654,6 +665,11 @@ EAPI void
 ecore_drm2_device_free(Ecore_Drm2_Device *device)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);
+
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     _drm2_atomic_state_free(device->state);
+#endif
 
    ecore_event_handler_del(device->active_hdlr);
    ecore_event_handler_del(device->device_change_hdlr);
