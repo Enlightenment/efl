@@ -345,6 +345,7 @@ struct _Ecore_Wl2_Input
         struct wl_data_device *device;
         struct wl_data_source *source;
         struct wl_array types;
+        uint32_t action;
      } data;
 
    struct
