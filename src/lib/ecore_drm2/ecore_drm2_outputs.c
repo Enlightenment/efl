@@ -189,6 +189,28 @@ _output_edid_parse(Ecore_Drm2_Output *output, const uint8_t *data, size_t len)
    return 0;
 }
 
+#ifdef HAVE_ATOMIC_DRM
+static void
+_output_edid_atomic_find(Ecore_Drm2_Output *output)
+{
+   Ecore_Drm2_Connector_State *cstate;
+   int ret = 0;
+
+   cstate = output->conn_state;
+
+   ret = _output_edid_parse(output, cstate->edid.data, cstate->edid.len);
+   if (!ret)
+     {
+        if (output->edid.pnp[0] != '\0')
+          eina_stringshare_replace(&output->make, output->edid.pnp);
+        if (output->edid.monitor[0] != '\0')
+          eina_stringshare_replace(&output->model, output->edid.monitor);
+        if (output->edid.serial[0] != '\0')
+          eina_stringshare_replace(&output->serial, output->edid.serial);
+     }
+}
+#endif
+
 static void
 _output_edid_find(Ecore_Drm2_Output *output, const drmModeConnector *conn)
 {
@@ -700,7 +722,12 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    _output_modes_create(dev, output, conn);
 
-   _output_edid_find(output, conn);
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     _output_edid_atomic_find(output);
+   else
+#endif
+     _output_edid_find(output, conn);
 
    if (output->connected) output->enabled = EINA_TRUE;
 
@@ -960,9 +987,16 @@ ecore_drm2_output_edid_get(Ecore_Drm2_Output *output)
    unsigned char *blob;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(output->edid.blob, NULL);
 
-   blob = output->edid.blob;
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     blob = output->conn_state->edid.data;
+   else
+#endif
+     {
+        EINA_SAFETY_ON_NULL_RETURN_VAL(output->edid.blob, NULL);
+        blob = output->edid.blob;
+     }
 
    edid_str = malloc((128 * 2) + 1);
    if (edid_str)
