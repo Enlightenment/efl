@@ -2191,7 +2191,7 @@ _elm_photocam_gesture_enabled_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
    return sd->do_gesture;
 }
 
-static void
+EOLIAN static void
 _elm_photocam_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
