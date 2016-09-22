@@ -346,13 +346,148 @@ cont:
 }
 
 static void
+_drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
+{
+   drmModeObjectPropertiesPtr oprops;
+   unsigned int i = 0;
+   int k = 0;
+
+   DBG("Atomic State Plane Fill");
+
+   oprops =
+     drmModeObjectGetProperties(fd, pstate->obj_id, DRM_MODE_OBJECT_PLANE);
+   if (!oprops) return;
+
+   DBG("\tPlane: %d", pstate->obj_id);
+
+   for (i = 0; i < oprops->count_props; i++)
+     {
+        drmModePropertyPtr prop;
+
+        prop = drmModeGetProperty(fd, oprops->props[i]);
+        if (!prop) continue;
+
+        DBG("\t\tProperty: %s", prop->name);
+
+        if (!strcmp(prop->name, "CRTC_ID"))
+          {
+             pstate->cid.id = prop->prop_id;
+             pstate->cid.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "FB_ID"))
+          {
+             pstate->fid.id = prop->prop_id;
+             pstate->fid.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "CRTC_X"))
+          {
+             pstate->cx.id = prop->prop_id;
+             pstate->cx.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "CRTC_Y"))
+          {
+             pstate->cy.id = prop->prop_id;
+             pstate->cy.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "CRTC_W"))
+          {
+             pstate->cw.id = prop->prop_id;
+             pstate->cw.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "CRTC_H"))
+          {
+             pstate->ch.id = prop->prop_id;
+             pstate->ch.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "SRC_X"))
+          {
+             pstate->sx.id = prop->prop_id;
+             pstate->sx.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "SRC_Y"))
+          {
+             pstate->sy.id = prop->prop_id;
+             pstate->sy.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "SRC_W"))
+          {
+             pstate->sw.id = prop->prop_id;
+             pstate->sw.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "SRC_H"))
+          {
+             pstate->sh.id = prop->prop_id;
+             pstate->sh.value = oprops->prop_values[i];
+          }
+        else if (!strcmp(prop->name, "type"))
+          {
+             pstate->type.id = prop->prop_id;
+             pstate->type.value = oprops->prop_values[i];
+             switch (pstate->type.value)
+               {
+                case DRM_PLANE_TYPE_OVERLAY:
+                  DBG("\t\t\tOverlay Type");
+                  break;
+                case DRM_PLANE_TYPE_PRIMARY:
+                  DBG("\t\t\tPrimary Type");
+                  break;
+                case DRM_PLANE_TYPE_CURSOR:
+                  DBG("\t\t\tCursor Type");
+                  break;
+                default:
+                  DBG("\t\t\tValue: %d", pstate->type.value);
+                  break;
+               }
+          }
+        else if (!strcmp(prop->name, "rotation"))
+          {
+             pstate->rotation.id = prop->prop_id;
+             pstate->rotation.value = oprops->prop_values[i];
+
+             for (k = 0; k < prop->count_enums; k++)
+               {
+                  int r = -1;
+
+                  if (!strcmp(prop->enums[k].name, "rotate-0"))
+                    r = ECORE_DRM2_ROTATION_NORMAL;
+                  else if (!strcmp(prop->enums[k].name, "rotate-90"))
+                    r = ECORE_DRM2_ROTATION_90;
+                  else if (!strcmp(prop->enums[k].name, "rotate-180"))
+                    r = ECORE_DRM2_ROTATION_180;
+                  else if (!strcmp(prop->enums[k].name, "rotate-270"))
+                    r = ECORE_DRM2_ROTATION_270;
+                  else if (!strcmp(prop->enums[k].name, "reflect-x"))
+                    r = ECORE_DRM2_ROTATION_REFLECT_X;
+                  else if (!strcmp(prop->enums[k].name, "reflect-y"))
+                    r = ECORE_DRM2_ROTATION_REFLECT_Y;
+
+                  if (r != -1)
+                    {
+                       pstate->supported_rotations |= r;
+                       pstate->rotation_map[ffs(r)] =
+                         1 << prop->enums[k].value;
+                    }
+               }
+          }
+
+        drmModeFreeProperty(prop);
+     }
+
+   drmModeFreeObjectProperties(oprops);
+}
+
+static void
 _drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
 {
    int i = 0;
    drmModeResPtr res;
+   drmModePlaneResPtr pres;
 
    res = drmModeGetResources(fd);
    if (!res) return;
+
+   pres = drmModeGetPlaneResources(fd);
+   if (!pres) goto err;
 
    state->crtcs = res->count_crtcs;
    state->crtc_states = calloc(state->crtcs, sizeof(Ecore_Drm2_Crtc_State));
@@ -385,6 +520,30 @@ _drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
              _drm2_atomic_state_conn_fill(cstate, fd);
           }
      }
+
+   state->planes = pres->count_planes;
+   state->plane_states = calloc(state->planes, sizeof(Ecore_Drm2_Plane_State));
+   if (state->plane_states)
+     {
+        for (i = 0; i < state->planes; i++)
+          {
+             drmModePlanePtr plane;
+             Ecore_Drm2_Plane_State *pstate;
+
+             plane = drmModeGetPlane(fd, pres->planes[i]);
+             if (!plane) continue;
+
+             pstate = &state->plane_states[i];
+             pstate->obj_id = pres->planes[i];
+             pstate->mask = plane->possible_crtcs;
+
+             drmModeFreePlane(plane);
+
+             _drm2_atomic_state_plane_fill(pstate, fd);
+          }
+     }
+
+   drmModeFreePlaneResources(pres);
 
 err:
    drmModeFreeResources(res);
