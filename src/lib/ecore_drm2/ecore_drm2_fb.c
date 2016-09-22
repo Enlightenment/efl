@@ -31,6 +31,83 @@ _fb2_create(Ecore_Drm2_Fb *fb)
    return EINA_TRUE;
 }
 
+#ifdef HAVE_ATOMIC_DRM
+static int
+_fb_atomic_flip(Ecore_Drm2_Output *output, Ecore_Drm2_Plane_State *pstate, uint32_t flags)
+{
+   int ret = 0;
+   drmModeAtomicReq *req = NULL;
+
+   req = drmModeAtomicAlloc();
+   if (!req) return -1;
+
+   drmModeAtomicSetCursor(req, 0);
+
+   if (flags & DRM_MODE_ATOMIC_ALLOW_MODESET)
+     {
+        Ecore_Drm2_Crtc_State *cstate;
+
+        cstate = output->crtc_state;
+
+        ret = drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
+                                       cstate->mode.value);
+        if (ret < 0) goto err;
+
+        ret = drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
+                                       cstate->active.value);
+        if (ret < 0) goto err;
+     }
+
+   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
+                                  pstate->cid.id, pstate->cid.value);
+   if (ret < 0) goto err;
+
+   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
+                                  pstate->fid.id, pstate->fid.value);
+   if (ret < 0) goto err;
+
+   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
+                                  pstate->sx.id, pstate->sx.value);
+   if (ret < 0) goto err;
+
+   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
+                                  pstate->sy.id, pstate->sy.value);
+   if (ret < 0) goto err;
+
+   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
+                                  pstate->sw.id, pstate->sw.value);
+   if (ret < 0) goto err;
+
+   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
+                                  pstate->sh.id, pstate->sh.value);
+   if (ret < 0) goto err;
+
+   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
+                                  pstate->cx.id, pstate->cx.value);
+   if (ret < 0) goto err;
+
+   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
+                                  pstate->cy.id, pstate->cy.value);
+   if (ret < 0) goto err;
+
+   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
+                                  pstate->cw.id, pstate->cw.value);
+   if (ret < 0) goto err;
+
+   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
+                                  pstate->ch.id, pstate->ch.value);
+   if (ret < 0) goto err;
+
+   ret = drmModeAtomicCommit(output->fd, req, flags, output->user_data);
+   if (ret < 0) ERR("Failed to commit Atomic FB Flip: %m");
+   else ret = 0;
+
+err:
+   drmModeAtomicFree(req);
+   return ret;
+}
+#endif
+
 EAPI Ecore_Drm2_Fb *
 ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned int format)
 {
@@ -275,48 +352,113 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    /* If we don't have an fb to set by now, BAIL! */
    if (!fb) return -1;
 
-   if ((!output->current) ||
-       (output->current->stride != fb->stride))
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
      {
-        ret =
-          drmModeSetCrtc(fb->fd, output->crtc_id, fb->id,
-                         output->x, output->y, &output->conn_id, 1,
-                         &output->current_mode->info);
-        if (ret)
+        Ecore_Drm2_Plane_State *pstate;
+        uint32_t flags =
+          DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT;
+
+        pstate = output->plane_state;
+
+        pstate->cid.value = output->crtc_id;
+        pstate->fid.value = fb->id;
+
+        pstate->sx.value = 0;
+        pstate->sy.value = 0;
+        pstate->sw.value = fb->w << 16;
+        pstate->sh.value = fb->h << 16;
+        pstate->cx.value = output->x;
+        pstate->cy.value = output->y;
+        pstate->cw.value = output->current_mode->width;
+        pstate->ch.value = output->current_mode->height;
+
+        if ((!output->current) ||
+            (output->current->stride != fb->stride))
           {
-             ERR("Failed to set Mode %dx%d for Output %s: %m",
-                 output->current_mode->width, output->current_mode->height,
-                 output->name);
-             return ret;
+             flags |= DRM_MODE_ATOMIC_ALLOW_MODESET;
+
+             ret = _fb_atomic_flip(output, pstate, flags);
+             if (ret < 0)
+               {
+                  ERR("\tCrtc: %d FB: %d", output->crtc_id, fb->id);
+                  return ret;
+               }
+
+             if (output->current) _release_buffer(output, output->current);
+             output->current = fb;
+             output->current->busy = EINA_TRUE;
+             output->next = NULL;
+
+             return 0;
           }
 
-        if (output->current) _release_buffer(output, output->current);
-        output->current = fb;
-        output->current->busy = EINA_TRUE;
-        output->next = NULL;
+        ret = _fb_atomic_flip(output, pstate, flags);
+        if ((ret < 0) && (errno != EBUSY))
+          {
+             ERR("Atomic Pageflip Failed for Crtc %u on Connector %u: %m",
+                 output->crtc_id, output->conn_id);
+             return ret;
+          }
+        else if (ret < 0)
+          {
+             output->next = fb;
+             if (output->next) output->next->busy = EINA_TRUE;
+
+             return 0;
+          }
+
+        output->pending = fb;
+        output->pending->busy = EINA_TRUE;
 
         return 0;
      }
+   else
+#endif
+     {
+        if ((!output->current) ||
+            (output->current->stride != fb->stride))
+          {
+             ret =
+               drmModeSetCrtc(fb->fd, output->crtc_id, fb->id,
+                              output->x, output->y, &output->conn_id, 1,
+                              &output->current_mode->info);
+             if (ret)
+               {
+                  ERR("Failed to set Mode %dx%d for Output %s: %m",
+                      output->current_mode->width, output->current_mode->height,
+                      output->name);
+                  return ret;
+               }
 
-   ret =
-     drmModePageFlip(fb->fd, output->crtc_id, fb->id,
-                     DRM_MODE_PAGE_FLIP_EVENT, output->user_data);
-   if ((ret < 0) && (errno != EBUSY))
-     {
-        DBG("Pageflip Failed for Crtc %u on Connector %u: %m",
-            output->crtc_id, output->conn_id);
-        return ret;
-     }
-   else if (ret < 0)
-     {
-        output->next = fb;
-        output->next->busy = EINA_TRUE;
+             if (output->current) _release_buffer(output, output->current);
+             output->current = fb;
+             output->current->busy = EINA_TRUE;
+             output->next = NULL;
+
+             return 0;
+          }
+
+        ret =
+          drmModePageFlip(fb->fd, output->crtc_id, fb->id,
+                          DRM_MODE_PAGE_FLIP_EVENT, output->user_data);
+        if ((ret < 0) && (errno != EBUSY))
+          {
+             DBG("Pageflip Failed for Crtc %u on Connector %u: %m",
+                 output->crtc_id, output->conn_id);
+             return ret;
+          }
+        else if (ret < 0)
+          {
+             output->next = fb;
+             output->next->busy = EINA_TRUE;
+             return 0;
+          }
+
+        output->pending = fb;
+        output->pending->busy = EINA_TRUE;
         return 0;
      }
-
-   output->pending = fb;
-   output->pending->busy = EINA_TRUE;
-   return 0;
 }
 
 EAPI Eina_Bool
