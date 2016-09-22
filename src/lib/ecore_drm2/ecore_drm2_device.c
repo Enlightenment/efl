@@ -151,7 +151,7 @@ out:
 
 #ifdef HAVE_ATOMIC_DRM
 static Eina_Bool
-_ecore_drm2_atomic_usable(int fd)
+_drm2_atomic_usable(int fd)
 {
    drmVersion *drmver;
    Eina_Bool ret = EINA_FALSE;
@@ -190,6 +190,104 @@ _ecore_drm2_atomic_usable(int fd)
    drmFreeVersion(drmver);
 
    return ret;
+}
+
+static void
+_drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
+{
+   drmModeObjectPropertiesPtr oprops;
+   unsigned int i = 0;
+
+   DBG("Atomic State Crtc Fill");
+
+   oprops =
+     drmModeObjectGetProperties(fd, cstate->obj_id, DRM_MODE_OBJECT_CRTC);
+   if (!oprops) return;
+
+   DBG("\tCrtc %d", cstate->obj_id);
+
+   for (i = 0; i < oprops->count_props; i++)
+     {
+        drmModePropertyPtr prop;
+
+        prop = drmModeGetProperty(fd, oprops->props[i]);
+        if (!prop) continue;
+
+        DBG("\t\tProperty: %s %d", prop->name, i);
+
+        if (!strcmp(prop->name, "MODE_ID"))
+          {
+             drmModePropertyBlobPtr bp;
+
+             cstate->mode.id = prop->prop_id;
+             cstate->mode.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->mode.value);
+
+             if (!cstate->mode.value)
+               {
+                  cstate->mode.len = 0;
+                  goto cont;
+               }
+
+             bp = drmModeGetPropertyBlob(fd, cstate->mode.value);
+             if (!bp) goto cont;
+
+             if ((!cstate->mode.data) ||
+                 memcmp(cstate->mode.data, bp->data, bp->length) != 0)
+               {
+                  cstate->mode.data =
+                    eina_memdup(bp->data, bp->length, 1);
+               }
+
+             cstate->mode.len = bp->length;
+
+             if (cstate->mode.value != 0)
+               drmModeCreatePropertyBlob(fd, bp->data, bp->length,
+                                         &cstate->mode.value);
+
+             drmModeFreePropertyBlob(bp);
+          }
+        else if (!strcmp(prop->name, "ACTIVE"))
+          {
+             cstate->active.id = prop->prop_id;
+             cstate->active.value = oprops->prop_values[i];
+             DBG("\t\t\tValue: %d", cstate->active.value);
+          }
+
+cont:
+        drmModeFreeProperty(prop);
+     }
+
+   drmModeFreeObjectProperties(oprops);
+}
+
+static void
+_drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
+{
+   int i = 0;
+   drmModeResPtr res;
+
+   res = drmModeGetResources(fd);
+   if (!res) return;
+
+   state->crtcs = res->count_crtcs;
+   state->crtc_states = calloc(state->crtcs, sizeof(Ecore_Drm2_Crtc_State));
+   if (state->crtc_states)
+     {
+        for (i = 0; i < state->crtcs; i++)
+          {
+             Ecore_Drm2_Crtc_State *cstate;
+
+             cstate = &state->crtc_states[i];
+             cstate->obj_id = res->crtcs[i];
+             cstate->index = i;
+
+             _drm2_atomic_state_crtc_fill(cstate, fd);
+          }
+     }
+
+err:
+   drmModeFreeResources(res);
 }
 #endif
 
@@ -243,7 +341,28 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
 
 #ifdef HAVE_ATOMIC_DRM
    /* check that this system can do atomic */
-   _ecore_drm2_use_atomic = _ecore_drm2_atomic_usable(device->fd);
+   _ecore_drm2_use_atomic = _drm2_atomic_usable(device->fd);
+   if (_ecore_drm2_use_atomic)
+     {
+        if (drmSetClientCap(device->fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0)
+          {
+             WRN("Could not enable Atomic Modesetting support");
+             _ecore_drm2_use_atomic = EINA_FALSE;
+          }
+        else
+          {
+             if (drmSetClientCap(device->fd,
+                                 DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
+               WRN("Could not enable Universal Plane support");
+             else
+               {
+                  /* atomic & planes are usable */
+                  device->state = calloc(1, sizeof(Ecore_Drm2_Atomic_State));
+                  if (device->state)
+                    _drm2_atomic_state_fill(device->state, device->fd);
+               }
+          }
+     }
 #endif
 
    device->active_hdlr =
