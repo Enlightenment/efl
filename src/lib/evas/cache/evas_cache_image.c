@@ -1066,6 +1066,7 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache,
                              DATA32 *image_data, int alpha,
                              Evas_Colorspace cspace)
 {
+   int err;
    Image_Entry *im;
 
    if ((cspace == EVAS_COLORSPACE_YCBCR422P601_PL) ||
@@ -1073,7 +1074,7 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache,
        (cspace == EVAS_COLORSPACE_YCBCR422601_PL))
      w &= ~0x1;
 
-   im = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+   im = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL, &err);
    if (!im) return NULL;
    im->space = cspace;
    im->flags.alpha = alpha;
@@ -1093,6 +1094,7 @@ EAPI Image_Entry *
 evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h,
                       DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
+   int err;
    Image_Entry *im;
 
    if ((cspace == EVAS_COLORSPACE_YCBCR422P601_PL) ||
@@ -1100,7 +1102,7 @@ evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h,
        (cspace == EVAS_COLORSPACE_YCBCR422601_PL))
      w &= ~0x1;
 
-   im = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+   im = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL, &err);
    if (!im) return NULL;
    im->w = w;
    im->h = h;
@@ -1389,9 +1391,10 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
 EAPI Image_Entry *
 evas_cache_image_empty(Evas_Cache_Image *cache)
 {
+   int err;
    Image_Entry *im;
 
-   im = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+   im = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL, &err);
    if (!im) return NULL;
    im->references = 1;
    return im;
