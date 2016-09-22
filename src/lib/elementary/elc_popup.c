@@ -21,8 +21,6 @@
 #define MY_CLASS_NAME "Elm_Popup"
 #define MY_CLASS_NAME_LEGACY "elm_popup"
 
-#define ELM_POPUP_ACTION_BUTTON_MAX 3
-
 static void _button_remove(Evas_Object *, int, Eina_Bool);
 
 static const char ACCESS_TITLE_PART[] = "access.title";
