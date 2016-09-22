@@ -30,6 +30,13 @@
  *                 typed object onto the object in question -- the
  *                 event info argument is the path to that image file
  * @li @c "clicked" - This is called when a user has clicked the image
+ * @li @c "download,start" - This is called when the remote image file download
+ *                           has started.
+ * @li @c "download,progress" - This is continuously called before the remote
+ *                              image file download has done. The event info
+ *                              data is of type Elm_Image_Progress.
+ * @li @c "download,done" - This is called when the download has completed.
+ * @li @c "download,error"- This is called when the download has failed.
  *
  * An example of usage for this API follows:
  * @li @ref tutorial_image

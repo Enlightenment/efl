@@ -127,6 +127,7 @@ interface Efl.File {
       }
    }
    events {
+      /* FIXME - remove Efl.File events: async,{opened,error} */
       async,opened; [[The file was successfully opened asynchronously]]
       async,error; [[Error occurred in asynchronous file operation]]
    }

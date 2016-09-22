@@ -160,11 +160,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      drop;
-      download,start;
-      download,progress;
-      download,done;
-      download,error;
+      drop; /* FIXME - Belongs to DnD interface */
    }
 
 }

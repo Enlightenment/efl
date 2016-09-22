@@ -897,7 +897,7 @@ _efl_ui_image_smart_download_done(void *data, Elm_Url *url, Eina_Binbuf *downloa
 
         free(sd->remote_data);
         sd->remote_data = NULL;
-        efl_event_callback_legacy_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_ERROR, &err);
+        evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
      }
    else
      {
@@ -906,8 +906,7 @@ _efl_ui_image_smart_download_done(void *data, Elm_Url *url, Eina_Binbuf *downloa
              sd->preload_status = EFL_UI_IMAGE_PRELOADING;
              evas_object_image_preload(sd->img, EINA_FALSE);
           }
-
-        efl_event_callback_legacy_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_DONE, NULL);
+        evas_object_smart_callback_call(obj, SIG_DOWNLOAD_DONE, NULL);
      }
 
    ELM_SAFE_FREE(sd->key, eina_stringshare_del);
@@ -920,7 +919,7 @@ _efl_ui_image_smart_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int er
    Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Efl_Ui_Image_Error err = { error, EINA_FALSE };
 
-   efl_event_callback_legacy_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_ERROR, &err);
+   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
 
    sd->remote = NULL;
    ELM_SAFE_FREE(sd->key, eina_stringshare_del);
@@ -934,7 +933,7 @@ _efl_ui_image_smart_download_progress(void *data, Elm_Url *url EINA_UNUSED, doub
 
    progress.now = now;
    progress.total = total;
-   efl_event_callback_legacy_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_PROGRESS, &progress);
+   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_PROGRESS, &progress);
 }
 
 static const char *remote_uri[] = {
@@ -969,8 +968,7 @@ _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file
                                         obj);
           if (sd->remote)
             {
-               efl_event_callback_legacy_call
-                     (obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_START, NULL);
+               evas_object_smart_callback_call(obj, SIG_DOWNLOAD_START, NULL);
                eina_stringshare_replace(&sd->key, key);
                return EINA_TRUE;
             }
