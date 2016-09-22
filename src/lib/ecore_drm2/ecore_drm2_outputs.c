@@ -408,6 +408,42 @@ _output_dpms_property_get(int fd, const drmModeConnector *conn)
    return NULL;
 }
 
+#ifdef HAVE_ATOMIC_DRM
+static Eina_Bool
+_output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
+{
+   Ecore_Drm2_Crtc_State *cstate;
+   drmModeAtomicReq *req = NULL;
+   Eina_Bool ret = EINA_TRUE;
+
+   req = drmModeAtomicAlloc();
+   if (!req) return EINA_FALSE;
+
+   drmModeAtomicSetCursor(req, 0);
+
+   cstate = output->crtc_state;
+
+   if (drmModeAtomicAddProperty(req, cstate->obj_id,
+                                cstate->active.id, level) < 0)
+     {
+        ERR("Failed to add connector property DPMS");
+        ret = EINA_FALSE;
+        goto err;
+     }
+
+   if (drmModeAtomicCommit(output->fd, req, 0, NULL))
+     {
+        ERR("Could not set dpms property: %m");
+        ret = EINA_FALSE;
+     }
+
+err:
+   drmModeAtomicFree(req);
+
+   return ret;
+}
+#endif
+
 static void
 _output_backlight_init(Ecore_Drm2_Output *output, unsigned int conn_type)
 {
@@ -976,8 +1012,13 @@ ecore_drm2_output_dpms_set(Ecore_Drm2_Output *output, int level)
    EINA_SAFETY_ON_NULL_RETURN(output);
    EINA_SAFETY_ON_TRUE_RETURN(!output->enabled);
 
-   drmModeConnectorSetProperty(output->fd, output->conn_id,
-                               output->dpms->prop_id, level);
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     _output_dpms_atomic_set(output, level);
+   else
+#endif
+     drmModeConnectorSetProperty(output->fd, output->conn_id,
+                                 output->dpms->prop_id, level);
 }
 
 EAPI char *
