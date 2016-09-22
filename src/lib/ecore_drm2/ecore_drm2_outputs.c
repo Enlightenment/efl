@@ -554,6 +554,35 @@ _output_crtc_state_get(Ecore_Drm2_Atomic_State *state, unsigned int id)
 
    return NULL;
 }
+
+static Ecore_Drm2_Connector_State *
+_atomic_state_conn_duplicate(Ecore_Drm2_Connector_State *state)
+{
+   Ecore_Drm2_Connector_State *cstate;
+
+   cstate = calloc(1, sizeof(Ecore_Drm2_Connector_State));
+   if (!cstate) return NULL;
+
+   memcpy(cstate, state, sizeof(Ecore_Drm2_Connector_State));
+
+   return cstate;
+}
+
+static Ecore_Drm2_Connector_State *
+_output_conn_state_get(Ecore_Drm2_Atomic_State *state, unsigned int id)
+{
+   Ecore_Drm2_Connector_State *cstate;
+   int i = 0;
+
+   for (; i < state->conns; i++)
+     {
+        cstate = &state->conn_states[i];
+        if (cstate->obj_id != id) continue;
+        return _atomic_state_conn_duplicate(cstate);
+     }
+
+   return NULL;
+}
 #endif
 
 static Eina_Bool
@@ -624,6 +653,8 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
      {
         output->crtc_state =
           _output_crtc_state_get(dev->state, output->crtc_id);
+        output->conn_state =
+          _output_conn_state_get(dev->state, output->conn_id);
      }
    else
 #endif
