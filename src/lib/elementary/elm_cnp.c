@@ -2954,124 +2954,150 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
    return EINA_FALSE;
 }
 
+
+static Elm_Xdnd_Action
+_wl_to_elm(Ecore_Wl2_Drag_Action action)
+{
+   #define CONV(wl, elm) if (action == wl) return elm;
+   CONV(ECORE_WL2_DRAG_ACTION_COPY, ELM_XDND_ACTION_COPY);
+   CONV(ECORE_WL2_DRAG_ACTION_MOVE, ELM_XDND_ACTION_MOVE);
+   CONV(ECORE_WL2_DRAG_ACTION_ASK, ELM_XDND_ACTION_ASK);
+   #undef CONV
+   return ELM_XDND_ACTION_UNKNOWN;
+}
+
 typedef struct {
    Ecore_Wl2_Offer *offer;
-   Wl_Cnp_Selection sel;
+
+   Evas_Object *requestwidget;
+   Elm_Drop_Cb drop_cb;
+   void *drop_cb_data;
+   Elm_Sel_Format format;
+
    Ecore_Event_Handler *handler;
 } Selection_Ready;
+
+static void
+_wl_selection_receive_timeout(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Selection_Ready *ready = data;
+
+   if (ready->requestwidget != obj) return;
+
+   ecore_event_handler_del(ready->handler);
+   free(ready);
+}
 
 static Eina_Bool
 _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Offer_Data_Ready *ev = event;
    Selection_Ready *ready = data;
-   Wl_Cnp_Selection *sel =  &ready->sel;
 
    if (ready->offer != ev->offer) return ECORE_CALLBACK_PASS_ON;
 
-   if (sel->requestwidget)
+   if (ready->drop_cb)
      {
-        if (sel->datacb)
-          {
-             Elm_Selection_Data sdata;
+        Elm_Selection_Data sdata;
 
-             sdata.x = sdata.y = 0;
-             sdata.format = ELM_SEL_FORMAT_TEXT;
-             sdata.data = ev->data;
-             sdata.len = ev->len;
-             sdata.action = sel->action;
-             sel->datacb(sel->udata,
-                          sel->requestwidget,
-                          &sdata);
-          }
-        else
-          {
-             char *stripstr, *mkupstr;
-
-             stripstr = malloc(ev->len + 1);
-             if (!stripstr) return ECORE_CALLBACK_CANCEL;
-             strncpy(stripstr, (char *)ev->data, ev->len);
-             stripstr[ev->len] = '\0';
-             mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
-             /* TODO BUG: should never NEVER assume it's an elm_entry! */
-             _elm_entry_entry_paste(sel->requestwidget, mkupstr);
-             free(stripstr);
-             free(mkupstr);
-          }
-        evas_object_event_callback_del_full(sel->requestwidget,
-                                            EVAS_CALLBACK_DEL,
-                                            _wl_sel_obj_del2, sel);
-        sel->requestwidget = NULL;
+        sdata.x = sdata.y = 0;
+        sdata.format = ready->format;
+        sdata.data = ev->data;
+        sdata.len = ev->len;
+        sdata.action = _wl_to_elm(ecore_wl2_offer_action_get(ready->offer));
+        ready->drop_cb(ready->drop_cb_data,
+                       ready->requestwidget,
+                       &sdata);
      }
+   else
+     {
+        char *stripstr, *mkupstr;
+
+        stripstr = malloc(ev->len + 1);
+        if (!stripstr) return ECORE_CALLBACK_CANCEL;
+        strncpy(stripstr, (char *)ev->data, ev->len);
+        stripstr[ev->len] = '\0';
+        mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
+        /* TODO BUG: should never NEVER assume it's an elm_entry! */
+        _elm_entry_entry_paste(ready->requestwidget, mkupstr);
+        free(stripstr);
+        free(mkupstr);
+     }
+
+   evas_object_event_callback_del_full(ready->requestwidget,
+                                        EVAS_CALLBACK_DEL,
+                                        _wl_selection_receive_timeout, ready);
+
    ecore_event_handler_del(ready->handler);
    free(data);
    return ECORE_CALLBACK_CANCEL;
 }
 
+typedef struct _Format_Translation{
+  Elm_Sel_Format format;
+  char **translates;
+}Format_Translation;
+
+char *markup[] = {"application/x-elementary-markup", "", NULL};
+char *text[] = {"text/plain;charset=utf-8", "text/plain", NULL};
+char *html[] = {"text/html;charset=utf-8", "text/html", NULL};
+
+Format_Translation convertion[] = {
+  {ELM_SEL_FORMAT_MARKUP, markup},
+  {ELM_SEL_FORMAT_TEXT, text},
+  {ELM_SEL_FORMAT_HTML, html},
+  {ELM_SEL_FORMAT_NONE, NULL},
+};
+
 static Eina_Bool
 _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata)
 {
    Ecore_Wl2_Window *win;
-
+   Ecore_Wl2_Input *input;
+   Ecore_Wl2_Offer *offer;
+   int i = 0;
    _wl_elm_cnp_init();
 
    win = _wl_elm_widget_window_get(obj);
 
+   if (selection == ELM_SEL_TYPE_XDND) return EINA_FALSE;
 
-   if ((selection == ELM_SEL_TYPE_CLIPBOARD) ||
-       (selection == ELM_SEL_TYPE_PRIMARY) ||
-       (selection == ELM_SEL_TYPE_SECONDARY))
+   input = ecore_wl2_window_input_get(win);
+   offer = ecore_wl2_dnd_selection_get(input);
+
+   //there can be no selection available
+   if (!offer) return EINA_FALSE;
+
+   for (i = 0; convertion[i].translates; i++)
      {
-        Ecore_Wl2_Input *input;
-        Ecore_Wl2_Offer *offer;
-        const char *types[10] = {0, };
-        int i = -1, j;
+       int j = 0;
+       if (!(format & convertion[i].format)) continue;
 
-        input = ecore_wl2_window_input_get(win);
-        offer = ecore_wl2_dnd_selection_get(input);
+       for (j = 0; convertion[i].translates[j]; j++)
+         {
+            if (!ecore_wl2_offer_supprts_mime(offer, convertion[i].translates[j])) continue;
 
-        if (!offer) return EINA_FALSE;
+            //we have found mathing mimetypes
+            Selection_Ready *ready;
 
-        if ((format & ELM_SEL_FORMAT_MARKUP) ||
-            (format & ELM_SEL_FORMAT_TEXT))
-          {
-             types[++i] = "application/x-elementary-markup";
-             types[++i] = "text/plain;charset=utf-8";
-             types[++i] = "text/plain";
-          }
+            ready = calloc(1, sizeof(Selection_Ready));
 
-        if (format & ELM_SEL_FORMAT_HTML)
-          {
-             types[++i] = "text/html;charset=utf-8";
-             types[++i] = "text/html";
-          }
+            ready->requestwidget = (Evas_Object *) obj;
+            ready->drop_cb = datacb;
+            ready->drop_cb_data = udata;
+            ready->offer = offer;
+            ready->format = convertion[i].format;
 
-        if (i < 0) return EINA_FALSE;
+            evas_object_event_callback_add(ready->requestwidget, EVAS_CALLBACK_DEL,
+                                           _wl_selection_receive_timeout, ready);
+            ready->handler = ecore_event_handler_add(ECORE_WL2_EVENT_OFFER_DATA_READY, _wl_selection_receive, ready);
 
-
-        for (j = 0; j <= i; j++)
-          if (ecore_wl2_offer_supprts_mime(offer, types[j]))
-            {
-               Selection_Ready *ready;
-
-               ready = calloc(1, sizeof(Selection_Ready));
-
-               ready->sel.requestformat = format;
-               ready->sel.requestwidget = (Evas_Object *) obj;
-               ready->sel.win = win;
-               ready->sel.datacb = datacb;
-               ready->sel.udata = udata;
-               ready->offer = offer;
-
-               evas_object_event_callback_add(ready->sel.requestwidget, EVAS_CALLBACK_DEL,
-                                              _wl_sel_obj_del2, &ready->sel);
-
-               ecore_wl2_offer_receive(offer, (char*)types[j]);
-               ready->handler = ecore_event_handler_add(ECORE_WL2_EVENT_OFFER_DATA_READY, _wl_selection_receive, ready);
-            }
+            ecore_wl2_offer_receive(offer, (char*)convertion[i].translates[j]);
+            return EINA_TRUE;
+         }
      }
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static void
@@ -3608,17 +3634,6 @@ _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      dragacceptcb(dragacceptdata, wl_cnp_selection.requestwidget, will_accept);
 
    return ECORE_CALLBACK_PASS_ON;
-}
-
-static Elm_Xdnd_Action
-_wl_to_elm(Ecore_Wl2_Drag_Action action)
-{
-   #define CONV(wl, elm) if (action == wl) return elm;
-   CONV(ECORE_WL2_DRAG_ACTION_COPY, ELM_XDND_ACTION_COPY);
-   CONV(ECORE_WL2_DRAG_ACTION_MOVE, ELM_XDND_ACTION_MOVE);
-   CONV(ECORE_WL2_DRAG_ACTION_ASK, ELM_XDND_ACTION_ASK);
-   #undef CONV
-   return ELM_XDND_ACTION_UNKNOWN;
 }
 
 static Eina_Bool
