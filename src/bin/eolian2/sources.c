@@ -436,8 +436,6 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
       const Eolian_Implement *imp;
       EINA_ITERATOR_FOREACH(itr, imp)
         {
-           if (eolian_implement_class_get(imp) != cl)
-             continue;
            Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
            const Eolian_Function *fid = eolian_implement_function_get(imp, &ftype);
            switch (ftype)
