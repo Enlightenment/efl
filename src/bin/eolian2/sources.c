@@ -408,10 +408,6 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    if (!cl)
      return;
 
-   char *cname = NULL, *cnameu = NULL, *cnamel = NULL;
-   if (!eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel))
-     return;
-
    _funcs_params_init = eina_hash_stringshared_new(NULL);
 
    /* event section, they come first */
