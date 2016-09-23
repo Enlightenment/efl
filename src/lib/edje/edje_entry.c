@@ -1679,6 +1679,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
    Eina_Bool control, alt, shift;
+#if defined(__APPLE__) && defined(__MACH__)
+   Eina_Bool super, altgr;
+#endif
    Eina_Bool multiline;
    Eina_Bool cursor_changed;
    int old_cur_pos;
@@ -1712,6 +1715,10 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    old_cur_pos = evas_textblock_cursor_pos_get(en->cursor);
 
+#if defined(__APPLE__) && defined(__MACH__)
+   super = evas_key_modifier_is_set(ev->modifiers, "Super");
+   altgr = evas_key_modifier_is_set(ev->modifiers, "AltGr");
+#endif
    control = evas_key_modifier_is_set(ev->modifiers, "Control");
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
@@ -1824,8 +1831,12 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
           }
         if (evas_textblock_cursor_char_prev(en->cursor))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+#if defined(__APPLE__) && defined(__MACH__)
+        if (altgr) evas_textblock_cursor_word_start(en->cursor);
+#else
         /* If control is pressed, go to the start of the word */
         if (control) evas_textblock_cursor_word_start(en->cursor);
+#endif
         if (en->select_allow)
           {
              if (shift) _sel_extend(ed, en->cursor, rp->object, en);
@@ -1861,7 +1872,11 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                }
           }
         /* If control is pressed, go to the end of the word */
+#if defined(__APPLE__) && defined(__MACH__)
+        if (altgr) evas_textblock_cursor_word_end(en->cursor);
+#else
         if (control) evas_textblock_cursor_word_end(en->cursor);
+#endif
         if (evas_textblock_cursor_char_next(en->cursor))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (en->select_allow)
@@ -1990,14 +2005,22 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         _edje_emit(ed, "cursor,changed,manual", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
+#if defined(__APPLE__) && defined(__MACH__)
+   else if ((super) && (!shift) && (!strcmp(ev->keyname, "v")))
+#else
    else if ((control) && (!shift) && (!strcmp(ev->keyname, "v")))
+#endif
      {
         _compose_seq_reset(en);
         _edje_emit(ed, "entry,paste,request", rp->part->name);
         _edje_emit(ed, "entry,paste,request,3", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
+#if defined(__APPLE__) && defined(__MACH__)
+   else if ((super) && (!strcmp(ev->keyname, "a")))
+#else
    else if ((control) && (!strcmp(ev->keyname, "a")))
+#endif
      {
         _compose_seq_reset(en);
         if (shift)
@@ -2011,19 +2034,31 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
      }
+#if defined(__APPLE__) && defined(__MACH__)
+   else if ((super) && (((!shift) && !strcmp(ev->keyname, "c")) || !strcmp(ev->key, "Insert")))
+#else
    else if ((control) && (((!shift) && !strcmp(ev->keyname, "c")) || !strcmp(ev->key, "Insert")))
+#endif
      {
         _compose_seq_reset(en);
         _edje_emit(ed, "entry,copy,notify", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
+#if defined(__APPLE__) && defined(__MACH__)
+   else if ((super) && (!shift) && ((!strcmp(ev->keyname, "x") || (!strcmp(ev->keyname, "m")))))
+#else
    else if ((control) && (!shift) && ((!strcmp(ev->keyname, "x") || (!strcmp(ev->keyname, "m")))))
+#endif
      {
         _compose_seq_reset(en);
         _edje_emit(ed, "entry,cut,notify", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
+#if defined(__APPLE__) && defined(__MACH__)
+   else if ((super) && (!strcmp(ev->keyname, "z")))
+#else
    else if ((control) && (!strcmp(ev->keyname, "z")))
+#endif
      {
         _compose_seq_reset(en);
         if (shift)
@@ -2038,7 +2073,11 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
           }
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
+#if defined(__APPLE__) && defined(__MACH__)
+   else if ((super) && (!shift) && (!strcmp(ev->keyname, "y")))
+#else
    else if ((control) && (!shift) && (!strcmp(ev->keyname, "y")))
+#endif
      {
         _compose_seq_reset(en);
         // redo

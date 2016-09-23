@@ -1462,7 +1462,11 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
 
    _elm_code_widget_update_focus_directions((Elm_Code_Widget *)obj);
 
+#if defined(__APPLE__) && defined(__MACH__)
+   if (evas_key_modifier_is_set(ev->modifiers, "Super"))
+#else
    if (evas_key_modifier_is_set(ev->modifiers, "Control"))
+#endif
      {
         _elm_code_widget_control_key_down_cb(widget, ev->key);
         return;

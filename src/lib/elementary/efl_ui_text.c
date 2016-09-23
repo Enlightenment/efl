@@ -1844,7 +1844,11 @@ _key_down_cb(void *data,
      }
    else
      {
+#if defined(__APPLE__) && defined(__MACH__)
+        Eina_Bool control = evas_key_modifier_is_set(ev->modifiers, "Super");
+#else
         Eina_Bool control = evas_key_modifier_is_set(ev->modifiers, "Control");
+#endif
 
         /* Ctrl operations */
         if (control)

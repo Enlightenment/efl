@@ -702,6 +702,9 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
    Evas_Event_Key_Down *ev = event_info;
    Efl_Canvas_Text_Cursor *cur;
    Eina_Bool control, alt, shift;
+#if defined(__APPLE__) && defined(__MACH__)
+   Eina_Bool super, altgr;
+#endif
    Eina_Bool multiline;
    int old_cur_pos;
    char *string = (char *)ev->string;
@@ -720,6 +723,10 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
    control = evas_key_modifier_is_set(ev->modifiers, "Control");
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+#if defined(__APPLE__) && defined(__MACH__)
+   super = evas_key_modifier_is_set(ev->modifiers, "Super");
+   altgr = evas_key_modifier_is_set(ev->modifiers, "AltGr");
+#endif
    multiline = en->multiline;
 
    /* Translate some keys to strings. */
@@ -788,8 +795,12 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
         _key_down_sel_pre(obj, cur, en, shift, EINA_FALSE);
 
         efl_canvas_text_cursor_char_prev(cur);
+#if defined(__APPLE__) && defined(__MACH__)
+        if (altgr) efl_canvas_text_cursor_word_start(cur);
+#else
         /* If control is pressed, go to the start of the word */
         if (control) efl_canvas_text_cursor_word_start(cur);
+#endif
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
         _key_down_sel_post(obj, cur, en, shift);
@@ -800,8 +811,12 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
         _compose_seq_reset(en);
         _key_down_sel_pre(obj, cur, en, shift, EINA_TRUE);
 
+#if defined(__APPLE__) && defined(__MACH__)
+        if (altgr) efl_canvas_text_cursor_word_end(cur);
+#else
         /* If control is pressed, go to the end of the word */
         if (control) efl_canvas_text_cursor_word_end(cur);
+#endif
         efl_canvas_text_cursor_char_next(cur);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
@@ -962,9 +977,16 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
                   free(compres);
                   compres = NULL;
                   _compose_seq_reset(en);
+#if defined(__APPLE__) && defined(__MACH__)
+                  if (super ||
+                      (string && (!string[1]) &&
+                       (string[0] != 0xa) && (string[0] != 0x9) &&
+                       ((string[0] < 0x20) || (string[0] == 0x7f))))
+#else
                   if (string && (!string[1]) &&
                       (string[0] != 0xa) && (string[0] != 0x9) &&
                       ((string[0] < 0x20) || (string[0] == 0x7f)))
+#endif
                     goto end;
                }
              else
