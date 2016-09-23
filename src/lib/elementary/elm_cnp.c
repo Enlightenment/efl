@@ -3041,11 +3041,15 @@ typedef struct _Format_Translation{
 char *markup[] = {"application/x-elementary-markup", "", NULL};
 char *text[] = {"text/plain;charset=utf-8", "text/plain", NULL};
 char *html[] = {"text/html;charset=utf-8", "text/html", NULL};
+char *vcard[] = {"text/x-vcard", NULL};
+char *image[] = {"image/", "text/uri-list", NULL};
 
 Format_Translation convertion[] = {
   {ELM_SEL_FORMAT_MARKUP, markup},
   {ELM_SEL_FORMAT_TEXT, text},
   {ELM_SEL_FORMAT_HTML, html},
+  {ELM_SEL_FORMAT_VCARD, vcard},
+  {ELM_SEL_FORMAT_IMAGE, image},
   {ELM_SEL_FORMAT_NONE, NULL},
 };
 
@@ -3907,40 +3911,25 @@ _wl_drops_accept(const char *type)
    Dropable *drop;
    Eina_Bool will_accept = EINA_FALSE;
 
+   if (!type) return EINA_FALSE;
+
    EINA_LIST_FOREACH(drops, l, drop)
      {
         Dropable_Cbs *cbs;
         EINA_INLIST_FOREACH(drop->cbs_list, cbs)
           {
-             switch (cbs->types)
+             for (int i = 0; convertion[i].translates ; ++i)
                {
-                case ELM_SEL_FORMAT_TARGETS:
-                case ELM_SEL_FORMAT_IMAGE:
-                   if (!strncmp(type, "image/", 6))
-                     {
-                        wl_cnp_selection.requestwidget = drop->obj;
-                        return EINA_TRUE;
-                     }
-                   break;
-                case ELM_SEL_FORMAT_NONE:
-                   break;
-                case ELM_SEL_FORMAT_MARKUP:
-                case ELM_SEL_FORMAT_TEXT:
-                  if (eina_streq(type, "application/x-elementary-markup") ||
-                      eina_streq(type, "text/plain") ||
-                      eina_streq(type, "text/plain;charset=utf-8") ||
-                      eina_streq(type, "UTF8_STRING") ||
-                      eina_streq(type, "STRING") ||
-                      eina_streq(type, "TEXT"))
-                    return EINA_TRUE;
-                  break;
-                case ELM_SEL_FORMAT_VCARD:
-                   break;
-                case ELM_SEL_FORMAT_HTML:
-                  if (eina_streq(type, "text/html") ||
-                      eina_streq(type, "text/html;charset=utf-8"))
-                    return EINA_TRUE;
-                  break;
+                  if (!(convertion[i].format & cbs->types)) continue;
+
+                  for (int j = 0; convertion[i].translates[j]; ++j)
+                    {
+                       if (!strncmp(type, convertion[i].translates[j], strlen(convertion[i].translates[j])))
+                         {
+                            wl_cnp_selection.requestwidget = drop->obj;
+                            return EINA_TRUE;
+                         }
+                    }
                }
           }
      }
