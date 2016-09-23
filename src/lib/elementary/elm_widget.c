@@ -728,6 +728,10 @@ _propagate_event(void *data EINA_UNUSED, const Efl_Event *event)
    } event_info = {};
    Eina_Bool was_hold;
 
+   if ((evas_focus_get(evas_object_evas_get(obj)) != elm_widget_top_get(obj)) &&
+       efl_isa(obj, EFL_UI_WIN_CLASS))
+     return;
+
    /* FIXME: Avoid this translation to evas struct and use pointer/key events
     * in all of elementary widgets
     * See also: efl_input_key_legacy_info_fill().
