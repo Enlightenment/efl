@@ -233,6 +233,47 @@ char *eo_gen_c_full_name_get(const char *nm)
    return buf;
 }
 
+Eina_Bool eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
+                                 char **cnameu, char **cnamel)
+{
+   char *cn = NULL, *cnu = NULL, *cnl = NULL;
+   cn = eo_gen_c_full_name_get(eolian_class_full_name_get(cl));
+   if (!cn)
+     return EINA_FALSE;
+   if (cname)
+     *cname = cn;
+
+   if (cnameu)
+     {
+        cnu = strdup(cn);
+        if (!cnu)
+          {
+             free(cn);
+             return EINA_FALSE;
+          }
+        eina_str_toupper(&cnu);
+        *cnameu = cnu;
+     }
+
+   if (cnamel)
+     {
+        cnl = strdup(cn);
+        if (!cnl)
+          {
+             free(cn);
+             free(cnu);
+             return EINA_FALSE;
+          }
+        eina_str_tolower(&cnl);
+        *cnamel = cnl;
+     }
+
+   if (!cname)
+     free(cn);
+
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
 {

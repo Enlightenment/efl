@@ -199,20 +199,8 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
      return;
 
    char *cname = NULL, *cnameu = NULL, *cnamel = NULL;
-
-   cname = eo_gen_c_full_name_get(eolian_class_full_name_get(cl));
-   if (!cname)
-     goto end;
-
-   cnameu = strdup(cname);
-   if (!cnameu)
-     goto end;
-   eina_str_toupper(&cnameu);
-
-   cnamel = strdup(cname);
-   if (!cnamel)
-     goto end;
-   eina_str_tolower(&cnamel);
+   if (!eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel))
+     return;
 
    /* class definition */
 
@@ -319,7 +307,6 @@ events:
         eina_iterator_free(itr);
      }
 
-end:
    free(cname);
    free(cnameu);
    free(cnamel);
