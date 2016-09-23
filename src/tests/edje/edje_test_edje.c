@@ -711,6 +711,20 @@ START_TEST(edje_test_table_eoapi)
 }
 END_TEST
 
+START_TEST(edje_test_combine_keywords)
+{
+   Evas *evas;
+   Evas_Object *obj;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_combine_keywords.edj"), "test_group"));
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
@@ -731,4 +745,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_box_eoapi);
    tcase_add_test(tc, edje_test_table);
    tcase_add_test(tc, edje_test_table_eoapi);
+   tcase_add_test(tc, edje_test_combine_keywords);
 }

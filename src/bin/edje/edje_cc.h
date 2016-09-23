@@ -247,7 +247,8 @@ void    using_file(const char *filename, const char type);
 void    error_and_abort(Eet_File *ef, const char *fmt, ...);
 
 void stack_push_quick(const char *str);
-void stack_pop_quick(Eina_Bool check_last, Eina_Bool do_free);
+char *stack_pop_quick(Eina_Bool check_last, Eina_Bool do_free);
+void stack_replace_quick(const char *token);
 Eina_Bool edje_cc_handlers_wildcard(void);
 void edje_cc_handlers_hierarchy_alloc(void);
 void edje_cc_handlers_hierarchy_free(void);

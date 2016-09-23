@@ -1,0 +1,10 @@
+collections {
+   group { "test_group";
+      parts.rect { "base";
+      }
+   }
+   group { "test_group2";
+      parts.rect { "base";
+      }
+   }
+}

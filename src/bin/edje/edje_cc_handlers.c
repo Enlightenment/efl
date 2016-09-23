@@ -5951,8 +5951,7 @@ ob_collections_group_parts_part_short(void)
                   "vector", EDJE_PART_TYPE_VECTOR,
                   NULL);
 
-   stack_pop_quick(EINA_TRUE, EINA_TRUE);
-   stack_push_quick("part");
+   stack_replace_quick("part");
    _part_create();
    _part_type_set(type);
 }
@@ -7990,8 +7989,7 @@ ob_collections_group_parts_part_description(void)
 static void
 ob_collections_group_parts_part_desc(void)
 {
-   stack_pop_quick(EINA_TRUE, EINA_TRUE);
-   stack_push_quick("description");
+   stack_replace_quick("description");
    ob_collections_group_parts_part_description();
 }
 

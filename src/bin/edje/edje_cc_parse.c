@@ -672,7 +672,7 @@ stack_push_quick(const char *str)
    eina_strbuf_append(stack_buf, s);
 }
 
-void
+char *
 stack_pop_quick(Eina_Bool check_last, Eina_Bool do_free)
 {
    char *tmp, *str;
@@ -690,7 +690,46 @@ stack_pop_quick(Eina_Bool check_last, Eina_Bool do_free)
                            eina_strbuf_length_get(stack_buf) - strlen(tmp) - 1,
                            eina_strbuf_length_get(stack_buf)); /* remove: '.tmp' */
    stack = eina_list_remove_list(stack, eina_list_last(stack));
-   if (do_free) free(str);
+   if (do_free)
+     {
+        free(str);
+        str = NULL;
+     }
+   return str;
+}
+
+/* replace the top of stack with given token */
+void
+stack_replace_quick(const char *token)
+{
+   char *str;
+
+   str = stack_pop_quick(EINA_FALSE, EINA_FALSE);
+   if ((str) && strchr(str, '.'))
+     {
+        char *end, *tmp = str;
+        Eina_Strbuf *buf;
+
+        end = strchr(tmp, '.');
+        if (end)
+          tmp = end + 1;
+
+        buf = eina_strbuf_new();
+        eina_strbuf_append(buf, str);
+        eina_strbuf_remove(buf,
+                           eina_strbuf_length_get(buf) - strlen(tmp),
+                           eina_strbuf_length_get(buf));
+        eina_strbuf_append(buf, token);
+
+        stack_push_quick(eina_strbuf_string_get(buf));
+
+        eina_strbuf_free(buf);
+        free(str);
+     }
+   else
+     {
+        stack_push_quick(token);
+     }
 }
 
 static const char *
