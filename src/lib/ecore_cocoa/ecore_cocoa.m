@@ -202,6 +202,18 @@ _ecore_cocoa_feed_events(void *anEvent)
       case NSKeyDown:
         {
            Ecore_Event_Key *ev;
+           NSUInteger flags = [event modifierFlags];
+
+           if (flags & NSCommandKeyMask)
+             {
+                NSString *keychar = [event charactersIgnoringModifiers];
+                if ([keychar characterAtIndex:0] == 'q')
+                  {
+                     [NSApp performSelector:@selector(terminate:)
+                                            withObject:nil afterDelay:0.0];
+                     return EINA_TRUE;
+                  }
+             }
 
            ev = _ecore_cocoa_event_key(event, NSKeyDown, time);
            if (ev == NULL) return EINA_TRUE;
