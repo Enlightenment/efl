@@ -365,7 +365,7 @@ void
 evas_fb_outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth)
 {
    int have_backbuf = 0;
-   int fb_w, fb_h, fb_depth, refresh;
+   int fb_w, fb_h, fb_depth;
 
    if ((w == buf->w) && (h == buf->h) &&
        (rot == buf->rot) && (depth == buf->depth))
@@ -378,7 +378,6 @@ evas_fb_outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth d
      }
 
    fb_depth = _outbuf_depth_convert(depth);
-   refresh = buf->priv.fb.fb->refresh;
 
    if (rot == 0 || rot == 180)
      {
@@ -393,9 +392,9 @@ evas_fb_outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth d
 
    if (buf->priv.fb.fb)
      buf->priv.fb.fb = fb_changemode(buf->priv.fb.fb, fb_w, fb_h,
-                                        fb_depth, refresh);
+                                     fb_depth, buf->priv.fb.fb->refresh);
    else
-     buf->priv.fb.fb = fb_setmode(fb_w, fb_h, fb_depth, refresh);
+     buf->priv.fb.fb = fb_setmode(fb_w, fb_h, fb_depth, 0);
 
    if (!buf->priv.fb.fb) buf->priv.fb.fb = fb_getmode();
    EINA_SAFETY_ON_NULL_RETURN(buf->priv.fb.fb);
