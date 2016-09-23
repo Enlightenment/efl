@@ -1282,7 +1282,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
    if (ed->delete_me) return;
    if (!sig) sig = "";
    if (!src) src = "";
-   //   printf("EDJE EMIT: (%p) signal: \"%s\" source: \"%s\"\n", ed, sig, src);
+   DBG("EDJE EMIT: (%p) signal: \"%s\" source: \"%s\"\n", ed, sig, src);
    _edje_block(ed);
    _edje_ref(ed);
    _edje_util_freeze(ed);
