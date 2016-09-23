@@ -94,6 +94,18 @@ group { name: "e/modules/pager16/desk";
             rel2.to: "base";
          }
       }
+      part { name: "e.swallow.drop"; type: SWALLOW;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            rel2.offset: -2 -1;
+            link.base: "e,state,visible" "e";
+         }
+         desc { "hid"; inherit; hid;
+            link.base: "e,state,hidden" "e";
+         }
+      }
       part { name: "e.swallow.content"; type: SWALLOW;
          clip_to: "clip";
          description { state: "default" 0.0;
