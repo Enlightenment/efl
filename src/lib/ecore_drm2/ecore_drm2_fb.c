@@ -37,26 +37,22 @@ _fb_atomic_flip(Ecore_Drm2_Output *output, Ecore_Drm2_Plane_State *pstate, uint3
 {
    int ret = 0;
    drmModeAtomicReq *req = NULL;
+   Ecore_Drm2_Crtc_State *cstate;
 
    req = drmModeAtomicAlloc();
    if (!req) return -1;
 
    drmModeAtomicSetCursor(req, 0);
 
-   if (flags & DRM_MODE_ATOMIC_ALLOW_MODESET)
-     {
-        Ecore_Drm2_Crtc_State *cstate;
+   cstate = output->crtc_state;
 
-        cstate = output->crtc_state;
+   ret = drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
+                                  cstate->mode.value);
+   if (ret < 0) goto err;
 
-        ret = drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
-                                       cstate->mode.value);
-        if (ret < 0) goto err;
-
-        ret = drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
-                                       cstate->active.value);
-        if (ret < 0) goto err;
-     }
+   ret = drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
+                                  cstate->active.value);
+   if (ret < 0) goto err;
 
    ret = drmModeAtomicAddProperty(req, pstate->obj_id,
                                   pstate->cid.id, pstate->cid.value);
