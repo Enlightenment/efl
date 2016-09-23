@@ -323,8 +323,8 @@ _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, con
         value = efreet_mime_type_get(priv->path);
         if (value == NULL)
           {
-             eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
-             return rpromise;
+             value = "";
+             WRN("could not get mime type for: %s", priv->path);
           }
         property_name = EIO_MODEL_PROP_MIME_TYPE;
      }
