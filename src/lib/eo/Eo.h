@@ -745,19 +745,31 @@ typedef struct _Efl_Object_Call_Cache
 #endif
 
 // cache OP id, get real fct and object data then do the call
-#define EFL_FUNC_COMMON_OP(Obj, Name, DefRet)                                 \
-     static EFL_FUNC_TLS Efl_Object_Call_Cache ___cache; /* static 0 by default */ \
-     Efl_Object_Op_Call_Data ___call;                                           \
-     if (EINA_UNLIKELY((___cache.op == EFL_NOOP) ||                      \
-                       (___cache.generation != _efl_object_init_generation)))   \
-       {                                                                \
-          ___cache.op = _efl_object_api_op_id_get(EFL_FUNC_COMMON_OP_FUNC(Name)); \
-          if (___cache.op == EFL_NOOP) return DefRet;                    \
-          ___cache.generation = _efl_object_init_generation;                    \
-       }                                                                \
-     if (!_efl_object_call_resolve((Eo *) Obj, #Name, &___call, &___cache,                  \
-                           __FILE__, __LINE__)) return DefRet;          \
-     _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
+#define EFL_FUNC_COMMON_OP(Obj, Name, DefRet) \
+   static EFL_FUNC_TLS Efl_Object_Call_Cache ___cache; /* static 0 by default */ \
+   Efl_Object_Op_Call_Data ___call; \
+   if (EINA_UNLIKELY((___cache.op == EFL_NOOP) || \
+                     (___cache.generation != _efl_object_init_generation))) \
+     goto __##Name##_op_create; /* yes a goto - see below */ \
+   __##Name##_op_create_done: \
+   if (!_efl_object_call_resolve((Eo *) Obj, #Name, &___call, &___cache, \
+                                 __FILE__, __LINE__)) return DefRet; \
+   _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;
+
+// yes this looks ugly with gotos BUT it moves rare "init" handling code
+// out of the hot path and thus l1 instruction cach prefetch etc. so it
+// should provide a micro-speedup. this has been shown to have real big
+// measurable effects on very hot code paths as l1 instgruction cache
+// does matter and fetching a cacheline of code may fetch a lot of rarely
+// used instructions that are skipepd by and if so moving those away out
+// of the cacheline that was already fetched should yield better cache
+// hits.
+#define EFL_FUNC_COMMON_OP_END(Obj, Name, DefRet) \
+__##Name##_op_create: \
+   ___cache.op = _efl_object_api_op_id_get(EFL_FUNC_COMMON_OP_FUNC(Name)); \
+   if (___cache.op == EFL_NOOP) return DefRet; \
+   ___cache.generation = _efl_object_init_generation; \
+   goto __##Name##_op_create_done;
 
 #define _EFL_OBJECT_API_BEFORE_HOOK
 #define _EFL_OBJECT_API_AFTER_HOOK
@@ -765,55 +777,61 @@ typedef struct _Efl_Object_Call_Cache
 
 // to define an EAPI function
 #define _EFL_OBJECT_FUNC_BODY(Name, ObjType, Ret, DefRet) \
-  Ret                                                                   \
-  Name(ObjType obj)                                                            \
-  {                                                                     \
-     typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data);            \
-     Ret _r;                                                            \
-     EFL_FUNC_COMMON_OP(obj, Name, DefRet);                                   \
-     _EFL_OBJECT_API_BEFORE_HOOK                                                       \
-     _r = _EFL_OBJECT_API_CALL_HOOK(_func_(___call.eo_id, ___call.data));     \
+  Ret \
+  Name(ObjType obj) \
+  { \
+     typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data); \
+     Ret _r; \
+     EFL_FUNC_COMMON_OP(obj, Name, DefRet); \
+     _EFL_OBJECT_API_BEFORE_HOOK \
+     _r = _EFL_OBJECT_API_CALL_HOOK(_func_(___call.eo_id, ___call.data)); \
      _efl_object_call_end(&___call); \
-     _EFL_OBJECT_API_AFTER_HOOK                                                       \
-     return _r;                                                         \
+     _EFL_OBJECT_API_AFTER_HOOK \
+     return _r; \
+     EFL_FUNC_COMMON_OP_END(obj, Name, DefRet); \
   }
 
-#define _EFL_OBJECT_VOID_FUNC_BODY(Name, ObjType)                               \
-  void									\
-  Name(ObjType obj)                                                            \
-  {                                                                     \
-     typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data);           \
-     EFL_FUNC_COMMON_OP(obj, Name, );                                         \
-     _EFL_OBJECT_API_BEFORE_HOOK                                                       \
-     _EFL_OBJECT_API_CALL_HOOK(_func_(___call.eo_id, ___call.data));          \
-     _efl_object_call_end(&___call);                                            \
-     _EFL_OBJECT_API_AFTER_HOOK                                                       \
+#define _EFL_OBJECT_VOID_FUNC_BODY(Name, ObjType) \
+  void \
+  Name(ObjType obj) \
+  { \
+     typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data); \
+     EFL_FUNC_COMMON_OP(obj, Name, ); \
+     _EFL_OBJECT_API_BEFORE_HOOK \
+     _EFL_OBJECT_API_CALL_HOOK(_func_(___call.eo_id, ___call.data)); \
+     _efl_object_call_end(&___call); \
+     _EFL_OBJECT_API_AFTER_HOOK \
+     return; \
+     EFL_FUNC_COMMON_OP_END(obj, Name, ); \
   }
 
-#define _EFL_OBJECT_FUNC_BODYV(Name, ObjType, Ret, DefRet, Arguments, ...)      \
-  Ret                                                                   \
-  Name(ObjType obj, __VA_ARGS__)                                                     \
-  {                                                                     \
+#define _EFL_OBJECT_FUNC_BODYV(Name, ObjType, Ret, DefRet, Arguments, ...) \
+  Ret \
+  Name(ObjType obj, __VA_ARGS__) \
+  { \
      typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
-     Ret _r;                                                            \
-     EFL_FUNC_COMMON_OP(obj, Name, DefRet);                                   \
-     _EFL_OBJECT_API_BEFORE_HOOK                                                       \
+     Ret _r; \
+     EFL_FUNC_COMMON_OP(obj, Name, DefRet); \
+     _EFL_OBJECT_API_BEFORE_HOOK \
      _r = _EFL_OBJECT_API_CALL_HOOK(_func_(___call.eo_id, ___call.data, Arguments)); \
      _efl_object_call_end(&___call); \
-     _EFL_OBJECT_API_AFTER_HOOK                                                        \
-     return _r;                                                         \
+     _EFL_OBJECT_API_AFTER_HOOK \
+     return _r; \
+     EFL_FUNC_COMMON_OP_END(obj, Name, DefRet); \
   }
 
-#define _EFL_OBJECT_VOID_FUNC_BODYV(Name, ObjType, Arguments, ...)              \
-  void                                                                  \
-  Name(ObjType obj, __VA_ARGS__)                                                     \
-  {                                                                     \
+#define _EFL_OBJECT_VOID_FUNC_BODYV(Name, ObjType, Arguments, ...) \
+  void \
+  Name(ObjType obj, __VA_ARGS__) \
+  { \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
-     EFL_FUNC_COMMON_OP(obj, Name, );                                         \
-     _EFL_OBJECT_API_BEFORE_HOOK                                                       \
+     EFL_FUNC_COMMON_OP(obj, Name, ); \
+     _EFL_OBJECT_API_BEFORE_HOOK \
      _EFL_OBJECT_API_CALL_HOOK(_func_(___call.eo_id, ___call.data, Arguments)); \
      _efl_object_call_end(&___call); \
-     _EFL_OBJECT_API_AFTER_HOOK                                                        \
+     _EFL_OBJECT_API_AFTER_HOOK \
+     return; \
+     EFL_FUNC_COMMON_OP_END(obj, Name, ); \
   }
 
 #define EFL_FUNC_BODY(Name, Ret, DefRet) _EFL_OBJECT_FUNC_BODY(Name, Eo *, Ret, DefRet)
