@@ -1617,12 +1617,8 @@ _emotion_playback_finished(Evas_Object *obj)
    Efl_Canvas_Video_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (sd->play)
-     {
-        sd->play = 0;
-        efl_event_callback_call(obj, EFL_CANVAS_VIDEO_EVENT_PLAYBACK_STOP, NULL);
-        evas_object_smart_callback_call(obj, "playback_finished", NULL);
-     }
+   efl_event_callback_call(obj, EFL_CANVAS_VIDEO_EVENT_PLAYBACK_STOP, NULL);
+   evas_object_smart_callback_call(obj, "playback_finished", NULL);
 }
 
 EAPI void
