@@ -998,15 +998,15 @@ test_toolbar8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    ph3 = elm_photo_add(win);
    ph4 = elm_photo_add(win);
 
-   elm_toolbar_item_append(tb, "document-print", "Hello", _tb_sel1_cb, ph1);
-   elm_toolbar_item_append(tb, "folder-new", "World", _tb_sel2_cb, ph1);
-   elm_toolbar_item_append(tb, "object-rotate-right", "H", _tb_sel3_cb, ph4);
-   elm_toolbar_item_append(tb, "mail-send", "Comes", _tb_sel4_cb, ph4);
-   elm_toolbar_item_append(tb, "edit-cut", "Shrink", _tb_sel4_cb, ph4);
-   elm_toolbar_item_append(tb, "edit-copy", "Mode", _tb_sel4_cb, ph4);
-   elm_toolbar_item_append(tb, "edit-paste", "is set to", _tb_sel4_cb, ph4);
-   elm_toolbar_item_append(tb, "edit-delete", "Menu", _tb_sel4_cb, ph4);
-   elm_toolbar_item_append(tb, "clock", "Elementary", _tb_sel5_cb, ph4);
+   elm_toolbar_item_append(tb, "document-print", NULL, _tb_sel1_cb, ph1);
+   elm_toolbar_item_append(tb, "folder-new", NULL, _tb_sel2_cb, ph1);
+   elm_toolbar_item_append(tb, "object-rotate-right", NULL, _tb_sel3_cb, ph4);
+   elm_toolbar_item_append(tb, "mail-send", NULL, _tb_sel4_cb, ph4);
+   elm_toolbar_item_append(tb, "edit-cut", NULL, _tb_sel4_cb, ph4);
+   elm_toolbar_item_append(tb, "edit-copy", NULL, _tb_sel4_cb, ph4);
+   elm_toolbar_item_append(tb, "edit-paste", NULL, _tb_sel4_cb, ph4);
+   elm_toolbar_item_append(tb, "edit-delete", NULL, _tb_sel4_cb, ph4);
+   elm_toolbar_item_append(tb, "clock", NULL, _tb_sel5_cb, ph4);
 
    evas_object_smart_callback_add(tb, "clicked", toolbar_clicked_cb, NULL);
 
