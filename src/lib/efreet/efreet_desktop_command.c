@@ -846,53 +846,28 @@ efreet_desktop_command_path_absolute(const char *path)
 static char *
 efreet_string_append(char *dest, int *size, int *len, const char *src)
 {
-    int l;
-    int off = 0;
+   int append_len = strlen(src);
 
-    l = eina_strlcpy(dest + *len, src, *size - *len);
+   if ((*len + append_len + 1) > *size)
+     {
+        char *dest2 = realloc(dest, *size + append_len + 1024);
+        if (!dest2) return NULL;
 
-    while (l > *size - *len)
-    {
-        char *tmp;
-        /* we successfully appended this much */
-        off += *size - *len - 1;
-        *len = *size - 1;
-        *size += 1024;
-        tmp = realloc(dest, *size);
-        if (!tmp)
-        {
-            free(dest);
-            return NULL;
-        }
-        dest = tmp;
-        *(dest + *len) = '\0';
-
-        l = eina_strlcpy(dest + *len, src + off, *size - *len);
-    }
-    *len += l;
-
-    return dest;
+        dest = dest2;
+        *size += append_len + 1024;
+     }
+   strcpy(dest + *len, src);
+   *len += append_len;
+   return dest;
 }
 
 static char *
 efreet_string_append_char(char *dest, int *size, int *len, char c)
 {
-    if (*len >= *size - 1)
-    {
-        char *tmp;
-        *size += 1024;
-        tmp = realloc(dest, *size);
-        if (!tmp)
-        {
-            free(dest);
-            return NULL;
-        }
-        dest = tmp;
-    }
+   char str[2];
 
-    dest[(*len)++] = c;
-    dest[*len] = '\0';
-
-    return dest;
+   str[0] = c;
+   str[1] = 0;
+   return efreet_string_append(dest, size, len, str);
 }
 
