@@ -3925,7 +3925,7 @@ _active_descendant_changed_signal_send(void *data, const Efl_Event *event)
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
 
-   if (!STATE_TYPE_GET(pd->object_children_broadcast_mask, ATSPI_OBJECT_EVENT_ACTIVE_DESCENDANT_CHANGED))
+   if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_ACTIVE_DESCENDANT_CHANGED))
      {
         efl_event_callback_stop(event->object);
         return;
