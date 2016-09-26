@@ -1458,3 +1458,180 @@ ecore_thread_global_data_wait(const char *key,
    if (ret) return ret->data;
    return NULL;
 }
+
+typedef struct _Ecore_Thread_Set Ecore_Thread_Set;
+struct _Ecore_Thread_Set
+{
+   Eo *obj;
+
+   union {
+      struct {
+         void *v;
+         Eina_Free_Cb free_cb;
+      } value;
+      Eina_Error error;
+   } u;
+
+   Eina_Bool success;
+};
+
+static void
+_ecore_thread_main_loop_set(void *data)
+{
+   Ecore_Thread_Set *dt = data;
+
+   if (dt->success)
+     efl_promise_value_set(efl_super(dt->obj, EFL_OBJECT_OVERRIDE_CLASS),
+                           dt->u.value.v, dt->u.value.free_cb);
+   else
+     efl_promise_failed_set(efl_super(dt->obj, EFL_OBJECT_OVERRIDE_CLASS),
+                            dt->u.error);
+
+   efl_unref(dt->obj);
+   free(dt);
+}
+
+static Ecore_Thread_Set *
+_ecore_thread_set_new(Eo *obj)
+{
+   Ecore_Thread_Set *dt;
+
+   dt = calloc(1, sizeof (Ecore_Thread_Set));
+   if (!dt) return NULL;
+
+   dt->obj = efl_ref(obj);
+
+   return dt;
+}
+
+static void
+_ecore_thread_value_set(Eo *obj, const void *data EINA_UNUSED, void *v, Eina_Free_Cb free_cb)
+{
+   Ecore_Thread_Set *dt;
+
+   dt = _ecore_thread_set_new(obj);
+   if (!dt) return ;
+
+   dt->success = EINA_TRUE;
+   dt->u.value.v = v;
+   dt->u.value.free_cb = free_cb;
+
+   ecore_main_loop_thread_safe_call_async(_ecore_thread_main_loop_set, dt);
+}
+
+static void
+_ecore_thread_failed_set(Eo *obj, const void *data EINA_UNUSED, Eina_Error err)
+{
+   Ecore_Thread_Set *dt;
+
+   dt = _ecore_thread_set_new(obj);
+   if (!dt) return ;
+
+   dt->success = EINA_FALSE;
+   dt->u.error = err;
+
+   ecore_main_loop_thread_safe_call_async(_ecore_thread_main_loop_set, dt);
+}
+
+typedef struct _Ecore_Thread_Progress Ecore_Thread_Progress;
+struct _Ecore_Thread_Progress
+{
+   Eo *obj;
+   const void *p;
+};
+
+static void *
+_ecore_thread_progress_sync(void *data)
+{
+   Ecore_Thread_Progress *p = data;
+
+   efl_promise_progress_set(efl_super(p->obj, EFL_OBJECT_OVERRIDE_CLASS), p->p);
+
+   return NULL;
+}
+
+static void
+_ecore_thread_progress_set(Eo *obj, const void *data EINA_UNUSED, const void *p)
+{
+   Ecore_Thread_Progress ip = { efl_ref(obj), p };
+
+   ecore_main_loop_thread_safe_call_sync(_ecore_thread_progress_sync, &ip);
+   efl_unref(obj);
+}
+
+static void
+_ecore_thread_future_heavy(void *dp, Ecore_Thread *thread)
+{
+   Ecore_Thread_Future_Cb heavy;
+   const void *data;
+   Eo *p = dp;
+
+   heavy = efl_key_data_get(p, "_ecore_thread.heavy");
+   data = efl_key_data_get(p, "_ecore_thread.data");
+
+   heavy(data, p, thread);
+}
+
+static void
+_ecore_thread_future_end(void *dp, Ecore_Thread *thread EINA_UNUSED)
+{
+   Eina_Free_Cb free_cb;
+   void *data;
+   Eo *p = dp;
+
+   free_cb = efl_key_data_get(p, "_ecore_thread.free_cb");
+   data = efl_key_data_get(p, "_ecore_thread.data");
+
+   if (free_cb) free_cb(data);
+   efl_del(p);
+}
+
+static void
+_ecore_thread_future_none(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Ecore_Thread *t = data;
+
+   // Cancelling thread if there is nobody listening on the promise anymore
+   ecore_thread_cancel(t);
+}
+
+EAPI Efl_Future *
+ecore_thread_future_run(Ecore_Thread_Future_Cb heavy, const void *data, Eina_Free_Cb free_cb)
+{
+   Ecore_Thread *t;
+   Eo *p;
+
+   if (!heavy) return NULL;
+
+   EFL_OPS_DEFINE(thread_safe_call,
+                  EFL_OBJECT_OP_FUNC(efl_promise_value_set, _ecore_thread_value_set),
+                  EFL_OBJECT_OP_FUNC(efl_promise_failed_set, _ecore_thread_failed_set),
+                  EFL_OBJECT_OP_FUNC(efl_promise_progress_set, _ecore_thread_progress_set));
+
+   efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
+
+   efl_wref_add(efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get()), &p);
+   if (!p) goto end;
+
+   efl_object_override(p, &thread_safe_call);
+
+   efl_key_data_set(p, "_ecore_thread.data", data);
+   efl_key_data_set(p, "_ecore_thread.free_cb", free_cb);
+   efl_key_data_set(p, "_ecore_thread.heavy", heavy);
+
+   t = ecore_thread_run(_ecore_thread_future_heavy,
+                        _ecore_thread_future_end,
+                        _ecore_thread_future_end,
+                        p);
+
+   if (p)
+     {
+        efl_event_callback_add(p, EFL_PROMISE_EVENT_FUTURE_NONE, _ecore_thread_future_none, t);
+        efl_wref_del(p, &p);
+     }
+
+ end:
+   efl_domain_current_pop();
+
+   return p ? efl_promise_future_get(p) : NULL;
+}

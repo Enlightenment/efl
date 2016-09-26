@@ -3124,6 +3124,10 @@ EAPI Ecore_Thread* ecore_thread_promise_run(Ecore_Thread_Promise_Cb func_heavy,
                                             const void* data,
                                             Eina_Promise** promise);
 
+typedef void (*Ecore_Thread_Future_Cb)(const void *data, Eo *promise, Ecore_Thread *thread);
+
+EAPI Efl_Future *ecore_thread_future_run(Ecore_Thread_Future_Cb heavy, const void *data, Eina_Free_Cb free_cb);
+
 #endif
 
 #ifdef __cplusplus
