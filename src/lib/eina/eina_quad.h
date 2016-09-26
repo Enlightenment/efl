@@ -26,9 +26,16 @@
  */
 
 /**
- * @defgroup Eina_Quad Quadrangles
- * @ingroup Eina_Basic
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_Quad_Group Quadrangles
+ *
  * @brief Quadrangles operations
+ *
  * @{
  */
 
@@ -74,6 +81,10 @@ EAPI void eina_quad_coords_get(const Eina_Quad *q,
                                double *x2, double *y2,
                                double *x3, double *y3,
                                double *x4, double *y4);
+
+/**
+ * @}
+ */
 
 /**
  * @}
