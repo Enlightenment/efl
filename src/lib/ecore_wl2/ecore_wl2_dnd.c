@@ -51,7 +51,7 @@ struct _Ecore_Wl2_Offer
    Ecore_Wl2_Drag_Action actions;
    Ecore_Wl2_Drag_Action action;
    uint32_t serial;
-   Ecore_Fd_Handler *read;
+   Eina_List *reads;
    int ref;
    unsigned int window_id;
 };
@@ -689,6 +689,7 @@ ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes)
 typedef struct {
    int len;
    void *data;
+   char *mimetype;
    Ecore_Wl2_Offer *offer;
 } Read_Buffer;
 
@@ -700,6 +701,7 @@ _free_buf(void *user_data, void *event)
    _ecore_wl2_offer_unref(buf->offer);
 
    free(buf->data);
+   free(buf->mimetype);
    free(user_data);
    free(event);
 }
@@ -737,41 +739,44 @@ _offer_receive_fd_cb(void *data, Ecore_Fd_Handler *fdh)
 
         ev->data = buf->data;
         ev->len = buf->len;
-
+        ev->mimetype = buf->mimetype;
         ecore_event_add(ECORE_WL2_EVENT_OFFER_DATA_READY, ev, _free_buf, buf);
 
-        buf->offer->read = NULL;
+        buf->offer->reads = eina_list_remove(buf->offer->reads, fdh);
         return ECORE_CALLBACK_CANCEL;
      }
 }
 
-EAPI Eina_Bool
+EAPI void
 ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime)
 {
    Read_Buffer *buffer;
+   Ecore_Fd_Handler *handler;
    int pipe[2];
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(offer, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN(offer);
 
-   //if a read is going on exit
-   if (offer->read) return EINA_FALSE;
+   if (pipe2(pipe, O_CLOEXEC) == -1)
+     {
+        ERR("Failed to create pipe for receiving");
+        return;
+     }
 
    buffer = calloc(1, sizeof(Read_Buffer));
    buffer->offer = offer;
-
-   // no data yet, we would have to fetch it and then tell when the data is ready
-   if (pipe2(pipe, O_CLOEXEC) == -1)
-     return EINA_FALSE;
+   buffer->mimetype = strdup(mime);
 
    offer->ref ++; // we are keeping this ref until the read is done AND emitted
 
    wl_data_offer_receive(offer->offer, mime, pipe[1]);
    close(pipe[1]);
 
-   offer->read =
+   handler =
      ecore_main_fd_handler_file_add(pipe[0], ECORE_FD_READ | ECORE_FD_ERROR,
                                     _offer_receive_fd_cb, buffer, NULL, NULL);
-   return EINA_FALSE;
+
+   offer->reads = eina_list_append(offer->reads, handler);
+   return;
 }
 
 EAPI void

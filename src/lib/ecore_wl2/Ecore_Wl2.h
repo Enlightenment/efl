@@ -168,6 +168,7 @@ typedef struct _Ecore_Wl2_Event_Offer_Data_Ready{
    Ecore_Wl2_Offer *offer;
    char *data;
    int len;
+   const char *mimetype;
 } Ecore_Wl2_Event_Offer_Data_Ready;
 
 typedef enum _Ecore_Wl2_Window_Type
@@ -1208,7 +1209,7 @@ EAPI void ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes);
  *
  * @since 1.19
  */
-EAPI Eina_Bool ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime);
+EAPI void ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime);
 
 /**
  * Check if the given offer supports the given mimetype
