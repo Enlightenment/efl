@@ -226,7 +226,7 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
         if (!input->drag)
           {
              ERR("Userdata of offer not found");
-             goto emit;
+             return;
           }
 
         input->drag->serial = serial;
@@ -245,14 +245,14 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
         input->drag = NULL;
      }
 
-emit:
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Dnd_Enter));
    if (!ev) return;
 
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
+   if (input->drag)
+     ev->win = input->drag->window_id;
 
-   ev->win = input->drag->window_id;
    ev->x = x;
    ev->y = y;
    ev->offer = input->drag;
