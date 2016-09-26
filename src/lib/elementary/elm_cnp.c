@@ -3477,7 +3477,6 @@ _wl_dnd_enter(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    ev = event;
 
-   known = eina_array_new(5);
    available = ecore_wl2_offer_mimes_get(ev->offer);
 
    free(savedtypes.types);
@@ -3486,9 +3485,12 @@ _wl_dnd_enter(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    savedtypes.types = malloc(sizeof(char *) * savedtypes.ntypes);
    if (!savedtypes.types) return EINA_FALSE;
 
+   known = eina_array_new(5);
+
    for (i = 0; i < eina_array_count(available); i++)
      {
-        savedtypes.types[i] = eina_stringshare_add(eina_array_data_get(available, i));
+        savedtypes.types[i] =
+          eina_stringshare_add(eina_array_data_get(available, i));
         if (savedtypes.types[i] == text_uri)
           {
              savedtypes.textreq = 1;
