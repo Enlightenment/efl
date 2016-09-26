@@ -4476,16 +4476,21 @@ if test "x${have_ecore_evas_opengl_x11}" = "xyes" || test "x${have_ecore_evas_op
 fi
 
 build_ecore_evas_x11="no"
-build_ecore_evas_vnc="no"
 if test "x$have_ecore_evas_software_x11" = "xyes" || \
    test "x$have_ecore_evas_opengl_x11" = "xyes"; then
    AC_DEFINE([BUILD_ECORE_EVAS_X11], [1], [Support for X Window Engines in Ecore_Evas])
    build_ecore_evas_x11="yes"
-   if test "$want_vnc_server" = "yes"; then
-      build_ecore_evas_vnc="yes"
-   fi
 fi
+
 AM_CONDITIONAL([BUILD_ECORE_EVAS_X11], [test "${build_ecore_evas_x11}" = "yes"])
+
+build_ecore_evas_vnc="no"
+if test "${want_vnc_server}" = "yes" && \
+   (test "${build_ecore_evas_x11}" = "yes" || \
+   test "${want_fb}" = "yes"); then
+   AC_DEFINE([BUILD_ECORE_EVAS_VNC_SERVER], [1], [Build Ecore_Evas VNC module])
+   build_ecore_evas_vnc="yes"
+fi
 
 AM_CONDITIONAL([BUILD_ECORE_EVAS_VNC_SERVER], [test "${build_ecore_evas_vnc}" = "yes"])
 AC_DEFINE_IF([BUILD_ECORE_EVAS_VNC_SERVER], [test "${build_ecore_evas_vnc}" = "yes"], [1], [Build Ecore_Evas VNC module])
