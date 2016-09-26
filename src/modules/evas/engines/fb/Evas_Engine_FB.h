@@ -19,6 +19,10 @@ struct _Evas_Engine_Info_FB
 
    /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
+
+   struct {
+      void (*region_push_hook)(Evas *e, int x, int y, int w, int h, const void *pixels);
+   } func;
 };
 #endif
 
