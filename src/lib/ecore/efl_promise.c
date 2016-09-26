@@ -1077,10 +1077,10 @@ efl_future_iterator_all(Eina_Iterator *it)
 static void
 _then_race(void *data, const Efl_Event *ev)
 {
-   Efl_Future_Event_Success *success = ev->info;
+   Efl_Future_Event_Success *ev_success = ev->info;
    Efl_Promise_Race *race = data;
    // This is a trick due to the fact we are using internal function call to register this functions
-   Efl_Promise_Msg *d = success->value;
+   Efl_Promise_Msg *d = ev_success->value;
    Efl_Future *f;
    Eina_Array_Iterator iterator;
    unsigned int i;
