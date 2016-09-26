@@ -79,7 +79,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
    domain = (obj_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
    data = _eo_table_data_get();
    tdata = _eo_table_data_table_get(data, domain);
-   if (!tdata) goto err_invalid;
+   if (!tdata) goto err;
 
 
    if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED))
@@ -93,7 +93,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
         // get tag bit to check later down below - pipelining
         tag_bit = (obj_id) & MASK_OBJ_TAG;
         if (!obj_id) goto err_null;
-        else if (!tag_bit) goto err_invalid;
+        else if (!tag_bit) goto err;
 
         EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
@@ -128,8 +128,8 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
 
         // get tag bit to check later down below - pipelining
         tag_bit = (obj_id) & MASK_OBJ_TAG;
-        if (!obj_id) goto err_null;
-        else if (!tag_bit) goto err_invalid;
+        if (!obj_id) goto err_shared_null;
+        else if (!tag_bit) goto err_shared;
 
         EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
@@ -151,16 +151,18 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
                     }
                }
           }
-        eina_spinlock_release(&(tdata->lock));
-        goto err;
+        goto err_shared;
 shared_ok:
         eina_spinlock_release(&(tdata->lock));
         return ptr;
      }
+err_shared_null:
+   eina_spinlock_release(&(tdata->lock));
 err_null:
    DBG("obj_id is NULL. Possibly unintended access?");
    return NULL;
-err_invalid:
+err_shared:
+   eina_spinlock_release(&(tdata->lock));
 err:
    _eo_obj_pointer_invalid(obj_id, data, domain);
    return NULL;
