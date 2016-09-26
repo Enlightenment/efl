@@ -956,6 +956,11 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
                                     "entry", "handler/end", style);
      }
 
+   if (sd->scroll)
+     edje_obj_signal_emit(sd->entry_edje, "elm,scroll,enable", "elm");
+   else
+     edje_obj_signal_emit(sd->entry_edje, "elm,scroll,disable", "elm");
+
    sd->changed = EINA_TRUE;
    elm_layout_sizing_eval(obj);
 
