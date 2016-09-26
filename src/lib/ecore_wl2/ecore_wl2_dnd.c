@@ -590,7 +590,7 @@ data_offer_source_actions(void *data, struct wl_data_offer *wl_data_offer EINA_U
 
    offer->actions = 0;
 
-   for (i = 0; i < sizeof(types); ++i)
+   for (i = 0; types[i] != 0; ++i)
    {
       if (source_actions & types[i])
         offer->actions |= _wl_to_action_convert(types[i]);
