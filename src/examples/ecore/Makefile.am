@@ -205,7 +205,8 @@ ecore_evas_window_sizes_example_SOURCES = ecore_evas_window_sizes_example.c
 ecore_evas_window_sizes_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 
 ecore_evas_vnc_SOURCES = ecore_evas_vnc.c
-ecore_evas_vnc_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+ecore_evas_vnc_LDADD = $(ECORE_EVAS_COMMON_LDADD) \
+$(top_builddir)/src/lib/ecore_input/libecore_input.la
 
 ecore_event_example_01_SOURCES = ecore_event_example_01.c
 ecore_event_example_01_LDADD = $(ECORE_COMMON_LDADD)
