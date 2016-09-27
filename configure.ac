@@ -4642,6 +4642,7 @@ AM_CONDITIONAL([BUILD_ECORE_EVAS_WIN32],
 
 ECORE_EVAS_MODULE([software-x11], [${want_x11_any}],
   [EFL_OPTIONAL_DEPEND_PKG([ECORE_EVAS], [${want_vnc_server}], [VNC_SERVER], [libvncserver])])
+EFL_ADD_FEATURE([ECORE_EVAS], [vnc_server])
 
 have_ecore_evas_software_xlib="no"
 have_ecore_evas_software_xcb="no"
