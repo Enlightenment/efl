@@ -62,6 +62,15 @@ _elm_panel_elm_layout_sizing_eval(Eo *obj, Elm_Panel_Data *sd)
 
    if (sd->delete_me) return;
 
+   if (sd->scrollable)
+     {
+        int w, h;
+        evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+
+        if (sd->hidden) _drawer_close(obj, w, h, EINA_FALSE);
+        else _drawer_open(obj, w, h, EINA_FALSE);
+     }
+
    evas_object_smart_calculate(sd->bx);
    edje_object_size_min_calc(wd->resize_obj, &mw, &mh);
    evas_object_size_hint_min_set(obj, mw, mh);
@@ -555,7 +564,7 @@ _state_sync(Evas_Object *obj)
          elm_interface_scrollable_content_pos_get(obj, &pos, NULL);
          horizontal = EINA_TRUE;
 
-         if (!elm_widget_mirrored_get(obj))
+         if (elm_widget_mirrored_get(obj))
            {
               if (pos == 0) open = EINA_TRUE;
               else if (pos == panel_size) open = EINA_FALSE;
@@ -1095,23 +1104,6 @@ _elm_panel_efl_canvas_group_group_move(Eo *obj, Elm_Panel_Data *sd, Evas_Coord x
    evas_object_move(sd->hit_rect, x, y);
 }
 
-// FIXME: This is definitively not an animator, but a pre calc function
-// Not sure if I can hook on smart calc or on RENDER_PRE, will be left for later
-static void
-_elm_panel_anim_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Evas_Object *obj = data;
-   ELM_PANEL_DATA_GET(obj, sd);
-   int w, h;
-
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-
-   if (sd->hidden) _drawer_close(obj, w, h, EINA_FALSE);
-   else _drawer_open(obj, w, h, EINA_FALSE);
-
-   efl_event_callback_stop(event->object);
-}
-
 EOLIAN static void
 _elm_panel_efl_canvas_group_group_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord h)
 {
@@ -1139,7 +1131,7 @@ _elm_panel_efl_canvas_group_group_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord
          break;
      }
 
-   efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj);
+   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -1199,8 +1191,34 @@ _elm_panel_orient_set(Eo *obj, Elm_Panel_Data *sd, Elm_Panel_Orient orient)
    if (sd->orient == orient) return;
    sd->orient = orient;
 
-   if (sd->scrollable) _scrollable_layout_theme_set(obj, sd);
-   else _orient_set_do(obj);
+   if (sd->scrollable)
+     {
+        _scrollable_layout_theme_set(obj, sd);
+
+        if (!sd->freeze)
+          {
+             switch (sd->orient)
+               {
+                  case ELM_PANEL_ORIENT_TOP:
+                  case ELM_PANEL_ORIENT_BOTTOM:
+                     elm_interface_scrollable_movement_block_set
+                           (obj, ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL);
+                     break;
+                  case ELM_PANEL_ORIENT_LEFT:
+                  case ELM_PANEL_ORIENT_RIGHT:
+                     elm_interface_scrollable_movement_block_set
+                           (obj, ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL);
+                     break;
+               }
+
+             sd->freeze = EINA_TRUE;
+             elm_layout_signal_emit(sd->scr_ly, "elm,state,content,hidden", "elm");
+          }
+
+        elm_panel_scrollable_content_size_set(obj, sd->content_size_ratio);
+     }
+   else
+     _orient_set_do(obj);
 
    elm_layout_sizing_eval(obj);
 }
@@ -1392,7 +1410,7 @@ _elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *sd, double ratio
          break;
      }
 
-   efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj);
+   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static Eina_Bool
