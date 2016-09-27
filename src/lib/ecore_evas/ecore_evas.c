@@ -3955,6 +3955,37 @@ ecore_evas_x11_shape_input_apply(Ecore_Evas *ee)
    iface->shape_input_apply(ee);
 }
 
+EAPI Eina_Bool
+ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int port,
+                         Ecore_Evas_Vnc_Client_Accept_Cb cb, void *data)
+{
+   Ecore_Evas_Interface_X11 *iface;
+
+   if (strcmp(ee->driver, "software_x11"))
+     return EINA_FALSE;
+
+   iface = (Ecore_Evas_Interface_X11 *)_ecore_evas_interface_get(ee, "x11");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iface->vnc_start, EINA_FALSE);
+
+   return iface->vnc_start(ee, addr, port, cb, data);
+}
+
+EAPI Eina_Bool
+ecore_evas_vnc_stop(Ecore_Evas *ee)
+{
+   Ecore_Evas_Interface_X11 *iface;
+
+   if (strcmp(ee->driver, "software_x11"))
+     return EINA_FALSE;
+
+   iface = (Ecore_Evas_Interface_X11 *)_ecore_evas_interface_get(ee, "x11");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iface->vnc_stop, EINA_FALSE);
+
+   return iface->vnc_stop(ee);
+}
+
 EAPI Ecore_Evas *
 ecore_evas_extn_socket_new(int w, int h)
 {

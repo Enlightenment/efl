@@ -2398,6 +2398,42 @@ EAPI void           ecore_evas_x11_shape_input_reset(Ecore_Evas *ee);
 EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
 
 /**
+ * @brief A callback used to accept a new client.
+ * @param data The callback data
+ * @param ee The Ecore_Evas
+ * @param client_host The address of the new client.
+ * @return @c EINA_TRUE to accep the client, @c EINA_FALSE otherwise.
+ * @see ecore_evas_vnc_start()
+ * @since 1.19
+ */
+typedef Eina_Bool (*Ecore_Evas_Vnc_Client_Accept_Cb)(void *data, Ecore_Evas *ee, const char *client_host);
+
+/**
+ * @brief Starts a VNC server.
+ *
+ * @param ee The Ecore_Evas to start the VNC server
+ * @param addr The address that will be used to bind the VNC server. Use @c NULL to bind to any interface.
+ * @param port The port number to start the VNC server. Use @c -1 to set the default VNC port (5900)
+ * @param cb A callback used to accept a new client. If @c NULL all clients will be accepted.
+ * @param data Data to @a cb
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @see ecore_evas_vnc_stop()
+ * @see Ecore_Evas_Vnc_Client_Accept_Cb()
+ * @since 1.19
+ */
+EAPI Eina_Bool      ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int port, Ecore_Evas_Vnc_Client_Accept_Cb cb, void *data);
+
+/**
+ * @brief Stop a running VNC server
+ *
+ * @param ee Ecore_Evas to stop the VNC server
+ * @return @c EINA_TRUE if the VNC server was stopped, @c EINA_FALSE otherwise.
+ * @see ecore_evas_vnc_start()
+ * @since 1.19
+ */
+EAPI Eina_Bool      ecore_evas_vnc_stop(Ecore_Evas *ee);
+
+/**
  * @defgroup Ecore_Evas_Ews Ecore_Evas Single Process Windowing System.
  * @ingroup Ecore_Evas_Group
  *

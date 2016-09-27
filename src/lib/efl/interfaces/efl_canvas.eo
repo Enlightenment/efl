@@ -155,5 +155,7 @@ interface Efl.Canvas ()
       render,pre;
       render,post;
       device,changed: Efl.Input.Device;
+      device,added: Efl.Input.Device;
+      device,removed: Efl.Input.Device;
    }
 }

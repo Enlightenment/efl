@@ -433,6 +433,24 @@ AC_DEFINE_IF([ENABLE_LIBLZ4], [test "${want_liblz4}" = "yes"], [1], [Use liblz4 
 AC_SUBST([want_liblz4])
 AC_SUBST([ENABLE_LIBLZ4])
 
+
+want_vnc_server="no"
+AC_ARG_ENABLE([vnc-server],
+   [AS_HELP_STRING([--enable-vnc-server],[Enable VNC server support for Ecore_Evas_X. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_vnc_server="yes"
+    else
+       want_vnc_server="no"
+    fi
+   ],
+   [want_vnc_server="no"])
+
+AM_CONDITIONAL([ENABLE_VNC_SERVER], [test "${want_vnc_server}" = "yes"])
+AC_DEFINE_IF([ENABLE_VNC_SERVER], [test "${want_vnc_server}" = "yes"], [1], [Use VNC server support for Ecore_Evas_X])
+AC_SUBST([want_vnc_server])
+AC_SUBST([ENABLE_VNC_SERVER])
+
 #### Checks for header files
 
 # Common Checks (keep names sorted for ease of use):
@@ -4622,7 +4640,8 @@ AM_CONDITIONAL([BUILD_ECORE_EVAS_WIN32],
 
 # XXX TODO: ecore_evas_x11
 
-ECORE_EVAS_MODULE([software-x11], [${want_x11_any}])
+ECORE_EVAS_MODULE([software-x11], [${want_x11_any}],
+  [EFL_OPTIONAL_DEPEND_PKG([ECORE_EVAS], [${want_vnc_server}], [VNC_SERVER], [libvncserver])])
 
 have_ecore_evas_software_xlib="no"
 have_ecore_evas_software_xcb="no"
@@ -4645,7 +4664,8 @@ fi
 
 # XXX TODO: ecore_evas_opengl_x11
 
-ECORE_EVAS_MODULE([opengl-x11], [${want_x11_any_opengl}])
+ECORE_EVAS_MODULE([opengl-x11], [${want_x11_any_opengl}],
+  [EFL_OPTIONAL_DEPEND_PKG([ECORE_EVAS], [${want_vnc_server}], [VNC_SERVER], [libvncserver])])
 
 have_ecore_evas_opengl_xlib="no"
 have_ecore_evas_opengl_xcb="no"

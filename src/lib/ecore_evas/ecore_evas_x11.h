@@ -17,6 +17,10 @@ struct _Ecore_Evas_Interface_X11 {
    void           (*shape_input_empty)(Ecore_Evas *ee);
    void           (*shape_input_reset)(Ecore_Evas *ee);
    void           (*shape_input_apply)(Ecore_Evas *ee);
+   Eina_Bool      (*vnc_start)(Ecore_Evas *ee, const char *addr, int port,
+                               Ecore_Evas_Vnc_Client_Accept_Cb cb,
+                               void *data);
+   Eina_Bool      (*vnc_stop)(Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Interface_Software_X11 {

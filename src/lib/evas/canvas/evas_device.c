@@ -31,10 +31,22 @@ _del_cb(void *data, const Efl_Event *ev)
 
    // can not be done in std destructor
    e->devices = eina_list_remove(e->devices, ev->object);
+   efl_event_callback_call(e->evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+                           ev->object);
 }
 
 EAPI Evas_Device *
 evas_device_add(Evas *eo_e)
+{
+   return evas_device_full_add(eo_e, NULL, NULL, NULL, NULL,
+                               EVAS_DEVICE_CLASS_NONE,
+                               EVAS_DEVICE_SUBCLASS_NONE);
+}
+
+EAPI Evas_Device *
+evas_device_full_add(Evas *eo_e, const char *name, const char *desc,
+                     Evas_Device *parent_dev, Evas_Device *emulation_dev,
+                     Evas_Device_Class clas, Evas_Device_Subclass sub_clas)
 {
    Efl_Input_Device_Data *d;
    Evas_Public_Data *e;
@@ -42,15 +54,24 @@ evas_device_add(Evas *eo_e)
 
    SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
 
-   dev = efl_add(EFL_INPUT_DEVICE_CLASS, eo_e);
+   dev = efl_add(EFL_INPUT_DEVICE_CLASS, eo_e,
+                 efl_input_device_name_set(efl_added, name),
+                 efl_input_device_description_set(efl_added, desc),
+                 efl_input_device_type_set(efl_added, clas),
+                 efl_input_device_subtype_set(efl_added, sub_clas),
+                 efl_input_device_source_set(efl_added, emulation_dev),
+                 efl_input_device_parent_set(efl_added, parent_dev));
 
    d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    d->evas = eo_e;
 
    e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   e->devices = eina_list_append(e->devices, dev);
+   if (!parent_dev)
+     e->devices = eina_list_append(e->devices, dev);
    efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
 
+   efl_event_callback_call(eo_e, EFL_CANVAS_EVENT_DEVICE_ADDED, dev);
+   // Keeping this event to do not break things...
    evas_event_callback_call(eo_e, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 
    return dev;
@@ -61,7 +82,7 @@ evas_device_del(Evas_Device *dev)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
-   efl_unref(dev);
+   efl_del(dev);
 }
 
 EAPI void
@@ -155,24 +176,11 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
         SAFETY_CHECK(parent, EFL_INPUT_DEVICE_CLASS);
      }
 
-   /* FIXME: move this to Efl.Input.Device */
-   if (d->parent == parent) return;
-   if (d->parent)
-     {
-        Efl_Input_Device_Data *p = efl_data_scope_get(d->parent, EFL_INPUT_DEVICE_CLASS);
-        p->children = eina_list_remove(p->children, dev);
-     }
-   else if (parent)
-     e->devices = eina_list_remove(e->devices, dev);
-   d->parent = parent;
+   efl_input_device_parent_set(dev, parent);
    if (parent)
-     {
-        Efl_Input_Device_Data *p = efl_data_scope_get(parent, EFL_INPUT_DEVICE_CLASS);
-        p->children = eina_list_append(p->children, dev);
-     }
+     e->devices = eina_list_remove(e->devices, dev);
    else
      e->devices = eina_list_append(e->devices, dev);
-   
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
