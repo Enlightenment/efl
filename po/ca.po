@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-08-29 09:31+0900\n"
+"POT-Creation-Date: 2016-09-26 23:19+0900\n"
 "PO-Revision-Date: 2015-02-10 09:34+0000\n"
 "Last-Translator: JoanColl <Unknown>\n"
 "Language-Team: Catalan\n"
@@ -240,24 +240,24 @@ msgstr "Imatges"
 msgid "Videos"
 msgstr "Vídeos"
 
-#: src/lib/elementary/elc_fileselector.c:1894
+#: src/lib/elementary/elc_fileselector.c:1904
 msgid "Up"
 msgstr "Amunt"
 
-#: src/lib/elementary/elc_fileselector.c:1908
+#: src/lib/elementary/elc_fileselector.c:1918
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elementary/elc_fileselector.c:1927
+#: src/lib/elementary/elc_fileselector.c:1937
 msgid "Search"
 msgstr "Cerca"
 
-#: src/lib/elementary/elc_fileselector.c:2128
-#: src/lib/elementary/elm_entry.c:1700 src/lib/elementary/elm_entry.c:1725
+#: src/lib/elementary/elc_fileselector.c:2230
+#: src/lib/elementary/elm_entry.c:1703 src/lib/elementary/elm_entry.c:1728
 msgid "Cancel"
 msgstr "Cancel·la"
 
-#: src/lib/elementary/elc_fileselector.c:2138
+#: src/lib/elementary/elc_fileselector.c:2240
 msgid "OK"
 msgstr "Accepta"
 
@@ -273,24 +273,24 @@ msgstr "element entrada múltiple"
 msgid "multi button entry"
 msgstr "entrada múltiple"
 
-#: src/lib/elementary/elc_naviframe.c:435
+#: src/lib/elementary/elc_naviframe.c:437
 msgid "Title"
 msgstr "Títol"
 
-#: src/lib/elementary/elc_naviframe.c:984
-#: src/lib/elementary/elc_naviframe.c:1189
+#: src/lib/elementary/elc_naviframe.c:986
+#: src/lib/elementary/elc_naviframe.c:1191
 msgid "Back"
 msgstr "Enrere"
 
-#: src/lib/elementary/elc_naviframe.c:1288
+#: src/lib/elementary/elc_naviframe.c:1290
 msgid "Next"
 msgstr "Següent"
 
-#: src/lib/elementary/elc_popup.c:297 src/lib/elementary/elc_popup.c:955
+#: src/lib/elementary/elc_popup.c:295 src/lib/elementary/elc_popup.c:953
 msgid "Popup Title"
 msgstr "Títol finestra emergent"
 
-#: src/lib/elementary/elc_popup.c:307 src/lib/elementary/elc_popup.c:1031
+#: src/lib/elementary/elc_popup.c:305 src/lib/elementary/elc_popup.c:1029
 msgid "Popup Body Text"
 msgstr "Text de la finestra emergent"
 
@@ -303,7 +303,7 @@ msgid "Clicked"
 msgstr "Clicat"
 
 #: src/lib/elementary/elm_button.c:278 src/lib/elementary/elm_check.c:212
-#: src/lib/elementary/elm_gengrid.c:1258 src/lib/elementary/elm_genlist.c:1716
+#: src/lib/elementary/elm_gengrid.c:1255 src/lib/elementary/elm_genlist.c:1716
 #: src/lib/elementary/elm_list.c:2176 src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:527
 #: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2378
@@ -412,7 +412,7 @@ msgstr "A:"
 msgid "color selector palette item"
 msgstr "paleta de selecció de color"
 
-#: src/lib/elementary/elm_config.c:3782
+#: src/lib/elementary/elm_config.c:3783
 msgid "default:LTR"
 msgstr "Per defecte: LTR"
 
@@ -424,27 +424,27 @@ msgstr "selector de dia"
 msgid "diskselector item"
 msgstr "selector de disc"
 
-#: src/lib/elementary/elm_entry.c:1687
-msgid "Copy"
-msgstr "Copia"
-
-#: src/lib/elementary/elm_entry.c:1692
+#: src/lib/elementary/elm_entry.c:1693
 msgid "Cut"
 msgstr "Retalla"
 
-#: src/lib/elementary/elm_entry.c:1696 src/lib/elementary/elm_entry.c:1719
+#: src/lib/elementary/elm_entry.c:1696
+msgid "Copy"
+msgstr "Copia"
+
+#: src/lib/elementary/elm_entry.c:1700 src/lib/elementary/elm_entry.c:1722
 msgid "Paste"
 msgstr "Enganxa"
 
-#: src/lib/elementary/elm_entry.c:1712
+#: src/lib/elementary/elm_entry.c:1715
 msgid "Select"
 msgstr "Selecciona"
 
-#: src/lib/elementary/elm_entry.c:3792
+#: src/lib/elementary/elm_entry.c:3795
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elementary/elm_gengrid.c:1288
+#: src/lib/elementary/elm_gengrid.c:1285
 msgid "Gengrid Item"
 msgstr "Quadrícula genèrica"
 
@@ -456,7 +456,7 @@ msgstr "Índex"
 msgid "Index Item"
 msgstr "Element d'índex"
 
-#: src/lib/elementary/elm_label.c:395
+#: src/lib/elementary/elm_label.c:399
 msgid "Label"
 msgstr "Etiqueta"
 

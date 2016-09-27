@@ -3,11 +3,12 @@
 # This file is put in the public domain.
 # r1to <renato.rener@gmail.com>, 2011.
 #
+#: src/lib/elementary/elm_config.c:3766
 msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-08-11 13:52+0200\n"
+"POT-Creation-Date: 2016-09-26 23:19+0900\n"
 "PO-Revision-Date: 2016-09-21 17:00+0200\n"
 "Last-Translator: Renato Rener <renato.rener@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -233,28 +234,28 @@ msgstr "Glasba"
 msgid "Pictures"
 msgstr "Slike"
 
-#: src/lib/efreet/efreet_base.c:182
+#: src/lib/efreet/efreet_base.c:183
 msgid "Videos"
 msgstr "Videi"
 
-#: src/lib/elementary/elc_fileselector.c:1873
+#: src/lib/elementary/elc_fileselector.c:1904
 msgid "Up"
 msgstr "Gor"
 
-#: src/lib/elementary/elc_fileselector.c:1887
+#: src/lib/elementary/elc_fileselector.c:1918
 msgid "Home"
 msgstr "Dom"
 
-#: src/lib/elementary/elc_fileselector.c:1906
+#: src/lib/elementary/elc_fileselector.c:1937
 msgid "Search"
 msgstr "Poišči"
 
-#: src/lib/elementary/elc_fileselector.c:2107
-#: src/lib/elementary/elm_entry.c:1700 src/lib/elementary/elm_entry.c:1725
+#: src/lib/elementary/elc_fileselector.c:2230
+#: src/lib/elementary/elm_entry.c:1703 src/lib/elementary/elm_entry.c:1728
 msgid "Cancel"
 msgstr "Prekliči"
 
-#: src/lib/elementary/elc_fileselector.c:2117
+#: src/lib/elementary/elc_fileselector.c:2240
 msgid "OK"
 msgstr "V redu"
 
@@ -270,24 +271,24 @@ msgstr "predmet vnosa večkratnih gumbov"
 msgid "multi button entry"
 msgstr "vnos večkratnih gumbov"
 
-#: src/lib/elementary/elc_naviframe.c:435
+#: src/lib/elementary/elc_naviframe.c:437
 msgid "Title"
 msgstr "Naslov"
 
-#: src/lib/elementary/elc_naviframe.c:984
-#: src/lib/elementary/elc_naviframe.c:1189
+#: src/lib/elementary/elc_naviframe.c:986
+#: src/lib/elementary/elc_naviframe.c:1191
 msgid "Back"
 msgstr "Nazaj"
 
-#: src/lib/elementary/elc_naviframe.c:1288
+#: src/lib/elementary/elc_naviframe.c:1290
 msgid "Next"
 msgstr "Naslednje"
 
-#: src/lib/elementary/elc_popup.c:297 src/lib/elementary/elc_popup.c:955
+#: src/lib/elementary/elc_popup.c:295 src/lib/elementary/elc_popup.c:953
 msgid "Popup Title"
 msgstr "Naslov pojavnika"
 
-#: src/lib/elementary/elc_popup.c:307 src/lib/elementary/elc_popup.c:1031
+#: src/lib/elementary/elc_popup.c:305 src/lib/elementary/elc_popup.c:1029
 msgid "Popup Body Text"
 msgstr "Besedilo telesa pojavnika"
 
@@ -300,7 +301,7 @@ msgid "Clicked"
 msgstr "Kliknjeno"
 
 #: src/lib/elementary/elm_button.c:278 src/lib/elementary/elm_check.c:212
-#: src/lib/elementary/elm_gengrid.c:1258 src/lib/elementary/elm_genlist.c:1715
+#: src/lib/elementary/elm_gengrid.c:1255 src/lib/elementary/elm_genlist.c:1716
 #: src/lib/elementary/elm_list.c:2176 src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:527
 #: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2378
@@ -409,7 +410,7 @@ msgstr "A:"
 msgid "color selector palette item"
 msgstr "izbirnik s paleto barve"
 
-#: src/lib/elementary/elm_config.c:3782
+#: src/lib/elementary/elm_config.c:3783
 msgid "default:LTR"
 msgstr "privzeto:LTR"
 
@@ -421,27 +422,27 @@ msgstr "izbirnik dneva"
 msgid "diskselector item"
 msgstr "izbirnik diska"
 
-#: src/lib/elementary/elm_entry.c:1687
-msgid "Copy"
-msgstr "Kopiraj"
-
-#: src/lib/elementary/elm_entry.c:1692
+#: src/lib/elementary/elm_entry.c:1693
 msgid "Cut"
 msgstr "Izreži"
 
-#: src/lib/elementary/elm_entry.c:1696 src/lib/elementary/elm_entry.c:1719
+#: src/lib/elementary/elm_entry.c:1696
+msgid "Copy"
+msgstr "Kopiraj"
+
+#: src/lib/elementary/elm_entry.c:1700 src/lib/elementary/elm_entry.c:1722
 msgid "Paste"
 msgstr "Prilepi"
 
-#: src/lib/elementary/elm_entry.c:1712
+#: src/lib/elementary/elm_entry.c:1715
 msgid "Select"
 msgstr "Izberi"
 
-#: src/lib/elementary/elm_entry.c:3791
+#: src/lib/elementary/elm_entry.c:3795
 msgid "Entry"
 msgstr "Vnos"
 
-#: src/lib/elementary/elm_gengrid.c:1288
+#: src/lib/elementary/elm_gengrid.c:1285
 msgid "Gengrid Item"
 msgstr "Generator mreže"
 
@@ -453,27 +454,27 @@ msgstr "Kazalo"
 msgid "Index Item"
 msgstr "Predmet kazala"
 
-#: src/lib/elementary/elm_label.c:395
+#: src/lib/elementary/elm_label.c:399
 msgid "Label"
 msgstr "Oznaka"
 
-#: src/lib/elementary/elm_panel.c:74
+#: src/lib/elementary/elm_panel.c:76
 msgid "state: opened"
 msgstr "stanje: odprto"
 
-#: src/lib/elementary/elm_panel.c:75
+#: src/lib/elementary/elm_panel.c:77
 msgid "state: closed"
 msgstr "stanje: zaprto"
 
-#: src/lib/elementary/elm_panel.c:115
+#: src/lib/elementary/elm_panel.c:117
 msgid "A panel is open"
 msgstr "Vrstica je odprta"
 
-#: src/lib/elementary/elm_panel.c:117
+#: src/lib/elementary/elm_panel.c:119
 msgid "Double tap to close panel menu"
 msgstr "Dvoklik za zaprtje menija vrstice"
 
-#: src/lib/elementary/elm_panel.c:169
+#: src/lib/elementary/elm_panel.c:171
 msgid "panel button"
 msgstr "gumb vrstice"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-08-29 09:31+0900\n"
+"POT-Creation-Date: 2016-09-26 23:19+0900\n"
 "PO-Revision-Date: 2014-08-31 15:13+0000\n"
 "Last-Translator: Kai Huuhko <kai.huuhko@gmail.com>\n"
 "Language-Team: Finnish <fi@li.org>\n"
@@ -239,24 +239,24 @@ msgstr "Kuvat"
 msgid "Videos"
 msgstr "Videot"
 
-#: src/lib/elementary/elc_fileselector.c:1894
+#: src/lib/elementary/elc_fileselector.c:1904
 msgid "Up"
 msgstr "Ylös"
 
-#: src/lib/elementary/elc_fileselector.c:1908
+#: src/lib/elementary/elc_fileselector.c:1918
 msgid "Home"
 msgstr "Koti"
 
-#: src/lib/elementary/elc_fileselector.c:1927
+#: src/lib/elementary/elc_fileselector.c:1937
 msgid "Search"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:2128
-#: src/lib/elementary/elm_entry.c:1700 src/lib/elementary/elm_entry.c:1725
+#: src/lib/elementary/elc_fileselector.c:2230
+#: src/lib/elementary/elm_entry.c:1703 src/lib/elementary/elm_entry.c:1728
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: src/lib/elementary/elc_fileselector.c:2138
+#: src/lib/elementary/elc_fileselector.c:2240
 msgid "OK"
 msgstr "OK"
 
@@ -272,24 +272,24 @@ msgstr "moninappisyöttökentän kohta"
 msgid "multi button entry"
 msgstr "moninappisyöttökenttä"
 
-#: src/lib/elementary/elc_naviframe.c:435
+#: src/lib/elementary/elc_naviframe.c:437
 msgid "Title"
 msgstr "Otsikko"
 
-#: src/lib/elementary/elc_naviframe.c:984
-#: src/lib/elementary/elc_naviframe.c:1189
+#: src/lib/elementary/elc_naviframe.c:986
+#: src/lib/elementary/elc_naviframe.c:1191
 msgid "Back"
 msgstr "Takaisin"
 
-#: src/lib/elementary/elc_naviframe.c:1288
+#: src/lib/elementary/elc_naviframe.c:1290
 msgid "Next"
 msgstr "Seuraava"
 
-#: src/lib/elementary/elc_popup.c:297 src/lib/elementary/elc_popup.c:955
+#: src/lib/elementary/elc_popup.c:295 src/lib/elementary/elc_popup.c:953
 msgid "Popup Title"
 msgstr "Ponnahdusikkunan otsikko"
 
-#: src/lib/elementary/elc_popup.c:307 src/lib/elementary/elc_popup.c:1031
+#: src/lib/elementary/elc_popup.c:305 src/lib/elementary/elc_popup.c:1029
 msgid "Popup Body Text"
 msgstr "Ponnahdusikkunan leipäteksti"
 
@@ -302,7 +302,7 @@ msgid "Clicked"
 msgstr "Napsautettu"
 
 #: src/lib/elementary/elm_button.c:278 src/lib/elementary/elm_check.c:212
-#: src/lib/elementary/elm_gengrid.c:1258 src/lib/elementary/elm_genlist.c:1716
+#: src/lib/elementary/elm_gengrid.c:1255 src/lib/elementary/elm_genlist.c:1716
 #: src/lib/elementary/elm_list.c:2176 src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:527
 #: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2378
@@ -411,7 +411,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "värivalitsimen palettikohta"
 
-#: src/lib/elementary/elm_config.c:3782
+#: src/lib/elementary/elm_config.c:3783
 msgid "default:LTR"
 msgstr ""
 
@@ -423,27 +423,27 @@ msgstr "päivyrin kohta"
 msgid "diskselector item"
 msgstr "kiekkovalitsimen kohta"
 
-#: src/lib/elementary/elm_entry.c:1687
-msgid "Copy"
-msgstr "Kopioi"
-
-#: src/lib/elementary/elm_entry.c:1692
+#: src/lib/elementary/elm_entry.c:1693
 msgid "Cut"
 msgstr "Leikkaa"
 
-#: src/lib/elementary/elm_entry.c:1696 src/lib/elementary/elm_entry.c:1719
+#: src/lib/elementary/elm_entry.c:1696
+msgid "Copy"
+msgstr "Kopioi"
+
+#: src/lib/elementary/elm_entry.c:1700 src/lib/elementary/elm_entry.c:1722
 msgid "Paste"
 msgstr "Liitä"
 
-#: src/lib/elementary/elm_entry.c:1712
+#: src/lib/elementary/elm_entry.c:1715
 msgid "Select"
 msgstr "Valitse"
 
-#: src/lib/elementary/elm_entry.c:3792
+#: src/lib/elementary/elm_entry.c:3795
 msgid "Entry"
 msgstr "Syöttökenttä"
 
-#: src/lib/elementary/elm_gengrid.c:1288
+#: src/lib/elementary/elm_gengrid.c:1285
 msgid "Gengrid Item"
 msgstr "Gengridin kohta"
 
@@ -455,7 +455,7 @@ msgstr "Indeksi"
 msgid "Index Item"
 msgstr "Indeksin kohta"
 
-#: src/lib/elementary/elm_label.c:395
+#: src/lib/elementary/elm_label.c:399
 msgid "Label"
 msgstr "Nimiö"
 
