@@ -714,7 +714,7 @@ else
 fi
 
 AC_ARG_ENABLE([systemd],
-   [AS_HELP_STRING([--enable-systemd],[Enable systemd support. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-systemd],[Enable systemd support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_systemd="yes"
