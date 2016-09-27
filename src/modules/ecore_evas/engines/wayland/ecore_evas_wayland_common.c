@@ -1368,10 +1368,13 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas EINA_UNUSED, void 
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Wl_Data *wdata;
+   struct wl_surface *surf;
 
    wdata = ee->engine.data;
-   wdata->anim_callback =
-     wl_surface_frame(ecore_wl2_window_surface_get(wdata->win));
+   surf = ecore_wl2_window_surface_get(wdata->win);
+   if (!surf) return;
+
+   wdata->anim_callback = wl_surface_frame(surf);
    wl_callback_add_listener(wdata->anim_callback, &_anim_listener, ee);
    ecore_evas_manual_render_set(ee, 1);
    if (wdata->win->configure_ack && wdata->win->configure_serial)
