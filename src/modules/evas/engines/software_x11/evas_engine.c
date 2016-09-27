@@ -144,11 +144,12 @@ evas_software_x11_region_push_hook_call(Outbuf *buf, int x, int y, int w, int h,
 
    if (!buf->region_push_hook.cb)
      return;
-
+/*
    err = ecore_thread_main_loop_begin();
    EINA_SAFETY_ON_TRUE_RETURN(err == -1);
    buf->region_push_hook.cb(buf->region_push_hook.evas, x, y, w, h, pixels);
    ecore_thread_main_loop_end();
+ */
 }
 
 static void
