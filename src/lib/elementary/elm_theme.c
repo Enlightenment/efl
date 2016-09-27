@@ -574,7 +574,7 @@ elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f)
    Eina_File *file = eina_file_dup(f);
 
    if (!th) th = &(theme_default);
-   _elm_theme_item_finalize(&th->extension, eina_file_filename_get(file), file, EINA_TRUE, EINA_FALSE);
+   _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file, EINA_TRUE, EINA_FALSE);
    elm_theme_flush(th);
 }
 
@@ -619,7 +619,7 @@ elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f)
 
    if (!f) return;
    if (!th) th = &(theme_default);
-   _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file, EINA_FALSE, EINA_FALSE);
+   _elm_theme_item_finalize(&th->extension, eina_file_filename_get(file), file, EINA_FALSE, EINA_FALSE);
    elm_theme_flush(th);
 }
 
