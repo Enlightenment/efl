@@ -41,7 +41,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 - (BOOL)isFullScreen
 {
-   return (([self styleMask] & NSFullScreenWindowMask) == NSFullScreenWindowMask);
+   return (([self styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen);
 }
 
 - (BOOL)acceptsFirstResponder
@@ -333,10 +333,10 @@ ecore_cocoa_window_new(int x,
    Ecore_Cocoa_Window *win;
    EcoreCocoaWindow *window;
    NSUInteger style =
-      NSTitledWindowMask        |
-      NSClosableWindowMask      |
-      NSResizableWindowMask     |
-      NSMiniaturizableWindowMask;
+      NSWindowStyleMaskTitled    |
+      NSWindowStyleMaskClosable  |
+      NSWindowStyleMaskResizable |
+      NSWindowStyleMaskMiniaturizable;
 
    window = [[EcoreCocoaWindow alloc] initWithContentRect:NSMakeRect(x, y, w, h)
                                                 styleMask:style

@@ -28,6 +28,39 @@ extern int _ecore_cocoa_log_domain;
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_ecore_cocoa_log_domain, __VA_ARGS__)
 
+/*
+ * macOS Sierra (10.12) deprecated enumeration types in profit to others,
+ * more meaningful ones.
+ */
+#ifndef __MAC_10_12
+# define NSWindowStyleMaskTitled NSTitledWindowMask
+# define NSWindowStyleMaskClosable NSClosableWindowMask
+# define NSWindowStyleMaskResizable NSResizableWindowMask
+# define NSWindowStyleMaskMiniaturizable NSMiniaturizableWindowMask
+# define NSWindowStyleMaskFullScreen NSFullScreenWindowMask
+# define NSEventModifierFlagShift NSShiftKeyMask
+# define NSEventModifierFlagControl NSControlKeyMask
+# define NSEventModifierFlagOption NSAlternateKeyMask
+# define NSEventModifierFlagCommand NSCommandKeyMask
+# define NSEventModifierFlagCapsLock NSAlphaShiftKeyMask
+# define NSEventTypeScrollWheel NSScrollWheel
+# define NSEventMaskAny NSAnyEventMask
+# define NSEventTypePeriodic NSPeriodic
+# define NSEventTypeMouseMoved NSMouseMoved
+# define NSEventTypeRightMouseDown NSRightMouseDown
+# define NSEventTypeLeftMouseDown NSLeftMouseDown
+# define NSEventTypeOtherMouseDown NSOtherMouseDown
+# define NSEventTypeLeftMouseUp NSLeftMouseUp
+# define NSEventTypeRightMouseUp NSRightMouseUp
+# define NSEventTypeOtherMouseUp NSOtherMouseUp
+# define NSEventTypeKeyDown NSKeyDown
+# define NSEventTypeKeyUp NSKeyUp
+# define NSEventTypeFlagsChanged NSFlagsChanged
+# define NSEventTypeLeftMouseDragged NSLeftMouseDragged
+# define NSEventTypeRightMouseDragged NSRightMouseDragged
+# define NSEventTypeOtherMouseDragged NSOtherMouseDragged
+# define NSEventModifierFlagNumericPad NSNumericPadKeyMask
+#endif
 
 struct _Ecore_Cocoa_Window
 {

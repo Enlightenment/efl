@@ -8,7 +8,7 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
         @try {
              NSEvent *e;
              do {
-                  e = [NSApp nextEventMatchingMask:NSAnyEventMask
+                  e = [NSApp nextEventMatchingMask:NSEventMaskAny
                                          untilDate:[NSApp eventExpirationDate]
                                             inMode:NSDefaultRunLoopMode
                                            dequeue:YES];
@@ -19,7 +19,8 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
 
                        /* Update (en/disable) the services menu's items */
                        NSEventType type = [e type];
-                       if (type != NSPeriodic && type != NSMouseMoved) {
+                       if ((type != NSEventTypePeriodic) &&
+                           (type != NSEventTypeMouseMoved)) {
                             [NSApp internalUpdate];
                        }
                   }
