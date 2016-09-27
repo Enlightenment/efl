@@ -95,11 +95,11 @@ _ecore_cocoa_event_modifiers(NSUInteger mod)
 {
    unsigned int modifiers = 0;
 
-   if(mod & NSShiftKeyMask) modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
-   if(mod & NSControlKeyMask) modifiers |= ECORE_EVENT_MODIFIER_CTRL;
-   if(mod & NSAlternateKeyMask) modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
-   if(mod & NSCommandKeyMask) modifiers |= ECORE_EVENT_MODIFIER_WIN;
-   if(mod & NSNumericPadKeyMask) modifiers |= ECORE_EVENT_LOCK_NUM;
+   if (mod & NSEventModifierFlagShift) modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+   if (mod & NSEventModifierFlagShift) modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   if (mod & NSEventModifierFlagOption) modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
+   if (mod & NSEventModifierFlagOption) modifiers |= ECORE_EVENT_MODIFIER_WIN;
+   if (mod & NSEventModifierFlagNumericPad) modifiers |= ECORE_EVENT_LOCK_NUM;
 
    DBG("key modifiers: 0x%lx, %u", mod, modifiers);
    return modifiers;
@@ -126,7 +126,7 @@ _ecore_cocoa_event_key(NSEvent     *event,
    ev = calloc(1, sizeof (Ecore_Event_Key));
    if (!ev) return NULL;
 
-   if (compose && keyType == NSKeyDown)
+   if (compose && (keyType == NSEventTypeKeyDown))
      {
         [edit interpretKeyEvents:[NSArray arrayWithObject:event]];
         compose=EINA_FALSE;
@@ -160,7 +160,7 @@ _ecore_cocoa_event_key(NSEvent     *event,
           }
      }
 
-   if ([keycharRaw length] == 0  && keyType == NSKeyDown)
+   if (([keycharRaw length] == 0)  && (keyType == NSEventTypeKeyDown))
      {
         compose=EINA_TRUE;
         edit = [[event window]  fieldEditor:YES forObject:nil];
@@ -185,26 +185,26 @@ _ecore_cocoa_feed_events(void *anEvent)
 
    switch ([event type])
      {
-      case NSMouseMoved:
-      case NSLeftMouseDragged:
-      case NSRightMouseDragged:
-      case NSOtherMouseDragged:
-      case NSLeftMouseDown:
-      case NSRightMouseDown:
-      case NSOtherMouseDown:
-      case NSLeftMouseUp:
-      case NSRightMouseUp:
-      case NSOtherMouseUp:
+      case NSEventTypeMouseMoved:
+      case NSEventTypeLeftMouseDragged:
+      case NSEventTypeRightMouseDragged:
+      case NSEventTypeOtherMouseDragged:
+      case NSEventTypeLeftMouseDown:
+      case NSEventTypeRightMouseDown:
+      case NSEventTypeOtherMouseDown:
+      case NSEventTypeLeftMouseUp:
+      case NSEventTypeRightMouseUp:
+      case NSEventTypeOtherMouseUp:
         {
            //mouse events are managed in EcoreCocoaWindow
            return EINA_TRUE;
         }
-      case NSKeyDown:
+      case NSEventTypeKeyDown:
         {
            Ecore_Event_Key *ev;
            NSUInteger flags = [event modifierFlags];
 
-           if (flags & NSCommandKeyMask)
+           if (flags & NSEventModifierFlagOption)
              {
                 NSString *keychar = [event charactersIgnoringModifiers];
                 if ([keychar characterAtIndex:0] == 'q')
@@ -215,25 +215,25 @@ _ecore_cocoa_feed_events(void *anEvent)
                   }
              }
 
-           ev = _ecore_cocoa_event_key(event, NSKeyDown, time);
+           ev = _ecore_cocoa_event_key(event, NSEventTypeKeyDown, time);
            if (ev == NULL) return EINA_TRUE;
 
            ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
 
            break;
         }
-      case NSKeyUp:
+      case NSEventTypeKeyUp:
         {
            Ecore_Event_Key *ev;
 
-           ev = _ecore_cocoa_event_key(event, NSKeyUp, time);
+           ev = _ecore_cocoa_event_key(event, NSEventTypeKeyUp, time);
            if (ev == NULL) return EINA_TRUE;
 
            ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
 
            break;
         }
-      case NSFlagsChanged:
+      case NSEventTypeFlagsChanged:
         {
            NSUInteger flags = [event modifierFlags];
 
@@ -244,15 +244,15 @@ _ecore_cocoa_feed_events(void *anEvent)
            if (!evDown) return pass;
 
            // Turn special key flags on
-           if (flags & NSShiftKeyMask)
+           if (flags & NSEventModifierFlagShift)
              evDown->key = "Shift_L";
-           else if (flags & NSControlKeyMask)
+           else if (flags & NSEventModifierFlagShift)
              evDown->key = "Control_L";
-           else if (flags & NSAlternateKeyMask)
+           else if (flags & NSEventModifierFlagOption)
              evDown->key = "Alt_L";
-           else if (flags & NSCommandKeyMask)
+           else if (flags & NSEventModifierFlagOption)
              evDown->key = "Super_L";
-           else if (flags & NSAlphaShiftKeyMask)
+           else if (flags & NSEventModifierFlagCapsLock)
              evDown->key = "Caps_Lock";
 
            if (evDown->key)
@@ -276,15 +276,15 @@ _ecore_cocoa_feed_events(void *anEvent)
            NSUInteger changed_flags = flags ^ old_flags;
 
            // Turn special key flags off
-           if (changed_flags & NSShiftKeyMask)
+           if (changed_flags & NSEventModifierFlagShift)
              evUp->key = "Shift_L";
-           else if (changed_flags & NSControlKeyMask)
+           else if (changed_flags & NSEventModifierFlagShift)
              evUp->key = "Control_L";
-           else if (changed_flags & NSAlternateKeyMask)
+           else if (changed_flags & NSEventModifierFlagOption)
              evUp->key = "Alt_L";
-           else if (changed_flags & NSCommandKeyMask)
+           else if (changed_flags & NSEventModifierFlagOption)
              evUp->key = "Super_L";
-           else if (changed_flags & NSAlphaShiftKeyMask)
+           else if (changed_flags & NSEventModifierFlagCapsLock)
              evUp->key = "Caps_Lock";
 
            if (evUp->key)
@@ -300,7 +300,7 @@ _ecore_cocoa_feed_events(void *anEvent)
 
            break;
         }
-      case NSScrollWheel:
+      case NSEventTypeScrollWheel:
         {
            DBG("Scroll Wheel");
 
@@ -376,7 +376,7 @@ ecore_cocoa_titlebar_height_get(void)
         NSRect frame = NSMakeRect(0, 0, 100, 100);
         NSRect contentRect;
         contentRect = [NSWindow contentRectForFrameRect:frame
-                                              styleMask:NSTitledWindowMask];
+                                              styleMask:NSWindowStyleMaskTitled];
         height = (frame.size.height - contentRect.size.height);
         DBG("Titlebar Heigt : %d", height);
      }
