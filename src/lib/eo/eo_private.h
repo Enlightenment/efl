@@ -208,6 +208,7 @@ Eo *_eo_header_id_get(const Eo_Header *header)
 
 /* Retrieves the pointer to the object from the id */
 _Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id);
+void _eo_obj_pointer_done(const Eo_Id obj_id);
 
 static inline
 Efl_Class *_eo_class_id_get(const _Efl_Class *klass)

@@ -8,8 +8,9 @@ extern Eina_Thread _efl_object_main_thread;
 
 //////////////////////////////////////////////////////////////////////////
 
-Eina_TLS    _eo_table_data;
-Eo_Id_Data *_eo_table_data_shared = NULL;
+Eina_TLS          _eo_table_data;
+Eo_Id_Data       *_eo_table_data_shared = NULL;
+Eo_Id_Table_Data *_eo_table_data_shared_data = NULL;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -119,11 +120,11 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
      }
    else
      {
-        eina_spinlock_take(&(tdata->lock));
+        eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
         if (obj_id == tdata->cache.id)
           {
              ptr = tdata->cache.object;
-             goto shared_ok;
+             return ptr;
           }
 
         // get tag bit to check later down below - pipelining
@@ -147,26 +148,36 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
                        tdata->cache.object = entry->ptr;
                        tdata->cache.id = obj_id;
                        ptr = entry->ptr;
-                       goto shared_ok;
+                       // yes we return keeping the lock locked. thats why
+                       // you must call _eo_obj_pointer_done() wrapped
+                       // by EO_OBJ_DONE() to release
+                       return ptr;
                     }
                }
           }
         goto err_shared;
-shared_ok:
-        eina_spinlock_release(&(tdata->lock));
-        return ptr;
      }
 err_shared_null:
-   eina_spinlock_release(&(tdata->lock));
+   eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
 err_null:
    DBG("obj_id is NULL. Possibly unintended access?");
    return NULL;
 err_shared:
-   eina_spinlock_release(&(tdata->lock));
+   eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
 err:
    _eo_obj_pointer_invalid(obj_id, data, domain);
    return NULL;
 #else
    return (_Eo_Object *) obj_id;
+#endif
+}
+
+void
+_eo_obj_pointer_done(const Eo_Id obj_id)
+{
+#ifdef HAVE_EO_ID
+   Efl_Id_Domain domain = (obj_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
+   if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED)) return;
+   eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
 #endif
 }

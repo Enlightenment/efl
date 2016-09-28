@@ -592,6 +592,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
      {
         pd->parent = NULL;
      }
+   EO_OBJ_DONE(obj);
 }
 
 EOLIAN static Eo *
@@ -603,9 +604,11 @@ _efl_object_parent_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 EOLIAN static Eina_Bool
 _efl_object_finalized_get(Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
 {
+   Eina_Bool finalized;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-
-   return obj->finalized;
+   finalized = obj->finalized;
+   EO_OBJ_DONE(obj);
+   return finalized;
 }
 
 EOLIAN static Efl_Object *
@@ -679,7 +682,11 @@ _efl_object_children_iterator_new(Eo *obj_id, Efl_Object_Data *pd)
 
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
 
-   if (!pd->children) return NULL;
+   if (!pd->children)
+     {
+        EO_OBJ_DONE(obj_id);
+        return NULL;
+     }
 
    klass = (_Efl_Class *) obj->klass;
 
@@ -706,6 +713,7 @@ _efl_object_children_iterator_new(Eo *obj_id, Efl_Object_Data *pd)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_efl_children_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_efl_children_iterator_free);
 
+   EO_OBJ_DONE(obj_id);
    return (Eina_Iterator *)it;
 }
 
@@ -1443,8 +1451,12 @@ EOLIAN static Eina_Bool
 _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo *comp_obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
-   EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
-
+   EO_OBJ_POINTER(parent_id, parent);
+   if (!parent)
+     {
+        EO_OBJ_DONE(comp_obj_id);
+        return EINA_FALSE;
+     }
    Efl_Object_Data *comp_pd = efl_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
    /* Don't composite if we already have a composite object of this type */
      {
@@ -1454,14 +1466,16 @@ _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
           {
              EO_OBJ_POINTER_RETURN_VAL(emb_obj_id, emb_obj, EINA_FALSE);
              if (emb_obj->klass == comp_obj->klass)
-               return EINA_FALSE;
+               {
+                  EO_OBJ_DONE(parent_id);
+                  EO_OBJ_DONE(comp_obj_id);
+                  return EINA_FALSE;
+               }
           }
      }
 
    if (efl_composite_part_is(comp_obj_id))
-     {
-        efl_composite_detach(comp_pd->ext->composite_parent, comp_obj_id);
-     }
+     efl_composite_detach(comp_pd->ext->composite_parent, comp_obj_id);
 
    /* Set the parent comp on the child. */
    _efl_object_extension_need(comp_pd);
@@ -1469,6 +1483,8 @@ _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
 
    parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
 
+   EO_OBJ_DONE(parent_id);
+   EO_OBJ_DONE(comp_obj_id);
    return EINA_TRUE;
 }
 
@@ -1476,10 +1492,19 @@ EOLIAN static Eina_Bool
 _efl_object_composite_detach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo *comp_obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
-   EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
+   EO_OBJ_POINTER(parent_id, parent);
+   if (!parent)
+     {
+        EO_OBJ_DONE(comp_obj_id);
+        return EINA_FALSE;
+     }
 
    if (!efl_composite_part_is(comp_obj_id))
-      return EINA_FALSE;
+     {
+        EO_OBJ_DONE(parent_id);
+        EO_OBJ_DONE(comp_obj_id);
+        return EINA_FALSE;
+     }
 
    parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
    /* Clear the comp parent on the child. */
@@ -1490,6 +1515,8 @@ _efl_object_composite_detach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
         _efl_object_extension_noneed(comp_pd);
      }
 
+   EO_OBJ_DONE(parent_id);
+   EO_OBJ_DONE(comp_obj_id);
    return EINA_TRUE;
 }
 
@@ -1635,6 +1662,7 @@ _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
           {
              efl_composite_detach(obj, emb_obj_id);
           }
+        EO_OBJ_DONE(obj);
      }
 
    if (pd->ext && pd->ext->composite_parent)

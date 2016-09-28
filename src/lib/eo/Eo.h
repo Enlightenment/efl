@@ -691,7 +691,6 @@ typedef struct _Efl_Object_Op_Call_Data
    _Eo_Object   *obj;
    void         *func;
    void         *data;
-   void         *lock_data;
    void         *extn1; // for the future to avoid ABI issues
    void         *extn2; // for the future to avoid ABI issues
    void         *extn3; // for the future to avoid ABI issues

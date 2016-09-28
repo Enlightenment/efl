@@ -53,6 +53,9 @@ void _eo_pointer_error(const char *msg);
         } \
    } while (0)
 
+#define EO_OBJ_DONE(obj_id) \
+   _eo_obj_pointer_done((Eo_Id)obj_id)
+
 #else
 
 #define EO_OBJ_POINTER(obj_id, obj)                                     \
@@ -97,6 +100,8 @@ void _eo_pointer_error(const char *msg);
         EO_MAGIC_RETURN((Eo_Header *) klass, EO_CLASS_EINA_MAGIC);  \
    } while (0)
 
+#define EO_OBJ_DONE(obj_id)
+
 #endif
 
 #ifdef EFL_DEBUG
@@ -108,6 +113,7 @@ extern Eina_TLS _eo_table_data;
 #include "eo_ptr_indirection.x"
 
 extern Eo_Id_Data *_eo_table_data_shared;
+extern Eo_Id_Table_Data *_eo_table_data_shared_data;
 
 #endif
 

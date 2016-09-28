@@ -335,8 +335,6 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
    const op_type_funcs *func;
    Eina_Bool is_obj;
    Eina_Bool is_override = EINA_FALSE;
-   Eo_Id_Data *data;
-   Efl_Id_Domain domain = 0;
 
    if (((Eo_Id) eo_id) & MASK_SUPER_TAG)
      {
@@ -351,14 +349,12 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
       return EINA_FALSE;
 
    call->eo_id = eo_id;
-   call->lock_data = NULL;
 
    is_obj = _eo_is_a_obj(eo_id);
 
    if (is_obj)
      {
         EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
-        domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
 
         obj = _obj;
         klass = _obj->klass;
@@ -376,14 +372,6 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
         is_override = _obj_is_override(obj) && (cur_klass == NULL);
 
         call->obj = obj;
-        if (EINA_UNLIKELY(domain == EFL_ID_DOMAIN_SHARED))
-          {
-             // YES this is a goto with a label to return. this is a
-             // micro-optimization to move infrequent code out of the
-             // hot path of the function
-             goto ok_lock;
-          }
-ok_lock_back:
         _efl_ref(_obj);
      }
    else
@@ -515,8 +503,7 @@ err_func_src:
    ERR("in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.",
        file, line, func_name, cache->op, klass->desc->name);
 err:
-   if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED)) return EINA_FALSE;
-   eina_lock_take(&(data->tables[EFL_ID_DOMAIN_SHARED]->obj_lock));
+   if (is_obj) _eo_obj_pointer_done((Eo_Id)eo_id);
    return EINA_FALSE;
 
    // yes - special "move out of hot path" code blobs with goto's for
@@ -539,13 +526,6 @@ ok_klass:
      }
    goto ok_klass_back;
 
-ok_lock:
-     {
-        data = call->lock_data = _eo_table_data_get();
-        eina_lock_take(&(data->tables[EFL_ID_DOMAIN_SHARED]->obj_lock));
-     }
-   goto ok_lock_back;
-
    return EINA_FALSE;
 }
 
@@ -555,12 +535,31 @@ _efl_object_call_end(Efl_Object_Op_Call_Data *call)
    if (EINA_LIKELY(!!call->obj))
      {
         _efl_unref(call->obj);
-        if (EINA_LIKELY(!call->lock_data)) return;
-
-        Eo_Id_Data *data = call->lock_data;
-        eina_lock_release(&(data->tables[EFL_ID_DOMAIN_SHARED]->obj_lock));
+        if (call->obj) _eo_obj_pointer_done((Eo_Id)call->eo_id);
      }
 }
+
+/*
+EAPI void
+_efl_shared_lock(const Eo *eo_id)
+{
+#ifdef HAVE_EO_ID
+   Efl_Id_Domain domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
+   if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED)) return;
+   eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
+#endif
+}
+
+EAPI void
+_efl_shared_unlock(const Eo *eo_id)
+{
+#ifdef HAVE_EO_ID
+   Efl_Id_Domain domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
+   if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED)) return;
+   eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
+#endif
+}
+*/
 
 static inline Eina_Bool
 _eo_api_func_equal(const void *api_func1, const void *api_func2)
@@ -748,6 +747,7 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    if (EINA_UNLIKELY(klass->desc->type != EFL_CLASS_TYPE_REGULAR))
      {
         ERR("in %s:%d: Class '%s' is not instantiate-able. Aborting.", file, line, klass->desc->name);
+        if (parent_id) EO_OBJ_DONE(parent_id);
         return NULL;
      }
 
@@ -791,6 +791,7 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
         /* We have two refs at this point. */
         _efl_unref(obj);
         efl_del((Eo *) obj->header.id);
+        if (parent_id) EO_OBJ_DONE(parent_id);
         return NULL;
      }
    else if (eo_id != _eo_obj_id_get(obj))
@@ -801,6 +802,7 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
         efl_del((Eo *) obj->header.id);
 
         _efl_ref(new_obj);
+        EO_OBJ_DONE(eo_id);
      }
 
    if (is_fallback)
@@ -808,6 +810,7 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
         fptr->obj = eo_id;
      }
 
+   if (parent_id) EO_OBJ_DONE(parent_id);
    return eo_id;
 }
 
@@ -844,12 +847,13 @@ _efl_add_internal_end(Eo *eo_id, Eo *finalized_id)
    obj->finalized = EINA_TRUE;
 
    _efl_unref(obj);
-
+   EO_OBJ_DONE(eo_id);
    return (Eo *)eo_id;
 
 cleanup:
    _efl_unref(obj);
    efl_del((Eo *) obj->header.id);
+   EO_OBJ_DONE(eo_id);
    return NULL;
 }
 
@@ -877,6 +881,8 @@ _efl_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
 EAPI const Efl_Class *
 efl_class_get(const Eo *eo_id)
 {
+   const Efl_Class *klass;
+
    if (_eo_is_a_class(eo_id))
      {
         EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, NULL);
@@ -884,8 +890,9 @@ efl_class_get(const Eo *eo_id)
      }
 
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
-
-   return _eo_class_id_get(obj->klass);
+   klass = _eo_class_id_get(obj->klass);
+   EO_OBJ_DONE(eo_id);
+   return klass;
 }
 
 EAPI const char *
@@ -902,8 +909,8 @@ efl_class_name_get(const Efl_Class *eo_id)
      {
         EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
         klass = obj->klass;
+        EO_OBJ_DONE(eo_id);
      }
-
    return klass->desc->name;
 }
 
@@ -1403,36 +1410,41 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
    EO_CLASS_POINTER_RETURN_VAL(EFL_OBJECT_OVERRIDE_CLASS, klass, EINA_FALSE);
    Eo_Vtable *previous = obj->vtable;
 
-   if (!ops)
+   if (ops)
+     {
+        if (obj->vtable == &obj->klass->vtable)
+          {
+             obj->vtable = calloc(1, sizeof(*obj->vtable));
+             _vtable_init(obj->vtable, previous->size);
+             _vtable_copy_all(obj->vtable, previous);
+             if (!_eo_class_funcs_set(obj->vtable, ops, obj->klass,
+                                      klass, 0, EINA_TRUE))
+               goto err;
+             goto done;
+          }
+        else goto err_already;
+     }
+   else
      {
         if (obj->vtable != &obj->klass->vtable)
           {
              free(obj->vtable);
              obj->vtable = (Eo_Vtable *) &obj->klass->vtable;
           }
-        return EINA_TRUE;
      }
-
-   if (obj->vtable == &obj->klass->vtable)
-     {
-        obj->vtable = calloc(1, sizeof(*obj->vtable));
-        _vtable_init(obj->vtable, previous->size);
-        _vtable_copy_all(obj->vtable, previous);
-     }
-   else
-     {
-        ERR("Function table already overridden, not allowed to override again. "
-            "Call with NULL to reset the function table first.");
-        return EINA_FALSE;
-     }
-
-   if (!_eo_class_funcs_set(obj->vtable, ops, obj->klass, klass, 0, EINA_TRUE))
-     {
-        ERR("Failed to override functions for %p", eo_id);
-        return EINA_FALSE;
-     }
-
+done:
+   EO_OBJ_DONE(eo_id);
    return EINA_TRUE;
+
+err_already:
+   ERR("Function table already overridden, not allowed to override again. "
+       "Call with NULL to reset the function table first.");
+   goto err_done;
+err:
+   ERR("Failed to override functions for %p", eo_id);
+err_done:
+   EO_OBJ_DONE(eo_id);
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -1471,7 +1483,7 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
      }
    else
      {
-        eina_spinlock_take(&(tdata->lock));
+        eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
 
         if ((tdata->cache.isa_id == eo_id) &&
             (tdata->cache.klass == klass_id))
@@ -1479,14 +1491,11 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
              isa = tdata->cache.isa;
              goto shared_ok;
           }
-        eina_spinlock_release(&(tdata->lock));
 
         EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
         EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
         const op_type_funcs *func = _vtable_func_get
           (obj->vtable, klass->base_id + klass->ops_count);
-
-        eina_spinlock_take(&(tdata->lock));
 
         // Caching the result as we do a lot of serial efl_isa due to evas_object_image using it.
         tdata->cache.isa_id = eo_id;
@@ -1495,7 +1504,7 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         // _eo_class_isa_func.
         isa = tdata->cache.isa = (func && (func->func == _eo_class_isa_func));
 shared_ok:
-        eina_spinlock_release(&(tdata->lock));
+        eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
    return isa;
 }
@@ -1514,6 +1523,7 @@ efl_xref_internal(const char *file, int line, Eo *obj_id, const Eo *ref_obj_id)
    xref->line = line;
 
    obj->xrefs = eina_inlist_prepend(obj->xrefs, EINA_INLIST_GET(xref));
+   EO_OBJ_DONE(obj_id);
 #else
    (void) ref_obj_id;
    (void) file;
@@ -1543,8 +1553,10 @@ efl_xunref(Eo *obj_id, const Eo *ref_obj_id)
    else
      {
         ERR("ref_obj (%p) does not reference obj (%p). Aborting unref.", ref_obj_id, obj_id);
+        EO_OBJ_DONE(obj_id);
         return;
      }
+   EO_OBJ_DONE(obj_id);
 #else
    (void) ref_obj_id;
 #endif
@@ -1558,9 +1570,8 @@ efl_ref(const Eo *obj_id)
 
    ++(obj->user_refcount);
    if (EINA_UNLIKELY(obj->user_refcount == 1))
-     {
-        _efl_ref(obj);
-     }
+     _efl_ref(obj);
+   EO_OBJ_DONE(obj_id);
    return (Eo *)obj_id;
 }
 
@@ -1575,27 +1586,32 @@ efl_unref(const Eo *obj_id)
         if (obj->user_refcount < 0)
           {
              ERR("Obj:%p. User refcount (%d) < 0. Too many unrefs.", obj, obj->user_refcount);
+             EO_OBJ_DONE(obj_id);
              return;
           }
-
         _efl_unref(obj);
      }
+   EO_OBJ_DONE(obj_id);
 }
 
 EAPI int
 efl_ref_get(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
-
-   return obj->user_refcount;
+   int ref;
+   ref = obj->user_refcount;
+   EO_OBJ_DONE(obj_id);
+   return ref;
 }
 
 EAPI int
 ___efl_ref2_get(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
-
-   return obj->refcount;
+   int ref;
+   ref = obj->refcount;
+   EO_OBJ_DONE(obj_id);
+   return ref;
 }
 
 EAPI void
@@ -1603,6 +1619,7 @@ ___efl_ref2_reset(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
    obj->refcount = 0;
+   EO_OBJ_DONE(obj_id);
 }
 
 
@@ -1610,16 +1627,18 @@ EAPI void
 efl_del_intercept_set(Eo *obj_id, Efl_Del_Intercept del_intercept_func)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
-
    obj->del_intercept = del_intercept_func;
+   EO_OBJ_DONE(obj_id);
 }
 
 EAPI Efl_Del_Intercept
 efl_del_intercept_get(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
-
-   return obj->del_intercept;
+   Efl_Del_Intercept func;
+   func = obj->del_intercept;
+   EO_OBJ_DONE(obj_id);
+   return func;
 }
 
 void
@@ -1629,10 +1648,11 @@ _eo_condtor_done(Eo *obj_id)
    if (obj->condtor_done)
      {
         ERR("Object %p is already constructed at this point.", obj);
+        EO_OBJ_DONE(obj_id);
         return;
      }
-
    obj->condtor_done = EINA_TRUE;
+   EO_OBJ_DONE(obj_id);
 }
 
 static inline void *
@@ -1755,52 +1775,52 @@ efl_data_scope_get(const Eo *obj_id, const Efl_Class *klass_id)
    if (!_eo_class_mro_has(obj->klass, klass))
      {
         ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
+        EO_OBJ_DONE(obj_id);
         return NULL;
      }
 #endif
 
    ret = _efl_data_scope_safe_get(obj, klass);
-
 #ifdef EO_DEBUG
    if (!ret && (klass->desc->data_size == 0))
-     {
-        ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
-     }
+     ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
 #endif
-
+   EO_OBJ_DONE(obj_id);
    return ret;
 }
 
 EAPI void *
 efl_data_xref_internal(const char *file, int line, const Eo *obj_id, const Efl_Class *klass_id, const Eo *ref_obj_id)
 {
-   void *ret;
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
-   EO_OBJ_POINTER_RETURN_VAL(ref_obj_id, ref_obj, NULL);
+   void *ret = NULL;
    _Efl_Class *klass = NULL;
-   if (klass_id)
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+   EO_OBJ_POINTER(ref_obj_id, ref_obj);
+   if (ref_obj)
      {
-        EO_CLASS_POINTER_RETURN_VAL(klass_id, klass2, NULL);
-        klass = klass2;
-
-#ifdef EO_DEBUG
-        if (!_eo_class_mro_has(obj->klass, klass))
+        if (klass_id)
           {
-             ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
-             return NULL;
-          }
-#endif
-     }
-
-   ret = _efl_data_xref_internal(file, line, obj, klass, ref_obj);
-
+             EO_CLASS_POINTER_RETURN_VAL(klass_id, klass2, NULL);
+             klass = klass2;
 #ifdef EO_DEBUG
-   if (klass && !ret && (klass->desc->data_size == 0))
-     {
-        ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
-     }
+             if (!_eo_class_mro_has(obj->klass, klass))
+               {
+                  ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
+                  EO_OBJ_DONE(obj_id);
+                  EO_OBJ_DONE(ref_obj_id);
+                  return NULL;
+               }
 #endif
+          }
 
+        ret = _efl_data_xref_internal(file, line, obj, klass, ref_obj);
+#ifdef EO_DEBUG
+        if (klass && !ret && (klass->desc->data_size == 0))
+          ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
+#endif
+        EO_OBJ_DONE(ref_obj_id);
+     }
+   EO_OBJ_DONE(obj_id);
    return ret;
 }
 
@@ -1808,8 +1828,13 @@ EAPI void
 efl_data_xunref_internal(const Eo *obj_id, void *data, const Eo *ref_obj_id)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
-   EO_OBJ_POINTER_RETURN(ref_obj_id, ref_obj);
-   _efl_data_xunref_internal(obj, data, ref_obj);
+   EO_OBJ_POINTER(ref_obj_id, ref_obj);
+   if (ref_obj)
+     {
+        _efl_data_xunref_internal(obj, data, ref_obj);
+        EO_OBJ_DONE(ref_obj_id);
+     }
+   EO_OBJ_DONE(obj_id);
 }
 
 static void
@@ -1880,6 +1905,7 @@ efl_object_init(void)
         EINA_LOG_ERR("Could not allocate shared table data");
         return EINA_FALSE;
      }
+   _eo_table_data_shared_data = _eo_table_data_shared->tables[EFL_ID_DOMAIN_SHARED];
 
    // specially force eoid data to be creanted so we can switch it to domain 0
    Eo_Id_Data *data = _eo_table_data_new(EFL_ID_DOMAIN_MAIN);
@@ -1953,6 +1979,7 @@ efl_object_shutdown(void)
      {
         _eo_free_ids_tables(_eo_table_data_shared);
         _eo_table_data_shared = NULL;
+        _eo_table_data_shared_data = NULL;
      }
 
    eina_log_domain_unregister(_eo_log_dom);
@@ -2117,9 +2144,11 @@ efl_compatible(const Eo *obj, const Eo *obj_target)
 EAPI Eina_Bool
 efl_destructed_is(const Eo *obj_id)
 {
+   Eina_Bool is;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-
-   return obj->destructed;
+   is = obj->destructed;
+   EO_OBJ_DONE(obj_id);
+   return is;
 }
 
 EAPI void
@@ -2127,6 +2156,7 @@ efl_manual_free_set(Eo *obj_id, Eina_Bool manual_free)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
    obj->manual_free = manual_free;
+   EO_OBJ_DONE(obj_id);
 }
 
 EAPI Eina_Bool
@@ -2134,21 +2164,21 @@ efl_manual_free(Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
 
-   if (EINA_FALSE == obj->manual_free)
-     {
-        ERR("Tried to manually free the object %p while the option has not been set; see efl_manual_free_set for more information.", obj);
-        return EINA_FALSE;
-     }
-
-   if (!obj->destructed)
-     {
-        ERR("Tried deleting the object %p while still referenced(%d).", obj_id, obj->refcount);
-        return EINA_FALSE;
-     }
-
+   if (obj->manual_free == EINA_FALSE) goto err_manual_free;
+   if (!obj->destructed) goto err_not_destructed;
    _eo_free(obj);
-
+   EO_OBJ_DONE(obj_id);
    return EINA_TRUE;
+
+err_manual_free:
+   ERR("Tried to manually free the object %p while the option has not been set; see efl_manual_free_set for more information.", obj);
+   goto err;
+err_not_destructed:
+   ERR("Tried deleting the object %p while still referenced(%d).", obj_id, obj->refcount);
+   goto err;
+err:
+   EO_OBJ_DONE(obj_id);
+   return EINA_FALSE;
 }
 
 EAPI int

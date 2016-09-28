@@ -269,8 +269,6 @@ struct _Eo_Id_Table_Data
    cache;
    /* Next generation to use when assigning a new entry to a Eo pointer */
    Generation_Counter  generation;
-   /* Optional lock around objects and eoid table - only used if shared */
-   Eina_Spinlock       lock;
    /* Optional lock around all objects in eoid table - only used if shared */
    Eina_Lock           obj_lock;
    /* are we shared so we need lock/unlock? */
@@ -285,8 +283,9 @@ struct _Eo_Id_Data
    unsigned char       domain_stack[255 - (sizeof(void *) * 4) - 2];
 };
 
-extern Eina_TLS    _eo_table_data;
-extern Eo_Id_Data *_eo_table_data_shared;
+extern Eina_TLS          _eo_table_data;
+extern Eo_Id_Data       *_eo_table_data_shared;
+extern Eo_Id_Table_Data *_eo_table_data_shared_data;
 
 static inline Eo_Id_Table_Data *
 _eo_table_data_table_new(Efl_Id_Domain domain)
@@ -297,14 +296,8 @@ _eo_table_data_table_new(Efl_Id_Domain domain)
    if (!tdata) return NULL;
    if (domain == EFL_ID_DOMAIN_SHARED)
      {
-        if (!eina_spinlock_new(&(tdata->lock)))
-          {
-             free(tdata);
-             return NULL;
-          }
         if (!eina_lock_recursive_new(&(tdata->obj_lock)))
           {
-             eina_spinlock_free(&(tdata->lock));
              free(tdata);
              return NULL;
           }
@@ -326,19 +319,14 @@ _eo_table_data_new(Efl_Id_Domain domain)
    data->tables[data->local_domain] =
      _eo_table_data_table_new(data->local_domain);
    if (domain != EFL_ID_DOMAIN_SHARED)
-     data->tables[EFL_ID_DOMAIN_SHARED] =
-     _eo_table_data_shared->tables[EFL_ID_DOMAIN_SHARED];
+     data->tables[EFL_ID_DOMAIN_SHARED] = _eo_table_data_shared_data;
    return data;
 }
 
 static void
 _eo_table_data_table_free(Eo_Id_Table_Data *tdata)
 {
-   if (tdata->shared)
-     {
-        eina_spinlock_free(&(tdata->lock));
-        eina_lock_free(&(tdata->obj_lock));
-     }
+   if (tdata->shared) eina_lock_free(&(tdata->obj_lock));
    free(tdata);
 }
 
@@ -538,7 +526,7 @@ _eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id)
      }
    else
      {
-        eina_spinlock_take(&(tdata->lock));
+        eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
         if (tdata->current_table)
           entry = _get_available_entry(tdata->current_table);
 
@@ -564,7 +552,7 @@ _eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id)
                                  EFL_ID_DOMAIN_SHARED,
                                  entry->generation);
 shared_err:
-        eina_spinlock_release(&(tdata->lock));
+        eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
    return id;
 #else
@@ -643,7 +631,7 @@ _eo_id_release(const Eo_Id obj_id)
      }
    else
      {
-        eina_spinlock_take(&(tdata->lock));
+        eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
         // Check the validity of the entry
         if (tdata->eo_ids_tables[mid_table_id] && (table = TABLE_FROM_IDS))
           {
@@ -687,11 +675,11 @@ _eo_id_release(const Eo_Id obj_id)
                        tdata->cache.klass = NULL;;
                        tdata->cache.isa = EINA_FALSE;
                     }
-                  eina_spinlock_release(&(tdata->lock));
+                  eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
                   return;
                }
           }
-        eina_spinlock_release(&(tdata->lock));
+        eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
    ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.", (void *)obj_id);
 #else
