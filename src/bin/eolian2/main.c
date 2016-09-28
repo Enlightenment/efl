@@ -419,6 +419,7 @@ main(int argc, char **argv)
                  fprintf(stderr, "unknown type: '%c'\n", *wstr);
                  goto end;
               }
+          break;
         case 'o':
           if (strchr(optarg, ':'))
             {
