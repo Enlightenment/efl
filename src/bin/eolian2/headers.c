@@ -222,7 +222,7 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
                                   cnameu, _cl_type_str_get(cl, EINA_TRUE),
                                   cnamel, _cl_type_str_get(cl, EINA_FALSE));
 
-        eina_strbuf_append_printf(buf, "EWAPI const Efl_Class *%s_%s_get(void);\n\n",
+        eina_strbuf_append_printf(buf, "EWAPI const Efl_Class *%s_%s_get(void);\n",
                                   cnamel, _cl_type_str_get(cl, EINA_FALSE));
      }
 
@@ -242,6 +242,7 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
            /* beta can only exist for eo api */
            if (legacy && eolian_function_is_beta(fid))
              continue;
+           eina_strbuf_append_char(buf, '\n');
            switch (ftype)
              {
               case EOLIAN_PROP_GET:
