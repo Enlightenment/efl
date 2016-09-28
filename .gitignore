@@ -75,3 +75,4 @@ tags
 Session.vim
 /elm_intro.h
 /src/modules/evas/engines/gl_common/shader_3d/evas_3d_shaders.x
+/src/scripts/eo/eo_debug
