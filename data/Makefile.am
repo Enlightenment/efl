@@ -200,7 +200,7 @@ include elementary/images/Makefile.am
 elementaryimagesdir = $(datadir)/elementary/images
 elementaryimages_DATA = $(elementary_images_files)
 
-elementaryimages_glayerdir = $(datadir)/elementary/images
+elementaryimages_glayerdir = $(datadir)/elementary/images/g_layer
 elementaryimages_glayer_DATA = $(elementary_images_glayer_files)
 
 EXTRA_DIST += $(elementary_images_files) $(elementary_images_glayer_files)

@@ -88,11 +88,3 @@ elementary_images_glayer_files = \
 	elementary/images/g_layer/flick_5.png \
 	elementary/images/g_layer/long_tap_5.png \
 	elementary/images/g_layer/tap_4.png
-
-elementary_images_filesdir = $(datadir)/elementary/images
-elementary_images_files_DATA = $(elementary_images_files)
-
-elementary_images_glayer_filesdir = $(datadir)/elementary/images/g_layer
-elementary_images_glayer_files_DATA = $(elementary_images_glayer_files)
-
-EXTRA_DIST += $(elementary_images_files_DATA) $(elementary_images_glayer_files_DATA)
