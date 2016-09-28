@@ -61,7 +61,7 @@ evas_device_del(Evas_Device *dev)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
-   eo_unref(dev);
+   eo_del(dev);
 }
 
 EAPI void
