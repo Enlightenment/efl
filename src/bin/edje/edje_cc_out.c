@@ -378,6 +378,9 @@ check_image_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
                       Edje_Part_Description_Image *epd, Eet_File *ef)
 {
    unsigned int i;
+   Edje_Part_Collection_Parser *pcp = (Edje_Part_Collection_Parser *)pc;
+
+   if (pcp->inherit_only) return;
 
    if (epd->image.id == -1 && epd->common.visible)
      WRN("Collection %s(%i): image attributes missing for "
