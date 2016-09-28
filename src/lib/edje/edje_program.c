@@ -231,10 +231,11 @@ edje_object_propagate_callback_add(Evas_Object *obj, void (*func)(void *data, Ev
    sig = eina_stringshare_add("*");
    src = eina_stringshare_add("*");
 
-   _edje_signal_callback_push(ed->callbacks,
-                              sig, src,
-                              func, data,
-                              EINA_TRUE);
+   if (ed->callbacks)
+     _edje_signal_callback_push(ed->callbacks,
+                                sig, src,
+                                func, data,
+                                EINA_TRUE);
 
    eina_stringshare_del(sig);
    eina_stringshare_del(src);
