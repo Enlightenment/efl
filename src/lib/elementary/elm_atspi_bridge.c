@@ -3948,7 +3948,16 @@ _children_changed_signal_send(void *data, const Efl_Event *event)
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
 
-   type = ev_data->is_added ? ATSPI_OBJECT_CHILD_ADDED : ATSPI_OBJECT_CHILD_REMOVED;
+   if (ev_data->is_added)
+     {
+        type = ATSPI_OBJECT_CHILD_ADDED;
+        atspi_desc = "add";
+     }
+   else
+     {
+        type = ATSPI_OBJECT_CHILD_REMOVED;
+        atspi_desc = "remove";
+     }
 
    if (!STATE_TYPE_GET(pd->object_children_broadcast_mask, type))
      {
@@ -3956,18 +3965,7 @@ _children_changed_signal_send(void *data, const Efl_Event *event)
         return;
      }
 
-   switch (type)
-    {
-     case ATSPI_OBJECT_CHILD_ADDED:
-        atspi_desc = "add";
-        idx = elm_interface_atspi_accessible_index_in_parent_get(ev_data->child);
-        break;
-     case ATSPI_OBJECT_CHILD_REMOVED:
-        atspi_desc = "remove";
-        idx = elm_interface_atspi_accessible_index_in_parent_get(ev_data->child);
-        break;
-    }
-
+   idx = elm_interface_atspi_accessible_index_in_parent_get(ev_data->child);
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
                        &_event_obj_signals[ATSPI_OBJECT_EVENT_CHILDREN_CHANGED], atspi_desc,
                        idx, 0, "(so)", eldbus_connection_unique_name_get(pd->a11y_bus), ev_data->child);
