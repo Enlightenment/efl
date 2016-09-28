@@ -258,8 +258,9 @@ codegen_example_generated.c codegen_example_generated.h: codegen_example.edj
 
 BUILT_SOURCES = codegen_example_generated.c codegen_example_generated.h
 
+codegen_example.c: codegen_example_generated.h
+
 codegen_example_SOURCES = \
-	codegen_example_generated.h \
 	codegen_example.c
 nodist_codegen_example_SOURCES = \
 codegen_example_generated.c \
