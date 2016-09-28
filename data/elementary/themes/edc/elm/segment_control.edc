@@ -226,9 +226,6 @@ group { name: "elm/segment_control/item/default";
             }
             color: FN_COL_WHITE_GLOW;
          }
-         description { state: "" 0.0;
-            inherit: "default" 0.0;
-         }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
             visible: 1;
