@@ -2489,6 +2489,7 @@ eng_ector_create(void *data EINA_UNUSED)
    Ector_Surface *ector;
    const char *ector_backend;
    ector_backend = getenv("ECTOR_BACKEND");
+   efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
         ector = efl_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
@@ -2503,6 +2504,7 @@ eng_ector_create(void *data EINA_UNUSED)
         ector = efl_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_TRUE;
      }
+   efl_domain_current_pop();
    return ector;
 }
 

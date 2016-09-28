@@ -74,7 +74,9 @@ _efl_vg_gradient_linear_render_pre(Eo *obj,
 
    if (!nd->renderer)
      {
+        efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
         nd->renderer = ector_surface_renderer_factory_new(s, ECTOR_RENDERER_GRADIENT_LINEAR_MIXIN);
+        efl_domain_current_pop();
      }
 
    ector_renderer_transformation_set(nd->renderer, current);
