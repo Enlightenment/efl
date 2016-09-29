@@ -5359,18 +5359,18 @@ _ecore_evas_x11_vnc_client_connection_new(rfbClientRec *client)
 
    snprintf(buf, sizeof(buf), "seat-%u", _available_seat);
 
-   cdata->seat = evas_device_full_add(ee->evas, buf,
-                                          "A remote VNC seat",
-                                          NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
-                                          EVAS_DEVICE_SUBCLASS_NONE);
+   cdata->seat = evas_device_add_full(ee->evas, buf,
+                                      "A remote VNC seat",
+                                      NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
+                                      EVAS_DEVICE_SUBCLASS_NONE);
    EINA_SAFETY_ON_NULL_GOTO(cdata->seat, err_handler);
-   cdata->keyboard = evas_device_full_add(ee->evas, "Keyboard",
+   cdata->keyboard = evas_device_add_full(ee->evas, "Keyboard",
                                           "A remote VNC keyboard",
                                           cdata->seat, NULL,
                                           EVAS_DEVICE_CLASS_KEYBOARD,
                                           EVAS_DEVICE_SUBCLASS_NONE);
    EINA_SAFETY_ON_NULL_GOTO(cdata->keyboard, err_dev);
-   cdata->mouse = evas_device_full_add(ee->evas, "Mouse",
+   cdata->mouse = evas_device_add_full(ee->evas, "Mouse",
                                        "A remote VNC mouse",
                                        cdata->seat, NULL,
                                        EVAS_DEVICE_CLASS_MOUSE,

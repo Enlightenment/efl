@@ -1126,7 +1126,7 @@ EAPI void              evas_render_updates_free(Eina_List *updates);
  * @return the device node created or NULL if an error occurred.
  *
  * @see evas_device_del
- * @see evas_device_full_add
+ * @see evas_device_add_full
  * @since 1.8
  */
 EAPI Evas_Device *evas_device_add(Evas *e);
@@ -1151,7 +1151,7 @@ EAPI Evas_Device *evas_device_add(Evas *e);
  * @see evas_device_del
  * @since 1.19
  */
-EAPI Evas_Device *evas_device_full_add(Evas *eo_e, const char *name,
+EAPI Evas_Device *evas_device_add_full(Evas *eo_e, const char *name,
                                        const char *desc,
                                        Evas_Device *parent_dev,
                                        Evas_Device *emulation_dev,

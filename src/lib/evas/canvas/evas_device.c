@@ -38,13 +38,13 @@ _del_cb(void *data, const Efl_Event *ev)
 EAPI Evas_Device *
 evas_device_add(Evas *eo_e)
 {
-   return evas_device_full_add(eo_e, NULL, NULL, NULL, NULL,
+   return evas_device_add_full(eo_e, NULL, NULL, NULL, NULL,
                                EVAS_DEVICE_CLASS_NONE,
                                EVAS_DEVICE_SUBCLASS_NONE);
 }
 
 EAPI Evas_Device *
-evas_device_full_add(Evas *eo_e, const char *name, const char *desc,
+evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
                      Evas_Device *parent_dev, Evas_Device *emulation_dev,
                      Evas_Device_Class clas, Evas_Device_Subclass sub_clas)
 {
