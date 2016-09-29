@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <unistd.h>
 #include <libgen.h>
 
@@ -227,19 +228,19 @@ char *eo_gen_c_full_name_get(const char *nm)
      return NULL;
    char *buf = strdup(nm);
    if (!buf)
-     return NULL;
+     abort();
    for (char *p = strchr(buf, '.'); p; p = strchr(p, '.'))
      *p = '_';
    return buf;
 }
 
-Eina_Bool eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
-                                 char **cnameu, char **cnamel)
+void eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
+                            char **cnameu, char **cnamel)
 {
    char *cn = NULL, *cnu = NULL, *cnl = NULL;
    cn = eo_gen_c_full_name_get(eolian_class_full_name_get(cl));
    if (!cn)
-     return EINA_FALSE;
+     abort();
    if (cname)
      *cname = cn;
 
@@ -249,7 +250,7 @@ Eina_Bool eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
         if (!cnu)
           {
              free(cn);
-             return EINA_FALSE;
+             abort();
           }
         eina_str_toupper(&cnu);
         *cnameu = cnu;
@@ -262,7 +263,7 @@ Eina_Bool eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
           {
              free(cn);
              free(cnu);
-             return EINA_FALSE;
+             abort();
           }
         eina_str_tolower(&cnl);
         *cnamel = cnl;
@@ -270,8 +271,6 @@ Eina_Bool eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
 
    if (!cname)
      free(cn);
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool

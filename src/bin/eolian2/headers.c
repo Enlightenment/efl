@@ -199,8 +199,7 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
      return;
 
    char *cname = NULL, *cnameu = NULL, *cnamel = NULL;
-   if (!eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel))
-     return;
+   eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel);
 
    /* class definition */
 

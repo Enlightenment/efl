@@ -216,10 +216,8 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
                                 : eina_stringshare_add("void");
 
    char *cname = NULL, *cnameu = NULL, *cnamel = NULL, *ocnamel = NULL;
-   if (!eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel))
-     goto end;
-   if (!eo_gen_class_names_get(eolian_implement_class_get(impl), NULL, NULL, &ocnamel))
-     goto end;
+   eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel);
+   eo_gen_class_names_get(eolian_implement_class_get(impl), NULL, NULL, &ocnamel);
 
    if (impl_need)
      {
@@ -446,7 +444,6 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
         eina_stringshare_del(eofn);
      }
 
-end:
    free(cname);
    free(cnameu);
    free(cnamel);
@@ -503,8 +500,7 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
    eina_iterator_free(itr);
 
    char *cnamel = NULL;
-   if (!eo_gen_class_names_get(cl, NULL, NULL, &cnamel))
-     return EINA_FALSE;
+   eo_gen_class_names_get(cl, NULL, NULL, &cnamel);
 
    eina_strbuf_append(buf, "\nstatic Eina_Bool\n_");
    eina_strbuf_append(buf, cnamel);
@@ -530,8 +526,8 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
 
         Eina_Bool found = !!eina_hash_find(_funcs_params_init, &imp);
         char *ocnamel = NULL;
-        if ((cl != icl) && !eo_gen_class_names_get(cl, NULL, NULL, &ocnamel))
-          return EINA_FALSE;
+        if (cl != icl)
+          eo_gen_class_names_get(cl, NULL, NULL, &ocnamel);
 
         switch (ftype)
           {
@@ -584,6 +580,8 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    eina_strbuf_append(buf, "}\n\n");
 
+   free(cnamel);
+
    return EINA_TRUE;
 }
 
@@ -596,8 +594,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    _funcs_params_init = eina_hash_pointer_new(NULL);
 
    char *cname = NULL, *cnameu = NULL, *cnamel = NULL;
-   if (!eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel))
-     return;
+   eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel);
 
    /* event section, they come first */
    {
