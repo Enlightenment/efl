@@ -535,7 +535,7 @@ _efl_object_call_end(Efl_Object_Op_Call_Data *call)
    if (EINA_LIKELY(!!call->obj))
      {
         _efl_unref(call->obj);
-        if (call->obj) _eo_obj_pointer_done((Eo_Id)call->eo_id);
+        _eo_obj_pointer_done((Eo_Id)call->eo_id);
      }
 }
 
