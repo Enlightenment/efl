@@ -92,6 +92,10 @@ _efl_ui_nstate_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Nstate_Data *pd)
 EOLIAN static void
 _efl_ui_nstate_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   edje_object_signal_callback_del_full(wd->resize_obj, "elm,action,state,changed",
+                                        "*", _on_state_changed, obj);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
