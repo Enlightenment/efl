@@ -1,6 +1,23 @@
 #include "main.h"
 #include "docs.h"
 
+static const char *
+_cl_type_str_get(const Eolian_Class *cl)
+{
+   switch (eolian_class_type_get(cl))
+     {
+      case EOLIAN_CLASS_REGULAR:
+      case EOLIAN_CLASS_ABSTRACT:
+        return "CLASS";
+      case EOLIAN_CLASS_MIXIN:
+        return "MIXIN";
+      case EOLIAN_CLASS_INTERFACE:
+        return "INTERFACE";
+      default:
+        return NULL;
+     }
+}
+
 /* Used to store the function names that will have to be appended
  * with __eolian during C generation. Needed when params have to
  * be initialized and for future features.
@@ -520,7 +537,7 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
    eina_strbuf_free(ops);
    eina_strbuf_free(cops);
 
-   eina_strbuf_append(buf, "}\n");
+   eina_strbuf_append(buf, "}\n\n");
 
    return EINA_TRUE;
 }
@@ -532,6 +549,10 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
      return;
 
    _funcs_params_init = eina_hash_pointer_new(NULL);
+
+   char *cname = NULL, *cnameu = NULL, *cnamel = NULL;
+   if (!eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel))
+     return;
 
    /* event section, they come first */
    {
@@ -578,7 +599,74 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
       eina_iterator_free(itr);
    }
 
+   /* class initializer - contains method defs */
    Eina_Bool has_init = _gen_initializer(cl, buf);
 
+   /* class description */
+   eina_strbuf_append(buf, "static const Efl_Class_Description _");
+   eina_strbuf_append(buf, cnamel);
+   eina_strbuf_append(buf, "_class_desc = {\n"
+                           "   EO_VERSION,\n");
+   eina_strbuf_append_printf(buf, "   \"%s\",\n", cname);
+
+   const char *dt = eolian_class_data_type_get(cl);
+   if (dt && !strcmp(dt, "null"))
+     eina_strbuf_append(buf, "   0,\n");
+   else
+     {
+        eina_strbuf_append(buf, "   sizeof(");
+        if (dt)
+          eina_strbuf_append(buf, dt);
+        else
+          eina_strbuf_append_printf(buf, "%s_Data", cname);
+        eina_strbuf_append(buf, "),\n");
+     }
+
+   if (has_init)
+     eina_strbuf_append_printf(buf, "   _%s_class_initializer,\n", cnamel);
+   else
+     eina_strbuf_append(buf, "   NULL,\n");
+
+   if (eolian_class_ctor_enable_get(cl))
+     eina_strbuf_append_printf(buf, "   _%s_class_constructor,\n", cnamel);
+   else
+     eina_strbuf_append(buf, "   NULL,\n");
+
+   if (eolian_class_dtor_enable_get(cl))
+     eina_strbuf_append_printf(buf, "   _%s_class_destructor\n", cnamel);
+   else
+     eina_strbuf_append(buf, "   NULL\n");
+
+   eina_strbuf_append(buf, "}\n\n");
+
+   /* class def */
+   eina_strbuf_append(buf, "EFL_DEFINE_CLASS(");
+
+   Eina_Stringshare *cgfunc = eolian_class_c_get_function_name_get(cl);
+   eina_strbuf_append(buf, cgfunc);
+   eina_stringshare_del(cgfunc);
+
+   eina_strbuf_append_printf(buf, ", &_%s_class_desc", cnamel);
+
+   /* inherits in EFL_DEFINE_CLASS */
+   {
+      Eina_Iterator *itr = eolian_class_inherits_get(cl);
+      const char *iname;
+      EINA_ITERATOR_FOREACH(itr, iname)
+        {
+           eina_strbuf_append(buf, ", ");
+           eina_strbuf_append_printf(buf, "%s_%s", cnameu,
+              _cl_type_str_get(eolian_class_get_by_name(iname)));
+        }
+      eina_iterator_free(itr);
+   }
+
+   /* terminate inherits */
+   eina_strbuf_append(buf, ", NULL);\n");
+
+   /* and we're done */
+   free(cname);
+   free(cnameu);
+   free(cnamel);
    eina_hash_free(_funcs_params_init);
 }
