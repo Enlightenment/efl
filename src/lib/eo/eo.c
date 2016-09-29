@@ -1917,6 +1917,7 @@ efl_object_init(void)
    if (!eina_tls_cb_new(&_eo_table_data, _eo_table_del_cb))
      {
         EINA_LOG_ERR("Could not allocate TLS for eo domain data");
+        _eo_table_del_cb(data);
         return EINA_FALSE;
      }
    eina_tls_set(_eo_table_data, data);
