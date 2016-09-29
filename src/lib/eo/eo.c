@@ -316,13 +316,16 @@ static Eina_Spinlock _super_class_lock;
 EAPI Eo *
 efl_super(const Eo *obj, const Efl_Class *cur_klass)
 {
-   EO_CLASS_POINTER_RETURN_VAL(cur_klass, klass, NULL);
+   EO_CLASS_POINTER_GOTO(cur_klass, klass, err);
 
    /* FIXME: Switch to atomic operations intead of lock. */
    eina_spinlock_take(&_super_class_lock);
    _super_class = klass;
 
    return (Eo *) ((Eo_Id) obj | MASK_SUPER_TAG);
+err:
+   _EO_POINTER_ERR("Class (%p) is an invalid ref.", cur_klass);
+   return NULL;
 }
 
 EAPI Eina_Bool
@@ -345,8 +348,7 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
         eo_id = (Eo *) ((Eo_Id) eo_id & ~MASK_SUPER_TAG);
      }
 
-   if (EINA_UNLIKELY(!eo_id))
-      return EINA_FALSE;
+   if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
 
    call->eo_id = eo_id;
 
@@ -420,6 +422,9 @@ ok_klass_back:
           }
 #endif
         func = _vtable_func_get(vtable, cache->op);
+        // this is not very likely to happen - but may if its an invalid
+        // call or a composite object, but either way, it's not very likely
+        // so make it a goto to save on instruction cache
         if (!func) goto end;
      }
 ok_cur_klass_back:
@@ -449,6 +454,8 @@ ok_cur_klass_back:
         return EINA_TRUE;
      }
 
+   // very unlikely in general to use a goto to move code out of l1 cache
+   // ie instruction cache
    if (func->src != NULL) goto err_func_src;
 
 end:
@@ -479,7 +486,8 @@ end:
           }
      }
 
-   /* If it's a do_super call. */
+   // all of this is error handling at the end so... rare-ish
+   // If it's a do_super call.
    if (cur_klass)
      {
         ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.",
@@ -509,16 +517,14 @@ err:
    // yes - special "move out of hot path" code blobs with goto's for
    // speed reasons to have intr prefetches work better and miss less
 ok_cur_klass:
-     {
-        func = _eo_kls_itr_next(klass, cur_klass, cache->op);
-        if (!func) goto end;
-        klass = func->src;
-     }
+   func = _eo_kls_itr_next(klass, cur_klass, cache->op);
+   if (!func) goto end;
+   klass = func->src;
    goto ok_cur_klass_back;
 
 ok_klass:
      {
-        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
+        EO_CLASS_POINTER_GOTO(eo_id, _klass, err_klass);
         klass = _klass;
         vtable = &klass->vtable;
         call->obj = NULL;
@@ -526,6 +532,8 @@ ok_klass:
      }
    goto ok_klass_back;
 
+err_klass:
+   _EO_POINTER_ERR("Class (%p) is an invalid ref.", eo_id);
    return EINA_FALSE;
 }
 
@@ -538,28 +546,6 @@ _efl_object_call_end(Efl_Object_Op_Call_Data *call)
         _eo_obj_pointer_done((Eo_Id)call->eo_id);
      }
 }
-
-/*
-EAPI void
-_efl_shared_lock(const Eo *eo_id)
-{
-#ifdef HAVE_EO_ID
-   Efl_Id_Domain domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
-   if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED)) return;
-   eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
-#endif
-}
-
-EAPI void
-_efl_shared_unlock(const Eo *eo_id)
-{
-#ifdef HAVE_EO_ID
-   Efl_Id_Domain domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
-   if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED)) return;
-   eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
-#endif
-}
-*/
 
 static inline Eina_Bool
 _eo_api_func_equal(const void *api_func1, const void *api_func2)
@@ -681,25 +667,16 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
 EAPI Eina_Bool
 efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops)
 {
-   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
+   EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
    Efl_Object_Ops empty_ops = { 0 };
 
-   if (klass->functions_set)
-     {
-        ERR("Class %s already had its functions set..", klass->desc->name);
-        return EINA_FALSE;
-     }
+   // not likely so use goto to alleviate l1 instruction cache of rare code
+   if (klass->functions_set) goto err_funcs;
    klass->functions_set = EINA_TRUE;
 
-   if (!object_ops)
-     {
-        object_ops = &empty_ops;
-     }
+   if (!object_ops) object_ops = &empty_ops;
 
-   if (!class_ops)
-     {
-        class_ops = &empty_ops;
-     }
+   if (!class_ops) class_ops = &empty_ops;
 
    klass->ops_count = object_ops->count + class_ops->count;
 
@@ -708,22 +685,25 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
 
    _vtable_init(&klass->vtable, DICH_CHAIN1(_eo_ops_last_id) + 1);
 
-
    /* Flatten the function array */
      {
         const _Efl_Class **mro_itr = klass->mro;
-        for (  ; *mro_itr ; mro_itr++)
-           ;
+        for (  ; *mro_itr ; mro_itr++) ;
 
         /* Skip ourselves. */
         for ( mro_itr-- ; mro_itr > klass->mro ; mro_itr--)
-          {
-             _vtable_copy_all(&klass->vtable, &(*mro_itr)->vtable);
-          }
+          _vtable_copy_all(&klass->vtable, &(*mro_itr)->vtable);
      }
 
    return _eo_class_funcs_set(&klass->vtable, object_ops, klass, klass, 0, EINA_FALSE) &&
       _eo_class_funcs_set(&klass->vtable, class_ops, klass, klass, object_ops->count, EINA_FALSE);
+
+err_funcs:
+   ERR("Class %s already had its functions set..", klass->desc->name);
+   return EINA_FALSE;
+err_klass:
+   _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id);
+   return EINA_FALSE;
 }
 
 EAPI Eo *
@@ -732,24 +712,18 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    _Eo_Object *obj;
    Eo_Stack_Frame *fptr = NULL;
 
-   if (is_fallback)
-     {
-        fptr = _efl_add_fallback_stack_push(NULL);
-     }
+   if (is_fallback) fptr = _efl_add_fallback_stack_push(NULL);
 
-   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
+   EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
 
    if (parent_id)
      {
-        EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, NULL);
+        EO_OBJ_POINTER_GOTO(parent_id, parent, err_parent);
      }
 
+   // not likely so use goto to alleviate l1 instruction cache of rare code
    if (EINA_UNLIKELY(klass->desc->type != EFL_CLASS_TYPE_REGULAR))
-     {
-        ERR("in %s:%d: Class '%s' is not instantiate-able. Aborting.", file, line, klass->desc->name);
-        if (parent_id) EO_OBJ_DONE(parent_id);
-        return NULL;
-     }
+     goto err_noreg;
 
    eina_spinlock_take(&klass->objects.trash_lock);
    obj = eina_trash_pop(&klass->objects.trash);
@@ -783,35 +757,44 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
 
    /* eo_id can change here. Freeing is done on the resolved object. */
    eo_id = efl_constructor(eo_id);
-   if (!eo_id)
-     {
-        ERR("Object of class '%s' - Error while constructing object",
-            klass->desc->name);
+   // not likely so use goto to alleviate l1 instruction cache of rare code
+   if (!eo_id) goto err_noid;
+   // not likely so use goto to alleviate l1 instruction cache of rare code
+   else if (eo_id != _eo_obj_id_get(obj)) goto ok_nomatch;
+ok_nomatch_back:
+   if (is_fallback) fptr->obj = eo_id;
+   if (parent_id) EO_OBJ_DONE(parent_id);
+   return eo_id;
 
+ok_nomatch:
+     {
+        EO_OBJ_POINTER_GOTO(eo_id, new_obj, err_newid);
         /* We have two refs at this point. */
         _efl_unref(obj);
-        efl_del((Eo *) obj->header.id);
-        if (parent_id) EO_OBJ_DONE(parent_id);
-        return NULL;
-     }
-   else if (eo_id != _eo_obj_id_get(obj))
-     {
-        EO_OBJ_POINTER_RETURN_VAL(eo_id, new_obj, NULL);
-        /* We have two refs at this point. */
-        _efl_unref(obj);
-        efl_del((Eo *) obj->header.id);
-
+        efl_del((Eo *)obj->header.id);
         _efl_ref(new_obj);
         EO_OBJ_DONE(eo_id);
      }
+   goto ok_nomatch_back;
 
-   if (is_fallback)
-     {
-        fptr->obj = eo_id;
-     }
-
+err_noid:
+   ERR("Object of class '%s' - Error while constructing object",
+       klass->desc->name);
+   /* We have two refs at this point. */
+   _efl_unref(obj);
+   efl_del((Eo *) obj->header.id);
+err_newid:
    if (parent_id) EO_OBJ_DONE(parent_id);
-   return eo_id;
+   return NULL;
+err_noreg:
+   ERR("in %s:%d: Class '%s' is not instantiate-able. Aborting.", file, line, klass->desc->name);
+   if (parent_id) EO_OBJ_DONE(parent_id);
+   return NULL;
+
+err_klass:
+   _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id);
+err_parent:
+   return NULL;
 }
 
 static Eo *
@@ -819,15 +802,8 @@ _efl_add_internal_end(Eo *eo_id, Eo *finalized_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
 
-   if (!obj->condtor_done)
-     {
-        const _Efl_Class *klass = obj->klass;
-
-        ERR("Object of class '%s' - Not all of the object constructors have been executed.",
-              klass->desc->name);
-        goto cleanup;
-     }
-
+   // rare so move error handling to end to save l1 instruction cache
+   if (!obj->condtor_done) goto err_condtor;
    if (!finalized_id)
      {
         // XXX: Given EFL usage of objects, construction is a perfectly valid thing
@@ -845,11 +821,16 @@ _efl_add_internal_end(Eo *eo_id, Eo *finalized_id)
      }
 
    obj->finalized = EINA_TRUE;
-
    _efl_unref(obj);
    EO_OBJ_DONE(eo_id);
    return (Eo *)eo_id;
 
+err_condtor:
+     {
+        const _Efl_Class *klass = obj->klass;
+        ERR("Object of class '%s' - Not all of the object constructors have been executed.",
+              klass->desc->name);
+     }
 cleanup:
    _efl_unref(obj);
    efl_del((Eo *) obj->header.id);
@@ -885,14 +866,19 @@ efl_class_get(const Eo *eo_id)
 
    if (_eo_is_a_class(eo_id))
      {
-        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, NULL);
+        EO_CLASS_POINTER_GOTO(eo_id, _klass, err_klass);
         return EFL_CLASS_CLASS;
      }
 
-   EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
+   EO_OBJ_POINTER_GOTO(eo_id, obj, err_obj);
    klass = _eo_class_id_get(obj->klass);
    EO_OBJ_DONE(eo_id);
    return klass;
+
+err_klass:
+   _EO_POINTER_ERR("Class (%p) is an invalid ref.", eo_id);
+err_obj:
+   return NULL;
 }
 
 EAPI const char *
@@ -902,16 +888,21 @@ efl_class_name_get(const Efl_Class *eo_id)
 
    if (_eo_is_a_class(eo_id))
      {
-        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, NULL);
+        EO_CLASS_POINTER_GOTO(eo_id, _klass, err_klass);
         klass = _klass;
      }
    else
      {
-        EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
+        EO_OBJ_POINTER_GOTO(eo_id, obj, err_obj);
         klass = obj->klass;
         EO_OBJ_DONE(eo_id);
      }
    return klass->desc->name;
+
+err_klass:
+   _EO_POINTER_ERR("Class (%p) is an invalid ref.", eo_id);
+err_obj:
+   return NULL;
 }
 
 static void
@@ -1407,7 +1398,7 @@ EAPI Eina_Bool
 efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
 {
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
-   EO_CLASS_POINTER_RETURN_VAL(EFL_OBJECT_OVERRIDE_CLASS, klass, EINA_FALSE);
+   EO_CLASS_POINTER_GOTO(EFL_OBJECT_OVERRIDE_CLASS, klass, err_done);
    Eo_Vtable *previous = obj->vtable;
 
    if (ops)
@@ -1417,11 +1408,13 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
              obj->vtable = calloc(1, sizeof(*obj->vtable));
              _vtable_init(obj->vtable, previous->size);
              _vtable_copy_all(obj->vtable, previous);
+             // rare so move error handling to end to save l1 instruction cache
              if (!_eo_class_funcs_set(obj->vtable, ops, obj->klass,
                                       klass, 0, EINA_TRUE))
                goto err;
              goto done;
           }
+        // rare so move error handling to end to save l1 instruction cache
         else goto err_already;
      }
    else
@@ -1489,7 +1482,12 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
             (tdata->cache.klass == klass_id))
           {
              isa = tdata->cache.isa;
-             goto done;
+             // since this is the cache we hope this gets a lot of hits and
+             // thus lets assume the hit is the mot important thing thus
+             // put the lock release and return here inline in the l1
+             // instruction cache hopefully already fetched
+             eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
+             return isa;
           }
 
         EO_OBJ_POINTER_GOTO(eo_id, obj, err_shared_obj);
@@ -1503,7 +1501,6 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         // Currently implemented by reusing the LAST op id. Just marking it with
         // _eo_class_isa_func.
         isa = tdata->cache.isa = (func && (func->func == _eo_class_isa_func));
-done:
         eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
    return isa;
@@ -1778,24 +1775,29 @@ _efl_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj
 EAPI void *
 efl_data_scope_get(const Eo *obj_id, const Efl_Class *klass_id)
 {
-   void *ret;
+   void *ret = NULL;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
-   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
+   EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
 
 #ifdef EO_DEBUG
-   if (!_eo_class_mro_has(obj->klass, klass))
-     {
-        ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
-        EO_OBJ_DONE(obj_id);
-        return NULL;
-     }
+   if (_eo_class_mro_has(obj->klass, klass))
 #endif
-
-   ret = _efl_data_scope_safe_get(obj, klass);
+     ret = _efl_data_scope_safe_get(obj, klass);
 #ifdef EO_DEBUG
-   if (!ret && (klass->desc->data_size == 0))
-     ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
+   // rare to make it a goto to clear out instruction cache of rare code
+   else goto err_mro;
+   // rare to make it a goto to clear out instruction cache of rare code
+   if (!ret && (klass->desc->data_size == 0)) goto err_ret;
+   EO_OBJ_DONE(obj_id);
+   return ret;
+
+err_ret:
+   ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
+   goto err_klass;
+err_mro:
+   ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
 #endif
+err_klass:
    EO_OBJ_DONE(obj_id);
    return ret;
 }
@@ -1811,28 +1813,35 @@ efl_data_xref_internal(const char *file, int line, const Eo *obj_id, const Efl_C
      {
         if (klass_id)
           {
-             EO_CLASS_POINTER_RETURN_VAL(klass_id, klass2, NULL);
+             EO_CLASS_POINTER_GOTO(klass_id, klass2, err_klass);
              klass = klass2;
 #ifdef EO_DEBUG
-             if (!_eo_class_mro_has(obj->klass, klass))
-               {
-                  ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
-                  EO_OBJ_DONE(obj_id);
-                  EO_OBJ_DONE(ref_obj_id);
-                  return NULL;
-               }
+             // rare to use goto to keep instruction cache cleaner
+             if (!_eo_class_mro_has(obj->klass, klass)) goto err_mro;
 #endif
           }
 
         ret = _efl_data_xref_internal(file, line, obj, klass, ref_obj);
 #ifdef EO_DEBUG
-        if (klass && !ret && (klass->desc->data_size == 0))
-          ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
+        // rare to use goto to keep instruction cache cleaner
+        if (klass && !ret && (klass->desc->data_size == 0)) goto err_ret;
 #endif
+err_klass:
         EO_OBJ_DONE(ref_obj_id);
      }
    EO_OBJ_DONE(obj_id);
    return ret;
+#ifdef EO_DEBUG
+err_ret:
+   ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
+   goto err;
+err_mro:
+   ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
+err:
+   EO_OBJ_DONE(obj_id);
+   EO_OBJ_DONE(ref_obj_id);
+   return NULL;
+#endif
 }
 
 EAPI void
@@ -2176,7 +2185,9 @@ efl_manual_free(Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
 
+   // rare to use goto to keep instruction cache cleaner
    if (obj->manual_free == EINA_FALSE) goto err_manual_free;
+   // rare to use goto to keep instruction cache cleaner
    if (!obj->destructed) goto err_not_destructed;
    _eo_free(obj);
    EO_OBJ_DONE(obj_id);

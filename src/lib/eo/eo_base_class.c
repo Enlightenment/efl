@@ -536,63 +536,59 @@ _efl_object_del(const Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 EOLIAN static void
 _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 {
-   if (pd->parent == parent_id)
+   if ((pd->parent == parent_id) ||
+       ((parent_id) && (!_eo_id_domain_compatible(parent_id, obj))))
      return;
-   if (parent_id)
-     {
-        if (!_eo_id_domain_compatible(parent_id, obj)) return;
-     }
 
    EO_OBJ_POINTER(obj, eo_obj);
-
    if (pd->parent)
      {
-        Efl_Object_Data *old_parent_pd;
+        Efl_Object_Data *old_parent_pd = efl_data_scope_get(pd->parent,
+                                                            EFL_OBJECT_CLASS);
 
-        old_parent_pd = efl_data_scope_get(pd->parent, EFL_OBJECT_CLASS);
         if (old_parent_pd)
-          {
-             old_parent_pd->children = eina_inlist_remove(old_parent_pd->children,
-                   EINA_INLIST_GET(eo_obj));
-          }
-        else
-          {
-             ERR("CONTACT DEVS!!! SHOULD NEVER HAPPEN!!! Old parent %p for object %p is not a valid Eo object.",
-                 pd->parent, obj);
-          }
+          old_parent_pd->children = eina_inlist_remove(old_parent_pd->children,
+                                                       EINA_INLIST_GET(eo_obj));
+        // this error is highly unlikely so move it out of the normal
+        // instruction path to avoid l1 cache pollution
+        else goto err_impossible;
 
         /* Only unref if we don't have a new parent instead and we are not at
          * the process of deleting the object.*/
-        if (!parent_id && !eo_obj->del_triggered)
-          {
-             efl_unref(obj);
-          }
+        if (!parent_id && !eo_obj->del_triggered) efl_unref(obj);
      }
 
    /* Set new parent */
    if (parent_id)
      {
-        Efl_Object_Data *parent_pd = NULL;
-        parent_pd = efl_data_scope_get(parent_id, EFL_OBJECT_CLASS);
+        Efl_Object_Data *parent_pd = efl_data_scope_get(parent_id,
+                                                        EFL_OBJECT_CLASS);
 
         if (EINA_LIKELY(parent_pd != NULL))
           {
              pd->parent = parent_id;
              parent_pd->children = eina_inlist_append(parent_pd->children,
-                   EINA_INLIST_GET(eo_obj));
+                                                      EINA_INLIST_GET(eo_obj));
           }
         else
           {
              pd->parent = NULL;
-             ERR("New parent %p for object %p is not a valid Eo object.",
-                 parent_id, obj);
+             // unlikely this error happens, so move it out of execution path
+             // to improve l1 cache efficiency
+             goto err_parent;
           }
      }
-   else
-     {
-        pd->parent = NULL;
-     }
+   else pd->parent = NULL;
+
    EO_OBJ_DONE(obj);
+   return;
+err_parent:
+   ERR("New parent %p for object %p is not a valid Eo object.",
+       parent_id, obj);
+   return;
+err_impossible:
+   ERR("CONTACT DEVS!!! SHOULD NEVER HAPPEN!!! Old parent %p for object %p is not a valid Eo object.",
+       pd->parent, obj);
 }
 
 EOLIAN static Eo *
@@ -678,41 +674,36 @@ EOLIAN static Eina_Iterator *
 _efl_object_children_iterator_new(Eo *obj_id, Efl_Object_Data *pd)
 {
    _Efl_Class *klass;
-   Eo_Children_Iterator *it;
+   Eo_Children_Iterator *it = NULL;
 
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
 
-   if (!pd->children)
+   if (pd->children)
      {
-        EO_OBJ_DONE(obj_id);
-        return NULL;
+        klass = (_Efl_Class *)obj->klass;
+
+        eina_spinlock_take(&klass->iterators.trash_lock);
+        it = eina_trash_pop(&klass->iterators.trash);
+        if (it)
+          {
+             klass->iterators.trash_count--;
+             memset(it, 0, sizeof (Eo_Children_Iterator));
+          }
+        else it = calloc(1, sizeof (Eo_Children_Iterator));
+        eina_spinlock_release(&klass->iterators.trash_lock);
+        // very unlikely to not allocate the iterator to move this error
+        // handling out of l1 instruction cache
+        if (!it) goto done;
+
+        EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+        it->current = pd->children;
+        it->obj = _efl_ref(obj);
+        it->obj_id = obj_id;
+        it->iterator.next = FUNC_ITERATOR_NEXT(_efl_children_iterator_next);
+        it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_efl_children_iterator_container);
+        it->iterator.free = FUNC_ITERATOR_FREE(_efl_children_iterator_free);
      }
-
-   klass = (_Efl_Class *) obj->klass;
-
-   eina_spinlock_take(&klass->iterators.trash_lock);
-   it = eina_trash_pop(&klass->iterators.trash);
-   if (it)
-     {
-        klass->iterators.trash_count--;
-        memset(it, 0, sizeof (Eo_Children_Iterator));
-     }
-   else
-     {
-        it = calloc(1, sizeof (Eo_Children_Iterator));
-     }
-   eina_spinlock_release(&klass->iterators.trash_lock);
-   if (!it) return NULL;
-
-   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-   it->current = pd->children;
-   it->obj = _efl_ref(obj);
-   it->obj_id = obj_id;
-
-   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_children_iterator_next);
-   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_efl_children_iterator_container);
-   it->iterator.free = FUNC_ITERATOR_FREE(_efl_children_iterator_free);
-
+done:
    EO_OBJ_DONE(obj_id);
    return (Eina_Iterator *)it;
 }
@@ -749,15 +740,17 @@ _efl_object_wref_add(Eo *obj, Efl_Object_Data *pd, Eo **wref)
    count += 1; /* New wref. */
 
    ext = _efl_object_extension_need(pd);
-   if (!ext) return;
-
-   tmp = realloc(ext->wrefs, sizeof(*ext->wrefs) * (count + 1));
-   if (!tmp) return;
-   ext->wrefs = tmp;
-
-   ext->wrefs[count - 1] = wref;
-   ext->wrefs[count] = NULL;
-   *wref = obj;
+   if (ext)
+     {
+        tmp = realloc(ext->wrefs, sizeof(*ext->wrefs) * (count + 1));
+        if (tmp)
+          {
+             ext->wrefs = tmp;
+             ext->wrefs[count - 1] = wref;
+             ext->wrefs[count] = NULL;
+             *wref = obj;
+          }
+     }
 }
 
 EOLIAN static void
@@ -766,19 +759,11 @@ _efl_object_wref_del(Eo *obj, Efl_Object_Data *pd, Eo **wref)
    size_t count;
    Efl_Object_Extension *ext = pd->ext;
 
-   if (*wref != obj)
-     {
-        ERR("Wref is a weak ref to %p, while this function was called on %p.",
-            *wref, obj);
-        return;
-     }
+   // very unlikely so improve l1 instr cache by using goto
+   if (*wref != obj) goto err_wref_not_obj;
 
-   if ((!ext) || (!ext->wrefs))
-     {
-        ERR("There are no weak refs for object %p", obj);
-        *wref = NULL;
-        return;
-     }
+   // very unlikely so improve l1 instr cache by using goto
+   if ((!ext) || (!ext->wrefs)) goto err_wref_none;
 
    /* Move the last item in the array instead of the current wref. */
    count = _wref_count(pd);
@@ -793,13 +778,8 @@ _efl_object_wref_del(Eo *obj, Efl_Object_Data *pd, Eo **wref)
                   break;
                }
           }
-
-        if (!*itr)
-          {
-             ERR("Wref %p is not associated with object %p", wref, obj);
-             *wref = NULL;
-             return;
-          }
+        // very unlikely so improve l1 instr cache by using goto
+        if (!*itr) goto err_noiter;
      }
 
    if (count > 1)
@@ -810,6 +790,8 @@ _efl_object_wref_del(Eo *obj, Efl_Object_Data *pd, Eo **wref)
         if (!tmp) return;
         ext->wrefs = tmp;
         ext->wrefs[count - 1] = NULL;
+        *wref = NULL;
+        return;
      }
    else
      {
@@ -819,6 +801,20 @@ _efl_object_wref_del(Eo *obj, Efl_Object_Data *pd, Eo **wref)
      }
 
    *wref = NULL;
+   return;
+
+err_noiter:
+   ERR("Wref %p is not associated with object %p", wref, obj);
+   goto err_null;
+err_wref_none:
+   ERR("There are no weak refs for object %p", obj);
+err_null:
+   *wref = NULL;
+   return;
+err_wref_not_obj:
+   ERR("Wref is a weak ref to %p, while this function was called on %p.",
+       *wref, obj);
+   return;
 }
 
 static inline void
@@ -913,27 +909,28 @@ static Eo_Callback_Description *
 _eo_callback_new(void)
 {
    Eo_Callback_Description *cb;
-   if (!_eo_callback_mempool)
-     {
-        _eo_callback_mempool = eina_mempool_add
-          ("chained_mempool",
-           NULL, NULL,
-           sizeof(Eo_Callback_Description), 256);
-        if (!_eo_callback_mempool) return NULL;
-     }
+   // very unlikely  that the mempool isnt initted, so take all the init code
+   // and move it out of l1 instruction cache space so we dont pollute the
+   // l1 cache with unused code 99% of the time
+   if (!_eo_callback_mempool) goto init_mempool;
+init_mempool_back:
+
    cb = eina_mempool_calloc(_eo_callback_mempool,
                             sizeof(Eo_Callback_Description));
-   if (!cb)
+   if (cb)
      {
-        if (_eo_callbacks == 0)
-          {
-             eina_mempool_del(_eo_callback_mempool);
-             _eo_callback_mempool = NULL;
-          }
-        return NULL;
+        _eo_callbacks++;
+        return cb;
      }
-   _eo_callbacks++;
-   return cb;
+   if (_eo_callbacks != 0) return NULL;
+   eina_mempool_del(_eo_callback_mempool);
+   _eo_callback_mempool = NULL;
+   return NULL;
+init_mempool:
+   _eo_callback_mempool = eina_mempool_add
+   ("chained_mempool", NULL, NULL, sizeof(Eo_Callback_Description), 256);
+   if (!_eo_callback_mempool) return NULL;
+   goto init_mempool_back;
 }
 
 /* Actually remove, doesn't care about walking list, or delete_me */
@@ -991,35 +988,24 @@ static inline unsigned int
 _eo_callback_search_sorted_near(const Efl_Object_Data *pd, const Eo_Callback_Description *look)
 {
    unsigned int start, last, middle;
+   const Eo_Callback_Description *p;
+   int cmp;
 
-   if (pd->callbacks_count == 0)
-     {
-        return 0;
-     }
-   else if (pd->callbacks_count == 1)
-     {
-        return 0;
-     }
+   if (pd->callbacks_count == 0) return 0;
+   else if (pd->callbacks_count == 1) return 0;
 
    start = 0;
    last = pd->callbacks_count - 1;
    do
      {
-        const Eo_Callback_Description *p;
-        int cmp;
-
         middle = start + (last - start) / 2;
         p = pd->callbacks[middle];
 
         cmp = p->priority - look->priority;
-        if (cmp == 0)
-          return middle;
-        else if (cmp > 0)
-          start = middle + 1;
-        else if (middle > 0)
-          last = middle - 1;
-        else
-          break ;
+        if (cmp == 0) return middle;
+        else if (cmp > 0) start = middle + 1;
+        else if (middle > 0) last = middle - 1;
+        else break;
      }
    while (start <= last);
    return middle;
@@ -1065,20 +1051,16 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 
 EOLIAN static Eina_Bool
 _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
-                    const Efl_Event_Description *desc,
-                    Efl_Callback_Priority priority,
-                    Efl_Event_Cb func,
-                    const void *user_data)
+                                        const Efl_Event_Description *desc,
+                                        Efl_Callback_Priority priority,
+                                        Efl_Event_Cb func,
+                                        const void *user_data)
 {
    const Efl_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
    Eo_Callback_Description *cb = _eo_callback_new();
 
-   if (!cb || !desc || !func)
-     {
-        ERR("Tried adding callback with invalid values: cb: %p desc: %p func: %p\n", cb, desc, func);
-        _eo_callback_free(cb);
-        return EINA_FALSE;
-     }
+   // very unlikely so improve l1 instr cache by using goto
+   if (!cb || !desc || !func) goto err;
    cb->items.item.desc = desc;
    cb->items.item.func = func;
    cb->func_data = (void *) user_data;
@@ -1088,6 +1070,11 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
 
    return EINA_TRUE;
+
+err:
+   ERR("Tried adding callback with invalid values: cb: %p desc: %p func: %p\n", cb, desc, func);
+   _eo_callback_free(cb);
+   return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
@@ -1127,9 +1114,9 @@ _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
 
 EOLIAN static Eina_Bool
 _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
-                          const Efl_Callback_Array_Item *array,
-                          Efl_Callback_Priority priority,
-                          const void *user_data)
+                                              const Efl_Callback_Array_Item *array,
+                                              Efl_Callback_Priority priority,
+                                              const void *user_data)
 {
    Eo_Callback_Description *cb = _eo_callback_new();
 #ifdef EO_DEBUG
@@ -1137,13 +1124,8 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    const Efl_Callback_Array_Item *prev;
 #endif
 
-   if (!cb || !array)
-     {
-        ERR("Tried adding array of callbacks with invalid values: cb: %p array: %p.", cb, array);
-        _eo_callback_free(cb);
-        return EINA_FALSE;
-     }
-
+   // very unlikely so improve l1 instr cache by using goto
+   if (!cb || !array) goto err;
 #ifdef EO_DEBUG
    prev = array;
    for (it = prev + 1; prev->func && it->func; it++, prev++)
@@ -1166,12 +1148,17 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)array);
 
    return EINA_TRUE;
+
+err:
+   ERR("Tried adding array of callbacks with invalid values: cb: %p array: %p.", cb, array);
+   _eo_callback_free(cb);
+   return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
 _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
-                 const Efl_Callback_Array_Item *array,
-                 const void *user_data)
+                                     const Efl_Callback_Array_Item *array,
+                                     const void *user_data)
 {
    Eo_Callback_Description **cb;
    unsigned int i;
@@ -1203,19 +1190,16 @@ static Eina_Bool
 _cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b, Eina_Bool legacy_compare)
 {
    /* If one is legacy and the other is not, strcmp. Else, pointer compare. */
-   if (EINA_UNLIKELY(legacy_compare && (_legacy_event_desc_is(a) != _legacy_event_desc_is(b))))
-     {
-        return !strcmp(a->name, b->name);
-     }
-
-   return (a == b);
+   if (!EINA_UNLIKELY(legacy_compare && (_legacy_event_desc_is(a) != _legacy_event_desc_is(b))))
+     return (a == b);
+   return !strcmp(a->name, b->name);
 }
 
 static inline Eina_Bool
 _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
-            const Efl_Event_Description *desc,
-            void *event_info,
-            Eina_Bool legacy_compare)
+                     const Efl_Event_Description *desc,
+                     void *event_info,
+                     Eina_Bool legacy_compare)
 {
    Eo_Callback_Description **cb;
    Eo_Current_Callback_Description *lookup = NULL;
@@ -1234,32 +1218,10 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    pd->walking_list++;
 
    // Handle event that require to restart where we were in the nested list walking
-   if (desc->restart)
-     {
-        EINA_INLIST_FOREACH(pd->current, lookup)
-          if (lookup->desc == desc)
-            break;
-
-        // This is the first event to trigger it, so register it here
-        if (!lookup)
-          {
-             // This following trick get us a zero allocation list
-             saved.desc = desc;
-             saved.current = 0;
-             lookup = &saved;
-             // Ideally there will most of the time be only one item in this list
-             // But just to speed up things, prepend so we find it fast at the end
-             // of this function
-             pd->current = eina_inlist_prepend(pd->current, EINA_INLIST_GET(lookup));
-          }
-
-        if (!lookup->current) lookup->current = pd->callbacks_count;
-        idx = lookup->current;
-     }
-   else
-     {
-        idx = pd->callbacks_count;
-     }
+   // relatively unlikely so improve l1 instr cache by using goto
+   if (desc->restart) goto restart;
+   else idx = pd->callbacks_count;
+restart_back:
 
    for (; idx > 0; idx--)
      {
@@ -1336,6 +1298,28 @@ end:
    pd->callback_stopped = callback_already_stopped;
 
    return ret;
+restart:
+   EINA_INLIST_FOREACH(pd->current, lookup)
+     {
+        if (lookup->desc == desc) break;
+     }
+
+   // This is the first event to trigger it, so register it here
+   if (!lookup)
+     {
+        // This following trick get us a zero allocation list
+        saved.desc = desc;
+        saved.current = 0;
+        lookup = &saved;
+        // Ideally there will most of the time be only one item in this list
+        // But just to speed up things, prepend so we find it fast at the end
+        // of this function
+        pd->current = eina_inlist_prepend(pd->current, EINA_INLIST_GET(lookup));
+     }
+
+   if (!lookup->current) lookup->current = pd->callbacks_count;
+   idx = lookup->current;
+   goto restart_back;
 }
 
 EOLIAN static Eina_Bool
@@ -1452,12 +1436,9 @@ _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
 {
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
    EO_OBJ_POINTER(parent_id, parent);
-   if (!parent)
-     {
-        EO_OBJ_DONE(comp_obj_id);
-        return EINA_FALSE;
-     }
-   Efl_Object_Data *comp_pd = efl_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
+   // very unlikely so improve l1 instr cache by using goto
+   if (!parent) goto err_parent;
+
    /* Don't composite if we already have a composite object of this type */
      {
         Eina_List *itr;
@@ -1465,14 +1446,12 @@ _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
         EINA_LIST_FOREACH(parent->composite_objects, itr, emb_obj_id)
           {
              EO_OBJ_POINTER_RETURN_VAL(emb_obj_id, emb_obj, EINA_FALSE);
-             if (emb_obj->klass == comp_obj->klass)
-               {
-                  EO_OBJ_DONE(parent_id);
-                  EO_OBJ_DONE(comp_obj_id);
-                  return EINA_FALSE;
-               }
+             // unlikely so improve l1 instr cache by using goto
+             if (emb_obj->klass == comp_obj->klass) goto err_klass;
           }
      }
+
+   Efl_Object_Data *comp_pd = efl_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
 
    if (efl_composite_part_is(comp_obj_id))
      efl_composite_detach(comp_pd->ext->composite_parent, comp_obj_id);
@@ -1486,6 +1465,12 @@ _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
    EO_OBJ_DONE(parent_id);
    EO_OBJ_DONE(comp_obj_id);
    return EINA_TRUE;
+
+err_klass:
+   EO_OBJ_DONE(parent_id);
+err_parent:
+   EO_OBJ_DONE(comp_obj_id);
+   return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
@@ -1493,31 +1478,29 @@ _efl_object_composite_detach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
 {
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
    EO_OBJ_POINTER(parent_id, parent);
-   if (!parent)
-     {
-        EO_OBJ_DONE(comp_obj_id);
-        return EINA_FALSE;
-     }
+   // very unlikely so improve l1 instr cache by using goto
+   if (!parent) goto err_parent;
 
-   if (!efl_composite_part_is(comp_obj_id))
-     {
-        EO_OBJ_DONE(parent_id);
-        EO_OBJ_DONE(comp_obj_id);
-        return EINA_FALSE;
-     }
+   // unlikely so improve l1 instr cache by using goto
+   if (!efl_composite_part_is(comp_obj_id)) goto err_part;
 
    parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
    /* Clear the comp parent on the child. */
      {
         Efl_Object_Data *comp_pd = efl_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
         comp_pd->ext->composite_parent = NULL;
-
         _efl_object_extension_noneed(comp_pd);
      }
 
    EO_OBJ_DONE(parent_id);
    EO_OBJ_DONE(comp_obj_id);
    return EINA_TRUE;
+
+err_part:
+   EO_OBJ_DONE(parent_id);
+err_parent:
+   EO_OBJ_DONE(comp_obj_id);
+   return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
@@ -1641,59 +1624,84 @@ _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
 {
    Eo *child;
    Efl_Object_Extension *ext;
+   _Eo_Object *obj_data2 = NULL;
 
    DBG("%p - %s.", obj, efl_class_name_get(obj));
 
    // special removal - remove from children list by hand after getting
    // child handle in case unparent method is overridden and does
    // extra things like removes other children too later on in the list
-   while (pd->children)
-     {
-        child = _eo_obj_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
-        efl_parent_set(child, NULL);
-     }
+   // this is a goto because more often than not objects do not have children
+   // so it's unlikely they will need the child cleanup code to so to have
+   // better l1 cache instruction coherency, move this to the end
+   if (pd->children) goto children;
+children_back:
 
-   /* If we are a composite object, detach children */
+   // If we are a composite object, detach children. it is quite unlikely
+   // we are a composite object, so put the core of this handling
+   // at the end out of l1 cache prefetch
      {
         EO_OBJ_POINTER_RETURN(obj, obj_data);
-        Eina_List *itr, *next;
-        Eo *emb_obj_id;
-        EINA_LIST_FOREACH_SAFE(obj_data->composite_objects, itr, next, emb_obj_id)
-          {
-             efl_composite_detach(obj, emb_obj_id);
-          }
+        obj_data2 = obj_data;
+        if (obj_data->composite_objects) goto composite_obj;
+composite_obj_back:
         EO_OBJ_DONE(obj);
      }
 
    if (pd->ext && pd->ext->composite_parent)
-     {
-        efl_composite_detach(pd->ext->composite_parent, obj);
-     }
+     efl_composite_detach(pd->ext->composite_parent, obj);
 
-   if (pd->parent)
-     {
-        ERR("Object '%p' still has a parent at the time of destruction.", obj);
-        efl_parent_set(obj, NULL);
-     }
+   // parent still being here is unlikely, so move error handling out of the
+   // code execution path
+   if (pd->parent) goto err_parent;
+err_parent_back:
 
    _eo_generic_data_del_all(obj, pd);
    _wref_destruct(pd);
    _eo_callback_remove_all(pd);
 
    ext = pd->ext;
-   if (ext)
+   // it is rather likely we dont have any extension section for most objects
+   // so return immediately here to avoid pulling in more instructions to
+   // the 1l cache if we can
+   if (!ext)
      {
-        eina_stringshare_del(ext->name);
-        ext->name = NULL;
-        eina_stringshare_del(ext->comment);
-        ext->comment = NULL;
-        while (pd->ext && ext->futures)
-          efl_future_cancel(eina_list_data_get(ext->futures));
-
-        _efl_object_extension_noneed(pd);
+        _eo_condtor_done(obj);
+        return;
      }
-
+   eina_stringshare_del(ext->name);
+   ext->name = NULL;
+   eina_stringshare_del(ext->comment);
+   ext->comment = NULL;
+   while (pd->ext && ext->futures)
+     efl_future_cancel(eina_list_data_get(ext->futures));
+   _efl_object_extension_noneed(pd);
    _eo_condtor_done(obj);
+   return;
+
+children:
+   while (pd->children)
+     {
+        child = _eo_obj_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
+        efl_parent_set(child, NULL);
+     }
+   goto children_back;
+
+composite_obj:
+     {
+        Eina_List *itr, *next;
+        Eo *emb_obj_id;
+        EINA_LIST_FOREACH_SAFE(obj_data2->composite_objects, itr, next, emb_obj_id)
+          {
+             efl_composite_detach(obj, emb_obj_id);
+          }
+     }
+   goto composite_obj_back;
+
+err_parent:
+   ERR("Object '%p' still has a parent at the time of destruction.", obj);
+   efl_parent_set(obj, NULL);
+   goto err_parent_back;
 }
 
 EOLIAN static Eo *
