@@ -491,14 +491,19 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
         free(ocnamel);
      }
 
+   /* strip the final comma before appending */
    if (eina_strbuf_length_get(ops))
      {
-        eina_strbuf_append(ops, "   );\n");
+        eina_strbuf_remove(ops, eina_strbuf_length_get(ops) - 2,
+                           eina_strbuf_length_get(ops));
+        eina_strbuf_append(ops, "\n   );\n");
         eina_strbuf_append(buf, eina_strbuf_string_get(ops));
      }
    if (eina_strbuf_length_get(cops))
      {
-        eina_strbuf_append(cops, "   );\n");
+        eina_strbuf_remove(cops, eina_strbuf_length_get(cops) - 2,
+                           eina_strbuf_length_get(cops));
+        eina_strbuf_append(cops, "\n   );\n");
         eina_strbuf_append(buf, eina_strbuf_string_get(cops));
      }
 
