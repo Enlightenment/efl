@@ -43,7 +43,7 @@ struct _Job_Closure
 {
    Eo *object;
    Efl_Io_Manager_Data *pdata;
-   Eina_Promise_Owner *promise;
+   Efl_Promise *promise;
    Eio_File *file;
    Eina_Bool delete_me;
    void *delayed_arg;
@@ -260,7 +260,8 @@ _efl_io_manager_direct_ls(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   p = efl_add(EFL_PROMISE_CLASS, obj);
+   Eo *loop = efl_loop_user_loop_get(obj);
+   p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
    if (!recursive)
@@ -299,7 +300,8 @@ _efl_io_manager_stat_ls(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   p = efl_add(EFL_PROMISE_CLASS, obj);
+   Eo *loop = efl_loop_user_loop_get(obj);
+   p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
    if (!recursive)
@@ -337,7 +339,8 @@ _efl_io_manager_ls(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   p = efl_add(EFL_PROMISE_CLASS, obj);
+   Eo *loop = efl_loop_user_loop_get(obj);
+   p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
    h = _eio_file_ls(path,
@@ -384,7 +387,8 @@ _efl_io_manager_stat(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   p = efl_add(EFL_PROMISE_CLASS, obj);
+   Eo *loop = efl_loop_user_loop_get(obj);
+   p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
    h = eio_file_direct_stat(path,
@@ -411,7 +415,8 @@ _efl_io_manager_xattr_ls(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   p = efl_add(EFL_PROMISE_CLASS, obj);
+   Eo *loop = efl_loop_user_loop_get(obj);
+   p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
    h = _eio_file_xattr(path,
@@ -440,7 +445,8 @@ _efl_io_manager_xattr_set(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   p = efl_add(EFL_PROMISE_CLASS, obj);
+   Eo *loop = efl_loop_user_loop_get(obj);
+   p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
    h = eio_file_xattr_set(path, attribute,
@@ -469,7 +475,8 @@ _efl_io_manager_xattr_get(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   p = efl_add(EFL_PROMISE_CLASS, obj);
+   Eo *loop = efl_loop_user_loop_get(obj);
+   p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
    h = eio_file_xattr_get(path, attribute,
@@ -507,7 +514,8 @@ _efl_io_manager_open(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   p = efl_add(EFL_PROMISE_CLASS, obj);
+   Eo *loop = efl_loop_user_loop_get(obj);
+   p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
    h = eio_file_open(path, shared,
@@ -533,7 +541,8 @@ _efl_io_manager_close(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   p = efl_add(EFL_PROMISE_CLASS, obj);
+   Eo *loop = efl_loop_user_loop_get(obj);
+   p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
    h = eio_file_close(file,

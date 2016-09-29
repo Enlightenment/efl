@@ -93,10 +93,10 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED)
 }
 
 static void
-_property_get_cb(void* data, void* v)
+_property_get_cb(void* data, Efl_Event const* event)
 {
     View_List_ValueItem *vitem = data;
-    Eina_Value *value = v;
+    Eina_Value *value = (Eina_Value*)((Efl_Future_Event_Success*)event->info)->value;
     vitem->value = eina_value_new(eina_value_type_get(value));
     eina_value_copy(value, vitem->value);
 
@@ -105,7 +105,7 @@ _property_get_cb(void* data, void* v)
 }
 
 static void
-_property_get_error_cb(void* data, Eina_Error err EINA_UNUSED)
+_property_get_error_cb(void* data, Efl_Event const* event EINA_UNUSED)
 {
     View_List_ValueItem *vitem = data;
     eina_stringshare_del(vitem->part);
@@ -144,7 +144,7 @@ _item_get_value(View_List_ItemData *idata, const char *part)
 
    if (value == NULL)
      {
-         Eina_Promise *promise;
+         Efl_Future *future;
          vitem = calloc(1, sizeof(View_List_ValueItem));
          const char *prop = eina_hash_find(idata->priv->prop_con, part);
 
@@ -153,9 +153,9 @@ _item_get_value(View_List_ItemData *idata, const char *part)
          vitem->part = eina_stringshare_add(part);
          vitem->item = idata->item;
          idata->values = eina_list_append(idata->values, vitem);
-         promise = efl_model_property_get(idata->model, prop);
-         eina_promise_then(promise, &_property_get_cb,
-                           &_property_get_error_cb, vitem);
+         future = efl_model_property_get(idata->model, prop);
+         efl_future_then(future, &_property_get_cb,
+                         &_property_get_error_cb, NULL, vitem);
      }
    else
      {
@@ -300,10 +300,10 @@ _efl_model_properties_change_cb(void *data, const Efl_Event *event)
 }
 
 static void
-_efl_model_load_children_then(void * data, void* value)
+_efl_model_load_children_then(void * data, Efl_Event const* event)
 {
    View_List_ItemData *pdata = data;
-   Eina_Accessor *accessor = value;
+   Eina_Accessor *accessor = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
    Eo *child;
    unsigned i = 0;
    EINA_SAFETY_ON_NULL_RETURN(pdata);
@@ -332,10 +332,8 @@ _efl_model_load_children_then(void * data, void* value)
 static void
 _efl_model_load_children(View_List_ItemData *pdata)
 {
-   Eina_Promise *promise;
-
-   promise = efl_model_children_slice_get(pdata->model, 0, 0);
-   eina_promise_then(promise, &_efl_model_load_children_then, NULL, pdata);
+   efl_future_then(efl_model_children_slice_get(pdata->model, 0, 0),
+                   &_efl_model_load_children_then, NULL, NULL, pdata);
 }
 
 static void

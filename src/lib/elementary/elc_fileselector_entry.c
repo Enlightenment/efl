@@ -64,7 +64,7 @@ SIG_FWD(UNPRESSED, EFL_UI_EVENT_UNPRESSED)
 #undef SIG_FWD
 
 static void
-_file_chosen_path_then(void *data, void *v)
+_file_chosen_path_then(void *data, Efl_Event const* event)
 {
    Eina_Array *args = data;
    const char *file = NULL;
@@ -74,7 +74,7 @@ _file_chosen_path_then(void *data, void *v)
 
    eina_array_free(args);
 
-   eina_value_get(v, &file);
+   eina_value_get((Eina_Value*)((Efl_Future_Event_Success*)event->info)->value, &file);
 
    if (!file) return;
    ELM_FILESELECTOR_ENTRY_DATA_GET(fs, sd);
@@ -88,8 +88,9 @@ _file_chosen_path_then(void *data, void *v)
 }
 
 static void
-_file_chosen_path_then_error(void *data, Eina_Error err)
+_file_chosen_path_then_error(void *data, Efl_Event const* event)
 {
+   Eina_Error err = ((Efl_Future_Event_Failure*)event->info)->error;
    ERR("Efl.Model property \"path\" error: %s", eina_error_msg_get(err));
    eina_array_free(data);
 }
@@ -98,7 +99,7 @@ static void
 _FILE_CHOSEN_fwd(void *data, const Efl_Event *event)
 {
    Efl_Model *model = event->info;
-   Eina_Promise *promise = NULL;
+   Efl_Future *future = NULL;
    Eina_Array *args = NULL;
 
    if (!model) return;
@@ -107,9 +108,9 @@ _FILE_CHOSEN_fwd(void *data, const Efl_Event *event)
    eina_array_push(args, data);
    eina_array_push(args, model);
 
-   promise = efl_model_property_get(model, "path");
-   eina_promise_then
-     (promise, _file_chosen_path_then, _file_chosen_path_then_error, args);
+   future = efl_model_property_get(model, "path");
+   efl_future_then
+     (future, _file_chosen_path_then, _file_chosen_path_then_error, NULL, args);
 }
 
 static void
@@ -129,7 +130,7 @@ _ACTIVATED_fwd(void *data, const Efl_Event *event)
          model = efl_add(efl_class_get(bmodel), NULL);
          eina_value_setup(&path, EINA_VALUE_TYPE_STRING);
          eina_value_set(&path, file);
-         efl_model_property_set(model, "path", &path, NULL);
+         efl_model_property_set(model, "path", &path);
          eina_value_flush(&path);
          elm_interface_fileselector_model_set(sd->button, model);
      }
@@ -410,14 +411,16 @@ _elm_fileselector_entry_selected_set_internal(Evas_Object *obj, const char *path
    return EINA_TRUE;
 }
 
-EOLIAN static void
+EOLIAN static Efl_Future*
 _elm_fileselector_entry_elm_interface_fileselector_selected_model_set(Eo *obj EINA_UNUSED,
                                                                       Elm_Fileselector_Entry_Data *sd,
-                                                                      Efl_Model *model,
-                                                                      Eina_Promise_Owner *promise_owner)
+                                                                      Efl_Model *model)
 {
+   Efl_Promise* promise = efl_add(EFL_PROMISE_CLASS, obj);
+   Efl_Future* future = efl_promise_future_get(promise);
    elm_interface_fileselector_model_set(sd->button, model);
-   eina_promise_owner_value_set(promise_owner, efl_ref(model), _model_free_eo_cb);
+   efl_promise_value_set(promise, efl_ref(model), _model_free_eo_cb);
+   return future;
 }
 
 EINA_DEPRECATED EAPI const char *
@@ -499,11 +502,12 @@ _elm_fileselector_entry_path_set_internal(Evas_Object *obj, const char *path)
 }
 
 static void
-_fs_entry_model_path_get_then(void *data, void *v)
+_fs_entry_model_path_get_then(void *data, Efl_Event const *event)
 {
    Elm_Fileselector_Entry_Data *sd = data;
    char *path = NULL;
    char *s;
+   Eina_Value* v = (Eina_Value*)((Efl_Future_Event_Success*)event->info)->value;
 
    if (!v)
      return;
@@ -520,11 +524,11 @@ _fs_entry_model_path_get_then(void *data, void *v)
 EOLIAN static void
 _elm_fileselector_entry_elm_interface_fileselector_model_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd, Efl_Model *model)
 {
-   Eina_Promise *p = NULL;
+   Efl_Future *p = NULL;
    elm_interface_fileselector_model_set(sd->button, model);
 
    p = efl_model_property_get(model, "path");
-   eina_promise_then(p, _fs_entry_model_path_get_then, NULL, sd);
+   efl_future_then(p, _fs_entry_model_path_get_then, NULL, NULL, sd);
 }
 
 EINA_DEPRECATED EAPI const char *
@@ -560,7 +564,7 @@ _elm_fileselector_entry_elm_interface_fileselector_model_get(Eo *obj EINA_UNUSED
    sd->path = elm_entry_markup_to_utf8(elm_object_text_get(sd->entry));
    eina_value_setup(&path, EINA_VALUE_TYPE_STRING);
    eina_value_set(&path, sd->path);
-   efl_model_property_set(ret, "path", &path, NULL);
+   efl_model_property_set(ret, "path", &path);
    eina_value_flush(&path);
 
    return ret;

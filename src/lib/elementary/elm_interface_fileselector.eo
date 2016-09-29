@@ -151,8 +151,8 @@ interface Elm.Interface.Fileselector ()
          [[Set, programmatically, the currently selected file/directory in the given file selector widget]]
          params {
             @in model: Efl.Model; [[Model to be set]]
-            @inout promise: promise<Efl.Model>; [[Promise returning the recorded selected model or error]]
          }
+         return: future<Efl.Model>; [[Promise returning the recorded selected model or error]]
       }
       selected_model_get {
          [[Get the currently selected item's model, in the given file the given file selector widget]]

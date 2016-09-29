@@ -64,7 +64,7 @@ _eio_stat_done_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *st
             break;
           };
 
-        eina_promise_owner_value_set(p->promise, v, (Eina_Promise_Free_Cb)&eina_value_free);
+        efl_promise_value_set(p->promise, v, (Eina_Free_Cb)&eina_value_free);
         free(p);
      }
    eina_list_free(priv->property_promises);
@@ -111,7 +111,7 @@ _eio_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
 
         EINA_LIST_FOREACH(priv->property_promises, l, p)
           {
-              eina_promise_owner_error_set(p->promise, EFL_MODEL_ERROR_UNKNOWN);
+              efl_promise_failed_set(p->promise, EFL_MODEL_ERROR_UNKNOWN);
           }
         eina_list_free(priv->property_promises);
         priv->property_promises = NULL;
@@ -289,20 +289,24 @@ _eio_model_efl_model_properties_get(Eo *obj EINA_UNUSED, Eio_Model_Data *_pd)
 /**
  * Property Get
  */
-static Eina_Promise*
+static Efl_Future*
 _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, const char *property)
 {
    _Eio_Property_Name property_name;
    const char* value = NULL;
-   Eina_Promise_Owner *promise = eina_promise_add();
-   Eina_Promise *rpromise = eina_promise_owner_promise_get(promise);
+   Efl_Promise *promise;
+   Efl_Future *future;
+
+   Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+   promise = efl_add(EFL_PROMISE_CLASS, loop);
+   future = efl_promise_future_get(promise);
    
-   EINA_SAFETY_ON_NULL_RETURN_VAL(priv, rpromise);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(priv, future);
 
    if (property == NULL)
      {
-        eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
-        return rpromise;
+        efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
+        return future;
      }
 
    if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_FILENAME], property) == 0)
@@ -338,8 +342,8 @@ _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, con
      property_name = EIO_MODEL_PROP_SIZE;
    else
      {
-        eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
-        return rpromise;
+        efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
+        return future;
      }
 
    switch(property_name)
@@ -350,7 +354,7 @@ _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, con
        {
           Eina_Value* v = eina_value_new(EINA_VALUE_TYPE_STRING);
           eina_value_set(v, value);
-          eina_promise_owner_value_set(promise, v, (Eina_Promise_Free_Cb)&eina_value_free);
+          efl_promise_value_set(promise, v, (Eina_Free_Cb)&eina_value_free);
        }
        break;
      default:
@@ -365,27 +369,30 @@ _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, con
        }
        break;
      }
-   return rpromise;
+   return future;
 }
 
 /**
  * Property Set
  */
-static void
+static Efl_Future*
 _eio_model_efl_model_property_set(Eo *obj EINA_UNUSED,
                                                 Eio_Model_Data *priv,
                                                 const char * property,
-                                                const Eina_Value *value,
-                                                Eina_Promise_Owner *promise)
+                                  const Eina_Value *value)
 {
    char *dest;
 
-   EINA_SAFETY_ON_NULL_RETURN(property);
+   Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, loop);
+   Efl_Future* future = efl_promise_future_get(promise);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(property, future);
 
    if (strcmp(property, "path") != 0)
      {
-        eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_SUPPORTED);
-        return;
+        efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_SUPPORTED);
+        return future;
      }
 
    eina_value_get(value, &dest);
@@ -395,8 +402,8 @@ _eio_model_efl_model_property_set(Eo *obj EINA_UNUSED,
 
         if (!ecore_file_exists(priv->path))
           {
-             eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
-             return;
+             efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
+             return future;
           }
 
         char* tmp = strdup(priv->path);
@@ -415,21 +422,23 @@ _eio_model_efl_model_property_set(Eo *obj EINA_UNUSED,
         eina_stringshare_replace(&priv->path, dest);
      }
 
-     eina_promise_owner_value_set(promise, &value, NULL);
+   efl_promise_value_set(promise, &value, NULL);
+   return future;
 }
 
 /**
  * Children Count Get
  */
-static Eina_Promise*
+static Efl_Future*
 _eio_model_efl_model_children_count_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv)
 {
-   Eina_Promise_Owner *promise = eina_promise_add();
-   Eina_Promise* rpromise = eina_promise_owner_promise_get(promise);
+   Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, loop);
+   Efl_Future* future = efl_promise_future_get(promise);
    unsigned int *c = calloc(sizeof(unsigned int), 1);
    *c = eina_list_count(priv->children_list);
-   eina_promise_owner_value_set(promise, c, free);
-   return rpromise;
+   efl_promise_value_set(promise, c, free);
+   return future;
 }
 
 static void
@@ -524,7 +533,7 @@ _eio_done_children_load_cb(void *data, Eio_File *handler EINA_UNUSED)
    EINA_LIST_FOREACH(priv->children_promises, i, p)
      {
        Eina_Accessor* accessor = efl_model_list_slice(priv->children_list, p->start, p->count);
-       eina_promise_owner_value_set(p->promise, accessor, (Eina_Promise_Free_Cb)&eina_accessor_free);
+       efl_promise_value_set(p->promise, accessor, (Eina_Free_Cb)&eina_accessor_free);
        free(p);
      }
 
@@ -603,20 +612,21 @@ _eio_model_efl_model_child_del(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eo *ch
 /**
  * Children Slice Get
  */
-static Eina_Promise*
+static Efl_Future*
 _eio_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv,
                                              unsigned int start, unsigned int count)
 {
-   Eina_Promise_Owner *promise = eina_promise_add();
-   Eina_Promise* rpromise = eina_promise_owner_promise_get(promise);
+   Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, loop);
+   Efl_Future* future = efl_promise_future_get(promise);
    /**
     * children must be already loaded otherwise we do nothing
     * and parameter is set to NULL.
     */
    if (!priv->path)
      {
-        eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_INIT_FAILED);
-        return rpromise;
+        efl_promise_failed_set(promise, EFL_MODEL_ERROR_INIT_FAILED);
+        return future;
      }
 
    if (!(priv->is_listed))
@@ -636,12 +646,12 @@ _eio_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *pri
                              _eio_main_children_load_cb, _eio_done_children_load_cb,
                              _eio_error_children_load_cb, priv);
          }
-       return rpromise;
+       return future;
      }
 
    Eina_Accessor* accessor = efl_model_list_slice(priv->children_list, start, count);
-   eina_promise_owner_value_set(promise, accessor, (Eina_Promise_Free_Cb)&eina_accessor_free);
-   return rpromise;
+   efl_promise_value_set(promise, accessor, (Eina_Free_Cb)&eina_accessor_free);
+   return future;
 }
 
 

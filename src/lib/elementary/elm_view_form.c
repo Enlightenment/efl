@@ -46,23 +46,24 @@ struct _Elm_View_Form_Promise
 
 
 static void
-_efl_promise_then_widget(void* data, void* v)
+_efl_promise_then_widget(void* data, Efl_Event const* event)
 {
     Elm_View_Form_Widget *w = data;
-    Eina_Value *value = v;
+    Efl_Future_Event_Success* info = event->info;
+    Eina_Value *value = info->value;
     w->widget_obj_set_cb(w->widget_obj, value, w->widget_propname);
 }
 
 static void
-_efl_promise_error_widget(void *data EINA_UNUSED, Eina_Error err EINA_UNUSED)
+_efl_promise_error_widget(void *data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
 {
 }
 
 static void
-_efl_model_promise_then_cb(void* data, void* v)
+_efl_model_promise_then_cb(void* data, Efl_Event const* event)
 {
    Elm_View_Form_Promise *p = data;
-   Eina_Value *value = v;
+   Eina_Value *value = ((Efl_Future_Event_Success*)event->info)->value;
    Elm_View_Form_Data *priv = p->priv;
    Elm_View_Form_Widget *w = NULL;
    Eina_List *l = NULL;
@@ -82,7 +83,7 @@ _efl_model_promise_then_cb(void* data, void* v)
 }
 
 static void
-_efl_model_promise_error_cb(void* data, Eina_Error error EINA_UNUSED)
+_efl_model_promise_error_cb(void* data, Efl_Event const* event EINA_UNUSED)
 {
    Elm_View_Form_Promise *p = data;
    EINA_SAFETY_ON_NULL_RETURN(p);
@@ -95,7 +96,6 @@ static void
 _efl_model_properties_change_cb(void *data, const Efl_Event *event)
 {
    const Efl_Model_Property_Event *evt = event->info;
-   Eina_Promise *promise;
    const char *prop;
    unsigned int i;
    Elm_View_Form_Data *priv = data;
@@ -114,9 +114,9 @@ _efl_model_properties_change_cb(void *data, const Efl_Event *event)
         p = calloc(1, sizeof(Elm_View_Form_Promise));
         p->property_name = eina_stringshare_add(prop);
         p->priv = priv;
-        promise = efl_model_property_get(priv->model_obj, prop);
-        eina_promise_then(promise, &_efl_model_promise_then_cb,
-                          &_efl_model_promise_error_cb, p);
+        efl_future_then(efl_model_property_get(priv->model_obj, prop),
+                        &_efl_model_promise_then_cb,
+                        &_efl_model_promise_error_cb, NULL, p);
      }
 }
 
@@ -125,15 +125,14 @@ _update_model_properties(Elm_View_Form_Data *priv)
 {
    Eina_List *l;
    Elm_View_Form_Widget *w;
-   Eina_Promise *promise;
    //update all widgets property
    if (priv->model_obj == NULL)
      return;
 
    EINA_LIST_FOREACH(priv->widgets, l, w)
      {
-        promise = efl_model_property_get(priv->model_obj, w->widget_propname);
-        eina_promise_then(promise, &_efl_promise_then_widget, &_efl_promise_error_widget, w);
+        efl_future_then(efl_model_property_get(priv->model_obj, w->widget_propname),
+                        &_efl_promise_then_widget, &_efl_promise_error_widget, NULL, w);
      }
 }
 
@@ -201,7 +200,7 @@ _elm_evas_object_text_changed_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *o
    EINA_SAFETY_ON_NULL_RETURN(w);
    eina_value_setup(&value, EINA_VALUE_TYPE_STRING);
    eina_value_set(&value, elm_object_text_get(obj));
-   efl_model_property_set(priv->model_obj, w->widget_propname, &value, NULL);
+   efl_model_property_set(priv->model_obj, w->widget_propname, &value);
    eina_value_flush(&value);
 }
 /**
@@ -212,7 +211,7 @@ _elm_evas_object_text_changed_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *o
 static Eina_Bool
 _elm_view_widget_add(Elm_View_Form_Data *priv, const char *propname, Evas_Object *widget_obj)
 {
-   Eina_Promise *promise = NULL;
+   Efl_Future *future = NULL;
    Elm_View_Form_Widget *w = calloc(1, sizeof(Elm_View_Form_Widget));
    EINA_SAFETY_ON_NULL_RETURN_VAL(w, EINA_FALSE);
 
@@ -241,9 +240,9 @@ _elm_view_widget_add(Elm_View_Form_Data *priv, const char *propname, Evas_Object
 
    if (priv->model_obj != NULL)
      {
-         promise = efl_model_property_get(priv->model_obj, w->widget_propname);
-         eina_promise_then(promise, &_efl_promise_then_widget,
-                           &_efl_promise_error_widget, priv);
+         future = efl_model_property_get(priv->model_obj, w->widget_propname);
+         efl_future_then(future, &_efl_promise_then_widget,
+                         &_efl_promise_error_widget, NULL, priv);
      }
    return EINA_TRUE;
 }

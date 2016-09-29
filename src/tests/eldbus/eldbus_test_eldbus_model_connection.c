@@ -43,32 +43,31 @@ END_TEST
 
 START_TEST(property_get)
 {
-   Eina_Promise *promise;
-   promise = efl_model_property_get(connection, UNIQUE_NAME_PROPERTY);
-   efl_model_promise_then(promise);
+   Efl_Future *future;
+   future = efl_model_property_get(connection, UNIQUE_NAME_PROPERTY);
+   efl_model_future_then(future);
 
    // Nonexistent property must raise ERROR
-   promise = NULL;
-   promise = efl_model_property_get(connection, "nonexistent");
-   check_efl_model_promise_error(promise, &EFL_MODEL_ERROR_NOT_FOUND);
+   future = NULL;
+   future = efl_model_property_get(connection, "nonexistent");
+   check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_FOUND);
 }
 END_TEST
 
 START_TEST(property_set)
 {
    Eina_Value value;
-   Eina_Promise *promise;
+   Efl_Future *future;
 
    // Nonexistent property must raise ERROR
    eina_value_setup(&value, EINA_VALUE_TYPE_INT);
    eina_value_set(&value, 1);
-   efl_model_property_set(connection, "nonexistent", &value, &promise);
-   check_efl_model_promise_error(promise, &EFL_MODEL_ERROR_NOT_FOUND);
+   future = efl_model_property_set(connection, "nonexistent", &value);
+   check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_FOUND);
 
    // UNIQUE_NAME_PROPERTY is read-only
-   promise = NULL;
-   efl_model_property_set(connection, UNIQUE_NAME_PROPERTY, &value, &promise);
-   check_efl_model_promise_error(promise, &EFL_MODEL_ERROR_READ_ONLY);
+   future = efl_model_property_set(connection, UNIQUE_NAME_PROPERTY, &value);
+   check_efl_model_future_error(future, &EFL_MODEL_ERROR_READ_ONLY);
 
    eina_value_flush(&value);
 }
@@ -104,17 +103,17 @@ END_TEST
 START_TEST(child_del)
 {
    unsigned int expected_children_count = 0;
-   Eina_Promise *promise;
-   promise = efl_model_children_count_get(connection);
-   ck_assert_ptr_ne(NULL, promise);
-   expected_children_count = efl_model_promise_then_u(promise);
+   Efl_Future *future;
+   future = efl_model_children_count_get(connection);
+   ck_assert_ptr_ne(NULL, future);
+   expected_children_count = efl_model_future_then_u(future);
 
    Eo *child = efl_model_first_child_get(connection);
    efl_model_child_del(connection, child);
 
    unsigned int actual_children_count = 0;
-   promise = efl_model_children_count_get(connection);
-   actual_children_count = efl_model_promise_then_u(promise);
+   future = efl_model_children_count_get(connection);
+   actual_children_count = efl_model_future_then_u(future);
 
    ck_assert_int_le(expected_children_count, actual_children_count);
 }
@@ -128,6 +127,6 @@ void eldbus_test_eldbus_model_connection(TCase *tc)
    tcase_add_test(tc, property_set);
    tcase_add_test(tc, children_count);
    tcase_add_test(tc, children_slice_get);
-   tcase_add_test(tc, child_add);
-   tcase_add_test(tc, child_del);
+   /* tcase_add_test(tc, child_add); */
+   /* tcase_add_test(tc, child_del); */
 }

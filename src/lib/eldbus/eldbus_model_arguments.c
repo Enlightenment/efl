@@ -113,60 +113,62 @@ _eldbus_model_arguments_properties_load(Eldbus_Model_Arguments_Data *pd)
      }
 }
 
-static void
+static Efl_Future*
 _eldbus_model_arguments_efl_model_property_set(Eo *obj EINA_UNUSED,
                                                     Eldbus_Model_Arguments_Data *pd,
                                                     const char *property,
-                                                    Eina_Value const* value,
-                                                    Eina_Promise_Owner *promise)
+                                               Eina_Value const* value)
 {
    Eina_Value *prop_value;
    Eina_Value *promise_value;
+   Efl_Promise* promise = efl_add(EFL_PROMISE_CLASS, obj);
+   Efl_Future* future = efl_promise_future_get(promise);
 
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(property, promise, EFL_MODEL_ERROR_INCORRECT_VALUE, );
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(value, promise, EFL_MODEL_ERROR_INCORRECT_VALUE, );
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(property, promise, EFL_MODEL_ERROR_INCORRECT_VALUE, future);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(value, promise, EFL_MODEL_ERROR_INCORRECT_VALUE, future);
    DBG("(%p): property=%s", obj, property);
 
    _eldbus_model_arguments_properties_load(pd);
 
    Eina_Bool ret = _eldbus_model_arguments_is_input_argument(pd, property);
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_READ_ONLY, );
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_READ_ONLY, future);
 
    prop_value = eina_hash_find(pd->properties_hash, property);
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(prop_value, promise, EFL_MODEL_ERROR_NOT_FOUND, );
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(prop_value, promise, EFL_MODEL_ERROR_NOT_FOUND, future);
 
    eina_value_flush(prop_value);
    eina_value_copy(value, prop_value);
 
    promise_value = eina_value_new(eina_value_type_get(value));
    eina_value_copy(value, promise_value);
-   eina_promise_owner_value_set(promise, promise_value, (Eina_Promise_Free_Cb)&eina_value_free);
+   efl_promise_value_set(promise, promise_value, (Eina_Free_Cb)&eina_value_free);
+   return future;
 }
 
-static Eina_Promise*
+static Efl_Future*
 _eldbus_model_arguments_efl_model_property_get(Eo *obj EINA_UNUSED,
                                                     Eldbus_Model_Arguments_Data *pd,
                                                     const char *property)
 {
-   Eina_Promise_Owner *promise = eina_promise_add();
-   Eina_Promise *rpromise = eina_promise_owner_promise_get(promise);
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, obj);
+   Efl_Future *future = efl_promise_future_get(promise);
    Eina_Value *promise_value;
 
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(property, promise, EFL_MODEL_ERROR_INCORRECT_VALUE, rpromise);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(property, promise, EFL_MODEL_ERROR_INCORRECT_VALUE, future);
    DBG("(%p): property=%s", obj, property);
 
    _eldbus_model_arguments_properties_load(pd);
 
    Eina_Value* value = eina_hash_find(pd->properties_hash, property);
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(value, promise, EFL_MODEL_ERROR_NOT_FOUND, rpromise);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(value, promise, EFL_MODEL_ERROR_NOT_FOUND, future);
 
    Eina_Bool ret = _eldbus_model_arguments_is_output_argument(pd, property);
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_PERMISSION_DENIED, rpromise);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_PERMISSION_DENIED, future);
 
    promise_value = eina_value_new(eina_value_type_get(value));
    eina_value_copy(value, promise_value);
-   eina_promise_owner_value_set(promise, promise_value, (Eina_Promise_Free_Cb)&eina_value_free);
-   return rpromise;
+   efl_promise_value_set(promise, promise_value, (Eina_Free_Cb)&eina_value_free);
+   return future;
 }
 
 static Eo *
@@ -182,26 +184,27 @@ _eldbus_model_arguments_efl_model_child_del(Eo *obj EINA_UNUSED,
 {
 }
 
-static Eina_Promise*
+static Efl_Future*
 _eldbus_model_arguments_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
                                                           Eldbus_Model_Arguments_Data *pd EINA_UNUSED,
                                                           unsigned start EINA_UNUSED,
                                                           unsigned count EINA_UNUSED)
 {
-   Eina_Promise_Owner *promise = eina_promise_add();
-   eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_SUPPORTED);
-   return eina_promise_owner_promise_get(promise);
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, obj);
+   efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_SUPPORTED);
+   return efl_promise_future_get(promise);
 }
 
-static Eina_Promise*
+static Efl_Future*
 _eldbus_model_arguments_efl_model_children_count_get(Eo *obj EINA_UNUSED,
                                                          Eldbus_Model_Arguments_Data *pd EINA_UNUSED)
 {
-   Eina_Promise_Owner *promise = eina_promise_add();
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, obj);
+   Efl_Future* future = efl_promise_future_get(promise);
    unsigned *count = malloc(sizeof(unsigned));
    *count = 0;
-   eina_promise_owner_value_set(promise, count, free);
-   return eina_promise_owner_promise_get(promise);
+   efl_promise_value_set(promise, count, free);
+   return future;
 }
 
 static const char *

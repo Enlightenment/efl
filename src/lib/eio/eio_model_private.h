@@ -40,7 +40,7 @@ typedef struct _Eio_Property_Promise _Eio_Property_Promise;
 struct _Eio_Property_Promise
 {
   _Eio_Property_Name property;
-  Eina_Promise_Owner* promise;
+  Efl_Promise* promise;
 };
 
 typedef struct _Eio_Children_Slice_Promise _Eio_Children_Slice_Promise;
@@ -48,7 +48,7 @@ struct _Eio_Children_Slice_Promise
 {
   unsigned start;
   unsigned count;
-  Eina_Promise_Owner* promise;
+  Efl_Promise* promise;
 };
 
 typedef struct _Eio_Model_Data _Eio_Model_Data;

@@ -57,18 +57,18 @@ static Eina_Bool
  }
 
 static void
-promise_then_count(void *data EINA_UNUSED, void *p)
+promise_then_count(void *data EINA_UNUSED, Efl_Event const *event)
 {
-  int *total = p;
+  int *total = ((Efl_Future_Event_Success*)event->info)->value;
   ck_assert_ptr_ne(total, NULL);
   printf("efl_model_loaded count %d\n", *total); fflush(stdout);
   ecore_main_loop_quit();
 }
 
 static void
-promise_then_accessor(void *data EINA_UNUSED, void* p)
+promise_then_accessor(void *data EINA_UNUSED, Efl_Event const* event)
 {
-  Eina_Accessor *accessor = p;
+  Eina_Accessor *accessor = ((Efl_Future_Event_Success*)event->info)->value;
   ck_assert_ptr_ne(accessor, NULL);
   printf("efl_model_loaded accessor %p\n", accessor); fflush(stdout);
 
@@ -83,9 +83,9 @@ promise_then_accessor(void *data EINA_UNUSED, void* p)
 }
 
 static void
-promise_then_value(void *user EINA_UNUSED, void *p)
+promise_then_value(void *user EINA_UNUSED, Efl_Event const* event)
 {
-  Eina_Value* value = p;
+  Eina_Value* value = ((Efl_Future_Event_Success*)event->info)->value;
   ck_assert_ptr_ne(value, NULL);
   char *str = eina_value_to_string(value);
 
@@ -97,7 +97,7 @@ promise_then_value(void *user EINA_UNUSED, void *p)
 }
 
 static void
-error_promise_then(void* data EINA_UNUSED, Eina_Error error EINA_UNUSED)
+error_promise_then(void* data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
 {
   ck_abort_msg(0, "Error Promise cb");
   ecore_main_loop_quit();
@@ -114,31 +114,31 @@ START_TEST(eio_model_test_test_file)
    fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
    fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
 
-   filemodel = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, EFL_MODEL_TEST_FILENAME_PATH));
+   filemodel = efl_add(EIO_MODEL_CLASS, ecore_main_loop_get(), eio_model_path_set(efl_added, EFL_MODEL_TEST_FILENAME_PATH));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
    handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, NULL);
 
-   Eina_Promise *promise;
+   Efl_Future *future;
 
-   promise = efl_model_property_get(filemodel, "filename");
-   eina_promise_then(promise, &promise_then_value, &error_promise_then, NULL);
+   future = efl_model_property_get(filemodel, "filename");
+   efl_future_then(future, &promise_then_value, &error_promise_then, NULL, NULL);
    ecore_main_loop_begin();
 
-   promise = efl_model_property_get(filemodel, "size");
-   eina_promise_then(promise, &promise_then_value, &error_promise_then, NULL);
+   future = efl_model_property_get(filemodel, "size");
+   efl_future_then(future, &promise_then_value, &error_promise_then, NULL, NULL);
    ecore_main_loop_begin();
 
-   promise = efl_model_property_get(filemodel, "mtime");
-   eina_promise_then(promise, &promise_then_value, &error_promise_then, NULL);
+   future = efl_model_property_get(filemodel, "mtime");
+   efl_future_then(future, &promise_then_value, &error_promise_then, NULL, NULL);
    ecore_main_loop_begin();
 
-   promise = efl_model_children_slice_get(filemodel, 0, 0);
-   eina_promise_then(promise, &promise_then_accessor, &error_promise_then, NULL);
+   future = efl_model_children_slice_get(filemodel, 0, 0);
+   efl_future_then(future, &promise_then_accessor, &error_promise_then, NULL, NULL);
    ecore_main_loop_begin();
 
-   promise = efl_model_children_count_get(filemodel);
-   eina_promise_then(promise, &promise_then_count, &error_promise_then, NULL);
+   future = efl_model_children_count_get(filemodel);
+   efl_future_then(future, &promise_then_count, &error_promise_then, NULL, NULL);
    ecore_main_loop_begin();
 
    efl_unref(filemodel);

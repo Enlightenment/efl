@@ -68,18 +68,18 @@ _elm_fileselector_button_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Button
 }
 
 static void
-_replace_path_then(void *data, void *value)
+_replace_path_then(void *data, Efl_Event const *event)
 {
    Elm_Fileselector_Button_Data *sd = data;
    const char *path = NULL;
-   eina_value_get(value, &path);
+   eina_value_get((Eina_Value*)((Efl_Future_Event_Success*)event->info), &path);
    eina_stringshare_replace(&sd->fsd.path, path);
    _event_to_legacy_call
      (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, (void *)path);
 }
 
 static void
-_replace_path_then_error(void *data, Eina_Error err EINA_UNUSED)
+_replace_path_then_error(void *data, Efl_Event const* event EINA_UNUSED)
 {
    Elm_Fileselector_Button_Data *sd = data;
    ERR("could not get information from Efl.Model");
@@ -97,12 +97,12 @@ _selection_done(void *data, const Efl_Event *event)
 
    if (model)
      {
-        Eina_Promise *promise = NULL;
+        Efl_Future *future = NULL;
         if (sd->fsd.model)
           efl_unref(sd->fsd.model);
         sd->fsd.model = efl_ref(model);
-        promise = efl_model_property_get(model, "path");
-        eina_promise_then(promise, _replace_path_then, _replace_path_then_error, sd);
+        future = efl_model_property_get(model, "path");
+        efl_future_then(future, _replace_path_then, _replace_path_then_error, NULL, sd);
         efl_event_callback_call
           (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, model);
      }
@@ -176,7 +176,7 @@ _activate(Elm_Fileselector_Button_Data *sd)
    elm_fileselector_expandable_set(sd->fs, sd->fsd.expandable);
    elm_fileselector_folder_only_set(sd->fs, sd->fsd.folder_only);
    elm_fileselector_is_save_set(sd->fs, sd->fsd.is_save);
-   elm_interface_fileselector_selected_model_set(sd->fs, sd->fsd.model, NULL);
+   elm_interface_fileselector_selected_model_set(sd->fs, sd->fsd.model);
    evas_object_size_hint_weight_set
      (sd->fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sd->fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -328,7 +328,7 @@ _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path)
 
    eina_stringshare_replace(&sd->fsd.path, path);
 
-   if (sd->fs) elm_interface_fileselector_selected_model_set(sd->fs, model, NULL);
+   if (sd->fs) elm_interface_fileselector_selected_model_set(sd->fs, model);
 }
 
 EINA_DEPRECATED EAPI void
@@ -346,10 +346,9 @@ _elm_fileselector_button_elm_interface_fileselector_model_set(Eo *obj EINA_UNUSE
 
    if (model)
      {
-        Eina_Promise *promise = NULL;
         sd->fsd.model = efl_ref(model);
-        promise = efl_model_property_get(model, "path");
-        eina_promise_then(promise, _replace_path_then, _replace_path_then_error, sd);
+        efl_future_then(efl_model_property_get(model, "path"),
+                        _replace_path_then, _replace_path_then_error, NULL, sd);
      }
    else
      {
@@ -357,7 +356,7 @@ _elm_fileselector_button_elm_interface_fileselector_model_set(Eo *obj EINA_UNUSE
         eina_stringshare_replace(&sd->fsd.path, NULL);
      }
 
-   if (sd->fs) elm_interface_fileselector_selected_model_set(sd->fs, model, NULL);
+   if (sd->fs) elm_interface_fileselector_selected_model_set(sd->fs, model);
 }
 
 const char *
@@ -575,32 +574,36 @@ _elm_fileselector_button_selected_set_internal(Evas_Object *obj, const char *_pa
 }
 
 static void
-_selected_model_then(void *data, void *v)
+_selected_model_then(void *data, Efl_Event const *event)
 {
-   Eina_Promise_Owner *owner = data;
-   eina_promise_owner_value_set(owner, efl_ref(v), _model_free_eo_cb);
+   Eo* v = (Eo*)((Efl_Future_Event_Success*)event->info)->value;
+   Efl_Promise *owner = data;
+   efl_promise_value_set(owner, efl_ref(v), _model_free_eo_cb);
 }
 
 static void
-_selected_model_then_error(void *data, Eina_Error err)
+_selected_model_then_error(void *data, Efl_Event const* event)
 {
-   Eina_Promise_Owner *owner = data;
-   eina_promise_owner_error_set(owner, err);
+   Efl_Promise *owner = data;
+   efl_promise_failed_set(owner, ((Efl_Future_Event_Failure*)event->info)->error);
 }
 
-EOLIAN static void
-_elm_fileselector_button_elm_interface_fileselector_selected_model_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, Efl_Model *model, Eina_Promise_Owner *promise_owner)
+EOLIAN static Efl_Future*
+_elm_fileselector_button_elm_interface_fileselector_selected_model_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, Efl_Model *model)
 {
+   Efl_Promise* promise = efl_add(EFL_PROMISE_CLASS, obj);
    if (sd->fs)
      {
-        Eina_Promise *promise = NULL;
-        elm_interface_fileselector_selected_model_set(sd->fs, model, &promise);
-        eina_promise_then(promise, _selected_model_then, _selected_model_then_error, promise_owner);
+        efl_future_then(elm_interface_fileselector_selected_model_set(sd->fs, model),
+                        _selected_model_then, _selected_model_then_error, NULL, promise);
      }
+   else
+     efl_promise_failed_set(promise, EINA_ERROR_FUTURE_CANCEL);
 
    if (sd->fsd.selection)
      efl_unref(sd->fsd.selection);
    sd->fsd.selection = model ? efl_ref(model) : NULL;
+   return efl_promise_future_get(promise);
 }
 
 EOLIAN static void

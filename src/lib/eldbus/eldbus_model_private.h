@@ -13,14 +13,14 @@ struct _Eldbus_Children_Slice_Promise
 {
   unsigned start;
   unsigned count;
-  Eina_Promise_Owner* promise;
+  Efl_Promise* promise;
 };
 
 typedef struct _Eldbus_Property_Promise _Eldbus_Property_Promise;
 struct _Eldbus_Property_Promise
 {
   char *property;
-  Eina_Promise_Owner* promise;
+  Efl_Promise* promise;
 };
 
 /* logging support */
@@ -31,7 +31,7 @@ extern int eldbus_model_log_dom;
     {                                                                   \
       if (EINA_UNLIKELY(!(exp)))                                        \
         {                                                               \
-            eina_promise_owner_error_set(promise, err);                 \
+            efl_promise_failed_set(promise, err);                       \
             return v;                                                   \
         }                                                               \
     }                                                                   \
