@@ -1469,8 +1469,8 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
              return isa;
           }
 
-        EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
-        EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
+        EO_OBJ_POINTER_GOTO(eo_id, obj, err_obj);
+        EO_CLASS_POINTER_GOTO(klass_id, klass, err_class);
         const op_type_funcs *func = _vtable_func_get
           (obj->vtable, klass->base_id + klass->ops_count);
 
@@ -1489,11 +1489,11 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
             (tdata->cache.klass == klass_id))
           {
              isa = tdata->cache.isa;
-             goto shared_ok;
+             goto done;
           }
 
-        EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
-        EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
+        EO_OBJ_POINTER_GOTO(eo_id, obj, err_shared_obj);
+        EO_CLASS_POINTER_GOTO(klass_id, klass, err_shared_class);
         const op_type_funcs *func = _vtable_func_get
           (obj->vtable, klass->base_id + klass->ops_count);
 
@@ -1503,10 +1503,21 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         // Currently implemented by reusing the LAST op id. Just marking it with
         // _eo_class_isa_func.
         isa = tdata->cache.isa = (func && (func->func == _eo_class_isa_func));
-shared_ok:
+done:
         eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
    return isa;
+
+err_shared_class:
+   _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id);
+err_shared_obj:
+   eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
+   return EINA_FALSE;
+
+err_class:
+   _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id);
+err_obj:
+   return EINA_FALSE;
 }
 
 EAPI Eo *
