@@ -110,8 +110,8 @@ static void _fill_all_outs(char **outs, const char *val)
 static Eina_Strbuf *
 _include_guard(const char *fname, const char *gname, Eina_Strbuf *buf)
 {
-   if (!buf || !eina_strbuf_length_get(buf))
-     return buf;
+   if (!buf)
+     return NULL;
 
    if (!gname)
      gname = "";
@@ -454,7 +454,7 @@ main(int argc, char **argv)
      }
 
    const char *ext = strrchr(input, '.');
-   if (!ext || strcmp(ext, ".eo"))
+   if (!ext || (strcmp(ext, ".eo") && strcmp(ext, ".eot")))
      {
         fprintf(stderr, "eolian: invalid input file '%s'\n", input);
         goto end;
