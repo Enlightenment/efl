@@ -581,7 +581,7 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
         eina_strbuf_append(buf, eina_strbuf_string_get(cops));
      }
 
-   eina_strbuf_append(buf, "   efl_class_functions_set(klass, ");
+   eina_strbuf_append(buf, "   return efl_class_functions_set(klass, ");
    if (eina_strbuf_length_get(ops))
      eina_strbuf_append(buf, "&ops, ");
    else
