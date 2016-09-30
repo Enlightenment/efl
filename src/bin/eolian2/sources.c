@@ -431,13 +431,17 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              eina_strbuf_append(lbuf, lfn);
              /* param list */
              eina_strbuf_append_char(lbuf, '(');
+             /* for class funcs, offset the params to remove comma */
+             int poff = 2;
              if (!eolian_function_is_class(fid))
                {
+                  /* non-class funcs have the obj though */
+                  poff = 0;
                   if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid))
                     eina_strbuf_append(lbuf, "const ");
                   eina_strbuf_append_printf(lbuf, "%s *obj", cname);
                }
-             eina_strbuf_append(lbuf, eina_strbuf_string_get(params_full));
+             eina_strbuf_append(lbuf, eina_strbuf_string_get(params_full) + poff);
              eina_strbuf_append(lbuf, ")\n{\n");
              /* body */
              if (strcmp(rtpn, "void"))
