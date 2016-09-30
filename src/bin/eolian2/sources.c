@@ -542,7 +542,7 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
         Eina_Bool found = !!eina_hash_find(_funcs_params_init, &imp);
         char *ocnamel = NULL;
         if (cl != icl)
-          eo_gen_class_names_get(cl, NULL, NULL, &ocnamel);
+          eo_gen_class_names_get(icl, NULL, NULL, &ocnamel);
 
         switch (ftype)
           {
