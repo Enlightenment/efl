@@ -669,6 +669,22 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
                            "   EO_VERSION,\n");
    eina_strbuf_append_printf(buf, "   \"%s\",\n", cname);
 
+   switch (eolian_class_type_get(cl))
+     {
+      case EOLIAN_CLASS_ABSTRACT:
+        eina_strbuf_append(buf, "   EFL_CLASS_TYPE_REGULAR_NO_INSTANT,\n");
+        break;
+      case EOLIAN_CLASS_MIXIN:
+        eina_strbuf_append(buf, "   EFL_CLASS_TYPE_MIXIN,\n");
+        break;
+      case EOLIAN_CLASS_INTERFACE:
+        eina_strbuf_append(buf, "   EFL_CLASS_TYPE_INTERFACE,\n");
+        break;
+      default:
+        eina_strbuf_append(buf, "   EFL_CLASS_TYPE_REGULAR,\n");
+        break;
+     }
+
    char *dt = _get_data_type(cl);
    if (dt && !strcmp(dt, "null"))
      eina_strbuf_append(buf, "   0,\n");
