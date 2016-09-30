@@ -682,7 +682,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    else
      eina_strbuf_append(buf, "   NULL\n");
 
-   eina_strbuf_append(buf, "}\n\n");
+   eina_strbuf_append(buf, "};\n\n");
 
    /* class def */
    eina_strbuf_append(buf, "EFL_DEFINE_CLASS(");

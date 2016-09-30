@@ -29,7 +29,7 @@ _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool legacy)
            char *fn = eo_gen_c_full_name_get(eolian_typedecl_full_name_get(tp));
            if (tpt == EOLIAN_TYPEDECL_STRUCT_OPAQUE || !full)
              {
-                eina_strbuf_append_printf(buf, "typedf struct _%s %s", fn, fn);
+                eina_strbuf_append_printf(buf, "typedef struct _%s %s", fn, fn);
                 free(fn);
                 break;
              }
