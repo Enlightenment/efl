@@ -548,6 +548,7 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
 
         free(ocnamel);
      }
+   eina_iterator_free(itr);
 
    /* strip the final comma before appending */
    if (eina_strbuf_length_get(ops))

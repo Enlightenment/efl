@@ -488,8 +488,6 @@ main(int argc, char **argv)
    if (succ && (gen_what & GEN_C_IMPL))
      succ = _write_impl(outs[_get_bit_pos(GEN_C_IMPL)], eobn);
 
-   free(inoext);
-
    if (!succ)
      goto end;
 
