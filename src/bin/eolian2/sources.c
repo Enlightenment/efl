@@ -727,13 +727,19 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    /* inherits in EFL_DEFINE_CLASS */
    {
-      Eina_Iterator *itr = eolian_class_inherits_get(cl);
       const char *iname;
+      Eina_Iterator *itr = eolian_class_inherits_get(cl);
+      /* no inherits, NULL parent */
+      if (!itr)
+        eina_strbuf_append(buf, ", NULL");
       EINA_ITERATOR_FOREACH(itr, iname)
         {
+           char *inameu = NULL;
+           const Eolian_Class *icl = eolian_class_get_by_name(iname);
+           eo_gen_class_names_get(icl, NULL, &inameu, NULL);
            eina_strbuf_append(buf, ", ");
-           eina_strbuf_append_printf(buf, "%s_%s", cnameu,
-              _cl_type_str_get(eolian_class_get_by_name(iname)));
+           eina_strbuf_append_printf(buf, "%s_%s", inameu, _cl_type_str_get(icl));
+           free(inameu);
         }
       eina_iterator_free(itr);
    }
