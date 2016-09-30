@@ -20,7 +20,7 @@ enum
 
 static const char *_dexts[5] =
 {
-  ".eo.h", ".eo.legacy.h", ".eo.stub.h", ".eo.c", ".eo.c"
+  ".h", ".legacy.h", ".stub.h", ".c", ".c"
 };
 
 static int
@@ -45,14 +45,15 @@ _print_usage(const char *progn, FILE *outf)
                  "  -v            print version and exit\n"
                  "\n"
                  "Available types:\n"
-                 "  h: C header file (.eo.h)\n"
-                 "  l: Legacy C header file (.eo.legacy.h)\n"
-                 "  s: Stub C header file (.eo.stub.h)\n"
-                 "  c: C source file (.eo.c)\n"
-                 "  i: Implementation file (added into .eo.c)\n"
+                 "  h: C header file (.h)\n"
+                 "  l: Legacy C header file (.legacy.h)\n"
+                 "  s: Stub C header file (.stub.h)\n"
+                 "  c: C source file (.c)\n"
+                 "  i: Implementation file (added into .c)\n"
                  "\n"
-                 "By default, the 'hc' set is used.\n"
-                 "Output filenames are determined from input .eo filename.\n");
+                 "By default, the 'hc' set is used ('h' for .eot files).\n"
+                 "Output filenames are determined from input .eo filename.\n"
+                 "Default filenames include input extension. (e.g. \".eo.c\")\n");
 }
 
 static void
@@ -466,15 +467,12 @@ main(int argc, char **argv)
         goto end;
      }
 
-   char *inoext = strdup(input);
-   inoext[ext - input] = '\0';
-   _fill_all_outs(outs, inoext);
-   free(inoext);
+   _fill_all_outs(outs, input);
 
    const char *eobn = _get_filename(input);
 
    if (!gen_what)
-     gen_what = GEN_H | GEN_C;
+     gen_what = !strcmp(ext, ".eot") ? GEN_H : (GEN_H | GEN_C);
 
    Eina_Bool succ = EINA_TRUE;
    if (gen_what & GEN_H)
