@@ -38,10 +38,6 @@
 # include <pthread.h>
 #endif
 
-#ifdef EINA_HAVE_OSX_SPINLOCK
-# include <libkern/OSAtomic.h>
-#endif
-
 #ifdef EINA_HAVE_OSX_SEMAPHORE
 # include <mach/mach.h>
 #endif
@@ -87,7 +83,7 @@ typedef pthread_key_t Eina_TLS;
 #if defined(EINA_HAVE_POSIX_SPINLOCK)
 typedef pthread_spinlock_t Eina_Spinlock;
 #elif defined(EINA_HAVE_OSX_SPINLOCK)
-typedef OSSpinLock Eina_Spinlock;
+typedef uintptr_t Eina_Spinlock;
 #else
 typedef Eina_Lock Eina_Spinlock;
 #endif
@@ -153,6 +149,11 @@ EAPI Eina_Bool _eina_spinlock_new(Eina_Spinlock *spinlock);
 EAPI void      _eina_spinlock_free(Eina_Spinlock *spinlock);
 EAPI Eina_Bool _eina_semaphore_new(Eina_Semaphore *sem, int count_init);
 EAPI Eina_Bool _eina_semaphore_free(Eina_Semaphore *sem);
+#ifdef EINA_HAVE_OSX_SPINLOCK
+EAPI Eina_Lock_Result _eina_spinlock_macos_take(Eina_Spinlock *spinlock);
+EAPI Eina_Lock_Result _eina_spinlock_macos_take_try(Eina_Spinlock *spinlock);
+EAPI Eina_Lock_Result _eina_spinlock_macos_release(Eina_Spinlock *spinlock);
+#endif
 
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
@@ -637,11 +638,7 @@ eina_spinlock_take(Eina_Spinlock *spinlock)
 
    return EINA_LOCK_SUCCEED;
 #elif defined(EINA_HAVE_OSX_SPINLOCK)
-   /* void OSSpinLockLock(OSSpinLock *lock);
-    * Will spin if the lock is already held, but employs various strategies to
-    * back off, making it immune to most priority-inversion livelocks. */
-   OSSpinLockLock(spinlock);
-   return EINA_LOCK_SUCCEED;
+   return _eina_spinlock_macos_take(spinlock);
 #else
    return eina_lock_take(spinlock);
 #endif
@@ -657,10 +654,7 @@ eina_spinlock_take_try(Eina_Spinlock *spinlock)
    else EINA_LOCK_ABORT_DEBUG(t, spin_trylock, spinlock);
    return EINA_LOCK_FAIL;
 #elif defined(EINA_HAVE_OSX_SPINLOCK)
-   /* bool OSSpinLockTry(OSSpinLock *lock);
-    * Immediately returns false if the lock was held, true if it took the
-    * lock.  It does not spin. */
-   return (OSSpinLockTry(spinlock)) ? EINA_LOCK_SUCCEED : EINA_LOCK_FAIL;
+   return _eina_spinlock_macos_take_try(spinlock);
 #else
    return eina_lock_take_try(spinlock);
 #endif
@@ -676,10 +670,7 @@ eina_spinlock_release(Eina_Spinlock *spinlock)
    else EINA_LOCK_ABORT_DEBUG(ok, spin_unlock, spinlock);
    return EINA_LOCK_FAIL;
 #elif defined(EINA_HAVE_OSX_SPINLOCK)
-   /* void OSSpinLockUnlock(OSSpinLock *lock);
-    * Unconditionally unlocks the lock by zeroing it. */
-   OSSpinLockUnlock(spinlock);
-   return EINA_LOCK_SUCCEED;
+   return _eina_spinlock_macos_release(spinlock);
 #else
    return eina_lock_release(spinlock);
 #endif
@@ -738,20 +729,5 @@ eina_semaphore_release(Eina_Semaphore *sem, int count_release EINA_UNUSED)
 #ifdef EINA_XOPEN_SOURCE
 # define _XOPEN_SOURCE EINA_XOPEN_SOURCE
 #endif
-
-#ifdef EINA_HAVE_OSX_SPINLOCK
-/* The inclusion of libkern/OSAtomic.h is a mess because it includes stdbool
- * which #defines bool. #undef bool is not sufficient because then other
- * headers (dlfcn.h) require it and #include stdbool.h to get it. It is
- * therefore important to "undo" the whole stdbool.h inclusion. */
-# undef true
-# undef false
-# undef bool
-# undef __bool_true_false_are_defined
-# undef _STDBOOL_H_ // OSX SDK
-# undef __STDBOOL_H // Clang 5.1
-# undef _STDBOOL_H  // GCC
-#endif
-
 
 #endif
