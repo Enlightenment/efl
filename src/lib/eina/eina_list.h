@@ -1411,12 +1411,16 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  *          For destructive operations such as this, consider
  *          using EINA_LIST_FOREACH_SAFE().
  */
-#define EINA_LIST_FOREACH(list, l, data) \
+#define EINA_LIST_FOREACH(list, l, _data)\
   for (l = list,                         \
-       data = eina_list_data_get(l);     \
+       _data = eina_list_data_get(l),    \
+       l ? (EINA_PREFETCH(l->next), EINA_PREFETCH(_data)) : EINA_PREFETCH(l); \
+                                         \
        l;                                \
+                                         \
        l = eina_list_next(l),            \
-       data = eina_list_data_get(l))
+       _data = eina_list_data_get(l),    \
+       l ? (EINA_PREFETCH(l->next), EINA_PREFETCH(_data)) : EINA_PREFETCH(l))
 
 /**
  * @def EINA_LIST_REVERSE_FOREACH
@@ -1469,12 +1473,14 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  *          For destructive operations such as this, consider
  *          using EINA_LIST_REVERSE_FOREACH_SAFE().
  */
-#define EINA_LIST_REVERSE_FOREACH(list, l, data) \
+#define EINA_LIST_REVERSE_FOREACH(list, l, _data)\
   for (l = eina_list_last(list),                 \
-       data = eina_list_data_get(l);             \
+       _data = eina_list_data_get(l),            \
+       l ? (EINA_PREFETCH(l->prev), EINA_PREFETCH(_data)) : EINA_PREFETCH(l); \
        l;                                        \
        l = eina_list_prev(l),                    \
-       data = eina_list_data_get(l))
+       _data = eina_list_data_get(l),            \
+       l ? (EINA_PREFETCH(l->prev), EINA_PREFETCH(_data)) : EINA_PREFETCH(l))
 
 /**
  * @def EINA_LIST_FOREACH_SAFE
@@ -1525,11 +1531,15 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
 #define EINA_LIST_FOREACH_SAFE(list, l, l_next, data) \
   for (l = list,                                      \
        l_next = eina_list_next(l),                    \
+       EINA_PREFETCH(l_next),                         \
        data = eina_list_data_get(l);                  \
+       EINA_PREFETCH(data),                           \
        l;                                             \
        l = l_next,                                    \
        l_next = eina_list_next(l),                    \
-       data = eina_list_data_get(l))
+       EINA_PREFETCH(l_next),                         \
+       data = eina_list_data_get(l),                  \
+       EINA_PREFETCH(data))
 
 /**
  * @def EINA_LIST_REVERSE_FOREACH_SAFE
@@ -1582,11 +1592,15 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
 #define EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, data) \
   for (l = eina_list_last(list),                              \
        l_prev = eina_list_prev(l),                            \
+       EINA_PREFETCH(l_prev),                                 \
        data = eina_list_data_get(l);                          \
+       EINA_PREFETCH(data),                                   \
        l;                                                     \
        l = l_prev,                                            \
        l_prev = eina_list_prev(l),                            \
-       data = eina_list_data_get(l))
+       EINA_PREFETCH(l_prev),                                 \
+       data = eina_list_data_get(l),                          \
+       EINA_PREFETCH(data))
 
 /**
  * @def EINA_LIST_FREE
@@ -1624,9 +1638,11 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  * @see eina_list_free()
  */
 #define EINA_LIST_FREE(list, data)               \
-  for (data = eina_list_data_get(list);          \
+  for (data = eina_list_data_get(list),          \
+       list ? EINA_PREFETCH((list)->next) : EINA_PREFETCH(list); \
        list;                                     \
        list = eina_list_remove_list(list, list), \
+       list ? EINA_PREFETCH((list)->next) : EINA_PREFETCH(list), \
        data = eina_list_data_get(list))
 
 #include "eina_inline_list.x"
