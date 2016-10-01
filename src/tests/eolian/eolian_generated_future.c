@@ -47,5 +47,15 @@ static void _generated_future_method3(Eo *obj EINA_UNUSED, Generated_Future_Data
    ck_assert(future1 != NULL);
 }
 
+static void _generated_future_method_multiple_args_1(Eo *obj EINA_UNUSED, Generated_Future_Data *pd EINA_UNUSED,
+                                                     Efl_Future **future1 EINA_UNUSED, void *data EINA_UNUSED)
+{
+}
+
+static void _generated_future_method_multiple_args_2(Eo *obj EINA_UNUSED, Generated_Future_Data *pd EINA_UNUSED,
+                                                     void *data EINA_UNUSED, Efl_Future **future1 EINA_UNUSED)
+{
+}
+
 #include "generated_future.eo.h"
 #include "generated_future.eo.c"
