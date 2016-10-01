@@ -133,6 +133,18 @@
 #ifdef EINA_SENTINEL
 # undef EINA_SENTINEL
 #endif
+#ifdef EINA_PREFETCH
+# undef EINA_PREFETCH
+#endif
+#ifdef EINA_PREFETCH_WRITE
+# undef EINA_PREFETCH_WRITE
+#endif
+#ifdef EINA_PREFETCH_NOCACHE
+# undef EINA_PREFETCH_NOCACHE
+#endif
+#ifdef EINA_PREFETCH_NOCACHE_WRITE
+# undef EINA_PREFETCH_NOCACHE_WRITE
+#endif
 
 #ifdef __GNUC__
 
@@ -181,6 +193,10 @@
 #  define EINA_UNLIKELY(exp)    __builtin_expect((exp), 0)
 #  define EINA_LIKELY(exp)      __builtin_expect((exp), 1)
 #  define EINA_SENTINEL __attribute__((__sentinel__))
+#  define EINA_PREFETCH(arg) __builtin_prefetch(arg)
+#  define EINA_PREFETCH_WRITE(arg) __builtin_prefetch(arg, 1)
+#  define EINA_PREFETCH_NOCACHE(arg) __builtin_prefetch(arg, 0, 0)
+#  define EINA_PREFETCH_NOCACHE_WRITE(arg) __builtin_prefetch(arg, 1, 0)
 # else
 #  define EINA_PRINTF(fmt, arg)
 #  define EINA_SCANF(fmt, arg)
@@ -190,6 +206,10 @@
 #  define EINA_UNLIKELY(exp) exp
 #  define EINA_LIKELY(exp)   exp
 #  define EINA_SENTINEL
+#  define EINA_PREFETCH(arg)
+#  define EINA_PREFETCH_WRITE(arg)
+#  define EINA_PREFETCH_NOCACHE(arg)
+#  define EINA_PREFETCH_NOCACHE_WRITE(arg)
 # endif
 
 #elif defined(_MSC_VER)
@@ -211,6 +231,10 @@
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp)   exp
 # define EINA_SENTINEL
+# define EINA_PREFETCH(arg)
+# define EINA_PREFETCH_WRITE(arg)
+# define EINA_PREFETCH_NOCACHE(arg)
+# define EINA_PREFETCH_NOCACHE_WRITE(arg)
 
 #elif defined(__SUNPRO_C)
 # define EINA_UNUSED
@@ -236,6 +260,10 @@
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp)   exp
 # define EINA_SENTINEL
+# define EINA_PREFETCH(arg)
+# define EINA_PREFETCH_WRITE(arg)
+# define EINA_PREFETCH_NOCACHE(arg)
+# define EINA_PREFETCH_NOCACHE_WRITE(arg)
 
 #else /* ! __GNUC__ && ! _MSC_VER && ! __SUNPRO_C */
 
@@ -322,9 +350,59 @@
  * @def EINA_SENTINEL
  * @brief Attribute from gcc to prevent calls without the necessary NULL
  * sentinel in certain variadic functions
- * @since 1.7.0
+ * @since 1.7
  */
 # define EINA_SENTINEL
+
+/**
+ * @def EINA_PREFETCH
+ * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ * This hints to the compiler to probably issue a prefetch command for the
+ * memory address @p arg and ensure it goes into all levels of cache. For
+ * just writing to an address look at EINA_PREFETCH_WRITE().
+ * Note that the pointer @p arg does not have to be a valid pointer and
+ * will not cause any exceptions (like segfaults) if it is invalid.
+ * @since 1.19
+ */
+# define EINA_PREFETCH(arg)
+
+/**
+ * @def EINA_PREFETCH_WRITE
+ * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ * This hints to the compiler to probably issue a prefetch command for the
+ * memory address @p arg and ensure it goes into all levels of cache. This
+ * specifically indicates that the address is going to be written to as
+ * opposed to being read from as with EINA_PREFETCH().
+ * Note that the pointer @p arg does not have to be a valid pointer and
+ * will not cause any exceptions (like segfaults) if it is invalid.
+ * @since 1.19
+ */
+# define EINA_PREFETCH_WRITE(arg)
+
+/**
+ * @def EINA_PREFETCH_NOCACHE
+ * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ * This hints to the compiler to probably issue a prefetch command for the
+ * memory address @p arg and ensure it goes into just the closest(l1) cache.
+ * For just writing to an address look at EINA_PREFETCH_WRITE_NOCACHE().
+ * Note that the pointer @p arg does not have to be a valid pointer and
+ * will not cause any exceptions (like segfaults) if it is invalid.
+ * @since 1.19
+ */
+# define EINA_PREFETCH_NOCACHE(arg)
+/**
+ * @def EINA_PREFETCH_WRITE_NOCACHE
+ * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ * This hints to the compiler to probably issue a prefetch command for the
+ * memory address @p arg and ensure it goes into just the closest(l1) cache.
+ * This specifically indicates that the address is going to be written to as
+ * opposed to being read from as with EINA_PREFETCH_NOCACHE().
+ * Note that the pointer @p arg does not have to be a valid pointer and
+ * will not cause any exceptions (like segfaults) if it is invalid.
+ * @since 1.19
+ */
+# define EINA_PREFETCH_NOCACHE_WRITE(arg)
+
 #endif /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
 
 /**
