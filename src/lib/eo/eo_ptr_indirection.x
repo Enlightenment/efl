@@ -251,12 +251,6 @@ typedef struct _Eo_Id_Table_Data Eo_Id_Table_Data;
 
 struct _Eo_Id_Table_Data
 {
-   /* Tables handling pointers indirection */
-   _Eo_Ids_Table     **eo_ids_tables[MAX_MID_TABLE_ID];
-   /* Current table used for following allocations */
-   _Eo_Ids_Table      *current_table;
-   /* Spare empty table */
-   _Eo_Ids_Table      *empty_table;
    /* Cached eoid lookups */
    struct
      {
@@ -267,12 +261,18 @@ struct _Eo_Id_Table_Data
         Eina_Bool         isa;
      }
    cache;
-   /* Next generation to use when assigning a new entry to a Eo pointer */
-   Generation_Counter  generation;
+   /* Tables handling pointers indirection */
+   _Eo_Ids_Table     **eo_ids_tables[MAX_MID_TABLE_ID];
+   /* Current table used for following allocations */
+   _Eo_Ids_Table      *current_table;
+   /* Spare empty table */
+   _Eo_Ids_Table      *empty_table;
    /* Optional lock around all objects in eoid table - only used if shared */
    Eina_Lock           obj_lock;
+   /* Next generation to use when assigning a new entry to a Eo pointer */
+   Generation_Counter  generation;
    /* are we shared so we need lock/unlock? */
-   Eina_Bool           shared : 1;
+   Eina_Bool           shared;
 };
 
 struct _Eo_Id_Data

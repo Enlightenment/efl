@@ -66,7 +66,6 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
 {
 #ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry;
-   _Eo_Object *ptr;
    Generation_Counter generation;
    Table_Index mid_table_id, table_id, entry_id;
    Eo_Id tag_bit;
@@ -77,26 +76,29 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
    // NULL objects will just be sensibly ignored. not worth complaining
    // every single time.
 
-   domain = (obj_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
    data = _eo_table_data_get();
+   EINA_PREFETCH(&(data->tables[0]));
+   domain = (obj_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
    tdata = _eo_table_data_table_get(data, domain);
-   if (!tdata) goto err;
+   EINA_PREFETCH(&(tdata->cache.id));
+   if (EINA_UNLIKELY(!tdata)) goto err;
 
 
    if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED))
      {
         if (obj_id == tdata->cache.id)
-          {
-             ptr = tdata->cache.object;
-             return ptr;
-          }
+          return tdata->cache.object;
+
+        mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;
+        EINA_PREFETCH(&(tdata->eo_ids_tables[mid_table_id]));
+        table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID;
+        entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
+        generation = obj_id & MASK_GENERATIONS;
 
         // get tag bit to check later down below - pipelining
         tag_bit = (obj_id) & MASK_OBJ_TAG;
         if (!obj_id) goto err_null;
         else if (!tag_bit) goto err;
-
-        EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
         // Check the validity of the entry
         if (tdata->eo_ids_tables[mid_table_id])
@@ -111,8 +113,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
                        // Cache the result of that lookup
                        tdata->cache.object = entry->ptr;
                        tdata->cache.id = obj_id;
-                       ptr = entry->ptr;
-                       return ptr;
+                       return entry->ptr;
                     }
                }
           }
@@ -122,17 +123,21 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
      {
         eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
         if (obj_id == tdata->cache.id)
-          {
-             ptr = tdata->cache.object;
-             return ptr;
-          }
+        // yes we return keeping the lock locked. thats why
+        // you must call _eo_obj_pointer_done() wrapped
+        // by EO_OBJ_DONE() to release
+          return tdata->cache.object;
+
+        mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;
+        EINA_PREFETCH(&(tdata->eo_ids_tables[mid_table_id]));
+        table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID;
+        entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
+        generation = obj_id & MASK_GENERATIONS;
 
         // get tag bit to check later down below - pipelining
         tag_bit = (obj_id) & MASK_OBJ_TAG;
         if (!obj_id) goto err_shared_null;
         else if (!tag_bit) goto err_shared;
-
-        EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
         // Check the validity of the entry
         if (tdata->eo_ids_tables[mid_table_id])
@@ -147,11 +152,10 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
                        // Cache the result of that lookup
                        tdata->cache.object = entry->ptr;
                        tdata->cache.id = obj_id;
-                       ptr = entry->ptr;
                        // yes we return keeping the lock locked. thats why
                        // you must call _eo_obj_pointer_done() wrapped
                        // by EO_OBJ_DONE() to release
-                       return ptr;
+                       return entry->ptr;
                     }
                }
           }
