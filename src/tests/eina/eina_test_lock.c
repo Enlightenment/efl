@@ -55,7 +55,7 @@ clock_gettime(int mode, struct timespec* ts)
 }
 # else /* ! __MACH__ */
 # error No support for clock_gettime()
-# endif /* __MACH__ *//
+# endif /* __MACH__ */
 
 #endif /* ! HAVE_CLOCK_GETTIME */
 
