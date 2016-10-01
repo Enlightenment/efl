@@ -32,15 +32,24 @@
 
 #define CLOCK_REALTIME 0
 
-void clock_gettime(int mode, struct timespec* ts)
+int
+clock_gettime(int mode, struct timespec* ts)
 {
    clock_serv_t cclock;
    mach_timespec_t mts;
-   host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
-   clock_get_time(cclock, &mts);
+   kern_return_t err;
+
+   err = host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+   if (EINA_UNLIKELY(err != KERN_SUCCESS)) return err;
+
+   err = clock_get_time(cclock, &mts);
    mach_port_deallocate(mach_task_self(), cclock);
+   if (EINA_UNLIKELY(err != KERN_SUCCESS)) return err;
+
    ts->tv_sec = mts.tv_sec;
    ts->tv_nsec = mts.tv_nsec;
+
+   return 0;
 }
 #endif
 
