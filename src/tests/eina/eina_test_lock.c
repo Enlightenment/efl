@@ -26,11 +26,13 @@
 
 #include "eina_suite.h"
 
-#ifdef __MACH__
-# include <mach/clock.h>
-# include <mach/mach.h>
+#ifndef HAVE_CLOCK_GETTIME
 
-#define CLOCK_REALTIME 0
+# ifdef __MACH__
+#  include <mach/clock.h>
+#  include <mach/mach.h>
+
+#  define CLOCK_REALTIME 0
 
 int
 clock_gettime(int mode, struct timespec* ts)
@@ -51,7 +53,11 @@ clock_gettime(int mode, struct timespec* ts)
 
    return 0;
 }
-#endif
+# else /* ! __MACH__ */
+# error No support for clock_gettime()
+# endif /* __MACH__ *//
+
+#endif /* ! HAVE_CLOCK_GETTIME */
 
 static Eina_Spinlock spin;
 static Eina_Thread thread;
