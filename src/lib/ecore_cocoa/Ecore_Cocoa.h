@@ -81,6 +81,17 @@ typedef struct _Ecore_Cocoa_Event_Window_Unfocused Ecore_Cocoa_Event_Window_Unfo
 typedef struct _Ecore_Cocoa_Event_Window_Destroy Ecore_Cocoa_Event_Window_Destroy;
 
 /**
+ * @typedef Ecore_Cocoa_Terminate_Cb
+ * Callback called when a delete request is sent to the application.
+ * Such function must return EINA_TRUE for the application to terminate,
+ * and EINA_FALSE to ignore application termination.
+ * It is typically called by a CMD+Q signal.
+ * @param sender The NSApplication instance to be terminated
+ * @since 1.19
+ */
+typedef Eina_Bool (*Ecore_Cocoa_Terminate_Cb)(Ecore_Cocoa_Object *sender);
+
+/**
  * @typedef Ecore_Cocoa_Cursor
  * Values of the Cocoa cursors handled by Ecore_Cocoa
  * See https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSCursor_Class/index.html for images of each cursors.
@@ -527,6 +538,17 @@ EAPI void ecore_cocoa_window_cursor_set(Ecore_Cocoa_Window *win,
 EAPI void ecore_cocoa_window_cursor_show(Ecore_Cocoa_Window *win, Eina_Bool show);
    EINA_ARG_NONNULL(1);
 
+/**
+ * Overrides the default behaviour in response to an application delete
+ * request. When an application receives a delete request (i.e. CMD+Q)
+ * the termination callback will be called and its result will determine
+ * whether the application should terminate or not
+ * @param cb The custom termination callback to set
+ * @see Ecore_Cocoa_Terminate_Cb
+ * @since 1.19
+ */
+EAPI void ecore_cocoa_terminate_cb_set(Ecore_Cocoa_Terminate_Cb cb)
+   EINA_ARG_NONNULL(1);
 
 
 /*

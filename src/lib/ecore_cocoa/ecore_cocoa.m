@@ -387,3 +387,10 @@ ecore_cocoa_titlebar_height_get(void)
      }
    return height;
 }
+
+EAPI void
+ecore_cocoa_terminate_cb_set(Ecore_Cocoa_Terminate_Cb cb)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cb);
+   [NSApp setTerminateCb: cb];
+}

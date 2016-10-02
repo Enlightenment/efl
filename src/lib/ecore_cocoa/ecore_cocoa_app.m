@@ -112,6 +112,16 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
    ecore_timer_thaw(_timer);
 }
 
+- (void)setTerminateCb:(Ecore_Cocoa_Terminate_Cb)cb
+{
+   _terminate_cb = cb;
+}
+
+- (Ecore_Cocoa_Terminate_Cb)terminateCb
+{
+   return _terminate_cb;
+}
+
 @end
 
 
@@ -131,8 +141,19 @@ static Ecore_Cocoa_AppDelegate *_appDelegate = nil;
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *) EINA_UNUSED sender
 {
    // XXX This should be alterable (by Elm_Window policy)
-   return YES;
+   return NO;
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+   NSApplicationTerminateReply status = NSTerminateNow;
+   const Ecore_Cocoa_Terminate_Cb cb = [(Ecore_Cocoa_Application *)sender terminateCb];
+   if (cb)
+     {
+         const Eina_Bool ret = cb(sender);
+         if (!ret) status = NSTerminateCancel;
+     }
+   return status;
 }
 
 @end
-

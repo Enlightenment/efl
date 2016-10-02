@@ -8,6 +8,7 @@
 {
    Ecore_Timer  *_timer;
    NSDate       *_expiration;
+   Ecore_Cocoa_Terminate_Cb _terminate_cb;
 }
 
 - (NSDate *)eventExpirationDate;
@@ -17,6 +18,8 @@
 - (void)sendEvent:(NSEvent *)anEvent;
 - (id)init;
 - (void)internalUpdate;
+- (void)setTerminateCb:(Ecore_Cocoa_Terminate_Cb)cb;
+- (Ecore_Cocoa_Terminate_Cb)terminateCb;
 
 - (void) pauseNSRunLoopMonitoring;
 - (void) resumeNSRunLoopMonitoring;
