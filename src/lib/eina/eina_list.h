@@ -1414,13 +1414,13 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
 #define EINA_LIST_FOREACH(list, l, _data)\
   for (l = list,                         \
        _data = eina_list_data_get(l),    \
-       l ? (EINA_PREFETCH(l->next), EINA_PREFETCH(_data)) : EINA_PREFETCH(l); \
+       l ? (EINA_PREFETCH(((Eina_List *)l)->next), EINA_PREFETCH(_data)) : EINA_PREFETCH(l); \
                                          \
        l;                                \
                                          \
        l = eina_list_next(l),            \
        _data = eina_list_data_get(l),    \
-       l ? (EINA_PREFETCH(l->next), EINA_PREFETCH(_data)) : EINA_PREFETCH(l))
+       l ? (EINA_PREFETCH(((Eina_List *)l)->next), EINA_PREFETCH(_data)) : EINA_PREFETCH(l))
 
 /**
  * @def EINA_LIST_REVERSE_FOREACH
@@ -1476,11 +1476,11 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
 #define EINA_LIST_REVERSE_FOREACH(list, l, _data)\
   for (l = eina_list_last(list),                 \
        _data = eina_list_data_get(l),            \
-       l ? (EINA_PREFETCH(l->prev), EINA_PREFETCH(_data)) : EINA_PREFETCH(l); \
+       l ? (EINA_PREFETCH(((Eina_List *)l)->prev), EINA_PREFETCH(_data)) : EINA_PREFETCH(l); \
        l;                                        \
        l = eina_list_prev(l),                    \
        _data = eina_list_data_get(l),            \
-       l ? (EINA_PREFETCH(l->prev), EINA_PREFETCH(_data)) : EINA_PREFETCH(l))
+       l ? (EINA_PREFETCH(((Eina_List *)l)->prev), EINA_PREFETCH(_data)) : EINA_PREFETCH(l))
 
 /**
  * @def EINA_LIST_FOREACH_SAFE
@@ -1639,10 +1639,10 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  */
 #define EINA_LIST_FREE(list, data)               \
   for (data = eina_list_data_get(list),          \
-       list ? EINA_PREFETCH((list)->next) : EINA_PREFETCH(list); \
+       list ? EINA_PREFETCH(((Eina_List *)list)->next) : EINA_PREFETCH(list); \
        list;                                     \
        list = eina_list_remove_list(list, list), \
-       list ? EINA_PREFETCH((list)->next) : EINA_PREFETCH(list), \
+       list ? EINA_PREFETCH(((Eina_List *)list)->next) : EINA_PREFETCH(list), \
        data = eina_list_data_get(list))
 
 #include "eina_inline_list.x"
