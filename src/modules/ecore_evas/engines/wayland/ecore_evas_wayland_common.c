@@ -25,6 +25,14 @@ struct _EE_Wl_Smart_Data
    Evas_Coord border_size[4]; // same as border
 };
 
+/* local structure for evas devices with IDs */
+typedef struct _EE_Wl_Device EE_Wl_Device;
+struct _EE_Wl_Device
+{
+   Evas_Device *seat;
+   unsigned int id;
+};
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
      {NULL, NULL}
@@ -36,7 +44,7 @@ EVAS_SMART_SUBCLASS_NEW(_smart_frame_type, _ecore_evas_wl_frame,
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
-static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[8];
+static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[10];
 
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 
@@ -438,6 +446,95 @@ _ecore_evas_wl_common_cb_www(void *d EINA_UNUSED, int t EINA_UNUSED, void *event
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_ecore_evas_wl_common_cb_global_added(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Global *ev = event;
+   EE_Wl_Device *device;
+   Ecore_Evas *ee;
+   Eina_List *l;
+   char buf[32];
+
+   if ((!ev->interface) || (strcmp(ev->interface, "wl_seat")))
+       return ECORE_CALLBACK_PASS_ON;
+
+   snprintf(buf, sizeof(buf), "seat-%u", ev->id);
+
+   EINA_LIST_FOREACH(ee_list, l, ee)
+     {
+        Ecore_Evas_Engine_Wl_Data *wdata;
+        Evas_Device *dev;
+
+        device = calloc(1, sizeof(EE_Wl_Device));
+        EINA_SAFETY_ON_NULL_GOTO(device, err_device);
+
+        dev = evas_device_add_full(ee->evas, buf, "Wayland seat",
+                                   NULL, NULL,
+                                   EVAS_DEVICE_CLASS_SEAT,
+                                   EVAS_DEVICE_SUBCLASS_NONE);
+        EINA_SAFETY_ON_NULL_GOTO(dev, err_dev);
+
+        device->seat = dev;
+        device->id = ev->id;
+
+        wdata = ee->engine.data;
+        wdata->devices_list = eina_list_append(wdata->devices_list, device);
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+
+err_dev:
+   free(device);
+err_device:
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_ecore_evas_wl_common_device_free(EE_Wl_Device *device)
+{
+   if (device->seat)
+     evas_device_del(device->seat);
+   free(device);
+}
+
+static Eina_Bool
+_ecore_evas_wl_common_cb_global_removed(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Global *ev = event;
+   Ecore_Evas *ee;
+   Eina_List *l, *ll;
+
+   if ((!ev->interface) || (strcmp(ev->interface, "wl_seat")))
+       return ECORE_CALLBACK_PASS_ON;
+
+   EINA_LIST_FOREACH(ee_list, l, ee)
+     {
+        Ecore_Evas_Engine_Wl_Data *wdata;
+        EE_Wl_Device *device;
+        Eina_Bool found = EINA_FALSE;
+
+        wdata = ee->engine.data;
+
+        EINA_LIST_FOREACH(wdata->devices_list, ll, device)
+          {
+             if (device->id == ev->id)
+               {
+                  found = EINA_TRUE;
+                  break;
+               }
+          }
+
+        if (found)
+          {
+             wdata->devices_list = eina_list_remove(wdata->devices_list,
+                                                    device);
+             _ecore_evas_wl_common_device_free(device);
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 int
 _ecore_evas_wl_common_init(void)
 {
@@ -470,6 +567,13 @@ _ecore_evas_wl_common_init(void)
    _ecore_evas_wl_event_hdls[7] =
      ecore_event_handler_add(ECORE_WL2_EVENT_DISCONNECT,
                              _ecore_evas_wl_common_cb_disconnect, NULL);
+   _ecore_evas_wl_event_hdls[8] =
+     ecore_event_handler_add(ECORE_WL2_EVENT_GLOBAL_ADDED,
+                             _ecore_evas_wl_common_cb_global_added, NULL);
+   _ecore_evas_wl_event_hdls[9] =
+     ecore_event_handler_add(ECORE_WL2_EVENT_GLOBAL_REMOVED,
+                             _ecore_evas_wl_common_cb_global_removed, NULL);
+
    ecore_event_evas_init();
 
    return _ecore_evas_wl_init_count;
@@ -512,6 +616,7 @@ void
 _ecore_evas_wl_common_free(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
+   EE_Wl_Device *device;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -525,6 +630,9 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
    ecore_event_handler_del(wdata->sync_handler);
    if (wdata->win) ecore_wl2_window_free(wdata->win);
    ecore_wl2_display_disconnect(wdata->display);
+
+   EINA_LIST_FREE(wdata->devices_list, device)
+      free(device);
 
    free(wdata);
 

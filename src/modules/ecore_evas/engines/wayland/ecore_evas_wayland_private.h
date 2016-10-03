@@ -49,8 +49,8 @@ struct _Ecore_Evas_Engine_Wl_Data
    int x_rel;
    int y_rel;
    uint32_t timestamp;
+   Eina_List *devices_list;
    Eina_Bool dragging : 1;
-
    Eina_Bool sync_done : 1;
    Eina_Bool defer_show : 1;
    Eina_Bool reset_pending : 1;
