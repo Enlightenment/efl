@@ -521,16 +521,11 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
    ee_list = eina_list_remove(ee_list, ee);
 
    eina_list_free(wdata->regen_objs);
-
    if (wdata->anim_callback) wl_callback_destroy(wdata->anim_callback);
-   wdata->anim_callback = NULL;
-
    ecore_event_handler_del(wdata->sync_handler);
-
    if (wdata->win) ecore_wl2_window_free(wdata->win);
-   wdata->win = NULL;
-
    ecore_wl2_display_disconnect(wdata->display);
+
    free(wdata);
 
    ecore_event_window_unregister(ee->prop.window);
