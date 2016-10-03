@@ -705,145 +705,6 @@ _drm_animator_tick_source_set(void)
 
 
 
-// disable gl vsync for now - nvidia doesnt work well.
-//#define ECORE_X_VSYNC_GL 1
-
-#ifdef ECORE_X_VSYNC_GL
-static Ecore_Con_Server *vsync_server = NULL;
-static Eina_Bool handlers = EINA_FALSE;
-static Eina_Prefix *_prefix = NULL;
-
-static Eina_Bool
-vsync_server_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Con_Event_Server_Add *ev = event;
-   if (ev->server != vsync_server) return EINA_TRUE;
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-vsync_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Con_Event_Server_Del *ev = event;
-   if (ev->server != vsync_server) return EINA_TRUE;
-   if (vsync_server)
-     {
-        ecore_con_server_del(vsync_server);
-        vsync_server = NULL;
-        ecore_animator_custom_source_tick_begin_callback_set(NULL, NULL);
-        ecore_animator_custom_source_tick_end_callback_set(NULL, NULL);
-        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
-     }
-   return EINA_FALSE;
-}
-
-static int ticking = 0;
-
-static Eina_Bool
-vsync_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Con_Event_Server_Data *ev = event;
-   int i;
-   double t;
-   char *d;
-   if (ev->server != vsync_server) return EINA_TRUE;
-   d = ev->data;
-   if (ticking)
-     {
-        for (i = 0; i < ev->size - (int)(sizeof(double) - 1); i++)
-          {
-             memcpy(&t, &(d[i]), sizeof(double));
-             ecore_loop_time_set(t);
-             ecore_animator_custom_tick();
-          }
-     }
-   return EINA_FALSE;
-}
-
-static void
-vsync_tick_begin(void *data EINA_UNUSED)
-{
-   char val = 1;
-   ticking = val;
-   ecore_con_server_send(vsync_server, &val, 1);
-}
-
-static void
-vsync_tick_end(void *data EINA_UNUSED)
-{
-   char val = 0;
-   ticking = val;
-   ecore_con_server_send(vsync_server, &val, 1);
-}
-
-static Eina_Bool
-_glvsync_animator_tick_source_set(void)
-{
-   if (!vsync_server)
-     {
-        char buf[4096], run[4096], *disp, *s;
-        int tries = 0;
-
-        if (!handlers)
-          {
-             _prefix = eina_prefix_new(NULL, ecore_x_vsync_animator_tick_source_set,
-                                       "ECORE_X", "ecore_x", "checkme",
-                                       PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-                                       PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
-             ecore_con_init();
-          }
-        disp = getenv("DISPLAY");
-        if (!disp) disp = ":0";
-        snprintf(buf, sizeof(buf), "ecore-x-vsync-%s", disp);
-        for (s = buf; *s; s++)
-          {
-             if (!(((*s >= 'a') && (*s <= 'z')) ||
-                   ((*s >= 'A') && (*s <= 'Z')) ||
-                   ((*s >= '0') && (*s <= '9')))) *s = '-';
-          }
-        vsync_server = ecore_con_server_connect(ECORE_CON_LOCAL_USER, buf, 1, NULL);
-        if (!vsync_server)
-          {
-             snprintf(run, sizeof(run), "%s/ecore_x/bin/%s/ecore_x_vsync",
-                      eina_prefix_lib_get(_prefix), MODULE_ARCH);
-             ecore_exe_run(run, NULL);
-          }
-        while (!vsync_server)
-          {
-             tries++;
-             if (tries > 50) return EINA_FALSE;
-             usleep(10000);
-             vsync_server = ecore_con_server_connect(ECORE_CON_LOCAL_USER, buf, 1, NULL);
-          }
-        if (!handlers)
-          {
-             ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, vsync_server_add, NULL);
-             ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL, vsync_server_del, NULL);
-             ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA, vsync_server_data, NULL);
-             handlers = EINA_FALSE;
-          }
-     }
-   if (vsync_root)
-     {
-        ecore_animator_custom_source_tick_begin_callback_set(vsync_tick_begin, NULL);
-        ecore_animator_custom_source_tick_end_callback_set(vsync_tick_end, NULL);
-        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
-     }
-   else
-     {
-        if (vsync_server)
-          {
-             ecore_con_server_del(vsync_server);
-             vsync_server = NULL;
-          }
-        ecore_animator_custom_source_tick_begin_callback_set(NULL, NULL);
-        ecore_animator_custom_source_tick_end_callback_set(NULL, NULL);
-        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
-     }
-   return EINA_TRUE;
-}
-#endif
-
 // XXX: missing mode 3 == separate x connection with compiled in dri2 proto
 // handling ala mesa (taken from mesa likely)
 
@@ -871,30 +732,6 @@ _vsync_init(void)
                }
           }
 #endif
-        // nvidia gl vsync slave mode
-        if (mode == 0)
-          {
-             // we appear to have an nvidia driver running
-             if (!stat("/dev/nvidiactl", &stb))
-               {
-                  if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-                    fprintf(stderr, "We appear to have an nvidia driver: drm flags %i\n", flags);
-                  if (
-                      // we have dri device AND it's an nvidia one
-                      ((!stat("/dev/dri/card0", &stb)) &&
-                       (flags & DRM_HAVE_NVIDIA))
-                      ||
-                      // or we have no dri device, and no nvidia flags
-                      ((stat("/dev/dri/card0", &stb)) &&
-                       (flags == 0))
-                      )
-                    {
-                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-                         fprintf(stderr, "Using nvidia vsync slave proc\n");
-                       mode = 2;
-                    }
-               }
-          }
      }
    done = 1;
 }
@@ -928,13 +765,6 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
         vsync_root = root;
 #ifdef ECORE_X_VSYNC_DRM
         if (mode == 1) return _drm_animator_tick_source_set();
-# ifdef ECORE_X_VSYNC_GL
-        else
-# endif
-#endif
-#ifdef ECORE_X_VSYNC_GL
-        if (mode == 2) return _glvsync_animator_tick_source_set();
-        else return EINA_FALSE;
 #endif
      }
    return EINA_TRUE;
