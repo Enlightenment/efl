@@ -145,7 +145,6 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
 
    if (!_kqueue_fd)
      {
-        eio_monitor_fallback_add(monitor);
         return;
      }
 
@@ -170,7 +169,6 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    if (res)
      {
         eina_hash_del(_kevent_monitors, &backend->fd, backend);
-        eio_monitor_fallback_add(monitor);
      }
 
    return;
@@ -183,12 +181,6 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
 {
    Eio_Monitor_Backend *backend;
    
-   if (monitor->fallback)
-     {
-        eio_monitor_fallback_del(monitor);
-        return;
-     }
-
    backend = monitor->backend;
    monitor->backend = NULL;
 
