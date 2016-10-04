@@ -1188,11 +1188,31 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
 }
 
 static void
-_seat_cb_name(void *data EINA_UNUSED, struct wl_seat *seat EINA_UNUSED, const char *name EINA_UNUSED)
+_cb_seat_event_free(void *data EINA_UNUSED, void *event)
 {
-   /* NB: No-Op as we don't care about seat name right now.
-    *
-    * This will likely change as we hash out remaining multi-seat issues */
+   Ecore_Wl2_Event_Seat_Name *ev;
+
+   ev = event;
+   eina_stringshare_del(ev->name);
+   free(ev);
+}
+
+static void
+_seat_cb_name(void *data, struct wl_seat *seat EINA_UNUSED, const char *name)
+{
+   Ecore_Wl2_Event_Seat_Name *ev;
+   Ecore_Wl2_Input *input;
+
+   input = data;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Seat_Name));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
+   ev->id = input->id;
+   ev->name = eina_stringshare_add(name);
+
+   ecore_event_add(ECORE_WL2_EVENT_SEAT_NAME_CHANGED, ev,
+                   _cb_seat_event_free, NULL);
 }
 
 static const struct wl_seat_listener _seat_listener =
@@ -1241,6 +1261,7 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
    input = calloc(1, sizeof(Ecore_Wl2_Input));
    if (!input) return;
 
+   input->id = id;
    input->display = display;
    input->seat_version = version;
    input->repeat.rate = 0.025;

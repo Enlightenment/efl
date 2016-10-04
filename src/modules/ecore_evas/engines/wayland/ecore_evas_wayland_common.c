@@ -44,7 +44,7 @@ EVAS_SMART_SUBCLASS_NEW(_smart_frame_type, _ecore_evas_wl_frame,
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
-static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[10];
+static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[11];
 
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 
@@ -535,6 +535,33 @@ _ecore_evas_wl_common_cb_global_removed(void *d EINA_UNUSED, int t EINA_UNUSED, 
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_ecore_evas_wl_common_cb_seat_name_changed(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Seat_Name *ev = event;
+   Ecore_Evas *ee;
+   Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH(ee_list, l, ee)
+     {
+        Ecore_Evas_Engine_Wl_Data *wdata;
+        EE_Wl_Device *device;
+
+        wdata = ee->engine.data;
+
+        EINA_LIST_FOREACH(wdata->devices_list, ll, device)
+          {
+             if (device->id == ev->id)
+               {
+                  evas_device_name_set(device->seat, ev->name);
+                  break;
+               }
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 int
 _ecore_evas_wl_common_init(void)
 {
@@ -573,6 +600,9 @@ _ecore_evas_wl_common_init(void)
    _ecore_evas_wl_event_hdls[9] =
      ecore_event_handler_add(ECORE_WL2_EVENT_GLOBAL_REMOVED,
                              _ecore_evas_wl_common_cb_global_removed, NULL);
+   _ecore_evas_wl_event_hdls[10] =
+     ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_NAME_CHANGED,
+                             _ecore_evas_wl_common_cb_seat_name_changed, NULL);
 
    ecore_event_evas_init();
 

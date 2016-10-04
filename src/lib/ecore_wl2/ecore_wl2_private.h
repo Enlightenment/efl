@@ -405,6 +405,7 @@ struct _Ecore_Wl2_Input
    Ecore_Wl2_Offer *drag, *selection;
 
    unsigned int seat_version;
+   unsigned int id;
 };
 
 typedef struct Ecore_Wl2_Event_Window_WWW
