@@ -137,10 +137,10 @@ _output_egl_setup(int w, int h, int rot, Display *disp, Drawable draw,
 
 
 void
-evas_software_x11_region_push_hook_call(Outbuf *buf, int x, int y, int w, int h,
-                                        const void *pixels)
+evas_software_x11_region_push_hook_call(Outbuf *buf, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED,
+                                        const void *pixels EINA_UNUSED)
 {
-   int err;
+   /* int err; */
 
    if (!buf->region_push_hook.cb)
      return;
