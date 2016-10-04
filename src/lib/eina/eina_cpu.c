@@ -49,6 +49,11 @@
 #include "eina_log.h"
 #include "eina_cpu.h"
 
+#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+# include <sys/auxv.h>
+# include <asm/hwcap.h>
+#endif
+
 /*============================================================================*
 *                                  Local                                     *
 *============================================================================*/
