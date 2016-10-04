@@ -1580,6 +1580,8 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
         nfo->push = EINA_TRUE;
 
         _schedule_deferred(nfo, sd);
+
+        if (top_item) top_item->pushing = EINA_FALSE;
         item->pushing = EINA_TRUE;
      }
    else
