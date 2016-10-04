@@ -1560,6 +1560,8 @@ struct _Evas_Func
    void  (*ector_end)                    (void *data, void *context, Ector_Surface *ector, void *surface, void *engine_data, Eina_Bool do_async);
    void* (*ector_new)                    (void *data, void *context, Ector_Surface *ector, void *surface);
    void  (*ector_free)                   (void *engine_data);
+
+   void (*gl_get_pixels)                 (void *data, Evas_Object_Image_Pixels_Get_Cb cb, void *get_pixels_data, Evas_Object *o, void *image);
 };
 
 struct _Evas_Image_Save_Func

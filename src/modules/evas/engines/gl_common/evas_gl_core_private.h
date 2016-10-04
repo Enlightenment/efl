@@ -126,6 +126,8 @@ struct _EVGL_Surface
    unsigned buffers_skip_allocate : 1;
    unsigned buffers_allocated : 1;
 
+   unsigned thread_rendering : 1;
+
    void   *cfg;
    int     cfg_index;
 
