@@ -231,19 +231,6 @@ static int                  _ecore_ipc_init_count = 0;
 static Eina_List           *servers = NULL;
 static Ecore_Event_Handler *handler[6];
 
-/**
- * @defgroup Ecore_IPC_Library_Group Ecore_IPC - Inter Process Communication Library Functions
- * @ingroup Ecore
- *
- * Functions that set up and shut down the Ecore IPC Library.
- */
-
-/**
- * Initialises the Ecore IPC library.
- * @return  Number of times the library has been initialised without
- *          being shut down.
- * @ingroup Ecore_IPC_Library_Group
- */
 EAPI int
 ecore_ipc_init(void)
 {
@@ -283,12 +270,6 @@ ecore_ipc_init(void)
    return _ecore_ipc_init_count;
 }
 
-/**
- * Shuts down the Ecore IPC library.
- * @return  Number of times the library has been initialised without being
- *          shut down.
- * @ingroup Ecore_IPC_Library_Group
- */
 EAPI int
 ecore_ipc_shutdown(void)
 {
@@ -311,27 +292,7 @@ ecore_ipc_shutdown(void)
    return _ecore_ipc_init_count;
 }
 
-/**
- * @defgroup Ecore_IPC_Server_Group IPC Server Functions
- * @ingroup Ecore_IPC_Library_Group
- *
- * Functions the deal with IPC server objects.
- */
-
-/**
- * Creates an IPC server that listens for connections.
- *
- * For more details about the @p compl_type, @p name and @p port
- * parameters, see the @ref ecore_con_server_add documentation.
- *
- * @param   compl_type The connection type.
- * @param   name       Name to associate with the socket used for connection.
- * @param   port       Number to identify with socket used for connection.
- * @param   data       Data to associate with the IPC server.
- * @return  New IPC server.  If there is an error, @c NULL is returned.
- * @ingroup Ecore_IPC_Server_Group
- * @todo    Need to add protocol type parameter to this function.
- */
+/* FIXME: need to add protocol type parameter */
 EAPI Ecore_Ipc_Server *
 ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, const void *data)
 {
@@ -373,23 +334,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, cons
    return svr;
 }
 
-/**
- * Creates an IPC server object to represent the IPC server listening
- * on the given port.
- *
- * For more details about the @p compl_type, @p name and @p port
- * parameters, see the @ref ecore_con_server_connect documentation.
- *
- * @param   compl_type The IPC connection type.
- * @param   name       Name used to determine which socket to use for the
- *                     IPC connection.
- * @param   port       Number used to identify the socket to use for the
- *                     IPC connection.
- * @param   data       Data to associate with the server.
- * @return  A new IPC server.  @c NULL is returned on error.
- * @ingroup Ecore_IPC_Server_Group
- * @todo    Need to add protocol type parameter.
- */
+/* FIXME: need to add protocol type parameter */
 EAPI Ecore_Ipc_Server *
 ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const void *data)
 {
@@ -433,12 +378,6 @@ ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const 
    return svr;
 }
 
-/**
- * Closes the connection and frees the given IPC server.
- * @param   svr The given IPC server.
- * @return  The data associated with the server when it was created.
- * @ingroup Ecore_IPC_Server_Group
- */
 EAPI void *
 ecore_ipc_server_del(Ecore_Ipc_Server *svr)
 {
@@ -475,12 +414,6 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
    return data;
 }
 
-/**
- * Retrieves the data associated with the given IPC server.
- * @param   svr The given IPC server.
- * @return  The associated data.
- * @ingroup Ecore_IPC_Server_Group
- */
 EAPI void *
 ecore_ipc_server_data_get(Ecore_Ipc_Server *svr)
 {
@@ -493,12 +426,6 @@ ecore_ipc_server_data_get(Ecore_Ipc_Server *svr)
    return svr->data;
 }
 
-/**
- * Retrieves whether the given IPC server is currently connected.
- * @param   svr The given IPC server.
- * @return @c EINA_TRUE if the server is connected, @c EINA_FALSE otherwise.
- * @ingroup Ecore_IPC_Server_Group
- */
 EAPI Eina_Bool
 ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
 {
@@ -511,12 +438,6 @@ ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
    return ecore_con_server_connected_get(svr->server);
 }
 
-/**
- * Retrieves the list of clients for this server.
- * @param   svr The given IPC server.
- * @return  An Eina_List with the clients.
- * @ingroup Ecore_IPC_Server_Group
- */
 EAPI Eina_List *
 ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
 {
@@ -561,25 +482,7 @@ ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
         s += 1; \
      }
 
-/**
- * Sends a message to the given IPC server.
- *
- * The content of the parameters, excluding the @p svr parameter, is up to
- * the client.
- *
- * @param   svr      The given IPC server.
- * @param   major    Major opcode of the message.
- * @param   minor    Minor opcode of the message.
- * @param   ref      Message reference number.
- * @param   ref_to   Reference number of the message this message refers to.
- * @param   response Requires response.
- * @param   data     The data to send as part of the message.
- * @param   size     Length of the data, in bytes, to send.
- * @return  Number of bytes sent.  @c 0 is returned if there is an error.
- * @ingroup Ecore_IPC_Server_Group
- * @todo    This function needs to become an IPC message.
- * @todo Fix up the documentation: Make sure what ref_to and response are.
- */
+/* FIXME: this needs to become an ipc message */
 EAPI int
 ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, const void *data, int size)
 {
@@ -622,28 +525,6 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
    return ret;
 }
 
-/**
- * Sets a limit on the number of clients that can be handled concurrently
- * by the given server, and a policy on what to do if excess clients try to
- * connect.
- * Beware that if you set this once ecore is already running, you may
- * already have pending CLIENT_ADD events in your event queue.  Those
- * clients have already connected and will not be affected by this call.
- * Only clients subsequently trying to connect will be affected.
- * @param   svr           The given server.
- * @param   client_limit  The maximum number of clients to handle
- *                        concurrently.  -1 means unlimited (default).  0
- *                        effectively disables the server.
- * @param   reject_excess_clients  Set to 1 to automatically disconnect
- *                        excess clients as soon as they connect if you are
- *                        already handling client_limit clients.  Set to 0
- *                        (default) to just hold off on the "accept()"
- *                        system call until the number of active clients
- *                        drops. This causes the kernel to queue up to 4096
- *                        connections (or your kernel's limit, whichever is
- *                        lower).
- * @ingroup Ecore_Ipc_Server_Group
- */
 EAPI void
 ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char reject_excess_clients)
 {
@@ -656,13 +537,6 @@ ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char 
    ecore_con_server_client_limit_set(svr->server, client_limit, reject_excess_clients);
 }
 
-/**
- * Sets the max data payload size for an Ipc message in bytes
- *
- * @param   svr           The given server.
- * @param   size          The maximum data payload size in bytes.
- * @ingroup Ecore_Ipc_Server_Group
- */
 EAPI void
 ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *svr, int size)
 {
@@ -675,13 +549,6 @@ ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *svr, int size)
    svr->max_buf_size = size;
 }
 
-/**
- * Gets the max data payload size for an Ipc message in bytes
- *
- * @param   svr           The given server.
- * @return The maximum data payload in bytes.
- * @ingroup Ecore_Ipc_Server_Group
- */
 EAPI int
 ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr)
 {
@@ -694,16 +561,6 @@ ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr)
    return svr->max_buf_size;
 }
 
-/**
- * Gets the IP address of a server that has been connected to.
- *
- * @param   svr           The given server.
- * @return  A pointer to an internal string that contains the IP address of
- *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
- *          This string should not be modified or trusted to stay valid after
- *          deletion for the @p svr object. If no IP is known NULL is returned.
- * @ingroup Ecore_Ipc_Server_Group
- */
 EAPI const char *
 ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr)
 {
@@ -716,12 +573,6 @@ ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr)
    return ecore_con_server_ip_get(svr->server);
 }
 
-/**
- * Flushes all pending data to the given server. Will return when done.
- *
- * @param   svr           The given server.
- * @ingroup Ecore_Ipc_Server_Group
- */
 EAPI void
 ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
 {
@@ -766,29 +617,7 @@ ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
         s += 1; \
      }
 
-/**
- * @defgroup Ecore_IPC_Client_Group IPC Client Functions
- * @ingroup Ecore_IPC_Library_Group
- *
- * Functions that deal with IPC client objects.
- */
-
-/**
- * Sends a message to the given IPC client.
- * @param   cl       The given IPC client.
- * @param   major    Major opcode of the message.
- * @param   minor    Minor opcode of the message.
- * @param   ref      Reference number of the message.
- * @param   ref_to   Reference number of the message this message refers to.
- * @param   response Requires response.
- * @param   data     The data to send as part of the message.
- * @param   size     Length of the data, in bytes, to send.
- * @return  The number of bytes sent.  @c 0 will be returned if there is
- *          an error.
- * @ingroup Ecore_IPC_Client_Group
- * @todo    This function needs to become an IPC message.
- * @todo    Make sure ref_to and response parameters are described correctly.
- */
+/* FIXME: this needs to become an ipc message */
 EAPI int
 ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, const void *data, int size)
 {
@@ -833,12 +662,6 @@ ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int r
    return ret;
 }
 
-/**
- * Retrieves the IPC server that the given IPC client is connected to.
- * @param   cl The given IPC client.
- * @return  The IPC server the IPC client is connected to.
- * @ingroup Ecore_IPC_Client_Group
- */
 EAPI Ecore_Ipc_Server *
 ecore_ipc_client_server_get(Ecore_Ipc_Client *cl)
 {
@@ -851,13 +674,6 @@ ecore_ipc_client_server_get(Ecore_Ipc_Client *cl)
    return cl->svr;
 }
 
-/**
- * Closes the connection and frees memory allocated to the given IPC
- * client.
- * @param   cl The given client.
- * @return  Data associated with the client.
- * @ingroup Ecore_IPC_Client_Group
- */
 EAPI void *
 ecore_ipc_client_del(Ecore_Ipc_Client *cl)
 {
@@ -887,12 +703,6 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
    return data;
 }
 
-/**
- * Sets the IPC data associated with the given IPC client to @p data.
- * @param   cl   The given IPC client.
- * @param   data The data to associate with the IPC client.
- * @ingroup Ecore_IPC_Client_Group
- */
 EAPI void
 ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
 {
@@ -905,12 +715,6 @@ ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
    cl->data = (void *)data;
 }
 
-/**
- * Retrieves the data that has been associated with the given IPC client.
- * @param   cl The given client.
- * @return  The data associated with the IPC client.
- * @ingroup Ecore_IPC_Client_Group
- */
 EAPI void *
 ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
 {
@@ -923,13 +727,6 @@ ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
    return cl->data;
 }
 
-/**
- * Sets the max data payload size for an Ipc message in bytes
- *
- * @param   cl        The given client.
- * @param   size          The maximum data payload size in bytes.
- * @ingroup Ecore_Ipc_Client_Group
- */
 EAPI void
 ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, int size)
 {
@@ -942,13 +739,6 @@ ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, int size)
    cl->max_buf_size = size;
 }
 
-/**
- * Gets the max data payload size for an Ipc message in bytes
- *
- * @param   cl            The given client.
- * @return The maximum data payload size in bytes on success, @c -1 on failure.
- * @ingroup Ecore_Ipc_Client_Group
- */
 EAPI int
 ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl)
 {
@@ -961,17 +751,6 @@ ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl)
    return cl->max_buf_size;
 }
 
-/**
- * Gets the IP address of a client that has been connected to.
- *
- * @param   cl            The given client.
- * @return  A pointer to an internal string that contains the IP address of
- *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
- *          This string should not be modified or trusted to stay valid after
- *          deletion for the @p cl object. If no IP is known @c NULL is
- *          returned.
- * @ingroup Ecore_Ipc_Client_Group
- */
 EAPI const char *
 ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl)
 {
@@ -984,12 +763,6 @@ ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl)
    return ecore_con_client_ip_get(cl->client);
 }
 
-/**
- * Flushes all pending data to the given client. Will return when done.
- *
- * @param   cl            The given client.
- * @ingroup Ecore_Ipc_Client_Group
- */
 EAPI void
 ecore_ipc_client_flush(Ecore_Ipc_Client *cl)
 {
@@ -1002,11 +775,6 @@ ecore_ipc_client_flush(Ecore_Ipc_Client *cl)
    ecore_con_client_flush(cl->client);
 }
 
-/**
- * Returns if SSL support is available
- * @return  1 if SSL is available, 0 if it is not.
- * @ingroup Ecore_Con_Client_Group
- */
 EAPI int
 ecore_ipc_ssl_available_get(void)
 {

@@ -147,41 +147,6 @@ _ecore_file_download(const char *url,
      }
 }
 
-/**
- * @addtogroup Ecore_File_Group Ecore_File - Files and directories convenience functions
- *
- * @{
- */
-
-/**
- * @brief Download the given url to the given destination.
- *
- * @param  url The complete url to download.
- * @param  dst The local file to save the downloaded to.
- * @param  completion_cb A callback called on download complete.
- * @param  progress_cb A callback called during the download operation.
- * @param  data User data passed to both callbacks.
- * @param  job_ret Job used to abort the download.
- * @return @c EINA_TRUE if the download start or @c EINA_FALSE on failure.
- *
- * This function starts the download of the URL @p url and saves it to
- * @p dst. @p url must provide the protocol, including 'http://',
- * 'ftp://' or 'file://'. Ecore_File must be compiled with CURL to
- * download using http and ftp protocols. If @p dst is ill-formed, or
- * if it already exists, the function returns @c EINA_FALSE. When the
- * download is complete, the callback @p completion_cb is called and
- * @p data is passed to it. The @p status parameter of @p completion_cb
- * will be filled with the status of the download (200, 404,...). The
- * @p progress_cb is called during the download operation, each time a
- * packet is received or when CURL wants. It can be used to display the
- * percentage of the downloaded file. Return 0 from this callback, if provided,
- * to continue the operation or anything else to abort the download. The only
- * operations that can be aborted are those with protocol 'http' or 'ftp'. In
- * that case @p job_ret can be passed to ecore_file_download_abort() to abort
- * that download job. Similarly ecore_file_download_abort_all() can be used to
- * abort all download operations. This function returns @c EINA_TRUE if the
- * download starts, @c EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 ecore_file_download(const char *url,
                     const char *dst,
@@ -193,18 +158,6 @@ ecore_file_download(const char *url,
    return _ecore_file_download(url, dst, completion_cb, progress_cb, data, job_ret, NULL);
 }
 
-/**
- * @brief Download the given url to the given destination with additional headers.
- *
- * @param  url The complete url to download.
- * @param  dst The local file to save the downloaded to.
- * @param  completion_cb A callback called on download complete.
- * @param  progress_cb A callback called during the download operation.
- * @param  data User data passed to both callbacks.
- * @param  job_ret Job used to abort the download.
- * @param  headers pointer of header lists.
- * @return @c EINA_TRUE if the download start or @c EINA_FALSE on failure.
- */
 EAPI Eina_Bool
 ecore_file_download_full(const char *url,
                          const char *dst,
@@ -217,17 +170,6 @@ ecore_file_download_full(const char *url,
    return _ecore_file_download(url, dst, completion_cb, progress_cb, data, job_ret, headers);
 }
 
-/**
- * @brief Check if the given protocol is available.
- *
- * @param  protocol The protocol to check.
- * @return @c EINA_TRUE if protocol is handled, @c EINA_FALSE otherwise.
- *
- * This function returns @c EINA_TRUE if @p protocol is supported,
- * @c EINA_FALSE otherwise. @p protocol can be 'http://', 'ftp://' or
- * 'file://'. Ecore_FILE must be compiled with CURL to handle http and
- * ftp protocols.
- */
 EAPI Eina_Bool
 ecore_file_download_protocol_available(const char *protocol)
 {
@@ -348,18 +290,6 @@ _ecore_file_download_curl(const char *url, const char *dst,
    return job;
 }
 
-/**
- * @brief Abort the given download job and call the completion_cb
- * callbck with a status of 1 (error).
- *
- * @param job The download job to abort.
- *
- * This function aborts a download operation started by
- * ecore_file_download(). @p job is the #Ecore_File_Download_Job
- * structure filled by ecore_file_download(). If it is @c NULL, this
- * function does nothing. To abort all the currently downloading
- * operations, call ecore_file_download_abort_all().
- */
 EAPI void
 ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
@@ -375,14 +305,6 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
    free(job);
 }
 
-/**
- * @brief Abort all downloads.
- *
- * This function aborts all the downloads that have been started by
- * ecore_file_download(). It loops over the started downloads and call
- * ecore_file_download_abort() for each of them. To abort only one
- * specific download operation, call ecore_file_download_abort().
- */
 EAPI void
 ecore_file_download_abort_all(void)
 {
@@ -391,7 +313,3 @@ ecore_file_download_abort_all(void)
    EINA_LIST_FREE(_job_list, job)
              ecore_file_download_abort(job);
 }
-
-/**
- * @}
- */
