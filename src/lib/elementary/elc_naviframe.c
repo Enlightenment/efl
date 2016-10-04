@@ -30,6 +30,10 @@ static const char TITLE_ACCESS_PART[] = "access.title";
 static const char SIG_TRANSITION_FINISHED[] = "transition,finished";
 static const char SIG_TITLE_TRANSITION_FINISHED[] = "title,transition,finished";
 static const char SIG_TITLE_CLICKED[] = "title,clicked";
+static const char SIG_PUSH_FINISHED_ITEM_ACTIVATED[] = "push,finished,item,activated";
+static const char SIG_PUSH_FINISHED_ITEM_DEACTIVATED[] = "push,finished,item,deactivated";
+static const char SIG_POP_FINISHED_ITEM_ACTIVATED[] = "pop,finished,item,activated";
+static const char SIG_POP_FINISHED_ITEM_DEACTIVATED[] = "pop,finished,item,deactivated";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_TRANSITION_FINISHED, ""},
@@ -39,6 +43,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_WIDGET_ACCESS_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_LAYOUT_FOCUSED, ""}, /**< handled by elm_layout */
    {SIG_LAYOUT_UNFOCUSED, ""}, /**< handled by elm_layout */
+   {SIG_PUSH_FINISHED_ITEM_ACTIVATED, ""},
+   {SIG_PUSH_FINISHED_ITEM_DEACTIVATED, ""},
+   {SIG_POP_FINISHED_ITEM_ACTIVATED, ""},
+   {SIG_POP_FINISHED_ITEM_DEACTIVATED, ""},
    {NULL, NULL}
 };
 
@@ -569,6 +577,7 @@ _elm_naviframe_item_efl_object_destructor(Eo *eo_item, Elm_Naviframe_Item_Data *
         if (!prev_it)
           {
              elm_widget_tree_unfocusable_set(VIEW(nit), EINA_TRUE);
+             efl_event_callback_legacy_call(WIDGET(nit), ELM_NAVIFRAME_EVENT_POP_FINISHED_ITEM_DEACTIVATED, EO_OBJ(nit));
              goto end;
           }
 
@@ -583,6 +592,9 @@ _elm_naviframe_item_efl_object_destructor(Eo *eo_item, Elm_Naviframe_Item_Data *
         _prev_page_focus_recover(prev_it);
 
         elm_object_signal_emit(VIEW(prev_it), "elm,state,visible", "elm");
+
+        efl_event_callback_legacy_call(WIDGET(nit), ELM_NAVIFRAME_EVENT_POP_FINISHED_ITEM_ACTIVATED, EO_OBJ(prev_it));
+        efl_event_callback_legacy_call(WIDGET(nit), ELM_NAVIFRAME_EVENT_POP_FINISHED_ITEM_DEACTIVATED, EO_OBJ(nit));
      }
 
 end:
@@ -595,7 +607,6 @@ end:
      }
 
    _item_free(nit);
-
    efl_destructor(efl_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS));
 }
 
@@ -1114,6 +1125,8 @@ _on_item_push_finished(void *data,
 
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
+
+   efl_event_callback_legacy_call(WIDGET(it), ELM_NAVIFRAME_EVENT_PUSH_FINISHED_ITEM_DEACTIVATED, EO_OBJ(it));
 }
 
 /* "elm,state,cur,popped"
@@ -1132,6 +1145,7 @@ _on_item_pop_finished(void *data,
      elm_widget_tree_unfocusable_set(VIEW(it), EINA_FALSE);
    sd->popping = eina_list_remove(sd->popping, it);
 
+   efl_event_callback_legacy_call(WIDGET(it), ELM_NAVIFRAME_EVENT_POP_FINISHED_ITEM_DEACTIVATED, EO_OBJ(it));
    elm_wdg_item_del(EO_OBJ(it));
 }
 
@@ -1155,9 +1169,18 @@ _on_item_show_finished(void *data,
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
 
+   Eina_Bool is_pushed = it->pushing;
    it->pushing = EINA_FALSE;
 
    efl_event_callback_legacy_call(WIDGET(it), ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED, EO_OBJ(it));
+
+   if (EO_OBJ(it) == elm_naviframe_top_item_get(WIDGET(it)))
+     {
+        if (is_pushed)
+          efl_event_callback_legacy_call(WIDGET(it), ELM_NAVIFRAME_EVENT_PUSH_FINISHED_ITEM_ACTIVATED, EO_OBJ(it));
+        else
+          efl_event_callback_legacy_call(WIDGET(it), ELM_NAVIFRAME_EVENT_POP_FINISHED_ITEM_ACTIVATED, EO_OBJ(it));
+     }
 }
 
 static void
@@ -1598,6 +1621,9 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
      elm_object_signal_emit(VIEW(item), "elm,state,visible", "elm");
 
    elm_layout_sizing_eval(obj);
+
+   if (!top_item)
+     efl_event_callback_legacy_call(obj, ELM_NAVIFRAME_EVENT_PUSH_FINISHED_ITEM_ACTIVATED, EO_OBJ(item));
 }
 
 EAPI Evas_Object *
@@ -1712,6 +1738,12 @@ _elm_naviframe_item_insert_after(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_Ite
 
    elm_layout_sizing_eval(obj);
 
+   if (top_inserted)
+     {
+        efl_event_callback_legacy_call(obj, ELM_NAVIFRAME_EVENT_PUSH_FINISHED_ITEM_ACTIVATED, eo_item);
+        efl_event_callback_legacy_call(obj, ELM_NAVIFRAME_EVENT_PUSH_FINISHED_ITEM_DEACTIVATED, EO_OBJ(after));
+     }
+
    return eo_item;
 }
 
@@ -1802,7 +1834,10 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
         _schedule_deferred(nfo, sd);
      }
    else
-     elm_wdg_item_del(eo_item);
+     {
+        efl_event_callback_legacy_call(obj, ELM_NAVIFRAME_EVENT_POP_FINISHED_ITEM_DEACTIVATED, eo_item);
+        elm_wdg_item_del(eo_item);
+     }
 
  on_error:
    return content;
