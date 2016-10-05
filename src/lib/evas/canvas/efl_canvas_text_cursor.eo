@@ -209,6 +209,6 @@ class Efl.Canvas.Text.Cursor (Efl.Object)
       changed; [[The cursor position has changed]]
    }
    constructors {
-      .text_object;
+      Efl.Canvas.Text.Cursor.text_object;
    }
 }

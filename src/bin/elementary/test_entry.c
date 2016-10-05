@@ -2948,6 +2948,22 @@ test_entry_password(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 }
 
 static void
+my_efl_ui_text_anchor_hover_opened(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Eo *bt;
+   Eo *en = data;
+
+   Efl_Ui_Text_Anchor_Hover_Info *ei = event->info;
+
+   bt = efl_add(ELM_BUTTON_CLASS, en);
+   elm_object_text_set(bt, ei->anchor_info->name);
+   evas_object_show(bt);
+   elm_object_part_content_set(ei->hover, "middle", bt);
+
+   printf("anchor hover\n");
+}
+
+static void
 my_efl_ui_text_bt_3(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eo *sel_start, *sel_end;
@@ -2981,7 +2997,7 @@ void
 test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx2, *bx3, *bt, *en, *ck;
-   Efl_Canvas_Text_Cursor *cur;
+   Efl_Canvas_Text_Cursor *main_cur, *cur;
 
    win = elm_win_util_standard_add("entry", "Entry");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -2997,11 +3013,20 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
          " new UI Text widget.\xE2\x80\xA9This is the next paragraph.\nThis"
          " is the next line.\nThis is Yet another line! Line and paragraph"
          " separators are actually different!");
+
+   main_cur = efl_canvas_text_cursor_get(en);
    cur = efl_ui_text_cursor_new(en);
+
    efl_canvas_text_cursor_position_set(cur, 2);
    efl_canvas_text_cursor_object_item_insert(cur, "size=32x32 href=emoticon");
-   efl_canvas_text_cursor_position_set(cur, 10);
+   efl_canvas_text_cursor_position_set(cur, 50);
    efl_canvas_text_cursor_object_item_insert(cur, "size=32x32 href=emoticon");
+
+   efl_canvas_text_cursor_position_set(main_cur, 5);
+   efl_canvas_text_cursor_position_set(cur, 20);
+
+   efl_canvas_text_annotation_insert(en, main_cur, cur, "a href=#hello");
+
    efl_ui_text_interactive_editable_set(en, EINA_TRUE);
    efl_ui_text_selection_handler_disabled_set(en, EINA_FALSE);
    efl_ui_text_scrollable_set(en, EINA_TRUE);
@@ -3092,6 +3117,8 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx3);
    evas_object_show(bx2);
+
+   efl_event_callback_add(en, EFL_UI_TEXT_EVENT_ANCHOR_HOVER_OPENED, my_efl_ui_text_anchor_hover_opened, en);
 
    evas_object_show(win);
 }

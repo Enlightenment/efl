@@ -2,6 +2,52 @@ import elm_general;
 import elm_icon;
 import elm_entry;
 
+struct Efl.Ui.Text.Anchor_Info
+{
+   name: string; [[The name of the anchor, as stated in its href.]]
+   button: int; [[The mouse button used to click on it.]]
+   x: Evas.Coord; [[Anchor geometry, relative to canvas.]]
+   y: Evas.Coord; [[Anchor geometry, relative to canvas.]]
+   w: Evas.Coord; [[Anchor geometry, relative to canvas.]]
+   h: Evas.Coord; [[Anchor geometry, relative to canvas.]]
+}
+
+struct Efl.Ui.Text.Hover_Parent
+{
+   x: Evas.Coord;
+   y: Evas.Coord;
+   w: Evas.Coord;
+   h: Evas.Coord;
+}
+
+struct Efl.Ui.Text.Anchor_Hover_Info
+{
+   anchor_info: const(Efl.Ui.Text.Anchor_Info)*; [[The actual anchor info.]]
+   hover: Elm.Hover; [[The hover object to use for the popup.]]
+   hover_parent: Efl.Ui.Text.Hover_Parent;
+   hover_left : bool; [[Hint indicating if there's space
+                     for content on the left side of
+                     the hover. Before calling the
+                     callback, the widget will make the
+                     necessary calculations to check
+                     which sides are fit to be set with
+                     content, based on the position the
+                     hover is activated and its distance
+                     to the edges of its parent object
+                   ]]
+   hover_right : bool; [[Hint indicating content fits on
+                      the right side of the hover.
+                      See @.hover_left.
+                    ]]
+   hover_top : bool; [[Hint indicating content fits on top
+                    of the hover. @.hover_left.
+                  ]]
+   hover_bottom : bool; [[Hint indicating content fits
+                                   below the hover. See
+                                   @.hover_left.
+                                  ]]
+}
+
 class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Elm.Interface.Atspi.Text, Elm.Interface.Atspi.Text.Editable, Efl.File,
                  Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Ui.Text.Interactive)
