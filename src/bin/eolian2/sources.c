@@ -48,6 +48,56 @@ _get_data_type(const Eolian_Class *cl)
    return dtr;
 }
 
+static Eina_Bool
+_function_exists(const char *fname, Eina_Strbuf *buf)
+{
+   const char *ptr = eina_strbuf_string_get(buf);
+   size_t flen = strlen(fname);
+   while ((ptr = strstr(ptr, fname)) != NULL)
+     {
+        switch (*(ptr - 1))
+          {
+           case '\n':
+           case ' ':
+             switch (*(ptr + flen))
+               {
+                case ' ':
+                case '(':
+                  return EINA_TRUE;
+               }
+          }
+        ++ptr;
+     }
+   return EINA_FALSE;
+}
+
+/* Check if the type is used in the file, not if it is a typedef... */
+static Eina_Bool
+_type_exists(const char *tname, Eina_Strbuf *buf)
+{
+   const char *ptr = eina_strbuf_string_get(buf);
+   size_t tlen = strlen(tname);
+   while ((ptr = strstr(ptr, tname)) != NULL)
+     {
+        switch (*(ptr - 1))
+          {
+           case '\n':
+           case ' ':
+           case ',':
+             switch (*(ptr + tlen))
+               {
+                case '\n':
+                case ' ':
+                case ',':
+                case ';':
+                  return EINA_TRUE;
+               }
+          }
+        ++ptr;
+     }
+   return EINA_FALSE;
+}
+
 static void
 _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
           Eolian_Function_Type ftype, Eina_Strbuf *buf,
@@ -768,4 +818,49 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 {
    if (!cl)
      return;
+
+   char *cname = NULL, *cnameu = NULL, *cnamel = NULL;
+   eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel);
+
+   Eina_Strbuf *beg = eina_strbuf_new();
+
+   if (!_type_exists("EFL_BETA_API_SUPPORT", buf))
+     {
+        printf("generating EFL_BETA_API_SUPPORT...\n");
+        eina_strbuf_append(beg, "#define EFL_BETA_API_SUPPORT\n");
+     }
+
+   if (!_type_exists("<Eo.h>", buf))
+     {
+        printf("generating includes for <Eo.h> and \"%s.eo.h\"...\n", cnamel);
+        eina_strbuf_append(beg, "#include <Eo.h>\n");
+        eina_strbuf_append_printf(beg, "#include \"%s.eo.h\"\n\n", cnamel);
+     }
+
+   /* determine data type name */
+   char *dt = _get_data_type(cl);
+   char adt[128];
+   if (dt && !strcmp(dt, "null"))
+     adt[0] = '\0';
+   else if (dt)
+     snprintf(adt, sizeof(adt), "%s", dt);
+   else
+     snprintf(adt, sizeof(adt), "%s_Data", cname);
+   free(dt);
+
+   /* generate data type struct */
+   if (adt[0] && !_type_exists(adt, buf))
+     {
+        printf("generating data type structure %s...\n", adt);
+        eina_strbuf_append_printf(beg, "typedef struct\n{\n} %s;\n\n", adt);
+     }
+
+   if (eina_strbuf_length_get(beg))
+     eina_strbuf_prepend(buf, eina_strbuf_string_get(beg));
+
+   eina_strbuf_free(beg);
+
+   free(cname);
+   free(cnameu);
+   free(cnamel);
 }
