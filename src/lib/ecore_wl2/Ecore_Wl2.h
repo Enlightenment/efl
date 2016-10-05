@@ -145,6 +145,14 @@ typedef struct _Ecore_Wl2_Event_Seat_Name
    unsigned int id;
 } Ecore_Wl2_Event_Seat_Name;
 
+typedef struct _Ecore_Wl2_Event_Seat_Capabilities
+{
+   unsigned int id;
+   Eina_Bool pointer_enabled : 1;
+   Eina_Bool keyboard_enabled : 1;
+   Eina_Bool touch_enabled : 1;
+} Ecore_Wl2_Event_Seat_Capabilities;
+
 typedef enum
 {
    ECORE_WL2_SELECTION_CNP,
@@ -210,6 +218,7 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_SYNC_DONE; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_OFFER_DATA_READY; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_SEAT_NAME_CHANGED; /** @since 1.19 */
+EAPI extern int ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED; /** @since 1.19 */
 /**
  * @file
  * @brief Ecore functions for dealing with the Wayland display protocol

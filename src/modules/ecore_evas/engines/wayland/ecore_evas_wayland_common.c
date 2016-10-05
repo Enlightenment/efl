@@ -30,6 +30,9 @@ typedef struct _EE_Wl_Device EE_Wl_Device;
 struct _EE_Wl_Device
 {
    Evas_Device *seat;
+   Evas_Device *pointer;
+   Evas_Device *keyboard;
+   Evas_Device *touch;
    unsigned int id;
 };
 
@@ -44,7 +47,7 @@ EVAS_SMART_SUBCLASS_NEW(_smart_frame_type, _ecore_evas_wl_frame,
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
-static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[11];
+static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[12];
 
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 
@@ -494,6 +497,12 @@ _ecore_evas_wl_common_device_free(EE_Wl_Device *device)
 {
    if (device->seat)
      evas_device_del(device->seat);
+   if (device->pointer)
+     evas_device_del(device->pointer);
+   if (device->keyboard)
+     evas_device_del(device->keyboard);
+   if (device->touch)
+     evas_device_del(device->touch);
    free(device);
 }
 
@@ -562,6 +571,77 @@ _ecore_evas_wl_common_cb_seat_name_changed(void *d EINA_UNUSED, int t EINA_UNUSE
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Seat_Capabilities *ev = event;
+   Ecore_Evas *ee;
+   Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH(ee_list, l, ee)
+     {
+        Ecore_Evas_Engine_Wl_Data *wdata;
+        EE_Wl_Device *device;
+
+        wdata = ee->engine.data;
+
+        EINA_LIST_FOREACH(wdata->devices_list, ll, device)
+          {
+             if (device->id == ev->id)
+               {
+                  if (ev->pointer_enabled && !device->pointer)
+                    {
+                       device->pointer = evas_device_add_full(
+                          ee->evas, "Mouse",
+                          "A wayland pointer device",
+                          device->seat, NULL,
+                          EVAS_DEVICE_CLASS_MOUSE,
+                          EVAS_DEVICE_SUBCLASS_NONE);
+                    }
+                  else if (!ev->pointer_enabled && device->pointer)
+                    {
+                       evas_device_del(device->pointer);
+                       device->pointer = NULL;
+                    }
+
+                  if (ev->keyboard_enabled && !device->keyboard)
+                    {
+                       device->keyboard = evas_device_add_full(
+                          ee->evas, "Keyboard",
+                          "A wayland keyboard device",
+                          device->seat, NULL,
+                          EVAS_DEVICE_CLASS_KEYBOARD,
+                          EVAS_DEVICE_SUBCLASS_NONE);
+                    }
+                  else if (!ev->keyboard_enabled && device->keyboard)
+                    {
+                       evas_device_del(device->keyboard);
+                       device->keyboard = NULL;
+                    }
+
+                  if (ev->touch_enabled && !device->touch)
+                    {
+                       device->touch = evas_device_add_full(
+                          ee->evas, "Touch",
+                          "A wayland touch device",
+                          device->seat, NULL,
+                          EVAS_DEVICE_CLASS_TOUCH,
+                          EVAS_DEVICE_SUBCLASS_NONE);
+                    }
+                  else if (!ev->touch_enabled && device->touch)
+                    {
+                       evas_device_del(device->touch);
+                       device->touch = NULL;
+                    }
+
+                  break;
+               }
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 int
 _ecore_evas_wl_common_init(void)
 {
@@ -603,6 +683,10 @@ _ecore_evas_wl_common_init(void)
    _ecore_evas_wl_event_hdls[10] =
      ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_NAME_CHANGED,
                              _ecore_evas_wl_common_cb_seat_name_changed, NULL);
+   _ecore_evas_wl_event_hdls[11] =
+     ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED,
+                             _ecore_evas_wl_common_cb_seat_capabilities_changed,
+                             NULL);
 
    ecore_event_evas_init();
 

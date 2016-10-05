@@ -1130,6 +1130,7 @@ static const struct wl_data_device_listener _data_listener =
 static void
 _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability caps)
 {
+   Ecore_Wl2_Event_Seat_Capabilities *ev;
    Ecore_Wl2_Input *input;
 
    input = data;
@@ -1185,6 +1186,16 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
           wl_touch_destroy(input->wl.touch);
         input->wl.touch = NULL;
      }
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Seat_Capabilities));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
+   ev->id = input->id;
+   ev->pointer_enabled = !!(caps & WL_SEAT_CAPABILITY_POINTER);
+   ev->keyboard_enabled = !!(caps & WL_SEAT_CAPABILITY_KEYBOARD);
+   ev->touch_enabled = !!(caps & WL_SEAT_CAPABILITY_TOUCH);
+
+   ecore_event_add(ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED, ev, NULL, NULL);
 }
 
 static void
