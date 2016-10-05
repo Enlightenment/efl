@@ -155,9 +155,9 @@ _get_filename(const char *path)
 }
 
 static Eina_Bool
-_write_file(const char *fname, const Eina_Strbuf *buf, Eina_Bool append)
+_write_file(const char *fname, const Eina_Strbuf *buf)
 {
-   FILE *f = fopen(fname, append ? "ab" : "wb");
+   FILE *f = fopen(fname, "wb");
    if (!f)
      {
         fprintf(stderr, "eolian: could not open '%s' (%s)\n",
@@ -297,7 +297,7 @@ _write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
    if (cl || !legacy)
      {
         buf = _include_guard(_get_filename(ofname), NULL, buf);
-        if (_write_file(ofname, buf, EINA_FALSE))
+        if (_write_file(ofname, buf))
           {
              eina_strbuf_free(buf);
              return EINA_TRUE;
@@ -326,7 +326,7 @@ _write_stub_header(const char *ofname, const char *ifname)
 
    buf = _include_guard(ifname, "STUBS", buf);
 
-   Eina_Bool ret = _write_file(ofname, buf, EINA_FALSE);
+   Eina_Bool ret = _write_file(ofname, buf);
    eina_strbuf_free(buf);
    return ret;
 }
@@ -341,7 +341,7 @@ _write_source(const char *ofname, const char *ifname)
    eo_gen_source_gen(cl, buf);
    if (cl)
      {
-        if (_write_file(ofname, buf, EINA_FALSE))
+        if (_write_file(ofname, buf))
           {
              eina_strbuf_free(buf);
              return EINA_TRUE;
@@ -366,7 +366,7 @@ _write_impl(const char *ofname, const char *ifname)
      return EINA_FALSE;
 
    eo_gen_impl_gen(cl, buf);
-   Eina_Bool ret = _write_file(ofname, buf, EINA_FALSE);
+   Eina_Bool ret = _write_file(ofname, buf);
    eina_strbuf_free(buf);
    return ret;
 }
