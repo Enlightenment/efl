@@ -11,6 +11,8 @@
 #include "evas_polygon_private.h"
 #include "evas_vg_private.h"
 
+#include <Ecore.h>
+
 #define MY_CLASS EVAS_CANVAS_CLASS
 
 #ifdef LKDEBUG
@@ -613,6 +615,8 @@ _evas_canvas_efl_object_provider_find(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED,
 {
    if (klass == EVAS_CANVAS_CLASS)
      return eo_e;
+   else if (klass == EFL_LOOP_CLASS)
+     return ecore_main_loop_get();
    return efl_provider_find(efl_super(eo_e, MY_CLASS), klass);
 }
 
