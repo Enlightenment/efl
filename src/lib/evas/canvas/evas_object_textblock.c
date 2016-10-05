@@ -14043,6 +14043,21 @@ _efl_canvas_text_object_item_geometry_get(Eo *eo_obj, Efl_Canvas_Text_Data *o EI
    return _evas_textblock_cursor_format_item_geometry_get(&cur, cx, cy, cw, ch);
 }
 
+EOLIAN static void
+_efl_canvas_text_annotation_positions_get(Eo *eo_obj,
+      Efl_Canvas_Text_Data *o EINA_UNUSED,
+      const Efl_Canvas_Text_Annotation *annotation,
+      Efl_Canvas_Text_Cursor *start_obj, Efl_Canvas_Text_Cursor *end_obj)
+{
+   Efl_Canvas_Text_Cursor_Data *start, *end;
+
+   start = efl_data_scope_get(start_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
+   end = efl_data_scope_get(end_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
+
+   _textblock_cursor_pos_at_fnode_set(eo_obj, start, annotation->start_node);
+   _textblock_cursor_pos_at_fnode_set(eo_obj, end, annotation->end_node);
+}
+
 /**
  * @}
  */
