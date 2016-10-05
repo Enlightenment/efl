@@ -3904,11 +3904,12 @@ do_error(cpp_reader * pfile, struct directive *keyword EINA_UNUSED,
 {
    int                 length = limit - buf;
    unsigned char      *copy = (unsigned char *)xmalloc(length + 1);
+   unsigned char      *msg = copy;
 
    memcpy(copy, buf, length);
    copy[length] = 0;
-   SKIP_WHITE_SPACE(copy);
-   cpp_error(pfile, "#error %s", copy);
+   SKIP_WHITE_SPACE(msg);
+   cpp_error(pfile, "#error %s", msg);
    free(copy);
    return 0;
 }
@@ -3925,11 +3926,12 @@ do_warning(cpp_reader * pfile, struct directive *keyword EINA_UNUSED,
 {
    int                 length = limit - buf;
    unsigned char      *copy = (unsigned char *)xmalloc(length + 1);
+   unsigned char      *msg = copy;
 
    memcpy(copy, buf, length);
    copy[length] = 0;
-   SKIP_WHITE_SPACE(copy);
-   cpp_warning(pfile, "#warning %s", copy);
+   SKIP_WHITE_SPACE(msg);
+   cpp_warning(pfile, "#warning %s", msg);
    free(copy);
    return 0;
 }
