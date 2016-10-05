@@ -5,6 +5,8 @@
 #endif
 #include <Elementary.h>
 
+#define ITEMS_MAX 50
+
 Evas_Object * _focus_autoscroll_mode_frame_create(Evas_Object *parent);
 
 static Elm_Gengrid_Item_Class *gic, *ggic;
@@ -2336,3 +2338,209 @@ test_gengrid_disabled_item_focus(void *data EINA_UNUSED,
    evas_object_resize(win, 600, 600);
    evas_object_show(win);
 }
+
+static void
+_enable_bringin(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   if (elm_check_state_get(obj))
+     elm_config_focus_autoscroll_mode_set(ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN);
+   else
+     elm_config_focus_autoscroll_mode_set(ELM_FOCUS_AUTOSCROLL_MODE_SHOW);
+}
+
+typedef struct _item_resize_data{
+   Evas_Object *wentry, *hentry, *grid;
+}Item_Resize_Data;
+
+static void
+_custom_item_size(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Coord w = 0, h = 0;
+   Elm_Object_Item *it;
+   const char *pstr;
+   Item_Resize_Data *pdata;
+   if (!data) return;
+
+   pdata = data;
+   pstr = elm_object_text_get(pdata->wentry);
+   if (pstr) w = atoi(pstr);
+   pstr = elm_object_text_get(pdata->hentry);
+   if (pstr) h = atoi(pstr);
+   it = elm_gengrid_selected_item_get(pdata->grid);
+   if (it) elm_gengrid_item_custom_size_set(it, w, h);
+}
+
+static void
+_item_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Coord w, h;
+   Item_Resize_Data *pdata;
+   char buf[8];
+   if (!data) return;
+
+   pdata = data;
+   elm_gengrid_item_custom_size_get(event_info, &w, &h);
+   if (snprintf(buf, 8, "%d", (int)w) > 7) buf[7] = 0;
+   elm_object_part_text_set(pdata->wentry, NULL, buf);
+   if (snprintf(buf, 8, "%d", (int)h) > 7) buf[7] = 0;
+   elm_object_part_text_set(pdata->hentry, NULL, buf);
+}
+
+
+void
+test_gengrid_item_custom_size(void *data EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *hbox, *vbox, *ck, *grid, *en, *btn, *ebox, *lb;
+   Elm_Gengrid_Item_Class *ic;
+   Item_Data *id;
+   Item_Resize_Data *pdata;
+   char buf[PATH_MAX];
+   int i, n;
+
+   pdata = calloc(1, sizeof(Item_Resize_Data));
+
+   win = elm_win_util_standard_add("item custom size", "Item Custom Size");
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, pdata);
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_show(win);
+
+   hbox = elm_box_add(win);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, hbox);
+   evas_object_show(hbox);
+
+   /* box for gengrid */
+   vbox = elm_box_add(hbox);
+   evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(vbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(hbox, vbox);
+   evas_object_show(vbox);
+
+   grid = elm_gengrid_add(vbox);
+   /* Set default size of items even if elm_gengrid_item_custom_size_set()
+    * will be used to set custom size for individual item. */
+   elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(100), ELM_SCALE_SIZE(100));
+   elm_gengrid_horizontal_set(grid, EINA_TRUE);
+   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(vbox, grid);
+   evas_object_show(grid);
+
+   pdata->grid = grid;
+
+   evas_object_smart_callback_add(grid, "item,focused", _gengrid_focus_item_cb, "item,focused");
+   evas_object_smart_callback_add(grid, "item,unfocused", _gengrid_focus_item_cb, "item,unfocused");
+   evas_object_smart_callback_add(grid, "selected", _gengrid_focus_item_cb, "selected");
+   evas_object_smart_callback_add(grid, "unselected", _gengrid_focus_item_cb, "unselected");
+   evas_object_smart_callback_add(grid, "activated", _gengrid_focus_item_cb, "activated");
+   evas_object_smart_callback_add(grid, "highlighted", _gengrid_focus_item_cb, "highlighted");
+   evas_object_smart_callback_add(grid, "unhighlighted", _gengrid_focus_item_cb, "unhighlighted");
+
+   /* box for options */
+   vbox = elm_box_add(hbox);
+   elm_box_padding_set(vbox, 0, 20);
+   evas_object_size_hint_weight_set(vbox, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(vbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(hbox, vbox);
+   evas_object_show(vbox);
+
+   ebox = elm_box_add(vbox);
+   elm_box_padding_set(ebox, 0, 5);
+   evas_object_size_hint_weight_set(ebox, 0.0, 0.0);
+   evas_object_size_hint_align_set(ebox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(vbox, ebox);
+   evas_object_show(ebox);
+
+   lb = elm_label_add(ebox);
+   elm_object_text_set(lb, "Select an item...");
+   evas_object_size_hint_weight_set(lb, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(ebox, lb);
+   evas_object_show(lb);
+
+   en = elm_entry_add(ebox);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_object_part_text_set(en, "guide", "Width");
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(ebox, en);
+   evas_object_show(en);
+
+   pdata->wentry = en;
+
+   en = elm_entry_add(ebox);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_object_part_text_set(en, "guide", "Height");
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(ebox, en);
+   evas_object_show(en);
+
+   pdata->hentry = en;
+
+   btn = elm_button_add(ebox);
+   elm_object_text_set(btn, "Resize Item");
+   evas_object_smart_callback_add(btn, "clicked", _custom_item_size, (void *)pdata);
+   elm_box_pack_end(ebox, btn);
+   evas_object_show(btn);
+
+   ebox = elm_box_add(vbox);
+   evas_object_size_hint_weight_set(ebox, 0.0, 0.0);
+   evas_object_size_hint_align_set(ebox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(vbox, ebox);
+   evas_object_show(ebox);
+
+   ck = elm_check_add(ebox);
+   elm_object_text_set(ck, "Horizontal Mode");
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(ck, "changed", _horizontal_grid, grid);
+   elm_check_state_set(ck, EINA_TRUE);
+   elm_box_pack_end(ebox, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(ebox);
+   elm_object_text_set(ck, "Bring-in");
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(ck, "changed", _enable_bringin, grid);
+   elm_box_pack_end(ebox, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(ebox);
+   elm_object_text_set(ck, "Item Loop");
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(ck, "changed",_item_loop_enable_changed_cb, grid);
+   elm_box_pack_end(ebox, ck);
+   evas_object_show(ck);
+
+   ic = elm_gengrid_item_class_new();
+   ic->item_style = "default";
+   ic->func.text_get = grid_text_get;
+   ic->func.content_get = grid_content_get;
+   ic->func.state_get = NULL;
+   ic->func.del = grid_del;
+
+   n = 0;
+   for (i = 0; i < ITEMS_MAX; i++)
+     {
+        id = calloc(1, sizeof(Item_Data));
+        snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n]);
+        n = (n + 1) % 9;
+        id->mode = i;
+        id->path = eina_stringshare_add(buf);
+        id->item = elm_gengrid_item_append(grid, ic, id, _item_selected, pdata);
+        if (!(i % 2))
+          elm_gengrid_item_custom_size_set(id->item, ELM_SCALE_SIZE(40 + (2 * i)),
+                                           ELM_SCALE_SIZE(40 + (2 * i)));
+     }
+   elm_gengrid_item_class_free(ic);
+
+   evas_object_resize(win, 800, 600);
+}
+

@@ -135,6 +135,17 @@ struct _Elm_Gengrid_Data
                                                       * cache. */
    int                                   item_cache_count;
    int                                   item_cache_max;
+
+   /* custom dimensions may be set for any item.
+    * the logic for placing items requires that either item widths
+    * for horizontal gengrid or item height for vertical gengrid
+    * may be varied at once. */
+
+   Eina_Bool                          custom_size_mode : 1; /* a flag that items have custom sizes */
+   unsigned int                       *custom_size_sum; /* array to store sum of the widths for items placed already for each row or sum of heights for each column. this is to find location of next item. */
+   unsigned int                       *custom_tot_sum; /* array to store total sum of all widths or heights. this is used for item alignment calculations. */
+   unsigned int                       custom_tot_max; /* maximum of the total sums over all rows or columns. this is also used for item alignment calculations. */
+   unsigned int                       custom_alloc_size; /* amount of memory allocated to above dynamic arrays in terms of number of rows or columns. */
 };
 
 struct Elm_Gen_Item_Type
@@ -153,6 +164,9 @@ struct Elm_Gen_Item_Type
    Eina_Bool               nocache_once : 1; /* do not use cache for
                                               * this item only once */
    Eina_Bool               nocache : 1; /* do not use cache for this item */
+
+   /* for non homogenous items */
+   Evas_Coord              w, h, sw, sh;
 };
 
 typedef struct _Item_Cache Item_Cache;

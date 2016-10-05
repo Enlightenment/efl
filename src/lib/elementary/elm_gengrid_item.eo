@@ -129,6 +129,33 @@ class Elm.Gengrid.Item(Elm.Widget.Item)
                      mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); [[The selected mode]]
                 }
            }
+           @property custom_size {
+                [[Custom size mode for non-homogeneous gengrid. ]]
+                get {
+                     [[Get the dimensions of a gengrid item.
+
+                       Gives the dimensions set with elm_gengrid_item_custom_size_set(). If the item
+                       has not been modified values set with elm_gengrid_item_size_set() are obtained.
+
+                       @since 1.19]]
+                }
+                set {
+                     [[Resize dimensions of a gengrid item.
+
+                       In case of a horizontal grid, only the widths only be resized and
+                       in case of vertical only the heights can be resized. Item size
+                       should be set by elm_gengrid_item_size_set() beforehand.
+
+                       The values set by elm_gengrid_item_size_set() will be used for the
+                       dimension that remains fixed.
+
+                       @since 1.19]]
+                }
+                values {
+                     w : Evas.Coord; [[The item's width.]]
+                     h : Evas.Coord; [[The item's height.]]
+                }
+           }
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;

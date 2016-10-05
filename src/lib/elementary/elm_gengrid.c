@@ -94,7 +94,7 @@ static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 static void _item_position_update(Eina_Inlist *list, int idx);
 static void _item_mouse_callbacks_add(Elm_Gen_Item *it, Evas_Object *view);
 static void _item_mouse_callbacks_del(Elm_Gen_Item *it, Evas_Object *view);
-
+static void _calc_job(void *data);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -264,6 +264,66 @@ _item_cache_find(Elm_Gen_Item *it)
    return EINA_FALSE;
 }
 
+//Calculate sum of widths or heights of all items in a row or column
+static int
+_get_item_span(Elm_Gengrid_Data *sd, int idx)
+{
+   Elm_Gen_Item *it;
+   int sum = 0;
+   idx++;
+
+   EINA_INLIST_FOREACH(sd->items, it)
+     {
+        if (it->position == idx)
+          {
+             sum += ((sd->horizontal) ? it->item->w : it->item->h);
+             idx += sd->nmax;
+          }
+     }
+   return sum;
+}
+
+static Eina_Bool
+_setup_custom_size_mode(Elm_Gengrid_Data *sd)
+{
+   unsigned int *tmp;
+   int alloc_size = sd->nmax * sizeof(unsigned int);
+   if (sd->nmax <= sd->custom_alloc_size) return EINA_TRUE;
+
+   tmp = realloc(sd->custom_size_sum, alloc_size);
+   if (!tmp) return EINA_FALSE;
+   sd->custom_size_sum = tmp;
+
+   tmp = realloc(sd->custom_tot_sum, alloc_size);
+   if (!tmp) return EINA_FALSE;
+   sd->custom_tot_sum = tmp;
+
+   sd->custom_alloc_size = sd->nmax;
+   return EINA_TRUE;
+}
+
+static inline void
+_cleanup_custom_size_mode(Elm_Gengrid_Data *sd)
+{
+   ELM_SAFE_FREE(sd->custom_size_sum, free);
+   ELM_SAFE_FREE(sd->custom_tot_sum, free);
+}
+
+static void
+_custom_size_mode_calc(Elm_Gengrid_Data *sd)
+{
+   unsigned int i, max;
+   if (!sd->custom_tot_sum) return;
+
+   max = sd->custom_tot_sum[0] = _get_item_span(sd, 0);
+   for (i = 1; i < sd->custom_alloc_size; ++i)
+     {
+        sd->custom_tot_sum[i] = _get_item_span(sd, i);
+        max = (max < sd->custom_tot_sum[i]) ? sd->custom_tot_sum[i] : max;
+     }
+   sd->custom_tot_max = max;
+}
+
 static Eina_Bool
 _is_no_select(Elm_Gen_Item *it)
 {
@@ -275,6 +335,36 @@ _is_no_select(Elm_Gen_Item *it)
        (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      return EINA_TRUE;
    return EINA_FALSE;
+}
+
+EOLIAN static void
+_elm_gengrid_item_custom_size_get(Eo *eo_it EINA_UNUSED,
+                                   Elm_Gen_Item *it,
+                                   Evas_Coord *w,
+                                   Evas_Coord *h)
+{
+   ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
+
+   if (w) *w = GG_IT(it)->w;
+   if (h) *h = GG_IT(it)->h;
+}
+
+EOLIAN static void
+_elm_gengrid_item_custom_size_set(Eo *eo_it EINA_UNUSED,
+                         Elm_Gen_Item *it,
+                         Evas_Coord w,
+                         Evas_Coord h)
+{
+   ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
+
+   if (!sd->custom_size_mode) sd->custom_size_mode = !sd->custom_size_mode;
+   if ((GG_IT(it)->w == w) && (GG_IT(it)->h == h)) return;
+   GG_IT(it)->h = h;
+   GG_IT(it)->w = w;
+
+   ecore_job_del(sd->calc_job);
+   sd->calc_job = ecore_job_add(_calc_job, sd->obj);
 }
 
 EOLIAN static Elm_Object_Item *
@@ -324,13 +414,15 @@ static void
 _item_show_region(void *data)
 {
    Elm_Gengrid_Data *sd = data;
-   Evas_Coord cvw, cvh, it_xpos = 0, it_ypos = 0, minx = 0, miny = 0;
+   Evas_Coord cvw, cvh, it_xpos = 0, it_ypos = 0, col = 0, row = 0, minx = 0, miny = 0;
    Evas_Coord vw = 0, vh = 0;
    Elm_Object_Item *eo_it = NULL;
+   Eina_Bool was_resized = EINA_FALSE;
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &cvw, &cvh);
 
    if ((cvw != 0) && (cvh != 0))
        {
+          int x = 0;
           if (sd->show_region)
             eo_it = sd->show_it;
           else if (sd->bring_in)
@@ -342,21 +434,91 @@ _item_show_region(void *data)
           elm_obj_pan_pos_min_get(sd->pan_obj, &minx, &miny);
           if (sd->horizontal && (sd->item_height > 0))
             {
-               if (it->x >= 1)
-                 it_xpos = ((it->x - GG_IT(it)->prev_group) * sd->item_width)
-                    + (GG_IT(it)->prev_group * sd->group_item_width)
-                    + minx;
-               else it_xpos = minx;
+               row = cvh / sd->item_height;
+               if (row <= 0) row = 1;
+               was_resized = sd->custom_size_mode && (it->y < (Evas_Coord)sd->custom_alloc_size);
+               if (was_resized)
+                 {
+                    it_xpos = GG_IT(it)->sw
+                       + ((sd->custom_tot_max - sd->custom_tot_sum[it->y]) * sd->align_x)
+                       + (GG_IT(it)->prev_group * sd->group_item_width)
+                       + minx;
+                 }
+               else
+                 {
+                    col = sd->item_count / row;
+                    if (elm_widget_mirrored_get(sd->obj))
+                      {
+                         if (sd->item_count % row == 0)
+                           x = col - 1 - it->x;
+                         else
+                           x = col - it->x;
+                      }
+                    else x = it->x;
+                    if (x >= 1)
+                      {
+                         it_xpos = ((x - GG_IT(it)->prev_group) * sd->item_width)
+                            + (GG_IT(it)->prev_group * sd->group_item_width)
+                            + minx;
+                      }
+                    else it_xpos = minx;
+                    /**
+                     * If custom size cannot be used for a row
+                     * account for offset due to rows which are
+                     * using custom sizes already.
+                     */
+                    if (sd->custom_alloc_size > 0)
+                      {
+                         if (sd->item_count % row)
+                           col++;
+                         it_xpos += (sd->custom_tot_max
+                            - ((col - GG_IT(it)->prev_group) * sd->item_width)
+                            + (GG_IT(it)->prev_group * sd->group_item_width)) * sd->align_x;
+                      }
+                 }
+               miny = miny + ((cvh - (sd->item_height * row))
+                    * sd->align_y);
                it_ypos = it->y * sd->item_height + miny;
             }
           else if (sd->item_width > 0)
             {
+               col = cvw / sd->item_width;
+               if (col <= 0) col = 1;
+               was_resized = it->x < (Evas_Coord)sd->custom_alloc_size;
+               if (was_resized)
+                 {
+                    it_ypos = GG_IT(it)->sh
+                       + ((sd->custom_tot_max - sd->custom_tot_sum[it->x]) * sd->align_y)
+                       + (GG_IT(it)->prev_group * sd->group_item_height)
+                       + miny;
+                 }
+               else
+                 {
+                    if (it->y >= 1)
+                      {
+                         it_ypos = ((it->y - GG_IT(it)->prev_group) * sd->item_height)
+                            + (GG_IT(it)->prev_group * sd->group_item_height)
+                            + miny;
+                      }
+                    else it_ypos = miny;
+                    /**
+                     * If custom size cannot be used for a column
+                     * account for offset due to columns which are
+                     * using custom sizes already.
+                     */
+                    if (sd->custom_alloc_size > 0)
+                      {
+                         row = sd->item_count / col;
+                         if (sd->item_count % col)
+                           row++;
+                         it_ypos += (sd->custom_tot_max
+                            - ((row - GG_IT(it)->prev_group) * sd->item_height)
+                            + (GG_IT(it)->prev_group * sd->group_item_height)) * sd->align_y;
+                      }
+                 }
+               minx = minx + ((cvw - (sd->item_width * col))
+                    * sd->align_x);
                it_xpos = it->x * sd->item_width + minx;
-               if (it->y >= 1)
-                 it_ypos = ((it->y - GG_IT(it)->prev_group) * sd->item_height)
-                    + (GG_IT(it)->prev_group * sd->group_item_height)
-                    + miny;
-               else it_ypos = miny;
             }
 
           switch (sd->scroll_to_type)
@@ -378,8 +540,8 @@ _item_show_region(void *data)
                   it_ypos = it_ypos - vh + sd->item_height;
                   break;
                default:
-                  vw = sd->item_width;
-                  vh = sd->item_height;
+                  vw = (sd->horizontal && was_resized) ? GG_IT(it)->w : sd->item_width;
+                  vh = (!sd->horizontal && was_resized) ? GG_IT(it)->h : sd->item_height;
                   break;
             }
 
@@ -419,6 +581,15 @@ _calc_job(void *data)
         if (nmax < 1)
           nmax = 1;
 
+        sd->nmax = nmax;
+        if (sd->custom_size_mode)
+          {
+             if (!_setup_custom_size_mode(sd))
+               ERR("Failed to allocate memory for custom item size "
+                   "calculations!: gengrid=%p", sd->obj);
+             _custom_size_mode_calc(sd);
+          }
+
         EINA_INLIST_FOREACH(sd->items, it)
           {
              if (GG_IT(it)->prev_group != count_group)
@@ -442,15 +613,23 @@ _calc_job(void *data)
         count = sd->item_count + sd->items_lost - count_group;
         if (sd->horizontal)
           {
-             minw = (ceil(count / (float)nmax) * sd->item_width) +
-               (count_group * sd->group_item_width);
              minh = nmax * sd->item_height;
+             if (sd->custom_size_mode && (sd->custom_alloc_size > 0))
+               minw = sd->custom_tot_max +
+                  (count_group * sd->group_item_width);
+             else
+               minw = (ceil(count / (float)nmax) * sd->item_width) +
+                  (count_group * sd->group_item_width);
           }
         else
           {
              minw = nmax * sd->item_width;
-             minh = (ceil(count / (float)nmax) * sd->item_height) +
-               (count_group * sd->group_item_height);
+             if (sd->custom_size_mode && (sd->custom_alloc_size > 0))
+               minh = sd->custom_tot_max +
+                  (count_group * sd->group_item_height);
+             else
+               minh = (ceil(count / (float)nmax) * sd->item_height) +
+                  (count_group * sd->group_item_height);
           }
 
         if ((minw != sd->minw) || (minh != sd->minh))
@@ -1497,7 +1676,7 @@ _item_place(Elm_Gen_Item *it,
    Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh, iw, ih, ww;
    Evas_Coord tch, tcw, alignw = 0, alignh = 0, vw, vh;
    Eina_Bool reorder_item_move_forward = EINA_FALSE;
-   Eina_Bool was_realized;
+   Eina_Bool was_realized, can_resize;
    Elm_Gen_Item_Type *item;
    long items_count;
    int item_pos;
@@ -1530,8 +1709,14 @@ _item_place(Elm_Gen_Item *it,
         if (items_count % items_visible)
           columns++;
 
-        tcw = (wsd->item_width * columns) + (wsd->group_item_width *
-                                             eina_list_count(wsd->group_items));
+        /* If custom sizes cannot be applied to items
+         * of a row use default item size. */
+        can_resize = (wsd->custom_size_mode && (cy < (Evas_Coord)wsd->custom_alloc_size));
+        if (can_resize)
+          tcw = wsd->custom_tot_sum[cy];
+        else
+          tcw = (wsd->item_width * columns) + (wsd->group_item_width *
+                                               eina_list_count(wsd->group_items));
         alignw = (vw - tcw) * wsd->align_x;
 
         items_row = items_visible;
@@ -1563,8 +1748,14 @@ _item_place(Elm_Gen_Item *it,
         if (items_count % items_visible)
           rows++;
 
-        tch = (wsd->item_height * rows) + (wsd->group_item_height *
-                                           eina_list_count(wsd->group_items));
+        /* If custom sizes cannot be applied to items
+         * of a column use to default item size. */
+        can_resize = (wsd->custom_size_mode && (cx < (Evas_Coord)wsd->custom_alloc_size));
+        if (can_resize)
+          tch = wsd->custom_tot_sum[cx];
+        else
+          tch = (wsd->item_height * rows) + (wsd->group_item_height *
+                                             eina_list_count(wsd->group_items));
         alignh = (vh - tch) * wsd->align_y;
 
         items_col = items_visible;
@@ -1611,18 +1802,48 @@ _item_place(Elm_Gen_Item *it,
      {
         if (wsd->horizontal)
           {
-             x = (((cx - item->prev_group) * wsd->item_width)
-                  + (item->prev_group * wsd->group_item_width)) -
-               wsd->pan_x + ox + alignw;
+             if (can_resize)
+               {
+                  if (cx == 0) wsd->custom_size_sum[cy] = 0;
+                  x = ((item->prev_group * wsd->item_width)
+                       + (item->prev_group * wsd->group_item_width)) -
+                     wsd->pan_x + ox + alignw + wsd->custom_size_sum[cy];
+
+                  if (elm_widget_mirrored_get(WIDGET(it)))
+                    it->item->sw = wsd->custom_tot_sum[cy] - wsd->custom_size_sum[cy] - it->item->w;
+                  else
+                    it->item->sw = wsd->custom_size_sum[cy];
+
+                  wsd->custom_size_sum[cy] += it->item->w;
+               }
+             else
+               {
+                  x = (((cx - item->prev_group) * wsd->item_width)
+                       + (item->prev_group * wsd->group_item_width)) -
+                     wsd->pan_x + ox + alignw;
+               }
              y = (cy * wsd->item_height) - wsd->pan_y + oy + alignh;
           }
         else
           {
+             if (can_resize)
+               {
+                  if (cy == 0) wsd->custom_size_sum[cx] = 0;
+                  y = ((item->prev_group * wsd->item_height)
+                       + (item->prev_group * wsd->group_item_height)) -
+                     wsd->pan_y + oy + alignh + wsd->custom_size_sum[cx];
+
+                  it->item->sh = wsd->custom_size_sum[cx];
+                  wsd->custom_size_sum[cx] += it->item->h;
+               }
+             else
+               {
+                  y = (((cy - item->prev_group)
+                        * wsd->item_height) + (item->prev_group *
+                                               wsd->group_item_height)) -
+                     wsd->pan_y + oy + alignh;
+               }
              x = (cx * wsd->item_width) - wsd->pan_x + ox + alignw;
-             y = (((cy - item->prev_group)
-                   * wsd->item_height) + (item->prev_group *
-                                          wsd->group_item_height)) -
-               wsd->pan_y + oy + alignh;
           }
         if (elm_widget_mirrored_get(WIDGET(it))) /* Switch items side
                                                   * and componsate for
@@ -1630,10 +1851,13 @@ _item_place(Elm_Gen_Item *it,
                                                   * mode */
           {
              evas_object_geometry_get(WIDGET(it), NULL, NULL, &ww, NULL);
-             x = ww - x - wsd->item_width - wsd->pan_x - wsd->pan_x + ox + ox;
+             if (wsd->horizontal && can_resize)
+               x = ww - x - it->item->w - wsd->pan_x - wsd->pan_x + ox + ox;
+             else
+               x = ww - x - wsd->item_width - wsd->pan_x - wsd->pan_x + ox + ox;
           }
-        iw = wsd->item_width;
-        ih = wsd->item_height;
+        iw = (wsd->horizontal && can_resize) ? it->item->w : wsd->item_width;
+        ih = (!wsd->horizontal && can_resize) ? it->item->h : wsd->item_height;
      }
 
    was_realized = it->realized;
@@ -1652,8 +1876,12 @@ _item_place(Elm_Gen_Item *it,
                {
                   if (it->parent->item->gx < ox)
                     {
-                       it->parent->item->gx = x + wsd->item_width -
-                         wsd->group_item_width;
+                       if (wsd->custom_size_mode)
+                         it->parent->item->gx = x + it->item->w -
+                           wsd->group_item_width;
+                       else
+                         it->parent->item->gx = x + wsd->item_width -
+                           wsd->group_item_width;
                        if (it->parent->item->gx > ox)
                          it->parent->item->gx = ox;
                     }
@@ -1663,8 +1891,12 @@ _item_place(Elm_Gen_Item *it,
                {
                   if (it->parent->item->gy < oy)
                     {
-                       it->parent->item->gy = y + wsd->item_height -
-                         wsd->group_item_height;
+                       if (wsd->custom_size_mode)
+                         it->parent->item->gy = y + it->item->h -
+                           wsd->group_item_height;
+                       else
+                         it->parent->item->gy = y + wsd->item_height -
+                           wsd->group_item_height;
                        if (it->parent->item->gy > oy)
                          it->parent->item->gy = oy;
                     }
@@ -4243,6 +4475,10 @@ _elm_gengrid_item_new(Elm_Gengrid_Data *sd,
    GG_IT(it) = ELM_NEW(Elm_Gen_Item_Type);
    GG_IT(it)->wsd = sd;
 
+   /* for non homogenous items */
+   it->item->w = sd->item_width;
+   it->item->h = sd->item_height;
+
    it->group = it->itc->item_style &&
      (!strcmp(it->itc->item_style, "group_index"));
    sd->item_count++;
@@ -4321,6 +4557,12 @@ _elm_gengrid_efl_canvas_group_group_add(Eo *obj, Elm_Gengrid_Data *priv)
    evas_object_raise(priv->stack);
 
    elm_interface_scrollable_extern_pan_set(obj, priv->pan_obj);
+
+   /* for non homogenous mode */
+   priv->custom_size_mode = EINA_FALSE;
+   priv->custom_size_sum = NULL;
+   priv->custom_tot_sum = NULL;
+   priv->custom_alloc_size = 0;
 }
 
 EOLIAN static void
@@ -4329,6 +4571,7 @@ _elm_gengrid_efl_canvas_group_group_del(Eo *obj, Elm_Gengrid_Data *sd)
    elm_gengrid_clear(obj);
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
    ELM_SAFE_FREE(sd->stack, evas_object_del);
+   _cleanup_custom_size_mode(sd);
 
    _item_cache_zero(sd);
    ecore_job_del(sd->calc_job);
