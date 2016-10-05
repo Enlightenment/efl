@@ -544,10 +544,15 @@ group { name: "elm/naviframe/item/basic/default";
       program {
          signal: "elm,state,visible"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "elm.swallow.content";
+         target: "elements_clip";
+         target: "base";
+      }
+      program {
+         signal: "elm,state,invisible"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
          target: "elements_clip";
       }
-      
+
       /* current page is being pushed: [previous]<----[current] */
       program {
          signal: "elm,state,cur,pushed"; source: "elm";
