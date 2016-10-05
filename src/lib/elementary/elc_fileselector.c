@@ -172,15 +172,15 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 }
 
 static Eina_Bool
-_iterator_next_value_get(Eina_Iterator *it, void *res)
+_accessor_value_get(Eina_Accessor *acc, int id, void *res)
 {
    Eina_Value *v = NULL;
-   if (eina_iterator_next(it, (void **)&v) && v)
-     {
-        eina_value_get(v, res);
-        return EINA_TRUE;
-     }
-   return EINA_FALSE;
+
+   if (!eina_accessor_data_get(acc, id, (void **) &v))
+     return EINA_FALSE;
+
+   eina_value_get(v, res);
+   return EINA_TRUE;
 }
 
 static Efl_Future*
@@ -687,7 +687,7 @@ _process_last(Listing_Request *lreq)
 }
 
 static Eina_Bool
-_process_child(Elm_Fileselector_Item_Data *it_data, Eina_Iterator *value_itt)
+_process_child(Elm_Fileselector_Item_Data *it_data, Eina_Accessor *values_acc)
 {
    Elm_Object_Item *item;
    Listing_Request *lreq = it_data->user_data;
@@ -704,13 +704,12 @@ _process_child(Elm_Fileselector_Item_Data *it_data, Eina_Iterator *value_itt)
    if (!sd->files_view)
      return EINA_FALSE;
 
-   if (!_iterator_next_value_get(value_itt, &path) ||
-       !_iterator_next_value_get(value_itt, &filename) ||
-       !path || !filename ||
-       !_iterator_next_value_get(value_itt, &dir) ||
-       !_iterator_next_value_get(value_itt, &size) ||
-       !_iterator_next_value_get(value_itt, &mtime) ||
-       !_iterator_next_value_get(value_itt, &mime_type))
+   if (!_accessor_value_get(values_acc, 0, &path) || !path ||
+       !_accessor_value_get(values_acc, 1, &filename) || !filename ||
+       !_accessor_value_get(values_acc, 2, &dir) ||
+       !_accessor_value_get(values_acc, 3, &size) ||
+       !_accessor_value_get(values_acc, 4, &mtime) ||
+       !_accessor_value_get(values_acc, 5, &mime_type))
      {
         ERR("missing child Efl.Model data");
         return EINA_FALSE;
@@ -773,10 +772,10 @@ _process_child_cb(void *data, Efl_Event const*event)
 {
    Elm_Fileselector_Item_Data *it_data = data;
    Listing_Request *lreq = it_data->user_data;
-   Eina_Iterator *value_itt = (Eina_Iterator*)((Efl_Future_Event_Success*)event->info)->value;
+   Efl_Future_Event_Success *ev = event->info;
+   Eina_Accessor *values_acc = ev->value;
 
-   if (!lreq->valid ||
-       !_process_child(it_data, value_itt))
+   if (!lreq->valid || !_process_child(it_data, values_acc))
      {
         efl_unref(it_data->model);
         free(it_data);
@@ -837,7 +836,8 @@ static void
 _process_children_cb(void *data, Efl_Event const *event)
 {
    Listing_Request *lreq = data;
-   Eina_Iterator *value_itt = (Eina_Iterator*)((Efl_Future_Event_Success*)event->info)->value;
+   Efl_Future_Event_Success *ev = event->info;
+   Eina_Accessor *all_promises = ev->value;
    Eina_Accessor *children_accessor = NULL;
    Elm_Fileselector_Item_Data *it_data = NULL;
    const char *path = NULL;
@@ -851,13 +851,12 @@ _process_children_cb(void *data, Efl_Event const *event)
         return;
      }
 
-   if (_iterator_next_value_get(value_itt, &path) &&
-       eina_iterator_next(value_itt, (void **)&children_accessor) &&
-       path)
+   if (_accessor_value_get(all_promises, 0, &path) && path &&
+       eina_accessor_data_get(all_promises, 1, (void **) &children_accessor))
    {
         if (lreq->selected)
           {
-             if (!_iterator_next_value_get(value_itt, &selected_path) ||
+             if (!_accessor_value_get(all_promises, 2, &selected_path) ||
                  !selected_path)
                {
                   ERR("missing selected Efl.Model path information");
@@ -1664,7 +1663,8 @@ _resource_created_then(void *data, Efl_Event const*event)
 {
    Elm_Fileselector_Item_Data *it_data = data;
    Evas_Object *obj = it_data->user_data;
-   Eina_Iterator *value_itt = (Eina_Iterator*)((Efl_Future_Event_Success*)event->info)->value;
+   Efl_Future_Event_Success *ev = event->info;
+   Eina_Accessor *values_acc = ev->value;
    int itcn = ELM_FILE_UNKNOW;
    const char *path = NULL;
    const char *filename = NULL;
@@ -1679,13 +1679,12 @@ _resource_created_then(void *data, Efl_Event const*event)
    if (!sd || !sd->monitoring || sd->model != it_data->parent_model)
      goto cancel;
 
-   if (!_iterator_next_value_get(value_itt, &path) ||
-       !_iterator_next_value_get(value_itt, &filename) ||
-       !path || !filename ||
-       !_iterator_next_value_get(value_itt, &dir) ||
-       !_iterator_next_value_get(value_itt, &size) ||
-       !_iterator_next_value_get(value_itt, &mtime) ||
-       !_iterator_next_value_get(value_itt, &mime_type))
+   if (!_accessor_value_get(values_acc, 0, &path) || !path ||
+       !_accessor_value_get(values_acc, 1, &filename) || !filename ||
+       !_accessor_value_get(values_acc, 2, &dir) ||
+       !_accessor_value_get(values_acc, 3, &size) ||
+       !_accessor_value_get(values_acc, 4, &mtime) ||
+       !_accessor_value_get(values_acc, 5, &mime_type))
      {
         ERR("missing Efl.Model data");
         goto cancel;
@@ -1755,8 +1754,6 @@ _resource_created(void *data, const Efl_Event *event)
    it_data->user_data = efl_ref(fs);
    it_data->parent_model = efl_ref(sd->model);
    it_data->parent_path = eina_stringshare_add(sd->path);
-
-
 
    future_all = efl_future_all
      (
