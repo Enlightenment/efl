@@ -2980,6 +2980,7 @@ _efl_ui_text_resize_internal(Evas_Object *obj)
      }
 
    if (sd->hoversel) _hoversel_position(obj);
+   _decoration_defer_all(obj);
 }
 
 static void
