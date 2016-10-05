@@ -2501,12 +2501,12 @@ _add_polyline(Efl_VG *vg, double *array, int size, Eina_Bool polygon)
 
    if (size < 2) return;
 
-   evas_vg_shape_shape_append_move_to(vg, array[0], array[1]);
+   evas_vg_shape_append_move_to(vg, array[0], array[1]);
    for (i=2; i < size; i+=2)
-     evas_vg_shape_shape_append_line_to(vg, array[i], array[i+1]);
+     evas_vg_shape_append_line_to(vg, array[i], array[i+1]);
 
    if (polygon)
-     evas_vg_shape_shape_append_close(vg);
+     evas_vg_shape_append_close(vg);
 }
 
 static void
@@ -2531,7 +2531,7 @@ _create_vg_node(Svg_Node *node, Efl_VG *parent)
            break;
         case SVG_NODE_PATH:
            vg = evas_vg_shape_add(parent);
-           evas_vg_shape_shape_append_svg_path(vg, node->node.path.path);
+           evas_vg_shape_append_svg_path(vg, node->node.path.path);
            break;
         case SVG_NODE_POLYGON:
            vg = evas_vg_shape_add(parent);
@@ -2543,18 +2543,18 @@ _create_vg_node(Svg_Node *node, Efl_VG *parent)
            break;
         case SVG_NODE_ELLIPSE:
            vg = evas_vg_shape_add(parent);
-           evas_vg_shape_shape_append_arc(vg, node->node.ellipse.cx - node->node.ellipse.rx,
+           evas_vg_shape_append_arc(vg, node->node.ellipse.cx - node->node.ellipse.rx,
                                           node->node.ellipse.cy - node->node.ellipse.ry,
                                           2*node->node.ellipse.rx, 2*node->node.ellipse.ry, 0, 360);
-           evas_vg_shape_shape_append_close(vg);
+           evas_vg_shape_append_close(vg);
            break;
         case SVG_NODE_CIRCLE:
            vg = evas_vg_shape_add(parent);
-           evas_vg_shape_shape_append_circle(vg, node->node.circle.cx, node->node.circle.cy, node->node.circle.r);
+           evas_vg_shape_append_circle(vg, node->node.circle.cx, node->node.circle.cy, node->node.circle.r);
            break;
         case SVG_NODE_RECT:
            vg = evas_vg_shape_add(parent);
-           evas_vg_shape_shape_append_rect(vg, node->node.rect.x, node->node.rect.y, node->node.rect.w, node->node.rect.h,
+           evas_vg_shape_append_rect(vg, node->node.rect.x, node->node.rect.y, node->node.rect.w, node->node.rect.h,
                                            node->node.rect.rx, node->node.rect.ry);
            break;
        default:

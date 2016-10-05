@@ -2770,7 +2770,7 @@ EAPI void evas_vg_shape_stroke_join_set(Eo *obj, Efl_Gfx_Join j);
  * @param[in] points point list
  *
  */
-EAPI void evas_vg_shape_shape_path_set(Eo *obj, const Efl_Gfx_Path_Command *op, const double *points);
+EAPI void evas_vg_shape_path_set(Eo *obj, const Efl_Gfx_Path_Command *op, const double *points);
 
 /**
  *
@@ -2782,10 +2782,10 @@ EAPI void evas_vg_shape_shape_path_set(Eo *obj, const Efl_Gfx_Path_Command *op, 
  *
  */
 
-EAPI void evas_vg_shape_shape_path_get(Eo *obj, const Efl_Gfx_Path_Command **op, const double **points);
-EAPI void evas_vg_shape_shape_path_length_get(Eo *obj, unsigned int *commands, unsigned int *points);
-EAPI void evas_vg_shape_shape_current_get(Eo *obj, double *x, double *y);
-EAPI void evas_vg_shape_shape_current_ctrl_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_shape_path_get(Eo *obj, const Efl_Gfx_Path_Command **op, const double **points);
+EAPI void evas_vg_shape_path_length_get(Eo *obj, unsigned int *commands, unsigned int *points);
+EAPI void evas_vg_shape_current_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_shape_current_ctrl_get(Eo *obj, double *x, double *y);
 
 /**
  *
@@ -2797,7 +2797,7 @@ EAPI void evas_vg_shape_shape_current_ctrl_get(Eo *obj, double *x, double *y);
  * @param[in] dup_from Shape object from where data will be copied.
  *
  */
-EAPI void evas_vg_shape_shape_dup(Eo *obj, Eo *dup_from);
+EAPI void evas_vg_shape_dup(Eo *obj, Eo *dup_from);
 
 /**
  *
@@ -2808,7 +2808,7 @@ EAPI void evas_vg_shape_shape_dup(Eo *obj, Eo *dup_from);
  *
  *
  */
-EAPI void evas_vg_shape_shape_reset(Eo *obj);
+EAPI void evas_vg_shape_reset(Eo *obj);
 
 /**
  *
@@ -2823,7 +2823,7 @@ EAPI void evas_vg_shape_shape_reset(Eo *obj);
  * @param[in] y Y co-ordinate of the current point.
  *
  */
-EAPI void evas_vg_shape_shape_append_move_to(Eo *obj, double x, double y);
+EAPI void evas_vg_shape_append_move_to(Eo *obj, double x, double y);
 
 /**
  *
@@ -2842,7 +2842,7 @@ EAPI void evas_vg_shape_shape_append_move_to(Eo *obj, double x, double y);
  * @param[in] y Y co-ordinate of end point of the line.
  *
  */
-EAPI void evas_vg_shape_shape_append_line_to(Eo *obj, double x, double y);
+EAPI void evas_vg_shape_append_line_to(Eo *obj, double x, double y);
 
 /**
  *
@@ -2860,7 +2860,7 @@ EAPI void evas_vg_shape_shape_append_line_to(Eo *obj, double x, double y);
  * @param[in] ctrl_y Y co-ordinate of control point.
  *
  */
-EAPI void evas_vg_shape_shape_append_quadratic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y);
+EAPI void evas_vg_shape_append_quadratic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y);
 
 /**
  *
@@ -2875,7 +2875,7 @@ EAPI void evas_vg_shape_shape_append_quadratic_to(Eo *obj, double x, double y, d
  * @param[in] y Y co-ordinate of end point of the line.
  *
  */
-EAPI void evas_vg_shape_shape_append_squadratic_to(Eo *obj, double x, double y);
+EAPI void evas_vg_shape_append_squadratic_to(Eo *obj, double x, double y);
 
 /**
  *
@@ -2895,7 +2895,7 @@ EAPI void evas_vg_shape_shape_append_squadratic_to(Eo *obj, double x, double y);
  * @param[in] ctrl_y1 Y co-ordinate of 2nd control point.
  *
  */
-EAPI void evas_vg_shape_shape_append_cubic_to(Eo *obj, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1);
+EAPI void evas_vg_shape_append_cubic_to(Eo *obj, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1);
 
 /**
  *
@@ -2913,7 +2913,7 @@ EAPI void evas_vg_shape_shape_append_cubic_to(Eo *obj, double x, double y, doubl
  * @param[in] ctrl_y Y co-ordinate of 2nd control point.
  *
  */
-EAPI void evas_vg_shape_shape_append_scubic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y);
+EAPI void evas_vg_shape_append_scubic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y);
 
 /**
  *
@@ -2937,7 +2937,7 @@ EAPI void evas_vg_shape_shape_append_scubic_to(Eo *obj, double x, double y, doub
  * @param[in] sweep Defines whether the arc will be drawn counter-clockwise or clockwise from current point to the end point taking into account the large_arc property.
  *
  */
-EAPI void evas_vg_shape_shape_append_arc_to(Eo *obj, double x, double y, double rx, double ry, double angle, Eina_Bool large_arc, Eina_Bool sweep);
+EAPI void evas_vg_shape_append_arc_to(Eo *obj, double x, double y, double rx, double ry, double angle, Eina_Bool large_arc, Eina_Bool sweep);
 
 /**
  * @brief Append an arc that enclosed in the given rectangle (x, y, w, h). The
@@ -2953,7 +2953,7 @@ EAPI void evas_vg_shape_shape_append_arc_to(Eo *obj, double x, double y, double 
  *
  * @ingroup Efl_Gfx_Shape
  */
-EAPI void evas_vg_shape_shape_append_arc(Eo *obj, double x, double y, double w, double h, double start_angle, double sweep_length);
+EAPI void evas_vg_shape_append_arc(Eo *obj, double x, double y, double w, double h, double start_angle, double sweep_length);
 
 /**
  *
@@ -2968,7 +2968,7 @@ EAPI void evas_vg_shape_shape_append_arc(Eo *obj, double x, double y, double w, 
  *
  *
  */
-EAPI void evas_vg_shape_shape_append_close(Eo *obj);
+EAPI void evas_vg_shape_append_close(Eo *obj);
 
 /**
  *
@@ -2983,7 +2983,7 @@ EAPI void evas_vg_shape_shape_append_close(Eo *obj);
  * @param[in] radius radius of the circle.
  *
  */
-EAPI void evas_vg_shape_shape_append_circle(Eo *obj, double x, double y, double radius);
+EAPI void evas_vg_shape_append_circle(Eo *obj, double x, double y, double radius);
 
 /**
  *
@@ -3007,11 +3007,11 @@ EAPI void evas_vg_shape_shape_append_circle(Eo *obj, double x, double y, double 
  * @param[in] ry The y radius of the rounded corner and should be in range [ 0 to h/2 ]
  *
  */
-EAPI void evas_vg_shape_shape_append_rect(Eo *obj, double x, double y, double w, double h, double rx, double ry);
+EAPI void evas_vg_shape_append_rect(Eo *obj, double x, double y, double w, double h, double rx, double ry);
 
-EAPI void evas_vg_shape_shape_append_svg_path(Eo *obj, const char *svg_path_data);
-EAPI Eina_Bool evas_vg_shape_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map);
-EAPI Eina_Bool evas_vg_shape_shape_equal_commands(Eo *obj, const Eo *with);
+EAPI void evas_vg_shape_append_svg_path(Eo *obj, const char *svg_path_data);
+EAPI Eina_Bool evas_vg_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map);
+EAPI Eina_Bool evas_vg_shape_equal_commands(Eo *obj, const Eo *with);
 
 #include "canvas/efl_vg_shape.eo.legacy.h"
 

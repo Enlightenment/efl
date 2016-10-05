@@ -328,127 +328,127 @@ evas_vg_shape_stroke_join_set(Eo *obj, Efl_Gfx_Join j)
 }
 
 EAPI void
-evas_vg_shape_shape_path_set(Eo *obj, const Efl_Gfx_Path_Command *op, const double *points)
+evas_vg_shape_path_set(Eo *obj, const Efl_Gfx_Path_Command *op, const double *points)
 {
    efl_gfx_shape_path_set(obj, op, points);
 }
 
 EAPI void
-evas_vg_shape_shape_path_get(Eo *obj, const Efl_Gfx_Path_Command **op, const double **points)
+evas_vg_shape_path_get(Eo *obj, const Efl_Gfx_Path_Command **op, const double **points)
 {
    efl_gfx_shape_path_get(obj, op, points);
 }
 
 EAPI void
-evas_vg_shape_shape_path_length_get(Eo *obj, unsigned int *commands, unsigned int *points)
+evas_vg_shape_path_length_get(Eo *obj, unsigned int *commands, unsigned int *points)
 {
    efl_gfx_shape_path_length_get(obj, commands, points);
 }
 
 EAPI void
-evas_vg_shape_shape_current_get(Eo *obj, double *x, double *y)
+evas_vg_shape_current_get(Eo *obj, double *x, double *y)
 {
    efl_gfx_shape_current_get(obj, x, y);
 }
 
 EAPI void
-evas_vg_shape_shape_current_ctrl_get(Eo *obj, double *x, double *y)
+evas_vg_shape_current_ctrl_get(Eo *obj, double *x, double *y)
 {
    efl_gfx_shape_current_ctrl_get(obj, x, y);
 }
 
 EAPI void
-evas_vg_shape_shape_dup(Eo *obj, Eo *dup_from)
+evas_vg_shape_dup(Eo *obj, Eo *dup_from)
 {
    efl_gfx_shape_dup(obj, dup_from);
 }
 
 EAPI void
-evas_vg_shape_shape_reset(Eo *obj)
+evas_vg_shape_reset(Eo *obj)
 {
    efl_gfx_shape_reset(obj);
 }
 
 EAPI void
-evas_vg_shape_shape_append_move_to(Eo *obj, double x, double y)
+evas_vg_shape_append_move_to(Eo *obj, double x, double y)
 {
    efl_gfx_shape_append_move_to(obj, x, y);
 }
 
 EAPI void
-evas_vg_shape_shape_append_line_to(Eo *obj, double x, double y)
+evas_vg_shape_append_line_to(Eo *obj, double x, double y)
 {
    efl_gfx_shape_append_line_to(obj, x, y);
 }
 
 EAPI void
-evas_vg_shape_shape_append_quadratic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y)
+evas_vg_shape_append_quadratic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y)
 {
    efl_gfx_shape_append_quadratic_to(obj, x, y, ctrl_x, ctrl_y);
 }
 
 EAPI void
-evas_vg_shape_shape_append_squadratic_to(Eo *obj, double x, double y)
+evas_vg_shape_append_squadratic_to(Eo *obj, double x, double y)
 {
    efl_gfx_shape_append_squadratic_to(obj, x, y);
 }
 
 EAPI void
-evas_vg_shape_shape_append_cubic_to(Eo *obj, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1)
+evas_vg_shape_append_cubic_to(Eo *obj, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1)
 {
    efl_gfx_shape_append_cubic_to(obj, x, y, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1);
 }
 
 EAPI void
-evas_vg_shape_shape_append_scubic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y)
+evas_vg_shape_append_scubic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y)
 {
    efl_gfx_shape_append_scubic_to(obj, x, y, ctrl_x, ctrl_y);
 }
 
 EAPI void
-evas_vg_shape_shape_append_arc_to(Eo *obj, double x, double y, double rx, double ry, double angle, Eina_Bool large_arc, Eina_Bool sweep)
+evas_vg_shape_append_arc_to(Eo *obj, double x, double y, double rx, double ry, double angle, Eina_Bool large_arc, Eina_Bool sweep)
 {
    efl_gfx_shape_append_arc_to(obj, x, y, rx, ry, angle, large_arc, sweep);
 }
 
 EAPI void
-evas_vg_shape_shape_append_arc(Eo *obj, double x, double y, double w, double h, double start_angle, double sweep_length)
+evas_vg_shape_append_arc(Eo *obj, double x, double y, double w, double h, double start_angle, double sweep_length)
 {
    efl_gfx_shape_append_arc(obj, x, y, w, h, start_angle, sweep_length);
 }
 
 EAPI void
-evas_vg_shape_shape_append_close(Eo *obj)
+evas_vg_shape_append_close(Eo *obj)
 {
    efl_gfx_shape_append_close(obj);
 }
 
 EAPI void
-evas_vg_shape_shape_append_circle(Eo *obj, double x, double y, double radius)
+evas_vg_shape_append_circle(Eo *obj, double x, double y, double radius)
 {
    efl_gfx_shape_append_circle(obj, x, y, radius);
 }
 
 EAPI void
-evas_vg_shape_shape_append_rect(Eo *obj, double x, double y, double w, double h, double rx, double ry)
+evas_vg_shape_append_rect(Eo *obj, double x, double y, double w, double h, double rx, double ry)
 {
    efl_gfx_shape_append_rect(obj, x, y, w, h, rx, ry);
 }
 
 EAPI void
-evas_vg_shape_shape_append_svg_path(Eo *obj, const char *svg_path_data)
+evas_vg_shape_append_svg_path(Eo *obj, const char *svg_path_data)
 {
    efl_gfx_shape_append_svg_path(obj, svg_path_data);
 }
 
 EAPI Eina_Bool
-evas_vg_shape_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map)
+evas_vg_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map)
 {
    return efl_gfx_shape_interpolate(obj, from, to, pos_map);
 }
 
 EAPI Eina_Bool
-evas_vg_shape_shape_equal_commands(Eo *obj, const Eo *with)
+evas_vg_shape_equal_commands(Eo *obj, const Eo *with)
 {
    return efl_gfx_shape_equal_commands(obj, with);
 }
