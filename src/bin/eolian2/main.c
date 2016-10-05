@@ -356,8 +356,16 @@ static Eina_Bool
 _write_impl(const char *ofname, const char *ifname)
 {
    INF("generating impl: %s", ofname);
-   Eina_Strbuf *buf = eina_strbuf_new();
 
+   const Eolian_Class *cl = eolian_class_get_by_file(ifname);
+   if (!cl)
+     return EINA_FALSE;
+
+   Eina_Strbuf *buf = _read_file(ofname);
+   if (!buf)
+     return EINA_FALSE;
+
+   eo_gen_impl_gen(cl, buf);
    Eina_Bool ret = _write_file(ofname, buf, EINA_FALSE);
    eina_strbuf_free(buf);
    return ret;

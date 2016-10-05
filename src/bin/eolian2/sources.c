@@ -762,3 +762,10 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    free(cnamel);
    eina_hash_free(_funcs_params_init);
 }
+
+void
+eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
+{
+   if (!cl)
+     return;
+}
