@@ -232,9 +232,27 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
          return: Efl.Canvas.Text.Annotation *;
       }
       range_geometry_get {
-         [[Get the geometry of a range.  The geometry is the geometry in
-           which rectangles in middle lines of range are merged into one big
-           rectangle.
+         [[Get the geometry of a range in the text.
+
+           The geometry is represented as rectangles for each of the line
+           segments in the given range [$cur1, $cur2].
+
+           @since 1.19
+         ]]
+         legacy: null;
+         params {
+             @in cur1: const(Efl.Canvas.Text.Cursor);
+             @in cur2: const(Efl.Canvas.Text.Cursor);
+         }
+         return: free(own(iterator<Eina.Rectangle>),
+                         eina_iterator_free);
+      }
+      range_simple_geometry_get {
+         [[Get the "simple" geometry of a range.
+
+           The geometry is the geometry in which rectangles in middle lines of
+           range are merged into one big rectangle. This is an optimized
+           version of @.range_geometry_get.
 
            @since 1.13
          ]]
