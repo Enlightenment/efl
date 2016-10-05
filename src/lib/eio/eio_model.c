@@ -703,7 +703,6 @@ _eio_model_efl_object_destructor(Eo *obj , Eio_Model_Data *priv)
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-
 static Eo *
 _eio_model_efl_object_parent_get(Eo *obj , Eio_Model_Data *priv)
 {
@@ -723,4 +722,17 @@ _eio_model_efl_object_parent_get(Eo *obj , Eio_Model_Data *priv)
      }
    return model;
 }
+
+EOLIAN static Eo *
+_eio_model_efl_object_provider_find(Eo *obj, Eio_Model_Data *priv EINA_UNUSED, const Efl_Class *klass)
+{
+   Eo *provider = efl_provider_find(efl_super(obj, MY_CLASS), klass);
+
+   // Provide main loop even if we don't have a loop user parent
+   if (!provider && (klass == EFL_LOOP_CLASS) && eina_main_loop_is())
+     return ecore_main_loop_get();
+
+   return provider;
+}
+
 #include "eio_model.eo.c"
