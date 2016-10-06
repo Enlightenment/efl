@@ -4,6 +4,11 @@
 
 #include <stdio.h>
 
+#ifndef _WIN32
+# include <signal.h>
+# include <unistd.h>
+#endif
+
 #include <Eo.h>
 
 #include "eo_suite.h"
@@ -1373,6 +1378,9 @@ thr1(void *data, Eina_Thread t EINA_UNUSED)
    Eo *obj = efl_add(DOMAIN_CLASS, NULL);
    printf("ADD2 DONE = %p\n", obj);
 
+   printf("VERIFY finalized_get()\n");
+   fail_if(!efl_finalized_get(d->objs));
+
    printf("SET ON LOCAL\n");
    domain_a_set(obj, 1234);
    fail_if(domain_a_get(obj) != 1234);
@@ -1410,12 +1418,26 @@ thr1(void *data, Eina_Thread t EINA_UNUSED)
    return NULL;
 }
 
+#ifndef _WIN32
+static void
+_timeout(int val EINA_UNUSED)
+{
+   printf("TIMED OUT!\n");
+   exit(-1);
+}
+#endif
+
 START_TEST(eo_domain)
 {
    Eo *obj, *objs;
 
    printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
    efl_object_init();
+
+#ifndef _WIN32
+   signal(SIGALRM, _timeout);
+   alarm(10);
+#endif
 
    fail_if(efl_domain_get() != EFL_ID_DOMAIN_MAIN);
 
@@ -1459,7 +1481,7 @@ START_TEST(eo_domain)
 
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
    printf("ADDS\n");
-   objs = efl_add(DOMAIN_CLASS, NULL);
+   objs = efl_add(DOMAIN_CLASS, NULL, domain_a_set(efl_added, 42));
    printf("ADDS DONE = %p\n", objs);
    efl_domain_current_pop();
 
@@ -1484,11 +1506,17 @@ START_TEST(eo_domain)
    eina_thread_join(t);
    printf("JOIN DONE\n");
 
+   printf("DELETING OBJECTS\n");
    efl_del(obj);
    efl_del(objs);
 
    efl_object_shutdown();
    printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+
+#ifndef _WIN32
+   alarm(0);
+   signal(SIGALRM, NULL);
+#endif
 }
 END_TEST
 
