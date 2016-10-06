@@ -1249,7 +1249,7 @@ _efl_net_dialer_http_curl_start(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    // TODO: move this to be per-loop once multiple mainloops are supported
    // this would need to attach something to the loop
    cm = &_cm_global;
-   if (!cm->loop) cm->loop = efl_loop_user_loop_get(o);
+   if (!cm->loop) cm->loop = efl_loop_get(o);
    if (!_efl_net_dialer_http_curlm_add(cm, o, pd->easy))
      {
         ERR("dialer=%p could not add curl easy handle to multi manager", o);
@@ -1671,7 +1671,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
      {
         if (!pd->pending_close)
           {
-             efl_future_use(&pd->pending_close, efl_loop_job(efl_loop_user_loop_get(o), o));
+             efl_future_use(&pd->pending_close, efl_loop_job(efl_loop_get(o), o));
              efl_future_then(pd->pending_close, _efl_net_dialer_http_pending_close, NULL, NULL, o);
              DBG("dialer=%p closed from CURL callback, schedule close job=%p", o, pd->pending_close);
           }

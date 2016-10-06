@@ -168,7 +168,7 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
      efl_future_cancel(pd->connect.timeout);
    if (pd->timeout_dial > 0.0)
      {
-        efl_future_use(&pd->connect.timeout, efl_loop_timeout(efl_loop_user_loop_get(o), pd->timeout_dial, o));
+        efl_future_use(&pd->connect.timeout, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial, o));
         efl_future_then(pd->connect.timeout, _efl_net_dialer_tcp_connect_timeout, NULL, NULL, o);
         efl_future_link(o, pd->connect.timeout);
      }
@@ -209,7 +209,7 @@ _efl_net_dialer_tcp_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_Net_D
 
    if ((pd->timeout_dial > 0.0) && (pd->connect.thread))
      {
-        efl_future_use(&pd->connect.timeout, efl_loop_timeout(efl_loop_user_loop_get(o), pd->timeout_dial, o));
+        efl_future_use(&pd->connect.timeout, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial, o));
         efl_future_then(pd->connect.timeout, _efl_net_dialer_tcp_connect_timeout, NULL, NULL, o);
      }
 }

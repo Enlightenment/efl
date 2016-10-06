@@ -260,7 +260,7 @@ _efl_io_manager_direct_ls(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   Eo *loop = efl_loop_user_loop_get(obj);
+   Eo *loop = efl_loop_get(obj);
    p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
@@ -300,7 +300,7 @@ _efl_io_manager_stat_ls(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   Eo *loop = efl_loop_user_loop_get(obj);
+   Eo *loop = efl_loop_get(obj);
    p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
@@ -339,7 +339,7 @@ _efl_io_manager_ls(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   Eo *loop = efl_loop_user_loop_get(obj);
+   Eo *loop = efl_loop_get(obj);
    p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
@@ -387,7 +387,7 @@ _efl_io_manager_stat(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   Eo *loop = efl_loop_user_loop_get(obj);
+   Eo *loop = efl_loop_get(obj);
    p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
@@ -415,7 +415,7 @@ _efl_io_manager_xattr_ls(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   Eo *loop = efl_loop_user_loop_get(obj);
+   Eo *loop = efl_loop_get(obj);
    p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
@@ -445,7 +445,7 @@ _efl_io_manager_xattr_set(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   Eo *loop = efl_loop_user_loop_get(obj);
+   Eo *loop = efl_loop_get(obj);
    p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
@@ -475,7 +475,7 @@ _efl_io_manager_xattr_get(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   Eo *loop = efl_loop_user_loop_get(obj);
+   Eo *loop = efl_loop_get(obj);
    p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
@@ -514,7 +514,7 @@ _efl_io_manager_open(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   Eo *loop = efl_loop_user_loop_get(obj);
+   Eo *loop = efl_loop_get(obj);
    p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 
@@ -541,7 +541,7 @@ _efl_io_manager_close(Eo *obj,
    Efl_Promise *p;
    Eio_File *h;
 
-   Eo *loop = efl_loop_user_loop_get(obj);
+   Eo *loop = efl_loop_get(obj);
    p = efl_add(EFL_PROMISE_CLASS, loop);
    if (!p) return NULL;
 

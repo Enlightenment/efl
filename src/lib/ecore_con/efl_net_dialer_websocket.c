@@ -761,7 +761,7 @@ _efl_net_dialer_websocket_job_schedule(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
 
    if (pd->job) return;
 
-   loop = efl_loop_user_loop_get(o);
+   loop = efl_loop_get(o);
    if (!loop) return;
    efl_future_use(&pd->job, efl_loop_job(loop, o));
    efl_future_then(pd->job, _efl_net_dialer_websocket_job, NULL, NULL, o);
@@ -1499,7 +1499,7 @@ _efl_net_dialer_websocket_close_request(Eo *o, Efl_Net_Dialer_Websocket_Data *pd
    if (pd->close_timeout)
      efl_future_cancel(pd->close_timeout);
 
-   efl_future_use(&pd->close_timeout, efl_loop_timeout(efl_loop_user_loop_get(o), 2.0, o));
+   efl_future_use(&pd->close_timeout, efl_loop_timeout(efl_loop_get(o), 2.0, o));
    efl_future_then(pd->close_timeout, _efl_net_dialer_websocket_close_request_timeout, NULL, NULL, o);
    efl_future_link(o, pd->close_timeout);
 

@@ -102,7 +102,7 @@ _efl_io_copier_job_schedule(Eo *o, Efl_Io_Copier_Data *pd)
 {
    if (pd->job) return;
 
-   efl_future_use(&pd->job, efl_loop_job(efl_loop_user_loop_get(o), o));
+   efl_future_use(&pd->job, efl_loop_job(efl_loop_get(o), o));
    efl_future_then(pd->job, _efl_io_copier_job, NULL, NULL, o);
    efl_future_link(o, pd->job);
 }
@@ -664,7 +664,7 @@ _efl_io_copier_efl_object_finalize(Eo *o, Efl_Io_Copier_Data *pd)
    if (pd->read_chunk_size == 0)
      efl_io_copier_read_chunk_size_set(o, DEF_READ_CHUNK_SIZE);
 
-   if (!efl_loop_user_loop_get(o))
+   if (!efl_loop_get(o))
      {
         ERR("Set a loop provider as parent of this copier!");
         return NULL;
