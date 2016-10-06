@@ -1371,6 +1371,7 @@ thr1(void *data, Eina_Thread t EINA_UNUSED)
 {
    Data *d = data;
    Efl_Id_Domain dom;
+   Eo *objs2;
 
    fail_if(efl_domain_switch(EFL_ID_DOMAIN_THREAD) != EINA_TRUE);
    fail_if(efl_domain_get() != EFL_ID_DOMAIN_THREAD);
@@ -1380,6 +1381,13 @@ thr1(void *data, Eina_Thread t EINA_UNUSED)
 
    printf("VERIFY finalized_get()\n");
    fail_if(!efl_finalized_get(d->objs));
+
+   printf("VERIFY parent_set(invalid)\n");
+   efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
+   objs2 = efl_add(DOMAIN_CLASS, NULL);
+   efl_domain_current_pop();
+   efl_del(objs2);
+   efl_parent_set(d->objs, objs2);
 
    printf("SET ON LOCAL\n");
    domain_a_set(obj, 1234);

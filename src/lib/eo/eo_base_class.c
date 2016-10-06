@@ -582,13 +582,17 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 
    EO_OBJ_DONE(obj);
    return;
+
 err_parent:
    ERR("New parent %p for object %p is not a valid Eo object.",
        parent_id, obj);
+   EO_OBJ_DONE(obj);
    return;
+
 err_impossible:
    ERR("CONTACT DEVS!!! SHOULD NEVER HAPPEN!!! Old parent %p for object %p is not a valid Eo object.",
        pd->parent, obj);
+   EO_OBJ_DONE(obj);
 }
 
 EOLIAN static Eo *
