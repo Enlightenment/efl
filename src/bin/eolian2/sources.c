@@ -813,14 +813,21 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    eina_hash_free(_funcs_params_init);
 }
 
+static void
+_gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
+           Eolian_Function_Type ftype, Eina_Strbuf *buf,
+           const Eolian_Implement *impl, const char *dtype)
+{
+}
+
 void
 eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 {
    if (!cl)
      return;
 
-   char *cname = NULL, *cnameu = NULL, *cnamel = NULL;
-   eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel);
+   char *cname = NULL, *cnamel = NULL;
+   eo_gen_class_names_get(cl, &cname, NULL, &cnamel);
 
    Eina_Strbuf *beg = eina_strbuf_new();
 
@@ -860,7 +867,69 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    eina_strbuf_free(beg);
 
+   /* method section */
+   {
+      Eina_Iterator *itr = eolian_class_implements_get(cl);
+      const Eolian_Implement *imp;
+      EINA_ITERATOR_FOREACH(itr, imp)
+        {
+           Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
+           const Eolian_Function *fid = eolian_implement_function_get(imp, &ftype);
+           switch (ftype)
+             {
+              case EOLIAN_PROP_GET:
+              case EOLIAN_PROP_SET:
+                _gen_proto(cl, fid, ftype, buf, imp, adt);
+                break;
+              case EOLIAN_PROPERTY:
+                _gen_proto(cl, fid, EOLIAN_PROP_SET, buf, imp, adt);
+                _gen_proto(cl, fid, EOLIAN_PROP_GET, buf, imp, adt);
+                break;
+              default:
+                _gen_proto(cl, fid, EOLIAN_UNRESOLVED, buf, imp, adt);
+             }
+        }
+      eina_iterator_free(itr);
+   }
+
+   if (eolian_class_ctor_enable_get(cl))
+     {
+        char fname[128];
+        snprintf(fname, sizeof(fname), "_%s_class_constructor", cnamel);
+        if (!_function_exists(fname, buf))
+          {
+             printf("generating function %s...\n", fname);
+             eina_strbuf_append_printf(buf,
+                                       "EOLIAN static void\n"
+                                       "_%s_class_constructor(Efl_Class *klass)\n"
+                                       "{\n"
+                                       "}\n\n", cnamel);
+          }
+     }
+
+   if (eolian_class_dtor_enable_get(cl))
+     {
+        char fname[128];
+        snprintf(fname, sizeof(fname), "_%s_class_destructor", cnamel);
+        if (!_function_exists(fname, buf))
+          {
+             printf("generating function %s...\n", fname);
+             eina_strbuf_append_printf(buf,
+                                       "EOLIAN static void\n"
+                                       "_%s_class_destructor(Efl_Class *klass)\n"
+                                       "{\n"
+                                       "}\n\n", cnamel);
+          }
+     }
+
+   printf("removing includes for \"%s.eo.c\"\n", cnamel);
+   char ibuf[512];
+   snprintf(ibuf, sizeof(ibuf), "\n#include \"%s.eo.c\"\n", cnamel);
+   eina_strbuf_replace_all(buf, ibuf, "\n");
+
+   printf("generating include for \"%s.eo.c\"\n", cnamel);
+   eina_strbuf_append_printf(buf, "#include \"%s.eo.c\"\n", cnamel);
+
    free(cname);
-   free(cnameu);
    free(cnamel);
 }
