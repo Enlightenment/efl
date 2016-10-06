@@ -71,8 +71,11 @@ static void
 _replace_path_then(void *data, Efl_Event const *event)
 {
    Elm_Fileselector_Button_Data *sd = data;
+   Efl_Future_Event_Success *ev = event->info;
+   Eina_Value *v = ev->value;
    const char *path = NULL;
-   eina_value_get((Eina_Value*)((Efl_Future_Event_Success*)event->info), &path);
+
+   eina_value_get(v, &path);
    eina_stringshare_replace(&sd->fsd.path, path);
    _event_to_legacy_call
      (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, (void *)path);
