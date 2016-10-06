@@ -250,6 +250,7 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
                 break;
               case EOLIAN_PROPERTY:
                 _gen_func(fid, EOLIAN_PROP_SET, buf, cname, cnameu, legacy);
+                eina_strbuf_append_char(buf, '\n');
                 _gen_func(fid, EOLIAN_PROP_GET, buf, cname, cnameu, legacy);
                 break;
               default:
