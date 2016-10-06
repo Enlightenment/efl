@@ -315,7 +315,7 @@ _write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
 static Eina_Bool
 _write_stub_header(const char *ofname, const char *ifname)
 {
-   INF("generating stuv header: %s", ofname);
+   INF("generating stub header: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
 
    eo_gen_types_header_gen(ifname, buf, EINA_FALSE, EINA_FALSE);
