@@ -183,12 +183,15 @@ end:
    return fret;
 }
 
-static Eina_Strbuf *
-_read_file(const char *fname)
+static Eina_Bool
+_read_file(const char *fname, Eina_Strbuf **buf)
 {
    FILE *f = fopen(fname, "rb");
    if (!f)
-     return NULL;
+     {
+        *buf = eina_strbuf_new();
+        return EINA_TRUE;
+     }
 
    fseek(f, 0, SEEK_END);
    long fs = ftell(f);
@@ -196,7 +199,7 @@ _read_file(const char *fname)
      {
         fprintf(stderr, "eolian: could not get length of '%s'\n", fname);
         fclose(f);
-        return NULL;
+        return EINA_FALSE;
      }
    fseek(f, 0, SEEK_SET);
 
@@ -205,7 +208,7 @@ _read_file(const char *fname)
      {
         fprintf(stderr, "eolian: could not allocate memory for '%s'\n", fname);
         fclose(f);
-        return NULL;
+        return EINA_FALSE;
      }
 
    long as = fread(cont, 1, fs, f);
@@ -215,12 +218,13 @@ _read_file(const char *fname)
                 fs, fname, as);
         free(cont);
         fclose(f);
-        return NULL;
+        return EINA_FALSE;
      }
 
    cont[fs] = '\0';
    fclose(f);
-   return eina_strbuf_manage_new_length(cont, fs);
+   *buf = eina_strbuf_manage_new_length(cont, fs);
+   return EINA_TRUE;
 }
 
 char *eo_gen_c_full_name_get(const char *nm)
@@ -361,8 +365,8 @@ _write_impl(const char *ofname, const char *ifname)
    if (!cl)
      return EINA_FALSE;
 
-   Eina_Strbuf *buf = _read_file(ofname);
-   if (!buf)
+   Eina_Strbuf *buf;
+   if (!_read_file(ofname, &buf))
      return EINA_FALSE;
 
    eo_gen_impl_gen(cl, buf);

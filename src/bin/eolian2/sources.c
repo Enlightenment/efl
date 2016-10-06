@@ -859,7 +859,7 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    if (adt[0] && !_type_exists(adt, buf))
      {
         printf("generating data type structure %s...\n", adt);
-        eina_strbuf_append_printf(beg, "typedef struct\n{\n} %s;\n\n", adt);
+        eina_strbuf_append_printf(beg, "typedef struct\n{\n\n} %s;\n\n", adt);
      }
 
    if (eina_strbuf_length_get(beg))
@@ -902,7 +902,7 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
              eina_strbuf_append_printf(buf,
                                        "EOLIAN static void\n"
                                        "_%s_class_constructor(Efl_Class *klass)\n"
-                                       "{\n"
+                                       "{\n\n"
                                        "}\n\n", cnamel);
           }
      }
@@ -917,7 +917,7 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
              eina_strbuf_append_printf(buf,
                                        "EOLIAN static void\n"
                                        "_%s_class_destructor(Efl_Class *klass)\n"
-                                       "{\n"
+                                       "{\n\n"
                                        "}\n\n", cnamel);
           }
      }
