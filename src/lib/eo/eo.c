@@ -466,12 +466,11 @@ end:
         Eo *emb_obj_id;
         EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj_id)
           {
-             _Eo_Object *emb_obj = _eo_obj_pointer_get((Eo_Id)emb_obj_id);
-
-             if (!emb_obj) continue;
+             EO_OBJ_POINTER(emb_obj_id, emb_obj);
+             if (EINA_UNLIKELY(!emb_obj)) continue;
 
              func = _vtable_func_get(emb_obj->vtable, cache->op);
-             if (func == NULL) continue;
+             if (func == NULL) goto composite_continue;
 
              if (EINA_LIKELY(func->func && func->src))
                {
@@ -481,8 +480,11 @@ end:
                   call->data = _efl_data_scope_get(emb_obj, func->src);
                   /* We reffed it above, but no longer need/use it. */
                   _efl_unref(obj);
+                  EO_OBJ_DONE(emb_obj_id);
                   return EINA_TRUE;
                }
+composite_continue:
+             EO_OBJ_DONE(emb_obj_id);
           }
      }
 

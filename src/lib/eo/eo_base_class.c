@@ -1438,21 +1438,22 @@ _efl_object_event_global_freeze_count_get(Eo *klass EINA_UNUSED, void *pd EINA_U
 EOLIAN static Eina_Bool
 _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo *comp_obj_id)
 {
+   Eo *emb_obj_id = NULL;
+
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
-   EO_OBJ_POINTER(parent_id, parent);
-   // very unlikely so improve l1 instr cache by using goto
-   if (!parent) goto err_parent;
+   EO_OBJ_POINTER_GOTO(parent_id, parent, err_parent);
+
+   /* FIXME: composite should fail if domains are different */
 
    /* Don't composite if we already have a composite object of this type */
      {
         Eina_List *itr;
-        Eo *emb_obj_id;
         EINA_LIST_FOREACH(parent->composite_objects, itr, emb_obj_id)
           {
-             EO_OBJ_POINTER_RETURN_VAL(emb_obj_id, emb_obj, EINA_FALSE);
-             // unlikely so improve l1 instr cache by using goto
-             if (emb_obj->klass == comp_obj->klass) goto err_klass;
+             EO_OBJ_POINTER_GOTO(emb_obj_id, emb_obj, err_klass);
+             if (EINA_UNLIKELY(emb_obj->klass == comp_obj->klass)) goto err_klass;
           }
+        emb_obj_id = NULL;
      }
 
    Efl_Object_Data *comp_pd = efl_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
@@ -1466,11 +1467,13 @@ _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
 
    parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
 
+   if (emb_obj_id) EO_OBJ_DONE(emb_obj_id);
    EO_OBJ_DONE(parent_id);
    EO_OBJ_DONE(comp_obj_id);
    return EINA_TRUE;
 
 err_klass:
+   if (emb_obj_id) EO_OBJ_DONE(emb_obj_id);
    EO_OBJ_DONE(parent_id);
 err_parent:
    EO_OBJ_DONE(comp_obj_id);
@@ -1481,9 +1484,7 @@ EOLIAN static Eina_Bool
 _efl_object_composite_detach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo *comp_obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
-   EO_OBJ_POINTER(parent_id, parent);
-   // very unlikely so improve l1 instr cache by using goto
-   if (!parent) goto err_parent;
+   EO_OBJ_POINTER_GOTO(parent_id, parent, err_parent);
 
    // unlikely so improve l1 instr cache by using goto
    if (!efl_composite_part_is(comp_obj_id)) goto err_part;

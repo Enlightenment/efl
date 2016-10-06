@@ -1371,7 +1371,7 @@ thr1(void *data, Eina_Thread t EINA_UNUSED)
 {
    Data *d = data;
    Efl_Id_Domain dom;
-   Eo *objs2;
+   Eo *s1, *s2;
 
    fail_if(efl_domain_switch(EFL_ID_DOMAIN_THREAD) != EINA_TRUE);
    fail_if(efl_domain_get() != EFL_ID_DOMAIN_THREAD);
@@ -1382,12 +1382,28 @@ thr1(void *data, Eina_Thread t EINA_UNUSED)
    printf("VERIFY finalized_get()\n");
    fail_if(!efl_finalized_get(d->objs));
 
-   printf("VERIFY parent_set(invalid)\n");
+   printf("VERIFY parent_set(invalid) -- WILL SHOW ERRORS\n");
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
-   objs2 = efl_add(DOMAIN_CLASS, NULL);
+   s1 = efl_add(DOMAIN_CLASS, NULL);
    efl_domain_current_pop();
-   efl_del(objs2);
-   efl_parent_set(d->objs, objs2);
+   efl_del(s1);
+   efl_parent_set(d->objs, s1);
+   printf("END OF ERRORS\n");
+
+   printf("VERIFY composite\n");
+   efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
+   s1 = efl_add(SIMPLE_CLASS, NULL, simple_a_set(efl_added, 7));
+   s2 = efl_add(SIMPLE_CLASS, NULL, simple_a_set(efl_added, 42));
+   efl_domain_current_pop();
+
+   efl_composite_attach(d->objs, s1);
+   int i1 = simple_a_get(d->objs);
+   int i2 = simple_a_get(s1);
+   fail_if(i1 != i2);
+   fail_if(efl_composite_attach(d->objs, s2));
+   efl_del(s1);
+   fail_if(!efl_composite_attach(d->objs, s2));
+   efl_del(s2);
 
    printf("SET ON LOCAL\n");
    domain_a_set(obj, 1234);
@@ -1430,7 +1446,7 @@ thr1(void *data, Eina_Thread t EINA_UNUSED)
 static void
 _timeout(int val EINA_UNUSED)
 {
-   printf("TIMED OUT!\n");
+   EINA_LOG_CRIT("TIMED OUT!");
    exit(-1);
 }
 #endif
