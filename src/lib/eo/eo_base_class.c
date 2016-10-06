@@ -603,7 +603,7 @@ _efl_object_finalized_get(Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
    Eina_Bool finalized;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
    finalized = obj->finalized;
-   EO_OBJ_DONE(obj);
+   EO_OBJ_DONE(obj_id);
    return finalized;
 }
 
