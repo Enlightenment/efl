@@ -8,6 +8,9 @@
 #include <Eina.h>
 #include <Ecore_Evas.h>
 #include <Ecore_Input.h>
+#include <Ecore_Getopt.h>
+
+static int width = 800;
 
 static Eina_Bool
 _anim(void *data)
@@ -30,10 +33,10 @@ _anim(void *data)
    else
      {
         x += speed;
-        if (x >= 800)
+        if (x >= width)
           {
              direction = LEFT;
-             x = 800;
+             x = width;
           }
      }
 
@@ -164,7 +167,7 @@ _dev_added_or_removed(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 int
-main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
+main(int argc, char *argv[])
 {
    Ecore_Evas *ee;
    Evas *evas;
@@ -173,10 +176,52 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    Eina_Bool r;
    Ecore_Event_Handler *keydown_handler, *keyup_handler, *mouse_move,
      *mouse_down, *mouse_up, *mouse_wheel;
+   char *engine = "software_x11";
+   int args, height = 600;
+   Eina_Bool quit_option = EINA_FALSE;
+   static const Ecore_Getopt options = {
+     "ecore_evas_vnc_example",
+     NULL,
+     "0.1",
+     "(C) 2016 Enlightenment Project",
+     "BSD 2-Clause",
+     "Ecore_Evas VNC example.\n",
+     EINA_TRUE,
+     {
+       ECORE_GETOPT_STORE_DEF_STR('e', "engine", "The engine backend", "software_x11"),
+       ECORE_GETOPT_STORE_DEF_INT('w', "width", "The window width", 800),
+       ECORE_GETOPT_STORE_DEF_INT('h', "height", "The window height", 600),
+       ECORE_GETOPT_VERSION('v', "version"),
+       ECORE_GETOPT_COPYRIGHT('c', "copyright"),
+       ECORE_GETOPT_LICENSE('k', "license"),
+       ECORE_GETOPT_HELP('H', "help"),
+       ECORE_GETOPT_SENTINEL
+     }
+   };
+   Ecore_Getopt_Value values[] = {
+     ECORE_GETOPT_VALUE_STR(engine),
+     ECORE_GETOPT_VALUE_INT(width),
+     ECORE_GETOPT_VALUE_INT(height),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_NONE
+   };
 
    ecore_evas_init();
 
-   ee = ecore_evas_new(NULL, 0, 0, 800, 600, NULL);
+   args = ecore_getopt_parse(&options, values, argc, argv);
+   if (args < 0)
+     {
+        fprintf(stderr, "Could not parse command line options.\n");
+        return -1;
+     }
+
+   if (quit_option) return 0;
+
+   printf("Using engine '%s'. Width: %d - Height: %d\n", engine, width, height);
+   ee = ecore_evas_new(engine, 0, 0, width, height, NULL);
 
    if (!ee)
      {
@@ -189,13 +234,13 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    bg = evas_object_rectangle_add(evas);
    evas_object_color_set(bg, 255, 255, 255, 255);
    evas_object_move(bg, 0, 0);
-   evas_object_resize(bg, 800, 600);
+   evas_object_resize(bg, width, height);
    evas_object_show(bg);
 
    rect = evas_object_rectangle_add(evas);
    evas_object_color_set(rect, 0, 255, 0, 255);
    evas_object_resize(rect, 50, 50);
-   evas_object_move(rect, (800 - 50) /2, (600 - 50)/2);
+   evas_object_move(rect, (width - 50) /2, (height - 50)/2);
    evas_object_show(rect);
 
    animator = ecore_animator_add(_anim, rect);
