@@ -13,7 +13,7 @@
 
 typedef struct {
    Ector_Software_Buffer_Base_Data *base;
-   Evas *evas;
+   Evas_Public_Data *evas;
    RGBA_Image *image;
 } Evas_Ector_Software_Buffer_Data;
 
@@ -39,7 +39,7 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
         return;
      }
 
-   pd->evas = efl_xref(evas, obj);
+   pd->evas = efl_data_xref(evas, EVAS_CANVAS_CLASS, obj);
    evas_cache_image_ref(&im->cache_entry);
    pd->image = im;
 
@@ -51,10 +51,15 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_get(Eo *obj EINA_UNUS
                                                                Evas_Ector_Software_Buffer_Data *pd,
                                                                Evas **evas, void **image)
 {
-   Evas_Public_Data *e = efl_data_scope_get(pd->evas, EVAS_CANVAS_CLASS);
-
-   if (evas) *evas = pd->evas;
-   if (e->engine.func->gl_surface_read_pixels)
+   if (!pd->evas)
+     {
+        INF("evas_ector_buffer_engine_image_set was not called on this image");
+        if (evas) *evas = NULL;
+        if (image) *image = NULL;
+        return;
+     }
+   if (evas) *evas = pd->evas->evas;
+   if (pd->evas->engine.func->gl_surface_read_pixels)
      {
         ERR("Invalid: requesting engine_image from a GL image from a simple SW buffer!");
         if (image) *image = NULL;
@@ -86,7 +91,8 @@ _evas_ector_software_buffer_efl_object_destructor(Eo *obj, Evas_Ector_Software_B
 {
    efl_data_xunref(obj, pd->base, obj);
    evas_cache_image_drop(&pd->image->cache_entry);
-   efl_xunref(pd->evas, obj);
+   if (pd->evas)
+     efl_data_xunref(pd->evas->evas, pd->evas, obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
