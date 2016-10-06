@@ -449,6 +449,30 @@ _ecore_evas_wl_common_cb_www(void *d EINA_UNUSED, int t EINA_UNUSED, void *event
    return ECORE_CALLBACK_RENEW;
 }
 
+static void
+_ecore_evas_wl_common_cb_device_event_free(void *user_data, void *func_data)
+{
+   efl_unref(user_data);
+   free(func_data);
+}
+
+static void
+_ecore_evas_wl_common_device_event_add(int event_type, Ecore_Wl2_Device_Type device_type, unsigned int id, Evas_Device *dev, Ecore_Evas *ee)
+{
+   Ecore_Wl2_Event_Device *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Device));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
+   ev->dev = efl_ref(dev);
+   ev->type = device_type;
+   ev->seat_id = id;
+   ev->window_id = ee->prop.window;
+
+   ecore_event_add(event_type, ev, _ecore_evas_wl_common_cb_device_event_free,
+                   dev);
+}
+
 static Eina_Bool
 _ecore_evas_wl_common_cb_global_added(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
 {
@@ -482,6 +506,10 @@ _ecore_evas_wl_common_cb_global_added(void *d EINA_UNUSED, int t EINA_UNUSED, vo
 
         wdata = ee->engine.data;
         wdata->devices_list = eina_list_append(wdata->devices_list, device);
+
+        _ecore_evas_wl_common_device_event_add(ECORE_WL2_EVENT_DEVICE_ADDED,
+                                               ECORE_WL2_DEVICE_TYPE_SEAT,
+                                               ev->id, dev, ee);
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -535,6 +563,9 @@ _ecore_evas_wl_common_cb_global_removed(void *d EINA_UNUSED, int t EINA_UNUSED, 
 
         if (found)
           {
+             _ecore_evas_wl_common_device_event_add(
+                ECORE_WL2_EVENT_DEVICE_REMOVED, ECORE_WL2_DEVICE_TYPE_SEAT,
+                ev->id, device->seat, ee);
              wdata->devices_list = eina_list_remove(wdata->devices_list,
                                                     device);
              _ecore_evas_wl_common_device_free(device);
@@ -597,9 +628,17 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
                           device->seat, NULL,
                           EVAS_DEVICE_CLASS_MOUSE,
                           EVAS_DEVICE_SUBCLASS_NONE);
+                       _ecore_evas_wl_common_device_event_add(
+                          ECORE_WL2_EVENT_DEVICE_ADDED,
+                          ECORE_WL2_DEVICE_TYPE_POINTER,
+                          ev->id, device->pointer, ee);
                     }
                   else if (!ev->pointer_enabled && device->pointer)
                     {
+                       _ecore_evas_wl_common_device_event_add(
+                          ECORE_WL2_EVENT_DEVICE_REMOVED,
+                          ECORE_WL2_DEVICE_TYPE_POINTER,
+                          ev->id, NULL, ee);
                        evas_device_del(device->pointer);
                        device->pointer = NULL;
                     }
@@ -612,9 +651,17 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
                           device->seat, NULL,
                           EVAS_DEVICE_CLASS_KEYBOARD,
                           EVAS_DEVICE_SUBCLASS_NONE);
+                       _ecore_evas_wl_common_device_event_add(
+                          ECORE_WL2_EVENT_DEVICE_ADDED,
+                          ECORE_WL2_DEVICE_TYPE_KEYBOARD,
+                          ev->id, device->keyboard, ee);
                     }
                   else if (!ev->keyboard_enabled && device->keyboard)
                     {
+                       _ecore_evas_wl_common_device_event_add(
+                          ECORE_WL2_EVENT_DEVICE_REMOVED,
+                          ECORE_WL2_DEVICE_TYPE_KEYBOARD,
+                          ev->id, NULL, ee);
                        evas_device_del(device->keyboard);
                        device->keyboard = NULL;
                     }
@@ -627,9 +674,17 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
                           device->seat, NULL,
                           EVAS_DEVICE_CLASS_TOUCH,
                           EVAS_DEVICE_SUBCLASS_NONE);
+                       _ecore_evas_wl_common_device_event_add(
+                          ECORE_WL2_EVENT_DEVICE_ADDED,
+                          ECORE_WL2_DEVICE_TYPE_TOUCH,
+                          ev->id, device->touch, ee);
                     }
                   else if (!ev->touch_enabled && device->touch)
                     {
+                       _ecore_evas_wl_common_device_event_add(
+                          ECORE_WL2_EVENT_DEVICE_REMOVED,
+                          ECORE_WL2_DEVICE_TYPE_TOUCH,
+                          ev->id, NULL, ee);
                        evas_device_del(device->touch);
                        device->touch = NULL;
                     }

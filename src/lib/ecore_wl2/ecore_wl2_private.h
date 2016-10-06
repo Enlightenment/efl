@@ -406,6 +406,10 @@ struct _Ecore_Wl2_Input
 
    unsigned int seat_version;
    unsigned int id;
+
+   Ecore_Event_Handler *dev_add_handler;
+   Ecore_Event_Handler *dev_remove_handler;
+   Eina_List *devices_list;
 };
 
 typedef struct Ecore_Wl2_Event_Window_WWW
@@ -436,6 +440,7 @@ void _ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, uns
 void _ecore_wl2_input_cursor_set(Ecore_Wl2_Input *input, const char *cursor);
 Eina_Bool _ecore_wl2_input_cursor_update(void *data);
 void _ecore_wl2_input_cursor_update_stop(Ecore_Wl2_Input *input);
+void _ecore_wl2_input_window_remove(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window);
 
 void _ecore_wl2_dnd_add(Ecore_Wl2_Input *input, struct wl_data_offer *offer);
 void _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct wl_surface *surface, int x, int y, uint32_t serial);

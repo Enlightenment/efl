@@ -18,6 +18,14 @@
 #include <sys/mman.h>
 #include "ecore_wl2_private.h"
 
+typedef struct _Ecore_Wl2_Input_Devices
+{
+   Eo *pointer_dev;
+   Eo *keyboard_dev;
+   Eo *touch_dev;
+   int window_id;
+} Ecore_Wl2_Input_Devices;
+
 typedef struct _Ecore_Wl2_Mouse_Down_Info
 {
    EINA_INLIST;
@@ -57,6 +65,33 @@ _ecore_wl2_input_mouse_down_info_get(int device)
    return info;
 }
 
+static Ecore_Wl2_Input_Devices *
+_ecore_wl2_devices_get(Ecore_Wl2_Input *input, int window_id)
+{
+   Ecore_Wl2_Input_Devices *devices;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(input->devices_list, l, devices)
+     {
+        if (devices->window_id == window_id)
+          return devices;
+     }
+
+   return NULL;
+}
+
+static Eo *
+_ecore_wl2_mouse_dev_get(Ecore_Wl2_Input *input, int window_id)
+{
+   Ecore_Wl2_Input_Devices *devices;
+
+   devices = _ecore_wl2_devices_get(input, window_id);
+   if (devices)
+     return devices->pointer_dev;
+
+   return NULL;
+}
+
 static void
 _ecore_wl2_input_mouse_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
 {
@@ -71,6 +106,7 @@ _ecore_wl2_input_mouse_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
    ev->event_window = window->id;
    ev->timestamp = input->timestamp;
    ev->modifiers = input->keyboard.modifiers;
+   ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
 
    ecore_event_add(ECORE_EVENT_MOUSE_IN, ev, NULL, NULL);
 }
@@ -89,6 +125,7 @@ _ecore_wl2_input_mouse_out_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window
    ev->event_window = window->id;
    ev->timestamp = input->timestamp;
    ev->modifiers = input->keyboard.modifiers;
+   ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
 
    ecore_event_add(ECORE_EVENT_MOUSE_OUT, ev, NULL, NULL);
 }
@@ -120,6 +157,7 @@ _ecore_wl2_input_mouse_move_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
    ev->multi.y = input->pointer.sy;
    ev->multi.root.x = input->pointer.sx;
    ev->multi.root.y = input->pointer.sy;
+   ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
 
    info = _ecore_wl2_input_mouse_down_info_get(device);
    if (info)
@@ -165,6 +203,7 @@ _ecore_wl2_input_mouse_wheel_send(Ecore_Wl2_Input *input, unsigned int axis, int
         ev->window = input->focus.pointer->id;
         ev->event_window = input->focus.pointer->id;
      }
+   ev->dev = _ecore_wl2_mouse_dev_get(input, ev->window);
 
    ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 }
@@ -254,6 +293,7 @@ _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
      {
         ev->window = window->id;
         ev->event_window = window->id;
+        ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
      }
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
@@ -324,6 +364,7 @@ _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window,
 
    ev->window = window->id;
    ev->event_window = window->id;
+   ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
 }
@@ -432,6 +473,18 @@ _ecore_wl2_input_symbol_rep_find(xkb_keysym_t keysym, char *buffer, int size, un
     snprintf(buffer, size, "Keycode-%u", code);
 }
 
+static Eo *
+_ecore_wl2_keyboard_dev_get(Ecore_Wl2_Input *input, int window_id)
+{
+   Ecore_Wl2_Input_Devices *devices;
+
+   devices = _ecore_wl2_devices_get(input, window_id);
+   if (devices)
+     return devices->keyboard_dev;
+
+   return NULL;
+}
+
 static void
 _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_keysym_t sym, xkb_keysym_t sym_name, unsigned int code, unsigned int state, unsigned int timestamp)
 {
@@ -466,6 +519,7 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
    ev->timestamp = timestamp;
    ev->modifiers = input->keyboard.modifiers;
    ev->keycode = code;
+   ev->dev = _ecore_wl2_keyboard_dev_get(input, window->id);
 
    /* DBG("Emitting Key event (%s,%s,%s,%s)\n", ev->keyname, ev->key, ev->compose, ev->string); */
 
@@ -1264,6 +1318,90 @@ _ecore_wl2_input_cursor_update(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
+static void
+_ecore_wl2_devices_free(Ecore_Wl2_Input_Devices *devices)
+{
+   if (devices->pointer_dev)
+     efl_unref(devices->pointer_dev);
+   if (devices->keyboard_dev)
+     efl_unref(devices->keyboard_dev);
+   if (devices->touch_dev)
+     efl_unref(devices->touch_dev);
+
+   free(devices);
+}
+
+static Eina_Bool
+_ecore_evas_wl_common_cb_device_event(void *data, int type, void *event)
+{
+   Ecore_Wl2_Input_Devices *devs, *devices = NULL;;
+   Ecore_Wl2_Event_Device *ev = event;
+   Ecore_Wl2_Input *input = data;
+   Eina_List *l;
+
+   if (input->id != ev->seat_id)
+     return ECORE_CALLBACK_PASS_ON;
+
+   EINA_LIST_FOREACH(input->devices_list, l, devs)
+     {
+        if (devs->window_id == ev->window_id)
+          {
+             devices = devs;
+             break;
+          }
+     }
+
+   if (type == ECORE_WL2_EVENT_DEVICE_ADDED)
+     {
+        if (!devices)
+          {
+             devices = calloc(1, sizeof(Ecore_Wl2_Input_Devices));
+             EINA_SAFETY_ON_NULL_RETURN_VAL(devices, ECORE_CALLBACK_PASS_ON);
+             input->devices_list = eina_list_append(input->devices_list,
+                                                    devices);
+             devices->window_id = ev->window_id;
+          }
+
+        if (ev->type == ECORE_WL2_DEVICE_TYPE_POINTER)
+          devices->pointer_dev = efl_ref(ev->dev);
+        else if (ev->type == ECORE_WL2_DEVICE_TYPE_KEYBOARD)
+          devices->keyboard_dev = efl_ref(ev->dev);
+        else if (ev->type == ECORE_WL2_DEVICE_TYPE_TOUCH)
+          devices->touch_dev = efl_ref(ev->dev);
+
+        return ECORE_CALLBACK_PASS_ON;
+     }
+
+   if (!devices)
+     return ECORE_CALLBACK_PASS_ON;
+
+   if (ev->type == ECORE_WL2_DEVICE_TYPE_SEAT)
+     {
+        input->devices_list = eina_list_remove(input->devices_list,
+                                               devices);
+        _ecore_wl2_devices_free(devices);
+        return ECORE_CALLBACK_PASS_ON;
+     }
+
+   if (ev->type == ECORE_WL2_DEVICE_TYPE_POINTER && devices->pointer_dev)
+     {
+        efl_unref(devices->pointer_dev);
+        devices->pointer_dev = NULL;
+     }
+   else if (ev->type == ECORE_WL2_DEVICE_TYPE_KEYBOARD && devices->keyboard_dev)
+     {
+        efl_unref(devices->keyboard_dev);
+        devices->keyboard_dev = NULL;
+     }
+   else if (ev->type == ECORE_WL2_DEVICE_TYPE_TOUCH && devices->touch_dev)
+     {
+        efl_unref(devices->touch_dev);
+        devices->touch_dev = NULL;
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 void
 _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int version)
 {
@@ -1299,11 +1437,19 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
      wl_data_device_manager_get_data_device(display->wl.data_device_manager,
                                             input->wl.seat);
    wl_data_device_add_listener(input->data.device, &_data_listener, input);
+
+   input->dev_add_handler = ecore_event_handler_add(
+      ECORE_WL2_EVENT_DEVICE_ADDED, _ecore_evas_wl_common_cb_device_event,
+      input);
+   input->dev_remove_handler = ecore_event_handler_add(
+      ECORE_WL2_EVENT_DEVICE_REMOVED, _ecore_evas_wl_common_cb_device_event,
+      input);
 }
 
 void
 _ecore_wl2_input_del(Ecore_Wl2_Input *input)
 {
+   Ecore_Wl2_Input_Devices *devices;
    Ecore_Wl2_Display *display;
    Eina_Inlist *l = NULL;
    Ecore_Wl2_Mouse_Down_Info *info = NULL;
@@ -1348,6 +1494,11 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
 
    if (input->wl.seat) wl_seat_destroy(input->wl.seat);
 
+   ecore_event_handler_del(input->dev_add_handler);
+   ecore_event_handler_del(input->dev_remove_handler);
+   EINA_LIST_FREE(input->devices_list, devices)
+      _ecore_wl2_devices_free(devices);
+
    display->inputs =
      eina_inlist_remove(display->inputs, EINA_INLIST_GET(input));
 
@@ -1371,6 +1522,31 @@ _ecore_wl2_input_cursor_update_stop(Ecore_Wl2_Input *input)
         wl_callback_destroy(input->cursor.frame_cb);
         input->cursor.frame_cb = NULL;
      }
+}
+
+void
+_ecore_wl2_input_window_remove(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
+{
+   Ecore_Wl2_Input_Devices *devices;
+   Eina_List *l, *l_next;
+
+   if ((input->focus.pointer) &&
+       (input->focus.pointer == window))
+     input->focus.pointer = NULL;
+   if ((input->focus.keyboard) &&
+       (input->focus.keyboard == window))
+     {
+        input->focus.keyboard = NULL;
+        ecore_timer_del(input->repeat.timer);
+        input->repeat.timer = NULL;
+     }
+
+   EINA_LIST_FOREACH_SAFE(input->devices_list, l, l_next, devices)
+      if (devices->window_id == window->id)
+        {
+           _ecore_wl2_devices_free(devices);
+           input->devices_list = eina_list_remove_list(input->devices_list, l);
+        }
 }
 
 EAPI void
