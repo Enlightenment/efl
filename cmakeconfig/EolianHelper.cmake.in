@@ -7,7 +7,7 @@
 macro(_rule_eox file include deps)
     add_custom_command(
        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${file}.x
-       COMMAND eolian_gen ${include} --gc -o ${CMAKE_CURRENT_SOURCE_DIR}/${file}.x ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+       COMMAND eolian_gen ${include} -g c -o c:${CMAKE_CURRENT_SOURCE_DIR}/${file}.x ${CMAKE_CURRENT_SOURCE_DIR}/${file}
        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
        DEPENDS ${deps}
     )
@@ -19,7 +19,7 @@ endmacro()
 macro(_rule_eoh file include deps)
     add_custom_command(
        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${file}.h
-       COMMAND eolian_gen ${include} --gh -o ${CMAKE_CURRENT_SOURCE_DIR}/${file}.h ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+       COMMAND eolian_gen ${include} -g h -o h:${CMAKE_CURRENT_SOURCE_DIR}/${file}.h ${CMAKE_CURRENT_SOURCE_DIR}/${file}
        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
        DEPENDS ${deps}
     )
