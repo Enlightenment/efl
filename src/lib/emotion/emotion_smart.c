@@ -1966,8 +1966,12 @@ _efl_canvas_video_efl_canvas_group_group_hide(Evas_Object *obj EINA_UNUSED, Efl_
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_canvas_group_group_color_set(Evas_Object *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, int r, int g, int b, int a)
+_efl_canvas_video_efl_gfx_color_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, int r, int g, int b, int a)
 {
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_COLOR_SET, 0, r, g, b, a))
+     return;
+
+   efl_gfx_color_set(efl_super(obj, MY_CLASS), r, g, b, a);
    evas_object_color_set(sd->obj, r, g, b, a);
    evas_object_color_set(sd->crop.clipper, r, g, b, a);
 }

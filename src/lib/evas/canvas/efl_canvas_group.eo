@@ -87,18 +87,6 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
             clip: Efl.Canvas.Object;
          }
       }
-      @property group_color {
-         set {
-            [[No description supplied by the EAPI.]]
-            legacy: null;
-         }
-         values {
-            r: int;
-            g: int;
-            b: int;
-            a: int;
-         }
-      }
       group_show {
          [[No description supplied by the EAPI.]]
          legacy: null;

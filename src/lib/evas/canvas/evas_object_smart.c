@@ -650,16 +650,6 @@ _efl_canvas_group_group_hide(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_canvas_group_group_color_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, int r, int g, int b, int a)
-{
-   // If this function is reached, so we do nothing except trying to call
-   // the function of the legacy smart class.
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Evas_Smart *s = obj->smart.smart;
-   if (s && s->smart_class->color_set) s->smart_class->color_set(eo_obj, r, g, b, a);
-}
-
-EOLIAN static void
 _efl_canvas_group_group_clip_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Object *clip)
 {
    // If this function is reached, so we do nothing except trying to call

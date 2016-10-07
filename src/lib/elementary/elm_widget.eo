@@ -847,12 +847,12 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       Efl.Object.destructor;
       Efl.Object.dbg_info_get;
       Efl.Object.provider_find;
+      Efl.Gfx.color.set;
       Efl.Canvas.Object.no_render.set;
       Efl.Canvas.Group.group_hide;
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_clip_unset;
       Efl.Canvas.Group.group_show;
-      Efl.Canvas.Group.group_color.set;
       Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_member_del;
       Efl.Canvas.Group.group_add;

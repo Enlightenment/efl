@@ -3,12 +3,12 @@ abstract Efl.Canvas.Group.Clipped (Efl.Canvas.Group)
    [[Internal class representing a canvas object group with a clipper.]]
    data: Evas_Object_Smart_Clipped_Data;
    implements {
+      Efl.Gfx.color.set;
       Efl.Canvas.Object.no_render.set;
       Efl.Canvas.Group.group_hide;
       Efl.Canvas.Group.group_clip.set;
       Efl.Canvas.Group.group_clip_unset;
       Efl.Canvas.Group.group_show;
-      Efl.Canvas.Group.group_color.set;
       Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_member_del;
       Efl.Canvas.Group.group_add;

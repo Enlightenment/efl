@@ -621,9 +621,12 @@ _efl_ui_image_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Image_Data *sd, 
 }
 
 EOLIAN static void
-_efl_ui_image_efl_canvas_group_group_color_set(Eo *obj, Efl_Ui_Image_Data *sd, int r, int g, int b, int a)
+_efl_ui_image_efl_gfx_color_set(Eo *obj, Efl_Ui_Image_Data *sd, int r, int g, int b, int a)
 {
-   efl_canvas_group_color_set(efl_super(obj, MY_CLASS), r, g, b, a);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_COLOR_SET, 0, r, g, b, a))
+     return;
+
+   efl_gfx_color_set(efl_super(obj, MY_CLASS), r, g, b, a);
 
    evas_object_color_set(sd->hit_rect, 0, 0, 0, 0);
    evas_object_color_set(sd->img, r, g, b, a);

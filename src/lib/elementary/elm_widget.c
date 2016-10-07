@@ -559,10 +559,13 @@ _elm_widget_efl_canvas_group_group_hide(Eo *obj, Elm_Widget_Smart_Data *_pd)
 }
 
 EOLIAN static void
-_elm_widget_efl_canvas_group_group_color_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, int r, int g, int b, int a)
+_elm_widget_efl_gfx_color_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, int r, int g, int b, int a)
 {
    Eina_Iterator *it;
    Evas_Object *o;
+
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_COLOR_SET, 0, r, g, b, a))
+     return;
 
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)

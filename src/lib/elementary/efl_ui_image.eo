@@ -122,6 +122,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.File.mmap.set;
+      Efl.Gfx.color.set;
       Efl.Gfx.View.view_size.get;
       Efl.Image.Load.load_size.set;
       Efl.Image.Load.load_size.get;
@@ -143,7 +144,6 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Canvas.Group.group_clip.set;
       Efl.Canvas.Group.group_clip_unset;
       Efl.Canvas.Group.group_show;
-      Efl.Canvas.Group.group_color.set;
       Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
