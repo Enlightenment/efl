@@ -89,7 +89,7 @@ _eolian_gen_execute(const char *eo_filename, const char *options, const char *ou
    if (getenv("EFL_RUN_IN_TREE"))
      {
         snprintf(eolian_gen_path, sizeof(eolian_gen_path),
-              "%s/src/bin/eolian2/eolian_gen2%s",
+              "%s/src/bin/eolian/eolian_gen%s",
               PACKAGE_BUILD_DIR, EXEEXT);
      }
    if (eolian_gen_path[0] == '\0')
