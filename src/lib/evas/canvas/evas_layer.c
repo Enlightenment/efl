@@ -224,7 +224,7 @@ _efl_canvas_object_efl_gfx_stack_layer_set(Eo *eo_obj,
 
    if (obj->delete_me) return;
    evas_object_async_block(obj);
-   if (evas_object_intercept_call_layer_set(eo_obj, obj, l)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_LAYER_SET, 1, l)) return;
    if (obj->smart.parent) return;
    if (obj->cur->layer == l)
      {

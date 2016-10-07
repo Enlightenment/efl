@@ -18,7 +18,7 @@ _efl_canvas_object_key_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Ei
 
    event_id = _evas_object_event_new();
    if (obj->focused == focus) goto end;
-   if (evas_object_intercept_call_focus_set(eo_obj, obj, focus)) goto end;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET, 1, focus)) return;
    if (focus)
      {
         if (obj->layer->evas->focused)

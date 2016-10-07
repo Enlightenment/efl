@@ -2483,6 +2483,33 @@ EAPI void  evas_object_intercept_focus_set_callback_add(Evas_Object *obj, Evas_O
  */
 EAPI void *evas_object_intercept_focus_set_callback_del(Evas_Object *obj, Evas_Object_Intercept_Focus_Set_Cb func) EINA_ARG_NONNULL(1, 2);
 
+/* Internal APIs for legacy compatibility */
+#ifdef EFL_CANVAS_OBJECT_PROTECTED
+
+typedef enum _Evas_Object_Intercept_Cb_Type Evas_Object_Intercept_Cb_Type;
+
+enum _Evas_Object_Intercept_Cb_Type
+{
+   EVAS_OBJECT_INTERCEPT_CB_SHOW,
+   EVAS_OBJECT_INTERCEPT_CB_HIDE,
+   EVAS_OBJECT_INTERCEPT_CB_MOVE,
+   EVAS_OBJECT_INTERCEPT_CB_RESIZE,
+   EVAS_OBJECT_INTERCEPT_CB_RAISE,
+   EVAS_OBJECT_INTERCEPT_CB_LOWER,
+   EVAS_OBJECT_INTERCEPT_CB_STACK_ABOVE,
+   EVAS_OBJECT_INTERCEPT_CB_STACK_BELOW,
+   EVAS_OBJECT_INTERCEPT_CB_LAYER_SET,
+   EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
+   EVAS_OBJECT_INTERCEPT_CB_COLOR_SET,
+   EVAS_OBJECT_INTERCEPT_CB_CLIP_SET,
+   EVAS_OBJECT_INTERCEPT_CB_CLIP_UNSET,
+};
+
+EWAPI Eina_Bool _evas_object_intercept_call(Evas_Object *obj, Evas_Object_Intercept_Cb_Type type, Eina_Bool internal, ...);
+
+#endif
+
+
 /**
  * @}
  */

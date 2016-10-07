@@ -267,10 +267,9 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
         return;
      }
 
-   if (evas_object_intercept_call_clip_set(eo_obj, obj, eo_clip))
-     {
-        return;
-     }
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 1, eo_clip))
+     return;
+
    // illegal to set anything but a rect or an image as a clip
    if (clip->type != o_rect_type && clip->type != o_image_type)
      {
@@ -411,7 +410,7 @@ _efl_canvas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
 
    /* unclip */
-   if (evas_object_intercept_call_clip_unset(eo_obj, obj)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_UNSET, 1)) return;
    if (obj->is_smart)
      {
         efl_canvas_group_clip_unset(eo_obj);

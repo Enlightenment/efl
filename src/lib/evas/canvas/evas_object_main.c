@@ -804,7 +804,7 @@ _efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *
    if (!obj->layer) return;
 
    evas_object_async_block(obj);
-   if (evas_object_intercept_call_move(eo_obj, obj, x, y)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 1, x, y)) return;
 
    if (obj->doing.in_move > 0)
      {
@@ -896,7 +896,7 @@ _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    if (h < 0) h = 0;
 
    evas_object_async_block(obj);
-   if (evas_object_intercept_call_resize(eo_obj, obj, w, h)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 1, w, h)) return;
 
    if (obj->doing.in_resize > 0)
      {
@@ -1326,13 +1326,7 @@ _efl_canvas_object_efl_gfx_visible_set(Eo *eo_obj,
 static void
 _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (!obj->layer) return;
-   if (obj->delete_me) return;
-   if (obj->cur->visible)
-     {
-        return;
-     }
-   if (evas_object_intercept_call_show(eo_obj, obj)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_SHOW, 1)) return;
    if (obj->is_smart)
      {
         efl_canvas_group_show(eo_obj);
@@ -1373,16 +1367,7 @@ _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 static void
 _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   if (!obj->layer) return;
-   if (obj->delete_me) return;
-   if (!obj->cur->visible)
-     {
-        return;
-     }
-  if (evas_object_intercept_call_hide(eo_obj, obj)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_HIDE, 1)) return;
    if (obj->is_smart)
      {
         efl_canvas_group_hide(eo_obj);
@@ -1519,7 +1504,7 @@ _efl_canvas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
      ERR("Evas only handles premultiplied colors (0 <= R,G,B <= A <= 255)");
 
    evas_object_async_block(obj);
-   if (evas_object_intercept_call_color_set(eo_obj, obj, r, g, b, a)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_COLOR_SET, 1, r, g, b, a)) return;
    if ((obj->cur->color.r == r) &&
        (obj->cur->color.g == g) &&
        (obj->cur->color.b == b) &&
