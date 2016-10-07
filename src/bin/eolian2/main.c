@@ -328,7 +328,7 @@ _write_stub_header(const char *ofname, const char *ifname)
         eina_strbuf_free(cltd);
      }
 
-   buf = _include_guard(ifname, "STUBS", buf);
+   buf = _include_guard(_get_filename(ofname), "STUBS", buf);
 
    Eina_Bool ret = _write_file(ofname, buf);
    eina_strbuf_free(buf);
