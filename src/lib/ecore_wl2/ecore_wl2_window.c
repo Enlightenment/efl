@@ -631,8 +631,7 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
    window->opaque.h = h;
 
    if ((window->transparent) || (window->alpha)) return;
-
-   EINA_SAFETY_ON_NULL_RETURN(window->display->wl.compositor);
+   if (!window->surface) return; //surface not created yet
 
    region = wl_compositor_create_region(window->display->wl.compositor);
    if (!region)
@@ -674,6 +673,7 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
    window->input_rect.h = h;
 
    if (window->type == ECORE_WL2_WINDOW_TYPE_DND) return;
+   if (!window->surface) return; //surface not created yet
 
    region = wl_compositor_create_region(window->display->wl.compositor);
    if (!region)
