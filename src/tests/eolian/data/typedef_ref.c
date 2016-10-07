@@ -1,5 +1,5 @@
-#ifndef _TYPES_OUTPUT_C_
-#define _TYPES_OUTPUT_C_
+#ifndef _EOLIAN_TYPEDEF_H_
+#define _EOLIAN_TYPEDEF_H_
 
 #ifndef _TYPEDEF_EO_CLASS_TYPE
 #define _TYPEDEF_EO_CLASS_TYPE
@@ -46,6 +46,5 @@ typedef enum
 EWAPI const Efl_Class *typedef_class_get(void);
 
 EOAPI char *typedef_foo(Eo *obj, int idx);
-
 
 #endif

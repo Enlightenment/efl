@@ -1,8 +1,7 @@
-#ifndef DOCS_GENERATOR_H
-#define DOCS_GENERATOR_H
+#ifndef EOLIAN_GEN_DOCS_H
+#define EOLIAN_GEN_DOCS_H
 
-#include <Eina.h>
-#include <Eolian.h>
+#include "main.h"
 
 /*
  * @brief Generate standard documentation
@@ -15,7 +14,7 @@
  * @return A documentation comment
  *
  */
-Eina_Strbuf *docs_generate_full(const Eolian_Documentation *doc, const char *group, int indent, Eina_Bool use_legacy);
+Eina_Strbuf *eo_gen_docs_full_gen(const Eolian_Documentation *doc, const char *group, int indent, Eina_Bool use_legacy);
 
 /*
  * @brief Generate function documentation
@@ -28,7 +27,7 @@ Eina_Strbuf *docs_generate_full(const Eolian_Documentation *doc, const char *gro
  * @return A documentation comment
  *
  */
-Eina_Strbuf *docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype, int indent, Eina_Bool use_legacy);
+Eina_Strbuf *eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype, int indent, Eina_Bool use_legacy);
 
 /*
  * @brief Generate event documentation
@@ -39,7 +38,7 @@ Eina_Strbuf *docs_generate_function(const Eolian_Function *fid, Eolian_Function_
  * @return A documentation comment
  *
  */
-Eina_Strbuf *docs_generate_event(const Eolian_Event *ev, const char *group);
+Eina_Strbuf *eo_gen_docs_event_gen(const Eolian_Event *ev, const char *group);
 
 #endif
 

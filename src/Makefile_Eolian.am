@@ -48,19 +48,16 @@ bin_PROGRAMS += \
                 bin/eolian/eolian_gen
 
 bin_eolian_eolian_gen_SOURCES = \
-                bin/eolian/common_funcs.c \
-                bin/eolian/common_funcs.h \
-                bin/eolian/eo_generator.c \
-                bin/eolian/eo_generator.h \
-                bin/eolian/impl_generator.c \
-                bin/eolian/impl_generator.h \
-                bin/eolian/legacy_generator.c \
-                bin/eolian/legacy_generator.h \
-                bin/eolian/types_generator.c \
-                bin/eolian/types_generator.h \
-                bin/eolian/docs_generator.c \
-                bin/eolian/docs_generator.h \
-                bin/eolian/main.c
+                bin/eolian/main.c \
+                bin/eolian/main.h \
+                bin/eolian/types.c \
+                bin/eolian/types.h \
+                bin/eolian/headers.c \
+                bin/eolian/headers.h \
+                bin/eolian/sources.c \
+                bin/eolian/sources.h \
+                bin/eolian/docs.c \
+                bin/eolian/docs.h
 
 bin_eolian_eolian_gen_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@
 bin_eolian_eolian_gen_LDADD = @USE_EOLIAN_LIBS@

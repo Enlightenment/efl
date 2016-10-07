@@ -1,10 +1,6 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
 #include <ctype.h>
 
-#include "docs_generator.h"
+#include "docs.h"
 
 static int
 _indent_line(Eina_Strbuf *buf, int ind)
@@ -360,14 +356,14 @@ _gen_doc_buf(const Eolian_Documentation *doc, const char *group,
 }
 
 Eina_Strbuf *
-docs_generate_full(const Eolian_Documentation *doc, const char *group,
-                   int indent, Eina_Bool use_legacy)
+eo_gen_docs_full_gen(const Eolian_Documentation *doc, const char *group,
+                     int indent, Eina_Bool use_legacy)
 {
    return _gen_doc_buf(doc, group, NULL, indent, use_legacy);
 }
 
 Eina_Strbuf *
-docs_generate_event(const Eolian_Event *ev, const char *group)
+eo_gen_docs_event_gen(const Eolian_Event *ev, const char *group)
 {
    if (!ev) return NULL;
 
@@ -402,8 +398,8 @@ docs_generate_event(const Eolian_Event *ev, const char *group)
 }
 
 Eina_Strbuf *
-docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype,
-                       int indent, Eina_Bool use_legacy)
+eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
+                     int indent, Eina_Bool use_legacy)
 {
    const Eolian_Function_Parameter *par = NULL;
    const Eolian_Function_Parameter *vpar = NULL;

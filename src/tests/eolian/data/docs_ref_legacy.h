@@ -1,5 +1,5 @@
-#ifndef _EOLIAN_OUTPUT_H_
-#define _EOLIAN_OUTPUT_H_
+#ifndef _EOLIAN_DOCS_LEGACY_H_
+#define _EOLIAN_DOCS_LEGACY_H_
 
 #ifndef _DOCS_EO_CLASS_TYPE
 #define _DOCS_EO_CLASS_TYPE
@@ -64,17 +64,6 @@ typedef struct _Opaque Opaque;
 
 
 #endif
-/**
- * @brief Docs for class.
- *
- * More docs for class. Testing references now. @ref Foo @ref Bar @ref Alias
- * @ref pants @ref docs_meth @ref docs_prop_get @ref docs_prop_get
- * @ref docs_prop_set @ref Foo.field1 @ref Bar.BAR_FOO @ref Docs
- *
- * @since 1.18
- *
- * @ingroup Docs
- */
 
 /**
  * @brief Property common documentation.

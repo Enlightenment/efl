@@ -1,5 +1,5 @@
-#ifndef _EOLIAN_OUTPUT_H_
-#define _EOLIAN_OUTPUT_H_
+#ifndef _EOLIAN_DOCS_H_
+#define _EOLIAN_DOCS_H_
 
 #ifndef _DOCS_EO_CLASS_TYPE
 #define _DOCS_EO_CLASS_TYPE
