@@ -422,10 +422,12 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
           }
      }
 
-   ecore_wl2_window_input_region_set(window, window->input_rect.x, window->input_rect.x, 
-                                             window->input_rect.w, window->input_rect.h);
-   ecore_wl2_window_opaque_region_set(window, window->opaque.x, window->opaque.x, 
-                                             window->opaque.w, window->opaque.h);
+   if (window->input_set)
+     ecore_wl2_window_input_region_set(window, window->input_rect.x, window->input_rect.x, 
+                                               window->input_rect.w, window->input_rect.h);
+   if (window->opaque_set)
+     ecore_wl2_window_opaque_region_set(window, window->opaque.x, window->opaque.x, 
+                                               window->opaque.w, window->opaque.h);
 
    if ((window->type != ECORE_WL2_WINDOW_TYPE_DND) &&
        (window->type != ECORE_WL2_WINDOW_TYPE_NONE))
@@ -634,6 +636,7 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
    window->opaque.y = y;
    window->opaque.w = w;
    window->opaque.h = h;
+   window->opaque_set = 1;
 
    if ((window->transparent) || (window->alpha)) return;
    if (!window->surface) return; //surface not created yet
@@ -676,6 +679,7 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
    window->input_rect.y = y;
    window->input_rect.w = w;
    window->input_rect.h = h;
+   window->input_set = 1;
 
    if (window->type == ECORE_WL2_WINDOW_TYPE_DND) return;
    if (!window->surface) return; //surface not created yet
