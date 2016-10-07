@@ -30,6 +30,7 @@ static const char TITLE_ACCESS_PART[] = "access.title";
 static const char SIG_TRANSITION_FINISHED[] = "transition,finished";
 static const char SIG_TITLE_TRANSITION_FINISHED[] = "title,transition,finished";
 static const char SIG_TITLE_CLICKED[] = "title,clicked";
+static const char SIG_ITEM_ACTIVATED[] = "item,activated";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_TRANSITION_FINISHED, ""},
@@ -583,6 +584,8 @@ _elm_naviframe_item_efl_object_destructor(Eo *eo_item, Elm_Naviframe_Item_Data *
         _prev_page_focus_recover(prev_it);
 
         elm_object_signal_emit(VIEW(prev_it), "elm,state,visible", "elm");
+
+        efl_event_callback_legacy_call(WIDGET(prev_it), ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED, EO_OBJ(prev_it));
      }
 
 end:
@@ -1158,6 +1161,9 @@ _on_item_show_finished(void *data,
    it->pushing = EINA_FALSE;
 
    efl_event_callback_legacy_call(WIDGET(it), ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED, EO_OBJ(it));
+
+   if (EO_OBJ(it) == elm_naviframe_top_item_get(WIDGET(it)))
+     efl_event_callback_legacy_call(WIDGET(it), ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED, EO_OBJ(it));
 }
 
 static void
@@ -1598,6 +1604,9 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
      elm_object_signal_emit(VIEW(item), "elm,state,visible", "elm");
 
    elm_layout_sizing_eval(obj);
+
+   if (!top_item)
+     efl_event_callback_legacy_call(obj, ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED, EO_OBJ(item));
 }
 
 EAPI Evas_Object *
@@ -1711,6 +1720,9 @@ _elm_naviframe_item_insert_after(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_Ite
      elm_object_signal_emit(VIEW(it), "elm,state,invisible", "elm");
 
    elm_layout_sizing_eval(obj);
+
+   if (top_inserted)
+     efl_event_callback_legacy_call(obj, ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED, eo_item);
 
    return eo_item;
 }

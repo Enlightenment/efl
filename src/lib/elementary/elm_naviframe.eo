@@ -164,6 +164,7 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       transition,finished;
       title,transition,finished;
       title,clicked;
+      item,activated;
    }
 
 }

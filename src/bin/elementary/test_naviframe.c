@@ -45,6 +45,13 @@ _title_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 }
 
 void
+_item_activated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *it = event_info;
+   printf("Item(%p) is activated! The Title is \"%s\"\n", it, elm_object_item_text_get(it));
+}
+
+void
 _title_visible(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_naviframe_item_title_enabled_set(data,
@@ -280,6 +287,7 @@ test_naviframe(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    elm_win_resize_object_add(win, nf);
    evas_object_show(nf);
    evas_object_smart_callback_add(nf, "title,clicked", _title_clicked, 0);
+   evas_object_smart_callback_add(nf, "item,activated", _item_activated, NULL);
 
    btn = elm_button_add(nf);
    evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
