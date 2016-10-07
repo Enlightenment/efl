@@ -1,5 +1,5 @@
-#ifndef _TYPES_OUTPUT_C_
-#define _TYPES_OUTPUT_C_
+#ifndef _EOLIAN_TYPEDEF_H_
+#define _EOLIAN_TYPEDEF_H_
 
 #ifndef _STRUCT_EO_CLASS_TYPE
 #define _STRUCT_EO_CLASS_TYPE
@@ -42,6 +42,5 @@ EWAPI const Efl_Class *struct_class_get(void);
 EOAPI char *struct_foo(Eo *obj, int idx);
 
 EOAPI Named *struct_bar(Eo *obj);
-
 
 #endif

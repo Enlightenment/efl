@@ -20,7 +20,7 @@ enum Enum.Bar
    last_item
 }
 
-enum Elm.Object.Select_mode
+enum Elm.Object.Select_Mode
 {
    default = 0,
    always,

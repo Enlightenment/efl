@@ -1,5 +1,5 @@
-#ifndef _TYPES_OUTPUT_C_STUBS
-#define _TYPES_OUTPUT_C_STUBS
+#ifndef _EOLIAN_TYPEDEF_STUB_H_STUBS
+#define _EOLIAN_TYPEDEF_STUB_H_STUBS
 
 typedef Eo Typedef;
 

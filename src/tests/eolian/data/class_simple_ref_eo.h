@@ -1,5 +1,5 @@
-#ifndef _EOLIAN_OUTPUT_H_
-#define _EOLIAN_OUTPUT_H_
+#ifndef _EOLIAN_CLASS_SIMPLE_H_
+#define _EOLIAN_CLASS_SIMPLE_H_
 
 #ifndef _CLASS_SIMPLE_EO_CLASS_TYPE
 #define _CLASS_SIMPLE_EO_CLASS_TYPE
@@ -66,6 +66,5 @@ EOAPI char *efl_canvas_object_simple_foo(Eo *obj, int a, char *b, double *c, int
 #endif
 
 EOAPI int *efl_canvas_object_simple_bar(Eo *obj, int x);
-
 
 #endif
