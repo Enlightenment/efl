@@ -173,7 +173,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              }
            eina_strbuf_append(params_full, prn);
            eina_strbuf_append(params_full_imp, prn);
-           if (is_empty)
+           if (is_empty || is_auto)
              eina_strbuf_append(params_full_imp, " EINA_UNUSED");
 
            eina_stringshare_del(ptn);
@@ -243,7 +243,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
                     eina_strbuf_append_printf(params_init, "   %s = pd->%s;\n", prn, prn);
                   else
                     {
-                       eina_strbuf_append_printf(params_init, "   if (%s) *%s = pd->%s\n",
+                       eina_strbuf_append_printf(params_init, "   if (%s) *%s = pd->%s;\n",
                                                  prn, prn, prn);
                     }
                }
@@ -350,6 +350,8 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              eina_strbuf_append(buf, ", ");
              eina_strbuf_append(buf, adt);
              eina_strbuf_append(buf, " *pd");
+             if (is_empty || (is_auto && !eina_strbuf_length_get(params_init)))
+               eina_strbuf_append(buf, " EINA_UNUSED");
              eina_strbuf_append(buf, eina_strbuf_string_get(params_full_imp));
              eina_strbuf_append(buf, ")\n{\n");
           }
