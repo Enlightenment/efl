@@ -45,153 +45,36 @@ evas_object_intercept_cleanup(Evas_Object *eo_obj)
    if (obj->interceptors) free(obj->interceptors);
 }
 
-#define EVAS_OBJECT_INTERCEPT_CALL_SIMPLE(Type)                         \
-  int                                                                   \
-  evas_object_intercept_call_##Type(Evas_Object *eo_obj,                \
-                                    Evas_Object_Protected_Data *obj)    \
-  {									\
-     int ret;								\
-                                                                        \
-     if (!obj->interceptors) return 0;					\
-     if (obj->interceptors->Type.intercepted) return 0;			\
-     obj->interceptors->Type.intercepted = EINA_TRUE;			\
-     ret = !!(obj->interceptors->Type.func);				\
-     if (ret)								\
-       obj->interceptors->Type.func(obj->interceptors->Type.data, eo_obj); \
-     if (obj->interceptors) obj->interceptors->Type.intercepted = EINA_FALSE;			\
-     return ret;                                                        \
+#define COMMON_ARGS Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
+#define UNPACK_ARG1(a) , a
+#define UNPACK_ARG2(a, b) , a, b
+#define UNPACK_ARG4(a, b, c, d) , a, b, c, d
+
+#define EVAS_OBJECT_INTERCEPT_CALL(Type, Args, ...) \
+  int evas_object_intercept_call_##Type Args \
+  { \
+     if (!obj->interceptors) return 0; \
+     if (obj->interceptors->Type.intercepted) return 0; \
+     if (!obj->interceptors->Type.func) return 0; \
+     obj->interceptors->Type.intercepted = EINA_TRUE; \
+     obj->interceptors->Type.func(obj->interceptors->Type.data, eo_obj __VA_ARGS__); \
+     if (obj->interceptors) obj->interceptors->Type.intercepted = EINA_FALSE; \
+     return 1; \
   }
 
-EVAS_OBJECT_INTERCEPT_CALL_SIMPLE(show);
-EVAS_OBJECT_INTERCEPT_CALL_SIMPLE(hide);
-EVAS_OBJECT_INTERCEPT_CALL_SIMPLE(raise);
-EVAS_OBJECT_INTERCEPT_CALL_SIMPLE(lower);
-
-#define EVAS_OBJECT_INTERCEPT_CALL_GEOMETRY(Type)                       \
-  int                                                                   \
-  evas_object_intercept_call_##Type(Evas_Object *eo_obj,                \
-                                    Evas_Object_Protected_Data *obj,    \
-                                    Evas_Coord a, Evas_Coord b)         \
-  {									\
-     int ret;								\
-                                                                        \
-     if (!obj->interceptors) return 0;					\
-     if (obj->interceptors->Type.intercepted) return 0;			\
-     obj->interceptors->Type.intercepted = EINA_TRUE;			\
-     ret = !!(obj->interceptors->Type.func);				\
-     if (ret)								\
-       obj->interceptors->Type.func(obj->interceptors->Type.data,       \
-                                    eo_obj, a , b);                     \
-     obj->interceptors->Type.intercepted = EINA_FALSE;			\
-     return ret;                                                        \
-  }
-
-EVAS_OBJECT_INTERCEPT_CALL_GEOMETRY(move);
-EVAS_OBJECT_INTERCEPT_CALL_GEOMETRY(resize);
-
-#define EVAS_OBJECT_INTERCEPT_CALL_STACKING(Type)                       \
-  int                                                                   \
-  evas_object_intercept_call_##Type(Evas_Object *eo_obj,                \
-                                    Evas_Object_Protected_Data *obj,    \
-                                    Evas_Object *rel_to)                \
-  {									\
-     int ret;								\
-                                                                        \
-     if (!obj->interceptors) return 0;					\
-     if (obj->interceptors->Type.intercepted) return 0;			\
-     obj->interceptors->Type.intercepted = EINA_TRUE;			\
-     ret = !!(obj->interceptors->Type.func);				\
-     if (ret)								\
-       obj->interceptors->Type.func(obj->interceptors->Type.data,       \
-                                    eo_obj, rel_to);                    \
-     obj->interceptors->Type.intercepted = EINA_FALSE;			\
-     return ret;                                                        \
-  }
-
-EVAS_OBJECT_INTERCEPT_CALL_STACKING(stack_above);
-EVAS_OBJECT_INTERCEPT_CALL_STACKING(stack_below);
-
-int
-evas_object_intercept_call_layer_set(Evas_Object *eo_obj,
-                                     Evas_Object_Protected_Data *obj,
-                                     int l)
-{
-   int ret;
-
-   if (!obj->interceptors) return 0;
-   if (obj->interceptors->layer_set.intercepted) return 0;
-   obj->interceptors->layer_set.intercepted = EINA_TRUE;
-   ret = !!(obj->interceptors->layer_set.func);
-   if (ret)
-     obj->interceptors->layer_set.func(obj->interceptors->layer_set.data, eo_obj, l);
-   obj->interceptors->layer_set.intercepted = EINA_FALSE;
-   return ret;
-}
-
-int
-evas_object_intercept_call_focus_set(Evas_Object *eo_obj,
-                                     Evas_Object_Protected_Data *obj,
-                                     Eina_Bool focus)
-{
-   int ret;
-
-   if (!obj->interceptors) return 0;
-   if (obj->interceptors->focus_set.intercepted) return 0;
-   obj->interceptors->focus_set.intercepted = EINA_TRUE;
-   ret = !!(obj->interceptors->focus_set.func);
-   if (ret)
-     obj->interceptors->focus_set.func(obj->interceptors->focus_set.data, eo_obj, focus);
-   obj->interceptors->focus_set.intercepted = EINA_FALSE;
-   return ret;
-}
-
-
-int
-evas_object_intercept_call_color_set(Evas_Object *eo_obj,
-                                     Evas_Object_Protected_Data *obj,
-                                     int r, int g, int b, int a)
-{
-   int ret;
-
-   if (!obj->interceptors) return 0;
-   if (obj->interceptors->color_set.intercepted) return 0;
-   obj->interceptors->color_set.intercepted = EINA_TRUE;
-   ret = !!(obj->interceptors->color_set.func);
-   if (ret)
-     obj->interceptors->color_set.func(obj->interceptors->color_set.data, eo_obj, r, g, b, a);
-   obj->interceptors->color_set.intercepted = EINA_FALSE;
-   return ret;
-}
-
-int
-evas_object_intercept_call_clip_set(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *clip)
-{
-   int ret;
-
-   if (!obj->interceptors) return 0;
-   if (obj->interceptors->clip_set.intercepted) return 0;
-   obj->interceptors->clip_set.intercepted = EINA_TRUE;
-   ret = !!(obj->interceptors->clip_set.func);
-   if (ret)
-     obj->interceptors->clip_set.func(obj->interceptors->clip_set.data, eo_obj, clip);
-   obj->interceptors->clip_set.intercepted = EINA_FALSE;
-   return ret;
-}
-
-int
-evas_object_intercept_call_clip_unset(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
-{
-   int ret;
-
-   if (!obj->interceptors) return 0;
-   if (obj->interceptors->clip_unset.intercepted) return 0;
-   obj->interceptors->clip_unset.intercepted = EINA_TRUE;
-   ret = !!(obj->interceptors->clip_unset.func);
-   if (ret)
-     obj->interceptors->clip_unset.func(obj->interceptors->clip_unset.data, eo_obj);
-   obj->interceptors->clip_unset.intercepted = EINA_FALSE;
-   return ret;
-}
+EVAS_OBJECT_INTERCEPT_CALL(show,        (COMMON_ARGS))
+EVAS_OBJECT_INTERCEPT_CALL(hide,        (COMMON_ARGS))
+EVAS_OBJECT_INTERCEPT_CALL(raise,       (COMMON_ARGS))
+EVAS_OBJECT_INTERCEPT_CALL(lower,       (COMMON_ARGS))
+EVAS_OBJECT_INTERCEPT_CALL(clip_unset,  (COMMON_ARGS))
+EVAS_OBJECT_INTERCEPT_CALL(move,        (COMMON_ARGS, Evas_Coord a, Evas_Coord b), UNPACK_ARG2(a, b))
+EVAS_OBJECT_INTERCEPT_CALL(resize,      (COMMON_ARGS, Evas_Coord a, Evas_Coord b), UNPACK_ARG2(a, b))
+EVAS_OBJECT_INTERCEPT_CALL(stack_above, (COMMON_ARGS, Evas_Object *rel_to), UNPACK_ARG1(rel_to))
+EVAS_OBJECT_INTERCEPT_CALL(stack_below, (COMMON_ARGS, Evas_Object *rel_to), UNPACK_ARG1(rel_to))
+EVAS_OBJECT_INTERCEPT_CALL(layer_set,   (COMMON_ARGS, int l), UNPACK_ARG1(l))
+EVAS_OBJECT_INTERCEPT_CALL(focus_set,   (COMMON_ARGS, Eina_Bool focus), UNPACK_ARG1(focus))
+EVAS_OBJECT_INTERCEPT_CALL(color_set,   (COMMON_ARGS, int r, int g, int b, int a), UNPACK_ARG4(r, g, b, a))
+EVAS_OBJECT_INTERCEPT_CALL(clip_set,    (COMMON_ARGS, Evas_Object *clip), UNPACK_ARG1(clip))
 
 /* public calls */
 
