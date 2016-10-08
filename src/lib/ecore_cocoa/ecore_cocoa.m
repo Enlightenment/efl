@@ -90,8 +90,8 @@ ecore_cocoa_shutdown(void)
    return _ecore_cocoa_init_count;
 }
 
-static unsigned int
-_ecore_cocoa_event_modifiers(NSUInteger mod)
+unsigned int
+ecore_cocoa_event_modifiers(NSUInteger mod)
 {
    unsigned int modifiers = 0;
 
@@ -134,7 +134,7 @@ _ecore_cocoa_event_key(NSEvent     *event,
      }
 
    ev->timestamp = time;
-   ev->modifiers = _ecore_cocoa_event_modifiers([event modifierFlags]);
+   ev->modifiers = ecore_cocoa_event_modifiers([event modifierFlags]);
 
    ev->keycode = event.keyCode;
    ev->string = [keycharRaw cStringUsingEncoding:NSUTF8StringEncoding];
@@ -334,7 +334,7 @@ _ecore_cocoa_feed_events(void *anEvent)
 
            ev->window = (Ecore_Window)window.ecore_window_data;
            ev->event_window = ev->window;
-           ev->modifiers = 0; /* FIXME: keep modifier around. */
+           ev->modifiers = ecore_cocoa_event_modifiers([event modifierFlags]);
            ev->timestamp = time;
            if (dy != 0)
              {
