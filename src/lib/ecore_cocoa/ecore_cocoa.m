@@ -96,10 +96,11 @@ ecore_cocoa_event_modifiers(NSUInteger mod)
    unsigned int modifiers = 0;
 
    if (mod & NSEventModifierFlagShift) modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
-   if (mod & NSEventModifierFlagShift) modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   if (mod & NSEventModifierFlagControl) modifiers |= ECORE_EVENT_MODIFIER_CTRL;
    if (mod & NSEventModifierFlagOption) modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
-   if (mod & NSEventModifierFlagOption) modifiers |= ECORE_EVENT_MODIFIER_WIN;
+   if (mod & NSEventModifierFlagCommand) modifiers |= ECORE_EVENT_MODIFIER_WIN;
    if (mod & NSEventModifierFlagNumericPad) modifiers |= ECORE_EVENT_LOCK_NUM;
+   if (mod & NSEventModifierFlagCapsLock) modifiers |= ECORE_EVENT_LOCK_CAPS;
 
    DBG("key modifiers: 0x%lx, %u", mod, modifiers);
    return modifiers;
@@ -234,14 +235,16 @@ _ecore_cocoa_feed_events(void *anEvent)
            // Turn special key flags on
            if (flags & NSEventModifierFlagShift)
              evDown->key = "Shift_L";
-           else if (flags & NSEventModifierFlagShift)
+           else if (flags & NSEventModifierFlagControl)
              evDown->key = "Control_L";
            else if (flags & NSEventModifierFlagOption)
              evDown->key = "Alt_L";
-           else if (flags & NSEventModifierFlagOption)
+           else if (flags & NSEventModifierFlagCommand)
              evDown->key = "Super_L";
            else if (flags & NSEventModifierFlagCapsLock)
              evDown->key = "Caps_Lock";
+           else if (flags & NSEventModifierFlagNumericPad)
+             evDown->key = "Num_Lock";
 
            if (evDown->key)
              {
@@ -266,14 +269,16 @@ _ecore_cocoa_feed_events(void *anEvent)
            // Turn special key flags off
            if (changed_flags & NSEventModifierFlagShift)
              evUp->key = "Shift_L";
-           else if (changed_flags & NSEventModifierFlagShift)
+           else if (changed_flags & NSEventModifierFlagControl)
              evUp->key = "Control_L";
            else if (changed_flags & NSEventModifierFlagOption)
              evUp->key = "Alt_L";
-           else if (changed_flags & NSEventModifierFlagOption)
+           else if (changed_flags & NSEventModifierFlagCommand)
              evUp->key = "Super_L";
            else if (changed_flags & NSEventModifierFlagCapsLock)
              evUp->key = "Caps_Lock";
+           else if (changed_flags & NSEventModifierFlagNumericPad)
+             evUp->key = "Num_Lock";
 
            if (evUp->key)
              {
