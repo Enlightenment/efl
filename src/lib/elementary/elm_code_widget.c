@@ -564,11 +564,18 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
                              Eina_Bool was_key)
 {
    Elm_Code *code;
-   unsigned int oldrow;
+   Elm_Code_Line *line_obj;
+   unsigned int oldrow, position;
 
    oldrow = pd->cursor_line;
    pd->cursor_col = col;
    pd->cursor_line = line;
+
+   code = pd->code;
+   line_obj = elm_code_file_line_get(code->file, line);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line_obj, col);
+   if (elm_code_line_text_get(line_obj, NULL)[position] == '\t')
+     pd->cursor_col = elm_code_widget_line_text_column_width_to_position(widget, line_obj, position);
 
    if (!was_key)
      _elm_code_widget_update_focus_directions(widget);
@@ -578,7 +585,6 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
 
    if (oldrow != pd->cursor_line)
      {
-        code = pd->code;
         if (oldrow <= elm_code_file_lines_get(code->file))
           _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, oldrow));
      }
@@ -1065,6 +1071,7 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
+   unsigned int position, next_col;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    elm_code_widget_selection_clear(widget);
@@ -1080,7 +1087,12 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
         return;
      }
 
-   _elm_code_widget_cursor_move(widget, pd, pd->cursor_col+1, pd->cursor_line, EINA_TRUE);
+   next_col = pd->cursor_col + 1;
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, pd->cursor_col);
+   if (elm_code_line_text_get(line, NULL)[position] == '\t')
+     next_col = pd->cursor_col + pd->tabstop;
+
+   _elm_code_widget_cursor_move(widget, pd, next_col, pd->cursor_line, EINA_TRUE);
 }
 
 static unsigned int
