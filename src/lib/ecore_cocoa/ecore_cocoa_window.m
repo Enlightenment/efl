@@ -217,6 +217,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
    else
      ev->triple_click = 0;
 
+   ev->modifiers = ecore_cocoa_event_modifiers([event modifierFlags]);
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
 }
 
@@ -274,6 +275,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
    else
      ev->triple_click = 0;
 
+   ev->modifiers = ecore_cocoa_event_modifiers([event modifierFlags]);
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
 }
 
@@ -314,6 +316,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
    ev->multi.x = ev->x;
    ev->multi.y = ev->y;
 
+   ev->modifiers = ecore_cocoa_event_modifiers([event modifierFlags]);
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 }
 
