@@ -6147,6 +6147,9 @@ _efl_ui_win_teamwork_uri_open(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const ch
           zwp_teamwork_open_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win), uri);
      }
 #endif
+#if !defined(HAVE_ELEMENTARY_WL2) && !defined(HAVE_ELEMENTARY_X)
+   (void)sd;
+#endif
 }
 
 /* legacy APIs */
