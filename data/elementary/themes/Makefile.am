@@ -1344,7 +1344,8 @@ elementary_fdo_apps_64_files = \
 	elementary/themes/fdo/apps/64/preferences-desktop-screensaver.png \
 	elementary/themes/fdo/apps/64/preferences-desktop-theme.png \
 	elementary/themes/fdo/apps/64/preferences-desktop-wallpaper.png \
-	elementary/themes/fdo/apps/64/preferences-profile.png
+	elementary/themes/fdo/apps/64/preferences-profile.png \
+	elementary/themes/fdo/apps/64/system-file-manager.png
 
 elementary_fdo_intl_128_files = \
 	elementary/themes/fdo/intl/128/flag-ad.png \

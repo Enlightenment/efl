@@ -4,8 +4,8 @@
  * WARNING: When you add new icons you MUST ensure to use standard names as per:
  * http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
  *
- * If you can't find the name in the spec then you MUST search in the Tango,
- * Oxigen, Faenza (now Rave-X) icone themes to find a suitable name.
+ * If you can't find the name in the spec then you MUST search in the Adwaita,
+ * Tango, Breeze, Oxigen, Faenza (now Rave-X) icone themes to find a suitable name.
  *
  * IF you really cannot find anything try at least to be consistent with other
  * existing names.
@@ -385,7 +385,7 @@ ICO1(CTX, "preferences-desktop-wallpaper", 64)
 // TODO system-software-update
 // TODO utilities-system-monitor
 // TODO utilities-terminal
-// TODO system-file-manager
+ICO1(CTX, "system-file-manager", 64)
 #undef CTX
 
 

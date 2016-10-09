@@ -520,6 +520,7 @@ _standard_genlist_populate(Evas_Object *gl)
    IC("preferences-desktop-screensaver")
    IC("preferences-desktop-theme")
    IC("preferences-desktop-wallpaper")
+   IC("system-file-manager")
 
    CONTEXT("International")
    IC("flag-ad")
