@@ -339,7 +339,7 @@ _ecore_evas_cocoa_free(Ecore_Evas *ee)
 {
    DBG("");
    ecore_evases = eina_list_remove(ecore_evases, ee);
-   ecore_event_window_unregister(0);
+   ecore_event_window_unregister(ee->prop.window);
    _ecore_evas_cocoa_shutdown();
    ecore_cocoa_shutdown();
 }
