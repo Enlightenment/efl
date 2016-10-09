@@ -473,7 +473,7 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
 static void
 _ecore_thread_worker_cleanup(void *data EINA_UNUSED)
 {
-   DBG("cleanup thread=%" PRIu64 " (should join)", PHS());
+   DBG("cleanup thread=%" PRIuPTR " (should join)", PHS());
    SLKL(_ecore_pending_job_threads_mutex);
    _ecore_thread_count--;
    SLKU(_ecore_pending_job_threads_mutex);
