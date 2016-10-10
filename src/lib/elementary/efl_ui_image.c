@@ -634,21 +634,15 @@ _efl_ui_image_efl_gfx_color_set(Eo *obj, Efl_Ui_Image_Data *sd, int r, int g, in
 }
 
 EOLIAN static void
-_efl_ui_image_efl_canvas_group_group_clip_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *clip)
+_efl_ui_image_efl_canvas_object_clip_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *clip)
 {
-   efl_canvas_group_clip_set(efl_super(obj, MY_CLASS), clip);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
+     return;
+
+   efl_canvas_object_clip_set(efl_super(obj, MY_CLASS), clip);
 
    evas_object_clip_set(sd->img, clip);
    if (sd->prev_img) evas_object_clip_set(sd->prev_img, clip);
-}
-
-EOLIAN static void
-_efl_ui_image_efl_canvas_group_group_clip_unset(Eo *obj, Efl_Ui_Image_Data *sd)
-{
-   efl_canvas_group_clip_unset(efl_super(obj, MY_CLASS));
-
-   evas_object_clip_unset(sd->img);
-   if (sd->prev_img) evas_object_clip_unset(sd->prev_img);
 }
 
 EOLIAN static Elm_Theme_Apply

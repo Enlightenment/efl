@@ -129,7 +129,7 @@ _on_keydown(void        *data EINA_UNUSED,
         clip = efl_canvas_object_clip_get(d.img);
         if (clip == d.clipper)
           {
-             efl_canvas_object_clip_unset(d.img);
+             efl_canvas_object_clip_set(d.img, NULL);
              fprintf(stdout, "off\n");
           }
         else

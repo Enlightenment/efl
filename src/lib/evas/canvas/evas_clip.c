@@ -1,6 +1,8 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+static void _clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj);
+
 void
 evas_object_clip_dirty(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
@@ -215,6 +217,47 @@ extern const char *o_image_type;
 
 static void _clipper_del_cb(void *data, const Efl_Event *event);
 
+Eina_Bool
+_efl_canvas_object_clip_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+                                  Evas_Object *eo_clip, Evas_Object_Protected_Data *clip)
+{
+   if (!obj) obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   if (!clip) clip = efl_data_scope_get(eo_clip, EFL_CANVAS_OBJECT_CLASS);
+
+   evas_object_async_block(obj);
+
+   if (obj->cur->clipper && (obj->cur->clipper->object == eo_clip)) return EINA_TRUE;
+   if (eo_obj == eo_clip) goto err_same;
+   if (clip->delete_me) goto err_clip_deleted;
+   if (obj->delete_me) goto err_obj_deleted;
+   if (!obj->layer || !clip->layer) goto err_no_layer;
+   if (obj->layer->evas != clip->layer->evas) goto err_diff_evas;
+   if ((clip->type != o_rect_type) && (clip->type != o_image_type)) goto err_type;
+
+   return EINA_FALSE;
+
+err_same:
+   CRI("Setting clip %p on itself", eo_obj);
+   return EINA_TRUE;
+err_clip_deleted:
+   CRI("Setting deleted object %p as clip obj %p", eo_clip, eo_obj);
+   return EINA_TRUE;
+err_obj_deleted:
+   CRI("Setting object %p as clip to deleted obj %p", eo_clip, eo_obj);
+   return EINA_TRUE;
+err_no_layer:
+   CRI("Object %p or clip %p layer is not set !", obj, clip);;
+   return EINA_TRUE;
+err_diff_evas:
+   CRI("Setting object %p from Evas (%p) to another Evas (%p)",
+       obj, obj->layer->evas, clip->layer->evas);
+   return EINA_TRUE;
+err_type:
+   CRI("A clipper can only be an evas rectangle or image (got %s)",
+       efl_class_name_get(eo_clip));
+   return EINA_TRUE;
+}
+
 EOLIAN void
 _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
 {
@@ -223,62 +266,18 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
 
    if (!eo_clip)
      {
-        evas_object_clip_unset(eo_obj);
+        _clip_unset(eo_obj, obj);
         return;
      }
-
-   MAGIC_CHECK(eo_clip, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-
-   evas_object_async_block(obj);
 
    clip = efl_data_scope_get(eo_clip, EFL_CANVAS_OBJECT_CLASS);
-   if (obj->cur->clipper && obj->cur->clipper->object == eo_clip) return;
-   if (eo_obj == eo_clip)
-     {
-        CRI("Setting clip %p on itself", eo_obj);
-        return;
-     }
-   if (clip->delete_me)
-     {
-        CRI("Setting deleted object %p as clip obj %p", eo_clip, eo_obj);
-        return;
-     }
-   if (obj->delete_me)
-     {
-        CRI("Setting object %p as clip to deleted obj %p", eo_clip, eo_obj);
-        return;
-     }
-   if (!obj->layer)
-     {
-        CRI("No evas surface associated with object (%p)", eo_obj);
-        return;
-     }
-   if ((obj->layer && clip->layer) &&
-       (obj->layer->evas != clip->layer->evas))
-     {
-        CRI("Setting object %p from Evas (%p) to another Evas (%p)", obj, obj->layer->evas, clip->layer->evas);
-        return;
-     }
-   if (!obj->layer || !clip->layer)
-     {
-        CRI("Object %p or clip %p layer is not set !", obj, clip);
-        return;
-     }
+   if (_efl_canvas_object_clip_set_block(eo_obj, obj, eo_clip, clip)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 1, eo_clip)) return;
 
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 1, eo_clip))
-     return;
-
-   // illegal to set anything but a rect or an image as a clip
-   if (clip->type != o_rect_type && clip->type != o_image_type)
+   if (obj->is_smart && obj->smart.smart && obj->smart.smart->smart_class &&
+       obj->smart.smart->smart_class->clip_set)
      {
-        ERR("For now a clip on other object than a rectangle or an image is disabled");
-        return;
-     }
-   if (obj->is_smart)
-     {
-        efl_canvas_group_clip_set(eo_obj, eo_clip);
+        obj->smart.smart->smart_class->clip_set(eo_obj, eo_clip);
      }
    if (obj->cur->clipper)
      {
@@ -402,18 +401,27 @@ _efl_canvas_object_clip_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *
    return NULL;
 }
 
-EOLIAN void
-_efl_canvas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+Eina_Bool
+_efl_canvas_object_clip_unset_block(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   if (!obj->cur->clipper) return;
+   if (!obj->cur->clipper)
+     return EINA_TRUE;
+
    evas_object_async_block(obj);
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
 
-   /* unclip */
+   return EINA_FALSE;
+}
+
+static void
+_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   if (_efl_canvas_object_clip_unset_block(eo_obj, obj)) return;
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_UNSET, 1)) return;
-   if (obj->is_smart)
+   if (obj->is_smart && obj->smart.smart && obj->smart.smart->smart_class &&
+       obj->smart.smart->smart_class->clip_unset)
      {
-        efl_canvas_group_clip_unset(eo_obj);
+        obj->smart.smart->smart_class->clip_unset(eo_obj);
      }
    if (obj->cur->clipper)
      {
@@ -478,6 +486,16 @@ _efl_canvas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    evas_object_clip_across_check(eo_obj, obj);
 }
 
+EAPI void
+evas_object_clip_unset(Evas_Object *eo_obj)
+{
+   Evas_Object_Protected_Data *obj;
+
+   if (!efl_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS)) return;
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   _clip_unset(eo_obj, obj);
+}
+
 static void
 _clipper_del_cb(void *data, const Efl_Event *event)
 {
@@ -486,7 +504,7 @@ _clipper_del_cb(void *data, const Efl_Event *event)
 
    if (!obj) return;
 
-   _efl_canvas_object_clip_unset(eo_obj, obj);
+   _clip_unset(eo_obj, obj);
    if (obj->prev->clipper && (obj->prev->clipper->object == event->object))
      {
         // not removing cb since it's the del cb... it can't be called again!

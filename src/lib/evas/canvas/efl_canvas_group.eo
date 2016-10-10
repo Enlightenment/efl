@@ -78,15 +78,6 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
          return: free(own(iterator<Efl.Gfx>), eina_iterator_free);
          legacy: evas_object_smart_iterator_new;
       }
-      @property group_clip {
-         set {
-            [[No description supplied by the EAPI.]]
-            legacy: null;
-         }
-         values {
-            clip: Efl.Canvas.Object;
-         }
-      }
       group_show {
          [[No description supplied by the EAPI.]]
          legacy: null;
@@ -139,10 +130,6 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
             @in w: Evas.Coord;
             @in h: Evas.Coord;
          }
-      }
-      group_clip_unset {
-         [[No description supplied by the EAPI.]]
-         legacy: null;
       }
       group_member_del {
          [[Removes a member object from a given smart object.

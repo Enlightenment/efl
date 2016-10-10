@@ -131,27 +131,13 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
               is  called, it gets implicitly removed from the old clipper's
               domain and is made now to be clipped by its new clipper.
 
-              Note: At the moment the only objects that can validly be used
-              to clip other objects are rectangle objects. All other object
-              types are invalid and the result of using them is undefined.
-              The clip object $clip must be a valid object, but can also be
-              $null, in which case the effect of this function is the same
-              as @.clip_unset on the $obj object.
+              If $clip is $null, this call will disable clipping for the object
+              i.e. its visibility and color get detached from the previous
+              clipper. If it wasn't, this has no effect.
+
+              Note: Only rectangle and image (masks) objects can be used
+              as clippers. Anything else will result in undefined behaviour.
             ]]
-            /* FIXME-doc
-            The following figure illustrates some clipping in Evas:
-
-            @image html clipping.png
-            @image rtf clipping.png
-            @image latex clipping.eps
-            ---
-            Example:
-            @dontinclude evas-object-manipulation.c
-            @skip solid white clipper (note that it's the default color for a
-            @until evas_object_show(d.clipper);
-
-            See the full @ref Example_Evas_Object_Manipulation "example".
-            */
          }
          get {
             [[Get the object clipping $obj (if any).
@@ -160,14 +146,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
               not being clipped at all, $null is returned. The object $obj
               must be a valid Evas_Object.
             ]]
-            /* FIXME-doc
-            Example:
-            @dontinclude evas-object-manipulation.c
-            @skip if (evas_object_clip_get(d.img) == d.clipper)
-            @until return
-
-            See the full @ref Example_Evas_Object_Manipulation "example".
-            */
          }
          values {
             clip: Efl.Canvas.Object @nonull; [[The object to clip $obj by.]]
@@ -381,7 +359,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
               anymore after that point. Any use of the list after this
               may have undefined results, possibly leading to crashes.
 
-              See also @.clip and @.clip_unset.
+              See also @.clip.
             ]]
             legacy: null;
             return: iterator<Efl.Canvas.Object> @warn_unused; [[An iterator over the
@@ -497,17 +475,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
                                                      the event.
                                                    ]]
          }
-      }
-      clip_unset {
-         [[Disable/cease clipping on a clipped $obj object.
-
-           This function disables clipping for the object $obj, if it was
-           already clipped, i.e., its visibility and color get detached from
-           the previous clipper. If it wasn't, this has no effect. The
-           object $obj must be a valid Evas_Object.
-
-           See also @.clip.set, @.clipees.get and @.clip.get.
-         ]]
       }
       @property no_render {
          get {

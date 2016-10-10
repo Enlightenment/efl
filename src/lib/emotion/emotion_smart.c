@@ -1977,20 +1977,14 @@ _efl_canvas_video_efl_gfx_color_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd,
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_canvas_group_group_clip_set(Evas_Object *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Evas_Object * clip)
+_efl_canvas_video_efl_canvas_object_clip_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Evas_Object *clip)
 {
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
+     return;
+
    if (sd->crop.clipper) evas_object_clip_set(sd->crop.clipper, clip);
    else evas_object_clip_set(sd->obj, clip);
    evas_object_clip_set(sd->bg, clip);
-}
-
-EOLIAN static void
-_efl_canvas_video_efl_canvas_group_group_clip_unset(Evas_Object *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
-{
-   if (sd->crop.clipper) evas_object_clip_unset(sd->crop.clipper);
-   else evas_object_clip_unset(sd->obj);
-   evas_object_clip_unset(sd->bg);
-
 }
 
 #include "efl_canvas_video.eo.c"

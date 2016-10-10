@@ -1012,6 +1012,21 @@ EAPI void evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *
 EAPI void evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
 /**
+ * @brief Disable/cease clipping on a clipped @c obj object.
+ *
+ * This function disables clipping for the object @c obj, if it was already
+ * clipped, i.e., its visibility and color get detached from the previous
+ * clipper. If it wasn't, this has no effect. The object @c obj must be a valid
+ * Evas_Object.
+ *
+ * See also @ref evas_object_clip_set, @ref evas_object_clipees_get and
+ * @ref evas_object_clip_get.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_clip_unset(Evas_Object *obj);
+
+/**
  * @brief Retrieves the hints for an object's minimum size.
  *
  * These are hints on the minimum sizes @c obj should have. This is not a size

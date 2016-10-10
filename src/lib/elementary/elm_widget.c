@@ -599,31 +599,21 @@ _elm_widget_efl_canvas_object_no_render_set(Eo *obj, Elm_Widget_Smart_Data *_pd 
 }
 
 EOLIAN static void
-_elm_widget_efl_canvas_group_group_clip_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *clip)
+_elm_widget_efl_canvas_object_clip_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *clip)
 {
    Eina_Iterator *it;
    Evas_Object *o;
+
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
+     return;
+
+   efl_canvas_object_clip_set(efl_super(obj, MY_CLASS), clip);
 
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)
      {
        if (evas_object_data_get(o, "_elm_leaveme")) continue;
        evas_object_clip_set(o, clip);
-     }
-   eina_iterator_free(it);
-}
-
-EOLIAN static void
-_elm_widget_efl_canvas_group_group_clip_unset(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
-{
-   Eina_Iterator *it;
-   Evas_Object *o;
-
-   it = evas_object_smart_iterator_new(obj);
-   EINA_ITERATOR_FOREACH(it, o)
-     {
-       if (evas_object_data_get(o, "_elm_leaveme")) continue;
-       evas_object_clip_unset(o);
      }
    eina_iterator_free(it);
 }
