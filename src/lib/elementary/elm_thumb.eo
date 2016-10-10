@@ -10,10 +10,9 @@ class Elm.Thumb (Elm.Layout, Efl.File, Efl.Ui.Clickable,
       Efl.Object.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
-      Efl.Canvas.Group.group_hide;
+      Efl.Gfx.visible.set;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
-      Efl.Canvas.Group.group_show;
       Efl.Ui.Draggable.drag_target.set;
       Efl.Ui.Draggable.drag_target.get;
    }

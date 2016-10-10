@@ -2107,19 +2107,28 @@ _deferred_ecore_evas_free(void *data)
    _elm_win_deferred_free--;
 }
 
-EOLIAN static void
-_efl_ui_win_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Win_Data *sd)
+static void
+_efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   if (sd->modal_count) return;
-   const Eina_List *l;
-   Evas_Object *current;
    Eina_Bool do_eval = EINA_FALSE;
 
+   if (sd->modal_count)
+     {
+        /* FIXME FIXME FIXME
+         * Ugly code flow: legacy code had an early return in smart_show, ie.
+         * evas object show would be processed but smart object show would be
+         * aborted. This super call tries to simulate that. */
+        efl_gfx_visible_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), EINA_TRUE);
+        return;
+     }
+
    if (!evas_object_visible_get(obj)) do_eval = EINA_TRUE;
-   efl_canvas_group_show(efl_super(obj, MY_CLASS));
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
 
    if ((sd->modal) && (!evas_object_visible_get(obj)))
      {
+        const Eina_List *l;
+        Evas_Object *current;
         INCREMENT_MODALITY()
      }
 
@@ -2150,19 +2159,26 @@ _efl_ui_win_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Win_Data *sd)
    if (sd->shot.info) _shot_handle(sd);
 }
 
-EOLIAN static void
-_efl_ui_win_efl_canvas_group_group_hide(Eo *obj, Efl_Ui_Win_Data *sd)
+static void
+_efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   if (sd->modal_count) return;
-   const Eina_List *l;
-   Evas_Object *current;
+   if (sd->modal_count)
+     {
+        /* FIXME FIXME FIXME
+         * Ugly code flow: legacy code had an early return in smart_show, ie.
+         * evas object show would be processed but smart object show would be
+         * aborted. This super call tries to simulate that. */
+        efl_gfx_visible_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), EINA_FALSE);
+        return;
+     }
 
-   if (evas_object_visible_get(obj))
-     _elm_win_state_eval_queue();
-   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
+   _elm_win_state_eval_queue();
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
 
    if ((sd->modal) && (evas_object_visible_get(obj)))
      {
+        const Eina_List *l;
+        Evas_Object *current;
         DECREMENT_MODALITY()
      }
 
@@ -2194,6 +2210,16 @@ _efl_ui_win_efl_canvas_group_group_hide(Eo *obj, Efl_Ui_Win_Data *sd)
 
    if (_elm_win_policy_quit_triggered(obj))
      _elm_win_flush_cache_and_exit(obj);
+}
+
+EOLIAN static void
+_efl_ui_win_efl_gfx_visible_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool vis)
+{
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
+
+   if (vis) _efl_ui_win_show(obj, sd);
+   else _efl_ui_win_hide(obj, sd);
 }
 
 EOLIAN static void
@@ -2710,6 +2736,8 @@ _elm_win_obj_intercept_show(void *data,
                             Evas_Object *obj)
 {
    ELM_WIN_DATA_GET(data, sd);
+
+   /* FIXME: this intercept needs to be implemented in proper EO */
 
    // this is called to make sure all smart containers have calculated their
    // sizes BEFORE we show the window to make sure it initially appears at

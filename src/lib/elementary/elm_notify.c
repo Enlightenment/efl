@@ -281,12 +281,12 @@ _timer_init(Evas_Object *obj,
      sd->timer = NULL;
 }
 
-EOLIAN static void
-_elm_notify_efl_canvas_group_group_show(Eo *obj, Elm_Notify_Data *sd)
+static void
+_elm_notify_show(Eo *obj, Elm_Notify_Data *sd)
 {
    sd->had_hidden = EINA_FALSE;
    sd->in_timeout = EINA_FALSE;
-   efl_canvas_group_show(efl_super(obj, MY_CLASS));
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
 
    evas_object_show(sd->notify);
    if (!sd->allow_events) evas_object_show(sd->block_events);
@@ -294,8 +294,8 @@ _elm_notify_efl_canvas_group_group_show(Eo *obj, Elm_Notify_Data *sd)
    elm_object_focus_set(obj, EINA_TRUE);
 }
 
-EOLIAN static void
-_elm_notify_efl_canvas_group_group_hide(Eo *obj, Elm_Notify_Data *sd)
+static void
+_elm_notify_hide(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 {
    const char *hide_signal;
 
@@ -303,18 +303,28 @@ _elm_notify_efl_canvas_group_group_hide(Eo *obj, Elm_Notify_Data *sd)
      return;
 
    hide_signal = edje_object_data_get(sd->notify, "hide_finished_signal");
-   if ((hide_signal) && (!strcmp(hide_signal, "on")))
+   if (eina_streq(hide_signal, "on"))
      {
         if (!sd->in_timeout)
           edje_object_signal_emit(sd->notify, "elm,state,hide", "elm");
      }
    else //for backport supporting: edc without emitting hide finished signal
      {
-        efl_canvas_group_hide(efl_super(obj, MY_CLASS));
+        efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
         evas_object_hide(sd->notify);
         if (sd->allow_events) evas_object_hide(sd->block_events);
      }
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
+}
+
+EOLIAN static void
+_elm_notify_efl_gfx_visible_set(Eo *obj, Elm_Notify_Data *sd, Eina_Bool vis)
+{
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
+
+   if (vis) _elm_notify_show(obj, sd);
+   else _elm_notify_hide(obj, sd);
 }
 
 static void
@@ -447,7 +457,7 @@ _hide_finished_cb(void *data,
    sd->had_hidden = EINA_TRUE;
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
-   efl_canvas_group_hide(efl_super(data, MY_CLASS));
+   efl_gfx_visible_set(efl_super(data, MY_CLASS), EINA_FALSE);
    efl_event_callback_legacy_call(data, ELM_NOTIFY_EVENT_DISMISSED, NULL);
 }
 

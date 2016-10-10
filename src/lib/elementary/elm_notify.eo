@@ -79,8 +79,7 @@ class Elm.Notify (Elm.Widget, Efl.Container, Efl.Part)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_hide;
-      Efl.Canvas.Group.group_show;
+      Efl.Gfx.visible.set;
       Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;

@@ -3936,21 +3936,18 @@ _elm_entry_efl_canvas_group_group_resize(Eo *obj, Elm_Entry_Data *sd, Evas_Coord
 }
 
 EOLIAN static void
-_elm_entry_efl_canvas_group_group_show(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_gfx_visible_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool vis)
 {
-   efl_canvas_group_show(efl_super(obj, MY_CLASS));
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
+
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
 
    if (sd->have_selection)
-     _update_selection_handler(obj);
-}
-
-EOLIAN static void
-_elm_entry_efl_canvas_group_group_hide(Eo *obj, Elm_Entry_Data *sd)
-{
-   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
-
-   if (sd->have_selection)
-     _hide_selection_handler(obj);
+     {
+        if (vis) _update_selection_handler(obj);
+        else _hide_selection_handler(obj);
+     }
 }
 
 EOLIAN static void

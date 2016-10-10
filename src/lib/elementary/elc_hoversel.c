@@ -579,17 +579,13 @@ _elm_hoversel_efl_canvas_group_group_del(Eo *obj, Elm_Hoversel_Data *sd)
 }
 
 EOLIAN static void
-_elm_hoversel_efl_canvas_group_group_show(Eo *obj, Elm_Hoversel_Data *sd)
+_elm_hoversel_efl_gfx_visible_set(Eo *obj, Elm_Hoversel_Data *sd, Eina_Bool vis)
 {
-   efl_canvas_group_show(efl_super(obj, MY_CLASS));
-   evas_object_show(sd->hover);
-}
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
 
-EOLIAN static void
-_elm_hoversel_efl_canvas_group_group_hide(Eo *obj, Elm_Hoversel_Data *sd)
-{
-   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
-   evas_object_hide(sd->hover);
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_visible_set(sd->hover, vis);
 }
 
 EOLIAN static void

@@ -519,43 +519,37 @@ _elm_widget_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Elm_Widget_Smart_
 }
 
 EOLIAN static void
-_elm_widget_efl_canvas_group_group_show(Eo *obj, Elm_Widget_Smart_Data *_pd)
+_elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vis)
 {
    Eina_Iterator *it;
    Evas_Object *o;
+
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
+
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
 
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)
      {
        if (evas_object_data_get(o, "_elm_leaveme")) continue;
-       evas_object_show(o);
+       efl_gfx_visible_set(o, vis);
      }
    eina_iterator_free(it);
 
-   if (_elm_config->atspi_mode)
+   if (!_elm_config->atspi_mode || pd->on_destroy)
+     return;
+
+   if (vis)
      {
         elm_interface_atspi_accessible_added(obj);
-        if (!_pd->on_destroy && _elm_widget_onscreen_is(obj))
-           elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_TRUE);
+        if (_elm_widget_onscreen_is(obj))
+          elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_TRUE);
      }
-}
-
-EOLIAN static void
-_elm_widget_efl_canvas_group_group_hide(Eo *obj, Elm_Widget_Smart_Data *_pd)
-{
-   Eina_Iterator *it;
-   Evas_Object *o;
-
-   it = evas_object_smart_iterator_new(obj);
-   EINA_ITERATOR_FOREACH(it, o)
+   else
      {
-        if (evas_object_data_get(o, "_elm_leaveme")) continue;
-        evas_object_hide(o);
+        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_FALSE);
      }
-   eina_iterator_free(it);
-
-   if (_elm_config->atspi_mode && !_pd->on_destroy)
-     elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_FALSE);
 }
 
 EOLIAN static void

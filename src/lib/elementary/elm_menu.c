@@ -550,9 +550,12 @@ _unblock_menu(void *_sd, const Efl_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_menu_efl_canvas_group_group_show(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_efl_gfx_visible_set(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd, Eina_Bool vis)
 {
-   evas_object_show(sd->hv);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
+
+   if (vis) efl_gfx_visible_set(sd->hv, EINA_TRUE);
 }
 
 static void

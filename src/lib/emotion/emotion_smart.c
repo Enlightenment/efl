@@ -1946,23 +1946,24 @@ _efl_canvas_video_efl_canvas_group_group_resize(Evas_Object *obj, Efl_Canvas_Vid
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_canvas_group_group_show(Evas_Object *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_gfx_visible_set(Evas_Object *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Bool vis)
 {
-   int a;
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
 
-   evas_object_show(sd->obj);
-   if (sd->crop.clipper) evas_object_show(sd->crop.clipper);
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_visible_set(sd->obj, vis);
+   efl_gfx_visible_set(sd->crop.clipper, vis);
 
-   evas_object_color_get(sd->bg, NULL, NULL, NULL, &a);
-   if (a > 0) evas_object_show(sd->bg);
-}
+   if (vis)
+     {
+        int a;
 
-EOLIAN static void
-_efl_canvas_video_efl_canvas_group_group_hide(Evas_Object *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
-{
-   evas_object_hide(sd->obj);
-   if (sd->crop.clipper) evas_object_hide(sd->crop.clipper);
-   evas_object_hide(sd->bg);
+        evas_object_color_get(sd->bg, NULL, NULL, NULL, &a);
+        if (a > 0) efl_gfx_visible_set(sd->bg, EINA_TRUE);
+     }
+   else
+      efl_gfx_visible_set(sd->bg, EINA_FALSE);
 }
 
 EOLIAN static void

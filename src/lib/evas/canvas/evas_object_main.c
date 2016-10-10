@@ -11,11 +11,6 @@ EVAS_MEMPOOL(_mp_sh);
 
 #define MY_CLASS_NAME "Evas_Object"
 
-static void
-_show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void
-_hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-
 static Eina_Inlist *
 get_layer_objects(Evas_Layer *l)
 {
@@ -1314,22 +1309,11 @@ evas_object_visible_get(const Evas_Object *obj)
 }
 
 static void
-_efl_canvas_object_efl_gfx_visible_set(Eo *eo_obj,
-                                      Evas_Object_Protected_Data *obj,
-                                      Eina_Bool visible)
-{
-   evas_object_async_block(obj);
-   if (visible) _show(eo_obj, obj);
-   else _hide(eo_obj, obj);
-}
-
-static void
 _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_SHOW, 1)) return;
-   if (obj->is_smart)
+   if (obj->is_smart && obj->smart.smart && obj->smart.smart->smart_class->show)
      {
-        efl_canvas_group_show(eo_obj);
+        obj->smart.smart->smart_class->show(eo_obj);
      }
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
@@ -1367,12 +1351,10 @@ _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 static void
 _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_HIDE, 1)) return;
-   if (obj->is_smart)
+   if (obj->is_smart && obj->smart.smart && obj->smart.smart->smart_class->hide)
      {
-        efl_canvas_group_hide(eo_obj);
+        obj->smart.smart->smart_class->hide(eo_obj);
      }
- 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
         state_write->visible = 0;
@@ -1476,6 +1458,17 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    evas_object_update_bounding_box(eo_obj, obj, NULL);
    evas_object_inform_call_hide(eo_obj);
+}
+
+EOLIAN static void
+_efl_canvas_object_efl_gfx_visible_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+                                       Eina_Bool vis)
+{
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 1, vis))
+     return;
+
+   if (vis) _show(eo_obj, obj);
+   else _hide(eo_obj, obj);
 }
 
 static Eina_Bool

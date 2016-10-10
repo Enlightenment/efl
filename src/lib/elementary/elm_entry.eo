@@ -939,13 +939,12 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Gfx.visible.set;
       Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_resize;
       Efl.Canvas.Group.group_del;
-      Efl.Canvas.Group.group_show;
-      Efl.Canvas.Group.group_hide;
       Elm.Widget.activate;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;

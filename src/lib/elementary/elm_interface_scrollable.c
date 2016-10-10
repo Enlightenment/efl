@@ -121,21 +121,13 @@ _elm_pan_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *
 }
 
 EOLIAN static void
-_elm_pan_efl_canvas_group_group_show(Eo *obj, Elm_Pan_Smart_Data *psd)
+_elm_pan_efl_gfx_visible_set(Eo *obj, Elm_Pan_Smart_Data *psd, Eina_Bool vis)
 {
-   efl_canvas_group_show(efl_super(obj, MY_PAN_CLASS));
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
 
-   if (psd->content)
-     evas_object_show(psd->content);
-}
-
-EOLIAN static void
-_elm_pan_efl_canvas_group_group_hide(Eo *obj, Elm_Pan_Smart_Data *psd)
-{
-   efl_canvas_group_hide(efl_super(obj, MY_PAN_CLASS));
-
-   if (psd->content)
-     evas_object_hide(psd->content);
+   efl_gfx_visible_set(efl_super(obj, MY_PAN_CLASS), vis);
+   if (psd->content) efl_gfx_visible_set(psd->content, vis);
 }
 
 EOLIAN static void

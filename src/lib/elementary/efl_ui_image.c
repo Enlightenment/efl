@@ -587,28 +587,34 @@ _efl_ui_image_efl_canvas_group_group_resize(Eo *obj, Efl_Ui_Image_Data *sd, Evas
    _efl_ui_image_internal_sizing_eval(obj, sd);
 }
 
-EOLIAN static void
-_efl_ui_image_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Image_Data *sd)
+static void
+_efl_ui_image_show(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    sd->show = EINA_TRUE;
    if (sd->preload_status == EFL_UI_IMAGE_PRELOADING) return;
 
-   efl_canvas_group_show(efl_super(obj, MY_CLASS));
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
+   efl_gfx_visible_set(sd->img, EINA_TRUE);
+   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+}
 
-   evas_object_show(sd->img);
-
+static void
+_efl_ui_image_hide(Eo *obj, Efl_Ui_Image_Data *sd)
+{
+   sd->show = EINA_FALSE;
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
+   efl_gfx_visible_set(sd->img, EINA_FALSE);
    ELM_SAFE_FREE(sd->prev_img, evas_object_del);
 }
 
 EOLIAN static void
-_efl_ui_image_efl_canvas_group_group_hide(Eo *obj, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_gfx_visible_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool vis)
 {
-   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
 
-   sd->show = EINA_FALSE;
-   evas_object_hide(sd->img);
-
-   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+   if (vis) _efl_ui_image_show(obj, sd);
+   else _efl_ui_image_hide(obj, sd);
 }
 
 EOLIAN static void

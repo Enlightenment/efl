@@ -120,30 +120,30 @@ _efl_canvas_group_clipped_efl_canvas_group_group_move(Eo *eo_obj, Evas_Object_Sm
 }
 
 static void
-evas_object_smart_clipped_group_show(Evas_Object *eo_obj)
+evas_object_smart_clipped_smart_show(Evas_Object *eo_obj)
 {
    CSO_DATA_GET_OR_RETURN(eo_obj, cso);
    if (evas_object_clipees_has(cso->clipper))
      evas_object_show(cso->clipper); /* just show if clipper being used */
 }
 
-EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_group_group_show(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
-{
-   evas_object_smart_clipped_group_show(eo_obj);
-}
-
 static void
-evas_object_smart_clipped_group_hide(Evas_Object *eo_obj)
+evas_object_smart_clipped_smart_hide(Evas_Object *eo_obj)
 {
    CSO_DATA_GET_OR_RETURN(eo_obj, cso);
    evas_object_hide(cso->clipper);
 }
 
 EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_group_group_hide(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
+_efl_canvas_group_clipped_efl_gfx_visible_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Eina_Bool vis)
 {
-   evas_object_smart_clipped_group_hide(eo_obj);
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
+
+   efl_gfx_visible_set(efl_super(eo_obj, MY_CLASS), vis);
+
+   if (vis) evas_object_smart_clipped_smart_show(eo_obj);
+   else evas_object_smart_clipped_smart_hide(eo_obj);
 }
 
 EOLIAN static void
@@ -244,8 +244,8 @@ evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
    sc->add = evas_object_smart_clipped_smart_add;
    sc->del = evas_object_smart_clipped_smart_del;
    sc->move = evas_object_smart_clipped_smart_move;
-   sc->show = evas_object_smart_clipped_group_show;
-   sc->hide = evas_object_smart_clipped_group_hide;
+   sc->show = evas_object_smart_clipped_smart_show;
+   sc->hide = evas_object_smart_clipped_smart_hide;
    sc->color_set = evas_object_smart_clipped_smart_color_set;
    sc->clip_set = evas_object_smart_clipped_smart_clip_set;
    sc->clip_unset = evas_object_smart_clipped_smart_clip_unset;

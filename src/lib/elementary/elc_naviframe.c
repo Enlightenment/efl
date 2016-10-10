@@ -1478,9 +1478,15 @@ _elm_naviframe_efl_canvas_group_group_del(Eo *obj, Elm_Naviframe_Data *sd)
 
 //Show only the top item view
 EOLIAN static void
-_elm_naviframe_efl_canvas_group_group_show(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED)
+_elm_naviframe_efl_gfx_visible_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, Eina_Bool vis)
 {
    Elm_Object_Item *eo_top;
+
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
+
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   if (!vis) return;
 
    eo_top = elm_naviframe_top_item_get(obj);
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_top, top);

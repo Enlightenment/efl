@@ -453,19 +453,20 @@ _thumb_show(Elm_Thumb_Data *sd)
 }
 
 EOLIAN static void
-_elm_thumb_efl_canvas_group_group_show(Eo *obj, Elm_Thumb_Data *sd)
+_elm_thumb_efl_gfx_visible_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool vis)
 {
-   efl_canvas_group_show(efl_super(obj, MY_CLASS));
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
 
-   _thumb_show(sd);
-}
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
 
-EOLIAN static void
-_elm_thumb_efl_canvas_group_group_hide(Eo *obj, Elm_Thumb_Data *sd)
-{
+   if (vis)
+     {
+        _thumb_show(sd);
+        return;
+     }
+
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
 
    if (sd->thumb.request)
      {

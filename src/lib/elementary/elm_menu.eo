@@ -72,7 +72,7 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Elm.Interface.Atspi.Selection)
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Canvas.Group.group_show;
+      Efl.Gfx.visible.set;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.widget_parent;

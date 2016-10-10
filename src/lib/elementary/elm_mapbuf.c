@@ -176,18 +176,12 @@ _elm_mapbuf_efl_canvas_group_group_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coo
 }
 
 EOLIAN static void
-_elm_mapbuf_efl_canvas_group_group_show(Eo *obj, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_efl_gfx_visible_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool vis)
 {
-   efl_canvas_group_show(efl_super(obj, MY_CLASS));
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
 
-   _mapbuf_auto_eval(obj, sd);
-   _configure(obj);
-}
-
-EOLIAN static void
-_elm_mapbuf_efl_canvas_group_group_hide(Eo *obj, Elm_Mapbuf_Data *sd)
-{
-   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
 
    _mapbuf_auto_eval(obj, sd);
    _configure(obj);

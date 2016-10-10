@@ -36,8 +36,7 @@ class Elm.Combobox (Elm.Button, Efl.Ui.Selectable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_hide;
-      Efl.Canvas.Group.group_show;
+      Efl.Gfx.visible.set;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_resize;

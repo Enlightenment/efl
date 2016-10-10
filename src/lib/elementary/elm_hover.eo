@@ -60,9 +60,8 @@ class Elm.Hover (Elm.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Gfx.visible.set;
       Efl.Canvas.Group.group_del;
-      Efl.Canvas.Group.group_hide;
-      Efl.Canvas.Group.group_show;
       Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_resize;

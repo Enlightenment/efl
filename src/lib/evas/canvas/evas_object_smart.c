@@ -630,26 +630,6 @@ _efl_canvas_group_group_move(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Co
 }
 
 EOLIAN static void
-_efl_canvas_group_group_show(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
-{
-   // If this function is reached, so we do nothing except trying to call
-   // the function of the legacy smart class.
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Evas_Smart *s = obj->smart.smart;
-   if (s && s->smart_class->show) s->smart_class->show(eo_obj);
-}
-
-EOLIAN static void
-_efl_canvas_group_group_hide(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
-{
-   // If this function is reached, so we do nothing except trying to call
-   // the function of the legacy smart class.
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Evas_Smart *s = obj->smart.smart;
-   if (s && s->smart_class->hide) s->smart_class->hide(eo_obj);
-}
-
-EOLIAN static void
 _efl_canvas_group_efl_canvas_object_no_render_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Eina_Bool enable)
 {
    Evas_Object_Protected_Data *obj2;

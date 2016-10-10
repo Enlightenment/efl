@@ -101,15 +101,14 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
 
    switch (cb_type)
      {
-      case EVAS_OBJECT_INTERCEPT_CB_SHOW:
-        if (obj->cur->visible) return 1;
+      case EVAS_OBJECT_INTERCEPT_CB_VISIBLE:
+        va_start(args, internal);
+        i = !!va_arg(args, int);
+        va_end(args);
+        if (i == obj->cur->visible) return 1;
         if (!obj->interceptors) return 0;
-        return evas_object_intercept_call_show(eo_obj, obj);
-
-      case EVAS_OBJECT_INTERCEPT_CB_HIDE:
-        if (!obj->cur->visible) return 1;
-        if (!obj->interceptors) return 0;
-        return evas_object_intercept_call_hide(eo_obj, obj);
+        if (i) return evas_object_intercept_call_show(eo_obj, obj);
+        else return evas_object_intercept_call_hide(eo_obj, obj);
 
       case EVAS_OBJECT_INTERCEPT_CB_MOVE:
         if (!obj->interceptors) return 0;

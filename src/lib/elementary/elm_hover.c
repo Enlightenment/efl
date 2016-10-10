@@ -632,25 +632,22 @@ _elm_hover_efl_canvas_group_group_resize(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static void
-_elm_hover_efl_canvas_group_group_show(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
+_elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Eina_Bool vis)
 {
-   efl_canvas_group_show(efl_super(obj, MY_CLASS));
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
 
-   _hov_show_do(obj);
-}
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
 
-EOLIAN static void
-_elm_hover_efl_canvas_group_group_hide(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
-{
-   const char *dismissstr;
+   if (vis) _hov_show_do(obj);
+   else
+     {
+        // for backward compatibility
+        const char *dismissstr = elm_layout_data_get(obj, "dismiss");
 
-   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
-
-   // for backward compatibility
-   dismissstr = elm_layout_data_get(obj, "dismiss");
-
-   if (!dismissstr || strcmp(dismissstr, "on"))
-     _hide_signals_emit(obj);
+        if (!eina_streq(dismissstr, "on"))
+          _hide_signals_emit(obj);
+     }
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*

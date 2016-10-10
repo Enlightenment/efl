@@ -282,14 +282,13 @@ _edje_object_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_C
    _edje_emit(ed, "resize", NULL);
 }
 
-EOLIAN static void
-_edje_object_efl_canvas_group_group_show(Eo *obj, Edje *ed)
+static void
+_edje_object_show(Eo *obj, Edje *ed)
 {
    Eina_List *l;
    Edje *edg;
 
-   efl_canvas_group_show(efl_super(obj, MY_CLASS));
-   if (evas_object_visible_get(obj)) return;
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_show(ed);
@@ -310,14 +309,13 @@ _edje_object_efl_canvas_group_group_show(Eo *obj, Edje *ed)
    _edje_emit(ed, "show", NULL);
 }
 
-EOLIAN static void
-_edje_object_efl_canvas_group_group_hide(Eo *obj, Edje *ed)
+static void
+_edje_object_hide(Eo *obj, Edje *ed)
 {
    Eina_List *l;
    Edje *edg;
 
-   efl_canvas_group_hide(efl_super(obj, MY_CLASS));
-   if (!evas_object_visible_get(obj)) return;
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_hide(ed);
@@ -326,6 +324,16 @@ _edje_object_efl_canvas_group_group_hide(Eo *obj, Edje *ed)
    EINA_LIST_FOREACH(ed->groups, l, edg)
      if (edg != ed) evas_object_hide(edg->obj);
    _edje_emit(ed, "hide", NULL);
+}
+
+EOLIAN static void
+_edje_object_efl_gfx_visible_set(Eo *obj, Edje *ed, Eina_Bool vis)
+{
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
+
+   if (vis) _edje_object_show(obj, ed);
+   else _edje_object_hide(obj, ed);
 }
 
 EOLIAN static void
