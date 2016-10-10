@@ -1650,44 +1650,6 @@ void evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
                                 int x, int y, int w, int h, int ow, int oh,
                                 Evas_Text_Props *intl_props, Eina_Bool do_async);
 
-void _freeze_events_set(Eo *obj, void *_pd, va_list *list);
-void _freeze_events_get(Eo *obj, void *_pd, va_list *list);
-void _pass_events_set(Eo *obj, void *_pd, va_list *list);
-void _pass_events_get(Eo *obj, void *_pd, va_list *list);
-void _repeat_events_set(Eo *obj, void *_pd, va_list *list);
-void _repeat_events_get(Eo *obj, void *_pd, va_list *list);
-void _propagate_events_set(Eo *obj, void *_pd, va_list *list);
-void _propagate_events_get(Eo *obj, void *_pd, va_list *list);
-void _pointer_mode_set(Eo *obj, void *_pd, va_list *list);
-void _pointer_mode_get(Eo *obj, void *_pd, va_list *list);
-void _key_grab(Eo *obj, void *_pd, va_list *list);
-void _key_ungrab(Eo *obj, void *_pd, va_list *list);
-void _focus_set(Eo *obj, void *_pd, va_list *list);
-void _focus_get(Eo *obj, void *_pd, va_list *list);
-void _name_set(Eo *obj, void *_pd, va_list *list);
-void _name_get(Eo *obj, void *_pd, va_list *list);
-void _name_child_find(Eo *obj, void *_pd, va_list *list);
-void _layer_set(Eo *obj, void *_pd, va_list *list);
-void _layer_get(Eo *obj, void *_pd, va_list *list);
-void _clip_set(Eo *obj, void *_pd, va_list *list);
-void _clip_get(Eo *obj, void *_pd, va_list *list);
-void _clip_unset(Eo *obj, void *_pd, va_list *list);
-void _clipees_get(Eo *obj, void *_pd, va_list *list);
-void _clipees_has(Eo *obj, void *_pd, va_list *list);
-void _map_enable_set(Eo *obj, void *_pd, va_list *list);
-void _map_enable_get(Eo *obj, void *_pd, va_list *list);
-void _map_source_set(Eo *obj, void *_pd, va_list *list);
-void _map_source_get(Eo *obj, void *_pd, va_list *list);
-void _map_set(Eo *obj, void *_pd, va_list *list);
-void _map_get(Eo *obj, void *_pd, va_list *list);
-void _raise(Eo *obj, void *_pd, va_list *list);
-void _lower(Eo *obj, void *_pd, va_list *list);
-void _stack_above(Eo *obj, void *_pd, va_list *list);
-void _stack_below(Eo *obj, void *_pd, va_list *list);
-void _above_get(Eo *obj, void *_pd, va_list *list);
-void _below_get(Eo *obj, void *_pd, va_list *list);
-void _smart_move_children_relative(Eo *obj, void *_pd, va_list *list);
-void _smart_clipped_clipper_get(Eo *obj, void *_pd, va_list *list);
 void _efl_canvas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev);
 
 void _canvas_event_default_flags_set(Eo *e, void *_pd, va_list *list);
