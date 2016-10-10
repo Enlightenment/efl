@@ -79,6 +79,8 @@ Eina_Bool _ecore_cocoa_window_init(void);
 
 Eina_Bool _ecore_cocoa_feed_events(void *anEvent);
 
+unsigned int ecore_cocoa_event_modifiers(NSUInteger mod);
+
 
 
 #endif

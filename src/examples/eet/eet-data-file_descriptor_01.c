@@ -409,7 +409,7 @@ main(int   argc,
                   if (!acc_)
                     {
                        acc_ = _my_account_new(argv[4]);
-                       eina_hash_direct_add(my_cache->accounts, acc_->name, acc);
+                       eina_hash_direct_add(my_cache->accounts, acc_->name, acc_);
                     }
                   else
                     fprintf(stderr, "ERROR: account '%s' already exists.\n",
