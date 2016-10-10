@@ -457,7 +457,7 @@ EAPI int               ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, i
  *                        drops. This causes the kernel to queue up to 4096
  *                        connections (or your kernel's limit, whichever is
  *                        lower).
- * @ingroup Ecore_Ipc_Server_Group
+ * @ingroup Ecore_IPC_Server_Group
  */
 EAPI void              ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char reject_excess_clients);
 
@@ -466,7 +466,7 @@ EAPI void              ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, 
  *
  * @param   svr           The given server.
  * @param   size          The maximum data payload size in bytes.
- * @ingroup Ecore_Ipc_Server_Group
+ * @ingroup Ecore_IPC_Server_Group
  */
 EAPI void              ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *srv, int size);
 
@@ -475,7 +475,7 @@ EAPI void              ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *srv,
  *
  * @param   svr           The given server.
  * @return The maximum data payload in bytes.
- * @ingroup Ecore_Ipc_Server_Group
+ * @ingroup Ecore_IPC_Server_Group
  */
 EAPI int               ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *srv);
 
@@ -487,7 +487,7 @@ EAPI int               ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *srv)
  *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
  *          This string should not be modified or trusted to stay valid after
  *          deletion for the @p svr object. If no IP is known NULL is returned.
- * @ingroup Ecore_Ipc_Server_Group
+ * @ingroup Ecore_IPC_Server_Group
  */
 EAPI const char       *ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr);
 
@@ -495,7 +495,7 @@ EAPI const char       *ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr);
  * @brief Flushes all pending data to the given server. Will return when done.
  *
  * @param   svr           The given server.
- * @ingroup Ecore_Ipc_Server_Group
+ * @ingroup Ecore_IPC_Server_Group
  */
 EAPI void              ecore_ipc_server_flush(Ecore_Ipc_Server *svr);
 
@@ -567,7 +567,7 @@ EAPI void             *ecore_ipc_client_data_get(Ecore_Ipc_Client *cl);
  *
  * @param   cl        The given client.
  * @param   size          The maximum data payload size in bytes.
- * @ingroup Ecore_Ipc_Client_Group
+ * @ingroup Ecore_IPC_Client_Group
  */
 EAPI void              ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, int size);
 
@@ -576,7 +576,7 @@ EAPI void              ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, 
  *
  * @param   cl            The given client.
  * @return The maximum data payload size in bytes on success, @c -1 on failure.
- * @ingroup Ecore_Ipc_Client_Group
+ * @ingroup Ecore_IPC_Client_Group
  */
 EAPI int               ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl);
 
@@ -589,7 +589,7 @@ EAPI int               ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl);
  *          This string should not be modified or trusted to stay valid after
  *          deletion for the @p cl object. If no IP is known @c NULL is
  *          returned.
- * @ingroup Ecore_Ipc_Client_Group
+ * @ingroup Ecore_IPC_Client_Group
  */
 EAPI const char       *ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl);
 
@@ -597,7 +597,7 @@ EAPI const char       *ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl);
  * @brief Flushes all pending data to the given client. Will return when done.
  *
  * @param   cl            The given client.
- * @ingroup Ecore_Ipc_Client_Group
+ * @ingroup Ecore_IPC_Client_Group
  */
 EAPI void              ecore_ipc_client_flush(Ecore_Ipc_Client *cl);
 
