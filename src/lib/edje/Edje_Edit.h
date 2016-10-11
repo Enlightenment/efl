@@ -8163,6 +8163,17 @@ EAPI const char * edje_edit_object_source_generate(Evas_Object *obj);
 
 EAPI char *edje_edit_full_source_generate(Evas_Object *obj);
 
+/**
+ * Return source code of global block data.
+ *
+ * Remember to free the string with edje_edit_string_free()
+ *
+ * @param obj The object being edited
+ *
+ * @return Source code of global block data.
+ */
+EAPI const char * edje_edit_data_source_generate(Evas_Object *obj);
+
 //@}
 /******************************************************************************/
 /**************************   ERROR API   ***********************************/

@@ -12791,6 +12791,56 @@ edje_edit_object_source_generate(Evas_Object *obj)
    return _edje_edit_source_generate(obj, EINA_TRUE);
 }
 
+EAPI const char *
+edje_edit_data_source_generate(Evas_Object *obj)
+{
+   Eina_Strbuf *buf = NULL;
+   Eina_Bool ret = EINA_TRUE;
+   Eina_Stringshare *str = NULL;
+   const char *entry;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file) return NULL;
+
+   buf = eina_strbuf_new();
+
+   /* If data items exist, print them */
+   if (ed->file->data)
+     {
+        Edje_String *es;
+        size_t data_len = 0;
+        char *escaped_entry = NULL;
+        char *escaped_string = NULL;
+        BUF_APPEND(I0 "data {\n");
+        Eina_Iterator *it = eina_hash_iterator_key_new(ed->file->data);
+        EINA_ITERATOR_FOREACH(it, entry)
+          {
+             es = eina_hash_find(ed->file->data, entry);
+             str = edje_string_get(es);
+             if (!str) break;
+             data_len = strlen(str);
+             /* In case when data ends with '\n' character, this item recognize
+              * as data.file. This data will not generated into the source code
+              * of group. */
+             if (str[data_len - 1] == '\n') continue;
+             escaped_entry = eina_str_escape(entry);
+             escaped_string = eina_str_escape(str);
+             BUF_APPENDF(I1 "item: \"%s\" \"%s\";\n", escaped_entry, escaped_string);
+             free(escaped_entry);
+             free(escaped_string);
+          }
+        eina_iterator_free(it);
+        BUF_APPEND(I0 "}\n\n");
+     }
+
+   /* return resulted source code of the group */
+   if (ret)
+     str = eina_stringshare_add(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   return str;
+}
+
 #undef COLLECT_RESOURCE
 
 static Eina_Bool
