@@ -3483,12 +3483,15 @@ _efl_ui_text_efl_gfx_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord x, E
 }
 
 EOLIAN static void
-_efl_ui_text_efl_canvas_group_group_resize(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_ui_text_efl_gfx_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
 
    evas_object_resize(sd->hit_rect, w, h);
    _update_selection_handler(obj);
+
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 }
 
 EOLIAN static void

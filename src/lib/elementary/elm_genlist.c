@@ -290,14 +290,16 @@ _elm_genlist_pan_smart_resize_job(void *data)
 }
 
 EOLIAN static void
-_elm_genlist_pan_efl_canvas_group_group_resize(Eo *obj, Elm_Genlist_Pan_Data *psd, Evas_Coord w, Evas_Coord h)
+_elm_genlist_pan_efl_gfx_size_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Evas_Coord w, Evas_Coord h)
 {
+   Elm_Genlist_Data *sd = psd->wsd;
    Evas_Coord ow, oh;
 
-   Elm_Genlist_Data *sd = psd->wsd;
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
 
-   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-   if ((ow == w) && (oh == h)) return;
+   efl_gfx_size_get(obj, &ow, &oh);
+   if ((ow == w) && (oh == h)) goto super; // should already be intercepted above
    if ((sd->mode == ELM_LIST_COMPRESS) && (ow != w))
      {
         /* fix me later */
@@ -315,6 +317,9 @@ _elm_genlist_pan_efl_canvas_group_group_resize(Eo *obj, Elm_Genlist_Pan_Data *ps
      sd->calc_job = ecore_job_add(_calc_job, psd->wobj);
    else
      sd->calc_job = NULL;
+
+super:
+   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), w, h);
 }
 
 static void
@@ -5674,13 +5679,16 @@ _elm_genlist_efl_gfx_position_set(Eo *obj, Elm_Genlist_Data *sd, Evas_Coord x, E
 }
 
 EOLIAN static void
-_elm_genlist_efl_canvas_group_group_resize(Eo *obj, Elm_Genlist_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_genlist_efl_gfx_size_set(Eo *obj, Elm_Genlist_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
 
    evas_object_resize(sd->hit_rect, w, h);
    if ((sd->queue) && (!sd->queue_idle_enterer) && (w > 0))
      _requeue_idle_enterer(sd);
+
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 }
 
 EOLIAN static void

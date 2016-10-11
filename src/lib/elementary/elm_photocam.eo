@@ -190,10 +190,10 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
       class.constructor;
       Efl.Object.constructor;
       Efl.Gfx.position.set;
+      Efl.Gfx.size.set;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;
-      Efl.Canvas.Group.group_resize;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
       Elm.Widget.event;

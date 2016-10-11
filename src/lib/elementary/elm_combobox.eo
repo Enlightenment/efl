@@ -37,9 +37,9 @@ class Elm.Combobox (Elm.Button, Efl.Ui.Selectable,
       class.constructor;
       Efl.Object.constructor;
       Efl.Gfx.visible.set;
+      Efl.Gfx.size.set;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
-      Efl.Canvas.Group.group_resize;
       Elm.Widget.part_text.set;
       Elm.Widget.part_text.get;
       Elm.Widget.theme_apply;

@@ -92,14 +92,6 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
          }
          legacy: null;
       }
-      group_resize {
-         [[No description supplied by the EAPI.]]
-         legacy: null;
-         params {
-            @in w: Evas.Coord;
-            @in h: Evas.Coord;
-         }
-      }
       group_member_del {
          [[Removes a member object from a given smart object.
 

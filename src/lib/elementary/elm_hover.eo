@@ -62,9 +62,9 @@ class Elm.Hover (Elm.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action
       Efl.Object.constructor;
       Efl.Gfx.visible.set;
       Efl.Gfx.position.set;
+      Efl.Gfx.size.set;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_resize;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_add;
       Elm.Widget.widget_parent;

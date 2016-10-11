@@ -506,21 +506,24 @@ _elm_widget_efl_gfx_position_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd,
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
-
    sd->x = x;
    sd->y = y;
-
    _smart_reconfigure(sd);
+
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
 }
 
 EOLIAN static void
-_elm_widget_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_widget_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Coord w, Evas_Coord h)
 {
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
+
    sd->w = w;
    sd->h = h;
-
    _smart_reconfigure(sd);
+
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 }
 
 EOLIAN static void

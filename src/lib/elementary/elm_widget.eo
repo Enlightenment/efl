@@ -850,6 +850,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       Efl.Gfx.color.set;
       Efl.Gfx.visible.set;
       Efl.Gfx.position.set;
+      Efl.Gfx.size.set;
       Efl.Canvas.Object.clip.set;
       Efl.Canvas.Object.no_render.set;
       Efl.Canvas.Group.group_calculate;
@@ -857,7 +858,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;
-      Efl.Canvas.Group.group_resize;
       Elm.Interface.Atspi_Accessible.name.get;
       Elm.Interface.Atspi_Accessible.state_set.get;
       Elm.Interface.Atspi_Accessible.children.get;

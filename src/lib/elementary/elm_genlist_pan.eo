@@ -7,9 +7,9 @@ class Elm.Genlist.Pan (Elm.Pan)
       class.constructor;
       Efl.Object.destructor;
       Efl.Gfx.position.set;
+      Efl.Gfx.size.set;
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_del;
-      Efl.Canvas.Group.group_resize;
       Elm.Pan.content_size.get;
       Elm.Pan.pos;
       Elm.Pan.pos_min.get;

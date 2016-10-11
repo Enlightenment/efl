@@ -577,17 +577,21 @@ _efl_ui_image_efl_gfx_position_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord x,
 }
 
 EOLIAN static void
-_efl_ui_image_efl_canvas_group_group_resize(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_ui_image_efl_gfx_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
 
-   if ((sd->img_w == w) && (sd->img_h == h)) return;
+   if ((sd->img_w == w) && (sd->img_h == h)) goto super;
 
    sd->img_w = w;
    sd->img_h = h;
 
    /* takes care of resizing */
    _efl_ui_image_internal_sizing_eval(obj, sd);
+
+super:
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 }
 
 static void

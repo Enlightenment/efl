@@ -529,10 +529,12 @@ _elm_combobox_elm_widget_part_text_get(Eo *obj EINA_UNUSED, Elm_Combobox_Data *p
 }
 
 EOLIAN static void
-_elm_combobox_efl_canvas_group_group_resize(Eo *obj, Elm_Combobox_Data *pd,
-                                       Evas_Coord w, Evas_Coord h)
+_elm_combobox_efl_gfx_size_set(Eo *obj, Elm_Combobox_Data *pd, Evas_Coord w, Evas_Coord h)
 {
-   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
+
    if (pd->count > 0) _table_resize(obj);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 }
 #include "elm_combobox.eo.c"

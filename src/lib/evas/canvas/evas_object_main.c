@@ -865,6 +865,26 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    efl_gfx_size_set((Evas_Object *)obj, w, h);
 }
 
+Eina_Bool
+_efl_canvas_object_efl_gfx_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+                                          Evas_Coord w, Evas_Coord h)
+{
+   if (obj->doing.in_resize > 0)
+     {
+        WRN("evas_object_resize() called on object %p (%s) when in the middle "
+            "of resizing the same object", eo_obj, efl_class_name_get(eo_obj));
+        return EINA_TRUE;
+     }
+
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+
+   if ((obj->cur->geometry.w == w) && (obj->cur->geometry.h == h))
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
 EOLIAN static void
 _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                     Evas_Coord w, Evas_Coord h)
@@ -873,21 +893,11 @@ _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
 
-   if (obj->delete_me) return;
-   if (!obj->layer) return;
    if (w < 0) w = 0;
    if (h < 0) h = 0;
 
-   evas_object_async_block(obj);
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 1, w, h)) return;
-
-   if (obj->doing.in_resize > 0)
-     {
-        WRN("evas_object_resize() called on object %p when in the middle of resizing the same object", obj);
-        return;
-     }
-
-   if ((obj->cur->geometry.w == w) && (obj->cur->geometry.h == h)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 1, w, h))
+     return;
 
    if (!(obj->layer->evas->is_frozen))
      {
@@ -901,10 +911,8 @@ _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
      }
    obj->doing.in_resize++;
 
-   if (obj->is_smart)
-     {
-        efl_canvas_group_resize(eo_obj, w, h);
-     }
+   if (obj->is_smart && obj->smart.smart && obj->smart.smart->smart_class->resize)
+     obj->smart.smart->smart_class->resize(eo_obj, w, h);
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {

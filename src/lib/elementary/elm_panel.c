@@ -1108,9 +1108,12 @@ _elm_panel_efl_gfx_position_set(Eo *obj, Elm_Panel_Data *sd, Evas_Coord x, Evas_
 }
 
 EOLIAN static void
-_elm_panel_efl_canvas_group_group_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_panel_efl_gfx_size_set(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
+
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 
    if (!sd->scrollable) return;
 

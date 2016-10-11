@@ -45,9 +45,9 @@ class Elm.Pan (Efl.Canvas.Group.Clipped)
       class.constructor;
       Efl.Gfx.visible.set;
       Efl.Gfx.position.set;
+      Efl.Gfx.size.set;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
-      Efl.Canvas.Group.group_resize;
    }
    events {
       changed;

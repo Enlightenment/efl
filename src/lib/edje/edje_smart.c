@@ -254,9 +254,12 @@ _edje_limit_get(Edje *ed, Edje_Limit **limits, unsigned int length, Evas_Coord s
 }
 
 EOLIAN static void
-_edje_object_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord w, Evas_Coord h)
+_edje_object_efl_gfx_size_set(Eo *obj, Edje *ed, Evas_Coord w, Evas_Coord h)
 {
-   if ((w == ed->w) && (h == ed->h)) return;
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
+
+   if ((w == ed->w) && (h == ed->h)) goto super;
    if (ed->collection)
      {
         _edje_limit_get(ed, ed->collection->limits.horizontal, ed->collection->limits.horizontal_count, ed->w, w);
@@ -279,12 +282,15 @@ _edje_object_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_C
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_resize(ed);
-        return;
+        goto super;
      }
 //   evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = EINA_TRUE;
    _edje_recalc_do(ed);
    _edje_emit(ed, "resize", NULL);
+
+super:
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 }
 
 static void

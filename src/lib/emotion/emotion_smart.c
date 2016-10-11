@@ -1944,8 +1944,13 @@ _efl_canvas_video_efl_gfx_position_set(Evas_Object *obj, Efl_Canvas_Video_Data *
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_canvas_group_group_resize(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_canvas_video_efl_gfx_size_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Evas_Coord w, Evas_Coord h)
 {
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
+
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+
    _efl_canvas_video_aspect_border_apply(obj, sd, w, h);
    evas_object_resize(sd->bg, w, h);
 }

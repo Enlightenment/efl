@@ -3864,8 +3864,13 @@ _elm_map_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Elm_Map_Pan_Data *psd
 }
 
 EOLIAN static void
-_elm_map_pan_efl_canvas_group_group_resize(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord w EINA_UNUSED, Evas_Coord h EINA_UNUSED)
+_elm_map_pan_efl_gfx_size_set(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord w, Evas_Coord h)
 {
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
+
+   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), w, h);
+
    _sizing_eval(psd->wsd->obj);
    elm_map_zoom_mode_set(psd->wobj, psd->wsd->mode);
    evas_object_smart_changed(obj);
@@ -4219,9 +4224,12 @@ _elm_map_efl_gfx_position_set(Eo *obj, Elm_Map_Data *sd, Evas_Coord x, Evas_Coor
 }
 
 EOLIAN static void
-_elm_map_efl_canvas_group_group_resize(Eo *obj, Elm_Map_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_map_efl_gfx_size_set(Eo *obj, Elm_Map_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
+
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 
    evas_object_resize(sd->hit_rect, w, h);
 }

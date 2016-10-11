@@ -226,15 +226,18 @@ _block_area_clicked_cb(void *data,
 }
 
 EOLIAN static void
-_elm_notify_efl_canvas_group_group_resize(Eo *obj, Elm_Notify_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_notify_efl_gfx_size_set(Eo *obj, Elm_Notify_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Coord x, y;
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
 
-   efl_canvas_group_resize(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 
    if (!sd->parent && sd->content)
      {
-        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        Evas_Coord x, y;
+
+        efl_gfx_position_get(obj, &x, &y);
         _notify_move_to_orientation(obj, x, y, w, h);
      }
 }

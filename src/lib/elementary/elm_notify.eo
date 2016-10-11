@@ -81,9 +81,9 @@ class Elm.Notify (Elm.Widget, Efl.Container, Efl.Part)
       Efl.Object.constructor;
       Efl.Gfx.visible.set;
       Efl.Gfx.position.set;
+      Efl.Gfx.size.set;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
-      Efl.Canvas.Group.group_resize;
       Elm.Widget.focus_direction;
       Elm.Widget.widget_parent;
       Elm.Widget.theme_apply;
