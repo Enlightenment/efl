@@ -885,6 +885,15 @@ _cb_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUS
 static void
 _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
 {
+   Ecore_Drm2_Output_Mode *mode;
+
+   EINA_LIST_FREE(output->modes, mode)
+     {
+        if (mode->id)
+          drmModeDestroyPropertyBlob(output->fd, mode->id);
+        free(mode);
+     }
+
    dev->alloc.crtc &= ~(1 << output->crtc_id);
    dev->alloc.conn &= ~(1 << output->conn_id);
 
