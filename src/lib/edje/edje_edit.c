@@ -12459,8 +12459,8 @@ error:
    return NULL;
 }
 
-EAPI const char *
-edje_edit_source_generate(Evas_Object *obj)
+static const char *
+_edje_edit_source_generate(Evas_Object *obj, Eina_Bool without_global_data)
 {
    Edje_Part_Collection_Directory_Entry *ce;
    Edje_Part *part;
@@ -12588,7 +12588,7 @@ edje_edit_source_generate(Evas_Object *obj)
    buf = eina_strbuf_new();
 
    /* If data items exist, print them */
-   if (ed->file->data)
+   if (!without_global_data && ed->file->data)
      {
         Edje_String *es;
         size_t data_len = 0;
@@ -12706,7 +12706,7 @@ edje_edit_source_generate(Evas_Object *obj)
         eina_list_free(fonts);
      }
    /* if color_classes were found, print them */
-   if (color_classes)
+   if (!without_global_data && color_classes)
      {
         BUF_APPEND(I0 "color_classes {\n");
 
@@ -12719,7 +12719,7 @@ edje_edit_source_generate(Evas_Object *obj)
 
 
    /* print the main code of group collections */
-   BUF_APPEND(I0 "collections {\n");
+   if (!without_global_data) BUF_APPEND(I0 "collections {\n");
    /* if sounds were found, print them */
    if (sounds)
      {
@@ -12764,7 +12764,7 @@ edje_edit_source_generate(Evas_Object *obj)
         BUF_APPEND(I1 "}\n");
      }
    _edje_generate_source_of_group(ed, ce, buf);
-   BUF_APPEND(I0 "}");
+   if (!without_global_data) BUF_APPEND(I0 "}");
 
    if (!ret)
      {
@@ -12777,6 +12777,18 @@ edje_edit_source_generate(Evas_Object *obj)
    str = eina_stringshare_add(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return str;
+}
+
+EAPI const char *
+edje_edit_source_generate(Evas_Object *obj)
+{
+   return _edje_edit_source_generate(obj, EINA_FALSE);
+}
+
+EAPI const char *
+edje_edit_object_source_generate(Evas_Object *obj)
+{
+   return _edje_edit_source_generate(obj, EINA_TRUE);
 }
 
 #undef COLLECT_RESOURCE
