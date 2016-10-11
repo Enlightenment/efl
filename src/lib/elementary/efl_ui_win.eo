@@ -810,7 +810,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Gfx.visible.set;
-      Efl.Canvas.Group.group_move;
+      Efl.Gfx.position.set;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_resize;

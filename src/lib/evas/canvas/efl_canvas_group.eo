@@ -63,14 +63,6 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
          return: free(own(iterator<Efl.Gfx>), eina_iterator_free);
          legacy: evas_object_smart_iterator_new;
       }
-      group_move {
-         [[No description supplied by the EAPI.]]
-         legacy: null;
-         params {
-            @in x: Evas.Coord;
-            @in y: Evas.Coord;
-         }
-      }
       group_add {
          [[Instantiates a new smart object described by $s.
 

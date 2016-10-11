@@ -528,8 +528,8 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Gfx.position.set;
       Efl.Canvas.Group.group_member_add;
-      Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_resize;

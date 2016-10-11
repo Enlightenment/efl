@@ -197,8 +197,8 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Gfx.position.set;
       Efl.Canvas.Group.group_member_add;
-      Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_resize;

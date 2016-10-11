@@ -478,8 +478,13 @@ _elm_gengrid_pan_efl_object_destructor(Eo *obj, Elm_Gengrid_Pan_Data *psd)
 }
 
 EOLIAN static void
-_elm_gengrid_pan_efl_canvas_group_group_move(Eo *obj EINA_UNUSED, Elm_Gengrid_Pan_Data *psd, Evas_Coord _gen_param2 EINA_UNUSED, Evas_Coord _gen_param3 EINA_UNUSED)
+_elm_gengrid_pan_efl_gfx_position_set(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord x, Evas_Coord y)
 {
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+     return;
+
+   efl_gfx_position_set(efl_super(obj, MY_PAN_CLASS), x, y);
+
    ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
 }
@@ -4331,9 +4336,12 @@ _elm_gengrid_efl_canvas_group_group_del(Eo *obj, Elm_Gengrid_Data *sd)
 }
 
 EOLIAN static void
-_elm_gengrid_efl_canvas_group_group_move(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_gengrid_efl_gfx_position_set(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   efl_canvas_group_move(efl_super(obj, MY_CLASS), x, y);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+     return;
+
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
 
    evas_object_move(sd->hit_rect, x, y);
 }

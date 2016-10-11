@@ -561,9 +561,12 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_image_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord x, Evas_Coord y)
+_efl_ui_image_efl_gfx_position_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   efl_canvas_group_move(efl_super(obj, MY_CLASS), x, y);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+     return;
+
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
 
    if ((sd->img_x == x) && (sd->img_y == y)) return;
    sd->img_x = x;

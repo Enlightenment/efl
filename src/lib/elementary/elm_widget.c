@@ -501,8 +501,13 @@ _smart_reconfigure(Elm_Widget_Smart_Data *sd)
 }
 
 EOLIAN static void
-_elm_widget_efl_canvas_group_group_move(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_widget_efl_gfx_position_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Coord x, Evas_Coord y)
 {
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+     return;
+
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+
    sd->x = x;
    sd->y = y;
 

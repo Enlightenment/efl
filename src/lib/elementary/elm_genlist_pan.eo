@@ -6,8 +6,8 @@ class Elm.Genlist.Pan (Elm.Pan)
    implements {
       class.constructor;
       Efl.Object.destructor;
+      Efl.Gfx.position.set;
       Efl.Canvas.Group.group_calculate;
-      Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_resize;
       Elm.Pan.content_size.get;

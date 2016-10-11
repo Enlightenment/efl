@@ -86,14 +86,18 @@ evas_object_smart_clipped_smart_move(Evas_Object *eo_obj, Evas_Coord x, Evas_Coo
 {
    Evas_Coord orig_x, orig_y;
 
-   evas_object_geometry_get(eo_obj, &orig_x, &orig_y, NULL, NULL);
+   efl_gfx_position_get(eo_obj, &orig_x, &orig_y);
    evas_object_smart_move_children_relative(eo_obj, x - orig_x, y - orig_y);
 }
 
 EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_group_group_move(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_efl_canvas_group_clipped_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+     return;
+
    evas_object_smart_clipped_smart_move(eo_obj, x, y);
+   efl_gfx_position_set(efl_super(eo_obj, MY_CLASS), x, y);
 }
 
 static void

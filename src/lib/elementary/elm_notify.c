@@ -240,14 +240,17 @@ _elm_notify_efl_canvas_group_group_resize(Eo *obj, Elm_Notify_Data *sd, Evas_Coo
 }
 
 EOLIAN static void
-_elm_notify_efl_canvas_group_group_move(Eo *obj, Elm_Notify_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_notify_efl_gfx_position_set(Eo *obj, Elm_Notify_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord w, h;
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+     return;
 
-   efl_canvas_group_move(efl_super(obj, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
 
    if (!sd->parent && sd->content)
      {
+        Evas_Coord w, h;
+
         evas_object_geometry_get(obj, NULL, NULL, &w, &h);
         _notify_move_to_orientation(obj, x, y, w, h);
      }

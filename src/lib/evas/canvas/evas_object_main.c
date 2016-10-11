@@ -795,19 +795,9 @@ _efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
 
-   if (obj->delete_me) return;
-   if (!obj->layer) return;
-
    evas_object_async_block(obj);
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 1, x, y)) return;
-
-   if (obj->doing.in_move > 0)
-     {
-        WRN("evas_object_move() called on object %p when in the middle of moving the same object", obj);
-        return;
-     }
-
-   if ((obj->cur->geometry.x == x) && (obj->cur->geometry.y == y)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 1, x, y))
+     return;
 
    Evas_Map *map;
    map = (Evas_Map *) evas_object_map_get(eo_obj);
@@ -830,10 +820,8 @@ _efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *
      }
    obj->doing.in_move++;
 
-   if (obj->is_smart)
-     {
-        efl_canvas_group_move(eo_obj, x, y);
-     }
+   if (obj->is_smart && obj->smart.smart && obj->smart.smart->smart_class->move)
+     obj->smart.smart->smart_class->move(eo_obj, x, y);
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {

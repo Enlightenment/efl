@@ -2766,8 +2766,11 @@ _elm_win_obj_intercept_show(void *data,
 }
 
 EOLIAN static void
-_efl_ui_win_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord x, Evas_Coord y)
+_efl_ui_win_efl_gfx_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord x, Evas_Coord y)
 {
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+     return;
+
    if (sd->img_obj)
      {
         if ((x != sd->screen.x) || (y != sd->screen.y))
@@ -2776,15 +2779,15 @@ _efl_ui_win_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord
              sd->screen.y = y;
              efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_MOVE, NULL);
           }
-        return;
+        goto super_skip;
      }
    else
      {
         if (!sd->response) TRAP(sd, move, x, y);
-        if (!ecore_evas_override_get(sd->ee))  return;
+        if (!ecore_evas_override_get(sd->ee)) goto super_skip;
      }
 
-   efl_canvas_group_move(efl_super(obj, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
 
    if (ecore_evas_override_get(sd->ee))
      {
@@ -2806,6 +2809,15 @@ _efl_ui_win_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord
         sd->screen.x = x;
         sd->screen.y = y;
      }
+
+   return;
+
+super_skip:
+   /* FIXME FIXME FIXME
+    * Ugly code flow: legacy code had an early return in smart_move, ie.
+    * evas object move would be processed but smart object move would be
+    * aborted. This super call tries to simulate that. */
+   efl_gfx_position_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), x, y);
 }
 
 EOLIAN static void

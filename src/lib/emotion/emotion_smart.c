@@ -1929,11 +1929,16 @@ _efl_canvas_video_efl_canvas_group_group_del(Evas_Object *obj EINA_UNUSED, Efl_C
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_canvas_group_group_move(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Evas_Coord x, Evas_Coord y)
+_efl_canvas_video_efl_gfx_position_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    int w, h;
 
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+     return;
+
+   efl_gfx_size_get(obj, &w, &h);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+
    _clipper_position_size_update(obj, x, y, w, h, sd->video.w, sd->video.h);
    evas_object_move(sd->bg, x, y);
 }

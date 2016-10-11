@@ -80,7 +80,7 @@ class Elm.Notify (Elm.Widget, Efl.Container, Efl.Part)
       class.constructor;
       Efl.Object.constructor;
       Efl.Gfx.visible.set;
-      Efl.Canvas.Group.group_move;
+      Efl.Gfx.position.set;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_resize;

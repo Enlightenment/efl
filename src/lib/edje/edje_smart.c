@@ -159,9 +159,14 @@ _edje_object_efl_canvas_group_group_del(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_efl_canvas_group_group_move(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord x, Evas_Coord y)
+_edje_object_efl_gfx_position_set(Eo *obj, Edje *ed, Evas_Coord x, Evas_Coord y)
 {
    unsigned short i;
+
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+     return;
+
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
 
    if ((ed->x == x) && (ed->y == y)) return;
    ed->x = x;

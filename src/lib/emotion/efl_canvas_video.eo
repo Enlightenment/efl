@@ -53,10 +53,10 @@ class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.I
         Efl.Object.constructor;
         Efl.Gfx.color.set;
         Efl.Gfx.visible.set;
+        Efl.Gfx.position.set;
         Efl.Canvas.Object.clip.set;
         Efl.Canvas.Group.group_add;
         Efl.Canvas.Group.group_del;
-        Efl.Canvas.Group.group_move;
         Efl.Canvas.Group.group_resize;
         Efl.File.file.set;
         Efl.File.file.get;

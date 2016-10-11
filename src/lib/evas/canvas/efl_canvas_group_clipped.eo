@@ -5,9 +5,9 @@ abstract Efl.Canvas.Group.Clipped (Efl.Canvas.Group)
    implements {
       Efl.Gfx.color.set;
       Efl.Gfx.visible.set;
+      Efl.Gfx.position.set;
       Efl.Canvas.Object.clip.set;
       Efl.Canvas.Object.no_render.set;
-      Efl.Canvas.Group.group_move;
       Efl.Canvas.Group.group_member_del;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
