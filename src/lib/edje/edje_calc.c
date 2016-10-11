@@ -2541,6 +2541,61 @@ _edje_filter_get(Edje *ed, Edje_Part_Description_Spec_Filter *filter)
 }
 
 static void
+_edje_part_pixel_adjust(Edje *ed,
+                        Edje_Real_Part *ep,
+                        Edje_Calc_Params *params)
+{
+   /* Adjust rounding to not loose one pixels compared to float
+      information only when rendering to avoid infinite adjustement
+      when doing min restricted calc */
+   if (ABS(params->final.x) + params->final.w < TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
+     {
+        if (!ed->calc_only)
+          {
+             params->final.w += 1;
+          }
+        else
+          {
+             ep->invalidate = EINA_TRUE;
+          }
+     }
+   else if (ABS(params->final.x) + params->final.w > TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
+     {
+        if (!ed->calc_only)
+          {
+             params->final.w -= 1;
+          }
+        else
+          {
+             ep->invalidate = EINA_TRUE;
+          }
+     }
+   if (ABS(params->final.y) + params->final.h < TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
+     {
+        if (!ed->calc_only)
+          {
+             params->final.h += 1;
+          }
+        else
+          {
+             ep->invalidate = EINA_TRUE;
+          }
+     }
+   else if (ABS(params->final.y) + params->final.h > TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
+     {
+        if (!ed->calc_only)
+          {
+             params->final.h -= 1;
+          }
+        else
+          {
+             ep->invalidate = EINA_TRUE;
+          }
+     }
+
+}
+
+static void
 _edje_part_recalc_single_filter(Edje *ed,
                                 Edje_Real_Part *ep,
                                 Edje_Part_Description_Common *desc,
@@ -3079,54 +3134,7 @@ _edje_part_recalc_single(Edje *ed,
    params->final.w = TO_INT(params->eval.w);
    params->final.h = TO_INT(params->eval.h);
 
-   /* Adjust rounding to not loose one pixels compared to float
-      information only when rendering to avoid infinite adjustement
-      when doing min restricted calc */
-   if (ABS(params->final.x) + params->final.w < TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
-     {
-        if (!ed->calc_only)
-          {
-             params->final.w += 1;
-          }
-        else
-          {
-             ep->invalidate = EINA_TRUE;
-          }
-     }
-   else if (ABS(params->final.x) + params->final.w > TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
-     {
-        if (!ed->calc_only)
-          {
-             params->final.w -= 1;
-          }
-        else
-          {
-             ep->invalidate = EINA_TRUE;
-          }
-     }
-   if (ABS(params->final.y) + params->final.h < TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
-     {
-        if (!ed->calc_only)
-          {
-             params->final.h += 1;
-          }
-        else
-          {
-             ep->invalidate = EINA_TRUE;
-          }
-     }
-   else if (ABS(params->final.y) + params->final.h > TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
-     {
-        if (!ed->calc_only)
-          {
-             params->final.h -= 1;
-          }
-        else
-          {
-             ep->invalidate = EINA_TRUE;
-          }
-     }
-
+   _edje_part_pixel_adjust(ed, ep, params);
    /* fill */
    if (ep->part->type == EDJE_PART_TYPE_IMAGE)
      _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Image *)desc)->image.fill, params);
@@ -4474,6 +4482,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         p3->req.y = INTP(p1->req.y, p2->req.y, pos);
         p3->req.w = INTP(p1->req.w, p2->req.w, pos);
         p3->req.h = INTP(p1->req.h, p2->req.h, pos);
+
+        _edje_part_pixel_adjust(ed, ep, p3);
 
         if (ep->part->dragable.x)
           {
