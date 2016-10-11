@@ -2272,7 +2272,8 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
               * of surfaces must add data update regions. */
              Evas_Native_Surface *ns;
              ns = ENFN->image_native_get(ENDT, o->engine_data);
-             if (ns && (ns->type == EVAS_NATIVE_SURFACE_EVASGL))
+             if (ns && ((ns->type == EVAS_NATIVE_SURFACE_EVASGL) ||
+                        (ns->type == EVAS_NATIVE_SURFACE_TBM)))
                {
                   evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
                   goto done;
