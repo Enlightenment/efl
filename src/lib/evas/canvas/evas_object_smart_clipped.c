@@ -12,29 +12,6 @@
   CSO_DATA_GET(eo_obj, ptr)						 \
   if (!ptr) return;
 
-EOLIAN void
-_efl_canvas_group_group_children_move(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_Coord dx, Evas_Coord dy)
-{
-
-   const Eina_Inlist *lst;
-   Evas_Object_Protected_Data *child;
-
-   if ((dx == 0) && (dy == 0))
-     return;
-
-   lst = evas_object_smart_members_get_direct(eo_obj);
-   EINA_INLIST_FOREACH(lst, child)
-     {
-        Evas_Coord orig_x, orig_y;
-
-        if (child->delete_me) continue;
-        if (child->is_static_clip) continue;
-        orig_x = child->cur->geometry.x;
-        orig_y = child->cur->geometry.y;
-	evas_object_move(child->object, orig_x + dx, orig_y + dy);
-     }
-}
-
 EAPI Evas_Object *
 evas_object_smart_clipped_clipper_get(const Evas_Object *eo_obj)
 {

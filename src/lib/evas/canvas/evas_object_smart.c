@@ -594,6 +594,28 @@ _efl_canvas_group_efl_object_constructor(Eo *eo_obj, Evas_Smart_Data *class_data
    return eo_obj;
 }
 
+EAPI void
+evas_object_smart_move_children_relative(Eo *eo_obj, Evas_Coord dx, Evas_Coord dy)
+{
+   Evas_Object_Protected_Data *child;
+   const Eina_Inlist *lst;
+
+   if ((dx == 0) && (dy == 0)) return;
+   if (!efl_isa(eo_obj, MY_CLASS)) return;
+
+   lst = evas_object_smart_members_get_direct(eo_obj);
+   EINA_INLIST_FOREACH(lst, child)
+     {
+        Evas_Coord orig_x, orig_y;
+
+        if (child->delete_me) continue;
+        if (child->is_static_clip) continue;
+        orig_x = child->cur->geometry.x;
+        orig_y = child->cur->geometry.y;
+        evas_object_move(child->object, orig_x + dx, orig_y + dy);
+     }
+}
+
 EOLIAN static void
 _efl_canvas_group_group_add(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {

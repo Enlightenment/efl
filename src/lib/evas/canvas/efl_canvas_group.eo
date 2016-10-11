@@ -45,21 +45,6 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
          ]]
          legacy: evas_object_smart_changed;
       }
-      group_children_move {
-         [[Move all children of this object using relative coordinates.
-
-           This will make each children move, from where they before, by
-           a certain delta (offsets) in both directions.
-
-           Note: Clipped smart objects already make use of this function on
-           their $move smart function definition.
-         ]]
-         params {
-            @in dx: int; [[Horizontal offset (delta).]]
-            @in dy: int; [[Vertical offset (delta).]]
-         }
-         legacy: evas_object_smart_move_children_relative;
-      }
       group_calculate {
          [[Triggers an immediate recalculation of this object's geometry.
 
