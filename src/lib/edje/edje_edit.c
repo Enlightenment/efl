@@ -700,6 +700,22 @@ _edje_part_description_id_switch(int type, Edje_Part_Description_Common *c, int 
         else if (t->text.id_text_source == id2)
           t->text.id_text_source = id1;
      }
+
+   if (c->map.id_persp == id1)
+     c->map.id_persp = id2;
+   else if (c->map.id_persp == id2)
+     c->map.id_persp = id1;
+
+   if (c->map.id_light == id1)
+     c->map.id_light = id2;
+   else if (c->map.id_light == id2)
+     c->map.id_light = id1;
+
+
+   if (c->map.rot.id_center == id1)
+     c->map.rot.id_center = id2;
+   else if (c->map.rot.id_center == id2)
+     c->map.rot.id_center = id1;
 }
 
 static void
@@ -3291,7 +3307,7 @@ edje_edit_part_del(Evas_Object *obj, const char *part)
    Edje_Part *ep;
    unsigned int k;
    unsigned int id;
-   unsigned short i;
+   unsigned short i, j;
 
    GET_EED_OR_RETURN(EINA_FALSE);
    GET_RP_OR_RETURN(EINA_FALSE);
@@ -3331,6 +3347,23 @@ edje_edit_part_del(Evas_Object *obj, const char *part)
                real->part->dragable.event_id = -1;
              else if (i > id)
                real->part->dragable.event_id--;
+          }
+
+        if (real->part->default_desc->map.id_persp == rp->part->id)
+          real->part->default_desc->map.id_persp = -1;
+        if (real->part->default_desc->map.id_light == rp->part->id)
+          real->part->default_desc->map.id_light = -1;
+        if (real->part->default_desc->map.rot.id_center == rp->part->id)
+          real->part->default_desc->map.rot.id_center = -1;
+
+        for (j = 0; j < real->part->other.desc_count; ++j)
+          {
+             if (real->part->other.desc[i]->map.id_persp == rp->part->id)
+               real->part->other.desc[i]->map.id_persp = -1;
+             if (real->part->other.desc[i]->map.id_light == rp->part->id)
+               real->part->other.desc[i]->map.id_light = -1;
+             if (real->part->other.desc[i]->map.rot.id_center == rp->part->id)
+               real->part->other.desc[i]->map.rot.id_center = -1;
           }
      }
 
