@@ -71,7 +71,6 @@ esac
 case "$host_os" in
    mingw*)
       $2="yes"
-      EFL_ADD_LIBS([$1], [-levil])
    ;;
    *)
       EFL_FIND_LIB_FOR_CODE([$1], [$dllibs], [$2], [[
@@ -100,7 +99,6 @@ esac
 case "$host_os" in
    mingw*)
       $2="yes"
-      EFL_ADD_LIBS([$1], [-levil])
    ;;
    *)
       EFL_FIND_LIB_FOR_CODE([$1], [$dllibs], [$2], [[
@@ -125,7 +123,6 @@ esac
 case "$host_os" in
    mingw*)
       $2="yes"
-      EFL_ADD_LIBS([$1], [-levil])
    ;;
    *)
       EFL_FIND_LIB_FOR_CODE([$1], [$dllibs], [$2], [[
