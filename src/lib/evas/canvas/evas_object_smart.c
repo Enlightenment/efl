@@ -1036,7 +1036,7 @@ evas_object_smart_changed_get(Evas_Object *eo_obj)
       for rendering. */
 
    //a. Object itself visibility
-   if (obj->no_render || !(obj->prev->visible && obj->cur->visible) ||
+   if (obj->no_render || (!obj->prev->visible && !obj->cur->visible) ||
        ((obj->prev->color.a == 0) && (obj->cur->color.a == 0)))
      return EINA_FALSE;
 
