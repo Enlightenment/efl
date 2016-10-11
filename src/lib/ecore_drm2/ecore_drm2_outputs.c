@@ -1229,11 +1229,83 @@ ecore_drm2_output_mode_info_get(Ecore_Drm2_Output_Mode *mode, int *w, int *h, un
    if (flags) *flags = mode->flags;
 }
 
+#ifdef HAVE_ATOMIC_DRM
+static Eina_Bool
+_output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
+{
+   Ecore_Drm2_Crtc_State *cstate;
+   drmModeAtomicReq *req = NULL;
+   int ret = 0;
+
+   cstate = output->crtc_state;
+
+   if (mode)
+     {
+        if (mode->id)
+          drmModeDestroyPropertyBlob(output->fd, mode->id);
+
+        ret =
+          drmModeCreatePropertyBlob(output->fd, &mode->info,
+                                    sizeof(drmModeModeInfo), &mode->id);
+        if (ret < 0)
+          {
+             ERR("Failed to create Mode Property Blob");
+             return EINA_FALSE;
+          }
+     }
+
+   req = drmModeAtomicAlloc();
+   if (!req) return EINA_FALSE;
+
+   drmModeAtomicSetCursor(req, 0);
+
+   if (mode)
+     {
+        cstate->active.value = 1;
+        cstate->mode.value = mode->id;
+     }
+   else
+     cstate->active.value = 0;
+
+   ret = drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
+                                  cstate->mode.value);
+   if (ret < 0)
+     {
+        ERR("Could not add atomic property");
+        ret = EINA_FALSE;
+        goto err;
+     }
+
+   ret = drmModeAtomicAddProperty(req, cstate->obj_id,
+                                  cstate->active.id, cstate->active.value);
+   if (ret < 0)
+     {
+        ERR("Could not add atomic property");
+        ret = EINA_FALSE;
+        goto err;
+     }
+
+   ret = drmModeAtomicCommit(output->fd, req, DRM_MODE_ATOMIC_ALLOW_MODESET,
+                             output->user_data);
+   if (ret < 0)
+     {
+        ERR("Failed to commit atomic Mode: %m");
+        ret = EINA_FALSE;
+        goto err;
+     }
+   else
+     ret = EINA_TRUE;
+
+err:
+   drmModeAtomicFree(req);
+   return ret;
+}
+#endif
+
 EAPI Eina_Bool
 ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode, int x, int y)
 {
    Eina_Bool ret = EINA_TRUE;
-   unsigned int buffer = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL((output->fd < 0), EINA_FALSE);
@@ -1242,30 +1314,39 @@ ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mo
    output->y = y;
    output->current_mode = mode;
 
-   if (mode)
-     {
-        if (output->current)
-          buffer = output->current->id;
-        else if (output->next)
-          buffer = output->next->id;
-        else
-          buffer = output->ocrtc->buffer_id;
-
-        if (drmModeSetCrtc(output->fd, output->crtc_id, buffer,
-                           x, y, &output->conn_id, 1, &mode->info) < 0)
-          {
-             ERR("Failed to set Mode %dx%d for Output %s: %m",
-                 mode->width, mode->height, output->name);
-             ret = EINA_FALSE;
-          }
-     }
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     ret = _output_mode_atomic_set(output, mode);
    else
+#endif
      {
-        if (drmModeSetCrtc(output->fd, output->crtc_id, 0,
-                           0, 0, 0, 0, NULL) < 0)
+        if (mode)
           {
-             ERR("Failed to turn off Output %s: %m", output->name);
-             ret = EINA_FALSE;
+             unsigned int buffer = 0;
+
+             if (output->current)
+               buffer = output->current->id;
+             else if (output->next)
+               buffer = output->next->id;
+             else
+               buffer = output->ocrtc->buffer_id;
+
+             if (drmModeSetCrtc(output->fd, output->crtc_id, buffer,
+                                x, y, &output->conn_id, 1, &mode->info) < 0)
+               {
+                  ERR("Failed to set Mode %dx%d for Output %s: %m",
+                      mode->width, mode->height, output->name);
+                  ret = EINA_FALSE;
+               }
+          }
+        else
+          {
+             if (drmModeSetCrtc(output->fd, output->crtc_id, 0,
+                                0, 0, 0, 0, NULL) < 0)
+               {
+                  ERR("Failed to turn off Output %s: %m", output->name);
+                  ret = EINA_FALSE;
+               }
           }
      }
 

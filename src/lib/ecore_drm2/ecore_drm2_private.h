@@ -161,6 +161,7 @@ struct _Ecore_Drm2_Fb
 
 struct _Ecore_Drm2_Output_Mode
 {
+   uint32_t id;
    uint32_t flags;
    int32_t width, height;
    uint32_t refresh;
