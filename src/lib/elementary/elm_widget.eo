@@ -36,19 +36,11 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
    data: Elm_Widget_Smart_Data;
    methods {
       @property focus {
-         set {
-         }
-         get {
-         }
          values {
             focus: bool;
          }
       }
       @property drag_lock_y {
-         set {
-         }
-         get {
-         }
          values {
             lock: bool;
          }
@@ -72,68 +64,38 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
            When an object will be deleted soon, it and its children may not want to
            get focus (by focus reverting or by other focus controls).
            Then, just use this API before deleting.]]
-         set {
-         }
-         get {
-           [[Return $true, if the tree is unfocusable,
-             $false otherwise (and on errors).]]
-         }
          values {
             tree_unfocusable: bool; [[$true for unfocusable, $false for focusable.]]
          }
       }
       @property mirrored {
          [[Control the widget's mirrored mode.]]
-         set {
-         }
-         get {
-         }
          values {
             mirrored: bool;
          }
       }
       @property theme {
-         set {
-         }
-         get {
-         }
          values {
             th: Elm.Theme * @nullable;
          }
       }
       @property disabled {
-         set {
-         }
-         get {
-         }
          values {
             disabled: bool;
          }
       }
       @property highlight_ignore {
-         set {
-         }
-         get {
-         }
          values {
             ignore: bool;
          }
       }
       @property mirrored_automatic {
          [[Control the widget's mirrored mode setting.]]
-         set {
-         }
-         get {
-         }
          values {
             automatic: bool;
          }
       }
       @property orientation_mode_disabled {
-         set {
-         }
-         get {
-         }
          values {
             disabled: bool;
          }
@@ -149,10 +111,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property scale {
-         set {
-         }
-         get {
-         }
          values {
             scale: double;
          }
@@ -187,22 +145,12 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
            Note: Objects which are meant to be interacted with by input
            events are created able to be focused, by default. All the
            others are not.]]
-         set {
-         }
-         get {
-            [[Return $true if the object is allowed to be focused,
-              $false if not (and on errors).]]
-         }
          values {
             can_focus: bool; [[$true if the object can be focused,
                                $false if not.]]
          }
       }
       @property highlight_in_theme {
-         set {
-         }
-         get {
-         }
          values {
             highlight: bool;
          }
@@ -220,38 +168,22 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property access_info {
-         set {
-         }
-         get {
-         }
          values {
             txt: string @nullable;
          }
       }
       @property drag_lock_x {
-         set {
-         }
-         get {
-         }
          values {
             lock: bool;
          }
       }
       @property access_highlight_in_theme {
-         set {
-         }
-         get {
-         }
          values {
             highlight: bool; [[highlight]]
          }
       }
       @property focus_region_show_mode {
          [[Control the focus_region_show mode.]]
-         set {
-         }
-         get {
-         }
          values {
             mode: Elm.Focus.Region.Show_Mode;
          }
@@ -349,10 +281,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       @property item_loop_enabled {
          [[Control item loop feature.]]
-         set {
-         }
-         get {
-         }
          values {
             enable: bool;
          }
@@ -430,19 +358,11 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property parent2 {
-         set {
-         }
-         get {
-         }
          values {
             parent: Efl.Canvas.Object @nullable;
          }
       }
       @property part_text {
-         set {
-         }
-         get {
-         }
          keys {
             part: string;
          }
@@ -815,23 +735,15 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property focus_move_policy {
-         set {
-            [[Sets the widget's focus move policy.]]
-         }
-         get {
-            [[Returns the widget's focus move policy.]]
-         }
+         [[The widget's focus move policy.]]
          values {
-            policy: Efl.Ui.Focus.Move_Policy; [[Object's focus move policy.]]
+            policy: Efl.Ui.Focus.Move_Policy;
          }
       }
 	  @property focus_move_policy_automatic {
          [[Control the widget's focus_move_policy mode setting.
+
            @since 1.18]]
-         set {
-         }
-         get {
-         }
          values {
             automatic: bool; [[$true to follow system focus move policy change, $false otherwise]]
          }
