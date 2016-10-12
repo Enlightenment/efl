@@ -2,23 +2,6 @@
 #include "docs.h"
 
 static const char *
-_cl_type_str_get(const Eolian_Class *cl, Eina_Bool uc)
-{
-   switch (eolian_class_type_get(cl))
-     {
-      case EOLIAN_CLASS_REGULAR:
-      case EOLIAN_CLASS_ABSTRACT:
-        return uc ? "CLASS" : "class";
-      case EOLIAN_CLASS_MIXIN:
-        return uc ? "MIXIN" : "mixin";
-      case EOLIAN_CLASS_INTERFACE:
-        return uc ? "INTERFACE" : "interface";
-      default:
-        return NULL;
-     }
-}
-
-static const char *
 _get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir)
 {
    if (ftype == EOLIAN_PROP_GET)
@@ -198,8 +181,8 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
    if (!cl)
      return;
 
-   char *cname = NULL, *cnameu = NULL, *cnamel = NULL;
-   eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel);
+   char *cname = NULL, *cnameu = NULL;
+   eo_gen_class_names_get(cl, &cname, &cnameu, NULL);
 
    /* class definition */
 
@@ -219,12 +202,12 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
           }
 
         Eina_Stringshare *mname = eolian_class_c_name_get(cl);
-        eina_strbuf_append_printf(buf, "#define %s %s_%s_get()\n\n",
-                                  mname, cnamel, _cl_type_str_get(cl, EINA_FALSE));
+        Eina_Stringshare *gname = eolian_class_c_get_function_name_get(cl);
+        eina_strbuf_append_printf(buf, "#define %s %s()\n\n", mname, gname);
         eina_stringshare_del(mname);
 
-        eina_strbuf_append_printf(buf, "EWAPI const Efl_Class *%s_%s_get(void);\n",
-                                  cnamel, _cl_type_str_get(cl, EINA_FALSE));
+        eina_strbuf_append_printf(buf, "EWAPI const Efl_Class *%s(void);\n", gname);
+        eina_stringshare_del(gname);
      }
 
    /* method section */
@@ -312,5 +295,4 @@ events:
 
    free(cname);
    free(cnameu);
-   free(cnamel);
 }
