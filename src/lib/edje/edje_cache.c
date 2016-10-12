@@ -88,6 +88,8 @@ edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce)
    eina_mempool_del(ce->mp->mp_rtl.CAMERA);
    eina_mempool_del(ce->mp->mp_rtl.VECTOR);
    memset(&ce->mp->mp_rtl, 0, sizeof(ce->mp->mp_rtl));
+
+   free(ce->mp);
 }
 
 void
