@@ -1391,7 +1391,7 @@ endif
 
 if HAVE_CXX11
 elementary_eolian_cxx_hh = $(elm_public_eolian_files:%.eo=%.eo.hh)
-elementary_eolian_cxx_impl = $(elm_public_eolian_files:%.eo=%.eo.impl.hh)
+elementary_eolian_cxx_impl_hh = $(elm_public_eolian_files:%.eo=%.eo.impl.hh)
 endif
 
 EXTRA_DIST2 += \

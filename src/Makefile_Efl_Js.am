@@ -166,6 +166,7 @@ lib_efl_js_libefl_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_builddir)/src/lib/efl/interfaces/ \
 -I$(top_builddir)/src/lib/evas/canvas/ \
+-I$(top_builddir)/src/lib/ecore/ \
 -I$(top_srcdir)/src/bindings/js/eina_js \
 -I$(top_srcdir)/src/bindings/js/ecore_js \
 -I$(top_srcdir)/src/bindings/js/eo_js \

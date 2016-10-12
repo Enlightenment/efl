@@ -311,6 +311,6 @@ endif
 if HAVE_CXX11
 
 ecore_eolian_cxx_hh = $(ecore_eolian_files_public:%.eo=%.eo.hh)
-ecore_eolian_cxx_impl = $(ecore_eolian_files_public:%.eo=%.eo.impl.hh)
+ecore_eolian_cxx_impl_hh = $(ecore_eolian_files_public:%.eo=%.eo.impl.hh)
 
 endif
