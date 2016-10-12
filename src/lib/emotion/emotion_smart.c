@@ -3,6 +3,8 @@
 #endif
 
 #define EFL_CANVAS_OBJECT_PROTECTED
+#define EFL_CANVAS_GROUP_PROTECTED
+#define EFL_CANVAS_GROUP_BETA
 
 #include <Evas.h>
 #include <Ecore.h>

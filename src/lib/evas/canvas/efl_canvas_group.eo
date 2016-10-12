@@ -63,16 +63,6 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
          return: free(own(iterator<Efl.Gfx>), eina_iterator_free);
          legacy: evas_object_smart_iterator_new;
       }
-      group_add {
-         [[Instantiates a new smart object described by $s.
-
-           This is the function one should use when defining the public
-           function adding an instance of the new smart object to a given
-           canvas. It will take care of setting all of its internals to work
-           as they should, if the user set things properly, as seem on the
-           #EVAS_SMART_SUBCLASS_NEW, for example.]]
-         legacy: null;
-      }
       group_member_add {
          [[Set an Evas object as a member of a given smart object.
 
@@ -85,8 +75,8 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
            Any $smart_obj object's specific implementation of the
            $member_add() smart function will take place too, naturally.
 
-           See also @.group_member_del.]]
-
+           See also @.group_member_del.
+         ]]
          params {
             @in sub_obj: Efl.Canvas.Object @nonull; [[The member object.]]
          }
@@ -99,15 +89,19 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
            to any. The object will still be on the canvas, but no longer
            associated with whichever smart object it was associated with.
 
-           See also @.group_member_add for more details.]]
-
+           See also @.group_member_add for more details.
+         ]]
          params {
             @in sub_obj: Efl.Canvas.Object; [[the member object.]]
          }
          legacy: null;
       }
-      group_del {
-         [[Deletes a smart object.]]
+      group_add @protected @beta /* @internal */ {
+         [[Internal constructor function.]]
+         legacy: null;
+      }
+      group_del @protected @beta /* @internal */ {
+         [[Internal destructor function.]]
          legacy: null;
       }
    }

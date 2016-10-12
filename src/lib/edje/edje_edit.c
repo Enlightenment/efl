@@ -8,6 +8,8 @@
  */
 
 #define _EDJE_EDIT_EO_CLASS_TYPE
+#define EFL_CANVAS_GROUP_PROTECTED
+#define EFL_CANVAS_GROUP_BETA
 
 #include "edje_private.h"
 
