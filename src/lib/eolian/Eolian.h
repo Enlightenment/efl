@@ -1286,9 +1286,27 @@ EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
  *
  * You have to delete the stringshare manually.
  *
+ * @see eolian_class_c_name_get
+ *
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_class_c_get_function_name_get(const Eolian_Class *klass);
+
+/*
+ * @brief Get the C name of the class.
+ *
+ * @param[in] klass the class
+ * @return the C name
+ *
+ * The C name is the name of the macro the class is accessed through, in format
+ * CLASS_NAME_SUFFIX where SUFFIX is CLASS, MIXIN or INTERFACE. You're responsible
+ * for the stringshare afterwards.
+ *
+ * @see eolian_class_c_get_function_name_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_class_c_name_get(const Eolian_Class *klass);
 
 /*
  * @brief Get an alias type declaration by name. Supports namespaces.
