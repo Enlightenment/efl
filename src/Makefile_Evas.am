@@ -1500,6 +1500,7 @@ bin_evas_evas_cserve2_slave_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DEVAS_MODULE_NO_ENGINES=1 \
 -DEVAS_MODULE_NO_IMAGE_SAVERS=1 \
+-DEVAS_MODULE_NO_VG_LOADERS=1 \
 @EVAS_CFLAGS@
 
 bin_evas_evas_cserve2_slave_LDADD = @EVAS_CSERVE2_SLAVE_LIBS@ @USE_EINA_LIBS@ @USE_EMILE_LIBS@
@@ -1524,6 +1525,40 @@ endif
 
 
 ### loaders and savers
+
+if BUILD_VG_LOADER_SVG
+if EVAS_STATIC_BUILD_VG_SVG
+lib_evas_libevas_la_SOURCES += modules/evas/vg_loaders/svg/evas_vg_load_svg.c
+lib_evas_libevas_la_CPPFLAGS += @evas_vg_loader_svg_cflags@
+lib_evas_libevas_la_LIBADD += @evas_vg_loader_svg_libs@
+if EVAS_CSERVE2
+bin_evas_evas_cserve2_slave_CPPFLAGS += @evas_vg_loader_svg_cflags@
+bin_evas_evas_cserve2_slave_LDADD += @evas_vg_loader_svg_libs@
+endif
+else
+vgloadersvgpkgdir = $(libdir)/evas/modules/vg_loaders/svg/$(MODULE_ARCH)
+vgloadersvgpkg_LTLIBRARIES = modules/evas/vg_loaders/svg/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_vgloadersvgpkgLTLIBRARIES = install-vgloadersvgpkgLTLIBRARIES
+$(install_vgloadersvgpkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_evas_vg_loaders_svg_module_la_SOURCES = modules/evas/vg_loaders/svg/evas_vg_load_svg.c
+modules_evas_vg_loaders_svg_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/include \
+@EVAS_CFLAGS@ \
+@evas_vg_loader_svg_cflags@
+modules_evas_vg_loaders_svg_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@evas_vg_loader_svg_libs@
+modules_evas_vg_loaders_svg_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_vg_loaders_svg_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_vg_loaders_svg_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
+
 
 if BUILD_LOADER_BMP
 if EVAS_STATIC_BUILD_BMP

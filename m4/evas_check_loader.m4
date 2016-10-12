@@ -1,4 +1,47 @@
 
+dnl use: ARG_ENABLE_EVAS_VG_LOADER(loader, default_value)
+
+AC_DEFUN([ARG_ENABLE_EVAS_VG_LOADER],
+[dnl
+m4_pushdef([DOWN], m4_tolower([$1]))dnl
+
+AC_ARG_ENABLE([vg-loader-[]DOWN],
+   [AC_HELP_STRING([--enable-vg-loader-[]DOWN], [enable $1 vg loader. @<:@default=$2@:>@])],
+   [
+      if test "x${enableval}" = "xyes" ; then
+         want_evas_vg_loader_[]DOWN="yes"
+      else
+         if test "x${enableval}" = "xstatic" ; then
+            want_evas_vg_loader_[]DOWN="static"
+         else
+            if test "x${enableval}" = "xauto" ; then
+               want_evas_vg_loader_[]DOWN="auto"
+            else
+               want_evas_vg_loader_[]DOWN="no"
+            fi
+         fi
+      fi
+   ],
+   [want_evas_vg_loader_[]DOWN="$2"])
+m4_popdef([DOWN])dnl
+])
+
+dnl use: EVAS_CHECK_VG_LOADER_DEP_SVG(loader, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EVAS_CHECK_VG_LOADER_DEP_SVG],
+[
+
+have_dep="yes"
+evas_vg_loader_[]$1[]_cflags=""
+evas_vg_loader_[]$1[]_libs=""
+
+AC_SUBST([evas_vg_loader_$1_cflags])
+AC_SUBST([evas_vg_loader_$1_libs])
+
+AS_IF([test "x${have_dep}" = "xyes"], [$3], [$4])
+
+])
+
 dnl use: ARG_ENABLE_EVAS_IMAGE_LOADER(loader, default_value)
 
 AC_DEFUN([ARG_ENABLE_EVAS_IMAGE_LOADER],
@@ -589,6 +632,59 @@ fi
 
 EFL_ADD_FEATURE([EVAS_LOADER], DOWN, [${have_evas_image_loader_]DOWN[}])dnl
 AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "x${want_static_loader}" = "xyes"])dnl
+m4_popdef([UP])dnl
+m4_popdef([DOWN])dnl
+])
+
+dnl use: EVAS_CHECK_VG_LOADER(loader, want_loader, macro)
+AC_DEFUN([EVAS_CHECK_VG_LOADER],
+[dnl
+m4_pushdef([UP], m4_toupper([$1]))dnl
+m4_pushdef([DOWN], m4_tolower([$1]))dnl
+
+want_loader="$2"
+want_static_loader="no"
+have_loader="no"
+have_evas_vg_loader_[]DOWN="no"
+
+AC_MSG_CHECKING([whether to enable $1 vg loader])
+AC_MSG_RESULT([${want_loader}])
+
+if test "x${want_loader}" = "xyes" -o "x${want_loader}" = "xstatic" -o "x${want_loader}" = "xauto"; then
+   m4_default([EVAS_CHECK_VG_LOADER_DEP_]m4_defn([UP]))(DOWN, ${want_loader}, [have_loader="yes"], [have_loader="no"])
+fi
+
+if test "x${have_loader}" = "xno"; then
+   if test "x${want_loader}" = "xyes" -o "x${want_loader}" = "xstatic"; then
+      AC_MSG_ERROR([$1 dependencies not found])
+   fi
+fi
+
+AC_MSG_CHECKING([whether $1 vg loader will be built])
+AC_MSG_RESULT([${have_loader}])
+
+if test "x${have_loader}" = "xyes" ; then
+   if test "x${want_loader}" = "xstatic" ; then
+      have_evas_vg_loader_[]DOWN="static"
+      want_static_loader="yes"
+   else
+      have_evas_vg_loader_[]DOWN="yes"
+   fi
+fi
+
+if test "x${have_loader}" = "xyes" ; then
+   AC_DEFINE(BUILD_VG_LOADER_[]UP, [1], [UP Image Loader Support])
+fi
+
+AM_CONDITIONAL(BUILD_VG_LOADER_[]UP, [test "x${have_loader}" = "xyes"])
+
+if test "x${want_static_loader}" = "xyes" ; then
+   AC_DEFINE(EVAS_STATIC_BUILD_VG_[]UP, [1], [Build $1 vg loader inside libevas])
+   have_static_module="yes"
+fi
+
+EFL_ADD_FEATURE([EVAS_VG_LOADER], DOWN, [${have_evas_vg_loader_]DOWN[}])dnl
+AM_CONDITIONAL(EVAS_STATIC_BUILD_VG_[]UP, [test "x${want_static_loader}" = "xyes"])dnl
 m4_popdef([UP])dnl
 m4_popdef([DOWN])dnl
 ])

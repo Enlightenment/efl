@@ -78,7 +78,8 @@ typedef enum _Evas_Module_Type
    EVAS_MODULE_TYPE_ENGINE = 0,
    EVAS_MODULE_TYPE_IMAGE_LOADER = 1,
    EVAS_MODULE_TYPE_IMAGE_SAVER = 2,
-   EVAS_MODULE_TYPE_OBJECT = 3
+   EVAS_MODULE_TYPE_OBJECT = 3,
+   EVAS_MODULE_TYPE_VG_LOADER = 4
 } Evas_Module_Type;
 
 typedef struct _Evas_Module_Api    Evas_Module_Api;

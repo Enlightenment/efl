@@ -68,6 +68,7 @@ typedef struct _Evas_Font_Description       Evas_Font_Description;
 typedef struct _Evas_Data_Node              Evas_Data_Node;
 typedef struct _Evas_Func                   Evas_Func;
 typedef struct _Evas_Image_Save_Func        Evas_Image_Save_Func;
+typedef struct _Evas_Vg_Load_Func           Evas_Vg_Load_Func;
 typedef struct _Evas_Object_Func            Evas_Object_Func;
 typedef struct _Evas_Intercept_Func         Evas_Intercept_Func;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
@@ -1511,6 +1512,12 @@ struct _Evas_Image_Save_Func
 {
   int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 };
+
+struct _Evas_Vg_Load_Func
+{
+  void     *(*file_data) (Eina_File *f, Eina_Stringshare *key, int *error);
+};
+
 
 #ifdef __cplusplus
 extern "C" {
