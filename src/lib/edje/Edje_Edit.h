@@ -8174,6 +8174,27 @@ EAPI char *edje_edit_full_source_generate(Evas_Object *obj);
  */
 EAPI const char * edje_edit_data_source_generate(Evas_Object *obj);
 
+/**
+ * Get a list of color clsses which given object use.
+ *
+ * @paramaram obj The object being edited
+ *
+ * @return The color classes list
+ */
+EAPI Eina_List *
+edje_edit_object_color_class_list_get(Evas_Object *obj);
+
+/**
+ * Get the source code for given color classes
+ *
+ * @param obj The object being edited
+ * @param color_classes The list of color classes for generete code
+ *
+ * @return The color classes source code
+ */
+EAPI const char *
+edje_edit_color_classes_source_generate(Evas_Object *obj, Eina_List *color_classes);
+
 //@}
 /******************************************************************************/
 /**************************   ERROR API   ***********************************/

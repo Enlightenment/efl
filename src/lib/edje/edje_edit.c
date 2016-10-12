@@ -12841,6 +12841,66 @@ edje_edit_data_source_generate(Evas_Object *obj)
    return str;
 }
 
+EAPI Eina_List *
+edje_edit_object_color_class_list_get(Evas_Object *obj)
+{
+   Edje_Part_Collection_Directory_Entry *ce;
+   Edje_Part *part;
+   Edje_Part_Description_Common *part_desc;
+   unsigned int j, i;
+   Eina_List *color_classes = NULL;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file) return NULL;
+
+   ce = eina_hash_find(ed->file->collection, ed->group);
+   if (!ce) return NULL;
+
+   /* Go through all of group's parts to find all resources needed for that group. */
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        part = ed->table_parts[i]->part;
+        part_desc = (Edje_Part_Description_Common *)part->default_desc;
+
+        /* find all color_classes required by those every part. */
+        COLLECT_RESOURCE(part_desc->color_class, color_classes);
+        for (j = 0; j < part->other.desc_count; j++)
+          {
+             part_desc = part->other.desc[j];
+             COLLECT_RESOURCE(part_desc->color_class, color_classes);
+          }
+     }
+
+   return color_classes;
+}
+
+EAPI const char *
+edje_edit_color_classes_source_generate(Evas_Object *obj, Eina_List *color_classes)
+{
+   Eina_Strbuf *buf;
+   Eina_List *l;
+   const char *entry;
+   Eina_Bool ret = EINA_TRUE;
+   Eina_Stringshare *str = NULL;
+
+   GET_ED_OR_RETURN(NULL);
+
+   buf = eina_strbuf_new();
+
+   BUF_APPEND(I0 "color_classes {\n");
+
+   EINA_LIST_FOREACH(color_classes, l, entry)
+     _edje_generate_source_of_colorclass(ed, entry, buf);
+
+   BUF_APPEND(I0 "}\n\n");
+
+   if (ret)
+     str = eina_stringshare_add(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   return str;
+}
+
 #undef COLLECT_RESOURCE
 
 static Eina_Bool
