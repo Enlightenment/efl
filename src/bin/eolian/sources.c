@@ -1,23 +1,6 @@
 #include "main.h"
 #include "docs.h"
 
-static const char *
-_cl_type_str_get(const Eolian_Class *cl)
-{
-   switch (eolian_class_type_get(cl))
-     {
-      case EOLIAN_CLASS_REGULAR:
-      case EOLIAN_CLASS_ABSTRACT:
-        return "CLASS";
-      case EOLIAN_CLASS_MIXIN:
-        return "MIXIN";
-      case EOLIAN_CLASS_INTERFACE:
-        return "INTERFACE";
-      default:
-        return NULL;
-     }
-}
-
 /* Used to store the function names that will have to be appended
  * with __eolian during C generation. Needed when params have to
  * be initialized and for future features.
@@ -279,8 +262,8 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
    Eina_Stringshare *rtpn = rtp ? eolian_type_c_type_get(rtp)
                                 : eina_stringshare_add("void");
 
-   char *cname = NULL, *cnameu = NULL, *cnamel = NULL, *ocnamel = NULL;
-   eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel);
+   char *cname = NULL, *cnamel = NULL, *ocnamel = NULL;
+   eo_gen_class_names_get(cl, &cname, NULL, &cnamel);
    eo_gen_class_names_get(eolian_implement_class_get(impl), NULL, NULL, &ocnamel);
 
    if (impl_need)
@@ -505,7 +488,11 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              if (!eolian_function_is_class(fid))
                eina_strbuf_append(lbuf, "obj");
              else
-               eina_strbuf_append_printf(lbuf, "%s_%s", cnameu, _cl_type_str_get(cl));
+               {
+                  Eina_Stringshare *mname = eolian_class_c_name_get(cl);
+                  eina_strbuf_append_printf(lbuf, mname);
+                  eina_stringshare_del(mname);
+               }
              if (has_params)
                eina_strbuf_append_printf(lbuf, ", %s", eina_strbuf_string_get(params));
              eina_strbuf_append(lbuf, ");\n}\n");
@@ -516,7 +503,6 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
      }
 
    free(cname);
-   free(cnameu);
    free(cnamel);
    free(ocnamel);
 
@@ -665,8 +651,8 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    _funcs_params_init = eina_hash_pointer_new(NULL);
 
-   char *cname = NULL, *cnameu = NULL, *cnamel = NULL;
-   eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel);
+   char *cname = NULL, *cnamel = NULL;
+   eo_gen_class_names_get(cl, &cname, NULL, &cnamel);
 
    /* event section, they come first */
    {
@@ -790,12 +776,10 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
         eina_strbuf_append(buf, ", NULL");
       EINA_ITERATOR_FOREACH(itr, iname)
         {
-           char *inameu = NULL;
            const Eolian_Class *icl = eolian_class_get_by_name(iname);
-           eo_gen_class_names_get(icl, NULL, &inameu, NULL);
-           eina_strbuf_append(buf, ", ");
-           eina_strbuf_append_printf(buf, "%s_%s", inameu, _cl_type_str_get(icl));
-           free(inameu);
+           Eina_Stringshare *mname = eolian_class_c_name_get(icl);
+           eina_strbuf_append_printf(buf, ", %s", mname);
+           eina_stringshare_del(mname);
         }
       eina_iterator_free(itr);
    }
@@ -810,7 +794,6 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    /* and we're done */
    free(cname);
-   free(cnameu);
    free(cnamel);
    eina_hash_free(_funcs_params_init);
 }
@@ -883,7 +866,7 @@ static void
 _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
            Eolian_Function_Type ftype, Eina_Strbuf *buf,
            const Eolian_Implement *impl, const char *dtype,
-           const char *cnamel, const char *cnameu)
+           const char *cnamel)
 {
    Eina_Bool impl_same_class = (eolian_implement_class_get(impl) == cl);
    if (impl_same_class && eolian_function_is_virtual_pure(fid, ftype))
@@ -962,11 +945,12 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
      if (!strcmp(efname + strlen(efname) - sizeof("destructor") + 1, "destructor"))
        {
           Eina_Stringshare *fcn = eolian_function_full_c_name_get(fid, ftype, EINA_FALSE);
+          Eina_Stringshare *mname = eolian_class_c_name_get(cl);
           eina_strbuf_append(buf, "   ");
           eina_strbuf_append(buf, fcn);
           eina_stringshare_del(fcn);
-          eina_strbuf_append_printf(buf, "(efl_super(obj, %s_%s)",
-                                    cnameu, _cl_type_str_get(cl));
+          eina_strbuf_append_printf(buf, "(efl_super(obj, %s)", mname);
+          eina_stringshare_del(mname);
           if (eina_strbuf_length_get(params))
             eina_strbuf_append(buf, eina_strbuf_string_get(params));
           eina_strbuf_append(buf, ");\n");
@@ -984,8 +968,8 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    if (!cl)
      return;
 
-   char *cname = NULL, *cnameu = NULL, *cnamel = NULL;
-   eo_gen_class_names_get(cl, &cname, &cnameu, &cnamel);
+   char *cname = NULL, *cnamel = NULL;
+   eo_gen_class_names_get(cl, &cname, NULL, &cnamel);
 
    Eina_Strbuf *beg = eina_strbuf_new();
 
@@ -1037,14 +1021,14 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
              {
               case EOLIAN_PROP_GET:
               case EOLIAN_PROP_SET:
-                _gen_proto(cl, fid, ftype, buf, imp, adt, cnamel, cnameu);
+                _gen_proto(cl, fid, ftype, buf, imp, adt, cnamel);
                 break;
               case EOLIAN_PROPERTY:
-                _gen_proto(cl, fid, EOLIAN_PROP_SET, buf, imp, adt, cnamel, cnameu);
-                _gen_proto(cl, fid, EOLIAN_PROP_GET, buf, imp, adt, cnamel, cnameu);
+                _gen_proto(cl, fid, EOLIAN_PROP_SET, buf, imp, adt, cnamel);
+                _gen_proto(cl, fid, EOLIAN_PROP_GET, buf, imp, adt, cnamel);
                 break;
               default:
-                _gen_proto(cl, fid, EOLIAN_UNRESOLVED, buf, imp, adt, cnamel, cnameu);
+                _gen_proto(cl, fid, EOLIAN_UNRESOLVED, buf, imp, adt, cnamel);
              }
         }
       eina_iterator_free(itr);
@@ -1089,6 +1073,5 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    eina_strbuf_append_printf(buf, "#include \"%s.eo.c\"\n", cnamel);
 
    free(cname);
-   free(cnameu);
    free(cnamel);
 }

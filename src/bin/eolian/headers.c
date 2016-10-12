@@ -217,9 +217,11 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
                   eina_strbuf_free(cdoc);
                }
           }
-        eina_strbuf_append_printf(buf, "#define %s_%s %s_%s_get()\n\n",
-                                  cnameu, _cl_type_str_get(cl, EINA_TRUE),
-                                  cnamel, _cl_type_str_get(cl, EINA_FALSE));
+
+        Eina_Stringshare *mname = eolian_class_c_name_get(cl);
+        eina_strbuf_append_printf(buf, "#define %s %s_%s_get()\n\n",
+                                  mname, cnamel, _cl_type_str_get(cl, EINA_FALSE));
+        eina_stringshare_del(mname);
 
         eina_strbuf_append_printf(buf, "EWAPI const Efl_Class *%s_%s_get(void);\n",
                                   cnamel, _cl_type_str_get(cl, EINA_FALSE));
