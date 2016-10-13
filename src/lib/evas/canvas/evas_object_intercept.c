@@ -204,10 +204,10 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
         if (!internal)
           {
              if (_efl_canvas_object_clip_unset_block(eo_obj, obj))
-               return 1;
+               goto end_block;
           }
-        if (!obj->interceptors) return 0;
-        return evas_object_intercept_call_clip_unset(eo_obj, obj);
+        if (!obj->interceptors) goto end_noblock;
+        blocked = evas_object_intercept_call_clip_unset(eo_obj, obj);
      }
 
    va_end(args);
