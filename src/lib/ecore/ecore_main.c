@@ -1598,6 +1598,8 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler      *fd_handler,
 void
 _ecore_main_shutdown(void)
 {
+   Efl_Future *future;
+
    if (in_main_loop)
      {
         ERR("\n"
@@ -1605,6 +1607,10 @@ _ecore_main_shutdown(void)
             "***                 Program may crash or behave strangely now.");
         return;
      }
+
+   EINA_LIST_FREE(_pending_futures, future)
+     efl_del(future);
+
    while (fd_handlers)
      {
         Ecore_Fd_Handler *fdh;
