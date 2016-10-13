@@ -5223,6 +5223,16 @@ EAPI void evas_object_smart_data_set(Evas_Object *obj, void *data);
 EAPI void *evas_object_smart_data_get(const Evas_Object *obj);
 
 /**
+ * @brief Get the clipper object for the given clipped smart object.
+ *
+ * Use this function if you want to change any of this clipper's properties,
+ * like colors.
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Retrieves the list of the member objects of a given Evas smart
  * object.
  *

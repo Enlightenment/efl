@@ -8,9 +8,9 @@
         eo_data_scope_get(eo_obj, MY_CLASS) :                               \
         evas_object_smart_data_get(eo_obj));
 
-#define CSO_DATA_GET_OR_RETURN(eo_obj, ptr)                                 \
-  CSO_DATA_GET(eo_obj, ptr)						 \
-  if (!ptr) return;
+#define CSO_DATA_GET_OR_RETURN(eo_obj, ptr, ...) \
+  CSO_DATA_GET(eo_obj, ptr) \
+  if (!ptr) return __VA_ARGS__;
 
 EOLIAN void
 _efl_canvas_group_group_children_move(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_Coord dx, Evas_Coord dy)
@@ -38,12 +38,9 @@ _efl_canvas_group_group_children_move(Eo *eo_obj, Evas_Object_Protected_Data *ob
 EAPI Evas_Object *
 evas_object_smart_clipped_clipper_get(const Evas_Object *eo_obj)
 {
-   Evas_Object_Smart_Clipped_Data *obj;
+   CSO_DATA_GET_OR_RETURN(eo_obj, cso, NULL);
 
-   if (!eo_isa(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS))
-     return NULL;
-   obj = eo_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
-   return obj->clipper;
+   return cso->clipper;
 }
 
 static void
