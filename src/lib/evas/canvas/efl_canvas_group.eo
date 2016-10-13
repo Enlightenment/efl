@@ -60,7 +60,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
            from both the $Efl.Object children list as well as the $Efl.Container
            content list.
          ]]
-         return: free(own(iterator<Efl.Gfx>), eina_iterator_free);
+         return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free);
          legacy: evas_object_smart_iterator_new;
       }
       group_member_add {
