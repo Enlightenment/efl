@@ -12185,9 +12185,11 @@ EAPI Eina_List *
 evas_textblock_cursor_range_geometry_get(const Efl_Canvas_Text_Cursor *cur1_obj, const Evas_Textblock_Cursor *cur2_obj)
 {
    Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur1_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
+   Efl_Canvas_Text_Data *o;
 
    if (!cur) return NULL;
+
+   o = efl_data_scope_get(cur->obj, MY_CLASS);
 
    return _efl_canvas_text_range_geometry_list_get(cur->obj, o, cur1_obj, cur2_obj);
 }
