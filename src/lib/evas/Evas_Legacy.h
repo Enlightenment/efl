@@ -2501,8 +2501,6 @@ EAPI void *evas_object_intercept_focus_set_callback_del(Evas_Object *obj, Evas_O
 /* Internal APIs for legacy compatibility */
 #ifdef EFL_CANVAS_OBJECT_PROTECTED
 
-typedef enum _Evas_Object_Intercept_Cb_Type Evas_Object_Intercept_Cb_Type;
-
 enum _Evas_Object_Intercept_Cb_Type
 {
    EVAS_OBJECT_INTERCEPT_CB_VISIBLE,
@@ -2518,6 +2516,7 @@ enum _Evas_Object_Intercept_Cb_Type
    EVAS_OBJECT_INTERCEPT_CB_CLIP_SET,
    EVAS_OBJECT_INTERCEPT_CB_CLIP_UNSET,
 };
+typedef enum _Evas_Object_Intercept_Cb_Type Evas_Object_Intercept_Cb_Type;
 
 EWAPI Eina_Bool _evas_object_intercept_call(Evas_Object *obj, Evas_Object_Intercept_Cb_Type type, Eina_Bool internal, ...);
 
