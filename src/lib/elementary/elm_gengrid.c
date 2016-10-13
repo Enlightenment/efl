@@ -495,7 +495,7 @@ _elm_gengrid_pan_efl_gfx_size_set(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), w, h);
 
    ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
