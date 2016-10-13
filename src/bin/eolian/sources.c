@@ -17,20 +17,6 @@ _get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir)
    return "";
 }
 
-static char *
-_get_data_type(const Eolian_Class *cl)
-{
-   const char *dt = eolian_class_data_type_get(cl);
-   if (!dt)
-     return NULL;
-   char *dtr = strdup(dt);
-   if (!dtr)
-     abort();
-   for (char *p = strchr(dtr, '.'); p; p = strchr(p, '.'))
-     *p = '_';
-   return dtr;
-}
-
 static Eina_Bool
 _function_exists(const char *fname, Eina_Strbuf *buf)
 {
@@ -269,16 +255,11 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
    if (impl_need)
      {
         /* figure out the data type */
-        Eina_Bool is_cf = eolian_function_is_class(fid);
-        char *dt = _get_data_type(cl);
-        char adt[128];
-        if (is_cf || (dt && !strcmp(dt, "null")))
-          snprintf(adt, sizeof(adt), "void");
-        else if (dt)
-          snprintf(adt, sizeof(adt), "%s", dt);
+        Eina_Stringshare *dt = NULL;
+        if (eolian_function_is_class(fid))
+          dt = eina_stringshare_add("void");
         else
-          snprintf(adt, sizeof(adt), "%s_Data", cname);
-        free(dt);
+          dt = eolian_class_c_data_type_get(cl);
 
         eina_strbuf_append_char(buf, '\n');
         /* no need for prototype with empty/auto impl */
@@ -300,7 +281,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              if (eolian_function_object_is_const(fid))
                eina_strbuf_append(buf, "const ");
              eina_strbuf_append(buf, "Eo *obj, ");
-             eina_strbuf_append(buf, adt);
+             eina_strbuf_append(buf, dt);
              eina_strbuf_append(buf, " *pd");
              eina_strbuf_append(buf, eina_strbuf_string_get(params_full_imp));
              eina_strbuf_append(buf, ");\n\n");
@@ -331,7 +312,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              if (is_empty || is_auto)
                eina_strbuf_append(buf, " EINA_UNUSED");
              eina_strbuf_append(buf, ", ");
-             eina_strbuf_append(buf, adt);
+             eina_strbuf_append(buf, dt);
              eina_strbuf_append(buf, " *pd");
              if (is_empty || (is_auto && !eina_strbuf_length_get(params_init)))
                eina_strbuf_append(buf, " EINA_UNUSED");
@@ -372,6 +353,8 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              eina_strbuf_append(buf, eina_strbuf_string_get(params));
              eina_strbuf_append(buf, ");\n}\n\n");
           }
+
+        eina_stringshare_del(dt);
      }
 
    if (impl_same_class)
@@ -727,19 +710,12 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
         break;
      }
 
-   char *dt = _get_data_type(cl);
-   if (dt && !strcmp(dt, "null"))
+   Eina_Stringshare *dt = eolian_class_c_data_type_get(cl);
+   if (!strcmp(dt, "void"))
      eina_strbuf_append(buf, "   0,\n");
    else
-     {
-        eina_strbuf_append(buf, "   sizeof(");
-        if (dt)
-          eina_strbuf_append(buf, dt);
-        else
-          eina_strbuf_append_printf(buf, "%s_Data", cname);
-        eina_strbuf_append(buf, "),\n");
-     }
-   free(dt);
+     eina_strbuf_append_printf(buf, "   sizeof(%s),\n", dt);
+   eina_stringshare_del(dt);
 
    if (has_init)
      eina_strbuf_append_printf(buf, "   _%s_class_initializer,\n", cnamel);
@@ -925,7 +901,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
      eina_strbuf_append(buf, "const ");
 
    eina_strbuf_append(buf, "Eo *obj, ");
-   if (dtype[0])
+   if (strcmp(dtype, "void"))
      eina_strbuf_append_printf(buf, "%s *pd", dtype);
    else
      eina_strbuf_append(buf, "void *pd EINA_UNUSED");
@@ -987,21 +963,13 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
      }
 
    /* determine data type name */
-   char *dt = _get_data_type(cl);
-   char adt[128];
-   if (dt && !strcmp(dt, "null"))
-     adt[0] = '\0';
-   else if (dt)
-     snprintf(adt, sizeof(adt), "%s", dt);
-   else
-     snprintf(adt, sizeof(adt), "%s_Data", cname);
-   free(dt);
+   Eina_Stringshare *dt = eolian_class_c_data_type_get(cl);
 
    /* generate data type struct */
-   if (adt[0] && !_type_exists(adt, buf))
+   if (strcmp(dt, "void") && !_type_exists(dt, buf))
      {
-        printf("generating data type structure %s...\n", adt);
-        eina_strbuf_append_printf(beg, "typedef struct\n{\n\n} %s;\n\n", adt);
+        printf("generating data type structure %s...\n", dt);
+        eina_strbuf_append_printf(beg, "typedef struct\n{\n\n} %s;\n\n", dt);
      }
 
    if (eina_strbuf_length_get(beg))
@@ -1021,18 +989,21 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
              {
               case EOLIAN_PROP_GET:
               case EOLIAN_PROP_SET:
-                _gen_proto(cl, fid, ftype, buf, imp, adt, cnamel);
+                _gen_proto(cl, fid, ftype, buf, imp, dt, cnamel);
                 break;
               case EOLIAN_PROPERTY:
-                _gen_proto(cl, fid, EOLIAN_PROP_SET, buf, imp, adt, cnamel);
-                _gen_proto(cl, fid, EOLIAN_PROP_GET, buf, imp, adt, cnamel);
+                _gen_proto(cl, fid, EOLIAN_PROP_SET, buf, imp, dt, cnamel);
+                _gen_proto(cl, fid, EOLIAN_PROP_GET, buf, imp, dt, cnamel);
                 break;
               default:
-                _gen_proto(cl, fid, EOLIAN_UNRESOLVED, buf, imp, adt, cnamel);
+                _gen_proto(cl, fid, EOLIAN_UNRESOLVED, buf, imp, dt, cnamel);
              }
         }
       eina_iterator_free(itr);
    }
+
+   /* free the data type */
+   eina_stringshare_del(dt);
 
    if (eolian_class_ctor_enable_get(cl))
      {
