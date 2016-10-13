@@ -1666,8 +1666,8 @@ _tap_gesture_check_finish(Gesture_Info *gesture, Evas_Coord tap_finger_size)
    Taps_Type *st = gesture->data;
    Eina_List *l;
    Eina_List *pe_list;
-   Evas_Coord_Rectangle base;
-   Evas_Coord_Rectangle tmp;
+   Evas_Coord_Rectangle base = {0, 0, 0, 0};
+   Evas_Coord_Rectangle tmp = {0, 0, 0, 0};
    if (!tap_finger_size)  /* Use system default if not set by user */
      tap_finger_size = elm_config_finger_size_get();
 
