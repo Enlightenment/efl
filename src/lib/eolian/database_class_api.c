@@ -239,3 +239,19 @@ eolian_class_c_name_get(const Eolian_Class *cl)
    eina_strbuf_free(buf);
    return ret;
 }
+
+EAPI Eina_Stringshare *
+eolian_class_c_data_type_get(const Eolian_Class *cl)
+{
+   char buf[512];
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
+   if (!cl->data_type)
+     snprintf(buf, sizeof(buf), "%s_Data", cl->full_name);
+   else if (!strcmp(cl->data_type, "null"))
+     return eina_stringshare_add("void");
+   else
+     snprintf(buf, sizeof(buf), "%s", cl->data_type);
+   for (char *p = strchr(buf, '.'); p; p = strchr(p, '.'))
+     *p = '_';
+   return eina_stringshare_add(buf);
+}

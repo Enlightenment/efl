@@ -556,6 +556,9 @@ START_TEST(eolian_simple_parsing)
    fail_if(strcmp(eolian_class_legacy_prefix_get(class), "evas_object_simple"));
    fail_if(strcmp(eolian_class_eo_prefix_get(class), "efl_canvas_object_simple"));
    fail_if(strcmp(eolian_class_data_type_get(class), "Evas_Simple_Data"));
+   Eina_Stringshare *dt = eolian_class_c_data_type_get(class);
+   fail_if(strcmp(dt, "Evas_Simple_Data"));
+   eina_stringshare_del(dt);
 
    /* c get func */
    fail_if(!(string = eolian_class_c_get_function_name_get(class)));

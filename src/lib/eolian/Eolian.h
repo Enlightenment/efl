@@ -1309,6 +1309,24 @@ EAPI Eina_Stringshare *eolian_class_c_get_function_name_get(const Eolian_Class *
 EAPI Eina_Stringshare *eolian_class_c_name_get(const Eolian_Class *klass);
 
 /*
+ * @brief Get the C data type of the class.
+ *
+ * @param[in] klass the class
+ * @return the C data type
+ *
+ * This will sanitize the data type of the class for C usage; if it's "null",
+ * this returns "void"; if it's actually explicitly set, it returns the sanitized
+ * version of the string, otherwise it returns Class_Name_Data. Keep in mind that
+ * this does not add an asterisk (it doesn't return a pointer type name). You're
+ * responsible for the stringshare afterwards.
+ *
+ * @see eolian_class_c_get_function_name_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_class_c_data_type_get(const Eolian_Class *klass);
+
+/*
  * @brief Get an alias type declaration by name. Supports namespaces.
  *
  * @param[in] name the name of the alias
