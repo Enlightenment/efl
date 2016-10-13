@@ -423,10 +423,10 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
      }
 
    if (window->input_set)
-     ecore_wl2_window_input_region_set(window, window->input_rect.x, window->input_rect.x, 
+     ecore_wl2_window_input_region_set(window, window->input_rect.x, window->input_rect.y,
                                                window->input_rect.w, window->input_rect.h);
    if (window->opaque_set)
-     ecore_wl2_window_opaque_region_set(window, window->opaque.x, window->opaque.x, 
+     ecore_wl2_window_opaque_region_set(window, window->opaque.x, window->opaque.y,
                                                window->opaque.w, window->opaque.h);
 
    if ((window->type != ECORE_WL2_WINDOW_TYPE_DND) &&
