@@ -355,12 +355,13 @@ EOLIAN static void
 _efl_canvas_filter_internal_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
                                                               const char *code, const char *name)
 {
-   Evas_Object_Protected_Data *obj = pd->obj;
+   Evas_Object_Protected_Data *obj;
    Evas_Filter_Program *pgm = NULL;
    Evas_Object_Filter_Data *fcow;
    Eina_Bool alpha;
 
    if (!pd) return;
+   obj = pd->obj;
    if (eina_streq(pd->data->code, code) && eina_streq(pd->data->name, name))
      return;
 
