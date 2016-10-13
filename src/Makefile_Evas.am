@@ -1531,10 +1531,6 @@ if EVAS_STATIC_BUILD_VG_SVG
 lib_evas_libevas_la_SOURCES += modules/evas/vg_loaders/svg/evas_vg_load_svg.c
 lib_evas_libevas_la_CPPFLAGS += @evas_vg_loader_svg_cflags@
 lib_evas_libevas_la_LIBADD += @evas_vg_loader_svg_libs@
-if EVAS_CSERVE2
-bin_evas_evas_cserve2_slave_CPPFLAGS += @evas_vg_loader_svg_cflags@
-bin_evas_evas_cserve2_slave_LDADD += @evas_vg_loader_svg_libs@
-endif
 else
 vgloadersvgpkgdir = $(libdir)/evas/modules/vg_loaders/svg/$(MODULE_ARCH)
 vgloadersvgpkg_LTLIBRARIES = modules/evas/vg_loaders/svg/module.la
@@ -1558,6 +1554,33 @@ modules_evas_vg_loaders_svg_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
+if BUILD_VG_LOADER_EET
+if EVAS_STATIC_BUILD_VG_EET
+lib_evas_libevas_la_SOURCES += modules/evas/vg_loaders/eet/evas_vg_load_eet.c
+lib_evas_libevas_la_CPPFLAGS += @evas_vg_loader_eet_cflags@
+lib_evas_libevas_la_LIBADD += @evas_vg_loader_eet_libs@
+else
+vgloadereetpkgdir = $(libdir)/evas/modules/vg_loaders/eet/$(MODULE_ARCH)
+vgloadereetpkg_LTLIBRARIES = modules/evas/vg_loaders/eet/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_vgloadereetpkgLTLIBRARIES = install-vgloadereetpkgLTLIBRARIES
+$(install_vgloadereetpkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_evas_vg_loaders_eet_module_la_SOURCES = modules/evas/vg_loaders/eet/evas_vg_load_eet.c
+modules_evas_vg_loaders_eet_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/include \
+@EVAS_CFLAGS@ \
+@evas_vg_loader_eet_cflags@
+modules_evas_vg_loaders_eet_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@evas_vg_loader_eet_libs@
+modules_evas_vg_loaders_eet_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_vg_loaders_eet_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_vg_loaders_eet_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
 
 
 if BUILD_LOADER_BMP

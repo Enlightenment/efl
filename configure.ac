@@ -2391,6 +2391,8 @@ case "$host_os" in
 esac
 
 ARG_ENABLE_EVAS_VG_LOADER(SVG, static)
+ARG_ENABLE_EVAS_VG_LOADER(EET, static)
+
 
 ARG_ENABLE_EVAS_IMAGE_LOADER(BMP, static)
 ARG_ENABLE_EVAS_IMAGE_LOADER(Eet, static)
@@ -2713,6 +2715,7 @@ AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_COMMON], [test "x${have_static_evas_engine_
 ## Vg Loaders
 
 EVAS_CHECK_VG_LOADER([SVG], [${want_evas_vg_loader_svg}])
+EVAS_CHECK_VG_LOADER([EET], [${want_evas_vg_loader_eet}])
 
 ## Image Loaders
 
