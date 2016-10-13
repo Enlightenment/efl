@@ -1348,22 +1348,31 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    else RD(0, "\n");
    if (obj->cur->clipper)
      {
-        RD(level, "  clipper: '%s'%s%s %p (mask: %p) %d,%d %dx%d\n",
+        RD(level, "  clipper: '%s'%s%s %p (mask: %p) %d,%d %dx%d ; color: {%d,%d,%d,%d} ; cached: {%d,%d,%d,%d}\n",
            obj->cur->clipper->type,
            obj->cur->clipper->name ? ":" : "",
            obj->cur->clipper->name ? obj->cur->clipper->name : "",
            obj->cur->clipper, obj->clip.mask,
            obj->cur->clipper->cur->geometry.x, obj->cur->clipper->cur->geometry.y,
-           obj->cur->clipper->cur->geometry.w, obj->cur->clipper->cur->geometry.h);
+           obj->cur->clipper->cur->geometry.w, obj->cur->clipper->cur->geometry.h,
+           obj->cur->clipper->cur->color.r, obj->cur->clipper->cur->color.g,
+           obj->cur->clipper->cur->color.b, obj->cur->clipper->cur->color.a,
+           obj->cur->clipper->cur->cache.clip.r, obj->cur->clipper->cur->cache.clip.g,
+           obj->cur->clipper->cur->cache.clip.b, obj->cur->clipper->cur->cache.clip.a);
      }
 
-   RD(level, "  geom: %d,%d %dx%d, cache.clip: (vis: %d) %d,%d %dx%d\n",
-      obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h,
-      obj->cur->cache.clip.visible, obj->cur->cache.clip.x, obj->cur->cache.clip.y, obj->cur->cache.clip.w, obj->cur->cache.clip.h);
+   RD(level, "  geom: %d,%d %dx%d, cache.clip: (vis: %d) %d,%d %dx%d ; color: {%d,%d,%d,%d} ; cached: {%d,%d,%d,%d}\n",
+      obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h, obj->cur->cache.clip.visible,
+      obj->cur->cache.clip.x, obj->cur->cache.clip.y, obj->cur->cache.clip.w, obj->cur->cache.clip.h,
+      obj->cur->color.r, obj->cur->color.g, obj->cur->color.b, obj->cur->color.a,
+      obj->cur->cache.clip.r, obj->cur->cache.clip.g, obj->cur->cache.clip.b, obj->cur->cache.clip.a);
    {
-      int _c, _cx, _cy, _cw, _ch;
-      _c = ENFN->context_clip_get(ENDT, context, &_cx, &_cy, &_cw, &_ch);
-      RD(level, "  context clip: [%d] %d,%d %dx%d\n", _c, _cx, _cy, _cw, _ch);
+      int _cu, _cc, _cm, _cx, _cy, _cw, _ch, _cr, _cg, _cb, _ca, _cmr, _cmg, _cmb, _cma;
+      _cu = ENFN->context_clip_get(ENDT, context, &_cx, &_cy, &_cw, &_ch);
+      _cc = ENFN->context_color_get(ENDT, context, &_cr, &_cr, &_cb, &_ca);
+      _cm = ENFN->context_multiplier_get(ENDT, context, &_cmr, &_cmr, &_cmb, &_cma);
+      RD(level, "  context clip: [%d] %d,%d %dx%d ; color: [%d] {%d,%d,%d,%d} ; mult: [%d] {%d,%d,%d,%d}\n",
+         _cu, _cx, _cy, _cw, _ch, _cc, _cr, _cg, _cb, _ca, _cm, _cmr, _cmg, _cmb, _cma);
    }
 #endif
 
