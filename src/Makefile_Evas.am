@@ -1501,6 +1501,7 @@ bin_evas_evas_cserve2_slave_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DEVAS_MODULE_NO_ENGINES=1 \
 -DEVAS_MODULE_NO_IMAGE_SAVERS=1 \
 -DEVAS_MODULE_NO_VG_LOADERS=1 \
+-DEVAS_MODULE_NO_VG_SAVERS=1 \
 @EVAS_CFLAGS@
 
 bin_evas_evas_cserve2_slave_LDADD = @EVAS_CSERVE2_SLAVE_LIBS@ @USE_EINA_LIBS@ @USE_EMILE_LIBS@
@@ -1556,7 +1557,7 @@ endif
 
 if BUILD_VG_LOADER_EET
 if EVAS_STATIC_BUILD_VG_EET
-lib_evas_libevas_la_SOURCES += modules/evas/vg_loaders/eet/evas_vg_load_eet.c
+lib_evas_libevas_la_SOURCES += modules/evas/vg_loaders/eet/evas_vg_load_eet.c modules/evas/vg_savers/eet/evas_vg_save_eet.c
 lib_evas_libevas_la_CPPFLAGS += @evas_vg_loader_eet_cflags@
 lib_evas_libevas_la_LIBADD += @evas_vg_loader_eet_libs@
 else
@@ -1579,6 +1580,26 @@ modules_evas_vg_loaders_eet_module_la_LIBADD = \
 modules_evas_vg_loaders_eet_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_vg_loaders_eet_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_vg_loaders_eet_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+vgsavereetpkgdir = $(libdir)/evas/modules/vg_savers/eet/$(MODULE_ARCH)
+vgsavereetpkg_LTLIBRARIES = modules/evas/vg_savers/eet/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_vgsavereetpkgLTLIBRARIES = install-vgloadereetpkgLTLIBRARIES
+$(install_vgsavereetpkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_evas_vg_savers_eet_module_la_SOURCES = modules/evas/vg_savers/eet/evas_vg_save_eet.c
+modules_evas_vg_savers_eet_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/include \
+@EVAS_CFLAGS@ \
+@evas_vg_saver_eet_cflags@
+modules_evas_vg_savers_eet_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@evas_vg_saver_eet_libs@
+modules_evas_vg_savers_eet_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_vg_savers_eet_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_vg_savers_eet_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 

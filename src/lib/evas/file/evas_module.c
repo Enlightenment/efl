@@ -24,8 +24,13 @@
 #define EVAS_MODULE_NO_VG_LOADERS 0
 #endif
 
+#ifndef EVAS_MODULE_NO_VG_SAVERS
+#define EVAS_MODULE_NO_VG_SAVERS 0
+#endif
 
-static Eina_Hash *evas_modules[5] = {
+
+static Eina_Hash *evas_modules[6] = {
+  NULL,
   NULL,
   NULL,
   NULL,
@@ -155,6 +160,10 @@ EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, xpm);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, tgv);
 #endif
 
+#if !EVAS_MODULE_NO_VG_SAVERS
+EVAS_EINA_STATIC_MODULE_DEFINE(vg_saver, eet);
+#endif
+
 #if !EVAS_MODULE_NO_IMAGE_SAVERS
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, jpeg);
@@ -264,6 +273,11 @@ static const struct {
   EVAS_EINA_STATIC_MODULE_USE(image_loader, tgv),
 #endif
 #endif
+#if !EVAS_MODULE_NO_VG_SAVERS
+#ifdef EVAS_STATIC_BUILD_VG_EET
+  EVAS_EINA_STATIC_MODULE_USE(vg_saver, eet),
+#endif
+#endif
 #if !EVAS_MODULE_NO_IMAGE_SAVERS
 #ifdef EVAS_STATIC_BUILD_EET
   EVAS_EINA_STATIC_MODULE_USE(image_saver, eet),
@@ -301,6 +315,7 @@ evas_module_init(void)
    evas_modules[EVAS_MODULE_TYPE_IMAGE_SAVER] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
    evas_modules[EVAS_MODULE_TYPE_OBJECT] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
    evas_modules[EVAS_MODULE_TYPE_VG_LOADER] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
+   evas_modules[EVAS_MODULE_TYPE_VG_SAVER] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
 
    evas_engines = eina_array_new(4);
 
@@ -313,7 +328,7 @@ evas_module_register(const Evas_Module_Api *module, Evas_Module_Type type)
 {
    Evas_Module *em;
 
-   if ((unsigned int)type > 3) return EINA_FALSE;
+   if ((unsigned int)type > 5) return EINA_FALSE;
    if (!module) return EINA_FALSE;
    if (module->version != EVAS_MODULE_API_VERSION) return EINA_FALSE;
 
@@ -415,7 +430,7 @@ evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
 {
    Evas_Module *em;
 
-   if ((unsigned int)type > 3) return EINA_FALSE;
+   if ((unsigned int)type > 5) return EINA_FALSE;
    if (!module) return EINA_FALSE;
 
    em = eina_hash_find(evas_modules[type], module->name);
@@ -454,7 +469,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
    Eina_List *l;
    Eina_Bool run_in_tree;
 
-   if ((unsigned int)type > 3) return NULL;
+   if ((unsigned int)type > 5) return NULL;
 
    em = eina_hash_find(evas_modules[type], name);
    if (em)
@@ -475,6 +490,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
            case EVAS_MODULE_TYPE_IMAGE_SAVER: type_str = "image_savers"; break;
            case EVAS_MODULE_TYPE_OBJECT: type_str = "object"; break;
            case EVAS_MODULE_TYPE_VG_LOADER: type_str = "vg_loaders"; break;
+           case EVAS_MODULE_TYPE_VG_SAVER: type_str = "vg_savers"; break;
           }
 
         buffer[0] = '\0';
@@ -677,6 +693,7 @@ evas_module_shutdown(void)
    eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_IMAGE_SAVER], _cb_mod_close, NULL);
    eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_OBJECT], _cb_mod_close, NULL);
    eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_VG_LOADER], _cb_mod_close, NULL);
+   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_VG_SAVER], _cb_mod_close, NULL);
 
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_ENGINE]);
    evas_modules[EVAS_MODULE_TYPE_ENGINE] = NULL;
@@ -688,6 +705,8 @@ evas_module_shutdown(void)
    evas_modules[EVAS_MODULE_TYPE_OBJECT] = NULL;
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_VG_LOADER]);
    evas_modules[EVAS_MODULE_TYPE_VG_LOADER] = NULL;
+   eina_hash_free(evas_modules[EVAS_MODULE_TYPE_VG_SAVER]);
+   evas_modules[EVAS_MODULE_TYPE_VG_SAVER] = NULL;
 
    EINA_LIST_FREE(evas_module_paths, path)
      free(path);

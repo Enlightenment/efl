@@ -69,6 +69,7 @@ typedef struct _Evas_Data_Node              Evas_Data_Node;
 typedef struct _Evas_Func                   Evas_Func;
 typedef struct _Evas_Image_Save_Func        Evas_Image_Save_Func;
 typedef struct _Evas_Vg_Load_Func           Evas_Vg_Load_Func;
+typedef struct _Evas_Vg_Save_Func           Evas_Vg_Save_Func;
 typedef struct _Evas_Object_Func            Evas_Object_Func;
 typedef struct _Evas_Intercept_Func         Evas_Intercept_Func;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
@@ -1518,6 +1519,10 @@ struct _Evas_Vg_Load_Func
   void     *(*file_data) (Eina_File *f, Eina_Stringshare *key, int *error);
 };
 
+struct _Evas_Vg_Save_Func
+{
+  int (*vg_save) (void *vg, const char *file, const char *key, int compress);
+};
 
 #ifdef __cplusplus
 extern "C" {
