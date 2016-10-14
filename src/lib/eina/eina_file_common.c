@@ -1054,6 +1054,7 @@ eina_file_shutdown(void)
      }
 
    eina_hash_free(_eina_file_cache);
+   _eina_file_cache = NULL;
 
    eina_lock_free(&_eina_file_lock_cache);
 
