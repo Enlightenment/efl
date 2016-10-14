@@ -80,7 +80,8 @@ glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
 #ifdef GL_GLES
 
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
-void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
+EGLImage (*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
+EGLImage (*glsym_eglCreateImageKHR)            (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, EGLint *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 unsigned int   (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
@@ -1325,6 +1326,31 @@ gl_symbols(void)
    done = 1;
 }
 
+#ifdef GL_GLES
+static EGLImage
+_eflCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list)
+{
+   if (glsym_eglCreateImage)
+     return glsym_eglCreateImage(dpy, ctx, target, buffer, attrib_list);
+   if (glsym_eglCreateImageKHR)
+     {
+        int count, i;
+        EGLint *ints = NULL;
+
+        if (attrib_list)
+          {
+             for (count = 0; attrib_list[count] != EGL_NONE; count += 2);
+             count++;
+             ints = alloca(count * sizeof(EGLint));
+             for (i = 0; i < count; i++)
+               ints[i] = attrib_list[i];
+          }
+        return glsym_eglCreateImageKHR(dpy, ctx, target, buffer, ints);
+     }
+   return NULL;
+}
+#endif
+
 void
 eng_gl_symbols(Outbuf *ob)
 {
@@ -1358,8 +1384,8 @@ eng_gl_symbols(Outbuf *ob)
    exts = eglQueryString(ob->egl_disp, EGL_EXTENSIONS);
 
    FINDSYM(glsym_eglCreateImage, "eglCreateImage", NULL, glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", "EGL_KHR_image_base", glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", "EGL_KHR_image", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image", glsym_func_void_ptr);
 
    FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", NULL, glsym_func_void);
    FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", glsym_func_void);
@@ -2042,7 +2068,8 @@ _native_bind_cb(void *image)
             if (n->ns_data.x11.multiple_buffer)
               {
                  EGLint err;
-                 if (!glsym_eglDestroyImage || !glsym_eglCreateImage)
+                 if (!glsym_eglDestroyImage ||
+                     (!glsym_eglCreateImage && !glsym_eglCreateImageKHR))
                    {
                       ERR("Try eglDestroyImage()/eglCreateImage() on EGL with no support");
                       return;
@@ -2055,11 +2082,11 @@ _native_bind_cb(void *image)
                       glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
                    }
 
-                 n->ns_data.x11.surface = glsym_eglCreateImage(im->native.disp,
-                                                       EGL_NO_CONTEXT,
-                                                       EGL_NATIVE_PIXMAP_KHR,
-                                                       (void *)n->ns_data.x11.pixmap,
-                                                       NULL);
+                 n->ns_data.x11.surface = _eflCreateImage(im->native.disp,
+                                                          EGL_NO_CONTEXT,
+                                                          EGL_NATIVE_PIXMAP_KHR,
+                                                          (void *)n->ns_data.x11.pixmap,
+                                                          NULL);
                  if (!n->ns_data.x11.surface)
                    ERR("eglCreateImage() for Pixmap 0x%#lx failed: %#x", n->ns_data.x11.pixmap, eglGetError());
 
@@ -2594,7 +2621,7 @@ eng_image_native_set(void *data, void *image, void *native)
 #ifdef GL_GLES
        if (native)
          {
-            if (!glsym_eglCreateImage)
+            if (!glsym_eglCreateImage && !glsym_eglCreateImageKHR)
               {
                  ERR("Try eglCreateImage on EGL with no support");
                  return NULL;
@@ -2651,10 +2678,10 @@ eng_image_native_set(void *data, void *image, void *native)
                  memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
                  n->ns_data.x11.pixmap = pm;
                  n->ns_data.x11.visual = vis;
-                 n->ns_data.x11.surface = glsym_eglCreateImage(eng_get_ob(re)->egl_disp,
-                                                               EGL_NO_CONTEXT,
-                                                               EGL_NATIVE_PIXMAP_KHR,
-                                                               (void *)pm, NULL);
+                 n->ns_data.x11.surface = _eflCreateImage(eng_get_ob(re)->egl_disp,
+                                                          EGL_NO_CONTEXT,
+                                                          EGL_NATIVE_PIXMAP_KHR,
+                                                          (void *)pm, NULL);
 
                  if ((ns->version < 4) ||
                      ((ns->version == 4) && !(ns->data.x11.multiple_buffer == 1)))
@@ -2941,12 +2968,12 @@ eng_image_native_set(void *data, void *image, void *native)
 
                  memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
                  n->ns_data.tbm.buffer = buffer;
-                 if (glsym_eglCreateImage)
-                   n->ns_data.tbm.surface = glsym_eglCreateImage(eng_get_ob(re)->egl_disp,
-                                                                 EGL_NO_CONTEXT,
-                                                                 EGL_NATIVE_SURFACE_TIZEN,
-                                                                 (void *)buffer,
-                                                                 NULL);
+                 if (glsym_eglCreateImage || glsym_eglCreateImageKHR)
+                   n->ns_data.tbm.surface = _eflCreateImage(eng_get_ob(re)->egl_disp,
+                                                            EGL_NO_CONTEXT,
+                                                            EGL_NATIVE_SURFACE_TIZEN,
+                                                            (void *)buffer,
+                                                            NULL);
                  else
                    ERR("Try eglCreateImage on EGL with no support");
                  if (!n->ns_data.tbm.surface)
@@ -3010,7 +3037,7 @@ eng_image_native_set(void *data, void *image, void *native)
           {
              if ((n = calloc(1, sizeof(Native))))
                {
-                  EGLint attribs[3];
+                  EGLAttrib attribs[3];
                   int format, yinvert = 1;
 
                   glsym_eglQueryWaylandBufferWL(eng_get_ob(re)->egl_disp, wl_buf,
@@ -3037,11 +3064,11 @@ eng_image_native_set(void *data, void *image, void *native)
                                 &wlid, im);
 
                   n->ns_data.wl_surface.wl_buf = wl_buf;
-                  if (glsym_eglCreateImage)
-                    n->ns_data.wl_surface.surface = glsym_eglCreateImage(eng_get_ob(re)->egl_disp,
-                                                                         NULL,
-                                                                         EGL_WAYLAND_BUFFER_WL,
-                                                                         wl_buf, attribs);
+                  if (glsym_eglCreateImage || glsym_eglCreateImageKHR)
+                    n->ns_data.wl_surface.surface = _eflCreateImage(eng_get_ob(re)->egl_disp,
+                                                                    NULL,
+                                                                    EGL_WAYLAND_BUFFER_WL,
+                                                                    wl_buf, attribs);
                   else
                     {
                        ERR("Try eglCreateImage on EGL with no support");
