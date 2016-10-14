@@ -21,6 +21,7 @@ static const char SIG_DISMISSED[] = "dismissed";
 static const char SIG_EXPANDED[] = "expanded";
 static const char SIG_ITEM_FOCUSED[] = "item,focused";
 static const char SIG_ITEM_UNFOCUSED[] = "item,unfocused";
+static const char SIG_CLICKED[] = "clicked";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SELECTED, ""},
@@ -28,7 +29,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_EXPANDED, ""},
    {SIG_ITEM_FOCUSED, ""},
    {SIG_ITEM_UNFOCUSED, ""},
-   {"clicked", ""}, /**< handled by parent button class */
+   {SIG_CLICKED, ""}, /**< handled by parent button class */
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_ACCESS_CHANGED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
