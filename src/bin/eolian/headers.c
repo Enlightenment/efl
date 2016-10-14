@@ -131,7 +131,7 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
              if (!first)
                eina_strbuf_append(buf, ", ");
              eina_strbuf_append(buf, prtn);
-             if (!strchr(prtn, '*'))
+             if (prtn[strlen(prtn) - 1] != '*')
                eina_strbuf_append_char(buf, ' ');
              eina_strbuf_append(buf,
                  _get_add_star(ftype, eolian_parameter_direction_get(pr)));

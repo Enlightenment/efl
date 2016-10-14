@@ -135,7 +135,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
 
            eina_strbuf_append_printf(params_full, ", %s", ptn);
            eina_strbuf_append_printf(params_full_imp, ", %s", ptn);
-           if (!strchr(ptn, '*'))
+           if (ptn[strlen(ptn) - 1] != '*')
              {
                 eina_strbuf_append_char(params_full, ' ');
                 eina_strbuf_append_char(params_full_imp, ' ');
@@ -167,7 +167,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              const Eolian_Type *pt = eolian_parameter_type_get(pr);
              Eina_Stringshare *ptn = eolian_type_c_type_get(pt);
 
-             Eina_Bool had_star = !!strchr(ptn, '*');
+             Eina_Bool had_star = ptn[strlen(ptn) - 1] == '*';
              const char *add_star = _get_add_star(ftype, pd);
 
              if (eina_strbuf_length_get(params))
@@ -267,7 +267,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
           {
              /* T _class_name[_orig_class]_func_name_suffix */
              eina_strbuf_append(buf, rtpn);
-             if (!strchr(rtpn, '*'))
+             if (rtpn[strlen(rtpn) - 1] != '*')
                eina_strbuf_append_char(buf, ' ');
              eina_strbuf_append_char(buf, '_');
              eina_strbuf_append(buf, cnamel);
@@ -296,7 +296,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              /* generation of intermediate __eolian_... */
              eina_strbuf_append(buf, "static ");
              eina_strbuf_append(buf, rtpn);
-             if (!strchr(rtpn, '*'))
+             if (rtpn[strlen(rtpn) - 1] != '*')
                eina_strbuf_append_char(buf, ' ');
              eina_strbuf_append(buf, "__eolian_");
              eina_strbuf_append(buf, cnamel);
@@ -794,7 +794,7 @@ _gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
            eina_strbuf_append(params, prn);
 
            eina_strbuf_append_printf(params_full, ", %s", ptn);
-           if (!strchr(ptn, '*'))
+           if (ptn[strlen(ptn) - 1] != '*')
              eina_strbuf_append_char(params_full, ' ');
            eina_strbuf_append(params_full, prn);
 
@@ -819,7 +819,7 @@ _gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
              const Eolian_Type *pt = eolian_parameter_type_get(pr);
              Eina_Stringshare *ptn = eolian_type_c_type_get(pt);
 
-             Eina_Bool had_star = !!strchr(ptn, '*');
+             Eina_Bool had_star = ptn[strlen(ptn) - 1] == '*';
              const char *add_star = _get_add_star(ftype, pd);
 
              eina_strbuf_append(params, ", ");
