@@ -137,10 +137,10 @@ eolian_cxx_callbacks_01_SOURCES = eolian_cxx_callbacks_01.cc
 	true $<
 
 %.eo.c: %.eo
-	$(AM_V_EOL)$(EOLIAN_GEN) --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
+	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) -gc -o c:$@ $<
 
 %.eo.h: %.eo
-	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) --gh -o $@ $<
+	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) -gh -o h:$@ $<
 
 examples: $(ECXX_EXAMPLE_EOS) $(GENERATED) $(EXTRA_PROGRAMS)
 
