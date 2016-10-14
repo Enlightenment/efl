@@ -297,12 +297,15 @@ _ecore_evas_x11_region_push_hook(Evas *e EINA_UNUSED, int x EINA_UNUSED,
 static void
 _ecore_evas_x_hints_update(Ecore_Evas *ee)
 {
+   Ecore_X_Window_State_Hint initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+
+   if (ee->prop.iconified)
+     initial_state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
+
    ecore_x_icccm_hints_set
      (ee->prop.window,
          !ee->prop.focus_skip /* accepts_focus */,
-         ee->prop.iconified ? ECORE_X_WINDOW_STATE_HINT_ICONIC :
-         ee->prop.withdrawn ? ECORE_X_WINDOW_STATE_HINT_WITHDRAWN :
-         ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
+         initial_state /* initial_state */,
          0 /* icon_pixmap */,
          0 /* icon_mask */,
          0 /* icon_window */,
@@ -3386,7 +3389,6 @@ _ecore_evas_x_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (ee->prop.withdrawn == on) return;
 //   ee->prop.withdrawn = on;
-   _ecore_evas_x_hints_update(ee);
    if (on)
      ecore_evas_hide(ee);
    else
