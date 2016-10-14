@@ -1233,6 +1233,15 @@ EAPI Eina_Bool ecore_wl2_offer_supprts_mime(Ecore_Wl2_Offer *offer, const char *
  */
 EAPI void ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer);
 
+/**
+ * Check if a window has a shell surface - without one it can't be visible.
+ *
+ * @param The window to check
+ *
+ * @return Returns true if the window has an associated shell surface.
+ * @since 1.19
+ */
+EAPI Eina_Bool ecore_wl2_window_has_shell_surface(Ecore_Wl2_Window *win);
 
 # endif
 
