@@ -93,6 +93,7 @@ static inline void
 _efl_input_pointer_free(Efl_Input_Pointer_Data *pd)
 {
    free(pd->legacy);
+   efl_unref(pd->device);
 }
 
 EOLIAN static void
@@ -130,6 +131,7 @@ _efl_input_pointer_efl_input_event_dup(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Da
    ev->win_fed = 0;
    ev->fake = 1;
    ev->legacy = NULL;
+   ev->device = efl_ref(pd->device);
 
    return evt;
 }
@@ -222,8 +224,7 @@ _efl_input_pointer_delta_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, in
 EOLIAN static void
 _efl_input_pointer_efl_input_event_device_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Efl_Input_Device *dev)
 {
-   /* ref? */
-   pd->device = dev;
+   pd->device = efl_ref(dev);
 }
 
 EOLIAN static Efl_Input_Device *
