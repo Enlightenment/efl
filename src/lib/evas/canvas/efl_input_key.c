@@ -81,6 +81,7 @@ static inline void
 _efl_input_key_free(Efl_Input_Key_Data *pd)
 {
    free(pd->legacy);
+   efl_unref(pd->device);
    if (pd->no_stringshare) return;
    eina_stringshare_del(pd->key);
    eina_stringshare_del(pd->keyname);
@@ -197,6 +198,7 @@ _efl_input_key_efl_input_event_dup(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
    ev->win_fed   = 0;
    ev->fake      = 1;
    ev->legacy    = NULL;
+   ev->device    = efl_ref(pd->device);
 
    return evt;
 }
@@ -228,7 +230,7 @@ _efl_input_key_efl_input_event_event_flags_get(Eo *obj EINA_UNUSED, Efl_Input_Ke
 EOLIAN static void
 _efl_input_key_efl_input_event_device_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, Efl_Input_Device *dev)
 {
-   pd->device = dev;
+   pd->device = efl_ref(dev);
 }
 
 EOLIAN static Efl_Input_Device *
