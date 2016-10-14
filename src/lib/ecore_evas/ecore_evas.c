@@ -3788,6 +3788,8 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
    ev->radius_y = info->multi.radius_y;
    ev->pressure = info->multi.pressure;
    ev->angle = info->multi.angle - ee->rotation;
+   if (info->dev) ev->device = efl_ref(info->dev);
+   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_CLASS_MOUSE));
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
@@ -3846,6 +3848,8 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
    ev->radius_y = info->multi.radius_y;
    ev->pressure = info->multi.pressure;
    ev->angle = info->multi.angle - ee->rotation;
+   if (info->dev) ev->device = efl_ref(info->dev);
+   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_CLASS_MOUSE));
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
@@ -3878,6 +3882,8 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
    _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
    ev->wheel.z = info->z;
    ev->wheel.dir = info->direction ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL;
+   if (info->dev) ev->device = efl_ref(info->dev);
+   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_CLASS_MOUSE));
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
@@ -3905,6 +3911,8 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
    ev->action = action;
    ev->timestamp = info->timestamp;
    _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
+   if (info->dev) ev->device = efl_ref(info->dev);
+   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_CLASS_MOUSE));
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
@@ -4032,6 +4040,8 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
           }
      }
    _pointer_position_set(ev, ee, x, y, x, y);
+   if (info->dev) ev->device = efl_ref(info->dev);
+   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_CLASS_MOUSE));
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
@@ -4068,7 +4078,8 @@ _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool dow
    ev->keycode = info->keycode;
    ev->data = info->data;
    ev->event_flags = 0;
-   ev->device = NULL; /* FIXME */
+   if (info->dev) ev->device = efl_ref(info->dev);
+   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_CLASS_KEYBOARD));
 
    if (down)
      efl_event_callback_legacy_call(e, EFL_EVENT_KEY_DOWN, evt);
