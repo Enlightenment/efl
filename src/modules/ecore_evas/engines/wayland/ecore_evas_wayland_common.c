@@ -1373,6 +1373,7 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas EINA_UNUSED, void 
    wdata = ee->engine.data;
    surf = ecore_wl2_window_surface_get(wdata->win);
    if (!surf) return;
+   if (!ecore_wl2_window_has_shell_surface(wdata->win)) return;
 
    wdata->anim_callback = wl_surface_frame(surf);
    wl_callback_add_listener(wdata->anim_callback, &_anim_listener, ee);
