@@ -476,10 +476,20 @@ _efl_canvas_video_aspect_border_apply(Evas_Object *obj, Efl_Canvas_Video_Data *s
 
    int aspect_opt = 0;
 
-   iw = sd->video.w;
-   ih = sd->video.h;
+   /* Prefer (if available) the video aspect ratio to calculate the sizes */
+   if (sd->ratio > 0.0)
+     {
+        ir = sd->ratio;
+        ih = sd->video.h;
+        iw = (double)ih * ir;
+     }
+   else
+     {
+        iw = sd->video.w;
+        ih = sd->video.h;
+        ir = (double)iw / ih;
+     }
 
-   ir = (double)iw / ih;
    r = (double)w / h;
 
    /* First check if we should fit the width or height of the video inside the
