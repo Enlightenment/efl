@@ -641,8 +641,11 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 
    EINA_LIST_FOREACH(ep->targets, l, et)
      {
-        if (((ep->action == EDJE_ACTION_TYPE_STATE_SET) || (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)) &&
-            (pc->parts[et->id]->type == EDJE_PART_TYPE_MESH_NODE) && strstr(ep->signal, "mouse"))
+        if (((ep->action == EDJE_ACTION_TYPE_STATE_SET) ||
+             (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)) &&
+            (et->id < (int)pc->parts_count) &&
+            (pc->parts[et->id]->type == EDJE_PART_TYPE_MESH_NODE) &&
+            (strstr(ep->signal, "mouse")))
           {
              for (i = 0; (i < pc->parts_count) && (ep->source_3d_id < 0); i++)
                {
