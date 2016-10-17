@@ -793,7 +793,7 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
         prog = gc->state.current.prog;
         evas_glUseProgram_th(prog->prog);
         evas_glUniform1i_th(prog->uniform.rotation_id, gc->rot / 90);
-        evas_glUniformMatrix4fv_th(prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
+        evas_glUniformMatrix4fv_th(gc->state.current.prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
      }
 }
 

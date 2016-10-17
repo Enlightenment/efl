@@ -160,6 +160,7 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
    p->prog = prg;
    p->reset = EINA_TRUE;
    p->bin_saved = EINA_TRUE;
+   evas_glUseProgram_th(prg);
    p->uniform.mvp = evas_glGetUniformLocation_th(prg, "mvp");
    p->uniform.rotation_id = evas_glGetUniformLocation_th(prg, "rotation_id");
    evas_gl_common_shader_textures_bind(p);
