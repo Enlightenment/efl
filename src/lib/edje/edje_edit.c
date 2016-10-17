@@ -13654,6 +13654,7 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
    int attr_amount = 0;
    int indent_space = strlen(I6);
    char *data;
+   unsigned int i;
 
    Eina_Bool name = EINA_FALSE;
    Eina_Bool border = EINA_FALSE;
@@ -13661,12 +13662,12 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
    Eina_Bool scale_hint = EINA_FALSE;
    Eina_Bool border_no_fill = EINA_FALSE;
    Eina_Bool border_scale = EINA_FALSE;
+   Eina_Bool tweens = EINA_FALSE;
 
    Edje_Part_Description_Image *img;
    img = (Edje_Part_Description_Image *)pd;
    Edje_Part_Description_Image *inherit_pd_img = (Edje_Part_Description_Image *)inherit_pd;
 
-   ll = edje_edit_state_tweens_list_get(obj, part, state, value);
 
 /*TODO: support tweens inherit*/
    if (inherit_pd)
@@ -13686,7 +13687,19 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
 
         border_scale = (img->image.border.scale == inherit_pd_img->image.border.scale) ? EINA_FALSE : EINA_TRUE;
 
-        /*Add check for a tween images*/
+        if (img->image.tweens_count == inherit_pd_img->image.tweens_count)
+          {
+             for (i = 0; i < img->image.tweens_count; i++)
+               {
+                  if (img->image.tweens[i]->id == inherit_pd_img->image.tweens[i]->id)
+                    continue;
+                  else
+                    {
+                       tweens = EINA_TRUE;
+                       break;
+                    }
+               }
+          }
      }
    else
      {
@@ -13697,11 +13710,11 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
         scale_hint = (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_NONE) ? EINA_FALSE : EINA_TRUE;
         border_no_fill = (img->image.border.no_fill == 0) ? EINA_FALSE : EINA_TRUE;
         border_scale = (img->image.border.scale == 0) ? EINA_FALSE : EINA_TRUE;
+        tweens = (img->image.tweens_count == 0) ? EINA_FALSE : EINA_TRUE;
      }
 
 
-   attr_amount =  name + border + border_scale_by + scale_hint + border_no_fill + border_scale;
-   attr_amount += (ll == NULL) ? 0 : 2;
+   attr_amount =  name + border + border_scale_by + scale_hint + border_no_fill + border_scale + tweens;
 
    if (attr_amount == 0) goto fill;
    if (attr_amount == 1)
@@ -13724,9 +13737,13 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
           }
      }
 
-   EINA_LIST_FOREACH(ll, l, data)
-     BUF_APPENDF("%*stween: \"%s\";\n", indent_space, "", data);
-   edje_edit_string_list_free(ll);
+   if (tweens)
+     {
+        ll = edje_edit_state_tweens_list_get(obj, part, state, value);
+        EINA_LIST_FOREACH(ll, l, data)
+           BUF_APPENDF("%*stween: \"%s\";\n", indent_space, "", data);
+        edje_edit_string_list_free(ll);
+     }
 
    if (border)
      BUF_APPENDF("%*sborder: %d %d %d %d;\n", indent_space, "",
