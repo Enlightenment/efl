@@ -3896,7 +3896,7 @@ _elm_map_pan_efl_gfx_position_set(Eo *obj, Elm_Map_Pan_Data *_pd EINA_UNUSED, Ev
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_PAN_CLASS), x, y);
    evas_object_smart_changed(obj);
 }
 
