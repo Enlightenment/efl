@@ -823,7 +823,7 @@ _compare(const void *container EINA_UNUSED, void *elem, void *data)
 }
 
 EAPI Eina_Bool
-ecore_wl2_offer_supprts_mime(Ecore_Wl2_Offer *offer, const char *mime)
+ecore_wl2_offer_supports_mime(Ecore_Wl2_Offer *offer, const char *mime)
 {
   EINA_SAFETY_ON_NULL_RETURN_VAL(offer, EINA_FALSE);
   EINA_SAFETY_ON_NULL_RETURN_VAL(mime, EINA_FALSE);

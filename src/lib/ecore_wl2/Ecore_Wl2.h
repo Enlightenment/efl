@@ -1221,7 +1221,7 @@ EAPI void ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime);
  *
  * @since 1.19
  */
-EAPI Eina_Bool ecore_wl2_offer_supprts_mime(Ecore_Wl2_Offer *offer, const char *mime);
+EAPI Eina_Bool ecore_wl2_offer_supports_mime(Ecore_Wl2_Offer *offer, const char *mime);
 
 /**
  * Mark this offer as finished
