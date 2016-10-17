@@ -167,7 +167,7 @@ _eo_evas_object_cb(void *data, const Efl_Event *event)
    switch (info->efl_event_type)
      {
       case EFL_EVENT_TYPE_POINTER:
-        event_info = efl_input_pointer_legacy_info_fill(efl_event_info, info->type, &event_flags);
+        event_info = efl_input_pointer_legacy_info_fill(evas, efl_event_info, info->type, &event_flags);
         break;
 
       case EFL_EVENT_TYPE_KEY:

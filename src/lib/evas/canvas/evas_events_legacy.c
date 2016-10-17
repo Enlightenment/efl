@@ -33,12 +33,14 @@ _event_alloc(void *old)
 }
 
 void *
-efl_input_pointer_legacy_info_fill(Efl_Input_Key *evt, Evas_Callback_Type type, Evas_Event_Flags **pflags)
+efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Callback_Type type, Evas_Event_Flags **pflags)
 {
-   Efl_Input_Pointer_Data *ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
-   if (!ev) return NULL;
+   Efl_Input_Pointer_Data *ev = efl_data_scope_get(eo_ev, EFL_INPUT_POINTER_CLASS);
+   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
 
-#define COORD_DUP(e) do { (e)->output.x = (e)->canvas.x; (e)->output.y = (e)->canvas.y; } while (0)
+   if (!ev || !evas) return NULL;
+
+#define COORD_DUP(e) do { (e)->output.x = evas->pointer.x; (e)->output.y = evas->pointer.y; } while (0)
 #define TYPE_CHK(typ) do { if (type != EVAS_CALLBACK_ ## typ) return NULL; } while (0)
 
    switch (ev->action)
