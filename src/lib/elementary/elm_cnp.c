@@ -3079,7 +3079,7 @@ _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Se
 
        for (j = 0; convertion[i].translates[j]; j++)
          {
-            if (!ecore_wl2_offer_supprts_mime(offer, convertion[i].translates[j])) continue;
+            if (!ecore_wl2_offer_supports_mime(offer, convertion[i].translates[j])) continue;
 
             //we have found mathing mimetypes
             Selection_Ready *ready;
