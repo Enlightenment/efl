@@ -1,6 +1,21 @@
 ==========
-EFL 1.18.1
+EFL 1.18.2
 ==========
+
+Changes since 1.18.1:
+---------------------
+
+Fixes:
+
+   * efreet - fix command generation by fixing string buffer expansion
+   * elm_toolbar: Show icons in icon only mode
+   * Evas_Common: Fix typo.
+   * Evas_Device: Use eo_del() in evas_device_del().
+   * ecore_evas x - dont set withdrawn to fals on show but wait for wm state (T4699)
+   * ecore-evas - x fix intial iconified state so terminology -I works
+   * evas: Fix evas_object_smart_clipped_clipper_get
+   * epp: fix memory corruption when using #warning and #error
+   * fix edje_cc segv when compiling bling bling theme
 
 Changes since 1.18.0:
 ---------------------
