@@ -321,7 +321,7 @@ emile_cipher_server_listen(Emile_Cipher_Type t)
    INF("DH params successfully generated and applied!");
 
    if (!SSL_CTX_set_cipher_list(r->ssl_ctx,
-                                "aNULL:!eNULL:!LOW:!EXPORT:@STRENGTH"))
+                                "aRSA+HIGH:+kEDH:+kRSA:!kSRP:!kPSK:+3DES:!MD5"))
      goto on_error;
 
    return r;
@@ -748,7 +748,7 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
      }
 
    if (!SSL_CTX_set_cipher_list(r->ssl_ctx,
-                                "aNULL:!eNULL:!LOW:!EXPORT:!ECDH:RSA:AES:!PSK:@STRENGTH"))
+                                "aRSA+HIGH:+kEDH:+kRSA:!kSRP:!kPSK:+3DES:!MD5"))
      goto on_error;
 
    return r;
