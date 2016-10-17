@@ -9374,7 +9374,8 @@ st_collections_group_parts_part_description_image_normal(void)
    {
       char *name;
 
-      ed->image.set = EINA_TRUE;
+      if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+        ed->image.set = EINA_TRUE;
 
       name = parse_str(0);
       data_queue_image_remove(&(ed->image.id), &(ed->image.set));
