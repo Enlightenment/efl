@@ -198,7 +198,8 @@ _efl_net_socket_tcp_cork_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool cork)
    option = _cork_option_get();
    if (EINA_UNLIKELY(option < 0))
      {
-        ERR("Could not find a TCP_CORK equivalent on your system");
+        if (cork)
+          ERR("Could not find a TCP_CORK equivalent on your system");
         return EINA_FALSE;
      }
 
