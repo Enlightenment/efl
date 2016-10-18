@@ -132,10 +132,6 @@ EAPI void register_object(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 namespace emotion {
 EAPI void register_object(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }
-EAPI void register_elm_app_client(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_elm_app_client_view(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_elm_app_server(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_elm_app_server_view(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_atspi_app_object(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_atspi_accessible(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_atspi_action(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -352,10 +348,6 @@ EAPI void init(v8::Handle<v8::Object> exports)
 
       // elm::register_access(exports, v8::Isolate::GetCurrent());
       // elm::register_actionslider(exports, v8::Isolate::GetCurrent());
-      // ::register_elm_app_client(exports, v8::Isolate::GetCurrent());
-      // ::register_elm_app_client_view(exports, v8::Isolate::GetCurrent());
-      // ::register_elm_app_server(exports, v8::Isolate::GetCurrent());
-      // ::register_elm_app_server_view(exports, v8::Isolate::GetCurrent());
       // ::register_elm_atspi_app_object(exports, v8::Isolate::GetCurrent());
       // elm::register_box(exports, v8::Isolate::GetCurrent());
 

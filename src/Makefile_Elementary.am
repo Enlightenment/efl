@@ -5,10 +5,6 @@ elm_public_eolian_files = \
 	lib/elementary/elm_access.eo \
 	lib/elementary/elm_actionslider.eo \
 	lib/elementary/elm_atspi_bridge.eo \
-	lib/elementary/elm_app_client.eo \
-	lib/elementary/elm_app_client_view.eo \
-	lib/elementary/elm_app_server.eo \
-	lib/elementary/elm_app_server_view.eo \
 	lib/elementary/elm_atspi_app_object.eo \
 	lib/elementary/elm_bg.eo \
 	lib/elementary/elm_bubble.eo \
@@ -319,16 +315,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_actionslider.h \
 	lib/elementary/elm_actionslider_eo.h \
 	lib/elementary/elm_actionslider_legacy.h \
-	lib/elementary/elm_app_common.h \
-	lib/elementary/elm_app_server_eo.h \
-	lib/elementary/elm_app_server_view_eo.h \
-	lib/elementary/elm_app_server_view.h \
-	lib/elementary/elm_app_server_eet.h \
-	lib/elementary/elm_app_server.h \
-	lib/elementary/elm_app_client_eo.h \
-	lib/elementary/elm_app_client.h \
-	lib/elementary/elm_app_client_view_eo.h \
-	lib/elementary/elm_app_client_view.h \
 	lib/elementary/elm_app.h \
 	lib/elementary/elm_atspi_app_object.h \
 	lib/elementary/elm_authors.h \
@@ -571,12 +557,6 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elc_scrolled_entry.c \
 	lib/elementary/elm_access.c \
 	lib/elementary/elm_actionslider.c \
-	lib/elementary/elm_app_common.c \
-	lib/elementary/elm_app_server_eet.c \
-	lib/elementary/elm_app_server.c \
-	lib/elementary/elm_app_server_view.c \
-	lib/elementary/elm_app_client.c \
-	lib/elementary/elm_app_client_view.c \
 	lib/elementary/elm_atspi_app_object.c \
 	lib/elementary/elm_atspi_bridge.c \
 	lib/elementary/elm_bg.c \
@@ -763,7 +743,6 @@ bin/elementary/test_3d.c \
 bin/elementary/test_access.c \
 bin/elementary/test_actionslider.c \
 bin/elementary/test_anim.c \
-bin/elementary/test_application_server.c \
 bin/elementary/test_bg.c \
 bin/elementary/test_box.c \
 bin/elementary/test_bubble.c \
@@ -852,7 +831,6 @@ bin/elementary/test_spinner.c \
 bin/elementary/test_store.c \
 bin/elementary/test_sys_notify.c \
 bin/elementary/test_systray.c \
-bin/elementary/test_task_switcher.c \
 bin/elementary/test_table.c \
 bin/elementary/test_thumb.c \
 bin/elementary/test_toolbar.c \

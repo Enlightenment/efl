@@ -184,11 +184,6 @@ EAPI extern Elm_Version *elm_version;
 #include <elc_naviframe.h>
 #include <elc_popup.h>
 #include <elm_actionslider.h>
-#include <elm_app_common.h>
-#include <elm_app_server.h>
-#include <elm_app_server_view.h>
-#include <elm_app_client.h>
-#include <elm_app_client_view.h>
 #include <elm_app.h>
 #include <elm_atspi_app_object.h>
 #include <elm_atspi_bridge.h>
