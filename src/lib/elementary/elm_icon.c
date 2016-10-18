@@ -9,6 +9,7 @@
 #include "elm_priv.h"
 #include "elm_widget_icon.h"
 #include "efl_ui_widget_image.h"
+#include "elm_icon.eo.h"
 
 #define NON_EXISTING (void *)-1
 

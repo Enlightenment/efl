@@ -9,6 +9,8 @@
 #define ELM_WIDGET_ITEM_PROTECTED
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_hoversel.eo.h"
+#include "elm_hoversel_item.eo.h"
 #include "elm_widget_hoversel.h"
 
 #define MY_CLASS ELM_HOVERSEL_CLASS

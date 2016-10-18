@@ -7,6 +7,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_bubble.eo.h"
 #include "elm_widget_bubble.h"
 #include "elm_widget_layout.h"
 

@@ -8,6 +8,8 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_naviframe.eo.h"
+#include "elm_naviframe_item.eo.h"
 #include "elm_widget_naviframe.h"
 #include "elm_widget_container.h"
 

@@ -74,9 +74,6 @@
  */
 
 #include "elm_prefs_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_prefs_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_prefs_legacy.h"
 #endif

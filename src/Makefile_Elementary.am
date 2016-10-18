@@ -2,12 +2,9 @@
 ### Library
 
 elm_public_eolian_files = \
-	lib/elementary/elm_access.eo \
-	lib/elementary/elm_actionslider.eo \
 	lib/elementary/elm_atspi_bridge.eo \
 	lib/elementary/elm_atspi_app_object.eo \
 	lib/elementary/elm_bg.eo \
-	lib/elementary/elm_bubble.eo \
 	lib/elementary/elm_button.eo \
 	lib/elementary/elm_calendar.eo \
 	lib/elementary/elm_check.eo \
@@ -18,14 +15,10 @@ elm_public_eolian_files = \
 	lib/elementary/elm_ctxpopup.eo \
 	lib/elementary/elm_datetime.eo \
 	lib/elementary/elm_dayselector.eo \
-	lib/elementary/elm_diskselector.eo \
 	lib/elementary/elm_entry.eo \
 	lib/elementary/elm_fileselector.eo \
-	lib/elementary/elm_fileselector_button.eo \
-	lib/elementary/elm_fileselector_entry.eo \
 	lib/elementary/efl_ui_flip.eo \
 	lib/elementary/efl_ui_flip_internal_part.eo \
-	lib/elementary/elm_flipselector.eo \
 	lib/elementary/efl_ui_frame.eo \
 	lib/elementary/elm_gengrid.eo \
 	lib/elementary/elm_gengrid_pan.eo \
@@ -34,8 +27,6 @@ elm_public_eolian_files = \
 	lib/elementary/elm_gesture_layer.eo \
 	lib/elementary/elm_glview.eo \
 	lib/elementary/elm_hover.eo \
-	lib/elementary/elm_hoversel.eo \
-	lib/elementary/elm_icon.eo \
 	lib/elementary/efl_ui_image.eo \
 	lib/elementary/elm_index.eo \
 	lib/elementary/elm_interface_atspi_accessible.eo \
@@ -50,7 +41,6 @@ elm_public_eolian_files = \
 	lib/elementary/elm_interface_atspi_window.eo \
 	lib/elementary/elm_interface_fileselector.eo \
 	lib/elementary/elm_interface_scrollable.eo \
-	lib/elementary/elm_inwin.eo \
 	lib/elementary/elm_label.eo \
 	lib/elementary/elm_layout.eo \
 	lib/elementary/elm_list.eo \
@@ -58,33 +48,26 @@ elm_public_eolian_files = \
 	lib/elementary/elm_map_pan.eo \
 	lib/elementary/elm_menu.eo \
 	lib/elementary/elm_multibuttonentry.eo \
-	lib/elementary/elm_naviframe.eo \
 	lib/elementary/elm_notify.eo \
 	lib/elementary/efl_ui_nstate.eo \
 	lib/elementary/elm_pan.eo \
 	lib/elementary/elm_panel.eo \
 	lib/elementary/elm_panes.eo \
-	lib/elementary/elm_photo.eo \
 	lib/elementary/elm_photocam.eo \
 	lib/elementary/elm_photocam_pan.eo \
 	lib/elementary/elm_player.eo \
 	lib/elementary/elm_plug.eo \
 	lib/elementary/elm_popup.eo \
-	lib/elementary/elm_prefs.eo \
 	lib/elementary/elm_progressbar.eo \
 	lib/elementary/elm_radio.eo \
 	lib/elementary/elm_route.eo \
 	lib/elementary/elm_scroller.eo \
-	lib/elementary/elm_segment_control.eo \
-	lib/elementary/elm_separator.eo \
 	lib/elementary/elm_slider.eo \
-	lib/elementary/elm_slideshow.eo \
 	lib/elementary/elm_spinner.eo \
 	lib/elementary/elm_sys_notify_interface.eo \
 	lib/elementary/elm_sys_notify.eo \
 	lib/elementary/elm_sys_notify_dbus.eo \
 	lib/elementary/elm_systray.eo \
-	lib/elementary/elm_thumb.eo \
 	lib/elementary/elm_toolbar.eo \
 	lib/elementary/efl_ui_video.eo \
 	lib/elementary/elm_view_list.eo \
@@ -96,20 +79,15 @@ elm_public_eolian_files = \
 	lib/elementary/elm_widget_item.eo \
 	lib/elementary/elm_color_item.eo \
 	lib/elementary/elm_dayselector_item.eo \
-	lib/elementary/elm_hoversel_item.eo \
-	lib/elementary/elm_segment_control_item.eo \
-	lib/elementary/elm_slideshow_item.eo \
 	lib/elementary/elm_flipselector_item.eo \
 	lib/elementary/elm_menu_item.eo \
 	lib/elementary/elm_ctxpopup_item.eo \
 	lib/elementary/elm_index_item.eo \
 	lib/elementary/elm_multibuttonentry_item.eo \
-	lib/elementary/elm_naviframe_item.eo \
 	lib/elementary/elm_genlist_item.eo \
 	lib/elementary/elm_gengrid_item.eo \
 	lib/elementary/elm_list_item.eo \
 	lib/elementary/elm_toolbar_item.eo \
-	lib/elementary/elm_diskselector_item.eo \
 	lib/elementary/elm_popup_item.eo \
 	lib/elementary/efl_ui_box.eo \
 	lib/elementary/efl_ui_box_flow.eo \
@@ -147,10 +125,32 @@ elm_private_eolian_files = \
 
 # Legacy classes - not part of public EO API
 elm_legacy_eolian_files = \
+	lib/elementary/elm_access.eo \
+	lib/elementary/elm_actionslider.eo \
 	lib/elementary/elm_box.eo \
+	lib/elementary/elm_bubble.eo \
+	lib/elementary/elm_diskselector.eo \
+	lib/elementary/elm_diskselector_item.eo \
+	lib/elementary/elm_fileselector_button.eo \
+	lib/elementary/elm_fileselector_entry.eo \
+	lib/elementary/elm_flipselector.eo \
 	lib/elementary/elm_grid.eo \
-	lib/elementary/elm_table.eo \
+	lib/elementary/elm_hoversel.eo \
+	lib/elementary/elm_hoversel_item.eo \
+	lib/elementary/elm_icon.eo \
+	lib/elementary/elm_inwin.eo \
 	lib/elementary/elm_mapbuf.eo \
+	lib/elementary/elm_naviframe.eo \
+	lib/elementary/elm_naviframe_item.eo \
+	lib/elementary/elm_photo.eo \
+	lib/elementary/elm_prefs.eo \
+	lib/elementary/elm_segment_control.eo \
+	lib/elementary/elm_segment_control_item.eo \
+	lib/elementary/elm_separator.eo \
+	lib/elementary/elm_slideshow.eo \
+	lib/elementary/elm_slideshow_item.eo \
+	lib/elementary/elm_table.eo \
+	lib/elementary/elm_thumb.eo \
 	$(NULL)
 
 elm_eolian_type_files = \
@@ -298,14 +298,12 @@ includesub_HEADERS = \
 	lib/elementary/elc_fileselector_entry_eo.h \
 	lib/elementary/elc_fileselector_entry_legacy.h \
 	lib/elementary/elc_hoversel.h \
-	lib/elementary/elc_hoversel_eo.h \
 	lib/elementary/elc_hoversel_legacy.h \
 	lib/elementary/elc_multibuttonentry.h \
 	lib/elementary/elc_multibuttonentry_eo.h \
 	lib/elementary/elc_multibuttonentry_legacy.h \
 	lib/elementary/elc_multibuttonentry_common.h \
 	lib/elementary/elc_naviframe.h \
-	lib/elementary/elc_naviframe_eo.h \
 	lib/elementary/elc_naviframe_legacy.h \
 	lib/elementary/elc_naviframe_common.h \
 	lib/elementary/elc_popup.h \
@@ -313,7 +311,6 @@ includesub_HEADERS = \
 	lib/elementary/elc_popup_legacy.h \
 	lib/elementary/elm_access.h \
 	lib/elementary/elm_actionslider.h \
-	lib/elementary/elm_actionslider_eo.h \
 	lib/elementary/elm_actionslider_legacy.h \
 	lib/elementary/elm_app.h \
 	lib/elementary/elm_atspi_app_object.h \
@@ -325,7 +322,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_box_legacy.h \
 	lib/elementary/elm_box_common.h \
 	lib/elementary/elm_bubble.h \
-	lib/elementary/elm_bubble_eo.h \
 	lib/elementary/elm_bubble_legacy.h \
 	lib/elementary/elm_button.h \
 	lib/elementary/elm_button_eo.h \
@@ -374,7 +370,6 @@ includesub_HEADERS = \
 	lib/elementary/efl_ui_flip_eo.h \
 	lib/elementary/efl_ui_flip_legacy.h \
 	lib/elementary/elm_flipselector.h \
-	lib/elementary/elm_flipselector_eo.h \
 	lib/elementary/elm_flipselector_legacy.h \
 	lib/elementary/elm_focus.h \
 	lib/elementary/elm_focus_item.h \
@@ -407,7 +402,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_hover_eo.h \
 	lib/elementary/elm_hover_legacy.h \
 	lib/elementary/elm_icon.h \
-	lib/elementary/elm_icon_eo.h \
 	lib/elementary/elm_icon_legacy.h \
 	lib/elementary/elm_image.h \
 	lib/elementary/elm_image_eo.h \
@@ -417,7 +411,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_index_legacy.h \
 	${top_builddir}/elm_intro.h \
 	lib/elementary/elm_inwin.h \
-	lib/elementary/elm_inwin_eo.h \
 	lib/elementary/elm_inwin_legacy.h \
 	lib/elementary/elm_label.h \
 	lib/elementary/elm_label_eo.h \
@@ -456,7 +449,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_panes_eo.h \
 	lib/elementary/elm_panes_legacy.h \
 	lib/elementary/elm_photo.h \
-	lib/elementary/elm_photo_eo.h \
 	lib/elementary/elm_photo_legacy.h \
 	lib/elementary/elm_photocam.h \
 	lib/elementary/elm_photocam_eo.h \
@@ -466,7 +458,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_plug_legacy.h \
 	lib/elementary/elm_prefs.h \
 	lib/elementary/elm_prefs_common.h \
-	lib/elementary/elm_prefs_eo.h \
 	lib/elementary/elm_prefs_legacy.h \
 	lib/elementary/elm_prefs_data.h \
 	lib/elementary/elm_progressbar.h \
@@ -512,7 +503,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_theme.h \
 	lib/elementary/elm_thumb.h \
 	lib/elementary/elm_thumb_common.h \
-	lib/elementary/elm_thumb_eo.h \
 	lib/elementary/elm_thumb_legacy.h \
 	lib/elementary/elm_toolbar.h \
 	lib/elementary/elm_toolbar_common.h \

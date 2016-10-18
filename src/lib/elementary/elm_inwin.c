@@ -9,6 +9,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
+#include "elm_inwin.eo.h"
 #include "elm_widget_inwin.h"
 #include "elm_widget_layout.h"
 

@@ -11,6 +11,8 @@
 #include "elm_widget_actionslider.h"
 #include "elm_widget_layout.h"
 
+#include "elm_actionslider.eo.h"
+
 #define MY_CLASS ELM_ACTIONSLIDER_CLASS
 
 #define MY_CLASS_NAME "Elm_Actionslider"

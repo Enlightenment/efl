@@ -151,9 +151,6 @@
  * @li @ref tutorial_icon
  */
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_icon_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_icon_legacy.h"
 #endif

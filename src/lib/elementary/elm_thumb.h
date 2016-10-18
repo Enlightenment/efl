@@ -56,9 +56,6 @@
  */
 
 #include "elm_thumb_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_thumb_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_thumb_legacy.h"
 #endif

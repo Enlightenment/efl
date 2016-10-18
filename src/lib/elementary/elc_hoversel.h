@@ -57,9 +57,6 @@
  * @{
  */
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elc_hoversel_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elc_hoversel_legacy.h"
 #endif

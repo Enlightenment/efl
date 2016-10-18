@@ -10,6 +10,9 @@
 #include "elm_priv.h"
 #include "elm_widget_flipselector.h"
 
+#include "elm_flipselector.eo.h"
+#include "elm_flipselector_item.eo.h"
+
 #define MY_CLASS ELM_FLIPSELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Flipselector"

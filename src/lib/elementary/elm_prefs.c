@@ -7,10 +7,9 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
+#include "elm_prefs.eo.h"
 #include "elm_widget_prefs.h"
 #include "elm_prefs_edd.x"
-
-#include "Eo.h"
 
 #define MY_CLASS ELM_PREFS_CLASS
 

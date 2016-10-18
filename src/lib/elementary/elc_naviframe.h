@@ -90,9 +90,6 @@
  */
 
 #include "elc_naviframe_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elc_naviframe_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elc_naviframe_legacy.h"
 #endif

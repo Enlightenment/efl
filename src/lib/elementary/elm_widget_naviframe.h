@@ -2,6 +2,8 @@
 #define ELM_WIDGET_NAVIFRAME_H
 
 #include "Elementary.h"
+#include "elm_naviframe.eo.h"
+#include "elm_naviframe_item.eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

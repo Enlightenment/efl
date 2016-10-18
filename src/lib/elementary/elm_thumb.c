@@ -7,6 +7,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
+#include "elm_thumb.eo.h"
 #include "elm_widget_thumb.h"
 
 #define MY_CLASS_NAME "Elm_Thumb"

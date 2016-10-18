@@ -9,6 +9,9 @@
 #include "elm_code_private.h"
 #include "elm_code_widget_private.h"
 
+/* FIXME: hoversel is deprecated in EO APIs */
+#include "elm_hoversel.eo.h"
+
 #define MY_CLASS ELM_CODE_WIDGET_CLASS
 
 typedef enum {

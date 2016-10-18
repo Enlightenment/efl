@@ -19,6 +19,7 @@
 #include "elm_entry_common.h"
 #include "elm_widget_entry.h"
 #include "efl_ui_text.eo.h"
+#include "elm_hoversel.eo.h"
 
 typedef struct _Efl_Ui_Text_Data        Efl_Ui_Text_Data;
 typedef struct _Efl_Ui_Text_Rectangle   Efl_Ui_Text_Rectangle;

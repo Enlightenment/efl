@@ -9,6 +9,8 @@
 #include "elm_view_list.h"
 
 #include "elm_priv.h"
+#include "elm_thumb.eo.h"
+
 #include <assert.h>
 
 #define MY_CLASS ELM_VIEW_FORM_CLASS
