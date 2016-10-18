@@ -952,7 +952,7 @@ detect_time_changes_start(void)
    if (realtime_fd < 0) return;
 
    memset(&its, 0, sizeof(its));
-   its.it_value.tv_sec += 0xfffffff0; // end of time - 0xf
+   its.it_value.tv_sec = 0x7ffffff0; // end of time - 0xf
    if (timerfd_settime(realtime_fd,
                        TFD_TIMER_ABSTIME | TFD_TIMER_CANCELON_SET,
                        &its, NULL) < 0)
