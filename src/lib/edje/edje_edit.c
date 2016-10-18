@@ -13669,10 +13669,10 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
    Edje_Part_Description_Image *inherit_pd_img = (Edje_Part_Description_Image *)inherit_pd;
 
 
-/*TODO: support tweens inherit*/
    if (inherit_pd)
      {
-        name = (img->image.id == inherit_pd_img->image.id) ? EINA_FALSE : EINA_TRUE;
+        if (img->image.id != -1)
+          name = (img->image.id == inherit_pd_img->image.id) ? EINA_FALSE : EINA_TRUE;
 
         border = ((img->image.border.l == inherit_pd_img->image.border.l) &&
                   (img->image.border.r == inherit_pd_img->image.border.r) &&
