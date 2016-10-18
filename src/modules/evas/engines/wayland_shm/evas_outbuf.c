@@ -314,17 +314,22 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
 Render_Engine_Swap_Mode 
 _evas_outbuf_swap_mode_get(Outbuf *ob)
 {
+   Render_Engine_Swap_Mode mode;
    int age;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    age = ob->surface->funcs.assign(ob->surface);
-   if (age == 1) return MODE_COPY;
-   else if (age == 2) return MODE_DOUBLE;
-   else if (age == 3) return MODE_TRIPLE;
-   else if (age == 4) return MODE_QUADRUPLE;
+   if (age == 1) mode = MODE_COPY;
+   else if (age == 2) mode = MODE_DOUBLE;
+   else if (age == 3) mode = MODE_TRIPLE;
+   else if (age == 4) mode = MODE_QUADRUPLE;
+   else mode = MODE_FULL;
 
-   return MODE_FULL;
+   if (ob->prev_age != age) mode = MODE_FULL;
+   ob->prev_age = age;
+
+   return mode;
 }
 
 int 
