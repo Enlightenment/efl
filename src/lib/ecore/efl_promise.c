@@ -139,11 +139,16 @@ static void
 _efl_loop_future_propagate(Eo *obj, Efl_Loop_Future_Data *pd)
 {
    Efl_Event ev;
+   Eina_Bool cancel;
 
    ev.object = obj;
+   cancel = pd->fulfilled && !pd->message;
 
-   if (pd->fulfilled &&
-       !pd->message)
+   // This has to be done early on to avoid recursive success/failure to
+   // bypass the fulfilled check.
+   pd->fulfilled = EINA_TRUE;
+
+   if (cancel)
      {
         _efl_loop_future_failure(&ev, pd, EINA_ERROR_FUTURE_CANCEL);
      }
@@ -155,7 +160,6 @@ _efl_loop_future_propagate(Eo *obj, Efl_Loop_Future_Data *pd)
      {
         _efl_loop_future_failure(&ev, pd, pd->message->error);
      }
-   pd->fulfilled = EINA_TRUE;
 
    if (!pd->delayed)
      {
