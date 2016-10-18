@@ -3197,6 +3197,17 @@ _efl_net_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
    if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
      efl_net_ip_port_fmt(buf, sizeof(buf), d->addr);
 
+   if ((d->type == SOCK_DGRAM) &&
+       (d->addr->sa_family == AF_INET) &&
+       (((const struct sockaddr_in *)d->addr)->sin_addr.s_addr == INADDR_BROADCAST))
+     {
+        int enable = 1;
+        if (setsockopt(d->sockfd, SOL_SOCKET, SO_BROADCAST, &enable, sizeof(enable)) == 0)
+          DBG("enabled SO_BROADCAST for socket=%d", d->sockfd);
+        else
+          WRN("could not enable SO_BROADCAST for socket=%d: %s", d->sockfd, strerror(errno));
+     }
+
    DBG("connecting fd=%d to %s", d->sockfd, buf);
 
    r = connect(d->sockfd, d->addr, d->addrlen);
@@ -3375,6 +3386,17 @@ _efl_net_ip_connect(const struct addrinfo *addr, int *sockfd)
           {
              if (efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr))
                DBG("connect fd=%d to %s", fd, buf);
+          }
+
+        if ((addr->ai_socktype == SOCK_DGRAM) &&
+            (addr->ai_family == AF_INET) &&
+            (((const struct sockaddr_in *)addr->ai_addr)->sin_addr.s_addr == INADDR_BROADCAST))
+          {
+             int enable = 1;
+             if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST, &enable, sizeof(enable)) == 0)
+               DBG("enabled SO_BROADCAST for socket=%d", fd);
+             else
+               WRN("could not enable SO_BROADCAST for socket=%d: %s", fd, strerror(errno));
           }
 
         r = connect(fd, addr->ai_addr, addr->ai_addrlen);
