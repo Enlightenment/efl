@@ -1,0 +1,18 @@
+class Efl.Net.Dialer.Udp (Efl.Net.Socket.Udp, Efl.Net.Dialer) {
+    [[Connects to a remote UDP server.
+
+      UDP proxies are not supported, not even using SOCKSv5.
+
+      @since 1.19
+    ]]
+
+    implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+        Efl.Net.Dialer.dial;
+        Efl.Net.Dialer.address_dial;
+        Efl.Net.Dialer.connected;
+        Efl.Net.Dialer.timeout_dial;
+        Efl.Io.Closer.close;
+    }
+}

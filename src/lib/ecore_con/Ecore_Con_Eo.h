@@ -15,6 +15,9 @@
 #include "efl_net_dialer_tcp.eo.h"
 #include "efl_net_server_tcp.eo.h"
 
+#include "efl_net_socket_udp.eo.h"
+#include "efl_net_dialer_udp.eo.h"
+
 #include "efl_net_http_types.eot.h"
 
 /* TODO: should be generated from 'var Efl.Net.Dialer.Error.*' */

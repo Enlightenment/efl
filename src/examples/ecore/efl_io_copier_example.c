@@ -344,6 +344,7 @@ static const Ecore_Getopt options = {
                                    "tcp://IP:PORT to connect using TCP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
                                    "http://address to do a PUT request\n"
                                    "ws://address or wss:// to do WebSocket request\n"
+                                   "udp://IP:PORT to connect using UDP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
                                    "",
                                    "output-file"),
     ECORE_GETOPT_SENTINEL
@@ -655,6 +656,33 @@ main(int argc, char **argv)
           {
              fprintf(stderr, "ERROR: could not WebSocket dial %s: %s\n",
                      output_fname, eina_error_msg_get(err));
+             goto end_output;
+          }
+     }
+   else if (strncmp(output_fname, "udp://", strlen("udp://")) == 0)
+     {
+        /*
+         * Since Efl.Net.Socket implements the required interfaces,
+         * they can be used here as well.
+         */
+        const char *address = output_fname + strlen("udp://");
+        Eina_Error err;
+        output = efl_add(EFL_NET_DIALER_UDP_CLASS, ecore_main_loop_get(),
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
+                         );
+        if (!output)
+          {
+             fprintf(stderr, "ERROR: could not create UDP Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end_input;
+          }
+
+        err = efl_net_dialer_dial(output, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not UDP dial %s: %s\n",
+                     address, eina_error_msg_get(err));
              goto end_output;
           }
      }

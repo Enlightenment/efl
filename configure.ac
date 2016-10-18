@@ -477,6 +477,7 @@ EFL_CHECK_PATH_MAX
 
 EFL_CHECK_DEFINE(TCP_CORK, netinet/tcp.h)
 EFL_CHECK_DEFINE(TCP_NOPUSH, netinet/tcp.h)
+EFL_CHECK_DEFINE(UDP_CORK, netinet/udp.h)
 
 #### Checks for types
 
@@ -1784,6 +1785,7 @@ langinfo.h \
 features.h \
 netinet/in.h \
 netinet/tcp.h \
+netinet/udp.h \
 sys/prctl.h \
 sys/resource.h \
 sys/timerfd.h \

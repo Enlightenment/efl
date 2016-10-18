@@ -1,0 +1,26 @@
+class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
+    [[A base UDP socket.
+
+      This is the common class and takes an existing FD, usually
+      created by an dialer or server.
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property cork {
+            [[Controls UDP's cork using UDP_CORK]]
+            get { }
+            set {
+                return: bool (false); [[$true on success]]
+            }
+            values {
+                cork: bool;
+            }
+        }
+    }
+
+    implements {
+        Efl.Loop.Fd.fd.set;
+    }
+}
