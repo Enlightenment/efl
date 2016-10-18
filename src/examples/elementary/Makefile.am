@@ -187,9 +187,6 @@ calendar_cxx_example_05.cc \
 clock_cxx_example.cc \
 datetime_cxx_example.cc \
 icon_cxx_example_01.cc \
-separator_cxx_example_01.cc \
-thumb_cxx_example_01.cc \
-bubble_cxx_example_01.cc \
 button_cxx_example_00.cc
 endif
 #table_cxx_example_02.cc \
@@ -413,17 +410,12 @@ calendar_cxx_example_05 \
 clock_cxx_example \
 datetime_cxx_example \
 icon_cxx_example_01 \
-thumb_cxx_example_01 \
-separator_cxx_example_01 \
-bubble_cxx_example_01 \
 button_cxx_example_00
 # examples_PROGRAMS += \
-# thumb_cxx_example_01 \
 # table_cxx_example_02 \
 # table_cxx_example_01 \
 # spinner_cxx_example \
 # slider_cxx_example \
-# separator_cxx_example_01 \
 # radio_cxx_example_01 \
 # popup_cxx_example_01 \
 # menu_cxx_example_01 \
@@ -440,7 +432,6 @@ button_cxx_example_00
 # calendar_cxx_example_01 \
 # button_cxx_example_01 \
 # button_cxx_example_00 \
-# bubble_cxx_example_01 \
 # box_cxx_example_02 \
 # bg_cxx_example_02 \
 # bg_cxx_example_01
@@ -469,15 +460,11 @@ calendar_cxx_example_02_SOURCES = calendar_cxx_example_02.cc
 calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
 bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
 bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
-thumb_cxx_example_01_SOURCES = thumb_cxx_example_01.cc
-separator_cxx_example_01_SOURCES = separator_cxx_example_01.cc
-bubble_cxx_example_01_SOURCES = bubble_cxx_example_01.cc
 button_cxx_example_00_SOURCES = button_cxx_example_00.cc
 # table_cxx_example_02_SOURCES = table_cxx_example_02.cc
 # table_cxx_example_01_SOURCES = table_cxx_example_01.cc
 # spinner_cxx_example_SOURCES = spinner_cxx_example.cc
 # slider_cxx_example_SOURCES = slider_cxx_example.cc
-# separator_cxx_example_01_SOURCES = separator_cxx_example_01.cc
 # radio_cxx_example_01_SOURCES = radio_cxx_example_01.cc
 # popup_cxx_example_01_SOURCES = popup_cxx_example_01.cc
 # menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
@@ -494,7 +481,6 @@ button_cxx_example_00_SOURCES = button_cxx_example_00.cc
 # calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
 # button_cxx_example_01_SOURCES = button_cxx_example_01.cc
 # button_cxx_example_00_SOURCES = button_cxx_example_00.cc
-# bubble_cxx_example_01_SOURCES = bubble_cxx_example_01.cc
 # box_cxx_example_02_SOURCES = box_cxx_example_02.cc
 # bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
 # bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
@@ -590,7 +576,6 @@ if HAVE_CXX11
 SCREENSHOTS += \
  bg_cxx_example_02:bg_cxx_example_02.png:0.0 \
  box_cxx_example_02:box_cxx_example_02.png:1.3 \
- bubble_cxx_example_01:bubble_cxx_example_01.png:0.0 \
  button_cxx_example_00:button_cxx_example_00.png:0.0 \
  button_cxx_example_01:button_cxx_example_01.png:0.0 \
  calendar_cxx_example_01:calendar_cxx_example_01.png:0.0 \
@@ -606,12 +591,10 @@ SCREENSHOTS += \
  popup_cxx_example_01:popup_cxx_example_01.png:1.0 \
  popup_cxx_example_01:popup_cxx_example_01_a.png:6.0 \
  radio_cxx_example_01:radio_cxx_example_01.png:0.0 \
- separator_cxx_example_01:separator_cxx_example_01.png:0.0 \
  slider_cxx_example:slider_cxx_example.png:0.0 \
  spinner_cxx_example:spinner_cxx_example.png:0.0 \
  table_cxx_example_01:table_cxx_example_01.png:0.0 \
- table_cxx_example_02:table_cxx_example_02.png:0.0 \
- thumb_cxx_example_01:thumb_cxx_example_01.png:0.5
+ table_cxx_example_02:table_cxx_example_02.png:0.0
 endif
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
