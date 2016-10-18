@@ -4,7 +4,34 @@ class Efl.Net.Server.Tcp (Efl.Net.Server.Fd) {
       @since 1.19
     ]]
 
-    data: null;
+    methods {
+        @property ipv6_only {
+            [[Whenever IPv6 listen address will accept only same-family clients or will allow IPv4 to connect as well.
+
+              Since Linux 2.4.21, Windows Vista and MacOS X these
+              control whenever a server that did bind to an IPv6
+              address will accept only IPv6 clients or will also
+              accept IPv4 by automatically converting them in an IPv6
+              address, allowing a single socket to handle both
+              protocols.
+
+              If an IPv6 address was used in @Efl.Net.Server.address,
+              this property is $false and an IPv4 connects, then an
+              address such as [::ffff:IPv4]:PORT will be used, such as
+              [::ffff:192.168.0.2]:1234, where the IPv4 address can be
+              extracted.
+
+              If an IPv4 address was used in @Efl.Net.Server.address,
+              this has no effect.
+
+              Systems can configure their default value, usually true
+              (allows only IPv6 clients).
+            ]]
+            values {
+                ipv6_only: bool;
+            }
+        }
+    }
 
     implements {
         Efl.Net.Server.serve;

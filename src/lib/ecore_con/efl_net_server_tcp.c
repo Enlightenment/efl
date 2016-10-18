@@ -29,8 +29,13 @@
 
 #define MY_CLASS EFL_NET_SERVER_TCP_CLASS
 
+typedef struct _Efl_Net_Server_Tcp_Data
+{
+   Eina_Bool ipv6_only;
+} Efl_Net_Server_Tcp_Data;
+
 EOLIAN static Eina_Error
-_efl_net_server_tcp_efl_net_server_serve(Eo *o, void *pd EINA_UNUSED, const char *address)
+_efl_net_server_tcp_efl_net_server_serve(Eo *o, Efl_Net_Server_Tcp_Data *pd, const char *address)
 {
    struct sockaddr_storage addr = {};
    char *str, *host, *port;
@@ -94,9 +99,6 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, void *pd EINA_UNUSED, const char
 
    efl_net_server_fd_family_set(o, addr.ss_family);
 
-   if (efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&addr))
-     efl_net_server_address_set(o, buf);
-
    fd = efl_net_socket4(addr.ss_family, SOCK_STREAM, IPPROTO_TCP,
                         efl_net_server_fd_close_on_exec_get(o));
    if (fd < 0)
@@ -109,6 +111,10 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, void *pd EINA_UNUSED, const char
 
    efl_loop_fd_set(o, fd);
 
+   /* apply pending value BEFORE bind() */
+   if (addr.ss_family == AF_INET6)
+     efl_net_server_tcp_ipv6_only_set(o, pd->ipv6_only);
+
    r = bind(fd, (struct sockaddr *)&addr, addrlen);
    if (r < 0)
      {
@@ -116,6 +122,14 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, void *pd EINA_UNUSED, const char
         ERR("bind(%d, %s): %s", fd, address, strerror(errno));
         goto error_listen;
      }
+
+   if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) != 0)
+     {
+        ERR("getsockname(%d): %s", fd, strerror(errno));
+        goto error_listen;
+     }
+   else if (efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&addr))
+     efl_net_server_address_set(o, buf);
 
    r = listen(fd, 0);
    if (r < 0)
@@ -158,7 +172,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_efl_net_server_tcp_client_cbs,
                            { EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_server_tcp_client_event_closed });
 
 static void
-_efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, void *pd EINA_UNUSED, int client_fd)
+_efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, Efl_Net_Server_Tcp_Data *pd EINA_UNUSED, int client_fd)
 {
    Eo *client = efl_add(EFL_NET_SOCKET_TCP_CLASS, o,
                         efl_event_callback_array_add(efl_added, _efl_net_server_tcp_client_cbs(), o),
@@ -184,7 +198,7 @@ _efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, void *pd EINA_UNUSED, in
 }
 
 static void
-_efl_net_server_tcp_efl_net_server_fd_client_reject(Eo *o, void *pd EINA_UNUSED, int client_fd)
+_efl_net_server_tcp_efl_net_server_fd_client_reject(Eo *o, Efl_Net_Server_Tcp_Data *pd EINA_UNUSED, int client_fd)
 {
    struct sockaddr_storage addr;
    socklen_t addrlen;
@@ -199,5 +213,50 @@ _efl_net_server_tcp_efl_net_server_fd_client_reject(Eo *o, void *pd EINA_UNUSED,
    close(client_fd);
    efl_event_callback_call(o, EFL_NET_SERVER_EVENT_CLIENT_REJECTED, str);
 }
+
+EOLIAN void
+_efl_net_server_tcp_ipv6_only_set(Eo *o, Efl_Net_Server_Tcp_Data *pd, Eina_Bool ipv6_only)
+{
+   Eina_Bool old = pd->ipv6_only;
+   int fd = efl_loop_fd_get(o);
+   int value = ipv6_only;
+
+   pd->ipv6_only = ipv6_only;
+
+   if (fd < 0) return;
+   if (efl_net_server_fd_family_get(o) != AF_INET6) return;
+
+#ifdef IPV6_V6ONLY
+   if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &value, sizeof(value)) < 0)
+     {
+        ERR("could not set socket=%d IPV6_V6ONLY=%d: %s", fd, value, strerror(errno));
+        pd->ipv6_only = old;
+     }
+#endif
+}
+
+EOLIAN Eina_Bool
+_efl_net_server_tcp_ipv6_only_get(Eo *o EINA_UNUSED, Efl_Net_Server_Tcp_Data *pd)
+{
+#ifdef IPV6_V6ONLY
+   int fd = efl_loop_fd_get(o);
+   int value = 0;
+   socklen_t size = sizeof(value);
+
+   if (fd < 0) goto end;
+   if (efl_net_server_fd_family_get(o) != AF_INET6) goto end;
+
+   if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &value, &size) < 0)
+     {
+        WRN("getsockopt(%d, IPPROTO_IPV6, IPV6_V6ONLY): %s", fd, strerror(errno));
+        goto end;
+     }
+   pd->ipv6_only = !!value;
+
+ end:
+#endif
+   return pd->ipv6_only;
+}
+
 
 #include "efl_net_server_tcp.eo.c"

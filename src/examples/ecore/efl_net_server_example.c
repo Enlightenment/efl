@@ -430,6 +430,8 @@ static const Ecore_Getopt options = {
                             "If set will limit number of clients to accept"),
     ECORE_GETOPT_STORE_BOOL('r', "clients-reject-excess",
                             "If true, excess clients will be immediately rejected."),
+    ECORE_GETOPT_STORE_BOOL(0, "ipv6-only",
+                            "If true (default), only IPv6 clients will be allowed for a server if an IPv6 was used, otherwise IPv4 clients will be automatically converted into IPv6 and handled transparently."),
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_LICENSE('L', "license"),
@@ -453,11 +455,13 @@ main(int argc, char **argv)
    char *address = NULL;
    unsigned int clients_limit = 0;
    Eina_Bool clients_reject_excess = EINA_FALSE;
+   Eina_Bool ipv6_only = EINA_TRUE;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_BOOL(echo),
      ECORE_GETOPT_VALUE_UINT(clients_limit),
      ECORE_GETOPT_VALUE_BOOL(clients_reject_excess),
+     ECORE_GETOPT_VALUE_BOOL(ipv6_only),
 
      /* standard block to provide version, copyright, license and help */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -V/--version quits */
@@ -517,6 +521,9 @@ main(int argc, char **argv)
                 cls, efl_class_name_get(cls));
         goto end;
      }
+
+   if (cls == EFL_NET_SERVER_TCP_CLASS)
+     efl_net_server_tcp_ipv6_only_set(server, ipv6_only);
 
    /* an explicit call to efl_net_server_serve() after the object is
     * constructed allows for more complex setup, such as interacting
