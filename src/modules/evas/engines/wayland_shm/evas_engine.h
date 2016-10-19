@@ -107,7 +107,6 @@ struct _Outbuf
    int rotation;
    int onebuf;
    int num_buff;
-   int prev_age;
    Outbuf_Depth depth;
 
    Evas_Engine_Info_Wayland_Shm *info;
