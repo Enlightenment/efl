@@ -495,10 +495,8 @@ eng_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update EINA_UNUSED, int x 
 }
 
 void 
-eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode)
+eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode)
 {
-   Tilebuf_Rect *rects = buffer_damage;
-
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
 
    if (!_re_wincheck(ob)) goto end;
@@ -518,18 +516,18 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
    if (ob->info->callback.pre_swap)
      ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
 
-   if ((glsym_eglSwapBuffersWithDamage) && (rects) &&
+   if ((glsym_eglSwapBuffersWithDamage) && (surface_damage) &&
        (ob->swap_mode != MODE_FULL))
      {
         EGLint num = 0, *result = NULL, i = 0;
         Tilebuf_Rect *r;
 
-        // if partial swaps can be done use re->rects
-        num = eina_inlist_count(EINA_INLIST_GET(rects));
+        // if partial swaps can be done use surface_damage
+        num = eina_inlist_count(EINA_INLIST_GET(surface_damage));
         if (num > 0)
           {
              result = alloca(sizeof(EGLint) * 4 * num);
-             EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+             EINA_INLIST_FOREACH(EINA_INLIST_GET(surface_damage), r)
                {
                   _convert_glcoords(&result[i], ob, r->x, r->y, r->w, r->h);
                   i += 4;
