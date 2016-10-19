@@ -966,6 +966,66 @@ START_TEST(eo_magic_checks)
 }
 END_TEST
 
+/* resolve issues */
+
+static Eina_Bool
+_a_print(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
+{
+   printf("Hey\n");
+
+   return EINA_TRUE;
+}
+
+EFL_FUNC_BODY(resolve_a_print, Eina_Bool, EINA_FALSE);
+
+static Eina_Bool
+_multi_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+         EFL_OBJECT_OP_FUNC(resolve_a_print, _a_print),
+   );
+
+   return efl_class_functions_set(klass, &ops, NULL);
+}
+
+START_TEST(efl_func_resolve)
+{
+   efl_object_init();
+
+   /* Usually should be const, not const only for the test... */
+   static Efl_Class_Description class_desc = {
+        EO_VERSION,
+        "Inherit",
+        EFL_CLASS_TYPE_REGULAR,
+        0,
+        _multi_class_initializer,
+        NULL,
+        NULL
+   };
+
+   const Efl_Class *klass = efl_class_new(&class_desc, SIMPLE_CLASS, NULL);
+   fail_if(!klass);
+
+   Eo *obj = efl_add(klass, NULL);
+   fail_if(!resolve_a_print(obj));
+   efl_unref(obj);
+
+
+   obj = efl_add(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+   efl_manual_free_set(obj, EINA_TRUE);
+
+   fail_if(resolve_a_print(obj));
+
+   efl_unref(obj);
+
+   fail_if(!efl_destructed_is(obj));
+   efl_manual_free(obj);
+
+   efl_object_shutdown();
+}
+END_TEST
+
 START_TEST(efl_add_do_and_custom)
 {
    Simple_Public_Data *pd = NULL;
@@ -1485,6 +1545,7 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, efl_weak_reference);
    tcase_add_test(tc, eo_generic_data);
    tcase_add_test(tc, eo_magic_checks);
+   tcase_add_test(tc, efl_func_resolve);
    tcase_add_test(tc, efl_add_do_and_custom);
    tcase_add_test(tc, eo_pointers_indirection);
    tcase_add_test(tc, efl_add_failures);
