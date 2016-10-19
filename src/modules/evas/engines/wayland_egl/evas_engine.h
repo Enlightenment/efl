@@ -66,7 +66,7 @@ struct _Outbuf
    Evas_Engine_GL_Context *gl_context;
 
    Render_Engine_Swap_Mode swap_mode;
-   int prev_age, vsync;
+   int vsync;
    int frame_cnt;
 
    struct 

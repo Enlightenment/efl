@@ -382,9 +382,6 @@ eng_outbuf_swap_mode_get(Outbuf *ob)
         else if (age == 4) swap_mode = MODE_QUADRUPLE;
         else swap_mode = MODE_FULL;
 
-        if ((int)age != ob->prev_age) swap_mode = MODE_FULL;
-        ob->prev_age = age;
-
         return swap_mode;
      }
 
