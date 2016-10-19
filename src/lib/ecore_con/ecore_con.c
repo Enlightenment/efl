@@ -51,6 +51,10 @@
 #define MSG_NOSIGNAL 0 /* noop */
 #endif
 
+#ifndef EAI_SYSTEM
+#define EAI_SYSTEM -11 /* same as other systems */
+#endif
+
 static Eina_Bool   _ecore_con_client_timer(Ecore_Con_Client *cl);
 static void        _ecore_con_cl_timer_update(Ecore_Con_Client *cl);
 static Eina_Bool   _ecore_con_server_timer(Ecore_Con_Server *svr);
