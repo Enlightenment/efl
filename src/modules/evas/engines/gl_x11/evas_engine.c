@@ -80,7 +80,7 @@ glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
 #ifdef GL_GLES
 
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
-EGLImageKHR (*glsym_eglCreateImage)            (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
+EGLImageKHR (*glsym_eglCreateImage)            (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttribKHR *e) = NULL;
 EGLImageKHR (*glsym_eglCreateImageKHR)         (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, EGLint *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
@@ -1327,8 +1327,8 @@ gl_symbols(void)
 }
 
 #ifdef GL_GLES
-static EGLImage
-_eflCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list)
+static EGLImageKHR
+_eflCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttribKHR *attrib_list)
 {
    if (glsym_eglCreateImage)
      return glsym_eglCreateImage(dpy, ctx, target, buffer, attrib_list);
@@ -3037,7 +3037,7 @@ eng_image_native_set(void *data, void *image, void *native)
           {
              if ((n = calloc(1, sizeof(Native))))
                {
-                  EGLAttrib attribs[3];
+                  EGLAttribKHR attribs[3];
                   int format, yinvert = 1;
 
                   glsym_eglQueryWaylandBufferWL(eng_get_ob(re)->egl_disp, wl_buf,
