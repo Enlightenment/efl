@@ -1006,19 +1006,15 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
 {
    Eolian_Declaration *decl;
    Eolian_Variable *def = calloc(1, sizeof(Eolian_Variable));
-   Eina_Bool has_extern = EINA_FALSE;
    Eina_Strbuf *buf;
    ls->tmp.var = def;
    eo_lexer_get(ls);
    if (ls->t.kw == KW_at_extern)
      {
-        if (!global)
-          eo_lexer_syntax_error(ls, "extern constant");
-        has_extern = EINA_TRUE;
+        def->is_extern = EINA_TRUE;
         eo_lexer_get(ls);
      }
    def->type = global ? EOLIAN_VAR_GLOBAL : EOLIAN_VAR_CONSTANT;
-   def->is_extern = has_extern;
    buf = push_strbuf(ls);
    eo_lexer_context_push(ls);
    FILL_BASE(def->base, ls, ls->line_number, ls->column);
@@ -1035,7 +1031,11 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
    check_next(ls, ':');
    def->base_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
    pop_type(ls);
-   if ((ls->t.token == '=') && !has_extern)
+   /* constants are required to have a value */
+   if (!global)
+     check(ls, '=');
+   /* globals can optionally have a value */
+   if (ls->t.token == '=')
      {
         ls->expr_mode = EINA_TRUE;
         eo_lexer_get(ls);
