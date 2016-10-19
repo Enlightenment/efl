@@ -24,6 +24,53 @@
  * here (callbacks and canvas private data).
  */
 
+static Eina_Bool
+_is_pointer(Evas_Device_Class clas)
+{
+   if (clas == EVAS_DEVICE_CLASS_MOUSE ||
+       clas == EVAS_DEVICE_CLASS_TOUCH ||
+       clas == EVAS_DEVICE_CLASS_WAND ||
+       clas == EVAS_DEVICE_CLASS_PEN)
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static Evas_Device *
+_new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
+{
+   Eina_List *l;
+   Evas_Device *dev, *def, *old_parent;
+   Evas_Device_Class old_class;
+
+   old_class = efl_input_device_type_get(old_dev);
+   old_parent = efl_input_device_parent_get(old_dev);
+   def = NULL;
+
+   EINA_LIST_FOREACH(e->devices, l, dev)
+     {
+        if (efl_input_device_type_get(dev) != old_class)
+          continue;
+
+        def = dev;
+        //Prefer devices with the same parent.
+        if (efl_input_device_parent_get(dev) == old_parent)
+          break;
+     }
+
+   if (!def)
+     {
+        const char *class_str;
+        if (old_class == EVAS_DEVICE_CLASS_SEAT)
+          class_str = "seat";
+        else if (old_class == EVAS_DEVICE_CLASS_KEYBOARD)
+          class_str = "keyboard";
+        else
+          class_str = "mouse";
+        WRN("Could not find a default %s device.", class_str);
+     }
+   return def;
+}
+
 static void
 _del_cb(void *data, const Efl_Event *ev)
 {
@@ -31,6 +78,14 @@ _del_cb(void *data, const Efl_Event *ev)
 
    // can not be done in std destructor
    e->devices = eina_list_remove(e->devices, ev->object);
+
+   if (e->default_seat == ev->object)
+     e->default_seat = _new_default_device_find(e, ev->object);
+   else if (e->default_mouse == ev->object)
+     e->default_mouse = _new_default_device_find(e, ev->object);
+   else if (e->default_keyboard == ev->object)
+     e->default_keyboard = _new_default_device_find(e, ev->object);
+
    efl_event_callback_call(e->evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,
                            ev->object);
 }
@@ -66,6 +121,16 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
    d->evas = eo_e;
 
    e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+
+   /* This is the case when the user is using wayland backend,
+      since evas itself will not create the devices we must set them here. */
+   if (!e->default_seat && clas == EVAS_DEVICE_CLASS_SEAT)
+     e->default_seat = dev;
+   else if (!e->default_keyboard && clas == EVAS_DEVICE_CLASS_KEYBOARD)
+     e->default_keyboard = dev;
+   else if (!e->default_mouse && _is_pointer(clas))
+     e->default_mouse = dev;
+
    e->devices = eina_list_append(e->devices, dev);
    efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
 

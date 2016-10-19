@@ -905,6 +905,10 @@ struct _Evas_Public_Data
 
    Eina_List     *outputs;
 
+   Evas_Device   *default_seat;
+   Evas_Device   *default_mouse;
+   Evas_Device   *default_keyboard;
+
    unsigned char  changed : 1;
    unsigned char  delete_me : 1;
    unsigned char  invalidate : 1;

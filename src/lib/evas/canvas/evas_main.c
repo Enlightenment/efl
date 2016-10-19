@@ -410,6 +410,20 @@ _evas_canvas_coord_world_y_to_screen(const Eo *eo_e EINA_UNUSED, Evas_Public_Dat
    else return (int)((((long long)y - (long long)e->viewport.y) * (long long)e->output.h) /  (long long)e->viewport.h);
 }
 
+EOLIAN static Efl_Input_Device *
+_evas_canvas_default_device_get(Eo *eo_e EINA_UNUSED,
+                                Evas_Public_Data *e,
+                                Efl_Input_Device_Class klass)
+{
+   if (klass == EFL_INPUT_DEVICE_CLASS_SEAT)
+     return e->default_seat;
+   if (klass == EFL_INPUT_DEVICE_CLASS_MOUSE)
+     return e->default_mouse;
+   if (klass == EFL_INPUT_DEVICE_CLASS_KEYBOARD)
+     return e->default_keyboard;
+   return NULL;
+}
+
 EAPI int
 evas_render_method_lookup(const char *name)
 {
@@ -807,7 +821,25 @@ evas_output_method_set(Evas *eo_e, int render_method)
    evas_module_ref(em);
    /* get the engine info struct */
    if (e->engine.func->info) e->engine.info = e->engine.func->info(eo_e);
-   return;
+
+   //Wayland already handle seats.
+   if (render_method == evas_render_method_lookup("wayland_shm") ||
+       render_method == evas_render_method_lookup("wayland_egl"))
+     return;
+
+   e->default_seat = evas_device_add_full(eo_e, "default", "The default seat",
+                                          NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
+                                          EVAS_DEVICE_SUBCLASS_NONE);
+   e->default_mouse = evas_device_add_full(eo_e, "keyboard",
+                                           "The default mouse",
+                                           e->default_seat, NULL,
+                                           EVAS_DEVICE_CLASS_MOUSE,
+                                           EVAS_DEVICE_SUBCLASS_NONE);
+   e->default_keyboard = evas_device_add_full(eo_e, "keyboard",
+                                              "The default keyboard",
+                                              e->default_seat, NULL,
+                                              EVAS_DEVICE_CLASS_KEYBOARD,
+                                              EVAS_DEVICE_SUBCLASS_NONE);
 }
 
 EAPI int

@@ -1116,6 +1116,16 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
            re-compute of that data etc.
          ]]
       }
+      default_device_get {
+         [[Return the default device of a given type.
+           \@note Currently Evas only creates a seat, mouse and keyboard.
+           @since 1.19
+         ]]
+         params {
+            @in type: Efl.Input.Device.Class; [[The class of the default device to fetch.]]
+         }
+         return: Efl.Input.Device; [[The default device or $null on error.]]
+      }
       coord_world_y_to_screen @const {
          [[Convert/scale a canvas coordinate into output screen
            coordinates.
