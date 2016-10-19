@@ -4229,7 +4229,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    re = (Render_Engine_Software_Generic *)data;
-   if (re->outbuf_flush) re->outbuf_flush(re->ob, re->rects, render_mode);
+   if (re->outbuf_flush) re->outbuf_flush(re->ob, re->rects_prev[0], re->rects, render_mode);
    if (re->rects && render_mode != EVAS_RENDER_MODE_ASYNC_INIT)
      {
         evas_common_tilebuf_free_render_rects(re->rects);

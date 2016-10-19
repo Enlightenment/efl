@@ -170,7 +170,7 @@ evas_buffer_outbuf_buf_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 }
 
 void
-evas_buffer_outbuf_buf_switch_buffer(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
+evas_buffer_outbuf_buf_switch_buffer(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
 {
    if (buf->func.switch_buffer)
      {

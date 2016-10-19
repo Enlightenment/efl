@@ -187,7 +187,7 @@ evas_software_xlib_outbuf_free(Outbuf *buf)
      }
    eina_spinlock_release(&(buf->priv.lock));
    evas_software_xlib_outbuf_idle_flush(buf);
-   evas_software_xlib_outbuf_flush(buf, NULL, EVAS_RENDER_MODE_UNDEF);
+   evas_software_xlib_outbuf_flush(buf, NULL, NULL, EVAS_RENDER_MODE_UNDEF);
    if (buf->priv.x11.xlib.gc)
       XFreeGC(buf->priv.x11.xlib.disp, buf->priv.x11.xlib.gc);
    if (buf->priv.x11.xlib.gcm)
@@ -760,7 +760,7 @@ evas_software_xlib_outbuf_free_region_for_update(Outbuf *buf EINA_UNUSED, RGBA_I
 }
 
 void
-evas_software_xlib_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
+evas_software_xlib_outbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
 {
    Eina_List *l;
    RGBA_Image *im;

@@ -123,7 +123,7 @@ _evas_outbuf_free(Outbuf *ob)
         eina_rectangle_free(rect);
      }
 
-   _evas_outbuf_flush(ob, NULL, EVAS_RENDER_MODE_UNDEF);
+   _evas_outbuf_flush(ob, NULL, NULL, EVAS_RENDER_MODE_UNDEF);
    _evas_outbuf_idle_flush(ob);
 
    if (ob->surface) ob->surface->funcs.destroy(ob->surface);
@@ -195,7 +195,7 @@ _evas_surface_damage(struct wl_surface *s, int compositor_version, int w, int h,
 }
 
 void 
-_evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
+_evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    Eina_Rectangle *result;
    RGBA_Image *img;

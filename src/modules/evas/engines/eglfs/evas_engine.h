@@ -111,7 +111,7 @@ Eina_Bool evas_outbuf_update_region_first_rect(Outbuf *ob);
 void *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
-void evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
+void evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
 Evas_Engine_GL_Context* evas_outbuf_gl_context_get(Outbuf *ob);
 void *evas_outbuf_egl_display_get(Outbuf *ob);
 Context_3D *evas_outbuf_gl_context_new(Outbuf *ob);

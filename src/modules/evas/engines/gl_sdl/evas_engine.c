@@ -68,7 +68,7 @@ _outbuf_get_rot(Outbuf *ob EINA_UNUSED)
 }
 
 static void
-_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
+_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
 {
    SDL_GL_SwapWindow(ob->window);
 }

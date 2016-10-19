@@ -356,7 +356,7 @@ evas_software_ddraw_outbuf_free_region_for_update(Outbuf     *buf EINA_UNUSED,
 }
 
 void
-evas_software_ddraw_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
+evas_software_ddraw_outbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    Eina_List *l;
    RGBA_Image       *im;

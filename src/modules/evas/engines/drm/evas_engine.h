@@ -77,7 +77,7 @@ Render_Engine_Swap_Mode _outbuf_state_get(Outbuf *ob);
 void *_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void _outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
-void _outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
+void _outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
 void _outbuf_redraws_clear(Outbuf *ob);
 
 #endif

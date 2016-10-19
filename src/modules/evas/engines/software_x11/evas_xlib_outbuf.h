@@ -38,7 +38,7 @@ void  *evas_software_xlib_outbuf_new_region_for_update (Outbuf *buf,
 void         evas_software_xlib_outbuf_free_region_for_update (Outbuf     *buf,
                                                                RGBA_Image *update);
 
-void         evas_software_xlib_outbuf_flush (Outbuf *buf, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
+void         evas_software_xlib_outbuf_flush (Outbuf *buf, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
 
 void         evas_software_xlib_outbuf_idle_flush (Outbuf *buf);
 

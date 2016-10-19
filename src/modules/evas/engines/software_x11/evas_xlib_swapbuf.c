@@ -34,7 +34,7 @@ evas_software_xlib_swapbuf_init(void)
 void
 evas_software_xlib_swapbuf_free(Outbuf *buf)
 {
-   evas_software_xlib_swapbuf_flush(buf, NULL, EVAS_RENDER_MODE_UNDEF);
+   evas_software_xlib_swapbuf_flush(buf, NULL, NULL, EVAS_RENDER_MODE_UNDEF);
    evas_software_xlib_swapbuf_idle_flush(buf);
    if (buf->priv.pal)
      evas_software_xlib_x_color_deallocate
@@ -315,7 +315,7 @@ evas_software_xlib_swapbuf_free_region_for_update(Outbuf *buf EINA_UNUSED, RGBA_
 }
 
 void
-evas_software_xlib_swapbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
+evas_software_xlib_swapbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 

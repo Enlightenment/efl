@@ -1540,8 +1540,10 @@ eng_outbuf_push_free_region_for_update(Outbuf *ob EINA_UNUSED,
 }
 
 void
-eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
+eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode)
 {
+   Tilebuf_Rect *rects = buffer_damage;
+
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
 
    if (!_re_wincheck(ob)) goto end;

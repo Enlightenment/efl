@@ -53,7 +53,7 @@ typedef void (*Outbuf_Idle_Flush)(Outbuf *ob);
 typedef void (*Outbuf_Free_Region_For_Update)(Outbuf *ob, RGBA_Image *update);
 typedef void (*Outbuf_Free)(Outbuf *ob);
 typedef int (*Outbuf_Get_Rot)(Outbuf *ob);
-typedef void (*Outbuf_Flush)(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
+typedef void (*Outbuf_Flush)(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
 typedef void (*Outbuf_Redraws_Clear)(Outbuf *ob);
 
 struct _Render_Engine_Software_Generic

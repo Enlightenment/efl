@@ -135,7 +135,7 @@ Eina_Bool _evas_shm_surface_create(Surface *s, int w, int h, int num_buff);
 
 Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info);
 void _evas_outbuf_free(Outbuf *ob);
-void _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
+void _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
 void _evas_outbuf_idle_flush(Outbuf *ob);
 
 Render_Engine_Swap_Mode _evas_outbuf_swap_mode_get(Outbuf *ob);
