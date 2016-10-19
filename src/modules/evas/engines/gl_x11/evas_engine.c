@@ -79,6 +79,10 @@ glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
 
 #ifdef GL_GLES
 
+#if !defined(EGL_KHR_cl_event2) && !defined(EGL_VERSION_1_5)
+typedef intptr_t EGLAttribKHR;
+#endif
+
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 EGLImageKHR (*glsym_eglCreateImage)            (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttribKHR *e) = NULL;
 EGLImageKHR (*glsym_eglCreateImageKHR)         (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, EGLint *e) = NULL;
