@@ -473,7 +473,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              else
                {
                   Eina_Stringshare *mname = eolian_class_c_name_get(cl);
-                  eina_strbuf_append_printf(lbuf, mname);
+                  eina_strbuf_append(lbuf, mname);
                   eina_stringshare_del(mname);
                }
              if (has_params)
