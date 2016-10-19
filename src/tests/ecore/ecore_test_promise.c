@@ -1125,6 +1125,33 @@ START_TEST(efl_test_future_link)
 }
 END_TEST
 
+static Efl_Future *recursive_future = NULL;
+
+static void
+_then_cleanup(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+{
+   efl_future_cancel(recursive_future);
+}
+
+START_TEST(efl_test_recursive_mess)
+{
+    Efl_Promise *p;
+    Future_Ok done = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+
+    ecore_init();
+
+    p = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+    efl_future_use(&recursive_future, efl_promise_future_get(p));
+    efl_future_then(recursive_future, _then_cleanup, _cancel, NULL, &done);
+
+    efl_promise_value_set(p, &value[0], NULL);
+
+    efl_del(p);
+
+    ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_ecore_promise(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_promise);
@@ -1155,4 +1182,5 @@ void ecore_test_ecore_promise(TCase *tc)
    tcase_add_test(tc, efl_test_promise_all);
    tcase_add_test(tc, efl_test_promise_race);
    tcase_add_test(tc, efl_test_future_link);
+   tcase_add_test(tc, efl_test_recursive_mess);
 }
