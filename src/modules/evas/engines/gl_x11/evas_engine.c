@@ -80,8 +80,8 @@ glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
 #ifdef GL_GLES
 
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
-EGLImage (*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
-EGLImage (*glsym_eglCreateImageKHR)            (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, EGLint *e) = NULL;
+EGLImageKHR (*glsym_eglCreateImage)            (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
+EGLImageKHR (*glsym_eglCreateImageKHR)         (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, EGLint *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 unsigned int   (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
