@@ -2665,6 +2665,48 @@ evas_event_feed_multi_move(Eo *eo_e, int d, int x, int y, double rad, double rad
 }
 
 static void
+_key_event_dispatch(Evas_Public_Data *e, void *event_info,
+                    Efl_Input_Device *device,
+                    const Efl_Event_Description *efl_event_desc,
+                    Evas_Callback_Type evas_event_type, int event_id)
+{
+   Eo *focused;
+
+   if (!device)
+     device = e->default_seat;
+   else
+     {
+        const char *name = efl_input_device_name_get(device);
+
+        while ((device = efl_input_device_parent_get(device)))
+          {
+             if (efl_input_device_type_get(device) == EFL_INPUT_DEVICE_CLASS_SEAT)
+               break;
+          }
+        if (!device)
+          {
+             ERR("Could not find the parent seat from device name '%s'. Using default seat instead", name);
+             device = e->default_seat;
+          }
+     }
+
+   focused = eina_hash_find(e->focused_objects, &device);
+
+   if (!focused)
+     return;
+
+   Evas_Object_Protected_Data *focused_obj =
+     efl_data_scope_get(focused, EFL_CANVAS_OBJECT_CLASS);
+
+   if (!e->is_frozen && !evas_event_freezes_through(focused, focused_obj))
+     {
+        evas_object_event_callback_call(focused, focused_obj,
+                                        evas_event_type, event_info,
+                                        event_id, efl_event_desc);
+     }
+}
+
+static void
 _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
 {
    Eina_Bool exclusive = EINA_FALSE;
@@ -2738,15 +2780,9 @@ _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev
                }
           }
      }
-   if ((e->focused) && (!exclusive))
-     {
-        Evas_Object_Protected_Data *focused_obj = efl_data_scope_get(e->focused, EFL_CANVAS_OBJECT_CLASS);
-        if (!e->is_frozen && !evas_event_freezes_through(e->focused, focused_obj))
-          {
-             evas_object_event_callback_call(e->focused, focused_obj, EVAS_CALLBACK_KEY_DOWN, evt,
-                                             event_id, EFL_EVENT_KEY_DOWN);
-          }
-     }
+   if (!exclusive)
+     _key_event_dispatch(e, evt, ev->device, EFL_EVENT_KEY_DOWN,
+                         EVAS_CALLBACK_KEY_DOWN, event_id);
    _evas_post_event_callback_call(e->evas, e);
    _evas_unwalk(e);
 
@@ -2828,16 +2864,9 @@ _canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
                }
           }
      }
-   if ((e->focused) && (!exclusive))
-     {
-        Evas_Object_Protected_Data *focused_obj = efl_data_scope_get(e->focused, EFL_CANVAS_OBJECT_CLASS);
-        if (!e->is_frozen && !evas_event_freezes_through(e->focused, focused_obj))
-          {
-             evas_object_event_callback_call
-                   (e->focused, focused_obj, EVAS_CALLBACK_KEY_UP, evt,
-                    event_id, EFL_EVENT_KEY_UP);
-          }
-     }
+   if (!exclusive)
+     _key_event_dispatch(e, evt, ev->device, EFL_EVENT_KEY_UP,
+                         EVAS_CALLBACK_KEY_UP, event_id);
    _evas_post_event_callback_call(e->evas, e);
    _evas_unwalk(e);
 

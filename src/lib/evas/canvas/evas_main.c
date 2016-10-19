@@ -212,6 +212,8 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
 
    _evas_canvas_event_init(eo_obj, e);
 
+   e->focused_objects = eina_hash_pointer_new(NULL);
+
    return eo_obj;
 }
 
@@ -342,6 +344,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    eina_array_flush(&e->image_unref_queue);
    eina_array_flush(&e->glyph_unref_queue);
    eina_array_flush(&e->texts_unref_queue);
+   eina_hash_free(e->focused_objects);
 
    EINA_LIST_FREE(e->touch_points, touch_point)
      free(touch_point);
