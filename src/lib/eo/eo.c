@@ -513,7 +513,11 @@ err_func_src:
    ERR("in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.",
        file, line, func_name, cache->op, klass->desc->name);
 err:
-   if (is_obj) _eo_obj_pointer_done((Eo_Id)eo_id);
+   if (is_obj)
+     {
+        _efl_unref(obj);
+        _eo_obj_pointer_done((Eo_Id)eo_id);
+     }
    return EINA_FALSE;
 
    // yes - special "move out of hot path" code blobs with goto's for
