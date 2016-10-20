@@ -147,7 +147,7 @@ void assign_out_impl(efl::eina::string_view* view, const char* string, Tag)
 template <typename Tag>
 void assign_out_impl(efl::eina::stringshare& to, const char* from, Tag)
 {
-  to = {from};
+  to = from;
 }
 template <typename T>
 void assign_out_impl(T*& lhs, T& rhs, tag<T*, T>) // optional
@@ -167,7 +167,7 @@ void assign_out_impl(eina::value& lhs, Eina_Value& rhs, Tag)
   Eina_Value* v = eina_value_new(EINA_VALUE_TYPE_CHAR);
   eina_value_flush(v);
   eina_value_copy(&rhs, v);
-  lhs = {v};
+  lhs.reset(v);
   eina_value_flush(&rhs);
 }
 // This is a invalid use-case that is used in EFL. This leaks
@@ -177,7 +177,7 @@ void assign_out_impl(eina::value_view& lhs, Eina_Value& rhs, Tag)
   Eina_Value* v = eina_value_new(EINA_VALUE_TYPE_CHAR);
   eina_value_flush(v);
   eina_value_copy(&rhs, v);
-  lhs = {v};
+  lhs.reset(v);
 }
 template <typename T>
 void assign_out_impl(efl::eina::list<T>& lhs, Eina_List* rhs, tag<efl::eina::list<T>&, Eina_List*, true>)

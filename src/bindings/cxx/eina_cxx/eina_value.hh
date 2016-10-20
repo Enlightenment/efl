@@ -338,8 +338,8 @@ public:
    * @brief Create an generic value storage holding the given argument.
    * @param v Value to be stored.
    */
-  template <typename T>
-  value_view(T v, typename std::enable_if<_eina_value_traits<T>::is_specialized::value>::type* = 0)
+  template <typename T, typename Enable = typename std::enable_if<_eina_value_traits<T>::is_specialized::value>::type>
+  value_view(T v)
   {
     primitive_init(v);
   }
@@ -462,6 +462,12 @@ public:
     return _raw;
   }
 
+  void reset(Eina_Value* v)
+  {
+    value_view tmp(v);
+    tmp.swap(*this);
+  }
+  
   /**
    * Type for a constant pointer to an @c Eina_Value_Type.
    * Describes the type of the data being stored.
@@ -604,7 +610,7 @@ inline bool operator!=(value_view const& lhs, value_view const& rhs)
 /**
  * Store generic value
  */
-struct value :  value_view
+struct value : value_view
 {
    using value_view::value_view;
 

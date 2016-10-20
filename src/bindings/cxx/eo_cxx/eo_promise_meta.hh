@@ -248,6 +248,7 @@ typename std::enable_if<std::is_same<A0, void>::value>::type
 future_invoke(F f, Efl_Event const* event, std::integral_constant<bool, IsRace>)
 {
    Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
+   static_cast<void>(info);
    try
      {
         f();

@@ -34,15 +34,15 @@ struct wait_state
    Eina_Error error;
 };
 
-static void get_error_cb(void* data, Efl_Event const* event)
-{ 
-   struct wait_state<>* wait_state = static_cast<struct wait_state<>*>(data);
+inline void get_error_cb(void* data, Efl_Event const* event)
+{
+   wait_state<>* wait_state_ = static_cast<wait_state<>*>(data);
    Efl_Future_Event_Failure* info = static_cast<Efl_Future_Event_Failure*>(event->info);
-   std::unique_lock<std::mutex> l(wait_state->mutex);
-   wait_state->error = info->error;
-   wait_state->has_failed = true;
-   wait_state->available = true;
-   wait_state->cv.notify_one();
+   std::unique_lock<std::mutex> l(wait_state_->mutex);
+   wait_state_->error = info->error;
+   wait_state_->has_failed = true;
+   wait_state_->available = true;
+   wait_state_->cv.notify_one();
 }
 
 struct shared_future_common
@@ -103,10 +103,10 @@ struct shared_future_common
    }
    static void wait_success(void* data, Efl_Event const*)
    {
-      struct wait_state<>* wait_state = static_cast<struct wait_state<>*>(data);
-      std::unique_lock<std::mutex> l(wait_state->mutex);
-      wait_state->available = true;
-      wait_state->cv.notify_one();
+      wait_state<>* wait_state_ = static_cast<wait_state<>*>(data);
+      std::unique_lock<std::mutex> l(wait_state_->mutex);
+      wait_state_->available = true;
+      wait_state_->cv.notify_one();
    }
 
    typedef Efl_Future* native_handle_type;
@@ -151,13 +151,13 @@ struct shared_future_1_type : shared_future_common
 
    static void get_success(void* data, Efl_Event const* event)
    {
-      struct wait_state<T>* wait_state = static_cast<struct wait_state<T>*>(data);
+      wait_state<T>* wait_state_ = static_cast<wait_state<T>*>(data);
       Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
 
-      std::unique_lock<std::mutex> l(wait_state->mutex);
-      _impl::future_copy_traits<T>::copy(static_cast<T*>(static_cast<void*>(&wait_state->storage)), info);
-      wait_state->available = true;
-      wait_state->cv.notify_one();
+      std::unique_lock<std::mutex> l(wait_state_->mutex);
+      _impl::future_copy_traits<T>::copy(static_cast<T*>(static_cast<void*>(&wait_state_->storage)), info);
+      wait_state_->available = true;
+      wait_state_->cv.notify_one();
    }
 
    typedef shared_future_1_type<T, Progress> _self_type;
@@ -197,13 +197,13 @@ struct shared_race_future_1_type : shared_future_common
 
    static void get_success(void* data, Efl_Event const* event)
    {
-      struct wait_state<T>* wait_state = static_cast<struct wait_state<T>*>(data);
+      wait_state<T>* wait_state_ = static_cast<wait_state<T>*>(data);
       Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
 
-      std::unique_lock<std::mutex> l(wait_state->mutex);
-      _impl::future_copy_traits<T>::copy_race(static_cast<T*>(static_cast<void*>(&wait_state->storage)), info);
-      wait_state->available = true;
-      wait_state->cv.notify_one();
+      std::unique_lock<std::mutex> l(wait_state_->mutex);
+      _impl::future_copy_traits<T>::copy_race(static_cast<T*>(static_cast<void*>(&wait_state_->storage)), info);
+      wait_state_->available = true;
+      wait_state_->cv.notify_one();
    }
 
    typedef shared_race_future_1_type<T> _self_type;
@@ -292,13 +292,13 @@ struct shared_future_varargs_type : shared_future_common
   
    static void get_success(void* data, Efl_Event const* event)
    {
-      struct wait_state<tuple_type>* wait_state = static_cast<struct wait_state<tuple_type>*>(data);
+      wait_state<tuple_type>* wait_state_ = static_cast<wait_state<tuple_type>*>(data);
       Efl_Future_Event_Success* info = static_cast<Efl_Future_Event_Success*>(event->info);
 
       Eina_Accessor* accessor = static_cast<Eina_Accessor*>(info->value);
       std::tuple<typename std::aligned_storage<sizeof(Args), alignof(Args)>::type...> storage_tuple;
 
-      _self_type::read_accessor<0u>(accessor, storage_tuple, wait_state, std::false_type());
+      _self_type::read_accessor<0u>(accessor, storage_tuple, wait_state_, std::false_type());
    }
   
    typedef shared_future_varargs_type<Args...> _self_type;
@@ -477,11 +477,13 @@ shared_future
     = efl_future_then(pdata->future.native_handle(), raw_success_cb, raw_error_cb, nullptr, pdata);
   return shared_future<typename std::result_of<Success(Args...)>::type>{efl_ref(new_future)};
 }
-  
+
+// TODO:
 template <typename...Args, typename F>
 void then(shared_future<Args...> future, F function)
 {
-  
+  static_cast<void>(future);
+  static_cast<void>(function);
 }
 
 template <typename...Args1, typename...Args2, typename...Futures>
