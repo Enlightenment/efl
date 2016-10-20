@@ -23,13 +23,13 @@ typedef Eo Class_Simple;
  *
  * @ingroup Bar
  */
-extern float BAR;
+EWAPI extern float BAR;
 
 /** in header but not in source
  *
  * @ingroup Baz
  */
-extern long BAZ;
+EWAPI extern long BAZ;
 
 
 #endif
