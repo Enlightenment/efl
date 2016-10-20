@@ -684,6 +684,9 @@ _efl_io_copier_efl_object_destructor(Eo *o, Efl_Io_Copier_Data *pd)
 {
    _COPIER_DBG(o, pd);
 
+   if (pd->job)
+     efl_future_cancel(pd->job);
+
    if (efl_io_closer_close_on_destructor_get(o) &&
        (!efl_io_closer_closed_get(o)))
      efl_io_closer_close(o);
