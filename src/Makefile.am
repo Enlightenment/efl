@@ -75,6 +75,7 @@ include Makefile_Elementary.am
 
 include Makefile_Cxx.am
 include Makefile_Eolian_Cxx.am
+include Makefile_Eolian_Csharp.am
 
 include Makefile_Elua.am
 
