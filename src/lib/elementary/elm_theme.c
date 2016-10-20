@@ -399,8 +399,9 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
                   eina_strbuf_append_char(buf, ':');
                   pe += 2;
                }
-             else if ((pe[0] == ':') && (pe[1] == '\\'))
+             else if ((isalpha(pe[0]) && (pe[1] == ':') && pe[2] == '/'))
                {
+                  // Correct processing file path on  Windows OS "<disk>:/"
                   eina_strbuf_append_char(buf, *pe);
                   pe++;
                   eina_strbuf_append_char(buf, *pe);
