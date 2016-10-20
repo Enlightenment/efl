@@ -1512,11 +1512,10 @@ _canvas_event_feed_mouse_updown_legacy(Eo *eo_e, int b, Evas_Button_Flags flags,
 
    ev->data = (void *) data;
    ev->timestamp = timestamp;
-   ev->device = _evas_device_top_get(eo_e);
+   ev->device = efl_ref(_evas_device_top_get(eo_e));
    ev->action = down ? EFL_POINTER_ACTION_DOWN : EFL_POINTER_ACTION_UP;
    ev->button = b;
    ev->button_flags = flags;
-   ev->device = _evas_device_top_get(e->evas);
    ev->radius = 1;
    ev->radius_x = 1;
    ev->radius_y = 1;
@@ -1613,7 +1612,7 @@ evas_event_feed_mouse_cancel(Eo *eo_e, unsigned int timestamp, const void *data)
 
    ev->timestamp = timestamp;
    ev->data = (void *) data;
-   ev->device = _evas_device_top_get(e->evas);
+   ev->device = efl_ref(_evas_device_top_get(e->evas));
 
    _canvas_event_feed_mouse_cancel_internal(e, ev);
 
@@ -1652,7 +1651,6 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
    ev->event_flags = e->default_event_flags;
-   ev->device = efl_ref(_evas_device_top_get(eo_e));
    ev->action = EFL_POINTER_ACTION_WHEEL;
    ev->value_flags |= value_flags;
 
@@ -1677,7 +1675,6 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
    eina_list_free(copy);
    _evas_post_event_callback_call(eo_e, e);
 
-   efl_unref(ev->device);
    efl_del(evt);
    _evas_unwalk(e);
 }
@@ -1695,6 +1692,7 @@ evas_event_feed_mouse_wheel(Eo *eo_e, int direction, int z, unsigned int timesta
    ev->wheel.z = z;
    ev->timestamp = timestamp;
    ev->data = (void *) data;
+   ev->device = efl_ref(_evas_device_top_get(eo_e));
 
    _canvas_event_feed_mouse_wheel_internal(eo_e, ev);
    efl_del(evt);
@@ -2069,7 +2067,7 @@ _canvas_event_feed_mouse_move_legacy(Evas *eo_e, Evas_Public_Data *e, int x, int
 
    ev->data = (void *) data;
    ev->timestamp = timestamp;
-   ev->device = _evas_device_top_get(eo_e);
+   ev->device = efl_ref(_evas_device_top_get(eo_e));
    ev->cur.x = x;
    ev->cur.y = y;
 
@@ -2243,7 +2241,7 @@ _canvas_event_feed_mouse_inout_legacy(Eo *eo_e, unsigned int timestamp,
 
    ev->timestamp = timestamp;
    ev->data = (void *) data;
-   ev->device = _evas_device_top_get(eo_e);
+   ev->device = efl_ref(_evas_device_top_get(eo_e));
 
    if (in)
      _canvas_event_feed_mouse_in_internal(eo_e, ev);
@@ -2443,7 +2441,7 @@ _canvas_event_feed_multi_internal(Evas *eo_e, Evas_Public_Data *e,
    ev->button_flags = flags;
    ev->timestamp = timestamp;
    ev->data = (void *) data;
-   ev->device = _evas_device_top_get(eo_e);
+   ev->device = efl_ref(_evas_device_top_get(eo_e));
 
    switch (action)
      {
@@ -2854,7 +2852,7 @@ _canvas_event_feed_key_legacy(Eo *eo_e, Evas_Public_Data *e,
    ev->timestamp = timestamp;
    ev->keycode = keycode;
    ev->no_stringshare = EINA_TRUE;
-   ev->device = _evas_device_top_get(e->evas);
+   ev->device = efl_ref(_evas_device_top_get(e->evas));
 
    if (down)
      _canvas_event_feed_key_down_internal(e, ev);
@@ -2943,7 +2941,6 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
    _evas_unwalk(e);
    _evas_object_event_new();
 
-   efl_unref(ev->device);
    efl_del(evt);
 }
 
@@ -3101,7 +3098,7 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
    ev->cur.y = y;
 
    /* FIXME: set proper device based on the device id (X or WL specific) */
-   ev->device = _evas_device_top_get(eo_e); // FIXME
+   ev->device = efl_ref(_evas_device_top_get(eo_e)); // FIXME
    (void) device;
 
    _canvas_event_feed_axis_update_internal(e, ev);
