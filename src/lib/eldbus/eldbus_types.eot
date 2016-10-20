@@ -1,73 +1,82 @@
 import eina_types;
 
-struct Eldbus.Proxy;
+struct Eldbus.Proxy; [[Represents a client object bound to an interface]]
 struct Eldbus.Connection; [[Represents a connection of one the type of connection with the DBus daemon.]]
 struct Eldbus.Object; [[Represents an object path already attached with bus name or unique id]]
 
 enum Eldbus.Introspection.Argument_Direction
 {
-   none = 0,
-   in,
-   out,
+   [[Argument direction]]
+   none = 0, [[No direction]]
+   in, [[Incoming direction]]
+   out, [[Outgoing direction]]
 }
 
 /* DTD conversion form: http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd */
 
 enum Eldbus.Introspection.Property_Access
 {
-   read,
-   write,
-   readwrite,
+   [[Property access rights]]
+   read, [[Property can be read]]
+   write, [[Property can be written]]
+   readwrite, [[Property can be read and written]]
 }
 
 /* FIXME: Properly type all of these lists. */
 struct Eldbus.Introspection.Node
 {
-   name: stringshare; [[optional]]
-   nodes: list<void *>;
-   interfaces: list<void *>;
+   [[DBus Node]]
+   name: stringshare; [[Node name (optional)]]
+   nodes: list<void *>; [[List with nodes]]
+   interfaces: list<void *>; [[List with interfaces]]
 }
 
 struct Eldbus.Introspection.Interface
 {
-   name: stringshare;
-   methods: list<void *>;
-   signals: list<void *>;
-   properties: list<void *>;
-   annotations: list<void *>;
+   [[DBus Interface]]
+   name: stringshare; [[Interface name]]
+   methods: list<void *>; [[List with interface methods]]
+   signals: list<void *>; [[List with interface signals]]
+   properties: list<void *>; [[List with interface properties]]
+   annotations: list<void *>; [[List with interface annotations]]
 }
 
 struct Eldbus.Introspection.Method
 {
-   name: stringshare;
-   arguments: list<void *>;
-   annotations: list<void *>;
+   [[DBus Method]]
+   name: stringshare; [[Method name]]
+   arguments: list<void *>; [[List with method arguments]]
+   annotations: list<void *>; [[List with method annotations]]
 }
 
 struct Eldbus.Introspection.Property
 {
-   name: stringshare;
-   type: stringshare;
-   access: Eldbus.Introspection.Property_Access;
-   annotations: list<void *>;
+   [[DBus Property]]
+   name: stringshare; [[Property name]]
+   type: stringshare; [[Property type]]
+   access: Eldbus.Introspection.Property_Access; [[Property access rights]]
+   annotations: list<void *>; [[List with property annotations]]
 }
 
 struct Eldbus.Introspection.Annotation
 {
-   name: stringshare;
-   value: stringshare;
+   [[DBus Annotation]]
+   name: stringshare; [[Annotation name]]
+   value: stringshare; [[Annotation value]]
 }
 
 struct Eldbus.Introspection.Argument
 {
-    name: stringshare; [[Optional]]
-    type: stringshare;
-    direction: Eldbus.Introspection.Argument_Direction;
+   [[DBus Argument]]
+    name: stringshare; [[Argument name (optional)]]
+    type: stringshare; [[Argument type]]
+    direction: Eldbus.Introspection.Argument_Direction; [[Argument direction]]
 }
 
 struct Eldbus.Introspection.Signal
 {
-    name: stringshare;
-    arguments: list<Eldbus.Introspection.Argument *>;
-    annotations: list<Eldbus.Introspection.Annotation *>;
+   [[DBus Signal]]
+    name: stringshare; [[Signal name]]
+    arguments: list<Eldbus.Introspection.Argument *>; [[List with signal arguments]]
+    annotations: list<Eldbus.Introspection.Annotation *>; [[List with signal annotations]]
 }
