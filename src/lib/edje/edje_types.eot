@@ -41,6 +41,7 @@ enum Edje.Text.Autocapital_Type {
 }
 
 enum Edje.Input_Hints {
+   [[Input hints]]
    legacy: Edje_Input_Hint;
 
    none                = 0,        [[No active hints
@@ -55,6 +56,7 @@ enum Edje.Input_Hints {
 }
 
 enum Edje.Input_Panel.Lang {
+   [[Input panel language]]
    automatic,    [[Automatic
 
                    @since 1.2]]
@@ -64,6 +66,7 @@ enum Edje.Input_Panel.Lang {
 }
 
 enum Edje.Input_Panel.Return_Key_Type {
+   [[Input panel retrun key types]]
    default, [[Default
 
               @since 1.2]]
@@ -94,6 +97,7 @@ enum Edje.Input_Panel.Return_Key_Type {
 }
 
 enum Edje.Input_Panel.Layout {
+   [[Input panel layout]]
    normal,          [[Default layout]]
    number,          [[Number layout]]
    email,           [[Email layout]]
@@ -151,9 +155,9 @@ enum Edje.Message_Type {
    ]]
    legacy: Edje_Message;
 
-   none = 0,
+   none = 0, [[No message type]]
 
-   signal = 1, [[DONT USE THIS]]
+   signal = 1, [[DO NOT USE THIS]]
 
    string = 2, [[A message with a string as value. Use #Edje_Message_String structs as message body, for this type.]]
    int = 3, [[A message with an integer number as value. Use #Edje_Message_Int structs as message body, for this type.]]
