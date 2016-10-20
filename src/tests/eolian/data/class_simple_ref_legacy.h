@@ -11,6 +11,26 @@ typedef Eo Class_Simple;
 #ifndef _CLASS_SIMPLE_EO_TYPES
 #define _CLASS_SIMPLE_EO_TYPES
 
+#ifndef Foo
+/** doc for constant
+ *
+ * @ingroup Foo
+ */
+#define Foo 5
+#endif
+
+/** doc for global
+ *
+ * @ingroup Bar
+ */
+extern float Bar;
+
+/** in header but not in source
+ *
+ * @ingroup Baz
+ */
+extern long Baz;
+
 
 #endif
 

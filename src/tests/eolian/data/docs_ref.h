@@ -56,6 +56,12 @@ typedef enum
  */
 typedef Bar Alias;
 
+/** Docs for var.
+ *
+ * @ingroup pants
+ */
+extern int pants;
+
 /** Opaque struct docs. See @ref Foo for another struct.
  *
  * @ingroup Opaque
