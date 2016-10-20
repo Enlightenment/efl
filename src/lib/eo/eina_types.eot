@@ -1,24 +1,26 @@
 /* FIXME: Move to Eina when we decide they are handled properly. */
 struct @extern Eina.Rectangle {
-    x: int;
-    y: int;
-    w: int;
-    h: int;
+    [[Eina Rectangle]]
+    x: int; [[X coordinate of the rectangle]]
+    y: int; [[Y coordinate of the rectangle]]
+    w: int; [[Width of the rectangle]]
+    h: int; [[Height of the rectangle]]
 }
 struct @extern Eina.File;
 
 struct @extern Eina.Matrix3 {
-   xx: double;
-   xy: double;
-   xz: double;
+   [[Eina 3x3 Matrix]]
+   xx: double; [[XX matrix value]]
+   xy: double; [[XY matrix value]]
+   xz: double; [[XZ matrix value]]
 
-   yx: double;
-   yy: double;
-   yz: double;
+   yx: double; [[YX matrix value]]
+   yy: double; [[YY matrix value]]
+   yz: double; [[YZ matrix value]]
 
-   zx: double;
-   zy: double;
-   zz: double;
+   zx: double; [[ZX matrix value]]
+   zy: double; [[ZY matrix value]]
+   zz: double; [[ZZ matrix value]]
 }
 
 struct @extern Eina.Inarray;
@@ -35,6 +37,7 @@ struct @extern Eina.File.Direct.Info;
 };*/
 
 enum @extern Eina.Xattr.Flags {
+  [[Eina file extended attributes flags]]
   insert, [[This is the default behaviour, it will either create or replace the extended attribute]]
   replace, [[This will only succeed if the extended attribute previously existed]]
   created [[This will only succeed if the extended attribute wasn't previously set]]
@@ -46,12 +49,12 @@ struct @extern @free(eina_binbuf_free) Eina.Binbuf;
 
 struct @extern Eina.Slice {
     [[A linear, read-only, memory segment]]
-    len: size;
-    mem: const(void_ptr);
+    len: size; [[Length of the memory segment]]
+    mem: const(void_ptr); [[Pointer to memory segment]]
 }
 
 struct @extern Eina.Rw_Slice {
     [[A linear, read-write, memory segment]]
-    len: size;
-    mem: void_ptr;
+    len: size; [[Length of the memory segment]]
+    mem: void_ptr; [[Pointer to memory segment]]
 }
