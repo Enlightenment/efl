@@ -1,9 +1,11 @@
 import eina_types;
 
 enum Efl.Net.Http.Version {
-    v1_0 = 100, [[1.0]]
-    v1_1 = 101, [[1.1]]
-    v2_0 = 200, [[2.0]]
+    [[HTTP protocol versions]]
+
+    v1_0 = 100, [[HTTP version 1.0]]
+    v1_1 = 101, [[HTTP version 1.1]]
+    v2_0 = 200, [[HTTP version 2.0]]
 }
 
 enum Efl.Net.Http.Authentication_Method {
