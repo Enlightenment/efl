@@ -1,4 +1,4 @@
-float Bar = 10.300000f;
+float BAR = 10.300000f;
 
 Eina_Bool _class_simple_a_set(Eo *obj, Evas_Simple_Data *pd, int value);
 

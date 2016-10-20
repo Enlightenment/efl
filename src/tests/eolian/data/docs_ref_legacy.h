@@ -60,7 +60,7 @@ typedef Bar Alias;
  *
  * @ingroup pants
  */
-extern int pants;
+extern int PANTS;
 
 /** Opaque struct docs. See @ref Foo for another struct.
  *

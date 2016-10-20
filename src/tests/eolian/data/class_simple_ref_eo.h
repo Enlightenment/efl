@@ -11,25 +11,25 @@ typedef Eo Class_Simple;
 #ifndef _CLASS_SIMPLE_EO_TYPES
 #define _CLASS_SIMPLE_EO_TYPES
 
-#ifndef Foo
+#ifndef FOO
 /** doc for constant
  *
  * @ingroup Foo
  */
-#define Foo 5
+#define FOO 5
 #endif
 
 /** doc for global
  *
  * @ingroup Bar
  */
-extern float Bar;
+extern float BAR;
 
 /** in header but not in source
  *
  * @ingroup Baz
  */
-extern long Baz;
+extern long BAZ;
 
 
 #endif

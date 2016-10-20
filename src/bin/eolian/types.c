@@ -153,6 +153,7 @@ _var_generate(const Eolian_Variable *vr, Eina_Bool legacy)
         while ((p = strchr(fn, '.')))
           *p = '_';
      }
+   eina_str_toupper(&fn);
    if (!buf) buf = eina_strbuf_new();
    else eina_strbuf_append_char(buf, '\n');
    const Eolian_Type *vt = eolian_variable_base_type_get(vr);
@@ -262,6 +263,7 @@ void eo_gen_types_source_gen(const char *eof, Eina_Strbuf *buf)
         char *fn = strdup(eolian_variable_full_name_get(vr));
         for (char *p = strchr(fn, '.'); p; p = strchr(p, '.'))
           *p = '_';
+        eina_str_toupper(&fn);
 
         const Eolian_Type *vt = eolian_variable_base_type_get(vr);
         Eina_Stringshare *ct = eolian_type_c_type_get(vt);
