@@ -187,6 +187,9 @@ void      eng_gl_context_use(Context_3D *context);
 void eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
 int eng_outbuf_get_rot(Outbuf *ob);
 Render_Engine_Swap_Mode eng_outbuf_swap_mode(Outbuf *ob);
+#ifdef GL_GLES
+void eng_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage);
+#endif
 Eina_Bool eng_outbuf_region_first_rect(Outbuf *ob);
 void *eng_outbuf_new_region_for_update(Outbuf *ob,
                                        int x, int y, int w, int h,

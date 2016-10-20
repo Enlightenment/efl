@@ -1751,7 +1751,11 @@ eng_setup(Evas *eo_e, void *in)
                                                 eng_outbuf_get_rot,
                                                 eng_outbuf_reconfigure,
                                                 eng_outbuf_region_first_rect,
+#ifdef GL_GLES
+                                                eng_outbuf_damage_region_set,
+#else
                                                 NULL,
+#endif
                                                 eng_outbuf_new_region_for_update,
                                                 eng_outbuf_push_updated_region,
                                                 eng_outbuf_push_free_region_for_update,

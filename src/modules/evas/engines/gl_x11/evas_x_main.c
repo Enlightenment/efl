@@ -1479,20 +1479,24 @@ _convert_to_glcoords(int *result, Outbuf *ob, int x, int y, int w, int h)
      }
 }
 
-static void
-_set_damage_rect(Outbuf *ob, int x, int y, int w, int h)
+void
+eng_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage)
 {
-   int rects[4];
-
-   if ((x==0) && (y==0) &&
-       (((w == ob->gl_context->w) && (h == ob->gl_context->h))
-        || ((h == ob->gl_context->w) && (w == ob->gl_context->h))))
+   if (glsym_eglSetDamageRegionKHR)
      {
-        return;
-     }
+        Tilebuf_Rect *tr;
+        int *rect, *rects, count;
 
-   _convert_to_glcoords(rects, ob, x, y, w, h);
-   glsym_eglSetDamageRegionKHR(ob->egl_disp, ob->egl_surface[0], rects, 1);
+        count = eina_inlist_count(EINA_INLIST_GET(damage));
+        rects = alloca(sizeof(int) * 4 * count);
+        rect = rects;
+        EINA_INLIST_FOREACH(damage, tr)
+          {
+             _convert_to_glcoords(rect, ob, tr->x, tr->y, tr->w, tr->h);
+             rect += 4;
+          }
+        glsym_eglSetDamageRegionKHR(ob->egl_disp, ob->egl_surface[0], rects, count);
+     }
 }
 #endif
 
@@ -1513,10 +1517,6 @@ eng_outbuf_new_region_for_update(Outbuf *ob,
         ob->gl_context->master_clip.y = y;
         ob->gl_context->master_clip.w = w;
         ob->gl_context->master_clip.h = h;
-#ifdef GL_GLES
-        if (glsym_eglSetDamageRegionKHR)
-          _set_damage_rect(ob, x, y, w, h);
-#endif
      }
    return ob->gl_context->def_surface;
 }
