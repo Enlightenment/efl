@@ -67,7 +67,7 @@ static Eina_Bool animator_ran = EINA_FALSE;
 
 static int timer_fd_read = -1;
 static int timer_fd_write = -1;
-static Ecore_Thread *timer_thread = NULL;
+static volatile Ecore_Thread *timer_thread = NULL;
 static volatile int timer_event_is_busy = 0;
 
 static void
