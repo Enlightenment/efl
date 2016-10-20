@@ -139,6 +139,49 @@ _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool legacy)
    return buf;
 }
 
+static Eina_Strbuf *
+_var_generate(const Eolian_Variable *vr, Eina_Bool legacy)
+{
+   char *fn = strdup(eolian_variable_full_name_get(vr));
+   char *p = strrchr(fn, '.');
+   if (p) *p = '\0';
+   Eina_Strbuf *buf = eo_gen_docs_full_gen(eolian_variable_documentation_get(vr),
+                                           fn, 0, legacy);
+   if (p)
+     {
+        *p = '_';
+        while ((p = strchr(fn, '.')))
+          *p = '_';
+     }
+   if (!buf) buf = eina_strbuf_new();
+   else eina_strbuf_append_char(buf, '\n');
+   const Eolian_Type *vt = eolian_variable_base_type_get(vr);
+   if (eolian_variable_type_get(vr) == EOLIAN_VAR_CONSTANT)
+     {
+        /* we generate a define macro here, as it's a constant */
+        eina_strbuf_prepend_printf(buf, "#ifndef %s\n", fn);
+        eina_strbuf_append_printf(buf, "#define %s ", fn);
+        const Eolian_Expression *vv = eolian_variable_value_get(vr);
+        Eolian_Value val = eolian_expression_eval_type(vv, vt);
+        Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
+        eina_strbuf_append(buf, lit);
+        Eina_Stringshare *exp = eolian_expression_serialize(vv);
+        if (exp && strcmp(lit, exp))
+          eina_strbuf_append_printf(buf, " /* %s */", exp);
+        eina_stringshare_del(lit);
+        eina_stringshare_del(exp);
+        eina_strbuf_append(buf, "\n#endif");
+     }
+   else
+     {
+        Eina_Stringshare *ct = eolian_type_c_type_get(vt);
+        eina_strbuf_append_printf(buf, "extern %s %s;", ct, fn);
+        eina_stringshare_del(ct);
+     }
+   free(fn);
+   return buf;
+}
+
 void eo_gen_types_header_gen(const char *eof, Eina_Strbuf *buf,
                              Eina_Bool full, Eina_Bool legacy)
 {
@@ -148,6 +191,23 @@ void eo_gen_types_header_gen(const char *eof, Eina_Strbuf *buf,
    EINA_ITERATOR_FOREACH(itr, decl)
      {
         Eolian_Declaration_Type dt = eolian_declaration_type_get(decl);
+
+        if (dt == EOLIAN_DECL_VAR)
+          {
+             const Eolian_Variable *vr = eolian_declaration_variable_get(decl);
+             if (!vr || eolian_variable_is_extern(vr))
+               continue;
+
+             Eina_Strbuf *vbuf = _var_generate(vr, legacy);
+             if (vbuf)
+               {
+                  eina_strbuf_append(buf, eina_strbuf_string_get(vbuf));
+                  eina_strbuf_append(buf, "\n\n");
+                  eina_strbuf_free(vbuf);
+               }
+             continue;
+          }
+
         if ((dt != EOLIAN_DECL_ALIAS) &&
             (dt != EOLIAN_DECL_STRUCT) &&
             (dt != EOLIAN_DECL_ENUM))
