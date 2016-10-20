@@ -336,14 +336,15 @@ _write_stub_header(const char *ofname, const char *ifname)
 }
 
 static Eina_Bool
-_write_source(const char *ofname, const char *ifname)
+_write_source(const char *ofname, const char *ifname, Eina_Bool eot)
 {
    INF("generating source: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
 
    const Eolian_Class *cl = eolian_class_get_by_file(ifname);
+   eo_gen_types_source_gen(ifname, buf);
    eo_gen_source_gen(cl, buf);
-   if (cl)
+   if (cl || (eot && eina_strbuf_length_get(buf)))
      {
         if (_write_file(ofname, buf))
           {
@@ -484,7 +485,7 @@ main(int argc, char **argv)
    const char *eobn = _get_filename(input);
 
    if (!gen_what)
-     gen_what = !strcmp(ext, ".eot") ? GEN_H : (GEN_H | GEN_C);
+     gen_what = GEN_H | GEN_C;
 
    Eina_Bool succ = EINA_TRUE;
    if (gen_what & GEN_H)
@@ -494,7 +495,7 @@ main(int argc, char **argv)
    if (succ && (gen_what & GEN_H_STUB))
      succ = _write_stub_header(outs[_get_bit_pos(GEN_H_STUB)], eobn);
    if (succ && (gen_what & GEN_C))
-     succ = _write_source(outs[_get_bit_pos(GEN_C)], eobn);
+     succ = _write_source(outs[_get_bit_pos(GEN_C)], eobn, !strcmp(ext, ".eot"));
    if (succ && (gen_what & GEN_C_IMPL))
      succ = _write_impl(outs[_get_bit_pos(GEN_C_IMPL)], eobn);
 
