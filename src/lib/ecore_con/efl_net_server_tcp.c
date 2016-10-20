@@ -34,6 +34,13 @@ typedef struct _Efl_Net_Server_Tcp_Data
    Eina_Bool ipv6_only;
 } Efl_Net_Server_Tcp_Data;
 
+EOLIAN Efl_Object *
+_efl_net_server_tcp_efl_object_constructor(Eo *o, Efl_Net_Server_Tcp_Data *pd)
+{
+   pd->ipv6_only = 0xff;
+   return efl_constructor(efl_super(o, MY_CLASS));
+}
+
 EOLIAN static Eina_Error
 _efl_net_server_tcp_efl_net_server_serve(Eo *o, Efl_Net_Server_Tcp_Data *pd, const char *address)
 {
@@ -113,7 +120,12 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, Efl_Net_Server_Tcp_Data *pd, con
 
    /* apply pending value BEFORE bind() */
    if (addr.ss_family == AF_INET6)
-     efl_net_server_tcp_ipv6_only_set(o, pd->ipv6_only);
+     {
+        if (pd->ipv6_only == 0xff)
+          efl_net_server_tcp_ipv6_only_get(o); /* fetch & sync */
+        else
+          efl_net_server_tcp_ipv6_only_set(o, pd->ipv6_only);
+     }
 
    r = bind(fd, (struct sockaddr *)&addr, addrlen);
    if (r < 0)
