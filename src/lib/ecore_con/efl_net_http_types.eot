@@ -9,14 +9,16 @@ enum Efl.Net.Http.Version {
 }
 
 enum Efl.Net.Http.Authentication_Method {
-    none = 0,
-    basic = (1 << 0),
-    digest = (1 << 1),
-    negotiate = (1 << 2),
-    ntlm = (1 << 3),
-    ntlm_winbind = (1 << 4),
-    any_safe = Efl.Net.Http.Authentication_Method.digest | Efl.Net.Http.Authentication_Method.negotiate | Efl.Net.Http.Authentication_Method.ntlm | Efl.Net.Http.Authentication_Method.ntlm_winbind,
-    any = Efl.Net.Http.Authentication_Method.any_safe | Efl.Net.Http.Authentication_Method.basic,
+    [[HTTP authentication methods]]
+
+    none = 0, [[HTTP authentication method none]]
+    basic = (1 << 0), [[HTTP authentication method basic]]
+    digest = (1 << 1), [[HTTP authentication method digest]]
+    negotiate = (1 << 2), [[HTTP authentication method negotiate]]
+    ntlm = (1 << 3), [[HTTP authentication method ntlm]]
+    ntlm_winbind = (1 << 4), [[HTTP authentication method ntlm winbind]]
+    any_safe = Efl.Net.Http.Authentication_Method.digest | Efl.Net.Http.Authentication_Method.negotiate | Efl.Net.Http.Authentication_Method.ntlm | Efl.Net.Http.Authentication_Method.ntlm_winbind, [[HTTP authentication method any safe]]
+    any = Efl.Net.Http.Authentication_Method.any_safe | Efl.Net.Http.Authentication_Method.basic, [[HTTP authentication method any]]
 }
 
 enum Efl.Net.Http.Status {
