@@ -2010,6 +2010,36 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    else if (evgl_engine->direct_override == 1)
      sfc->direct_override = EINA_TRUE;
 
+   if (sfc->direct_override == EINA_TRUE)
+     {
+        if (evas_gl_thread_enabled())
+          {
+             // Now surface direct override is ON.
+             // It means that EvasGL DIRECT rendering is enabled strictly
+             // and Evas GL THREAD rendering needs disabled from now,
+             // and executes runtime FALLBACKS (eglMakeCurrent NULL).
+             // But it may not work correctly if some rendering is not yet completely finished.
+             // So it is recommended that programmer should disable EVAS_GL_THREAD_RENDER flag
+#ifdef GL_GLES
+             int ret;
+             EGLDisplay display = evas_eglGetCurrentDisplay_th();
+
+             DBG("Overriding Thread Rendering ON to OFF (FALLBACK is occurred)");
+
+             ret = evas_eglMakeCurrent_th(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+             if (ret != EGL_TRUE)
+               ERR("Evas GL thread fallback is failed");
+
+             ret = evas_eglMakeCurrent_evgl_th(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+             if (ret != EGL_TRUE)
+               ERR("Evas GL thread fallback is failed");
+#endif
+
+             evas_gl_thread_begin();
+             evas_evgl_thread_begin();
+          }
+     }
+
    // Set the internal config value
    if (!_internal_config_set(eng_data, sfc, cfg))
      {

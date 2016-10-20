@@ -1745,6 +1745,9 @@ eng_gl_surface_direct_renderable_get(void *data, Evas_Native_Surface *ns, Eina_B
    Evas_Engine_GL_Context *gl_context;
    Evas_GL_Image *sfc = surface;
 
+   if (evas_gl_thread_enabled())
+     return EINA_FALSE;
+
    if (!re) return EINA_FALSE;
    EVGLINIT(data, EINA_FALSE);
    if (!ns) return EINA_FALSE;
