@@ -2,10 +2,3 @@ AM_V_MCS = $(am__v_MCS_@AM_V@)
 am__v_MCS_ = $(am__v_MCS_@AM_DEFAULT_V@)
 am__v_MCS_0 = @echo "  MCS  " $@;
 
-.cs.$(OBJEXT):
-	cp $< $@
-
-#.cs.exe:
-#	$(AM_V_MCS) \
-#	$(MKDIR_P) $(dir $@); \
-#	$(MCS) $(MCS_FLAGS) $<
