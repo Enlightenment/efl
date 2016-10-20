@@ -1,7 +1,7 @@
-var Efl.Net.Dialer.Error.COULDNT_CONNECT: Eina.Error;
-var Efl.Net.Dialer.Error.COULDNT_RESOLVE_PROXY: Eina.Error;
-var Efl.Net.Dialer.Error.COULDNT_RESOLVE_HOST: Eina.Error;
-var Efl.Net.Dialer.Error.PROXY_AUTHENTICATION_FAILED: Eina.Error;
+var Efl.Net.Dialer.Error.COULDNT_CONNECT: Eina.Error; [[The dialer could not connect to the remote]]
+var Efl.Net.Dialer.Error.COULDNT_RESOLVE_PROXY: Eina.Error; [[The dialer could not resolve the given proxy server]]
+var Efl.Net.Dialer.Error.COULDNT_RESOLVE_HOST: Eina.Error; [[The dialer could not resolve the given host name ]]
+var Efl.Net.Dialer.Error.PROXY_AUTHENTICATION_FAILED: Eina.Error; [[The dialer failed to authenticate against the proxy server]]
 
 interface Efl.Net.Dialer (Efl.Net.Socket) {
     [[Creates a client socket to reach a remote peer.
