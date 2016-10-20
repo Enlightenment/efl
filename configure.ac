@@ -327,6 +327,7 @@ AC_LANG(C)
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
 AC_PROG_SED
+AC_PROG_MCS
 
 AM_CONDITIONAL([BUILD_EFL_NATIVE], [test "x${cross_compiling}" = "xno"])
 
@@ -374,6 +375,13 @@ if test "${want_coverage}" = "yes" ; then
 fi
 
 AM_CONDITIONAL([EFL_ENABLE_COVERAGE], [test "${want_coverage}" = "yes"])
+
+if test "x${HAVE_MCS}" = "x1"; then
+  have_mcs="yes"
+else
+  have_mcs="no"
+fi
+AM_CONDITIONAL([HAVE_MCS], [test "x${have_mcs}" = "xyes"])
 
 #### Checks for libraries
 
@@ -5816,6 +5824,7 @@ echo "  Cryptography..: ${build_crypto}"
 echo "  X11...........: ${with_x11}"
 echo "  OpenGL........: ${with_opengl} ${opengl_egl}"
 echo "  C++11.........: ${have_cxx11}"
+echo "  C#............: ${have_mcs}"
 echo "  JavaScript....: ${want_js}"
 echo "  JavaScript flg: $EINA_JS_LIBS"
 echo "Eina............: yes (${features_eina} unwind=$have_unwind)"
