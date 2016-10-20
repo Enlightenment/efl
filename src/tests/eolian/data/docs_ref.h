@@ -126,7 +126,7 @@ EOAPI int docs_prop_get(const Eo *obj);
  */
 EOAPI int docs_meth(Eo *obj, int a, float *b, long *c);
 
-EOAPI extern const Efl_Event_Description _DOCS_EVENT_CLICKED;
+EWAPI extern const Efl_Event_Description _DOCS_EVENT_CLICKED;
 
 /** Event docs.
  *

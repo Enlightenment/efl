@@ -644,7 +644,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
       EINA_ITERATOR_FOREACH(itr, ev)
         {
            Eina_Stringshare *evn = eolian_event_c_name_get(ev);
-           eina_strbuf_append(buf, "EOAPI const Efl_Event_Description _");
+           eina_strbuf_append(buf, "EWAPI const Efl_Event_Description _");
            eina_strbuf_append(buf, evn);
            eina_strbuf_append(buf, " =\n   EFL_EVENT_DESCRIPTION");
            if (eolian_event_is_hot(ev))
