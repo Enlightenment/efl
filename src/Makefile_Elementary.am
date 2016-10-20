@@ -118,6 +118,10 @@ elm_public_eolian_files = \
 	lib/elementary/efl_config_global.eo \
 	lib/elementary/efl_ui_clock.eo \
 	lib/elementary/efl_ui_image_factory.eo \
+	lib/elementary/efl_ui_focus_manager.eo \
+	lib/elementary/efl_ui_focus_manager_sub.eo \
+	lib/elementary/efl_ui_focus_object.eo \
+	lib/elementary/efl_ui_focus_user.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
@@ -669,6 +673,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_clock.c \
 	lib/elementary/efl_ui_clock_private.h \
 	lib/elementary/efl_ui_image_factory.c \
+	lib/elementary/efl_ui_focus_manager.c \
+	lib/elementary/efl_ui_focus_manager_sub.c \
+	lib/elementary/efl_ui_focus_object.c \
 	$(NULL)
 
 
@@ -1332,7 +1339,14 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_code_test_widget.c \
 	tests/elementary/elm_code_test_widget_text.c \
 	tests/elementary/elm_code_test_widget_selection.c \
-	tests/elementary/elm_code_test_widget_undo.c
+	tests/elementary/elm_code_test_widget_undo.c \
+	tests/elementary/elm_test_focus_common.c \
+	tests/elementary/elm_test_focus.c \
+	tests/elementary/elm_test_focus_sub.c
+
+tests/elementary/tests_elementary_elm_suite-elm_test_focus.$(OBJEXT): tests/elementary/focus_test.eo.c tests/elementary/focus_test.eo.h
+
+tests/elementary/tests_elementary_elm_suite-elm_test_focus_sub.$(OBJEXT): tests/elementary/focus_test_sub.eo.c tests/elementary/focus_test_sub.eo.h
 
 tests_elementary_elm_suite_CPPFLAGS = \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \

@@ -1,0 +1,18 @@
+mixin Efl.Ui.Focus.User {
+    methods {
+        @property manager {
+            get {
+
+            }
+            values {
+                manager : Efl.Ui.Focus.Manager;
+            }
+        }
+    }
+    implements {
+        @empty .manager.get;
+    }
+    events {
+        manager,changed : Efl.Ui.Focus.Manager; [[emitted if a new manager is the parent for this one]]
+    }
+}

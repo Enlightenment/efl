@@ -1,0 +1,14 @@
+class Focus.Test(Efl.Object, Efl.Ui.Focus.Object) {
+    methods {
+        size {
+            params {
+                rect : Eina.Rectangle;
+            }
+        }
+    }
+    implements {
+        Efl.Object.constructor;
+        Efl.Ui.Focus.Object.geometry_get;
+        Efl.Ui.Focus.Object.focus.set;
+    }
+}

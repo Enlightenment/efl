@@ -1,0 +1,8 @@
+class Focus.Test.Sub(Efl.Ui.Focus.Manager.Sub) {
+    implements {
+        Efl.Ui.Focus.Manager.Sub.select_set;
+        Efl.Ui.Focus.Object.geometry_get;
+        Efl.Ui.Focus.Object.focus.get;
+        Efl.Ui.Focus.User.manager.get;
+    }
+}

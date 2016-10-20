@@ -136,11 +136,25 @@ typedef struct _Elm_Version
 
 EAPI extern Elm_Version *elm_version;
 
+
 /* include these first for general used definitions */
 #include <elm_gen.h>
 #include <elm_general.h>
 #include <elm_config.h>
 #include <elm_focus.h>
+
+#ifdef EFL_EO_API_SUPPORT
+# include "efl_ui_focus_object.eo.h"
+# include "efl_ui_focus_manager.eo.h"
+# include "efl_ui_focus_manager_sub.eo.h"
+# include "efl_ui_focus_user.eo.h"
+#else
+# include "efl_ui_focus_object.eo.legacy.h"
+# include "efl_ui_focus_manager.eo.legacy.h"
+# include "efl_ui_focus_manager_sub.eo.legacy.h"
+# include "efl_ui_focus_user.eo.legacy.h"
+#endif
+
 #include <elm_tooltip.h>
 #include <elm_object_item.h>
 #include <elm_focus_item.h>

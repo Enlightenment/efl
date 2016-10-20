@@ -1,0 +1,28 @@
+mixin Efl.Ui.Focus.Object
+{
+    [[Functions of focusable objects]]
+    methods {
+        geometry_get {
+            params {
+                @out rect : Eina.Rectangle;
+            }
+        }
+        @property focus {
+            [[This gets called by the manager and should never be called by someone else
+
+             It can be used by a implementation of a focus object to adapt to changes which are needed
+            ]]
+            values {
+                focus : bool;
+            }
+        }
+    }
+    implements {
+        @empty .geometry_get;
+        @empty .focus.get;
+    }
+    events {
+        focus;
+        unfocus;
+    }
+}

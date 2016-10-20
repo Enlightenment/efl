@@ -1,0 +1,25 @@
+abstract Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Ui.Focus.Object, Efl.Ui.Focus.User)
+{
+    methods {
+        select_set {
+            params {
+                objects : iterator<Efl.Ui.Focus.Object>;
+            }
+            return : list<Efl.Ui.Focus.Object>;
+        }
+        @property parent {
+            values {
+                node : Efl.Ui.Focus.Object;
+            }
+        }
+    }
+    implements {
+        @empty .select_set;
+        @empty Efl.Ui.Focus.Object.geometry_get;
+        @empty Efl.Ui.Focus.Object.focus.get;
+        @empty Efl.Ui.Focus.User.manager.get;
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+        Efl.Object.finalize;
+    }
+}
