@@ -185,9 +185,15 @@ _accumulate_time(double before, Eina_Bool async)
 static int _render_busy = 0;
 
 static inline Eina_Bool
-_is_obj_in_framespace(Evas_Object_Protected_Data *obj)
+_is_obj_in_framespace(Evas_Object_Protected_Data *obj, Evas_Public_Data *evas)
 {
-   return obj->is_frame;
+   if (obj->is_frame) return EINA_TRUE;
+
+   return !RECTS_INTERSECT(obj->cur->geometry.x, obj->cur->geometry.y,
+                           obj->cur->geometry.w, obj->cur->geometry.h,
+                           evas->framespace.x, evas->framespace.y,
+                           evas->viewport.w - evas->framespace.w,
+                           evas->viewport.h - evas->framespace.h);
 }
 
 static inline void
@@ -1648,7 +1654,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                }
           }
         ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
-        if (!_is_obj_in_framespace(obj))
+        if (!_is_obj_in_framespace(obj, evas))
           _evas_render_framespace_context_clip_clip(evas, ctx);
 
         if (obj->cur->cache.clip.visible || !proxy_src_clip)
@@ -1824,7 +1830,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                           clipper->cur->cache.clip.w,
                                           clipper->cur->cache.clip.h);
                        ENFN->context_clip_set(ENDT, ctx, x + off_x, y + off_y, w, h);
-                       if (!_is_obj_in_framespace(obj))
+                       if (!_is_obj_in_framespace(obj, evas))
                          _evas_render_framespace_context_clip_clip(evas, ctx);
 
                        if (proxy_src_clip)
@@ -2393,7 +2399,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                                                    context,
                                                    x, y, w, h);
 
-                  if (!_is_obj_in_framespace(obj))
+                  if (!_is_obj_in_framespace(obj, e))
                     _evas_render_framespace_context_clip_clip(e, context);
                     
                   /* Clipper masks */
