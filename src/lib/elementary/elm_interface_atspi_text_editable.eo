@@ -3,46 +3,52 @@ interface Elm.Interface.Atspi.Text.Editable ()
    eo_prefix: elm_interface_atspi_text_editable;
    methods {
       @property content @protected {
+         [[Editable content property]]
          set {
-            return: bool;
+            return: bool; [[$true if setting the value succeeded, $false otherwise]]
          }
          values {
-            string: string;
+            string: string; [[Content]]
          }
       }
       insert @protected {
+      [[Insert text at given position]]
          params {
-            @in string: string;
-            @in position: int;
+            @in string: string; [[String to be inserted]]
+            @in position: int; [[Position to insert string]]
          }
-         return: bool;
+         return: bool; [[$true if insert succeeded, $false otherwise]]
       }
       copy @protected {
+      [[Copy text between start and end parameter]]
          params {
-            @in start: int;
-            @in end: int;
+            @in start: int; [[Start position to copy]]
+            @in end: int; [[End position to copy]]
          }
-         return: bool;
+         return: bool; [[$true if copy succeeded, $false otherwise]]
       }
       cut @protected {
+      [[Cut text between start and end parameter]]
          params {
-            @in start: int;
-            @in end: int;
+            @in start: int; [[Start position to cut]]
+            @in end: int; [[End position to cut]]
          }
-         return: bool;
+         return: bool; [[$true if cut succeeded, $false otherwise]]
       }
       delete @protected {
+      [[Delete text between start and end parameter]]
          params {
-            @in start: int;
-            @in end: int;
+            @in start: int; [[Start position to delete]]
+            @in end: int; [[End position to delete]]
          }
-         return: bool;
+         return: bool; [[$true if delete succeeded, $false otherwise]]
       }
       paste @protected {
+      [[Paste text at given position]]
          params {
-            @in position: int;
+            @in position: int; [[Position to insert text]]
          }
-         return: bool;
+         return: bool; [[$true if paste succeeded, $false otherwise]]
       }
    }
 }
