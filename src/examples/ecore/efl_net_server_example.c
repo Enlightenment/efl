@@ -69,8 +69,8 @@ _echo_copier_error(void *data EINA_UNUSED, const Efl_Event *event)
 
    retval = EXIT_FAILURE;
 
-   fprintf(stderr, "ERROR: echo copier %p failed %d, close and del.\n",
-           copier, *perr);
+   fprintf(stderr, "ERROR: echo copier %p failed %d '%s', close and del.\n",
+           copier, *perr, eina_error_msg_get(*perr));
 
    efl_del(copier);
 }
@@ -189,8 +189,8 @@ _send_copier_error(void *data, const Efl_Event *event)
                 remaining.len, EINA_SLICE_STR_PRINT(remaining));
      }
 
-   fprintf(stderr, "ERROR: send copier %p failed %d, check if should close..\n",
-           copier, *perr);
+   fprintf(stderr, "ERROR: send copier %p failed %d '%s', check if should close..\n",
+           copier, *perr, eina_error_msg_get(*perr));
    _send_recv_done(d, copier);
 }
 
@@ -254,8 +254,8 @@ _recv_copier_error(void *data, const Efl_Event *event)
              efl_net_socket_address_remote_get(client),
              slice.len, EINA_SLICE_STR_PRINT(slice));
 
-   fprintf(stderr, "ERROR: receive copier %p failed %d, check if should close..\n",
-           copier, *perr);
+   fprintf(stderr, "ERROR: receive copier %p failed %d '%s', check if should close..\n",
+           copier, *perr, eina_error_msg_get(*perr));
    _send_recv_done(d, copier);
 }
 
@@ -388,7 +388,7 @@ static void
 _server_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
-   fprintf(stderr, "INFO: error: %d\n", *perr);
+   fprintf(stderr, "ERROR: %d '%s'\n", *perr, eina_error_msg_get(*perr));
    retval = EXIT_FAILURE;
    ecore_main_loop_quit();
 }
