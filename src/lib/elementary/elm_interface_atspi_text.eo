@@ -98,7 +98,7 @@ interface Elm.Interface.Atspi.Text ()
       @property attribute @protected {
          get {
             [[Indicate if a text attribute with a given name is set]]
-            return: bool;
+            return: bool; [[$true if attribute name is set, $false otherwise]]
          }
          keys {
             name: string @nonull; [[text attribute name]]
@@ -130,7 +130,7 @@ interface Elm.Interface.Atspi.Text ()
       }
       @property character_extents @protected {
          get {
-            return: bool;
+            return: bool; [[$true if character extents, $false otherwise]]
          }
          keys {
             offset: int;
@@ -174,7 +174,7 @@ interface Elm.Interface.Atspi.Text ()
       }
       @property range_extents @protected {
          get {
-            return: bool;
+            return: bool; [[$true if range extents, $false otherwise]]
          }
          keys {
             screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
@@ -186,46 +186,50 @@ interface Elm.Interface.Atspi.Text ()
          }
       }
       @property selections_count @protected {
+         [[Selection count property]]
          get {
          }
          values {
-            count: int;
+            count: int; [[Selection counter]]
          }
       }
       @property selection @protected {
+         [[Selection property]]
          get {
          }
          set {
-            return: bool;
+            return: bool; [[$true if selection was set, $false otherwise]]
          }
          keys {
-            selection_number: int;
+            selection_number: int; [[Selection number for identification]]
          }
          values {
-            start_offset: int;
-            end_offset: int;
+            start_offset: int; [[Selection start offset]]
+            end_offset: int; [[Selection end offset]]
          }
       }
       selection_add @protected {
+         [[Add selection]]
          params {
-            @in start_offset: int;
-            @in end_offset: int;
+            @in start_offset: int; [[Start selection from this offset]]
+            @in end_offset: int; [[End selection at this offset]]
          }
-         return: bool;
+         return: bool; [[$true if selection was added, $false otherwise]]
       }
       selection_remove @protected {
+         [[Remove selection]]
          params {
-            @in selection_number: int;
+            @in selection_number: int; [[Selection number to be removed]]
          }
-         return: bool;
+         return: bool; [[$true if selection was removed, $false otherwise]]
       }
    }
    events {
-      access,text,bounds,changed;
-      access,text,attributes,changed;
-      access,text,caret,moved;
-      access,text,inserted;
-      access,text,removed;
-      access,text,selection,changed;
+      access,text,bounds,changed; [[Text bounds have changed]]
+      access,text,attributes,changed; [[Text attributes have changed]]
+      access,text,caret,moved; [[Caret moved]]
+      access,text,inserted; [[Text was inserted]]
+      access,text,removed; [[Text was removed]]
+      access,text,selection,changed; [[Text selection has changed]]
    }
 }
