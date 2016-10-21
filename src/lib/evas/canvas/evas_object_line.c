@@ -108,7 +108,7 @@ _evas_line_xy_set(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord x1, Evas_Coord y1,
 
    Evas_Line_Data *o = _pd;
    Evas_Coord min_x, max_x, min_y, max_y;
-   int is, was = 0;
+   Eina_List *was = NULL;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -127,10 +127,8 @@ _evas_line_xy_set(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord x1, Evas_Coord y1,
         if (!evas_event_passes_through(eo_obj, obj) &&
             !evas_event_freezes_through(eo_obj, obj) &&
             !evas_object_is_source_invisible(eo_obj, obj))
-          was = evas_object_is_in_output_rect(eo_obj, obj,
-                                              obj->layer->evas->pointer.x,
-                                              obj->layer->evas->pointer.y,
-                                              1, 1);
+          was = _evas_pointer_list_in_rect_get(obj->layer->evas, eo_obj, obj,
+                                               1, 1);
      }
    if (x1 < x2)
      {
@@ -171,23 +169,13 @@ _evas_line_xy_set(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord x1, Evas_Coord y1,
    evas_object_change(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
-   if (!(obj->layer->evas->is_frozen))
-     {
-        is = evas_object_is_in_output_rect(eo_obj, obj,
-                                           obj->layer->evas->pointer.x,
-                                           obj->layer->evas->pointer.y, 1, 1);
-        if (!evas_event_passes_through(eo_obj, obj) &&
-            !evas_event_freezes_through(eo_obj, obj) &&
-            !evas_object_is_source_invisible(eo_obj, obj))
-          {
-             if ((is ^ was) && obj->cur->visible)
-               evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                          obj->layer->evas->pointer.x,
-                                          obj->layer->evas->pointer.y,
-                                          obj->layer->evas->last_timestamp,
-                                          NULL);
-          }
-     }
+   if (!(obj->layer->evas->is_frozen) &&
+       !evas_event_passes_through(eo_obj, obj) &&
+       !evas_event_freezes_through(eo_obj, obj) &&
+       !evas_object_is_source_invisible(eo_obj, obj) &&
+       obj->cur->visible)
+     _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_TRUE, NULL);
+   eina_list_free(was);
    evas_object_inform_call_move(eo_obj, obj);
    evas_object_inform_call_resize(eo_obj);
 }

@@ -5,7 +5,6 @@
 static void
 _evas_map_calc_geom_change(Evas_Object *eo_obj)
 {
-   int is, was = 0;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return;
    evas_object_change(eo_obj, obj);
@@ -13,17 +12,10 @@ _evas_map_calc_geom_change(Evas_Object *eo_obj)
    if (!(obj->layer->evas->is_frozen))
      {
         evas_object_recalc_clippees(obj);
-        if (!obj->is_smart)
+        if (!obj->is_smart && obj->cur->visible)
           {
-             is = evas_object_is_in_output_rect(eo_obj, obj,
-                                                obj->layer->evas->pointer.x,
-                                                obj->layer->evas->pointer.y, 1, 1);
-             if ((is ^ was) && obj->cur->visible)
-               evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                          obj->layer->evas->pointer.x,
-                                          obj->layer->evas->pointer.y,
-                                          obj->layer->evas->last_timestamp,
-                                          NULL);
+             _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, NULL, eo_obj, obj, 1, 1,
+                          EINA_TRUE, NULL);
           }
      }
    evas_object_inform_call_move(eo_obj, obj);

@@ -105,7 +105,7 @@ _efl_canvas_polygon_point_add(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd, Evas_Coo
    Efl_Canvas_Polygon_Data *o = _pd;
    Efl_Canvas_Polygon_Point *p;
    Evas_Coord min_x, max_x, min_y, max_y;
-   int is, was = 0;
+   Eina_List *was = NULL;
 
    evas_object_async_block(obj);
    if (!obj->layer->evas->is_frozen)
@@ -113,10 +113,8 @@ _efl_canvas_polygon_point_add(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd, Evas_Coo
         if (!evas_event_passes_through(eo_obj, obj) &&
             !evas_event_freezes_through(eo_obj, obj) &&
             !evas_object_is_source_invisible(eo_obj, obj))
-          was = evas_object_is_in_output_rect(eo_obj, obj,
-                                              obj->layer->evas->pointer.x,
-                                              obj->layer->evas->pointer.y,
-                                              1, 1);
+          was = _evas_pointer_list_in_rect_get(obj->layer->evas, eo_obj, obj,
+                                               1, 1);
      }
    if (!o->points)
      {
@@ -184,23 +182,13 @@ _efl_canvas_polygon_point_add(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd, Evas_Coo
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
-   if (!obj->layer->evas->is_frozen)
-     {
-        is = evas_object_is_in_output_rect(eo_obj, obj,
-                                           obj->layer->evas->pointer.x,
-                                           obj->layer->evas->pointer.y, 1, 1);
-        if (!evas_event_passes_through(eo_obj, obj) &&
-            !evas_event_freezes_through(eo_obj, obj) &&
-            !evas_object_is_source_invisible(eo_obj, obj))
-          {
-             if ((is ^ was) && obj->cur->visible)
-               evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                          obj->layer->evas->pointer.x,
-                                          obj->layer->evas->pointer.y,
-                                          obj->layer->evas->last_timestamp,
-                                          NULL);
-          }
-     }
+   if (!obj->layer->evas->is_frozen &&
+       !evas_event_passes_through(eo_obj, obj) &&
+       !evas_event_freezes_through(eo_obj, obj) &&
+       !evas_object_is_source_invisible(eo_obj, obj) &&
+       obj->cur->visible)
+     _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_TRUE, NULL);
+   eina_list_free(was);
    evas_object_inform_call_move(eo_obj, obj);
    evas_object_inform_call_resize(eo_obj);
 }
@@ -211,12 +199,11 @@ _efl_canvas_polygon_points_clear(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Efl_Canvas_Polygon_Data *o = _pd;
    void *list_data;
-   int is, was;
+   Eina_List *was;
 
    evas_object_async_block(obj);
-   was = evas_object_is_in_output_rect(eo_obj, obj,
-                                       obj->layer->evas->pointer.x,
-                                       obj->layer->evas->pointer.y, 1, 1);
+   was = _evas_pointer_list_in_rect_get(obj->layer->evas, eo_obj, obj, 1, 1);
+
    EINA_LIST_FREE(o->points, list_data)
      {
         free(list_data);
@@ -236,15 +223,9 @@ _efl_canvas_polygon_points_clear(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd)
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
-   is = evas_object_is_in_output_rect(eo_obj, obj,
-                                      obj->layer->evas->pointer.x,
-                                      obj->layer->evas->pointer.y, 1, 1);
-   if ((is || was) && obj->cur->visible)
-     evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                obj->layer->evas->pointer.x,
-                                obj->layer->evas->pointer.y,
-                                obj->layer->evas->last_timestamp,
-                                NULL);
+   if (obj->cur->visible)
+     _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_FALSE, NULL);
+   eina_list_free(was);
    evas_object_inform_call_move(eo_obj, obj);
    evas_object_inform_call_resize(eo_obj);
 }

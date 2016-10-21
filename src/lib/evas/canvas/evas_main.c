@@ -262,6 +262,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    Evas_Out *evo;
    int i;
    Eina_Bool del;
+   Evas_Pointer_Data *pdata;
 
    evas_canvas_async_block(e);
    if (e->walking_list == 0) evas_render_idle_flush(eo_e);
@@ -320,7 +321,6 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    e->walking_list--;
 
    evas_font_path_clear(eo_e);
-   e->pointer.object.in = eina_list_free(e->pointer.object.in);
 
    if (e->name_hash) eina_hash_free(e->name_hash);
    e->name_hash = NULL;
@@ -377,6 +377,12 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 
    _evas_device_cleanup(eo_e);
    e->focused_by = eina_list_free(e->focused_by);
+
+   EINA_LIST_FREE(e->pointers, pdata)
+     {
+        eina_list_free(pdata->object.in);
+        free(pdata);
+     }
 
    eina_lock_free(&(e->lock_objects));
    eina_spinlock_free(&(e->render.lock));
@@ -501,29 +507,88 @@ evas_object_image_extension_can_load_fast_get(const char *file)
 }
 
 EOLIAN static void
-_evas_canvas_pointer_output_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *x, int *y)
+_evas_canvas_pointer_output_xy_by_device_get(Eo *eo_e EINA_UNUSED,
+                                             Evas_Public_Data *e,
+                                             Efl_Input_Device *dev,
+                                             int *x, int *y)
 {
-   if (x) *x = e->pointer.x;
-   if (y) *y = e->pointer.y;
+   Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, dev);
+
+   if (!pdata)
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+     }
+   else
+     {
+        if (x) *x = pdata->x;
+        if (y) *y = pdata->y;
+     }
+
 }
 
 EOLIAN static void
-_evas_canvas_pointer_canvas_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y)
+_evas_canvas_pointer_canvas_xy_by_device_get(Eo *eo_e EINA_UNUSED,
+                                             Evas_Public_Data *e,
+                                             Efl_Input_Device *dev,
+                                             int *x, int *y)
 {
-   if (x) *x = e->pointer.x;
-   if (y) *y = e->pointer.y;
+   Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, dev);
+
+   if (!pdata)
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+     }
+   else
+     {
+        if (x) *x = pdata->x;
+        if (y) *y = pdata->y;
+     }
 }
 
 EOLIAN static unsigned int
-_evas_canvas_pointer_button_down_mask_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_pointer_button_down_mask_by_device_get(Eo *eo_e EINA_UNUSED,
+                                                    Evas_Public_Data *e,
+                                                    Efl_Input_Device *dev)
 {
-   return e->pointer.button;
+   Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, dev);
+   if (!pdata) return 0;
+   return pdata->button;
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_pointer_inside_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_pointer_inside_by_device_get(Eo *eo_e EINA_UNUSED,
+                                          Evas_Public_Data *e,
+                                          Efl_Input_Device *dev)
 {
-   return e->pointer.inside;
+   Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, dev);
+   if (!pdata) return EINA_FALSE;
+   return pdata->inside;
+}
+
+EOLIAN static void
+_evas_canvas_pointer_output_xy_get(Eo *eo_e, Evas_Public_Data *e, int *x, int *y)
+{
+   return _evas_canvas_pointer_output_xy_by_device_get(eo_e, e, NULL, x, y);
+}
+
+EOLIAN static void
+_evas_canvas_pointer_canvas_xy_get(Eo *eo_e, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y)
+{
+   return _evas_canvas_pointer_canvas_xy_by_device_get(eo_e, e, NULL, x, y);
+}
+
+EOLIAN static unsigned int
+_evas_canvas_pointer_button_down_mask_get(Eo *eo_e, Evas_Public_Data *e)
+{
+   return _evas_canvas_pointer_button_down_mask_by_device_get(eo_e, e, NULL);
+}
+
+EOLIAN static Eina_Bool
+_evas_canvas_pointer_inside_get(Eo *eo_e, Evas_Public_Data *e)
+{
+   return _evas_canvas_pointer_inside_by_device_get(eo_e, e, NULL);
 }
 
 EOLIAN static void
@@ -1002,6 +1067,72 @@ evas_output_viewport_get(const Evas *eo_e, Evas_Coord *x, Evas_Coord *y, Evas_Co
    if (y) *y = e->viewport.y;
    if (w) *w = e->viewport.w;
    if (h) *h = e->viewport.h;
+}
+
+Evas_Pointer_Data *
+_evas_pointer_data_by_device_get(Evas_Public_Data *edata, Efl_Input_Device *pointer)
+{
+   Eina_List *l;
+   Evas_Pointer_Data *pdata;
+
+   if (!pointer)
+     pointer = edata->default_mouse;
+
+   EINA_LIST_FOREACH(edata->pointers, l, pdata)
+     {
+        if (pdata->pointer == pointer)
+          return pdata;
+     }
+   return NULL;
+}
+
+Eina_Bool
+_evas_pointer_data_add(Evas_Public_Data *edata, Efl_Input_Device *pointer)
+{
+   Evas_Pointer_Data *pdata;
+
+   pdata = calloc(1, sizeof(Evas_Pointer_Data));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, EINA_FALSE);
+
+   pdata->pointer = pointer;
+   edata->pointers = eina_list_append(edata->pointers, pdata);
+   return EINA_TRUE;
+}
+
+void
+_evas_pointer_data_remove(Evas_Public_Data *edata, Efl_Input_Device *pointer)
+{
+   Eina_List *l;
+   Evas_Pointer_Data *pdata;
+
+   EINA_LIST_FOREACH(edata->pointers, l, pdata)
+     {
+        if (pdata->pointer == pointer)
+          {
+             edata->pointers = eina_list_remove_list(edata->pointers, l);
+             eina_list_free(pdata->object.in);
+             free(pdata);
+             break;
+          }
+     }
+}
+
+Eina_List *
+_evas_pointer_list_in_rect_get(Evas_Public_Data *edata, Evas_Object *obj,
+                               Evas_Object_Protected_Data *obj_data,
+                               int w, int h)
+{
+   Eina_List *l, *list = NULL;
+   Evas_Pointer_Data *pdata;
+
+   EINA_LIST_FOREACH(edata->pointers, l, pdata)
+     {
+        if (evas_object_is_in_output_rect(obj, obj_data, pdata->x,
+                                          pdata->y, w, h))
+          list = eina_list_append(list, pdata);
+     }
+
+   return list;
 }
 
 #include "canvas/evas_canvas.eo.c"

@@ -211,9 +211,20 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             ]]
          }
       }
+      @property pointer_canvas_xy_by_device {
+         [[This function returns the current known default pointer coordinates. @since 1.19]]
+         get {}
+         keys {
+           dev: Efl.Input.Device; [[The pointer device.]]
+         }
+         values {
+            x: Evas.Coord; [[The pointer to a Evas_Coord to be filled in.]]
+            y: Evas.Coord; [[The pointer to a Evas_Coord to be filled in.]]
+         }
+      }
       @property pointer_canvas_xy {
          get {
-            [[This function returns the current known pointer coordinates
+            [[This function returns the current known default pointer coordinates
 
               This function returns the current known canvas unit
               coordinates of the mouse pointer and sets the contents of
@@ -291,9 +302,20 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             return: bool; [[$true if changed, $false otherwise]]
          }
       }
+      @property pointer_output_xy_by_device {
+         [[This function returns the current known pointer coordinates. @since 1.19]]
+         get {}
+         keys {
+            dev: Efl.Input.Device; [[The mouse device.]]
+         }
+         values {
+            x: int; [[The pointer to an integer to be filled in.]]
+            y: int; [[The pointer to an integer to be filled in.]]
+         }
+      }
       @property pointer_output_xy {
          get {
-            [[This function returns the current known pointer coordinates.
+            [[This function returns the current known default pointer coordinates.
 
               This function returns the current known screen/output
               coordinates of the mouse pointer and sets the contents of
@@ -317,9 +339,20 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             y: int; [[The pointer to an integer to be filled in.]]
          }
       }
+      @property pointer_inside_by_device {
+         [[Returns whether the mouse pointer is logically inside the
+           canvas. @since 1.19]]
+         keys {
+            dev: Efl.Input.Device; [[The pointer device.]]
+         }
+         get {}
+         values {
+            in: bool; [[$true if the pointer is inside, $false otherwise.]]
+         }
+      }
       @property pointer_inside {
          get {
-            [[Returns whether the mouse pointer is logically inside the
+            [[Returns whether the default mouse pointer is logically inside the
               canvas.
 
               When this function is called it will return a value of either
@@ -405,9 +438,20 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             ]]
          }
       }
+      @property pointer_button_down_mask_by_device {
+         [[Returns a bitmask with the mouse buttons currently pressed,
+              set to 1.]]
+         keys {
+            dev: Efl.Input.Device; [[The mouse device.]]
+         }
+         get {}
+         values {
+            mask: uint; [[A bitmask of the currently depressed buttons on the canvas.]]
+         }
+      }
       @property pointer_button_down_mask {
          get {
-            [[Returns a bitmask with the mouse buttons currently pressed,
+            [[Returns a bitmask with the default mouse buttons currently pressed,
               set to 1.
 
               Calling this function will return a 32-bit integer with the
