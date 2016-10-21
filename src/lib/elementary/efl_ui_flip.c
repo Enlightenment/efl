@@ -873,6 +873,41 @@ _state_update(Evas_Object *obj)
 }
 
 static void
+_cross_fade_update(Evas_Object *obj, double t)
+{
+   int ca, cb;
+   Evas_Object *aclip, *bclip;
+   Eina_Bool front;
+   double s;
+   EFL_UI_FLIP_DATA_GET(obj, sd);
+   front = sd->next_state;
+
+   s = sin(t * M_PI_2);  // fade in sinusoidally
+   t = s * s;
+   ca = 255 * t;
+   if (ca < 0) ca = 0;
+   if (ca > 255) ca = 255;
+
+   cb = sqrt(255 * 255 - ca * ca);
+   if (cb < 0) cb = 0;
+   if (cb > 255) cb = 255;
+
+   if (front)
+     {
+         aclip = sd->front.clip;
+         bclip = sd->back.clip;
+     }
+   else
+     {
+         aclip = sd->back.clip;
+         bclip = sd->front.clip;
+     }
+
+   evas_object_color_set(aclip, ca, ca, ca, ca);
+   evas_object_color_set(bclip, cb, cb, cb, cb);
+}
+
+static void
 _state_end(Efl_Ui_Flip_Data *sd)
 {
    _state_slices_clear(sd);
@@ -1308,6 +1343,13 @@ _flip(Evas_Object *obj)
              _flip_show_hide(obj);
              _state_update(obj);
           }
+        else if (sd->mode == ELM_FLIP_CROSS_FADE)
+          {
+             sd->dir = 0;
+             sd->started = EINA_TRUE;
+             sd->pageflip = EINA_FALSE;
+             _cross_fade_update(obj, t);
+          }
         else
           _flip_do(obj, t, sd->mode, 0, 0);
      }
@@ -1337,6 +1379,14 @@ _flip(Evas_Object *obj)
           sd->state = sd->next_state;
         _configure(obj);
         _flip_show_hide(obj);
+
+        if (sd->mode == ELM_FLIP_CROSS_FADE)
+          {
+             // Make the content fully opaque again
+             evas_object_color_set(sd->front.clip, 255, 255, 255, 255);
+             evas_object_color_set(sd->back.clip, 255, 255, 255, 255);
+          }
+
         efl_event_callback_legacy_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_DONE, NULL);
 
         // update the new front and back object.
@@ -1905,7 +1955,6 @@ _internal_elm_flip_go_to(Evas_Object *obj,
                 Elm_Flip_Mode mode)
 {
    if (!sd->animator) sd->animator = ecore_animator_add(_animate, obj);
-   _flip_show_hide(obj);
 
    sd->mode = mode;
    sd->start = ecore_loop_time_get();
@@ -1919,6 +1968,33 @@ _internal_elm_flip_go_to(Evas_Object *obj,
      sd->pageflip = EINA_TRUE;
    // force calc to contents are the right size before transition
    evas_smart_objects_calculate(evas_object_evas_get(obj));
+
+   if (sd->mode == ELM_FLIP_CROSS_FADE)
+     {
+        // Convention: a is fading in, b is fading out
+        Evas_Object *a, *b;
+        if (front)
+          {
+             a = sd->front.content;
+             b = sd->back.content;
+          }
+        else
+          {
+             a = sd->back.content;
+             b = sd->front.content;
+          }
+
+        // Stack fade-in content on top of fade-out content
+        if (a && b) evas_object_stack_above(a, b);
+
+        evas_object_show(sd->front.clip);
+        evas_object_show(sd->back.clip);
+     }
+   else
+     {
+        _flip_show_hide(obj);
+     }
+
    _flip(obj);
    // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow)
    evas_object_map_enable_set(sd->front.content, EINA_FALSE);
@@ -1928,6 +2004,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
    evas_smart_objects_calculate(evas_object_evas_get(obj));
    _configure(obj);
    // FIXME: end hack
+
    efl_event_callback_legacy_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
 
    // set focus to the content object when flip go to is called

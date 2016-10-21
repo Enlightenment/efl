@@ -22,6 +22,7 @@ typedef Efl_Ui_Flip_Mode                  Elm_Flip_Mode;
 #define ELM_FLIP_PAGE_RIGHT               EFL_UI_FLIP_PAGE_RIGHT
 #define ELM_FLIP_PAGE_UP                  EFL_UI_FLIP_PAGE_UP
 #define ELM_FLIP_PAGE_DOWN                EFL_UI_FLIP_PAGE_DOWN
+#define ELM_FLIP_CROSS_FADE               EFL_UI_FLIP_CROSS_FADE
 
 typedef enum
 {

@@ -13,7 +13,8 @@ enum Efl.Ui.Flip.Mode
    page_left,
    page_right,
    page_up,
-   page_down
+   page_down,
+   cross_fade,
 }
 
 enum Efl.Ui.Flip.Interaction
@@ -159,9 +160,11 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
            right s if the flip was a book, the other content is shown as the
            page below that), #ELM_FLIP_PAGE_UP (move the currently visible
            content up as if the flip was a book, the other content is shown
-           as the page below that) and #ELM_FLIP_PAGE_DOWN (move the
+           as the page below that), #ELM_FLIP_PAGE_DOWN (move the
            currently visible content down as if the flip was a book, the
-           other content is shown as the page below that).
+           other content is shown as the page below that) and #ELM_FLIP_CROSS_FADE
+           (fade out the currently visible content, while fading in the
+           invisible content).
          ]]
          /* FIXME-doc
           * @image html elm_flip.png
