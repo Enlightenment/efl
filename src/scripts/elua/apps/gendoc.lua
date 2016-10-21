@@ -840,12 +840,22 @@ local build_enum = function(tp)
 end
 
 local build_variable = function(v, constant)
-    local f = writer.Writer(v:nspaces_get(), v:full_name_get())
+    local ns = v:nspaces_get()
+    local f = writer.Writer(ns, v:full_name_get())
     if constant then
         stats.check_constant(v)
     else
         stats.check_global(v)
     end
+
+    write_tsigs(f, v, ns)
+
+    f:write_h("Description", 2)
+    f:write_raw(v:doc_get():full_get(nil, true))
+    f:write_nl(2)
+
+    f:write_editable(ns, "description")
+    f:write_nl()
 
     f:finish()
 end

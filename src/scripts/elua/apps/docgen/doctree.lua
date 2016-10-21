@@ -1118,7 +1118,11 @@ M.Variable = Node:clone {
     end,
 
     value_get = function(self)
-        return self.variable:value_get()
+        local v = self.variable:value_get()
+        if not v then
+            return nil
+        end
+        return M.Expression(v)
     end,
 
     name_get = function(self)
@@ -1139,6 +1143,68 @@ M.Variable = Node:clone {
 
     nspaces_get = function(self, root)
         return M.Node.nspaces_get(self, self:type_str_get(), root)
+    end,
+
+    serialize = function(self)
+        local buf = {}
+        if self:type_get() == self.GLOBAL then
+            buf[#buf + 1] = "var "
+        else
+            buf[#buf + 1] = "const "
+        end
+        if self:is_extern() then
+            buf[#buf + 1] = "@extern "
+        end
+        buf[#buf + 1] = self:full_name_get()
+        buf[#buf + 1] = ": "
+        buf[#buf + 1] = self:base_type_get():serialize()
+        local val = self:value_get()
+        if val then
+            buf[#buf + 1] = " = "
+            buf[#buf + 1] = val:serialize()
+        end
+        buf[#buf + 1] = ";"
+        return table.concat(buf)
+    end,
+
+    serialize_c = function(self, ns)
+        local buf = {}
+        local bt = self:base_type_get()
+        local fulln = self:full_name_get():gsub("%.", "_"):upper()
+        keyref.add(fulln, ns, "c")
+        if self:type_get() == self.GLOBAL then
+            local ts = bt:c_type_get()
+            buf[#buf + 1] = ts
+            if ts:sub(#ts) ~= "*" then
+                buf[#buf + 1] = " "
+            end
+            buf[#buf + 1] = fulln
+            local val = self:value_get()
+            if val then
+                buf[#buf + 1] = " = "
+                local vt = val:eval_type(bt)
+                local lv = vt:to_literal()
+                local sv = val:serialize()
+                buf[#buf + 1] = lv
+                if lv ~= sv then
+                    buf[#buf + 1] = "/* " .. sv .. " */"
+                end
+            end
+            buf[#buf + 1] = ";"
+        else
+            buf[#buf + 1] = "#define "
+            buf[#buf + 1] = fulln
+            buf[#buf + 1] = " "
+            local val = self:value_get()
+            local vt = val:eval_type(bt)
+            local lv = vt:to_literal()
+            local sv = val:serialize()
+            buf[#buf + 1] = lv
+            if lv ~= sv then
+                buf[#buf + 1] = "/* " .. sv .. " */"
+            end
+        end
+        return table.concat(buf)
     end,
 
     -- static getters
@@ -1200,6 +1266,10 @@ M.Expression = Node:clone {
 
     eval_enum = function(self)
         return self.expr:eval(eolian.expression_mask.INT)
+    end,
+
+    eval_type = function(self, tp)
+        return self.expr:eval_type(tp.type)
     end,
 
     serialize = function(self)
