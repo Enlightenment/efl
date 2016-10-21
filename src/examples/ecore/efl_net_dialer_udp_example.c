@@ -7,46 +7,31 @@
 #include <ctype.h>
 
 static int retval = EXIT_SUCCESS;
-static Eina_Bool do_read = EINA_FALSE;
+static int needed_reads = 0;
 
 static void
 _connected(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   char buf[1024];
-   Eina_Rw_Slice rw_slice = {.mem = buf, .len = sizeof(buf)};
-   Eina_Slice slice = EINA_SLICE_STR_LITERAL("Hello World");
-   Eina_Error err;
-
    fprintf(stderr, "INFO: connected %s\n",
            efl_net_dialer_address_dial_get(event->object));
+}
 
-   err = efl_io_writer_write(event->object, &slice, NULL);
-   if (err)
-     {
-        fprintf(stderr, "ERROR: could not write: %s\n", eina_error_msg_get(err));
-        retval = EXIT_FAILURE;
-        ecore_main_loop_quit();
-        return;
-     }
+static void
+_can_read(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   char buf[1024];
+   Eina_Rw_Slice rw_slice = {.mem = buf, .len = sizeof(buf)};
+   Eina_Error err;
+   Eina_Bool can_read = efl_io_reader_can_read_get(event->object);
 
-   fprintf(stderr, "INFO: wrote " EINA_SLICE_STR_FMT "\n", EINA_SLICE_STR_PRINT(slice));
+   /* NOTE: this message may appear with can read=0 BEFORE
+    * "read '...'" because efl_io_readr_read() will change the status
+    * of can_read to FALSE prior to return so we can print it!
+    */
+   fprintf(stderr, "INFO: can read=%d (needed reads=%d)\n", can_read, needed_reads);
+   if (!can_read) return;
 
-   slice = (Eina_Slice)EINA_SLICE_STR_LITERAL("Second Write");
-   err = efl_io_writer_write(event->object, &slice, NULL);
-   if (err)
-     {
-        fprintf(stderr, "ERROR: could not write: %s\n", eina_error_msg_get(err));
-        retval = EXIT_FAILURE;
-        ecore_main_loop_quit();
-        return;
-     }
-
-   fprintf(stderr, "INFO: wrote " EINA_SLICE_STR_FMT "\n", EINA_SLICE_STR_PRINT(slice));
-
-   /* if CORK was used, then say we're done to generate the single final datagram */
-   efl_net_socket_udp_cork_set(event->object, EINA_FALSE);
-
-   if (!do_read) goto end;
+   if (!needed_reads) return;
 
    err = efl_io_reader_read(event->object, &rw_slice);
    if (err)
@@ -57,11 +42,77 @@ _connected(void *data EINA_UNUSED, const Efl_Event *event)
         return;
      }
 
-   fprintf(stderr, "INFO: read " EINA_SLICE_STR_FMT "\n", EINA_SLICE_STR_PRINT(rw_slice));
+   fprintf(stderr, "INFO: read '" EINA_SLICE_STR_FMT "'\n", EINA_SLICE_STR_PRINT(rw_slice));
 
- end:
-   retval = EXIT_SUCCESS;
-   ecore_main_loop_quit();
+   needed_reads--;
+   if (!needed_reads)
+     {
+        retval = EXIT_SUCCESS;
+        ecore_main_loop_quit();
+     }
+}
+
+static void
+_can_write(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   static int needed_writes = 2;
+   Eina_Slice slice;
+   Eina_Error err;
+   Eina_Bool can_write = efl_io_writer_can_write_get(event->object);
+
+   /* NOTE: this message may appear with can write=0 BEFORE
+    * "wrote '...'" because efl_io_writer_write() will change the status
+    * of can_write to FALSE prior to return so we can print it!
+    */
+   fprintf(stderr, "INFO: can write=%d (needed writes=%d)\n", can_write, needed_writes);
+   if (!can_write) return;
+
+   if (needed_writes == 2)
+     {
+        slice = (Eina_Slice)EINA_SLICE_STR_LITERAL("Hello World");
+
+        err = efl_io_writer_write(event->object, &slice, NULL);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not write: %s\n", eina_error_msg_get(err));
+             retval = EXIT_FAILURE;
+             ecore_main_loop_quit();
+             return;
+          }
+
+        fprintf(stderr, "INFO: wrote '" EINA_SLICE_STR_FMT "'\n", EINA_SLICE_STR_PRINT(slice));
+     }
+   else if (needed_writes == 1)
+     {
+        slice = (Eina_Slice)EINA_SLICE_STR_LITERAL("Second Write");
+        err = efl_io_writer_write(event->object, &slice, NULL);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not write: %s\n", eina_error_msg_get(err));
+             retval = EXIT_FAILURE;
+             ecore_main_loop_quit();
+             return;
+          }
+
+        fprintf(stderr, "INFO: wrote '" EINA_SLICE_STR_FMT "'\n", EINA_SLICE_STR_PRINT(slice));
+
+        /* if CORK was used, then say we're done to generate the single final datagram */
+        efl_net_socket_udp_cork_set(event->object, EINA_FALSE);
+     }
+   else if (needed_writes == 0)
+     {
+        if (needed_reads)
+          fprintf(stderr, "INFO: done writing, now wait for %d reads\n", needed_reads);
+        else
+          {
+             fprintf(stderr, "INFO: we're done\n");
+             retval = EXIT_SUCCESS;
+             ecore_main_loop_quit();
+          }
+        return;
+     }
+
+   needed_writes--;
 }
 
 static void
@@ -83,7 +134,10 @@ _error(void *data EINA_UNUSED, const Efl_Event *event)
 EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
                            { EFL_NET_DIALER_EVENT_CONNECTED, _connected },
                            { EFL_NET_DIALER_EVENT_RESOLVED, _resolved },
-                           { EFL_NET_DIALER_EVENT_ERROR, _error });
+                           { EFL_NET_DIALER_EVENT_ERROR, _error },
+                           { EFL_IO_READER_EVENT_CAN_READ_CHANGED, _can_read },
+                           { EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, _can_write }
+                           );
 
 static const Ecore_Getopt options = {
   "efl_net_dialer_udp_example", /* program name */
@@ -113,6 +167,7 @@ main(int argc, char **argv)
 {
    char *address = NULL;
    Eina_Bool cork = EINA_FALSE;
+   Eina_Bool do_read = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
    double timeout_dial = 30.0;
    Ecore_Getopt_Value values[] = {
@@ -181,6 +236,8 @@ main(int argc, char **argv)
            do_read,
            efl_net_socket_udp_cork_get(dialer),
            efl_net_dialer_timeout_dial_get(dialer));
+
+   if (do_read) needed_reads = cork ? 1 : 2;
 
    ecore_main_loop_begin();
 
