@@ -244,7 +244,7 @@ evas_software_xlib_x_can_do_shm(Display *d)
 	     cached_result = 0;
 	     return 0;
 	  }
-	evas_software_xlib_x_output_buffer_free(xob, 1);
+	evas_software_xlib_x_output_buffer_unref(xob, 1);
 	cached_result = 1;
 	return 1;
      }
@@ -275,6 +275,7 @@ evas_software_xlib_x_output_buffer_new(Display *d, Visual *v, int depth, int w, 
    xob->shm_info = NULL;
    xob->w = w;
    xob->h = h;
+   xob->refcount = 1;
 
    if (try_shm > 0)
      {
@@ -370,9 +371,23 @@ evas_software_xlib_x_output_buffer_new(Display *d, Visual *v, int depth, int w, 
    return xob;
 }
 
-void
-evas_software_xlib_x_output_buffer_free(X_Output_Buffer *xob, int psync)
+X_Output_Buffer *
+evas_software_xlib_x_output_buffer_ref(X_Output_Buffer *xob)
 {
+   if (xob->refcount == UINT_MAX)
+     return NULL;
+   xob->refcount++;
+   return xob;
+}
+
+void
+evas_software_xlib_x_output_buffer_unref(X_Output_Buffer *xob, int psync)
+{
+   if (!xob->refcount)
+     return;
+   xob->refcount--;
+   if (xob->refcount)
+     return;
    if (xob->shm_info)
      {
 	if (psync) XSync(xob->display, False);

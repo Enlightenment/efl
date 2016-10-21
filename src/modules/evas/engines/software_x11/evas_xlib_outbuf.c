@@ -124,12 +124,16 @@ _unfind_xob(X_Output_Buffer *xob, int psync)
 	     xob = xl->data;
              shmpool = eina_list_remove_list(shmpool, xl);
              shmsize -= xob->psize * xob->xim->depth / 8;
-	     evas_software_xlib_x_output_buffer_free(xob, psync);
+	     evas_software_xlib_x_output_buffer_unref(xob, psync);
 	  }
         SHMPOOL_UNLOCK();
      }
    else
-     evas_software_xlib_x_output_buffer_free(xob, psync);
+     {
+        SHMPOOL_LOCK();
+        evas_software_xlib_x_output_buffer_unref(xob, psync);
+        SHMPOOL_UNLOCK();
+     }
 }
 
 static void
@@ -142,7 +146,7 @@ _clear_xob(int psync)
 
 	xob = shmpool->data;
 	shmpool = eina_list_remove_list(shmpool, shmpool);
-	evas_software_xlib_x_output_buffer_free(xob, psync);
+	evas_software_xlib_x_output_buffer_unref(xob, psync);
      }
    shmsize = 0;
    SHMPOOL_UNLOCK();
@@ -318,12 +322,12 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 		/* FIXME: only alloc once per display+cmap */
 		buf->priv.pal = evas_software_xlib_x_color_allocate(disp, cmap, vis,
 								    pm);
-		if (!buf->priv.pal)
-		  {
-                     if (xob) evas_software_xlib_x_output_buffer_free(xob, 1);
-		     free(buf);
-		     return NULL;
-		  }
+                if (!buf->priv.pal)
+                  {
+                     if (xob) evas_software_xlib_x_output_buffer_unref(xob, 1);
+                     free(buf);
+                     return NULL;
+                  }
 	     }
 	   if (buf->priv.pal)
 	     {
@@ -362,7 +366,7 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
                                                             buf->rot);
 	     }
            buf->priv.x11.xlib.imdepth = evas_software_xlib_x_output_buffer_depth(xob);
-           evas_software_xlib_x_output_buffer_free(xob, 1);
+           evas_software_xlib_x_output_buffer_unref(xob, 1);
 	   if (!conv_func)
 	     {
                 ERR("At depth: %i, RGB format mask: %08x %08x %08x, "
@@ -479,7 +483,7 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
                                                         alpha, EVAS_COLORSPACE_ARGB8888);
              if (!im)
                {
-                  evas_software_xlib_x_output_buffer_free(obr->xob, 0);
+                  evas_software_xlib_x_output_buffer_unref(obr->xob, 0);
                   free(obr);
                   eina_spinlock_release(&(buf->priv.lock));
                   return NULL;
@@ -819,9 +823,8 @@ evas_software_xlib_outbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_U
 	XSetRegion(buf->priv.x11.xlib.disp, buf->priv.x11.xlib.gc, tmpr);
         if (obr->xob)
           {
-             evas_software_x11_region_push_hook_call(buf, 0, 0, obr->xob->xim->width,
-                                                     obr->xob->xim->height,
-                                                     evas_software_xlib_x_output_buffer_data(obr->xob, NULL));
+             evas_software_x11_region_push_hook_call(buf, 0, 0, obr->xob,
+                                                     &shmpool_lock);
              evas_software_xlib_x_output_buffer_paste(obr->xob, buf->priv.x11.xlib.win,
                                                       buf->priv.x11.xlib.gc,
                                                       0, 0, 0);
@@ -850,9 +853,7 @@ evas_software_xlib_outbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_U
              if (obr->xob)
                {
                   evas_software_x11_region_push_hook_call(buf, obr->x, obr->y,
-                                                          obr->xob->xim->width,
-                                                          obr->xob->xim->height,
-                                                          evas_software_xlib_x_output_buffer_data(obr->xob, NULL));
+                                                          obr->xob, &shmpool_lock);
                   evas_software_xlib_x_output_buffer_paste(obr->xob, buf->priv.x11.xlib.win,
                                                            buf->priv.x11.xlib.gc,
                                                            obr->x, obr->y, 0);
@@ -952,8 +953,18 @@ evas_software_xlib_outbuf_idle_flush(Outbuf *buf)
 	im = buf->priv.onebuf;
 	buf->priv.onebuf = NULL;
 	obr = im->extended_info;
-	if (obr->xob) evas_software_xlib_x_output_buffer_free(obr->xob, 0);
-	if (obr->mxob) evas_software_xlib_x_output_buffer_free(obr->mxob, 0);
+        if (obr->xob)
+          {
+             SHMPOOL_LOCK();
+             evas_software_xlib_x_output_buffer_unref(obr->xob, 0);
+             SHMPOOL_UNLOCK();
+          }
+        if (obr->mxob)
+          {
+             SHMPOOL_LOCK();
+             evas_software_xlib_x_output_buffer_unref(obr->mxob, 0);
+             SHMPOOL_UNLOCK();
+          }
 	free(obr);
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
@@ -1137,9 +1148,7 @@ evas_software_xlib_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, i
         if (obr->xob)
           {
              evas_software_x11_region_push_hook_call(buf, obr->x, obr->y,
-                                                     obr->xob->xim->width,
-                                                     obr->xob->xim->height,
-                                                     evas_software_xlib_x_output_buffer_data(obr->xob, NULL));
+                                                     obr->xob, &shmpool_lock);
              evas_software_xlib_x_output_buffer_paste(obr->xob, buf->priv.x11.xlib.win,
                                                       buf->priv.x11.xlib.gc,
                                                       obr->x, obr->y, 0);

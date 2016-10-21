@@ -18,6 +18,7 @@ struct _X_Output_Buffer
    int              h;
    int              bpl;
    int              psize;
+   unsigned int     refcount;
 };
 
 void evas_software_xlib_x_write_mask_line               (Outbuf *buf, X_Output_Buffer *xob, DATA32 *src, int w, int y);
@@ -29,7 +30,9 @@ int evas_software_xlib_x_can_do_shm                     (Display *d);
 
 X_Output_Buffer *evas_software_xlib_x_output_buffer_new (Display *d, Visual *v, int depth, int w, int h, int try_shm, void *data);
 
-void evas_software_xlib_x_output_buffer_free            (X_Output_Buffer *xob, int sync);
+void evas_software_xlib_x_output_buffer_unref            (X_Output_Buffer *xob, int sync);
+
+X_Output_Buffer *evas_software_xlib_x_output_buffer_ref(X_Output_Buffer *xob);
 
 void evas_software_xlib_x_output_buffer_paste           (X_Output_Buffer *xob, Drawable d, GC gc, int x, int y, int sync);
 

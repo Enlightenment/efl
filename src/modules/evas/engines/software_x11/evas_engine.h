@@ -123,6 +123,6 @@ struct _Outbuf
 void evas_software_xlib_x_init(void);
 void evas_software_xcb_init(void);
 
-void evas_software_x11_region_push_hook_call(Outbuf *buf, int x, int y, int w, int h, const void *pixels);
+void evas_software_x11_region_push_hook_call(Outbuf *buf, int x, int y, void *out_buf, Eina_Spinlock *lock);
 
 #endif

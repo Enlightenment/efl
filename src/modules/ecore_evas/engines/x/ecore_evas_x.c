@@ -236,7 +236,9 @@ _ecore_evas_x11_region_push_hook(Evas *e, int x, int y, int w, int h,
 {
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Data_X11 *edata;
-   size_t size;
+   size_t size, src_stride;
+   int dy;
+   Eina_Bool new_buf = EINA_FALSE;
 
    ee = evas_data_attach_get(e);
    edata = ee->engine.data;
@@ -249,10 +251,11 @@ _ecore_evas_x11_region_push_hook(Evas *e, int x, int y, int w, int h,
         new_fb = malloc(size);
         EINA_SAFETY_ON_NULL_RETURN(new_fb);
         free(edata->frame_buffer);
-        memcpy(new_fb, pixels, size);
         edata->frame_buffer = new_fb;
         edata->last_w = ee->w;
         edata->last_h = ee->h;
+        new_buf = EINA_TRUE;
+
         if (edata->vnc_screen)
           {
              rfbNewFramebuffer(edata->vnc_screen, edata->frame_buffer, ee->w,
@@ -261,17 +264,58 @@ _ecore_evas_x11_region_push_hook(Evas *e, int x, int y, int w, int h,
              _ecore_evas_x11_vnc_server_format_setup(edata);
           }
      }
-   else
-     {
-        //Partial update
-        int dy;
-        const int src_stride = w * VNC_BYTES_PER_PIXEL;
 
-        for (dy = 0; dy < h; dy++)
+   if (y > edata->last_h || x > edata->last_w)
+     return;
+
+   //Do not paint outside the VNC canvas
+   if (y + h > edata->last_h)
+     h = edata->last_h - y;
+
+   //Do not paint outside the VNC canvas
+   if (x + w > edata->last_w)
+     w = edata->last_w - x;
+
+   src_stride = w * VNC_BYTES_PER_PIXEL;
+
+   for (dy = 0; dy < h; dy++)
+     {
+        memcpy(edata->frame_buffer + (x * VNC_BYTES_PER_PIXEL)
+               + ((dy + y) * (edata->last_w * VNC_BYTES_PER_PIXEL)),
+               (char *)pixels + (dy * src_stride), src_stride);
+     }
+
+   //We did not receive the whole buffer yet, zero the missing bytes for now.
+   if (new_buf)
+     {
+        //Missing width
+        if (edata->last_w != w || x != 0)
           {
-             memcpy(edata->frame_buffer + (x * VNC_BYTES_PER_PIXEL)
-                    + ((dy + y) * (edata->last_w * VNC_BYTES_PER_PIXEL)),
-                    (char *)pixels + (dy * src_stride), src_stride);
+             for (dy = 0; dy < h; dy++)
+               {
+                  if (x)
+                    {
+                       memset(edata->frame_buffer
+                              + ((dy + y) * (edata->last_w * VNC_BYTES_PER_PIXEL)),
+                              0, x * VNC_BYTES_PER_PIXEL);
+                    }
+
+                  memset(edata->frame_buffer +
+                         ((dy + y) * (edata->last_w * VNC_BYTES_PER_PIXEL))
+                         + ((x + w) * VNC_BYTES_PER_PIXEL),
+                         0, (edata->last_w - (w + x)) * VNC_BYTES_PER_PIXEL);
+               }
+          }
+
+        //Missing height
+        if (edata->last_h != h || y != 0)
+          {
+             src_stride = edata->last_w * VNC_BYTES_PER_PIXEL;
+             for (dy = 0; dy < y; dy++)
+               memset(edata->frame_buffer + (dy * src_stride), 0, src_stride);
+
+             for (dy = y + h; dy < edata->last_h; dy++)
+               memset(edata->frame_buffer + (dy * src_stride), 0, src_stride);
           }
      }
 
@@ -5347,7 +5391,7 @@ _ecore_evas_x11_vnc_client_connection_new(rfbClientRec *client)
    ee = client->screen->screenData;
    edata = ee->engine.data;
 
-   if (!edata->accept_cb(edata->accept_cb_data, ee, client->host))
+   if (edata->accept_cb && !edata->accept_cb(edata->accept_cb_data, ee, client->host))
      return RFB_CLIENT_REFUSE;
 
    cdata = calloc(1, sizeof(Ecore_Evas_X11_Vnc_Client_Data));

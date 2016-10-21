@@ -243,7 +243,7 @@ evas_software_xcb_can_do_shm(xcb_connection_t *conn, xcb_screen_t *screen)
           cached_result = 0;
         else 
           {
-             evas_software_xcb_output_buffer_free(xcbob, EINA_TRUE);
+             evas_software_xcb_output_buffer_unref(xcbob, EINA_TRUE);
              cached_result = 1;
           }
      }
@@ -267,6 +267,7 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
    xcbob->shm_info = NULL;
    xcbob->w = w;
    xcbob->h = h;
+   xcbob->refcount = 1;
 
    if (try_shm > 0) 
      {
@@ -352,9 +353,23 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
    return xcbob;
 }
 
-void 
-evas_software_xcb_output_buffer_free(Xcb_Output_Buffer *xcbob, Eina_Bool sync) 
+Xcb_Output_Buffer *
+evas_software_xcb_output_buffer_ref(Xcb_Output_Buffer *xcbob)
 {
+   if (xcbob->refcount == UINT_MAX)
+     return NULL;
+   xcbob->refcount++;
+   return xcbob;
+}
+
+void 
+evas_software_xcb_output_buffer_unref(Xcb_Output_Buffer *xcbob, Eina_Bool sync) 
+{
+   if (!xcbob->refcount)
+     return;
+   xcbob->refcount--;
+   if (xcbob->refcount)
+     return;
    if (xcbob->shm_info) 
      {
         if (sync) _xcbob_sync(xcbob->connection);
