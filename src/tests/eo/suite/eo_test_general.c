@@ -589,6 +589,11 @@ START_TEST(efl_refs)
    ck_assert_int_eq(efl_ref_get(obj2), 1);
    ck_assert_int_eq(efl_ref_get(obj3), 2);
 
+   efl_del(obj);
+   efl_del(obj2);
+   efl_unref(obj3);
+   efl_del(obj3);
+
    /* Setting and removing parents. */
    obj = efl_add(SIMPLE_CLASS, NULL);
    obj2 = efl_ref(efl_add(SIMPLE_CLASS, obj));
