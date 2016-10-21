@@ -5,53 +5,53 @@ interface Elm.Interface.Atspi.Selection ()
       @property selected_children_count @protected {
          get {
             [[Gets the number of currently selected children]]
-            return: int;
+            return: int; [[Number of currently selected children]]
          }
       }
       @property selected_child @protected {
          [[Gets child for given child index]]
          get {
-            return: Efl.Object;
+            return: Efl.Object; [[Child object]]
          }
          keys {
-            selected_child_index: int; [[index of selected child]]
+            selected_child_index: int; [[Index of child]]
          }
       }
       child_select @protected {
          [[Adds selection for given child index]]
          params {
-            @in child_index: int;
+            @in child_index: int; [[Index of child]]
          }
-         return: bool;
+         return: bool; [[$true if selection was added, $false otherwise]]
       }
       selected_child_deselect @protected {
          [[Removes selection for given child index]]
          params {
-            @in child_index: int;
+            @in child_index: int; [[Index of child]]
          }
-         return: bool;
+         return: bool; [[$true if selection was removed, $false otherwise]]
       }
       is_child_selected @protected {
          [[Determines if child specified by index is selected]]
          params {
-            @in child_index: int;
+            @in child_index: int; [[Index of child]]
          }
-         return: bool;
+         return: bool; [[$true if child is selected, $false otherwise]]
       }
       all_children_select @protected {
          [[Adds selection for all children]]
-         return: bool;
+         return: bool; [[$true if selection was added to all children, $false otherwise]]
       }
       clear @protected {
          [[Clears the current selection]]
-         return: bool;
+         return: bool; [[$true if selection was cleared, $false otherwise]]
       }
       child_deselect @protected {
          [[Removes selection for given child index]]
          params {
-            @in child_index: int;
+            @in child_index: int; [[Index of child]]
          }
-         return: bool;
+         return: bool; [[$true if selection was removed, $false otherwise]]
       }
    }
    events {
