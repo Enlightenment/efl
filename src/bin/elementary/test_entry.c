@@ -2548,7 +2548,7 @@ test_entry8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_part_text_set(en4, "guide", "Type in here");
    elm_entry_scrollable_set(en4, EINA_TRUE);
    elm_scroller_bounce_set(en4, EINA_TRUE, EINA_TRUE);
-   elm_entry_autocapital_type_set(en4, EINA_TRUE);
+   elm_entry_autocapital_type_set(en4, ELM_AUTOCAPITAL_TYPE_WORD);
    evas_object_size_hint_weight_set(en4, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en4, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_grid_pack(gd, en4, 5, 65, 90, 20);
