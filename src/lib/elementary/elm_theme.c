@@ -399,14 +399,17 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
                   eina_strbuf_append_char(buf, ':');
                   pe += 2;
                }
-             else if ((isalpha(pe[0]) && (pe[1] == ':') && pe[2] == '/'))
+#ifdef HAVE_ELEMENTARY_WIN32
+             else if (isalpha(pe[0]) && (pe[1] == ':') &&
+                      ((pe[2] == '/') || (pe[2] == '\\')))
                {
-                  // Correct processing file path on  Windows OS "<disk>:/"
+                  // Correct processing file path on  Windows OS "<disk>:/" or "<disk>:\"
                   eina_strbuf_append_char(buf, *pe);
                   pe++;
                   eina_strbuf_append_char(buf, *pe);
                   pe++;
                }
+#endif
              else if ((*pe == ':') || (!*pe))
                { // p -> pe == 'name:'
                   if (pe > p)
