@@ -1,6 +1,7 @@
 group { name: "elm/pointer/base/default";
    images {
       image: "pointer.png" COMP;
+      image: "pointer_glow.png" COMP;
    }
    parts {
       part {
@@ -20,6 +21,20 @@ group { name: "elm/pointer/base/default";
             image {
                normal: "pointer.png";
             }
+         }
+      }
+      part { name: "glow";
+         description { state: "default" 0.0;
+            image.normal: "pointer_glow.png";
+            color: 255 255 255 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "faded" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 128;
          }
       }
       part {
@@ -45,6 +60,403 @@ group { name: "elm/pointer/base/default";
                relative: 0.1875 0.1875;
                offset: 0 0;
             }
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,action,mouse,down"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "glow";
+         after: "fade";
+      }
+      program { name: "fade";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "glow";
+      }
+      program { name: "pulse";
+         signal: "e,state,mouse,idle"; source: "e";
+         in: 10.0 0.0;
+         action: STATE_SET "faded" 0.0;
+         transition: SINUSOIDAL 0.25;
+         target: "glow";
+         after: "pulse2";
+      }
+      program { name: "pulse2";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "glow";
+         after: "pulse";
+      }
+      program {
+         signal: "elm,action,mouse,move"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "glow";
+         after: "stop2";
+      }
+      program { name: "stop2";
+         action: ACTION_STOP;
+         target: "pulse";
+         target: "pulse2";
+      }
+   }
+}
+
+group { name: "elm/pointer/base/bottom_right_corner";
+   inherit: "elm/pointer/base/default";
+   images.image: "mini_box_glow.png" COMP;
+   parts {
+      part { name: "box";
+         insert_after: "glow";
+         description { state: "default" 0.0;
+            image.normal: "mini_box_glow.png";
+            image.border: 7 7 7 7;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 0.7 0.7;
+         }
+         description { state: "p1" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+   programs {
+      program { name: "box1";
+         signal: "load"; source: "";
+         action: STATE_SET "p1" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "box";
+         after: "box2";
+      }
+      program { name: "box2";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "box";
+         after: "box1";
+      }
+   }
+}
+
+group { name: "elm/pointer/base/top_right_corner";
+   inherit: "elm/pointer/base/bottom_right_corner";
+   parts {
+      part { name: "box";
+         description { state: "default" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 0.7 0.7;
+         }
+         description { state: "p1" 0.0;
+            rel1.relative: 0.3 0.0;
+            rel2.relative: 1.0 0.7;
+         }
+      }
+   }
+}
+
+group { name: "elm/pointer/base/top_left_corner";
+   inherit: "elm/pointer/base/bottom_right_corner";
+   parts {
+      part { name: "box";
+         description { state: "default" 0.0;
+            rel1.relative: 0.6 0.6;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "p1" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/pointer/base/bottom_left_corner";
+   inherit: "elm/pointer/base/bottom_right_corner";
+   parts {
+      part { name: "box";
+         description { state: "default" 0.0;
+            rel1.relative: 0.7 0.3;
+            rel2.relative: 1.0 0.7;
+         }
+         description { state: "p1" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/pointer/base/bottom_side";
+   inherit: "elm/pointer/base/bottom_right_corner";
+   parts {
+      part { name: "box";
+         description { state: "default" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 0.7;
+         }
+         description { state: "p1" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/pointer/base/top_side";
+   inherit: "elm/pointer/base/bottom_right_corner";
+   parts {
+      part { name: "box";
+         description { state: "default" 0.0;
+            rel1.relative: 0.3 0.6;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "p1" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/pointer/base/left_side";
+   inherit: "elm/pointer/base/bottom_right_corner";
+   parts {
+      part { name: "box";
+         description { state: "default" 0.0;
+            rel1.relative: 0.6 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "p1" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/pointer/base/right_side";
+   inherit: "elm/pointer/base/bottom_right_corner";
+   parts {
+      part { name: "box";
+         description { state: "default" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 0.7 1.0;
+         }
+         description { state: "p1" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/pointer/base/hand1";
+   inherit: "elm/pointer/base/default";
+   images.image: "mini_box_glow.png" COMP;
+   parts {
+      part { name: "box";
+         insert_after: "glow";
+         description { state: "default" 0.0;
+            image.normal: "mini_box_glow.png";
+            image.border: 7 7 7 7;
+            rel1.relative: 0.5 0.5;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "p1" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.5 0.2;
+            rel2.relative: 1.0 0.7;
+         }
+         description { state: "p2" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.5;
+            rel2.relative: 0.5 1.0;
+         }
+         description { state: "p3" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.2 0.2;
+            rel2.relative: 0.7 0.7;
+         }
+         description { state: "p4" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.3 0.5;
+            rel2.relative: 0.8 1.0;
+         }
+      }
+   }
+   programs {
+      program { name: "box1";
+         signal: "load"; source: "";
+         action: STATE_SET "p1" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "box";
+         after: "box2";
+      }
+      program { name: "box2";
+         action: STATE_SET "p2" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "box";
+         after: "box3";
+      }
+      program { name: "box3";
+         action: STATE_SET "p3" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "box";
+         after: "box4";
+      }
+      program { name: "box4";
+         action: STATE_SET "p4" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "box";
+         after: "box5";
+      }
+      program { name: "box5";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "box";
+         after: "box1";
+      }
+   }
+}
+
+group { name: "elm/pointer/base/move";
+   inherit: "elm/pointer/base/hand1";
+   programs {
+      program { name: "move1";
+         signal: "load"; source: "";
+         action: STATE_SET "faded" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "glow";
+         after: "move2";
+      }
+      program { name: "move2";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "glow";
+         after: "move1";
+      }
+   }
+}
+
+group { name: "elm/pointer/base/rotate";
+   inherit: "elm/pointer/base/default";
+   images.image: "mini_box_glow.png" COMP;
+   parts {
+      part { name: "box";
+         insert_after: "glow";
+         description { state: "default" 0.0;
+            image.normal: "mini_box_glow.png";
+            image.border: 7 7 7 7;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 0.8 0.8;
+            map.on: 1;
+            map.smooth: 1;
+            map.rotation.center: "box";
+         }
+         description { state: "p1" 0.0;
+            inherit: "default" 0.0;
+            map.rotation.z: 30;
+         }
+         description { state: "p2" 0.0;
+            inherit: "default" 0.0;
+            map.rotation.z: -60;
+         }
+      }
+   }
+   programs {
+      program { name: "box1";
+         signal: "load"; source: "";
+         action: STATE_SET "p1" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "box";
+         after: "box2";
+      }
+      program { name: "box2";
+         action: STATE_SET "p2" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "box";
+         after: "box3";
+      }
+      program { name: "box3";
+         action: STATE_SET "p1" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "box";
+         after: "box2";
+      }
+   }
+}
+
+group { name: "elm/pointer/base/plus";
+   inherit: "elm/pointer/base/default";
+   images.image: "add_glow_small.png" COMP;
+   parts {
+      part { name: "add";
+         insert_after: "glow";
+         description { state: "default" 0.0;
+            image.normal: "add_glow_small.png";
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 1.0;
+            align: 1.0 1.0;
+            max: 21 21;
+         }
+         description { state: "faded" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 128;
+         }
+      }
+   }
+   programs {
+      program { name: "fade1";
+         signal: "load"; source: "";
+         action: STATE_SET "faded" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "add";
+         after: "fade2";
+      }
+      program { name: "fade2";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "add";
+         after: "fade1";
+      }
+   }
+}
+
+group { name: "elm/pointer/base/xterm";
+   images.image: "pointer_entry_bar.png" COMP;
+   images.image: "led_dot_white.png" COMP;
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            image.normal: "pointer_entry_bar.png";
+            max: 15 99999;
+            min: 15 20;
+            image.normal: "pointer_entry_bar.png";
+            image.border: 0 0 10 10;
+            rel1.offset: 0 2;
+            rel2.offset: -1 -3;
+         }
+      }
+      part { name: "elm.swallow.hotspot"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            visible: 0;
+            rel1.relative: 0.5 0.5;
+            rel1.to: "base";
+            rel2.to: "base";
+            rel2.relative: 0.5 0.5;
+            rel2.offset: 0 0;
+        }
+      }
+      part { name: "shine";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "led_dot_white.png";
+            max: 27 27;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
          }
       }
    }
