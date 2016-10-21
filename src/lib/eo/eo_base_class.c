@@ -39,6 +39,7 @@ typedef struct
    unsigned short             event_freeze_count;
    Eina_Bool                  deletions_waiting : 1;
    Eina_Bool                  callback_stopped : 1;
+   Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
 } Efl_Object_Data;
 
 typedef enum {
@@ -533,9 +534,17 @@ _efl_object_del(const Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
      }
 }
 
+void
+_efl_object_parent_sink(Eo *obj)
+{
+   Efl_Object_Data *pd = efl_data_scope_get(obj, EFL_OBJECT_CLASS);
+   pd->parent_sunk = EINA_TRUE;
+}
+
 EOLIAN static void
 _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 {
+   Eo *prev_parent = pd->parent;
    if ((pd->parent == parent_id) ||
        ((parent_id) && (!_eo_id_domain_compatible(parent_id, obj))))
      return;
@@ -552,10 +561,6 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
         // this error is highly unlikely so move it out of the normal
         // instruction path to avoid l1 cache pollution
         else goto err_impossible;
-
-        /* Only unref if we don't have a new parent instead and we are not at
-         * the process of deleting the object.*/
-        if (!parent_id && !eo_obj->del_triggered) efl_unref(obj);
      }
 
    /* Set new parent */
@@ -569,16 +574,23 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
              pd->parent = parent_id;
              parent_pd->children = eina_inlist_append(parent_pd->children,
                                                       EINA_INLIST_GET(eo_obj));
+             if (!prev_parent && pd->parent_sunk) efl_ref(obj);
+             pd->parent_sunk = EINA_TRUE;
           }
         else
           {
              pd->parent = NULL;
+             if (prev_parent) efl_unref(obj);
              // unlikely this error happens, so move it out of execution path
              // to improve l1 cache efficiency
              goto err_parent;
           }
      }
-   else pd->parent = NULL;
+   else
+     {
+        pd->parent = NULL;
+        if (prev_parent && !eo_obj->del_triggered) efl_unref(obj);
+     }
 
    EO_OBJ_DONE(obj);
    return;

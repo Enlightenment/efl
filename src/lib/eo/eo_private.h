@@ -196,6 +196,8 @@ typedef struct
    int line;
 } Eo_Xref_Node;
 
+void _efl_object_parent_sink(Eo *obj);
+
 static inline
 Eo *_eo_header_id_get(const Eo_Header *header)
 {

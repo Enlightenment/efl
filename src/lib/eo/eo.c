@@ -850,9 +850,13 @@ _efl_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
    Eo *ret = efl_finalize(eo_id);
    ret = _efl_add_internal_end(eo_id, ret);
 
-   if (is_ref && efl_parent_get(eo_id))
+   if (is_ref)
      {
-        efl_ref(eo_id);
+        if (efl_parent_get(eo_id))
+          {
+             efl_ref(eo_id);
+          }
+        _efl_object_parent_sink(eo_id);
      }
 
    if (is_fallback)

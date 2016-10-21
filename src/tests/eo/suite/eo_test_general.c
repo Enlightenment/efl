@@ -611,8 +611,8 @@ START_TEST(efl_refs)
 
    efl_parent_set(obj2, obj);
    efl_parent_set(obj3, obj);
-   ck_assert_int_eq(efl_ref_get(obj2), 1);
-   ck_assert_int_eq(efl_ref_get(obj3), 1);
+   ck_assert_int_eq(efl_ref_get(obj2), 2);
+   ck_assert_int_eq(efl_ref_get(obj3), 2);
 
    efl_del(obj);
    efl_del(obj2);
