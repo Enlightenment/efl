@@ -56,12 +56,12 @@ interface Elm.Interface.Atspi.Text ()
             offset: int; [[Position in text.]]
          }
          values {
-            character: Eina.Unicode; [[Character at offset. 0 when out-of bounds offset has been given.  Codepoints between DC80 and DCFF indicates that string includes invalid UTF8 chars.]]
+            character: Eina.Unicode; [[Character at offset. 0 when out-of bounds offset has been given. Codepoints between DC80 and DCFF indicates that string includes invalid UTF8 chars.]]
          }
       }
       @property string @protected {
          get {
-            [[Gets string, start and end offset in text according to given initial offset and granulatity.]]
+            [[Gets string, start and end offset in text according to given initial offset and granularity.]]
          }
          keys {
             granularity: Elm.Atspi_Text.Granularity;
@@ -69,7 +69,7 @@ interface Elm.Interface.Atspi.Text ()
             end_offset: int *; [[Offset indicating end of string according to given granularity. -1 in case of error.]]
          }
          values {
-            string: own(char *); [[Newly allocated UTF-8 encoded string.  Must be free by a user.]]
+            string: own(char *); [[Newly allocated UTF-8 encoded string. Must be free by a user.]]
          }
       }
       @property text @protected {
@@ -89,7 +89,7 @@ interface Elm.Interface.Atspi.Text ()
             [[Gets offset position of caret (cursor)]]
          }
          set {
-            return: bool; [[$true if caret was successfully moved, $falseotherwise.]]
+            return: bool; [[$true if caret was successfully moved, $false otherwise.]]
          }
          values {
             offset: int;
@@ -177,7 +177,7 @@ interface Elm.Interface.Atspi.Text ()
             return: bool;
          }
          keys {
-            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
+            screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
             start_offset: int;
             end_offset: int;
          }
