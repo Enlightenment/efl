@@ -618,6 +618,33 @@ START_TEST(efl_refs)
    efl_del(obj2);
    efl_del(obj3);
 
+   /* Setting and removing parents for add_ref */
+   obj = efl_add(SIMPLE_CLASS, NULL);
+   obj2 = efl_add_ref(SIMPLE_CLASS, obj);
+   obj3 = efl_add_ref(SIMPLE_CLASS, NULL);
+
+   ck_assert_int_eq(efl_ref_get(obj2), 2);
+   ck_assert_int_eq(efl_ref_get(obj3), 1);
+
+   efl_parent_set(obj2, obj3);
+   efl_parent_set(obj3, obj);
+   ck_assert_int_eq(efl_ref_get(obj2), 2);
+   ck_assert_int_eq(efl_ref_get(obj3), 2);
+
+   efl_parent_set(obj2, NULL);
+   efl_parent_set(obj3, NULL);
+   ck_assert_int_eq(efl_ref_get(obj2), 1);
+   ck_assert_int_eq(efl_ref_get(obj3), 1);
+
+   efl_parent_set(obj2, obj);
+   efl_parent_set(obj3, obj);
+   ck_assert_int_eq(efl_ref_get(obj2), 2);
+   ck_assert_int_eq(efl_ref_get(obj3), 2);
+
+   efl_del(obj);
+   efl_del(obj2);
+   efl_del(obj3);
+
    /* Just check it doesn't seg atm. */
    obj = efl_add(SIMPLE_CLASS, NULL);
    efl_ref(obj);
