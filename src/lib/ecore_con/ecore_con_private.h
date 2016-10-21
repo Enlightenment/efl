@@ -406,6 +406,26 @@ Eina_Bool efl_net_ip_port_split(char *buf, const char **p_host, const char **p_p
 int efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec);
 
 /**
+ * @brief callback to notify of resolved address.
+ *
+ * The callback is given the ownership of the result, thus must free
+ * it with freeaddrinfo().
+ *
+ * @internal
+ */
+typedef void (*Efl_Net_Ip_Resolve_Async_Cb)(void *data, const char *host, const char *port, const struct addrinfo *hints, struct addrinfo *result, int gai_error);
+
+/**
+ * @brief asynchronously resolve a host and port using getaddrinfo().
+ *
+ * This will call getaddrinfo() in a thread, taking care to return the
+ * result to the main loop and calling @a cb with given user @a data.
+ *
+ * @internal
+ */
+Ecore_Thread *efl_net_ip_resolve_async_new(const char *host, const char *port, const struct addrinfo *hints, Efl_Net_Ip_Resolve_Async_Cb cb, const void *data);
+
+/**
  * @brief callback to notify of connection.
  *
  * The callback is given the ownership of the socket (sockfd), thus

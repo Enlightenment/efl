@@ -184,6 +184,8 @@ EWAPI Eina_Error EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_PROXY = 0;
 EWAPI Eina_Error EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST = 0;
 EWAPI Eina_Error EFL_NET_DIALER_ERROR_PROXY_AUTHENTICATION_FAILED = 0;
 
+EWAPI Eina_Error EFL_NET_SERVER_ERROR_COULDNT_RESOLVE_HOST = 0;
+
 static Eina_List *servers = NULL;
 static int _ecore_con_init_count = 0;
 static int _ecore_con_event_count = 0;
@@ -238,6 +240,8 @@ ecore_con_init(void)
    EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_PROXY = eina_error_msg_static_register("Couldn't resolve proxy name");
    EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST = eina_error_msg_static_register("Couldn't resolve host name");
    EFL_NET_DIALER_ERROR_PROXY_AUTHENTICATION_FAILED = eina_error_msg_static_register("Proxy authentication failed");
+
+   EFL_NET_SERVER_ERROR_COULDNT_RESOLVE_HOST = eina_error_msg_static_register("Couldn't resolve host name");
 
    eina_magic_string_set(ECORE_MAGIC_CON_SERVER, "Ecore_Con_Server");
    eina_magic_string_set(ECORE_MAGIC_CON_CLIENT, "Ecore_Con_Client");
@@ -3151,6 +3155,124 @@ efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec)
 #endif
 
    return fd;
+}
+
+typedef struct _Efl_Net_Ip_Resolve_Async_Data
+{
+   Efl_Net_Ip_Resolve_Async_Cb cb;
+   const void *data;
+   char *host;
+   char *port;
+   struct addrinfo *result;
+   struct addrinfo *hints;
+   int gai_error;
+} Efl_Net_Ip_Resolve_Async_Data;
+
+static void
+_efl_net_ip_resolve_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Efl_Net_Ip_Resolve_Async_Data *d = data;
+
+   /* allows ecore_thread_cancel() to cancel at some points, see
+    * man:pthreads(7).
+    *
+    * no need to set cleanup functions since the main thread will
+    * handle that with _efl_net_ip_resolve_async_cancel().
+    */
+   eina_thread_cancellable_set(EINA_TRUE, NULL);
+
+   while (EINA_TRUE)
+     {
+        DBG("resolving host='%s' port='%s'", d->host, d->port);
+        d->gai_error = getaddrinfo(d->host, d->port, d->hints, &d->result);
+        if (d->gai_error == 0) break;
+        if (d->gai_error == EAI_AGAIN) continue;
+        if ((d->gai_error == EAI_SYSTEM) && (errno == EINTR)) continue;
+
+        DBG("getaddrinfo(\"%s\", \"%s\") failed: %s", d->host, d->port, gai_strerror(d->gai_error));
+        break;
+     }
+
+   eina_thread_cancellable_set(EINA_FALSE, NULL);
+
+   if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
+     {
+        char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
+        const struct addrinfo *addrinfo;
+        for (addrinfo = d->result; addrinfo != NULL; addrinfo = addrinfo->ai_next)
+          {
+             if (efl_net_ip_port_fmt(buf, sizeof(buf), addrinfo->ai_addr))
+               DBG("resolved host='%s' port='%s': %s", d->host, d->port, buf);
+          }
+     }
+}
+
+static void
+_efl_net_ip_resolve_async_data_free(Efl_Net_Ip_Resolve_Async_Data *d)
+{
+   free(d->hints);
+   free(d->host);
+   free(d->port);
+   free(d);
+}
+
+static void
+_efl_net_ip_resolve_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Efl_Net_Ip_Resolve_Async_Data *d = data;
+   d->cb((void *)d->data, d->host, d->port, d->hints, d->result, d->gai_error);
+   _efl_net_ip_resolve_async_data_free(d);
+}
+
+static void
+_efl_net_ip_resolve_async_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Efl_Net_Ip_Resolve_Async_Data *d = data;
+   if (d->result) freeaddrinfo(d->result);
+   _efl_net_ip_resolve_async_data_free(d);
+}
+
+Ecore_Thread *
+efl_net_ip_resolve_async_new(const char *host, const char *port, const struct addrinfo *hints, Efl_Net_Ip_Resolve_Async_Cb cb, const void *data)
+{
+   Efl_Net_Ip_Resolve_Async_Data *d;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(host, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(port, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cb, NULL);
+
+   d = malloc(sizeof(Efl_Net_Ip_Resolve_Async_Data));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
+
+   d->cb = cb;
+   d->data = data;
+   d->host = strdup(host);
+   EINA_SAFETY_ON_NULL_GOTO(d->host, failed_host);
+   d->port = strdup(port);
+   EINA_SAFETY_ON_NULL_GOTO(d->port, failed_port);
+
+   if (!hints) d->hints = NULL;
+   else
+     {
+        d->hints = malloc(sizeof(struct addrinfo));
+        EINA_SAFETY_ON_NULL_GOTO(d->hints, failed_hints);
+        memcpy(d->hints, hints, sizeof(struct addrinfo));
+     }
+
+   d->result = NULL;
+
+   return ecore_thread_run(_efl_net_ip_resolve_async_run,
+                           _efl_net_ip_resolve_async_end,
+                           _efl_net_ip_resolve_async_cancel,
+                           d);
+
+ failed_hints:
+   free(d->port);
+ failed_port:
+   free(d->host);
+ failed_host:
+   free(d);
+   return NULL;
 }
 
 typedef struct _Efl_Net_Connect_Async_Data

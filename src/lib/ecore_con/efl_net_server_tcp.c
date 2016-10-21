@@ -31,6 +31,7 @@
 
 typedef struct _Efl_Net_Server_Tcp_Data
 {
+   Ecore_Thread *resolver;
    Eina_Bool ipv6_only;
 } Efl_Net_Server_Tcp_Data;
 
@@ -41,85 +42,41 @@ _efl_net_server_tcp_efl_object_constructor(Eo *o, Efl_Net_Server_Tcp_Data *pd)
    return efl_constructor(efl_super(o, MY_CLASS));
 }
 
-EOLIAN static Eina_Error
-_efl_net_server_tcp_efl_net_server_serve(Eo *o, Efl_Net_Server_Tcp_Data *pd, const char *address)
+EOLIAN void
+_efl_net_server_tcp_efl_object_destructor(Eo *o, Efl_Net_Server_Tcp_Data *pd)
 {
-   struct sockaddr_storage addr = {};
-   char *str, *host, *port;
-   int r, fd;
-   socklen_t addrlen;
-   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
+   if (pd->resolver)
+     {
+        ecore_thread_cancel(pd->resolver);
+        pd->resolver = NULL;
+     }
+   efl_destructor(efl_super(o, MY_CLASS));
+}
+
+static Eina_Error
+_efl_net_server_tcp_resolved_bind(Eo *o, Efl_Net_Server_Tcp_Data *pd, const struct addrinfo *addr)
+{
    Eina_Error err = 0;
+   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
+   socklen_t addrlen = addr->ai_addrlen;
+   int fd, r;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
+   efl_net_server_fd_family_set(o, addr->ai_family);
 
-   // TODO: change to getaddrinfo() and move to a thread...
-   str = host = strdup(address);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(str, ENOMEM);
-
-   if (host[0] == '[')
-     {
-        struct sockaddr_in6 *a = (struct sockaddr_in6 *)&addr;
-        /* IPv6 is: [IP]:port */
-        host++;
-        port = strchr(host, ']');
-        if (!port)
-          {
-             ERR("missing ']' in IPv6 address: %s", address);
-             err = EINVAL;
-             goto invalid_address;
-          }
-        *port = '\0';
-        port++;
-
-        if (port[0] == ':')
-          port++;
-        else
-          port = NULL;
-        a->sin6_family = AF_INET6;
-        a->sin6_port = htons(port ? atoi(port) : 0);
-        r = inet_pton(AF_INET6, host, &(a->sin6_addr));
-        addrlen = sizeof(*a);
-     }
-   else
-     {
-        struct sockaddr_in *a = (struct sockaddr_in *)&addr;
-        port = strchr(host, ':');
-        if (port)
-          {
-             *port = '\0';
-             port++;
-          }
-        a->sin_family = AF_INET;
-        a->sin_port = htons(port ? atoi(port) : 0);
-        r = inet_pton(AF_INET, host, &(a->sin_addr));
-        addrlen = sizeof(*a);
-     }
-
-   if (r != 1)
-     {
-        ERR("could not parse IP '%s' (%s)", host, address);
-        err = EINVAL;
-        goto invalid_address;
-     }
-   free(str);
-
-   efl_net_server_fd_family_set(o, addr.ss_family);
-
-   fd = efl_net_socket4(addr.ss_family, SOCK_STREAM, IPPROTO_TCP,
+   fd = efl_net_socket4(addr->ai_family, addr->ai_socktype, addr->ai_protocol,
                         efl_net_server_fd_close_on_exec_get(o));
    if (fd < 0)
      {
-        err = errno;
-        ERR("socket(%d, SOCK_STREAM, IPPROTO_TCP): %s",
-            addr.ss_family, strerror(errno));
-        goto error_socket;
+        ERR("socket(%d, %d, %d): %s",
+            addr->ai_family, addr->ai_socktype, addr->ai_protocol,
+            strerror(errno));
+        return errno;
      }
 
    efl_loop_fd_set(o, fd);
 
    /* apply pending value BEFORE bind() */
-   if (addr.ss_family == AF_INET6)
+   if (addr->ai_family == AF_INET6)
      {
         if (pd->ipv6_only == 0xff)
           efl_net_server_tcp_ipv6_only_get(o); /* fetch & sync */
@@ -127,42 +84,100 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, Efl_Net_Server_Tcp_Data *pd, con
           efl_net_server_tcp_ipv6_only_set(o, pd->ipv6_only);
      }
 
-   r = bind(fd, (struct sockaddr *)&addr, addrlen);
+   r = bind(fd, addr->ai_addr, addrlen);
    if (r < 0)
      {
         err = errno;
-        ERR("bind(%d, %s): %s", fd, address, strerror(errno));
-        goto error_listen;
+        efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr);
+        DBG("bind(%d, %s): %s", fd, buf, strerror(errno));
+        goto error;
      }
-
-   if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) != 0)
-     {
-        ERR("getsockname(%d): %s", fd, strerror(errno));
-        goto error_listen;
-     }
-   else if (efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&addr))
-     efl_net_server_address_set(o, buf);
 
    r = listen(fd, 0);
    if (r < 0)
      {
         err = errno;
-        ERR("listen(%d): %s", fd, strerror(errno));
-        goto error_listen;
+        DBG("listen(%d): %s", fd, strerror(errno));
+        goto error;
      }
 
+   if (getsockname(fd, addr->ai_addr, &addrlen) != 0)
+     {
+        ERR("getsockname(%d): %s", fd, strerror(errno));
+        goto error;
+     }
+   else if (efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr))
+     efl_net_server_address_set(o, buf);
+
+   DBG("fd=%d serving at %s", fd, buf);
    efl_net_server_serving_set(o, EINA_TRUE);
    return 0;
 
- invalid_address:
-   free(str);
-   goto error_socket;
-
- error_listen:
+ error:
+   efl_net_server_fd_family_set(o, AF_UNSPEC);
+   efl_loop_fd_set(o, -1);
    close(fd);
- error_socket:
-   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
    return err;
+}
+
+static void
+_efl_net_server_tcp_resolved(void *data, const char *host EINA_UNUSED, const char *port EINA_UNUSED, const struct addrinfo *hints EINA_UNUSED, struct addrinfo *result, int gai_error)
+{
+   Eo *o = data;
+   Efl_Net_Server_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   const struct addrinfo *addr;
+   Eina_Error err;
+
+   pd->resolver = NULL;
+
+   efl_ref(o); /* we're emitting callbacks then continuing the workflow */
+
+   if (gai_error)
+     {
+        err = EFL_NET_SERVER_ERROR_COULDNT_RESOLVE_HOST;
+        goto end;
+     }
+
+   for (addr = result; addr != NULL; addr = addr->ai_next)
+     {
+        err = _efl_net_server_tcp_resolved_bind(o, pd, addr);
+        if (err == 0) break;
+     }
+   freeaddrinfo(result);
+
+ end:
+   if (err) efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+
+   efl_unref(o);
+}
+
+EOLIAN static Eina_Error
+_efl_net_server_tcp_efl_net_server_serve(Eo *o, Efl_Net_Server_Tcp_Data *pd, const char *address)
+{
+   char *str;
+   const char *host, *port;
+   struct addrinfo hints = {
+     .ai_socktype = SOCK_STREAM,
+     .ai_protocol = IPPROTO_TCP,
+     .ai_family = AF_UNSPEC,
+   };
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
+
+   str = strdup(address);
+   if (!efl_net_ip_port_split(str, &host, &port))
+     {
+        free(str);
+        return EINVAL;
+     }
+   if (!port) port = "0";
+   if (strchr(host, ':')) hints.ai_family = AF_INET6;
+
+   pd->resolver = efl_net_ip_resolve_async_new(host, port, &hints,
+                                               _efl_net_server_tcp_resolved, o);
+   free(str);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->resolver, EINVAL);
+   return 0;
 }
 
 static Efl_Callback_Array_Item *_efl_net_server_tcp_client_cbs(void);
