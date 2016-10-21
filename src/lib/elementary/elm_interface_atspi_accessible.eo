@@ -256,7 +256,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          set {
          }
          values {
-            name: char*; [[Obj name]]
+            name: char*; [[Object name]]
          }
       }
       @property relation_set @protected {
@@ -264,7 +264,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          get {
          }
          values {
-            relations: Elm.Atspi.Relation_Set;
+            relations: Elm.Atspi.Relation_Set; [[Widget relation set]]
          }
       }
       @property role {
@@ -274,7 +274,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          set {
          }
          values {
-            role: Elm.Atspi.Role;
+            role: Elm.Atspi.Role; [[Widget role]]
          }
       }
       @property children @protected {
@@ -282,7 +282,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          get {
          }
          values {
-            children: free(own(list<Elm.Interface.Atspi_Accessible>), eina_list_free);
+            children: free(own(list<Elm.Interface.Atspi_Accessible>), eina_list_free); [[List of widget's children]]
          }
       }
       @property role_name @protected {
@@ -290,7 +290,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          get {
          }
          values {
-            role_name: string;
+            role_name: string; [[Widget role name]]
          }
       }
       @property attributes @protected {
@@ -298,7 +298,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          get {
          }
          values {
-            attributes: free(own(list<own(Elm.Atspi.Attribute *)>), elm_atspi_attributes_list_free);
+            attributes: free(own(list<own(Elm.Atspi.Attribute *)>), elm_atspi_attributes_list_free); [[List of widget attributes]]
          }
       }
       @property index_in_parent @protected {
@@ -306,7 +306,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          get {
          }
          values {
-            idx: int;
+            idx: int; [[Index in children list]]
          }
       }
       @property description {
@@ -326,7 +326,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          set {
          }
          values {
-            parent: Elm.Interface.Atspi_Accessible;
+            parent: Elm.Interface.Atspi_Accessible; [[Widget parent]]
          }
       }
       @property state_set @protected {
@@ -334,7 +334,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          get {
          }
          values {
-            states: Elm.Atspi.State_Set;
+            states: Elm.Atspi.State_Set; [[Widget states]]
          }
       }
       event_handler_add @class @protected {
@@ -387,7 +387,7 @@ mixin Elm.Interface.Atspi_Accessible ()
            set {
            }
            values {
-               type: Elm.Atspi.Type;
+               type: Elm.Atspi.Type; [[Object type]]
            }
       }
       relationship_append {
@@ -402,14 +402,11 @@ mixin Elm.Interface.Atspi_Accessible ()
            Relationship_append API is asymmetric, which means that
            appending, for example, relation ELM_ATSPI_RELATION_FLOWS_TO from object A to B,
            do NOT append relation ELM_ATSPI_RELATION_FLOWS_FROM from object B to
-           object A.
-
-           return: EINA_TRUE is relationship was successfully appended, EINA_FALSE
-           otherwise]]
-         return: bool;
+           object A.]]
+         return: bool; [[EINA_TRUE is relationship was successfully appended, EINA_FALSE otherwise]]
          params {
-            @in type: Elm.Atspi.Relation_Type;
-            @in relation_object: const(Elm.Interface.Atspi_Accessible);
+            @in type: Elm.Atspi.Relation_Type; [[Relation type]]
+            @in relation_object: const(Elm.Interface.Atspi_Accessible); [[Object to relate to]]
          }
       }
       relationship_remove {
@@ -419,8 +416,8 @@ mixin Elm.Interface.Atspi_Accessible ()
           of given type.
          ]]
          params {
-            @in type: Elm.Atspi.Relation_Type;
-            @in relation_object: const(Elm.Interface.Atspi_Accessible);
+            @in type: Elm.Atspi.Relation_Type; [[Relation type]]
+            @in relation_object: const(Elm.Interface.Atspi_Accessible); [[Object to remove relation from]]
          }
       }
       relationships_clear {
@@ -430,7 +427,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          get {
             [[Get root object of accessible object hierarchy]]
             values {
-               ret: Efl.Object;
+               ret: Efl.Object; [[Root object]]
             }
          }
       }
