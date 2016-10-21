@@ -2,7 +2,11 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
     [[A base UDP socket.
 
       This is the common class and takes an existing FD, usually
-      created by an dialer or server.
+      created by an dialer.
+
+      Since for the server 'clients' there is no accepted connection
+      it will reuse the same file decriptor and to avoid it being
+      closed, another class Efl.Net.Server.Udp.Client is used instead.
 
       @since 1.19
     ]]

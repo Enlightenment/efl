@@ -18,6 +18,8 @@ ecore_con_eolian_files = \
         lib/ecore_con/efl_net_server.eo \
         lib/ecore_con/efl_net_server_fd.eo \
         lib/ecore_con/efl_net_server_tcp.eo \
+        lib/ecore_con/efl_net_server_udp.eo \
+        lib/ecore_con/efl_net_server_udp_client.eo \
 	lib/ecore_con/ecore_con_eet_base.eo \
 	lib/ecore_con/ecore_con_eet_server_obj.eo \
 	lib/ecore_con/ecore_con_eet_client_obj.eo \
@@ -83,7 +85,9 @@ lib/ecore_con/efl_net_dialer_http.c \
 lib/ecore_con/efl_net_dialer_websocket.c \
 lib/ecore_con/efl_net_server.c \
 lib/ecore_con/efl_net_server_fd.c \
-lib/ecore_con/efl_net_server_tcp.c
+lib/ecore_con/efl_net_server_tcp.c \
+lib/ecore_con/efl_net_server_udp.c \
+lib/ecore_con/efl_net_server_udp_client.c
 
 EXTRA_DIST2 += lib/ecore_con/ecore_con_legacy.c
 

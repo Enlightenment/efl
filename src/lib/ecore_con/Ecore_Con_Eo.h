@@ -17,6 +17,8 @@
 
 #include "efl_net_socket_udp.eo.h"
 #include "efl_net_dialer_udp.eo.h"
+#include "efl_net_server_udp.eo.h"
+#include "efl_net_server_udp_client.eo.h"
 
 #include "efl_net_http_types.eot.h"
 
