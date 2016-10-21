@@ -59,6 +59,21 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
             }
         }
 
+        process_incoming_data @protected {
+            [[When the socket has data to be read, process it.
+
+              By default this method will call accept() and then
+              decide if @.client_add or @.client_reject must be
+              executed, however it may be replaced with something
+              else, such as in SOCK_DGRAM (UDP) there is no accept(),
+              only recvfrom().
+
+              It is called straight from @Efl.Loop.Fd "read" event
+              handler and is provided as a method to allow easy
+              extending of the class for various purposes.
+            ]]
+        }
+
         client_add @protected @virtual_pure {
             [[Accept a new client, should emit "client,add".
 

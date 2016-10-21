@@ -61,43 +61,7 @@ efl_net_accept4(int fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool clo
 static void
 _efl_net_server_fd_event_read(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Eo *o = event->object;
-   unsigned int count, limit;
-   Eina_Bool reject_excess, do_reject = EINA_FALSE;
-   struct sockaddr_storage addr;
-   int client, fd;
-   socklen_t addrlen;
-
-   count = efl_net_server_clients_count_get(o);
-   efl_net_server_clients_limit_get(o, &limit, &reject_excess);
-
-   if ((limit > 0) && (count >= limit))
-     {
-        if (!reject_excess)
-          {
-             // TODO: disconnect 'read' so stops calling?
-             return;
-          }
-        do_reject = EINA_TRUE;
-     }
-
-   fd = efl_loop_fd_get(o);
-
-   addrlen = sizeof(addr);
-   client = efl_net_accept4(fd, (struct sockaddr *)&addr, &addrlen,
-                            efl_net_server_fd_close_on_exec_get(o));
-   if (client < 0)
-     {
-        Eina_Error err = errno;
-        ERR("accept(%d): %s", fd, strerror(errno));
-        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
-        return;
-     }
-
-   if (do_reject)
-     efl_net_server_fd_client_reject(o, client);
-   else
-     efl_net_server_fd_client_add(o, client);
+   efl_net_server_fd_process_incoming_data(event->object);
 }
 
 static void
@@ -387,6 +351,43 @@ EOLIAN static int
 _efl_net_server_fd_family_get(Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd)
 {
    return pd->family;
+}
+
+EOLIAN static void
+_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Server_Fd_Data *pd)
+{
+   Eina_Bool do_reject = EINA_FALSE;
+   struct sockaddr_storage addr;
+   int client, fd;
+   socklen_t addrlen;
+
+   if ((pd->clients_limit > 0) && (pd->clients_count >= pd->clients_limit))
+     {
+        if (!pd->clients_reject_excess)
+          {
+             // TODO: disconnect 'read' so stops calling?
+             return;
+          }
+        do_reject = EINA_TRUE;
+     }
+
+   fd = efl_loop_fd_get(o);
+
+   addrlen = sizeof(addr);
+   client = efl_net_accept4(fd, (struct sockaddr *)&addr, &addrlen,
+                            efl_net_server_fd_close_on_exec_get(o));
+   if (client < 0)
+     {
+        Eina_Error err = errno;
+        ERR("accept(%d): %s", fd, strerror(errno));
+        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+        return;
+     }
+
+   if (do_reject)
+     efl_net_server_fd_client_reject(o, client);
+   else
+     efl_net_server_fd_client_add(o, client);
 }
 
 #include "efl_net_server_fd.eo.c"
