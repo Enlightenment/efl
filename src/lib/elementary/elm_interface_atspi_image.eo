@@ -9,13 +9,13 @@ mixin Elm.Interface.Atspi_Image ()
          get @virtual_pure {
          }
          keys {
-            screen_coords: bool;
+            screen_coords: bool; [[$true if we got the screen coordinates, $false otherwise]] 
          }
          values {
-            x: int;
-            y: int;
-            width: int;
-            height: int;
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
+            width: int; [[Image width]]
+            height: int; [[Image height]]
          }
       }
       @property description @protected {
