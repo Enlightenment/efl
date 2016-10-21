@@ -951,8 +951,7 @@ ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surfac
 
    if (input->wl.pointer)
      wl_pointer_set_cursor(input->wl.pointer,
-                           input->pointer.enter_serial,
-                           surface, hot_x, hot_y);
+                           input->pointer.enter_serial, surface, hot_x, hot_y);
 }
 
 EAPI void
