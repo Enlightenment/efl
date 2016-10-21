@@ -65,9 +65,9 @@ static Ecore_Cb end_tick_cb = NULL;
 static const void *end_tick_data = NULL;
 static Eina_Bool animator_ran = EINA_FALSE;
 
-static int timer_fd_read = -1;
-static int timer_fd_write = -1;
-static volatile Ecore_Thread *timer_thread = NULL;
+static volatile int timer_fd_read = -1;
+static volatile int timer_fd_write = -1;
+static Ecore_Thread *timer_thread = NULL;
 static volatile int timer_event_is_busy = 0;
 
 static void
@@ -215,7 +215,9 @@ _timer_tick_quit(void)
 
    if (timer_fd_read < 0) return;
    _tick_send(-1);
-   for (i = 0; (i < 500) && (timer_thread); i++)
+   // SHOULd use this, but broken if thread shutting down already:
+   // ecore_thread_wait(timer_thread, 0.5);
+   for (i = 0; (i < 500) && (timer_fd_write >= 0); i++)
      {
         usleep(1000);
      }
