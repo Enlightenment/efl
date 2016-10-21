@@ -12,7 +12,7 @@ mixin Elm.Interface.Atspi_Action ()
             name: string; [[Action name]]
          }
          keys {
-            id: int;
+            id: int; [[ID to get action name for]]
          }
       }
       @property localized_name @protected {
@@ -23,7 +23,7 @@ mixin Elm.Interface.Atspi_Action ()
             name: string; [[Localized name]]
          }
          keys {
-            id: int;
+            id: int; [[ID to get localized name for]]
          }
       }
       @property description @protected @virtual_pure {
@@ -31,13 +31,13 @@ mixin Elm.Interface.Atspi_Action ()
          get {
          }
          set {
-            return: bool;
+            return: bool; [[EINA_TRUE if description was set, else EINA_FALSE]]
          }
          values {
-            description: string;
+            description: string; [[Action description]]
          }
          keys {
-            id: int;
+            id: int; [[ID to set or get description for]]
          }
       }
       @property actions @protected {
@@ -45,20 +45,20 @@ mixin Elm.Interface.Atspi_Action ()
          get @virtual_pure {
          }
          values {
-            actions: list<Elm_Atspi_Action>; [[contains statically allocated strings]]
+            actions: list<Elm_Atspi_Action>; [[Contains statically allocated strings]]
          }
       }
       action_do @protected @virtual_pure {
          [[Performs action on given widget.]]
          params {
-            @in id: int;
+            @in id: int; [[ID for widget]]
          }
-         return: bool;
+         return: bool; [[EINA_TRUE if action was performed, else EINA_FALSE]]
       }
       keybinding_get @protected @virtual_pure {
          [[Gets configured keybinding for specific action and widget.]]
          params {
-            @in id: int;
+            @in id: int; [[ID for widget]]
          }
          return: own(char *) @warn_unused; [[Should be freed by the user.]]
       }
