@@ -2,41 +2,46 @@ import eina_types;
 
 enum Elm.Atspi_Text.Granularity
 {
-   char,
-   word,
-   sentence,
-   line,
-   paragraph
+   [[Text accessibility granularity]]
+   char, [[Character granularity]]
+   word, [[Word granularity]]
+   sentence, [[Sentence granularity]]
+   line, [[Line granularity]]
+   paragraph [[Paragraph granularity]]
 }
 
 enum Elm.Atspi_Text.Clip_Type
 {
+   [[Text clip type]]
    legacy: elm_atspi_text_clip;
-   none,
-   min,
-   max,
-   both
+   none, [[No clip type]]
+   min, [[Minimum clip type]]
+   max, [[Maximum clip type]]
+   both [[Both clip types]]
 }
 
 struct Elm.Atspi_Text.Attribute
 {
-   name:  string;
-   value: string;
+   [[Text attribute]]
+   name:  string; [[Text attribute name]]
+   value: string; [[Text attribute value]]
 }
 
 struct Elm.Atspi_Text.Range
 {
-   start_offset: int;
-   end_offset : int;
-   content: char *;
+   [[Text range]]
+   start_offset: int; [[Range start offset]]
+   end_offset : int; [[Range end offset]]
+   content: char *; [[Range content]]
 }
 
 struct Elm.Atspi_Text.Change_Info
 {
-   content: string;
-   inserted: bool;
-   pos: size;
-   len: size;
+   [[Text change information]]
+   content: string; [[Change content]]
+   inserted: bool; [[$true if text got inserted]]
+   pos: size; [[Change position]]
+   len: size; [[Change length]]
 }
 
 interface Elm.Interface.Atspi.Text ()
