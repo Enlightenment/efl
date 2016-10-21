@@ -7,7 +7,7 @@ interface Elm.Interface.Atspi.Value ()
             [[Gets value displayed by a accessible widget.]]
          }
          set {
-            return: bool; [[true if setting widgets value has successed, false otherwise.]]
+            return: bool; [[$true if setting widgets value has succeed, $false otherwise.]]
          }
          values {
             value: double; [[Value of widget casted to floating point number.]]
@@ -19,9 +19,9 @@ interface Elm.Interface.Atspi.Value ()
             [[Gets a range of all possible values and its description]]
          }
          values {
-            lower_limit: double;
-            upper_limit: double;
-            description: string;
+            lower_limit: double; [[Lower limit of the range]]
+            upper_limit: double; [[Upper limit of the range]]
+            description: string; [[Description of the range]]
          }
       }
       @property increment @protected {
@@ -29,7 +29,7 @@ interface Elm.Interface.Atspi.Value ()
             [[Gets an minimal incrementation value]]
          }
          values {
-            increment: double;
+            increment: double; [[Minimal incrementation value]]
          }
       }
    }
