@@ -95,6 +95,10 @@ _efl_loop_future_success(Efl_Event *ev, Efl_Loop_Future_Data *pd, void *value)
 
    EINA_INLIST_FREE(pd->callbacks, cb)
      {
+        // Remove callback early to avoid double execution while
+        // doing recursive call
+        pd->callbacks = eina_inlist_remove(pd->callbacks, pd->callbacks);
+
         if (cb->next)
           {
              chain_success.next = cb->next;
@@ -109,7 +113,6 @@ _efl_loop_future_success(Efl_Event *ev, Efl_Loop_Future_Data *pd, void *value)
              chain_success.value = value;
           }
 
-        pd->callbacks = eina_inlist_remove(pd->callbacks, pd->callbacks);
         free(cb);
      }
 }
@@ -127,12 +130,32 @@ _efl_loop_future_failure(Efl_Event *ev, Efl_Loop_Future_Data *pd, Eina_Error err
 
    EINA_INLIST_FREE(pd->callbacks, cb)
      {
+        // Remove callback early to avoid double execution while
+        // doing recursive call
+        pd->callbacks = eina_inlist_remove(pd->callbacks, pd->callbacks);
+
         chain_fail.next = cb->next;
 
         if (cb->failure) cb->failure((void*) cb->data, ev);
 
-        pd->callbacks = eina_inlist_remove(pd->callbacks, pd->callbacks);
         free(cb);
+     }
+}
+
+static void
+_efl_loop_future_propagate_force(Eo *obj, Efl_Loop_Future_Data *pd)
+{
+   Efl_Event ev;
+
+   ev.object = obj;
+
+   if (pd->promise->message->error == 0)
+     {
+        _efl_loop_future_success(&ev, pd, pd->message->value);
+     }
+   else
+     {
+        _efl_loop_future_failure(&ev, pd, pd->message->error);
      }
 }
 
@@ -299,7 +322,14 @@ _efl_loop_future_cancel(Eo *obj, Efl_Loop_Future_Data *pd)
    // We do allow for calling cancel during the propagation phase
    // as the other proper fix is to wype out all future reference before
    // starting propagating things.
-   if (pd->promise && pd->promise->propagating) return;
+   if (pd->promise && pd->promise->propagating)
+     {
+        efl_ref(obj);
+
+        _efl_loop_future_propagate_force(obj, pd);
+
+        goto disconnect;
+     }
 
    // Check state
    if (pd->fulfilled)
@@ -322,6 +352,7 @@ _efl_loop_future_cancel(Eo *obj, Efl_Loop_Future_Data *pd)
 
    _efl_loop_future_propagate(obj, pd);
 
+ disconnect:
    _efl_loop_future_disconnect(obj, pd);
 
    efl_unref(obj);
