@@ -282,6 +282,7 @@ _elm_cursor_set(Elm_Cursor *cur)
    if (cur->visible) return;
 
    evas_event_freeze(cur->evas);
+
    if (!cur->use_engine)
      {
         if (!cur->obj)
@@ -304,10 +305,6 @@ _elm_cursor_set(Elm_Cursor *cur)
 #ifdef HAVE_ELEMENTARY_X
         if (cur->x.win)
           ecore_x_window_cursor_set(cur->x.win, cur->x.cursor);
-#endif
-#ifdef HAVE_ELEMENTARY_WL2
-        if (cur->wl.win)
-          ecore_wl2_window_cursor_from_name_set(cur->wl.win, cur->cursor_name);
 #endif
 
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -365,17 +362,14 @@ _elm_cursor_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_
      }
 
    if (!cur->use_engine)
-     ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
-                                  cur->hot_x, cur->hot_y);
+     cur->obj = ecore_evas_cursor_unset(cur->ee);
+     /* ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR, */
+     /*                              cur->hot_x, cur->hot_y); */
    else
      {
 #ifdef HAVE_ELEMENTARY_X
         if (cur->x.win)
           ecore_x_window_cursor_set(cur->x.win, ECORE_X_CURSOR_X);
-#endif
-#ifdef HAVE_ELEMENTARY_WL2
-        if (cur->wl.win)
-          ecore_wl2_window_cursor_from_name_set(cur->wl.win, NULL);
 #endif
 
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -427,12 +421,15 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
         cur->use_engine = EINA_TRUE;
      }
 
-#ifdef HAVE_ELEMENTARY_DRM
+#if defined (HAVE_ELEMENTARY_DRM) || defined(HAVE_ELEMENTARY_WL2)
    const char *engine_name;
 
    engine_name = ecore_evas_engine_name_get(cur->ee);
-   if ((engine_name) && (!strcmp(engine_name, ELM_DRM)))
-     cur->use_engine = EINA_FALSE;
+   if ((engine_name) &&
+       ((!strcmp(engine_name, ELM_DRM)) ||
+           (!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
+           (!strcmp(engine_name, ELM_WAYLAND_EGL))))
+       cur->use_engine = EINA_FALSE;
 #endif
 
    if (cur->use_engine)
@@ -481,9 +478,9 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
                }
 #endif
 
-#ifdef HAVE_ELEMENTARY_WL2
-             cur->wl.win = elm_win_wl_window_get(top);
-#endif
+/* #ifdef HAVE_ELEMENTARY_WL2 */
+/*              cur->wl.win = elm_win_wl_window_get(top); */
+/* #endif */
 #ifdef HAVE_ELEMENTARY_WIN32
              cur->win32.win = elm_win_win32_window_get(top);
              if (cur->win32.win)
@@ -626,10 +623,6 @@ elm_object_cursor_unset(Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_COCOA
         else if (cur->cocoa.win)
           ecore_cocoa_window_cursor_set(cur->cocoa.win, ECORE_COCOA_CURSOR_DEFAULT);
-#endif
-#ifdef HAVE_ELEMENTARY_WL2
-        else if (cur->wl.win)
-          ecore_wl2_window_cursor_from_name_set(cur->wl.win, NULL);
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
         else
