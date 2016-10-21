@@ -198,34 +198,39 @@ struct Elm.Atspi.Event.Handler; [[ATSPI event listener]]
 
 struct Elm.Atspi.Event.State_Changed.Data
 {
-   type: Elm.Atspi.State_Type;
-   new_value: bool;
+   [[ATSPI state changed event data]]
+   type: Elm.Atspi.State_Type; [[Type of the state changed event]]
+   new_value: bool; [[New value]]
 }
 
 struct Elm.Atspi.Event.Geometry_Changed.Data
 {
-   x: int;
-   y: int;
-   width: int;
-   height: int;
+   [[ATSPI geometry changed event data]]
+   x: int; [[X coordinate]]
+   y: int; [[Y coordinate]]
+   width: int; [[Width]]
+   height: int; [[Height]]
 }
 
 struct Elm.Atspi.Event.Children_Changed.Data
 {
-   is_added: bool;
-   child: Efl.Object;
+   [[ATSPI children changed event data]]
+   is_added: bool; [[Child is added or not]]
+   child: Efl.Object; [[Child object]]
 }
 
 struct Elm.Atspi.Attribute
 {
-   key: string;
-   value: string;
+   [[ATSPI Attribute]]
+   key: string; [[Attribute key]]
+   value: string; [[Attribute value]]
 }
 
 struct Elm.Atspi.Relation
 {
-   type: Elm.Atspi.Relation_Type;
-   objects: list<Efl.Object>;
+   [[ATSPI Relation]]
+   type: Elm.Atspi.Relation_Type; [[Relation type]]
+   objects: list<Efl.Object>; [[List with relation objects]]
 }
 
 type Elm.Atspi.Relation_Set: list<Elm.Atspi.Relation *>;
