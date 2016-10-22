@@ -1,0 +1,79 @@
+
+### Library
+
+# if HAVE_MCS
+# ### Binary
+
+# bin_PROGRAMS += bin/eolian_mono/eolian_mono.exe
+
+# bin_eolian_mono_eolian_mono_exe_SOURCES = \
+#     bin/eolian_mono/main.cs bin/eolian_mono/teste.cs
+
+# bin/eolian_mono/eolian_mono.exe$(EXEEXT): $(bin_eolian_mono_eolian_mono_exe_SOURCES) bin/eolian_mono/$(am__dirstamp)
+# 	@rm -f bin/eolian_mono/eolian_mono_exe$(EXEEXT)
+# 	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(top_builddir)/src/lib/eolian $(MCS) $(MCS_FLAGS) -out:$@ $(filter-out $(lastword $(^)), $(^))
+
+# include Makefile_Mono_Helper.am
+
+# endif
+
+bin_PROGRAMS += bin/eolian_mono/eolian_mono
+
+bin_eolian_mono_eolian_mono_SOURCES = \
+	bin/eolian_mono/eolian_mono.cc
+bin_eolian_mono_eolian_mono_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/eolian_cxx/ \
+-I$(top_srcdir)/src/bin/eolian_mono/ \
+@CHECK_CFLAGS@ @EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_CXX_CFLAGS@ @ECORE_CXX_CFLAGS@ @EO_CFLAGS@ \
+-I$(top_srcdir)/src/bindings/cxx/eina_cxx \
+@EOLIAN_CXX_CFLAGS@ @EOLIAN_CFLAGS@
+
+bin_eolian_mono_eolian_mono_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@
+
+bin_eolian_mono_eolian_mono_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
+
+### Efl C++
+installed_eflmonomainheadersdir = $(includedir)/efl-mono-@VMAJ@/
+nodist_installed_eflmonomainheaders_DATA = $(efl_eolian_cxx_hh:%.hh=%.cs)
+
+CLEANFILES += $(efl_eolian_cxx_hh:%.hh=%.cs)
+
+if HAVE_EOLIAN_MONO
+EOLIAN_MONO = @eolian_mono@
+_EOLIAN_MONO_DEP = @eolian_mono@
+else
+EOLIAN_MONO = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian_mono/eolian_mono${EXEEXT}
+_EOLIAN_MONO_DEP = bin/eolian_mono/eolian_mono${EXEEXT}
+endif
+
+AM_V_EOLMONO = $(am__v_EOLMONO_@AM_V@)
+am__v_EOLMONO_ = $(am__v_EOLMONO_@AM_DEFAULT_V@)
+am__v_EOLMONO_0 = @echo "  EOLMONO  " $@;
+
+if HAVE_MCS
+if EFL_ENABLE_TESTS
+
+AM_TESTS_ENVIRONMENT += MONO='mono'; export MONO;
+AM_TESTS_ENVIRONMENT += MONO_BUILDPATH='$(top_absbuilddir)'; export MONO_BUILDPATH;
+
+check_PROGRAMS += tests/eo_mono/eo_mono.exe
+TESTS += tests/eo_mono/eo_mono.exe
+
+tests_eo_mono_eo_mono_exe_SOURCES = \
+     tests/eo_mono/Main.cs
+
+LD_LIBRARY_PATH_APPEND=$(top_builddir)/src/lib/eina
+
+tests/eo_mono/eo_mono.exe$(EXEEXT): $(tests_eo_mono_eo_mono_exe_SOURCES) tests/eo_mono/$(am__dirstamp)
+	@rm -f tests/eo_mono/eo_mono_exe$(EXEEXT)
+	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LD_LIBRARY_PATH_APPEND) $(MCS) $(MCS_FLAGS) -out:$@ $(filter-out $(lastword $(^)), $(^))
+
+SUFFIXES += .eo.cs
+
+%.eo.cs: %.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) -o $@ $<
+
+endif
+endif
