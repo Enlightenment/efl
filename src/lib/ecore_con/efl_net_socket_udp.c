@@ -46,7 +46,7 @@ _efl_net_socket_udp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Udp_Data *pd EINA_U
 {
    efl_loop_fd_set(efl_super(o, MY_CLASS), fd);
 
-   if (fd >= 0)
+   if (fd != INVALID_SOCKET)
      {
         struct sockaddr_storage addr;
         socklen_t addrlen;
@@ -60,8 +60,8 @@ _efl_net_socket_udp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Udp_Data *pd EINA_U
         if (family == AF_UNSPEC) return;
 
         addrlen = sizeof(addr);
-        if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) < 0)
-          ERR("getsockname(%d): %s", fd, strerror(errno));
+        if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) != 0)
+          ERR("getsockname(%d): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         else
           {
              char str[INET6_ADDRSTRLEN + sizeof("[]:65536")];
@@ -70,8 +70,8 @@ _efl_net_socket_udp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Udp_Data *pd EINA_U
           }
 
         addrlen = sizeof(addr);
-        if (getpeername(fd, (struct sockaddr *)&addr, &addrlen) < 0)
-          ERR("getpeername(%d): %s", fd, strerror(errno));
+        if (getpeername(fd, (struct sockaddr *)&addr, &addrlen) != 0)
+          ERR("getpeername(%d): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         else
           {
              char str[INET6_ADDRSTRLEN + sizeof("[]:65536")];
@@ -108,13 +108,13 @@ _efl_net_socket_udp_cork_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool cork)
    pd->cork = cork;
 
    fd = efl_loop_fd_get(o);
-   if (fd < 0) return EINA_TRUE; /* postpone until fd_set() */
+   if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = cork;
-   if (setsockopt(fd, IPPROTO_UDP, option, &value, sizeof(value)) < 0)
+   if (setsockopt(fd, IPPROTO_UDP, option, &value, sizeof(value)) != 0)
      {
         ERR("setsockopt(%d, IPPROTO_UDP, 0x%x, %d): %s",
-            fd, option, value, strerror(errno));
+            fd, option, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->cork = old;
         return EINA_FALSE;
      }
@@ -132,21 +132,21 @@ _efl_net_socket_udp_cork_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
    option = _cork_option_get();
    if (EINA_UNLIKELY(option < 0))
      {
-        ERR("Could not find a UDP_CORK equivalent on your system");
+        WRN("Could not find a UDP_CORK equivalent on your system");
         return EINA_FALSE;
      }
 
    fd = efl_loop_fd_get(o);
-   if (fd < 0) return pd->cork;
+   if (fd == INVALID_SOCKET) return pd->cork;
 
    /* if there is a fd, always query it directly as it may be modified
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, IPPROTO_UDP, option, &value, &valuelen) < 0)
+   if (getsockopt(fd, IPPROTO_UDP, option, &value, &valuelen) != 0)
      {
         ERR("getsockopt(%d, IPPROTO_UDP, 0x%x): %s",
-            fd, option, strerror(errno));
+            fd, option, eina_error_msg_get(efl_net_socket_error_get()));
         return EINA_FALSE;
      }
 
@@ -167,7 +167,7 @@ _efl_net_socket_udp_dont_route_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool
 
    pd->dont_route = dont_route;
 
-   if (fd < 0) return EINA_TRUE;
+   if (fd == INVALID_SOCKET) return EINA_TRUE;
 
    if (setsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &value, sizeof(value)) != 0)
      {
@@ -191,7 +191,7 @@ _efl_net_socket_udp_dont_route_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
 #endif
    socklen_t valuelen;
 
-   if (fd < 0) return pd->dont_route;
+   if (fd == INVALID_SOCKET) return pd->dont_route;
 
    /* if there is a fd, always query it directly as it may be modified
     * elsewhere by nasty users.

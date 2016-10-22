@@ -385,6 +385,14 @@ void _efl_net_server_udp_client_feed(Eo *client, Eina_Rw_Slice slice);
 
 Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr);
 
+/* allow windows and posix to use the same error comparison */
+#ifndef SOCKET_ERROR
+#define SOCKET_ERROR -1
+#endif
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET -1
+#endif
+
 /**
  * @brief splits an address in the format "host:port" in two
  * null-terminated strings.

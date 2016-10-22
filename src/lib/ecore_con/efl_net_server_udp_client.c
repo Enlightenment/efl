@@ -62,7 +62,7 @@ _efl_net_server_udp_client_cleanup(Efl_Net_Server_Udp_Client_Data *pd)
 {
    Efl_Net_Server_Udp_Client_Packet *pkt;
 
-   pd->fd = -1;
+   pd->fd = INVALID_SOCKET;
    EINA_INLIST_FREE(pd->packets, pkt)
      {
         pd->packets = eina_inlist_remove(pd->packets, EINA_INLIST_GET(pkt));
@@ -165,7 +165,7 @@ _efl_net_server_udp_client_efl_io_writer_write(Eo *o EINA_UNUSED, Efl_Net_Server
    ssize_t r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ro_slice, EINVAL);
-   if (pd->fd < 0) goto error;
+   if (pd->fd == INVALID_SOCKET) goto error;
 
    do
      {
@@ -209,7 +209,7 @@ _efl_net_server_udp_client_efl_io_reader_can_read_get(Eo *o EINA_UNUSED, Efl_Net
 EOLIAN static void
 _efl_net_server_udp_client_efl_io_reader_can_read_set(Eo *o, Efl_Net_Server_Udp_Client_Data *pd, Eina_Bool can_read)
 {
-   EINA_SAFETY_ON_TRUE_RETURN(pd->fd < 0);
+   EINA_SAFETY_ON_TRUE_RETURN(pd->fd == INVALID_SOCKET);
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
    efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
@@ -224,7 +224,7 @@ _efl_net_server_udp_client_efl_io_reader_eos_get(Eo *o EINA_UNUSED, Efl_Net_Serv
 EOLIAN static void
 _efl_net_server_udp_client_efl_io_reader_eos_set(Eo *o, Efl_Net_Server_Udp_Client_Data *pd, Eina_Bool is_eos)
 {
-   EINA_SAFETY_ON_TRUE_RETURN(pd->fd < 0);
+   EINA_SAFETY_ON_TRUE_RETURN(pd->fd == INVALID_SOCKET);
    if (pd->eos == is_eos) return;
    pd->eos = is_eos;
    if (is_eos)
@@ -240,7 +240,7 @@ _efl_net_server_udp_client_efl_io_writer_can_write_get(Eo *o EINA_UNUSED, Efl_Ne
 EOLIAN static void
 _efl_net_server_udp_client_efl_io_writer_can_write_set(Eo *o, Efl_Net_Server_Udp_Client_Data *pd, Eina_Bool can_write)
 {
-   EINA_SAFETY_ON_TRUE_RETURN(pd->fd < 0);
+   EINA_SAFETY_ON_TRUE_RETURN(pd->fd == INVALID_SOCKET);
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
    efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
@@ -249,7 +249,7 @@ _efl_net_server_udp_client_efl_io_writer_can_write_set(Eo *o, Efl_Net_Server_Udp
 EOLIAN static Eina_Bool
 _efl_net_server_udp_client_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
 {
-   return pd->fd < 0;
+   return pd->fd == INVALID_SOCKET;
 }
 
 EOLIAN static void

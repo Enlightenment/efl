@@ -47,7 +47,7 @@ _efl_net_socket_tcp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd EINA_U
 {
    efl_loop_fd_set(efl_super(o, MY_CLASS), fd);
 
-   if (fd >= 0)
+   if (fd != INVALID_SOCKET)
      {
         struct sockaddr_storage addr;
         socklen_t addrlen;
@@ -62,8 +62,8 @@ _efl_net_socket_tcp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd EINA_U
         if (family == AF_UNSPEC) return;
 
         addrlen = sizeof(addr);
-        if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) < 0)
-          ERR("getsockname(%d): %s", fd, strerror(errno));
+        if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) != 0)
+          ERR("getsockname(%d): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         else
           {
              char str[INET6_ADDRSTRLEN + sizeof("[]:65536")];
@@ -72,8 +72,8 @@ _efl_net_socket_tcp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd EINA_U
           }
 
         addrlen = sizeof(addr);
-        if (getpeername(fd, (struct sockaddr *)&addr, &addrlen) < 0)
-          ERR("getpeername(%d): %s", fd, strerror(errno));
+        if (getpeername(fd, (struct sockaddr *)&addr, &addrlen) != 0)
+          ERR("getpeername(%d): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         else
           {
              char str[INET6_ADDRSTRLEN + sizeof("[]:65536")];
@@ -86,19 +86,24 @@ _efl_net_socket_tcp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd EINA_U
 EOLIAN static Eina_Bool
 _efl_net_socket_tcp_keep_alive_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool keep_alive)
 {
-   int value, fd;
+   int fd;
    Eina_Bool old = pd->keep_alive;
+#ifdef _WIN32
+   DWORD value;
+#else
+   int value;
+#endif
 
    pd->keep_alive = keep_alive;
 
    fd = efl_loop_fd_get(o);
-   if (fd < 0) return EINA_TRUE; /* postpone until fd_set() */
+   if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = keep_alive;
-   if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &value, sizeof(value)) < 0)
+   if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &value, sizeof(value)) != 0)
      {
         ERR("setsockopt(%d, SOL_SOCKET, SO_KEEPALIVE, %d): %s",
-            fd, value, strerror(errno));
+            fd, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->keep_alive = old;
         return EINA_FALSE;
      }
@@ -109,20 +114,26 @@ _efl_net_socket_tcp_keep_alive_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool
 EOLIAN static Eina_Bool
 _efl_net_socket_tcp_keep_alive_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
 {
-   int value = 0, fd;
+   int fd;
+#ifdef _WIN32
+   DWORD value = 0;
+   int valuelen;
+#else
+   int value = 0;
    socklen_t valuelen;
+#endif
 
    fd = efl_loop_fd_get(o);
-   if (fd < 0) return pd->keep_alive;
+   if (fd == INVALID_SOCKET) return pd->keep_alive;
 
    /* if there is a fd, always query it directly as it may be modified
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &value, &valuelen) < 0)
+   if (getsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &value, &valuelen) != 0)
      {
         ERR("getsockopt(%d, SOL_SOCKET, SO_KEEPALIVE): %s",
-            fd, strerror(errno));
+            fd, eina_error_msg_get(efl_net_socket_error_get()));
         return EINA_FALSE;
      }
 
@@ -133,19 +144,24 @@ _efl_net_socket_tcp_keep_alive_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
 EOLIAN static Eina_Bool
 _efl_net_socket_tcp_no_delay_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool no_delay)
 {
-   int value, fd;
+   int fd;
    Eina_Bool old = pd->no_delay;
+#ifdef _WIN32
+   BOOL value;
+#else
+   int value;
+#endif
 
    pd->no_delay = no_delay;
 
    fd = efl_loop_fd_get(o);
-   if (fd < 0) return EINA_TRUE; /* postpone until fd_set() */
+   if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = no_delay;
-   if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) < 0)
+   if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) != 0)
      {
         ERR("setsockopt(%d, IPPROTO_TCP, TCP_NODELAY, %d): %s",
-            fd, value, strerror(errno));
+            fd, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->no_delay = old;
         return EINA_FALSE;
      }
@@ -156,20 +172,26 @@ _efl_net_socket_tcp_no_delay_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool n
 EOLIAN static Eina_Bool
 _efl_net_socket_tcp_no_delay_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
 {
-   int value = 0, fd;
+   int fd;
+#ifdef _WIN32
+   BOOL value;
+   int valuelen;
+#else
+   int value;
    socklen_t valuelen;
+#endif
 
    fd = efl_loop_fd_get(o);
-   if (fd < 0) return pd->no_delay;
+   if (fd == INVALID_SOCKET) return pd->no_delay;
 
    /* if there is a fd, always query it directly as it may be modified
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &value, &valuelen) < 0)
+   if (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &value, &valuelen) != 0)
      {
         ERR("getsockopt(%d, IPPROTO_TCP, TCP_NODELAY): %s",
-            fd, strerror(errno));
+            fd, eina_error_msg_get(efl_net_socket_error_get()));
         return EINA_FALSE;
      }
 
@@ -206,13 +228,13 @@ _efl_net_socket_tcp_cork_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool cork)
    pd->cork = cork;
 
    fd = efl_loop_fd_get(o);
-   if (fd < 0) return EINA_TRUE; /* postpone until fd_set() */
+   if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = cork;
-   if (setsockopt(fd, IPPROTO_TCP, option, &value, sizeof(value)) < 0)
+   if (setsockopt(fd, IPPROTO_TCP, option, &value, sizeof(value)) != 0)
      {
         ERR("setsockopt(%d, IPPROTO_TCP, 0x%x, %d): %s",
-            fd, option, value, strerror(errno));
+            fd, option, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->cork = old;
         return EINA_FALSE;
      }
@@ -230,21 +252,21 @@ _efl_net_socket_tcp_cork_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
    option = _cork_option_get();
    if (EINA_UNLIKELY(option < 0))
      {
-        ERR("Could not find a TCP_CORK equivalent on your system");
+        WRN("Could not find a TCP_CORK equivalent on your system");
         return EINA_FALSE;
      }
 
    fd = efl_loop_fd_get(o);
-   if (fd < 0) return pd->cork;
+   if (fd == INVALID_SOCKET) return pd->cork;
 
    /* if there is a fd, always query it directly as it may be modified
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, IPPROTO_TCP, option, &value, &valuelen) < 0)
+   if (getsockopt(fd, IPPROTO_TCP, option, &value, &valuelen) != 0)
      {
         ERR("getsockopt(%d, IPPROTO_TCP, 0x%x): %s",
-            fd, option, strerror(errno));
+            fd, option, eina_error_msg_get(efl_net_socket_error_get()));
         return EINA_FALSE;
      }
 

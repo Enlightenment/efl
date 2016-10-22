@@ -78,12 +78,13 @@ _efl_net_server_udp_resolved_bind(Eo *o, Efl_Net_Server_Udp_Data *pd, const stru
 
    fd = efl_net_socket4(addr->ai_family, addr->ai_socktype, addr->ai_protocol,
                         efl_net_server_fd_close_on_exec_get(o));
-   if (fd < 0)
+   if (fd == INVALID_SOCKET)
      {
+        err = efl_net_socket_error_get();
         ERR("socket(%d, %d, %d): %s",
             addr->ai_family, addr->ai_socktype, addr->ai_protocol,
-            strerror(errno));
-        return errno;
+            eina_error_msg_get(err));
+        return err;
      }
 
    efl_loop_fd_set(o, fd);
@@ -100,17 +101,18 @@ _efl_net_server_udp_resolved_bind(Eo *o, Efl_Net_Server_Udp_Data *pd, const stru
    efl_net_server_udp_dont_route_set(o, pd->dont_route);
 
    r = bind(fd, addr->ai_addr, addrlen);
-   if (r < 0)
+   if (r != 0)
      {
-        err = errno;
+        err = efl_net_socket_error_get();
         efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr);
-        DBG("bind(%d, %s): %s", fd, buf, strerror(errno));
+        DBG("bind(%d, %s): %s", fd, buf, eina_error_msg_get(err));
         goto error;
      }
 
    if (getsockname(fd, addr->ai_addr, &addrlen) != 0)
      {
-        ERR("getsockname(%d): %s", fd, strerror(errno));
+        err = efl_net_socket_error_get();
+        ERR("getsockname(%d): %s", fd, eina_error_msg_get(err));
         goto error;
      }
    else if (efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr))
@@ -317,19 +319,25 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
 EOLIAN void
 _efl_net_server_udp_ipv6_only_set(Eo *o, Efl_Net_Server_Udp_Data *pd, Eina_Bool ipv6_only)
 {
+#ifdef IPV6_V6ONLY
    Eina_Bool old = pd->ipv6_only;
    int fd = efl_loop_fd_get(o);
+#ifdef _WIN32
+   DWORD value = ipv6_only;
+#else
    int value = ipv6_only;
+#endif
+#endif
 
    pd->ipv6_only = ipv6_only;
 
-   if (fd < 0) return;
+#ifdef IPV6_V6ONLY
+   if (fd == INVALID_SOCKET) return;
    if (efl_net_server_fd_family_get(o) != AF_INET6) return;
 
-#ifdef IPV6_V6ONLY
-   if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &value, sizeof(value)) < 0)
+   if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &value, sizeof(value)) != 0)
      {
-        ERR("could not set socket=%d IPV6_V6ONLY=%d: %s", fd, value, strerror(errno));
+        ERR("could not set socket=%d IPV6_V6ONLY=%d: %s", fd, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->ipv6_only = old;
      }
 #endif
@@ -340,15 +348,21 @@ _efl_net_server_udp_ipv6_only_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Data *pd
 {
 #ifdef IPV6_V6ONLY
    int fd = efl_loop_fd_get(o);
+#ifdef _WIN32
+   DWORD value = 0;
+   int valuelen;
+#else
    int value = 0;
-   socklen_t size = sizeof(value);
+   socklen_t valuelen;
+#endif
 
-   if (fd < 0) goto end;
+   if (fd == INVALID_SOCKET) goto end;
    if (efl_net_server_fd_family_get(o) != AF_INET6) goto end;
 
-   if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &value, &size) < 0)
+   valuelen = sizeof(value);
+   if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &value, &valuelen) != 0)
      {
-        WRN("getsockopt(%d, IPPROTO_IPV6, IPV6_V6ONLY): %s", fd, strerror(errno));
+        WRN("getsockopt(%d, IPPROTO_IPV6, IPV6_V6ONLY): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         goto end;
      }
    pd->ipv6_only = !!value;
@@ -371,7 +385,7 @@ _efl_net_server_udp_dont_route_set(Eo *o, Efl_Net_Server_Udp_Data *pd, Eina_Bool
 
    pd->dont_route = dont_route;
 
-   if (fd < 0) return EINA_TRUE;
+   if (fd == INVALID_SOCKET) return EINA_TRUE;
 
    if (setsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &value, sizeof(value)) != 0)
      {
@@ -395,7 +409,7 @@ _efl_net_server_udp_dont_route_get(Eo *o, Efl_Net_Server_Udp_Data *pd)
 #endif
    socklen_t valuelen;
 
-   if (fd < 0) return pd->dont_route;
+   if (fd == INVALID_SOCKET) return pd->dont_route;
 
    /* if there is a fd, always query it directly as it may be modified
     * elsewhere by nasty users.

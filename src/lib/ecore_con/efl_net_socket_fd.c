@@ -124,11 +124,11 @@ _efl_net_socket_fd_unset(Eo *o)
 EOLIAN static void
 _efl_net_socket_fd_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, int fd)
 {
-   if ((pd->family == AF_UNSPEC) && (fd >= 0))
+   if ((pd->family == AF_UNSPEC) && (fd != INVALID_SOCKET))
      {
         struct sockaddr_storage addr;
         socklen_t addrlen = sizeof(addr);
-        if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) < 0)
+        if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) != 0)
           ERR("getsockname(%d): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         else
           efl_net_socket_fd_family_set(o, addr.ss_family);
@@ -136,7 +136,7 @@ _efl_net_socket_fd_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, int fd)
 
    efl_loop_fd_set(efl_super(o, MY_CLASS), fd);
 
-   if (fd >= 0) _efl_net_socket_fd_set(o, pd, fd);
+   if (fd != INVALID_SOCKET) _efl_net_socket_fd_set(o, pd, fd);
    else _efl_net_socket_fd_unset(o);
 }
 
@@ -172,11 +172,11 @@ _efl_net_socket_fd_efl_io_reader_read(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNU
    ssize_t r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(rw_slice, EINVAL);
-   if (fd < 0) goto error;
+   if (fd == INVALID_SOCKET) goto error;
    do
      {
         r = recv(fd, rw_slice->mem, rw_slice->len, 0);
-        if (r < 0)
+        if (r == SOCKET_ERROR)
           {
              Eina_Error err = efl_net_socket_error_get();
 
@@ -189,7 +189,7 @@ _efl_net_socket_fd_efl_io_reader_read(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNU
              return err;
           }
      }
-   while (r < 0);
+   while (r == SOCKET_ERROR);
 
    rw_slice->len = r;
    efl_io_reader_can_read_set(o, EINA_FALSE); /* wait Efl.Loop.Fd "read" */
@@ -211,12 +211,12 @@ _efl_net_socket_fd_efl_io_writer_write(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
    ssize_t r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ro_slice, EINVAL);
-   if (fd < 0) goto error;
+   if (fd == INVALID_SOCKET) goto error;
 
    do
      {
         r = send(fd, ro_slice->mem, ro_slice->len, 0);
-        if (r < 0)
+        if (r == SOCKET_ERROR)
           {
              Eina_Error err = efl_net_socket_error_get();
 
@@ -229,7 +229,7 @@ _efl_net_socket_fd_efl_io_writer_write(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
              return err;
           }
      }
-   while (r < 0);
+   while (r == SOCKET_ERROR);
 
    if (remaining)
      {

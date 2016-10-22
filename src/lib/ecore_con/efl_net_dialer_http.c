@@ -1102,7 +1102,7 @@ _efl_net_dialer_http_socket_open(void *data, curlsocktype purpose EINA_UNUSED, s
    Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
    pd->fd = efl_net_socket4(addr->family, addr->socktype, addr->protocol, pd->close_on_exec);
-   if (pd->fd < 0)
+   if (pd->fd == INVALID_SOCKET)
      ERR("could not create curl socket family=%d, type=%d, protocol=%d",
          addr->family, addr->socktype, addr->protocol);
    else
@@ -1665,7 +1665,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EBADF);
 
-   pd->fd = -1;
+   pd->fd = INVALID_SOCKET;
 
    if (pd->in_curl_callback)
      {
@@ -1731,7 +1731,7 @@ _efl_net_dialer_http_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Net_
 
    pd->close_on_exec = close_on_exec;
 
-   if (pd->fd < 0) return EINA_TRUE; /* postpone until _efl_net_dialer_http_socket_open */
+   if (pd->fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until _efl_net_dialer_http_socket_open */
 
    flags = fcntl(pd->fd, F_GETFD);
    if (flags < 0)
