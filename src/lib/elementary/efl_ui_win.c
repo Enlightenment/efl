@@ -919,7 +919,8 @@ _elm_win_mouse_in(Ecore_Evas *ee)
    _elm_win_throttle_ok = EINA_TRUE;
    if (sd->resizing) sd->resizing = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_WL2
-   ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+   if (sd->wl.win)
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 
    ecore_evas_object_cursor_set(sd->ee, sd->pointer.obj,
                                 ELM_OBJECT_LAYER_CURSOR,
@@ -3517,7 +3518,8 @@ _elm_win_frame_cb_move_start(void *data,
    if (!sd) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+   if (sd->wl.win)
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 
    if (!strcmp(source, "elm"))
      _elm_theme_object_set(sd->obj, sd->pointer.obj,
@@ -3551,7 +3553,8 @@ _elm_win_frame_cb_move_stop(void *data,
    if (!sd) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+   if (sd->wl.win)
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
    _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", "default");
 #endif
 }
