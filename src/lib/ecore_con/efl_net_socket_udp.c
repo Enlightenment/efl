@@ -158,7 +158,7 @@ EOLIAN static Eina_Bool
 _efl_net_socket_udp_dont_route_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool dont_route)
 {
    Eina_Bool old = pd->dont_route;
-   int fd = efl_loop_fd_get(o);
+   SOCKET fd = efl_loop_fd_get(o);
 #ifdef _WIN32
    DWORD value = dont_route;
 #else
@@ -183,7 +183,7 @@ _efl_net_socket_udp_dont_route_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool
 EOLIAN static Eina_Bool
 _efl_net_socket_udp_dont_route_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
 {
-   int fd = efl_loop_fd_get(o);
+   SOCKET fd = efl_loop_fd_get(o);
 #ifdef _WIN32
    DWORD value;
 #else

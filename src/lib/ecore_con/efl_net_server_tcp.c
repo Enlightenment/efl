@@ -59,7 +59,8 @@ _efl_net_server_tcp_resolved_bind(Eo *o, Efl_Net_Server_Tcp_Data *pd, const stru
    Eina_Error err = 0;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
    socklen_t addrlen = addr->ai_addrlen;
-   int fd, r;
+   SOCKET fd;
+   int r;
 
    efl_net_server_fd_family_set(o, addr->ai_family);
 
@@ -118,7 +119,7 @@ _efl_net_server_tcp_resolved_bind(Eo *o, Efl_Net_Server_Tcp_Data *pd, const stru
  error:
    efl_net_server_fd_family_set(o, AF_UNSPEC);
    efl_loop_fd_set(o, -1);
-   close(fd);
+   closesocket(fd);
    return err;
 }
 
@@ -212,7 +213,7 @@ _efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, Efl_Net_Server_Tcp_Data 
    if (!client)
      {
         ERR("could not create client object fd=%d", client_fd);
-        close(client_fd);
+        closesocket(client_fd);
         return;
      }
 
@@ -240,7 +241,7 @@ _efl_net_server_tcp_efl_net_server_fd_client_reject(Eo *o, Efl_Net_Server_Tcp_Da
    else
      efl_net_ip_port_fmt(str, sizeof(str), (struct sockaddr *)&addr);
 
-   close(client_fd);
+   closesocket(client_fd);
    efl_event_callback_call(o, EFL_NET_SERVER_EVENT_CLIENT_REJECTED, str);
 }
 
@@ -249,7 +250,7 @@ _efl_net_server_tcp_ipv6_only_set(Eo *o, Efl_Net_Server_Tcp_Data *pd, Eina_Bool 
 {
 #ifdef IPV6_V6ONLY
    Eina_Bool old = pd->ipv6_only;
-   int fd = efl_loop_fd_get(o);
+   SOCKET fd = efl_loop_fd_get(o);
 #ifdef _WIN32
    DWORD value = ipv6_only;
 #else
@@ -275,7 +276,7 @@ EOLIAN Eina_Bool
 _efl_net_server_tcp_ipv6_only_get(Eo *o EINA_UNUSED, Efl_Net_Server_Tcp_Data *pd)
 {
 #ifdef IPV6_V6ONLY
-   int fd = efl_loop_fd_get(o);
+   SOCKET fd = efl_loop_fd_get(o);
 #ifdef _WIN32
    DWORD value = 0;
    int valuelen;

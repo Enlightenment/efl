@@ -90,7 +90,7 @@ _efl_net_dialer_udp_connect_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_efl_net_dialer_udp_connected(void *data, const struct sockaddr *addr, socklen_t addrlen EINA_UNUSED, int sockfd, Eina_Error err)
+_efl_net_dialer_udp_connected(void *data, const struct sockaddr *addr, socklen_t addrlen EINA_UNUSED, SOCKET sockfd, Eina_Error err)
 {
    Eo *o = data;
    Efl_Net_Dialer_Udp_Data *pd = efl_data_scope_get(o, MY_CLASS);

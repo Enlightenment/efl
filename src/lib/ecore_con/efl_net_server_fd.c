@@ -32,15 +32,15 @@ typedef struct _Efl_Net_Server_Fd_Data
    Eina_Bool reuse_port;
 } Efl_Net_Server_Fd_Data;
 
-static int
-efl_net_accept4(int fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool close_on_exec)
+static SOCKET
+efl_net_accept4(SOCKET fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool close_on_exec)
 {
 #ifdef HAVE_ACCEPT4
    int flags = 0;
    if (close_on_exec) flags |= SOCK_CLOEXEC;
    return accept4(fd, addr, addrlen, flags);
 #else
-   int client = accept(fd, addr, addrlen);
+   SOCKET client = accept(fd, addr, addrlen);
    if (client != INVALID_SOCKET) return client;
 
 #ifdef FD_CLOEXEC
@@ -50,7 +50,7 @@ efl_net_accept4(int fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool clo
           {
              int errno_bkp = errno;
              ERR("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", client, strerror(errno));
-             close(client);
+             closesocket(client);
              errno = errno_bkp;
              return -1;
           }
@@ -366,7 +366,7 @@ _efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Server_Fd_Data *pd)
 {
    Eina_Bool do_reject = EINA_FALSE;
    struct sockaddr_storage addr;
-   int client, fd;
+   SOCKET client, fd;
    socklen_t addrlen;
 
    if ((pd->clients_limit > 0) && (pd->clients_count >= pd->clients_limit))

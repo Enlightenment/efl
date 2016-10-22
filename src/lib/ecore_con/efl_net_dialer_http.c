@@ -204,7 +204,7 @@ typedef struct
    } authentication;
    Efl_Future *pending_close;
    unsigned int in_curl_callback;
-   int fd;
+   SOCKET fd;
    Eina_Error error;
    Efl_Net_Http_Version version;
    Efl_Net_Dialer_Http_Primary_Mode primary_mode;
@@ -368,7 +368,7 @@ static void
 _efl_net_dialer_http_curlm_event_fd_read(void *data, const Efl_Event *event)
 {
    Efl_Net_Dialer_Http_Curlm *cm = data;
-   int fd = efl_loop_fd_get(event->object);
+   SOCKET fd = efl_loop_fd_get(event->object);
    CURLMcode r;
 
    ERR("XXX socket=%d CURL_CSELECT_IN", fd);
@@ -383,7 +383,7 @@ static void
 _efl_net_dialer_http_curlm_event_fd_write(void *data, const Efl_Event *event)
 {
    Efl_Net_Dialer_Http_Curlm *cm = data;
-   int fd = efl_loop_fd_get(event->object);
+   SOCKET fd = efl_loop_fd_get(event->object);
    CURLMcode r;
 
    ERR("XXX socket=%d CURL_CSELECT_OUT", fd);
@@ -476,7 +476,8 @@ static Eina_Bool
 _efl_net_dialer_http_curlm_event_fd(void *data, Ecore_Fd_Handler *fdhandler)
 {
    Efl_Net_Dialer_Http_Curlm *cm = data;
-   int fd, flags = 0;
+   SOCKET fd;
+   int flags = 0;
    CURLMcode r;
 
    if (ecore_main_fd_handler_active_get(fdhandler, ECORE_FD_READ))

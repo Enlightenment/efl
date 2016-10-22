@@ -72,7 +72,8 @@ _efl_net_server_udp_resolved_bind(Eo *o, Efl_Net_Server_Udp_Data *pd, const stru
    Eina_Error err = 0;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
    socklen_t addrlen = addr->ai_addrlen;
-   int fd, r;
+   SOCKET fd;
+   int r;
 
    efl_net_server_fd_family_set(o, addr->ai_family);
 
@@ -125,7 +126,7 @@ _efl_net_server_udp_resolved_bind(Eo *o, Efl_Net_Server_Udp_Data *pd, const stru
  error:
    efl_net_server_fd_family_set(o, AF_UNSPEC);
    efl_loop_fd_set(o, -1);
-   close(fd);
+   closesocket(fd);
    return err;
 }
 
@@ -211,7 +212,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_efl_net_server_udp_client_cbs,
                            { EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_server_udp_client_event_closed });
 
 static size_t
-_udp_datagram_size_query(int fd)
+_udp_datagram_size_query(SOCKET fd)
 {
 #ifdef _WIN32
    unsigned long size;
@@ -232,7 +233,7 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
    Eina_Bool reject_excess;
    struct sockaddr_storage addr;
    Eo *client;
-   int fd;
+   SOCKET fd;
    socklen_t addrlen = sizeof(addr);
    char str[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
    char *buf;
@@ -321,7 +322,7 @@ _efl_net_server_udp_ipv6_only_set(Eo *o, Efl_Net_Server_Udp_Data *pd, Eina_Bool 
 {
 #ifdef IPV6_V6ONLY
    Eina_Bool old = pd->ipv6_only;
-   int fd = efl_loop_fd_get(o);
+   SOCKET fd = efl_loop_fd_get(o);
 #ifdef _WIN32
    DWORD value = ipv6_only;
 #else
@@ -347,7 +348,7 @@ EOLIAN Eina_Bool
 _efl_net_server_udp_ipv6_only_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Data *pd)
 {
 #ifdef IPV6_V6ONLY
-   int fd = efl_loop_fd_get(o);
+   SOCKET fd = efl_loop_fd_get(o);
 #ifdef _WIN32
    DWORD value = 0;
    int valuelen;
@@ -376,7 +377,7 @@ EOLIAN static Eina_Bool
 _efl_net_server_udp_dont_route_set(Eo *o, Efl_Net_Server_Udp_Data *pd, Eina_Bool dont_route)
 {
    Eina_Bool old = pd->dont_route;
-   int fd = efl_loop_fd_get(o);
+   SOCKET fd = efl_loop_fd_get(o);
 #ifdef _WIN32
    DWORD value = dont_route;
 #else
@@ -401,7 +402,7 @@ _efl_net_server_udp_dont_route_set(Eo *o, Efl_Net_Server_Udp_Data *pd, Eina_Bool
 EOLIAN static Eina_Bool
 _efl_net_server_udp_dont_route_get(Eo *o, Efl_Net_Server_Udp_Data *pd)
 {
-   int fd = efl_loop_fd_get(o);
+   SOCKET fd = efl_loop_fd_get(o);
 #ifdef _WIN32
    DWORD value;
 #else

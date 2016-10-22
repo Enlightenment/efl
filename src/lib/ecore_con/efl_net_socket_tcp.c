@@ -86,7 +86,7 @@ _efl_net_socket_tcp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd EINA_U
 EOLIAN static Eina_Bool
 _efl_net_socket_tcp_keep_alive_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool keep_alive)
 {
-   int fd;
+   SOCKET fd;
    Eina_Bool old = pd->keep_alive;
 #ifdef _WIN32
    DWORD value;
@@ -114,7 +114,7 @@ _efl_net_socket_tcp_keep_alive_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool
 EOLIAN static Eina_Bool
 _efl_net_socket_tcp_keep_alive_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
 {
-   int fd;
+   SOCKET fd;
 #ifdef _WIN32
    DWORD value = 0;
    int valuelen;
@@ -144,7 +144,7 @@ _efl_net_socket_tcp_keep_alive_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
 EOLIAN static Eina_Bool
 _efl_net_socket_tcp_no_delay_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool no_delay)
 {
-   int fd;
+   SOCKET fd;
    Eina_Bool old = pd->no_delay;
 #ifdef _WIN32
    BOOL value;
@@ -172,7 +172,7 @@ _efl_net_socket_tcp_no_delay_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool n
 EOLIAN static Eina_Bool
 _efl_net_socket_tcp_no_delay_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
 {
-   int fd;
+   SOCKET fd;
 #ifdef _WIN32
    BOOL value;
    int valuelen;

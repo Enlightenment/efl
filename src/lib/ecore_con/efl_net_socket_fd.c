@@ -94,7 +94,7 @@ _efl_net_socket_fd_efl_object_destructor(Eo *o, Efl_Net_Socket_Fd_Data *pd)
 }
 
 static void
-_efl_net_socket_fd_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, int fd)
+_efl_net_socket_fd_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, SOCKET fd)
 {
    Eina_Bool close_on_exec = efl_io_closer_close_on_exec_get(o); /* get cached value, otherwise will query from set fd */
    efl_io_reader_fd_reader_fd_set(o, fd);
@@ -168,7 +168,7 @@ _efl_net_socket_fd_efl_io_closer_close(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
 EOLIAN static Eina_Error
 _efl_net_socket_fd_efl_io_reader_read(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED, Eina_Rw_Slice *rw_slice)
 {
-   int fd = efl_io_reader_fd_reader_fd_get(o);
+   SOCKET fd = efl_io_reader_fd_reader_fd_get(o);
    ssize_t r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(rw_slice, EINVAL);
@@ -207,7 +207,7 @@ _efl_net_socket_fd_efl_io_reader_read(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNU
 EOLIAN static Eina_Error
 _efl_net_socket_fd_efl_io_writer_write(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED, Eina_Slice *ro_slice, Eina_Slice *remaining)
 {
-   int fd = efl_io_writer_fd_writer_fd_get(o);
+   SOCKET fd = efl_io_writer_fd_writer_fd_get(o);
    ssize_t r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ro_slice, EINVAL);

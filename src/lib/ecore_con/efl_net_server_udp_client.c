@@ -41,7 +41,7 @@ typedef struct _Efl_Net_Server_Udp_Client_Data
    Eina_Inlist *packets;
    struct sockaddr *addr_remote;
    socklen_t addr_remote_len;
-   int fd;
+   SOCKET fd;
    Eina_Bool close_on_destructor;
    Eina_Bool eos;
    Eina_Bool can_read;
@@ -89,7 +89,7 @@ _efl_net_server_udp_client_efl_object_destructor(Eo *o, Efl_Net_Server_Udp_Clien
 }
 
 void
-_efl_net_server_udp_init(Eo *o, int fd, const struct sockaddr *addr, socklen_t addrlen, const char *str)
+_efl_net_server_udp_init(Eo *o, SOCKET fd, const struct sockaddr *addr, socklen_t addrlen, const char *str)
 {
    Efl_Net_Server_Udp_Client_Data *pd = efl_data_scope_get(o, MY_CLASS);
    pd->fd = fd;

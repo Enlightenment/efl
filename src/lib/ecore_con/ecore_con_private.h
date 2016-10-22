@@ -380,11 +380,6 @@ void ecore_con_mempool_shutdown(void);
 
 #undef GENERIC_ALLOC_FREE_HEADER
 
-void _efl_net_server_udp_init(Eo *client, int fd, const struct sockaddr *addr, socklen_t addrlen, const char *str);
-void _efl_net_server_udp_client_feed(Eo *client, Eina_Rw_Slice slice);
-
-Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr);
-
 /* allow windows and posix to use the same error comparison */
 #ifndef SOCKET_ERROR
 #define SOCKET_ERROR -1
@@ -392,11 +387,20 @@ Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr
 #ifndef INVALID_SOCKET
 #define INVALID_SOCKET -1
 #endif
+#ifndef _WIN32
+#define closesocket(fd) close(fd)
+#define SOCKET int
+#endif
 
 /* some platforms do not have AI_V4MAPPED, then define to 0 so bitwise OR won't be changed */
 #ifndef AI_V4MAPPED
 #define AI_V4MAPPED 0
 #endif
+
+void _efl_net_server_udp_init(Eo *client, SOCKET fd, const struct sockaddr *addr, socklen_t addrlen, const char *str);
+void _efl_net_server_udp_client_feed(Eo *client, Eina_Rw_Slice slice);
+
+Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr);
 
 /**
  * @brief splits an address in the format "host:port" in two
@@ -419,7 +423,7 @@ Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr
  */
 Eina_Bool efl_net_ip_port_split(char *buf, const char **p_host, const char **p_port);
 
-int efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec);
+SOCKET efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec);
 
 /**
  * @brief callback to notify of resolved address.

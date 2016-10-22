@@ -3119,16 +3119,16 @@ efl_net_ip_port_split(char *buf, const char **p_host, const char **p_port)
 static void
 _cleanup_close(void *data)
 {
-   int *p_fd = data;
-   int fd = *p_fd;
+   SOCKET *p_fd = data;
+   SOCKET fd = *p_fd;
    *p_fd = INVALID_SOCKET;
-   if (fd != INVALID_SOCKET) close(fd);
+   if (fd != INVALID_SOCKET) closesocket(fd);
 }
 
-int
+SOCKET
 efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec)
 {
-   int fd = INVALID_SOCKET;
+   SOCKET fd = INVALID_SOCKET;
 
 #ifdef SOCK_CLOEXEC
    if (close_on_exec) type |= SOCK_CLOEXEC;
@@ -3145,7 +3145,7 @@ efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec)
                {
                   int errno_bkp = errno;
                   ERR("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", fd, strerror(errno));
-                  close(fd);
+                  closesocket(fd);
                   fd = INVALID_SOCKET;
                   errno = errno_bkp;
                }
@@ -3283,7 +3283,7 @@ typedef struct _Efl_Net_Connect_Async_Data
    Eina_Bool close_on_exec;
    int type;
    int protocol;
-   int sockfd;
+   SOCKET sockfd;
    Eina_Error error;
    struct sockaddr addr[];
 } Efl_Net_Connect_Async_Data;
@@ -3335,14 +3335,14 @@ _efl_net_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
    r = connect(d->sockfd, d->addr, d->addrlen);
    if (r != 0)
      {
-        int fd = d->sockfd;
+        SOCKET fd = d->sockfd;
         d->error = efl_net_socket_error_get();
         d->sockfd = INVALID_SOCKET;
         /* close() is a cancellation point, thus unset sockfd before
          * closing, so the main thread _efl_net_connect_async_cancel()
          * won't close it again.
          */
-        close(fd);
+        closesocket(fd);
         DBG("connect(%d, %s) failed: %s", fd, buf, eina_error_msg_get(d->error));
         return;
      }
@@ -3370,7 +3370,7 @@ _efl_net_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
           {
              d->error = errno;
              ERR("fcntl(%d, F_GETFD): %s", d->sockfd, eina_error_msg_get(d->error));
-             close(d->sockfd);
+             closesocket(d->sockfd);
              d->sockfd = INVALID_SOCKET;
           }
         else
@@ -3380,7 +3380,7 @@ _efl_net_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
                {
                   d->error = errno;
                   ERR("fcntl(%d, F_SETFD, %#x): %s", d->sockfd, flags, eina_error_msg_get(d->error));
-                  close(d->sockfd);
+                  closesocket(d->sockfd);
                   d->sockfd = INVALID_SOCKET;
                }
           }
@@ -3394,7 +3394,7 @@ static void
 _efl_net_connect_async_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Efl_Net_Connect_Async_Data *d = data;
-   if (d->sockfd != INVALID_SOCKET) close(d->sockfd);
+   if (d->sockfd != INVALID_SOCKET) closesocket(d->sockfd);
    _efl_net_connect_async_data_free(d);
 }
 
@@ -3478,7 +3478,7 @@ typedef struct _Efl_Net_Ip_Connect_Async_Data
    Eina_Bool close_on_exec;
    int type;
    int protocol;
-   int sockfd;
+   SOCKET sockfd;
    Eina_Error error;
    union {
       struct sockaddr_in addr4;
@@ -3490,7 +3490,7 @@ typedef struct _Efl_Net_Ip_Connect_Async_Data
 static Eina_Error
 _efl_net_ip_connect(const struct addrinfo *addr, int *sockfd)
 {
-   int fd = INVALID_SOCKET;
+   SOCKET fd = INVALID_SOCKET;
    Eina_Error ret = 0;
 
    /* always close-on-exec since it's not a point to pass an
@@ -3535,7 +3535,7 @@ _efl_net_ip_connect(const struct addrinfo *addr, int *sockfd)
           {
              ret = efl_net_socket_error_get();
              DBG("couldn't connect fd=%d to %s: %s", fd, buf, eina_error_msg_get(ret));
-             close(fd);
+             closesocket(fd);
           }
         EINA_THREAD_CLEANUP_POP(EINA_FALSE); /* we need sockfd on success */
      }
@@ -3666,7 +3666,7 @@ _efl_net_ip_connect_async_run_socks4_try(Efl_Net_Ip_Connect_Async_Data *d, const
    struct sockaddr_in *a = (struct sockaddr_in *)addrinfo->ai_addr;
    struct sockaddr_storage proxy_addr;
    socklen_t proxy_addrlen;
-   int fd;
+   SOCKET fd;
    Eina_Error err;
    Eina_Bool ret = EINA_FALSE;
    ssize_t s;
@@ -3814,7 +3814,7 @@ _efl_net_ip_connect_async_run_socks4(Efl_Net_Ip_Connect_Async_Data *d, const cha
 static void
 _efl_net_ip_connect_async_run_socks4a(Efl_Net_Ip_Connect_Async_Data *d, const char *host, const char *port, const char *proxy)
 {
-   int fd = INVALID_SOCKET;
+   SOCKET fd = INVALID_SOCKET;
    char *str;
    const char *proxy_user, *proxy_pass, *proxy_host, *proxy_port;
    struct sockaddr_storage proxy_addr;
@@ -4119,7 +4119,7 @@ typedef struct _Efl_Net_Socks5_Reply_Ipv4 {
 } Efl_Net_Socks5_Reply_Ipv6;
 
 static Eina_Bool
-_efl_net_ip_connect_async_run_socks5_auth_user_pass(int fd, const char *user, const char *pass, const char *proxy_protocol, const char *proxy_host, const char *proxy_port)
+_efl_net_ip_connect_async_run_socks5_auth_user_pass(SOCKET fd, const char *user, const char *pass, const char *proxy_protocol, const char *proxy_host, const char *proxy_port)
 {
    uint8_t user_len = user ? strlen(user) : 0;
    uint8_t pass_len = pass ? strlen(pass) : 0;
@@ -4188,7 +4188,7 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
    };
    struct sockaddr_storage proxy_addr;
    socklen_t proxy_addrlen;
-   int fd;
+   SOCKET fd;
    Eina_Error err;
    Eina_Bool ret = EINA_FALSE;
    ssize_t s;
@@ -4388,7 +4388,7 @@ _efl_net_ip_connect_async_run_socks5(Efl_Net_Ip_Connect_Async_Data *d, const cha
 static void
 _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const char *host, const char *port, const char *proxy)
 {
-   int fd = INVALID_SOCKET;
+   SOCKET fd = INVALID_SOCKET;
    char *str;
    const char *proxy_user, *proxy_pass, *proxy_host, *proxy_port;
    struct sockaddr_storage proxy_addr;
@@ -4789,7 +4789,7 @@ _efl_net_ip_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
           {
              d->error = errno;
              ERR("fcntl(%d, F_GETFD): %s", d->sockfd, strerror(errno));
-             close(d->sockfd);
+             closesocket(d->sockfd);
              d->sockfd = INVALID_SOCKET;
           }
         else
@@ -4799,7 +4799,7 @@ _efl_net_ip_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
                {
                   d->error = errno;
                   ERR("fcntl(%d, F_SETFD, %#x): %s", d->sockfd, flags, strerror(errno));
-                  close(d->sockfd);
+                  closesocket(d->sockfd);
                   d->sockfd = INVALID_SOCKET;
                }
           }
@@ -4814,7 +4814,7 @@ static void
 _efl_net_ip_connect_async_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Efl_Net_Ip_Connect_Async_Data *d = data;
-   if (d->sockfd != INVALID_SOCKET) close(d->sockfd);
+   if (d->sockfd != INVALID_SOCKET) closesocket(d->sockfd);
    _efl_net_ip_connect_async_data_free(d);
 }
 
