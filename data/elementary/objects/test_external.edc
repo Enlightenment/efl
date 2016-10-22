@@ -95,7 +95,7 @@ collections {
                rel1.offset: 0 60;
                params {
                   string: "label" "icon + label";
-                  string: "icon" "home";
+                  string: "icon" "user-home";
                }
             }
          }
@@ -121,7 +121,7 @@ collections {
                align: 0.5 0.0;
                rel1.offset: 0 180;
                params {
-                  string: "icon" "home";
+                  string: "icon" "user-home";
                }
             }
             description { state: "left" 0.0;
@@ -157,7 +157,7 @@ collections {
                rel1.offset: 0 300;
                params {
                   string: "label" "disabled";
-                  string: "icon" "home";
+                  string: "icon" "user-home";
                   bool: "disabled" 1;
                }
             }
@@ -215,7 +215,7 @@ collections {
                rel1.offset: 0 60;
                params {
                   string: "label" "Horizontal";
-                  string: "icon" "home";
+                  string: "icon" "user-home";
                   string: "unit format" "%.1f units";
                   string: "indicator format" "%.0f";
                   double: "min" -100.0;
@@ -233,7 +233,7 @@ collections {
                rel1.offset: 0 90;
                params {
                   string: "label" "Disabled";
-                  string: "icon" "home";
+                  string: "icon" "user-home";
                   bool: "disabled" 1;
                   double: "value" 0.5;
                }
@@ -263,7 +263,7 @@ collections {
                rel1.offset: 20 160;
                params {
                   string: "label" "Horizontal";
-                  string: "icon" "home";
+                  string: "icon" "user-home";
                   bool: "horizontal" 0;
                   string: "unit format" "%.0f u";
                   string: "indicator format" "%.3f";
@@ -286,7 +286,7 @@ collections {
                rel1.offset: 80 160;
                params {
                   string: "label" "Inverted";
-                  string: "icon" "home";
+                  string: "icon" "user-home";
                   bool: "horizontal" 0;
                   bool: "inverted" 1;
                   string: "unit format" "%.0f u";
@@ -310,7 +310,7 @@ collections {
                rel1.offset: 140 160;
                params {
                   string: "label" "Disabled";
-                  string: "icon" "home";
+                  string: "icon" "user-home";
                   double: "min" -70.0;
                   double: "max" 70.0;
                   bool: "disabled" 1;
@@ -602,7 +602,7 @@ embryo script and from C code.";
                rel1.offset: 0 140;
                params {
                   string: "label" "inverted";
-                  string: "icon" "home";
+                  string: "icon" "user-home";
                   bool: "inverted" 1;
                   string: "unit format" "%.3f units";
                }
@@ -651,7 +651,7 @@ embryo script and from C code.";
                rel2.offset: 0 -50;
                params {
                   string: "label" "inverted";
-                  string: "icon" "home";
+                  string: "icon" "user-home";
                   bool: "horizontal" 0;
                   bool: "inverted" 1;
                   bool: "disabled" 1;
@@ -1070,7 +1070,7 @@ embryo script and from C code.";
                max: 64 64;
                fixed: 1 1;
                params {
-                  string: "icon" "apps";
+                  string: "icon" "user-trash";
                   bool: "smooth" 1;
                }
                map {
@@ -1103,7 +1103,7 @@ embryo script and from C code.";
             description { state: "default" 0.0;
                rel.to: "icon_3_bg";
                params {
-                  string: "icon" "refresh";
+                  string: "icon" "view-refresh";
                   bool: "scale up" 0;
                   bool: "scale down" 0;
                }
@@ -1127,7 +1127,7 @@ embryo script and from C code.";
                rel1.relative: 0.9 0.9;
                align: 0.0 0.0;
                params {
-                  string: "icon" "clock";
+                  string: "icon" "folder";
                   bool: "scale up" 1;
                   bool: "scale down" 1;
                }
@@ -1155,7 +1155,7 @@ embryo script and from C code.";
                rel1.relative: 0.5 0.0;
                rel2.relative: 1.0 0.5;
                params {
-                  string: "icon" "starred";
+                  string: "icon" "user-bookmarks";
                }
             }
          }
