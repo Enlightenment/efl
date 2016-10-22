@@ -164,6 +164,7 @@ _efl_net_server_udp_efl_net_server_serve(Eo *o, Efl_Net_Server_Udp_Data *pd, con
      .ai_socktype = SOCK_DGRAM,
      .ai_protocol = IPPROTO_UDP,
      .ai_family = AF_UNSPEC,
+     .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED,
    };
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);

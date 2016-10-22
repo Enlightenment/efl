@@ -3546,6 +3546,7 @@ _efl_net_ip_resolve_and_connect(const char *host, const char *port, int type, in
      .ai_socktype = type,
      .ai_protocol = protocol,
      .ai_family = AF_UNSPEC,
+     .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED,
    };
    Eina_Error ret = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
    int r;
@@ -3732,6 +3733,7 @@ _efl_net_ip_connect_async_run_socks4(Efl_Net_Ip_Connect_Async_Data *d, const cha
      .ai_socktype = d->type,
      .ai_protocol = d->protocol,
      .ai_family = AF_INET,
+     .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED,
    };
    int r;
 
@@ -3819,6 +3821,7 @@ _efl_net_ip_connect_async_run_socks4a(Efl_Net_Ip_Connect_Async_Data *d, const ch
      .ai_socktype = d->type,
      .ai_protocol = d->protocol,
      .ai_family = AF_INET,
+     .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED,
    };
    int r;
 
@@ -4321,6 +4324,7 @@ _efl_net_ip_connect_async_run_socks5(Efl_Net_Ip_Connect_Async_Data *d, const cha
      .ai_socktype = d->type,
      .ai_protocol = d->protocol,
      .ai_family = AF_UNSPEC,
+     .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED,
    };
    Efl_Net_Socks5_Request_Command cmd;
    int r;
@@ -4466,6 +4470,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                          .ai_socktype = d->type,
                          .ai_protocol = d->protocol,
                          .ai_family = AF_UNSPEC,
+                         .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED,
                        };
 
                        if (strchr(host, ':')) hints.ai_family = AF_INET6;
