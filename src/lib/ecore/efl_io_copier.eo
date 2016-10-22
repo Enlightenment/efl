@@ -88,6 +88,21 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
            }
         }
 
+        @property inactivity_timeout {
+            [[Terminate the copier with ETIMEDOUT if it becomes inactive for some time.
+
+              If the copier cannot do any read or write in the given
+              amount of seconds, then the copier will emit "error"
+              event with ETIMEDOUT value.
+
+              This is specified in seconds and is only active for
+              greater-than zero. Defaults to inactive.
+            ]]
+            values {
+                seconds: double; [[Number inactive seconds to timeout this copier. If zero or less, it will be disabled.]]
+            }
+        }
+
         binbuf_steal {
            [[Steals the internal binbuf and return it to caller.
 

@@ -322,6 +322,8 @@ static const Ecore_Getopt options = {
                              "If set will limit buffer size to this limit of bytes. If used alongside with --line-delimiter and that delimiter was not found but bffer limit was reached, the line event will be triggered without the delimiter at the end."),
     ECORE_GETOPT_STORE_ULONG('c', "read-chunk-size",
                              "If set will change the base chunk size used while reading."),
+    ECORE_GETOPT_STORE_DOUBLE('t', "inactivity-timeout",
+                              "If greater than zero, specifies the number of seconds without any reads or writes that the copier will be timed out."),
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_LICENSE('L', "license"),
@@ -359,11 +361,13 @@ main(int argc, char **argv)
    char *line_delimiter = NULL;
    unsigned long buffer_limit = 0;
    unsigned long read_chunk_size = 0;
+   double timeout = 0.0;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(line_delimiter),
      ECORE_GETOPT_VALUE_ULONG(buffer_limit),
      ECORE_GETOPT_VALUE_ULONG(read_chunk_size),
+     ECORE_GETOPT_VALUE_DOUBLE(timeout),
 
      /* standard block to provide version, copyright, license and help */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -V/--version quits */
@@ -723,6 +727,7 @@ main(int argc, char **argv)
                     efl_io_copier_line_delimiter_set(efl_added, &line_delm_slice), /* optional */
                     efl_io_copier_buffer_limit_set(efl_added, buffer_limit), /* optional, defaults to unlimited */
                     efl_io_copier_read_chunk_size_set(efl_added, read_chunk_size), /* optional, defaults to 4096 */
+                    efl_io_copier_inactivity_timeout_set(efl_added, timeout), /* optional, defaults to 0.0 (disabled) */
                     efl_event_callback_array_add(efl_added, copier_cbs(), NULL) /* recommended, at least EFL_IO_COPIER_EVENT_DONE. */
                     );
    if (!copier)

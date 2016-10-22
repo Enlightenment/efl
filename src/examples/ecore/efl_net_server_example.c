@@ -7,6 +7,7 @@
 
 static int retval = EXIT_SUCCESS;
 static Eina_Bool echo = EINA_FALSE;
+static double timeout = 10.0;
 
 /* NOTE: client i/o events are only used as debug, you can omit these */
 
@@ -66,6 +67,15 @@ _echo_copier_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *copier = event->object;
    const Eina_Error *perr = event->info;
+
+   if (*perr == ETIMEDOUT)
+     {
+        Eo *client = efl_io_copier_source_get(copier);
+        fprintf(stderr, "INFO: client '%s' timed out, delete it.\n",
+                efl_net_socket_address_remote_get(client));
+        efl_del(copier);
+        return;
+     }
 
    retval = EXIT_FAILURE;
 
@@ -146,6 +156,12 @@ _send_copier_done(void *data, const Efl_Event *event)
              efl_net_socket_address_remote_get(client),
              slice.len, EINA_SLICE_STR_PRINT(slice));
 
+   if (d->recv_copier)
+     {
+        /* only start the reader inactivity timeout once the sender is done */
+        efl_io_copier_inactivity_timeout_set(d->recv_copier, efl_io_copier_inactivity_timeout_get(copier));
+     }
+
    fprintf(stderr, "INFO: send copier done, check if should close %p\n", copier);
    _send_recv_done(d, copier);
 }
@@ -160,6 +176,14 @@ _send_copier_error(void *data, const Efl_Event *event)
    Send_Recv_Data *d = data;
    uint64_t offset;
    Eina_Slice slice;
+
+   if (*perr == ETIMEDOUT)
+     {
+        fprintf(stderr, "INFO: client '%s' timed out send, delete it.\n",
+                efl_net_socket_address_remote_get(client));
+        efl_io_closer_close(copier); /* forces client to be closed, thus closes the recv copier as an effect */
+        return;
+     }
 
    retval = EXIT_FAILURE;
 
@@ -235,11 +259,19 @@ static void
 _recv_copier_error(void *data, const Efl_Event *event)
 {
    Eo *copier = event->object;
-   Eo *buffer = efl_io_copier_source_get(copier);
-   Eo *client = efl_io_copier_destination_get(copier);
+   Eo *buffer = efl_io_copier_destination_get(copier);
+   Eo *client = efl_io_copier_source_get(copier);
    const Eina_Error *perr = event->info;
    Send_Recv_Data *d = data;
    Eina_Slice slice;
+
+   if (*perr == ETIMEDOUT)
+     {
+        fprintf(stderr, "INFO: client '%s' timed out recv, delete it.\n",
+                efl_net_socket_address_remote_get(client));
+        efl_io_closer_close(copier); /* forces client to be closed, thus closes the send copier as an effect */
+        return;
+     }
 
    retval = EXIT_FAILURE;
 
@@ -303,6 +335,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
         Eo *echo_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
                                   efl_io_copier_source_set(efl_added, client),
                                   efl_io_copier_destination_set(efl_added, client),
+                                  efl_io_copier_inactivity_timeout_set(efl_added, timeout),
                                   efl_event_callback_array_add(efl_added, echo_copier_cbs(), client),
                                   efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
                                   );
@@ -345,6 +378,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
         d->send_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
                                  efl_io_copier_source_set(efl_added, send_buffer),
                                  efl_io_copier_destination_set(efl_added, client),
+                                 efl_io_copier_inactivity_timeout_set(efl_added, timeout),
                                  efl_event_callback_array_add(efl_added, send_copier_cbs(), d),
                                  efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
                                  );
@@ -361,6 +395,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
         d->recv_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
                                  efl_io_copier_source_set(efl_added, client),
                                  efl_io_copier_destination_set(efl_added, recv_buffer),
+                                 efl_io_copier_inactivity_timeout_set(efl_added, 0.0), /* we'll only set an inactivity timeout once the sender is done */
                                  efl_event_callback_array_add(efl_added, recv_copier_cbs(), d),
                                  efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
                                  );
@@ -433,6 +468,9 @@ static const Ecore_Getopt options = {
                             "If true, excess clients will be immediately rejected."),
     ECORE_GETOPT_STORE_BOOL(0, "ipv6-only",
                             "If true (default), only IPv6 clients will be allowed for a server if an IPv6 was used, otherwise IPv4 clients will be automatically converted into IPv6 and handled transparently."),
+    ECORE_GETOPT_STORE_DOUBLE('t', "inactivity-timeout",
+                              "The timeout in seconds to disconnect a client. The timeout is restarted for each client when there is some activity. It's particularly useful for UDP where there is no disconnection event."),
+
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_LICENSE('L', "license"),
@@ -463,6 +501,7 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_UINT(clients_limit),
      ECORE_GETOPT_VALUE_BOOL(clients_reject_excess),
      ECORE_GETOPT_VALUE_BOOL(ipv6_only),
+     ECORE_GETOPT_VALUE_DOUBLE(timeout),
 
      /* standard block to provide version, copyright, license and help */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -V/--version quits */

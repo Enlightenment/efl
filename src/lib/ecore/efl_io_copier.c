@@ -12,6 +12,7 @@ typedef struct _Efl_Io_Copier_Data
 {
    Efl_Io_Reader *source;
    Efl_Io_Writer *destination;
+   Efl_Future *inactivity_timer;
    Efl_Future *job;
    Eina_Binbuf *buf;
    uint8_t *read_chunk; /* TODO: method to grow Eina_Binbuf so we can expand it and read directly to that */
@@ -21,6 +22,7 @@ typedef struct _Efl_Io_Copier_Data
    struct {
       uint64_t read, written, total;
    } progress;
+   double inactivity_timeout;
    Eina_Bool closed;
    Eina_Bool done;
    Eina_Bool close_on_exec;
@@ -68,10 +70,32 @@ static void _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd);
   while (0)
 
 static void
+_efl_io_copier_inactivity_timeout_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *o = data;
+   Eina_Error err = ETIMEDOUT;
+   efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
+}
+
+static void
+_efl_io_copier_inactivity_timeout_reschedule(Eo *o, Efl_Io_Copier_Data *pd)
+{
+   if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
+   if (pd->inactivity_timeout <= 0.0) return;
+
+   efl_future_use(&pd->inactivity_timer, efl_loop_timeout(efl_loop_get(o), pd->inactivity_timeout, o));
+   efl_future_then(pd->inactivity_timer, _efl_io_copier_inactivity_timeout_cb, NULL, NULL, o);
+   efl_future_link(o, pd->inactivity_timer);
+}
+
+static void
 _efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *o = data;
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   uint64_t old_read = pd->progress.read;
+   uint64_t old_written = pd->progress.written;
+   uint64_t old_total = pd->progress.total;
 
    _COPIER_DBG(o, pd);
    efl_ref(o);
@@ -82,7 +106,13 @@ _efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
    if (pd->destination && efl_io_writer_can_write_get(pd->destination))
      _efl_io_copier_write(o, pd);
 
-   efl_event_callback_call(o, EFL_IO_COPIER_EVENT_PROGRESS, NULL);
+   if ((old_read != pd->progress.read) ||
+       (old_written != pd->progress.written) ||
+       (old_total != pd->progress.total))
+     {
+        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_PROGRESS, NULL);
+        _efl_io_copier_inactivity_timeout_reschedule(o, pd);
+     }
 
    if (!pd->source || efl_io_reader_eos_get(pd->source))
      {
@@ -90,6 +120,7 @@ _efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
             ((!pd->destination) || (eina_binbuf_length_get(pd->buf) == 0)))
           {
              pd->done = EINA_TRUE;
+             if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
              efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
           }
      }
@@ -430,12 +461,14 @@ _efl_io_copier_destination_closed(void *data, const Efl_Event *event EINA_UNUSED
         if (!pd->done)
           {
              pd->done = EINA_TRUE;
+             if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
              efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
           }
      }
    else
      {
         Eina_Error err = EBADF;
+        if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
         efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
      }
 }
@@ -574,6 +607,9 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
    if (pd->job)
      efl_future_cancel(pd->job);
 
+   if (pd->inactivity_timer)
+     efl_future_cancel(pd->inactivity_timer);
+
    if (pd->source)
      {
         if (efl_isa(pd->source, EFL_IO_SIZER_MIXIN))
@@ -646,12 +682,26 @@ _efl_io_copier_binbuf_steal(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
    return ret;
 }
 
+EOLIAN static void
+_efl_io_copier_inactivity_timeout_set(Eo *o, Efl_Io_Copier_Data *pd, double seconds)
+{
+   pd->inactivity_timeout = seconds;
+   _efl_io_copier_inactivity_timeout_reschedule(o, pd);
+}
+
+EOLIAN static double
+_efl_io_copier_inactivity_timeout_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+{
+   return pd->inactivity_timeout;
+}
+
 EOLIAN static Eo *
 _efl_io_copier_efl_object_constructor(Eo *o, Efl_Io_Copier_Data *pd)
 {
    pd->buf = eina_binbuf_new();
    pd->close_on_exec = EINA_TRUE;
    pd->close_on_destructor = EINA_TRUE;
+   pd->inactivity_timeout = 0.0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->buf, NULL);
 
@@ -686,6 +736,9 @@ _efl_io_copier_efl_object_destructor(Eo *o, Efl_Io_Copier_Data *pd)
 
    if (pd->job)
      efl_future_cancel(pd->job);
+
+   if (pd->inactivity_timer)
+     efl_future_cancel(pd->inactivity_timer);
 
    if (efl_io_closer_close_on_destructor_get(o) &&
        (!efl_io_closer_closed_get(o)))
