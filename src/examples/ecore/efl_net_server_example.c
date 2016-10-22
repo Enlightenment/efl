@@ -477,14 +477,14 @@ static const Ecore_Getopt options = {
   "This example spawns a server of the given protocol at the given address.",
   EINA_FALSE,
   {
-    ECORE_GETOPT_STORE_BOOL('e', "echo",
-                            "If true, will send back to client all the data receive (echo server)"),
+    ECORE_GETOPT_STORE_TRUE('e', "echo",
+                            "Behave as 'echo' server, send back to client all the data receive"),
     ECORE_GETOPT_STORE_UINT('l', "clients-limit",
                             "If set will limit number of clients to accept"),
-    ECORE_GETOPT_STORE_BOOL('r', "clients-reject-excess",
-                            "If true, excess clients will be immediately rejected."),
-    ECORE_GETOPT_STORE_BOOL(0, "ipv6-only",
-                            "If true (default), only IPv6 clients will be allowed for a server if an IPv6 was used, otherwise IPv4 clients will be automatically converted into IPv6 and handled transparently."),
+    ECORE_GETOPT_STORE_TRUE('r', "clients-reject-excess",
+                            "Immediately reject excess clients (over limit)"),
+    ECORE_GETOPT_STORE_FALSE(0, "ipv4-on-ipv6",
+                            "IPv4 clients will be automatically converted into IPv6 and handled transparently."),
     ECORE_GETOPT_STORE_DOUBLE('t', "inactivity-timeout",
                               "The timeout in seconds to disconnect a client. The timeout is restarted for each client when there is some activity. It's particularly useful for UDP where there is no disconnection event."),
 
@@ -494,7 +494,7 @@ static const Ecore_Getopt options = {
     ECORE_GETOPT_HELP('h', "help"),
 
     ECORE_GETOPT_CATEGORY("udp", "UDP options"),
-    ECORE_GETOPT_STORE_BOOL(0, "udp-dont-route",
+    ECORE_GETOPT_STORE_TRUE(0, "udp-dont-route",
                             "If true, datagrams won't be routed using a gateway, being restricted to the local network."),
 
     ECORE_GETOPT_CHOICE_METAVAR(0, NULL, "The server protocol.", "protocol",

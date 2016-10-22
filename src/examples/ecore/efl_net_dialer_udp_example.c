@@ -149,9 +149,9 @@ static const Ecore_Getopt options = {
   "Example of Efl_Net_Dialer_Udp usage, sending a message and receiving a reply\n",
   EINA_FALSE,
   {
-    ECORE_GETOPT_STORE_BOOL('r', "read-after-write", "Do a read after writes are done."),
-    ECORE_GETOPT_STORE_BOOL('c', "cork", "use UDP_CORK around messages to generate a single datagram."),
-    ECORE_GETOPT_STORE_BOOL('R', "dont-route", "Do not route packets via a gateway."),
+    ECORE_GETOPT_STORE_TRUE('r', "read-after-write", "Do a read after writes are done."),
+    ECORE_GETOPT_STORE_TRUE('c', "cork", "use UDP_CORK around messages to generate a single datagram."),
+    ECORE_GETOPT_STORE_TRUE('R', "dont-route", "Do not route packets via a gateway."),
     ECORE_GETOPT_STORE_DOUBLE('t', "connect-timeout", "timeout in seconds for the connection phase"),
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
