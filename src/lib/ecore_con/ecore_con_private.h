@@ -393,6 +393,11 @@ Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr
 #define INVALID_SOCKET -1
 #endif
 
+/* some platforms do not have AI_V4MAPPED, then define to 0 so bitwise OR won't be changed */
+#ifndef AI_V4MAPPED
+#define AI_V4MAPPED 0
+#endif
+
 /**
  * @brief splits an address in the format "host:port" in two
  * null-terminated strings.
