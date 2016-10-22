@@ -38,6 +38,7 @@
 typedef struct _Efl_Net_Socket_Udp_Data
 {
    Eina_Bool cork;
+   Eina_Bool dont_route;
 } Efl_Net_Socket_Udp_Data;
 
 EOLIAN static void
@@ -53,6 +54,7 @@ _efl_net_socket_udp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Udp_Data *pd EINA_U
 
         /* apply postponed values */
         efl_net_socket_udp_cork_set(o, pd->cork);
+        efl_net_socket_udp_dont_route_set(o, pd->dont_route);
 
         family = efl_net_socket_fd_family_get(o);
         if (family == AF_UNSPEC) return;
@@ -150,6 +152,60 @@ _efl_net_socket_udp_cork_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
 
    pd->cork = !!value; /* sync */
    return pd->cork;
+}
+
+EOLIAN static Eina_Bool
+_efl_net_socket_udp_dont_route_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool dont_route)
+{
+   Eina_Bool old = pd->dont_route;
+   int fd = efl_loop_fd_get(o);
+#ifdef _WIN32
+   DWORD value = dont_route;
+#else
+   int value = dont_route;
+#endif
+
+   pd->dont_route = dont_route;
+
+   if (fd < 0) return EINA_TRUE;
+
+   if (setsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &value, sizeof(value)) != 0)
+     {
+        Eina_Error err = efl_net_socket_error_get();
+        ERR("setsockopt(%d, SOL_SOCKET, SO_DONTROUTE, %u): %s", fd, dont_route, eina_error_msg_get(err));
+        pd->dont_route = old;
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_net_socket_udp_dont_route_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
+{
+   int fd = efl_loop_fd_get(o);
+#ifdef _WIN32
+   DWORD value;
+#else
+   int value;
+#endif
+   socklen_t valuelen;
+
+   if (fd < 0) return pd->dont_route;
+
+   /* if there is a fd, always query it directly as it may be modified
+    * elsewhere by nasty users.
+    */
+   valuelen = sizeof(value);
+   if (getsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &value, &valuelen) != 0)
+     {
+        Eina_Error err = efl_net_socket_error_get();
+        ERR("getsockopt(%d, SOL_SOCKET, SO_DONTROUTE): %s", fd, eina_error_msg_get(err));
+        return EINA_FALSE;
+     }
+
+   pd->dont_route = !!value; /* sync */
+   return pd->dont_route;
 }
 
 #include "efl_net_socket_udp.eo.c"

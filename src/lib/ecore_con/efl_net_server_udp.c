@@ -38,6 +38,7 @@ typedef struct _Efl_Net_Server_Udp_Data
    Ecore_Thread *resolver;
    Eina_Hash *clients; /* addr (string) -> client (Efl.Net.Server.Udp.Client) */
    Eina_Bool ipv6_only;
+   Eina_Bool dont_route;
 } Efl_Net_Server_Udp_Data;
 
 EOLIAN Efl_Object *
@@ -95,6 +96,8 @@ _efl_net_server_udp_resolved_bind(Eo *o, Efl_Net_Server_Udp_Data *pd, const stru
         else
           efl_net_server_udp_ipv6_only_set(o, pd->ipv6_only);
      }
+
+   efl_net_server_udp_dont_route_set(o, pd->dont_route);
 
    r = bind(fd, addr->ai_addr, addrlen);
    if (r < 0)
@@ -354,5 +357,60 @@ _efl_net_server_udp_ipv6_only_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Data *pd
 #endif
    return pd->ipv6_only;
 }
+
+EOLIAN static Eina_Bool
+_efl_net_server_udp_dont_route_set(Eo *o, Efl_Net_Server_Udp_Data *pd, Eina_Bool dont_route)
+{
+   Eina_Bool old = pd->dont_route;
+   int fd = efl_loop_fd_get(o);
+#ifdef _WIN32
+   DWORD value = dont_route;
+#else
+   int value = dont_route;
+#endif
+
+   pd->dont_route = dont_route;
+
+   if (fd < 0) return EINA_TRUE;
+
+   if (setsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &value, sizeof(value)) != 0)
+     {
+        Eina_Error err = efl_net_socket_error_get();
+        ERR("setsockopt(%d, SOL_SOCKET, SO_DONTROUTE, %u): %s", fd, dont_route, eina_error_msg_get(err));
+        pd->dont_route = old;
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_net_server_udp_dont_route_get(Eo *o, Efl_Net_Server_Udp_Data *pd)
+{
+   int fd = efl_loop_fd_get(o);
+#ifdef _WIN32
+   DWORD value;
+#else
+   int value;
+#endif
+   socklen_t valuelen;
+
+   if (fd < 0) return pd->dont_route;
+
+   /* if there is a fd, always query it directly as it may be modified
+    * elsewhere by nasty users.
+    */
+   valuelen = sizeof(value);
+   if (getsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &value, &valuelen) != 0)
+     {
+        Eina_Error err = efl_net_socket_error_get();
+        ERR("getsockopt(%d, SOL_SOCKET, SO_DONTROUTE): %s", fd, eina_error_msg_get(err));
+        return EINA_FALSE;
+     }
+
+   pd->dont_route = !!value; /* sync */
+   return pd->dont_route;
+}
+
 
 #include "efl_net_server_udp.eo.c"

@@ -22,6 +22,23 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
                 cork: bool;
             }
         }
+
+        @property dont_route {
+            [[Avoid sent UDP packets being routed by a gateway, limiting them to the local network.
+
+              This will use SO_DONTROUTE option to avoid gateways
+              routing sent packets to outside of local network. It's
+              useful for some protocols that only want local area to
+              be affected.
+            ]]
+            get { }
+            set {
+                return: bool (false); [[$true on success]]
+            }
+            values {
+                dont_route: bool;
+            }
+        }
     }
 
     implements {

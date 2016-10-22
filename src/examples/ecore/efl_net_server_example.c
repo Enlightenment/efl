@@ -433,6 +433,23 @@ _server_serving(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: serving at %s\n",
            efl_net_server_address_get(event->object));
+
+   if (efl_class_get(event->object) == EFL_NET_SERVER_TCP_CLASS)
+     {
+        fprintf(stderr,
+                "TCP options:\n"
+                " - IPv6 only: %u\n",
+                efl_net_server_tcp_ipv6_only_get(event->object));
+     }
+   else if (efl_class_get(event->object) == EFL_NET_SERVER_UDP_CLASS)
+     {
+        fprintf(stderr,
+                "UDP options:\n"
+                " - IPv6 only: %u\n"
+                " - don't route: %u\n",
+                efl_net_server_udp_ipv6_only_get(event->object),
+                efl_net_server_udp_dont_route_get(event->object));
+     }
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(server_cbs,
@@ -476,12 +493,17 @@ static const Ecore_Getopt options = {
     ECORE_GETOPT_LICENSE('L', "license"),
     ECORE_GETOPT_HELP('h', "help"),
 
+    ECORE_GETOPT_CATEGORY("udp", "UDP options"),
+    ECORE_GETOPT_STORE_BOOL(0, "udp-dont-route",
+                            "If true, datagrams won't be routed using a gateway, being restricted to the local network."),
+
     ECORE_GETOPT_CHOICE_METAVAR(0, NULL, "The server protocol.", "protocol",
                                 protocols),
     ECORE_GETOPT_STORE_METAVAR_STR(0, NULL,
                                    "The server address to listen, such as "
                                    "IPv4:PORT, [IPv6]:PORT, Unix socket path...",
                                    "address"),
+
     ECORE_GETOPT_SENTINEL
   }
 };
@@ -495,6 +517,7 @@ main(int argc, char **argv)
    unsigned int clients_limit = 0;
    Eina_Bool clients_reject_excess = EINA_FALSE;
    Eina_Bool ipv6_only = EINA_TRUE;
+   Eina_Bool udp_dont_route = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_BOOL(echo),
@@ -508,6 +531,9 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -C/--copyright quits */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -L/--license quits */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -h/--help quits */
+
+     ECORE_GETOPT_VALUE_BOOL(quit_option), /* category: udp */
+     ECORE_GETOPT_VALUE_BOOL(udp_dont_route),
 
      /* positional argument */
      ECORE_GETOPT_VALUE_STR(protocol),
@@ -540,6 +566,13 @@ main(int argc, char **argv)
         goto end;
      }
 
+   if (!protocol)
+     {
+        fputs("ERROR: missing protocol.\n", stderr);
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
    if (strcmp(protocol, "tcp") == 0) cls = EFL_NET_SERVER_TCP_CLASS;
    else if (strcmp(protocol, "udp") == 0) cls = EFL_NET_SERVER_UDP_CLASS;
    else
@@ -566,7 +599,10 @@ main(int argc, char **argv)
    if (cls == EFL_NET_SERVER_TCP_CLASS)
      efl_net_server_tcp_ipv6_only_set(server, ipv6_only);
    else if (cls == EFL_NET_SERVER_UDP_CLASS)
-     efl_net_server_udp_ipv6_only_set(server, ipv6_only);
+     {
+        efl_net_server_udp_ipv6_only_set(server, ipv6_only);
+        efl_net_server_udp_dont_route_set(server, udp_dont_route);
+     }
 
    /* an explicit call to efl_net_server_serve() after the object is
     * constructed allows for more complex setup, such as interacting

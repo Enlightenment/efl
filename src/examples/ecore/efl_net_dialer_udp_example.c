@@ -151,6 +151,7 @@ static const Ecore_Getopt options = {
   {
     ECORE_GETOPT_STORE_BOOL('r', "read-after-write", "Do a read after writes are done."),
     ECORE_GETOPT_STORE_BOOL('c', "cork", "use UDP_CORK around messages to generate a single datagram."),
+    ECORE_GETOPT_STORE_BOOL('R', "dont-route", "Do not route packets via a gateway."),
     ECORE_GETOPT_STORE_DOUBLE('t', "connect-timeout", "timeout in seconds for the connection phase"),
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
@@ -168,11 +169,13 @@ main(int argc, char **argv)
    char *address = NULL;
    Eina_Bool cork = EINA_FALSE;
    Eina_Bool do_read = EINA_FALSE;
+   Eina_Bool dont_route = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
    double timeout_dial = 30.0;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_BOOL(do_read),
      ECORE_GETOPT_VALUE_BOOL(cork),
+     ECORE_GETOPT_VALUE_BOOL(dont_route),
      ECORE_GETOPT_VALUE_DOUBLE(timeout_dial),
 
      /* standard block to provide version, copyright, license and help */
@@ -216,6 +219,7 @@ main(int argc, char **argv)
    dialer = efl_add(EFL_NET_DIALER_UDP_CLASS, loop,
                     efl_name_set(efl_added, "dialer"),
                     efl_net_socket_udp_cork_set(efl_added, cork),
+                    efl_net_socket_udp_dont_route_set(efl_added, dont_route),
                     efl_net_dialer_timeout_dial_set(efl_added, timeout_dial),
                     efl_event_callback_array_add(efl_added, dialer_cbs(), NULL));
 
