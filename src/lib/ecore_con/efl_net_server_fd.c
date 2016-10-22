@@ -41,7 +41,7 @@ efl_net_accept4(int fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool clo
    return accept4(fd, addr, addrlen, flags);
 #else
    int client = accept(fd, addr, addrlen);
-   if (client < 0) return client;
+   if (client != INVALID_SOCKET) return client;
 
 #ifdef FD_CLOEXEC
    if (close_on_exec)
@@ -384,7 +384,7 @@ _efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Server_Fd_Data *pd)
    addrlen = sizeof(addr);
    client = efl_net_accept4(fd, (struct sockaddr *)&addr, &addrlen,
                             efl_net_server_fd_close_on_exec_get(o));
-   if (client < 0)
+   if (client != INVALID_SOCKET)
      {
         Eina_Error err = efl_net_socket_error_get();
         ERR("accept(%d): %s", fd, eina_error_msg_get(err));
