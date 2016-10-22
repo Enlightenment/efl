@@ -1,4 +1,0 @@
-AM_V_MCS = $(am__v_MCS_@AM_V@)
-am__v_MCS_ = $(am__v_MCS_@AM_DEFAULT_V@)
-am__v_MCS_0 = @echo "  MCS  " $@;
-
