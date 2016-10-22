@@ -610,6 +610,12 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
    if (pd->inactivity_timer)
      efl_future_cancel(pd->inactivity_timer);
 
+   if (!pd->done)
+     {
+        pd->done = EINA_TRUE;
+        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
+     }
+
    if (pd->source)
      {
         if (efl_isa(pd->source, EFL_IO_SIZER_MIXIN))
