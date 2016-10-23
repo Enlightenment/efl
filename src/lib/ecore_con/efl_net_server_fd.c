@@ -52,7 +52,7 @@ efl_net_accept4(SOCKET fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool 
              ERR("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", client, strerror(errno));
              closesocket(client);
              errno = errno_bkp;
-             return -1;
+             return INVALID_SOCKET;
           }
      }
 #endif

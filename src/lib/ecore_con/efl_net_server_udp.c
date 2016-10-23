@@ -125,7 +125,7 @@ _efl_net_server_udp_resolved_bind(Eo *o, Efl_Net_Server_Udp_Data *pd, const stru
 
  error:
    efl_net_server_fd_family_set(o, AF_UNSPEC);
-   efl_loop_fd_set(o, -1);
+   efl_loop_fd_set(o, INVALID_SOCKET);
    closesocket(fd);
    return err;
 }
