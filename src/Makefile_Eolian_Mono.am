@@ -1,22 +1,4 @@
 
-### Library
-
-# if HAVE_MCS
-# ### Binary
-
-# bin_PROGRAMS += bin/eolian_mono/eolian_mono.exe
-
-# bin_eolian_mono_eolian_mono_exe_SOURCES = \
-#     bin/eolian_mono/main.cs bin/eolian_mono/teste.cs
-
-# bin/eolian_mono/eolian_mono.exe$(EXEEXT): $(bin_eolian_mono_eolian_mono_exe_SOURCES) bin/eolian_mono/$(am__dirstamp)
-# 	@rm -f bin/eolian_mono/eolian_mono_exe$(EXEEXT)
-# 	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(top_builddir)/src/lib/eolian $(MCS) $(MCS_FLAGS) -out:$@ $(filter-out $(lastword $(^)), $(^))
-
-# include Makefile_Mono_Helper.am
-
-# endif
-
 bin_PROGRAMS += bin/eolian_mono/eolian_mono
 
 bin_eolian_mono_eolian_mono_SOURCES = \
@@ -51,6 +33,20 @@ am__v_EOLMONO_ = $(am__v_EOLMONO_@AM_DEFAULT_V@)
 am__v_EOLMONO_0 = @echo "  EOLMONO  " $@;
 
 if HAVE_MCS
+
+bin_PROGRAMS += lib/eo_mono/eo_mono.dll
+
+lib_eo_mono_eo_mono_dll_SOURCES = \
+	bindings/mono/eo_mono/object.cs \
+	bindings/mono/eo_mono/iwrapper.cs
+#	src/lib/efl/interfaces/efl_model.eo.cs
+
+mono_cs_sources = $(efl_eolian_cxx_hh:%.hh=%.cs)
+
+lib/eo_mono/eo_mono.dll$(EXEEXT): $(lib_eo_mono_eo_mono_dll_SOURCES) lib/eo_mono/$(am__dirstamp) $(mono_cs_sources)
+	@rm -f lib/eo_mono/eo_mono_dll$(EXEEXT)
+	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LD_LIBRARY_PATH_APPEND) $(MCS) $(MCS_FLAGS) -out:$@ -t:library $(filter-out $(lastword $(^)), $(^))
+
 if EFL_ENABLE_TESTS
 
 AM_TESTS_ENVIRONMENT += MONO='mono'; export MONO;
