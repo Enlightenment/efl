@@ -99,6 +99,14 @@ _efl_net_server_fd_efl_object_constructor(Eo *o, Efl_Net_Server_Fd_Data *pd EINA
 EOLIAN static void
 _efl_net_server_fd_efl_object_destructor(Eo *o, Efl_Net_Server_Fd_Data *pd)
 {
+   SOCKET fd = efl_loop_fd_get(o);
+
+   if (fd != INVALID_SOCKET)
+     {
+        efl_loop_fd_set(o, INVALID_SOCKET);
+        closesocket(fd);
+     }
+
    efl_destructor(efl_super(o, MY_CLASS));
 
    eina_stringshare_replace(&pd->address, NULL);
