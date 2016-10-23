@@ -35,6 +35,7 @@ class Efl.Net.Socket.Fd (Efl.Loop.Fd, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io
         Efl.Object.destructor;
         Efl.Loop.Fd.fd.set;
         Efl.Io.Closer.close;
+        Efl.Io.Closer.closed.get;
         Efl.Io.Reader.read;
         Efl.Io.Writer.write;
         Efl.Net.Socket.address_local;
