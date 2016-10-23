@@ -597,6 +597,7 @@ struct klass_def
   std::set<klass_name, compare_klass_name_by_name> inherits;
   class_type type;
   std::vector<event_def> events;
+  std::set<klass_name, compare_klass_name_by_name> immediate_inherits;
 
   friend inline bool operator==(klass_def const& lhs, klass_def const& rhs)
   {
@@ -617,10 +618,12 @@ struct klass_def
             , std::vector<std::string> namespaces
             , std::vector<function_def> functions
             , std::set<klass_name, compare_klass_name_by_name> inherits
-            , class_type type)
+            , class_type type
+            , std::set<klass_name, compare_klass_name_by_name> immediate_inherits)
     : eolian_name(eolian_name), cxx_name(cxx_name)
     , namespaces(namespaces)
     , functions(functions), inherits(inherits), type(type)
+    , immediate_inherits(immediate_inherits)
   {}
   klass_def(Eolian_Class const* klass, Eolian_Unit const* unit)
   {
@@ -665,6 +668,12 @@ struct klass_def
                 && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
                functions.push_back({function, EOLIAN_METHOD, unit});
          } catch(std::exception const&) {}
+       }
+     for(efl::eina::iterator<const char> inherit_iterator ( ::eolian_class_inherits_get(klass))
+           , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
+       {
+         Eolian_Class const* inherit = ::eolian_class_get_by_name(&*inherit_iterator);
+         immediate_inherits.insert({inherit, {}});
        }
      std::function<void(Eolian_Class const*)> inherit_algo = 
        [&] (Eolian_Class const* klass)

@@ -25,18 +25,36 @@ struct klass
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
+     std::string suffix, class_type;
+     switch(cls.type)
+       {
+       case attributes::class_type::regular:
+       case attributes::class_type::abstract_:
+         class_type = "class";
+         suffix = "CLASS";
+         break;
+       case attributes::class_type::mixin:
+         class_type = "interface";
+         suffix = "MIXIN";
+         break;
+       case attributes::class_type::interface_:
+         class_type = "interface";
+         suffix = "INTERFACE";
+         break;
+       }
+
      std::vector<std::string> cpp_namespaces = attributes::cpp_namespaces(cls.namespaces);
      auto open_namespace = *("namespace " << string << " { ") << "\n";
      if(!as_generator(open_namespace).generate(sink, cpp_namespaces, add_lower_case_context(context))) return false;
 
      if(!as_generator
         (
-         "public class " << string << " : "
+         "public " << class_type << " " << string << " : "
          )
         .generate(sink, cls.cxx_name, context))
        return false;
-     for(auto first = std::begin(cls.inherits)
-           , last = std::end(cls.inherits); first != last; ++first)
+     for(auto first = std::begin(cls.immediate_inherits)
+           , last = std::end(cls.immediate_inherits); first != last; ++first)
        {
          if(!as_generator("\n" << scope_tab << *(lower_case[string] << ".") << string)
             .generate(sink, std::make_tuple(attributes::cpp_namespaces(first->namespaces), first->eolian_name), context))
@@ -44,6 +62,8 @@ struct klass
          if(std::next(first) != last)
            *sink++ = ',';
        }
+     if(cls.immediate_inherits.empty())
+       if(!as_generator("\n" << scope_tab << "efl.eo.IWrapper").generate(sink, attributes::unused, context)) return false;
      if(!as_generator("\n{\n").generate(sink, attributes::unused, context)) return false;
 
      // // constructors
