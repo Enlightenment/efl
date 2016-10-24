@@ -212,15 +212,6 @@ enum Efl.Ui.Focus.Move_Policy
                Left, Right, Up, Down, Tab, or Shift+Tab.]]
 }
 
-enum Elm.App.View_State
-{
-   unknown = 0,
-   live,
-   paused,
-   closed,
-   shallow,
-}
-
 enum Elm.Prefs.Reset_Mode
 {
    [[Modes of resetting a prefs widget.
