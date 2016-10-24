@@ -189,11 +189,10 @@ _is_obj_in_framespace(Evas_Object_Protected_Data *obj, Evas_Public_Data *evas)
 {
    if (obj->is_frame) return EINA_TRUE;
 
-   return !RECTS_INTERSECT(obj->cur->geometry.x, obj->cur->geometry.y,
-                           obj->cur->geometry.w, obj->cur->geometry.h,
-                           evas->framespace.x, evas->framespace.y,
-                           evas->viewport.w - evas->framespace.w,
-                           evas->viewport.h - evas->framespace.h);
+   return RECTS_INTERSECT(0, -evas->framespace.y,
+                          evas->viewport.w, evas->viewport.h,
+                          obj->cur->geometry.x, obj->cur->geometry.y,
+                          obj->cur->geometry.w, obj->cur->geometry.h);
 }
 
 static inline void
