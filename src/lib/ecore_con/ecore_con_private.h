@@ -397,7 +397,7 @@ void ecore_con_mempool_shutdown(void);
 #define AI_V4MAPPED 0
 #endif
 
-void _efl_net_server_udp_init(Eo *client, SOCKET fd, const struct sockaddr *addr, socklen_t addrlen, const char *str);
+void _efl_net_server_udp_client_init(Eo *client, SOCKET fd, const struct sockaddr *addr, socklen_t addrlen, const char *str);
 void _efl_net_server_udp_client_feed(Eo *client, Eina_Rw_Slice slice);
 
 Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr);

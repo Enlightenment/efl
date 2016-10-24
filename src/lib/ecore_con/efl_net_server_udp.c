@@ -283,7 +283,7 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
                     efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
 
                     efl_net_socket_address_local_set(efl_added, efl_net_server_address_get(o)),
-                    _efl_net_server_udp_init(efl_added, fd, (const struct sockaddr *)&addr, addrlen, str),
+                    _efl_net_server_udp_client_init(efl_added, fd, (const struct sockaddr *)&addr, addrlen, str),
                     efl_io_writer_can_write_set(efl_added, EINA_TRUE));
    if (!client)
      {
