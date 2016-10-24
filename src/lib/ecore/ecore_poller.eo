@@ -42,7 +42,7 @@ class Ecore.Poller (Efl.Object)
          [[Polling interval rate of the poller.]]
          set {
             legacy: ecore_poller_poller_interval_set;
-            return: bool; [[true on success, false on failure.]]
+            return: bool; [[$true on success, $false on failure.]]
          }
          get {
             legacy: ecore_poller_poller_interval_get;

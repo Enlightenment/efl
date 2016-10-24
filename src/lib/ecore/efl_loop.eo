@@ -2,7 +2,7 @@ import efl_types;
 
 struct Efl.Loop.Arguments {
    argv: const(array<const(stringshare)>);
-   initialization: bool; [[Set to true when the program should initialize its internal state. This happen once per process instance.]]
+   initialization: bool; [[Set to $true when the program should initialize its internal state. This happen once per process instance.]]
 }
 
 class Efl.Loop (Efl.Object)
@@ -89,7 +89,7 @@ class Efl.Loop (Efl.Object)
             @in klass: const(Efl.Class); [[The class provided by the registered provider.]]
             @in provider: const(Efl.Object); [[The provider for the newly registered class that has to provide that said Efl.Class.]]
          }
-         return: bool; [[true if successfully register, false otherwise.]]
+         return: bool; [[$true if successfully register, $false otherwise.]]
       }
       unregister {
          [[Will unregister a manager of a specific class that was previously registered and answered by eo.provider_find.]]
@@ -97,7 +97,7 @@ class Efl.Loop (Efl.Object)
             @in klass: const(Efl.Class); [[The class provided by the provider to unregister for.]]
             @in provider: const(Efl.Object); [[The provider for the registered class to unregister.]]
          }
-         return: bool; [[true if successfully unregistered, false otherwise.]]
+         return: bool; [[$true if successfully unregistered, $false otherwise.]]
       }
    }
    events {
