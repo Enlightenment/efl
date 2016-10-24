@@ -7,7 +7,7 @@ enum Elm.Photocam.Zoom_Mode
    auto_fit, [[Zoom until photo fits in photocam]]
    auto_fill, [[Zoom until photo fills photocam]]
    auto_fit_in, [[Zoom in until photo fits in photocam]]
-   last
+   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
 class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,

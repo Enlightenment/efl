@@ -16,7 +16,7 @@ enum Elm.Gesture.Type
    n_flicks, [[N fingers flick gesture]]
    zoom, [[Zoom]]
    rotate, [[Rotate]]
-   last
+   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Elm.Gesture.State

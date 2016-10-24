@@ -14,7 +14,7 @@ enum Elm.Scroller.Policy
    auto = 0, [[Show scrollbars as needed]]
    on, [[Always show scrollbars]]
    off, [[Never show scrollbars]]
-   last
+   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Elm.Scroller.Single_Direction
@@ -26,7 +26,7 @@ enum Elm.Scroller.Single_Direction
    none = 0, [[Scroll every direction]]
    soft, [[Scroll single direction if the direction is certain]]
    hard, [[Scroll only single direction]]
-   last
+   last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Elm.Scroller.Movement_Block

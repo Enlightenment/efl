@@ -24,7 +24,7 @@ enum Elm.Map.Zoom_Mode
    manual,    [[Zoom controlled manually by elm_map_zoom_set(). It's set by default.]]
    auto_fit,  [[Zoom until map fits inside the scroll frame with no pixels outside this area.]]
    auto_fill, [[Zoom until map fills scroll, ensuring no pixels are left unfilled.]]
-   last
+   last       [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Elm.Map.Source_Type
@@ -39,7 +39,7 @@ enum Elm.Map.Source_Type
    tile,  [[Map tile provider.]]
    route, [[Route service provider.]]
    name,  [[Name service provider.]]
-   last
+   last   [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Elm.Map.Route_Type
@@ -52,7 +52,7 @@ enum Elm.Map.Route_Type
    motocar, [[Route should consider an automobile will be used.]]
    bicycle, [[Route should consider a bicycle will be used by the user.]]
    foot,    [[Route should consider user will be walking.]]
-   last
+   last     [[Sentinel value to indicate last enum field during iteration]]
 }
 
 
@@ -65,7 +65,7 @@ enum Elm.Map.Route_Method
    ]]
    fastest,  [[Route should prioritize time.]]
    shortest, [[Route should prioritize distance.]]
-   last
+   last      [[Sentinel value to indicate last enum field during iteration]]
 }
 
 
