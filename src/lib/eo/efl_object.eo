@@ -3,9 +3,9 @@ import eina_types;
 struct Efl.Event.Description {
     [[This struct holds the description of a specific event.]]
     name: string; [[name of the event.]]
-    unfreezable: bool; [[Eina_True if the event cannot be frozen.]]
-    legacy_is: bool; [[Internal use: if is a legacy event.]]
-    restart: bool; [[Eina_True if when the event is triggered again from a callback, it should start from where it was]]
+    unfreezable: bool; [[$true if the event cannot be frozen.]]
+    legacy_is: bool; [[Internal use: $true if a legacy event.]]
+    restart: bool; [[$true if when the event is triggered again from a callback, it should start from where it was]]
 }
 
 struct Efl.Event {
@@ -322,7 +322,7 @@ abstract Efl.Object ()
            callbacks of the same priority are called in reverse order of
            creation.
          ]]
-         return: bool; [[Return true when the callback has been successfully added.]]
+         return: bool; [[Return $true when the callback has been successfully added.]]
          params {
             @in desc: ref(const(Efl.Event.Description)); [[The description of the event to listen to]]
             @in priority: Efl.Callback_Priority; [[The priority of the callback]]
@@ -332,7 +332,7 @@ abstract Efl.Object ()
       }
       event_callback_del {
          [[Del a callback with a specific data associated to it for an event.]]
-         return: bool; [[Return true when the callback has been successfully removed.]]
+         return: bool; [[Return $true when the callback has been successfully removed.]]
          params {
             @in desc: ref(const(Efl.Event.Description)); [[The description of the event to listen to]]
             @in func: Efl.Event_Cb; [[the callback to delete]]
@@ -347,7 +347,7 @@ abstract Efl.Object ()
            callbacks of the same priority are called in reverse order of
            creation.
          ]]
-         return: bool; [[Return true when the callback has been successfully added.]]
+         return: bool; [[Return $true when the callback has been successfully added.]]
          params {
             @in array: ref(const(Efl.Callback_Array_Item)); [[an #Efl_Callback_Array_Item of events to listen to]]
             @in priority: Efl.Callback_Priority; [[The priority of the callback]]
@@ -358,7 +358,7 @@ abstract Efl.Object ()
          [[Del a callback array with a specific data associated to it for an
            event.
          ]]
-         return: bool; [[Return true when the callback has been successfully removed.]]
+         return: bool; [[Return $true when the callback has been successfully removed.]]
          params {
             @in array: ref(const(Efl.Callback_Array_Item)); [[an #Efl_Callback_Array_Item of events to listen to]]
             @in user_data: const(void_ptr); [[The data to compare]]
