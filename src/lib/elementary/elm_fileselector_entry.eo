@@ -25,9 +25,9 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
       Efl.Part.part;
    }
    events {
-      changed;
-      activated;
-      file,chosen;
+      changed; [[Called when the entry changed]]
+      activated; [[Called when the entry was activated]]
+      file,chosen; [[Called when a file was chosen in the fileselector]]
       press;
    }
 

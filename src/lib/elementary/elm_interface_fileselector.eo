@@ -15,14 +15,15 @@ enum Elm.Fileselector.Mode
 
 enum Elm.Fileselector.Sort
 {
-   by_filename_asc = 0,
-   by_filename_desc,
-   by_type_asc,
-   by_type_desc,
-   by_size_asc,
-   by_size_desc,
-   by_modified_asc,
-   by_modified_desc,
+   [[Fileselector sorting modes]]
+   by_filename_asc = 0, [[Alphabetical sort by ascending filename, default]]
+   by_filename_desc, [[Alphabetical sorting by descending filename]]
+   by_type_asc, [[Sort by file type]]
+   by_type_desc, [[Sort by file type description]]
+   by_size_asc, [[Sort by ascending file size]]
+   by_size_desc, [[Sort by descending file size]]
+   by_modified_asc, [[Sort by ascending modified date]]
+   by_modified_desc, [[Sort by descending modified date]]
    last [[Sentinel (helper) value, not used.]]
 }
 

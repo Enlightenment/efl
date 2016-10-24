@@ -26,7 +26,7 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
             ]]
          }
          values {
-            visible: bool; [[true to show buttons, false to hide.]]
+            visible: bool; [[$true to show buttons, $false to hide.]]
          }
       }
    }
@@ -63,10 +63,10 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      done;
-      activated;
-      selected,invalid;
-      directory,open;
+      done; [[Called when OK button was pressed]]
+      activated; [[Called when the filesector was activated]]
+      selected,invalid; [[Called when fileselector was selected]]
+      directory,open; [[Called when a directory was opened]]
    }
 
 }

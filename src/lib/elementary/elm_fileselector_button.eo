@@ -21,7 +21,7 @@ class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
       Elm.Interface.Fileselector.mode;
    }
    events {
-      file,chosen;
+      file,chosen; [[Called when a file was chosen in the fileselector]]
    }
 
 }
