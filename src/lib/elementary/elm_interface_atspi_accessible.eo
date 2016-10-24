@@ -433,13 +433,13 @@ mixin Elm.Interface.Atspi_Accessible ()
       }
    }
    events {
-      property,changed: string;
-      children,changed: Elm.Atspi.Event.Children_Changed.Data;
-      state,changed: Elm.Atspi.Event.State_Changed.Data;
-      bounds,changed: Elm.Atspi.Event.Geometry_Changed.Data;
-      visible,data,changed;
-      active,descendant,changed;
-      added;
-      removed;
+      property,changed: string; [[Called when roperty has changed]]
+      children,changed: Elm.Atspi.Event.Children_Changed.Data; [[Called when children have changed]]
+      state,changed: Elm.Atspi.Event.State_Changed.Data; [[Called when tate has changed]]
+      bounds,changed: Elm.Atspi.Event.Geometry_Changed.Data; [[Called when bounds have changed]]
+      visible,data,changed; [[Called when visibility has changed]]
+      active,descendant,changed; [[Called when active state of descendant has changed]]
+      added; [[Called when item was added]]
+      removed; [[Called when item was removed]]
    }
 }
