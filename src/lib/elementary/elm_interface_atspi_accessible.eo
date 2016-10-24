@@ -12,184 +12,184 @@ enum Elm.Atspi.Type
 enum Elm.Atspi.Role
 {
    [[Describes the role of an object visible to AT-SPI Clients.]]
-   invalid,
-   accelerator_label,
-   alert,
-   animation,
-   arrow,
-   calendar,
-   canvas,
-   check_box,
-   check_menu_item,
-   color_chooser,
-   column_header,
-   combo_box,
-   date_editor,
-   desktop_icon,
-   desktop_frame,
-   dial,
-   dialog,
-   directory_pane,
-   drawing_area,
-   file_chooser,
-   filler,
-   focus_traversable,
-   font_chooser,
-   frame,
-   glass_pane,
-   html_container,
-   icon,
-   image,
-   internal_frame,
-   label,
-   layered_pane,
-   list,
-   list_item,
-   menu,
-   menu_bar,
-   menu_item,
-   option_pane,
-   page_tab,
-   page_tab_list,
-   panel,
-   password_text,
-   popup_menu,
-   progress_bar,
-   push_button,
-   radio_button,
-   radio_menu_item,
-   root_pane,
-   row_header,
-   scroll_bar,
-   scroll_pane,
-   separator,
-   slider,
-   spin_button,
-   split_pane,
-   status_bar,
-   table,
-   table_cell,
-   table_column_header,
-   table_row_header,
-   tearoff_menu_item,
-   terminal,
-   text,
-   toggle_button,
-   tool_bar,
-   tool_tip,
-   tree,
-   tree_table,
-   unknown,
-   viewport,
-   window,
-   extended,
-   header,
-   footer,
-   paragraph,
-   ruler,
-   application,
-   autocomplete,
-   editbar,
-   embedded,
-   entry,
-   chart,
-   caption,
-   document_frame,
-   heading,
-   page,
-   section,
-   redundant_object,
-   form,
-   link,
-   input_method_window,
-   table_row,
-   tree_item,
-   document_spreadsheet,
-   document_presentation,
-   document_text,
-   document_web,
-   document_email,
-   comment,
-   list_box,
-   grouping,
-   image_map,
-   notification,
-   info_bar,
-   last_defined,
+   invalid, [[Role: invalid]]
+   accelerator_label, [[Role: accelerator label]]
+   alert, [[Role: alert]]
+   animation, [[Role: animation]]
+   arrow, [[Role: arrow]]
+   calendar, [[Role: calendar]]
+   canvas, [[Role: canvas]]
+   check_box, [[Role: check box]]
+   check_menu_item, [[Role: check menu item]]
+   color_chooser, [[Role: color chooser]]
+   column_header, [[Role: column header]]
+   combo_box, [[Role: combo box]]
+   date_editor, [[Role: data editor]]
+   desktop_icon, [[Role: desktop icon]]
+   desktop_frame, [[Role: desktop frame]]
+   dial, [[Role: dial]]
+   dialog, [[Role: dialog]]
+   directory_pane, [[Role: directory pane]]
+   drawing_area, [[Role: drawing area]]
+   file_chooser, [[Role: file chooser]]
+   filler, [[Role: filler]]
+   focus_traversable, [[Role: focus traversable]]
+   font_chooser, [[Role: font chooser]]
+   frame, [[Role: frame]]
+   glass_pane, [[Role: glass pane]]
+   html_container, [[Role: HTML container]]
+   icon, [[Role: icon]]
+   image, [[Role: image]]
+   internal_frame, [[Role: internal frame]]
+   label, [[Role: label]]
+   layered_pane, [[Role: layered pane]]
+   list, [[Role: list]]
+   list_item, [[Role: list item]]
+   menu, [[Role: menu]]
+   menu_bar, [[Role: menu bar]]
+   menu_item, [[Role: menu item]]
+   option_pane, [[Role: option pane]]
+   page_tab, [[Role: page tab]]
+   page_tab_list, [[Role: page tab list]]
+   panel, [[Role: panel]]
+   password_text, [[Role: password text]]
+   popup_menu, [[Role: popup menu]]
+   progress_bar, [[Role: progress bar]]
+   push_button, [[Role: push button]]
+   radio_button, [[Role: radio button]]
+   radio_menu_item, [[Role: radio menu item]]
+   root_pane, [[Role: root pane]]
+   row_header, [[Role: row header]]
+   scroll_bar, [[Role: scroll bar]]
+   scroll_pane, [[Role: scroll pane]]
+   separator, [[Role: separator]]
+   slider, [[Role: slider]]
+   spin_button, [[Role: spin button]]
+   split_pane, [[Role: split pane]]
+   status_bar, [[Role: status bar]]
+   table, [[Role: table]]
+   table_cell, [[Role: table cell]]
+   table_column_header, [[Role: table column header]]
+   table_row_header, [[Role: table row header]]
+   tearoff_menu_item, [[Role: tearoff menu item]]
+   terminal, [[Role: terminal]]
+   text, [[Role: text]]
+   toggle_button, [[Role: toggle button]]
+   tool_bar, [[Role: too bar]]
+   tool_tip, [[Role: tool tip]]
+   tree, [[Role: tree]]
+   tree_table, [[Role: tree table]]
+   unknown, [[Role: unknown]]
+   viewport, [[Role: viewport]]
+   window, [[Role: window]]
+   extended, [[Role: extended]]
+   header, [[Role: header]]
+   footer, [[Role: footer]]
+   paragraph, [[Role: paragraph]]
+   ruler, [[Role: ruler]]
+   application, [[Role: application]]
+   autocomplete, [[Role: autocomplete]]
+   editbar, [[Role: editbar]]
+   embedded, [[Role: embedded]]
+   entry, [[Role: entry]]
+   chart, [[Role: chart]]
+   caption, [[Role: caption]]
+   document_frame, [[Role: document frame]]
+   heading, [[Role: heading]]
+   page, [[Role: page]]
+   section, [[Role: section]]
+   redundant_object, [[Role: redundant object]]
+   form, [[Role: form]]
+   link, [[Role: link]]
+   input_method_window, [[Role: input method window]]
+   table_row, [[Role: table row]]
+   tree_item, [[Role: table item]]
+   document_spreadsheet, [[Role: document spreadsheet]]
+   document_presentation, [[Role: document presentation]]
+   document_text, [[Role: document text]]
+   document_web, [[Role: document web]]
+   document_email, [[Role: document email]]
+   comment, [[Role: comment]]
+   list_box, [[Role: list box]]
+   grouping, [[Role: grouping]]
+   image_map, [[Role: image map]]
+   notification, [[Role: notification]]
+   info_bar, [[Role: info bar]]
+   last_defined,  [[Last enum entry sentinel]]
 }
 
 enum Elm.Atspi.State_Type
 {
    [[Describes a possible states of an object visible to AT-SPI clients.]]
    legacy: elm_atspi_state;
-   invalid,
-   active,
-   armed,
-   busy,
-   checked,
-   collapsed,
-   defunct,
-   editable,
-   enabled,
-   expandable,
-   expanded,
-   focusable,
-   focused,
-   has_tooltip,
-   horizontal,
-   iconified,
-   modal,
-   multi_line,
-   multiselectable,
-   opaque,
-   pressed,
-   resizable,
-   selectable,
-   selected,
-   sensitive,
-   showing,
-   single_line,
-   stale,
-   transient,
-   vertical,
-   visible,
-   manages_descendants,
-   indeterminate,
-   required,
-   truncated,
-   animated,
-   invalid_entry,
-   supports_autocompletion,
-   selectable_text,
-   is_default,
-   visited,
-   last_defined,
+   invalid, [[State: invalid]]
+   active, [[State: active]]
+   armed, [[State: armed]]
+   busy, [[State: busy]]
+   checked, [[State: checked]]
+   collapsed, [[State: collapsed]]
+   defunct, [[State: defunct]]
+   editable, [[State: editable]]
+   enabled, [[State: enabled]]
+   expandable, [[State: expandable]]
+   expanded, [[State: expanded]]
+   focusable, [[State: focusable]]
+   focused, [[State: focused]]
+   has_tooltip, [[State: has a tooltip]]
+   horizontal, [[State: horizontal]]
+   iconified, [[State: iconified]]
+   modal, [[State: modal]]
+   multi_line, [[State: multi line]]
+   multiselectable, [[State: multiselectable]]
+   opaque, [[State: opaque]]
+   pressed, [[State: pressed]]
+   resizable, [[State: resizable]]
+   selectable, [[State: selectable]]
+   selected, [[State: selected]]
+   sensitive, [[State: sensitive]]
+   showing, [[State: showing]]
+   single_line, [[State: single line]]
+   stale, [[State: stale]]
+   transient, [[State: transient]]
+   vertical, [[State: vertical]]
+   visible, [[State: visible]]
+   manages_descendants, [[State: manage descendants]]
+   indeterminate, [[State: indeterminate]]
+   required, [[State: required]]
+   truncated, [[State: truncated]]
+   animated, [[State: animated]]
+   invalid_entry, [[State: invalid entry]]
+   supports_autocompletion, [[State: supports autocompletion]]
+   selectable_text, [[State: selectable text]]
+   is_default, [[State: is default]]
+   visited, [[State: visited]]
+   last_defined,  [[Last enum entry sentinel]]
 }
 
 enum Elm.Atspi.Relation_Type
 {
    [[Describes relation between two objects.]]
    legacy: elm_atspi_relation;
-   null,
-   label_for,
-   labelled_by,
-   controller_for,
-   controlled_by,
-   member_of,
-   tooltip_for,
-   node_child_of,
-   node_parent_of,
-   extended,
-   flows_to,
-   flows_from,
-   subwindow_of,
-   embeds,
-   embedded_by,
-   popup_for,
-   parent_window_of,
-   description_for,
-   described_by,
-   last_defined,
+   null, [[No relation]]
+   label_for, [[Label for relation]]
+   labelled_by, [[Labelled by relation]]
+   controller_for, [[Controller for relation]]
+   controlled_by, [[Controlled by relation]]
+   member_of, [[Member of relation]]
+   tooltip_for, [[Tooltip for relation]]
+   node_child_of, [[Node child of relation]]
+   node_parent_of, [[Node parent of relation]]
+   extended, [[Extended relation]]
+   flows_to, [[Flows to relation]]
+   flows_from, [[Flows from relation]]
+   subwindow_of, [[Subwindow of relation]]
+   embeds, [[Embeds relation]]
+   embedded_by, [[Embedded by relation]]
+   popup_for, [[Popup for relation]]
+   parent_window_of, [[Parent window of relation]]
+   description_for, [[Description for relation]]
+   described_by, [[Described by relation]]
+   last_defined, [[Last enum entry sentinel]]
 }
 
 type Elm.Atspi.State_Set: uint64; [[ATSPI object state set.]]
