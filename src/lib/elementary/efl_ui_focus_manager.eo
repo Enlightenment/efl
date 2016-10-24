@@ -1,15 +1,20 @@
 enum Efl.Ui.Focus.Direction {
-    right = 0,
-    left = 1,
-    down = 2,
-    up = 3,
-    next = 4,
-    prev = 5,
+    [[Those values are desribing a direction from the position of view from one item]]
+    right = 0, [[Coorinate-wise the next element on the right hand side ]]
+    left = 1, [[Coorinate-wise the next element on the left hand side ]]
+    down = 2, [[Coorinate-wise the next element on the down hand side ]]
+    up = 3, [[Coorinate-wise the next element on the up hand side ]]
+    next = 4, [[Logically-wise the next item in the logical tree]]
+    prev = 5, [[Logically-wise the prev item in the logical tree]]
     last = 6
 }
 
 
 class Efl.Ui.Focus.Manager (Efl.Object) {
+    [[Calculates the directions of Efl.Ui.Focus.Direction
+
+      Each registered item will get a other registered object into each direction, you can get those items for the currently focused item if you call request move
+    ]]
     methods {
         move {
             [[Move the focus into the given direction

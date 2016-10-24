@@ -1,15 +1,25 @@
 abstract Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Ui.Focus.Object, Efl.Ui.Focus.User)
 {
+    [[A abstract class to have a sub manager
+
+      This submanager will register its border elements on the parent manager. The parent manager is found with the Efl.Ui.Focus.User interface.
+
+      Each submanager also has to be a focus object, the object itself will be registered into the parent manager. It will be used as logical parent while registering the border elements.
+
+      The border elements can be filtered by using the select_set function.
+    ]]
     methods {
         select_set {
+            [[filters the given iterator for which elements should be registered in the upper manager]]
             params {
-                objects : iterator<Efl.Ui.Focus.Object>;
+                objects : iterator<Efl.Ui.Focus.Object>; [[The objects to filter]]
             }
-            return : list<Efl.Ui.Focus.Object>;
+            return : list<Efl.Ui.Focus.Object>; [[The rest set from objects to use]]
         }
         @property parent {
+            [[The logical parent which is used to register the object itself in the parent manager]]
             values {
-                node : Efl.Ui.Focus.Object;
+                node : Efl.Ui.Focus.Object; [[object to use]]
             }
         }
     }
