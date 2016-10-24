@@ -5,22 +5,6 @@ typedef struct {
 
 } Focus_Test_Sub_Data;
 
-EOLIAN static Eina_List*
-_focus_test_sub_efl_ui_focus_manager_sub_select_set(Eo *obj EINA_UNUSED, Focus_Test_Sub_Data *pd EINA_UNUSED, Eina_Iterator *objects)
-{
-   Eina_List *list = NULL;
-   Efl_Ui_Focus_Object *o;
-
-   EINA_ITERATOR_FOREACH(objects, o)
-     {
-        list = eina_list_append(list, o);
-     }
-
-   eina_iterator_free(objects);
-
-   return list;
-}
-
 EOLIAN static void
 _focus_test_sub_efl_ui_focus_object_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Sub_Data *pd EINA_UNUSED, Eina_Rectangle *rect EINA_UNUSED)
 {

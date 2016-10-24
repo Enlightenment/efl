@@ -38,7 +38,12 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    Efl_Ui_Focus_Object *node;
 
    borders = efl_ui_focus_manager_border_elements_get(obj);
-   selection = efl_ui_focus_manager_sub_select_set(obj, borders);
+   selection = NULL;
+   EINA_ITERATOR_FOREACH(borders, node)
+     {
+        selection = eina_list_append(selection, node);
+     }
+   eina_iterator_free(borders);
 
    //elements which are not in the current border elements
    tmp = eina_list_clone(pd->current_border);
