@@ -922,6 +922,7 @@ _elm_win_mouse_in(Ecore_Evas *ee)
    if (sd->wl.win)
      ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 
+   if (!sd->pointer.obj) return;
    ecore_evas_object_cursor_set(sd->ee, sd->pointer.obj,
                                 ELM_OBJECT_LAYER_CURSOR,
                                 sd->pointer.hot_x, sd->pointer.hot_y);
@@ -935,6 +936,7 @@ _elm_win_mouse_out(Ecore_Evas *ee)
    if (!sd) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
+   if (!sd->pointer.obj) return;
    sd->pointer.obj = ecore_evas_cursor_unset(sd->ee);
 #endif
 }
@@ -3521,12 +3523,15 @@ _elm_win_frame_cb_move_start(void *data,
    if (sd->wl.win)
      ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 
-   if (!strcmp(source, "elm"))
-     _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                           "pointer", "base", "move");
-   else
-     _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                           "pointer", "base", "default");
+   if (sd->pointer.obj)
+     {
+        if (!strcmp(source, "elm"))
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base", "move");
+        else
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base", "default");
+     }
 #else
    (void)source;
 #endif
@@ -3555,6 +3560,7 @@ _elm_win_frame_cb_move_stop(void *data,
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
      ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+   if (!sd->pointer.obj) return;
    _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", "default");
 #endif
 }
@@ -3626,6 +3632,8 @@ _elm_win_frame_cb_resize_show(void *data,
    Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
    int i;
 
+   if (!sd->pointer.obj) return;
+
    i = sd->rot / 90;
    if (!strcmp(source, "elm.event.resize.t"))
      _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base",
@@ -3678,6 +3686,7 @@ _elm_win_frame_cb_resize_hide(void *data,
    if (sd->resizing) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
+   if (!sd->pointer.obj) return;
    _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", "default");
 #endif
 }
