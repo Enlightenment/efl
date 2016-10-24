@@ -3,17 +3,20 @@ mixin Efl.Ui.Focus.Object
     [[Functions of focusable objects]]
     methods {
         geometry_get {
+            [[The geometry which should be used to calculate the relations to others]]
             params {
-                @out rect : Eina.Rectangle;
+                @out rect : Eina.Rectangle; [[the geometry to use]]
             }
         }
         @property focus {
             [[This gets called by the manager and should never be called by someone else
 
-             It can be used by a implementation of a focus object to adapt to changes which are needed
+             It can be used by a implementation of a focus object to adapt to changes which are needed.
+
+             The function is emitting the focus state events, if focus is different to the state before.
             ]]
             values {
-                focus : bool;
+                focus : bool; [[The state in which the object should be put]]
             }
         }
     }
@@ -22,7 +25,6 @@ mixin Efl.Ui.Focus.Object
         @empty .focus.get;
     }
     events {
-        focus;
-        unfocus;
+        focus,changed : bool; [[Emitted if the focus state has changed]]
     }
 }

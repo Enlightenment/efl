@@ -6,20 +6,16 @@
 #include "elm_priv.h"
 
 typedef struct {
-
+  Eina_Bool old_focus;
 } Efl_Ui_Focus_Object_Data;
 
 EOLIAN static void
-_efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Focus_Object_Data *pd EINA_UNUSED, Eina_Bool focus)
+_efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Focus_Object_Data *pd, Eina_Bool focus)
 {
-   const Efl_Event_Description *desc;
+   if (pd->old_focus == focus) return;
 
-   if (focus)
-     desc = EFL_UI_FOCUS_OBJECT_EVENT_FOCUS;
-   else
-     desc = EFL_UI_FOCUS_OBJECT_EVENT_UNFOCUS;
-
-   efl_event_callback_call(obj, desc, NULL);
+   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , (void*) (uintptr_t) focus);
+   pd->old_focus = focus;
 }
 
 
