@@ -2773,7 +2773,8 @@ _elm_win_obj_intercept_show(void *data,
 #if 0
         ecore_evas_show(sd->pointer.ee);
 #endif
-        evas_object_show(sd->pointer.obj);
+        if (evas_pointer_inside_get(sd->evas))
+          evas_object_show(sd->pointer.obj);
      }
    evas_object_show(obj);
 #ifdef ELEMENTARY_X
