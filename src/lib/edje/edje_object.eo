@@ -12,7 +12,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             [[Edje will automatically update the size hints on itself.
 
               By default edje doesn't set size hints on itself. With this function
-              call, it will do so if update is true. Be carefully, it cost a lot to
+              call, it will do so if update is $true. Be carefully, it cost a lot to
               trigger this feature as it will recalc the object every time it make
               sense to be sure that's its minimal size hint is always accurate.]]
          }
@@ -37,7 +37,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               @since 1.1.0]]
          }
          values {
-            rtl: bool; [[new value of flag true/false]]
+            rtl: bool; [[new value of flag $true/$false]]
          }
       }
       @property language {
@@ -633,7 +633,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               Note: unlike Evas, Edje colors are not pre-multiplied. That is,
               half-transparent white is 255 255 255 128.]]
             legacy: null;
-            return: bool; [[true on sucess, false on failure.]]
+            return: bool; [[$true on sucess, $false on failure.]]
          }
          get {
             [[Get Edje color class.
@@ -648,7 +648,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               Note: unlike Evas, Edje colors are not pre-multiplied. That is,
               half-transparent white is 255 255 255 128.]]
             legacy: null;
-            return: bool; [[true if found or false if not found and all values
+            return: bool; [[$true if found or $false if not found and all values
                             are zeored.]]
          }
          keys {
@@ -697,7 +697,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               Note: unlike Evas, Edje colors are not pre-multiplied. That is,
               half-transparent white is 255 255 255 128.]]
             legacy: null;
-            return: bool; [[true if found or false if not found and all
+            return: bool; [[$true if found or $false if not found and all
                             values are zeroed.]]
          }
          keys {
@@ -1342,7 +1342,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             part: string; [[The part name]]
          }
          values {
-            prediction: bool; [[If true, the prediction feature is allowed.]]
+            prediction: bool; [[If $true, the prediction feature is allowed.]]
          }
       }
       part_text_hide_visible_password {
@@ -1507,7 +1507,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
          get {
             [[Returns whether the cursor points to a format.
               \@ref evas_textblock_cursor_is_format]]
-            return: bool; [[true if it's true, false otherwise.]]
+            return: bool; [[$true if the cursor points to a format, $false otherwise.]]
          }
          keys {
             part: string; [[The part name]]
@@ -1516,10 +1516,10 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
       }
       @property part_text_cursor_is_visible_format {
          get {
-            [[Return true if the cursor points to a visible format
+            [[Return $true if the cursor points to a visible format
               For example \\t, \\n, item and etc.
               \@ref evas_textblock_cursor_format_is_visible_get]]
-            return: bool; [[true if it's true, false otherwise.]]
+            return: bool; [[$true if the cursor points to a visible format, $false otherwise.]]
          }
          keys {
             part: string; [[The part name]]
@@ -1552,7 +1552,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             part: string; [[The part name]]
          }
          values {
-            allow: bool; [[true to enable, false otherwise]]
+            allow: bool; [[$true to enable, $false otherwise]]
          }
       }
       part_text_select_begin @const {
@@ -1815,7 +1815,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             part: string; [[The part name]]
          }
          values {
-            enabled: bool; [[If true, the input panel is appeared when entry is clicked or has a focus]]
+            enabled: bool; [[If $true, the input panel is appeared when entry is clicked or has a focus]]
          }
       }
       @property part_text_input_panel_return_key_disabled {
@@ -1874,7 +1874,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             part: string; [[The part name]]
          }
          values {
-            ondemand: bool; [[If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)]]
+            ondemand: bool; [[If $true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)]]
          }
       }
       @property part_text_anchor_geometry {
