@@ -19,7 +19,7 @@ enum Elm.Popup.Orient
    top_right, [[Popup should appear in the top right of parent.]]
    bottom_left, [[Popup should appear in the bottom left of parent.]]
    bottom_right, [[Notify should appear in the bottom right of parent.]]
-   last [[Sentinel value, don't use.]]
+   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
 

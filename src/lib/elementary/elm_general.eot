@@ -92,7 +92,7 @@ enum Elm.Policy
 
                @since 1.8
              ]]
-   last
+   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Elm.Policy.Quit
@@ -177,7 +177,7 @@ enum Elm.Wrap.Type
    char,     [[Char wrap - wrap between characters.]]
    word,     [[Word wrap - wrap in allowed wrapping points (as defined in the unicode standard).]]
    mixed,    [[Mixed wrap - Word wrap, and if that fails, char wrap.]]
-   last
+   last      [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Elm.Focus_Direction

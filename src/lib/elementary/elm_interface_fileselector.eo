@@ -10,7 +10,7 @@ enum Elm.Fileselector.Mode
    legacy: elm_fileselector;
    list = 0, [[Layout as a list.]]
    grid, [[Layout as a grid.]]
-   last [[Sentinel (helper) value, not used.]]
+   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Elm.Fileselector.Sort
@@ -24,7 +24,7 @@ enum Elm.Fileselector.Sort
    by_size_desc, [[Sort by descending file size]]
    by_modified_asc, [[Sort by ascending modified date]]
    by_modified_desc, [[Sort by descending modified date]]
-   last [[Sentinel (helper) value, not used.]]
+   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
 interface Elm.Interface.Fileselector ()

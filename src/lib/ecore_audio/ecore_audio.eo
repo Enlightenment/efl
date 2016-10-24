@@ -8,7 +8,7 @@ enum Ecore.Audio.Format {
     ogg, [[OGG]]
     flac, [[FLAC, the Free Lossless Audio Codec]]
     mp3,  [[MP3 (not supported)]]
-    last [[Sentinel value, do not use]]
+    last [[Sentinel value to indicate last enum field during iteration]]
 }
 
 class Ecore.Audio (Efl.Object)

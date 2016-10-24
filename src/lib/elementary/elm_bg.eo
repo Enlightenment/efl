@@ -10,7 +10,7 @@ enum Elm.Bg.Option
   scale, [[Scale the background image, retaining aspect ratio (default).]]
   stretch, [[Stretch the background image to fill the widget's area.]]
   tile, [[Tile background image at its original size.]]
-  last [[Sentinel value, also used to indicate errors.]]
+  last  [[Sentinel value to indicate last enum field during iteration. Also used to indicate errors]]
 }
 
 class Elm.Bg (Elm.Layout, Efl.File)

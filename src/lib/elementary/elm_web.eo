@@ -11,7 +11,7 @@ enum Elm.Web.Zoom_Mode
    manual = 0, [[Zoom controlled normally by elm_web_zoom_set]]
    auto_fit, [[Zoom until content fits in web object]]
    auto_fill, [[Zoom until content fills web object]]
-   last [[Sentinel value to indicate end]]
+   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
 class Elm.Web (Elm.Widget)

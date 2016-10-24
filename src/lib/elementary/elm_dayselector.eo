@@ -14,7 +14,7 @@ enum Elm.Dayselector.Day
    thu,    [[Indicates Thursday.]]
    fri,    [[Indicates Friday.]]
    sat,    [[Indicates Saturday.]]
-   max     [[Sentinel value, don't use.]]
+   max     [[Sentinel value to indicate last enum field during iteration]]
 }
 
 class Elm.Dayselector (Elm.Layout)

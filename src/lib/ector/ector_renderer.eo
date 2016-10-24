@@ -6,7 +6,7 @@ enum Ector.Quality
    best, [[Best quality]]
    good, [[Good quality]]
    fast, [[Lower quality]]
-   last, [[Sentinel]]
+   last, [[Sentinel value to indicate last enum field during iteration]]
 }
 
 abstract Ector.Renderer (Efl.Object)

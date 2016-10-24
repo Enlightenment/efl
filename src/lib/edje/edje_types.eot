@@ -134,7 +134,7 @@ enum Edje.External.Param_Type {
    bool, [[Parameter value is boolean.]]
    choice, [[Parameter value is one of a set of
              predefined string choices.]]
-   max [[Sentinel. Don't use.]]
+   max [[Sentinel value to indicate last enum field during iteration]]
 }
 
 struct Edje.External.Param {

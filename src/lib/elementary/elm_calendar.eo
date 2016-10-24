@@ -37,7 +37,7 @@ enum Elm.Calendar.Weekday
    thursday, [[Thursday weekday]]
    friday, [[Friday weekday]]
    saturday, [[Saturday weekday]]
-   last [[Sentinel value to mark last entry]]
+   last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Elm.Calendar.Select.Mode
