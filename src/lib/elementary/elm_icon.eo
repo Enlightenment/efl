@@ -1,13 +1,15 @@
 enum Elm.Icon.Type
 {
+   [[Elementary icon types]]
    legacy: elm_icon;
-   none,
-   file,
-   standard
+   none, [[Icon has no type set]]
+   file, [[Icon is of type file]]
+   standard [[Icon is of type standard]]
 }
 
 class Elm.Icon (Efl.Ui.Image)
 {
+   [[Elementary Icon Class]]
    legacy_prefix: elm_icon;
    eo_prefix: elm_obj_icon;
    event_prefix: elm_icon;
@@ -22,8 +24,8 @@ class Elm.Icon (Efl.Ui.Image)
       Efl.File.file.set;
    }
    events {
-      thumb,done;
-      thumb,error;
+      thumb,done; [[Called when thumb nailing is successfully done]]
+      thumb,error; [[Called when thumb nailing failed]]
    }
 
 }
