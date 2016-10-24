@@ -145,7 +145,6 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(ustrbuf);
    S(quadtree);
    S(simple_xml);
-   S(file);
    S(prefix);
    S(value);
    S(tmpstr);
@@ -154,6 +153,7 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(cpu);
    S(thread_queue);
    S(rbtree);
+   S(file);
    S(safepointer);
    S(promise);
 /* no model for now
@@ -194,7 +194,6 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(ustrbuf),
    S(quadtree),
    S(simple_xml),
-   S(file),
    S(prefix),
    S(value),
    S(tmpstr),
@@ -203,6 +202,7 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(cpu),
    S(thread_queue),
    S(rbtree),
+   S(file),
    S(safepointer),
    S(promise)
 /* no model for now
