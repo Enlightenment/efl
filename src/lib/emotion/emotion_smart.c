@@ -374,17 +374,28 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
    sd->video.h = 0;
    if ((file) && (file[0] != 0))
      {
+        const char *file2;
+
         eina_stringshare_replace(&sd->file, file);
         emotion_engine_instance_file_close(sd->engine_instance);
         evas_object_image_data_set(sd->obj, NULL);
         evas_object_image_size_set(sd->obj, 1, 1);
         _emotion_image_data_zero(sd->obj);
         sd->open = 0;
-        if (!emotion_engine_instance_file_open(sd->engine_instance, sd->file))
+
+        Efl_Vpath_File *file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
+        efl_vpath_file_do(file_obj);
+        // XXX:FIXME: allow this to be async
+        efl_vpath_file_wait(file_obj);
+        file2 = efl_vpath_file_result_get(file_obj);
+
+        if (!emotion_engine_instance_file_open(sd->engine_instance, file2))
           {
              WRN("Couldn't open file=%s", sd->file);
+             efl_del(file_obj);
              return EINA_FALSE;
           }
+        efl_del(file_obj);
         DBG("successfully opened file=%s", sd->file);
         sd->pos = 0.0;
         if (sd->play) emotion_engine_instance_play(sd->engine_instance, 0.0);
