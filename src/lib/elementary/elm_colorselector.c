@@ -2098,7 +2098,6 @@ _key_action_move(Evas_Object *obj, const char *params)
    if (cl)
      {
         eo_item = eina_list_data_get(cl);
-        ELM_COLOR_ITEM_DATA_GET(eo_item, item);
         elm_object_item_focus_set(eo_item, EINA_TRUE);
      }
    else if (!cl && (sd->focused == ELM_COLORSELECTOR_PALETTE))
@@ -2120,7 +2119,11 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
         Elm_Object_Item *eo_item = NULL;
         eo_item = eina_list_data_get(sd->focus_items);
         elm_obj_color_item_selected_set(eo_item, EINA_TRUE);
+
+        return EINA_TRUE;
      }
+
+   return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
