@@ -2,6 +2,7 @@
 /* type @extern Evas.Animated_Loop_Hint: int; */
 
 enum Efl.Image.Animated.Loop_Hint {
+   [[Image animation loop modes]]
    none = 0,       [[No looping order specified.]]
    loop = 1,       [[Standard loop: 1->2->3->1->2->3->1]]
    pingpong = 2    [[Ping-pong bouncing loop: 1->2->3->2->1->2->3->1]]

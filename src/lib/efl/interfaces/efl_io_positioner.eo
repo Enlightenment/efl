@@ -1,9 +1,10 @@
 import eina_types;
 
 enum Efl.Io.Positioner.Whence {
-    start, [[seek from start of the stream/file]]
-    current, [[seek from current position]]
-    end, [[seek from the end of stream/file]]
+    [[Seek position modes]]
+    start, [[Seek from start of the stream/file]]
+    current, [[Seek from current position]]
+    end, [[Seek from the end of stream/file]]
 }
 
 mixin Efl.Io.Positioner {

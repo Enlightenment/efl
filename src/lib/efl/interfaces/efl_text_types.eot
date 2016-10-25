@@ -1,7 +1,8 @@
 enum Efl.Text.Bidirectional_Type {
-   natural = 0,
-   neutral = 0,
-   ltr,
-   rtl,
-   inherit
+   [[Bidirectionaltext type]]
+   natural = 0, [[Natural text type, same as neutral]]
+   neutral = 0, [[Neutral text type, same as natural]]
+   ltr, [[Left to right text type]]
+   rtl, [[Right to left text type]]
+   inherit [[Inherit text type]]
 }

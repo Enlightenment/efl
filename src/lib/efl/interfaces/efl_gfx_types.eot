@@ -1,4 +1,5 @@
 enum Efl.Gfx.Colorspace {
+  [[Graphics colorspace type]]
   argb8888,             [[ARGB 32 bits per pixel, high-byte is Alpha, accessed one 32bit word at a time.]]
   ycbcr422p601_pl,      [[YCbCr 4:2:2 Planar, ITU.BT-601 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows.]]
   ycbcr422p709_pl,      [[YCbCr 4:2:2 Planar, ITU.BT-709 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows.]]
@@ -21,6 +22,7 @@ enum Efl.Gfx.Colorspace {
 }
 
 enum Efl.Gfx.Render_Op {
+  [[Graphics render operation mode]]
   blend = 0, [[Alpha blending onto destination (default); d = d*(1-sa) + s.]]
   copy  = 1, [[Copy source to destination; d = s.]]
   last       [[Sentinel value to indicate last enum field during iteration]]
@@ -180,6 +182,7 @@ enum Efl.Gfx.Size.Hint.Aspect
 
 enum Efl.Image.Load.Error
 {
+   [[Image load error type]]
    none = 0,                       [[No error on load]]
    generic = 1,                    [[A non-specific error occurred]]
    does_not_exist = 2,             [[File (or file path) does not exist]]
