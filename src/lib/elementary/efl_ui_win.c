@@ -151,10 +151,11 @@ struct _Efl_Ui_Win_Data
    } screen;
    struct
    {
-#if 0
-      Ecore_Evas  *ee;
+#ifdef HAVE_ELEMENTARY_WL2
+      Ecore_Wl2_Window *win;
+      struct wl_surface *surf;
 #endif
-      Evas        *evas;
+      Ecore_Evas  *ee;
       Evas_Object *obj, *hot_obj;
       int          hot_x, hot_y;
    } pointer;
@@ -919,8 +920,9 @@ _elm_win_mouse_in(Ecore_Evas *ee)
    _elm_win_throttle_ok = EINA_TRUE;
    if (sd->resizing) sd->resizing = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win && (!sd->frame_obj))
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+   if (sd->wl.win)
+     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
+                                  sd->pointer.hot_x, sd->pointer.hot_y);
 #endif
 }
 
@@ -2195,9 +2197,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
    if (sd->pointer.obj)
      {
         evas_object_hide(sd->pointer.obj);
-#if 0
         ecore_evas_hide(sd->pointer.ee);
-#endif
      }
    if (_elm_config->atspi_mode)
      {
@@ -2753,9 +2753,7 @@ _elm_win_obj_intercept_show(void *data,
      }
    if (sd->pointer.obj)
      {
-#if 0
         ecore_evas_show(sd->pointer.ee);
-#endif
         evas_object_show(sd->pointer.obj);
      }
    evas_object_show(obj);
@@ -3503,10 +3501,19 @@ _elm_win_frame_cb_move_start(void *data,
    if (!sd) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   if (!strcmp(source, "elm"))
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_HAND1);
-   else
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+   if (sd->pointer.obj)
+     {
+        if (!strcmp(source, "elm"))
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base", "move");
+        else
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base", "default");
+     }
+
+   if ((sd->wl.win) && (sd->pointer.surf))
+     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
+                                  sd->pointer.hot_x, sd->pointer.hot_y);
 #else
    (void)source;
 #endif
@@ -3533,8 +3540,13 @@ _elm_win_frame_cb_move_stop(void *data,
    if (!sd) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win)
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+   if (sd->pointer.obj)
+     _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                           "pointer", "base", "default");
+
+   if ((sd->wl.win) && (sd->pointer.surf))
+     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
+                                  sd->pointer.hot_x, sd->pointer.hot_y);
 #endif
 }
 
@@ -3568,8 +3580,13 @@ _elm_win_frame_obj_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
 #ifdef HAVE_ELEMENTARY_WL2
    Efl_Ui_Win_Data *sd = data;
 
-   if (sd->wl.win)
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+   if (sd->pointer.obj)
+     _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                           "pointer", "base", "default");
+
+   if ((sd->wl.win) && (sd->pointer.surf))
+     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
+                                  sd->pointer.hot_x, sd->pointer.hot_y);
 #else
    (void)data;
 #endif
@@ -3615,34 +3632,51 @@ _elm_win_frame_cb_resize_show(void *data,
    if (sd->resizing) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   int i;
-   i = sd->rot / 90;
-   if (!strcmp(source, "elm.event.resize.t"))
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
-                                           _border_side[(0 + i) % 4].name);
-   else if (!strcmp(source, "elm.event.resize.b"))
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
-                                           _border_side[(2 + i) % 4].name);
-   else if (!strcmp(source, "elm.event.resize.l"))
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
-                                           _border_side[(1 + i) % 4].name);
-   else if (!strcmp(source, "elm.event.resize.r"))
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
-                                           _border_side[(3 + i) % 4].name);
-   else if (!strcmp(source, "elm.event.resize.tl"))
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
-                                           _border_corner[(0 + i) % 4].name);
-   else if (!strcmp(source, "elm.event.resize.tr"))
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
-                                           _border_corner[(3 + i) % 4].name);
-   else if (!strcmp(source, "elm.event.resize.bl"))
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
-                                           _border_corner[(1 + i) % 4].name);
-   else if (!strcmp(source, "elm.event.resize.br"))
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
-                                           _border_corner[(2 + i) % 4].name);
-   else
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+   if (sd->pointer.obj)
+     {
+        int i;
+
+        i = sd->rot / 90;
+        if (!strcmp(source, "elm.event.resize.t"))
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base",
+                                _border_side[(0 + i) % 4].name);
+        else if (!strcmp(source, "elm.event.resize.b"))
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base",
+                                _border_side[(2 + i) % 4].name);
+        else if (!strcmp(source, "elm.event.resize.l"))
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base",
+                                _border_side[(1 + i) % 4].name);
+        else if (!strcmp(source, "elm.event.resize.r"))
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base",
+                                _border_side[(3 + i) % 4].name);
+        else if (!strcmp(source, "elm.event.resize.tl"))
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base",
+                                _border_corner[(0 + i) % 4].name);
+        else if (!strcmp(source, "elm.event.resize.tr"))
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base",
+                                _border_corner[(3 + i) % 4].name);
+        else if (!strcmp(source, "elm.event.resize.bl"))
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base",
+                                _border_corner[(1 + i) % 4].name);
+        else if (!strcmp(source, "elm.event.resize.br"))
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base",
+                                _border_corner[(2 + i) % 4].name);
+        else
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base", "default");
+     }
+
+   if ((sd->wl.win) && (sd->pointer.surf))
+     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
+                                  sd->pointer.hot_x, sd->pointer.hot_y);
 #else
    (void)source;
 #endif
@@ -3660,7 +3694,13 @@ _elm_win_frame_cb_resize_hide(void *data,
    if (sd->resizing) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+   if (sd->pointer.obj)
+     _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                           "pointer", "base", "default");
+
+   if ((sd->wl.win) && (sd->pointer.surf))
+     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
+                                  sd->pointer.hot_x, sd->pointer.hot_y);
 #endif
 }
 
@@ -4769,6 +4809,44 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
           elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);
         if (_elm_config->focus_highlight_animate)
           elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
+     }
+
+   if (type != ELM_WIN_FAKE)
+     {
+        if ((engine) &&
+            ((!strcmp(engine, ELM_WAYLAND_SHM) ||
+              (!strcmp(engine, ELM_WAYLAND_EGL)))))
+          {
+             Evas *pevas;
+             Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
+
+             if (!strcmp(engine, ELM_WAYLAND_SHM))
+               sd->pointer.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 1, 1, 0);
+             else if (!strcmp(engine, ELM_WAYLAND_EGL))
+               sd->pointer.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
+
+             pevas = ecore_evas_get(sd->pointer.ee);
+
+             sd->pointer.obj = edje_object_add(pevas);
+             _elm_theme_object_set(obj, sd->pointer.obj,
+                                   "pointer", "base", "default");
+             edje_object_size_min_calc(sd->pointer.obj, &mw, &mh);
+             evas_object_move(sd->pointer.obj, 0, 0);
+             evas_object_resize(sd->pointer.obj, mw, mh);
+             edje_object_part_geometry_get(sd->pointer.obj,
+                                           "elm.swallow.hotspot",
+                                           &hx, &hy, NULL, NULL);
+             sd->pointer.hot_x = hx;
+             sd->pointer.hot_y = hy;
+             evas_object_show(sd->pointer.obj);
+
+             sd->pointer.win = _elm_ee_wlwin_get(sd->pointer.ee);
+             ecore_wl2_window_type_set(sd->pointer.win,
+                                       ECORE_WL2_WINDOW_TYPE_NONE);
+             sd->pointer.surf = ecore_wl2_window_surface_get(sd->pointer.win);
+
+             ecore_evas_resize(sd->pointer.ee, mw, mh);
+          }
      }
 
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_WINDOW);
