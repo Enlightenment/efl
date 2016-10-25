@@ -87,6 +87,7 @@ group { "e/gadget/clock/digital/advanced"; nomouse;
          desc {
             rel1.to: "e.text";
             rel2.to: "e.text.sub";
+            rel2.offset: 3 0;
          }
          desc { "only";
             rel.to: "e.text";
