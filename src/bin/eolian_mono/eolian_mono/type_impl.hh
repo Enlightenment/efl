@@ -61,53 +61,53 @@ struct visitor_generate
       const match_table[] =
         {
            // signed primitives
-             {"byte", nullptr, [&] { return replace_base_type(regular, " char"); }}
-           , {"llong", nullptr, [&] { return replace_base_type(regular, " long long"); }}
-           , {"int8", nullptr, [&] { return replace_base_type(regular, " int8_t"); }}
-           , {"int16", nullptr, [&] { return replace_base_type(regular, " int16_t"); }}
-           , {"int32", nullptr, [&] { return replace_base_type(regular, " int32_t"); }}
-           , {"int64", nullptr, [&] { return replace_base_type(regular, " int64_t"); }}
-           , {"ssize", nullptr, [&] { return replace_base_type(regular, " ssize_t"); }}
+             {"byte", nullptr, [&] { return replace_base_type(regular, " Byte"); }}
+           , {"llong", nullptr, [&] { return replace_base_type(regular, " Long"); }}
+           , {"int8", nullptr, [&] { return replace_base_type(regular, " Byte"); }}
+           , {"int16", nullptr, [&] { return replace_base_type(regular, " Short"); }}
+           , {"int32", nullptr, [&] { return replace_base_type(regular, " Integer"); }}
+           , {"int64", nullptr, [&] { return replace_base_type(regular, " Long"); }}
+           , {"ssize", nullptr, [&] { return replace_base_type(regular, " Long"); }}
            // unsigned primitives
-           , {"ubyte", nullptr, [&] { return replace_base_type(regular, " unsigned char"); }}
-           , {"ushort", nullptr, [&] { return replace_base_type(regular, " unsigned short"); }}
-           , {"uint", nullptr, [&] { return replace_base_type(regular, " unsigned int"); }}
-           , {"ulong", nullptr, [&] { return replace_base_type(regular, " unsigned long"); }}
-           , {"ullong", nullptr, [&] { return replace_base_type(regular, " unsigned long long"); }}
-           , {"uint8", nullptr, [&] { return replace_base_type(regular, " uint8_t"); }}
-           , {"uint16", nullptr, [&] { return replace_base_type(regular, " uint16_t"); }}
-           , {"uint32", nullptr, [&] { return replace_base_type(regular, " uint32_t"); }}
-           , {"uint64", nullptr, [&] { return replace_base_type(regular, " uint64_t"); }}
-           , {"size", nullptr, [&] { return replace_base_type(regular, " size_t"); }}
+           , {"ubyte", nullptr, [&] { return replace_base_type(regular, " Byte"); }}
+           , {"ushort", nullptr, [&] { return replace_base_type(regular, " Short"); }}
+           , {"uint", nullptr, [&] { return replace_base_type(regular, " Integer"); }}
+           , {"ulong", nullptr, [&] { return replace_base_type(regular, " Long"); }}
+           , {"ullong", nullptr, [&] { return replace_base_type(regular, " Long"); }}
+           , {"uint8", nullptr, [&] { return replace_base_type(regular, " byte"); }}
+           , {"uint16", nullptr, [&] { return replace_base_type(regular, " Short"); }}
+           , {"uint32", nullptr, [&] { return replace_base_type(regular, " Integer"); }}
+           , {"uint64", nullptr, [&] { return replace_base_type(regular, " Long"); }}
+           , {"size", nullptr, [&] { return replace_base_type(regular, " Long"); }}
            
-           , {"ptrdiff", nullptr, [&] { return replace_base_type(regular, " ptrdiff_t"); }}
-           , {"intptr", nullptr, [&] { return replace_base_type(regular, " intptr_t"); }}
+           , {"ptrdiff", nullptr, [&] { return replace_base_type(regular, " Long"); }}
+           , {"intptr", nullptr, [&] { return replace_base_type(regular, " IntPtr"); }}
            , {"string", true, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                if(is_out || is_return)
-                  return replace_base_type(r, " ::std::string");
-                else return replace_base_type(r, " ::efl::eina::string_view");
+                // if(is_out || is_return)
+                  return replace_base_type(r, " String");
+                // else return replace_base_type(r, " ::efl::eina::string_view");
               }}
            , {"string", false, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " ::efl::eina::string_view");
+                return replace_base_type(r, " String");
               }}
            , {"stringshare", nullptr, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " ::efl::eina::stringshare");
+                return replace_base_type(r, " String");
               }}
-           , {"generic_value", true, [&]
-              { return regular_type_def{" ::efl::eina::value", regular.base_qualifier, {}};
-              }}
-           , {"generic_value", false, [&]
-              { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier, {}};
-              }}
+           // , {"generic_value", true, [&]
+           //    { return regular_type_def{" ::efl::eina::value", regular.base_qualifier, {}};
+           //    }}
+           // , {"generic_value", false, [&]
+           //    { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier, {}};
+           //    }}
         };
       if(regular.base_type == "void_ptr")
         {
@@ -211,10 +211,11 @@ struct visitor_generate
    bool operator()(attributes::klass_name klass) const
    {
      return
-       as_generator(" " << *("::" << lower_case[string]) << "::" << string)
+       as_generator(" " << *(lower_case[string] << ".") << string)
        .generate(sink, std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context)
-       && (!(klass.base_qualifier & qualifier_info::is_ref)
-           || as_generator("&").generate(sink, attributes::unused, *context));
+       // && (!(klass.base_qualifier & qualifier_info::is_ref)
+       //     || as_generator("&").generate(sink, attributes::unused, *context))
+       ;
    }
    bool operator()(attributes::complex_type_def const& complex) const
    {
