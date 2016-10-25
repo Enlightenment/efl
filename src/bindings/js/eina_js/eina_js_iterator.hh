@@ -66,8 +66,8 @@ inline v8::Local<v8::Object> export_iterator(Eina_Iterator *i,
             ::eina_iterator_free(static_cast<Eina_Iterator*>(i));
         };
         compatibility_set_pointer_internal_field(ret, 0, i);
-        compatibility_set_pointer_internal_field
-          (ret, 1, reinterpret_cast<void*>(deleter));
+        // compatibility_set_pointer_internal_field
+        //   (ret, 1, reinterpret_cast<void*>(deleter));
     }
 
     return ret;
