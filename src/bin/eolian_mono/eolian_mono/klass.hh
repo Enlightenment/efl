@@ -7,19 +7,19 @@
 #include "grammar/indentation.hpp"
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
-#include "grammar/type.hpp"
-#include "grammar/parameter.hpp"
-#include "grammar/function_declaration.hpp"
+#include "type.hh"
+//#include "grammar/parameter.hpp"
+#include "function_definition.hh"
+#include "grammar/string.hpp"
 #include "grammar/case.hpp"
-#include "grammar/address_of.hpp"
-#include "grammar/attribute_reorder.hpp"
-#include "grammar/attribute_conditional.hpp"
-#include "grammar/attribute_replace.hpp"
+// #include "grammar/address_of.hpp"
+// #include "grammar/attribute_reorder.hpp"
+// #include "grammar/attribute_conditional.hpp"
+// #include "grammar/attribute_replace.hpp"
+#include "using_decl.hh"
 
 namespace eolian_mono {
 
-using namespace efl::eolian::grammar;
-  
 struct klass
 {
    template <typename OutputIterator, typename Context>
@@ -99,8 +99,8 @@ struct klass
      //     // << scope_tab << scope_tab << ": ::efl::eo::concrete( ::efl::eo::do_eo_add( ::efl::eo::concrete{nullptr}, f)) {}\n"
      //    ).generate(sink, attributes::make_infinite_tuple(cls.cxx_name), context)) return false;
      
-     // if(!as_generator(*(scope_tab << function_declaration))
-     //    .generate(sink, cls.functions, context)) return false;
+     if(!as_generator(*(scope_tab << function_definition))
+        .generate(sink, cls.functions, context)) return false;
                                              
      // // static Efl_Class const* _eo_class();
      // std::string suffix;
