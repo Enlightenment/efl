@@ -950,8 +950,7 @@ ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surfac
    _ecore_wl2_input_cursor_update_stop(input);
 
    if (input->wl.pointer)
-     wl_pointer_set_cursor(input->wl.pointer,
-                           input->pointer.enter_serial,
+     wl_pointer_set_cursor(input->wl.pointer, input->pointer.enter_serial,
                            surface, hot_x, hot_y);
 }
 
@@ -967,7 +966,6 @@ ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *curs
    input = ecore_wl2_window_input_get(window);
    if (!input) return;
 
-   _ecore_wl2_input_cursor_update_stop(input);
    _ecore_wl2_input_cursor_set(input, cursor);
 }
 
