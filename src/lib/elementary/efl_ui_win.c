@@ -919,23 +919,8 @@ _elm_win_mouse_in(Ecore_Evas *ee)
    _elm_win_throttle_ok = EINA_TRUE;
    if (sd->resizing) sd->resizing = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win)
+   if (sd->wl.win && (!sd->frame_obj))
      ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
-
-   ecore_evas_object_cursor_set(sd->ee, sd->pointer.obj,
-                                ELM_OBJECT_LAYER_CURSOR,
-                                sd->pointer.hot_x, sd->pointer.hot_y);
-#endif
-}
-
-static void
-_elm_win_mouse_out(Ecore_Evas *ee)
-{
-   Efl_Ui_Win_Data *sd = _elm_win_associate_get(ee);
-   if (!sd) return;
-
-#ifdef HAVE_ELEMENTARY_WL2
-   sd->pointer.obj = ecore_evas_cursor_unset(sd->ee);
 #endif
 }
 
@@ -3518,15 +3503,10 @@ _elm_win_frame_cb_move_start(void *data,
    if (!sd) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win)
-     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
-
    if (!strcmp(source, "elm"))
-     _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                           "pointer", "base", "move");
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_HAND1);
    else
-     _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                           "pointer", "base", "default");
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 #else
    (void)source;
 #endif
@@ -3555,7 +3535,6 @@ _elm_win_frame_cb_move_stop(void *data,
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
      ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
-   _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", "default");
 #endif
 }
 
@@ -3582,6 +3561,19 @@ static struct _resize_info _border_corner[4] =
      { ELM_CURSOR_TOP_RIGHT_CORNER, 9 },
 };
 #endif
+
+static void
+_elm_win_frame_obj_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+#ifdef HAVE_ELEMENTARY_WL2
+   Efl_Ui_Win_Data *sd = data;
+
+   if (sd->wl.win)
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+#else
+   (void)data;
+#endif
+}
 
 static void
 _elm_win_frame_obj_move(void *data,
@@ -3623,44 +3615,34 @@ _elm_win_frame_cb_resize_show(void *data,
    if (sd->resizing) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
    int i;
-
    i = sd->rot / 90;
    if (!strcmp(source, "elm.event.resize.t"))
-     _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base",
-                           _border_side[(0 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_side[(0 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.b"))
-     _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base",
-                           _border_side[(2 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_side[(2 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.l"))
-     _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base",
-                           _border_side[(1 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_side[(1 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.r"))
-     _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base",
-                           _border_side[(3 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_side[(3 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.tl"))
-     _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base",
-                           _border_corner[(0 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_corner[(0 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.tr"))
-     _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base",
-                           _border_corner[(3 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_corner[(3 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.bl"))
-     _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base",
-                           _border_corner[(1 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_corner[(1 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.br"))
-     _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base",
-                           _border_corner[(2 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_corner[(2 + i) % 4].name);
    else
-     _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", "default");
-
-   edje_object_size_min_calc(sd->pointer.obj, &mw, &mh);
-   evas_object_resize(sd->pointer.obj, mw, mh);
-   edje_object_part_geometry_get(sd->pointer.obj, "elm.swallow.hotspot",
-                                 &hx, &hy, NULL, NULL);
-   sd->pointer.hot_x = hx;
-   sd->pointer.hot_y = hy;
-
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 #else
    (void)source;
 #endif
@@ -3678,7 +3660,7 @@ _elm_win_frame_cb_resize_hide(void *data,
    if (sd->resizing) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", "default");
+   ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 #endif
 }
 
@@ -3837,39 +3819,6 @@ _elm_win_frame_pre_render(void *data, Evas *e EINA_UNUSED, void *ev EINA_UNUSED)
 #endif
 
 static void
-_elm_win_frame_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
-                             Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Efl_Ui_Win_Data *sd;
-
-   if (!(sd = data)) return;
-   if (!sd->pointer.obj) return;
-   edje_object_signal_emit(sd->pointer.obj, "elm,action,mouse,down", "elm");
-}
-
-static void
-_elm_win_frame_cb_mouse_up(void *data, Evas *e EINA_UNUSED,
-                           Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Efl_Ui_Win_Data *sd;
-
-   if (!(sd = data)) return;
-   if (!sd->pointer.obj) return;
-   edje_object_signal_emit(sd->pointer.obj, "elm,action,mouse,up", "elm");
-}
-
-static void
-_elm_win_frame_cb_mouse_move(void *data, Evas *e EINA_UNUSED,
-                             Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Efl_Ui_Win_Data *sd;
-
-   if (!(sd = data)) return;
-   if (!sd->pointer.obj) return;
-   edje_object_signal_emit(sd->pointer.obj, "elm,action,mouse,move", "elm");
-}
-
-static void
 _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
 {
    Evas_Object *obj = sd->obj;
@@ -3913,18 +3862,15 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
           }
      }
 
-   edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon", sd->icon);
+   edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon",
+                            sd->icon);
 
+   evas_object_event_callback_add
+     (sd->frame_obj, EVAS_CALLBACK_MOUSE_IN, _elm_win_frame_obj_mouse_in, sd);
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
-   evas_object_event_callback_add
-     (sd->frame_obj, EVAS_CALLBACK_MOUSE_DOWN, _elm_win_frame_cb_mouse_down, sd);
-   evas_object_event_callback_add
-     (sd->frame_obj, EVAS_CALLBACK_MOUSE_UP, _elm_win_frame_cb_mouse_up, sd);
-   evas_object_event_callback_add
-     (sd->frame_obj, EVAS_CALLBACK_MOUSE_MOVE, _elm_win_frame_cb_mouse_move, sd);
 
    /* NB: Do NOT remove these calls !! Needed to calculate proper
     * framespace on initial show of the window */
@@ -4042,6 +3988,7 @@ _debug_key_down(void *data EINA_UNUSED,
    INF("Tree graph generated.");
    elm_object_tree_dot_dump(obj, "./dump.dot");
 }
+
 #endif
 
 static void
@@ -4707,11 +4654,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    ecore_evas_callback_move_set(sd->ee, _elm_win_move);
    ecore_evas_callback_pre_render_set(sd->ee, _elm_win_pre_render);
    if (type != ELM_WIN_FAKE)
-     {
-        ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
-        ecore_evas_callback_mouse_out_set(sd->ee, _elm_win_mouse_out);
-     }
-
+     ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_win_cb_hide, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _elm_win_cb_show, NULL);
 
@@ -4765,16 +4708,10 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 
    if (type != ELM_WIN_FAKE)
      {
-        /* NB: As we do not want to use standard X/FDO cursors for EFL
-         * Wayland Client Apps, we can use Elm Softcursor to provide an
-         * EFL mouse pointer for Wayland Client Apps */
         if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
             ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
-                ((engine) &&
-                    ((!strcmp(engine, ELM_SOFTWARE_FB)) ||
-                        (!strcmp(engine, ELM_DRM)) ||
-                        (!strcmp(engine, ELM_WAYLAND_SHM)) ||
-                        (!strcmp(engine, ELM_WAYLAND_EGL))))))
+             ((engine) &&
+              ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))))
           {
              Evas_Object *o;
              Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
@@ -4787,15 +4724,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
                                            &hx, &hy, NULL, NULL);
              sd->pointer.hot_x = hx;
              sd->pointer.hot_y = hy;
-
-             /* NB: Sadly we have to mark pointer as a frame object now due
-              * to the recent changes in evas_render wrt framespace & context
-              * clipping...if we do not, then the pointer never gets drawn
-              * over the frame object due to clipping */
-             evas_object_is_frame_object_set(sd->pointer.obj, EINA_TRUE);
-
-             ecore_evas_object_cursor_set(tmp_sd.ee, o,
-                                          ELM_OBJECT_LAYER_CURSOR, hx, hy);
+             evas_object_show(o);
+             ecore_evas_object_cursor_set(tmp_sd.ee, o, EVAS_LAYER_MAX, hx, hy);
           }
         else if (_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_OFF)
           {
