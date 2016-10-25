@@ -74,6 +74,8 @@ struct _Eio_Model_Data
    Eio_Filter_Direct_Cb filter_cb;
    void *filter_userdata;
    Eina_Spinlock filter_lock; /**< filter callback is called from another thread */
+
+   Eina_List *fetching_mime;
 };
 
 #endif
