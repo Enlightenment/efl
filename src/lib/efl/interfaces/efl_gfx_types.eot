@@ -36,7 +36,7 @@ enum Efl.Gfx.Path.Command_Type {
   move_to,   [[The next point is the start point of a sub path.]]
   line_to,   [[The next point is used to draw a line from current point.]]
   cubic_to,  [[The next three point is used to draw a cubic bezier curve from current point.]]
-  close,     [[Close the curent subpath by drawing a line between current point and the first point of current subpath.]]
+  close,     [[Close the current subpath by drawing a line between current point and the first point of current subpath.]]
   last       [[Sentinel value to indicate last enum field during iteration]]
 }
 
@@ -91,7 +91,7 @@ struct Efl.Gfx.Dash {
     @since 1.14
   ]]
   length: double;  [[Dash drawing length.]]
-  gap: double;     [[Distance bettwen two dashes.]]
+  gap: double;     [[Distance between two dashes.]]
 }
 
 struct Efl.Gfx.Gradient.Stop
@@ -103,8 +103,8 @@ struct Efl.Gfx.Gradient.Stop
   offset: double; [[The location of the gradient stop within the gradient vector]]
   r: int; [[The component R color of the gradient stop]]
   g: int; [[The component G color of the gradient stop]]
-  b: int; [[The component B color of the graident stop]]
-  a: int; [[The component A color of the graident stop]]
+  b: int; [[The component B color of the gradient stop]]
+  a: int; [[The component A color of the gradient stop]]
 }
 
 struct Efl.Gfx.Stroke.Color
