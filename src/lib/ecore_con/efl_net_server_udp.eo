@@ -54,7 +54,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
 
               The multicast address should be in the format:
 
-                 IP@INTERFACE
+                 IP\@INTERFACE
 
               With '\@INTERFACE' being optional, such as:
 
