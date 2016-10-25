@@ -3646,7 +3646,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_WL2], [efl])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WL2], [eina])
 
 EFL_DEPEND_PKG([ECORE_WL2], [WAYLAND],
-   [wayland-server >= 1.11.0 wayland-client >= 1.11.0 xkbcommon >= 0.6.0])
+   [wayland-server >= 1.11.0 wayland-client >= 1.11.0 wayland-cursor >= 1.11.0 xkbcommon >= 0.6.0])
 
 EFL_EVAL_PKGS([ECORE_WL2])
 

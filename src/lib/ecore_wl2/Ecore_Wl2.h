@@ -4,6 +4,7 @@
 # include <Eina.h>
 # include <Ecore.h>
 # include <wayland-client.h>
+# include <wayland-cursor.h>
 # include <xkbcommon/xkbcommon.h>
 
 # define WL_HIDE_DEPRECATED
