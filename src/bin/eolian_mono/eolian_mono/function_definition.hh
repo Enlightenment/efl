@@ -20,7 +20,7 @@ struct function_definition_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     return as_generator
-      (eolian_mono::type(true) << " " << string << "(" /*<< (parameter % ", ")*/ << ") const;\n")
+      (eolian_mono::type(true) << " " << string << "(" /*<< (parameter % ", ")*/ << ");\n")
       .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name)/*, f.parameters*/), context);
   }
 };
