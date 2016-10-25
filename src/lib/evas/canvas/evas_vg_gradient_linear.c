@@ -192,4 +192,10 @@ evas_vg_gradient_linear_end_get(Eo *obj, double *x, double *y)
    efl_gfx_gradient_linear_end_get(obj, x, y);
 }
 
+EAPI Efl_VG*
+evas_vg_gradient_linear_add(Efl_VG *parent)
+{
+   return efl_add(EFL_VG_GRADIENT_LINEAR_CLASS, parent);
+}
+
 #include "efl_vg_gradient_linear.eo.c"

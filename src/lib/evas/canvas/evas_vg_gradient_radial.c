@@ -224,4 +224,10 @@ evas_vg_gradient_radial_focal_get(Eo *obj, double *x, double *y)
    efl_gfx_gradient_radial_focal_get(obj, x, y);
 }
 
+EAPI Efl_VG*
+evas_vg_gradient_radial_add(Efl_VG *parent)
+{
+   return efl_add(EFL_VG_GRADIENT_RADIAL_CLASS, parent);
+}
+
 #include "efl_vg_gradient_radial.eo.c"

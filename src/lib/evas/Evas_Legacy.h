@@ -3234,6 +3234,42 @@ EAPI void evas_vg_shape_append_svg_path(Eo *obj, const char *svg_path_data);
 EAPI Eina_Bool evas_vg_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map);
 EAPI Eina_Bool evas_vg_shape_equal_commands(Eo *obj, const Eo *with);
 
+/**
+ * set a vg object as the fill property
+ *
+ * @param obj The object whose fill property gets modified.
+ * @param f The object content will be used for filling.
+ *
+ */
+EAPI void evas_vg_shape_fill_set(Eo *obj, Efl_VG *f);
+
+/**
+ * returns the object that is set for the fill property
+ *
+ * @param obj The object whose fill property is inspected.
+ * @return The object that is set as fill property.
+ *
+ */
+EAPI Efl_VG* evas_vg_shape_fill_get(const Eo *obj);
+
+/**
+ * set a vg object as the stroke fill property
+ *
+ * @param obj The object whose stroke fill property gets modified.
+ * @param f The object content will be used for stroke filling.
+ *
+ */
+EAPI void evas_vg_shape_stroke_fill_set(Eo *obj, Efl_VG *f);
+
+/**
+ * returns the object that is set for the stroke fill property
+ *
+ * @param obj The object whose stroke fill property is inspected.
+ * @return The object that is set as stroke fill property.
+ *
+ */
+EAPI Efl_VG* evas_vg_shape_stroke_fill_get(const Eo *obj);
+
 #include "canvas/efl_vg_shape.eo.legacy.h"
 
 /**
@@ -3281,6 +3317,15 @@ EAPI Efl_Gfx_Gradient_Spread evas_vg_gradient_spread_get(Eo *obj);
 #include "canvas/efl_vg_gradient.eo.legacy.h"
 
 /**
+ * Creates a new linear gradient object \.
+ *
+ * @param parent The given vector container object.
+ * @return The created linear gradient object handle.
+ *
+ */
+EAPI Efl_VG* evas_vg_gradient_linear_add(Efl_VG *parent);
+
+/**
  *
  * Sets the start point of this linear gradient.
  *
@@ -3321,6 +3366,15 @@ EAPI void evas_vg_gradient_linear_end_set(Eo *obj, double x, double y);
 EAPI void evas_vg_gradient_linear_end_get(Eo *obj, double *x, double *y);
 
 #include "canvas/efl_vg_gradient_linear.eo.legacy.h"
+
+/**
+ * Creates a new radial gradient object \.
+ *
+ * @param parent The given vector container object.
+ * @return The created radial gradient object handle.
+ *
+ */
+EAPI Efl_VG* evas_vg_gradient_radial_add(Efl_VG *parent);
 
 /**
  *
