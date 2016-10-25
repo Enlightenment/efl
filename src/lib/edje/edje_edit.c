@@ -3372,12 +3372,12 @@ edje_edit_part_del(Evas_Object *obj, const char *part)
 
         for (j = 0; j < real->part->other.desc_count; ++j)
           {
-             if (real->part->other.desc[i]->map.id_persp == rp->part->id)
-               real->part->other.desc[i]->map.id_persp = -1;
-             if (real->part->other.desc[i]->map.id_light == rp->part->id)
-               real->part->other.desc[i]->map.id_light = -1;
-             if (real->part->other.desc[i]->map.rot.id_center == rp->part->id)
-               real->part->other.desc[i]->map.rot.id_center = -1;
+             if (real->part->other.desc[j]->map.id_persp == rp->part->id)
+               real->part->other.desc[j]->map.id_persp = -1;
+             if (real->part->other.desc[j]->map.id_light == rp->part->id)
+               real->part->other.desc[j]->map.id_light = -1;
+             if (real->part->other.desc[j]->map.rot.id_center == rp->part->id)
+               real->part->other.desc[j]->map.rot.id_center = -1;
           }
      }
 
