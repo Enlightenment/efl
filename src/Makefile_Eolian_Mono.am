@@ -39,7 +39,6 @@ bin_PROGRAMS += lib/eo_mono/eo_mono.dll
 lib_eo_mono_eo_mono_dll_SOURCES = \
 	bindings/mono/eo_mono/object.cs \
 	bindings/mono/eo_mono/iwrapper.cs
-#	src/lib/efl/interfaces/efl_model.eo.cs
 
 mono_cs_sources = $(efl_eolian_cxx_hh:%.hh=%.cs)
 
@@ -60,9 +59,9 @@ tests_eo_mono_eo_mono_exe_SOURCES = \
 
 LD_LIBRARY_PATH_APPEND=$(top_builddir)/src/lib/eina
 
-tests/eo_mono/eo_mono.exe$(EXEEXT): $(tests_eo_mono_eo_mono_exe_SOURCES) tests/eo_mono/$(am__dirstamp)
+tests/eo_mono/eo_mono.exe$(EXEEXT): $(tests_eo_mono_eo_mono_exe_SOURCES) tests/eo_mono/$(am__dirstamp) lib/eo_mono/eo_mono.dll 
 	@rm -f tests/eo_mono/eo_mono_exe$(EXEEXT)
-	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LD_LIBRARY_PATH_APPEND) $(MCS) $(MCS_FLAGS) -out:$@ $(filter-out $(lastword $(^)), $(^))
+	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LD_LIBRARY_PATH_APPEND) $(MCS) $(MCS_FLAGS) -r:lib/eo_mono/eo_mono.dll -out:$@ $(filter-out $(lastword $(^)), $(^))
 
 SUFFIXES += .eo.cs
 
