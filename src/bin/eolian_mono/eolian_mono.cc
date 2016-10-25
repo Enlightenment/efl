@@ -23,6 +23,7 @@
 #include <Eolian_Cxx.hh>
 
 #include <eolian_mono/klass.hh>
+#include <eolian_mono/type_impl.hh>
 
 namespace eolian_mono {
 
