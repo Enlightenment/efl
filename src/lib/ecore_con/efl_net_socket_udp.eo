@@ -12,6 +12,15 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
     ]]
 
     methods {
+        next_datagram_size_query {
+            [[Query the next datagram size.
+
+              This will use system calls to determine the next
+              datagram size, in bytes.
+            ]]
+            return: size; [[size in bytes]]
+        }
+
         @property cork {
             [[Controls UDP's cork using UDP_CORK]]
             get { }
@@ -39,9 +48,127 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
                 dont_route: bool;
             }
         }
+
+        @property reuse_address {
+            [[Controls address reuse() using SO_REUSEADDR]]
+            get { }
+            set {
+                return: bool (false); [[$true on success]]
+            }
+            values {
+                reuse_address: bool;
+            }
+        }
+
+        @property reuse_port {
+            [[Controls port reuse() using SO_REUSEPORT (since linux 3.9)]]
+            get { }
+            set {
+                return: bool (false); [[$true on success]]
+            }
+            values {
+                reuse_port: bool;
+            }
+        }
+
+        multicast_join {
+            [[Join a multicast group.
+
+              The multicast address should be in the format:
+
+                 IP@INTERFACE
+
+              With '\@INTERFACE' being optional, such as:
+
+                 224.0.0.1 - use any interface (ie: 0.0.0.0)
+                 224.0.0.1@0.0.0.0
+                 224.0.0.1@192.168.0.1 - use the interface assigned to 192.168.0.1
+                 ff02::1@0 - use any interface
+                 ff02::1@1 - use loopback interface (idx=1)
+            ]]
+            params {
+                address: string @nonull;
+            }
+            return: Eina.Error;
+        }
+
+        multicast_leave {
+            [[Leave a multicast group.
+
+              This reverses the effect of @.multicast_join.
+            ]]
+            params {
+                address: string @nonull;
+            }
+            return: Eina.Error;
+        }
+
+        multicast_groups_get {
+            [[Return the multicast groups this server has joined.
+
+              The iterator is only valid until a new group is joined
+              or left using @.multicast_join or @.multicast_leave.
+            ]]
+            return: free(own(iterator<string>), eina_iterator_free);
+        }
+
+        @property multicast_time_to_live {
+            [[Controls time to live in number of hops.
+
+              If 1 (default), packets are only delivered to the local network.
+            ]]
+            get { }
+            set {
+                return: Eina.Error; [[0 on success, error code otherwise]]
+            }
+            values {
+                loopback: bool;
+            }
+        }
+
+        @property multicast_loopback {
+            [[Controls whenever multicast will loopback packets locally.
+
+              If $false, then packets won't be looped back locally,
+              just delivered for remote peers.
+            ]]
+            get { }
+            set {
+                return: Eina.Error; [[0 on success, error code otherwise]]
+            }
+            values {
+                loopback: bool;
+            }
+        }
+
+        @property bind {
+            [[Force binding to a specific address.
+
+              Some servers may request packets being sent from a
+              specific address, then one should bind to that address
+              before proceeding to dial.
+
+              If no address is provided or bind is not called, a
+              random port is bound automatically to any address.
+
+              \@note IP and PORT must be all numeric, no name
+              resolution is applied.
+            ]]
+            get { }
+            set {
+                return: Eina.Error; [[0 on success, error code otherwise]]
+            }
+            values {
+                address: string @nonull;
+            }
+        }
     }
 
     implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
         Efl.Loop.Fd.fd.set;
+        Efl.Io.Reader.read;
+        Efl.Io.Writer.write;
     }
 }

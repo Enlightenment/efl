@@ -35,7 +35,7 @@ typedef struct _Efl_Net_Dialer_Udp_Data
    struct {
       Ecore_Thread *thread;
       Efl_Future *timeout;
-   } connect;
+   } resolver;
    Eina_Stringshare *address_dial;
    Eina_Bool connected;
    Eina_Bool closed;
@@ -59,10 +59,10 @@ _efl_net_dialer_udp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Udp_Data *pd)
        (!efl_io_closer_closed_get(o)))
      efl_io_closer_close(o);
 
-   if (pd->connect.thread)
+   if (pd->resolver.thread)
      {
-        ecore_thread_cancel(pd->connect.thread);
-        pd->connect.thread = NULL;
+        ecore_thread_cancel(pd->resolver.thread);
+        pd->resolver.thread = NULL;
      }
 
    efl_destructor(efl_super(o, MY_CLASS));
@@ -71,16 +71,16 @@ _efl_net_dialer_udp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Udp_Data *pd)
 }
 
 static void
-_efl_net_dialer_udp_connect_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
+_efl_net_dialer_udp_resolver_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *o = data;
    Efl_Net_Dialer_Udp_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eina_Error err = ETIMEDOUT;
 
-   if (pd->connect.thread)
+   if (pd->resolver.thread)
      {
-        ecore_thread_cancel(pd->connect.thread);
-        pd->connect.thread = NULL;
+        ecore_thread_cancel(pd->resolver.thread);
+        pd->resolver.thread = NULL;
      }
 
    efl_ref(o);
@@ -89,32 +89,122 @@ _efl_net_dialer_udp_connect_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_unref(o);
 }
 
+static Eina_Error
+_efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED, struct addrinfo *addr)
+{
+   Eina_Error err = 0;
+   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
+   SOCKET fd;
+   int family = addr->ai_family;
+
+   efl_net_socket_fd_family_set(o, family);
+
+   fd = efl_net_socket4(family, addr->ai_socktype, addr->ai_protocol,
+                        efl_io_closer_close_on_exec_get(o));
+   if (fd == INVALID_SOCKET)
+     {
+        err = efl_net_socket_error_get();
+        ERR("socket(%d, %d, %d): %s",
+            family, addr->ai_socktype, addr->ai_protocol,
+            eina_error_msg_get(err));
+        return err;
+     }
+
+   if (!efl_net_socket_udp_bind_get(o))
+     {
+        if (family == AF_INET)
+          efl_net_socket_udp_bind_set(o, "0.0.0.0:0");
+        else
+          efl_net_socket_udp_bind_set(o, "[::]:0");
+     }
+
+   efl_loop_fd_set(o, fd); /* will also apply reuse_address et al */
+
+   if (family == AF_INET)
+     {
+        const struct sockaddr_in *a = (const struct sockaddr_in *)addr->ai_addr;
+        uint32_t ipv4 = ntohl(a->sin_addr.s_addr);
+        if (ipv4 == INADDR_BROADCAST)
+          {
+#ifdef _WIN32
+             DWORD enable = 1;
+#else
+             int enable = 1;
+#endif
+             if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST, &enable, sizeof(enable)) == 0)
+               DBG("enabled SO_BROADCAST for socket=%d", fd);
+             else
+               WRN("could not enable SO_BROADCAST for socket=%d: %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
+          }
+     }
+   else if (family == AF_INET6)
+     {
+        const struct sockaddr_in6 *a = (const struct sockaddr_in6 *)addr->ai_addr;
+        if (IN6_IS_ADDR_MULTICAST(&a->sin6_addr))
+          {
+             struct ipv6_mreq mreq = {
+               .ipv6mr_multiaddr = a->sin6_addr,
+             };
+             if (setsockopt(fd, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) == 0)
+               {
+                  efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr);
+                  DBG("joined multicast group %s socket=%d", buf, fd);
+               }
+             else
+               {
+                  err = efl_net_socket_error_get();
+                  efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr);
+                  ERR("could not join multicast group %s socket=%d: %s", buf, fd, eina_error_msg_get(err));
+                  goto error;
+               }
+          }
+     }
+
+   if (efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr))
+     {
+        _efl_net_socket_udp_init(o, addr->ai_addr, addr->ai_addrlen, buf);
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+     }
+   efl_net_dialer_connected_set(o, EINA_TRUE);
+   return 0;
+
+ error:
+   efl_net_socket_fd_family_set(o, AF_UNSPEC);
+   efl_loop_fd_set(o, INVALID_SOCKET);
+   closesocket(fd);
+   return err;
+}
+
 static void
-_efl_net_dialer_udp_connected(void *data, const struct sockaddr *addr, socklen_t addrlen EINA_UNUSED, SOCKET sockfd, Eina_Error err)
+_efl_net_dialer_udp_resolved(void *data, const char *host EINA_UNUSED, const char *port EINA_UNUSED, const struct addrinfo *hints EINA_UNUSED, struct addrinfo *result, int gai_error)
 {
    Eo *o = data;
    Efl_Net_Dialer_Udp_Data *pd = efl_data_scope_get(o, MY_CLASS);
-   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
+   Eina_Error err;
+   struct addrinfo *addr;
 
-   pd->connect.thread = NULL;
+   pd->resolver.thread = NULL;
 
    efl_ref(o); /* we're emitting callbacks then continuing the workflow */
 
+   if (gai_error)
+     {
+        err = EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST;
+        goto end;
+     }
+
+   for (addr = result; addr != NULL; addr = addr->ai_next)
+     {
+        err = _efl_net_dialer_udp_resolved_bind(o, pd, addr);
+        if (err == 0) break;
+     }
+   freeaddrinfo(result);
+
+ end:
    if (err)
      {
         efl_io_reader_eos_set(o, EINA_TRUE);
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
-     }
-   else
-     {
-        efl_net_socket_fd_family_set(o, addr->sa_family);
-        efl_loop_fd_set(o, sockfd);
-        if (efl_net_ip_port_fmt(buf, sizeof(buf), addr))
-          {
-             efl_net_socket_address_remote_set(o, buf);
-             efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
-          }
-        efl_net_dialer_connected_set(o, EINA_TRUE);
      }
 
    efl_unref(o);
@@ -123,39 +213,52 @@ _efl_net_dialer_udp_connected(void *data, const struct sockaddr *addr, socklen_t
 EOLIAN static Eina_Error
 _efl_net_dialer_udp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED, const char *address)
 {
+   char *str;
+   const char *host, *port;
+   struct addrinfo hints = {
+     .ai_socktype = SOCK_DGRAM,
+     .ai_protocol = IPPROTO_UDP,
+     .ai_family = AF_UNSPEC,
+     .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED,
+   };
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_net_dialer_connected_get(o), EISCONN);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EBADF);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_loop_fd_get(o) >= 0, EALREADY);
 
-   if (pd->connect.thread)
+   if (pd->resolver.thread)
      {
-        ecore_thread_cancel(pd->connect.thread);
-        pd->connect.thread = NULL;
+        ecore_thread_cancel(pd->resolver.thread);
+        pd->resolver.thread = NULL;
      }
 
-   if (pd->connect.thread)
-     ecore_thread_cancel(pd->connect.thread);
+   if (pd->resolver.thread)
+     ecore_thread_cancel(pd->resolver.thread);
 
-   pd->connect.thread = efl_net_ip_connect_async_new(address,
-                                                     "",
-                                                     NULL,
-                                                     NULL,
-                                                     SOCK_DGRAM,
-                                                     IPPROTO_UDP,
-                                                     efl_io_closer_close_on_exec_get(o),
-                                                     _efl_net_dialer_udp_connected, o);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->connect.thread, EINVAL);
+   str = strdup(address);
+   if (!efl_net_ip_port_split(str, &host, &port))
+     {
+        free(str);
+        return EINVAL;
+     }
+   if (!port) port = "0";
+   if (strchr(host, ':')) hints.ai_family = AF_INET6;
+
+   pd->resolver.thread = efl_net_ip_resolve_async_new(host, port, &hints,
+                                                     _efl_net_dialer_udp_resolved, o);
+   free(str);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->resolver.thread, EINVAL);
 
    efl_net_dialer_address_dial_set(o, address);
 
-   if (pd->connect.timeout)
-     efl_future_cancel(pd->connect.timeout);
+   if (pd->resolver.timeout)
+     efl_future_cancel(pd->resolver.timeout);
    if (pd->timeout_dial > 0.0)
      {
-        efl_future_use(&pd->connect.timeout, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial, o));
-        efl_future_then(pd->connect.timeout, _efl_net_dialer_udp_connect_timeout, NULL, NULL, o);
-        efl_future_link(o, pd->connect.timeout);
+        efl_future_use(&pd->resolver.timeout, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial, o));
+        efl_future_then(pd->resolver.timeout, _efl_net_dialer_udp_resolver_timeout, NULL, NULL, o);
+        efl_future_link(o, pd->resolver.timeout);
      }
 
    return 0;
@@ -177,13 +280,13 @@ EOLIAN static void
 _efl_net_dialer_udp_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Udp_Data *pd, double seconds)
 {
    pd->timeout_dial = seconds;
-   if (pd->connect.timeout)
-     efl_future_cancel(pd->connect.timeout);
+   if (pd->resolver.timeout)
+     efl_future_cancel(pd->resolver.timeout);
 
-   if ((pd->timeout_dial > 0.0) && (pd->connect.thread))
+   if ((pd->timeout_dial > 0.0) && (pd->resolver.thread))
      {
-        efl_future_use(&pd->connect.timeout, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial, o));
-        efl_future_then(pd->connect.timeout, _efl_net_dialer_udp_connect_timeout, NULL, NULL, o);
+        efl_future_use(&pd->resolver.timeout, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial, o));
+        efl_future_then(pd->resolver.timeout, _efl_net_dialer_udp_resolver_timeout, NULL, NULL, o);
      }
 }
 
@@ -196,8 +299,8 @@ _efl_net_dialer_udp_efl_net_dialer_timeout_dial_get(Eo *o EINA_UNUSED, Efl_Net_D
 EOLIAN static void
 _efl_net_dialer_udp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Udp_Data *pd, Eina_Bool connected)
 {
-   if (pd->connect.timeout)
-     efl_future_cancel(pd->connect.timeout);
+   if (pd->resolver.timeout)
+     efl_future_cancel(pd->resolver.timeout);
    if (pd->connected == connected) return;
    pd->connected = connected;
    if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);

@@ -12,15 +12,33 @@ static int needed_reads = 0;
 static void
 _connected(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   fprintf(stderr, "INFO: connected %s\n",
-           efl_net_dialer_address_dial_get(event->object));
+   fprintf(stderr,
+           "INFO: connected to '%s' (%s)\n"
+           "INFO:  - local address=%s\n"
+           "INFO:  - read-after-write=%d reads required\n"
+           "INFO:  - cork=%hhu\n"
+           "INFO:  - timeout_dial=%fs\n"
+           "INFO:  - reuse address=%hhu\n"
+           "INFO:  - reuse port=%hhu\n"
+           "INFO:  - multicast TTL: %u\n"
+           "INFO:  - multicast loopback: %u\n"
+           "INFO:  - multicast groups:\n",
+           efl_net_dialer_address_dial_get(event->object),
+           efl_net_socket_address_remote_get(event->object),
+           efl_net_socket_address_local_get(event->object),
+           needed_reads,
+           efl_net_socket_udp_cork_get(event->object),
+           efl_net_dialer_timeout_dial_get(event->object),
+           efl_net_socket_udp_reuse_address_get(event->object),
+           efl_net_socket_udp_reuse_port_get(event->object),
+           efl_net_socket_udp_multicast_time_to_live_get(event->object),
+           efl_net_socket_udp_multicast_loopback_get(event->object));
 }
 
 static void
 _can_read(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   char buf[1024];
-   Eina_Rw_Slice rw_slice = {.mem = buf, .len = sizeof(buf)};
+   Eina_Rw_Slice rw_slice;
    Eina_Error err;
    Eina_Bool can_read = efl_io_reader_can_read_get(event->object);
 
@@ -33,9 +51,15 @@ _can_read(void *data EINA_UNUSED, const Efl_Event *event)
 
    if (!needed_reads) return;
 
+   rw_slice.len = efl_net_socket_udp_next_datagram_size_query(event->object);
+   rw_slice.mem = malloc(rw_slice.len);
+   EINA_SAFETY_ON_NULL_RETURN(rw_slice.mem);
    err = efl_io_reader_read(event->object, &rw_slice);
    if (err)
      {
+        free(rw_slice.mem);
+        if (err == EAGAIN) /* EAGAIN for spurious packets */
+          return;
         fprintf(stderr, "ERROR: could not read: %s\n", eina_error_msg_get(err));
         retval = EXIT_FAILURE;
         ecore_main_loop_quit();
@@ -50,6 +74,7 @@ _can_read(void *data EINA_UNUSED, const Efl_Event *event)
         retval = EXIT_SUCCESS;
         ecore_main_loop_quit();
      }
+   free(rw_slice.mem);
 }
 
 static void
@@ -149,10 +174,16 @@ static const Ecore_Getopt options = {
   "Example of Efl_Net_Dialer_Udp usage, sending a message and receiving a reply\n",
   EINA_FALSE,
   {
+    ECORE_GETOPT_STORE_STR('b', "bind", "Bind to a particular address in the format IP:PORT."),
     ECORE_GETOPT_STORE_TRUE('r', "read-after-write", "Do a read after writes are done."),
     ECORE_GETOPT_STORE_TRUE('c', "cork", "use UDP_CORK around messages to generate a single datagram."),
     ECORE_GETOPT_STORE_TRUE('R', "dont-route", "Do not route packets via a gateway."),
     ECORE_GETOPT_STORE_DOUBLE('t', "connect-timeout", "timeout in seconds for the connection phase"),
+    ECORE_GETOPT_STORE_UINT(0, "multicast-ttl",
+                            "Multicast time to live in number of hops from 0-255. Defaults to 1 (only local network)."),
+    ECORE_GETOPT_STORE_FALSE(0, "multicast-noloopback",
+                            "Disable multicast loopback."),
+    ECORE_GETOPT_APPEND('M', "multicast-group", "Join a multicast group in the form 'IP@INTERFACE', with optional '@INTERFACE', where INTERFACE is the IP address of the interface to join the multicast.", ECORE_GETOPT_TYPE_STR),
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_LICENSE('L', "license"),
@@ -167,16 +198,25 @@ int
 main(int argc, char **argv)
 {
    char *address = NULL;
+   char *bind_address = NULL;
+   Eina_List *mcast_groups = NULL, *lst;
+   char *str;
    Eina_Bool cork = EINA_FALSE;
    Eina_Bool do_read = EINA_FALSE;
    Eina_Bool dont_route = EINA_FALSE;
+   unsigned mcast_ttl = 1;
+   Eina_Bool mcast_loopback = EINA_TRUE;
    Eina_Bool quit_option = EINA_FALSE;
    double timeout_dial = 30.0;
    Ecore_Getopt_Value values[] = {
+     ECORE_GETOPT_VALUE_STR(bind_address),
      ECORE_GETOPT_VALUE_BOOL(do_read),
      ECORE_GETOPT_VALUE_BOOL(cork),
      ECORE_GETOPT_VALUE_BOOL(dont_route),
      ECORE_GETOPT_VALUE_DOUBLE(timeout_dial),
+     ECORE_GETOPT_VALUE_UINT(mcast_ttl),
+     ECORE_GETOPT_VALUE_BOOL(mcast_loopback),
+     ECORE_GETOPT_VALUE_LIST(mcast_groups),
 
      /* standard block to provide version, copyright, license and help */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -V/--version quits */
@@ -218,10 +258,18 @@ main(int argc, char **argv)
 
    dialer = efl_add(EFL_NET_DIALER_UDP_CLASS, loop,
                     efl_name_set(efl_added, "dialer"),
+                    efl_net_socket_udp_bind_set(efl_added, bind_address),
                     efl_net_socket_udp_cork_set(efl_added, cork),
                     efl_net_socket_udp_dont_route_set(efl_added, dont_route),
+                    efl_net_socket_udp_reuse_address_set(efl_added, EINA_TRUE), /* optional, but nice for testing */
+                    efl_net_socket_udp_reuse_port_set(efl_added, EINA_TRUE), /* optional, but nice for testing... not secure unless you know what you're doing */
+                    efl_net_socket_udp_multicast_time_to_live_set(efl_added, mcast_ttl),
+                    efl_net_socket_udp_multicast_loopback_set(efl_added, mcast_loopback),
                     efl_net_dialer_timeout_dial_set(efl_added, timeout_dial),
                     efl_event_callback_array_add(efl_added, dialer_cbs(), NULL));
+
+   EINA_LIST_FOREACH(mcast_groups, lst, str)
+     efl_net_socket_udp_multicast_join(dialer, str);
 
    err = efl_net_dialer_dial(dialer, address);
    if (err != 0)
@@ -230,16 +278,6 @@ main(int argc, char **argv)
                 address, eina_error_msg_get(err));
         goto no_mainloop;
      }
-
-   fprintf(stderr,
-           "INFO: dialed %s\n"
-           "INFO:  - read-after-write=%hhu\n"
-           "INFO:  - cork=%hhu\n"
-           "INFO:  - timeout_dial=%fs\n",
-           efl_net_dialer_address_dial_get(dialer),
-           do_read,
-           efl_net_socket_udp_cork_get(dialer),
-           efl_net_dialer_timeout_dial_get(dialer));
 
    if (do_read) needed_reads = cork ? 1 : 2;
 
@@ -251,6 +289,8 @@ main(int argc, char **argv)
    efl_del(dialer);
 
  end:
+   EINA_LIST_FREE(mcast_groups, str)
+     free(str);
    ecore_con_shutdown();
    ecore_shutdown();
 

@@ -29,14 +29,19 @@
 # include <Evil.h>
 #endif
 
-#include <sys/ioctl.h>
-
 #define MY_CLASS EFL_NET_SERVER_UDP_CLASS
 
 typedef struct _Efl_Net_Server_Udp_Data
 {
    Ecore_Thread *resolver;
    Eina_Hash *clients; /* addr (string) -> client (Efl.Net.Server.Udp.Client) */
+   struct {
+      Eina_List *groups; /* list of newly allocated strings */
+      Eina_List *pending; /* list of nodes of groups pending join */
+      uint8_t ttl;
+      Eina_Bool loopback;
+      Eina_Bool ttl_set;
+   } multicast;
    Eina_Bool ipv6_only;
    Eina_Bool dont_route;
 } Efl_Net_Server_Udp_Data;
@@ -46,12 +51,24 @@ _efl_net_server_udp_efl_object_constructor(Eo *o, Efl_Net_Server_Udp_Data *pd)
 {
    pd->ipv6_only = 0xff;
    pd->clients = eina_hash_string_superfast_new(NULL);
+   pd->multicast.ttl = 1;
+   pd->multicast.ttl_set = EINA_FALSE;
+   pd->multicast.loopback = 0xff;
    return efl_constructor(efl_super(o, MY_CLASS));
 }
 
 EOLIAN void
 _efl_net_server_udp_efl_object_destructor(Eo *o, Efl_Net_Server_Udp_Data *pd)
 {
+   if (pd->multicast.pending)
+     {
+        eina_list_free(pd->multicast.pending);
+        pd->multicast.pending = NULL;
+     }
+
+   while (pd->multicast.groups)
+     efl_net_server_udp_multicast_leave(o, pd->multicast.groups->data);
+
    if (pd->resolver)
      {
         ecore_thread_cancel(pd->resolver);
@@ -72,6 +89,7 @@ _efl_net_server_udp_resolved_bind(Eo *o, Efl_Net_Server_Udp_Data *pd, const stru
    Eina_Error err = 0;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
    socklen_t addrlen = addr->ai_addrlen;
+   Eina_List *node;
    SOCKET fd;
    int r;
 
@@ -121,6 +139,28 @@ _efl_net_server_udp_resolved_bind(Eo *o, Efl_Net_Server_Udp_Data *pd, const stru
 
    DBG("fd=%d serving at %s", fd, buf);
    efl_net_server_serving_set(o, EINA_TRUE);
+
+   EINA_LIST_FREE(pd->multicast.pending, node)
+     {
+        const char *mcast_addr = node->data;
+        Eina_Error mr = efl_net_multicast_join(fd, addr->ai_family, mcast_addr);
+        if (mr)
+          {
+             ERR("could not join pending multicast group '%s': %s", mcast_addr, eina_error_msg_get(mr));
+             efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &mr);
+          }
+     }
+
+   if (!pd->multicast.ttl_set)
+     efl_net_server_udp_multicast_time_to_live_get(o); /* fetch & sync */
+   else
+     efl_net_server_udp_multicast_time_to_live_set(o, pd->multicast.ttl);
+
+   if (pd->multicast.loopback == 0xff)
+     efl_net_server_udp_multicast_loopback_get(o); /* fetch & sync */
+   else
+     efl_net_server_udp_multicast_loopback_set(o, pd->multicast.loopback);
+
    return 0;
 
  error:
@@ -211,21 +251,6 @@ _efl_net_server_udp_client_event_closed(void *data, const Efl_Event *event)
 EFL_CALLBACKS_ARRAY_DEFINE(_efl_net_server_udp_client_cbs,
                            { EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_server_udp_client_event_closed });
 
-static size_t
-_udp_datagram_size_query(SOCKET fd)
-{
-#ifdef _WIN32
-   unsigned long size;
-   if (ioctlsocket(fd, FIONREAD, &size) == 0)
-     return size;
-#else
-   int size;
-   if (ioctl(fd, FIONREAD, &size) == 0)
-     return size;
-#endif
-   return 8 * 1024;
-}
-
 EOLIAN static void
 _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Server_Udp_Data *pd)
 {
@@ -242,7 +267,7 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
    Eina_Rw_Slice slice;
 
    fd = efl_loop_fd_get(o);
-   buflen = _udp_datagram_size_query(fd);
+   buflen = efl_net_udp_datagram_size_query(fd);
    buf = malloc(buflen);
    EINA_SAFETY_ON_NULL_RETURN(buf);
 
@@ -254,6 +279,11 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
         free(buf);
         efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
         return;
+     }
+   if ((size_t)r < buflen)
+     {
+        void *tmp = realloc(buf, r);
+        if (tmp) buf = tmp;
      }
    slice = (Eina_Rw_Slice){.mem = buf, .len = r };
 
@@ -427,5 +457,153 @@ _efl_net_server_udp_dont_route_get(Eo *o, Efl_Net_Server_Udp_Data *pd)
    return pd->dont_route;
 }
 
+static Eina_List *
+_efl_net_server_udp_multicast_find(const Eina_List *lst, const char *address)
+{
+   const char *str;
+   const Eina_List *node;
+
+   EINA_LIST_FOREACH(lst, node, str)
+     {
+        if (strcmp(str, address) == 0)
+          return (Eina_List *)node;
+     }
+
+   return NULL;
+}
+
+EOLIAN static Eina_Error
+_efl_net_server_udp_multicast_join(Eo *o, Efl_Net_Server_Udp_Data *pd, const char *address)
+{
+   const Eina_List *found;
+   SOCKET fd = efl_loop_fd_get(o);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
+
+   found = _efl_net_server_udp_multicast_find(pd->multicast.groups, address);
+   if (found) return EEXIST;
+
+   pd->multicast.groups = eina_list_append(pd->multicast.groups, strdup(address));
+
+   if (fd == INVALID_SOCKET)
+     {
+        pd->multicast.pending = eina_list_append(pd->multicast.pending, eina_list_last(pd->multicast.groups));
+        return 0;
+     }
+
+   return efl_net_multicast_join(fd, efl_net_server_fd_family_get(o), address);
+}
+
+EOLIAN static Eina_Error
+_efl_net_server_udp_multicast_leave(Eo *o, Efl_Net_Server_Udp_Data *pd, const char *address)
+{
+   Eina_List *found;
+   SOCKET fd = efl_loop_fd_get(o);
+   Eina_Error err;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
+
+   found = _efl_net_server_udp_multicast_find(pd->multicast.groups, address);
+   if (!found) return ENOENT;
+
+   if (fd == INVALID_SOCKET)
+     {
+        free(found->data);
+        pd->multicast.pending = eina_list_remove(pd->multicast.pending, found);
+        pd->multicast.groups = eina_list_remove_list(pd->multicast.groups, found);
+        return 0;
+     }
+
+   err = efl_net_multicast_leave(fd, efl_net_server_fd_family_get(o), address);
+
+   free(found->data);
+   pd->multicast.groups = eina_list_remove_list(pd->multicast.groups, found);
+   return err;
+}
+
+EOLIAN static Eina_Iterator *
+_efl_net_server_udp_multicast_groups_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Data *pd)
+{
+   return eina_list_iterator_new(pd->multicast.groups);
+}
+
+EOLIAN static Eina_Error
+_efl_net_server_udp_multicast_time_to_live_set(Eo *o, Efl_Net_Server_Udp_Data *pd, uint8_t ttl)
+{
+   SOCKET fd = efl_loop_fd_get(o);
+   Eina_Error err;
+   uint8_t old = pd->multicast.ttl;
+
+   pd->multicast.ttl_set = EINA_TRUE;
+   pd->multicast.ttl = ttl;
+
+   if (fd == INVALID_SOCKET) return 0;
+
+   err = efl_net_multicast_ttl_set(fd, efl_net_server_fd_family_get(o), ttl);
+   if (err)
+     {
+        ERR("could not set multicast time to live=%hhu: %s", ttl, eina_error_msg_get(err));
+        pd->multicast.ttl = old;
+     }
+
+   return err;
+}
+
+EOLIAN static uint8_t
+_efl_net_server_udp_multicast_time_to_live_get(Eo *o, Efl_Net_Server_Udp_Data *pd)
+{
+   SOCKET fd = efl_loop_fd_get(o);
+   Eina_Error err;
+   uint8_t ttl = pd->multicast.ttl;
+
+   if (fd == INVALID_SOCKET) return pd->multicast.ttl;
+
+   err = efl_net_multicast_ttl_get(fd, efl_net_server_fd_family_get(o), &ttl);
+   if (err)
+     ERR("could not get multicast time to live: %s", eina_error_msg_get(err));
+   else
+     pd->multicast.ttl = ttl;
+
+   return pd->multicast.ttl;
+}
+
+EOLIAN static Eina_Error
+_efl_net_server_udp_multicast_loopback_set(Eo *o, Efl_Net_Server_Udp_Data *pd, Eina_Bool loopback)
+{
+   SOCKET fd = efl_loop_fd_get(o);
+   Eina_Error err;
+   Eina_Bool old = pd->multicast.loopback;
+
+   pd->multicast.loopback = loopback;
+
+   if (fd == INVALID_SOCKET) return 0;
+
+   err = efl_net_multicast_loopback_set(fd, efl_net_server_fd_family_get(o), loopback);
+   if (err)
+     {
+        ERR("could not set multicast loopback=%hhu: %s", loopback, eina_error_msg_get(err));
+        pd->multicast.loopback = old;
+     }
+
+   return err;
+}
+
+EOLIAN static Eina_Bool
+_efl_net_server_udp_multicast_loopback_get(Eo *o, Efl_Net_Server_Udp_Data *pd)
+{
+   SOCKET fd = efl_loop_fd_get(o);
+   Eina_Error err;
+   Eina_Bool loopback = pd->multicast.loopback;
+
+   if (fd == INVALID_SOCKET) return pd->multicast.loopback;
+
+   err = efl_net_multicast_loopback_get(fd, efl_net_server_fd_family_get(o), &loopback);
+   if (err)
+     ERR("could not get multicast loopback: %s", eina_error_msg_get(err));
+   else
+     pd->multicast.loopback = loopback;
+
+   return pd->multicast.loopback;
+}
 
 #include "efl_net_server_udp.eo.c"

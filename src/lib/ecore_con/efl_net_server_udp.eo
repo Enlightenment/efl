@@ -48,6 +48,76 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
                 dont_route: bool;
             }
         }
+
+        multicast_join {
+            [[Join a multicast group.
+
+              The multicast address should be in the format:
+
+                 IP@INTERFACE
+
+              With '\@INTERFACE' being optional, such as:
+
+                 224.0.0.1 - use any interface (ie: 0.0.0.0)
+                 224.0.0.1@0.0.0.0
+                 224.0.0.1@192.168.0.1 - use the interface assigned to 192.168.0.1
+                 ff02::1@0 - use any interface
+                 ff02::1@1 - use loopback interface (idx=1)
+            ]]
+            params {
+                address: string @nonull;
+            }
+            return: Eina.Error;
+        }
+
+        multicast_leave {
+            [[Leave a multicast group.
+
+              This reverses the effect of @.multicast_join.
+            ]]
+            params {
+                address: string @nonull;
+            }
+            return: Eina.Error;
+        }
+
+        multicast_groups_get {
+            [[Return the multicast groups this server has joined.
+
+              The iterator is only valid until a new group is joined
+              or left using @.multicast_join or @.multicast_leave.
+            ]]
+            return: free(own(iterator<string>), eina_iterator_free);
+        }
+
+        @property multicast_time_to_live {
+            [[Controls time to live in number of hops.
+
+              If 1 (default), packets are only delivered to the local network.
+            ]]
+            get { }
+            set {
+                return: Eina.Error; [[0 on success, error code otherwise]]
+            }
+            values {
+                loopback: bool;
+            }
+        }
+
+        @property multicast_loopback {
+            [[Controls whenever multicast will loopback packets locally.
+
+              If $false, then packets won't be looped back locally,
+              just delivered for remote peers.
+            ]]
+            get { }
+            set {
+                return: Eina.Error; [[0 on success, error code otherwise]]
+            }
+            values {
+                loopback: bool;
+            }
+        }
     }
 
     implements {

@@ -400,6 +400,8 @@ void ecore_con_mempool_shutdown(void);
 void _efl_net_server_udp_client_init(Eo *client, SOCKET fd, const struct sockaddr *addr, socklen_t addrlen, const char *str);
 void _efl_net_server_udp_client_feed(Eo *client, Eina_Rw_Slice slice);
 
+void _efl_net_socket_udp_init(Eo *o, const struct sockaddr *addr, socklen_t addrlen, const char *str);
+
 Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr);
 
 /**
@@ -575,5 +577,94 @@ efl_net_socket_error_get(void)
    return err;
 #endif
 }
+
+/**
+ * Join a multicast group specified by address.
+ *
+ * Address must be an IPv4 or IPv6 depending on @a fd and will be
+ * parsed using inet_pton() with corresponding @a family. The address
+ * may contain an '@@' delimiter to specify the local interface IP
+ * address to use. No interface means '0.0.0.0'.
+ *
+ * @param fd socket to operate on.
+ * @param family the socket family of fd, AF_INET or AF_INET6.
+ * @param address the address in the format IP[@@IFACE]
+ *
+ * @return 0 on success, errno mapping otherwise.
+ * @internal
+ */
+Eina_Error efl_net_multicast_join(SOCKET fd, int family, const char *address);
+
+/**
+ * Leave a multicast group specified by address.
+ *
+ * This reverses the effect of efl_net_multicast_join().
+ *
+ * @param fd socket to operate on.
+ * @param family the socket family of fd, AF_INET or AF_INET6.
+ * @param address the address in the format IP[@@IFACE]
+ *
+ * @return 0 on success, errno mapping otherwise.
+ * @internal
+ */
+Eina_Error efl_net_multicast_leave(SOCKET fd, int family, const char *address);
+
+/**
+ * Sets the Time-To-Live of multicast packets. <= 1 disables going
+ * outside of local network.
+ *
+ * @param fd socket to operate on.
+ * @param family the socket family of fd, AF_INET or AF_INET6.
+ * @param ttl the time-to-live in units.
+ *
+ * @return 0 on success, errno mapping otherwise.
+ * @internal
+ */
+Eina_Error efl_net_multicast_ttl_set(SOCKET fd, int family, uint8_t ttl);
+
+/**
+ * Retrieves the current time-to-live of multicast packets.
+ *
+ * @param fd socket to operate on.
+ * @param family the socket family of fd, AF_INET or AF_INET6.
+ * @param[out] ttl returns the time-to-live in units.
+ *
+ * @return 0 on success, errno mapping otherwise.
+ * @internal
+ */
+Eina_Error efl_net_multicast_ttl_get(SOCKET fd, int family, uint8_t *ttl);
+
+/**
+ * Sets if the current local address should get a copy of the packets sent.
+ *
+ * @param fd socket to operate on.
+ * @param family the socket family of fd, AF_INET or AF_INET6.
+ * @param loopback if #EINA_TRUE, enables receive of local copy. #EINA_FALSE means only remote peers will do.
+ *
+ * @return 0 on success, errno mapping otherwise.
+ * @internal
+ */
+Eina_Error efl_net_multicast_loopback_set(SOCKET fd, int family, Eina_Bool loopback);
+
+/**
+ * Gets if the current local address should get a copy of the packets sent.
+ *
+ * @param fd socket to operate on.
+ * @param family the socket family of fd, AF_INET or AF_INET6.
+ * @param[out] loopback returns if #EINA_TRUE, enables receive of local copy. #EINA_FALSE means only remote peers will do.
+ *
+ * @return 0 on success, errno mapping otherwise.
+ * @internal
+ */
+Eina_Error efl_net_multicast_loopback_get(SOCKET fd, int family, Eina_Bool *loopback);
+
+/**
+ * Query the size of the next UDP datagram pending on queue.
+ *
+ * @param fd socket to operate on.
+ * @return the size in bytes.
+ * @internal
+ */
+size_t efl_net_udp_datagram_size_query(SOCKET fd);
 
 #endif

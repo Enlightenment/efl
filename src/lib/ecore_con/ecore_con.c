@@ -42,6 +42,8 @@
 # include <Evil.h>
 #endif
 
+#include <sys/ioctl.h>
+
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Con.h"
@@ -3319,17 +3321,6 @@ _efl_net_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
    if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
      efl_net_ip_port_fmt(buf, sizeof(buf), d->addr);
 
-   if ((d->type == SOCK_DGRAM) &&
-       (d->addr->sa_family == AF_INET) &&
-       (((const struct sockaddr_in *)d->addr)->sin_addr.s_addr == INADDR_BROADCAST))
-     {
-        int enable = 1;
-        if (setsockopt(d->sockfd, SOL_SOCKET, SO_BROADCAST, &enable, sizeof(enable)) == 0)
-          DBG("enabled SO_BROADCAST for socket=%d", d->sockfd);
-        else
-          WRN("could not enable SO_BROADCAST for socket=%d: %s", d->sockfd, eina_error_msg_get(efl_net_socket_error_get()));
-     }
-
    DBG("connecting fd=%d to %s", d->sockfd, buf);
 
    r = connect(d->sockfd, d->addr, d->addrlen);
@@ -3508,21 +3499,6 @@ _efl_net_ip_connect(const struct addrinfo *addr, int *sockfd)
           {
              if (efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr))
                DBG("connect fd=%d to %s", fd, buf);
-          }
-
-        if ((addr->ai_socktype == SOCK_DGRAM) &&
-            (addr->ai_family == AF_INET) &&
-            (((const struct sockaddr_in *)addr->ai_addr)->sin_addr.s_addr == INADDR_BROADCAST))
-          {
-#ifdef _WIN32
-             DWORD enable = 1;
-#else
-             int enable = 1;
-#endif
-             if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST, &enable, sizeof(enable)) == 0)
-               DBG("enabled SO_BROADCAST for socket=%d", fd);
-             else
-               WRN("could not enable SO_BROADCAST for socket=%d: %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
           }
 
         r = connect(fd, addr->ai_addr, addr->ai_addrlen);
@@ -4873,6 +4849,294 @@ efl_net_ip_connect_async_new(const char *address, const char *proxy, const char 
  error_address:
    free(d);
    return NULL;
+}
+
+static Eina_Error
+efl_net_multicast_address4_parse(const char *address, struct ip_mreq *mreq)
+{
+   char *str = NULL;
+   const char *iface;
+   Eina_Error err = 0;
+   int r;
+
+   iface = strchr(address, '@');
+   if (!iface) iface = "0.0.0.0";
+   else
+     {
+        str = malloc(iface - address + 1);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(str, ENOMEM);
+        memcpy(str, address, iface - address);
+        str[iface - address] = '\0';
+        address = str;
+        iface++;
+        if (iface[0] == '\0') iface = "0.0.0.0";
+     }
+
+   if (address[0] == '\0')
+     {
+        err = EINVAL;
+        goto end;
+     }
+
+   r = inet_pton(AF_INET, address, &mreq->imr_multiaddr);
+   if (r != 1)
+     {
+        if (r < 0) err = efl_net_socket_error_get();
+        else err = EINVAL;
+        goto end;
+     }
+
+   r = inet_pton(AF_INET, iface, &mreq->imr_interface);
+   if (r != 1)
+     {
+        if (r < 0) err = efl_net_socket_error_get();
+        else err = EINVAL;
+        goto end;
+     }
+
+ end:
+   free(str);
+   return err;
+}
+
+static Eina_Error
+efl_net_multicast_address6_parse(const char *address, struct ipv6_mreq *mreq)
+{
+   char *str;
+   char *endptr;
+   const char *iface;
+   Eina_Error err = 0;
+   unsigned long idx;
+   int r;
+
+   str = strdup(address);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, ENOMEM);
+   address = str;
+
+   if (address[0] == '[')
+     {
+        address++;
+
+        endptr = strchr(address, ']');
+        if (!endptr)
+          {
+             err = EINVAL;
+             goto end;
+          }
+        memmove(endptr, endptr + 1, strlen(endptr + 1) + 1);
+     }
+
+   iface = strchr(address, '@');
+   if (!iface) iface = "0";
+   else
+     {
+        str[iface - address] = '\0';
+        iface++;
+        if (iface[0] == '\0') iface = "0";
+     }
+
+   if (address[0] == '\0')
+     {
+        err = EINVAL;
+        goto end;
+     }
+
+   r = inet_pton(AF_INET6, address, &mreq->ipv6mr_multiaddr);
+   if (r != 1)
+     {
+        if (r < 0) err = efl_net_socket_error_get();
+        else err = EINVAL;
+        goto end;
+     }
+
+   errno = 0;
+   idx = strtoul(iface, &endptr, 10);
+   if (errno)
+     {
+        err = errno;
+        goto end;
+     }
+   else if ((iface == endptr) || (endptr[0] != '\0'))
+     {
+        errno = EINVAL;
+        goto end;
+     }
+   else if (idx > UINT32_MAX)
+     {
+        errno = ERANGE;
+        goto end;
+     }
+
+   mreq->ipv6mr_interface = idx;
+
+ end:
+   free(str);
+   return err;
+}
+
+Eina_Error
+efl_net_multicast_join(SOCKET fd, int family, const char *address)
+{
+   Eina_Error err;
+
+   if (family == AF_INET)
+     {
+        struct ip_mreq mreq;
+
+        err = efl_net_multicast_address4_parse(address, &mreq);
+        if (err)
+          return err;
+
+        if (setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) == 0)
+          return 0;
+     }
+   else if (family == AF_INET6)
+     {
+        struct ipv6_mreq mreq;
+
+        err = efl_net_multicast_address6_parse(address, &mreq);
+        if (err)
+          return err;
+
+        if (setsockopt(fd, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) == 0)
+          return 0;
+     }
+   else
+     {
+        ERR("invalid socket family=%d", family);
+        return EINVAL;
+     }
+
+   return efl_net_socket_error_get();
+}
+
+Eina_Error
+efl_net_multicast_leave(SOCKET fd, int family, const char *address)
+{
+   Eina_Error err;
+
+   if (family == AF_INET)
+     {
+        struct ip_mreq mreq;
+
+        err = efl_net_multicast_address4_parse(address, &mreq);
+        if (err)
+          return err;
+
+        if (setsockopt(fd, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq)) == 0)
+          return 0;
+     }
+   else if (family == AF_INET6)
+     {
+        struct ipv6_mreq mreq;
+
+        err = efl_net_multicast_address6_parse(address, &mreq);
+        if (err)
+          return err;
+
+        if (setsockopt(fd, IPPROTO_IPV6, IPV6_DROP_MEMBERSHIP, &mreq, sizeof(mreq)) == 0)
+          return 0;
+     }
+   else
+     {
+        ERR("invalid socket family=%d", family);
+        return EINVAL;
+     }
+
+   return efl_net_socket_error_get();
+}
+
+Eina_Error
+efl_net_multicast_ttl_set(SOCKET fd, int family, uint8_t ttl)
+{
+   int level = (family == AF_INET) ? IPPROTO_IP : IPPROTO_IPV6;
+   int opt = (family == AF_INET) ? IP_MULTICAST_TTL : IPV6_MULTICAST_HOPS;
+#ifdef _WIN32
+   DWORD value = ttl;
+#else
+   int value = ttl;
+#endif
+
+   if (setsockopt(fd, level, opt, &value, sizeof(value)) == 0)
+     return 0;
+
+   return efl_net_socket_error_get();
+}
+
+Eina_Error
+efl_net_multicast_ttl_get(SOCKET fd, int family, uint8_t *ttl)
+{
+   int level = (family == AF_INET) ? IPPROTO_IP : IPPROTO_IPV6;
+   int opt = (family == AF_INET) ? IP_MULTICAST_TTL : IPV6_MULTICAST_HOPS;
+#ifdef _WIN32
+   DWORD value;
+   int valuelen = sizeof(value);
+#else
+   int value;
+   socklen_t valuelen = sizeof(value);
+#endif
+
+   if (getsockopt(fd, level, opt, &value, &valuelen) == 0)
+     {
+        *ttl = value;
+        return 0;
+     }
+
+   return efl_net_socket_error_get();
+}
+
+Eina_Error
+efl_net_multicast_loopback_set(SOCKET fd, int family, Eina_Bool loopback)
+{
+   int level = (family == AF_INET) ? IPPROTO_IP : IPPROTO_IPV6;
+   int opt = (family == AF_INET) ? IP_MULTICAST_LOOP : IPV6_MULTICAST_LOOP;
+#ifdef _WIN32
+   DWORD value = loopback;
+#else
+   int value = loopback;
+#endif
+
+   if (setsockopt(fd, level, opt, &value, sizeof(value)) == 0)
+     return 0;
+
+   return efl_net_socket_error_get();
+}
+
+Eina_Error
+efl_net_multicast_loopback_get(SOCKET fd, int family, Eina_Bool *loopback)
+{
+   int level = (family == AF_INET) ? IPPROTO_IP : IPPROTO_IPV6;
+   int opt = (family == AF_INET) ? IP_MULTICAST_LOOP : IPV6_MULTICAST_LOOP;
+#ifdef _WIN32
+   DWORD value;
+   int valuelen = sizeof(value);
+#else
+   int value;
+   socklen_t valuelen = sizeof(value);
+#endif
+
+   if (getsockopt(fd, level, opt, &value, &valuelen) == 0)
+     {
+        *loopback = !!value;
+        return 0;
+     }
+
+   return efl_net_socket_error_get();
+}
+
+size_t
+efl_net_udp_datagram_size_query(SOCKET fd)
+{
+#ifdef _WIN32
+   unsigned long size;
+   if (ioctlsocket(fd, FIONREAD, &size) == 0)
+     return size;
+#else
+   int size;
+   if (ioctl(fd, FIONREAD, &size) == 0)
+     return size;
+#endif
+   return READBUFSIZ;
 }
 
 Eina_Bool

@@ -3,6 +3,25 @@ class Efl.Net.Dialer.Udp (Efl.Net.Socket.Udp, Efl.Net.Dialer) {
 
       UDP proxies are not supported, not even using SOCKSv5.
 
+      In addition to an IP:PORT, the UDP address to dial may be an
+      IPv4 broadcast (255.255.255.255), 'any ip' 0.0.0.0 (IPv4) '::'
+      (IPv6) or a multicast of both IPv4 and IPv6, then the group will
+      be joined automatically.
+
+      Any IP (0.0.0.0 or '::') and multicast addresses will allow
+      incoming packets on @Efl.Io.Reader.read regardless of their
+      source. If using a regular IP, packets that do not match the
+      remote peer will be dropped as spurious, returning EAGAIN.
+
+      To allow finer control, see:
+
+       - @Efl.Net.Socket.Udp.bind: choose the local address to bind.
+       - @Efl.Net.Socket.Udp.multicast_join: join other multicast groups.
+       - @Efl.Net.Socket.Udp.multicast_loopback: if packets should be delivered locally or only to remote peers.
+       - @Efl.Net.Socket.Udp.multicast_time_to_live: how far, in number of hops, the packet should go.
+
+      I
+
       @since 1.19
     ]]
 

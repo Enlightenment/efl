@@ -13,6 +13,17 @@ class Efl.Net.Server.Udp.Client (Efl.Object, Efl.Net.Socket) {
       @since 1.19
     ]]
 
+    methods {
+        next_datagram_size_query {
+            [[Query the next datagram size.
+
+              This will query the next pending datagram size, in
+              bytes. If no datagrams are pending, 0 is returned.
+            ]]
+            return: size; [[size in bytes]]
+        }
+    }
+
     implements {
         Efl.Object.finalize;
         Efl.Object.destructor;

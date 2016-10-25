@@ -443,12 +443,25 @@ _server_serving(void *data EINA_UNUSED, const Efl_Event *event)
      }
    else if (efl_class_get(event->object) == EFL_NET_SERVER_UDP_CLASS)
      {
+        Eina_Iterator *it;
+        const char *str;
+
         fprintf(stderr,
                 "UDP options:\n"
                 " - IPv6 only: %u\n"
-                " - don't route: %u\n",
+                " - don't route: %u\n"
+                " - multicast TTL: %u\n"
+                " - multicast loopback: %u\n"
+                " - multicast groups:\n",
                 efl_net_server_udp_ipv6_only_get(event->object),
-                efl_net_server_udp_dont_route_get(event->object));
+                efl_net_server_udp_dont_route_get(event->object),
+                efl_net_server_udp_multicast_time_to_live_get(event->object),
+                efl_net_server_udp_multicast_loopback_get(event->object));
+
+        it = efl_net_server_udp_multicast_groups_get(event->object);
+        EINA_ITERATOR_FOREACH(it, str)
+          fprintf(stderr, "   * %s\n", str);
+        eina_iterator_free(it);
      }
 }
 
@@ -496,6 +509,11 @@ static const Ecore_Getopt options = {
     ECORE_GETOPT_CATEGORY("udp", "UDP options"),
     ECORE_GETOPT_STORE_TRUE(0, "udp-dont-route",
                             "If true, datagrams won't be routed using a gateway, being restricted to the local network."),
+    ECORE_GETOPT_STORE_UINT(0, "udp-multicast-ttl",
+                            "Multicast time to live in number of hops from 0-255. Defaults to 1 (only local network)."),
+    ECORE_GETOPT_STORE_FALSE(0, "udp-multicast-noloopback",
+                            "Disable multicast loopback."),
+    ECORE_GETOPT_APPEND('M', "udp-multicast-group", "Join a multicast group in the form 'IP@INTERFACE', with optional '@INTERFACE', where INTERFACE is the IP address of the interface to join the multicast.", ECORE_GETOPT_TYPE_STR),
 
     ECORE_GETOPT_CHOICE_METAVAR(0, NULL, "The server protocol.", "protocol",
                                 protocols),
@@ -514,10 +532,14 @@ main(int argc, char **argv)
    const Efl_Class *cls;
    char *protocol = NULL;
    char *address = NULL;
+   Eina_List *udp_mcast_groups = NULL;
+   char *str;
    unsigned int clients_limit = 0;
+   unsigned udp_mcast_ttl = 1;
    Eina_Bool clients_reject_excess = EINA_FALSE;
    Eina_Bool ipv6_only = EINA_TRUE;
    Eina_Bool udp_dont_route = EINA_FALSE;
+   Eina_Bool udp_mcast_loopback = EINA_TRUE;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_BOOL(echo),
@@ -534,6 +556,9 @@ main(int argc, char **argv)
 
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* category: udp */
      ECORE_GETOPT_VALUE_BOOL(udp_dont_route),
+     ECORE_GETOPT_VALUE_UINT(udp_mcast_ttl),
+     ECORE_GETOPT_VALUE_BOOL(udp_mcast_loopback),
+     ECORE_GETOPT_VALUE_LIST(udp_mcast_groups),
 
      /* positional argument */
      ECORE_GETOPT_VALUE_STR(protocol),
@@ -600,8 +625,16 @@ main(int argc, char **argv)
      efl_net_server_tcp_ipv6_only_set(server, ipv6_only);
    else if (cls == EFL_NET_SERVER_UDP_CLASS)
      {
+        const Eina_List *lst;
+
         efl_net_server_udp_ipv6_only_set(server, ipv6_only);
         efl_net_server_udp_dont_route_set(server, udp_dont_route);
+
+        efl_net_server_udp_multicast_time_to_live_set(server, udp_mcast_ttl);
+        efl_net_server_udp_multicast_loopback_set(server, udp_mcast_loopback);
+
+        EINA_LIST_FOREACH(udp_mcast_groups, lst, str)
+          efl_net_server_udp_multicast_join(server, str);
      }
 
    /* an explicit call to efl_net_server_serve() after the object is
@@ -624,6 +657,8 @@ main(int argc, char **argv)
    server = NULL;
 
  end:
+   EINA_LIST_FREE(udp_mcast_groups, str)
+     free(str);
    ecore_con_shutdown();
    ecore_shutdown();
 

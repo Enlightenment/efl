@@ -118,6 +118,16 @@ _efl_net_server_udp_client_feed(Eo *o, Eina_Rw_Slice slice)
    free(slice.mem);
 }
 
+EOLIAN static size_t
+_efl_net_server_udp_client_next_datagram_size_query(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
+{
+   Efl_Net_Server_Udp_Client_Packet *pkt;
+
+   if (!pd->packets) return 0;
+   pkt = EINA_INLIST_CONTAINER_GET(pd->packets, Efl_Net_Server_Udp_Client_Packet);
+   return pkt->slice.len;
+}
+
 EOLIAN static Eina_Error
 _efl_net_server_udp_client_efl_io_closer_close(Eo *o, Efl_Net_Server_Udp_Client_Data *pd)
 {
