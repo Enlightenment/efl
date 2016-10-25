@@ -747,13 +747,14 @@ typedef struct _Efl_Object_Call_Cache
 #define EFL_FUNC_COMMON_OP(Obj, Name, DefRet) \
    static EFL_FUNC_TLS Efl_Object_Call_Cache ___cache; /* static 0 by default */ \
    Efl_Object_Op_Call_Data ___call; \
-   if (EINA_UNLIKELY((___cache.op == EFL_NOOP) || \
+   _Eo_##Name##_func _func_;                                            \
+   if (EINA_UNLIKELY((___cache.op == EFL_NOOP) ||                       \
                      (___cache.generation != _efl_object_init_generation))) \
      goto __##Name##_op_create; /* yes a goto - see below */ \
    __##Name##_op_create_done: \
    if (!_efl_object_call_resolve((Eo *) Obj, #Name, &___call, &___cache, \
                                  __FILE__, __LINE__)) return DefRet; \
-   _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;
+   _func_ = (_Eo_##Name##_func) ___call.func;
 
 // yes this looks ugly with gotos BUT it moves rare "init" handling code
 // out of the hot path and thus l1 instruction cach prefetch etc. so it
