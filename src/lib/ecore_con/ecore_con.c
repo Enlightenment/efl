@@ -4998,7 +4998,7 @@ efl_net_multicast_join(SOCKET fd, int family, const char *address)
         if (err)
           return err;
 
-        if (setsockopt(fd, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) == 0)
+        if (setsockopt(fd, IPPROTO_IPV6, IPV6_JOIN_GROUP, &mreq, sizeof(mreq)) == 0)
           return 0;
      }
    else
@@ -5034,7 +5034,7 @@ efl_net_multicast_leave(SOCKET fd, int family, const char *address)
         if (err)
           return err;
 
-        if (setsockopt(fd, IPPROTO_IPV6, IPV6_DROP_MEMBERSHIP, &mreq, sizeof(mreq)) == 0)
+        if (setsockopt(fd, IPPROTO_IPV6, IPV6_LEAVE_GROUP, &mreq, sizeof(mreq)) == 0)
           return 0;
      }
    else
