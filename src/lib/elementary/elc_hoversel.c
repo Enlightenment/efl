@@ -371,6 +371,52 @@ _hover_end_finished(void *data,
      }
 }
 
+static char *
+_access_info_cb(void *data, Evas_Object *obj)
+{
+   const char *txt;
+   Elm_Hoversel_Item_Data *it;
+
+   if (data != NULL)
+     {
+        it = (Elm_Hoversel_Item_Data *)data;
+        if (it->label) return strdup(it->label);
+     }
+   else
+     {
+        txt = elm_widget_access_info_get(obj);
+        if (!txt) txt = elm_layout_text_get(obj, NULL);
+        if (txt) return strdup(txt);
+     }
+
+   return NULL;
+}
+
+static void
+_access_widget_item_register(Elm_Hoversel_Data *sd)
+{
+   const Eina_List *l;
+   Elm_Object_Item *eo_item;
+   Elm_Access_Info *ai;
+
+   EINA_LIST_FOREACH(sd->items, l, eo_item)
+     {
+        ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
+        _elm_access_widget_item_register(item->base);
+        ai = _elm_access_info_get(item->base->access_obj);
+        _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, item);
+     }
+}
+
+static char *
+_access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
+{
+   if (elm_widget_disabled_get(obj))
+     return strdup(E_("State: Disabled"));
+
+   return NULL;
+}
+
 static void
 _activate(Evas_Object *obj)
 {
@@ -429,6 +475,8 @@ _activate(Evas_Object *obj)
 
    _resizing_eval(obj, sd);
    elm_object_part_content_set(sd->hover, sd->last_location, sd->tbl);
+
+   if (_elm_config->access_mode) _access_widget_item_register(sd);
 
    efl_event_callback_legacy_call(obj, ELM_HOVERSEL_EVENT_EXPANDED, NULL);
    evas_object_show(sd->hover);
@@ -561,6 +609,13 @@ _elm_hoversel_efl_canvas_group_group_add(Eo *obj, Elm_Hoversel_Data *priv)
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _on_move_resize, priv);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_move_resize, priv);
+
+   _elm_access_text_set
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Hoversel"));
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
 }
 
 EOLIAN static void
