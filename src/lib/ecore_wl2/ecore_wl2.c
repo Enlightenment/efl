@@ -92,7 +92,8 @@ ecore_wl2_init(void)
         _ecore_wl2_event_window_www = ecore_event_type_new();
         _ecore_wl2_event_window_www_drag = ecore_event_type_new();
      }
-   no_session_recovery = !!getenv("EFL_NO_WAYLAND_SESSION_RECOVERY");
+   if (!no_session_recovery)
+     no_session_recovery = !!getenv("EFL_NO_WAYLAND_SESSION_RECOVERY");
 
    return _ecore_wl2_init_count;
 
@@ -154,4 +155,10 @@ ecore_wl2_shutdown(void)
    eina_shutdown();
 
    return _ecore_wl2_init_count;
+}
+
+EAPI void
+ecore_wl2_session_recovery_disable(void)
+{
+   no_session_recovery = EINA_TRUE;
 }

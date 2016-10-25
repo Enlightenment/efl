@@ -1243,6 +1243,15 @@ EAPI void ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer);
  */
 EAPI Eina_Bool ecore_wl2_window_has_shell_surface(Ecore_Wl2_Window *win);
 
+/**
+ * Disable session recovery for any further connections.  Must be called
+ * before connecting.  This is irreversible and not intended for general
+ * use.
+ *
+ * @since 1.19
+ */
+EAPI void ecore_wl2_session_recovery_disable(void);
+
 # endif
 
 # undef EAPI
