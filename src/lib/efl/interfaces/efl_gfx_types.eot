@@ -110,10 +110,10 @@ struct Efl.Gfx.Gradient.Stop
 struct Efl.Gfx.Stroke.Color
 {
   [[Internal structure for @Efl.Gfx.Stroke.]]
-  r: int;
-  g: int;
-  b: int;
-  a: int;
+  r: int; [[The component R color of the stroke]]
+  g: int; [[The component G color of the stroke]]
+  b: int; [[The component B color of the stroke]]
+  a: int; [[The component A color of the stroke]]
 }
 
 struct Efl.Gfx.Stroke
@@ -122,19 +122,20 @@ struct Efl.Gfx.Stroke
     Describes the properties to define the path stroke.
     @since 1.14
   ]]
-  scale: double;
-  width: double;
-  centered: double;
-  color: Efl.Gfx.Stroke.Color;
-  dash: Efl.Gfx.Dash*;
-  dash_length: uint;
-  cap: Efl.Gfx.Cap;
-  join: Efl.Gfx.Join;
+  scale: double; [[Stroke scale]]
+  width: double; [[Stroke width]]
+  centered: double; [[Stroke centered]]
+  color: Efl.Gfx.Stroke.Color; [[Stroke color]]
+  dash: Efl.Gfx.Dash*; [[Stroke dash]]
+  dash_length: uint; [[Stroke dash length]]
+  cap: Efl.Gfx.Cap; [[Stroke cap]]
+  join: Efl.Gfx.Join; [[Stroke join]]
 }
 
 struct Efl.Gfx.Shape.Public
 {
-   stroke: Efl.Gfx.Stroke;
+   [[Public shape]]
+   stroke: Efl.Gfx.Stroke; [[Internal representation as stroke]]
 }
 
 enum Efl.Gfx.Border_Fill_Mode
