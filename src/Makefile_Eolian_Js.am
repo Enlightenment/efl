@@ -54,11 +54,11 @@ tests_eolian_js_libeolian_js_suite_la_CPPFLAGS = \
 @EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ @EINA_CXX_CFLAGS@ \
 @EO_JS_CFLAGS@ @EO_CXX_CFLAGS@ @ECORE_CXX_CFLAGS@
 tests_eolian_js_libeolian_js_suite_la_LIBADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
-tests_eolian_js_libeolian_js_suite_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+HECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ bindings/js/efl_js/libefl_js.la
+tests_eolian_js_libeolian_js_suite_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ 
 tests_eolian_js_libeolian_js_suite_la_CFLAGS = $(tests_eolian_js_libeolian_js_suite_la_CXXFLAGS)
 tests_eolian_js_libeolian_js_suite_la_LIBTOOLFLAGS = --tag=disable-static
-tests_eolian_js_libeolian_js_suite_la_LDFLAGS = -rpath $(abs_top_builddir)/tests/eolian_js @EFL_LTLIBRARY_FLAGS@
+tests_eolian_js_libeolian_js_suite_la_LDFLAGS = -rpath $(abs_top_builddir)/src/tests/eolian_js -rpath $(abs_top_builddir)/src/bin/efl_js @EFL_LTLIBRARY_FLAGS@
 
 # if compiler_o_lo == yes, lo, otherwise $(OBJEXT)
 
@@ -112,8 +112,8 @@ tests_eolian_js_eolian_js_suite_CPPFLAGS = 	\
 @EO_JS_CFLAGS@ @EO_CXX_CFLAGS@ @EFL_JS_CFLAGS@ @ECORE_CXX_CFLAGS@
 
 tests_eolian_js_eolian_js_suite_LDADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@ @USE_EVAS_LIBS@ @USE_EFL_JS_LIBS@
-tests_eolian_js_eolian_js_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@ @USE_EVAS_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EVAS_LIBS@ bin/efl_js/efl.node
+tests_eolian_js_eolian_js_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@ @USE_EVAS_INTERNAL_LIBS@
 endif
 endif
 

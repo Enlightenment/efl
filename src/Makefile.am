@@ -85,7 +85,7 @@ am__v_CP_0 = @echo "  CP  " $@;
 CP = cp
 if EFL_ENABLE_TESTS
 if HAVE_NODEJS
-AM_TESTS_ENVIRONMENT += NODE_PATH='$(abs_builddir)/lib/efl_js:$(abs_builddir)/tests/eolian_js:$(abs_builddir)/tests/efl_js'; export NODE_PATH;
+AM_TESTS_ENVIRONMENT += NODE_PATH='$(abs_builddir)/bin/efl_js:$(abs_builddir)/tests/eolian_js:$(abs_builddir)/tests/efl_js'; export NODE_PATH;
 endif
 endif
 endif

@@ -2,14 +2,14 @@ if HAVE_JS
 
 if HAVE_NODEJS
 
-noinst_lib_LTLIBRARIES = lib/efl_js/libefl_node_js.la
+noinst_lib_LTLIBRARIES = bindings/js/efl_js/libefl_js.la
 noinst_libdir = $(libdir)/efl_js
 
-$(top_builddir)/src/lib/efl_js/efl.node: lib/efl_js/libefl_node_js.la
-	$(AM_V_CP)$(CP) $(top_builddir)/src/lib/efl_js/.libs/libefl_node_js.so $(top_builddir)/src/lib/efl_js/efl.node
+bin/efl_js/efl.node: bindings/js/efl_js/libefl_js.la
+	$(AM_V_CP)$(CP) bindings/js/efl_js/.libs/libefl_js.so bin/efl_js/efl.node
 
 eflnodedir = $(libdir)/node_modules
-eflnode_DATA = $(top_builddir)/src/lib/efl_js/efl.node
+eflnode_DATA = bin/efl_js/efl.node
 
 CLEANFILES += ${eflnodedir_DATA}
 EXTRA_DIST2 += ${eflnodedir_DATA}
@@ -133,9 +133,9 @@ installed_efljsheadersdir = $(includedir)/efl-js-@VMAJ@
 dist_installed_efljsheaders_DATA = \
 bindings/js/efl_js/Efl_Js.hh
 
-lib_LTLIBRARIES += lib/efl_js/libefl_js.la
+#lib_LTLIBRARIES += lib/efl_js/libefl_js.la
 
-lib_efl_js_libefl_js_la_SOURCES = \
+bindings_js_efl_js_libefl_js_la_SOURCES = \
 bindings/js/eina_js/eina_js_container.cc \
 bindings/js/eina_js/eina_js_value.cc \
 bindings/js/eina_js/eina_js_error.cc \
@@ -157,14 +157,15 @@ bindings/js/eldbus_js/eldbus_js_connection.cc \
 bindings/js/eldbus_js/eldbus_js_message.cc \
 bindings/js/eldbus_js/eldbus_js_object_mapper.cc \
 bindings/js/eio_js/eio_js.cc \
+bindings/js/efl_js/efl_js.cc \
 bindings/js/ethumb_js/ethumb_js_client.cc
 
-nodist_lib_efl_js_libefl_js_la_SOURCES = \
+nodist_bindings_js_efl_js_libefl_js_la_SOURCES = \
 bindings/js/efl_js/eolian_js_bindings.cc
 
-bindings/js/efl_js/efl_js.cc $(lib_efl_js_libefl_js_la_SOURCES): $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl_hh) $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl_hh) $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh) lib/ecore/Ecore.eo.hh
+bindings/js/efl_js/efl_js.cc $(bindings_js_efl_js_libefl_js_la_SOURCES): $(ecore_eolian_cxx_public_hh) $(ecore_eolian_cxx_public_impl_hh) $(eo_eolian_cxx_public_hh) $(eo_eolian_cxx_public_impl_hh) $(efl_eolian_cxx_public_hh) $(efl_eolian_cxx_public_impl_hh) lib/ecore/Ecore.eo.hh
 
-lib_efl_js_libefl_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+bindings_js_efl_js_libefl_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_builddir)/src/lib/efl/interfaces/ \
 -I$(top_builddir)/src/lib/evas/canvas/ \
@@ -187,24 +188,10 @@ lib_efl_js_libefl_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EINA_CXX_CFLAGS@ \
 @ELEMENTARY_CFLAGS@ \
 -D_EO_ADD_FALLBACK_FORCE=1
-lib_efl_js_libefl_js_la_LIBADD = @EFL_JS_LIBS@
-lib_efl_js_libefl_js_la_DEPENDENCIES = @EFL_JS_INTERNAL_LIBS@
-lib_efl_js_libefl_js_la_LIBTOOLFLAGS = --tag=disable-static
-lib_efl_js_libefl_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
-
-if HAVE_NODEJS
-lib_efl_js_libefl_node_js_la_SOURCES = \
-bindings/js/efl_js/efl_js.cc
-
-lib_efl_js_libefl_node_js_la_CPPFLAGS = $(lib_efl_js_libefl_js_la_CPPFLAGS)
-lib_efl_js_libefl_node_js_la_LIBADD = @USE_EFL_JS_LIBS@
-lib_efl_js_libefl_node_js_la_DEPENDENCIES = @USE_EFL_JS_INTERNAL_LIBS@
-lib_efl_js_libefl_node_js_la_LIBTOOLFLAGS = --tag=disable-static
-lib_efl_js_libefl_node_js_la_LDFLAGS =
-else
-lib_efl_js_libefl_js_la_SOURCES += \
-bindings/js/efl_js/efl_js.cc
-endif
+bindings_js_efl_js_libefl_js_la_LIBADD = @EFL_JS_LIBS@
+bindings_js_efl_js_libefl_js_la_DEPENDENCIES = @EFL_JS_INTERNAL_LIBS@
+bindings_js_efl_js_libefl_js_la_LIBTOOLFLAGS = --tag=disable-static
+bindings_js_efl_js_libefl_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 if EFL_ENABLE_TESTS
 
@@ -236,11 +223,11 @@ tests/efl_js/benchmark_js_suite.js
 
 check_LTLIBRARIES += tests/efl_js/libbenchmark_object.la
 
-tests/efl_js/eina_js_suite.js tests/efl_js/eina_js_containers_suite.js tests/efl_js/ecore_js_suite.js tests/efl_js/eldbus_js_suite.js tests/efl_js/eio_js_suite.js tests/efl_js/ethumb_js_suite.js: $(top_builddir)/src/lib/efl_js/efl.node
+tests/efl_js/eina_js_suite.js tests/efl_js/eina_js_containers_suite.js tests/efl_js/ecore_js_suite.js tests/efl_js/eldbus_js_suite.js tests/efl_js/eio_js_suite.js tests/efl_js/ethumb_js_suite.js:bin/efl_js/efl.node
 
 tests/efl_js/benchmark_object.node: tests/efl_js/libbenchmark_object.la
 	$(AM_V_CP)$(CP) $(top_builddir)/src/tests/efl_js/.libs/libbenchmark_object.so $(top_builddir)/src/tests/efl_js/benchmark_object.node
-tests/efl_js/benchmark_js_suite.js: $(top_builddir)/src/lib/efl_js/efl.node tests/efl_js/benchmark_object.node
+tests/efl_js/benchmark_js_suite.js: bin/efl_js/efl.node tests/efl_js/benchmark_object.node
 
 tests_efl_js_libbenchmark_object_la_SOURCES = tests/efl_js/benchmark_object_impl.cc
 tests_efl_js_libbenchmark_object_la_CPPFLAGS = \
@@ -258,9 +245,9 @@ tests_efl_js_libbenchmark_object_la_CPPFLAGS = \
 @EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ @EINA_CXX_CFLAGS@ \
 @EO_JS_CFLAGS@ @EO_CXX_CFLAGS@
 tests_efl_js_libbenchmark_object_la_LIBADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ bindings/js/efl_js/libefl_js.la
 tests_efl_js_libbenchmark_object_la_LDFLAGS = -rpath $(abs_top_builddir)/tests/efl_js @EFL_LTLIBRARY_FLAGS@
-tests_efl_js_libbenchmark_object_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+tests_efl_js_libbenchmark_object_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 tests_efl_js_libbenchmark_object_la_LIBTOOLFLAGS = --tag=disable-static
 
 tests/efl_js/tests_efl_js_libbenchmark_object_la-benchmark_object_impl.l$(OBJEXT): tests/efl_js/benchmark_object.eo.js.cc tests/efl_js/benchmark_object.eo.c tests/efl_js/benchmark_object.eo.h
@@ -285,56 +272,56 @@ tests/efl_js/eina_js_suite.cc
 
 tests_efl_js_eina_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
 tests_efl_js_eina_js_suite_LDADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
-tests_efl_js_eina_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
+tests_efl_js_eina_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 tests_efl_js_eina_js_containers_suite_SOURCES = \
 tests/efl_js/eina_js_containers_suite.cc
 
 tests_efl_js_eina_js_containers_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
 tests_efl_js_eina_js_containers_suite_LDADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
-tests_efl_js_eina_js_containers_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
+tests_efl_js_eina_js_containers_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 tests_efl_js_ecore_js_suite_SOURCES = \
 tests/efl_js/ecore_js_suite.cc
 
 tests_efl_js_ecore_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
 tests_efl_js_ecore_js_suite_LDADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
-tests_efl_js_ecore_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
+tests_efl_js_ecore_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 tests_efl_js_eldbus_js_suite_SOURCES = \
 tests/efl_js/eldbus_js_suite.cc
 
 tests_efl_js_eldbus_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
 tests_efl_js_eldbus_js_suite_LDADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
-tests_efl_js_eldbus_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
+tests_efl_js_eldbus_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 tests_efl_js_ethumb_js_suite_SOURCES = \
 tests/efl_js/ethumb_js_suite.cc
 
 tests_efl_js_ethumb_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
 tests_efl_js_ethumb_js_suite_LDADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
-tests_efl_js_ethumb_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
+tests_efl_js_ethumb_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 tests_efl_js_eio_js_suite_SOURCES = \
 tests/efl_js/eio_js_suite.cc
 
 tests_efl_js_eio_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
 tests_efl_js_eio_js_suite_LDADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
-tests_efl_js_eio_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
+tests_efl_js_eio_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 tests_efl_js_benchmark_js_suite_SOURCES = \
 tests/efl_js/benchmark_js_suite.cc
 
 tests_efl_js_benchmark_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
 tests_efl_js_benchmark_js_suite_LDADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
-tests_efl_js_benchmark_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ bindings/js/efl_js/libefl_js.la
+tests_efl_js_benchmark_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 endif
 endif
 

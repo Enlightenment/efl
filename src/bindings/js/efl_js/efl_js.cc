@@ -42,7 +42,7 @@ EAPI void eina_value_register(v8::Handle<v8::Object>, v8::Isolate* isolate);
 EAPI void register_ecore_mainloop(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 
 namespace ecore {
-EAPI void register_exe(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+  //EAPI void register_exe(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_idler(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_ecore(v8::Isolate* isolate, v8::Handle<v8::Object> exports);
 namespace idle {
@@ -50,7 +50,7 @@ EAPI void register_enterer(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_exiter(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }
 EAPI void register_job(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_parent(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+  //EAPI void register_parent(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_poller(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_timer(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }
@@ -281,12 +281,12 @@ EAPI void init(v8::Handle<v8::Object> exports)
         efl::eio::js::register_eio(v8::Isolate::GetCurrent(), exports);
         efl::eldbus::js::register_eldbus(v8::Isolate::GetCurrent(), exports);
         efl::ethumb::js::register_ethumb(v8::Isolate::GetCurrent(), exports);
-        ecore::register_exe(exports, v8::Isolate::GetCurrent());
+        //ecore::register_exe(exports, v8::Isolate::GetCurrent());
         // ecore::register_idler(exports, v8::Isolate::GetCurrent());
         // ecore::idle::register_enterer(exports, v8::Isolate::GetCurrent());
         // ecore::idle::register_exiter(exports, v8::Isolate::GetCurrent());
         // ecore::register_job(exports, v8::Isolate::GetCurrent());
-        ecore::register_parent(exports, v8::Isolate::GetCurrent());
+        //ecore::register_parent(exports, v8::Isolate::GetCurrent());
         // ecore::register_poller(exports, v8::Isolate::GetCurrent());
         // ecore::register_timer(exports, v8::Isolate::GetCurrent());
         // efl::network::register_base(exports, v8::Isolate::GetCurrent());

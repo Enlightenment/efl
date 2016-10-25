@@ -12,11 +12,12 @@ if(typeof process !== 'undefined')
 {
     console.log('running from nodejs');
     console.log('path', process.env.NODE_PATH);
-    console.log("teste1");
 
     efl = require('efl');
     assert(efl != null, "could not load efl node module");
 
+    console.log('efl.node loaded')
+    
     // Setup output aliases
     print = console.log;
     printError = function() {
