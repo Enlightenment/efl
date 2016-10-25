@@ -2771,6 +2771,7 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
             ((sd->horizontal) && (dir == ELM_FOCUS_LEFT)))
      {
         Evas_Coord col, row, cvw, cvh;
+        int x;
 
         evas_object_geometry_get(sd->pan_obj, NULL, NULL, &cvw, &cvh);
         if (sd->horizontal && sd->item_height > 0)
@@ -2778,7 +2779,8 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
              row = cvh / sd->item_height;
              if (row <= 0) row = 1;
              col = tmp->position / row;
-             if (col == 0)
+             x = tmp->position % row;
+             if (col == 0 || (col == 1 && x == 0))
                return EINA_TRUE;
           }
         else if (sd->item_width > 0)
@@ -2786,7 +2788,8 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
              col = cvw / sd->item_width;
              if (col <= 0) col = 1;
              row = tmp->position / col;
-             if (row == 0)
+             x = tmp->position % col;
+             if (row == 0 || (row == 1 && x == 0))
                return EINA_TRUE;
           }
      }
