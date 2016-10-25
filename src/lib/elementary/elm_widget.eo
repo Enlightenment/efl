@@ -19,9 +19,10 @@ enum Elm.Activate
 
 enum Elm.Theme.Apply
 {
-   failed = 0,
-   default = 1,
-   success = 3
+   [[Return codes when a Elementary theme is applied]]
+   failed = 0, [[Failed to apply theme]]
+   default = 1, [[Default return value]]
+   success = 3 [[Success to apply theme]]
 }
 
 struct Elm.Tooltip;

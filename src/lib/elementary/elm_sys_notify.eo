@@ -1,5 +1,6 @@
 enum Elm.Sys_Notify.Server
 {
+   [[System notification server types]]
    none = 0, [[No notificationserver (disables notifications)]]
    dbus = 1 << 0 [[Use DBus as a notification server]]
 }

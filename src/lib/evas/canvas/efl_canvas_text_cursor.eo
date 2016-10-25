@@ -1,5 +1,6 @@
 enum Efl.Canvas.Text.Cursor.Type
 {
+   [[Text cursor types]]
    before,
    under
 }

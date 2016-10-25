@@ -3,8 +3,9 @@ import ecore_types;
 
 enum Elm.Gengrid.Reorder_Type
 {
-   normal, [[ normal reorder type ]]
-   swap    [[ swap reorder type ]]
+   [[Gengrid reorder modes]]
+   normal, [[Normal reorder type]]
+   swap    [[Swap reorder type]]
 }
 
 class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
