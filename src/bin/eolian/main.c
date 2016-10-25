@@ -43,7 +43,6 @@ _print_usage(const char *progn, FILE *outf)
                  "  -o type:name  specify a particular output filename\n"
                  "  -h            print this message and exit\n"
                  "  -v            print version and exit\n"
-                 "  -s            silence type errors in validation\n"
                  "\n"
                  "Available types:\n"
                  "  h: C header file (.h)\n"
@@ -398,8 +397,7 @@ main(int argc, char **argv)
    char *outs[5] = { NULL, NULL, NULL, NULL, NULL };
 
    int gen_what = 0;
-   Eina_Bool silent_types = EINA_FALSE;
-   for (int opt; (opt = getopt(argc, argv, "I:g:o:shv")) != -1;)
+   for (int opt; (opt = getopt(argc, argv, "I:g:o:hv")) != -1;)
      switch (opt)
        {
         case 0:
@@ -451,9 +449,6 @@ main(int argc, char **argv)
             }
           else _fill_all_outs(outs, optarg);
           break;
-        case 's':
-          silent_types = EINA_TRUE;
-          break;
         case 'h':
           _print_usage(argv[0], stdout);
           goto end;
@@ -485,7 +480,7 @@ main(int argc, char **argv)
         goto end;
      }
 
-   if (!eolian_database_validate(silent_types))
+   if (!eolian_database_validate())
      {
         fprintf(stderr, "eolian: failed validating database\n");
         goto end;

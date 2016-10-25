@@ -372,12 +372,12 @@ eolian_all_eo_files_parse()
 }
 
 EAPI Eina_Bool
-eolian_database_validate(Eina_Bool silent_types)
+eolian_database_validate()
 {
    if (_database_init_count <= 0)
      return EINA_FALSE;
 
-   return database_validate(silent_types);
+   return database_validate();
 }
 
 EAPI Eina_Iterator *

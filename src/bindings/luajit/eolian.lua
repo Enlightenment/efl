@@ -196,7 +196,7 @@ ffi.cdef [[
     Eina_Bool eolian_system_directory_scan();
     Eina_Bool eolian_all_eo_files_parse();
     Eina_Bool eolian_all_eot_files_parse();
-    Eina_Bool eolian_database_validate(Eina_Bool silent_types);
+    Eina_Bool eolian_database_validate();
     const Eolian_Class *eolian_class_get_by_name(const char *class_name);
     const Eolian_Class *eolian_class_get_by_file(const char *file_name);
     const char *eolian_class_file_get(const Eolian_Class *klass);
@@ -438,8 +438,8 @@ M.all_eot_files_get = function()
     return iterator.String_Iterator(eolian.eolian_all_eot_files_get())
 end
 
-M.database_validate = function(silent)
-    return eolian.eolian_database_validate((not not silent) or false) ~= 0
+M.database_validate = function()
+    return eolian.eolian_database_validate() ~= 0
 end
 
 M.declaration_type = {
