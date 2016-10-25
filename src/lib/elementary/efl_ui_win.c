@@ -4811,6 +4811,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
           elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
      }
 
+#ifdef HAVE_ELEMENTARY_WL2
    if (type != ELM_WIN_FAKE)
      {
         if ((engine) &&
@@ -4848,6 +4849,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
              ecore_evas_resize(sd->pointer.ee, mw, mh);
           }
      }
+#endif
 
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_WINDOW);
    if (_elm_config->atspi_mode)
