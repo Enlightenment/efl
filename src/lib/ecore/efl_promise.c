@@ -39,6 +39,7 @@ struct _Efl_Promise_Data
 static void
 _efl_promise_msg_free(Efl_Promise_Msg *msg)
 {
+   if (!msg) return ;
    if (msg->free_cb)
      msg->free_cb(msg->value);
    free(msg);
@@ -737,8 +738,9 @@ _efl_promise_all_free(Efl_Promise_All *all)
 
    EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
      {
-        EINA_REFCOUNT_UNREF(fa->d)
-          _efl_promise_msg_free(fa->d);
+        if (fa->d)
+          EINA_REFCOUNT_UNREF(fa->d)
+            _efl_promise_msg_free(fa->d);
      }
    efl_del(all->promise);
    all->promise = NULL;
