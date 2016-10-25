@@ -200,6 +200,13 @@ get_value_from_c(efl::eina::js::complex_tag<Eina_Accessor *, T, K> v, v8::Isolat
 
 template <typename T, typename K>
 inline v8::Local<v8::Value>
+get_value_from_c(efl::eina::js::complex_tag<Eo**, T, K>, v8::Isolate*, const char*)
+{
+  throw std::logic_error("");
+}
+
+template <typename T, typename K>
+inline v8::Local<v8::Value>
 get_value_from_c(efl::eina::js::complex_tag<const Eina_Accessor *, T, K> v, v8::Isolate* isolate, const char* class_name)
 {
   // TODO implement const accessor?

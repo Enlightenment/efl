@@ -109,7 +109,7 @@ struct constructor_caller
             Eo* eo = efl_add
               (klass
                , parent
-               , eina::_mpl::for_each(constructors, call{efl_self, &current_index, &args})
+               , eina::_mpl::for_each(constructors, call{efl_added, &current_index, &args})
                );
             if (!eo)
               throw std::logic_error("Failed to create object.");

@@ -111,6 +111,19 @@ inline Eo* get_value_from_javascript
   return get_value_from_javascript(v, isolate, class_name, value_tag<Eo*>(), throw_js_exception);
 }
 
+// Futures
+template <typename ClassGetter>
+Eo* get_value_from_javascript
+  (v8::Local<v8::Value>
+   , v8::Isolate*
+   , const char*
+   , value_tag<complex_tag<Eo**, void*, ClassGetter>>
+   , bool = true)
+{
+  throw std::logic_error("");
+  return nullptr;
+}
+      
 template <typename T>
 inline T get_value_from_javascript
   (v8::Local<v8::Value> v

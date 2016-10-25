@@ -308,6 +308,12 @@ R wrap_value(T v, value_tag<eina::js::complex_tag<T, U...>>)
    return R {v};
 }
 
+template <typename R, typename T, typename... U>
+R wrap_value(T const& v, value_tag<eina::js::complex_tag<T*, U...>>)
+{
+   return R {const_cast<T*>(&v)};
+}
+
 template <typename T = v8::External>
 struct _libv8_isolate_test
 {
