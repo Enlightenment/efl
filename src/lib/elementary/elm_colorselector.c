@@ -183,9 +183,11 @@ static const Elm_Color_Name _color_name[] = {
 };
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
+   {"activate", _key_action_activate},
    {NULL, NULL}
 };
 
@@ -237,6 +239,7 @@ _items_del(Elm_Colorselector_Data *sd)
 
    sd->items = NULL;
    sd->selected = NULL;
+   sd->focus_items = NULL;
 }
 
 static void
@@ -1895,6 +1898,7 @@ _elm_colorselector_efl_canvas_group_group_add(Eo *obj, Elm_Colorselector_Data *p
    priv->focused = ELM_COLORSELECTOR_PALETTE;
    priv->sel_color_type = HUE;
    priv->selected = NULL;
+   priv->focus_items = NULL;
    priv->er = 255;
    priv->eg = 0;
    priv->eb = 0;
@@ -2014,7 +2018,7 @@ _key_action_move(Evas_Object *obj, const char *params)
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE && sd->selected)
           {
-             cl = eina_list_prev(sd->selected);
+             cl = eina_list_prev(sd->focus_items);
           }
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
@@ -2028,7 +2032,7 @@ _key_action_move(Evas_Object *obj, const char *params)
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE && sd->selected)
           {
-             cl = eina_list_next(sd->selected);
+             cl = eina_list_next(sd->focus_items);
           }
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
@@ -2061,16 +2065,16 @@ _key_action_move(Evas_Object *obj, const char *params)
                }
           }
         else if (sd->focused == ELM_COLORSELECTOR_PALETTE)
-        {
-            cl = _palette_box_vertical_item_get(sd->selected, PALETTE_BOX_UP);
-            if (!cl) cl = sd->selected;
-        }
+          {
+             cl = _palette_box_vertical_item_get(sd->focus_items, PALETTE_BOX_UP);
+             if (!cl) cl = sd->focus_items;
+          }
      }
    else if (!strcmp(dir, "down"))
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE)
           {
-             cl = _palette_box_vertical_item_get(sd->selected, PALETTE_BOX_DOWN);
+             cl = _palette_box_vertical_item_get(sd->focus_items, PALETTE_BOX_DOWN);
              if (sd->mode == ELM_COLORSELECTOR_BOTH && !cl)
                {
                   sd->focused = ELM_COLORSELECTOR_COMPONENTS;
@@ -2095,18 +2099,28 @@ _key_action_move(Evas_Object *obj, const char *params)
      {
         eo_item = eina_list_data_get(cl);
         ELM_COLOR_ITEM_DATA_GET(eo_item, item);
-        elm_object_signal_emit(VIEW(item), "elm,anim,activate", "elm");
-        elm_colorselector_color_set
-          (WIDGET(item), item->color->r, item->color->g, item->color->b,
-          item->color->a);
-        efl_event_callback_legacy_call
-          (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, eo_item);
-        elm_obj_color_item_selected_set(eo_item, EINA_TRUE);
+        elm_object_item_focus_set(eo_item, EINA_TRUE);
      }
-   else if (!cl && sd->focused == ELM_COLORSELECTOR_PALETTE)
+   else if (!cl && (sd->focused == ELM_COLORSELECTOR_PALETTE))
      return EINA_FALSE;
+   else if (!cl && (sd->focused == ELM_COLORSELECTOR_COMPONENTS))
+      _elm_widget_focus_highlight_start(obj);
 
    return EINA_TRUE;
+}
+
+
+static Eina_Bool
+_key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   if (sd->focused == ELM_COLORSELECTOR_PALETTE)
+     {
+        Elm_Object_Item *eo_item = NULL;
+        eo_item = eina_list_data_get(sd->focus_items);
+        elm_obj_color_item_selected_set(eo_item, EINA_TRUE);
+     }
 }
 
 EOLIAN static Eina_Bool
@@ -2119,6 +2133,7 @@ _elm_colorselector_elm_widget_event(Eo *obj, Elm_Colorselector_Data *sd, Evas_Ob
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (!sd) return EINA_FALSE;
    if (!sd->selected) sd->selected = sd->items;
+   if (!sd->focus_items) sd->focus_items = sd->items;
 
    if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
      return EINA_FALSE;
@@ -2216,6 +2231,20 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
                                                               "elm.arrow_bg_access");
           }
      }
+}
+
+EOLIAN static void
+_elm_colorselector_elm_widget_focus_highlight_geometry_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   if (sd->focused_item && (sd->focused == ELM_COLORSELECTOR_PALETTE))
+     {
+       ELM_COLOR_ITEM_DATA_GET(sd->focused_item, focus_it);
+       evas_object_geometry_get(VIEW(focus_it), x, y, w, h);
+     }
+   else if(sd->focused == ELM_COLORSELECTOR_COMPONENTS)
+     evas_object_geometry_get(sd->cb_data[sd->sel_color_type]->colorbar, x, y, w, h);
+   else
+     evas_object_geometry_get(obj, x, y, w, h);
 }
 
 EOLIAN static void
@@ -2491,6 +2520,10 @@ _elm_color_item_selected_set(Eo *eo_item,
 
         EINA_LIST_FOREACH(sd->items, l, eo_temp_item)
           if (eo_item == eo_temp_item) sd->selected = l;
+
+        elm_object_signal_emit(VIEW(item), "elm,anim,activate", "elm");
+        efl_event_callback_legacy_call
+          (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, eo_item);
      }
 }
 
@@ -2556,6 +2589,43 @@ _elm_colorselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EIN
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
+}
+
+EOLIAN static void
+_elm_color_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Color_Item_Data *it, Eina_Bool focused)
+{
+   Evas_Object *obj = WIDGET(it);
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   if (focused)
+     {
+        if (eo_it != sd->focused_item)
+          sd->focused_item = eo_it;
+
+        Eina_List *l;
+        Eo *eo_temp_item;
+        EINA_LIST_FOREACH(sd->items, l, eo_temp_item)
+          if (eo_it == eo_temp_item) sd->focus_items = l;
+     }
+   else
+     {
+        if (!elm_widget_focus_get(obj))
+          return;
+        sd->focused_item = NULL;
+     }
+
+   _elm_widget_focus_highlight_start(obj);
+}
+
+EOLIAN static Eina_Bool
+_elm_color_item_elm_widget_item_focus_get(Eo *eo_it, Elm_Color_Item_Data *it)
+{
+   Evas_Object *obj = WIDGET(it);
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   if (eo_it == sd->focused_item)
+     return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 #include "elm_colorselector.eo.c"

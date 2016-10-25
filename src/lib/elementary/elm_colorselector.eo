@@ -114,6 +114,7 @@ selected.]]
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.focus_highlight_geometry_get;
       Elm.Widget.access;
       Elm.Widget.event;
       Elm.Layout.sizing_eval;

@@ -803,6 +803,12 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "down";
            }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Return";
+              value "action" string: "activate";
+              value "params" string: "";
+           }
         }
      }
      group "Elm_Config_Bindings_Widget" struct {

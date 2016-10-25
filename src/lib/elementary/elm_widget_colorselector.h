@@ -49,6 +49,10 @@ struct _Elm_Colorselector_Data
 #endif
    } grab;
 
+   /* focus support data */
+   Elm_Object_Item       *focused_item;
+   Eina_List             *focus_items;
+
    Eina_List             *items, *selected;
    Color_Bar_Data        *cb_data[4];
 
