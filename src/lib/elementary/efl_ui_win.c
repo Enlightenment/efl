@@ -2672,6 +2672,11 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
    ecore_event_handler_del(sd->wl.configure_handler);
+   if (sd->pointer.obj)
+     {
+        evas_object_del(sd->pointer.obj);
+        ecore_evas_free(sd->pointer.ee);
+     }
 #endif
 
    if (sd->img_obj)
