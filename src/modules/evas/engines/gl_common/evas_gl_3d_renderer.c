@@ -119,7 +119,7 @@ _renderer_vertex_attrib_array_enable(E3D_Renderer *renderer, int index)
    if (renderer->vertex_attrib_enable[index])
      return;
 
-   glEnableVertexAttribArray(index);
+   evas_glEnableVertexAttribArray_th(index);
    renderer->vertex_attrib_enable[index] = EINA_TRUE;
 }
 
@@ -129,7 +129,7 @@ _renderer_vertex_attrib_array_disable(E3D_Renderer *renderer, int index)
    if (!renderer->vertex_attrib_enable[index])
      return;
 
-   glDisableVertexAttribArray(index);
+   evas_glDisableVertexAttribArray_th(index);
    renderer->vertex_attrib_enable[index] = EINA_FALSE;
 }
 
@@ -137,8 +137,8 @@ static inline void
 _renderer_vertex_attrib_pointer_set(E3D_Renderer *renderer EINA_UNUSED, int index,
                                     const Evas_Canvas3D_Vertex_Buffer *buffer)
 {
-   glVertexAttribPointer(index, buffer->element_count, GL_FLOAT,
-                         GL_FALSE, buffer->stride, buffer->data);
+   evas_glVertexAttribPointer_th(index, buffer->element_count, GL_FLOAT,
+                                 GL_FALSE, buffer->stride, buffer->data);
 }
 
 static inline void
@@ -148,9 +148,9 @@ _renderer_elements_draw(E3D_Renderer *renderer EINA_UNUSED, Evas_Canvas3D_Vertex
    GLenum mode = _gl_assembly_get(assembly);
 
    if (format == EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_BYTE)
-     glDrawElements(mode, count, GL_UNSIGNED_BYTE, indices);
+     evas_glDrawElements_th(mode, count, GL_UNSIGNED_BYTE, indices);
    else if (format == EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT)
-     glDrawElements(mode, count, GL_UNSIGNED_SHORT, indices);
+     evas_glDrawElements_th(mode, count, GL_UNSIGNED_SHORT, indices);
 }
 
 static inline void
@@ -159,7 +159,7 @@ _renderer_array_draw(E3D_Renderer *renderer EINA_UNUSED,
 {
    GLenum mode = _gl_assembly_get(assembly);
 
-   glDrawArrays(mode, 0, count);
+   evas_glDrawArrays_th(mode, 0, count);
 }
 
 static inline void
@@ -169,7 +169,7 @@ _renderer_program_use(E3D_Renderer *renderer ,E3D_Program *program)
 
    if (renderer->program != prog)
      {
-        glUseProgram(prog);
+        evas_glUseProgram_th(prog);
         renderer->program = prog;
      }
 }
@@ -185,8 +185,8 @@ _renderer_texture_bind(E3D_Renderer *renderer, E3D_Draw_Data *data)
           {
              if (renderer->textures[data->materials[i].sampler0] != data->materials[i].tex0)
                {
-                  glActiveTexture(GL_TEXTURE0 + data->materials[i].sampler0);
-                  glBindTexture(GL_TEXTURE_2D, data->materials[i].tex0->tex);
+                  evas_glActiveTexture_th(GL_TEXTURE0 + data->materials[i].sampler0);
+                  evas_glBindTexture_th(GL_TEXTURE_2D, data->materials[i].tex0->tex);
                   e3d_texture_param_update(data->materials[i].tex0);
 
                   renderer->textures[data->materials[i].sampler0] = data->materials[i].tex0;
@@ -197,8 +197,8 @@ _renderer_texture_bind(E3D_Renderer *renderer, E3D_Draw_Data *data)
           {
              if (renderer->textures[data->materials[i].sampler1] != data->materials[i].tex1)
                {
-                  glActiveTexture(GL_TEXTURE0 + data->materials[i].sampler1);
-                  glBindTexture(GL_TEXTURE_2D, data->materials[i].tex1->tex);
+                  evas_glActiveTexture_th(GL_TEXTURE0 + data->materials[i].sampler1);
+                  evas_glBindTexture_th(GL_TEXTURE_2D, data->materials[i].tex1->tex);
                   e3d_texture_param_update(data->materials[i].tex1);
 
                   renderer->textures[data->materials[i].sampler1] = data->materials[i].tex1;
@@ -207,14 +207,14 @@ _renderer_texture_bind(E3D_Renderer *renderer, E3D_Draw_Data *data)
      }
    if ((data->flags & E3D_SHADER_FLAG_SHADOWED) && (renderer->smap_sampler != data->smap_sampler))
      {
-        glActiveTexture(GL_TEXTURE0 + data->smap_sampler);
-        glBindTexture(GL_TEXTURE_2D, renderer->texDepth);
+        evas_glActiveTexture_th(GL_TEXTURE0 + data->smap_sampler);
+        evas_glBindTexture_th(GL_TEXTURE_2D, renderer->texDepth);
         renderer->smap_sampler = data->smap_sampler;
      }
    if (renderer->render_to_texture)
      {
-        glActiveTexture(GL_TEXTURE0 + data->colortex_sampler);
-        glBindTexture(GL_TEXTURE_2D, renderer->texcolorpick);
+        evas_glActiveTexture_th(GL_TEXTURE0 + data->colortex_sampler);
+        evas_glBindTexture_th(GL_TEXTURE_2D, renderer->texcolorpick);
         renderer->colortex_sampler = data->colortex_sampler;
      }
 }
@@ -226,12 +226,12 @@ _renderer_depth_test_enable(E3D_Renderer *renderer, Eina_Bool enable)
      {
         if (enable)
           {
-             glEnable(GL_DEPTH_TEST);
+             evas_glEnable_th(GL_DEPTH_TEST);
              /* Use default depth func. */
           }
         else
           {
-             glDisable(GL_DEPTH_TEST);
+             evas_glDisable_th(GL_DEPTH_TEST);
           }
 
         renderer->depth_test_enable = enable;
@@ -274,8 +274,8 @@ e3d_renderer_target_set(E3D_Renderer *renderer, E3D_Drawable *target)
    if (renderer->fbo == target->fbo)
      return;
 
-   glBindFramebuffer(GL_FRAMEBUFFER, target->fbo);
-   glViewport(0, 0, target->w, target->h);
+   evas_glBindFramebuffer_th(GL_FRAMEBUFFER, target->fbo);
+   evas_glViewport_th(0, 0, target->w, target->h);
    renderer->fbo = target->fbo;
    renderer->texDepth = target->texDepth;
    renderer->texcolorpick = target->texcolorpick;
@@ -285,19 +285,19 @@ e3d_renderer_target_set(E3D_Renderer *renderer, E3D_Drawable *target)
 void
 e3d_renderer_color_pick_target_set(E3D_Renderer *renderer, E3D_Drawable *drawable)
 {
-   glBindFramebuffer(GL_FRAMEBUFFER, drawable->color_pick_fb_id);
-   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                          GL_TEXTURE_2D, drawable->texcolorpick, 0);
+   evas_glBindFramebuffer_th(GL_FRAMEBUFFER, drawable->color_pick_fb_id);
+   evas_glFramebufferTexture2D_th(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                  GL_TEXTURE_2D, drawable->texcolorpick, 0);
 #ifdef GL_GLES
-   glBindRenderbuffer(GL_RENDERBUFFER, drawable->depth_stencil_buf);
-   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                          GL_TEXTURE_2D, drawable->depth_stencil_buf, 0);
+   evas_glBindRenderbuffer_th(GL_RENDERBUFFER, drawable->depth_stencil_buf);
+   evas_glFramebufferTexture2D_th(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_TEXTURE_2D, drawable->depth_stencil_buf, 0);
 #else
-   glBindRenderbuffer(GL_RENDERBUFFER, drawable->depth_stencil_buf);
-   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-                             GL_RENDERBUFFER, drawable->depth_stencil_buf);
+   evas_glBindRenderbuffer_th(GL_RENDERBUFFER, drawable->depth_stencil_buf);
+   evas_glFramebufferRenderbuffer_th(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                                     GL_RENDERBUFFER, drawable->depth_stencil_buf);
 #endif
-   glViewport(0, 0, drawable->w, drawable->h);
+   evas_glViewport_th(0, 0, drawable->w, drawable->h);
    renderer->texDepth = drawable->texDepth;
    renderer->texcolorpick = drawable->texcolorpick;
    renderer->render_to_texture = EINA_TRUE;
@@ -312,8 +312,8 @@ e3d_renderer_rendering_to_texture_get(E3D_Renderer *renderer)
 void
 e3d_renderer_clear(E3D_Renderer *renderer EINA_UNUSED, const Evas_Color *color)
 {
-   glClearColor(color->r, color->g, color->b, color->a);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   evas_glClearColor_th(color->r, color->g, color->b, color->a);
+   evas_glClear_th(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void
@@ -383,19 +383,19 @@ e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *data)
 
    if (data->blending)
      {
-        glEnable(GL_BLEND);
-        glBlendFunc(_gl_blend_func_get(data->blend_sfactor), _gl_blend_func_get(data->blend_dfactor));
+        evas_glEnable_th(GL_BLEND);
+        evas_glBlendFunc_th(_gl_blend_func_get(data->blend_sfactor), _gl_blend_func_get(data->blend_dfactor));
      }
-   else glDisable(GL_BLEND);
+   else evas_glDisable_th(GL_BLEND);
 
 #ifndef GL_GLES
    if (data->alpha_test_enabled)
      {
-        glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(_gl_comparison_func_get(data->alpha_comparison),
-                    (GLclampf)data->alpha_ref_value);
+        evas_glEnable_th(GL_ALPHA_TEST);
+        evas_glAlphaFunc_th(_gl_comparison_func_get(data->alpha_comparison),
+                            (GLclampf)data->alpha_ref_value);
      }
-   else glDisable(GL_ALPHA_TEST);
+   else evas_glDisable_th(GL_ALPHA_TEST);
 #endif
 
    if (data->indices)
@@ -412,7 +412,7 @@ e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *data)
 void
 e3d_renderer_flush(E3D_Renderer *renderer EINA_UNUSED)
 {
-   glFlush();
+   evas_glFlush_th();
 }
 
 GLint

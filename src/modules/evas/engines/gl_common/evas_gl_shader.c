@@ -75,18 +75,18 @@ gl_compile_link_error(GLuint target, const char *action, Eina_Bool is_shader)
 
    if (is_shader)
      /* Shader info log */
-     glGetShaderiv(target, GL_INFO_LOG_LENGTH, &loglen);
+     evas_glGetShaderiv_th(target, GL_INFO_LOG_LENGTH, &loglen);
    else
      /* Program info log */
-     glGetProgramiv(target, GL_INFO_LOG_LENGTH, &loglen);
+     evas_glGetProgramiv_th(target, GL_INFO_LOG_LENGTH, &loglen);
 
    if (loglen > 0)
      {
         logtxt = calloc(loglen, sizeof(char));
         if (logtxt)
           {
-             if (is_shader) glGetShaderInfoLog(target, loglen, &chars, logtxt);
-             else glGetProgramInfoLog(target, loglen, &chars, logtxt);
+             if (is_shader) evas_glGetShaderInfoLog_th(target, loglen, &chars, logtxt);
+             else evas_glGetProgramInfoLog_th(target, loglen, &chars, logtxt);
              ERR("Failed to %s: %s", action, logtxt);
              free(logtxt);
           }
@@ -115,43 +115,43 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
      }
    if ((!data) || (length <= 0)) goto finish;
 
-   glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &num);
+   evas_glGetIntegerv_th(GL_NUM_PROGRAM_BINARY_FORMATS, &num);
    if (num <= 0) goto finish;
 
    formats = calloc(num, sizeof(int));
    if (!formats) goto finish;
 
-   glGetIntegerv(GL_PROGRAM_BINARY_FORMATS, formats);
+   evas_glGetIntegerv_th(GL_PROGRAM_BINARY_FORMATS, formats);
    if (!formats[0]) goto finish;
 
-   prg = glCreateProgram();
+   prg = evas_glCreateProgram_th();
 #if 1
    // TODO: invalid rendering error occurs when attempting to use a
    // glProgramBinary. in order to render correctly we should create a dummy
    // vertex shader.
-   vtx = glCreateShader(GL_VERTEX_SHADER);
-   glAttachShader(prg, vtx);
-   frg = glCreateShader(GL_FRAGMENT_SHADER);
-   glAttachShader(prg, frg);
+   vtx = evas_glCreateShader_th(GL_VERTEX_SHADER);
+   evas_glAttachShader_th(prg, vtx);
+   frg = evas_glCreateShader_th(GL_FRAGMENT_SHADER);
+   evas_glAttachShader_th(prg, frg);
 #endif
    glsym_glProgramBinary(prg, formats[0], data, length);
 
-   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
-   glBindAttribLocation(prg, SHAD_COLOR,   "color");
-   glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
-   glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
-   glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
-   glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
-   glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
-   glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
-   glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
+   evas_glBindAttribLocation_th(prg, SHAD_VERTEX,  "vertex");
+   evas_glBindAttribLocation_th(prg, SHAD_COLOR,   "color");
+   evas_glBindAttribLocation_th(prg, SHAD_TEXUV,   "tex_coord");
+   evas_glBindAttribLocation_th(prg, SHAD_TEXUV2,  "tex_coord2");
+   evas_glBindAttribLocation_th(prg, SHAD_TEXUV3,  "tex_coord3");
+   evas_glBindAttribLocation_th(prg, SHAD_TEXA,    "tex_coorda");
+   evas_glBindAttribLocation_th(prg, SHAD_TEXSAM,  "tex_sample");
+   evas_glBindAttribLocation_th(prg, SHAD_MASK,    "mask_coord");
+   evas_glBindAttribLocation_th(prg, SHAD_MASKSAM, "tex_masksample");
 
-   glGetProgramiv(prg, GL_LINK_STATUS, &ok);
+   evas_glGetProgramiv_th(prg, GL_LINK_STATUS, &ok);
    if (!ok)
      {
         gl_compile_link_error(prg, "load a program object", EINA_FALSE);
         ERR("Abort load of program (%s)", pname);
-        glDeleteProgram(prg);
+        evas_glDeleteProgram_th(prg);
         goto finish;
      }
 
@@ -160,13 +160,13 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
    p->prog = prg;
    p->reset = EINA_TRUE;
    p->bin_saved = EINA_TRUE;
-   p->uniform.mvp = glGetUniformLocation(prg, "mvp");
-   p->uniform.rotation_id = glGetUniformLocation(prg, "rotation_id");
+   p->uniform.mvp = evas_glGetUniformLocation_th(prg, "mvp");
+   p->uniform.rotation_id = evas_glGetUniformLocation_th(prg, "rotation_id");
    evas_gl_common_shader_textures_bind(p);
 
 finish:
-   if (vtx) glDeleteShader(vtx);
-   if (frg) glDeleteShader(frg);
+   if (vtx) evas_glDeleteShader_th(vtx);
+   if (frg) evas_glDeleteShader_th(frg);
    free(formats);
    if (!direct) free(data);
    return p;
@@ -182,7 +182,7 @@ _evas_gl_common_shader_program_binary_save(Evas_GL_Program *p, Eet_File *ef)
 
    if (!glsym_glGetProgramBinary) return 0;
 
-   glGetProgramiv(p->prog, GL_PROGRAM_BINARY_LENGTH, &length);
+   evas_glGetProgramiv_th(p->prog, GL_PROGRAM_BINARY_LENGTH, &length);
    if (length <= 0) return 0;
 
    data = malloc(length);
@@ -384,7 +384,7 @@ save:
 static inline void
 _program_del(Evas_GL_Program *p)
 {
-   if (p->prog) glDeleteProgram(p->prog);
+   if (p->prog) evas_glDeleteProgram_th(p->prog);
    free(p);
 }
 
@@ -422,61 +422,61 @@ evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
    GLint ok = 0;
 
    compiler_released = EINA_FALSE;
-   vtx = glCreateShader(GL_VERTEX_SHADER);
-   frg = glCreateShader(GL_FRAGMENT_SHADER);
+   vtx = evas_glCreateShader_th(GL_VERTEX_SHADER);
+   frg = evas_glCreateShader_th(GL_FRAGMENT_SHADER);
 
-   glShaderSource(vtx, 1, &vertex, NULL);
-   glCompileShader(vtx);
-   glGetShaderiv(vtx, GL_COMPILE_STATUS, &ok);
+   evas_glShaderSource_th(vtx, 1, &vertex, NULL);
+   evas_glCompileShader_th(vtx);
+   evas_glGetShaderiv_th(vtx, GL_COMPILE_STATUS, &ok);
    if (!ok)
      {
         gl_compile_link_error(vtx, "compile vertex shader", EINA_TRUE);
         ERR("Abort compile of vertex shader:\n%s", vertex);
-        glDeleteShader(vtx);
+        evas_glDeleteShader_th(vtx);
         return NULL;
      }
    ok = 0;
 
-   glShaderSource(frg, 1, &fragment, NULL);
-   glCompileShader(frg);
-   glGetShaderiv(frg, GL_COMPILE_STATUS, &ok);
+   evas_glShaderSource_th(frg, 1, &fragment, NULL);
+   evas_glCompileShader_th(frg);
+   evas_glGetShaderiv_th(frg, GL_COMPILE_STATUS, &ok);
    if (!ok)
      {
         gl_compile_link_error(frg, "compile fragment shader", EINA_TRUE);
         ERR("Abort compile of fragment shader:\n%s", fragment);
-        glDeleteShader(vtx);
-        glDeleteShader(frg);
+        evas_glDeleteShader_th(vtx);
+        evas_glDeleteShader_th(frg);
         return NULL;
      }
    ok = 0;
 
-   prg = glCreateProgram();
+   prg = evas_glCreateProgram_th();
 #ifndef GL_GLES
    if ((glsym_glGetProgramBinary) && (glsym_glProgramParameteri))
      glsym_glProgramParameteri(prg, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 #endif
-   glAttachShader(prg, vtx);
-   glAttachShader(prg, frg);
+   evas_glAttachShader_th(prg, vtx);
+   evas_glAttachShader_th(prg, frg);
 
-   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
-   glBindAttribLocation(prg, SHAD_COLOR,   "color");
-   glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
-   glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
-   glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
-   glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
-   glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
-   glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
-   glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
+   evas_glBindAttribLocation_th(prg, SHAD_VERTEX,  "vertex");
+   evas_glBindAttribLocation_th(prg, SHAD_COLOR,   "color");
+   evas_glBindAttribLocation_th(prg, SHAD_TEXUV,   "tex_coord");
+   evas_glBindAttribLocation_th(prg, SHAD_TEXUV2,  "tex_coord2");
+   evas_glBindAttribLocation_th(prg, SHAD_TEXUV3,  "tex_coord3");
+   evas_glBindAttribLocation_th(prg, SHAD_TEXA,    "tex_coorda");
+   evas_glBindAttribLocation_th(prg, SHAD_TEXSAM,  "tex_sample");
+   evas_glBindAttribLocation_th(prg, SHAD_MASK,    "mask_coord");
+   evas_glBindAttribLocation_th(prg, SHAD_MASKSAM, "tex_masksample");
 
-   glLinkProgram(prg);
-   glGetProgramiv(prg, GL_LINK_STATUS, &ok);
+   evas_glLinkProgram_th(prg);
+   evas_glGetProgramiv_th(prg, GL_LINK_STATUS, &ok);
    if (!ok)
      {
         gl_compile_link_error(prg, "link fragment and vertex shaders", EINA_FALSE);
         ERR("Abort compile of shader (flags: %08x)", flags);
-        glDeleteShader(vtx);
-        glDeleteShader(frg);
-        glDeleteProgram(prg);
+        evas_glDeleteShader_th(vtx);
+        evas_glDeleteShader_th(frg);
+        evas_glDeleteProgram_th(prg);
         return 0;
      }
 
@@ -485,8 +485,8 @@ evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
    p->prog = prg;
    p->reset = EINA_TRUE;
 
-   glDeleteShader(vtx);
-   glDeleteShader(frg);
+   evas_glDeleteShader_th(vtx);
+   evas_glDeleteShader_th(frg);
 
    return p;
 }
@@ -568,8 +568,8 @@ evas_gl_common_shader_generate_and_compile(Evas_GL_Shared *shared, unsigned int 
    if (p)
      {
         shared->needs_shaders_flush = 1;
-        p->uniform.mvp = glGetUniformLocation(p->prog, "mvp");
-        p->uniform.rotation_id = glGetUniformLocation(p->prog, "rotation_id");
+        p->uniform.mvp = evas_glGetUniformLocation_th(p->prog, "mvp");
+        p->uniform.rotation_id = evas_glGetUniformLocation_th(p->prog, "rotation_id");
         evas_gl_common_shader_textures_bind(p);
         eina_hash_add(shared->shaders_hash, &flags, p);
      }
@@ -654,7 +654,7 @@ evas_gl_common_shaders_flush(Evas_GL_Shared *shared)
      {
         compiler_released = EINA_TRUE;
 #ifdef GL_GLES
-        glReleaseShaderCompiler();
+        evas_glReleaseShaderCompiler_th();
 #else
         if (glsym_glReleaseShaderCompiler)
           glsym_glReleaseShaderCompiler();
@@ -875,17 +875,17 @@ evas_gl_common_shader_textures_bind(Evas_GL_Program *p)
 
    if (hastex)
      {
-        glUseProgram(p->prog); // is this necessary??
+        evas_glUseProgram_th(p->prog); // is this necessary??
         for (i = 0; textures[i].name; i++)
           {
              if (!textures[i].enabled) continue;
-             loc = glGetUniformLocation(p->prog, textures[i].name);
+             loc = evas_glGetUniformLocation_th(p->prog, textures[i].name);
              if (loc < 0)
                {
                   ERR("Couldn't find uniform '%s' (shader: %08x)",
                       textures[i].name, p->flags);
                }
-             glUniform1i(loc, p->tex_count++);
+             evas_glUniform1i_th(loc, p->tex_count++);
           }
      }
 }

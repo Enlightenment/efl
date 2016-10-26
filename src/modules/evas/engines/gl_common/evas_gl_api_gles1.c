@@ -538,7 +538,7 @@ _evgl_gles1_glClear(GLbitfield mask)
         if (!(rsc->current_ctx->current_fbo))
           //|| rsc->current_ctx->map_tex)
           {
-             /* Skip glClear() if clearing with transparent color
+             /* Skip glClear if clearing with transparent color
               * Note: There will be side effects if the object itself is not
               * marked as having an alpha channel!
               */
@@ -1138,7 +1138,7 @@ _evgl_gles1_glGetString(GLenum name)
       case GL_SHADING_LANGUAGE_VERSION:
         break;
       case GL_VERSION:
-        ret = glGetString(GL_VERSION);
+        ret = evas_glGetString_th(GL_VERSION);
         if (!ret) return NULL;
 #ifdef GL_GLES
         if (ret[13] != (GLubyte) '1')
