@@ -449,6 +449,24 @@ _entry_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EIN
    _menu_create(str);
 }
 
+static void
+_entry_activated_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   const char *str = elm_entry_entry_get(obj);
+   struct elm_test *t, *found = NULL;
+   Eina_List *l;
+
+   if (!str) return;
+   EINA_LIST_FOREACH(tests, l, t)
+     {
+        if (!strcasestr(t->name, str)) continue;
+        if (found) return;
+        found = t;
+     }
+   if (!found) return;
+   evas_object_smart_callback_call(found->btn, "clicked", NULL);
+}
+
 static char *
 _space_removed_string_get(const char *name)
 {
@@ -584,6 +602,7 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(en, "changed,user", _entry_changed_cb, NULL);
+   evas_object_smart_callback_add(en, "activated", _entry_activated_cb, NULL);
    elm_box_pack_end(bx1, en);
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
