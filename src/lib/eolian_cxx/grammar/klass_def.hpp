@@ -660,6 +660,25 @@ struct klass_def
 
 };
 
+struct enum_def
+{
+  std::string eolian_name;
+  std::string cxx_name;
+  std::vector<std::string> namespaces;
+
+  enum_def(Eolian_Typedecl const* enum_obj)
+  {
+     for(efl::eina::iterator<const char> namespace_iterator( ::eolian_typedecl_namespaces_get(enum_obj))
+           , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
+       {
+          this->namespaces.push_back((&*namespace_iterator));
+       }
+     cxx_name = eolian_name = eolian_typedecl_name_get(enum_obj);
+
+     // FIXME Iterate through enum fields
+  }
+};
+
 inline klass_name get_klass_name(klass_def const& klass)
 {
   return {klass.namespaces, klass.eolian_name, {qualifier_info::is_none, {}}, klass.type};

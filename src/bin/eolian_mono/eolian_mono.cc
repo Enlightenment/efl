@@ -53,6 +53,13 @@ opts_check(eolian_mono::options_type const& opts)
 }
 
 static bool
+generate(const Eolian_Typedecl* enum_obj, eolian_mono::options_type const& opts)
+{
+    EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "would be generating enum";
+    return EINA_TRUE;
+}
+
+static bool
 generate(const Eolian_Class* klass, eolian_mono::options_type const& opts)
 {
    std::string class_file_name = opts.out_file.empty()
@@ -103,8 +110,13 @@ run(options_type const& opts)
      }
    else
      {
-       Eina_Iterator *enums = eolian_typedecl_enums_get_by_file(opts.in_file.c_str());
-              
+       for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator(::eolian_typedecl_enums_get_by_file(opts.in_file.c_str()))
+               , enum_last; enum_iterator != enum_last; ++enum_iterator)
+         {
+            if (!generate(&*enum_iterator, opts))
+              goto err;
+         }
+
        // for(
        
        // EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
