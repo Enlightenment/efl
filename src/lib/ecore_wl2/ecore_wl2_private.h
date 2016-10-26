@@ -219,17 +219,6 @@ struct _Ecore_Wl2_Pointer
 
    struct
      {
-        const char *name, *theme_name;
-        unsigned int index, size;
-        struct wl_cursor *wl_cursor;
-        struct wl_cursor_theme *theme;
-        struct wl_surface *surface;
-        struct wl_callback *frame_cb;
-        Ecore_Timer *timer;
-     } cursor;
-
-   struct
-     {
         unsigned int button, count, timestamp;
         Ecore_Wl2_Window *window;
      } grab;
