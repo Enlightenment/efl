@@ -16,10 +16,10 @@ enum Elm.Gengrid.Item.Field_Type
    [[Defines the type of the item part Used while updating item's parts.
      It can be used at updating multi fields.]]
    legacy: elm_gengrid_item_field;
-   all = 0,
-   text = (1 << 0),
-   content = (1 << 1),
-   state = (1 << 2)
+   all = 0, [[Type all]]
+   text = (1 << 0), [[Type text]]
+   content = (1 << 1), [[Type content]]
+   state = (1 << 2) [[Type state]]
 }
 
 
