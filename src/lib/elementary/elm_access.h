@@ -9,8 +9,6 @@
  *
  */
 
-#include "elm_access.eo.h"
-
 enum _Elm_Access_Info_Type
 {
    ELM_ACCESS_INFO_FIRST = -1,
