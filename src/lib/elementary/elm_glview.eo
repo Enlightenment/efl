@@ -22,7 +22,7 @@ enum Elm.GLView.Mode
      See elm_opengl_page
    ]]
    legacy: elm_glview;
-   none    = 0,
+   none    = 0, [[Default mode]]
    // 0x1 is reserved for future use
    alpha   = (1<<1), [[Alpha channel enabled rendering mode]]
    depth   = (1<<2), [[Depth buffer enabled rendering mode (24 bits by default)]]

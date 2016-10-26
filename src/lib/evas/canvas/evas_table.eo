@@ -4,9 +4,9 @@ enum Evas.Object_Table.Homogeneous_Mode {
 
        See @Evas.Table.homogeneous for an explanation of the function of each one.]]
      legacy: Evas_Object_Table_Homogeneous;
-     none = 0,
-     table = 1,
-     item = 2
+     none = 0, [[No mode specified]]
+     table = 1, [[Table mode]]
+     item = 2 [[Item mode]]
 }
 
 class Evas.Table (Efl.Canvas.Group.Clipped)

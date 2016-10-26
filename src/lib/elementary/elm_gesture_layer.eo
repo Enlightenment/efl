@@ -6,7 +6,7 @@ enum Elm.Gesture.Type
      Enum of supported gesture types.
    ]]
    legacy: elm_gesture;
-   first = 0,
+   first = 0, [[First type used for iteration over the enum]]
    n_taps, [[N fingers single taps]]
    n_long_taps, [[N fingers single long-taps]]
    n_double_taps, [[N fingers double-single taps]]

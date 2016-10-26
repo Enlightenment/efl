@@ -26,7 +26,7 @@ enum Ecore.Con.Type
    no_proxy = (1 << 8), [[Disable all types of proxy on the server
                          Note: Only functional for clients
                          @since 1.2]]
-   socket_activate = (1 << 9)
+   socket_activate = (1 << 9) [[Indicate if the type is socket activated]]
 }
 
 abstract Efl.Network (Efl.Object) {

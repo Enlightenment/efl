@@ -227,7 +227,7 @@ enum Elm.Prefs.Item_Type
    [[Elm Prefs item types.
      @since 1.8]]
    legacy: elm_prefs_type;
-   unknown = 0,
+   unknown = 0, [[Unknown type]]
    action, [[action type, bound to button-like UI elements]]
    bool, [[boolean type, bound to checkbox-like UI elements]]
    int, [[integer type, bound to spinner-like UI elements]]
