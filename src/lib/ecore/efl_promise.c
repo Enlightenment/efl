@@ -25,6 +25,8 @@ struct _Efl_Promise_Data
    Efl_Promise_Msg *message;
    Eina_List *futures;
 
+   unsigned char propagating;
+
    struct {
       Eina_Bool future : 1;
       Eina_Bool future_triggered : 1;
@@ -33,7 +35,6 @@ struct _Efl_Promise_Data
    } set;
 
    Eina_Bool optional : 1;
-   Eina_Bool propagating : 1;
 };
 
 static void
@@ -76,6 +77,7 @@ struct _Efl_Loop_Future_Data
 #ifndef NDEBUG
    int wref;
 #endif
+   unsigned char propagating;
 
    Eina_Bool fulfilled : 1;
    Eina_Bool death : 1;
@@ -94,6 +96,7 @@ _efl_loop_future_success(Efl_Event *ev, Efl_Loop_Future_Data *pd, void *value)
 
    chain_success.value = value;
 
+   pd->propagating++;
    EINA_INLIST_FREE(pd->callbacks, cb)
      {
         // Remove callback early to avoid double execution while
@@ -116,6 +119,7 @@ _efl_loop_future_success(Efl_Event *ev, Efl_Loop_Future_Data *pd, void *value)
 
         free(cb);
      }
+   pd->propagating--;
 }
 
 static void
@@ -129,6 +133,7 @@ _efl_loop_future_failure(Efl_Event *ev, Efl_Loop_Future_Data *pd, Eina_Error err
 
    chain_fail.error = error;
 
+   pd->propagating++;
    EINA_INLIST_FREE(pd->callbacks, cb)
      {
         // Remove callback early to avoid double execution while
@@ -141,6 +146,7 @@ _efl_loop_future_failure(Efl_Event *ev, Efl_Loop_Future_Data *pd, Eina_Error err
 
         free(cb);
      }
+   pd->propagating--;
 }
 
 static void
@@ -323,7 +329,8 @@ _efl_loop_future_cancel(Eo *obj, Efl_Loop_Future_Data *pd)
    // We do allow for calling cancel during the propagation phase
    // as the other proper fix is to wype out all future reference before
    // starting propagating things.
-   if (pd->promise && pd->promise->propagating)
+   if (pd->propagating ||
+       (pd->promise && pd->promise->propagating))
      {
         efl_ref(obj);
 
@@ -353,9 +360,9 @@ _efl_loop_future_cancel(Eo *obj, Efl_Loop_Future_Data *pd)
 
    _efl_loop_future_propagate(obj, pd);
 
- disconnect:
    _efl_loop_future_disconnect(obj, pd);
 
+ disconnect:
    efl_unref(obj);
 }
 
@@ -564,7 +571,7 @@ _efl_promise_value_set(Eo *obj, Efl_Promise_Data *pd, void *v, Eina_Free_Cb free
    pd->message = message;
 
    // Send it to all futures
-   pd->propagating = EINA_TRUE;
+   pd->propagating++;
    EINA_LIST_FOREACH_SAFE(pd->futures, l, ln, f)
      {
         EINA_REFCOUNT_REF(message);
@@ -573,7 +580,7 @@ _efl_promise_value_set(Eo *obj, Efl_Promise_Data *pd, void *v, Eina_Free_Cb free
         // Trigger the callback
         _efl_loop_future_propagate(f->self, f);
      }
-   pd->propagating = EINA_FALSE;
+   pd->propagating--;
 
    // Now, we may die.
    efl_unref(obj);
@@ -607,7 +614,7 @@ _efl_promise_failed_set(Eo *obj, Efl_Promise_Data *pd, Eina_Error err)
    pd->message = message;
 
    // Send it to each future
-   pd->propagating = EINA_TRUE;
+   pd->propagating++;
    EINA_LIST_FOREACH_SAFE(pd->futures, l, ln, f)
      {
         EINA_REFCOUNT_REF(message);
@@ -616,7 +623,7 @@ _efl_promise_failed_set(Eo *obj, Efl_Promise_Data *pd, Eina_Error err)
         // Trigger the callback
         _efl_loop_future_propagate(f->self, f);
      }
-   pd->propagating = EINA_FALSE;
+   pd->propagating--;
 
    // Now, we may die.
    efl_unref(obj);
