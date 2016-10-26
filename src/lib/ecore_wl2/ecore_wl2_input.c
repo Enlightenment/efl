@@ -666,7 +666,8 @@ _pointer_cb_frame(void *data, struct wl_callback *callback, unsigned int timesta
 
    if (callback)
      {
-        if (callback != input->cursor.frame_cb) return;
+        if ((input->cursor.frame_cb) &&
+            (callback != input->cursor.frame_cb)) return;
         wl_callback_destroy(callback);
         input->cursor.frame_cb = NULL;
      }
