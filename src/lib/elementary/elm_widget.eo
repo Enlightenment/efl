@@ -9,12 +9,12 @@ type region_hook_func_type: __undefined_type;
 enum Elm.Activate
 {
    [[ Used in 'Virtual' function @Elm.Widget.activate. ]]
-   default = 0,
-   up,
-   down,
-   right,
-   left,
-   back,
+   default = 0, [[Activate default]]
+   up, [[Activate up]]
+   down, [[Activate down]]
+   right, [[Activate right]]
+   left, [[Activate left]]
+   back, [[Activate back]]
 }
 
 enum Elm.Theme.Apply
@@ -25,9 +25,9 @@ enum Elm.Theme.Apply
    success = 3 [[Success to apply theme]]
 }
 
-struct Elm.Tooltip;
-struct Elm.Cursor;
-struct @extern Elm.Theme;
+struct Elm.Tooltip; [[Elementary tooltip]]
+struct Elm.Cursor; [[Elementary cursor]]
+struct @extern Elm.Theme; [[Elementary theme]]
 
 abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi_Component)
 {
@@ -38,7 +38,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
    methods {
       @property focus {
          values {
-            focus: bool;
+            focus: bool; [[$true if the widget has focus, $false otherwise]]
          }
       }
       @property drag_lock_y {
@@ -72,7 +72,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       @property mirrored {
          [[Control the widget's mirrored mode.]]
          values {
-            mirrored: bool;
+            mirrored: bool; [[$true if the widget is in mirrored mode, $false otherwise]]
          }
       }
       @property theme {
@@ -82,7 +82,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       @property disabled {
          values {
-            disabled: bool;
+            disabled: bool; [[$true if the widget is disabled, $false otherwise]]
          }
       }
       @property highlight_ignore {
@@ -93,7 +93,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       @property mirrored_automatic {
          [[Control the widget's mirrored mode setting.]]
          values {
-            automatic: bool;
+            automatic: bool; [[$true if the widget uses automatic mirrored mode, $false otherwise]]
          }
       }
       @property orientation_mode_disabled {
@@ -301,10 +301,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             return: bool;
          }
          values {
-            x: Evas.Coord;
-            y: Evas.Coord;
-            w: Evas.Coord;
-            h: Evas.Coord;
+            x: Evas.Coord; [[X coordinate]]
+            y: Evas.Coord; [[Y coordinate]]
+            w: Evas.Coord; [[Width]]
+            h: Evas.Coord; [[Height]]
          }
       }
       @property top {
@@ -445,10 +445,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       focus_highlight_geometry_get @const {
          [[Get the focus highlight geometry of widget.]]
          params {
-            @out x: Evas.Coord;
-            @out y: Evas.Coord;
-            @out w: Evas.Coord;
-            @out h: Evas.Coord;
+            @out x: Evas.Coord; [[X coordinate]]
+            @out y: Evas.Coord; [[Y coordinate]]
+            @out w: Evas.Coord; [[Width]]
+            @out h: Evas.Coord; [[Height]]
          }
       }
       activate {
@@ -506,19 +506,19 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       on_focus {
-         [['Virtual' function handling focus in/out events on the widget.  return true if this widget can handle focus, false otherwise]]
+         [['Virtual' function handling focus in/out events on the widget]]
          params {
             @in item: Elm.Widget.Item @nullable;
          }
-         return: bool;
+         return: bool; [[$true if this widget can handle focus, $false otherwise]]
       }
       on_focus_region {
          [['Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise.]]
          params {
-            @out x: Evas.Coord;
-            @out y: Evas.Coord;
-            @out w: Evas.Coord;
-            @out h: Evas.Coord;
+            @out x: Evas.Coord; [[X coordinate]]
+            @out y: Evas.Coord; [[Y coordinate]]
+            @out w: Evas.Coord; [[Width]]
+            @out h: Evas.Coord; [[Height]]
          }
          return: bool;
       }
@@ -589,19 +589,19 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       show_region_set {
          params {
-            @in x: Evas.Coord;
-            @in y: Evas.Coord;
-            @in w: Evas.Coord;
-            @in h: Evas.Coord;
+            @in x: Evas.Coord; [[X coordinate]]
+            @in y: Evas.Coord; [[Y coordinate]]
+            @in w: Evas.Coord; [[Width]]
+            @in h: Evas.Coord; [[Height]]
             @in forceshow: bool;
          }
       }
       show_region_get @const {
          params {
-            @out x: Evas.Coord @optional;
-            @out y: Evas.Coord @optional;
-            @out w: Evas.Coord @optional;
-            @out h: Evas.Coord @optional;
+            @out x: Evas.Coord @optional; [[X coordinate]]
+            @out y: Evas.Coord @optional; [[Y coordinate]]
+            @out w: Evas.Coord @optional; [[Width]]
+            @out h: Evas.Coord @optional; [[Height]]
          }
       }
       scroll_freeze_pop {
@@ -779,10 +779,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       Elm.Interface.Atspi_Component.focus_grab;
    }
    events {
-      moved;
-      focused;
-      unfocused;
-      language,changed;
-      access,changed;
+      moved; [[Called when widget moved]]
+      focused; [[Called when widget was focused]]
+      unfocused; [[Called when widget was unfocused]]
+      language,changed; [[Called when widget language changed]]
+      access,changed; [[Called when accessibility changed]]
    }
 }
