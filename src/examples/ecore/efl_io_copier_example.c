@@ -336,6 +336,9 @@ static const Ecore_Getopt options = {
                                    "http://address to do a GET request\n"
                                    "ws://address or wss:// to do WebSocket request (must send some data once connected)\n"
                                    "udp://IP:PORT to bind using UDP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
+#ifndef _WIN32
+                                   "unix://path to connect to an AF_UNIX server. For Linux one can create abstract sockets with unix://abstract:name.\n"
+#endif
                                    "",
                                    "input-file"),
     ECORE_GETOPT_STORE_METAVAR_STR(0, NULL,
@@ -348,6 +351,9 @@ static const Ecore_Getopt options = {
                                    "http://address to do a PUT request\n"
                                    "ws://address or wss:// to do WebSocket request\n"
                                    "udp://IP:PORT to connect using UDP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
+#ifndef _WIN32
+                                   "unix://path to connect to an AF_UNIX server. For Linux one can create abstract sockets with unix://abstract:name.\n"
+#endif
                                    "",
                                    "output-file"),
     ECORE_GETOPT_SENTINEL
@@ -537,6 +543,35 @@ main(int argc, char **argv)
              goto end_input;
           }
      }
+#ifndef _WIN32
+   else if (strncmp(input_fname, "unix://", strlen("unix://")) == 0)
+     {
+        /*
+         * Since Efl.Net.Socket implements the required interfaces,
+         * they can be used here as well.
+         */
+        const char *address = input_fname + strlen("unix://");
+        Eina_Error err;
+        input = efl_add(EFL_NET_DIALER_UNIX_CLASS, ecore_main_loop_get(),
+                        efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
+                        );
+        if (!input)
+          {
+             fprintf(stderr, "ERROR: could not create AF_UNIX Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end;
+          }
+
+        err = efl_net_dialer_dial(input, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not AF_UNIX dial %s: %s\n",
+                     address, eina_error_msg_get(err));
+             goto end_input;
+          }
+     }
+#endif
    else
      {
         /* regular file, open with flags: read-only and close-on-exec */
@@ -723,6 +758,35 @@ main(int argc, char **argv)
              goto end_output;
           }
      }
+#ifndef _WIN32
+   else if (strncmp(output_fname, "unix://", strlen("unix://")) == 0)
+     {
+        /*
+         * Since Efl.Net.Socket implements the required interfaces,
+         * they can be used here as well.
+         */
+        const char *address = output_fname + strlen("unix://");
+        Eina_Error err;
+        output = efl_add(EFL_NET_DIALER_UNIX_CLASS, ecore_main_loop_get(),
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
+                         );
+        if (!output)
+          {
+             fprintf(stderr, "ERROR: could not create AF_UNIX Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end_input;
+          }
+
+        err = efl_net_dialer_dial(output, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not AF_UNIX dial %s: %s\n",
+                     address, eina_error_msg_get(err));
+             goto end_output;
+          }
+     }
+#endif
    else
      {
         /* regular file, open with flags: write-only, close-on-exec,
