@@ -461,18 +461,19 @@ _evas_shm_surface_reconfigure(Surface *s, int w, int h, uint32_t flags)
 static Shm_Leaf *
 _evas_shm_surface_wait(Shm_Surface *surface)
 {
-   int iterations = 0, i;
+   int i = 0, best = -1, best_age = -1;
 
-   while (iterations++ < 10)
+   for (i = 0; i < surface->num_buff; i++)
      {
-        for (i = 0; i < surface->num_buff; i++)
+        if (surface->leaf[i].busy) continue;
+        if ((surface->leaf[i].valid) && (surface->leaf[i].age > best_age))
           {
-             if (surface->leaf[i].busy) continue;
-             if (surface->leaf[i].valid) return &surface->leaf[i];
+             best = i;
+             best_age = surface->leaf[i].age;
           }
-
-        wl_display_dispatch_pending(surface->disp);
      }
+
+   if (best >= 0) return &surface->leaf[best];
    return NULL;
 }
 
@@ -506,7 +507,7 @@ _evas_shm_surface_assign(Surface *s)
         if (surface->leaf[i].valid && surface->leaf[i].drawn)
           {
              surface->leaf[i].age++;
-             if (surface->leaf[i].age > surface->num_buff)
+             if (surface->leaf[i].age > 4)
                {
                   surface->leaf[i].age = 0;
                   surface->leaf[i].drawn = EINA_FALSE;

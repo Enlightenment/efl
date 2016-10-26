@@ -56,8 +56,8 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info)
    ob->depth = info->info.depth;
    ob->priv.destination_alpha = info->info.destination_alpha;
 
-   /* default to double buffer */
-   ob->num_buff = 2;
+   /* default to triple buffer */
+   ob->num_buff = 3;
 
    /* check for any 'number of buffers' override in the environment */
    if ((num = getenv("EVAS_WAYLAND_SHM_BUFFERS")))
@@ -199,11 +199,13 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
 {
    Eina_Rectangle *result;
    RGBA_Image *img;
-   unsigned int n = 0, i = 0;
+   unsigned int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
+
+   if (ob->priv.rect_count) free(ob->priv.rects);
 
    /* check for pending writes */
    if (!ob->priv.pending_writes)
@@ -212,11 +214,13 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
         Eina_Array_Iterator it;
 
         /* get number of buffer regions */
-        n = eina_array_count_get(&ob->priv.onebuf_regions);
-        if (n == 0) return;
+        ob->priv.rect_count = eina_array_count_get(&ob->priv.onebuf_regions);
+        if (ob->priv.rect_count == 0) return;
 
         /* allocate rectangles */
-        if (!(result = alloca(n * sizeof(Eina_Rectangle)))) return;
+        ob->priv.rects = malloc(ob->priv.rect_count * sizeof(Eina_Rectangle));
+        if (!ob->priv.rects) return;
+        result = ob->priv.rects;
 
         /* loop the buffer regions and assign to result */
         EINA_ARRAY_ITER_NEXT(&ob->priv.onebuf_regions, i, rect, it)
@@ -224,8 +228,6 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
              result[i] = *rect;
              eina_rectangle_free(rect);
           }
-
-        ob->surface->funcs.post(ob->surface, result, n);
 
         /* clean array */
         eina_array_clean(&ob->priv.onebuf_regions);
@@ -245,11 +247,12 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
    else
      {
         /* get number of pending writes */
-        n = eina_list_count(ob->priv.pending_writes);
-        if (n == 0) return;
+        ob->priv.rect_count = eina_list_count(ob->priv.pending_writes);
+        if (ob->priv.rect_count == 0) return;
 
-        /* allocate rectangles */
-        if (!(result = alloca(n * sizeof(Eina_Rectangle)))) return;
+        ob->priv.rects = malloc(ob->priv.rect_count * sizeof(Eina_Rectangle));
+        if (!ob->priv.rects) return;
+        result = ob->priv.rects;
 
         /* loop the pending writes */
         EINA_LIST_FREE(ob->priv.pending_writes, img)
@@ -306,8 +309,6 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
 
              i++;
           }
-
-        ob->surface->funcs.post(ob->surface, result, n);
      }
 }
 
@@ -319,7 +320,10 @@ _evas_outbuf_swap_mode_get(Outbuf *ob)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    age = ob->surface->funcs.assign(ob->surface);
-   if (age == 1) return MODE_COPY;
+   if (!age) return MODE_FULL;
+
+   if (age > ob->num_buff) return MODE_FULL;
+   else if (age == 1) return MODE_COPY;
    else if (age == 2) return MODE_DOUBLE;
    else if (age == 3) return MODE_TRIPLE;
    else if (age == 4) return MODE_QUADRUPLE;
@@ -615,4 +619,13 @@ void
 _evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+}
+
+void
+_evas_outbuf_redraws_clear(Outbuf *ob)
+{
+   if (!ob->priv.rect_count) return;
+   ob->surface->funcs.post(ob->surface, ob->priv.rects, ob->priv.rect_count);
+   free(ob->priv.rects);
+   ob->priv.rect_count = 0;
 }
