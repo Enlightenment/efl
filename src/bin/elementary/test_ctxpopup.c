@@ -210,7 +210,7 @@ _list_item_cb5(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 
    btn = elm_button_add(sc);
    elm_object_text_set(btn, "Enlightenment");
-   evas_object_size_hint_min_set(btn, 140, 140);
+   evas_object_size_hint_min_set(btn, 150, 150);
 
    elm_object_content_set(sc, btn);
 

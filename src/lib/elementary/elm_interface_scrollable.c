@@ -732,6 +732,35 @@ _elm_scroll_scroll_bar_v_visibility_adjust(
    return scroll_v_vis_change;
 }
 
+static inline void
+_elm_scroll_scroll_bar_auto_visibility_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
+{
+   int sw = 0, sh = 0, w, h;
+
+   if ((sid->vbar_flags != ELM_SCROLLER_POLICY_AUTO) ||
+       (sid->hbar_flags != ELM_SCROLLER_POLICY_AUTO) ||
+       !sid->hbar_visible || !sid->vbar_visible) return;
+
+   if (!sid->content && !sid->extern_pan) return;
+
+   w = sid->content_info.w;
+   h = sid->content_info.h;
+   efl_gfx_size_get(sid->edje_obj, &sw, &sh);
+
+   // Adjust when the content may fit but the bars are visible. The if() test
+   // does not guarantee that the content will fit (offsets & margins depend
+   // on the theme).
+   if ((w <= sw) && (h <= sh))
+     {
+        sid->hbar_visible = EINA_FALSE;
+        sid->vbar_visible = EINA_FALSE;
+        _elm_scroll_scroll_bar_h_visibility_apply(sid);
+        _elm_scroll_scroll_bar_v_visibility_apply(sid);
+        _elm_scroll_scroll_bar_h_visibility_adjust(sid);
+        _elm_scroll_scroll_bar_v_visibility_adjust(sid);
+     }
+}
+
 static void
 _elm_scroll_scroll_bar_visibility_adjust(
   Elm_Scrollable_Smart_Interface_Data *sid)
@@ -746,6 +775,8 @@ _elm_scroll_scroll_bar_visibility_adjust(
         _elm_scroll_scroll_bar_h_visibility_adjust(sid);
         _elm_scroll_scroll_bar_v_visibility_adjust(sid);
      }
+
+   _elm_scroll_scroll_bar_auto_visibility_adjust(sid);
 }
 
 static void
