@@ -125,6 +125,9 @@ struct _Outbuf
         /* list of previous frame pending regions to write out */
         Eina_List *prev_pending_writes;
 
+        Eina_Rectangle *rects;
+        unsigned int rect_count;
+
         /* Eina_Bool redraw : 1; */
         Eina_Bool destination_alpha : 1;
      } priv;
@@ -145,6 +148,7 @@ void *_evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int
 void _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void _evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void _evas_surface_damage(struct wl_surface *s, int compositor_version, int w, int h, Eina_Rectangle *rects, unsigned int count);
+void _evas_outbuf_redraws_clear(Outbuf *ob);
 
 Eina_Bool _evas_surface_init(Surface *s, int w, int h, int num_buf);
 

@@ -55,7 +55,7 @@ _render_engine_swapbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *einfo)
                                                  _evas_outbuf_update_region_free,
                                                  _evas_outbuf_idle_flush,
                                                  _evas_outbuf_flush,
-                                                 NULL,
+                                                 _evas_outbuf_redraws_clear,
                                                  _evas_outbuf_free,
                                                  w, h))
      goto err;
