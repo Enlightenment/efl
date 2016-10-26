@@ -506,7 +506,7 @@ _evas_shm_surface_assign(Surface *s)
         if (surface->leaf[i].valid && surface->leaf[i].drawn)
           {
              surface->leaf[i].age++;
-             if (surface->leaf[i].age > surface->num_buff)
+             if (surface->leaf[i].age > 4)
                {
                   surface->leaf[i].age = 0;
                   surface->leaf[i].drawn = EINA_FALSE;
