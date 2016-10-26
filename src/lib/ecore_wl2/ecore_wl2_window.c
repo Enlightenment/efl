@@ -963,8 +963,6 @@ ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *curs
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   eina_stringshare_replace(&window->cursor, cursor);
-
    input = ecore_wl2_window_input_get(window);
    if (!input) return;
 
