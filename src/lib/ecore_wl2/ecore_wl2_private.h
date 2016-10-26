@@ -357,7 +357,6 @@ struct _Ecore_Wl2_Input
         struct wl_surface *surface;
         struct wl_callback *frame_cb;
         int hot_x, hot_y;
-        Ecore_Timer *timer;
      } cursor;
 
    struct

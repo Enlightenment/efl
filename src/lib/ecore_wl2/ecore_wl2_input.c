@@ -1333,9 +1333,11 @@ _ecore_wl2_input_cursor_set(Ecore_Wl2_Input *input, const char *cursor)
 void
 _ecore_wl2_input_cursor_update_stop(Ecore_Wl2_Input *input)
 {
-   if (!input->cursor.timer) return;
-   ecore_timer_del(input->cursor.timer);
-   input->cursor.timer = NULL;
+   if (input->cursor.frame_cb)
+     {
+        wl_callback_destroy(input->cursor.frame_cb);
+        input->cursor.frame_cb = NULL;
+     }
 }
 
 EAPI void
