@@ -30,7 +30,7 @@ enum Evas.Text_Style_Type {
    shadow_direction_top_left = (0x4 << 4),          [[shadow growing to top left]]
    shadow_direction_top = (0x5 << 4),               [[shadow growing to the top]]
    shadow_direction_top_right = (0x6 << 4),         [[shadow growing to top right]]
-   shadow_direction_right = (0x7 << 4)             [[shadow growing to the right]]
+   shadow_direction_right = (0x7 << 4)              [[shadow growing to the right]]
 }
 
 type Evas.Font.Size: int; [[A type for font size]]
@@ -125,7 +125,7 @@ enum Evas.Callback_Type
    canvas_viewport_resize, [[Canvas viewport resized
 
                              @since 1.15]]
-   last [[kept as last element/sentinel -- not really an event]]
+   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Evas.Image.Orient
@@ -167,16 +167,17 @@ enum Evas.Canvas3D.Object_Type
    [[Type of 3D Object
 
      @since 1.10]]
-   invalid = 0,
-   scene,
-   node,
-   camera,
-   light,
-   model,
-   mesh,
-   texture,
-   material,
-   primitive [[@since 1.15]]
+   invalid = 0, [[Evas 3D type: invalid]]
+   scene, [[Evas 3D type: scene]]
+   node, [[Evas 3D type: node]]
+   camera, [[Evas 3D type: camera]]
+   light, [[Evas 3D type: light]]
+   model, [[Evas 3D type: model]]
+   mesh, [[Evas 3D type: mesh]]
+   texture, [[Evas 3D type: texture]]
+   material, [[Evas 3D type: material]]
+   primitive [[Evas 3D type: primitive
+               @since 1.15]]
 }
 
 enum Evas.Canvas3D.State
@@ -184,69 +185,72 @@ enum Evas.Canvas3D.State
    [[State of the Evas 3D
 
      @since 1.10]]
-   max = 16,
+   max = 16, [[Evas 3D state: max]]
 
-   any = 0,
+   any = 0, [[Evas 3D state: any]]
 
-   scene_root_node = 1,
-   scene_camera_node,
-   scene_background_color,
-   scene_size,
-   scene_shadows_enabled,
-   scene_updated, [[@since 1.14]]
-   scene_shadows_depth,
-   scene_render_to_texture,
+   scene_root_node = 1, [[Evas 3D state: scene root node]]
+   scene_camera_node, [[Evas 3D state: scene camera node]]
+   scene_background_color, [[Evas 3D state: scene background color]]
+   scene_size, [[Evas 3D state: scene size]]
+   scene_shadows_enabled, [[Evas 3D state: scene shadows enabled]]
+   scene_updated, [[Evas 3D state: scene updated
+                    @since 1.14]]
+   scene_shadows_depth, [[Evas 3D state: scene shadows depth]]
+   scene_render_to_texture, [[Evas 3D state: scene render to texture]]
 
-   texture_data = 1,
-   texture_wrap,
-   texture_filter,
+   texture_data = 1, [[Evas 3D state: texture data]]
+   texture_wrap, [[Evas 3D state: texture wrap]]
+   texture_filter, [[Evas 3D state: texture filter]]
 
-   material_id = 1,
-   material_color,
-   material_texture,
+   material_id = 1, [[Evas 3D state: material ID]]
+   material_color, [[Evas 3D state: material color]]
+   material_texture, [[Evas 3D state: material texture]]
 
-   mesh_vertex_count = 1,
-   mesh_frame,
-   mesh_material,
-   mesh_transform,
-   mesh_vertex_data,
-   mesh_index_data,
-   mesh_vertex_assembly,
-   mesh_shader_mode,
-   mesh_fog,
-   mesh_blending,
-   mesh_alpha_test,
-   mesh_color_pick,
-   mesh_shadows_edges_filtering,
-   mesh_shadows_constant_bias,
+   mesh_vertex_count = 1, [[Evas 3D state: mesh vertex count]]
+   mesh_frame, [[Evas 3D state: mesh frame]]
+   mesh_material, [[Evas 3D state: mesh material]]
+   mesh_transform, [[Evas 3D state: mesh transform]]
+   mesh_vertex_data, [[Evas 3D state: mesh vertex data]]
+   mesh_index_data, [[Evas 3D state: mesh index data]]
+   mesh_vertex_assembly, [[Evas 3D state: mesh vertex assembly]]
+   mesh_shader_mode, [[Evas 3D state: mesh shader mode]]
+   mesh_fog, [[Evas 3D state: mesh fog]]
+   mesh_blending, [[Evas 3D state: mesh blending]]
+   mesh_alpha_test, [[Evas 3D state: mesh alpha test]]
+   mesh_color_pick, [[Evas 3D state: mesh color pick]]
+   mesh_shadows_edges_filtering, [[Evas 3D state: mesh shadows edges filtering]]
+   mesh_shadows_constant_bias, [[Evas 3D state: mesh shadows constant bias]]
 
-   camera_projection = 1,
+   camera_projection = 1, [[Evas 3D state: camera projection]]
 
-   light_ambient = 1,
-   light_diffuse,
-   light_specular,
-   light_spot_dir,
-   light_spot_exp,
-   light_spot_cutoff,
-   light_attenuation,
-   light_projection,
+   light_ambient = 1, [[Evas 3D state: light ambient]]
+   light_diffuse, [[Evas 3D state: light diffuse]]
+   light_specular, [[Evas 3D state: light specular]]
+   light_spot_dir, [[Evas 3D state: light spot dir]]
+   light_spot_exp, [[Evas 3D state: light spot exp]]
+   light_spot_cutoff, [[Evas 3D state: light spot cutoff]]
+   light_attenuation, [[Evas 3D state: light attenuation]]
+   light_projection, [[Evas 3D state: light projection]]
 
-   node_transform_position = 1,
-   node_transform_orientation,
-   node_transform_scale,
-   node_mesh_geometry,
-   node_mesh_material,
-   node_mesh_frame,
-   node_mesh_shader_mode,
-   node_mesh_material_id,
-   node_light,
-   node_camera,
-   node_parent_position,
-   node_parent_orientation,
-   node_parent_scale,
-   node_member,
-   node_parent_billboard, [[@since 1.14]]
-   node_lod [[@since 1.18]]
+   node_transform_position = 1, [[Evas 3D state: node transform position]]
+   node_transform_orientation, [[Evas 3D state: node transform orientation]]
+   node_transform_scale, [[Evas 3D state: node transform scale]]
+   node_mesh_geometry, [[Evas 3D state: node mesh geometry]]
+   node_mesh_material, [[Evas 3D state: node mesh material]]
+   node_mesh_frame, [[Evas 3D state: node mesh frame]]
+   node_mesh_shader_mode, [[Evas 3D state: node mesh shader mode]]
+   node_mesh_material_id, [[Evas 3D state: node mesh material ID]]
+   node_light, [[Evas 3D state: node light]]
+   node_camera, [[Evas 3D state: node camera]]
+   node_parent_position, [[Evas 3D state: node parent position]]
+   node_parent_orientation, [[Evas 3D state: node parent orientation]]
+   node_parent_scale, [[Evas 3D state: node parent scale]]
+   node_member, [[Evas 3D state: node member]]
+   node_parent_billboard, [[Evas 3D state: node parent billboard
+                            @since 1.14]]
+   node_lod [[Evas 3D state: node lod
+              @since 1.18]]
 }
 
 enum Evas.Canvas3D.Space
@@ -299,7 +303,7 @@ enum Evas.Canvas3D.Frustum_Mode
    @since 1.12]]
    bsphere, [[Bounding sphere]]
    aabb,    [[Axis-aligned bounding box]]
-   central_point
+   central_point [[Central point]]
 }
 
 enum Evas.Canvas3D.Vertex_Assembly
@@ -361,14 +365,14 @@ enum Evas.Canvas3D.Mesh_Primitive
     @since 1.12]]
    none = 0, [[An empty space]]
    square,   [[One sided square]]
-   cube,
+   cube,     [[Cube primitive]]
    cylinder, [[Cylinder (can use precision and texture scale)]]
    cone,     [[Cone (can use precision and texture scale)]]
    sphere,   [[Sphere (can use precision and texture scale)]]
    torus,    [[Torus (can use ratio, precision and texture scale)]]
    surface,  [[Custom surface (can use pointer to users function, precision and texture scale)]]
    terrain,  [[Terrain as surface with pointer to perlin's noise function]]
-   count
+   count     [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Evas.Canvas3D.Primitive_Mode
