@@ -12,6 +12,9 @@ static int needed_reads = 0;
 static void
 _connected(void *data EINA_UNUSED, const Efl_Event *event)
 {
+   const char *str;
+   Eina_Iterator *it;
+
    fprintf(stderr,
            "INFO: connected to '%s' (%s)\n"
            "INFO:  - local address=%s\n"
@@ -33,6 +36,11 @@ _connected(void *data EINA_UNUSED, const Efl_Event *event)
            efl_net_socket_udp_reuse_port_get(event->object),
            efl_net_socket_udp_multicast_time_to_live_get(event->object),
            efl_net_socket_udp_multicast_loopback_get(event->object));
+
+   it = efl_net_socket_udp_multicast_groups_get(event->object);
+   EINA_ITERATOR_FOREACH(it, str)
+     fprintf(stderr, "   * %s\n", str);
+   eina_iterator_free(it);
 }
 
 static void
