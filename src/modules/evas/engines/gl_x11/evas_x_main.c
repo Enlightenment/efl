@@ -253,9 +253,9 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         eng_window_free(gw);
         return NULL;
      }
-   if (!eglBindAPI(EGL_OPENGL_ES_API))
+   if (!evas_eglBindAPI_th(EGL_OPENGL_ES_API))
      {
-        ERR("eglBindAPI() fail. code=%#x", eglGetError());
+        ERR("eglBindAPI() fail. code=%#x", evas_eglGetError_th());
         eng_window_free(gw);
         return NULL;
      }
@@ -305,15 +305,15 @@ try_gles2:
                       gw->egl_surface,
                       gw->egl_context) == EGL_FALSE)
      {
-        ERR("evas_eglMakeCurrent() fail. code=%#x", eglGetError());
+        ERR("evas_eglMakeCurrent() fail. code=%#x", evas_eglGetError_th());
         eng_window_free(gw);
         return NULL;
      }
 
-   vendor = glGetString(GL_VENDOR);
-   renderer = glGetString(GL_RENDERER);
-   version = glGetString(GL_VERSION);
-   glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+   vendor = evas_glGetString_th(GL_VENDOR);
+   renderer = evas_glGetString_th(GL_RENDERER);
+   version = evas_glGetString_th(GL_VERSION);
+   glslversion = evas_glGetString_th(GL_SHADING_LANGUAGE_VERSION);
    if (!vendor)   vendor   = (unsigned char *)"-UNKNOWN-";
    if (!renderer) renderer = (unsigned char *)"-UNKNOWN-";
    if (!version)  version  = (unsigned char *)"-UNKNOWN-";
@@ -452,10 +452,10 @@ try_gles2:
      }
    // FIXME: move this up to context creation
 
-   vendor = glGetString(GL_VENDOR);
-   renderer = glGetString(GL_RENDERER);
-   version = glGetString(GL_VERSION);
-   glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+   vendor = evas_glGetString_th(GL_VENDOR);
+   renderer = evas_glGetString_th(GL_RENDERER);
+   version = evas_glGetString_th(GL_VERSION);
+   glslversion = evas_glGetString_th(GL_SHADING_LANGUAGE_VERSION);
    if (!vendor)   vendor   = (unsigned char *)"-UNKNOWN-";
    if (!renderer) renderer = (unsigned char *)"-UNKNOWN-";
    if (!version)  version  = (unsigned char *)"-UNKNOWN-";
@@ -1452,8 +1452,8 @@ eng_outbuf_region_first_rect(Outbuf *ob)
    glsym_evas_gl_common_context_newframe(ob->gl_context);
    if (partial_render_debug == 1)
      {
-        glClearColor(0.2, 0.5, 1.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
+        evas_glClearColor_th(0.2, 0.5, 1.0, 1.0);
+        evas_glClear_th(GL_COLOR_BUFFER_BIT);
      }
 
    return EINA_FALSE;
@@ -1594,8 +1594,8 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
 #ifdef GL_GLES
    if (!ob->vsync)
      {
-        if (ob->info->vsync) eglSwapInterval(ob->egl_disp, 1);
-        else eglSwapInterval(ob->egl_disp, 0);
+        if (ob->info->vsync) evas_eglSwapInterval_th(ob->egl_disp, 1);
+        else evas_eglSwapInterval_th(ob->egl_disp, 0);
         ob->vsync = 1;
      }
    if ((glsym_eglSwapBuffersWithDamage) && (rects) &&
@@ -1620,7 +1620,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
           }
      }
    else
-     eglSwapBuffers(ob->egl_disp, ob->egl_surface);
+     evas_eglSwapBuffers_th(ob->egl_disp, ob->egl_surface);
 
 //xx   if (!safe_native) eglWaitGL();
 //   if (eglGetError() != EGL_SUCCESS)

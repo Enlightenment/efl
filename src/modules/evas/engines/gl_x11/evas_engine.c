@@ -239,10 +239,14 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
 
    if ((!context) && (!surface))
      {
+       if (!evas_eglGetCurrentContext_th() &&
+           !evas_eglGetCurrentSurface_th(EGL_READ) &&
+           !evas_eglGetCurrentSurface_th(EGL_DRAW))
+          return 1;
         ret = evas_eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (!ret)
           {
-             int err = eglGetError();
+             int err = evas_eglGetError_th();
              glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
              ERR("evas_eglMakeCurrent() failed! Error Code=%#x", err);
              return 0;
@@ -265,7 +269,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
 
         if (!ret)
           {
-             int err = eglGetError();
+             int err = evas_eglGetError_th();
              glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
              ERR("evas_eglMakeCurrent() failed! Error Code=%#x", err);
              return 0;
@@ -1373,7 +1377,7 @@ eng_gl_symbols(Outbuf *ob)
    FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL", "EGL_WL_bind_wayland_display", glsym_func_uint);
 
    // This is a GL extension
-   exts = (const char *) glGetString(GL_EXTENSIONS);
+   exts = (const char *) evas_glGetString_th(GL_EXTENSIONS);
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image", glsym_func_void);
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
 
@@ -1459,8 +1463,8 @@ gl_extn_veto(Render_Engine *re)
           {
              const GLubyte *vendor, *renderer;
 
-             vendor = glGetString(GL_VENDOR);
-             renderer = glGetString(GL_RENDERER);
+             vendor = evas_glGetString_th(GL_VENDOR);
+             renderer = evas_glGetString_th(GL_RENDERER);
              // XXX: workaround mesa bug!
              // looking for mesa and intel build which is known to
              // advertise the EGL_NOK_texture_from_pixmap extension
@@ -1925,7 +1929,7 @@ eng_gl_error_get(void *data)
      goto end;
 
 #ifdef GL_GLES
-   err = eglGetError() - EGL_SUCCESS;
+   err = evas_eglGetError_th() - EGL_SUCCESS;
 #else
    Render_Engine *re = data;
 
@@ -2012,7 +2016,7 @@ _native_bind_cb(void *image)
     }
   else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
     {
-       glBindTexture(im->native.target, n->ns.data.opengl.texture_id);
+       evas_glBindTexture_th(im->native.target, n->ns.data.opengl.texture_id);
     }
   else if (n->ns.type == EVAS_NATIVE_SURFACE_TBM)
     {
@@ -2052,7 +2056,7 @@ _native_bind_cb(void *image)
               }
             else
               {
-                 glBindTexture(GL_TEXTURE_2D, (GLuint)(uintptr_t)surface);
+                 evas_glBindTexture_th(GL_TEXTURE_2D, (GLuint)(uintptr_t)surface);
               }
          }
     }
@@ -2100,7 +2104,7 @@ _native_unbind_cb(void *image)
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
      {
-        glBindTexture(im->native.target, 0);
+        evas_glBindTexture_th(im->native.target, 0);
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_TBM)
      {
@@ -2111,7 +2115,7 @@ _native_unbind_cb(void *image)
 #ifdef GL_GLES
         // nothing
 #else
-        glBindTexture(GL_TEXTURE_2D, 0);
+        evas_glBindTexture_th(GL_TEXTURE_2D, 0);
 #endif
      }
 }
