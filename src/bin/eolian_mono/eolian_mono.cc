@@ -103,7 +103,15 @@ run(options_type const& opts)
      }
    else
      {
-        std::abort();
+       Eina_Iterator *enums = eolian_typedecl_enums_get_by_file(opts.in_file.c_str());
+              
+       // for(
+       
+       // EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
+       //   << "is this a type file?"
+       //   << std::endl;
+       // //std::abort();
+       // goto err;
     }
    return;
  err:
@@ -219,7 +227,7 @@ opts_get(int argc, char **argv)
           }
         else if (c == 'h')
           {
-             _usage(argv[0]);
+           _usage(argv[0]);
           }
         else if (c == 'v')
           {

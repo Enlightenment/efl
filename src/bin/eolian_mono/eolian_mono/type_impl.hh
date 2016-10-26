@@ -65,18 +65,18 @@ struct visitor_generate
            , {"llong", nullptr, [&] { return replace_base_type(regular, " Long"); }}
            , {"int8", nullptr, [&] { return replace_base_type(regular, " Byte"); }}
            , {"int16", nullptr, [&] { return replace_base_type(regular, " Short"); }}
-           , {"int32", nullptr, [&] { return replace_base_type(regular, " Integer"); }}
+           , {"int32", nullptr, [&] { return replace_base_type(regular, " int"); }}
            , {"int64", nullptr, [&] { return replace_base_type(regular, " Long"); }}
            , {"ssize", nullptr, [&] { return replace_base_type(regular, " Long"); }}
            // unsigned primitives
            , {"ubyte", nullptr, [&] { return replace_base_type(regular, " Byte"); }}
            , {"ushort", nullptr, [&] { return replace_base_type(regular, " Short"); }}
-           , {"uint", nullptr, [&] { return replace_base_type(regular, " Integer"); }}
+           , {"uint", nullptr, [&] { return replace_base_type(regular, " int"); }}
            , {"ulong", nullptr, [&] { return replace_base_type(regular, " Long"); }}
            , {"ullong", nullptr, [&] { return replace_base_type(regular, " Long"); }}
            , {"uint8", nullptr, [&] { return replace_base_type(regular, " byte"); }}
            , {"uint16", nullptr, [&] { return replace_base_type(regular, " Short"); }}
-           , {"uint32", nullptr, [&] { return replace_base_type(regular, " Integer"); }}
+           , {"uint32", nullptr, [&] { return replace_base_type(regular, " int"); }}
            , {"uint64", nullptr, [&] { return replace_base_type(regular, " Long"); }}
            , {"size", nullptr, [&] { return replace_base_type(regular, " Long"); }}
            
@@ -87,20 +87,26 @@ struct visitor_generate
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 // if(is_out || is_return)
-                  return replace_base_type(r, " String");
+                  return replace_base_type(r, " System.String");
                 // else return replace_base_type(r, " ::efl::eina::string_view");
               }}
            , {"string", false, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " String");
+                return replace_base_type(r, " System.String");
               }}
            , {"stringshare", nullptr, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " String");
+                return replace_base_type(r, " System.String");
+              }}
+           , {"generic_value", true, [&]
+              { return regular_type_def{" int", regular.base_qualifier, {}};
+              }}
+           , {"generic_value", false, [&]
+              { return regular_type_def{" int", regular.base_qualifier, {}};
               }}
            // , {"generic_value", true, [&]
            //    { return regular_type_def{" ::efl::eina::value", regular.base_qualifier, {}};
@@ -174,33 +180,42 @@ struct visitor_generate
                && as_generator(">").generate(sink, attributes::unused, *context);
            }
        }
-      else if((is_return || is_out) && regular.base_qualifier & qualifier_info::is_ref
-              && regular.base_qualifier & qualifier_info::is_own)
-        {
-          if(as_generator
-             (
-              " ::std::unique_ptr<"
-              << *(string << "_")
-              << string
-              << (regular.base_qualifier & qualifier_info::is_const ? " const" : "")
-              << ", ::efl::eina::malloc_deleter>"
-             )
-             .generate(sink, std::make_tuple(regular.namespaces, regular.base_type), *context))
-            return true;
-          else
-            return false;
-        }
+      // else if((is_return || is_out) && regular.base_qualifier & qualifier_info::is_ref
+      //         && regular.base_qualifier & qualifier_info::is_own)
+      //   {
+      //     if(as_generator
+      //        (
+      //         " ::std::unique_ptr<"
+      //         << *(string << "_")
+      //         << string
+      //         << (regular.base_qualifier & qualifier_info::is_const ? " const" : "")
+      //         << ", ::efl::eina::malloc_deleter>"
+      //        )
+      //        .generate(sink, std::make_tuple(regular.namespaces, regular.base_type), *context))
+      //       return true;
+      //     else
+      //       return false;
+      //   }
+      // else if(Eolian_Typedecl const* typedecl = eolian_typedecl_struct_get_by_name(c_type.c_str()))
+      //   {
+      //   return as_generator
+      //        (
+      //         *(string << ".")
+      //         << string
+      //        )
+      //     .generate(sink, std::make_tuple(regular.namespaces, regular.base_type), *context);
+      //   }
       else
         {
           if(as_generator
              (
-              *(string << "_")
+              *(lower_case[string] << ".")
               << string
-              << (regular.base_qualifier & qualifier_info::is_const
-                  || (regular.base_qualifier & qualifier_info::is_ref
-                      && !is_return && !is_out)
-                  ? " const" : "")
-              << (regular.base_qualifier & qualifier_info::is_ref? "&" : "")
+              // << (regular.base_qualifier & qualifier_info::is_const
+              //     || (regular.base_qualifier & qualifier_info::is_ref
+              //         && !is_return && !is_out)
+              //     ? /*" const"*/ "" : "")
+              /*<< (regular.base_qualifier & qualifier_info::is_ref? "&" : "")*/
              )
              .generate(sink, std::make_tuple(regular.namespaces, regular.base_type), *context))
             return true;
@@ -231,28 +246,39 @@ struct visitor_generate
       {
         {"list", true, nullptr, [&]
          {
-           // generate_container(sink, complex, *context, " ::efl::eina::list");
+           (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
            return attributes::type_def::variant_type();
+           // generate_container(sink, complex, *context, " ::efl::eina::list");
+           // return attributes::type_def::variant_type();
          }}
         , {"list", false, nullptr, [&]
            {
+           return replace_outer
+           (complex, regular_type_def{" int", complex.outer.base_qualifier, {}});
            // generate_container(sink, complex, *context, " ::efl::eina::range_list");
-           return attributes::type_def::variant_type();
+           // return attributes::type_def::variant_type();
          }}
         , {"array", true, nullptr, [&]
            {
-           // generate_container(sink, complex, *context, " ::efl::eina::array");
+           (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
            return attributes::type_def::variant_type();
+           // generate_container(sink, complex, *context, " ::efl::eina::array");
+           // return attributes::type_def::variant_type();
          }}
         , {"array", false, nullptr, [&]
            {
-           // generate_container(sink, complex, *context, " ::efl::eina::range_array");
+           (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
            return attributes::type_def::variant_type();
+           // generate_container(sink, complex, *context, " ::efl::eina::range_array");
+           // return attributes::type_def::variant_type();
          }}
         , {"hash", nullptr, nullptr
            , [&]
-           { regular_type_def r{"Eina_Hash*", complex.outer.base_qualifier, {}};
-             return r;
+           {
+             return replace_outer
+             (complex, regular_type_def{" int", complex.outer.base_qualifier, {}});
+             // regular_type_def r{"Eina_Hash*", complex.outer.base_qualifier, {}};
+             // return r;
            }}
         , {"promise", nullptr, nullptr, [&]
            {
@@ -262,20 +288,26 @@ struct visitor_generate
           }
         , {"future", nullptr, nullptr, [&]
            {
-             return replace_outer
-             (complex, regular_type_def{" ::efl::shared_future", complex.outer.base_qualifier, {}});
+             (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
+             return attributes::type_def::variant_type();
+             // return replace_outer
+             // (complex, regular_type_def{" ::efl::shared_future", complex.outer.base_qualifier, {}});
            }           
           }
         , {"iterator", nullptr, nullptr, [&]
            {
-             return replace_outer
-             (complex, regular_type_def{" ::efl::eina::iterator", complex.outer.base_qualifier, {}});
+             (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
+             return attributes::type_def::variant_type();
+             // return replace_outer
+             // (complex, regular_type_def{" ::efl::eina::iterator", complex.outer.base_qualifier, {}});
            }           
           }
         , {"accessor", nullptr, nullptr, [&]
            {
-             return replace_outer
-             (complex, regular_type_def{" ::efl::eina::accessor", complex.outer.base_qualifier, {}});
+             (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
+             return attributes::type_def::variant_type();
+             // return replace_outer
+             // (complex, regular_type_def{" ::efl::eina::accessor", complex.outer.base_qualifier, {}});
            }           
           }
       };

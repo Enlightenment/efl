@@ -14,11 +14,13 @@ bin_eolian_mono_eolian_mono_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@
 
 bin_eolian_mono_eolian_mono_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
+efl_eolian_mono_files = $(efl_eolian_files:%.eo=%.eo.cs) $(efl_eolian_type_files:%.eot=%.eot.cs)
+
 ### Efl C++
 installed_eflmonomainheadersdir = $(includedir)/efl-mono-@VMAJ@/
-nodist_installed_eflmonomainheaders_DATA = $(efl_eolian_cxx_hh:%.hh=%.cs)
+nodist_installed_eflmonomainheaders_DATA = $(efl_eolian_files:%.eo=%.eo.cs)
 
-CLEANFILES += $(efl_eolian_cxx_hh:%.hh=%.cs)
+CLEANFILES += $(efl_eolian_mono_files)
 
 if HAVE_EOLIAN_MONO
 EOLIAN_MONO = @eolian_mono@
@@ -40,9 +42,7 @@ lib_eo_mono_eo_mono_dll_SOURCES = \
 	bindings/mono/eo_mono/object.cs \
 	bindings/mono/eo_mono/iwrapper.cs
 
-mono_cs_sources = $(efl_eolian_cxx_hh:%.hh=%.cs)
-
-lib/eo_mono/eo_mono.dll$(EXEEXT): $(lib_eo_mono_eo_mono_dll_SOURCES) lib/eo_mono/$(am__dirstamp) $(mono_cs_sources)
+lib/eo_mono/eo_mono.dll$(EXEEXT): $(lib_eo_mono_eo_mono_dll_SOURCES) lib/eo_mono/$(am__dirstamp) $(efl_eolian_mono_files)
 	@rm -f lib/eo_mono/eo_mono_dll$(EXEEXT)
 	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LD_LIBRARY_PATH_APPEND) $(MCS) $(MCS_FLAGS) -out:$@ -t:library $(filter-out $(lastword $(^)), $(^))
 
@@ -66,6 +66,11 @@ tests/eo_mono/eo_mono.exe$(EXEEXT): $(tests_eo_mono_eo_mono_exe_SOURCES) tests/e
 SUFFIXES += .eo.cs
 
 %.eo.cs: %.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) -o $@ $<
+
+%.eot.cs: %.eot $(_EOLIAN_MONO_DEP)
 	$(AM_V_EOLMONO) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_MONO) $(EOLIAN_FLAGS) -o $@ $<
