@@ -25,6 +25,14 @@ ecore_con_eolian_files = \
 	lib/ecore_con/ecore_con_eet_client_obj.eo \
 	lib/ecore_con/efl_network_url.eo
 
+if HAVE_WINDOWS
+else
+ecore_con_eolian_files += \
+        lib/ecore_con/efl_net_socket_unix.eo \
+        lib/ecore_con/efl_net_dialer_unix.eo \
+        lib/ecore_con/efl_net_server_unix.eo
+endif
+
 ecore_con_eolian_type_files = \
         lib/ecore_con/efl_net_http_types.eot
 
@@ -94,7 +102,10 @@ EXTRA_DIST2 += lib/ecore_con/ecore_con_legacy.c
 if HAVE_WINDOWS
 lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_local_win32.c
 else
-lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_local.c
+lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_local.c \
+lib/ecore_con/efl_net_socket_unix.c \
+lib/ecore_con/efl_net_dialer_unix.c \
+lib/ecore_con/efl_net_server_unix.c
 endif
 
 lib_ecore_con_libecore_con_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_CON_CFLAGS@

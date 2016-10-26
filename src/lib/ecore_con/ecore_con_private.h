@@ -402,7 +402,8 @@ void _efl_net_server_udp_client_feed(Eo *client, Eina_Rw_Slice slice);
 
 void _efl_net_socket_udp_init(Eo *o, const struct sockaddr *addr, socklen_t addrlen, const char *str);
 
-Eina_Bool efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr);
+Eina_Bool efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct sockaddr_un *addr, socklen_t addrlen);
+Eina_Bool efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr);
 
 /**
  * @brief splits an address in the format "host:port" in two

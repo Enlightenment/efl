@@ -15,6 +15,13 @@
 #include "efl_net_dialer_tcp.eo.h"
 #include "efl_net_server_tcp.eo.h"
 
+#ifdef _WIN32
+#else
+#include "efl_net_socket_unix.eo.h"
+#include "efl_net_dialer_unix.eo.h"
+#include "efl_net_server_unix.eo.h"
+#endif
+
 #include "efl_net_socket_udp.eo.h"
 #include "efl_net_dialer_udp.eo.h"
 #include "efl_net_server_udp.eo.h"

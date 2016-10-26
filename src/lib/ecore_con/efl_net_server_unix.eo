@@ -1,0 +1,28 @@
+class Efl.Net.Server.Unix (Efl.Net.Server.Fd) {
+    [[An AF_UNIX server.
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property unlink_before_bind {
+            [[AF_UNIX paths may be stale due crashes, remove files and try again.
+
+              If this property is $true, then it will unlink() before
+              bind() is done, repeating this process if EADDRINUSE.
+
+              By default it's false and you will get EADDRINUSE.
+            ]]
+            values {
+                unlink_before_bind: bool; [[if $true, server will unlink() the path before bind() is called.]]
+            }
+        }
+    }
+
+    implements {
+        Efl.Object.destructor;
+        Efl.Net.Server.serve;
+        Efl.Net.Server.Fd.client_add;
+        Efl.Net.Server.Fd.client_reject;
+    }
+}

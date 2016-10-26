@@ -314,6 +314,12 @@ efl_net_dialer_websocket_autobahntestee_LDADD = $(ECORE_CON_COMMON_LDADD)
 efl_net_dialer_udp_example_SOURCES = efl_net_dialer_udp_example.c
 efl_net_dialer_udp_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
+if ! HAVE_WINDOWS
+EXTRA_PROGRAMS += efl_net_dialer_unix_example
+efl_net_dialer_unix_example_SOURCES = efl_net_dialer_unix_example.c
+efl_net_dialer_unix_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+endif
+
 SRCS = \
 ecore_animator_example.c \
 ecore_buffer_example.c \

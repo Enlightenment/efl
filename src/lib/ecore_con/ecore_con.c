@@ -3027,7 +3027,60 @@ _ecore_con_lookup_done(void *data,
 #include "efl_network_connector.eo.c"
 
 Eina_Bool
-efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr)
+efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct sockaddr_un *addr, socklen_t addrlen)
+{
+   const char *src = addr->sun_path;
+   socklen_t pathlen = addrlen - offsetof(struct sockaddr_un, sun_path);
+
+   if (addr->sun_family != AF_UNIX)
+     {
+        ERR("unsupported address family: %d", addr->sun_family);
+        return EINA_FALSE;
+     }
+
+   if (addrlen == offsetof(struct sockaddr_un, sun_path))
+     {
+        int r = snprintf(buf, buflen, "unnamed:%d", fd);
+        if (r < 0)
+          {
+             ERR("snprintf(): %s", strerror(errno));
+             return EINA_FALSE;
+          }
+        else if ((size_t)r > buflen)
+          {
+             ERR("buflen=%zu is too small, required=%d", buflen, r);
+             return EINA_FALSE;
+          }
+        return EINA_TRUE;
+     }
+
+   if (src[0] != '\0')
+     {
+        if (buflen < pathlen)
+          {
+             ERR("buflen=%zu is too small, required=%u", buflen, pathlen);
+             return EINA_FALSE;
+          }
+     }
+   else
+     {
+        if (buflen < pathlen + sizeof("abstract:") - 2)
+          {
+             ERR("buflen=%zu is too small, required=%zu", buflen, pathlen + sizeof("abstract:") - 2);
+             return EINA_FALSE;
+          }
+        memcpy(buf, "abstract:", sizeof("abstract:") - 1);
+        buf += sizeof("abstract:") - 1;
+        src++;
+     }
+
+   memcpy(buf, src, pathlen);
+   buf[pathlen] = '\0';
+   return EINA_TRUE;
+}
+
+Eina_Bool
+efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr)
 {
    char p[INET6_ADDRSTRLEN];
    const void *mem;
@@ -3069,9 +3122,9 @@ efl_net_ip_port_fmt(char *buf, int buflen, const struct sockaddr *addr)
         ERR("could not snprintf(): %s", strerror(errno));
         return EINA_FALSE;
      }
-   else if (r > buflen)
+   else if ((size_t)r > buflen)
      {
-        ERR("buffer is too small: %d, required %d", buflen, r);
+        ERR("buffer is too small: %zu, required %d", buflen, r);
         return EINA_FALSE;
      }
 
@@ -3294,7 +3347,7 @@ static void
 _efl_net_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Efl_Net_Connect_Async_Data *d = data;
-   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
+   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536") + sizeof(struct sockaddr_un)] = "";
    int r;
 
    /* allows ecore_thread_cancel() to cancel at some points, see
@@ -3319,7 +3372,12 @@ _efl_net_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
      }
 
    if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
-     efl_net_ip_port_fmt(buf, sizeof(buf), d->addr);
+     {
+        if (d->addr->sa_family == AF_UNIX)
+          efl_net_unix_fmt(buf, sizeof(buf), d->sockfd, (const struct sockaddr_un *)d->addr, d->addrlen);
+        else
+          efl_net_ip_port_fmt(buf, sizeof(buf), d->addr);
+     }
 
    DBG("connecting fd=%d to %s", d->sockfd, buf);
 

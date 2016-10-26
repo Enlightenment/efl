@@ -1,0 +1,13 @@
+class Efl.Net.Socket.Unix (Efl.Net.Socket.Fd) {
+    [[A base UNIX socket.
+
+      This is the common class and takes an existing FD, usually
+      created by an dialer or server.
+
+      @since 1.19
+    ]]
+
+    implements {
+        Efl.Loop.Fd.fd.set;
+    }
+}

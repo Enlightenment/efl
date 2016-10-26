@@ -474,6 +474,9 @@ EFL_CALLBACKS_ARRAY_DEFINE(server_cbs,
 static const char * protocols[] = {
   "tcp",
   "udp",
+#ifndef _WIN32
+  "unix",
+#endif
   NULL
 };
 
@@ -600,6 +603,9 @@ main(int argc, char **argv)
 
    if (strcmp(protocol, "tcp") == 0) cls = EFL_NET_SERVER_TCP_CLASS;
    else if (strcmp(protocol, "udp") == 0) cls = EFL_NET_SERVER_UDP_CLASS;
+#ifndef _WIN32
+   else if (strcmp(protocol, "unix") == 0) cls = EFL_NET_SERVER_UNIX_CLASS;
+#endif
    else
      {
         fprintf(stderr, "ERROR: unsupported protocol: %s\n", protocol);
@@ -636,6 +642,12 @@ main(int argc, char **argv)
         EINA_LIST_FOREACH(udp_mcast_groups, lst, str)
           efl_net_server_udp_multicast_join(server, str);
      }
+#ifndef _WIN32
+   else if (cls == EFL_NET_SERVER_UNIX_CLASS)
+     {
+        efl_net_server_unix_unlink_before_bind_set(server, EINA_TRUE); /* makes testing easier */
+     }
+#endif
 
    /* an explicit call to efl_net_server_serve() after the object is
     * constructed allows for more complex setup, such as interacting
