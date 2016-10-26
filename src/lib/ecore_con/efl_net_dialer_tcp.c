@@ -96,27 +96,33 @@ _efl_net_dialer_tcp_connected(void *data, const struct sockaddr *addr, socklen_t
 {
    Eo *o = data;
    Efl_Net_Dialer_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
-   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
 
    pd->connect.thread = NULL;
 
    efl_ref(o); /* we're emitting callbacks then continuing the workflow */
 
+   if (err) goto error;
+
+   efl_net_socket_fd_family_set(o, addr->sa_family);
+   efl_loop_fd_set(o, sockfd);
+   if (efl_net_socket_address_remote_get(o))
+     {
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+        efl_net_dialer_connected_set(o, EINA_TRUE);
+     }
+   else
+     {
+        err = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
+        efl_loop_fd_set(o, INVALID_SOCKET);
+        closesocket(sockfd);
+        goto error;
+     }
+
+ error:
    if (err)
      {
         efl_io_reader_eos_set(o, EINA_TRUE);
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
-     }
-   else
-     {
-        efl_net_socket_fd_family_set(o, addr->sa_family);
-        efl_loop_fd_set(o, sockfd);
-        if (efl_net_ip_port_fmt(buf, sizeof(buf), addr))
-          {
-             efl_net_socket_address_remote_set(o, buf);
-             efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
-          }
-        efl_net_dialer_connected_set(o, EINA_TRUE);
      }
 
    efl_unref(o);
