@@ -1755,7 +1755,11 @@ _efl_object_future_link_tracking_end(void *data, const Efl_Event *ev)
 EOLIAN static Eina_Bool
 _efl_object_future_link(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, Efl_Future *link)
 {
-   Efl_Object_Extension *ext = _efl_object_extension_need(pd);
+   Efl_Object_Extension *ext;
+
+   if (!link) return EINA_FALSE;
+
+   ext = _efl_object_extension_need(pd);
 
    ext->futures = eina_list_append(ext->futures, link);
    return !!efl_future_then(link, _efl_object_future_link_tracking_end, _efl_object_future_link_tracking_end, NULL, obj);
