@@ -1,29 +1,29 @@
 enum Efl.Ui.Flip.Mode
 {
-   [[]]
+   [[Efl UI flip mode ]]
    legacy: efl_ui_flip;
-   rotate_y_center_axis,
-   rotate_x_center_axis,
-   rotate_xz_center_axis,
-   rotate_yz_center_axis,
-   cube_left,
-   cube_right,
-   cube_up,
-   cube_down,
-   page_left,
-   page_right,
-   page_up,
-   page_down,
-   cross_fade,
+   rotate_y_center_axis, [[Rotate Y center axis flip mode]]
+   rotate_x_center_axis, [[Rotate X center axis flip mode]]
+   rotate_xz_center_axis, [[Rotate XZ center axis flip mode]]
+   rotate_yz_center_axis, [[Rotate YZ center axis flip mode]]
+   cube_left, [[Cube left flip mode]]
+   cube_right, [[Cube right flip mode]]
+   cube_up, [[Cube up flip mode]]
+   cube_down, [[Cube down flip mode]]
+   page_left, [[Page left flip mode]]
+   page_right, [[Page right flip mode]]
+   page_up, [[Page up flip mode]]
+   page_down, [[Page down flip mode]]
+   cross_fade, [[Cross fade flip mode]]
 }
 
 enum Efl.Ui.Flip.Interaction
 {
-   [[]]
-   none,
-   rotate,
-   cube,
-   page
+   [[Efl UI flip interaction]]
+   none, [[No interaction]]
+   rotate, [[Rotate interaction]]
+   cube, [[Cube interaction]]
+   page [[Page interaction]]
 }
 
 class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
@@ -253,8 +253,7 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
       Efl.Pack.Linear.pack_index_get;
    }
    events {
-      animate,begin;
-      animate,done;
+      animate,begin; [[Called when flip animation begins]]
+      animate,done; [[Called when flip animation is done]]
    }
-
 }
