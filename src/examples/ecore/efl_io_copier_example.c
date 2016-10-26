@@ -335,6 +335,7 @@ static const Ecore_Getopt options = {
                                    "tcp://IP:PORT to connect using TCP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
                                    "http://address to do a GET request\n"
                                    "ws://address or wss:// to do WebSocket request (must send some data once connected)\n"
+                                   "udp://IP:PORT to bind using UDP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
                                    "",
                                    "input-file"),
     ECORE_GETOPT_STORE_METAVAR_STR(0, NULL,
@@ -501,6 +502,38 @@ main(int argc, char **argv)
           {
              fprintf(stderr, "ERROR: could not WebSocket dial %s: %s\n",
                      input_fname, eina_error_msg_get(err));
+             goto end_input;
+          }
+     }
+   else if (strncmp(input_fname, "udp://", strlen("udp://")) == 0)
+     {
+        /*
+         * Since Efl.Net.Socket implements the required interfaces,
+         * they can be used here as well.
+         */
+        const char *bind_address = input_fname + strlen("udp://");
+        const char *address;
+        Eina_Error err;
+        input = efl_add(EFL_NET_DIALER_UDP_CLASS, ecore_main_loop_get(),
+                        efl_net_socket_udp_bind_set(efl_added, bind_address), /* use the address as the bind, so we can get data at it */
+                        efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
+                        );
+        if (!input)
+          {
+             fprintf(stderr, "ERROR: could not create UDP Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end;
+          }
+
+        if (bind_address[0] == '[') address = "[::]";
+        else address = "0.0.0.0";
+
+        err = efl_net_dialer_dial(input, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not UDP dial %s: %s\n",
+                     address, eina_error_msg_get(err));
              goto end_input;
           }
      }
