@@ -2,6 +2,7 @@ import evas_types;
 
 class Evas.Canvas3D.Object (Efl.Object)
 {
+   [[Evas 3D canvas object class]]
    data: Evas_Canvas3D_Object_Data;
    methods {
       change {
@@ -13,19 +14,19 @@ class Evas.Canvas3D.Object (Efl.Object)
       }
       type_get @const {
          [[Returns the type of the object.]]
-          return: Evas.Canvas3D.Object_Type;
+          return: Evas.Canvas3D.Object_Type; [[Object type]]
       }
 
       type_set {
-         [[Returns the type of the object.]]
+         [[Sets the type of the object.]]
           params{
-            @in type: Evas.Canvas3D.Object_Type;
+            @in type: Evas.Canvas3D.Object_Type; [[Object type]]
           }
       }
 
       dirty_get @const {
          [[Returns the status of a particular state of the object.]]
-          return: bool;
+          return: bool; [[$true if the status is dirty, $false otherwise]]
          params {
            @in state: Evas.Canvas3D.State; [[State whose status is being asked.]]
          }
