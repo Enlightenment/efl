@@ -649,11 +649,11 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    out->surface = s;
    out->bh = bm->alloc(bm, "name", w, h, &out->stride, &out->fd);
    if (!out->bh)
-   {
-      free(out);
-      _fallback(s, w, h);
-      return NULL;
-   }
+     {
+        free(out);
+        _fallback(s, w, h);
+        return NULL;
+     }
    out->w = w;
    out->h = h;
 
