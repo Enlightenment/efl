@@ -67,9 +67,6 @@
  */
 
 #include "elm_diskselector_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_diskselector_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_diskselector_legacy.h"
 #endif

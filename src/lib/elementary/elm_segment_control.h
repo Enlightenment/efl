@@ -61,9 +61,6 @@
  * @{
  */
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_segment_control_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_segment_control_legacy.h"
 #endif

@@ -292,10 +292,8 @@ includesub_HEADERS = \
 	lib/elementary/elc_fileselector_legacy.h \
 	lib/elementary/elc_fileselector_common.h \
 	lib/elementary/elc_fileselector_button.h \
-	lib/elementary/elc_fileselector_button_eo.h \
 	lib/elementary/elc_fileselector_button_legacy.h \
 	lib/elementary/elc_fileselector_entry.h \
-	lib/elementary/elc_fileselector_entry_eo.h \
 	lib/elementary/elc_fileselector_entry_legacy.h \
 	lib/elementary/elc_hoversel.h \
 	lib/elementary/elc_hoversel_legacy.h \
@@ -359,7 +357,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_deprecated.h \
 	lib/elementary/elm_diskselector.h \
 	lib/elementary/elm_diskselector_common.h \
-	lib/elementary/elm_diskselector_eo.h \
 	lib/elementary/elm_diskselector_legacy.h \
 	lib/elementary/elm_entry.h \
 	lib/elementary/elm_entry_common.h \
@@ -476,10 +473,8 @@ includesub_HEADERS = \
 	lib/elementary/elm_scroller_eo.h \
 	lib/elementary/elm_scroller_legacy.h \
 	lib/elementary/elm_segment_control.h \
-	lib/elementary/elm_segment_control_eo.h \
 	lib/elementary/elm_segment_control_legacy.h \
 	lib/elementary/elm_separator.h \
-	lib/elementary/elm_separator_eo.h \
 	lib/elementary/elm_separator_legacy.h \
 	lib/elementary/elm_slider.h \
 	lib/elementary/elm_slider_common.h \
@@ -487,7 +482,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_slider_legacy.h \
 	lib/elementary/elm_slideshow.h \
 	lib/elementary/elm_slideshow_common.h \
-	lib/elementary/elm_slideshow_eo.h \
 	lib/elementary/elm_slideshow_legacy.h \
 	lib/elementary/elm_spinner.h \
 	lib/elementary/elm_spinner_eo.h \

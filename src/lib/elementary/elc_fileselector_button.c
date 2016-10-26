@@ -6,6 +6,8 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_fileselector_button.eo.h"
+#include "elm_fileselector_entry.eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_button.h"
 

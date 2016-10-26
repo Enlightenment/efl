@@ -73,9 +73,6 @@
  * @{
  */
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elc_fileselector_entry_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elc_fileselector_entry_legacy.h"
 #endif

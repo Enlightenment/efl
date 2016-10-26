@@ -64,9 +64,6 @@
  * @{
  */
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elc_fileselector_button_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elc_fileselector_button_legacy.h"
 #endif

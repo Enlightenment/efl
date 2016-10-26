@@ -7,6 +7,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
+#include "elm_separator.eo.h"
 #include "elm_widget_separator.h"
 #include "elm_widget_layout.h"
 

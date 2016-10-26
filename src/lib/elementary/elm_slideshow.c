@@ -9,6 +9,8 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
+#include "elm_slideshow.eo.h"
+#include "elm_slideshow_item.eo.h"
 #include "elm_widget_slideshow.h"
 
 #define MY_CLASS ELM_SLIDESHOW_CLASS

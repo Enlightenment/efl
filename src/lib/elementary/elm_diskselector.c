@@ -8,6 +8,8 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_diskselector.eo.h"
+#include "elm_diskselector_item.eo.h"
 #include "elm_widget_diskselector.h"
 #include "elm_interface_scrollable.h"
 

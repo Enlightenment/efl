@@ -8,6 +8,8 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
+#include "elm_segment_control.eo.h"
+#include "elm_segment_control_item.eo.h"
 #include "elm_widget_segment_control.h"
 
 #define MY_CLASS ELM_SEGMENT_CONTROL_CLASS
