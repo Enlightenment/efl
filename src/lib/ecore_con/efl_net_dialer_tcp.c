@@ -39,7 +39,6 @@ typedef struct _Efl_Net_Dialer_Tcp_Data
    Eina_Stringshare *address_dial;
    Eina_Stringshare *proxy;
    Eina_Bool connected;
-   Eina_Bool closed;
    double timeout_dial;
 } Efl_Net_Dialer_Tcp_Data;
 
@@ -144,9 +143,6 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
         pd->connect.thread = NULL;
      }
 
-   if (pd->connect.thread)
-     ecore_thread_cancel(pd->connect.thread);
-
    if (!pd->proxy)
      {
         proxy_env = getenv("socks_proxy");
@@ -243,9 +239,8 @@ _efl_net_dialer_tcp_efl_net_dialer_connected_get(Eo *o EINA_UNUSED, Efl_Net_Dial
 }
 
 EOLIAN static Eina_Error
-_efl_net_dialer_tcp_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
+_efl_net_dialer_tcp_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_UNUSED)
 {
-   pd->closed = EINA_TRUE;
    efl_net_dialer_connected_set(o, EINA_FALSE);
    return efl_io_closer_close(efl_super(o, MY_CLASS));
 }
