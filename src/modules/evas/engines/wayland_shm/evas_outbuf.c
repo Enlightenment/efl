@@ -199,7 +199,7 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
 {
    Eina_Rectangle *result;
    RGBA_Image *img;
-   unsigned int n = 0, i = 0;
+   unsigned int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -228,8 +228,6 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
              result[i] = *rect;
              eina_rectangle_free(rect);
           }
-
-        /* ob->surface->funcs.post(ob->surface, result, n); */
 
         /* clean array */
         eina_array_clean(&ob->priv.onebuf_regions);
