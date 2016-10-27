@@ -30,14 +30,14 @@ struct function_definition_generator
        (scope_tab << "[System.Runtime.InteropServices.DllImport(\"" << context_find_tag<library_context>(context).library_name << "\")] static extern "
         << return_type << " "
         << string
-        << "(" /*<< (parameter % ", ")*/ << ");\n")
+        << "(System.IntPtr obj" /*<< (parameter % ", ")*/ << ");\n")
        .generate(sink, std::make_tuple(f.c_name/*, f.parameters*/), context))
       return false;
 
     if(!as_generator
        (scope_tab << "public " << return_type << " " << string << "(" /*<< (parameter % ", ")*/
         << ") { "
-        << (return_type == "void" ? "":"return ") << string << "();"
+        << (return_type == "void" ? "":"return ") << string << "(handle);"
         << " }\n")
        .generate(sink, std::make_tuple(escape_keyword(f.name), f.c_name/*, f.parameters*/), context))
       return false;

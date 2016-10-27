@@ -53,13 +53,17 @@ lib/eo_mono/libeo_mono.dll$(EXEEXT): $(lib_eo_mono_libeo_mono_dll_SOURCES) lib/e
 
 if EFL_ENABLE_TESTS
 
+LD_LIBRARY_PATH_APPEND=lib/eina/.libs:lib/ecore/.libs:lib/efl/.libs
+
 AM_TESTS_ENVIRONMENT += MONO='mono'; export MONO;
+AM_TESTS_ENVIRONMENT += MONO_CONFIG='$(srcdir)/tests/eo_mono/eo_mono.exe.config'; export MONO_CONFIG;
 AM_TESTS_ENVIRONMENT += MONO_BUILDPATH='$(abs_top_builddir)'; export MONO_BUILDPATH;
-AM_TESTS_ENVIRONMENT += MONO_PATH='$(abs_top_builddir)/src/lib/eo_mono'; export MONO_PATH;
+AM_TESTS_ENVIRONMENT += MONO_PATH='$(abs_top_builddir)/src/lib/eo_mono:$(LD_LIBRARY_PATH_APPEND)'; export MONO_PATH;
 #AM_TESTS_ENVIRONMENT += MONO_LOG_LEVEL=debug; export MONO_LOG_LEVEL;
+#AM_TESTS_ENVIRONMENT += LD_LIBRARY_PATH=$(LD_LIBRARY_PATH_APPEND)
 
 check_PROGRAMS += tests/eo_mono/eo_mono.exe
-TESTS += tests/eo_mono/eo_mono.exe
+TESTS += tests/eo_mono/mono_test_driver.sh
 
 tests_eo_mono_eo_mono_exe_SOURCES = \
      tests/eo_mono/Main.cs
