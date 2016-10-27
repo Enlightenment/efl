@@ -4814,7 +4814,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
      }
 
 #ifdef HAVE_ELEMENTARY_WL2
-   if (type != ELM_WIN_FAKE)
+   if ((type != ELM_WIN_FAKE) && (type != ELM_WIN_INLINED_IMAGE))
      {
         if ((engine) &&
             ((!strcmp(engine, ELM_WAYLAND_SHM) ||
