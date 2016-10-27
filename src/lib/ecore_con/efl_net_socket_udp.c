@@ -140,7 +140,7 @@ _efl_net_socket_udp_bind(Eo *o, Efl_Net_Socket_Udp_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_socket_udp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Udp_Data *pd EINA_UNUSED, int fd)
+_efl_net_socket_udp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, int fd)
 {
    Eina_List *node;
    struct sockaddr_storage addr;
