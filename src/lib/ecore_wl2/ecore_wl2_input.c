@@ -672,7 +672,7 @@ _pointer_cb_frame(void *data, struct wl_callback *callback, unsigned int timesta
         input->cursor.frame_cb = NULL;
      }
 
-   if (!input->cursor.frame_cb)
+   if ((!input->cursor.frame_cb) && (input->cursor.surface))
      {
         input->cursor.frame_cb = wl_surface_frame(input->cursor.surface);
         wl_callback_add_listener(input->cursor.frame_cb,
