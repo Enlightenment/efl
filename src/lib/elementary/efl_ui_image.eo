@@ -28,8 +28,8 @@ struct Efl.Ui.Image.Progress
      Structure associated with smart callback 'download,progress'.
      @since 1.8
    ]]
-   now:   double;
-   total: double;
+   now:   double; [[Current percentage]]
+   total: double; [[Total percentage]]
 }
 
 struct Efl.Ui.Image.Error
@@ -38,8 +38,8 @@ struct Efl.Ui.Image.Error
      Structure associated with smart callback 'download,progress'.
      @since 1.8
    ]]
-   status:     int;
-   open_error: bool;
+   status:     int; [[Error status of the download]]
+   open_error: bool; [[$true if the error happened when opening the file, $false otherwise]]
 }
 
 class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,

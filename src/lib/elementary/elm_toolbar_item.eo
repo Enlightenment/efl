@@ -16,11 +16,11 @@ struct Elm.Toolbar.Item.State
      State of a Elm_Toolbar_Item.
      Can be created with elm_toolbar_item_state_add() and removed with elm_toolbar_item_state_del().
    ]]
-   label: string;
-   icon_str: string;
-   icon: Efl.Canvas.Object;
-   func: Evas_Smart_Cb ;
-   data: const(void_ptr);
+   label: string; [[Item label]]
+   icon_str: string; [[Item icon string]]
+   icon: Efl.Canvas.Object; [[Item icon]]
+   func: Evas_Smart_Cb ; [[Item callback function]]
+   data: const(void_ptr); [[Item data]]
 }
 
 class Elm.Toolbar.Item(Elm.Widget.Item)

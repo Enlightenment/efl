@@ -3,8 +3,8 @@ import edje_types;
 import elm_interface_scrollable;
 import elm_general;
 
-struct @extern Elm_Code; /* The main interface currently defined in code */
-struct @extern Elm_Code_Line; /* Parts of the interface currently defined in code */
+struct @extern Elm_Code; [[Elementary code main data structure]] /* The main interface currently defined in code */
+struct @extern Elm_Code_Line; [[Elementary code line data structure]] /* Parts of the interface currently defined in code */
 
 class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
 {

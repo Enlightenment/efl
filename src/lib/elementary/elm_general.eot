@@ -22,6 +22,7 @@ type Eina_Compare_Cb: __undefined_type;
 /* FIXME: This shouldn't be here, we don't do functions in eolian!!! */
 struct Elm.Gen.Item.Class.Functions
 {
+   [[Elementary genlist/gengrid callback functions data structure]]
    text_get: Elm_Gen_Item_Text_Get_Cb; [[ Text fetching class function for
                                           genlist/gengrid item classes. ]]
    content_get: Elm_Gen_Item_Content_Get_Cb; [[ Content fetching class function

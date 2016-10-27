@@ -1,7 +1,7 @@
 struct Efl.Ui.Box.Flow_Params {
    [[Extra parameters for Box_Flow layout. Can be omitted.]]
-   homogenous: bool;
-   max_size: bool;
+   homogenous: bool; [[$true if the box flow layout is homogenous, $false otherwise]]
+   max_size: bool; [[$true if the box flow layout has the maximal size, $false otherwise]]
 }
 
 class Efl.Ui.Box.Flow (Efl.Ui.Box, Efl.Pack.Layout)
@@ -12,14 +12,14 @@ class Efl.Ui.Box.Flow (Efl.Ui.Box, Efl.Pack.Layout)
          set {}
          get {}
          values {
-            val: bool;
+            val: bool; [[$true if the box flow layout is homogenous, $false otherwise]]
          }
       }
       @property box_flow_max_size {
          set {}
          get {}
          values {
-            val: bool;
+            val: bool; [[$true if the box flow layout has the maximal size, $false otherwise]]
          }
       }
    }
