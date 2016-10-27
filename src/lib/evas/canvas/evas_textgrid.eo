@@ -18,7 +18,7 @@ enum Evas.Textgrid.Font_Style {
 }
 
 /* XXX: Actual definition is in C. */
-struct Evas.Textgrid.Cell;
+struct Evas.Textgrid.Cell; [[Evas textgrid cell data structure]]
 
 class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
 {

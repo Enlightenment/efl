@@ -1,4 +1,4 @@
-struct Efl.Canvas.Text.Style;
+struct Efl.Canvas.Text.Style; [[EFL text style data structure]]
 
 class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
 {

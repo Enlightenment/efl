@@ -1,5 +1,5 @@
 type @extern Evas.Load_Error: int; /* FIXME: Need to migrate emile. */
-struct @extern Evas.Video_Surface; /* FIXME: The structure is full of the unsupported func pointers. */
+struct @extern Evas.Video_Surface; [[Evas video surface data structure]]  /* FIXME: The structure is full of the unsupported func pointers. */
 
 type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
 type Evas.Coord: int; [[A type for coordinates]]
@@ -450,4 +450,4 @@ enum Evas.Canvas3D.Material_Attrib
 
 type Evas.Canvas3D.Surface_Func: __undefined_type;
 
-struct Efl.Canvas.Text.Annotation;
+struct Efl.Canvas.Text.Annotation; [[EFL text annotations data structure]]
