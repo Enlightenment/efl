@@ -7,21 +7,8 @@
 #ifndef ELEMENTARY_H
 #define ELEMENTARY_H
 
-#define ELM_ELDBUS
-#define ELM_EFREET
-#define ELM_ETHUMB
-
-@ELM_UNIX_DEF@ ELM_UNIX
-@ELM_WIN32_DEF@ ELM_WIN32
-#undef ELM_EMAP
-@ELM_DEBUG_DEF@ ELM_DEBUG
-@ELM_ALLOCA_H_DEF@ ELM_ALLOCA_H
-@ELM_LIBINTL_H_DEF@ ELM_LIBINTL_H
-@ELM_DIRENT_H_DEF@ ELM_DIRENT_H
-
-#ifdef EFL_BETA_API_SUPPORT
-# define ELM_ELOCATION
-#endif
+/* Options which can be enabled or disabled by the buildtool */
+#include "Elementary_Options.h"
 
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
@@ -83,6 +70,7 @@
 #include <Efreet_Mime.h>
 #include <Efreet_Trash.h>
 #include <Ethumb_Client.h>
+#include <Efl.h>
 
 #ifdef ELM_ELOCATION
 #include <Elocation.h>
@@ -135,8 +123,8 @@ extern "C"
 #include <elm_getting_started.h>
 #include <elm_authors.h>
 
-#define ELM_VERSION_MAJOR @EFL_VERSION_MAJOR@
-#define ELM_VERSION_MINOR @EFL_VERSION_MINOR@
+#define ELM_VERSION_MAJOR EFL_VERSION_MAJOR
+#define ELM_VERSION_MINOR EFL_VERSION_MINOR
 
 typedef struct _Elm_Version
 {

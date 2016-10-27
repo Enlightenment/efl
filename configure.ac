@@ -5790,7 +5790,7 @@ src/examples/elementary/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 src/lib/efl/Efl_Config.h
-src/lib/elementary/Elementary.h
+src/lib/elementary/Elementary_Options.h
 src/scripts/eo/eo_debug
 elm_intro.h
 spec/efl.spec

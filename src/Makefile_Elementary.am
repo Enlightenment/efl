@@ -188,6 +188,7 @@ lib_LTLIBRARIES += lib/elementary/libelementary.la
 
 includes_HEADERS = \
 lib/elementary/Elementary.h \
+lib/elementary/Elementary_Options.h \
 lib/elementary/Elementary_Cursor.h
 includesdir = $(includedir)/elementary-@VMAJ@
 
@@ -1359,7 +1360,7 @@ endif
 EXTRA_DIST2 += \
 tests/elementary/elm_suite.h \
 tests/elementary/elm_test_helper.h \
-lib/elementary/Elementary.h.in \
+lib/elementary/Elementary_Options.h.in \
 lib/elementary/elm_code_widget_text.c \
 lib/elementary/elm_code_widget_undo.c
 
