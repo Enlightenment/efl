@@ -182,6 +182,7 @@ class Elm.Multibuttonentry (Elm.Layout)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.access;
+      Elm.Widget.focus_direction;
       Elm.Widget.focus_next;
       Elm.Widget.on_focus;
       Elm.Widget.translate;

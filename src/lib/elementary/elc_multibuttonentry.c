@@ -45,6 +45,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool _elm_multibuttonentry_smart_focus_next_enable = EINA_FALSE;
+static Eina_Bool _elm_multibuttonentry_smart_focus_direction_enable = EINA_TRUE;
+
 static void _entry_changed_cb(void *data, const Efl_Event *event);
 static void _entry_focus_in_cb(void *data, const Efl_Event *event);
 static void _entry_focus_out_cb(void *data, const Efl_Event *event);
@@ -301,6 +304,11 @@ _shrink_mode_set(Evas_Object *obj,
           (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)(uintptr_t)sd->shrink);
      }
 
+   if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK)
+     _elm_multibuttonentry_smart_focus_direction_enable = EINA_FALSE;
+   else
+     _elm_multibuttonentry_smart_focus_direction_enable = EINA_TRUE;
+
    if (sd->view_state != MULTIBUTTONENTRY_VIEW_SHRINK)
      _visual_guide_text_set(obj);
 }
@@ -538,13 +546,27 @@ _on_item_deleted(void *data,
 }
 
 static void
+_on_item_focused(void *data,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   Elm_Multibuttonentry_Item_Data *it = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(WIDGET(it), sd);
+
+   if (!it) return;
+   sd->selected_it = it;
+}
+
+static void
 _on_item_unfocused(void *data,
                    Evas_Object *obj EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
    Elm_Multibuttonentry_Item_Data *it = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(WIDGET(it), sd);
 
    if (!it) return;
+   sd->selected_it = NULL;
    elm_layout_signal_emit(VIEW(it), "elm,state,unfocused", "elm");
 }
 
@@ -767,6 +789,8 @@ _item_new(Elm_Multibuttonentry_Data *sd,
      (VIEW(item), "mouse,clicked,1", "*", _on_item_clicked, EO_OBJ(item));
    elm_layout_signal_callback_add
      (VIEW(item), "elm,deleted", "elm", _on_item_deleted, EO_OBJ(item));
+   evas_object_smart_callback_add
+     (VIEW(item), "focused", _on_item_focused, item);
    evas_object_smart_callback_add
      (VIEW(item), "unfocused", _on_item_unfocused, item);
    evas_object_event_callback_add
@@ -1602,12 +1626,25 @@ _elm_multibuttonentry_efl_canvas_group_group_del(Eo *obj, Elm_Multibuttonentry_D
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-static Eina_Bool _elm_multibuttonentry_smart_focus_next_enable = EINA_FALSE;
-
 EOLIAN static Eina_Bool
 _elm_multibuttonentry_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return _elm_multibuttonentry_smart_focus_direction_enable;
+}
+
+EOLIAN static Eina_Bool
+_elm_multibuttonentry_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+{
+   Eina_Bool ret;
+   Eina_List *items = NULL;
+
+   items = eina_list_append(items, sd->box);
+
+   ret = elm_widget_focus_list_direction_get
+      (obj, base, items, eina_list_data_get, degree, direction, direction_item, weight);
+   eina_list_free(items);
+
+   return ret;
 }
 
 EOLIAN static Eina_Bool
