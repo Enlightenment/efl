@@ -1,6 +1,7 @@
 import eina_types;
 
 struct Efl.Event.Animator_Tick {
+   [[EFL event animator tick data structure]]
    update_area: Eina.Rectangle; [[Area of the canvas that will be pushed to screen.]]
 }
 

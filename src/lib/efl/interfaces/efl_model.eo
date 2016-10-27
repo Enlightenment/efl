@@ -1,4 +1,5 @@
 struct Efl.Model.Property_Event {
+     [[EFL model property event data structure]]
      changed_properties: array<string>; [[List of changed properties]]
      invalidated_properties: array<string>; [[Removed properties identified by name]]
 }
