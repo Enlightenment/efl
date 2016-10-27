@@ -23,6 +23,7 @@
 #include <Eolian_Cxx.hh>
 
 #include <eolian_mono/klass.hh>
+#include <eolian_mono/enum_definition.hh>
 #include <eolian_mono/type_impl.hh>
 
 namespace eolian_mono {
@@ -60,8 +61,8 @@ run(options_type const& opts)
 {
    const Eolian_Class *klass = NULL;
    char* dup = strdup(opts.in_file.c_str());
-   char* base = basename(dup);
-   klass = ::eolian_class_get_by_file(base);
+   std::string basename_input = basename(dup);
+   klass = ::eolian_class_get_by_file(basename_input.c_str());
    free(dup);
 
    std::string class_file_name = opts.out_file;
@@ -92,15 +93,18 @@ run(options_type const& opts)
 
         eolian_mono::klass.generate(iterator, klass_def, efl::eolian::grammar::context_null());
      }
-   else
+   //else
      {
-       for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator(::eolian_typedecl_enums_get_by_file(opts.in_file.c_str()))
+       EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "No klass, probably a eot file? " << opts.in_file.c_str();
+       for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator( ::eolian_typedecl_enums_get_by_file(basename_input.c_str()))
                , enum_last; enum_iterator != enum_last; ++enum_iterator)
          {
+            efl::eolian::grammar::attributes::enum_def enum_(&*enum_iterator);
             EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "would be generating enum";
+
+            eolian_mono::enum_definition.generate(iterator, enum_, efl::eolian::grammar::context_null());
          }
     }
-   return;
 }
 
 static void
