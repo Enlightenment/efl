@@ -2180,34 +2180,33 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 
    if (edata->direct_resize)
      {
-        if ((ee->w != w) || (ee->h != h))
-          {
-             ee->w = w;
-             ee->h = h;
-             if (changed) edata->configure_reqs++;
-             if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
-             if (ECORE_EVAS_PORTRAIT(ee))
-               {
-                  evas_output_size_set(ee->evas, ee->w, ee->h);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-               }
-             else
-               {
-                  evas_output_size_set(ee->evas, ee->h, ee->w);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-               }
-             if (ee->prop.avoid_damage)
-               {
-                  int pdam;
+        if ((ee->w == w) && (ee->h == h)) return;
 
-                  pdam = ecore_evas_avoid_damage_get(ee);
-                  ecore_evas_avoid_damage_set(ee, 0);
-                  ecore_evas_avoid_damage_set(ee, pdam);
-               }
-             if ((ee->shaped) || (ee->alpha))
-               _ecore_evas_x_resize_shape(ee);
-             if (ee->func.fn_resize) ee->func.fn_resize(ee);
+        ee->w = w;
+        ee->h = h;
+        if (changed) edata->configure_reqs++;
+        if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
+        if (ECORE_EVAS_PORTRAIT(ee))
+          {
+             evas_output_size_set(ee->evas, ee->w, ee->h);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
           }
+        else
+          {
+             evas_output_size_set(ee->evas, ee->h, ee->w);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+          }
+        if (ee->prop.avoid_damage)
+          {
+             int pdam;
+
+             pdam = ecore_evas_avoid_damage_get(ee);
+             ecore_evas_avoid_damage_set(ee, 0);
+             ecore_evas_avoid_damage_set(ee, pdam);
+          }
+        if ((ee->shaped) || (ee->alpha))
+          _ecore_evas_x_resize_shape(ee);
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
    else
      {
