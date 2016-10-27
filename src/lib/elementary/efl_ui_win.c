@@ -418,6 +418,8 @@ _elm_win_apply_alpha(Eo *obj, Efl_Ui_Win_Data *sd)
 {
    Eina_Bool enabled;
 
+   if (!sd->ee) return;
+
    enabled = sd->theme_alpha | sd->application_alpha;
    if (sd->img_obj)
      {
@@ -426,6 +428,7 @@ _elm_win_apply_alpha(Eo *obj, Efl_Ui_Win_Data *sd)
      }
    else
      {
+        enabled |= (sd->need_frame && !sd->fullscreen);
 #ifdef HAVE_ELEMENTARY_X
         if (sd->x.xwin)
           {
@@ -4642,8 +4645,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         return NULL;
      }
 
-   _elm_win_need_frame_adjust(sd, engine);
-
    if (!sd->accel_pref)
      eina_stringshare_replace(&sd->accel_pref, elm_config_accel_preference_get());
 
@@ -4877,6 +4878,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         evas_object_event_callback_add(sd->edje, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _elm_win_on_resize_obj_changed_size_hints, obj);
      }
+
+   _elm_win_need_frame_adjust(sd, engine);
+   _elm_win_apply_alpha(obj, sd);
 
    /* do not append to list; all windows render as black rects */
    if (type != ELM_WIN_FAKE)
