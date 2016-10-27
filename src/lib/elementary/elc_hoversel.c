@@ -764,6 +764,7 @@ _elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *sd)
      {
         _hover_del(obj);
      } // for backward compatibility
+   elm_object_focus_set(obj, EINA_TRUE);
 }
 
 EOLIAN static Eina_Bool
