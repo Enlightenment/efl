@@ -39,7 +39,6 @@ struct _Ecore_Evas_Engine_Wl_Data
    Eina_List *regen_objs;
    Ecore_Wl2_Window *parent, *win;
    Ecore_Event_Handler *sync_handler;
-   Evas_Object *frame;
    int fx, fy, fw, fh;
    Eina_Rectangle content;
    struct wl_callback *anim_callback;
@@ -57,7 +56,6 @@ Ecore_Evas_Interface_Wayland *_ecore_evas_wl_interface_new(void);
 
 int  _ecore_evas_wl_common_init(void);
 int  _ecore_evas_wl_common_shutdown(void);
-void _ecore_evas_wl_common_pre_free(Ecore_Evas *ee);
 void _ecore_evas_wl_common_free(Ecore_Evas *ee);
 void _ecore_evas_wl_common_callback_resize_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
 void _ecore_evas_wl_common_callback_move_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
@@ -102,10 +100,6 @@ void _ecore_evas_wl_common_alpha_set(Ecore_Evas *ee, int alpha);
 void _ecore_evas_wl_common_transparent_set(Ecore_Evas *ee, int transparent);
 
 void _ecore_evas_wl_common_frame_callback_clean(Ecore_Evas *ee);
-
-Evas_Object * _ecore_evas_wl_common_frame_add(Evas *evas);
-void _ecore_evas_wl_common_frame_border_size_set(Evas_Object *obj, int fx, int fy, int fw, int fh);
-
 void _ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
 
 Ecore_Evas *_ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name);

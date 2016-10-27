@@ -2304,8 +2304,8 @@ EAPI void        ecore_evas_screen_geometry_get(const Ecore_Evas *ee, int *x, in
  */
 EAPI void        ecore_evas_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi);
 
-EAPI void        ecore_evas_draw_frame_set(Ecore_Evas *ee, Eina_Bool draw_frame);
-EAPI Eina_Bool   ecore_evas_draw_frame_get(const Ecore_Evas *ee);
+EAPI void        ecore_evas_draw_frame_set(Ecore_Evas *ee, Eina_Bool draw_frame) EINA_DEPRECATED;
+EAPI Eina_Bool   ecore_evas_draw_frame_get(const Ecore_Evas *ee) EINA_DEPRECATED;
 
 /**
  * @brief Associate the given object to this ecore evas.

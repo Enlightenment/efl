@@ -2227,17 +2227,16 @@ ecore_evas_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
 }
 
 EAPI void
-ecore_evas_draw_frame_set(Ecore_Evas *ee, Eina_Bool draw_frame)
+ecore_evas_draw_frame_set(Ecore_Evas *ee EINA_UNUSED, Eina_Bool draw_frame EINA_UNUSED)
 {
-   ECORE_EVAS_CHECK(ee);
-   ee->prop.draw_frame = draw_frame;
+   WRN("Calling deprecated function %s (not implemented)", __FUNCTION__);
 }
 
 EAPI Eina_Bool
-ecore_evas_draw_frame_get(const Ecore_Evas *ee)
+ecore_evas_draw_frame_get(const Ecore_Evas *ee EINA_UNUSED)
 {
-   ECORE_EVAS_CHECK(ee, EINA_FALSE);
-   return ee->prop.draw_frame;
+   WRN("Calling deprecated function %s (not implemented)", __FUNCTION__);
+   return EINA_FALSE;
 }
 
 EAPI void 

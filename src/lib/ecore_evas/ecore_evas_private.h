@@ -267,7 +267,6 @@ struct _Ecore_Evas
       Eina_Bool       withdrawn    : 1;
       Eina_Bool       sticky       : 1;
       Eina_Bool       request_pos  : 1;
-      Eina_Bool       draw_frame   : 1;
       Eina_Bool       hwsurface    : 1;
       Eina_Bool       urgent           : 1;
       Eina_Bool       modal            : 1;

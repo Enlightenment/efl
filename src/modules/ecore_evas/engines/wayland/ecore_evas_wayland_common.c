@@ -94,17 +94,6 @@ static const int interface_wl_version = 1;
 
 Eina_List *ee_list;
 
-/* local structures for the frame smart object */
-typedef struct _EE_Wl_Smart_Data EE_Wl_Smart_Data;
-struct _EE_Wl_Smart_Data
-{
-   Evas_Object_Smart_Clipped_Data base;
-   Evas_Object *text;
-   Evas_Coord x, y, w, h;
-   Evas_Object *border[4]; // 0 = top, 1 = bottom, 2 = left, 3 = right
-   Evas_Coord border_size[4]; // same as border
-};
-
 /* local structure for evas devices with IDs */
 typedef struct _EE_Wl_Device EE_Wl_Device;
 struct _EE_Wl_Device
@@ -115,15 +104,6 @@ struct _EE_Wl_Device
    Evas_Device *touch;
    unsigned int id;
 };
-
-static const Evas_Smart_Cb_Description _smart_callbacks[] =
-{
-     {NULL, NULL}
-};
-
-EVAS_SMART_SUBCLASS_NEW(_smart_frame_type, _ecore_evas_wl_frame,
-                        Evas_Smart_Class, Evas_Smart_Class,
-                        evas_object_smart_clipped_class_get, _smart_callbacks);
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
@@ -137,7 +117,6 @@ void _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, vo
 static void _rotation_do(Ecore_Evas *ee, int rotation, int resize);
 static void _ecore_evas_wayland_alpha_do(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_wayland_transparent_do(Ecore_Evas *ee, int transparent);
-static void _ecore_evas_wl_common_border_update(Ecore_Evas *ee);
 
 /* local functions */
 static void 
@@ -307,9 +286,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
    fw = wdata->win->geometry.w - wdata->content.w;
    fh = wdata->win->geometry.h - wdata->content.h;
-
-   if (prev_full != ee->prop.fullscreen)
-     _ecore_evas_wl_common_border_update(ee);
 
    if ((prev_max != ee->prop.maximized) ||
        (prev_full != ee->prop.fullscreen))
@@ -837,18 +813,6 @@ _ecore_evas_wl_common_shutdown(void)
 }
 
 void
-_ecore_evas_wl_common_pre_free(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!ee) return;
-   wdata = ee->engine.data;
-   if (wdata->frame) evas_object_del(wdata->frame);
-}
-
-void
 _ecore_evas_wl_common_free(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1051,9 +1015,6 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
              ecore_evas_avoid_damage_set(ee, pdam);
           }
 
-        if (wdata->frame)
-          evas_object_resize(wdata->frame, w, h);
-
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
@@ -1137,231 +1098,6 @@ _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
      }
 }
 
-/* Frame border:
- *
- * |------------------------------------------|
- * |                top border                |
- * |------------------------------------------|
- * |       |                         |        |
- * |       |                         |        |
- * |       |                         |        |
- * |       |                         |        |
- * |left   |                         | right  |
- * |border |                         | border |
- * |       |                         |        |
- * |       |                         |        |
- * |       |                         |        |
- * |------------------------------------------|
- * |                bottom border             |
- * |------------------------------------------|
- */
-static void
-_border_size_eval(Evas_Object *obj EINA_UNUSED, EE_Wl_Smart_Data *sd)
-{
-
-   /* top border */
-   if (sd->border[0])
-     {
-        evas_object_move(sd->border[0], sd->x, sd->y);
-        evas_object_resize(sd->border[0], sd->w, sd->border_size[0]);
-     }
-
-   /* bottom border */
-   if (sd->border[1])
-     {
-        evas_object_move(sd->border[1], sd->x,
-                         sd->y + sd->h - sd->border_size[1]);
-        evas_object_resize(sd->border[1], sd->w, sd->border_size[1]);
-     }
-
-   /* left border */
-   if (sd->border[2])
-     {
-        evas_object_move(sd->border[2], sd->x, sd->y + sd->border_size[0]);
-        evas_object_resize(sd->border[2], sd->border_size[2],
-                           sd->h - sd->border_size[0] - sd->border_size[1]);
-     }
-
-   /* right border */
-   if (sd->border[3])
-     {
-        evas_object_move(sd->border[3], sd->x + sd->w - sd->border_size[3],
-                         sd->y + sd->border_size[0]);
-        evas_object_resize(sd->border[3], sd->border_size[3],
-                           sd->h - sd->border_size[0] - sd->border_size[1]);
-     }
-}
-
-static void
-_ecore_evas_wl_common_smart_add(Evas_Object *obj)
-{
-   EE_Wl_Smart_Data *sd;
-   Evas *evas;
-   int i;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   EVAS_SMART_DATA_ALLOC(obj, EE_Wl_Smart_Data);
-
-   _ecore_evas_wl_frame_parent_sc->add(obj);
-
-   sd = priv;
-
-   evas = evas_object_evas_get(obj);
-
-   sd->x = 0;
-   sd->y = 0;
-   sd->w = 1;
-   sd->h = 1;
-
-   for (i = 0; i < 4; i++)
-     {
-        sd->border[i] = NULL;
-        sd->border_size[i] = 0;
-     }
-
-   sd->text = evas_object_text_add(evas);
-   evas_object_color_set(sd->text, 0, 0, 0, 255);
-   evas_object_text_style_set(sd->text, EVAS_TEXT_STYLE_PLAIN);
-   evas_object_text_font_set(sd->text, "Sans", 10);
-   evas_object_text_text_set(sd->text, "Smart Test");
-   evas_object_show(sd->text);
-   evas_object_smart_member_add(sd->text, obj);
-}
-
-static void
-_ecore_evas_wl_common_smart_del(Evas_Object *obj)
-{
-   EE_Wl_Smart_Data *sd;
-   int i;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!(sd = evas_object_smart_data_get(obj))) return;
-   evas_object_del(sd->text);
-   for (i = 0; i < 4; i++)
-     {
-        evas_object_del(sd->border[i]);
-     }
-   _ecore_evas_wl_frame_parent_sc->del(obj);
-}
-
-static void
-_ecore_evas_wl_common_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
-{
-   EE_Wl_Smart_Data *sd;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   _ecore_evas_wl_frame_parent_sc->move(obj, x, y);
-
-   if (!(sd = evas_object_smart_data_get(obj))) return;
-   if ((sd->x == x) && (sd->y == y)) return;
-   sd->x = x;
-   sd->y = y;
-
-   evas_object_smart_changed(obj);
-}
-
-static void
-_ecore_evas_wl_common_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
-{
-   EE_Wl_Smart_Data *sd;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!(sd = evas_object_smart_data_get(obj))) return;
-   if ((sd->w == w) && (sd->h == h)) return;
-   sd->w = w;
-   sd->h = h;
-
-   evas_object_smart_changed(obj);
-}
-
-void
-_ecore_evas_wl_common_smart_calculate(Evas_Object *obj)
-{
-   EE_Wl_Smart_Data *sd;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!(sd = evas_object_smart_data_get(obj))) return;
-
-   _border_size_eval(obj, sd);
-}
-
-static void
-_ecore_evas_wl_frame_smart_set_user(Evas_Smart_Class *sc)
-{
-   sc->add = _ecore_evas_wl_common_smart_add;
-   sc->del = _ecore_evas_wl_common_smart_del;
-   sc->move = _ecore_evas_wl_common_smart_move;
-   sc->resize = _ecore_evas_wl_common_smart_resize;
-   sc->calculate = _ecore_evas_wl_common_smart_calculate;
-}
-
-Evas_Object *
-_ecore_evas_wl_common_frame_add(Evas *evas)
-{
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   return evas_object_smart_add(evas, _ecore_evas_wl_frame_smart_class_new());
-}
-
-/*
- * Size is received in the same format as it is used to set the framespace
- * offset size.
- */
-void
-_ecore_evas_wl_common_frame_border_size_set(Evas_Object *obj, int fx, int fy, int fw, int fh)
-{
-   EE_Wl_Smart_Data *sd;
-   Evas *e;
-   int i;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!(sd = evas_object_smart_data_get(obj))) return;
-
-   e = evas_object_evas_get(obj);
-
-   sd->border_size[0] = fy;
-   sd->border_size[1] = fh - fy;
-   sd->border_size[2] = fx;
-   sd->border_size[3] = fw - fx;
-
-   for (i = 0; i < 4; i++)
-     {
-        if ((sd->border_size[i] <= 0) && (sd->border[i]))
-          {
-             evas_object_del(sd->border[i]);
-             sd->border[i] = NULL;
-          }
-        else if ((sd->border_size[i] > 0) && (!sd->border[i]))
-          {
-             sd->border[i] = evas_object_rectangle_add(e);
-             evas_object_color_set(sd->border[i], 249, 249, 249, 255);
-             evas_object_show(sd->border[i]);
-             evas_object_smart_member_add(sd->border[i], obj);
-          }
-     }
-   evas_object_raise(sd->text);
-}
-
-void
-_ecore_evas_wl_common_frame_border_size_get(Evas_Object *obj, int *fx, int *fy, int *fw, int *fh)
-{
-   EE_Wl_Smart_Data *sd;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!(sd = evas_object_smart_data_get(obj))) return;
-
-   if (fx) *fx = sd->border_size[2];
-   if (fy) *fy = sd->border_size[0];
-   if (fw) *fw = sd->border_size[2] + sd->border_size[3];
-   if (fh) *fh = sd->border_size[0] + sd->border_size[1];
-}
-
 void 
 _ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {
@@ -1394,20 +1130,14 @@ _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
 
    if (!ee) return;
    if (eina_streq(ee->prop.title, title)) return;
-   if (ee->prop.title) free(ee->prop.title);
-   ee->prop.title = NULL;
-   if (title) ee->prop.title = strdup(title);
-   wdata = ee->engine.data;
-   if ((ee->prop.draw_frame) && (wdata->frame))
-     {
-        EE_Wl_Smart_Data *sd;
-
-        if ((sd = evas_object_smart_data_get(wdata->frame)))
-          evas_object_text_text_set(sd->text, ee->prop.title);
-     }
+   free(ee->prop.title);
+   ee->prop.title = eina_strdup(title);
 
    if (ee->prop.title)
-     ecore_wl2_window_title_set(wdata->win, ee->prop.title);
+     {
+        wdata = ee->engine.data;
+        ecore_wl2_window_title_set(wdata->win, ee->prop.title);
+     }
 }
 
 void
@@ -1593,30 +1323,6 @@ _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, Eina_Bool on)
    ecore_wl2_window_iconified_set(wdata->win, on);
 }
 
-static void
-_ecore_evas_wl_common_border_update(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   wdata = ee->engine.data;
-   if (!wdata->frame) return;
-
-   if ((ee->prop.borderless) || (ee->prop.fullscreen))
-     {
-        evas_object_hide(wdata->frame);
-        evas_output_framespace_set(ee->evas, 0, 0, 0, 0);
-     }
-   else
-     {
-        int fx = 0, fy = 0, fw = 0, fh = 0;
-
-        evas_object_show(wdata->frame);
-        _ecore_evas_wl_common_frame_border_size_get(wdata->frame,
-                                                    &fx, &fy, &fw, &fh);
-        evas_output_framespace_set(ee->evas, fx, fy, fw, fh);
-     }
-}
-
 void
 _ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, Eina_Bool on)
 {
@@ -1626,7 +1332,6 @@ _ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, Eina_Bool on)
    if (ee->prop.borderless == on) return;
    ee->prop.borderless = on;
 
-   _ecore_evas_wl_common_border_update(ee);
    _ecore_evas_wl_common_state_update(ee);
 }
 
@@ -2042,12 +1747,6 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
           }
      }
 
-   if (wdata->frame)
-     {
-        evas_object_show(wdata->frame);
-        evas_object_resize(wdata->frame, ee->w + fw, ee->h + fh);
-     }
-
    ee->prop.withdrawn = EINA_FALSE;
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
 
@@ -2287,12 +1986,6 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
                }
           }
 
-        if (wdata->frame)
-          {
-             evas_object_show(wdata->frame);
-             evas_object_resize(wdata->frame, ee->w + fw, ee->h + fh);
-          }
-
         ee->prop.withdrawn = EINA_FALSE;
         if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
 
@@ -2318,7 +2011,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    Ecore_Evas_Interface_Wayland *iface;
    Ecore_Evas *ee = NULL;
    int method = 0;
-   int fx = 0, fy = 0, fw = 0, fh = 0;
+   int fw = 0, fh = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -2354,6 +2047,8 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
         goto err;
      }
 
+   if (frame) WRN("draw_frame is now deprecated and will have no effect");
+
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
    _ecore_evas_wl_common_init();
@@ -2384,7 +2079,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    ee->prop.layer = 4;
    ee->prop.request_pos = EINA_FALSE;
    ee->prop.sticky = EINA_FALSE;
-   ee->prop.draw_frame = frame;
    ee->prop.withdrawn = EINA_TRUE;
    ee->alpha = EINA_FALSE;
 
@@ -2393,15 +2087,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
      ee->can_async_render = 0;
    else
      ee->can_async_render = 1;
-
-   /* frame offset and size */
-   if (ee->prop.draw_frame)
-     {
-        fx = 4;
-        fy = 18;
-        fw = 8;
-        fh = 22;
-     }
 
    if (parent)
      {
@@ -2430,10 +2115,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                            _ecore_evas_wl_common_render_flush_pre, ee);
 
-   /* FIXME: This needs to be set based on theme & scale */
-   if (ee->prop.draw_frame)
-     evas_output_framespace_set(ee->evas, fx, fy, fw, fh);
-
    if (ewd->sync_done)
      {
         wdata->sync_done = EINA_TRUE;
@@ -2459,16 +2140,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
              ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
              goto err;
           }
-     }
-
-   ecore_evas_callback_pre_free_set(ee, _ecore_evas_wl_common_pre_free);
-
-   if (ee->prop.draw_frame)
-     {
-        wdata->frame = _ecore_evas_wl_common_frame_add(ee->evas);
-        _ecore_evas_wl_common_frame_border_size_set(wdata->frame, fx, fy, fw, fh);
-        evas_object_move(wdata->frame, -fx, -fy);
-        evas_object_layer_set(wdata->frame, EVAS_LAYER_MAX - 1);
      }
 
    ee->engine.func->fn_render = _ecore_evas_wl_common_render;
