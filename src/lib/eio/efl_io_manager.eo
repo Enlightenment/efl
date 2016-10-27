@@ -3,8 +3,8 @@ import eina_types;
 struct Eio.Data
 {
   [[A structure to handle arbitrary data to be sent over Promises.]]
-  data: void_ptr;
-  size: uint;
+  data: void_ptr; [[Private data pointer]]
+  size: uint; [[Size of private data]]
 }
 
 class Efl.Io.Manager (Efl.Loop_User)
