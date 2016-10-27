@@ -40,6 +40,26 @@ template <typename Tag>
 struct tag_check<Tag, context_null> : std::false_type {};
 template <typename Tag, typename OtherTag, typename Context>
 struct tag_check<Tag, context_cons<OtherTag, Context>> : tag_check<Tag, Context> {};
+
+template <typename Tag, typename SameTag, typename Tail> 
+Tag const& context_find_tag(context_cons<SameTag, Tail> const& context
+                            , typename std::enable_if<std::is_same<Tag, SameTag>::value>::type* = nullptr)
+{
+  return context.tag;
+}
+
+template <typename Tag, typename OtherTag, typename Tail> 
+Tag const& context_find_tag(context_cons<OtherTag, Tail> const& context
+                            , typename std::enable_if<!std::is_same<Tag, OtherTag>::value>::type* = nullptr)
+{
+  return context_find_tag<Tag>(context.tail);
+}
+
+template <typename Tag, typename OtherTag, typename Tail> 
+Tag const& context_find_tag(context_null const& context)
+{
+  throw std::logic_error("Context for generation not available");
+}
       
 } } }
 

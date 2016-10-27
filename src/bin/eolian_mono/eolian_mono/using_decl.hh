@@ -8,11 +8,13 @@ using efl::eolian::grammar::as_generator;
 using efl::eolian::grammar::string;
 using efl::eolian::grammar::operator<<;
 using efl::eolian::grammar::operator%;
+using efl::eolian::grammar::operator*;
 using efl::eolian::grammar::scope_tab;
 using efl::eolian::grammar::lower_case;
 using efl::eolian::grammar::upper_case;
 using efl::eolian::grammar::lit;
 using efl::eolian::grammar::qualifier_info;
+using efl::eolian::grammar::context_find_tag;
 
 }
 
