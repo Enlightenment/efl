@@ -41,20 +41,22 @@ am__v_EOLMONO_0 = @echo "  EOLMONO  " $@;
 
 if HAVE_MCS
 
-bin_PROGRAMS += lib/eo_mono/eo_mono.dll
+bin_PROGRAMS += lib/eo_mono/libeo_mono.dll
 
-lib_eo_mono_eo_mono_dll_SOURCES = \
+lib_eo_mono_libeo_mono_dll_SOURCES = \
 	bindings/mono/eo_mono/object.cs \
 	bindings/mono/eo_mono/iwrapper.cs
 
-lib/eo_mono/eo_mono.dll$(EXEEXT): $(lib_eo_mono_eo_mono_dll_SOURCES) lib/eo_mono/$(am__dirstamp) $(efl_eolian_mono_files)
-	@rm -f lib/eo_mono/eo_mono_dll$(EXEEXT)
+lib/eo_mono/libeo_mono.dll$(EXEEXT): $(lib_eo_mono_libeo_mono_dll_SOURCES) lib/eo_mono/$(am__dirstamp) $(efl_eolian_mono_files)
+	@rm -f lib/eo_mono/libeo_mono.dll$(EXEEXT)
 	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LD_LIBRARY_PATH_APPEND) $(MCS) $(MCS_FLAGS) -out:$@ -t:library $(filter-out $(lastword $(^)), $(^))
 
 if EFL_ENABLE_TESTS
 
 AM_TESTS_ENVIRONMENT += MONO='mono'; export MONO;
-AM_TESTS_ENVIRONMENT += MONO_BUILDPATH='$(top_absbuilddir)'; export MONO_BUILDPATH;
+AM_TESTS_ENVIRONMENT += MONO_BUILDPATH='$(abs_top_builddir)'; export MONO_BUILDPATH;
+AM_TESTS_ENVIRONMENT += MONO_PATH='$(abs_top_builddir)/src/lib/eo_mono'; export MONO_PATH;
+#AM_TESTS_ENVIRONMENT += MONO_LOG_LEVEL=debug; export MONO_LOG_LEVEL;
 
 check_PROGRAMS += tests/eo_mono/eo_mono.exe
 TESTS += tests/eo_mono/eo_mono.exe
@@ -62,11 +64,11 @@ TESTS += tests/eo_mono/eo_mono.exe
 tests_eo_mono_eo_mono_exe_SOURCES = \
      tests/eo_mono/Main.cs
 
-LD_LIBRARY_PATH_APPEND=$(top_builddir)/src/lib/eina
+LD_LIBRARY_PATH_APPEND=$(top_builddir)/src/lib/eina:$(top_builddir)/src/lib/ecore:$(top_builddir)/src/lib/efl
 
-tests/eo_mono/eo_mono.exe$(EXEEXT): $(tests_eo_mono_eo_mono_exe_SOURCES) tests/eo_mono/$(am__dirstamp) lib/eo_mono/eo_mono.dll 
+tests/eo_mono/eo_mono.exe$(EXEEXT): $(tests_eo_mono_eo_mono_exe_SOURCES) tests/eo_mono/$(am__dirstamp) lib/eo_mono/libeo_mono.dll 
 	@rm -f tests/eo_mono/eo_mono_exe$(EXEEXT)
-	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LD_LIBRARY_PATH_APPEND) $(MCS) $(MCS_FLAGS) -r:lib/eo_mono/eo_mono.dll -out:$@ $(filter-out $(lastword $(^)), $(^))
+	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LD_LIBRARY_PATH_APPEND) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -out:$@ $(filter-out $(lastword $(^)), $(^))
 
 SUFFIXES += .eo.cs
 
