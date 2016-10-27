@@ -1,7 +1,8 @@
 import efl_types;
 
 struct Efl.Loop.Arguments {
-   argv: const(array<const(stringshare)>);
+   [[EFL loop arguments data structure]]
+   argv: const(array<const(stringshare)>); [[Array with loop arguments]]
    initialization: bool; [[Set to $true when the program should initialize its internal state. This happen once per process instance.]]
 }
 
