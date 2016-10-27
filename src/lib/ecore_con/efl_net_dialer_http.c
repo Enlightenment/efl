@@ -214,6 +214,7 @@ typedef struct
    Eina_Bool closed;
    Eina_Bool close_on_exec;
    Eina_Bool close_on_destructor;
+   Eina_Bool pending_eos;
    Eina_Bool eos;
    Eina_Bool can_read;
    Eina_Bool can_write;
@@ -313,8 +314,13 @@ _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
         pd = efl_data_scope_get(dialer, MY_CLASS);
         if (pd->error)
           efl_event_callback_call(dialer, EFL_NET_DIALER_EVENT_ERROR, &pd->error);
-        efl_io_reader_eos_set(dialer, EINA_TRUE);
-        efl_io_closer_close(dialer);
+        if (pd->recv.used > 0) pd->pending_eos = EINA_TRUE;
+        else
+          {
+             efl_io_reader_eos_set(dialer, EINA_TRUE);
+             efl_io_closer_close(dialer);
+          }
+
         _efl_net_dialer_http_curlm_check_finished_object_remove(&finished, dialer);
         efl_unref(dialer);
      }
@@ -1534,6 +1540,11 @@ _efl_net_dialer_http_efl_io_reader_read(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ein
    if (ro_slice.len == 0)
      {
         rw_slice->len = 0;
+        if (pd->pending_eos)
+          {
+             efl_io_reader_eos_set(o, EINA_TRUE);
+             efl_io_closer_close(o);
+          }
         return EAGAIN;
      }
    ro_slice.bytes = pd->recv.bytes;
@@ -1546,6 +1557,13 @@ _efl_net_dialer_http_efl_io_reader_read(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ein
 
    pd->recv.used = remaining;
    efl_io_reader_can_read_set(o, remaining > 0);
+
+   if ((pd->pending_eos) && (remaining == 0))
+     {
+        efl_io_reader_eos_set(o, EINA_TRUE);
+        efl_io_closer_close(o);
+        return 0;
+     }
 
    if ((pd->pause & CURLPAUSE_RECV) && (pd->recv.used < pd->recv.limit))
      {
