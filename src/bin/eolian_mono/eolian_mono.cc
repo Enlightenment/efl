@@ -45,54 +45,14 @@ opts_check(eolian_mono::options_type const& opts)
         EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
           << "Nothing to generate?" << std::endl;
      }
-   else
+   else if (opts.out_file.empty())
      {
-        return true; // valid.
+        EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
+          << "Nowhere to generate?" << std::endl;
      }
+   else
+     return true; // valid.
    return false;
-}
-
-static bool
-generate(const Eolian_Typedecl* enum_obj, eolian_mono::options_type const& opts)
-{
-    EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "would be generating enum";
-    return EINA_TRUE;
-}
-
-static bool
-generate(const Eolian_Class* klass, eolian_mono::options_type const& opts)
-{
-   std::string class_file_name = opts.out_file.empty()
-     ? (::eolian_class_file_get(klass) + std::string(".cs")) : opts.out_file;
-
-   efl::eolian::grammar::attributes::klass_def klass_def(klass);
-   std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
-
-   if(opts.out_file == "-")
-     {
-        std::ostream_iterator<char> iterator(std::cout);
-
-        eolian_mono::klass.generate
-          (iterator, klass_def, efl::eolian::grammar::context_null());
-        std::endl(std::cout);
-     }
-   else
-     {
-        std::ofstream class_def;
-        class_def.open(class_file_name);
-        if (!class_def.good())
-          {
-             EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
-               << "Can't open output file: " << class_file_name << std::endl;
-             return false;
-          }
-
-        eolian_mono::klass.generate
-          (std::ostream_iterator<char>(class_def), klass_def, efl::eolian::grammar::context_null());
-
-        class_def.close();
-     }
-   return true;
 }
 
 static void
@@ -103,34 +63,44 @@ run(options_type const& opts)
    char* base = basename(dup);
    klass = ::eolian_class_get_by_file(base);
    free(dup);
+
+   std::string class_file_name = opts.out_file;
+
+   std::ofstream output_file;
+   std::ostream_iterator<char> iterator
+     {[&]
+     {
+       if(opts.out_file == "-")
+         return std::ostream_iterator<char>(std::cout);
+       else
+         {
+           output_file.open(class_file_name);
+           if (!output_file.good())
+             {
+               EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
+                 << "Can't open output file: " << class_file_name << std::endl;
+               throw std::runtime_error("");
+             }
+           return std::ostream_iterator<char>(output_file);
+         }
+     }()};
+
    if (klass)
      {
-        if (!generate(klass, opts))
-          goto err;
+       efl::eolian::grammar::attributes::klass_def klass_def(klass);
+       std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
+
+        eolian_mono::klass.generate(iterator, klass_def, efl::eolian::grammar::context_null());
      }
    else
      {
        for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator(::eolian_typedecl_enums_get_by_file(opts.in_file.c_str()))
                , enum_last; enum_iterator != enum_last; ++enum_iterator)
          {
-            if (!generate(&*enum_iterator, opts))
-              goto err;
+            EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "would be generating enum";
          }
-
-       // for(
-       
-       // EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
-       //   << "is this a type file?"
-       //   << std::endl;
-       // //std::abort();
-       // goto err;
     }
    return;
- err:
-   EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
-     << "Error generating: " << ::eolian_class_name_get(klass)
-     << std::endl;
-   assert(false && "error generating class");
 }
 
 static void
