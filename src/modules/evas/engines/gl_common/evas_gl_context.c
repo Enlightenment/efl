@@ -3826,12 +3826,16 @@ evas_gl_common_module_open(void)
         EINA_LOG_ERR("Can not create a module log domain.");
         return EINA_FALSE;
      }
+   evas_gl_thread_init();
+
    return EINA_TRUE;
 }
 
 void
 evas_gl_common_module_close(void)
 {
+   evas_gl_thread_terminate();
+
    if (_evas_engine_GL_common_log_dom < 0) return;
    eina_log_domain_unregister(_evas_engine_GL_common_log_dom);
    _evas_engine_GL_common_log_dom = -1;
