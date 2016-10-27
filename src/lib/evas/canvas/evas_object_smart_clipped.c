@@ -86,7 +86,7 @@ evas_object_smart_clipped_smart_move(Evas_Object *eo_obj, Evas_Coord x, Evas_Coo
 {
    Evas_Coord orig_x, orig_y;
 
-   efl_gfx_position_get(eo_obj, &orig_x, &orig_y);
+   _evas_object_smart_xy_update(eo_obj, &orig_x, &orig_y, x, y);
    evas_object_smart_move_children_relative(eo_obj, x - orig_x, y - orig_y);
 }
 

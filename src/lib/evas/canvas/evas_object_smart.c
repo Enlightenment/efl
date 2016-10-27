@@ -36,6 +36,8 @@ struct _Evas_Smart_Data
 
    Evas_Smart_Cb_Description_Array callbacks_descriptions;
 
+   Evas_Coord        x, y;
+
    int               walking_list;
    int               member_count; /** number of smart member objects */
 
@@ -911,6 +913,17 @@ EOLIAN int
 _evas_canvas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->smart_calc_count;
+}
+
+void
+_evas_object_smart_xy_update(Eo *eo_obj, Evas_Coord *px, Evas_Coord *py,
+                             Evas_Coord x, Evas_Coord y)
+{
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
+   *px = o->x;
+   *py = o->y;
+   o->x = x;
+   o->y = y;
 }
 
 /**
