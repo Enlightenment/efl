@@ -11,6 +11,7 @@
 //#include "grammar/parameter.hpp"
 #include "keyword.hh"
 #include "using_decl.hh"
+#include "library_context.hh"
 
 namespace eolian_mono {
 
@@ -19,9 +20,29 @@ struct function_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
-    return as_generator
-      (eolian_mono::type(true) << " " << string << "(" /*<< (parameter % ", ")*/ << ");\n")
-      .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name)/*, f.parameters*/), context);
+    //using namespace System;
+    //using namespace System::Runtime::InteropServices;
+    std::string return_type;
+    if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
+      return false;
+    
+    if(!as_generator
+       (scope_tab << "[System.Runtime.InteropServices.DllImport(\"" << context_find_tag<library_context>(context).library_name << "\")] static extern "
+        << return_type << " "
+        << string
+        << "(" /*<< (parameter % ", ")*/ << ");\n")
+       .generate(sink, std::make_tuple(f.c_name/*, f.parameters*/), context))
+      return false;
+
+    if(!as_generator
+       (scope_tab << "public " << return_type << " " << string << "(" /*<< (parameter % ", ")*/
+        << ") { "
+        << (return_type == "void" ? "":"return ") << string << "();"
+        << " }\n")
+       .generate(sink, std::make_tuple(escape_keyword(f.name), f.c_name/*, f.parameters*/), context))
+      return false;
+
+    return true;
   }
 };
 

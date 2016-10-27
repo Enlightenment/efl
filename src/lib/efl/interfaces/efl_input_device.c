@@ -74,13 +74,13 @@ _efl_input_device_source_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
 }
 
 EOLIAN static void
-_efl_input_device_name_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, const char *name)
+_efl_input_device_device_name_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, const char *name)
 {
    eina_stringshare_replace(&pd->name, name);
 }
 
 EOLIAN static const char *
-_efl_input_device_name_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+_efl_input_device_device_name_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
 {
    return pd->name;
 }
@@ -98,13 +98,13 @@ _efl_input_device_description_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_input_device_parent_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+_efl_input_device_device_parent_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
 {
    return pd->parent;
 }
 
 EOLIAN static void
-_efl_input_device_parent_set(Eo *obj, Efl_Input_Device_Data *pd, Efl_Input_Device *parent)
+_efl_input_device_device_parent_set(Eo *obj, Efl_Input_Device_Data *pd, Efl_Input_Device *parent)
 {
    if (pd->parent == parent) return;
    if (pd->parent)

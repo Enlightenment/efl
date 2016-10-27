@@ -64,7 +64,7 @@ class Efl.Input.Device (Efl.Object)
             src: Efl.Input.Device;
          }
       }
-      @property name {
+      @property device_name {
          values {
             name: string;
          }
@@ -74,7 +74,7 @@ class Efl.Input.Device (Efl.Object)
             desc: string;
          }
       }
-      @property parent {
+      @property device_parent {
          set {}
          get {}
          values {

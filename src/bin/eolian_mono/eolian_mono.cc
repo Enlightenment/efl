@@ -91,7 +91,7 @@ run(options_type const& opts)
        efl::eolian::grammar::attributes::klass_def klass_def(klass);
        std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
 
-        eolian_mono::klass.generate(iterator, klass_def, efl::eolian::grammar::context_null());
+       eolian_mono::klass.generate(iterator, klass_def, efl::eolian::grammar::context_cons<eolian_mono::library_context>({"ecore"}));
      }
    //else
      {
