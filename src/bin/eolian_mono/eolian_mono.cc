@@ -95,13 +95,10 @@ run(options_type const& opts)
      }
    //else
      {
-       EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "No klass, probably a eot file? " << opts.in_file.c_str();
        for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator( ::eolian_typedecl_enums_get_by_file(basename_input.c_str()))
                , enum_last; enum_iterator != enum_last; ++enum_iterator)
          {
             efl::eolian::grammar::attributes::enum_def enum_(&*enum_iterator);
-            EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "would be generating enum";
-
             eolian_mono::enum_definition.generate(iterator, enum_, efl::eolian::grammar::context_null());
          }
     }

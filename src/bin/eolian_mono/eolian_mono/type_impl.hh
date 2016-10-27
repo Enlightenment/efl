@@ -61,27 +61,32 @@ struct visitor_generate
       const match_table[] =
         {
            // signed primitives
-             {"byte", nullptr, [&] { return replace_base_type(regular, " Byte"); }}
-           , {"llong", nullptr, [&] { return replace_base_type(regular, " Long"); }}
-           , {"int8", nullptr, [&] { return replace_base_type(regular, " Byte"); }}
-           , {"int16", nullptr, [&] { return replace_base_type(regular, " Short"); }}
+             {"byte", nullptr, [&] { return replace_base_type(regular, " byte"); }}
+           , {"llong", nullptr, [&] { return replace_base_type(regular, " long"); }}
+           , {"int8", nullptr, [&] { return replace_base_type(regular, " byte"); }}
+           , {"int16", nullptr, [&] { return replace_base_type(regular, " short"); }}
            , {"int32", nullptr, [&] { return replace_base_type(regular, " int"); }}
-           , {"int64", nullptr, [&] { return replace_base_type(regular, " Long"); }}
-           , {"ssize", nullptr, [&] { return replace_base_type(regular, " Long"); }}
+           , {"int64", nullptr, [&] { return replace_base_type(regular, " long"); }}
+           , {"ssize", nullptr, [&] { return replace_base_type(regular, " long"); }}
            // unsigned primitives
-           , {"ubyte", nullptr, [&] { return replace_base_type(regular, " Byte"); }}
-           , {"ushort", nullptr, [&] { return replace_base_type(regular, " Short"); }}
-           , {"uint", nullptr, [&] { return replace_base_type(regular, " int"); }}
-           , {"ulong", nullptr, [&] { return replace_base_type(regular, " Long"); }}
-           , {"ullong", nullptr, [&] { return replace_base_type(regular, " Long"); }}
+           , {"ubyte", nullptr, [&] { return replace_base_type(regular, " byte"); }}
+           , {"ushort", nullptr, [&] { return replace_base_type(regular, " ushort"); }}
+           , {"uint", nullptr, [&] { return replace_base_type(regular, " uint"); }}
+           , {"ulong", nullptr, [&] { return replace_base_type(regular, " ulong"); }}
+           , {"ullong", nullptr, [&] { return replace_base_type(regular, " ulong"); }}
            , {"uint8", nullptr, [&] { return replace_base_type(regular, " byte"); }}
-           , {"uint16", nullptr, [&] { return replace_base_type(regular, " Short"); }}
-           , {"uint32", nullptr, [&] { return replace_base_type(regular, " int"); }}
-           , {"uint64", nullptr, [&] { return replace_base_type(regular, " Long"); }}
-           , {"size", nullptr, [&] { return replace_base_type(regular, " Long"); }}
+           , {"uint16", nullptr, [&] { return replace_base_type(regular, " ushort"); }}
+           , {"uint32", nullptr, [&] { return replace_base_type(regular, " uint"); }}
+           , {"uint64", nullptr, [&] { return replace_base_type(regular, " ulong"); }}
+           , {"size", nullptr, [&] { return replace_base_type(regular, " ulong"); }}
            
-           , {"ptrdiff", nullptr, [&] { return replace_base_type(regular, " Long"); }}
-           , {"intptr", nullptr, [&] { return replace_base_type(regular, " IntPtr"); }}
+           , {"ptrdiff", nullptr, [&] { return replace_base_type(regular, " long"); }}
+           , {"intptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
+           , {"void_ptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
+           , {"Error", nullptr, [&] // Eina.Error
+              {
+                return regular_type_def{" System.IntPtr", regular.base_qualifier, {}};
+              }} // TODO
            , {"string", true, [&]
               {
                 regular_type_def r = regular;
@@ -115,19 +120,20 @@ struct visitor_generate
            //    { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier, {}};
            //    }}
         };
-      if(regular.base_type == "void_ptr")
-        {
-          if(regular.base_qualifier & qualifier_info::is_ref)
-            throw std::runtime_error("ref of void_ptr is invalid");
-          return as_generator
-             (
-              lit("void") << (regular.base_qualifier & qualifier_info::is_const ? " const" : "")
-              << "*"
-              << (is_out ? "&" : "")
-             )
-             .generate(sink, attributes::unused, *context);
-        }
-      else if(eina::optional<bool> b = call_match
+      // if(regular.base_type == "void_ptr")
+      //   {
+      //     if(regular.base_qualifier & qualifier_info::is_ref)
+      //       throw std::runtime_error("ref of void_ptr is invalid");
+      //     return as_generator
+      //        (
+      //         lit("void") << (regular.base_qualifier & qualifier_info::is_const ? " const" : "")
+      //         << "*"
+      //         << (is_out ? "&" : "")
+      //        )
+      //        .generate(sink, attributes::unused, *context);
+      //   }
+      // else
+        if(eina::optional<bool> b = call_match
          (match_table
           , [&] (match const& m)
           {
@@ -207,6 +213,8 @@ struct visitor_generate
       //   }
       else
         {
+          as_generator(" Generating: " << *(lower_case[string] << ".") << string << "\n")
+            .generate(std::ostream_iterator<char>(std::cerr), std::make_tuple(regular.namespaces, regular.base_type), *context);
           if(as_generator
              (
               *(lower_case[string] << ".")
@@ -225,6 +233,14 @@ struct visitor_generate
    }
    bool operator()(attributes::klass_name klass) const
    {
+     // as_generator(" Generating: " << *(lower_case[string] << ".") << string << "\n")
+     //   .generate(std::ostream_iterator<char>(std::cerr), std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context);
+     // if(klass.namespaces.size() == 1
+     //    && klass.namespaces[0] == "Eina"
+     //    && klass.eolian_name == "Error")
+     // return
+     //   as_generator(" System.IntPtr")
+     //   .generate(sink, attributes::unused, *context);
      return
        as_generator(" " << *(lower_case[string] << ".") << string)
        .generate(sink, std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context)
