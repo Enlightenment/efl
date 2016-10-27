@@ -98,6 +98,8 @@ _efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
    uint64_t old_total = pd->progress.total;
 
    _COPIER_DBG(o, pd);
+   pd->job = NULL; /* XXX TODO this should be NULL-ified by efl_promise before calling this function */
+
    efl_ref(o);
 
    if (pd->source && efl_io_reader_can_read_get(pd->source))
