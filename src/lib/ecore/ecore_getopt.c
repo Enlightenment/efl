@@ -1694,8 +1694,15 @@ _ecore_getopt_parse_arg_long(const Ecore_Getopt *parser,
                arg_val = NULL;
           }
 
-        if (arg_val && arg_val[0] == '\0')
-          arg_val = NULL;
+        /* empty strings are still valid values */
+        if (!(((desc->action == ECORE_GETOPT_ACTION_STORE) &&
+               (desc->action_param.store.type == ECORE_GETOPT_TYPE_STR)) ||
+              ((desc->action == ECORE_GETOPT_ACTION_APPEND) &&
+               (desc->action_param.append_type == ECORE_GETOPT_TYPE_STR))))
+          {
+             if (arg_val && arg_val[0] == '\0')
+               arg_val = NULL;
+          }
 
         if ((!arg_val) && (arg_req == ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES))
           {
@@ -1773,8 +1780,15 @@ _ecore_getopt_parse_arg_short(const Ecore_Getopt *parser,
                     arg_val = NULL;
                }
 
-             if (arg_val && arg_val[0] == '\0')
-               arg_val = NULL;
+             /* empty strings are still valid values */
+             if (!(((desc->action == ECORE_GETOPT_ACTION_STORE) &&
+                    (desc->action_param.store.type == ECORE_GETOPT_TYPE_STR)) ||
+                   ((desc->action == ECORE_GETOPT_ACTION_APPEND) &&
+                    (desc->action_param.append_type == ECORE_GETOPT_TYPE_STR))))
+               {
+                  if (arg_val && arg_val[0] == '\0')
+                    arg_val = NULL;
+               }
 
              if ((!arg_val) &&
                  (arg_req == ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES))
