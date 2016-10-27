@@ -2197,8 +2197,10 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
    if (sd->pointer.obj)
      {
         evas_object_hide(sd->pointer.obj);
-        ecore_evas_hide(sd->pointer.ee);
      }
+
+   if (sd->pointer.ee) ecore_evas_hide(sd->pointer.ee);
+
    if (_elm_config->atspi_mode)
      {
         Eo *root;
@@ -2672,11 +2674,8 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
    ecore_event_handler_del(sd->wl.configure_handler);
-   if (sd->pointer.obj)
-     {
-        evas_object_del(sd->pointer.obj);
-        ecore_evas_free(sd->pointer.ee);
-     }
+   if (sd->pointer.obj) evas_object_del(sd->pointer.obj);
+   if (sd->pointer.ee) ecore_evas_free(sd->pointer.ee);
 #endif
 
    if (sd->img_obj)
@@ -2756,11 +2755,9 @@ _elm_win_obj_intercept_show(void *data,
      {
         evas_object_show(sd->img_obj);
      }
-   if (sd->pointer.obj)
-     {
-        ecore_evas_show(sd->pointer.ee);
-        evas_object_show(sd->pointer.obj);
-     }
+   if (sd->pointer.obj) evas_object_show(sd->pointer.obj);
+   if (sd->pointer.ee) ecore_evas_show(sd->pointer.ee);
+
    evas_object_show(obj);
 #ifdef ELEMENTARY_X
    if (sd->type == ELM_WIN_TOOLTIP)
