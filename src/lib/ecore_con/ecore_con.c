@@ -3026,6 +3026,7 @@ _ecore_con_lookup_done(void *data,
 #include "efl_network_server.eo.c"
 #include "efl_network_connector.eo.c"
 
+#ifndef _WIN32
 Eina_Bool
 efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct sockaddr_un *addr, socklen_t addrlen)
 {
@@ -3078,6 +3079,7 @@ efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct sockaddr_un *
    buf[pathlen] = '\0';
    return EINA_TRUE;
 }
+#endif
 
 Eina_Bool
 efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr)
@@ -3373,9 +3375,11 @@ _efl_net_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
      {
+#ifndef _WIN32
         if (d->addr->sa_family == AF_UNIX)
           efl_net_unix_fmt(buf, sizeof(buf), d->sockfd, (const struct sockaddr_un *)d->addr, d->addrlen);
         else
+#endif
           efl_net_ip_port_fmt(buf, sizeof(buf), d->addr);
      }
 
