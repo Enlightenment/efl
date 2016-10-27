@@ -57,7 +57,7 @@ static FILE *_ecore_memory_statistic_file = NULL;
 #endif
 #endif
 
-static Eina_Bool _no_system_modules = EINA_FALSE;
+static Eina_Bool _no_system_modules = 0xff;
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
@@ -307,6 +307,13 @@ ecore_init(void)
         _systemd_watchdog_cb(NULL);
      }
 #endif
+
+   if (_no_system_modules == 0xff)
+     {
+        const char *s = getenv("ECORE_NO_SYSTEM_MODULES");
+        if (s) _no_system_modules = atoi(s);
+        else _no_system_modules = EINA_FALSE;
+     }
 
    if (!_no_system_modules)
      ecore_system_modules_load();

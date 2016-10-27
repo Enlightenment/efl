@@ -34,6 +34,22 @@ extern "C" {
  *   ecore_shutdown();
  * }
  * @endcode
+ *
+ * This function is affected by some environment variables:
+ *
+ *  @li @c ECORE_NO_SYSTEM_MODULES=1 may be used to temporarily
+ *      disable system modules, often useful for debug.
+ *
+ *  @li @c ECORE_FPS_DEBUG=1 prints frames per second, usefult to
+ *      detect lags and blocking calls.
+ *
+ *  @li @c ECORE_MEM_STAT=1 will generate @c ecore_mem_stat.${PID}
+ *      file with memory statistics.
+ *
+ *  @li @c ECORE_ERROR_ABORT=1 will abort on errors.
+ *
+ * This function will call eina_init(), so other environment variables
+ * may apply.
  */
 EAPI int ecore_init(void);
 
@@ -2498,6 +2514,9 @@ EAPI void ecore_app_restart(void);
  *
  * This may be useful to some command-line utilities, hardly will be
  * useful for end-user applications.
+ *
+ * The environment variable ECORE_NO_SYSTEM_MODULES=1 may be used
+ * to temporarily disable system modules, often useful for debug.
  *
  * @since 1.8
  */
