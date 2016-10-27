@@ -256,6 +256,7 @@ struct _Efl_Ui_Win_Data
    Eina_Bool    noblank : 1;
    Eina_Bool    theme_alpha : 1; /**< alpha value fetched by a theme. this has higher priority than application_alpha */
    Eina_Bool    application_alpha : 1; /**< alpha value set by an elm_win_alpha_set() api. this has lower priority than theme_alpha */
+   Eina_Bool    need_frame : 1;
 };
 
 struct _Box_Item_Iterator
@@ -1504,10 +1505,7 @@ _elm_win_state_change(Ecore_Evas *ee)
      }
    if (ch_fullscreen)
      {
-        const char *engine_name = ecore_evas_engine_name_get(sd->ee);
-        Eina_Bool need_frame = eina_streq(engine_name, ELM_WAYLAND_SHM) ||
-                               eina_streq(engine_name, ELM_WAYLAND_EGL);
-        if (need_frame)
+        if (sd->need_frame)
           {
              if ((!sd->fullscreen) && (!sd->frame_obj))
                {
@@ -1521,7 +1519,7 @@ _elm_win_state_change(Ecore_Evas *ee)
         if (sd->fullscreen)
           {
 #ifdef HAVE_ELEMENTARY_WL2
-             if (need_frame)
+             if (sd->need_frame)
                sd->wl.opaque_dirty = 1;
 #endif
              efl_event_callback_legacy_call
@@ -1530,7 +1528,7 @@ _elm_win_state_change(Ecore_Evas *ee)
         else
           {
 #ifdef HAVE_ELEMENTARY_WL2
-             if (need_frame)
+             if (sd->need_frame)
                {
                   _elm_win_opaque_update(sd);
                   _elm_win_frame_obj_update(sd);
@@ -4263,6 +4261,27 @@ _accel_is_gl(const char *accel)
    return EINA_FALSE;
 }
 
+static inline void
+_elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine)
+{
+   const char *s;
+
+   /* this is for debug only - don't keep forever, it's not an api! */
+   s = getenv("EFL_WIN_FRAME_MODE");
+
+   if (sd->type == ELM_WIN_INLINED_IMAGE)
+     sd->need_frame = EINA_FALSE;
+   else if (eina_streq(s, "on"))
+     sd->need_frame = EINA_TRUE;
+   else if (eina_streq(s, "off"))
+     sd->need_frame = EINA_FALSE;
+   else
+     {
+        sd->need_frame = (eina_streq(engine, ELM_WAYLAND_SHM) ||
+                          eina_streq(engine, ELM_WAYLAND_EGL));
+     }
+}
+
 static Eo *
 _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_Win_Type type)
 {
@@ -4623,11 +4642,14 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         return NULL;
      }
 
+   _elm_win_need_frame_adjust(sd, engine);
+
    if (!sd->accel_pref)
      eina_stringshare_replace(&sd->accel_pref, elm_config_accel_preference_get());
 
    efl_parent_set(obj, ecore_evas_get(tmp_sd.ee));
 
+   /* FIXME: Major hack: calling the constructor in the middle of finalize. */
    efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
@@ -4867,10 +4889,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
           {
              TRAP(sd, fullscreen_set, 1);
           }
-        else if ((type != ELM_WIN_INLINED_IMAGE) &&
-                 ((engine) &&
-                  ((!strcmp(engine, ELM_WAYLAND_SHM) ||
-                   (!strcmp(engine, ELM_WAYLAND_EGL))))))
+        else if (sd->need_frame)
           _elm_win_frame_add(sd, "default");
 
         if (_elm_config->focus_highlight_enable)
@@ -5296,13 +5315,8 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
 EOLIAN static void
 _efl_ui_win_borderless_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool borderless)
 {
-   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
-   Eina_Bool need_frame = engine_name &&
-                          ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
-                           (!strcmp(engine_name, ELM_WAYLAND_EGL)));
 
-   if (need_frame)
-     need_frame = !sd->fullscreen;
+   Eina_Bool need_frame = sd->need_frame && !sd->fullscreen;
 
    if (borderless)
      {
@@ -7345,6 +7359,7 @@ elm_win_fake_canvas_set(Evas_Object *obj, Ecore_Evas *oee)
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
    sd->ee = oee;
+   _elm_win_need_frame_adjust(sd, ecore_evas_engine_name_get(oee));
 }
 
 EAPI Evas_Object *
