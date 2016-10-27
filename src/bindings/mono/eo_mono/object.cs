@@ -3,7 +3,7 @@ namespace efl {
 
 using System;
     
-public class Object : efl.eo.IWrapper
+    /*public interface Object : efl.eo.IWrapper
 {
     IntPtr handle;
     public Object()
@@ -14,6 +14,6 @@ public class Object : efl.eo.IWrapper
     {
         handle = raw;
     }
-}
+}*/
     
 }

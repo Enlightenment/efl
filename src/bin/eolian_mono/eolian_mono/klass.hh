@@ -49,7 +49,7 @@ struct klass
 
      if(!as_generator
         (
-         "public " << class_type << " " << string << " : "
+         "public " /*<< class_type*/ "interface" /*<<*/ " " << string << " : "
          )
         .generate(sink, cls.cxx_name, context))
        return false;
