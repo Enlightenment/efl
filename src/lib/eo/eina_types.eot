@@ -6,7 +6,8 @@ struct @extern Eina.Rectangle {
     w: int; [[Width of the rectangle]]
     h: int; [[Height of the rectangle]]
 }
-struct @extern Eina.File;
+
+struct @extern Eina.File; [[Eina file data structure]]
 
 struct @extern Eina.Matrix3 {
    [[Eina 3x3 Matrix]]
@@ -23,11 +24,11 @@ struct @extern Eina.Matrix3 {
    zz: double; [[ZZ matrix value]]
 }
 
-struct @extern Eina.Inarray;
+struct @extern Eina.Inarray; [[Eina inarray data structure]]
 
 type @extern Eina.Unicode: uint32;
 
-struct @extern Eina.File.Direct.Info;
+struct @extern Eina.File.Direct.Info; [[Eina file direct information data structure]]
 /*{
    path_lenght:    size_t;              [[Size of the whole path]]
    name_length:    size_t;              [[Size of the filename/basename component]]
@@ -45,7 +46,7 @@ enum @extern Eina.Xattr.Flags {
 
 type @extern Eina.Error: int;
 
-struct @extern @free(eina_binbuf_free) Eina.Binbuf;
+struct @extern @free(eina_binbuf_free) Eina.Binbuf; [[Eina binbuf data structure]]
 
 struct @extern Eina.Slice {
     [[A linear, read-only, memory segment]]
