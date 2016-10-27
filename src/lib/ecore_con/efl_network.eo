@@ -184,6 +184,7 @@ abstract Efl.Network (Efl.Object) {
 
 /* FIXME: Should actually be a binbuf. */
 struct Ecore.Con.Event_Data.Received {
+    [[Ecore connection event data received data structure]]
     data: void_ptr; [[The data that got sent.]]
     size: int; [[The length of the data sent.]]
 }

@@ -123,7 +123,7 @@ struct Efl.Net.Http.Header {
       described in the value "HTTP/1.1 200 Ok".
     ]]
     key: string; [[for response headers this may be null to indicate a new request response, then the value will be a line such as 'HTTP/1.1 200 Ok']]
-    value: string;
+    value: string; [[Header value]]
 }
 
 var Efl.Net.Http.Error.BAD_CONTENT_ENCODING: Eina.Error; [[HTTP error: bad content encoding]]

@@ -43,8 +43,8 @@ struct Efl.Net.Dialer.Websocket.Closed_Reason {
 
       @since 1.19
     ]]
-    reason: Efl.Net.Dialer.Websocket.Close_Reason;
-    message: string;
+    reason: Efl.Net.Dialer.Websocket.Close_Reason; [[Closing reason]]
+    message: string; [[Textual closing reason message]]
 }
 
 class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
