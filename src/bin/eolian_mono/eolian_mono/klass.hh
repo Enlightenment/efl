@@ -73,9 +73,9 @@ struct klass
 
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
 
+     // Concrete class
      if(class_type == "class")
        {
-         // Concrete class
          if(!as_generator
             (
              "public " << class_type << " " << string << "Concrete : " << string << "\n{\n"
