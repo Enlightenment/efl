@@ -920,9 +920,30 @@ _elm_win_mouse_in(Ecore_Evas *ee)
    _elm_win_throttle_ok = EINA_TRUE;
    if (sd->resizing) sd->resizing = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win)
-     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
-                                  sd->pointer.hot_x, sd->pointer.hot_y);
+   if ((sd->wl.win) && (sd->pointer.ee))
+     {
+        ecore_evas_show(sd->pointer.ee);
+        sd->pointer.surf = ecore_wl2_window_surface_get(sd->pointer.win);
+        ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
+                                     sd->pointer.hot_x, sd->pointer.hot_y);
+     }
+#endif
+}
+
+static void
+_elm_win_mouse_out(Ecore_Evas *ee)
+{
+   Efl_Ui_Win_Data *sd = _elm_win_associate_get(ee);
+   if (!sd) return;
+
+#ifdef HAVE_ELEMENTARY_WL2
+   if ((sd->wl.win) && (sd->pointer.ee))
+     {
+        ecore_evas_hide(sd->pointer.ee);
+        sd->pointer.surf = NULL;
+        ecore_wl2_window_pointer_set(sd->wl.win, NULL,
+                                     sd->pointer.hot_x, sd->pointer.hot_y);
+     }
 #endif
 }
 
@@ -2199,7 +2220,13 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
         evas_object_hide(sd->pointer.obj);
      }
 
-   if (sd->pointer.ee) ecore_evas_hide(sd->pointer.ee);
+   if (sd->pointer.ee)
+     {
+        ecore_evas_hide(sd->pointer.ee);
+        sd->pointer.surf = NULL;
+        ecore_wl2_window_pointer_set(sd->wl.win, NULL,
+                                     sd->pointer.hot_x, sd->pointer.hot_y);
+     }
 
    if (_elm_config->atspi_mode)
      {
@@ -2676,6 +2703,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    ecore_event_handler_del(sd->wl.configure_handler);
    if (sd->pointer.obj) evas_object_del(sd->pointer.obj);
    if (sd->pointer.ee) ecore_evas_free(sd->pointer.ee);
+   sd->pointer.surf = NULL;
 #endif
 
    if (sd->img_obj)
@@ -2756,7 +2784,6 @@ _elm_win_obj_intercept_show(void *data,
         evas_object_show(sd->img_obj);
      }
    if (sd->pointer.obj) evas_object_show(sd->pointer.obj);
-   if (sd->pointer.ee) ecore_evas_show(sd->pointer.ee);
 
    evas_object_show(obj);
 #ifdef ELEMENTARY_X
@@ -3577,24 +3604,6 @@ static struct _resize_info _border_corner[4] =
 #endif
 
 static void
-_elm_win_frame_obj_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-#ifdef HAVE_ELEMENTARY_WL2
-   Efl_Ui_Win_Data *sd = data;
-
-   if (sd->pointer.obj)
-     _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                           "pointer", "base", "default");
-
-   if ((sd->wl.win) && (sd->pointer.surf))
-     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
-                                  sd->pointer.hot_x, sd->pointer.hot_y);
-#else
-   (void)data;
-#endif
-}
-
-static void
 _elm_win_frame_obj_move(void *data,
                         Evas *e EINA_UNUSED,
                         Evas_Object *obj EINA_UNUSED,
@@ -3907,8 +3916,6 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
    edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon",
                             sd->icon);
 
-   evas_object_event_callback_add
-     (sd->frame_obj, EVAS_CALLBACK_MOUSE_IN, _elm_win_frame_obj_mouse_in, sd);
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
    evas_object_event_callback_add
@@ -4696,7 +4703,11 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    ecore_evas_callback_move_set(sd->ee, _elm_win_move);
    ecore_evas_callback_pre_render_set(sd->ee, _elm_win_pre_render);
    if (type != ELM_WIN_FAKE)
-     ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
+     {
+         ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
+         ecore_evas_callback_mouse_out_set(sd->ee, _elm_win_mouse_out);
+     }
+
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_win_cb_hide, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _elm_win_cb_show, NULL);
 
@@ -4841,12 +4852,10 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
                                            &hx, &hy, NULL, NULL);
              sd->pointer.hot_x = hx;
              sd->pointer.hot_y = hy;
-             evas_object_show(sd->pointer.obj);
 
              sd->pointer.win = _elm_ee_wlwin_get(sd->pointer.ee);
              ecore_wl2_window_type_set(sd->pointer.win,
                                        ECORE_WL2_WINDOW_TYPE_NONE);
-             sd->pointer.surf = ecore_wl2_window_surface_get(sd->pointer.win);
 
              ecore_evas_resize(sd->pointer.ee, mw, mh);
           }
