@@ -625,7 +625,8 @@ void
 _evas_outbuf_redraws_clear(Outbuf *ob)
 {
    if (!ob->priv.rect_count) return;
-   ob->surface->funcs.post(ob->surface, ob->priv.rects, ob->priv.rect_count);
+   if (ob->info->info.wl_surface)
+     ob->surface->funcs.post(ob->surface, ob->priv.rects, ob->priv.rect_count);
    free(ob->priv.rects);
    ob->priv.rect_count = 0;
 }
