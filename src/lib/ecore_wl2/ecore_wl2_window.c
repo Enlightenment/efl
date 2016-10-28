@@ -953,9 +953,7 @@ ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surfac
    input->cursor.hot_x = hot_x;
    input->cursor.hot_y = hot_y;
 
-   if (!input->cursor.surface)
-     _ecore_wl2_input_cursor_update_stop(input);
-   else
+   if (input->cursor.surface)
      _ecore_wl2_input_cursor_update(input);
 }
 
