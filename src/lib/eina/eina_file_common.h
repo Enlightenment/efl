@@ -99,10 +99,14 @@ struct _Eina_File
 
    Eina_List *dead_map;          /**< Tracks regions that get a failure from mmap(2). */
 
+   unsigned char *write_buf;
+   size_t write_pos;
+   size_t write_buf_size;
    Eina_Bool shared : 1;         /**< Indicates whether this file can be shared */
    Eina_Bool delete_me : 1;      /**< Indicates that this file should be deleted */
    Eina_Bool global_faulty : 1;  /**< Indicates whether #global_map is bad */
    Eina_Bool virtual : 1;        /**< Indicates that this is a virtual file */
+   Eina_Bool writable : 1;       /**< Indicates whether this file has writable handler */
 };
 
 /**

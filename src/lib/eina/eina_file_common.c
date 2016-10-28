@@ -443,6 +443,89 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
    return file;
 }
 
+EAPI Eina_File *
+eina_file_virtualize_writable(const char *virtual_name, const void *data, unsigned long long length)
+{
+   Eina_File *ret;
+   ret = eina_file_virtualize(virtual_name, data, length, EINA_TRUE);
+   ret->writable = EINA_TRUE;
+   return ret;
+}
+
+EAPI Eina_Bool
+eina_file_writable_get(const Eina_File *file)
+{
+   if (file) return file->writable;
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+eina_file_write(Eina_File *file, const void *data, size_t size)
+{
+   const unsigned char *data_to_write;
+
+   if (!file)
+     return EINA_FALSE;
+
+   if (!file->writable)
+     return EINA_FALSE;
+
+   if (data == NULL || size == 0)
+     return EINA_FALSE;
+
+   data_to_write = data;
+
+   if (file->write_pos + size >= file->write_buf_size)
+     {
+        if (file->write_buf_size == 0)
+          {
+             //alloc
+             file->write_buf_size = 1024;
+             file->write_buf = malloc(file->write_buf_size);
+          }
+        else
+          {
+             //realloc
+             file->write_buf_size = 2 * file->write_buf_size;
+             file->write_buf = realloc(file->write_buf, file->write_buf_size);
+          }
+     }
+   for(size_t i = 0; i < size; i++)
+     {
+        //memcopy?
+        file->write_buf[file->write_pos++] = data_to_write[i];
+     }
+   return EINA_TRUE;
+}
+
+EAPI Eina_File *
+eina_file_written_file_get(const Eina_File *file)
+{
+   if (!file)
+     return NULL;
+
+   if (!file->writable)
+     return NULL;
+
+   if (file->write_pos == 0)
+     return NULL;
+
+   return eina_file_virtualize_writable(file->filename, file->write_buf, file->write_pos);
+}
+
+EAPI Eina_Bool
+eina_file_writable_reset_buf(Eina_File *file)
+{
+   if (!file)
+      return EINA_FALSE;
+
+   if (!file->writable)
+      return EINA_FALSE;
+
+   file->write_pos = 0;
+   return EINA_TRUE;
+}
+
 EAPI Eina_Bool
 eina_file_virtual(Eina_File *file)
 {
@@ -470,6 +553,8 @@ eina_file_clean_close(Eina_File *file)
    // Generic destruction of the file
    eina_hash_free(file->rmap); file->rmap = NULL;
    eina_hash_free(file->map); file->map = NULL;
+
+   free(file->write_buf);
 
    // Backend specific file resource close
    eina_file_real_close(file);
