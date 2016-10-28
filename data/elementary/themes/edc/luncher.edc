@@ -59,44 +59,36 @@ group { name: "e/gadget/luncher/icon";
             inherit: "default" 0.0;
             visible: 1;
             rel1.to_y: "e.swallow.icon";
+            rel2.to_y: "e.swallow.icon";
             rel1.relative: 0.0 0.025;
-            rel2.to: "e.swallow.icon";
-            rel2.relative: 0.0 0.975;
-            rel1.offset: 0 0;
-            rel2.offset: -2 0;
+            rel2.relative: 0.05 0.975;
             color: 51 153 255 255;
          }
          description { state: "on_top" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             rel1.to_x: "e.swallow.icon";
+            rel2.to_x: "e.swallow.icon";
             rel1.relative: 0.025 0.0;
-            rel2.to: "e.swallow.icon";
-            rel2.relative: 0.975 0.0;
-            rel1.offset: 0 0;
-            rel2.offset: 0 -2;
+            rel2.relative: 0.975 0.05;
             color: 51 153 255 255;
          }
          description { state: "on_right" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            rel1.to: "e.swallow.icon";
-            rel1.relative: 1.0 0.025;
+            rel1.to_y: "e.swallow.icon";
             rel2.to_y: "e.swallow.icon";
+            rel1.relative: 0.95 0.025;
             rel2.relative: 1.0 0.975;
-            rel1.offset: 0 0;
-            rel2.offset: 2 0;
             color: 51 153 255 255;
          }
          description { state: "on_bottom" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            rel1.to: "e.swallow.icon";
-            rel1.relative: 0.025 1.0;
+            rel1.to_x: "e.swallow.icon";
             rel2.to_x: "e.swallow.icon";
+            rel1.relative: 0.025 0.95;
             rel2.relative: 0.975 1.0;
-            rel1.offset: 0 0;
-            rel2.offset: 0 2;
             color: 51 153 255 255;
          }
       }
@@ -110,23 +102,27 @@ group { name: "e/gadget/luncher/icon";
          }
          description { state: "on_left" 0.0;
             inherit: "default" 0.0;
-            rel1.offset: 5 1;
+            rel1.relative: 0.05 0.0;
+            rel1.offset: 1 1;
             rel2.offset: 0 -1;
          }
          description { state: "on_top" 0.0;
             inherit: "default" 0.0;
-            rel1.offset: 1 5;
+            rel1.relative: 0.0 0.05;
+            rel1.offset: 1 1;
             rel2.offset: -1 0;
          }
          description { state: "on_right" 0.0;
             inherit: "default" 0.0;
+            rel2.relative: 0.95 1.0;
             rel1.offset: 0 1;
-            rel2.offset: -5 -1;
+            rel2.offset: -1 -1;
          }
          description { state: "on_bottom" 0.0;
             inherit: "default" 0.0;
+            rel2.relative: 1.0 0.95;
             rel1.offset: 1 0;
-            rel2.offset: -1 -5;
+            rel2.offset: -1 -1;
          }
       }
       part { name: "obackground"; type: RECT;
