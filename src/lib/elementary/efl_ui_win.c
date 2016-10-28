@@ -2220,6 +2220,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
         evas_object_hide(sd->pointer.obj);
      }
 
+#ifdef HAVE_ELEMENTARY_WL2
    if (sd->pointer.ee)
      {
         ecore_evas_hide(sd->pointer.ee);
@@ -2227,6 +2228,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
         ecore_wl2_window_pointer_set(sd->wl.win, NULL,
                                      sd->pointer.hot_x, sd->pointer.hot_y);
      }
+#endif
 
    if (_elm_config->atspi_mode)
      {
