@@ -1370,6 +1370,7 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd)
    else
      ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
 
+   /* FIXME: Replace with call to ecore_evas_shadow_geometry_set(). */
    ecore_wl2_window_geometry_set(sd->wl.win, ox, oy, ow, oh);
    ecore_wl2_window_input_region_set(sd->wl.win, ox, oy, ow, oh);
 }
@@ -2863,6 +2864,25 @@ super_skip:
    efl_gfx_position_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), x, y);
 }
 
+static inline void
+_elm_win_frame_geometry_adjust(Efl_Ui_Win_Data *sd)
+{
+   int l = 0, t = 0, r = 0, b = 0;
+
+   if (sd->frame_obj)
+     {
+        int fw, fh, ox, oy, ow, oh;
+        evas_object_geometry_get(sd->frame_obj, NULL, NULL, &fw, &fh);
+        edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
+                                      &ox, &oy, &ow, &oh);
+        l = ox;
+        t = oy;
+        r = fw - ow - l;
+        b = fh - oh - t;
+     }
+   ecore_evas_shadow_geometry_set(sd->ee, l, r, t, b);
+}
+
 EOLIAN static void
 _efl_ui_win_efl_gfx_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord w, Evas_Coord h)
 {
@@ -2885,6 +2905,7 @@ _efl_ui_win_efl_gfx_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord w, Evas_Co
         evas_object_image_size_set(sd->img_obj, w, h);
      }
 
+   _elm_win_frame_geometry_adjust(sd);
    if (!sd->response) TRAP(sd, resize, w, h);
 
    efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
@@ -3292,6 +3313,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if (sd->img_obj) evas_object_resize(obj, w, h);
    else
      {
+        _elm_win_frame_geometry_adjust(sd);
         if (!sd->response) TRAP(sd, resize, w, h);
      }
 }
@@ -4023,6 +4045,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
    if (ecore_evas_maximized_get(sd->ee))
      edje_object_signal_emit(sd->frame_obj, "elm,state,maximize", "elm");
 
+   _elm_win_frame_geometry_adjust(sd);
    ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
    ecore_evas_resize(sd->ee, w, h);
 }
@@ -4070,6 +4093,7 @@ _elm_win_frame_del(Efl_Ui_Win_Data *sd)
    if (sd->icon) evas_object_hide(sd->icon);
 
    evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
+   _elm_win_frame_geometry_adjust(sd);
    ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
    ecore_evas_resize(sd->ee, w, h);
 #ifdef HAVE_ELEMENTARY_WL2

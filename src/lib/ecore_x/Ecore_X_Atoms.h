@@ -348,4 +348,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_OPEN; /**< @since 1.18 */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_COMPLETED; /**< @since 1.18 */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_PROGRESS; /**< @since 1.18 */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_STARTED; /**< @since 1.18 */
+
+/* Client-Side Decorations */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_GTK_FRAME_EXTENTS; /**< @since 1.19 */
 #endif /* _ECORE_X_ATOMS_H */

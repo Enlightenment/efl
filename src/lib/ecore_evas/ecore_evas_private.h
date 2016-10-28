@@ -206,6 +206,10 @@ struct _Ecore_Evas
    } req;
 
    struct {
+      int      l, r, t, b;
+   } shadow;
+
+   struct {
       int      x, y;
    } mouse;
 
