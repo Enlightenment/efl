@@ -284,7 +284,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             y: int; [[The pointer to an integer to be filled in.]]
          }
       }
-      @property pointer_inside {
+/*      @property pointer_inside {
          get {
             [[Returns whether the mouse pointer is logically inside the
               canvas.
@@ -311,10 +311,11 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             else printf("Mouse is out!\n");
             @endcode
             */
+            /*
             return: bool @warn_unused;
          }
-      }
-      @property image_max_size {
+      }*/
+/*      @property image_max_size {
          get {
             [[Get the maximum image size evas can possibly handle.
 
@@ -333,7 +334,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             maxw: int; [[Pointer to hold the return value in pixels of the maximum width.]]
             maxh: int; [[Pointer to hold the return value in pixels of the maximum height.]]
          }
-      }
+      }*/
       @property object_bottom {
          get {
             [[Get the lowest (stacked) Evas object on the canvas $e.
@@ -501,7 +502,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             @in keyname: string @nonull; [[The name of the modifier to disable.]]
          }
       }
-      objects_at_xy_get @const {
+/*      objects_at_xy_get @const {
          [[Retrieve a list of Evas objects lying over a given position in
            a canvas.
 
@@ -529,7 +530,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
                calculation.
             ]]
          }
-      }
+      }*/
       render_async {
          [[Render the given Evas canvas asynchronously.
 
@@ -647,7 +648,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             @in hinting: Evas.Font.Hinting_Flags; [[The hinting to use.]]
          }
       }
-      object_top_at_xy_get @const {
+/*      object_top_at_xy_get @const {
          [[Retrieve the Evas object stacked at the top of a given position
            in a canvas.
 
@@ -673,7 +674,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
                calculation.
             ]]
          }
-      }
+      }*/
       key_modifier_on {
          [[Enables or turns on programmatically the modifier key with name
            $keyname.
@@ -700,7 +701,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             after you're done.
          ]]
       }
-      objects_in_rectangle_get @const {
+/*      objects_in_rectangle_get @const {
          return: list<Efl.Canvas.Object> @warn_unused;
          params {
             @in x: Evas.Coord;
@@ -710,7 +711,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             @in include_pass_events_objects: bool;
             @in include_hidden_objects: bool;
          }
-      }
+      }*/
       object_name_find @const {
          [[Retrieves the object on the given evas with the given name.
 
@@ -751,12 +752,12 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       font_path_clear {
          [[Removes all font paths loaded into memory for the given evas.]]
       }
-      smart_objects_calculate {
+/*      smart_objects_calculate {
          [[Call user-provided $calculate smart functions and unset the
            flag signalling that the object needs to get recalculated to
            all smart objects in the canvas.
          ]]
-      }
+      }*/
       touch_point_list_nth_xy_get {
          [[This function returns the nth touch point's coordinates.
 
@@ -987,7 +988,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
            @.render_idle_flush might discard too.
          ]]
       }
-      object_top_in_rectangle_get @const {
+/*      object_top_in_rectangle_get @const {
          [[Retrieve the Evas object stacked at the top of a given
            rectangular region in a canvas
 
@@ -1025,7 +1026,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
                calculation.
             ]]
          }
-      }
+      }*/
       render {
          [[Force renderization of the given canvas.]]
 
@@ -1148,6 +1149,13 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       Efl.Object.event_thaw;
       Efl.Object.event_freeze;
       Efl.Object.provider_find;
+      Efl.Canvas.image_max_size.get;
+      Efl.Canvas.smart_objects_calculate;
+      Efl.Canvas.objects_at_xy_get;
+      Efl.Canvas.objects_in_rectangle_get;
+      Efl.Canvas.object_top_at_xy_get;
+      Efl.Canvas.object_top_in_rectangle_get;
+      Efl.Input.Interface.pointer_inside.get;
    }
    events {
       render,flush,pre @beta;

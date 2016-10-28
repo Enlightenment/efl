@@ -438,7 +438,7 @@ _ecore_evas_ews_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, i
                     x - ee->prop.cursor.hot.x,
                     y - ee->prop.cursor.hot.y);
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
-   if (evas_pointer_inside_get(ee->evas))
+   if (efl_input_pointer_inside_get(ee->evas))
      evas_object_show(ee->prop.cursor.object);
 
    evas_object_event_callback_add

@@ -2134,7 +2134,7 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
 
    if (sd->deferred_resize_job)
      _elm_win_resize_job(sd->obj);
-   evas_smart_objects_calculate(evas_object_evas_get(obj));
+   efl_canvas_smart_objects_calculate(evas_object_evas_get(obj));
 
    TRAP(sd, show);
 
@@ -2231,7 +2231,7 @@ _efl_ui_win_efl_input_interface_pointer_xy_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_D
 EOLIAN static Eina_Bool
 _efl_ui_win_efl_input_interface_pointer_inside_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   return evas_pointer_inside_get(sd->evas);
+   return efl_input_pointer_inside_get(sd->evas);
 }
 
 /* multi touch support */
@@ -2335,41 +2335,41 @@ _efl_ui_win_efl_input_interface_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *
 EOLIAN static Eina_Bool
 _efl_ui_win_efl_canvas_image_max_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *maxw, int *maxh)
 {
-   return evas_image_max_size_get(sd->evas, maxw, maxh);
+   return efl_canvas_image_max_size_get(sd->evas, maxw, maxh);
 }
 
 EOLIAN static void
 _efl_ui_win_efl_canvas_smart_objects_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   evas_smart_objects_calculate(sd->evas);
+   efl_canvas_smart_objects_calculate(sd->evas);
 }
 
 EOLIAN static Eina_Iterator *
 _efl_ui_win_efl_canvas_objects_at_xy_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *objs = NULL;
-   objs = evas_objects_at_xy_get(sd->evas, x, y, include_pass_events_objects, include_hidden_objects);
+   objs = efl_canvas_objects_at_xy_get(sd->evas, x, y, include_pass_events_objects, include_hidden_objects);
    return eina_list_iterator_new(objs);
 }
 
 EOLIAN static Efl_Gfx *
 _efl_ui_win_efl_canvas_object_top_at_xy_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
-   return evas_object_top_at_xy_get(sd->evas, x, y, include_pass_events_objects, include_hidden_objects);
+   return efl_canvas_object_top_at_xy_get(sd->evas, x, y, include_pass_events_objects, include_hidden_objects);
 }
 
 EOLIAN static Eina_Iterator *
 _efl_ui_win_efl_canvas_objects_in_rectangle_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *objs = NULL;
-   objs = evas_objects_in_rectangle_get(sd->evas, x, y, w, h, include_pass_events_objects, include_hidden_objects);
+   objs = efl_canvas_objects_in_rectangle_get(sd->evas, x, y, w, h, include_pass_events_objects, include_hidden_objects);
    return eina_list_iterator_new(objs);
 }
 
 EOLIAN static Efl_Gfx *
 _efl_ui_win_efl_canvas_object_top_in_rectangle_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
-   return evas_object_top_in_rectangle_get(sd->evas, x, y, w, h, include_pass_events_objects, include_hidden_objects);
+   return efl_canvas_object_top_in_rectangle_get(sd->evas, x, y, w, h, include_pass_events_objects, include_hidden_objects);
 }
 
 static void
@@ -2742,7 +2742,7 @@ _elm_win_obj_intercept_show(void *data,
    // this is called to make sure all smart containers have calculated their
    // sizes BEFORE we show the window to make sure it initially appears at
    // our desired size (ie min size is known first)
-   evas_smart_objects_calculate(evas_object_evas_get(obj));
+   efl_canvas_smart_objects_calculate(evas_object_evas_get(obj));
    if (sd->frame_obj)
      {
         evas_object_show(sd->frame_obj);

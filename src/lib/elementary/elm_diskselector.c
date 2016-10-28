@@ -639,7 +639,7 @@ _access_on_highlight_cb(void *data)
    ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
    ELM_DISKSELECTOR_DATA_GET(WIDGET(it), sd);
 
-   evas_smart_objects_calculate(evas_object_evas_get(sd->main_box));
+   efl_canvas_smart_objects_calculate(evas_object_evas_get(sd->main_box));
    evas_object_geometry_get(sd->main_box, &bx, &by, &bw, &bh);
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
 

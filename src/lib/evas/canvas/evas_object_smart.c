@@ -902,7 +902,7 @@ _efl_canvas_group_group_calculate(Eo *eo_obj, Evas_Smart_Data *o)
 }
 
 EOLIAN void
-_evas_canvas_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
+_evas_canvas_efl_canvas_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
 {
    evas_call_smarts_calculate(eo_e);
 }

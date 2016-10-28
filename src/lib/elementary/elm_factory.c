@@ -137,7 +137,7 @@ _eval(Evas_Object *obj)
                      evas_object_smart_calculate(wd->content);
                }
              wd->last_calc_count =
-                evas_smart_objects_calculate_count_get(evas_object_evas_get(obj));
+                efl_canvas_smart_objects_calculate_count_get(evas_object_evas_get(obj));
           }
      }
    else
@@ -145,7 +145,7 @@ _eval(Evas_Object *obj)
         if (wd->content)
           {
              if (wd->last_calc_count !=
-                evas_smart_objects_calculate_count_get(evas_object_evas_get(obj)))
+                efl_canvas_smart_objects_calculate_count_get(evas_object_evas_get(obj)))
                 evas_object_smart_callback_call(obj, SIG_UNREALIZE, NULL);
           }
      }

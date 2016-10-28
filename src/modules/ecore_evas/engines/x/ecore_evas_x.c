@@ -3310,7 +3310,7 @@ _ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int
         ecore_x_window_cursor_show(ee->prop.window, 0);
         evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
         evas_object_pass_events_set(ee->prop.cursor.object, 1);
-        if (evas_pointer_inside_get(ee->evas))
+        if (efl_input_pointer_inside_get(ee->evas))
           evas_object_show(ee->prop.cursor.object);
         evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                        _ecore_evas_object_cursor_del, ee);

@@ -477,7 +477,7 @@ _evas_canvas_pointer_button_down_mask_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_pointer_inside_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_efl_input_interface_pointer_inside_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->pointer.inside;
 }

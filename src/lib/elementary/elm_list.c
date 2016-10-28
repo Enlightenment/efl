@@ -2981,7 +2981,7 @@ _elm_list_item_show(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it)
    ELM_LIST_ITEM_CHECK_OR_RETURN(it);
    ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
 
-   evas_smart_objects_calculate(evas_object_evas_get(sd->box));
+   efl_canvas_smart_objects_calculate(evas_object_evas_get(sd->box));
    evas_object_geometry_get(sd->box, &bx, &by, &bw, &bh);
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
    x -= bx;
@@ -2999,7 +2999,7 @@ _elm_list_item_bring_in(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it)
    ELM_LIST_ITEM_CHECK_OR_RETURN(it);
    ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
 
-   evas_smart_objects_calculate(evas_object_evas_get(sd->box));
+   efl_canvas_smart_objects_calculate(evas_object_evas_get(sd->box));
    evas_object_geometry_get(sd->box, &bx, &by, &bw, &bh);
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
    x -= bx;
