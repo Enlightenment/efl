@@ -12,6 +12,7 @@
 static Eina_Hash *_registered_engines = NULL;
 static Eina_List *_engines_paths = NULL;
 static Eina_List *_engines_available = NULL;
+static Eina_Module *_ecore_evas_vnc = NULL;
 
 #ifdef _WIN32
 # define ECORE_EVAS_ENGINE_NAME "module.dll"
@@ -19,6 +20,72 @@ static Eina_List *_engines_available = NULL;
 # define ECORE_EVAS_ENGINE_NAME "module.so"
 #endif
 
+static Eina_Module *
+_ecore_evas_vnc_server_module_try_load(const char *prefix,
+                                       Eina_Bool use_prefix_only)
+{
+   Eina_Module *m;
+
+   if (use_prefix_only)
+     m = eina_module_new(prefix);
+   else
+     {
+        char path[PATH_MAX];
+
+        snprintf(path, sizeof(path), "%s/vnc_server/%s/%s", prefix,
+                 MODULE_ARCH, ECORE_EVAS_ENGINE_NAME);
+        m = eina_module_new(path);
+     }
+
+   if (!m)
+     return NULL;
+   if (!eina_module_load(m))
+     {
+        eina_module_free(m);
+        _ecore_evas_vnc = NULL;
+        return NULL;
+     }
+
+   return m;
+}
+
+Eina_Module *
+_ecore_evas_vnc_server_module_load(void)
+{
+   char *prefix;
+
+   if (_ecore_evas_vnc)
+     return _ecore_evas_vnc;
+
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
+     {
+        if (getenv("EFL_RUN_IN_TREE"))
+          {
+             _ecore_evas_vnc = _ecore_evas_vnc_server_module_try_load(PACKAGE_BUILD_DIR
+                                                                      "/src/modules/ecore_evas/vnc_server/.libs/"
+                                                                      ECORE_EVAS_ENGINE_NAME,
+                                                                      EINA_TRUE);
+             if (_ecore_evas_vnc)
+               return _ecore_evas_vnc;
+          }
+     }
+
+   prefix = eina_module_symbol_path_get(_ecore_evas_vnc_server_module_load,
+                                        "/ecore_evas");
+   _ecore_evas_vnc = _ecore_evas_vnc_server_module_try_load(prefix, EINA_FALSE);
+   free(prefix);
+   //Last try...
+   if (!_ecore_evas_vnc)
+     {
+        _ecore_evas_vnc = _ecore_evas_vnc_server_module_try_load(PACKAGE_LIB_DIR"/ecore_evas",
+                                                                 EINA_FALSE);
+        if (!_ecore_evas_vnc)
+          ERR("Could not find a valid VNC module to load!");
+     }
+   return _ecore_evas_vnc;
+}
 
 Eina_Module *
 _ecore_evas_engine_load(const char *engine)

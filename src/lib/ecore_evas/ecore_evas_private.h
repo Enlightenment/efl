@@ -199,6 +199,8 @@ struct _Ecore_Evas
 
    Eina_Hash  *data;
 
+   void *vnc_server; /* @since 1.19 */
+
    struct {
       int      x, y, w, h;
    } req;
@@ -431,6 +433,8 @@ void _ecore_evas_engine_init(void);
 void _ecore_evas_engine_shutdown(void);
 
 EAPI void ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport);
+
+Eina_Module *_ecore_evas_vnc_server_module_load(void);
 
 #undef EAPI
 #define EAPI

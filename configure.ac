@@ -436,20 +436,16 @@ AC_SUBST([ENABLE_LIBLZ4])
 
 want_vnc_server="no"
 AC_ARG_ENABLE([vnc-server],
-   [AS_HELP_STRING([--enable-vnc-server],[Enable VNC server support for Ecore_Evas_X. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-vnc-server],[Build Ecore_Evas VNC module. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
+       PKG_CHECK_MODULES([LIBVNCSERVER], [libvncserver])
        want_vnc_server="yes"
     else
        want_vnc_server="no"
     fi
    ],
    [want_vnc_server="no"])
-
-AM_CONDITIONAL([ENABLE_VNC_SERVER], [test "${want_vnc_server}" = "yes"])
-AC_DEFINE_IF([ENABLE_VNC_SERVER], [test "${want_vnc_server}" = "yes"], [1], [Use VNC server support for Ecore_Evas_X])
-AC_SUBST([want_vnc_server])
-AC_SUBST([ENABLE_VNC_SERVER])
 
 #### Checks for header files
 
@@ -4649,10 +4645,7 @@ AM_CONDITIONAL([BUILD_ECORE_EVAS_WIN32],
 
 
 # XXX TODO: ecore_evas_x11
-
-ECORE_EVAS_MODULE([software-x11], [${want_x11_any}],
-  [EFL_OPTIONAL_DEPEND_PKG([ECORE_EVAS], [${want_vnc_server}], [VNC_SERVER], [libvncserver])])
-EFL_ADD_FEATURE([ECORE_EVAS], [vnc_server])
+ECORE_EVAS_MODULE([software-x11], [${want_x11_any}])
 
 have_ecore_evas_software_xlib="no"
 have_ecore_evas_software_xcb="no"
@@ -4675,8 +4668,7 @@ fi
 
 # XXX TODO: ecore_evas_opengl_x11
 
-ECORE_EVAS_MODULE([opengl-x11], [${want_x11_any_opengl}],
-  [EFL_OPTIONAL_DEPEND_PKG([ECORE_EVAS], [${want_vnc_server}], [VNC_SERVER], [libvncserver])])
+ECORE_EVAS_MODULE([opengl-x11], [${want_x11_any_opengl}])
 
 have_ecore_evas_opengl_xlib="no"
 have_ecore_evas_opengl_xcb="no"
@@ -4708,13 +4700,21 @@ if test "x${have_ecore_evas_opengl_x11}" = "xyes" || test "x${have_ecore_evas_op
 fi
 
 build_ecore_evas_x11="no"
+build_ecore_evas_vnc="no"
 if test "x$have_ecore_evas_software_x11" = "xyes" || \
    test "x$have_ecore_evas_opengl_x11" = "xyes" || \
    test "x$have_ecore_evas_software_xcb" = "xyes"; then
    AC_DEFINE([BUILD_ECORE_EVAS_X11], [1], [Support for X Window Engines in Ecore_Evas])
    build_ecore_evas_x11="yes"
+   if test "$want_vnc_server" = "yes"; then
+      build_ecore_evas_vnc="yes"
+   fi
 fi
 AM_CONDITIONAL([BUILD_ECORE_EVAS_X11], [test "${build_ecore_evas_x11}" = "yes"])
+
+AM_CONDITIONAL([BUILD_ECORE_EVAS_VNC_SERVER], [test "${build_ecore_evas_vnc}" = "yes"])
+AC_DEFINE_IF([BUILD_ECORE_EVAS_VNC_SERVER], [test "${build_ecore_evas_vnc}" = "yes"], [1], [Build Ecore_Evas VNC module])
+EFL_ADD_FEATURE([ECORE_EVAS], [vnc_server], [${build_ecore_evas_vnc}])
 
 EFL_EVAL_PKGS([ECORE_EVAS])
 

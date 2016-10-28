@@ -3274,6 +3274,23 @@ _ecore_evas_unref(Ecore_Evas *ee)
      ERR("Ecore_Evas %p->refcount=%d < 0", ee, ee->refcount);
 }
 
+static Eina_Bool
+_ecore_evas_vnc_stop(Ecore_Evas *ee)
+{
+   Eina_Module *mod;
+   void (*vnc_del)(void *);
+
+   mod = _ecore_evas_vnc_server_module_load();
+   EINA_SAFETY_ON_NULL_RETURN_VAL(mod, EINA_FALSE);
+
+   vnc_del = eina_module_symbol_get(mod, "ecore_evas_vnc_server_del");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(vnc_del, EINA_FALSE);
+
+   vnc_del(ee->vnc_server);
+   ee->vnc_server = NULL;
+   return EINA_TRUE;
+}
+
 EAPI void
 _ecore_evas_free(Ecore_Evas *ee)
 {
@@ -3295,6 +3312,7 @@ _ecore_evas_free(Ecore_Evas *ee)
    ee->anim = NULL;
 
    if (ee->func.fn_pre_free) ee->func.fn_pre_free(ee);
+   if (ee->vnc_server) _ecore_evas_vnc_stop(ee);
    while (ee->sub_ecore_evas)
      {
         _ecore_evas_free(ee->sub_ecore_evas->data);
@@ -3957,33 +3975,35 @@ ecore_evas_x11_shape_input_apply(Ecore_Evas *ee)
 
 EAPI Eina_Bool
 ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int port,
-                         Ecore_Evas_Vnc_Client_Accept_Cb cb, void *data)
+                     Ecore_Evas_Vnc_Client_Accept_Cb cb, void *data)
 {
-   Ecore_Evas_Interface_X11 *iface;
+   Eina_Module *mod;
+   void *(*vnc_new)(Ecore_Evas *, int, const char *,
+                    Ecore_Evas_Vnc_Client_Accept_Cb, void *);
 
-   if (strcmp(ee->driver, "software_x11"))
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
+
+   if (ee->vnc_server)
      return EINA_FALSE;
 
-   iface = (Ecore_Evas_Interface_X11 *)_ecore_evas_interface_get(ee, "x11");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface->vnc_start, EINA_FALSE);
+   mod = _ecore_evas_vnc_server_module_load();
+   EINA_SAFETY_ON_NULL_RETURN_VAL(mod, EINA_FALSE);
 
-   return iface->vnc_start(ee, addr, port, cb, data);
+   vnc_new = eina_module_symbol_get(mod, "ecore_evas_vnc_server_new");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(vnc_new, EINA_FALSE);
+
+   ee->vnc_server = vnc_new(ee, port, addr, cb, data);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee->vnc_server, EINA_FALSE);
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 ecore_evas_vnc_stop(Ecore_Evas *ee)
 {
-   Ecore_Evas_Interface_X11 *iface;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ee->vnc_server, EINA_FALSE);
 
-   if (strcmp(ee->driver, "software_x11"))
-     return EINA_FALSE;
-
-   iface = (Ecore_Evas_Interface_X11 *)_ecore_evas_interface_get(ee, "x11");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface->vnc_stop, EINA_FALSE);
-
-   return iface->vnc_stop(ee);
+   return _ecore_evas_vnc_stop(ee);
 }
 
 EAPI Ecore_Evas *
