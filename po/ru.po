@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-09-26 23:19+0900\n"
+"POT-Creation-Date: 2016-10-28 09:22+0900\n"
 "PO-Revision-Date: 2015-02-07 15:16+0300\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -240,20 +240,20 @@ msgstr "Изображения"
 msgid "Videos"
 msgstr "Видео"
 
-#: src/lib/elementary/elc_fileselector.c:1904
+#: src/lib/elementary/elc_fileselector.c:1902
 msgid "Up"
 msgstr "Вверх"
 
-#: src/lib/elementary/elc_fileselector.c:1918
+#: src/lib/elementary/elc_fileselector.c:1916
 msgid "Home"
 msgstr "Дом"
 
-#: src/lib/elementary/elc_fileselector.c:1937
+#: src/lib/elementary/elc_fileselector.c:1935
 msgid "Search"
 msgstr "Поиск"
 
 #: src/lib/elementary/elc_fileselector.c:2230
-#: src/lib/elementary/elm_entry.c:1703 src/lib/elementary/elm_entry.c:1728
+#: src/lib/elementary/elm_entry.c:1704 src/lib/elementary/elm_entry.c:1729
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -261,28 +261,41 @@ msgstr "Отмена"
 msgid "OK"
 msgstr "ОК"
 
-#: src/lib/elementary/elc_multibuttonentry.c:675
+#: src/lib/elementary/elc_hoversel.c:417 src/lib/elementary/elm_button.c:278
+#: src/lib/elementary/elm_check.c:212 src/lib/elementary/elm_gengrid.c:1440
+#: src/lib/elementary/elm_genlist.c:1726 src/lib/elementary/elm_list.c:2176
+#: src/lib/elementary/elm_radio.c:216
+#: src/lib/elementary/elm_segment_control.c:529
+#: src/lib/elementary/elm_spinner.c:999 src/lib/elementary/elm_toolbar.c:2378
+msgid "State: Disabled"
+msgstr "Состояние: Отключено"
+
+#: src/lib/elementary/elc_hoversel.c:616
+msgid "Hoversel"
+msgstr ""
+
+#: src/lib/elementary/elc_multibuttonentry.c:697
 msgid "multi button entry label"
 msgstr "метка многокопочного элемента"
 
-#: src/lib/elementary/elc_multibuttonentry.c:697
+#: src/lib/elementary/elc_multibuttonentry.c:719
 msgid "multi button entry item"
 msgstr "кнопка многокопочного элемента"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1573
+#: src/lib/elementary/elc_multibuttonentry.c:1597
 msgid "multi button entry"
 msgstr "многокнопочный элемент"
 
-#: src/lib/elementary/elc_naviframe.c:437
+#: src/lib/elementary/elc_naviframe.c:441
 msgid "Title"
 msgstr "Заголовок"
 
-#: src/lib/elementary/elc_naviframe.c:986
-#: src/lib/elementary/elc_naviframe.c:1191
+#: src/lib/elementary/elc_naviframe.c:992
+#: src/lib/elementary/elc_naviframe.c:1200
 msgid "Back"
 msgstr "Назад"
 
-#: src/lib/elementary/elc_naviframe.c:1290
+#: src/lib/elementary/elc_naviframe.c:1299
 msgid "Next"
 msgstr "Вперёд"
 
@@ -294,21 +307,13 @@ msgstr "Заголовок всплывающего окна"
 msgid "Popup Body Text"
 msgstr "Текст всплывающего окна"
 
-#: src/lib/elementary/elm_bubble.c:195
+#: src/lib/elementary/elm_bubble.c:196
 msgid "Bubble"
 msgstr "Облачко"
 
 #: src/lib/elementary/elm_button.c:69
 msgid "Clicked"
 msgstr "Нажато"
-
-#: src/lib/elementary/elm_button.c:278 src/lib/elementary/elm_check.c:212
-#: src/lib/elementary/elm_gengrid.c:1255 src/lib/elementary/elm_genlist.c:1716
-#: src/lib/elementary/elm_list.c:2176 src/lib/elementary/elm_radio.c:216
-#: src/lib/elementary/elm_segment_control.c:527
-#: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2378
-msgid "State: Disabled"
-msgstr "Состояние: Отключено"
 
 #: src/lib/elementary/elm_button.c:303
 msgid "Button"
@@ -388,27 +393,27 @@ msgstr "Состояние: Редактируемо"
 msgid "Clock"
 msgstr "Часы"
 
-#: src/lib/elementary/elm_colorselector.c:910
+#: src/lib/elementary/elm_colorselector.c:913
 msgid "Pick a color"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:948
+#: src/lib/elementary/elm_colorselector.c:951
 msgid "R:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:950
+#: src/lib/elementary/elm_colorselector.c:953
 msgid "G:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:952
+#: src/lib/elementary/elm_colorselector.c:955
 msgid "B:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:954
+#: src/lib/elementary/elm_colorselector.c:957
 msgid "A:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:1678
+#: src/lib/elementary/elm_colorselector.c:1681
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
@@ -420,31 +425,31 @@ msgstr "по умолчанию: ЛНП"
 msgid "day selector item"
 msgstr "элемент выбора дня"
 
-#: src/lib/elementary/elm_diskselector.c:700
+#: src/lib/elementary/elm_diskselector.c:702
 msgid "diskselector item"
 msgstr "элемент диска выбора"
 
-#: src/lib/elementary/elm_entry.c:1693
+#: src/lib/elementary/elm_entry.c:1694
 msgid "Cut"
 msgstr "Вырезать"
 
-#: src/lib/elementary/elm_entry.c:1696
+#: src/lib/elementary/elm_entry.c:1697
 msgid "Copy"
 msgstr "Копировать"
 
-#: src/lib/elementary/elm_entry.c:1700 src/lib/elementary/elm_entry.c:1722
+#: src/lib/elementary/elm_entry.c:1701 src/lib/elementary/elm_entry.c:1723
 msgid "Paste"
 msgstr "Вставить"
 
-#: src/lib/elementary/elm_entry.c:1715
+#: src/lib/elementary/elm_entry.c:1716
 msgid "Select"
 msgstr "Выбрать"
 
-#: src/lib/elementary/elm_entry.c:3795
+#: src/lib/elementary/elm_entry.c:3796
 msgid "Entry"
 msgstr "Запись"
 
-#: src/lib/elementary/elm_gengrid.c:1285
+#: src/lib/elementary/elm_gengrid.c:1470
 msgid "Gengrid Item"
 msgstr "Элемент сетки"
 
@@ -460,23 +465,23 @@ msgstr "Элемент алфавитного указателя"
 msgid "Label"
 msgstr "Метка"
 
-#: src/lib/elementary/elm_panel.c:76
+#: src/lib/elementary/elm_panel.c:85
 msgid "state: opened"
 msgstr "состояние: открыто"
 
-#: src/lib/elementary/elm_panel.c:77
+#: src/lib/elementary/elm_panel.c:86
 msgid "state: closed"
 msgstr "состояние: закрыто"
 
-#: src/lib/elementary/elm_panel.c:117
+#: src/lib/elementary/elm_panel.c:126
 msgid "A panel is open"
 msgstr "Панель открыта"
 
-#: src/lib/elementary/elm_panel.c:119
+#: src/lib/elementary/elm_panel.c:128
 msgid "Double tap to close panel menu"
 msgstr "Двойной щелчок, чтобы закрыть меню панели"
 
-#: src/lib/elementary/elm_panel.c:171
+#: src/lib/elementary/elm_panel.c:180
 msgid "panel button"
 msgstr "кнопка панели"
 
@@ -488,16 +493,16 @@ msgstr "индикатор выполнения"
 msgid "Radio"
 msgstr "Радио флажок"
 
-#: src/lib/elementary/elm_segment_control.c:530
+#: src/lib/elementary/elm_segment_control.c:532
 #: src/lib/elementary/elm_toolbar.c:2380
 msgid "State: Selected"
 msgstr "Состояние: Выбрано"
 
-#: src/lib/elementary/elm_segment_control.c:532
+#: src/lib/elementary/elm_segment_control.c:534
 msgid "State: Unselected"
 msgstr "Состояние: Невыбрано"
 
-#: src/lib/elementary/elm_segment_control.c:546
+#: src/lib/elementary/elm_segment_control.c:548
 msgid "Segment Control Item"
 msgstr "Элемент сегментного элемента управления"
 
@@ -505,27 +510,27 @@ msgstr "Элемент сегментного элемента управлен�
 msgid "slider"
 msgstr "бегунок"
 
-#: src/lib/elementary/elm_spinner.c:1044
+#: src/lib/elementary/elm_spinner.c:1029
 msgid "incremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1050
+#: src/lib/elementary/elm_spinner.c:1035
 msgid "decremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1083 src/lib/elementary/elm_spinner.c:1150
+#: src/lib/elementary/elm_spinner.c:1068 src/lib/elementary/elm_spinner.c:1135
 msgid "spinner"
 msgstr "счётчик"
 
-#: src/lib/elementary/elm_spinner.c:1092 src/lib/elementary/elm_spinner.c:1133
+#: src/lib/elementary/elm_spinner.c:1077 src/lib/elementary/elm_spinner.c:1118
 msgid "spinner increment button"
 msgstr "кнопка увеличения счётчика"
 
-#: src/lib/elementary/elm_spinner.c:1095 src/lib/elementary/elm_spinner.c:1142
+#: src/lib/elementary/elm_spinner.c:1080 src/lib/elementary/elm_spinner.c:1127
 msgid "spinner decrement button"
 msgstr "кнопка уменьшения счётчика"
 
-#: src/lib/elementary/elm_spinner.c:1097
+#: src/lib/elementary/elm_spinner.c:1082
 #, fuzzy
 msgid "spinner text"
 msgstr "счётчик"
