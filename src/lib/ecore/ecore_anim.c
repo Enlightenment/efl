@@ -30,6 +30,10 @@
 
 #endif /* ! _WIN32 */
 
+#ifdef HAVE_PRCTL
+# include <sys/prctl.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 
@@ -109,6 +113,9 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    int ret;
 
    eina_thread_name_set(eina_thread_self(), "Eanimator-timer");
+#ifdef HAVE_PRCTL
+   prctl(PR_SET_TIMERSLACK, 1, 0, 0, 0);
+#endif
    while (!ecore_thread_check(thread))
      {
         DBG("------- timer_event_is_busy=%i", timer_event_is_busy);

@@ -13,7 +13,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
-#ifdef HAVE_SYS_PRCTL_H
+#ifdef HAVE_PRCTL
 # include <sys/prctl.h>
 #endif
 
@@ -1017,11 +1017,11 @@ _ecore_exe_exec_it(const char     *exe_cmd,
       }
    }
 
-#ifdef HAVE_SYS_PRCTL_H
+#ifdef HAVE_PRCTL
    if ((flags & ECORE_EXE_TERM_WITH_PARENT))
-   {
-      prctl(PR_SET_PDEATHSIG, SIGTERM);
-   }
+     {
+        prctl(PR_SET_PDEATHSIG, SIGTERM);
+     }
 #endif
 
    if (!(flags & ECORE_EXE_NOT_LEADER)) setsid();

@@ -1029,7 +1029,7 @@ EFL_CHECK_GCC_BUILTIN([bswap64], [HAVE_BSWAP64])
 
 AC_CHECK_FUNCS([fchmod])
 
-EFL_CHECK_FUNCS([EINA], [dlopen dladdr iconv shm_open splice setxattr getpagesize])
+EFL_CHECK_FUNCS([EINA], [dlopen dladdr iconv shm_open splice setxattr getpagesize prctl])
 
 enable_log="no"
 if test "x${efl_func_fnmatch}" = "xyes" && test "x${want_log}" = "xyes" ; then

@@ -17,6 +17,10 @@
 #include <sys/select.h>
 #include <fcntl.h>
 
+#ifdef HAVE_PRCTL
+# include <sys/prctl.h>
+#endif
+
 #define ECORE_X_VSYNC_DRM 1
 
 static Ecore_X_Window vsync_root = 0;
@@ -286,6 +290,9 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    int tick = 0;
 
    eina_thread_name_set(eina_thread_self(), "Eanimator-vsync");
+#ifdef HAVE_PRCTL
+   prctl(PR_SET_TIMERSLACK, 1, 0, 0, 0);
+#endif
    while (!ecore_thread_check(thread))
      {
         DBG("------- drm_event_is_busy=%i", drm_event_is_busy);
