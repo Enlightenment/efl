@@ -5,7 +5,7 @@ namespace eolian_mono {
 
 inline std::string escape_keyword(std::string const& name)
 {
-  if(name == "delete" || name == "register" || name == "do")
+  if(name == "delete" || name == "register" || name == "do" || name == "lock")
     return "mono_" + name;
   return name;
 }

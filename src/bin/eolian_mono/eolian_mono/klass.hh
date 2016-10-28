@@ -96,8 +96,12 @@ struct klass
              << scope_tab << scope_tab << "System.IntPtr eo = _efl_add_internal_start(\"file\", 0, klass, parent, 0, 0);\n"
              << scope_tab << scope_tab << "handle = _efl_add_end(eo, 0, 0);\n"
              << scope_tab << "}\n"
+             << scope_tab << "public " << string << "Concrete(System.IntPtr raw)\n"
+             << scope_tab << "{\n"
+             << scope_tab << scope_tab << "handle = raw;\n"
+             << scope_tab << "}\n"
             )
-            .generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name, cls.namespaces, cls.eolian_name), context))
+            .generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name), context))
            return false;
      
          if(!as_generator(*(function_definition))

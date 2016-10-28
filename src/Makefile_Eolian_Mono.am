@@ -14,12 +14,35 @@ bin_eolian_mono_eolian_mono_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@
 
 bin_eolian_mono_eolian_mono_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
+evas_eolian_blacklisted_files = \
+lib/evas/canvas/efl_canvas_text_cursor.eo.cs \
+lib/evas/canvas/efl_canvas_text.eo.cs \
+lib/evas/canvas/efl_canvas_scene3d.eo.cs \
+lib/evas/canvas/evas_canvas3d_camera.eo.cs \
+lib/evas/canvas/evas_canvas3d_light.eo.cs \
+lib/evas/canvas/evas_canvas3d_material.eo.cs \
+lib/evas/canvas/evas_canvas3d_mesh.eo.cs \
+lib/evas/canvas/evas_canvas3d_node.eo.cs \
+lib/evas/canvas/evas_canvas3d_object.eo.cs \
+lib/evas/canvas/evas_canvas3d_primitive.eo.cs \
+lib/evas/canvas/evas_canvas3d_scene.eo.cs \
+lib/evas/canvas/evas_canvas3d_texture.eo.cs \
+lib/evas/canvas/efl_vg.eo.cs \
+lib/evas/canvas/efl_vg_container.eo.cs \
+lib/evas/canvas/efl_vg_gradient.eo.cs \
+lib/evas/canvas/efl_vg_gradient_radial.eo.cs \
+lib/evas/canvas/efl_vg_gradient_linear.eo.cs \
+lib/evas/canvas/efl_vg_root_node.eo.cs \
+lib/evas/canvas/efl_vg_shape.eo.cs
+
 efl_eolian_mono_files = \
 $(filter-out lib/eo/efl_object_override.eo.cs, $(eo_eolian_files:%.eo=%.eo.cs)) \
 $(ecore_eolian_files_public:%.eo=%.eo.cs) \
 $(ecore_eolian_type_files:%.eot=%.eot.cs) \
 $(efl_eolian_files:%.eo=%.eo.cs) \
-$(efl_eolian_type_files:%.eot=%.eot.cs)
+$(efl_eolian_type_files:%.eot=%.eot.cs) \
+$(filter-out $(evas_eolian_blacklisted_files),$(evas_eolian_pub_files:%.eo=%.eo.cs)) \
+$(evas_eolian_type_files:%.eot=%.eot.cs)
 
 ### Efl C++
 installed_eflmonomainheadersdir = $(includedir)/efl-mono-@VMAJ@/
@@ -45,7 +68,8 @@ bin_PROGRAMS += lib/eo_mono/libeo_mono.dll
 
 lib_eo_mono_libeo_mono_dll_SOURCES = \
 	bindings/mono/eo_mono/object.cs \
-	bindings/mono/eo_mono/iwrapper.cs
+	bindings/mono/eo_mono/iwrapper.cs \
+	bindings/mono/eo_mono/workaround.cs
 
 lib/eo_mono/libeo_mono.dll$(EXEEXT): $(lib_eo_mono_libeo_mono_dll_SOURCES) lib/eo_mono/$(am__dirstamp) $(efl_eolian_mono_files)
 	@rm -f lib/eo_mono/libeo_mono.dll$(EXEEXT)
@@ -53,22 +77,19 @@ lib/eo_mono/libeo_mono.dll$(EXEEXT): $(lib_eo_mono_libeo_mono_dll_SOURCES) lib/e
 
 if EFL_ENABLE_TESTS
 
-LD_LIBRARY_PATH_APPEND=lib/eina/.libs:lib/ecore/.libs:lib/efl/.libs
+#LD_LIBRARY_PATH_APPEND=$(abs_top_builddir)/lib/eina/.libs:$(abs_top_builddir)/lib/ecore/.libs:$(abs_top_builddir)/lib/efl/.libs:$(abs_top_builddir)/lib/evas/.libs:$(abs_top_builddir)/lib/ecore_evas/.libs
 
 AM_TESTS_ENVIRONMENT += MONO='mono'; export MONO;
-AM_TESTS_ENVIRONMENT += MONO_CONFIG='$(srcdir)/tests/eo_mono/eo_mono.exe.config'; export MONO_CONFIG;
+AM_TESTS_ENVIRONMENT += MONO_CONFIG='$(builddir)/tests/eo_mono/eo_mono.exe.config'; export MONO_CONFIG;
 AM_TESTS_ENVIRONMENT += MONO_BUILDPATH='$(abs_top_builddir)'; export MONO_BUILDPATH;
 AM_TESTS_ENVIRONMENT += MONO_PATH='$(abs_top_builddir)/src/lib/eo_mono:$(LD_LIBRARY_PATH_APPEND)'; export MONO_PATH;
-#AM_TESTS_ENVIRONMENT += MONO_LOG_LEVEL=debug; export MONO_LOG_LEVEL;
-#AM_TESTS_ENVIRONMENT += LD_LIBRARY_PATH=$(LD_LIBRARY_PATH_APPEND)
+AM_TESTS_ENVIRONMENT += EINA_LOG_LEVEL=8; export EINA_LOG_LEVEL;
 
 check_PROGRAMS += tests/eo_mono/eo_mono.exe
 TESTS += tests/eo_mono/mono_test_driver.sh
 
 tests_eo_mono_eo_mono_exe_SOURCES = \
-     tests/eo_mono/Main.cs
-
-LD_LIBRARY_PATH_APPEND=$(top_builddir)/src/lib/eina:$(top_builddir)/src/lib/ecore:$(top_builddir)/src/lib/efl
+     tests/eo_mono/Main.cs tests/eo_mono/EcoreEvas.cs
 
 tests/eo_mono/eo_mono.exe$(EXEEXT): $(tests_eo_mono_eo_mono_exe_SOURCES) tests/eo_mono/$(am__dirstamp) lib/eo_mono/libeo_mono.dll 
 	@rm -f tests/eo_mono/eo_mono_exe$(EXEEXT)
@@ -76,15 +97,40 @@ tests/eo_mono/eo_mono.exe$(EXEEXT): $(tests_eo_mono_eo_mono_exe_SOURCES) tests/e
 
 SUFFIXES += .eo.cs
 
-%.eo.cs: %.eo $(_EOLIAN_MONO_DEP)
+lib/eo/%.eo.cs: lib/eo/%.eo $(_EOLIAN_MONO_DEP)
 	$(AM_V_EOLMONO) \
 	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_MONO) $(EOLIAN_FLAGS) -o $@ $<
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport eo -o $@ $<
 
-%.eot.cs: %.eot $(_EOLIAN_MONO_DEP)
+lib/ecore/%.eo.cs: lib/ecore/%.eo $(_EOLIAN_MONO_DEP)
 	$(AM_V_EOLMONO) \
 	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_MONO) $(EOLIAN_FLAGS) -o $@ $<
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport ecore -o $@ $<
+
+lib/evas/%.eo.cs: lib/evas/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport evas -o $@ $<
+
+lib/efl/%.eo.cs: lib/efl/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport efl -o $@ $<
+
+lib/ecore/%.eot.cs: lib/ecore/%.eot $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport ecore -o $@ $<
+
+lib/evas/%.eot.cs: lib/evas/%.eot $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport evas -o $@ $<
+
+lib/efl/%.eot.cs: lib/efl/%.eot $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport efl -o $@ $<
 
 endif
 endif

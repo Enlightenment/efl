@@ -1,0 +1,7 @@
+
+<configuration>
+  <dllmap target="@abs_top_builddir@/src/lib/ecore/.libs/libecore.so" dll="ecore" />
+  <dllmap target="@abs_top_builddir@/src/lib/eo/.libs/libeo.so" dll="eo" />
+  <dllmap target="@abs_top_builddir@/src/lib/evas/.libs/libevas.so" dll="evas" />
+  <dllmap target="@abs_top_builddir@/src/lib/ecore_evas/.libs/libecore_evas.so" dll="ecore_evas" />
+</configuration>
