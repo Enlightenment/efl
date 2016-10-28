@@ -34,6 +34,7 @@ struct options_type
    std::vector<std::string> include_dirs;
    std::string in_file;
    std::string out_file;
+   std::string dllimport;
 };
 
 efl::eina::log_domain domain("eolian_mono");
@@ -91,7 +92,7 @@ run(options_type const& opts)
        efl::eolian::grammar::attributes::klass_def klass_def(klass);
        std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
 
-       eolian_mono::klass.generate(iterator, klass_def, efl::eolian::grammar::context_cons<eolian_mono::library_context>({"ecore"}));
+       eolian_mono::klass.generate(iterator, klass_def, efl::eolian::grammar::context_cons<eolian_mono::library_context>({opts.dllimport}));
      }
    //else
      {
@@ -192,6 +193,7 @@ opts_get(int argc, char **argv)
        { "out-file",  required_argument, 0,  'o' },
        { "version",   no_argument,       0,  'v' },
        { "help",      no_argument,       0,  'h' },
+       { "dllimport",      required_argument,       0,  'l' },
        { 0,           0,                 0,   0  }
      };
    const char* options = "I:D:o:c:arvh";
@@ -211,6 +213,10 @@ opts_get(int argc, char **argv)
         else if (c == 'h')
           {
            _usage(argv[0]);
+          }
+        else if (c == 'l')
+          {
+            opts.dllimport = optarg;
           }
         else if (c == 'v')
           {

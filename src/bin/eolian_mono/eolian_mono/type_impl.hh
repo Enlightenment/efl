@@ -262,7 +262,7 @@ struct visitor_generate
       {
         {"list", true, nullptr, [&]
          {
-           (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
+           (*this)(regular_type_def{" System.Collections.Generic.List", complex.outer.base_qualifier, {}});
            return attributes::type_def::variant_type();
            // generate_container(sink, complex, *context, " ::efl::eina::list");
            // return attributes::type_def::variant_type();
@@ -270,7 +270,7 @@ struct visitor_generate
         , {"list", false, nullptr, [&]
            {
            return replace_outer
-           (complex, regular_type_def{" int", complex.outer.base_qualifier, {}});
+           (complex, regular_type_def{" System.Collections.Generic.List", complex.outer.base_qualifier, {}});
            // generate_container(sink, complex, *context, " ::efl::eina::range_list");
            // return attributes::type_def::variant_type();
          }}
@@ -292,7 +292,7 @@ struct visitor_generate
            , [&]
            {
              return replace_outer
-             (complex, regular_type_def{" int", complex.outer.base_qualifier, {}});
+             (complex, regular_type_def{" System.Collections.Generic.Dictionary", complex.outer.base_qualifier, {}});
              // regular_type_def r{"Eina_Hash*", complex.outer.base_qualifier, {}};
              // return r;
            }}
