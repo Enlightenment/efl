@@ -228,7 +228,8 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
    err = efl_io_reader_read(pd->source, &rw_slice);
    if (err)
      {
-        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
+        if (err != EAGAIN)
+          efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
         return;
      }
 
