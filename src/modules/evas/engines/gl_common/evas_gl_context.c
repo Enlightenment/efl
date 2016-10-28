@@ -35,6 +35,13 @@ void       (*glsym_glEndTiling)            (GLuint a) = NULL;
 
 const char *(*glsym_glGetStringi) (GLenum name, GLuint index) = NULL;
 
+#define REPLACE_THREAD(prefix, dst, typ) \
+   if (prefix##dst && (typ)prefix##dst != (typ)evas_##dst##_th) \
+     { \
+        dst##_orig_evas_set(prefix##dst); \
+        prefix##dst = (typ)evas_##dst##_th; \
+     }
+
 #ifdef GL_GLES
 
 # ifndef GL_LINE_SMOOTH
@@ -167,6 +174,7 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
     */
 
    glsym_glGetStringi = dlsym(RTLD_DEFAULT, "glGetStringi");
+   REPLACE_THREAD(glsym_, glGetStringi, glsym_func_const_char_ptr);
 
 #define FINDSYM(dst, sym, ext, typ) do { \
    if (!dst) { \
@@ -185,9 +193,11 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
 #ifdef GL_GLES
 
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", NULL, glsym_func_void);
+   REPLACE_THREAD(glsym_, glGenFramebuffers, glsym_func_void);
    FALLBAK(glsym_glGenFramebuffers, glsym_func_void);
 
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", NULL, glsym_func_void);
+   REPLACE_THREAD(glsym_, glBindFramebuffer, glsym_func_void);
    FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
 
 #else
@@ -229,11 +239,13 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", NULL, glsym_func_void);
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB", "GL_ARB_framebuffer_object", glsym_func_void);
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT", "GL_EXT_framebuffer_object", glsym_func_void);
+   REPLACE_THREAD(glsym_, glGenFramebuffers, glsym_func_void);
    FALLBAK(glsym_glGenFramebuffers, glsym_func_void);
 
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", NULL, glsym_func_void);
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferARB", "GL_ARB_framebuffer_object", glsym_func_void);
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT", "GL_EXT_framebuffer_object", glsym_func_void);
+   REPLACE_THREAD(glsym_, glBindFramebuffer, glsym_func_void);
    FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
 
 #endif
@@ -241,38 +253,46 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
    FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", NULL, glsym_func_void);
    FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DARB", "GL_ARB_framebuffer_object", glsym_func_void);
    FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT", "GL_EXT_framebuffer_object", glsym_func_void);
+   REPLACE_THREAD(glsym_, glFramebufferTexture2D, glsym_func_void);
    FALLBAK(glsym_glFramebufferTexture2D, glsym_func_void);
 
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", NULL, glsym_func_void);
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB", "GL_ARB_framebuffer_object", glsym_func_void);
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT", "GL_EXT_framebuffer_object", glsym_func_void);
+   REPLACE_THREAD(glsym_, glDeleteFramebuffers, glsym_func_void);
    FALLBAK(glsym_glDeleteFramebuffers, glsym_func_void);
 
    // Not sure there's an EXT variant
    FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinary", NULL, glsym_func_void);
    FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryOES", "GL_OES_get_program_binary", glsym_func_void);
    FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryEXT", "GL_EXT_get_program_binary", glsym_func_void);
+   REPLACE_THREAD(glsym_, glGetProgramBinary, glsym_func_void);
 
    // Not sure there's an EXT variant
    FINDSYM(glsym_glProgramBinary, "glProgramBinary", NULL, glsym_func_void);
    FINDSYM(glsym_glProgramBinary, "glProgramBinaryOES", "GL_OES_get_program_binary", glsym_func_void);
    FINDSYM(glsym_glProgramBinary, "glProgramBinaryEXT", "GL_EXT_get_program_binary", glsym_func_void);
+   REPLACE_THREAD(glsym_, glProgramBinary, glsym_func_void);
 
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_separate_shader_objects", glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", "GL_ARB_geometry_shader4", glsym_func_void);
+   REPLACE_THREAD(glsym_, glProgramParameteri, glsym_func_void);
 
    FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", NULL, glsym_func_void);
 #ifndef GL_GLES
    FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", "GL_ARB_ES2_compatibility", glsym_func_void);
 #endif
+   REPLACE_THREAD(glsym_, glReleaseShaderCompiler, glsym_func_void);
 
    // Not sure there's a core variant, glActivateTileQCOM is strange as well
    FINDSYM(glsym_glStartTiling, "glStartTilingQCOM", "GL_QCOM_tiled_rendering", glsym_func_void);
    FINDSYM(glsym_glStartTiling, "glStartTiling", NULL, glsym_func_void);
    FINDSYM(glsym_glStartTiling, "glActivateTileQCOM", NULL, glsym_func_void);
+   REPLACE_THREAD(glsym_, glStartTiling, glsym_func_void);
    FINDSYM(glsym_glEndTiling, "glEndTilingQCOM", "GL_QCOM_tiled_rendering", glsym_func_void);
    FINDSYM(glsym_glEndTiling, "glEndTiling", NULL, glsym_func_void);
+   REPLACE_THREAD(glsym_, glEndTiling, glsym_func_void);
    
    if (!getenv("EVAS_GL_MAPBUFFER_DISABLE"))
      {
@@ -282,12 +302,14 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
         FINDSYM(glsym_glMapBuffer, "glMapBufferARB", "GL_ARB_vertex_buffer_object", glsym_func_void_ptr);
         FINDSYM(glsym_glMapBuffer, "glMapBufferARB", "GLX_ARB_vertex_buffer_object", glsym_func_void_ptr);
         FINDSYM(glsym_glMapBuffer, "glMapBufferEXT", NULL, glsym_func_void_ptr);
+        REPLACE_THREAD(glsym_, glMapBuffer, glsym_func_void_ptr);
 
         FINDSYM(glsym_glUnmapBuffer, "glUnmapBuffer", NULL, glsym_func_boolean);
         FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferOES", "GL_OES_mapbuffer", glsym_func_boolean);
         FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", "GL_ARB_vertex_buffer_object", glsym_func_boolean);
         FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", "GLX_ARB_vertex_buffer_object", glsym_func_boolean);
         FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferEXT", NULL, glsym_func_boolean);
+        REPLACE_THREAD(glsym_, glUnmapBuffer, glsym_func_boolean);
      }
 
 #ifdef GL_GLES
@@ -312,8 +334,10 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_geometry_shader4", glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", "GL_ARB_geometry_shader4", glsym_func_void);
+   REPLACE_THREAD(glsym_, glProgramParameteri, glsym_func_void);
 
    FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
+   REPLACE_THREAD(glsym_, glEGLImageTargetTexture2DOES, glsym_func_void);
 
    // Old SEC extensions
    FINDSYM(secsym_eglMapImageSEC, "eglMapImageSEC", NULL, secsym_func_void_ptr);
@@ -789,7 +813,10 @@ evas_gl_common_context_new(void)
 #endif
 
    if (!glsym_glGetStringi)
-     glsym_glGetStringi = dlsym(RTLD_DEFAULT, "glGetStringi");
+     {
+        glsym_glGetStringi = dlsym(RTLD_DEFAULT, "glGetStringi");
+        REPLACE_THREAD(glsym_, glGetStringi, glsym_func_const_char_ptr);
+     }
 
    if (!_evas_gl_common_version_check(&gles_version))
      return NULL;
