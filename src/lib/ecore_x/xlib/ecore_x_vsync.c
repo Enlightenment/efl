@@ -147,6 +147,10 @@ static void *drm_lib = NULL;
 
 static Eina_Thread_Queue *thq = NULL;
 static Ecore_Thread *drm_thread = NULL;
+static Eina_Spinlock tick_queue_lock;
+static int           tick_queue_count = 0;
+static Eina_Bool     tick_skip = EINA_FALSE;
+
 typedef struct
 {
    Eina_Thread_Queue_Msg head;
@@ -208,6 +212,9 @@ _drm_send_time(double t)
         *tim = t;
         DBG("   ... send %1.8f", t);
         D("    @%1.5f   ... send %1.8f\n", ecore_time_get(), t);
+        eina_spinlock_take(&tick_queue_lock);
+        tick_queue_count++;
+        eina_spinlock_release(&tick_queue_lock);
         ecore_thread_feedback(drm_thread, tim);
      }
 }
@@ -363,6 +370,12 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 static void
 _drm_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
+   int tick_queued;
+
+   eina_spinlock_take(&tick_queue_lock);
+   tick_queued = tick_queue_count;
+   tick_queue_count--;
+   eina_spinlock_release(&tick_queue_lock);
    DBG("notify.... %3.3f %i", *((double *)msg), drm_event_is_busy);
    D("notify.... %3.3f %i\n", *((double *)msg), drm_event_is_busy);
    if (drm_event_is_busy)
@@ -372,8 +385,11 @@ _drm_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void 
 
         DBG("VSYNC %1.8f = delt %1.8f", *t, *t - pt);
         D("VSYNC %1.8f = delt %1.8f\n", *t, *t - pt);
-        ecore_loop_time_set(*t);
-        ecore_animator_custom_tick();
+        if ((!tick_skip) || (tick_queued == 1))
+          {
+             ecore_loop_time_set(*t);
+             ecore_animator_custom_tick();
+          }
         pt = *t;
      }
    free(msg);
@@ -666,6 +682,9 @@ checkdone:
         return 0;
      }
 
+   if (getenv("ECORE_ANIMATOR_SKIP")) tick_skip = EINA_TRUE;
+   tick_queue_count = 0;
+   eina_spinlock_new(&tick_queue_lock);
    thq = eina_thread_queue_new();
    drm_thread = ecore_thread_feedback_run(_drm_tick_core, _drm_tick_notify,
                                           NULL, NULL, NULL, EINA_TRUE);

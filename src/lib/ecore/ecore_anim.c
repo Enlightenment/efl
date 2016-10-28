@@ -69,6 +69,9 @@ static volatile int timer_fd_read = -1;
 static volatile int timer_fd_write = -1;
 static Ecore_Thread *timer_thread = NULL;
 static volatile int timer_event_is_busy = 0;
+static Eina_Spinlock tick_queue_lock;
+static int           tick_queue_count = 0;
+static Eina_Bool     tick_skip = EINA_FALSE;
 
 static void
 _tick_send(signed char val)
@@ -88,6 +91,9 @@ _timer_send_time(double t)
      {
         *tim = t;
         DBG("   ... send %1.8f", t);
+        eina_spinlock_take(&tick_queue_lock);
+        tick_queue_count++;
+        eina_spinlock_release(&tick_queue_lock);
         ecore_thread_feedback(timer_thread, tim);
      }
 }
@@ -150,6 +156,12 @@ done:
 static void
 _timer_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
+   int tick_queued;
+
+   eina_spinlock_take(&tick_queue_lock);
+   tick_queued = tick_queue_count;
+   tick_queue_count--;
+   eina_spinlock_release(&tick_queue_lock);
    DBG("notify.... %3.3f %i", *((double *)msg), timer_event_is_busy);
    if (timer_event_is_busy)
      {
@@ -157,8 +169,11 @@ _timer_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, voi
         static double pt = 0.0;
 
         DBG("VSYNC %1.8f = delt %1.8f", *t, *t - pt);
-        ecore_loop_time_set(*t);
-        _do_tick();
+        if ((!tick_skip) || (tick_queued == 1))
+          {
+             ecore_loop_time_set(*t);
+             _do_tick();
+          }
         pt = *t;
      }
    free(msg);
@@ -167,7 +182,9 @@ _timer_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, voi
 static void
 _timer_tick_finished(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
+   eina_spinlock_free(&tick_queue_lock);
    timer_thread = NULL;
+   tick_queue_count = 0;
    if (timer_fd_read >= 0)
      {
         pipe_close(timer_fd_read);
@@ -190,6 +207,9 @@ _timer_tick_begin(void)
         if (pipe(fds) != 0) return;
         timer_fd_read = fds[0];
         timer_fd_write = fds[1];
+        if (getenv("ECORE_ANIMATOR_SKIP")) tick_skip = EINA_TRUE;
+        tick_queue_count = 0;
+        eina_spinlock_new(&tick_queue_lock);
         timer_thread = ecore_thread_feedback_run(_timer_tick_core,
                                                  _timer_tick_notify,
                                                  _timer_tick_finished,
