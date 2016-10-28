@@ -893,26 +893,6 @@ __evas_gl_errdyn(int err, const char *file, const char *func, int line, const ch
 Eina_Bool evas_gl_common_module_open(void);
 void      evas_gl_common_module_close(void);
 
-#ifndef EVAS_GL_NO_HEADERS
-
-static inline void
-_tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int type, const void *pix)
-{
-   if ((w > gc->shared->info.max_texture_size) ||
-       (h > gc->shared->info.max_texture_size)) return;
-   glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
-}
-
-static inline void
-_comp_tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int imgsize, const void *pix)
-{
-   if ((w > gc->shared->info.max_texture_size) ||
-       (h > gc->shared->info.max_texture_size)) return;
-   glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, imgsize, pix);
-}
-
-#endif
-
 #include "evas_gl_3d_common.h"
 
 #undef EAPI

@@ -97,6 +97,22 @@ static const struct {
   { MATCH_ANY, MATCH_ANY, EVAS_COLORSPACE_RGBA_S3TC_DXT5, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt }
 };
 
+static void
+_tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int type, const void *pix)
+{
+   if ((w > gc->shared->info.max_texture_size) ||
+       (h > gc->shared->info.max_texture_size)) return;
+   glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
+}
+
+static void
+_comp_tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int imgsize, const void *pix)
+{
+   if ((w > gc->shared->info.max_texture_size) ||
+       (h > gc->shared->info.max_texture_size)) return;
+   glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, imgsize, pix);
+}
+
 #ifdef GL_TEXTURE_INTERNAL_FORMAT
 # ifndef GL_GLES
 static const GLenum matching_rgb[] = { GL_RGB4, GL_RGB8, GL_RGB12, GL_RGB16, 0x0 };
