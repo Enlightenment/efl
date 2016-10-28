@@ -1373,7 +1373,7 @@ _flip(Evas_Object *obj)
         // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow
         evas_object_resize(sd->front.content, 0, 0);
         evas_object_resize(sd->back.content, 0, 0);
-        evas_smart_objects_calculate(evas_object_evas_get(obj));
+        efl_canvas_smart_objects_calculate(evas_object_evas_get(obj));
         // FIXME: end hack
         sd->animator = NULL;
         if (((sd->manual) && (sd->finish)) || (!sd->manual))
@@ -1564,7 +1564,7 @@ _event_anim(void *data,
    // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow
    evas_object_resize(sd->front.content, 0, 0);
    evas_object_resize(sd->back.content, 0, 0);
-   evas_smart_objects_calculate
+   efl_canvas_smart_objects_calculate
      (evas_object_evas_get(sd->obj));
    // FIXME: end hack
    sd->animator = NULL;
@@ -1747,7 +1747,7 @@ _move_cb(void *data,
              if (sd->intmode == EFL_UI_FLIP_INTERACTION_PAGE)
                sd->pageflip = EINA_TRUE;
              _flip_show_hide(data);
-             evas_smart_objects_calculate(evas_object_evas_get(data));
+             efl_canvas_smart_objects_calculate(evas_object_evas_get(data));
              _flip(data);
              // FIXME: hack around evas rendering bug (only fix makes
              // evas bitch-slow)
@@ -1756,7 +1756,7 @@ _move_cb(void *data,
 // FIXME: XXX why does this bork interactive flip??
 //             evas_object_resize(sd->front.content, 0, 0);
 //             evas_object_resize(sd->back.content, 0, 0);
-             evas_smart_objects_calculate(evas_object_evas_get(data));
+             efl_canvas_smart_objects_calculate(evas_object_evas_get(data));
              _configure(fl);
              // FIXME: end hack
              efl_event_callback_legacy_call(fl, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
@@ -1797,7 +1797,7 @@ _flip_content_set(Evas_Object *obj,
      }
 
    // force calc to contents are the right size before transition
-   evas_smart_objects_calculate(evas_object_evas_get(obj));
+   efl_canvas_smart_objects_calculate(evas_object_evas_get(obj));
    //evas_object_smart_calculate(obj);
    _flip_show_hide(obj);
    _configure(obj);
@@ -1968,7 +1968,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
        (sd->mode == ELM_FLIP_PAGE_DOWN))
      sd->pageflip = EINA_TRUE;
    // force calc to contents are the right size before transition
-   evas_smart_objects_calculate(evas_object_evas_get(obj));
+   efl_canvas_smart_objects_calculate(evas_object_evas_get(obj));
 
    if (sd->mode == ELM_FLIP_CROSS_FADE)
      {
@@ -2002,7 +2002,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
    evas_object_map_enable_set(sd->back.content, EINA_FALSE);
    evas_object_resize(sd->front.content, 0, 0);
    evas_object_resize(sd->back.content, 0, 0);
-   evas_smart_objects_calculate(evas_object_evas_get(obj));
+   efl_canvas_smart_objects_calculate(evas_object_evas_get(obj));
    _configure(obj);
    // FIXME: end hack
 

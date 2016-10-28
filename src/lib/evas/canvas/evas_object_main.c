@@ -2165,7 +2165,7 @@ _efl_canvas_object_efl_loop_user_loop_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Pr
 }
 
 EOLIAN Evas_Object*
-_evas_canvas_object_top_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_evas_canvas_efl_canvas_object_top_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Evas_Layer *lay;
    int xx, yy;
@@ -2204,11 +2204,11 @@ evas_object_top_at_pointer_get(const Evas *eo_e)
 
    Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
-   return evas_canvas_object_top_at_xy_get((Eo *)eo_e, pdata->seat->x, pdata->seat->y, EINA_TRUE, EINA_TRUE);
+   return efl_canvas_object_top_at_xy_get((Eo *)eo_e, pdata->seat->x, pdata->seat->y, EINA_TRUE, EINA_TRUE);
 }
 
 EOLIAN Evas_Object*
-_evas_canvas_object_top_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_evas_canvas_efl_canvas_object_top_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Evas_Layer *lay;
    int xx, yy, ww, hh;
@@ -2245,7 +2245,7 @@ _evas_canvas_object_top_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data 
 }
 
 EOLIAN Eina_List*
-_evas_canvas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_evas_canvas_efl_canvas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *in = NULL;
    Evas_Layer *lay;
@@ -2301,7 +2301,7 @@ _evas_canvas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_C
  *
  */
 EOLIAN Eina_List*
-_evas_canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_evas_canvas_efl_canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *in = NULL;
    Evas_Layer *lay;

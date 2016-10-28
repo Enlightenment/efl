@@ -615,7 +615,7 @@ _evas_canvas_pointer_button_down_mask_get(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_pointer_inside_get(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_efl_input_interface_pointer_inside_get(Eo *eo_e, Evas_Public_Data *e)
 {
    return _evas_canvas_pointer_inside_by_device_get(eo_e, e, NULL);
 }

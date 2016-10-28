@@ -1814,7 +1814,7 @@ _ecore_evas_object_cursor_device_set(Ecore_Evas *ee, Efl_Input_Device *pointer,
      {
         evas_object_layer_set(cursor->object, cursor->layer);
         evas_object_pass_events_set(cursor->object, 1);
-        if (evas_pointer_inside_get(ee->evas))
+        if (efl_input_pointer_inside_get(ee->evas))
           evas_object_show(cursor->object);
         evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                        _ecore_evas_object_cursor_del, cursor);
