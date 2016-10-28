@@ -62,6 +62,8 @@ static char *layouts[] =
    NULL
 };
 
+static Eina_File *eina_file;
+
 static void
 _on_delete(Ecore_Evas *ee EINA_UNUSED)
 {
@@ -74,7 +76,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
                 Evas_Object *o,
                 void *event_info)
 {
-   const char  *edje_file = PACKAGE_DATA_DIR"/box_example.edj";
+   Eina_File *new_file;
    Evas_Event_Key_Down *ev;
    Evas_Object         *edje_edit_obj = o;
 
@@ -107,7 +109,11 @@ _on_bg_key_down(void *data EINA_UNUSED,
           fprintf(stderr, "Couldn't set align y for item x2, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
-        if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+        new_file = eina_file_written_file_get(eina_file);
+        eina_file_close(eina_file);
+        eina_file = new_file;
+
+        if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
           fprintf(stdout, "Couldn't load edje edit object! \n");
 
         return;
@@ -129,7 +135,11 @@ _on_bg_key_down(void *data EINA_UNUSED,
           fprintf(stderr, "Couldn't set weight y for item x2, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
-        if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+        new_file = eina_file_written_file_get(eina_file);
+        eina_file_close(eina_file);
+        eina_file = new_file;
+
+        if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
           fprintf(stdout, "Couldn't load edje edit object! \n");
 
         return;
@@ -151,7 +161,11 @@ _on_bg_key_down(void *data EINA_UNUSED,
           fprintf(stderr, "Couldn't set paddings for item x2, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
-        if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+        new_file = eina_file_written_file_get(eina_file);
+        eina_file_close(eina_file);
+        eina_file = new_file;
+
+        if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
           fprintf(stdout, "Couldn't load edje edit object! \n");
 
         return;
@@ -179,7 +193,11 @@ _on_bg_key_down(void *data EINA_UNUSED,
           fprintf(stderr, "Couldn't set spread h for item x2, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
-        if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+        new_file = eina_file_written_file_get(eina_file);
+        eina_file_close(eina_file);
+        eina_file = new_file;
+
+        if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
           fprintf(stdout, "Couldn't load edje edit object! \n");
 
         return;
@@ -201,7 +219,11 @@ _on_bg_key_down(void *data EINA_UNUSED,
           fprintf(stderr, "Couldn't set min h for item x2, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
-        if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+        new_file = eina_file_written_file_get(eina_file);
+        eina_file_close(eina_file);
+        eina_file = new_file;
+
+        if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
           fprintf(stdout, "Couldn't load edje edit object! \n");
 
         return;
@@ -223,7 +245,11 @@ _on_bg_key_down(void *data EINA_UNUSED,
           fprintf(stderr, "Couldn't set max h for item x2, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
-        if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+        new_file = eina_file_written_file_get(eina_file);
+        eina_file_close(eina_file);
+        eina_file = new_file;
+
+        if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
           fprintf(stdout, "Couldn't load edje edit object! \n");
 
         return;
@@ -244,7 +270,11 @@ _on_bg_key_down(void *data EINA_UNUSED,
           fprintf(stderr, "Couldn't change item's source, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
-        if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+        new_file = eina_file_written_file_get(eina_file);
+        eina_file_close(eina_file);
+        eina_file = new_file;
+
+        if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
           fprintf(stdout, "Couldn't load edje edit object! \n");
 
         eina_stringshare_del(source);
@@ -267,7 +297,11 @@ _on_bg_key_down(void *data EINA_UNUSED,
           }
 
         edje_edit_save_all(edje_edit_obj);
-        if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+        new_file = eina_file_written_file_get(eina_file);
+        eina_file_close(eina_file);
+        eina_file = new_file;
+
+        if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
           fprintf(stdout, "Couldn't load edje edit object! \n");
 
         return;
@@ -288,7 +322,11 @@ _on_bg_key_down(void *data EINA_UNUSED,
           fprintf(stderr, "Couldn't change layout, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
-        if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+        new_file = eina_file_written_file_get(eina_file);
+        eina_file_close(eina_file);
+        eina_file = new_file;
+
+        if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
           fprintf(stdout, "Couldn't load edje edit object! \n");
 
         eina_stringshare_del(layout);
@@ -310,7 +348,11 @@ _on_bg_key_down(void *data EINA_UNUSED,
           fprintf(stderr, "Couldn't change alternative layout, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
-        if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+        new_file = eina_file_written_file_get(eina_file);
+        eina_file_close(eina_file);
+        eina_file = new_file;
+
+        if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
           fprintf(stdout, "Couldn't load edje edit object! \n");
 
         eina_stringshare_del(layout);
@@ -324,9 +366,13 @@ int
 main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
    const char  *edje_file = PACKAGE_DATA_DIR"/box_example.edj";
+   Eina_File   *tmp;
+   void        *file_data;
+   size_t      file_size;
    Ecore_Evas  *ee;
    Evas        *evas;
    Evas_Object *edje_edit_obj;
+   FILE *fileptr;
 
    if (!ecore_evas_init())
      return EXIT_FAILURE;
@@ -347,7 +393,15 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 
    /* loading edje edit object here */
    edje_edit_obj = edje_edit_object_add(evas);
-   if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
+
+   tmp = eina_file_open(edje_file, 0);
+   file_data = eina_file_map_all(tmp, EINA_FILE_SEQUENTIAL);
+   file_size = eina_file_size_get(tmp);
+   eina_file = eina_file_virtualize_writable("virtual_file", file_data, file_size);
+   eina_file_map_free(tmp, file_data);
+   eina_file_close(tmp);
+
+   if (!edje_object_mmap_set(edje_edit_obj, eina_file, "box_group"))
      fprintf(stdout, "Couldn't load edje edit object! \n");
 
    evas_object_resize(edje_edit_obj, WIDTH, HEIGHT);
@@ -363,6 +417,16 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    ecore_evas_show(ee);
 
    ecore_main_loop_begin();
+
+   file_data = eina_file_map_all(eina_file, EINA_FILE_SEQUENTIAL);
+   file_size = eina_file_size_get(eina_file);
+
+   fileptr = fopen("edje_edit_output.edj", "wb");
+   fwrite(file_data, file_size, 1, fileptr);
+   fclose(fileptr);
+
+   eina_file_map_free(eina_file, file_data);
+   eina_file_close(eina_file);
 
    ecore_evas_free(ee);
    ecore_evas_shutdown();
