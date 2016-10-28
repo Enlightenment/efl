@@ -348,12 +348,6 @@ _eio_model_efl_model_property_get(Eo *obj, Eio_Model_Data *priv, const char *pro
      }
    else if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_MIME_TYPE], property) == 0)
      {
-        value = efreet_mime_type_get(priv->path);
-        if (value == NULL)
-          {
-             value = "";
-             WRN("could not get mime type for: %s", priv->path);
-          }
         property_name = EIO_MODEL_PROP_MIME_TYPE;
      }
    else if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_MTIME], property) == 0)
