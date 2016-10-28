@@ -532,6 +532,10 @@ void                 _elm_dbus_menu_item_select_cb(Elm_Object_Item *obj_item);
 void                 _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar);
 void                 _elm_menu_menu_bar_hide(Eo *obj);
 
+#ifdef HAVE_ELEMENTARY_WL2
+void                 _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor);
+#endif
+
 /* DEPRECATED, will be removed on next release */
 void                 _elm_icon_signal_emit(Evas_Object *obj,
                                            const char *emission,

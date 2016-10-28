@@ -2960,6 +2960,55 @@ _elm_win_wlwindow_get(Efl_Ui_Win_Data *sd)
 {
    sd->wl.win = _elm_ee_wlwin_get(sd->ee);
 }
+
+void
+_elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor)
+{
+   ELM_WIN_DATA_GET(obj, sd);
+
+   if (!sd) return;
+
+   if (sd->pointer.obj)
+     {
+        Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
+
+        fprintf(stderr, "Elm Win Cursor Set: %s\n", cursor);
+
+        if (cursor)
+          {
+             if (!_elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                        "cursor", cursor, "default"))
+               {
+                  fprintf(stderr, "\tCursor %s not found in theme\n", cursor);
+                  _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                        "pointer", "base", "default");
+               }
+          }
+        else
+          _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                                "pointer", "base", "default");
+
+        edje_object_size_min_get(sd->pointer.obj, &mw, &mh);
+        edje_object_size_min_restricted_calc(sd->pointer.obj, &mw, &mh, mw, mh);
+        if ((mw < 32) || (mh < 32))
+          {
+             mw = 32;
+             mh = 32;
+          }
+        fprintf(stderr, "\tMin Size: %d %d\n", mw, mh);
+        evas_object_move(sd->pointer.obj, 0, 0);
+        evas_object_resize(sd->pointer.obj, mw, mh);
+        edje_object_part_geometry_get(sd->pointer.obj,
+                                      "elm.swallow.hotspot",
+                                      &hx, &hy, NULL, NULL);
+        sd->pointer.hot_x = hx;
+        sd->pointer.hot_y = hy;
+     }
+
+   if ((sd->wl.win) && (sd->pointer.surf))
+     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
+                                  sd->pointer.hot_x, sd->pointer.hot_y);
+}
 #endif
 
 Ecore_Cocoa_Window *
@@ -3523,7 +3572,7 @@ static void
 _elm_win_frame_cb_move_start(void *data,
                              Evas_Object *obj EINA_UNUSED,
                              const char *sig EINA_UNUSED,
-                             const char *source)
+                             const char *source EINA_UNUSED)
 {
    int ox, oy;
 
