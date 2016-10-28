@@ -302,7 +302,7 @@ eet_string_match(const char *s1,
 
 /* flush out writes to a v2 eet file */
 static Eet_Error
-eet_flush2(Eet_File *ef)
+eet_flush2_real(Eet_File *ef)
 {
    Eet_File_Node *efn;
    FILE *fp;
@@ -547,6 +547,225 @@ write_error:
 sign_error:
    fclose(fp);
    return error;
+}
+
+/* flush out writes to a v2 eet file in memory */
+static Eet_Error
+eet_flush2_in_memory(Eet_File *ef)
+{
+   Eina_File *file;
+   Eet_File_Node *efn;
+   Eet_Error error = EET_ERROR_NONE;
+   int head[EET_FILE2_HEADER_COUNT];
+   int num_directory_entries = 0;
+   int num_dictionary_entries = 0;
+   int bytes_directory_entries = 0;
+   int bytes_dictionary_entries = 0;
+   int bytes_strings = 0;
+   int data_offset = 0;
+   int strings_offset = 0;
+   int data_pad = 0;
+   int pad = 0;
+   int orig_data_offset = 0;
+   int num;
+   int i;
+   int j;
+   unsigned char zeros[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+   if (eet_check_pointer(ef))
+     return EET_ERROR_BAD_OBJECT;
+
+   if (eet_check_header(ef))
+     return EET_ERROR_EMPTY;
+
+   if (!ef->writes_pending)
+     return EET_ERROR_NONE;
+
+   if ((ef->mode == EET_FILE_MODE_READ_WRITE)
+       || (ef->mode == EET_FILE_MODE_WRITE))
+     {
+        file = ef->readfp;
+     }
+   else
+     {
+        return EET_ERROR_NOT_WRITABLE;
+     }
+
+   /* calculate string base offset and data base offset */
+   num = (1 << ef->header->directory->size);
+   for (i = 0; i < num; ++i)
+     {
+        for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
+          {
+             num_directory_entries++;
+             bytes_strings += strlen(efn->name) + 1;
+          }
+     }
+   if (ef->ed)
+     {
+        num_dictionary_entries = ef->ed->count;
+
+        for (i = 0; i < num_dictionary_entries; ++i)
+          bytes_strings += ef->ed->all[i].len;
+     }
+
+   /* calculate section bytes size */
+   bytes_directory_entries = EET_FILE2_DIRECTORY_ENTRY_SIZE *
+     num_directory_entries + EET_FILE2_HEADER_SIZE;
+   bytes_dictionary_entries = EET_FILE2_DICTIONARY_ENTRY_SIZE *
+     num_dictionary_entries;
+
+   /* go thru and write the header */
+   head[0] = (int)htonl((unsigned int)EET_MAGIC_FILE2);
+   head[1] = (int)htonl((unsigned int)num_directory_entries);
+   head[2] = (int)htonl((unsigned int)num_dictionary_entries);
+
+   eina_file_writable_reset_buf(file);
+   if (eina_file_write(file, head, sizeof (head)) != 1)
+     goto write_error;
+
+   /* calculate per entry base offset */
+   strings_offset = bytes_directory_entries + bytes_dictionary_entries;
+   data_offset = bytes_directory_entries + bytes_dictionary_entries +
+     bytes_strings;
+
+   data_pad = (((data_offset + (ALIGN - 1)) / ALIGN) * ALIGN) - data_offset;
+   data_offset += data_pad;
+   orig_data_offset = data_offset;
+
+   /* write directories entry */
+   for (i = 0; i < num; i++)
+     {
+        for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
+          {
+             unsigned int flag;
+             int ibuf[EET_FILE2_DIRECTORY_ENTRY_COUNT];
+
+             flag = (efn->alias << 2) | (efn->ciphered << 1) | efn->compression;
+             flag |= efn->compression_type << 3;
+
+             efn->offset = data_offset;
+
+             ibuf[0] = (int)htonl((unsigned int)data_offset);
+             ibuf[1] = (int)htonl((unsigned int)efn->size);
+             ibuf[2] = (int)htonl((unsigned int)efn->data_size);
+             ibuf[3] = (int)htonl((unsigned int)strings_offset);
+             ibuf[4] = (int)htonl((unsigned int)efn->name_size);
+             ibuf[5] = (int)htonl((unsigned int)flag);
+
+             strings_offset += efn->name_size;
+             data_offset += efn->size;
+
+             pad = (((data_offset + (ALIGN - 1)) / ALIGN) * ALIGN) - data_offset;
+             data_offset += pad;
+
+             if (eina_file_write(file, ibuf, sizeof(ibuf)) != 1)
+               goto write_error;
+          }
+     }
+
+   /* write dictionary */
+   if (ef->ed)
+     {
+        int offset = strings_offset;
+
+        /* calculate dictionary strings offset */
+        ef->ed->offset = strings_offset;
+
+        for (j = 0; j < ef->ed->count; ++j)
+          {
+             int sbuf[EET_FILE2_DICTIONARY_ENTRY_COUNT];
+             int prev = 0;
+
+             // We still use the prev as an hint for knowing if it is the head of the hash
+             if (ef->ed->hash[ef->ed->all_hash[j]] == j)
+               prev = -1;
+
+             sbuf[0] = (int)htonl((unsigned int)ef->ed->all_hash[j]);
+             sbuf[1] = (int)htonl((unsigned int)offset);
+             sbuf[2] = (int)htonl((unsigned int)ef->ed->all[j].len);
+             sbuf[3] = (int)htonl((unsigned int)prev);
+             sbuf[4] = (int)htonl((unsigned int)ef->ed->all[j].next);
+
+             offset += ef->ed->all[j].len;
+
+             if (eina_file_write(file, sbuf, sizeof (sbuf)) != 1)
+               goto write_error;
+          }
+     }
+
+   /* write directories name */
+   for (i = 0; i < num; i++)
+     {
+        for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
+          {
+             if (eina_file_write(file, efn->name, efn->name_size) != 1)
+               goto write_error;
+          }
+     }
+
+   /* write strings */
+   if (ef->ed)
+     for (j = 0; j < ef->ed->count; ++j)
+       {
+          if (eina_file_write(file, ef->ed->all[j].str, ef->ed->all[j].len) != 1)
+            goto write_error;
+       }
+
+   if (data_pad > 0)
+     {
+        if (eina_file_write(file, zeros, data_pad) != 1)
+          goto write_error;
+     }
+
+   /* write data */
+   data_offset = orig_data_offset;
+   pad = 0;
+   for (i = 0; i < num; i++)
+     {
+        for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
+          {
+             if (pad > 0)
+               {
+                  data_offset += pad;
+                  if (eina_file_write(file, zeros, pad) != 1)
+                    goto write_error;
+               }
+             if (eina_file_write(file, efn->data, efn->size) != 1)
+               goto write_error;
+
+             data_offset += efn->size;
+             pad = (((data_offset + (ALIGN - 1)) / ALIGN) * ALIGN) - data_offset;
+          }
+     }
+
+   /* append signature if required */
+   //if (ef->key)
+   //  {
+   //     error = eet_identity_sign(fp, ef->key);
+   //     if (error != EET_ERROR_NONE)
+   //       goto sign_error;
+   //  }
+
+   /* no more writes pending */
+   ef->writes_pending = 0;
+
+   return EET_ERROR_NONE;
+
+write_error:
+//sign_error:
+   eina_file_writable_reset_buf(file);
+   return error;
+}
+
+
+static Eet_Error
+eet_flush2(Eet_File *ef)
+{
+   if (eina_file_writable_get(ef->readfp))
+     return eet_flush2_in_memory(ef);
+   else
+     return eet_flush2_real(ef);
 }
 
 EAPI int
@@ -1456,7 +1675,10 @@ eet_mmap(const Eina_File *file)
    ef->path = eina_stringshare_add(path);
    ef->magic = EET_MAGIC_FILE;
    ef->references = 1;
-   ef->mode = EET_FILE_MODE_READ;
+   if (eina_file_writable_get(file))
+     ef->mode = EET_FILE_MODE_READ_WRITE;
+   else
+     ef->mode = EET_FILE_MODE_READ;
    ef->header = NULL;
    ef->writes_pending = 0;
    ef->delete_me_now = 0;
