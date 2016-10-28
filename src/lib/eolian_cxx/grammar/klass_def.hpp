@@ -213,6 +213,7 @@ struct type_def
      set(eolian_type);
    }
    void set(Eolian_Type const* eolian_type);
+   void set(Eolian_Expression_Type eolian_exp_type);
 };
 
 struct get_qualifier_visitor
@@ -285,6 +286,22 @@ inline void type_def::set(Eolian_Type const* eolian_type)
        std::abort();
        break;
      }
+}
+
+inline void type_def::set(Eolian_Expression_Type eolian_exp_type)
+{
+    switch(eolian_exp_type)
+      {
+      case EOLIAN_EXPR_INT:
+        original_type = attributes::regular_type_def{"int", {{}, {}}, {}};
+        c_type = "int";
+        break;
+      default:
+        // FIXME implement the remaining types
+        EINA_LOG_ERR("Unsupported expression type");
+        std::abort();
+        break;
+      }
 }
 
 enum class parameter_direction
@@ -660,11 +677,41 @@ struct klass_def
 
 };
 
+struct value_def
+{
+  typedef eina::variant<int> variant_type; // FIXME support other types
+  variant_type value;
+  type_def type;
+
+  value_def() {}
+  value_def(Eolian_Value value_obj)
+  {
+    type.set(value_obj.type);
+    value = value_obj.value.i;
+  }
+};
+
+struct enum_value_def
+{
+  value_def value;
+  std::string name;
+  std::string c_name;
+
+  enum_value_def(Eolian_Enum_Type_Field const* enum_field)
+  {
+      name = eolian_typedecl_enum_field_name_get(enum_field);
+      c_name = eolian_typedecl_enum_field_c_name_get(enum_field);
+      auto exp = eolian_typedecl_enum_field_value_get(enum_field, EINA_TRUE);
+      value = eolian_expression_eval(exp, EOLIAN_MASK_INT); // FIXME hardcoded int
+  }
+};
+
 struct enum_def
 {
   std::string eolian_name;
   std::string cxx_name;
   std::vector<std::string> namespaces;
+  std::vector<enum_value_def> fields;
 
   enum_def(Eolian_Typedecl const* enum_obj)
   {
@@ -675,7 +722,12 @@ struct enum_def
        }
      cxx_name = eolian_name = eolian_typedecl_name_get(enum_obj);
 
-     // FIXME Iterate through enum fields
+     for (efl::eina::iterator<const Eolian_Enum_Type_Field> field_iterator(::eolian_typedecl_enum_fields_get(enum_obj))
+             , field_last; field_iterator != field_last; ++field_iterator)
+       {
+          // Fill the types
+          this->fields.push_back(&*field_iterator);
+       }
   }
 };
 
