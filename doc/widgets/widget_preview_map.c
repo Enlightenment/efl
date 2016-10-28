@@ -15,7 +15,7 @@ _nasty_hack(void *data)
 {
    Evas_Object *o = data;
    Evas *e = evas_object_evas_get(o);
-   evas_smart_objects_calculate(e);
+   efl_canvas_smart_objects_calculate(e);
    return ECORE_CALLBACK_CANCEL;
 }
 
