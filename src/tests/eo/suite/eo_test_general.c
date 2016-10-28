@@ -1230,6 +1230,12 @@ _del_intercept(Eo *obj)
    efl_del_intercept_set(obj, NULL);
    efl_unref(obj);
 }
+
+static void
+_del_intercept_reuse(Eo *obj)
+{
+   efl_reuse(obj);
+}
 #endif
 
 START_TEST(efl_del_intercept)
@@ -1269,6 +1275,21 @@ START_TEST(efl_del_intercept)
    efl_del(obj);
    fail_if(!intercepted);
    fail_if(efl_isa(obj, klass));
+
+   /* Check reuse works as expected. */
+   Eo *parent = efl_add(SIMPLE_CLASS, NULL);
+   obj = efl_add(klass, NULL);
+   fail_if(!obj);
+   ck_assert_int_eq(efl_ref_get(obj), 1);
+   efl_parent_set(obj, parent);
+   ck_assert_int_eq(efl_ref_get(obj), 1);
+   efl_del_intercept_set(obj, _del_intercept_reuse);
+   efl_del_intercept_set(obj, NULL);
+   /* This essentially checks it get unsunk */
+   ck_assert_int_eq(efl_ref_get(obj), 1);
+   efl_parent_set(obj, parent);
+   ck_assert_int_eq(efl_ref_get(obj), 1);
+   efl_del(obj);
 
    efl_object_shutdown();
 #endif

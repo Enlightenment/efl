@@ -856,7 +856,7 @@ _efl_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
           {
              efl_ref(eo_id);
           }
-        _efl_object_parent_sink(eo_id);
+        _efl_object_parent_sink_set(eo_id, EINA_TRUE);
      }
 
    if (is_fallback)
@@ -867,6 +867,13 @@ _efl_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
    return ret;
 }
 
+EAPI void
+efl_reuse(const Eo *_obj)
+{
+   Eo *obj = (Eo *) _obj;
+   efl_object_override(obj, NULL);
+   _efl_object_parent_sink_set(obj, EINA_FALSE);
+}
 /*****************************************************************************/
 
 EAPI const Efl_Class *

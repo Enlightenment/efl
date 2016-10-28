@@ -196,7 +196,7 @@ typedef struct
    int line;
 } Eo_Xref_Node;
 
-void _efl_object_parent_sink(Eo *obj);
+void _efl_object_parent_sink_set(Eo *obj, Eina_Bool sink);
 
 static inline
 Eo *_eo_header_id_get(const Eo_Header *header)

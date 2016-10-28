@@ -1097,6 +1097,17 @@ EAPI void efl_del_intercept_set(Eo *obj, Efl_Del_Intercept del_intercept_func);
 EAPI Efl_Del_Intercept efl_del_intercept_get(const Eo *obj);
 
 /**
+ * @brief Clears the object so it can be reused (for example in a cache)
+ * @param obj The object to mark for reusal
+ *
+ * This assumes the destructor has been called on the object, so it
+ * should probably only be used from the del intercept.
+ *
+ * @see efl_del_intercept_set()
+ */
+EAPI void efl_reuse(const Eo *obj);
+
+/**
  * @def efl_xref(obj, ref_obj)
  * Convenience macro around efl_xref_internal()
  * @see efl_xref()

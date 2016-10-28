@@ -535,10 +535,10 @@ _efl_object_del(const Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 }
 
 void
-_efl_object_parent_sink(Eo *obj)
+_efl_object_parent_sink_set(Eo *obj, Eina_Bool sink)
 {
    Efl_Object_Data *pd = efl_data_scope_get(obj, EFL_OBJECT_CLASS);
-   pd->parent_sunk = EINA_TRUE;
+   pd->parent_sunk = sink;
 }
 
 EOLIAN static void
