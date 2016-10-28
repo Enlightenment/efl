@@ -631,7 +631,7 @@ eng_window_free(Outbuf *gw)
         eina_hash_free(_evas_gl_visuals);
         _evas_gl_visuals = NULL;
         eglTerminate(gw->egl_disp);
-        eglReleaseThread();
+        evas_eglReleaseThread_th();
         _tls_context_set(EGL_NO_CONTEXT);
      }
 #else
@@ -1391,8 +1391,8 @@ eng_outbuf_swap_mode(Outbuf *ob)
 #ifdef GL_GLES
         EGLint age = 0;
 
-        if (!eglQuerySurface(ob->egl_disp, ob->egl_surface,
-                             EGL_BUFFER_AGE_EXT, &age))
+        if (!evas_eglQuerySurface_th(ob->egl_disp, ob->egl_surface,
+                                        EGL_BUFFER_AGE_EXT, &age))
           age = 0;
 #else
         unsigned int age = 0;
@@ -1502,7 +1502,7 @@ _convert_to_glcoords(int *result, Outbuf *ob, int x, int y, int w, int h)
 void
 eng_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage)
 {
-   if (glsym_eglSetDamageRegionKHR)
+   if (glsym_eglSetDamageRegion)
      {
         Tilebuf_Rect *tr;
         int *rect, *rects, count;
@@ -1515,7 +1515,7 @@ eng_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage)
              _convert_to_glcoords(rect, ob, tr->x, tr->y, tr->w, tr->h);
              rect += 4;
           }
-        glsym_eglSetDamageRegionKHR(ob->egl_disp, ob->egl_surface, rects, count);
+        glsym_eglSetDamageRegion(ob->egl_disp, ob->egl_surface, rects, count);
      }
 }
 #endif

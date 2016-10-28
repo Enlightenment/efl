@@ -84,8 +84,8 @@ EGLImageKHR (*glsym_evas_gl_common_eglCreateImage)(EGLDisplay a, EGLContext b, E
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 unsigned int   (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
-unsigned int   (*glsym_eglSetDamageRegionKHR)  (EGLDisplay a, EGLSurface b, EGLint *c, EGLint d) = NULL;
-unsigned int (*glsym_eglQueryWaylandBufferWL)(EGLDisplay a, /*struct wl_resource */void *b, EGLint c, EGLint *d) = NULL;
+unsigned int   (*glsym_eglSetDamageRegion)  (EGLDisplay a, EGLSurface b, EGLint *c, EGLint d) = NULL;
+unsigned int (*glsym_eglQueryWaylandBuffer)(EGLDisplay a, /*struct wl_resource */void *b, EGLint c, EGLint *d) = NULL;
 
 #else
 
@@ -104,6 +104,13 @@ void     (*glsym_glXSwapIntervalEXT) (Display *s, GLXDrawable b, int c) = NULL;
 void     (*glsym_glXReleaseBuffersMESA)   (Display *a, XID b) = NULL;
 
 #endif
+
+#define REPLACE_THREAD(prefix, dst, typ) \
+   if (prefix##dst && prefix##dst != (typ) evas_##dst##_th) \
+     { \
+        dst##_orig_evas_set(prefix##dst); \
+        prefix##dst = (typ) evas_##dst##_th; \
+     }
 
 static inline Outbuf *
 eng_get_ob(Render_Engine *re)
@@ -1371,15 +1378,19 @@ eng_gl_symbols(Outbuf *ob)
    FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", "EGL_EXT_swap_buffers_with_damage", glsym_func_uint);
    FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageKHR", "EGL_KHR_swap_buffers_with_damage", glsym_func_uint);
    FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", "EGL_INTEL_swap_buffers_with_damage", glsym_func_uint);
+   REPLACE_THREAD(glsym_, eglSwapBuffersWithDamage, glsym_func_uint);
 
-   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR", "EGL_KHR_partial_update", glsym_func_uint);
+   FINDSYM(glsym_eglSetDamageRegion, "eglSetDamageRegionKHR", "EGL_KHR_partial_update", glsym_func_uint);
+   REPLACE_THREAD(glsym_, eglSetDamageRegion, glsym_func_uint);
 
-   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL", "EGL_WL_bind_wayland_display", glsym_func_uint);
+   FINDSYM(glsym_eglQueryWaylandBuffer, "eglQueryWaylandBufferWL", "EGL_WL_bind_wayland_display", glsym_func_uint);
+   REPLACE_THREAD(glsym_, eglQueryWaylandBuffer, glsym_func_uint);
 
    // This is a GL extension
    exts = (const char *) evas_glGetString_th(GL_EXTENSIONS);
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image", glsym_func_void);
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
+   REPLACE_THREAD(glsym_, glEGLImageTargetTexture2DOES, glsym_func_void);
 
 #else
 
@@ -1444,7 +1455,7 @@ gl_extn_veto(Render_Engine *re)
           {
              extn_have_buffer_age = 0;
              glsym_eglSwapBuffersWithDamage = NULL;
-             glsym_eglSetDamageRegionKHR = NULL;
+             glsym_eglSetDamageRegion = NULL;
           }
         if (!strstr(str, "EGL_EXT_buffer_age"))
           {
@@ -1453,7 +1464,7 @@ gl_extn_veto(Render_Engine *re)
           }
         if (!strstr(str, "EGL_KHR_partial_update"))
           {
-             glsym_eglSetDamageRegionKHR = NULL;
+             glsym_eglSetDamageRegion = NULL;
           }
         if (!strstr(str, "EGL_NOK_texture_from_pixmap"))
           {
@@ -2290,7 +2301,7 @@ eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
         return 1;
 #if defined(GL_GLES) && defined(HAVE_WAYLAND)
       case EVAS_NATIVE_SURFACE_WL:
-        return (glsym_eglQueryWaylandBufferWL != NULL) ? 1 : 0;
+        return (glsym_eglQueryWaylandBuffer != NULL) ? 1 : 0;
 #endif
       default:
         ERR("Native surface type %d not supported!", type);
@@ -2941,8 +2952,8 @@ eng_image_native_set(void *data, void *image, void *native)
                   EGLAttrib attribs[3];
                   int format, yinvert = 1;
 
-                  glsym_eglQueryWaylandBufferWL(eng_get_ob(re)->egl_disp, wl_buf,
-                                                EGL_TEXTURE_FORMAT, &format);
+                  glsym_eglQueryWaylandBuffer(eng_get_ob(re)->egl_disp, wl_buf,
+                                              EGL_TEXTURE_FORMAT, &format);
                   if ((format != EGL_TEXTURE_RGB) &&
                       (format != EGL_TEXTURE_RGBA))
                     {
@@ -2963,9 +2974,9 @@ eng_image_native_set(void *data, void *image, void *native)
                   attribs[2] = EGL_NONE;
 
                   memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
-                  if (glsym_eglQueryWaylandBufferWL(eng_get_ob(re)->egl_disp, wl_buf,
-                                                    EGL_WAYLAND_Y_INVERTED_WL,
-                                                    &yinvert) == EGL_FALSE)
+                  if (glsym_eglQueryWaylandBuffer(eng_get_ob(re)->egl_disp, wl_buf,
+                                                  EGL_WAYLAND_Y_INVERTED_WL,
+                                                  &yinvert) == EGL_FALSE)
                     yinvert = 1;
                   eina_hash_add(eng_get_ob(re)->gl_context->shared->native_wl_hash,
                                 &wlid, im);
