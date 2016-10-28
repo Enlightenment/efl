@@ -519,5 +519,4 @@ DISTCLEANFILES= \
 ./src/lib/evil/Makefile \
 ./src/lib/edje/Makefile \
 ./src/lib/efl/Efl_Config.h \
-./src/lib/eina/eina_config.h \
-./src/lib/elementary/Elementary.h
+./src/lib/eina/eina_config.h
