@@ -23,6 +23,7 @@ _del_hook(Eo *evt)
              efl_ref(evt);
              efl_parent_set(evt, NULL);
           }
+        efl_reuse(evt);
         s_cached_event = evt;
      }
    else
