@@ -241,8 +241,17 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
 {
    int x, y;
 
-   cur->obj = edje_object_add(cur->evas);
+#ifdef HAVE_ELEMENTARY_WL2
+   const char *engine_name;
 
+   engine_name = ecore_evas_engine_name_get(cur->ee);
+   if ((engine_name) &&
+       ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
+           (!strcmp(engine_name, ELM_WAYLAND_EGL))))
+     return EINA_FALSE;
+#endif
+
+   cur->obj = edje_object_add(cur->evas);
    if (!cur->obj) return EINA_FALSE;
 
    if (!_elm_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
@@ -261,7 +270,7 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
                                   _elm_cursor_hot_change, cur);
    evas_object_event_callback_add(cur->hotobj, EVAS_CALLBACK_RESIZE,
                                   _elm_cursor_hot_change, cur);
-   edje_object_part_swallow(cur->obj, "elm.content.hotspot", cur->hotobj);
+   edje_object_part_swallow(cur->obj, "elm.swallow.hotspot", cur->hotobj);
 
    evas_object_event_callback_add(cur->obj, EVAS_CALLBACK_DEL,
                                   _elm_cursor_obj_del, cur);
@@ -279,11 +288,11 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
 static void
 _elm_cursor_set(Elm_Cursor *cur)
 {
-   if (cur->visible) return;
-
    evas_event_freeze(cur->evas);
    if (!cur->use_engine)
      {
+        if (cur->visible) goto end;
+
         if (!cur->obj)
           _elm_cursor_obj_add(cur->owner, cur);
         if (cur->obj)
@@ -307,7 +316,13 @@ _elm_cursor_set(Elm_Cursor *cur)
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
         if (cur->wl.win)
-          ecore_wl2_window_cursor_from_name_set(cur->wl.win, cur->cursor_name);
+          {
+             Evas_Object *top;
+
+             top = elm_widget_top_get(cur->owner);
+             if ((top) && (efl_isa(top, EFL_UI_WIN_CLASS)))
+               _elm_win_wl_cursor_set(top, cur->cursor_name);
+          }
 #endif
 
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -320,6 +335,7 @@ _elm_cursor_set(Elm_Cursor *cur)
           ecore_win32_window_cursor_set(cur->win32.win, cur->win32.cursor);
 #endif
      }
+end:
    evas_event_thaw(cur->evas);
 }
 
@@ -375,7 +391,13 @@ _elm_cursor_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
         if (cur->wl.win)
-          ecore_wl2_window_cursor_from_name_set(cur->wl.win, NULL);
+          {
+             Evas_Object *top;
+
+             top = elm_widget_top_get(cur->owner);
+             if ((top) && (efl_isa(top, EFL_UI_WIN_CLASS)))
+               _elm_win_wl_cursor_set(top, NULL);
+          }
 #endif
 
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -480,7 +502,6 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
                     cur->cocoa.cursor = cur_id->cid;
                }
 #endif
-
 #ifdef HAVE_ELEMENTARY_WL2
              cur->wl.win = elm_win_wl_window_get(top);
 #endif
@@ -629,7 +650,13 @@ elm_object_cursor_unset(Evas_Object *obj)
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
         else if (cur->wl.win)
-          ecore_wl2_window_cursor_from_name_set(cur->wl.win, NULL);
+          {
+             Evas_Object *top;
+
+             top = elm_widget_top_get(cur->owner);
+             if ((top) && (efl_isa(top, EFL_UI_WIN_CLASS)))
+               _elm_win_wl_cursor_set(top, NULL);
+          }
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
         else
