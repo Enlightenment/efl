@@ -344,9 +344,9 @@ _elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const 
         if (id->show)
           evas_object_show(id->img);
         evas_object_clip_set(id->img, pclip);
+        id->edje = EINA_TRUE;
      }
 
-   id->edje = EINA_TRUE;
    if (!edje_object_file_set(id->img, file, key))
      {
         ERR("failed to set edje file '%s', group '%s': %s", file, key,
