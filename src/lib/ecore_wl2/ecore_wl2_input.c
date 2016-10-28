@@ -1227,7 +1227,7 @@ _ecore_wl2_input_cursor_update(void *data)
                            input->cursor.surface,
                            input->cursor.hot_x, input->cursor.hot_y);
 
-   if (!input->cursor.frame_cb)
+   if (input->cursor.surface && (!input->cursor.frame_cb))
      _pointer_cb_frame(input, NULL, 0);
 
    return ECORE_CALLBACK_RENEW;
