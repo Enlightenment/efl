@@ -327,11 +327,7 @@ _elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const 
      ELM_SAFE_FREE(sd->stdicon, eina_stringshare_del);
 
    if (!sd->is_video)
-     {
-        Eina_Bool int_ret = EINA_FALSE;
-        int_ret = efl_file_set(efl_super(obj, MY_CLASS), file, key);
-        return int_ret;
-     }
+     return efl_file_set(efl_super(obj, MY_CLASS), file, key);
 
    /* parent's edje file setting path replicated here (we got .eet
     * extension, so bypassing it) */
