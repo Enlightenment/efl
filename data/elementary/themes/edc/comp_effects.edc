@@ -580,6 +580,7 @@ group { name: "e/comp/effects/iconify/default";
    alias: "e/comp/effects/iconify/ibar";
    alias: "e/comp/effects/iconify/ibox";
    alias: "e/comp/effects/iconify/tasks";
+   alias: "e/comp/effects/iconify/luncher";
    inherit: "e/comp/effects/auto/pane";
    data.item: "noclip" "1";
    script {

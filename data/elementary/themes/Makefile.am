@@ -56,6 +56,7 @@ elementary/themes/edc/ilist.edc \
 elementary/themes/edc/illume.edc \
 elementary/themes/edc/init.edc \
 elementary/themes/edc/label.edc \
+elementary/themes/edc/luncher.edc \
 elementary/themes/edc/menu.edc \
 elementary/themes/edc/mixer.edc \
 elementary/themes/edc/music_control.edc \

@@ -147,6 +147,7 @@ collections {
 #include "edc/packagekit.edc"
 #include "edc/wireless.edc"
 #include "edc/time.edc"
+#include "edc/luncher.edc"
 
 // icons
 #include "edc/icons.edc"
