@@ -152,6 +152,8 @@ static void _transparent_do(Ecore_Evas *, int);
 static void _avoid_damage_do(Ecore_Evas *, int);
 static void _rotation_do(Ecore_Evas *, int, int);
 
+#define SWAP_INT(a, b) do { a ^= b; b ^= a; a ^= b; } while (0)
+
 static void
 _ecore_evas_x_hints_update(Ecore_Evas *ee)
 {
@@ -835,16 +837,19 @@ _resize_shape_do(Ecore_Evas *ee)
    if (einfo)
      {
         unsigned int foreground;
+        int fw = 0, fh = 0;
         Ecore_X_GC gc;
 
+        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+
         if (edata->mask) ecore_x_pixmap_free(edata->mask);
-        edata->mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
+        edata->mask = ecore_x_pixmap_new(ee->prop.window, ee->w + fw, ee->h + fh, 1);
         foreground = 0;
         gc = ecore_x_gc_new(edata->mask,
                             ECORE_X_GC_VALUE_MASK_FOREGROUND,
                             &foreground);
         ecore_x_drawable_rectangle_fill(edata->mask, gc,
-                                        0, 0, ee->w, ee->h);
+                                        0, 0, ee->w + fw, ee->h + fh);
         ecore_x_gc_free(gc);
         einfo->info.mask = edata->mask;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
@@ -1609,6 +1614,7 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Configure *e;
    Ecore_Evas_Engine_Data_X11 *edata;
+   int fw = 0, fh = 0, w, h;
 
    e = event;
    ee = ecore_event_window_match(e->win);
@@ -1631,11 +1637,18 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
              if (ee->func.fn_move) ee->func.fn_move(ee);
           }
      }
-   if ((ee->w != e->w) || (ee->h != e->h) ||
-       (ee->req.w != e->w) || (ee->req.h != e->h))
+
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+   if (!ECORE_EVAS_PORTRAIT(ee))
+     SWAP_INT(fw, fh);
+
+   if (((ee->w + fw) != e->w) || ((ee->h + fh) != e->h) ||
+       ((ee->req.w + fw) != e->w) || ((ee->req.h + fh) != e->h))
      {
-        ee->w = e->w;
-        ee->h = e->h;
+        w = e->w;
+        h = e->h;
+        ee->w = w - fw;
+        ee->h = h - fh;
         if (edata->configure_reqs == 0)
           {
              ee->req.w = ee->w;
@@ -1643,13 +1656,13 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
           }
         if (ECORE_EVAS_PORTRAIT(ee))
           {
-             evas_output_size_set(ee->evas, ee->w, ee->h);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+             evas_output_size_set(ee->evas, w, h);
+             evas_output_viewport_set(ee->evas, 0, 0, w, h);
           }
         else
           {
-             evas_output_size_set(ee->evas, ee->h, ee->w);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+             evas_output_size_set(ee->evas, h, w);
+             evas_output_viewport_set(ee->evas, 0, 0, h, w);
           }
         if (ee->prop.avoid_damage)
           {
@@ -2156,6 +2169,12 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    Eina_Bool changed = EINA_FALSE;
+   int fw = 0, fh = 0;
+
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+   if (ECORE_EVAS_PORTRAIT(ee)) SWAP_INT(fw, fh);
+   w -= fw;
+   h -= fh;
 
    if ((ee->req.w != w) || (ee->req.h != h))
      {
@@ -2212,7 +2231,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
      {
         edata->configure_coming = 1;
         if (changed) edata->configure_reqs++;
-        if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
+        if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w + fw, h + fh);
      }
 }
 
@@ -2310,9 +2329,15 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
 {
    int rot_dif;
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   int fw = 0, fh = 0;
 
    rot_dif = ee->rotation - rotation;
    if (rot_dif < 0) rot_dif = -rot_dif;
+
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+
+   if (!PORTRAIT_CHECK(rotation))
+     SWAP_INT(fw, fh);
 
    if (rot_dif != 180)
      {
@@ -2328,11 +2353,11 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
              edata->configure_coming = 1;
              if (!ee->prop.fullscreen)
                {
-                  ecore_x_window_resize(ee->prop.window, ee->req.h, ee->req.w);
+                  ecore_x_window_resize(ee->prop.window, ee->req.h + fw, ee->req.w + fh);
                   ee->expecting_resize.w = ee->h;
                   ee->expecting_resize.h = ee->w;
-                  evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.h, ee->req.w);
+                  evas_output_size_set(ee->evas, ee->req.h + fw, ee->req.w + fh);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.h + fw, ee->req.w + fh);
                }
              else
                {
@@ -2351,11 +2376,12 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
                        evas_output_viewport_set(ee->evas, 0, 0, ee->req.h, ee->req.w);
                     }
                   if (ee->func.fn_resize) ee->func.fn_resize(ee);
+                  fw = fh = 0;
                }
              if (PORTRAIT_CHECK(rotation))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w + fw, ee->req.h + fh);
              else
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h + fw, ee->req.w + fh);
           }
         else
           {
@@ -2402,9 +2428,9 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
 
         if (ECORE_EVAS_PORTRAIT(ee))
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
         else
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h + fw, ee->w + fh);
      }
 }
 
