@@ -76,7 +76,8 @@ typedef struct _Shm_Surface Shm_Surface;
 typedef struct _Dmabuf_Surface Dmabuf_Surface;
 
 typedef enum _Surface_Type Surface_Type;
-enum _Surface_Type {
+enum _Surface_Type
+{
    SURFACE_EMPTY,
    SURFACE_SHM,
    SURFACE_DMABUF
@@ -86,10 +87,11 @@ typedef struct _Surface Surface;
 struct _Surface
 {
    Surface_Type type;
-   union {
-      Shm_Surface *shm;
-      Dmabuf_Surface *dmabuf;
-   } surf;
+   union
+     {
+        Shm_Surface *shm;
+        Dmabuf_Surface *dmabuf;
+     } surf;
    Evas_Engine_Info_Wayland_Shm *info;
    struct
      {
