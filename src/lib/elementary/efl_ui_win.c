@@ -3234,6 +3234,9 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
    if (sd->wm_rot.preferred_rot != -1)
      ecore_evas_wm_rotation_preferred_rotation_set(sd->ee,
                                                    sd->wm_rot.preferred_rot);
+
+   if (sd->need_frame)
+     TRAP(sd, borderless_set, EINA_TRUE);
 }
 
 #endif
@@ -5317,7 +5320,7 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
 }
 
 EOLIAN static void
-_efl_ui_win_borderless_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool borderless)
+_efl_ui_win_borderless_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool borderless)
 {
 
    Eina_Bool need_frame = sd->need_frame && !sd->fullscreen;
@@ -5335,7 +5338,9 @@ _efl_ui_win_borderless_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool b
           evas_object_show(sd->frame_obj);
      }
 
-   TRAP(sd, borderless_set, borderless);
+   if (!sd->need_frame)
+     TRAP(sd, borderless_set, borderless);
+   _elm_win_resize_objects_eval(obj);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
