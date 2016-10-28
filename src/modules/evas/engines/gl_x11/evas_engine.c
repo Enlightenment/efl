@@ -3130,6 +3130,7 @@ module_open(Evas_Module *em)
    if (!(platform_env = getenv("EGL_PLATFORM")))
       setenv("EGL_PLATFORM", "x11", 0);
 
+   evas_gl_thread_link_init();
    gl_symbols();
 
    if (!platform_env)
