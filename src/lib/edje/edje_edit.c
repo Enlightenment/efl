@@ -1226,7 +1226,7 @@ edje_edit_sound_sample_add(Evas_Object *obj, const char *name, const char *snd_s
    sound_sample = ed->file->sound_dir->samples +
      ed->file->sound_dir->samples_count - 1;
    sound_sample->name = (char *)eina_stringshare_add(name);
-   sound_sample->snd_src = (char *)eina_stringshare_add(snd_src);
+   sound_sample->snd_src = (char *)eina_stringshare_add(ecore_file_file_get(snd_src));
    sound_sample->compression = EDJE_SOUND_SOURCE_TYPE_INLINE_RAW;
    sound_sample->id = id;
    sound_sample->mode = 0;
