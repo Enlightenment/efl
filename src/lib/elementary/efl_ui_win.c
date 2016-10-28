@@ -3530,18 +3530,8 @@ _elm_win_frame_cb_move_start(void *data,
    if (!sd) return;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   if (sd->pointer.obj)
-     {
-        if (!strcmp(source, "elm"))
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base", "move");
-        else
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base", "default");
-     }
-
-   if ((sd->wl.win) && (sd->pointer.surf))
-     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
+   if (sd->wl.win)
+     ecore_wl2_window_pointer_set(sd->wl.win, NULL,
                                   sd->pointer.hot_x, sd->pointer.hot_y);
 #else
    (void)source;
