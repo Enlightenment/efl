@@ -4,9 +4,33 @@ using System.Runtime.InteropServices;
 
 namespace efl { namespace eo {
 
+public class Globals {
+    [DllImport("eo")] public static extern IntPtr
+        _efl_add_internal_start([MarshalAs(UnmanagedType.LPStr)] String file, int line,
+                                IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
+    [DllImport("eo")] public static extern IntPtr
+        _efl_add_end(IntPtr eo, byte is_ref, byte is_fallback);
+    [DllImport("eo")] public static extern IntPtr
+        efl_class_new(ref ClassDescription class_description, IntPtr base0);
+    [DllImport("eo")] public static extern IntPtr
+        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1);
+    [DllImport("eo")] public static extern IntPtr
+        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2);
+    [DllImport("eo")] public static extern IntPtr
+        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3);
+    [DllImport("eo")] public static extern IntPtr
+        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4);
+    [DllImport("eo")] public static extern IntPtr
+        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4, IntPtr base5);
+    [DllImport("eo")] public static extern IntPtr
+        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4, IntPtr base5, IntPtr base6);
+    [DllImport("eo")] public static extern IntPtr
+        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4, IntPtr base5, IntPtr base6, IntPtr base7);
+}        
+        
 public interface IWrapper
 {
-    System.IntPtr raw_handle
+    IntPtr raw_handle
     {
         get;
     }
@@ -30,14 +54,14 @@ class MarshalTest : ICustomMarshaler
 
     public int GetNativeDataSize()
     {
-        System.Console.WriteLine("GetNativeDataSize");
+        Console.WriteLine("GetNativeDataSize");
         return 0;
         //return 8;
     }
 
     public IntPtr MarshalManagedToNative(object ManagedObj)
     {
-        System.Console.WriteLine("MarshallManagedToNative");
+        Console.WriteLine("MarshallManagedToNative");
         return ((IWrapper)ManagedObj).raw_handle;
     }
 

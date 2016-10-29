@@ -1,4 +1,19 @@
 
+using System;
+using System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+public struct ClassDescription
+{
+    public uint version;
+    [MarshalAs(UnmanagedType.LPStr)] public String name;
+    public int class_type;
+    public UIntPtr data_size;
+    public IntPtr class_initializer;
+    public IntPtr class_constructor;
+    public IntPtr class_destructor;
+}
+
 public struct Evas_Object_Box_Layout {};
 public struct Eina_Free_Cb {};
 public struct Evas_Object_Box_Option {};

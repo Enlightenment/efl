@@ -1,6 +1,8 @@
 #ifndef EOLIAN_MONO_FUNCTION_DEFINITION_HH
 #define EOLIAN_MONO_FUNCTION_DEFINITION_HH
 
+#include <Eina.hh>
+
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 
@@ -19,6 +21,10 @@ namespace eolian_mono {
 
 struct function_definition_generator
 {
+  function_definition_generator(efl::eina::optional<attributes::klass_def> klass = nullptr)
+    : klass(klass)
+  {}
+  
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
@@ -42,16 +48,32 @@ struct function_definition_generator
     if(!as_generator
        (scope_tab << "public " << return_type << " " << string << "(" << (parameter % ", ")
         << ") { "
-        << (return_type == "void" ? "":"return ") << string << "(handle" << *(", " << argument) << ");"
+        << (return_type == "void" ? "":"return ") << string << "("
+        ""
+        "handle"
+        ""
+        << *(", " << argument) << ");"
         << " }\n")
        .generate(sink, std::make_tuple(escape_keyword(f.name), f.parameters, f.c_name, f.parameters), context))
       return false;
 
     return true;
   }
+
+  efl::eina::optional<attributes::klass_def> klass;
 };
 
-function_definition_generator const function_definition = {};
+struct function_definition_parameterized
+{
+  function_definition_generator operator()(attributes::klass_def const& klass) const
+  {
+    return {klass};
+  }
+} const function_definition;
+function_definition_generator as_generator(function_definition_parameterized)
+{
+  return {nullptr};
+}
 
 }
 
@@ -59,6 +81,8 @@ namespace efl { namespace eolian { namespace grammar {
 
 template <>
 struct is_eager_generator< ::eolian_mono::function_definition_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::function_definition_parameterized> : std::true_type {};
 
 namespace type_traits {
 template <>
