@@ -73,10 +73,10 @@ struct klass
 
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
 
+     auto class_get_name = *(lower_case[string] << "_") << lower_case[string] << "_class_get";
      // Concrete class
      if(class_type == "class")
        {
-         auto class_get_name = *(lower_case[string] << "_") << lower_case[string] << "_class_get";
          if(!as_generator
             (
              "public " << class_type << " " << string << "Concrete : " << string << "\n{\n"
@@ -84,11 +84,6 @@ struct klass
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
              << scope_tab << "}\n"
-             << scope_tab << "[System.Runtime.InteropServices.DllImport(\"eo\")] static extern System.IntPtr\n"
-             << scope_tab << "_efl_add_internal_start([System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPStr)] System.String file, int line,\n"
-             << scope_tab << scope_tab << "System.IntPtr klass, System.IntPtr parent, byte is_ref, byte is_fallback);\n"
-             << scope_tab << "[System.Runtime.InteropServices.DllImport(\"eo\")] static extern System.IntPtr\n"
-             << scope_tab << "_efl_add_end(System.IntPtr eo, byte is_ref, byte is_fallback);\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(\"" << context_find_tag<library_context>(context).library_name
              << "\")] static extern System.IntPtr\n"
              << scope_tab << scope_tab << class_get_name << "();\n"
@@ -98,12 +93,54 @@ struct klass
              << scope_tab << scope_tab << "System.IntPtr parent_ptr = System.IntPtr.Zero;\n"
              << scope_tab << scope_tab << "if(parent != null)\n"
              << scope_tab << scope_tab << scope_tab << "parent_ptr = parent.raw_handle;\n"
-             << scope_tab << scope_tab << "System.IntPtr eo = _efl_add_internal_start(\"file\", 0, klass, parent_ptr, 0, 0);\n"
-             << scope_tab << scope_tab << "handle = _efl_add_end(eo, 0, 0);\n"
+             << scope_tab << scope_tab << "System.IntPtr eo = efl.eo.Globals._efl_add_internal_start(\"file\", 0, klass, parent_ptr, 0, 0);\n"
+             << scope_tab << scope_tab << "handle = efl.eo.Globals._efl_add_end(eo, 0, 0);\n"
              << scope_tab << "}\n"
              << scope_tab << "public " << string << "Concrete(System.IntPtr raw)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "handle = raw;\n"
+             << scope_tab << "}\n"
+            )
+            .generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name), context))
+           return false;
+     
+         if(!as_generator(*(function_definition))
+            .generate(sink, cls.functions, context)) return false;
+
+         for(auto first = std::begin(cls.inherits)
+               , last = std::end(cls.inherits); first != last; ++first)
+           {
+             attributes::klass_def klass(get_klass(*first));
+             
+             if(!as_generator(*(function_definition))
+                .generate(sink, klass.functions, context)) return false;
+           }
+
+         
+         if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
+       }
+
+     // Concrete class
+     if(class_type == "class")
+       {
+         if(!as_generator
+            (
+             "public " << class_type << " " << string << "Inherit : " << string << "\n{\n"
+             << scope_tab << "System.IntPtr handle;\n"
+             << scope_tab << "public System.IntPtr raw_handle {\n"
+             << scope_tab << scope_tab << "get { return handle; }\n"
+             << scope_tab << "}\n"
+             << scope_tab << "[System.Runtime.InteropServices.DllImport(\"" << context_find_tag<library_context>(context).library_name
+             << "\")] static extern System.IntPtr\n"
+             << scope_tab << scope_tab << class_get_name << "();\n"
+             << scope_tab << "public " << string << "Inherit(System.Type type, efl.Object parent = null)\n"
+             << scope_tab << "{\n"
+             << scope_tab << scope_tab << "System.IntPtr klass = " << class_get_name << "();\n"
+             << scope_tab << scope_tab << "System.IntPtr parent_ptr = System.IntPtr.Zero;\n"
+             << scope_tab << scope_tab << "if(parent != null)\n"
+             << scope_tab << scope_tab << scope_tab << "parent_ptr = parent.raw_handle;\n"
+             // << scope_tab << scope_tab << "System.IntPtr eo = _efl_add_internal_start(\"file\", 0, klass, parent_ptr, 0, 0);\n"
+             // << scope_tab << scope_tab << "handle = _efl_add_end(eo, 0, 0);\n"
              << scope_tab << "}\n"
             )
             .generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name), context))
