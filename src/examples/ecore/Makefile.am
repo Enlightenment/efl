@@ -85,7 +85,10 @@ efl_net_server_example \
 efl_net_dialer_http_example \
 efl_net_dialer_websocket_example \
 efl_net_dialer_websocket_autobahntestee \
-efl_net_dialer_udp_example
+efl_net_dialer_udp_example \
+efl_net_socket_ssl_dialer_example \
+efl_net_socket_ssl_server_example
+
 
 ECORE_COMMON_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
@@ -320,6 +323,12 @@ efl_net_dialer_unix_example_SOURCES = efl_net_dialer_unix_example.c
 efl_net_dialer_unix_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 endif
 
+efl_net_socket_ssl_dialer_example_SOURCES = efl_net_socket_ssl_dialer_example.c
+efl_net_socket_ssl_dialer_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
+efl_net_socket_ssl_server_example_SOURCES = efl_net_socket_ssl_server_example.c
+efl_net_socket_ssl_server_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
 SRCS = \
 ecore_animator_example.c \
 ecore_buffer_example.c \
@@ -374,7 +383,9 @@ efl_net_server_example.c \
 efl_net_dialer_http_example.c \
 efl_net_dialer_websocket_example.c \
 efl_net_dialer_websocket_autobahntestee.c \
-efl_net_dialer_udp_example.c
+efl_net_dialer_udp_example.c \
+efl_net_socket_ssl_dialer_example.c \
+efl_net_socket_ssl_server_example.c
 
 DATA_FILES = red.png Makefile.examples
 

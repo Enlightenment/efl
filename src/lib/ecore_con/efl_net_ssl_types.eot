@@ -1,0 +1,26 @@
+enum Efl.Net.Ssl.Verify_Mode {
+    [[Defines how remote peers should be verified.
+
+      @since 1.19
+    ]]
+    none, [[Do not verify peer]]
+    optional, [[If provided, verify. Otherwise proceed]]
+    required, [[Always verify and fail if certificate wasn't provided]]
+}
+
+enum Efl.Net.Ssl.Cipher {
+    [[Defines the SSL/TLS version to use.
+
+      Prefer 'auto' or one of the TLS variants.
+
+      \@note since it's very insecure, SSLv2 is not present. SSLv3
+      support depends on being available on the platform.
+
+      @since 1.19
+    ]]
+    auto, [[The default. Use the best your system supports, disables dangerous ciphers]]
+    sslv3, [[SSLv3, insecure and unsupported - DANGEROUS]]
+    tlsv1, [[TLSv1, secure and widely available]]
+    tlsv1_1, [[TLSv1.1, secure]]
+    tlsv1_2, [[TLSv1.2, secure]]
+}

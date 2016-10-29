@@ -1,0 +1,90 @@
+var Efl.Net.Socket.Ssl.Error.HANDSHAKE: Eina.Error; [[Failed SSL handshake]]
+var Efl.Net.Socket.Ssl.Error.CERTIFICATE_VERIFY_FAILED: Eina.Error; [[Failed to verify peer's certificate]]
+
+class Efl.Net.Socket.Ssl (Efl.Object, Efl.Net.Socket) {
+    [[A wrapper socket doing SSL (Secure Sockets Layer).
+
+      Use this wrapper around an existing socket to do secure
+      communication, a common use is to apply it to TCP sockets
+      created with @Efl.Net.Dialer.Tcp or @Efl.Net.Server.Tcp created
+      with "client,add" event.
+
+      @since 1.19
+    ]]
+
+    events {
+        ssl,ready; [[Notifies the SSL handshake was done and the socket is now able to communicate]]
+        ssl,error: Eina.Error; [[an error such as @Efl.Net.Socket.Ssl.Error.HANDSHAKE]]
+    }
+
+    methods {
+        adopt {
+            [[Adopt an Efl.Net.Dialer or regular Efl.Net.Socket that will be used for the actual communication.
+
+              If used with an Efl.Net.Dialer object, it will assume
+              the 'connect' role, otherwise will use 'accept'.
+
+              This is a constructor only method and should be called
+              before @Efl.Object.finalize.
+            ]]
+            params {
+                efl_net_socket: Efl.Net.Socket; [[The socket to adopt]]
+                ctx: Efl.Net.Ssl.Context; [[The SSL context to use when adopting the socket]]
+            }
+        }
+
+        @property verify_mode {
+            [[How to verify the remote peer.]]
+            values {
+                verify_mode: Efl.Net.Ssl.Verify_Mode;
+            }
+        }
+
+        @property hostname_verify {
+            [[Define if hostname should be verified.
+
+              This will check the socket hostname (without the port in
+              case of an IP) or the overriden value from
+              @.hostname_override.
+            ]]
+            values {
+                hostname_verify: bool;
+            }
+        }
+
+        @property hostname_override {
+            [[Overrides the hostname to use for this socket.
+
+              Most of time this is useful if you're using an IP
+              address but the server certificate only specifies DNS
+              (names).
+
+              If NULL, then it will fetch from socket using
+              @Efl.Net.Socket.address_remote or
+              @Efl.Net.Dialer.address_dial.
+
+              It's only used if @.hostname_verify is $true.
+            ]]
+            values {
+                hostname_override: string @nullable;
+            }
+        }
+    }
+
+    implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+        Efl.Object.finalize;
+        Efl.Io.Closer.close;
+        Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.close_on_exec;
+        Efl.Io.Closer.close_on_destructor;
+        Efl.Io.Reader.read;
+        Efl.Io.Reader.can_read;
+        Efl.Io.Reader.eos;
+        Efl.Io.Writer.write;
+        Efl.Io.Writer.can_write;
+        Efl.Net.Socket.address_remote.get;
+        Efl.Net.Socket.address_local.get;
+    }
+}

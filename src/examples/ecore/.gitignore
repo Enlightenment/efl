@@ -57,3 +57,5 @@
 /efl_net_dialer_udp_example
 /efl_net_dialer_unix_example
 /ecore_evas_vnc
+/efl_net_socket_ssl_dialer_example
+/efl_net_socket_ssl_server_example

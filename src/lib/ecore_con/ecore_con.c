@@ -184,6 +184,9 @@ EWAPI Eina_Error EFL_NET_DIALER_ERROR_PROXY_AUTHENTICATION_FAILED = 0;
 
 EWAPI Eina_Error EFL_NET_SERVER_ERROR_COULDNT_RESOLVE_HOST = 0;
 
+EWAPI Eina_Error EFL_NET_SOCKET_SSL_ERROR_HANDSHAKE = 0;
+EWAPI Eina_Error EFL_NET_SOCKET_SSL_ERROR_CERTIFICATE_VERIFY_FAILED = 0;
+
 static Eina_List *servers = NULL;
 static int _ecore_con_init_count = 0;
 static int _ecore_con_event_count = 0;
@@ -240,6 +243,9 @@ ecore_con_init(void)
    EFL_NET_DIALER_ERROR_PROXY_AUTHENTICATION_FAILED = eina_error_msg_static_register("Proxy authentication failed");
 
    EFL_NET_SERVER_ERROR_COULDNT_RESOLVE_HOST = eina_error_msg_static_register("Couldn't resolve host name");
+
+   EFL_NET_SOCKET_SSL_ERROR_HANDSHAKE = eina_error_msg_static_register("Failed SSL handshake");
+   EFL_NET_SOCKET_SSL_ERROR_CERTIFICATE_VERIFY_FAILED = eina_error_msg_static_register("Failed to verify peer's certificate");
 
    eina_magic_string_set(ECORE_MAGIC_CON_SERVER, "Ecore_Con_Server");
    eina_magic_string_set(ECORE_MAGIC_CON_CLIENT, "Ecore_Con_Client");

@@ -31,3 +31,9 @@
 
 #include "efl_net_dialer_http.eo.h"
 #include "efl_net_dialer_websocket.eo.h"
+
+
+#include "efl_net_ssl_types.eot.h"
+
+#include "efl_net_ssl_context.eo.h"
+#include "efl_net_socket_ssl.eo.h"

@@ -674,4 +674,8 @@ Eina_Error efl_net_multicast_loopback_get(SOCKET fd, int family, Eina_Bool *loop
  */
 size_t efl_net_udp_datagram_size_query(SOCKET fd);
 
+
+/* SSL abstraction API */
+extern void *efl_net_ssl_context_connection_new(Efl_Net_Ssl_Context *context);
+
 #endif

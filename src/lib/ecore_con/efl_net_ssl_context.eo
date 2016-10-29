@@ -1,0 +1,122 @@
+import efl_net_ssl_types;
+
+class Efl.Net.Ssl.Context (Efl.Object) {
+    [[A SSL Context that is used to start a SSL socket wrapper.
+
+      The context will contain common configurations such as
+      certificates, private keys, certificate revogation lists (CRLs),
+      certificate authorities (CAs) and so on.
+
+      The method @.setup must be called once before
+      @Efl.Object.finalize in order to define the mandatory
+      operational parameters.
+
+      \@note All setter methods must be called before @Efl.Object.finalize.
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property default_dialer @class {
+            [[The default context for dialers.
+
+              It will start with:
+
+               - default_paths_load = true
+               - cipher = auto
+               - verify_mode = required
+               - verify_hostname = true
+
+            ]]
+            get { }
+            values {
+                default_client_context: Efl.Net.Ssl.Context;
+            }
+        }
+
+        setup {
+            [[Defines the context mandatory operation parameters]]
+            params {
+                cipher: Efl.Net.Ssl.Cipher; [[Cipher to use, prefer @Efl.Net.Ssl.Cipher.auto]]
+                is_dialer: bool; [[If $true, this SSL context is targeted at dialers connecting to a remote serer]]
+            }
+        }
+
+        @property certificates {
+            [[The list of paths to certificates to use.]]
+            values {
+                paths: free(own(iterator<string>), eina_iterator_free);
+            }
+        }
+
+        @property private_keys {
+            [[The list of paths to private keys to use.]]
+            values {
+                paths: free(own(iterator<string>), eina_iterator_free);
+            }
+        }
+
+        @property certificate_revogation_lists {
+            [[The list of paths to CRL (certificate revogation list) to use.]]
+            values {
+                paths: free(own(iterator<string>), eina_iterator_free);
+            }
+        }
+
+        @property certificate_authorities {
+            [[The list of paths to CA (certificate authoritie) to use.]]
+            values {
+                paths: free(own(iterator<string>), eina_iterator_free);
+            }
+        }
+
+        @property default_paths_load {
+            [[If $true, will use system's default certificate storage]]
+            values {
+                default_paths_load: bool;
+            }
+        }
+
+        @property verify_mode {
+            [[How to verify the remote peer.]]
+            values {
+                verify_mode: Efl.Net.Ssl.Verify_Mode;
+            }
+        }
+
+        @property hostname_verify {
+            [[Define if hostname should be verified.
+
+              This will check the socket hostname (without the port in
+              case of an IP) or the overriden value from
+              @.hostname.
+            ]]
+            values {
+                hostname_verify: bool;
+            }
+        }
+
+        @property hostname {
+            [[Defines the hostname to use for sockets.
+
+              This is useful to avoid replicating a hostname in all
+              socket wrapper with hostname_override.
+
+              If NULL, then sockets wrappers will will fetch from
+              adopted socket using address_remote or
+              address_dial.
+
+              It's only used if @.hostname_verify is $true.
+            ]]
+            values {
+                hostname: string @nullable;
+            }
+        }
+    }
+
+    implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+        Efl.Object.finalize;
+    }
+}
