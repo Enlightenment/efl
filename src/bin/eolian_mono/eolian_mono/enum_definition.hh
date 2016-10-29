@@ -29,6 +29,20 @@ struct enum_definition_generator
         .generate(sink, enum_.cxx_name, context))
        return false;
 
+     // iterate enum fiels
+     for(auto first = std::begin(enum_.fields)
+             , last = std::end(enum_.fields); first != last; ++first)
+       {
+          auto name = (*first).name;
+          name[0] = std::toupper(name[0]); // Hack to allow 'static' as a field name
+          if (!as_generator
+              (
+               string << ",\n"
+              )
+              .generate(sink, name, context))
+            return false;
+       }
+
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
 
      auto close_namespace = *(lit("} ")) << "\n";
