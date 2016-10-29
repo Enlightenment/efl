@@ -8,7 +8,7 @@
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
 #include "type.hh"
-//#include "grammar/parameter.hpp"
+#include "namespace.hh"
 #include "function_definition.hh"
 #include "function_declaration.hh"
 #include "grammar/string.hpp"
@@ -44,9 +44,9 @@ struct klass
          break;
        }
 
-     std::vector<std::string> cpp_namespaces = attributes::cpp_namespaces(cls.namespaces);
+     std::vector<std::string> namespaces = escape_namespace(cls.namespaces);
      auto open_namespace = *("namespace " << string << " { ") << "\n";
-     if(!as_generator(open_namespace).generate(sink, cpp_namespaces, add_lower_case_context(context))) return false;
+     if(!as_generator(open_namespace).generate(sink, namespaces, add_lower_case_context(context))) return false;
 
      // Interface class
      if(!as_generator
@@ -58,13 +58,13 @@ struct klass
      for(auto first = std::begin(cls.immediate_inherits)
            , last = std::end(cls.immediate_inherits); first != last; ++first)
        {
-         if(!as_generator("\n" << scope_tab << *(lower_case[string] << ".") << string)
-            .generate(sink, std::make_tuple(attributes::cpp_namespaces(first->namespaces), first->eolian_name), context))
+         if(!as_generator("\n" << scope_tab << *(lower_case[string] << ".") << string << " ,")
+            .generate(sink, std::make_tuple(escape_namespace(first->namespaces), first->eolian_name), context))
            return false;
-         if(std::next(first) != last)
-           *sink++ = ',';
+         // if(std::next(first) != last)
+         //   *sink++ = ',';
        }
-     if(cls.immediate_inherits.empty())
+     // if(cls.immediate_inherits.empty())
        if(!as_generator("\n" << scope_tab << "efl.eo.IWrapper").generate(sink, attributes::unused, context)) return false;
      if(!as_generator("\n{\n").generate(sink, attributes::unused, context)) return false;
      
@@ -81,6 +81,9 @@ struct klass
             (
              "public " << class_type << " " << string << "Concrete : " << string << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
+             << scope_tab << "public System.IntPtr raw_handle {\n"
+             << scope_tab << scope_tab << "get { return handle; }\n"
+             << scope_tab << "}\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(\"eo\")] static extern System.IntPtr\n"
              << scope_tab << "_efl_add_internal_start([System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPStr)] System.String file, int line,\n"
              << scope_tab << scope_tab << "System.IntPtr klass, System.IntPtr parent, byte is_ref, byte is_fallback);\n"
@@ -89,11 +92,13 @@ struct klass
              << scope_tab << "[System.Runtime.InteropServices.DllImport(\"" << context_find_tag<library_context>(context).library_name
              << "\")] static extern System.IntPtr\n"
              << scope_tab << scope_tab << class_get_name << "();\n"
-             << scope_tab << "public " << string << "Concrete()\n"
+             << scope_tab << "public " << string << "Concrete(efl.Object parent = null)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "System.IntPtr klass = " << class_get_name << "();\n"
-             << scope_tab << scope_tab << "System.IntPtr parent = System.IntPtr.Zero;\n"
-             << scope_tab << scope_tab << "System.IntPtr eo = _efl_add_internal_start(\"file\", 0, klass, parent, 0, 0);\n"
+             << scope_tab << scope_tab << "System.IntPtr parent_ptr = System.IntPtr.Zero;\n"
+             << scope_tab << scope_tab << "if(parent != null)\n"
+             << scope_tab << scope_tab << scope_tab << "parent_ptr = parent.raw_handle;\n"
+             << scope_tab << scope_tab << "System.IntPtr eo = _efl_add_internal_start(\"file\", 0, klass, parent_ptr, 0, 0);\n"
              << scope_tab << scope_tab << "handle = _efl_add_end(eo, 0, 0);\n"
              << scope_tab << "}\n"
              << scope_tab << "public " << string << "Concrete(System.IntPtr raw)\n"
@@ -121,7 +126,7 @@ struct klass
        }
      
      auto close_namespace = *(lit("} ")) << "\n";
-     if(!as_generator(close_namespace).generate(sink, cpp_namespaces, context)) return false;
+     if(!as_generator(close_namespace).generate(sink, namespaces, context)) return false;
      
      return true;
    }

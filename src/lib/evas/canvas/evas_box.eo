@@ -277,7 +277,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            Note: This call will trigger the box's _Evas_Object_Box_Api.append
            smart function.]]
 
-         return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
+         return: ref(Evas_Object_Box_Option); [[A box option bound to the recently added box item or
                                              $null, on errors.]]
          params {
             @in child: Efl.Canvas.Object @nonull; [[A child Evas object to be made a member of $o.]]

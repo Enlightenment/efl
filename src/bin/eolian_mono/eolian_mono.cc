@@ -25,6 +25,8 @@
 #include <eolian_mono/klass.hh>
 #include <eolian_mono/enum_definition.hh>
 #include <eolian_mono/type_impl.hh>
+#include <eolian_mono/marshall_type_impl.hh>
+#include <eolian_mono/marshall_annotation.hh>
 
 namespace eolian_mono {
 

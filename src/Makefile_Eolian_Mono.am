@@ -35,13 +35,39 @@ lib/evas/canvas/efl_vg_gradient_linear.eo.cs \
 lib/evas/canvas/efl_vg_root_node.eo.cs \
 lib/evas/canvas/efl_vg_shape.eo.cs
 
+efl_eolian_blacklisted_files = \
+lib/efl/interfaces/efl_io_buffer.eo.cs \
+lib/efl/interfaces/efl_io_closer.eo.cs \
+lib/efl/interfaces/efl_io_positioner.eo.cs \
+lib/efl/interfaces/efl_io_queue.eo.cs \
+lib/efl/interfaces/efl_io_reader.eo.cs \
+lib/efl/interfaces/efl_io_sizer.eo.cs \
+lib/efl/interfaces/efl_io_writer.eo.cs \
+lib/efl/interfaces/efl_text_properties.eo.cs \
+lib/efl/interfaces/efl_gfx_buffer.eo.cs \
+lib/efl/interfaces/efl_gfx_shape.eo.cs
+
+ecore_eolian_blacklisted_files = \
+lib/ecore/efl_io_closer_fd.eo.cs \
+lib/ecore/efl_io_positioner_fd.eo.cs \
+lib/ecore/efl_io_reader_fd.eo.cs \
+lib/ecore/efl_io_writer_fd.eo.cs \
+lib/ecore/efl_io_copier_fd.eo.cs \
+lib/ecore/efl_io_sizer_fd.eo.cs \
+lib/ecore/efl_io_stdin.eo.cs \
+lib/ecore/efl_io_stdout.eo.cs \
+lib/ecore/efl_io_stderr.eo.cs \
+lib/ecore/efl_io_file.eo.cs \
+lib/ecore/efl_io_copier.eo.cs
+
 efl_eolian_mono_files = \
-$(filter-out lib/eo/efl_object_override.eo.cs, $(eo_eolian_files:%.eo=%.eo.cs)) \
-$(ecore_eolian_files_public:%.eo=%.eo.cs) \
+$(filter-out lib/eo/efl_object.eo.cs lib/eo/efl_object_override.eo.cs, $(eo_eolian_files:%.eo=%.eo.cs)) \
+$(filter-out $(ecore_eolian_blacklisted_files),$(ecore_eolian_files_public:%.eo=%.eo.cs)) \
 $(ecore_eolian_type_files:%.eot=%.eot.cs) \
-$(efl_eolian_files:%.eo=%.eo.cs) \
+$(filter-out $(efl_eolian_blacklisted_files),$(efl_eolian_files:%.eo=%.eo.cs)) \
 $(efl_eolian_type_files:%.eot=%.eot.cs) \
 $(filter-out $(evas_eolian_blacklisted_files),$(evas_eolian_pub_files:%.eo=%.eo.cs)) \
+lib/evas/canvas/evas_box.eo.cs \
 $(evas_eolian_type_files:%.eot=%.eot.cs)
 
 ### Efl C++

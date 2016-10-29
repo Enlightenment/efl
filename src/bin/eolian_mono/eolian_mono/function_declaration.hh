@@ -8,7 +8,7 @@
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
 #include "type.hh"
-//#include "grammar/parameter.hpp"
+#include "parameter.hh"
 #include "keyword.hh"
 #include "using_decl.hh"
 
@@ -20,8 +20,8 @@ struct function_declaration_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     return as_generator
-      (eolian_mono::type(true) << " " << string << "(" /*<< (parameter % ", ")*/ << ");\n")
-      .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name)/*, f.parameters*/), context);
+      (eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n")
+      .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), context);
   }
 };
 
