@@ -6043,21 +6043,6 @@ echo "  systemd units.: $USER_SESSION_DIR"
 fi
 echo
 
-if test "x${have_systemd_pkg}" = "xyes" -a "x${want_systemd}" = "xno"; then
-   echo " _________________________________________"
-   echo "/ Systemd dependency is available on your \\"
-   echo "| system, but you are building without    |"
-   echo "| systemd support. Don't forget to        |"
-   echo "| --enable-systemd if you want systemd    |"
-   echo "\\ integration for EFL.                    /"
-   echo " -----------------------------------------"
-   echo "        \\   ^__^"
-   echo "         \\  (oo)\\_______"
-   echo "            (__)\\       )\\/\\"
-   echo "                ||----w |"
-   echo "                ||     ||"
-fi
-
 if test -n "$CFOPT_WARNING"; then
   echo "_____________________________________________________________________"
   echo ""
