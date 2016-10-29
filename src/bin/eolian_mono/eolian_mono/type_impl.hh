@@ -4,6 +4,7 @@
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
+#include "namespace.hh"
 
 namespace eolian_mono {
 
@@ -156,36 +157,36 @@ struct visitor_generate
       // out A @optional -> optional<A&>
       // out A& @optional -> optional<A&>
       // out own(A&) @optional -> optional<A*&>
-      else if(regular.base_qualifier & qualifier_info::is_optional)
-       {
-         attributes::regular_type_def no_optional_regular = regular;
-         no_optional_regular.base_qualifier.qualifier ^= qualifier_info::is_optional;
-         if(is_out)
-           {
-             if(no_optional_regular.base_qualifier & qualifier_info::is_own)
-               {
-                 return as_generator(" ::efl::eina::optional<").generate(sink, attributes::unused, *context)
-                   && (*this)(no_optional_regular)
-                   && as_generator("&>").generate(sink, attributes::unused, *context);
-              }
-             else if(no_optional_regular.base_qualifier & qualifier_info::is_ref)
-               {
-                  no_optional_regular.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                  return (*this)(no_optional_regular)
-                    && as_generator("**").generate(sink, attributes::unused, *context);
-               }
-             else
-               return (*this)(no_optional_regular)
-                 && as_generator("*").generate(sink, attributes::unused, *context);
-           }
-         else
-           {
-             // regular.base_qualifier & qualifier_info::is_ref
-             return as_generator(" ::efl::eina::optional<").generate(sink, attributes::unused, *context)
-               && (*this)(no_optional_regular)
-               && as_generator(">").generate(sink, attributes::unused, *context);
-           }
-       }
+      // else if(regular.base_qualifier & qualifier_info::is_optional)
+      //  {
+      //    attributes::regular_type_def no_optional_regular = regular;
+      //    no_optional_regular.base_qualifier.qualifier ^= qualifier_info::is_optional;
+      //    if(is_out)
+      //      {
+      //        if(no_optional_regular.base_qualifier & qualifier_info::is_own)
+      //          {
+      //            return as_generator(" ::efl::eina::optional<").generate(sink, attributes::unused, *context)
+      //              && (*this)(no_optional_regular)
+      //              && as_generator("&>").generate(sink, attributes::unused, *context);
+      //         }
+      //        else if(no_optional_regular.base_qualifier & qualifier_info::is_ref)
+      //          {
+      //             no_optional_regular.base_qualifier.qualifier ^= qualifier_info::is_ref;
+      //             return (*this)(no_optional_regular)
+      //               && as_generator("**").generate(sink, attributes::unused, *context);
+      //          }
+      //        else
+      //          return (*this)(no_optional_regular)
+      //            && as_generator("*").generate(sink, attributes::unused, *context);
+      //      }
+      //    else
+      //      {
+      //        // regular.base_qualifier & qualifier_info::is_ref
+      //        return as_generator(" ::efl::eina::optional<").generate(sink, attributes::unused, *context)
+      //          && (*this)(no_optional_regular)
+      //          && as_generator(">").generate(sink, attributes::unused, *context);
+      //      }
+      //  }
       // else if((is_return || is_out) && regular.base_qualifier & qualifier_info::is_ref
       //         && regular.base_qualifier & qualifier_info::is_own)
       //   {
@@ -213,8 +214,8 @@ struct visitor_generate
       //   }
       else
         {
-          as_generator(" Generating: " << *(lower_case[string] << ".") << string << "\n")
-            .generate(std::ostream_iterator<char>(std::cerr), std::make_tuple(regular.namespaces, regular.base_type), *context);
+          // as_generator(" Generating: " << *(lower_case[string] << ".") << string << "\n")
+          //   .generate(std::ostream_iterator<char>(std::cerr), std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context);
           if(as_generator
              (
               *(lower_case[string] << ".")
@@ -225,7 +226,7 @@ struct visitor_generate
               //     ? /*" const"*/ "" : "")
               /*<< (regular.base_qualifier & qualifier_info::is_ref? "&" : "")*/
              )
-             .generate(sink, std::make_tuple(regular.namespaces, regular.base_type), *context))
+             .generate(sink, std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context))
             return true;
           else
             return false;
@@ -243,7 +244,7 @@ struct visitor_generate
      //   .generate(sink, attributes::unused, *context);
      return
        as_generator(" " << *(lower_case[string] << ".") << string)
-       .generate(sink, std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context)
+       .generate(sink, std::make_tuple(eolian_mono::escape_namespace(klass.namespaces), klass.eolian_name), *context)
        // && (!(klass.base_qualifier & qualifier_info::is_ref)
        //     || as_generator("&").generate(sink, attributes::unused, *context))
        ;
