@@ -205,7 +205,7 @@ _ecore_cocoa_feed_events(void *anEvent)
            Ecore_Event_Key *ev;
            NSUInteger flags = [event modifierFlags];
 
-           if (flags & NSEventModifierFlagOption)
+           if (flags & NSEventModifierFlagCommand)
              {
                 NSString *keychar = [event charactersIgnoringModifiers];
                 if ([keychar characterAtIndex:0] == 'q')
