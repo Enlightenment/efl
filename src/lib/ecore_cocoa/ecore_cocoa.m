@@ -115,6 +115,7 @@ _ecore_cocoa_event_key(NSEvent     *event,
    static Eina_Bool compose = EINA_FALSE;
    static NSText *edit;
    unsigned int i;
+   int kchar = -1;
 
    Ecore_Event_Key *ev;
 
@@ -143,22 +144,33 @@ _ecore_cocoa_event_key(NSEvent     *event,
    ev->window = (Ecore_Window)window.ecore_window_data;
    ev->event_window = ev->window;
 
+   /*
+    * Try to look for the keychar data if available.
+    * If not, try the raw keychar.
+    */
    if ([keychar length] > 0)
+     kchar = [keychar characterAtIndex: 0];
+   if ((kchar < 0) && ([keycharRaw length] > 0))
+     kchar = [keycharRaw characterAtIndex: 0];
+
+   if (kchar >= 0)
      {
         for (i = 0; i < EINA_C_ARRAY_LENGTH(keystable); ++i)
           {
-             if (keystable[i].code == [keychar characterAtIndex:0])
+             if (keystable[i].code == kchar)
                {
                   ev->keyname = keystable[i].name;
                   ev->key = ev->keyname;
                   break;
                }
           }
-        if (ev->keyname == NULL)
-          {
-             ev->keyname = "";
-             ev->key = "";
-          }
+     }
+
+   /* Fallback */
+   if (!ev->keyname)
+     {
+        ev->keyname = "";
+        ev->key = "";
      }
 
    if (([keycharRaw length] == 0) && (keyType == NSEventTypeKeyDown))
