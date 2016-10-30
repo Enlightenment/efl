@@ -124,13 +124,13 @@ _ecore_cocoa_event_key(NSEvent     *event,
 
    DBG("Event Key, keyType : %lu", keyType);
 
-   ev = calloc(1, sizeof (Ecore_Event_Key));
-   if (!ev) return NULL;
+   ev = calloc(1, sizeof(*ev));
+   if (EINA_UNLIKELY(!ev)) return NULL;
 
    if (compose && (keyType == NSEventTypeKeyDown))
      {
         [edit interpretKeyEvents:[NSArray arrayWithObject:event]];
-        compose=EINA_FALSE;
+        compose = EINA_FALSE;
      }
 
    ev->timestamp = time;
@@ -145,7 +145,7 @@ _ecore_cocoa_event_key(NSEvent     *event,
 
    if ([keychar length] > 0)
      {
-        for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
+        for (i = 0; i < EINA_C_ARRAY_LENGTH(keystable); ++i)
           {
              if (keystable[i].code == [keychar characterAtIndex:0])
                {
@@ -161,10 +161,10 @@ _ecore_cocoa_event_key(NSEvent     *event,
           }
      }
 
-   if (([keycharRaw length] == 0)  && (keyType == NSEventTypeKeyDown))
+   if (([keycharRaw length] == 0) && (keyType == NSEventTypeKeyDown))
      {
-        compose=EINA_TRUE;
-        edit = [[event window]  fieldEditor:YES forObject:nil];
+        compose = EINA_TRUE;
+        edit = [[event window] fieldEditor:YES forObject:nil];
         [edit interpretKeyEvents:[NSArray arrayWithObject:event]];
         free(ev);
         return NULL;
@@ -182,7 +182,7 @@ _ecore_cocoa_feed_events(void *anEvent)
    unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
    Eina_Bool pass = EINA_FALSE;
 
-   DBG("Feed events, event type ; %lu", [event type]);
+   DBG("Feed events, event type ; %lx", [event type]);
 
    switch ([event type])
      {
