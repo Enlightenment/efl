@@ -44,7 +44,7 @@ enum _Ecore_Audio_Type {
     ECORE_AUDIO_TYPE_ALSA,    /**< Use ALSA module*/
     ECORE_AUDIO_TYPE_SNDFILE, /**< Use libsndfile module */
     ECORE_AUDIO_TYPE_TONE,    /**< Use tone module */
-    ECORE_AUDIO_TYPE_CORE_AUDIO EINA_DEPRECATED, /**< Use Core Audio module (Apple) - DEPRECATED */
+    ECORE_AUDIO_TYPE_CORE_AUDIO, /**< Use Core Audio module (Apple) - DEPRECATED */
     ECORE_AUDIO_TYPE_CUSTOM,  /**< Use custom module */
     ECORE_AUDIO_MODULE_LAST,  /**< Sentinel */
 };
