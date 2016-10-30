@@ -18,6 +18,10 @@
 # include <openssl/ssl.h>
 #endif
 
+#ifdef HAVE_SYS_UN_H
+#include <sys/un.h>
+#endif
+
 #define READBUFSIZ 65536
 
 extern int _ecore_con_log_dom;

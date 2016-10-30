@@ -26,10 +26,6 @@
 # include <arpa/inet.h>
 #endif
 
-#ifdef HAVE_SYS_UN_H
-#include <sys/un.h>
-#endif
-
 #ifdef HAVE_SYSTEMD
 # include <systemd/sd-daemon.h>
 #endif
