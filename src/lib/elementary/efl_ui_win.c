@@ -922,7 +922,7 @@ _elm_win_mouse_in(Ecore_Evas *ee)
    if (!sd) return;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   if (sd->resizing) sd->resizing = EINA_FALSE;
+   sd->resizing = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_WL2
    if ((sd->wl.win) && (sd->pointer.ee))
      {
@@ -1228,7 +1228,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
    evas_object_smart_callback_call(obj, SIG_FOCUS_OUT, NULL);
    sd->focus_highlight.cur.visible = EINA_FALSE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
-   if (sd->frame_obj)
+   if (sd->frame_obj && !sd->resizing)
      {
         edje_object_signal_emit(sd->frame_obj, "elm,action,unfocus", "elm");
      }
@@ -3609,29 +3609,40 @@ _elm_win_frame_cb_move_start(void *data,
                              const char *sig EINA_UNUSED,
                              const char *source EINA_UNUSED)
 {
-   int ox, oy;
-
-   ELM_WIN_DATA_GET(data, sd);
-
-   if (!sd) return;
+   ELM_WIN_DATA_GET_OR_RETURN(data, sd);
 
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
-     ecore_wl2_window_pointer_set(sd->wl.win, NULL,
-                                  sd->pointer.hot_x, sd->pointer.hot_y);
-#else
-   (void)source;
-#endif
+     {
+        int ox, oy;
 
-   /* NB: Wayland handles moving surfaces by itself so we cannot
+        ecore_wl2_window_pointer_set(sd->wl.win, NULL,
+                                     sd->pointer.hot_x, sd->pointer.hot_y);
+
+        /* NB: Wayland handles moving surfaces by itself so we cannot
     * specify a specific x/y we want. Instead, we will pass in the
     * existing x/y values so they can be recorded as 'previous'
     * position. The new position will get updated automatically when
     * the move is finished */
 
-   edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
-                                 &ox, &oy, NULL, NULL);
-   ecore_evas_wayland_move(sd->ee, ox, oy);
+        edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
+                                      &ox, &oy, NULL, NULL);
+        ecore_evas_wayland_move(sd->ee, ox, oy);
+     }
+#endif
+
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        int x, y;
+
+        sd->resizing = EINA_TRUE;
+        ecore_x_pointer_ungrab();
+        ecore_x_pointer_root_xy_get(&x, &y);
+        ecore_x_netwm_moveresize_request_send(sd->x.xwin, x, y,
+                                              ECORE_X_NETWM_DIRECTION_MOVE, 1);
+     }
+#endif
 }
 
 static void
@@ -3640,9 +3651,7 @@ _elm_win_frame_cb_move_stop(void *data,
                             const char *sig EINA_UNUSED,
                             const char *source EINA_UNUSED)
 {
-   ELM_WIN_DATA_GET(data, sd);
-
-   if (!sd) return;
+   ELM_WIN_DATA_GET_OR_RETURN(data, sd);
 
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->pointer.obj)
@@ -3655,7 +3664,6 @@ _elm_win_frame_cb_move_stop(void *data,
 #endif
 }
 
-#ifdef HAVE_ELEMENTARY_WL2
 struct _resize_info
 {
    const char *name;
@@ -3677,7 +3685,6 @@ static struct _resize_info _border_corner[4] =
      { ELM_CURSOR_BOTTOM_RIGHT_CORNER, 10 },
      { ELM_CURSOR_TOP_RIGHT_CORNER, 9 },
 };
-#endif
 
 static void
 _elm_win_frame_obj_move(void *data,
@@ -3797,7 +3804,6 @@ _elm_win_frame_cb_resize_start(void *data,
                                const char *sig EINA_UNUSED,
                                const char *source)
 {
-#ifdef HAVE_ELEMENTARY_WL2
    ELM_WIN_DATA_GET(data, sd);
    int i;
 
@@ -3826,11 +3832,39 @@ _elm_win_frame_cb_resize_start(void *data,
      sd->resize_location = 0;
 
    if (sd->resize_location > 0)
-     ecore_evas_wayland_resize(sd->ee, sd->resize_location);
-#else
-   (void)data;
-   (void)source;
+     {
+#ifdef HAVE_ELEMENTARY_WL2
+        if (sd->wl.win)
+          {
+             ecore_evas_wayland_resize(sd->ee, sd->resize_location);
+          }
 #endif
+#ifdef HAVE_ELEMENTARY_X
+        if (sd->x.xwin)
+          {
+             int x, y;
+
+             const Ecore_X_Netwm_Direction loc2dir[11] = {
+                ECORE_X_NETWM_DIRECTION_CANCEL, // loc 0
+                ECORE_X_NETWM_DIRECTION_SIZE_T,
+                ECORE_X_NETWM_DIRECTION_SIZE_B,
+                ECORE_X_NETWM_DIRECTION_CANCEL, // no loc 3
+                ECORE_X_NETWM_DIRECTION_SIZE_L,
+                ECORE_X_NETWM_DIRECTION_SIZE_TL,
+                ECORE_X_NETWM_DIRECTION_SIZE_BL,
+                ECORE_X_NETWM_DIRECTION_CANCEL, // no loc 7
+                ECORE_X_NETWM_DIRECTION_SIZE_R,
+                ECORE_X_NETWM_DIRECTION_SIZE_TR,
+                ECORE_X_NETWM_DIRECTION_SIZE_BR
+             };
+
+             ecore_x_pointer_ungrab();
+             ecore_x_pointer_root_xy_get(&x, &y);
+             ecore_x_netwm_moveresize_request_send
+                   (sd->x.xwin, x, y, loc2dir[sd->resize_location], 1);
+          }
+#endif
+     }
 }
 
 static void
