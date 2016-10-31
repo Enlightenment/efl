@@ -11,21 +11,24 @@ public class Globals {
     [DllImport("eo")] public static extern IntPtr
         _efl_add_end(IntPtr eo, byte is_ref, byte is_fallback);
     [DllImport("eo")] public static extern IntPtr
-        efl_class_new(ref ClassDescription class_description, IntPtr base0);
+        efl_class_new(IntPtr class_description, IntPtr base0);
     [DllImport("eo")] public static extern IntPtr
-        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1);
+        efl_class_new(IntPtr class_description, IntPtr base0, IntPtr base1);
     [DllImport("eo")] public static extern IntPtr
-        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2);
+        efl_class_new(IntPtr class_description, IntPtr base0, IntPtr base1, IntPtr base2);
     [DllImport("eo")] public static extern IntPtr
-        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3);
+        efl_class_new(IntPtr class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3);
     [DllImport("eo")] public static extern IntPtr
-        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4);
+        efl_class_new(IntPtr class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4);
     [DllImport("eo")] public static extern IntPtr
-        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4, IntPtr base5);
+        efl_class_new(IntPtr class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4, IntPtr base5);
     [DllImport("eo")] public static extern IntPtr
-        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4, IntPtr base5, IntPtr base6);
+        efl_class_new(IntPtr class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4, IntPtr base5, IntPtr base6);
     [DllImport("eo")] public static extern IntPtr
-        efl_class_new(ref ClassDescription class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4, IntPtr base5, IntPtr base6, IntPtr base7);
+        efl_class_new(IntPtr class_description, IntPtr base0, IntPtr base1, IntPtr base2, IntPtr base3, IntPtr base4, IntPtr base5, IntPtr base6, IntPtr base7);
+    [DllImport("eo")] public static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
+    [DllImport("eo")] public static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
+    [DllImport("eo")] public static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
 }        
         
 public interface IWrapper
@@ -36,7 +39,7 @@ public interface IWrapper
     }
 }
 
-class MarshalTest : ICustomMarshaler
+public class MarshalTest : ICustomMarshaler
 {
     public static ICustomMarshaler GetInstance(string cookie)
     {

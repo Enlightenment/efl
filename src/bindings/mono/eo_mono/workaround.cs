@@ -14,6 +14,26 @@ public struct ClassDescription
     public IntPtr class_destructor;
 }
 
+[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+public struct Efl_Op_Description
+{
+    public IntPtr api_func;
+    public IntPtr func;
+}
+
+[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+public struct Efl_Object_Ops
+{
+    public IntPtr descs; /**< The op descriptions array of size count. */
+    public UIntPtr count; /**< Number of op descriptions. */
+};
+
+[StructLayout(LayoutKind.Sequential)]
+public struct EolianPD
+{
+    public IntPtr pointer;
+}
+
 public struct Evas_Object_Box_Layout {};
 public struct Eina_Free_Cb {};
 public struct Evas_Object_Box_Option {};
