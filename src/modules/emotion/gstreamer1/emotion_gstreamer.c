@@ -1689,7 +1689,8 @@ _create_pipeline(Emotion_Gstreamer *ev,
    g_object_set(G_OBJECT(vsink), "emotion-object", o, NULL);
 
    g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
-   g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_DOWNLOAD, NULL);
+   g_object_set(G_OBJECT(playbin), "flags",
+                (flags | GST_PLAY_FLAG_DOWNLOAD) & ~GST_PLAY_FLAG_TEXT, NULL);
    g_object_set(G_OBJECT(playbin), "video-sink", vsink, NULL);
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
    if (suburi)
