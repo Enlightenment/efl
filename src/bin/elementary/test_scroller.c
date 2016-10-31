@@ -28,6 +28,24 @@ _my_bt_go_900_900(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
 }
 
 static void
+_my_bt_y_minus_one(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int x, y, w, h;
+   elm_scroller_region_get((Evas_Object *)data, &x, &y, &w, &h);
+   printf("Current region: %d %d %d %d\n", x, y, w, h);
+   elm_scroller_region_show((Evas_Object *)data, x, y - 1, w, h);
+}
+
+static void
+_my_bt_y_plus_one(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int x, y, w, h;
+   elm_scroller_region_get((Evas_Object *)data, &x, &y, &w, &h);
+   printf("Current region: %d %d %d %d\n", x, y, w, h);
+   elm_scroller_region_show((Evas_Object *)data, x, y + 1, w, h);
+}
+
+static void
 _my_bt_prev_page(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
 	Evas_Object *sc = (Evas_Object *)data;
@@ -345,6 +363,14 @@ test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(bt);
 
    bt = elm_button_add(win);
+   elm_object_text_set(bt, "y -1 px");
+   evas_object_smart_callback_add(bt, "clicked", _my_bt_y_minus_one, sc);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, 0.5, 0.1);
+   elm_table_pack(tb2, bt, 1, 0, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
    elm_object_text_set(bt, "to 900 300");
    evas_object_smart_callback_add(bt, "clicked", _my_bt_go_900_300, sc);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -358,6 +384,14 @@ test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.1, 0.9);
    elm_table_pack(tb2, bt, 0, 2, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "y +1 px");
+   evas_object_smart_callback_add(bt, "clicked", _my_bt_y_plus_one, sc);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, 0.5, 0.9);
+   elm_table_pack(tb2, bt, 1, 2, 1, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
