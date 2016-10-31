@@ -785,7 +785,7 @@ _evgl_api_gles2_ext_init(void *getproc, const char *glueexts)
 #endif
 
    // GLES Extensions
-   glexts = (const char*)glGetString(GL_EXTENSIONS);
+   glexts = (const char*)evas_glGetString_evgl_th(GL_EXTENSIONS);
    if (!glexts)
      {
         ERR("glGetString returned NULL! Something is very wrong...");
@@ -1017,7 +1017,6 @@ _evgl_api_gles1_ext_init(void *getproc, const char *glueexts)
    const char *glexts;
    fp_getproc gp = (fp_getproc)getproc;
    int _curext_supported = 0;
-   Evas_GL_API *gles1_funcs;
    Eina_Strbuf *sb = eina_strbuf_new();
    Eina_Strbuf *sboff = eina_strbuf_new();
 
@@ -1055,14 +1054,7 @@ _evgl_api_gles1_ext_init(void *getproc, const char *glueexts)
      }
 #endif
 
-   gles1_funcs = _evgl_api_gles1_internal_get();
-   if (!gles1_funcs || !gles1_funcs->glGetString)
-     {
-        ERR("Could not get address of glGetString in GLESv1 library!");
-        return EINA_FALSE;
-     }
-
-   glexts = (const char *) gles1_funcs->glGetString(GL_EXTENSIONS);
+   glexts = (const char *) evas_glGetString_evgl_th(GL_EXTENSIONS);
    if (!glexts)
      {
         ERR("GLESv1:glGetString(GL_EXTENSIONS) returned NULL!");
@@ -1301,7 +1293,6 @@ _evgl_api_gles3_ext_init(void *getproc, const char *glueexts)
    const char *glexts;
    fp_getproc gp = (fp_getproc)getproc;
    int _curext_supported = 0;
-   Evas_GL_API *gles3_funcs;
    Eina_Strbuf *sb = eina_strbuf_new();
    Eina_Strbuf *sboff = eina_strbuf_new();
 
@@ -1340,14 +1331,7 @@ _evgl_api_gles3_ext_init(void *getproc, const char *glueexts)
 #endif
 
    _gles3_ext_plist = eina_array_new(1);
-   gles3_funcs = _evgl_api_gles3_internal_get();
-   if (!gles3_funcs || !gles3_funcs->glGetString)
-     {
-        ERR("Could not get address of glGetString in GLESv3 library!");
-        return EINA_FALSE;
-     }
-
-   glexts = (const char *) gles3_funcs->glGetString(GL_EXTENSIONS);
+   glexts = (const char *) evas_glGetString_evgl_th(GL_EXTENSIONS);
    if (!glexts)
      {
         ERR("GLESv3:glGetString(GL_EXTENSIONS) returned NULL!");
