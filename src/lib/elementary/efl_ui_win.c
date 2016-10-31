@@ -3945,6 +3945,16 @@ _elm_win_frame_pre_render(void *data, Evas *e EINA_UNUSED, void *ev EINA_UNUSED)
 }
 #endif
 
+static inline void
+_elm_object_part_cursor_set(Evas_Object *obj, Evas_Object *edj,
+                            const char *part, const char *cursor)
+{
+   Evas_Object *sub = (Evas_Object *) edje_object_part_object_get(edj, part);
+   if (!sub) return;
+
+   elm_object_sub_cursor_set(sub, obj, cursor);
+}
+
 static void
 _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
 {
@@ -4034,6 +4044,27 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
      (sd->frame_obj, "elm,action,close", "elm", _elm_win_frame_cb_close, obj);
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,menu", "elm", _elm_win_frame_cb_menu, obj);
+
+   if (!sd->pointer.obj)
+     {
+        int i = sd->rot / 90;
+        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.t",
+                                    _border_side[(0 + i) % 4].name);
+        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.b",
+                                    _border_side[(2 + i) % 4].name);
+        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.l",
+                                    _border_side[(1 + i) % 4].name);
+        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.r",
+                                    _border_side[(3 + i) % 4].name);
+        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.tl",
+                                    _border_corner[(0 + i) % 4].name);
+        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.tr",
+                                    _border_corner[(3 + i) % 4].name);
+        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.bl",
+                                    _border_corner[(1 + i) % 4].name);
+        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.br",
+                                    _border_corner[(2 + i) % 4].name);
+     }
 
    if (sd->title)
      {
