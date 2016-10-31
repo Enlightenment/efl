@@ -265,8 +265,9 @@ EOLIAN static Eo *
 _ecore_audio_out_pulse_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_Data *_pd EINA_UNUSED)
 {
   int argc;
-  char **argv;
+  char **argv, *disp = NULL;
   Ecore_Audio_Output *out_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
+  static char *dispenv = NULL;
 
   if (!EPA_LOAD()) return NULL;
   eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
@@ -274,6 +275,35 @@ _ecore_audio_out_pulse_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_
   out_obj->need_writer = EINA_FALSE;
 
   if (!class_vars.context) {
+
+    // if we're in a wayland world rather than x11... but DISPLAY also set...
+    if (getenv("WAYLAND_DISPLAY")) disp = getenv("DISPLAY");
+    // make a tmp copy of display locally as we'll overwrite this
+    if (disp) disp = strdup(disp);
+    // if we had a previously allocated env var buffer for DISPLAY then
+    // free it only if DISPLAY env var changed
+    if (dispenv) {
+      if (!((disp) && (!strcmp(dispenv + 8/*"DISPLAY="*/, disp)))) {
+        free(dispenv);
+        dispenv = NULL;
+      }
+    }
+    // no previous display env but we have a display, then allocate a buffer
+    // that stays around until the next time here with the evn var string
+    // but have space for disp string too
+    if ((!dispenv) && (disp)) {
+      dispenv = malloc(8/*"DISPLAY="*/ + strlen(disp) + 1);
+    }
+    // ensure env var is empty and to a putenv as pulse wants to use DISPLAY
+    // and if its non-empty it'll try connect to the xserver and we do not
+    // want this to happen in a wayland universe
+    if (dispenv) {
+      strcpy(dispenv, "DISPLAY=");
+      putenv(dispenv);
+    }
+    // now hopefully getenv("DISPLAY") inside pulse will return NULL or it
+    // will return an empty string "" which pulse thinsk is the same as NULL
+
     ecore_app_args_get(&argc, &argv);
     if (!argc) {
         DBG("Could not get program name, pulse outputs will be named ecore_audio");
@@ -281,6 +311,19 @@ _ecore_audio_out_pulse_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_
     } else {
        class_vars.context = EPA_CALL(pa_context_new)(class_vars.api, basename(argv[0]));
     }
+    // if we had a display value and a displayenv buffer then let's restore
+    // the previous value content of DISPLAY as we duplicated it above and
+    // add to the env of the dispenv buffer, then putenv that back. as the
+    // buffer is malloced this will be safe, but as the displayenv is local
+    // and static we wont go allocating these buffers forever. just this one
+    // here and then replace/re-use it.
+    if ((disp) && (dispenv)) {
+      strcat(dispenv, disp);
+      putenv(dispenv);
+    }
+    // free up our temporary local DISPLAY env sring copy if we have it
+    if (disp) free(disp);
+
     EPA_CALL(pa_context_set_state_callback)(class_vars.context, _state_cb, NULL);
     EPA_CALL(pa_context_connect)(class_vars.context, NULL, PA_CONTEXT_NOFLAGS, NULL);
   }
