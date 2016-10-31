@@ -15548,6 +15548,7 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    int len;
    char *tmp_alias;
    const char *aliased;
+   double base_scale;
 
    obj = edje_edit_object_add(ed->base->evas);
    if (!edje_object_file_set(obj, ed->file->path, group)) return EINA_FALSE;
@@ -15562,6 +15563,10 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    eed = efl_data_scope_get(obj, MY_CLASS);
    pc = eed->base->collection;
    alias_list = edje_edit_group_aliases_get(obj, group);
+
+   base_scale = edje_object_base_scale_get(obj);
+   if ((base_scale - 1.0) > DBL_EPSILON)
+     BUF_APPENDF(I1 "base_scale: \"%f\";\n",base_scale);
 
    BUF_APPENDF(I1 "group { name: \"%s\";\n", group);
    EINA_LIST_FOREACH(alias_list, l, data)
