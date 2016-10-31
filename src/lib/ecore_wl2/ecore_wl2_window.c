@@ -335,6 +335,29 @@ surf_err:
    ERR("Failed to create surface for window");
 }
 
+static void
+_ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
+{
+   if (window->surface) return;
+
+   EINA_SAFETY_ON_NULL_RETURN(window->display->wl.compositor);
+
+   window->surface =
+     wl_compositor_create_surface(window->display->wl.compositor);
+   if (!window->surface)
+     {
+        ERR("Failed to create surface for window");
+        return;
+     }
+
+   window->surface_id =
+     wl_proxy_get_id((struct wl_proxy *)window->surface);
+
+   if (window->display->wl.session_recovery)
+     zwp_e_session_recovery_add_listener(window->display->wl.session_recovery,
+                                         &_session_listener, window);
+}
+
 EAPI Ecore_Wl2_Window *
 ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h)
 {
@@ -381,20 +404,7 @@ ecore_wl2_window_surface_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
 
-   if (!window->surface)
-     {
-        EINA_SAFETY_ON_NULL_RETURN_VAL(window->display->wl.compositor, NULL);
-
-        window->surface =
-          wl_compositor_create_surface(window->display->wl.compositor);
-
-        window->surface_id =
-          wl_proxy_get_id((struct wl_proxy *)window->surface);
-
-        if (window->display->wl.session_recovery)
-          zwp_e_session_recovery_add_listener(window->display->wl.session_recovery,
-                                              &_session_listener, window);
-     }
+   _ecore_wl2_window_surface_create(window);
 
    return window->surface;
 }
@@ -411,16 +421,7 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if (!window->surface)
-     {
-        window->surface =
-          wl_compositor_create_surface(window->display->wl.compositor);
-        if (!window->surface)
-          {
-             ERR("Failed to create surface for window");
-             return;
-          }
-     }
+   _ecore_wl2_window_surface_create(window);
 
    if (window->input_set)
      ecore_wl2_window_input_region_set(window, window->input_rect.x, window->input_rect.y,
@@ -470,6 +471,8 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
 
    window->configure_serial = 0;
    window->configure_ack = NULL;
+
+   window->surface_id = -1;
 }
 
 EAPI void
