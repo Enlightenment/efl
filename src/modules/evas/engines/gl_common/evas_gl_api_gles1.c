@@ -4016,13 +4016,17 @@ _evgl_gles1_api_init(void)
    return EINA_TRUE;
 }
 
+#define EVAS_API_OVERRIDE_THREAD_CMD(func, api, prefix) \
+   (api)->func = evas_##func##_evgl_api_th; \
+   orig_evgl_api_##func = prefix##func
+
 static void
 _debug_gles1_api_get(Evas_GL_API *funcs)
 {
    if (!funcs) return;
    funcs->version = EVAS_GL_API_VERSION;
 
-#define ORD(name) EVAS_API_OVERRIDE(name, funcs, _evgld_gles1_)
+#define ORD(name) EVAS_API_OVERRIDE_THREAD_CMD(name, funcs, _evgld_gles1_)
    /* Available only in Common profile */
    ORD(glAlphaFunc);
    ORD(glClearColor);
@@ -4179,7 +4183,7 @@ _normal_gles1_api_get(Evas_GL_API *funcs)
    if (!funcs) return;
    funcs->version = EVAS_GL_API_VERSION;
 
-#define ORD(name) EVAS_API_OVERRIDE(name, funcs, _evgl_gles1_)
+#define ORD(name) EVAS_API_OVERRIDE_THREAD_CMD(name, funcs, _evgl_gles1_)
    /* Available only in Common profile */
    ORD(glAlphaFunc);
    ORD(glClearColor);

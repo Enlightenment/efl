@@ -2234,12 +2234,19 @@ finish:
 
 //-------------------------------------------------------------//
 
+#define EVAS_API_OVERRIDE_THREAD_CMD(func, api, prefix) \
+   (api)->func = evas_##func##_evgl_api_th; \
+   orig_evgl_api_##func = prefix##func
+
+#define EVAS_API_OVERRIDE_DIRECT_THREAD_CMD(func, api, prefix) \
+   (api)->func = evas_##func##_evgl_th;
+
 static void
 _normal_gles2_api_get(Evas_GL_API *funcs)
 {
    funcs->version = EVAS_GL_API_VERSION;
 
-#define ORD(f) EVAS_API_OVERRIDE(f, funcs, evgl_)
+#define ORD(f) EVAS_API_OVERRIDE_THREAD_CMD(f, funcs, evgl_)
    // GLES 2.0
    ORD(glActiveTexture);
    ORD(glAttachShader);
@@ -2391,7 +2398,7 @@ static void
 _direct_scissor_off_api_get(Evas_GL_API *funcs)
 {
 
-#define ORD(f) EVAS_API_OVERRIDE(f, funcs,)
+#define ORD(f) EVAS_API_OVERRIDE_DIRECT_THREAD_CMD(f, funcs,)
    // For Direct Rendering
    ORD(glClear);
    ORD(glClearColor);
@@ -2410,7 +2417,7 @@ _debug_gles2_api_get(Evas_GL_API *funcs)
 {
    funcs->version = EVAS_GL_API_VERSION;
 
-#define ORD(f) EVAS_API_OVERRIDE(f, funcs, _evgld_)
+#define ORD(f) EVAS_API_OVERRIDE_THREAD_CMD(f, funcs, _evgld_)
    // GLES 2.0
    ORD(glActiveTexture);
    ORD(glAttachShader);
@@ -2576,7 +2583,7 @@ _normal_gles3_api_get(Evas_GL_API *funcs, int minor_version)
    if (!funcs) return;
    funcs->version = EVAS_GL_API_VERSION;
 
-#define ORD(f) EVAS_API_OVERRIDE(f, funcs, evgl_)
+#define ORD(f) EVAS_API_OVERRIDE_THREAD_CMD(f, funcs, _evgld_)
    // GLES 3.0 APIs that are same as GLES 2.0
    ORD(glActiveTexture);
    ORD(glAttachShader);
@@ -2724,7 +2731,7 @@ _normal_gles3_api_get(Evas_GL_API *funcs, int minor_version)
 #undef ORD
 
 // GLES 3.0 NEW APIs
-#define ORD(name) EVAS_API_OVERRIDE(name, funcs, evgl_gles3_)
+#define ORD(name) EVAS_API_OVERRIDE_THREAD_CMD(name, funcs, evgl_gles3_)
    ORD(glBeginQuery);
    ORD(glBeginTransformFeedback);
    ORD(glBindBufferBase);
@@ -2912,7 +2919,7 @@ _debug_gles3_api_get(Evas_GL_API *funcs, int minor_version)
    if (!funcs) return;
    funcs->version = EVAS_GL_API_VERSION;
 
-#define ORD(f) EVAS_API_OVERRIDE(f, funcs, _evgld_)
+#define ORD(f) EVAS_API_OVERRIDE_THREAD_CMD(f, funcs, _evgld_)
    // GLES 3.0 APIs that are same as GLES 2.0
    ORD(glActiveTexture);
    ORD(glAttachShader);

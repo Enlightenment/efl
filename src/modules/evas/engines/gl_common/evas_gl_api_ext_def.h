@@ -21,12 +21,14 @@
 // The functions of this block must correspond with the functions list in Evas_GL.h.
 // Begin of the extension function block (ret : return value, name : function name, param1 : parameters with bracket, param2 : parameters without type)
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param1, param2) ret (*name) param1;
+#define _EVASGL_EXT_FUNCTION_BEGIN_NOTH(ret, name, param1, param2) ret (*name) param1;
 // End of the extension function block
 #define _EVASGL_EXT_FUNCTION_END()
 
 // These functions will not be exported. Only be used in engines privately.
 // Begin of the extension function block (ret : return value, name : function name, param1 : parameters with bracket, param2 : parameters without type)
 #define _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(ret, name, param1, param2)
+#define _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(ret, name, param1, param2)
 // End of the extension function block
 #define _EVASGL_EXT_FUNCTION_PRIVATE_END()
 
@@ -41,6 +43,7 @@
 
 // Driver extension functions that need no wrapping
 #define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH(name)
 
 #endif
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +61,11 @@
 #ifndef _EVASGL_EXT_FUNCTION_PRIVATE_END
 #define _EVASGL_EXT_FUNCTION_PRIVATE_END() _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_PRIVATE_END_DEFINED
+#endif
+
+#ifndef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH
+#define _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(ret, name, param1, param2) _EVASGL_EXT_FUNCTION_BEGIN_NOTH(ret, name, param1, param2)
+#define _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH_DEFINED
 #endif
 
 #ifndef _EVASGL_EXT_WHITELIST_ONLY
@@ -1480,20 +1488,20 @@ _EVASGL_EXT_BEGIN(EGL_KHR_image_base)
 
 	_EVASGL_EXT_DRVNAME(EGL_KHR_image_base)
 
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void *, eglCreateImage, (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e), (a, b, c, d, e))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglCreateImageKHR")
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(void *, eglCreateImage, (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e), (a, b, c, d, e))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglCreateImageKHR")
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void, eglDestroyImage, (EGLDisplay a, void *b), (a, b))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglDestroyImageKHR")
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(void, eglDestroyImage, (EGLDisplay a, void *b), (a, b))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglDestroyImageKHR")
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
 
-    _EVASGL_EXT_FUNCTION_BEGIN(EvasGLImage, evasglCreateImage, (int target, void* buffer, const int *attrib_list), (target, buffer, attrib_list))
+    _EVASGL_EXT_FUNCTION_BEGIN_NOTH(EvasGLImage, evasglCreateImage, (int target, void* buffer, const int *attrib_list), (target, buffer, attrib_list))
         _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglCreateImage)
 	_EVASGL_EXT_FUNCTION_END()
-	_EVASGL_EXT_FUNCTION_BEGIN(void, evasglDestroyImage, (EvasGLImage image), (image))
+	_EVASGL_EXT_FUNCTION_BEGIN_NOTH(void, evasglDestroyImage, (EvasGLImage image), (image))
         _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglDestroyImage)
 	_EVASGL_EXT_FUNCTION_END()
-	_EVASGL_EXT_FUNCTION_BEGIN(EvasGLImage, evasglCreateImageForContext, (Evas_GL *evas_gl, Evas_GL_Context *ctx, int target, void* buffer, const int *attrib_list), (evas_gl, ctx, target, buffer, attrib_list))
+	_EVASGL_EXT_FUNCTION_BEGIN_NOTH(EvasGLImage, evasglCreateImageForContext, (Evas_GL *evas_gl, Evas_GL_Context *ctx, int target, void* buffer, const int *attrib_list), (evas_gl, ctx, target, buffer, attrib_list))
 		_EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglCreateImageForContext)
 	_EVASGL_EXT_FUNCTION_END()
 
@@ -1593,29 +1601,29 @@ _EVASGL_EXT_BEGIN(EGL_KHR_fence_sync)
         _EVASGL_EXT_DRVNAME_PRIVATE(GL_OES_EGL_sync)
         _EVASGL_EXT_DRVNAME_PRIVATE(VG_KHR_EGL_sync)
 
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void *, eglCreateSyncKHR, (EGLDisplay dpy, EGLenum type, const EGLint *attrib_list), (dpy, type, attrib_list))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglCreateSyncKHR")
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(void *, eglCreateSyncKHR, (EGLDisplay dpy, EGLenum type, const EGLint *attrib_list), (dpy, type, attrib_list))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglCreateSyncKHR")
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglDestroySyncKHR, (EGLDisplay dpy, EGLSyncKHR sync), (dpy, sync))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglDestroySyncKHR")
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(EGLBoolean, eglDestroySyncKHR, (EGLDisplay dpy, EGLSyncKHR sync), (dpy, sync))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglDestroySyncKHR")
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLint, eglClientWaitSyncKHR, (EGLDisplay dpy, EGLSyncKHR sync, EGLint flags, EGLTimeKHR timeout), (dpy, sync, flags, timeout))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglClientWaitSyncKHR")
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(EGLint, eglClientWaitSyncKHR, (EGLDisplay dpy, EGLSyncKHR sync, EGLint flags, EGLTimeKHR timeout), (dpy, sync, flags, timeout))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglClientWaitSyncKHR")
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglGetSyncAttribKHR, (EGLDisplay dpy, EGLSyncKHR sync, EGLint attribute, EGLint *value), (dpy, sync, attribute, value))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglGetSyncAttribKHR")
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(EGLBoolean, eglGetSyncAttribKHR, (EGLDisplay dpy, EGLSyncKHR sync, EGLint attribute, EGLint *value), (dpy, sync, attribute, value))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglGetSyncAttribKHR")
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
 
-	_EVASGL_EXT_FUNCTION_BEGIN(EvasGLSync, evasglCreateSync, (Evas_GL *evas_gl, unsigned int type, const int *attrib_list), (evas_gl, type, attrib_list))
+	_EVASGL_EXT_FUNCTION_BEGIN_NOTH(EvasGLSync, evasglCreateSync, (Evas_GL *evas_gl, unsigned int type, const int *attrib_list), (evas_gl, type, attrib_list))
             _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglCreateSync)
 	_EVASGL_EXT_FUNCTION_END()
-	_EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglDestroySync, (Evas_GL *evas_gl, EvasGLSync sync), (evas_gl, sync))
+	_EVASGL_EXT_FUNCTION_BEGIN_NOTH(Eina_Bool, evasglDestroySync, (Evas_GL *evas_gl, EvasGLSync sync), (evas_gl, sync))
             _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglDestroySync)
 	_EVASGL_EXT_FUNCTION_END()
-	_EVASGL_EXT_FUNCTION_BEGIN(int, evasglClientWaitSync, (Evas_GL *evas_gl, EvasGLSync sync, int flags, EvasGLTime timeout), (evas_gl, sync, flags, timeout))
+	_EVASGL_EXT_FUNCTION_BEGIN_NOTH(int, evasglClientWaitSync, (Evas_GL *evas_gl, EvasGLSync sync, int flags, EvasGLTime timeout), (evas_gl, sync, flags, timeout))
             _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglClientWaitSync)
 	_EVASGL_EXT_FUNCTION_END()
-	_EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglGetSyncAttrib, (Evas_GL *evas_gl, EvasGLSync sync, int attribute, int *value), (evas_gl, sync, attribute, value))
+	_EVASGL_EXT_FUNCTION_BEGIN_NOTH(Eina_Bool, evasglGetSyncAttrib, (Evas_GL *evas_gl, EvasGLSync sync, int attribute, int *value), (evas_gl, sync, attribute, value))
             _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglGetSyncAttrib)
 	_EVASGL_EXT_FUNCTION_END()
 
@@ -1625,11 +1633,11 @@ _EVASGL_EXT_BEGIN(EGL_KHR_reusable_sync)
 
 	_EVASGL_EXT_DRVNAME(EGL_KHR_reusable_sync)
 
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglSignalSyncKHR, (EGLDisplay dpy, EGLSyncKHR sync, EGLenum mode), (dpy, sync, mode))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglSignalSyncKHR")
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(EGLBoolean, eglSignalSyncKHR, (EGLDisplay dpy, EGLSyncKHR sync, EGLenum mode), (dpy, sync, mode))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglSignalSyncKHR")
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
 
-	_EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglSignalSync, (Evas_GL *evas_gl, EvasGLSync sync, unsigned mode), (evas_gl, sync, mode))
+	_EVASGL_EXT_FUNCTION_BEGIN_NOTH(Eina_Bool, evasglSignalSync, (Evas_GL *evas_gl, EvasGLSync sync, unsigned mode), (evas_gl, sync, mode))
             _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglSignalSync)
 	_EVASGL_EXT_FUNCTION_END()
 
@@ -1639,11 +1647,11 @@ _EVASGL_EXT_BEGIN(EGL_KHR_wait_sync)
 
 	_EVASGL_EXT_DRVNAME(EGL_KHR_wait_sync)
 
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLint, eglWaitSyncKHR, (EGLDisplay dpy, EGLSyncKHR sync, int flags), (dpy, sync, flags))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglWaitSyncKHR")
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(EGLint, eglWaitSyncKHR, (EGLDisplay dpy, EGLSyncKHR sync, int flags), (dpy, sync, flags))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglWaitSyncKHR")
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
 
-	_EVASGL_EXT_FUNCTION_BEGIN(int, evasglWaitSync, (Evas_GL *evas_gl, EvasGLSync sync, int flags), (evas_gl, sync, flags))
+	_EVASGL_EXT_FUNCTION_BEGIN_NOTH(int, evasglWaitSync, (Evas_GL *evas_gl, EvasGLSync sync, int flags), (evas_gl, sync, flags))
             _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglWaitSync)
 	_EVASGL_EXT_FUNCTION_END()
 
@@ -1653,23 +1661,23 @@ _EVASGL_EXT_BEGIN(EGL_WL_bind_wayland_display)
 
         _EVASGL_EXT_DRVNAME(EGL_WL_bind_wayland_display)
 
-        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglBindWaylandDisplayWL, (EGLDisplay dpy, void *display), (dpy, display))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglBindWaylandDisplayWL")
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(EGLBoolean, eglBindWaylandDisplayWL, (EGLDisplay dpy, void *display), (dpy, display))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglBindWaylandDisplayWL")
         _EVASGL_EXT_FUNCTION_PRIVATE_END()
-        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglUnbindWaylandDisplayWL, (EGLDisplay dpy, void *display), (dpy, display))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglUnbindWaylandDisplayWL")
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(EGLBoolean, eglUnbindWaylandDisplayWL, (EGLDisplay dpy, void *display), (dpy, display))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglUnbindWaylandDisplayWL")
         _EVASGL_EXT_FUNCTION_PRIVATE_END()
-        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglQueryWaylandBufferWL, (EGLDisplay dpy, void *buffer, EGLint attribute, EGLint *value), (dpy, buffer, attribute, value))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglQueryWaylandBufferWL")
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH(EGLBoolean, eglQueryWaylandBufferWL, (EGLDisplay dpy, void *buffer, EGLint attribute, EGLint *value), (dpy, buffer, attribute, value))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH("eglQueryWaylandBufferWL")
         _EVASGL_EXT_FUNCTION_PRIVATE_END()
 
-        _EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglBindWaylandDisplay, (Evas_GL *evas_gl, void *wl_display), (evas_gl, wl_display))
+        _EVASGL_EXT_FUNCTION_BEGIN_NOTH(Eina_Bool, evasglBindWaylandDisplay, (Evas_GL *evas_gl, void *wl_display), (evas_gl, wl_display))
                 _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglBindWaylandDisplay)
         _EVASGL_EXT_FUNCTION_END()
-        _EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglUnbindWaylandDisplay, (Evas_GL *evas_gl, void *wl_display), (evas_gl, wl_display))
+        _EVASGL_EXT_FUNCTION_BEGIN_NOTH(Eina_Bool, evasglUnbindWaylandDisplay, (Evas_GL *evas_gl, void *wl_display), (evas_gl, wl_display))
                 _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglUnbindWaylandDisplay)
         _EVASGL_EXT_FUNCTION_END()
-        _EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglQueryWaylandBuffer, (Evas_GL *evas_gl, void *buffer, int attribute, int *value), (evas_gl, buffer, attribute, value))
+        _EVASGL_EXT_FUNCTION_BEGIN_NOTH(Eina_Bool, evasglQueryWaylandBuffer, (Evas_GL *evas_gl, void *buffer, int attribute, int *value), (evas_gl, buffer, attribute, value))
                 _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglQueryWaylandBuffer)
         _EVASGL_EXT_FUNCTION_END()
 
@@ -1766,6 +1774,11 @@ _EVASGL_EXT_END()
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_DEFINED
 #endif
 
+#ifdef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH_DEFINED
+#undef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH
+#undef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH_DEFINED
+#endif
+
 #ifdef _EVASGL_EXT_FUNCTION_PRIVATE_END_DEFINED
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_END
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_END_DEFINED
@@ -1784,8 +1797,10 @@ _EVASGL_EXT_END()
 #undef _EVASGL_EXT_DRVNAME
 #undef _EVASGL_EXT_DRVNAME_PRIVATE
 #undef _EVASGL_EXT_FUNCTION_BEGIN
+#undef _EVASGL_EXT_FUNCTION_BEGIN_NOTH
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN
+#undef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN_NOTH
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
 #endif

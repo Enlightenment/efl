@@ -31,11 +31,17 @@
    extern ret (*gl_ext_sym_##name) param1; \
    extern ret (*gles1_ext_sym_##name) param1; \
    extern ret (*gles3_ext_sym_##name) param1;
+#define _EVASGL_EXT_FUNCTION_BEGIN_NOTH(ret, name, param1, param2) \
+   extern ret (*egl_ext_sym_##name) param1; \
+   extern ret (*gl_ext_sym_##name) param1; \
+   extern ret (*gles1_ext_sym_##name) param1; \
+   extern ret (*gles3_ext_sym_##name) param1;
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_BEGIN()
 #define _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
 #define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH(name)
 
 #include "evas_gl_api_ext_def.h"
 
@@ -47,11 +53,13 @@
 #undef _EVASGL_EXT_DRVNAME_PRIVATE
 #undef _EVASGL_EXT_DRVNAME_DESKTOP
 #undef _EVASGL_EXT_FUNCTION_BEGIN
+#undef _EVASGL_EXT_FUNCTION_BEGIN_NOTH
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_BEGIN
 #undef _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define EXT_FUNC_EGL(fname) egl_ext_sym_##fname
 #define EXT_FUNC(fname) gl_ext_sym_##fname
@@ -73,11 +81,13 @@
 #define _EVASGL_EXT_DRVNAME_PRIVATE(name)
 #define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param1, param2)
+#define _EVASGL_EXT_FUNCTION_BEGIN_NOTH(ret, name, param1, param2)
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_BEGIN()
 #define _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
 #define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH(name)
 
 #include "evas_gl_api_ext_def.h"
 
@@ -89,11 +99,13 @@
 #undef _EVASGL_EXT_DRVNAME_PRIVATE
 #undef _EVASGL_EXT_DRVNAME_DESKTOP
 #undef _EVASGL_EXT_FUNCTION_BEGIN
+#undef _EVASGL_EXT_FUNCTION_BEGIN_NOTH
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_BEGIN
 #undef _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR_NOTH
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define EXTENSION_SUPPORT_EGL(name) (_egl_ext_support_##name == 1)
 #define EXTENSION_SUPPORT(name) (_gl_ext_support_##name == 1)
