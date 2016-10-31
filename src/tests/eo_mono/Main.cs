@@ -4,47 +4,87 @@ using System.Runtime.InteropServices;
 public class BoxInherit : evas.Box
 {
    System.IntPtr handle;
+   System.IntPtr klass;
    public System.IntPtr raw_handle {
       get { return handle; }
    }
-   // [System.Runtime.InteropServices.DllImport("eo")] static extern System.IntPtr
-   // _efl_add_internal_start([System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPStr)] System.String file, int line,
-   //    System.IntPtr klass, System.IntPtr parent, byte is_ref, byte is_fallback);
-   // [System.Runtime.InteropServices.DllImport("eo")] static extern System.IntPtr
-   // _efl_add_end(System.IntPtr eo, byte is_ref, byte is_fallback);
    [System.Runtime.InteropServices.DllImport("evas")] static extern System.IntPtr
       evas_box_class_get();
    public delegate byte class_initializer_delegate(IntPtr klass);
 
+   [DllImport("dl")] static extern System.IntPtr dlsym
+       (IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] String name);
+    
+   delegate Evas_Object_Box_Option append_delegate(IntPtr handle, IntPtr pd, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.canvas.Object child);
+   static Evas_Object_Box_Option append_override(IntPtr handle, IntPtr pd, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.canvas.Object child)
+   {
+       EolianPD epd = (EolianPD)Marshal.PtrToStructure(pd, typeof(EolianPD));
+       GCHandle gch = GCHandle.FromIntPtr(epd.pointer);
+       BoxInherit self = (BoxInherit)gch.Target;
+       return self.append(child);
+   }
+   static append_delegate append_override_delegate = new append_delegate(BoxInherit.append_override);
+
    public static byte class_initializer(IntPtr klass)
    {
        System.Console.WriteLine("class_initializer");
-       return 0;
+
+       Efl_Op_Description descs_struct;
+
+       //descs_struct[0].api_func = (IntPtr)evas_obj_box_append;
+       descs_struct.api_func = dlsym(IntPtr.Zero, "evas_obj_box_append");
+       descs_struct.func = Marshal.GetFunctionPointerForDelegate(append_override_delegate);
+
+       IntPtr descs = Marshal.AllocHGlobal(Marshal.SizeOf(descs_struct)*1);
+       Marshal.StructureToPtr(descs_struct, descs, false);
+
+       Efl_Object_Ops ops_struct;
+       ops_struct.descs = descs;
+       ops_struct.count = (UIntPtr)1;
+
+       IntPtr ops = Marshal.AllocHGlobal(Marshal.SizeOf(ops_struct));
+       Marshal.StructureToPtr(ops_struct, ops, false);
+       
+       efl.eo.Globals.efl_class_functions_set(klass, ops, IntPtr.Zero);
+       return 1;
    }
    static class_initializer_delegate class_initializer_delegate_inst = new class_initializer_delegate(BoxInherit.class_initializer);
    public BoxInherit(efl.Object parent = null)
    {
       ClassDescription description;
       description.version = 2; // EO_VERSION
-      description.name = "Class Name";
+      description.name = "BoxInherit";
       description.class_type = 0; // REGULAR
-      description.data_size = UIntPtr.Zero;
+      description.data_size = (UIntPtr)8;
       description.class_initializer = Marshal.GetFunctionPointerForDelegate(class_initializer_delegate_inst);
       description.class_constructor = IntPtr.Zero;
       description.class_destructor = IntPtr.Zero;
 
+      IntPtr pnt = Marshal.AllocHGlobal(Marshal.SizeOf(description));
+      Marshal.StructureToPtr(description, pnt, false);
+      
       IntPtr base_klass = evas_box_class_get();
       Console.WriteLine("Going to register!");
-      IntPtr klass = efl.eo.Globals.efl_class_new(ref description, base_klass);
+      klass = efl.eo.Globals.efl_class_new(pnt, base_klass, IntPtr.Zero);
        if(klass == IntPtr.Zero)
            Console.WriteLine("klass was not registed");
+      Console.WriteLine("Registered?");
 
       System.IntPtr parent_ptr = System.IntPtr.Zero;
       if(parent != null)
          parent_ptr = parent.raw_handle;
 
+      Console.WriteLine("Instantiating?");
       System.IntPtr eo = efl.eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 0, 0);
       handle = efl.eo.Globals._efl_add_end(eo, 0, 0);
+      IntPtr pd = efl.eo.Globals.efl_data_scope_get(handle, klass);
+      {
+          GCHandle gch = GCHandle.Alloc(this);
+          EolianPD epd;
+          epd.pointer = GCHandle.ToIntPtr(gch);
+          Marshal.StructureToPtr(epd, pd, false);
+      }
+      Console.WriteLine("Instantiated?");
    }
    public BoxInherit(System.IntPtr raw)
    {
@@ -60,7 +100,7 @@ public class BoxInherit : evas.Box
    public void padding_set(evas.Coord horizontal, evas.Coord vertical) { evas_obj_box_padding_set(handle, horizontal, vertical); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  void evas_obj_box_layout_set(System.IntPtr obj,  Evas_Object_Box_Layout cb,   System.IntPtr data,  Eina_Free_Cb free_data);
    public void layout_set(Evas_Object_Box_Layout cb,  System.IntPtr data, Eina_Free_Cb free_data) { evas_obj_box_layout_set(handle, cb, data, free_data); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.canvas.Object evas_obj_box_internal_remove(System.IntPtr obj,   efl.canvas.Object child);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.canvas.Object evas_obj_box_internal_remove(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.canvas.Object child);
    public  efl.canvas.Object internal_remove( efl.canvas.Object child) { return evas_obj_box_internal_remove(handle, child); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  bool evas_obj_box_remove_all(System.IntPtr obj,  bool clear);
    public bool remove_all(bool clear) { return evas_obj_box_remove_all(handle, clear); }
@@ -68,8 +108,8 @@ public class BoxInherit : evas.Box
    public  int iterator_new() { return evas_obj_box_iterator_new(handle); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.canvas.Object evas_obj_box_add_to(System.IntPtr obj);
    public  efl.canvas.Object add_to() { return evas_obj_box_add_to(handle); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  Evas_Object_Box_Option evas_obj_box_append(System.IntPtr obj,   efl.canvas.Object child);
-   public Evas_Object_Box_Option append( efl.canvas.Object child) { return evas_obj_box_append(handle, child); }
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  Evas_Object_Box_Option evas_obj_box_append(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.canvas.Object child);
+   public Evas_Object_Box_Option append( efl.canvas.Object child) { return evas_obj_box_append(efl.eo.Globals.efl_super(handle, klass), child); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  int evas_obj_box_option_property_id_get(System.IntPtr obj,   System.String name);
    public int option_property_id_get( System.String name) { return evas_obj_box_option_property_id_get(handle, name); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   int evas_obj_box_accessor_new(System.IntPtr obj);
@@ -80,7 +120,7 @@ public class BoxInherit : evas.Box
    public bool remove_at( uint pos) { return evas_obj_box_remove_at(handle, pos); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   System.String evas_obj_box_option_property_name_get(System.IntPtr obj,  int property);
    public  System.String option_property_name_get(int property) { return evas_obj_box_option_property_name_get(handle, property); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  bool evas_obj_box_remove(System.IntPtr obj,   efl.canvas.Object child);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  bool evas_obj_box_remove(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.canvas.Object child);
    public bool remove( efl.canvas.Object child) { return evas_obj_box_remove(handle, child); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  int evas_obj_box_count(System.IntPtr obj);
    public int count() { return evas_obj_box_count(handle); }
@@ -110,7 +150,7 @@ public class BoxInherit : evas.Box
    public void visible_set(bool v) { efl_gfx_visible_set(handle, v); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.Object efl_parent_get(System.IntPtr obj);
    public  efl.Object parent_get() { return efl_parent_get(handle); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_parent_set(System.IntPtr obj,   efl.Object parent);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_parent_set(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.Object parent);
    public void parent_set( efl.Object parent) { efl_parent_set(handle, parent); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   System.String efl_name_get(System.IntPtr obj);
    public  System.String name_get() { return efl_name_get(handle); }
@@ -132,11 +172,11 @@ public class BoxInherit : evas.Box
    public void key_data_set( System.String key,  System.IntPtr data) { efl_key_data_set(handle, key, data); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.Object efl_key_ref_get(System.IntPtr obj,   System.String key);
    public  efl.Object key_ref_get( System.String key) { return efl_key_ref_get(handle, key); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_key_ref_set(System.IntPtr obj,   System.String key,   efl.Object objdata);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_key_ref_set(System.IntPtr obj,   System.String key, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.Object objdata);
    public void key_ref_set( System.String key,  efl.Object objdata) { efl_key_ref_set(handle, key, objdata); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.Object efl_key_wref_get(System.IntPtr obj,   System.String key);
    public  efl.Object key_wref_get( System.String key) { return efl_key_wref_get(handle, key); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_key_wref_set(System.IntPtr obj,   System.String key,   efl.Object objdata);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_key_wref_set(System.IntPtr obj,   System.String key, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.Object objdata);
    public void key_wref_set( System.String key,  efl.Object objdata) { efl_key_wref_set(handle, key, objdata); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   int efl_key_value_get(System.IntPtr obj,   System.String key);
    public  int key_value_get( System.String key) { return efl_key_value_get(handle, key); }
@@ -144,7 +184,7 @@ public class BoxInherit : evas.Box
    public void key_value_set( System.String key,  int value) { efl_key_value_set(handle, key, value); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_del(System.IntPtr obj);
    public void del() { efl_del(handle); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.Object efl_provider_find(System.IntPtr obj,   efl.Object klass);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.Object efl_provider_find(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.Object klass);
    public  efl.Object provider_find( efl.Object klass) { return efl_provider_find(handle, klass); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.Object efl_constructor(System.IntPtr obj);
    public  efl.Object constructor() { return efl_constructor(handle); }
@@ -154,9 +194,9 @@ public class BoxInherit : evas.Box
    public  efl.Object finalize() { return efl_finalize(handle); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.Object efl_name_find(System.IntPtr obj,   System.String search);
    public  efl.Object name_find( System.String search) { return efl_name_find(handle, search); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_wref_add(System.IntPtr obj,   efl.Object wref);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_wref_add(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.Object wref);
    public void wref_add( efl.Object wref) { efl_wref_add(handle, wref); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_wref_del(System.IntPtr obj,   efl.Object wref);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_wref_del(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.Object wref);
    public void wref_del( efl.Object wref) { efl_wref_del(handle, wref); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_event_thaw(System.IntPtr obj);
    public void event_thaw() { efl_event_thaw(handle); }
@@ -180,17 +220,17 @@ public class BoxInherit : evas.Box
    public bool event_callback_legacy_call(efl.kw_event.Description desc,  System.IntPtr event_info) { return efl_event_callback_legacy_call(handle, desc, event_info); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_event_callback_stop(System.IntPtr obj);
    public void event_callback_stop() { efl_event_callback_stop(handle); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_event_callback_forwarder_add(System.IntPtr obj,  efl.kw_event.Description desc,   efl.Object new_obj);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_event_callback_forwarder_add(System.IntPtr obj,  efl.kw_event.Description desc, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.Object new_obj);
    public void event_callback_forwarder_add(efl.kw_event.Description desc,  efl.Object new_obj) { efl_event_callback_forwarder_add(handle, desc, new_obj); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_event_callback_forwarder_del(System.IntPtr obj,  efl.kw_event.Description desc,   efl.Object new_obj);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_event_callback_forwarder_del(System.IntPtr obj,  efl.kw_event.Description desc, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.Object new_obj);
    public void event_callback_forwarder_del(efl.kw_event.Description desc,  efl.Object new_obj) { efl_event_callback_forwarder_del(handle, desc, new_obj); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_dbg_info_get(System.IntPtr obj,  efl.Dbg_Info root_node);
    public void dbg_info_get(efl.Dbg_Info root_node) { efl_dbg_info_get(handle, root_node); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   int efl_children_iterator_new(System.IntPtr obj);
    public  int children_iterator_new() { return efl_children_iterator_new(handle); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  bool efl_composite_attach(System.IntPtr obj,   efl.Object comp_obj);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  bool efl_composite_attach(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.Object comp_obj);
    public bool composite_attach( efl.Object comp_obj) { return efl_composite_attach(handle, comp_obj); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  bool efl_composite_detach(System.IntPtr obj,   efl.Object comp_obj);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  bool efl_composite_detach(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.Object comp_obj);
    public bool composite_detach( efl.Object comp_obj) { return efl_composite_detach(handle, comp_obj); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  bool efl_composite_part_is(System.IntPtr obj);
    public bool composite_part_is() { return efl_composite_part_is(handle); }
@@ -206,9 +246,9 @@ public class BoxInherit : evas.Box
    public void group_calculate() { efl_canvas_group_calculate(handle); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   int efl_canvas_group_children_iterate(System.IntPtr obj);
    public  int group_children_iterate() { return efl_canvas_group_children_iterate(handle); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_canvas_group_member_add(System.IntPtr obj,   efl.canvas.Object sub_obj);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_canvas_group_member_add(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.canvas.Object sub_obj);
    public void group_member_add( efl.canvas.Object sub_obj) { efl_canvas_group_member_add(handle, sub_obj); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_canvas_group_member_del(System.IntPtr obj,   efl.canvas.Object sub_obj);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_canvas_group_member_del(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.canvas.Object sub_obj);
    public void group_member_del( efl.canvas.Object sub_obj) { efl_canvas_group_member_del(handle, sub_obj); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_canvas_group_add(System.IntPtr obj);
    public void group_add() { efl_canvas_group_add(handle); }
@@ -230,7 +270,7 @@ public class BoxInherit : evas.Box
    public void freeze_events_set(bool freeze) { efl_canvas_object_freeze_events_set(handle, freeze); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.canvas.Object efl_canvas_object_clip_get(System.IntPtr obj);
    public  efl.canvas.Object clip_get() { return efl_canvas_object_clip_get(handle); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_canvas_object_clip_set(System.IntPtr obj,   efl.canvas.Object clip);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_canvas_object_clip_set(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.canvas.Object clip);
    public void clip_set( efl.canvas.Object clip) { efl_canvas_object_clip_set(handle, clip); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  bool efl_canvas_object_repeat_events_get(System.IntPtr obj);
    public bool repeat_events_get() { return efl_canvas_object_repeat_events_get(handle); }
@@ -332,7 +372,7 @@ public class BoxInherit : evas.Box
    public bool map_lightning_3d(double lx, double ly, double lz, int lr, int lg, int lb, int ar, int ag, int ab) { return efl_gfx_map_lightning_3d(handle, lx, ly, lz, lr, lg, lb, ar, ag, ab); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  bool efl_gfx_map_perspective_3d(System.IntPtr obj,  double px,  double py,  double z0,  double foc);
    public bool map_perspective_3d(double px, double py, double z0, double foc) { return efl_gfx_map_perspective_3d(handle, px, py, z0, foc); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  bool efl_gfx_map_dup(System.IntPtr obj,   efl.gfx.Map other);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  bool efl_gfx_map_dup(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.gfx.Map other);
    public bool map_dup( efl.gfx.Map other) { return efl_gfx_map_dup(handle, other); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  short efl_gfx_stack_layer_get(System.IntPtr obj);
    public short layer_get() { return efl_gfx_stack_layer_get(handle); }
@@ -342,11 +382,11 @@ public class BoxInherit : evas.Box
    public  efl.gfx.Stack below_get() { return efl_gfx_stack_below_get(handle); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern   efl.gfx.Stack efl_gfx_stack_above_get(System.IntPtr obj);
    public  efl.gfx.Stack above_get() { return efl_gfx_stack_above_get(handle); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_gfx_stack_below(System.IntPtr obj,   efl.gfx.Stack below);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_gfx_stack_below(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.gfx.Stack below);
    public void stack_below( efl.gfx.Stack below) { efl_gfx_stack_below(handle, below); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_gfx_stack_raise(System.IntPtr obj);
    public void raise() { efl_gfx_stack_raise(handle); }
-   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_gfx_stack_above(System.IntPtr obj,   efl.gfx.Stack above);
+   [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_gfx_stack_above(System.IntPtr obj, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]  efl.gfx.Stack above);
    public void stack_above( efl.gfx.Stack above) { efl_gfx_stack_above(handle, above); }
    [System.Runtime.InteropServices.DllImport("evas")] static extern  void efl_gfx_stack_lower(System.IntPtr obj);
    public void lower() { efl_gfx_stack_lower(handle); }
@@ -435,7 +475,7 @@ class TestMain
         rect.size_set(640, 480);
         rect.visible_set(true);
 
-        // evas.Box box = new evas.BoxConcrete(canvas);
+        //evas.Box box = new evas.BoxConcrete(canvas);
         evas.Box box = new MyBox(canvas);
         // rect.position_set(160, 120);
         rect.size_set(320, 240);
@@ -451,8 +491,12 @@ class TestMain
         image2.hint_min_set(160, 120);
         image2.visible_set(true);
         
+        System.Console.WriteLine("Calling append");
         box.append(image1);
+        System.Console.WriteLine("Called append");
+        System.Console.WriteLine("Calling append");
         box.append(image2);
+        System.Console.WriteLine("Called append");
         
         loop.begin();
     }
