@@ -1,6 +1,7 @@
 import efl_gfx_types;
 
 interface Efl.Gfx {
+   [[Efl graphics interface]]
    eo_prefix: efl_gfx;
    methods {
       @property position {
@@ -18,8 +19,8 @@ interface Efl.Gfx {
             [[Retrieves the position of the given Evas object.]]
          }
          values {
-            x: int;
-            y: int;
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
          }
       }
       @property size {
@@ -37,17 +38,17 @@ interface Efl.Gfx {
             [[Retrieves the (rectangular) size of the given Evas object.]]
          }
          values {
-            w: int;
-            h: int;
+            w: int; [[Width]]
+            h: int; [[Height]]
          }
       }
       @property geometry {
          [[Rectangular geometry that combines both position and size.]]
          values {
-            x: int;
-            y: int;
-            w: int;
-            h: int;
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
+            w: int; [[Width]]
+            h: int; [[Height]]
          }
       }
       @property color {
@@ -99,7 +100,7 @@ interface Efl.Gfx {
 
               These color values are expected to be premultiplied by alpha.
             ]]
-            return: bool;
+            return: bool; [[$true when color was set, $false otherwise]]
          }
          get {
             [[Retrieves a specific color of the given Evas object.
@@ -120,7 +121,7 @@ interface Efl.Gfx {
               Use null pointers on the components you're not interested
               in: they'll be ignored by the function.
             ]]
-            return: bool;
+            return: bool; [[$true when color was retrieved, $false otherwise]]
          }
          keys {
             part: string; [[The part you are interested in.]]
@@ -140,7 +141,7 @@ interface Efl.Gfx {
             [[Retrieves whether or not the given Evas object is visible.]]
          }
          values {
-            v: bool; [[true if to make the object visible, false otherwise]]
+            v: bool; [[$true if to make the object visible, $false otherwise]]
          }
       }
    }
