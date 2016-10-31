@@ -14,7 +14,7 @@ interface Efl.Canvas ()
               much higher one.
 
             ]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]] 
          }
          values {
             maxw: int; [[Pointer to hold the return value in pixels of the maximum width.]]
@@ -97,14 +97,26 @@ interface Efl.Canvas ()
            objects, acting only on the ones at the "top level", with
            regard to object parenting.
          ]]
-         return: free(own(iterator<Efl.Gfx>), eina_iterator_free) @warn_unused;
+         return: free(own(iterator<Efl.Gfx>), eina_iterator_free) @warn_unused; [[List of objects]] 
          params {
-            @in x: int;
-            @in y: int;
-            @in w: int;
-            @in h: int;
-            @in include_pass_events_objects: bool;
-            @in include_hidden_objects: bool;
+            @in x: int; [[
+               The top left corner's horizontal coordinate for the
+               rectangular region.
+            ]]
+            @in y: int; [[
+               The top left corner's vertical coordinate for the
+               rectangular region.
+            ]]
+            @in w: int; [[The width of the rectangular region.]]
+            @in h: int; [[The height of the rectangular region.]]
+            @in include_pass_events_objects: bool; [[
+               Boolean flag to include or not objects which pass events
+               in this calculation.
+            ]]
+            @in include_hidden_objects: bool; [[
+               Boolean flag to include or not hidden objects in this
+               calculation.
+            ]]
          }
       }
       object_top_in_rectangle_get @const {
@@ -148,14 +160,14 @@ interface Efl.Canvas ()
       }
    }
    events {
-      focus,in;
-      focus,out;
-      object,focus,in: Efl.Canvas.Object;
-      object,focus,out: Efl.Canvas.Object;
-      render,pre;
-      render,post;
-      device,changed: Efl.Input.Device;
-      device,added: Efl.Input.Device;
-      device,removed: Efl.Input.Device;
+      focus,in; [[Called when canvas got focus]]
+      focus,out; [[Called when canvas lost focus]]
+      object,focus,in: Efl.Canvas.Object; [[Called when object got focus]]
+      object,focus,out: Efl.Canvas.Object; [[Called when object lost focus]]
+      render,pre; [[Called when pre render happens]]
+      render,post; [[Called when post render happens]]
+      device,changed: Efl.Input.Device; [[Called when input device changed]]
+      device,added: Efl.Input.Device; [[Called when input device was added]]
+      device,removed: Efl.Input.Device; [[Called when input device was removed]]
    }
 }
