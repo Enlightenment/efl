@@ -6,6 +6,7 @@ struct Efl.Event.Animator_Tick {
 }
 
 interface Efl.Animator {
+   [[Efl animator interface]]
    eo_prefix: efl_animator;
    event_prefix: efl;
    events {
