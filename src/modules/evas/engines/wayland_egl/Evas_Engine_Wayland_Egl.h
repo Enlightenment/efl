@@ -19,13 +19,6 @@ struct _Evas_Engine_Info_Wayland_Egl
         unsigned int destination_alpha : 1;
      } info;
 
-   struct 
-     {
-        void (*pre_swap) (void *data, Evas *evas);
-        void (*post_swap) (void *data, Evas *evas);
-        void *data;
-     } callback;
-
    /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
 

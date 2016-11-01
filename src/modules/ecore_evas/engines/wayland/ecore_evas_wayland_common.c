@@ -1884,25 +1884,6 @@ _ecore_evas_wayland_window_get(const Ecore_Evas *ee)
    return wdata->win;
 }
 
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-static void
-_ecore_evas_wayland_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e))
-{
-   Evas_Engine_Info_Wayland_Egl *einfo;
-
-   if (!(!strcmp(ee->driver, "wayland_egl"))) return;
-
-   if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
-     {
-        einfo->callback.pre_swap = pre_cb;
-        einfo->callback.post_swap = post_cb;
-        einfo->callback.data = data;
-        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-          ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-     }
-}
-#endif
-
 /* static void */
 /* _ecore_evas_wayland_pointer_set(Ecore_Evas *ee EINA_UNUSED, int hot_x EINA_UNUSED, int hot_y EINA_UNUSED) */
 /* { */
@@ -1925,11 +1906,6 @@ _ecore_evas_wl_interface_new(void)
    /* iface->pointer_set = _ecore_evas_wayland_pointer_set; */
    iface->type_set = _ecore_evas_wayland_type_set;
    iface->window2_get = _ecore_evas_wayland_window_get;
-
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-   iface->pre_post_swap_callback_set = 
-     _ecore_evas_wayland_pre_post_swap_callback_set;
-#endif
 
    return iface;
 }

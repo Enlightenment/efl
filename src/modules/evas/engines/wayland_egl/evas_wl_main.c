@@ -509,9 +509,6 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_
         ob->vsync = EINA_TRUE;
      }
 
-   if (ob->info->callback.pre_swap)
-     ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
-
    if ((glsym_eglSwapBuffersWithDamage) && (surface_damage) &&
        (ob->swap_mode != MODE_FULL))
      {
@@ -534,9 +531,6 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_
      }
    else
       eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
-
-   if (ob->info->callback.post_swap)
-     ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
 
    ob->frame_cnt++;
 
