@@ -1048,6 +1048,49 @@ START_TEST(efl_test_promise_all)
 }
 END_TEST
 
+START_TEST(efl_test_promise_all_after_value_set)
+{
+   Efl_Promise *p1, *p2, *p3;
+   Efl_Future *all = NULL, *f1, *f2, *f3;
+   Future_Ok donea = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+
+   ecore_init();
+
+   p1 = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   p2 = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   p3 = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p1 || !p2 || !p3);
+
+   f1 = efl_ref(efl_promise_future_get(p1));
+   f2 = efl_ref(efl_promise_future_get(p2));
+   f3 = efl_ref(efl_promise_future_get(p3));
+
+   efl_promise_value_set(p1, &value[0], NULL);
+   efl_promise_value_set(p2, &value[1], NULL);
+   efl_promise_value_set(p3, &value[2], NULL);
+
+   efl_future_use(&all, efl_future_all(f1, f2, f3));
+
+   fail_if(!all);
+
+   fail_if(!efl_future_then(all, _then_all, _cancel, _progress, &donea));
+
+   fail_if(!donea.then || donea.cancel || donea.progress);
+
+   fail_if(all);
+
+   efl_unref(f1);
+   efl_unref(f2);
+   efl_unref(f3);
+
+   efl_del(p1);
+   efl_del(p2);
+   efl_del(p3);
+
+   ecore_shutdown();
+}
+END_TEST
+
 static void
 _then_race(void *data, const Efl_Event *ev)
 {
@@ -1180,6 +1223,7 @@ void ecore_test_ecore_promise(TCase *tc)
    tcase_add_test(tc, efl_test_promise_future_optional_success);
    tcase_add_test(tc, efl_test_promise_future_optional_cancel);
    tcase_add_test(tc, efl_test_promise_all);
+   tcase_add_test(tc, efl_test_promise_all_after_value_set);
    tcase_add_test(tc, efl_test_promise_race);
    tcase_add_test(tc, efl_test_future_link);
    tcase_add_test(tc, efl_test_recursive_mess);
