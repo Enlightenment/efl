@@ -1,19 +1,7 @@
 #ifndef _EVAS_ENGINE_WAYLAND_EGL_H
 # define _EVAS_ENGINE_WAYLAND_EGL_H
 
-# define EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_EXISTS 1
-
 typedef struct _Evas_Engine_Info_Wayland_Egl Evas_Engine_Info_Wayland_Egl;
-
-typedef enum _Evas_Engine_Info_Wayland_Egl_Swap_Mode
-{
-   EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_AUTO = 0,
-   EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_FULL = 1,
-   EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_COPY = 2,
-   EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_DOUBLE = 3,
-   EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_TRIPLE = 4,
-   EVAS_ENGINE_WAYLAND_EGL_SWAP_MODE_QUADRUPLE = 5
-} Evas_Engine_Info_Wayland_Egl_Swap_Mode;
 
 struct _Evas_Engine_Info_Wayland_Egl
 {
