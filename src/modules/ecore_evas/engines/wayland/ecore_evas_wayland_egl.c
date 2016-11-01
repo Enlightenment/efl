@@ -257,23 +257,6 @@ _ecore_evas_wl_egl_render_flush_pre(void *data, Evas *e, void *event_info EINA_U
    einfo->drag_ack = wdata->dragging;
 }
 
-static void
-_ecore_evas_wl_egl_render_post(void *data, Evas *e, void *event_info EINA_UNUSED)
-{
-   Ecore_Evas *ee = data;
-   Evas_Engine_Info_Wayland_Egl *einfo;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-   int fw, fh;
-
-   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(e);
-   wdata = ee->engine.data;
-   if (!einfo->wobbling) return;
-   evas_output_framespace_get(e, NULL, NULL, &fw, &fh);
-   evas_damage_rectangle_add(e, 0, 0, ee->w + fw, ee->h + fh);
-   ecore_wl2_window_opaque_region_set(wdata->win,
-     wdata->win->opaque.x, wdata->win->opaque.y, wdata->win->opaque.w, wdata->win->opaque.h);
-}
-
 /* external functions */
 EAPI Ecore_Evas *
 ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
@@ -399,8 +382,6 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
                            _ecore_evas_wl_common_render_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                            _ecore_evas_wl_egl_render_flush_pre, ee);
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
-                           _ecore_evas_wl_egl_render_post, ee);
 
    /* FIXME: This needs to be set based on theme & scale */
    if (ee->prop.draw_frame)

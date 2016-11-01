@@ -44,7 +44,6 @@ struct _Evas_Engine_Info_Wayland_Egl
    Eina_Bool vsync : 1;
    Eina_Bool indirect : 1;
 
-   Eina_Bool wobbling : 1;
    Eina_Bool www_avail : 1;
    Eina_Bool just_mapped : 1;
    Eina_Rectangle window;
