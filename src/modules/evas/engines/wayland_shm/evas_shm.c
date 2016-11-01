@@ -585,7 +585,7 @@ _evas_shm_surface_create(Surface *s, int w, int h, int num_buff)
 
    surf->w = w;
    surf->h = h;
-   surf->disp = s->info->info.wl_disp;
+   surf->disp = s->info->info.wl_display;
    surf->shm = s->info->info.wl_shm;
    surf->surface = s->info->info.wl_surface;
    surf->num_buff = num_buff;

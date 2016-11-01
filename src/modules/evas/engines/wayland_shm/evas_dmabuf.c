@@ -701,7 +701,7 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    surf = s->surf.dmabuf;
 
    surf->surface = s;
-   surf->wl_display = s->info->info.wl_disp;
+   surf->wl_display = s->info->info.wl_display;
    surf->dmabuf = s->info->info.wl_dmabuf;
    surf->wl_surface = s->info->info.wl_surface;
    surf->alpha = s->info->info.destination_alpha;

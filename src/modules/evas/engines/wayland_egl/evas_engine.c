@@ -649,7 +649,7 @@ eng_setup(Evas *evas, void *info)
         if ((ob) && (_re_wincheck(ob)))
           {
              ob->info = inf;
-             if ((ob->info->info.display != ob->disp) ||
+             if ((ob->info->info.wl_display != ob->disp) ||
                  (ob->info->info.wl_surface != ob->surface) ||
                  /* FIXME: comment out below line.
                   * since there is no place set the info->info.win for now,
@@ -660,7 +660,7 @@ eng_setup(Evas *evas, void *info)
                  (ob->info->info.destination_alpha != ob->alpha))
                {
                   gl_wins--;
-                  if (!ob->info->info.display)
+                  if (!ob->info->info.wl_display)
                     {
                        eng_window_free(re->generic.software.ob);
                        re->generic.software.ob = NULL;

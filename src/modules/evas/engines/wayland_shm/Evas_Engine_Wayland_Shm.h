@@ -21,7 +21,7 @@ struct _Evas_Engine_Info_Wayland_Shm
         Eina_Bool destination_alpha : 1;
         int edges;
 
-        struct wl_display *wl_disp;
+        struct wl_display *wl_display;
         int compositor_version;
      } info;
 

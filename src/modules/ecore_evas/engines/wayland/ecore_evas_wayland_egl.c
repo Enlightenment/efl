@@ -128,7 +128,7 @@ _ee_egl_display_unset(Ecore_Evas *ee)
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
-   einfo->info.display = NULL;
+   einfo->info.wl_display = NULL;
    wdata = ee->engine.data;
    wdata->regen_objs = _evas_canvas_image_data_unset(ecore_evas_get(ee));
    evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -148,7 +148,7 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
-        einfo->info.display = ecore_wl2_display_get(wdata->display);
+        einfo->info.wl_display = ecore_wl2_display_get(wdata->display);
         einfo->info.destination_alpha = EINA_TRUE;
         einfo->info.rotation = ee->rotation;
         einfo->info.wl_surface = ecore_wl2_window_surface_get(wdata->win);
@@ -391,7 +391,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
         wdata->sync_done = EINA_TRUE;
         if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
           {
-             einfo->info.display = ecore_wl2_display_get(ewd);
+             einfo->info.wl_display = ecore_wl2_display_get(ewd);
              einfo->info.destination_alpha = EINA_TRUE;
              einfo->info.rotation = ee->rotation;
              einfo->info.depth = 32;

@@ -12,7 +12,7 @@ struct _Evas_Engine_Info_Wayland_Egl
    /* engine specific data & parameters it needs to set up */
    struct 
      {
-        struct wl_display *display;
+        struct wl_display *wl_display;
         struct wl_surface *wl_surface;
         struct wl_egl_window *win;
         int depth, rotation, edges;
