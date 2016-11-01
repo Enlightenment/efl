@@ -1151,7 +1151,7 @@ EAPI Evas_Device *evas_device_add(Evas *e);
  * @see evas_device_del
  * @since 1.19
  */
-EAPI Evas_Device *evas_device_add_full(Evas *eo_e, const char *name,
+EAPI Evas_Device *evas_device_add_full(Evas *e, const char *name,
                                        const char *desc,
                                        Evas_Device *parent_dev,
                                        Evas_Device *emulation_dev,

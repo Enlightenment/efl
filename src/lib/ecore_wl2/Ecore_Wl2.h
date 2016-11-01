@@ -139,6 +139,36 @@ typedef struct _Ecore_Wl2_Event_Data_Source_Send
    int fd;
 } Ecore_Wl2_Event_Data_Source_Send;
 
+typedef struct _Ecore_Wl2_Event_Seat_Name
+{
+   Eina_Stringshare *name;
+   unsigned int id;
+} Ecore_Wl2_Event_Seat_Name;
+
+typedef struct _Ecore_Wl2_Event_Seat_Capabilities
+{
+   unsigned int id;
+   Eina_Bool pointer_enabled : 1;
+   Eina_Bool keyboard_enabled : 1;
+   Eina_Bool touch_enabled : 1;
+} Ecore_Wl2_Event_Seat_Capabilities;
+
+typedef enum
+{
+   ECORE_WL2_DEVICE_TYPE_SEAT,
+   ECORE_WL2_DEVICE_TYPE_POINTER,
+   ECORE_WL2_DEVICE_TYPE_KEYBOARD,
+   ECORE_WL2_DEVICE_TYPE_TOUCH
+} Ecore_Wl2_Device_Type;
+
+typedef struct _Ecore_Wl2_Event_Device
+{
+   Eo *dev;
+   int window_id;
+   unsigned int seat_id;
+   Ecore_Wl2_Device_Type type;
+} Ecore_Wl2_Event_Device;
+
 typedef enum
 {
    ECORE_WL2_SELECTION_CNP,
@@ -203,6 +233,10 @@ EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_SYNC_DONE; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_OFFER_DATA_READY; /** @since 1.19 */
+EAPI extern int ECORE_WL2_EVENT_SEAT_NAME_CHANGED; /** @since 1.19 */
+EAPI extern int ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED; /** @since 1.19 */
+EAPI extern int ECORE_WL2_EVENT_DEVICE_ADDED; /** @since 1.19 */
+EAPI extern int ECORE_WL2_EVENT_DEVICE_REMOVED; /** @since 1.19 */
 /**
  * @file
  * @brief Ecore functions for dealing with the Wayland display protocol

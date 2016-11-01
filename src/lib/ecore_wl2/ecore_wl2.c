@@ -31,6 +31,10 @@ EAPI int ECORE_WL2_EVENT_DATA_SOURCE_SEND = 0;
 EAPI int ECORE_WL2_EVENT_WINDOW_CONFIGURE = 0;
 EAPI int ECORE_WL2_EVENT_SYNC_DONE = 0;
 EAPI int ECORE_WL2_EVENT_OFFER_DATA_READY = 0;
+EAPI int ECORE_WL2_EVENT_SEAT_NAME_CHANGED = 0;
+EAPI int ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED = 0;
+EAPI int ECORE_WL2_EVENT_DEVICE_ADDED = 0;
+EAPI int ECORE_WL2_EVENT_DEVICE_REMOVED = 0;
 
 EAPI int _ecore_wl2_event_window_www = -1;
 EAPI int _ecore_wl2_event_window_www_drag = -1;
@@ -89,6 +93,10 @@ ecore_wl2_init(void)
         ECORE_WL2_EVENT_WINDOW_CONFIGURE = ecore_event_type_new();
         ECORE_WL2_EVENT_SYNC_DONE = ecore_event_type_new();
         ECORE_WL2_EVENT_OFFER_DATA_READY = ecore_event_type_new();
+        ECORE_WL2_EVENT_SEAT_NAME_CHANGED = ecore_event_type_new();
+        ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED = ecore_event_type_new();
+        ECORE_WL2_EVENT_DEVICE_ADDED = ecore_event_type_new();
+        ECORE_WL2_EVENT_DEVICE_REMOVED = ecore_event_type_new();
         _ecore_wl2_event_window_www = ecore_event_type_new();
         _ecore_wl2_event_window_www_drag = ecore_event_type_new();
      }
@@ -140,6 +148,10 @@ ecore_wl2_shutdown(void)
    ECORE_WL2_EVENT_WINDOW_CONFIGURE = 0;
    ECORE_WL2_EVENT_SYNC_DONE = 0;
    ECORE_WL2_EVENT_OFFER_DATA_READY = 0;
+   ECORE_WL2_EVENT_SEAT_NAME_CHANGED = 0;
+   ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED = 0;
+   ECORE_WL2_EVENT_DEVICE_ADDED = 0;
+   ECORE_WL2_EVENT_DEVICE_REMOVED = 0;
 
    /* shutdown Ecore_Event */
    ecore_event_shutdown();

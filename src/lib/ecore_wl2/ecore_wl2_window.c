@@ -488,18 +488,7 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
    display = window->display;
 
    EINA_INLIST_FOREACH(display->inputs, input)
-     {
-        if ((input->focus.pointer) &&
-            (input->focus.pointer == window))
-          input->focus.pointer = NULL;
-        if ((input->focus.keyboard) &&
-            (input->focus.keyboard == window))
-          {
-             input->focus.keyboard = NULL;
-             ecore_timer_del(input->repeat.timer);
-             input->repeat.timer = NULL;
-          }
-     }
+      _ecore_wl2_input_window_remove(input, window);
 
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_free(subsurf);
