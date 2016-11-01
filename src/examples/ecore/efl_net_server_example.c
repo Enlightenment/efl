@@ -474,12 +474,21 @@ EFL_CALLBACKS_ARRAY_DEFINE(server_cbs,
 static const char * protocols[] = {
   "tcp",
   "udp",
+  "ssl",
 #ifndef _WIN32
   "unix",
 #endif
   NULL
 };
 
+static const char *ciphers_strs[] = {
+  "auto",
+  "sslv3",
+  "tlsv1",
+  "tlsv1.1",
+  "tlsv1.2",
+  NULL
+};
 
 static const Ecore_Getopt options = {
   "efl_net_server_example", /* program name */
@@ -518,6 +527,13 @@ static const Ecore_Getopt options = {
                             "Disable multicast loopback."),
     ECORE_GETOPT_APPEND('M', "udp-multicast-group", "Join a multicast group in the form 'IP@INTERFACE', with optional '@INTERFACE', where INTERFACE is the IP address of the interface to join the multicast.", ECORE_GETOPT_TYPE_STR),
 
+    ECORE_GETOPT_CATEGORY("ssl", "SSL options"),
+    ECORE_GETOPT_CHOICE('c', "ssl-cipher", "Cipher to use, defaults to 'auto'", ciphers_strs),
+    ECORE_GETOPT_APPEND(0, "ssl-certificate", "certificate path to use.", ECORE_GETOPT_TYPE_STR),
+    ECORE_GETOPT_APPEND(0, "ssl-private-key", "private key path to use.", ECORE_GETOPT_TYPE_STR),
+    ECORE_GETOPT_APPEND(0, "ssl-crl", "certificate revogation list to use.", ECORE_GETOPT_TYPE_STR),
+    ECORE_GETOPT_APPEND(0, "ssl-ca", "certificate authorities path to use.", ECORE_GETOPT_TYPE_STR),
+
     ECORE_GETOPT_CHOICE_METAVAR(0, NULL, "The server protocol.", "protocol",
                                 protocols),
     ECORE_GETOPT_STORE_METAVAR_STR(0, NULL,
@@ -543,6 +559,11 @@ main(int argc, char **argv)
    Eina_Bool ipv6_only = EINA_TRUE;
    Eina_Bool udp_dont_route = EINA_FALSE;
    Eina_Bool udp_mcast_loopback = EINA_TRUE;
+   Eina_List *certificates = NULL;
+   Eina_List *private_keys = NULL;
+   Eina_List *crls = NULL;
+   Eina_List *cas = NULL;
+   char *cipher_choice = NULL;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_BOOL(echo),
@@ -562,6 +583,13 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_UINT(udp_mcast_ttl),
      ECORE_GETOPT_VALUE_BOOL(udp_mcast_loopback),
      ECORE_GETOPT_VALUE_LIST(udp_mcast_groups),
+
+     ECORE_GETOPT_VALUE_BOOL(quit_option), /* category: ssl */
+     ECORE_GETOPT_VALUE_STR(cipher_choice),
+     ECORE_GETOPT_VALUE_LIST(certificates),
+     ECORE_GETOPT_VALUE_LIST(private_keys),
+     ECORE_GETOPT_VALUE_LIST(crls),
+     ECORE_GETOPT_VALUE_LIST(cas),
 
      /* positional argument */
      ECORE_GETOPT_VALUE_STR(protocol),
@@ -603,6 +631,7 @@ main(int argc, char **argv)
 
    if (strcmp(protocol, "tcp") == 0) cls = EFL_NET_SERVER_TCP_CLASS;
    else if (strcmp(protocol, "udp") == 0) cls = EFL_NET_SERVER_UDP_CLASS;
+   else if (strcmp(protocol, "ssl") == 0) cls = EFL_NET_SERVER_SSL_CLASS;
 #ifndef _WIN32
    else if (strcmp(protocol, "unix") == 0) cls = EFL_NET_SERVER_UNIX_CLASS;
 #endif
@@ -641,6 +670,33 @@ main(int argc, char **argv)
 
         EINA_LIST_FOREACH(udp_mcast_groups, lst, str)
           efl_net_server_udp_multicast_join(server, str);
+     }
+   else if (cls == EFL_NET_SERVER_SSL_CLASS)
+     {
+        Eo *ssl_ctx;
+        Efl_Net_Ssl_Cipher cipher = EFL_NET_SSL_CIPHER_AUTO;
+        if (cipher_choice)
+          {
+             if (strcmp(cipher_choice, "auto") == 0)
+               cipher = EFL_NET_SSL_CIPHER_AUTO;
+             else if (strcmp(cipher_choice, "sslv3") == 0)
+               cipher = EFL_NET_SSL_CIPHER_SSLV3;
+             else if (strcmp(cipher_choice, "tlsv1") == 0)
+               cipher = EFL_NET_SSL_CIPHER_TLSV1;
+             else if (strcmp(cipher_choice, "tlsv1.1") == 0)
+               cipher = EFL_NET_SSL_CIPHER_TLSV1_1;
+             else if (strcmp(cipher_choice, "tlsv1.2") == 0)
+               cipher = EFL_NET_SSL_CIPHER_TLSV1_2;
+          }
+
+        ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
+                          efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(certificates)),
+                          efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(private_keys)),
+                          efl_net_ssl_context_certificate_revogation_lists_set(efl_added, eina_list_iterator_new(crls)),
+                          efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(cas)),
+                          efl_net_ssl_context_setup(efl_added, cipher, EINA_FALSE /* a server! */));
+
+        efl_net_server_ssl_context_set(server, ssl_ctx);
      }
 #ifndef _WIN32
    else if (cls == EFL_NET_SERVER_UNIX_CLASS)

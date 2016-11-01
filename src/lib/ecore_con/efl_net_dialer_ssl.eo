@@ -1,0 +1,78 @@
+class Efl.Net.Dialer.Ssl (Efl.Net.Socket.Ssl, Efl.Net.Dialer) {
+    [[Connects to a remote SSL server using TCP.
+
+      This creates an internal @Efl.Net.Dialer.Tcp and once connected
+      it will start the SSL handshake.
+
+      If the proxy is NULL (default), then the system proxy will be
+      used. On UNIX that's the environment variable $socks_proxy (or
+      '$proxy' or '$all_proxy') is used if the given address doesn't
+      match $no_proxy patterns. To disable proxy use an empty string.
+
+      If the proxy is NULL (default), then the system proxy will be
+      used. On UNIX that's the environment variable $socks_proxy (or
+      '$all_proxy') is used if the given address doesn't match
+      $no_proxy patterns. To disable proxy use an empty string. If
+      provided proxy must be one of the protocols:
+
+       - socks5://username:password\@proxyserver:port (SOCKSv5)
+       - socks5h://username\@proxyserver:port (let socks server to resolve domain)
+       - socks5://proxyserver:port
+       - socks5://proxyserver (default port 1080)
+       - socks4a://proxyserver:port (SOCKSv4 and let socks server to resolve domain)
+       - socks4://proxyserver:port (SOCKSv4)
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property ssl_context {
+            [[Defines the SSL context to use for this dialer.
+
+              This specifies a shared context for all clients, with
+              certificate, private keys, CRL, CAs...
+
+              It must be called before @Efl.Object.finalize!
+            ]]
+            values {
+                ssl_context: Efl.Net.Ssl.Context;
+            }
+        }
+
+        @property keep_alive {
+            [[Controls keep-alive using SO_KEEPALIVE]]
+            get { }
+            set {
+                return: bool (false); [[$true on success]]
+            }
+            values {
+                keep_alive: bool;
+            }
+        }
+
+        @property no_delay {
+            [[Controls TCP's no-delay using TCP_NODELAY]]
+            get { }
+            set {
+                return: bool (false); [[$true on success]]
+            }
+            values {
+                no_delay: bool;
+            }
+        }
+
+        /* Note: no cork as it doesn't make sense here for the wrapped connection */
+    }
+
+    implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+        Efl.Object.finalize;
+        Efl.Net.Dialer.dial;
+        Efl.Net.Dialer.address_dial.get;
+        Efl.Net.Dialer.connected;
+        Efl.Net.Dialer.proxy;
+        Efl.Net.Dialer.timeout_dial;
+        Efl.Io.Closer.close;
+    }
+}

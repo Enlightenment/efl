@@ -1,7 +1,7 @@
 var Efl.Net.Socket.Ssl.Error.HANDSHAKE: Eina.Error; [[Failed SSL handshake]]
 var Efl.Net.Socket.Ssl.Error.CERTIFICATE_VERIFY_FAILED: Eina.Error; [[Failed to verify peer's certificate]]
 
-class Efl.Net.Socket.Ssl (Efl.Object, Efl.Net.Socket) {
+class Efl.Net.Socket.Ssl (Efl.Loop_User, Efl.Net.Socket) {
     [[A wrapper socket doing SSL (Secure Sockets Layer).
 
       Use this wrapper around an existing socket to do secure

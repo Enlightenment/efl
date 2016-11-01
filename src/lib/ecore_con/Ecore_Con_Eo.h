@@ -37,3 +37,5 @@
 
 #include "efl_net_ssl_context.eo.h"
 #include "efl_net_socket_ssl.eo.h"
+#include "efl_net_dialer_ssl.eo.h"
+#include "efl_net_server_ssl.eo.h"

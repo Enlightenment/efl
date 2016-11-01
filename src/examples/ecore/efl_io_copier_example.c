@@ -324,6 +324,10 @@ static const Ecore_Getopt options = {
                              "If set will change the base chunk size used while reading."),
     ECORE_GETOPT_STORE_DOUBLE('t', "inactivity-timeout",
                               "If greater than zero, specifies the number of seconds without any reads or writes that the copier will be timed out."),
+
+    ECORE_GETOPT_STORE_FALSE(0, "no-ssl-verify",
+                             "Disables SSL verify, to use with self-signed certificates and the likes"),
+
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_LICENSE('L', "license"),
@@ -339,6 +343,7 @@ static const Ecore_Getopt options = {
 #ifndef _WIN32
                                    "unix://path to connect to an AF_UNIX server. For Linux one can create abstract sockets with unix://abstract:name.\n"
 #endif
+                                   "ssl://IP:PORT to connect using TCP+SSL and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
                                    "",
                                    "input-file"),
     ECORE_GETOPT_STORE_METAVAR_STR(0, NULL,
@@ -354,6 +359,7 @@ static const Ecore_Getopt options = {
 #ifndef _WIN32
                                    "unix://path to connect to an AF_UNIX server. For Linux one can create abstract sockets with unix://abstract:name.\n"
 #endif
+                                   "ssl://IP:PORT to connect using TCP+SSL and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
                                    "",
                                    "output-file"),
     ECORE_GETOPT_SENTINEL
@@ -369,12 +375,15 @@ main(int argc, char **argv)
    unsigned long buffer_limit = 0;
    unsigned long read_chunk_size = 0;
    double timeout = 0.0;
+   Eina_Bool ssl_verify = EINA_TRUE;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(line_delimiter),
      ECORE_GETOPT_VALUE_ULONG(buffer_limit),
      ECORE_GETOPT_VALUE_ULONG(read_chunk_size),
      ECORE_GETOPT_VALUE_DOUBLE(timeout),
+
+     ECORE_GETOPT_VALUE_BOOL(ssl_verify),
 
      /* standard block to provide version, copyright, license and help */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -V/--version quits */
@@ -572,6 +581,36 @@ main(int argc, char **argv)
           }
      }
 #endif
+   else if (strncmp(input_fname, "ssl://", strlen("ssl://")) == 0)
+     {
+        /*
+         * Since Efl.Net.Socket implements the required interfaces,
+         * they can be used here as well.
+         */
+        const char *address = input_fname + strlen("ssl://");
+        Eina_Error err;
+        input = efl_add(EFL_NET_DIALER_SSL_CLASS, ecore_main_loop_get(),
+                        efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
+                        );
+        if (!input)
+          {
+             fprintf(stderr, "ERROR: could not create SSL Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end;
+          }
+
+        efl_net_socket_ssl_verify_mode_set(input, ssl_verify ? EFL_NET_SSL_VERIFY_MODE_REQUIRED : EFL_NET_SSL_VERIFY_MODE_NONE);
+        efl_net_socket_ssl_hostname_verify_set(input, ssl_verify);
+
+        err = efl_net_dialer_dial(input, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not SSL dial %s: %s\n",
+                     address, eina_error_msg_get(err));
+             goto end_input;
+          }
+     }
    else
      {
         /* regular file, open with flags: read-only and close-on-exec */
@@ -787,6 +826,36 @@ main(int argc, char **argv)
           }
      }
 #endif
+   else if (strncmp(output_fname, "ssl://", strlen("ssl://")) == 0)
+     {
+        /*
+         * Since Efl.Net.Socket implements the required interfaces,
+         * they can be used here as well.
+         */
+        const char *address = output_fname + strlen("ssl://");
+        Eina_Error err;
+        output = efl_add(EFL_NET_DIALER_SSL_CLASS, ecore_main_loop_get(),
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
+                         );
+        if (!output)
+          {
+             fprintf(stderr, "ERROR: could not create SSL Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end_input;
+          }
+
+        efl_net_socket_ssl_verify_mode_set(output, ssl_verify ? EFL_NET_SSL_VERIFY_MODE_REQUIRED : EFL_NET_SSL_VERIFY_MODE_NONE);
+        efl_net_socket_ssl_hostname_verify_set(output, ssl_verify);
+
+        err = efl_net_dialer_dial(output, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not SSL dial %s: %s\n",
+                     address, eina_error_msg_get(err));
+             goto end_output;
+          }
+     }
    else
      {
         /* regular file, open with flags: write-only, close-on-exec,
