@@ -3,28 +3,31 @@
 #endif
 #include <Elementary.h>
 
+
+#define PSIZE 318
+
 static void
 _my_bt_go_300_300(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   elm_scroller_region_bring_in((Evas_Object *)data, 300, 300, 318, 318);
+   elm_scroller_region_bring_in((Evas_Object *)data, 300, 300, PSIZE, PSIZE);
 }
 
 static void
 _my_bt_go_900_300(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   elm_scroller_region_bring_in((Evas_Object *)data, 900, 300, 318, 318);
+   elm_scroller_region_bring_in((Evas_Object *)data, 900, 300, PSIZE, PSIZE);
 }
 
 static void
 _my_bt_go_300_900(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   elm_scroller_region_bring_in((Evas_Object *)data, 300, 900, 318, 318);
+   elm_scroller_region_bring_in((Evas_Object *)data, 300, 900, PSIZE, PSIZE);
 }
 
 static void
 _my_bt_go_900_900(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   elm_scroller_region_bring_in((Evas_Object *)data, 900, 900, 318, 318);
+   elm_scroller_region_bring_in((Evas_Object *)data, 900, 900, PSIZE, PSIZE);
 }
 
 static void
@@ -208,11 +211,19 @@ _sc_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_inf
 }
 
 static void
-_size_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_step_size_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *sc = data;
    int size = elm_spinner_value_get(obj);
    elm_scroller_step_size_set(sc, ELM_SCALE_SIZE(size), ELM_SCALE_SIZE(size));
+}
+
+static void
+_page_size_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *sc = data;
+   int size = elm_spinner_value_get(obj);
+   elm_scroller_page_size_set(sc, size, size);
 }
 
 void
@@ -316,7 +327,7 @@ test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
              elm_bg_file_set(bg2, buf, NULL);
              evas_object_size_hint_weight_set(bg2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
              evas_object_size_hint_align_set(bg2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-             evas_object_size_hint_min_set(bg2, 318, 318);
+             evas_object_size_hint_min_set(bg2, PSIZE, PSIZE);
              elm_table_pack(tb, bg2, i, j, 1, 1);
              evas_object_show(bg2);
           }
@@ -325,7 +336,7 @@ test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_object_content_set(sc, tb);
    evas_object_show(tb);
 
-   elm_scroller_page_size_set(sc, 318, 318);
+   elm_scroller_page_size_set(sc, PSIZE, PSIZE);
    evas_object_show(sc);
 
    evas_object_smart_callback_add
@@ -342,14 +353,30 @@ test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_smart_callback_add(ck7, "changed", _my_bt_loop_y_axis, sc);
    evas_object_smart_callback_add(ck8, "changed", _my_bt_wheel_disable_cb, sc);
 
+   bx2 = elm_box_add(win);
+   elm_box_pack_end(bx, bx2);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_padding_set(bx2, 10, 0);
+   evas_object_show(bx2);
+
    bt = elm_spinner_add(win);
    elm_spinner_min_max_set(bt, 0, 500);
    elm_scroller_step_size_get(sc, &x, &y);
    elm_spinner_value_set(bt, x);
    elm_spinner_editable_set(bt, EINA_TRUE);
    elm_spinner_label_format_set(bt, "Step size: %.0f");
-   evas_object_smart_callback_add(bt, "changed", _size_changed, sc);
-   elm_box_pack_end(bx, bt);
+   evas_object_smart_callback_add(bt, "changed", _step_size_changed, sc);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_spinner_add(win);
+   elm_spinner_min_max_set(bt, 0, PSIZE * 2);
+   elm_scroller_page_size_get(sc, &x, &y);
+   elm_spinner_value_set(bt, x);
+   elm_spinner_editable_set(bt, EINA_TRUE);
+   elm_spinner_label_format_set(bt, "Page size: %.0f");
+   evas_object_smart_callback_add(bt, "changed", _page_size_changed, sc);
+   elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
    tb2 = elm_table_add(win);
