@@ -390,6 +390,34 @@ efl_net_ssl_conn_read(Efl_Net_Ssl_Conn *conn, Eina_Rw_Slice *slice)
    return 0;
 }
 
+#ifndef X509_CHECK_FLAG_ALWAYS_CHECK_SUBJECT
+/* OpenSSL 1.0.2 introduced X509_check_host() and X509_check_ip_asc()
+ * and with them the X509_CHECK_FLAG_ALWAYS_CHECK_SUBJECT define.
+ */
+static int
+X509_check_host(X509 *x, const char *chk, size_t chklen, unsigned int flags, char **peername)
+{
+   ERR("your OpenSSL do not support X509_check_ip_asc() - no verification can be done");
+   return 0;
+   (void)x;
+   (void)chk;
+   (void)chklen;
+   (void)flags;
+   (void)peername;
+}
+
+static int
+X509_check_ip_asc(X509 *x, const char *ipasc, unsigned int flags)
+{
+   ERR("your OpenSSL do not support X509_check_ip_asc() - no verification can be done");
+   return 0;
+   (void)x;
+   (void)ipasc;
+   (void)flags;
+}
+#endif
+
+
 static Eina_Error
 _efl_net_ssl_conn_hostname_verify(Efl_Net_Ssl_Conn *conn)
 {
