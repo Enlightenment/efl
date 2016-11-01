@@ -734,6 +734,43 @@ struct enum_def
   }
 };
 
+struct struct_field_def
+{
+  type_def type;
+  std::string name;
+
+  struct_field_def(Eolian_Struct_Type_Field const* struct_field)
+  {
+     name = eolian_typedecl_struct_field_name_get(struct_field);
+     type.set(eolian_typedecl_struct_field_type_get(struct_field));
+  }
+
+};
+
+struct struct_def
+{
+  std::string eolian_name;
+  std::string cxx_name;
+  std::vector<std::string> namespaces;
+  std::vector<struct_field_def> fields;
+
+  struct_def(Eolian_Typedecl const* struct_obj)
+  {
+     for(efl::eina::iterator<const char> namespace_iterator( ::eolian_typedecl_namespaces_get(struct_obj))
+           , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
+       {
+          this->namespaces.push_back((&*namespace_iterator));
+       }
+     cxx_name = eolian_name = eolian_typedecl_name_get(struct_obj);
+
+     for(efl::eina::iterator<const Eolian_Struct_Type_Field> field_iterator(::eolian_typedecl_struct_fields_get(struct_obj))
+             , field_last; field_iterator != field_last; ++field_iterator)
+       {
+          this->fields.push_back(&*field_iterator);
+       }
+  }
+};
+
 inline klass_name get_klass_name(klass_def const& klass)
 {
   return {klass.namespaces, klass.eolian_name, {qualifier_info::is_none, {}}, klass.type};
