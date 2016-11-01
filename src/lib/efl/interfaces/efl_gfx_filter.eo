@@ -60,17 +60,17 @@ interface Efl.Gfx.Filter
          [[Required padding to apply this filter without cropping.
 
            Read-only property that can be used to calculate the object's final
-           geometry. This can be overriden (set) from inside the filter program
+           geometry. This can be overridden (set) from inside the filter program
            by using the function 'padding_set' in the Lua program.
          ]]
          get {
             [[Gets the padding required to apply this filter.]]
          }
          values {
-            l: int;
-            r: int;
-            t: int;
-            b: int;
+            l: int; [[Padding on the left]]
+            r: int; [[Padding on the ight]]
+            t: int; [[Padding on the top]]
+            b: int; [[Padding on the bottom]]
          }
       }
       @property filter_source {

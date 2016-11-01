@@ -46,7 +46,7 @@ interface Efl.Gfx.Buffer ()
             ]]
          }
          values {
-            cspace: Efl.Gfx.Colorspace;
+            cspace: Efl.Gfx.Colorspace; [[Colorspace]]
          }
       }
       @property alpha {
@@ -85,7 +85,7 @@ interface Efl.Gfx.Buffer ()
          ]]
          get {}
          values {
-            stride: int;
+            stride: int; [[Stride]]
          }
       }
 
@@ -135,18 +135,18 @@ interface Efl.Gfx.Buffer ()
          params {
             @out slice: Eina.Rw_Slice; [[Pointer to the top-left pixel data.]]
             @in mode: Efl.Gfx.Buffer.Access_Mode; [[Specifies whether to map for read-only,
-                                                    write-only or read-write access (OR combinaison of flags).]]
+                                                    write-only or read-write access (OR combination of flags).]]
             @in x: int @optional;  [[X position of the top-left pixel to map, defaults to 0.]]
             @in y: int @optional;  [[Y position of the top-left pixel to map, defaults to 0.]]
             @in w: int @optional; [[If 0, defaults to the buffer width.]]
             @in h: int @optional; [[If 0, defaults to the buffer height.]]
-            @in cspace: Efl.Gfx.Colorspace @optional; [[Requested colorspace. If differen from the internal cspace,
+            @in cspace: Efl.Gfx.Colorspace @optional; [[Requested colorspace. If different from the internal cspace,
                                                         map should try to convert the data into a new buffer.
                                                         argb8888 by default.]]
             @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
             @out stride: int @optional; [[Returns the length in bytes of a mapped line]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       buffer_unmap {
          [[Unmap a region of this buffer, and update the internal data if needed.
@@ -161,7 +161,7 @@ interface Efl.Gfx.Buffer ()
          params {
             @in slice: const(Eina.Rw_Slice)*; [[Data slice returned by a previous call to map.]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       buffer_copy_set {
          [[Set the pixels for this buffer by copying them, or allocate
@@ -182,13 +182,13 @@ interface Efl.Gfx.Buffer ()
          ]]
          params {
             @in slice: const(Eina.Slice)* @nullable; [[If $null, allocates an empty buffer]]
-            @in width: int;
-            @in height: int;
+            @in width: int; [[Width]]
+            @in height: int; [[Height]]
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
             @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       buffer_managed_set {
          [[Set the pixels for this buffer, managed externally by the client.
@@ -208,13 +208,13 @@ interface Efl.Gfx.Buffer ()
          ]]
          params {
             @in slice: const(Eina.Slice)* @nullable; [[If $null, detaches the previous buffer.]]
-            @in width: int;
-            @in height: int;
+            @in width: int; [[Width]]
+            @in height: int; [[Height]]
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
             @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       buffer_managed_get {
          [[Get a direct pointer to the internal pixel data, if available.
@@ -227,7 +227,7 @@ interface Efl.Gfx.Buffer ()
             @out slice: Eina.Slice;
             @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       /* Note: border, span and buffer flags not imported from ector buffer */
    }

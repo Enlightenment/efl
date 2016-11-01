@@ -1,4 +1,6 @@
-interface Efl.Gfx.View {
+interface Efl.Gfx.View
+{
+   [[Efl graphics view interface]]
    eo_prefix: efl_gfx;
    methods {
       @property view_size {

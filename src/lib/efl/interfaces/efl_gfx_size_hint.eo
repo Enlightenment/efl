@@ -2,6 +2,7 @@ import efl_gfx_types;
 
 interface Efl.Gfx.Size.Hint
 {
+   [[Efl graphics size hint interface]]
    event_prefix: efl_gfx;
    methods {
       @property hint_base {
@@ -55,8 +56,8 @@ interface Efl.Gfx.Size.Hint
          */
          values {
             mode: Efl.Gfx.Size.Hint.Aspect; [[Mode of interpretation.]]
-            w: int;
-            h: int;
+            w: int; [[Width]]
+            h: int; [[Height]]
 
             /* FIXME: do we want min/max like Edje instead??
             min: double; [[Default: 0.0 (no preference).]]
