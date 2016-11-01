@@ -682,6 +682,7 @@ struct value_def
 {
   typedef eina::variant<int> variant_type; // FIXME support other types
   variant_type value;
+  std::string literal;
   type_def type;
 
   value_def() {}
@@ -689,6 +690,7 @@ struct value_def
   {
     type.set(value_obj.type);
     value = value_obj.value.i;
+    literal = eolian_expression_value_to_literal(&value_obj);
   }
 };
 
