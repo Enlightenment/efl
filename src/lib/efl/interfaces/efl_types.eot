@@ -38,3 +38,9 @@ struct Efl.Version
                      vanilla (upstream) EFL. Contains $EFL_VERSION_FLAVOR.]]
    build_id: string; [[Contains $EFL_BUILD_ID.]]
 }
+
+struct Efl.Observable.Tuple
+{
+   key: string;
+   data: free(own(iterator<Efl.Observer>), eina_iterator_free);
+}

@@ -50,6 +50,8 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_io_writer.eo \
       lib/efl/interfaces/efl_io_buffer.eo \
       lib/efl/interfaces/efl_io_queue.eo \
+      lib/efl/interfaces/efl_observer.eo \
+      lib/efl/interfaces/efl_observable.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 
@@ -99,6 +101,7 @@ lib/efl/interfaces/efl_io_sizer.c \
 lib/efl/interfaces/efl_io_writer.c \
 lib/efl/interfaces/efl_io_buffer.c \
 lib/efl/interfaces/efl_io_queue.c \
+lib/efl/interfaces/efl_observer.c \
 $(NULL)
 
 lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA

@@ -1,0 +1,63 @@
+class Efl.Observable (Efl.Object) {
+   methods {
+      observer_add {
+         [[Add an observer to a group of observers.
+
+           Note: Observers that observe this observable are grouped by the $key
+           and an observer can belong to multiple groups at the same time.
+
+           @since 1.19]]
+         params {
+            @in key: string; [[A key to classify observer groups]]
+            @in obs: Efl.Observer; [[An observer object]]
+         }
+      }
+      observer_del {
+         [[Delete an observer from a group of observers.
+
+           See also @.observer_add().
+
+           @since 1.19]]
+         params {
+            @in key: string; [[A key to classify observer groups]]
+            @in obs: Efl.Observer; [[An observer object]]
+         }
+      }
+      observer_clean {
+         [[Clear an observer from all groups of observers.
+
+           @since 1.19]]
+         params {
+            @in obs: Efl.Observer; [[An observer object]]
+         }
+      }
+      observers_iterator_new {
+         [[Return a new iterator associated with a group of observers.
+
+           @since 1.19]]
+         return: free(own(iterator<Efl.Observer>), eina_iterator_free);
+         params {
+            @in key: string; [[A key to classify observer groups]]
+         }
+      }
+      observers_update {
+         [[Update all observers in a group by calling their update() method.
+
+           @since 1.19]]
+         params {
+            @in key: string; [[A key to classify observer groups]]
+            @in data: void_ptr; [[Required data to update observer]]
+         }
+      }
+      iterator_tuple_new {
+         [[Return a new iterator associated to this observable.
+
+           @since 1.19]]
+         return: free(own(iterator<Efl.Observable.Tuple>), eina_iterator_free);
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

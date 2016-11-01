@@ -490,4 +490,54 @@ _edje_object_efl_canvas_object_paragraph_direction_set(Eo *obj, Edje *ed, Evas_B
    efl_canvas_group_need_recalculate_set(obj, 1);
 }
 
+EOLIAN static void
+_edje_object_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object *obs, const char *key, void *data)
+{
+   if (!obs) return;
+
+   ed->dirty = EINA_TRUE;
+   ed->recalc_call = EINA_TRUE;
+
+   if ((obs == _edje_color_class_member) || (obs == _edje_size_class_member))
+     {
+#ifdef EDJE_CALC_CACHE
+        ed->all_part_change = EINA_TRUE;
+#endif
+     }
+   else if (obs == _edje_text_class_member)
+     {
+        _edje_textblock_styles_cache_free(ed, key);
+        _edje_textblock_style_all_update(ed);
+#ifdef EDJE_CALC_CACHE
+        ed->text_part_change = EINA_TRUE;
+#endif
+     }
+
+   _edje_recalc(ed);
+
+   if (obs == _edje_color_class_member)
+     {
+        if (data)
+          _edje_emit(ed, (const char *)data, key);
+
+        if ((ed->file) && (ed->file->color_tree))
+          {
+             Edje_Color_Tree_Node *ctn = NULL;
+             Eina_List *l = NULL;
+             char *name;
+
+             EINA_LIST_FOREACH(ed->file->color_tree, l, ctn)
+               {
+                  if (!strcmp(ctn->name, key) && (ctn->color_classes))
+                    {
+                       EINA_LIST_FOREACH(ctn->color_classes, l, name)
+                         efl_observable_observers_update(_edje_color_class_member, name, data);
+
+                       break;
+                    }
+               }
+          }
+     }
+}
+
 #include "edje_object.eo.c"

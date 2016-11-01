@@ -90,6 +90,7 @@ edje_init(void)
    _edje_message_init();
    _edje_multisense_init();
    edje_signal_init();
+   _edje_class_init();
 
    _edje_real_part_mp = eina_mempool_add("chained_mempool",
                                          "Edje_Real_Part", NULL,
@@ -130,14 +131,13 @@ shutdown_all:
    eina_mempool_del(_edje_real_part_mp);
    _edje_real_part_state_mp = NULL;
    _edje_real_part_mp = NULL;
+   _edje_class_shutdown();
    _edje_message_shutdown();
    _edje_module_shutdown();
    _edje_external_shutdown();
    _edje_box_shutdown();
    _edje_internal_proxy_shutdown();
-   _edje_text_class_members_free();
    _edje_text_class_hash_free();
-   _edje_size_class_members_free();
    _edje_size_class_hash_free();
    _edje_edd_shutdown();
    efreet_shutdown();
@@ -169,7 +169,6 @@ _edje_shutdown_core(void)
                    EINA_LOG_STATE_SHUTDOWN);
 
    _edje_file_cache_shutdown();
-   _edje_color_class_members_free();
    _edje_color_class_hash_free();
 
    eina_stringshare_del(_edje_cache_path);
@@ -182,15 +181,14 @@ _edje_shutdown_core(void)
    _edje_real_part_state_mp = NULL;
    _edje_real_part_mp = NULL;
 
+   _edje_class_shutdown();
    edje_signal_shutdown();
    _edje_multisense_shutdown();
    _edje_message_shutdown();
    _edje_module_shutdown();
    _edje_external_shutdown();
    _edje_box_shutdown();
-   _edje_text_class_members_free();
    _edje_text_class_hash_free();
-   _edje_size_class_members_free();
    _edje_size_class_hash_free();
    _edje_edd_shutdown();
 
@@ -250,6 +248,37 @@ edje_shutdown(void)
 
 /* Private Routines */
 void
+_edje_class_init(void)
+{
+   if (!_edje_color_class_member)
+     _edje_color_class_member = efl_add(EFL_OBSERVABLE_CLASS, NULL);
+   if (!_edje_text_class_member)
+     _edje_text_class_member = efl_add(EFL_OBSERVABLE_CLASS, NULL);
+   if (!_edje_size_class_member)
+     _edje_size_class_member = efl_add(EFL_OBSERVABLE_CLASS, NULL);
+}
+
+void
+_edje_class_shutdown(void)
+{
+   if (_edje_color_class_member)
+     {
+        efl_del(_edje_color_class_member);
+        _edje_color_class_member = NULL;
+     }
+   if (_edje_text_class_member)
+     {
+        efl_del(_edje_text_class_member);
+        _edje_text_class_member = NULL;
+     }
+   if (_edje_size_class_member)
+     {
+        efl_del(_edje_size_class_member);
+        _edje_size_class_member = NULL;
+     }
+}
+
+void
 _edje_del(Edje *ed)
 {
    Edje_Text_Insert_Filter_Callback *cb;
@@ -286,9 +315,9 @@ _edje_del(Edje *ed)
         free(cb);
      }
 
-   _edje_color_class_member_clean(ed);
-   _edje_text_class_members_clean(ed);
-   _edje_size_class_members_clean(ed);
+   efl_observable_observer_clean(_edje_color_class_member, ed->obj);
+   efl_observable_observer_clean(_edje_text_class_member, ed->obj);
+   efl_observable_observer_clean(_edje_size_class_member, ed->obj);
 }
 
 void

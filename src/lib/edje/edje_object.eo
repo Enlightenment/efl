@@ -1,6 +1,7 @@
 import edje_types;
 
-class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
+class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
+                   Efl.Observer)
 {
    legacy_prefix: edje_object;
    eo_prefix: edje_obj;
@@ -2084,6 +2085,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
       Efl.Container.content_remove;
       Efl.Container.content_part_name.get;
       Efl.Part.part;
+      Efl.Observer.update;
    }
    events {
       recalc; [[Edje re-calculated the object.]]

@@ -17,13 +17,12 @@ struct _Edje_Box_Layout
 };
 
 static Eina_Hash *_edje_color_class_hash = NULL;
-static Eina_Hash *_edje_color_class_member_hash = NULL;
-
 static Eina_Hash *_edje_text_class_hash = NULL;
-static Eina_Hash *_edje_text_class_member_hash = NULL;
-
 static Eina_Hash *_edje_size_class_hash = NULL;
-static Eina_Hash *_edje_size_class_member_hash = NULL;
+
+Efl_Observable *_edje_color_class_member = NULL;
+Efl_Observable *_edje_text_class_member = NULL;
+Efl_Observable *_edje_size_class_member = NULL;
 
 static Eina_Rbtree *_edje_box_layout_registry = NULL;
 
@@ -154,116 +153,6 @@ _edje_user_def_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *child EINA_U
    Edje_User_Defined *eud = data;
 
    _edje_user_definition_free(eud);
-}
-
-static void
-_edje_class_member_add(Edje *ed, Eina_Hash **ghash, const char *class)
-{
-   Eina_Hash *members;
-   Edje_Refcount *er;
-
-   if ((!ed) || (!ghash) || (!class)) return;
-
-   if (!*ghash) *ghash = eina_hash_string_superfast_new(NULL);
-
-   members = eina_hash_find(*ghash, class);
-   if (!members)
-     {
-        members = eina_hash_pointer_new(NULL);
-        eina_hash_add(*ghash, class, members);
-     }
-
-   er = eina_hash_find(members, &ed);
-   if (!er)
-     {
-        er = calloc(1, sizeof (Edje_Refcount));
-        er->ed = ed;
-        EINA_REFCOUNT_INIT(er);
-
-        eina_hash_direct_add(members, &er->ed, er);
-     }
-   else
-     {
-        EINA_REFCOUNT_REF(er);
-     }
-}
-
-static void
-_edje_class_member_del(Edje *ed, Eina_Hash **ghash, const char *class)
-{
-   Edje_Refcount *lookup;
-   Eina_Hash *members;
-
-   if ((!ed) || (!ghash) || (!class)) return;
-   members = eina_hash_find(*ghash, class);
-   if (!members) return;
-
-   lookup = eina_hash_find(members, &ed);
-   if (!lookup) return;
-
-   EINA_REFCOUNT_UNREF(lookup)
-   {
-      eina_hash_del(members, &lookup->ed, lookup);
-      free(lookup);
-
-      if (eina_hash_population(members) == 0)
-        {
-           eina_hash_del(*ghash, class, members);
-           eina_hash_free(members);
-        }
-   }
-}
-
-static void
-_edje_class_members_free(Eina_Hash **ghash)
-{
-   Eina_Iterator *it;
-   Eina_Hash *members;
-
-   if (!ghash || !*ghash) return;
-
-   it = eina_hash_iterator_data_new(*ghash);
-   EINA_ITERATOR_FOREACH(it, members)
-     {
-        Eina_Iterator *it2;
-        Edje_Refcount *er;
-
-        it2 = eina_hash_iterator_data_new(members);
-        EINA_ITERATOR_FOREACH(it2, er)
-          free(er);
-        eina_iterator_free(it2);
-
-        eina_hash_free(members);
-     }
-   eina_iterator_free(it);
-
-   eina_hash_free(*ghash);
-   *ghash = NULL;
-}
-
-static void
-_edje_class_members_clean(Edje *ed, Eina_Hash *ghash)
-{
-   Eina_Iterator *it;
-   Eina_Hash *members;
-
-   if (!ed || !ghash) return;
-
-   it = eina_hash_iterator_data_new(ghash);
-   EINA_ITERATOR_FOREACH(it, members)
-     {
-        Edje_Refcount *lookup;
-
-        lookup = eina_hash_find(members, &ed);
-        if (!lookup) continue;
-
-        EINA_REFCOUNT_UNREF(lookup)
-        {
-           eina_hash_del(members, &lookup->ed, lookup);
-           free(lookup);
-        }
-     }
-   eina_iterator_free(it);
 }
 
 /************************** API Routines **************************/
@@ -749,41 +638,6 @@ _edje_color_class_get_internal(Edje_Color_Class *cc, Edje_Color_Class_Mode mode,
      }
 }
 
-static void
-_edje_color_class_apply(const char *color_class, const char *parent)
-{
-   Eina_Hash *members;
-   Eina_Iterator *it;
-   Edje_Refcount *er;
-   Edje_Color_Tree_Node *ctn;
-   Eina_List *l, *ll;
-   char *name;
-
-   members = eina_hash_find(_edje_color_class_member_hash, color_class);
-   if (!members) return;
-   it = eina_hash_iterator_data_new(members);
-   EINA_ITERATOR_FOREACH(it, er)
-     {
-        er->ed->dirty = EINA_TRUE;
-        er->ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-        er->ed->all_part_change = EINA_TRUE;
-#endif
-        _edje_recalc(er->ed);
-        _edje_emit(er->ed, "color_class,set", parent);
-
-        if (!er->ed->file) continue;
-
-        EINA_LIST_FOREACH(er->ed->file->color_tree, l, ctn)
-          {
-             if ((!strcmp(ctn->name, color_class)) && (ctn->color_classes))
-                EINA_LIST_FOREACH(ctn->color_classes, ll, name)
-                  _edje_color_class_apply(name, parent);
-          }
-     }
-   eina_iterator_free(it);
-}
-
 EAPI Eina_Bool
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
@@ -809,7 +663,7 @@ _edje_object_global_color_class_set(Efl_Class *klass EINA_UNUSED, void *pd EINA_
    int_ret = _edje_color_class_set_internal(_edje_color_class_hash, color_class, mode, r, g, b, a, &need_update);
 
    if ((int_ret) && (need_update))
-     _edje_color_class_apply(color_class, color_class);
+     efl_observable_observers_update(_edje_color_class_member, color_class, "color_class,set");
 
    return int_ret;
 }
@@ -844,9 +698,6 @@ EAPI void
 edje_color_class_del(const char *color_class)
 {
    Edje_Color_Class *cc;
-   Eina_Hash *members;
-   Eina_Iterator *it;
-   Edje_Refcount *er;
 
    if (!color_class) return;
 
@@ -857,20 +708,7 @@ edje_color_class_del(const char *color_class)
    eina_stringshare_del(cc->name);
    free(cc);
 
-   members = eina_hash_find(_edje_color_class_member_hash, color_class);
-   if (!members) return;
-   it = eina_hash_iterator_data_new(members);
-   EINA_ITERATOR_FOREACH(it, er)
-     {
-        er->ed->dirty = EINA_TRUE;
-        er->ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-        er->ed->all_part_change = EINA_TRUE;
-#endif
-        _edje_recalc(er->ed);
-        _edje_emit(er->ed, "color_class,del", color_class);
-     }
-   eina_iterator_free(it);
+   efl_observable_observers_update(_edje_color_class_member, color_class, "color_class,del");
 }
 
 Eina_List *
@@ -900,42 +738,40 @@ static Eina_Bool
 _edje_color_class_active_iterator_next(Eina_Iterator *it, void **data)
 {
    Edje_Active_Color_Class_Iterator *et = (void *)it;
-   Eina_Hash_Tuple *tuple = NULL;
-   Edje_Refcount *er = NULL;
-   Eina_Iterator *ith;
+   Efl_Observable_Tuple *tuple = NULL;
+   Efl_Observer *o;
+   Edje *ed;
    Edje_Color_Class *cc = NULL;
-   Eina_Bool r = EINA_FALSE;
 
    if (!eina_iterator_next(et->classes, (void **)&tuple)) return EINA_FALSE;
    if (!tuple) return EINA_FALSE;
 
-   ith = eina_hash_iterator_data_new(tuple->data);
-   if (!eina_iterator_next(ith, (void **)&er)) goto on_error;
+   if (!eina_iterator_next(tuple->data, (void **)&o)) return EINA_FALSE;
+
+   ed = efl_data_scope_get(o, EDJE_OBJECT_CLASS);
+   if (!ed) return EINA_FALSE;
 
    /*
       We actually need to ask on an object to get the correct value.
       It is being assumed that the color key are the same for all object here.
       This can some times not be the case, but for now we should be fine.
     */
-   cc = _edje_color_class_find(er->ed, tuple->key);
-   if (!cc) goto on_error;
+   cc = _edje_color_class_find(ed, tuple->key);
+   if (!cc) return EINA_FALSE;
    et->cc = *cc;
 
    /*
       Any of the Edje object referenced should have a file with a valid
       description for this color class. Let's bet on that for now.
     */
-   if (er->ed->file)
-     cc = eina_hash_find(er->ed->file->color_hash, tuple->key);
-   if (!cc) goto on_error;
+   if (ed->file)
+     cc = eina_hash_find(ed->file->color_hash, tuple->key);
+   if (!cc) return EINA_FALSE;
    et->cc.desc = cc->desc;
 
    *data = &et->cc;
-   r = EINA_TRUE;
 
- on_error:
-   eina_iterator_free(ith);
-   return r;
+   return EINA_TRUE;
 }
 
 static void *
@@ -959,12 +795,12 @@ edje_color_class_active_iterator_new(void)
 {
    Edje_Active_Color_Class_Iterator *it;
 
-   if (!_edje_color_class_member_hash) return NULL;
+   if (!_edje_color_class_member) return NULL;
    it = calloc(1, sizeof (Edje_Active_Color_Class_Iterator));
    if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-   it->classes = eina_hash_iterator_tuple_new(_edje_color_class_member_hash);
+   it->classes = efl_observable_iterator_tuple_new(_edje_color_class_member);
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = _edje_color_class_active_iterator_next;
@@ -1218,9 +1054,6 @@ on_error:
 EAPI Eina_Bool
 edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size)
 {
-   Eina_Hash *members;
-   Eina_Iterator *it;
-   Edje_Refcount *er;
    Edje_Text_Class *tc;
 
    if (!text_class) return EINA_FALSE;
@@ -1257,20 +1090,8 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
      }
 
    /* Tell all members of the text class to recalc */
-   members = eina_hash_find(_edje_text_class_member_hash, text_class);
-   it = eina_hash_iterator_data_new(members);
-   EINA_ITERATOR_FOREACH(it, er)
-     {
-        er->ed->dirty = EINA_TRUE;
-        er->ed->recalc_call = EINA_TRUE;
-        _edje_textblock_styles_cache_free(er->ed, text_class);
-        _edje_textblock_style_all_update(er->ed);
-#ifdef EDJE_CALC_CACHE
-        er->ed->text_part_change = EINA_TRUE;
-#endif
-        _edje_recalc(er->ed);
-     }
-   eina_iterator_free(it);
+   efl_observable_observers_update(_edje_text_class_member, text_class, NULL);
+
    return EINA_TRUE;
 }
 
@@ -1302,9 +1123,6 @@ EAPI void
 edje_text_class_del(const char *text_class)
 {
    Edje_Text_Class *tc;
-   Eina_Hash *members;
-   Eina_Iterator *it;
-   Edje_Refcount *er;
 
    if (!text_class) return;
 
@@ -1316,19 +1134,7 @@ edje_text_class_del(const char *text_class)
    eina_stringshare_del(tc->font);
    free(tc);
 
-   members = eina_hash_find(_edje_text_class_member_hash, text_class);
-   it = eina_hash_iterator_data_new(members);
-   EINA_ITERATOR_FOREACH(it, er)
-     {
-        er->ed->dirty = EINA_TRUE;
-        _edje_textblock_styles_cache_free(er->ed, text_class);
-        _edje_textblock_style_all_update(er->ed);
-#ifdef EDJE_CALC_CACHE
-        er->ed->text_part_change = EINA_TRUE;
-#endif
-        _edje_recalc(er->ed);
-     }
-   eina_iterator_free(it);
+   efl_observable_observers_update(_edje_text_class_member, text_class, NULL);
 }
 
 Eina_List *
@@ -1355,33 +1161,31 @@ static Eina_Bool
 _edje_text_class_active_iterator_next(Eina_Iterator *it, void **data)
 {
    Edje_Active_Text_Class_Iterator *et = (void *)it;
-   Eina_Hash_Tuple *tuple = NULL;
-   Edje_Refcount *er = NULL;
-   Eina_Iterator *ith;
+   Efl_Observable_Tuple *tuple = NULL;
+   Efl_Observer *o;
+   Edje *ed;
    Edje_Text_Class *tc;
-   Eina_Bool r = EINA_FALSE;
 
    if (!eina_iterator_next(et->classes, (void **)&tuple)) return EINA_FALSE;
    if (!tuple) return EINA_FALSE;
 
-   ith = eina_hash_iterator_data_new(tuple->data);
-   if (!eina_iterator_next(ith, (void **)&er)) goto on_error;
+   if (!eina_iterator_next(tuple->data, (void **)&o)) return EINA_FALSE;
+
+   ed = efl_data_scope_get(o, EDJE_OBJECT_CLASS);
+   if (!ed) return EINA_FALSE;
 
    /*
       We actually need to ask on an object to get the correct value.
       It is being assumed that the size key are the same for all object here.
       This can some times not be the case, but for now we should be fine.
     */
-   tc = _edje_text_class_find(er->ed, tuple->key);
-   if (!tc) goto on_error;
+   tc = _edje_text_class_find(ed, tuple->key);
+   if (!tc) return EINA_FALSE;
    et->tc = *tc;
 
    *data = &et->tc;
-   r = EINA_TRUE;
 
- on_error:
-   eina_iterator_free(ith);
-   return r;
+   return EINA_TRUE;
 }
 
 static void *
@@ -1405,12 +1209,12 @@ edje_text_class_active_iterator_new(void)
 {
    Edje_Active_Text_Class_Iterator *it;
 
-   if (!_edje_text_class_member_hash) return NULL;
+   if (!_edje_text_class_member) return NULL;
    it = calloc(1, sizeof (Edje_Active_Text_Class_Iterator));
    if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-   it->classes = eina_hash_iterator_tuple_new(_edje_text_class_member_hash);
+   it->classes = efl_observable_iterator_tuple_new(_edje_text_class_member);
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = _edje_text_class_active_iterator_next;
@@ -1489,14 +1293,7 @@ _edje_object_text_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *text_clas
                                      text_class, font, size);
      }
 
-   ed->dirty = EINA_TRUE;
-   ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-   ed->text_part_change = EINA_TRUE;
-#endif
-   _edje_textblock_styles_cache_free(ed, text_class);
-   _edje_textblock_style_all_update(ed);
-   _edje_recalc(ed);
+   efl_observer_update(obj, _edje_text_class_member, text_class, NULL);
 
    return EINA_TRUE;
 }
@@ -1543,14 +1340,7 @@ _edje_object_text_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *text_clas
           edje_object_text_class_del(rp->typedata.swallow->swallowed_object, text_class);
      }
 
-   ed->dirty = EINA_TRUE;
-   ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-   ed->text_part_change = EINA_TRUE;
-#endif
-   _edje_textblock_styles_cache_free(ed, text_class);
-   _edje_textblock_style_all_update(ed);
-   _edje_recalc(ed);
+   efl_observer_update(obj, _edje_text_class_member, text_class, NULL);
 }
 
 typedef struct _Edje_File_Text_Class_Iterator Edje_File_Text_Class_Iterator;
@@ -1630,9 +1420,6 @@ on_error:
 EAPI Eina_Bool
 edje_size_class_set(const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh)
 {
-   Eina_Hash *members;
-   Eina_Iterator *it;
-   Edje_Refcount *er;
    Edje_Size_Class *sc;
 
    if (!size_class) return EINA_FALSE;
@@ -1672,18 +1459,8 @@ edje_size_class_set(const char *size_class, Evas_Coord minw, Evas_Coord minh, Ev
      }
 
    /* Tell all members of the size class to recalc */
-   members = eina_hash_find(_edje_size_class_member_hash, size_class);
-   it = eina_hash_iterator_data_new(members);
-   EINA_ITERATOR_FOREACH(it, er)
-     {
-        er->ed->dirty = EINA_TRUE;
-        er->ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-        er->ed->all_part_change = EINA_TRUE;
-#endif
-        _edje_recalc(er->ed);
-     }
-   eina_iterator_free(it);
+   efl_observable_observers_update(_edje_size_class_member, size_class, NULL);
+
    return EINA_TRUE;
 }
 
@@ -1719,9 +1496,6 @@ EAPI void
 edje_size_class_del(const char *size_class)
 {
    Edje_Size_Class *sc;
-   Eina_Hash *members;
-   Eina_Iterator *it;
-   Edje_Refcount *er;
 
    if (!size_class) return;
 
@@ -1732,18 +1506,7 @@ edje_size_class_del(const char *size_class)
    eina_stringshare_del(sc->name);
    free(sc);
 
-   members = eina_hash_find(_edje_size_class_member_hash, size_class);
-   it = eina_hash_iterator_data_new(members);
-   EINA_ITERATOR_FOREACH(it, er)
-     {
-        er->ed->dirty = EINA_TRUE;
-        er->ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-        er->ed->all_part_change = EINA_TRUE;
-#endif
-        _edje_recalc(er->ed);
-     }
-   eina_iterator_free(it);
+   efl_observable_observers_update(_edje_size_class_member, size_class, NULL);
 }
 
 Eina_List *
@@ -1770,33 +1533,31 @@ static Eina_Bool
 _edje_size_class_active_iterator_next(Eina_Iterator *it, void **data)
 {
    Edje_Active_Size_Class_Iterator *et = (void *)it;
-   Eina_Hash_Tuple *tuple = NULL;
-   Edje_Refcount *er = NULL;
-   Eina_Iterator *ith;
+   Efl_Observable_Tuple *tuple = NULL;
+   Efl_Observer *o;
+   Edje *ed;
    Edje_Size_Class *sc;
-   Eina_Bool r = EINA_FALSE;
 
    if (!eina_iterator_next(et->classes, (void **)&tuple)) return EINA_FALSE;
    if (!tuple) return EINA_FALSE;
 
-   ith = eina_hash_iterator_data_new(tuple->data);
-   if (!eina_iterator_next(ith, (void **)&er)) goto on_error;
+   if (!eina_iterator_next(tuple->data, (void **)&o)) return EINA_FALSE;
+
+   ed = efl_data_scope_get(o, EDJE_OBJECT_CLASS);
+   if (!ed) return EINA_FALSE;
 
    /*
       We actually need to ask on an object to get the correct value.
       It is being assumed that the size key are the same for all object here.
       This can some times not be the case, but for now we should be fine.
     */
-   sc = _edje_size_class_find(er->ed, tuple->key);
-   if (!sc) goto on_error;
+   sc = _edje_size_class_find(ed, tuple->key);
+   if (!sc) return EINA_FALSE;
    et->sc = *sc;
 
    *data = &et->sc;
-   r = EINA_TRUE;
 
- on_error:
-   eina_iterator_free(ith);
-   return r;
+   return EINA_TRUE;
 }
 
 static void *
@@ -1820,12 +1581,12 @@ edje_size_class_active_iterator_new(void)
 {
    Edje_Active_Size_Class_Iterator *it;
 
-   if (!_edje_size_class_member_hash) return NULL;
+   if (!_edje_size_class_member) return NULL;
    it = calloc(1, sizeof (Edje_Active_Size_Class_Iterator));
    if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-   it->classes = eina_hash_iterator_tuple_new(_edje_size_class_member_hash);
+   it->classes = efl_observable_iterator_tuple_new(_edje_size_class_member);
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = _edje_size_class_active_iterator_next;
@@ -1902,12 +1663,7 @@ _edje_object_size_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *size_clas
                                      size_class, minw, minh, maxw, maxh);
      }
 
-   ed->dirty = EINA_TRUE;
-   ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-   ed->all_part_change = EINA_TRUE;
-#endif
-   _edje_recalc(ed);
+   efl_observable_observers_update(_edje_size_class_member, size_class, NULL);
 
    return EINA_TRUE;
 }
@@ -1958,12 +1714,7 @@ _edje_object_size_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *size_clas
           edje_object_size_class_del(rp->typedata.swallow->swallowed_object, size_class);
      }
 
-   ed->dirty = EINA_TRUE;
-   ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-   ed->all_part_change = EINA_TRUE;
-#endif
-   _edje_recalc(ed);
+   efl_observable_observers_update(_edje_size_class_member, size_class, NULL);
 }
 
 typedef struct _Edje_File_Size_Class_Iterator Edje_File_Size_Class_Iterator;
@@ -6138,32 +5889,6 @@ _edje_color_class_recursive_find(const Edje *ed, const char *color_class)
    return NULL;
 }
 
-void
-_edje_color_class_member_add(Edje *ed, const char *color_class)
-{
-   _edje_class_member_add(ed, &_edje_color_class_member_hash, color_class);
-}
-
-void
-_edje_color_class_member_del(Edje *ed, const char *color_class)
-{
-   if ((!ed) || (!color_class)) return;
-
-   _edje_class_member_del(ed, &_edje_color_class_member_hash, color_class);
-}
-
-void
-_edje_color_class_members_free(void)
-{
-   _edje_class_members_free(&_edje_color_class_member_hash);
-}
-
-void
-_edje_color_class_member_clean(Edje *ed)
-{
-   _edje_class_members_clean(ed, _edje_color_class_member_hash);
-}
-
 static Eina_Bool
 color_class_hash_list_free(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
@@ -6190,11 +5915,11 @@ _edje_color_class_on_del(Edje *ed, Edje_Part *ep)
    unsigned int i;
 
    if ((ep->default_desc) && (ep->default_desc->color_class))
-     _edje_color_class_member_del(ed, ep->default_desc->color_class);
+     efl_observable_observer_del(_edje_color_class_member, ep->default_desc->color_class, ed->obj);
 
    for (i = 0; i < ep->other.desc_count; ++i)
      if (ep->other.desc[i]->color_class)
-       _edje_color_class_member_del(ed, ep->other.desc[i]->color_class);
+       efl_observable_observer_del(_edje_color_class_member, ep->other.desc[i]->color_class, ed->obj);
 }
 
 Edje_Text_Class *
@@ -6218,32 +5943,6 @@ _edje_text_class_find(Edje *ed, const char *text_class)
    if (tc) return tc;
 
    return NULL;
-}
-
-void
-_edje_text_class_member_add(Edje *ed, const char *text_class)
-{
-   _edje_class_member_add(ed, &_edje_text_class_member_hash, text_class);
-}
-
-void
-_edje_text_class_member_del(Edje *ed, const char *text_class)
-{
-   if ((!ed) || (!text_class)) return;
-
-   _edje_class_member_del(ed, &_edje_text_class_member_hash, text_class);
-}
-
-void
-_edje_text_class_members_free(void)
-{
-   _edje_class_members_free(&_edje_text_class_member_hash);
-}
-
-void
-_edje_text_class_members_clean(Edje *ed)
-{
-   _edje_class_members_clean(ed, _edje_text_class_member_hash);
 }
 
 static Eina_Bool
@@ -6288,32 +5987,6 @@ _edje_size_class_find(Edje *ed, const char *size_class)
    if (sc) return sc;
 
    return NULL;
-}
-
-void
-_edje_size_class_member_add(Edje *ed, const char *size_class)
-{
-   _edje_class_member_add(ed, &_edje_size_class_member_hash, size_class);
-}
-
-void
-_edje_size_class_member_del(Edje *ed, const char *size_class)
-{
-   if ((!ed) || (!size_class)) return;
-
-   _edje_class_member_del(ed, &_edje_size_class_member_hash, size_class);
-}
-
-void
-_edje_size_class_members_free(void)
-{
-   _edje_class_members_free(&_edje_size_class_member_hash);
-}
-
-void
-_edje_size_class_members_clean(Edje *ed)
-{
-   _edje_class_members_clean(ed, _edje_size_class_member_hash);
 }
 
 static Eina_Bool

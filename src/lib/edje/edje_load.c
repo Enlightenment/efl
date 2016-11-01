@@ -637,7 +637,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
                   /* Register any color classes in this parts descriptions. */
                   if ((ep->default_desc) && (ep->default_desc->color_class))
-                    _edje_color_class_member_add(ed, ep->default_desc->color_class);
+                    efl_observable_observer_add(_edje_color_class_member, ep->default_desc->color_class, obj);
 
                   for (k = 0; k < ep->other.desc_count; k++)
                     {
@@ -646,7 +646,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        desc = ep->other.desc[k];
 
                        if (desc->color_class)
-                         _edje_color_class_member_add(ed, desc->color_class);
+                         efl_observable_observer_add(_edje_color_class_member, desc->color_class, obj);
                     }
                }
              /* sizeclass stuff */
@@ -659,7 +659,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
                   /* Register any size classes in this parts descriptions. */
                   if ((ep->default_desc) && (ep->default_desc->size_class))
-                    _edje_size_class_member_add(ed, ep->default_desc->size_class);
+                    efl_observable_observer_add(_edje_size_class_member, ep->default_desc->size_class, obj);
 
                   for (k = 0; k < ep->other.desc_count; k++)
                     {
@@ -668,7 +668,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        desc = ep->other.desc[k];
 
                        if (desc->size_class)
-                         _edje_size_class_member_add(ed, desc->size_class);
+                         efl_observable_observer_add(_edje_size_class_member, desc->size_class, obj);
                     }
                }
              /* build real parts */

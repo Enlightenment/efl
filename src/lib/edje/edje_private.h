@@ -2496,26 +2496,14 @@ Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);
 Edje_Real_Part   *_edje_real_part_recursive_get(Edje **ed, const char *part);
 Edje_Color_Class *_edje_color_class_find(const Edje *ed, const char *color_class);
 Edje_Color_Class *_edje_color_class_recursive_find(const Edje *ed, const char *color_class);
-void              _edje_color_class_member_add(Edje *ed, const char *color_class);
-void              _edje_color_class_member_del(Edje *ed, const char *color_class);
-void              _edje_color_class_member_clean(Edje *ed);
 void              _edje_color_class_on_del(Edje *ed, Edje_Part *ep);
-void              _edje_color_class_members_free(void);
 void              _edje_color_class_hash_free(void);
 
 const char       * _edje_find_alias(Eina_Hash *aliased, char *src, int *length);
 Edje_Text_Class  *_edje_text_class_find(Edje *ed, const char *text_class);
-void              _edje_text_class_member_add(Edje *ed, const char *text_class);
-void              _edje_text_class_member_del(Edje *ed, const char *text_class);
-void              _edje_text_class_members_free(void);
 void              _edje_text_class_hash_free(void);
-void              _edje_text_class_members_clean(Edje *ed);
 Edje_Size_Class  *_edje_size_class_find(Edje *ed, const char *size_class);
-void              _edje_size_class_member_add(Edje *ed, const char *size_class);
-void              _edje_size_class_member_del(Edje *ed, const char *size_class);
-void              _edje_size_class_members_free(void);
 void              _edje_size_class_hash_free(void);
-void              _edje_size_class_members_clean(Edje *ed);
 Edje             *_edje_fetch(const Evas_Object *obj) EINA_PURE;
 int               _edje_util_freeze(Edje *ed);
 int               _edje_util_thaw(Edje *ed);
@@ -2894,6 +2882,13 @@ void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params
 
 void _edje_user_definition_remove(Edje_User_Defined *eud, Evas_Object *child);
 void _edje_user_definition_free(Edje_User_Defined *eud);
+
+extern Efl_Observable *_edje_color_class_member;
+extern Efl_Observable *_edje_text_class_member;
+extern Efl_Observable *_edje_size_class_member;
+
+void _edje_class_init(void);
+void _edje_class_shutdown(void);
 
 void _scale_set(Eo *obj, void *_pd, va_list *list);
 void _scale_get(Eo *obj, void *_pd, va_list *list);
