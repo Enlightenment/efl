@@ -33,9 +33,6 @@
 extern EAPI Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
 extern EAPI void _evas_canvas_image_data_regenerate(Eina_List *list);
 
-/* local function prototypes */
-static void _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize);
-
 static Ecore_Evas_Engine_Func _ecore_wl_engine_func = 
 {
    _ecore_evas_wl_common_free,
@@ -57,7 +54,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // managed_move
    _ecore_evas_wl_common_resize,
    _ecore_evas_wl_common_move_resize,
-   _ecore_evas_wl_rotation_set,
+   _ecore_evas_wl_common_rotation_set,
    NULL, // shaped_set
    _ecore_evas_wl_common_show,
    _ecore_evas_wl_common_hide,
@@ -443,26 +440,6 @@ err:
 conn_err:
    ecore_wl2_shutdown();
    return NULL;
-}
-
-static void
-_ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
-{
-   Evas_Engine_Info_Wayland *einfo;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (ee->rotation == rotation) return;
-
-   _ecore_evas_wl_common_rotation_set(ee, rotation, resize);
-
-   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
-   if (!einfo) return;
-
-   einfo->info.rotation = rotation;
-
-   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-     ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
 }
 
 void 

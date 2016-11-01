@@ -397,19 +397,6 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
      }
 }
 
-void
-_ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
-{
-   if (ee->in_async_render)
-     {
-        ee->delayed.rotation = rotation;
-        ee->delayed.rotation_resize = resize;
-        ee->delayed.rotation_changed = EINA_TRUE;
-        return;
-     }
-   _rotation_do(ee, rotation, resize);
-}
-
 static Eina_Bool
 _ecore_evas_wl_common_cb_www_drag(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
 {
@@ -2065,4 +2052,31 @@ _ecore_evas_wl_common_transparent_set(Ecore_Evas *ee, int transparent)
      }
 
    _ecore_evas_wayland_transparent_do(ee, transparent);
+}
+
+void
+_ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
+{
+   Evas_Engine_Info_Wayland *einfo;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (ee->rotation == rotation) return;
+
+   if (ee->in_async_render)
+     {
+        ee->delayed.rotation = rotation;
+        ee->delayed.rotation_resize = resize;
+        ee->delayed.rotation_changed = EINA_TRUE;
+     }
+   else
+     _rotation_do(ee, rotation, resize);
+
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+   if (!einfo) return;
+
+   einfo->info.rotation = rotation;
+
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+     ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
 }
