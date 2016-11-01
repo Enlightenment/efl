@@ -657,7 +657,6 @@ eng_setup(Evas *evas, void *info)
                   */
                  /* (ob->info->info.win != ob->win) || */
                  (ob->info->info.depth != ob->depth) ||
-                 (ob->info->info.screen != ob->screen) ||
                  (ob->info->info.destination_alpha != ob->alpha))
                {
                   gl_wins--;
