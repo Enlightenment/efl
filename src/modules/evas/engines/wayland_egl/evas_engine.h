@@ -5,7 +5,7 @@
 # include "evas_common_private.h"
 # include "evas_private.h"
 # include "Evas.h"
-# include "Evas_Engine_Wayland_Egl.h"
+# include "Evas_Engine_Wayland.h"
 
 /* NB: This already includes wayland-client.h */
 # include <wayland-egl.h>
@@ -62,7 +62,7 @@ struct _Outbuf
    int depth, screen, rot, alpha;
 
    Evas *evas;
-   Evas_Engine_Info_Wayland_Egl *info;
+   Evas_Engine_Info_Wayland *info;
    Evas_Engine_GL_Context *gl_context;
 
    Render_Engine_Swap_Mode swap_mode;
@@ -107,7 +107,7 @@ extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 extern unsigned int (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c);
 extern unsigned int (*glsym_eglSetDamageRegionKHR) (EGLDisplay a, EGLSurface b, EGLint *c, EGLint d);
 
-Outbuf *eng_window_new(Evas *evas, Evas_Engine_Info_Wayland_Egl *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode);
+Outbuf *eng_window_new(Evas *evas, Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode);
 void eng_window_free(Outbuf *gw);
 void eng_window_use(Outbuf *gw);
 void eng_window_unsurf(Outbuf *gw);

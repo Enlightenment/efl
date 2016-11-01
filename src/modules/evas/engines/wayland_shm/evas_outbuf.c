@@ -21,7 +21,7 @@ _evas_surface_init(Surface *s, int w, int h, int num_buf)
 }
 
 static Surface *
-_evas_surface_create(Evas_Engine_Info_Wayland_Shm *info, int w, int h, int num_buf)
+_evas_surface_create(Evas_Engine_Info_Wayland *info, int w, int h, int num_buf)
 {
    Surface *out;
 
@@ -37,7 +37,7 @@ _evas_surface_create(Evas_Engine_Info_Wayland_Shm *info, int w, int h, int num_b
 }
 
 Outbuf *
-_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info)
+_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
 {
    Outbuf *ob = NULL;
    char *num;

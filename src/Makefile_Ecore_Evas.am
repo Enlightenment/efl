@@ -189,6 +189,7 @@ modules_ecore_evas_engines_wayland_module_la_CPPFLAGS = -I$(top_builddir)/src/li
 @ECORE_WL2_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_shm \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_egl \
+-I$(top_srcdir)/src/modules/evas/engines/wayland_common \
 @ECORE_WAYLAND_CFLAGS@ \
 @ECORE_WL2_CFLAGS@
 modules_ecore_evas_engines_wayland_module_la_LIBADD = \

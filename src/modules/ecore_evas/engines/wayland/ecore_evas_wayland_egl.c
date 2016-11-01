@@ -6,7 +6,7 @@
 # include <unistd.h>
 # include <sys/types.h>
 # include <sys/mman.h>
-# include <Evas_Engine_Wayland_Egl.h>
+# include <Evas_Engine_Wayland.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -124,10 +124,10 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
 void
 _ee_egl_display_unset(Ecore_Evas *ee)
 {
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
 
-   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
    einfo->info.wl_display = NULL;
    wdata = ee->engine.data;
    wdata->regen_objs = _evas_canvas_image_data_unset(ecore_evas_get(ee));
@@ -138,7 +138,7 @@ static Eina_Bool
 _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee;
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    ee = data;
@@ -146,7 +146,7 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    if (wdata->sync_done) return ECORE_CALLBACK_PASS_ON;
    wdata->sync_done = EINA_TRUE;
 
-   if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
+   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.wl_display = ecore_wl2_display_get(wdata->display);
         einfo->info.destination_alpha = EINA_TRUE;
@@ -187,7 +187,7 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
         if (wdata->win)
           {
 
-             einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+             einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
              if (einfo)
                {
                   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
@@ -221,11 +221,11 @@ static void
 _ecore_evas_wl_egl_render_flush_pre(void *data, Evas *e, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    int fx, fy;
 
-   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(e);
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(e);
    wdata = ee->engine.data;
    einfo->window.x = wdata->win->geometry.x;
    einfo->window.y = wdata->win->geometry.y;
@@ -263,7 +263,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
 {
    Ecore_Wl2_Display *ewd;
    Ecore_Wl2_Window *p = NULL;
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Interface_Wayland *iface;
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Evas *ee = NULL;
@@ -389,7 +389,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    if (ewd->sync_done)
      {
         wdata->sync_done = EINA_TRUE;
-        if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
+        if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
           {
              einfo->info.wl_display = ecore_wl2_display_get(ewd);
              einfo->info.destination_alpha = EINA_TRUE;
@@ -452,7 +452,7 @@ conn_err:
 static void
 _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   Evas_Engine_Info_Wayland *einfo;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -460,7 +460,7 @@ _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 
    _ecore_evas_wl_common_rotation_set(ee, rotation, resize);
 
-   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
    if (!einfo) return;
 
    einfo->info.rotation = rotation;
@@ -472,7 +472,7 @@ _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 static void 
 _ecore_evas_wl_show(Ecore_Evas *ee)
 {
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    int fw, fh;
 
@@ -494,7 +494,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         ecore_wl2_window_show(wdata->win);
         ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
 
-        einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+        einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
         if (einfo)
           {
              struct wl_surface *surf;
@@ -531,7 +531,7 @@ static void
 _ecore_evas_wl_hide(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   Evas_Engine_Info_Wayland *einfo;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -540,7 +540,7 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
 
    evas_sync(ee->evas);
 
-   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
         einfo->info.wl_surface = NULL;
@@ -567,7 +567,7 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
 static void 
 _ecore_evas_wayland_egl_alpha_do(Ecore_Evas *ee, int alpha)
 {
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    int fw, fh;
 
@@ -583,7 +583,7 @@ _ecore_evas_wayland_egl_alpha_do(Ecore_Evas *ee, int alpha)
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
-   if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
+   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.destination_alpha = EINA_TRUE;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
@@ -608,7 +608,7 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
 static void 
 _ecore_evas_wayland_egl_transparent_do(Ecore_Evas *ee, int transparent)
 {
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    int fw, fh;
 
@@ -626,7 +626,7 @@ _ecore_evas_wayland_egl_transparent_do(Ecore_Evas *ee, int transparent)
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
-   if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
+   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.destination_alpha = EINA_TRUE;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
@@ -671,9 +671,9 @@ _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
 void 
 _ecore_evas_wayland_egl_resize_edge_set(Ecore_Evas *ee, int edge)
 {
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   Evas_Engine_Info_Wayland *einfo;
 
-   if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
+   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
      einfo->info.edges = edge;
 }
 

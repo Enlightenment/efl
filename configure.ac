@@ -2710,6 +2710,19 @@ fi
 
 AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_COMMON], [test "x${have_static_evas_engine_gl_common}" = "xyes"])
 
+have_evas_engine_wayland_common="no"
+if test "x$have_evas_engine_wayland_egl" = "xstatic" || \
+   test "x$have_evas_engine_wayland_shm" = "xstatic" || \
+   test "x$have_evas_engine_wayland_egl" = "xyes" || \
+   test "x$have_evas_engine_wayland_shm" = "xyes"; then
+   have_evas_engine_wayland_common="yes"
+fi
+
+if test "x$have_evas_engine_wayland_common" = "xyes"; then
+   AC_DEFINE([BUILD_ENGINE_WAYLAND_COMMON], [1], [Building any wayland evas engine])
+fi
+AM_CONDITIONAL([BUILD_ENGINE_WAYLAND_COMMON], [test "x${have_evas_engine_wayland_common}" = "xyes"])
+
 ## Vg Loaders
 
 EVAS_CHECK_VG_LOADER([SVG], [${want_evas_vg_loader_svg}])

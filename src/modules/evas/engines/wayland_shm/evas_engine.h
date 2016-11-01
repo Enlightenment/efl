@@ -68,7 +68,7 @@ extern int _evas_engine_way_shm_log_dom;
 # include <wayland-client.h>
 # include "linux-dmabuf-unstable-v1-client-protocol.h"
 # include "../software_generic/Evas_Engine_Software_Generic.h"
-# include "Evas_Engine_Wayland_Shm.h"
+# include "Evas_Engine_Wayland.h"
 
 # define MAX_BUFFERS 4
 
@@ -92,7 +92,7 @@ struct _Surface
         Shm_Surface *shm;
         Dmabuf_Surface *dmabuf;
      } surf;
-   Evas_Engine_Info_Wayland_Shm *info;
+   Evas_Engine_Info_Wayland *info;
    struct
      {
         void (*destroy)(Surface *surface);
@@ -111,7 +111,7 @@ struct _Outbuf
    int num_buff;
    Outbuf_Depth depth;
 
-   Evas_Engine_Info_Wayland_Shm *info;
+   Evas_Engine_Info_Wayland *info;
 
    Surface *surface;
 
@@ -138,7 +138,7 @@ struct _Outbuf
 Eina_Bool _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff);
 Eina_Bool _evas_shm_surface_create(Surface *s, int w, int h, int num_buff);
 
-Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info);
+Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info);
 void _evas_outbuf_free(Outbuf *ob);
 void _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
 void _evas_outbuf_idle_flush(Outbuf *ob);

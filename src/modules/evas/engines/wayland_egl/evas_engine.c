@@ -503,10 +503,10 @@ static const EVGL_Interface evgl_funcs =
 static void *
 eng_info(Evas *evas EINA_UNUSED)
 {
-   Evas_Engine_Info_Wayland_Egl *info;
+   Evas_Engine_Info_Wayland *info;
 
    /* try to allocate space for our engine info */
-   if (!(info = calloc(1, sizeof(Evas_Engine_Info_Wayland_Egl))))
+   if (!(info = calloc(1, sizeof(Evas_Engine_Info_Wayland))))
      return NULL;
 
    info->magic.magic = rand();
@@ -518,9 +518,9 @@ eng_info(Evas *evas EINA_UNUSED)
 static void
 eng_info_free(Evas *evas EINA_UNUSED, void *info)
 {
-   Evas_Engine_Info_Wayland_Egl *inf;
+   Evas_Engine_Info_Wayland *inf;
 
-   if ((inf = (Evas_Engine_Info_Wayland_Egl *)info))
+   if ((inf = (Evas_Engine_Info_Wayland *)info))
      free(inf);
 }
 
@@ -528,13 +528,13 @@ static int
 eng_setup(Evas *evas, void *info)
 {
    Render_Engine_Swap_Mode swap_mode = MODE_FULL;
-   Evas_Engine_Info_Wayland_Egl *inf;
+   Evas_Engine_Info_Wayland *inf;
    Evas_Public_Data *epd;
    Render_Engine *re;
    Outbuf *ob;
    const char *s;
 
-   inf = (Evas_Engine_Info_Wayland_Egl *)info;
+   inf = (Evas_Engine_Info_Wayland *)info;
    epd = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    if ((s = getenv("EVAS_GL_SWAP_MODE")))

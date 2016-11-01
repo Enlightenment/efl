@@ -1,25 +1,30 @@
-#ifndef _EVAS_ENGINE_WAYLAND_EGL_H
-# define _EVAS_ENGINE_WAYLAND_EGL_H
+#ifndef _EVAS_ENGINE_WAYLAND_COMMON_H
+# define _EVAS_ENGINE_WAYLAND_COMMON_H
 
-typedef struct _Evas_Engine_Info_Wayland_Egl Evas_Engine_Info_Wayland_Egl;
+typedef struct _Evas_Engine_Info_Wayland Evas_Engine_Info_Wayland;
 
-struct _Evas_Engine_Info_Wayland_Egl
+struct _Evas_Engine_Info_Wayland
 {
    /* PRIVATE - don't mess with this baby or evas will poke its tongue out
     * at you and make nasty noises */
    Evas_Engine_Info magic;
 
    /* engine specific data & parameters it needs to set up */
-   struct 
+   struct
      {
+        /* the wayland shm object used to create new shm pool */
+        struct wl_shm *wl_shm;
+        struct zwp_linux_dmabuf_v1 *wl_dmabuf;
         struct wl_display *wl_display;
         struct wl_surface *wl_surface;
         int depth, rotation, edges;
-        unsigned int destination_alpha : 1;
+        int compositor_version;
+        Eina_Bool destination_alpha : 1;
      } info;
 
    /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
+   Evas *evas;
 
    Eina_Bool vsync : 1;
    Eina_Bool indirect : 1;

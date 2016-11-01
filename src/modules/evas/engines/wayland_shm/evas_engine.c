@@ -29,7 +29,7 @@ struct _Render_Engine
 
 /* LOCAL FUNCTIONS */
 static Render_Engine *
-_render_engine_swapbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *einfo)
+_render_engine_swapbuf_setup(int w, int h, Evas_Engine_Info_Wayland *einfo)
 {
    Render_Engine *re;
    Outbuf *ob;
@@ -103,12 +103,12 @@ _symbols(void)
 static void *
 eng_info(Evas *eo_evas EINA_UNUSED)
 {
-   Evas_Engine_Info_Wayland_Shm *einfo;
+   Evas_Engine_Info_Wayland *einfo;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* try to allocate space for new engine info */
-   if (!(einfo = calloc(1, sizeof(Evas_Engine_Info_Wayland_Shm))))
+   if (!(einfo = calloc(1, sizeof(Evas_Engine_Info_Wayland))))
      return NULL;
 
    /* fill in engine info */
@@ -123,26 +123,26 @@ eng_info(Evas *eo_evas EINA_UNUSED)
 static void 
 eng_info_free(Evas *eo_evas EINA_UNUSED, void *info)
 {
-   Evas_Engine_Info_Wayland_Shm *einfo;
+   Evas_Engine_Info_Wayland *einfo;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* try to free previously allocated engine info */
-   if ((einfo = (Evas_Engine_Info_Wayland_Shm *)info))
+   if ((einfo = (Evas_Engine_Info_Wayland *)info))
      free(einfo);
 }
 
 static int 
 eng_setup(Evas *eo_evas, void *info)
 {
-   Evas_Engine_Info_Wayland_Shm *einfo;
+   Evas_Engine_Info_Wayland *einfo;
    Evas_Public_Data *epd;
    Render_Engine *re = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* try to cast to our engine info */
-   if (!(einfo = (Evas_Engine_Info_Wayland_Shm *)info))
+   if (!(einfo = (Evas_Engine_Info_Wayland *)info))
      return 0;
 
    /* try to get evas public data */
@@ -210,7 +210,7 @@ static void
 eng_output_resize(void *data, int w, int h)
 {
    Render_Engine *re;
-   Evas_Engine_Info_Wayland_Shm *einfo;
+   Evas_Engine_Info_Wayland *einfo;
    Eina_Bool resize = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
