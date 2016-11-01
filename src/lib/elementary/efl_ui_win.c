@@ -4873,10 +4873,15 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
              Evas *pevas;
              Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
 
-             if (!strcmp(engine, ELM_WAYLAND_SHM))
-               sd->pointer.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 1, 1, 0);
-             else if (!strcmp(engine, ELM_WAYLAND_EGL))
-               sd->pointer.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
+             /* FIXME: NB:
+              * Disable using wayland_egl engine for mouse pointer right now.
+              * This is being disabled due to an issue in the engine where
+              * a black square is being drawn behind the pointer image */
+
+             /* if (!strcmp(engine, ELM_WAYLAND_SHM)) */
+             sd->pointer.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 1, 1, 0);
+             /* else if (!strcmp(engine, ELM_WAYLAND_EGL)) */
+             /*   sd->pointer.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0); */
 
              pevas = ecore_evas_get(sd->pointer.ee);
 
