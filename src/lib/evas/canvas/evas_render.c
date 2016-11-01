@@ -1806,7 +1806,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
              ENFN->context_free(ENDT, ctx);
           }
-        else
+        else if (!obj->is_smart)
           {
              ctx = ENFN->context_dup(ENDT, context);
              if (obj->cur->clipper)
