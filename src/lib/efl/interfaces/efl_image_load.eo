@@ -43,7 +43,7 @@ interface Efl.Image.Load ()
             ]]
          }
          values {
-            state: Efl.Image.Load.State;
+            state: Efl.Image.Load.State; [[Image loading status]]
          }
       }
       */
@@ -60,7 +60,7 @@ interface Efl.Image.Load ()
             [[Requests the canvas to load the image at the given size.
 
               EFL will try to load the image at the requested size, but does
-              not garantee an exact match between the request and the loaded
+              not guarantee an exact match between the request and the loaded
               image dimensions.
             ]]
          }
@@ -99,7 +99,7 @@ interface Efl.Image.Load ()
          ]]
          get {}
          values {
-            support: bool;
+            support: bool; [[$true if region load of the image is supported, $false otherwise]]
          }
       }
       @property load_region {
@@ -184,8 +184,8 @@ interface Efl.Image.Load ()
       }
    }
    events {
-      load,done;
-      load,error: Efl.Image.Load.Error;
-      load,cancelled;
+      load,done; [[Called when he image was loaded]]
+      load,error: Efl.Image.Load.Error; [[Called when an error happened during image loading]]
+      load,cancelled; [[Called when the image loading was cancelled]]
    }
 }

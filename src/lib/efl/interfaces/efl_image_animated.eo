@@ -12,6 +12,7 @@ enum Efl.Image.Animated.Loop_Hint {
 
 interface Efl.Image.Animated ()
 {
+   [[Efl animated image interface]]
    eo_prefix: efl_image;
 
    methods {
@@ -113,7 +114,7 @@ interface Efl.Image.Animated ()
             frame_num: int; [[Number of frames in the sequence, starts from 0.]]
          }
          values {
-            duration: double;
+            duration: double; [[Duration in seconds]]
          }
       }
    }
