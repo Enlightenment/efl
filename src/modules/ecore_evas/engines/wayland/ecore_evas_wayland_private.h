@@ -71,6 +71,7 @@ void _ecore_evas_wl_common_callback_mouse_in_set(Ecore_Evas *ee, void (*func)(Ec
 void _ecore_evas_wl_common_callback_mouse_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
 void _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y);
 void _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h);
+void _ecore_evas_wl_common_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
 void _ecore_evas_wl_common_raise(Ecore_Evas *ee);
 void _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title);
 void _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *c);

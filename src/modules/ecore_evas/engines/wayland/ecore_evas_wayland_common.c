@@ -992,6 +992,18 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 }
 
 void
+_ecore_evas_wl_common_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if ((ee->x != x) || (ee->y != y))
+     _ecore_evas_wl_common_move(ee, x, y);
+   if ((ee->w != w) || (ee->h != h))
+     _ecore_evas_wl_common_resize(ee, w, h);
+}
+
+void
 _ecore_evas_wl_common_callback_resize_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee))
 {
    if (!ee) return;

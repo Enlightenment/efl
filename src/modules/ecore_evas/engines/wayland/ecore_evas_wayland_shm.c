@@ -31,7 +31,6 @@
 #endif /* ! _WIN32 */
 
 /* local function prototypes */
-static void _ecore_evas_wl_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
 static void _ecore_evas_wl_show(Ecore_Evas *ee);
 static void _ecore_evas_wl_hide(Ecore_Evas *ee);
 static void _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha);
@@ -58,7 +57,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_common_move,
    NULL, // managed_move
    _ecore_evas_wl_common_resize,
-   _ecore_evas_wl_move_resize,
+   _ecore_evas_wl_common_move_resize,
    _ecore_evas_wl_rotation_set,
    NULL, // shaped_set
    _ecore_evas_wl_show,
@@ -377,18 +376,6 @@ ee_err:
 conn_err:
    ecore_wl2_shutdown();
    return NULL;
-}
-
-static void 
-_ecore_evas_wl_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
-{
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!ee) return;
-   if ((ee->x != x) || (ee->y != y))
-     _ecore_evas_wl_common_move(ee, x, y);
-   if ((ee->w != w) || (ee->h != h))
-     _ecore_evas_wl_common_resize(ee, w, h);
 }
 
 static void
