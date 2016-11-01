@@ -41,9 +41,6 @@ struct _Ecore_Evas_Engine_Wl_Data
    Ecore_Event_Handler *sync_handler;
    Evas_Object *frame;
    int fx, fy, fw, fh;
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-   struct wl_egl_window *egl_win;
-#endif
    Eina_Rectangle content;
    struct wl_callback *anim_callback;
    int x_rel;
