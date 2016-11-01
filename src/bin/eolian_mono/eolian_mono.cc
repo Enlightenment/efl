@@ -108,6 +108,13 @@ run(options_type const& opts)
             efl::eolian::grammar::attributes::enum_def enum_(&*enum_iterator);
             eolian_mono::enum_definition.generate(iterator, enum_, efl::eolian::grammar::context_null());
          }
+
+       for (efl::eina::iterator<const Eolian_Typedecl> struct_iterator( ::eolian_typedecl_structs_get_by_file(basename_input.c_str()))
+               , struct_last; struct_iterator != struct_last; ++struct_iterator)
+         {
+            efl::eolian::grammar::attributes::struct_def struct_(&*struct_iterator);
+         }
+
     }
 }
 
