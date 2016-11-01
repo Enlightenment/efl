@@ -714,7 +714,7 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
    int w = 0, h = 0;
    double ts;
 
-   EFL_UI_IMAGE_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_DATA_GET_OR_RETURN(obj, sd);
 
    _efl_ui_image_internal_sizing_eval(obj, sd);
    efl_image_smooth_scale_set(obj, sd->smooth);
@@ -1617,6 +1617,7 @@ _efl_ui_image_icon_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 EAPI void
 elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(obj, MY_CLASS));
    efl_image_smooth_scale_set(obj, smooth);
    _efl_ui_image_sizing_eval(obj);
 }
@@ -1624,6 +1625,7 @@ elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 EAPI Eina_Bool
 elm_image_smooth_get(const Evas_Object *obj)
 {
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(obj, MY_CLASS), EINA_FALSE);
    return efl_image_smooth_scale_get(obj);
 }
 
