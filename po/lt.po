@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-10-28 09:22+0900\n"
+"POT-Creation-Date: 2016-11-01 22:10+0900\n"
 "PO-Revision-Date: 2014-02-21 22:38+0000\n"
 "Last-Translator: Mantas Kriaučiūnas <mantas@akl.lt>\n"
 "Language-Team: Lithuanian <lt@li.org>\n"
@@ -142,67 +142,67 @@ msgstr ""
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "KLAIDA: nežinomas parametras --%s, nepaisomas.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1703
+#: src/lib/ecore/ecore_getopt.c:1710
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1745
+#: src/lib/ecore/ecore_getopt.c:1752
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "KLAIDA: nežinomas parametras -%c, nepaisomas.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1783
+#: src/lib/ecore/ecore_getopt.c:1797
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1878
+#: src/lib/ecore/ecore_getopt.c:1892
 #, c-format
 msgid "ERROR: missing required positional argument %s.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1910
+#: src/lib/ecore/ecore_getopt.c:1924
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2031 src/lib/ecore/ecore_getopt.c:2097
+#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
 msgid "ERROR: no parser provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2036 src/lib/ecore/ecore_getopt.c:2102
+#: src/lib/ecore/ecore_getopt.c:2050 src/lib/ecore/ecore_getopt.c:2116
 msgid "ERROR: no values provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
+#: src/lib/ecore/ecore_getopt.c:2059 src/lib/ecore/ecore_getopt.c:2125
 msgid "ERROR: no arguments provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2071
+#: src/lib/ecore/ecore_getopt.c:2085
 msgid "ERROR: invalid options found."
 msgstr "KLAIDA: aptikti netinkami parametrai."
 
-#: src/lib/ecore/ecore_getopt.c:2077 src/lib/ecore/ecore_getopt.c:2143
+#: src/lib/ecore/ecore_getopt.c:2091 src/lib/ecore/ecore_getopt.c:2157
 #, c-format
 msgid " See --%s.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2079 src/lib/ecore/ecore_getopt.c:2145
+#: src/lib/ecore/ecore_getopt.c:2093 src/lib/ecore/ecore_getopt.c:2159
 #, c-format
 msgid " See -%c.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2137
+#: src/lib/ecore/ecore_getopt.c:2151
 msgid "ERROR: invalid positional arguments found."
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2172
+#: src/lib/ecore/ecore_getopt.c:2186
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2190
+#: src/lib/ecore/ecore_getopt.c:2204
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr ""

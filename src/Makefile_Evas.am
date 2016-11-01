@@ -894,7 +894,7 @@ modules_evas_engines_gl_generic_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_engines_gl_generic_module_la_LIBTOOLFLAGS = --tag=disable-static
 
 if BUILD_ENGINE_GL_X11
-modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS += @evas_engine_gl_xlib_cflags@ @evas_engine_gl_xcb_cflags@
+modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS += @evas_engine_gl_xlib_cflags@
 endif
 if BUILD_ENGINE_WAYLAND_EGL
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS += @evas_engine_wayland_egl_cflags@
@@ -996,10 +996,8 @@ modules/evas/engines/gl_x11/evas_x_main.c \
 modules/evas/engines/gl_x11/evas_engine.h
 if EVAS_STATIC_BUILD_GL_X11
 lib_evas_libevas_la_SOURCES += $(GL_X11_SOURCES)
-lib_evas_libevas_la_CPPFLAGS += \
-@evas_engine_gl_xlib_cflags@ @evas_engine_gl_xcb_cflags@
-lib_evas_libevas_la_LIBADD += \
-@evas_engine_gl_xlib_libs@ @evas_engine_gl_xcb_libs@
+lib_evas_libevas_la_CPPFLAGS += @evas_engine_gl_xlib_cflags@
+lib_evas_libevas_la_LIBADD += @evas_engine_gl_xlib_libs@
 else
 engineglx11pkgdir = $(libdir)/evas/modules/engines/gl_x11/$(MODULE_ARCH)
 engineglx11pkg_LTLIBRARIES = modules/evas/engines/gl_x11/module.la
@@ -1014,12 +1012,10 @@ modules_evas_engines_gl_x11_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@ \
-@evas_engine_gl_xlib_cflags@ \
-@evas_engine_gl_xcb_cflags@
+@evas_engine_gl_xlib_cflags@
 modules_evas_engines_gl_x11_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
-@evas_engine_gl_xlib_libs@ \
-@evas_engine_gl_xcb_libs@
+@evas_engine_gl_xlib_libs@
 modules_evas_engines_gl_x11_module_la_DEPENDENCIES = \
 @USE_EVAS_INTERNAL_LIBS@
 modules_evas_engines_gl_x11_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
@@ -1168,22 +1164,6 @@ modules/evas/engines/software_x11/evas_xlib_image.h \
 modules/evas/engines/software_x11/evas_xlib_dri_image.h
 SOFTWARE_X11_CPPFLAGS += @evas_engine_software_xlib_cflags@
 SOFTWARE_X11_LIBADD += @evas_engine_software_xlib_libs@
-endif
-if BUILD_ENGINE_SOFTWARE_XCB
-SOFTWARE_X11_SOURCES += \
-modules/evas/engines/software_x11/evas_xcb_xdefaults.c \
-modules/evas/engines/software_x11/evas_xcb_outbuf.c \
-modules/evas/engines/software_x11/evas_xcb_buffer.c \
-modules/evas/engines/software_x11/evas_xcb_color.c \
-modules/evas/engines/software_x11/evas_xcb_main.c \
-modules/evas/engines/software_x11/evas_xcb_image.c \
-modules/evas/engines/software_x11/evas_xcb_outbuf.h \
-modules/evas/engines/software_x11/evas_xcb_buffer.h \
-modules/evas/engines/software_x11/evas_xcb_color.h \
-modules/evas/engines/software_x11/evas_xcb_xdefaults.h \
-modules/evas/engines/software_x11/evas_xcb_image.h
-SOFTWARE_X11_CPPFLAGS += @evas_engine_software_xcb_cflags@
-SOFTWARE_X11_LIBADD += @evas_engine_software_xcb_libs@
 endif
 if EVAS_STATIC_BUILD_SOFTWARE_X11
 lib_evas_libevas_la_SOURCES += $(SOFTWARE_X11_SOURCES)

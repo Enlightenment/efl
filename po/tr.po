@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-10-28 09:22+0900\n"
+"POT-Creation-Date: 2016-11-01 22:10+0900\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -142,67 +142,67 @@ msgstr "lisans tanımlanmadı.\n"
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "HATA: bilinmeyen seçenek --%s, yoksayıldı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1703
+#: src/lib/ecore/ecore_getopt.c:1710
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "HATA: seçenek --%s bağımsız bir değişken gerektirir!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1745
+#: src/lib/ecore/ecore_getopt.c:1752
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "HATA: bilinmeyen seçenek --%c, yoksayıldı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1783
+#: src/lib/ecore/ecore_getopt.c:1797
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "HATA: seçenek --%c bağımsız bir değişken gerektirir!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1878
+#: src/lib/ecore/ecore_getopt.c:1892
 #, c-format
 msgid "ERROR: missing required positional argument %s.\n"
 msgstr "HATA: konumsal argüman kayıp  %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1910
+#: src/lib/ecore/ecore_getopt.c:1924
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
 msgstr "HATA:  %d desteklenmeyen eylem türü %s konumsal argümanı için.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2031 src/lib/ecore/ecore_getopt.c:2097
+#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
 msgid "ERROR: no parser provided.\n"
 msgstr "HATA: ayrıştırıcı sağlanmadı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2036 src/lib/ecore/ecore_getopt.c:2102
+#: src/lib/ecore/ecore_getopt.c:2050 src/lib/ecore/ecore_getopt.c:2116
 msgid "ERROR: no values provided.\n"
 msgstr "HATA: değerler sağlanmadı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
+#: src/lib/ecore/ecore_getopt.c:2059 src/lib/ecore/ecore_getopt.c:2125
 msgid "ERROR: no arguments provided.\n"
 msgstr "HATA: bağımsız değişkenler sağlanmadı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2071
+#: src/lib/ecore/ecore_getopt.c:2085
 msgid "ERROR: invalid options found."
 msgstr "HATA: geçersiz seçenekler bulundu."
 
-#: src/lib/ecore/ecore_getopt.c:2077 src/lib/ecore/ecore_getopt.c:2143
+#: src/lib/ecore/ecore_getopt.c:2091 src/lib/ecore/ecore_getopt.c:2157
 #, c-format
 msgid " See --%s.\n"
 msgstr " Bakın --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2079 src/lib/ecore/ecore_getopt.c:2145
+#: src/lib/ecore/ecore_getopt.c:2093 src/lib/ecore/ecore_getopt.c:2159
 #, c-format
 msgid " See -%c.\n"
 msgstr " Bakın -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2137
+#: src/lib/ecore/ecore_getopt.c:2151
 msgid "ERROR: invalid positional arguments found."
 msgstr "HATA: geçersiz konumsal argümanlar bulundu."
 
-#: src/lib/ecore/ecore_getopt.c:2172
+#: src/lib/ecore/ecore_getopt.c:2186
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "HATA: yanlış geometri değeri '%s'\n"
 
-#: src/lib/ecore/ecore_getopt.c:2190
+#: src/lib/ecore/ecore_getopt.c:2204
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "HATA: yanlış boyut değeri '%s'\n"

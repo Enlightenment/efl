@@ -1966,8 +1966,6 @@ ecore_x_randr_crtc_info_free(Ecore_X_Randr_Crtc_Info *info)
  * @param mode The mode added to the output.
  * @return @c EINA_FALSE if output or mode equal Ecore_X_Randr_None, else
  * @c EINA_TRUE.
- * Additionally, if xcb backend is used, the success of the addition is
- * reported back directly.
  * @since 1.2.0
  */
 EAPI Eina_Bool 

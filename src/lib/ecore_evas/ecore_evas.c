@@ -261,13 +261,9 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
         return EINA_FALSE;
 #endif
-      case ECORE_EVAS_ENGINE_SOFTWARE_XCB:
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-        return EINA_TRUE;
-#else
+      case ECORE_EVAS_ENGINE_SOFTWARE_XCB: /* @deprecated */
         return EINA_FALSE;
-#endif
-      case ECORE_EVAS_ENGINE_XRENDER_XCB:
+      case ECORE_EVAS_ENGINE_XRENDER_XCB: /* @deprecated */
         return EINA_FALSE;
       case ECORE_EVAS_ENGINE_SOFTWARE_GDI:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI

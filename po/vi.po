@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-10-28 09:22+0900\n"
+"POT-Creation-Date: 2016-11-01 22:10+0900\n"
 "PO-Revision-Date: 2015-09-29 18:06+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: General\n"
@@ -143,67 +143,67 @@ msgstr "không định nghĩa giấy phép.\n"
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "LỖI: không rõ lựa chọn --%s, bỏ qua.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1703
+#: src/lib/ecore/ecore_getopt.c:1710
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "LỖI: lựa chọn --%s đòi hỏi một tham số!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1745
+#: src/lib/ecore/ecore_getopt.c:1752
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "LỖI: không rõ lựa chọn -%c, bỏ qua.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1783
+#: src/lib/ecore/ecore_getopt.c:1797
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "LỖI: lựa chọn -%c đòi hỏi một tham số!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1878
+#: src/lib/ecore/ecore_getopt.c:1892
 #, c-format
 msgid "ERROR: missing required positional argument %s.\n"
 msgstr "LỖI: thiếu tham số vị trí được yêu cầu %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1910
+#: src/lib/ecore/ecore_getopt.c:1924
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
 msgstr "LỖI: kiểu hoạt động không được hỗ trợ %d cho tham số vị trí %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:2031 src/lib/ecore/ecore_getopt.c:2097
+#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
 msgid "ERROR: no parser provided.\n"
 msgstr "LỖI: không cung cấp bộ phân tích.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2036 src/lib/ecore/ecore_getopt.c:2102
+#: src/lib/ecore/ecore_getopt.c:2050 src/lib/ecore/ecore_getopt.c:2116
 msgid "ERROR: no values provided.\n"
 msgstr "LỖI: không cung cấp giá trị.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
+#: src/lib/ecore/ecore_getopt.c:2059 src/lib/ecore/ecore_getopt.c:2125
 msgid "ERROR: no arguments provided.\n"
 msgstr "LỖI: không cung cấp đối số.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2071
+#: src/lib/ecore/ecore_getopt.c:2085
 msgid "ERROR: invalid options found."
 msgstr "LỖI: phát hiện các tùy chọn không hợp lệ."
 
-#: src/lib/ecore/ecore_getopt.c:2077 src/lib/ecore/ecore_getopt.c:2143
+#: src/lib/ecore/ecore_getopt.c:2091 src/lib/ecore/ecore_getopt.c:2157
 #, c-format
 msgid " See --%s.\n"
 msgstr "Xem --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2079 src/lib/ecore/ecore_getopt.c:2145
+#: src/lib/ecore/ecore_getopt.c:2093 src/lib/ecore/ecore_getopt.c:2159
 #, c-format
 msgid " See -%c.\n"
 msgstr "Xem -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2137
+#: src/lib/ecore/ecore_getopt.c:2151
 msgid "ERROR: invalid positional arguments found."
 msgstr "LỖI: phát hiện các đối số vị trí không hợp lệ."
 
-#: src/lib/ecore/ecore_getopt.c:2172
+#: src/lib/ecore/ecore_getopt.c:2186
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "LỖI: giá trị hình học không đúng '%s'\n"
 
-#: src/lib/ecore/ecore_getopt.c:2190
+#: src/lib/ecore/ecore_getopt.c:2204
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "LỖI: giá trị kích thước không đúng '%s'\n"

@@ -72,8 +72,8 @@ EAPI extern Ecore_X_Version *ecore_x_version;
  * @li @ref Ecore_X_Window_Parent_Group
  * @li @ref Ecore_X_Window_Shape
  *
- * When using the XLib backend, setting the ECORE_X_SYNC environment variable
- * will cause X calls to be run synchronously for easier debugging.
+ * The ECORE_X_SYNC environment variable will cause X calls to be run
+ * synchronously for easier debugging.
  */
 
 typedef unsigned int   Ecore_X_ID;
@@ -89,11 +89,7 @@ typedef struct _Ecore_X_Icon
 #endif // ifndef _ECORE_X_WINDOW_PREDEF
 typedef void          *Ecore_X_Visual;
 typedef Ecore_X_ID     Ecore_X_Drawable;
-#ifdef HAVE_ECORE_X_XCB
-typedef Ecore_X_ID     Ecore_X_GC;
-#else // ifdef HAVE_ECORE_X_XCB
 typedef void          *Ecore_X_GC;
-#endif /* HAVE_ECORE_X_XCB */
 typedef Ecore_X_ID     Ecore_X_Colormap;
 typedef Ecore_X_ID     Ecore_X_Time;
 typedef Ecore_X_ID     Ecore_X_Cursor;
@@ -1118,7 +1114,7 @@ struct Ecore_X_Event_Present_Idle
 }; /**< @since 1.9 */
 
 EAPI extern int ECORE_X_EVENT_ANY; /**< low level event dependent on
-                                        backend in use, if Xlib will be XEvent, if XCB will be xcb_generic_event_t.
+                                        backend in use, will be XEvent.
                                         @warning avoid using it.
                                     */
 EAPI extern int ECORE_X_EVENT_MOUSE_IN;

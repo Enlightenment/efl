@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-10-28 09:22+0900\n"
+"POT-Creation-Date: 2016-11-01 22:10+0900\n"
 "PO-Revision-Date: 2015-02-10 09:34+0000\n"
 "Last-Translator: JoanColl <Unknown>\n"
 "Language-Team: Catalan\n"
@@ -143,67 +143,67 @@ msgstr "no s'ha definit la llicència.\n"
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "ERROR: opció desconeguda --%s, s'ha ignorat.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1703
+#: src/lib/ecore/ecore_getopt.c:1710
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "ERROR: l'opció --%s requereix un argument!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1745
+#: src/lib/ecore/ecore_getopt.c:1752
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "ERROR: opció desconeguda -%c, s'ha ignorat.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1783
+#: src/lib/ecore/ecore_getopt.c:1797
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "ERROR: L'opció -%c requereix un argument!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1878
+#: src/lib/ecore/ecore_getopt.c:1892
 #, c-format
 msgid "ERROR: missing required positional argument %s.\n"
 msgstr "ERROR: es requereix argument posicional %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1910
+#: src/lib/ecore/ecore_getopt.c:1924
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
 msgstr "ERROR: acció no permesa %d per argument posicional %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:2031 src/lib/ecore/ecore_getopt.c:2097
+#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
 msgid "ERROR: no parser provided.\n"
 msgstr "ERROR: no s'ha proporcionat cap analitzador.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2036 src/lib/ecore/ecore_getopt.c:2102
+#: src/lib/ecore/ecore_getopt.c:2050 src/lib/ecore/ecore_getopt.c:2116
 msgid "ERROR: no values provided.\n"
 msgstr "ERROR: no s'ha proporcionat cap valor.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
+#: src/lib/ecore/ecore_getopt.c:2059 src/lib/ecore/ecore_getopt.c:2125
 msgid "ERROR: no arguments provided.\n"
 msgstr "ERROR: no s'ha proporcionat cap argument.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2071
+#: src/lib/ecore/ecore_getopt.c:2085
 msgid "ERROR: invalid options found."
 msgstr "ERROR: s'han trobat opcions no vàlides."
 
-#: src/lib/ecore/ecore_getopt.c:2077 src/lib/ecore/ecore_getopt.c:2143
+#: src/lib/ecore/ecore_getopt.c:2091 src/lib/ecore/ecore_getopt.c:2157
 #, c-format
 msgid " See --%s.\n"
 msgstr " Miri --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2079 src/lib/ecore/ecore_getopt.c:2145
+#: src/lib/ecore/ecore_getopt.c:2093 src/lib/ecore/ecore_getopt.c:2159
 #, c-format
 msgid " See -%c.\n"
 msgstr " Miri -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2137
+#: src/lib/ecore/ecore_getopt.c:2151
 msgid "ERROR: invalid positional arguments found."
 msgstr "ERROR: arguments posicionals no vàlids."
 
-#: src/lib/ecore/ecore_getopt.c:2172
+#: src/lib/ecore/ecore_getopt.c:2186
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "ERROR: valor geomètric incorrecte '%s'\n"
 
-#: src/lib/ecore/ecore_getopt.c:2190
+#: src/lib/ecore/ecore_getopt.c:2204
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ERROR: tamany incorrecte '%s'\n"

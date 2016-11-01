@@ -4101,15 +4101,9 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
                redraw_debug = 0;
           }
 
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-        einfo->info.backend = EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XCB;
-        einfo->info.connection = ecore_x_connection_get();
-        einfo->info.screen = screen;
-# else
         einfo->info.backend = EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB;
         einfo->info.connection = ecore_x_display_get();
         einfo->info.screen = NULL;
-# endif
         einfo->info.drawable = ee->prop.window;
 
         if (argb)
@@ -4309,15 +4303,9 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
                redraw_debug = 0;
           }
 
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-        einfo->info.backend = EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XCB;
-        einfo->info.connection = ecore_x_connection_get();
-        einfo->info.screen = screen;
-# else
         einfo->info.backend = EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB;
         einfo->info.connection = ecore_x_display_get();
         einfo->info.screen = NULL;
-# endif
 
         if ((argb) && (ee->prop.window))
           {

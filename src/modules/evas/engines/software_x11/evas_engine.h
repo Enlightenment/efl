@@ -4,19 +4,11 @@
 # include <sys/ipc.h>
 # include <sys/shm.h>
 
-# ifdef BUILD_ENGINE_SOFTWARE_XLIB
-#  include <X11/Xlib.h>
-#  include <X11/Xutil.h>
-#  include <X11/Xatom.h>
-#  include <X11/extensions/XShm.h>
-#  include <X11/Xresource.h> // xres - dpi
-# endif
-
-# ifdef BUILD_ENGINE_SOFTWARE_XCB
-#  include <xcb/xcb.h>
-#  include <xcb/shm.h>
-#  include <xcb/xcb_image.h>
-# endif
+# include <X11/Xlib.h>
+# include <X11/Xutil.h>
+# include <X11/Xatom.h>
+# include <X11/extensions/XShm.h>
+# include <X11/Xresource.h> // xres - dpi
 
 #include "../software_generic/Evas_Engine_Software_Generic.h"
 
@@ -60,7 +52,6 @@ struct _Outbuf
         Convert_Pal *pal;
         union 
           {
-# ifdef BUILD_ENGINE_SOFTWARE_XLIB
              struct 
                {
                   Display *disp;
@@ -73,22 +64,6 @@ struct _Outbuf
                   unsigned char swap : 1;
                   unsigned char bit_swap : 1;
                } xlib;
-# endif
-# ifdef BUILD_ENGINE_SOFTWARE_XCB
-             struct 
-               {
-                  xcb_connection_t *conn;
-                  xcb_screen_t *screen;
-                  xcb_window_t win;
-                  xcb_pixmap_t mask;
-                  xcb_visualtype_t *visual;
-                  xcb_colormap_t cmap;
-                  int depth, imdepth, shm;
-                  xcb_gcontext_t gc, gcm;
-                  unsigned char swap : 1;
-                  unsigned char bit_swap : 1;
-               } xcb;
-# endif
           } x11;
         struct 
           {
@@ -121,7 +96,6 @@ struct _Outbuf
 };
 
 void evas_software_xlib_x_init(void);
-void evas_software_xcb_init(void);
 
 void evas_software_x11_region_push_hook_call(Outbuf *buf, int x, int y, void *out_buf, Eina_Spinlock *lock);
 

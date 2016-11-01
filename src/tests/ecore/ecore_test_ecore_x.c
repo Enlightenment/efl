@@ -11,7 +11,6 @@
  * with getting X on the server. */
 #undef HAVE_ECORE_X_XLIB
 
-/* TODO: change to HAVE_ECORE_X when xcb implementation is done */
 #ifdef HAVE_ECORE_X_XLIB
 
 #include <Ecore_X.h>
@@ -53,8 +52,6 @@ END_TEST
 
 void ecore_test_ecore_x(TCase *tc EINA_UNUSED)
 {
-
-/* TODO: change to HAVE_ECORE_X when xcb implementation is done */
 #ifdef HAVE_ECORE_X_XLIB
    tcase_add_test(tc, ecore_test_ecore_x_init);
    tcase_add_test(tc, ecore_test_ecore_x_bell);

@@ -3,8 +3,7 @@
 
 typedef enum
 {
-   EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB,
-   EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XCB
+   EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB
 } Evas_Engine_Info_Software_X11_Backend;
 
 typedef struct _Evas_Engine_Info_Software_X11 Evas_Engine_Info_Software_X11;

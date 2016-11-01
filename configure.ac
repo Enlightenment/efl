@@ -1912,7 +1912,7 @@ EFL_LIB_START([Evas])
 
 # X11
 AC_ARG_WITH([x11],
-   [AS_HELP_STRING([--with-x11=xlib|xcb|none],[X11 method to use: xlib, xcb or none])])
+   [AS_HELP_STRING([--with-x11=xlib|none],[Use X11 (Xlib) or not])])
 
 if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes" || test "x${have_darwin}" = "xyes"; then
    with_x11="none"
@@ -1921,18 +1921,12 @@ elif test "x${with_x11}" = "x"; then
 fi
 
 want_x11_xlib="no"
-want_x11_xcb="no"
 want_x11_none="no"
 want_x11_any="no"
 case "${with_x11}" in
    xlib)
      want_x11_xlib="yes"
      want_x11_any="yes"
-     ;;
-   xcb)
-     want_x11_xcb="yes"
-     want_x11_any="yes"
-     CFOPT_WARNING="xyes"
      ;;
    none)
      want_x11_none="yes"
@@ -1961,10 +1955,8 @@ case "${with_opengl}" in
 esac
 
 want_x11_xlib_opengl="no"
-want_x11_xcb_opengl="no"
 if test "${with_opengl}" != "none"; then
    want_x11_xlib_opengl="${want_x11_xlib}"
-   want_x11_xcb_opengl="${want_x11_xcb}"
    want_x11_any_opengl="${want_x11_any}"
 fi
 
@@ -2529,50 +2521,30 @@ EVAS_CHECK_ENGINE([gl-drm], [${want_gl_drm}], [no], [OpenGL Drm])
 EVAS_CHECK_ENGINE([eglfs], [${want_eglfs}], [no], [OpenGL Fb])
 
 
-# Software XCB
-
-have_evas_engine_software_xcb="no"
-if test "${with_x11}" = "xcb" ; then
-   EVAS_CHECK_ENGINE([software-xcb], [${want_x11_xcb}], [no], [Software XCB])
-else
-   AM_CONDITIONAL([BUILD_ENGINE_SOFTWARE_XCB], [false])
-   AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_XCB], [false])
-fi
-
-AC_MSG_CHECKING([whether to build Software XCB Engine])
-AC_MSG_RESULT([${have_evas_engine_software_xcb}])
-
-# No Software XCB ? Then try Software Xlib
+# Software Xlib
 
 have_evas_engine_software_xlib="no"
-if test "x${want_x11_xcb}" = "xno" ; then
-   EVAS_CHECK_ENGINE([software-xlib], [${want_x11_xlib}], [no], [Software Xlib])
-else
-   AM_CONDITIONAL([BUILD_ENGINE_SOFTWARE_XLIB], [false])
-   AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_XLIB], [false])
-fi
-
+EVAS_CHECK_ENGINE([software-xlib], [${want_x11_xlib}], [no], [Software Xlib])
 AC_MSG_CHECKING([whether to build Software Xlib Engine])
 AC_MSG_RESULT([${have_evas_engine_software_xlib}])
 
 # If software_x11 is available, define everything needed for X11
 
 have_evas_engine_software_x11="no"
-if test "x${have_evas_engine_software_xlib}" = "xyes" || test "x${have_evas_engine_software_xlib}" = "xstatic" || test "x${have_evas_engine_software_xcb}" = "xyes" || test "x${have_evas_engine_software_xcb}" = "xstatic" ; then
+if test "x${have_evas_engine_software_xlib}" = "xyes" || test "x${have_evas_engine_software_xlib}" = "xstatic"; then
    have_evas_engine_software_x11="yes"
    AC_DEFINE_UNQUOTED([BUILD_ENGINE_SOFTWARE_X11], [1], [Build software X11 engine])
 fi
 AM_CONDITIONAL([BUILD_ENGINE_SOFTWARE_X11], [test "x${have_evas_engine_software_x11}" = "xyes"])
 
-if test "x${have_evas_engine_software_xlib}" = "xstatic" || test "x${have_evas_engine_software_xcb}" = "xstatic"; then
+if test "x${have_evas_engine_software_xlib}" = "xstatic"; then
    AC_DEFINE_UNQUOTED([EVAS_STATIC_BUILD_SOFTWARE_X11], [1], [Build software X11 engine as part of libevas])
 fi
-AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_X11], [test "x${have_evas_engine_software_xcb}" = "xstatic" || test "x${have_evas_engine_software_xlib}" = "xstatic"])
+AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_X11], [test "x${have_evas_engine_software_xlib}" = "xstatic"])
 
 # Needed for evas-software-x11.pc
 
 AC_SUBST([have_evas_engine_software_xlib])
-AC_SUBST([have_evas_engine_software_xcb])
 
 # Software generic
 AC_DEFINE([EVAS_STATIC_BUILD_SOFTWARE_GENERIC], [1], [Build software generic engine as part of libevas])
@@ -2584,28 +2556,10 @@ if test "${with_opengl}" = "es" ; then
    AC_DEFINE(GL_GLES, 1, [GLSL runtime shader GLES2 support])
 fi
 
-# OpenGL XCB
-
-have_evas_engine_gl_xcb="no"
-if test "${want_x11_xcb_opengl}" = "yes"; then
-   EVAS_CHECK_ENGINE([gl-xcb], [${want_x11_xcb_opengl}], [no], [OpenGL XCB])
-else
-   AM_CONDITIONAL([BUILD_ENGINE_GL_XCB], [false])
-   AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_XCB], [false])
-fi
-
-AC_MSG_CHECKING([whether to build OpenGL XCB Engine])
-AC_MSG_RESULT([${have_evas_engine_gl_xcb}])
-
-# No openGL XCB ? Then try OpenGL Xlib
+# OpenGL Xlib
 
 have_evas_engine_gl_xlib="no"
-if test "x${have_evas_engine_gl_xcb}" = "xno" ; then
-   EVAS_CHECK_ENGINE([gl-xlib], [${want_x11_xlib_opengl}], [no], [OpenGL XLib])
-else
-   AM_CONDITIONAL([BUILD_ENGINE_GL_XLIB], [false])
-   AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_XLIB], [false])
-fi
+EVAS_CHECK_ENGINE([gl-xlib], [${want_x11_xlib_opengl}], [no], [OpenGL XLib])
 
 AC_MSG_CHECKING([whether to build OpenGL Xlib Engine])
 AC_MSG_RESULT([${have_evas_engine_gl_xlib}])
@@ -2613,21 +2567,20 @@ AC_MSG_RESULT([${have_evas_engine_gl_xlib}])
 # If opengl_x11 is available, define everything needed for X11
 
 have_evas_engine_gl_x11="no"
-if test "x${have_evas_engine_gl_xlib}" = "xyes" || test "x${have_evas_engine_gl_xlib}" = "xstatic" || test "x${have_evas_engine_gl_xcb}" = "xyes" || test "x${have_evas_engine_gl_xcb}" = "xstatic" ; then
+if test "x${have_evas_engine_gl_xlib}" = "xyes" || test "x${have_evas_engine_gl_xlib}" = "xstatic"; then
    have_evas_engine_gl_x11="yes"
    AC_DEFINE_UNQUOTED([BUILD_ENGINE_GL_X11], [1], [Build OpenGL X11 engine])
 fi
 AM_CONDITIONAL([BUILD_ENGINE_GL_X11], [test "x${have_evas_engine_gl_x11}" = "xyes"])
 
-if test "x${have_evas_engine_gl_xlib}" = "xstatic" || test "x${have_evas_engine_gl_xcb}" = "xstatic"; then
+if test "x${have_evas_engine_gl_xlib}" = "xstatic"; then
    AC_DEFINE_UNQUOTED([EVAS_STATIC_BUILD_GL_X11], [1], [Build OpenGL X11 engine as part of libevas])
 fi
-AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_X11], [test "x${have_evas_engine_gl_xcb}" = "xstatic" || test "x${have_evas_engine_gl_xlib}" = "xstatic"])
+AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_X11], [test "x${have_evas_engine_gl_xlib}" = "xstatic"])
 
 # Needed for evas-opengl-x11.pc
 
 AC_SUBST([have_evas_engine_gl_xlib])
-AC_SUBST([have_evas_engine_gl_xcb])
 
 # OpenGL SDL
 
@@ -2679,7 +2632,6 @@ AC_SUBST([evas_engine_gl_common_libs])
 have_evas_engine_gl_common="no"
 have_static_evas_engine_gl_common="no"
 if test "x$have_evas_engine_gl_xlib" = "xyes" || \
-   test "x$have_evas_engine_gl_xcb" = "xyes" || \
    test "x$have_evas_engine_gl_sdl" = "xyes" || \
    test "x$have_evas_engine_gl_cocoa" = "xyes" || \
    test "x$have_evas_engine_gl_drm" = "xyes" || \
@@ -2688,7 +2640,6 @@ if test "x$have_evas_engine_gl_xlib" = "xyes" || \
    have_evas_engine_gl_common="yes"
 fi
 if test "x$have_evas_engine_gl_xlib" = "xstatic" || \
-   test "x$have_evas_engine_gl_xcb" = "xstatic" || \
    test "x$have_evas_engine_gl_sdl" = "xstatic" || \
    test "x$have_evas_engine_gl_cocoa" = "xstatic" || \
    test "x$have_evas_engine_gl_drm" = "xstatic" || \
@@ -4177,65 +4128,6 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_X], [eina])
 
 ## Xlib
 
-## XCB
-
-### Checks for header files
-
-AC_CHECK_DECL([MAXHOSTNAMELEN], [FOUND_MAXHOSTNAMELEN=yes])
-
-if test "x${FOUND_MAXHOSTNAMELEN}" != "xyes" ; then
-   FOUND_MAXHOSTNAMELEN="not found"
-
-   AC_COMPILE_IFELSE(
-      [
-       AC_LANG_PROGRAM(
-          [[
-#include <sys/param.h>
-          ]],
-          [[
-int h = MAXHOSTNAMELEN;
-          ]])
-      ],
-      [
-       FOUND_MAXHOSTNAMELEN="sys/param.h"
-       AC_DEFINE([NEED_SYS_PARAM_H], [1], [Define to 1 if you need <sys/param.h> to define MAXHOSTNAMELEN])
-      ])
-
-   AC_COMPILE_IFELSE(
-      [
-       AC_LANG_PROGRAM(
-          [[
-#include <netdb.h>
-          ]],
-          [[
-int h = MAXHOSTNAMELEN;
-          ]])
-      ],
-      [
-       FOUND_MAXHOSTNAMELEN="netdb.h"
-       AC_DEFINE([NEED_NETDB_H], [1], [Define to 1 if you need <netdb.h> to define MAXHOSTNAMELEN])
-      ])
-
-   AC_MSG_CHECKING([for header that defines MAXHOSTNAMELEN])
-   AC_MSG_RESULT([$FOUND_MAXHOSTNAMELEN])
-fi
-
-## Xlib
-if test "x${want_x11_xcb}" = "xyes" ; then
-   KEYSYMDEFDIR=`$PKG_CONFIG --variable=includedir xproto`/X11
-   FILES="keysymdef.h XF86keysym.h Sunkeysym.h DECkeysym.h HPkeysym.h"
-   for i in $FILES; do
-       if test -f "$KEYSYMDEFDIR/$i"; then
-         KEYSYMDEFS="$KEYSYMDEFS $KEYSYMDEFDIR/$i"
-       elif test "x$i" = "xkeysymdef.h"; then
-         AC_MSG_ERROR([Cannot find keysymdef.h])
-       fi
-   done
-   AC_MSG_CHECKING([keysym definitions])
-   AC_MSG_RESULT([$KEYSYMDEFS])
-   AC_SUBST([KEYSYMDEFS])
-fi
-
 ### Checks for types
 
 ### Checks for structures
@@ -4302,54 +4194,6 @@ if test "x${want_x11_xlib}" = "xyes" ; then
    EFL_CHECK_FUNCS([ECORE_X], [dlopen dlsym])
 fi
 
-## XCB
-
-if test "${want_x11_xcb}" = "yes"; then
-dnl note: added pixman-1 as ecore_xcb_region uses that
-   EFL_DEPEND_PKG([ECORE_X], [ECORE_X_XCB],
-      [x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8 xcb-composite xcb-present xcb-damage xcb-dpms xcb-randr xcb-render xcb-screensaver xcb-shape xcb-sync xcb-xfixes xcb-xinerama xcb-xtest xcb-renderutil pixman-1])
-
-dnl TODO: remove these ifdefs from code!
-   AC_DEFINE([ECORE_XCB_COMPOSITE], [1], [Build support for XCB composite])
-   AC_DEFINE([ECORE_XCB_DAMAGE], [1], [Build support for XCB damage])
-   AC_DEFINE([ECORE_XCB_DPMS], [1], [Build support for XCB dpms])
-   AC_DEFINE([ECORE_XCB_RANDR], [1], [Build support for XCB randr])
-   AC_DEFINE([ECORE_XCB_RENDER], [1], [Build support for XCB render])
-   AC_DEFINE([ECORE_XCB_SCREENSAVER], [1], [Build support for XCB screensaver])
-   AC_DEFINE([ECORE_XCB_SHAPE], [1], [Build support for XCB shape])
-   AC_DEFINE([ECORE_XCB_SYNC], [1], [Build support for XCB sync])
-   AC_DEFINE([ECORE_XCB_XFIXES], [1], [Build support for XCB xfixes])
-   AC_DEFINE([ECORE_XCB_XINERAMA], [1], [Build support for XCB xinerama])
-   AC_DEFINE([ECORE_XCB_XTEST], [1], [Build support for XCB xtest])
-   AC_DEFINE([ECORE_XCB_CURSOR], [1], [Build support for XCB cursor])
-
-   EFL_OPTIONAL_DEPEND_PKG([ECORE_X], [${want_xpresent}], [ECORE_XCB_XPRESENT],
-      [xcb-present])
-   AC_DEFINE_IF([ECORE_XCB_XPRESENT], [test "${want_xpresent}" = "yes"],
-      [1], [Build support for XCB Present])
-   EFL_ADD_FEATURE([ECORE_X], [xpresent])
-
-   EFL_OPTIONAL_DEPEND_PKG([ECORE_X], [${want_gesture}], [ECORE_XCB_GESTURE],
-      [xcb-gesture])
-   AC_DEFINE_IF([ECORE_XCB_XGESTURE], [test "${want_gesture}" = "yes"],
-      [1], [Build support for XCB xgesture])
-
-   EFL_ADD_FEATURE([ECORE_X], [gesture])
-
-dnl input extension disabled currently in xcb as xcb-input has some issues
-dnl remember to add xcb-xinput to EFL_DEPEND_PKG()
-dnl AC_DEFINE([ECORE_XCB_XINPUT], [1], [Build support for XCB input])
-
-dnl dri extension disabled currently in xcb
-dnl remember to add xcb-dri2 to EFL_DEPEND_PKG()
-dnl AC_DEFINE([ECORE_XCB_DRI], [1], [Build support for XCB dri])
-
-   EFL_EVAL_PKGS([ECORE_X])
-   EFL_CHECK_FUNCS([ECORE_X], [dlopen iconv])
-
-   HAVE_ECORE_X_BACKEND="HAVE_ECORE_X_XCB"
-fi
-
 EFL_ADD_LIBS([ECORE_X], [${ECORE_X_LIBS}])
 
 AC_SUBST([HAVE_ECORE_X_BACKEND])
@@ -4357,7 +4201,6 @@ AC_SUBST([HAVE_ECORE_X_BACKEND])
 EFL_LIB_END_OPTIONAL([Ecore_X])
 
 AM_CONDITIONAL([HAVE_ECORE_X_XLIB], [test "${want_x11_xlib}" = "yes"])
-AM_CONDITIONAL([HAVE_ECORE_X_XCB], [test "${want_x11_xcb}" = "yes"])
 #### End of Ecore_X
 
 
@@ -4610,7 +4453,6 @@ AM_CONDITIONAL([BUILD_ECORE_EVAS_WIN32],
 ECORE_EVAS_MODULE([software-x11], [${want_x11_any}])
 
 have_ecore_evas_software_xlib="no"
-have_ecore_evas_software_xcb="no"
 if test "x$have_ecore_evas_software_x11" = "xyes" ; then
    have_ecore_evas_software_xlib=${have_evas_engine_software_xlib}
    if test "x${have_ecore_evas_software_xlib}" = "xstatic"; then
@@ -4619,13 +4461,6 @@ if test "x$have_ecore_evas_software_x11" = "xyes" ; then
    if test "x${have_ecore_evas_software_xlib}" = "xyes"; then
       AC_DEFINE([BUILD_ECORE_EVAS_SOFTWARE_XLIB], [1], [Evas Software Xlib Engine Support])
    fi
-   have_ecore_evas_software_xcb=${have_evas_engine_software_xcb}
-   if test "x$have_ecore_evas_software_xcb" = "xstatic"; then
-      have_ecore_evas_software_xcb="yes"
-   fi
-   if test "x$have_ecore_evas_software_xcb" = "xyes"; then
-      AC_DEFINE([BUILD_ECORE_EVAS_SOFTWARE_XCB], [1], [Evas Software XCB Engine Support])
-   fi
 fi
 
 # XXX TODO: ecore_evas_opengl_x11
@@ -4633,39 +4468,17 @@ fi
 ECORE_EVAS_MODULE([opengl-x11], [${want_x11_any_opengl}])
 
 have_ecore_evas_opengl_xlib="no"
-have_ecore_evas_opengl_xcb="no"
 if test "x${have_ecore_evas_opengl_x11}" = "xyes" || test "x${have_ecore_evas_opengl_x11}" = "xstatic" ; then
    have_ecore_evas_opengl_xlib=${have_evas_engine_gl_xlib}
    if test "x${have_ecore_evas_opengl_xlib}" = "xyes" ; then
       AC_DEFINE([BUILD_ECORE_EVAS_OPENGL_XLIB], [1], [OpenGL Xlib rendering backend])
    fi
-
-# opengl does not work with xcb (yet)
-   have_ecore_evas_opengl_xcb=${have_evas_engine_gl_xcb}
-   if test "x${have_ecore_evas_opengl_xcb}" = "xstatic"; then
-      have_ecore_evas_opengl_xcb="yes"
-   fi
-   if test "x${have_ecore_evas_opengl_xcb}" = "xyes"; then
-      PKG_CHECK_MODULES([XCB_X11],
-         [x11-xcb],
-         [
-          have_ecore_x_opengl_xcb="yes"
-          requirements_ecore_x="x11-xcb ${requirements_ecore_x}"
-          AC_DEFINE([BUILD_ECORE_X_OPENGL_XCB], [1], [Build support for XCB-based OpenGL])
-          AC_DEFINE([BUILD_ECORE_EVAS_OPENGL_XCB], [1], [OpenGL XCB rendering backend])
-         ],
-         [have_ecore_x_opengl_xcb="no"])
-    else
-      have_ecore_x_opengl_xcb="no"
-      AC_MSG_NOTICE([XCB-based OpenGL explicitly disabled])
-    fi
 fi
 
 build_ecore_evas_x11="no"
 build_ecore_evas_vnc="no"
 if test "x$have_ecore_evas_software_x11" = "xyes" || \
-   test "x$have_ecore_evas_opengl_x11" = "xyes" || \
-   test "x$have_ecore_evas_software_xcb" = "xyes"; then
+   test "x$have_ecore_evas_opengl_x11" = "xyes"; then
    AC_DEFINE([BUILD_ECORE_EVAS_X11], [1], [Support for X Window Engines in Ecore_Evas])
    build_ecore_evas_x11="yes"
    if test "$want_vnc_server" = "yes"; then
@@ -6062,27 +5875,6 @@ if test -n "$CFOPT_WARNING"; then
   echo "==-- WARNING --=="
   echo ""
   echo "_____________________________________________________________________"
-  if test "x${with_x11}" = "xxcb"; then
-    echo "_____________________________________________________________________"
-    echo "You have chosen to use XCB instead of Xlib. It is a myth that XCB"
-    echo "is amazingly faster than Xlib (when used sensibly). It can be"
-    echo "faster in a few corner cases on startup of an app, but it comes"
-    echo "with many downsides. One of those is more complex code inside"
-    echo "ecore_x, which is far less tested in XCB mode than Xlib. Also"
-    echo "the big catch is that OpenGL support basically requires Xlib anyway"
-    echo "so if you want OpenGL in X11, you need Xlib regardless and so you"
-    echo "gain nothing really in terms of speed and no savings in memory"
-    echo "because Xlib is still linked, loaded and used, BUT instead you"
-    echo "have OpenGL drivers working with an hybrid XCB/Xlib (mostly XCB)"
-    echo "toolkit and this is basically never tested by anyone working on"
-    echo "the OpenGL drivers, so you will have bugs. Do not enable XCB"
-    echo "and use OpenGL. XCB is only useful if you wish to shave a few Kb"
-    echo "off the memory footprint of a whole system and live with less"
-    echo "tested code, and possibly unimplemented features in ecore_x. To"
-    echo "remove the XCB setup, remove the --with-x11=xcb option to"
-    echo "configure."
-    echo "_____________________________________________________________________"
-  fi
   if test "x${want_physics}" = "xno"; then
     echo "_____________________________________________________________________"
     echo "You have chosen to disable physics support. This disables lots of"

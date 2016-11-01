@@ -3,4 +3,3 @@ Description: Evas software X11 engine
 Version: @VERSION@
 
 Xlib=@have_evas_engine_software_xlib@
-XCB=@have_evas_engine_software_xcb@

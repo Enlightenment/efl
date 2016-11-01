@@ -264,10 +264,6 @@ _ecore_evas_available_engines_get(void)
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_XLIB
                             ADDENG("software_x11");
-#else
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-                            ADDENG("software_x11");
-# endif
 #endif
                          }
                        else if (!strcmp(name, "buffer"))
