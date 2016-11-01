@@ -276,10 +276,7 @@ static const char vertex_glsl[] =
    "   maskdiv_s = 4.0;\n"
    "#endif\n"
    "#ifdef SHD_MASK\n"
-   "   // mask_coord.w contains the Y-invert flag\n"
-   "   // position on screen in [0..1] range of current pixel\n"
-   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
-   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "   tex_m = mask_coord.xy;\n"
    "#endif\n"
    "}\n";
 

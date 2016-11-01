@@ -1357,7 +1357,7 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 #define COLOR_CNT  4
 #define TEX_CNT    2
 #define SAM_CNT    2
-#define MASK_CNT   4
+#define MASK_CNT   2
 
 #define PUSH_VERTEX(n, x, y, z) do { \
    gc->pipe[n].array.vertex[nv++] = x; \
@@ -1380,11 +1380,9 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 #define PUSH_TEXA(n, u, v) do { \
    gc->pipe[n].array.texa[na++] = u; \
    gc->pipe[n].array.texa[na++] = v; } while(0)
-#define PUSH_TEXM(n, u, v, w, z) do { \
+#define PUSH_TEXM(n, u, v) do { \
    gc->pipe[n].array.mask[nm++] = u; \
-   gc->pipe[n].array.mask[nm++] = v; \
-   gc->pipe[n].array.mask[nm++] = w; \
-   gc->pipe[n].array.mask[nm++] = z; } while(0)
+   gc->pipe[n].array.mask[nm++] = v; } while(0)
 #define PUSH_TEXSAM(n, x, y) do { \
    gc->pipe[n].array.texsam[ns++] = x; \
    gc->pipe[n].array.texsam[ns++] = y; } while(0)
@@ -1397,6 +1395,12 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 #define PUSH_6_QUAD(pn, x1, y1, x2, y2, x3, y3, x4, y4)                 \
   PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x4, y4);\
   PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x3, y3); PUSH_TEXUV(pn, x4, y4);
+
+#define PUSH_6_TEXM(pn, x, y, w, h) do { \
+   PUSH_TEXM(pn, x    , y    ); PUSH_TEXM(pn, x + w, y    ); \
+   PUSH_TEXM(pn, x    , y + h); PUSH_TEXM(pn, x + w, y    ); \
+   PUSH_TEXM(pn, x + w, y + h); PUSH_TEXM(pn, x    , y + h); \
+   } while (0)
 
 #define PUSH_6_TEXUV(pn, x1, y1, x2, y2)                \
   PUSH_6_QUAD(pn, x1, y1, x2, y1, x2, y2, x1, y2);
@@ -1425,38 +1429,31 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 
 static inline Eina_Bool
 _push_mask(Evas_Engine_GL_Context *gc, const int pn, int nm, Evas_GL_Texture *mtex,
-           int mx, int my, int mw, int mh, Shader_Sampling msam, int nms)
+           int mx, int my, int mw, int mh, int x, int y, int w, int h,
+           Shader_Sampling msam, int nms)
 {
-   double glmx, glmy, glmw, glmh, yinv = -1.f;
+   double glmx, glmy, glmw, glmh;
    double gw = gc->w, gh = gc->h;
-   int i, cnt = 6;
-
-   if (!((gc->pipe[0].shader.surface == gc->def_surface) ||
-         (!gc->pipe[0].shader.surface)))
-     {
-        gw = gc->pipe[0].shader.surface->w;
-        gh = gc->pipe[0].shader.surface->h;
-        yinv = 1.f;
-     }
+   int cnt = 6;
 
    if (!gw || !gh || !mw || !mh || !mtex->pt->w || !mtex->pt->h)
      return EINA_FALSE;
 
-   /* vertex shader:
-    * vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
-    * tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;
-    */
-   glmx = (double)((mtex->x * mw) - (mtex->w * mx)) / (double)(mw * mtex->pt->w);
-   glmy = (double)((mtex->y * mh) - (mtex->h * my)) / (double)(mh * mtex->pt->h);
-   glmw = (double)(gw * mtex->w) / (double)(mw * mtex->pt->w);
-   glmh = (double)(gh * mtex->h) / (double)(mh * mtex->pt->h);
-   glmh *= yinv;
+   glmx = ((double) (x - mx) / mw) * mtex->w / mtex->pt->w + (double) mtex->x / mtex->pt->w;
+   glmy = ((double) (y - my) / mh) * mtex->h / mtex->pt->h + (double) mtex->y / mtex->pt->h;
+   glmw = (double) (w * mtex->w) / (mw * mtex->pt->w);
+   glmh = (double) (h * mtex->h) / (mh * mtex->pt->h);
 
-   if (gc->pipe[pn].array.line)
-     cnt = 2;
-
-   for (i = 0; i < cnt; i++)
-     PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
+   if (EINA_UNLIKELY(gc->pipe[pn].array.line))
+     {
+        PUSH_TEXM(pn, glmx, glmy);
+        PUSH_TEXM(pn, glmx + glmy, glmy + glmh);
+        cnt = 2;
+     }
+   else
+     {
+        PUSH_6_TEXM(pn, glmx, glmy, glmw, glmh);
+     }
 
    if (msam)
      {
@@ -1465,18 +1462,11 @@ _push_mask(Evas_Engine_GL_Context *gc, const int pn, int nm, Evas_GL_Texture *mt
         PUSH_MASKSAM(pn, samx, samy, cnt);
      }
 
-   /*
-   DBG("%d,%d %dx%d --> %f , %f - %f x %f [gc %dx%d, tex %d,%d %dx%d, pt %dx%d]",
-       mx, my, mw, mh,
-       glmx, glmy, glmw, glmh,
-       gc->w, gc->h, mtex->x, mtex->y, mtex->w, mtex->h, mtex->pt->w, mtex->pt->h);
-   */
-
    return EINA_TRUE;
 }
 
 #define PUSH_MASK(pn, mtex, mx, my, mw, mh, msam) if (mtex) do { \
-   _push_mask(gc, pn, nm, mtex, mx, my, mw, mh, msam, nms); \
+   _push_mask(gc, pn, nm, mtex, mx, my, mw, mh, x, y, w, h, msam, nms); \
    } while(0)
 
 #define PIPE_GROW(gc, pn, inc) \
