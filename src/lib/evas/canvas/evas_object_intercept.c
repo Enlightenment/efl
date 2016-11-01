@@ -99,25 +99,25 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
    if (!obj || obj->delete_me || !obj->layer) return 1;
    evas_object_async_block(obj);
 
+   va_start(args, internal);
+
    switch (cb_type)
      {
       case EVAS_OBJECT_INTERCEPT_CB_VISIBLE:
-        va_start(args, internal);
         i = !!va_arg(args, int);
-        va_end(args);
-        if (i == obj->cur->visible) return 1;
-        if (!obj->interceptors) return 0;
-        if (i) return evas_object_intercept_call_show(eo_obj, obj);
-        else return evas_object_intercept_call_hide(eo_obj, obj);
+        if (i == obj->cur->visible) goto end_block;
+        if (!obj->interceptors) goto end_noblock;
+        if (i) blocked = evas_object_intercept_call_show(eo_obj, obj);
+        else blocked = evas_object_intercept_call_hide(eo_obj, obj);
+        break;
 
       case EVAS_OBJECT_INTERCEPT_CB_MOVE:
         if (obj->doing.in_move > 0)
           {
              WRN("evas_object_move() called on object %p (%s) in the middle "
                  "of moving the same object", eo_obj, efl_class_name_get(eo_obj));
-             return 1;
+             goto end_block;
           }
-        va_start(args, internal);
         i = va_arg(args, int);
         j = va_arg(args, int);
         if ((obj->cur->geometry.x == i) && (obj->cur->geometry.y == j)) goto end_block;
@@ -126,7 +126,6 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_RESIZE:
-        va_start(args, internal);
         i = va_arg(args, int);
         j = va_arg(args, int);
         if (!internal)
@@ -139,44 +138,41 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_RAISE:
-        if (!obj->interceptors) return 0;
-        return evas_object_intercept_call_raise(eo_obj, obj);
+        if (!obj->interceptors) goto end_noblock;
+        blocked = evas_object_intercept_call_raise(eo_obj, obj);
+        break;
 
       case EVAS_OBJECT_INTERCEPT_CB_LOWER:
-        if (!obj->interceptors) return 0;
-        return evas_object_intercept_call_lower(eo_obj, obj);
+        if (!obj->interceptors) goto end_noblock;
+        blocked = evas_object_intercept_call_lower(eo_obj, obj);
+        break;
 
       case EVAS_OBJECT_INTERCEPT_CB_STACK_ABOVE:
-        if (!obj->interceptors) return 0;
-        va_start(args, internal);
+        if (!obj->interceptors) goto end_noblock;
         eo_other = va_arg(args, Evas_Object *);
         blocked = evas_object_intercept_call_stack_above(eo_obj, obj, eo_other);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_STACK_BELOW:
-        if (!obj->interceptors) return 0;
-        va_start(args, internal);
+        if (!obj->interceptors) goto end_noblock;
         eo_other = va_arg(args, Evas_Object *);
         blocked = evas_object_intercept_call_stack_below(eo_obj, obj, eo_other);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_LAYER_SET:
-        if (!obj->interceptors) return 0;
-        va_start(args, internal);
+        if (!obj->interceptors) goto end_noblock;
         i = va_arg(args, int);
         blocked = evas_object_intercept_call_layer_set(eo_obj, obj, i);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET:
-        if (!obj->interceptors) return 0;
-        va_start(args, internal);
+        if (!obj->interceptors) goto end_noblock;
         i = va_arg(args, int);
         blocked = evas_object_intercept_call_focus_set(eo_obj, obj, !!i);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_COLOR_SET:
-        if (!obj->interceptors) return 0;
-        va_start(args, internal);
+        if (!obj->interceptors) goto end_noblock;
         r = va_arg(args, int);
         g = va_arg(args, int);
         b = va_arg(args, int);
@@ -185,7 +181,6 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_CLIP_SET:
-        va_start(args, internal);
         eo_other = va_arg(args, Evas_Object *);
         if (eo_other)
           {
@@ -208,6 +203,7 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
           }
         if (!obj->interceptors) goto end_noblock;
         blocked = evas_object_intercept_call_clip_unset(eo_obj, obj);
+        break;
      }
 
    va_end(args);
