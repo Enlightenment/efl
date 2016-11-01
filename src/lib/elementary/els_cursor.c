@@ -197,14 +197,11 @@ _elm_cursor_obj_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UN
 }
 
 static void
-_elm_cursor_set_hot_spots(void *data)
+_elm_cursor_set_hot_spots(Elm_Cursor *cur)
 {
-   Elm_Cursor *cur = data;
    const char *str;
    Evas_Coord cx, cy, cw, ch, x, y, w, h;
    int prev_hot_x, prev_hot_y;
-
-   cur->hotupdate_job = NULL;
 
    prev_hot_x = cur->hot_x;
    prev_hot_y = cur->hot_y;
@@ -229,11 +226,21 @@ _elm_cursor_set_hot_spots(void *data)
 }
 
 static void
+_elm_cursor_set_hot_spots_job(void *data)
+{
+   Elm_Cursor *cur = data;
+
+   cur->hotupdate_job = NULL;
+
+   _elm_cursor_set_hot_spots(cur);
+}
+
+static void
 _elm_cursor_hot_change(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Cursor *cur = data;
    if (cur->hotupdate_job) ecore_job_del(cur->hotupdate_job);
-   cur->hotupdate_job = ecore_job_add(_elm_cursor_set_hot_spots, data);
+   cur->hotupdate_job = ecore_job_add(_elm_cursor_set_hot_spots_job, data);
 }
 
 static Eina_Bool
