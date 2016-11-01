@@ -8,39 +8,39 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
       pack_grid {
          params {
             subobj: own(Efl.Gfx);
-            col: int;
-            row: int;
+            col: int; [[Column number]]
+            row: int; [[Row number]]
             colspan: int @optional; [[0 means 1, -1 means @.grid_columns]]
             rowspan: int @optional; [[0 means 1, -1 means @.grid_rows]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       grid_contents_get {
          [[Returns all objects at a given position in this grid.]]
          return: free(own(iterator<Efl.Gfx>), eina_iterator_free);
          params {
-            @in col: int;
-            @in row: int;
+            @in col: int; [[Column number]]
+            @in row: int; [[Row number]]
             @in below: bool @optional; [[If $true get objects spanning over this cell.]]
          }
       }
       grid_content_get {
          [[Returns a child at a given position, see @.grid_contents_get.]]
-         return: Efl.Gfx;
+         return: Efl.Gfx; [[Child object]]
          params {
-            @in col: int;
-            @in row: int;
+            @in col: int; [[Column number]]
+            @in row: int; [[Row number]]
          }
       }
       @property grid_position {
-         [[position and span of the $subobj in this container, may be modified to move the $subobj]]
-         get { return: bool; [[returns false if item is not a child]] }
+         [[Position and span of the $subobj in this container, may be modified to move the $subobj]]
+         get { return: bool; [[Returns false if item is not a child]] }
          keys {
-            subobj: Efl.Gfx;
+            subobj: Efl.Gfx; [[Child object]]
          }
          values {
-            col: int;
-            row: int;
+            col: int; [[Column number]]
+            row: int; [[Row number]]
             colspan: int;
             rowspan: int;
          }
@@ -50,22 +50,22 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
          set {}
          get {}
          values {
-            cols: int;
-            rows: int;
+            cols: int; [[Number of columns]]
+            rows: int; [[Number of rows]]
          }
       }
       @property grid_columns {
          set { [[Specifies limit for linear adds - if direction is horizontal]] }
          get {}
          values {
-            cols: int;
+            cols: int; [[Number of columns]]
          }
       }
       @property grid_rows {
          set { [[Specifies limit for linear adds - if direction is vertical]] }
          get {}
          values {
-            rows: int;
+            rows: int; [[Number of rows]]
          }
       }
       @property grid_orientation {
@@ -76,8 +76,8 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
          set {}
          get {}
          values {
-            primary: Efl.Orient;
-            secondary: Efl.Orient;
+            primary: Efl.Orient; [[Primary orientation]]
+            secondary: Efl.Orient; [[Secondary orientation]]
          }
       }
    }
