@@ -34,12 +34,13 @@ struct enum_definition_generator
              , last = std::end(enum_.fields); first != last; ++first)
        {
           auto name = (*first).name;
+          auto literal = (*first).value.literal;
           name[0] = std::toupper(name[0]); // Hack to allow 'static' as a field name
           if (!as_generator
               (
-               string << ",\n"
+               string << " = " << string << ",\n"
               )
-              .generate(sink, name, context))
+              .generate(sink, std::make_tuple(name, literal), context))
             return false;
        }
 
