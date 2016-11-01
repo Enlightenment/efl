@@ -3,6 +3,7 @@
 #endif
 
 #include "ecore_evas_wayland_private.h"
+#include <Evas_Engine_Wayland.h>
 
 #define _smart_frame_type "ecore_evas_wl_frame"
 
@@ -1905,4 +1906,103 @@ _ecore_evas_wl_interface_new(void)
    iface->window2_get = _ecore_evas_wayland_window_get;
 
    return iface;
+}
+
+void
+_ecore_evas_wl_common_show(Ecore_Evas *ee)
+{
+   Evas_Engine_Info_Wayland *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+   int fw, fh;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (ee->visible)) return;
+
+   wdata = ee->engine.data;
+   if (!wdata->sync_done)
+     {
+        wdata->defer_show = EINA_TRUE;
+        return;
+     }
+
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+
+   if (wdata->win)
+     {
+        ecore_wl2_window_show(wdata->win);
+        ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
+
+        einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+        if (einfo)
+          {
+             struct wl_surface *surf;
+
+             surf = ecore_wl2_window_surface_get(wdata->win);
+             if ((!einfo->info.wl_surface) || (einfo->info.wl_surface != surf))
+               {
+                  einfo->info.wl_surface = surf;
+                  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
+                  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
+               }
+             einfo->www_avail = !!wdata->win->www_surface;
+             einfo->just_mapped = EINA_TRUE;
+          }
+     }
+
+   if (wdata->frame)
+     {
+        evas_object_show(wdata->frame);
+        evas_object_resize(wdata->frame, ee->w + fw, ee->h + fh);
+     }
+
+   ee->prop.withdrawn = EINA_FALSE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+
+   if (ee->visible) return;
+   ee->visible = 1;
+   ee->should_be_visible = 1;
+   ee->draw_ok = EINA_TRUE;
+   if (ee->func.fn_show) ee->func.fn_show(ee);
+}
+
+void
+_ecore_evas_wl_common_hide(Ecore_Evas *ee)
+{
+   Evas_Engine_Info_Wayland *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->visible)) return;
+   wdata = ee->engine.data;
+
+   evas_sync(ee->evas);
+
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+   if (einfo)
+     {
+        einfo->info.wl_surface = NULL;
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
+          }
+     }
+
+   if (wdata->win)
+     ecore_wl2_window_hide(wdata->win);
+
+   if (ee->prop.override)
+     {
+        ee->prop.withdrawn = EINA_TRUE;
+        if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+     }
+
+   if (!ee->visible) return;
+   ee->visible = 0;
+   ee->should_be_visible = 0;
+   ee->draw_ok = EINA_FALSE;
+
+   if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }

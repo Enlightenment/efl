@@ -96,6 +96,8 @@ void _ecore_evas_wl_common_render_updates(void *data, Evas *evas, void *event);
 void _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize);
 void _ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, Eina_Bool on);
 void _ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, Eina_Bool on);
+void _ecore_evas_wl_common_show(Ecore_Evas *ee);
+void _ecore_evas_wl_common_hide(Ecore_Evas *ee);
 
 void _ecore_evas_wl_common_frame_callback_clean(Ecore_Evas *ee);
 

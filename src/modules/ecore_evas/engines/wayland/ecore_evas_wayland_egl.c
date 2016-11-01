@@ -34,8 +34,6 @@ extern EAPI Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
 extern EAPI void _evas_canvas_image_data_regenerate(Eina_List *list);
 
 /* local function prototypes */
-static void _ecore_evas_wl_show(Ecore_Evas *ee);
-static void _ecore_evas_wl_hide(Ecore_Evas *ee);
 static void _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent);
 static void _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize);
@@ -63,8 +61,8 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_common_move_resize,
    _ecore_evas_wl_rotation_set,
    NULL, // shaped_set
-   _ecore_evas_wl_show,
-   _ecore_evas_wl_hide,
+   _ecore_evas_wl_common_show,
+   _ecore_evas_wl_common_hide,
    _ecore_evas_wl_common_raise,
    NULL, // lower
    NULL, // activate
@@ -467,101 +465,6 @@ _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-}
-
-static void 
-_ecore_evas_wl_show(Ecore_Evas *ee)
-{
-   Evas_Engine_Info_Wayland *einfo;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-   int fw, fh;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if ((!ee) || (ee->visible)) return;
-
-   wdata = ee->engine.data;
-   if (!wdata->sync_done)
-     {
-        wdata->defer_show = EINA_TRUE;
-        return;
-     }
-
-   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-
-   if (wdata->win)
-     {
-        ecore_wl2_window_show(wdata->win);
-        ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
-
-        einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
-        if (einfo)
-          {
-             struct wl_surface *surf;
-
-             surf = ecore_wl2_window_surface_get(wdata->win);
-             if ((!einfo->info.wl_surface) || (einfo->info.wl_surface != surf))
-               {
-                  einfo->info.wl_surface = surf;
-                  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-                  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
-               }
-             einfo->www_avail = !!wdata->win->www_surface;
-             einfo->just_mapped = EINA_TRUE;
-          }
-     }
-
-   if (wdata->frame)
-     {
-        evas_object_show(wdata->frame);
-        evas_object_resize(wdata->frame, ee->w + fw, ee->h + fh);
-     }
-
-   ee->prop.withdrawn = EINA_FALSE;
-   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
-
-   if (ee->visible) return;
-   ee->visible = 1;
-   ee->should_be_visible = 1;
-   ee->draw_ok = EINA_TRUE;
-   if (ee->func.fn_show) ee->func.fn_show(ee);
-}
-
-static void 
-_ecore_evas_wl_hide(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
-   Evas_Engine_Info_Wayland *einfo;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if ((!ee) || (!ee->visible)) return;
-   wdata = ee->engine.data;
-
-   evas_sync(ee->evas);
-
-   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
-   if (einfo)
-     {
-        einfo->info.wl_surface = NULL;
-        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-     }
-
-   if (wdata->win) 
-     ecore_wl2_window_hide(wdata->win);
-
-   if (ee->prop.override)
-     {
-        ee->prop.withdrawn = EINA_TRUE;
-        if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
-     }
-
-   if (!ee->visible) return;
-   ee->visible = 0;
-   ee->should_be_visible = 0;
-   ee->draw_ok = EINA_FALSE;
-
-   if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
 static void 
