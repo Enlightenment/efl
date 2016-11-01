@@ -99,6 +99,7 @@ void _ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, Eina_Bool on);
 void _ecore_evas_wl_common_show(Ecore_Evas *ee);
 void _ecore_evas_wl_common_hide(Ecore_Evas *ee);
 void _ecore_evas_wl_common_alpha_set(Ecore_Evas *ee, int alpha);
+void _ecore_evas_wl_common_transparent_set(Ecore_Evas *ee, int transparent);
 
 void _ecore_evas_wl_common_frame_callback_clean(Ecore_Evas *ee);
 
@@ -112,7 +113,6 @@ extern Eina_List *ee_list;
 #ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
 void _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location);
 void _ecore_evas_wayland_shm_resize_edge_set(Ecore_Evas *ee, int edge);
-void _ecore_evas_wayland_shm_transparent_do(Ecore_Evas *ee, int transparent);
 #endif
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
