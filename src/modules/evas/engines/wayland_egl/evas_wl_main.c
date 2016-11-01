@@ -33,7 +33,7 @@ eng_window_new(Evas *evas, Evas_Engine_Info_Wayland_Egl *einfo, int w, int h, Re
    if (display && (display != gw->disp))
      context = EGL_NO_CONTEXT;
    display = gw->disp;
-   gw->surface = einfo->info.surface;
+   gw->surface = einfo->info.wl_surface;
    gw->depth = einfo->info.depth;
    gw->alpha = einfo->info.destination_alpha;
    gw->rot = einfo->info.rotation;

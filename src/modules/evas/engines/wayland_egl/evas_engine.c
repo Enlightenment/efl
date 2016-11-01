@@ -283,7 +283,7 @@ evgl_eng_native_window_create(void *data)
    if (!(re = (Render_Engine *)data)) return NULL;
    if (!(ob = eng_get_ob(re))) return NULL;
 
-   if (!(win = wl_egl_window_create(ob->info->info.surface, 1, 1)))
+   if (!(win = wl_egl_window_create(ob->info->info.wl_surface, 1, 1)))
      {
         ERR("Could not create wl_egl window");
         return NULL;
@@ -637,7 +637,7 @@ eng_setup(Evas *evas, void *info)
         re = epd->engine.data.output;
         ob = eng_get_ob(re);
 
-        if (!inf->info.surface && (ob->egl_surface[0] != EGL_NO_SURFACE))
+        if (!inf->info.wl_surface && (ob->egl_surface[0] != EGL_NO_SURFACE))
           {
              eglDestroySurface(ob->egl_disp, ob->egl_surface[0]);
              eglMakeCurrent(ob->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE,
@@ -650,7 +650,7 @@ eng_setup(Evas *evas, void *info)
           {
              ob->info = inf;
              if ((ob->info->info.display != ob->disp) ||
-                 (ob->info->info.surface != ob->surface) ||
+                 (ob->info->info.wl_surface != ob->surface) ||
                  /* FIXME: comment out below line.
                   * since there is no place set the info->info.win for now,
                   * it causes renew the window unnecessarily.
