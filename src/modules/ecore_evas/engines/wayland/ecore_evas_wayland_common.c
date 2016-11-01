@@ -3,9 +3,6 @@
 #endif
 
 #include "ecore_evas_wayland_private.h"
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-# include <Evas_Engine_Wayland_Egl.h>
-#endif
 
 #define _smart_frame_type "ecore_evas_wl_frame"
 
