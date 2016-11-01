@@ -24,5 +24,6 @@ class Efl.Net.Server.Unix (Efl.Net.Server.Fd) {
         Efl.Net.Server.serve;
         Efl.Net.Server.Fd.client_add;
         Efl.Net.Server.Fd.client_reject;
+        Efl.Net.Server.Fd.socket_activate;
     }
 }

@@ -17,6 +17,10 @@
 # include <Evil.h>
 #endif
 
+#ifdef HAVE_SYSTEMD
+# include <systemd/sd-daemon.h>
+#endif
+
 #define MY_CLASS EFL_NET_SERVER_FD_CLASS
 
 typedef struct _Efl_Net_Server_Fd_Data
@@ -194,6 +198,58 @@ EOLIAN static Eina_Bool
 _efl_net_server_fd_efl_net_server_serving_get(Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd)
 {
    return pd->serving;
+}
+
+EOLIAN static Eina_Error
+_efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Fd_Data *pd EINA_UNUSED, const char *address)
+{
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_loop_fd_get(o) != INVALID_SOCKET, EALREADY);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
+
+#ifndef HAVE_SYSTEMD
+   DBG("systemd support is disabled");
+   return ENOENT;
+#else
+   if (!sd_fd_max)
+     {
+        DBG("This service was not socket-activated, no $LISTEN_FDS");
+        return ENOENT;
+     }
+   else if (sd_fd_index >= sd_fd_max)
+     {
+        WRN("No more systemd sockets available. Configuration mismatch?");
+        return ENOENT;
+     }
+   else
+     {
+        SOCKET fd = SD_LISTEN_FDS_START + sd_fd_index;
+        int family;
+        socklen_t len = sizeof(family);
+
+        if (getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &family, &len) != 0)
+          {
+             WRN("socket %d failed to return family: %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
+             return EINVAL;
+          }
+
+        sd_fd_index++;
+        efl_net_server_fd_family_set(o, family);
+        efl_loop_fd_set(o, fd);
+        if (efl_loop_fd_get(o) == INVALID_SOCKET)
+          {
+             sd_fd_index--;
+             WRN("socket %d could not be used by %p (%s)",
+                 fd, o, efl_class_name_get(efl_class_get(o)));
+             return EINVAL;
+          }
+
+        /* by default they all come with close_on_exec set
+         * and we must apply our local conf.
+         */
+        efl_net_server_fd_close_on_exec_set(o, pd->close_on_exec);
+        return 0;
+     }
+#endif
 }
 
 EOLIAN static Eina_Bool

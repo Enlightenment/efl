@@ -39,5 +39,6 @@ class Efl.Net.Server.Tcp (Efl.Net.Server.Fd) {
         Efl.Net.Server.serve;
         Efl.Net.Server.Fd.client_add;
         Efl.Net.Server.Fd.client_reject;
+        Efl.Net.Server.Fd.socket_activate;
     }
 }

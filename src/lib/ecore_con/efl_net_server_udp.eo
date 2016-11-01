@@ -125,5 +125,6 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
         Efl.Object.destructor;
         Efl.Net.Server.serve;
         Efl.Net.Server.Fd.process_incoming_data;
+        Efl.Net.Server.Fd.socket_activate;
     }
 }

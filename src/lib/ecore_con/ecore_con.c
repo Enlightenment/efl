@@ -3175,6 +3175,220 @@ efl_net_ip_port_split(char *buf, const char **p_host, const char **p_port)
    return EINA_TRUE;
 }
 
+#ifdef HAVE_SYSTEMD
+Eina_Error
+efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina_Bool *listening)
+{
+   SOCKET fd = SD_LISTEN_FDS_START + sd_fd_index;
+   int r;
+
+   if (sd_fd_index >= sd_fd_max) return ENOENT;
+
+   if (family == AF_UNIX)
+     {
+        char buf[sizeof(struct sockaddr_un)] = "";
+        const char *sun_path;
+        size_t len;
+
+        if (strncmp(address, "abstract:", strlen("abstract:")) == 0)
+          {
+             const char *path = address + strlen("abstract:");
+             if (strlen(path) + 2 > sizeof(buf))
+               {
+                  ERR("abstract path is too long: %s", path);
+                  return EINVAL;
+               }
+             buf[0] = '\0';
+             memcpy(buf + 1, path, strlen(path) + 1);
+             sun_path = buf;
+             len = strlen(path) + 2;
+          }
+        else
+          {
+             if (strlen(address) + 1 > sizeof(buf))
+               {
+                  ERR("path is too long: %s", address);
+                  return EINVAL;
+               }
+             sun_path = address;
+             len = strlen(address) + 1;
+          }
+
+        r = sd_is_socket_unix(fd, type, 0, sun_path, len);
+        if (r < 0)
+          {
+             ERR("socket %d is not of family=%d, type=%d", fd, family, type);
+             return EINVAL;
+          }
+        if (listening) *listening = (r == 1);
+        return 0;
+     }
+   else if ((family == AF_UNSPEC) || (family == AF_INET) || (family == AF_INET6))
+     {
+        char *str;
+        const char *host, *port;
+        struct sockaddr_storage sock_addr;
+        struct sockaddr_storage want_addr = { .ss_family = family };
+        socklen_t addrlen;
+        Eina_Error err;
+        int x;
+
+        r = sd_is_socket(fd, family, type, (type == SOCK_DGRAM) ? -1 : 0);
+        if (r < 0)
+          {
+             ERR("socket %d is not of family=%d, type=%d", fd, family, type);
+             return EINVAL;
+          }
+        if ((type == SOCK_DGRAM) && (listening)) *listening = EINA_FALSE;
+        else if (listening) *listening = (r == 1);
+
+        addrlen = sizeof(sock_addr);
+        if (getsockname(fd, (struct sockaddr *)&sock_addr, &addrlen) != 0)
+          {
+             err = efl_net_socket_error_get();
+             ERR("could not query socket=%d name: %s", fd, eina_error_msg_get(err));
+             return err;
+          }
+
+        str = strdup(address);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(str, ENOMEM);
+        if (!efl_net_ip_port_split(str, &host, &port))
+          {
+             ERR("invalid IP:PORT address: %s", address);
+             free(str);
+             return EINVAL;
+          }
+        if (!port) port = "0";
+
+        if ((family == AF_UNSPEC) && (strchr(host, ':'))) family = AF_INET6;
+
+        if (family == AF_INET6)
+          {
+             struct sockaddr_in6 *a = (struct sockaddr_in6 *)&want_addr;
+             x = inet_pton(AF_INET6, host, &a->sin6_addr);
+          }
+        else
+          {
+             struct sockaddr_in *a = (struct sockaddr_in *)&want_addr;
+             x = inet_pton(AF_INET, host, &a->sin_addr);
+          }
+
+        /* FAST PATH: numbers were provided */
+        if (x == 1)
+          {
+             char *endptr;
+             unsigned long p;
+             Eina_Bool matches;
+
+             want_addr.ss_family = family;
+             if (want_addr.ss_family != sock_addr.ss_family)
+               {
+                  ERR("socket %d family=%d differs from wanted %d", fd, sock_addr.ss_family, want_addr.ss_family);
+                  free(str);
+                  return EINVAL;
+               }
+
+             errno = 0;
+             p = strtoul(port, &endptr, 10);
+             if ((errno) || (endptr == port) || (*endptr != '\0'))
+               {
+                  ERR("invalid port number '%s'", port);
+                  free(str);
+                  return EINVAL;
+               }
+             else if (p > UINT16_MAX)
+               {
+                  ERR("invalid port number %lu (out of range)", p);
+                  free(str);
+                  return ERANGE;
+               }
+
+             if (family == AF_INET6)
+               {
+                  struct sockaddr_in6 *a = (struct sockaddr_in6 *)&want_addr;
+                  a->sin6_port = htons(p);
+                  matches = memcmp(a, &sock_addr, sizeof(*a)) == 0;
+               }
+             else
+               {
+                  struct sockaddr_in *a = (struct sockaddr_in *)&want_addr;
+                  x = inet_pton(AF_INET, host, &a->sin_addr);
+                  a->sin_port = htons(p);
+                  matches = memcmp(a, &sock_addr, sizeof(*a)) == 0;
+               }
+
+             if (!matches)
+               {
+                  char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
+
+                  efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&sock_addr);
+                  ERR("socket %d address %s differs from wanted %s", fd, buf, address);
+                  free(str);
+                  return EINVAL;
+               }
+
+             free(str);
+             return 0;
+          }
+        else
+          {
+             /*
+              * NOTE: this may block, but users should be using the IP:PORT
+              * as numbers, getting into the fast path above.
+              *
+              * This is best-try to help API to be usable, but may
+              * impact the main loop execution for a while. However
+              * people doing bind are expected to do so on a local
+              * address, usually resolves faster without too many DNS
+              * lookups.
+              */
+             struct addrinfo hints = {
+               .ai_socktype = type,
+               .ai_family = family,
+               .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED,
+             };
+             struct addrinfo *results, *itr;
+
+             DBG("resolving '%s', it may block main loop! Consider using IP:PORT", address);
+             do
+               {
+                  x = getaddrinfo(host, port, &hints, &results);
+               }
+             while ((r == EAI_AGAIN) || ((r == EAI_SYSTEM) && (errno == EINTR)));
+
+             if (x != 0)
+               {
+                  ERR("couldn't resolve host='%s', port='%s': %s",
+                      host, port, gai_strerror(x));
+                  free(str);
+                  return EINVAL;
+               }
+
+             err = EINVAL;
+             for (itr = results; itr != NULL; itr = itr->ai_next)
+               {
+                  if (sock_addr.ss_family != itr->ai_family) continue;
+                  if (memcmp(itr->ai_addr, &sock_addr, itr->ai_addrlen) == 0)
+                    {
+                       err = 0;
+                       break;
+                    }
+               }
+             freeaddrinfo(results);
+             free(str);
+             return err;
+          }
+     }
+   else
+     {
+        if (listening) *listening = EINA_FALSE;
+        ERR("unsupported family=%d", family);
+        return EINVAL;
+     }
+}
+#endif
+
+
 static void
 _cleanup_close(void *data)
 {

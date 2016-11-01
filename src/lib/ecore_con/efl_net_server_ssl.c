@@ -118,6 +118,14 @@ _efl_net_server_ssl_ssl_context_get(Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *
 }
 
 EOLIAN static Eina_Error
+_efl_net_server_ssl_socket_activate(Eo *o, Efl_Net_Server_Ssl_Data *pd, const char *address)
+{
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_net_server_serving_get(o), EALREADY);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
+   return efl_net_server_fd_socket_activate(pd->server, address);
+}
+
+EOLIAN static Eina_Error
 _efl_net_server_ssl_efl_net_server_serve(Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *pd, const char *address)
 {
    return efl_net_server_serve(pd->server, address);

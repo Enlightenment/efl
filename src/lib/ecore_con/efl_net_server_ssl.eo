@@ -18,14 +18,49 @@ class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
             }
         }
 
+        socket_activate {
+            [[If this method is called use an already activated socket.
+
+              This method allows a server to use an existing socket
+              received from systemd or similar system.
+
+              It will replace @Efl.Net.Server.serve, thus if this is
+              used, that method will return EALREADY.
+
+              \@note The parameter 'address' given to this function is
+              only used to validate the next socket available, it
+              doesn't search for a socket with the given address. Thus
+              the socket to be used is the next unused and orders
+              matter is using multiple servers!
+
+              Errors:
+
+                - EALREADY: already have a socket, either from
+                  previous @.socket_activate or
+                  @Efl.Net.Server.serve. Usually represents a
+                  programming error.
+
+                - ENOENT: no sockets received from process manager
+                  (ie: systemd). Usually this is not a fatal error,
+                  just proceed by calling @Efl.Net.Server.serve
+
+                - EINVAL: the socket received is not of the correct
+                  family, type or protocol. Usually this means a
+                  configuration mismatch with the order of server
+                  creation and calls to socket_activate. The
+                  systemd.socket entries must match the order in your
+                  application.
+            ]]
+            params {
+                address: string; [[The address to validate the next available socket. It doesn't serve as search, only as validation!]]
+            }
+            return: Eina.Error; [[0 on success, ENOENT if no socket is available or EALREADY if already have a socket]]
+        }
+
         @property family {
             [[The address family (AF_*) family of this socket.
 
-              It will be one of AF_INET (IPv4), AF_INET6 (IPv6),
-              AF_UNIX...
-
-              It must be set before the @Efl.Loop.Fd.fd.set is called
-              with a valid file descriptor.
+              It will be one of AF_INET (IPv4) or AF_INET6 (IPv6).
             ]]
             get { }
             values {

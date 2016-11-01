@@ -163,6 +163,64 @@ _efl_net_server_unix_bind_job(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 EOLIAN static Eina_Error
+_efl_net_server_unix_efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Unix_Data *pd EINA_UNUSED, const char *address)
+{
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_loop_fd_get(o) != INVALID_SOCKET, EALREADY);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
+
+#ifndef HAVE_SYSTEMD
+   return efl_net_server_fd_socket_activate(efl_super(o, MY_CLASS), address);
+#else
+   {
+      char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
+      Eina_Bool listening;
+      Eina_Error err;
+      struct sockaddr_storage *addr;
+      socklen_t addrlen;
+      int fd;
+
+      err = efl_net_ip_socket_activate_check(address, AF_UNIX, SOCK_STREAM, &listening);
+      if (err) return err;
+
+      err = efl_net_server_fd_socket_activate(efl_super(o, MY_CLASS), address);
+      if (err) return err;
+
+      fd = efl_loop_fd_get(o);
+
+      if (!listening)
+        {
+           if (listen(fd, 0) != 0)
+             {
+                err = efl_net_socket_error_get();
+                DBG("listen(%d): %s", fd, eina_error_msg_get(err));
+                goto error;
+             }
+        }
+
+      addrlen = sizeof(addr);
+      if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) != 0)
+        {
+           err = efl_net_socket_error_get();
+           ERR("getsockname(%d): %s", fd, eina_error_msg_get(err));
+           goto error;
+        }
+      else if (efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&addr))
+        efl_net_server_address_set(o, buf);
+
+      DBG("fd=%d serving at %s", fd, address);
+      efl_net_server_serving_set(o, EINA_TRUE);
+      return 0;
+
+   error:
+      efl_net_server_fd_family_set(o, AF_UNSPEC);
+      efl_loop_fd_set(o, INVALID_SOCKET);
+      closesocket(fd);
+      return err;
+   }
+#endif
+}
+
+EOLIAN static Eina_Error
 _efl_net_server_unix_efl_net_server_serve(Eo *o, Efl_Net_Server_Unix_Data *pd, const char *address)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);

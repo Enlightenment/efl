@@ -504,6 +504,8 @@ static const Ecore_Getopt options = {
   {
     ECORE_GETOPT_STORE_TRUE('e', "echo",
                             "Behave as 'echo' server, send back to client all the data receive"),
+    ECORE_GETOPT_STORE_TRUE(0, "socket-activated",
+                            "Try to use $LISTEN_FDS from systemd, if not do a regular serve()"),
     ECORE_GETOPT_STORE_UINT('l', "clients-limit",
                             "If set will limit number of clients to accept"),
     ECORE_GETOPT_STORE_TRUE('r', "clients-reject-excess",
@@ -564,9 +566,11 @@ main(int argc, char **argv)
    Eina_List *crls = NULL;
    Eina_List *cas = NULL;
    char *cipher_choice = NULL;
+   Eina_Bool socket_activated = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_BOOL(echo),
+     ECORE_GETOPT_VALUE_BOOL(socket_activated),
      ECORE_GETOPT_VALUE_UINT(clients_limit),
      ECORE_GETOPT_VALUE_BOOL(clients_reject_excess),
      ECORE_GETOPT_VALUE_BOOL(ipv6_only),
@@ -659,6 +663,8 @@ main(int argc, char **argv)
         efl_net_server_fd_close_on_exec_set(server, EINA_TRUE); /* recommended */
         efl_net_server_fd_reuse_address_set(server, EINA_TRUE); /* optional, but nice for testing */
         efl_net_server_fd_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
+
+        if (socket_activated) efl_net_server_fd_socket_activate(server, address);
      }
    else if (cls == EFL_NET_SERVER_UDP_CLASS)
      {
@@ -677,6 +683,7 @@ main(int argc, char **argv)
         efl_net_server_fd_close_on_exec_set(server, EINA_TRUE); /* recommended */
         efl_net_server_fd_reuse_address_set(server, EINA_TRUE); /* optional, but nice for testing */
         efl_net_server_fd_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
+        if (socket_activated) efl_net_server_fd_socket_activate(server, address);
      }
    else if (cls == EFL_NET_SERVER_SSL_CLASS)
      {
@@ -708,11 +715,13 @@ main(int argc, char **argv)
         efl_net_server_ssl_close_on_exec_set(server, EINA_TRUE); /* recommended */
         efl_net_server_ssl_reuse_address_set(server, EINA_TRUE); /* optional, but nice for testing */
         efl_net_server_ssl_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
+        if (socket_activated) efl_net_server_ssl_socket_activate(server, address);
      }
 #ifndef _WIN32
    else if (cls == EFL_NET_SERVER_UNIX_CLASS)
      {
         efl_net_server_unix_unlink_before_bind_set(server, EINA_TRUE); /* makes testing easier */
+        if (socket_activated) efl_net_server_fd_socket_activate(server, address);
      }
 #endif
 
@@ -721,12 +730,18 @@ main(int argc, char **argv)
     * with the object to add more properties that couldn't be done
     * during efl_add().
     */
-   err = efl_net_server_serve(server, address);
-   if (err)
+   if (!efl_net_server_serving_get(server))
      {
-        fprintf(stderr, "ERROR: could not serve(%s): %s\n",
-                address, eina_error_msg_get(err));
-        goto end_server;
+        if (socket_activated)
+          fprintf(stderr, "WARNING: --socket-activated, but not able to use $LISTEN_FDS descriptors. Try to start the server...\n");
+
+        err = efl_net_server_serve(server, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not serve(%s): %s\n",
+                     address, eina_error_msg_get(err));
+             goto end_server;
+          }
      }
 
    ecore_main_loop_begin();

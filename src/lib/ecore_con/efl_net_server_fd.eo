@@ -5,6 +5,53 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
     ]]
 
     methods {
+        socket_activate {
+            [[If this method is called use an already activated socket.
+
+              This method allows a server to use an existing socket
+              received from systemd or similar system.
+
+              It will replace @Efl.Net.Server.serve, thus if this is
+              used, that method will return EALREADY.
+
+              \@note The parameter 'address' given to this function is
+              only used to validate the next socket available, it
+              doesn't search for a socket with the given address. Thus
+              the socket to be used is the next unused and orders
+              matter is using multiple servers!
+
+              \@note subclasses must validate the socket and return
+              EINVAL prior to call the base class with
+              Efl.Object.super. They must also emit "serving" when
+              ready, for instance stream protocols may need to check
+              for listening and if not try to listen. Usually they
+              will also query getsockname() and set
+              @Efl.Net.Server.address.
+
+              Errors:
+
+                - EALREADY: already have a socket, either from
+                  previous @.socket_activate or
+                  @Efl.Net.Server.serve. Usually represents a
+                  programming error.
+
+                - ENOENT: no sockets received from process manager
+                  (ie: systemd). Usually this is not a fatal error,
+                  just proceed by calling @Efl.Net.Server.serve
+
+                - EINVAL: the socket received is not of the correct
+                  family, type or protocol. Usually this means a
+                  configuration mismatch with the order of server
+                  creation and calls to socket_activate. The
+                  systemd.socket entries must match the order in your
+                  application.
+            ]]
+            params {
+                address: string; [[The address to validate the next available socket. It doesn't serve as search, only as validation!]]
+            }
+            return: Eina.Error; [[0 on success, ENOENT if no socket is available or EALREADY if already have a socket]]
+        }
+
         @property family {
             [[The address family (AF_*) family of this socket.
 

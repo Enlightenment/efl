@@ -411,6 +411,30 @@ Eina_Bool efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct soc
 #endif
 Eina_Bool efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr);
 
+#ifdef HAVE_SYSTEMD
+/**
+ * Checks if the next FD in the sd_fd_index:sd_fd_max is of the
+ * expected family, protocol and if it's listening.
+ *
+ * This is similar to sd_is_socket()/sd_is_socket_inet(), but will
+ * also parse address in our standard format "IP:PORT", including IPv6
+ * within braces, and then will validate the address with
+ * getsockaddr() for INET.
+ *
+ * @param address the address to validate
+ * @param family AF_UNIX or AF_UNSPEC for INET, in that case AF_INET
+ *        or AF_INET6 will be inferred from @a address.
+ * @param type SOCK_STREAM or SOCK_DGRAM
+ * @param[out] listening where to return listening state, should be
+ *       NULL for @a type SOCK_DGRAM
+ *
+ * @return 0 on success, error otherwise.
+ *
+ * @internal
+ */
+Eina_Error efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina_Bool *listening);
+#endif
+
 /**
  * @brief splits an address in the format "host:port" in two
  * null-terminated strings.
