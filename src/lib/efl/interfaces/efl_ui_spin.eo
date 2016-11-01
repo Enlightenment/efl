@@ -1,5 +1,6 @@
 interface Efl.Ui.Spin()
 {
+   [[Efl UI spinner interface]]
    methods {
       @property min_max {
          [[Control the minimum and maximum values for the spinner.
