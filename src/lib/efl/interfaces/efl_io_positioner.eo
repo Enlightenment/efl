@@ -31,7 +31,7 @@ mixin Efl.Io.Positioner {
                 return: bool; [[$true if could reposition, $false if errors.]]
             }
             values {
-                position: uint64;
+                position: uint64; [[Position in file or buffer]]
             }
         }
     }

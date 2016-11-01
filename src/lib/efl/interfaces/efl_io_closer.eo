@@ -38,7 +38,7 @@ mixin Efl.Io.Closer {
                 return: bool; [[$true if could close, $false if already closed or errors.]]
             }
             values {
-                is_closed: bool;
+                is_closed: bool; [[$true if closed, $false otherwise]]
             }
         }
 
@@ -51,11 +51,11 @@ mixin Efl.Io.Closer {
             ]]
             get @virtual_pure { }
             set @virtual_pure {
-                [[If true, will close on exec() call.]]
+                [[If $true, will close on exec() call.]]
                 return: bool; [[$true if could set, $false if not supported or failed.]]
             }
             values {
-                close_on_exec: bool;
+                close_on_exec: bool; [[$true if close on exec(), $false otherwise]]
             }
         }
 
@@ -68,7 +68,7 @@ mixin Efl.Io.Closer {
             get @virtual_pure { }
             set @virtual_pure { }
             values {
-                close_on_destructor: bool;
+                close_on_destructor: bool; [[$true if close on destructor, $false otherwise]]
             }
         }
     }

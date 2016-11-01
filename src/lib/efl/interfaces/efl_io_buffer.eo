@@ -18,7 +18,7 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
         preallocate {
             [[Immediately pre-allocate a buffer of at least a given size.]]
             params {
-                @in size: size; [[amount of bytes to pre-allocate.]]
+                @in size: size; [[Amount of bytes to pre-allocate.]]
             }
         }
 
@@ -52,10 +52,10 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
             ]]
             get { }
             set {
-                return: bool (false);
+                return: bool (false); [[$true if setting the position succeeded, $false otherwise]]
             }
             values {
-                position: uint64;
+                position: uint64; [[Position in buffer]]
             }
         }
 
@@ -71,10 +71,10 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
             ]]
             get { }
             set {
-                return: bool (false);
+                return: bool (false); [[$true if setting the position succeeded, $false otherwise]]
             }
             values {
-                position: uint64;
+                position: uint64; [[Position in buffer]]
             }
         }
 

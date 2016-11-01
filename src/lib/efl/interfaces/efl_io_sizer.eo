@@ -14,7 +14,7 @@ mixin Efl.Io.Sizer {
     methods {
         resize @virtual_pure {
             params {
-                @in size: uint64;
+                @in size: uint64; [[Object size]]
             }
             return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
         }
@@ -26,7 +26,7 @@ mixin Efl.Io.Sizer {
                 return: bool; [[$true if could resize, $false if errors.]]
             }
             values {
-                size: uint64;
+                size: uint64; [[Object size]]
             }
         }
     }

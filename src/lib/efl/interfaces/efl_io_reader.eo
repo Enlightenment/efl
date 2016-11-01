@@ -29,7 +29,7 @@ interface Efl.Io.Reader {
               You can understand this method as read(2) libc function.
             ]]
             params {
-               @inout rw_slice: Eina.Rw_Slice @nonull; [[provides a pre-allocated memory to be filled up to rw_slice.len. It will be populated and the length will be set to the actually used amount of bytes, which can be smaller than the request.]]
+               @inout rw_slice: Eina.Rw_Slice @nonull; [[Provides a pre-allocated memory to be filled up to rw_slice.len. It will be populated and the length will be set to the actually used amount of bytes, which can be smaller than the request.]]
             }
             return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
         }
@@ -39,7 +39,8 @@ interface Efl.Io.Reader {
             get { }
             set @protected { }
             values {
-                can_read: bool;
+                can_read: bool; [[$true if it can be read without blocking or failing, $false
+                		  otherwise]]
             }
         }
 
@@ -48,7 +49,7 @@ interface Efl.Io.Reader {
             get { }
             set @protected { }
             values {
-                is_eos: bool;
+                is_eos: bool; [[$true if end of stream, $false otherwise]]
             }
         }
     }
