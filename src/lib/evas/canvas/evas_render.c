@@ -572,7 +572,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
 #ifdef REND_DBG
    if (!is_active)
      {
-        RD(level, "[%p", obj);
+        RD(level, "[%p", obj->object);
         IFRD(obj->name, 0, " '%s'", obj->name);
         RD(0, "] vis: %i, cache.clip.vis: %i cache.clip.a: %i [%p]\n", obj->cur->visible, obj->cur->cache.clip.visible, obj->cur->cache.clip.a, obj->func->is_visible);
      }
@@ -1344,7 +1344,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
 #ifdef REND_DBG
    RD(level, "{\n");
-   RD(level, "  evas_render_mapped(evas:%p, obj:%p", evas, obj);
+   RD(level, "  evas_render_mapped(evas:%p, obj:%p", evas->evas, obj->object);
    IFRD(obj->name, 0, " '%s'", obj->name);
    RD(0, ", ctx:%p, sfc:%p, offset:%i,%i, %s, use_mapped_ctx:%d, %s)\n", context, surface, off_x, off_y,
       mapped ? "mapped" : "normal", use_mapped_ctx, do_async ? "async" : "sync");
@@ -1357,7 +1357,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
            obj->cur->clipper->type,
            obj->cur->clipper->name ? ":" : "",
            obj->cur->clipper->name ? obj->cur->clipper->name : "",
-           obj->cur->clipper, obj->clip.mask,
+           obj->cur->clipper->object, obj->clip.mask ? obj->clip.mask->object : NULL,
            obj->cur->clipper->cur->geometry.x, obj->cur->clipper->cur->geometry.y,
            obj->cur->clipper->cur->geometry.w, obj->cur->clipper->cur->geometry.h,
            obj->cur->clipper->cur->color.r, obj->cur->clipper->cur->color.g,
@@ -1374,8 +1374,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    {
       int _cu, _cc, _cm, _cx, _cy, _cw, _ch, _cr, _cg, _cb, _ca, _cmr, _cmg, _cmb, _cma;
       _cu = ENFN->context_clip_get(ENDT, context, &_cx, &_cy, &_cw, &_ch);
-      _cc = ENFN->context_color_get(ENDT, context, &_cr, &_cr, &_cb, &_ca);
-      _cm = ENFN->context_multiplier_get(ENDT, context, &_cmr, &_cmr, &_cmb, &_cma);
+      _cc = ENFN->context_color_get(ENDT, context, &_cr, &_cg, &_cb, &_ca);
+      _cm = ENFN->context_multiplier_get(ENDT, context, &_cmr, &_cmg, &_cmb, &_cma);
       RD(level, "  context clip: [%d] %d,%d %dx%d ; color: [%d] {%d,%d,%d,%d} ; mult: [%d] {%d,%d,%d,%d}\n",
          _cu, _cx, _cy, _cw, _ch, _cc, _cr, _cg, _cb, _ca, _cm, _cmr, _cmg, _cmb, _cma);
    }
