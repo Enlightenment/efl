@@ -1128,6 +1128,14 @@ _layout_key_down_cb(void *data,
                   elm_object_focus_set(sd->entry, EINA_TRUE);
                }
           }
+        else if (sd->selected_it &&
+            ((!strcmp(ev->key, "KP_Enter")) ||
+             (!strcmp(ev->key, "Return"))))
+          {
+             Elm_Multibuttonentry_Item_Data *item = sd->selected_it;
+             if (item)
+               _on_item_clicked(EO_OBJ(item), NULL, NULL, NULL);
+          }
         else if (((!sd->selected_it && (sd->n_str == 0) &&
                    (!strcmp(ev->key, "BackSpace"))) ||
                   (!strcmp(ev->key, "Delete"))))
