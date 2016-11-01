@@ -1,6 +1,7 @@
 /* FIXME: Rename */
 
 interface Efl.Control {
+   [[Efl control interface]]
    methods {
         @property priority {
              [[Control the priority of the object.]]

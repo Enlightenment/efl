@@ -8,30 +8,30 @@ interface Efl.Container (Efl.Gfx)
          [[The name of the part under which an object is swallowed.]]
          get {}
          keys {
-            content: Efl.Gfx;
+            content: Efl.Gfx; [[Swallowed object]]
          }
          values {
-            name: string;
+            name: string; [[Part name]]
          }
       }
       @property content {
          [[Swallowed sub-object contained in this object.]]
          set {
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {}
          values {
-            content: Efl.Gfx; [[the object to swallow.]]
+            content: Efl.Gfx; [[The object to swallow.]]
          }
       }
       content_unset {
          [[Unswallow the object in the current container and return it.]]
-         return: Efl.Gfx;
+         return: Efl.Gfx; [[Unswallowed object]]
       }
       content_remove {
          [[Unswallow an object from this container.]]
          params {
-            @in content: Efl.Gfx;
+            @in content: Efl.Gfx; [[To be removed content]]
          }
          return: bool; [[$false if $content was not a child or can not be removed.]]
       }
@@ -41,7 +41,7 @@ interface Efl.Container (Efl.Gfx)
       }
       content_count {
          [[Returns the number of UI elements packed in this container.]]
-         return: int;
+         return: int; [[Number of packed UI elements]]
       }
    }
    events {

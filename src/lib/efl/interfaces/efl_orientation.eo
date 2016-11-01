@@ -4,18 +4,19 @@ enum Efl.Orient
 
      See also @Efl.Orientation
    ]]
-   none = 0, [[default, same as up]]
+   none = 0, [[Default, same as up]]
    up = 0, [[orient up]]
-   right = 90, [[orient right]]
-   down = 180, [[orient down]]
-   left = 270, [[orient left]]
-   vertical = 0, [[orient vertical]]
-   horizontal = 90 [[orient horizontal]]
+   right = 90, [[Orient right]]
+   down = 180, [[Orient down]]
+   left = 270, [[Orient left]]
+   vertical = 0, [[Orient vertical]]
+   horizontal = 90 [[Orient horizontal]]
 
 }
 
 interface Efl.Orientation
 {
+   [[Efl orientation interface]]
    methods {
        @property orientation{
          [[Control the orientation of a given widget

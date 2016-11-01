@@ -51,34 +51,34 @@ class Efl.Input.Device (Efl.Object)
       /* FIXME: device_class makes compilation error because of class_get() */
       @property device_type {
          values {
-            klass: Efl.Input.Device.Class;
+            klass: Efl.Input.Device.Class; [[Input device class]]
          }
       }
       @property device_subtype {
          values {
-            klass: Efl.Input.Device.Sub_Class;
+            klass: Efl.Input.Device.Sub_Class; [[Input device sub-class]]
          }
       }
       @property source {
          values {
-            src: Efl.Input.Device;
+            src: Efl.Input.Device; [[Input device]]
          }
       }
       @property name {
          values {
-            name: string;
+            name: string; [[Input device name]]
          }
       }
       @property description {
          values {
-            desc: string;
+            desc: string; [[Input device description]]
          }
       }
       @property parent {
          set {}
          get {}
          values {
-            parent: Efl.Input.Device;
+            parent: Efl.Input.Device; [[Parent input device]]
          }
       }
    }

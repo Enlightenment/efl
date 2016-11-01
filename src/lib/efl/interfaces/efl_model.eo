@@ -6,6 +6,7 @@ struct Efl.Model.Property_Event {
 
 interface Efl.Model ()
 {
+   [[Efl model interface]]
    eo_prefix: efl_model;
       methods {
          @property properties {
@@ -23,7 +24,7 @@ interface Efl.Model ()
                ]]
          }
          values {
-               properties: const(array<string>); [[array of current properties]]
+               properties: const(array<string>); [[Array of current properties]]
             }
         }
         property_set {
@@ -125,7 +126,7 @@ interface Efl.Model ()
 
               @since 1.14
             ]]
-            return: Efl.Object;
+            return: Efl.Object; [[Child object]]
          }
          child_del {
             [[Remove a child.

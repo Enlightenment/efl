@@ -5,24 +5,25 @@ interface Efl.Config ()
       /* FIXME: make this a property -- @own is a problem */
       config_set {
          params {
-            name: string;
-            val: const(generic_value)*;
+            name: string; [[Configuration option name]]
+            val: const(generic_value)*; [[Configuration option value]]
          }
          return: bool; [[$false in case of error: value type was invalid, the
                          config can't be changed, config does not exist...]]
       }
       config_get @const {
          params {
-            name: string;
+            name: string; [[Configuration option name]]
          }
-         return: free(own(generic_value *), eina_value_free);
+         return: free(own(generic_value *), eina_value_free); [[Configuration option value]]
       }
       config_list_get @const {
          [[Returns a list of generic values under a given key.]]
          params {
-            @in name: string;
+            @in name: string; [[Configuration option name]]
          }
-         return: free(own(iterator<generic_value*>), eina_iterator_free);
+         return: free(own(iterator<generic_value*>), eina_iterator_free); [[
+                 List of configuration option values]]
       }
    }
 }

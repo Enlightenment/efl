@@ -1,11 +1,13 @@
-interface Efl.Player {
+interface Efl.Player
+{
+   [[Efl media player interface]]
    methods {
         @property playable {
              [[Whether or not the object data can be played.]]
              get {
              }
              values {
-                  play: bool; [[true if the object have playable data, false otherwise]]
+                  play: bool; [[$true if the object have playable data, $false otherwise]]
              }
         }
         @property play {
@@ -21,7 +23,7 @@ interface Efl.Player {
                   [[Get play/pause state of the media file.]]
              }
              values {
-                  play: bool; [[true if playing, false otherwise.]]
+                  play: bool; [[$true if playing, $false otherwise.]]
              }
         }
         @property position {
@@ -95,7 +97,7 @@ interface Efl.Player {
              get {
              }
              values {
-                  mute: bool; [[The mute state. True or false.]]
+                  mute: bool; [[The mute state. $true or $false.]]
              }
         }
         @property length {
@@ -111,7 +113,7 @@ interface Efl.Player {
              get {
              }
              values {
-                  seekable: bool; [[True if seekable.]]
+                  seekable: bool; [[$true if seekable.]]
              }
         }
    }

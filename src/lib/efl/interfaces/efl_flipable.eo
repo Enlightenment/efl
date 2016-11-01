@@ -1,16 +1,14 @@
 enum Efl.Flip
 {
-   [[Flip
-
-     See also @Efl.Flipable
-   ]]
-   none = 0, [[no flip]]
-   horizontal = 1, [[flip image horizontally]]
-   vertical = 2 [[flip image vertically]]
+   [[Flip, See also @Efl.Flipable]]
+   none = 0, [[No flip]]
+   horizontal = 1, [[Flip image horizontally]]
+   vertical = 2 [[Flip image vertically]]
 }
 
 interface Efl.Flipable
 {
+   [[Efl flipable interface]]
    eo_prefix: efl_flip;
    methods {
        @property flip {
@@ -24,7 +22,7 @@ interface Efl.Flipable
          get {
          }
          values {
-            flip: Efl.Flip; [[Flip]]
+            flip: Efl.Flip; [[Flip method]]
          }
       }
    }

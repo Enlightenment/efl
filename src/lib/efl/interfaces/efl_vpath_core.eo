@@ -22,7 +22,7 @@ class Efl.Vpath.Core (Efl.Object, Efl.Vpath)
          params {
             key: string; [[ The magic path key being looked up ]]
          }
-         return: string;
+         return: string; [[Real file path]]
       }
    }
    implements {

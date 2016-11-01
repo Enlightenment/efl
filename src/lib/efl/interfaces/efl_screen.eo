@@ -1,6 +1,8 @@
 import eina_types;
 
-interface Efl.Screen {
+interface Efl.Screen
+{
+   [[Efl screen interface]]
    methods {
       @property screen_size {
          get {

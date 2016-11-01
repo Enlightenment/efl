@@ -7,14 +7,14 @@ interface Efl.Pack (Efl.Container)
    {
       pack_clear {
          [[Removes all packed contents, and unreferences them.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       unpack_all {
          [[Removes all packed contents, without unreferencing them.
 
            Use with caution.
          ]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       unpack {
          [[Removes an existing item from the container, without deleting it.]]
@@ -43,8 +43,8 @@ interface Efl.Pack (Efl.Container)
          set {}
          get {}
          values {
-            align_horiz: double;
-            align_vert:  double;
+            align_horiz: double; [[Horizontal alignment]]
+            align_vert:  double; [[Vertical alignment]]
          }
       }
       @property pack_padding {
@@ -52,9 +52,9 @@ interface Efl.Pack (Efl.Container)
          set {}
          get {}
          values {
-            pad_horiz: double;
-            pad_vert:  double;
-            scalable:  bool;
+            pad_horiz: double; [[Horizontal padding]]
+            pad_vert:  double; [[Vertical padding]]
+            scalable:  bool; [[$true if scalable, $false otherwise]]
          }
       }
    }

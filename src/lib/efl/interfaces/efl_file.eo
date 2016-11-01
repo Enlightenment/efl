@@ -1,6 +1,7 @@
 import eina_types;
 
 interface Efl.File {
+   [[Efl file interface]]
    methods {
       @property mmap {
          set {
@@ -13,7 +14,7 @@ interface Efl.File {
 
               @since 1.8]]
 
-            return: bool; [[$true = success, $false = error]]
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Get the source mmaped file from where an image object must fetch the real
@@ -62,7 +63,7 @@ interface Efl.File {
              * @endcode
              */
 
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Retrieve the source file from where an image object is to fetch the
@@ -91,7 +92,7 @@ interface Efl.File {
            acceptable flags are $quality and $compress. Eg.:
            "quality=100 compress=9"]]
 
-         return: bool;
+         return: bool;  [[$true on success, $false otherwise]]
          params {
             @in file: string @nonull; [[The filename to be used to save the image (extension
                                               obligatory).]]
