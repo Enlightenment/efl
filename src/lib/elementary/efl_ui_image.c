@@ -598,9 +598,10 @@ static void
 _efl_ui_image_show(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    sd->show = EINA_TRUE;
-   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING) return;
 
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
+
+   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING) return;
    efl_gfx_visible_set(sd->img, EINA_TRUE);
    ELM_SAFE_FREE(sd->prev_img, evas_object_del);
 }
