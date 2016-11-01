@@ -50,7 +50,11 @@ _efl_net_ssl_ctx_load_lists(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
    int err_line, err_flags;
    X509_STORE *x509_store;
    X509_LOOKUP *x509_lookup;
-   unsigned long x509_store_flags = X509_V_FLAG_TRUSTED_FIRST;
+   unsigned long x509_store_flags = 0;
+
+#ifdef X509_V_FLAG_TRUSTED_FIRST
+   x509_store_flags |= X509_V_FLAG_TRUSTED_FIRST;
+#endif
 
    if (cfg.load_defaults)
      {

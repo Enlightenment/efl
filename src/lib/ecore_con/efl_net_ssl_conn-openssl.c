@@ -3,6 +3,12 @@
 #include <openssl/err.h>
 #include <openssl/dh.h>
 
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
 #endif
@@ -263,13 +269,27 @@ efl_net_ssl_conn_setup(Efl_Net_Ssl_Conn *conn, Eina_Bool is_dialer, Efl_Net_Sock
       int ver;
       const char *str;
    } *ssl_ver_itr, ssl_ver_map[] = {
+#ifdef SSL3_VERSION
      {SSL3_VERSION, "SSLv3.0"},
+#endif
+#ifdef TLS1_VERSION
      {TLS1_VERSION, "TLSv1.0"},
+#endif
+#ifdef TLS1_1_VERSION
      {TLS1_1_VERSION, "TLSv1.1"},
+#endif
+#ifdef TLS1_2_VERSION
      {TLS1_2_VERSION, "TLSv1.2"},
+#endif
+#ifdef DTLS1_VERSION
      {DTLS1_VERSION, "DTLSv1.0"},
+#endif
+#ifdef DTLS1_2_VERSION
      {DTLS1_2_VERSION, "DTLSv1.2"},
+#endif
+#ifdef DTLS1_BAD_VER
      {DTLS1_BAD_VER, "DTLSv1.0"},
+#endif
      {0, NULL}
    };
 
