@@ -3531,19 +3531,20 @@ _evas_canvas_event_key_cb(void *data, const Efl_Event *event)
 static void
 _evas_canvas_event_focus_cb(void *data, const Efl_Event *event)
 {
+   Efl_Input_Device *seat = efl_input_device_get(event->info);
    Evas_Public_Data *e = data;
 
    if (event->desc == EFL_EVENT_FOCUS_IN)
      {
-        if (e->focus) return;
-        e->focus = 1;
+        if (eina_list_data_find(e->focused_by, seat)) return;
+        e->focused_by = eina_list_append(e->focused_by, seat);
         evas_event_callback_call(e->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN,
                                  event->info);
      }
    else
      {
-        if (!e->focus) return;
-        e->focus = 0;
+        if (!eina_list_data_find(e->focused_by, seat)) return;
+        e->focused_by = eina_list_remove(e->focused_by, seat);
         evas_event_callback_call(e->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT,
                                  event->info);
      }

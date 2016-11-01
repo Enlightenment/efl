@@ -265,8 +265,18 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       }
       @property focus_state {
          get {
-            [[Get the focus state known by the given evas.]]
+            [[Get the focus state for the default seat.]]
             return: bool; [[$true if focused, $false otherwise]]
+         }
+      }
+      @property seat_focus_state {
+         [[Get the focus state by a given seat.]]
+         get {}
+         keys {
+            seat: Efl.Input.Device; [[The seat to check the focus state. Use $null for the default seat.]]
+         }
+         values {
+            return: bool; [[$true if the seat has the canvas focus, $false otherwise.]]
          }
       }
       @property changed {
@@ -599,7 +609,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
          ]]
       }
       focus_out {
-         [[Inform to the evas that it lost the focus.]]
+         [[Inform to the evas that it lost the focus from the default seat.]]
       }
       norender {
          [[Update the canvas internal objects but not triggering immediate
@@ -942,7 +952,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
          }
       }
       focus_in {
-         [[Inform to the evas that it got the focus.]]
+         [[Inform to the evas that it got the focus from the default seat.]]
       }
       obscured_rectangle_add {
          [[Add an "obscured region" to an Evas canvas.

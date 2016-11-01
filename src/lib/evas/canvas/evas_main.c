@@ -376,6 +376,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
      free(touch_point);
 
    _evas_device_cleanup(eo_e);
+   e->focused_by = eina_list_free(e->focused_by);
 
    eina_lock_free(&(e->lock_objects));
    eina_spinlock_free(&(e->render.lock));
@@ -567,9 +568,17 @@ _evas_canvas_focus_out(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_focus_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_seat_focus_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
+                                  Efl_Input_Device *seat)
 {
-   return e->focus;
+   if (!seat) seat = e->default_seat;
+   return eina_list_data_find(e->focused_by, seat) ? EINA_TRUE : EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_evas_canvas_focus_state_get(Eo *eo_e, Evas_Public_Data *e)
+{
+   return _evas_canvas_seat_focus_state_get(eo_e, e, NULL);
 }
 
 EOLIAN static Eina_Bool
