@@ -66,8 +66,7 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
    d->evas = eo_e;
 
    e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   if (!parent_dev)
-     e->devices = eina_list_append(e->devices, dev);
+   e->devices = eina_list_append(e->devices, dev);
    efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
 
    efl_event_callback_call(eo_e, EFL_CANVAS_EVENT_DEVICE_ADDED, dev);
@@ -170,17 +169,12 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
    Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-   Evas_Public_Data *e = efl_data_scope_get(d->evas, EVAS_CANVAS_CLASS);
    if (parent)
      {
         SAFETY_CHECK(parent, EFL_INPUT_DEVICE_CLASS);
      }
 
    efl_input_device_parent_set(dev, parent);
-   if (parent)
-     e->devices = eina_list_remove(e->devices, dev);
-   else
-     e->devices = eina_list_append(e->devices, dev);
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
@@ -242,9 +236,10 @@ evas_device_emulation_source_get(const Evas_Device *dev)
 void
 _evas_device_cleanup(Evas *eo_e)
 {
+   Eina_List *cpy;
    Evas_Device *dev;
-   
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+
    if (e->cur_device)
      {
         while ((dev = eina_array_pop(e->cur_device)))
@@ -252,9 +247,23 @@ _evas_device_cleanup(Evas *eo_e)
         eina_array_free(e->cur_device);
         e->cur_device = NULL;
      }
+
+   /* If the device is deleted, _del_cb will remove the device
+      from the devices list. */
+   cpy = eina_list_clone(e->devices);
+   EINA_LIST_FREE(cpy, dev)
+     evas_device_del(dev);
+
+   /* Not all devices were deleted. The user probably will unref them later.
+      Since Evas will be deleted, remove the del callback from them and
+      tell the user that the device was removed.
+   */
    EINA_LIST_FREE(e->devices, dev)
      {
-        evas_device_del(dev);
+        efl_event_callback_call(e->evas,
+                                EFL_CANVAS_EVENT_DEVICE_REMOVED,
+                                dev);
+        efl_event_callback_del(dev, EFL_EVENT_DEL, _del_cb, e);
      }
 }
 
