@@ -387,6 +387,9 @@ efl_net_dialer_udp_example.c \
 efl_net_socket_ssl_dialer_example.c \
 efl_net_socket_ssl_server_example.c
 
+%.pem:
+	echo -e "US\nOR\nPortland\nXPTO Ltd\n\nlocalhost\nroot@localhost\n" | openssl req -new -x509 -days 30 -nodes -out $@ -keyout $@
+
 DATA_FILES = red.png Makefile.examples
 
 EXTRA_DIST = $(DATA_FILES)
