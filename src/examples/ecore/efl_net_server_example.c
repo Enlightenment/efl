@@ -642,9 +642,6 @@ main(int argc, char **argv)
      }
 
    server = efl_add(cls, ecore_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
-                    efl_net_server_fd_close_on_exec_set(efl_added, EINA_TRUE), /* recommended */
-                    efl_net_server_fd_reuse_address_set(efl_added, EINA_TRUE), /* optional, but nice for testing */
-                    efl_net_server_fd_reuse_port_set(efl_added, EINA_TRUE), /* optional, but nice for testing... not secure unless you know what you're doing */
                     efl_net_server_clients_limit_set(efl_added,
                                                      clients_limit,
                                                      clients_reject_excess), /* optional */
@@ -657,7 +654,12 @@ main(int argc, char **argv)
      }
 
    if (cls == EFL_NET_SERVER_TCP_CLASS)
-     efl_net_server_tcp_ipv6_only_set(server, ipv6_only);
+     {
+        efl_net_server_tcp_ipv6_only_set(server, ipv6_only);
+        efl_net_server_fd_close_on_exec_set(server, EINA_TRUE); /* recommended */
+        efl_net_server_fd_reuse_address_set(server, EINA_TRUE); /* optional, but nice for testing */
+        efl_net_server_fd_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
+     }
    else if (cls == EFL_NET_SERVER_UDP_CLASS)
      {
         const Eina_List *lst;
@@ -670,6 +672,11 @@ main(int argc, char **argv)
 
         EINA_LIST_FOREACH(udp_mcast_groups, lst, str)
           efl_net_server_udp_multicast_join(server, str);
+
+
+        efl_net_server_fd_close_on_exec_set(server, EINA_TRUE); /* recommended */
+        efl_net_server_fd_reuse_address_set(server, EINA_TRUE); /* optional, but nice for testing */
+        efl_net_server_fd_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
      }
    else if (cls == EFL_NET_SERVER_SSL_CLASS)
      {
@@ -697,6 +704,10 @@ main(int argc, char **argv)
                           efl_net_ssl_context_setup(efl_added, cipher, EINA_FALSE /* a server! */));
 
         efl_net_server_ssl_context_set(server, ssl_ctx);
+
+        efl_net_server_ssl_close_on_exec_set(server, EINA_TRUE); /* recommended */
+        efl_net_server_ssl_reuse_address_set(server, EINA_TRUE); /* optional, but nice for testing */
+        efl_net_server_ssl_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
      }
 #ifndef _WIN32
    else if (cls == EFL_NET_SERVER_UNIX_CLASS)
