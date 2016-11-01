@@ -16211,6 +16211,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only, Eina_Bool generate_
    _edje_edit_eet_close(ed, eetf);
 
    /* Update mtime */
+   if (eet_mode_get(ed->file->ef) == EET_FILE_MODE_READ)
    {
       struct stat st;
       if (stat(ed->path, &st) != 0)
