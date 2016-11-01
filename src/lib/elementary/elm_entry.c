@@ -842,6 +842,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *str;
    const char *t;
+   const char *stl_user;
    const char *style = elm_widget_style_get(obj);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
@@ -863,6 +864,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
+   stl_user = eina_stringshare_add(edje_obj_part_text_style_user_peek(sd->entry_edje, "elm.text"));
    t = eina_stringshare_add(elm_object_text_get(obj));
 
    elm_widget_theme_object_set
@@ -874,6 +876,9 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    else
      edje_obj_part_text_select_allow_set
         (sd->entry_edje, "elm.text", EINA_FALSE);
+
+   edje_obj_part_text_style_user_push(sd->entry_edje, "elm.text", stl_user);
+   eina_stringshare_del(stl_user);
 
    elm_object_text_set(obj, t);
    eina_stringshare_del(t);

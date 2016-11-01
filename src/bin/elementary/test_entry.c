@@ -1024,6 +1024,14 @@ static char *user_style =
    "ul='+ underline=on underline_color=#AAA'";
 
 static void
+ent_tg_singleline_mode_state_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+
+   elm_entry_single_line_set(en, elm_check_state_get(obj));
+}
+
+static void
 ent_bt_style_user_peek(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
@@ -1053,7 +1061,7 @@ ent_bt_style_user_push(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
 void
 test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *hbx, *en, *bt, *bt2;
+   Evas_Object *win, *bx, *hbx, *en, *bt, *bt2, *tg;
 
    win = elm_win_util_standard_add("entry-user-style", "Entry User Style");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -1078,6 +1086,15 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    elm_box_pack_end(bx, en);
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
+
+   tg = elm_check_add(bx);
+   elm_object_style_set(tg, "toggle");
+   elm_object_text_set(tg, "Singleline Mode");
+   elm_object_part_text_set(tg, "on", "ON");
+   elm_object_part_text_set(tg, "off", "OFF");
+   evas_object_smart_callback_add(tg, "changed", ent_tg_singleline_mode_state_changed_cb, en);
+   elm_box_pack_end(bx, tg);
+   evas_object_show(tg);
 
    hbx = elm_box_add(bx);
    elm_box_horizontal_set(hbx, EINA_TRUE);
