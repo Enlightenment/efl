@@ -372,6 +372,7 @@ _item_title_enabled_update(Elm_Naviframe_Item_Data *nit, Eina_Bool transition)
         else
           elm_object_signal_emit(VIEW(nit), "elm,state,title,hide", "elm");
      }
+   edje_object_message_signal_process(elm_layout_edje_get(VIEW(nit)));
 }
 
 EOLIAN static Elm_Theme_Apply
