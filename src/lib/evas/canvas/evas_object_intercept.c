@@ -96,7 +96,7 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
    int r, g, b, a, i, j;
    va_list args;
 
-   if (!obj || obj->delete_me || !obj->layer) return 1;
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj, 1);
    evas_object_async_block(obj);
 
    va_start(args, internal);

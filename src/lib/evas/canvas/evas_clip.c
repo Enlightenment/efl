@@ -29,6 +29,7 @@ evas_object_recalc_clippees(Evas_Object_Protected_Data *obj)
    Evas_Object_Protected_Data *clipee;
    Eina_List *l;
 
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
    if (obj->cur->cache.clip.dirty)
      {
         evas_object_clip_recalc(obj);
@@ -193,7 +194,8 @@ evas_object_mapped_clip_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_D
 static void
 _efl_canvas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
 {
-   if (!obj || !obj->mask->is_mask) return;
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
+   if (!obj->mask->is_mask) return;
    if (obj->clip.clipees) return;
 
    /* this frees the clip surface. is this correct? */
@@ -258,19 +260,77 @@ err_type:
    return EINA_TRUE;
 }
 
+static inline void
+_efl_canvas_object_clip_unset_common(Evas_Object_Protected_Data *obj, Eina_Bool warn)
+{
+   Evas_Object_Protected_Data *clip = obj->cur->clipper;
+
+   if (!clip) return;
+   if (EVAS_OBJECT_DATA_VALID(clip))
+     {
+        clip->clip.cache_clipees_answer = eina_list_free(clip->clip.cache_clipees_answer);
+        clip->clip.clipees = eina_list_remove(clip->clip.clipees, obj);
+        if (!clip->clip.clipees)
+          {
+             EINA_COW_STATE_WRITE_BEGIN(clip, state_write, cur)
+               {
+                  state_write->have_clipees = 0;
+                  if (warn && clip->is_static_clip)
+                    {
+                       WRN("You override static clipper, it may be dangled! "
+                           "obj(%p) type(%s) new clip(%p)",
+                           obj->object, obj->type, clip->object);
+                    }
+               }
+             EINA_COW_STATE_WRITE_END(clip, state_write, cur);
+             /* i know this was to handle a case where a clip stops having
+              * children and becomes a solid colored box - no one ever does
+              * that... they hide the clip so dont add damages,
+              * But, if the clipper could affect color to its clipees, the
+              * clipped area should be redrawn. */
+             if (((clip->cur) && (clip->cur->visible)) &&
+                 (((clip->cur->color.r != 255) || (clip->cur->color.g != 255) ||
+                   (clip->cur->color.b != 255) || (clip->cur->color.a != 255)) ||
+                  (clip->mask->is_mask)))
+               {
+                  if (clip->layer)
+                    {
+                       Evas_Public_Data *e = clip->layer->evas;
+                       evas_damage_rectangle_add(e->evas,
+                                                 clip->cur->geometry.x + e->framespace.x,
+                                                 clip->cur->geometry.y + e->framespace.y,
+                                                 clip->cur->geometry.w,
+                                                 clip->cur->geometry.h);
+                    }
+               }
+
+             _efl_canvas_object_clip_mask_unset(clip);
+          }
+        evas_object_change(clip->object, clip);
+        if (obj->prev->clipper != clip)
+          efl_event_callback_del(clip->object, EFL_EVENT_DEL, _clipper_del_cb, obj->object);
+     }
+
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     state_write->clipper = NULL;
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+}
+
 EOLIAN void
 _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
 {
    Evas_Object_Protected_Data *clip;
    Evas_Public_Data *e;
 
-   if (!eo_clip)
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
+
+   clip = EVAS_OBJECT_DATA_SAFE_GET(eo_clip);
+   if (!EVAS_OBJECT_DATA_ALIVE(clip))
      {
         _clip_unset(eo_obj, obj);
         return;
      }
 
-   clip = efl_data_scope_get(eo_clip, EFL_CANVAS_OBJECT_CLASS);
    if (_efl_canvas_object_clip_set_block(eo_obj, obj, eo_clip, clip)) return;
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 1, eo_clip)) return;
 
@@ -279,54 +339,9 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
      {
         obj->smart.smart->smart_class->clip_set(eo_obj, eo_clip);
      }
-   if (obj->cur->clipper)
-     {
-        Evas_Object_Protected_Data *old_clip = obj->cur->clipper;
 
-	/* unclip */
-        obj->cur->clipper->clip.cache_clipees_answer = eina_list_free(obj->cur->clipper->clip.cache_clipees_answer);
-        obj->cur->clipper->clip.clipees = eina_list_remove(obj->cur->clipper->clip.clipees, obj);
-        if (!obj->cur->clipper->clip.clipees)
-          {
-             EINA_COW_STATE_WRITE_BEGIN(obj->cur->clipper, state_write, cur)
-               {
-                  state_write->have_clipees = 0;
-                  if (obj->cur->clipper->is_static_clip)
-                    WRN("You override static clipper, it may be dangled! obj(%p) type(%s) new clip(%p)", eo_obj, obj->type, eo_clip);
-               }
-             EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
-/* i know this was to handle a case where a clip stops having children and
- * becomes a solid colored box - no one ever does that... they hide the clip
- * so dont add damages.
- * But, if the clipper could affect color to its clipees,
- * the clipped area should be redrawn. */
-             if (((obj->cur->clipper->cur) && (obj->cur->clipper->cur->visible)) &&
-                 (((obj->cur->clipper->cur->color.r != 255) || (obj->cur->clipper->cur->color.g != 255) ||
-                   (obj->cur->clipper->cur->color.b != 255) || (obj->cur->clipper->cur->color.a != 255)) ||
-                  (obj->cur->clipper->mask->is_mask)))
-               {
-                  if (obj->cur->clipper->layer)
-                    {
-                       e = obj->cur->clipper->layer->evas;
-                       evas_damage_rectangle_add(e->evas,
-                                                 obj->cur->clipper->cur->geometry.x + e->framespace.x,
-                                                 obj->cur->clipper->cur->geometry.y + e->framespace.y,
-                                                 obj->cur->clipper->cur->geometry.w,
-                                                 obj->cur->clipper->cur->geometry.h);
-                    }
-               }
-
-             _efl_canvas_object_clip_mask_unset(obj->cur->clipper);
-          }
-        evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
-        evas_object_change(eo_obj, obj);
-
-        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-          state_write->clipper = NULL;
-        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
-        if (obj->prev->clipper != old_clip)
-          efl_event_callback_del(old_clip->object, EFL_EVENT_DEL, _clipper_del_cb, eo_obj);
-     }
+   /* unset cur clipper */
+   _efl_canvas_object_clip_unset_common(obj, EINA_TRUE);
 
    /* image object clipper */
    if (clip->type == o_image_type)
@@ -396,6 +411,7 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
 EOLIAN Evas_Object *
 _efl_canvas_object_clip_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj, NULL);
    if (obj->cur->clipper)
      return obj->cur->clipper->object;
    return NULL;
@@ -423,50 +439,7 @@ _clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
      {
         obj->smart.smart->smart_class->clip_unset(eo_obj);
      }
-   if (obj->cur->clipper)
-     {
-        Evas_Object_Protected_Data *old_clip = obj->cur->clipper;
-
-        obj->cur->clipper->clip.clipees = eina_list_remove(obj->cur->clipper->clip.clipees, obj);
-        if (!obj->cur->clipper->clip.clipees)
-          {
-             EINA_COW_STATE_WRITE_BEGIN(obj->cur->clipper, state_write, cur)
-               {
-                  state_write->have_clipees = 0;
-               }
-             EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
-/* i know this was to handle a case where a clip stops having children and
- * becomes a solid colored box - no one ever does that... they hide the clip
- * so dont add damages.
- * But, if the clipper could affect color to its clipees,
- * the clipped area should be redrawn. */
-             if (((obj->cur->clipper->cur) && (obj->cur->clipper->cur->visible)) &&
-                 (((obj->cur->clipper->cur->color.r != 255) || (obj->cur->clipper->cur->color.g != 255) ||
-                   (obj->cur->clipper->cur->color.b != 255) || (obj->cur->clipper->cur->color.a != 255)) ||
-                  (obj->cur->clipper->mask->is_mask)))
-               {
-                  if (obj->cur->clipper->layer)
-                    {
-                       Evas_Public_Data *e = obj->cur->clipper->layer->evas;
-                       evas_damage_rectangle_add(e->evas,
-                                                 obj->cur->clipper->cur->geometry.x + e->framespace.x,
-                                                 obj->cur->clipper->cur->geometry.y + e->framespace.y,
-                                                 obj->cur->clipper->cur->geometry.w,
-                                                 obj->cur->clipper->cur->geometry.h);
-                    }
-               }
-
-             _efl_canvas_object_clip_mask_unset(obj->cur->clipper);
-          }
-	evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
-
-        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-          state_write->clipper = NULL;
-        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
-        if (obj->prev->clipper != old_clip)
-          efl_event_callback_del(old_clip->object, EFL_EVENT_DEL, _clipper_del_cb, eo_obj);
-     }
-
+   _efl_canvas_object_clip_unset_common(obj, EINA_FALSE);
    evas_object_update_bounding_box(eo_obj, obj, NULL);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
@@ -489,10 +462,8 @@ _clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 EAPI void
 evas_object_clip_unset(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj;
-
-   if (!efl_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS)) return;
-   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
    _clip_unset(eo_obj, obj);
 }
 
@@ -501,11 +472,12 @@ _clipper_del_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *eo_obj = data;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *clip = efl_data_scope_get(event->object, EFL_CANVAS_OBJECT_CLASS);
 
-   if (!obj) return;
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
 
    _clip_unset(eo_obj, obj);
-   if (obj->prev->clipper && (obj->prev->clipper->object == event->object))
+   if (obj->prev->clipper && (obj->prev->clipper == clip))
      {
         // not removing cb since it's the del cb... it can't be called again!
         EINA_COW_STATE_WRITE_BEGIN(obj, state_write, prev)
