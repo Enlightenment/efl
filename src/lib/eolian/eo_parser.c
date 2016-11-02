@@ -757,7 +757,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            check_match(ls, ')', '(', pline, pcol);
            goto parse_ptr;
         }
-      case KW_ref:
+      case KW_ptr:
         {
            int pline, pcol;
            eo_lexer_get(ls);

@@ -5,17 +5,17 @@ class Name1.Name2.Type_Generation (Efl.Object)
      // inref
      inrefint {
        params {
-         @in v: ref(int);
+         @in v: ptr(int);
        }
      }
      inrefintown {
        params {
-         @in v: own(ref(int));
+         @in v: own(ptr(int));
        }
      }
      inrefintownfree {
        params {
-         @in v: free(own(ref(int)), free);
+         @in v: free(own(ptr(int)), free);
        }
      }
      // in void ptr
@@ -31,17 +31,17 @@ class Name1.Name2.Type_Generation (Efl.Object)
      }
      inintptr {
        params {
-         @in v: ref(int);
+         @in v: ptr(int);
        }
      }
      inintptrown {
        params {
-         @in v: own(ref(int));
+         @in v: own(ptr(int));
        }
      }
      inintptrownfree {
        params {
-         @in v: free(own(ref(int)), free);
+         @in v: free(own(ptr(int)), free);
        }
      }
      instring {
@@ -51,7 +51,7 @@ class Name1.Name2.Type_Generation (Efl.Object)
      }
      instringptr {
        params {
-         @in v: ref(string);
+         @in v: ptr(string);
        }
      }
      instringown {
@@ -61,7 +61,7 @@ class Name1.Name2.Type_Generation (Efl.Object)
      }
      instringptrown {
        params {
-         @in v: own(ref(string));
+         @in v: own(ptr(string));
        }
      }
      instringshare {
@@ -76,7 +76,7 @@ class Name1.Name2.Type_Generation (Efl.Object)
      }
      // return
      returnrefint {
-       return: ref(int);
+       return: ptr(int);
      }
      returnvoidptr {
         return: void_ptr;
@@ -85,27 +85,27 @@ class Name1.Name2.Type_Generation (Efl.Object)
        return: int;
      }
      returnintptr {
-       return: ref(int);
+       return: ptr(int);
      }
      returnintptrown {
-       return: own(ref(int));
+       return: own(ptr(int));
      }
      returnintptrownfree {
        params {
-         @in v: free(own(ref(int)), free);
+         @in v: free(own(ptr(int)), free);
        }
      }
      returnstring {
        return: string;
      }
      returnstringptr {
-       return: ref(string);
+       return: ptr(string);
      }
      returnstringown {
        return: own(string);
      }
      returnstringownptr {
-       return: own(ref(string));
+       return: own(ptr(string));
      }
      returnstringshare {
         return: stringshare;
@@ -126,17 +126,17 @@ class Name1.Name2.Type_Generation (Efl.Object)
      }
      outintptr {
        params {
-         @out v: ref(int);
+         @out v: ptr(int);
        }
      }
      outintptrown {
        params {
-         @out v: own(ref(int));
+         @out v: own(ptr(int));
        }
      }
      outintptrownfree {
        params {
-         @out v: free(own(ref(int)), free);
+         @out v: free(own(ptr(int)), free);
        }
      }
      outstringshare {
@@ -177,17 +177,17 @@ class Name1.Name2.Type_Generation (Efl.Object)
      }
      optionalinintptr {
        params {
-         @in v: ref(int) @optional;
+         @in v: ptr(int) @optional;
        }
      }
      optionalinintptrown {
        params {
-         @in v: own(ref(int)) @optional;
+         @in v: own(ptr(int)) @optional;
        }
      }
      optionalinintptrownfree {
        params {
-         @in v: free(own(ref(int)), free) @optional;
+         @in v: free(own(ptr(int)), free) @optional;
        }
      }
      optionaloutvoidptr {
@@ -202,17 +202,17 @@ class Name1.Name2.Type_Generation (Efl.Object)
      }
      optionaloutintptr {
        params {
-         @out v: ref(int) @optional;
+         @out v: ptr(int) @optional;
        }
      }
      optionaloutintptrown {
        params {
-         @out v: own(ref(int)) @optional;
+         @out v: own(ptr(int)) @optional;
        }
      }
      optionaloutintptrownfree {
        params {
-         @out v: free(own(ref(int)), free) @optional;
+         @out v: free(own(ptr(int)), free) @optional;
        }
      }
      optionalinclassname {
