@@ -371,33 +371,4 @@ conn_err:
    return NULL;
 }
 
-void 
-_ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!ee) return;
-   wdata = ee->engine.data;
-   if (wdata->win) 
-     {
-        _ecore_evas_wayland_shm_resize_edge_set(ee, location);
-
-        if (ECORE_EVAS_PORTRAIT(ee))
-          ecore_wl2_window_resize(wdata->win, ee->w, ee->h, location);
-        else
-          ecore_wl2_window_resize(wdata->win, ee->h, ee->w, location);
-     }
-}
-
-void 
-_ecore_evas_wayland_shm_resize_edge_set(Ecore_Evas *ee, int edge)
-{
-   Evas_Engine_Info_Wayland *einfo;
-
-   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
-     einfo->info.edges = edge;
-}
-
 #endif

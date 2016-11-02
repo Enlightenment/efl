@@ -1791,20 +1791,31 @@ _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee EINA_UNUSED, int *xdpi
 }
 
 static void
+_ecore_evas_wayland_resize_edge_set(Ecore_Evas *ee, int edge)
+{
+   Evas_Engine_Info_Wayland *einfo;
+
+   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
+     einfo->info.edges = edge;
+}
+
+static void
 _ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
 {
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
-   if (!strcmp(ee->driver, "wayland_shm"))
+   wdata = ee->engine.data;
+   if (wdata->win)
      {
-#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
-        _ecore_evas_wayland_shm_resize(ee, location);
-#endif
-     }
-   else if (!strcmp(ee->driver, "wayland_egl"))
-     {
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-        _ecore_evas_wayland_egl_resize(ee, location);
-#endif
+        _ecore_evas_wayland_resize_edge_set(ee, location);
+
+        if (ECORE_EVAS_PORTRAIT(ee))
+          ecore_wl2_window_resize(wdata->win, ee->w, ee->h, location);
+        else
+          ecore_wl2_window_resize(wdata->win, ee->h, ee->w, location);
      }
 }
 
