@@ -1,9 +1,4 @@
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#include "evas_common_private.h"
-#include "evas_private.h"
+#include "vg_common.h"
 
 static int _evas_vg_loader_eet_log_dom = -1;
 
@@ -17,11 +12,34 @@ static int _evas_vg_loader_eet_log_dom = -1;
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_evas_vg_loader_eet_log_dom, __VA_ARGS__)
 
-static void*
-evas_vg_load_file_data_eet(Eina_File *f EINA_UNUSED, Eina_Stringshare *key EINA_UNUSED, int *error EINA_UNUSED)
+static Vg_File_Data*
+evas_vg_load_file_data_eet(const char *file, const char *key, int *error EINA_UNUSED)
 {
-   INF("No Implementation Yet");
-   return NULL;
+   Eet_Data_Descriptor *svg_node_eet;
+   Svg_Node *node;
+   Eet_File *ef;
+
+   ef = eet_open(file, EET_FILE_MODE_READ);
+   if (!ef)
+     {
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        return NULL;
+     }
+
+   svg_node_eet = vg_common_svg_node_eet();
+   node = eet_data_read(ef, svg_node_eet, key);
+   eet_close(ef);
+
+   if (!node)
+     {
+        *error = EVAS_LOAD_ERROR_GENERIC;
+     }
+   else
+     {
+        *error = EVAS_LOAD_ERROR_NONE;
+     }
+
+   return vg_common_create_vg_node(node);
 }
 
 static Evas_Vg_Load_Func evas_vg_load_eet_func =
@@ -34,12 +52,24 @@ module_open(Evas_Module *em)
 {
    if (!em) return 0;
    em->functions = (void *)(&evas_vg_load_eet_func);
+   _evas_vg_loader_eet_log_dom = eina_log_domain_register
+     ("vg-load-eet", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_vg_loader_eet_log_dom < 0)
+     {
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
+     }
    return 1;
 }
 
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
+   if (_evas_vg_loader_eet_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_evas_vg_loader_eet_log_dom);
+        _evas_vg_loader_eet_log_dom = -1;
+     }
 }
 
 static Evas_Module_Api evas_modapi =
