@@ -1376,6 +1376,25 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd)
 }
 #endif
 
+static inline void
+_elm_win_frame_geometry_adjust(Efl_Ui_Win_Data *sd)
+{
+   int l = 0, t = 0, r = 0, b = 0;
+
+   if (sd->frame_obj && !sd->fullscreen)
+     {
+        int fw, fh, ox, oy, ow, oh;
+        evas_object_geometry_get(sd->frame_obj, NULL, NULL, &fw, &fh);
+        edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
+                                      &ox, &oy, &ow, &oh);
+        l = ox;
+        t = oy;
+        r = fw - ow - l;
+        b = fh - oh - t;
+     }
+   ecore_evas_shadow_geometry_set(sd->ee, l, r, t, b);
+}
+
 static void
 _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
 {
@@ -1386,6 +1405,7 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
    sd->wl.opaque_dirty = 1;
 #endif
 
+   _elm_win_frame_geometry_adjust(sd);
    if (sd->fullscreen)
      {
 #ifdef HAVE_ELEMENTARY_WL2
@@ -2864,25 +2884,6 @@ super_skip:
    efl_gfx_position_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), x, y);
 }
 
-static inline void
-_elm_win_frame_geometry_adjust(Efl_Ui_Win_Data *sd)
-{
-   int l = 0, t = 0, r = 0, b = 0;
-
-   if (sd->frame_obj)
-     {
-        int fw, fh, ox, oy, ow, oh;
-        evas_object_geometry_get(sd->frame_obj, NULL, NULL, &fw, &fh);
-        edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
-                                      &ox, &oy, &ow, &oh);
-        l = ox;
-        t = oy;
-        r = fw - ow - l;
-        b = fh - oh - t;
-     }
-   ecore_evas_shadow_geometry_set(sd->ee, l, r, t, b);
-}
-
 EOLIAN static void
 _efl_ui_win_efl_gfx_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord w, Evas_Coord h)
 {
@@ -3893,7 +3894,7 @@ _elm_win_frame_cb_maximize(void *data,
    if (sd->maximized) value = EINA_FALSE;
    else value = EINA_TRUE;
 
-   TRAP(sd, maximized_set, value);
+   efl_ui_win_maximized_set(sd->obj, value);
 }
 
 static void

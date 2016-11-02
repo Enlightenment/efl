@@ -1608,6 +1608,18 @@ _ecore_evas_x_event_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED,
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static inline void
+_ecore_evas_x_shadow_update(Ecore_Evas *ee)
+{
+   if (EINA_LIKELY(!ee->shadow.changed)) return;
+
+   int shadow[4] = { ee->shadow.l, ee->shadow.r, ee->shadow.t, ee->shadow.b };
+   ee->shadow.changed = EINA_FALSE;
+   ecore_x_window_prop_property_set(ee->prop.window,
+                                    ECORE_X_ATOM_GTK_FRAME_EXTENTS,
+                                    ECORE_X_ATOM_CARDINAL, 32, shadow, 4);
+}
+
 static Eina_Bool
 _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -1638,6 +1650,7 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
           }
      }
 
+   _ecore_evas_x_shadow_update(ee);
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
    if (!ECORE_EVAS_PORTRAIT(ee))
      SWAP_INT(fw, fh);
@@ -2170,7 +2183,6 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    Eina_Bool changed = EINA_FALSE;
    int fw = 0, fh = 0;
-   int zero[4] = {0};
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
    if (ECORE_EVAS_PORTRAIT(ee)) SWAP_INT(fw, fh);
@@ -2198,6 +2210,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
           }
      }
 
+   _ecore_evas_x_shadow_update(ee);
    if (edata->direct_resize)
      {
         if ((ee->w == w) && (ee->h == h)) return;
@@ -2233,14 +2246,6 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
         edata->configure_coming = 1;
         if (changed) edata->configure_reqs++;
         if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w + fw, h + fh);
-     }
-
-   if (memcmp(&zero, &ee->shadow, sizeof(zero)))
-     {
-        ecore_x_window_prop_property_set(ee->prop.window,
-                                         ECORE_X_ATOM_GTK_FRAME_EXTENTS,
-                                         ECORE_X_ATOM_CARDINAL, 32,
-                                         &ee->shadow, 4);
      }
 }
 
