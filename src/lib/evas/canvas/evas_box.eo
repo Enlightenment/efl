@@ -131,6 +131,18 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
               data: void_ptr;
          }
       }
+      @property layouting {
+        set {}
+        values {
+          is_layouting: bool;
+        }
+      }
+      @property children_changed {
+        set {}
+        values {
+          is_children_changed: bool;
+        }
+      }
       layout_vertical {
          [[Layout function which sets the box o to a (basic) vertical box
 

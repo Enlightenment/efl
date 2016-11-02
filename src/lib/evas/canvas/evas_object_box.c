@@ -437,6 +437,18 @@ _evas_box_efl_gfx_size_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Co
 }
 
 EOLIAN static void
+_evas_box_layouting_set(Eo *o EINA_UNUSED, Evas_Object_Box_Data * priv, Eina_Bool v)
+{
+  priv->layouting = v;
+}
+
+EOLIAN static void
+_evas_box_children_changed_set(Eo *o EINA_UNUSED, Evas_Object_Box_Data * priv, Eina_Bool v)
+{
+  priv->children_changed = v;
+}
+
+EOLIAN static void
 _evas_box_efl_canvas_group_group_calculate(Eo *o, Evas_Object_Box_Data *priv)
 {
    if (priv->layout.cb)
