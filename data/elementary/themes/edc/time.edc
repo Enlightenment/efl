@@ -104,6 +104,9 @@ group { "e/gadget/clock/digital/advanced"; nomouse;
          action: STATE_SET "only";
          targets: "e.text" "e.text.sub" "e.sizer";
       }
+      program { signal: "resize";
+        action: SIGNAL_EMIT "e,state,sizing,changed" "e";
+      }
    }
 }
 group { name: "e/gadget/clock/digital";
@@ -690,6 +693,9 @@ group { name: "e/gadget/clock/digital";
             set_state(PART:"ampmclip", "default", 0.0);
             reset();
          }
+      }
+      program { signal: "resize";
+        action: SIGNAL_EMIT "e,state,sizing,changed" "e";
       }
 #define DIGPRG(_NAME) \
       program { \
