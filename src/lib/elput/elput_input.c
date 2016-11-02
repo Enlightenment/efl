@@ -638,3 +638,38 @@ elput_input_device_output_name_get(Elput_Device *device)
    if (!device->output_name) return NULL;
    return eina_stringshare_ref(device->output_name);
 }
+
+EAPI void
+elput_input_pointer_accel_profile_set(Elput_Manager *manager, const char *seat, uint32_t profile)
+{
+   Elput_Seat *eseat;
+   Elput_Device *edev;
+   Eina_List *l, *ll;
+
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   /* if no seat name is passed in, just use default seat name */
+   if (!seat) seat = "seat0";
+
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        if ((eseat->name) && (strcmp(eseat->name, seat)))
+          continue;
+
+        EINA_LIST_FOREACH(eseat->devices, ll, edev)
+          {
+             if (!libinput_device_has_capability(edev->device,
+                                                 LIBINPUT_DEVICE_CAP_POINTER))
+               continue;
+
+             if (libinput_device_config_accel_set_profile(edev->device,
+                                                          profile) !=
+                 LIBINPUT_CONFIG_STATUS_SUCCESS)
+               {
+                  WRN("Failed to set acceleration profile for device: %s",
+                      libinput_device_get_name(edev->device));
+                  continue;
+               }
+          }
+     }
+}

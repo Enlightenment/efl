@@ -413,6 +413,18 @@ EAPI void elput_input_keyboard_cached_keymap_set(Elput_Manager *manager, void *k
  */
 EAPI Eina_Stringshare *elput_input_device_output_name_get(Elput_Device *device);
 
+/**
+ * Set the pointer acceleration profile
+ *
+ * @param manager
+ * @param seat
+ * @param profile
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.19
+ */
+EAPI void elput_input_pointer_accel_profile_set(Elput_Manager *manager, const char *seat, uint32_t profile);
+
 # endif
 
 # undef EAPI
