@@ -92,7 +92,10 @@ _visuals_set(Evas_Object *obj)
      elm_layout_signal_emit(sd->main_layout, "elm,state,title_area,visible", "elm");
 
    if (sd->action_area)
-     elm_layout_signal_emit(sd->main_layout, "elm,state,action_area,visible", "elm");
+     {
+        elm_layout_signal_emit(sd->main_layout, "elm,state,action_area,visible", "elm");
+        evas_object_show(sd->action_area);
+     }
    else
      elm_layout_signal_emit(sd->main_layout, "elm,state,action_area,hidden", "elm");
 
@@ -1130,6 +1133,7 @@ _content_set(Evas_Object *obj,
         else
           elm_object_content_set(sd->scr, sd->content_area);
 
+        evas_object_show(content);
         efl_content_set(efl_part(sd->content_area, CONTENT_PART), content);
 
         evas_object_event_callback_add
@@ -1196,6 +1200,7 @@ _action_button_set(Evas_Object *obj,
      CRI("Failed to set layout!");
 
    snprintf(buf, sizeof(buf), "elm.swallow.content.button%i", idx + 1);
+   evas_object_show(sd->buttons[idx]->btn);
    elm_object_part_content_set
      (sd->action_area, buf, sd->buttons[idx]->btn);
 }
