@@ -118,7 +118,6 @@ group { name: "e/bryce/default/base"; nomouse;
          desc { hid;
             color: 255 255 255 0;
             text { font: "Sans:style=Bold"; size: 14;
-               min: 1 1;
                ellipsis: -1;
             }
          }
