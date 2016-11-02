@@ -5,6 +5,88 @@
 #include "ecore_evas_wayland_private.h"
 #include <Evas_Engine_Wayland.h>
 
+extern EAPI Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
+extern EAPI void _evas_canvas_image_data_regenerate(Eina_List *list);
+
+static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
+{
+   _ecore_evas_wl_common_free,
+   _ecore_evas_wl_common_callback_resize_set,
+   _ecore_evas_wl_common_callback_move_set,
+   NULL,
+   NULL,
+   _ecore_evas_wl_common_callback_delete_request_set,
+   NULL,
+   _ecore_evas_wl_common_callback_focus_in_set,
+   _ecore_evas_wl_common_callback_focus_out_set,
+   _ecore_evas_wl_common_callback_mouse_in_set,
+   _ecore_evas_wl_common_callback_mouse_out_set,
+   NULL, // sticky_set
+   NULL, // unsticky_set
+   NULL, // pre_render_set
+   NULL, // post_render_set
+   _ecore_evas_wl_common_move,
+   NULL, // managed_move
+   _ecore_evas_wl_common_resize,
+   _ecore_evas_wl_common_move_resize,
+   _ecore_evas_wl_common_rotation_set,
+   NULL, // shaped_set
+   _ecore_evas_wl_common_show,
+   _ecore_evas_wl_common_hide,
+   _ecore_evas_wl_common_raise,
+   NULL, // lower
+   NULL, // activate
+   _ecore_evas_wl_common_title_set,
+   _ecore_evas_wl_common_name_class_set,
+   _ecore_evas_wl_common_size_min_set,
+   _ecore_evas_wl_common_size_max_set,
+   _ecore_evas_wl_common_size_base_set,
+   _ecore_evas_wl_common_size_step_set,
+   _ecore_evas_wl_common_object_cursor_set,
+   _ecore_evas_wl_common_object_cursor_unset,
+   _ecore_evas_wl_common_layer_set,
+   NULL, // focus set
+   _ecore_evas_wl_common_iconified_set,
+   _ecore_evas_wl_common_borderless_set,
+   NULL, // override set
+   _ecore_evas_wl_common_maximized_set,
+   _ecore_evas_wl_common_fullscreen_set,
+   NULL, // func avoid_damage set
+   _ecore_evas_wl_common_withdrawn_set,
+   NULL, // func sticky set
+   _ecore_evas_wl_common_ignore_events_set,
+   _ecore_evas_wl_common_alpha_set,
+   _ecore_evas_wl_common_transparent_set,
+   NULL, // func profiles set
+   NULL, // func profile set
+   NULL, // window group set
+   _ecore_evas_wl_common_aspect_set,
+   NULL, // urgent set
+   NULL, // modal set
+   NULL, // demand attention set
+   NULL, // focus skip set
+   NULL, //_ecore_evas_wl_common_render,
+   _ecore_evas_wl_common_screen_geometry_get,
+   _ecore_evas_wl_common_screen_dpi_get,
+   NULL, // func msg parent send
+   NULL, // func msg send
+
+   _ecore_evas_wl_common_pointer_xy_get,
+   NULL, // pointer_warp
+
+   NULL, // wm_rot_preferred_rotation_set
+   NULL, // wm_rot_available_rotations_set
+   NULL, // wm_rot_manual_rotation_done_set
+   NULL, // wm_rot_manual_rotation_done
+
+   NULL, // aux_hints_set
+
+   NULL, // fn_animator_register
+   NULL, // fn_animator_unregister
+
+   NULL, // fn_evas_changed
+};
+
 #define _smart_frame_type "ecore_evas_wl_frame"
 
 static const char *interface_wl_name = "wayland";
@@ -1633,11 +1715,13 @@ static const struct wl_callback_listener _anim_listener =
 };
 
 void
-_ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
+_ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
+   Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    struct wl_surface *surf;
+   int fx, fy;
 
    wdata = ee->engine.data;
    surf = ecore_wl2_window_surface_get(wdata->win);
@@ -1651,6 +1735,39 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas EINA_UNUSED, void 
      wdata->win->configure_ack(wdata->win->xdg_surface,
                                wdata->win->configure_serial);
    wdata->win->configure_serial = 0;
+
+   /* Surviving bits of WWW - track interesting state we might want
+    * to pass to clients to do client side effects
+    */
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(evas);
+   wdata = ee->engine.data;
+   einfo->window.x = wdata->win->geometry.x;
+   einfo->window.y = wdata->win->geometry.y;
+   einfo->window.w = wdata->win->geometry.w;
+   einfo->window.h = wdata->win->geometry.h;
+   if (einfo->resizing)
+     {
+        einfo->x_rel = 0;
+        einfo->y_rel = 0;
+     }
+   else
+     {
+        einfo->x_rel = wdata->x_rel;
+        einfo->y_rel = wdata->y_rel;
+     }
+   einfo->timestamp = wdata->timestamp;
+   evas_canvas_pointer_canvas_xy_get(evas, &einfo->x_cursor, &einfo->y_cursor);
+   evas_output_framespace_get(evas, &fx, &fy, NULL, NULL);
+   einfo->x_cursor -= fx;
+   einfo->y_cursor -= fy;
+   wdata->x_rel = wdata->y_rel = 0;
+   einfo->resizing = wdata->win->resizing;
+   einfo->dragging = wdata->dragging;
+   einfo->drag_start = EINA_FALSE;
+   einfo->drag_stop = EINA_FALSE;
+   if (einfo->drag_ack && !einfo->dragging) einfo->drag_stop = EINA_TRUE;
+   if (einfo->dragging && !einfo->drag_ack) einfo->drag_start = EINA_TRUE;
+   einfo->drag_ack = wdata->dragging;
 }
 
 void 
@@ -2090,4 +2207,294 @@ _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+}
+
+static void
+_ee_egl_display_unset(Ecore_Evas *ee)
+{
+   Evas_Engine_Info_Wayland *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+   einfo->info.wl_display = NULL;
+   wdata = ee->engine.data;
+   wdata->regen_objs = _evas_canvas_image_data_unset(ecore_evas_get(ee));
+   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+}
+
+static Eina_Bool
+_ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Ecore_Evas *ee;
+   Evas_Engine_Info_Wayland *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   ee = data;
+   wdata = ee->engine.data;
+   if (wdata->sync_done) return ECORE_CALLBACK_PASS_ON;
+   wdata->sync_done = EINA_TRUE;
+
+   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
+     {
+        einfo->info.wl_display = ecore_wl2_display_get(wdata->display);
+        einfo->info.wl_dmabuf = ecore_wl2_display_dmabuf_get(wdata->display);
+        einfo->info.wl_shm = ecore_wl2_display_shm_get(wdata->display);
+        einfo->info.compositor_version = ecore_wl2_display_compositor_version_get(wdata->display);
+        einfo->info.destination_alpha = EINA_TRUE;
+        einfo->info.rotation = ee->rotation;
+        einfo->info.wl_surface = ecore_wl2_window_surface_get(wdata->win);
+
+        if (wdata->reset_pending)
+          {
+             ecore_evas_manual_render_set(ee, 0);
+          }
+        if (evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             if (wdata->reset_pending && !strcmp(ee->driver, "wayland_egl"))
+               _evas_canvas_image_data_regenerate(wdata->regen_objs);
+             wdata->regen_objs = NULL;
+          }
+        else
+          ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
+        wdata->reset_pending = 0;
+     }
+   else
+     {
+        ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
+     }
+
+   if (wdata->defer_show)
+     {
+        int fw, fh;
+
+        wdata->defer_show = EINA_FALSE;
+
+        ecore_wl2_window_show(wdata->win);
+        ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
+        ecore_wl2_window_transparent_set(wdata->win, ee->transparent);
+
+        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+
+        if (wdata->win)
+          {
+
+             einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+             if (einfo)
+               {
+                  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
+                  einfo->www_avail = !!wdata->win->www_surface;
+                  einfo->just_mapped = EINA_TRUE;
+               }
+          }
+
+        if (wdata->frame)
+          {
+             evas_object_show(wdata->frame);
+             evas_object_resize(wdata->frame, ee->w + fw, ee->h + fh);
+          }
+
+        ee->prop.withdrawn = EINA_FALSE;
+        if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+
+        if (!ee->visible)
+          {
+             ee->visible = 1;
+             ee->should_be_visible = 1;
+             ee->draw_ok = EINA_TRUE;
+             if (ee->func.fn_show) ee->func.fn_show(ee);
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+Ecore_Evas *
+_ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name)
+{
+   Ecore_Wl2_Display *ewd;
+   Ecore_Wl2_Window *p = NULL;
+   Evas_Engine_Info_Wayland *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+   Ecore_Evas_Interface_Wayland *iface;
+   Ecore_Evas *ee = NULL;
+   int method = 0;
+   int fx = 0, fy = 0, fw = 0, fh = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(method = evas_render_method_lookup(engine_name)))
+     {
+        ERR("Render method lookup failed for Wayland_Shm");
+        return NULL;
+     }
+
+   if (!ecore_wl2_init())
+     {
+        ERR("Failed to initialize Ecore_Wl2");
+        return NULL;
+     }
+
+   ewd = ecore_wl2_display_connect(disp_name);
+
+   if (!ewd)
+     {
+        ERR("Failed to connect to Wayland Display %s", disp_name);
+        goto conn_err;
+     }
+   if (!(ee = calloc(1, sizeof(Ecore_Evas))))
+     {
+        ERR("Failed to allocate Ecore_Evas");
+        goto err;
+     }
+
+   if (!(wdata = calloc(1, sizeof(Ecore_Evas_Engine_Wl_Data))))
+     {
+        ERR("Failed to allocate Ecore_Evas_Engine_Wl_Data");
+        free(ee);
+        goto err;
+     }
+
+   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
+
+   _ecore_evas_wl_common_init();
+
+   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_wl_engine_func;
+   ee->engine.data = wdata;
+
+   iface = _ecore_evas_wl_interface_new();
+   ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
+
+   ee->driver = engine_name;
+   if (disp_name) ee->name = strdup(disp_name);
+
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+
+   ee->x = x;
+   ee->y = y;
+   ee->w = w;
+   ee->h = h;
+   ee->req.x = ee->x;
+   ee->req.y = ee->y;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
+   ee->rotation = 0;
+   ee->prop.max.w = 32767;
+   ee->prop.max.h = 32767;
+   ee->prop.layer = 4;
+   ee->prop.request_pos = EINA_FALSE;
+   ee->prop.sticky = EINA_FALSE;
+   ee->prop.draw_frame = frame;
+   ee->prop.withdrawn = EINA_TRUE;
+   ee->alpha = EINA_FALSE;
+
+   /* Wayland egl engine can't async render */
+   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER") || !strcmp(engine_name, "wayland_egl"))
+     ee->can_async_render = 0;
+   else
+     ee->can_async_render = 1;
+
+   /* frame offset and size */
+   if (ee->prop.draw_frame)
+     {
+        fx = 4;
+        fy = 18;
+        fw = 8;
+        fh = 22;
+     }
+
+   if (parent)
+     {
+        p = ecore_wl2_display_window_find(ewd, parent);
+        ee->alpha = ecore_wl2_window_alpha_get(p);
+     }
+
+   wdata->sync_done = EINA_FALSE;
+   wdata->parent = p;
+   wdata->display = ewd;
+   if (!strcmp(engine_name, "wayland_egl"))
+     wdata->display_unset = _ee_egl_display_unset;
+   wdata->win = ecore_wl2_window_new(ewd, p, x, y, w + fw, h + fh);
+   ee->prop.window = ecore_wl2_window_id_get(wdata->win);
+
+   ee->evas = evas_new();
+   evas_data_attach_set(ee->evas, ee);
+   evas_output_method_set(ee->evas, method);
+   evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
+   evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
+
+   if (ee->can_async_render)
+     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
+                             _ecore_evas_wl_common_render_updates, ee);
+
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
+                           _ecore_evas_wl_common_render_flush_pre, ee);
+
+   /* FIXME: This needs to be set based on theme & scale */
+   if (ee->prop.draw_frame)
+     evas_output_framespace_set(ee->evas, fx, fy, fw, fh);
+
+   if (ewd->sync_done)
+     {
+        wdata->sync_done = EINA_TRUE;
+        if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
+          {
+             einfo->info.wl_display = ecore_wl2_display_get(ewd);
+             einfo->info.destination_alpha = EINA_TRUE;
+             einfo->info.rotation = ee->rotation;
+             einfo->info.depth = 32;
+             einfo->info.wl_surface = ecore_wl2_window_surface_get(wdata->win);
+             einfo->info.wl_dmabuf = ecore_wl2_display_dmabuf_get(ewd);
+             einfo->info.wl_shm = ecore_wl2_display_shm_get(ewd);
+             einfo->info.compositor_version = ecore_wl2_display_compositor_version_get(ewd);
+
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               {
+                  ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
+                  goto err;
+               }
+          }
+        else
+          {
+             ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
+             goto err;
+          }
+     }
+
+   ecore_evas_callback_pre_free_set(ee, _ecore_evas_wl_common_pre_free);
+
+   if (ee->prop.draw_frame)
+     {
+        wdata->frame = _ecore_evas_wl_common_frame_add(ee->evas);
+        _ecore_evas_wl_common_frame_border_size_set(wdata->frame, fx, fy, fw, fh);
+        evas_object_move(wdata->frame, -fx, -fy);
+        evas_object_layer_set(wdata->frame, EVAS_LAYER_MAX - 1);
+     }
+
+   ee->engine.func->fn_render = _ecore_evas_wl_common_render;
+
+   _ecore_evas_register(ee);
+   ecore_evas_input_event_register(ee);
+
+   ecore_event_window_register(ee->prop.window, ee, ee->evas,
+                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+   _ecore_event_window_direct_cb_set(ee->prop.window,
+                                     _ecore_evas_input_direct_cb);
+
+   wdata->sync_handler =
+     ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _ee_cb_sync_done, ee);
+
+   ee_list = eina_list_append(ee_list, ee);
+
+   return ee;
+
+err:
+   if (ee) ecore_evas_free(ee);
+   else ecore_wl2_display_disconnect(ewd);
+conn_err:
+   ecore_wl2_shutdown();
+   return NULL;
 }

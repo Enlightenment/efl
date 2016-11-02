@@ -108,6 +108,8 @@ void _ecore_evas_wl_common_frame_border_size_set(Evas_Object *obj, int fx, int f
 
 void _ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
 
+Ecore_Evas *_ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name);
+
 extern Eina_List *ee_list;
 
 #endif /* _ECORE_EVAS_WAYLAND_PRIVATE_H_ */
