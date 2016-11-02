@@ -255,5 +255,5 @@ _efl_observable_iterator_tuple_new(Eo *obj, Efl_Observable_Data *pd)
    return &it->iterator;
 }
 
-#include "efl_observable.eo.c"
-#include "efl_observer.eo.c"
+#include "interfaces/efl_observable.eo.c"
+#include "interfaces/efl_observer.eo.c"
