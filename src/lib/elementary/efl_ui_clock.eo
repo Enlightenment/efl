@@ -18,6 +18,7 @@ enum Efl.Ui.Clock.Type
 
 class Efl.Ui.Clock (Elm.Layout)
 {
+   [[Efl UI clock class]]
    methods {
       @property format {
          [[The current clock format.
@@ -131,10 +132,10 @@ class Efl.Ui.Clock (Elm.Layout)
            Minute: default value range is from 0 to 59.
          ]]
          set {
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
 
          keys {
@@ -158,10 +159,10 @@ class Efl.Ui.Clock (Elm.Layout)
            Minute: default value range is from 0 to 59.
          ]]
          set {
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
 
          keys {
@@ -185,10 +186,10 @@ class Efl.Ui.Clock (Elm.Layout)
            Minute: default value range is from 0 to 59.
          ]]
          set {
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          keys {
             curtime: Efl.Time*; [[Time structure containing the minimum time value.]]
@@ -254,7 +255,7 @@ class Efl.Ui.Clock (Elm.Layout)
       Elm.Layout.sizing_eval;
    }
    events {
-      changed;
+      changed; [[Called when clock changed]]
    }
 
 }
