@@ -27,7 +27,7 @@ interface Efl.File {
               @since 1.10]]
          }
          values {
-            f: const(Eina.File)*; [[The handler to an Eina_File that will be used as image source]]
+            f: ptr(const(Eina.File)); [[The handler to an Eina_File that will be used as image source]]
             key: string @optional; [[The group that the image belongs to, in case 
                                            it's an EET(including Edje case) file. This can be used
                                            as a key inside evas image cache if this is a normal image
