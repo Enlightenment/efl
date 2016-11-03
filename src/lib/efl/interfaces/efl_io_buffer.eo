@@ -96,7 +96,7 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
 
               The returned memory must be freed with eina_binbuf_free().
             ]]
-            return: free(own(Eina.Binbuf*), eina_binbuf_free) @warn_unused;
+            return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused;
         }
     }
 
