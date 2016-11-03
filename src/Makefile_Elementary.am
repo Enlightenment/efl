@@ -992,6 +992,34 @@ modules_elementary_datetime_input_ctxpopup_module_la_DEPENDENCIES = @USE_ELEMENT
 modules_elementary_datetime_input_ctxpopup_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_elementary_datetime_input_ctxpopup_module_la_LIBTOOLFLAGS = --tag=disable-static
 
+## clock_input_ctxpopup
+
+moduleclock_input_ctxpopuppkgdir = $(libdir)/elementary/modules/clock_input_ctxpopup/$(MODULE_ARCH)
+moduleclock_input_ctxpopuppkg_LTLIBRARIES = modules/elementary/clock_input_ctxpopup/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_moduleclock_input_ctxpopuppkgLTLIBRARIES = install-moduleclock_input_ctxpopuppkgLTLIBRARIES
+$(install_moduleclock_input_ctxpopuppkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_elementary_clock_input_ctxpopup_module_la_SOURCES = \
+modules/elementary/clock_input_ctxpopup/clock_input_ctxpopup.c
+modules_elementary_clock_input_ctxpopup_module_la_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
+-I. \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DELEMENTARY_BUILD \
+@ELEMENTARY_CFLAGS@
+modules_elementary_clock_input_ctxpopup_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
+modules_elementary_clock_input_ctxpopup_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+modules_elementary_clock_input_ctxpopup_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_elementary_clock_input_ctxpopup_module_la_LIBTOOLFLAGS = --tag=disable-static
+
 ## prefs
 
 moduleprefspkgdir = $(libdir)/elementary/modules/prefs/$(MODULE_ARCH)
