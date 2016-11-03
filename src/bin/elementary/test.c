@@ -254,6 +254,7 @@ void test_naviframe3(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe_complex(void *data, Evas_Object *obj, void *event_info);
 //void test_factory(void *data, Evas_Object *obj, void *event_info);
 void test_datetime(void *data, Evas_Object *obj, void *event_info);
+void test_ui_clock(void *data, Evas_Object *obj, void *event_info);
 void test_popup(void *data, Evas_Object *obj, void *event_info);
 void test_dayselector(void *data, Evas_Object *obj, void *event_info);
 void test_image(void *data, Evas_Object *obj, void *event_info);
@@ -917,6 +918,7 @@ add_tests:
    ADD_TEST(NULL, "Times & Dates", "Clock Edit 2", test_clock_edit2);
    ADD_TEST(NULL, "Times & Dates", "Clock Pause", test_clock_pause);
    ADD_TEST(NULL, "Times & Dates", "Datetime", test_datetime);
+   ADD_TEST(NULL, "Times & Dates", "Ui.Clock", test_ui_clock);
 
    //------------------------------//
    ADD_TEST(NULL, "Text", "Label", test_label);

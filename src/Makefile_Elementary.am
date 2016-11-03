@@ -121,6 +121,7 @@ elm_public_eolian_files = \
 # Private classes (not exposed or shipped)
 elm_private_eolian_files = \
 	lib/elementary/efl_ui_internal_text_interactive.eo \
+	lib/elementary/efl_ui_clock.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -662,6 +663,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_grid_static.c \
 	lib/elementary/efl_ui_grid_private.h \
 	lib/elementary/efl_ui_text.c \
+	lib/elementary/efl_ui_clock.c \
 	$(NULL)
 
 
@@ -823,6 +825,7 @@ bin/elementary/test_tooltip.c \
 bin/elementary/test_transit.c \
 bin/elementary/test_transit_bezier.c \
 bin/elementary/test_ui_box.c \
+bin/elementary/test_ui_clock.c \
 bin/elementary/test_ui_grid.c \
 bin/elementary/test_video.c \
 bin/elementary/test_weather.c \

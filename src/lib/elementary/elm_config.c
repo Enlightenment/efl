@@ -2194,6 +2194,10 @@ _config_update(void)
    IFCFG(0x000a)
    _elm_config->icon_theme = eina_stringshare_add(ELM_CONFIG_ICON_THEME_ELEMENTARY);
    IFCFGEND
+
+   IFCFG(0x000b)
+   eina_stringshare_refplace(&_elm_config->modules, tcfg->modules);
+   IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
