@@ -126,7 +126,7 @@ struct Efl.Gfx.Stroke
   width: double; [[Stroke width]]
   centered: double; [[Stroke centered]]
   color: Efl.Gfx.Stroke.Color; [[Stroke color]]
-  dash: Efl.Gfx.Dash*; [[Stroke dash]]
+  dash: ptr(Efl.Gfx.Dash); [[Stroke dash]]
   dash_length: uint; [[Stroke dash length]]
   cap: Efl.Gfx.Cap; [[Stroke cap]]
   join: Efl.Gfx.Join; [[Stroke join]]
