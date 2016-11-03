@@ -2518,7 +2518,7 @@ enum _Evas_Object_Intercept_Cb_Type
 };
 typedef enum _Evas_Object_Intercept_Cb_Type Evas_Object_Intercept_Cb_Type;
 
-EWAPI Eina_Bool _evas_object_intercept_call(Evas_Object *obj, Evas_Object_Intercept_Cb_Type type, Eina_Bool internal, ...);
+EWAPI Eina_Bool _evas_object_intercept_call(Evas_Object *obj, Evas_Object_Intercept_Cb_Type type, int internal, ...);
 
 #endif
 

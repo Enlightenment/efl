@@ -422,7 +422,7 @@ _instruction_param_addv(Evas_Filter_Instruction *instr, const char *name,
 
 static Eina_Bool
 _instruction_param_adda(Evas_Filter_Instruction *instr, const char *name,
-                        Value_Type format, Eina_Bool sequential,
+                        Value_Type format, int sequential,
                         /* default value */ ...)
 {
    Eina_Bool ok;
