@@ -14,7 +14,7 @@
 #define EVAS_SCRIPT_DIRECT_TABLE_LIMIT 8192
 
 static const
-Eina_Unicode _evas_script_fast_table[EVAS_SCRIPT_DIRECT_TABLE_LIMIT] = {
+unsigned char _evas_script_fast_table[EVAS_SCRIPT_DIRECT_TABLE_LIMIT] = {
   EVAS_SCRIPT_COMMON, EVAS_SCRIPT_COMMON, EVAS_SCRIPT_COMMON,
   EVAS_SCRIPT_COMMON, EVAS_SCRIPT_COMMON, EVAS_SCRIPT_COMMON,
   EVAS_SCRIPT_COMMON, EVAS_SCRIPT_COMMON, EVAS_SCRIPT_COMMON,
@@ -2749,9 +2749,9 @@ Eina_Unicode _evas_script_fast_table[EVAS_SCRIPT_DIRECT_TABLE_LIMIT] = {
 };
 
 static const struct {
-    Eina_Unicode start;
-    short len;
-    Evas_Script_Type script;
+   Eina_Unicode start; // int - 4
+   unsigned short len; // short - 2
+   unsigned short script; // short 2 -- total. 8 bytes per entry
 } _evas_script_slow_table[] = {
  { 0x2000,    12, EVAS_SCRIPT_COMMON },
  { 0x200c,     2, EVAS_SCRIPT_INHERITED },
