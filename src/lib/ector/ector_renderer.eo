@@ -111,7 +111,7 @@ abstract Ector.Renderer (Efl.Object)
 	 }
       }
       draw @virtual_pure {
-         return: bool @warn_unused;
+         return: bool;
 	 params {
 	    @in op: Efl.Gfx.Render_Op;
 	    @in clips: array<ptr(Eina.Rectangle)>; [[array of @Eina.Rectangle clip]]
@@ -119,12 +119,12 @@ abstract Ector.Renderer (Efl.Object)
 	 }
       }
       prepare {
-         return: bool @warn_unused;
+         return: bool;
 	 params {
 	 }
       }
       done @virtual_pure {
-         return: bool @warn_unused;
+         return: bool;
       }
    }
    implements {
