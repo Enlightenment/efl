@@ -15,7 +15,7 @@ class Ector.Cairo.Surface (Efl.Object, Ector.Surface)
 	 get {
 	 }
 	 values {
-	    ctx: cairo_t *; [[Cairo context]]
+	    ctx: ptr(cairo_t); [[Cairo context]]
 	 }
       }
       symbol_get {
