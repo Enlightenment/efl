@@ -41,6 +41,7 @@ struct Efl.Version
 
 struct Efl.Observable.Tuple
 {
-   key: string;
-   data: free(own(iterator<Efl.Observer>), eina_iterator_free);
+   [[This type describes an observable touple]]
+   key: string; [[Touple key]]
+   data: free(own(iterator<Efl.Observer>), eina_iterator_free); [[Touple data]]
 }
