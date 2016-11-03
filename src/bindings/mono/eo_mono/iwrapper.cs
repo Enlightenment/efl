@@ -107,38 +107,43 @@ public interface IWrapper
     }
 }
 
-public class MarshalTest : ICustomMarshaler
+public class MarshalTest<T> : ICustomMarshaler
 {
     public static ICustomMarshaler GetInstance(string cookie)
     {
-        return new MarshalTest();
+        Console.WriteLine("MarshalTest.GetInstace cookie " + cookie);
+        return new MarshalTest<T>();
     }
     public void CleanUpManagedData(object ManagedObj)
     {
+        Console.WriteLine("MarshalTest.CleanUpManagedData");
         //throw new NotImplementedException();
     }
 
     public void CleanUpNativeData(IntPtr pNativeData)
     {
+        Console.WriteLine("MarshalTest.CleanUpNativeData");
         //throw new NotImplementedException();
     }
 
     public int GetNativeDataSize()
     {
-        Console.WriteLine("GetNativeDataSize");
+        Console.WriteLine("MarshalTest.GetNativeDataSize");
         return 0;
         //return 8;
     }
 
     public IntPtr MarshalManagedToNative(object ManagedObj)
     {
-        Console.WriteLine("MarshallManagedToNative");
+        Console.WriteLine("MarshalTest.MarshallManagedToNative");
         return ((IWrapper)ManagedObj).raw_handle;
     }
 
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
-        return null;
+        Console.WriteLine("MarshalTest.MarshalNativeToManaged");
+        return Activator.CreateInstance(typeof(T), new System.Object[] {pNativeData});
+//        return null;
     }
 }
 

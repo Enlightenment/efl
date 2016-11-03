@@ -36,6 +36,16 @@ class TestMain
         efl_object_init();
         ecore_init();
         evas_init();
+
+        {
+            test.Testing testing = new test.TestingConcrete();
+            test.Testing o1 = testing.return_object();
+            System.Diagnostics.Debug.Assert(o1.raw_handle != IntPtr.Zero);
+            System.Diagnostics.Debug.Assert(o1.raw_handle == testing.raw_handle);
+            test.Testing o2 = o1.return_object();
+            System.Diagnostics.Debug.Assert(o2.raw_handle != IntPtr.Zero);
+            System.Diagnostics.Debug.Assert(o2.raw_handle == o1.raw_handle);
+        }
         
         efl.Loop loop = new efl.LoopConcrete();
 
@@ -46,6 +56,9 @@ class TestMain
         efl.canvas.Object canvas = ecore_evas.canvas;
         canvas.visible_set(true);
 
+        efl.Object parent = canvas.parent_get();
+        System.Diagnostics.Debug.Assert(parent.raw_handle != IntPtr.Zero);
+        
         efl.canvas.Rectangle rect = new efl.canvas.RectangleConcrete(canvas);
         rect.color_set(255, 255, 255, 255);
         rect.size_set(640, 480);

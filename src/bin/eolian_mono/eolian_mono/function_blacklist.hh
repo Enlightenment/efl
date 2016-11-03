@@ -7,9 +7,9 @@ inline bool is_function_blacklisted(std::string const& c_name)
 {
   return c_name == "efl_constructor"
     || c_name == "efl_parent_set"
-    || c_name == "efl_parent_get"
+    // || c_name == "efl_parent_get"
     || c_name == "efl_canvas_object_type_set"
-    || c_name == "efl_provider_find"
+    // || c_name == "efl_provider_find"
     || c_name == "efl_canvas_group_add"
     || c_name == "efl_canvas_group_member_add"
     || c_name == "efl_event_callback_array_priority_add"
