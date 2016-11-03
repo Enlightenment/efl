@@ -3,7 +3,7 @@
 struct Ecore.Exe.Event_Data.Line
 {
    [[A structure that stores information of lines data from a child process.]]
-   line: char *; [[The bytes of a line of buffered data]]
+   line: ptr(char); [[The bytes of a line of buffered data]]
    size: int; [[The size of the line buffer in bytes]]
 }
 
@@ -17,7 +17,7 @@ struct Ecore.Exe.Event_Data
    exe: Efl.Object;  [[The handle to the process. FIXME: should actually be Ecore.Exe, workaround cyclic]]
    data: void_ptr; [[the raw binary data from the child process that was received]]
    size: int; [[the size of this data in bytes]]
-   lines: Ecore.Exe.Event_Data.Line *; [[an array of line data if line buffered, the last one has it's line member set to $NULL]]
+   lines: ptr(Ecore.Exe.Event_Data.Line); [[an array of line data if line buffered, the last one has it's line member set to $NULL]]
 }
 
 enum Ecore.Exe_Flags
