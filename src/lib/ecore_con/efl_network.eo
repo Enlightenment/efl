@@ -1,4 +1,4 @@
-type Ecore_Con_Dns_Cb: __undefined_type;
+type Ecore_Con_Dns_Cb: __undefined_type; [[Ecore connection DNS callback type]]
 
 enum Ecore.Con.Type
 {

@@ -1,7 +1,7 @@
 import efl_network_server;
 
-type @extern Ecore_Con_Eet_Data_Cb: __undefined_type; /* FIXME: function pointers not supported. */
-type @extern Ecore_Con_Eet_Raw_Data_Cb: __undefined_type; /* FIXME: function pointers not supported. */
+type @extern Ecore_Con_Eet_Data_Cb: __undefined_type; [[Ecore connection eet data callback type]] /* FIXME: function pointers not supported. */
+type @extern Ecore_Con_Eet_Raw_Data_Cb: __undefined_type; [[Ecore connection eet raw data callback type]]/* FIXME: function pointers not supported. */
 
 struct @extern Eet.Data.Descriptor; [[Eet data descriptor data structure]]
 struct Ecore.Con.Reply; [[Ecore connection reply data structure]]

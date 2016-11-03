@@ -1,5 +1,5 @@
-type @extern Ecore_Cb: __undefined_type;
-type @extern Ecore_Task_Cb: __undefined_type;
+type @extern Ecore_Cb: __undefined_type; [[Ecore callback type]]
+type @extern Ecore_Task_Cb: __undefined_type; [[Ecore task callback type]]
 
 enum Ecore.Pos_Map
 {
