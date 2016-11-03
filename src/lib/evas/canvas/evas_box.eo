@@ -127,7 +127,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            be set, by the evas_object_size_hint_{min,max}_set
            functions.]]
          params {
-              priv: Evas_Object_Box_Data *;
+              priv: ptr(Evas_Object_Box_Data);
               data: void_ptr;
          }
       }
@@ -138,7 +138,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            evas_object_box_layout_horizontal. The description of its
            behaviour can be derived from that function's documentation.]]
          params {
-              priv: Evas_Object_Box_Data *;
+              priv: ptr(Evas_Object_Box_Data);
               data: void_ptr;
          }
       }
@@ -184,7 +184,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            try to resize this child element to the exact height of its parent
            (respecting the max hint on the child's height).]]
          params {
-              priv: Evas_Object_Box_Data *;
+              priv: ptr(Evas_Object_Box_Data);
               data: void_ptr;
          }
 
@@ -204,7 +204,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            evas_object_box_layout_flow_horizontal. The description of its
            behaviour can be derived from that function's documentation.]]
          params {
-              priv: Evas_Object_Box_Data *;
+              priv: ptr(Evas_Object_Box_Data);
               data: void_ptr;
          }
       }
@@ -212,7 +212,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
          [[No description supplied by the EAPI.]]
          legacy: null;
          params {
-            @in opt: Evas_Object_Box_Option *;
+            @in opt: ptr(Evas_Object_Box_Option);
          }
       }
       insert_after {
@@ -229,7 +229,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            Note: This call will trigger the box's
            _Evas_Object_Box_Api.insert_after smart function.]]
 
-         return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
+         return: ptr(Evas_Object_Box_Option); [[A box option bound to the recently added box item or
                                              $null, on errors]]
          params {
             @in child: Efl.Canvas.Object @nonull; [[A child Evas object to be made a member of $o.]]
@@ -277,7 +277,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            Note: This call will trigger the box's _Evas_Object_Box_Api.append
            smart function.]]
 
-         return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
+         return: ptr(Evas_Object_Box_Option); [[A box option bound to the recently added box item or
                                              $null, on errors.]]
          params {
             @in child: Efl.Canvas.Object @nonull; [[A child Evas object to be made a member of $o.]]
@@ -313,7 +313,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            Note: This call will trigger the box's
            _Evas_Object_Box_Api.prepend smart function.]]
 
-         return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
+         return: ptr(Evas_Object_Box_Option); [[A box option bound to the recently added box item or
                                              $null, on errors.]]
          params {
             @in child: Efl.Canvas.Object @nonull; [[A child Evas object to be made a member of $o.]]
@@ -331,7 +331,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       internal_append {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: Evas_Object_Box_Option *;
+         return: ptr(Evas_Object_Box_Option);
          params {
             @in child: Efl.Canvas.Object;
          }
@@ -346,12 +346,12 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
 
          return: bool; [[$ture on success, $false on failure.]]
          params {
-            @in opt: Evas_Object_Box_Option * @nonull; [[The box option structure bound to the child box element
+            @in opt: ptr(Evas_Object_Box_Option) @nonull; [[The box option structure bound to the child box element
                                                          to set a property on.]]
             @in property: int; [[The numerical ID of the given property.]]
-            @in args: va_list *; [[The variable argument list implementing the value to
-                                   be set for this property. It must be of the same type the user has
-                                   defined for it.]]
+            @in args: ptr(va_list); [[The variable argument list implementing the value to
+                                      be set for this property. It must be of the same type the user has
+                                      defined for it.]]
          }
          legacy: null;
       }
@@ -393,19 +393,19 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            more details.]]
          return: bool;  [[$ture on success, $false on failure.]]
          params {
-            @in opt: Evas_Object_Box_Option * @nonull; [[The box option structure bound to the child box element
+            @in opt: ptr(Evas_Object_Box_Option) @nonull; [[The box option structure bound to the child box element
                                                          to get a property from.]]
             @in property: int; [[The numerical ID of the given property.]]
-            @in args: va_list *; [[The variable argument list with pointers to where to
-                                   store the values of this property. They must point to variables
-                                   of the same type the user has defined for them.]]
+            @in args: ptr(va_list); [[The variable argument list with pointers to where to
+                                      store the values of this property. They must point to variables
+                                      of the same type the user has defined for them.]]
          }
          legacy: null;
       }
       internal_insert_at {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: Evas_Object_Box_Option *;
+         return: ptr(Evas_Object_Box_Option);
          params {
             @in child: Efl.Canvas.Object;
             @in pos: uint;
@@ -425,7 +425,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            Note: This call will trigger the box's
            _Evas_Object_Box_Api.insert_before smart function.]]
 
-         return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
+         return: ptr(Evas_Object_Box_Option); [[A box option bound to the recently added box item or
                                              $null, on errors.]]
          params {
             @in child: Efl.Canvas.Object @nonull; [[A child Evas object to be made a member of $o.]]
@@ -451,7 +451,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       internal_insert_before {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: Evas_Object_Box_Option *;
+         return: ptr(Evas_Object_Box_Option);
          params {
             @in child: Efl.Canvas.Object;
             @in reference: const(Efl.Canvas.Object);
@@ -490,14 +490,14 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            try to resize this child element to the exact height of its parent
            (respecting the maximum size hint on the child's height).]]
          params {
-            @in priv: Evas_Object_Box_Data *;
+            @in priv: ptr(Evas_Object_Box_Data);
             @in data: void_ptr;
          }
       }
       internal_option_new {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: Evas_Object_Box_Option*;
+         return: ptr(Evas_Object_Box_Option);
          params {
             @in child: Efl.Canvas.Object;
          }
@@ -511,14 +511,14 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            description of its behaviour can be derived from that function's
            documentation.]]
          params {
-            @in priv: Evas_Object_Box_Data *;
+            @in priv: ptr(Evas_Object_Box_Data);
             @in data: void_ptr;
          }
       }
       internal_insert_after {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: Evas_Object_Box_Option *;
+         return: ptr(Evas_Object_Box_Option);
          params {
             @in child: Efl.Canvas.Object;
             @in reference: const(Efl.Canvas.Object);
@@ -539,7 +539,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            Note: This call will trigger the box's
            _Evas_Object_Box_Api.insert_at smart function.]]
 
-         return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
+         return: ptr(Evas_Object_Box_Option); [[A box option bound to the recently added box item or
                                              $null, on errors.]]
          params {
             @in child: Efl.Canvas.Object @nonull; [[A child Evas object to be made a member of $o.]]
@@ -550,7 +550,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       internal_prepend {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: Evas_Object_Box_Option*;
+         return: ptr(Evas_Object_Box_Option);
          params {
             @in child: Efl.Canvas.Object;
          }
@@ -593,7 +593,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            width and accounting for its horizontal padding properties). The
            same applies to the vertical axis.]]
          params {
-            @in priv: Evas_Object_Box_Data *;
+            @in priv: ptr(Evas_Object_Box_Data);
             @in data: void_ptr;
          }
       }
@@ -605,7 +605,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            evas_object_box_layout_homogeneous_horizontal.  The description
            of its behaviour can be derived from that function's documentation.]]
          params {
-              priv: Evas_Object_Box_Data *;
+              priv: ptr(Evas_Object_Box_Data);
               data: void_ptr;
          }
       }
@@ -644,7 +644,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            $align_y dictates positioning relative to the largest
            height required by a child object in the actual row.]]
          params {
-              priv: Evas_Object_Box_Data *;
+              priv: ptr(Evas_Object_Box_Data);
               data: void_ptr;
          }
       }
