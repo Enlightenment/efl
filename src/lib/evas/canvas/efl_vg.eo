@@ -41,7 +41,7 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
               @since 1.14]]
          }
          values {
-            m: const(Eina.Matrix3) *; [[transformation matrix.]]
+            m: ptr(const(Eina.Matrix3)); [[transformation matrix.]]
          }
       }
       @property origin {
