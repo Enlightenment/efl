@@ -126,7 +126,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
 
          params {
             @in y: int; [[The row index of the grid.]]
-            @in row: const(Evas.Textgrid.Cell)*; [[The string as a sequence of #Evas_Textgrid_Cell.]]
+            @in row: ptr(const(Evas.Textgrid.Cell)); [[The string as a sequence of #Evas_Textgrid_Cell.]]
          }
       }
       cellrow_get @const {
@@ -139,7 +139,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
            See also @.cellrow_set, @.size.set and @.update_add.
 
            @since 1.7]]
-         return: Evas.Textgrid.Cell*; [[A pointer to the first cell of the given row.]]
+         return: ptr(Evas.Textgrid.Cell); [[A pointer to the first cell of the given row.]]
          params {
             @in y: int; [[The row index of the grid.]]
          }
