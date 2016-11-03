@@ -13,7 +13,7 @@ interface Efl.Gfx.Gradient
             [[Get the list of color stops.]]
          }
          values {
-            colors: const(Efl.Gfx.Gradient.Stop) *; [[Color stops list]]
+            colors: ptr(const(Efl.Gfx.Gradient.Stop)); [[Color stops list]]
             length: uint; [[Length of the list]]
          }
       }
