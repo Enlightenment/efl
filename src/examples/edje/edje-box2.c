@@ -30,8 +30,8 @@
 
 static const char commands[] = \
   "commands are:\n"
-  "\tShift - remove box\n"
-  "\tCtrl - insert box\n"
+  "\tShift + any key - remove box\n"
+  "\tCtrl + any key - insert box\n"
   "\tEsc - exit\n"
   "\th - print help\n";
 
