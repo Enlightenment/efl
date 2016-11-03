@@ -190,9 +190,9 @@ enum Edje.Color_Class.Mode {
 }
 
 /* FIXME-cb: Ignore cb types that should be fixed. */
-type Edje.Signal_Cb: __undefined_type;
-type Edje.Markup_Filter_Cb: __undefined_type;
-type Edje.Text.Filter_Cb: __undefined_type;
-type Edje.Text.Change_Cb: __undefined_type;
-type Edje.Item_Provider_Cb: __undefined_type;
-type Edje.Message_Handler_Cb: __undefined_type;
+type Edje.Signal_Cb: __undefined_type; [[Edje signal callback type]]
+type Edje.Markup_Filter_Cb: __undefined_type; [[Edje markup filter callback type]]
+type Edje.Text.Filter_Cb: __undefined_type; [[Edje text filter callback type]]
+type Edje.Text.Change_Cb: __undefined_type; [[Edje text change callback type]]
+type Edje.Item_Provider_Cb: __undefined_type; [[Edje item provider callback type]]
+type Edje.Message_Handler_Cb: __undefined_type; [[Edje message handler callback type]]
