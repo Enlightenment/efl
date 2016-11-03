@@ -68,7 +68,7 @@ mixin Efl.Input.Event
       instance_get @class @protected @virtual_pure {
          params {
             @in owner: Efl.Object;
-            @out priv: void*;
+            @out priv: void_ptr;
          }
          return: own(Efl.Input.Event);
       }
