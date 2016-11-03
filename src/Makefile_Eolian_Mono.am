@@ -60,8 +60,11 @@ lib/ecore/efl_io_stderr.eo.cs \
 lib/ecore/efl_io_file.eo.cs \
 lib/ecore/efl_io_copier.eo.cs
 
+eo_eolian_blacklisted_files = \
+lib/eo/efl_object_override.eo.cs
+
 efl_eolian_mono_files = \
-$(filter-out lib/eo/efl_object.eo.cs lib/eo/efl_object_override.eo.cs, $(eo_eolian_files:%.eo=%.eo.cs)) \
+$(filter-out $(eo_eolian_blacklisted_files),$(eo_eolian_files:%.eo=%.eo.cs)) \
 $(filter-out $(ecore_eolian_blacklisted_files),$(ecore_eolian_files_public:%.eo=%.eo.cs)) \
 $(ecore_eolian_type_files:%.eot=%.eot.cs) \
 $(filter-out $(efl_eolian_blacklisted_files),$(efl_eolian_files:%.eo=%.eo.cs)) \
@@ -99,11 +102,32 @@ lib_eo_mono_libeo_mono_dll_SOURCES = \
 
 lib/eo_mono/libeo_mono.dll$(EXEEXT): $(lib_eo_mono_libeo_mono_dll_SOURCES) lib/eo_mono/$(am__dirstamp) $(efl_eolian_mono_files)
 	@rm -f lib/eo_mono/libeo_mono.dll$(EXEEXT)
-	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LD_LIBRARY_PATH_APPEND) $(MCS) $(MCS_FLAGS) -out:$@ -t:library $(filter-out $(lastword $(^)), $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -out:$@ -t:library $(filter %.cs, $(^))
 
 if EFL_ENABLE_TESTS
 
-#LD_LIBRARY_PATH_APPEND=$(abs_top_builddir)/lib/eina/.libs:$(abs_top_builddir)/lib/ecore/.libs:$(abs_top_builddir)/lib/efl/.libs:$(abs_top_builddir)/lib/evas/.libs:$(abs_top_builddir)/lib/ecore_evas/.libs
+check_LTLIBRARIES += tests/eo_mono/libeo_mono_native_test.la
+tests_eo_mono_libeo_mono_native_test_la_CPPFLAGS =  \
+-I$(builddir)/tests/eo_mono \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eo_mono\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eo_mono\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/efl_js\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eo_mono\" \
+@CHECK_CFLAGS@  @EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ 
+tests_eo_mono_libeo_mono_native_test_la_LIBADD = \
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
+tests_eo_mono_libeo_mono_native_test_la_LDFLAGS = -rpath $(abs_top_builddir)/tests/eo_mono @EFL_LTLIBRARY_FLAGS@
+tests_eo_mono_libeo_mono_native_test_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
+tests_eo_mono_libeo_mono_native_test_la_LIBTOOLFLAGS = --tag=disable-static
+
+eo_mono_test_eolian_mono_files = tests/eo_mono/test_testing.eo.cs
+
+tests/eo_mono/libeo_mono_native_test.c: tests/eo_mono/test_testing.eo.h tests/eo_mono/test_testing.eo.c
+
+tests/eo_mono/libeo_mono_test.dll$(EXEEXT): $(eo_mono_test_eolian_mono_files) tests/eo_mono/$(am__dirstamp) lib/eo_mono/libeo_mono.dll tests/eo_mono/libeo_mono_native_test.la
+	@rm -f tests/eo_mono/libeo_mono_test.dll$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_builddir)/lib/eo_mono/libeo_mono.dll -out:$@ -t:library $(filter %.cs, $(^))
 
 AM_TESTS_ENVIRONMENT += MONO='mono'; export MONO;
 AM_TESTS_ENVIRONMENT += MONO_CONFIG='$(builddir)/tests/eo_mono/eo_mono.exe.config'; export MONO_CONFIG;
@@ -117,9 +141,9 @@ TESTS += tests/eo_mono/mono_test_driver.sh
 tests_eo_mono_eo_mono_exe_SOURCES = \
      tests/eo_mono/Main.cs tests/eo_mono/EcoreEvas.cs
 
-tests/eo_mono/eo_mono.exe$(EXEEXT): $(tests_eo_mono_eo_mono_exe_SOURCES) tests/eo_mono/$(am__dirstamp) lib/eo_mono/libeo_mono.dll 
+tests/eo_mono/eo_mono.exe$(EXEEXT): $(tests_eo_mono_eo_mono_exe_SOURCES) tests/eo_mono/$(am__dirstamp) lib/eo_mono/libeo_mono.dll tests/eo_mono/libeo_mono_test.dll
 	@rm -f tests/eo_mono/eo_mono_exe$(EXEEXT)
-	$(AM_V_MCS)LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LD_LIBRARY_PATH_APPEND) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -out:$@ $(filter-out $(lastword $(^)), $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -r:$(abs_top_builddir)/src/tests/eo_mono/libeo_mono_test.dll -out:$@ $(filter %.cs, $(^))
 
 SUFFIXES += .eo.cs
 
@@ -157,6 +181,11 @@ lib/efl/%.eot.cs: lib/efl/%.eot $(_EOLIAN_MONO_DEP)
 	$(AM_V_EOLMONO) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport efl -o $@ $<
+
+tests/eo_mono/%.eo.cs: tests/eo_mono/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport eo_mono_native_test -o $@ $<
 
 endif
 endif

@@ -31,8 +31,11 @@ struct native_function_definition_generator
     else
       {
     if(!as_generator
-       (scope_tab << "public delegate "
-        << eolian_mono::marshall_annotation(true) << " " << eolian_mono::marshall_type(true) << " "
+       (scope_tab
+        << eolian_mono::marshall_annotation(true)
+        << " public delegate "
+        << eolian_mono::marshall_type(true)
+        << " "
         << string
         << "_delegate(System.IntPtr obj, System.IntPtr pd"
         << *grammar::attribute_reorder<1, -1>
@@ -48,8 +51,10 @@ struct native_function_definition_generator
       return false;
     
     if(!as_generator
-       (scope_tab << "public static "
-        << eolian_mono::marshall_annotation(true) << " " << eolian_mono::marshall_type(true) << " "
+       (scope_tab
+        << eolian_mono::marshall_annotation(true)
+        << " public static "
+        << eolian_mono::marshall_type(true) << " "
         << string
         << "(System.IntPtr obj, System.IntPtr pd"
         << *grammar::attribute_reorder<1, -1>
@@ -105,9 +110,11 @@ struct function_definition_generator
     else
       {
     if(!as_generator
-       (scope_tab << "[System.Runtime.InteropServices.DllImport(\"" << context_find_tag<library_context>(context).library_name << "\")] public static extern "
-        << eolian_mono::marshall_annotation(true) << " " << eolian_mono::marshall_type(true) << " "
-        << string
+       (scope_tab << "[System.Runtime.InteropServices.DllImport(\"" << context_find_tag<library_context>(context).library_name << "\")]\n"
+        << scope_tab << eolian_mono::marshall_annotation(true)
+        << " public static extern "
+        << eolian_mono::marshall_type(true)
+        << " " << string
         << "(System.IntPtr obj"
         << *grammar::attribute_reorder<1, -1>
         (

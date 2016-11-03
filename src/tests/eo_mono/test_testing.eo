@@ -1,0 +1,7 @@
+class Test.Testing (Efl.Object) {
+   methods {
+      return_object {
+         return: Test.Testing;
+      }
+   }
+}

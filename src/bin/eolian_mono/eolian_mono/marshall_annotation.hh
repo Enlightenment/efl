@@ -12,6 +12,19 @@ namespace eolian_mono {
 namespace eina = efl::eina;
 
 namespace detail {
+
+template <typename Array, typename F, int N, typename A>
+eina::optional<bool> call_annotation_match(Array const (&array)[N], F f, A a)
+{
+   typedef Array const* iterator_type;
+   iterator_type match_iterator = &array[0], match_last = match_iterator + N;
+   match_iterator = std::find_if(match_iterator, match_last, f);
+   if(match_iterator != match_last)
+     {
+        return a(match_iterator->function());
+     }
+   return {nullptr};
+}
   
 template <typename OutputIterator, typename Context>
 struct marshall_annotation_visitor_generate
@@ -32,20 +45,20 @@ struct marshall_annotation_visitor_generate
       {
         eina::optional<std::string> name;
         eina::optional<bool> has_own;
-        std::function<attributes::type_def::variant_type()> function;
+        std::function<std::string()> function;
       };
       match const parameter_match_table[] =
         {
            // signed primitives
-             {"bool", nullptr, [&] { return replace_base_type(regular, " [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.I1)]"); }}
+          {"bool", nullptr, [&] { return " [MarshalAs(UnmanagedType.I1)]"; }}
         };
       match const return_match_table[] =
         {
            // signed primitives
-             {"bool", nullptr, [&] { return replace_base_type(regular, " [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.I1)]"); }}
+          {"bool", nullptr, [&] { return " [return: MarshalAs(UnmanagedType.I1)]"; }}
         };
 
-        if(eina::optional<bool> b = call_match
+        if(eina::optional<bool> b = call_annotation_match
            ((is_return ? return_match_table : parameter_match_table)
           , [&] (match const& m)
           {
@@ -53,9 +66,10 @@ struct marshall_annotation_visitor_generate
             && (!m.has_own || *m.has_own == (bool)(regular.base_qualifier & qualifier_info::is_own))
             ;
           }
-          , [&] (attributes::type_def::variant_type const& v)
+          , [&] (std::string const& string)
           {
-            return v.visit(*this); // we want to keep is_out info
+            std::copy(string.begin(), string.end(), sink);
+            return true;
           }))
         {
            return *b;
@@ -65,14 +79,15 @@ struct marshall_annotation_visitor_generate
           return true;
         }
    }
-   bool operator()(attributes::klass_name) const
+   bool operator()(attributes::klass_name const& klass_name) const
    {
-     if(!is_return)
-       {
-         const char marshal[] = "[System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.CustomMarshaler, /*System.Runtime.InteropServices.*/MarshalTypeRef = typeof(efl.eo.MarshalTest))]";
-         std::copy(&marshal[0], &marshal[0] + sizeof(marshal) - 1, sink);
-       }
-     return true;
+     const char no_return_prefix[] = "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(efl.eo.MarshalTest<";
+     const char return_prefix[] = "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(efl.eo.MarshalTest<";
+     return as_generator
+       ((is_return ? return_prefix : no_return_prefix)
+        << *(lower_case[string] << ".") << string
+        << "Concrete>))]"
+        ).generate(sink, std::make_tuple(klass_name.namespaces, klass_name.eolian_name), *context);
    }
    bool operator()(attributes::complex_type_def const&) const
    {
