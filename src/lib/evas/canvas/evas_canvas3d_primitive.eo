@@ -108,7 +108,7 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object)
                Default surface is $null]]
          }
          values {
-            surface: Evas.Canvas3D.Surface_Func *; [[Pointer to customers surface function.]]
+            surface: ptr(Evas.Canvas3D.Surface_Func); [[Pointer to customers surface function.]]
          }
       }
       @property tex_scale {
