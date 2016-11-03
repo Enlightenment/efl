@@ -56,6 +56,8 @@ struct header_guards_generator
 
 template <typename G>
 struct is_eager_generator<header_guards_generator<G> > : std::true_type {};
+template <typename G>
+struct is_generator<header_guards_generator<G> > : std::true_type {};
 
 namespace type_traits {
 template  <typename G>

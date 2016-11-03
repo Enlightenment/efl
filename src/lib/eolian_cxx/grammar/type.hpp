@@ -46,6 +46,8 @@ type_generator const as_generator(type_terminal)
 template <>
 struct is_eager_generator<type_generator> : std::true_type {};
 template <>
+struct is_generator<type_generator> : std::true_type {};
+template <>
 struct is_generator<type_terminal> : std::true_type {};
 
 namespace type_traits {

@@ -46,6 +46,8 @@ namespace efl { namespace eolian { namespace grammar {
 
 template <>
 struct is_eager_generator< ::eolian_mono::parameter_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::parameter_generator> : std::true_type {};
 
 namespace type_traits {
 template <>
@@ -54,6 +56,8 @@ struct attributes_needed< ::eolian_mono::parameter_generator> : std::integral_co
 
 template <>
 struct is_eager_generator< ::eolian_mono::marshall_parameter_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::marshall_parameter_generator> : std::true_type {};
 
 namespace type_traits {
 template <>
@@ -62,6 +66,8 @@ struct attributes_needed< ::eolian_mono::marshall_parameter_generator> : std::in
       
 template <>
 struct is_eager_generator< ::eolian_mono::argument_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::argument_generator> : std::true_type {};
 
 namespace type_traits {
 template <>

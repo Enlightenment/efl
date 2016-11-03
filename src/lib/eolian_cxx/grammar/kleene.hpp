@@ -29,6 +29,8 @@ struct kleene_generator
 
 template <typename Generator>
 struct is_eager_generator<kleene_generator<Generator> > : std::true_type {};
+template <typename Generator>
+struct is_generator<kleene_generator<Generator> > : std::true_type {};
 
 namespace type_traits {
 template  <typename G>

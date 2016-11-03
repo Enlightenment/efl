@@ -87,6 +87,8 @@ namespace efl { namespace eolian { namespace grammar {
 template <>
 struct is_eager_generator< ::eolian_mono::marshall_type_generator> : std::true_type {};
 template <>
+struct is_generator< ::eolian_mono::marshall_type_generator> : std::true_type {};
+template <>
 struct is_generator< ::eolian_mono::marshall_type_terminal> : std::true_type {};
 
 namespace type_traits {
@@ -98,6 +100,8 @@ struct attributes_needed< ::eolian_mono::marshall_type_terminal> : std::integral
 
 template <>
 struct is_eager_generator< ::eolian_mono::marshall_annotation_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::marshall_annotation_generator> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::marshall_annotation_terminal> : std::true_type {};
 

@@ -620,7 +620,8 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
           {
              ERR("Class '%s': NULL API not allowed (NULL->%p '%s').",
                  klass->desc->name, op_desc->func, _eo_op_desc_name_get(op_desc));
-             return EINA_FALSE;
+             //return EINA_FALSE;
+             continue;
           }
 
         /* Get the opid for the function. */

@@ -30,6 +30,8 @@ struct alternative_generator
 
 template <typename L, typename R>
 struct is_eager_generator<alternative_generator<L, R> > : std::true_type {};
+template <typename L, typename R>
+struct is_generator<alternative_generator<L, R> > : std::true_type {};
 
 namespace type_traits {
 template  <typename  L, typename R>

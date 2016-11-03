@@ -34,6 +34,8 @@ struct list_generator
 
 template <typename G, typename S>
 struct is_eager_generator<list_generator<G, S> > : std::true_type {};
+template <typename G, typename S>
+struct is_generator<list_generator<G, S> > : std::true_type {};
 
 namespace type_traits {
 template  <typename G, typename S>

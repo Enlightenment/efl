@@ -115,6 +115,8 @@ struct sequence_generator
 
 template <typename L, typename R>
 struct is_eager_generator<sequence_generator<L, R> > : std::true_type {};
+template <typename L, typename R>
+struct is_generator<sequence_generator<L, R> > : std::true_type {};
 
 namespace type_traits {
 template  <typename  L, typename R>

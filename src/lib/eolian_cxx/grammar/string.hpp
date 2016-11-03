@@ -26,15 +26,6 @@ struct literal_generator
    const char* string;
 };
 
-template <>
-struct is_eager_generator<literal_generator> : std::true_type {};
-
-template <>
-struct is_generator<const char*> : std::true_type {};
-
-template <int N>
-struct is_generator<const char[N]> : std::true_type {};
-
 literal_generator as_generator(char const* literal) { return literal; }
 
 struct {
@@ -130,13 +121,6 @@ struct string_replace_generator
   char from, to;
 };
       
-template <>
-struct is_eager_generator<string_generator> : std::true_type {};
-template <>
-struct is_eager_generator<specific_string_generator> : std::true_type {};
-template <>
-struct is_eager_generator<string_replace_generator> : std::true_type {};
-
 struct string_generator_terminal
 {
   specific_string_generator operator[](std::string string) const
@@ -153,6 +137,28 @@ struct string_replace_terminal
   }
 } const string_replace = {};
       
+template <>
+struct is_eager_generator<literal_generator> : std::true_type {};
+template <>
+struct is_generator<literal_generator> : std::true_type {};
+template <>
+struct is_generator<const char*> : std::true_type {};
+
+template <int N>
+struct is_generator<const char[N]> : std::true_type {};
+template <>
+struct is_eager_generator<string_generator> : std::true_type {};
+template <>
+struct is_eager_generator<specific_string_generator> : std::true_type {};
+template <>
+struct is_eager_generator<string_replace_generator> : std::true_type {};
+template <>
+struct is_generator<string_generator> : std::true_type {};
+template <>
+struct is_generator<specific_string_generator> : std::true_type {};
+template <>
+struct is_generator<string_replace_generator> : std::true_type {};
+
 template <>
 struct is_generator<string_generator_terminal> : std::true_type {};
 template <>

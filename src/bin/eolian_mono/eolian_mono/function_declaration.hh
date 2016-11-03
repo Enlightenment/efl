@@ -19,9 +19,12 @@ struct function_declaration_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
-    return as_generator
-      (eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n")
-      .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), context);
+    if(is_function_blacklisted(f.c_name))
+      return true;
+    else
+      return as_generator
+        (eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n")
+        .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), context);
   }
 };
 
@@ -33,6 +36,8 @@ namespace efl { namespace eolian { namespace grammar {
 
 template <>
 struct is_eager_generator< ::eolian_mono::function_declaration_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::function_declaration_generator> : std::true_type {};
 
 namespace type_traits {
 template <>

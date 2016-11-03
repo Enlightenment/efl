@@ -28,6 +28,8 @@ struct scope_tab_generator
 
 template <>
 struct is_eager_generator<scope_tab_generator> : std::true_type {};
+template <>
+struct is_generator<scope_tab_generator> : std::true_type {};
       
 struct scope_tab_terminal
 {
