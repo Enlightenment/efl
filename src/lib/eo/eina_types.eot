@@ -26,7 +26,7 @@ struct @extern Eina.Matrix3 {
 
 struct @extern Eina.Inarray; [[Eina inarray data structure]]
 
-type @extern Eina.Unicode: uint32;
+type @extern Eina.Unicode: uint32; [[Eina unicode type]]
 
 struct @extern Eina.File.Direct.Info; [[Eina file direct information data structure]]
 /*{
@@ -44,7 +44,7 @@ enum @extern Eina.Xattr.Flags {
   created [[This will only succeed if the extended attribute wasn't previously set]]
 }
 
-type @extern Eina.Error: int;
+type @extern Eina.Error: int; [[Eina error type]]
 
 struct @extern @free(eina_binbuf_free) Eina.Binbuf; [[Eina binbuf data structure]]
 

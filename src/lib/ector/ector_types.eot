@@ -1,2 +1,2 @@
-type @extern GLshort: short; /* FIXME: We should not expose this in the API but probably redefine it. */
+type @extern GLshort: short; [[GLshort type]] /* FIXME: We should not expose this in the API but probably redefine it. */
 

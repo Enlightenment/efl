@@ -1,4 +1,4 @@
-type @extern Eio_Filter_Direct_Cb: __undefined_type;
+type @extern Eio_Filter_Direct_Cb: __undefined_type; [[Eio filter direct callback type]]
 
 class Eio.Model (Efl.Object, Efl.Model)
 {
