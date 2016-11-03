@@ -165,7 +165,7 @@ template <typename T, typename Enable = T>
 struct accessor;
 
 template <typename T>
-struct accessor<T, typename std::enable_if< ! std::is_base_of<::efl::eo::concrete, T>::value, T>::type>
+struct accessor<T, typename std::enable_if< !  ::efl::eo::is_eolian_object<T>::value, T>::type>
   : accessor_common_base<T>
 {
   typedef accessor_common_base<T> _base_type;
@@ -277,7 +277,7 @@ struct accessor<T, typename std::enable_if< ! std::is_base_of<::efl::eo::concret
 };
 
 template <typename T>
-struct accessor<T, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value, T>::type>
+struct accessor<T, typename std::enable_if< ::efl::eo::is_eolian_object<T>::value, T>::type>
   : accessor_common_base<T>
 {
   typedef accessor_common_base<T> _base_type;
@@ -419,7 +419,7 @@ struct accessor_iterator;
  * Random access iterator for <tt>eina::accessor</tt>.
  */
 template <typename T>
-struct accessor_iterator<T, typename std::enable_if< ! std::is_base_of<::efl::eo::concrete, T>::value, T>::type>
+struct accessor_iterator<T, typename std::enable_if< !  ::efl::eo::is_eolian_object<T>::value, T>::type>
 {
   typedef T value_type; /**< Type of the elements. */
   typedef value_type* pointer; /**< Pointer to element type. */
@@ -571,7 +571,7 @@ struct accessor_iterator<T, typename std::enable_if< ! std::is_base_of<::efl::eo
  * Specialization for all data types that are not derivated from efl::eo::concrete.
  */
 template <typename T>
-struct accessor_iterator<T, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value, T>::type>
+struct accessor_iterator<T, typename std::enable_if< ::efl::eo::is_eolian_object<T>::value, T>::type>
 {
   typedef T value_type; /**< Type of the elements. */
   typedef value_type* pointer; /**< Pointer to element type. */

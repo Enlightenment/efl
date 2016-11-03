@@ -69,7 +69,7 @@ struct container_value_type
 {
   typedef typename std::conditional<
     std::is_void<T>::value
-    , T*, T>::type type;
+    , std::add_pointer<T>, std::remove_reference<T>>::type::type type;
 };
 
 template <typename T>
@@ -77,7 +77,7 @@ struct nonconst_container_value_type
 {
   typedef typename std::conditional<
     std::is_void<T>::value
-    , T*, typename std::remove_const<T>::type>::type type;
+    , std::add_pointer<T>, std::remove_cv<typename std::remove_reference<T>::type>>::type::type type;
 };
 
 /**

@@ -230,7 +230,7 @@ struct _eo_array_access_traits : _ptr_array_access_traits
 };
     
 template <typename T, typename CloneAllocator>
-class array<T, CloneAllocator, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>::type>
+class array<T, CloneAllocator, typename std::enable_if< ::efl::eo::is_eolian_object<T>::value>::type>
   : ptr_array<Eo, typename std::conditional
              <std::is_same<CloneAllocator, default_clone_allocator_placeholder>::value
               , eo_clone_allocator, CloneAllocator>::type>
@@ -497,7 +497,7 @@ public:
 };
 
 template <typename T>
-class range_array<T, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>::type>
+class range_array<T, typename std::enable_if< ::efl::eo::is_eolian_object<T>::value>::type>
   : range_ptr_array<Eo>
 {
   typedef range_ptr_array<Eo> _base_type;

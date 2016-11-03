@@ -32,7 +32,7 @@ struct _common_iterator_base
 private:
   typedef _common_iterator_base<T> self_type; /**< Type for the iterator instantiation itself. */
 public:
-  typedef T const value_type; /**< Type for elements returned by the iterator. */
+  typedef typename std::remove_reference<T>::type const value_type; /**< Type for elements returned by the iterator. */
   typedef value_type* pointer; /**< Type for a pointer to an element. */
   typedef value_type& reference; /**< Type for a reference to an element. */
   typedef std::ptrdiff_t difference_type;  /**< Type to represent the distance between two iterators. */
@@ -148,7 +148,7 @@ protected:
  */
 template <typename T, typename Enable = void>
 struct iterator
-  : _common_iterator_base<typename std::enable_if<!std::is_convertible<T*, ::efl::eo::concrete const* const>::value, T const>::type>
+  : _common_iterator_base<typename std::enable_if<! ::efl::eo::is_eolian_object<T>::value, T const>::type>
 {
 private:
   typedef _common_iterator_base<T const> base_type; /**< Type for the base class. */
@@ -225,7 +225,7 @@ public:
 };
 
 template <typename T>
-struct iterator<T, typename std::enable_if<std::is_convertible<T*, ::efl::eo::concrete const* const>::value, void>::type>
+struct iterator<T, typename std::enable_if< ::efl::eo::is_eolian_object<T>::value, void>::type>
   : _common_iterator_base<Eo const>
 {
 private:

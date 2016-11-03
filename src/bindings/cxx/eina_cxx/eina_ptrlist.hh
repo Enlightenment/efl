@@ -311,6 +311,7 @@ struct range_ptr_list : _range_template<T, _ptr_list_access_traits>
 template <typename T, typename CloneAllocator>
 struct _ptr_list_common_base
 {
+  typedef typename remove_cv<typename std::remove_reference<T>::type>::type value_type;
   typedef CloneAllocator clone_allocator_type; /**< Type for the clone allocator. */
 
   /**
@@ -363,7 +364,7 @@ struct _ptr_list_common_base
   /**
    * @internal
    */
-  void _delete_clone(T const* p)
+  void _delete_clone(value_type const* p)
   {
     _get_clone_allocator().deallocate_clone(p);
   }
@@ -371,7 +372,7 @@ struct _ptr_list_common_base
   /**
    * @internal
    */
-  T* _new_clone(typename container_value_type<T>::type const& a)
+  value_type* _new_clone(typename container_value_type<T>::type const& a)
   {
     return _get_clone_allocator().allocate_clone(a);
   }
@@ -420,8 +421,8 @@ public:
   typedef value_type const& const_reference; /**< Type for a constant reference to an element. */
   typedef _ptr_list_iterator<value_type const> const_iterator; /**< Type for a iterator for this container. */
   typedef _ptr_list_iterator<value_type> iterator; /**< Type for a constant iterator for this container. */
-  typedef T* pointer; /**< Type for a pointer to an element. */
-  typedef T const* const_pointer; /**< Type for a constant pointer for an element. */
+  typedef value_type* pointer; /**< Type for a pointer to an element. */
+  typedef value_type const* const_pointer; /**< Type for a constant pointer for an element. */
   typedef std::size_t size_type; /**< Type for size information. */
   typedef std::ptrdiff_t difference_type; /**< Type to represent the distance between two iterators. */
   typedef CloneAllocator clone_allocator_type; /** Type for the clone allocator. */

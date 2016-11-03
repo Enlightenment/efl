@@ -56,33 +56,47 @@ struct visitor_generate
       {
         eina::optional<std::string> name;
         eina::optional<bool> has_own;
+        eina::optional<bool> is_ref;
+        eina::optional<std::vector<std::string>> namespaces;
         std::function<attributes::type_def::variant_type()> function;
       }
       const match_table[] =
         {
            // signed primitives
-             {"byte", nullptr, [&] { return replace_base_type(regular, " char"); }}
-           , {"llong", nullptr, [&] { return replace_base_type(regular, " long long"); }}
-           , {"int8", nullptr, [&] { return replace_base_type(regular, " int8_t"); }}
-           , {"int16", nullptr, [&] { return replace_base_type(regular, " int16_t"); }}
-           , {"int32", nullptr, [&] { return replace_base_type(regular, " int32_t"); }}
-           , {"int64", nullptr, [&] { return replace_base_type(regular, " int64_t"); }}
-           , {"ssize", nullptr, [&] { return replace_base_type(regular, " ssize_t"); }}
+             {"byte", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " char"); }}
+           , {"llong", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " long long"); }}
+           , {"int8", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " int8_t"); }}
+           , {"int16", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " int16_t"); }}
+           , {"int32", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " int32_t"); }}
+           , {"int64", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " int64_t"); }}
+           , {"ssize", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " ssize_t"); }}
            // unsigned primitives
-           , {"ubyte", nullptr, [&] { return replace_base_type(regular, " unsigned char"); }}
-           , {"ushort", nullptr, [&] { return replace_base_type(regular, " unsigned short"); }}
-           , {"uint", nullptr, [&] { return replace_base_type(regular, " unsigned int"); }}
-           , {"ulong", nullptr, [&] { return replace_base_type(regular, " unsigned long"); }}
-           , {"ullong", nullptr, [&] { return replace_base_type(regular, " unsigned long long"); }}
-           , {"uint8", nullptr, [&] { return replace_base_type(regular, " uint8_t"); }}
-           , {"uint16", nullptr, [&] { return replace_base_type(regular, " uint16_t"); }}
-           , {"uint32", nullptr, [&] { return replace_base_type(regular, " uint32_t"); }}
-           , {"uint64", nullptr, [&] { return replace_base_type(regular, " uint64_t"); }}
-           , {"size", nullptr, [&] { return replace_base_type(regular, " size_t"); }}
+           , {"ubyte", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " unsigned char"); }}
+           , {"ushort", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " unsigned short"); }}
+           , {"uint", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " unsigned int"); }}
+           , {"ulong", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " unsigned long"); }}
+           , {"ullong", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " unsigned long long"); }}
+           , {"uint8", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " uint8_t"); }}
+           , {"uint16", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " uint16_t"); }}
+           , {"uint32", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " uint32_t"); }}
+           , {"uint64", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " uint64_t"); }}
+           , {"size", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " size_t"); }}
+           , {"size", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " size_t"); }}
+           , {"File", nullptr, nullptr, {{"Eina"}}, [&]
+              {
+                const char const_[] = "const ";
+                if(regular.base_qualifier.qualifier & qualifier_info::is_const)
+                  std::copy(&const_[0], &const_[0] + sizeof(const_) - 1, sink);
+                const char name[] = "Eina_File*";
+                std::copy(&name[0], &name[0] + sizeof(name) - 1, sink);
+                if(is_out)
+                  *sink++ = '*';
+                return attributes::type_def::variant_type{};
+              }}
            
-           , {"ptrdiff", nullptr, [&] { return replace_base_type(regular, " ptrdiff_t"); }}
-           , {"intptr", nullptr, [&] { return replace_base_type(regular, " intptr_t"); }}
-           , {"string", true, [&]
+           , {"ptrdiff", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " ptrdiff_t"); }}
+           , {"intptr", nullptr, nullptr, nullptr, [&] { return replace_base_type(regular, " intptr_t"); }}
+           , {"string", true, nullptr, nullptr, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
@@ -90,22 +104,23 @@ struct visitor_generate
                   return replace_base_type(r, " ::std::string");
                 else return replace_base_type(r, " ::efl::eina::string_view");
               }}
-           , {"string", false, [&]
+           , {"string", false, nullptr, nullptr, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 return replace_base_type(r, " ::efl::eina::string_view");
               }}
-           , {"stringshare", nullptr, [&]
+           , {"stringshare", nullptr, nullptr, nullptr, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 return replace_base_type(r, " ::efl::eina::stringshare");
               }}
-           , {"generic_value", true, [&]
-              { return regular_type_def{" ::efl::eina::value", regular.base_qualifier, {}};
+           , {"generic_value", true, nullptr, nullptr, [&]
+              {
+                return regular_type_def{" ::efl::eina::value", regular.base_qualifier ^ qualifier_info::is_ref, {}};
               }}
-           , {"generic_value", false, [&]
+           , {"generic_value", false, nullptr, nullptr, [&]
               { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier, {}};
               }}
         };
@@ -127,11 +142,16 @@ struct visitor_generate
           {
             return (!m.name || *m.name == regular.base_type)
             && (!m.has_own || *m.has_own == (bool)(regular.base_qualifier & qualifier_info::is_own))
+            && (!m.namespaces || *m.namespaces == regular.namespaces)
+            && (!m.is_ref || *m.is_ref == (bool)(regular.base_qualifier & qualifier_info::is_ref))
             ;
           }
           , [&] (attributes::type_def::variant_type const& v)
           {
-            return v.visit(*this); // we want to keep is_out info
+            if(!v.empty())
+              return v.visit(*this); // we want to keep is_out info
+            else
+              return true;
           }))
         {
            return *b;

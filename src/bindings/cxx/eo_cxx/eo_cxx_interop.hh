@@ -85,9 +85,14 @@ struct tag
 };
   
 template <typename T>
-void assign_out_impl(T& lhs, T*& rhs, tag<T&, T*>)
+void assign_out_impl(T& lhs, T*& rhs, tag<T&, T*>, typename std::enable_if<!std::is_const<T>::value>::type* = 0)
 {
   lhs = *rhs;
+}
+template <typename T>
+void assign_out_impl(T const& lhs, T const*& rhs, tag<T const&, T const*>)
+{
+  const_cast<T&>(lhs) = *rhs;
 }
 inline void assign_out_impl(void*&, void*&, tag<void*, void*>)
 {

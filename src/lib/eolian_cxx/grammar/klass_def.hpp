@@ -13,6 +13,8 @@
 
 #include <Eina.hh>
 
+#include "eo_concrete.hh"
+
 #include <vector>
 #include <memory>
 #include <set>
@@ -251,6 +253,8 @@ inline void type_def::set(Eolian_Type const* eolian_type)
        break;
      case EOLIAN_TYPE_REGULAR:
        {
+         if(c_type == "va_list *")
+           throw std::runtime_error("");
          std::vector<std::string> namespaces;
          for(efl::eina::iterator<const char> namespace_iterator( ::eolian_type_namespaces_get(eolian_type))
                , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)

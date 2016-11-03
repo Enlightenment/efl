@@ -7,27 +7,11 @@
 namespace efl { namespace eo {
 
 struct concrete;
+
+template <typename T>
+struct is_eolian_object;
     
 } }
 
-namespace std {
-template <>
-struct is_base_of< ::efl::eo::concrete, ::Eo > : std::false_type {};
-template <>
-struct is_base_of< ::efl::eo::concrete, const ::Eo > : std::false_type {};
-template <>
-struct is_base_of< ::efl::eo::concrete, volatile ::Eo > : std::false_type {};
-template <>
-struct is_base_of< ::efl::eo::concrete, const volatile ::Eo > : std::false_type {};
-
-template <>
-struct is_base_of< const ::efl::eo::concrete, ::Eo > : std::false_type {};
-template <>
-struct is_base_of< const ::efl::eo::concrete, const ::Eo > : std::false_type {};
-template <>
-struct is_base_of< const ::efl::eo::concrete, volatile ::Eo > : std::false_type {};
-template <>
-struct is_base_of< const ::efl::eo::concrete, const volatile ::Eo > : std::false_type {};
-}
 
 #endif

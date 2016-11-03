@@ -3,6 +3,8 @@
 
 #include <eina_workarounds.hh>
 
+#include <Eina.h>
+
 namespace efl { namespace eina {
 
 struct malloc_deleter
@@ -12,6 +14,10 @@ struct malloc_deleter
   {
     object->~T();
     free(object);
+  }
+  void operator()(Eina_Binbuf* /*object*/) const
+  {
+    // how to free binbuf?
   }
 };
 

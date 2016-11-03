@@ -20,6 +20,13 @@ struct wrapper : efl::eo::concrete
     : concrete(o) {}
 };
 
+namespace efl { namespace eo {
+
+template <>
+struct is_eolian_object< ::wrapper> : std::true_type {};
+    
+} }
+
 START_TEST(eina_cxx_ptrlist_push_back)
 {
   efl::eina::eina_init eina_init;
