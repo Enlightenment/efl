@@ -116,12 +116,12 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_text.eo \
 	lib/elementary/efl_ui_text_editable.eo \
 	lib/elementary/efl_config_global.eo \
+	lib/elementary/efl_ui_clock.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
 elm_private_eolian_files = \
 	lib/elementary/efl_ui_internal_text_interactive.eo \
-	lib/elementary/efl_ui_clock.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
