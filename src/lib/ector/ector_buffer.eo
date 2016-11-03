@@ -100,12 +100,12 @@ mixin Ector.Buffer
             @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace, may trigger conversion on the fly.]]
             @out length: uint; [[Length in bytes of the returned buffer]]
          }
-         return: uint8*; [[A temporary memory buffer containing the pixels requested.]]
+         return: ptr(uint8); [[A temporary memory buffer containing the pixels requested.]]
       }
       span_free @virtual_pure {
          [[Must be called as soon as possible after span_get]]
          params {
-            data: uint8*; [[Data to be freed]]
+            data: ptr(uint8); [[Data to be freed]]
          }
       }
       @property flags {
