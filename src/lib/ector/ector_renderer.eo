@@ -33,7 +33,7 @@ abstract Ector.Renderer (Efl.Object)
 	 get {
 	 }
 	 values {
-	    m: const(Eina.Matrix3) *;
+	    m: ptr(const(Eina.Matrix3));
 	 }
       }
       @property origin {
@@ -114,7 +114,7 @@ abstract Ector.Renderer (Efl.Object)
          return: bool @warn_unused;
 	 params {
 	    @in op: Efl.Gfx.Render_Op;
-	    @in clips: array<Eina.Rectangle *>; [[array of @Eina.Rectangle clip]]
+	    @in clips: array<ptr(Eina.Rectangle)>; [[array of @Eina.Rectangle clip]]
 	    @in mul_col: uint;
 	 }
       }
