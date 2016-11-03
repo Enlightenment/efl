@@ -1897,7 +1897,7 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
    pwx = sid->wx;
    pwy = sid->wy;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_TRUE;
    if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
      direction = !direction;
 
@@ -2025,7 +2025,7 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
         sid->down.last_time_y_wheel = t;
      }
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static void
@@ -2076,7 +2076,7 @@ _elm_scroll_post_event_up(void *data,
              elm_widget_drag_lock_y_set(sid->obj, EINA_FALSE);
           }
      }
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -2931,7 +2931,7 @@ _elm_scroll_post_event_move(void *data,
      }
    if (start) _elm_scroll_drag_start(sid);
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static void
