@@ -6,7 +6,7 @@ interface Efl.Config ()
       config_set {
          params {
             name: string; [[Configuration option name]]
-            val: const(generic_value)*; [[Configuration option value]]
+            val: ptr(const(generic_value)); [[Configuration option value]]
          }
          return: bool; [[$false in case of error: value type was invalid, the
                          config can't be changed, config does not exist...]]
@@ -15,14 +15,14 @@ interface Efl.Config ()
          params {
             name: string; [[Configuration option name]]
          }
-         return: free(own(generic_value *), eina_value_free); [[Configuration option value]]
+         return: free(own(ptr(generic_value)), eina_value_free); [[Configuration option value]]
       }
       config_list_get @const {
          [[Returns a list of generic values under a given key.]]
          params {
             @in name: string; [[Configuration option name]]
          }
-         return: free(own(iterator<generic_value*>), eina_iterator_free); [[
+         return: free(own(iterator<ptr(generic_value)>), eina_iterator_free); [[
                  List of configuration option values]]
       }
    }
