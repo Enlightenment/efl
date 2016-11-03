@@ -183,7 +183,7 @@ class Efl.Canvas.Text.Cursor (Efl.Object)
             legacy: null;
          }
          values {
-            annotation: Efl.Canvas.Text.Annotation *;
+            annotation: ptr(Efl.Canvas.Text.Annotation);
          }
       }
       object_item_insert {
@@ -198,7 +198,7 @@ class Efl.Canvas.Text.Cursor (Efl.Object)
             @in format: string; [[Format of the inserted item.
             See Format styles.]]
          }
-         return: Efl.Canvas.Text.Annotation *; [[The annotation handle of the
+         return: ptr(Efl.Canvas.Text.Annotation); [[The annotation handle of the
          inserted item.]]
       }
    }
