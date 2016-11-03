@@ -158,6 +158,10 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_animator_unregister)(Ecore_Evas *ee);
 
    void (*fn_evas_changed)(Ecore_Evas *ee, Eina_Bool changed);
+
+   void (*fn_focus_device_set) (Ecore_Evas *ee, Efl_Input_Device *seat, Eina_Bool on);
+   void (*fn_callback_focus_device_in_set) (Ecore_Evas *ee, Ecore_Evas_Focus_Device_Event_Cb func);
+   void (*fn_callback_focus_device_out_set) (Ecore_Evas *ee, Ecore_Evas_Focus_Device_Event_Cb func);
 };
 
 struct _Ecore_Evas_Interface
@@ -257,13 +261,13 @@ struct _Ecore_Evas
          Eina_List      *hints;
          int             id;
       } aux_hint;
+      Eina_List       *focused_by;
       int             layer;
       Ecore_Window    window;
       unsigned char   avoid_damage;
       Ecore_Evas     *group_ee;
       Ecore_Window    group_ee_win;
       double          aspect;
-      Eina_Bool       focused      : 1;
       Eina_Bool       iconified    : 1;
       Eina_Bool       borderless   : 1;
       Eina_Bool       override     : 1;
@@ -300,6 +304,8 @@ struct _Ecore_Evas
       void          (*fn_msg_handle) (Ecore_Evas *ee, int maj, int min, void *data, int size);
       void          (*fn_pointer_xy_get) (const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
       Eina_Bool     (*fn_pointer_warp) (const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
+      void          (*fn_focus_device_in) (Ecore_Evas *ee, Efl_Input_Device *seat);
+      void          (*fn_focus_device_out) (Ecore_Evas *ee, Efl_Input_Device *seat);
    } func;
 
    Ecore_Evas_Engine engine;
@@ -444,6 +450,10 @@ void _ecore_evas_engine_shutdown(void);
 EAPI void ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_time);
 
 Eina_Module *_ecore_evas_vnc_server_module_load(void);
+
+
+EAPI void _ecore_evas_focus_device_set(Ecore_Evas *ee, Efl_Input_Device *seat,
+                                       Eina_Bool on);
 
 #undef EAPI
 #define EAPI

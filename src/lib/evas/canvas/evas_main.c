@@ -539,7 +539,8 @@ _evas_canvas_data_attach_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 static void
-_evas_canvas_focus_inout_dispatch(Eo *eo_e, Evas_Public_Data *e, Eina_Bool in)
+_evas_canvas_focus_inout_dispatch(Eo *eo_e, Efl_Input_Device *seat,
+                                  Eina_Bool in)
 {
    Efl_Input_Focus_Data *ev_data;
    Efl_Input_Focus *evt;
@@ -547,7 +548,7 @@ _evas_canvas_focus_inout_dispatch(Eo *eo_e, Evas_Public_Data *e, Eina_Bool in)
    evt = efl_input_instance_get(EFL_INPUT_FOCUS_CLASS, eo_e, (void **) &ev_data);
    if (!evt) return;
 
-   ev_data->device = efl_ref(e->default_seat);
+   ev_data->device = efl_ref(seat);
    ev_data->timestamp = time(NULL);
    efl_event_callback_call(eo_e,
                            in ? EFL_EVENT_FOCUS_IN : EFL_EVENT_FOCUS_OUT,
@@ -556,15 +557,33 @@ _evas_canvas_focus_inout_dispatch(Eo *eo_e, Evas_Public_Data *e, Eina_Bool in)
 }
 
 EOLIAN static void
+_evas_canvas_seat_focus_in(Eo *eo_e, Evas_Public_Data *e,
+                           Efl_Input_Device *seat)
+{
+   if (!seat) seat = e->default_seat;
+   if (!seat || efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   _evas_canvas_focus_inout_dispatch(eo_e, seat, EINA_TRUE);
+}
+
+EOLIAN static void
+_evas_canvas_seat_focus_out(Eo *eo_e, Evas_Public_Data *e,
+                            Efl_Input_Device *seat)
+{
+   if (!seat) seat = e->default_seat;
+   if (!seat || efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   _evas_canvas_focus_inout_dispatch(eo_e, seat, EINA_FALSE);
+}
+
+EOLIAN static void
 _evas_canvas_focus_in(Eo *eo_e, Evas_Public_Data *e)
 {
-   _evas_canvas_focus_inout_dispatch(eo_e, e, EINA_TRUE);
+   _evas_canvas_seat_focus_in(eo_e, e, NULL);
 }
 
 EOLIAN static void
 _evas_canvas_focus_out(Eo *eo_e, Evas_Public_Data *e)
 {
-   _evas_canvas_focus_inout_dispatch(eo_e, e, EINA_FALSE);
+   _evas_canvas_seat_focus_out(eo_e, e, NULL);
 }
 
 EOLIAN static Eina_Bool

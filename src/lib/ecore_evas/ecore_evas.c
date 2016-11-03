@@ -66,6 +66,23 @@ static int _ecore_evas_fps_debug = 0;
 static int _ecore_evas_render_sync = 1;
 
 static void
+_ecore_evas_focus_out_dispatch(Ecore_Evas *ee, Efl_Input_Device *seat)
+{
+   evas_canvas_seat_focus_out(ee->evas, seat);
+   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
+   if (ee->func.fn_focus_device_out) ee->func.fn_focus_device_out(ee, seat);
+}
+
+static void
+_ecore_evas_device_del_cb(void *data, const Efl_Event *ev)
+{
+   Ecore_Evas *ee = data;
+
+   ee->prop.focused_by = eina_list_remove(ee->prop.focused_by, ev->object);
+   _ecore_evas_focus_out_dispatch(ee, ev->object);
+}
+
+static void
 _ecore_evas_animator(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
@@ -1005,12 +1022,32 @@ ecore_evas_callback_focus_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 }
 
 EAPI void
+ecore_evas_callback_focus_device_in_set(Ecore_Evas *ee,
+                                        Ecore_Evas_Focus_Device_Event_Cb func)
+{
+   ECORE_EVAS_CHECK(ee);
+   IFC(ee, fn_callback_focus_device_in_set) (ee, func);
+   IFE;
+   ee->func.fn_focus_device_in = func;
+}
+
+EAPI void
 ecore_evas_callback_focus_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    ECORE_EVAS_CHECK(ee);
    IFC(ee, fn_callback_focus_out_set) (ee, func);
    IFE;
    ee->func.fn_focus_out = func;
+}
+
+EAPI void
+ecore_evas_callback_focus_device_out_set(Ecore_Evas *ee,
+                                         Ecore_Evas_Focus_Device_Event_Cb func)
+{
+   ECORE_EVAS_CHECK(ee);
+   IFC(ee, fn_callback_focus_device_out_set) (ee, func);
+   IFE;
+   ee->func.fn_focus_device_out = func;
 }
 
 EAPI void
@@ -1553,30 +1590,75 @@ ecore_evas_layer_get(const Ecore_Evas *ee)
    return ee->prop.layer;
 }
 
+EAPI Eina_Bool
+ecore_evas_focus_device_get(const Ecore_Evas *ee, Efl_Input_Device *seat)
+{
+   ECORE_EVAS_CHECK(ee, EINA_FALSE);
+   if (!seat)
+     seat = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_SEAT);
+   return eina_list_data_find(ee->prop.focused_by, seat) ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI void
+_ecore_evas_focus_device_set(Ecore_Evas *ee, Efl_Input_Device *seat,
+                             Eina_Bool on)
+{
+   Eina_Bool present;
+
+   if (!seat)
+     seat = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_SEAT);
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+
+   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT)
+     {
+        ERR("The Input device must be an seat");
+        return;
+     }
+
+   present = ecore_evas_focus_device_get(ee, seat);
+   if (on)
+     {
+        if (present) return;
+        ee->prop.focused_by = eina_list_append(ee->prop.focused_by, seat);
+        efl_event_callback_add(seat, EFL_EVENT_DEL,
+                               _ecore_evas_device_del_cb, ee);
+        evas_canvas_seat_focus_in(ee->evas, seat);
+        if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+        if (ee->func.fn_focus_device_in) ee->func.fn_focus_device_in(ee, seat);
+     }
+   else
+     {
+        if (!present) return;
+        ee->prop.focused_by = eina_list_remove(ee->prop.focused_by, seat);
+        efl_event_callback_del(seat, EFL_EVENT_DEL,
+                               _ecore_evas_device_del_cb, ee);
+        _ecore_evas_focus_out_dispatch(ee, seat);
+     }
+}
+
+EAPI void
+ecore_evas_focus_device_set(Ecore_Evas *ee, Efl_Input_Device *seat,
+                            Eina_Bool on)
+{
+   ECORE_EVAS_CHECK(ee);
+   IFC(ee, fn_focus_device_set) (ee, seat, on);
+   IFE;
+   _ecore_evas_focus_device_set(ee, seat, on);
+}
+
 EAPI void
 ecore_evas_focus_set(Ecore_Evas *ee, Eina_Bool on)
 {
    ECORE_EVAS_CHECK(ee);
    IFC(ee, fn_focus_set) (ee, on);
    IFE;
-   if (on)
-     {
-        evas_focus_in(ee->evas);
-        if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
-     }
-   else
-     {
-        evas_focus_out(ee->evas);
-        if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
-     }
-   ee->prop.focused = !!on;
+   ecore_evas_focus_device_set(ee, NULL, on);
 }
 
 EAPI Eina_Bool
 ecore_evas_focus_get(const Ecore_Evas *ee)
 {
-   ECORE_EVAS_CHECK(ee, EINA_FALSE);
-   return ee->prop.focused ? EINA_TRUE : EINA_FALSE;
+   return ecore_evas_focus_device_get(ee, NULL);
 }
 
 EAPI void
@@ -2672,6 +2754,7 @@ _ecore_evas_vnc_stop(Ecore_Evas *ee)
 EAPI void
 _ecore_evas_free(Ecore_Evas *ee)
 {
+   Efl_Input_Device *seat;
    Ecore_Evas_Interface *iface;
 
    ee->deleted = EINA_TRUE;
@@ -2694,6 +2777,11 @@ _ecore_evas_free(Ecore_Evas *ee)
    while (ee->sub_ecore_evas)
      {
         _ecore_evas_free(ee->sub_ecore_evas->data);
+     }
+   EINA_LIST_FREE(ee->prop.focused_by, seat)
+     {
+        efl_event_callback_del(seat, EFL_EVENT_DEL,
+                               _ecore_evas_device_del_cb, ee);
      }
    if (ee->data) eina_hash_free(ee->data);
    ee->data = NULL;

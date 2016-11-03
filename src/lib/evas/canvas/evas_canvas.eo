@@ -954,6 +954,20 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       focus_in {
          [[Inform to the evas that it got the focus from the default seat.]]
       }
+      seat_focus_in {
+         [[Inform to the evas that it got the focus from a given seat. @since 1.19]]
+         legacy: null;
+         params {
+            @in seat: Efl.Input.Device; [[The seat or $null for the default seat.]]
+         }
+      }
+      seat_focus_out {
+         [[Inform to the evas that it lost the focus from a given seat. @since 1.19]]
+         legacy: null;
+         params {
+            @in seat: Efl.Input.Device; [[The seat or $null for the default seat.]]
+         }
+      }
       obscured_rectangle_add {
          [[Add an "obscured region" to an Evas canvas.
 

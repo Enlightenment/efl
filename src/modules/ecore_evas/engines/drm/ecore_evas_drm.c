@@ -793,6 +793,9 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _drm_animator_unregister, // animator_unregister
 
    _drm_evas_changed, // evas_changed
+   NULL, //fn_focus_device_set
+   NULL, //fn_callback_focus_device_in_set
+   NULL, //fn_callback_focus_device_out_set
 };
 
 static Ecore_Evas *

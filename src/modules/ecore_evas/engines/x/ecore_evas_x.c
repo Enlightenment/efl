@@ -1500,9 +1500,7 @@ _ecore_evas_x_event_window_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 //xx// filtering with these doesnt help   
 //xx//   if (e->mode == ECORE_X_EVENT_MODE_UNGRAB) return ECORE_CALLBACK_PASS_ON;
-   ee->prop.focused = EINA_TRUE;
-   evas_focus_in(ee->evas);
-   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1521,9 +1519,7 @@ _ecore_evas_x_event_window_focus_out(void *data EINA_UNUSED, int type EINA_UNUSE
 
 //   if (ee->prop.fullscreen)
 //     ecore_x_window_focus(ee->prop.window);
-   evas_focus_out(ee->evas);
-   ee->prop.focused = EINA_FALSE;
-   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
+   _ecore_evas_focus_device_set(ee, NULL, EINA_FALSE);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2721,7 +2717,7 @@ _alpha_do(Ecore_Evas *ee, int alpha)
      ecore_x_mwm_borderless_set(ee->prop.window, ee->prop.borderless);
    if (ee->visible || ee->should_be_visible)
      ecore_x_window_show(ee->prop.window);
-   if (ee->prop.focused) ecore_x_window_focus(ee->prop.window);
+   if (ecore_evas_focus_device_get(ee, NULL)) ecore_x_window_focus(ee->prop.window);
    if (ee->prop.title)
      {
         ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
@@ -2877,7 +2873,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
           ecore_x_mwm_borderless_set(ee->prop.window, ee->prop.borderless);
         if (ee->visible || ee->should_be_visible)
           ecore_x_window_show(ee->prop.window);
-        if (ee->prop.focused) ecore_x_window_focus(ee->prop.window);
+        if (ecore_evas_focus_device_get(ee, NULL)) ecore_x_window_focus(ee->prop.window);
         if (ee->prop.title)
           {
              ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
@@ -3359,7 +3355,7 @@ _ecore_evas_x_override_set(Ecore_Evas *ee, Eina_Bool on)
    if (ee->should_be_visible) ecore_x_window_hide(ee->prop.window);
    ecore_x_window_override_set(ee->prop.window, on);
    if (ee->should_be_visible) ecore_x_window_show(ee->prop.window);
-   if (ee->prop.focused) ecore_x_window_focus(ee->prop.window);
+   if (ecore_evas_focus_device_get(ee, NULL)) ecore_x_window_focus(ee->prop.window);
    ee->prop.override = on;
 }
 
@@ -3788,6 +3784,9 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
    NULL, // fn_animator_unregister
 
    NULL, // fn_evas_changed
+   NULL, //fn_focus_device_set
+   NULL, //fn_callback_focus_device_in_set
+   NULL, //fn_callback_focus_device_out_set
 };
 
 /*

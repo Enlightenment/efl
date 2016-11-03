@@ -416,12 +416,10 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
 static void
 _ecore_evas_show(Ecore_Evas *ee)
 {
-   if (ee->prop.focused) return;
+   if (ecore_evas_focus_device_get(ee, NULL)) return;
    ee->prop.withdrawn = EINA_FALSE;
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
-   ee->prop.focused = EINA_TRUE;
-   evas_focus_in(ee->evas);
-   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
 }
 
 static void
@@ -429,12 +427,7 @@ _ecore_evas_hide(Ecore_Evas *ee)
 {
    ee->prop.withdrawn = EINA_TRUE;
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
-   if (ee->prop.focused)
-     {
-        ee->prop.focused = EINA_FALSE;
-        evas_focus_out(ee->evas);
-        if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
-     }
+   _ecore_evas_focus_device_set(ee, NULL, EINA_FALSE);
 }
 
 static void
@@ -644,6 +637,9 @@ static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL, // fn_animator_unregister
 
      NULL, // fn_evas_changed
+     NULL, //fn_focus_device_set
+     NULL, //fn_callback_focus_device_in_set
+     NULL, //fn_callback_focus_device_out_set
 };
 
 EAPI Ecore_Evas *
@@ -692,7 +688,6 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = EINA_FALSE;
    ee->prop.borderless = EINA_TRUE;
    ee->prop.override = EINA_TRUE;
    ee->prop.maximized = EINA_TRUE;

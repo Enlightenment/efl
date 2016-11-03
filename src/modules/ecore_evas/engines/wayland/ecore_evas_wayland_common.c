@@ -85,6 +85,9 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // fn_animator_unregister
 
    NULL, // fn_evas_changed
+   NULL, //fn_focus_device_set
+   NULL, //fn_callback_focus_device_in_set
+   NULL, //fn_callback_focus_device_out_set
 };
 
 #define _smart_frame_type "ecore_evas_wl_frame"
@@ -207,10 +210,7 @@ _ecore_evas_wl_common_cb_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, 
    ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (ee->prop.focused) return ECORE_CALLBACK_PASS_ON;
-   ee->prop.focused = EINA_TRUE;
-   evas_focus_in(ee->evas);
-   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   _ecore_evas_focus_device_set(ee, ev->dev, EINA_TRUE);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -226,10 +226,7 @@ _ecore_evas_wl_common_cb_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (!ee->prop.focused) return ECORE_CALLBACK_PASS_ON;
-   evas_focus_out(ee->evas);
-   ee->prop.focused = EINA_FALSE;
-   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
+   _ecore_evas_focus_device_set(ee, ev->dev, EINA_FALSE);
    return ECORE_CALLBACK_PASS_ON;
 }
 

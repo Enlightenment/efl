@@ -186,10 +186,7 @@ _ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, 
    ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
 
-   ee->prop.focused = EINA_TRUE;
-   evas_focus_in(ee->evas);
-   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
-
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -202,10 +199,7 @@ _ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED,
    ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
 
-   evas_focus_out(ee->evas);
-   ee->prop.focused = EINA_FALSE;
-   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
-
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -676,6 +670,9 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL, // fn_animator_unregister
 
     NULL, // fn_evas_changed
+    NULL, //fn_focus_device_set
+    NULL, //fn_callback_focus_device_in_set
+    NULL, //fn_callback_focus_device_out_set
   };
 
 static Ecore_Cocoa_Window *

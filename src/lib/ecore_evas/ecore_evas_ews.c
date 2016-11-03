@@ -465,19 +465,11 @@ static void
 _ecore_evas_ews_focus_set(Ecore_Evas *ee, Eina_Bool on)
 {
    evas_object_focus_set(ee->engine.ews.image, on);
-   ee->prop.focused = on;
+   _ecore_evas_focus_device_set(ee, NULL, on);
    if (on)
-     {
-        evas_focus_in(ee->evas);
-        if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
-        _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_FOCUS);
-     }
+     _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_FOCUS);
    else
-     {
-        evas_focus_out(ee->evas);
-        if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
-        _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_UNFOCUS);
-     }
+     _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_UNFOCUS);
 }
 
 static void
@@ -501,7 +493,8 @@ _ecore_evas_ews_override_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (ee->prop.override == on) return;
    if (ee->visible) evas_object_show(ee->engine.ews.image);
-   if (ee->prop.focused) evas_object_focus_set(ee->engine.ews.image, EINA_TRUE);
+   if (ecore_evas_focus_device_get(ee, NULL))
+     evas_object_focus_set(ee->engine.ews.image, EINA_TRUE);
    ee->prop.override = on;
    _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE);
 }
@@ -721,6 +714,9 @@ static const Ecore_Evas_Engine_Func _ecore_ews_engine_func =
      NULL, // fn_animator_unregister
 
      NULL, // fn_evas_changed
+     NULL, //fn_focus_device_set
+     NULL, //fn_callback_focus_device_in_set
+     NULL, //fn_callback_focus_device_out_set
 };
 
 void
