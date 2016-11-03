@@ -201,7 +201,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
             legacy: null;
          }
          keys {
-            annotation: Efl.Canvas.Text.Annotation *; [[Given annotation]]
+            annotation: ptr(Efl.Canvas.Text.Annotation); [[Given annotation]]
          }
          values {
             format: string; [[The new format for the given annotation]]
@@ -217,7 +217,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
               @in start: const(Efl.Canvas.Text.Cursor); [[Start of range]]
               @in end:   const(Efl.Canvas.Text.Cursor); [[End of range]]
          }
-         return: free(own(iterator<Efl.Canvas.Text.Annotation *>),
+         return: free(own(iterator<ptr(Efl.Canvas.Text.Annotation)>),
                  eina_iterator_free); [[Handle of the Annotation]]
       }
       annotation_insert {
@@ -234,7 +234,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
               @in end:   Efl.Canvas.Text.Cursor; [[End of range]]
               @in format: string;
          }
-         return: Efl.Canvas.Text.Annotation *; [[Handle of inserted annotation]]
+         return: ptr(Efl.Canvas.Text.Annotation); [[Handle of inserted annotation]]
       }
       annotation_del {
          [[Deletes given annotation.
@@ -246,7 +246,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
          ]]
          legacy: null;
          params {
-            @in annotation: Efl.Canvas.Text.Annotation *; [[Annotation to be
+            @in annotation: ptr(Efl.Canvas.Text.Annotation); [[Annotation to be
                 removed]]
          }
          return: bool; [[$true on success, $false otherwise.]]
@@ -318,7 +318,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
            @since 1.18
          ]]
          legacy: null;
-         return: own(char*); [[The text in the given range]]
+         return: own(ptr(char)); [[The text in the given range]]
          params {
             @in cur1: const(Efl.Canvas.Text.Cursor); [[Start of range]]
             @in cur2: const(Efl.Canvas.Text.Cursor); [[End of range]]
@@ -333,7 +333,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
          ]]
          legacy: null;
          params {
-            @in an: const(Efl.Canvas.Text.Annotation)*; [[Given annotation to query]]
+            @in an: ptr(const(Efl.Canvas.Text.Annotation)); [[Given annotation to query]]
             @out x: Evas.Coord; [[x coordinate of the annotation]]
             @out y: Evas.Coord; [[y coordinate of the annotation]]
             @out w: Evas.Coord; [[w coordinate of the annotation]]
@@ -351,7 +351,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
          ]]
          legacy: null;
          params {
-             @in annotation: const(Efl.Canvas.Text.Annotation)*; [[Annotation
+             @in annotation: ptr(const(Efl.Canvas.Text.Annotation)); [[Annotation
                  handle to query]]
              @in start: Efl.Canvas.Text.Cursor; [[Cursor to be set to the start
              position of the annotation in the text]]
