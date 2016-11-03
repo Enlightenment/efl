@@ -218,7 +218,8 @@ struct visitor_generate
           //   .generate(std::ostream_iterator<char>(std::cerr), std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context);
           if(as_generator
              (
-              *(lower_case[string] << ".")
+              (is_out ? " out " : "")
+              << *(lower_case[string] << ".")
               << string
               // << (regular.base_qualifier & qualifier_info::is_const
               //     || (regular.base_qualifier & qualifier_info::is_ref
@@ -243,7 +244,7 @@ struct visitor_generate
      //   as_generator(" System.IntPtr")
      //   .generate(sink, attributes::unused, *context);
      return
-       as_generator(" " << *(lower_case[string] << ".") << string)
+       as_generator((is_out ? " out " : " ") << *(lower_case[string] << ".") << string)
        .generate(sink, std::make_tuple(eolian_mono::escape_namespace(klass.namespaces), klass.eolian_name), *context)
        // && (!(klass.base_qualifier & qualifier_info::is_ref)
        //     || as_generator("&").generate(sink, attributes::unused, *context))
