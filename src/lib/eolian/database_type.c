@@ -117,7 +117,7 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      }
    if (tp->type == EOLIAN_TYPE_COMPLEX || tp->type == EOLIAN_TYPE_CLASS)
      _buf_add_suffix(buf, "*");
-   if (tp->is_ref)
+   if (tp->is_ptr)
      _buf_add_suffix(buf, "*");
    _buf_add_suffix(buf, name);
 }

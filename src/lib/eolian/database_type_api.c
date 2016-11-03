@@ -335,10 +335,10 @@ eolian_type_is_const(const Eolian_Type *tp)
 }
 
 EAPI Eina_Bool
-eolian_type_is_ref(const Eolian_Type *tp)
+eolian_type_is_ptr(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
-   return tp->is_ref;
+   return tp->is_ptr;
 }
 
 EAPI Eina_Bool

@@ -306,7 +306,7 @@ ffi.cdef [[
     size_t eolian_type_array_size_get(const Eolian_Type *tp);
     Eina_Bool eolian_type_is_own(const Eolian_Type *tp);
     Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
-    Eina_Bool eolian_type_is_ref(const Eolian_Type *tp);
+    Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
 
     Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 
@@ -668,8 +668,8 @@ M.Type = ffi.metatype("Eolian_Type", {
             return eolian.eolian_type_is_const(self) ~= 0
         end,
 
-        is_ref = function(self)
-            return eolian.eolian_type_is_ref(self) ~= 0
+        is_ptr = function(self)
+            return eolian.eolian_type_is_ptr(self) ~= 0
         end,
 
         c_type_get = function(self)

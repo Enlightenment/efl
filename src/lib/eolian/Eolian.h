@@ -1801,7 +1801,7 @@ EAPI Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_type_is_ref(const Eolian_Type *tp);
+EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
 
 /*
  * @brief Get the full C type name of the given type.

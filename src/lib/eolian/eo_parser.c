@@ -709,7 +709,7 @@ static const Eina_Bool _ownable_types[] = {
 static Eina_Bool
 _type_is_ownable(Eolian_Type *tp)
 {
-   if (tp->is_ref)
+   if (tp->is_ptr)
      return EINA_TRUE;
    if (tp->type == EOLIAN_TYPE_REGULAR)
      {
@@ -766,7 +766,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            check_next(ls, '(');
            def = parse_type_void(ls, EINA_FALSE, EINA_FALSE);
            FILL_BASE(def->base, ls, line, col);
-           def->is_ref = EINA_TRUE;
+           def->is_ptr = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcol);
            goto parse_ptr;
         }
