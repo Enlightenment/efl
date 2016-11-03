@@ -742,7 +742,9 @@ struct struct_field_def
   struct_field_def(Eolian_Struct_Type_Field const* struct_field)
   {
      name = eolian_typedecl_struct_field_name_get(struct_field);
-     type.set(eolian_typedecl_struct_field_type_get(struct_field));
+     try {
+        type.set(eolian_typedecl_struct_field_type_get(struct_field));
+     } catch(std::runtime_error const&) { /* Silently skip pointer fields*/ }
   }
 
 };
