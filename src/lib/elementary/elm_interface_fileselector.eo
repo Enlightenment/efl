@@ -1,6 +1,6 @@
 import evas_types;
 
-type Elm_Fileselector_Filter_Func: __undefined_type;
+type Elm_Fileselector_Filter_Func: __undefined_type; [[Elementary fileselector filter function type]]
 
 enum Elm.Fileselector.Mode
 {

@@ -1,9 +1,9 @@
-type Elm_Web_Console_Message: __undefined_type;
-type Elm_Web_Window_Open: __undefined_type;
-type Elm_Web_Dialog_File_Selector: __undefined_type;
-type Elm_Web_Dialog_Confirm: __undefined_type;
-type Elm_Web_Dialog_Prompt: __undefined_type;
-type Elm_Web_Dialog_Alert: __undefined_type;
+type Elm_Web_Console_Message: __undefined_type; [[Elementary web console message type]]
+type Elm_Web_Window_Open: __undefined_type; [[Elementary web window open type]]
+type Elm_Web_Dialog_File_Selector: __undefined_type; [[Elementary web dialog file selector type]]
+type Elm_Web_Dialog_Confirm: __undefined_type; [[Elementary web dialog confirm type]]
+type Elm_Web_Dialog_Prompt: __undefined_type; [[Elementary web dialog prompt type]]
+type Elm_Web_Dialog_Alert: __undefined_type; [[Elementary web dialog alert type]]
 
 enum Elm.Web.Zoom_Mode
 {

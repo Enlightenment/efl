@@ -1,4 +1,4 @@
-type Elm_Gesture_Event_Cb: __undefined_type;
+type Elm_Gesture_Event_Cb: __undefined_type; [[Elementary gesture event callback type]]
 
 enum Elm.Gesture.Type
 {

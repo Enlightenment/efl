@@ -1,8 +1,8 @@
 import elm_general;
 import elm_icon;
 
-type Elm_Entry_Item_Provider_Cb: __undefined_type;
-type Elm_Entry_Filter_Cb: __undefined_type;
+type Elm_Entry_Item_Provider_Cb: __undefined_type; [[Elementary entry item provider callback type]]
+type Elm_Entry_Filter_Cb: __undefined_type; [[Elementary entry filter callback type]]
 
 enum Elm.Text_Format
 {

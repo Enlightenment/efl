@@ -7,17 +7,17 @@ struct Elm.Event.Policy_Changed
 }
 
 /* FIXME: These shouldn't be here, we don't do functions in eolian!!! */
-type Elm_Gen_Item_Text_Get_Cb: __undefined_type;
-type Elm_Gen_Item_Content_Get_Cb: __undefined_type;
-type Elm_Gen_Item_State_Get_Cb: __undefined_type;
-type Elm_Gen_Item_Del_Cb: __undefined_type;
-type Elm_Gen_Item_Filter_Get_Cb: __undefined_type;
-type Elm_Gen_Item_Reusable_Content_Get_Cb: __undefined_type;
-type Elm_Tooltip_Item_Content_Cb: __undefined_type;
-type Elm_Object_Item_Signal_Cb: __undefined_type;
-type Elm_Event_Cb: __undefined_type;
-type Evas_Smart_Cb: __undefined_type;
-type Eina_Compare_Cb: __undefined_type;
+type Elm_Gen_Item_Text_Get_Cb: __undefined_type; [[Elementary genlist/gengrid item text callback type]]
+type Elm_Gen_Item_Content_Get_Cb: __undefined_type; [[Elementary genlist/gengrid item content callback type]]
+type Elm_Gen_Item_State_Get_Cb: __undefined_type; [[Elementary genlist/gengrid item state callback type]]
+type Elm_Gen_Item_Del_Cb: __undefined_type; [[Elementary genlist/gengrid item del callback type]]
+type Elm_Gen_Item_Filter_Get_Cb: __undefined_type; [[Elementary genlist/gengrid item filter callback type]]
+type Elm_Gen_Item_Reusable_Content_Get_Cb: __undefined_type; [[Elementary genlist/gengrid item reusable content callback type]]
+type Elm_Tooltip_Item_Content_Cb: __undefined_type; [[Elementary tooltip item content callback type]]
+type Elm_Object_Item_Signal_Cb: __undefined_type; [[Elementary object item signal callback type]]
+type Elm_Event_Cb: __undefined_type; [[Elementary event callback type]]
+type Evas_Smart_Cb: __undefined_type; [[Evas smart callback type]]
+type Eina_Compare_Cb: __undefined_type; [[Eina compare callback type]]
 
 /* FIXME: This shouldn't be here, we don't do functions in eolian!!! */
 struct Elm.Gen.Item.Class.Functions

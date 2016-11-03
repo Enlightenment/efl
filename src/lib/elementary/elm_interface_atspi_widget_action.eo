@@ -1,4 +1,4 @@
-type Elm_Atspi_Action: __undefined_type;
+type Elm_Atspi_Action: __undefined_type; [[Elementary ATSPI action type]]
 
 mixin Elm.Interface.Atspi_Widget_Action (Elm.Interface.Atspi_Action)
 {

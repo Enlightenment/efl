@@ -1,6 +1,6 @@
 import efl_types;
 
-type Elm_Calendar_Format_Cb: __undefined_type;
+type Elm_Calendar_Format_Cb: __undefined_type; [[Elementary calendar format callback type]]
 
 enum Elm.Calendar.Mark.Repeat.Type
 {

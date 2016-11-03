@@ -1,4 +1,4 @@
-type Elm_Slideshow_Item_Class: __undefined_type;
+type Elm_Slideshow_Item_Class: __undefined_type; [[Elementary slideshow item class type]]
 
 class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {

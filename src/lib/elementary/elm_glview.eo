@@ -1,6 +1,6 @@
-type Evas_GL: __undefined_type;
-type Evas_GL_API: __undefined_type;
-type Evas_GL_Context_Version: __undefined_type;
+type Evas_GL: __undefined_type; [[Evas GL type]]
+type Evas_GL_API: __undefined_type; [[Evas GL API type]]
+type Evas_GL_Context_Version: __undefined_type; [[Evas GL context version type]]
 
 enum Elm.GLView.Mode
 {

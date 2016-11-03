@@ -1,5 +1,5 @@
-type Elm_Multibuttonentry_Item_Filter_Cb: __undefined_type;
-type Elm_Multibuttonentry_Format_Cb: __undefined_type;
+type Elm_Multibuttonentry_Item_Filter_Cb: __undefined_type; [[Elementary multibuttonentry item filter callback type]]
+type Elm_Multibuttonentry_Format_Cb: __undefined_type; [[Elementary multibuttonentry format callback type]]
 
 class Elm.Multibuttonentry (Elm.Layout)
 {

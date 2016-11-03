@@ -1,4 +1,4 @@
-type Elm_Naviframe_Item_Pop_Cb: __undefined_type;
+type Elm_Naviframe_Item_Pop_Cb: __undefined_type; [[Elementary naviframe item pop callback type]]
 
 class Elm.Naviframe.Item(Elm.Widget.Item)
 {

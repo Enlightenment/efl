@@ -1,5 +1,5 @@
 /* FIXME: This definitely shouldn't be here. */
-type Efl_Event_Cb: __undefined_type;
+type Efl_Event_Cb: __undefined_type; [[Efl event callback type]]
 
 enum Elm.Atspi.Type
 {
@@ -233,7 +233,7 @@ struct Elm.Atspi.Relation
    objects: list<Efl.Object>; [[List with relation objects]]
 }
 
-type Elm.Atspi.Relation_Set: list<Elm.Atspi.Relation *>;
+type Elm.Atspi.Relation_Set: list<Elm.Atspi.Relation *>; [[Elementary ATSPI relation set type]]
 
 mixin Elm.Interface.Atspi_Accessible ()
 {

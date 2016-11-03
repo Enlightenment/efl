@@ -1,10 +1,10 @@
 /* FIXME: Handle properly. */
-type Elm_Map_Route: __undefined_type;
-type Elm_Map_Route_Cb: __undefined_type;
-type Elm_Map_Overlay: __undefined_type;
-type Elm_Map_Name: __undefined_type;
-type Elm_Map_Name_Cb: __undefined_type;
-type Elm_Map_Name_List_Cb: __undefined_type;
+type Elm_Map_Route: __undefined_type; [[Elementary map route type]]
+type Elm_Map_Route_Cb: __undefined_type; [[Elementary map route callback type]]
+type Elm_Map_Overlay: __undefined_type; [[Elementary map overlay type]]
+type Elm_Map_Name: __undefined_type; [[Elementary map name type]]
+type Elm_Map_Name_Cb: __undefined_type; [[Elementary map name callback type]]
+type Elm_Map_Name_List_Cb: __undefined_type; [[Elementary map name list callback type]]
 
 enum Elm.Map.Zoom_Mode
 {
