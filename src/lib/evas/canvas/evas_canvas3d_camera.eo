@@ -11,7 +11,7 @@ class Evas.Canvas3D.Camera (Evas.Canvas3D.Object)
 
            See also @.projection_perspective_set, @.projection_ortho_set and @.projection_frustum_set.]]
          params {
-           @in matrix: const(Evas.Real)*; [[Projection Matrix]]
+           @in matrix: ptr(const(Evas.Real)); [[Projection Matrix]]
          }
       }
 
