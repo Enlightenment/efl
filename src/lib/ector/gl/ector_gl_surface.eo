@@ -14,7 +14,7 @@ class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
          return: bool;
 	 params {
 	    @in flags: uint64;
-	    @in vertex: GLshort *;
+	    @in vertex: ptr(GLshort);
 	    @in vertex_count: uint;
 	    @in mul_col: uint;
 	 }
@@ -23,7 +23,7 @@ class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
          return: bool;
 	 params {
             @in op: Efl.Gfx.Render_Op;
-	    @in clips: array<Eina.Rectangle *>; [[array of @Eina.Rectangle clip]]
+	    @in clips: array<ptr(Eina.Rectangle)>; [[array of @Eina.Rectangle clip]]
 	 }
       }
    }
