@@ -1,4 +1,4 @@
-type @extern Evas.Load_Error: int; /* FIXME: Need to migrate emile. */
+type @extern Evas.Load_Error: int; [[Evas load error type]] /* FIXME: Need to migrate emile. */
 struct @extern Evas.Video_Surface; [[Evas video surface data structure]]  /* FIXME: The structure is full of the unsupported func pointers. */
 
 type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
@@ -448,6 +448,6 @@ enum Evas.Canvas3D.Material_Attrib
    normal       [[Normal map term]]
 }
 
-type Evas.Canvas3D.Surface_Func: __undefined_type;
+type Evas.Canvas3D.Surface_Func: __undefined_type; [[Evas 3D canvas surface function type]]
 
 struct Efl.Canvas.Text.Annotation; [[EFL text annotations data structure]]

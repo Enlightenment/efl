@@ -1,4 +1,4 @@
-type @extern Evas_Colorspace: int; /* FIXME: Need to get emile migrated. */
+type @extern Evas_Colorspace: int; [[Evas colorspace type]] /* FIXME: Need to get emile migrated. */
 
 class Evas.Canvas3D.Texture (Evas.Canvas3D.Object)
 {
