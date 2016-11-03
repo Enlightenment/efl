@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 public class MyBox : evas.BoxInherit
 {
@@ -30,6 +31,11 @@ class TestMain
     [DllImport("eo")] static extern void efl_object_init();
     [DllImport("ecore")] static extern void ecore_init();
     [DllImport("evas")] static extern void evas_init();
+
+    static string ImagePath([CallerFilePath] string folder="")
+    {
+        return System.IO.Path.GetDirectoryName(folder);
+    }
 
     static void Main(string[] args)
     {
@@ -69,12 +75,12 @@ class TestMain
         box.visible_set(true);
         
         efl.canvas.Image image1 = new efl.canvas.ImageConcrete(canvas);
-        image1.file_set("/home/felipe/dev/samsung/upstream/efl/src/examples/elementary/sphere_hunter/score.jpg", "");
+        image1.file_set(ImagePath() + "/../../examples/elementary/sphere_hunter/score.jpg", "");
         image1.hint_min_set(160, 240);
         image1.visible_set(true);
 
         efl.canvas.Image image2 = new efl.canvas.ImageConcrete(canvas);
-        image2.file_set("/home/felipe/dev/samsung/upstream/efl/src/examples/evas/shooter/assets/images/bricks.jpg", "");
+        image2.file_set(ImagePath() + "/../../examples/evas/shooter/assets/images/bricks.jpg", "");
         image2.hint_min_set(160, 120);
         image2.visible_set(true);
         
