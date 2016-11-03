@@ -159,7 +159,7 @@ interface Efl.Gfx.Buffer ()
            valid anymore.
          ]]
          params {
-            @in slice: const(Eina.Rw_Slice)*; [[Data slice returned by a previous call to map.]]
+            @in slice: ptr(const(Eina.Rw_Slice)); [[Data slice returned by a previous call to map.]]
          }
          return: bool; [[$true on success, $false otherwise]]
       }
@@ -181,7 +181,7 @@ interface Efl.Gfx.Buffer ()
            $slice should not be the return value of @.buffer_managed_get.
          ]]
          params {
-            @in slice: const(Eina.Slice)* @nullable; [[If $null, allocates an empty buffer]]
+            @in slice: ptr(const(Eina.Slice)) @nullable; [[If $null, allocates an empty buffer]]
             @in width: int; [[Width]]
             @in height: int; [[Height]]
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
@@ -207,7 +207,7 @@ interface Efl.Gfx.Buffer ()
            internally.
          ]]
          params {
-            @in slice: const(Eina.Slice)* @nullable; [[If $null, detaches the previous buffer.]]
+            @in slice: ptr(const(Eina.Slice)) @nullable; [[If $null, detaches the previous buffer.]]
             @in width: int; [[Width]]
             @in height: int; [[Height]]
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
