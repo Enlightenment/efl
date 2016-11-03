@@ -114,7 +114,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             ]]
          }
          values {
-            info: Evas.Engine_Info *; [[The pointer to the engine info to use.]]
+            info: ptr(Evas.Engine_Info); [[The pointer to the engine info to use.]]
          }
       }
       @property focus {
@@ -182,7 +182,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
               This is required to check for which locks are set at a given
               time with the \@ref evas_key_lock_is_set function.
             ]]
-            return: const(Evas.Lock)* @warn_unused; [[
+            return: ptr(const(Evas.Lock)) @warn_unused; [[
                An Evas_Lock handle to query Evas' keys subsystem with
                \@ref evas_key_lock_is_set, or $null on error.
             ]]
@@ -366,7 +366,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
               See also @.key_modifier_add, @.key_modifier_del,
               @.key_modifier_on, @.key_modifier_off.
             ]]
-            return: const(Evas.Modifier)* @warn_unused; [[
+            return: ptr(const(Evas.Modifier)) @warn_unused; [[
                An Evas_Modifier handle to query Evas' keys subsystem
                with \@ref evas_key_modifier_is_set, or $null on error.
             ]]
@@ -571,7 +571,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 
            @since 1.15
          ]]
-         return: free(own(list<Eina.Rectangle *>), evas_render_updates_free)
+         return: free(own(list<ptr(Eina.Rectangle)>), evas_render_updates_free)
             @warn_unused; [[
             A newly allocated list of updated rectangles of the canvas
             ($Eina.Rectangle structs). Free this list with
@@ -856,7 +856,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 
          See the full @ref Example_Evas_Events "example".
          */
-         return: free(own(list<Eina.Rectangle *>), evas_render_updates_free)
+         return: free(own(list<ptr(Eina.Rectangle)>), evas_render_updates_free)
             @warn_unused; [[
             A newly allocated list of updated rectangles of the canvas
             ($Eina.Rectangle structs). Free this list with
