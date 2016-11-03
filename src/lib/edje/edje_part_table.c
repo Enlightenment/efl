@@ -1,257 +1,16 @@
 #include "edje_private.h"
+#include "edje_part_helper.h"
 
-#define EFL_CANVAS_LAYOUT_INTERNAL_PROTECTED
-#define EFL_CANVAS_LAYOUT_INTERNAL_BOX_PROTECTED
 #define EFL_CANVAS_LAYOUT_INTERNAL_TABLE_PROTECTED
-#define EFL_CANVAS_LAYOUT_INTERNAL_SWALLOW_PROTECTED
-
-#include "efl_canvas_layout_internal.eo.h"
-#include "efl_canvas_layout_internal_box.eo.h"
 #include "efl_canvas_layout_internal_table.eo.h"
-#include "efl_canvas_layout_internal_swallow.eo.h"
+#define MY_CLASS EFL_CANVAS_LAYOUT_INTERNAL_TABLE_CLASS
 
-#include "../evas/canvas/evas_box.eo.h"
 #include "../evas/canvas/evas_table.eo.h"
 
-#define BOX_CLASS     EFL_CANVAS_LAYOUT_INTERNAL_BOX_CLASS
-#define TABLE_CLASS   EFL_CANVAS_LAYOUT_INTERNAL_TABLE_CLASS
-#define SWALLOW_CLASS EFL_CANVAS_LAYOUT_INTERNAL_SWALLOW_CLASS
-
-typedef struct _Edje_Part_Data     Edje_Box_Data;
-typedef struct _Edje_Part_Data     Edje_Table_Data;
-typedef struct _Edje_Part_Data     Edje_Swallow_Data;
-typedef struct _Part_Item_Iterator Part_Item_Iterator;
-
-struct _Edje_Part_Data
-{
-   Edje           *ed;
-   Edje_Real_Part *rp;
-   const char     *part;
-   unsigned char   temp;
-};
-
-struct _Part_Item_Iterator
-{
-   Eina_Iterator  iterator;
-   Eina_List     *list;
-   Eina_Iterator *real_iterator;
-   Eo            *object;
-};
-
-#define PROXY_REF(obj, pd) do { if (!(pd->temp++)) efl_ref(obj); } while(0)
-#define PROXY_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) efl_del(obj); } } while(0)
-#define RETURN_VAL(a) do { typeof(a) _ret = a; PROXY_UNREF(obj, pd); return _ret; } while(0)
-#define RETURN_VOID do { PROXY_UNREF(obj, pd); return; } while(0)
-#define PROXY_CALL(a) ({ PROXY_REF(obj, pd); a; })
-
-/* ugly macros to avoid code duplication */
-
-#define PROXY_RESET(type) \
-   do { if (_ ## type ## _proxy) \
-     { \
-        efl_del_intercept_set(_ ## type ## _proxy, NULL); \
-        efl_del(_ ## type ## _proxy); \
-        _ ## type ## _proxy = NULL; \
-     } } while (0)
-
-#define PROXY_DEL_CB(type) \
-static void \
-type ## _del_cb(Eo *proxy) \
-{ \
-   if (_ ## type ## _proxy) \
-     { \
-        efl_del_intercept_set(proxy, NULL); \
-        efl_del(proxy); \
-        return; \
-     } \
-   if (efl_parent_get(proxy)) \
-     { \
-        efl_ref(proxy); \
-        efl_parent_set(proxy, NULL); \
-     } \
-   _ ## type ## _proxy = proxy; \
-}
-
-#define PROXY_IMPLEMENTATION(type, TYPE, datatype) \
-Eo * \
-_edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp) \
-{ \
-   Edje_Box_Data *pd; \
-   Eo *proxy; \
-   \
-   pd = efl_data_scope_get(_ ## type ## _proxy, TYPE ## _CLASS); \
-   if (!pd) \
-     { \
-        if (_ ## type ## _proxy) \
-          { \
-             ERR("Found invalid handle for efl_part. Reset."); \
-             _ ## type ## _proxy = NULL; \
-          } \
-        return efl_add(TYPE ## _CLASS, ed->obj, \
-                      _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
-     } \
-   \
-   if (EINA_UNLIKELY(pd->temp)) \
-     { \
-        /* warn about misuse, since non-implemented functions may trigger this \
-         * misuse by accident. */ \
-        ERR("Misuse of efl_part detected. Handles returned by efl_part() are " \
-            "valid for a single function call! Did you call a non implemented " \
-            "function?"); \
-     } \
-   proxy = _ ## type ## _proxy; \
-   _ ## type ## _proxy = NULL; \
-   _edje_real_part_set(proxy, ed, rp, rp->part->name); \
-   return proxy; \
-} \
-\
-EOLIAN static void \
-_efl_canvas_layout_internal_ ## type ## _efl_canvas_layout_internal_real_part_set(Eo *obj, datatype *pd, void *ed, void *rp, const char *part) \
-{ \
-   pd->ed = ed; \
-   pd->rp = rp; \
-   pd->part = part; \
-   pd->temp = 1; \
-   efl_del_intercept_set(obj, type ## _del_cb); \
-   efl_parent_set(obj, pd->ed->obj); \
-} \
-\
-EOLIAN static Efl_Object * \
-_efl_canvas_layout_internal_ ## type ## _efl_object_finalize(Eo *obj, datatype *pd) \
-{ \
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->rp && pd->ed && pd->part, NULL); \
-   return efl_finalize(efl_super(obj, TYPE ## _CLASS)); \
-}
-
-static Eo *_box_proxy = NULL;
-static Eo *_table_proxy = NULL;
-static Eo *_swallow_proxy = NULL;
-
-void
-_edje_internal_proxy_shutdown(void)
-{
-   PROXY_RESET(box);
-   PROXY_RESET(table);
-   PROXY_RESET(swallow);
-}
-
-PROXY_DEL_CB(box)
-PROXY_DEL_CB(table)
-PROXY_DEL_CB(swallow)
-
-PROXY_IMPLEMENTATION(box, BOX, Edje_Box_Data)
 PROXY_IMPLEMENTATION(table, TABLE, Edje_Table_Data)
-PROXY_IMPLEMENTATION(swallow, SWALLOW, Edje_Swallow_Data)
-
-#undef PROXY_RESET
-#undef PROXY_DEL_CB
 #undef PROXY_IMPLEMENTATION
 
-
-/* Legacy features */
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_pack_clear(Eo *obj, Edje_Box_Data *pd)
-{
-   RETURN_VAL(_edje_part_box_remove_all(pd->ed, pd->part, EINA_TRUE));
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_unpack_all(Eo *obj, Edje_Box_Data *pd)
-{
-   RETURN_VAL(_edje_part_box_remove_all(pd->ed, pd->part, EINA_FALSE));
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_unpack(Eo *obj, Edje_Box_Data *pd, Efl_Gfx *subobj)
-{
-   Evas_Object *removed;
-   removed = _edje_part_box_remove(pd->ed, pd->part, subobj);
-   RETURN_VAL((removed == subobj));
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_pack(Eo *obj, Edje_Box_Data *pd, Efl_Gfx *subobj)
-{
-   RETURN_VAL(_edje_part_box_append(pd->ed, pd->part, subobj));
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_begin(Eo *obj, Edje_Box_Data *pd, Efl_Gfx *subobj)
-{
-   RETURN_VAL(_edje_part_box_prepend(pd->ed, pd->part, subobj));
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_end(Eo *obj, Edje_Box_Data *pd, Efl_Gfx *subobj)
-{
-   RETURN_VAL(_edje_part_box_append(pd->ed, pd->part, subobj));
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_before(Eo *obj, Edje_Box_Data *pd, Efl_Gfx *subobj, const Efl_Gfx *existing)
-{
-   RETURN_VAL(_edje_part_box_insert_before(pd->ed, pd->part, subobj, existing));
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_after(Eo *obj, Edje_Box_Data *pd, Efl_Gfx *subobj, const Efl_Gfx *existing)
-{
-   RETURN_VAL(_edje_part_box_insert_after(pd->ed, pd->part, subobj, existing));
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_at(Eo *obj, Edje_Box_Data *pd, Efl_Gfx *subobj, int index)
-{
-   int cnt = PROXY_CALL(efl_content_count(obj));
-   if ((index < 0) && ((-index) <= (cnt + 1)))
-     index = cnt + index + 1;
-   if ((index >= 0) && (index < cnt))
-     RETURN_VAL(_edje_part_box_insert_at(pd->ed, pd->part, subobj, index));
-   else
-     RETURN_VAL(_edje_part_box_append(pd->ed, pd->part, subobj));
-}
-
-EOLIAN static Efl_Gfx *
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_unpack_at(Eo *obj, Edje_Box_Data *pd, int index)
-{
-   if (index < 0) index += PROXY_CALL(efl_content_count(obj));
-   RETURN_VAL(_edje_part_box_remove_at(pd->ed, pd->part, index));
-}
-
-/* New APIs with Eo */
-
-EOLIAN static Efl_Gfx *
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_content_get(Eo *obj, Edje_Box_Data *pd, int index)
-{
-   if (index < 0) index += PROXY_CALL(efl_content_count(obj));
-   RETURN_VAL(_edje_part_box_content_at(pd->ed, pd->part, index));
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_container_content_remove(Eo *obj, Edje_Box_Data *pd EINA_UNUSED, Efl_Gfx *subobj)
-{
-   RETURN_VAL(PROXY_CALL(efl_pack_unpack(obj, subobj)));
-}
-
-EOLIAN static int
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_index_get(Eo *obj, Edje_Box_Data *pd, const Efl_Gfx * subobj)
-{
-   Evas_Object_Box_Option *opt;
-   Evas_Object_Box_Data *priv;
-   Eina_List *l;
-   int k = 0;
-
-   priv = efl_data_scope_get(pd->rp->object, EVAS_BOX_CLASS);
-   if (!priv) RETURN_VAL(-1);
-   EINA_LIST_FOREACH(priv->children, l, opt)
-     {
-        if (opt->obj == subobj)
-          RETURN_VAL(k);
-        k++;
-     }
-   RETURN_VAL(-1);
-}
+typedef struct _Part_Item_Iterator Part_Item_Iterator;
 
 /* this iterator is the same as efl_ui_box */
 static Eina_Bool
@@ -299,41 +58,6 @@ _part_item_iterator_create(Eo *obj, Eina_Iterator *real_iterator)
    efl_wref_add(obj, &it->object);
 
    return &it->iterator;
-}
-
-EOLIAN static Eina_Iterator *
-_efl_canvas_layout_internal_box_efl_container_content_iterate(Eo *obj, Edje_Box_Data *pd)
-{
-   Eina_Iterator *it;
-
-   if (!pd->rp->typedata.container) RETURN_VAL(NULL);
-   it = evas_object_box_iterator_new(pd->rp->object);
-
-   RETURN_VAL(_part_item_iterator_create(pd->rp->object, it));
-}
-
-EOLIAN static int
-_efl_canvas_layout_internal_box_efl_container_content_count(Eo *obj, Edje_Box_Data *pd)
-{
-   RETURN_VAL(evas_obj_box_count(pd->rp->object));
-}
-
-EOLIAN static Efl_Orient
-_efl_canvas_layout_internal_box_efl_orientation_orientation_get(Eo *obj, Edje_Box_Data *pd)
-{
-   const Edje_Part_Description_Box *desc =
-         (Edje_Part_Description_Box *) pd->rp->chosen_description;
-
-   if (!desc || !desc->box.layout)
-     RETURN_VAL(EFL_ORIENT_NONE);
-
-   if (!strncmp(desc->box.layout, "vertical", 8))
-     RETURN_VAL(EFL_ORIENT_VERTICAL);
-   else if (!strncmp(desc->box.layout, "horizontal", 10))
-     RETURN_VAL(EFL_ORIENT_HORIZONTAL);
-
-   WRN("unknown orientation '%s'", desc->box.layout);
-   RETURN_VAL(EFL_ORIENT_NONE);
 }
 
 EOLIAN static Eina_Iterator *
@@ -499,29 +223,6 @@ _efl_canvas_layout_internal_table_efl_pack_grid_grid_position_get(Eo *obj, Edje_
    RETURN_VAL(ret);
 }
 
-/* Swallow parts */
-EOLIAN static Efl_Gfx *
-_efl_canvas_layout_internal_swallow_efl_container_content_get(Eo *obj, Edje_Swallow_Data *pd)
-{
-   RETURN_VAL(_edje_efl_container_content_get(pd->ed, pd->part));
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_swallow_efl_container_content_set(Eo *obj, Edje_Swallow_Data *pd, Efl_Gfx *content)
-{
-   RETURN_VAL(_edje_efl_container_content_set(pd->ed, pd->part, content));
-}
-
-EOLIAN static Efl_Gfx *
-_efl_canvas_layout_internal_swallow_efl_container_content_unset(Eo *obj, Edje_Swallow_Data *pd)
-{
-   Efl_Gfx *content = _edje_efl_container_content_get(pd->ed, pd->part);
-   if (!content) RETURN_VAL(NULL);
-   PROXY_CALL(efl_content_remove(obj, content));
-   RETURN_VAL(content);
-}
-
-
 /* Legacy API implementation */
 
 #ifdef DEGUG
@@ -601,22 +302,6 @@ edje_object_part_box_remove_all(Edje_Object *obj, const char *part, Eina_Bool cl
      return efl_pack_unpack_all(box);
 }
 
-#ifdef DEBUG
-#define PART_TABLE_GET(obj, part, ...) ({ \
-   Eo *__table = efl_part(obj, part); \
-   if (!__table || !efl_isa(__table, EFL_CANVAS_LAYOUT_INTERNAL_TABLE_CLASS)) \
-     { \
-        ERR("No such table part '%s' in layout %p", part, obj); \
-        return __VA_ARGS__; \
-     } \
-   __table; })
-#else
-#define PART_TABLE_GET(obj, part, ...) ({ \
-   Eo *__table = efl_part(obj, part); \
-   if (!__table) return __VA_ARGS__; \
-   __table; })
-#endif
-
 EAPI Eina_Bool
 edje_object_part_table_pack(Edje_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
@@ -656,7 +341,4 @@ edje_object_part_table_clear(Edje_Object *obj, const char *part, Eina_Bool clear
      return efl_pack_unpack_all(table);
 }
 
-#include "efl_canvas_layout_internal.eo.c"
-#include "efl_canvas_layout_internal_box.eo.c"
 #include "efl_canvas_layout_internal_table.eo.c"
-#include "efl_canvas_layout_internal_swallow.eo.c"

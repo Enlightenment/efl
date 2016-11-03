@@ -92,8 +92,10 @@ lib/edje/edje_textblock_styles.c \
 lib/edje/edje_util.c \
 lib/edje/edje_var.c \
 lib/edje/edje_signal.c \
-lib/edje/edje_containers.c
-
+lib/edje/edje_part.c \
+lib/edje/edje_part_swallow.c \
+lib/edje/edje_part_table.c \
+lib/edje/edje_part_box.c
 
 lib_edje_libedje_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 lib_edje_libedje_la_LIBADD = @EDJE_LIBS@ @EDJE_LUA_LIBS@
