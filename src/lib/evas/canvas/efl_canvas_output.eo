@@ -38,7 +38,7 @@ class Efl.Canvas.Output (Efl.Object, Efl.Gfx.Buffer)
             [[Gets the engine specific output parameters for a given output.]]
          }
          values {
-            info: Evas.Engine_Info *; [[The engine parameters.]]
+            info: ptr(Evas.Engine_Info); [[The engine parameters.]]
          }
       }
    }
