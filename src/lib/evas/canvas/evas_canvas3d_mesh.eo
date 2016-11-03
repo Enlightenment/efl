@@ -104,8 +104,8 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Efl.File)
          ]]
          params {
             @in frame: int; [[ The number of the key frame.]]
-            @in vertex: Eina.Inarray*;
-            @in index: Eina.Inarray*;
+            @in vertex: ptr(Eina.Inarray);
+            @in index: ptr(Eina.Inarray);
          }
       }
 
