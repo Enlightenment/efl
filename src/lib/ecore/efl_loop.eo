@@ -33,7 +33,7 @@ class Efl.Loop (Efl.Object)
          ]]
          get {}
          values {
-            version: const(Efl.Version)*;
+            version: ptr(const(Efl.Version));
          }
       }
       @property efl_version {
@@ -43,7 +43,7 @@ class Efl.Loop (Efl.Object)
          ]]
          get {}
          values {
-            version: const(Efl.Version)*;
+            version: ptr(const(Efl.Version));
          }
       }
       iterate {
