@@ -43,6 +43,7 @@ external_elm_panes.edc \
 external_emotion_elm.edc \
 lua_script.edc \
 messages_echo.edc \
+multiseat.edc \
 perspective.edc \
 signals-messages.edc \
 signalsBubble.edc \
@@ -140,6 +141,7 @@ edje-color-class.c \
 edje-drag.c \
 edje-edit-part-box.c \
 edje-entry.c \
+edje-multiseat.c \
 edje-multisense.c \
 edje-perspective.c \
 edje-signals-messages.c \
@@ -213,6 +215,7 @@ edje-color-class \
 edje-drag\
 edje-edit-part-box \
 edje-entry \
+edje-multiseat \
 edje-perspective \
 edje-signals-messages \
 edje-swallow \
