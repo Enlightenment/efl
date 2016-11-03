@@ -21,9 +21,6 @@ struct functional_attribute_conditional_generator
    G g;
 };
 
-template <typename F, typename G>
-struct is_eager_generator<functional_attribute_conditional_generator<F, G>> : std::true_type {};
-
 template <typename F>
 struct functional_attribute_conditional_directive
 {
@@ -42,9 +39,6 @@ struct functional_attribute_conditional_directive
   F f;
 };
 
-template <typename F>
-struct is_eager_generator<functional_attribute_conditional_directive<F>> : std::true_type {};
-      
 struct attribute_conditional_terminal
 {
   template <typename F>
@@ -54,6 +48,15 @@ struct attribute_conditional_terminal
   }
 } const attribute_conditional = {};
 
+template <typename F, typename G>
+struct is_eager_generator<functional_attribute_conditional_generator<F, G>> : std::true_type {};
+template <typename F>
+struct is_eager_generator<functional_attribute_conditional_directive<F>> : std::true_type {};
+template <typename F, typename G>
+struct is_generator<functional_attribute_conditional_generator<F, G>> : std::true_type {};
+template <typename F>
+struct is_generator<functional_attribute_conditional_directive<F>> : std::true_type {};
+      
 namespace type_traits {
 template <typename F, typename G>
 struct attributes_needed<functional_attribute_conditional_generator<F, G>>

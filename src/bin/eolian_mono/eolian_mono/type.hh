@@ -52,6 +52,8 @@ namespace efl { namespace eolian { namespace grammar {
 template <>
 struct is_eager_generator< ::eolian_mono::type_generator> : std::true_type {};
 template <>
+struct is_generator< ::eolian_mono::type_generator> : std::true_type {};
+template <>
 struct is_generator< ::eolian_mono::type_terminal> : std::true_type {};
 
 namespace type_traits {

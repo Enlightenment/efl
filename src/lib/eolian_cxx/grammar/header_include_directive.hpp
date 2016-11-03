@@ -21,6 +21,8 @@ struct header_include_directive_generator
 
 template <>
 struct is_eager_generator<header_include_directive_generator> : std::true_type {};
+template <>
+struct is_generator<header_include_directive_generator> : std::true_type {};
 
 namespace type_traits {
 template <>

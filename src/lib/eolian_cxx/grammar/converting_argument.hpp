@@ -39,6 +39,8 @@ struct converting_argument_generator
 
 template <>
 struct is_eager_generator<converting_argument_generator> : std::true_type {};
+template <>
+struct is_generator<converting_argument_generator> : std::true_type {};
 
 namespace type_traits {
 template <>

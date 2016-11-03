@@ -66,6 +66,8 @@ struct attribute_reorder_generator
 
 template <typename G, int...S>
 struct is_eager_generator<attribute_reorder_generator<G, S...>> : std::true_type {};
+template <typename G, int...S>
+struct is_generator<attribute_reorder_generator<G, S...>> : std::true_type {};
 
 template <int...S, typename G>
 attribute_reorder_generator<G, S...> attribute_reorder(G g)

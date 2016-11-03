@@ -63,6 +63,8 @@ struct c_type_generator
 
 template <>
 struct is_eager_generator<c_type_generator> : std::true_type {};
+template <>
+struct is_generator<c_type_generator> : std::true_type {};
 
 namespace type_traits {
 template <>

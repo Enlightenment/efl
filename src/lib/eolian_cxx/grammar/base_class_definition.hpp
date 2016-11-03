@@ -101,6 +101,8 @@ struct base_class_definition_generator
 
 template <>
 struct is_eager_generator<base_class_definition_generator> : std::true_type {};
+template <>
+struct is_generator<base_class_definition_generator> : std::true_type {};
 
 namespace type_traits {
 template <>

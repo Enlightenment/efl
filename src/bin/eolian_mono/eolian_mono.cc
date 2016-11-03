@@ -89,12 +89,16 @@ run(options_type const& opts)
          }
      }()};
 
+   as_generator("using System;\nusing System.Runtime.InteropServices;\n")
+     .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null());
+   
    if (klass)
      {
        efl::eolian::grammar::attributes::klass_def klass_def(klass);
        std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
 
-       eolian_mono::klass.generate(iterator, klass_def, efl::eolian::grammar::context_cons<eolian_mono::library_context>({opts.dllimport}));
+       eolian_mono::klass
+         .generate(iterator, klass_def, efl::eolian::grammar::context_cons<eolian_mono::library_context>({opts.dllimport}));
      }
    //else
      {

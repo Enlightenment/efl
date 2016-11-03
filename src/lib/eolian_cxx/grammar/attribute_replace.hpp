@@ -18,9 +18,6 @@ struct functional_attribute_replace_generator
    G g;
 };
 
-template <typename F, typename G>
-struct is_eager_generator<functional_attribute_replace_generator<F, G>> : std::true_type {};
-
 template <typename F>
 struct functional_attribute_replace_directive
 {
@@ -39,8 +36,14 @@ struct functional_attribute_replace_directive
   F f;
 };
 
+template <typename F, typename G>
+struct is_eager_generator<functional_attribute_replace_generator<F, G>> : std::true_type {};
 template <typename F>
 struct is_eager_generator<functional_attribute_replace_directive<F>> : std::true_type {};
+template <typename F, typename G>
+struct is_generator<functional_attribute_replace_generator<F, G>> : std::true_type {};
+template <typename F>
+struct is_generator<functional_attribute_replace_directive<F>> : std::true_type {};
       
 struct attribute_replace_terminal
 {

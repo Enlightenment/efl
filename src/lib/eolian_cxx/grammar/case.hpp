@@ -55,6 +55,10 @@ template <typename G>
 struct is_eager_generator<lower_case_generator<G>> : std::true_type {};
 template <typename G>
 struct is_eager_generator<upper_case_generator<G>> : std::true_type {};
+template <typename G>
+struct is_generator<lower_case_generator<G>> : std::true_type {};
+template <typename G>
+struct is_generator<upper_case_generator<G>> : std::true_type {};
 
 namespace type_traits {
 template <typename G>

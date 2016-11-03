@@ -35,6 +35,8 @@ struct parameter_type_generator
 
 template <>
 struct is_eager_generator<parameter_type_generator> : std::true_type {};
+template <>
+struct is_generator<parameter_type_generator> : std::true_type {};
 namespace type_traits {
 template <>
 struct attributes_needed<parameter_type_generator> : std::integral_constant<int, 1> {};  
@@ -53,6 +55,8 @@ struct parameter_generator
 
 template <>
 struct is_eager_generator<parameter_generator> : std::true_type {};
+template <>
+struct is_generator<parameter_generator> : std::true_type {};
 namespace type_traits {
 template <>
 struct attributes_needed<parameter_generator> : std::integral_constant<int, 1> {};  

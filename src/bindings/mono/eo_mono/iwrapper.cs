@@ -29,11 +29,79 @@ public class Globals {
     [DllImport("eo")] public static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
     [DllImport("eo")] public static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
     [DllImport("eo")] public static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
+    [DllImport("eo")] public static extern IntPtr efl_class_get(IntPtr obj);
+    [DllImport("dl")] public static extern IntPtr dlsym
+       (IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] String name);
+
+    public delegate byte class_initializer(IntPtr klass);
+    
+    public static IntPtr register_class(class_initializer initializer, IntPtr base_klass)
+    {
+        ClassDescription description;
+        description.version = 2; // EO_VERSION
+        description.name = "BoxInherit";
+        description.class_type = 0; // REGULAR
+        description.data_size = (UIntPtr)8;
+        description.class_initializer = IntPtr.Zero;
+        description.class_constructor = IntPtr.Zero;
+        description.class_destructor = IntPtr.Zero;
+
+        if(initializer != null)
+            description.class_initializer = Marshal.GetFunctionPointerForDelegate(initializer);
+
+        IntPtr description_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(description));
+        Marshal.StructureToPtr(description, description_ptr, false);
+      
+        Console.WriteLine("Going to register!");
+        IntPtr klass = efl.eo.Globals.efl_class_new(description_ptr, base_klass, IntPtr.Zero);
+        if(klass == IntPtr.Zero)
+            Console.WriteLine("klass was not registed");
+        Console.WriteLine("Registered?");
+        return klass;
+    }
+    public static IntPtr instantiate(IntPtr klass, efl.Object parent)
+    {
+        Console.WriteLine("Instantiating");
+        System.IntPtr parent_ptr = System.IntPtr.Zero;
+        if(parent != null)
+            parent_ptr = parent.raw_handle;
+
+        System.IntPtr eo = efl.eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 0, 0);
+        Console.WriteLine("efl_add_internal_start returned");
+        eo = efl.eo.Globals._efl_add_end(eo, 0, 0);
+        Console.WriteLine("efl_add_end returned");
+        return eo;
+    }
+    public static void data_set(efl.eo.IWrapper obj)
+    {
+      IntPtr pd = efl.eo.Globals.efl_data_scope_get(obj.raw_handle, obj.raw_klass);
+      {
+          GCHandle gch = GCHandle.Alloc(obj);
+          EolianPD epd;
+          epd.pointer = GCHandle.ToIntPtr(gch);
+          Marshal.StructureToPtr(epd, pd, false);
+      }
+    }
+    public static efl.eo.IWrapper data_get(IntPtr pd)
+    {
+        EolianPD epd = (EolianPD)Marshal.PtrToStructure(pd, typeof(EolianPD));
+        if(epd.pointer != IntPtr.Zero)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(epd.pointer);
+            return (efl.eo.IWrapper)gch.Target;
+        }
+        else
+            return null;
+    }
 }        
         
 public interface IWrapper
 {
     IntPtr raw_handle
+    {
+        get;
+    }
+    IntPtr raw_klass
     {
         get;
     }
