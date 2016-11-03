@@ -52,7 +52,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
                [[Change line delimiter to use. If NULL or empty, no delimiter is to be used]]
             }
             values {
-                slice: const(Eina.Slice)*; [[The contents may contain \0 and will be copied]]
+                slice: ptr(const(Eina.Slice)); [[The contents may contain \0 and will be copied]]
             }
         }
 
@@ -109,7 +109,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
              The buffer is then owned by caller, which should call
              eina_binbuf_free() when it's done.
            ]]
-           return: free(own(Eina.Binbuf*), eina_binbuf_free) @warn_unused;
+           return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused;
         }
     }
 
@@ -117,8 +117,8 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
         done; [[All available data was copied from source to destination]]
         error: Eina.Error; [[An error happened and the copy stopped]]
         progress; [[Total size changed or Data was read/written]]
-        data: const(Eina.Slice)*; [[When data is read to internal buffer, it's emitted in this event. The memory is only valid during event callback dispatched and should not be modified.]]
-        line: const(Eina.Slice)*; [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified.]]
+        data: ptr(const(Eina.Slice)); [[When data is read to internal buffer, it's emitted in this event. The memory is only valid during event callback dispatched and should not be modified.]]
+        line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified.]]
     }
 
     implements {
