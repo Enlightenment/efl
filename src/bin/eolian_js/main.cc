@@ -329,7 +329,7 @@ _function_is_generatable(const Eolian_Function *function, Eolian_Function_Type f
         if (!_type_is_generatable(tp, add_pointer))
           return false;
 
-        if (eolian_type_is_ref(tp) && _function_belongs_to(function, "Efl.Object"))
+        if (eolian_type_is_ptr(tp) && _function_belongs_to(function, "Efl.Object"))
           return false;
      }
 
@@ -687,7 +687,7 @@ int main(int argc, char** argv)
                   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Could not get struct field name";
                   continue;
                }
-             if (should_reject_ref && eolian_type_is_ref(field_type))
+             if (should_reject_ref && eolian_type_is_ptr(field_type))
                {
                   has_ref_field = true;
                   break;

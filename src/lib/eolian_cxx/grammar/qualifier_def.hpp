@@ -76,7 +76,7 @@ inline qualifier_info qualifiers(Eolian_Type const* type)
 {
   qualifier_info is_own = ::eolian_type_is_own(type) ? qualifier_info::is_own : qualifier_info::is_none;
   qualifier_info is_const = ::eolian_type_is_const(type) ? qualifier_info::is_const : qualifier_info::is_none;
-  qualifier_info is_ref = ::eolian_type_is_ref(type) ? qualifier_info::is_ref : qualifier_info::is_none;
+  qualifier_info is_ref = ::eolian_type_is_ptr(type) ? qualifier_info::is_ref : qualifier_info::is_none;
   return is_own | is_const | is_ref;
 }
         
