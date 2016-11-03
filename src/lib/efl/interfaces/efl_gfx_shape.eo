@@ -65,7 +65,7 @@ mixin Efl.Gfx.Shape
          get {
          }
          values {
-            dash: const(Efl.Gfx.Dash) *;
+            dash: ptr(const(Efl.Gfx.Dash));
             length: uint;
          }
       }
@@ -131,8 +131,8 @@ mixin Efl.Gfx.Shape
          get {
          }
          values {
-            op: const(Efl.Gfx.Path.Command_Type) *; [[Command list]]
-            points: const(double) *; [[Point list]]
+            op: ptr(const(Efl.Gfx.Path.Command_Type)); [[Command list]]
+            points: ptr(const(double)); [[Point list]]
          }
       }
       @property path_length {
