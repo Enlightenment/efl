@@ -357,6 +357,7 @@ evas_fb_outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, in
 			    h, w,
 			    x, y, NULL);
 	       }
+             evas_fb_region_push_hook_call(buf, x, y, w, h, src_data);
 	  }
      }
 }

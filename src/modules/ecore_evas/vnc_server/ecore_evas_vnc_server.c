@@ -11,8 +11,16 @@
 #include <Ecore_Input.h>
 #include <Evas.h>
 #include <Ecore_Evas.h>
-#include <Evas_Engine_Software_X11.h>
-#include <Ecore_X.h>
+
+#ifdef BUILD_ENGINE_SOFTWARE_X11
+# include <Evas_Engine_Software_X11.h>
+# include <Ecore_X.h>
+#endif
+
+#ifdef BUILD_ENGINE_FB
+# include <Evas_Engine_FB.h>
+# include "ecore_evas_vnc_server_fb_keymap.h"
+#endif
 
 #include <time.h>
 #include <stdio.h>
@@ -57,6 +65,12 @@ static unsigned int _available_seat = 1;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_ecore_evas_vnc_server_log_dom, __VA_ARGS__)
 
+typedef Eina_Bool (*Ecore_Evas_Vnc_Key_Info_Get)(rfbKeySym key,
+                                                 const char **key_name,
+                                                 const char **key_str,
+                                                 const char **compose,
+                                                 int *keycode);
+
 typedef struct _Ecore_Evas_Vnc_Server {
    char *frame_buffer;
    rfbScreenInfoPtr vnc_screen;
@@ -65,6 +79,7 @@ typedef struct _Ecore_Evas_Vnc_Server {
    Ecore_Evas_Vnc_Client_Accept_Cb accept_cb;
    void *accept_cb_data;
    Ecore_Evas *ee;
+   Ecore_Evas_Vnc_Key_Info_Get key_info_get_func;
    double double_click_time;
    int last_w;
    int last_h;
@@ -263,6 +278,42 @@ _ecore_evas_vnc_server_ecore_event_generic_free(void *user_data,
    free(func_data);
 }
 
+#ifdef BUILD_ENGINE_SOFTWARE_X11
+static Eina_Bool
+_ecore_evas_vnc_server_x11_key_info_get(rfbKeySym key,
+                                        const char **key_name,
+                                        const char **key_str,
+                                        const char **compose,
+                                        int *keycode)
+{
+   *key_str = *key_name = ecore_x_keysym_string_get(key);
+
+   if (!*key_str)
+     {
+        *keycode = 0;
+        return EINA_FALSE;
+     }
+
+   *compose = NULL;
+   *keycode = ecore_x_keysym_keycode_get(*key_str);
+   return EINA_TRUE;
+}
+#endif
+
+#ifdef BUILD_ENGINE_FB
+static Eina_Bool
+_ecore_evas_vnc_server_fb_key_info_get(rfbKeySym key,
+                                       const char **key_name,
+                                       const char **key_str,
+                                       const char **compose,
+                                       int *keycode EINA_UNUSED)
+{
+   return ecore_evas_vnc_server_keysym_to_fb_translate(key,
+                                                       key_name, key_str,
+                                                       compose);
+}
+#endif
+
 static void
 _ecore_evas_vnc_server_client_keyboard_event(rfbBool down,
                                              rfbKeySym key,
@@ -272,7 +323,9 @@ _ecore_evas_vnc_server_client_keyboard_event(rfbBool down,
    Ecore_Evas_Vnc_Server_Client_Data *cdata = client->clientData;
    rfbScreenInfoPtr screen = client->screen;
    Ecore_Evas_Vnc_Server *server = screen->screenData;
-   const char *key_string;
+   const char *key_str, *compose, *key_name;
+   int keycode = 0;
+   Eina_Bool r;
    char buf[10];
 
    if (key >= XK_Shift_L && key <= XK_Hyper_R)
@@ -288,12 +341,13 @@ _ecore_evas_vnc_server_client_keyboard_event(rfbBool down,
    if (server->ee->ignore_events)
      return;
 
-   key_string = ecore_x_keysym_string_get(key);
-   EINA_SAFETY_ON_NULL_RETURN(key_string);
+   r = server->key_info_get_func(key, &key_str, &key_name,
+                                 &compose, &keycode);
+   EINA_SAFETY_ON_FALSE_RETURN(r);
 
    snprintf(buf, sizeof(buf), "%lc", key);
 
-   e = calloc(1, sizeof(Ecore_Event_Key) + strlen(buf) + 1);
+   e = calloc(1, sizeof(Ecore_Event_Key) + (compose ? 0 : strlen(buf) + 1));
    EINA_SAFETY_ON_NULL_RETURN(e);
 
    e->timestamp = (unsigned int)time(NULL);
@@ -303,10 +357,14 @@ _ecore_evas_vnc_server_client_keyboard_event(rfbBool down,
      server->ee->prop.window;
    e->dev = cdata->keyboard;
    efl_ref(cdata->keyboard);
-   e->keycode = ecore_x_keysym_keycode_get(key_string);
-   e->keyname = e->key = key_string;
+   e->keyname = key_name;
+   e->key = key_str;
+   e->keycode = keycode;
    e->compose = (char *)(e + 1);
-   strcpy((char *)e->compose, buf);
+   if (compose)
+     e->compose = compose;
+   else
+     strcpy((char *)e->compose, buf);
    e->string = e->compose;
 
    ecore_event_add(down ? ECORE_EVENT_KEY_DOWN : ECORE_EVENT_KEY_UP,
@@ -618,18 +676,48 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
 {
    Ecore_Evas_Vnc_Server *server;
    Eina_Bool can_listen = EINA_FALSE;
-   Evas_Engine_Info_Software_X11 *einfo;
-   Eina_Bool err;
+   Evas_Engine_Info *engine;
+   Eina_Bool err, engine_set = EINA_FALSE;
+   Ecore_Evas_Vnc_Key_Info_Get key_info_get_func;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ee, NULL);
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(strcmp(ee->driver, "software_x11"), NULL);
+   engine = evas_engine_info_get(ee->evas);
 
-   einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(einfo, NULL);
+#ifdef BUILD_ENGINE_SOFTWARE_X11
+   if (!strcmp(ee->driver, "software_x11"))
+     {
+        Evas_Engine_Info_Software_X11 *x11_engine;
+
+        x11_engine = (Evas_Engine_Info_Software_X11 *)engine;
+        x11_engine->func.region_push_hook = _ecore_evas_vnc_server_draw;
+        engine_set = EINA_TRUE;
+        key_info_get_func = _ecore_evas_vnc_server_x11_key_info_get;
+     }
+#endif
+
+#ifdef BUILD_ENGINE_FB
+   if (!engine_set && !strcmp(ee->driver, "fb"))
+     {
+        Evas_Engine_Info_FB *fb_engine;
+
+        fb_engine = (Evas_Engine_Info_FB *)engine;
+        fb_engine->func.region_push_hook = _ecore_evas_vnc_server_draw;
+        engine_set = EINA_TRUE;
+        key_info_get_func = _ecore_evas_vnc_server_fb_key_info_get;
+     }
+#endif
+
+   if (!engine_set)
+     {
+        WRN("The engine '%s' is not supported. Only Software X11"
+            " and FB are supported.", ee->driver);
+        return NULL;
+     }
 
    server = calloc(1, sizeof(Ecore_Evas_Vnc_Server));
    EINA_SAFETY_ON_NULL_RETURN_VAL(server, NULL);
+   server->key_info_get_func = key_info_get_func;
 
    server->vnc_screen = rfbGetScreen(0, NULL, ee->w, ee->h, VNC_BITS_PER_SAMPLE,
                                      VNC_SAMPLES_PER_PIXEL, VNC_BYTES_PER_PIXEL);
@@ -683,8 +771,7 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
    //rfbInitServer() failed and could not setup the sockets.
    EINA_SAFETY_ON_FALSE_GOTO(can_listen, err_addr);
 
-   einfo->func.region_push_hook = _ecore_evas_vnc_server_draw;
-   err = evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+   err = evas_engine_info_set(ee->evas, (Evas_Engine_Info *)engine);
    EINA_SAFETY_ON_FALSE_GOTO(err, err_engine);
 
    server->vnc_screen->screenData = server;
@@ -695,7 +782,6 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
    return server;
 
  err_engine:
-   einfo->func.region_push_hook = NULL;
    ecore_main_fd_handler_del(server->vnc_listen6_handler);
  err_listen:
    ecore_main_fd_handler_del(server->vnc_listen_handler);
