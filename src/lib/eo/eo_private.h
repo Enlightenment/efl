@@ -284,7 +284,7 @@ _eo_free(_Eo_Object *obj)
    if (_obj_is_override(obj))
      {
         _vtable_func_clean_all(obj->vtable);
-        free(obj->vtable);
+        eina_freeq_ptr_main_add(obj->vtable, free, 0);
         obj->vtable = &klass->vtable;
      }
 
@@ -298,7 +298,7 @@ _eo_free(_Eo_Object *obj)
      }
    else
      {
-        free(obj);
+        eina_freeq_ptr_main_add(obj, free, klass->obj_size);
      }
    eina_spinlock_release(&klass->objects.trash_lock);
 }
@@ -351,7 +351,7 @@ _efl_unref(_Eo_Object *obj)
           {
              ERR("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
              Eina_Inlist *nitr = obj->xrefs->next;
-             free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Xref_Node));
+             eina_freeq_ptr_main_add(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Xref_Node), free, 0);
              obj->xrefs = nitr;
           }
         while (obj->data_xrefs)
@@ -360,7 +360,7 @@ _efl_unref(_Eo_Object *obj)
              Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
              ERR("Data of object 0x%lx is still referenced by object %p", (unsigned long) _eo_obj_id_get(obj), xref->ref_obj);
 
-             free(xref);
+             eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
              obj->data_xrefs = nitr;
           }
 #endif

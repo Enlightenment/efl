@@ -72,7 +72,7 @@ typedef struct
 static inline void
 _efl_object_extension_free(Efl_Object_Extension *ext)
 {
-   free(ext);
+   eina_freeq_ptr_main_add(ext, free, sizeof(*ext));
 }
 
 static inline Efl_Object_Extension *
@@ -118,7 +118,7 @@ _eo_generic_data_node_free(Eo_Generic_Data_Node *node)
         break;
      }
    eina_stringshare_del(node->key);
-   free(node);
+   eina_freeq_ptr_main_add(node, free, sizeof(*node));
 }
 
 static void
@@ -679,7 +679,7 @@ _efl_children_iterator_free(Eo_Children_Iterator *it)
      }
    else
      {
-        free(it);
+        eina_freeq_ptr_main_add(it, free, sizeof(*it));
      }
    eina_spinlock_release(&klass->iterators.trash_lock);
 
@@ -811,7 +811,7 @@ _efl_object_wref_del(Eo *obj, Efl_Object_Data *pd, Eo **wref)
      }
    else
      {
-        free(ext->wrefs);
+        eina_freeq_ptr_main_add(ext->wrefs, free, 0);
         ext->wrefs = NULL;
         _efl_object_extension_noneed(pd);
      }
@@ -841,7 +841,7 @@ _wref_destruct(Efl_Object_Data *pd)
 
    if ((!ext) || (!ext->wrefs)) return;
    for (itr = ext->wrefs; *itr; itr++) **itr = NULL;
-   free(ext->wrefs);
+   eina_freeq_ptr_main_add(ext->wrefs, free, 0);
    ext->wrefs = NULL;
 }
 
@@ -885,7 +885,7 @@ _legacy_events_hash_free_cb(void *_desc)
 {
    Efl_Event_Description *desc = _desc;
    eina_stringshare_del(desc->name);
-   free(desc);
+   eina_freeq_ptr_main_add(desc, free, sizeof(*desc));
 }
 
 /* EOF Legacy */
@@ -971,7 +971,7 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
    for (i = 0; i < pd->callbacks_count; i++)
      _eo_callback_free(pd->callbacks[i]);
 
-   free(pd->callbacks);
+   eina_freeq_ptr_main_add(pd->callbacks, free, 0);
    pd->callbacks = NULL;
    pd->callbacks_count = 0;
 }
@@ -1531,7 +1531,7 @@ EAPI void
 efl_dbg_info_free(Efl_Dbg_Info *info)
 {
    eina_value_flush(&(info->value));
-   free(info);
+   eina_freeq_ptr_main_add(info, free, sizeof(*info));
 }
 
 static Eina_Bool
@@ -1547,7 +1547,7 @@ _eo_dbg_info_flush(const Eina_Value_Type *type EINA_UNUSED, void *_mem)
    Efl_Dbg_Info *mem = *(Efl_Dbg_Info **) _mem;
    eina_stringshare_del(mem->name);
    eina_value_flush(&(mem->value));
-   free(mem);
+   eina_freeq_ptr_main_add(mem, free, sizeof(*mem));
    return EINA_TRUE;
 }
 
@@ -1577,7 +1577,7 @@ _eo_dbg_info_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Valu
         char *inner_val = eina_value_to_string(&(*src)->value);
         other_mem = inner_val;
         ret = eina_value_type_pset(convert, convert_mem, &other_mem);
-        free(inner_val);
+        eina_freeq_ptr_main_add(inner_val, free, 0);
         return ret;
      }
 
@@ -1589,8 +1589,7 @@ static Eina_Bool
 _eo_dbg_info_pset(const Eina_Value_Type *type EINA_UNUSED, void *_mem, const void *_ptr)
 {
    Efl_Dbg_Info **mem = _mem;
-   if (*mem)
-     free(*mem);
+   if (*mem) free(*mem);
    *mem = (void *) _ptr;
    return EINA_TRUE;
 }

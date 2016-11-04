@@ -1082,15 +1082,15 @@ eo_class_free(_Efl_Class *klass)
      }
 
    EINA_TRASH_CLEAN(&klass->objects.trash, data)
-      free(data);
+      eina_freeq_ptr_main_add(data, free, klass->obj_size);
 
    EINA_TRASH_CLEAN(&klass->iterators.trash, data)
-      free(data);
+      eina_freeq_ptr_main_add(data, free, 0);
 
    eina_spinlock_free(&klass->objects.trash_lock);
    eina_spinlock_free(&klass->iterators.trash_lock);
 
-   free(klass);
+   eina_freeq_ptr_main_add(klass, free, 0);
 }
 
 /* Not really called, just used for the ptr... */
@@ -1438,7 +1438,7 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
      {
         if (obj->vtable != &obj->klass->vtable)
           {
-             free(obj->vtable);
+             eina_freeq_ptr_main_add(obj->vtable, free, 0);
              obj->vtable = (Eo_Vtable *) &obj->klass->vtable;
           }
      }
@@ -1573,7 +1573,7 @@ efl_xunref(Eo *obj_id, const Eo *ref_obj_id)
    if (xref)
      {
         obj->xrefs = eina_inlist_remove(obj->xrefs, EINA_INLIST_GET(xref));
-        free(xref);
+        eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
      }
    else
      {
@@ -1778,7 +1778,7 @@ _efl_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj
    if (xref)
      {
         obj->data_xrefs = eina_inlist_remove(obj->data_xrefs, EINA_INLIST_GET(xref));
-        free(xref);
+        eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
      }
    else
      {
