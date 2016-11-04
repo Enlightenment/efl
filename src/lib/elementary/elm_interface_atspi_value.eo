@@ -1,5 +1,6 @@
 interface Elm.Interface.Atspi.Value ()
 {
+   [[Elementary AT-SPI value interface]]
    eo_prefix: elm_interface_atspi_value;
    methods {
       @property value_and_text @protected {

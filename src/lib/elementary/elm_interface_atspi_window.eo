@@ -1,5 +1,6 @@
 interface Elm.Interface.Atspi.Window ()
 {
+   [[Elementary AT-SPI window interface]]
    events {
       window,created; [[Called when new window has been created.]]
       window,destroyed; [[Called when window has been destroyed.]]

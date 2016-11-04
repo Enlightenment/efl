@@ -46,6 +46,7 @@ struct Elm.Atspi_Text.Change_Info
 
 interface Elm.Interface.Atspi.Text ()
 {
+   [[Elementary AT-SPI text interface]]
    eo_prefix: elm_interface_atspi_text;
    methods {
       @property character @protected {

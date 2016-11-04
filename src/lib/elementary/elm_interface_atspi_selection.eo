@@ -1,5 +1,6 @@
 interface Elm.Interface.Atspi.Selection ()
 {
+   [[Elementary AT-SPI selection interface]]
    eo_prefix: elm_interface_atspi_selection;
    methods {
       @property selected_children_count @protected {

@@ -1,5 +1,6 @@
 interface Elm.Interface.Atspi.Text.Editable ()
 {
+   [[Elementary AT-SPI text editable interface]]
    eo_prefix: elm_interface_atspi_text_editable;
    methods {
       @property content @protected {
