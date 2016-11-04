@@ -117,6 +117,11 @@ void
 _ecore_idler_all_call(Eo *loop)
 {
    efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
+   // just spin in an idler until the free queue is empty freeing 84 items
+   // from the free queue each time.for now this seems like an ok balance
+   // between going in and out of a reduce func with mutexes around it
+   // vs blocking mainloop for too long. this number is up for discussion
+   eina_freeq_reduce(eina_freeq_main_get(), 84);
 }
 
 int
@@ -124,5 +129,5 @@ _ecore_idler_exist(Eo *loop)
 {
    Efl_Loop_Data *dt = efl_data_scope_get(loop, EFL_LOOP_CLASS);
 
-   return dt->idlers;
+   return dt->idlers || eina_freeq_ptr_pending(eina_freeq_main_get());
 }
