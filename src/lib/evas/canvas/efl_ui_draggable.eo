@@ -1,9 +1,10 @@
 interface Efl.Ui.Draggable ()
 {
+   [[Efl UI draggable interface]]
    event_prefix: efl_ui;
    methods {
         @property drag_target {
-             [[Contrtol whether the object's content is changed by drag and drop.
+             [[Control whether the object's content is changed by drag and drop.
 
                If $drag_target is true, the object can be target of dragging
                object and the content of this object can be changed into

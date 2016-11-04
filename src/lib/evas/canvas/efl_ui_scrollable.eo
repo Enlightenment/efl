@@ -1,5 +1,6 @@
 interface Efl.Ui.Scrollable ()
 {
+   [[Efl UI scrollable interface]]
    event_prefix: efl_ui;
    events {
       scroll;

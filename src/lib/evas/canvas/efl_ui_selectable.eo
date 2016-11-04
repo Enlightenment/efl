@@ -1,5 +1,6 @@
 interface Efl.Ui.Selectable ()
 {
+   [[Efl UI selectable interface]]
    event_prefix: efl_ui;
    events {
       selected;

@@ -1,14 +1,15 @@
 interface Efl.Ui.Clickable ()
 {
+   [[Efl UI clickable interface]]
    event_prefix: efl_ui;
    events {
-      clicked;
-      clicked,double;
-      clicked,triple;
-      clicked,right;
-      pressed;
-      unpressed;
-      longpressed;
-      repeated;
+      clicked; [[Called when object was clicked]]
+      clicked,double; [[Called when object received a double click]]
+      clicked,triple; [[Called when object received a triple click]]
+      clicked,right; [[Called when object received a right click]]
+      pressed; [[Called when the object was pressed]]
+      unpressed; [[Called when the object is now longer pressed]]
+      longpressed; [[Called when the object received a longpress]]
+      repeated; [[Called when the object received repeated presses/clicks]]
    }
 }

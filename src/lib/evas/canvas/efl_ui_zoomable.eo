@@ -1,9 +1,10 @@
 interface Efl.Ui.Zoomable ()
 {
+   [[Efl UI zoomable interface]]
    event_prefix: efl_ui;
    events {
-      zoom,start;
-      zoom,stop;
-      zoom,change;
+      zoom,start; [[Called when zooming started]]
+      zoom,stop; [[Called when zooming stopped]]
+      zoom,change; [[Called when zooming changed]]
    }
 }
