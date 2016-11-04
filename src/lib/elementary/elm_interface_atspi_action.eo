@@ -1,6 +1,6 @@
 mixin Elm.Interface.Atspi_Action ()
 {
-   [[ATSPI action mixin]]
+   [[AT-SPI action mixin]]
    eo_prefix: elm_interface_atspi_action;
    data: null;
    methods {

@@ -1,6 +1,6 @@
 mixin Elm.Interface.Atspi_Image ()
 {
-   [[ATSPI image mixin]]
+   [[AT-SPI image mixin]]
    eo_prefix: elm_interface_atspi_image;
    data: null;
    methods {
