@@ -120,7 +120,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               See also @.perspective.get()
               \@ref edje_perspective_set()]]
             values {
-                ps: Edje.Perspective*; [[The perspective object that will be used.]]
+                ps: ptr(Edje.Perspective); [[The perspective object that will be used.]]
             }
          }
          get {
@@ -128,7 +128,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
               See also @.perspective.set()]]
             values {
-                ps: const(Edje.Perspective)*; [[The perspective object that will be used.]]
+                ps: ptr(const(Edje.Perspective)); [[The perspective object that will be used.]]
             }
          }
       }
@@ -1160,7 +1160,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
             return: bool; [[$true if everything went fine, $false on errors.]]
             values {
-               param: const(Edje.External.Param)*; [[the parameter details, including its name, type and
+               param: ptr(const(Edje.External.Param)); [[the parameter details, including its name, type and
                                                      actual value. This pointer should be valid, and the
                                                      parameter must exist in
                                                      #Edje_External_Type.parameters_info, with the exact type,
@@ -1267,7 +1267,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
               See also @.part_text_unescaped.set().]]
             values {
-               text_to_escape: own(char *); [[The text string]]
+               text_to_escape: own(ptr(char)); [[The text string]]
             }
          }
          keys {
@@ -1351,7 +1351,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
            @since 1.18.0]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
          return: bool; [[$true if the visible character is hidden. $false if there is no visible character or the object is not set for password mode.]]
       }
@@ -1497,7 +1497,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               \@ref evas_textblock_cursor_content_get
 
               You must free the return (if not $null) after you are done with it.]]
-            return: own(char *); [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
+            return: own(ptr(char)); [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
          }
          keys {
             part: string; [[The part name]]
@@ -1884,7 +1884,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
               This function return a list of Evas_Textblock_Rectangle anchor
               rectangles.]]
-            return: const(list<const(Evas.Textblock_Rectangle)*>); [[The list of anchor rects (const Evas_Textblock_Rectangle
+            return: const(list<ptr(const(Evas.Textblock_Rectangle))>); [[The list of anchor rects (const Evas_Textblock_Rectangle
                                                                      *), do not modify! Geometry is relative to entry part.]]
          }
          keys {
