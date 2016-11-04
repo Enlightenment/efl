@@ -463,6 +463,45 @@ START_TEST(efl_test_promise_future_success)
 }
 END_TEST
 
+// Test value set before future_get
+START_TEST(efl_test_promise_future_success_before_get)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   efl_promise_value_set(p, &value, NULL);
+
+   efl_future_use(&f, efl_promise_future_get(p));
+   fail_if(!f);
+
+   efl_event_callback_add(f, EFL_EVENT_DEL, _death, &deadf);
+   efl_event_callback_add(p, EFL_EVENT_DEL, _death, &deadp);
+
+   fail_if(deadp || deadf);
+
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo));
+
+   fail_if(f);
+   fail_if(!fo.then || fo.cancel || fo.progress);
+   fail_if(!deadf || deadp);
+
+   efl_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
 START_TEST(efl_test_promise_future_cancel)
 {
    Efl_Promise *p;
@@ -1224,6 +1263,7 @@ void ecore_test_ecore_promise(TCase *tc)
    tcase_add_test(tc, efl_test_promise_future_optional_cancel);
    tcase_add_test(tc, efl_test_promise_all);
    tcase_add_test(tc, efl_test_promise_all_after_value_set);
+   tcase_add_test(tc, efl_test_promise_future_success_before_get);
    tcase_add_test(tc, efl_test_promise_race);
    tcase_add_test(tc, efl_test_future_link);
    tcase_add_test(tc, efl_test_recursive_mess);
