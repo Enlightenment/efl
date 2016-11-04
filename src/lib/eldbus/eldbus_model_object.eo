@@ -10,7 +10,7 @@ class Eldbus.Model.Object (Efl.Object, Efl.Model) {
 
               @since 1.16]]
             params {
-                @in type: int; [[The connection type]]
+                @in type: Eldbus.Connection.Type; [[The connection type]]
                 @in address: string; [[Remote address of DBus]]
                 @in private_: bool; [[Non shared DBus connection]]
                 @in bus: string; [[DBus Name or unique-id]]
@@ -29,30 +29,35 @@ class Eldbus.Model.Object (Efl.Object, Efl.Model) {
         }
     @property type {
             [[Connection type]]
+            get { }
             values {
-                type: int; [[Connection type]]
+                type: Eldbus.Connection.Type; [[Connection type]]
             }
         }
     @property address {
             [[Remote address of DBus]]
+            get { }
             values {
                 address: string; [[Address]]
             }
         }
     @property private {
             [[Indicate if the DBus connection is shared or private]]
+            get { }
             values {
                 private_: bool; [[Private DBus connection]]
             }
         }
     @property bus {
             [[DBus Name or unique-id]]
+            get { }
             values {
                 bus: string; [[DBus name]]
             }
         }
     @property path {
             [[DBus path]]
+            get { }
             values {
                 path: string; [[DBus path]]
             }

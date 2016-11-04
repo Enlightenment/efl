@@ -48,7 +48,7 @@ _eldbus_model_object_efl_object_constructor(Eo *obj, Eldbus_Model_Object_Data *p
 static void
 _eldbus_model_object_constructor(Eo *obj EINA_UNUSED,
                                  Eldbus_Model_Object_Data *pd,
-                                 int type,
+                                 Eldbus_Connection_Type type,
                                  const char* address,
                                  Eina_Bool private,
                                  const char* bus,
@@ -231,35 +231,16 @@ _eldbus_model_object_address_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *
    return pd->address;
 }
 
-static void
-_eldbus_model_object_address_set(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd, const char *value)
-{
-   eina_stringshare_del(pd->address);
-   pd->address = eina_stringshare_add(value);
-}
-
 static Eina_Bool
 _eldbus_model_object_private_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
 {
    return pd->private;
 }
 
-static void
-_eldbus_model_object_private_set(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd, Eina_Bool value)
-{
-   pd->private = value;
-}
-
-static int
+static Eldbus_Connection_Type
 _eldbus_model_object_type_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
 {
    return pd->type;
-}
-
-static void
-_eldbus_model_object_type_set(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd, int value)
-{
-   pd->type = value;
 }
 
 static const char *
@@ -268,24 +249,10 @@ _eldbus_model_object_bus_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
    return pd->bus;
 }
 
-static void
-_eldbus_model_object_bus_set(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd, const char *value)
-{
-   eina_stringshare_del(pd->bus);
-   pd->bus = eina_stringshare_add(value);
-}
-
 static const char *
 _eldbus_model_object_path_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
 {
    return pd->path;
-}
-
-static void
-_eldbus_model_object_path_set(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd, const char *value)
-{
-   eina_stringshare_del(pd->path);
-   pd->path = eina_stringshare_add(value);
 }
 
 static void

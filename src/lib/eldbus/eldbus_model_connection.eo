@@ -1,3 +1,5 @@
+import eldbus_types;
+
 class Eldbus.Model.Connection (Efl.Object, Efl.Model) {
     [[Eldbus model connection class]]
 
@@ -7,25 +9,28 @@ class Eldbus.Model.Connection (Efl.Object, Efl.Model) {
 
               @since 1.16]]
             params {
-                @in type: int; [[The connection type]]
+                @in type: Eldbus.Connection.Type; [[The connection type]]
                 @in address: string; [[Remote address of DBus]]
                 @in private_: bool; [[Non shared dbus connection]]
             }
         }
     @property type {
             [[Connection type]]
+            get { }
             values {
-                type: int; [[Connection type]]
+                type: Eldbus.Connection.Type; [[Connection type]]
             }
         }
     @property address {
             [[Remote DBus address]]
+            get { }
             values {
                 address: string; [[Address]]
             }
         }
     @property private {
             [[Indicate if the DBus connection is shared or private]]
+            get { }
             values {
                 private_: bool; [[Private DBus connection]]
             }

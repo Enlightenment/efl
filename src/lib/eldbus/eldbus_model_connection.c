@@ -39,7 +39,7 @@ _eldbus_model_connection_efl_object_constructor(Eo *obj, Eldbus_Model_Connection
 static void
 _eldbus_model_connection_constructor(Eo *obj EINA_UNUSED,
                                      Eldbus_Model_Connection_Data *pd,
-                                     int type,
+                                     Eldbus_Connection_Type type,
                                      const char* address,
                                      Eina_Bool private)
 {
@@ -212,35 +212,16 @@ _eldbus_model_connection_address_get(Eo *obj EINA_UNUSED, Eldbus_Model_Connectio
    return pd->address;
 }
 
-static void
-_eldbus_model_connection_address_set(Eo *obj EINA_UNUSED, Eldbus_Model_Connection_Data *pd, const char *value)
-{
-   eina_stringshare_del(pd->address);
-   pd->address = eina_stringshare_add(value);
-}
-
 static Eina_Bool
 _eldbus_model_connection_private_get(Eo *obj EINA_UNUSED, Eldbus_Model_Connection_Data *pd)
 {
    return pd->private;
 }
 
-static void
-_eldbus_model_connection_private_set(Eo *obj EINA_UNUSED, Eldbus_Model_Connection_Data *pd, Eina_Bool value)
-{
-   pd->private = value;
-}
-
-static int
+static Eldbus_Connection_Type
 _eldbus_model_connection_type_get(Eo *obj EINA_UNUSED, Eldbus_Model_Connection_Data *pd)
 {
    return pd->type;
-}
-
-static void
-_eldbus_model_connection_type_set(Eo *obj EINA_UNUSED, Eldbus_Model_Connection_Data *pd, int value)
-{
-   pd->type = value;
 }
 
 static void

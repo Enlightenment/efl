@@ -4,6 +4,16 @@ struct Eldbus.Proxy; [[Represents a client object bound to an interface]]
 struct Eldbus.Connection; [[Represents a connection of one the type of connection with the DBus daemon.]]
 struct Eldbus.Object; [[Represents an object path already attached with bus name or unique id]]
 
+enum @extern Eldbus.Connection.Type
+{
+    unknown = 0, [[sentinel, not a real type]]
+    session, [[regular user session bus, used for applications and services running per user]]
+    system, [[system-wide connection bus, used for system services]]
+    starter, [[Uses whatever bus started our application, be session or system]]
+    address, [[A private bus at a specific address]]
+    last, [[sentinel, not a real type]]
+}
+
 enum Eldbus.Introspection.Argument_Direction
 {
    [[Argument direction]]
