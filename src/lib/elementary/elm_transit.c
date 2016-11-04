@@ -479,6 +479,9 @@ _recover_image_uv(Evas_Object *obj, Evas_Map *map, Eina_Bool revert, Eina_Bool b
    //Since the map is not proper for all types of objects,
    //Need to handle uvs only for image objects
    int iw, ih;
+   int x, y, w, h;
+   int fill_x, fill_y, fill_w, fill_h;
+
    const char *type = evas_object_type_get(obj);
    if ((!type) || (strcmp(type, "image"))) return EINA_FALSE;
    if (evas_object_image_source_get(obj)) return EINA_FALSE;
@@ -494,10 +497,34 @@ _recover_image_uv(Evas_Object *obj, Evas_Map *map, Eina_Bool revert, Eina_Bool b
      }
    else
      {
-        evas_map_point_image_uv_set(map, 0, 0, 0);
-        evas_map_point_image_uv_set(map, 1, iw, 0);
-        evas_map_point_image_uv_set(map, 2, iw, ih);
-        evas_map_point_image_uv_set(map, 3, 0, ih);
+        if (evas_object_image_filled_get(obj))
+          {
+             x = 0;
+             y = 0;
+             w = iw;
+             h = ih;
+          }
+        //Zooming image fill area.
+        else
+          {
+             efl_gfx_fill_get(obj, &fill_x, &fill_y, &fill_w, &fill_h);
+             efl_gfx_geometry_get(obj, NULL, NULL, &w, &h);
+
+             double rate_x = (double) w / (double) fill_w;
+             double rate_y = (double) h / (double) fill_h;
+             double rate_x2 = (double) iw / (double) fill_w;
+             double rate_y2 = (double) ih / (double) fill_h;
+
+             x = -(int)((double) fill_x * rate_x2);
+             y = -(int)((double) fill_y * rate_y2);
+             w = (int)(((double) iw) * rate_x) + x;
+             h = (int)(((double) ih) * rate_y) + y;
+          }
+
+        evas_map_point_image_uv_set(map, 0, x, y);
+        evas_map_point_image_uv_set(map, 1, w, y);
+        evas_map_point_image_uv_set(map, 2, w, h);
+        evas_map_point_image_uv_set(map, 3, x, h);
      }
    return EINA_TRUE;
 }
