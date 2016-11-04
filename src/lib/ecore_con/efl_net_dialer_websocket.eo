@@ -307,7 +307,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
 
     events {
         message,text: string; [[Received a text string message (opcode=0x1)]]
-        message,binary: const(Eina.Slice)*; [[Received a binary message (opcode=0x2)]]
+        message,binary: ptr(const(Eina.Slice)); [[Received a binary message (opcode=0x2)]]
         pong: string; [[Received a pong (opcode=0xA) with optional message/reason]]
         closed,reason: Efl.Net.Dialer.Websocket.Closed_Reason; [[Received a request to close the connection. It may be a reply/confirmation from a local request, see @.close_request, or some server-generated reason. After this point, no more messages are allowed to be sent and no more will be received. @Efl.Io.Closer.close will be called.]]
     }

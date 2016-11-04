@@ -64,15 +64,15 @@ class Ecore.Con.Eet.Base (Efl.Object) {
          legacy: ecore_con_eet;
          params {
             name: string; [[The name of the eet stream.]]
-            edd: Eet.Data.Descriptor *; [[The Eet.Data.Descriptor that
-                                          is to be registered.]]
+            edd: ptr(Eet.Data.Descriptor); [[The Eet.Data.Descriptor that
+                                             is to be registered.]]
          }
       }
       send {
          [[Function to send data.]]
          params {
-            reply: Ecore.Con.Reply *; [[Contains the ecore_con_eet object
-                                        to which the data has to be sent.]]
+            reply: ptr(Ecore.Con.Reply); [[Contains the ecore_con_eet object
+                                           to which the data has to be sent.]]
             name: string; [[The name of the eet stream.]]
             value: void_ptr; [[Actual data]]
          }
@@ -80,8 +80,8 @@ class Ecore.Con.Eet.Base (Efl.Object) {
       raw_send {
          [[Function to send raw data.]]
          params {
-            reply: Ecore.Con.Reply *; [[Contains the ecore_con_eet object
-                                        to which the data has to be sent.]]
+            reply: ptr(Ecore.Con.Reply); [[Contains the ecore_con_eet object
+                                           to which the data has to be sent.]]
             protocol_name: string; [[The name of the eet stream.]]
             section: string; [[Name of section in the eet descriptor.]]
             value: void_ptr; [[The value of the section.]]
