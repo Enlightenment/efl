@@ -109,7 +109,7 @@ class Ecore.Audio (Efl.Object)
            @since 1.8
          ]]
          params {
-              vio: Ecore.Audio.Vio *; [[the @Ecore.Audio.Vio struct with
+              vio: ptr(Ecore.Audio.Vio); [[the @Ecore.Audio.Vio struct with
                                         the function callbacks
                                       ]]
               data: void_ptr; [[user data to pass to the VIO functions]]

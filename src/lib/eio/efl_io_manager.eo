@@ -60,7 +60,7 @@ class Efl.Io.Manager (Efl.Loop_User)
       [[Retrieves or sets information of a given extended attribute.]]
       set {
          values {
-	    data: Eina.Binbuf *;
+            data: ptr(Eina.Binbuf);
             flags: Eina.Xattr.Flags;
          }
          return: future<uint64>;
@@ -88,7 +88,7 @@ class Efl.Io.Manager (Efl.Loop_User)
     close {
       [[Closes an open Eina.File.]]
       params {
-        @in file: Eina.File*;
+        @in file: ptr(Eina.File);
         // Here we're just interested whether the promise was fullfilled or not. No value needed.
       }
       return: future<int>;
