@@ -164,6 +164,8 @@ struct _Efl_Ui_Win_Data
 
    Evas_Object *main_menu;
 
+   Efl_Ui_Focus_Manager *manager;
+
    struct
    {
       const char  *name;
@@ -5214,11 +5216,16 @@ _efl_ui_win_efl_object_finalize(Eo *obj, Efl_Ui_Win_Data *_pd)
 }
 
 EOLIAN static Eo *
-_efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED)
+_efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
 {
    /* Do nothing. */
    /* XXX: We are calling the constructor chain from the finalizer. It's
     * really bad and hacky. Needs fixing. */
+   pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+    efl_ui_focus_manager_root_set(efl_added, obj)
+   );
+
+   efl_composite_attach(obj, pd->manager);
 
    return obj;
 }
