@@ -15,10 +15,10 @@ interface Efl.Model ()
 
                  properties_get is due to provide callers a way the fetch the
                  current properties implemented/used by the model. The event
-                 EFL_MODEL_EVENT_PROPERTIES_CHANGE will be raised to notify
+                 EFL_MODEL_EVENT_PROPERTIES_CHANGED will be raised to notify
                  listeners of any modifications in the properties.
 
-                 See also \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGE.
+                 See also \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGED.
 
                  @since 1.14
                ]]
@@ -34,14 +34,14 @@ interface Efl.Model ()
              before being able to see/set properties. This function sets
              a new property value into given property name. Once the
              operation is completed the concrete implementation should
-             raise EFL_MODEL_EVENT_PROPERTIES_CHANGE event in order to
+             raise EFL_MODEL_EVENT_PROPERTIES_CHANGED event in order to
              notify listeners of the new value of the property.
 
              If the model doesn't have the property then there are two
              possibilities, either raise an error or create the new
              property in model
 
-             See @.property_get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGE
+             See @.property_get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGED
 
              @since 1.14
             ]]
@@ -55,10 +55,10 @@ interface Efl.Model ()
            [[Retrieve the value of a given property name.
 
              At this point the caller is free to get values from properties.
-             The event EFL_MODEL_EVENT_PROPERTIES_CHANGE may be raised to
+             The event EFL_MODEL_EVENT_PROPERTIES_CHANGED may be raised to
              notify listeners of the property/value.
 
-             See @.properties.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGE
+             See @.properties.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGED
 
              @since 1.14
            ]]
