@@ -164,7 +164,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    if (!ee) goto shutdown_edje;
 
    ecore_evas_callback_delete_request_set(ee, _on_delete);
-   ecore_evas_title_set(ee, "Edje Basics Example");
+   ecore_evas_title_set(ee, "Edje Signals and Messages Example");
 
    evas = ecore_evas_get(ee);
 

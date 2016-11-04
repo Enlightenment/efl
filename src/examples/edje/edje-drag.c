@@ -5,7 +5,7 @@
  * buffer one). See stdout/stderr for output.
  *
  * @verbatim
- * edje_cc drag.edc && gcc -o drag-box drag-box.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
+ * edje_cc drag.edc && gcc -o edje-drag edje-drag.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
  * @endverbatim
  */
 
@@ -138,7 +138,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 
    ecore_evas_callback_destroy_set(ee, _on_destroy);
    ecore_evas_callback_resize_set(ee, _on_canvas_resize);
-   ecore_evas_title_set(ee, "Edje Box Example");
+   ecore_evas_title_set(ee, "Edje Drag Example");
 
    evas = ecore_evas_get(ee);
 

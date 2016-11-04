@@ -5,7 +5,7 @@
  * buffer one). See stdout/stderr for output.
  *
  * @verbatim
- * edje_cc swallow.edc && gcc -o edje-textblock-hyphenation edje-textblock-hyphenation.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
+ * edje_cc textblock-hyphen.edc && gcc -o edje-textblock-hyphenation edje-textblock-hyphenation.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
  * @endverbatim
  */
 

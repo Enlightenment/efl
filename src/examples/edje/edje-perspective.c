@@ -190,7 +190,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 
    ecore_evas_callback_destroy_set(ee, _on_destroy);
    ecore_evas_callback_resize_set(ee, _on_canvas_resize);
-   ecore_evas_title_set(ee, "Edje Box Example");
+   ecore_evas_title_set(ee, "Edje Perspective Example");
 
    ecore_evas_data_set(ee, "app", &app);
 
