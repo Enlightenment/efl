@@ -456,6 +456,9 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     on_create : 1; /**< This is true when the widget is on creation(general widget constructor). */
    Eina_Bool                     on_destroy: 1; /**< This is true when the widget is on destruction(general widget destructor). */
    Eina_Bool                     provider_lookup : 1; /**< This is true when efl_provider_find is currently walking the tree */
+   struct {
+     Efl_Ui_Focus_Manager *manager;
+   } focus;
 } Elm_Widget_Smart_Data;
 
 /**

@@ -199,6 +199,24 @@ elm_widget_focus_highlight_enabled_get(const Evas_Object *obj)
    return EINA_FALSE;
 }
 
+static void
+_focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
+{
+   if (pd->can_focus && !pd->focus.manager)
+     {
+        pd->focus.manager = efl_ui_focus_user_manager_get(obj);
+        if (pd->focus.manager != obj)
+          efl_ui_focus_manager_register(pd->focus.manager, obj, pd->focus.manager, NULL);
+        else
+          pd->focus.manager = NULL;
+     }
+   else if (!pd->can_focus && pd->focus.manager)
+     {
+        efl_ui_focus_manager_unregister(pd->focus.manager, obj);
+        pd->focus.manager = NULL;
+     }
+}
+
 /**
  * @internal
  *
@@ -1470,6 +1488,8 @@ _elm_widget_can_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool can_focu
           }
         efl_event_callback_array_del(obj, focus_callbacks(), NULL);
      }
+     if (efl_finalized_get(obj))
+       _focus_state_eval(obj, sd);
 }
 
 EOLIAN static Eina_Bool
@@ -3866,11 +3886,30 @@ _elm_widget_theme_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *ed
    return ret;
 }
 
+static void
+_convert(Efl_Dbg_Info *info, Eina_List *ptr_list)
+{
+   Eina_List *n;
+   void *p;
+   int i = 0;
+
+   EINA_LIST_FOREACH(ptr_list, n, p)
+     {
+        char name[100];
+
+        snprintf(name, sizeof(name), "Candidate %d", i);
+
+        EFL_DBG_INFO_APPEND(info, name, EINA_VALUE_TYPE_UINT64, p);
+        i++;
+     }
+}
+
 EOLIAN static void
 _elm_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Efl_Dbg_Info *root)
 {
    efl_dbg_info_get(efl_super(eo_obj, MY_CLASS), root);
-   Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   Efl_Ui_Focus_Relations *rel = NULL;
+   Efl_Dbg_Info *focus, *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    EFL_DBG_INFO_APPEND(group, "Wid-Type", EINA_VALUE_TYPE_STRING, elm_widget_type_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Style", EINA_VALUE_TYPE_STRING, elm_widget_style_get(eo_obj));
@@ -3880,12 +3919,36 @@ _elm_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EINA_
          evas_object_scale_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Has focus", EINA_VALUE_TYPE_CHAR,
          elm_object_focus_get(eo_obj));
+   EFL_DBG_INFO_APPEND(group, "Can focus", EINA_VALUE_TYPE_CHAR,
+         elm_widget_can_focus_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Disabled", EINA_VALUE_TYPE_CHAR,
          elm_widget_disabled_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Mirrored", EINA_VALUE_TYPE_CHAR,
          elm_widget_mirrored_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Automatic mirroring", EINA_VALUE_TYPE_CHAR,
          elm_widget_mirrored_automatic_get(eo_obj));
+
+
+   rel = efl_ui_focus_manager_fetch(_pd->focus.manager, eo_obj);
+   if (rel)
+     {
+        focus = EFL_DBG_INFO_LIST_APPEND(group, "Focus");
+
+        EFL_DBG_INFO_APPEND(focus, "Next", EINA_VALUE_TYPE_UINT64 , rel->next);
+        EFL_DBG_INFO_APPEND(focus, "Prev", EINA_VALUE_TYPE_UINT64 , rel->prev);
+
+#define ADD_PTR_LIST(name) \
+        Efl_Dbg_Info* name = EFL_DBG_INFO_LIST_APPEND(focus, " "#name" "); \
+        _convert(name, rel->name);
+
+        ADD_PTR_LIST(top)
+        ADD_PTR_LIST(down)
+        ADD_PTR_LIST(right)
+        ADD_PTR_LIST(left)
+
+#undef ADD_PTR_LIST
+
+     }
 }
 
 EAPI Eina_Bool
@@ -5821,8 +5884,22 @@ _elm_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSE
    sd->on_create = EINA_FALSE;
 
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_UNKNOWN);
+
    return obj;
 }
+
+EOLIAN static Efl_Object*
+_elm_widget_efl_object_finalize(Eo *obj, Elm_Widget_Smart_Data *pd)
+{
+  Eo *eo;
+
+  eo = efl_finalize(efl_super(obj, MY_CLASS));
+
+  _focus_state_eval(obj, pd);
+
+  return eo;
+}
+
 
 EOLIAN static void
 _elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
@@ -6089,6 +6166,30 @@ _elm_widget_efl_object_provider_find(Eo *obj, Elm_Widget_Smart_Data *pd, const E
    return lookup;
 }
 
+
+EOLIAN static Efl_Ui_Focus_Manager*
+_elm_widget_efl_ui_focus_user_manager_get(Eo *obj, Elm_Widget_Smart_Data *pd)
+{
+   Evas_Object *parent = obj;
+
+   do
+     {
+        if (efl_isa(parent, EFL_UI_FOCUS_MANAGER_CLASS))
+         return parent;
+     }
+   while((parent = elm_widget_parent_get(parent)));
+
+   ERR("Failed to find manager object");
+   return NULL;
+}
+
+EOLIAN static void
+_elm_widget_efl_ui_focus_object_geometry_get(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Rectangle *rect)
+{
+   if (!rect) return;
+
+   return efl_gfx_geometry_get(obj, &rect->x , &rect->y, &rect->w, &rect->h);
+}
 
 #include "elm_widget_item.eo.c"
 #include "elm_widget.eo.c"

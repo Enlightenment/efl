@@ -29,7 +29,7 @@ struct Elm.Tooltip; [[Elementary tooltip]]
 struct Elm.Cursor; [[Elementary cursor]]
 struct @extern Elm.Theme; [[Elementary theme]]
 
-abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi_Component)
+abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi_Component, Efl.Ui.Focus.User, Efl.Ui.Focus.Object)
 {
    [[Elementary widget abstract class]]
    legacy_prefix: elm_widget;
@@ -828,6 +828,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Object.destructor;
       Efl.Object.dbg_info_get;
       Efl.Object.provider_find;
@@ -849,6 +850,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       Elm.Interface.Atspi_Accessible.parent { get; }
       Elm.Interface.Atspi_Accessible.attributes { get; }
       Elm.Interface.Atspi_Component.focus_grab;
+      Efl.Ui.Focus.User.manager.get;
+      Efl.Ui.Focus.Object.geometry_get;
    }
    events {
       moved; [[Called when widget moved]]
