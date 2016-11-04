@@ -508,7 +508,7 @@ _recover_image_uv(Evas_Object *obj, Evas_Map *map, Eina_Bool revert, Eina_Bool b
         else
           {
              efl_gfx_fill_get(obj, &fill_x, &fill_y, &fill_w, &fill_h);
-             efl_gfx_geometry_get(obj, NULL, NULL, &w, &h);
+             efl_gfx_size_get(obj, &w, &h);
 
              double rate_x = (double) w / (double) fill_w;
              double rate_y = (double) h / (double) fill_h;
