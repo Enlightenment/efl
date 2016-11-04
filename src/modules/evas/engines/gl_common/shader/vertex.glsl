@@ -128,7 +128,10 @@ void main()
 #endif
 
 #ifdef SHD_MASK
-   tex_m = mask_coord.xy;
+   // mask_coord.w contains the Y-invert flag
+   // position on screen in [0..1] range of current pixel
+   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
+   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;
 #endif
 }
 
