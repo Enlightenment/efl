@@ -5,11 +5,31 @@
 #ifndef _MSC_VER
 # include <unistd.h>
 #endif
-#include <fcntl.h>
 #include <errno.h>
 
 #include "evas_common_private.h"
 #include "evas_private.h"
+
+#ifdef _WIN32
+
+# include <winsock2.h>
+
+# define pipe_write(fd, buffer, size) send((fd), (char *)(buffer), size, 0)
+# define pipe_read(fd, buffer, size)  recv((fd), (char *)(buffer), size, 0)
+# define pipe_close(fd)               closesocket(fd)
+# define PIPE_FD_ERROR   SOCKET_ERROR
+
+#else
+
+# include <fcntl.h>
+
+# define pipe_write(fd, buffer, size) write((fd), buffer, size)
+# define pipe_read(fd, buffer, size)  read((fd), buffer, size)
+# define pipe_close(fd)               close(fd)
+# define PIPE_FD_ERROR   -1
+
+#endif /* ! _WIN32 */
+
 
 typedef struct _Evas_Event_Async	Evas_Event_Async;
 struct _Evas_Event_Async
@@ -129,8 +149,8 @@ evas_async_events_shutdown(void)
    eina_inarray_flush(&async_queue);
    free(async_queue_cache);
 
-   close(_fd_read);
-   close(_fd_write);
+   pipe_close(_fd_read);
+   pipe_close(_fd_write);
    _fd_read = -1;
    _fd_write = -1;
 
@@ -159,7 +179,7 @@ _evas_async_events_process_single(void)
 {
    int ret, wakeup;
 
-   ret = read(_fd_read, &wakeup, sizeof(int));
+   ret = pipe_read(_fd_read, &wakeup, sizeof(int));
    if (ret < 0)
      {
         switch (errno)
@@ -293,7 +313,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 
         do
           {
-             check = write(_fd_write, &wakeup, sizeof (int));
+             check = pipe_write(_fd_write, &wakeup, sizeof (int));
           }
         while ((check != sizeof (int)) &&
                ((errno == EINTR) || (errno == EAGAIN)));
