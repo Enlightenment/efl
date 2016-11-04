@@ -35,6 +35,7 @@ embryo_set_state_anim.edc \
 embryo_set_text.edc \
 embryo_timer.edc \
 embryo_tween_anim.edc \
+entry.edc \
 external_elm_anchorblock.edc \
 external_elm_button.edc \
 external_elm_check.edc \
@@ -138,6 +139,7 @@ edje-codegen-example.c \
 edje-color-class.c \
 edje-drag.c \
 edje-edit-part-box.c \
+edje-entry.c \
 edje-multisense.c \
 edje-perspective.c \
 edje-signals-messages.c \
@@ -210,6 +212,7 @@ edje-codegen-example \
 edje-color-class \
 edje-drag\
 edje-edit-part-box \
+edje-entry \
 edje-perspective \
 edje-signals-messages \
 edje-swallow \
