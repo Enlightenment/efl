@@ -9,6 +9,14 @@ enum Efl.Ui.Focus.Direction {
     last = 6
 }
 
+struct Efl.Ui.Focus.Relations{
+    right : list<Efl.Ui.Focus.Object>;
+    left : list<Efl.Ui.Focus.Object>;
+    top : list<Efl.Ui.Focus.Object>;
+    down : list<Efl.Ui.Focus.Object>;
+    next : Efl.Ui.Focus.Object;
+    prev : Efl.Ui.Focus.Object;
+}
 
 class Efl.Ui.Focus.Manager (Efl.Object) {
     [[Calculates the directions of Efl.Ui.Focus.Direction
@@ -119,6 +127,17 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
             values {
                 root : Efl.Ui.Focus.Object @nonull; [[Will be registered into this manager object]]
             }
+        }
+        fetch {
+            [[This will fetch the data from a registered node
+
+              Be aware this function will trigger all dirty nodes to be computed
+            ]]
+            params {
+                child : Efl.Ui.Focus.Object;
+            }
+
+            return : own(ptr(Efl.Ui.Focus.Relations));
         }
     }
     implements {

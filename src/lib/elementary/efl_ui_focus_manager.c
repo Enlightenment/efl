@@ -1048,4 +1048,45 @@ _efl_ui_focus_manager_efl_object_finalize(Eo *obj, Efl_Ui_Focus_Manager_Data *pd
    return result;
 }
 
+static Eina_List*
+_convert(Eina_List *node_list)
+{
+   Eina_List *n, *par = NULL;
+   Node *node;
+
+   EINA_LIST_FOREACH(node_list, n, node)
+     par = eina_list_append(par, node->focusable);
+
+   return par;
+}
+
+EOLIAN static Efl_Ui_Focus_Relations*
+_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *child)
+{
+   Efl_Ui_Focus_Relations *res;
+   Node *n;
+
+   n = node_get(pd, child);
+
+   if (!n) return NULL;
+
+   res = calloc(1, sizeof(Efl_Ui_Focus_Relations));
+
+   dirty_flush(obj, pd);
+
+#define DIR_CLONE(dir) _convert(G(n).directions[dir].partners);
+
+   res->right = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_RIGHT);
+   res->left = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_LEFT);
+   res->top = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_UP);
+   res->down = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_DOWN);
+   res->next = _next(n)->focusable;
+   res->prev = _prev(n)->focusable;
+
+#undef DIR_CLONE
+
+   return res;
+}
+
+
 #include "efl_ui_focus_manager.eo.c"
