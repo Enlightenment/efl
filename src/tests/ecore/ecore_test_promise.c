@@ -470,7 +470,6 @@ START_TEST(efl_test_promise_future_success_before_get)
    Efl_Future *f;
    Future_Ok fo = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
-   int progress = 7;
    int value = 42;
 
    ecore_init();
