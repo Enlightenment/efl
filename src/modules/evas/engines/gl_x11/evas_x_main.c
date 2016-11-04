@@ -706,7 +706,7 @@ eng_window_use(Outbuf *gw)
 #else
    if (xwin)
      {
-        if (glXGetCurrentContext() != xwin->context)
+        if (evas_glXGetCurrentContext_th() != xwin->context)
            force_use = EINA_TRUE;
      }
 #endif
@@ -1664,7 +1664,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
 #endif
    // XXX: if partial swaps can be done use re->rects
 //   measure(0, "swap");
-   glXSwapBuffers(ob->disp, ob->glxwin);
+   evas_glXSwapBuffers_th(ob->disp, ob->glxwin);
 //   measure(1, "swap");
 #endif
    // clear out rects after swap as we may use them during swap

@@ -253,7 +253,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         ret = evas_eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (!ret)
           {
-             int err = evas_eglGetError_th();
+             int err = evas_eglGetError_evgl_th();
              glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
              ERR("evas_eglMakeCurrent() failed! Error Code=%#x", err);
              return 0;
@@ -276,7 +276,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
 
         if (!ret)
           {
-             int err = evas_eglGetError_th();
+             int err = evas_eglGetError_evgl_th();
              glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
              ERR("evas_eglMakeCurrent() failed! Error Code=%#x", err);
              return 0;
@@ -301,7 +301,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
      }
 
 
-   if ((glXGetCurrentContext() != ctx))
+   if ((evas_glXGetCurrentContext_evgl_th() != ctx))
      {
         //!!!! Does it need to be flushed with it's set to NULL above??
         // Flush remainder of what's in Evas' pipeline
@@ -1924,7 +1924,7 @@ eng_gl_current_context_get(void *data EINA_UNUSED)
    if (evas_eglGetCurrentContext() == context)
      return ctx;
 #else
-   if (glXGetCurrentContext() == context)
+   if (evas_glXGetCurrentContext_th() == context)
      return ctx;
 #endif
 
