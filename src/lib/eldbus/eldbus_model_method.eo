@@ -8,8 +8,8 @@ class Eldbus.Model.Method (Eldbus.Model.Arguments) {
 
               @since 1.16]]
             params {
-                @in proxy: Eldbus.Proxy*; [[Eldbus proxy]]
-                @in method: const(Eldbus.Introspection.Method)*; [[The introspected method]]
+                @in proxy: ptr(Eldbus.Proxy); [[Eldbus proxy]]
+                @in method: ptr(const(Eldbus.Introspection.Method)); [[The introspected method]]
             }
         }
         call {

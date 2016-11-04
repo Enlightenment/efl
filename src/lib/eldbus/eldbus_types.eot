@@ -37,26 +37,26 @@ struct Eldbus.Introspection.Node
 {
    [[DBus Node]]
    name: stringshare; [[Node name (optional)]]
-   nodes: list<void *>; [[List with nodes]]
-   interfaces: list<void *>; [[List with interfaces]]
+   nodes: list<void_ptr>; [[List with nodes]]
+   interfaces: list<void_ptr>; [[List with interfaces]]
 }
 
 struct Eldbus.Introspection.Interface
 {
    [[DBus Interface]]
    name: stringshare; [[Interface name]]
-   methods: list<void *>; [[List with interface methods]]
-   signals: list<void *>; [[List with interface signals]]
-   properties: list<void *>; [[List with interface properties]]
-   annotations: list<void *>; [[List with interface annotations]]
+   methods: list<void_ptr>; [[List with interface methods]]
+   signals: list<void_ptr>; [[List with interface signals]]
+   properties: list<void_ptr>; [[List with interface properties]]
+   annotations: list<void_ptr>; [[List with interface annotations]]
 }
 
 struct Eldbus.Introspection.Method
 {
    [[DBus Method]]
    name: stringshare; [[Method name]]
-   arguments: list<void *>; [[List with method arguments]]
-   annotations: list<void *>; [[List with method annotations]]
+   arguments: list<void_ptr>; [[List with method arguments]]
+   annotations: list<void_ptr>; [[List with method annotations]]
 }
 
 struct Eldbus.Introspection.Property
@@ -65,7 +65,7 @@ struct Eldbus.Introspection.Property
    name: stringshare; [[Property name]]
    type: stringshare; [[Property type]]
    access: Eldbus.Introspection.Property_Access; [[Property access rights]]
-   annotations: list<void *>; [[List with property annotations]]
+   annotations: list<void_ptr>; [[List with property annotations]]
 }
 
 struct Eldbus.Introspection.Annotation
@@ -87,6 +87,6 @@ struct Eldbus.Introspection.Signal
 {
    [[DBus Signal]]
     name: stringshare; [[Signal name]]
-    arguments: list<Eldbus.Introspection.Argument *>; [[List with signal arguments]]
-    annotations: list<Eldbus.Introspection.Annotation *>; [[List with signal annotations]]
+    arguments: list<ptr(Eldbus.Introspection.Argument)>; [[List with signal arguments]]
+    annotations: list<ptr(Eldbus.Introspection.Annotation)>; [[List with signal annotations]]
 }

@@ -9,9 +9,9 @@ class Eldbus.Model.Arguments (Efl.Object, Efl.Model) {
 
             @since 1.16]]
             params {
-                @in proxy: Eldbus.Proxy*; [[Eldbus proxy]]
+                @in proxy: ptr(Eldbus.Proxy); [[Eldbus proxy]]
                 @in name: string; [[Name]]
-                @in arguments: const(list<Eldbus.Introspection.Argument *>); [[The introspected arguments]]
+                @in arguments: const(list<ptr(Eldbus.Introspection.Argument)>); [[The introspected arguments]]
             }
         }
     @property name {

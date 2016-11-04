@@ -9,8 +9,8 @@ class Eldbus.Model.Proxy (Efl.Object, Efl.Model) {
 
               @since 1.16]]
             params {
-                @in object: Eldbus.Object *; [[Eldbus object]]
-                @in interface: const(Eldbus.Introspection.Interface)*; [[The introspected interface]]
+                @in object: ptr(Eldbus.Object); [[Eldbus object]]
+                @in interface: ptr(const(Eldbus.Introspection.Interface)); [[The introspected interface]]
             }
         }
     @property name {
