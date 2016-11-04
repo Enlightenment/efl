@@ -74,6 +74,7 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_list.h"
+#include "eina_freeq.h"
 
 
 /*============================================================================*
@@ -182,13 +183,26 @@ _eina_list_mempool_accounting_new(EINA_UNUSED Eina_List *list)
 
    return tmp;
 }
+
+static void
+_eina_list_accounting_free(void *accounting)
+{
+   eina_mempool_free(_eina_list_accounting_mp, accounting);
+}
+
+static void
+_eina_list_list_free(void *list)
+{
+   eina_mempool_free(_eina_list_mp, list);
+}
+
 static inline void
 _eina_list_mempool_accounting_free(Eina_List_Accounting *accounting)
 {
    EINA_MAGIC_CHECK_LIST_ACCOUNTING(accounting);
 
    EINA_MAGIC_SET(accounting, EINA_MAGIC_NONE);
-   eina_mempool_free(_eina_list_accounting_mp, accounting);
+   eina_freeq_ptr_main_add(accounting, _eina_list_accounting_free, sizeof(*accounting));
 }
 
 static inline Eina_List *
@@ -217,7 +231,7 @@ _eina_list_mempool_list_free(Eina_List *list)
      }
 
    EINA_MAGIC_SET(list, EINA_MAGIC_NONE);
-   eina_mempool_free(_eina_list_mp, list);
+   eina_freeq_ptr_main_add(list, _eina_list_list_free, sizeof(*list));
 }
 
 static Eina_List *
@@ -534,6 +548,7 @@ on_init_fail:
 Eina_Bool
 eina_list_shutdown(void)
 {
+   eina_freeq_clear(eina_freeq_main_get());
    eina_mempool_del(_eina_list_accounting_mp);
    eina_mempool_del(_eina_list_mp);
 
