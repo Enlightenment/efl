@@ -68,6 +68,7 @@
 #include "eina_inarray.h"
 #include "eina_value.h"
 #include "eina_evlog.h"
+#include "eina_freeq.h"
 /* no model for now
 #include "eina_model.h"
  */
@@ -265,6 +266,7 @@ eina_init(void)
         mtrace();
      }
 #endif
+   eina_freeq_main_set(eina_freeq_new());
 
    if (!eina_log_init())
      {
@@ -332,6 +334,7 @@ eina_shutdown(void)
 #ifdef EINA_HAVE_DEBUG_THREADS
 	pthread_mutex_destroy(&_eina_tracking_lock);
 #endif
+        eina_freeq_free(eina_freeq_main_get());
 #ifdef MT
         if (_mt_enabled)
           {

@@ -81,6 +81,7 @@ static const Efl_Test_Case etc[] = {
    { "Bezier", eina_test_bezier },
    { "SafePointer", eina_test_safepointer },
    { "Slice", eina_test_slice },
+   { "Free Queue", eina_test_freeq },
    { NULL, NULL }
 };
 

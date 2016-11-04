@@ -73,5 +73,6 @@ void eina_test_promise(TCase *tc);
 void eina_test_bezier(TCase *tc);
 void eina_test_safepointer(TCase *tc);
 void eina_test_slice(TCase *tc);
+void eina_test_freeq(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

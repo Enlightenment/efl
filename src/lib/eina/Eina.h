@@ -272,6 +272,7 @@ extern "C" {
 #include <eina_bezier.h>
 #include <eina_safepointer.h>
 #include <eina_slice.h>
+#include <eina_freeq.h>
 
 #undef EAPI
 #define EAPI
