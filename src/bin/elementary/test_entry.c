@@ -3137,5 +3137,6 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    efl_event_callback_add(en, EFL_UI_TEXT_EVENT_ANCHOR_HOVER_OPENED, my_efl_ui_text_anchor_hover_opened, en);
 
+   evas_object_resize(win, 480, 320);
    evas_object_show(win);
 }
