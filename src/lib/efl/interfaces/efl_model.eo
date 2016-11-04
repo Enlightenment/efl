@@ -121,7 +121,7 @@ interface Efl.Model ()
 
               Add a new child, possibly dummy, depending on the implementation,
               of a internal keeping. When the child is effectively
-              added the event \@ref EFL_MODEL_EVENT_CHILD_ADD is then raised
+              added the event \@ref EFL_MODEL_EVENT_CHILD_ADDED is then raised
               and the new child is kept along with other children.
 
               @since 1.14
