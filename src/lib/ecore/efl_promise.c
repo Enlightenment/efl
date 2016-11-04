@@ -525,6 +525,15 @@ _efl_promise_future_get(Eo *obj, Efl_Promise_Data *pd EINA_UNUSED)
    fd->promise = efl_data_xref(obj, EFL_PROMISE_CLASS, f);
    fd->promise->futures = eina_list_append(fd->promise->futures, fd);
 
+   // The promise has already been fullfilled, prepare the propagation
+   if (fd->promise->message)
+     {
+        fd->message = fd->promise->message;
+        EINA_REFCOUNT_REF(fd->message);
+
+        _efl_loop_future_propagate(f, fd);
+     }
+
    return f;
 }
 
