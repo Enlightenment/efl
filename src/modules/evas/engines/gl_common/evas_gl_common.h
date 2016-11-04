@@ -103,6 +103,9 @@ typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 struct _Evas_GL_Program
 {
    unsigned int flags, hitcount, tex_count;
+   struct {
+      GLuint mvp, rotation_id;
+   } uniform;
    GLuint prog;
 
    Eina_Bool reset : 1;

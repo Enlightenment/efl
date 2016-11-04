@@ -158,7 +158,7 @@ void main()
      * col
 #endif
 #ifdef SHD_MASK
-	 * ma
+     * ma
 #endif
 #ifdef SHD_TEXA
      * texture2D(texa, tex_a).r

@@ -726,17 +726,11 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    eina_iterator_free(it);
 
    if (gc->state.current.prog != PRG_INVALID)
-     /*
      {
-        glUseProgram(gc->shared->shader[0].prog);
-        glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader[0].prog, "mvp"), 1, GL_FALSE, gc->shared->proj);
-        gc->shared->shader[0].reset = EINA_FALSE;
-     }
-   else
-   */
-     {
-        glUseProgram(gc->state.current.prog->prog);
-        glUniformMatrix4fv(glGetUniformLocation(gc->state.current.prog->prog, "mvp"), 1, GL_FALSE, gc->shared->proj);
+        prog = gc->state.current.prog;
+        glUseProgram(prog->prog);
+        glUniform1i(prog->uniform.rotation_id, gc->rot / 90);
+        glUniformMatrix4fv(prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
      }
 }
 
@@ -1442,9 +1436,20 @@ _push_mask(Evas_Engine_GL_Context *gc, const int pn, int nm, Evas_GL_Texture *mt
    if (!gw || !gh || !mw || !mh || !mtex->pt->w || !mtex->pt->h)
      return EINA_FALSE;
 
-   /* vertex shader:
-    * vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
-    * tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;
+   /* Vertex shader:
+    *
+    * INPUTS:
+    *   vec4 mask_coord = vec4(glmx, glmy, glmw, glmh);
+    *   int rotation_id = gc->rot / 90;
+    *
+    * CODE:
+    *   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
+    *   vec2 pos[4]; // no ctor-style init because of GLSL-ES (version 100)
+    *   pos[0] = vec2(mask_Position.xy);
+    *   pos[1] = vec2(1.0 - mask_Position.y, mask_Position.x);
+    *   pos[2] = vec2(1.0 - mask_Position.xy);
+    *   pos[3] = vec2(mask_Position.y, 1.0 - mask_Position.x);
+    *   tex_m = pos[rotation_id].xy * abs(mask_coord.zw) + mask_coord.xy;
     */
    glmx = (double)((mtex->x * mw) - (mtex->w * mx)) / (double)(mw * mtex->pt->w);
    glmy = (double)((mtex->y * mh) - (mtex->h * my)) / (double)(mh * mtex->pt->h);
@@ -1464,13 +1469,6 @@ _push_mask(Evas_Engine_GL_Context *gc, const int pn, int nm, Evas_GL_Texture *mt
         double samy = (double)(mtex->h) / (double)(mtex->pt->h * mh * 4);
         PUSH_MASKSAM(pn, samx, samy, cnt);
      }
-
-   /*
-   DBG("%d,%d %dx%d --> %f , %f - %f x %f [gc %dx%d, tex %d,%d %dx%d, pt %dx%d]",
-       mx, my, mw, mh,
-       glmx, glmy, glmw, glmh,
-       gc->w, gc->h, mtex->x, mtex->y, mtex->w, mtex->h, mtex->pt->w, mtex->pt->h);
-   */
 
    return EINA_TRUE;
 }
@@ -3032,7 +3030,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              glUseProgram(prog->prog);
              if (prog->reset)
                {
-                  glUniformMatrix4fv(glGetUniformLocation(prog->prog, "mvp"), 1, GL_FALSE, gc->shared->proj);
+                  glUniform1i(prog->uniform.rotation_id, gc->rot / 90);
+                  glUniformMatrix4fv(prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
                   prog->reset = EINA_FALSE;
                }
           }
