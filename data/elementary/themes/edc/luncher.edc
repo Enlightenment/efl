@@ -24,6 +24,8 @@ group { name: "e/gadget/luncher/icon";
    parts {
       part { name: "item_clip"; type: RECT;
          description { state: "default" 0.0;
+            rel1.to: "e.swallow.icon";
+            rel2.to: "e.swallow.icon";
             rel1.offset: -100 -100;
             rel2.offset: 99 99;
             color: 255 255 255 255;
@@ -124,6 +126,12 @@ group { name: "e/gadget/luncher/icon";
             rel1.offset: 1 0;
             rel2.offset: -1 -1;
          }
+         description { state: "full" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: -1.0 -1.0;
+            link.base: "e,state,zoom,full" "e";
+         }
       }
       part { name: "obackground"; type: RECT;
          repeat_events: 1;
@@ -217,7 +225,7 @@ group { name: "e/gadget/luncher/icon";
          transition: ACCELERATE 0.1;
       }
       program { name: "icon_off";
-         signal: "e,state,off"; source: "e";
+         signal: "e,state,off,*"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "indicator";
          target: "e.swallow.icon";
