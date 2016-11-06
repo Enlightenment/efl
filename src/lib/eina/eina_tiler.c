@@ -1202,13 +1202,26 @@ EAPI Eina_Bool
 eina_tiler_empty(Eina_Tiler *t)
 {
    EINA_MAGIC_CHECK_TILER(t, EINA_TRUE);
+   return ((!t->splitter.rects.head) && (!t->splitter.rects.tail));
+}
 
-   return !memcmp(&t->splitter.rects, &list_zeroed, sizeof (list_t));
+typedef struct _Rectangle_Same
+{
+   unsigned long long x, y;
+} Rectangle_Same;
+
+static inline Eina_Bool
+_rect_same(Eina_Rectangle *rec1, Eina_Rectangle *rec2)
+{
+   // this is ok because all the rects being compared will be aligned to 8bytes
+   Rectangle_Same *same1 = (Rectangle_Same *)rec1;
+   Rectangle_Same *same2 = (Rectangle_Same *)rec2;
+   return ((same1->x == same2->y) && (same1->y == same2->y));
 }
 
 EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
 {
-   Eina_Rectangle tmp;
+   Eina_Rectangle tmp __attribute__ ((aligned (8)));
 
    EINA_MAGIC_CHECK_TILER(t, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(r, EINA_FALSE);
@@ -1223,7 +1236,7 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
    if ((tmp.w <= 0) || (tmp.h <= 0))
       return EINA_FALSE;
 
-   if (!memcmp(&tmp, &t->last.add, sizeof (Eina_Rectangle)))
+   if (_rect_same(&tmp, &t->last.add))
       return EINA_FALSE;
 
    t->last.add = tmp;
@@ -1234,7 +1247,7 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
 
 EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
 {
-   Eina_Rectangle tmp;
+   Eina_Rectangle tmp __attribute__ ((aligned (8)));
 
    EINA_MAGIC_CHECK_TILER(t);
    EINA_SAFETY_ON_NULL_RETURN(r);
@@ -1249,7 +1262,7 @@ EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
    if ((tmp.w <= 0) || (tmp.h <= 0))
       return;
 
-   if (!memcmp(&tmp, &t->last.del, sizeof (Eina_Rectangle)))
+   if (_rect_same(&tmp, &t->last.del))
       return;
 
    t->last.del = tmp;

@@ -1002,6 +1002,8 @@ struct _Evas_Object_Proxy_Data
 
 struct _Evas_Object_Map_Data
 {
+   // WARNING - you cannot change the below cur/prev layout, content or size
+   // unless you also update evas_object_main.c _map_same() func
    struct {
       Evas_Map             *map;
       Evas_Object          *map_parent;

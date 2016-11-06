@@ -128,6 +128,21 @@ evas_object_change_reset(Evas_Object *eo_obj)
    obj->need_surface_clear = EINA_FALSE;
 }
 
+typedef struct _Map_Same
+{
+   void *p1, *p2;
+   Eina_Bool b1;
+} Map_Same;
+
+static inline Eina_Bool
+_map_same(const void *map1, const void *map2)
+{
+   const Map_Same *same1 = map1, *same2 = map2;
+   return ((same1->p1 == same2->p1) &&
+           (same1->p2 == same2->p2) &&
+           (same1->b1 == same2->b1));
+}
+
 void
 evas_object_cur_prev(Evas_Object *eo_obj)
 {
@@ -155,7 +170,7 @@ evas_object_cur_prev(Evas_Object *eo_obj)
           }
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
-   if (memcmp(&obj->map->prev, &obj->map->cur, sizeof (obj->map->cur)))
+   if (!_map_same(&obj->map->prev, &obj->map->cur))
      {
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
           map_write->prev = map_write->cur;

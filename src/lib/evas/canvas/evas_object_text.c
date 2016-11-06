@@ -33,6 +33,9 @@ struct _Evas_Text_Data
    DATA32               magic;
 
    struct {
+      // WARNING - you cannot change the below outline/shadow etc. members
+      // and their content without also updating _color_same() in this
+      // file
       struct {
          unsigned char  r, g, b, a;
       } outline, shadow, glow, glow2;
@@ -192,6 +195,13 @@ _evas_object_text_item_del(Evas_Text_Data *o, Evas_Object_Text_Item *it)
    free(it);
 }
 
+static inline Eina_Bool
+_color_same(const void *col1, const void *col2)
+{
+   const unsigned int *icol1 = col1, *icol2 = col2;
+   return (*icol1 == *icol2);
+}
+
 static void
 _evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Text_Data *o)
 {
@@ -199,10 +209,10 @@ _evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Text_Data *o
    if ((o->cur.font == o->prev.font) &&
        (o->cur.fdesc == o->prev.fdesc) &&
        (o->cur.size == o->prev.size) &&
-       (!memcmp(&o->cur.outline, &o->prev.outline, sizeof (o->cur.outline))) &&
-       (!memcmp(&o->cur.shadow, &o->prev.shadow, sizeof (o->cur.shadow))) &&
-       (!memcmp(&o->cur.glow, &o->prev.glow, sizeof (o->cur.glow))) &&
-       (!memcmp(&o->cur.glow2, &o->prev.glow2, sizeof (o->cur.glow2))) &&
+       (_color_same(&o->cur.outline, &o->prev.outline)) &&
+       (_color_same(&o->cur.shadow, &o->prev.shadow)) &&
+       (_color_same(&o->cur.glow, &o->prev.glow)) &&
+       (_color_same(&o->cur.glow2, &o->prev.glow2)) &&
        (o->cur.style == o->prev.style) &&
        (obj->cur->scale == obj->prev->scale))
      {
