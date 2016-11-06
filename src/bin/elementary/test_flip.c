@@ -80,10 +80,49 @@ my_fl_back(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSE
    elm_flip_go_to(fl, EINA_FALSE, ELM_FLIP_ROTATE_X_CENTER_AXIS);
 }
 
+static void
+_animations_ck_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Eo *fl = data;
+   char buf[PATH_MAX];
+   if (elm_check_state_get(obj))
+     {
+        Eo *ly = elm_layout_add(fl), *bt;
+        snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+        elm_layout_file_set(ly, buf, "layout");
+        evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_object_part_content_set(fl, "back", ly);
+        evas_object_show(ly);
+
+        bt = elm_button_add(ly);
+        elm_object_text_set(bt, "Button 1");
+        elm_object_part_content_set(ly, "element1", bt);
+
+        bt = elm_button_add(ly);
+        elm_object_text_set(bt, "Button 2");
+        elm_object_part_content_set(ly, "element2", bt);
+
+        bt = elm_button_add(ly);
+        elm_object_text_set(bt, "Button 3");
+        elm_object_part_content_set(ly, "element3", bt);
+     }
+   else
+     {
+        Eo *o = elm_bg_add(fl);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", elm_app_data_dir_get());
+        elm_bg_file_set(o, buf, NULL);
+        elm_object_part_content_set(fl, "back", o);
+        evas_object_show(o);
+     }
+}
+
 void
 test_flip(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *bx2, *fl, *o, *bt, *ly;
+   Evas_Object *win, *bx, *bx2, *fl, *o, *bt, *ck;
    char buf[PATH_MAX];
 
    win = elm_win_util_standard_add("flip", "Flip");
@@ -107,26 +146,6 @@ test_flip(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    elm_bg_file_set(o, buf, NULL);
    elm_object_part_content_set(fl, "front", o);
    evas_object_show(o);
-
-   ly = elm_layout_add(win);
-   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   elm_layout_file_set(ly, buf, "layout");
-   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_object_part_content_set(fl, "back", ly);
-   evas_object_show(ly);
-
-   bt = elm_button_add(ly);
-   elm_object_text_set(bt, "Button 1");
-   elm_object_part_content_set(ly, "element1", bt);
-
-   bt = elm_button_add(ly);
-   elm_object_text_set(bt, "Button 2");
-   elm_object_part_content_set(ly, "element2", bt);
-
-   bt = elm_button_add(ly);
-   elm_object_text_set(bt, "Button 3");
-   elm_object_part_content_set(ly, "element3", bt);
 
    evas_object_show(fl);
 
@@ -222,6 +241,23 @@ test_flip(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+
+   ck = elm_check_add(bx2);
+   elm_object_style_set(ck, "toggle");
+   elm_object_text_set(ck, "Allow animations");
+   elm_check_state_set(ck, EINA_TRUE);
+   evas_object_smart_callback_add(ck, "changed", _animations_ck_changed, fl);
+   elm_box_pack_end(bx2, ck);
+   evas_object_show(ck);
+   _animations_ck_changed(fl, ck, NULL);
 
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
