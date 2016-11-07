@@ -2,6 +2,7 @@
 #include "efl_canvas_image.eo.h"
 
 #define MY_CLASS EFL_CANVAS_IMAGE_CLASS
+#define MY_CLASS_NAME efl_class_name_get(MY_CLASS)
 
 Eina_Bool
 _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key)
@@ -811,5 +812,22 @@ _efl_canvas_image_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
 
    return EINA_TRUE;
 }
+
+EOLIAN static void
+_efl_canvas_image_efl_object_dbg_info_get(Eo *obj, void *pd EINA_UNUSED, Efl_Dbg_Info *root)
+{
+   efl_dbg_info_get(efl_super(obj, MY_CLASS), root);
+
+   if (efl_image_load_error_get(obj) != EFL_IMAGE_LOAD_ERROR_NONE)
+     {
+        Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+        Evas_Load_Error error = EVAS_LOAD_ERROR_GENERIC;
+
+        error = (Evas_Load_Error) _evas_image_load_error_get(obj);
+        EFL_DBG_INFO_APPEND(group, "Load Error", EINA_VALUE_TYPE_STRING,
+                            evas_load_error_str(error));
+     }
+}
+
 
 #include "efl_canvas_image.eo.c"

@@ -479,14 +479,6 @@ _efl_canvas_image_internal_efl_object_dbg_info_get(Eo *eo_obj, Evas_Image_Data *
    EFL_DBG_INFO_APPEND(group, "Key", EINA_VALUE_TYPE_STRING, key);
    EFL_DBG_INFO_APPEND(group, "Source", EINA_VALUE_TYPE_UINT64,
                           (uint64_t) (uintptr_t) evas_object_image_source_get(eo_obj));
-
-   if (efl_image_load_error_get(eo_obj) != EFL_IMAGE_LOAD_ERROR_NONE)
-     {
-        Evas_Load_Error error = EVAS_LOAD_ERROR_GENERIC;
-        error = (Evas_Load_Error) _evas_image_load_error_get(eo_obj);
-        EFL_DBG_INFO_APPEND(group, "Load Error", EINA_VALUE_TYPE_STRING,
-                           evas_load_error_str(error));
-     }
 }
 
 EOLIAN static void
