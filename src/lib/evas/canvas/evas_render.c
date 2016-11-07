@@ -185,18 +185,14 @@ _accumulate_time(double before, Eina_Bool async)
 static int _render_busy = 0;
 
 static inline Eina_Bool
-_is_obj_in_framespace(Evas_Object_Protected_Data *obj, Evas_Public_Data *evas)
+_is_obj_in_framespace(Evas_Object_Protected_Data *obj, Evas_Public_Data *evas EINA_UNUSED)
 {
-   if (obj->is_frame) return EINA_TRUE;
-
-   return RECTS_INTERSECT(0, -evas->framespace.y,
-                          evas->viewport.w, evas->viewport.h,
-                          obj->cur->geometry.x, obj->cur->geometry.y,
-                          obj->cur->geometry.w, obj->cur->geometry.h);
+   return obj->is_frame;
 }
 
 static inline void
-_evas_render_framespace_context_clip_clip(Evas_Public_Data *evas, void *ctx)
+_evas_render_framespace_context_clip_clip(Evas_Public_Data *evas, void *ctx,
+                                          int ox, int oy)
 {
    int fx, fy, fw, fh;
 
@@ -205,7 +201,7 @@ _evas_render_framespace_context_clip_clip(Evas_Public_Data *evas, void *ctx)
    fw = evas->viewport.w - evas->framespace.w;
    fh = evas->viewport.h - evas->framespace.h;
 
-   ENFN->context_clip_clip(ENDT, ctx, fx, fy, fw, fh);
+   ENFN->context_clip_clip(ENDT, ctx, fx + ox, fy + oy, fw, fh);
 }
 
 static void
@@ -1663,8 +1659,6 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                }
           }
         ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
-        if (!_is_obj_in_framespace(obj, evas))
-          _evas_render_framespace_context_clip_clip(evas, ctx);
 
         if (obj->cur->cache.clip.visible || !proxy_src_clip)
           {
@@ -1857,7 +1851,10 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                           clipper->cur->cache.clip.h);
                        ENFN->context_clip_set(ENDT, ctx, x + off_x, y + off_y, w, h);
                        if (!_is_obj_in_framespace(obj, evas))
-                         _evas_render_framespace_context_clip_clip(evas, ctx);
+                         {
+                            _evas_render_framespace_context_clip_clip
+                                  (evas, ctx, off_x - evas->framespace.x, off_y - evas->framespace.y);
+                         }
 
                        if (proxy_src_clip)
                          ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
@@ -1870,6 +1867,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                             return clean_them;
                          }
                     }
+               }
+             else if (!_is_obj_in_framespace(obj, evas))
+               {
+                  _evas_render_framespace_context_clip_clip
+                        (evas, ctx, off_x - evas->framespace.x, off_y - evas->framespace.y);
                }
 
 #ifdef REND_DBG
@@ -2444,9 +2446,6 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    context,
                                                    x, y, w, h);
-
-                  if (!_is_obj_in_framespace(obj, e))
-                    _evas_render_framespace_context_clip_clip(e, context);
                     
                   /* Clipper masks */
                   if (_evas_render_object_is_mask(obj->cur->clipper))
