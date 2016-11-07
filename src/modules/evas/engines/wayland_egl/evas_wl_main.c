@@ -371,6 +371,7 @@ eng_outbuf_swap_mode_get(Outbuf *ob)
         Render_Engine_Swap_Mode swap_mode;
         EGLint age = 0;
 
+        eina_evlog("+gl_query_surf_swap_mode", ob, 0.0, NULL);
         if (!eglQuerySurface(ob->egl_disp, ob->egl_surface[0], 
                              EGL_BUFFER_AGE_EXT, &age))
           age = 0;
@@ -395,6 +396,7 @@ eng_outbuf_swap_mode_get(Outbuf *ob)
           }
         ob->prev_age = age;
 
+        eina_evlog("-gl_query_surf_swap_mode", ob, 0.0, NULL);
         return swap_mode;
      }
 

@@ -1380,6 +1380,7 @@ eng_outbuf_swap_mode(Outbuf *ob)
    if (ob->swap_mode == MODE_AUTO && extn_have_buffer_age)
      {
         Render_Engine_Swap_Mode swap_mode;
+        eina_evlog("+gl_query_surf_swap_mode", ob, 0.0, NULL);
 #ifdef GL_GLES
         EGLint age = 0;
 
@@ -1416,6 +1417,7 @@ eng_outbuf_swap_mode(Outbuf *ob)
           }
         ob->prev_age = age;
 
+        eina_evlog("-gl_query_surf_swap_mode", ob, 0.0, NULL);
         return swap_mode;
      }
 
