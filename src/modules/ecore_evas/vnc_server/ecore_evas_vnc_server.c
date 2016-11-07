@@ -77,7 +77,8 @@ typedef struct _Ecore_Evas_Vnc_Server {
    Ecore_Fd_Handler *vnc_listen_handler;
    Ecore_Fd_Handler *vnc_listen6_handler;
    Ecore_Evas_Vnc_Client_Accept_Cb accept_cb;
-   void *accept_cb_data;
+   Ecore_Evas_Vnc_Client_Disconnected_Cb disc_cb;
+   void *cb_data;
    Ecore_Evas *ee;
    Ecore_Evas_Vnc_Key_Info_Get key_info_get_func;
    double double_click_time;
@@ -154,9 +155,12 @@ static void
 _ecore_evas_vnc_server_client_gone(rfbClientRec *client)
 {
    Ecore_Evas_Vnc_Server_Client_Data *cdata = client->clientData;
+   Ecore_Evas_Vnc_Server *server = client->screen->screenData;
 
    DBG("VNC client on seat '%s' gone", evas_device_name_get(cdata->seat));
 
+   if (server->disc_cb)
+     server->disc_cb(server->cb_data, server->ee, client->host);
    ecore_main_fd_handler_del(cdata->handler);
    evas_device_del(cdata->keyboard);
    evas_device_del(cdata->mouse);
@@ -200,7 +204,7 @@ _ecore_evas_vnc_server_client_connection_new(rfbClientRec *client)
 
    server = client->screen->screenData;
 
-   if (server->accept_cb && !server->accept_cb(server->accept_cb_data,
+   if (server->accept_cb && !server->accept_cb(server->cb_data,
                                                server->ee, client->host))
      return RFB_CLIENT_REFUSE;
 
@@ -593,6 +597,8 @@ _ecore_evas_vnc_server_draw(Evas *evas, int x, int y,
    ee = evas_data_attach_get(evas);
    server = ee->vnc_server;
 
+   if (!server) return;
+
    if (!server->frame_buffer || server->last_w != ee->w || server->last_h != ee->h)
      {
         char *new_fb;
@@ -672,7 +678,9 @@ _ecore_evas_vnc_server_draw(Evas *evas, int x, int y,
 
 EAPI Ecore_Evas_Vnc_Server *
 ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
-                          Ecore_Evas_Vnc_Client_Accept_Cb cb, void *data)
+                          Ecore_Evas_Vnc_Client_Accept_Cb accept_cb,
+                          Ecore_Evas_Vnc_Client_Disconnected_Cb disc_cb,
+                          void *data)
 {
    Ecore_Evas_Vnc_Server *server;
    Eina_Bool can_listen = EINA_FALSE;
@@ -775,8 +783,9 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
    EINA_SAFETY_ON_FALSE_GOTO(err, err_engine);
 
    server->vnc_screen->screenData = server;
-   server->accept_cb_data = data;
-   server->accept_cb = cb;
+   server->cb_data = data;
+   server->accept_cb = accept_cb;
+   server->disc_cb = disc_cb;
    server->ee = ee;
 
    return server;
@@ -795,8 +804,35 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
 EAPI void
 ecore_evas_vnc_server_del(Ecore_Evas_Vnc_Server *server)
 {
+   Evas_Engine_Info *engine;
+   Eina_Bool err;
+
    EINA_SAFETY_ON_NULL_RETURN(server);
 
+   engine = evas_engine_info_get(server->ee->evas);
+
+#ifdef BUILD_ENGINE_SOFTWARE_X11
+   if (!strcmp(server->ee->driver, "software_x11"))
+     {
+        Evas_Engine_Info_Software_X11 *x11_engine;
+
+        x11_engine = (Evas_Engine_Info_Software_X11 *)engine;
+        x11_engine->func.region_push_hook = NULL;
+     }
+#endif
+#ifdef BUILD_ENGINE_FB
+   if (!strcmp(server->ee->driver, "fb"))
+     {
+        Evas_Engine_Info_FB *fb_engine;
+
+        fb_engine = (Evas_Engine_Info_FB *)engine;
+        fb_engine->func.region_push_hook = NULL;
+     }
+#endif
+
+   err = evas_engine_info_set(server->ee->evas, engine);
+   if (!err)
+     WRN("Could not unset the region push hook callback");
    ecore_main_fd_handler_del(server->vnc_listen6_handler);
    ecore_main_fd_handler_del(server->vnc_listen_handler);
    free(server->frame_buffer);

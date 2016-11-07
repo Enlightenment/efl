@@ -3316,11 +3316,15 @@ ecore_evas_x11_shape_input_apply(Ecore_Evas *ee)
 
 EAPI Eina_Bool
 ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int port,
-                     Ecore_Evas_Vnc_Client_Accept_Cb cb, void *data)
+                     Ecore_Evas_Vnc_Client_Accept_Cb accept_cb,
+                     Ecore_Evas_Vnc_Client_Disconnected_Cb disc_cb,
+                     void *data)
 {
    Eina_Module *mod;
    void *(*vnc_new)(Ecore_Evas *, int, const char *,
-                    Ecore_Evas_Vnc_Client_Accept_Cb, void *);
+                    Ecore_Evas_Vnc_Client_Accept_Cb,
+                    Ecore_Evas_Vnc_Client_Disconnected_Cb,
+                    void *);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
 
@@ -3333,7 +3337,7 @@ ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int port,
    vnc_new = eina_module_symbol_get(mod, "ecore_evas_vnc_server_new");
    EINA_SAFETY_ON_NULL_RETURN_VAL(vnc_new, EINA_FALSE);
 
-   ee->vnc_server = vnc_new(ee, port, addr, cb, data);
+   ee->vnc_server = vnc_new(ee, port, addr, accept_cb, disc_cb, data);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ee->vnc_server, EINA_FALSE);
    return EINA_TRUE;
 }

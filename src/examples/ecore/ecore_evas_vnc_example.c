@@ -52,6 +52,12 @@ _accept_cb(void *data EINA_UNUSED, Ecore_Evas *ee EINA_UNUSED, const char *clien
    return EINA_TRUE;
 }
 
+static void
+_disc_cb(void *data EINA_UNUSED, Ecore_Evas *ee EINA_UNUSED, const char *client_host)
+{
+   printf("Client %s disconnected\n", client_host);
+}
+
 static Efl_Input_Device *
 _get_seat(Efl_Input_Device *dev)
 {
@@ -247,7 +253,7 @@ main(int argc, char *argv[])
 
    ecore_evas_show(ee);
 
-   r = ecore_evas_vnc_start(ee, "localhost", -1, _accept_cb, NULL);
+   r = ecore_evas_vnc_start(ee, "localhost", -1, _accept_cb, _disc_cb, NULL);
 
    if (!r)
      {

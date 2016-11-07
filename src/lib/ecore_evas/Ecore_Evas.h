@@ -2409,19 +2409,31 @@ EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
 typedef Eina_Bool (*Ecore_Evas_Vnc_Client_Accept_Cb)(void *data, Ecore_Evas *ee, const char *client_host);
 
 /**
+ * @brief A callback used to inform that a client has disconnected.
+ * @param data The callback data
+ * @param ee The Ecore_Evas
+ * @param client_host The adrress of the client
+ * @see ecore_evas_vnc_start()
+ * @since 1.19
+ */
+typedef void (*Ecore_Evas_Vnc_Client_Disconnected_Cb)(void *data, Ecore_Evas *ee, const char *client_host);
+
+/**
  * @brief Starts a VNC server.
  *
  * @param ee The Ecore_Evas to start the VNC server
  * @param addr The address that will be used to bind the VNC server. Use @c NULL to bind to any interface.
  * @param port The port number to start the VNC server. Use @c -1 to set the default VNC port (5900)
- * @param cb A callback used to accept a new client. If @c NULL all clients will be accepted.
+ * @param accept_cb A callback used to accept a new client. If @c NULL all clients will be accepted.
+ * @param disc_cb A callback user to inform that a client has disconnected. It may be @c NULL.
  * @param data Data to @a cb
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  * @see ecore_evas_vnc_stop()
  * @see Ecore_Evas_Vnc_Client_Accept_Cb()
  * @since 1.19
  */
-EAPI Eina_Bool      ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int port, Ecore_Evas_Vnc_Client_Accept_Cb cb, void *data);
+EAPI Eina_Bool      ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int port, Ecore_Evas_Vnc_Client_Accept_Cb accept_cb,
+                                         Ecore_Evas_Vnc_Client_Disconnected_Cb disc_cb, void *data);
 
 /**
  * @brief Stop a running VNC server
