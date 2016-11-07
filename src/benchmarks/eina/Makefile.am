@@ -25,7 +25,6 @@ eina_bench_mempool.c \
 eina_bench_stringshare_e17.c \
 eina_bench_array.c \
 eina_bench_rectangle_pool.c \
-eina_bench_promise.c \
 ecore_list.c \
 ecore_strings.c \
 ecore_hash.c \
