@@ -2500,22 +2500,82 @@ test_genlist12(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 static int
 gl13_cmp(const void *pa, const void *pb)
 {
-   const Elm_Object_Item *ia = pa, *ib = pb;
-   int a = (int)(uintptr_t) elm_object_item_data_get(ia);
-   int b = (int)(uintptr_t) elm_object_item_data_get(ib);
-   return a - b;
+   const char *a = elm_object_item_data_get(pa);
+   const char *b = elm_object_item_data_get(pb);
+
+   if (!a) return -1;
+   if (!b) return 1;
+
+   return strcmp(a, b);
+}
+
+static void
+_add_cb(void *data,
+        Evas_Object *obj EINA_UNUSED,
+        void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+   Evas_Object *gl = evas_object_data_get(win, "genlist");
+   Evas_Object *entry = evas_object_data_get(win, "entry");
+   api_data *api = evas_object_data_get(win, "api");
+   const char *item_name = elm_entry_entry_get(entry);
+   Elm_Object_Item *parent = elm_genlist_selected_item_get(gl);
+
+   if ((!item_name) || (!strcmp(item_name, "")))
+     {
+        printf("ERROR: Unable to add item with empty name. Please type name.\n");
+        return;
+     }
+
+   elm_genlist_item_sorted_insert
+     (gl, api->itc2, eina_stringshare_add(item_name)/* item data */,
+      parent/* parent */, ELM_GENLIST_ITEM_NONE,
+      gl13_cmp/* cmp */, NULL/* func */, NULL/* func data */);
+
+   elm_entry_entry_set(entry, NULL);
+}
+
+static void
+_del_cb(void *data EINA_UNUSED,
+        Evas_Object *obj EINA_UNUSED,
+        void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+   Evas_Object *gl = evas_object_data_get(win, "genlist");
+   Elm_Object_Item *item = elm_genlist_selected_item_get(gl);
+
+   if (!item)
+     {
+        printf("ERROR: Unable to remove item. Please select item.\n");
+        return;
+     }
+   elm_object_item_del(item);
+}
+
+char *
+gl6_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   const char *str = data;
+   return strdup(str);
+}
+
+void
+gl6_del(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   Eina_Stringshare *str = data;
+   eina_stringshare_del(str);
 }
 
 void
 test_genlist13(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Elm_Object_Item *pi[6];
-   Evas_Object *win, *bx, *gl; int i, base, idx[3] = {1, 10, 15};
+   Evas_Object *win, *bx, *bx1, *btn_add, *btn_del, *gl, *entry;
 
    api_data *api = calloc(1, sizeof(api_data));
    win = elm_win_util_standard_add("genlist-tree-insert-sorted", "Genlist Tree, Insert Sorted");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+   evas_object_data_set(win, "api", api);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -2526,64 +2586,50 @@ test_genlist13(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
+   evas_object_data_set(win, "genlist", gl);
 
    api->itc2 = elm_genlist_item_class_new();
    api->itc2->item_style = "default";
-   api->itc2->func.text_get = gl4_text_get;
+   api->itc2->func.text_get = gl6_text_get;
    api->itc2->func.content_get = NULL;
    api->itc2->func.state_get = NULL;
-   api->itc2->func.del = NULL;
+   api->itc2->func.del = gl6_del;
 
-   /* mixed order to test insert sorted */
+   entry = elm_entry_add(win);
+   elm_entry_editable_set(entry, EINA_TRUE);
+   elm_entry_single_line_set(entry, EINA_TRUE);
+   elm_entry_scrollable_set(entry, EINA_TRUE);
+   elm_object_part_text_set(entry, "guide", "Type item's name here to add.");
+   evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(entry);
+   evas_object_data_set(win, "entry", entry);
 
-   for (i = 0; i < 3; i++)
-     {
-        pi[i] = elm_genlist_item_sorted_insert
-          (gl, api->itc2, (void *)(uintptr_t)idx[i]/* item data */, NULL/* parent */,
-           ELM_GENLIST_ITEM_TREE, gl13_cmp/* cmp */,
-           NULL/* func */, NULL/* func data */);
-     }
+   bx1 = elm_box_add(win);
+   elm_box_horizontal_set(bx1, EINA_TRUE);
+   evas_object_show(bx1);
 
-   for (i = 0, base = 100; i < 3; i++, base += 100)
-     {
-        int j;
-        for (j = 0; j < 3; j++)
-          {
-             elm_genlist_item_sorted_insert
-               (gl, api->itc2, (void *)(uintptr_t)(idx[j] + base)/* item data */,
-                pi[i]/* parent */, ELM_GENLIST_ITEM_NONE,
-                gl13_cmp/* cmp */, NULL/* func */, NULL/* func data */);
-          }
-     }
+   btn_add = elm_button_add(bx1);
+   elm_object_text_set(btn_add, "Add");
+   evas_object_size_hint_weight_set(btn_add, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(btn_add, "clicked", _add_cb, win);
+   elm_box_pack_end(bx1, btn_add);
+   evas_object_show(btn_add);
 
-   for (i = 0; i < 3; i++)
-     {
-        pi[i + 3] = elm_genlist_item_sorted_insert
-          (gl, api->itc2, (void *)(uintptr_t)(idx[i] * 2)/* item data */, NULL/* parent */,
-           ELM_GENLIST_ITEM_TREE, gl13_cmp/* cmp */, NULL/* func */,
-           NULL/* func data */);
-     }
+   btn_del = elm_button_add(bx1);
+   elm_object_text_set(btn_del, "Delete");
+   evas_object_size_hint_weight_set(btn_del, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(btn_del, "clicked", _del_cb, win);
+   elm_box_pack_end(bx1, btn_del);
+   evas_object_show(btn_del);
 
-
-   for (i = 0, base = 10000; i < 3; i++, base += 10000)
-     {
-        int j;
-        for (j = 0; j < 3; j++)
-          {
-             elm_genlist_item_sorted_insert
-               (gl, api->itc2, (void *)(uintptr_t)(idx[j] + base)/* item data */,
-                pi[i + 3]/* parent */, ELM_GENLIST_ITEM_NONE,
-                gl13_cmp/* cmp */, NULL/* func */, NULL/* func data */);
-          }
-     }
-   elm_genlist_item_class_free(api->itc2);
    elm_box_pack_end(bx, gl);
+   elm_box_pack_end(bx, entry);
+   elm_box_pack_end(bx, bx1);
    evas_object_show(bx);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 480, 480);
    evas_object_show(win);
 }
-
 
 /***  Genlist Tree, Insert Relative  *****************************************/
 static void
