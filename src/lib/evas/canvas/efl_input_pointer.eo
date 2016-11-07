@@ -11,17 +11,17 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
       @property action {
          [[The action represented by this event.]]
          values {
-            act: Efl.Pointer.Action;
+            act: Efl.Pointer.Action; [[Event action]]
          }
       }
       @property value_has {
          [[$true if this event carries a valid value for the specified $key.]]
          get {}
          keys {
-            key: Efl.Input.Value;
+            key: Efl.Input.Value; [[Pressed $key]]
          }
          values {
-            has: bool;
+            has: bool; [[$true if input value is valid, $false otherwise]]
          }
       }
       @property value {
@@ -41,10 +41,10 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
          }
          get {}
          keys {
-            key: Efl.Input.Value;
+            key: Efl.Input.Value; [[$key]]
          }
          values {
-            val: double;
+            val: double; [[$key value]]
          }
       }
       @property button {
@@ -61,10 +61,10 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
 
            Valid if and only if @.value_has($button_pressed) is $true.]]
          keys {
-            button: int;
+            button: int; [[1 to 32, 0 if not a button event.]]
          }
          values {
-            pressed: bool;
+            pressed: bool; [[$true when the button was pressed, $false otherwise]]
          }
       }
       @property position {
@@ -76,8 +76,8 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
            if you need precise coordinates.
          ]]
          values {
-            x: int;
-            y: int;
+            x: int; [[X coordinate of the event]]
+            y: int; [[Y coordinate of the event]]
          }
       }
       @property previous_position {
@@ -91,8 +91,8 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
            but prefer the generic interface if you need precise coordinates.
          ]]
          values {
-            x: int;
-            y: int;
+            x: int; [[X coordinate of the previous event]]
+            y: int; [[Y coordinate of the previous event]]
          }
       }
       @property delta {
@@ -105,14 +105,14 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
          ]]
          get {}
          values {
-            dx: int;
-            dy: int;
+            dx: int; [[X coordinate delta]]
+            dy: int; [[Y coordinate delta]]
          }
       }
       @property tool {
          [[ID of the tool (eg. pen) that triggered this event.]]
          values {
-            id: int;
+            id: int; [[Tool ID]]
          }
       }
       @property source {
@@ -126,7 +126,7 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
       @property button_flags {
          [[Double or triple click information.]]
          values {
-            flags: Efl.Pointer.Flags;
+            flags: Efl.Pointer.Flags; [[Button information flags]]
          }
       }
       @property double_click {
@@ -135,7 +135,7 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
            This is just a helper function around @.button_flags.
          ]]
          values {
-            val: bool;
+            val: bool; [[$true if the button press was a double click, $false otherwise]]
          }
       }
       @property triple_click {
@@ -144,7 +144,7 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
            This is just a helper function around @.button_flags.
          ]]
          values {
-            val: bool;
+            val: bool; [[$true if the button press was a triple click, $false otherwise]]
          }
       }
       @property wheel_direction {
@@ -156,7 +156,7 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
       @property wheel_delta {
          [[Delta movement of the wheel in discrete steps.]]
          values {
-            dist: int;
+            dist: int; [[Wheel movement delta]]
          }
       }
    }
