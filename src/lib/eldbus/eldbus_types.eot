@@ -6,12 +6,13 @@ struct Eldbus.Object; [[Represents an object path already attached with bus name
 
 enum @extern Eldbus.Connection.Type
 {
-    unknown = 0, [[sentinel, not a real type]]
-    session, [[regular user session bus, used for applications and services running per user]]
-    system, [[system-wide connection bus, used for system services]]
+    [[Eldbus connection type]]
+    unknown = 0, [[Sentinel, not a real type]]
+    session, [[Regular user session bus, used for applications and services running per user]]
+    system, [[System-wide connection bus, used for system services]]
     starter, [[Uses whatever bus started our application, be session or system]]
     address, [[A private bus at a specific address]]
-    last, [[sentinel, not a real type]]
+    last, [[Sentinel, not a real type]]
 }
 
 enum Eldbus.Introspection.Argument_Direction
