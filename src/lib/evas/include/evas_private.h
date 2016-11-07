@@ -800,6 +800,7 @@ struct _Evas_Public_Data
       int            downs;
       DATA32         button;
       Evas_Coord     x, y;
+      Evas_Point     prev;
       int            nogrep;
       struct {
           Eina_List *in;

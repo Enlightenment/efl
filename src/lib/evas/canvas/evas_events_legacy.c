@@ -41,6 +41,8 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
    if (!ev || !evas) return NULL;
 
 #define COORD_DUP(e) do { (e)->output.x = evas->pointer.x; (e)->output.y = evas->pointer.y; } while (0)
+#define COORD_DUP_CUR(e) do { (e)->cur.output.x = evas->pointer.x; (e)->cur.output.y = evas->pointer.y; } while (0)
+#define COORD_DUP_PREV(e) do { (e)->prev.output.x = evas->pointer.prev.x; (e)->prev.output.y = evas->pointer.prev.y; } while (0)
 #define TYPE_CHK(typ) do { if (type != EVAS_CALLBACK_ ## typ) return NULL; } while (0)
 
    switch (ev->action)
@@ -196,10 +198,10 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
              e->buttons = ev->pressed_buttons;
              e->cur.canvas.x = ev->cur.x;
              e->cur.canvas.y = ev->cur.y;
-             COORD_DUP(&e->cur);
              e->prev.canvas.x = ev->prev.x;
              e->prev.canvas.y = ev->prev.y;
-             COORD_DUP(&e->prev);
+             COORD_DUP_CUR(e);
+             COORD_DUP_PREV(e);
              e->data = ev->data;
              e->timestamp = ev->timestamp;
              e->event_flags = ev->event_flags;
@@ -225,7 +227,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
              e->cur.canvas.ysub = ev->cur.y;
              e->cur.canvas.x = ev->cur.x;
              e->cur.canvas.y = ev->cur.y;
-             COORD_DUP(&e->cur);
+             COORD_DUP_CUR(e);
              e->data = ev->data;
              e->timestamp = ev->timestamp;
              e->event_flags = ev->event_flags;

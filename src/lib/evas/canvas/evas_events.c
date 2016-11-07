@@ -1732,6 +1732,8 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    e->last_timestamp = ev->timestamp;
 
    // prev pos
+   e->pointer.prev.x = e->pointer.x;
+   e->pointer.prev.y = e->pointer.y;
    px = ev->prev.x = e->pointer.x;
    py = ev->prev.y = e->pointer.y;
 
