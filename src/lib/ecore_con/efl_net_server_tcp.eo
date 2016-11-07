@@ -28,7 +28,7 @@ class Efl.Net.Server.Tcp (Efl.Net.Server.Fd) {
               (allows only IPv6 clients).
             ]]
             values {
-                ipv6_only: bool;
+                ipv6_only: bool; [[If $true the server will only accept IPv6 clients, $false otherwise]]
             }
         }
     }

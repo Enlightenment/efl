@@ -28,7 +28,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
               (allows only IPv6 clients).
             ]]
             values {
-                ipv6_only: bool;
+                ipv6_only: bool; [[If $true the server will only accept IPv6 clients, $false otherwise]]
             }
         }
 
@@ -45,7 +45,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                dont_route: bool;
+                dont_route: bool; [[If $true limit packets to the local network, $false otherwise]]
             }
         }
 
@@ -65,7 +65,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
                  ff02::1@1 - use loopback interface (idx=1)
             ]]
             params {
-                address: string @nonull;
+                address: string @nonull; [[Multicast group address]]
             }
             return: Eina.Error;
         }
@@ -76,7 +76,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
               This reverses the effect of @.multicast_join.
             ]]
             params {
-                address: string @nonull;
+                address: string @nonull; [[Multicast group address]]
             }
             return: Eina.Error;
         }
@@ -87,7 +87,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
               The iterator is only valid until a new group is joined
               or left using @.multicast_join or @.multicast_leave.
             ]]
-            return: free(own(iterator<string>), eina_iterator_free);
+            return: free(own(iterator<string>), eina_iterator_free); [[List of multicast groups]]
         }
 
         @property multicast_time_to_live {
@@ -115,7 +115,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
                 return: Eina.Error; [[0 on success, error code otherwise]]
             }
             values {
-                loopback: bool;
+                loopback: bool; [[$true when multicast packets are looped back, $false otherwise]]
             }
         }
     }

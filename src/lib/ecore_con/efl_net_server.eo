@@ -47,7 +47,7 @@ interface Efl.Net.Server {
               dispatched.
             ]]
             params {
-                address: string @nonull;
+                address: string @nonull; [[Address to run server on]]
             }
             return: Eina.Error;
         }
@@ -66,7 +66,7 @@ interface Efl.Net.Server {
             get { }
             set @protected { }
             values {
-                address: string;
+                address: string; [[Address the server is bound to]]
             }
         }
 
@@ -75,7 +75,7 @@ interface Efl.Net.Server {
             get { }
             set @protected { }
             values {
-                count: uint;
+                count: uint; [[Number of connected clients]]
             }
         }
 
@@ -94,8 +94,8 @@ interface Efl.Net.Server {
               alredy exceeds the limit, no connections will be closed.
             ]]
             values {
-                limit: uint;
-                reject_excess: bool @optional;
+                limit: uint; [[Number of allowed client connections]]
+                reject_excess: bool @optional; [[If $true connection is accepted and immediately closed]]
             }
         }
 
@@ -108,7 +108,7 @@ interface Efl.Net.Server {
             get { }
             set @protected { }
             values {
-                serving: bool;
+                serving: bool; [[$true if server is ready to accept connections, $false otherwise]]
             }
         }
     }

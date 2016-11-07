@@ -64,7 +64,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
             get { }
             set @protected { }
             values {
-                family: int;
+                family: int; [[Socket address family]]
             }
         }
 
@@ -80,7 +80,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                close_on_exec: bool;
+                close_on_exec: bool; [[If $true close on exec will be used, $false otherwise]]
             }
         }
 
@@ -91,7 +91,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                reuse_address: bool;
+                reuse_address: bool; [[If $true the server will reuse the address, $false otherwise]]
             }
         }
 
@@ -102,7 +102,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                reuse_port: bool;
+                reuse_port: bool; [[If $true the server will reuse the port, $false otherwise]]
             }
         }
 

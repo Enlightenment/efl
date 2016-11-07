@@ -14,7 +14,7 @@ class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
               If changed in runtime, it will only affect new clients.
             ]]
             values {
-                ssl_context: Efl.Net.Ssl.Context;
+                ssl_context: Efl.Net.Ssl.Context; [[SSL context]]
             }
         }
 
@@ -64,7 +64,7 @@ class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
             ]]
             get { }
             values {
-                family: int;
+                family: int; [[Socket address family]]
             }
         }
 
@@ -80,7 +80,7 @@ class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                close_on_exec: bool;
+                close_on_exec: bool; [[If $true close on exec will be used, $false otherwise]]
             }
         }
 
@@ -91,7 +91,7 @@ class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                reuse_address: bool;
+                reuse_address: bool; [[If $true the server will reuse the address, $false otherwise]]
             }
         }
 
@@ -102,7 +102,7 @@ class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                reuse_port: bool;
+                reuse_port: bool; [[If $true the server will reuse the port, $false otherwise]]
             }
         }
 
@@ -129,7 +129,7 @@ class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
               (allows only IPv6 clients).
             ]]
             values {
-                ipv6_only: bool;
+                ipv6_only: bool; [[If $true the server will only accept IPv6 clients, $false otherwise]]
             }
         }
     }
