@@ -932,7 +932,7 @@ _process_children_error_cb(void *data, Efl_Event const* event)
    Listing_Request *lreq = data;
    Elm_Fileselector_Data *sd = lreq->sd;
 
-   if (error != EINA_ERROR_PROMISE_CANCEL)
+   if (error != EINA_ERROR_FUTURE_CANCEL)
      {
         ERR("failed to get information from Efl.Model");
      }
