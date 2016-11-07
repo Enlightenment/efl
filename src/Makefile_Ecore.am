@@ -88,7 +88,6 @@ lib/ecore/ecore_poller.c \
 lib/ecore/ecore_time.c \
 lib/ecore/ecore_timer.c \
 lib/ecore/ecore_thread.c \
-lib/ecore/ecore_thread_promise.c \
 lib/ecore/ecore_throttle.c \
 lib/ecore/ecore_exe.c \
 lib/ecore/ecore_exe_private.h \
