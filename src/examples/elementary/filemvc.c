@@ -79,12 +79,15 @@ _tree_selected_cb(void *data, const Efl_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
    Eo *child = event->info;
-   Eina_Promise *promise;
+   Efl_Future *f;
 
    printf("TREE selected model\n");
 
-   promise= efl_model_property_get(child, "path");
-   eina_promise_then(promise, &_promise_then, &_promise_error, priv);
+   f = efl_model_property_get(child, "path");
+   efl_ref(f);
+   efl_future_then(f, &_promise_then, &_promise_error, NULL, priv);
+   efl_future_link(event->object, f);
+   efl_unref(f);
 }
 
 static void
