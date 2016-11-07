@@ -65,6 +65,7 @@ struct _Outbuf
    Evas_Engine_Info_Wayland *info;
    Evas_Engine_GL_Context *gl_context;
 
+   int prev_age;
    Render_Engine_Swap_Mode swap_mode;
    int vsync;
    int frame_cnt;

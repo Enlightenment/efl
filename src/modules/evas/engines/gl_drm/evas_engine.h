@@ -89,6 +89,7 @@ struct _Outbuf
 
    int fd, w, h, bpp;
    unsigned int rotation, depth, format;
+   int prev_age;
    Render_Engine_Swap_Mode swap_mode;
 
    struct gbm_surface *surface;
