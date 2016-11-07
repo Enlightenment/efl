@@ -6,105 +6,6 @@
 #include "ecore_suite.h"
 #include <time.h>
 
-static void
-_ecore_test_promise_normal_lifetime_cb(void* data EINA_UNUSED, void* value EINA_UNUSED)
-{
-  ecore_main_loop_quit();
-}
-
-static void
-_ecore_test_promise_normal_lifetime_value_set_cb(void* promise_owner)
-{
-   eina_promise_owner_value_set((Eina_Promise_Owner*)promise_owner, NULL, NULL);
-}
-
-START_TEST(ecore_test_promise_normal_lifetime)
-{
-   Eina_Promise_Owner* promise_owner;
-   Eina_Promise* promise;
-   
-   ecore_init();
-
-   promise_owner = eina_promise_add();
-
-   promise = eina_promise_owner_promise_get(promise_owner);
-
-   eina_promise_then(promise, &_ecore_test_promise_normal_lifetime_cb, NULL, NULL);
-   ecore_job_add(_ecore_test_promise_normal_lifetime_value_set_cb, promise_owner);
-
-   ecore_main_loop_begin();
-
-   ecore_shutdown();
-}
-END_TEST
-
-START_TEST(ecore_test_promise_normal_lifetime_all)
-{
-   Eina_Promise_Owner* promise_owner;
-   Eina_Promise* first[2] = {NULL, NULL};
-   Eina_Promise* promise;
-   
-   ecore_init();
-
-   promise_owner = eina_promise_add();
-   first[0] = eina_promise_owner_promise_get(promise_owner);
-   promise = eina_promise_all(eina_carray_iterator_new((void**)&first[0]));
-   
-   eina_promise_then(promise, &_ecore_test_promise_normal_lifetime_cb, NULL, NULL);
-   ecore_job_add(_ecore_test_promise_normal_lifetime_value_set_cb, promise_owner);
-
-   ecore_main_loop_begin();
-
-   ecore_shutdown();
-}
-END_TEST
-
-static void
-_ecore_test_promise_immediate_set_lifetime_cb(void* data EINA_UNUSED, void* value EINA_UNUSED)
-{
-   ecore_main_loop_quit();
-}
-
-START_TEST(ecore_test_promise_immediate_set_lifetime)
-{
-   Eina_Promise_Owner* owner;
-   Eina_Promise* promise;
-   
-   ecore_init();
-
-   owner = eina_promise_add();
-   promise = eina_promise_owner_promise_get(owner);
-
-   eina_promise_owner_value_set(owner, NULL, NULL);
-   eina_promise_then(promise, &_ecore_test_promise_immediate_set_lifetime_cb, NULL, NULL);
-
-   ecore_main_loop_begin();
-
-   ecore_shutdown();
-}
-END_TEST
-
-START_TEST(ecore_test_promise_immediate_set_lifetime_all)
-{
-   Eina_Promise_Owner* owner;
-   Eina_Promise* first[2] = {NULL, NULL};
-   Eina_Promise* promise;
-
-   ecore_init();
-
-   owner = eina_promise_add();
-   first[0] = eina_promise_owner_promise_get(owner);
-   promise = eina_promise_all(eina_carray_iterator_new((void**)&first[0]));
-
-   eina_promise_owner_value_set(owner, NULL, NULL);
-   eina_promise_then(promise, &_ecore_test_promise_immediate_set_lifetime_cb, NULL, NULL);
-
-   ecore_main_loop_begin();
-
-   ecore_shutdown();
-}
-END_TEST
-
 typedef struct _Future_Ok Future_Ok;
 struct _Future_Ok
 {
@@ -960,11 +861,6 @@ END_TEST
 
 void ecore_test_ecore_promise(TCase *tc)
 {
-   tcase_add_test(tc, ecore_test_promise_normal_lifetime);
-   tcase_add_test(tc, ecore_test_promise_normal_lifetime_all);
-   tcase_add_test(tc, ecore_test_promise_immediate_set_lifetime);
-   tcase_add_test(tc, ecore_test_promise_immediate_set_lifetime_all);
-
    tcase_add_test(tc, efl_test_promise_future_success);
    tcase_add_test(tc, efl_test_promise_future_cancel);
    tcase_add_test(tc, efl_test_promise_future_chain_success);
