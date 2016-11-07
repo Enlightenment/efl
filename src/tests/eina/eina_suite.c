@@ -77,7 +77,6 @@ static const Efl_Test_Case etc[] = {
    { "Matrix", eina_test_matrix },
    { "Quaternion", eina_test_quaternion },
    { "Vector", eina_test_vector },
-   { "Promise", eina_test_promise },
    { "Bezier", eina_test_bezier },
    { "SafePointer", eina_test_safepointer },
    { "Slice", eina_test_slice },
