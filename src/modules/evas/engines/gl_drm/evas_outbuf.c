@@ -600,7 +600,19 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
         else if (age == 3) swap_mode = MODE_TRIPLE;
         else if (age == 4) swap_mode = MODE_QUADRUPLE;
         else swap_mode = MODE_FULL;
-        if ((int)age != ob->prev_age) swap_mode = MODE_FULL;
+        if ((int)age != ob->prev_age)
+          {
+             char buf[16];
+             snprintf(buf, sizeof(buf), "! %i", (int)age);
+             eina_evlog("!gl_buffer_age", ob, 0.0, buf);
+             swap_mode = MODE_FULL;
+          }
+        else
+          {
+             char buf[16];
+             snprintf(buf, sizeof(buf), "%i", (int)age);
+             eina_evlog("!gl_buffer_age", ob, 0.0, buf);
+          }
         ob->prev_age = age;
 
         return swap_mode;
