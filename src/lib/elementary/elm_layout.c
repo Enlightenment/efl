@@ -875,6 +875,38 @@ _elm_layout_efl_file_file_get(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED, co
    edje_object_file_get(wd->resize_obj, file, group);
 }
 
+
+EOLIAN static Eina_Bool
+_elm_layout_efl_file_mmap_set(Eo *obj, Elm_Layout_Smart_Data *sd, const Eina_File *file, const char *group)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   int_ret =
+     edje_object_mmap_set(wd->resize_obj, file, group);
+
+   if (int_ret)
+     {
+        sd->file_set = EINA_TRUE;
+        _visuals_refresh(obj, sd);
+     }
+   else
+     ERR("failed to set edje mmap file %p, group '%s': %s",
+         file, group,
+         edje_load_error_str
+           (edje_object_load_error_get(wd->resize_obj)));
+
+   return int_ret;
+}
+
+EOLIAN static void
+_elm_layout_efl_file_mmap_get(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED, const Eina_File **file, const char **group)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_file_mmap_get(wd->resize_obj, file, group);
+}
+
 EOLIAN static Eina_Bool
 _elm_layout_theme_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *klass, const char *group, const char *style)
 {
@@ -1903,6 +1935,18 @@ EAPI void
 elm_layout_file_get(Eo *obj, const char **file, const char **group)
 {
    efl_file_get((Eo *) obj, file, group);
+}
+
+EAPI Eina_Bool
+elm_layout_mmap_set(Eo *obj, const Eina_File *file, const char *group)
+{
+   return efl_file_mmap_set((Eo *) obj, file, group);
+}
+
+EAPI void
+elm_layout_mmap_get(Eo *obj, const Eina_File **file, const char **group)
+{
+   efl_file_mmap_get((Eo *) obj, file, group);
 }
 
 EAPI Eina_Bool

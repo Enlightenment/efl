@@ -102,6 +102,32 @@ EAPI Eina_Bool elm_layout_file_set(Eo *obj, const char *file, const char *group)
 EAPI void elm_layout_file_get(Eo *obj, const char **file, const char **group);
 
 /**
+ * Set the mmap file that will be used as layout
+ *
+ * @return (1 = success, 0 = error)
+ *
+ * @ingroup Elm_Layout
+ *
+ * @param[in] file Eina_File (edj) that will be used as layout
+ * @param[in] group The group that the layout belongs in edje file
+ *
+ * @since 1.19
+ */
+EAPI Eina_Bool elm_layout_mmap_set(Eo *obj, const Eina_File *file, const char *group);
+
+/**
+ * Get the loaded mmap file
+ *
+ * @ingroup Elm_Layout
+ *
+ * @param file Eina_File (edj) used as layout
+ * @param group The group that the layout belongs in edje file
+ *
+ * @since 1.19
+ */
+EAPI void elm_layout_mmap_get(Eo *obj, const Eina_File **file, const char **group);
+
+/**
  * @brief Append child to layout box part.
  *
  * Once the object is appended, it will become child of the layout. Its
