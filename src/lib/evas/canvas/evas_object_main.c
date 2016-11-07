@@ -814,6 +814,8 @@ _efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 1, x, y))
      return;
 
+   if ((obj->cur->geometry.x == x) && (obj->cur->geometry.y == y)) return;
+
    Evas_Map *map;
    map = (Evas_Map *) evas_object_map_get(eo_obj);
    if (map && map->move_sync.enabled)
