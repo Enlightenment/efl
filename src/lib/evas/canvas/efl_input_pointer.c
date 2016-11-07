@@ -325,15 +325,23 @@ _efl_input_pointer_tool_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int
 EOLIAN static Eina_Bool
 _efl_input_pointer_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, const char *name)
 {
+   Efl_Input_Device *seat;
+
    if (!pd->modifiers) return EINA_FALSE;
-   return evas_key_modifier_is_set(pd->modifiers, name);
+   seat = efl_input_device_seat_get(pd->device);
+   if (!seat) return EINA_FALSE;
+   return evas_seat_key_modifier_is_set(pd->modifiers, name, seat);
 }
 
 EOLIAN static Eina_Bool
 _efl_input_pointer_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, const char *name)
 {
+   Efl_Input_Device *seat;
+
    if (!pd->locks) return EINA_FALSE;
-   return evas_key_lock_is_set(pd->locks, name);
+   seat = efl_input_device_seat_get(pd->device);
+   if (!seat) return EINA_FALSE;
+   return evas_seat_key_lock_is_set(pd->locks, name, seat);
 }
 
 EOLIAN static void

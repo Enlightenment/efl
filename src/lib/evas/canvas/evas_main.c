@@ -191,6 +191,12 @@ evas_new(void)
    return eo_obj;
 }
 
+static void
+_evas_key_mask_free(void *data)
+{
+   free(data);
+}
+
 EOLIAN static Eo *
 _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
 {
@@ -239,6 +245,9 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    _evas_canvas_event_init(eo_obj, e);
 
    e->focused_objects = eina_hash_pointer_new(NULL);
+   e->locks.masks = eina_hash_pointer_new(_evas_key_mask_free);
+   e->modifiers.masks = eina_hash_pointer_new(_evas_key_mask_free);
+   e->locks.e = e->modifiers.e = e;
 
    return eo_obj;
 }
@@ -386,6 +395,8 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 
    eina_lock_free(&(e->lock_objects));
    eina_spinlock_free(&(e->render.lock));
+   eina_hash_free(e->locks.masks);
+   eina_hash_free(e->modifiers.masks);
 
    e->magic = 0;
    efl_destructor(efl_super(eo_e, MY_CLASS));

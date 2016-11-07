@@ -207,7 +207,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             ]]
             return: ptr(const(Evas.Lock)) @warn_unused; [[
                An Evas_Lock handle to query Evas' keys subsystem with
-               \@ref evas_key_lock_is_set, or $null on error.
+               \@ref evas_key_lock_is_set or \@ref evas_seat_key_lock_is_set, or $null on error.
             ]]
          }
       }
@@ -430,11 +430,12 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
               given time with the \@ref evas_key_modifier_is_set function.
 
               See also @.key_modifier_add, @.key_modifier_del,
-              @.key_modifier_on, @.key_modifier_off.
+              @.key_modifier_on, @.key_modifier_off, @.seat_key_modifier_on,
+              @.seat_key_modifier_off.
             ]]
             return: ptr(const(Evas.Modifier)) @warn_unused; [[
                An Evas_Modifier handle to query Evas' keys subsystem
-               with \@ref evas_key_modifier_is_set, or $null on error.
+               with \@ref evas_key_modifier_is_set or \@ref evas_seat_key_modifier_is_set, or $null on error.
             ]]
          }
       }
@@ -507,16 +508,47 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       }
       key_lock_on {
          [[Enables or turns on programmatically the lock key with name
-           $keyname.
+           $keyname for the default seat.
 
            The effect will be as if the key was put on its active state
            after this call.
 
-              See also @.key_lock_add, @.key_lock_del, @.key_lock_del,
-              @.key_lock_off.
+           See also @.key_lock_add, @.key_lock_del, @.key_lock_del,
+           @.key_lock_off, @.seat_key_lock_on, @.seat_key_lock_off.
          ]]
          params {
             @in keyname: string @nonull; [[The name of the lock to enable.]]
+         }
+      }
+      seat_key_lock_on {
+          [[Enables or turns on programmatically the lock key with name
+           $keyname for a give seat.
+
+           The effect will be as if the key was put on its active state
+           after this call.
+
+           See also @.key_lock_add, @.key_lock_del, @.key_lock_del,
+           @.key_lock_off, @.key_lock_on, @.seat_key_lock_off.
+           @since 1.19
+         ]]
+         params {
+            @in keyname: string @nonull; [[The name of the lock to enable.]]
+            @in seat: Efl.Input.Device; [[The seat to enable the keylock. A $null seat repesents the default seat.]]
+         }
+      }
+      seat_key_lock_off {
+         [[Disables or turns off programmatically the lock key with name
+           $keyname for a given seat.
+
+           The effect will be as if the key was put on its inactive state
+           after this call.
+
+           See also @.key_lock_on, @.seat_key_lock_on, @.key_lock_off.
+           @since 1.19
+         ]]
+         params {
+            @in keyname: string @nonull; [[The name of the lock to enable.]]
+            @in seat: Efl.Input.Device; [[The seat to disable the keylock. A $null seat repesents the default seat.]]
          }
       }
       key_modifier_mask_get @const {
@@ -529,8 +561,8 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
            Go check their documentation for more information.
 
            See also @.key_modifier_add, \@ref evas_key_modifier_get,
-           @.key_modifier_on, @.key_modifier_off,
-           \@ref evas_key_modifier_is_set.
+           @.key_modifier_on, @.key_modifier_off, @.seat_key_modifier_on, @.seat_key_modifier_off,
+           \@ref evas_key_modifier_is_set, \@ref evas_seat_key_modifier_is_set..
          ]]
          return: Evas.Modifier_Mask @warn_unused; [[
             The bit mask or 0 if the $keyname key wasn't registered as a
@@ -568,11 +600,11 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       }
       key_modifier_off {
          [[Disables or turns off programmatically the modifier key with
-           name $keyname.
+           name $keyname for the default seat.
 
            See also @.key_modifier_add, \@ref evas_key_modifier_get,
-           @.key_modifier_on, @.key_modifier_mask_get,
-           \@ref evas_key_modifier_is_set.
+           @.key_modifier_on, @.key_modifier_mask_get, @.seat_key_modifier_off,
+           @.seat_key_modifier_off, \@ref evas_key_modifier_is_set, \@ref evas_seat_key_modifier_is_set.
          ]]
          params {
             @in keyname: string @nonull; [[The name of the modifier to disable.]]
@@ -688,12 +720,12 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       }
       key_lock_off {
          [[Disables or turns off programmatically the lock key with name
-           $keyname.
+           $keyname for the default seat.
 
            The effect will be as if the key was put on its inactive state
            after this call.
 
-            See also @.key_lock_on.
+           See also @.key_lock_on, @.seat_key_lock_on, @.seat_key_lock_off.
          ]]
          params {
             @in keyname: string @nonull; [[The name of the lock to disable.]]
@@ -753,15 +785,46 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       }
       key_modifier_on {
          [[Enables or turns on programmatically the modifier key with name
-           $keyname.
+           $keyname for the default seat.
 
            The effect will be as if the key was pressed for the whole time
            between this call and a matching evas_key_modifier_off().
 
-           See also @.key_modifier_off.
+           See also @.key_modifier_off, @.seat_key_modifier_on,
+           @.seat_key_modifier_off.
          ]]
          params {
             @in keyname: string @nonull; [[The name of the modifier to enable.]]
+         }
+      }
+      seat_key_modifier_on {
+         [[Enables or turns on programmatically the modifier key with name
+           $keyname for a given seat.
+
+           The effect will be as if the key was pressed for the whole time
+           between this call and a matching @.seat_key_modifier_off.
+
+           See also @.key_modifier_off, @.seat_key_modifier_on,
+           @.seat_key_modifier_off.
+           @since 1.19
+         ]]
+         params {
+            @in keyname: string @nonull; [[The name of the lock to enable.]]
+            @in seat: Efl.Input.Device; [[The seat to enable the modifier. A $null seat repesents the default seat.]]
+         }
+      }
+      seat_key_modifier_off {
+         [[Disables or turns off programmatically the modifier key with
+           name $keyname for a given seat.
+
+           See also @.key_modifier_add, \@ref evas_key_modifier_get,
+           @.key_modifier_on, @.key_modifier_mask_get, @.seat_key_modifier_off,
+           @.seat_key_modifier_off, \@ref evas_key_modifier_is_set, \@ref evas_seat_key_modifier_is_set.
+           @since 1.19
+         ]]
+         params {
+            @in keyname: string @nonull; [[The name of the lock to enable.]]
+            @in seat: Efl.Input.Device; [[The seat to disable the modifier. A $null seat repesents the default seat.]]
          }
       }
       font_available_list @const {

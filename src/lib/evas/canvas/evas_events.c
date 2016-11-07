@@ -3070,8 +3070,11 @@ _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev
      {
         Eina_List *l;
         Evas_Key_Grab *g;
+        Evas_Modifier_Mask *seat_mask, modifier_mask;
 
         e->walking_grabs++;
+        seat_mask = eina_hash_find(e->modifiers.masks, &ev->device);
+        modifier_mask = seat_mask ? *seat_mask : 0;
         EINA_LIST_FOREACH(e->grabs, l, g)
           {
              if (g->just_added)
@@ -3082,11 +3085,11 @@ _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev
              if (g->delete_me) continue;
              if (!g->object) continue;
              if (!g->is_active) continue;
-             if (((e->modifiers.mask & g->modifiers) ||
-                  (g->modifiers == e->modifiers.mask)) &&
+             if (((modifier_mask & g->modifiers) ||
+                  (g->modifiers == modifier_mask)) &&
                  (!strcmp(ev->keyname, g->keyname)))
                {
-                  if (!(e->modifiers.mask & g->not_modifiers))
+                  if (!(modifier_mask & g->not_modifiers))
                     {
                        Evas_Object_Protected_Data *object_obj = efl_data_scope_get(g->object, EFL_CANVAS_OBJECT_CLASS);
                        if (!e->is_frozen &&
@@ -3153,8 +3156,11 @@ _canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
      {
         Eina_List *l;
         Evas_Key_Grab *g;
+        Evas_Modifier_Mask *seat_mask, modifier_mask;
 
         e->walking_grabs++;
+        seat_mask = eina_hash_find(e->modifiers.masks, &ev->device);
+        modifier_mask = seat_mask ? *seat_mask : 0;
         EINA_LIST_FOREACH(e->grabs, l, g)
           {
              if (g->just_added)
@@ -3165,9 +3171,9 @@ _canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
              if (g->delete_me) continue;
              if (!g->object) continue;
              if (!g->is_active) continue;
-             if (((e->modifiers.mask & g->modifiers) ||
-                  (g->modifiers == e->modifiers.mask)) &&
-                 (!(e->modifiers.mask & g->not_modifiers)) &&
+             if (((modifier_mask & g->modifiers) ||
+                  (g->modifiers == modifier_mask)) &&
+                 (!(modifier_mask & g->not_modifiers)) &&
                  (!strcmp(ev->keyname, g->keyname)))
                {
                   Evas_Object_Protected_Data *object_obj = efl_data_scope_get(g->object, EFL_CANVAS_OBJECT_CLASS);

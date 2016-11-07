@@ -88,6 +88,8 @@ _del_cb(void *data, const Efl_Event *ev)
      e->default_keyboard = _new_default_device_find(e, ev->object);
 
    _evas_pointer_data_remove(e, ev->object);
+   eina_hash_del_by_key(e->locks.masks, &ev->object);
+   eina_hash_del_by_key(e->modifiers.masks, &ev->object);
    efl_event_callback_call(e->evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,
                            ev->object);
 }

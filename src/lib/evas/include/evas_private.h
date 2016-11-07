@@ -769,7 +769,8 @@ struct _Evas_Modifier
       int       count;
       char    **list;
    } mod;
-   Evas_Modifier_Mask mask; /* ok we have a max of 64 modifiers */
+   Eina_Hash *masks; /* we have a max of 64 modifiers per seat */
+   Evas_Public_Data *e;
 };
 
 struct _Evas_Lock
@@ -778,7 +779,8 @@ struct _Evas_Lock
       int       count;
       char    **list;
    } lock;
-   Evas_Modifier_Mask mask; /* we have a max of 64 locks */
+   Eina_Hash *masks; /* we have a max of 64 locks per seat */
+   Evas_Public_Data *e;
 };
 
 struct _Evas_Post_Callback
