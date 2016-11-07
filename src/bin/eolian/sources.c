@@ -173,31 +173,15 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              if (eina_strbuf_length_get(params))
                eina_strbuf_append(params, ", ");
 
-             /* XXX: this is really bad */
-             if (!has_promise && !strcmp(ptn, "Eina_Promise *") && !is_prop
-                 && (pd == EOLIAN_INOUT_PARAM))
-               {
-                  has_promise = EINA_TRUE;
-                  promise_param_name = eina_stringshare_add(prn);
-                  promise_param_type = eolian_type_c_type_get(eolian_type_base_type_get(pt));
-                  eina_strbuf_append(params_full_imp, ", Eina_Promise_Owner *");
-                  eina_strbuf_append(params_full_imp, prn);
-                  if (is_empty && !dfv)
-                    eina_strbuf_append(params_full_imp, " EINA_UNUSED");
-                  eina_strbuf_append(params, "__eo_promise");
-               }
-             else
-               {
-                  eina_strbuf_append(params_full_imp, ", ");
-                  eina_strbuf_append(params_full_imp, ptn);
-                  if (!had_star)
-                    eina_strbuf_append_char(params_full_imp, ' ');
-                  eina_strbuf_append(params_full_imp, add_star);
-                  eina_strbuf_append(params_full_imp, prn);
-                  if (!dfv && is_empty)
-                    eina_strbuf_append(params_full_imp, " EINA_UNUSED");
-                  eina_strbuf_append(params, prn);
-               }
+             eina_strbuf_append(params_full_imp, ", ");
+             eina_strbuf_append(params_full_imp, ptn);
+             if (!had_star)
+               eina_strbuf_append_char(params_full_imp, ' ');
+             eina_strbuf_append(params_full_imp, add_star);
+             eina_strbuf_append(params_full_imp, prn);
+             if (!dfv && is_empty)
+               eina_strbuf_append(params_full_imp, " EINA_UNUSED");
+             eina_strbuf_append(params, prn);
 
              eina_strbuf_append(params_full, ", ");
              eina_strbuf_append(params_full, ptn);
@@ -359,20 +343,6 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
 
    if (impl_same_class)
      {
-        /* XXX: bad */
-        if (has_promise)
-          {
-             eina_strbuf_append_printf(buf,
-                                       "#undef _EFL_OBJECT_API_BEFORE_HOOK\n#undef _EFL_OBJECT_API_AFTER_HOOK\n#undef _EFL_OBJECT_API_CALL_HOOK\n"
-                                       "#define _EFL_OBJECT_API_BEFORE_HOOK _EINA_PROMISE_BEFORE_HOOK(%s, %s%s)\n"
-                                       "#define _EFL_OBJECT_API_AFTER_HOOK _EINA_PROMISE_AFTER_HOOK(%s)\n"
-                                       "#define _EFL_OBJECT_API_CALL_HOOK(x) _EINA_PROMISE_CALL_HOOK(EFL_FUNC_CALL(%s))\n\n",
-                                       promise_param_type, rtpn,
-                                       eina_strbuf_string_get(params_full_imp),
-                                       promise_param_name,
-                                       eina_strbuf_string_get(params));
-          }
-
         void *data;
         Eina_Iterator *itr = eolian_property_keys_get(fid, ftype);
         Eina_Bool has_params = eina_iterator_next(itr, &data);
