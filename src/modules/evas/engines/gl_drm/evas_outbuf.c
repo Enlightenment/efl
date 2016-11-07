@@ -672,6 +672,8 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
         else if (age == 3) swap_mode = MODE_TRIPLE;
         else if (age == 4) swap_mode = MODE_QUADRUPLE;
         else swap_mode = MODE_FULL;
+        if ((int)age != ob->prev_age) swap_mode = MODE_FULL;
+        ob->prev_age = age;
 
         return swap_mode;
      }
