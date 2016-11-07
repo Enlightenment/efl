@@ -15,44 +15,44 @@ class Efl.Io.Manager (Efl.Loop_User)
     ls {
       [[Lists entries in a given path.]]
       params {
-        @in path: string;
+        @in path: string; [[Path we want to list entries for]]
       }
-      return: future<uint64, const(array<string>)>;
+      return: future<uint64, const(array<string>)>; [[List of entries in path]]
     }
 
     direct_ls {
       [[Lists entries in a given path with more information.]]
       params {
-        @in path: string;
-	@in recursive: bool;
+        @in path: string;[[Path we want to list entries for]]
+	@in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
       }
-      return: future<uint64, const(array<Eina_File_Direct_Info>)>;
+      return: future<uint64, const(array<Eina_File_Direct_Info>)>; [[List of entries in path]]
     }
 
     stat_ls {
       [[Lists entries in a given path with stat information.]]
       params {
-        @in path: string;
-	@in recursive: bool;
+        @in path: string;[[Path we want to list entries for]]
+	@in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
       }
-      return: future<uint64, const(array<Eina_File_Direct_Info>)>;
+      return: future<uint64, const(array<Eina_File_Direct_Info>)>; [[List of entries in path]]
     }
 
     // Extended attributes
     xattr_ls {
       [[Lists all extended attributes asynchronously.]]
       params {
-         @in path: string;
+         @in path: string;[[Path we want to list entries for]]
       }
-      return: future<uint64, const(array<string>)>;
+      return: future<uint64, const(array<string>)>; [[Extended attributes]]
     }
 
     stat {
       [[Get stat info on a given file/directory.]]
       params {
-        @in path: string;
+        @in path: string; [[Path we want to get stat information for]]
       }
-      return: future<Eina_Stat>;
+      return: future<Eina_Stat>; [[Stat information]]
     }
 
     // FIXME: Add helper for Eina.Value to Xattr
@@ -80,15 +80,15 @@ class Efl.Io.Manager (Efl.Loop_User)
 
       The fulfilled value in the promise will be the Eina.File*.]]
       params {
-        @in path: string;
-        @in shared: bool;
+        @in path: string; [[Path to file]]
+        @in shared: bool; [[$true if the file can be accessed by others, $false otherwise]]
       }
-      return: future<Eina.File>;
+      return: future<Eina.File>; [[Eina file handle]]
     }
     close {
       [[Closes an open Eina.File.]]
       params {
-        @in file: ptr(Eina.File);
+        @in file: ptr(Eina.File); [[Eina file handle]]
         // Here we're just interested whether the promise was fullfilled or not. No value needed.
       }
       return: future<int>;
