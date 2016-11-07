@@ -15565,7 +15565,7 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    alias_list = edje_edit_group_aliases_get(obj, group);
 
    base_scale = edje_object_base_scale_get(obj);
-   if ((base_scale - 1.0) > DBL_EPSILON)
+   if (fabs(base_scale - 1.0) > DBL_EPSILON)
      BUF_APPENDF(I1 "base_scale: \"%f\";\n",base_scale);
 
    BUF_APPENDF(I1 "group { name: \"%s\";\n", group);
