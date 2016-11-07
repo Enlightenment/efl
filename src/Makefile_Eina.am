@@ -96,7 +96,6 @@ lib/eina/eina_util.h \
 lib/eina/eina_quaternion.h \
 lib/eina/eina_vector.h \
 lib/eina/eina_inline_vector.x \
-lib/eina/eina_promise.h \
 lib/eina/eina_bezier.h \
 lib/eina/eina_safepointer.h \
 lib/eina/eina_inline_safepointer.x \
@@ -175,7 +174,6 @@ lib/eina/eina_private.h \
 lib/eina/eina_share_common.h \
 lib/eina/eina_strbuf_common.h \
 lib/eina/eina_quaternion.c \
-lib/eina/eina_promise.c \
 lib/eina/eina_bezier.c \
 lib/eina/eina_safepointer.c \
 lib/eina/eina_freeq.c
