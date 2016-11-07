@@ -13,8 +13,7 @@ typedef struct {
    Eo *evdown, *evup, *evmove, *evkeydown, *evkeyup;
    Eo *win, *button, *text;
    int id;
-   Eina_Promise *p;
-   Eo *timer;
+   Efl_Future *f;
 } testdata;
 
 static void
@@ -69,27 +68,13 @@ _key_down(void *data, const Efl_Event *ev)
      }
 }
 
-#if 0
 static void
-_timeout_cb(void *data, void *value EINA_UNUSED, Eina_Promise *promise EINA_UNUSED)
-{
-   testdata *td = data;
-   elm_object_text_set(td->text, NULL);
-   td->p = NULL;
-}
-#else
-static Eina_Bool
-_ecore_timeout_cb(void *data)
+_ecore_timeout_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    testdata *td = data;
 
    elm_object_text_set(td->text, DEFAULT_TEXT);
-   td->timer = NULL;
-
-   return ECORE_CALLBACK_CANCEL;
 }
-
-#endif
 
 static void
 _key_up(void *data, const Efl_Event *ev)
@@ -102,14 +87,9 @@ _key_up(void *data, const Efl_Event *ev)
         td->evkeyup = efl_input_dup(ev->info);
      }
 
-   // FIXME: how to use efl_loop_timeout?
-   // 1. I can't cancel it (it crashes)
-   // 2. I can't get a handle on the loop without calling ecore_main_loop_get()
-   // 2bis I need to pass the loop object itself rather than a provider
-   // 3. All calls to eina_promise crash if the promise is null
-
-   if (td->timer) efl_del(td->timer);
-   td->timer = ecore_timer_add(0.5, _ecore_timeout_cb, td);
+   if (td->f) efl_future_cancel(td->f);
+   efl_future_use(&td->f, efl_loop_timeout(efl_provider_find(ev->object, EFL_LOOP_CLASS), 0.5, NULL));
+   efl_future_then(td->f, _ecore_timeout_cb, NULL, NULL, td);
 }
 
 static void
