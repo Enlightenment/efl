@@ -463,16 +463,6 @@ inline Evas_Smart_Cb get_value_from_javascript (
   return nullptr;
 }
 
-template <typename T, typename K>     
-inline Eina_Promise* get_value_from_javascript (
-  v8::Local<v8::Value>,
-  v8::Isolate*,
-  const char*,
-  value_tag<complex_tag<Eina_Promise*, T, K> >)
-{
-  return nullptr;
-}
-
 } } }
 
 #endif
