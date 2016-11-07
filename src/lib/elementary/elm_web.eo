@@ -16,6 +16,7 @@ enum Elm.Web.Zoom_Mode
 
 class Elm.Web (Elm.Widget)
 {
+   [[Elementary web view class]]
    legacy_prefix: elm_web;
    eo_prefix: elm_obj_web;
    event_prefix: elm_web;
@@ -27,7 +28,7 @@ class Elm.Web (Elm.Widget)
               If enabled, marks set with @.text_matches_mark will be
               highlighted.
             ]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Get whether highlighting marks is enabled.]]
@@ -54,7 +55,7 @@ class Elm.Web (Elm.Widget)
               It must be a full URL, with resource included, in the form
               http://www.enlightenment.org or file:///tmp/something.html
             ]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Get the current URL for the object.
@@ -105,7 +106,7 @@ class Elm.Web (Elm.Widget)
             [[Get whether Inwin mode is set for the current object.]]
          }
          values {
-            value: bool;
+            value: bool; [[$true if dialog will be opened as Inwin, $false otherwise]]
          }
       }
       @property tab_propagate @virtual_pure {
@@ -295,7 +296,7 @@ class Elm.Web (Elm.Widget)
       @property forward_possible {
          get @virtual_pure {
             [[Queries whether it's possible to go forward in history.]]
-            return: bool;
+            return: bool; [[$true if it is possible to go forward, $false otherwise]]
          }
       }
       @property webkit_view {
@@ -316,7 +317,7 @@ class Elm.Web (Elm.Widget)
       @property back_possible {
          get @virtual_pure {
             [[Queries whether it's possible to go back in history.]]
-            return: bool;
+            return: bool; [[$true if it is possible to go back, $false otherwise]]
          }
       }
       @property load_progress {
@@ -373,7 +374,7 @@ class Elm.Web (Elm.Widget)
 
            This is equivalent to calling elm_web_object_navigate(obj, -1);
          ]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       html_string_load @virtual_pure {
          [[Loads the specified $html string as the content of the web
@@ -388,7 +389,7 @@ class Elm.Web (Elm.Widget)
 
            @since 1.9
          ]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in html: string; [[HTML data to load.]]
             @in base_url: string @optional; [[Base URL used for relative paths to external objects (optional).]]
@@ -501,8 +502,8 @@ class Elm.Web (Elm.Widget)
       Efl.Object.constructor;
    }
    events {
-      uri,changed;
-      url,changed;
-      windows,close,request;
+      uri,changed; [[Called when URI changed]]
+      url,changed; [[Called when URL changed]]
+      windows,close,request; [[Called when window closed event was received]]
    }
 }
