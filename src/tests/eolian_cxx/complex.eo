@@ -216,24 +216,6 @@ class Complex (Efl.Object)
             @out a1: Complex;
          }
       }
-      with_promise_r {
-         return: promise<int>;
-      }
-      with_promise_in {
-         params {
-            @in p: promise<int>;
-         }
-      }
-      with_promise_out {
-         params {
-            @out p: promise<int>;
-         }
-      }
-      with_promise_inout {
-         params {
-            @inout p: promise<int>;
-         }
-      }
    }
 }
 

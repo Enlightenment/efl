@@ -228,25 +228,4 @@ _complex_wrapper_out(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Complex 
 {
 }
 
-EOLIAN static Eina_Promise *
-_complex_with_promise_r(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED)
-{
-   return NULL;
-}
-
-EOLIAN static void
-_complex_with_promise_in(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_Promise *p EINA_UNUSED)
-{
-}
-
-EOLIAN static void
-_complex_with_promise_out(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_Promise **p EINA_UNUSED)
-{
-}
-
-EOLIAN static void
-_complex_with_promise_inout(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_Promise_Owner *p EINA_UNUSED)
-{
-}
-
 #include "complex.eo.c"
