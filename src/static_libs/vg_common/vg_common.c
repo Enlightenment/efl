@@ -636,10 +636,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg)
                                style->fill.paint.b, style->fill.opacity);
      }
 
-   // apply the stroke style property
-   //@TODO HACK, fix the below api to take the stroke width as pixels
-   // rightnow it draws double the pixel (inside and outside the outline)
-   evas_vg_shape_stroke_width_set(vg, style->stroke.width/2.0);
+   evas_vg_shape_stroke_width_set(vg, style->stroke.width);
    evas_vg_shape_stroke_cap_set(vg, style->stroke.cap);
    evas_vg_shape_stroke_join_set(vg, style->stroke.join);
    evas_vg_shape_stroke_scale_set(vg, style->stroke.scale);
@@ -901,8 +898,7 @@ _apply_svg_property(Svg_Node *node, Efl_VG *vg)
                                        &style->stroke.paint.b, &style->stroke.opacity);
      }
 
-   // keep the stroke width same as svg spec.
-   style->stroke.width = (evas_vg_shape_stroke_width_get(vg) * 2.0);
+   style->stroke.width = (evas_vg_shape_stroke_width_get(vg));
    style->stroke.cap = evas_vg_shape_stroke_cap_get(vg);
    style->stroke.join = evas_vg_shape_stroke_join_get(vg);
    style->stroke.scale = evas_vg_shape_stroke_scale_get(vg);
