@@ -1445,6 +1445,8 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
     * to pass to clients to do client side effects
     */
    einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(evas);
+   if (!einfo) return;
+
    wdata = ee->engine.data;
    einfo->window.x = wdata->win->geometry.x;
    einfo->window.y = wdata->win->geometry.y;
