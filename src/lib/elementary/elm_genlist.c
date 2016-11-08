@@ -5118,15 +5118,15 @@ _decorate_item_finished_signal_cb(void *data,
    if ((!it->realized) || (!it->item->deco_it_view)) return;
 
    evas_event_freeze(te);
+   snprintf(buf, sizeof(buf), "elm,state,%s,passive,finished",
+            sd->decorate_it_type);
+   edje_object_signal_callback_del_full
+     (it->item->deco_it_view, buf, "elm", _decorate_item_finished_signal_cb, it);
    it->item->nocache_once = EINA_FALSE;
    _decorate_item_unrealize(it);
    if (it->item->group_item)
      evas_object_stack_above(it->item->VIEW(group_item), sd->stack[1]);
 
-   snprintf(buf, sizeof(buf), "elm,state,%s,passive,finished",
-            sd->decorate_it_type);
-   edje_object_signal_callback_del_full
-     (obj, buf, "elm", _decorate_item_finished_signal_cb, it);
    evas_event_thaw(te);
    evas_event_thaw_eval(te);
 }
