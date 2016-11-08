@@ -106,24 +106,24 @@ group { name: "e/gadget/luncher/icon";
             inherit: "default" 0.0;
             rel1.relative: 0.05 0.0;
             rel1.offset: 1 1;
-            rel2.offset: 0 -1;
+            rel2.offset: -2 -1;
          }
          description { state: "on_top" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.0 0.05;
             rel1.offset: 1 1;
-            rel2.offset: -1 0;
+            rel2.offset: -1 -2;
          }
          description { state: "on_right" 0.0;
             inherit: "default" 0.0;
             rel2.relative: 0.95 1.0;
-            rel1.offset: 0 1;
+            rel1.offset: 2 1;
             rel2.offset: -1 -1;
          }
          description { state: "on_bottom" 0.0;
             inherit: "default" 0.0;
             rel2.relative: 1.0 0.95;
-            rel1.offset: 1 0;
+            rel1.offset: 1 2;
             rel2.offset: -1 -1;
          }
          description { state: "full" 0.0;
@@ -223,6 +223,30 @@ group { name: "e/gadget/luncher/icon";
          target: "indicator";
          target: "e.swallow.icon";
          transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_off_left";
+         signal: "e,state,off,left"; source: "e";
+         action: STATE_SET "on_left" 0.0;
+         target: "e.swallow.icon";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_off_top";
+         signal: "e,state,off,top"; source: "e";
+         action: STATE_SET "on_top" 0.0;
+         target: "e.swallow.icon";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_off_right";
+         signal: "e,state,off,right"; source: "e";
+         action: STATE_SET "on_right" 0.0;
+         target: "e.swallow.icon";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_off_bottom";
+         signal: "e,state,off,bottom"; source: "e";
+         action: STATE_SET "on_bottom" 0.0;
+         target: "e.swallow.icon";
+         transition: DECELERATE 0.1;
       }
       program { name: "icon_off";
          signal: "e,state,off,*"; source: "e";
