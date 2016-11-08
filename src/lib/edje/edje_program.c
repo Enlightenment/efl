@@ -1209,6 +1209,26 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
    _edje_emit_full(ed, sig, src, NULL, NULL);
 }
 
+void
+_edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *src)
+{
+   Efl_Input_Device *seat;
+   char buf[128];
+
+   /* keep sending signals without seat information for legacy compatibility */
+   _edje_emit_full(ed, sig, src, NULL, NULL);
+
+   /* send extra signal with ",$SEAT" suffix if the input device originating
+    * the signal belongs to a seat */
+   if (!dev) return;
+
+   seat = efl_input_device_seat_get(dev);
+   if (!seat) return;
+
+   snprintf(buf, sizeof(buf), "%s,%s", sig, efl_input_device_name_get(seat));
+   _edje_emit_full(ed, buf, src, NULL, NULL);
+}
+
 /* data should either be NULL or a malloc allocated data */
 void
 _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *))

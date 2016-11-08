@@ -2467,6 +2467,7 @@ void  _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char 
 void _edje_programs_patterns_clean(Edje_Part_Collection *ed);
 void _edje_programs_patterns_init(Edje_Part_Collection *ed);
 void  _edje_emit(Edje *ed, const char *sig, const char *src);
+void _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *src);
 void _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *));
 void _edje_emit_handle(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data, Eina_Bool prop);
 void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
