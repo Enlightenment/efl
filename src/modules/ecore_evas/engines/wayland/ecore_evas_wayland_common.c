@@ -2049,7 +2049,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
      {
         ERR("Failed to allocate Ecore_Evas_Engine_Wl_Data");
         free(ee);
-        goto werr;
+        goto w_err;
      }
 
    if (frame) WRN("draw_frame is now deprecated and will have no effect");
