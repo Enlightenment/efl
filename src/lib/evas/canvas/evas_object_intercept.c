@@ -120,7 +120,12 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
           }
         i = va_arg(args, int);
         j = va_arg(args, int);
-        if (!obj->interceptors) goto end_noblock;
+        if (!obj->interceptors)
+          {
+             if ((obj->cur->geometry.x == i) && (obj->cur->geometry.y == j))
+               blocked = EINA_TRUE;
+             break;
+          }
         blocked = evas_object_intercept_call_move(eo_obj, obj, i, j);
         break;
 
