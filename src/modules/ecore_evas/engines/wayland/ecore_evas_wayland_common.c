@@ -1922,7 +1922,8 @@ _ee_egl_display_unset(Ecore_Evas *ee)
    einfo->info.wl_display = NULL;
    wdata = ee->engine.data;
    wdata->regen_objs = _evas_canvas_image_data_unset(ecore_evas_get(ee));
-   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+     WRN("Failed to set Evas Engine Info for '%s'", ee->driver);
 }
 
 static Eina_Bool
