@@ -13,7 +13,6 @@ elm_public_eolian_files = \
 	lib/elementary/elm_combobox.eo \
 	lib/elementary/elm_conformant.eo \
 	lib/elementary/elm_ctxpopup.eo \
-	lib/elementary/elm_datetime.eo \
 	lib/elementary/elm_dayselector.eo \
 	lib/elementary/elm_entry.eo \
 	lib/elementary/elm_fileselector.eo \
@@ -217,7 +216,6 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_container.h \
 	lib/elementary/elm_widget_combobox.h \
 	lib/elementary/elm_widget_ctxpopup.h \
-	lib/elementary/elm_widget_datetime.h \
 	lib/elementary/elm_widget_dayselector.h \
 	lib/elementary/elm_widget_diskselector.h \
 	lib/elementary/elm_widget_entry.h \
@@ -350,9 +348,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_conform_legacy.h \
 	lib/elementary/elm_cursor.h \
 	lib/elementary/elm_datetime.h \
-	lib/elementary/elm_datetime_common.h \
-	lib/elementary/elm_datetime_eo.h \
-	lib/elementary/elm_datetime_legacy.h \
 	lib/elementary/elm_dayselector.h \
 	lib/elementary/elm_dayselector_eo.h \
 	lib/elementary/elm_dayselector_legacy.h \
@@ -968,34 +963,6 @@ modules_elementary_access_output_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
 modules_elementary_access_output_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 modules_elementary_access_output_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_elementary_access_output_module_la_LIBTOOLFLAGS = --tag=disable-static
-
-## datetime_input_ctxpopup
-
-moduledatetime_input_ctxpopuppkgdir = $(libdir)/elementary/modules/datetime_input_ctxpopup/$(MODULE_ARCH)
-moduledatetime_input_ctxpopuppkg_LTLIBRARIES = modules/elementary/datetime_input_ctxpopup/module.la
-
-# Workaround for broken parallel install support in automake (relink issue)
-# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
-install_moduledatetime_input_ctxpopuppkgLTLIBRARIES = install-moduledatetime_input_ctxpopuppkgLTLIBRARIES
-$(install_moduledatetime_input_ctxpopuppkgLTLIBRARIES): install-libLTLIBRARIES
-
-modules_elementary_datetime_input_ctxpopup_module_la_SOURCES = \
-modules/elementary/datetime_input_ctxpopup/datetime_input_ctxpopup.c
-modules_elementary_datetime_input_ctxpopup_module_la_CPPFLAGS = \
--DELM_INTERNAL_API_ARGESFSDFEFC=1 \
--I. \
--I$(top_builddir) \
--I$(top_srcdir) \
--I$(top_srcdir)/src/lib/elementary \
--I$(top_builddir)/src/lib/elementary \
--DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
--DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DELEMENTARY_BUILD \
-@ELEMENTARY_CFLAGS@
-modules_elementary_datetime_input_ctxpopup_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
-modules_elementary_datetime_input_ctxpopup_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
-modules_elementary_datetime_input_ctxpopup_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_elementary_datetime_input_ctxpopup_module_la_LIBTOOLFLAGS = --tag=disable-static
 
 ## clock_input_ctxpopup
 

@@ -103,7 +103,6 @@ elementary/themes/edc/elm/colorclass.edc \
 elementary/themes/edc/elm/conform.edc \
 elementary/themes/edc/elm/ctxpopup.edc \
 elementary/themes/edc/elm/cursor.edc \
-elementary/themes/edc/elm/datetime.edc \
 elementary/themes/edc/elm/dayselector.edc \
 elementary/themes/edc/elm/diskselector.edc \
 elementary/themes/edc/elm/entry.edc \

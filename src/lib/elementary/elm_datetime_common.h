@@ -1,9 +1,0 @@
-/**
- * @addtogroup Elm_Datetime
- *
- * @{
- */
-
-/**
- * @}
- */
