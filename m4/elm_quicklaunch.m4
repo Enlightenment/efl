@@ -8,7 +8,7 @@ dnl add -pie -rdynamic to LDFLAGS and -fpie to CFLAGS
 
 AC_DEFUN([ELM_QUICKLAUNCH],
 [
-AC_MSG_CHECKING([If the compiler as what it takes to do quicklaunch (-pie -rdynamic)])
+AC_MSG_CHECKING([If the compiler has what it takes to do quicklaunch (-pie -rdynamic)])
 old_LDFLAGS="$LDFLAGS"
 old_CFLAGS="$CFLAGS"
 
