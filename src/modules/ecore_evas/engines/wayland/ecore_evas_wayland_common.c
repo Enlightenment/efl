@@ -2048,7 +2048,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    if (!(wdata = calloc(1, sizeof(Ecore_Evas_Engine_Wl_Data))))
      {
         ERR("Failed to allocate Ecore_Evas_Engine_Wl_Data");
-        free(ee);
         goto w_err;
      }
 
