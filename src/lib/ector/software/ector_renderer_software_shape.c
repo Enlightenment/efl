@@ -543,9 +543,10 @@ _update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
           {
              ector_software_rasterizer_stroke_set(pd->surface->rasterizer,
                                                   (pd->public_shape->stroke.width *
-                                                   pd->public_shape->stroke.scale),
+                                                  pd->public_shape->stroke.scale),
                                                   pd->public_shape->stroke.cap,
-                                                  pd->public_shape->stroke.join);
+                                                  pd->public_shape->stroke.join,
+                                                  pd->base->m);
 
              if (pd->public_shape->stroke.dash)
                {
