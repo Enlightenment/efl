@@ -1624,6 +1624,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
         if (obj->map->surface)
           {
+             Evas_Object_Protected_Data *mask = obj->clip.mask;
+
              if (obj->cur->clipper)
                {
                   evas_object_clip_recalc(obj);
@@ -1641,10 +1643,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                                        off_y);
 
                   /* Clipper masks */
-                  if (_evas_render_object_is_mask(obj->cur->clipper))
+                  if (mask)
                     {
                        // This path can be hit when we're multiplying masks on top of each other...
-                       Evas_Object_Protected_Data *mask = obj->cur->clipper;
                        RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p\n",
                           mask, mask->name?":":"", mask->name?mask->name:"",
                           mask->mask->redraw, mask->mask->surface);
@@ -1769,29 +1770,40 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
                   if (obj->cur->clipper && (mapped > 1))
                     {
-                       if (proxy_src_clip)
+                       Evas_Object_Protected_Data *mask = obj->clip.mask;
+
+                       if (obj->mask->surface != surface)
                          {
-                            if ((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
-                                _evas_render_object_is_mask(obj->cur->clipper))
-                              evas_object_clip_recalc(obj);
-                            _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
-                                                                 proxy_render_data,
-                                                                 off_x, off_y);
+                            if (proxy_src_clip)
+                              {
+                                 if ((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
+                                     _evas_render_object_is_mask(obj->cur->clipper))
+                                   evas_object_clip_recalc(obj);
+                                 _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
+                                                                      proxy_render_data,
+                                                                      off_x, off_y);
+                              }
+                            else
+                              {
+                                 if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
+                                   {
+                                      eina_evlog("-render_object", eo_obj, 0.0, NULL);
+                                      return clean_them;
+                                   }
+                              }
                          }
                        else
                          {
-                            if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
-                              {
-                                 eina_evlog("-render_object", eo_obj, 0.0, NULL);
-                                 return clean_them;
-                              }
+                            // rendering a mask in its own surface:
+                            // we want to render it fully and clip only at
+                            // clippee (maskee) render time
+                            RD(level, "  draw mask\n");
                          }
 
                        /* Clipper masks */
-                       if (_evas_render_object_is_mask(obj->cur->clipper))
+                       if (mask)
                          {
                             // This path can be hit when we're multiplying masks on top of each other...
-                            Evas_Object_Protected_Data *mask = obj->cur->clipper;
                             RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p\n",
                                mask, mask->name?":":"", mask->name?mask->name:"",
                                mask->mask->redraw, mask->mask->surface);
