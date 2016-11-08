@@ -1915,6 +1915,8 @@ _ee_egl_display_unset(Ecore_Evas *ee)
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+   if (!einfo) return;
+
    einfo->info.wl_display = NULL;
    wdata = ee->engine.data;
    wdata->regen_objs = _evas_canvas_image_data_unset(ecore_evas_get(ee));
