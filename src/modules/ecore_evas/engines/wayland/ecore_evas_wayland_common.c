@@ -2028,23 +2028,23 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
      }
 
    ewd = ecore_wl2_display_connect(disp_name);
-
    if (!ewd)
      {
         ERR("Failed to connect to Wayland Display %s", disp_name);
         goto conn_err;
      }
+
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
      {
         ERR("Failed to allocate Ecore_Evas");
-        goto err;
+        goto ee_err;
      }
 
    if (!(wdata = calloc(1, sizeof(Ecore_Evas_Engine_Wl_Data))))
      {
         ERR("Failed to allocate Ecore_Evas_Engine_Wl_Data");
         free(ee);
-        goto err;
+        goto werr;
      }
 
    if (frame) WRN("draw_frame is now deprecated and will have no effect");
@@ -2132,13 +2132,13 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                {
                   ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
-                  goto err;
+                  goto eng_err;
                }
           }
         else
           {
              ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
-             goto err;
+             goto eng_err;
           }
      }
 
@@ -2162,9 +2162,12 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
 
    return ee;
 
-err:
-   if (ee) ecore_evas_free(ee);
-   else ecore_wl2_display_disconnect(ewd);
+eng_err:
+   ecore_evas_free(ee);
+w_err:
+   free(ee);
+ee_err:
+   ecore_wl2_display_disconnect(ewd);
 conn_err:
    ecore_wl2_shutdown();
    return NULL;
