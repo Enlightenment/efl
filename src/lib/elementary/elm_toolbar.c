@@ -3818,7 +3818,7 @@ _elm_toolbar_item_state_prev(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *ite
    if (!item->states) return NULL;
 
    prev_state = eina_list_prev(item->current_state);
-   if ((!prev_state) || (prev_state == item->states))
+   if (!prev_state)
      prev_state = eina_list_last(item->states);
    return eina_list_data_get(prev_state);
 }
