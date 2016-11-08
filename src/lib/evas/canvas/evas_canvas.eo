@@ -119,9 +119,8 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       }
       @property focus {
          get {
-            [[Retrieve the object that currently has focus.
+            [[Retrieve the object focused by the default seat.
 
-              Evas can have (at most) one of its objects focused at a time.
               Focused objects will be the ones having key events delivered
               to, which the programmer can act upon by means of
               \@ref evas_object_event_callback_add usage.
@@ -136,7 +135,10 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 
               See also \@ref evas_object_focus_set,
               \@ref evas_object_focus_get, \@ref evas_object_key_grab,
-              \@ref evas_object_key_ungrab.
+              \@ref evas_object_key_ungrab, @.seat_focus_get,
+              @.focused_objects.get, @Efl.Canvas.Object.seat_focus_check,
+              @Efl.Canvas.Object.seat_focus_add,
+              @Efl.Canvas.Object.seat_focus_del.
             ]]
             /* FIXME-doc
             Example:
@@ -153,6 +155,23 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             return: Efl.Canvas.Object @warn_unused; [[The object that has focus
                                                   or $null if there is not one.]]
          }
+      }
+      @property focused_objects {
+         [[Return an iterator of focused objects. @since 1.19]]
+         get {
+            return: free(own(iterator<Eina_Hash_Tuple>), eina_iterator_free);  [[An iterator that contains
+                                                                                 Eina_Hash_Tuple which the key is an
+                                                                               Efl.Input.Device and the data is an Efl.Canvas.Object or $null on error.]]
+         }
+      }
+      seat_focus_get {
+         [[Return the focused object by a given seat. @since 1.19]]
+         params {
+             @in seat: Efl.Input.Device;[[The seat to fetch the focused
+                                          object or $null for the default seat.]]
+         }
+         return: Efl.Canvas.Object; [[The object that has the focus or $null if
+                                      the seat has no focused object.]]
       }
       @property object_top {
          get {
@@ -1115,6 +1134,16 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
            segments, temporary scratch buffers, cached data to avoid
            re-compute of that data etc.
          ]]
+      }
+      default_device_get {
+         [[Return the default device of a given type.
+           \@note Currently Evas only creates a seat, mouse and keyboard.
+           @since 1.19
+         ]]
+         params {
+            @in type: Efl.Input.Device.Class; [[The class of the default device to fetch.]]
+         }
+         return: Efl.Input.Device; [[The default device or $null on error.]]
       }
       coord_world_y_to_screen @const {
          [[Convert/scale a canvas coordinate into output screen

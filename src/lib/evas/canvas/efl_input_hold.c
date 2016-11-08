@@ -26,7 +26,7 @@ _efl_input_hold_hold_get(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 EOLIAN static void
 _efl_input_hold_efl_input_event_device_set(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd, Efl_Input_Device *dev)
 {
-   pd->device = dev;
+   pd->device = efl_ref(dev);
 }
 
 EOLIAN static Efl_Input_Device *
@@ -70,6 +70,7 @@ _efl_input_hold_efl_object_constructor(Eo *obj, Efl_Input_Hold_Data *pd EINA_UNU
 static inline void
 _efl_input_hold_free(Efl_Input_Hold_Data *pd)
 {
+   efl_unref(pd->device);
    free(pd->legacy);
 }
 
@@ -110,7 +111,7 @@ _efl_input_hold_efl_input_event_dup(Eo *obj, Efl_Input_Hold_Data *pd)
    ev->timestamp = pd->timestamp;
    ev->data = pd->data;
    ev->hold = pd->hold;
-   ev->device = pd->device; // lacks a proper ref :(
+   ev->device = efl_ref(pd->device);
 
    return evt;
 }

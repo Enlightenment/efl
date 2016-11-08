@@ -889,7 +889,7 @@ struct _Evas_Public_Data
    int            in_smart_calc;
    int            smart_calc_count;
 
-   Evas_Object   *focused;
+   Eina_Hash     *focused_objects; //Key - seat; value - the focused object
    void          *attach_data;
    Evas_Modifier  modifiers;
    Evas_Lock      locks;
@@ -904,6 +904,10 @@ struct _Evas_Public_Data
    Eina_Array    *cur_device;
 
    Eina_List     *outputs;
+
+   Evas_Device   *default_seat;
+   Evas_Device   *default_mouse;
+   Evas_Device   *default_keyboard;
 
    unsigned char  changed : 1;
    unsigned char  delete_me : 1;
@@ -1105,6 +1109,7 @@ struct _Evas_Object_Protected_Data
    const Evas_Object_Map_Data *map;
    const Evas_Object_3D_Data  *data_3d;
    const Evas_Object_Mask_Data *mask;
+   Eina_List                  *focused_by_seats;
 
    // Pointer to the Evas_Object itself
    Evas_Object                *object;
@@ -1154,7 +1159,6 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   rect_del : 1;
    Eina_Bool                   mouse_in : 1;
    Eina_Bool                   pre_render_done : 1;
-   Eina_Bool                   focused : 1;
    Eina_Bool                   in_layer : 1;
 
    Eina_Bool                   no_propagate : 1;
@@ -1711,6 +1715,7 @@ void _canvas_font_cache_flush(Eo *e, void *_pd, va_list *list);
 void _canvas_font_cache_set(Eo *e, void *_pd, va_list *list);
 void _canvas_font_cache_get(Eo *e, void *_pd, va_list *list);
 void _canvas_font_available_list(Eo *e, void *_pd, va_list *list);
+void _evas_focus_device_del_cb(void *data, const Efl_Event *ev);
 
 void _canvas_key_modifier_get(Eo *e, void *_pd, va_list *list);
 void _canvas_key_lock_get(Eo *e, void *_pd, va_list *list);

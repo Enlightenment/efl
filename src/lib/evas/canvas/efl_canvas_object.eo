@@ -209,6 +209,8 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
            is $true, $obj will be set as the currently focused object
            and it will receive all keyboard events that are not
            exclusive key grabs on other objects.
+           See also @.seat_focus_check,
+           @.seat_focus_add, @.seat_focus_del.
          ]]
          set {
             legacy: evas_object_focus_set;
@@ -219,6 +221,55 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          values {
             focus: bool; [[$true when set as focused or $false otherwise.]]
          }
+      }
+      @property seat_focus {
+         [[
+            Check if this object is focused.
+            @since 1.19
+         ]]
+         get {
+         }
+         values {
+            focus: bool; [[$true if focused by at least one seat or $false otherwise.]]
+         }
+      }
+      seat_focus_check {
+         [[ Check if this object is focused by a given seat @since 1.19 ]]
+         params {
+            @in seat: Efl.Input.Device; [[The seat to check if the object is focused. Use $null for the default seat.]]
+         }
+         return: bool; [[$true if focused or $false otherwise.]]
+      }
+      seat_focus_add {
+         [[ Add a seat to the focus list.
+
+           Evas supports that an Efl.Canvas.Object may be focused by multiple seats
+           at the same time. This function adds a new seat to the focus list, in other words,
+           after the seat is added to the list this object will now be also focused by this new seat.
+
+           This function generates an \@ref EFL_CANVAS_OBJECT_EVENT_FOCUS_DEVICE_IN event.
+
+           \@note The old focus APIs ( \@ref evas_object_focus_get, \@ref evas_object_focus_set,
+           @.key_grab) will still work, however they will only act on the default seat.
+
+           @since 1.19
+         ]]
+         params {
+            @in seat: Efl.Input.Device; [[The seat that should be added to the focus list. Use $null for the default seat.]]
+         }
+         return: bool; [[$true if the focus has been set or $false otherwise.]]
+      }
+      seat_focus_del {
+         [[ Remove a seat from the focus list.
+
+            Removing an seat from the focus list is an unfocus operation, thus it will generate an
+            \@ref EFL_CANVAS_OBJECT_EVENT_FOCUS_DEVICE_OUT event.
+            @since 1.19
+         ]]
+         params {
+            @in seat: Efl.Input.Device; [[The seat that should be removed from the focus list. Use $null for the default seat.]]
+         }
+         return: bool; [[$true if the seat was removed from the focus list or $false otherwise.]]
       }
       @property is_frame_object {
          set {
@@ -568,5 +619,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
    events {
        focus,in; [[Focus In Event ]]
        focus,out; [[Focus Out Event ]]
+       focus,device,in: Efl.Input.Device; [[Focus In event that contains the seat device that this object was focused. @since 1.19]]
+       focus,device,out: Efl.Input.Device; [[Focus Out event that contains the seat device that this object was unfocused.@since 1.19]]
    }
 }
