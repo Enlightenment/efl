@@ -195,18 +195,17 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
                }
              if (!obj->interceptors) goto end_noblock;
              blocked = evas_object_intercept_call_clip_set(eo_obj, obj, eo_other);
-             break;
           }
-        // else: fallthrough to unset
-
-      case EVAS_OBJECT_INTERCEPT_CB_CLIP_UNSET:
-        if (!internal)
+        else
           {
-             if (_efl_canvas_object_clip_unset_block(eo_obj, obj))
-               goto end_block;
+             if (!internal)
+               {
+                  if (_efl_canvas_object_clip_unset_block(eo_obj, obj))
+                    goto end_block;
+               }
+             if (!obj->interceptors) goto end_noblock;
+             blocked = evas_object_intercept_call_clip_unset(eo_obj, obj);
           }
-        if (!obj->interceptors) goto end_noblock;
-        blocked = evas_object_intercept_call_clip_unset(eo_obj, obj);
         break;
      }
 

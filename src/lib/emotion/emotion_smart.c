@@ -2016,6 +2016,8 @@ _efl_canvas_video_efl_canvas_object_clip_set(Evas_Object *obj, Efl_Canvas_Video_
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
      return;
 
+   efl_canvas_object_clip_set(efl_super(obj, MY_CLASS), clip);
+
    if (sd->crop.clipper) evas_object_clip_set(sd->crop.clipper, clip);
    else evas_object_clip_set(sd->obj, clip);
    evas_object_clip_set(sd->bg, clip);

@@ -37,7 +37,7 @@
 static int
 _bgra_compare(unsigned int *data, unsigned int *ref, int w, int h)
 {
-   int i,j;
+   int i, j, ret = 0;
    for (j = 0; j < h; j++)
      {
 #if 0
@@ -50,12 +50,12 @@ _bgra_compare(unsigned int *data, unsigned int *ref, int w, int h)
         for (i = 0; i < w; i++)
           if (data[i+j*w] != ref[i+j*w])
             {
-               printf("Pixel %d differ: %#x vs. %#x\n", i+j*w, data[i+j*w], ref[i+j*w]);
+               printf("Pixel %2dx%-2d differ: %#x vs. %#x\n", i, j, data[i+j*w], ref[i+j*w]);
                fflush(stdout);
-               return 1;
+               ret = 1;
             }
      }
-   return 0;
+   return ret;
 }
 
 // The usual useless unit test

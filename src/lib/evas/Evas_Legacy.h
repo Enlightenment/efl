@@ -2514,7 +2514,6 @@ enum _Evas_Object_Intercept_Cb_Type
    EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
    EVAS_OBJECT_INTERCEPT_CB_COLOR_SET,
    EVAS_OBJECT_INTERCEPT_CB_CLIP_SET,
-   EVAS_OBJECT_INTERCEPT_CB_CLIP_UNSET,
 };
 typedef enum _Evas_Object_Intercept_Cb_Type Evas_Object_Intercept_Cb_Type;
 

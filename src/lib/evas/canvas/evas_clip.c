@@ -433,7 +433,7 @@ static void
 _clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (_efl_canvas_object_clip_unset_block(eo_obj, obj)) return;
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_UNSET, 1)) return;
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 1, NULL)) return;
    if (obj->is_smart && obj->smart.smart && obj->smart.smart->smart_class &&
        obj->smart.smart->smart_class->clip_unset)
      {

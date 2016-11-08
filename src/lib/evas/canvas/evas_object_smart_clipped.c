@@ -166,18 +166,12 @@ evas_object_smart_clipped_smart_clip_unset(Evas_Object *eo_obj)
 EOLIAN static void
 _efl_canvas_group_clipped_efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *clip)
 {
-   if (clip)
-     {
-        if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
-          return;
-        evas_object_smart_clipped_smart_clip_set(eo_obj, clip);
-     }
-   else
-     {
-        if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_UNSET, 0))
-          return;
-        evas_object_smart_clipped_smart_clip_unset(eo_obj);
-     }
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
+     return;
+
+   efl_canvas_object_clip_set(efl_super(eo_obj, MY_CLASS), clip);
+   if (clip) evas_object_smart_clipped_smart_clip_set(eo_obj, clip);
+   else evas_object_smart_clipped_smart_clip_unset(eo_obj);
 }
 
 static void
