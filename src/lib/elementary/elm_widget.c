@@ -2556,7 +2556,7 @@ _elm_widget_focus_next_get(const Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Focus_D
           *next_item = sd->item_focus_right;
         else if (dir == ELM_FOCUS_LEFT)
           *next_item = sd->item_focus_left;
-        *next = elm_object_item_widget_get(*next_item);
+        if (*next_item) *next = elm_object_item_widget_get(*next_item);
 
         if (!(*next))
           {
