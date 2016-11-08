@@ -58,20 +58,6 @@ _disc_cb(void *data EINA_UNUSED, Ecore_Evas *ee EINA_UNUSED, const char *client_
    printf("Client %s disconnected\n", client_host);
 }
 
-static Efl_Input_Device *
-_get_seat(Efl_Input_Device *dev)
-{
-   if (!dev)
-     return NULL;
-
-   while ((dev = efl_input_device_parent_get(dev)))
-     {
-        if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)
-          return dev;
-     }
-   return NULL;
-}
-
 static Eina_Bool
 _keyboard_event(void *data EINA_UNUSED, int type, void *event)
 {
@@ -79,7 +65,7 @@ _keyboard_event(void *data EINA_UNUSED, int type, void *event)
    Efl_Input_Device *seat = NULL;
 
    if (e->dev)
-     seat = _get_seat(e->dev);
+     seat = efl_input_device_seat_get(e->dev);
 
    printf("The keyboard on seat '%s' %s the key '%s'\n", seat ?
           efl_input_device_name_get(seat) : "default",
@@ -96,7 +82,7 @@ _mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    Efl_Input_Device *seat = NULL;
 
    if (e->dev)
-     seat = _get_seat(e->dev);
+     seat = efl_input_device_seat_get(e->dev);
 
    printf("The mouse on seat '%s' is at X: %d Y:%d\n",
           seat ? efl_input_device_name_get(seat) : "default", e->x, e->y);
@@ -110,7 +96,7 @@ _mouse_button(void *data EINA_UNUSED, int type, void *event)
    Efl_Input_Device *seat = NULL;
 
    if (e->dev)
-     seat = _get_seat(e->dev);
+     seat = efl_input_device_seat_get(e->dev);
 
    printf("The mouse on seat '%s' %s the following button '%d'\n",
           seat ? efl_input_device_name_get(seat) : "default",
@@ -126,7 +112,7 @@ _mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    Efl_Input_Device *seat = NULL;
 
    if (e->dev)
-     seat = _get_seat(e->dev);
+     seat = efl_input_device_seat_get(e->dev);
 
    printf("The mouse on seat '%s' moved the wheel '%s'\n",
           seat ? efl_input_device_name_get(seat) : "default",

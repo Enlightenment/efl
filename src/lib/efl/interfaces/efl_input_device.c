@@ -98,6 +98,23 @@ _efl_input_device_description_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd
 }
 
 EOLIAN static Efl_Input_Device *
+_efl_input_device_seat_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+{
+   while (1)
+     {
+        if (pd->klass == EFL_INPUT_DEVICE_CLASS_SEAT)
+          return pd->eo;
+
+        if (!pd->parent)
+          break;
+
+        pd = efl_data_scope_get(pd->parent, EFL_INPUT_DEVICE_CLASS);
+     }
+
+   return NULL;
+}
+
+EOLIAN static Efl_Input_Device *
 _efl_input_device_parent_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
 {
    return pd->parent;

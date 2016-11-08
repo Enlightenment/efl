@@ -81,6 +81,22 @@ class Efl.Input.Device (Efl.Object)
             parent: Efl.Input.Device; [[Parent input device]]
          }
       }
+      @property seat {
+         [[Get the @Efl.Input.Device that represents a seat.
+
+           This method will find the seat the device belongs to.
+
+           For this, it walk through device's parents looking for a device
+           with @Efl.Input.Device.Class.seat. It may be
+           the device itself.
+
+           In case no seat is found, $null is returned.
+         ]]
+         get {}
+         values {
+            seat: Efl.Input.Device; [[The seat this device belongs to.]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
