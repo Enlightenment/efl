@@ -2833,7 +2833,6 @@ group { "elm/genlist/item/message/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text elm.title.1 elm.title.2";
-   data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
    inherit: "genlist_base";
