@@ -94,6 +94,9 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #define EFL_ORIENT_180 EFL_ORIENT_DOWN
 #define EFL_ORIENT_270 EFL_ORIENT_LEFT
 
+#define EFL_GFX_LAYER_MIN -32768 /**< bottom-most layer number */
+#define EFL_GFX_LAYER_MAX 32767 /**< top-most layer number */
+
 /* Core interface */
 #include "interfaces/efl_animator.eo.h"
 
