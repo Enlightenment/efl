@@ -32,7 +32,7 @@ struct Elm.Atspi_Text.Range
    [[Text range]]
    start_offset: int; [[Range start offset]]
    end_offset : int; [[Range end offset]]
-   content: char *; [[Range content]]
+   content: ptr(char); [[Range content]]
 }
 
 struct Elm.Atspi_Text.Change_Info
@@ -66,11 +66,11 @@ interface Elm.Interface.Atspi.Text ()
          }
          keys {
             granularity: Elm.Atspi_Text.Granularity;
-            start_offset: int * @nonull; [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
-            end_offset: int *; [[Offset indicating end of string according to given granularity. -1 in case of error.]]
+            start_offset: ptr(int) @nonull; [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
+            end_offset: ptr(int); [[Offset indicating end of string according to given granularity. -1 in case of error.]]
          }
          values {
-            string: own(char *); [[Newly allocated UTF-8 encoded string. Must be free by a user.]]
+            string: own(ptr(char)); [[Newly allocated UTF-8 encoded string. Must be free by a user.]]
          }
       }
       @property text @protected {
@@ -82,7 +82,7 @@ interface Elm.Interface.Atspi.Text ()
             end_offset: int; [[End offset of text.]]
          }
          values {
-            text: own(char *); [[UTF-8 encoded text.]]
+            text: own(ptr(char)); [[UTF-8 encoded text.]]
          }
       }
       @property caret_offset @protected {
@@ -103,11 +103,11 @@ interface Elm.Interface.Atspi.Text ()
          }
          keys {
             name: string @nonull; [[text attribute name]]
-            start_offset: int * @nonull; [[Position in text from which given attribute is set.]]
-            end_offset: int *; [[Position in text to which given attribute is set.]]
+            start_offset: ptr(int) @nonull; [[Position in text from which given attribute is set.]]
+            end_offset: ptr(int); [[Position in text to which given attribute is set.]]
          }
          values {
-            value: own(char *); [[Value of text attribute. Should be free()]]
+            value: own(ptr(char)); [[Value of text attribute. Should be free()]]
          }
       }
       @property attributes @protected {
@@ -115,18 +115,18 @@ interface Elm.Interface.Atspi.Text ()
             [[Gets list of all text attributes.]]
          }
          keys {
-            start_offset: int * @nonull;
-            end_offset: int *;
+            start_offset: ptr(int) @nonull;
+            end_offset: ptr(int);
          }
          values {
-            attributes: own(list<own(Elm.Atspi_Text.Attribute *)>);
+            attributes: own(list<own(ptr(Elm.Atspi_Text.Attribute))>);
          }
       }
       @property default_attributes @protected {
          get {
          }
          values {
-            attributes: own(list<own(Elm.Atspi_Text.Attribute *)>);
+            attributes: own(list<own(ptr(Elm.Atspi_Text.Attribute))>);
          }
       }
       @property character_extents @protected {
@@ -170,7 +170,7 @@ interface Elm.Interface.Atspi.Text ()
             yclip: Elm.Atspi_Text.Clip_Type;
          }
          values {
-            ranges: own(list<own(Elm.Atspi_Text.Range *)>);
+            ranges: own(list<own(ptr(Elm.Atspi_Text.Range))>);
          }
       }
       @property range_extents @protected {
