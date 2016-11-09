@@ -1417,9 +1417,16 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
 
    if (!sd->frame_obj) return;
    evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
-   evas_object_geometry_get(sd->edje, &ox, &oy, &ow, &oh);
-
-   evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy), (fw - ow), (fh - oh));
+   if (edje_object_part_exists(sd->frame_obj, "elm.spacer.content"))
+     {
+        edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.content", &ox, &oy, &ow, &oh);
+        evas_output_framespace_set(sd->evas, ox, oy, fw - ow, fh - oh);
+     }
+   else
+     {
+        evas_object_geometry_get(sd->edje, &ox, &oy, &ow, &oh);
+        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy), (fw - ow), (fh - oh));
+     }
 }
 
 static void
@@ -5504,23 +5511,35 @@ _efl_ui_win_fullscreen_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
    return sd->fullscreen;
 }
 
+static inline Eo *
+_main_menu_swallow_get(Efl_Ui_Win_Data *sd)
+{
+   if (sd->frame_obj)
+     {
+        if (edje_object_part_exists(sd->frame_obj, "elm.swallow.menu"))
+          return sd->frame_obj;
+     }
+   return sd->edje;
+}
+
 static void
 _dbus_menu_set(Eina_Bool dbus_connect, void *data)
 {
    ELM_WIN_DATA_GET_OR_RETURN(data, sd);
+   Eo *swallow = _main_menu_swallow_get(sd);
 
    if (dbus_connect)
      {
         DBG("Setting menu to D-Bus");
-        edje_object_part_unswallow(sd->edje, sd->main_menu);
-        edje_object_signal_emit(sd->edje, "elm,action,hide_menu", "elm");
+        edje_object_part_unswallow(swallow, sd->main_menu);
+        edje_object_signal_emit(swallow, "elm,action,hide_menu", "elm");
         _elm_menu_menu_bar_hide(sd->main_menu);
      }
    else
      {
         DBG("Setting menu to local mode");
-        edje_object_part_swallow(sd->edje, "elm.swallow.menu", sd->main_menu);
-        edje_object_signal_emit(sd->edje, "elm,action,show_menu", "elm");
+        edje_object_part_swallow(swallow, "elm.swallow.menu", sd->main_menu);
+        edje_object_signal_emit(swallow, "elm,action,show_menu", "elm");
         evas_object_show(sd->main_menu);
      }
 }

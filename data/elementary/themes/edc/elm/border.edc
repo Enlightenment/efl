@@ -837,11 +837,44 @@ group { name: "elm/border/base/default";
          /*    visible: 0; */
          /* } */
       }
+      /* main menu */
+      rect { "menu_bg";
+         desc { "default";
+            color: 64 64 64 255; // FIXME color_class
+            align: 0.5 0.0;
+            rel.to: "elm.swallow.menu";
+         }
+      }
+      swallow { "elm.swallow.menu";
+         required: 1; // since 1.19
+         desc { "default";
+            rel.to: "top";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 0 -1;
+            visible: 0;
+            align: 0.5 0.0;
+            fixed: 1 1;
+         }
+         desc { "visible"; inherit: "default";
+            visible: 1;
+            fixed: 0 1;
+         }
+      }
+      /* covers the entire client contents, including the main menu */
+      spacer { "elm.spacer.content";
+         required: 1; // since 1.19
+         desc {
+	    rel1.to: "top";
+	    rel1.relative: 0.0 1.0;
+	    rel2.to: "bottom";
+	    rel2.relative: 1.0 0.0;
+	 }
+      }
       part { name: "elm.swallow.client"; type: SWALLOW;
          clip_to: "client_clip";
          description { state: "default" 0.0;
             rel1.relative: 0.0 1.0;
-            rel1.to: "top";
+            rel1.to: "elm.swallow.menu";
             rel2.relative: 1.0 0.0;
             rel2.to: "bottom";
          }
@@ -1497,6 +1530,16 @@ group { name: "elm/border/base/default";
          target: "elm.event.resize.bl";
          target: "elm.event.resize.b";
          target: "elm.event.resize.br";
+      }
+      program { name: "show_menu";
+         signal: "elm,action,show_menu"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.swallow.menu";
+      }
+      program { name: "hide_menu";
+         signal: "elm,action,hide"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.menu";
       }
       program {
          signal: "mouse,down,*"; source: "elm.event.close";
