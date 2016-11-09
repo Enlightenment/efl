@@ -299,7 +299,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
               in the list are only valid so long as those items are not
               deleted or the gengrid is not deleted.
             ]]
-            return: free(own(list<Elm_Gen_Item *>), eina_list_free) @warn_unused; [[
+            return: free(own(list<ptr(Elm_Gen_Item)>), eina_list_free) @warn_unused; [[
                 The list of realized items or $null if none are realized.
             ]]
          }
@@ -374,7 +374,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
          ]]
          return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
-            @in itc: const(Elm.Gengrid.Item.Class)*; [[The item class for the item.]]
+            @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in relative: Elm.Widget.Item; [[The item to place this new one before.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called
@@ -400,7 +400,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
          ]]
          return: Elm.Widget.Item; [[A handle to the item added or $null on error.]]
          params {
-            @in itc: const(Elm.Gengrid.Item.Class)*; [[The item class for the item.]]
+            @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in relative: Elm.Widget.Item; [[The item to place this new one after.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called
@@ -448,7 +448,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
          ]]
          return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
-            @in itc: const(Elm.Gengrid.Item.Class)*; [[The item class for the item.]]
+            @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called
                                                  when the item is selected.]]
@@ -462,7 +462,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
          ]]
          return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
-            @in itc: const(Elm.Gengrid.Item.Class)*; [[The item class for the item.]]
+            @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called
                                                  when the item is selected.]]
@@ -487,7 +487,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
          ]]
          return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
-            @in itc: const(Elm.Gengrid.Item.Class)*; [[The item class for the item.]]
+            @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in comp: Eina_Compare_Cb; [[User defined comparison function
                                          that defines the sort order based
