@@ -2167,11 +2167,14 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    return ee;
 
 eng_err:
+   /* ecore_evas_free() will call ecore_wl2_display_disconnect()
+    * and free(ee) */
    ecore_evas_free(ee);
+   ee = NULL;
 w_err:
    free(ee);
 ee_err:
-   ecore_wl2_display_disconnect(ewd);
+   if (ee) ecore_wl2_display_disconnect(ewd);
 conn_err:
    ecore_wl2_shutdown();
    return NULL;
