@@ -1,5 +1,10 @@
 import efl_gfx_types;
 
+const Efl.Gfx.Size.Hint.Expand: int = 1; [[Use with efl_gfx_size_hint_weight_set(),
+                                           efl_gfx_size_hint_weight_get()]]
+const Efl.Gfx.Size.Hint.Fill: int = -1; [[Use with efl_gfx_size_hint_align_set(),
+                                          efl_gfx_size_hint_align_get()]]
+
 interface Efl.Gfx.Size.Hint
 {
    [[Efl graphics size hint interface]]
@@ -190,7 +195,7 @@ interface Efl.Gfx.Size.Hint
            This is a hint on how a container object should resize a given
            child within its area. Containers may adhere to the simpler
            logic of just expanding the child object's dimensions to fit
-           its own (see the #EVAS_HINT_EXPAND helper weight macro) or
+           its own (see the #EFL_GFX_SIZE_HINT_EXPAND helper weight macro) or
            the complete one of taking each child's weight hint as real
            weights to how much of its size to allocate for them in each
            axis. A container is supposed to, after normalizing the
@@ -215,7 +220,7 @@ interface Efl.Gfx.Size.Hint
 
            These are hints on how to align an object inside the
            boundaries of a container/manager. Accepted values are in
-           the 0.0 to 1.0 range, with the special value #EVAS_HINT_FILL
+           the 0.0 to 1.0 range, with the special value #EFL_GFX_SIZE_HINT_FILL
            used to specify "justify" or "fill" by some users. In this
            case, maximum size hints should be enforced with higher
            priority, if they are set. Also, any padding hint set on
@@ -240,9 +245,9 @@ interface Efl.Gfx.Size.Hint
          */
          values {
             x: double; [[Double, ranging from 0.0 to 1.0 or with the special value
-                         #EVAS_HINT_FILL, to use as horizontal alignment hint.]]
+                         #EFL_GFX_SIZE_HINT_FILL, to use as horizontal alignment hint.]]
             y: double; [[Double, ranging from 0.0 to 1.0 or with the special value
-                         #EVAS_HINT_FILL, to use as vertical alignment hint.]]
+                         #EFL_GFX_SIZE_HINT_FILL, to use as vertical alignment hint.]]
          }
       }
       @property hint_display_mode {
