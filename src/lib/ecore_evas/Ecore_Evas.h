@@ -1861,8 +1861,9 @@ EAPI void        ecore_evas_callback_unsticky_set(Ecore_Evas *ee, Ecore_Evas_Eve
  *
  * @warning If and when this function is called depends on the underlying
  * windowing system.
+ * @since 1.19
  */
-EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+EAPI void        ecore_evas_callback_device_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Mouse_IO_Cb func);
 /**
  * @brief Set a callback for Ecore_Evas mouse out events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1873,6 +1874,35 @@ EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Eve
  *
  * @warning If and when this function is called depends on the underlying
  * windowing system.
+ * @since 1.19
+ */
+EAPI void        ecore_evas_callback_device_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Mouse_IO_Cb func);
+/**
+ * @brief Set a callback for Ecore_Evas mouse in events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever the mouse enters @p ee.
+ *
+ * @note the @p func will only report events for the default mouse.
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ * @see ecore_evas_callback_device_mouse_in_set
+ */
+EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+/**
+ * @brief Set a callback for Ecore_Evas mouse out events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever the mouse leaves @p ee.
+ *
+ * @note the @p func will only report events for the default mouse.
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ * @see ecore_evas_callback_device_mouse_out_set
  */
 EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**

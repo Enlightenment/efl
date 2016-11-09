@@ -42,6 +42,7 @@ typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 typedef struct _Ecore_Evas Ecore_Evas;
 typedef void   (*Ecore_Evas_Event_Cb) (Ecore_Evas *ee); /**< Callback used for several ecore evas events @since 1.2 */
 typedef void   (*Ecore_Evas_Focus_Device_Event_Cb) (Ecore_Evas *ee, Eo *seat); /** Callback used to report an focus in/out event originated from a seat. @since 1.19*/
+typedef void   (*Ecore_Evas_Mouse_IO_Cb) (Ecore_Evas *ee, Eo *mouse); /**< Callback used to report mouse in/out events. @since 1.19 */
 #endif
 
 #ifndef _ECORE_WAYLAND_H_

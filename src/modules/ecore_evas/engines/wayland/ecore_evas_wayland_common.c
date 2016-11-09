@@ -88,6 +88,8 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, //fn_focus_device_set
    NULL, //fn_callback_focus_device_in_set
    NULL, //fn_callback_focus_device_out_set
+   NULL, //fn_callback_device_mouse_in_set
+   NULL, //fn_callback_device_mouse_out_set
 };
 
 #define _smart_frame_type "ecore_evas_wl_frame"
@@ -163,13 +165,12 @@ _ecore_evas_wl_common_cb_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, 
    ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (ee->in) return ECORE_CALLBACK_PASS_ON;
+   if (_ecore_evas_mouse_in_check(ee, ev->dev)) return ECORE_CALLBACK_PASS_ON;
 
-   if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
+   _ecore_evas_mouse_inout_set(ee, ev->dev, EINA_TRUE, EINA_FALSE);
    ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
    evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
    _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
-   ee->in = EINA_TRUE;
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -185,16 +186,13 @@ _ecore_evas_wl_common_cb_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (!_ecore_evas_mouse_in_check(ee, ev->dev)) return ECORE_CALLBACK_PASS_ON;
 
-   if (ee->in)
-     {
-        ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
-        _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
-        evas_event_feed_mouse_out(ee->evas, ev->timestamp, NULL);
-        if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
-        if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
-        ee->in = EINA_FALSE;
-     }
+   ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
+   _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
+   evas_event_feed_mouse_out(ee->evas, ev->timestamp, NULL);
+   _ecore_evas_mouse_inout_set(ee, ev->dev, EINA_FALSE, EINA_FALSE);
+   if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
    return ECORE_CALLBACK_PASS_ON;
 }
 

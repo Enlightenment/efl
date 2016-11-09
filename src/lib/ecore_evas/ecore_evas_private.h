@@ -162,6 +162,9 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_focus_device_set) (Ecore_Evas *ee, Efl_Input_Device *seat, Eina_Bool on);
    void (*fn_callback_focus_device_in_set) (Ecore_Evas *ee, Ecore_Evas_Focus_Device_Event_Cb func);
    void (*fn_callback_focus_device_out_set) (Ecore_Evas *ee, Ecore_Evas_Focus_Device_Event_Cb func);
+
+   void (*fn_callback_device_mouse_in_set) (Ecore_Evas *ee, Ecore_Evas_Mouse_IO_Cb func);
+   void (*fn_callback_device_mouse_out_set) (Ecore_Evas *ee, Ecore_Evas_Mouse_IO_Cb func);
 };
 
 struct _Ecore_Evas_Interface
@@ -198,10 +201,10 @@ struct _Ecore_Evas
    Eina_Bool   should_be_visible : 1;
    Eina_Bool   alpha  : 1;
    Eina_Bool   transparent  : 1;
-   Eina_Bool   in  : 1;
    Eina_Bool   events_block  : 1; /* @since 1.14 */
 
    Eina_Hash  *data;
+   Eina_List  *mice_in;
 
    void *vnc_server; /* @since 1.19 */
 
@@ -306,6 +309,8 @@ struct _Ecore_Evas
       Eina_Bool     (*fn_pointer_warp) (const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
       void          (*fn_focus_device_in) (Ecore_Evas *ee, Efl_Input_Device *seat);
       void          (*fn_focus_device_out) (Ecore_Evas *ee, Efl_Input_Device *seat);
+      void          (*fn_device_mouse_in) (Ecore_Evas *ee, Efl_Input_Device *mouse);
+      void          (*fn_device_mouse_out) (Ecore_Evas *ee, Efl_Input_Device *mouse);
    } func;
 
    Ecore_Evas_Engine engine;
@@ -455,6 +460,9 @@ Eina_Module *_ecore_evas_vnc_server_module_load(void);
 EAPI void _ecore_evas_focus_device_set(Ecore_Evas *ee, Efl_Input_Device *seat,
                                        Eina_Bool on);
 
+EAPI Eina_Bool _ecore_evas_mouse_in_check(Ecore_Evas *ee, Efl_Input_Device *mouse);
+EAPI void _ecore_evas_mouse_inout_set(Ecore_Evas *ee, Efl_Input_Device *mouse,
+                                      Eina_Bool in, Eina_Bool force_out);
 #undef EAPI
 #define EAPI
 

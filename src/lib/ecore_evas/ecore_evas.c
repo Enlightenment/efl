@@ -83,6 +83,22 @@ _ecore_evas_device_del_cb(void *data, const Efl_Event *ev)
 }
 
 static void
+_ecore_evas_mouse_out_dispatch(Ecore_Evas *ee, Efl_Input_Device *mouse)
+{
+   if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
+   if (ee->func.fn_device_mouse_out) ee->func.fn_device_mouse_out(ee, mouse);
+}
+
+static void
+_ecore_evas_mouse_del_cb(void *data, const Efl_Event *ev)
+{
+   Ecore_Evas *ee = data;
+
+   ee->mice_in = eina_list_remove(ee->mice_in, ev->object);
+   _ecore_evas_mouse_out_dispatch(ee, ev->object);
+}
+
+static void
 _ecore_evas_animator(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
@@ -2754,7 +2770,7 @@ _ecore_evas_vnc_stop(Ecore_Evas *ee)
 EAPI void
 _ecore_evas_free(Ecore_Evas *ee)
 {
-   Efl_Input_Device *seat;
+   Efl_Input_Device *dev;
    Ecore_Evas_Interface *iface;
 
    ee->deleted = EINA_TRUE;
@@ -2778,10 +2794,15 @@ _ecore_evas_free(Ecore_Evas *ee)
      {
         _ecore_evas_free(ee->sub_ecore_evas->data);
      }
-   EINA_LIST_FREE(ee->prop.focused_by, seat)
+   EINA_LIST_FREE(ee->prop.focused_by, dev)
      {
-        efl_event_callback_del(seat, EFL_EVENT_DEL,
+        efl_event_callback_del(dev, EFL_EVENT_DEL,
                                _ecore_evas_device_del_cb, ee);
+     }
+   EINA_LIST_FREE(ee->mice_in, dev)
+     {
+        efl_event_callback_del(dev, EFL_EVENT_DEL,
+                               _ecore_evas_mouse_del_cb, ee);
      }
    if (ee->data) eina_hash_free(ee->data);
    ee->data = NULL;
@@ -4242,4 +4263,64 @@ _ecore_evas_input_direct_cb(void *window, int type, const void *info)
         ERR("unhandled input event type %d", type);
         return EINA_FALSE;
      }
+}
+
+EAPI void
+_ecore_evas_mouse_inout_set(Ecore_Evas *ee, Efl_Input_Device *mouse,
+                            Eina_Bool in, Eina_Bool force_out)
+{
+   Efl_Input_Device *present;
+
+   if (!mouse)
+     mouse = evas_default_device_get(ee->evas,
+                                     EFL_INPUT_DEVICE_CLASS_MOUSE);;
+
+   EINA_SAFETY_ON_NULL_RETURN(mouse);
+   present = eina_list_data_find(ee->mice_in, mouse);
+
+   if (in)
+     {
+        if (present) return;
+        ee->mice_in = eina_list_append(ee->mice_in, mouse);
+        efl_event_callback_add(mouse, EFL_EVENT_DEL,
+                               _ecore_evas_mouse_del_cb, ee);
+        if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
+     }
+   else
+     {
+        if (present) ee->mice_in = eina_list_remove(ee->mice_in, mouse);
+        else if (!present && !force_out) return;
+        efl_event_callback_del(mouse, EFL_EVENT_DEL,
+                               _ecore_evas_mouse_del_cb, ee);
+        _ecore_evas_mouse_out_dispatch(ee, mouse);
+     }
+}
+
+EAPI Eina_Bool
+_ecore_evas_mouse_in_check(Ecore_Evas *ee, Efl_Input_Device *mouse)
+{
+   if (!mouse)
+     mouse = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(mouse, EINA_FALSE);
+   return eina_list_data_find(ee->mice_in, mouse) ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI void
+ecore_evas_callback_device_mouse_out_set(Ecore_Evas *ee,
+                                         Ecore_Evas_Mouse_IO_Cb func)
+{
+   ECORE_EVAS_CHECK(ee);
+   IFC(ee, fn_callback_device_mouse_out_set) (ee, func);
+   IFE;
+   ee->func.fn_device_mouse_out = func;
+}
+
+EAPI void
+ecore_evas_callback_device_mouse_in_set(Ecore_Evas *ee,
+                                        Ecore_Evas_Mouse_IO_Cb func)
+{
+   ECORE_EVAS_CHECK(ee);
+   IFC(ee, fn_callback_device_mouse_in_set) (ee, func);
+   IFE;
+   ee->func.fn_device_mouse_in = func;
 }
