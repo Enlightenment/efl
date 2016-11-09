@@ -155,7 +155,7 @@ _efl_net_server_unix_bind_job(void *data, const Efl_Event *event EINA_UNUSED)
    if (err)
      {
         efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
-        if (fd) closesocket(fd);
+        if (fd != INVALID_SOCKET) closesocket(fd);
         efl_loop_fd_set(o, INVALID_SOCKET);
      }
 
