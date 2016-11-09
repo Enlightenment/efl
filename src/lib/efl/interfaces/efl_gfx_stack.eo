@@ -1,3 +1,6 @@
+const Efl.Gfx.Stack.Layer.Max: short = -32768; [[bottom-most layer number]]
+const Efl.Gfx.Stack.Layer.Min: short = 32767;  [[top-most layer number]]
+
 interface Efl.Gfx.Stack
 {
    [[Efl graphics stack interface]]
@@ -29,7 +32,7 @@ interface Efl.Gfx.Stack
          }
          values {
             l: short; [[The number of the layer to place the object on.
-                        Must be between #EFL_GFX_LAYER_MIN and #EFL_GFX_LAYER_MAX.]]
+                        Must be between #EFL_GFX_STACK_LAYER_MIN and #EFL_GFX_STACK_LAYER_MAX.]]
          }
       }
       @property below {
