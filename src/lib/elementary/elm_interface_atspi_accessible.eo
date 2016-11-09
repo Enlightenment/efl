@@ -233,7 +233,7 @@ struct Elm.Atspi.Relation
    objects: list<Efl.Object>; [[List with relation objects]]
 }
 
-type Elm.Atspi.Relation_Set: list<Elm.Atspi.Relation *>; [[Elementary AT-SPI relation set type]]
+type Elm.Atspi.Relation_Set: list<ptr(Elm.Atspi.Relation)>; [[Elementary AT-SPI relation set type]]
 
 mixin Elm.Interface.Atspi_Accessible ()
 {
@@ -256,7 +256,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          set {
          }
          values {
-            name: char*; [[Object name]]
+            name: ptr(char); [[Object name]]
          }
       }
       @property relation_set @protected {
@@ -298,7 +298,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          get {
          }
          values {
-            attributes: free(own(list<own(Elm.Atspi.Attribute *)>), elm_atspi_attributes_list_free); [[List of widget attributes]]
+            attributes: free(own(list<own(ptr(Elm.Atspi.Attribute))>), elm_atspi_attributes_list_free); [[List of widget attributes]]
          }
       }
       @property index_in_parent @protected {
@@ -343,18 +343,18 @@ mixin Elm.Interface.Atspi_Accessible ()
               @in cb: Efl_Event_Cb; [[callback]]
               @in data: void_ptr; [[data]]
          }
-         return: Elm.Atspi.Event.Handler*; [[Event handler]]
+         return: ptr(Elm.Atspi.Event.Handler); [[Event handler]]
       }
       event_handler_del @class @protected {
          [[Deregister accessibility event listener]]
          params {
-              @in handler: Elm.Atspi.Event.Handler *; [[Event handler]]
+              @in handler: ptr(Elm.Atspi.Event.Handler); [[Event handler]]
          }
       }
       event_emit @class @protected {
          params {
             @in accessible: Elm.Interface.Atspi_Accessible; [[Accessibility object.]]
-            @in event: const(Efl.Event.Description)*; [[Accessibility event type.]]
+            @in event: ptr(const(Efl.Event.Description)); [[Accessibility event type.]]
             @in event_info: void_ptr; [[Accessibility event details.]]
          }
       }
