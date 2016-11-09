@@ -279,8 +279,9 @@ _ecore_evas_vnc_server_client_connection_new(rfbClientRec *client)
 }
 
 static unsigned int
-_ecore_evas_vnc_server_modifier_to_ecore_modifier(int mod)
+_ecore_evas_vnc_server_modifier_to_ecore_modifier(int mod, Eina_Bool *is_lock)
 {
+   *is_lock = EINA_FALSE;
    if (mod == XK_Shift_L || mod == XK_Shift_R)
      return ECORE_EVENT_MODIFIER_SHIFT;
    if (mod == XK_Control_L || mod == XK_Control_R)
@@ -290,13 +291,25 @@ _ecore_evas_vnc_server_modifier_to_ecore_modifier(int mod)
    if (mod == XK_Super_L || mod == XK_Super_R)
      return ECORE_EVENT_MODIFIER_WIN;
    if (mod == XK_Scroll_Lock)
-     return ECORE_EVENT_LOCK_SCROLL;
+     {
+        *is_lock = EINA_TRUE;
+        return ECORE_EVENT_LOCK_SCROLL;
+     }
    if (mod == XK_Num_Lock)
-     return ECORE_EVENT_LOCK_NUM;
+     {
+        *is_lock = EINA_TRUE;
+        return ECORE_EVENT_LOCK_NUM;
+     }
    if (mod == XK_Caps_Lock)
-     return ECORE_EVENT_LOCK_CAPS;
+     {
+        *is_lock = EINA_TRUE;
+        return ECORE_EVENT_LOCK_CAPS;
+     }
    if (mod == XK_Shift_Lock)
-     return ECORE_EVENT_LOCK_SHIFT;
+     {
+        *is_lock = EINA_TRUE;
+        return ECORE_EVENT_LOCK_SHIFT;
+     }
    return 0;
 }
 
@@ -360,11 +373,18 @@ _ecore_evas_vnc_server_client_keyboard_event(rfbBool down,
 
    if (key >= XK_Shift_L && key <= XK_Hyper_R)
      {
-        int mod = _ecore_evas_vnc_server_modifier_to_ecore_modifier(key);
+        Eina_Bool is_lock;
+        int mod = _ecore_evas_vnc_server_modifier_to_ecore_modifier(key,
+                                                                    &is_lock);
 
         if (down)
-          cdata->key_modifiers |= mod;
-        else
+          {
+             if (!is_lock || !(cdata->key_modifiers & mod))
+               cdata->key_modifiers |= mod;
+             else
+               cdata->key_modifiers &= ~mod;
+          }
+        else if (!is_lock)
           cdata->key_modifiers &= ~mod;
      }
 
