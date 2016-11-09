@@ -68,7 +68,7 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
             legacy: null;
          }
          values {
-            aliases: const(Elm.Layout_Part_Alias_Description)*;
+            aliases: ptr(const(Elm.Layout_Part_Alias_Description));
          }
       }
       @property content_aliases @protected {
@@ -76,7 +76,7 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
             legacy: null;
          }
          values {
-            aliases: const(Elm.Layout_Part_Alias_Description)*;
+            aliases: ptr(const(Elm.Layout_Part_Alias_Description));
          }
       }
       @property edje {

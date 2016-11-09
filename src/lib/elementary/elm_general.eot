@@ -49,13 +49,13 @@ struct Elm.Gen.Item.Class
                               its managed for you by class ref/unref calls. ]]
    delete_me: bool; [[ Leave this alone - set it to 0 if you have a
                                const class of your own. ]]
-   item_style: const(char) *; [[ Name of the visual style to use for this item.
+   item_style: string; [[ Name of the visual style to use for this item.
                                 If you don't know use "default". ]]
-   decorate_item_style: const(char) *; [[ Style used if item is set to a decorate
+   decorate_item_style: string; [[ Style used if item is set to a decorate
                                          mode. see elm_genlist_item_decorate_mode_set()
                                          or NULL if you don't care. currently
                                          it's used only in genlist. ]]
-   decorate_all_item_style: const(char) *; [[ Style to use when in edit mode, or
+   decorate_all_item_style: string; [[ Style to use when in edit mode, or
                                              NULL if you don't care. Currently
                                              it's used only in genlist. ]]
    func: Elm.Gen.Item.Class.Functions; [[ Set of callbacks ]]
