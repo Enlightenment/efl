@@ -60,7 +60,7 @@ mixin Elm.Interface.Atspi_Action ()
          params {
             @in id: int; [[ID for widget]]
          }
-         return: own(char *) @warn_unused; [[Should be freed by the user.]]
+         return: own(ptr(char)) @warn_unused; [[Should be freed by the user.]]
       }
    }
 }

@@ -10,7 +10,7 @@ mixin Elm.Interface.Atspi_Widget_Action (Elm.Interface.Atspi_Action)
          get @virtual_pure {
          }
          values {
-            actions: const(Elm_Atspi_Action)*; [[NULL-terminated array of Elm_Atspi_Action]]
+            actions: ptr(const(Elm_Atspi_Action)); [[NULL-terminated array of Elm_Atspi_Action]]
          }
       }
    }
