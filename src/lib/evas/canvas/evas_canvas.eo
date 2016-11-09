@@ -136,7 +136,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 
               See also \@ref evas_object_focus_set,
               \@ref evas_object_focus_get, \@ref evas_object_key_grab,
-              \@ref evas_object_key_ungrab, @.seat_focus_get,
+              \@ref evas_object_key_ungrab, @.seat_focus.get,
               @.focused_objects.get, @Efl.Canvas.Object.seat_focus_check,
               @Efl.Canvas.Object.seat_focus_add,
               @Efl.Canvas.Object.seat_focus_del.
@@ -165,14 +165,17 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
                                                                                Efl.Input.Device and the data is an Efl.Canvas.Object or $null on error.]]
          }
       }
-      seat_focus_get {
+      @property seat_focus {
          [[Return the focused object by a given seat. @since 1.19]]
-         params {
-             @in seat: Efl.Input.Device;[[The seat to fetch the focused
-                                          object or $null for the default seat.]]
+         get {}
+         keys {
+            seat: Efl.Input.Device;[[The seat to fetch the focused
+                                     object or $null for the default seat.]]
          }
-         return: Efl.Canvas.Object; [[The object that has the focus or $null if
-                                      the seat has no focused object.]]
+         values {
+            return: Efl.Canvas.Object; [[The object that has the focus or $null if
+                                         the seat has no focused object.]]
+        }
       }
       @property object_top {
          get {
