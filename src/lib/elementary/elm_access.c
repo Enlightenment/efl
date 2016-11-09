@@ -927,6 +927,11 @@ _access_object_register(Evas_Object *obj, Evas_Object *parent)
 
    if (!obj) return NULL;
 
+   /* check previous access object */
+   ao = evas_object_data_get(obj, "_part_access_obj");
+   if (ao)
+     _access_object_unregister(obj);
+
    /* create access object */
    ao = _elm_access_add(parent);
    if (!ao) return NULL;
