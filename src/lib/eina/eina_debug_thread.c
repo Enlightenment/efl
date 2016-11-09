@@ -25,13 +25,13 @@
 // mainloop thread (whihc is expected). also a growable array of thread
 // id's for other threads is held here so we can loop over them and do things
 // like get them to stop and dump a backtrace for us
-Eina_Spinlock _eina_debug_thread_lock;
+Eina_Spinlock         _eina_debug_thread_lock;
 
-pthread_t     _eina_debug_thread_mainloop = 0;
-pthread_t    *_eina_debug_thread_active = NULL;
-int           _eina_debug_thread_active_num = 0;
+pthread_t             _eina_debug_thread_mainloop = 0;
+Eina_Debug_Thread    *_eina_debug_thread_active = NULL;
+int                   _eina_debug_thread_active_num = 0;
 
-static int    _thread_active_size = 0;
+static int            _thread_active_size = 0;
 
 // add a thread id to our tracking array - very simple. add to end, and
 // if array to small, reallocate it to be bigger by 16 slots AND double that
@@ -45,9 +45,10 @@ _eina_debug_thread_add(void *th)
    // if we don't have enough space to store thread id's - make some more
    if (_thread_active_size < (_eina_debug_thread_active_num + 1))
      {
-        pthread_t *threads = realloc
+        Eina_Debug_Thread *threads = realloc
           (_eina_debug_thread_active,
-           ((_eina_debug_thread_active_num + 16) * 2) * sizeof(pthread_t *));
+           ((_eina_debug_thread_active_num + 16) * 2) *
+            sizeof(Eina_Debug_Thread));
         if (threads)
           {
              _eina_debug_thread_active = threads;
@@ -55,7 +56,12 @@ _eina_debug_thread_add(void *th)
           }
      }
    // add new thread id to the end
-   _eina_debug_thread_active[_eina_debug_thread_active_num] = *pth;
+   _eina_debug_thread_active[_eina_debug_thread_active_num].thread = *pth;
+#if defined(__clockid_t_defined)
+   _eina_debug_thread_active[_eina_debug_thread_active_num].clok.tv_sec = 0;
+   _eina_debug_thread_active[_eina_debug_thread_active_num].clok.tv_nsec = 0;
+   _eina_debug_thread_active[_eina_debug_thread_active_num].val = -1;
+#endif
    _eina_debug_thread_active_num++;
    // release our lock cleanly
    eina_spinlock_release(&_eina_debug_thread_lock);
@@ -74,7 +80,7 @@ _eina_debug_thread_del(void *th)
    // find the thread id to remove
    for (i = 0; i < _eina_debug_thread_active_num; i++)
      {
-        if (_eina_debug_thread_active[i] == *pth)
+        if (_eina_debug_thread_active[i].thread == *pth)
           {
              // found it - now shuffle down all further thread id's in array
              for (; i < (_eina_debug_thread_active_num - 1); i++)

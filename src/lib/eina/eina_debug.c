@@ -21,11 +21,6 @@
 
 #ifdef EINA_HAVE_DEBUG
 
-// access external thread data store in eina_debug_thread.c
-extern pthread_t     _eina_debug_thread_mainloop;
-extern pthread_t    *_eina_debug_thread_active;
-extern int           _eina_debug_thread_active_num;
-
 // yes - a global debug spinlock. i expect contention to be low for now, and
 // when needed we can split this up into mroe locks to reduce contention when
 // and if that day comes
@@ -54,7 +49,8 @@ eina_debug_init(void)
    eina_semaphore_new(&_eina_debug_monitor_return_sem, 0);
    self = pthread_self();
    _eina_debug_thread_mainloop_set(&self);
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   _eina_debug_thread_add(&self);
+# if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    // if we are setuid - don't debug!
    if (getuid() != geteuid()) return EINA_TRUE;
 #endif

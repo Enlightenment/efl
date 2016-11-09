@@ -20,21 +20,23 @@
 #include "eina_types.h"
 #include "eina_evlog.h"
 #include "eina_util.h"
+#include "eina_thread.h"
 #include <signal.h>
 
 #ifdef EINA_HAVE_DEBUG
 
 #define DEBUG_SERVER ".ecore/efl_debug/0"
 
-extern pthread_t            _eina_debug_thread_mainloop;
-extern volatile pthread_t  *_eina_debug_thread_active;
-extern volatile int         _eina_debug_thread_active_num;
+volatile int           _eina_debug_sysmon_reset = 0;
+volatile int           _eina_debug_evlog_active = 0;
 
 int                    _eina_debug_monitor_service_fd = -1;
 Eina_Semaphore         _eina_debug_monitor_return_sem;
+Eina_Lock              _eina_debug_sysmon_lock;
 
 static Eina_Bool       _monitor_thread_runs = EINA_FALSE;
 static pthread_t       _monitor_thread;
+static pthread_t       _sysmon_thread;
 
 // _bt_buf[0] is always for mainloop, 1 + is for extra threads
 static void             ***_bt_buf;
@@ -106,7 +108,7 @@ _eina_debug_signal(int sig EINA_UNUSED,
      {
         for (i = 0; i < _eina_debug_thread_active_num; i++)
           {
-             if (self == _eina_debug_thread_active[i])
+             if (self == _eina_debug_thread_active[i].thread)
                {
                   slot = i + 1;
                   goto found;
@@ -139,9 +141,15 @@ found:
 static inline double
 get_time(void)
 {
+#if defined(__clockid_t_defined)
+   struct timespec t;
+   clock_gettime(CLOCK_MONOTONIC, &t);
+   return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
+#else
    struct timeval timev;
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000.0);
+#endif
 }
 
 static void
@@ -150,6 +158,216 @@ _eina_debug_collect_bt(pthread_t pth)
    // this async signals the thread to switch to the deebug signal handler
    // and collect a backtrace and other info from inside the thread
    pthread_kill(pth, SIG);
+}
+
+// this is a DEDICATED thread tojust collect system info and to have the
+// least impact it can on a cpu core or system. all this does right now
+// is sleep and wait for a command to begin polling for the cpu state.
+// right now that means iterating through cpu's and getting their cpu
+// frequency to match up with event logs.
+static void *
+_eina_debug_sysmon(void *_data EINA_UNUSED)
+{
+   static int cpufreqs[64] = { 0 };
+   int i, fd, freq;
+   char buf[256], path[256];
+   ssize_t red;
+#if defined(__clockid_t_defined)
+   static struct timespec t_last = { 0, 0 };
+   static Eina_Debug_Thread *prev_threads = NULL;
+   static int prev_threads_num = 0;
+   int j, cpu;
+   Eina_Bool prev_threads_redo;
+   clockid_t cid;
+   struct timespec t, t_now;
+   unsigned long long tim_span, tim1, tim2;
+#endif
+
+   // set a name for this thread for system debugging
+#ifdef EINA_HAVE_PTHREAD_SETNAME
+# ifndef __linux__
+   pthread_set_name_np
+# else
+   pthread_setname_np
+# endif
+     (pthread_self(), "Edbg-sys");
+#endif
+   for (;;)
+     {
+        // wait on a mutex that will be locked for as long as this
+        // threead is not meant to go running
+        eina_lock_take(&_eina_debug_sysmon_lock);
+        // if we need to reset as we just started polling system stats...
+        if (_eina_debug_sysmon_reset)
+          {
+             _eina_debug_sysmon_reset = 0;
+             // clear out all the clocks for threads
+#if defined(__clockid_t_defined)
+             // reset the last clock timestamp when we checked to "now"
+             clock_gettime(CLOCK_MONOTONIC, &t);
+             t_last = t;
+             // walk over all threads
+             eina_spinlock_take(&_eina_debug_thread_lock);
+             for (i = 0; i < _eina_debug_thread_active_num; i++)
+               {
+                  // get the correct clock id to use for the target thread
+                  pthread_getcpuclockid
+                    (_eina_debug_thread_active[i].thread, &cid);
+                  // get the clock cpu time accumulation for that threas
+                  clock_gettime(cid, &t);
+                  _eina_debug_thread_active[i].clok = t;
+               }
+             eina_spinlock_release(&_eina_debug_thread_lock);
+#endif
+             // clear all the cpu freq (up to 64 cores) to 0
+             for (i = 0; i < 64; i++) cpufreqs[i] = 0;
+          }
+        eina_lock_release(&_eina_debug_sysmon_lock);
+
+#if defined(__clockid_t_defined)
+        // get the current time
+        clock_gettime(CLOCK_MONOTONIC, &t_now);
+        tim1 = (t_last.tv_sec * 1000000000LL) + t_last.tv_nsec;
+        // the time span between now and last time we checked
+        tim_span = ((t_now.tv_sec * 1000000000LL) + t_now.tv_nsec) - tim1;
+        // if the time span is non-zero we might get sensible results
+        if (tim_span > 0)
+          {
+             prev_threads_redo = EINA_FALSE;
+             eina_spinlock_take(&_eina_debug_thread_lock);
+             // figure out if the list of thread id's has changed since
+             // our last poll. this is imporant as we need to set the
+             // thread cpu usage to 0 for threads that have disappeared
+             if (prev_threads_num != _eina_debug_thread_active_num)
+               prev_threads_redo = EINA_TRUE;
+             else
+               {
+                  // XXX: isolate this out of hot path
+                  for (i = 0; i < _eina_debug_thread_active_num; i++)
+                    {
+                       if (_eina_debug_thread_active[i].thread !=
+                           prev_threads[i].thread)
+                         {
+                            prev_threads_redo = EINA_TRUE;
+                            break;
+                         }
+                    }
+               }
+             for (i = 0; i < _eina_debug_thread_active_num; i++)
+               {
+                  pthread_t thread = _eina_debug_thread_active[i].thread;
+                  // get the clock for the thread and its cpu time usage
+                  pthread_getcpuclockid(thread, &cid);
+                  clock_gettime(cid, &t);
+                  // calculate a long timestamp (64bits)
+                  tim1 = (_eina_debug_thread_active[i].clok.tv_sec * 1000000000LL) +
+                          _eina_debug_thread_active[i].clok.tv_nsec;
+                  // and get the difference in clock time in NS
+                  tim2 = ((t.tv_sec * 1000000000LL) + t.tv_nsec) - tim1;
+                  // and that as percentage of the timespan
+                  cpu = (int)((100 * (int)tim2) / (int)tim_span);
+                  // round to the nearest 10 percent - rough anyway
+                  cpu = ((cpu + 5) / 10) * 10;
+                  if (cpu > 100) cpu = 100;
+                  // if the usage changed since last time we checked...
+                  if (cpu != _eina_debug_thread_active[i].val)
+                    {
+                       // log this change
+                       snprintf(buf, sizeof(buf), "*CPUUSED %llu",
+                                (unsigned long long)thread);
+                       snprintf(path, sizeof(path), "%i", _eina_debug_thread_active[i].val);
+                       eina_evlog(buf, NULL, 0.0, path);
+                       snprintf(path, sizeof(path), "%i", cpu);
+                       eina_evlog(buf, NULL, 0.0, path);
+                       // store the clock time + cpu we got for next poll
+                       _eina_debug_thread_active[i].val = cpu;
+                    }
+                  _eina_debug_thread_active[i].clok = t;
+               }
+             // so threads changed between this poll and last so we need
+             // to redo our mapping/storage of them
+             if (prev_threads_redo)
+               {
+                  prev_threads_redo = EINA_FALSE;
+                  // find any threads from our last run that do not
+                  // exist now in our new list of threads
+                  for (j = 0; j < prev_threads_num; j++)
+                    {
+                       for (i = 0; i < _eina_debug_thread_active_num; i++)
+                         {
+                            if (prev_threads[j].thread ==
+                                _eina_debug_thread_active[i].thread) break;
+                         }
+                       // thread was there before and not now
+                       if (i == _eina_debug_thread_active_num)
+                         {
+                            // log it finishing - ie 0
+                            snprintf(buf, sizeof(buf), "*CPUUSED %llu",
+                                     (unsigned long long)
+                                     prev_threads[i].thread);
+                            eina_evlog(buf, NULL, 0.0, "0");
+                         }
+                    }
+                  // if the thread count changed then allocate a new shadow
+                  // buffer of thread id's etc.
+                  if (prev_threads_num != _eina_debug_thread_active_num)
+                    {
+                       if (prev_threads) free(prev_threads);
+                       prev_threads_num = _eina_debug_thread_active_num;
+                       prev_threads = malloc(prev_threads_num *
+                                             sizeof(Eina_Debug_Thread));
+                    }
+                  // store the thread handles/id's
+                  for (i = 0; i < prev_threads_num; i++)
+                    prev_threads[i].thread =
+                    _eina_debug_thread_active[i].thread;
+               }
+             eina_spinlock_release(&_eina_debug_thread_lock);
+             t_last = t_now;
+          }
+#endif
+        // poll up to 64 cpu cores for cpufreq info to log alongside
+        // the evlog call data
+        for (i = 0; i < 64; i++)
+          {
+             // look at sysfs nodes per cpu
+             snprintf
+               (buf, sizeof(buf),
+                "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_cur_freq", i);
+             fd = open(buf, O_RDONLY);
+             freq = 0;
+             // if the node is there, read it
+             if (fd >= 0)
+               {
+                  // really low overhead read from cpufreq node (just an int)
+                  red = read(fd, buf, sizeof(buf) - 1);
+                  if (red > 0)
+                    {
+                       // read something - it should be an int with whitespace
+                       buf[red] = 0;
+                       freq = atoi(buf);
+                       // move to mhz
+                       freq = (freq + 500) / 1000;
+                       // round mhz to the nearest 100mhz - to have less noise
+                       freq = ((freq + 50) / 100) * 100;
+                    }
+                  // close the fd so we can freshly poll next time around
+                  close(fd);
+               }
+             // node not there - ran out of cpu's to poll?
+             else break;
+             // if the current frequency changed vs previous poll, then log
+             if (freq != cpufreqs[i])
+               {
+                  snprintf(buf, sizeof(buf), "*CPUFREQ %i", i);
+                  snprintf(path, sizeof(path), "%i", freq);
+                  eina_evlog(buf, NULL, 0.0, path);
+                  cpufreqs[i] = freq;
+               }
+          }
+        usleep(1000); // 1ms sleep
+     }
+   return NULL;
 }
 
 // this is a DEDICATED debug thread to monitor the application so it works
@@ -170,6 +388,15 @@ _eina_debug_monitor(void *_data EINA_UNUSED)
    Eina_Bool poll_cpu = EINA_FALSE;
 
    t0 = get_time();
+   // set a name for this thread for system debugging
+#ifdef EINA_HAVE_PTHREAD_SETNAME
+# ifndef __linux__
+   pthread_set_name_np
+# else
+   pthread_setname_np
+# endif
+     (pthread_self(), "Edbg-mon");
+#endif
    // sit forever processing commands or timeouts in the debug monitor
    // thread - this is separate to the rest of the app so it shouldn't
    // impact the application specifically
@@ -227,12 +454,23 @@ _eina_debug_monitor(void *_data EINA_UNUSED)
                   // enable evlog
                   else if (!strcmp(op, "EVON"))
                     {
-                       eina_evlog_start();
+                       if (!_eina_debug_evlog_active)
+                         {
+                            _eina_debug_evlog_active = 1;
+                            eina_evlog_start();
+                            _eina_debug_sysmon_reset = 1;
+                            eina_lock_release(&_eina_debug_sysmon_lock);
+                         }
                     }
                   // stop evlog
                   else if (!strcmp(op, "EVOF"))
                     {
-                       eina_evlog_stop();
+                       if (_eina_debug_evlog_active)
+                         {
+                            eina_lock_take(&_eina_debug_sysmon_lock);
+                            eina_evlog_stop();
+                            _eina_debug_evlog_active = 0;
+                         }
                     }
                   // enable evlog
                   else if (!strcmp(op, "CPON"))
@@ -313,7 +551,7 @@ _eina_debug_monitor(void *_data EINA_UNUSED)
                   _eina_debug_collect_bt(_eina_debug_thread_mainloop);
                   // now collect per thread
                   for (i = 0; i < _eina_debug_thread_active_num; i++)
-                    _eina_debug_collect_bt(_eina_debug_thread_active[i]);
+                    _eina_debug_collect_bt(_eina_debug_thread_active[i].thread);
                   // we're done probing. now collec all the "i'm done" msgs on the
                   // semaphore for every thread + mainloop
                   for (i = 0; i < (_eina_debug_thread_active_num + 1); i++)
@@ -348,6 +586,8 @@ fail:
    // we failed - get out of here and disconnect to debugd
    close(_eina_debug_monitor_service_fd);
    _eina_debug_monitor_service_fd = -1;
+   // sleep forever because there is currently no logic to join this thread
+   for (;;) pause();
    return NULL;
 }
 
@@ -375,14 +615,22 @@ _eina_debug_monitor_thread_start(void)
    sigaddset(&newset, SIGPWR);
 #endif
    sigprocmask(SIG_BLOCK, &newset, &oldset);
+   eina_lock_new(&_eina_debug_sysmon_lock);
+   eina_lock_take(&_eina_debug_sysmon_lock);
+   err = pthread_create(&_sysmon_thread, NULL, _eina_debug_sysmon, NULL);
+   if (err != 0)
+     {
+        fprintf(stderr, "EINA DEBUG ERROR: Can't create debug thread 1!\n");
+        abort();
+     }
    err = pthread_create(&_monitor_thread, NULL, _eina_debug_monitor, NULL);
    sigprocmask(SIG_SETMASK, &oldset, NULL);
    if (err != 0)
      {
-        fprintf(stderr, "EINA DEBUG ERROR: Can't create debug thread!\n");
+        fprintf(stderr, "EINA DEBUG ERROR: Can't create debug thread 2!\n");
         abort();
      }
-   else _monitor_thread_runs = EINA_TRUE;
+   _monitor_thread_runs = EINA_TRUE;
 }
 
 void

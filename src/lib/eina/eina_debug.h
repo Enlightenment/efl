@@ -66,10 +66,24 @@
 
 #  define EINA_MAX_BT 256
 
-extern Eina_Spinlock  _eina_debug_lock;
-extern Eina_Spinlock  _eina_debug_thread_lock;
-extern Eina_Semaphore _eina_debug_monitor_return_sem;
-extern int            _eina_debug_monitor_service_fd;
+typedef struct _Eina_Debug_Thread Eina_Debug_Thread;
+
+struct _Eina_Debug_Thread
+{
+   pthread_t thread;
+#if defined(__clockid_t_defined)
+   struct timespec clok;
+#endif
+   int val;
+};
+
+extern Eina_Spinlock                _eina_debug_lock;
+extern Eina_Spinlock                _eina_debug_thread_lock;
+extern pthread_t                    _eina_debug_thread_mainloop;
+extern Eina_Debug_Thread           *_eina_debug_thread_active;
+extern int                          _eina_debug_thread_active_num;
+extern Eina_Semaphore               _eina_debug_monitor_return_sem;
+extern int                          _eina_debug_monitor_service_fd;
 
 void _eina_debug_thread_add(void *th);
 void _eina_debug_thread_del(void *th);
