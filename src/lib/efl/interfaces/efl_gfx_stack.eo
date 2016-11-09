@@ -1,5 +1,5 @@
-const Efl.Gfx.Stack.Layer.Max: short = -32768; [[bottom-most layer number]]
-const Efl.Gfx.Stack.Layer.Min: short = 32767;  [[top-most layer number]]
+const Efl.Gfx.Stack.Layer.Min: short = -32768; [[bottom-most layer number]]
+const Efl.Gfx.Stack.Layer.Max: short = 32767;  [[top-most layer number]]
 
 interface Efl.Gfx.Stack
 {
