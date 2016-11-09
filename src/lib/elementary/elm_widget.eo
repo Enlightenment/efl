@@ -77,7 +77,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       @property theme {
          values {
-            th: Elm.Theme * @nullable;
+            th: ptr(Elm.Theme) @nullable;
          }
       }
       @property disabled {
@@ -382,7 +382,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       cursor_add {
          params {
-            @in cur: Elm.Cursor *;
+            @in cur: ptr(Elm.Cursor);
          }
       }
       focus_next_object_set {
@@ -495,7 +495,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       cursor_del {
          params {
-            @in cur: Elm.Cursor *;
+            @in cur: ptr(Elm.Cursor);
          }
       }
       event_callback_del {
@@ -545,7 +545,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          params {
             @in type: Evas.Callback_Type;
             @in event_info: void_ptr;
-            @in event_flags: Efl.Input.Flags *;
+            @in event_flags: ptr(Efl.Input.Flags);
          }
       }
       signal_callback_add {
@@ -608,7 +608,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       tooltip_del {
          params {
-            @in tt: Elm.Tooltip *;
+            @in tt: ptr(Elm.Tooltip);
          }
       }
       focus_next_get @const {
@@ -716,7 +716,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       tooltip_add {
          params {
-            @in tt: Elm.Tooltip *;
+            @in tt: ptr(Elm.Tooltip);
          }
       }
       focus_region_show @const {
