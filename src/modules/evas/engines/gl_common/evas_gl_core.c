@@ -1513,6 +1513,7 @@ _evgl_direct_renderable(EVGL_Resource *rsc, EVGL_Surface *sfc)
    if (rsc->id != evgl_engine->main_tid) return 0;
    if (!sfc->direct_fb_opt) return 0;
    if (!rsc->direct.enabled) return 0;
+   if (evas_gl_thread_enabled()) return 0;
 
    return 1;
 }
@@ -1534,6 +1535,9 @@ _evgl_tls_resource_get(void)
 
    if (evgl_engine->resource_key)
      rsc = eina_tls_get(evgl_engine->resource_key);
+
+   if (rsc == NULL && eina_thread_self() == evas_gl_thread_get(EVAS_GL_THREAD_TYPE_EVGL))
+      rsc = evgl_engine->resource_main;
 
    return rsc;
 }
@@ -1576,6 +1580,9 @@ _evgl_tls_resource_create(void *eng_data)
         ERR("Error creating internal resources.");
         return NULL;
      }
+
+   if (eina_thread_self() == evgl_engine->main_tid)
+      evgl_engine->resource_main = rsc;
 
    // Set the resource in TLS
    if (eina_tls_set(evgl_engine->resource_key, (void*)rsc) == EINA_TRUE)
@@ -1629,6 +1636,9 @@ _evgl_tls_resource_destroy(void *eng_data)
    EINA_LIST_FOREACH(evgl_engine->resource_list, l, rsc)
      {
         _internal_resources_destroy(eng_data, rsc);
+
+        if (rsc == evgl_engine->resource_main)
+           evgl_engine->resource_main = NULL;
      }
    eina_list_free(evgl_engine->resource_list);
    evgl_engine->resource_list = NULL;
