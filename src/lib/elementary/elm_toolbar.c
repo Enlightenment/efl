@@ -2626,7 +2626,16 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj,
      }
    if (item->icon)
      {
-        evas_object_del(item->icon);
+        Elm_Toolbar_Item_State *it_state;
+        Eina_List *l;
+        Eina_Bool found = EINA_FALSE;
+        EINA_LIST_FOREACH(item->states, l, it_state)
+          {
+             found |= (it_state->icon == item->icon);
+          }
+        if (!found) evas_object_del(item->icon);
+        else evas_object_hide(item->icon);
+        elm_layout_content_unset(VIEW(item), "elm.swallow.icon");
      }
    item->icon = icon_obj;
 
