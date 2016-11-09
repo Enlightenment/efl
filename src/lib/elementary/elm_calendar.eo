@@ -169,7 +169,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
          get {
          }
          values {
-            weekdays: string*; [[Array of seven strings to be used as weekday names.
+            weekdays: ptr(string); [[Array of seven strings to be used as weekday names.
             Warning: It must have 7 elements, or it will access invalid memory.
             Warning: The strings must be $null terminated ('@\0').]]
          }
@@ -252,7 +252,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
               @.marks_clear.
 
             ]]
-            return: const(list<Elm.Calendar.Mark*>); [[List with all calendar marks]]
+            return: const(list<ptr(Elm.Calendar.Mark)>); [[List with all calendar marks]]
          }
       }
       selected_time_set {
@@ -267,7 +267,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
            \@ref calendar_example_04
          ]]
          params {
-            @in selected_time: Efl.Time *; [[A tm struct to represent the selected date.]]
+            @in selected_time: ptr(Efl.Time); [[A tm struct to represent the selected date.]]
          }
       }
       selected_time_get @const {
@@ -322,12 +322,12 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
             * elm_calendar_marks_draw(cal);
             * @endcode
             */
-         return: Elm.Calendar.Mark *; [[The newly added calendar mark]]
+         return: ptr(Elm.Calendar.Mark); [[The newly added calendar mark]]
          params {
             @in mark_type: string; [[A string used to define the type of mark. It will be
             emitted to the theme, that should display a related modification on these
             days representation.]]
-            @in mark_time: Efl.Time *; [[A time struct to represent the date of inclusion of the
+            @in mark_time: ptr(Efl.Time); [[A time struct to represent the date of inclusion of the
             mark. For marks that repeats it will just be displayed after the inclusion
             date in the calendar.]]
             @in repeat: Elm.Calendar.Mark.Repeat.Type; [[Repeat the event following this periodicity. Can be a unique
@@ -344,7 +344,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
          ]]
          legacy: null;
          params {
-            @in mark: Elm.Calendar.Mark *; [[ The mark to be deleted. ]]
+            @in mark: ptr(Elm.Calendar.Mark); [[ The mark to be deleted. ]]
          }
       }
       marks_clear {
