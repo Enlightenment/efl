@@ -74,7 +74,17 @@ namespace evas { namespace font {
 
 public struct Modifier_Mask {}
 
-public struct Coord {}
+public struct Coord {
+    int val;
+
+    public Coord(int value) { val = value; }
+    static public implicit operator Coord(int val) {
+        return new Coord(val);
+    }
+    static public implicit operator int(Coord coord) {
+        return coord.val;
+    }
+}
 
 
 }
