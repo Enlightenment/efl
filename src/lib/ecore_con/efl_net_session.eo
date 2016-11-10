@@ -12,19 +12,19 @@ enum Efl.Net.Session.State {
 enum Efl.Net.Session.Technology {
     [[Bitwise-able technologies to allow for a network session.
 
-      @since 1.19
+      @since 1.9
     ]]
-    unknown = 0,
-/*    system = (1 << 0), */
-    ethernet = (1 << 1),
-    wifi = (1 << 2),
-    bluetooth = (1 << 3),
-    cellular = (1 << 4),
-/*    gps = (1 << 5), */
-    vpn = (1 << 6),
-    gadget = (1 << 7),
-/*    p2p = (1 << 8), */
-    all = (Efl.Net.Session.Technology.ethernet | Efl.Net.Session.Technology.wifi | Efl.Net.Session.Technology.bluetooth | Efl.Net.Session.Technology.cellular | Efl.Net.Session.Technology.vpn | Efl.Net.Session.Technology.gadget),
+    unknown = 0, [[Type: unknown]]
+/*    system = (1 << 0), [[Type: system]]*/
+    ethernet = (1 << 1), [[Type: ethernet]]
+    wifi = (1 << 2), [[Type: WiFi]]
+    bluetooth = (1 << 3), [[Type: Bluetooth]]
+    cellular = (1 << 4), [[Type: cellular/mobile]]
+/*    gps = (1 << 5), [[Type: GPS]]*/
+    vpn = (1 << 6), [[Type: Virtual Private Network]]
+    gadget = (1 << 7), [[Type: USB gadget]]
+/*    p2p = (1 << 8), [[Type: Peer-2-Peer]]*/
+    all = (Efl.Net.Session.Technology.ethernet | Efl.Net.Session.Technology.wifi | Efl.Net.Session.Technology.bluetooth | Efl.Net.Session.Technology.cellular | Efl.Net.Session.Technology.vpn | Efl.Net.Session.Technology.gadget), [[All technology types]]
 }
 
 class Efl.Net.Session (Efl.Loop_User) {

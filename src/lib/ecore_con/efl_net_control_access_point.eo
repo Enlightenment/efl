@@ -30,7 +30,7 @@ enum Efl.Net.Control.Access_Point.Security {
 
       @since 1.19
     ]]
-    unknow = 0,
+    unknow = 0, [[Unknown]]
     none = (1 << 0), [[open access, no security]]
     wep = (1 << 1), [[WEP]]
     psk = (1 << 2), [[PSK (Pre Shared Key), such as WPA or RSN]]
