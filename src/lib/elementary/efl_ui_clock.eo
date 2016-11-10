@@ -95,7 +95,7 @@ class Efl.Ui.Clock (Elm.Layout)
          */
          set {} get {}
          values {
-            fmt: const(char)* @nullable; [[The clock format.]]
+            fmt: string @nullable; [[The clock format.]]
          }
       }
       @property pause {
@@ -139,7 +139,7 @@ class Efl.Ui.Clock (Elm.Layout)
          }
 
          keys {
-            mintime: Efl.Time*; [[Time structure containing the minimum time value.]]
+            mintime: ptr(Efl.Time); [[Time structure containing the minimum time value.]]
          }
       }
       @property value_max {
@@ -166,7 +166,7 @@ class Efl.Ui.Clock (Elm.Layout)
          }
 
          keys {
-            maxtime: Efl.Time*; [[Time structure containing the minimum time value.]]
+            maxtime: ptr(Efl.Time); [[Time structure containing the minimum time value.]]
          }
       }
       @property value {
@@ -192,7 +192,7 @@ class Efl.Ui.Clock (Elm.Layout)
             return: bool; [[$true on success, $false otherwise]]
          }
          keys {
-            curtime: Efl.Time*; [[Time structure containing the minimum time value.]]
+            curtime: ptr(Efl.Time); [[Time structure containing the minimum time value.]]
          }
       }
       @property field_visible {

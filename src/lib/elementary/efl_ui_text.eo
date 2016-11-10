@@ -25,7 +25,7 @@ struct Efl.Ui.Text.Hover_Parent
 struct Efl.Ui.Text.Anchor_Hover_Info
 {
    [[EFL text anchor hover information]]
-   anchor_info: const(Efl.Ui.Text.Anchor_Info)*; [[The actual anchor info.]]
+   anchor_info: ptr(const(Efl.Ui.Text.Anchor_Info)); [[The actual anchor info.]]
    hover: Elm.Hover; [[The hover object to use for the popup.]]
    hover_parent: Efl.Ui.Text.Hover_Parent; [[Hover parent widget]]
    hover_left : bool; [[Hint indicating if there's space
