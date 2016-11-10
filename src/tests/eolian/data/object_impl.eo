@@ -41,7 +41,7 @@ class Object_Impl (Base) {
             @inout b: char;
             @out c: double;
          }
-         return: char * (null); [[comment for method return]]
+         return: ptr(char) (null); [[comment for method return]]
       }
       foo2 @const {
          [[comment foo]]

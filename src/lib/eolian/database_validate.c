@@ -223,7 +223,6 @@ _validate_type(const Eolian_Type *tp)
              }
            return _validate_typedecl(tpp);
         }
-      case EOLIAN_TYPE_POINTER:
       case EOLIAN_TYPE_STATIC_ARRAY:
       case EOLIAN_TYPE_TERMINATED_ARRAY:
         return _validate_type(tp->base_type);

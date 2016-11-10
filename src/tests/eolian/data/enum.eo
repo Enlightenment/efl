@@ -39,7 +39,7 @@ class Enum {
             params {
                 idx: int;
             }
-            return: own(char*);
+            return: own(ptr(char));
         }
     }
 }

@@ -451,7 +451,7 @@ START_TEST(eolian_complex_type)
    fail_if(!!eolian_type_next_type_get(type));
    fail_if(!(type_name = eolian_type_c_type_get(type)));
    fail_if(!eolian_type_is_own(type));
-   fail_if(strcmp(type_name, "Eo **"));
+   fail_if(strcmp(type_name, "Eo *"));
    eina_stringshare_del(type_name);
    /* Properties parameter type */
    fail_if(!(iter = eolian_property_values_get(fid, EOLIAN_PROP_GET)));
@@ -611,7 +611,7 @@ START_TEST(eolian_simple_parsing)
    /* Method */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
    fail_if(!eolian_function_is_beta(fid));
-   fail_if(eolian_type_is_ptr(eolian_function_return_type_get(fid, EOLIAN_METHOD)));
+   fail_if(!eolian_type_is_ptr(eolian_function_return_type_get(fid, EOLIAN_METHOD)));
    /* Function return */
    tp = eolian_function_return_type_get(fid, EOLIAN_METHOD);
    fail_if(!tp);
@@ -739,9 +739,8 @@ START_TEST(eolian_struct)
    /* use in function */
    fail_if(!(func = eolian_class_function_get_by_name(class, "bar", EOLIAN_METHOD)));
    fail_if(!(type = eolian_function_return_type_get(func, EOLIAN_METHOD)));
-   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_POINTER);
-   fail_if(!(type = eolian_type_base_type_get(type)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_REGULAR);
+   fail_if(!eolian_type_is_ptr(type));
    fail_if(!(tdl = eolian_type_typedecl_get(type)));
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
 

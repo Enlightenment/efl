@@ -15,8 +15,8 @@ struct Opaque1;
 struct @free(opaque_free) Opaque2;
 
 /* pointers */
-type Pointer1: char *;
-type Pointer2: free(char *, ptr_free);
+type Pointer1: ptr(char);
+type Pointer2: free(ptr(char), ptr_free);
 
 class Free_Func {
    methods {
@@ -24,7 +24,7 @@ class Free_Func {
          params {
             idx: int;
          }
-         return: own(char*);
+         return: own(ptr(char));
       }
    }
 }

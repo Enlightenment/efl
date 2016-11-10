@@ -38,7 +38,7 @@ class Override (Base) {
            params {
                 @in idx: int;
                 @out a: int (250);
-                @out str: char * (null);
+                @out str: ptr(char) (null);
            }
       }
    }

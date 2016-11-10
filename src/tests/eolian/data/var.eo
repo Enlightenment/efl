@@ -16,7 +16,7 @@ class Var {
          params {
             idx: int;
          }
-         return: own(char*);
+         return: own(ptr(char));
       }
    }
 }

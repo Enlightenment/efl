@@ -1,5 +1,5 @@
 type Evas.Coord: int; /* Simple type definition */
-type List_Objects: own(list<Eo *>); /* A little more complex */
+type List_Objects: own(list<ptr(Eo)>); /* A little more complex */
 
 type Evas.Coord2: Evas.Coord;
 type Evas.Coord3: Evas.Coord2;
@@ -35,7 +35,7 @@ class Typedef {
          params {
             idx: int;
          }
-         return: own(char*);
+         return: own(ptr(char));
       }
    }
 }

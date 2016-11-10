@@ -2,10 +2,10 @@ class Null {
    methods {
       foo {
          params {
-            x: char *;
-            y: char * @nullable;
-            z: char * @optional;
-            w: char * @optional @nullable;
+            x: ptr(char);
+            y: ptr(char) @nullable;
+            z: ptr(char) @optional;
+            w: ptr(char) @optional @nullable;
          }
       }
    }

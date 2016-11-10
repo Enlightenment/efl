@@ -7,7 +7,7 @@ class Consts {
             @inout b: char;
             @out c: double;
          }
-         return: char * (null); [[comment for method return]]
+         return: ptr(char) (null); [[comment for method return]]
       }
    }
 }

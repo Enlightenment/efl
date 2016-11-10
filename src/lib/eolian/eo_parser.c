@@ -755,7 +755,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            FILL_BASE(def->base, ls, line, col);
            def->is_const = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcol);
-           goto parse_ptr;
+           return def;
         }
       case KW_ptr:
         {
@@ -768,7 +768,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            FILL_BASE(def->base, ls, line, col);
            def->is_ptr = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcol);
-           goto parse_ptr;
+           return def;
         }
       case KW_own:
         {
@@ -788,7 +788,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            FILL_BASE(def->base, ls, line, col);
            def->is_own = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcolumn);
-           goto parse_ptr;
+           return def;
         }
       case KW_free:
         {
@@ -811,7 +811,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            eo_lexer_get(ls);
            FILL_BASE(def->base, ls, line, col);
            check_match(ls, ')', '(', pline, pcolumn);
-           goto parse_ptr;
+           return def;
         }
       default:
         break;
@@ -940,28 +940,6 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
              eo_lexer_context_pop(ls);
              pop_strbuf(ls);
           }
-     }
-parse_ptr:
-   if ((def->type == EOLIAN_TYPE_CLASS) || (def->type == EOLIAN_TYPE_COMPLEX))
-     {
-        if (ls->t.token == '*')
-          eo_lexer_syntax_error(ls, "pointer to complex/class type");
-     }
-   if (getenv("EOLIAN_WARN_PTR") && ls->t.token == '*')
-     {
-        fprintf(stderr, "eolian:%s:%d:%d: found pointer type\n",
-                def->base.file, line, col);
-     }
-   while (ls->t.token == '*')
-     {
-        Eolian_Type *pdef;
-        pop_type(ls);
-        pdef = push_type(ls);
-        FILL_BASE(pdef->base, ls, ls->line_number, ls->column);
-        pdef->base_type = def;
-        pdef->type = EOLIAN_TYPE_POINTER;
-        def = pdef;
-        eo_lexer_get(ls);
      }
    return def;
 }

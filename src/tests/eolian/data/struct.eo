@@ -23,10 +23,10 @@ class Struct {
          params {
             idx: int;
          }
-         return: own(char*);
+         return: own(ptr(char));
       }
       bar {
-         return: Named *;
+         return: ptr(Named);
       }
    }
 }

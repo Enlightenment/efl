@@ -596,7 +596,6 @@ M.Type = Node:clone {
     VOID = eolian.type_type.VOID,
     REGULAR = eolian.type_type.REGULAR,
     COMPLEX = eolian.type_type.COMPLEX,
-    POINTER = eolian.type_type.POINTER,
     CLASS = eolian.type_type.CLASS,
     STATIC_ARRAY = eolian.type_type.STATIC_ARRAY,
     TERMINATED_ARRAY = eolian.type_type.TERMINATED_ARRAY,
@@ -708,13 +707,6 @@ M.Type = Node:clone {
             end
             return wrap_type_attrs(self, self:full_name_get() .. "<"
                 .. table.concat(stypes, ", ") .. ">")
-        elseif tpt == self.POINTER then
-            local btp = self:base_type_get()
-            local suffix = " *"
-            if btp:type_get() == self.POINTER then
-                suffix = "*"
-            end
-            return wrap_type_attrs(self, btp:serialize() .. suffix)
         elseif tpt == self.STATIC_ARRAY then
             return wrap_type_attrs(self, "static_array<"
                 .. self:base_type_get():serialize() .. ", "

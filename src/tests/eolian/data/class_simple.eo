@@ -37,7 +37,7 @@ class Class_Simple {
             @out c: double (1337.6);
             @in d: ptr(int);
          }
-         return: char * (null); [[comment for method return]]
+         return: ptr(char) (null); [[comment for method return]]
       }
       bar @c_only {
          eo: null;

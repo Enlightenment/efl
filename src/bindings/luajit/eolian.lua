@@ -74,7 +74,6 @@ ffi.cdef [[
         EOLIAN_TYPE_VOID,
         EOLIAN_TYPE_REGULAR,
         EOLIAN_TYPE_COMPLEX,
-        EOLIAN_TYPE_POINTER,
         EOLIAN_TYPE_CLASS,
         EOLIAN_TYPE_STATIC_ARRAY,
         EOLIAN_TYPE_TERMINATED_ARRAY,
@@ -456,11 +455,10 @@ M.type_type = {
     VOID             = 1,
     REGULAR          = 2,
     COMPLEX          = 3,
-    POINTER          = 4,
-    CLASS            = 5,
-    STATIC_ARRAY     = 6,
-    TERMINATED_ARRAY = 7,
-    UNDEFINED        = 8
+    CLASS            = 4,
+    STATIC_ARRAY     = 5,
+    TERMINATED_ARRAY = 6,
+    UNDEFINED        = 7
 }
 
 M.typedecl_type = {
