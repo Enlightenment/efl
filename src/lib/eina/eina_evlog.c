@@ -60,14 +60,6 @@ get_time(void)
 #if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
    struct timespec t;
 
-   if (EINA_UNLIKELY(_eina_evlog_time_clock_id < 0))
-     {
-        if (!clock_gettime(CLOCK_MONOTONIC, &t))
-          _eina_evlog_time_clock_id = CLOCK_MONOTONIC;
-        else
-          _eina_evlog_time_clock_id = CLOCK_REALTIME;
-     }
-
    if (EINA_UNLIKELY(clock_gettime(_eina_evlog_time_clock_id, &t)))
      {
         struct timeval timev;
@@ -226,6 +218,16 @@ eina_evlog_init(void)
 {
    eina_spinlock_new(&_evlog_lock);
    buf = &(buffers[0]);
+#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
+     {
+        struct timespec t;
+
+        if (!clock_gettime(CLOCK_MONOTONIC, &t))
+          _eina_evlog_time_clock_id = CLOCK_MONOTONIC;
+        else
+          _eina_evlog_time_clock_id = CLOCK_REALTIME;
+     }
+#endif
    eina_evlog("+eina_init", NULL, 0.0, NULL);
    return EINA_TRUE;
 }
