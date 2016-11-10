@@ -386,6 +386,10 @@ color_classes {
       color: FN_COL_DISABLE;
       desc: "Text of a disabled multibuttonentry item";
    }
+   color_class { "elm/win/background";
+      color: 64 64 64 255;
+      desc: "Background color of a standard window";
+   }
    
 // modules
    color_class { name: "module_label";

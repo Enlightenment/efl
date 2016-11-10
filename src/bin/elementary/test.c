@@ -16,6 +16,7 @@ void test_access3(void *data, Evas_Object *obj, void *event_info);
 void test_bg_plain(void *data, Evas_Object *obj, void *event_info);
 void test_bg_image(void *data, Evas_Object *obj, void *event_info);
 void test_bg_options(void *data, Evas_Object *obj, void *event_info);
+void test_bg_window(void *data, Evas_Object *obj, void *event_info);
 void test_icon(void *data, Evas_Object *obj, void *event_info);
 void test_icon_transparent(void *data, Evas_Object *obj, void *event_info);
 void test_icon_standard(void *data, Evas_Object *obj, void *event_info);
@@ -629,6 +630,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Bg Plain", test_bg_plain);
    ADD_TEST(NULL, "Window / Background", "Bg Image", test_bg_image);
    ADD_TEST(NULL, "Window / Background", "Bg Options", test_bg_options);
+   ADD_TEST(NULL, "Window / Background", "Bg EOAPI (Efl.Ui.Win)", test_bg_window);
    ADD_TEST(NULL, "Window / Background", "Window States", test_win_state);
    ADD_TEST(NULL, "Window / Background", "Window States 2", test_win_state2);
    ADD_TEST(NULL, "Window / Background", "Inwin", test_inwin);

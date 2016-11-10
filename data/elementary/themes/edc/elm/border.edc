@@ -787,6 +787,7 @@ group { name: "elm/border/base/default";
    images.image: "win_shadow.png" COMP;
    data.item: "shadow" "1";
    parts {
+      /* opaque region of the window, to inform the compositor */
       spacer { "elm.spacer.opaque";
          desc {
             rel1.to: "top";
@@ -797,6 +798,16 @@ group { name: "elm/border/base/default";
             rel2.to: "elm.swallow.client";
          }
          desc { "max"; inherit: "shaded"; }
+      }
+      /* covers the entire client contents, including the main menu */
+      spacer { "elm.spacer.content";
+         required; // since 1.19
+         desc {
+	    rel1.to: "top";
+	    rel1.relative: 0.0 1.0;
+	    rel2.to: "bottom";
+	    rel2.relative: 1.0 0.0;
+	 }
       }
       part { name: "shadow_clip"; type: RECT; mouse_events: 0;
          description { state: "default";
@@ -827,20 +838,42 @@ group { name: "elm/border/base/default";
             rel2.to: "elm.swallow.client";
          }
       }
-      part { name: "client_clip"; type: RECT; mouse_events: 0;
-         description { state: "default" 0.0;
+      rect { "client_clip";
+         nomouse;
+         desc { "default";
             rel1.to_y: "elm.swallow.client";
             rel2.to_y: "elm.swallow.client";
          }
-         /* description { state: "hidden" 0.0; */
-         /*    inherit: "default"; */
-         /*    visible: 0; */
-         /* } */
+      }
+      rect { "bg_clip";
+         nomouse;
+	 desc { "default";
+	    rel.to: "elm.spacer.content";
+	 }
+      }
+      /* window background: solid color */
+      rect { "elm.rect.background";
+         required; // @since 1.19
+         clip: "bg_clip";
+         desc { "default";
+	    color: 255 255 255 255;
+	    color_class: "elm/win/background"; // FIXME: color_class naming scheme
+	    visible: 0;
+	 }
+	 desc { "visible";
+	    inherit: "default";
+	    visible: 1;
+	 }
+      }
+      /* window background: image */
+      swallow { "elm.swallow.background";
+         required; // @since 1.19
+         clip: "client_clip";
       }
       /* main menu */
       rect { "menu_bg";
          desc { "default";
-            color: 64 64 64 255; // FIXME color_class
+            color: 64 64 64 255; // FIXME: color_class
             align: 0.5 0.0;
             rel.to: "elm.swallow.menu";
          }
@@ -860,16 +893,7 @@ group { name: "elm/border/base/default";
             fixed: 0 1;
          }
       }
-      /* covers the entire client contents, including the main menu */
-      spacer { "elm.spacer.content";
-         required: 1; // since 1.19
-         desc {
-	    rel1.to: "top";
-	    rel1.relative: 0.0 1.0;
-	    rel2.to: "bottom";
-	    rel2.relative: 1.0 0.0;
-	 }
-      }
+      /* application contents */
       part { name: "elm.swallow.client"; type: SWALLOW;
          clip_to: "client_clip";
          description { state: "default" 0.0;
@@ -1382,6 +1406,16 @@ group { name: "elm/border/base/default";
          signal: "elm,state,shadow,off"; source: "elm";
          action: STATE_SET "hidden" 0.0;
          target: "shadow_clip";
+      }
+      program {
+         signal: "elm,state,background,solid,on"; source: "elm";
+	 action: STATE_SET "visible" 0.0;
+	 target: "elm.rect.background";
+      }
+      program {
+         signal: "elm,state,background,solid,off"; source: "elm";
+	 action: STATE_SET "default" 0.0;
+	 target: "elm.rect.background";
       }
       program {
          signal: "elm,action,focus"; source: "elm";

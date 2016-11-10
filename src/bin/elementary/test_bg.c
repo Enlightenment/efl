@@ -268,3 +268,108 @@ test_bg_options(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
+
+static void
+_colorsel_cb(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Win *win = data;
+   int r, g, b, a;
+
+   // Solid color API
+   elm_colorselector_color_get(ev->object, &r, &g, &b, &a);
+   efl_gfx_color_set(efl_part(win, "background"), r, g, b, a);
+   efl_gfx_color_get(efl_part(win, "background"), &r, &g, &b, &a);
+   printf("bg color: %d %d %d %d\n", r, g, b, a);
+   fflush(stdout);
+}
+
+static void
+_file_cb(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Win *win = data;
+   const char *f, *k;
+
+   // File API
+   efl_file_get(efl_part(win, "background"), &f, &k);
+   if (f)
+     {
+        efl_file_set(efl_part(win, "background"), NULL, NULL);
+     }
+   else
+     {
+        efl_file_get(ev->object, &f, &k);
+        efl_file_set(efl_part(win, "background"), f, k);
+     }
+}
+
+static void
+_image_cb(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Win *win = data, *o;
+   const char *f, *k;
+
+   // Content API
+   if (efl_content_get(efl_part(win, "background")))
+     efl_content_set(efl_part(win, "background"), NULL);
+   else
+     {
+        efl_file_get(ev->object, &f, &k);
+        o = efl_add(EFL_UI_IMAGE_CLASS, win,
+                    efl_ui_image_scale_type_set(efl_added, EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
+                    efl_file_set(efl_added, f, k)
+                    );
+        efl_content_set(efl_part(win, "background"), o);
+     }
+}
+
+void
+test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *box;
+   char buf[PATH_MAX];
+
+   win = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
+                 efl_text_set(efl_added, "Bg EOAPI (Efl.Ui.Win)"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE),
+                 efl_ui_win_alpha_set(efl_added, 1));
+
+   box = efl_add(EFL_UI_BOX_CLASS, win,
+                 efl_gfx_size_hint_weight_set(efl_added, 1, 1),
+                 efl_pack(win, efl_added), // FIXME / use content set
+                 efl_gfx_visible_set(efl_added, 1));
+
+   efl_add(ELM_COLORSELECTOR_CLASS, win,
+           elm_colorselector_mode_set(efl_added, ELM_COLORSELECTOR_PALETTE),
+           elm_colorselector_palette_color_add(efl_added, 64, 64, 64, 255),
+           elm_colorselector_palette_color_add(efl_added, 255, 128, 128, 255),
+           elm_colorselector_palette_color_add(efl_added, 0, 64, 64, 64),
+           elm_colorselector_palette_color_add(efl_added, 0, 0, 0, 0),
+           efl_event_callback_add(efl_added, ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, _colorsel_cb, win),
+           efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
+           efl_pack(box, efl_added),
+           efl_gfx_visible_set(efl_added, 1)
+           );
+
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
+   efl_add(EFL_UI_IMAGE_CLASS, win,
+           efl_file_set(efl_added, buf, NULL),
+           efl_gfx_size_hint_min_set(efl_added, 64, 64),
+           efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
+           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _file_cb, win),
+           efl_pack(box, efl_added),
+           efl_gfx_visible_set(efl_added, 1)
+           );
+
+   snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", elm_app_data_dir_get());
+   efl_add(EFL_UI_IMAGE_CLASS, win,
+           efl_file_set(efl_added, buf, NULL),
+           efl_gfx_size_hint_min_set(efl_added, 64, 64),
+           efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
+           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _image_cb, win),
+           efl_pack(box, efl_added),
+           efl_gfx_visible_set(efl_added, 1)
+           );
+
+   efl_gfx_size_set(win, 300, 200);
+   efl_gfx_visible_set(win, 1);
+}

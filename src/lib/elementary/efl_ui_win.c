@@ -20,6 +20,9 @@
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
 
+#include "elm_part_helper.h"
+#include "efl_ui_win_internal_part.eo.h"
+
 #define MY_CLASS EFL_UI_WIN_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Win"
 #define MY_CLASS_NAME_LEGACY "elm_win"
@@ -99,6 +102,7 @@ struct _Efl_Ui_Win_Data
    Evas_Object          *img_obj, *frame_obj;
    Eo                   *edje; /**< edje object for a window layout */
    Eo                   *box;
+   Eo /* wref */        *bg, *std_bg;
    Evas_Object          *obj; /* The object itself */
 #ifdef HAVE_ELEMENTARY_X
    struct
@@ -5176,23 +5180,10 @@ _efl_ui_win_noblank_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 EAPI Evas_Object *
 elm_win_util_standard_add(const char *name, const char *title)
 {
-   Evas_Object *win, *bg;
-
-   win = elm_win_add(NULL, name, ELM_WIN_BASIC);
-   if (!win) return NULL;
-
-   elm_win_title_set(win, title);
-   bg = elm_bg_add(win);
-   if (!bg)
-     {
-        evas_object_del(win);
-        return NULL;
-     }
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
-
-   return win;
+   return efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
+                  efl_text_set(efl_added, title),
+                  efl_ui_win_name_set(efl_added, name)
+                  );
 }
 
 EAPI Evas_Object *
@@ -6381,6 +6372,256 @@ _efl_ui_win_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Dat
    const Evas_Lock *m = evas_key_lock_get(pd->evas);
    return evas_key_lock_is_set(m, name);
 }
+
+// See evas_inline.x
+#define _EVAS_COLOR_CLAMP(x, y) do { \
+if (x > y) { x = y; bad = 1; } \
+if (x < 0) { x = 0; bad = 1; } } while (0)
+
+#define EVAS_COLOR_SANITIZE(r, g, b, a) \
+({ int bad = 0; \
+   _EVAS_COLOR_CLAMP(a, 255); \
+   _EVAS_COLOR_CLAMP(r, a); \
+   _EVAS_COLOR_CLAMP(g, a); \
+   _EVAS_COLOR_CLAMP(b, a); \
+   bad; })
+
+/* Efl.Part APIs */
+
+#define WIN_PART_ERR(part) ERR("No such part in window: '%s'. Supported parts are: 'background'.", part);
+
+static void
+_elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg, Eina_Bool std)
+{
+   ELM_SAFE_DEL(sd->bg);
+   if (!bg)
+     {
+        efl_gfx_visible_set(sd->std_bg, 1);
+        return;
+     }
+
+   if (sd->frame_obj && edje_object_part_exists(sd->frame_obj, "elm.swallow.background"))
+     edje_object_part_swallow(sd->frame_obj, "elm.swallow.background", bg);
+   else
+     {
+        // Legacy theme or no CSD
+        Evas_Object *below = NULL;
+        Eina_Iterator *it;
+
+        // find lowest object in stack
+        it = evas_object_box_iterator_new(sd->box);
+        if (!eina_iterator_next(it, (void **) &below))
+          below = NULL;
+        eina_iterator_free(it);
+        elm_widget_sub_object_add(sd->obj, bg);
+        evas_object_box_prepend(sd->box, bg);
+        if (below) evas_object_stack_below(bg, below);
+     }
+
+   efl_gfx_visible_set(bg, 1);
+   efl_gfx_size_hint_align_set(bg, -1, -1);
+   efl_gfx_size_hint_weight_set(bg, 1, 1);
+   if (std)
+     {
+        efl_wref_add(bg, &sd->std_bg);
+     }
+   else
+     {
+        efl_gfx_visible_set(sd->std_bg, 0);
+        efl_wref_add(bg, &sd->bg);
+     }
+}
+
+void
+_elm_win_standard_init(Eo *obj)
+{
+   /* Support for elm_util_win_standard_add() and Efl.Ui.Win.Standard */
+   Efl_Ui_Win_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+
+   ELM_SAFE_DEL(sd->bg);
+   if (sd->frame_obj && edje_object_part_exists(sd->frame_obj, "elm.rect.background"))
+     edje_object_signal_emit(sd->frame_obj, "elm,state,background,solid,on", "elm");
+   else
+     {
+        // Legacy theme or no CSD
+        Eo *bg = efl_add(ELM_BG_CLASS, obj);
+        _elm_win_bg_set(sd, bg, EINA_TRUE);
+     }
+}
+
+static Eina_Bool
+_efl_ui_win_content_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *part, Eo *content)
+{
+   if (!part) part = "content";
+   if (eina_streq(part, "content"))
+     {
+        // FIXME / TODO
+        return EINA_TRUE;
+     }
+   else if (eina_streq(part, "background"))
+     {
+        if (sd->bg == content) return EINA_TRUE;
+        _elm_win_bg_set(sd, content, EINA_FALSE);
+        return EINA_TRUE;
+     }
+
+   WIN_PART_ERR(part);
+   return EINA_FALSE;
+}
+
+static Efl_Canvas_Object *
+_efl_ui_win_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *part)
+{
+   if (!part) part = "content";
+   if (eina_streq(part, "content"))
+     {
+        // FIXME / TODO
+        return NULL;
+     }
+   else if (eina_streq(part, "background"))
+     return sd->bg;
+
+   WIN_PART_ERR(part);
+   return NULL;
+}
+
+static Efl_Canvas_Object *
+_efl_ui_win_content_unset(Eo *obj, Efl_Ui_Win_Data *sd, const char *part)
+{
+   Eo *content = _efl_ui_win_content_get(obj, sd, part);
+   if (!content) return NULL;
+
+   efl_ref(content);
+   _efl_ui_win_content_set(obj, sd, part, NULL);
+   return content;
+}
+
+static Eina_Bool
+_efl_ui_win_part_color_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, int r, int g, int b, int a)
+{
+   if (eina_streq(part, "background"))
+     {
+        if (sd->frame_obj && edje_object_part_exists(sd->frame_obj, "elm.rect.background"))
+          {
+             // HACK: Force render mode of bg rect to COPY. This avoids render garbage.
+             Eo *bgrect = (Eo *) edje_object_part_object_get(sd->frame_obj, part);
+             efl_canvas_object_render_op_set(bgrect, EFL_GFX_RENDER_OP_COPY);
+
+             edje_object_color_class_set(sd->frame_obj, "elm/win/background", r, g, b, a, 0, 0, 0, 0, 0, 0, 0, 0);
+             edje_object_signal_emit(sd->frame_obj, "elm,state,background,solid,on", "elm");
+          }
+        else
+          {
+             // Legacy theme or no CSD
+             Eo *bg = efl_add(EFL_CANVAS_RECTANGLE_CLASS, obj,
+                              efl_canvas_object_render_op_set(efl_added, EFL_GFX_RENDER_OP_COPY),
+                              efl_gfx_color_set(efl_added, r, g, b, a));
+             _elm_win_bg_set(sd, bg, EINA_FALSE);
+          }
+        return EINA_TRUE;
+     }
+
+   WIN_PART_ERR(part);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_efl_ui_win_part_color_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *part, int *r, int *g, int *b, int *a)
+{
+   if (eina_streq(part, "background"))
+     {
+        edje_object_color_class_get(sd->frame_obj, "elm/win/background", r, g, b, a, 0, 0, 0, 0, 0, 0, 0, 0);
+        return EINA_TRUE;
+     }
+
+   WIN_PART_ERR(part);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_efl_ui_win_part_file_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, const char *file, const char *key)
+{
+   if (eina_streq(part, "background"))
+     {
+        Eina_Bool ok = EINA_TRUE;
+        Eo *bg = NULL;
+
+        if (file)
+          {
+             bg = efl_add(EFL_UI_IMAGE_CLASS, obj);
+             efl_ui_image_scale_type_set(bg, EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE);
+             ok = efl_file_set(bg, file, key);
+             if (!ok) ELM_SAFE_DEL(bg);
+             _elm_win_bg_set(sd, bg, EINA_FALSE);
+          }
+        else
+          {
+             _elm_win_standard_init(obj);
+          }
+
+        return ok;
+     }
+
+   WIN_PART_ERR(part);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_efl_ui_win_part_file_get(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, const char **file, const char **key)
+{
+   if (file) *file = NULL;
+   if (key) *key = NULL;
+
+   if (eina_streq(part, "background"))
+     {
+        const Eo *bg = _efl_ui_win_content_get(obj, sd, "background");
+        efl_file_get(bg, file, key);
+        return EINA_TRUE;
+     }
+
+   WIN_PART_ERR(part);
+   return EINA_FALSE;
+}
+
+/* Efl.Part begin */
+
+static void
+_efl_ui_win_internal_part_efl_gfx_color_set(Eo *obj, Elm_Part_Data *pd, int r, int g, int b, int a)
+{
+   if (EVAS_COLOR_SANITIZE(r, g, b, a))
+     ERR("Evas only handles premultiplied colors (0 <= R,G,B <= A <= 255)");
+
+   _efl_ui_win_part_color_set(pd->obj, pd->sd, pd->part, r, g, b, a);
+   ELM_PART_RETURN_VOID;
+}
+
+static void
+_efl_ui_win_internal_part_efl_gfx_color_get(Eo *obj, Elm_Part_Data *pd, int *r, int *g, int *b, int *a)
+{
+   _efl_ui_win_part_color_get(pd->obj, pd->sd, pd->part, r, g, b, a);
+   ELM_PART_RETURN_VOID;
+}
+
+static Eina_Bool
+_efl_ui_win_internal_part_efl_file_file_set(Eo *obj, Elm_Part_Data *pd, const char *file, const char *key)
+{
+   ELM_PART_RETURN_VAL(_efl_ui_win_part_file_set(pd->obj, pd->sd, pd->part, file, key));
+}
+
+static void
+_efl_ui_win_internal_part_efl_file_file_get(Eo *obj, Elm_Part_Data *pd, const char **file, const char **key)
+{
+   _efl_ui_win_part_file_get(pd->obj, pd->sd, pd->part, file, key);
+   ELM_PART_RETURN_VOID;
+}
+
+ELM_PART_IMPLEMENT(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_SET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_GET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
+#include "efl_ui_win_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #ifndef EFL_TEAMWORK_VERSION
 # define EFL_TEAMWORK_VERSION 2
