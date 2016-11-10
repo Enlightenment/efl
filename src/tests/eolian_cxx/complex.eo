@@ -5,27 +5,12 @@ class Complex (Efl.Object)
       // container test
       inptrcont {
          params {
-           l: list<int*>;
+           l: list<int>;
          }
       }
       inclasscont {
          params {
            l: list<Efl.Object>;
-         }
-      }
-      inptrptrcont {
-         params {
-           l: list<int**>;
-         }
-      }
-      inptrcontown {
-         params {
-           l: own(list<int*>);
-         }
-      }
-      inptrptrcontown {
-         params {
-           l: own(list<int**>);
          }
       }
       incontcont {
@@ -104,11 +89,6 @@ class Complex (Efl.Object)
          }
       }
       // out
-      outptrcont {
-         params {
-           @out l: list<int*>;
-         }
-      }
       outclasscont {
          params {
            @out l: list<Efl.Object>;

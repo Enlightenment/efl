@@ -262,10 +262,6 @@ inline void type_def::set(Eolian_Type const* eolian_type)
          original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces}};
        }
        break;
-     case EOLIAN_TYPE_POINTER:
-       {
-          throw std::runtime_error("");
-       }
      case EOLIAN_TYPE_CLASS:
        {
           Eolian_Class const* klass = eolian_type_class_get(eolian_type);
@@ -286,7 +282,7 @@ inline void type_def::set(Eolian_Type const* eolian_type)
        }
        break;
      default:
-       std::abort();
+       throw std::runtime_error("Type not supported");
        break;
      }
 }

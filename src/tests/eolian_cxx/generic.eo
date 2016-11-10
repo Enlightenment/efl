@@ -2,7 +2,7 @@
 struct Generic.Event
 {
   field1: int;
-  field2: list<int*>;
+  field2: list<int>;
 }
 
 class Generic (Efl.Object)

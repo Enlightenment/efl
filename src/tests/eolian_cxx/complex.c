@@ -22,21 +22,6 @@ _complex_inclasscont(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_Lis
 }
 
 EOLIAN static void
-_complex_inptrptrcont(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_List *l EINA_UNUSED)
-{
-}
-
-EOLIAN static void
-_complex_inptrcontown(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_List *l EINA_UNUSED)
-{
-}
-
-EOLIAN static void
-_complex_inptrptrcontown(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_List *l EINA_UNUSED)
-{
-}
-
-EOLIAN static void
 _complex_incontcont(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_List *l EINA_UNUSED)
 {
 }
@@ -108,11 +93,6 @@ _complex_inaccessor(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_Acce
 
 EOLIAN static void
 _complex_inaccessorown(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_Accessor *l EINA_UNUSED)
-{
-}
-
-EOLIAN static void
-_complex_outptrcont(Eo *obj EINA_UNUSED, Complex_Data *pd EINA_UNUSED, Eina_List **l EINA_UNUSED)
 {
 }
 
