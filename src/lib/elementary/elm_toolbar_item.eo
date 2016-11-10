@@ -179,7 +179,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      return: bool;
                 }
                 values {
-                     state: Elm.Toolbar.Item.State * @nullable;
+                     state: ptr(Elm.Toolbar.Item.State) @nullable;
                 }
            }
            /*      init { FIXME
@@ -231,12 +231,12 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked when this state is selected.]]
                      @in data: const(void_ptr) @optional; [[The data to associate with the state.]]
                 }
-                return: Elm.Toolbar.Item.State *; [[The toolbar item state, or $null upon failure.]]
+                return: ptr(Elm.Toolbar.Item.State); [[The toolbar item state, or $null upon failure.]]
            }
            state_del {
                 [[Delete a previously added state to $item.]]
                 params {
-                     @in state: Elm.Toolbar.Item.State *; [[The state to be deleted.]]
+                     @in state: ptr(Elm.Toolbar.Item.State); [[The state to be deleted.]]
                 }
                 return: bool; [[$true on success or $false on failure.]]
            }
@@ -246,7 +246,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                   If last state is selected, this function will return first
                   state.
                 ]]
-                return: Elm.Toolbar.Item.State *; [[The state after current state, or $null on failure.]]
+                return: ptr(Elm.Toolbar.Item.State); [[The state after current state, or $null on failure.]]
            }
            state_prev {
                 [[Get the state before selected state in toolbar's $item.
@@ -254,7 +254,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                   If first state is selected, this function will return last
                   state.
                 ]]
-                return: Elm.Toolbar.Item.State *; [[The state before current state, or $null on failure.]]
+                return: ptr(Elm.Toolbar.Item.State); [[The state before current state, or $null on failure.]]
            }
            show {
                 [[Show a specific item, when the toolbar can be scrolled.

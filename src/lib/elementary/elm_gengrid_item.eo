@@ -77,7 +77,7 @@ class Elm.Gengrid.Item(Elm.Widget.Item)
                        the function pointers and item_style.]]
                 }
                 values {
-                     itc: const (Elm.Gengrid.Item.Class) *; [[Gengrid Item class for the given item]]
+                     itc: ptr(const(Elm.Gengrid.Item.Class)); [[Gengrid Item class for the given item]]
                 }
            }
            @property index {
@@ -216,7 +216,7 @@ class Elm.Gengrid.Item(Elm.Widget.Item)
                   displayed. After changing the item class, elm_gengrid_item_update() is
                   called on the item $it.]]
                 params {
-                     @in itc: const (Elm.Gengrid.Item.Class) *; [[The gengrid item class describing the function pointers and the item style.]]
+                     @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The gengrid item class describing the function pointers and the item style.]]
                 }
            }
            all_contents_unset{
