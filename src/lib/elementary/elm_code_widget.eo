@@ -22,7 +22,7 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
             [[Get the underlying code object we are rendering]]
          }
          values {
-            code: Elm_Code *; [[Our underlying Elm_Code object]]
+            code: ptr(Elm_Code); [[Our underlying Elm_Code object]]
          }
       }
       @property font {
@@ -35,7 +35,7 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
             The font name is a copy ad should be freed once it is no longer needed]]
          }
          values {
-            name: const(char) *; [[The name of the font to load]]
+            name: string; [[The name of the font to load]]
             size: Evas.Font.Size; [[The font size for the widget]]
          }
       }
@@ -175,13 +175,13 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       line_refresh {
       	 [[Refresh code line in widget]]
          params {
-            line: Elm_Code_Line *; [[The line to refresh.]]
+            line: ptr(Elm_Code_Line); [[The line to refresh.]]
          }
       }
       line_visible_get {
          [[Check if the code line is currently visible]]
          params {
-            line: Elm_Code_Line *; [[The line to test for visibility.]]
+            line: ptr(Elm_Code_Line); [[The line to test for visibility.]]
          }
          return: bool; [[$true if the line specified is currently visible within the scroll region.]]
       }
@@ -194,8 +194,8 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
          params {
             x: Evas.Coord; [[The x coordinate in the widget]]
             y: Evas.Coord; [[The y coordinate in the widget]]
-            row: uint *; [[The row for the coordinates]]
-            col: int *; [[The column for the coordinates]]
+            row: ptr(uint); [[The row for the coordinates]]
+            col: ptr(int); [[The column for the coordinates]]
          }
          return: bool; [[$true if a line exists at these coordinates]]
       }
@@ -216,13 +216,13 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
             end_col: uint; [[The widget column of the last character to get]]
             end_line: uint; [[The line of the last character to get]]
          }
-         return: char *; [[The text content between start and end positions]]
+         return: ptr(char); [[The text content between start and end positions]]
       }
 
       line_text_column_width_to_position {
       	 [[Get text column width at given position]]
          params {
-            line: Elm_Code_Line *; [[Code line]]
+            line: ptr(Elm_Code_Line); [[Code line]]
             position: uint; [[Code position]]
          }
          return: uint; [[Text column width]]
@@ -230,14 +230,14 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       line_text_column_width_get {
       	 [[Get text column width for code line]]
          params {
-            line: Elm_Code_Line *; [[Code line]]
+            line: ptr(Elm_Code_Line); [[Code line]]
          }
          return: uint; [[Text column width]]
       }
       line_text_position_for_column_get {
       	 [[Get position from column]]
          params {
-            line: Elm_Code_Line *; [[Code line]]
+            line: ptr(Elm_Code_Line); [[Code line]]
             column: uint; [[Column]]
          }
          return: uint; [[Position]]
