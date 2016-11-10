@@ -21,6 +21,10 @@
  *
  * Set this environment variable to immediately bypass the free queue and
  * have all items submitted free with their free function immediately.
+ * Note that you can override this by setting count or mem max by
+ * eina_freeq_count_max_set() or eina_freeq_mem_max_set() which will
+ * disable bypass for that specific free queue. once bypass is disabled
+ * it cannot be re-enabled.
  *
  * EINA_FREEQ_FILL_MAX=N
  *

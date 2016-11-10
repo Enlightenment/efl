@@ -52,6 +52,7 @@ struct _Eina_FreeQ
    size_t mem_total; // current total memory known about in the queue
    Eina_FreeQ_Block *blocks; // the list of blocks of free items
    Eina_FreeQ_Block *block_last; // the last block to append items to
+   int bypass; // 0 if not to bypass, 1 if we should bypass
 };
 
 // ========================================================================= //
@@ -166,6 +167,7 @@ eina_freeq_new(void)
    eina_lock_recursive_new(&(fq->lock));
    fq->count_max = _eina_freeq_total_max;
    fq->mem_max = _eina_freeq_mem_max;
+   fq->bypass = _eina_freeq_bypass;
    return fq;
 }
 
@@ -198,6 +200,7 @@ eina_freeq_count_max_set(Eina_FreeQ *fq, int count)
    if (!fq) return;
    if (count < 0) count = 0;
    eina_lock_take(&(fq->lock));
+   fq->bypass = 0;
    fq->count_max = count;
    _eina_freeq_flush_nolock(fq);
    eina_lock_release(&(fq->lock));
@@ -210,7 +213,8 @@ eina_freeq_count_max_get(Eina_FreeQ *fq)
 
    if (!fq) return 0;
    eina_lock_take(&(fq->lock));
-   count = fq->count_max;
+   if (fq->bypass) count = 0;
+   else count = fq->count_max;
    eina_lock_release(&(fq->lock));
    return count;
 }
@@ -220,6 +224,7 @@ eina_freeq_mem_max_set(Eina_FreeQ *fq, size_t mem)
 {
    if (!fq) return;
    eina_lock_take(&(fq->lock));
+   fq->bypass = 0;
    fq->mem_max = mem;
    _eina_freeq_flush_nolock(fq);
    eina_lock_release(&(fq->lock));
@@ -232,7 +237,8 @@ eina_freeq_mem_max_get(Eina_FreeQ *fq)
 
    if (!fq) return 0;
    eina_lock_take(&(fq->lock));
-   mem = fq->mem_max;
+   if (fq->bypass) mem = 0;
+   else mem = fq->mem_max;
    eina_lock_release(&(fq->lock));
    return mem;
 }
@@ -284,7 +290,7 @@ eina_freeq_ptr_add(Eina_FreeQ *fq,
    if (!free_func) free_func = free;
    if ((size < _eina_freeq_fillpat_max) && (size > 0))
      _eina_freeq_fill_do(ptr, size);
-   if ((!fq) || (_eina_freeq_bypass)) goto insta_free;
+   if ((!fq) || (fq->bypass)) goto insta_free;
    eina_lock_take(&(fq->lock));
    if ((!fq->block_last) || (fq->block_last->end == ITEM_BLOCK_COUNT))
      goto newblock;
