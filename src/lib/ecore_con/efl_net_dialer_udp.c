@@ -233,9 +233,6 @@ _efl_net_dialer_udp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_
         pd->resolver.thread = NULL;
      }
 
-   if (pd->resolver.thread)
-     ecore_thread_cancel(pd->resolver.thread);
-
    str = strdup(address);
    if (!efl_net_ip_port_split(str, &host, &port))
      {
