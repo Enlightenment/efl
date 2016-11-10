@@ -44,6 +44,7 @@ type Efl.Callback_Priority: short; [[Callback priority value. Range is -32k - 32
 
 abstract Efl.Object ()
 {
+   [[Abstract Efl object class]]
    eo_prefix: efl;
 
    methods {
@@ -69,7 +70,7 @@ abstract Efl.Object ()
          get {
          }
          values {
-            parent: Efl.Object @nullable; [[the new parent]]
+            parent: Efl.Object @nullable; [[The new parent]]
          }
       }
       del @const {
@@ -96,7 +97,7 @@ abstract Efl.Object ()
          get {
          }
          values {
-           name: string @nullable; [[the name]]
+           name: string @nullable; [[The name]]
          }
       }
       @property comment {
@@ -111,7 +112,7 @@ abstract Efl.Object ()
          get {
          }
          values {
-           comment: string @nullable; [[the comment]]
+           comment: string @nullable; [[The comment]]
          }
       }
       @property event_global_freeze_count @class {
@@ -141,7 +142,7 @@ abstract Efl.Object ()
          get {
          }
          values {
-            finalized: bool;
+            finalized: bool; [[$true if the object is finalized, $false otherwise]]
          }
       }
       provider_find {
@@ -149,7 +150,7 @@ abstract Efl.Object ()
 
           The object from the provider will then be returned.
           The base implementation calls the provider_find function on the object parent,
-          and returnes its result. If no parent is present NULL is returned.
+          and returns its result. If no parent is present NULL is returned.
           Each implementation has to support this function by overriding
           it and returning itself if the interface matches the parameter.
           If this is not done the class cannot be found up in the object tree.
@@ -157,7 +158,7 @@ abstract Efl.Object ()
         params {
           klass : const(Efl.Object); [[The class identifier to search for]]
         }
-        return : Efl.Object;
+        return : Efl.Object; [[Object from the provider list]]
       }
       constructor {
          [[Call the object's constructor.
@@ -185,9 +186,9 @@ abstract Efl.Object ()
            the search will match any object of that class.
          ]]
          params {
-            @in search: string; [[the name search string]]
+            @in search: string; [[The name search string]]
          }
-         return: Efl.Object; [[the first object found]]
+         return: Efl.Object; [[The first object found]]
       }
       wref_add {
          [[Add a new weak reference to obj.
@@ -199,13 +200,13 @@ abstract Efl.Object ()
            being freed.
          ]]
          params {
-            @in wref: ptr(Efl.Object);
+            @in wref: ptr(Efl.Object); [[The weak ref]]
          }
       }
       wref_del {
          [[Delete the weak reference passed.]]
          params {
-            @in wref: ptr(Efl.Object);
+            @in wref: ptr(Efl.Object); [[The weak ref]]
          }
       }
       @property key_data {
@@ -214,16 +215,16 @@ abstract Efl.Object ()
            The user is in charge of freeing the data.
          ]]
          keys {
-            key: string; [[the key associated with the data]]
+            key: string; [[The key associated with the data]]
          }
          set {
             values {
-               data: const(void_ptr); [[the data to set]]
+               data: const(void_ptr); [[The data to set]]
             }
          }
          get {
             values {
-               data: void_ptr; [[the data to set]]
+               data: void_ptr; [[The data to set]]
             }
          }
       }
@@ -239,16 +240,16 @@ abstract Efl.Object ()
            are shared and can store only one thing
          ]]
          keys {
-            key: string; [[the key associated with the object ref]]
+            key: string; [[The key associated with the object ref]]
          }
          set {
             values {
-               objdata: const(Efl.Object); [[the object to set]]
+               objdata: const(Efl.Object); [[The object to set]]
             }
          }
          get {
             values {
-               objdata: Efl.Object; [[the object to set]]
+               objdata: Efl.Object; [[The object to set]]
             }
          }
       }
@@ -262,16 +263,16 @@ abstract Efl.Object ()
            are shared and can store only one thing
          ]]
          keys {
-            key: string; [[the key associated with the object ref]]
+            key: string; [[The key associated with the object ref]]
          }
          set {
             values {
-               objdata: const(Efl.Object); [[the object to set]]
+               objdata: const(Efl.Object); [[The object to set]]
             }
          }
          get {
             values {
-               objdata: Efl.Object; [[the object to set]]
+               objdata: Efl.Object; [[The object to set]]
             }
          }
       }
@@ -286,32 +287,32 @@ abstract Efl.Object ()
            are shared and can store only one thing
          ]]
          keys {
-            key: string; [[the key associated with the value]]
+            key: string; [[The key associated with the value]]
          }
          values {
-            value: ptr(generic_value); [[the value to set]]
+            value: ptr(generic_value); [[The value to set]]
          }
       }
       event_thaw {
-         [[thaw events of object.
+         [[Thaw events of object.
 
            Lets event callbacks be called for the object.
          ]]
       }
       event_freeze {
-         [[freeze events of object.
+         [[Freeze events of object.
 
            Prevents event callbacks from being called for the object.
          ]]
       }
       event_global_thaw @class {
-         [[thaw events of object.
+         [[Thaw events of object.
 
            Lets event callbacks be called for the object.
          ]]
       }
       event_global_freeze @class {
-         [[freeze events of object.
+         [[Freeze events of object.
 
            Prevents event callbacks from being called for the object.
          ]]
@@ -331,11 +332,11 @@ abstract Efl.Object ()
          }
       }
       event_callback_del {
-         [[Del a callback with a specific data associated to it for an event.]]
+         [[Delete a callback with a specific data associated to it for an event.]]
          return: bool; [[Return $true when the callback has been successfully removed.]]
          params {
             @in desc: ptr(const(Efl.Event.Description)); [[The description of the event to listen to]]
-            @in func: Efl.Event_Cb; [[the callback to delete]]
+            @in func: Efl.Event_Cb; [[The callback to delete]]
             @in user_data: const(void_ptr); [[The data to compare]]
          }
       }
@@ -349,9 +350,9 @@ abstract Efl.Object ()
          ]]
          return: bool; [[Return $true when the callback has been successfully added.]]
          params {
-            @in array: ptr(const(Efl.Callback_Array_Item)); [[an #Efl_Callback_Array_Item of events to listen to]]
+            @in array: ptr(const(Efl.Callback_Array_Item)); [[An #Efl_Callback_Array_Item of events to listen to]]
             @in priority: Efl.Callback_Priority; [[The priority of the callback]]
-            @in data: const(void_ptr); [[additional data to pass to the callback]]
+            @in data: const(void_ptr); [[Additional data to pass to the callback]]
          }
       }
       event_callback_array_del {
@@ -360,7 +361,7 @@ abstract Efl.Object ()
          ]]
          return: bool; [[Return $true when the callback has been successfully removed.]]
          params {
-            @in array: ptr(const(Efl.Callback_Array_Item)); [[an #Efl_Callback_Array_Item of events to listen to]]
+            @in array: ptr(const(Efl.Callback_Array_Item)); [[An #Efl_Callback_Array_Item of events to listen to]]
             @in user_data: const(void_ptr); [[The data to compare]]
          }
       }
@@ -370,9 +371,7 @@ abstract Efl.Object ()
             @in desc: ptr(const(Efl.Event.Description)); [[The description of the event to call]]
             @in event_info: void_ptr; [[Extra event info to pass to the callbacks]]
          }
-         return: bool; [[$false if one of the callbacks aborted the call,
-                         $true otherwise
-                       ]]
+         return: bool; [[$false if one of the callbacks aborted the call, $true otherwise]]
       }
       event_callback_legacy_call {
          [[Call the callbacks for an event of an object.
@@ -386,9 +385,7 @@ abstract Efl.Object ()
             @in desc: ptr(const(Efl.Event.Description)); [[The description of the event to call]]
             @in event_info: void_ptr; [[Extra event info to pass to the callbacks]]
          }
-         return: bool; [[$false if one of the callbacks aborted the call,
-                         $true otherwise
-                       ]]
+         return: bool; [[$false if one of the callbacks aborted the call, $true otherwise]]
       }
       event_callback_stop {
          [[Stop the current callback call.
@@ -414,14 +411,14 @@ abstract Efl.Object ()
          }
       }
       dbg_info_get {
-         [[Get dbg information from the object.]]
+         [[Get debug information from the object.]]
          params {
-            @in root_node: ptr(Efl.Dbg_Info); [[node of the tree]]
+            @in root_node: ptr(Efl.Dbg_Info); [[Node of the tree]]
          }
       }
       children_iterator_new {
          [[Get an iterator on all childrens]]
-         return: free(own(iterator<Efl.Object>), eina_iterator_free) @warn_unused;
+         return: free(own(iterator<Efl.Object>), eina_iterator_free) @warn_unused; [[Children iterator]]
       }
       composite_attach {
            [[Make an object a composite object of another.
@@ -445,7 +442,7 @@ abstract Efl.Object ()
              See @.composite_attach, @.composite_part_is.
            ]]
            params {
-                @in comp_obj: Efl.Object; [[the object that will be removed from the parent.]]
+                @in comp_obj: Efl.Object; [[The object that will be removed from the parent.]]
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }
@@ -471,6 +468,6 @@ abstract Efl.Object ()
    events {
       callback,add @hot; [[A callback was added.]]
       callback,del @hot; [[A callback was deleted.]]
-      del @hot; [[Obj is being deleted.]]
+      del @hot; [[Object is being deleted.]]
    }
 }
