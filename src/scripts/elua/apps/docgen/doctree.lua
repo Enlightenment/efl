@@ -585,8 +585,8 @@ local wrap_type_attrs = function(tp, str)
     if ffunc then
         str = "free(" .. str .. ", " .. ffunc .. ")"
     end
-    if tp:is_ref() then
-        str = "ref(" .. str .. ")"
+    if tp:is_ptr() then
+        str = "ptr(" .. str .. ")"
     end
     return str
 end
@@ -663,8 +663,8 @@ M.Type = Node:clone {
         return self.type:is_const()
     end,
 
-    is_ref = function(self)
-        return self.type:is_ref()
+    is_ptr = function(self)
+        return self.type:is_ptr()
     end,
 
     c_type_get = function(self)
