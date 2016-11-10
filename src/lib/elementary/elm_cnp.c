@@ -5543,10 +5543,13 @@ static void
 _cont_obj_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {  /* Cancel any drag waiting to start on timeout */
    cnp_debug("In\n");
-   if (((Evas_Event_Mouse_Move *)event_info)->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+   Item_Container_Drag_Info *st = data;
+   Evas_Event_Mouse_Move *ev = event_info;
+   int dx = ev->cur.canvas.x - st->x_down, dy = ev->cur.canvas.y - st->y_down;
+   int finger_size = elm_config_finger_size_get();
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD || (dx * dx + dy * dy > finger_size * finger_size))
      {
-        cnp_debug("event on hold - have to cancel DnD\n");
-        Item_Container_Drag_Info *st = data;
+        cnp_debug("event on hold or mouse moved too much - have to cancel DnD\n");
 
         evas_object_event_callback_del_full
            (st->obj, EVAS_CALLBACK_MOUSE_MOVE, _cont_obj_mouse_move, st);
