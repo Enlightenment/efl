@@ -264,7 +264,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
 
               @since 1.7
             ]]
-            return: list<Elm_Map_Overlay *>; [[The list of all overlays or $null upon failure.]]
+            return: list<ptr(Elm_Map_Overlay)>; [[The list of all overlays or $null upon failure.]]
          }
       }
       @property tile_load_status {
@@ -334,7 +334,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            \@ref elm_map_route_del and distance can be get with
            \@ref elm_map_route_distance_get.
          ]]
-         return: Elm_Map_Route *; [[The created route or $null upon failure.]]
+         return: ptr(Elm_Map_Route); [[The created route or $null upon failure.]]
          params {
             @in type: Elm.Map.Route_Type; [[The type of transport to be considered when tracing a route.]]
             @in method: Elm.Map.Route_Method; [[The routing method, what should be prioritized.]]
@@ -375,7 +375,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            \@ref elm_map_overlay_del.
          ]]
 
-         return: Elm_Map_Overlay *; [[The created overlay or $null upon failure.]]
+         return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
          params {
             @in lon: double; [[The center longitude.]]
             @in lat: double; [[The center latitude.]]
@@ -399,7 +399,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            Also these changes have a influence on the overlays in the
            same class even if each overlay is alone and is not grouped.
          ]]
-         return: Elm_Map_Overlay *; [[The created overlay or $null upon failure.]]
+         return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
       }
       overlay_bubble_add {
          [[Add a new bubble overlay to the map object.
@@ -414,7 +414,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            Overlay created with this method can be deleted with
            \@ref elm_map_overlay_del.
          ]]
-         return: Elm_Map_Overlay *; [[The created overlay or $null upon failure.]]
+         return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
       }
       sources_get @const {
          [[Get the names of available sources for a specific type.
@@ -430,7 +430,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
 
            At least available sources of name type are "Nominatim".
          ]]
-         return: string*; [[The char pointer array of source names.]]
+         return: ptr(string); [[The char pointer array of source names.]]
          params {
             @in type: Elm.Map.Source_Type; [[Source type.]]
          }
@@ -444,7 +444,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            Overlay created with this method can be deleted with
            \@ref elm_map_overlay_del.
          ]]
-         return: Elm_Map_Overlay *; [[The created overlay or $null upon failure.]]
+         return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
       }
       overlay_line_add {
          [[Add a new line overlay to the map object.
@@ -453,7 +453,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            Overlay created with this method can be deleted with 
            \@ref elm_map_overlay_del.
          ]]
-         return: Elm_Map_Overlay *; [[The created overlay or $null upon failure.]]
+         return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
          params {
             @in flon: double; [[The start longitude.]]
             @in flat: double; [[The start latitude.]]
@@ -489,7 +489,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            To get the longitude and latitude, \@ref elm_map_region_get
            should be used.
          ]]
-         return: Elm_Map_Name *; [[A #Elm_Map_Name handle for this coordinate.]]
+         return: ptr(Elm_Map_Name); [[A #Elm_Map_Name handle for this coordinate.]]
          params {
             @in address: string @optional; [[The address.]]
             @in lon: double; [[The longitude.]]
@@ -563,9 +563,9 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            Overlay created with this method can be deleted with
            \@ref elm_map_overlay_del.
          ]]
-         return: Elm_Map_Overlay *; [[The created overlay or $null upon failure.]]
+         return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
          params {
-            @in route: const(Elm_Map_Route)*; [[The route object to make a overlay.]]
+            @in route: ptr(const(Elm_Map_Route)); [[The route object to make a overlay.]]
          }
       }
       overlay_scale_add {
@@ -578,7 +578,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            Overlay created with this method can be deleted with
            \@ref elm_map_overlay_del.
          ]]
-         return: Elm_Map_Overlay *; [[The created overlay or $null upon failure.]]
+         return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
          params {
             @in x: Evas.Coord; [[horizontal pixel coordinate.]]
             @in y: Evas.Coord; [[vertical pixel coordinate.]]
@@ -602,7 +602,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            Overlay created with this method can be deleted by
            \@ref elm_map_overlay_del.
          ]]
-         return: Elm_Map_Overlay *; [[The created overlay or $null upon failure.]]
+         return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
          params {
             @in lon: double; [[The longitude of the overlay.]]
             @in lat: double; [[The latitude of the overlay.]]
