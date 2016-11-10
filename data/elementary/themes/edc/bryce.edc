@@ -344,7 +344,18 @@ group { name: "e/bryce/default/plain"; nomouse;
 
 group { "elm/scroller/base/bryce";
    parts {
-      rect { "clip"; }
+      rect { "clip";
+         desc {
+            rel1.offset: 0 -99999;
+            rel2.offset: -1 99999;
+            link.base: "e,state,orient,horizontal" "e";
+         }
+         desc { "vert";
+            rel1.offset: -99999 0;
+            rel2.offset: 99999 -1;
+            link.base: "estateorientvertical" "e";
+         }
+      }
       swallow { "elm.swallow.content" clip: "clip"; }
    }
 }
