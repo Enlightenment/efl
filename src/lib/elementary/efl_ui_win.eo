@@ -646,13 +646,19 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          }
       }
       @property available_profiles {
+         /* FIXME: terminated_array is actually wrong here (the "count" argument
+          * provides the size, not a NULL at the end of it), but we have no way
+          * to represent this in Eolian correctly, it will work fine for C but
+          * will break for other languages; we probably want to re-do this API
+          * completely though, so that it can bind nicely
+          */
          set {
             [[Set the array of available profiles to a window.
 
               @since 1.8
             ]]
             values {
-               profiles: ptr(string); [[The string array of available profiles.]]
+               profiles: terminated_array<string>; [[The string array of available profiles.]]
                count: uint; [[The number of members in profiles.]]
             }
          }
@@ -662,7 +668,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
               @since 1.8
             ]]
             values {
-               profiles: char**; [[The string array of available profiles.]]
+               profiles: terminated_array<ptr(char)>; [[The string array of available profiles.]]
                count: uint; [[The number of members in profiles.]]
             }
             return: bool;
