@@ -2600,6 +2600,7 @@ _ecore_evas_register(Ecore_Evas *ee)
    _ecore_evas_register_animators(ee);
 
    if (_ecore_evas_render_sync) ecore_evas_first = EINA_TRUE;
+   if (!_general_tick) _ecore_evas_tick_source_find();
 }
 
 EAPI void
