@@ -11,6 +11,7 @@ inline bool is_function_blacklisted(std::string const& c_name)
     || c_name == "efl_event_callback_legacy_call"
     || c_name == "efl_canvas_group_change"
     || c_name == "efl_event_callback_priority_add"
+    || c_name == "evas_obj_table_children_get"
     ;
 }
 
