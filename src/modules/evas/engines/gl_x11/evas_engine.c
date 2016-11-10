@@ -167,61 +167,107 @@ evgl_eng_evas_surface_get(void *data)
 }
 
 #ifdef GL_GLES
+
 static EGLDisplay main_dpy  = EGL_NO_DISPLAY;
 static EGLSurface main_draw = EGL_NO_SURFACE;
 static EGLSurface main_read = EGL_NO_SURFACE;
 static EGLContext main_ctx  = EGL_NO_CONTEXT;
 
 EGLContext
-evas_eglGetCurrentContext(void)
+evas_eglGetCurrentContext(GL_X11_Context_Type type)
 {
-   if (eina_main_loop_is())
-     return main_ctx;
+   if (type == GL_X11_Context_Type_Evas && evas_gl_thread_enabled())
+     {
+        return evas_eglGetCurrentContext_th();
+     }
+   else if (type == GL_X11_Context_Type_Evgl && evas_evgl_thread_enabled())
+     {
+        return evas_eglGetCurrentContext_evgl_th();
+     }
    else
-     return eglGetCurrentContext();
+     {
+        if (eina_main_loop_is())
+           return main_ctx;
+        else
+           return eglGetCurrentContext();
+     }
 }
 
 EGLSurface
-evas_eglGetCurrentSurface(EGLint readdraw)
+evas_eglGetCurrentSurface(GL_X11_Context_Type type, EGLint readdraw)
 {
-   if (eina_main_loop_is())
-     return (readdraw == EGL_READ) ? main_read : main_draw;
+   if (type == GL_X11_Context_Type_Evas && evas_gl_thread_enabled())
+     {
+        return evas_eglGetCurrentSurface_th(readdraw);
+     }
+   else if (type == GL_X11_Context_Type_Evgl && evas_evgl_thread_enabled())
+     {
+        return evas_eglGetCurrentSurface_evgl_th(readdraw);
+     }
    else
-     return eglGetCurrentSurface(readdraw);
+     {
+        if (eina_main_loop_is())
+           return (readdraw == EGL_READ) ? main_read : main_draw;
+        else
+           return eglGetCurrentSurface(readdraw);
+     }
 }
 
 EGLDisplay
-evas_eglGetCurrentDisplay(void)
+evas_eglGetCurrentDisplay(GL_X11_Context_Type type)
 {
-   if (eina_main_loop_is())
-     return main_dpy;
+   if (type == GL_X11_Context_Type_Evas && evas_gl_thread_enabled())
+     {
+        return evas_eglGetCurrentDisplay_th();
+     }
+   else if (type == GL_X11_Context_Type_Evgl && evas_evgl_thread_enabled())
+     {
+        return evas_eglGetCurrentDisplay_evgl_th();
+     }
    else
-     return eglGetCurrentDisplay();
+     {
+        if (eina_main_loop_is())
+           return main_ctx;
+        else
+           return eglGetCurrentDisplay();
+     }
 }
 
 EGLBoolean
-evas_eglMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx)
+evas_eglMakeCurrent(GL_X11_Context_Type type, EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx)
 {
-   if (eina_main_loop_is())
+   if (type == GL_X11_Context_Type_Evas && evas_gl_thread_enabled())
      {
-        EGLBoolean ret;
-
-        if ((dpy == main_dpy) && (draw == main_draw) &&
-            (read == main_read) && (ctx == main_ctx))
-          return 1;
-
-        ret = eglMakeCurrent(dpy, draw, read, ctx);
-        if (ret)
-          {
-             main_dpy  = dpy;
-             main_draw = draw;
-             main_read = read;
-             main_ctx  = ctx;
-          }
-        return ret;
+        return evas_eglMakeCurrent_th(dpy, draw, read, ctx);
+     }
+   else if (type == GL_X11_Context_Type_Evgl && evas_evgl_thread_enabled())
+     {
+        return evas_eglMakeCurrent_evgl_th(dpy, draw, read, ctx);
      }
    else
-     return eglMakeCurrent(dpy, draw, read, ctx);
+     {
+        if (eina_main_loop_is())
+          {
+             EGLBoolean ret = 0;
+
+             if ((dpy == main_dpy) && (draw == main_draw) &&
+                 (read == main_read) && (ctx == main_ctx))
+               return 1;
+
+             ret = eglMakeCurrent(dpy, draw, read, ctx);
+             if (ret)
+               {
+                  main_dpy  = dpy;
+                  main_draw = draw;
+                  main_read = read;
+                  main_ctx  = ctx;
+               }
+             return ret;
+          }
+        else
+          return eglMakeCurrent(dpy, draw, read, ctx);
+     }
+   return EGL_FALSE;
 }
 #endif
 
@@ -262,9 +308,9 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
      }
 
    // FIXME: Check (eglGetCurrentDisplay() != dpy) ?
-   if ((evas_eglGetCurrentContext() != ctx) ||
-       (evas_eglGetCurrentSurface(EGL_READ) != sfc) ||
-       (evas_eglGetCurrentSurface(EGL_DRAW) != sfc) )
+   if ((evas_eglGetCurrentContext(GL_X11_Context_Type_Evgl) != ctx) ||
+       (evas_eglGetCurrentSurface(GL_X11_Context_Type_Evgl, EGL_READ) != sfc) ||
+       (evas_eglGetCurrentSurface(GL_X11_Context_Type_Evgl, EGL_DRAW) != sfc) )
      {
 
         //!!!! Does it need to be flushed with it's set to NULL above??
@@ -272,7 +318,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         if (flush) eng_window_use(NULL);
 
         // Do a make current
-        ret = evas_eglMakeCurrent(dpy, sfc, sfc, ctx);
+        ret = evas_eglMakeCurrent(GL_X11_Context_Type_Evgl, dpy, sfc, sfc, ctx);
 
         if (!ret)
           {
@@ -290,7 +336,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
 
    if ((!context) && (!surface))
      {
-        ret = __glXMakeContextCurrent(eng_get_ob(re)->info->info.display, 0, NULL);
+        ret = __glXMakeContextCurrent(GL_X11_Context_Type_Evgl, eng_get_ob(re)->info->info.display, 0, NULL);
         if (!ret)
           {
              ERR("glXMakeContextCurrent() failed!");
@@ -310,10 +356,12 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         // Do a make current
         if ((sfc == eng_get_ob(re)->win) ||
             (sfc == eng_get_ob(re)->glxwin))
-          ret = __glXMakeContextCurrent(eng_get_ob(re)->info->info.display,
+          ret = __glXMakeContextCurrent(GL_X11_Context_Type_Evgl,
+                                        eng_get_ob(re)->info->info.display,
                                         eng_get_ob(re)->glxwin, ctx);
         else
-          ret = __glXMakeContextCurrent(eng_get_ob(re)->info->info.display,
+          ret = __glXMakeContextCurrent(GL_X11_Context_Type_Evgl,
+                                        eng_get_ob(re)->info->info.display,
                                         sfc, ctx);
         if (!ret)
           {
@@ -1859,10 +1907,10 @@ eng_preload_make_current(void *data, void *doit)
    if (doit)
      {
 #ifdef GL_GLES
-        if (!evas_eglMakeCurrent(ob->egl_disp, ob->egl_surface, ob->egl_surface, ob->egl_context))
+        if (!evas_eglMakeCurrent(GL_X11_Context_Type_Evas, ob->egl_disp, ob->egl_surface, ob->egl_surface, ob->egl_context))
           return EINA_FALSE;
 #else
-        if (!__glXMakeContextCurrent(ob->info->info.display, ob->glxwin, ob->context))
+        if (!__glXMakeContextCurrent(GL_X11_Context_Type_Evas, ob->info->info.display, ob->glxwin, ob->context))
           {
              ERR("glXMakeContextCurrent(%p, %p, %p) failed",
                  ob->info->info.display, (void *)ob->win, (void *)ob->context);
@@ -1874,10 +1922,10 @@ eng_preload_make_current(void *data, void *doit)
    else
      {
 #ifdef GL_GLES
-        if (!evas_eglMakeCurrent(ob->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
+        if (!evas_eglMakeCurrent(GL_X11_Context_Type_Evas, ob->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
           return EINA_FALSE;
 #else
-        if (!__glXMakeContextCurrent(ob->info->info.display, 0, NULL))
+        if (!__glXMakeContextCurrent(GL_X11_Context_Type_Evas, ob->info->info.display, 0, NULL))
           {
              ERR("glXMakeContextCurrent(%p, None, NULL) failed",
                  ob->info->info.display);
@@ -1921,7 +1969,7 @@ eng_gl_current_context_get(void *data EINA_UNUSED)
    context = glsym_evgl_current_native_context_get(ctx);
 
 #ifdef GL_GLES
-   if (evas_eglGetCurrentContext() == context)
+   if (evas_eglGetCurrentContext(GL_X11_Context_Type_Evgl) == context)
      return ctx;
 #else
    if (evas_glXGetCurrentContext_th() == context)

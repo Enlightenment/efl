@@ -116,10 +116,24 @@ _tls_rgba_context_set(GLXContext ctx)
 }
 
 Eina_Bool
-__glXMakeContextCurrent(Display *disp, GLXDrawable glxwin, GLXContext context)
+__glXMakeContextCurrent(GL_X11_Context_Type type, Display *disp, GLXDrawable glxwin, GLXContext context)
 {
-   if (!glXMakeContextCurrent(disp, glxwin, glxwin, context)) return EINA_FALSE;
-   return EINA_TRUE;
+   if (type == GL_X11_Context_Type_Evas && evas_gl_thread_enabled())
+     {
+        if (!evas_glXMakeContextCurrent_th(disp, glxwin, glxwin, context)) return EINA_FALSE;
+        return EINA_TRUE;
+     }
+   else if (type == GL_X11_Context_Type_Evgl && evas_evgl_thread_enabled())
+     {
+        if (!evas_glXMakeContextCurrent_evgl_th(disp, glxwin, glxwin, context)) return EINA_FALSE;
+        return EINA_TRUE;
+     }
+   else
+     {
+        if (!glXMakeContextCurrent(disp, glxwin, glxwin, context)) return EINA_FALSE;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 #endif
 
@@ -300,10 +314,11 @@ try_gles2:
      _tls_context_set(gw->egl_context);
    
    SET_RESTORE_CONTEXT();
-   if (evas_eglMakeCurrent(gw->egl_disp,
-                      gw->egl_surface,
-                      gw->egl_surface,
-                      gw->egl_context) == EGL_FALSE)
+   if (evas_eglMakeCurrent(GL_X11_Context_Type_Evas,
+                           gw->egl_disp,
+                           gw->egl_surface,
+                           gw->egl_surface,
+                           gw->egl_context) == EGL_FALSE)
      {
         ERR("evas_eglMakeCurrent() fail. code=%#x", evas_eglGetError_th());
         eng_window_free(gw);
@@ -444,7 +459,7 @@ try_gles2:
         eng_window_free(gw);
         return NULL;
      }
-   if (!__glXMakeContextCurrent(gw->disp, gw->glxwin, gw->context))
+   if (!__glXMakeContextCurrent(GL_X11_Context_Type_Evas, gw->disp, gw->glxwin, gw->context))
      {
         ERR("glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->win, (void *)gw->context);
         eng_window_free(gw);
@@ -620,7 +635,7 @@ eng_window_free(Outbuf *gw)
      }
 #ifdef GL_GLES
    SET_RESTORE_CONTEXT();
-   evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+   evas_eglMakeCurrent(GL_X11_Context_Type_Evas, gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
    if (gw->egl_surface != EGL_NO_SURFACE)
       eglDestroySurface(gw->egl_disp, gw->egl_surface);
    if (gw->egl_context != context)
@@ -659,18 +674,18 @@ eng_window_make_current(void *data, void *doit)
    SET_RESTORE_CONTEXT();
    if (doit)
      {
-        if (!evas_eglMakeCurrent(gw->egl_disp, gw->egl_surface, gw->egl_surface, gw->egl_context))
+        if (!evas_eglMakeCurrent(GL_X11_Context_Type_Evas, gw->egl_disp, gw->egl_surface, gw->egl_surface, gw->egl_context))
           return EINA_FALSE;
      }
    else
      {
-        if (!evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
+        if (!evas_eglMakeCurrent(GL_X11_Context_Type_Evas, gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
           return EINA_FALSE;
      }
 #else
    if (doit)
      {
-        if (!__glXMakeContextCurrent(gw->disp, gw->glxwin, gw->context))
+        if (!__glXMakeContextCurrent(GL_X11_Context_Type_Evas, gw->disp, gw->glxwin, gw->context))
           {
              ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->win, (void *)gw->context);
              return EINA_FALSE;
@@ -678,7 +693,7 @@ eng_window_make_current(void *data, void *doit)
      }
    else
      {
-        if (!__glXMakeContextCurrent(gw->disp, 0, NULL))
+        if (!__glXMakeContextCurrent(GL_X11_Context_Type_Evas, gw->disp, 0, NULL))
           return EINA_FALSE;
      }
 #endif
@@ -725,17 +740,18 @@ eng_window_use(Outbuf *gw)
              if (gw->egl_surface != EGL_NO_SURFACE)
                {
                   SET_RESTORE_CONTEXT();
-                  if (evas_eglMakeCurrent(gw->egl_disp,
-                                     gw->egl_surface,
-                                     gw->egl_surface,
-                                     gw->egl_context) == EGL_FALSE)
+                  if (evas_eglMakeCurrent(GL_X11_Context_Type_Evas,
+                                          gw->egl_disp,
+                                          gw->egl_surface,
+                                          gw->egl_surface,
+                                          gw->egl_context) == EGL_FALSE)
                     {
                        ERR("evas_eglMakeCurrent() failed!");
                     }
                }
 // GLX
 #else
-             if (!__glXMakeContextCurrent(gw->disp, gw->glxwin, gw->context))
+             if (!__glXMakeContextCurrent(GL_X11_Context_Type_Evas, gw->disp, gw->glxwin, gw->context))
                {
                   ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->win, (void *)gw->context);
                }
@@ -761,7 +777,7 @@ eng_window_unsurf(Outbuf *gw)
    if (xwin == gw)
      {
         SET_RESTORE_CONTEXT();
-        evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        evas_eglMakeCurrent(GL_X11_Context_Type_Evas, gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (gw->egl_surface != EGL_NO_SURFACE)
            eglDestroySurface(gw->egl_disp, gw->egl_surface);
         gw->egl_surface = EGL_NO_SURFACE;
@@ -793,10 +809,11 @@ eng_window_resurf(Outbuf *gw)
         return;
      }
    SET_RESTORE_CONTEXT();
-   if (evas_eglMakeCurrent(gw->egl_disp,
-                      gw->egl_surface,
-                      gw->egl_surface,
-                      gw->egl_context) == EGL_FALSE)
+   if (evas_eglMakeCurrent(GL_X11_Context_Type_Evas,
+                           gw->egl_disp,
+                           gw->egl_surface,
+                           gw->egl_surface,
+                           gw->egl_context) == EGL_FALSE)
      {
         ERR("evas_eglMakeCurrent() failed!");
      }
@@ -815,7 +832,7 @@ eng_window_resurf(Outbuf *gw)
           }
      }
    gw->glxwin = glXCreateWindow(gw->disp, evis->config, gw->win, NULL);
-   if (!__glXMakeContextCurrent(gw->disp, gw->glxwin, gw->context))
+   if (!__glXMakeContextCurrent(GL_X11_Context_Type_Evas, gw->disp, gw->glxwin, gw->context))
      {
         ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->win, (void *)gw->context);
      }
@@ -1350,13 +1367,14 @@ eng_gl_context_use(Context_3D *ctx)
 {
 #if GL_GLES
     SET_RESTORE_CONTEXT();
-   if (evas_eglMakeCurrent(ctx->display, ctx->surface,
-                      ctx->surface, ctx->context) == EGL_FALSE)
+   if (evas_eglMakeCurrent(GL_X11_Context_Type_Evgl,
+                           ctx->display, ctx->surface,
+                           ctx->surface, ctx->context) == EGL_FALSE)
      {
         ERR("evas_eglMakeCurrent() failed.");
      }
 #else
-   if (!__glXMakeContextCurrent(ctx->display, ctx->glxwin, ctx->context))
+   if (!__glXMakeContextCurrent(GL_X11_Context_Type_Evgl, ctx->display, ctx->glxwin, ctx->context))
      {
         ERR("glXMakeContextCurrent(%p, %p, %p, %p) faild.",
             (void *)ctx->display, (void *)ctx->glxwin,

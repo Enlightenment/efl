@@ -217,14 +217,19 @@ _re_wincheck(Outbuf *ob)
    return 0;
 }
 
+typedef enum
+{
+   GL_X11_Context_Type_Evas = 0,
+   GL_X11_Context_Type_Evgl = 1
+} GL_X11_Context_Type;
+
 #ifdef GL_GLES
-EGLBoolean evas_eglMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx);
-EGLContext evas_eglGetCurrentContext(void);
-EGLSurface evas_eglGetCurrentSurface(EGLint readdraw);
-EGLDisplay evas_eglGetCurrentDisplay(void);
+EGLBoolean evas_eglMakeCurrent(GL_X11_Context_Type type, EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx);
+EGLContext evas_eglGetCurrentContext(GL_X11_Context_Type type);
+EGLSurface evas_eglGetCurrentSurface(GL_X11_Context_Type type, EGLint readdraw);
+EGLDisplay evas_eglGetCurrentDisplay(GL_X11_Context_Type type);
 #else
-Eina_Bool __glXMakeContextCurrent(Display *disp, GLXDrawable glxwin,
-                                  GLXContext context);
+Eina_Bool __glXMakeContextCurrent(GL_X11_Context_Type type, Display *disp, GLXDrawable glxwin, GLXContext context);
 #endif
 
 #endif
