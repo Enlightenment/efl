@@ -1308,11 +1308,16 @@ _efl_net_dialer_http_libproxy_context_free(Efl_Net_Dialer_Http_Libproxy_Context 
 }
 
 static void
-_efl_net_dialer_http_libproxy_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+_efl_net_dialer_http_libproxy_end(void *data, Ecore_Thread *thread)
 {
    Efl_Net_Dialer_Http_Libproxy_Context *ctx = data;
    Eo *o = ctx->o;
    Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
+
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
+   if (pd->libproxy_thread == thread)
+     pd->libproxy_thread = NULL;
 
    if (ctx->proxy)
      {
@@ -1364,7 +1369,10 @@ _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, co
         Efl_Net_Dialer_Http_Libproxy_Context *ctx;
 
         if (pd->libproxy_thread)
-          ecore_thread_cancel(pd->libproxy_thread);
+          {
+             ecore_thread_cancel(pd->libproxy_thread);
+             pd->libproxy_thread = NULL;
+          }
 
         ctx = calloc(1, sizeof(Efl_Net_Dialer_Http_Libproxy_Context));
         EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, ENOMEM);
