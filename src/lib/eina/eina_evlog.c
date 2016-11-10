@@ -142,12 +142,8 @@ eina_evlog(const char *event, void *obj, double srctime, const char *detail)
    unsigned short detail_offset = 0;
    unsigned short event_size;
 
+   if (!_evlog_go) return;
    eina_spinlock_take(&_evlog_lock);
-   if (!_evlog_go)
-     {
-        eina_spinlock_release(&_evlog_lock);
-        return;
-     }
    size = sizeof(Eina_Evlog_Item);
    event_size = strlen(event) + 1;
    size += event_size;
