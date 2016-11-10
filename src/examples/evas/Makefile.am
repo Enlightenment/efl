@@ -357,6 +357,28 @@ $(AM_CPPFLAGS) @EVAS_CFLAGS@
 
 endif
 
+if HAVE_MCS
+
+EXTRA_PROGRAMS += \
+	evas_mono_rectangle.exe \
+    evas_mono_table.exe
+
+evas_mono_rectangle_exe_SOURCES = \
+	evas_mono_rectangle.cs ../../tests/eo_mono/EcoreEvas.cs
+
+evas_mono_rectangle.exe$(EXEEXT): $(evas_mono_rectangle_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/eo_mono/libeo_mono.dll
+	@rm -f evas_mono_rectangle$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -out:$@ $(filter %.cs, $(^))
+
+evas_mono_table_exe_SOURCES = \
+	evas_mono_table.cs ../../tests/eo_mono/EcoreEvas.cs
+
+evas_mono_table.exe$(EXEEXT): $(evas_mono_table_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/eo_mono/libeo_mono.dll
+	@rm -f evas_mono_table$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -out:$@ $(filter %.cs, $(^))
+
+endif
+
 EDJS = $(EDCS:%.edc=%.edj)
 
 SRCS = \
