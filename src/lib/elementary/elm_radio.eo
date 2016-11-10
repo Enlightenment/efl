@@ -51,7 +51,7 @@ class Elm.Radio (Elm.Check, Elm.Interface.Atspi_Widget_Action)
             ]]
          }
          values {
-            valuep: int * @nullable; [[Pointer to the integer to modify]]
+            valuep: ptr(int) @nullable; [[Pointer to the integer to modify]]
          }
       }
       @property selected_object {

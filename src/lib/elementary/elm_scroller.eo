@@ -52,8 +52,8 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
            @since 1.8
          ]]
          params {
-            @in page_limit_h: int *; [[The maximum of the movable horizontal page]]
-            @in page_limit_v: int *; [[The maximum of the movable vertical page]]
+            @in page_limit_h: ptr(int); [[The maximum of the movable horizontal page]]
+            @in page_limit_v: ptr(int); [[The maximum of the movable vertical page]]
          }
       }
    }

@@ -37,7 +37,7 @@ struct Elm.Sys_Notify.Action_Invoked
      @since 1.8
    ]]
    id: uint; [[ID of the notification]]
-   action_key: char *; [[The key of the action invoked. These match the
+   action_key: ptr(char); [[The key of the action invoked. These match the
                                 keys sent over in the list of actions]]
 }
 
