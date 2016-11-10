@@ -225,6 +225,7 @@ ecore_init(void)
 #endif
    if (!eina_init())
      goto shutdown_evil;
+   eina_evlog(">RUN", NULL, 0.0, NULL);
    _ecore_log_dom = eina_log_domain_register("ecore", ECORE_DEFAULT_LOG_COLOR);
    if (_ecore_log_dom < 0)
      {
@@ -446,6 +447,7 @@ ecore_shutdown(void)
 
      efl_object_shutdown();
 
+     eina_evlog("<RUN", NULL, 0.0, NULL);
      eina_shutdown();
 #ifdef HAVE_EVIL
      evil_shutdown();

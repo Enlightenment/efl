@@ -1772,10 +1772,12 @@ _ecore_main_select(double timeout)
        }
    if (_ecore_signal_count_get()) return -1;
 
+   eina_evlog("<RUN", NULL, 0.0, NULL);
    eina_evlog("!SLEEP", NULL, 0.0, t ? "timeout" : "forever");
    ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
    err_no = errno;
    eina_evlog("!WAKE", NULL, 0.0, NULL);
+   eina_evlog(">RUN", NULL, 0.0, NULL);
 
    _ecore_time_loop_time = ecore_time_get();
    if (ret < 0)
