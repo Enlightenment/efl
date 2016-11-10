@@ -2047,15 +2047,15 @@ _elm_multibuttonentry_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_M
    return eina_list_merge(eina_list_clone(sd->items), ret);
 }
 
-EOLIAN static char*
+EOLIAN static const char*
 _elm_multibuttonentry_item_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Multibuttonentry_Item_Data *item)
 {
-   char *ret;
+   const char *ret;
    ret = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
    if (ret) return ret;
 
    const char *txt = elm_object_part_text_get(VIEW(item), "elm.btn.text");
-   return txt ? strdup(txt) : NULL;
+   return txt;
 }
 
 static Eina_Bool

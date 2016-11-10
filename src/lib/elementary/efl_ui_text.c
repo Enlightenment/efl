@@ -4808,14 +4808,14 @@ _efl_ui_text_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Text_D
    return ret;
 }
 
-EOLIAN static char*
+EOLIAN static const char*
 _efl_ui_text_elm_interface_atspi_accessible_name_get(Eo *obj, Efl_Ui_Text_Data *pd)
 {
-   char *name;
+   const char *name;
    name = elm_interface_atspi_accessible_name_get(efl_super(obj, EFL_UI_TEXT_CLASS));
    if (name && strncmp("", name, 1)) return name;
    const char *ret = edje_object_part_text_get(pd->entry_edje, "elm.guide");
-   return ret ? strdup(ret) : NULL;
+   return ret;
 }
 
 EOLIAN static Efl_Canvas_Text_Cursor *

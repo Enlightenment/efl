@@ -410,6 +410,7 @@ typedef struct _Elm_Widget_Smart_Data
    const char                   *style;
    const char                   *focus_highlight_style;  /**< custom focus style for a widget */
    const char                   *access_info;
+   const char                   *accessible_name;
    unsigned int                  focus_order;
    Eina_Bool                     focus_order_on_calc;
 
@@ -603,6 +604,7 @@ struct _Elm_Widget_Item_Data
 
    Evas_Object                   *access_obj;
    const char                    *access_info;
+   const char                    *accessible_name;
    Eina_List                     *access_order;
    Eina_Inlist                   *translate_strings;
    Eina_List                     *signals;

@@ -6205,14 +6205,14 @@ _efl_ui_win_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Win_Dat
    return ret;
 }
 
-EOLIAN static char*
+EOLIAN static const char*
 _efl_ui_win_elm_interface_atspi_accessible_name_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
-   char *ret;
+   const char *ret;
    ret = elm_interface_atspi_accessible_name_get(efl_super(obj, EFL_UI_WIN_CLASS));
    if (ret) return ret;
    const char *name = elm_win_title_get(obj);
-   return name ? strdup(name) : NULL;
+   return name;
 }
 
 EOLIAN static Eina_Bool

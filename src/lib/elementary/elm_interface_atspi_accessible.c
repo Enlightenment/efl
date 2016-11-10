@@ -224,26 +224,18 @@ _elm_interface_atspi_accessible_role_name_get(Eo *obj EINA_UNUSED, Elm_Interface
    return role > ELM_ATSPI_ROLE_LAST_DEFINED ? "" : Atspi_Name[role];
 }
 
-EOLIAN char *
+EOLIAN const char *
 _elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
 {
-   if (pd->name)
-     {
 #ifdef ENABLE_NLS
-        if (pd->translation_domain)
-          return strdup(dgettext(pd->translation_domain, pd->name));
-        else
-          return strdup(pd->name);
-#else
-        return strdup(pd->name);
+   if (pd->translation_domain)
+     return dgettext(pd->translation_domain, pd->name);
 #endif
-     }
-
-   return NULL;
+   return pd->name;
 }
 
 EOLIAN static void
-_elm_interface_atspi_accessible_name_set(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd, char *val)
+_elm_interface_atspi_accessible_name_set(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd, const char *val)
 {
    eina_stringshare_replace(&pd->name, val);
 }

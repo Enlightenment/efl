@@ -2144,13 +2144,13 @@ _elm_list_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_List_
    return ret;
 }
 
-EOLIAN static char*
+EOLIAN static const char*
 _elm_list_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_List_Item_Data *data)
 {
-   char *ret;
+   const char *ret;
    ret = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
    if (ret) return ret;
-   return data->label ? strdup(data->label) : NULL;
+   return data->label;
 }
 
 static char *

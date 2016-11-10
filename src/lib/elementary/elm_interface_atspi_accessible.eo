@@ -256,7 +256,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          set {
          }
          values {
-            name: ptr(char); [[Object name]]
+            name: string; [[Object name]]
          }
       }
       @property relation_set @protected {

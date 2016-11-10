@@ -3966,13 +3966,13 @@ _elm_toolbar_item_bring_in(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item,
      (WIDGET(item), x, y, w, h);
 }
 
-EOLIAN static char*
+EOLIAN static const char*
 _elm_toolbar_item_elm_interface_atspi_accessible_name_get(Eo *eo_item, Elm_Toolbar_Item_Data *item)
 {
-   char *ret;
+   const char *ret;
    ret = elm_interface_atspi_accessible_name_get(efl_super(eo_item, ELM_TOOLBAR_ITEM_CLASS));
    if (ret) return ret;
-   return item->label ? strdup(item->label) : NULL;
+   return item->label;
 }
 
 EOLIAN static Elm_Atspi_State_Set

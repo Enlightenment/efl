@@ -2075,12 +2075,10 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
 
    if (!strcmp(property, "Name"))
      {
-        char *ret2;
-        ret2 = elm_interface_atspi_accessible_name_get(obj);
-        if (!ret2)
-          ret2 = strdup("");
-        eldbus_message_iter_basic_append(iter, 's', ret2);
-        free(ret2);
+        ret = elm_interface_atspi_accessible_name_get(obj);
+        if (!ret)
+          ret = "";
+        eldbus_message_iter_basic_append(iter, 's', ret);
         return EINA_TRUE;
      }
    else if (!strcmp(property, "Description"))
@@ -3191,13 +3189,12 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
   _iter_interfaces_append(iter_struct, data);
 
   /* Marshall name */
-  char *name = NULL;
+  const char *name = NULL;
   name = elm_interface_atspi_accessible_name_get(data);
   if (!name)
-    name = strdup("");
+    name = "";
 
   eldbus_message_iter_basic_append(iter_struct, 's', name);
-  free(name);
 
   /* Marshall role */
   eldbus_message_iter_basic_append(iter_struct, 'u', role);

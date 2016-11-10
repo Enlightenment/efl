@@ -8221,11 +8221,12 @@ _elm_genlist_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_Ge
    return ret;
 }
 
-EOLIAN char*
+EOLIAN const char*
 _elm_genlist_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Gen_Item *it)
 {
-   char *ret;
+   const char *ret;
    Eina_Strbuf *buf;
+   char *accessible_name;
 
    ret = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_GENLIST_ITEM_CLASS));
    if (ret) return ret;
@@ -8257,9 +8258,13 @@ _elm_genlist_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Gen_Ite
           }
      }
 
-   ret = eina_strbuf_string_steal(buf);
+   accessible_name = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
-   return ret;
+
+   eina_stringshare_del(it->base->accessible_name);
+   it->base->accessible_name = eina_stringshare_add(accessible_name);
+   free(accessible_name);
+   return it->base->accessible_name;
 }
 
 EOLIAN static void

@@ -1304,13 +1304,13 @@ _elm_menu_item_elm_interface_atspi_accessible_role_get(Eo *obj EINA_UNUSED, Elm_
    return sd->submenu.items ? ELM_ATSPI_ROLE_MENU : ELM_ATSPI_ROLE_MENU_ITEM;
 }
 
-EOLIAN static char*
+EOLIAN static const char*
 _elm_menu_item_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Menu_Item_Data *sd)
 {
-   char *ret;
+   const char *ret;
    ret = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_MENU_ITEM_CLASS));
    if (ret) return ret;
-   return sd->label ? strdup(sd->label) : NULL;
+   return sd->label;
 }
 
 EOLIAN static Elm_Atspi_State_Set

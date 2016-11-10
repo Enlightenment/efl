@@ -44,12 +44,12 @@ _elm_atspi_app_object_elm_interface_atspi_accessible_children_get(Eo *obj EINA_U
    return accs;
 }
 
-EOLIAN static char*
+EOLIAN static const char*
 _elm_atspi_app_object_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
    const char *ret;
    ret = elm_app_name_get();
-   return ret ? strdup(ret) : NULL;
+   return ret;
 }
 
 EOLIAN static const char*

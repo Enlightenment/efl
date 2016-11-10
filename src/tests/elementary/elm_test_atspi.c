@@ -51,15 +51,13 @@ START_TEST (elm_atspi_name_get)
    elm_init(0, NULL);
    generate_app();
 
-   char *name;
+   const char *name;
 
    name = elm_interface_atspi_accessible_name_get(g_btn);
 
    if (name && name[0]) {
       ck_assert(0);
    }
-
-   free(name);
 
    // Set name with additional text tags
    elm_object_text_set(g_btn, "Some<br>text");
@@ -70,7 +68,6 @@ START_TEST (elm_atspi_name_get)
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Some\ntext");
 
-   free(name);
    elm_shutdown();
 }
 END_TEST
@@ -80,7 +77,7 @@ START_TEST (elm_atspi_name_set)
    elm_init(0, NULL);
    generate_app();
 
-   char *name;
+   const char *name;
 
    elm_object_text_set(g_btn, "Other text");
    elm_interface_atspi_accessible_name_set(g_btn, "Test name");
@@ -90,15 +87,11 @@ START_TEST (elm_atspi_name_set)
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Test name");
 
-   free(name);
-
    elm_interface_atspi_accessible_name_set(g_btn, NULL);
    name = elm_interface_atspi_accessible_name_get(g_btn);
 
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Other text");
-
-   free(name);
 
    elm_shutdown();
 }

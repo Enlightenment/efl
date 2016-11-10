@@ -5983,14 +5983,14 @@ _elm_entry_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Entry_Data 
    return ret;
 }
 
-EOLIAN static char*
+EOLIAN static const char*
 _elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Entry_Data *sd)
 {
-   char *name;
+   const char *name;
    name = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_ENTRY_CLASS));
    if (name && strncmp("", name, 1)) return name;
    const char *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
-   return ret ? strdup(ret) : NULL;
+   return ret;
 }
 
 /* Efl.Part begin */

@@ -1736,14 +1736,14 @@ _elm_spinner_elm_interface_atspi_value_increment_get(Eo *obj EINA_UNUSED, Elm_Sp
    return sd->step;
 }
 
-EOLIAN static char*
+EOLIAN static const char*
 _elm_spinner_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
 {
-   char *name;
+   const char *name;
    name = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_SPINNER_CLASS));
    if (name) return name;
    const char *ret = elm_layout_text_get(obj, "elm.text");
-   return ret ? strdup(ret) : NULL;
+   return ret;
 }
 
 // A11Y Accessibility - END

@@ -482,6 +482,7 @@ _elm_widget_efl_canvas_group_group_del(Eo *obj, Elm_Widget_Smart_Data *sd)
    _if_focused_revert(obj, EINA_TRUE);
    elm_widget_focus_custom_chain_unset(obj);
    eina_stringshare_del(sd->access_info);
+   eina_stringshare_del(sd->accessible_name);
    evas_object_smart_data_set(obj, NULL);
 }
 
@@ -4576,6 +4577,7 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
    evas_object_del(item->view);
 
    eina_stringshare_del(item->access_info);
+   eina_stringshare_del(item->accessible_name);
 
    while (item->signals)
      _elm_widget_item_signal_callback_list_get(item, item->signals);
@@ -5939,11 +5941,11 @@ _elm_widget_elm_interface_atspi_component_focus_grab(Eo *obj, Elm_Widget_Smart_D
    return EINA_FALSE;
 }
 
-EOLIAN static char*
-_elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+EOLIAN static const char*
+_elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd)
 {
-   const char *ret;
-   char *name;
+   const char *ret, *name;
+   char *accessible_name;
    name = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_WIDGET_CLASS));
 
    if (name) return name;
@@ -5951,7 +5953,11 @@ _elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Wid
    ret = elm_object_text_get(obj);
    if (!ret) return NULL;
 
-   return _elm_util_mkup_to_text(ret);
+   accessible_name = _elm_util_mkup_to_text(ret);
+   eina_stringshare_del(_pd->accessible_name);
+   _pd->accessible_name =  eina_stringshare_add(accessible_name);
+   free(accessible_name);
+   return _pd->accessible_name;
 }
 
 EOLIAN static Eina_List*

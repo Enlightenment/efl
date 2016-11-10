@@ -1741,14 +1741,14 @@ _elm_index_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_Index_Data *
    return eina_list_merge(eina_list_clone(data->items), ret);
 }
 
-EOLIAN static char*
+EOLIAN static const char*
 _elm_index_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Index_Item_Data *data)
 {
-   char *name;
+   const char *name;
    name = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_INDEX_ITEM_CLASS));
    if (name) return name;
 
-   return data->letter ? strdup(data->letter) : NULL;
+   return data->letter;
 }
 
 EOLIAN static const Elm_Atspi_Action*
