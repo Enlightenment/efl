@@ -175,29 +175,43 @@ _efl_net_session_notifier_update_ipv4(Efl_Net_Session_Data *pd, Eldbus_Message_I
         if (strcmp(key, "Method") == 0)
           {
              const char *str;
-             eldbus_message_iter_arguments_get(value, "s", &str);
-             DBG("configuration method %s", str);
+             if (!eldbus_message_iter_arguments_get(value, "s", &str))
+               ERR("expected string, property=%s", key);
+             else
+               DBG("configuration method %s", str);
           }
         else if (strcmp(key, "Address") == 0)
           {
              const char *str;
-             eldbus_message_iter_arguments_get(value, "s", &str);
-             DBG("address %s", str);
-             eina_stringshare_replace(&pd->ipv4.address, str);
+             if (!eldbus_message_iter_arguments_get(value, "s", &str))
+               ERR("expected string, property=%s", key);
+             else
+               {
+                  DBG("address %s", str);
+                  eina_stringshare_replace(&pd->ipv4.address, str);
+               }
           }
         else if (strcmp(key, "Gateway") == 0)
           {
              const char *str;
-             eldbus_message_iter_arguments_get(value, "s", &str);
-             DBG("gateway %s", str);
-             eina_stringshare_replace(&pd->ipv4.gateway, str);
+             if (!eldbus_message_iter_arguments_get(value, "s", &str))
+               ERR("expected string, property=%s", key);
+             else
+               {
+                  DBG("gateway %s", str);
+                  eina_stringshare_replace(&pd->ipv4.gateway, str);
+               }
           }
         else if (strcmp(key, "Netmask") == 0)
           {
              const char *str;
-             eldbus_message_iter_arguments_get(value, "s", &str);
-             DBG("netmask %s", str);
-             eina_stringshare_replace(&pd->ipv4.netmask, str);
+             if (!eldbus_message_iter_arguments_get(value, "s", &str))
+               ERR("expected string, property=%s", key);
+             else
+               {
+                  DBG("netmask %s", str);
+                  eina_stringshare_replace(&pd->ipv4.netmask, str);
+               }
           }
         else
           {
@@ -231,47 +245,58 @@ _efl_net_session_notifier_update_ipv6(Efl_Net_Session_Data *pd, Eldbus_Message_I
         if (strcmp(key, "Method") == 0)
           {
              const char *str;
-             eldbus_message_iter_arguments_get(value, "s", &str);
-             DBG("configuration method %s", str);
+             if (!eldbus_message_iter_arguments_get(value, "s", &str))
+               ERR("expected string, property=%s", key);
+             else
+               DBG("configuration method %s", str);
           }
         else if (strcmp(key, "Address") == 0)
           {
              const char *str;
-             eldbus_message_iter_arguments_get(value, "s", &str);
-             DBG("address %s", str);
-             eina_stringshare_replace(&pd->ipv6.address, str);
+             if (!eldbus_message_iter_arguments_get(value, "s", &str))
+               ERR("expected string, property=%s", key);
+             else
+               {
+                  DBG("address %s", str);
+                  eina_stringshare_replace(&pd->ipv6.address, str);
+               }
           }
         else if (strcmp(key, "Gateway") == 0)
           {
              const char *str;
-             eldbus_message_iter_arguments_get(value, "s", &str);
-             DBG("gateway %s", str);
-             eina_stringshare_replace(&pd->ipv6.gateway, str);
+             if (!eldbus_message_iter_arguments_get(value, "s", &str))
+               ERR("expected string, property=%s", key);
+             else
+               {
+                  DBG("gateway %s", str);
+                  eina_stringshare_replace(&pd->ipv6.gateway, str);
+               }
           }
         else if (strcmp(key, "Netmask") == 0)
           {
              const char *str;
-             eldbus_message_iter_arguments_get(value, "s", &str);
-             DBG("netmask %s", str);
-             eina_stringshare_replace(&pd->ipv6.netmask, str);
-          }
-        else if (strcmp(key, "Netmask") == 0)
-          {
-             const char *str;
-             eldbus_message_iter_arguments_get(value, "s", &str);
-             DBG("netmask %s", str);
-             eina_stringshare_replace(&pd->ipv6.netmask, str);
+             if (!eldbus_message_iter_arguments_get(value, "s", &str))
+               ERR("expected string, property=%s", key);
+             else
+               {
+                  DBG("netmask %s", str);
+                  eina_stringshare_replace(&pd->ipv6.netmask, str);
+               }
           }
         else if (strcmp(key, "PrefixLength") == 0)
           {
-             eldbus_message_iter_arguments_get(value, "y", &pd->ipv6.prefix_length);
-             DBG("prefix_length %hhu", pd->ipv6.prefix_length);
+             if (!eldbus_message_iter_arguments_get(value, "y", &pd->ipv6.prefix_length))
+               ERR("expected unsigned byte, property=%s", key);
+             else
+               DBG("prefix_length %hhu", pd->ipv6.prefix_length);
           }
         else if (strcmp(key, "Privacy") == 0)
           {
              const char *str;
-             eldbus_message_iter_arguments_get(value, "s", &str);
-             DBG("privacy %s (unused)", str);
+             if (!eldbus_message_iter_arguments_get(value, "s", &str))
+               ERR("expected string, property=%s", key);
+             else
+               DBG("privacy %s (unused)", str);
           }
         else
           {
@@ -289,7 +314,11 @@ _efl_net_session_notifier_update_bearers(Efl_Net_Session_Data *pd EINA_UNUSED, E
    Eldbus_Message_Iter *sub;
    const char *str;
 
-   eldbus_message_iter_arguments_get(var, "as", &sub);
+   if (!eldbus_message_iter_arguments_get(var, "as", &sub))
+     {
+        ERR("Expected array of strings, got %s", eldbus_message_iter_signature_get(var));
+        return EINVAL;
+     }
    while (eldbus_message_iter_get_and_next(sub, 's', &str))
      DBG("allowed bearer '%s'", str);
 
