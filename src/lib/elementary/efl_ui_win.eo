@@ -213,7 +213,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             ]]
             legacy: elm_win_wm_rotation_available_rotations_set;
             values {
-               rotations: const(int)*; [[The array of rotation value.]]
+               rotations: ptr(const(int)); [[The array of rotation value.]]
                count: uint; [[The size of the rotations array.]]
             }
          }
@@ -226,7 +226,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             ]]
             legacy: elm_win_wm_rotation_available_rotations_get;
             values {
-               rotations: int*; [[The array of rotation value.]]
+               rotations: ptr(int); [[The array of rotation value.]]
                count: uint; [[The size of the rotations array.]]
             }
             return: bool;
@@ -652,7 +652,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
               @since 1.8
             ]]
             values {
-               profiles: string*; [[The string array of available profiles.]]
+               profiles: ptr(string); [[The string array of available profiles.]]
                count: uint; [[The number of members in profiles.]]
             }
          }
