@@ -146,7 +146,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
       @property gl_api {
          get {
             [[Get the gl api struct for gl rendering.]]
-            return: Evas_GL_API *;
+            return: ptr(Evas_GL_API);
          }
       }
       @property evas_gl {
@@ -159,7 +159,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
 
               @since 1.12
             ]]
-            return: Evas_GL *;
+            return: ptr(Evas_GL);
          }
       }
       @property rotation {

@@ -106,7 +106,7 @@ class Elm.Dayselector (Elm.Layout)
             */
 
          params {
-            @in weekdays: string * @nullable; [[Array of seven strings to be used as weekday names.
+            @in weekdays: ptr(string) @nullable; [[Array of seven strings to be used as weekday names.
             Warning: It must have 7 elements, or it will access invalid memory.
             Warning: The strings must be NULL terminated ('@\0').]]
          }

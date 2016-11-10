@@ -633,7 +633,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               Only the text is returned, any format that may exist will not be part
               of the return value. You must free the string when done with \@ref free.
             ]]
-            return: own(char *) @warn_unused;
+            return: own(ptr(char)) @warn_unused;
          }
       }
       @property selection {
