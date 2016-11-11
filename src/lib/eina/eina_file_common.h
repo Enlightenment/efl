@@ -24,6 +24,8 @@
 #include "eina_lock.h"
 #include "eina_list.h"
 #include "eina_util.h"
+#include "eina_slice.h"
+#include "eina_binbuf.h"
 
 #define EINA_FILE_MAGIC 0xFEEDBEEF
 
@@ -99,9 +101,7 @@ struct _Eina_File
 
    Eina_List *dead_map;          /**< Tracks regions that get a failure from mmap(2). */
 
-   unsigned char *write_buf;
-   size_t write_pos;
-   size_t write_buf_size;
+   Eina_Binbuf *write_buf;
    Eina_Bool shared : 1;         /**< Indicates whether this file can be shared */
    Eina_Bool delete_me : 1;      /**< Indicates that this file should be deleted */
    Eina_Bool global_faulty : 1;  /**< Indicates whether #global_map is bad */
