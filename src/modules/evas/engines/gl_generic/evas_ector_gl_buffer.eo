@@ -1,4 +1,5 @@
 class Evas.Ector.GL.Buffer (Efl.Object, Evas.Ector.Buffer, Ector.GL.Buffer.Base)
 {
+   [[Evas ector GL buffer class]]
    data: null;
 }

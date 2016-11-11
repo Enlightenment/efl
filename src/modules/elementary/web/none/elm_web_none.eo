@@ -1,5 +1,6 @@
 class Elm.Web.None (Elm.Web)
 {
+   [[Elementary web module class]]
    implements {
       Efl.Canvas.Group.group_add;
       Elm.Web.tab_propagate.get;
