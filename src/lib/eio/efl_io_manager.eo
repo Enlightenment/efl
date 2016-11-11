@@ -42,7 +42,7 @@ class Efl.Io.Manager (Efl.Loop_User)
     xattr_ls {
       [[Lists all extended attributes asynchronously.]]
       params {
-         @in path: string;[[Path we want to list entries for]]
+         @in path: string; [[Path we want to list entries for]]
       }
       return: future<uint64, const(array<string>)>; [[Extended attributes]]
     }
@@ -60,17 +60,17 @@ class Efl.Io.Manager (Efl.Loop_User)
       [[Retrieves or sets information of a given extended attribute.]]
       set {
          values {
-            data: ptr(Eina.Binbuf);
-            flags: Eina.Xattr.Flags;
+            data: ptr(Eina.Binbuf); [[Data to set as information]] 
+            flags: Eina.Xattr.Flags; [[Extended attributes flags]]
          }
-         return: future<uint64>;
+         return: future<uint64>; [[Future for asynchronous set operation]]
       }
       get {
-         return: future<Eina.Binbuf>;
+         return: future<Eina.Binbuf>; [[Information]]
       }
       keys {
-         path: string;
-	 attribute: string;
+         path: string; [[File path]]
+	 attribute: string; [[Attribute name]]
       }
     }
 
@@ -91,7 +91,7 @@ class Efl.Io.Manager (Efl.Loop_User)
         @in file: ptr(Eina.File); [[Eina file handle]]
         // Here we're just interested whether the promise was fullfilled or not. No value needed.
       }
-      return: future<int>;
+      return: future<int>; [[Close return code]]
     }
   }
 }
