@@ -18,17 +18,17 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
               This will use system calls to determine the next
               datagram size, in bytes.
             ]]
-            return: size; [[size in bytes]]
+            return: size; [[Size in bytes]]
         }
 
         @property cork {
             [[Controls UDP's cork using UDP_CORK]]
             get { }
             set {
-                return: bool (false); [[$true on success]]
+                return: bool (false); [[$true on success, $false otherwise]]
             }
             values {
-                cork: bool;
+                cork: bool; [[$true if cork is enabled for this socket, $false otherwise]]
             }
         }
 
@@ -45,7 +45,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                dont_route: bool;
+                dont_route: bool; [[$true if do not route is enabled, $false otherwise]]
             }
         }
 
@@ -56,18 +56,18 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                reuse_address: bool;
+                reuse_address: bool; [[$true if address reuse is enabled, $false otherwise]]
             }
         }
 
         @property reuse_port {
-            [[Controls port reuse() using SO_REUSEPORT (since linux 3.9)]]
+            [[Controls port reuse() using SO_REUSEPORT (since Linux 3.9)]]
             get { }
             set {
                 return: bool (false); [[$true on success]]
             }
             values {
-                reuse_port: bool;
+                reuse_port: bool; [[$true if port reuse is enabled, $false otherwise]]
             }
         }
 
@@ -87,9 +87,9 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
                  ff02::1@1 - use loopback interface (idx=1)
             ]]
             params {
-                address: string @nonull;
+                address: string @nonull; [[Multicast address to join]]
             }
-            return: Eina.Error;
+            return: Eina.Error; [[0 on success, error code otherwise]]
         }
 
         multicast_leave {
@@ -98,9 +98,9 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
               This reverses the effect of @.multicast_join.
             ]]
             params {
-                address: string @nonull;
+                address: string @nonull; [[Multicast address to leave]]
             }
-            return: Eina.Error;
+            return: Eina.Error; [[0 on success, error code otherwise]]
         }
 
         multicast_groups_get {
@@ -137,7 +137,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
                 return: Eina.Error; [[0 on success, error code otherwise]]
             }
             values {
-                loopback: bool;
+                loopback: bool; [[$true multicast packets are loopbacked, $false otherwise]]
             }
         }
 
@@ -159,7 +159,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
                 return: Eina.Error; [[0 on success, error code otherwise]]
             }
             values {
-                address: string @nonull;
+                address: string @nonull; [[Address to bind to]]
             }
         }
     }

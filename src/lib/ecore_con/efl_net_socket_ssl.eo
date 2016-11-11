@@ -14,7 +14,7 @@ class Efl.Net.Socket.Ssl (Efl.Loop_User, Efl.Net.Socket) {
 
     events {
         ssl,ready; [[Notifies the SSL handshake was done and the socket is now able to communicate]]
-        ssl,error: Eina.Error; [[an error such as @Efl.Net.Socket.Ssl.Error.HANDSHAKE]]
+        ssl,error: Eina.Error; [[An error such as @Efl.Net.Socket.Ssl.Error.HANDSHAKE]]
     }
 
     methods {
@@ -36,7 +36,7 @@ class Efl.Net.Socket.Ssl (Efl.Loop_User, Efl.Net.Socket) {
         @property verify_mode {
             [[How to verify the remote peer.]]
             values {
-                verify_mode: Efl.Net.Ssl.Verify_Mode;
+                verify_mode: Efl.Net.Ssl.Verify_Mode; [[Remote verification mode]]
             }
         }
 
@@ -48,7 +48,7 @@ class Efl.Net.Socket.Ssl (Efl.Loop_User, Efl.Net.Socket) {
               @.hostname_override.
             ]]
             values {
-                hostname_verify: bool;
+                hostname_verify: bool; [[$true if the hostname will be verified, $false otherwise]]
             }
         }
 
@@ -66,7 +66,7 @@ class Efl.Net.Socket.Ssl (Efl.Loop_User, Efl.Net.Socket) {
               It's only used if @.hostname_verify is $true.
             ]]
             values {
-                hostname_override: string @nullable;
+                hostname_override: string @nullable; [[Hostname for this socket]]
             }
         }
     }

@@ -15,7 +15,7 @@ class Efl.Net.Socket.Tcp (Efl.Net.Socket.Fd) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                keep_alive: bool;
+                keep_alive: bool; [[$true if keep alive is enabled, $false otherwise]]
             }
         }
 
@@ -26,7 +26,7 @@ class Efl.Net.Socket.Tcp (Efl.Net.Socket.Fd) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                no_delay: bool;
+                no_delay: bool; [[$true if no delay is enabled, $false otherwise]]
             }
         }
 
@@ -37,7 +37,7 @@ class Efl.Net.Socket.Tcp (Efl.Net.Socket.Fd) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                cork: bool;
+                cork: bool; [[$true if cork is enabled, $false otherwise]]
             }
         }
     }

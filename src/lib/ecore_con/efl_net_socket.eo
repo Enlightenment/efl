@@ -25,7 +25,7 @@ interface Efl.Net.Socket (Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
             get { }
             set @protected { }
             values {
-                address: string;
+                address: string; [[Local address]]
             }
         }
 
@@ -43,7 +43,7 @@ interface Efl.Net.Socket (Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
             get { }
             set @protected { }
             values {
-                address: string;
+                address: string; [[Remote address]]
             }
         }
     }

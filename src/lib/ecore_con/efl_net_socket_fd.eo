@@ -24,7 +24,7 @@ class Efl.Net.Socket.Fd (Efl.Loop.Fd, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io
             get { }
             set @protected { }
             values {
-                family: int;
+                family: int; [[Address family]]
             }
         }
     }
