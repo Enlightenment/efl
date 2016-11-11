@@ -185,7 +185,6 @@ calendar_cxx_example_03.cc \
 calendar_cxx_example_04.cc \
 calendar_cxx_example_05.cc \
 clock_cxx_example.cc \
-datetime_cxx_example.cc \
 icon_cxx_example_01.cc \
 button_cxx_example_00.cc
 endif
@@ -286,7 +285,6 @@ conformant_example_01 \
 conformant_example_02 \
 combobox_example_01 \
 ctxpopup_example_01 \
-datetime_example \
 dayselector_example \
 diskselector_example_01 \
 diskselector_example_02 \
@@ -408,7 +406,6 @@ calendar_cxx_example_03 \
 calendar_cxx_example_04 \
 calendar_cxx_example_05 \
 clock_cxx_example \
-datetime_cxx_example \
 icon_cxx_example_01 \
 button_cxx_example_00
 # examples_PROGRAMS += \
@@ -423,7 +420,6 @@ button_cxx_example_00
 # icon_cxx_example_01 \
 # hoversel_cxx_example_01 \
 # glview_cxx_example_01 \
-# datetime_cxx_example \
 # clock_cxx_example \
 # calendar_cxx_example_05 \
 # calendar_cxx_example_04 \
@@ -451,7 +447,6 @@ endif
 
 if HAVE_CXX11
 icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
-datetime_cxx_example_SOURCES = datetime_cxx_example.cc
 clock_cxx_example_SOURCES = clock_cxx_example.cc
 calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
 calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
@@ -472,7 +467,6 @@ button_cxx_example_00_SOURCES = button_cxx_example_00.cc
 # icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
 # hoversel_cxx_example_01_SOURCES = hoversel_cxx_example_01.cc
 # glview_cxx_example_01_SOURCES = glview_cxx_example_01.cc
-# datetime_cxx_example_SOURCES = datetime_cxx_example.cc
 # clock_cxx_example_SOURCES = clock_cxx_example.cc
 # calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
 # calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
