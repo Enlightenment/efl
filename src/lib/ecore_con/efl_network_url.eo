@@ -5,7 +5,7 @@ class Efl.Network.Url (Efl.Object) {
       @property url {
          [[Controls the URL to send the request to.]]
          set {
-            return: bool (false); [[true on success, false on error.]]
+            return: bool (false); [[$true on success, $false on error.]]
          }
          get {
          }

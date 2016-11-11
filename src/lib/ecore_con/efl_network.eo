@@ -104,7 +104,7 @@ abstract Efl.Network (Efl.Object) {
              legacy: null;
          }
          values {
-            connected: bool; [[Returns true if connected, false otherwise.]]
+            connected: bool; [[$true if connected, $false otherwise.]]
          }
       }
       @property timeout @virtual_pure {
@@ -172,12 +172,12 @@ abstract Efl.Network (Efl.Object) {
             done_cb: Ecore_Con_Dns_Cb; [[Callback to notify when done.]]
             data: const(void_ptr); [[User data to be given to done_cb.]]
          }
-         return: bool; [[true if the request did not fail to be set up, false otherwise.]]
+         return: bool; [[$true if the request did not fail to be set up, $false otherwise.]]
       }
    }
    events {
         data,received: Ecore.Con.Event_Data.Received; [[Data received on connection]]
-        connection,upgraded;
+        connection,upgraded; [[FIXME: what does upgrade mean here??]]
         connection,error: string; [[Error received on connection]]
    }
 }
