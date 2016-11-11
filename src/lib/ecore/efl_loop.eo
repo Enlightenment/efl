@@ -23,7 +23,7 @@ class Efl.Loop (Efl.Object)
          [[Points to the main loop instance of the application.]]
          get {}
          values {
-            main_loop: Efl.Loop;
+            main_loop: Efl.Loop; [[Application main loop]]
          }
       }
       @property app_efl_version {
@@ -33,7 +33,7 @@ class Efl.Loop (Efl.Object)
          ]]
          get {}
          values {
-            version: ptr(const(Efl.Version));
+            version: ptr(const(Efl.Version)); [[Efl version]]
          }
       }
       @property efl_version {
@@ -43,7 +43,7 @@ class Efl.Loop (Efl.Object)
          ]]
          get {}
          values {
-            version: ptr(const(Efl.Version));
+            version: ptr(const(Efl.Version)); [[Efl version]]
          }
       }
       iterate {
@@ -53,7 +53,7 @@ class Efl.Loop (Efl.Object)
       iterate_may_block {
          [[Runs a single iteration of the main loop to process everything on the
            queue with block/non-blocking status.]]
-         return: int;
+         return: int; [[Return from single iteration run]]
          params {
             may_block: int; [[A flag if the main loop has a possibility of blocking.]]
          }

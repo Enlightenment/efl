@@ -6,10 +6,11 @@ mixin Efl.Io.Sizer.Fd (Efl.Io.Sizer) {
 
     methods {
         @property sizer_fd {
+            [[Sizer file descriptor]]
             get {}
             set @protected {}
             values {
-                fd: int;
+                fd: int; [[File descriptor]]
             }
         }
     }

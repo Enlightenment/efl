@@ -30,7 +30,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
                 [[Constructor-only property to set where to read data from]]
            }
            values {
-                source: Efl.Io.Reader;
+                source: Efl.Io.Reader; [[Reader source]]
            }
         }
 
@@ -41,7 +41,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
                 [[Constructor-only property to set where to write data to]]
            }
            values {
-                destination: Efl.Io.Writer;
+                destination: Efl.Io.Writer; [[Writer destination]]
            }
         }
 
@@ -79,11 +79,12 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
         }
 
         @property progress {
+            [[Progress for read or write]]
             get {
             }
             values {
-                read: uint64 @optional; [[amount of bytes read from source]]
-                written: uint64 @optional; [[amount of bytes written to destination]]
+                read: uint64 @optional; [[Amount of bytes read from source]]
+                written: uint64 @optional; [[Amount of bytes written to destination]]
                 total: uint64 @optional; [[If @.source is an Efl.Io.Sizer, its total size. Otherwise 0 to report unknown size]]
            }
         }
@@ -109,7 +110,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
              The buffer is then owned by caller, which should call
              eina_binbuf_free() when it's done.
            ]]
-           return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused;
+           return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused; [[Binbuf]]
         }
     }
 

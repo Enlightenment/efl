@@ -6,10 +6,11 @@ mixin Efl.Io.Reader.Fd (Efl.Io.Reader) {
 
     methods {
         @property reader_fd {
+            [[Reader file descriptor]]
             get {}
             set @protected {}
             values {
-                fd: int;
+                fd: int; [[File descriptor]]
             }
         }
     }

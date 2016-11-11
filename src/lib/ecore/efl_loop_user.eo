@@ -6,7 +6,8 @@ class Efl.Loop_User (Efl.Object)
    eo_prefix: efl_loop;
    methods {
       loop_get {
-         return: Efl.Loop;
+      	 [[Get loop]]
+         return: Efl.Loop; [[Efl loop]]
       }
    }
    implements {

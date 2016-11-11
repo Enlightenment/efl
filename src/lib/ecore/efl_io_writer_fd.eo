@@ -6,10 +6,11 @@ mixin Efl.Io.Writer.Fd (Efl.Io.Writer) {
 
     methods {
         @property writer_fd {
+            [[Writer file descriptor]]
             get {}
             set @protected {}
             values {
-                fd: int;
+                fd: int; [[File descriptor]]
             }
         }
     }

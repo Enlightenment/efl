@@ -6,10 +6,11 @@ mixin Efl.Io.Closer.Fd (Efl.Io.Closer) {
 
     methods {
         @property closer_fd {
+            [[Closer file descriptor]]
             get {}
             set @protected {}
             values {
-                fd: int;
+                fd: int; [[File descriptor]]
             }
         }
     }

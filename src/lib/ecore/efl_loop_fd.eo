@@ -34,9 +34,9 @@ class Efl.Loop.Fd (Efl.Loop_User)
       }
    }
    events {
-      read;
-      write;
-      error;
+      read; [[Called when a read happened on the file descriptor]]
+      write; [[Called when a write happened on the file descriptor]]
+      error; [[Called when a error occurred on the file descriptor]]
    }
    implements {
       Efl.Object.constructor;

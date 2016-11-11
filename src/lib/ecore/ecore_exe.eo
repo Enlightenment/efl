@@ -15,9 +15,9 @@ struct Ecore.Exe.Event_Data
 {
    [[Ecore exe event data structure]]
    exe: Efl.Object;  [[The handle to the process. FIXME: should actually be Ecore.Exe, workaround cyclic]]
-   data: void_ptr; [[the raw binary data from the child process that was received]]
-   size: int; [[the size of this data in bytes]]
-   lines: ptr(Ecore.Exe.Event_Data.Line); [[an array of line data if line buffered, the last one has it's line member set to $NULL]]
+   data: void_ptr; [[The raw binary data from the child process that was received]]
+   size: int; [[The size of this data in bytes]]
+   lines: ptr(Ecore.Exe.Event_Data.Line); [[An array of line data if line buffered, the last one has it's line member set to $NULL]]
 }
 
 enum Ecore.Exe_Flags

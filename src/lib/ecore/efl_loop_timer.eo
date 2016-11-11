@@ -25,7 +25,7 @@ class Efl.Loop.Timer (Efl.Loop_User)
       @property pending {
          [[Pending time regarding a timer.]]
          get {
-            return: double;
+            return: double; [[Pending time]]
          }
       }
       reset {

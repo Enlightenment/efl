@@ -6,10 +6,11 @@ mixin Efl.Io.Positioner.Fd (Efl.Io.Positioner) {
 
     methods {
         @property positioner_fd {
+            [[Positionier file descriptor]]
             get {}
             set @protected {}
             values {
-                fd: int;
+                fd: int; [[File descriptor]]
             }
         }
     }

@@ -2,6 +2,7 @@ import eina_types;
 
 class Efl.Promise (Efl.Loop_User)
 {
+   [[Efl promise class]]
    methods {
       progress_set {
          [[Update the progress and send it immediately to all connected Efl_Future.
@@ -11,7 +12,7 @@ class Efl.Promise (Efl.Loop_User)
 	   of the function call.
 	 ]]
          params {
-            @in p: const(void_ptr);
+            @in p: const(void_ptr); [[Progress to be set]]
 	 }
       }
       @property future {

@@ -10,7 +10,7 @@ class Efl.Io.File (Efl.Loop.Fd, Efl.File, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Ef
 
     methods {
         @property flags {
-            [[bitwise OR'ed flags to open the file, like O_CREAT, O_APPEND...
+            [[Bitwise OR'ed flags to open the file, like O_CREAT, O_APPEND...
 
               Defaults to O_RDONLY | O_CLOEXEC.
 
@@ -23,11 +23,11 @@ class Efl.Io.File (Efl.Loop.Fd, Efl.File, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Ef
             }
 
             set {
-               [[constructor property to define flags to open the file]]
+               [[Constructor property to define flags to open the file]]
             }
 
             values {
-                flags: uint32; [[flags to open file, see man:open(2).]]
+                flags: uint32; [[Flags to open file, see man:open(2).]]
             }
         }
 
@@ -36,11 +36,11 @@ class Efl.Io.File (Efl.Loop.Fd, Efl.File, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Ef
             }
 
             set {
-               [[constructor property to define mode to open the file]]
+               [[Constructor property to define mode to open the file]]
             }
 
             values {
-                mode: uint32; [[mode to open file, see man:open(2).]]
+                mode: uint32; [[Mode to open file, see man:open(2).]]
             }
         }
     }
