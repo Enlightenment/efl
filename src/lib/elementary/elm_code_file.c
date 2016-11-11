@@ -210,19 +210,20 @@ EAPI void elm_code_file_free(Elm_Code_File *file)
         elm_code_line_free(l);
      }
 
-   if (file->file)
-     {
-        if (file->map)
-          eina_file_map_free(file->file, file->map);
-
-        eina_file_close(file->file);
-     }
+   elm_code_file_close(file);
    free(file);
 }
 
 EAPI void elm_code_file_close(Elm_Code_File *file)
 {
+   if (!file->file)
+     return;
+
+   if (file->map)
+     eina_file_map_free(file->file, file->map);
+
    eina_file_close(file->file);
+   file->file = NULL;
 }
 
 EAPI Elm_Code_File_Line_Ending elm_code_file_line_ending_get(Elm_Code_File *file)
