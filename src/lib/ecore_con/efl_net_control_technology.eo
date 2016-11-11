@@ -28,7 +28,7 @@ class Efl.Net.Control.Technology (Efl.Loop_User) {
       @since 1.19
     ]]
     events {
-        changed; [[Some properties were changed.]]
+        changed; [[Called when some properties were changed.]]
     }
 
     methods {
@@ -61,7 +61,7 @@ class Efl.Net.Control.Technology (Efl.Loop_User) {
             [[If $true the technology has at least one access point connected.]]
             get { }
             values {
-                connected: bool;[[$true if technology is connected, $false otherwise]]
+                connected: bool; [[$true if technology is connected, $false otherwise]]
             }
         }
 

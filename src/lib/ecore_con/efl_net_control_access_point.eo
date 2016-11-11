@@ -3,13 +3,13 @@ enum Efl.Net.Control.Access_Point.State {
 
       @since 1.19
     ]]
-    idle, [[nothing is happening with this access point]]
-    association, [[the access point is trying to associate itself, this is the first state after a connection attempt]]
-    configuration, [[the access point is configuring itself, such as DHCP]]
-    local, [[the access point is connected, but the internet connection wasn't validated]]
-    online, [[the access point is connected and the internet connected was validated]]
-    disconnect, [[the access point is disconnecting]]
-    failure, [[a connection attempt failed, @Efl.Net.Control.Access_Point.error will provide more details]]
+    idle, [[Nothing is happening with this access point]]
+    association, [[The access point is trying to associate itself, this is the first state after a connection attempt]]
+    configuration, [[The access point is configuring itself, such as DHCP]]
+    local, [[The access point is connected, but the internet connection wasn't validated]]
+    online, [[The access point is connected and the internet connected was validated]]
+    disconnect, [[The access point is disconnecting]]
+    failure, [[A connection attempt failed, @Efl.Net.Control.Access_Point.error will provide more details]]
 }
 
 enum Efl.Net.Control.Access_Point.Error {
@@ -17,12 +17,12 @@ enum Efl.Net.Control.Access_Point.Error {
 
       @since 1.19
     ]]
-    none, [[all right, no errors]]
-    out_of_range, [[wireless device is out of range]]
+    none, [[All right, no errors]]
+    out_of_range, [[Wireless device is out of range]]
     pin_missing, [[PIN was required and is missing]]
     dhcp_failed, [[DHCP failed to provide configuration]]
-    connect_failed, [[couldn't connect to access point]]
-    login_failed, [[login or authentication information was incorrect, agent_request_input event may be emitted]]
+    connect_failed, [[Could not connect to access point]]
+    login_failed, [[Login or authentication information was incorrect, agent_request_input event may be emitted]]
 }
 
 enum Efl.Net.Control.Access_Point.Security {
@@ -31,7 +31,7 @@ enum Efl.Net.Control.Access_Point.Security {
       @since 1.19
     ]]
     unknow = 0, [[Unknown]]
-    none = (1 << 0), [[open access, no security]]
+    none = (1 << 0), [[Open access, no security]]
     wep = (1 << 1), [[WEP]]
     psk = (1 << 2), [[PSK (Pre Shared Key), such as WPA or RSN]]
     ieee802_1x = (1 << 3), [[IEEE 802.1X]]
@@ -68,9 +68,9 @@ enum Efl.Net.Control.Access_Point.Proxy_Method {
 
       @since 1.19
     ]]
-    off, [[direct connection to the internet, no proxy to be used]]
-    auto, [[proxy is autoconfigured using Proxy-Auto-Configuration (PAC) using given URL]]
-    manual, [[proxy is configured manually using servers and excludes]]
+    off, [[Direct connection to the internet, no proxy to be used]]
+    auto, [[Proxy is autoconfigured using Proxy-Auto-Configuration (PAC) using given URL]]
+    manual, [[Proxy is configured manually using servers and excludes]]
     unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_proxy]]
 }
 
@@ -87,7 +87,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
     ]]
 
     events {
-        changed; [[Some properties were changed.]]
+        changed; [[Called when some properties were changed.]]
     }
 
     methods {
@@ -106,9 +106,9 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
 
               The future may fail with non-fatal errors such as
               EINPROGRESS (the connection was already ongoing) and
-              EALREADY (the connection was already stablished).
+              EALREADY (the connection was already established).
             ]]
-            return: future<void_ptr>; /* NOTE: This should be future<void> */
+            return: future<void_ptr>; [[Future for asynchronous connect]] /* NOTE: This should be future<void> */
         }
 
         disconnect {
@@ -141,7 +141,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                state: Efl.Net.Control.Access_Point.State;
+                state: Efl.Net.Control.Access_Point.State; [[Access point state]]
             }
         }
 
@@ -149,7 +149,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             [[If the access point is in error state, this states the error.]]
             get { }
             values {
-                error: Efl.Net.Control.Access_Point.Error;
+                error: Efl.Net.Control.Access_Point.Error; [[Access point error]]
             }
         }
 
@@ -160,7 +160,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                name: string;
+                name: string; [[Access point name]]
             }
         }
 
@@ -172,7 +172,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
               access points may come and go, the value may change at
               any time and notified with "changed" event.
 
-              If set, then it will reoder priorities, moving all other
+              If set, then it will reorder priorities, moving all other
               services at equal or higher priority up. To move as the
               first (most priority), then use 0. To move as the last
               priority, use UINT32_MAX or the last known priority + 1.
@@ -184,7 +184,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             get { }
             set { }
             values {
-                priority: uint;
+                priority: uint; [[Access point priority in listing]]
             }
         }
 
@@ -192,7 +192,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             [[The technology that generated this access point]]
             get { }
             values {
-                technology: Efl.Net.Control.Technology;
+                technology: Efl.Net.Control.Technology; [[Access point technology]]
             }
         }
 
@@ -200,7 +200,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             [[Signal strength percentage in 0-100]]
             get { }
             values {
-                strength: uint8;
+                strength: uint8; [[Access point signal strength]]
             }
         }
 
@@ -208,7 +208,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             [[If it's a cellular access point and it's on roaming.]]
             get { }
             values {
-                roaming: bool;
+                roaming: bool; [[$true if the access point is cellular and uses roaming, $false otherwise]]
             }
         }
 
@@ -225,7 +225,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             get { }
             set { }
             values {
-                auto_connect: bool;
+                auto_connect: bool; [[$true when auto-connect is set for this access point, $false otherwise]]
             }
         }
 
@@ -236,7 +236,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                remembered: bool;
+                remembered: bool; [[$true if this access point will be remembered, $false otherwise]]
             }
         }
 
@@ -244,12 +244,12 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             [[Immutable access points are those defined in configuration files and its properties can't be changed using API.]]
             get { }
             values {
-                immutable: bool;
+                immutable: bool; [[$true is this access point is immutable, $false otherwise]]
             }
         }
 
         @property security {
-            [[Security options such as wep, wps, psk or none (open).]]
+            [[Security options such as WEP, WPS, PSK or none (open).]]
             get { }
             values {
                 security: Efl.Net.Control.Access_Point.Security; [[Bitwise OR of security supported by this access point]]
@@ -266,7 +266,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                name_servers: free(own(iterator<string>), eina_iterator_free);
+                name_servers: free(own(iterator<string>), eina_iterator_free); [[Iterator to DNS server]]
             }
         }
 
@@ -280,7 +280,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                time_servers: free(own(iterator<string>), eina_iterator_free);
+                time_servers: free(own(iterator<string>), eina_iterator_free); [[Iterator to time server]]
             }
         }
 
@@ -294,7 +294,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                domains: free(own(iterator<string>), eina_iterator_free);
+                domains: free(own(iterator<string>), eina_iterator_free); [[Iterator to search domains]]
             }
         }
 
@@ -308,10 +308,10 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                method: Efl.Net.Control.Access_Point.Ipv4_Method;
-                address: string;
-                netmask: string;
-                gateway: string;
+                method: Efl.Net.Control.Access_Point.Ipv4_Method; [[IPv4 method]]
+                address: string; [[IPv4 address]]
+                netmask: string; [[IPv4 netmask]]
+                gateway: string; [[IPv4 gateway]]
             }
         }
 
@@ -325,11 +325,11 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                method: Efl.Net.Control.Access_Point.Ipv6_Method;
-                address: string;
-                prefix_length: uint8;
-                netmask: string;
-                gateway: string;
+                method: Efl.Net.Control.Access_Point.Ipv6_Method; [[IPv6 method]]
+                address: string; [[IPv6 address]]
+                prefix_length: uint8; [[IPv6 prefix length]]
+                netmask: string; [[IPv6 netmask]]
+                gateway: string; [[IPv6 gateway]]
             }
         }
 
@@ -343,8 +343,8 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                method: Efl.Net.Control.Access_Point.Proxy_Method;
-                url: string; [[if @Efl.Net.Control.Access_Point.Proxy_Method.auto, then states the URL to use for proxy auto-configuration]]
+                method: Efl.Net.Control.Access_Point.Proxy_Method; [[Proxy method]]
+                url: string; [[If @Efl.Net.Control.Access_Point.Proxy_Method.auto, then states the URL to use for proxy auto-configuration]]
                 servers: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the URI with proxy servers to use, like "http://proxy.domain.com:911"]]
                 excludes: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the hosts or patterns to exclude from proxy access, such as "localhost", ".domain.com", or "10.0.0.0..."]]
             }
@@ -362,7 +362,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             set { }
             get { }
             values {
-                name_servers: free(own(iterator<string>), eina_iterator_free);
+                name_servers: free(own(iterator<string>), eina_iterator_free); [[Iterator to user DNS server]]
             }
         }
 
@@ -378,7 +378,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             set { }
             get { }
             values {
-                time_servers: free(own(iterator<string>), eina_iterator_free);
+                time_servers: free(own(iterator<string>), eina_iterator_free); [[Iterator to user time server]]
             }
         }
 
@@ -394,7 +394,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             set { }
             get { }
             values {
-                domains: free(own(iterator<string>), eina_iterator_free);
+                domains: free(own(iterator<string>), eina_iterator_free); [[Iterator to user search domains]]
             }
         }
 
@@ -410,10 +410,10 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             set { }
             get { }
             values {
-                method: Efl.Net.Control.Access_Point.Ipv4_Method;
-                address: string;
-                netmask: string;
-                gateway: string;
+                method: Efl.Net.Control.Access_Point.Ipv4_Method; [[IPv4 method]]
+                address: string; [[IPv4 address]]
+                netmask: string; [[IPv4 netmask]]
+                gateway: string; [[IPv4 gateway]]
             }
         }
 
@@ -429,11 +429,11 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             set { }
             get { }
             values {
-                method: Efl.Net.Control.Access_Point.Ipv6_Method;
-                address: string;
-                prefix_length: uint8;
-                netmask: string;
-                gateway: string;
+                method: Efl.Net.Control.Access_Point.Ipv6_Method; [[IPv6 method]]
+                address: string; [[IPv6 address]]
+                prefix_length: uint8; [[IPv6 prefix length]]
+                netmask: string; [[IPv6 netmask]]
+                gateway: string; [[IPv6 gateway]]
             }
         }
 
@@ -449,8 +449,8 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             set { }
             get { }
             values {
-                method: Efl.Net.Control.Access_Point.Proxy_Method;
-                url: string; [[if @Efl.Net.Control.Access_Point.Proxy_Method.auto, then states the URL to use for proxy auto-configuration]]
+                method: Efl.Net.Control.Access_Point.Proxy_Method; [[Proxy method]]
+                url: string; [[If @Efl.Net.Control.Access_Point.Proxy_Method.auto, then states the URL to use for proxy auto-configuration]]
                 servers: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the URI with proxy servers to use, like "http://proxy.domain.com:911"]]
                 excludes: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the hosts or patterns to exclude from proxy access, such as "localhost", ".domain.com", or "10.0.0.0..."]]
             }
