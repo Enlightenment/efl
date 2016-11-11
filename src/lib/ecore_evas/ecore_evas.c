@@ -57,28 +57,23 @@ static int _ecore_evas_init_count = 0;
 static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
 static Eina_Bool _ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
+static Ecore_Idle_Exiter *ecore_evas_idle_exiter = NULL;
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 static Ecore_Evas *ecore_evases = NULL;
 static int _ecore_evas_fps_debug = 0;
 
 //RENDER_SYNC
 static int _ecore_evas_render_sync = 1;
-static Ecore_Animator *ecore_evas_animator = NULL;
-static Eina_Bool ecore_evas_animator_ticked = EINA_FALSE;
-static Eina_Bool ecore_evas_first = EINA_TRUE;
-static int overtick = 0;
 
-static Eina_Bool
-_ecore_evas_animator(void *data EINA_UNUSED)
+static void
+_ecore_evas_animator(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   ecore_evas_animator_ticked = EINA_TRUE;
-   overtick--;
-   if (overtick == 0)
-     {
-        ecore_evas_animator = NULL;
-        return EINA_FALSE;
-     }
-   return EINA_TRUE;
+   Ecore_Evas *ee = data;
+
+   ee->animator_ticked = EINA_TRUE;
+
+   efl_event_callback_del(ee->evas, EFL_EVENT_ANIMATOR_TICK, _ecore_evas_animator, ee);
+   ee->animator_registered = EINA_FALSE;
 }
 
 static Eina_Bool
@@ -95,15 +90,14 @@ _ecore_evas_changes_get(Ecore_Evas *ee)
 }
 
 static Eina_Bool
-_ecore_evas_changes_check(void)
+_ecore_evas_idle_exiter(void *data EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
    EINA_INLIST_FOREACH(ecore_evases, ee)
-     {
-        if (_ecore_evas_changes_get(ee)) return EINA_TRUE;
-     }
-   return EINA_FALSE;
+     ee->animator_ran = EINA_FALSE;
+
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -119,34 +113,34 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
 
    if (!ecore_evases) return ECORE_CALLBACK_RENEW;
 
-   if (_ecore_evas_render_sync)
-     {
-        if (!ecore_evas_first)
-          {
-             if ((!ecore_evas_animator_ticked) &&
-                 (!ecore_main_loop_animator_ticked_get()))
-               {
-                  if (_ecore_evas_changes_check())
-                    {
-                       if (!ecore_evas_animator)
-                         {
-                            overtick = 1;
-                            ecore_evas_animator = ecore_animator_add(_ecore_evas_animator, NULL);
-                         }
-                    }
-                  return ECORE_CALLBACK_RENEW;
-               }
-             ecore_evas_animator_ticked = EINA_FALSE;
-          }
-        ecore_evas_first = EINA_FALSE;
-     }
-
    if (_ecore_evas_fps_debug)
      {
         t1 = ecore_time_get();
      }
    EINA_INLIST_FOREACH(ecore_evases, ee)
      {
+        if (_ecore_evas_render_sync)
+          {
+             if (!ee->first_frame)
+               {
+                  if ((!ee->animator_ticked) &&
+                      (!ee->animator_ran))
+                    {
+                       if (_ecore_evas_changes_get(ee))
+                         {
+                            if (!ee->animator_registered)
+                              {
+                                 efl_event_callback_add(ee->evas, EFL_EVENT_ANIMATOR_TICK, _ecore_evas_animator, ee);
+                                 ee->animator_registered = EINA_TRUE;
+                              }
+                         }
+                       continue ;
+                    }
+                  ee->animator_ticked = EINA_FALSE;
+               }
+             ee->first_frame = EINA_FALSE;
+          }
+
 #ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
         if ((ee->in_async_render) && (now - ee->async_render_start > 2.0))
           {
@@ -406,6 +400,8 @@ ecore_evas_init(void)
 
    ecore_evas_idle_enterer =
      ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
+   ecore_evas_idle_exiter =
+     ecore_idle_exiter_add(_ecore_evas_idle_exiter, NULL);
    if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
    if (getenv("ECORE_EVAS_RENDER_NOSYNC")) _ecore_evas_render_sync = 0;
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
@@ -451,12 +447,6 @@ ecore_evas_shutdown(void)
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
    ecore_idle_enterer_del(ecore_evas_idle_enterer);
    ecore_evas_idle_enterer = NULL;
-
-   if (_ecore_evas_render_sync)
-     {
-        if (ecore_evas_animator) ecore_animator_del(ecore_evas_animator);
-        ecore_evas_animator = NULL;
-     }
 
    _ecore_evas_extn_shutdown();
 
@@ -2463,6 +2453,7 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
         a.update_area = *viewport;
      }
 
+   ee->animator_ran = EINA_TRUE;
    efl_event_callback_legacy_call(ee->evas, EFL_EVENT_ANIMATOR_TICK, &a);
 
    // FIXME: We do not support partial animator in the subcanvas
@@ -2599,7 +2590,7 @@ _ecore_evas_register(Ecore_Evas *ee)
 
    _ecore_evas_register_animators(ee);
 
-   if (_ecore_evas_render_sync) ecore_evas_first = EINA_TRUE;
+   if (_ecore_evas_render_sync) ee->first_frame = EINA_TRUE;
    if (!_general_tick) _ecore_evas_tick_source_find();
 }
 

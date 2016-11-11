@@ -343,8 +343,13 @@ struct _Ecore_Evas
    unsigned char semi_sync  : 1;
    unsigned char deleted : 1;
    unsigned char profile_supported : 1;
+
    unsigned char in_async_render : 1;
    unsigned char can_async_render : 1;
+   unsigned char animator_registered : 1;
+   unsigned char animator_ticked : 1;
+   unsigned char animator_ran : 1;
+   unsigned char first_frame : 1;
 };
 
 struct _Ecore_Evas_Aux_Hint
