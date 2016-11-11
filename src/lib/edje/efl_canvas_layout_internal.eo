@@ -6,9 +6,9 @@ interface Efl.Canvas.Layout_Internal ()
       @property real_part @protected {
          set {}
          values {
-            ed: void_ptr;
-            rp: void_ptr;
-            part: string;
+            ed: void_ptr; [[Edje object]]
+            rp: void_ptr; [[Real part object]]
+            part: string; [[Real part name]]
          }
       }
    }

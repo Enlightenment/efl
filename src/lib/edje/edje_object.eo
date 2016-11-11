@@ -3,6 +3,7 @@ import edje_types;
 class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                    Efl.Observer)
 {
+   [[Edje object class]]
    legacy_prefix: edje_object;
    eo_prefix: edje_obj;
    event_prefix: edje_object;
@@ -38,7 +39,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               @since 1.1.0]]
          }
          values {
-            rtl: bool; [[new value of flag $true/$false]]
+            rtl: bool; [[New value of flag $true/$false]]
          }
       }
       @property language {
@@ -168,7 +169,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
               See also @.scale.get()
               \@ref edje_scale_get() for more details]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Get a given Edje object's scaling factor.
@@ -379,7 +380,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
            Note: On failure, this function will make all non-$null geometry
            pointers' pointed variables be set to zero.]]
 
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @out x: Evas.Coord; [[A pointer to a variable where to store the parts region's
                                   x coordinate]]
@@ -634,7 +635,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               Note: unlike Evas, Edje colors are not pre-multiplied. That is,
               half-transparent white is 255 255 255 128.]]
             legacy: null;
-            return: bool; [[$true on sucess, $false on failure.]]
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Get Edje color class.
@@ -654,7 +655,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
          keys {
             color_class: string; [[The name of color class]]
-            mode: Edje.Color_Class.Mode;
+            mode: Edje.Color_Class.Mode; [[Edje color class mode]]
          }
          values {
             r: int; [[Object Red value]]
@@ -682,7 +683,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               Note: unlike Evas, Edje colors are not pre-multiplied. That is,
               half-transparent white is 255 255 255 128.]]
             legacy: null;
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Gets the object color class.
@@ -703,7 +704,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
          keys {
             color_class: string; [[The name of color class]]
-            mode: Edje.Color_Class.Mode;
+            mode: Edje.Color_Class.Mode; [[Edje color class mode]]
          }
          values {
             r: int; [[Object Red value]]
@@ -720,7 +721,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             return: string; [[The description of the target color class or $null if not found]]
          }
          keys {
-            color_class: string;
+            color_class: string; [[Color class description]]
          }
       }
       color_class_clear @const {
@@ -826,13 +827,13 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
            @since 1.17]]
          params {
-            @in size_class: string;
+            @in size_class: string; [[Size class name]]
          }
       }
       access_part_iterate {
          [[Iterate over all accessibility-enabled part names.]]
          legacy: null;
-         return: free(own(iterator<string>), eina_iterator_free);
+         return: free(own(iterator<string>), eina_iterator_free); [[Part name iterator]]
       }
       part_exists @const {
          [[Check if an Edje part exists in a given Edje object's group
@@ -886,7 +887,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             part: string; [[The part name]]
          }
          values {
-            val_ret: double;
+            val_ret: double; [[Part state value]]
          }
       }
       @property part_geometry {
@@ -903,7 +904,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
               Note: On failure, this function will make all non-$null geometry
               pointers' pointed variables be set to zero.]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          keys {
             part: string; [[The Edje part's name]]
@@ -934,7 +935,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               dragable part theme is 1, and right if it is -1.
 
               See also @.part_drag_value.get()]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Get the dragable object location.
@@ -945,7 +946,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               See also @.part_drag_value.set()
 
               Gets the drag location values.]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          keys {
             part: string; [[The part name]]
@@ -965,7 +966,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               Sets the size of the dragable object.
 
               See also @.part_drag_size.get()]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Get the dragable object size.
@@ -973,7 +974,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               Gets the dragable object size.
 
               See also @.part_drag_size.set()]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          keys {
             part: string; [[The part name]]
@@ -1010,7 +1011,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               part will be moved.
 
               See also @.part_drag_step.get()]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Gets the drag step increment values.
@@ -1018,7 +1019,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               Gets the x and y step increments for the dragable object.
 
               See also @.part_drag_step.set()]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          keys {
             part: string; [[The part name]]
@@ -1038,7 +1039,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
            See also @.part_drag_page()]]
 
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in part: string; [[The part name]]
             @in dx: double; [[The x step]]
@@ -1056,7 +1057,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               part will be moved.
 
               See also @.part_drag_page.get()]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Gets the page step increments.
@@ -1064,7 +1065,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               Gets the x,y page step increments for the dragable object.
 
               See also @.part_drag_page.set()]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          keys {
             part: string; [[The part name]]
@@ -1086,7 +1087,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
            See also @.part_drag_step()]]
 
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in part: string; [[The part name]]
             @in dx: double; [[The x step]]
@@ -1101,7 +1102,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
          keys {
             part: string; [[The part name]]
-            param: string; [[the parameter name to use.]]
+            param: string; [[The parameter name to use]]
          }
       }
       @property part_external_object {
@@ -1131,7 +1132,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
               The content string must not be $null. Its actual value depends on the
               code providing the EXTERNAL.]]
-            return: Efl.Canvas.Object;
+            return: Efl.Canvas.Object; [[Canvas object]] 
          }
          keys {
             part: string; [[The name of the part holding the EXTERNAL]]
@@ -1160,7 +1161,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
             return: bool; [[$true if everything went fine, $false on errors.]]
             values {
-               param: ptr(const(Edje.External.Param)); [[the parameter details, including its name, type and
+               param: ptr(const(Edje.External.Param)); [[The parameter details, including its name, type and
                                                      actual value. This pointer should be valid, and the
                                                      parameter must exist in
                                                      #Edje_External_Type.parameters_info, with the exact type,
@@ -1186,7 +1187,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                             are filled with information, $false on errors and
                             param member values are not set or valid.]]
             values {
-               param: Edje.External.Param; [[the parameter details. It is used as both input and
+               param: Edje.External.Param; [[The parameter details. It is used as both input and
                                              output variable. This pointer should be valid, and the
                                              parameter must exist in
                                              #Edje_External_Type.parameters_info, with the exact type,
@@ -1252,7 +1253,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               if text contain tags, these tags will not be interpreted/parsed by TEXTBLOCK.
 
               See also @.part_text_unescaped.get().]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
             values {
                text_to_escape: string; [[The text string]]
             }
@@ -1362,7 +1363,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
          values {
             part: string; [[The part name]]
-            cur: Edje.Cursor; [[the edje cursor to work on]]
+            cur: Edje.Cursor; [[The edje cursor to work on]]
          }
       }
       @property part_text_cursor_end {
@@ -1372,7 +1373,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
          values {
             part: string; [[The part name]]
-            cur: Edje.Cursor; [[the edje cursor to work on]]
+            cur: Edje.Cursor; [[The edje cursor to work on]]
          }
       }
       @property part_text_cursor_line_begin {
@@ -1382,7 +1383,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
          values {
             part: string; [[The part name]]
-            cur: Edje.Cursor; [[the edje cursor to work on]]
+            cur: Edje.Cursor; [[The edje cursor to work on]]
          }
       }
       @property part_text_cursor_line_end {
@@ -1392,24 +1393,24 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
          values {
             part: string; [[The part name]]
-            cur: Edje.Cursor; [[the edje cursor to work on]]
+            cur: Edje.Cursor; [[The edje cursor to work on]]
          }
       }
       part_text_cursor_prev {
          [[Moves the cursor to the previous char
            \@ref evas_textblock_cursor_char_prev]]
 
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in part: string; [[The part name]]
-            @in cur: Edje.Cursor; [[the edje cursor to work on]]
+            @in cur: Edje.Cursor; [[The edje cursor to work on]]
          }
       }
       part_text_cursor_next {
          [[Advances the cursor to the next cursor position.
            \@ref evas_textblock_cursor_char_next]]
 
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[The edje cursor to advance]]
@@ -1418,19 +1419,19 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       part_text_cursor_up {
          [[Move the cursor to the char above the current cursor position.]]
 
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in part: string; [[The part name]]
-            @in cur: Edje.Cursor; [[the edje cursor to work on]]
+            @in cur: Edje.Cursor; [[The edje cursor to work on]]
          }
       }
       part_text_cursor_down {
          [[Moves the cursor to the char below the current cursor position.]]
 
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in part: string; [[The part name]]
-            @in cur: Edje.Cursor; [[the edje cursor to work on]]
+            @in cur: Edje.Cursor; [[The edje cursor to work on]]
          }
       }
       @property part_text_cursor_geometry {
@@ -1454,7 +1455,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
               This is frequently used with the user cursor.]]
 
-            return: bool; [[True on success, false on error.]]
+            return: bool; [[$true on success, $false otherwise]]
          }
          values {
             part: string; [[The part containing the object.]]
@@ -1479,7 +1480,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             cur: Edje.Cursor; [[The cursor to move]]
          }
          values {
-            pos: int; [[the position of the cursor]]
+            pos: int; [[The position of the cursor]]
          }
       }
       part_text_cursor_copy {
@@ -1487,8 +1488,8 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
          params {
             @in part: string; [[The part name]]
-            @in src: Edje.Cursor; [[the cursor to copy from]]
-            @in dst: Edje.Cursor; [[the cursor to copy to]]
+            @in src: Edje.Cursor; [[The cursor to copy from]]
+            @in dst: Edje.Cursor; [[The cursor to copy to]]
          }
       }
       @property part_text_cursor_content {
@@ -1497,7 +1498,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               \@ref evas_textblock_cursor_content_get
 
               You must free the return (if not $null) after you are done with it.]]
-            return: own(ptr(char)); [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
+            return: own(ptr(char)); [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a null byte.]]
          }
          keys {
             part: string; [[The part name]]
@@ -1674,7 +1675,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             part: string; [[The part name]]
          }
          values {
-            input_hints: Edje.Input_Hints; [[input hints]]
+            input_hints: Edje.Input_Hints; [[Input hints]]
          }
       }
       part_text_input_panel_show @const {
@@ -1725,7 +1726,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             }
          }
          values {
-            len: int; [[the length of data, in bytes, to send to the input panel]]
+            len: int; [[The length of data, in bytes, to send to the input panel]]
          }
       }
       @property part_text_input_panel_layout {
@@ -1772,7 +1773,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             part: string; [[The part name]]
          }
          values {
-            lang: Edje.Input_Panel.Lang; [[the language to be set to the input panel.]]
+            lang: Edje.Input_Panel.Lang; [[The language to be set to the input panel.]]
          }
       }
       @property part_text_input_panel_layout_variation {
@@ -1797,7 +1798,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             part: string; [[The part name]]
          }
          values {
-            variation: int; [[layout variation type]]
+            variation: int; [[Layout variation type]]
          }
       }
       @property part_text_input_panel_enabled {
