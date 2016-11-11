@@ -77,7 +77,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
             ]]
             get { }
             set {
-                return: bool (false); [[$true on success]]
+                return: bool (false); [[$true on success, $false otherwise]]
             }
             values {
                 close_on_exec: bool; [[If $true close on exec will be used, $false otherwise]]
@@ -88,7 +88,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
             [[Controls address reuse() using SO_REUSEADDR]]
             get { }
             set {
-                return: bool (false); [[$true on success]]
+                return: bool (false); [[$true on success, $false otherwise]]
             }
             values {
                 reuse_address: bool; [[If $true the server will reuse the address, $false otherwise]]
@@ -99,7 +99,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
             [[Controls port reuse() using SO_REUSEPORT (since linux 3.9)]]
             get { }
             set {
-                return: bool (false); [[$true on success]]
+                return: bool (false); [[$true on success, $false otherwise]]
             }
             values {
                 reuse_port: bool; [[If $true the server will reuse the port, $false otherwise]]

@@ -20,7 +20,7 @@ class Efl.Net.Server.Udp.Client (Efl.Object, Efl.Net.Socket) {
               This will query the next pending datagram size, in
               bytes. If no datagrams are pending, 0 is returned.
             ]]
-            return: size; [[size in bytes]]
+            return: size; [[Size in bytes]]
         }
     }
 

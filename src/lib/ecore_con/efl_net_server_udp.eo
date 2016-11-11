@@ -67,7 +67,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
             params {
                 address: string @nonull; [[Multicast group address]]
             }
-            return: Eina.Error;
+            return: Eina.Error; [[0 on success, error code otherwise]]
         }
 
         multicast_leave {
@@ -78,7 +78,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
             params {
                 address: string @nonull; [[Multicast group address]]
             }
-            return: Eina.Error;
+            return: Eina.Error; [[0 on success, error code otherwise]]
         }
 
         multicast_groups_get {
@@ -100,7 +100,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
                 return: Eina.Error; [[0 on success, error code otherwise]]
             }
             values {
-                loopback: bool;
+                loopback: bool; [[FIXME: should this be named ttl?]]
             }
         }
 

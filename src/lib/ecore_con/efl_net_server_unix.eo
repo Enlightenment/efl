@@ -14,7 +14,7 @@ class Efl.Net.Server.Unix (Efl.Net.Server.Fd) {
               By default it's false and you will get EADDRINUSE.
             ]]
             values {
-                unlink_before_bind: bool; [[if $true, server will unlink() the path before bind() is called.]]
+                unlink_before_bind: bool; [[If $true, server will unlink() the path before bind() is called.]]
             }
         }
     }
