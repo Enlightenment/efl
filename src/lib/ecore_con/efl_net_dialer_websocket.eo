@@ -21,17 +21,17 @@ enum Efl.Net.Dialer.Websocket.Close_Reason {
 
       @since 1.19
     ]]
-    normal = 1000, [[indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled.]]
-    going_away = 1001, [[indicates that an endpoint is "going away", such as a server going down or a browser having navigated away from a page.]]
-    protocol_error = 1002, [[indicates that an endpoint is terminating the connection due to a protocol error.]]
-    no_reason = 1005, [[reserved value and MUST NOT be set as a status code in a Close control frame by an endpoint. It is designated for use in applications expecting a status code to indicate that no status code was actually present.]]
-    abruptly = 1006, [[reserved value and MUST NOT be set as a status code in a Close control frame by an endpoint.  It is designated for use in applications expecting a status code to indicate that the connection was closed abnormally, e.g., without sending or receiving a Close control frame.]]
-    unexpected_data = 1003, [[indicates that an endpoint is terminating the connection because it has received a type of data it cannot accept (e.g., an endpoint that understands only text data MAY send this if it receives a binary message).]]
-    inconsistent_data = 1007, [[indicates that an endpoint is terminating the connection because it has received data within a message that was not consistent with the type of the message (e.g., non-UTF-8 data within a text message).]]
-    policy_violation = 1008, [[indicates that an endpoint is terminating the connection because it has received a message that violates its policy.  This is a generic status code that can be returned when there is no other more suitable status code (e.g., 1003 or 1009) or if there is a need to hide specific details about the policy.]]
-    too_big = 1009, [[indicates that an endpoint is terminating the connection because it has received a message that is too big for it to process.]]
-    missing_extension = 1010, [[indicates that an endpoint (client) is terminating the connection because it has expected the server to negotiate one or more extension, but the server didn't return them in the response message of the WebSocket handshake.  The list of extensions that are needed SHOULD appear in the reason part of the Close frame.  Note that this status code is not used by the server, because it can fail the WebSocket handshake instead.]]
-    server_error = 1011, [[indicates that a server is terminating the connection because it encountered an unexpected condition that prevented it from fulfilling the request.]]
+    normal = 1000, [[Indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled.]]
+    going_away = 1001, [[Indicates that an endpoint is "going away", such as a server going down or a browser having navigated away from a page.]]
+    protocol_error = 1002, [[Indicates that an endpoint is terminating the connection due to a protocol error.]]
+    no_reason = 1005, [[Reserved value and MUST NOT be set as a status code in a Close control frame by an endpoint. It is designated for use in applications expecting a status code to indicate that no status code was actually present.]]
+    abruptly = 1006, [[Reserved value and MUST NOT be set as a status code in a Close control frame by an endpoint.  It is designated for use in applications expecting a status code to indicate that the connection was closed abnormally, e.g., without sending or receiving a Close control frame.]]
+    unexpected_data = 1003, [[Indicates that an endpoint is terminating the connection because it has received a type of data it cannot accept (e.g., an endpoint that understands only text data MAY send this if it receives a binary message).]]
+    inconsistent_data = 1007, [[Indicates that an endpoint is terminating the connection because it has received data within a message that was not consistent with the type of the message (e.g., non-UTF-8 data within a text message).]]
+    policy_violation = 1008, [[Indicates that an endpoint is terminating the connection because it has received a message that violates its policy.  This is a generic status code that can be returned when there is no other more suitable status code (e.g., 1003 or 1009) or if there is a need to hide specific details about the policy.]]
+    too_big = 1009, [[Indicates that an endpoint is terminating the connection because it has received a message that is too big for it to process.]]
+    missing_extension = 1010, [[Indicates that an endpoint (client) is terminating the connection because it has expected the server to negotiate one or more extension, but the server didn't return them in the response message of the WebSocket handshake.  The list of extensions that are needed SHOULD appear in the reason part of the Close frame.  Note that this status code is not used by the server, because it can fail the WebSocket handshake instead.]]
+    server_error = 1011, [[Indicates that a server is terminating the connection because it encountered an unexpected condition that prevented it from fulfilling the request.]]
     iana_registry_start = 3000, [[IANA registry starts at 3000]]
     iana_registry_end = 3999, [[IANA registry ends at 3999]]
     private_start = 4000, [[Applications can use range 4000-4999]]
@@ -87,7 +87,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
             ]]
 
             params {
-                reason: string @optional;
+                reason: string @optional; [[Reason]]
             }
         }
 
@@ -101,7 +101,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
               are kept after this method returns.
             ]]
             params {
-                text: string;
+                text: string; [[Text to send]]
             }
         }
 
@@ -115,7 +115,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
               are kept after this method returns.
             ]]
             params {
-                blob: const(Eina.Slice);
+                blob: const(Eina.Slice); [[Binary blob to send]]
             }
         }
 
@@ -135,8 +135,8 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
               close message, that will be reported as "closed,reason".
             ]]
             params {
-                reason: Efl.Net.Dialer.Websocket.Close_Reason;
-                message: string @optional;
+                reason: Efl.Net.Dialer.Websocket.Close_Reason; [[Reason for closing]]
+                message: string @optional; [[Additional closing message]]
             }
         }
 
@@ -146,13 +146,13 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
               This should be set before dialing.
             ]]
             params {
-                protocol: string;
+                protocol: string; [[WebSocket protocol]]
             }
         }
 
         request_protocols_get {
             [[Return an iterator to the requested WebSocket protocols]]
-            return: free(own(iterator<string>), eina_iterator_free) @warn_unused;
+            return: free(own(iterator<string>), eina_iterator_free) @warn_unused; [[Iterator to protocols]]
         }
 
         request_protocols_clear {
@@ -161,7 +161,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
 
         response_protocols_get {
             [[Return an iterator to the server-replied (response) WebSocket protocols it supports]]
-            return: free(own(iterator<string>), eina_iterator_free) @warn_unused;
+            return: free(own(iterator<string>), eina_iterator_free) @warn_unused; [[Iterator to server protocols]]
         }
 
         @property streaming_mode {
@@ -189,7 +189,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
             get { }
             set { }
             values {
-                streaming_mode: Efl.Net.Dialer.Websocket.Streaming_Mode;
+                streaming_mode: Efl.Net.Dialer.Websocket.Streaming_Mode; [[Streaming mode]]
             }
         }
 
@@ -201,7 +201,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
             get { }
             set { }
             values {
-                user_agent: string;
+                user_agent: string; [[User-agent]]
             }
         }
 
@@ -213,10 +213,10 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
             get { }
             set { }
             values {
-                username: string;
-                password: string;
-                method: Efl.Net.Http.Authentication_Method @optional; [[authentication method to use, defaults to @Efl.Net.Http.Authentication_Method.basic]]
-                restricted: bool @optional; [[restrict method]]
+                username: string; [[HTTP authentication username]]
+                password: string; [[HTTP authentication password]]
+                method: Efl.Net.Http.Authentication_Method @optional; [[Authentication method to use, defaults to @Efl.Net.Http.Authentication_Method.basic]]
+                restricted: bool @optional; [[Restrict method]]
             }
         }
 
@@ -228,7 +228,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
             get { }
             set { }
             values {
-                allow_redirects: bool;
+                allow_redirects: bool; [[$true when following redirects, $false otherwise]]
             }
         }
 
@@ -252,8 +252,8 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
               This should be called before dialing.
             ]]
             params {
-                @in key: string;
-                @in value: string;
+                @in key: string; [[HTTP request header key]]
+                @in value: string; [[HTTP request header value]]
             }
         }
 
@@ -268,7 +268,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
 
         request_headers_get {
             [[Return an iterator to the key-value pairs for request headers]]
-            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused;
+            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused; [[Iterator to key value pairs]]
         }
 
         @property cookie_jar {
@@ -300,7 +300,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
             get { }
             set { }
             values {
-                path: string;
+                path: string; [[Path to cookie jar]]
             }
         }
     }

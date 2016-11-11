@@ -62,7 +62,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             get { }
             set { }
             values {
-                method: string;
+                method: string; [[HTTP method]]
             }
         }
 
@@ -107,7 +107,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             }
             set { }
             values {
-                primary_mode: Efl.Net.Dialer.Http.Primary_Mode;
+                primary_mode: Efl.Net.Dialer.Http.Primary_Mode; [[Primary HTTP mode]]
             }
         }
 
@@ -119,7 +119,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             get { }
             set { }
             values {
-                user_agent: string;
+                ser_agent: string; [[User-agent]]
             }
         }
 
@@ -134,7 +134,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             get { }
             set { }
             values {
-                http_version: Efl.Net.Http.Version;
+                http_version: Efl.Net.Http.Version; [[HTTP version]]
             }
         }
 
@@ -146,10 +146,10 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             get { }
             set { }
             values {
-                username: string;
-                password: string;
-                method: Efl.Net.Http.Authentication_Method @optional; [[authentication method to use, defaults to @Efl.Net.Http.Authentication_Method.basic]]
-                restricted: bool @optional; [[restrict method]]
+                username: string; [[HTTP authentication username]]
+                password: string; [[HTTP authentication password]]
+                method: Efl.Net.Http.Authentication_Method @optional; [[Authentication method to use, defaults to @Efl.Net.Http.Authentication_Method.basic]]
+                restricted: bool @optional; [[Restrict method]]
             }
         }
 
@@ -161,7 +161,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             get { }
             set { }
             values {
-                allow_redirects: bool;
+                allow_redirects: bool; [[$true if redirects are followed, $false otherwise]]
             }
         }
 
@@ -173,8 +173,8 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
               This should be called before dialing.
             ]]
             params {
-                @in key: string;
-                @in value: string;
+                @in key: string; [[Request header key]]
+                @in value: string; [[Request header value]]
             }
         }
 
@@ -189,7 +189,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
 
         request_headers_get {
             [[Return an iterator to the key-value pairs for request headers]]
-            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused;
+            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused; [[Iterator for request headers]]
         }
 
         @property request_content_length {
@@ -200,7 +200,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             get { }
             set { }
             values {
-                length: int64;
+                length: int64; [[Length value]]
             }
         }
 
@@ -212,7 +212,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             get { }
             set @protected { }
             values {
-                length: int64;
+                length: int64; [[Length value]]
             }
         }
 
@@ -221,7 +221,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             get { }
             set @protected { }
             values {
-                content_type: string;
+                content_type: string; [[Content type header string]]
             }
         }
 
@@ -237,7 +237,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             ]]
             get { }
             values {
-                status_code: Efl.Net.Http.Status;
+                status_code: Efl.Net.Http.Status; [[HTTP status]]
             }
         }
 
@@ -252,7 +252,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
 
               This will be usable after "headers,done" event is dispatched.
             ]]
-            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused;
+            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused; [[Iterator for response headers]]
         }
 
         response_headers_all_get {
@@ -277,7 +277,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
 
               This will be usable after "headers,done" event is dispatched.
             ]]
-            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused;
+            return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused; [[Iterator for all response headers]]
         }
 
         response_headers_clear {
@@ -288,8 +288,8 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             [[How many bytes were downloaded and how much was expected.]]
             get { }
             values {
-                downloaded: uint64 @optional;
-                total: uint64 @optional; [[0 if unknown]]
+                downloaded: uint64 @optional; [[Downloaded bytes so far]]
+                total: uint64 @optional; [[Download total in bytes, 0 if unknown]]
             }
         }
 
@@ -297,8 +297,8 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             [[How many bytes were uploaded and how much was expected.]]
             get { }
             values {
-                uploaded: uint64 @optional;
-                total: uint64 @optional; [[0 if unknown]]
+                uploaded: uint64 @optional; [[Uploaded bytes so far]]
+                total: uint64 @optional; [[Upload total in bytes, 0 if unknown]]
             }
         }
 
@@ -331,7 +331,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             get { }
             set { }
             values {
-                path: string;
+                path: string; [[Path to cookie jar]]
             }
         }
     }

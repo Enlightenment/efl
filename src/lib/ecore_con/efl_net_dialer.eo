@@ -32,9 +32,9 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
               dispatched.
             ]]
             params {
-                address: string @nonull;
+                address: string @nonull; [[Remote address]]
             }
-            return: Eina.Error;
+            return: Eina.Error; [[0 on success, error code otherwise]]
         }
 
         @property address_dial {
@@ -47,7 +47,7 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
             get { }
             set @protected { }
             values {
-                address: string;
+                address: string; [[Remote address]]
             }
         }
 
@@ -60,7 +60,7 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
             get { }
             set @protected { }
             values {
-                connected: bool;
+                connected: bool; [[$true if the socket is connected, $false otherwise]]
             }
         }
 
@@ -94,7 +94,7 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
             get { }
             set { }
             values {
-                proxy_url: string; [[may be empty or NULL to unset]]
+                proxy_url: string; [[May be empty or NULL to unset]]
             }
         }
 
@@ -106,7 +106,7 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
             get { }
             set { }
             values {
-                seconds: double;
+                seconds: double; [[Timeout value is seconds]]
             }
         }
     }

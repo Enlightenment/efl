@@ -35,7 +35,7 @@ class Efl.Net.Dialer.Ssl (Efl.Net.Socket.Ssl, Efl.Net.Dialer) {
               It must be called before @Efl.Object.finalize!
             ]]
             values {
-                ssl_context: Efl.Net.Ssl.Context;
+                ssl_context: Efl.Net.Ssl.Context; [[SSL context]]
             }
         }
 
@@ -46,7 +46,7 @@ class Efl.Net.Dialer.Ssl (Efl.Net.Socket.Ssl, Efl.Net.Dialer) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                keep_alive: bool;
+                keep_alive: bool; [[$true if keep alive is enabled, $false otherwise]]
             }
         }
 
@@ -57,7 +57,7 @@ class Efl.Net.Dialer.Ssl (Efl.Net.Socket.Ssl, Efl.Net.Dialer) {
                 return: bool (false); [[$true on success]]
             }
             values {
-                no_delay: bool;
+                no_delay: bool; [[$true if no delay is enabled, $false otherwise]]
             }
         }
 
