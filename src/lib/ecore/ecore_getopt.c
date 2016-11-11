@@ -1096,6 +1096,50 @@ _ecore_getopt_parse_double(const char *str,
    return endptr > str;
 }
 
+static void
+_ecore_getopt_use_optional_value(const Ecore_Getopt_Desc_Store *store,
+                                 Ecore_Getopt_Value *value)
+{
+   switch (store->type)
+     {
+      case ECORE_GETOPT_TYPE_STR:
+        *value->strp = (char *)store->def.strv;
+        break;
+
+      case ECORE_GETOPT_TYPE_BOOL:
+        *value->boolp = store->def.boolv;
+        break;
+
+      case ECORE_GETOPT_TYPE_SHORT:
+        *value->shortp = store->def.shortv;
+        break;
+
+      case ECORE_GETOPT_TYPE_INT:
+        *value->intp = store->def.intv;
+        break;
+
+      case ECORE_GETOPT_TYPE_LONG:
+        *value->longp = store->def.longv;
+        break;
+
+      case ECORE_GETOPT_TYPE_USHORT:
+        *value->ushortp = store->def.ushortv;
+        break;
+
+      case ECORE_GETOPT_TYPE_UINT:
+        *value->uintp = store->def.uintv;
+        break;
+
+      case ECORE_GETOPT_TYPE_ULONG:
+        *value->ulongp = store->def.ulongv;
+        break;
+
+      case ECORE_GETOPT_TYPE_DOUBLE:
+        *value->doublep = store->def.doublev;
+        break;
+     }
+}
+
 static Eina_Bool
 _ecore_getopt_parse_store(const Ecore_Getopt      *parser EINA_UNUSED,
                           const Ecore_Getopt_Desc *desc,
@@ -1196,45 +1240,7 @@ error:
    return EINA_FALSE;
 
 use_optional:
-   switch (store->type)
-     {
-      case ECORE_GETOPT_TYPE_STR:
-        *value->strp = (char *)store->def.strv;
-        break;
-
-      case ECORE_GETOPT_TYPE_BOOL:
-        *value->boolp = store->def.boolv;
-        break;
-
-      case ECORE_GETOPT_TYPE_SHORT:
-        *value->shortp = store->def.shortv;
-        break;
-
-      case ECORE_GETOPT_TYPE_INT:
-        *value->intp = store->def.intv;
-        break;
-
-      case ECORE_GETOPT_TYPE_LONG:
-        *value->longp = store->def.longv;
-        break;
-
-      case ECORE_GETOPT_TYPE_USHORT:
-        *value->ushortp = store->def.ushortv;
-        break;
-
-      case ECORE_GETOPT_TYPE_UINT:
-        *value->uintp = store->def.uintv;
-        break;
-
-      case ECORE_GETOPT_TYPE_ULONG:
-        *value->ulongp = store->def.ulongv;
-        break;
-
-      case ECORE_GETOPT_TYPE_DOUBLE:
-        *value->doublep = store->def.doublev;
-        break;
-     }
-
+   _ecore_getopt_use_optional_value(store, value);
    return EINA_TRUE;
 }
 
@@ -2032,6 +2038,23 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
    return NULL;
 }
 
+static void
+_ecore_getopt_set_defaults(const Ecore_Getopt *parser,
+                           Ecore_Getopt_Value *values)
+{
+   const Ecore_Getopt_Desc *desc = parser->descs;
+
+   for (; !_ecore_getopt_desc_is_sentinel(desc); desc++, values++)
+     {
+        if (desc->action == ECORE_GETOPT_ACTION_STORE)
+          {
+             const Ecore_Getopt_Desc_Store *const s = &desc->action_param.store;
+             if (s->arg_req == ECORE_GETOPT_DESC_ARG_REQUIREMENT_OPTIONAL)
+               _ecore_getopt_use_optional_value(s, values);
+          }
+     }
+}
+
 EAPI int
 ecore_getopt_parse(const Ecore_Getopt *parser,
                    Ecore_Getopt_Value *values,
@@ -2064,6 +2087,8 @@ ecore_getopt_parse(const Ecore_Getopt *parser,
      prog = argv[0];
    else
      prog = parser->prog;
+
+   _ecore_getopt_set_defaults(parser, values);
 
    nonargs = _ecore_getopt_parse_find_nonargs_base(parser, argc, argv);
    if (nonargs < 0)
