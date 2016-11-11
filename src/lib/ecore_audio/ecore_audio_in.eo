@@ -54,7 +54,7 @@ class Ecore.Audio.In (Ecore.Audio)
          get {
          }
          values {
-            preloaded: bool; [[true if the input should be cached, false otherwise]]
+            preloaded: bool; [[$true if the input should be cached, false $otherwise]]
          }
       }
       @property looped {
@@ -71,7 +71,7 @@ class Ecore.Audio.In (Ecore.Audio)
          get {
          }
          values {
-            looped: bool; [[true if the input should be looped, false otherwise]]
+            looped: bool; [[$true if the input should be looped, $false otherwise]]
          }
       }
       @property length {

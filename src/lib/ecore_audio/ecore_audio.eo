@@ -42,7 +42,7 @@ class Ecore.Audio (Efl.Object)
          get {
          }
          values {
-            paused: bool; [[true if object is paused, false if not]]
+            paused: bool; [[$true if object is paused, $false otherwise]]
          }
       }
       @property volume {
@@ -68,14 +68,13 @@ class Ecore.Audio (Efl.Object)
            @since 1.8
          ]]
          set {
-            return: bool; [[true if the source was set correctly (i.e. the file
-                            was opened), EINA_FALSE otherwise
-                          ]]
+            return: bool; [[$true if the source was set correctly (i.e. the file
+                            was opened), $false otherwise]]
          }
          get {
          }
          values {
-            source: string; [[the source to set to (i.e. file, URL, device)]]
+            source: string; [[The source to set to (i.e. file, URL, device)]]
          }
       }
       @property format @virtual_pure {
@@ -88,7 +87,7 @@ class Ecore.Audio (Efl.Object)
 
               @since 1.8
             ]]
-            return: bool; [[true if the format was supported, false otherwise]]
+            return: bool; [[$true if the format was supported, $false otherwise]]
          }
          get {
             [[Get the format of the object
@@ -100,7 +99,7 @@ class Ecore.Audio (Efl.Object)
             ]]
          }
          values {
-            format: Ecore.Audio.Format; [[the format of the object]]
+            format: Ecore.Audio.Format; [[The audio format of the object]]
          }
       }
       vio_set @virtual_pure {
@@ -109,11 +108,11 @@ class Ecore.Audio (Efl.Object)
            @since 1.8
          ]]
          params {
-              vio: ptr(Ecore.Audio.Vio); [[the @Ecore.Audio.Vio struct with
+              vio: ptr(Ecore.Audio.Vio); [[The @Ecore.Audio.Vio struct with
                                         the function callbacks
                                       ]]
-              data: void_ptr; [[user data to pass to the VIO functions]]
-              free_func: efl_key_data_free_func; [[this function takes care to
+              data: void_ptr; [[User data to pass to the VIO functions]]
+              free_func: efl_key_data_free_func; [[This function takes care to
                                                   clean up $data when he VIO is
                                                   destroyed. NULL means do
                                                   nothing.

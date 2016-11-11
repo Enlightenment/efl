@@ -10,7 +10,7 @@ class Ecore.Audio.Out (Ecore.Audio)
 
            @since 1.8
          ]]
-         return: bool; [[true if the input was attached, false otherwise]]
+         return: bool; [[$true if the input was attached, $false otherwise]]
          params {
             @in input: Ecore.Audio.In; [[The input to attach to the output]]
          }
@@ -20,7 +20,7 @@ class Ecore.Audio.Out (Ecore.Audio)
 
            @since 1.8
          ]]
-         return: bool; [[true if the input was detached, false otherwise]]
+         return: bool; [[$true if the input was detached, $false otherwise]]
          params {
             @in input: Ecore.Audio.In; [[The input to detach to the output]]
          }
