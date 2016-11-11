@@ -30,7 +30,7 @@ class Efl.Net.Ssl.Context (Efl.Object) {
             ]]
             get { }
             values {
-                default_client_context: Efl.Net.Ssl.Context;
+                default_client_context: Efl.Net.Ssl.Context; [[Default SSL context]]
             }
         }
 
@@ -45,42 +45,42 @@ class Efl.Net.Ssl.Context (Efl.Object) {
         @property certificates {
             [[The list of paths to certificates to use.]]
             values {
-                paths: free(own(iterator<string>), eina_iterator_free);
+                paths: free(own(iterator<string>), eina_iterator_free); [[Path list for certificates]]
             }
         }
 
         @property private_keys {
             [[The list of paths to private keys to use.]]
             values {
-                paths: free(own(iterator<string>), eina_iterator_free);
+                paths: free(own(iterator<string>), eina_iterator_free); [[Path list for private keys]]
             }
         }
 
         @property certificate_revogation_lists {
             [[The list of paths to CRL (certificate revogation list) to use.]]
             values {
-                paths: free(own(iterator<string>), eina_iterator_free);
+                paths: free(own(iterator<string>), eina_iterator_free); [[Path list for CRL's]]
             }
         }
 
         @property certificate_authorities {
             [[The list of paths to CA (certificate authoritie) to use.]]
             values {
-                paths: free(own(iterator<string>), eina_iterator_free);
+                paths: free(own(iterator<string>), eina_iterator_free); [[Path list for CA's]]
             }
         }
 
         @property default_paths_load {
             [[If $true, will use system's default certificate storage]]
             values {
-                default_paths_load: bool;
+                default_paths_load: bool; [[$if true use system default paths for loading, $false otherwise]]
             }
         }
 
         @property verify_mode {
             [[How to verify the remote peer.]]
             values {
-                verify_mode: Efl.Net.Ssl.Verify_Mode;
+                verify_mode: Efl.Net.Ssl.Verify_Mode; [[Remote verification mode]]
             }
         }
 
@@ -92,7 +92,7 @@ class Efl.Net.Ssl.Context (Efl.Object) {
               @.hostname.
             ]]
             values {
-                hostname_verify: bool;
+                hostname_verify: bool; [[$true if the hostname will be verified, $false otherwise]]
             }
         }
 
@@ -109,7 +109,7 @@ class Efl.Net.Ssl.Context (Efl.Object) {
               It's only used if @.hostname_verify is $true.
             ]]
             values {
-                hostname: string @nullable;
+                hostname: string @nullable; [[Hostname for this socket]]
             }
         }
     }

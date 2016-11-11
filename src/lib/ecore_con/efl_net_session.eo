@@ -3,9 +3,9 @@ enum Efl.Net.Session.State {
 
       @since 1.19
     ]]
-    offline, [[no access point is connected]]
-    local, [[at least one access point was connected and the internet connectio wasn't verified]]
-    online, [[at least one access point was connected and the internet was verified]]
+    offline, [[No access point is connected]]
+    local, [[At least one access point was connected and the internet connectio wasn't verified]]
+    online, [[At least one access point was connected and the internet was verified]]
 }
 
 /* keep in sync with efl_net_control_technology.eo, comment what doesn't make sense */
@@ -42,7 +42,7 @@ class Efl.Net.Session (Efl.Loop_User) {
       @since 1.19
     ]]
     events {
-        changed; [[Some properties were changed.]]
+        changed; [[Called when some properties were changed.]]
     }
 
     methods {
@@ -60,7 +60,7 @@ class Efl.Net.Session (Efl.Loop_User) {
               https://github.com/aldebaran/connman/blob/master/doc/session-policy-format.txt
             ]]
             params {
-                online_required: bool; [[if $false, access points with local state are enough. If $true, the access point must be in online state, with a validated internet connection]]
+                online_required: bool; [[If $false, access points with local state are enough. If $true, the access point must be in online state, with a validated internet connection]]
                 technologies_allowed: Efl.Net.Session.Technology; [[Bitwise OR of technologies to allow]]
             }
         }
@@ -79,7 +79,7 @@ class Efl.Net.Session (Efl.Loop_User) {
             [[The user-friendly access point name.]]
             get { }
             values {
-                name: string;
+                name: string; [[Access point name]]
             }
         }
 
@@ -87,7 +87,7 @@ class Efl.Net.Session (Efl.Loop_User) {
             [[If the session connectivity is offline, local or online.]]
             get { }
             values {
-                state: Efl.Net.Session.State;
+                state: Efl.Net.Session.State; [[Network session state]]
             }
         }
 
@@ -95,7 +95,7 @@ class Efl.Net.Session (Efl.Loop_User) {
             [[The access point technology that backs this session]]
             get { }
             values {
-                technology: Efl.Net.Session.Technology;
+                technology: Efl.Net.Session.Technology; [[Network session technology]]
             }
         }
 
@@ -103,7 +103,7 @@ class Efl.Net.Session (Efl.Loop_User) {
             [[The interface allows the application to assign the socket to a given device using SO_BINDTODEVICE]]
             get { }
             values {
-                interface: string;
+                interface: string; [[Network interface to bind to]]
             }
         }
 
@@ -111,9 +111,9 @@ class Efl.Net.Session (Efl.Loop_User) {
             [[IPv4 in use for this session.]]
             get { }
             values {
-                address: string;
-                netmask: string;
-                gateway: string;
+                address: string; [[IPv4 address]]
+                netmask: string; [[IPv4 netmask]]
+                gateway: string; [[IPv4 gateway]]
             }
         }
 
@@ -121,10 +121,10 @@ class Efl.Net.Session (Efl.Loop_User) {
             [[IPv6 in use for this session.]]
             get { }
             values {
-                address: string;
-                prefix_length: uint8;
-                netmask: string;
-                gateway: string;
+                address: string; [[IPv6 address]]
+                prefix_length: uint8; [[IPv6 prefix]]
+                netmask: string; [[IPv6 netmask]]
+                gateway: string; [[IPv6 gateway]]
             }
         }
     }
