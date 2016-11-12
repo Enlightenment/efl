@@ -950,7 +950,12 @@ EAPI void
 elm_object_tooltip_text_set(Evas_Object *obj, const char *text)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   EINA_SAFETY_ON_NULL_RETURN(text);
+
+   if (!text)
+     {
+        elm_object_tooltip_unset(obj);
+	return;
+     }
 
    text = eina_stringshare_add(text);
    elm_object_tooltip_content_cb_set
