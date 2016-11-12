@@ -163,7 +163,7 @@ _efl_net_session_notifier_update_ipv4(Efl_Net_Session_Data *pd, Eldbus_Message_I
 
    while (eldbus_message_iter_get_and_next(sub, 'e', &entry))
      {
-        const void *key;
+        const char *key;
         Eldbus_Message_Iter *value;
 
         if (!eldbus_message_iter_arguments_get(entry, "sv", &key, &value))
@@ -233,7 +233,7 @@ _efl_net_session_notifier_update_ipv6(Efl_Net_Session_Data *pd, Eldbus_Message_I
 
    while (eldbus_message_iter_get_and_next(sub, 'e', &entry))
      {
-        const void *key;
+        const char *key;
         Eldbus_Message_Iter *value;
 
         if (!eldbus_message_iter_arguments_get(entry, "sv", &key, &value))
@@ -357,7 +357,7 @@ _efl_net_session_notifier_update(const Eldbus_Service_Interface *service, const 
 
    while (eldbus_message_iter_get_and_next(array, 'e', &entry))
      {
-        const void *key;
+        const char *key;
         Eldbus_Message_Iter *var;
         Eina_Error err;
 
