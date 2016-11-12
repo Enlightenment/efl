@@ -5878,7 +5878,11 @@ module_close(Evas_Module *em EINA_UNUSED)
    eina_mempool_del(_mp_command_font);
    eina_mempool_del(_mp_command_map);
    eina_mempool_del(_mp_command_ector);
-   eina_log_domain_unregister(_evas_soft_gen_log_dom);
+   if (_evas_soft_gen_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_evas_soft_gen_log_dom);
+        _evas_soft_gen_log_dom = -1;
+     }
 }
 
 static Evas_Module_Api evas_modapi =

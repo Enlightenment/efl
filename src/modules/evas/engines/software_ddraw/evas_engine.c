@@ -186,7 +186,11 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
-  eina_log_domain_unregister(_evas_log_dom_module);
+   if (_evas_log_dom_module >= 0)
+     {
+        eina_log_domain_unregister(_evas_log_dom_module);
+        _evas_log_dom_module = -1;
+     }
 }
 
 static Evas_Module_Api evas_modapi =

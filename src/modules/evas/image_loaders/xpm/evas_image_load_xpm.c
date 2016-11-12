@@ -726,7 +726,11 @@ module_close(Evas_Module *em EINA_UNUSED)
         eina_file_close(rgb_txt);
         rgb_txt = NULL;
      }
-   eina_log_domain_unregister(_evas_loader_xpm_log_dom);
+   if (_evas_loader_xpm_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_evas_loader_xpm_log_dom);
+        _evas_loader_xpm_log_dom = -1;
+     }
 }
 
 static Evas_Module_Api evas_modapi =

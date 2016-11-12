@@ -1234,8 +1234,11 @@ static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
    /* unregister the eina log domain for this engine */
-   eina_log_domain_unregister(_evas_engine_eglfs_log_dom);
-   _evas_engine_eglfs_log_dom = -1;
+   if (_evas_engine_eglfs_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_evas_engine_eglfs_log_dom);
+        _evas_engine_eglfs_log_dom = -1;
+     }
 }
 
 static Evas_Module_Api evas_modapi =

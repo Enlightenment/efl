@@ -235,7 +235,11 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
-  eina_log_domain_unregister(_evas_engine_fb_log_dom);
+   if (_evas_engine_fb_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_evas_engine_fb_log_dom);
+        _evas_engine_fb_log_dom = -1;
+     }
 }
 
 static Evas_Module_Api evas_modapi =

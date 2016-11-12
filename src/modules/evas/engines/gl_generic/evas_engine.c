@@ -3262,7 +3262,11 @@ static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
    ector_shutdown();
-   eina_log_domain_unregister(_evas_engine_GL_log_dom);
+   if (_evas_engine_GL_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_evas_engine_GL_log_dom);
+        _evas_engine_GL_log_dom = -1;
+     }
    evas_gl_common_module_close();
 }
 

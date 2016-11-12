@@ -172,7 +172,11 @@ static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
    /* unregister the eina log domain for this engine */
-   eina_log_domain_unregister(_evas_engine_drm_log_dom);
+   if (_evas_engine_drm_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_evas_engine_drm_log_dom);
+        _evas_engine_drm_log_dom = -1;
+     }
 
    ecore_shutdown();
 }

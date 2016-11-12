@@ -415,11 +415,11 @@ module_close(Evas_Module *em EINA_UNUSED)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* unregister logging domain */
-   if (_evas_engine_way_shm_log_dom > -1)
-     eina_log_domain_unregister(_evas_engine_way_shm_log_dom);
-
-   /* reset logging domain variable */
-   _evas_engine_way_shm_log_dom = -1;
+   if (_evas_engine_way_shm_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_evas_engine_way_shm_log_dom);
+        _evas_engine_way_shm_log_dom = -1;
+     }
 }
 
 static Evas_Module_Api evas_modapi = 
