@@ -30,6 +30,7 @@ _default_seat_get(Eo *evas_obj)
    Evas *evas = evas_object_evas_get(evas_obj);
 
    edata = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
+   if (!edata) return NULL;
    return edata->default_seat;
 }
 
@@ -94,15 +95,13 @@ _efl_canvas_object_seat_focus_del(Eo *eo_obj,
                                   Efl_Input_Device *seat)
 {
    Eina_List *l;
-   Efl_Input_Device *dev, *def;
+   Efl_Input_Device *dev;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   def = _default_seat_get(eo_obj);
-   if (!seat)
-     seat = def;
+   if (!seat) seat = _default_seat_get(eo_obj);
 
    EINA_LIST_FOREACH(obj->focused_by_seats, l, dev)
      {
@@ -130,15 +129,12 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
                                   Efl_Input_Device *seat)
 {
    Eo *current_focus;
-   Efl_Input_Device *def;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   def = _default_seat_get(eo_obj);
-   if (!seat)
-     seat = def;
+   if (!seat) seat = _default_seat_get(eo_obj);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, EINA_FALSE);
    if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT)
@@ -161,8 +157,9 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
 
    obj->focused_by_seats = eina_list_append(obj->focused_by_seats, seat);
    _evas_focus_set(eo_obj, seat, EINA_TRUE);
+
    //Legacy events...
-   if (seat == def)
+   if (seat == _default_seat_get(eo_obj))
      {
         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_IN,
                                         NULL, _evas_object_event_new(),
@@ -190,8 +187,7 @@ _efl_canvas_object_seat_focus_check(Eo *eo_obj,
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   if (!seat)
-     seat = _default_seat_get(eo_obj);
+   if (!seat) seat = _default_seat_get(eo_obj);
 
    EINA_LIST_FOREACH(obj->focused_by_seats, l, s)
      {
