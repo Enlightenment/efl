@@ -325,6 +325,16 @@ typedef struct
    int state;
 } Bounce;
 
+#ifdef CLOCK_PROCESS_CPUTIME_ID
+static unsigned long long frames = 0;
+
+static void
+_bounce_cb_frame(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   frames++;
+}
+#endif
+
 static Eina_Bool
 _bounce_cb(void *data)
 {
@@ -334,8 +344,31 @@ _bounce_cb(void *data)
      elm_genlist_item_bring_in(bounce->it2, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
    else
      elm_genlist_item_bring_in(bounce->it1, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+
+#ifdef CLOCK_PROCESS_CPUTIME_ID
+   static struct timespec t0;
+   if (bounce->state == 2)
+     {
+        evas_event_callback_add(evas_object_evas_get(bounce->gl),
+                                EVAS_CALLBACK_RENDER_FLUSH_POST,
+                                _bounce_cb_frame, NULL);
+        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t0);
+     }
+#endif
+
    if (bounce->state > bounce_max)
      {
+#ifdef CLOCK_PROCESS_CPUTIME_ID
+        struct timespec t;
+        unsigned long long tll, t0ll, tdll;
+
+        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
+        t0ll = (t0.tv_sec * 1000000000) + t0.tv_nsec;
+        tll = (t.tv_sec * 1000000000) + t.tv_nsec;
+        tdll = tll - t0ll;
+        printf("NS since 2 = %llu , %llu frames = %llu / frame\n",
+               tdll, frames, tdll / (unsigned long long)frames);
+#endif
         if (getenv("ELM_TEST_AUTOBOUNCE")) elm_exit();
      }
    return EINA_TRUE;
