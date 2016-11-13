@@ -674,8 +674,6 @@ EOLIAN static void
 _elm_multibuttonentry_item_efl_object_destructor(Eo *eo_it,
                                               Elm_Multibuttonentry_Item_Data *it)
 {
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_del_signal_emit(WIDGET(it), eo_it);
    _item_del(it);
 
    efl_destructor(efl_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
@@ -943,11 +941,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
    efl_event_callback_legacy_call
      (obj, ELM_MULTIBUTTONENTRY_EVENT_ITEM_ADDED, eo_item);
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, eo_item);
-        elm_interface_atspi_accessible_added(eo_item);
-     }
+   elm_interface_atspi_accessible_parent_set(eo_item, obj);
 
    return eo_item;
 }
@@ -2041,14 +2035,6 @@ _elm_multibuttonentry_class_constructor(Efl_Class *klass)
 
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
       _elm_multibuttonentry_smart_focus_next_enable = EINA_TRUE;
-}
-
-EOLIAN static Eina_List*
-_elm_multibuttonentry_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_Multibuttonentry_Data *sd)
-{
-   Eina_List *ret;
-   ret = elm_interface_atspi_accessible_children_get(efl_super(obj, ELM_MULTIBUTTONENTRY_CLASS));
-   return eina_list_merge(eina_list_clone(sd->items), ret);
 }
 
 EOLIAN static const char*

@@ -550,7 +550,6 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Layout.sizing_eval;
       Elm.Interface_Scrollable.bounce_allow { get; set; }
       Elm.Interface_Scrollable.policy { get; set; }
-      Elm.Interface.Atspi_Accessible.children { get; }
       Elm.Interface.Atspi_Accessible.state_set { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Elm.Interface.Atspi.Selection.selected_children_count { get; }

@@ -2275,11 +2275,9 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
 
    if (_elm_config->atspi_mode)
      {
-        Eo *root;
+        Eo *root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+        elm_interface_atspi_accessible_parent_set(obj, root);
         elm_interface_atspi_window_created_signal_emit(obj);
-        root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
-        if (root)
-           elm_interface_atspi_accessible_children_changed_added_signal_emit(root, obj);
      }
 
    if (do_eval)
@@ -2337,11 +2335,8 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
 
    if (_elm_config->atspi_mode)
      {
-        Eo *root;
-        root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
         elm_interface_atspi_window_destroyed_signal_emit(obj);
-        if (root)
-           elm_interface_atspi_accessible_children_changed_del_signal_emit(root, obj);
+        elm_interface_atspi_accessible_parent_set(obj, NULL);
      }
 
    if (_elm_win_policy_quit_triggered(obj))
@@ -6475,6 +6470,7 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUS
    Evas_Object *win;
    Eina_List *l;
 
+   Eo *root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
    EINA_LIST_FOREACH(_elm_win_list, l, win)
      {
         /**
@@ -6483,6 +6479,7 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUS
          * receive all org.a11y.window events and could keep track of active
          * windows whithin system.
          */
+        elm_interface_atspi_accessible_parent_set(win, root);
         elm_interface_atspi_window_created_signal_emit(win);
         if (elm_win_focus_get(win))
           {
@@ -6511,15 +6508,6 @@ _efl_ui_win_class_constructor(Efl_Class *klass)
         if (bridge)
            efl_event_callback_add(bridge, ELM_ATSPI_BRIDGE_EVENT_CONNECTED, _on_atspi_bus_connected, NULL);
      }
-}
-
-EOLIAN static Eo*
-_efl_ui_win_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
-{
-   // attach all kinds of windows directly to ATSPI application root object
-   Eo *root;
-   root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
-   return root;
 }
 
 EOLIAN static const Elm_Atspi_Action*

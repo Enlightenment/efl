@@ -4483,6 +4483,9 @@ _elm_gengrid_item_new(Elm_Gengrid_Data *sd,
      (!strcmp(it->itc->item_style, "group_index"));
    sd->item_count++;
 
+   elm_interface_atspi_accessible_parent_set(EO_OBJ(it), sd->obj);
+
+
   return it;
 }
 
@@ -4771,12 +4774,6 @@ _elm_gengrid_item_append(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_C
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(EO_OBJ(it));
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
-     }
-
    return EO_OBJ(it);
 }
 
@@ -4796,12 +4793,6 @@ _elm_gengrid_item_prepend(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_
 
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
-
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(EO_OBJ(it));
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
-     }
 
    return EO_OBJ(it);
 }
@@ -5987,20 +5978,6 @@ _elm_gengrid_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
-}
-
-EOLIAN Eina_List*
-_elm_gengrid_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_Gengrid_Data *sd)
-{
-   Eina_List *ret = NULL, *ret2 = NULL;
-   Elm_Gen_Item *it;
-
-   EINA_INLIST_FOREACH(sd->items, it)
-      ret = eina_list_append(ret, EO_OBJ(it));
-
-   ret2 = elm_interface_atspi_accessible_children_get(efl_super(obj, ELM_GENGRID_CLASS));
-
-   return eina_list_merge(ret, ret2);
 }
 
 EOLIAN Elm_Atspi_State_Set

@@ -431,6 +431,7 @@ _item_content_realize(Elm_Gen_Item *it,
                   goto out;
                }
              elm_widget_sub_object_add(WIDGET(it), content);
+             elm_interface_atspi_accessible_parent_set(content, EO_OBJ(it));
           }
         *contents = eina_list_append(*contents, content);
 
@@ -4764,12 +4765,6 @@ _item_queue(Elm_Genlist_Data *sd,
 //   evas_event_thaw_eval(evas_object_evas_get(sd->obj));
    evas_object_geometry_get(sd->obj, NULL, NULL, &w, NULL);
    if (w > 0) _requeue_idle_enterer(sd);
-
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(EO_OBJ(it));
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
-     }
 }
 
 /* If the application wants to know the relative item, use
@@ -6014,8 +6009,6 @@ _elm_genlist_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED,
         sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(it));
         return EINA_FALSE;
      }
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_del_signal_emit(WIDGET(it),eo_it);
 
    _item_del(it);
    return EINA_TRUE;
@@ -6173,6 +6166,8 @@ _elm_genlist_item_new(Elm_Genlist_Data *sd,
      }
    it->item->expanded_depth = depth;
    sd->item_count++;
+
+   elm_interface_atspi_accessible_parent_set(eo_it, sd->obj);
 
    return it;
 }
@@ -8569,20 +8564,6 @@ _elm_genlist_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
-}
-
-EOLIAN Eina_List*
-_elm_genlist_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_Genlist_Data *sd)
-{
-   Eina_List *ret = NULL, *ret2 = NULL;
-   Elm_Gen_Item *it;
-
-   EINA_INLIST_FOREACH(sd->items, it)
-      ret = eina_list_append(ret, EO_OBJ(it));
-
-   ret2 = elm_interface_atspi_accessible_children_get(efl_super(obj, ELM_GENLIST_CLASS));
-
-   return eina_list_merge(ret, ret2);
 }
 
 EOLIAN Elm_Atspi_State_Set
