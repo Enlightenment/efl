@@ -63,8 +63,6 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection,
         Elm.Widget.Item.signal_emit;
         Elm.Widget.Item.part_text { get; set; }
         Elm.Widget.Item.part_content { get; set; }
-        Elm.Interface.Atspi_Accessible.children { get; }
-        Elm.Interface.Atspi_Accessible.parent { get; }
         Elm.Interface.Atspi_Accessible.role { get; }
         Elm.Interface.Atspi_Accessible.name { get; }
         Elm.Interface.Atspi_Accessible.state_set { get; }

@@ -577,6 +577,8 @@ _item_new(Evas_Object *obj,
    it->level = sd->level;
    it->priority = -1;
 
+   elm_interface_atspi_accessible_parent_set(eo_item, obj);
+
    return eo_item;
 }
 
@@ -1416,12 +1418,6 @@ _elm_index_item_append(Eo *obj, Elm_Index_Data *sd, const char *letter, Evas_Sma
    ELM_INDEX_ITEM_DATA_GET(eo_item, it);
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(eo_item);
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, eo_item);
-     }
-
    return eo_item;
 }
 
@@ -1437,12 +1433,6 @@ _elm_index_item_prepend(Eo *obj, Elm_Index_Data *sd, const char *letter, Evas_Sm
 
    ELM_INDEX_ITEM_DATA_GET(eo_item, it);
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
-
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(eo_item);
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, eo_item);
-     }
 
    return eo_item;
 }
@@ -1473,12 +1463,6 @@ _elm_index_item_insert_after(Eo *obj, Elm_Index_Data *sd, Elm_Object_Item *after
    ELM_INDEX_ITEM_DATA_GET(eo_item, it);
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(eo_item);
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, eo_item);
-     }
-
    return eo_item;
 }
 
@@ -1496,12 +1480,6 @@ _elm_index_item_insert_before(Eo *obj, Elm_Index_Data *sd, Elm_Object_Item *befo
 
    ELM_INDEX_ITEM_DATA_GET(eo_item, it);
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
-
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(eo_item);
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, eo_item);
-     }
 
    return eo_item;
 }
@@ -1540,12 +1518,6 @@ _elm_index_item_sorted_insert(Eo *obj, Elm_Index_Data *sd, const char *letter, E
      }
    ELM_INDEX_ITEM_DATA_GET(eo_item, it);
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
-
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(eo_item);
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, eo_item);
-     }
 
    return eo_item;
 }

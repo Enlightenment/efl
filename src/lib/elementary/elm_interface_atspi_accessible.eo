@@ -416,6 +416,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
       }
    }
    implements {
+      Efl.Object.constructor;
       Efl.Object.destructor;
    }
    events {

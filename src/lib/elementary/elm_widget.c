@@ -744,7 +744,7 @@ _elm_widget_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eva
 }
 
 EOLIAN static void
-_elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vis)
+_elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED, Eina_Bool vis)
 {
    Eina_Iterator *it;
    Evas_Object *o;
@@ -763,20 +763,6 @@ _elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vi
        efl_gfx_visible_set(o, vis);
      }
    eina_iterator_free(it);
-
-   if (!_elm_config->atspi_mode || pd->on_destroy)
-     return;
-
-   if (vis)
-     {
-        elm_interface_atspi_accessible_added(obj);
-        if (_elm_widget_onscreen_is(obj))
-          elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_TRUE);
-     }
-   else
-     {
-        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_FALSE);
-     }
 }
 
 EOLIAN static void
@@ -1429,6 +1415,9 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
    evas_object_data_set(sobj, "elm-parent", obj);
 
+   if (efl_isa(sobj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+     elm_interface_atspi_accessible_parent_set(sobj, obj);
+
    _callbacks_add(sobj, obj);
    if (_elm_widget_is(sobj))
      {
@@ -1460,13 +1449,6 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
 
         elm_widget_display_mode_set(sobj,
               evas_object_size_hint_display_mode_get(obj));
-        if (_elm_config->atspi_mode && !sd->on_create)
-          {
-             Elm_Interface_Atspi_Accessible *aparent;
-             aparent = elm_interface_atspi_accessible_parent_get(sobj);
-             if (aparent)
-                elm_interface_atspi_accessible_children_changed_added_signal_emit(aparent, sobj);
-          }
      }
 
 end:
@@ -1538,13 +1520,6 @@ _elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
                   parent = sdp->parent_obj;
                }
           }
-        if (_elm_config->atspi_mode && !sd->on_destroy)
-          {
-             Elm_Interface_Atspi_Accessible *aparent;
-             aparent = elm_interface_atspi_accessible_parent_get(sobj);
-             if (aparent)
-                elm_interface_atspi_accessible_children_changed_del_signal_emit(aparent, sobj);
-          }
 
         ELM_WIDGET_DATA_GET(sobj, sdc);
         sdc->parent_obj = NULL;
@@ -1555,6 +1530,9 @@ _elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
    if (sd->resize_obj == sobj) sd->resize_obj = NULL;
 
    sd->subobjs = eina_list_remove(sd->subobjs, sobj);
+
+   if (efl_isa(sobj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+     elm_interface_atspi_accessible_parent_set(sobj, NULL);
 
    _callbacks_del(sobj, obj);
 
@@ -4933,8 +4911,6 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
      }
    eina_hash_free(item->labels);
 
-   elm_interface_atspi_accessible_removed(eo_item);
-
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
 
    efl_destructor(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
@@ -6210,7 +6186,6 @@ _elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED
      efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
    sd->manager.provider = NULL;
 
-   elm_interface_atspi_accessible_removed(obj);
    if (sd->logical.parent)
      {
         efl_weak_unref(&sd->logical.parent);
@@ -6313,28 +6288,6 @@ _elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Wid
    _pd->accessible_name =  eina_stringshare_add(accessible_name);
    free(accessible_name);
    return _pd->accessible_name;
-}
-
-EOLIAN static Eina_List*
-_elm_widget_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
-{
-   Eina_List *l, *accs = NULL;
-   Evas_Object *widget;
-
-   EINA_LIST_FOREACH(pd->subobjs, l, widget)
-     {
-        if (!elm_object_widget_check(widget)) continue;
-        if (!efl_isa(widget, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN)) continue;
-          accs = eina_list_append(accs, widget);
-     }
-   return accs;
-}
-
-EOLIAN static Eo*
-_elm_widget_elm_interface_atspi_accessible_parent_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
-{
-   Elm_Interface_Atspi_Accessible *parent = obj;
-   return efl_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? parent : NULL;
 }
 
 EOLIAN static Elm_Atspi_State_Set

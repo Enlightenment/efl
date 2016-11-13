@@ -8,6 +8,5 @@ class Elm.Atspi.App.Object (Efl.Object, Elm.Interface.Atspi_Accessible)
       Elm.Interface.Atspi_Accessible.name { get; }
       Elm.Interface.Atspi_Accessible.description { get; set; }
       Elm.Interface.Atspi_Accessible.role { get; }
-      Elm.Interface.Atspi_Accessible.children { get; }
    }
 }

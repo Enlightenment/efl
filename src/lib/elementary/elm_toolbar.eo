@@ -332,7 +332,6 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
       Efl.Orientation.orientation { get; set; }
       Elm.Widget.focus_register;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
-      Elm.Interface.Atspi_Accessible.children { get; }
       Elm.Interface.Atspi_Accessible.state_set { get; }
       Elm.Interface.Atspi.Selection.selected_children_count { get; }
       Elm.Interface.Atspi.Selection.selected_child { get; }
