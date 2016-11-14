@@ -627,7 +627,7 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
 
    if (edata->ticking)
      {
-        ecore_evas_animator_tick(ee, NULL);
+        ecore_evas_animator_tick(ee, NULL, ecore_loop_time_get());
         ecore_drm2_fb_flip(NULL, edata->output);
      }
    else if (ret) ecore_drm2_fb_flip(NULL, edata->output);

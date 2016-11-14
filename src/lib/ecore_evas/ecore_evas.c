@@ -2438,7 +2438,7 @@ _ecore_evas_fps_debug_rendertime_add(double t)
 static Ecore_Evas *_general_tick = NULL;
 
 EAPI void
-ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
+ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_time)
 {
    Ecore_Evas *subee;
    Eina_List *l;
@@ -2453,13 +2453,15 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
         a.update_area = *viewport;
      }
 
+   ecore_loop_time_set(loop_time);
+
    ee->animator_ran = EINA_TRUE;
    efl_event_callback_legacy_call(ee->evas, EFL_EVENT_ANIMATOR_TICK, &a);
 
    // FIXME: We do not support partial animator in the subcanvas
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
      {
-        ecore_evas_animator_tick(subee, NULL);
+        ecore_evas_animator_tick(subee, NULL, loop_time);
      }
 
    // We are the source of sync for general animator.
@@ -2501,7 +2503,7 @@ _ecore_evas_tick_source_find(void)
 static Eina_Bool
 _ecore_evas_animator_fallback(void *data)
 {
-   ecore_evas_animator_tick(data, NULL);
+   ecore_evas_animator_tick(data, NULL, ecore_loop_time_get());
    return EINA_TRUE;
 }
 

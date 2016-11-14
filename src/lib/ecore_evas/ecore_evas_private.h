@@ -436,7 +436,7 @@ const Eina_List *_ecore_evas_available_engines_get(void);
 void _ecore_evas_engine_init(void);
 void _ecore_evas_engine_shutdown(void);
 
-EAPI void ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport);
+EAPI void ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_time);
 
 Eina_Module *_ecore_evas_vnc_server_module_load(void);
 
