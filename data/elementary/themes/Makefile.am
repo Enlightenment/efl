@@ -106,6 +106,7 @@ elementary/themes/edc/elm/cursor.edc \
 elementary/themes/edc/elm/dayselector.edc \
 elementary/themes/edc/elm/diskselector.edc \
 elementary/themes/edc/elm/entry.edc \
+elementary/themes/edc/elm/ews.edc \
 elementary/themes/edc/elm/fileselector.edc \
 elementary/themes/edc/elm/flipselector.edc \
 elementary/themes/edc/elm/focus.edc \
