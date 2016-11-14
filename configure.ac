@@ -3811,9 +3811,10 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_DRM2], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM2], [elput])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM2], [eeze])
 
-EFL_DEPEND_PKG([ECORE_DRM2], [DRM], [libdrm >= 2.4 gbm])
+EFL_DEPEND_PKG([ECORE_DRM2], [DRM], [gbm])
 
 EFL_ADD_LIBS([ECORE_DRM2], [-lm])
+EFL_ADD_LIBS([ECORE_DRM2], [-ldl])
 
 AC_CHECK_LIB(drm, drmModeAtomicCommit, AC_DEFINE(HAVE_ATOMIC_DRM, [], [Atomic modeset supported]))
 
