@@ -3,7 +3,7 @@
 static Eina_Bool
 _fb2_create(Ecore_Drm2_Fb *fb)
 {
-   struct drm_mode_fb_cmd2 cmd;
+   drm_mode_fb_cmd2 cmd;
    uint32_t hdls[4] = { 0 }, pitches[4] = { 0 }, offsets[4] = { 0 };
    uint64_t modifiers[4] = { 0 };
 
@@ -12,7 +12,7 @@ _fb2_create(Ecore_Drm2_Fb *fb)
    offsets[0] = 0;
    modifiers[0] = 0;
 
-   memset(&cmd, 0, sizeof(struct drm_mode_fb_cmd2));
+   memset(&cmd, 0, sizeof(drm_mode_fb_cmd2));
    cmd.fb_id = 0;
    cmd.width = fb->w;
    cmd.height = fb->h;
@@ -23,7 +23,7 @@ _fb2_create(Ecore_Drm2_Fb *fb)
    memcpy(cmd.offsets, offsets, 4 * sizeof(offsets[0]));
    memcpy(cmd.modifier, modifiers, 4 * sizeof(modifiers[0]));
 
-   if (drmIoctl(fb->fd, DRM_IOCTL_MODE_ADDFB2, &cmd))
+   if (sym_drmIoctl(fb->fd, DRM_IOCTL_MODE_ADDFB2, &cmd))
      return EINA_FALSE;
 
    fb->id = cmd.fb_id;
@@ -39,67 +39,67 @@ _fb_atomic_flip(Ecore_Drm2_Output *output, Ecore_Drm2_Plane_State *pstate, uint3
    drmModeAtomicReq *req = NULL;
    Ecore_Drm2_Crtc_State *cstate;
 
-   req = drmModeAtomicAlloc();
+   req = sym_drmModeAtomicAlloc();
    if (!req) return -1;
 
-   drmModeAtomicSetCursor(req, 0);
+   sym_drmModeAtomicSetCursor(req, 0);
 
    cstate = output->crtc_state;
 
-   ret = drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
-                                  cstate->mode.value);
+   ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
+                                      cstate->mode.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
-                                  cstate->active.value);
+   ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
+                                      cstate->active.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
-                                  pstate->cid.id, pstate->cid.value);
+   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                      pstate->cid.id, pstate->cid.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
-                                  pstate->fid.id, pstate->fid.value);
+   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                      pstate->fid.id, pstate->fid.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
-                                  pstate->sx.id, pstate->sx.value);
+   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                      pstate->sx.id, pstate->sx.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
-                                  pstate->sy.id, pstate->sy.value);
+   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                      pstate->sy.id, pstate->sy.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
-                                  pstate->sw.id, pstate->sw.value);
+   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                      pstate->sw.id, pstate->sw.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
-                                  pstate->sh.id, pstate->sh.value);
+   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                      pstate->sh.id, pstate->sh.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
-                                  pstate->cx.id, pstate->cx.value);
+   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                      pstate->cx.id, pstate->cx.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
-                                  pstate->cy.id, pstate->cy.value);
+   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                      pstate->cy.id, pstate->cy.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
-                                  pstate->cw.id, pstate->cw.value);
+   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                      pstate->cw.id, pstate->cw.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicAddProperty(req, pstate->obj_id,
-                                  pstate->ch.id, pstate->ch.value);
+   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                      pstate->ch.id, pstate->ch.value);
    if (ret < 0) goto err;
 
-   ret = drmModeAtomicCommit(output->fd, req, flags, output->user_data);
+   ret = sym_drmModeAtomicCommit(output->fd, req, flags, output->user_data);
    if (ret < 0) ERR("Failed to commit Atomic FB Flip: %m");
    else ret = 0;
 
 err:
-   drmModeAtomicFree(req);
+   sym_drmModeAtomicFree(req);
    return ret;
 }
 #endif
@@ -108,9 +108,9 @@ EAPI Ecore_Drm2_Fb *
 ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned int format)
 {
    Ecore_Drm2_Fb *fb;
-   struct drm_mode_create_dumb carg;
-   struct drm_mode_destroy_dumb darg;
-   struct drm_mode_map_dumb marg;
+   drm_mode_create_dumb carg;
+   drm_mode_destroy_dumb darg;
+   drm_mode_map_dumb marg;
    int ret;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL((fd < 0), NULL);
@@ -125,12 +125,12 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
    fb->depth = depth;
    fb->format = format;
 
-   memset(&carg, 0, sizeof(struct drm_mode_create_dumb));
+   memset(&carg, 0, sizeof(drm_mode_create_dumb));
    carg.bpp = bpp;
    carg.width = width;
    carg.height = height;
 
-   ret = drmIoctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
+   ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
    if (ret) goto err;
 
    fb->hdl = carg.handle;
@@ -140,8 +140,8 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
    if (!_fb2_create(fb))
      {
         ret =
-          drmModeAddFB(fd, width, height, depth, bpp,
-                       fb->stride, fb->hdl, &fb->id);
+          sym_drmModeAddFB(fd, width, height, depth, bpp,
+                           fb->stride, fb->hdl, &fb->id);
         if (ret)
           {
              ERR("Could not add framebuffer: %m");
@@ -149,9 +149,9 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
           }
      }
 
-   memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
+   memset(&marg, 0, sizeof(drm_mode_map_dumb));
    marg.handle = fb->hdl;
-   ret = drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
+   ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
    if (ret)
      {
         ERR("Could not map framebuffer: %m");
@@ -168,11 +168,11 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
    return fb;
 
 map_err:
-   drmModeRmFB(fd, fb->id);
+   sym_drmModeRmFB(fd, fb->id);
 add_err:
-   memset(&darg, 0, sizeof(struct drm_mode_destroy_dumb));
+   memset(&darg, 0, sizeof(drm_mode_destroy_dumb));
    darg.handle = fb->hdl;
-   drmIoctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
+   sym_drmIoctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
 err:
    free(fb);
    return NULL;
@@ -181,7 +181,7 @@ err:
 EAPI Ecore_Drm2_Fb *
 ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo)
 {
-   struct drm_mode_map_dumb marg;
+   drm_mode_map_dumb marg;
    Ecore_Drm2_Fb *fb;
    int ret;
 
@@ -205,8 +205,8 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
 
    if (!_fb2_create(fb))
      {
-        if (drmModeAddFB(fd, width, height, depth, bpp,
-                         fb->stride, fb->hdl, &fb->id))
+        if (sym_drmModeAddFB(fd, width, height, depth, bpp,
+                             fb->stride, fb->hdl, &fb->id))
           {
              ERR("Could not add framebuffer: %m");
              goto err;
@@ -214,9 +214,9 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
      }
 
    /* mmap it if we can so screenshots are easy */
-   memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
+   memset(&marg, 0, sizeof(drm_mode_map_dumb));
    marg.handle = fb->hdl;
-   ret = drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
+   ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
    if (!ret)
      {
         fb->mmap = mmap(NULL, fb->size, PROT_WRITE, MAP_SHARED, fd, marg.offset);
@@ -236,15 +236,15 @@ ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb)
 
    if (fb->mmap) munmap(fb->mmap, fb->size);
 
-   if (fb->id) drmModeRmFB(fb->fd, fb->id);
+   if (fb->id) sym_drmModeRmFB(fb->fd, fb->id);
 
    if (!fb->gbm)
      {
-        struct drm_mode_destroy_dumb darg;
+        drm_mode_destroy_dumb darg;
 
-        memset(&darg, 0, sizeof(struct drm_mode_destroy_dumb));
+        memset(&darg, 0, sizeof(drm_mode_destroy_dumb));
         darg.handle = fb->hdl;
-        drmIoctl(fb->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
+        sym_drmIoctl(fb->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
      }
 
    free(fb);
@@ -291,7 +291,7 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
         clip[i].y2 = rects[i].h;
      }
 
-   ret = drmModeDirtyFB(fb->fd, fb->id, clip, count);
+   ret = sym_drmModeDirtyFB(fb->fd, fb->id, clip, count);
    if ((ret) && (ret == -EINVAL))
      WRN("Could not mark framebuffer as dirty: %m");
 #endif
@@ -397,9 +397,9 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
             (output->current->stride != fb->stride))
           {
              ret =
-               drmModeSetCrtc(fb->fd, output->crtc_id, fb->id,
-                              output->x, output->y, &output->conn_id, 1,
-                              &output->current_mode->info);
+               sym_drmModeSetCrtc(fb->fd, output->crtc_id, fb->id,
+                                  output->x, output->y, &output->conn_id, 1,
+                                  &output->current_mode->info);
              if (ret)
                {
                   ERR("Failed to set Mode %dx%d for Output %s: %m",
@@ -420,8 +420,8 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
           }
 
         ret =
-          drmModePageFlip(fb->fd, output->crtc_id, fb->id,
-                          DRM_MODE_PAGE_FLIP_EVENT, output->user_data);
+          sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
+                              DRM_MODE_PAGE_FLIP_EVENT, output->user_data);
         if ((ret < 0) && (errno != EBUSY))
           {
              DBG("Pageflip Failed for Crtc %u on Connector %u: %m",

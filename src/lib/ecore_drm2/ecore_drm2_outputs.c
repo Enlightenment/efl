@@ -220,14 +220,14 @@ _output_edid_find(Ecore_Drm2_Output *output, const drmModeConnector *conn)
 
    for (; i < conn->count_props && !blob; i++)
      {
-        if (!(prop = drmModeGetProperty(output->fd, conn->props[i])))
+        if (!(prop = sym_drmModeGetProperty(output->fd, conn->props[i])))
           continue;
         if ((prop->flags & DRM_MODE_PROP_BLOB) &&
             (!strcmp(prop->name, "EDID")))
           {
-             blob = drmModeGetPropertyBlob(output->fd, conn->prop_values[i]);
+             blob = sym_drmModeGetPropertyBlob(output->fd, conn->prop_values[i]);
           }
-        drmModeFreeProperty(prop);
+        sym_drmModeFreeProperty(prop);
         if (blob) break;
      }
 
@@ -246,7 +246,7 @@ _output_edid_find(Ecore_Drm2_Output *output, const drmModeConnector *conn)
           eina_stringshare_replace(&output->serial, output->edid.serial);
      }
 
-   drmModeFreePropertyBlob(blob);
+   sym_drmModeFreePropertyBlob(blob);
 }
 
 static int
@@ -267,11 +267,11 @@ _output_crtc_find(const drmModeRes *res, const drmModeConnector *conn, Ecore_Drm
 
    for (j = 0; j < conn->count_encoders; j++)
      {
-        enc = drmModeGetEncoder(dev->fd, conn->encoders[j]);
+        enc = sym_drmModeGetEncoder(dev->fd, conn->encoders[j]);
         if (!enc) continue;
 
         crtc = enc->crtc_id;
-        drmModeFreeEncoder(enc);
+        sym_drmModeFreeEncoder(enc);
 
         for (i = 0; i < res->count_crtcs; i++)
           if (crtc == res->crtcs[i])
@@ -343,14 +343,14 @@ _output_modes_create(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output, const dr
 
    memset(&crtc_mode, 0, sizeof(crtc_mode));
 
-   enc = drmModeGetEncoder(dev->fd, conn->encoder_id);
+   enc = sym_drmModeGetEncoder(dev->fd, conn->encoder_id);
    if (enc)
      {
-        crtc = drmModeGetCrtc(dev->fd, enc->crtc_id);
-        drmModeFreeEncoder(enc);
+        crtc = sym_drmModeGetCrtc(dev->fd, enc->crtc_id);
+        sym_drmModeFreeEncoder(enc);
         if (!crtc) return;
         if (crtc->mode_valid) crtc_mode = crtc->mode;
-        drmModeFreeCrtc(crtc);
+        sym_drmModeFreeCrtc(crtc);
      }
 
    for (i = 0; i < conn->count_modes; i++)
@@ -397,12 +397,12 @@ _output_dpms_property_get(int fd, const drmModeConnector *conn)
 
    for (; i < conn->count_props; i++)
      {
-        prop = drmModeGetProperty(fd, conn->props[i]);
+        prop = sym_drmModeGetProperty(fd, conn->props[i]);
         if (!prop) continue;
 
         if (!strcmp(prop->name, "DPMS")) return prop;
 
-        drmModeFreeProperty(prop);
+        sym_drmModeFreeProperty(prop);
      }
 
    return NULL;
@@ -416,29 +416,29 @@ _output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
    drmModeAtomicReq *req = NULL;
    Eina_Bool ret = EINA_TRUE;
 
-   req = drmModeAtomicAlloc();
+   req = sym_drmModeAtomicAlloc();
    if (!req) return EINA_FALSE;
 
-   drmModeAtomicSetCursor(req, 0);
+   sym_drmModeAtomicSetCursor(req, 0);
 
    cstate = output->crtc_state;
 
-   if (drmModeAtomicAddProperty(req, cstate->obj_id,
-                                cstate->active.id, level) < 0)
+   if (sym_drmModeAtomicAddProperty(req, cstate->obj_id,
+                                    cstate->active.id, level) < 0)
      {
         ERR("Failed to add connector property DPMS");
         ret = EINA_FALSE;
         goto err;
      }
 
-   if (drmModeAtomicCommit(output->fd, req, 0, NULL))
+   if (sym_drmModeAtomicCommit(output->fd, req, 0, NULL))
      {
         ERR("Could not set dpms property: %m");
         ret = EINA_FALSE;
      }
 
 err:
-   drmModeAtomicFree(req);
+   sym_drmModeAtomicFree(req);
 
    return ret;
 }
@@ -736,7 +736,7 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    output->connected = (conn->connection == DRM_MODE_CONNECTED);
 
-   output->ocrtc = drmModeGetCrtc(dev->fd, output->crtc_id);
+   output->ocrtc = sym_drmModeGetCrtc(dev->fd, output->crtc_id);
 
 #ifdef HAVE_ATOMIC_DRM
    if (_ecore_drm2_use_atomic)
@@ -801,12 +801,12 @@ _outputs_update(Ecore_Drm2_Device *dev)
    uint32_t connected = 0, disconnected = 0;
    int i = 0, x = 0, y = 0;
 
-   res = drmModeGetResources(dev->fd);
+   res = sym_drmModeGetResources(dev->fd);
    if (!res) return;
 
    for (i = 0; i < res->count_connectors; i++)
      {
-        conn = drmModeGetConnector(dev->fd, res->connectors[i]);
+        conn = sym_drmModeGetConnector(dev->fd, res->connectors[i]);
         if (!conn) continue;
 
         if (conn->connection != DRM_MODE_CONNECTED) goto next;
@@ -831,10 +831,10 @@ _outputs_update(Ecore_Drm2_Device *dev)
           }
 
 next:
-        drmModeFreeConnector(conn);
+        sym_drmModeFreeConnector(conn);
      }
 
-   drmModeFreeResources(res);
+   sym_drmModeFreeResources(res);
 
    disconnected = (dev->alloc.conn & ~connected);
    if (disconnected)
@@ -890,7 +890,7 @@ _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
    EINA_LIST_FREE(output->modes, mode)
      {
         if (mode->id)
-          drmModeDestroyPropertyBlob(output->fd, mode->id);
+          sym_drmModeDestroyPropertyBlob(output->fd, mode->id);
         free(mode);
      }
 
@@ -903,7 +903,7 @@ _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
    eina_stringshare_del(output->model);
    eina_stringshare_del(output->serial);
 
-   drmModeFreeProperty(output->dpms);
+   sym_drmModeFreeProperty(output->dpms);
    free(output->edid.blob);
 
    free(output);
@@ -920,7 +920,7 @@ ecore_drm2_outputs_create(Ecore_Drm2_Device *device)
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL((device->fd < 0), EINA_FALSE);
 
-   res = drmModeGetResources(device->fd);
+   res = sym_drmModeGetResources(device->fd);
    if (!res) return EINA_FALSE;
 
    device->crtcs = calloc(res->count_crtcs, sizeof(uint32_t));
@@ -936,7 +936,7 @@ ecore_drm2_outputs_create(Ecore_Drm2_Device *device)
 
    for (i = 0; i < res->count_connectors; i++)
      {
-        conn = drmModeGetConnector(device->fd, res->connectors[i]);
+        conn = sym_drmModeGetConnector(device->fd, res->connectors[i]);
         if (!conn) continue;
 
         if (!_output_create(device, res, conn, x, y, &w, EINA_FALSE))
@@ -945,12 +945,12 @@ ecore_drm2_outputs_create(Ecore_Drm2_Device *device)
         x += w;
 
 next:
-        drmModeFreeConnector(conn);
+        sym_drmModeFreeConnector(conn);
      }
 
    if (eina_list_count(device->outputs) < 1) goto err;
 
-   drmModeFreeResources(res);
+   sym_drmModeFreeResources(res);
 
    events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE |
              EEZE_UDEV_EVENT_CHANGE);
@@ -962,7 +962,7 @@ next:
    return EINA_TRUE;
 
 err:
-   drmModeFreeResources(res);
+   sym_drmModeFreeResources(res);
    return EINA_FALSE;
 }
 
@@ -995,22 +995,22 @@ ecore_drm2_output_dpms_get(Ecore_Drm2_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, -1);
 
    props =
-     drmModeObjectGetProperties(output->fd, output->conn_id,
-                                DRM_MODE_OBJECT_CONNECTOR);
+     sym_drmModeObjectGetProperties(output->fd, output->conn_id,
+                                    DRM_MODE_OBJECT_CONNECTOR);
    if (!props) return -1;
 
    for (i = 0; i < props->count_props; i++)
      {
-        prop = drmModeGetProperty(output->fd, props->props[i]);
+        prop = sym_drmModeGetProperty(output->fd, props->props[i]);
         if (!prop) continue;
 
         if (!strcmp(prop->name, "DPMS"))
           val = props->prop_values[i];
 
-        drmModeFreeProperty(prop);
+        sym_drmModeFreeProperty(prop);
      }
 
-   drmModeFreeObjectProperties(props);
+   sym_drmModeFreeObjectProperties(props);
 
    return val;
 }
@@ -1026,8 +1026,8 @@ ecore_drm2_output_dpms_set(Ecore_Drm2_Output *output, int level)
      _output_dpms_atomic_set(output, level);
    else
 #endif
-     drmModeConnectorSetProperty(output->fd, output->conn_id,
-                                 output->dpms->prop_id, level);
+     sym_drmModeConnectorSetProperty(output->fd, output->conn_id,
+                                     output->dpms->prop_id, level);
 }
 
 EAPI char *
@@ -1137,13 +1137,13 @@ ecore_drm2_output_crtc_size_get(Ecore_Drm2_Output *output, int *w, int *h)
 
    EINA_SAFETY_ON_NULL_RETURN(output);
 
-   crtc = drmModeGetCrtc(output->fd, output->crtc_id);
+   crtc = sym_drmModeGetCrtc(output->fd, output->crtc_id);
    if (!crtc) return;
 
    if (w) *w = crtc->width;
    if (h) *h = crtc->height;
 
-   drmModeFreeCrtc(crtc);
+   sym_drmModeFreeCrtc(crtc);
 }
 
 EAPI Eina_Bool
@@ -1251,11 +1251,11 @@ _output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
    if (mode)
      {
         if (mode->id)
-          drmModeDestroyPropertyBlob(output->fd, mode->id);
+          sym_drmModeDestroyPropertyBlob(output->fd, mode->id);
 
         ret =
-          drmModeCreatePropertyBlob(output->fd, &mode->info,
-                                    sizeof(drmModeModeInfo), &mode->id);
+          sym_drmModeCreatePropertyBlob(output->fd, &mode->info,
+                                        sizeof(drmModeModeInfo), &mode->id);
         if (ret < 0)
           {
              ERR("Failed to create Mode Property Blob");
@@ -1263,10 +1263,10 @@ _output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
           }
      }
 
-   req = drmModeAtomicAlloc();
+   req = sym_drmModeAtomicAlloc();
    if (!req) return EINA_FALSE;
 
-   drmModeAtomicSetCursor(req, 0);
+   sym_drmModeAtomicSetCursor(req, 0);
 
    if (mode)
      {
@@ -1276,8 +1276,8 @@ _output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
    else
      cstate->active.value = 0;
 
-   ret = drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
-                                  cstate->mode.value);
+   ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
+                                      cstate->mode.value);
    if (ret < 0)
      {
         ERR("Could not add atomic property");
@@ -1285,8 +1285,8 @@ _output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
         goto err;
      }
 
-   ret = drmModeAtomicAddProperty(req, cstate->obj_id,
-                                  cstate->active.id, cstate->active.value);
+   ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id,
+                                      cstate->active.id, cstate->active.value);
    if (ret < 0)
      {
         ERR("Could not add atomic property");
@@ -1294,8 +1294,8 @@ _output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
         goto err;
      }
 
-   ret = drmModeAtomicCommit(output->fd, req, DRM_MODE_ATOMIC_ALLOW_MODESET,
-                             output->user_data);
+   ret = sym_drmModeAtomicCommit(output->fd, req, DRM_MODE_ATOMIC_ALLOW_MODESET,
+                                 output->user_data);
    if (ret < 0)
      {
         ERR("Failed to commit atomic Mode: %m");
@@ -1306,7 +1306,7 @@ _output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
      ret = EINA_TRUE;
 
 err:
-   drmModeAtomicFree(req);
+   sym_drmModeAtomicFree(req);
    return ret;
 }
 #endif
@@ -1340,8 +1340,8 @@ ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mo
              else
                buffer = output->ocrtc->buffer_id;
 
-             if (drmModeSetCrtc(output->fd, output->crtc_id, buffer,
-                                x, y, &output->conn_id, 1, &mode->info) < 0)
+             if (sym_drmModeSetCrtc(output->fd, output->crtc_id, buffer,
+                                    x, y, &output->conn_id, 1, &mode->info) < 0)
                {
                   ERR("Failed to set Mode %dx%d for Output %s: %m",
                       mode->width, mode->height, output->name);
@@ -1350,8 +1350,8 @@ ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mo
           }
         else
           {
-             if (drmModeSetCrtc(output->fd, output->crtc_id, 0,
-                                0, 0, 0, 0, NULL) < 0)
+             if (sym_drmModeSetCrtc(output->fd, output->crtc_id, 0,
+                                    0, 0, 0, 0, NULL) < 0)
                {
                   ERR("Failed to turn off Output %s: %m", output->name);
                   ret = EINA_FALSE;
@@ -1427,17 +1427,17 @@ ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, unsigned int crtc
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL((output->fd < 0), EINA_FALSE);
 
-   res = drmModeGetResources(output->fd);
+   res = sym_drmModeGetResources(output->fd);
    if (!res) return EINA_FALSE;
 
    for (; i < res->count_connectors; i++)
      {
-        conn = drmModeGetConnector(output->fd, res->connectors[i]);
+        conn = sym_drmModeGetConnector(output->fd, res->connectors[i]);
         if (!conn) continue;
 
         for (j = 0; j < conn->count_encoders; j++)
           {
-             enc = drmModeGetEncoder(output->fd, conn->encoders[j]);
+             enc = sym_drmModeGetEncoder(output->fd, conn->encoders[j]);
              if (!enc) continue;
 
              if (enc->crtc_id != crtc) goto next;
@@ -1456,15 +1456,15 @@ ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, unsigned int crtc
                }
 
 next:
-             drmModeFreeEncoder(enc);
+             sym_drmModeFreeEncoder(enc);
              if (ret) break;
           }
 
-        drmModeFreeConnector(conn);
+        sym_drmModeFreeConnector(conn);
         if (ret) break;
      }
 
-   drmModeFreeResources(res);
+   sym_drmModeFreeResources(res);
 
    return ret;
 }

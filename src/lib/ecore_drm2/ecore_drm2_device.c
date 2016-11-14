@@ -156,7 +156,7 @@ _drm2_atomic_usable(int fd)
    drmVersion *drmver;
    Eina_Bool ret = EINA_FALSE;
 
-   drmver = drmGetVersion(fd);
+   drmver = sym_drmGetVersion(fd);
    if (!drmver) return EINA_FALSE;
 
    /* detect driver */
@@ -187,7 +187,7 @@ _drm2_atomic_usable(int fd)
           }
      }
 
-   drmFreeVersion(drmver);
+   sym_drmFreeVersion(drmver);
 
    return ret;
 }
@@ -201,7 +201,7 @@ _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
    DBG("Atomic State Crtc Fill");
 
    oprops =
-     drmModeObjectGetProperties(fd, cstate->obj_id, DRM_MODE_OBJECT_CRTC);
+     sym_drmModeObjectGetProperties(fd, cstate->obj_id, DRM_MODE_OBJECT_CRTC);
    if (!oprops) return;
 
    DBG("\tCrtc %d", cstate->obj_id);
@@ -210,7 +210,7 @@ _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
      {
         drmModePropertyPtr prop;
 
-        prop = drmModeGetProperty(fd, oprops->props[i]);
+        prop = sym_drmModeGetProperty(fd, oprops->props[i]);
         if (!prop) continue;
 
         DBG("\t\tProperty: %s %d", prop->name, i);
@@ -229,7 +229,7 @@ _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
                   goto cont;
                }
 
-             bp = drmModeGetPropertyBlob(fd, cstate->mode.value);
+             bp = sym_drmModeGetPropertyBlob(fd, cstate->mode.value);
              if (!bp) goto cont;
 
              if ((!cstate->mode.data) ||
@@ -242,10 +242,10 @@ _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
              cstate->mode.len = bp->length;
 
              if (cstate->mode.value != 0)
-               drmModeCreatePropertyBlob(fd, bp->data, bp->length,
+               sym_drmModeCreatePropertyBlob(fd, bp->data, bp->length,
                                          &cstate->mode.value);
 
-             drmModeFreePropertyBlob(bp);
+             sym_drmModeFreePropertyBlob(bp);
           }
         else if (!strcmp(prop->name, "ACTIVE"))
           {
@@ -255,10 +255,10 @@ _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
           }
 
 cont:
-        drmModeFreeProperty(prop);
+        sym_drmModeFreeProperty(prop);
      }
 
-   drmModeFreeObjectProperties(oprops);
+   sym_drmModeFreeObjectProperties(oprops);
 }
 
 static void
@@ -270,7 +270,7 @@ _drm2_atomic_state_conn_fill(Ecore_Drm2_Connector_State *cstate, int fd)
    DBG("Atomic State Connector Fill");
 
    oprops =
-     drmModeObjectGetProperties(fd, cstate->obj_id, DRM_MODE_OBJECT_CONNECTOR);
+     sym_drmModeObjectGetProperties(fd, cstate->obj_id, DRM_MODE_OBJECT_CONNECTOR);
    if (!oprops) return;
 
    DBG("\tConnector: %d", cstate->obj_id);
@@ -279,7 +279,7 @@ _drm2_atomic_state_conn_fill(Ecore_Drm2_Connector_State *cstate, int fd)
      {
         drmModePropertyPtr prop;
 
-        prop = drmModeGetProperty(fd, oprops->props[i]);
+        prop = sym_drmModeGetProperty(fd, oprops->props[i]);
         if (!prop) continue;
 
         DBG("\t\tProperty: %s", prop->name);
@@ -307,7 +307,7 @@ _drm2_atomic_state_conn_fill(Ecore_Drm2_Connector_State *cstate, int fd)
                   goto cont;
                }
 
-             bp = drmModeGetPropertyBlob(fd, cstate->edid.id);
+             bp = sym_drmModeGetPropertyBlob(fd, cstate->edid.id);
              if (!bp) goto cont;
 
              if ((!cstate->edid.data) ||
@@ -320,10 +320,10 @@ _drm2_atomic_state_conn_fill(Ecore_Drm2_Connector_State *cstate, int fd)
              cstate->edid.len = bp->length;
 
              if (cstate->edid.id != 0)
-               drmModeCreatePropertyBlob(fd, bp->data, bp->length,
+               sym_drmModeCreatePropertyBlob(fd, bp->data, bp->length,
                                          &cstate->edid.id);
 
-             drmModeFreePropertyBlob(bp);
+             sym_drmModeFreePropertyBlob(bp);
           }
         else if (!strcmp(prop->name, "aspect ratio"))
           {
@@ -339,10 +339,10 @@ _drm2_atomic_state_conn_fill(Ecore_Drm2_Connector_State *cstate, int fd)
           }
 
 cont:
-        drmModeFreeProperty(prop);
+        sym_drmModeFreeProperty(prop);
      }
 
-   drmModeFreeObjectProperties(oprops);
+   sym_drmModeFreeObjectProperties(oprops);
 }
 
 static void
@@ -355,7 +355,7 @@ _drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
    DBG("Atomic State Plane Fill");
 
    oprops =
-     drmModeObjectGetProperties(fd, pstate->obj_id, DRM_MODE_OBJECT_PLANE);
+     sym_drmModeObjectGetProperties(fd, pstate->obj_id, DRM_MODE_OBJECT_PLANE);
    if (!oprops) return;
 
    DBG("\tPlane: %d", pstate->obj_id);
@@ -364,7 +364,7 @@ _drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
      {
         drmModePropertyPtr prop;
 
-        prop = drmModeGetProperty(fd, oprops->props[i]);
+        prop = sym_drmModeGetProperty(fd, oprops->props[i]);
         if (!prop) continue;
 
         DBG("\t\tProperty: %s", prop->name);
@@ -472,10 +472,10 @@ _drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
                }
           }
 
-        drmModeFreeProperty(prop);
+        sym_drmModeFreeProperty(prop);
      }
 
-   drmModeFreeObjectProperties(oprops);
+   sym_drmModeFreeObjectProperties(oprops);
 }
 
 static void
@@ -485,10 +485,10 @@ _drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
    drmModeResPtr res;
    drmModePlaneResPtr pres;
 
-   res = drmModeGetResources(fd);
+   res = sym_drmModeGetResources(fd);
    if (!res) return;
 
-   pres = drmModeGetPlaneResources(fd);
+   pres = sym_drmModeGetPlaneResources(fd);
    if (!pres) goto err;
 
    state->crtcs = res->count_crtcs;
@@ -532,23 +532,23 @@ _drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
              drmModePlanePtr plane;
              Ecore_Drm2_Plane_State *pstate;
 
-             plane = drmModeGetPlane(fd, pres->planes[i]);
+             plane = sym_drmModeGetPlane(fd, pres->planes[i]);
              if (!plane) continue;
 
              pstate = &state->plane_states[i];
              pstate->obj_id = pres->planes[i];
              pstate->mask = plane->possible_crtcs;
 
-             drmModeFreePlane(plane);
+             sym_drmModeFreePlane(plane);
 
              _drm2_atomic_state_plane_fill(pstate, fd);
           }
      }
 
-   drmModeFreePlaneResources(pres);
+   sym_drmModeFreePlaneResources(pres);
 
 err:
-   drmModeFreeResources(res);
+   sym_drmModeFreeResources(res);
 }
 
 static void
@@ -614,15 +614,15 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    _ecore_drm2_use_atomic = _drm2_atomic_usable(device->fd);
    if (_ecore_drm2_use_atomic)
      {
-        if (drmSetClientCap(device->fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0)
+        if (sym_drmSetClientCap(device->fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0)
           {
              WRN("Could not enable Atomic Modesetting support");
              _ecore_drm2_use_atomic = EINA_FALSE;
           }
         else
           {
-             if (drmSetClientCap(device->fd,
-                                 DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
+             if (sym_drmSetClientCap(device->fd,
+                                     DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
                WRN("Could not enable Universal Plane support");
              else
                {
@@ -686,7 +686,7 @@ ecore_drm2_device_clock_id_get(Ecore_Drm2_Device *device)
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, -1);
    EINA_SAFETY_ON_TRUE_RETURN_VAL((device->fd < 0), -1);
 
-   ret = drmGetCap(device->fd, DRM_CAP_TIMESTAMP_MONOTONIC, &caps);
+   ret = sym_drmGetCap(device->fd, DRM_CAP_TIMESTAMP_MONOTONIC, &caps);
    if ((ret == 0) && (caps == 1))
      return CLOCK_MONOTONIC;
    else
@@ -705,13 +705,13 @@ ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *device, int *width, int *he
    if (width)
      {
         *width = 64;
-        ret = drmGetCap(device->fd, DRM_CAP_CURSOR_WIDTH, &caps);
+        ret = sym_drmGetCap(device->fd, DRM_CAP_CURSOR_WIDTH, &caps);
         if (ret == 0) *width = caps;
      }
    if (height)
      {
         *height = 64;
-        ret = drmGetCap(device->fd, DRM_CAP_CURSOR_HEIGHT, &caps);
+        ret = sym_drmGetCap(device->fd, DRM_CAP_CURSOR_HEIGHT, &caps);
         if (ret == 0) *height = caps;
      }
 }
