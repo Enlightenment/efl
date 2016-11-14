@@ -630,9 +630,14 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
         double t = (double)sec + ((double)usec / 1000000);
 
         ecore_evas_animator_tick(ee, NULL, t);
+        edata->pending = EINA_TRUE;
         ecore_drm2_fb_flip(NULL, edata->output);
      }
-   else if (ret) ecore_drm2_fb_flip(NULL, edata->output);
+   else if (ret)
+     {
+        edata->pending = EINA_TRUE;
+        ecore_drm2_fb_flip(NULL, edata->output);
+     }
 }
 
 static void
@@ -654,6 +659,7 @@ _drm_animator_register(Ecore_Evas *ee)
    edata = ee->engine.data;
    edata->ticking = EINA_TRUE;
    if (!edata->pending) ecore_drm2_fb_flip(NULL, edata->output);
+   edata->pending = EINA_TRUE;
 }
 
 static void
