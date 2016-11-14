@@ -516,11 +516,43 @@ _ecore_evas_wl_common_device_event_add(int event_type, Ecore_Wl2_Device_Type dev
                    dev);
 }
 
+static EE_Wl_Device *
+_ecore_evas_wl_common_seat_add(Ecore_Evas *ee,
+                               const char *seat_name,
+                               unsigned int id)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+   EE_Wl_Device *device;
+   Evas_Device *dev;
+
+   device = calloc(1, sizeof(EE_Wl_Device));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
+
+   dev = evas_device_add_full(ee->evas, seat_name, "Wayland seat",
+                              NULL, NULL,
+                              EVAS_DEVICE_CLASS_SEAT,
+                              EVAS_DEVICE_SUBCLASS_NONE);
+   EINA_SAFETY_ON_NULL_GOTO(dev, err_dev);
+
+   device->seat = dev;
+   device->id = id;
+
+   wdata = ee->engine.data;
+   wdata->devices_list = eina_list_append(wdata->devices_list, device);
+
+   _ecore_evas_wl_common_device_event_add(ECORE_WL2_EVENT_DEVICE_ADDED,
+                                          ECORE_WL2_DEVICE_TYPE_SEAT,
+                                          id, dev, ee);
+   return device;
+ err_dev:
+   free(device);
+   return NULL;
+}
+
 static Eina_Bool
 _ecore_evas_wl_common_cb_global_added(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Global *ev = event;
-   EE_Wl_Device *device;
    Ecore_Evas *ee;
    Eina_List *l;
    char buf[32];
@@ -532,34 +564,27 @@ _ecore_evas_wl_common_cb_global_added(void *d EINA_UNUSED, int t EINA_UNUSED, vo
 
    EINA_LIST_FOREACH(ee_list, l, ee)
      {
-        Ecore_Evas_Engine_Wl_Data *wdata;
-        Evas_Device *dev;
+        Eina_List *ll;
+        EE_Wl_Device *device;
+        Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+        Eina_Bool already_present = EINA_FALSE;
 
-        device = calloc(1, sizeof(EE_Wl_Device));
-        EINA_SAFETY_ON_NULL_GOTO(device, err_device);
+        EINA_LIST_FOREACH(wdata->devices_list, ll, device)
+          {
+             if (device->id == ev->id)
+               {
+                  already_present = EINA_TRUE;
+                  break;
+               }
+          }
 
-        dev = evas_device_add_full(ee->evas, buf, "Wayland seat",
-                                   NULL, NULL,
-                                   EVAS_DEVICE_CLASS_SEAT,
-                                   EVAS_DEVICE_SUBCLASS_NONE);
-        EINA_SAFETY_ON_NULL_GOTO(dev, err_dev);
-
-        device->seat = dev;
-        device->id = ev->id;
-
-        wdata = ee->engine.data;
-        wdata->devices_list = eina_list_append(wdata->devices_list, device);
-
-        _ecore_evas_wl_common_device_event_add(ECORE_WL2_EVENT_DEVICE_ADDED,
-                                               ECORE_WL2_DEVICE_TYPE_SEAT,
-                                               ev->id, dev, ee);
+        if (!already_present && !_ecore_evas_wl_common_seat_add(ee, buf, ev->id))
+          goto err_add;
      }
 
    return ECORE_CALLBACK_PASS_ON;
 
-err_dev:
-   free(device);
-err_device:
+err_add:
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2006,6 +2031,72 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_ecore_wl2_devices_setup(Ecore_Evas *ee, Ecore_Wl2_Display *display)
+{
+   Eina_Bool r = EINA_TRUE;
+   Ecore_Wl2_Input *input;
+   Eina_Iterator *itr = ecore_wl2_display_inputs_get(display);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(itr, EINA_FALSE);
+   EINA_ITERATOR_FOREACH(itr, input)
+     {
+        EE_Wl_Device *device;
+        Ecore_Wl2_Seat_Capabilities cap;
+        char buf[32];
+        unsigned int id;
+
+        id = ecore_wl2_input_seat_id_get(input);
+        cap = ecore_wl2_input_seat_capabilities_get(input);
+        //No seat, ignore...
+        if (cap == ECORE_WL2_SEAT_CAPABILITIES_NO_SEAT)
+          continue;
+
+        snprintf(buf, sizeof(buf), "seat-%u", id);
+        device = _ecore_evas_wl_common_seat_add(ee, buf, id);
+        if (!device)
+          {
+             r = EINA_FALSE;
+             break;
+          }
+        if (cap & ECORE_WL2_SEAT_CAPABILITIES_KEYBOARD)
+          {
+             device->keyboard = evas_device_add_full(ee->evas, "Keyboard",
+                                                     "A wayland keyboard device",
+                                                     device->seat, NULL,
+                                                     EVAS_DEVICE_CLASS_KEYBOARD,
+                                                     EVAS_DEVICE_SUBCLASS_NONE);
+             _ecore_evas_wl_common_device_event_add(ECORE_WL2_EVENT_DEVICE_ADDED,
+                                                    ECORE_WL2_DEVICE_TYPE_KEYBOARD,
+                                                    id, device->keyboard, ee);
+          }
+        if (cap & ECORE_WL2_SEAT_CAPABILITIES_POINTER)
+          {
+             device->pointer = evas_device_add_full(ee->evas, "Mouse",
+                                                    "A wayland pointer device",
+                                                    device->seat, NULL,
+                                                    EVAS_DEVICE_CLASS_MOUSE,
+                                                    EVAS_DEVICE_SUBCLASS_NONE);
+             _ecore_evas_wl_common_device_event_add(ECORE_WL2_EVENT_DEVICE_ADDED,
+                                                    ECORE_WL2_DEVICE_TYPE_POINTER,
+                                                    id, device->pointer, ee);
+          }
+        if (cap & ECORE_WL2_SEAT_CAPABILITIES_TOUCH)
+          {
+             device->touch = evas_device_add_full(ee->evas, "Touch",
+                                                  "A wayland touch device",
+                                                  device->seat, NULL,
+                                                  EVAS_DEVICE_CLASS_TOUCH,
+                                                  EVAS_DEVICE_SUBCLASS_NONE);
+             _ecore_evas_wl_common_device_event_add(ECORE_WL2_EVENT_DEVICE_ADDED,
+                                                    ECORE_WL2_DEVICE_TYPE_TOUCH,
+                                                    id, device->touch, ee);
+          }
+     }
+   eina_iterator_free(itr);
+   return r;
+}
+
 Ecore_Evas *
 _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name)
 {
@@ -2144,6 +2235,12 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
              ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
              goto eng_err;
           }
+     }
+
+   if (!_ecore_wl2_devices_setup(ee, ewd))
+     {
+        ERR("Failed to create the devices");
+        goto eng_err;
      }
 
    ee->engine.func->fn_render = _ecore_evas_wl_common_render;

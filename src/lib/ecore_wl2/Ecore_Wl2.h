@@ -54,6 +54,15 @@ typedef enum
    ECORE_WL2_DRAG_ACTION_LAST = 5,
 } Ecore_Wl2_Drag_Action;
 
+typedef enum
+{
+  ECORE_WL2_SEAT_CAPABILITIES_NO_SEAT = 0,
+  ECORE_WL2_SEAT_CAPABILITIES_NONE = 1,
+  ECORE_WL2_SEAT_CAPABILITIES_POINTER = 2,
+  ECORE_WL2_SEAT_CAPABILITIES_KEYBOARD = 4,
+  ECORE_WL2_SEAT_CAPABILITIES_TOUCH = 8
+} Ecore_Wl2_Seat_Capabilities;
+
 struct _Ecore_Wl2_Event_Connection
 {
    Ecore_Wl2_Display *display;
@@ -438,6 +447,14 @@ EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
  * @since 1.17
  */
 EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h);
+
+/**
+ * Get all the Ecore_Wl2_Input from the display.
+ * @param display The display
+ * @return A Eina_Iterator of Ecore_Wl2_Input or @c NULL on error
+ * @since 1.19
+ */
+EAPI Eina_Iterator *ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display);
 
 /**
  * Find an Ecore_Wl2_Window based on id
@@ -885,6 +902,22 @@ EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
 /* TODO: doxy */
 /** @since 1.17 */
 EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
+
+/**
+ * Get the seat capabilities for a given input.
+ *
+ * @param input The input
+ * @since 1.19
+ */
+EAPI Ecore_Wl2_Seat_Capabilities ecore_wl2_input_seat_capabilities_get(Ecore_Wl2_Input *input);
+
+/**
+ * Get the wayland's seat id from an input.
+ * @param input The input
+ * @return The seat id
+ * @since 1.19
+ */
+EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input);
 
 /**
  * @defgroup Ecore_Wl2_Dnd_Group Wayland Library Drag-n-Drop Functions

@@ -1572,3 +1572,29 @@ ecore_wl2_input_seat_get(Ecore_Wl2_Input *input)
 
    return input->wl.seat;
 }
+
+EAPI Ecore_Wl2_Seat_Capabilities
+ecore_wl2_input_seat_capabilities_get(Ecore_Wl2_Input *input)
+{
+
+   Ecore_Wl2_Seat_Capabilities cap = ECORE_WL2_SEAT_CAPABILITIES_NONE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, ECORE_WL2_SEAT_CAPABILITIES_NO_SEAT);
+
+   if (!input->wl.seat)
+     return ECORE_WL2_SEAT_CAPABILITIES_NO_SEAT;
+   if (input->wl.keyboard)
+     cap |= ECORE_WL2_SEAT_CAPABILITIES_KEYBOARD;
+   if (input->wl.pointer)
+     cap |= ECORE_WL2_SEAT_CAPABILITIES_POINTER;
+   if (input->wl.touch)
+     cap |= ECORE_WL2_SEAT_CAPABILITIES_TOUCH;
+   return cap;
+}
+
+EAPI unsigned int
+ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, 0);
+   return input->id;
+}
