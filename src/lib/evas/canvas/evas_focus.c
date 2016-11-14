@@ -153,6 +153,9 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    if (current_focus)
      efl_canvas_object_seat_focus_del(current_focus, seat);
 
+   //In case intercept focus callback focused object we should return.
+   if (_current_focus_get(eo_obj, seat)) goto end;
+
    efl_event_callback_add(seat, EFL_EVENT_DEL, _evas_focus_device_del_cb, obj);
 
    obj->focused_by_seats = eina_list_append(obj->focused_by_seats, seat);
