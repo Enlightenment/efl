@@ -58,6 +58,16 @@ typedef struct _Ecore_Drm2_Event_Activate
    Eina_Bool active : 1;
 } Ecore_Drm2_Event_Activate;
 
+/* structure to represent a drm event context */
+typedef struct _Ecore_Drm2_Context
+{
+   int version;
+   void (*vblank_handler)(int fd, unsigned int sequence, unsigned int tv_sec,
+                          unsigned int tv_usec, void *user_data);
+   void (*page_flip_handler)(int fd, unsigned int sequence, unsigned int tv_sec,
+                             unsigned int tv_usec, void *user_data);
+} Ecore_Drm2_Context;
+
 EAPI extern int ECORE_DRM2_EVENT_OUTPUT_CHANGED;
 EAPI extern int ECORE_DRM2_EVENT_ACTIVATE;
 
@@ -105,6 +115,23 @@ EAPI int ecore_drm2_init(void);
  * @since 1.18
  */
 EAPI int ecore_drm2_shutdown(void);
+
+/**
+ * Read and process pending Drm events
+ *
+ * @param fd drm file descriptor
+ * @param ctx
+ *
+ * @return 0 on success, -1 otherwise
+ *
+ * @note: Do not ever use this function in applications !!!
+ * This is a special-purpose API function and should not be used by
+ * application developers.
+ *
+ * @ingroup Ecore_Drm_Init_Group
+ * @since 1.19
+ */
+EAPI int ecore_drm2_event_handle(int fd, Ecore_Drm2_Context *drmctx);
 
 /**
  * @defgroup Ecore_Drm2_Device_Group Drm device functions

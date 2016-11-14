@@ -211,3 +211,18 @@ ecore_drm2_shutdown(void)
 
    return _ecore_drm2_init_count;
 }
+
+EAPI int
+ecore_drm2_event_handle(int fd, Ecore_Drm2_Context *drmctx)
+{
+   drmEventContext ctx;
+
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((fd < 0), -1);
+
+   memset(&ctx, 0, sizeof(ctx));
+   ctx.version = DRM_EVENT_CONTEXT_VERSION;
+   ctx.page_flip_handler = drmctx->page_flip_handler;
+   ctx.vblank_handler = drmctx->vblank_handler;
+
+   return sym_drmHandleEvent(fd, &ctx);
+}
