@@ -75,7 +75,7 @@ evas_common_pipe_thread(void *data, Eina_Thread t EINA_UNUSED)
 {
    Thinfo *thinfo;
 
-   eina_thread_name_set(eina_thread_self(), "Eecore-pipe");
+   eina_thread_name_set(eina_thread_self(), "Ecore-pipe");
    // INF("TH [...........");
    thinfo = data;
    for (;;)
