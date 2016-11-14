@@ -1128,34 +1128,23 @@ efreet_mime_magic_check_priority(const char *file,
    Efreet_Mime_Magic *m = NULL;
    Efreet_Mime_Magic_Entry *e = NULL;
    Eina_List *l, *ll;
-   FILE *f = NULL;
-   unsigned int i = 0, offset = 0,level = 0, match = 0, bytes_read = 0;
+   Eina_File *f = NULL;
+   const char *mem = NULL;
+   size_t sz;
+   unsigned int i = 0, offset = 0,level = 0, match = 0;
    const char *last_mime = NULL;
    int c;
-   char v, buf[EFREET_MIME_MAGIC_BUFFER_SIZE];
-   struct stat s;
+   char v;
 
-#ifdef _WIN32
-   if (stat(file, &s) || s.st_size == 0)
-#else
-   if (lstat(file, &s) || s.st_size == 0)
-#endif
-      return NULL;
+   if (!magics) return NULL;
 
-   f = fopen(file, "rb");
+   f = eina_file_open(file, EINA_FALSE);
    if (!f) return NULL;
 
-   if (!magics)
-     {
-        fclose(f);
-        return NULL;
-     }
+   mem = eina_file_map_all(f, EINA_FILE_RANDOM);
+   if (!mem) goto end;
 
-   if ((bytes_read = fread(buf, 1, sizeof(buf), f)) == 0)
-     {
-        fclose(f);
-        return NULL;
-     }
+   sz = eina_file_size_get(f);
 
    EINA_LIST_FOREACH(magics, l, m)
      {
@@ -1171,30 +1160,25 @@ efreet_mime_magic_check_priority(const char *file,
                continue;
 
              if ((level >= e->indent) && !match)
-               level = e->indent;
-
+               {
+                  level = e->indent;
+               }
              else if ((level > e->indent) && match)
                {
-                  fclose(f);
-                  return last_mime;
+                  goto end;
                }
 
              for (offset = e->offset; offset < e->offset + e->range_len; offset++)
                {
-                  if (((offset + e->value_len) > bytes_read) &&
-                      (fseek(f, offset, SEEK_SET) == -1))
-                    break;
+                  if (offset + e->value_len >= sz) break;
 
                   match = 1;
                   for (i = 0; i < e->value_len; ++i)
                     {
-                       if (offset + e->value_len > bytes_read)
-                         c = fgetc(f);
-                       else
-                         c = buf[offset + i];
+                       c = mem[offset + i];
 
                        v = e->value[i];
-                       if (e->mask) v &= e->mask[i];
+                       if (e->mask) c &= e->mask[i];
 
                        if (!(c == v))
                          {
@@ -1212,15 +1196,15 @@ efreet_mime_magic_check_priority(const char *file,
                }
           }
 
-        if (match)
-          {
-             fclose(f);
-             return last_mime;
-          }
+        if (match) break;
      }
-   fclose(f);
 
-   return NULL;
+ end:
+   if (mem) eina_file_map_free(f, (void*) mem);
+
+   eina_file_close(f);
+
+   return last_mime;
 }
 
 /**
