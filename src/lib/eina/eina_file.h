@@ -29,6 +29,7 @@
 #include "eina_iterator.h"
 #include "eina_tmpstr.h"
 #include "eina_str.h"
+#include "eina_slice.h"
 
 /**
  * @page eina_file_example_01_page
@@ -544,6 +545,9 @@ eina_file_write(Eina_File *file, const void *data, size_t size);
 
 EAPI Eina_File *
 eina_file_written_file_get(const Eina_File *file);
+
+EAPI Eina_Slice
+eina_file_written_slice_get(const Eina_File *file);
 
 EAPI Eina_Bool
 eina_file_writable_reset_buf(Eina_File *file);

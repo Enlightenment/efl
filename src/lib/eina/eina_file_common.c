@@ -489,6 +489,17 @@ eina_file_written_file_get(const Eina_File *file)
    return eina_file_virtualize_writable(file->filename, eina_binbuf_string_get(file->write_buf), eina_binbuf_length_get(file->write_buf));
 }
 
+EAPI Eina_Slice
+eina_file_written_slice_get(const Eina_File *file)
+{
+   Eina_Slice ret = EINA_SLICE_ARRAY_LENGTH(NULL, 0);
+   if (file && file->writable)
+     {
+        ret = (Eina_Slice) EINA_SLICE_ARRAY_LENGTH(eina_binbuf_string_get(file->write_buf), eina_binbuf_length_get(file->write_buf));
+     }
+   return ret;
+}
+
 EAPI Eina_Bool
 eina_file_writable_reset_buf(Eina_File *file)
 {
