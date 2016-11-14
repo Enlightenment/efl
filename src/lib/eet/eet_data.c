@@ -1946,6 +1946,8 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
    eddc->func.mem_free = _eet_mem_free;
    eddc->func.str_alloc = (char *(*)(const char *))eina_stringshare_add;
    eddc->func.str_free = eina_stringshare_del;
+   eddc->func.str_direct_alloc = NULL;
+   eddc->func.str_direct_free = NULL;
    eddc->func.list_next = (void *(*)(void *))eina_list_next;
    eddc->func.list_append = (void *(*)(void *, void *))eina_list_append;
    eddc->func.list_data = (void *(*)(void *))eina_list_data_get;
