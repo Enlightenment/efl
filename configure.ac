@@ -2156,12 +2156,16 @@ AC_ARG_ENABLE([gl-drm],
        [enable gl drm engine. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
-       want_gl_drm="yes"
+      if test "x${want_elput}" != "xyes" ; then
+        AC_MSG_ERROR([elput is required to build gl-drm support])
+      fi
+      want_gl_drm="yes"
     else
-       want_gl_drm="no"
+      want_gl_drm="no"
     fi
    ],
    [want_gl_drm="no"])
+
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
    [AS_HELP_STRING([--disable-fontconfig],[disable fontconfig for finding fonts. @<:@default=enabled@:>@])],
