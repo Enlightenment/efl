@@ -121,7 +121,7 @@ struct _Eina_Rw_Slice
  * @brief Convert the Read-write slice to read-only.
  *
  * @param rw_slice the read-write slice to convert.
- * @return the red-only slice matching the slice.
+ * @return the read-only slice matching the slice.
  */
 static inline Eina_Slice eina_rw_slice_slice_get(const Eina_Rw_Slice rw_slice);
 
@@ -365,9 +365,41 @@ static inline char *eina_slice_strdup(const Eina_Slice slice);
 static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
 
 /**
+ * @def EINA_SLICE_ARRAY_LENGTH(buf, len)
+ *
+ * Initializer for arrays of any kind. Especially when array size is unknown at
+ * compile time
+ *
+ * @note This macro is usable with both Eina_Slice or Eina_Rw_Slice.
+ *
+ * @code
+ * void foo(void *buf, size_t len)
+ * {
+ *    Eina_Slice rw_slice = EINA_SLICE_ARRAY_LENGTH(buf, 1024);
+ *    ...
+ * }
+ * void bar()
+ * {
+ *    uint8_t buf[1024];
+ *    foo(buf, 1024);
+ * }
+ * @endcode
+ *
+ * @see EINA_SLICE_STR_LITERAL() for specific version that checks for string literals.
+ * @see EINA_SLICE_ARRAY() for static/local arrays.
+ *
+ * @since 1.19
+ */
+#ifdef __cplusplus
+#define EINA_SLICE_ARRAY_LENGTH(BUF, LEN) {(LEN), (BUF)}
+#else
+#define EINA_SLICE_ARRAY_LENGTH(BUF, LEN) {.len = (LEN), .mem = (BUF)}
+#endif
+
+/**
  * @def EINA_SLICE_ARRAY(buf)
  *
- * Initializer for arrays of any kind.
+ * Initializer for arrays which size is know at compile time.
  *
  * It is often useful for globals.
  *
@@ -379,15 +411,11 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
  * @endcode
  *
  * @see EINA_SLICE_STR_LITERAL() for specific version that checks for string literals.
+ * @see EINA_SLICE_ARRAY_LENGTH() for dynamic arrays.
  *
  * @since 1.19
  */
-#ifdef __cplusplus
-#define EINA_SLICE_ARRAY(buf) {((sizeof(buf) / sizeof((buf)[0])) * sizeof((buf)[0])), (buf)}
-#else
-#define EINA_SLICE_ARRAY(buf) {.len = ((sizeof(buf) / sizeof((buf)[0])) * sizeof((buf)[0])), .mem = (buf)}
-#endif
-
+#define EINA_SLICE_ARRAY(buf) EINA_SLICE_ARRAY_LENGTH((buf), ((sizeof(buf) / sizeof((buf)[0])) * sizeof((buf)[0])))
 
 /**
  * @def EINA_RW_SLICE_DECLARE(name, length)
