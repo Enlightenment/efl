@@ -388,8 +388,6 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
    const char *tmpname = "/dev/mem/virtual\\/%16x";
    int slen;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
-
    // Generate an almost uniq filename based on current nsec time.
    if (_eina_time_get(&tp)) return NULL;
    ti = _eina_time_convert(&tp);
