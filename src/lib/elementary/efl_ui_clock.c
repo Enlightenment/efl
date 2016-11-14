@@ -847,7 +847,8 @@ _ticker(void *data)
    if (sd->curr_time.tm_sec > 0)
      {
         field = sd->field_list + EFL_UI_CLOCK_TYPE_SECOND;
-        if (field->fmt_exist && field->visible)
+        if (field->fmt_exist && field->visible &&
+            dt_mod && dt_mod->field_value_display)
           dt_mod->field_value_display(sd->mod_data, field->item_obj);
      }
    else
