@@ -235,7 +235,7 @@ struct Elm.Atspi.Relation
 
 type Elm.Atspi.Relation_Set: list<ptr(Elm.Atspi.Relation)>; [[Elementary AT-SPI relation set type]]
 
-mixin Elm.Interface.Atspi_Accessible ()
+mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
 {
    [[AT-SPI accessible mixin]]
    eo_prefix: elm_interface_atspi_accessible;
@@ -431,6 +431,9 @@ mixin Elm.Interface.Atspi_Accessible ()
             }
          }
       }
+   }
+   implements {
+      Efl.Object.destructor;
    }
    events {
       property,changed: string; [[Called when roperty has changed]]

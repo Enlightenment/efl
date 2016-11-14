@@ -598,4 +598,15 @@ _elm_interface_atspi_accessible_type_set(Eo *obj, Elm_Interface_Atspi_Accessible
    pd->type = val;
 }
 
+EOLIAN void
+_elm_interface_atspi_accessible_efl_object_destructor(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd)
+{
+   eina_stringshare_del(pd->name);
+   eina_stringshare_del(pd->description);
+   eina_stringshare_del(pd->translation_domain);
+   elm_atspi_relation_set_free(pd->relations);
+
+   efl_destructor(efl_super(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN));
+}
+
 #include "elm_interface_atspi_accessible.eo.c"

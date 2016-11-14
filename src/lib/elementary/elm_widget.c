@@ -4595,11 +4595,6 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
      }
    eina_hash_free(item->labels);
 
-   elm_interface_atspi_accessible_description_set(eo_item, NULL);
-   elm_interface_atspi_accessible_name_set(eo_item, NULL);
-   elm_interface_atspi_accessible_translation_domain_set(eo_item, NULL);
-   elm_interface_atspi_accessible_relationships_clear(eo_item);
-
    elm_interface_atspi_accessible_removed(eo_item);
 
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
@@ -5853,10 +5848,6 @@ EOLIAN static void
 _elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
    sd->on_destroy = EINA_TRUE;
-   elm_interface_atspi_accessible_description_set(obj, NULL);
-   elm_interface_atspi_accessible_name_set(obj, NULL);
-   elm_interface_atspi_accessible_translation_domain_set(obj, NULL);
-   elm_interface_atspi_accessible_relationships_clear(obj);
    efl_destructor(efl_super(obj, ELM_WIDGET_CLASS));
    sd->on_destroy = EINA_FALSE;
 
