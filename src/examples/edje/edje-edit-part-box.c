@@ -367,6 +367,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
    const char  *edje_file = PACKAGE_DATA_DIR"/box_example.edj";
    Eina_File   *tmp;
+   Eina_Slice  file_slice;
    void        *file_data;
    size_t      file_size;
    Ecore_Evas  *ee;
@@ -418,14 +419,12 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 
    ecore_main_loop_begin();
 
-   file_data = eina_file_map_all(eina_file, EINA_FILE_SEQUENTIAL);
-   file_size = eina_file_size_get(eina_file);
+   file_slice = eina_file_written_slice_get(eina_file);
 
    fileptr = fopen("edje_edit_output.edj", "wb");
-   fwrite(file_data, file_size, 1, fileptr);
+   fwrite(file_slice.mem, file_slice.len, 1, fileptr);
    fclose(fileptr);
 
-   eina_file_map_free(eina_file, file_data);
    eina_file_close(eina_file);
 
    ecore_evas_free(ee);
