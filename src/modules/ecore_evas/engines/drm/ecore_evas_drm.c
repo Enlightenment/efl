@@ -612,7 +612,7 @@ _cb_drm_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 }
 
 static void
-_cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
+_cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec, unsigned int usec, void *data)
 {
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Drm_Data *edata;
@@ -627,7 +627,9 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
 
    if (edata->ticking)
      {
-        ecore_evas_animator_tick(ee, NULL, ecore_loop_time_get());
+        double t = (double)sec + ((double)usec / 1000000);
+
+        ecore_evas_animator_tick(ee, NULL, t);
         ecore_drm2_fb_flip(NULL, edata->output);
      }
    else if (ret) ecore_drm2_fb_flip(NULL, edata->output);
