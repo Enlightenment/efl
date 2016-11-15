@@ -1,5 +1,6 @@
 class Ector.Renderer.GL.Gradient.Radial (Ector.Renderer.GL, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial)
 {
+   [[Ector GL renderer gradient radial]]
    eo_prefix: ector_renderer_gl_gradient_radial;
    implements {
       Ector.Renderer.prepare;

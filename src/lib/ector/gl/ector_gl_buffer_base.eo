@@ -22,7 +22,7 @@ mixin Ector.GL.Buffer.Base (Ector.Buffer)
          ]]
          get {}
          values {
-            is_whole: bool;
+            is_whole: bool; [[$true if the image is covering the whole GL texture, $false otherwise]]
          }
       }
       @property vertices {
@@ -43,17 +43,17 @@ mixin Ector.GL.Buffer.Base (Ector.Buffer)
          params {
             texid: int; [[GL texture ID]]
             fboid: int; [[Framebuffer object ID]]
-            cspace: Efl.Gfx.Colorspace;
-            imw: int;
-            imh: int;
-            tx: int;
-            ty: int;
-            tw: int;
-            th: int;
-            l: int;
-            r: int;
-            t: int;
-            b: int;
+            cspace: Efl.Gfx.Colorspace; [[Colorspace]]
+            imw: int; [[Image width]]
+            imh: int; [[Image height]]
+            tx: int; [[Texture X coordinate]]
+            ty: int; [[Texture Y coordinate]]
+            tw: int; [[Texture width]]
+            th: int; [[Texture height]]
+            l: int; [[Left padding]]
+            r: int; [[Right padding]]
+            t: int; [[Top padding]]
+            b: int; [[Bottom padding]]
          }
       }
    }

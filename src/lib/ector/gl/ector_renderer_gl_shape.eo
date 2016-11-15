@@ -1,5 +1,6 @@
 class Ector.Renderer.GL.Shape (Ector.Renderer.GL, Ector.Renderer.Shape)
 {
+   [[Ector GL renderer shape class]]
    eo_prefix: ector_renderer_gl_shape;
    implements {
       Ector.Renderer.prepare;

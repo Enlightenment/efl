@@ -1,5 +1,6 @@
 class Ector.Renderer.GL.Gradient.Linear (Ector.Renderer.GL, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Linear)
 {
+   [[Ector GL renderer gradient linear]]
    eo_prefix: ector_renderer_gl_gradient_linear;
    implements {
       Ector.Renderer.prepare;

@@ -2,28 +2,32 @@ import ector_types;
 
 class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
 {
+   [[Ector GL surface class]]
    eo_prefix: ector_gl_surface;
    methods {
       shader_get {
-         return: uint;
+         [[Get shader]]
+         return: uint; [[Shader count]]
          params {
-            @in flags: uint64;
+            @in flags: uint64; [[Flags]]
          }
       }
       push {
-         return: bool;
+      	 [[Push surface to GPU]]
+         return: bool; [[$true on success, $false otherwise]]
 	 params {
-	    @in flags: uint64;
-	    @in vertex: ptr(GLshort);
-	    @in vertex_count: uint;
-	    @in mul_col: uint;
+	    @in flags: uint64; [[GL flags]]
+	    @in vertex: ptr(GLshort); [[GL vertex]]
+	    @in vertex_count: uint; [[GL vertex count]]
+	    @in mul_col: uint; [[Premultiplied color]]
 	 }
       }
       state_define {
-         return: bool;
+      	 [[Define state]]
+         return: bool; [[$true on success, $false otherwise]]
 	 params {
-            @in op: Efl.Gfx.Render_Op;
-	    @in clips: array<ptr(Eina.Rectangle)>; [[array of @Eina.Rectangle clip]]
+            @in op: Efl.Gfx.Render_Op; [[Render operation]]
+	    @in clips: array<ptr(Eina.Rectangle)>; [[Array of @Eina.Rectangle clip]]
 	 }
       }
    }
