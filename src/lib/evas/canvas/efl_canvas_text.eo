@@ -2,6 +2,7 @@ struct Efl.Canvas.Text.Style; [[EFL text style data structure]]
 
 class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
 {
+   [[Efl canvas text class]]
    legacy_prefix: evas_object_textblock;
    methods {
       @property bidi_delimiters {
@@ -19,7 +20,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
          }
       }
       @property legacy_newline {
-         [[When true, newline character will behave as a paragraph separator.
+         [[When $true, newline character will behave as a paragraph separator.
 
            @since 1.18
          ]]
@@ -87,7 +88,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
            @since 1.18
          ]]
          get {
-            return: Efl.Canvas.Text.Cursor;
+            return: Efl.Canvas.Text.Cursor; [[Text cursor object]]
          }
       }
       @property size_native {
@@ -140,7 +141,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
             legacy: null;
          }
          values {
-            is_empty: bool; [[$true if empty]]
+            is_empty: bool; [[$true if empty, $false otherwise]]
          }
       }
       obstacle_add {
@@ -153,7 +154,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
            @since 1.18
          ]]
          params {
-            @in eo_obs: Efl.Canvas.Object;
+            @in eo_obs: Efl.Canvas.Object; [[Obstacle object]]
          }
          return: bool; [[$true on success, $false otherwise.]]
       }
@@ -163,7 +164,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
            @since 1.18
          ]]
          params {
-            @in eo_obs: Efl.Canvas.Object;
+            @in eo_obs: Efl.Canvas.Object; [[Obstacle object]]
          }
          return: bool; [[$true on success, $false otherwise.]]
       }
@@ -232,7 +233,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
          params {
               @in start: Efl.Canvas.Text.Cursor; [[Start of range]]
               @in end:   Efl.Canvas.Text.Cursor; [[End of range]]
-              @in format: string;
+              @in format: string; [[Annotation format]]
          }
          return: ptr(Efl.Canvas.Text.Annotation); [[Handle of inserted annotation]]
       }
@@ -334,17 +335,17 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
          legacy: null;
          params {
             @in an: ptr(const(Efl.Canvas.Text.Annotation)); [[Given annotation to query]]
-            @out x: Evas.Coord; [[x coordinate of the annotation]]
-            @out y: Evas.Coord; [[y coordinate of the annotation]]
-            @out w: Evas.Coord; [[w coordinate of the annotation]]
-            @out h: Evas.Coord; [[h coordinate of the annotation]]
+            @out x: Evas.Coord; [[X coordinate of the annotation]]
+            @out y: Evas.Coord; [[Y coordinate of the annotation]]
+            @out w: Evas.Coord; [[Width of the annotation]]
+            @out h: Evas.Coord; [[Height of the annotation]]
          }
          return: bool; [[$true if given annotation is an object item, $false otherwise]]
       }
       annotation_positions_get {
          [[Sets given cursors to the start and end positions of the annotation.
 
-           The cursors $start and $end will be set to the the start and end
+           The cursors $start and $end will be set to the start and end
            positions of the given annotation $annotation.
 
            @since 1.18
@@ -370,6 +371,6 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
       Efl.Text.text.get;
    }
    events {
-      changed; [[The content (text or annotations) have changed.]]
+      changed; [[Called when the content (text or annotations) changed.]]
    }
 }

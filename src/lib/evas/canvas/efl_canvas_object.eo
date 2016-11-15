@@ -5,6 +5,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size.Hint,
                             Efl.Gfx.Map)
 {
+   [[Efl canvas object abstract class]]
    legacy_prefix: evas_object;
    data: Evas_Object_Protected_Data;
    methods {
@@ -38,7 +39,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
            The default value is @Efl.Input.Object_Pointer_Mode.auto_grab.
          ]]
          values {
-            pointer_mode: Efl.Input.Object_Pointer_Mode;
+            pointer_mode: Efl.Input.Object_Pointer_Mode; [[Input pointer mode]]
          }
       }
       @property render_op {
@@ -272,6 +273,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          return: bool; [[$true if the seat was removed from the focus list or $false otherwise.]]
       }
       @property is_frame_object {
+      	 [[Property to identify if an object is a frame]]
          set {
             [[@since 1.2]]
          }
@@ -279,7 +281,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             [[@since 1.2]]
          }
          values {
-            is_frame: bool;
+            is_frame: bool; [[$true if the object is a frame, $false otherwise]]
          }
       }
       @property precise_is_inside {
@@ -448,7 +450,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
 
            @since 1.8
          ]]
-         return: bool @warn_unused;
+         return: bool @warn_unused; [[$true if any object is clipped by $obj, $false otherwise]]
       }
       key_grab {
          [[Requests $keyname key events be directed to $obj.
@@ -518,7 +520,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          See the full example @ref Example_Evas_Events "here".
          */
          params {
-            @in keyname: string @nonull; [[he key the grab is set for.]]
+            @in keyname: string @nonull; [[The key the grab is set for.]]
             @in modifiers: Evas.Modifier_Mask; [[A mask of modifiers that must be
                                                  present to trigger the event.]]
             @in not_modifiers: Evas.Modifier_Mask; [[A mask of modifiers that mus

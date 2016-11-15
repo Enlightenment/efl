@@ -33,7 +33,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
             legacy: evas_object_smart_need_recalculate_get;
          }
          values {
-            value: bool;
+            value: bool; [[$true if the group layout needs to be recalculated, $false otherwise]]
          }
       }
       group_change {
@@ -60,7 +60,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
            from both the $Efl.Object children list as well as the $Efl.Container
            content list.
          ]]
-         return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free);
+         return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free); [[Iterator to object children]]
          legacy: evas_object_smart_iterator_new;
       }
       group_member_add {
@@ -92,7 +92,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
            See also @.group_member_add for more details.
          ]]
          params {
-            @in sub_obj: Efl.Canvas.Object; [[the member object.]]
+            @in sub_obj: Efl.Canvas.Object; [[The member object.]]
          }
          legacy: null;
       }

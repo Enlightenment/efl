@@ -11,7 +11,7 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
             [[Marks this filter as changed.]]
          }
          values {
-            val: bool;
+            val: bool; [[$true if filter changed, $false otherwise]]
          }
       }
       @property filter_invalid @protected {
@@ -19,12 +19,12 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
             [[Marks this filter as invalid.]]
          }
          values {
-            val: bool;
+            val: bool; [[$true if filter is invalid, $false otherwise]]
          }
       }
       filter_input_alpha @protected @virtual_pure {
          [[Called by Efl.Canvas.Filter.Internal to determine whether the input is alpha or rgba.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       filter_input_render @protected @virtual_pure {
          [[Called by Efl.Canvas.Filter.Internal when the parent class must render the input.
@@ -33,12 +33,12 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
          return: bool; [[Indicates success from the object render function.]]
          params {
             filter: void_ptr; [[Evas_Filter_Context]]
-            drawctx: void_ptr;
-            l: int;
-            r: int;
-            t: int;
-            b: int;
-            do_async: bool;
+            drawctx: void_ptr; [[Draw context]]
+            l: int; [[Left]]
+            r: int; [[Right]]
+            t: int; [[Top]]
+            b: int; [[Bottom]]
+            do_async: bool; [[$true when the operation should be done asynchronous, $false otherwise]]
          }
       }
       filter_dirty @protected @virtual_pure {
@@ -55,7 +55,7 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
             ]]
          }
          values {
-            buffer: void_ptr;
+            buffer: void_ptr; [[Output buffer]]
          }
       }
    }

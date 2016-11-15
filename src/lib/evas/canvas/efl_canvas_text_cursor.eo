@@ -7,6 +7,7 @@ enum Efl.Canvas.Text.Cursor.Type
 
 class Efl.Canvas.Text.Cursor (Efl.Object)
 {
+   [[Efl canvas text cursor class]]
    legacy_prefix: evas_textblock_cursor;
    methods {
       @property text_object {
@@ -47,17 +48,17 @@ class Efl.Canvas.Text.Cursor (Efl.Object)
             return: bool; [[ $true if split cursor, $false otherwise.]]
          }
          keys {
-            ctype: Efl.Canvas.Text.Cursor.Type; [[ the type of the cursor.]]
+            ctype: Efl.Canvas.Text.Cursor.Type; [[The type of the cursor.]]
          }
          values {
-            cx: Evas.Coord; [[the x of the cursor (or upper cursor)]]
-            cy: Evas.Coord; [[the y of the cursor (or upper cursor)]]
-            cw: Evas.Coord; [[the width of the cursor (or upper cursor)]]
-            ch: Evas.Coord; [[the height of the cursor (or upper cursor)]]
-            cx2: Evas.Coord; [[ the x of the lower cursor]]
-            cy2: Evas.Coord; [[ the y of the lower cursor]]
-            cw2: Evas.Coord; [[ the width of the lower cursor]]
-            ch2: Evas.Coord; [[ the height of the lower cursor]]
+            cx: Evas.Coord; [[The x of the cursor (or upper cursor)]]
+            cy: Evas.Coord; [[The y of the cursor (or upper cursor)]]
+            cw: Evas.Coord; [[The width of the cursor (or upper cursor)]]
+            ch: Evas.Coord; [[The height of the cursor (or upper cursor)]]
+            cx2: Evas.Coord; [[The x of the lower cursor]]
+            cy2: Evas.Coord; [[The y of the lower cursor]]
+            cw2: Evas.Coord; [[The width of the lower cursor]]
+            ch2: Evas.Coord; [[The height of the lower cursor]]
          }
       }
       copy {
@@ -173,8 +174,8 @@ class Efl.Canvas.Text.Cursor (Efl.Object)
          [[Sets the position of the cursor according to the X and Y coordinates.]]
          legacy: null;
          params {
-            @in x: Evas.Coord; [[x coord to set by.]]
-            @in y: Evas.Coord; [[y coord to set by.]]
+            @in x: Evas.Coord; [[X coord to set by.]]
+            @in y: Evas.Coord; [[Y coord to set by.]]
          }
       }
       @property object_item_annotation {
@@ -183,7 +184,7 @@ class Efl.Canvas.Text.Cursor (Efl.Object)
             legacy: null;
          }
          values {
-            annotation: ptr(Efl.Canvas.Text.Annotation);
+            annotation: ptr(Efl.Canvas.Text.Annotation); [[Annotation]]
          }
       }
       object_item_insert {

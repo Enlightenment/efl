@@ -4,6 +4,7 @@ abstract Efl.Canvas.Image.Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Interna
                                     Efl.Orientation, Efl.Flipable,
                                     Efl.File)
 {
+   [[Efl canvas internal image class]]
    data: Evas_Image_Data;
    implements {
       Efl.Object.constructor;

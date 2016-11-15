@@ -2,6 +2,7 @@ import evas_types;
 
 class Efl.Canvas.Output (Efl.Object, Efl.Gfx.Buffer)
 {
+   [[Efl canvas output class]]
    methods {
       @property view {
          set {
@@ -15,24 +16,24 @@ class Efl.Canvas.Output (Efl.Object, Efl.Gfx.Buffer)
             [[Gets the viewport region of the canvas that the output displays.]]
          }
          values {
-            x: Evas.Coord;
-            y: Evas.Coord;
-            w: Evas.Coord;
-            h: Evas.Coord;
+            x: Evas.Coord; [[X coordinate viewport]]
+            y: Evas.Coord; [[Y coordinate viewport]] 
+            w: Evas.Coord; [[Viewport width]]
+            h: Evas.Coord; [[Viewport height]]
          }
       }
       lock {
-         [[Lock this output and will prevent rendering any buffer associated to it.]]
-         return: bool;
+         [[Lock this output and prevent rendering any buffer associated to it.]]
+         return: bool; [[$true on success, $false otherwise]]
       }
       unlock {
          [[Unlock this output and will rendering of this buffer during next call to evas_render.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       @property engine_info {
          set {
             [[Sets the engine specific output parameters for a given output.]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Gets the engine specific output parameters for a given output.]]
@@ -49,6 +50,6 @@ class Efl.Canvas.Output (Efl.Object, Efl.Gfx.Buffer)
       Efl.Object.finalize;
    }
    events {
-      pixels,ready;
+      pixels,ready; [[Called when pixels in output are ready to be used]]
    }
 }

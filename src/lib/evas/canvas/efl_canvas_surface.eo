@@ -19,7 +19,7 @@ mixin Efl.Canvas.Surface (Efl.Interface, Efl.Canvas.Image.Internal)
              [[Set the buffer. If this fails, this function returns $false,
                and the surface is left without any attached buffer.
              ]]
-             return: bool @warn_unused;
+             return: bool @warn_unused; [[$true on success, $false otherwise]]
           }
           values {
              buffer: void_ptr; [[The external buffer, depends on its type.]]
