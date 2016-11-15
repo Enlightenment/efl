@@ -54,7 +54,7 @@ interface Efl.Input.Interface ()
 
               A canvas begins with the mouse being assumed outside ($false).
             ]]
-            return: bool;
+            return: bool; [[$true if the mouse pointer is inside the canvas, $false otherwise]]
          }
       }
       pointer_iterate @const {
@@ -77,7 +77,7 @@ interface Efl.Input.Interface ()
             hover: bool @optional; [[$false by default, $true means to include
                                      fingers that are currently hovering.]]
          }
-         return: iterator<const(Efl.Input.Pointer)>;
+         return: iterator<const(Efl.Input.Pointer)>; [[Iterator to pointer positions]]
       }
    }
    events {
@@ -98,6 +98,6 @@ interface Efl.Input.Interface ()
       finger,up: Efl.Input.Pointer;      [[Finger released (finger id is known).]]
       key,down: Efl.Input.Key;           [[Keyboard key press.]]
       key,up: Efl.Input.Key;             [[Keyboard key release.]]
-      hold: Efl.Input.Hold; [[All input events are on hold or resumed.]]
+      hold: Efl.Input.Hold;              [[All input events are on hold or resumed.]]
    }
 }

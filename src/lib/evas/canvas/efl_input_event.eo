@@ -32,45 +32,46 @@ mixin Efl.Input.Event
       }
       dup @virtual_pure {
          [[Creates a copy of this event.]]
-         return: own(Efl.Input.Event);
+         return: own(Efl.Input.Event); [[Event copy]]
       }
       @property device @virtual_pure {
          [[Input device that originated this event.]]
          values {
-            dev: Efl.Input.Device;
+            dev: Efl.Input.Device; [[Input device origin]]
          }
       }
       @property event_flags @virtual_pure {
          [[Extra flags for this event, may be changed by the user.]]
          values {
-            flags: Efl.Input.Flags;
+            flags: Efl.Input.Flags; [[Input event flags]]
          }
       }
       @property processed {
          [[$true if @.event_flags indicates the event is on hold.]]
          values {
-            val: bool;
+            val: bool; [[$true if the event is on hold, $false otherwise]]
          }
       }
       @property scrolling {
          [[$true if @.event_flags indicates the event happened while scrolling.]]
          values {
-            val: bool;
+            val: bool; [[$true if the event happened while scrolling, $false otherwise]]
          }
       }
       @property fake {
          [[$true if the event was fake, not triggered by real hardware.]]
          get {}
          values {
-            val: bool;
+            val: bool; [[$true if the event was not from real hardware, $false otherwise]]
          }
       }
       instance_get @class @protected @virtual_pure {
+      	 [[Get an instance of this input event]]
          params {
-            @in owner: Efl.Object;
-            @out priv: void_ptr;
+            @in owner: Efl.Object; [[Owner of this input event]]
+            @out priv: void_ptr; [[Private data pointer]]
          }
-         return: own(Efl.Input.Event);
+         return: own(Efl.Input.Event); [[Instance of this input event]]
       }
    }
 }

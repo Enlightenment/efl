@@ -8,13 +8,13 @@ class Efl.Input.Key (Efl.Object, Efl.Input.Event, Efl.Input.State, Efl.Input.Eve
       @property pressed {
          [[$true if the key is down, $false if it is released.]]
          values {
-            val: bool;
+            val: bool; [[$true if the key is pressed, $false otherwise]]
          }
       }
       @property key_name {
          [[Name string of the key.]]
          values {
-            val: string;
+            val: string; [[Key name]]
          }
       }
       @property key {
@@ -23,7 +23,7 @@ class Efl.Input.Key (Efl.Object, Efl.Input.Event, Efl.Input.State, Efl.Input.Eve
            Eg. Shift + 1 = exclamation
          ]]
          values {
-            val: string;
+            val: string; [[Logical key name]]
          }
       }
       @property string {
@@ -31,7 +31,7 @@ class Efl.Input.Key (Efl.Object, Efl.Input.Event, Efl.Input.State, Efl.Input.Eve
            added.
          ]]
          values {
-            val: string;
+            val: string; [[Visible string from key press in UTF8]]
          }
       }
       @property compose {
@@ -41,13 +41,13 @@ class Efl.Input.Key (Efl.Object, Efl.Input.Event, Efl.Input.State, Efl.Input.Eve
            Note: This string replaces the previous one
          ]]
          values {
-            val: string;
+            val: string; [[Composed key string in UTF8]]
          }
       }
       @property key_code {
          [[Key scan code numeric value.]]
          values {
-            val: int;
+            val: int; [[Key scan code]]
          }
       }
    }
