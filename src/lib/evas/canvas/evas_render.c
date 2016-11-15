@@ -2542,6 +2542,7 @@ evas_render_updates_internal(Evas *eo_e,
    Evas_Public_Data *e;
    Eina_List *ll;
    Eina_Bool clean_them = EINA_FALSE;
+   Eina_Bool rendering = EINA_FALSE;
    Eina_Bool alpha;
    Eina_Rectangle *r;
    unsigned int i;
@@ -2867,6 +2868,7 @@ evas_render_updates_internal(Evas *eo_e,
              _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
              eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
           }
+        rendering = EINA_TRUE;
         eina_evlog("-render_surface", eo_e, 0.0, NULL);
      }
    eina_evlog("-render_phase6", eo_e, 0.0, NULL);
@@ -3022,7 +3024,7 @@ evas_render_updates_internal(Evas *eo_e,
 
    if (!do_async) _evas_render_cleanup();
    eina_evlog("-render_end", eo_e, 0.0, NULL);
-   return EINA_TRUE;
+   return rendering;
 }
 
 static Eina_Bool
