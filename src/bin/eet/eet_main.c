@@ -249,14 +249,14 @@ do_eet_insert(const char *file,
    void *data;
    int size = 0;
    FILE *f;
+   Eina_File *virtual_file;
 
-   ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
-   if (!ef)
-     ef = eet_open(file, EET_FILE_MODE_WRITE);
+   virtual_file = eina_file_virtualize_writable_from_file("virtual_file", file);
+   ef = eet_mmap(virtual_file);
 
    if (!ef)
      {
-        ERR("cannot open for read+write: %s", file);
+        ERR("cannot open for read: %s", file);
         exit(-1);
      }
 
@@ -291,9 +291,16 @@ do_eet_insert(const char *file,
      }
 
    fclose(f);
+
    eet_write_cipher(ef, key, data, size, compress, crypto_key);
    free(data);
    eet_close(ef);
+
+   if (!eina_file_written_file_save(virtual_file, file))
+     {
+        ERR("cannot save to file: %s", file);
+        exit(-1);
+     }
 } /* do_eet_insert */
 
 static void
@@ -308,14 +315,14 @@ do_eet_encode(const char *file,
    int textlen = 0;
    int size = 0;
    FILE *f;
+   Eina_File *virtual_file;
 
-   ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
-   if (!ef)
-     ef = eet_open(file, EET_FILE_MODE_WRITE);
+   virtual_file = eina_file_virtualize_writable_from_file("virtual_file", file);
+   ef = eet_mmap(virtual_file);
 
    if (!ef)
      {
-        ERR("cannot open for read+write: %s", file);
+        ERR("cannot open for read: %s", file);
         exit(-1);
      }
 
@@ -358,6 +365,12 @@ do_eet_encode(const char *file,
 
    free(text);
    eet_close(ef);
+
+   if (!eina_file_written_file_save(virtual_file, file))
+     {
+        ERR("cannot save to file: %s", file);
+        exit(-1);
+     }
 } /* do_eet_encode */
 
 static void
@@ -365,16 +378,24 @@ do_eet_remove(const char *file,
               const char *key)
 {
    Eet_File *ef;
+   Eina_File *virtual_file;
 
-   ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
+   virtual_file = eina_file_virtualize_writable_from_file("virtual_file", file);
+   ef = eet_mmap(virtual_file);
    if (!ef)
      {
-        ERR("cannot open for read+write: %s", file);
+        ERR("cannot open for read: %s", file);
         exit(-1);
      }
 
    eet_delete(ef, key);
    eet_close(ef);
+
+   if (!eina_file_written_file_save(virtual_file, file))
+     {
+        ERR("cannot save to file: %s", file);
+        exit(-1);
+     }
 } /* do_eet_remove */
 
 static void
