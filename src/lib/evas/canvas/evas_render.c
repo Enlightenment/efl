@@ -2725,7 +2725,16 @@ evas_render_updates_internal(Evas *eo_e,
         e->engine.func->output_redraws_rect_del(e->engine.data.output,
                                                 r->x, r->y, r->w, r->h);
      }
-   /* build obscure objects list of active objects that obscure */
+
+   static int prepare = -1;
+   if (prepare == -1)
+     {
+        if (getenv("EVAS_PREPARE")) prepare = !!atoi(getenv("EVAS_PREPARE"));
+        else prepare = 1;
+     }
+   /* build obscure objects list of active objects that obscure as well
+    * as objects that may need data (image data loads, texture updates,
+    * pre-render buffers/fbo's etc.) that are not up to date yet */
    for (i = 0; i < e->active_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->active_objects, i);
@@ -2742,6 +2751,11 @@ evas_render_updates_internal(Evas *eo_e,
                      (!obj->is_smart)))
           /*	  obscuring_objects = eina_list_append(obscuring_objects, obj); */
           OBJ_ARRAY_PUSH(&e->obscuring_objects, obj);
+        if (prepare)
+          {
+             if (obj->func->render_prepare)
+               obj->func->render_prepare(eo_obj, obj);
+          }
      }
    eina_evlog("-render_phase5", eo_e, 0.0, NULL);
 

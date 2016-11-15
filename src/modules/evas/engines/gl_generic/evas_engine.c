@@ -3089,6 +3089,16 @@ fail:
    return NULL;
 }
 
+static void
+eng_image_prepare(void *engdata EINA_UNUSED, void *image)
+{
+   Evas_GL_Image *im = image;
+
+   if (!im) return;
+   evas_gl_common_image_update(im->gc, im);
+}
+
+
 static int
 module_open(Evas_Module *em)
 {
@@ -3173,6 +3183,8 @@ module_open(Evas_Module *em)
    ORD(image_data_unmap);
    ORD(image_data_maps_get);
    ORD(image_data_slice_add);
+
+   ORD(image_prepare);
 
    ORD(font_cache_flush);
    ORD(font_cache_set);

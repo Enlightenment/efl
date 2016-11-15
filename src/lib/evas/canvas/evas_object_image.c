@@ -51,6 +51,7 @@ static int evas_object_image_get_opaque_rect(Evas_Object *eo_obj,
 					     void *type_private_data,
 					     Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 static int evas_object_image_can_map(Evas_Object *eo_obj);
+static void evas_object_image_render_prepare(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 
 static void evas_object_image_filled_resize_listener(void *data, Evas *eo_e, Evas_Object *eo_obj, void *einfo);
 
@@ -78,6 +79,7 @@ static const Evas_Object_Func object_func =
      evas_object_image_has_opaque_rect,
      evas_object_image_get_opaque_rect,
      evas_object_image_can_map,
+     evas_object_image_render_prepare, // render_prepare
      NULL
 };
 
@@ -110,6 +112,20 @@ static const Evas_Object_Image_State default_state = {
 Eina_Cow *evas_object_image_load_opts_cow = NULL;
 Eina_Cow *evas_object_image_pixels_cow = NULL;
 Eina_Cow *evas_object_image_state_cow = NULL;
+
+static void
+evas_object_image_render_prepare(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+
+   // if image data not loaded or in texture then upload
+   if ((o->cur->u.file) || (o->written) || (o->cur->frame != 0))
+     {
+        if (o->engine_data) ENFN->image_prepare(ENDT, o->engine_data);
+        return;
+     }
+   // XXX: if image is a proxy, PREPEND to prerender list in evas canvas
+}
 
 void
 _evas_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o)

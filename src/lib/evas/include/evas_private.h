@@ -1289,6 +1289,10 @@ struct _Evas_Object_Func
                            Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
    int (*can_map) (Evas_Object *obj);
+// new - add to prepare list during render if object needs some pre-render
+// preparation - may include rendering content to buffer or loading data
+// from disk or uploading to texture etc.
+   void (*render_prepare) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
 
 // new render2 functions
 
@@ -1383,6 +1387,8 @@ struct _Evas_Func
 
    /* new api for direct data set (not put) */
    void *(*image_data_slice_add)           (void *data, void *image, const Eina_Slice *slice, Eina_Bool copy, int w, int h, int stride, Evas_Colorspace space, int plane, Eina_Bool alpha);
+
+   void (*image_prepare)                   (void *data, void *image);
 
    int (*image_native_init)                (void *data, Evas_Native_Surface_Type type);
    void (*image_native_shutdown)           (void *data, Evas_Native_Surface_Type type);

@@ -1938,6 +1938,14 @@ fail:
 }
 
 static void
+eng_image_prepare(void *engdata EINA_UNUSED, void *image EINA_UNUSED)
+{
+   // software rendering doesnt want/need to prepare at this point
+   // XXX: though this could push along any loading threads or start
+   // some thread jobs for loading in the bg.
+}
+
+static void
 _image_flip_horizontal(DATA32 *pixels_out, const DATA32 *pixels_in,
                        int iw, int ih)
 {
@@ -4649,6 +4657,7 @@ static Evas_Func func =
      eng_image_data_unmap,
      eng_image_data_maps_get,
      eng_image_data_slice_add,
+     eng_image_prepare,
      eng_image_native_init,
      eng_image_native_shutdown,
      eng_image_native_set,
