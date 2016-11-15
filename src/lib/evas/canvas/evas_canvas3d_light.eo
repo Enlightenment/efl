@@ -2,6 +2,8 @@ import evas_types;
 
 class Evas.Canvas3D.Light (Evas.Canvas3D.Object)
 {
+   [[Evas 3D canvas light class]]
+
    data: Evas_Canvas3D_Light_Data;
 
    methods {

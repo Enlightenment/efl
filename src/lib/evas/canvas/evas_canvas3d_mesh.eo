@@ -3,6 +3,7 @@ import evas_types;
 
 class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Efl.File)
 {
+   [[Evas 3D canvas mesh class]]
    data: Evas_Canvas3D_Mesh_Data;
 
    methods {
@@ -104,8 +105,8 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Efl.File)
          ]]
          params {
             @in frame: int; [[ The number of the key frame.]]
-            @in vertex: ptr(Eina.Inarray);
-            @in index: ptr(Eina.Inarray);
+            @in vertex: ptr(Eina.Inarray); [[Vertex data pointer]]
+            @in index: ptr(Eina.Inarray); [[Index data pointer]]
          }
       }
 
@@ -166,11 +167,11 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Efl.File)
       }
 
       frame_exist {
-         [[Returns EINA_TRUE if frame was added and EINA_FALSE in other case.]]
+         [[Returns $true if frame was added and $false in other case.]]
          params {
             @in frame: int; [[Frame number.]]
          }
-         return: bool;
+         return: bool; [[$true ifr frame was added, $false otherwise]]
       }
 
       frame_add {
@@ -222,10 +223,10 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Efl.File)
          }
       }
       blending_func_get {
-         [[Get blending blending function for given mesh.]]
+         [[Get blending function for given mesh.]]
          params {
-            @out sfactor: Evas.Canvas3D.Blend_Func; [[Pointer to receive source blendin factors key.]]
-            @out dfactor: Evas.Canvas3D.Blend_Func; [[Pointer to receive destination blendin factors key.]]
+            @out sfactor: Evas.Canvas3D.Blend_Func; [[Pointer to receive source blending factors key.]]
+            @out dfactor: Evas.Canvas3D.Blend_Func; [[Pointer to receive destination blending factors key.]]
          }
       }
       from_primitive_set {
@@ -251,13 +252,13 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Efl.File)
       }
       @property color_pick_enable {
         set {
-            [[Set posibility color picking.]]
+            [[Set possibility color picking.]]
          }
          get {
             [[Get status of color picking of the mesh.]]
          }
          values {
-            enabled: bool; [[Posibility flag.]]
+            enabled: bool; [[Possibility flag.]]
          }
       }
       @property vertex_count {
@@ -414,8 +415,8 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Efl.File)
               See also @Evas.Canvas3D.Mesh.lod_boundary.set.]]
          }
          values {
-            near_lod: Evas.Real; [[up boundary]]
-            far_lod: Evas.Real; [[down boundary]]
+            near_lod: Evas.Real; [[Up boundary]]
+            far_lod: Evas.Real; [[Down boundary]]
          }
       }
    }

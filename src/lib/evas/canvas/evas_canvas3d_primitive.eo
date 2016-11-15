@@ -2,6 +2,7 @@ import evas_types;
 
 class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object)
 {
+   [[Evas 3D canvas primitive class]]
    data: Evas_Canvas3D_Primitive_Data;
 
    methods {
@@ -116,7 +117,7 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object)
              [[Set the texture scale of the given primitive.
 
                Texture scale uses in all non tabulated primitives
-               and defines scale of texture coords or primitives.
+               and defines scale of texture coordinates or primitives.
 
                It uses to create periodical textured meshes.
 
@@ -128,8 +129,8 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object)
                See also @.tex_scale.set.]]
          }
          values {
-            tex_scale_x: Evas.Real;
-            tex_scale_y: Evas.Real;
+            tex_scale_x: Evas.Real; [[Texture scale X coordinate]]
+            tex_scale_y: Evas.Real; [[Texture scale Y coordinate]]
          }
       }
    }

@@ -2,13 +2,14 @@ import evas_types;
 
 class Evas.Canvas3D.Node (Evas.Canvas3D.Object)
 {
+   [[Evas 3D canvas node class]]
    data: Evas_Canvas3D_Node_Data;
    methods {
       constructor {
          [[Constructor.]]
          legacy: null;
          params {
-            @in type: Evas.Canvas3D.Node_Type;
+            @in type: Evas.Canvas3D.Node_Type; [[Node type]]
          }
       }
       type_get @const {

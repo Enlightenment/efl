@@ -1,5 +1,6 @@
 class Evas.Canvas3D.Material (Evas.Canvas3D.Object)
 {
+   [[Evas 3D canvas material class]]
    data: Evas_Canvas3D_Material_Data;
    methods {
       color_set {

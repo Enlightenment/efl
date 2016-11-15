@@ -2,6 +2,7 @@ import evas_types;
 
 class Evas.Canvas3D.Camera (Evas.Canvas3D.Object)
 {
+   [[Evas 3D canvas camera class]]
    data: Evas_Canvas3D_Camera_Data;
    methods {
       projection_matrix_set {
@@ -71,7 +72,7 @@ class Evas.Canvas3D.Camera (Evas.Canvas3D.Object)
          params {
             @in camera_node: Evas.Canvas3D.Node; [[The given camera node.]]
             @in node: Evas.Canvas3D.Node; [[The given node.]]
-            @in key: Evas.Canvas3D.Frustum_Mode;
+            @in key: Evas.Canvas3D.Frustum_Mode; [[The given key]]
          }
       }
    }

@@ -2,6 +2,7 @@ import evas_types;
 
 class Evas.Canvas3D.Scene (Evas.Canvas3D.Object)
 {
+   [[Efl 3D canvas scene class]]
    data: Evas_Canvas3D_Scene_Data;
    methods {
       size_set {
@@ -62,7 +63,7 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object)
            the size of the scene. The texture coordinate is useful when
            using proxy texture source.
          ]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in x: Evas.Real;              [[X coordinate of the picking position.]]
             @in y: Evas.Real;              [[Y coordinate of the picking position.]]
@@ -75,7 +76,7 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object)
 
       exist @const {
          [[Search given node in the given position.]]
-         return: Evas.Canvas3D.Node;
+         return: Evas.Canvas3D.Node; [[Node at the given position]]
          params {
             @in x: Evas.Real; [[X coordinate of the picking position.]]
             @in y: Evas.Real; [[Y coordinate of the picking position.]]
@@ -85,7 +86,7 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object)
 
       pick_member_list_get @const {
          [[Get list of the all root members from scene in the given position.]]
-         return: list<Evas.Canvas3D.Node>;
+         return: list<Evas.Canvas3D.Node>; [[List of all root members from scene]]
          params {
             @in x: Evas.Real; [[X coordinate of the picking position.]]
             @in y: Evas.Real; [[Y coordinate of the picking position.]]
@@ -109,13 +110,13 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object)
       }
       color_pick_enable_get @const {
          [[Get status of color picking of the scene.]]
-         return: bool;
+         return: bool; [[The pick enabled status]]
       }
       color_pick_enable_set {
-         [[Set posibility color picking.]]
-         return: bool;
+         [[Set possibility color picking.]]
+         return: bool; [[$true on success, $false otherwise]]
          params {
-            @in color_pick: bool; [[Posibility flag]]
+            @in color_pick: bool; [[Possibility flag]]
          }
       }
 
@@ -165,5 +166,4 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object)
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
    }
-
 }

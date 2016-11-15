@@ -2,6 +2,7 @@ type @extern Evas_Colorspace: int; [[Evas colorspace type]] /* FIXME: Need to ge
 
 class Evas.Canvas3D.Texture (Evas.Canvas3D.Object)
 {
+   [[Evas 3d canvas texture class]]
    data : Evas_Canvas3D_Texture_Data;
    methods {
       @property source_visible {
@@ -90,7 +91,7 @@ class Evas.Canvas3D.Texture (Evas.Canvas3D.Object)
 
            See also @.data_set, @.file_set, @.source_set.
          ]]
-         return: Evas_Colorspace;
+         return: Evas_Colorspace; [[Color format of the given texture]]
       }
 
       size_get @const {
@@ -164,5 +165,4 @@ class Evas.Canvas3D.Texture (Evas.Canvas3D.Object)
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
    }
-
 }
