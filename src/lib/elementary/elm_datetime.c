@@ -38,16 +38,48 @@ elm_datetime_format_get(const Evas_Object *obj)
    return efl_ui_clock_format_get(obj);
 }
 
+static Efl_Ui_Clock_Type
+adjust_field_type(Elm_Datetime_Field_Type type)
+{
+   Efl_Ui_Clock_Type ctype = EFL_UI_CLOCK_TYPE_YEAR;
+
+   switch(type)
+     {
+      case  ELM_DATETIME_YEAR:
+         ctype = EFL_UI_CLOCK_TYPE_YEAR;
+         break;
+      case ELM_DATETIME_MONTH:
+         ctype = EFL_UI_CLOCK_TYPE_MONTH;
+         break;
+      case ELM_DATETIME_DATE:
+         ctype = EFL_UI_CLOCK_TYPE_DATE;
+         break;
+      case ELM_DATETIME_HOUR:
+         ctype = EFL_UI_CLOCK_TYPE_HOUR;
+         break;
+      case ELM_DATETIME_MINUTE:
+         ctype = EFL_UI_CLOCK_TYPE_MINUTE;
+         break;
+      case ELM_DATETIME_AMPM:
+         ctype = EFL_UI_CLOCK_TYPE_AMPM;
+         break;
+      default:
+         ;
+     }
+
+   return ctype;
+}
+
 EAPI void
 elm_datetime_field_limit_set(Evas_Object *obj, Elm_Datetime_Field_Type type, int min, int max)
 {
-   efl_ui_clock_field_limit_set(obj, type, min, max);
+   efl_ui_clock_field_limit_set(obj, adjust_field_type(type), min, max);
 }
 
 EAPI void
 elm_datetime_field_limit_get(const Evas_Object *obj, Elm_Datetime_Field_Type fieldtype, int *min, int *max)
 {
-   efl_ui_clock_field_limit_get(obj, fieldtype, min, max);
+   efl_ui_clock_field_limit_get(obj, adjust_field_type(fieldtype), min, max);
 }
 
 EAPI Eina_Bool
@@ -76,12 +108,12 @@ EAPI Eina_Bool elm_datetime_value_get(const Evas_Object *obj, Efl_Time *currtime
 EAPI void
 elm_datetime_field_visible_set(Evas_Object *obj, Elm_Datetime_Field_Type fieldtype, Eina_Bool visible)
 {
-   efl_ui_clock_field_visible_set(obj, fieldtype, visible);
+   efl_ui_clock_field_visible_set(obj, adjust_field_type(fieldtype), visible);
 }
 
 EAPI Eina_Bool elm_datetime_field_visible_get(const Evas_Object *obj, Elm_Datetime_Field_Type fieldtype)
 {
-   return efl_ui_clock_field_visible_get(obj, fieldtype);
+   return efl_ui_clock_field_visible_get(obj, adjust_field_type(fieldtype));
 }
 
 EAPI Eina_Bool
