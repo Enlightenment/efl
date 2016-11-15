@@ -393,31 +393,12 @@ typedef struct _drmEventContext
                              void *user_data);
 } drmEventContext;
 
-typedef struct _drmVersionBroken
-{
-   int version_major;
-   int version_minor;
-   int version_patchlevel;
-   size_t name_len;
-   // WARNING! this does NOT match the system drm.h headers because
-   // literally drm.h is wrong. the below is correct. drm hapily
-   // broke its ABI at some point.
-   char *name;
-   size_t date_len;
-   char *date;
-   size_t desc_len;
-   char *desc;
-} drmVersionBroken;
-
 typedef struct _drmVersion
 {
    int version_major;
    int version_minor;
    int version_patchlevel;
    int name_len;
-   // WARNING! this does NOT match the system drm.h headers because
-   // literally drm.h is wrong. the below is correct. drm hapily
-   // broke its ABI at some point.
    char *name;
    int date_len;
    char *date;
