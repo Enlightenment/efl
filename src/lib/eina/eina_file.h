@@ -553,6 +553,9 @@ EAPI Eina_Slice
 eina_file_written_slice_get(const Eina_File *file);
 
 EAPI Eina_Bool
+eina_file_written_file_save(const Eina_File *virtual_file, const char *file_out);
+
+EAPI Eina_Bool
 eina_file_writable_reset_buf(Eina_File *file);
 
 /**

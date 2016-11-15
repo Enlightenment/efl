@@ -475,6 +475,32 @@ eina_file_virtualize_writable_from_file(const char *virtual_name, const char *fi
 }
 
 EAPI Eina_Bool
+eina_file_written_file_save(const Eina_File *virtual_file, const char *file_out)
+{
+   FILE *f_out;
+   Eina_Slice file_slice;
+
+   if (!file_out)
+     return EINA_FALSE;
+
+   if (!virtual_file)
+     return EINA_FALSE;
+
+   if (!virtual_file->writable)
+     return EINA_FALSE;
+
+   f_out = fopen(file_out, "wb");
+   if (!f_out)
+     return EINA_FALSE;
+
+   file_slice = eina_file_written_slice_get(virtual_file);
+   fwrite(file_slice.mem, file_slice.len, 1, f_out);
+   fclose(f_out);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 eina_file_writable_get(const Eina_File *file)
 {
    if (file) return file->writable;
