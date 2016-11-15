@@ -257,6 +257,20 @@ eina_thread_cancel_checkpoint(void)
    pthread_testcancel();
 }
 
+EAPI void *
+eina_thread_cancellable_run(Eina_Thread_Cancellable_Run_Cb cb, Eina_Free_Cb cleanup_cb, void *data)
+{
+   Eina_Bool old = EINA_FALSE;
+   void *ret;
+
+   EINA_THREAD_CLEANUP_PUSH(cleanup_cb, data);
+   eina_thread_cancellable_set(EINA_TRUE, &old); // is a cancellation point
+   ret = cb(data); // may not run if was previously canceled
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
+   eina_thread_cancellable_set(old, NULL);
+   return ret;
+}
+
 EAPI const void *EINA_THREAD_JOIN_CANCELED = PTHREAD_CANCELED;
 
 Eina_Bool
