@@ -537,6 +537,9 @@ eina_file_virtual(Eina_File *file) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI Eina_File *
 eina_file_virtualize_writable(const char *virtual_name, const void *data, unsigned long long length);
 
+EAPI Eina_File *
+eina_file_virtualize_writable_from_file(const char *virtual_name, const char *file);
+
 EAPI Eina_Bool
 eina_file_writable_get(const Eina_File *file);
 

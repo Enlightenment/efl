@@ -451,6 +451,29 @@ eina_file_virtualize_writable(const char *virtual_name, const void *data, unsign
    return ret;
 }
 
+EAPI Eina_File *
+eina_file_virtualize_writable_from_file(const char *virtual_name, const char *file)
+{
+   Eina_File *tmp_file, *ret;
+   void *file_data = NULL;
+   size_t file_size = 0;
+
+   tmp_file = eina_file_open(file, 0);
+   if (tmp_file)
+     {
+        file_data = eina_file_map_all(tmp_file, EINA_FILE_SEQUENTIAL);
+        file_size = eina_file_size_get(tmp_file);
+     }
+   ret = eina_file_virtualize_writable(virtual_name, file_data, file_size);
+   if (tmp_file)
+     {
+        eina_file_map_free(tmp_file, file_data);
+        eina_file_close(tmp_file);
+     }
+
+   return ret;
+}
+
 EAPI Eina_Bool
 eina_file_writable_get(const Eina_File *file)
 {
