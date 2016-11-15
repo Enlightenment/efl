@@ -117,6 +117,7 @@ _ecore_drm2_link(void)
         SYM(drm_lib, drmModeFreePlane);
         SYM(drm_lib, drmModeAddFB);
         SYM(drm_lib, drmModeRmFB);
+        SYM(drm_lib, drmModePageFlip);
         SYM(drm_lib, drmModeDirtyFB);
 
         if (fail)
