@@ -28,22 +28,24 @@ abstract Ector.Renderer (Efl.Object)
 	 }
       }
       @property transformation {
+      	 [[Transformation property]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    m: ptr(const(Eina.Matrix3));
+	    m: ptr(const(Eina.Matrix3)); [[Transformation matrix]]
 	 }
       }
       @property origin {
+      	 [[Renderer origin]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    x: double;
-	    y: double;
+	    x: double; [[X coordinate]]
+	    y: double; [[Y coordinate]]
 	 }
       }
       @property visibility {
@@ -53,7 +55,7 @@ abstract Ector.Renderer (Efl.Object)
 	 get {
 	 }
 	 values {
-	    v: bool; [[true if to make the object visible, false otherwise]]
+	    v: bool; [[$true if to make the object visible, $false otherwise]]
 	 }
       }
       @property color {
@@ -80,12 +82,13 @@ abstract Ector.Renderer (Efl.Object)
 	 }
       }
       @property mask {
+      	 [[Rendering mask]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    r: Ector.Renderer;
+	    r: Ector.Renderer; [[Rendering mask]]
 	 }
       }
       @property quality {
@@ -111,20 +114,21 @@ abstract Ector.Renderer (Efl.Object)
 	 }
       }
       draw @virtual_pure {
-         return: bool;
+      	 [[Actual draw operation]]
+         return: bool; [[$true on success, $false otherwise]]
 	 params {
-	    @in op: Efl.Gfx.Render_Op;
-	    @in clips: array<ptr(Eina.Rectangle)>; [[array of @Eina.Rectangle clip]]
-	    @in mul_col: uint;
+	    @in op: Efl.Gfx.Render_Op; [[Renderer operation]]
+	    @in clips: array<ptr(Eina.Rectangle)>; [[Array of @Eina.Rectangle clip]]
+	    @in mul_col: uint; [[Premultiplied color]] 
 	 }
       }
       prepare {
-         return: bool;
-	 params {
-	 }
+      	 [[Prepare for rendering]]
+         return: bool; [[$true on success, $false otherwise]]
       }
       done @virtual_pure {
-         return: bool;
+      	 [[Done with rendering]]
+         return: bool; [[$true on success, $false otherwise]]
       }
    }
    implements {

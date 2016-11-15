@@ -16,9 +16,9 @@ mixin Ector.Surface (Ector.Buffer)
       }
       renderer_factory_new @virtual_pure {
          [[Create a new renderer factory for the given type]]
-         return: Efl.Object; /* FIXME: Should be a more restricted type, only here for cyclic. */
+         return: Efl.Object; [[Renderer factory object]] /* FIXME: Should be a more restricted type, only here for cyclic. */
          params {
-            @in type: const(Efl.Class) @nonull; /* FIXME: Should probably be a more restricted type */
+            @in type: const(Efl.Class) @nonull; [[Efl class]] /* FIXME: Should probably be a more restricted type */
          }
       }
    }

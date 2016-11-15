@@ -6,30 +6,33 @@ mixin Ector.Renderer.Shape (Efl.Gfx.Shape)
    eo_prefix: ector_renderer_shape;
    methods {
       @property fill {
+      	 [[Fill property]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    r: const(Ector.Renderer);
+	    r: const(Ector.Renderer); [[Ector fill renderer]]
 	 }
       }
       @property stroke_fill {
+      	 [[Stroke fill property]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    r: const(Ector.Renderer);
+	    r: const(Ector.Renderer); [[Ector stroke fill renderer]]
 	 }
       }
       @property stroke_marker {
+      	 [[Stroke marker property]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    r: const(Ector.Renderer);
+	    r: const(Ector.Renderer); [[Ector stroke marker renderer]]
 	 }
       }
    }
