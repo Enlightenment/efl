@@ -49,11 +49,11 @@ interface Efl.Gfx.Filter
          get {}
          set {}
          values {
-            cur_state: string;
-            cur_val: double;
-            next_state: string @optional;
-            next_val: double @optional;
-            pos: double @optional;
+            cur_state: string; [[Current state of the filter]]
+            cur_val: double; [[Current value]]
+            next_state: string @optional; [[Next filter state, optional]]
+            next_val: double @optional; [[Next value, optional]]
+            pos: double @optional; [[Position, optional]]
          }
       }
       @property filter_padding {
@@ -68,7 +68,7 @@ interface Efl.Gfx.Filter
          }
          values {
             l: int; [[Padding on the left]]
-            r: int; [[Padding on the ight]]
+            r: int; [[Padding on the right]]
             t: int; [[Padding on the top]]
             b: int; [[Padding on the bottom]]
          }

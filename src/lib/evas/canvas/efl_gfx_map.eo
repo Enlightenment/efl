@@ -59,7 +59,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
          ]]
          get {}
          values {
-            cw: bool; [[$true if CW, $false if CCW.]]
+            cw: bool; [[$true if clockwise, $false if counter clockwise]]
          }
       }
       @property map_smooth {
@@ -170,17 +170,17 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
          ]]
          get {}
          keys {
-            idx: int;
+            idx: int; [[Point]]
          }
          values {
-            z: double;
+            z: double; [[Z coordinate for point]]
          }
       }
       map_populate {
          [[Populate source and destination map points to match this object.
          ]]
          params {
-            z: double @optional; [[Point Z coordinate (pre-perpective transform),
+            z: double @optional; [[Point Z coordinate (pre-pesrpective transform),
                                    used for all 4 points. 0 by default.]]
          }
          return: bool; [[$false in case of error.]]
@@ -194,11 +194,11 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
            image uv (@.map_point_image_uv).
          ]]
          params {
-            x: double;
-            y: double;
-            w: double;
-            h: double;
-            z: double @optional; [[Point Z coordinate (pre-perpective transform),
+            x: double; [[X coordinate]]
+            y: double; [[Y coordinate]]
+            w: double; [[Width]]
+            h: double; [[Height]]
+            z: double @optional; [[Point Z coordinate (pre-perspective transform),
                                    used for all 4 points. 0 by default.]]
          }
          return: bool; [[$false in case of error.]]
@@ -229,8 +229,8 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
            "half the size" etc. All coordinates are canvas global coordinates.
          ]]
          params {
-            zoomx: double;
-            zoomy: double;
+            zoomx: double; [[Zoom in X direction]]
+            zoomy: double; [[Zoom in Y direction]]
             cx: double; [[X coordinate of the center point.]]
             cy: double; [[Y coordinate of the center point.]]
          }
@@ -264,13 +264,13 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
            to rotate around (in 3D).
          ]]
          params {
-            qx: double; [[the x component of the imaginary part of the quaternion.]]
-            qy: double; [[the y component of the imaginary part of the quaternion.]]
-            qz: double; [[the z component of the imaginary part of the quaternion.]]
-            qw: double; [[the w component of the real part of the quaternion.]]
-            cx: double; [[rotation's center x.]]
-            cy: double; [[rotation's center y.]]
-            cz: double; [[rotation's center z.]]
+            qx: double; [[The x component of the imaginary part of the quaternion.]]
+            qy: double; [[The y component of the imaginary part of the quaternion.]]
+            qz: double; [[The z component of the imaginary part of the quaternion.]]
+            qw: double; [[The w component of the real part of the quaternion.]]
+            cx: double; [[Rotation's center x.]]
+            cy: double; [[Rotation's center y.]]
+            cz: double; [[Rotation's center z.]]
          }
          return: bool; [[$false in case of error.]]
       }
@@ -289,12 +289,12 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
             lx: double; [[X coordinate in space of light point.]]
             ly: double; [[Y coordinate in space of light point.]]
             lz: double; [[Z coordinate in space of light point.]]
-            lr: int; [[light red value (0 - 255).]]
-            lg: int; [[light green value (0 - 255).]]
-            lb: int; [[light blue value (0 - 255).]]
-            ar: int; [[ambient color red value (0 - 255).]]
-            ag: int; [[ambient color green value (0 - 255).]]
-            ab: int; [[ambient color blue value (0 - 255).]]
+            lr: int; [[Light red value (0 - 255).]]
+            lg: int; [[Light green value (0 - 255).]]
+            lb: int; [[Light blue value (0 - 255).]]
+            ar: int; [[Ambient color red value (0 - 255).]]
+            ag: int; [[Ambient color green value (0 - 255).]]
+            ab: int; [[Ambient color blue value (0 - 255).]]
          }
          return: bool; [[$false in case of error.]]
       }
@@ -325,7 +325,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
       map_dup {
          [[Duplicate the map information from another object.]]
          params {
-            other: const(Efl.Gfx.Map);
+            other: const(Efl.Gfx.Map); [[Map object to duplicate]]
          }
          return: bool; [[$false in case of error.]]
       }

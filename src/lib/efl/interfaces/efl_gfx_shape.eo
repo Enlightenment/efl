@@ -55,7 +55,7 @@ mixin Efl.Gfx.Shape
          get {
          }
          values {
-            centered: double;
+            centered: double; [[Centered stroke location]]
          }
       }
       @property stroke_dash {
@@ -65,8 +65,8 @@ mixin Efl.Gfx.Shape
          get {
          }
          values {
-            dash: ptr(const(Efl.Gfx.Dash));
-            length: uint;
+            dash: ptr(const(Efl.Gfx.Dash)); [[Stroke dash]]
+            length: uint; [[Stroke dash length]]
          }
       }
       @property stroke_cap {
@@ -136,11 +136,12 @@ mixin Efl.Gfx.Shape
          }
       }
       @property path_length {
+      	[[Path length property]]
         get {
         }
         values {
-          commands: uint;
-          points: uint;
+          commands: uint; [[Commands]]
+          points: uint; [[Points]]
         }
       }
       @property current {
@@ -288,9 +289,9 @@ mixin Efl.Gfx.Shape
         params {
           @in x: double; [[X co-ordinate of end point of the arc.]]
           @in y: double; [[Y co-ordinate of end point of the arc.]]
-          @in rx: double; [[radius of arc in x direction.]]
-          @in ry: double; [[radius of arc in y direction.]]
-          @in angle: double; [[x-axis rotation , normally 0.]]
+          @in rx: double; [[Radius of arc in x direction.]]
+          @in ry: double; [[Radius of arc in y direction.]]
+          @in angle: double; [[X-axis rotation , normally 0.]]
           @in large_arc: bool; [[Defines whether to draw the larger arc or
                                  smaller arc joining two point.]]
           @in sweep: bool; [[Defines whether the arc will be drawn
@@ -308,8 +309,8 @@ mixin Efl.Gfx.Shape
         params {
           @in x: double; [[X co-ordinate of the rect.]]
           @in y: double; [[Y co-ordinate of the rect.]]
-          @in w: double; [[width of the rect.]]
-          @in h: double; [[height of the rect.]]
+          @in w: double; [[Width of the rect.]]
+          @in h: double; [[Height of the rect.]]
           @in start_angle: double; [[Angle at which the arc will start]]
           @in sweep_length: double; [[@ Length of the arc.]]
         }
@@ -332,7 +333,7 @@ mixin Efl.Gfx.Shape
         params {
           @in x: double; [[X co-ordinate of the center of the circle.]]
           @in y: double; [[Y co-ordinate of the center of the circle.]]
-          @in radius: double; [[radius of the circle.]]
+          @in radius: double; [[Radius of the circle.]]
         }
       }
       append_rect {
@@ -362,22 +363,25 @@ mixin Efl.Gfx.Shape
         }
       }
       append_svg_path {
+      	[[Append SVG path data]]
         params {
-          @in svg_path_data: string;
+          @in svg_path_data: string; [[SVG path data to append]]
         }
       }
       interpolate {
-        return: bool;
+      	[[Interpolate object]]
+        return: bool; [[$true on success, $false otherwise]]
         params {
-          @in from: const(Efl.Object);
-          @in to: const(Efl.Object);
-          @in pos_map: double;
+          @in from: const(Efl.Object); [[Source object]]
+          @in to: const(Efl.Object); [[Destination object]]
+          @in pos_map: double; [[Position map]]
         }
       }
       equal_commands {
-        return: bool;
+        [[Equal commands in object]]
+        return: bool; [[True on success, $false otherwise]]
         params {
-          @in with: const(Efl.Object);
+          @in with: const(Efl.Object); [[Object]]
         }
       }
    }

@@ -224,7 +224,7 @@ interface Efl.Gfx.Buffer ()
            freed by the caller.
          ]]
          params {
-            @out slice: Eina.Slice;
+            @out slice: Eina.Slice; [[Data slice]]
             @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
          }
          return: bool; [[$true on success, $false otherwise]]
