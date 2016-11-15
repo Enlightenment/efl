@@ -6,6 +6,7 @@ type @extern va_list: __undefined_type; [[va_list type]] /* FIXME: va_list is no
 
 class Evas.Box (Efl.Canvas.Group.Clipped)
 {
+   [[Evas box class]]
    legacy_prefix: evas_object_box;
    eo_prefix: evas_obj_box;
    event_prefix: evas_box;
@@ -35,7 +36,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
          }
          values {
             horizontal: double; [[The horizontal alignment, in pixels.]]
-            vertical: double; [[the vertical alignment, in pixels.]]
+            vertical: double; [[The vertical alignment, in pixels.]]
          }
       }
       @property padding {
@@ -53,7 +54,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
          }
          values {
             horizontal: Evas.Coord; [[The horizontal padding, in pixels.]]
-            vertical: Evas.Coord; [[the vertical padding, in pixels.]]
+            vertical: Evas.Coord; [[The vertical padding, in pixels.]]
          }
       }
       @property layout {
@@ -127,8 +128,8 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            be set, by the evas_object_size_hint_{min,max}_set
            functions.]]
          params {
-              priv: ptr(Evas_Object_Box_Data);
-              data: void_ptr;
+              priv: ptr(Evas_Object_Box_Data); [[Private data pointer]]
+              data: void_ptr; [[Data pointer]]
          }
       }
       layout_vertical {
@@ -138,8 +139,8 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            evas_object_box_layout_horizontal. The description of its
            behaviour can be derived from that function's documentation.]]
          params {
-              priv: ptr(Evas_Object_Box_Data);
-              data: void_ptr;
+              priv: ptr(Evas_Object_Box_Data); [[Private data pointer]]
+              data: void_ptr; [[Data pointer]]
          }
       }
       layout_homogeneous_max_size_horizontal {
@@ -184,17 +185,17 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            try to resize this child element to the exact height of its parent
            (respecting the max hint on the child's height).]]
          params {
-              priv: ptr(Evas_Object_Box_Data);
-              data: void_ptr;
+              priv: ptr(Evas_Object_Box_Data); [[Private data pointer]]
+              data: void_ptr; [[Data pointer]]
          }
 
       }
       internal_remove {
          [[No description supplied by the EAPI.]]
-         return: Efl.Canvas.Object;
+         return: Efl.Canvas.Object; [[New object with child removed]]
          legacy: null;
          params {
-            @in child: Efl.Canvas.Object;
+            @in child: Efl.Canvas.Object; [[Child object to be removed]]
          }
       }
       layout_flow_vertical {
@@ -204,15 +205,15 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            evas_object_box_layout_flow_horizontal. The description of its
            behaviour can be derived from that function's documentation.]]
          params {
-              priv: ptr(Evas_Object_Box_Data);
-              data: void_ptr;
+              priv: ptr(Evas_Object_Box_Data); [[Private data pointer]]
+              data: void_ptr; [[Data pointer]]
          }
       }
       internal_option_free {
          [[No description supplied by the EAPI.]]
          legacy: null;
          params {
-            @in opt: ptr(Evas_Object_Box_Option);
+            @in opt: ptr(Evas_Object_Box_Option); [[Box option to be freed]]
          }
       }
       insert_after {
@@ -243,9 +244,9 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            each of $o's child objects, in sequence. If, and only if, all
            those calls succeed, so does this one.]]
 
-         return: bool; [[$true, on success, $false otherwise.]]
+         return: bool; [[$true on success, $false otherwise.]]
          params {
-            @in clear: bool; [[if true, it will delete just removed children.]]
+            @in clear: bool; [[If $true, it will delete just removed children.]]
          }
       }
       iterator_new @const {
@@ -331,9 +332,9 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       internal_append {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: ptr(Evas_Object_Box_Option);
+         return: ptr(Evas_Object_Box_Option); [[Box option]]
          params {
-            @in child: Efl.Canvas.Object;
+            @in child: Efl.Canvas.Object; [[Child object to be appended]]
          }
       }
       option_property_vset {
@@ -358,9 +359,9 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       internal_remove_at {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: Efl.Canvas.Object;
+         return: Efl.Canvas.Object; [[Canvas object]]
          params {
-            @in pos: uint;
+            @in pos: uint; [[Position of object to be removed]]
          }
       }
       remove_at {
@@ -405,10 +406,10 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       internal_insert_at {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: ptr(Evas_Object_Box_Option);
+         return: ptr(Evas_Object_Box_Option); [[Box option]]
          params {
-            @in child: Efl.Canvas.Object;
-            @in pos: uint;
+            @in child: Efl.Canvas.Object; [[Child object to be inserted]]
+            @in pos: uint; [[Position where the object will be inserted]]
          }
       }
       insert_before {
@@ -451,10 +452,10 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       internal_insert_before {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: ptr(Evas_Object_Box_Option);
+         return: ptr(Evas_Object_Box_Option); [[Box option]]
          params {
-            @in child: Efl.Canvas.Object;
-            @in reference: const(Efl.Canvas.Object);
+            @in child: Efl.Canvas.Object; [[Object to be inserted]]
+            @in reference: const(Efl.Canvas.Object); [[Reference where the object will be inserted]]
          }
       }
       layout_homogeneous_horizontal {
@@ -490,16 +491,16 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            try to resize this child element to the exact height of its parent
            (respecting the maximum size hint on the child's height).]]
          params {
-            @in priv: ptr(Evas_Object_Box_Data);
-            @in data: void_ptr;
+            @in priv: ptr(Evas_Object_Box_Data); [[Private data pointer]]
+            @in data: void_ptr; [[Data pointer]]
          }
       }
       internal_option_new {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: ptr(Evas_Object_Box_Option);
+         return: ptr(Evas_Object_Box_Option); [[Box option]]
          params {
-            @in child: Efl.Canvas.Object;
+            @in child: Efl.Canvas.Object; [[New box object]]
          }
       }
       layout_homogeneous_max_size_vertical {
@@ -511,17 +512,17 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            description of its behaviour can be derived from that function's
            documentation.]]
          params {
-            @in priv: ptr(Evas_Object_Box_Data);
-            @in data: void_ptr;
+            @in priv: ptr(Evas_Object_Box_Data); [[Private data pointer]]
+            @in data: void_ptr; [[Data pointer]]
          }
       }
       internal_insert_after {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: ptr(Evas_Object_Box_Option);
+         return: ptr(Evas_Object_Box_Option); [[Box option]]
          params {
-            @in child: Efl.Canvas.Object;
-            @in reference: const(Efl.Canvas.Object);
+            @in child: Efl.Canvas.Object; [[Object top be inserted]]
+            @in reference: const(Efl.Canvas.Object); [[Reference where the object will be inserted]]
          }
       }
       insert_at {
@@ -550,9 +551,9 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       internal_prepend {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: ptr(Evas_Object_Box_Option);
+         return: ptr(Evas_Object_Box_Option); [[Box option]]
          params {
-            @in child: Efl.Canvas.Object;
+            @in child: Efl.Canvas.Object; [[Object to be prepended]]
          }
       }
       remove {
@@ -593,8 +594,8 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            width and accounting for its horizontal padding properties). The
            same applies to the vertical axis.]]
          params {
-            @in priv: ptr(Evas_Object_Box_Data);
-            @in data: void_ptr;
+            @in priv: ptr(Evas_Object_Box_Data); [[Private data pointer]]
+            @in data: void_ptr; [[Data pointer]]
          }
       }
       layout_homogeneous_vertical {
@@ -605,8 +606,8 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            evas_object_box_layout_homogeneous_horizontal.  The description
            of its behaviour can be derived from that function's documentation.]]
          params {
-              priv: ptr(Evas_Object_Box_Data);
-              data: void_ptr;
+              priv: ptr(Evas_Object_Box_Data); [[Private data pointer]]
+              data: void_ptr; [[Data pointer]]
          }
       }
       layout_flow_horizontal {
@@ -644,14 +645,14 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
            $align_y dictates positioning relative to the largest
            height required by a child object in the actual row.]]
          params {
-              priv: ptr(Evas_Object_Box_Data);
-              data: void_ptr;
+              priv: ptr(Evas_Object_Box_Data); [[Private data pointer]]
+              data: void_ptr; [[Data pointer]]
          }
       }
       count {
          [[Returns the number of items in the box.]]
          legacy: null;
-         return: int;
+         return: int; [[Number of items in the box]]
       }
    }
    implements {
@@ -663,8 +664,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       Efl.Canvas.Group.group_del;
    }
    events {
-      child,added;
-      child,removed;
+      child,added; [[Called when a child object was added to the box]]
+      child,removed; [[Called when a child object was removed from the box]]
    }
-
 }

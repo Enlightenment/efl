@@ -1,5 +1,6 @@
 class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.Internal)
 {
+   [[Evas tex class]]
    legacy_prefix: evas_object_text;
    eo_prefix: evas_obj_text;
    methods {
@@ -50,7 +51,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          get {
          }
          values {
-            ellipsis: double(-1); [[the ellipsis. Allowed values: -1.0 or 0.0-1.0]]
+            ellipsis: double(-1); [[The ellipsis. Allowed values: -1.0 or 0.0-1.0]]
          }
       }
       @property bidi_delimiters {
@@ -134,7 +135,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          get {
          }
          values {
-            style: Evas.Text_Style_Type; [[a style type.]]
+            style: Evas.Text_Style_Type; [[Style type]]
          }
       }
       @property glow_color {
@@ -160,7 +161,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
       }
       @property max_descent {
          get {
-            return: Evas.Coord;
+            return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property style_pad {
@@ -179,56 +180,56 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
             [[Retrieves the direction of the text currently being displayed in the
             text object.]]
 
-            return: Efl.Text.Bidirectional_Type;
+            return: Efl.Text.Bidirectional_Type; [[Bidirectional type]]
          }
       }
       @property ascent {
          get {
-            return: Evas.Coord;
+            return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property horiz_advance {
          get {
-            return: Evas.Coord;
+            return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property inset {
          get {
-            return: Evas.Coord;
+            return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property max_ascent {
          get {
-            return: Evas.Coord;
+            return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property vert_advance {
          get {
-            return: Evas.Coord;
+            return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property descent {
          get {
-            return: Evas.Coord;
+            return: Evas.Coord; [[Evas coordinate]]
          }
       }
       last_up_to_pos @const {
-         [[Returns the logical position of the last char in the text up to the pos given. this is NOT the position of the last char because of the possibility of RTL in the text.]]
-         return: int(-1);
+         [[Returns the logical position of the last char in the text up to the pos given. This is NOT the position of the last char because of the possibility of RTL in the text.]]
+         return: int(-1); [[Logical position of the last char]]
          params {
-            @in x: Evas.Coord;
-            @in y: Evas.Coord;
+            @in x: Evas.Coord; [[X coordinate]]
+            @in y: Evas.Coord; [[Y coordinate]]
          }
       }
       char_coords_get @const {
-         return: int;
+         return: int; [[Logical poistion of char]]
          params {
-            @in x: Evas.Coord;
-            @in y: Evas.Coord;
-            @out cx: Evas.Coord;
-            @out cy: Evas.Coord;
-            @out cw: Evas.Coord;
-            @out ch: Evas.Coord;
+            @in x: Evas.Coord; [[X coordinate]]
+            @in y: Evas.Coord; [[Y coordinate]]
+            @out cx: Evas.Coord; [[X coordinate]]
+            @out cy: Evas.Coord; [[Y coordinate]]
+            @out cw: Evas.Coord; [[Width]]
+            @out ch: Evas.Coord; [[Height]]
          }
       }
       char_pos_get @const {

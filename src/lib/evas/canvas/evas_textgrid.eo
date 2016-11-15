@@ -3,9 +3,9 @@ enum Evas.Textgrid.Palette {
 
      @since 1.7]]
    none,     [[No palette is used]]
-   standard, [[standard palette (around 16 colors)]]
-   extended, [[extended palette (at max 256 colors)]]
-   last      [[ignore it]]
+   standard, [[Standard palette (around 16 colors)]]
+   extended, [[Extended palette (at max 256 colors)]]
+   last      [[Sentinel value to indicate last enum field during iteration]]
 }
 
 enum Evas.Textgrid.Font_Style {
@@ -22,6 +22,7 @@ struct Evas.Textgrid.Cell; [[Evas textgrid cell data structure]]
 
 class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
 {
+   [[Evas textgrid class]]
    legacy_prefix: evas_object_textgrid;
    eo_prefix: evas_obj_textgrid;
    methods {

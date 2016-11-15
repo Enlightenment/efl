@@ -1,5 +1,6 @@
 class Evas.Grid (Efl.Canvas.Group.Clipped)
 {
+   [[Evas grid class]]
    legacy_prefix: evas_object_grid;
    eo_prefix: evas_obj_grid;
    methods {
@@ -19,7 +20,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
               @since 1.1]]
          }
          values {
-            mirrored: bool; [[the mirrored mode to set.]]
+            mirrored: bool; [[$true if mirrored mode is set, $false otherwise]]
          }
       }
       @property size {
@@ -50,7 +51,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
               list, but these removals won't be reflected on it.
 
               @since 1.1]]
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused;
+            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[Iterator to grid children]]
          }
       }
       accessor_new @const {
@@ -59,8 +60,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
            Note: Do not remove or delete objects while walking the list.
 
            @since 1.1]]
-         return: free(own(accessor<Efl.Canvas.Object>), eina_accessor_free)
-            @warn_unused;
+         return: free(own(accessor<Efl.Canvas.Object>), eina_accessor_free) @warn_unused; [[Accessor to children list]]
       }
       clear {
          [[Faster way to remove all child objects from a grid object.
@@ -68,7 +68,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
            @since 1.1]]
 
          params {
-            @in clear: bool; [[if true, it will delete just removed children.]]
+            @in clear: bool; [[if $true, it will delete just removed children.]]
          }
       }
       iterator_new @const {
@@ -77,8 +77,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
            Note: Do not remove or delete objects while walking the list.
 
            @since 1.1]]
-         return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free)
-            @warn_unused;
+         return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free) @warn_unused; [[Iterator]]
       }
       add_to {
          [[Create a grid that is child of a given element parent.
@@ -87,7 +86,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
 
            @since 1.1]]
 
-         return: Efl.Canvas.Object @warn_unused;
+         return: Efl.Canvas.Object @warn_unused; [[New child object]]
       }
       unpack {
          [[Remove child from grid.
@@ -100,7 +99,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
 
          return: bool; [[1 on success, 0 on failure.]]
          params {
-            @in child: Efl.Canvas.Object @nonull;
+            @in child: Efl.Canvas.Object @nonull; [[Child to be removed]]
          }
       }
       pack_get @const {

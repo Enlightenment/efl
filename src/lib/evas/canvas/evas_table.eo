@@ -11,6 +11,7 @@ enum Evas.Object_Table.Homogeneous_Mode {
 
 class Evas.Table (Efl.Canvas.Group.Clipped)
 {
+   [[Evas table class]]
    legacy_prefix: evas_object_table;
    eo_prefix: evas_obj_table;
    methods {
@@ -60,7 +61,7 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
          get {
          }
          values {
-            homogeneous: Evas.Object_Table.Homogeneous_Mode;
+            homogeneous: Evas.Object_Table.Homogeneous_Mode; [[Table homogeneous mode]]
          }
       }
       @property align {
@@ -70,8 +71,8 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
          get {
          }
          values {
-            horizontal: double;
-            vertical: double;
+            horizontal: double; [[Horizontal alignment]]
+            vertical: double; [[Vertical alignment]]
          }
       }
       @property padding {
@@ -81,8 +82,8 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
          get {
          }
          values {
-            horizontal: Evas.Coord;
-            vertical: Evas.Coord;
+            horizontal: Evas.Coord; [[Horizontal padding]]
+            vertical: Evas.Coord; [[Vertical padding]]
          }
       }
       @property mirrored {
@@ -109,8 +110,8 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
               accounted proportionally.]]
          }
          values {
-            cols: int;
-            rows: int;
+            cols: int; [[Columns in Table]]
+            rows: int; [[Rows in table]]
          }
       }
       @property children {
@@ -121,7 +122,7 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
               It's up to the user to destroy it when it no longer needs it.
               It's possible to remove objects from the table when walking this
               list, but these removals won't be reflected on it.]]
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused;
+            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[Children list]]
          }
       }
       @property child {
@@ -131,11 +132,11 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
               Note: This does not take into account col/row spanning]]
          }
          keys {
-            col: ushort;
-            row: ushort;
+            col: ushort; [[Child column]]
+            row: ushort; [[Child row]]
          }
          values {
-            child: Efl.Canvas.Object;
+            child: Efl.Canvas.Object; [[Child object]]
          }
       }
       clear {
@@ -150,19 +151,19 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
 
            Note: Do not remove or delete objects while walking the list.]]
          return: free(own(accessor<Efl.Canvas.Object>), eina_accessor_free)
-            @warn_unused;
+            @warn_unused; [[Accessor to children list]]
       }
       iterator_new @const {
          [[Get an iterator to walk the list of children for the table.
 
            Note: Do not remove or delete objects while walking the list.]]
          return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free)
-            @warn_unused;
+            @warn_unused; [[Iterator to children]]
       }
       add_to {
          [[Create a table that is child of a given element $parent.]]
 
-         return: Efl.Canvas.Object @warn_unused;
+         return: Efl.Canvas.Object @warn_unused; [[Children table]]
       }
       pack_get @const {
          [[Get packing location of a child of table
@@ -171,10 +172,10 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
          return: bool; [[$true on success, $false on failure.]]
          params {
             @in child: Efl.Canvas.Object; [[The child object to add.]]
-            @out col: ushort; [[pointer to store relative-horizontal position to place child.]]
-            @out row: ushort; [[pointer to store relative-vertical position to place child.]]
-            @out colspan: ushort; [[pointer to store how many relative-horizontal position to use for this child.]]
-            @out rowspan: ushort; [[pointer to store how many relative-vertical position to use for this child.]]
+            @out col: ushort; [[Pointer to store relative-horizontal position to place child.]]
+            @out row: ushort; [[Pointer to store relative-vertical position to place child.]]
+            @out colspan: ushort; [[Pointer to store how many relative-horizontal position to use for this child.]]
+            @out rowspan: ushort; [[Pointer to store how many relative-vertical position to use for this child.]]
          }
       }
       pack {
@@ -189,10 +190,10 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
          return: bool; [[$true on success, $false on failure.]]
          params {
             @in child: Efl.Canvas.Object @nonull; [[The child object to add.]]
-            @in col: ushort; [[relative-horizontal position to place child.]]
-            @in row: ushort; [[relative-vertical position to place child.]]
-            @in colspan: ushort; [[how many relative-horizontal position to use for this child.]]
-            @in rowspan: ushort; [[how many relative-vertical position to use for this child.]]
+            @in col: ushort; [[Relative-horizontal position to place child.]]
+            @in row: ushort; [[Relative-vertical position to place child.]]
+            @in colspan: ushort; [[How many relative-horizontal position to use for this child.]]
+            @in rowspan: ushort; [[How many relative-vertical position to use for this child.]]
          }
       }
       unpack {
@@ -204,13 +205,13 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
 
          return: bool; [[$true on success, $false on failure.]]
          params {
-            @in child: Efl.Canvas.Object @nonull;
+            @in child: Efl.Canvas.Object @nonull; [[Child to be removed]]
          }
       }
       count {
-         [[Returns the number of items in the box.]]
+         [[Returns the number of items in the table]]
          legacy: null;
-         return: int;
+         return: int; [[Number of items in table]]
       }
    }
    implements {

@@ -3,6 +3,7 @@ import efl_input_types;
 
 class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 {
+   [[Evas canvas class]]
    legacy_prefix: evas;
    data: Evas_Public_Data;
    methods {
@@ -239,7 +240,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 
               @since 1.2
             ]]
-            return: int;
+            return: int; [[Mouse or multi presses currently active]]
          }
       }
       @property smart_objects_calculate_count {
@@ -259,13 +260,13 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 
               @since 1.1
             ]]
-            return: int;
+            return: int; [[Number of smart calculations]]
          }
       }
       @property focus_state {
          get {
             [[Get the focus state known by the given evas.]]
-            return: bool;
+            return: bool; [[$true if focused, $false otherwise]]
          }
       }
       @property changed {
@@ -274,7 +275,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 
               @since 1.11
             ]]
-            return: bool;
+            return: bool; [[$true if changed, $false otherwise]]
          }
       }
       @property pointer_output_xy {
@@ -330,7 +331,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
             else printf("Mouse is out!\n");
             @endcode
             */
-            return: bool @warn_unused;
+            return: bool @warn_unused; [[$true if the mouse pointer is inside the canvas, $false otherwise]]
          }
       }
       @property image_max_size {
@@ -346,7 +347,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 
               @since 1.1
             ]]
-            return: bool;
+            return: bool; [[$true if it can handle the maximum image size, $false otherwise]]
          }
          values {
             maxw: int; [[Pointer to hold the return value in pixels of the maximum width.]]
@@ -440,7 +441,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
            It will not append to the list pass events as hidden objects.
            Call eina_list_free on the returned list after usage.
          ]]
-         return: list<Efl.Canvas.Object> @warn_unused;
+         return: list<Efl.Canvas.Object> @warn_unused; [[List of objects]]
          params {
             @in stop: Efl.Canvas.Object; [[An Evas Object where to stop searching.]]
             @in x: int; [[The horizontal coordinate of the position.]]
@@ -720,14 +721,15 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
          ]]
       }
       objects_in_rectangle_get @const {
-         return: list<Efl.Canvas.Object> @warn_unused;
+      	 [[Get all objects in the given rectangle]]
+         return: list<Efl.Canvas.Object> @warn_unused; [[List of objects]]
          params {
-            @in x: Evas.Coord;
-            @in y: Evas.Coord;
-            @in w: Evas.Coord;
-            @in h: Evas.Coord;
-            @in include_pass_events_objects: bool;
-            @in include_hidden_objects: bool;
+            @in x: Evas.Coord; [[X coordinate]]
+            @in y: Evas.Coord; [[Y coordinate]]
+            @in w: Evas.Coord; [[Width]]
+            @in h: Evas.Coord; [[Height]]
+            @in include_pass_events_objects: bool; [[$true if the list should include objects which pass events]]
+            @in include_hidden_objects: bool; [[$true if the list should include hidden objects]]
          }
       }
       object_name_find @const {
@@ -815,6 +817,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
          }
       }
       sync {
+         [[Sync evas canvas]]
       }
       font_path_list @const {
          [[Retrieves the list of font paths used by the given evas.]]
@@ -849,7 +852,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
          */
          return: int @warn_unused; [[The output/screen coordinate translated to output coordinates.]]
          params {
-            @in x: Evas.Coord; [[The canvas x coordinate.]]
+            @in x: Evas.Coord; [[The canvas X coordinate.]]
          }
       }
       render_updates {
@@ -1182,9 +1185,9 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       Efl.Object.provider_find;
    }
    events {
-      render,flush,pre @beta;
-      render,flush,post @beta;
-      axis,update @beta;
-      viewport,resize @beta;
+      render,flush,pre @beta; [[Called on render flush pre phase]]
+      render,flush,post @beta; [[Called on render flush post phase]]
+      axis,update @beta; [[Called on axis update]]
+      viewport,resize @beta; [[Called on viewport resize]]
    }
 }
