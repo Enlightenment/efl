@@ -1,32 +1,36 @@
 class Efl.VG.Shape (Efl.VG, Efl.Gfx.Shape)
 {
+   [[Efl vector graphics shape class]]
    legacy_prefix: evas_vg_shape;
    methods {
       @property fill {
+      	 [[Fill of the shape object]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    f: Efl.VG;
+	    f: Efl.VG; [[Fill object]]
 	 }
       }
       @property stroke_fill {
+      	 [[Stroke fill of the shape object]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    f: Efl.VG;
+	    f: Efl.VG; [[Stroke fill object]]
 	 }
       }
       @property stroke_marker {
+      	 [[Stroke marker of the shape object]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    m: Efl.VG;
+	    m: Efl.VG; [[Stroke marker object]]
 	 }
       }
    }

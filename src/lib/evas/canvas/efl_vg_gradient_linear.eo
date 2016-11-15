@@ -1,5 +1,6 @@
 class Efl.VG.Gradient.Linear (Efl.VG.Gradient, Efl.Gfx.Gradient.Linear)
 {
+   [[Efl vector graphics gradient linear class]]
    legacy_prefix: evas_vg_gradient_linear;
    implements {
       Efl.Gfx.Gradient.Linear.start.set;

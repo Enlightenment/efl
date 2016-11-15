@@ -1,15 +1,18 @@
 class Efl.VG.Container (Efl.VG)
 {
+   [[Efl vector graphics container class]]
    legacy_prefix: evas_vg_container;
    methods {
       child_get {
+      	 [[Get child of container]]
          params {
-            @in name: string;
+            @in name: string; [[Child node name]]
          }
-         return: Efl.VG;
+         return: Efl.VG; [[Child object]]
       }
       children_get {
-         return: free(own(iterator<Efl.VG>), eina_iterator_free) @warn_unused;
+      	 [[Get all children of container]]
+         return: free(own(iterator<Efl.VG>), eina_iterator_free) @warn_unused; [[Iterator to children]]
       }
    }
    implements {

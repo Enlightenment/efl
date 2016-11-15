@@ -1,5 +1,6 @@
 class Evas.VG (Efl.Canvas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
 {
+   [[Efl vector graphics class]]
    legacy_prefix: evas_object_vg;
    eo_prefix: evas_obj_vg;
    methods {
@@ -8,7 +9,7 @@ class Evas.VG (Efl.Canvas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
             [[Get the root node of the evas_object_vg.
 
               Note: To manually create the shape object and show in the Vg
-                    object canvas you must create the hirarchy and set the
+                    object canvas you must create the hierarchy and set the
                     parent as root node.
 
               @since 1.14]]

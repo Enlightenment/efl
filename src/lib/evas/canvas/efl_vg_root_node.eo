@@ -1,5 +1,6 @@
 class Efl.VG.Root_Node (Efl.VG.Container)
 {
+   [[Efl vector graphics root node class]]
    legacy_prefix: evas_vg_root_node;
    implements {
       Efl.Object.parent.set;

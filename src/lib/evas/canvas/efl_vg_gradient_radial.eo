@@ -1,5 +1,6 @@
 class Efl.VG.Gradient.Radial (Efl.VG.Gradient, Efl.Gfx.Gradient.Radial)
 {
+   [[Efl vector graphics gradient radial class]]
    legacy_prefix: evas_vg_gradient_radial;
    implements {
       Efl.Gfx.Gradient.Radial.center.set;

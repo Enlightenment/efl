@@ -2,6 +2,7 @@ import eina_types;
 
 abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
 {
+   [[Efl vector graphics abstract class]]
    eo_prefix: efl_vg;
    legacy_prefix: evas_vg_node;
    methods {
@@ -24,7 +25,7 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
             ]]
          }
          values {
-            name: string;
+            name: string; [[Node name]]
          }
       }
       @property transformation {
@@ -41,7 +42,7 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
               @since 1.14]]
          }
          values {
-            m: ptr(const(Eina.Matrix3)); [[transformation matrix.]]
+            m: ptr(const(Eina.Matrix3)); [[Transformation matrix.]]
          }
       }
       @property origin {
@@ -63,12 +64,13 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
          }
       }
       @property mask {
+         [[Vector graphics object mask]]
          set {
          }
          get {
          }
          values {
-            m: Efl.VG;
+            m: Efl.VG; [[Object mask]]
          }
       }
 /*      quality {
@@ -88,20 +90,23 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
 
            @since 1.14]]
          params {
-            @out r: Eina.Rectangle; [[bounding box to be returned.]]
+            @out r: Eina.Rectangle; [[Bounding box to be returned.]]
          }
       }
       interpolate {
-        return: bool;
+        [[Interpolate a given vector graphics object]]
+
+        return: bool; [[$true on success, $false otherwise]]
         params {
-          @in from: const(Efl.VG);
-          @in to: const(Efl.VG);
-          @in pos_map: double;
+          @in from: const(Efl.VG); [[Source object]]
+          @in to: const(Efl.VG); [[Destination object]]
+          @in pos_map: double; [[Interpolate mapping]]
         }
       }
       dup {
+        [[Duplicate vector graphics object]]
         params {
-          @in from: const(Efl.VG);
+          @in from: const(Efl.VG); [[Source object]]
         }
       }
    }
