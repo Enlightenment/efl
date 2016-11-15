@@ -1689,17 +1689,24 @@ eet_mmap(const Eina_File *file)
    ef->readfp_owned = EINA_TRUE;
 
    ef->data_size = eina_file_size_get(ef->readfp);
-   ef->data = eina_file_map_all(ef->readfp, EINA_FILE_SEQUENTIAL);
-   if (eet_test_close((ef->data == NULL), ef))
-     goto on_error;
 
-   ef = eet_internal_read(ef);
-   if (!ef)
-     goto on_error;
+   if (ef->mode == EET_FILE_MODE_READ || ef->data_size > 0)
+     {
+        ef->data = eina_file_map_all(ef->readfp, EINA_FILE_SEQUENTIAL);
+
+        if (eet_test_close((ef->data == NULL), ef))
+          goto on_error;
+
+        ef = eet_internal_read(ef);
+        if (!ef)
+          goto on_error;
+     }
+   else
+     ef->mode = EET_FILE_MODE_WRITE;
 
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
-   
+
  done:
    UNLOCK_CACHE;
    return ef;
