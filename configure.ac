@@ -85,7 +85,13 @@ case "${build_profile}" in
 esac
 
 prefer_assert="no"
-eina_log_backtrace="no"
+eina_log_backtrace="yes"
+case "${build_profile}" in
+   dev|debug)
+     prefer_assert="yes"
+     eina_log_backtrace="no"
+     ;;
+esac
 
 # Enable CRI & ERR backtrace by default for release but not for dev/debug
 AC_DEFINE_IF([EINA_LOG_BACKTRACE_ENABLE], [test "x${eina_log_backtrace}" = "xyes"], [1], [Default log level triggering backtraces])
