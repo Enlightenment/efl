@@ -1100,6 +1100,12 @@ eng_image_native_set(void *data, void *image, void *native)
                        return NULL;
                     }
 
+#ifndef EGL_WAYLAND_PLANE_WL
+# define EGL_WAYLAND_PLANE_WL 0x31D6
+#endif
+#ifndef EGL_WAYLAND_BUFFER_WL
+# define EGL_WAYLAND_BUFFER_WL 0x31D5
+#endif
                   attribs[0] = EGL_WAYLAND_PLANE_WL;
                   attribs[1] = 0; //if plane is 1 then 0, if plane is 2 then 1
                   attribs[2] = EGL_NONE;
