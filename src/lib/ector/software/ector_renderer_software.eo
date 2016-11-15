@@ -1,9 +1,11 @@
 class Ector.Renderer.Software (Ector.Renderer)
 {
+   [[Ector software renderer class]]
    data: null;
    methods {
       fill @virtual_pure {
-         return: bool;
+      	 [[Renderer fill operation]]
+         return: bool; [[$true on success, $false otherwise]]
       }
    }
 }

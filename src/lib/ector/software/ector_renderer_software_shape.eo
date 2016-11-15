@@ -1,5 +1,6 @@
 class Ector.Renderer.Software.Shape (Ector.Renderer.Software, Ector.Renderer.Shape)
 {
+   [[Ector software renderer shape class]]
    eo_prefix: ector_renderer_software_shape;
    implements {
       Ector.Renderer.prepare;

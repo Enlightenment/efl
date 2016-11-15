@@ -1,11 +1,13 @@
 class Ector.Renderer.Software.Buffer (Ector.Renderer.Software, Ector.Renderer.Buffer)
 {
+   [[Ecto software renderer buffer class]]
    methods {
       @property buffer {
+      	 [[Buffer property]]
          set {}
          get {}
          values {
-            buf: Ector.Buffer;
+            buf: Ector.Buffer; [[Buffer]]
          }
       }
    }
