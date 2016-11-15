@@ -285,6 +285,7 @@ conformant_example_01 \
 conformant_example_02 \
 combobox_example_01 \
 ctxpopup_example_01 \
+datetime_example \
 dayselector_example \
 diskselector_example_01 \
 diskselector_example_02 \
