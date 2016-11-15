@@ -3061,7 +3061,7 @@ start_tiling(Evas_Engine_GL_Context *gc EINA_UNUSED,
 }
 
 static void
-shader_array_flush(Evas_Engine_GL_Context *gc)
+_orig_shader_array_flush(Evas_Engine_GL_Context *gc)
 {
    int i, gw, gh, offx = 0, offy = 0;
    unsigned int pipe_done = 0;  //count pipe iteration for debugging
@@ -3746,6 +3746,41 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (pipe_done > 0) printf("DONE (pipes): %i\n", pipe_done);
      }
    gc->havestuff = EINA_FALSE;
+}
+
+typedef struct
+{
+   Evas_Engine_GL_Context *gc;
+} Evas_Thread_Command_shader_array_flush;
+
+static void
+_gl_thread_shader_array_flush(void *data)
+{
+   Evas_Thread_Command_shader_array_flush *thread_param =
+      (Evas_Thread_Command_shader_array_flush *)data;
+    evas_gl_thread_begin();
+    _orig_shader_array_flush(thread_param->gc);
+    evas_gl_thread_end();
+}
+
+static void
+shader_array_flush(Evas_Engine_GL_Context *gc)
+{
+   if (!evas_gl_thread_enabled())
+     {
+        _orig_shader_array_flush(gc);
+        return;
+     }
+
+   Evas_Thread_Command_shader_array_flush thread_param_local;
+   Evas_Thread_Command_shader_array_flush *thread_param = &thread_param_local;
+   thread_param->gc = gc;
+
+   evas_gl_thread_cmd_enqueue(EVAS_GL_THREAD_TYPE_GL,
+                              _gl_thread_shader_array_flush,
+                              thread_param,
+                              EVAS_GL_THREAD_MODE_FINISH);
+
 }
 
 EAPI int
