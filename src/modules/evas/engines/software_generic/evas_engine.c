@@ -415,6 +415,9 @@ struct _Evas_Thread_Command_Ector_Surface
    int x, y;
 };
 
+// declare here as it is re-used
+static void *eng_image_map_surface_new(void *data, int w, int h, int alpha);
+
 Eina_Mempool *_mp_command_rect = NULL;
 Eina_Mempool *_mp_command_line = NULL;
 Eina_Mempool *_mp_command_polygon = NULL;
@@ -1943,6 +1946,13 @@ eng_image_prepare(void *engdata EINA_UNUSED, void *image EINA_UNUSED)
    // software rendering doesnt want/need to prepare at this point
    // XXX: though this could push along any loading threads or start
    // some thread jobs for loading in the bg.
+}
+
+static void *
+eng_image_surface_noscale_new(void *engdata, int w, int h, int alpha)
+{
+   // simply call the map surface new as all we need is a basic buffer
+   return eng_image_map_surface_new(engdata, w, h, alpha);
 }
 
 static void
@@ -4658,6 +4668,7 @@ static Evas_Func func =
      eng_image_data_maps_get,
      eng_image_data_slice_add,
      eng_image_prepare,
+     eng_image_surface_noscale_new,
      eng_image_native_init,
      eng_image_native_shutdown,
      eng_image_native_set,

@@ -3098,6 +3098,18 @@ eng_image_prepare(void *engdata EINA_UNUSED, void *image)
    evas_gl_common_image_update(im->gc, im);
 }
 
+static void *
+eng_image_surface_noscale_new(void *engdata, int w, int h, int alpha)
+{
+   Evas_Engine_GL_Context *gl_context;
+   Render_Engine_GL_Generic *re = engdata;
+
+   re->window_use(re->software.ob);
+   gl_context = re->window_gl_context_get(re->software.ob);
+   // XXX: FIXME: need a special surface new func that can use an atlas
+   return evas_gl_common_image_surface_new(gl_context, w, h, alpha);
+}
+
 
 static int
 module_open(Evas_Module *em)
@@ -3185,6 +3197,7 @@ module_open(Evas_Module *em)
    ORD(image_data_slice_add);
 
    ORD(image_prepare);
+   ORD(image_surface_noscale_new);
 
    ORD(font_cache_flush);
    ORD(font_cache_set);
