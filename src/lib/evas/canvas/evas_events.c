@@ -3304,6 +3304,41 @@ _efl_canvas_object_pointer_mode_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protecte
    return obj->pointer_mode;
 }
 
+EOLIAN Eina_Bool
+_efl_canvas_object_pointer_in_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   Evas_Object_Protected_Data *in, *parent;
+   Eo *eo_in, *eo_parent;
+   Eina_List *l;
+
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj, EINA_FALSE);
+   if (!obj->is_smart)
+     return obj->mouse_in;
+
+   /* For smart objects, this is a bit expensive obj->mouse_in will not be set.
+    * Alternatively we could count the number of in and out events propagated
+    * to the smart object, assuming they always match. */
+   EINA_LIST_FOREACH(obj->layer->evas->pointer.object.in, l, eo_in)
+     {
+        if (EINA_UNLIKELY(eo_in == eo_obj))
+          return EINA_TRUE;
+
+        in = EVAS_OBJECT_DATA_GET(eo_in);
+        if (!EVAS_OBJECT_DATA_ALIVE(in)) continue;
+        eo_parent = in->smart.parent;
+        while (eo_parent)
+          {
+             if ((eo_parent == eo_obj) && !in->no_propagate)
+               return EINA_TRUE;
+             parent = EVAS_OBJECT_DATA_GET(eo_parent);
+             if (!EVAS_OBJECT_DATA_ALIVE(parent)) break;
+             eo_parent = parent->smart.parent;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
 EAPI void
 evas_event_refeed_event(Eo *eo_e, void *event_copy, Evas_Callback_Type event_type)
 {
