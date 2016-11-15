@@ -124,7 +124,7 @@ struct _Format_Map
     }
 
 #define EFL_UI_CLOCK_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), EFL_UI_CLOCK_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_CLOCK_CLASS))) \
     return
 
 #endif
