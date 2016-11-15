@@ -3,10 +3,10 @@ interface Efl.Ui.Scrollable ()
    [[Efl UI scrollable interface]]
    event_prefix: efl_ui;
    events {
-      scroll;
-      scroll,anim,start;
-      scroll,anim,stop;
-      scroll,drag,start;
-      scroll,drag,stop;
+      scroll; [[Called when scroll operation started]]
+      scroll,anim,start; [[Called when scroll animation started]]
+      scroll,anim,stop; [[Called when scroll animation stopped]]
+      scroll,drag,start; [[Called when scroll drag started]]
+      scroll,drag,stop; [[Called when scroll drag stopped]]
    }
 }
