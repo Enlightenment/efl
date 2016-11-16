@@ -1777,6 +1777,7 @@ netinet/in.h \
 netinet/tcp.h \
 netinet/udp.h \
 sys/prctl.h \
+sys/ioctl.h \
 sys/resource.h \
 sys/timerfd.h \
 sys/un.h \

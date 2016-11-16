@@ -26,6 +26,10 @@
 # include <arpa/inet.h>
 #endif
 
+#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
+#endif
+
 #ifdef HAVE_SYSTEMD
 # include <systemd/sd-daemon.h>
 #endif
@@ -37,8 +41,6 @@
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
-
-#include <sys/ioctl.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"
