@@ -86,10 +86,18 @@ _ecore_wl2_mouse_dev_get(Ecore_Wl2_Input *input, int window_id)
    Ecore_Wl2_Input_Devices *devices;
 
    devices = _ecore_wl2_devices_get(input, window_id);
-   if (devices)
-     return devices->pointer_dev;
+   if (devices && devices->pointer_dev)
+     return efl_ref(devices->pointer_dev);
 
    return NULL;
+}
+
+static void
+_input_event_cb_free(void *data, void *event)
+{
+   if (data)
+     efl_unref(data);
+   free(event);
 }
 
 static void
@@ -108,7 +116,7 @@ _ecore_wl2_input_mouse_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
    ev->modifiers = input->keyboard.modifiers;
    ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
 
-   ecore_event_add(ECORE_EVENT_MOUSE_IN, ev, NULL, NULL);
+   ecore_event_add(ECORE_EVENT_MOUSE_IN, ev, _input_event_cb_free, ev->dev);
 }
 
 static void
@@ -127,7 +135,7 @@ _ecore_wl2_input_mouse_out_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window
    ev->modifiers = input->keyboard.modifiers;
    ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
 
-   ecore_event_add(ECORE_EVENT_MOUSE_OUT, ev, NULL, NULL);
+   ecore_event_add(ECORE_EVENT_MOUSE_OUT, ev, _input_event_cb_free, ev->dev);
 }
 
 static void
@@ -166,7 +174,7 @@ _ecore_wl2_input_mouse_move_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
         info->sy = input->pointer.sy;
      }
 
-   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, _input_event_cb_free, ev->dev);
 }
 
 static void
@@ -205,7 +213,7 @@ _ecore_wl2_input_mouse_wheel_send(Ecore_Wl2_Input *input, unsigned int axis, int
      }
    ev->dev = _ecore_wl2_mouse_dev_get(input, ev->window);
 
-   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, _input_event_cb_free, ev->dev);
 }
 
 static void
@@ -296,7 +304,8 @@ _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
         ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
      }
 
-   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev,
+                   _input_event_cb_free, ev->dev);
 
    if ((info) && (!info->triple_click))
      {
@@ -366,7 +375,8 @@ _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window,
    ev->event_window = window->id;
    ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
 
-   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev,
+                   _input_event_cb_free, ev->dev);
 }
 
 static void
@@ -479,8 +489,8 @@ _ecore_wl2_keyboard_dev_get(Ecore_Wl2_Input *input, int window_id)
    Ecore_Wl2_Input_Devices *devices;
 
    devices = _ecore_wl2_devices_get(input, window_id);
-   if (devices)
-     return devices->keyboard_dev;
+   if (devices && devices->keyboard_dev)
+     return efl_ref(devices->keyboard_dev);
 
    return NULL;
 }
@@ -524,9 +534,9 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
    /* DBG("Emitting Key event (%s,%s,%s,%s)\n", ev->keyname, ev->key, ev->compose, ev->string); */
 
    if (state)
-     ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, _input_event_cb_free, ev->dev);
    else
-     ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_KEY_UP, ev, _input_event_cb_free, ev->dev);
 }
 
 void
