@@ -1589,10 +1589,8 @@ ecore_wl2_input_seat_capabilities_get(Ecore_Wl2_Input *input)
 
    Ecore_Wl2_Seat_Capabilities cap = ECORE_WL2_SEAT_CAPABILITIES_NONE;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(input, ECORE_WL2_SEAT_CAPABILITIES_NO_SEAT);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, cap);
 
-   if (!input->wl.seat)
-     return ECORE_WL2_SEAT_CAPABILITIES_NO_SEAT;
    if (input->wl.keyboard)
      cap |= ECORE_WL2_SEAT_CAPABILITIES_KEYBOARD;
    if (input->wl.pointer)

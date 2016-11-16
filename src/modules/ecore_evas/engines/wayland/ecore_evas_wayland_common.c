@@ -518,17 +518,18 @@ _ecore_evas_wl_common_device_event_add(int event_type, Ecore_Wl2_Device_Type dev
 
 static EE_Wl_Device *
 _ecore_evas_wl_common_seat_add(Ecore_Evas *ee,
-                               const char *seat_name,
                                unsigned int id)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
    EE_Wl_Device *device;
    Evas_Device *dev;
+   char buf[32];
 
    device = calloc(1, sizeof(EE_Wl_Device));
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
 
-   dev = evas_device_add_full(ee->evas, seat_name, "Wayland seat",
+   snprintf(buf, sizeof(buf), "seat-%u", id);
+   dev = evas_device_add_full(ee->evas, buf, "Wayland seat",
                               NULL, NULL,
                               EVAS_DEVICE_CLASS_SEAT,
                               EVAS_DEVICE_SUBCLASS_NONE);
@@ -555,36 +556,16 @@ _ecore_evas_wl_common_cb_global_added(void *d EINA_UNUSED, int t EINA_UNUSED, vo
    Ecore_Wl2_Event_Global *ev = event;
    Ecore_Evas *ee;
    Eina_List *l;
-   char buf[32];
 
    if ((!ev->interface) || (strcmp(ev->interface, "wl_seat")))
        return ECORE_CALLBACK_PASS_ON;
 
-   snprintf(buf, sizeof(buf), "seat-%u", ev->id);
-
    EINA_LIST_FOREACH(ee_list, l, ee)
      {
-        Eina_List *ll;
-        EE_Wl_Device *device;
-        Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
-        Eina_Bool already_present = EINA_FALSE;
-
-        EINA_LIST_FOREACH(wdata->devices_list, ll, device)
-          {
-             if (device->id == ev->id)
-               {
-                  already_present = EINA_TRUE;
-                  break;
-               }
-          }
-
-        if (!already_present && !_ecore_evas_wl_common_seat_add(ee, buf, ev->id))
-          goto err_add;
+        if (!_ecore_evas_wl_common_seat_add(ee, ev->id))
+          break;
      }
 
-   return ECORE_CALLBACK_PASS_ON;
-
-err_add:
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2043,17 +2024,12 @@ _ecore_wl2_devices_setup(Ecore_Evas *ee, Ecore_Wl2_Display *display)
      {
         EE_Wl_Device *device;
         Ecore_Wl2_Seat_Capabilities cap;
-        char buf[32];
         unsigned int id;
 
         id = ecore_wl2_input_seat_id_get(input);
         cap = ecore_wl2_input_seat_capabilities_get(input);
-        //No seat, ignore...
-        if (cap == ECORE_WL2_SEAT_CAPABILITIES_NO_SEAT)
-          continue;
+        device = _ecore_evas_wl_common_seat_add(ee, id);
 
-        snprintf(buf, sizeof(buf), "seat-%u", id);
-        device = _ecore_evas_wl_common_seat_add(ee, buf, id);
         if (!device)
           {
              r = EINA_FALSE;
