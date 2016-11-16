@@ -380,10 +380,10 @@ main(int argc, char **argv)
         len = strlen(bt->bin_dir);
         for (i = 0; i < (cols[0] - len); i++) printf(" ");
         if (color)
-          printf("\033[34m%s\033[01m\033[36m/\033[37m%s\033[0m",
+          printf("    \033[34m%s\033[01m\033[36m/\033[37m%s\033[0m",
                  bt->bin_dir, bt->bin_name);
         else
-          printf("%s/%s",
+          printf("    %s/%s",
                  bt->bin_dir, bt->bin_name);
         len = strlen(bt->bin_name);
         for (i = 0; i < (cols[1] - len); i++) printf(" ");
