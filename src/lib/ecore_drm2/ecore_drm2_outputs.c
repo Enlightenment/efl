@@ -1028,6 +1028,9 @@ ecore_drm2_output_dpms_set(Ecore_Drm2_Output *output, int level)
 #endif
      sym_drmModeConnectorSetProperty(output->fd, output->conn_id,
                                      output->dpms->prop_id, level);
+
+   if (level == 0) /* DPMS on */
+     ecore_drm2_fb_flip(NULL, output);
 }
 
 EAPI char *
