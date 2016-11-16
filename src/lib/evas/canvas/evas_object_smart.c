@@ -283,6 +283,9 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
           }
      }
 
+   if (!smart->is_frame_top && (smart->is_frame != obj->is_frame))
+     efl_canvas_object_is_frame_object_set(eo_obj, smart->is_frame);
+
    evas_object_change(eo_obj, obj);
    evas_object_mapped_clip_across_mark(eo_obj, obj);
    if (smart->smart.smart && smart->smart.smart->smart_class->member_add)

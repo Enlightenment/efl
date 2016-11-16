@@ -1346,6 +1346,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    RD(0, ", ctx:%p, sfc:%p, offset:%i,%i, %s, use_mapped_ctx:%d, %s)\n", context, surface, off_x, off_y,
       mapped ? "mapped" : "normal", use_mapped_ctx, do_async ? "async" : "sync");
    RD(level, "  obj: '%s' %s", obj->type, obj->is_smart ? "(smart) " : "");
+   if (obj->is_frame) RD(0, "(frame) ");
    if (obj->name) RD(0, "'%s'\n", obj->name);
    else RD(0, "\n");
    if (obj->cur->clipper)
@@ -1856,8 +1857,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                   (evas, ctx, off_x - evas->framespace.x, off_y - evas->framespace.y);
                          }
 
-                       if (proxy_src_clip)
-                         ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
+                       ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
                     }
                   else
                     {
@@ -2436,9 +2436,18 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
 
                   if (!obj->is_smart)
                     {
-                       RECTS_CLIP_TO_RECT(x, y, w, h,
-                                          obj->cur->cache.clip.x + off_x + fx,
-                                          obj->cur->cache.clip.y + off_y + fy,
+                       int cfx, cfy;
+                       if (!obj->is_frame)
+                         {
+                            cfx = obj->cur->cache.clip.x + off_x + fx;
+                            cfy = obj->cur->cache.clip.y + off_y + fy;
+                         }
+                       else
+                         {
+                            cfx = obj->cur->cache.clip.x + off_x;
+                            cfy = obj->cur->cache.clip.y + off_y;
+                         }
+                       RECTS_CLIP_TO_RECT(x, y, w, h, cfx, cfy,
                                           obj->cur->cache.clip.w,
                                           obj->cur->cache.clip.h);
                     }

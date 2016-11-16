@@ -3926,9 +3926,14 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
         return;
      }
 
-   edje_object_part_swallow(sd->frame_obj, "elm.swallow.client", sd->edje);
+   /* Small hack: The special value 2 means this is the top frame object.
+    * We propagate to the children now (the edc group contents), but subsequent
+    * calls to smart_member_add will not propagate the flag further. Note that
+    * this little hack will fall apart if edje creates and destroys objects on
+    * the fly. */
+   efl_canvas_object_is_frame_object_set(sd->frame_obj, 2);
 
-   evas_object_is_frame_object_set(sd->frame_obj, EINA_TRUE);
+   edje_object_part_swallow(sd->frame_obj, "elm.swallow.client", sd->edje);
 
    if (sd->icon)
      evas_object_show(sd->icon);
@@ -3952,8 +3957,8 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
           }
      }
 
-   edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon",
-                            sd->icon);
+   edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon", sd->icon);
+   efl_canvas_object_is_frame_object_set(sd->icon, EINA_TRUE);
 
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
@@ -5201,7 +5206,10 @@ _efl_ui_win_icon_object_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Object *icon)
         evas_object_event_callback_add(sd->icon, EVAS_CALLBACK_DEL,
           _elm_win_on_icon_del, obj);
         if (sd->frame_obj)
-          edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon", sd->icon);
+          {
+             edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon", sd->icon);
+             evas_object_is_frame_object_set(sd->icon, EINA_TRUE);
+          }
      }
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);

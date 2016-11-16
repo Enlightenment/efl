@@ -2048,6 +2048,16 @@ _is_frame_flag_set(Evas_Object_Protected_Data *obj, Eina_Bool is_frame)
    const Eina_Inlist *l;
    Evas_Object_Protected_Data *child;
 
+   /* Small hack here:
+    * The main frame object (ie. the frame edje object itself) will set
+    * a value of 2 here (Eina_Bool is an unsigned char). That way we can
+    * safely propagate the frame flag inside smart_member_add. */
+   if (is_frame > 1)
+     {
+        obj->is_frame_top = EINA_TRUE;
+        is_frame = EINA_TRUE;
+     }
+
    obj->is_frame = is_frame;
 
    l = evas_object_smart_members_get_direct(obj->object);
