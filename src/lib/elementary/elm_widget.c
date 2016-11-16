@@ -3887,13 +3887,12 @@ _elm_widget_theme_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *ed
 }
 
 static void
-_convert(Efl_Dbg_Info *info, Eina_List *ptr_list)
+_convert(Efl_Dbg_Info *info, Eina_Iterator *ptr_list)
 {
-   Eina_List *n;
    void *p;
    int i = 0;
 
-   EINA_LIST_FOREACH(ptr_list, n, p)
+   EINA_ITERATOR_FOREACH(ptr_list, p)
      {
         char name[100];
 
@@ -3902,6 +3901,8 @@ _convert(Efl_Dbg_Info *info, Eina_List *ptr_list)
         EFL_DBG_INFO_APPEND(info, name, EINA_VALUE_TYPE_UINT64, p);
         i++;
      }
+
+   eina_iterator_free(ptr_list);
 }
 
 EOLIAN static void
@@ -3928,18 +3929,20 @@ _elm_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EINA_
    EFL_DBG_INFO_APPEND(group, "Automatic mirroring", EINA_VALUE_TYPE_CHAR,
          elm_widget_mirrored_automatic_get(eo_obj));
 
-
    rel = efl_ui_focus_manager_fetch(_pd->focus.manager, eo_obj);
    if (rel)
      {
         focus = EFL_DBG_INFO_LIST_APPEND(group, "Focus");
 
-        EFL_DBG_INFO_APPEND(focus, "Next", EINA_VALUE_TYPE_UINT64 , rel->next);
-        EFL_DBG_INFO_APPEND(focus, "Prev", EINA_VALUE_TYPE_UINT64 , rel->prev);
+        EFL_DBG_INFO_APPEND(focus, "manager", EINA_VALUE_TYPE_UINT64, _pd->focus.manager);
+
+        EFL_DBG_INFO_APPEND(focus, "next", EINA_VALUE_TYPE_UINT64 , rel->next);
+        EFL_DBG_INFO_APPEND(focus, "prev", EINA_VALUE_TYPE_UINT64 , rel->prev);
+        EFL_DBG_INFO_APPEND(focus, "redirect", EINA_VALUE_TYPE_UINT64 , rel->redirect);
 
 #define ADD_PTR_LIST(name) \
-        Efl_Dbg_Info* name = EFL_DBG_INFO_LIST_APPEND(focus, " "#name" "); \
-        _convert(name, rel->name);
+        Efl_Dbg_Info* name = EFL_DBG_INFO_LIST_APPEND(focus, ""#name""); \
+        _convert(name, eina_list_iterator_new(rel->name));
 
         ADD_PTR_LIST(top)
         ADD_PTR_LIST(down)
@@ -3948,6 +3951,22 @@ _elm_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EINA_
 
 #undef ADD_PTR_LIST
 
+     }
+
+   //if thats a focus manager, give usefull informations like the border elements
+   if (efl_isa(eo_obj, EFL_UI_FOCUS_MANAGER_CLASS))
+     {
+        Efl_Dbg_Info *border;
+
+        focus = EFL_DBG_INFO_LIST_APPEND(group, "Focus Manager");
+        border = EFL_DBG_INFO_LIST_APPEND(focus, "Border Elements");
+
+        _convert(border,
+          efl_ui_focus_manager_border_elements_get(eo_obj)
+        );
+
+        EFL_DBG_INFO_APPEND(focus, "redirect", EINA_VALUE_TYPE_UINT64,
+          efl_ui_focus_manager_redirect_get(eo_obj));
      }
 }
 

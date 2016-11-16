@@ -16,6 +16,7 @@ struct Efl.Ui.Focus.Relations{
     down : list<Efl.Ui.Focus.Object>;
     next : Efl.Ui.Focus.Object;
     prev : Efl.Ui.Focus.Object;
+    redirect : Efl.Ui.Focus.Manager;
 }
 
 class Efl.Ui.Focus.Manager (Efl.Object) {

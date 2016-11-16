@@ -1118,7 +1118,7 @@ _efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
    res->down = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_DOWN);
    res->next = _next(n)->focusable;
    res->prev = _prev(n)->focusable;
-
+   res->redirect = n->type == NODE_TYPE_LISTENER ? n->data.listener.manager : NULL;
 #undef DIR_CLONE
 
    return res;
