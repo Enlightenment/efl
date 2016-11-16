@@ -1799,7 +1799,6 @@ test_entry4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_text_set(en, "This is a single line");
    elm_entry_single_line_set(en, EINA_TRUE);
    elm_object_part_content_set(ly, "element1", en);
-   evas_object_show(en);
 
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
@@ -1812,7 +1811,6 @@ test_entry4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_part_content_set(ly, "element2", en);
-   evas_object_show(en);
 
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
@@ -1833,7 +1831,6 @@ test_entry4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                       );
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    elm_object_part_content_set(ly, "element3", en);
-   evas_object_show(en);
 
    evas_object_show(win);
 }
