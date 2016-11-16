@@ -157,6 +157,7 @@ _eet_connection_raw_send(Eet_Connection *conn,
 EAPI Eina_Bool
 eet_connection_empty(Eet_Connection *conn)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_TRUE);
    return conn->size ? EINA_FALSE : EINA_TRUE;
 }
 

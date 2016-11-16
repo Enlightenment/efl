@@ -5281,6 +5281,7 @@ eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
    int size;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(edd, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data_in, NULL);
 
    ret = _eet_data_descriptor_encode(NULL, edd, data_in, &size);
    if (cipher_key && ret)
