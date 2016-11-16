@@ -229,12 +229,12 @@ _calculate_node(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *node, Dimens
 {
    Eina_Rectangle rect = EINA_RECTANGLE_INIT;
    Efl_Ui_Focus_Object *op;
-   Efl_Ui_Focus_Object **focus_key;
    int dim_min, dim_max;
    Eina_Iterator *nodes;
    int cur_pos_min = 0, cur_neg_min = 0;
+   Node *n;
 
-   nodes = eina_hash_iterator_key_new(pd->node_hash);
+   nodes = eina_hash_iterator_data_new(pd->node_hash);
    efl_ui_focus_object_geometry_get(node, &rect);
 
    *pos = NULL;
@@ -251,16 +251,13 @@ _calculate_node(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *node, Dimens
         dim_max = rect.x + rect.w;
      }
 
-   EINA_ITERATOR_FOREACH(nodes, focus_key)
+   EINA_ITERATOR_FOREACH(nodes, n)
      {
-        Node *n;
         Eina_Rectangle op_rect = EINA_RECTANGLE_INIT;
         int min, max;
 
-        op = *focus_key;
+        op = n->focusable;
         if (op == node) continue;
-
-        n = node_get(pd, op);
 
         if (n->type == NODE_TYPE_ONLY_LOGICAL) continue;
 
