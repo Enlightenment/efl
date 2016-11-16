@@ -458,7 +458,12 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     provider_lookup : 1; /**< This is true when efl_provider_find is currently walking the tree */
    struct {
      Efl_Ui_Focus_Manager *manager;
+     Eina_Bool logical;
    } focus;
+   struct {
+      int child_count;
+      Efl_Ui_Focus_Object *parent;
+   } logical;
 } Elm_Widget_Smart_Data;
 
 /**

@@ -199,21 +199,91 @@ elm_widget_focus_highlight_enabled_get(const Evas_Object *obj)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_tree_unfocusable(Eo *obj)
+{
+   Elm_Widget *wid = obj;
+
+   do {
+     ELM_WIDGET_DATA_GET(obj, wid_pd);
+
+     if (wid_pd->tree_unfocusable) return EINA_TRUE;
+   } while((wid = elm_widget_parent_widget_get(wid)));
+
+   return EINA_FALSE;
+}
+
 static void
 _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
-   if (pd->can_focus && !pd->focus.manager)
+   Eina_Bool should = EINA_FALSE;
+   Eina_Bool want_full = EINA_FALSE;
+
+   //there are two reasons to be registered, the child count is bigger than 0, or the widget is flagged to be able to handle focus
+   if (pd->can_focus)
+     {
+        should = EINA_TRUE;
+        want_full = EINA_TRUE;
+        //can focus can be overridden by the following properties
+        if (pd->disabled)
+          should = EINA_FALSE;
+
+        if (_tree_unfocusable(obj))
+          should = EINA_FALSE;
+     }
+
+   if (pd->logical.child_count > 0)
+     should = EINA_TRUE;
+
+   //if we should register, make sure that the logical parent is up to date and setted up correctly
+   if (should)
+     {
+        Elm_Widget *parent;
+        parent = elm_widget_parent_widget_get(obj);
+        if (pd->logical.parent != parent)
+          {
+             //update old logical parent;
+             if (pd->logical.parent)
+               {
+                  ELM_WIDGET_DATA_GET(pd->logical.parent, logical_wd);
+                  logical_wd->logical.child_count --;
+                  _focus_state_eval(pd->logical.parent, logical_wd);
+                  pd->logical.parent = NULL;
+               }
+              if (parent)
+               {
+                  ELM_WIDGET_DATA_GET(parent, logical_wd);
+                  logical_wd->logical.child_count ++;
+                  _focus_state_eval(parent, logical_wd);
+                  pd->logical.parent = parent;
+               }
+          }
+     }
+
+   //now register in the manager
+   if (should && !pd->focus.manager)
      {
         pd->focus.manager = efl_ui_focus_user_manager_get(obj);
+        pd->focus.logical = !want_full;
+
         if (pd->focus.manager != obj)
-          efl_ui_focus_manager_register(pd->focus.manager, obj, pd->focus.manager, NULL);
-        else
-          pd->focus.manager = NULL;
+          {
+             if (want_full)
+               efl_ui_focus_manager_register(pd->focus.manager, obj, pd->logical.parent, NULL);
+             else
+               efl_ui_focus_manager_register_logical(pd->focus.manager, obj, pd->logical.parent);
+          }
      }
-   else if (!pd->can_focus && pd->focus.manager)
+   else if (!should && pd->focus.manager)
      {
         efl_ui_focus_manager_unregister(pd->focus.manager, obj);
         pd->focus.manager = NULL;
+     }
+   else if (should && pd->focus.manager && pd->focus.logical && want_full)
+     {
+        //the case when we before registered as logical, but now wanted to be a normal node
+        efl_ui_focus_manager_unregister(pd->focus.manager, obj);
+        efl_ui_focus_manager_register(pd->focus.manager, obj, pd->focus.manager, NULL);
      }
 }
 
@@ -6187,7 +6257,7 @@ _elm_widget_efl_object_provider_find(Eo *obj, Elm_Widget_Smart_Data *pd, const E
 
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_widget_efl_ui_focus_user_manager_get(Eo *obj, Elm_Widget_Smart_Data *pd)
+_elm_widget_efl_ui_focus_user_manager_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    Evas_Object *parent = obj;
 
@@ -6203,7 +6273,7 @@ _elm_widget_efl_ui_focus_user_manager_get(Eo *obj, Elm_Widget_Smart_Data *pd)
 }
 
 EOLIAN static void
-_elm_widget_efl_ui_focus_object_geometry_get(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Rectangle *rect)
+_elm_widget_efl_ui_focus_object_geometry_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED, Eina_Rectangle *rect)
 {
    if (!rect) return;
 
