@@ -36,6 +36,7 @@ struct _Border {
 typedef enum {
   NODE_TYPE_NORMAL = 0,
   NODE_TYPE_LISTENER = 1,
+  NODE_TYPE_ONLY_LOGICAL = 2,
 } Node_Type;
 
 struct _Node{
@@ -252,11 +253,16 @@ _calculate_node(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *node, Dimens
 
    EINA_ITERATOR_FOREACH(nodes, focus_key)
      {
+        Node *n;
         Eina_Rectangle op_rect = EINA_RECTANGLE_INIT;
         int min, max;
 
         op = *focus_key;
         if (op == node) continue;
+
+        n = node_get(pd, op);
+
+        if (n->type == NODE_TYPE_ONLY_LOGICAL) continue;
 
         efl_ui_focus_object_geometry_get(op, &op_rect);
 
@@ -430,6 +436,12 @@ dirty_flush(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Data *pd)
 static void
 dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Node *dirty)
 {
+   if (dirty->type == NODE_TYPE_ONLY_LOGICAL)
+     {
+        ERR("Only not only logical nodes can be marked dirty");
+        return;
+     }
+
    //if (eina_list_data_find(pd->dirty, dirty)) return;
    pd->dirty = eina_list_remove(pd->dirty, dirty);
    pd->dirty = eina_list_append(pd->dirty, dirty);
@@ -494,11 +506,29 @@ _register(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *child, No
         T(parent).children = eina_list_append(T(parent).children, node);
      }
 
-   //listen to changes
-   efl_event_callback_array_add(child, focusable_node(), obj);
-
    return node;
 }
+EOLIAN static Eina_Bool
+_efl_ui_focus_manager_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent)
+{
+   Node *node = NULL;
+   Node *pnode = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, EINA_FALSE);
+
+   pnode = node_get(pd, parent);
+   if (!pnode) return EINA_FALSE;
+
+   node = _register(obj, pd, child, pnode);
+   if (!node) return EINA_FALSE;
+
+   node->type = NODE_TYPE_ONLY_LOGICAL;
+
+
+   return EINA_TRUE;
+}
+
 
 EOLIAN static Eina_Bool
 _efl_ui_focus_manager_register(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent, Efl_Ui_Focus_Manager *redirect)
@@ -514,6 +544,9 @@ _efl_ui_focus_manager_register(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Fo
 
    node = _register(obj, pd, child, pnode);
    if (!node) return EINA_FALSE;
+
+   //listen to changes
+   efl_event_callback_array_add(child, focusable_node(), obj);
 
    if (!redirect)
      {
@@ -1020,6 +1053,9 @@ _efl_ui_focus_manager_root_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *p
      }
 
    node = _register(obj, pd, root, NULL);
+
+   //listen to changes
+   efl_event_callback_array_add(node->focusable, focusable_node(), obj);
 
    pd->root = node;
 }

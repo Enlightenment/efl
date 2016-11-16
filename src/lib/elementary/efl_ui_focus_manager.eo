@@ -55,6 +55,18 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
             }
             return : bool; [[$true if it was successfull $false if not]]
         }
+        register_logical {
+            [[Register a new item just for the logical parent.
+
+              This item can just be used as a parent for a child. It cannot be reached via coordinate wise movements.
+            ]]
+            params {
+                child : Efl.Ui.Focus.Object @nonull;
+                parent : Efl.Ui.Focus.Object @nonull;
+            }
+            return : bool; [[$true if it was successfull $false if not]]
+        }
+
         update_redirect {
             [[Set a new redirect object for the given child
 
