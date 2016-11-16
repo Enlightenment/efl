@@ -722,7 +722,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
 }
 
 Evas_GL_Image *
-evas_gl_common_image_surface_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha)
+evas_gl_common_image_surface_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, int stencil)
 {
    Evas_GL_Image *im;
 
@@ -738,7 +738,7 @@ evas_gl_common_image_surface_new(Evas_Engine_GL_Context *gc, unsigned int w, uns
    im->alpha = alpha;
    im->w = w;
    im->h = h;
-   im->tex = evas_gl_common_texture_render_new(gc, w, h, alpha);
+   im->tex = evas_gl_common_texture_render_new(gc, w, h, alpha, stencil);
    im->tex_only = 1;
    return im;
 }

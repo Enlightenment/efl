@@ -590,7 +590,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im, Eina_Bool
 }
 
 static Evas_GL_Texture_Pool *
-_pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, int format)
+_pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, int format, int stencil)
 {
    Evas_GL_Texture_Pool *pt;
    int fnum;
@@ -644,6 +644,15 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
         glsym_glBindFramebuffer(GL_FRAMEBUFFER, pt->fb);
         glsym_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pt->texture, 0);
         // note: should check fbo completeness
+     }
+
+   if (stencil)
+     {
+        glGenRenderbuffers(1, &(pt->stencil));
+        glBindRenderbuffer(GL_RENDERBUFFER, pt->stencil);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, pt->w, pt->h);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, pt->stencil);
      }
 
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, fnum);
@@ -949,6 +958,11 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
    glDeleteTextures(1, &(pt->texture));
    if (pt->gc->state.current.cur_tex == pt->texture)
      pt->gc->state.current.cur_tex = 0;
+   if (pt->stencil)
+     {
+        glDeleteRenderbuffers(1, &(pt->stencil));
+        pt->stencil = 0;
+     }
    if (pt->fb)
      {
         glsym_glDeleteFramebuffers(1, &(pt->fb));
@@ -1018,7 +1032,7 @@ evas_gl_common_texture_native_new(Evas_Engine_GL_Context *gc, unsigned int w, un
 }
 
 Evas_GL_Texture *
-evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha)
+evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, int stencil)
 {
    Evas_GL_Texture *tex;
    int lformat;
@@ -1030,7 +1044,7 @@ evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, un
    if (!tex) return NULL;
    tex->pt = _pool_tex_render_new(gc, w, h,
                                   *matching_format[lformat].intformat,
-                                  *matching_format[lformat].format);
+                                  *matching_format[lformat].format, stencil);
    if (!tex->pt)
      {
         evas_gl_common_texture_light_free(tex);
@@ -1205,7 +1219,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
         // FIXME: why a 'render' new here ??? Should already have been allocated, quite a weird path.
         tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h,
                                        *matching_format[lformat].intformat,
-                                       *matching_format[lformat].format);
+                                       *matching_format[lformat].format, EINA_FALSE);
      }
    // If image was preloaded then we need a ptt
    if (!tex->pt) return;

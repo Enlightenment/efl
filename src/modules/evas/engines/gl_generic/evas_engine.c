@@ -677,7 +677,7 @@ _rotate_image_data(Render_Engine_GL_Generic *re, Evas_GL_Image *im1)
         h = im1->w;
      }
 
-   im2 = evas_gl_common_image_surface_new(gl_context, w, h, alpha);
+   im2 = evas_gl_common_image_surface_new(gl_context, w, h, alpha, EINA_FALSE);
 
    evas_gl_common_context_target_surface_set(gl_context, im2);
 
@@ -1267,7 +1267,7 @@ eng_image_map_surface_new(void *data, int w, int h, int alpha)
 
    re->window_use(re->software.ob);
    gl_context = re->window_gl_context_get(re->software.ob);
-   return evas_gl_common_image_surface_new(gl_context, w, h, alpha);
+   return evas_gl_common_image_surface_new(gl_context, w, h, alpha, EINA_FALSE);
 }
 
 static void *
@@ -2589,7 +2589,7 @@ eng_ector_buffer_new(void *data, Evas *evas, void *pixels,
           WRN("Borders are not supported by Evas surfaces!");
 
         gc = re->window_gl_context_get(re->software.ob);
-        im = evas_gl_common_image_surface_new(gc, iw, ih, EINA_TRUE);
+        im = evas_gl_common_image_surface_new(gc, iw, ih, EINA_TRUE, EINA_FALSE);
         buf = efl_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(efl_added, evas, im));
         im->references--;
      }

@@ -351,7 +351,7 @@ struct _Evas_Engine_GL_Context
 struct _Evas_GL_Texture_Pool
 {
    Evas_Engine_GL_Context *gc;
-   GLuint           texture, fb;
+   GLuint           texture, fb, stencil;
    GLuint           intformat, format, dataformat;
    int              w, h;
    int              references;
@@ -650,7 +650,7 @@ void              evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, in
 void              evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt);
 Evas_GL_Texture  *evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im, Eina_Bool disable_atlas);
 Evas_GL_Texture  *evas_gl_common_texture_native_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, Evas_GL_Image *im);
-Evas_GL_Texture  *evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha);
+Evas_GL_Texture  *evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, int stencil);
 Evas_GL_Texture  *evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im);
 void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im);
 void              evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int bytes_count);
@@ -679,7 +679,7 @@ Evas_GL_Image    *evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha);
 void              evas_gl_common_image_scale_hint_set(Evas_GL_Image *im, int hint);
 void              evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint);
 void              evas_gl_common_image_cache_flush(Evas_Engine_GL_Context *gc);
-Evas_GL_Image    *evas_gl_common_image_surface_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha);
+Evas_GL_Image    *evas_gl_common_image_surface_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, int stencil);
 void              evas_gl_common_image_dirty(Evas_GL_Image *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
 void              evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im);
 void              evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int npoints, RGBA_Map_Point *p, int smooth, int level);
