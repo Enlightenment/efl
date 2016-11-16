@@ -71,6 +71,8 @@ $(filter-out $(efl_eolian_blacklisted_files),$(efl_eolian_files:%.eo=%.eo.cs)) \
 $(efl_eolian_type_files:%.eot=%.eot.cs) \
 $(filter-out $(evas_eolian_blacklisted_files),$(evas_eolian_pub_files:%.eo=%.eo.cs)) \
 lib/evas/canvas/evas_box.eo.cs \
+lib/evas/canvas/evas_image.eo.cs \
+lib/evas/canvas/efl_canvas_image.eo.cs \
 lib/evas/canvas/evas_table.eo.cs \
 $(evas_eolian_type_files:%.eot=%.eot.cs)
 
