@@ -658,8 +658,6 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
         double t = (double)sec + ((double)usec / 1000000);
 
         ecore_evas_animator_tick(ee, NULL, t);
-        edata->pending = EINA_TRUE;
-        ecore_drm2_fb_flip(NULL, edata->output);
      }
    else if (ret)
      {
