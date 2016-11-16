@@ -2852,37 +2852,39 @@ evas_render_updates_internal(Evas *eo_e,
                }
           }
 
-        if (do_async)
+        if (haveup)
           {
-             eina_evlog("+render_output_async_flush", eo_e, 0.0, NULL);
-             efl_ref(eo_e);
-             e->rendering = EINA_TRUE;
-             _rendering_evases = eina_list_append(_rendering_evases, e);
-             if (haveup)
-               _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-             evas_thread_queue_flush((Evas_Thread_Command_Cb)done_func, done_data);
-             eina_evlog("-render_output_async_flush", eo_e, 0.0, NULL);
-          }
-        else if (haveup)
-          {
-             eina_evlog("+render_output_flush", eo_e, 0.0, NULL);
-             EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
+             if (do_async)
                {
-                  _evas_object_image_video_overlay_do(eo_obj);
+                  eina_evlog("+render_output_async_flush", eo_e, 0.0, NULL);
+                  efl_ref(eo_e);
+                  e->rendering = EINA_TRUE;
+                  _rendering_evases = eina_list_append(_rendering_evases, e);
+                  _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
+                  evas_thread_queue_flush((Evas_Thread_Command_Cb)done_func, done_data);
+                  eina_evlog("-render_output_async_flush", eo_e, 0.0, NULL);
                }
-             _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-             e->engine.func->output_flush(e->engine.data.output,
-                                          EVAS_RENDER_MODE_SYNC);
-             _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
-             eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
+             else
+               {
+                  eina_evlog("+render_output_flush", eo_e, 0.0, NULL);
+                  EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
+                    {
+                       _evas_object_image_video_overlay_do(eo_obj);
+                    }
+                  _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
+                  e->engine.func->output_flush(e->engine.data.output,
+                                               EVAS_RENDER_MODE_SYNC);
+                  _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
+                  eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
+               }
           }
-        rendering = EINA_TRUE;
+        rendering = haveup;
         eina_evlog("-render_surface", eo_e, 0.0, NULL);
      }
    eina_evlog("-render_phase6", eo_e, 0.0, NULL);
 
    eina_evlog("+render_clear", eo_e, 0.0, NULL);
-   if (!do_async)
+   if (!do_async && rendering)
      {
         /* clear redraws */
         e->engine.func->output_redraws_clear(e->engine.data.output);
