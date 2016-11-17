@@ -31,6 +31,7 @@ struct @extern Elm.Theme; [[Elementary theme]]
 
 abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi_Component)
 {
+   [[Elementary widget abstract class]]
    legacy_prefix: elm_widget;
    eo_prefix: elm_obj_widget;
    event_prefix: elm_widget;
@@ -42,8 +43,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property drag_lock_y {
+      	 [[Lock the Y axis from being dragged]]
          values {
-            lock: bool;
+            lock: bool; [[$true if the Y axis is locked, $false otherwise]]
          }
       }
       @property focus_highlight_style {
@@ -76,18 +78,21 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property theme {
+      	 [[Widget theme]]
          values {
-            th: ptr(Elm.Theme) @nullable;
+            th: ptr(Elm.Theme) @nullable; [[Elementary theme]]
          }
       }
       @property disabled {
+      	 [[Enabled / disabled property]]
          values {
             disabled: bool; [[$true if the widget is disabled, $false otherwise]]
          }
       }
       @property highlight_ignore {
+      	 [[Highlight ignore]]
          values {
-            ignore: bool;
+            ignore: bool; [[$true if highlights are ignored, $false otherwise]]
          }
       }
       @property mirrored_automatic {
@@ -97,23 +102,26 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property orientation_mode_disabled {
+      	 [[Orientation mode disabled or enabled]]
          values {
-            disabled: bool;
+            disabled: bool; [[$true if orientation mode is disabled, $false otherwise]]
          }
       }
       @property style {
+      	 [[Theme style]]
          set {
-            return: Elm.Theme.Apply;
+            return: Elm.Theme.Apply; [[Theme style]]
          }
          get {
          }
          values {
-            style: string;
+            style: string; [[Style name]]
          }
       }
       @property scale {
+      	 [[Scale factor]]
          values {
-            scale: double;
+            scale: double; [[Scale factor]]
          }
       }
       @property focus_custom_chain {
@@ -239,10 +247,11 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property orientation {
+      	 [[Widget orientation]]
          set {
          }
          values {
-            rotation: int;
+            rotation: int; [[Orientation]]
          }
       }
       @property resize_object {

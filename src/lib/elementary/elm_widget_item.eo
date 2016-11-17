@@ -3,6 +3,7 @@ import elm_general;
 class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                       Elm.Interface.Atspi_Component)
 {
+      [[Elementary widget item class]]
       eo_prefix: elm_wdg_item;
       legacy_prefix: elm_object_item;
       methods {
@@ -34,7 +35,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                 set {
                 }
                 values {
-                     style: string; [[the theme style used/to use (default, transparent, ...)]]
+                     style: string; [[The theme style used/to use (default, transparent, ...)]]
                 }
            }
            @property cursor {
@@ -54,11 +55,11 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                 set {
                 }
                 values {
-                     cursor: string; [[the cursor type's name]]
+                     cursor: string; [[The cursor type's name]]
                 }
            }
            @property cursor_style {
-                [[Conrol a different $style for a given custom cursor set for an item.
+                [[Control a different $style for a given custom cursor set for an item.
 
                   This function only makes sense when one is using custom mouse
                   cursor decorations defined in a theme file, which can have,
@@ -73,7 +74,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                 set {
                 }
                 values {
-                     style: string; [[the theme style to use/in use (e.g. $"default", $"transparent", etc)]]
+                     style: string; [[The theme style to use/in use (e.g. $"default", $"transparent", etc)]]
                 }
            }
            @property cursor_engine_only {
@@ -136,10 +137,10 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                      legacy: null;
                 }
                 keys {
-                     part: string;
+                     part: string; [[Part name]]
                 }
                 values {
-                     label: string;
+                     label: string; [[Label name]]
                 }
            }
            @property focus {
@@ -189,7 +190,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                   [[Get highlight order
 
                     @since 1.8]]
-                return: const(list<Efl.Canvas.Object>);
+                return: const(list<Efl.Canvas.Object>); [[List of evas canvas objects]]
            }
            access_order_set {
                 [[Set highlight order
@@ -229,7 +230,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                 [[Set widget item tooltip as a text string]]
                 legacy: null;
                 params {
-                     text: string;
+                     text: string; [[Tooltip text]]
                 }
            }
            tooltip_unset {
@@ -260,7 +261,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                 params {
                      part: string; [[The content part name to unset (NULL for the default content)]]
                 }
-                return: Efl.Canvas.Object;
+                return: Efl.Canvas.Object; [[Content object]]
            }
            part_text_custom_update @protected {
                 [[Update additional text part content]]
@@ -462,9 +463,9 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
 
                   See: elm_object_tooltip_content_cb_set() for more details.]]
                 params {
-                     func: Elm_Tooltip_Item_Content_Cb @nullable; [[the function used to create the tooltip contents.]]
-                     data: const(void_ptr) @optional; [[what to provide to $func as callback data/context.]]
-                     del_cb: Evas_Smart_Cb @optional; [[called when data is not needed anymore, either when another callback replaces $func, the tooltip is unset with @.tooltip_unset or the owner $item dies. This callback receives as the first parameter the given $data, and $event_info is the item.]]
+                     func: Elm_Tooltip_Item_Content_Cb @nullable; [[The function used to create the tooltip contents.]]
+                     data: const(void_ptr) @optional; [[What to provide to $func as callback data/context.]]
+                     del_cb: Evas_Smart_Cb @optional; [[Called when data is not needed anymore, either when another callback replaces $func, the tooltip is unset with @.tooltip_unset or the owner $item dies. This callback receives as the first parameter the given $data, and $event_info is the item.]]
 
                 }
            }
@@ -489,7 +490,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
            }
            del_pre @protected {
                 legacy: null;
-                return: bool;
+                return: bool; [[$true on success, $false otherwise]]
            }
            focus_next_object_get @const {
                 [[Get the next object with specific focus direction.
