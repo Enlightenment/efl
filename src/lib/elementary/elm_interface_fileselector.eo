@@ -63,8 +63,7 @@ interface Elm.Interface.Fileselector ()
             [[Get if hiden files/directories in the file selector are visible or not.]]
          }
          values {
-            multi: bool; [[$true if hidden files are visible, $false otherwise]]
-                         /* FIXME needs a better value name */
+            hidden: bool; [[$true if hidden files are visible, $false otherwise]]
          }
       }
       @property sort_method {
