@@ -189,7 +189,11 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
              if (ee->engine.func->fn_evas_changed)
                ee->engine.func->fn_evas_changed(ee, change);
           }
-        else ee->engine.func->fn_evas_changed(ee, EINA_FALSE);
+        else
+         {
+            if (ee->engine.func->fn_evas_changed)
+               ee->engine.func->fn_evas_changed(ee, EINA_FALSE);
+         }
 
 #ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
         if ((ee->in_async_render) && (ee->async_render_start <= 0.0))
