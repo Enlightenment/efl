@@ -1115,7 +1115,7 @@ _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
 
              (*cb)->delete_me = EINA_TRUE;
              if (pd->walking_list > 0)
-               pd->deletions_waiting = EINA_FALSE;
+               pd->deletions_waiting = EINA_TRUE;
              else
                _eo_callback_remove(pd, cb);
 
@@ -1189,7 +1189,7 @@ _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
           {
              (*cb)->delete_me = EINA_TRUE;
              if (pd->walking_list > 0)
-               pd->deletions_waiting = EINA_FALSE;
+               pd->deletions_waiting = EINA_TRUE;
              else
                _eo_callback_remove(pd, cb);
 
