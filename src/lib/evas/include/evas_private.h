@@ -1292,7 +1292,7 @@ struct _Evas_Object_Func
 // new - add to prepare list during render if object needs some pre-render
 // preparation - may include rendering content to buffer or loading data
 // from disk or uploading to texture etc.
-   void (*render_prepare) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
+   void (*render_prepare) (Evas_Object *obj, Evas_Object_Protected_Data *pd, Eina_Bool do_async);
 
 // new render2 functions
 

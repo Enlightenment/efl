@@ -2754,7 +2754,7 @@ evas_render_updates_internal(Evas *eo_e,
         if (prepare)
           {
              if (obj->func->render_prepare)
-               obj->func->render_prepare(eo_obj, obj);
+               obj->func->render_prepare(eo_obj, obj, do_async);
           }
      }
    eina_evlog("-render_phase5", eo_e, 0.0, NULL);

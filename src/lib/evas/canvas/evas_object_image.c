@@ -51,7 +51,7 @@ static int evas_object_image_get_opaque_rect(Evas_Object *eo_obj,
 					     void *type_private_data,
 					     Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 static int evas_object_image_can_map(Evas_Object *eo_obj);
-static void evas_object_image_render_prepare(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+static void evas_object_image_render_prepare(Evas_Object *obj, Evas_Object_Protected_Data *pd, Eina_Bool do_async);
 
 static void evas_object_image_filled_resize_listener(void *data, Evas *eo_e, Evas_Object *eo_obj, void *einfo);
 
@@ -114,7 +114,7 @@ Eina_Cow *evas_object_image_pixels_cow = NULL;
 Eina_Cow *evas_object_image_state_cow = NULL;
 
 static void
-evas_object_image_render_prepare(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_image_render_prepare(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool do_async EINA_UNUSED)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
 
@@ -122,8 +122,45 @@ evas_object_image_render_prepare(Evas_Object *eo_obj, Evas_Object_Protected_Data
    if ((o->cur->u.file) || (o->written) || (o->cur->frame != 0))
      {
         if (o->engine_data) ENFN->image_prepare(ENDT, o->engine_data);
-        return;
      }
+#if 0
+   if (
+       ((o->cur->border.l != 0) || (o->cur->border.r != 0) ||
+        (o->cur->border.t != 0) || (o->cur->border.b != 0)) &&
+       ((obj->cur->geometry.w < 256) && (obj->cur->geometry.h < 256))
+      )
+     {
+        void *ctx, *prep = NULL;
+        int x, y, w, h;
+
+        if (!o->engine_data_prep)
+          {
+             prep = ENFN->image_surface_noscale_new
+               (ENDT, obj->cur->geometry.w, obj->cur->geometry.h,
+                o->cur->has_alpha);
+             ENFN->image_surface_noscale_region_get(ENDT, prep,
+                                                    &x, &y, &w, &h);
+             ctx = ENFN->context_new(ENDT);
+             ENFN->context_clip_set(ENDT, ctx, x, y, w, h);
+             ENFN->context_render_op_set(ENDT, ctx, EVAS_RENDER_COPY);
+             if (o->cur->has_alpha)
+               {
+                  ENFN->context_color_set(ENDT, ctx, 128, 64, 0, 128);
+                  ENFN->rectangle_draw(ENDT, ctx, prep, x, y, w, h, do_async);
+               }
+             printf("REND image, region %i %i %ix%i = %i %i\n",
+                    x, y, w, h,
+                    x - obj->cur->geometry.x, y - obj->cur->geometry.y);
+             evas_object_image_render(eo_obj, obj, obj->private_data, ENDT,
+                                      ctx, prep,
+                                      x - obj->cur->geometry.x,
+                                      y - obj->cur->geometry.y,
+                                      do_async);
+             ENFN->context_free(ENDT, ctx);
+             o->engine_data_prep = prep;
+          }
+     }
+#endif
    // XXX: if image is a proxy, PREPEND to prerender list in evas canvas
 }
 
@@ -1438,6 +1475,10 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 	     }
            ENFN->image_free(ENDT, o->engine_data);
 	 }
+       if (o->engine_data_prep)
+         {
+           ENFN->image_free(ENDT, o->engine_data_prep);
+         }
        if (o->video_surface)
 	 {
 	   o->video_surface = EINA_FALSE;
@@ -1445,6 +1486,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 	 }
      }
    o->engine_data = NULL;
+   o->engine_data_prep = NULL;
    if (o->file_obj)
      {
         efl_del(o->file_obj);
@@ -1742,6 +1784,16 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
    if (obj->mask->is_mask && (surface != obj->mask->surface))
      {
         ERR("Drawing a mask to another surface? Something's wrong...");
+        return;
+     }
+
+   if (o->engine_data_prep)
+     {
+        ENFN->image_draw(output, context, surface, o->engine_data_prep,
+                         0, 0, obj->cur->geometry.w, obj->cur->geometry.h,
+                         obj->cur->geometry.x + x, obj->cur->geometry.y + y,
+                         obj->cur->geometry.w, obj->cur->geometry.h,
+                         0, do_async);
         return;
      }
 
@@ -2147,6 +2199,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
 {
    Evas_Image_Data *o = type_private_data;
    int is_v = 0, was_v = 0;
+   Eina_Bool changed_prep = EINA_TRUE;
 
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
@@ -2305,8 +2358,16 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
         (obj->cur->geometry.h != obj->prev->geometry.h))
       )
      {
-        evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-        goto done;
+        if ((obj->cur->geometry.w == obj->prev->geometry.w) &&
+            (obj->cur->geometry.h == obj->prev->geometry.h))
+          {
+             evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
+          }
+        else
+          {
+             evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
+             goto done;
+          }
      }
    if (o->changed)
      {
@@ -2543,6 +2604,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                                                 x + e->framespace.x,
                                                 y + e->framespace.y,
                                                 w, h);
+        changed_prep = EINA_FALSE;
      }
    done:
    evas_object_render_pre_effect_updates(&e->clip_changes, eo_obj, is_v, was_v);
@@ -2559,6 +2621,15 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
           }
         EINA_COW_PIXEL_WRITE_END(o, pixi_write);
      }
+   if (changed_prep)
+     {
+        if (o->engine_data_prep)
+          {
+             ENFN->image_free(ENDT, o->engine_data_prep);
+             o->engine_data_prep = NULL;
+          }
+     }
+   o->changed = EINA_FALSE;
 }
 
 static void

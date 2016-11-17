@@ -107,6 +107,7 @@ struct _Evas_Image_Data
    const Evas_Object_Image_Pixels *pixels;
 
    void             *engine_data;
+   void             *engine_data_prep;
    Efl_Vpath_File   *file_obj;
 
    int               pixels_checked_out;
