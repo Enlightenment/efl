@@ -48,6 +48,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_input_key.eo \
 	lib/evas/canvas/efl_input_pointer.eo \
 	lib/evas/canvas/efl_input_hold.eo \
+	lib/evas/canvas/efl_input_focus.eo \
 	lib/evas/canvas/efl_gfx_map.eo \
 	lib/evas/canvas/efl_canvas_output.eo \
 	$(NULL)
@@ -208,6 +209,7 @@ lib/evas/canvas/efl_input_event.c \
 lib/evas/canvas/efl_input_key.c \
 lib/evas/canvas/efl_input_pointer.c \
 lib/evas/canvas/efl_input_hold.c \
+lib/evas/canvas/efl_input_focus.c \
 $(NULL)
 
 EXTRA_DIST2 += \

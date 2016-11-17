@@ -99,5 +99,7 @@ interface Efl.Input.Interface ()
       key,down: Efl.Input.Key;           [[Keyboard key press.]]
       key,up: Efl.Input.Key;             [[Keyboard key release.]]
       hold: Efl.Input.Hold;              [[All input events are on hold or resumed.]]
+      focus,in: Efl.Input.Focus;         [[A focus in event.]]
+      focus,out: Efl.Input.Focus;        [[A focus out event.]]
    }
 }
