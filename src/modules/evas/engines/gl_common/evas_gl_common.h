@@ -203,7 +203,6 @@ struct _Evas_GL_Shared
    int mflip;
    // persp map
    int foc, z0, px, py;
-   int ax, ay;
    int offx, offy;
    GLfloat proj[16];
 

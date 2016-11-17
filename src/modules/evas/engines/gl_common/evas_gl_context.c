@@ -637,6 +637,60 @@ _evas_gl_common_version_check(int *gles_ver)
    return 0;
 }
 
+static inline void
+_calculate_foc(int rot, int m, int w, int h, int px, int py,
+               int *vx_out, int *vy_out, int *vw_out, int *vh_out, int *ax_out, int *ay_out)
+{
+   int ppx = 0, ppy = 0;
+   int vx = 0, vy = 0, vw = 0, vh = 0, ax = 0, ay = 0;
+
+
+   if      ((rot == 0  ) || (rot == 90 )) ppx = px;
+   else if ((rot == 180) || (rot == 270)) ppx = w - px;
+   if      ((rot == 0  ) || (rot == 270)) ppy = py;
+   else if ((rot == 90 ) || (rot == 180)) ppy = h - py;
+
+   vx = ((w / 2) - ppx);
+   if (vx >= 0)
+     {
+        vw = w + (2 * vx);
+        if      ((rot == 0  ) || (rot == 90 )) ax = 2 * vx;
+        else if ((rot == 180) || (rot == 270)) ax = 0;
+     }
+   else
+     {
+        vw = w - (2 * vx);
+        if      ((rot == 0  ) || (rot == 90 )) ax = 0;
+        else if ((rot == 180) || (rot == 270)) ax = ppx - px;
+        vx = 0;
+     }
+
+   vy = ((h / 2) - ppy);
+   if (vy < 0)
+     {
+        vh = h - (2 * vy);
+        if      (rot == 0) ay = 0;
+        else if ((rot == 90 ) || (rot == 180) || (rot == 270)) ay = ppy - py;
+        vy = -vy;
+     }
+   else
+     {
+        vh = h + (2 * vy);
+        if      ((rot == 0  ) || (rot == 270)) ay = 2 * vy;
+        else if ((rot == 90 ) || (rot == 180)) ay = 0;
+        vy = 0;
+     }
+
+   if (m == -1) ay = vy * 2;
+
+   if (vx_out) *vx_out = vx;
+   if (vy_out) *vy_out = vy;
+   if (vw_out) *vw_out = vw;
+   if (vh_out) *vh_out = vh;
+   if (ax_out) *ax_out = ax;
+   if (ay_out) *ay_out = ay;
+}
+
 static void
 _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
 {
@@ -716,48 +770,10 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
      }
    else
      {
-        int px, py, vx, vy, vw = 0, vh = 0, ax = 0, ay = 0, ppx = 0, ppy = 0;
+        int vx, vy, vw, vh, ax, ay;
 
-        px = gc->shared->px;
-        py = gc->shared->py;
-
-        if      ((rot == 0  ) || (rot == 90 )) ppx = px;
-        else if ((rot == 180) || (rot == 270)) ppx = w - px;
-        if      ((rot == 0  ) || (rot == 270)) ppy = py;
-        else if ((rot == 90 ) || (rot == 180)) ppy = h - py;
-
-        vx = ((w / 2) - ppx);
-        if (vx >= 0)
-          {
-             vw = w + (2 * vx);
-             if      ((rot == 0  ) || (rot == 90 )) ax = 2 * vx;
-             else if ((rot == 180) || (rot == 270)) ax = 0;
-          }
-        else
-          {
-             vw = w - (2 * vx);
-             if      ((rot == 0  ) || (rot == 90 )) ax = 0;
-             else if ((rot == 180) || (rot == 270)) ax = ppx - px;
-             vx = 0;
-          }
-
-        vy = ((h / 2) - ppy);
-        if (vy < 0)
-          {
-             vh = h - (2 * vy);
-             if      (rot == 0) ay = 0;
-             else if ((rot == 90 ) || (rot == 180) || (rot == 270)) ay = ppy - py;
-             vy = -vy;
-          }
-        else
-          {
-             vh = h + (2 * vy);
-             if      ((rot == 0  ) || (rot == 270)) ay = 2 * vy;
-             else if ((rot == 90 ) || (rot == 180)) ay = 0;
-             vy = 0;
-          }
-
-        if (m == -1) ay = vy * 2;
+        _calculate_foc(rot, m, w, h, gc->shared->px, gc->shared->py,
+                       &vx, &vy, &vw, &vh, &ax, &ay);
 
         if ((rot == 0) || (rot == 180))
            evas_glViewport_th(offx + (-2 * vx), offy + (-2 * vy), vw, vh);
@@ -775,8 +791,6 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
                         -1000000.0, 1000000.0,
                         rot, vw, vh,
                         foc, 0.0);
-        gc->shared->ax = ax;
-        gc->shared->ay = ay;
      }
 
    // FIXME: Is this heavy work?
@@ -2947,9 +2961,30 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
           }
         else
           {
+             int w, h, rot, m = 1;
+             int vx, vy, vw, vh, ax, ay;
+
+             if ((gc->pipe[0].shader.surface == gc->def_surface) ||
+                 (!gc->pipe[0].shader.surface))
+               {
+                  w = gc->w;
+                  h = gc->h;
+                  rot = gc->rot;
+               }
+             else
+               {
+                  w = gc->pipe[0].shader.surface->w;
+                  h = gc->pipe[0].shader.surface->h;
+                  rot = 0;
+                  m = -1;
+               }
+
+             _calculate_foc(rot, m, w, h, gc->px, gc->py,
+                            &vx, &vy, &vw, &vh, &ax, &ay);
+
              PUSH_VERTEX(pn,
-                         (p[points[i]].fx) + gc->shared->ax,
-                         (p[points[i]].fy) + gc->shared->ay,
+                         (p[points[i]].fx) + ax,
+                         (p[points[i]].fy) + ay,
                          (p[points[i]].fz)
                          + (gc->shared->foc - gc->shared->z0));
           }
