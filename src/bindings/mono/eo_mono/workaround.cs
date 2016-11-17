@@ -89,3 +89,15 @@ public struct Coord {
 
 }
 
+public struct Efl_Font_Size {
+    int val;
+
+    public Efl_Font_Size(int value) { val = value; }
+    static public implicit operator Efl_Font_Size(int val) {
+        return new Efl_Font_Size(val);
+    }
+    static public implicit operator int(Efl_Font_Size coord) {
+        return coord.val;
+    }
+}
+
