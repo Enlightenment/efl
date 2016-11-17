@@ -2900,24 +2900,26 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 
    if (!flat)
-     {
-        shader_array_flush(gc);
-        gc->pipe[0].viewport.foc = p[0].foc >> FP;
-        gc->pipe[0].viewport.z0 = p[0].z0 >> FP;
-        gc->pipe[0].viewport.px = p[0].px >> FP;
-        gc->pipe[0].viewport.py = p[0].py >> FP;
-        _evas_gl_common_viewport_set(gc, 0);
-     }
+     pn = _evas_gl_common_context_push(SHD_MAP,
+                                       gc, tex, mtex,
+                                       prog,
+                                       p[0].foc >> FP, p[0].z0 >> FP, p[0].px >> FP, p[0].py >> FP,
+                                       x, y, w, h,
+                                       blend,
+                                       smooth,
+                                       clip, cx, cy, cw, ch,
+                                       mask_smooth);
+   else
+     pn = _evas_gl_common_context_push(SHD_MAP,
+                                       gc, tex, mtex,
+                                       prog,
+                                       0, 0, 0, 0,
+                                       x, y, w, h,
+                                       blend,
+                                       smooth,
+                                       clip, cx, cy, cw, ch,
+                                       mask_smooth);
 
-   pn = _evas_gl_common_context_push(SHD_MAP,
-                                     gc, tex, mtex,
-                                     prog,
-                                     0, 0, 0, 0,
-                                     x, y, w, h,
-                                     blend,
-                                     smooth,
-                                     clip, cx, cy, cw, ch,
-                                     mask_smooth);
    gc->pipe[pn].region.type = SHD_MAP;
    gc->pipe[pn].shader.prog = prog;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
@@ -3045,16 +3047,6 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 
    PUSH_MASK(pn, mtex, mx, my, mw, mh, masksam);
-
-   if (!flat)
-     {
-        shader_array_flush(gc);
-        gc->pipe[0].viewport.foc = 0;
-        gc->pipe[0].viewport.z0 = 0;
-        gc->pipe[0].viewport.px = 0;
-        gc->pipe[0].viewport.py = 0;
-        _evas_gl_common_viewport_set(gc, 0);
-     }
 }
 
 EAPI void
