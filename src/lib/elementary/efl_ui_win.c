@@ -2196,7 +2196,6 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
      }
 
    _elm_win_state_eval_queue();
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
 
    if ((sd->modal) && (evas_object_visible_get(obj)))
      {
@@ -2205,6 +2204,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
         DECREMENT_MODALITY()
      }
 
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
    TRAP(sd, hide);
 
    if (sd->frame_obj)
