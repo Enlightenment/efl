@@ -9,6 +9,8 @@
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
 
+#define EFL_EVENT_SPECIAL_SKIP 1
+
 static int event_freeze_count = 0;
 
 typedef struct _Eo_Callback_Description Eo_Callback_Description;
@@ -37,6 +39,11 @@ typedef struct
 
    unsigned short             walking_list;
    unsigned short             event_freeze_count;
+#ifdef EFL_EVENT_SPECIAL_SKIP
+   unsigned short             event_cb_efl_event_callback_add_count;
+   unsigned short             event_cb_efl_event_callback_del_count;
+   unsigned short             event_cb_efl_event_del_count;
+#endif
    Eina_Bool                  deletions_waiting : 1;
    Eina_Bool                  callback_stopped : 1;
    Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
@@ -949,11 +956,49 @@ init_mempool:
    goto init_mempool_back;
 }
 
+#ifdef EFL_EVENT_SPECIAL_SKIP
+
+#define CB_COUNT_INC(cnt) do { if ((cnt) != 0xffff) (cnt)++; } while(0)
+#define CB_COUNT_DEC(cnt) do { if ((cnt) != 0xffff) (cnt)--; } while(0)
+
+static inline void
+_special_event_count_inc(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
+{
+   if      (it->desc == EFL_EVENT_CALLBACK_ADD)
+     CB_COUNT_INC(pd->event_cb_efl_event_callback_add_count);
+   else if (it->desc == EFL_EVENT_CALLBACK_DEL)
+     CB_COUNT_INC(pd->event_cb_efl_event_callback_del_count);
+   else if (it->desc == EFL_EVENT_DEL)
+     CB_COUNT_INC(pd->event_cb_efl_event_del_count);
+}
+
+static inline void
+_special_event_count_dec(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
+{
+   if      (it->desc == EFL_EVENT_CALLBACK_ADD)
+     CB_COUNT_DEC(pd->event_cb_efl_event_callback_add_count);
+   else if (it->desc == EFL_EVENT_CALLBACK_DEL)
+     CB_COUNT_DEC(pd->event_cb_efl_event_callback_del_count);
+   else if (it->desc == EFL_EVENT_DEL)
+     CB_COUNT_DEC(pd->event_cb_efl_event_del_count);
+}
+#endif
+
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
 _eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description **cb)
 {
    unsigned int length;
+#ifdef EFL_EVENT_SPECIAL_SKIP
+   const Efl_Callback_Array_Item *it;
+
+   if ((*cb)->func_array)
+     {
+        for (it = (*cb)->items.item_array; it->func; it++)
+          _special_event_count_dec(pd, it);
+     }
+   else _special_event_count_dec(pd, &((*cb)->items.item));
+#endif
 
    _eo_callback_free(*cb);
 
@@ -974,6 +1019,11 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
    eina_freeq_ptr_main_add(pd->callbacks, free, 0);
    pd->callbacks = NULL;
    pd->callbacks_count = 0;
+#ifdef EFL_EVENT_SPECIAL_SKIP
+   pd->event_cb_efl_event_callback_add_count = 0;
+   pd->event_cb_efl_event_callback_del_count = 0;
+   pd->event_cb_efl_event_del_count = 0;
+#endif
 }
 
 static void
@@ -1082,6 +1132,9 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    cb->func_data = (void *) user_data;
    cb->priority = priority;
    _eo_callbacks_sorted_insert(pd, cb);
+#ifdef EFL_EVENT_SPECIAL_SKIP
+   _special_event_count_inc(pd, &(cb->items.item));
+#endif
 
    efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
 
@@ -1135,8 +1188,10 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
                                               const void *user_data)
 {
    Eo_Callback_Description *cb = _eo_callback_new();
-#ifdef EO_DEBUG
+#if  defined(EFL_EVENT_SPECIAL_SKIP) ||  defined(EO_DEBUG)
    const Efl_Callback_Array_Item *it;
+#endif
+#ifdef EO_DEBUG
    const Efl_Callback_Array_Item *prev;
 #endif
 
@@ -1160,6 +1215,10 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    cb->items.item_array = array;
    cb->func_array = EINA_TRUE;
    _eo_callbacks_sorted_insert(pd, cb);
+#ifdef EFL_EVENT_SPECIAL_SKIP
+   for (it = cb->items.item_array; it->func; it++)
+     _special_event_count_dec(pd, it);
+#endif
 
    efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)array);
 
@@ -1224,6 +1283,14 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    Eina_Bool callback_already_stopped, ret;
 
    if (pd->callbacks_count == 0) return EINA_FALSE;
+#ifdef EFL_EVENT_SPECIAL_SKIP
+   else if ((desc == EFL_EVENT_CALLBACK_ADD) &&
+            (pd->event_cb_efl_event_callback_add_count == 0)) return EINA_FALSE;
+   else if ((desc == EFL_EVENT_CALLBACK_DEL) &&
+            (pd->event_cb_efl_event_callback_del_count == 0)) return EINA_FALSE;
+   else if ((desc == EFL_EVENT_DEL) &&
+            (pd->event_cb_efl_event_del_count == 0)) return EINA_FALSE;
+#endif
 
    lookup = NULL;
    callback_already_stopped = pd->callback_stopped;
