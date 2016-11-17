@@ -90,7 +90,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             ]]
          }
          values {
-            ondemand: bool; [[If true, the input panel will be shown in case of only Mouse up event.
+            ondemand: bool; [[If $true, the input panel will be shown in case of only Mouse up event.
             (Focus event will be ignored.)
             ]]
          }
@@ -141,7 +141,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             [[Get the language mode of the input panel.]]
          }
          values {
-            lang: Elm.Input.Panel.Lang; [[language to be set to the input panel.]]
+            lang: Elm.Input.Panel.Lang; [[Language to be set to the input panel.]]
          }
       }
       @property selection_handler_disabled {
@@ -170,7 +170,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             ]]
          }
          values {
-            variation: int; [[layout variation type.]]
+            variation: int; [[Layout variation type.]]
          }
       }
       @property autocapital_type {
@@ -241,7 +241,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             [[Get the input panel layout of the entry.]]
          }
          values {
-            layout: Elm.Input.Panel.Layout(Elm.Input.Panel.Layout.invalid); [[layout type.]]
+            layout: Elm.Input.Panel.Layout(Elm.Input.Panel.Layout.invalid); [[Layout type.]]
          }
       }
       @property input_panel_return_key_type {
@@ -266,7 +266,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             [[Get the attribute to show the input panel automatically.]]
          }
          values {
-            enabled: bool; [[If true, the input panel is appeared when entry is clicked or has a focus.]]
+            enabled: bool; [[If $true, the input panel is appeared when entry is clicked or has a focus.]]
          }
       }
       @property input_panel_return_key_autoenabled {
@@ -279,7 +279,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             ]]
          }
          values {
-            enabled: bool; [[If $enabled is true, the return key is automatically disabled when the entry has no text.]]
+            enabled: bool; [[If $enabled is $true, the return key is automatically disabled when the entry has no text.]]
          }
       }
       @property imf_context {
@@ -291,7 +291,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               IMPORTANT: Many functions may change (i.e delete and create a new one)
               the internal input method context. Do NOT cache the returned object.
             ]]
-            return: void_ptr;
+            return: void_ptr; [[Input method context]]
          }
       }
       item_provider_prepend {
@@ -413,7 +413,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       cursor_new {
          [[Creates and returns a new cursor for the text.]]
-         return: Efl.Canvas.Text.Cursor;
+         return: Efl.Canvas.Text.Cursor; [[Text cursor]]
       }
    }
    implements {
@@ -475,26 +475,26 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Ui.Text.Interactive.editable.set;
    }
    events {
-      activated;
-      changed;
+      activated; [[Called when entry got activated]]
+      changed; [[Called when entry changed]]
       changed,user; [[Called when object changed due to user interaction]]
-      validate;
-      context,open;
-      anchor,clicked;
-      rejected;
-      maxlength,reached;
-      preedit,changed;
-      press;
-      redo,request;
-      undo,request;
-      text,set,done;
-      aborted;
-      anchor,down;
-      anchor,hover,opened;
-      anchor,in;
-      anchor,out;
-      anchor,up;
-      cursor,changed;
-      cursor,changed,manual;
+      validate; [[Called when validating]]
+      context,open; [[Called when context menu was opened]]
+      anchor,clicked; [[Called when anchor was clicked]]
+      rejected; [[Called when entry was rejected]]
+      maxlength,reached; [[Called when maximum entry length has been reached]]
+      preedit,changed; [[Called when entry preedit changed]]
+      press; [[Called when entry pressed]]
+      redo,request; [[Called when redo was requested]]
+      undo,request; [[Called when undo was requested]]
+      text,set,done; [[Called when text set finished]]
+      aborted; [[Called when entry was aborted]]
+      anchor,down; [[Called on anchor down]]
+      anchor,hover,opened; [[Called when hover opened]]
+      anchor,in; [[Called on anchor in]]
+      anchor,out; [[Called on anchor out]]
+      anchor,up; [[called on anchor up]]
+      cursor,changed; [[Called on cursor changed]]
+      cursor,changed,manual; [[Called on manual cursor change]]
    }
 }
