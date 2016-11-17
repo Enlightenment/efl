@@ -1218,18 +1218,20 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
                      Eina_Bool legacy_compare)
 {
    Eo_Callback_Description **cb;
-   Eo_Current_Callback_Description *lookup = NULL;
-   Eo_Current_Callback_Description saved;
+   Eo_Current_Callback_Description *lookup, saved;
    Efl_Event ev;
    unsigned int idx;
-   Eina_Bool callback_already_stopped = pd->callback_stopped;
-   Eina_Bool ret = EINA_TRUE;
+   Eina_Bool callback_already_stopped, ret;
+
+   if (pd->callbacks_count == 0) return EINA_FALSE;
+
+   lookup = NULL;
+   callback_already_stopped = pd->callback_stopped;
+   ret = EINA_TRUE;
 
    ev.object = obj_id;
    ev.desc = desc;
    ev.info = event_info;
-
-   if (pd->callbacks_count == 0) return EINA_FALSE;
 
    pd->walking_list++;
 
