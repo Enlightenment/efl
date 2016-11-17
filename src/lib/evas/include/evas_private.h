@@ -1391,6 +1391,7 @@ struct _Evas_Func
    void (*image_prepare)                   (void *data, void *image);
 
    void *(*image_surface_noscale_new)      (void *data, int w, int h, int alpha);
+   void (*image_surface_noscale_region_get)(void *data, void *image, int *x, int *y, int *w, int *h);
 
    int (*image_native_init)                (void *data, Evas_Native_Surface_Type type);
    void (*image_native_shutdown)           (void *data, Evas_Native_Surface_Type type);

@@ -3106,10 +3106,30 @@ eng_image_surface_noscale_new(void *engdata, int w, int h, int alpha)
 
    re->window_use(re->software.ob);
    gl_context = re->window_gl_context_get(re->software.ob);
-   // XXX: FIXME: need a special surface new func that can use an atlas
-   return evas_gl_common_image_surface_new(gl_context, w, h, alpha);
+   return evas_gl_common_image_surface_noscale_new(gl_context, w, h, alpha);
 }
 
+static void
+eng_image_surface_noscale_region_get(void *engdata, void *image, int *x, int *y, int *w, int *h)
+{
+   Evas_GL_Image *im = image;
+
+   if (im)
+     {
+        *x = im->tex->x;
+        *y = im->tex->y;
+        *w = im->w;
+        *h = im->h;
+        return;
+     }
+   else
+     {
+        *x = 0;
+        *y = 0;
+        *w = 0;
+        *h = 0;
+     }
+}
 
 static int
 module_open(Evas_Module *em)
@@ -3198,6 +3218,7 @@ module_open(Evas_Module *em)
 
    ORD(image_prepare);
    ORD(image_surface_noscale_new);
+   ORD(image_surface_noscale_region_get);
 
    ORD(font_cache_flush);
    ORD(font_cache_set);

@@ -743,6 +743,28 @@ evas_gl_common_image_surface_new(Evas_Engine_GL_Context *gc, unsigned int w, uns
    return im;
 }
 
+Evas_GL_Image *
+evas_gl_common_image_surface_noscale_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha)
+{
+   Evas_GL_Image *im;
+
+   if (((int)w > gc->shared->info.max_texture_size) ||
+       ((int)h > gc->shared->info.max_texture_size))
+     return NULL;
+
+   im = calloc(1, sizeof(Evas_GL_Image));
+   if (!im) return NULL;
+   im->references = 1;
+   im->gc = gc;
+   im->cs.space = EVAS_COLORSPACE_ARGB8888;
+   im->alpha = alpha;
+   im->w = w;
+   im->h = h;
+   im->tex = evas_gl_common_texture_render_noscale_new(gc, w, h, alpha);
+   im->tex_only = 1;
+   return im;
+}
+
 void
 evas_gl_common_image_dirty(Evas_GL_Image *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {

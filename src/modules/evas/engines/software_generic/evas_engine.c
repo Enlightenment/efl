@@ -1956,6 +1956,28 @@ eng_image_surface_noscale_new(void *engdata, int w, int h, int alpha)
 }
 
 static void
+eng_image_surface_noscale_region_get(void *engdata, void *image, int *x, int *y, int *w, int *h)
+{
+   RGBA_Image *im = image;
+
+   if (im)
+     {
+        *x = 0;
+        *y = 0;
+        *w = im->cache_entry.w;
+        *h = im->cache_entry.h;
+        return;
+     }
+   else
+     {
+        *x = 0;
+        *y = 0;
+        *w = 0;
+        *h = 0;
+     }
+}
+
+static void
 _image_flip_horizontal(DATA32 *pixels_out, const DATA32 *pixels_in,
                        int iw, int ih)
 {
@@ -4669,6 +4691,7 @@ static Evas_Func func =
      eng_image_data_slice_add,
      eng_image_prepare,
      eng_image_surface_noscale_new,
+     eng_image_surface_noscale_region_get,
      eng_image_native_init,
      eng_image_native_shutdown,
      eng_image_native_set,

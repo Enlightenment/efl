@@ -493,6 +493,7 @@ _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
    if (th2 < 0) return NULL;
    EINA_LIST_FOREACH(gc->shared->tex.atlas[th2], l, pt)
      {
+        if (pt->render) continue;
         if ((*apt = _pool_tex_alloc(pt, w, h, u, v)) != NULL)
           {
              gc->shared->tex.atlas[th2] =
@@ -670,6 +671,65 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    texinfo.r.num++;
    texinfo.r.pix += pt->w * pt->h;
    _print_tex_count();
+   return pt;
+}
+
+static Evas_GL_Texture_Pool *
+_pool_tex_render_find(Evas_Engine_GL_Context *gc, int w, int h,
+                      GLenum intformat, GLenum format, int *u, int *v,
+                      Eina_Rectangle **apt, int atlas_w, Eina_Bool disable_atlas)
+{
+   Evas_GL_Texture_Pool *pt = NULL;
+   Eina_List *l;
+   int th2;
+   int pool_h;
+   /*Return texture unit without atlas*/
+   if (disable_atlas)
+     {
+        pt = _pool_tex_render_new(gc, w, h, intformat, format, EINA_FALSE);
+        return pt ? pt : NULL;
+     }
+   if (atlas_w > gc->shared->info.max_texture_size)
+      atlas_w = gc->shared->info.max_texture_size;
+   if ((w > gc->shared->info.tune.atlas.max_w) ||
+       (h > gc->shared->info.tune.atlas.max_h) ||
+       (!gc->shared->info.etc1_subimage && (intformat == etc1_fmt)))
+     {
+        pt = _pool_tex_render_new(gc, w, h, intformat, format, EINA_FALSE);
+        if (!pt) return NULL;
+        gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, pt);
+        pt->fslot = -1;
+        pt->whole = 1;
+        *apt = _pool_tex_alloc(pt, w, h, u, v);
+        return pt;
+     }
+
+   th2 = _tex_format_index(intformat);
+   if (th2 < 0) return NULL;
+   EINA_LIST_FOREACH(gc->shared->tex.atlas[th2], l, pt)
+     {
+        if (!pt->render) continue;
+        if ((*apt = _pool_tex_alloc(pt, w, h, u, v)) != NULL)
+          {
+             gc->shared->tex.atlas[th2] =
+               eina_list_promote_list(gc->shared->tex.atlas[th2], l);
+             return pt;
+          }
+     }
+   pool_h = atlas_w;
+   if ( h > pool_h || w > atlas_w )
+     {
+        atlas_w = gc->shared->info.tune.atlas.max_w;
+        pool_h = gc->shared->info.tune.atlas.max_h;
+     }
+   pt = _pool_tex_render_new(gc, atlas_w, pool_h, intformat, format, EINA_FALSE);
+   if (!pt) return NULL;
+   gc->shared->tex.atlas[th2] =
+     eina_list_prepend(gc->shared->tex.atlas[th2], pt);
+   pt->fslot = th2;
+
+   *apt = _pool_tex_alloc(pt, w, h, u, v);
+
    return pt;
 }
 
@@ -983,7 +1043,7 @@ pt_unref(Evas_GL_Texture_Pool *pt)
    pt->references--;
    if (pt->references != 0) return;
 
-   if ((pt->gc) && !((pt->render) || (pt->native)))
+   if ((pt->gc) && !(pt->native))
      {
         if (pt->whole)
            pt->gc->shared->tex.whole =
@@ -1050,6 +1110,37 @@ evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, un
         evas_gl_common_texture_light_free(tex);
         return NULL;
      }
+   tex->pt->references++;
+   return tex;
+}
+
+Evas_GL_Texture *
+evas_gl_common_texture_render_noscale_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha)
+{
+   Evas_GL_Texture *tex;
+   int u = 0, v = 0;
+   int lformat;
+
+   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
+   if (lformat < 0) return NULL;
+
+   tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
+   if (!tex) return NULL;
+   tex->pt = _pool_tex_render_find(gc, w, h,
+                                   *matching_format[lformat].intformat,
+                                   *matching_format[lformat].format,
+                                   &u, &v, &tex->apt,
+                                   // XXX: should this be another atlas size?
+                                   gc->shared->info.tune.atlas.max_alloc_size,
+                                   EINA_FALSE);
+   if (!tex->pt)
+     {
+        evas_gl_common_texture_light_free(tex);
+        return NULL;
+     }
+   tex->x = u;
+   tex->y = v;
+
    tex->pt->references++;
    return tex;
 }
