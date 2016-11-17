@@ -40,12 +40,6 @@ evas_common_scale_rgba_in_to_out_clip_cb(RGBA_Image *src, RGBA_Image *dst,
                                          int dst_region_w, int dst_region_h,
                                          Evas_Common_Scale_In_To_Out_Clip_Cb cb)
 {
-#ifdef HAVE_THREAD_SPECIFIER
-   static __thread int rects_used = 0;
-   static __thread Cutout_Rects *rects = NULL;
-#else
-   Cutout_Rects *rects = NULL;
-#endif
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
@@ -76,26 +70,16 @@ evas_common_scale_rgba_in_to_out_clip_cb(RGBA_Image *src, RGBA_Image *dst,
         return EINA_FALSE;
      }
 
-   rects = evas_common_draw_context_apply_cutouts(dc, rects);
-   for (i = 0; i < rects->active; ++i)
+   dc->cache.rects = evas_common_draw_context_apply_cutouts(dc, dc->cache.rects);
+   for (i = 0; i < dc->cache.rects->active; ++i)
      {
-        r = rects->rects + i;
+        r = dc->cache.rects->rects + i;
         evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
         ret |= cb(src, dst, dc,
                   src_region_x, src_region_y, src_region_w, src_region_h,
                   dst_region_x, dst_region_y, dst_region_w, dst_region_h);
      }
-#ifdef HAVE_THREAD_SPECIFIER
-   rects_used++;
-   if (rects_used >= 4096)
-     {
-        evas_common_draw_context_cutouts_real_free(rects);
-        rects = NULL;
-        rects_used = 0;
-     }
-#else
-   evas_common_draw_context_cutouts_real_free(rects);
-#endif
+   evas_common_draw_context_cache_update(dc);
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 

@@ -122,6 +122,10 @@ evas_common_draw_context_dup(RGBA_Draw_Context *dc)
      pixman_image_ref(dc2->col.pixman_color_image);
 #endif
 #endif
+
+   dc2->cache.rects = NULL;
+   dc2->cache.used = 0;
+
    return dc2;
 }
 
@@ -141,6 +145,7 @@ evas_common_draw_context_free(RGBA_Draw_Context *dc)
 #endif
 
    evas_common_draw_context_apply_clean_cutouts(&dc->cutout);
+   evas_common_draw_context_cutouts_real_free(dc->cache.rects);
    free(dc);
 }
 

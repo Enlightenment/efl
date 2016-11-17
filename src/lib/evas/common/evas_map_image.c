@@ -752,12 +752,6 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
                         int smooth, int level,
                         Evas_Common_Map_RGBA_Cb cb)
 {
-#ifdef HAVE_THREAD_SPECIFIER
-   static __thread int rects_used = 0;
-   static __thread Cutout_Rects *rects = NULL;
-#else
-   Cutout_Rects *rects = NULL;
-#endif
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
@@ -789,24 +783,14 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
         dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
         return;
      }
-   rects = evas_common_draw_context_apply_cutouts(dc, rects);
-   for (i = 0; i < rects->active; ++i)
+   dc->cache.rects = evas_common_draw_context_apply_cutouts(dc, dc->cache.rects);
+   for (i = 0; i < dc->cache.rects->active; ++i)
      {
-        r = rects->rects + i;
+        r = dc->cache.rects->rects + i;
         evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
         cb(src, dst, dc, p, smooth, level);
      }
-#ifdef HAVE_THREAD_SPECIFIER
-   rects_used++;
-   if (rects_used >= 4096)
-     {
-        evas_common_draw_context_cutouts_real_free(rects);
-        rects = NULL;
-        rects_used = 0;
-     }
-#else
-   evas_common_draw_context_cutouts_real_free(rects);
-#endif
+   evas_common_draw_context_cache_update(dc);
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 }
@@ -814,12 +798,6 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
 EAPI Eina_Bool
 evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset, Evas_Common_Map_Thread_RGBA_Cb cb)
 {
-#ifdef HAVE_THREAD_SPECIFIER
-   static __thread int rects_used = 0;
-   static __thread Cutout_Rects *rects = NULL;
-#else
-   Cutout_Rects *rects = NULL;
-#endif
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
@@ -854,24 +832,14 @@ evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Conte
         return EINA_FALSE;
      }
 
-   rects = evas_common_draw_context_apply_cutouts(dc, rects);
-   for (i = 0; i < rects->active; ++i)
+   dc->cache.rects = evas_common_draw_context_apply_cutouts(dc, dc->cache.rects);
+   for (i = 0; i < dc->cache.rects->active; ++i)
      {
-        r = rects->rects + i;
+        r = dc->cache.rects->rects + i;
         evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
         ret |= cb(src, dst, dc, map, smooth, level, offset);
      }
-#ifdef HAVE_THREAD_SPECIFIER
-   rects_used++;
-   if (rects_used >= 4096)
-     {
-        evas_common_draw_context_cutouts_real_free(rects);
-        rects = NULL;
-        rects_used = 0;
-     }
-#else
-   evas_common_draw_context_cutouts_real_free(rects);
-#endif
+   evas_common_draw_context_cache_update(dc);
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 

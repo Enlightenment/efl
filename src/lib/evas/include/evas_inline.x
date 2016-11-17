@@ -427,6 +427,18 @@ evas_canvas_async_block(Evas_Public_Data *e)
      }
 }
 
+static inline void
+evas_common_draw_context_cache_update(RGBA_Draw_Context *dc)
+{
+   dc->cache.used++;
+   if (dc->cache.used >= 4096)
+     {
+        evas_common_draw_context_cutouts_real_free(dc->cache.rects);
+        dc->cache.rects = NULL;
+        dc->cache.used = 0;
+     }
+}
+
 #define _EVAS_COLOR_CLAMP(x, y) do { \
    if (x > y) { x = y; bad = 1; } \
    if (x < 0) { x = 0; bad = 1; } } while (0)

@@ -757,6 +757,10 @@ struct _RGBA_Draw_Context
    } clip;
    Cutout_Rects cutout;
    struct {
+      Cutout_Rects *rects;
+      int used;
+   } cache;
+   struct {
       struct {
          void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg);
          void  (*gl_free) (void *ext_dat);
