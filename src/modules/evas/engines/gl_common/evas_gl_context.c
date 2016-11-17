@@ -670,12 +670,10 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
 #endif
      {
         if (((offx == gc->shared->offx) && (offy == gc->shared->offy)) &&
-            ((!gc->change.size) ||
-             (
+            (
                 (gc->shared->w == w) && (gc->shared->h == h) &&
                 (gc->shared->rot == rot) && (gc->shared->foc == gc->foc) &&
                 (gc->shared->mflip == m)
-             )
             )
            )
           return;
@@ -692,7 +690,6 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    gc->shared->z0 = gc->z0;
    gc->shared->px = gc->px;
    gc->shared->py = gc->py;
-   gc->change.size = 0;
    gc->shared->offx = offx;
    gc->shared->offy = offy;
 
@@ -1270,7 +1267,6 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
         gc->pipe[i].shader.cw = 0;
         gc->pipe[i].shader.ch = 0;
      }
-   gc->change.size = 1;
 
    evas_glDisable_th(GL_SCISSOR_TEST);
    evas_glScissor_th(0, 0, 0, 0);
@@ -1309,7 +1305,6 @@ evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot)
 {
    if ((gc->w == w) && (gc->h == h) && (gc->rot == rot)) return;
    evas_gl_common_context_flush(gc);
-   gc->change.size = 1;
    gc->rot = rot;
    gc->w = w;
    gc->h = h;
@@ -1395,7 +1390,6 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
    gc->state.current.ch = -1;
 
    gc->pipe[0].shader.surface = surface;
-   gc->change.size = 1;
 #ifdef GL_GLES
 # ifndef GL_FRAMEBUFFER
 #  define GL_FRAMEBUFFER GL_FRAMEBUFFER_OES
@@ -2872,7 +2866,6 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
         gc->z0 = p[0].z0 >> FP;
         gc->px = p[0].px >> FP;
         gc->py = p[0].py >> FP;
-        gc->change.size = 1;
         _evas_gl_common_viewport_set(gc);
      }
 
@@ -2998,7 +2991,6 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
         gc->z0 = 0;
         gc->px = 0;
         gc->py = 0;
-        gc->change.size = 1;
         _evas_gl_common_viewport_set(gc);
      }
 }

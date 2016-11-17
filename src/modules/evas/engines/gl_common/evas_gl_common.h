@@ -320,10 +320,6 @@ struct _Evas_Engine_GL_Context
          int buffer_use;
       } array;
    } pipe[MAX_PIPES];
-
-   struct {
-      Eina_Bool size : 1;
-   } change;
    
    Eina_List *font_glyph_textures;
 
