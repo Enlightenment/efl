@@ -95,6 +95,32 @@ _del_cb(void *data, const Efl_Event *ev)
 }
 
 EAPI Evas_Device *
+evas_device_get(Evas *eo_e, const char *name)
+{
+   const char *dev_name;
+   Evas_Public_Data *e;
+   Evas_Device *dev;
+   Eina_List *l;
+
+   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
+
+   if (!name)
+       return NULL;
+
+   e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+
+   EINA_LIST_FOREACH(e->devices, l, dev)
+     {
+        dev_name = efl_input_device_name_get(dev);
+
+        if (eina_streq(dev_name, name))
+          return dev;
+     }
+
+   return NULL;
+}
+
+EAPI Evas_Device *
 evas_device_add(Evas *eo_e)
 {
    return evas_device_add_full(eo_e, NULL, NULL, NULL, NULL,
