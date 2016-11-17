@@ -47,6 +47,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
                  Elm.Interface.Atspi_Image, Elm.Interface.Atspi_Widget_Action,
                  Edje.Object, Efl.Orientation, Efl.Flipable)
 {
+   [[ Efl UI image class]]
    event_prefix: efl_ui_image;
    methods {
       @property scale_type {
@@ -54,7 +55,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
 
            @since 1.18]]
          values {
-            scale_type: Efl.Ui.Image.Scale_Type;
+            scale_type: Efl.Ui.Image.Scale_Type; [[Image scale type]]
          }
       }
       @property scalable {
@@ -102,7 +103,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
 
               See also @.icon.get.
             ]]
-            return: bool; [[true on success, false on error]]
+            return: bool; [[$true on success, $false on error]]
          }
          get {
             [[Get the icon name of image set by icon standard names.
@@ -155,7 +156,6 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      drop; /* FIXME - Belongs to DnD interface */
+      drop; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */
    }
-
 }

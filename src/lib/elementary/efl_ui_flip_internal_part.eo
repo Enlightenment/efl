@@ -1,5 +1,6 @@
 class Efl.Ui.Flip.Internal.Part (Efl.Object, Efl.Container)
 {
+   [[Efl UI flip internal class]]
    data: Elm_Part_Data;
    implements {
       Efl.Object.destructor;

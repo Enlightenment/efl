@@ -257,5 +257,4 @@ class Efl.Ui.Clock (Elm.Layout)
    events {
       changed; [[Called when clock changed]]
    }
-
 }

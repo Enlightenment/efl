@@ -1,16 +1,15 @@
 class Efl.Ui.Nstate(Elm.Button)
 {
+   [[Efl UI nstate class]]
    methods {
       activate @protected {
+         [[Activate widget]]
       }
       @property count {
+      	 [[Maximum number of states]]
          set {
-            [[Set the maximum number of states.
-            ]]
          }
          get {
-             [[Get the max number of states.
-             ]]
          }
          values {
             nstate: int; [[The number of states.]]
@@ -18,12 +17,10 @@ class Efl.Ui.Nstate(Elm.Button)
       }
       @property value {
          set {
-            [[Set the particular state given in (0...nstate}.
-            ]]
+            [[Set the particular state given in (0...nstate}.]]
          }
          get {
-            [[Get the state value.
-            ]]
+            [[Get the state value.]]
          }
          values {
             state: int; [[The state.]]
@@ -39,6 +36,6 @@ class Efl.Ui.Nstate(Elm.Button)
       Elm.Widget.event;
    }
    events {
-      state,changed;
+      state,changed; [[Called when nstate widget changed]]
    }
 }

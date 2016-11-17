@@ -28,6 +28,7 @@ enum Efl.Ui.Flip.Interaction
 
 class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
 {
+   [[Efl UI flip class]]
    legacy_prefix: elm_flip;
    methods {
       @property interaction {

@@ -55,6 +55,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Elm.Interface.Atspi.Text, Elm.Interface.Atspi.Text.Editable, Efl.File,
                  Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Ui.Text.Interactive)
 {
+   [[Efl UI text class]]
    methods {
       @property scrollable {
          set {
@@ -476,7 +477,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
    events {
       activated;
       changed;
-      changed,user;
+      changed,user; [[Called when object changed due to user interaction]]
       validate;
       context,open;
       anchor,clicked;
@@ -496,5 +497,4 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       cursor,changed;
       cursor,changed,manual;
    }
-
 }

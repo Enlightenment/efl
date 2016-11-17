@@ -8,10 +8,11 @@ class Efl.Ui.Layout_Internal.Table (Efl.Object, Efl.Pack.Grid)
    data: Efl_Ui_Layout_Table_Data;
    methods {
       @property real_part @protected {
+      	 [[Real part property]]
          set {}
          values {
-            layout: Efl.Object;
-            part: string;
+            layout: Efl.Object; [[Real part object]]
+            part: string; [[Real part name]]
          }
       }
    }

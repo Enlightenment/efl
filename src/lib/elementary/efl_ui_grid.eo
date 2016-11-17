@@ -1,6 +1,7 @@
 class Efl.Ui.Grid (Elm.Widget, Efl.Pack.Grid, Efl.Pack.Layout,
                    Efl.Orientation)
 {
+   [[Efl UI grid class]]
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_add;

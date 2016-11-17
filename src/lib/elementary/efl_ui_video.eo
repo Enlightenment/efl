@@ -1,6 +1,7 @@
 class Efl.Ui.Video (Elm.Layout, Efl.File,
                  Efl.Player, Elm.Interface.Atspi_Widget_Action)
 {
+   [[Efl UI video class]]
    legacy_prefix: elm_video;
    methods {
       @property remember_position {
@@ -19,7 +20,7 @@ class Efl.Ui.Video (Elm.Layout, Efl.File,
             ]]
          }
          values {
-            remember: bool; [[The value.]]
+            remember: bool; [[$true when the object can remember the last position, $false otherwise]]
          }
       }
       @property is_playing {
@@ -29,13 +30,13 @@ class Efl.Ui.Video (Elm.Layout, Efl.File,
               You should consider watching event on the object instead of
               polling the object state.
             ]]
-            return: bool;
+            return: bool; [[$true if the video is playing, $false otherwise]]
          }
       }
       @property emotion {
          get {
             [[Get the underlying Emotion object.]]
-            return: Efl.Canvas.Object; [[the underlying Emotion object.]]
+            return: Efl.Canvas.Object; [[The underlying Emotion object.]]
          }
       }
       @property title {

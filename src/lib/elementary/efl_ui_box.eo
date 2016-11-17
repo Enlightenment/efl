@@ -1,6 +1,7 @@
 class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout,
                   Efl.Orientation)
 {
+   [[Efl UI box class]]
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_add;

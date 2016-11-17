@@ -1,4 +1,3 @@
-
 enum Efl.Ui.Win.Type
 {
    [[Defines the types of window that can be created
@@ -104,8 +103,6 @@ enum Efl.Ui.Win.Indicator_Type
             If user flicks the upper side of window, the incator is shown temporarily.]]
 }
 
-/**
- */
 enum Efl.Ui.Win.Keygrab_Mode
 {
    [[Define the keygrab modes of window. A window may send commands to the
@@ -148,6 +145,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                Efl.Input.State, Efl.Input.Interface, Efl.Screen,
                Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global)
 {
+   [[Efl UI window class]]
    legacy_prefix: elm_win;
    eo_prefix: efl_ui_win;
    event_prefix: efl_ui_win;

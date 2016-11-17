@@ -19,7 +19,7 @@ interface Efl.Ui.Text.Interactive ()
          set {}
          get {}
          values {
-            allowed: bool; [[$true if enabled]]
+            allowed: bool; [[$true if enabled, $false otherwise]]
          }
       }
       @property selection_cursors {
@@ -42,7 +42,7 @@ interface Efl.Ui.Text.Interactive ()
          set {}
          get {}
          values {
-            enabled: bool; [[$true if enabled]]
+            enabled: bool; [[$true if enabled, $false otherwise]]
          }
       }
       @property editable {

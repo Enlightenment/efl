@@ -64,7 +64,4 @@ class Efl.Ui.Frame (Elm.Layout, Efl.Ui.Clickable)
       Elm.Layout.text_aliases.get;
       Elm.Layout.content_aliases.get;
    }
-   events {
-   }
-
 }
