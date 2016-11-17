@@ -96,7 +96,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          get {
          }
          values {
-            disabled: bool;
+            disabled: bool; [[$true if wheel is disabled, $false otherwise]]
          }
       }
       @property movement_block {
@@ -123,12 +123,13 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property momentum_animator_disabled {
+      	 [[Momentum animator]]
          set {
          }
          get {
          }
          values {
-            disabled: bool;
+            disabled: bool; [[$true if disabled, $false otherwise]]
          }
       }
       @property policy {
@@ -177,7 +178,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          get {
          }
          values {
-            repeat_events: bool;
+            repeat_events: bool; [[$true if events are propagated, $false otherwise]]
          }
       }
       @property page_size {
@@ -203,22 +204,24 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property bounce_animator_disabled {
+      	 [[Bounce animator]]
          set {
          }
          get {
          }
          values {
-            disabled: bool;
+            disabled: bool; [[$true if bounce animation is disabled, $false otherwise]]
          }
       }
       @property page_scroll_limit {
+      	 [[Page scroll limit]]
          set {
          }
          get {
          }
          values {
-            page_limit_h: int;
-            page_limit_v: int;
+            page_limit_h: int; [[Page limit horizontal]]
+            page_limit_v: int; [[Page limit vertical]]
          }
       }
       @property page_snap_allow {
@@ -245,15 +248,16 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property paging {
+      	 [[Pagin property]]
          set {
          }
          get {
          }
          values {
-            pagerel_h: double;
-            pagerel_v: double;
-            pagesize_h: Evas.Coord;
-            pagesize_v: Evas.Coord;
+            pagerel_h: double; [[Page relation horizontal]]
+            pagerel_v: double; [[Page relation vertical]]
+            pagesize_h: Evas.Coord; [[Page size horizontal]]
+            pagesize_v: Evas.Coord; [[Page size vertical]]
          }
       }
       @property single_direction {
@@ -278,13 +282,14 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property step_size {
+      	 [[Step size]]
          set {
          }
          get {
          }
          values {
-            x: Evas.Coord;
-            y: Evas.Coord;
+            x: Evas.Coord; [[X coordinate]]
+            y: Evas.Coord; [[Y coordinate]]
          }
       }
       @property loop {
@@ -325,10 +330,11 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property freeze {
+      	 [[Freeze property]]
          set {
          }
          values {
-            freeze: bool;
+            freeze: bool; [[$true if freeze, $false otherwise]]
          }
       }
       @property content_viewport_resize_cb {
@@ -336,7 +342,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
             [[When the viewport is resized, the callback is called.]]
          }
          values {
-            viewport_resize_cb: Elm_Interface_Scrollable_Resize_Cb @nullable;
+            viewport_resize_cb: Elm_Interface_Scrollable_Resize_Cb @nullable; [[The callback]]
          }
       }
       @property scroll_left_cb {
@@ -380,10 +386,11 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property extern_pan {
+      	 [[Extern pan]]
          set {
          }
          values {
-            pan: Efl.Canvas.Object @nullable;
+            pan: Efl.Canvas.Object @nullable; [[Pan object]]
          }
       }
       @property page_change_cb {
@@ -395,10 +402,11 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property hold {
+      	 [[Hold property]]
          set {
          }
          values {
-            hold: bool;
+            hold: bool; [[$true if hold, $false otherwise]]
          }
       }
       @property animate_start_cb {
@@ -422,8 +430,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
             [[Set scroll page size relative to viewport size.]]
          }
          values {
-            h_pagerel: double;
-            v_pagerel: double;
+            h_pagerel: double; [[Page relation horizontal]]
+            v_pagerel: double; [[Page relation vertical]]
          }
       }
       @property scroll_cb {
@@ -443,17 +451,19 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property mirrored {
+      	 [[Mirroed property]]
          set {
          }
          values {
-            mirrored: bool;
+            mirrored: bool; [[$true if mirrored, $false otherwise]]
          }
       }
       @property content_min_limit_cb {
+      	 [[set the callback to run on minimal limit content]]
          set {
          }
          values {
-            min_limit_cb: Elm_Interface_Scrollable_Min_Limit_Cb @nullable;
+            min_limit_cb: Elm_Interface_Scrollable_Min_Limit_Cb @nullable; [[The callback]]
          }
       }
       @property scroll_right_cb {
@@ -465,10 +475,11 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property content {
+      	 [[Content property]]
          set {
          }
          values {
-            content: Efl.Canvas.Object @nullable;
+            content: Efl.Canvas.Object @nullable; [[Content object]]
          }
       }
       @property edge_left_cb {
@@ -520,11 +531,12 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property objects {
+      	 [[Object property]]
          set {
          }
          values {
-            edje_object: Efl.Canvas.Object;
-            hit_rectangle: Efl.Canvas.Object;
+            edje_object: Efl.Canvas.Object; [[Edje object]]
+            hit_rectangle: Efl.Canvas.Object; [[Evas object]]
          }
       }
       @property last_page {
@@ -558,13 +570,14 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       @property content_viewport_geometry {
+      	 [[Content viewport geometry]]
          get {
          }
          values {
-            x: Evas.Coord;
-            y: Evas.Coord;
-            w: Evas.Coord;
-            h: Evas.Coord;
+            x: Evas.Coord; [[X coordinate]]
+            y: Evas.Coord; [[Y coordinate]]
+            w: Evas.Coord; [[Width]]
+            h: Evas.Coord; [[Height]]
          }
       }
       @property content_size {
@@ -580,16 +593,18 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          }
       }
       content_pos_set {
+      	 [[Set the content position]]
          params {
-            @in x: Evas.Coord;
-            @in y: Evas.Coord;
-            @in sig: bool;
+            @in x: Evas.Coord; [[X coordinate]]
+            @in y: Evas.Coord; [[Y coordinate]]
+            @in sig: bool; [[FIXME: what does sig stand for here?]]
          }
       }
       content_pos_get {
+      	 [[Get content position]]
          params {
-            @out x: Evas.Coord;
-            @out y: Evas.Coord;
+            @out x: Evas.Coord; [[X coordinate]]
+            @out y: Evas.Coord; [[Y coordinate]]
          }
       }
       page_show {
@@ -656,8 +671,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
            right size horizontally and/or vertically to perfectly fit its content in
            that direction.]]
          params {
-            @in w: bool; [[whether to limit the minimum horizontal size]]
-            @in h: bool; [[whether to limit the minimum vertical size]]
+            @in w: bool; [[Whether to limit the minimum horizontal size]]
+            @in h: bool; [[Whether to limit the minimum vertical size]]
          }
       }
    }
@@ -667,6 +682,6 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
       Efl.Canvas.Group.group_del;
    }
    events {
-      changed;
+      changed; [[Called when content changed]]
    }
 }

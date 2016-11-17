@@ -29,6 +29,7 @@ enum Elm.Fileselector.Sort
 
 interface Elm.Interface.Fileselector ()
 {
+   [[Elementary fileselector interface]]
    eo_prefix: elm_interface_fileselector;
    methods {
       @property folder_only {
@@ -39,7 +40,7 @@ interface Elm.Interface.Fileselector ()
             [[Get whether folder-only view is set for a given file selector]]
          }
          values {
-            only: bool;
+            only: bool; [[$true if folder view is set, $false otherwise]]
          }
       }
       @property thumbnail_size {
@@ -50,8 +51,8 @@ interface Elm.Interface.Fileselector ()
             [[Get the size for the thumbnail of a given file selector widget]]
          }
          values {
-            w: Evas.Coord;
-            h: Evas.Coord;
+            w: Evas.Coord; [[Width]]
+            h: Evas.Coord; [[Height]]
          }
       }
       @property hidden_visible {
@@ -62,7 +63,8 @@ interface Elm.Interface.Fileselector ()
             [[Get if hiden files/directories in the file selector are visible or not.]]
          }
          values {
-            multi: bool;
+            multi: bool; [[$true if hidden files are visible, $false otherwise]]
+                         /* FIXME needs a better value name */
          }
       }
       @property sort_method {
@@ -73,7 +75,7 @@ interface Elm.Interface.Fileselector ()
             [[Get the sort method of the file selector widget.]]
          }
          values {
-            sort: Elm.Fileselector.Sort;
+            sort: Elm.Fileselector.Sort; [[Sort method]]
          }
       }
       @property multi_select {
@@ -84,7 +86,7 @@ interface Elm.Interface.Fileselector ()
             [[Gets if multi-selection in fileselector is enabled or disabled.]]
          }
          values {
-            multi: bool;
+            multi: bool; [[$true if multiselection is enabled, $false otherwise]]
          }
       }
       @property expandable {
@@ -95,7 +97,7 @@ interface Elm.Interface.Fileselector ()
             [[Get whether tree view is enabled for the given file selector]]
          }
          values {
-            expand: bool;
+            expand: bool; [[$true if tree view is expanded, $false otherwise]]
          }
       }
       @property model {
@@ -106,7 +108,7 @@ interface Elm.Interface.Fileselector ()
             [[Get the directory's model that a given file selector selector widget display contents from]]
          }
          values {
-            model: Efl.Model;
+            model: Efl.Model; [[Directory model]]
          }
       }
       @property mode {
@@ -117,7 +119,7 @@ interface Elm.Interface.Fileselector ()
             [[Get the mode in which a given file selector widget is displaying]]
          }
          values {
-            mode: Elm.Fileselector.Mode;
+            mode: Elm.Fileselector.Mode; [[Fileselector mode]]
          }
       }
       @property is_save {
@@ -128,7 +130,7 @@ interface Elm.Interface.Fileselector ()
             [[Get whether the given file selector is in "saving dialog" mode]]
          }
          values {
-            is_save: bool;
+            is_save: bool; [[$true if in saving mode, $false otherwise]]
          }
       }
       @property selected_models {
@@ -136,16 +138,17 @@ interface Elm.Interface.Fileselector ()
             [[Get a list of models selected in the fileselector.]]
          }
          values {
-            ret: const(list<Efl.Model>);
+            ret: const(list<Efl.Model>); [[List of selected models]]
          }
       }
       @property current_name {
+      	 [[ Current name property]]
          set {
          }
          get {
          }
          values {
-            name: string;
+            name: string; [[Name]]
          }
       }
       selected_model_set {
@@ -157,16 +160,16 @@ interface Elm.Interface.Fileselector ()
       }
       selected_model_get {
          [[Get the currently selected item's model, in the given file the given file selector widget]]
-         return: Efl.Model;
+         return: Efl.Model; [[Selected model]]
       }
       custom_filter_append {
          [[Append custom filter into filter list]]
          params {
-            @in func: Elm_Fileselector_Filter_Func; [[function]]
-            @in data: void_ptr;
-            @in filter_name: string;
+            @in func: Elm_Fileselector_Filter_Func; [[Filter function]]
+            @in data: void_ptr; [[Data pointer]]
+            @in filter_name: string; [[Filter name]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       filters_clear {
          [[Clear all filters registered]]
@@ -174,10 +177,10 @@ interface Elm.Interface.Fileselector ()
       mime_types_filter_append {
          [[Append mime type based filter into filter list]]
          params {
-            @in mime_types: string;
-            @in filter_name: string;
+            @in mime_types: string; [[Mime types]]
+            @in filter_name: string; [[Filter name]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
    }
 }
