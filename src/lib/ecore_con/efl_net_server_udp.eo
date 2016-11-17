@@ -100,7 +100,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
                 return: Eina.Error; [[0 on success, error code otherwise]]
             }
             values {
-                loopback: bool; [[FIXME: should this be named ttl?]]
+                ttl: bool; [[Time to live]]
             }
         }
 
