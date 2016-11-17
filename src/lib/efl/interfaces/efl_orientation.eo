@@ -5,7 +5,7 @@ enum Efl.Orient
      See also @Efl.Orientation
    ]]
    none = 0, [[Default, same as up]]
-   up = 0, [[orient up]]
+   up = 0, [[Orient up]]
    right = 90, [[Orient right]]
    down = 180, [[Orient down]]
    left = 270, [[Orient left]]

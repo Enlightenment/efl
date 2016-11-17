@@ -15,7 +15,7 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
         preallocate {
             [[Immediately pre-allocate a buffer of at least a given size.]]
             params {
-                @in size: size; [[amount of bytes to pre-allocate.]]
+                @in size: size; [[Amount of bytes to pre-allocate.]]
             }
         }
 
@@ -41,7 +41,7 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
             [[How many bytes are available for read]]
             get { }
             values {
-                usage: size;
+                usage: size; [[Bytes available to read]]
             }
         }
 
@@ -53,9 +53,9 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
               called in those situations.
             ]]
             params {
-                @out slice: Eina.Slice; [[slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full slice available for reading.]]
+                @out slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full slice available for reading.]]
             }
-            return: bool (false);
+            return: bool (false); [[$true on success, $false otherwise]]
         }
 
         clear {

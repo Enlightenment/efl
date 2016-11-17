@@ -4,6 +4,7 @@ interface Efl.Config ()
    methods {
       /* FIXME: make this a property -- @own is a problem */
       config_set {
+      	 [[Set configuration]]
          params {
             name: string; [[Configuration option name]]
             val: ptr(const(generic_value)); [[Configuration option value]]
@@ -12,6 +13,7 @@ interface Efl.Config ()
                          config can't be changed, config does not exist...]]
       }
       config_get @const {
+      	 [[Get configuration]]
          params {
             name: string; [[Configuration option name]]
          }

@@ -114,7 +114,7 @@ interface Efl.Model ()
 
                   @since 1.14
                 ]]
-            return: future<uint>;
+            return: future<uint>; [[Future of the children count]]
          }
          child_add {
             [[Add a new child.

@@ -26,8 +26,8 @@ interface Efl.Pack.Linear (Efl.Pack)
       pack_before {
          [[Prepend item before other sub object.]]
          params {
-            @in subobj:   own(Efl.Gfx);   [[Item to pack.]]
-            @in existing: const(Efl.Gfx);  [[Item to refer to.]]
+            @in subobj:   own(Efl.Gfx); [[Item to pack.]]
+            @in existing: const(Efl.Gfx); [[Item to refer to.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
                          could not be packed]]
@@ -35,8 +35,8 @@ interface Efl.Pack.Linear (Efl.Pack)
       pack_after {
          [[Append item after other sub object.]]
          params {
-            @in subobj:   own(Efl.Gfx);   [[Item to pack.]]
-            @in existing: const(Efl.Gfx);  [[Item to refer to.]]
+            @in subobj:   own(Efl.Gfx); [[Item to pack.]]
+            @in existing: const(Efl.Gfx); [[Item to refer to.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
                          could not be packed]]
@@ -49,7 +49,7 @@ interface Efl.Pack.Linear (Efl.Pack)
           ]]
           params {
              @in subobj: own(Efl.Gfx); [[Item to pack.]]
-             @in index:  int;                 [[A position.]]
+             @in index:  int; [[A position.]]
           }
           return: bool; [[$false if $subobj could not be packed]]
       }

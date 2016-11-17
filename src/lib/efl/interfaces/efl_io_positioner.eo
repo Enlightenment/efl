@@ -17,14 +17,16 @@ mixin Efl.Io.Positioner {
 
     methods {
         seek @virtual_pure {
+            [[Seek in data]]
             params {
-                @in offset: int64; [[offset in byte relative to whence]]
-                @in whence: Efl.Io.Positioner.Whence;
+                @in offset: int64; [[Offset in byte relative to whence]]
+                @in whence: Efl.Io.Positioner.Whence; [[Whence]]
             }
             return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
         }
 
         @property position {
+            [[Position property]]
             get @virtual_pure { }
             set {
                 [[Try to set position object, relative to start of file. See @.seek()]]

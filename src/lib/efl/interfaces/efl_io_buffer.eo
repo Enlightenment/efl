@@ -86,9 +86,9 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
               called in those situations.
             ]]
             params {
-                @out slice: Eina.Slice; [[slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Sizer.resize are called. It is the full slice, not a partial one starting at current position.]]
+                @out slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Sizer.resize are called. It is the full slice, not a partial one starting at current position.]]
             }
-            return: bool (false);
+            return: bool (false); [[$true on success, $false otherwise]]
         }
 
         binbuf_steal {
@@ -96,7 +96,7 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
 
               The returned memory must be freed with eina_binbuf_free().
             ]]
-            return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused;
+            return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused; [[Binbuf]]
         }
     }
 

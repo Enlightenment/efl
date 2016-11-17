@@ -6,8 +6,9 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
    eo_prefix: efl_pack;
    methods {
       pack_grid {
+      	 [[Pack object on the grid]]
          params {
-            subobj: own(Efl.Gfx);
+            subobj: own(Efl.Gfx); [[Object]]
             col: int; [[Column number]]
             row: int; [[Row number]]
             colspan: int @optional; [[0 means 1, -1 means @.grid_columns]]
@@ -41,8 +42,8 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
          values {
             col: int; [[Column number]]
             row: int; [[Row number]]
-            colspan: int;
-            rowspan: int;
+            colspan: int; [[Column span]]
+            rowspan: int; [[Row span]]
          }
       }
       @property grid_size {

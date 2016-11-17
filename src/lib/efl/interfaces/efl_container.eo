@@ -37,7 +37,7 @@ interface Efl.Container (Efl.Gfx)
       }
       content_iterate {
          [[Begin iterating over this object's contents.]]
-         return: free(own(iterator<Efl.Gfx>), eina_iterator_free) @warn_unused;
+         return: free(own(iterator<Efl.Gfx>), eina_iterator_free) @warn_unused; [[Iterator to object content]]
       }
       content_count {
          [[Returns the number of UI elements packed in this container.]]
