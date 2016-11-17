@@ -608,6 +608,8 @@ _toggle_entry(Evas_Object *obj)
                elm_entry_markup_filter_append(sd->ent, _min_max_validity_filter, obj);
              efl_event_callback_add
                 (sd->ent, ELM_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
+             efl_event_callback_add
+                (sd->ent, ELM_ENTRY_EVENT_ACTIVATED, _entry_unfocused_cb, obj);
           }
         if (!sd->button_layout)
           {
