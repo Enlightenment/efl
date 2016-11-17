@@ -246,7 +246,6 @@ struct _Evas_Engine_GL_Context
    int                references;
    int                w, h;
    int                rot;
-   int                foc, z0, px, py;
    RGBA_Draw_Context *dc;
 
    Evas_GL_Shared     *shared;
@@ -274,6 +273,9 @@ struct _Evas_Engine_GL_Context
    } master_clip;
 
    struct {
+      struct {
+        int foc, z0, px, py;
+      } viewport;
       struct {
          int             x, y, w, h;
          Shader_Type     type;

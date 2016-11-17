@@ -692,7 +692,7 @@ _calculate_foc(int rot, int m, int w, int h, int px, int py,
 }
 
 static void
-_evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
+_evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc, int pipe)
 {
    int w = 1, h = 1, m = 1, rot = 1, foc = 0;
    int offx = 0, offy = 0;
@@ -700,7 +700,7 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    Eina_Iterator *it;
 
    EINA_SAFETY_ON_NULL_RETURN(gc);
-   foc = gc->foc;
+   foc = gc->pipe[pipe].viewport.foc;
    // surface in pipe 0 will be the same as all pipes
    if ((gc->pipe[0].shader.surface == gc->def_surface) ||
        (!gc->pipe[0].shader.surface))
@@ -726,8 +726,11 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
         if (((offx == gc->shared->offx) && (offy == gc->shared->offy)) &&
             (
                 (gc->shared->w == w) && (gc->shared->h == h) &&
-                (gc->shared->rot == rot) && (gc->shared->foc == gc->foc) &&
-                (gc->shared->mflip == m)
+                (gc->shared->rot == rot) && (gc->shared->foc == foc) &&
+                (gc->shared->mflip == m) &&
+                (gc->shared->z0 == gc->pipe[pipe].viewport.z0) &&
+                (gc->shared->px == gc->pipe[pipe].viewport.px) &&
+                (gc->shared->py == gc->pipe[pipe].viewport.py)
             )
            )
           return;
@@ -741,9 +744,9 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    gc->shared->rot = rot;
    gc->shared->mflip = m;
    gc->shared->foc = foc;
-   gc->shared->z0 = gc->z0;
-   gc->shared->px = gc->px;
-   gc->shared->py = gc->py;
+   gc->shared->z0 = gc->pipe[pipe].viewport.z0;
+   gc->shared->px = gc->pipe[pipe].viewport.px;
+   gc->shared->py = gc->pipe[pipe].viewport.py;
    gc->shared->offx = offx;
    gc->shared->offy = offy;
 
@@ -1124,7 +1127,7 @@ evas_gl_common_context_new(void)
      }
    gc->shared = shared;
    gc->shared->references++;
-   _evas_gl_common_viewport_set(gc);
+   _evas_gl_common_viewport_set(gc, 0);
 
    gc->def_surface = evas_gl_common_image_surface_new(gc, 1, 1, 1, EINA_FALSE);
 
@@ -1219,7 +1222,7 @@ evas_gl_common_context_use(Evas_Engine_GL_Context *gc)
 {
    if (_evas_gl_common_context == gc) return;
    _evas_gl_common_context = gc;
-   if (gc) _evas_gl_common_viewport_set(gc);
+   if (gc) _evas_gl_common_viewport_set(gc, 0);
 }
 
 EAPI void
@@ -1259,6 +1262,10 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
 
    for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
      {
+        gc->pipe[i].viewport.foc = 0;
+        gc->pipe[i].viewport.z0 = 0;
+        gc->pipe[i].viewport.px = 0;
+        gc->pipe[i].viewport.py = 0;
         gc->pipe[i].region.x = 0;
         gc->pipe[i].region.y = 0;
         gc->pipe[i].region.w = 0;
@@ -1311,7 +1318,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
    evas_glActiveTexture_th(GL_TEXTURE0);
    evas_glBindTexture_th(gc->pipe[0].shader.tex_target, gc->pipe[0].shader.cur_tex);
 
-   _evas_gl_common_viewport_set(gc);
+   _evas_gl_common_viewport_set(gc, 0);
 }
 
 EAPI void
@@ -1322,7 +1329,7 @@ evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot)
    gc->rot = rot;
    gc->w = w;
    gc->h = h;
-   if (_evas_gl_common_context == gc) _evas_gl_common_viewport_set(gc);
+   if (_evas_gl_common_context == gc) _evas_gl_common_viewport_set(gc, 0);
 }
 
 void
@@ -1417,7 +1424,7 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
      glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
    else
       glsym_glBindFramebuffer(GL_FRAMEBUFFER, surface->tex->pt->fb);
-   _evas_gl_common_viewport_set(gc);
+   _evas_gl_common_viewport_set(gc, 0);
 }
 
 #define VERTEX_CNT 3
@@ -2876,11 +2883,11 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    if (!flat)
      {
         shader_array_flush(gc);
-        gc->foc = p[0].foc >> FP;
-        gc->z0 = p[0].z0 >> FP;
-        gc->px = p[0].px >> FP;
-        gc->py = p[0].py >> FP;
-        _evas_gl_common_viewport_set(gc);
+        gc->pipe[0].viewport.foc = p[0].foc >> FP;
+        gc->pipe[0].viewport.z0 = p[0].z0 >> FP;
+        gc->pipe[0].viewport.px = p[0].px >> FP;
+        gc->pipe[0].viewport.py = p[0].py >> FP;
+        _evas_gl_common_viewport_set(gc, 0);
      }
 
    pn = _evas_gl_common_context_push(SHD_MAP,
@@ -2979,14 +2986,14 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                   m = -1;
                }
 
-             _calculate_foc(rot, m, w, h, gc->px, gc->py,
+             _calculate_foc(rot, m, w, h, gc->pipe[pn].viewport.px, gc->pipe[pn].viewport.py,
                             &vx, &vy, &vw, &vh, &ax, &ay);
 
              PUSH_VERTEX(pn,
                          (p[points[i]].fx) + ax,
                          (p[points[i]].fy) + ay,
                          (p[points[i]].fz)
-                         + (gc->shared->foc - gc->shared->z0));
+                         + (gc->pipe[pn].viewport.foc - gc->pipe[pn].viewport.z0));
           }
         PUSH_TEXUV(pn,
                    tx[points[i]],
@@ -3022,11 +3029,11 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    if (!flat)
      {
         shader_array_flush(gc);
-        gc->foc = 0;
-        gc->z0 = 0;
-        gc->px = 0;
-        gc->py = 0;
-        _evas_gl_common_viewport_set(gc);
+        gc->pipe[0].viewport.foc = 0;
+        gc->pipe[0].viewport.z0 = 0;
+        gc->pipe[0].viewport.px = 0;
+        gc->pipe[0].viewport.py = 0;
+        _evas_gl_common_viewport_set(gc, 0);
      }
 }
 
@@ -3112,6 +3119,8 @@ _orig_shader_array_flush(Evas_Engine_GL_Context *gc)
         Evas_GL_Program *prog;
 
         if (gc->pipe[i].array.num <= 0) break;
+
+        _evas_gl_common_viewport_set(gc, i);
 
         prog = gc->pipe[i].shader.prog;
         setclip = EINA_FALSE;
@@ -3731,6 +3740,15 @@ _orig_shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->state.current.clip      = gc->pipe[i].shader.clip;
         gc->state.current.anti_alias = gc->pipe[i].array.anti_alias;
 
+        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
+          {
+             evas_glBindBuffer_th(GL_ARRAY_BUFFER, 0);
+          }
+     }
+
+   for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
+     {
+
         gc->pipe[i].array.line = 0;
         //gc->pipe[i].array.use_vertex = 0;
         gc->pipe[i].array.use_color = 0;
@@ -3755,17 +3773,16 @@ _orig_shader_array_flush(Evas_Engine_GL_Context *gc)
 
         gc->pipe[i].array.num = 0;
         gc->pipe[i].array.alloc = 0;
-
-        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
-          {
-             evas_glBindBuffer_th(GL_ARRAY_BUFFER, 0);
-          }
-
         gc->pipe[i].region.x = 0;
         gc->pipe[i].region.y = 0;
         gc->pipe[i].region.w = 0;
         gc->pipe[i].region.h = 0;
         gc->pipe[i].region.type = 0;
+
+        gc->pipe[i].viewport.foc = 0;
+        gc->pipe[i].viewport.z0 = 0;
+        gc->pipe[i].viewport.px = 0;
+        gc->pipe[i].viewport.py = 0;
      }
    gc->state.top_pipe = 0;
    if (dbgflushnum == 1)
