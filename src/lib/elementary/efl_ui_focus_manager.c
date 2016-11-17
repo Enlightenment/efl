@@ -931,10 +931,20 @@ _prev(Node *node)
 static Node*
 _logical_movement(Efl_Ui_Focus_Manager_Data *pd EINA_UNUSED, Node *upper, Efl_Ui_Focus_Direction direction)
 {
+   Node* (*deliver)(Node *n);
+   Node *result;
    if (direction == EFL_UI_FOCUS_DIRECTION_NEXT)
-     return _next(upper);
+     deliver = _next;
    else
-     return _prev(upper);
+     deliver = _prev;
+
+   //search as long as we have a none logical parent
+   result = upper;
+   do {
+     result = deliver(result);
+   } while(result && result->type == NODE_TYPE_ONLY_LOGICAL);
+
+   return result;
 }
 
 EOLIAN static Efl_Ui_Focus_Object*

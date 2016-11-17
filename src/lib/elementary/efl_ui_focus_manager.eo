@@ -59,7 +59,7 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
         register_logical {
             [[Register a new item just for the logical parent.
 
-              This item can just be used as a parent for a child. It cannot be reached via coordinate wise movements.
+              The item can never get focus, it just help to build a tree out of the items who are getting focus.
             ]]
             params {
                 child : Efl.Ui.Focus.Object @nonull;

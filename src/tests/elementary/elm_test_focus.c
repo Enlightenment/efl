@@ -197,7 +197,7 @@ START_TEST(logical_chain)
    //register everything
    efl_ui_focus_manager_register(m, child1, root, NULL);
    efl_ui_focus_manager_register(m, child2, root, NULL);
-   efl_ui_focus_manager_register(m, child3, root, NULL);
+   efl_ui_focus_manager_register_logical(m, child3, root);
    efl_ui_focus_manager_register(m, subchild11, child1, NULL);
    efl_ui_focus_manager_register(m, subchild12, child1, NULL);
    efl_ui_focus_manager_register(m, subchild13, child1, NULL);
@@ -207,7 +207,7 @@ START_TEST(logical_chain)
 
    Efl_Object *logical_chain[] = {
     child1, subchild11, subchild12, subchild13,
-    child2, child3, subchild21, subchild22, subchild23, root, NULL
+    child2, subchild21, subchild22, subchild23, root, NULL
    };
    for (i = 0; logical_chain[i]; ++i)
      {
