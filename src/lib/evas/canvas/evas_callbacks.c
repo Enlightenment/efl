@@ -197,8 +197,17 @@ _eo_evas_object_cb(void *data, const Efl_Event *event)
 static void
 _eo_evas_cb(void *data, const Efl_Event *event)
 {
+   void *event_info;
    _eo_evas_cb_info *info = data;
-   if (info->func) info->func(info->data, event->object, event->info);
+
+   //Keep the legacy behaviour for focus events.
+   if (event->desc == EFL_CANVAS_EVENT_FOCUS_IN ||
+       event->desc == EFL_CANVAS_EVENT_FOCUS_OUT)
+     event_info = NULL;
+   else
+     event_info = event->info;
+
+   if (info->func) info->func(info->data, event->object, event_info);
 }
 
 void

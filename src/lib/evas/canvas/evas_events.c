@@ -3537,13 +3537,15 @@ _evas_canvas_event_focus_cb(void *data, const Efl_Event *event)
      {
         if (e->focus) return;
         e->focus = 1;
-        evas_event_callback_call(e->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, NULL);
+        evas_event_callback_call(e->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN,
+                                 event->info);
      }
    else
      {
         if (!e->focus) return;
         e->focus = 0;
-        evas_event_callback_call(e->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, NULL);
+        evas_event_callback_call(e->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT,
+                                 event->info);
      }
 }
 
