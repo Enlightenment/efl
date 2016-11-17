@@ -7,6 +7,7 @@ mixin Elm.Interface.Atspi_Widget_Action (Elm.Interface.Atspi_Action)
    data: null;
    methods {
       @property elm_actions @protected {
+      	 [[Elementary actions]]
          get @virtual_pure {
          }
          values {

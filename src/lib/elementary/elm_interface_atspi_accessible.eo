@@ -340,8 +340,8 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
       event_handler_add @class @protected {
          [[Register accessibility event listener]]
          params {
-              @in cb: Efl_Event_Cb; [[callback]]
-              @in data: void_ptr; [[data]]
+              @in cb: Efl_Event_Cb; [[Callback]]
+              @in data: void_ptr; [[Data]]
          }
          return: ptr(Elm.Atspi.Event.Handler); [[Event handler]]
       }
@@ -403,7 +403,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
            appending, for example, relation ELM_ATSPI_RELATION_FLOWS_TO from object A to B,
            do NOT append relation ELM_ATSPI_RELATION_FLOWS_FROM from object B to
            object A.]]
-         return: bool; [[EINA_TRUE is relationship was successfully appended, EINA_FALSE otherwise]]
+         return: bool; [[$true if relationship was successfully appended, $false otherwise]]
          params {
             @in type: Elm.Atspi.Relation_Type; [[Relation type]]
             @in relation_object: const(Elm.Interface.Atspi_Accessible); [[Object to relate to]]

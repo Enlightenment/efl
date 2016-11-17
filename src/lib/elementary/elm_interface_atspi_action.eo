@@ -31,7 +31,7 @@ mixin Elm.Interface.Atspi_Action ()
          get {
          }
          set {
-            return: bool; [[EINA_TRUE if description was set, else EINA_FALSE]]
+            return: bool; [[$true if description was set, $false otherwise]]
          }
          values {
             description: string; [[Action description]]
@@ -53,7 +53,7 @@ mixin Elm.Interface.Atspi_Action ()
          params {
             @in id: int; [[ID for widget]]
          }
-         return: bool; [[EINA_TRUE if action was performed, else EINA_FALSE]]
+         return: bool; [[$true if action was performed, $false otherwise]]
       }
       keybinding_get @protected @virtual_pure {
          [[Gets configured keybinding for specific action and widget.]]

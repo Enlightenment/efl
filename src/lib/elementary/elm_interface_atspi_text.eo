@@ -65,7 +65,7 @@ interface Elm.Interface.Atspi.Text ()
             [[Gets string, start and end offset in text according to given initial offset and granularity.]]
          }
          keys {
-            granularity: Elm.Atspi_Text.Granularity;
+            granularity: Elm.Atspi_Text.Granularity; [[Text granularity]]
             start_offset: ptr(int) @nonull; [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
             end_offset: ptr(int); [[Offset indicating end of string according to given granularity. -1 in case of error.]]
          }
@@ -93,7 +93,7 @@ interface Elm.Interface.Atspi.Text ()
             return: bool; [[$true if caret was successfully moved, $false otherwise.]]
          }
          values {
-            offset: int;
+            offset: int; [[Offset]]
          }
       }
       @property attribute @protected {
@@ -102,7 +102,7 @@ interface Elm.Interface.Atspi.Text ()
             return: bool; [[$true if attribute name is set, $false otherwise]]
          }
          keys {
-            name: string @nonull; [[text attribute name]]
+            name: string @nonull; [[Text attribute name]]
             start_offset: ptr(int) @nonull; [[Position in text from which given attribute is set.]]
             end_offset: ptr(int); [[Position in text to which given attribute is set.]]
          }
@@ -115,75 +115,81 @@ interface Elm.Interface.Atspi.Text ()
             [[Gets list of all text attributes.]]
          }
          keys {
-            start_offset: ptr(int) @nonull;
-            end_offset: ptr(int);
+            start_offset: ptr(int) @nonull; [[Start offset]]
+            end_offset: ptr(int); [[End offset]]
          }
          values {
-            attributes: own(list<own(ptr(Elm.Atspi_Text.Attribute))>);
+            attributes: own(list<own(ptr(Elm.Atspi_Text.Attribute))>); [[List of text attributes]]
          }
       }
       @property default_attributes @protected {
+      	 [[Default attributes]]
          get {
          }
          values {
-            attributes: own(list<own(ptr(Elm.Atspi_Text.Attribute))>);
+            attributes: own(list<own(ptr(Elm.Atspi_Text.Attribute))>); [[List of default attributes]]
          }
       }
       @property character_extents @protected {
+      	 [[Character extents]]
          get {
             return: bool; [[$true if character extents, $false otherwise]]
          }
          keys {
-            offset: int;
-            screen_coords: bool;
+            offset: int; [[Offset]]
+            screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
          }
          values {
-            rect: Eina.Rectangle;
+            rect: Eina.Rectangle; [[Extents rectangle]]
          }
       }
       @property character_count @protected {
+      	 [[Character count]]
          get {
          }
          values {
-            count: int;
+            count: int; [[Character count]]
          }
       }
       @property offset_at_point @protected {
+      	 [[Offset at given point]]
          get {
          }
          keys {
-            screen_coords: bool;
-            x: int;
-            y: int;
+            screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
          }
          values {
-            offset: int;
+            offset: int; [[Offset]]
          }
       }
       @property bounded_ranges @protected {
+      	 [[Bounded ranges]]
          get {
          }
          keys {
-            screen_coords: bool;
-            rect: Eina.Rectangle;
-            xclip: Elm.Atspi_Text.Clip_Type;
-            yclip: Elm.Atspi_Text.Clip_Type;
+            screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
+            rect: Eina.Rectangle; [[Bounding box]]
+            xclip: Elm.Atspi_Text.Clip_Type; [[AT-SPI xclip]]
+            yclip: Elm.Atspi_Text.Clip_Type; [[AT-SPI yclip]]
          }
          values {
-            ranges: own(list<own(ptr(Elm.Atspi_Text.Range))>);
+            ranges: own(list<own(ptr(Elm.Atspi_Text.Range))>); [[List of ranges]]
          }
       }
       @property range_extents @protected {
+      	 [[Range extents]]
          get {
             return: bool; [[$true if range extents, $false otherwise]]
          }
          keys {
             screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
-            start_offset: int;
-            end_offset: int;
+            start_offset: int; [[Start offset]]
+            end_offset: int; [[End offset]]
          }
          values {
-            rect: Eina.Rectangle;
+            rect: Eina.Rectangle; [[Range rectangle]]
          }
       }
       @property selections_count @protected {
