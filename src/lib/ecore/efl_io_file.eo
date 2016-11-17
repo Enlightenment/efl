@@ -32,6 +32,7 @@ class Efl.Io.File (Efl.Loop.Fd, Efl.File, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Ef
         }
 
         @property mode {
+            [[Mode property]]
             get {
             }
 
