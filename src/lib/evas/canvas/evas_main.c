@@ -1,5 +1,5 @@
 #define EVAS_CANVAS_BETA
-
+#define EFL_INPUT_EVENT_PROTECTED
 #include "evas_common_private.h"
 #include "evas_private.h"
 //#include "evas_cs.h"
@@ -12,6 +12,9 @@
 #include "evas_vg_private.h"
 
 #include <Ecore.h>
+
+#define EFL_INTERNAL_UNSTABLE
+#include "interfaces/efl_common_internal.h"
 
 #define MY_CLASS EVAS_CANVAS_CLASS
 
@@ -529,20 +532,33 @@ _evas_canvas_data_attach_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
    return e->attach_data;
 }
 
+static void
+_evas_canvas_focus_inout_dispatch(Eo *eo_e, Evas_Public_Data *e, Eina_Bool in)
+{
+   Efl_Input_Focus_Data *ev_data;
+   Efl_Input_Focus *evt;
+
+   evt = efl_input_instance_get(EFL_INPUT_FOCUS_CLASS, eo_e, (void **) &ev_data);
+   if (!evt) return;
+
+   ev_data->device = efl_ref(e->default_seat);
+   ev_data->timestamp = time(NULL);
+   efl_event_callback_call(eo_e,
+                           in ? EFL_EVENT_FOCUS_IN : EFL_EVENT_FOCUS_OUT,
+                           evt);
+   efl_del(evt);
+}
+
 EOLIAN static void
 _evas_canvas_focus_in(Eo *eo_e, Evas_Public_Data *e)
 {
-   if (e->focus) return;
-   e->focus = 1;
-   evas_event_callback_call(eo_e, EVAS_CALLBACK_CANVAS_FOCUS_IN, NULL);
+   _evas_canvas_focus_inout_dispatch(eo_e, e, EINA_TRUE);
 }
 
 EOLIAN static void
 _evas_canvas_focus_out(Eo *eo_e, Evas_Public_Data *e)
 {
-   if (!e->focus) return;
-   e->focus = 0;
-   evas_event_callback_call(eo_e, EVAS_CALLBACK_CANVAS_FOCUS_OUT, NULL);
+   _evas_canvas_focus_inout_dispatch(eo_e, e, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
