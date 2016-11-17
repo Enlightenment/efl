@@ -25,29 +25,35 @@ _edje_hold_signal_cb(void *data, const Efl_Event *event)
 static void
 _edje_focus_in_signal_cb(void *data, const Efl_Event *event)
 {
+   Efl_Input_Focus *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if ((!rp) || (!ed))
      return;
 
-   _edje_emit(ed, "focus,part,in", rp->part->name);
+   _edje_seat_emit(ed, efl_input_device_get(ev),
+                   "focus,part,in", rp->part->name);
 }
 
 static void
 _edje_focus_out_signal_cb(void *data, const Efl_Event *event)
 {
+   Efl_Input_Focus *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if ((!rp) || (!ed))
      return;
 
-   _edje_emit(ed, "focus,part,out", rp->part->name);
+   _edje_seat_emit(ed, efl_input_device_get(ev),
+                   "focus,part,out", rp->part->name);
 }
 
 static void

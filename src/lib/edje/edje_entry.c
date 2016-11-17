@@ -113,11 +113,16 @@ _preedit_del(Entry *en)
 }
 
 static void
-_edje_entry_focus_in_cb(void *data, Evas_Object *o, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+_edje_entry_focus_in_cb(void *data, Evas_Object *o, const char *emission, const char *source EINA_UNUSED)
 {
+   Efl_Input_Device *seat;
+   const char *seat_name;
    Edje_Real_Part *rp;
    Entry *en;
    Edje *ed;
+
+   seat_name = emission + strlen("focus,part,in,");
+   seat = evas_device_get(evas_object_evas_get(o), seat_name);
 
    rp = data;
    if ((!rp) || (rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -130,7 +135,7 @@ _edje_entry_focus_in_cb(void *data, Evas_Object *o, const char *emission EINA_UN
    en = rp->typedata.text->entry_data;
    if (!en || !en->imf_context) return;
 
-   if (evas_object_focus_get(ed->obj))
+   if (evas_object_seat_focus_check(ed->obj, seat))
      {
         ecore_imf_context_focus_in(en->imf_context);
         _edje_entry_imf_cursor_info_set(en);
@@ -158,17 +163,16 @@ _edje_entry_focus_out_cb(void *data, Evas_Object *o EINA_UNUSED, const char *emi
 #endif
 
 static void
-_edje_focus_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_edje_focus_in(Edje *ed, Efl_Input_Device *seat)
 {
-   Edje *ed = data;
 #ifdef HAVE_ECORE_IMF
    Edje_Real_Part *rp;
    Entry *en;
 #endif
 
-   _edje_emit(ed, "focus,in", "");
+   _edje_seat_emit(ed, seat, "focus,in", "");
 #ifdef HAVE_ECORE_IMF
-   rp = ed->focused_part;
+   rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -185,17 +189,25 @@ _edje_focus_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_edje_focus_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_edje_focus_in_cb(void *data, const Efl_Event *event)
 {
-   Edje *ed = data;
+   Efl_Input_Focus *ev = event->info;
+
+   _edje_focus_in(data, efl_input_device_get(ev));
+}
+
+static void
+_edje_focus_out(Edje *ed, Efl_Input_Device *seat)
+{
 #ifdef HAVE_ECORE_IMF
-   Edje_Real_Part *rp = ed->focused_part;
+   Edje_Real_Part *rp;
    Entry *en;
 #endif
 
-   _edje_emit(ed, "focus,out", "");
+   _edje_seat_emit(ed, seat, "focus,out", "");
 
 #ifdef HAVE_ECORE_IMF
+   rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -209,6 +221,14 @@ _edje_focus_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    ecore_imf_context_reset(en->imf_context);
    ecore_imf_context_focus_out(en->imf_context);
 #endif
+}
+
+static void
+_edje_focus_out_cb(void *data, const Efl_Event *event)
+{
+   Efl_Input_Focus *ev = event->info;
+
+   _edje_focus_out(data, efl_input_device_get(ev));
 }
 
 static Edje_Entry_Change_Info *
@@ -1676,7 +1696,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 {
    Edje *ed = data;
    Evas_Event_Key_Down *ev = event_info;
-   Edje_Real_Part *rp = ed->focused_part;
+   Edje_Real_Part *rp;
+   Efl_Input_Device *seat;
+
    Entry *en;
    Eina_Bool control, alt, shift;
 #if defined(__APPLE__) && defined(__MACH__)
@@ -1685,6 +1707,10 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    Eina_Bool multiline;
    Eina_Bool cursor_changed;
    int old_cur_pos;
+
+   seat = efl_input_device_seat_get(ev->dev);
+   rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
+
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -2340,10 +2366,14 @@ end:
 static void
 _edje_key_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
+   Evas_Event_Key_Up *ev = event_info;
+   Efl_Input_Device *seat;
    Edje *ed = data;
-   Edje_Real_Part *rp = ed->focused_part;
+   Edje_Real_Part *rp;
    Entry *en;
 
+   seat = efl_input_device_seat_get(ev->dev);
+   rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -2356,7 +2386,6 @@ _edje_key_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      {
-        Evas_Event_Key_Up *ev = event_info;
         Ecore_IMF_Event_Key_Up ecore_ev;
 
         ecore_imf_evas_event_key_up_wrap(ev, &ecore_ev);
@@ -2797,26 +2826,36 @@ _canvas_viewport_resize_cb(void *data, Evas *e EINA_UNUSED, void *event_info EIN
 }
 
 static void
-_evas_focus_in_cb(void *data, Evas *e, EINA_UNUSED void *event_info)
+_evas_focus_in_cb(void *data, const Efl_Event *event)
 {
-   Edje *ed = (Edje *)data;
+   Efl_Input_Focus *ev = event->info;
+   Evas *e = event->object;
+   Efl_Input_Device *seat;
+   Edje *ed = data;
+
    if (!ed) return;
 
-   if (evas_focus_get(e) == ed->obj)
+   seat = efl_input_device_get(ev);
+   if (evas_canvas_seat_focus_get(e, seat) == ed->obj)
      {
-        _edje_focus_in_cb(data, NULL, NULL, NULL);
+        _edje_focus_in(data, seat);
      }
 }
 
 static void
-_evas_focus_out_cb(void *data, Evas *e, EINA_UNUSED void *event_info)
+_evas_focus_out_cb(void *data, const Efl_Event *event)
 {
-   Edje *ed = (Edje *)data;
+   Efl_Input_Focus *ev = event->info;
+   Evas *e = event->object;
+   Efl_Input_Device *seat;
+   Edje *ed = data;
+
    if (!ed) return;
 
-   if (evas_focus_get(e) == ed->obj)
+   seat = efl_input_device_get(ev);
+   if (evas_canvas_seat_focus_get(e, seat) == ed->obj)
      {
-        _edje_focus_out_cb(data, NULL, NULL, NULL);
+        _edje_focus_out(data, seat);
      }
 }
 
@@ -2830,12 +2869,16 @@ _edje_entry_init(Edje *ed)
      return;
    ed->entries_inited = EINA_TRUE;
 
-   evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_FOCUS_IN, _edje_focus_in_cb, ed);
-   evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_FOCUS_OUT, _edje_focus_out_cb, ed);
-   evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_DOWN, _edje_key_down_cb, ed);
-   evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_UP, _edje_key_up_cb, ed);
-   evas_event_callback_add(ed->base->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, _evas_focus_in_cb, ed);
-   evas_event_callback_add(ed->base->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, _evas_focus_out_cb, ed);
+   efl_event_callback_add(ed->obj, EFL_EVENT_FOCUS_IN, _edje_focus_in_cb, ed);
+   efl_event_callback_add(ed->obj, EFL_EVENT_FOCUS_OUT, _edje_focus_out_cb, ed);
+   evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_DOWN,
+                                  _edje_key_down_cb, ed);
+   evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_UP,
+                                  _edje_key_up_cb, ed);
+   efl_event_callback_add(ed->base->evas, EFL_CANVAS_EVENT_FOCUS_IN,
+                          _evas_focus_in_cb, ed);
+   efl_event_callback_add(ed->base->evas, EFL_CANVAS_EVENT_FOCUS_OUT,
+                          _evas_focus_out_cb, ed);
 }
 
 void
@@ -2847,14 +2890,16 @@ _edje_entry_shutdown(Edje *ed)
      return;
    ed->entries_inited = EINA_FALSE;
 
-   evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_FOCUS_IN, _edje_focus_in_cb);
-   evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_FOCUS_OUT, _edje_focus_out_cb);
-   evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_DOWN, _edje_key_down_cb);
-   evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_UP, _edje_key_up_cb);
-   if (evas_event_callback_del_full(ed->base->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, _evas_focus_in_cb, ed) != ed)
-     ERR("could not unregister EVAS_CALLBACK_FOCUS_IN");
-   if (evas_event_callback_del_full(ed->base->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, _evas_focus_out_cb, ed) != ed)
-     ERR("could not unregister EVAS_CALLBACK_FOCUS_OUT");
+   efl_event_callback_del(ed->obj, EFL_EVENT_FOCUS_IN, _edje_focus_in_cb, ed);
+   efl_event_callback_del(ed->obj, EFL_EVENT_FOCUS_OUT, _edje_focus_out_cb, ed);
+   evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_DOWN,
+                                  _edje_key_down_cb);
+   evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_UP,
+                                  _edje_key_up_cb);
+   efl_event_callback_del(ed->base->evas, EFL_CANVAS_EVENT_FOCUS_IN,
+                          _evas_focus_in_cb, ed);
+   efl_event_callback_del(ed->base->evas, EFL_CANVAS_EVENT_FOCUS_OUT,
+                          _evas_focus_out_cb, ed);
 }
 
 void
@@ -2948,8 +2993,12 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
 
         en->commit_cancel = EINA_FALSE;
 
-        edje_object_signal_callback_add(ed->obj, "focus,part,in", rp->part->name, _edje_entry_focus_in_cb, rp);
-        edje_object_signal_callback_add(ed->obj, "focus,part,out", rp->part->name, _edje_entry_focus_out_cb, rp);
+        edje_object_signal_callback_add(ed->obj, "focus,part,in,*",
+                                        rp->part->name,
+                                        _edje_entry_focus_in_cb, rp);
+        edje_object_signal_callback_add(ed->obj, "focus,part,out,*",
+                                        rp->part->name,
+                                        _edje_entry_focus_out_cb, rp);
 
         ctx_id = ecore_imf_context_default_id_get();
         if (ctx_id)
@@ -3053,8 +3102,12 @@ _edje_entry_real_part_shutdown(Edje *ed, Edje_Real_Part *rp)
              en->imf_context = NULL;
           }
 
-        edje_object_signal_callback_del(ed->obj, "focus,part,in", rp->part->name, _edje_entry_focus_in_cb);
-        edje_object_signal_callback_del(ed->obj, "focus,part,out", rp->part->name, _edje_entry_focus_out_cb);
+        edje_object_signal_callback_del(ed->obj, "focus,part,in,*",
+                                        rp->part->name,
+                                        _edje_entry_focus_in_cb);
+        edje_object_signal_callback_del(ed->obj, "focus,part,out,*",
+                                        rp->part->name,
+                                        _edje_entry_focus_out_cb);
      }
 #endif
    _compose_seq_reset(en);
@@ -4429,11 +4482,14 @@ static Eina_Bool
 _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, char **text, int *cursor_pos)
 {
    Edje *ed = data;
-   Edje_Real_Part *rp = ed->focused_part;
+   Edje_Real_Part *rp;
    Entry *en = NULL;
    const char *str;
    char *plain_text;
 
+   // FIXME
+   //rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
+   rp = _edje_focused_part_get(ed, "default");
    if (!rp) return EINA_FALSE;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_FALSE;
@@ -4506,11 +4562,14 @@ static void
 _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event_info)
 {
    Edje *ed = data;
-   Edje_Real_Part *rp = ed->focused_part;
+   Edje_Real_Part *rp;
    Entry *en = NULL;
    char *commit_str = event_info;
    Edje_Entry_Change_Info *info = NULL;
 
+   // FIXME
+   //rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
+   rp = _edje_focused_part_get(ed, "default");
    if ((!rp)) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -4587,7 +4646,7 @@ static void
 _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Edje *ed = data;
-   Edje_Real_Part *rp = ed->focused_part;
+   Edje_Real_Part *rp;
    Entry *en = NULL;
    Edje_Entry_Change_Info *info = NULL;
    int cursor_pos;
@@ -4610,6 +4669,9 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
    Eina_Strbuf *buf;
    Eina_Strbuf *preedit_attr_str;
 
+   // FIXME
+   //rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
+   rp = _edje_focused_part_get(ed, "default");
    if ((!rp)) return;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -4751,7 +4813,7 @@ static void
 _edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event_info)
 {
    Edje *ed = data;
-   Edje_Real_Part *rp = ed->focused_part;
+   Edje_Real_Part *rp;
    Entry *en = NULL;
    Ecore_IMF_Event_Delete_Surrounding *ev = event_info;
    Evas_Textblock_Cursor *del_start, *del_end;
@@ -4759,6 +4821,10 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx E
    int cursor_pos;
    int start, end;
 
+   // FIXME
+   //rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
+   rp = _edje_focused_part_get(ed, "default");
+   if ((!rp)) return;
    if ((!rp) || (!ev)) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -4810,10 +4876,13 @@ static void
 _edje_entry_imf_event_selection_set_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event_info)
 {
    Edje *ed = data;
-   Edje_Real_Part *rp = ed->focused_part;
+   Edje_Real_Part *rp;
    Entry *en = NULL;
    Ecore_IMF_Event_Selection *ev = event_info;
 
+   // FIXME
+   //rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
+   rp = _edje_focused_part_get(ed, "default");
    if ((!rp) || (!ev)) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -4844,10 +4913,13 @@ static Eina_Bool
 _edje_entry_imf_retrieve_selection_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, char **text)
 {
    Edje *ed = data;
-   Edje_Real_Part *rp = ed->focused_part;
+   Edje_Real_Part *rp;
    Entry *en = NULL;
    const char *selection_text = NULL;
 
+   // FIXME
+   //rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
+   rp = _edje_focused_part_get(ed, "default");
    if (!rp) return EINA_FALSE;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_FALSE;

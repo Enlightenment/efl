@@ -10693,6 +10693,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    epr->in.from = 0.0;
    epr->in.range = 0.0;
    epr->action = 0;
+   epr->seat = NULL;
    epr->state = NULL;
    epr->value = 0.0;
    epr->state2 = NULL;
@@ -10788,6 +10789,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    _edje_if_string_free(ed, &epr->source);
    _edje_if_string_free(ed, &epr->filter.part);
    _edje_if_string_free(ed, &epr->filter.state);
+   _edje_if_string_free(ed, &epr->seat);
    _edje_if_string_free(ed, &epr->state);
    _edje_if_string_free(ed, &epr->state2);
    _edje_if_string_free(ed, &epr->sample_name);

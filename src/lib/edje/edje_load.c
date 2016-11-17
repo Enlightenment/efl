@@ -1809,13 +1809,23 @@ _edje_file_del(Edje *ed)
           }
      }
 
+   if (ed->focused_parts)
+     {
+        Edje_Focused_Part *focused_part;
+
+        EINA_LIST_FREE(ed->focused_parts, focused_part)
+          {
+             free(focused_part->seat);
+             free(focused_part);
+          }
+     }
+
    if (ed->L) _edje_lua2_script_shutdown(ed);
    while (ed->subobjs)
      _edje_subobj_unregister(ed, ed->subobjs->data);
    if (ed->table_parts) free(ed->table_parts);
    ed->table_parts = NULL;
    ed->table_parts_size = 0;
-   ed->focused_part = NULL;
    if (tev)
      {
         evas_event_thaw(tev);
@@ -1982,6 +1992,7 @@ _edje_program_free(Edje_Program *pr, Eina_Bool free_strings)
         if (pr->state2) eina_stringshare_del(pr->state2);
         if (pr->sample_name) eina_stringshare_del(pr->sample_name);
         if (pr->tone_name) eina_stringshare_del(pr->tone_name);
+        if (pr->seat) eina_stringshare_del(pr->seat);
      }
    EINA_LIST_FREE(pr->targets, prt)
      free(prt);

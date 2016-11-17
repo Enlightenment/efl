@@ -2032,6 +2032,7 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
    ep->in.from = ep2->in.from;
    ep->in.range = ep2->in.range;
    ep->action = ep2->action;
+   ep->seat = STRDUP(ep2->seat);
    ep->state = STRDUP(ep2->state);
    ep->state2 = STRDUP(ep2->state2);
    ep->value = ep2->value;
@@ -6067,6 +6068,7 @@ _program_free(Edje_Program *pr)
    free((void*)pr->source);
    free((void*)pr->filter.part);
    free((void*)pr->filter.state);
+   free((void*)pr->seat);
    free((void*)pr->state);
    free((void*)pr->state2);
    free((void*)pr->sample_name);
@@ -14091,7 +14093,7 @@ st_collections_group_programs_program_in(void)
         @li DRAG_VAL_SET 0.5 0.0
         @li DRAG_VAL_STEP 1.0 0.0
         @li DRAG_VAL_PAGE 0.0 0.0
-        @li FOCUS_SET
+        @li FOCUS_SET ("seat")
         @li FOCUS_OBJECT
         @li PARAM_COPY "src_part" "src_param" "dst_part" "dst_param"
         @li PARAM_SET "part" "param" "value"
@@ -14166,6 +14168,13 @@ st_collections_group_programs_program_action(void)
 	  ep->value = 0.0;
 	else
 	  ep->value = parse_float_range(2, 0.0, 1.0);
+     }
+   else if (ep->action == EDJE_ACTION_TYPE_FOCUS_SET)
+     {
+	if (get_arg_count() == 1)
+          ep->seat = NULL;
+        else
+          ep->seat = parse_str(1);
      }
    else if (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)
      {
@@ -14309,7 +14318,6 @@ st_collections_group_programs_program_action(void)
 	break;
       case EDJE_ACTION_TYPE_ACTION_STOP:
       case EDJE_ACTION_TYPE_FOCUS_OBJECT:
-      case EDJE_ACTION_TYPE_FOCUS_SET:
       case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
       case EDJE_ACTION_TYPE_PHYSICS_STOP:
         check_arg_count(1);
@@ -14332,6 +14340,9 @@ st_collections_group_programs_program_action(void)
         break;
       case EDJE_ACTION_TYPE_STATE_SET:
         check_min_arg_count(2);
+        break;
+      case EDJE_ACTION_TYPE_FOCUS_SET:
+        check_min_arg_count(1);
         break;
       default:
 	check_arg_count(3);

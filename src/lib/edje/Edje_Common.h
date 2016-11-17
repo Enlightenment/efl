@@ -1924,7 +1924,7 @@ typedef enum _Edje_Action_Type
    EDJE_ACTION_TYPE_DRAG_VAL_STEP            = 5,  /**< Drag val step action value */
    EDJE_ACTION_TYPE_DRAG_VAL_PAGE            = 6,  /**< Drag val page action value */
    EDJE_ACTION_TYPE_SCRIPT                   = 7,  /**< Script action value */
-   EDJE_ACTION_TYPE_FOCUS_SET                = 8,  /**< Forcus set action value */
+   EDJE_ACTION_TYPE_FOCUS_SET                = 8,  /**< Focus set action value */
    EDJE_ACTION_TYPE_RESERVED00               = 9,  /**< Reversed do action value */
    EDJE_ACTION_TYPE_FOCUS_OBJECT             = 10, /**< Forcus object action value */
    EDJE_ACTION_TYPE_PARAM_COPY               = 11, /**< Param copy action value */

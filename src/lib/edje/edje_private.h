@@ -805,6 +805,8 @@ struct _Edje_Program /* a conditional program to be run */
       double   range;
    } in;
 
+   const char *seat; /* which seat to focus, NULL = default seat */
+
    const char *state; /* what state of alternates to apply, NULL = default */
    const char *state2; /* what other state to use - for signal emit action */
    double      value; /* value of state to apply (if multiple names match) */
@@ -1659,7 +1661,7 @@ struct _Edje
    Edje_Var_Pool        *var_pool;
    /* for faster lookups to avoid nth list walks */
    Edje_Real_Part      **table_parts;
-   Edje_Real_Part       *focused_part;
+   Eina_List            *focused_parts;
    Eina_List            *subobjs;
    Eina_List            *text_insert_filter_callbacks;
    Eina_List            *markup_filter_callbacks;
@@ -2273,6 +2275,13 @@ struct _Edje_Font
    char *file;
 };
 
+typedef struct _Edje_Focused_Part Edje_Focused_Part;
+struct _Edje_Focused_Part
+{
+   Edje_Real_Part *part;
+   char *seat;
+};
+
 Edje_Patterns   *edje_match_collection_dir_init(const Eina_List *lst);
 Edje_Patterns   *edje_match_programs_signal_init(Edje_Program * const *array,
 						 unsigned int count);
@@ -2471,6 +2480,9 @@ void _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const cha
 void _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *));
 void _edje_emit_handle(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data, Eina_Bool prop);
 void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
+
+void _edje_focused_part_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp);
+Edje_Real_Part *_edje_focused_part_get(Edje *ed, const char *seat_name);
 
 const Edje_Signals_Sources_Patterns *_edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp);
 void _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp);
