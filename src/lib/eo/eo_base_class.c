@@ -28,7 +28,7 @@ typedef struct
    Eina_Inlist               *children;
    Eo                        *parent;
 
-   Efl_Object_Extension         *ext;
+   Efl_Object_Extension      *ext;
 
    Eina_Inlist               *current;
 
