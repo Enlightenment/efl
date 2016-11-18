@@ -3949,7 +3949,7 @@ _efl_net_ip_connect_async_run_socks4_try(Efl_Net_Ip_Connect_Async_Data *d, const
    request->port = a->sin_port;
    memcpy(request->ipv4, &a->sin_addr, 4);
 
-   s = send(fd, request, request_len, MSG_NOSIGNAL);
+   s = send(fd, (const char *)request, request_len, MSG_NOSIGNAL);
    if (s != (ssize_t)request_len)
      {
         if (s == SOCKET_ERROR)
@@ -3960,7 +3960,7 @@ _efl_net_ip_connect_async_run_socks4_try(Efl_Net_Ip_Connect_Async_Data *d, const
    else
      {
         Efl_Net_Socks4_Reply reply;
-        s = recv(fd, &reply, sizeof(reply), MSG_NOSIGNAL);
+        s = recv(fd, (char *)&reply, sizeof(reply), MSG_NOSIGNAL);
         if (s != sizeof(reply))
           {
              if (s == SOCKET_ERROR)
@@ -4170,7 +4170,7 @@ _efl_net_ip_connect_async_run_socks4a(Efl_Net_Ip_Connect_Async_Data *d, const ch
                   request->ipv4[2] = 0;
                   request->ipv4[3] = 255;
 
-                  s = send(fd, request, request_len, MSG_NOSIGNAL);
+                  s = send(fd, (const char *)request, request_len, MSG_NOSIGNAL);
                   if (s != (ssize_t)request_len)
                     {
                        if (s == SOCKET_ERROR)
@@ -4181,7 +4181,7 @@ _efl_net_ip_connect_async_run_socks4a(Efl_Net_Ip_Connect_Async_Data *d, const ch
                   else
                     {
                        Efl_Net_Socks4_Reply reply;
-                       s = recv(fd, &reply, sizeof(reply), MSG_NOSIGNAL);
+                       s = recv(fd, (char *)&reply, sizeof(reply), MSG_NOSIGNAL);
                        if (s != sizeof(reply))
                          {
                             if (s == SOCKET_ERROR)
@@ -4412,7 +4412,7 @@ _efl_net_ip_connect_async_run_socks5_auth_user_pass(SOCKET fd, const char *user,
      {
         uint8_t reply[2];
 
-        s = recv(fd, &reply, sizeof(reply), MSG_NOSIGNAL);
+        s = recv(fd, (char *)&reply, sizeof(reply), MSG_NOSIGNAL);
         if (s != (ssize_t)sizeof(reply))
           {
              if (s == SOCKET_ERROR)
@@ -4468,7 +4468,7 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
           DBG("resolved address='%s' to %s. Connect using fd=" SOCKET_FMT " socks5://%s:%s", d->address, buf, fd, proxy_host, proxy_port);
      }
 
-   s = send(fd, &greeting, sizeof(greeting), MSG_NOSIGNAL);
+   s = send(fd, (const char *)&greeting, sizeof(greeting), MSG_NOSIGNAL);
    if (s != (ssize_t)sizeof(greeting))
      {
         if (s == SOCKET_ERROR)
@@ -4479,7 +4479,7 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
    else
      {
         Efl_Net_Socks5_Greeting_Reply greeting_reply;
-        s = recv(fd, &greeting_reply, sizeof(greeting_reply), MSG_NOSIGNAL);
+        s = recv(fd, (char *)&greeting_reply, sizeof(greeting_reply), MSG_NOSIGNAL);
         if (s != sizeof(greeting_reply))
           {
              if (s == SOCKET_ERROR)
@@ -4508,7 +4508,7 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
                          {
                             EINA_THREAD_CLEANUP_PUSH(free, request);
 
-                            s = send(fd, request, request_len, MSG_NOSIGNAL);
+                            s = send(fd, (const char *)request, request_len, MSG_NOSIGNAL);
                             if (s != (ssize_t)request_len)
                               {
                                  if (s == SOCKET_ERROR)
@@ -4519,7 +4519,7 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
                             else if (addrinfo->ai_family == AF_INET)
                               {
                                  Efl_Net_Socks5_Reply_Ipv4 reply;
-                                 s = recv(fd, &reply, sizeof(reply), MSG_NOSIGNAL);
+                                 s = recv(fd, (char *)&reply, sizeof(reply), MSG_NOSIGNAL);
                                  if (s != sizeof(reply))
                                    {
                                       if (s == SOCKET_ERROR)
@@ -4545,7 +4545,7 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
                             else if (addrinfo->ai_family == AF_INET6)
                               {
                                  Efl_Net_Socks5_Reply_Ipv6 reply;
-                                 s = recv(fd, &reply, sizeof(reply), MSG_NOSIGNAL);
+                                 s = recv(fd, (char *)&reply, sizeof(reply), MSG_NOSIGNAL);
                                  if (s != sizeof(reply))
                                    {
                                       if (s == SOCKET_ERROR)
@@ -4697,7 +4697,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
    DBG("connected fd=" SOCKET_FMT " to socks5h://%s", fd, proxy);
    EINA_THREAD_CLEANUP_PUSH(_cleanup_close, &fd);
 
-   s = send(fd, &greeting, sizeof(greeting), MSG_NOSIGNAL);
+   s = send(fd, (const char *)&greeting, sizeof(greeting), MSG_NOSIGNAL);
    if (s != (ssize_t)sizeof(greeting))
      {
         if (s == SOCKET_ERROR)
@@ -4708,7 +4708,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
    else
      {
         Efl_Net_Socks5_Greeting_Reply greeting_reply;
-        s = recv(fd, &greeting_reply, sizeof(greeting_reply), MSG_NOSIGNAL);
+        s = recv(fd, (char *)&greeting_reply, sizeof(greeting_reply), MSG_NOSIGNAL);
         if (s != sizeof(greeting_reply))
           {
              if (s == SOCKET_ERROR)
@@ -4773,7 +4773,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                                    {
                                       EINA_THREAD_CLEANUP_PUSH(free, request);
 
-                                      s = send(fd, request, request_len, MSG_NOSIGNAL);
+                                      s = send(fd, (const char *)request, request_len, MSG_NOSIGNAL);
                                       if (s != (ssize_t)request_len)
                                         {
                                            if (s == SOCKET_ERROR)
@@ -4785,7 +4785,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                                         {
                                            Efl_Net_Socks5_Reply reply;
 
-                                           s = recv(fd, &reply, sizeof(reply), MSG_NOSIGNAL);
+                                           s = recv(fd, (char *)&reply, sizeof(reply), MSG_NOSIGNAL);
                                            if (s != sizeof(reply))
                                              {
                                                 if (s == SOCKET_ERROR)
@@ -4801,7 +4801,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                                                   {
                                                      Efl_Net_Socks5_Address_Ipv4 ipv4;
 
-                                                     s = recv(fd, &ipv4, sizeof(ipv4), MSG_NOSIGNAL);
+                                                     s = recv(fd, (char *)&ipv4, sizeof(ipv4), MSG_NOSIGNAL);
                                                      if (s != sizeof(ipv4))
                                                        {
                                                           if (s == SOCKET_ERROR)
@@ -4824,7 +4824,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                                                   {
                                                      Efl_Net_Socks5_Address_Ipv6 ipv6;
 
-                                                     s = recv(fd, &ipv6, sizeof(ipv6), MSG_NOSIGNAL);
+                                                     s = recv(fd, (char *)&ipv6, sizeof(ipv6), MSG_NOSIGNAL);
                                                      if (s != sizeof(ipv6))
                                                        {
                                                           if (s == SOCKET_ERROR)
