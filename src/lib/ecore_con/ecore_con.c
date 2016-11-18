@@ -416,7 +416,7 @@ _efl_network_server_efl_object_constructor(Ecore_Con_Server *obj, Efl_Network_Se
 {
    obj = efl_constructor(efl_super(obj, EFL_NETWORK_SERVER_CLASS));
 
-   svr->fd = -1;
+   svr->fd = INVALID_SOCKET;
    svr->reject_excess_clients = EINA_FALSE;
    svr->client_limit = -1;
    svr->clients = NULL;
@@ -742,7 +742,7 @@ _efl_network_server_efl_network_send(Eo *obj EINA_UNUSED, Efl_Network_Server_Dat
         svr->buf = eina_binbuf_new();
         EINA_SAFETY_ON_NULL_RETURN_VAL(svr->buf, 0);
 #ifdef TCP_CORK
-        if ((svr->fd >= 0) && ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK))
+        if ((svr->fd != INVALID_SOCKET) && ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK))
           {
              int state = 1;
              if (setsockopt(svr->fd, IPPROTO_TCP, TCP_CORK, (char *)&state, sizeof(int)) < 0)
@@ -867,7 +867,7 @@ _efl_network_client_efl_network_send(Eo *obj EINA_UNUSED, Efl_Network_Client_Dat
              cl->buf = eina_binbuf_new();
              EINA_SAFETY_ON_NULL_RETURN_VAL(cl->buf, 0);
 #ifdef TCP_CORK
-             if ((cl->fd >= 0) && (host_server) &&
+             if ((cl->fd != INVALID_SOCKET) && (host_server) &&
                  ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK))
                {
                   int state = 1;
@@ -1409,8 +1409,8 @@ _efl_network_server_efl_object_destructor(Eo *obj, Efl_Network_Server_Data *svr)
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
 
-   if (svr->fd >= 0)
-     close(svr->fd);
+   if (svr->fd != INVALID_SOCKET)
+     closesocket(svr->fd);
 
    if (svr->until_deletion)
      ecore_timer_del(svr->until_deletion);
@@ -1472,8 +1472,8 @@ _efl_network_client_efl_object_destructor(Eo *obj, Efl_Network_Client_Data *cl)
    if (cl->fd_handler)
      ecore_main_fd_handler_del(cl->fd_handler);
 
-   if (cl->fd >= 0)
-     close(cl->fd);
+   if (cl->fd != INVALID_SOCKET)
+     closesocket(cl->fd);
 
    free(cl->client_addr);
    cl->client_addr = NULL;
@@ -2165,7 +2165,7 @@ _ecore_con_svr_tcp_handler(void *data,
 
 error:
    if (cl->fd_handler) ecore_main_fd_handler_del(cl->fd_handler);
-   if (cl->fd >= 0) close(cl->fd);
+   if (cl->fd != INVALID_SOCKET) closesocket(cl->fd);
    {
       Ecore_Event *ev;
 
@@ -2384,7 +2384,7 @@ _ecore_con_svr_udp_handler(void *data,
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, ECORE_CALLBACK_RENEW);
 
    cl->host_server = svr_obj;
-   cl->fd = -1;
+   cl->fd = INVALID_SOCKET;
    cl->client_addr = malloc(client_addr_len);
    if (!cl->client_addr)
      {
