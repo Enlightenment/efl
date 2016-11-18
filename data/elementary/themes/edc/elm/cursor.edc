@@ -98,6 +98,8 @@ group { name: "elm/cursor/hand1/default";
             rel2.offset: 0 0;
          }
       }
+      /* elm.content.hotspot is the old name for the above part */
+      alias: "elm.content.hotspot" "elm.swallow.hotspot";
    }
 }
 
@@ -109,6 +111,8 @@ group { name: "elm/cursor/blank/default";
             max: 1 1;
          }
       }
+      /* elm.content.hotspot is the old name for the above part */
+      alias: "elm.content.hotspot" "elm.swallow.hotspot";
    }
 }
 
@@ -137,6 +141,8 @@ group { name: "elm/cursor/xterm/default";
             rel2.offset: 0 0;
          }
       }
+      /* elm.content.hotspot is the old name for the above part */
+      alias: "elm.content.hotspot" "elm.swallow.hotspot";
       part { name: "shine";
          description { state: "default" 0.0;
             rel1.to: "base";
