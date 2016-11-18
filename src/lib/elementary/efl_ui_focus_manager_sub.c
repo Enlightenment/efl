@@ -111,8 +111,8 @@ _parent_set(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd, Efl_Ui_Focus_Manager *ma
 
     if (pd->manager)
       {
-         //register our own root in the upper manager
-         efl_ui_focus_manager_register(pd->manager, obj, pd->parent, obj);
+         //register our own root in the upper manager as logical
+         efl_ui_focus_manager_register_logical(pd->manager, obj, pd->parent);
 
          //listen to the manager
          efl_event_callback_array_add(pd->manager, parent_manager(), obj);
