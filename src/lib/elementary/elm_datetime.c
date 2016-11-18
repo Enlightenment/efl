@@ -41,13 +41,10 @@ elm_datetime_format_get(const Evas_Object *obj)
 static Efl_Ui_Clock_Type
 adjust_field_type(Elm_Datetime_Field_Type type)
 {
-   Efl_Ui_Clock_Type ctype = EFL_UI_CLOCK_TYPE_YEAR;
+   Efl_Ui_Clock_Type ctype;
 
    switch(type)
      {
-      case  ELM_DATETIME_YEAR:
-         ctype = EFL_UI_CLOCK_TYPE_YEAR;
-         break;
       case ELM_DATETIME_MONTH:
          ctype = EFL_UI_CLOCK_TYPE_MONTH;
          break;
@@ -63,8 +60,9 @@ adjust_field_type(Elm_Datetime_Field_Type type)
       case ELM_DATETIME_AMPM:
          ctype = EFL_UI_CLOCK_TYPE_AMPM;
          break;
+      case ELM_DATETIME_YEAR:
       default:
-         ;
+         ctype = EFL_UI_CLOCK_TYPE_YEAR;
      }
 
    return ctype;
