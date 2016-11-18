@@ -108,13 +108,25 @@ lib/ecore_con/efl_net_server_udp_client.c \
 lib/ecore_con/efl_net_socket_ssl.c \
 lib/ecore_con/efl_net_ssl_context.c \
 lib/ecore_con/efl_net_dialer_ssl.c \
-lib/ecore_con/efl_net_server_ssl.c \
+lib/ecore_con/efl_net_server_ssl.c
+
+if EFL_NET_CONTROL_BACKEND_CONNMAN
+lib_ecore_con_libecore_con_la_SOURCES += \
 lib/ecore_con/efl_net-connman.h \
 lib/ecore_con/efl_net-connman.c \
 lib/ecore_con/efl_net_control_access_point-connman.c \
 lib/ecore_con/efl_net_control_technology-connman.c \
 lib/ecore_con/efl_net_control-connman.c \
 lib/ecore_con/efl_net_session-connman.c
+endif
+
+if EFL_NET_CONTROL_BACKEND_NONE
+lib_ecore_con_libecore_con_la_SOURCES += \
+lib/ecore_con/efl_net_control_access_point-none.c \
+lib/ecore_con/efl_net_control_technology-none.c \
+lib/ecore_con/efl_net_control-none.c \
+lib/ecore_con/efl_net_session-none.c
+endif
 
 EXTRA_DIST2 += lib/ecore_con/ecore_con_legacy.c
 

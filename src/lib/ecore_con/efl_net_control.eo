@@ -98,6 +98,13 @@ class Efl.Net.Control (Efl.Loop_User) {
       @.radios_offline property. This is usually called "airplane
       mode" in some platforms.
 
+      Some platforms may not implement the backend for this class, in
+      such cases the system will report always @.state "online"
+      (@Efl.Net.Control.State.online) and iterators for
+      @.access_points and @.technologies will be empty (they will be
+      returned but won't contain any item).
+
+
       @since 1.19
     ]]
     events {
@@ -134,6 +141,11 @@ class Efl.Net.Control (Efl.Loop_User) {
                 point is connected but couldn't reach the internet;
 
               - online means verified connectivity.
+
+              \@note if there is no backend for this class, then state
+              will be always online, however @.access_points and
+              @.technologies will be empty iterators (valid pointers
+              but no items in them).
             ]]
             get { }
             values {

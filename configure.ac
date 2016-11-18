@@ -3044,6 +3044,26 @@ AC_DEFINE_IF([HAVE_ABSTRACT_SOCKETS],
    [test "x${want_ecore_con_abstract_sockets}" = "xyes"],
    [1], [Have abstract sockets namespace])
 
+efl_net_control_backend=none
+if test "${have_linux}" = "yes"; then
+   EFL_NET_CONTROL_BACKEND=connman
+fi
+
+AC_MSG_CHECKING([net-control backend to use])
+AC_ARG_WITH([net-control],
+   [AS_HELP_STRING([--with-net-control=BACKEND],[Specify which network control backend to be used by Efl.Net.Session and Efl.Net.Control. One of: connman or none])],
+   [EFL_NET_CONTROL_BACKEND="${withval}"])
+
+case "${EFL_NET_CONTROL_BACKEND}" in
+   connman|none)
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown net-control backend --with-net-control=${EFL_NET_CONTROL_BACKEND}])
+     ;;
+esac
+AC_MSG_RESULT([${EFL_NET_CONTROL_BACKEND}])
+AC_SUBST(EFL_NET_CONTROL_BACKEND)
+
 ### Checks for programs
 
 ### Checks for libraries
@@ -3057,7 +3077,12 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [eet])
 EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [eina])
 EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [emile])
-EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [eldbus])
+
+if test "${EFL_NET_CONTROL_BACKEND}" = "connman"; then
+   EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [eldbus])
+fi
+AM_CONDITIONAL([EFL_NET_CONTROL_BACKEND_CONNMAN], [test "${EFL_NET_CONTROL_BACKEND}" = "connman"])
+AM_CONDITIONAL([EFL_NET_CONTROL_BACKEND_NONE], [test "${EFL_NET_CONTROL_BACKEND}" = "none"])
 
 EFL_ADD_LIBS([ECORE_CON], [-lm])
 
@@ -3066,6 +3091,7 @@ EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_systemd}], [SYSTEMD], [libsystemd])
 EFL_ADD_FEATURE([ECORE_CON], [local-sockets], [${want_ecore_con_local_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [abstract-sockets], [${want_ecore_con_abstract_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [systemd-daemon], [${want_systemd}])
+EFL_ADD_FEATURE([ECORE_CON], [net-control], [${EFL_NET_CONTROL_BACKEND}])
 
 EFL_EVAL_PKGS([ECORE_CON])
 
