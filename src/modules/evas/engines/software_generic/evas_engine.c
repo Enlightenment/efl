@@ -1956,7 +1956,7 @@ eng_image_surface_noscale_new(void *engdata, int w, int h, int alpha)
 }
 
 static void
-eng_image_surface_noscale_region_get(void *engdata, void *image, int *x, int *y, int *w, int *h)
+eng_image_surface_noscale_region_get(void *engdata EINA_UNUSED, void *image, int *x, int *y, int *w, int *h)
 {
    RGBA_Image *im = image;
 
