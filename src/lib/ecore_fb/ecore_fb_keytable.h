@@ -126,4 +126,4 @@
          "0x7c",          "0x7c",          "0x7c", /**/"",    "",    "",  NULL,/***/
       "Super_L",       "Super_L",       "Super_L", /**/"",    "",    "",  NULL,/***/
       "Super_R",       "Super_R",       "Super_R", /**/"",    "",    "",  NULL,/***/
-         "0x7f",          "0x7f",          "0x7f", /**/"",    "",    "",  NULL, /***/
+      "Compose",       "Compose",       "Compose", /**/"",    "",    "",  NULL,/***/
