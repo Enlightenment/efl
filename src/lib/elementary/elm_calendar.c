@@ -1715,8 +1715,13 @@ _elm_calendar_interval_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 }
 
 EAPI void
-_elm_calendar_min_max_year_set(Eo *obj, Elm_Calendar_Data *sd, int min, int max)
+elm_calendar_min_max_year_set(Elm_Calendar *obj, int min, int max)
 {
+   Elm_Calendar_Data *sd;
+
+   if (!efl_isa(obj, ELM_CALENDAR_CLASS)) return ;
+   sd = efl_data_scope_get(obj, ELM_CALENDAR_CLASS);
+
    min -= 1900;
    max -= 1900;
    if ((sd->date_min.tm_year == min) && (sd->date_max.tm_year == max)) return;
@@ -1739,8 +1744,13 @@ _elm_calendar_min_max_year_set(Eo *obj, Elm_Calendar_Data *sd, int min, int max)
 }
 
 EAPI void
-_elm_calendar_min_max_year_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd, int *min, int *max)
+elm_calendar_min_max_year_get(const Elm_Calendar *obj, int *min, int *max)
 {
+   Elm_Calendar_Data *sd;
+
+   if (!efl_isa(obj, ELM_CALENDAR_CLASS)) return ;
+   sd = efl_data_scope_get(obj, ELM_CALENDAR_CLASS);
+
    if (min) *min = sd->date_min.tm_year + 1900;
    if (max) *max = sd->date_max.tm_year + 1900;
 }
