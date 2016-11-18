@@ -287,6 +287,17 @@ _cit_mark(Evas_Object *cal,
           int cit,
           const char *mtype)
 {
+   ELM_CALENDAR_DATA_GET(cal, sd);
+
+   int day = cit - sd->first_day_it + 1;
+   int mon = sd->shown_time.tm_mon;
+   int yr = sd->shown_time.tm_year;
+
+   if (strcmp(mtype, "clear")
+       && (((yr == sd->date_min.tm_year) && (mon == sd->date_min.tm_mon) && (day < sd->date_min.tm_mday))
+           || ((yr == sd->date_max.tm_year) && (mon == sd->date_max.tm_mon) && (day > sd->date_max.tm_mday))))
+     return;
+
    char sign[64];
 
    snprintf(sign, sizeof(sign), "cit_%i,%s", cit, mtype);
@@ -575,7 +586,12 @@ _populate(Evas_Object *obj)
 
         if ((day) && (day <= maxdays))
           {
-             _enable(sd, i);
+             if (((yr == sd->date_min.tm_year) && (mon == sd->date_min.tm_mon) && (day < sd->date_min.tm_mday))
+                 || ((yr == sd->date_max.tm_year) && (mon == sd->date_max.tm_mon) && (day > sd->date_max.tm_mday)))
+               _disable(sd, i);
+             else
+               _enable(sd, i);
+
              snprintf(day_s, sizeof(day_s), "%i", day++);
           }
         else
@@ -885,6 +901,20 @@ _fix_selected_time(Elm_Calendar_Data *sd)
      sd->selected_time.tm_mon = sd->shown_time.tm_mon;
    if (sd->selected_time.tm_year != sd->shown_time.tm_year)
      sd->selected_time.tm_year = sd->shown_time.tm_year;
+
+   if ((sd->selected_time.tm_year == sd->date_min.tm_year)
+       && (sd->selected_time.tm_mon == sd->date_min.tm_mon)
+       && (sd->selected_time.tm_mday < sd->date_min.tm_mday))
+     {
+        sd->selected_time.tm_mday = sd->date_min.tm_mday;
+     }
+   else if ((sd->selected_time.tm_year == sd->date_max.tm_year)
+            && (sd->selected_time.tm_mon == sd->date_max.tm_mon)
+            && (sd->selected_time.tm_mday > sd->date_max.tm_mday))
+     {
+        sd->selected_time.tm_mday = sd->date_max.tm_mday;
+     }
+
    mktime(&sd->selected_time);
 }
 
@@ -909,35 +939,55 @@ _update_data(Evas_Object *obj, Eina_Bool month,
    if (month)
      {
         sd->shown_time.tm_mon += delta;
-        if (sd->shown_time.tm_mon < 0)
+        if (delta < 0)
           {
-             if (sd->shown_time.tm_year == sd->year_min)
+             if (sd->shown_time.tm_year == sd->date_min.tm_year)
                {
-                  sd->shown_time.tm_mon++;
-                  return EINA_FALSE;
+                  if (sd->shown_time.tm_mon < sd->date_min.tm_mon)
+                    {
+                       sd->shown_time.tm_mon = sd->date_min.tm_mon;
+                       return EINA_FALSE;
+                    }
                }
-             sd->shown_time.tm_mon = 11;
-             sd->shown_time.tm_year--;
+             else if (sd->shown_time.tm_mon < 0)
+               {
+                  sd->shown_time.tm_mon = 11;
+                  sd->shown_time.tm_year--;
+               }
           }
-        else if (sd->shown_time.tm_mon > 11)
+        else
           {
-             if (sd->shown_time.tm_year == sd->year_max)
+             if (sd->shown_time.tm_year == sd->date_max.tm_year)
                {
-                  sd->shown_time.tm_mon--;
-                  return EINA_FALSE;
+                  if (sd->shown_time.tm_mon > sd->date_max.tm_mon)
+                    {
+                       sd->shown_time.tm_mon = sd->date_max.tm_mon;
+                       return EINA_FALSE;
+                    }
                }
-             sd->shown_time.tm_mon = 0;
-             sd->shown_time.tm_year++;
+             else if (sd->shown_time.tm_mon > 11)
+               {
+                  sd->shown_time.tm_mon = 0;
+                  sd->shown_time.tm_year++;
+               }
           }
      }
    else
      {
         years = sd->shown_time.tm_year + delta;
-        if (((years > sd->year_max) && (sd->year_max != -1)) ||
-            years < sd->year_min)
+        if (((years > sd->date_max.tm_year) && (sd->date_max.tm_year != -1)) ||
+            years < sd->date_min.tm_year)
           return EINA_FALSE;
 
         sd->shown_time.tm_year = years;
+        if ((years == sd->date_min.tm_year) && (sd->shown_time.tm_mon < sd->date_min.tm_mon))
+          {
+             sd->shown_time.tm_mon = sd->date_min.tm_mon;
+          }
+        else if ((years == sd->date_max.tm_year) && (sd->shown_time.tm_mon > sd->date_max.tm_mon))
+          {
+             sd->shown_time.tm_mon = sd->date_max.tm_mon;
+          }
      }
 
    if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
@@ -1209,6 +1259,19 @@ _get_item_day(Evas_Object *obj,
    if ((day < 0) || (day > _maxdays_get(&sd->shown_time, 0)))
      return 0;
 
+   if ((sd->shown_time.tm_year == sd->date_min.tm_year)
+       && (sd->shown_time.tm_mon == sd->date_min.tm_mon)
+       && (day < sd->date_min.tm_mday))
+     {
+        return 0;
+     }
+   else if ((sd->shown_time.tm_year == sd->date_max.tm_year)
+            && (sd->shown_time.tm_mon == sd->date_max.tm_mon)
+            && (day > sd->date_max.tm_mday))
+     {
+        return 0;
+     }
+
    return day;
 }
 
@@ -1394,8 +1457,12 @@ _elm_calendar_efl_canvas_group_group_add(Eo *obj, Elm_Calendar_Data *priv)
    elm_widget_sub_object_parent_add(obj);
 
    priv->first_interval = 0.85;
-   priv->year_min = 2;
-   priv->year_max = -1;
+   priv->date_min.tm_year = 2;
+   priv->date_min.tm_mon = 0;
+   priv->date_min.tm_mday = 1;
+   priv->date_max.tm_year = -1;
+   priv->date_max.tm_mon = 11;
+   priv->date_max.tm_mday = 31;
    priv->today_it = -1;
    priv->selected_it = -1;
    priv->first_day_it = -1;
@@ -1647,29 +1714,153 @@ _elm_calendar_interval_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
    return sd->first_interval;
 }
 
-EOLIAN static void
+EAPI void
 _elm_calendar_min_max_year_set(Eo *obj, Elm_Calendar_Data *sd, int min, int max)
 {
    min -= 1900;
    max -= 1900;
-   if ((sd->year_min == min) && (sd->year_max == max)) return;
-   sd->year_min = min > 2 ? min : 2;
-   if (max > sd->year_min)
-     sd->year_max = max;
+   if ((sd->date_min.tm_year == min) && (sd->date_max.tm_year == max)) return;
+   sd->date_min.tm_year = min > 2 ? min : 2;
+   if (max > sd->date_min.tm_year)
+     sd->date_max.tm_year = max;
    else
-     sd->year_max = sd->year_min;
-   if (sd->shown_time.tm_year > sd->year_max)
-     sd->shown_time.tm_year = sd->year_max;
-   if (sd->shown_time.tm_year < sd->year_min)
-     sd->shown_time.tm_year = sd->year_min;
+     sd->date_max.tm_year = sd->date_min.tm_year;
+   sd->date_min.tm_mon = 0;
+   sd->date_min.tm_mday = 1;
+   sd->date_max.tm_mon = 11;
+   sd->date_max.tm_mday = 31;
+
+   if (sd->shown_time.tm_year > sd->date_max.tm_year)
+     sd->shown_time.tm_year = sd->date_max.tm_year;
+   if (sd->shown_time.tm_year < sd->date_min.tm_year)
+     sd->shown_time.tm_year = sd->date_min.tm_year;
+
    evas_object_smart_changed(obj);
 }
 
-EOLIAN static void
+EAPI void
 _elm_calendar_min_max_year_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd, int *min, int *max)
 {
-   if (min) *min = sd->year_min + 1900;
-   if (max) *max = sd->year_max + 1900;
+   if (min) *min = sd->date_min.tm_year + 1900;
+   if (max) *max = sd->date_max.tm_year + 1900;
+}
+
+EOLIAN static void
+_elm_calendar_date_min_set(Eo *obj, Elm_Calendar_Data *sd, const struct tm *min)
+{
+   Eina_Bool upper = EINA_FALSE;
+
+   if ((sd->date_min.tm_year == min->tm_year)
+       && (sd->date_min.tm_mon == min->tm_mon)
+       && (sd->date_min.tm_mday == min->tm_mday))
+     return;
+
+   if (min->tm_year < 2)
+     {
+        sd->date_min.tm_year = 2;
+        sd->date_min.tm_mon = 0;
+        sd->date_min.tm_mday = 1;
+     }
+   else
+     {
+        if (sd->date_max.tm_year != -1)
+          {
+             if (min->tm_year > sd->date_max.tm_year)
+               {
+                  upper = EINA_TRUE;
+               }
+             else if (min->tm_year == sd->date_max.tm_year)
+               {
+                  if (min->tm_mon > sd->date_max.tm_mon)
+                    upper = EINA_TRUE;
+                  else if ((min->tm_mon == sd->date_max.tm_mon) && (min->tm_mday > sd->date_max.tm_mday))
+                    upper = EINA_TRUE;
+               }
+          }
+
+        if (upper)
+          {
+             sd->date_min.tm_year = sd->date_max.tm_year;
+             sd->date_min.tm_mon = sd->date_max.tm_mon;
+             sd->date_min.tm_mday = sd->date_max.tm_mday;
+          }
+        else
+          {
+             sd->date_min.tm_year = min->tm_year;
+             sd->date_min.tm_mon = min->tm_mon;
+             sd->date_min.tm_mday = min->tm_mday;
+          }
+     }
+
+   if (sd->shown_time.tm_year <= sd->date_min.tm_year)
+     {
+        sd->shown_time.tm_year = sd->date_min.tm_year;
+        if (sd->shown_time.tm_mon < sd->date_min.tm_mon)
+          sd->shown_time.tm_mon = sd->date_min.tm_mon;
+     }
+
+   _fix_selected_time(sd);
+
+   evas_object_smart_changed(obj);
+}
+
+EOLIAN static const struct tm *
+_elm_calendar_date_min_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+{
+   return &(sd->date_min);
+}
+
+EOLIAN static void
+_elm_calendar_date_max_set(Eo *obj, Elm_Calendar_Data *sd, const struct tm *max)
+{
+   Eina_Bool lower = EINA_FALSE;
+
+   if ((sd->date_max.tm_year == max->tm_year)
+       && (sd->date_max.tm_mon == max->tm_mon)
+       && (sd->date_max.tm_mday == max->tm_mday))
+     return;
+
+   if (max->tm_year < sd->date_min.tm_year)
+     {
+        lower = EINA_TRUE;
+     }
+   else if (max->tm_year == sd->date_min.tm_year)
+     {
+        if (max->tm_mon < sd->date_min.tm_mon)
+          lower = EINA_TRUE;
+        else if ((max->tm_mon == sd->date_min.tm_mon) && (max->tm_mday < sd->date_min.tm_mday))
+          lower = EINA_TRUE;
+     }
+
+   if (lower)
+     {
+        sd->date_max.tm_year = sd->date_min.tm_year;
+        sd->date_max.tm_mon = sd->date_min.tm_mon;
+        sd->date_max.tm_mday = sd->date_min.tm_mday;
+     }
+   else
+     {
+        sd->date_max.tm_year = max->tm_year;
+        sd->date_max.tm_mon = max->tm_mon;
+        sd->date_max.tm_mday = max->tm_mday;
+     }
+
+   if (sd->shown_time.tm_year >= sd->date_max.tm_year)
+     {
+        sd->shown_time.tm_year = sd->date_max.tm_year;
+        if (sd->shown_time.tm_mon > sd->date_max.tm_mon)
+          sd->shown_time.tm_mon = sd->date_max.tm_mon;
+     }
+
+   _fix_selected_time(sd);
+
+   evas_object_smart_changed(obj);
+}
+
+EOLIAN static const struct tm *
+_elm_calendar_date_max_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+{
+   return &(sd->date_max);
 }
 
 EINA_DEPRECATED EAPI void

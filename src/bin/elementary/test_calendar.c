@@ -38,7 +38,6 @@ set_api_state(api_data *api)
            {
               Evas_Object *cal = eina_list_nth(items, 0);
               time_t the_time = (SEC_PER_YEAR * 41) + (SEC_PER_DAY * 9); /* Set date to DEC 31, 2010 */
-              elm_calendar_min_max_year_set(cal, 2010, 2011);
               m = elm_calendar_mark_add(cal, "checked", gmtime(&the_time), ELM_CALENDAR_MONTHLY);
               elm_calendar_selected_time_set(cal, gmtime(&the_time));
            }
@@ -143,7 +142,6 @@ test_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    time_t the_time = (SEC_PER_YEAR * 41) + (SEC_PER_DAY * 9); /* Set date to DEC 31, 2010 */
    elm_calendar_selected_time_set(cal, gmtime(&the_time));
-   elm_calendar_min_max_year_set(cal, 2010, 2012);
 
    evas_object_show(cal);
 
@@ -155,25 +153,30 @@ _print_cal_info(Evas_Object *cal, Evas_Object *en)
 {
    char info[1024];
    double interval;
-   int year_min, year_max;
    Eina_Bool sel_enabled;
    const char **wds;
    struct tm stm;
+   const struct tm *mintm, *maxtm;
 
    if (!elm_calendar_selected_time_get(cal, &stm))
      return;
 
    interval = elm_calendar_interval_get(cal);
-   elm_calendar_min_max_year_get(cal, &year_min, &year_max);
+   mintm = elm_calendar_date_min_get(cal);
+   maxtm = elm_calendar_date_max_get(cal);
    sel_enabled = !!(elm_calendar_select_mode_get(cal) != ELM_CALENDAR_SELECT_MODE_NONE);
    wds = elm_calendar_weekdays_names_get(cal);
 
    snprintf(info, sizeof(info),
             "  Day: %i, Mon: %i, Year %i, WeekDay: %i<br/>"
-            "  Interval: %0.2f, Year_Min: %i, Year_Max %i, Sel Enabled : %i<br/>"
+            "  Interval: %0.2f, Sel Enabled : %i<br/>"
+            "  Day_Min : %i, Mon_Min : %i, Year_Min : %i<br/>"
+            "  Day_Max : %i, Mon_Max : %i, Year_Max : %i<br/>"
             "  Weekdays: %s, %s, %s, %s, %s, %s, %s<br/>",
             stm.tm_mday, stm.tm_mon, stm.tm_year + 1900, stm.tm_wday,
-            interval, year_min, year_max, sel_enabled,
+            interval, sel_enabled,
+            mintm->tm_mday, mintm->tm_mon + 1, mintm->tm_year + 1900,
+            maxtm->tm_mday, maxtm->tm_mon + 1, maxtm->tm_year + 1900,
             wds[0], wds[1], wds[2], wds[3], wds[4], wds[5], wds[6]);
 
    elm_object_text_set(en, info);
@@ -231,7 +234,11 @@ _calendar_create(Evas_Object *parent)
    elm_calendar_first_day_of_week_set(cal, ELM_DAY_SATURDAY);
    elm_calendar_interval_set(cal, 0.4);
    elm_calendar_format_function_set(cal, _format_month_year);
-   elm_calendar_min_max_year_set(cal, 2010, 2020);
+
+   time_t the_time = (SEC_PER_YEAR * 40) + (SEC_PER_DAY * 24); /* Set min date to JAN 15, 2010 */
+   elm_calendar_date_min_set(cal, gmtime(&the_time));
+   the_time = (SEC_PER_YEAR * 42) + (SEC_PER_DAY * 3); /* Set max date to DEC 25, 2011 */
+   elm_calendar_date_max_set(cal, gmtime(&the_time));
 
    current_time = time(NULL) + 4 * SEC_PER_DAY;
    localtime_r(&current_time, &selected_time);
@@ -327,7 +334,6 @@ test_calendar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    elm_calendar_marks_draw(cal3);
    evas_object_show(cal3);
    elm_box_pack_end(bxh, cal3);
-   elm_calendar_min_max_year_set(cal3, -1, -1);
 
    evas_object_show(win);
 }

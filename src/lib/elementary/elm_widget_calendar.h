@@ -37,12 +37,12 @@ struct _Elm_Calendar_Data
    Evas_Object             *obj; // the object itself
    Eina_List               *marks;
    double                   interval, first_interval;
-   int                      year_min, year_max, spin_speed;
+   int                      spin_speed;
    int                      today_it, selected_it, first_day_it;
    Ecore_Timer             *spin_month, *spin_year, *update_timer;
    Elm_Calendar_Format_Cb   format_func;
    const char              *weekdays[ELM_DAY_LAST];
-   struct tm                current_time, selected_time, shown_time;
+   struct tm                current_time, selected_time, shown_time, date_min, date_max;
    Day_Color                day_color[42]; // EINA_DEPRECATED
    Evas_Object             *inc_btn_month;
    Evas_Object             *dec_btn_month;

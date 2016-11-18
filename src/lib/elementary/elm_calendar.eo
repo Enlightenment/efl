@@ -187,30 +187,6 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
             mode: Elm.Calendar.Select.Mode; [[The select mode to use.]]
          }
       }
-      @property min_max_year {
-         [[The minimum and maximum values for the year
-
-           Maximum must be greater than minimum, except if you don't want to set
-           maximum year.
-           Default values are 1902 and -1.
-
-           If the maximum year is a negative value, it will be limited depending
-           on the platform architecture (year 2037 for 32 bits);
-
-           See also @.min_max_year.get.
-
-           \@ref calendar_example_03.
-           \@ref calendar_example_05.
-         ]]
-         set {
-         }
-         get {
-         }
-         values {
-            min: int; [[The minimum year, greater than 1901;]]
-            max: int; [[The maximum year;]]
-         }
-      }
       @property format_function {
          set {
             [[Set a function to format the string that will be used to display
@@ -253,6 +229,58 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 
             ]]
             return: const(list<ptr(Elm.Calendar.Mark)>); [[List with all calendar marks]]
+         }
+      }
+      @property date_min {
+         [[Minimum date on calendar.
+
+           See also @.date_max.set, @.date_max.get
+
+           @since 1.19
+         ]]
+         set {
+            [[Set minimum date on calendar.
+
+              Set the minimum date, changing the displayed month or year if needed.
+              Displayed day also to be disabled if it is smaller than minimum date.
+            ]]
+         }
+         get {
+            [[Get minimum date.
+
+              Default value is 1 JAN,1902.
+            ]]
+         }
+         values {
+            min: const(Efl.Time)*; [[A tm struct to point to minimum date.]]
+         }
+      }
+      @property date_max {
+         [[Maximum date on calendar.
+
+           See also @.date_min.set, @.date_min.get
+
+           @since 1.19
+         ]]
+         set {
+            [[Set maximum date on calendar.
+
+              Set the maximum date, changing the displayed month or year if needed.
+              Displayed day also to be disabled if it is bigger than maximum date.
+            ]]
+         }
+         get {
+            [[Get maximum date.
+
+              Default maximum year is -1.
+              Default maximum day and month are 31 and DEC.
+
+              If the maximum year is a negative value, it will be limited depending
+              on the platform architecture (year 2037 for 32 bits);
+            ]]
+         }
+         values {
+            max: const(Efl.Time)*; [[A tm struct to point to maximum date.]]
          }
       }
       selected_time_set {
