@@ -12,6 +12,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
                    Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action,
                    Elm.Interface.Atspi.Selection)
 {
+   [[Elementary gengrid class]]
    legacy_prefix: elm_gengrid;
    eo_prefix: elm_obj_gengrid;
    event_prefix: elm_gengrid;
@@ -61,7 +62,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
             ]]
          }
          values {
-            fill: bool;
+            fill: bool; [[$true if the grid is filled, $false otherwise]]
          }
       }
       @property page_relative {
@@ -71,8 +72,8 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
          set {}
          get {}
          values {
-            h_pagerel: double;
-            v_pagerel: double;
+            h_pagerel: double; [[Page relation horizontal]]
+            v_pagerel: double; [[Page relation vertical]]
          }
       }
       @property multi_select {
@@ -96,7 +97,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
             ]]
          }
          values {
-            multi: bool;
+            multi: bool; [[$true if multislect is enabled, $false otherwise]]
          }
       }
       @property group_item_size {
@@ -177,7 +178,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
          set {}
          get {}
          values {
-            highlight: bool;
+            highlight: bool; [[$true if item will be highlighted, $false otherwise]]
          }
       }
       @property reorder_type {
@@ -271,8 +272,8 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
             [[Set a given gengrid widget's scrolling page size.]]
          }
          values {
-            h_pagesize: Evas.Coord;
-            v_pagesize: Evas.Coord;
+            h_pagesize: Evas.Coord; [[Page size horizontal]]
+            v_pagesize: Evas.Coord; [[Page size vertical]]
          }
       }
       @property selected_item {
@@ -414,7 +415,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
            This behavior is O(1) and includes items which may or may not
            be realized.
          ]]
-         return: uint;
+         return: uint; [[Items in list]]
       }
       at_xy_item_get @const {
          [[Get the item that is at the x, y canvas coords.
@@ -575,22 +576,21 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Interface.Atspi.Selection.clear;
    }
    events {
-      realized;
-      unrealized;
-      index,update;
-      scroll,page,changed;
-      edge,bottom;
-      edge,top;
-      edge,right;
-      edge,left;
-      item,focused;
-      item,unfocused;
-      item,reorder,anim,start;
-      item,reorder,anim,stop;
-      activated;
-      highlighted;
-      unhighlighted;
-      released;
+      realized; [[Called when gengrid realized]]
+      unrealized; [[Called when gengrid unrealized]]
+      index,update; [[Called on gengrid index update]]
+      scroll,page,changed; [[Called when scroll page changed]]
+      edge,bottom; [[Called when bottom edge is reached]]
+      edge,top; [[Called when top edge is reached]]
+      edge,right; [[Called when right edge is reached]]
+      edge,left; [[Called when left edge is reached]]
+      item,focused; [[Called when item got focus]]
+      item,unfocused; [[Called when item no longer has focus]]
+      item,reorder,anim,start; [[Called when item reorder animation started]]
+      item,reorder,anim,stop; [[Called when item reorder animation stopped]]
+      activated; [[Called when gengrid got activated]]
+      highlighted; [[Called when gengrid is highlighted]]
+      unhighlighted; [[Called when gengrid is no longer highlighted]]
+      released; [[Called when gengrid is released]]
    }
-
 }
