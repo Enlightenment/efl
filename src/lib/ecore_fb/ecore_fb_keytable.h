@@ -127,3 +127,19 @@
       "Super_L",       "Super_L",       "Super_L", /**/"",    "",    "",  NULL,/***/
       "Super_R",       "Super_R",       "Super_R", /**/"",    "",    "",  NULL,/***/
       "Compose",       "Compose",       "Compose", /**/"",    "",    "",  NULL,/***/
+         "Stop",          "Stop",          "Stop", /**/"",    "",    "",  NULL,/***/
+        "Again",         "Again",         "Again", /**/"",    "",    "",  NULL,/***/
+        "Props",         "Props",         "Props", /**/"",    "",    "",  NULL,/***/
+         "Undo",          "Undo",          "Undo", /**/"",    "",    "",  NULL,/***/
+        "Front",         "Front",         "Front", /**/"",    "",    "",  NULL,/***/
+         "Copy",          "Copy",          "Copy", /**/"",    "",    "",  NULL,/***/
+         "Open",          "Open",          "Open", /**/"",    "",    "",  NULL,/***/
+        "Paste",         "Paste",         "Paste", /**/"",    "",    "",  NULL,/***/
+         "Find",          "Find",          "Find", /**/"",    "",    "",  NULL,/***/
+          "Cut",           "Cut",           "Cut", /**/"",    "",    "",  NULL,/***/
+         "Help",          "Help",          "Help", /**/"",    "",    "",  NULL,/***/
+         "Menu",          "Menu",          "Menu", /**/"",    "",    "",  NULL,/***/
+         "Calc",          "Calc",          "Calc", /**/"",    "",    "",  NULL,/***/
+        "Setup",         "Setup",         "Setup", /**/"",    "",    "",  NULL,/***/
+        "Sleep",         "Sleep",         "Sleep", /**/"",    "",    "",  NULL,/***/
+       "WakeUp",        "WakeUp",        "WakeUp", /**/"",    "",    "",  NULL,/***/
