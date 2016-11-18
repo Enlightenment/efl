@@ -395,8 +395,7 @@ _op_blend_mas_can_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, 
       m++;  start++;
    }
 #else
-   DATA32 *e,*tmp;
-   int alpha;
+   DATA32 *e;
 
    DEBUG_FNCOUNT("");
 
