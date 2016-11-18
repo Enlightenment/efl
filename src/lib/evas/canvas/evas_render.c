@@ -512,6 +512,93 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
    RD(0, "  ---]\n");
 }
 
+static void
+_evas_render_object_map_change_update(Evas_Public_Data *e, Evas_Object *eo_obj EINA_UNUSED,
+                                      Evas_Object_Protected_Data *obj,
+                                      Eina_Bool map, Eina_Bool hmap,
+                                      int *redraw_all)
+{
+   if (map == hmap) return;
+
+   if (obj->map)
+     {
+        Evas_Coord x = 0, y = 0, w = 0, h = 0;
+
+        if (map)
+          {
+             x = obj->prev->cache.clip.x;
+             y = obj->prev->cache.clip.y;
+             w = obj->prev->cache.clip.w;
+             h = obj->prev->cache.clip.h;
+             if (obj->prev->clipper)
+               {
+                  RECTS_CLIP_TO_RECT(x, y, w, h,
+                                     obj->prev->clipper->prev->cache.clip.x,
+                                     obj->prev->clipper->prev->cache.clip.y,
+                                     obj->prev->clipper->prev->cache.clip.w,
+                                     obj->prev->clipper->prev->cache.clip.h);
+               }
+             e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                     x + e->framespace.x,
+                                                     y + e->framespace.y,
+                                                     w, h);
+             x = obj->map->cur.map->normal_geometry.x;
+             y = obj->map->cur.map->normal_geometry.y;
+             w = obj->map->cur.map->normal_geometry.w;
+             h = obj->map->cur.map->normal_geometry.h;
+             if (obj->cur->clipper)
+               {
+                  RECTS_CLIP_TO_RECT(x, y, w, h,
+                                     obj->cur->clipper->cur->cache.clip.x,
+                                     obj->cur->clipper->cur->cache.clip.y,
+                                     obj->cur->clipper->cur->cache.clip.w,
+                                     obj->cur->clipper->cur->cache.clip.h);
+               }
+             e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                     x + e->framespace.x,
+                                                     y + e->framespace.y,
+                                                     w, h);
+          }
+        else if (hmap)
+          {
+             x = obj->map->prev.map->normal_geometry.x;
+             y = obj->map->prev.map->normal_geometry.y;
+             w = obj->map->prev.map->normal_geometry.w;
+             h = obj->map->prev.map->normal_geometry.h;
+             if (obj->prev->clipper)
+               {
+                  RECTS_CLIP_TO_RECT(x, y, w, h,
+                                     obj->prev->clipper->prev->cache.clip.x,
+                                     obj->prev->clipper->prev->cache.clip.y,
+                                     obj->prev->clipper->prev->cache.clip.w,
+                                     obj->prev->clipper->prev->cache.clip.h);
+               }
+             e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                     x + e->framespace.x,
+                                                     y + e->framespace.y,
+                                                     w, h);
+             x = obj->cur->cache.clip.x;
+             y = obj->cur->cache.clip.y;
+             w = obj->cur->cache.clip.w;
+             h = obj->cur->cache.clip.h;
+             if (obj->cur->clipper)
+               {
+                  RECTS_CLIP_TO_RECT(x, y, w, h,
+                                     obj->cur->clipper->cur->cache.clip.x,
+                                     obj->cur->clipper->cur->cache.clip.y,
+                                     obj->cur->clipper->cur->cache.clip.w,
+                                     obj->cur->clipper->cur->cache.clip.h);
+               }
+             e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                     x + e->framespace.x,
+                                                     y + e->framespace.y,
+                                                     w, h);
+          }
+        return;
+     }
+   *redraw_all = 1;
+}
+
 static Eina_Bool
 _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                                    Eina_Array *active_objects,
@@ -602,7 +689,8 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
           }
         if (obj->changed)
           {
-             if (map != hmap) *redraw_all = 1;
+             _evas_render_object_map_change_update(e, eo_obj, obj,
+                                                   map, hmap, redraw_all);
 
              if ((is_active) && (!obj->clip.clipees) &&
                  ((evas_object_is_visible(eo_obj, obj) && (!obj->cur->have_clipees)) ||
@@ -647,10 +735,8 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                   if ((obj->map->cur.map) && (obj->map->cur.usemap))
                     map = EINA_TRUE;
                }
-             if (map != hmap)
-               {
-                  *redraw_all = 1;
-               }
+             _evas_render_object_map_change_update(e, eo_obj, obj,
+                                                   map, hmap, redraw_all);
           }
         if (!map && obj->cur->clipper)
           {
