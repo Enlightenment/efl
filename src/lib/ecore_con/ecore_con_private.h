@@ -399,7 +399,7 @@ void ecore_con_mempool_shutdown(void);
 #define SOCKET int
 #define SOCKET_FMT "%d"
 #else
-#define SOCKET_FMT "%u"
+#define SOCKET_FMT "%lu"
 #endif
 
 
