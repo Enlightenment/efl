@@ -388,6 +388,8 @@ _efl_net_server_fd_reuse_port_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Bool r
         pd->reuse_port = old;
         return EINA_FALSE;
      }
+#else
+   (void)o;
 #endif
 
    return EINA_TRUE;
@@ -416,6 +418,8 @@ _efl_net_server_fd_reuse_port_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
      }
 
    pd->reuse_port = !!value; /* sync */
+#else
+   (void)o;
 #endif
 
    return pd->reuse_port;
