@@ -249,7 +249,7 @@ _outbuf_fb_assign(Outbuf *ob)
    ob->priv.draw = _outbuf_fb_wait(ob);
    while (!ob->priv.draw)
      {
-        ecore_drm2_fb_release(ob->priv.output);
+        ecore_drm2_fb_release(ob->priv.output, EINA_TRUE);
         ob->priv.draw = _outbuf_fb_wait(ob);
      }
 

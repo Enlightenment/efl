@@ -829,16 +829,19 @@ EAPI void ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy);
 /**
  * Try to force a framebuffer release for an output
  *
- * This tries to release the next, pending, or current buffer from
- * the output.  If successful there will be a release callback to
- * the registered handler, and the fb will no longer be flagged busy.
+ * This tries to release the next or optionally pending, or current
+ * buffer from the output.  If successful there will be a release callback
+ * to the registered handler, and the fb will no longer be flagged busy.
+ *
+ * Releasing buffers committed to scanout will potentially cause flicker,
+ * so this is only done when the panic flag is set.
  *
  * @param output The output to force release
- *
+ * @param panic Try to release even buffers committed to scanout
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.19
  */
-EAPI void ecore_drm2_fb_release(Ecore_Drm2_Output *o);
+EAPI void ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic);
 
 /**
  * Set the user data for the output's page flip handler

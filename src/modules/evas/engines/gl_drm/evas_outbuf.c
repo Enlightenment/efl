@@ -96,7 +96,7 @@ _evas_outbuf_buffer_swap(Outbuf *ob)
    bo = gbm_surface_lock_front_buffer(ob->surface);
    if (!bo)
      {
-        ecore_drm2_fb_release(ob->priv.output);
+        ecore_drm2_fb_release(ob->priv.output, EINA_TRUE);
         bo = gbm_surface_lock_front_buffer(ob->surface);
      }
    if (bo) fb = _evas_outbuf_fb_get(ob, bo);

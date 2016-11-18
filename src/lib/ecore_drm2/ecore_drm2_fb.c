@@ -456,7 +456,7 @@ ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy)
 }
 
 EAPI void
-ecore_drm2_fb_release(Ecore_Drm2_Output *o)
+ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic)
 {
    EINA_SAFETY_ON_NULL_RETURN(o);
 
@@ -466,6 +466,7 @@ ecore_drm2_fb_release(Ecore_Drm2_Output *o)
         o->next = NULL;
         return;
      }
+   if (!panic) return;
 
    WRN("Buffer release request when no next buffer");
    /* If we have to release these we're going to see tearing.
