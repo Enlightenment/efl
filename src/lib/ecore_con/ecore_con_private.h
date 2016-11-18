@@ -422,6 +422,9 @@ void ecore_con_mempool_shutdown(void);
 #ifndef AI_V4MAPPED
 #define AI_V4MAPPED 0
 #endif
+#ifndef AI_ADDRCONFIG
+#define AI_ADDRCONFIG 0
+#endif
 
 void _efl_net_server_udp_client_init(Eo *client, SOCKET fd, const struct sockaddr *addr, socklen_t addrlen, const char *str);
 void _efl_net_server_udp_client_feed(Eo *client, Eina_Rw_Slice slice);
