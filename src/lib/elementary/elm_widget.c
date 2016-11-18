@@ -256,6 +256,7 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
                   logical_wd->logical.child_count ++;
                   _focus_state_eval(parent, logical_wd);
                   pd->logical.parent = parent;
+                  efl_weak_ref(&pd->logical.parent);
                }
           }
      }
