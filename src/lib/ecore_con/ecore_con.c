@@ -3567,7 +3567,11 @@ static void
 _efl_net_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Efl_Net_Connect_Async_Data *d = data;
-   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536") + sizeof(struct sockaddr_un)] = "";
+   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")
+#ifndef _WIN32
+            + sizeof(struct sockaddr_un)
+#endif
+            ] = "";
    int r;
 
    /* allows ecore_thread_cancel() to cancel at some points, see
