@@ -723,7 +723,7 @@ void
 elm_cursor_theme(Elm_Cursor *cur)
 {
    if ((!cur) || (!cur->obj)) return;
-   if (!_elm_theme_object_set(cur->eventarea, cur->obj, "cursor",
+   if (!_elm_theme_object_set(cur->owner, cur->obj, "cursor",
                               cur->cursor_name, cur->style))
      ERR("Could not apply the theme to the cursor style=%s", cur->style);
    else
