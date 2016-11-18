@@ -391,9 +391,31 @@ void ecore_con_mempool_shutdown(void);
 #ifndef INVALID_SOCKET
 #define INVALID_SOCKET -1
 #endif
+#ifndef SOCKET_TO_LOOP_FD
+#define SOCKET_TO_LOOP_FD(sock) ((int)sock)
+#endif
 #ifndef _WIN32
 #define closesocket(fd) close(fd)
 #define SOCKET int
+#define SOCKET_FMT "%d"
+#else
+#define SOCKET_FMT "%u"
+#endif
+
+
+/*
+ * This define will force SOCKET to be 'unsigned long', this will
+ * force compile to emit errors when assuming "int"/"%d", which is the
+ * case on UNIX but not on Windows.
+ */
+//#define EFL_NET_CHECK_SOCKET_TYPE 1
+#if EFL_NET_CHECK_SOCKET_TYPE
+#undef SOCKET
+#undef SOCKET_FMT
+#undef INVALID_SOCKET
+#define SOCKET unsigned long
+#define SOCKET_FMT "%lu"
+#define INVALID_SOCKET ((SOCKET)-1)
 #endif
 
 /* some platforms do not have AI_V4MAPPED, then define to 0 so bitwise OR won't be changed */
@@ -486,7 +508,7 @@ Ecore_Thread *efl_net_ip_resolve_async_new(const char *host, const char *port, c
  *
  * @internal
  */
-typedef void (*Efl_Net_Connect_Async_Cb)(void *data, const struct sockaddr *addr, socklen_t addrlen, int sockfd, Eina_Error error);
+typedef void (*Efl_Net_Connect_Async_Cb)(void *data, const struct sockaddr *addr, socklen_t addrlen, SOCKET sockfd, Eina_Error error);
 
 /**
  * @brief asynchronously create a socket and connect to the address.

@@ -3045,7 +3045,7 @@ efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct sockaddr_un *
 
    if (addrlen == offsetof(struct sockaddr_un, sun_path))
      {
-        int r = snprintf(buf, buflen, "unnamed:%d", fd);
+        int r = snprintf(buf, buflen, "unnamed:" SOCKET_FMT, fd);
         if (r < 0)
           {
              ERR("snprintf(): %s", strerror(errno));
@@ -3219,7 +3219,7 @@ efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina
         r = sd_is_socket_unix(fd, type, 0, sun_path, len);
         if (r < 0)
           {
-             ERR("socket %d is not of family=%d, type=%d", fd, family, type);
+             ERR("socket " SOCKET_FMT " is not of family=%d, type=%d", fd, family, type);
              return EINVAL;
           }
         if (listening) *listening = (r == 1);
@@ -3238,7 +3238,7 @@ efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina
         r = sd_is_socket(fd, family, type, (type == SOCK_DGRAM) ? -1 : 0);
         if (r < 0)
           {
-             ERR("socket %d is not of family=%d, type=%d", fd, family, type);
+             ERR("socket " SOCKET_FMT " is not of family=%d, type=%d", fd, family, type);
              return EINVAL;
           }
         if ((type == SOCK_DGRAM) && (listening)) *listening = EINA_FALSE;
@@ -3248,7 +3248,7 @@ efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina
         if (getsockname(fd, (struct sockaddr *)&sock_addr, &addrlen) != 0)
           {
              err = efl_net_socket_error_get();
-             ERR("could not query socket=%d name: %s", fd, eina_error_msg_get(err));
+             ERR("could not query socket=" SOCKET_FMT " name: %s", fd, eina_error_msg_get(err));
              return err;
           }
 
@@ -3285,7 +3285,7 @@ efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina
              want_addr.ss_family = family;
              if (want_addr.ss_family != sock_addr.ss_family)
                {
-                  ERR("socket %d family=%d differs from wanted %d", fd, sock_addr.ss_family, want_addr.ss_family);
+                  ERR("socket " SOCKET_FMT " family=%d differs from wanted %d", fd, sock_addr.ss_family, want_addr.ss_family);
                   free(str);
                   return EINVAL;
                }
@@ -3324,7 +3324,7 @@ efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina
                   char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
 
                   efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&sock_addr);
-                  ERR("socket %d address %s differs from wanted %s", fd, buf, address);
+                  ERR("socket " SOCKET_FMT " address %s differs from wanted %s", fd, buf, address);
                   free(str);
                   return EINVAL;
                }
@@ -3601,7 +3601,7 @@ _efl_net_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
           efl_net_ip_port_fmt(buf, sizeof(buf), d->addr);
      }
 
-   DBG("connecting fd=%d to %s", d->sockfd, buf);
+   DBG("connecting fd=" SOCKET_FMT " to %s", d->sockfd, buf);
 
    r = connect(d->sockfd, d->addr, d->addrlen);
    if (r != 0)
@@ -3614,11 +3614,11 @@ _efl_net_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
          * won't close it again.
          */
         closesocket(fd);
-        DBG("connect(%d, %s) failed: %s", fd, buf, eina_error_msg_get(d->error));
+        DBG("connect(" SOCKET_FMT ", %s) failed: %s", fd, buf, eina_error_msg_get(d->error));
         return;
      }
 
-   DBG("connected fd=%d to %s", d->sockfd, buf);
+   DBG("connected fd=" SOCKET_FMT " to %s", d->sockfd, buf);
 }
 
 static void
@@ -3640,7 +3640,7 @@ _efl_net_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
         if (flags < 0)
           {
              d->error = errno;
-             ERR("fcntl(%d, F_GETFD): %s", d->sockfd, eina_error_msg_get(d->error));
+             ERR("fcntl(" SOCKET_FMT ", F_GETFD): %s", d->sockfd, eina_error_msg_get(d->error));
              closesocket(d->sockfd);
              d->sockfd = INVALID_SOCKET;
           }
@@ -3650,7 +3650,7 @@ _efl_net_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
              if (fcntl(d->sockfd, F_SETFD, flags) < 0)
                {
                   d->error = errno;
-                  ERR("fcntl(%d, F_SETFD, %#x): %s", d->sockfd, flags, eina_error_msg_get(d->error));
+                  ERR("fcntl(" SOCKET_FMT ", F_SETFD, %#x): %s", d->sockfd, flags, eina_error_msg_get(d->error));
                   closesocket(d->sockfd);
                   d->sockfd = INVALID_SOCKET;
                }
@@ -3759,7 +3759,7 @@ typedef struct _Efl_Net_Ip_Connect_Async_Data
 } Efl_Net_Ip_Connect_Async_Data;
 
 static Eina_Error
-_efl_net_ip_connect(const struct addrinfo *addr, int *sockfd)
+_efl_net_ip_connect(const struct addrinfo *addr, SOCKET *sockfd)
 {
    SOCKET fd = INVALID_SOCKET;
    Eina_Error ret = 0;
@@ -3778,19 +3778,19 @@ _efl_net_ip_connect(const struct addrinfo *addr, int *sockfd)
         if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
           {
              if (efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr))
-               DBG("connect fd=%d to %s", fd, buf);
+               DBG("connect fd=" SOCKET_FMT " to %s", fd, buf);
           }
 
         r = connect(fd, addr->ai_addr, addr->ai_addrlen);
         if (r == 0)
           {
-             DBG("connected fd=%d to %s", fd, buf);
+             DBG("connected fd=" SOCKET_FMT " to %s", fd, buf);
              *sockfd = fd;
           }
         else
           {
              ret = efl_net_socket_error_get();
-             DBG("couldn't connect fd=%d to %s: %s", fd, buf, eina_error_msg_get(ret));
+             DBG("couldn't connect fd=" SOCKET_FMT " to %s: %s", fd, buf, eina_error_msg_get(ret));
              closesocket(fd);
           }
         EINA_THREAD_CLEANUP_POP(EINA_FALSE); /* we need sockfd on success */
@@ -3799,7 +3799,7 @@ _efl_net_ip_connect(const struct addrinfo *addr, int *sockfd)
 }
 
 static Eina_Error
-_efl_net_ip_resolve_and_connect(const char *host, const char *port, int type, int protocol, int *sockfd, struct sockaddr *addr, socklen_t *p_addrlen)
+_efl_net_ip_resolve_and_connect(const char *host, const char *port, int type, int protocol, SOCKET *sockfd, struct sockaddr *addr, socklen_t *p_addrlen)
 {
    struct addrinfo *results = NULL;
    struct addrinfo hints = {
@@ -3939,7 +3939,7 @@ _efl_net_ip_connect_async_run_socks4_try(Efl_Net_Ip_Connect_Async_Data *d, const
    if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
      {
         if (efl_net_ip_port_fmt(buf, sizeof(buf), addrinfo->ai_addr))
-          DBG("resolved address='%s' to %s. Connect using fd=%d socks4://%s:%s", d->address, buf, fd, proxy_host, proxy_port);
+          DBG("resolved address='%s' to %s. Connect using fd=" SOCKET_FMT " socks4://%s:%s", d->address, buf, fd, proxy_host, proxy_port);
      }
 
    request->port = a->sin_port;
@@ -3949,7 +3949,7 @@ _efl_net_ip_connect_async_run_socks4_try(Efl_Net_Ip_Connect_Async_Data *d, const
    if (s != (ssize_t)request_len)
      {
         if (s == SOCKET_ERROR)
-          DBG("couldn't request connection to host=%s fd=%d socks4://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+          DBG("couldn't request connection to host=%s fd=" SOCKET_FMT " socks4://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
         else
           DBG("couldn't send proxy request: need %zu, did %zd", request_len, s);
      }
@@ -3960,14 +3960,14 @@ _efl_net_ip_connect_async_run_socks4_try(Efl_Net_Ip_Connect_Async_Data *d, const
         if (s != sizeof(reply))
           {
              if (s == SOCKET_ERROR)
-               DBG("couldn't recv reply of connection to host=%s fd=%d socks4://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+               DBG("couldn't recv reply of connection to host=%s fd=" SOCKET_FMT " socks4://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
              else
                DBG("couldn't recv proxy reply: need %zu, did %zd", sizeof(reply), s);
           }
         else
           {
              if (reply.status != EFL_NET_SOCKS4_REPLY_STATUS_GRANTED)
-               DBG("rejected connection to host=%s fd=%d socks4://%s:%s: reason=%#x", buf, fd, proxy_host, proxy_port, reply.status);
+               DBG("rejected connection to host=%s fd=" SOCKET_FMT " socks4://%s:%s: reason=%#x", buf, fd, proxy_host, proxy_port, reply.status);
              else
                {
                   memcpy(&d->addr, addrinfo->ai_addr, addrinfo->ai_addrlen);
@@ -3975,7 +3975,7 @@ _efl_net_ip_connect_async_run_socks4_try(Efl_Net_Ip_Connect_Async_Data *d, const
                   d->sockfd = fd;
                   d->error = 0;
                   ret = EINA_TRUE;
-                  DBG("connected to host=%s fd=%d socks4://%s:%s", buf, fd, proxy_host, proxy_port);
+                  DBG("connected to host=%s fd=" SOCKET_FMT " socks4://%s:%s", buf, fd, proxy_host, proxy_port);
                }
           }
      }
@@ -4121,7 +4121,7 @@ _efl_net_ip_connect_async_run_socks4a(Efl_Net_Ip_Connect_Async_Data *d, const ch
         goto end;
      }
 
-   DBG("connected fd=%d to socks4a://%s", fd, proxy);
+   DBG("connected fd=" SOCKET_FMT " to socks4a://%s", fd, proxy);
    EINA_THREAD_CLEANUP_PUSH(_cleanup_close, &fd);
 
    /* we just resolve the port number here */
@@ -4206,7 +4206,7 @@ _efl_net_ip_connect_async_run_socks4a(Efl_Net_Ip_Connect_Async_Data *d, const ch
           }
         EINA_THREAD_CLEANUP_POP(EINA_TRUE); /* freeaddrinfo(results) */
      }
-   EINA_THREAD_CLEANUP_POP(d->sockfd == -1); /* we need fd only on success */
+   EINA_THREAD_CLEANUP_POP(d->sockfd == INVALID_SOCKET); /* we need fd only on success */
  end:
    EINA_THREAD_CLEANUP_POP(EINA_TRUE); /* free(str) */
 }
@@ -4400,7 +4400,7 @@ _efl_net_ip_connect_async_run_socks5_auth_user_pass(SOCKET fd, const char *user,
    if (s != (ssize_t)len)
      {
         if (s == SOCKET_ERROR)
-          DBG("couldn't send user-password authentication to fd=%d %s://%s:%s: %s", fd, proxy_protocol, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+          DBG("couldn't send user-password authentication to fd=" SOCKET_FMT " %s://%s:%s: %s", fd, proxy_protocol, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
         else
           DBG("couldn't send user-password authentication: need %zu, did %zd", len, s);
      }
@@ -4412,7 +4412,7 @@ _efl_net_ip_connect_async_run_socks5_auth_user_pass(SOCKET fd, const char *user,
         if (s != (ssize_t)sizeof(reply))
           {
              if (s == SOCKET_ERROR)
-               DBG("couldn't recv user-password authentication reply from fd=%d %s://%s:%s: %s", fd, proxy_protocol, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+               DBG("couldn't recv user-password authentication reply from fd=" SOCKET_FMT " %s://%s:%s: %s", fd, proxy_protocol, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
              else
                DBG("couldn't recv user-password authentication reply: need %zu, did %zd", len, s);
           }
@@ -4422,7 +4422,7 @@ _efl_net_ip_connect_async_run_socks5_auth_user_pass(SOCKET fd, const char *user,
                DBG("proxy authentication failed user='%s' pass=%hhu (bytes) to proxy %s://%s:%s: reason=%#x", user, pass_len, proxy_protocol, proxy_host, proxy_port, reply[1]);
              else
                {
-                DBG("successfully authenticated user=%s with proxy fd=%d %s://%s:%s", user, fd, proxy_protocol, proxy_host, proxy_port);
+                DBG("successfully authenticated user=%s with proxy fd=" SOCKET_FMT " %s://%s:%s", user, fd, proxy_protocol, proxy_host, proxy_port);
                 ret = EINA_TRUE;
              }
           }
@@ -4461,14 +4461,14 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
    if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
      {
         if (efl_net_ip_port_fmt(buf, sizeof(buf), addrinfo->ai_addr))
-          DBG("resolved address='%s' to %s. Connect using fd=%d socks5://%s:%s", d->address, buf, fd, proxy_host, proxy_port);
+          DBG("resolved address='%s' to %s. Connect using fd=" SOCKET_FMT " socks5://%s:%s", d->address, buf, fd, proxy_host, proxy_port);
      }
 
    s = send(fd, &greeting, sizeof(greeting), MSG_NOSIGNAL);
    if (s != (ssize_t)sizeof(greeting))
      {
         if (s == SOCKET_ERROR)
-          DBG("couldn't request connection to host=%s fd=%d socks5://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+          DBG("couldn't request connection to host=%s fd=" SOCKET_FMT " socks5://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
         else
           DBG("couldn't send proxy request: need %zu, did %zd", sizeof(greeting), s);
      }
@@ -4479,14 +4479,14 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
         if (s != sizeof(greeting_reply))
           {
              if (s == SOCKET_ERROR)
-               DBG("couldn't recv greeting reply of connection to host=%s fd=%d socks5://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+               DBG("couldn't recv greeting reply of connection to host=%s fd=" SOCKET_FMT " socks5://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
              else
                DBG("couldn't recv proxy reply: need %zu, did %zd", sizeof(greeting_reply), s);
           }
         else
           {
              if (greeting_reply.auth != greeting.auths[0])
-               DBG("proxy server rejected authentication %#x trying connection to host=%s fd=%d socks5://%s:%s", greeting.auths[0], buf, fd, proxy_host, proxy_port);
+               DBG("proxy server rejected authentication %#x trying connection to host=%s fd=" SOCKET_FMT " socks5://%s:%s", greeting.auths[0], buf, fd, proxy_host, proxy_port);
              else
                {
                   if ((greeting_reply.auth == EFL_NET_SOCKS5_AUTH_USER_PASS) &&
@@ -4508,7 +4508,7 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
                             if (s != (ssize_t)request_len)
                               {
                                  if (s == SOCKET_ERROR)
-                                   DBG("couldn't request connection to host=%s fd=%d socks5://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+                                   DBG("couldn't request connection to host=%s fd=" SOCKET_FMT " socks5://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
                                  else
                                    DBG("couldn't send proxy request: need %zu, did %zd", request_len, s);
                               }
@@ -4519,14 +4519,14 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
                                  if (s != sizeof(reply))
                                    {
                                       if (s == SOCKET_ERROR)
-                                        DBG("couldn't recv reply of connection to host=%s fd=%d socks5://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+                                        DBG("couldn't recv reply of connection to host=%s fd=" SOCKET_FMT " socks5://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
                                       else
                                         DBG("couldn't recv proxy reply: need %zu, did %zd", sizeof(reply), s);
                                    }
                                  else
                                    {
                                       if (reply.base.status != EFL_NET_SOCKS5_REPLY_STATUS_GRANTED)
-                                        DBG("rejected IPv4 connection to host=%s fd=%d socks5://%s:%s: reason=%#x", buf, fd, proxy_host, proxy_port, reply.base.status);
+                                        DBG("rejected IPv4 connection to host=%s fd=" SOCKET_FMT " socks5://%s:%s: reason=%#x", buf, fd, proxy_host, proxy_port, reply.base.status);
                                       else
                                         {
                                            memcpy(&d->addr, addrinfo->ai_addr, addrinfo->ai_addrlen);
@@ -4534,7 +4534,7 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
                                            d->sockfd = fd;
                                            d->error = 0;
                                            ret = EINA_TRUE;
-                                           DBG("connected IPv4 to host=%s fd=%d socks5://%s:%s", buf, fd, proxy_host, proxy_port);
+                                           DBG("connected IPv4 to host=%s fd=" SOCKET_FMT " socks5://%s:%s", buf, fd, proxy_host, proxy_port);
                                         }
                                    }
                               }
@@ -4545,14 +4545,14 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
                                  if (s != sizeof(reply))
                                    {
                                       if (s == SOCKET_ERROR)
-                                        DBG("couldn't recv reply of connection to host=%s fd=%d socks5://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+                                        DBG("couldn't recv reply of connection to host=%s fd=" SOCKET_FMT " socks5://%s:%s: %s", buf, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
                                       else
                                         DBG("couldn't recv proxy reply: need %zu, did %zd", sizeof(reply), s);
                                    }
                                  else
                                    {
                                       if (reply.base.status != EFL_NET_SOCKS5_REPLY_STATUS_GRANTED)
-                                        DBG("rejected IPv6 connection to host=%s fd=%d socks5://%s:%s: reason=%#x", buf, fd, proxy_host, proxy_port, reply.base.status);
+                                        DBG("rejected IPv6 connection to host=%s fd=" SOCKET_FMT " socks5://%s:%s: reason=%#x", buf, fd, proxy_host, proxy_port, reply.base.status);
                                       else
                                         {
                                            memcpy(&d->addr, addrinfo->ai_addr, addrinfo->ai_addrlen);
@@ -4560,7 +4560,7 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
                                            d->sockfd = fd;
                                            d->error = 0;
                                            ret = EINA_TRUE;
-                                           DBG("connected IPv6 to host=%s fd=%d socks5://%s:%s", buf, fd, proxy_host, proxy_port);
+                                           DBG("connected IPv6 to host=%s fd=" SOCKET_FMT " socks5://%s:%s", buf, fd, proxy_host, proxy_port);
                                         }
                                    }
                               }
@@ -4690,14 +4690,14 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
         goto end;
      }
 
-   DBG("connected fd=%d to socks5h://%s", fd, proxy);
+   DBG("connected fd=" SOCKET_FMT " to socks5h://%s", fd, proxy);
    EINA_THREAD_CLEANUP_PUSH(_cleanup_close, &fd);
 
    s = send(fd, &greeting, sizeof(greeting), MSG_NOSIGNAL);
    if (s != (ssize_t)sizeof(greeting))
      {
         if (s == SOCKET_ERROR)
-          DBG("couldn't request connection to host=%s:%s fd=%d socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+          DBG("couldn't request connection to host=%s:%s fd=" SOCKET_FMT " socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
         else
           DBG("couldn't send proxy request: need %zu, did %zd", sizeof(greeting), s);
      }
@@ -4708,14 +4708,14 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
         if (s != sizeof(greeting_reply))
           {
              if (s == SOCKET_ERROR)
-               DBG("couldn't recv greeting reply of connection to host=%s:%s fd=%d socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+               DBG("couldn't recv greeting reply of connection to host=%s:%s fd=" SOCKET_FMT " socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
              else
                DBG("couldn't recv proxy reply: need %zu, did %zd", sizeof(greeting_reply), s);
           }
         else
           {
              if (greeting_reply.auth != greeting.auths[0])
-               DBG("proxy server rejected authentication %#x trying connection to host=%s:%s fd=%d socks5h://%s:%s", greeting.auths[0], host, port, fd, proxy_host, proxy_port);
+               DBG("proxy server rejected authentication %#x trying connection to host=%s:%s fd=" SOCKET_FMT " socks5h://%s:%s", greeting.auths[0], host, port, fd, proxy_host, proxy_port);
              else
                {
                   if ((greeting_reply.auth == EFL_NET_SOCKS5_AUTH_USER_PASS) &&
@@ -4773,7 +4773,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                                       if (s != (ssize_t)request_len)
                                         {
                                            if (s == SOCKET_ERROR)
-                                             DBG("couldn't request connection to host=%s:%s fd=%d socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+                                             DBG("couldn't request connection to host=%s:%s fd=" SOCKET_FMT " socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
                                            else
                                              DBG("couldn't send proxy request: need %zu, did %zd", request_len, s);
                                         }
@@ -4785,14 +4785,14 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                                            if (s != sizeof(reply))
                                              {
                                                 if (s == SOCKET_ERROR)
-                                                  DBG("couldn't recv reply of connection to host=%s:%s fd=%d socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+                                                  DBG("couldn't recv reply of connection to host=%s:%s fd=" SOCKET_FMT " socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
                                                 else
                                                   DBG("couldn't recv proxy reply: need %zu, did %zd", sizeof(reply), s);
                                              }
                                            else
                                              {
                                                 if (reply.status != EFL_NET_SOCKS5_REPLY_STATUS_GRANTED)
-                                                  DBG("rejected connection to host=%s:%s fd=%d socks5h://%s:%s: reason=%#x", host, port, fd, proxy_host, proxy_port, reply.status);
+                                                  DBG("rejected connection to host=%s:%s fd=" SOCKET_FMT " socks5h://%s:%s: reason=%#x", host, port, fd, proxy_host, proxy_port, reply.status);
                                                 else if (reply.address_type == EFL_NET_SOCKS5_ADDRESS_TYPE_IPV4)
                                                   {
                                                      Efl_Net_Socks5_Address_Ipv4 ipv4;
@@ -4801,7 +4801,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                                                      if (s != sizeof(ipv4))
                                                        {
                                                           if (s == SOCKET_ERROR)
-                                                            DBG("couldn't recv ipv4 of connection to host=%s:%s fd=%d socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+                                                            DBG("couldn't recv ipv4 of connection to host=%s:%s fd=" SOCKET_FMT " socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
                                                           else
                                                             DBG("couldn't recv proxy ipv4: need %zu, did %zd", sizeof(ipv4), s);
                                                        }
@@ -4813,7 +4813,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                                                           d->addrlen = sizeof(struct sockaddr_in);
                                                           d->sockfd = fd;
                                                           d->error = 0;
-                                                          DBG("connected IPv4 to host=%s:%s fd=%d socks5h://%s:%s", host, port, fd, proxy_host, proxy_port);
+                                                          DBG("connected IPv4 to host=%s:%s fd=" SOCKET_FMT " socks5h://%s:%s", host, port, fd, proxy_host, proxy_port);
                                                        }
                                                   }
                                                 else if (reply.address_type == EFL_NET_SOCKS5_ADDRESS_TYPE_IPV6)
@@ -4824,7 +4824,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                                                      if (s != sizeof(ipv6))
                                                        {
                                                           if (s == SOCKET_ERROR)
-                                                            DBG("couldn't recv ipv6 of connection to host=%s:%s fd=%d socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
+                                                            DBG("couldn't recv ipv6 of connection to host=%s:%s fd=" SOCKET_FMT " socks5h://%s:%s: %s", host, port, fd, proxy_host, proxy_port, eina_error_msg_get(efl_net_socket_error_get()));
                                                           else
                                                             DBG("couldn't recv proxy ipv6: need %zu, did %zd", sizeof(ipv6), s);
                                                        }
@@ -4836,13 +4836,13 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                                                           d->addrlen = sizeof(struct sockaddr_in);
                                                           d->sockfd = fd;
                                                           d->error = 0;
-                                                          DBG("connected IPv6 to host=%s:%s fd=%d socks5h://%s:%s", host, port, fd, proxy_host, proxy_port);
+                                                          DBG("connected IPv6 to host=%s:%s fd=" SOCKET_FMT " socks5h://%s:%s", host, port, fd, proxy_host, proxy_port);
                                                        }
                                                   }
                                                 else
                                                   {
                                                      /* most proxy servers will return a failure instead of this, but let's guard and log */
-                                                     DBG("couldn't resolve host %s:%s fd=%d socks5h://%s:%s",  host, port, fd, proxy_host, proxy_port);
+                                                     DBG("couldn't resolve host %s:%s fd=" SOCKET_FMT " socks5h://%s:%s",  host, port, fd, proxy_host, proxy_port);
                                                   }
                                              }
                                         }
@@ -4857,7 +4857,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                }
           }
      }
-   EINA_THREAD_CLEANUP_POP(d->sockfd == -1); /* we need fd only on success */
+   EINA_THREAD_CLEANUP_POP(d->sockfd == INVALID_SOCKET); /* we need fd only on success */
  end:
    EINA_THREAD_CLEANUP_POP(EINA_TRUE); /* free(str) */
 }
@@ -5044,7 +5044,7 @@ _efl_net_ip_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
         if (flags < 0)
           {
              d->error = errno;
-             ERR("fcntl(%d, F_GETFD): %s", d->sockfd, strerror(errno));
+             ERR("fcntl(" SOCKET_FMT ", F_GETFD): %s", d->sockfd, strerror(errno));
              closesocket(d->sockfd);
              d->sockfd = INVALID_SOCKET;
           }
@@ -5054,7 +5054,7 @@ _efl_net_ip_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
              if (fcntl(d->sockfd, F_SETFD, flags) < 0)
                {
                   d->error = errno;
-                  ERR("fcntl(%d, F_SETFD, %#x): %s", d->sockfd, flags, strerror(errno));
+                  ERR("fcntl(" SOCKET_FMT ", F_SETFD, %#x): %s", d->sockfd, flags, strerror(errno));
                   closesocket(d->sockfd);
                   d->sockfd = INVALID_SOCKET;
                }

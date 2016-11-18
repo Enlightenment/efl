@@ -81,7 +81,7 @@ _efl_net_dialer_unix_connect_timeout(void *data, const Efl_Event *ev EINA_UNUSED
 }
 
 static void
-_efl_net_dialer_unix_connected(void *data, const struct sockaddr *addr, socklen_t addrlen EINA_UNUSED, int sockfd, Eina_Error err)
+_efl_net_dialer_unix_connected(void *data, const struct sockaddr *addr, socklen_t addrlen EINA_UNUSED, SOCKET sockfd, Eina_Error err)
 {
    Eo *o = data;
    Efl_Net_Dialer_Unix_Data *pd = efl_data_scope_get(o, MY_CLASS);
@@ -102,7 +102,7 @@ _efl_net_dialer_unix_connected(void *data, const struct sockaddr *addr, socklen_
    else
      {
         err = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
-        efl_loop_fd_set(o, INVALID_SOCKET);
+        efl_loop_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
         closesocket(sockfd);
         goto error;
      }

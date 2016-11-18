@@ -33,9 +33,11 @@ typedef struct _Efl_Net_Socket_Unix_Data
 } Efl_Net_Socket_Unix_Data;
 
 EOLIAN static void
-_efl_net_socket_unix_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Unix_Data *pd EINA_UNUSED, int fd)
+_efl_net_socket_unix_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Unix_Data *pd EINA_UNUSED, int pfd)
 {
-   efl_loop_fd_set(efl_super(o, MY_CLASS), fd);
+   SOCKET fd = (SOCKET)pfd;
+
+   efl_loop_fd_set(efl_super(o, MY_CLASS), pfd);
 
    if (fd != INVALID_SOCKET)
      {
@@ -49,7 +51,7 @@ _efl_net_socket_unix_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Unix_Data *pd EINA
 
         addrlen = sizeof(addr);
         if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) != 0)
-          ERR("getsockname(%d): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
+          ERR("getsockname(" SOCKET_FMT "): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         else
           {
              char str[sizeof(addr) + sizeof("abstract:")];
@@ -62,7 +64,7 @@ _efl_net_socket_unix_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Unix_Data *pd EINA
 
         addrlen = sizeof(addr);
         if (getpeername(fd, (struct sockaddr *)&addr, &addrlen) != 0)
-          ERR("getpeername(%d): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
+          ERR("getpeername(" SOCKET_FMT "): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         else
           {
              char str[sizeof(addr) + sizeof("abstract:")];

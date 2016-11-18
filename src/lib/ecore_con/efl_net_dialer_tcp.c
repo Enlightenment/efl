@@ -112,7 +112,7 @@ _efl_net_dialer_tcp_connected(void *data, const struct sockaddr *addr, socklen_t
    else
      {
         err = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
-        efl_loop_fd_set(o, INVALID_SOCKET);
+        efl_loop_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
         closesocket(sockfd);
         goto error;
      }

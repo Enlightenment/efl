@@ -132,9 +132,9 @@ _efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED
              int enable = 1;
 #endif
              if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST, &enable, sizeof(enable)) == 0)
-               DBG("enabled SO_BROADCAST for socket=%d", fd);
+               DBG("enabled SO_BROADCAST for socket=" SOCKET_FMT, fd);
              else
-               WRN("could not enable SO_BROADCAST for socket=%d: %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
+               WRN("could not enable SO_BROADCAST for socket=" SOCKET_FMT ": %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
           }
      }
    else if (family == AF_INET6)
@@ -148,13 +148,13 @@ _efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED
              if (setsockopt(fd, IPPROTO_IPV6, IPV6_JOIN_GROUP, &mreq, sizeof(mreq)) == 0)
                {
                   efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr);
-                  DBG("joined multicast group %s socket=%d", buf, fd);
+                  DBG("joined multicast group %s socket=" SOCKET_FMT, buf, fd);
                }
              else
                {
                   err = efl_net_socket_error_get();
                   efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr);
-                  ERR("could not join multicast group %s socket=%d: %s", buf, fd, eina_error_msg_get(err));
+                  ERR("could not join multicast group %s socket=" SOCKET_FMT ": %s", buf, fd, eina_error_msg_get(err));
                   goto error;
                }
           }
@@ -170,7 +170,7 @@ _efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED
 
  error:
    efl_net_socket_fd_family_set(o, AF_UNSPEC);
-   efl_loop_fd_set(o, INVALID_SOCKET);
+   efl_loop_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
    closesocket(fd);
    return err;
 }

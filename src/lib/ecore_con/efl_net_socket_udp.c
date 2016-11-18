@@ -140,14 +140,15 @@ _efl_net_socket_udp_bind(Eo *o, Efl_Net_Socket_Udp_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_socket_udp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, int fd)
+_efl_net_socket_udp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, int pfd)
 {
+   SOCKET fd = (SOCKET)pfd;
    Eina_List *node;
    struct sockaddr_storage addr;
    socklen_t addrlen;
    int family;
 
-   efl_loop_fd_set(efl_super(o, MY_CLASS), fd);
+   efl_loop_fd_set(efl_super(o, MY_CLASS), pfd);
 
    if (fd == INVALID_SOCKET) return;
 
@@ -197,7 +198,7 @@ _efl_net_socket_udp_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, int f
 
    addrlen = sizeof(addr);
    if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) != 0)
-     ERR("getsockname(%d): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
+     ERR("getsockname(" SOCKET_FMT "): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
    else
      {
         char str[INET6_ADDRSTRLEN + sizeof("[]:65536")];
@@ -227,7 +228,8 @@ _cork_option_get(void)
 EOLIAN static Eina_Bool
 _efl_net_socket_udp_cork_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool cork)
 {
-   int value, fd, option;
+   SOCKET fd;
+   int value, option;
    Eina_Bool old = pd->cork;
 
    option = _cork_option_get();
@@ -246,7 +248,7 @@ _efl_net_socket_udp_cork_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool cork)
    value = cork;
    if (setsockopt(fd, IPPROTO_UDP, option, &value, sizeof(value)) != 0)
      {
-        ERR("setsockopt(%d, IPPROTO_UDP, 0x%x, %d): %s",
+        ERR("setsockopt(" SOCKET_FMT ", IPPROTO_UDP, 0x%x, %d): %s",
             fd, option, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->cork = old;
         return EINA_FALSE;
@@ -258,7 +260,8 @@ _efl_net_socket_udp_cork_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool cork)
 EOLIAN static Eina_Bool
 _efl_net_socket_udp_cork_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
 {
-   int value = 0, fd;
+   SOCKET fd;
+   int value = 0;
    socklen_t valuelen;
    int option;
 
@@ -278,7 +281,7 @@ _efl_net_socket_udp_cork_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
    valuelen = sizeof(value);
    if (getsockopt(fd, IPPROTO_UDP, option, &value, &valuelen) != 0)
      {
-        ERR("getsockopt(%d, IPPROTO_UDP, 0x%x): %s",
+        ERR("getsockopt(" SOCKET_FMT ", IPPROTO_UDP, 0x%x): %s",
             fd, option, eina_error_msg_get(efl_net_socket_error_get()));
         return EINA_FALSE;
      }
@@ -305,7 +308,7 @@ _efl_net_socket_udp_dont_route_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool
    if (setsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &value, sizeof(value)) != 0)
      {
         Eina_Error err = efl_net_socket_error_get();
-        ERR("setsockopt(%d, SOL_SOCKET, SO_DONTROUTE, %u): %s", fd, dont_route, eina_error_msg_get(err));
+        ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_DONTROUTE, %u): %s", fd, dont_route, eina_error_msg_get(err));
         pd->dont_route = old;
         return EINA_FALSE;
      }
@@ -333,7 +336,7 @@ _efl_net_socket_udp_dont_route_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
    if (getsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &value, &valuelen) != 0)
      {
         Eina_Error err = efl_net_socket_error_get();
-        ERR("getsockopt(%d, SOL_SOCKET, SO_DONTROUTE): %s", fd, eina_error_msg_get(err));
+        ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_DONTROUTE): %s", fd, eina_error_msg_get(err));
         return EINA_FALSE;
      }
 
@@ -345,7 +348,8 @@ _efl_net_socket_udp_dont_route_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
 EOLIAN static Eina_Bool
 _efl_net_socket_udp_reuse_address_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool reuse_address)
 {
-   int value, fd;
+   SOCKET fd;
+   int value;
    Eina_Bool old = pd->reuse_address;
 
    pd->reuse_address = reuse_address;
@@ -356,7 +360,7 @@ _efl_net_socket_udp_reuse_address_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_B
    value = reuse_address;
    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) != 0)
      {
-        ERR("setsockopt(%d, SOL_SOCKET, SO_REUSEADDR, %d): %s",
+        ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEADDR, %d): %s",
             fd, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->reuse_address = old;
         return EINA_FALSE;
@@ -368,7 +372,8 @@ _efl_net_socket_udp_reuse_address_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_B
 EOLIAN static Eina_Bool
 _efl_net_socket_udp_reuse_address_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
 {
-   int value = 0, fd;
+   SOCKET fd;
+   int value = 0;
    socklen_t valuelen;
 
    fd = efl_loop_fd_get(o);
@@ -380,7 +385,7 @@ _efl_net_socket_udp_reuse_address_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
    valuelen = sizeof(value);
    if (getsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &value, &valuelen) != 0)
      {
-        ERR("getsockopt(%d, SOL_SOCKET, SO_REUSEADDR): %s",
+        ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEADDR): %s",
             fd, eina_error_msg_get(efl_net_socket_error_get()));
         return EINA_FALSE;
      }
@@ -393,7 +398,8 @@ EOLIAN static Eina_Bool
 _efl_net_socket_udp_reuse_port_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool reuse_port)
 {
 #ifdef SO_REUSEPORT
-   int value, fd;
+   SOCKET fd;
+   int value;
    Eina_Bool old = pd->reuse_port;
 #endif
 
@@ -406,7 +412,7 @@ _efl_net_socket_udp_reuse_port_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool
    value = reuse_port;
    if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, sizeof(value)) != 0)
      {
-        ERR("setsockopt(%d, SOL_SOCKET, SO_REUSEPORT, %d): %s",
+        ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEPORT, %d): %s",
             fd, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->reuse_port = old;
         return EINA_FALSE;
@@ -420,7 +426,8 @@ EOLIAN static Eina_Bool
 _efl_net_socket_udp_reuse_port_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
 {
 #ifdef SO_REUSEPORT
-   int value = 0, fd;
+   SOCKET fd;
+   int value = 0;
    socklen_t valuelen;
 
    fd = efl_loop_fd_get(o);
@@ -432,7 +439,7 @@ _efl_net_socket_udp_reuse_port_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
    valuelen = sizeof(value);
    if (getsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, &valuelen) != 0)
      {
-        ERR("getsockopt(%d, SOL_SOCKET, SO_REUSEPORT): %s",
+        ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEPORT): %s",
             fd, eina_error_msg_get(efl_net_socket_error_get()));
         return EINA_FALSE;
      }

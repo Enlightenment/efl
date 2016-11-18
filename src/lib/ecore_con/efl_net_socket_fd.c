@@ -118,23 +118,25 @@ _efl_net_socket_fd_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, SOCKET fd)
 static void
 _efl_net_socket_fd_unset(Eo *o)
 {
-   efl_io_reader_fd_reader_fd_set(o, INVALID_SOCKET);
-   efl_io_writer_fd_writer_fd_set(o, INVALID_SOCKET);
-   efl_io_closer_fd_closer_fd_set(o, INVALID_SOCKET);
+   efl_io_reader_fd_reader_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
+   efl_io_writer_fd_writer_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
+   efl_io_closer_fd_closer_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
 
    efl_net_socket_address_local_set(o, NULL);
    efl_net_socket_address_remote_set(o, NULL);
 }
 
 EOLIAN static void
-_efl_net_socket_fd_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, int fd)
+_efl_net_socket_fd_efl_loop_fd_fd_set(Eo *o, Efl_Net_Socket_Fd_Data *pd, int pfd)
 {
+   SOCKET fd = (SOCKET)pfd;
+
    if ((pd->family == AF_UNSPEC) && (fd != INVALID_SOCKET))
      {
         struct sockaddr_storage addr;
         socklen_t addrlen = sizeof(addr);
         if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) != 0)
-          ERR("getsockname(%d): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
+          ERR("getsockname(" SOCKET_FMT "): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         else
           efl_net_socket_fd_family_set(o, addr.ss_family);
      }
@@ -161,9 +163,9 @@ _efl_net_socket_fd_efl_io_closer_close(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
     * retain efl_io_closer_fd_closer_fd_get() so close(super()) works
     * and we emit the events with proper addresses.
     */
-   efl_loop_fd_set(efl_super(o, MY_CLASS), INVALID_SOCKET);
+   efl_loop_fd_set(efl_super(o, MY_CLASS), SOCKET_TO_LOOP_FD(INVALID_SOCKET));
 
-   efl_io_closer_fd_closer_fd_set(o, INVALID_SOCKET);
+   efl_io_closer_fd_closer_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
    if (closesocket(fd) != 0) ret = efl_net_socket_error_get();
    efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
 
@@ -176,7 +178,7 @@ _efl_net_socket_fd_efl_io_closer_close(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
 EOLIAN static Eina_Bool
 _efl_net_socket_fd_efl_io_closer_closed_get(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED)
 {
-   return efl_io_closer_fd_closer_fd_get(o) == INVALID_SOCKET;
+   return (SOCKET)efl_io_closer_fd_closer_fd_get(o) == INVALID_SOCKET;
 }
 
 EOLIAN static Eina_Error

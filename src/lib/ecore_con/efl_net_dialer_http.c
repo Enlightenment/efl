@@ -377,10 +377,10 @@ _efl_net_dialer_http_curlm_event_fd_read(void *data, const Efl_Event *event)
    SOCKET fd = efl_loop_fd_get(event->object);
    CURLMcode r;
 
-   ERR("XXX socket=%d CURL_CSELECT_IN", fd);
+   ERR("XXX socket=" SOCKET_FMT " CURL_CSELECT_IN", fd);
    r = curl_multi_socket_action(cm->multi, fd, CURL_CSELECT_IN, &cm->running);
    if (r != CURLM_OK)
-     ERR("socket action CURL_CSELECT_IN fd=%d failed: %s", fd, curl_multi_strerror(r));
+     ERR("socket action CURL_CSELECT_IN fd=" SOCKET_FMT " failed: %s", fd, curl_multi_strerror(r));
 
    _efl_net_dialer_http_curlm_check(cm);
 }
@@ -392,10 +392,10 @@ _efl_net_dialer_http_curlm_event_fd_write(void *data, const Efl_Event *event)
    SOCKET fd = efl_loop_fd_get(event->object);
    CURLMcode r;
 
-   ERR("XXX socket=%d CURL_CSELECT_OUT", fd);
+   ERR("XXX socket=" SOCKET_FMT " CURL_CSELECT_OUT", fd);
    r = curl_multi_socket_action(cm->multi, fd, CURL_CSELECT_OUT, &cm->running);
    if (r != CURLM_OK)
-     ERR("socket action CURL_CSELECT_OUT fd=%d failed: %s", fd, curl_multi_strerror(r));
+     ERR("socket action CURL_CSELECT_OUT fd=" SOCKET_FMT " failed: %s", fd, curl_multi_strerror(r));
 
    _efl_net_dialer_http_curlm_check(cm);
 }
@@ -472,7 +472,7 @@ _efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, vo
         efl_key_data_set(fdhandler, "curl_flags", (void *)(intptr_t)what);
      }
 
-   ERR("XXX finished manage fd=%d, what=%#x, cm=%p, fdhandler=%p", fd, what, cm, fdhandler);
+   ERR("XXX finished manage fd=" SOCKET_FMT ", what=%#x, cm=%p, fdhandler=%p", fd, what, cm, fdhandler);
 
    return 0;
 }
@@ -494,7 +494,7 @@ _efl_net_dialer_http_curlm_event_fd(void *data, Ecore_Fd_Handler *fdhandler)
    fd = ecore_main_fd_handler_fd_get(fdhandler);
    r = curl_multi_socket_action(cm->multi, fd, flags, &cm->running);
    if (r != CURLM_OK)
-     ERR("socket action %#x fd=%d failed: %s", flags, fd, curl_multi_strerror(r));
+     ERR("socket action %#x fd=" SOCKET_FMT " failed: %s", flags, fd, curl_multi_strerror(r));
 
    _efl_net_dialer_http_curlm_check(cm);
 
@@ -540,8 +540,8 @@ _efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, vo
           }
      }
 
-   DBG("dialer=%p fdhandler=%p, fd=%d, curl_easy=%p, flags=%#x",
-       dialer, pd->fdhandler, fd, e, what);
+   DBG("dialer=%p fdhandler=%p, fd=" SOCKET_FMT ", curl_easy=%p, flags=%#x",
+       dialer, pd->fdhandler, (SOCKET)fd, e, what);
 
    return 0;
 }
@@ -1113,7 +1113,7 @@ _efl_net_dialer_http_socket_open(void *data, curlsocktype purpose EINA_UNUSED, s
      ERR("could not create curl socket family=%d, type=%d, protocol=%d",
          addr->family, addr->socktype, addr->protocol);
    else
-     DBG("socket(%d, %d, %d) = %d",
+     DBG("socket(%d, %d, %d) = " SOCKET_FMT,
          addr->family, addr->socktype, addr->protocol, pd->fd);
 
    return pd->fd;
@@ -1641,7 +1641,7 @@ _efl_net_dialer_http_efl_io_writer_write(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ei
    if (rm != CURLM_OK)
      {
         err = _curlcode_to_eina_error(rm);
-        ERR("dialer=%p could not trigger socket=%d (fdhandler=%p) action: %s",
+        ERR("dialer=%p could not trigger socket=" SOCKET_FMT " (fdhandler=%p) action: %s",
             o, pd->fd, pd->fdhandler, eina_error_msg_get(err));
         goto error;
      }
@@ -1763,7 +1763,7 @@ _efl_net_dialer_http_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Net_
    flags = fcntl(pd->fd, F_GETFD);
    if (flags < 0)
      {
-        ERR("fcntl(%d, F_GETFD): %s", pd->fd, strerror(errno));
+        ERR("fcntl(" SOCKET_FMT ", F_GETFD): %s", pd->fd, strerror(errno));
         pd->close_on_exec = old;
         return EINA_FALSE;
      }
@@ -1773,7 +1773,7 @@ _efl_net_dialer_http_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Net_
      flags &= (~FD_CLOEXEC);
    if (fcntl(pd->fd, F_SETFD, flags) < 0)
      {
-        ERR("fcntl(%d, F_SETFD, %#x): %s", pd->fd, flags, strerror(errno));
+        ERR("fcntl(" SOCKET_FMT ", F_SETFD, %#x): %s", pd->fd, flags, strerror(errno));
         pd->close_on_exec = old;
         return EINA_FALSE;
      }

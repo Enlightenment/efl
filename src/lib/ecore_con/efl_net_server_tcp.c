@@ -91,7 +91,7 @@ _efl_net_server_tcp_resolved_bind(Eo *o, Efl_Net_Server_Tcp_Data *pd, const stru
      {
         err = efl_net_socket_error_get();
         efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr);
-        DBG("bind(%d, %s): %s", fd, buf, eina_error_msg_get(err));
+        DBG("bind(" SOCKET_FMT ", %s): %s", fd, buf, eina_error_msg_get(err));
         goto error;
      }
 
@@ -99,26 +99,26 @@ _efl_net_server_tcp_resolved_bind(Eo *o, Efl_Net_Server_Tcp_Data *pd, const stru
    if (r != 0)
      {
         err = efl_net_socket_error_get();
-        DBG("listen(%d): %s", fd, eina_error_msg_get(err));
+        DBG("listen(" SOCKET_FMT "): %s", fd, eina_error_msg_get(err));
         goto error;
      }
 
    if (getsockname(fd, addr->ai_addr, &addrlen) != 0)
      {
         err = efl_net_socket_error_get();
-        ERR("getsockname(%d): %s", fd, eina_error_msg_get(err));
+        ERR("getsockname(" SOCKET_FMT "): %s", fd, eina_error_msg_get(err));
         goto error;
      }
    else if (efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr))
      efl_net_server_address_set(o, buf);
 
-   DBG("fd=%d serving at %s", fd, buf);
+   DBG("fd=" SOCKET_FMT " serving at %s", fd, buf);
    efl_net_server_serving_set(o, EINA_TRUE);
    return 0;
 
  error:
    efl_net_server_fd_family_set(o, AF_UNSPEC);
-   efl_loop_fd_set(o, INVALID_SOCKET);
+   efl_loop_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
    closesocket(fd);
    return err;
 }
@@ -157,7 +157,7 @@ _efl_net_server_tcp_resolved(void *data, const char *host EINA_UNUSED, const cha
 EOLIAN static Eina_Error
 _efl_net_server_tcp_efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Tcp_Data *pd EINA_UNUSED, const char *address)
 {
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_loop_fd_get(o) != INVALID_SOCKET, EALREADY);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((SOCKET)efl_loop_fd_get(o) != INVALID_SOCKET, EALREADY);
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
 
 #ifndef HAVE_SYSTEMD
@@ -169,7 +169,7 @@ _efl_net_server_tcp_efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Tcp_
       Eina_Error err;
       struct sockaddr_storage *addr;
       socklen_t addrlen;
-      int fd;
+      SOCKET fd;
 
       err = efl_net_ip_socket_activate_check(address, AF_UNSPEC, SOCK_STREAM, &listening);
       if (err) return err;
@@ -184,7 +184,7 @@ _efl_net_server_tcp_efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Tcp_
            if (listen(fd, 0) != 0)
              {
                 err = efl_net_socket_error_get();
-                DBG("listen(%d): %s", fd, eina_error_msg_get(err));
+                DBG("listen(" SOCKET_FMT "): %s", fd, eina_error_msg_get(err));
                 goto error;
              }
         }
@@ -193,19 +193,19 @@ _efl_net_server_tcp_efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Tcp_
       if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) != 0)
         {
            err = efl_net_socket_error_get();
-           ERR("getsockname(%d): %s", fd, eina_error_msg_get(err));
+           ERR("getsockname(" SOCKET_FMT "): %s", fd, eina_error_msg_get(err));
            goto error;
         }
       else if (efl_net_ip_port_fmt(buf, sizeof(buf), (struct sockaddr *)&addr))
         efl_net_server_address_set(o, buf);
 
-      DBG("fd=%d serving at %s", fd, address);
+      DBG("fd=" SOCKET_FMT " serving at %s", fd, address);
       efl_net_server_serving_set(o, EINA_TRUE);
       return 0;
 
    error:
       efl_net_server_fd_family_set(o, AF_UNSPEC);
-      efl_loop_fd_set(o, INVALID_SOCKET);
+      efl_loop_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
       closesocket(fd);
       return err;
    }
@@ -270,7 +270,7 @@ _efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, Efl_Net_Server_Tcp_Data 
                         efl_loop_fd_set(efl_added, client_fd));
    if (!client)
      {
-        ERR("could not create client object fd=%d", client_fd);
+        ERR("could not create client object fd=" SOCKET_FMT, (SOCKET)client_fd);
         closesocket(client_fd);
         return;
      }
@@ -295,7 +295,7 @@ _efl_net_server_tcp_efl_net_server_fd_client_reject(Eo *o, Efl_Net_Server_Tcp_Da
 
    addrlen = sizeof(addr);
    if (getpeername(client_fd, (struct sockaddr *)&addr, &addrlen) != 0)
-     ERR("getpeername(%d): %s", client_fd, eina_error_msg_get(efl_net_socket_error_get()));
+     ERR("getpeername(" SOCKET_FMT "): %s", (SOCKET)client_fd, eina_error_msg_get(efl_net_socket_error_get()));
    else
      efl_net_ip_port_fmt(str, sizeof(str), (struct sockaddr *)&addr);
 
@@ -324,7 +324,7 @@ _efl_net_server_tcp_ipv6_only_set(Eo *o, Efl_Net_Server_Tcp_Data *pd, Eina_Bool 
 
    if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &value, sizeof(value)) != 0)
      {
-        ERR("could not set socket=%d IPV6_V6ONLY=%d: %s", fd, value, eina_error_msg_get(efl_net_socket_error_get()));
+        ERR("could not set socket=" SOCKET_FMT " IPV6_V6ONLY=%d: %s", fd, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->ipv6_only = old;
      }
 #endif
@@ -349,7 +349,7 @@ _efl_net_server_tcp_ipv6_only_get(Eo *o EINA_UNUSED, Efl_Net_Server_Tcp_Data *pd
    valuelen = sizeof(value);
    if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &value, &valuelen) != 0)
      {
-        WRN("getsockopt(%d, IPPROTO_IPV6, IPV6_V6ONLY): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
+        WRN("getsockopt(" SOCKET_FMT ", IPPROTO_IPV6, IPV6_V6ONLY): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         goto end;
      }
    pd->ipv6_only = !!value;

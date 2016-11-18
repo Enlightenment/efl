@@ -107,7 +107,7 @@ _efl_net_server_fd_efl_object_destructor(Eo *o, Efl_Net_Server_Fd_Data *pd)
 
    if (fd != INVALID_SOCKET)
      {
-        efl_loop_fd_set(o, INVALID_SOCKET);
+        efl_loop_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
         closesocket(fd);
      }
 
@@ -117,9 +117,11 @@ _efl_net_server_fd_efl_object_destructor(Eo *o, Efl_Net_Server_Fd_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_server_fd_efl_loop_fd_fd_set(Eo *o, Efl_Net_Server_Fd_Data *pd, int fd)
+_efl_net_server_fd_efl_loop_fd_fd_set(Eo *o, Efl_Net_Server_Fd_Data *pd, int pfd)
 {
-   efl_loop_fd_set(efl_super(o, MY_CLASS), fd);
+   SOCKET fd = (SOCKET)pfd;
+
+   efl_loop_fd_set(efl_super(o, MY_CLASS), pfd);
 
    if (fd != INVALID_SOCKET)
      {
@@ -203,7 +205,7 @@ _efl_net_server_fd_efl_net_server_serving_get(Eo *o EINA_UNUSED, Efl_Net_Server_
 EOLIAN static Eina_Error
 _efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Fd_Data *pd EINA_UNUSED, const char *address)
 {
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_loop_fd_get(o) != INVALID_SOCKET, EALREADY);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((SOCKET)efl_loop_fd_get(o) != INVALID_SOCKET, EALREADY);
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
 
 #ifndef HAVE_SYSTEMD
@@ -228,17 +230,17 @@ _efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Fd_Data *pd EINA_UNUSED
 
         if (getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &family, &len) != 0)
           {
-             WRN("socket %d failed to return family: %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
+             WRN("socket " SOCKET_FMT " failed to return family: %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
              return EINVAL;
           }
 
         sd_fd_index++;
         efl_net_server_fd_family_set(o, family);
         efl_loop_fd_set(o, fd);
-        if (efl_loop_fd_get(o) == INVALID_SOCKET)
+        if ((SOCKET)efl_loop_fd_get(o) == INVALID_SOCKET)
           {
              sd_fd_index--;
-             WRN("socket %d could not be used by %p (%s)",
+             WRN("socket " SOCKET_FMT " could not be used by %p (%s)",
                  fd, o, efl_class_name_get(efl_class_get(o)));
              return EINVAL;
           }
@@ -256,7 +258,8 @@ EOLIAN static Eina_Bool
 _efl_net_server_fd_close_on_exec_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Bool close_on_exec)
 {
 #ifdef FD_CLOEXEC
-   int flags, fd;
+   SOCKET fd;
+   int flags;
    Eina_Bool old = pd->close_on_exec;
 #endif
 
@@ -269,7 +272,7 @@ _efl_net_server_fd_close_on_exec_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
    flags = fcntl(fd, F_GETFD);
    if (flags < 0)
      {
-        ERR("fcntl(%d, F_GETFD): %s", fd, strerror(errno));
+        ERR("fcntl(" SOCKET_FMT ", F_GETFD): %s", fd, strerror(errno));
         pd->close_on_exec = old;
         return EINA_FALSE;
      }
@@ -279,7 +282,7 @@ _efl_net_server_fd_close_on_exec_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
      flags &= (~FD_CLOEXEC);
    if (fcntl(fd, F_SETFD, flags) < 0)
      {
-        ERR("fcntl(%d, F_SETFD, %#x): %s", fd, flags, strerror(errno));
+        ERR("fcntl(" SOCKET_FMT ", F_SETFD, %#x): %s", fd, flags, strerror(errno));
         pd->close_on_exec = old;
         return EINA_FALSE;
      }
@@ -292,7 +295,8 @@ EOLIAN static Eina_Bool
 _efl_net_server_fd_close_on_exec_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
 {
 #ifdef FD_CLOEXEC
-   int flags, fd;
+   SOCKET fd;
+   int flags;
 
    fd = efl_loop_fd_get(o);
    if (fd == INVALID_SOCKET) return pd->close_on_exec;
@@ -303,7 +307,7 @@ _efl_net_server_fd_close_on_exec_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
    flags = fcntl(fd, F_GETFD);
    if (flags < 0)
      {
-        ERR("fcntl(%d, F_GETFD): %s", fd, strerror(errno));
+        ERR("fcntl(" SOCKET_FMT ", F_GETFD): %s", fd, strerror(errno));
         return EINA_FALSE;
      }
 
@@ -315,7 +319,8 @@ _efl_net_server_fd_close_on_exec_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
 EOLIAN static Eina_Bool
 _efl_net_server_fd_reuse_address_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Bool reuse_address)
 {
-   int value, fd;
+   SOCKET fd;
+   int value;
    Eina_Bool old = pd->reuse_address;
 
    pd->reuse_address = reuse_address;
@@ -326,7 +331,7 @@ _efl_net_server_fd_reuse_address_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
    value = reuse_address;
    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) != 0)
      {
-        ERR("setsockopt(%d, SOL_SOCKET, SO_REUSEADDR, %d): %s",
+        ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEADDR, %d): %s",
             fd, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->reuse_address = old;
         return EINA_FALSE;
@@ -338,7 +343,8 @@ _efl_net_server_fd_reuse_address_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
 EOLIAN static Eina_Bool
 _efl_net_server_fd_reuse_address_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
 {
-   int value = 0, fd;
+   SOCKET fd;
+   int value = 0;
    socklen_t valuelen;
 
    fd = efl_loop_fd_get(o);
@@ -350,7 +356,7 @@ _efl_net_server_fd_reuse_address_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
    valuelen = sizeof(value);
    if (getsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &value, &valuelen) != 0)
      {
-        ERR("getsockopt(%d, SOL_SOCKET, SO_REUSEADDR): %s",
+        ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEADDR): %s",
             fd, eina_error_msg_get(efl_net_socket_error_get()));
         return EINA_FALSE;
      }
@@ -363,7 +369,8 @@ EOLIAN static Eina_Bool
 _efl_net_server_fd_reuse_port_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Bool reuse_port)
 {
 #ifdef SO_REUSEPORT
-   int value, fd;
+   SOCKET fd;
+   int value;
    Eina_Bool old = pd->reuse_port;
 #endif
 
@@ -376,7 +383,7 @@ _efl_net_server_fd_reuse_port_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Bool r
    value = reuse_port;
    if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, sizeof(value)) != 0)
      {
-        ERR("setsockopt(%d, SOL_SOCKET, SO_REUSEPORT, %d): %s",
+        ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEPORT, %d): %s",
             fd, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->reuse_port = old;
         return EINA_FALSE;
@@ -390,7 +397,8 @@ EOLIAN static Eina_Bool
 _efl_net_server_fd_reuse_port_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
 {
 #ifdef SO_REUSEPORT
-   int value = 0, fd;
+   SOCKET fd;
+   int value = 0;
    socklen_t valuelen;
 
    fd = efl_loop_fd_get(o);
@@ -402,7 +410,7 @@ _efl_net_server_fd_reuse_port_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
    valuelen = sizeof(value);
    if (getsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, &valuelen) != 0)
      {
-        ERR("getsockopt(%d, SOL_SOCKET, SO_REUSEPORT): %s",
+        ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEPORT): %s",
             fd, eina_error_msg_get(efl_net_socket_error_get()));
         return EINA_FALSE;
      }
@@ -451,7 +459,7 @@ _efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Server_Fd_Data *pd)
    if (client == INVALID_SOCKET)
      {
         Eina_Error err = efl_net_socket_error_get();
-        ERR("accept(%d): %s", fd, eina_error_msg_get(err));
+        ERR("accept(" SOCKET_FMT "): %s", fd, eina_error_msg_get(err));
         efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
         return;
      }
