@@ -3419,7 +3419,7 @@ efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec)
              if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0)
                {
                   int errno_bkp = errno;
-                  ERR("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", fd, strerror(errno));
+                  ERR("fcntl(" SOCKET_FMT ", F_SETFD, FD_CLOEXEC): %s", fd, strerror(errno));
                   closesocket(fd);
                   fd = INVALID_SOCKET;
                   errno = errno_bkp;
