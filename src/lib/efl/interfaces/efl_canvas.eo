@@ -162,8 +162,8 @@ interface Efl.Canvas ()
    events {
       focus,in: Efl.Input.Focus; [[Called when canvas got focus]]
       focus,out: Efl.Input.Focus; [[Called when canvas lost focus]]
-      object,focus,in: Efl.Canvas.Object; [[Called when object got focus]]
-      object,focus,out: Efl.Canvas.Object; [[Called when object lost focus]]
+      object,focus,in: Efl.Input.Focus; [[Called when object got focus]]
+      object,focus,out: Efl.Input.Focus; [[Called when object lost focus]]
       render,pre; [[Called when pre render happens]]
       render,post; [[Called when post render happens]]
       device,changed: Efl.Input.Device; [[Called when input device changed]]

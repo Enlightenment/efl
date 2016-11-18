@@ -204,6 +204,9 @@ _eo_evas_cb(void *data, const Efl_Event *event)
    if (event->desc == EFL_CANVAS_EVENT_FOCUS_IN ||
        event->desc == EFL_CANVAS_EVENT_FOCUS_OUT)
      event_info = NULL;
+   else if (event->desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_IN ||
+            event->desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT)
+     event_info = efl_input_focus_object_get(event->info);
    else
      event_info = event->info;
 
