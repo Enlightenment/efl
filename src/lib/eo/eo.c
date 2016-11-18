@@ -1881,6 +1881,11 @@ _eo_table_del_cb(void *in)
    _eo_free_ids_tables(data);
 }
 
+/* FIXME: Support other domains and tables, at the moment only the main
+ * domain and table.
+ * This is used by the gdb debug helper script */
+Eo_Id_Data *_eo_gdb_main_domain = NULL;
+
 EAPI Eina_Bool
 efl_object_init(void)
 {
@@ -1946,6 +1951,7 @@ efl_object_init(void)
 
    // specially force eoid data to be creanted so we can switch it to domain 0
    Eo_Id_Data *data = _eo_table_data_new(EFL_ID_DOMAIN_MAIN);
+   _eo_gdb_main_domain = data;
    if (!data)
      {
         EINA_LOG_ERR("Could not allocate main table data");
