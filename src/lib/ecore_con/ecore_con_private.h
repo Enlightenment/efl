@@ -426,6 +426,15 @@ void ecore_con_mempool_shutdown(void);
 #define AI_ADDRCONFIG 0
 #endif
 
+/* Windows do not define EAI_SYSTEM, so just define to some number
+ * that won't be matched, effectively disabling the subsequent
+ * checks/usage
+ */
+#ifndef EAI_SYSTEM
+#define EAI_SYSTEM 254 /* number that won't match anything in EAI_* */
+#endif
+
+
 void _efl_net_server_udp_client_init(Eo *client, SOCKET fd, const struct sockaddr *addr, socklen_t addrlen, const char *str);
 void _efl_net_server_udp_client_feed(Eo *client, Eina_Rw_Slice slice);
 
