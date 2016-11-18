@@ -5271,7 +5271,7 @@ efl_net_multicast_join(SOCKET fd, int family, const char *address)
         if (err)
           return err;
 
-        if (setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) == 0)
+        if (setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char *)&mreq, sizeof(mreq)) == 0)
           return 0;
      }
    else if (family == AF_INET6)
@@ -5282,7 +5282,7 @@ efl_net_multicast_join(SOCKET fd, int family, const char *address)
         if (err)
           return err;
 
-        if (setsockopt(fd, IPPROTO_IPV6, IPV6_JOIN_GROUP, &mreq, sizeof(mreq)) == 0)
+        if (setsockopt(fd, IPPROTO_IPV6, IPV6_JOIN_GROUP, (const char *)&mreq, sizeof(mreq)) == 0)
           return 0;
      }
    else
@@ -5307,7 +5307,7 @@ efl_net_multicast_leave(SOCKET fd, int family, const char *address)
         if (err)
           return err;
 
-        if (setsockopt(fd, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq)) == 0)
+        if (setsockopt(fd, IPPROTO_IP, IP_DROP_MEMBERSHIP, (const char *)&mreq, sizeof(mreq)) == 0)
           return 0;
      }
    else if (family == AF_INET6)
@@ -5318,7 +5318,7 @@ efl_net_multicast_leave(SOCKET fd, int family, const char *address)
         if (err)
           return err;
 
-        if (setsockopt(fd, IPPROTO_IPV6, IPV6_LEAVE_GROUP, &mreq, sizeof(mreq)) == 0)
+        if (setsockopt(fd, IPPROTO_IPV6, IPV6_LEAVE_GROUP, (const char *)&mreq, sizeof(mreq)) == 0)
           return 0;
      }
    else
@@ -5341,7 +5341,7 @@ efl_net_multicast_ttl_set(SOCKET fd, int family, uint8_t ttl)
    int value = ttl;
 #endif
 
-   if (setsockopt(fd, level, opt, &value, sizeof(value)) == 0)
+   if (setsockopt(fd, level, opt, (const char *)&value, sizeof(value)) == 0)
      return 0;
 
    return efl_net_socket_error_get();
@@ -5360,7 +5360,7 @@ efl_net_multicast_ttl_get(SOCKET fd, int family, uint8_t *ttl)
    socklen_t valuelen = sizeof(value);
 #endif
 
-   if (getsockopt(fd, level, opt, &value, &valuelen) == 0)
+   if (getsockopt(fd, level, opt, (char *)&value, &valuelen) == 0)
      {
         *ttl = value;
         return 0;
@@ -5380,7 +5380,7 @@ efl_net_multicast_loopback_set(SOCKET fd, int family, Eina_Bool loopback)
    int value = loopback;
 #endif
 
-   if (setsockopt(fd, level, opt, &value, sizeof(value)) == 0)
+   if (setsockopt(fd, level, opt, (const char *)&value, sizeof(value)) == 0)
      return 0;
 
    return efl_net_socket_error_get();
@@ -5399,7 +5399,7 @@ efl_net_multicast_loopback_get(SOCKET fd, int family, Eina_Bool *loopback)
    socklen_t valuelen = sizeof(value);
 #endif
 
-   if (getsockopt(fd, level, opt, &value, &valuelen) == 0)
+   if (getsockopt(fd, level, opt, (char *)&value, &valuelen) == 0)
      {
         *loopback = !!value;
         return 0;

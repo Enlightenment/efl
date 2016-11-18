@@ -131,7 +131,7 @@ _efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED
 #else
              int enable = 1;
 #endif
-             if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST, &enable, sizeof(enable)) == 0)
+             if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST, (const char *)&enable, sizeof(enable)) == 0)
                DBG("enabled SO_BROADCAST for socket=" SOCKET_FMT, fd);
              else
                WRN("could not enable SO_BROADCAST for socket=" SOCKET_FMT ": %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
@@ -145,7 +145,7 @@ _efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED
              struct ipv6_mreq mreq = {
                .ipv6mr_multiaddr = a->sin6_addr,
              };
-             if (setsockopt(fd, IPPROTO_IPV6, IPV6_JOIN_GROUP, &mreq, sizeof(mreq)) == 0)
+             if (setsockopt(fd, IPPROTO_IPV6, IPV6_JOIN_GROUP, (const char *)&mreq, sizeof(mreq)) == 0)
                {
                   efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr);
                   DBG("joined multicast group %s socket=" SOCKET_FMT, buf, fd);

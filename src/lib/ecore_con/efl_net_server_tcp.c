@@ -322,7 +322,7 @@ _efl_net_server_tcp_ipv6_only_set(Eo *o, Efl_Net_Server_Tcp_Data *pd, Eina_Bool 
    if (fd == INVALID_SOCKET) return;
    if (efl_net_server_fd_family_get(o) != AF_INET6) return;
 
-   if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &value, sizeof(value)) != 0)
+   if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (const char *)&value, sizeof(value)) != 0)
      {
         ERR("could not set socket=" SOCKET_FMT " IPV6_V6ONLY=%d: %s", fd, value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->ipv6_only = old;
@@ -347,7 +347,7 @@ _efl_net_server_tcp_ipv6_only_get(Eo *o EINA_UNUSED, Efl_Net_Server_Tcp_Data *pd
    if (efl_net_server_fd_family_get(o) != AF_INET6) goto end;
 
    valuelen = sizeof(value);
-   if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &value, &valuelen) != 0)
+   if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&value, &valuelen) != 0)
      {
         WRN("getsockopt(" SOCKET_FMT ", IPPROTO_IPV6, IPV6_V6ONLY): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
         goto end;

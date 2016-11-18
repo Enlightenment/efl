@@ -228,7 +228,7 @@ _efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Fd_Data *pd EINA_UNUSED
         int family;
         socklen_t len = sizeof(family);
 
-        if (getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &family, &len) != 0)
+        if (getsockopt(fd, SOL_SOCKET, SO_DOMAIN, (char *)&family, &len) != 0)
           {
              WRN("socket " SOCKET_FMT " failed to return family: %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
              return EINVAL;
@@ -329,7 +329,7 @@ _efl_net_server_fd_reuse_address_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
    if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = reuse_address;
-   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) != 0)
+   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const char *)&value, sizeof(value)) != 0)
      {
         ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEADDR, %d): %s",
             fd, value, eina_error_msg_get(efl_net_socket_error_get()));
@@ -354,7 +354,7 @@ _efl_net_server_fd_reuse_address_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &value, &valuelen) != 0)
+   if (getsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&value, &valuelen) != 0)
      {
         ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEADDR): %s",
             fd, eina_error_msg_get(efl_net_socket_error_get()));
@@ -381,7 +381,7 @@ _efl_net_server_fd_reuse_port_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Bool r
    if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = reuse_port;
-   if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, sizeof(value)) != 0)
+   if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (const char *)&value, sizeof(value)) != 0)
      {
         ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEPORT, %d): %s",
             fd, value, eina_error_msg_get(efl_net_socket_error_get()));
@@ -408,7 +408,7 @@ _efl_net_server_fd_reuse_port_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, &valuelen) != 0)
+   if (getsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *)&value, &valuelen) != 0)
      {
         ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEPORT): %s",
             fd, eina_error_msg_get(efl_net_socket_error_get()));

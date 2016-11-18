@@ -102,7 +102,7 @@ _efl_net_socket_tcp_keep_alive_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool
    if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = keep_alive;
-   if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &value, sizeof(value)) != 0)
+   if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (const char *)&value, sizeof(value)) != 0)
      {
         ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_KEEPALIVE, %d): %s",
             fd, value, eina_error_msg_get(efl_net_socket_error_get()));
@@ -132,7 +132,7 @@ _efl_net_socket_tcp_keep_alive_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &value, &valuelen) != 0)
+   if (getsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *)&value, &valuelen) != 0)
      {
         ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_KEEPALIVE): %s",
             fd, eina_error_msg_get(efl_net_socket_error_get()));
@@ -160,7 +160,7 @@ _efl_net_socket_tcp_no_delay_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool n
    if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = no_delay;
-   if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) != 0)
+   if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (const char *)&value, sizeof(value)) != 0)
      {
         ERR("setsockopt(" SOCKET_FMT ", IPPROTO_TCP, TCP_NODELAY, %d): %s",
             fd, value, eina_error_msg_get(efl_net_socket_error_get()));
@@ -190,7 +190,7 @@ _efl_net_socket_tcp_no_delay_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &value, &valuelen) != 0)
+   if (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *)&value, &valuelen) != 0)
      {
         ERR("getsockopt(" SOCKET_FMT ", IPPROTO_TCP, TCP_NODELAY): %s",
             fd, eina_error_msg_get(efl_net_socket_error_get()));
@@ -234,7 +234,7 @@ _efl_net_socket_tcp_cork_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool cork)
    if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = cork;
-   if (setsockopt(fd, IPPROTO_TCP, option, &value, sizeof(value)) != 0)
+   if (setsockopt(fd, IPPROTO_TCP, option, (const char *)&value, sizeof(value)) != 0)
      {
         ERR("setsockopt(" SOCKET_FMT ", IPPROTO_TCP, 0x%x, %d): %s",
             fd, option, value, eina_error_msg_get(efl_net_socket_error_get()));
@@ -267,7 +267,7 @@ _efl_net_socket_tcp_cork_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, IPPROTO_TCP, option, &value, &valuelen) != 0)
+   if (getsockopt(fd, IPPROTO_TCP, option, (char *)&value, &valuelen) != 0)
      {
         ERR("getsockopt(" SOCKET_FMT ", IPPROTO_TCP, 0x%x): %s",
             fd, option, eina_error_msg_get(efl_net_socket_error_get()));

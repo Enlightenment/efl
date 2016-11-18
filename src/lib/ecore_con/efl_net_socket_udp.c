@@ -246,7 +246,7 @@ _efl_net_socket_udp_cork_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool cork)
    if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = cork;
-   if (setsockopt(fd, IPPROTO_UDP, option, &value, sizeof(value)) != 0)
+   if (setsockopt(fd, IPPROTO_UDP, option, (const char *)&value, sizeof(value)) != 0)
      {
         ERR("setsockopt(" SOCKET_FMT ", IPPROTO_UDP, 0x%x, %d): %s",
             fd, option, value, eina_error_msg_get(efl_net_socket_error_get()));
@@ -279,7 +279,7 @@ _efl_net_socket_udp_cork_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, IPPROTO_UDP, option, &value, &valuelen) != 0)
+   if (getsockopt(fd, IPPROTO_UDP, option, (char *)&value, &valuelen) != 0)
      {
         ERR("getsockopt(" SOCKET_FMT ", IPPROTO_UDP, 0x%x): %s",
             fd, option, eina_error_msg_get(efl_net_socket_error_get()));
@@ -305,7 +305,7 @@ _efl_net_socket_udp_dont_route_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool
 
    if (fd == INVALID_SOCKET) return EINA_TRUE;
 
-   if (setsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &value, sizeof(value)) != 0)
+   if (setsockopt(fd, SOL_SOCKET, SO_DONTROUTE, (const char *)&value, sizeof(value)) != 0)
      {
         Eina_Error err = efl_net_socket_error_get();
         ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_DONTROUTE, %u): %s", fd, dont_route, eina_error_msg_get(err));
@@ -333,7 +333,7 @@ _efl_net_socket_udp_dont_route_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &value, &valuelen) != 0)
+   if (getsockopt(fd, SOL_SOCKET, SO_DONTROUTE, (char *)&value, &valuelen) != 0)
      {
         Eina_Error err = efl_net_socket_error_get();
         ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_DONTROUTE): %s", fd, eina_error_msg_get(err));
@@ -358,7 +358,7 @@ _efl_net_socket_udp_reuse_address_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_B
    if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = reuse_address;
-   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) != 0)
+   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const char *)&value, sizeof(value)) != 0)
      {
         ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEADDR, %d): %s",
             fd, value, eina_error_msg_get(efl_net_socket_error_get()));
@@ -383,7 +383,7 @@ _efl_net_socket_udp_reuse_address_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &value, &valuelen) != 0)
+   if (getsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&value, &valuelen) != 0)
      {
         ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEADDR): %s",
             fd, eina_error_msg_get(efl_net_socket_error_get()));
@@ -410,7 +410,7 @@ _efl_net_socket_udp_reuse_port_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool
    if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
    value = reuse_port;
-   if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, sizeof(value)) != 0)
+   if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (const char *)&value, sizeof(value)) != 0)
      {
         ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEPORT, %d): %s",
             fd, value, eina_error_msg_get(efl_net_socket_error_get()));
@@ -437,7 +437,7 @@ _efl_net_socket_udp_reuse_port_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
     * elsewhere by nasty users.
     */
    valuelen = sizeof(value);
-   if (getsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, &valuelen) != 0)
+   if (getsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *)&value, &valuelen) != 0)
      {
         ERR("getsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_REUSEPORT): %s",
             fd, eina_error_msg_get(efl_net_socket_error_get()));
