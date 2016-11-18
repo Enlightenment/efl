@@ -5,7 +5,7 @@
 
 #ifdef BUILD_NEON
 static void
-_op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
    uint16x8_t ad00_16x8;
    uint16x8_t ad01_16x8;
@@ -364,7 +364,7 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_pas_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
    uint16x8_t ad00_16x8;
    uint16x8_t ad01_16x8;
@@ -712,7 +712,7 @@ init_blend_pixel_span_funcs_neon(void)
 
 #ifdef BUILD_NEON
 static void
-_op_blend_pt_p_dp_neon(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_blend_pt_p_dp_neon(DATA32 s, DATA8 m EINA_UNUSED, DATA32 c, DATA32 *d) {
    c = 256 - (s >> 24);
    *d = s + MUL_256(c, *d);
 }
@@ -744,7 +744,7 @@ init_blend_pixel_pt_funcs_neon(void)
 
 #ifdef BUILD_NEON
 static void
-_op_blend_rel_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_rel_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
    uint16x8_t cs0_16x8;
    uint16x8_t cs1_16x8;
    uint16x8_t ld0_16x8;
@@ -862,7 +862,7 @@ _op_blend_rel_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_blend_rel_pan_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_rel_pan_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
    uint16x8_t cs0_16x8;
    uint16x8_t cs1_16x8;
    uint32x4_t c_32x4;
@@ -958,7 +958,7 @@ init_blend_rel_pixel_span_funcs_neon(void)
 
 #ifdef BUILD_NEON
 static void
-_op_blend_rel_pt_p_dp_neon(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_blend_rel_pt_p_dp_neon(DATA32 s, DATA8 m EINA_UNUSED, DATA32 c, DATA32 *d) {
    c = 256 - (s >> 24);
    *d = MUL_SYM(*d >> 24, s) + MUL_256(c, *d);
 }

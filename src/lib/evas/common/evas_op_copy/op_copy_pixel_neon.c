@@ -98,7 +98,7 @@ init_copy_pixel_pt_funcs_neon(void)
 
 #ifdef BUILD_NEON
 static void
-_op_copy_rel_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
+_op_copy_rel_p_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
    // FIXME: neon-it
    DATA32 *e;
    UNROLL8_PLD_WHILE(d, l, e,

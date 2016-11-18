@@ -53,7 +53,7 @@ init_copy_mask_color_span_funcs_neon(void)
 
 #ifdef BUILD_NEON
 static void
-_op_copy_pt_mas_c_dp_neon(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_copy_pt_mas_c_dp_neon(DATA32 s EINA_UNUSED, DATA8 m, DATA32 c, DATA32 *d) {
    *d = INTERP_256(m + 1, c, *d);
 }
 

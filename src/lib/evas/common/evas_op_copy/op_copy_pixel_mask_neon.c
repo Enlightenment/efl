@@ -47,7 +47,7 @@ init_copy_pixel_mask_span_funcs_neon(void)
 
 #ifdef BUILD_NEON
 static void
-_op_copy_pt_p_mas_dp_neon(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_copy_pt_p_mas_dp_neon(DATA32 s, DATA8 m, DATA32 c EINA_UNUSED, DATA32 *d) {
    *d = INTERP_256(m + 1, s, *d);
 }
 
