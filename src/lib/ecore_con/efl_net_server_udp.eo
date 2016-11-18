@@ -100,7 +100,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
                 return: Eina.Error; [[0 on success, error code otherwise]]
             }
             values {
-                ttl: bool; [[Time to live]]
+                ttl: uint8; [[Time to live]]
             }
         }
 
