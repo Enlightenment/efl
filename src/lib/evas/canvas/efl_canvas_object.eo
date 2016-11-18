@@ -636,10 +636,4 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Gfx.Map.map_enable.set;
       Efl.Gfx.Map.map_enable.get;
    }
-   events {
-       focus,in; [[Focus In Event ]]
-       focus,out; [[Focus Out Event ]]
-       focus,device,in: Efl.Input.Device; [[Focus In event that contains the seat device that this object was focused. @since 1.19]]
-       focus,device,out: Efl.Input.Device; [[Focus Out event that contains the seat device that this object was unfocused.@since 1.19]]
-   }
 }

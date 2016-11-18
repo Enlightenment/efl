@@ -439,8 +439,8 @@ EFL_CALLBACKS_ARRAY_DEFINE(edje_callbacks,
                           { EFL_EVENT_POINTER_WHEEL, _edje_mouse_wheel_signal_cb });
 
 EFL_CALLBACKS_ARRAY_DEFINE(edje_focus_callbacks,
-                          { EFL_CANVAS_OBJECT_EVENT_FOCUS_IN, _edje_focus_in_signal_cb },
-                          { EFL_CANVAS_OBJECT_EVENT_FOCUS_OUT, _edje_focus_out_signal_cb });
+                          { EFL_EVENT_FOCUS_IN, _edje_focus_in_signal_cb },
+                          { EFL_EVENT_FOCUS_OUT, _edje_focus_out_signal_cb });
 
 void
 _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp)

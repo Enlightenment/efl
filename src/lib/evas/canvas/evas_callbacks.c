@@ -48,8 +48,8 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EVAS_OBJECT_EVENT_FREE,
                       EFL_EVENT_KEY_DOWN,
                       EFL_EVENT_KEY_UP,
-                      EFL_CANVAS_OBJECT_EVENT_FOCUS_IN,
-                      EFL_CANVAS_OBJECT_EVENT_FOCUS_OUT,
+                      EFL_EVENT_FOCUS_IN,
+                      EFL_EVENT_FOCUS_OUT,
                       EFL_GFX_EVENT_SHOW,
                       EFL_GFX_EVENT_HIDE,
                       EFL_GFX_EVENT_MOVE,
@@ -93,7 +93,8 @@ typedef enum {
    EFL_EVENT_TYPE_STRUCT,
    EFL_EVENT_TYPE_POINTER,
    EFL_EVENT_TYPE_KEY,
-   EFL_EVENT_TYPE_HOLD
+   EFL_EVENT_TYPE_HOLD,
+   EFL_EVENT_TYPE_FOCUS
 } Efl_Event_Info_Type;
 
 typedef struct
@@ -147,6 +148,10 @@ _evas_event_efl_event_info_type(Evas_Callback_Type type)
       case EVAS_CALLBACK_DEVICE_CHANGED: /* Efl.Input.Device */
         return EFL_EVENT_TYPE_OBJECT;
 
+      case EVAS_CALLBACK_FOCUS_IN:
+      case EVAS_CALLBACK_FOCUS_OUT:
+          return EFL_EVENT_TYPE_FOCUS;
+
       default:
         return EFL_EVENT_TYPE_NULL;
      }
@@ -164,6 +169,7 @@ _eo_evas_object_cb(void *data, const Efl_Event *event)
    if (!info->func) return;
    evas = evas_object_evas_get(event->object);
 
+   event_info = event->info;
    switch (info->efl_event_type)
      {
       case EFL_EVENT_TYPE_POINTER:
@@ -178,12 +184,13 @@ _eo_evas_object_cb(void *data, const Efl_Event *event)
         event_info = efl_input_hold_legacy_info_fill(efl_event_info, &event_flags);
         break;
 
+      case EFL_EVENT_TYPE_FOCUS:
+         event_info = NULL;
       case EFL_EVENT_TYPE_NULL:
       case EFL_EVENT_TYPE_STRUCT:
       case EFL_EVENT_TYPE_OBJECT:
-        info->func(info->data, evas, event->object, event->info);
+        info->func(info->data, evas, event->object, event_info);
         return;
-
       default: return;
      }
 

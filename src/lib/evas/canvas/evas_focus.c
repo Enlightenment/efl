@@ -69,7 +69,7 @@ _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj, Efl_Input_Device *se
    Efl_Input_Focus_Data *ev_data;
    Efl_Input_Focus *evt;
    Evas_Callback_Type cb_evas, cb_obj_evas;
-   const Efl_Event_Description *efl_object_focus_event, *efl_object_focus_device_event;
+   const Efl_Event_Description *efl_object_focus_event;
 
    evt = efl_input_instance_get(EFL_INPUT_FOCUS_CLASS, NULL, (void **) &ev_data);
    if (!evt) return;
@@ -82,27 +82,20 @@ _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj, Efl_Input_Device *se
      {
         cb_obj_evas = EVAS_CALLBACK_FOCUS_IN;
         cb_evas = EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN;
-        efl_object_focus_event = EFL_CANVAS_OBJECT_EVENT_FOCUS_IN;
-        efl_object_focus_device_event = EFL_CANVAS_OBJECT_EVENT_FOCUS_DEVICE_IN;
+        efl_object_focus_event = EFL_EVENT_FOCUS_IN;
      }
    else
      {
         cb_obj_evas = EVAS_CALLBACK_FOCUS_OUT;
         cb_evas = EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT;
-        efl_object_focus_event = EFL_CANVAS_OBJECT_EVENT_FOCUS_OUT;
-        efl_object_focus_device_event = EFL_CANVAS_OBJECT_EVENT_FOCUS_DEVICE_OUT;
+        efl_object_focus_event = EFL_EVENT_FOCUS_OUT;
      }
 
-   if (seat == obj->layer->evas->default_seat)
-     {
-        evas_object_event_callback_call(obj->object, obj,
-                                        cb_obj_evas,
-                                        NULL, _evas_object_event_new(),
-                                        efl_object_focus_event);
-     }
-   evas_event_callback_call(obj->layer->evas->evas,
-                            cb_evas, evt);
-   efl_event_callback_call(obj->object, efl_object_focus_device_event, seat);
+   evas_object_event_callback_call(obj->object, obj,
+                                   cb_obj_evas,
+                                   evt, _evas_object_event_new(),
+                                   efl_object_focus_event);
+   evas_event_callback_call(obj->layer->evas->evas, cb_evas, evt);
    efl_del(evt);
 }
 
