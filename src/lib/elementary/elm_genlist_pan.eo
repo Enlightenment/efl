@@ -1,5 +1,6 @@
 class Elm.Genlist.Pan (Elm.Pan)
 {
+   [[Elementary genlist pan class]]
    legacy_prefix: elm_genlist_pan;
    eo_prefix: elm_obj_genlist_pan;
    event_prefix: elm_genlist_pan;
@@ -16,8 +17,7 @@ class Elm.Genlist.Pan (Elm.Pan)
       Elm.Pan.pos_max.get;
    }
    events {
-      item,focused;
-      item,unfocused;
+      item,focused; [[Called when item got focus]]
+      item,unfocused; [[Called when item lost focus]]
    }
-
 }

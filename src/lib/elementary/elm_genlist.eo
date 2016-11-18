@@ -6,6 +6,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                    Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
                    Efl.Ui.Selectable)
 {
+   [[Elementary genlist class]]
    legacy_prefix: elm_genlist;
    eo_prefix: elm_obj_genlist;
    event_prefix: elm_genlist;
@@ -304,7 +305,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               item pointers in the list are only valid so long as those
               items are not deleted or the genlist is not deleted.
             ]]
-            return: free(own(list<ptr(Elm_Gen_Item)>), eina_list_free) @warn_unused;
+            return: free(own(list<ptr(Elm_Gen_Item)>), eina_list_free) @warn_unused; [[List of realized items]]
          }
       }
       @property selected_items {
@@ -322,7 +323,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               Note: If not in multi-select mode, consider using function
               @.selected_item.get instead.
             ]]
-            return: const(list<Elm.Widget.Item>);
+            return: const(list<Elm.Widget.Item>); [[List of selected items]]
          }
       }
       @property last_item {
@@ -334,7 +335,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               If filter is set to genlist, it returns
               last filtered item in the list.
             ]]
-            return: Elm.Widget.Item;
+            return: Elm.Widget.Item; [[Last item in list]]
          }
       }
       item_insert_before {
@@ -343,7 +344,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
            This inserts an item before another in the list. It will be in
            the same tree level or group as the item it is inserted before.
          ]]
-         return: Elm.Widget.Item;
+         return: Elm.Widget.Item; [[Handle to inserted item]]
          params {
             @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
@@ -371,7 +372,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
            This inserts an item after another in the list. It will be in the
            same tree level or group as the item it is inserted after.
          ]]
-         return: Elm.Widget.Item;
+         return: Elm.Widget.Item; [[Handle to inserted item]]
          params {
             @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
@@ -395,7 +396,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
            1 based if the coordinate is above or below all items
            respectively in the genlist.
          ]]
-         return: Elm.Widget.Item;
+         return: Elm.Widget.Item; [[Item at position]]
          params {
             @in x: Evas.Coord; [[The input x coordinate.]]
             @in y: Evas.Coord; [[The input y coordinate.]]
@@ -435,7 +436,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
 
            @since 1.18
          ]]
-         return: uint;
+         return: uint; [[Count of items passing the filter]]
       }
       items_count @const {
          [[Return how many items are currently in a list.
@@ -443,7 +444,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
            This behavior is O(1) and includes items which may or may not
            be realized.
          ]]
-         return: uint;
+         return: uint; [[Item in list]]
       }
       item_prepend {
          [[Prepend a new item in a given genlist widget.
@@ -451,7 +452,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
            This adds an item to the beginning of the list or beginning of
            the children of the parent if given.
          ]]
-         return: Elm.Widget.Item;
+         return: Elm.Widget.Item; [[Handle to prepended item]]
          params {
             @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
@@ -473,7 +474,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
            This adds the given item to the end of the list or the end of
            the children list if the $parent is given.
          ]]
-         return: Elm.Widget.Item;
+         return: Elm.Widget.Item; [[Handle to appended item]]
          params {
             @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
@@ -490,7 +491,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
            comparison function. The two arguments passed to the function
            $func are genlist item handles to compare.
          ]]
-         return: Elm.Widget.Item;
+         return: Elm.Widget.Item; [[Handle to inserted item]]
          params {
             @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
@@ -513,7 +514,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
 
            @since 1.11
          ]]
-         return: Elm.Widget.Item;
+         return: Elm.Widget.Item; [[Searched item]]
          params {
             @in item_to_search_from: Elm.Widget.Item @optional; [[
                Pointer to item to start search from. If $null, search
@@ -563,41 +564,40 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Interface.Atspi.Selection.clear;
    }
    events {
-      item,focused;
-      item,unfocused;
-      vbar,drag;
-      vbar,press;
-      vbar,unpress;
-      hbar,drag;
-      hbar,press;
-      hbar,unpress;
-      edge,top;
-      edge,bottom;
-      edge,left;
-      edge,right;
-      moved;
-      moved,before;
-      moved,after;
-      swipe;
-      multi,pinch,in;
-      multi,pinch,out;
-      multi,swipe,down;
-      multi,swipe,up;
-      multi,swipe,right;
-      multi,swipe,left;
-      released;
-      activated;
-      highlighted;
-      unhighlighted;
-      realized;
-      unrealized;
-      contract,request;
-      expand,request;
-      contracted;
-      expanded;
-      index,update;
-      tree,effect,finished;
-      filter,done;
+      item,focused; [[Called when genlist item got focus]]
+      item,unfocused; [[Called when genlist item lost focus]]
+      vbar,drag; [[Called when vertical bar is dragged]]
+      vbar,press; [[Called when vertical bar is pressed]]
+      vbar,unpress; [[Called when vertical bar is no longer pressed]]
+      hbar,drag; [[Called when horizontal bar is dragged]]
+      hbar,press; [[Called when horizontal bar is pressed]]
+      hbar,unpress; [[Called when horizontal bar is no longer pressed]]
+      edge,top; [[Called when top edge is reached]]
+      edge,bottom; [[Called when bottom edge is reached]]
+      edge,left; [[Called when left edge is reached]]
+      edge,right; [[Called when right edge is reached]]
+      moved; [[Called when genlist item moved]] 
+      moved,before; [[Called when genlist item moved before]]
+      moved,after; [[Called when genlist item moved after]]
+      swipe; [[Called when swipe is detected]]
+      multi,pinch,in; [[Called when multitouch pinch in detected]] 
+      multi,pinch,out; [[Called when multitouch pinch out detected]]
+      multi,swipe,down; [[Called when multitouch swipe down detected]]
+      multi,swipe,up; [[Called when multitouch swipe up detected]]
+      multi,swipe,right; [[Called when multitouch swipe right detected]]
+      multi,swipe,left; [[Called when multitouch swipe left detected]]
+      released; [[Called when genlist is released]]
+      activated; [[called when genlist is activated]]
+      highlighted; [[Called when genlist is highlighted]]
+      unhighlighted; [[Called when genlist is no longer highlighted]]
+      realized; [[Called when genlist is realized]]
+      unrealized; [[Called when genlist is unrealized]]
+      contract,request; [[Called when contract is requested]]
+      expand,request; [[Called when expand is requested]]
+      contracted; [[called when genlist is contracted]]
+      expanded; [[Called when genlist is expanded]]
+      index,update; [[Called when genlist index updated]]
+      tree,effect,finished; [[Called when genlist tree effect finished]]
+      filter,done; [[Called when genlist filter is done]]
    }
-
 }
