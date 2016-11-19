@@ -457,7 +457,8 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     on_destroy: 1; /**< This is true when the widget is on destruction(general widget destructor). */
    Eina_Bool                     provider_lookup : 1; /**< This is true when efl_provider_find is currently walking the tree */
    struct {
-     Efl_Ui_Focus_Manager *manager;
+     Efl_Ui_Focus_Manager *chained_manager; //manager which is the correct according to the chain
+     Efl_Ui_Focus_Manager *manager; //manager which is currently regsitered in
      Eina_Bool logical;
    } focus;
    struct {

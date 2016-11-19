@@ -10,8 +10,18 @@ interface Efl.Ui.Focus.User {
                 manager : Efl.Ui.Focus.Manager; [[The manager object]]
             }
         }
+        @property parent {
+            [[Describes which logical parent is used by this object]]
+            get {
+
+            }
+            values {
+                logical_parent : Efl.Ui.Focus.Object;
+            }
+        }
     }
     events {
         manager,changed : Efl.Ui.Focus.Manager; [[emitted if a new manager is the parent for this one]]
+        logical,changed : Efl.Ui.Focus.Object; [[emitted if a new logical_parent should be used]]
     }
 }
