@@ -118,12 +118,12 @@ evas_object_image_render_prepare(Evas_Object *eo_obj, Evas_Object_Protected_Data
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
 
+#if 0
    // if image data not loaded or in texture then upload
    if ((o->cur->u.file) || (o->written) || (o->cur->frame != 0))
      {
         if (o->engine_data) ENFN->image_prepare(ENDT, o->engine_data);
      }
-#if 0
    if (
        ((o->cur->border.l != 0) || (o->cur->border.r != 0) ||
         (o->cur->border.t != 0) || (o->cur->border.b != 0)) &&
