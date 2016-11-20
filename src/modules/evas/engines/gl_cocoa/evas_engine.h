@@ -108,7 +108,7 @@ void *evas_outbuf_egl_display_get(Outbuf *ob);
 
 #define GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(...) \
    do { \
-      CRI("[%s] IS AN IMPLEMENTED CALL. PLEASE REPORT!!", __func__); \
+      CRI("[%s] IS AN UNIMPLEMENTED CALL. PLEASE REPORT!!", __func__); \
       return __VA_ARGS__; \
    } while (0)
 
