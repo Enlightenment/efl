@@ -3044,7 +3044,7 @@ AC_DEFINE_IF([HAVE_ABSTRACT_SOCKETS],
    [test "x${want_ecore_con_abstract_sockets}" = "xyes"],
    [1], [Have abstract sockets namespace])
 
-efl_net_control_backend=none
+EFL_NET_CONTROL_BACKEND=none
 if test "${have_linux}" = "yes"; then
    EFL_NET_CONTROL_BACKEND=connman
 fi
