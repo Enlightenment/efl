@@ -28,6 +28,11 @@ static Evas_Func func, pfunc;
 static Eina_Bool _initted = EINA_FALSE;
 static int _gl_wins = 0;
 
+static void *
+evgl_eng_display_get(void *data EINA_UNUSED)
+{
+   GL_COCOA_UNIMPLEMENTED_CALL_SO_RETURN(NULL);
+}
 
 static void *
 evgl_eng_native_window_create(void *data EINA_UNUSED)
@@ -100,7 +105,7 @@ evgl_eng_rotation_angle_get(void *data EINA_UNUSED)
 
 static const EVGL_Interface evgl_funcs =
 {
-   NULL,
+   evgl_eng_display_get,
    NULL,
    evgl_eng_native_window_create,
    evgl_eng_native_window_destroy,
