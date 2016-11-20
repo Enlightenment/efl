@@ -26,6 +26,69 @@
 
 #include "eina_suite.h"
 
+struct Number{
+   int number;
+};
+
+static Eina_Bool
+_filter(const void *it EINA_UNUSED, void *data, void *fdata)
+{
+   struct Number *numb = data;
+
+   ck_assert_ptr_eq(fdata, (void*)1);
+   return numb->number % 2;
+}
+
+START_TEST(eina_iterator_filter_simple)
+{
+   Eina_Iterator *it, *filtered;
+   Eina_Array *ea;
+
+   eina_init();
+
+   ea = eina_array_new(11);
+   fail_if(!ea);
+
+   for(int i = 0; i <= 10; i++)
+     {
+        struct Number *number;
+
+        number = calloc(1, sizeof(struct Number));
+        number->number = i;
+
+        eina_array_push(ea, number);
+     }
+
+   it = eina_array_iterator_new(ea);
+   filtered = eina_iterator_filter_new(it, _filter, (void*)1);
+   for(int i = 1; i <= 10; i+=2)
+     {
+        struct Number *numb;
+        Eina_Bool ret;
+
+        ret = eina_iterator_next(filtered, (void**)&numb);
+
+        fail_if(!ret);
+        ck_assert_int_eq(numb->number, i);
+     }
+
+   {
+      struct Number *numb;
+      Eina_Bool ret;
+
+      ret = eina_iterator_next(filtered, (void**)&numb);
+      fail_if(ret);
+   }
+
+
+   eina_iterator_free(it);
+
+   eina_array_free(ea);
+
+   eina_shutdown();
+}
+END_TEST
+
 static Eina_Bool
 eina_iterator_array_check(EINA_UNUSED const Eina_Array *array,
                           int *data,  int *fdata)
@@ -529,4 +592,5 @@ eina_test_iterator(TCase *tc)
    tcase_add_test(tc, eina_iterator_list_simple);
    tcase_add_test(tc, eina_reverse_iterator_list_simple);
    tcase_add_test(tc, eina_iterator_rbtree_simple);
+   tcase_add_test(tc, eina_iterator_filter_simple);
 }
