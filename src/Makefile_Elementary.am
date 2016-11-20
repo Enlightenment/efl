@@ -1219,12 +1219,15 @@ edje_external_elementary_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 edje_external_elementary_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 edje_external_elementary_module_la_LIBTOOLFLAGS = --tag=disable-static
 
+testfilesdir = $(datadir)/elementary/
+testfiles_DATA = \
+                tests/elementary/testfile.txt \
+                tests/elementary/testfile-windows.txt \
+                tests/elementary/testfile-withblanks.txt \
+                tests/elementary/testdiff.diff
+
 ### Tests
-EXTRA_DIST2 += \
-tests/elementary/testfile.txt \
-tests/elementary/testfile-windows.txt \
-tests/elementary/testfile-withblanks.txt \
-tests/elementary/testdiff.diff
+EXTRA_DIST2 += $(testfiles_DATA)
 
 if EFL_ENABLE_TESTS
 

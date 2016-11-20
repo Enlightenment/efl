@@ -138,7 +138,7 @@ _elm_code_test_diff_inline_setup(Evas_Object *parent)
    evas_object_show(diff);
 
    elm_code_parser_standard_add(code, ELM_CODE_PARSER_STANDARD_DIFF);
-   elm_code_file_open(code, PACKAGE_DATA_DIR "testdiff.diff");
+   elm_code_file_open(code, PACKAGE_DATA_DIR "/testdiff.diff");
 
    return diff;
 }
@@ -150,7 +150,7 @@ _elm_code_test_diff_setup(Evas_Object *parent)
    Elm_Code *code;
 
    code = elm_code_create();
-   elm_code_file_open(code, PACKAGE_DATA_DIR "testdiff.diff");
+   elm_code_file_open(code, PACKAGE_DATA_DIR "/testdiff.diff");
 
    diff = elm_code_diff_widget_add(parent, code);
    return diff;
