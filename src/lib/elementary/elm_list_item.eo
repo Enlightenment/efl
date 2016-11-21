@@ -1,5 +1,6 @@
 class Elm.List.Item(Elm.Widget.Item)
 {
+   [[Elementary list item class]]
    legacy_prefix: elm_list_item;
       eo_prefix: elm_obj_list_item;
       methods {
@@ -121,4 +122,3 @@ class Elm.List.Item(Elm.Widget.Item)
            Elm.Interface.Atspi_Accessible.state_set.get;
       }
 }
-
