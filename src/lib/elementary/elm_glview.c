@@ -185,7 +185,10 @@ _set_render_policy_callback(Evas_Object *obj)
      {
       case ELM_GLVIEW_RENDER_POLICY_ON_DEMAND:
          if (sd->render_idle_enterer)
-           evas_object_image_pixels_dirty_set(wd->resize_obj, EINA_TRUE);
+           {
+              evas_object_image_pixels_dirty_set(wd->resize_obj, EINA_TRUE);
+              evas_object_image_data_update_add(wd->resize_obj, 0, 0, sd->w, sd->h);
+           }
          // Delete idle_enterer if it for some reason is around
          efl_event_callback_del(ecore_main_loop_get(),
                                EFL_LOOP_EVENT_IDLE_ENTER,
@@ -529,8 +532,8 @@ _elm_glview_draw_request(Eo *obj, Elm_Glview_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_object_image_pixels_dirty_set
-     (wd->resize_obj, EINA_TRUE);
+   evas_object_image_pixels_dirty_set(wd->resize_obj, EINA_TRUE);
+   evas_object_image_data_update_add(wd->resize_obj, 0, 0, sd->w, sd->h);
    if (sd->render_policy == ELM_GLVIEW_RENDER_POLICY_ALWAYS &&
        !sd->render_idle_enterer)
      sd->render_idle_enterer = efl_event_callback_priority_add(ecore_main_loop_get(),
