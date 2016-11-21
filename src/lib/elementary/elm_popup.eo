@@ -25,6 +25,7 @@ enum Elm.Popup.Orient
 
 class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
+   [[Elementary popup class]]
    legacy_prefix: elm_popup;
    eo_prefix: elm_obj_popup;
    event_prefix: elm_popup;
@@ -188,11 +189,10 @@ class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Efl.Part.part;
    }
    events {
-      block,clicked;
-      timeout;
-      item,focused;
-      item,unfocused;
-      dismissed;
+      block,clicked; [[Called when popup was clicked]]
+      timeout; [[Called when popup timed out]]
+      item,focused; [[Called when popup got focus]]
+      item,unfocused; [[Called when popup lost focus]]
+      dismissed; [[Called when popup was dismissed]]
    }
-
 }
