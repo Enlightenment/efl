@@ -10,6 +10,7 @@ enum Elm.Ctxpopup.Direction
 
 class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientation)
 {
+   [[Elementary context popup class]]
    legacy_prefix: elm_ctxpopup;
    eo_prefix: elm_obj_ctxpopup;
    event_prefix: elm_ctxpopup;
@@ -40,7 +41,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
             ]]
          }
          values {
-            disabled: bool; [[auto hide enable/disable.]]
+            disabled: bool; [[Auto hide enable/disable.]]
          }
       }
       @property hover_parent {
@@ -97,7 +98,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
               Warning: Once the ctxpopup showed up, the direction would be determined
 
             ]]
-            return: Elm.Ctxpopup.Direction(Elm.Ctxpopup.Direction.unknown);
+            return: Elm.Ctxpopup.Direction(Elm.Ctxpopup.Direction.unknown); [[Direction]]
          }
       }
       @property items {
@@ -222,8 +223,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
       Efl.Part.part;
    }
    events {
-      dismissed;
-      geometry,update;
+      dismissed; [[Called when context popup was dismissed]]
+      geometry,update; [[Called when context popup geometry was updated]]
    }
-
 }

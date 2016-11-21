@@ -1,5 +1,6 @@
 class Elm.Ctxpopup.Internal.Part (Elm.Layout.Internal.Part)
 {
+   [[Elementary contex popup internal part class]]
    data: null;
    implements {
       Efl.Container.content.set;

@@ -1,5 +1,6 @@
 class Elm.Ctxpopup.Item(Elm.Widget.Item)
 {
+   [[Elementary context popup item class]]
    legacy_prefix: elm_ctxpopup_item;
    eo_prefix: elm_obj_ctxpopup_item;
    methods {
@@ -32,9 +33,10 @@ class Elm.Ctxpopup.Item(Elm.Widget.Item)
          }
       }
       init {
+      	 [[Init context popup item]]
          params {
-            func: Evas_Smart_Cb @nullable;
-            data: const(void_ptr) @optional;
+            func: Evas_Smart_Cb @nullable; [[Smart callback function]]
+            data: const(void_ptr) @optional; [[Data pointer]]
          }
       }
    }
