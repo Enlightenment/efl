@@ -19,10 +19,13 @@
 #define DST      "linux-1.0.tar.gz"
 #define DST_MIME "[x-gzip]linux-1.0.tar.gz"
 
+static Ecore_File_Download_Job *job = NULL;
+
 void
 completion_cb(void *data EINA_UNUSED, const char *file EINA_UNUSED, int status)
 {
    printf("Done (status: %d)\n", status);
+   job = NULL;
    ecore_main_loop_quit();
 }
 
@@ -53,12 +56,21 @@ main(void)
 
    start = ecore_time_get();
 
-   if (ecore_file_download(URL, DST, completion_cb, progress_cb, NULL, NULL))
+   if (ecore_file_download(URL, DST, completion_cb, progress_cb, NULL, &job))
      {
-        printf("Download started successfully:\n  URL: %s\n  DEST: %s\n", URL, DST);
+        printf("Download started successfully:\n  URL: %s\n  DEST: %s\n  JOB: %p\n", URL, DST, job);
         ecore_main_loop_begin();
-        printf("\nTime elapsed: %f seconds\n", ecore_time_get() - start);
-        printf("Downloaded %lld bytes\n", ecore_file_size(DST));
+        if (job)
+          {
+             printf("\nMain loop aborted! Abort download!\n");
+             ecore_file_download_abort(job);
+             job = NULL;
+          }
+        else
+          {
+             printf("\nTime elapsed: %f seconds\n", ecore_time_get() - start);
+             printf("Downloaded %lld bytes\n", ecore_file_size(DST));
+          }
      }
    else
      {
@@ -69,12 +81,21 @@ main(void)
    headers = eina_hash_string_small_new(NULL);
    eina_hash_add(headers, "Content-type", "application/x-gzip");
 
-   if (ecore_file_download_full(URL, DST_MIME, completion_cb, progress_cb, NULL, NULL, headers))
+   if (ecore_file_download_full(URL, DST_MIME, completion_cb, progress_cb, NULL, &job, headers))
      {
-        printf("Download started successfully:\n  URL: %s\n  DEST: %s\n", URL, DST_MIME);
+        printf("Download started successfully:\n  URL: %s\n  DEST: %s\n  JOB: %p\n", URL, DST_MIME, job);
         ecore_main_loop_begin();
-        printf("\nTime elapsed: %f seconds\n", ecore_time_get() - start);
-        printf("Downloaded %lld bytes\n", ecore_file_size(DST_MIME));
+        if (job)
+          {
+             printf("\nMain loop aborted! Abort download!\n");
+             ecore_file_download_abort(job);
+             job = NULL;
+          }
+        else
+          {
+             printf("\nTime elapsed: %f seconds\n", ecore_time_get() - start);
+             printf("Downloaded %lld bytes\n", ecore_file_size(DST_MIME));
+          }
      }
    else
      {
