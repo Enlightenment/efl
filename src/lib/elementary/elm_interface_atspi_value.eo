@@ -4,6 +4,7 @@ interface Elm.Interface.Atspi.Value ()
    eo_prefix: elm_interface_atspi_value;
    methods {
       @property value_and_text @protected {
+      	 [[Value and text property]]
          get {
             [[Gets value displayed by a accessible widget.]]
          }

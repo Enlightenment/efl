@@ -86,6 +86,7 @@ interface Elm.Interface.Atspi.Text ()
          }
       }
       @property caret_offset @protected {
+      	 [[Caret offset property]]
          get {
             [[Gets offset position of caret (cursor)]]
          }

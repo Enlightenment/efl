@@ -76,6 +76,7 @@ mixin Elm.Interface.Atspi_Component ()
          }
       }
       contains @protected {
+      	 [[Contains accessible widget]]
          params {
             screen_coords: bool; [[If $true x and y values will be relative to
                                    screen origin, otherwise relative to canvas]]

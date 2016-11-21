@@ -352,6 +352,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          }
       }
       event_emit @class @protected {
+      	 [[Emit event]]
          params {
             @in accessible: Elm.Interface.Atspi_Accessible; [[Accessibility object.]]
             @in event: ptr(const(Efl.Event.Description)); [[Accessibility event type.]]
