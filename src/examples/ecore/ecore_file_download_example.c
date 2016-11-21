@@ -48,6 +48,9 @@ main(void)
    if (ecore_file_exists(DST))
      ecore_file_unlink(DST);
 
+   if (ecore_file_exists(DST_MIME))
+     ecore_file_unlink(DST_MIME);
+
    start = ecore_time_get();
 
    if (ecore_file_download(URL, DST, completion_cb, progress_cb, NULL, NULL))
