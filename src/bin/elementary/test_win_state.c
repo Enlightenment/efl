@@ -11,6 +11,9 @@ typedef struct _Testitem
 
 static int rotate_with_resize = 0;
 static Eina_Bool fullscreen = EINA_FALSE;
+static Eina_Bool floating = EINA_FALSE;
+
+static Evas_Object *win;
 
 static void
 my_bt_38_alpha_on(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -134,6 +137,14 @@ my_ck_38_borderless(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
+my_ck_38_floating(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+   floating = elm_check_state_get(obj);
+   elm_win_floating_mode_set(win, floating);
+}
+
+static void
 my_win_move(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Coord x, y;
@@ -241,10 +252,62 @@ _win_hide(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    printf("win: hide\n");
 }
 
+static void
+_bt_pressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int param = (int)(uintptr_t)(data);
+   Eina_Bool res = EINA_FALSE;
+
+   printf("pressed event on Button:%d\n", param);
+
+   switch (param)
+     {
+      case 1:
+        printf("Top Left\n");
+        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_LEFT);
+        break;
+      case 2:
+	  	printf("Top\n");
+        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_TOP);
+        break;
+      case 3:
+	  	printf("Top Right\n");
+        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_RIGHT);
+        break;
+      case 4:
+	  	printf("Left\n");
+        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_LEFT);
+        break;
+      case 5:
+        printf("Move win\n");
+        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_MOVE);
+        break;
+      case 6:
+	  	printf("Right\n");
+        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_RIGHT);
+        break;
+      case 7:
+	  	printf("Bottom Left\n");
+        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_LEFT);
+        break;
+      case 8:
+	  	printf("Bottom\n");
+        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_BOTTOM);
+        break;
+      case 9:
+	  	printf("Bottom Right\n");
+        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_RIGHT);
+        break;
+      default:
+        printf("No action\n");
+   	}
+   printf("result = %d\n", res);
+}
+
 void
 test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bg, *sl, *bx, *bx2, *bt, *ck;
+   Evas_Object *bg, *sl, *bx, *bx2, *bt, *ck, *tb;
 
    win = elm_win_add(NULL, "window-states", ELM_WIN_BASIC);
    elm_win_title_set(win, "Window States");
@@ -427,6 +490,15 @@ test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(ck);
    elm_box_pack_end(bx, ck);
 
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "floating");
+   elm_check_state_set(ck, floating);
+   evas_object_smart_callback_add(ck, "changed", my_ck_38_floating, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.02, 0.99);
+   evas_object_show(ck);
+   elm_box_pack_end(bx, ck);
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
    elm_box_homogeneous_set(bx2, EINA_TRUE);
@@ -475,6 +547,86 @@ test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
+
+   tb = elm_table_add(win);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   evas_object_show(tb);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Top Left");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "pressed", _bt_pressed, (void *)1);
+   elm_table_pack(tb, bt, 0, 0, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Top");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "pressed", _bt_pressed, (void *)2);
+   elm_table_pack(tb, bt, 1, 0, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Top Right");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "pressed", _bt_pressed, (void *)3);
+   elm_table_pack(tb, bt, 2, 0, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Left");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "pressed", _bt_pressed, (void *)4);
+   elm_table_pack(tb, bt, 0, 1, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Move");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "pressed", _bt_pressed, (void *)5);
+   elm_table_pack(tb, bt, 1, 1, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Right");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "pressed", _bt_pressed, (void *)6);
+   elm_table_pack(tb, bt, 2, 1, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Bot Left");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "pressed", _bt_pressed, (void *)7);
+   elm_table_pack(tb, bt, 0, 2, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Bottom");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "pressed", _bt_pressed, (void *)8);
+   elm_table_pack(tb, bt, 1, 2, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Bot Right");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "pressed", _bt_pressed, (void *)9);
+   elm_table_pack(tb, bt, 2, 2, 1, 1);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, tb);
 
    evas_object_resize(win, 280, 400);
    evas_object_show(win);

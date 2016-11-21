@@ -140,6 +140,34 @@ enum Efl.Ui.Win.Urgent_Mode
    urgent [[The window is a urgent window.]]
 }
 
+enum Efl.Ui.Win.Move_Resize_Mode
+{
+   [[Define the move or resize mode of window.
+     The user can request the server to start moving or resizing the window by combining this modes.
+     However, only limited combinations are allowd.
+  
+     Currently, only the following 9 combinations are allowed (ELM_WIN_MOVE_RESIZE_MOVE should be used alone),
+	  and possibly more combinations may be added in the future.
+
+     1. EFL_UI_WIN_MOVE_RESIZE_MOVE 
+	  2. EFL_UI_WIN_MOVE_RESIZE_TOP
+	  3. EFL_UI_WIN_MOVE_RESIZE_BOTTOM
+	  4. EFL_UI_WIN_MOVE_RESIZE_LEFT
+     5. EFL_UI_WIN_MOVE_RESIZE_RIGHT
+     6. EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_LEFT
+	  7. EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_RIGHT
+	  8. EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_LEFT
+	  9. EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_RIGHT
+   ]]
+
+   legacy: efl_ui_win_move_resize;
+   move = 0, [[start moving window]]
+   top = (1 << 1), [[start resizing window to the top]]
+   bottom = (1 << 2), [[start resizing window to the bottom]]
+   left = (1 << 3), [[start resizing window to the left]]
+   right = (1 << 4) [[start resizing window to the right]]
+}
+
 class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                Elm.Interface.Atspi_Widget_Action, Efl.Pack,
                Efl.Input.State, Efl.Input.Interface, Efl.Screen,
@@ -806,6 +834,49 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          ]]
          params {
             @in uri: string; [[This is the uri to open]]
+         }
+      }
+      move_resize_start {
+         [[Start moving or resizing the window.
+           
+           The user can request the server to start moving or resizing the window by combining Elm.Win.Move_Resize_Mode.
+           The result of this API can only guarantee that the request has been forwared to the server,
+           In fact, there is no guarantee that the request can be processed by the server.
+
+           In order to use this API correctly, avoid the following conditions.
+           (The following situations will return a failure)
+
+           1. Calling a function in the absence of a touch(mouse) down event.
+           2. Calling the function twice more than once before the touch(mouse) up event. 
+           3. Calling the function when the elm win already resizing or moving the window.
+           4. Calling the function using a combination of unsupported modes. 
+
+           Right usage
+           1. touch(mouse) down event
+           2. efl_ui_win_move_resize_start only once using the supported mode combination.
+           3. touch(mouse) up event
+   
+           If a touch(mouse) up event occurs after calling the function, it automatically ends the window move and resize operation.
+
+           Since there are some non-exclusive modes, you can use a combination of modes.(ELM_WIN_MOVE_RESIZE_MOVE is exclusive with others)
+           However, Some combination of mode is limited for technical reasons.
+           At present, only the following nine combinations are allowed. 
+           For more information, see the Elm.Win.Move_Resize_Mode.
+		  
+           1. EFL_UI_WIN_MOVE_RESIZE_MOVE 
+           2. EFL_UI_WIN_MOVE_RESIZE_TOP
+           3. EFL_UI_WIN_MOVE_RESIZE_BOTTOM
+           4. EFL_UI_WIN_MOVE_RESIZE_LEFT
+           5. EFL_UI_WIN_MOVE_RESIZE_RIGHT
+           6. EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_LEFT
+           7. EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_RIGHT
+           8. EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_LEFT
+           9. EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_RIGHT
+
+         ]]
+         return: bool; [[$true = success to send request to server, $false = error]]
+         params {
+            @in mode: Efl.Ui.Win.Move_Resize_Mode; [[According to the move resize mode, it can request move resize to the server differently.]]
          }
       }
    }
