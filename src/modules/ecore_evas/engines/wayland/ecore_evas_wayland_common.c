@@ -90,7 +90,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, //fn_callback_focus_device_out_set
    NULL, //fn_callback_device_mouse_in_set
    NULL, //fn_callback_device_mouse_out_set
-   NULL, //fn_pointer_device_xy_get
+   _ecore_evas_wl_common_pointer_device_xy_get,
 };
 
 #define _smart_frame_type "ecore_evas_wl_frame"
@@ -1131,6 +1131,19 @@ _ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_C
 
    wdata = ee->engine.data;
    ecore_wl2_window_pointer_xy_get(wdata->win, x, y);
+}
+
+void
+_ecore_evas_wl_common_pointer_device_xy_get(const Ecore_Evas *ee,
+                                            const Efl_Input_Device *pointer,
+                                            Evas_Coord *x, Evas_Coord *y)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   wdata = ee->engine.data;
+   ecore_wl2_window_pointer_device_xy_get(wdata->win, pointer, x, y);
 }
 
 void

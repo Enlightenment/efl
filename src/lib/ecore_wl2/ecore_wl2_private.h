@@ -67,6 +67,15 @@ extern Eina_Bool no_session_recovery;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_ecore_wl2_log_dom, __VA_ARGS__)
 
+typedef struct _Ecore_Wl2_Input_Devices
+{
+   Eo *pointer_dev;
+   Eo *keyboard_dev;
+   Eo *touch_dev;
+   Eo *seat_dev;
+   int window_id;
+} Ecore_Wl2_Input_Devices;
+
 struct _Ecore_Wl2_Display
 {
    int refs;
