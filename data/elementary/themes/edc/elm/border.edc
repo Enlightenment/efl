@@ -480,8 +480,18 @@ group { name: "elm/border/base/default";
             color: 0 0 0 0;
          }
       }
-      rect {  "elm.event.resize.tl";
+      rect { "top_resize_clip";
          clip: "top_clip";
+         desc { "default";
+            rel.to: "top_clip";
+         }
+         desc { "hidden";
+            inherit: "default";
+            hid;
+         }
+      }
+      rect {  "elm.event.resize.tl";
+         clip: "top_resize_clip";
          desc { "default";
             rel.to: "top_clip";
             rel2.relative: 0.0 0.0;
@@ -493,7 +503,7 @@ group { name: "elm/border/base/default";
          desc { "hidden"; inherit: "default"; hid; }
       }
       rect {  "elm.event.resize.t";
-         clip: "top_clip";
+         clip: "top_resize_clip";
          desc { "default";
             rel1.relative: 1.0 0.0;
             rel1.to_y: "top_clip";
@@ -509,7 +519,7 @@ group { name: "elm/border/base/default";
          desc { "hidden"; inherit: "default"; hid; }
       }
       rect {  "elm.event.resize.tr";
-         clip: "top_clip";
+         clip: "top_resize_clip";
          desc { "default";
             rel.to: "top_clip";
             rel1.relative: 1.0 0.0;
@@ -613,8 +623,9 @@ group { name: "elm/border/base/default";
       }
    }
 
-#define BORDERLESS 1
-#define MAXIMIZED  2
+#define BORDERLESS  1
+#define MAXIMIZED   2
+#define UNRESIZABLE 4
 #define SET_MODE(a) script { new m = get_int(border_mode); m |= (a); set_int(border_mode, m); eval_mode(m); }
 #define UNSET_MODE(a) script { new m = get_int(border_mode); m &= ~(a); set_int(border_mode, m); eval_mode(m); }
 
@@ -622,10 +633,12 @@ group { name: "elm/border/base/default";
       script {
          public border_mode;
          public eval_mode(m) {
-            if (m & (BORDERLESS | MAXIMIZED)) {
+            if (m & (BORDERLESS | MAXIMIZED | UNRESIZABLE)) {
                set_state(PART:"bottom_clip", "hidden", 0.0);
+               set_state(PART:"top_resize_clip", "hidden", 0.0);
             } else {
                set_state(PART:"bottom_clip", "default", 0.0);
+               set_state(PART:"top_resize_clip", "default", 0.0);
             }
          }
       }
@@ -643,6 +656,14 @@ group { name: "elm/border/base/default";
          after: "borderless,off";
       }
       program { "borderless,off"; UNSET_MODE(BORDERLESS); }
+      program {
+         signal: "elm,state,unresizable,on"; source: "elm";
+         SET_MODE(UNRESIZABLE);
+      }
+      program {
+         signal: "elm,state,unresizable,off"; source: "elm";
+         UNSET_MODE(UNRESIZABLE);
+      }
       program {
          signal: "elm,state,shadow,on"; source: "elm";
          action: STATE_SET "default";
@@ -748,11 +769,8 @@ group { name: "elm/border/base/default";
       }
       program {
          signal: "elm,state,maximize*"; source: "elm";
-         action: STATE_SET "hidden";
-         targets: "elm.event.resize.t" "elm.event.resize.tl" "elm.event.resize.tr" "bottom_clip";
-         after: "maximized,on";
+         SET_MODE(MAXIMIZED);
       }
-      program { "maximized,on"; SET_MODE(MAXIMIZED); }
       program {
          signal: "elm,state,unmaximize*"; source: "elm";
          action: STATE_SET "default";
@@ -760,11 +778,8 @@ group { name: "elm/border/base/default";
       }
       program {
          signal: "elm,state,unmaximize*"; source: "elm";
-         action: STATE_SET "default";
-         targets: "elm.event.resize.t" "elm.event.resize.tl" "elm.event.resize.tr" "bottom_clip";
-         after: "maximized,off";
+         UNSET_MODE(MAXIMIZED);
       }
-      program { "maximized,off"; UNSET_MODE(MAXIMIZED); }
 
       /* application desktop menu */
       program { name: "show_menu";
@@ -843,7 +858,7 @@ group { name: "elm/border/base/default";
          signal: "mouse,out"; source: "elm.event.resize.t";
          action: SIGNAL_EMIT "elm,action,resize,hide" "elm.event.resize.t";
       }
-      program { name: "resize_t_down";
+      program {
          signal: "mouse,down,1"; source: "elm.event.resize.t";
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.t";
       }
@@ -914,6 +929,7 @@ group { name: "elm/border/base/default";
    }
 }
 
+#undef UNRESIZABLE
 #undef BORDERLESS
 #undef MAXIMIZED
 #undef SET_MODE

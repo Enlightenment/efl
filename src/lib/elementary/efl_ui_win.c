@@ -247,12 +247,14 @@ struct _Efl_Ui_Win_Data
       Eina_Bool need_borderless : 1;
       Eina_Bool need_bg_solid : 1;
       Eina_Bool need_menu : 1;
+      Eina_Bool need_unresizable : 1;
       Eina_Bool cur_borderless : 1;
       Eina_Bool cur_shadow : 1;
       Eina_Bool cur_focus : 1;
       Eina_Bool cur_maximized : 1;
       Eina_Bool cur_bg_solid : 1;
       Eina_Bool cur_menu : 1;
+      Eina_Bool cur_unresizable : 1;
    } csd;
 
    struct {
@@ -848,15 +850,15 @@ static void
 _elm_win_obj_callback_changed_size_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
-   Evas_Coord w, h;
+   Evas_Coord minw, minh, maxw, maxh;
 
-   efl_gfx_size_hint_combined_min_get(obj, &w, &h);
-   TRAP(sd, size_min_set, w, h);
+   efl_gfx_size_hint_combined_min_get(obj, &minw, &minh);
+   efl_gfx_size_hint_max_get(obj, &maxw, &maxh);
+   if (maxw < 1) maxw = -1;
+   if (maxh < 1) maxh = -1;
 
-   evas_object_size_hint_max_get(obj, &w, &h);
-   if (w < 1) w = -1;
-   if (h < 1) h = -1;
-   TRAP(sd, size_max_set, w, h);
+   TRAP(sd, size_min_set, minw, minh);
+   TRAP(sd, size_max_set, maxw, maxh);
 }
 /* end of elm-win specific associate */
 
@@ -3254,6 +3256,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
 {
    ELM_WIN_DATA_GET(obj, sd);
    Evas_Coord w, h, minw, minh, maxw, maxh;
+   Eina_Bool unresizable;
    double wx, wy;
 
    efl_gfx_size_hint_combined_min_get(sd->legacy.edje, &minw, &minh);
@@ -3265,6 +3268,13 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    else maxw = 32767;
    if (!wy) maxh = minh;
    else maxh = 32767;
+
+   unresizable = ((minw == maxw) && (minh == maxh));
+   if (sd->csd.need_unresizable != unresizable)
+     {
+        sd->csd.need_unresizable = unresizable;
+        _elm_win_frame_style_update(sd, 0, 1);
+     }
 
    if (sd->frame_obj)
      {
@@ -4098,7 +4108,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
 static void
 _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc)
 {
-   Eina_Bool borderless, maximized, shadow, focus, bg_solid, menu;
+   Eina_Bool borderless, maximized, shadow, focus, bg_solid, menu, unresizable;
    Eina_Bool changed = EINA_FALSE;
 
    if (!sd->frame_obj)
@@ -4116,6 +4126,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    shadow = sd->csd.need_shadow && (!sd->fullscreen) && (!sd->maximized);
    focus = ecore_evas_focus_get(sd->ee);
    bg_solid = sd->csd.need_bg_solid;
+   unresizable = sd->csd.need_unresizable;
    menu = sd->csd.need_menu;
 
 #define STATE_SET(state, s1, s2) do { \
@@ -4132,6 +4143,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    STATE_SET(maximized, "elm,state,maximized", "elm,state,unmaximized");
    STATE_SET(focus, "elm,action,focus", "elm,action,unfocus");
    STATE_SET(bg_solid, "elm,state,background,solid,on", "elm,state,background,solid,off");
+   STATE_SET(unresizable, "elm,state,unresizable,on", "elm,state,unresizable,off");
    STATE_SET(menu, "elm,action,show_menu", "elm,action,hide_menu");
 
 #undef STATE_SET

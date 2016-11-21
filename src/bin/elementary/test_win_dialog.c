@@ -42,8 +42,8 @@ _bt2_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 
    lb = efl_add(EFL_UI_TEXT_CLASS, dia,
                 efl_text_set(efl_added, "This is a non-resizable dialog."),
-                efl_gfx_size_hint_min_set(efl_added, 200, 150),
-                efl_gfx_size_hint_max_set(efl_added, 200, 150),
+                efl_gfx_size_hint_min_set(efl_added, 300, 150),
+                efl_gfx_size_hint_max_set(efl_added, 300, 150),
                 efl_gfx_size_hint_weight_set(efl_added, 0, 0));
 
    // Swallow in the label as the default content, this will make it visible.
