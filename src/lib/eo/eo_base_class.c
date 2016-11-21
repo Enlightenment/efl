@@ -1146,6 +1146,20 @@ err:
    return EINA_FALSE;
 }
 
+static void
+_efl_object_event_callback_clean(Eo *obj, Efl_Object_Data *pd,
+                                 const Efl_Callback_Array_Item *array,
+                                 Eo_Callback_Description **cb)
+{
+   (*cb)->delete_me = EINA_TRUE;
+   if (pd->walking_list > 0)
+     pd->deletions_waiting = EINA_TRUE;
+   else
+     _eo_callback_remove(pd, cb);
+
+   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)array);
+}
+
 EOLIAN static Eina_Bool
 _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
                     const Efl_Event_Description *desc,
@@ -1166,13 +1180,7 @@ _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
           {
              const Efl_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
 
-             (*cb)->delete_me = EINA_TRUE;
-             if (pd->walking_list > 0)
-               pd->deletions_waiting = EINA_TRUE;
-             else
-               _eo_callback_remove(pd, cb);
-
-             efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)arr);
+             _efl_object_event_callback_clean(obj, pd, arr, cb);
              return EINA_TRUE;
           }
      }
@@ -1246,13 +1254,7 @@ _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
             ((*cb)->items.item_array == array) &&
             ((*cb)->func_data == user_data))
           {
-             (*cb)->delete_me = EINA_TRUE;
-             if (pd->walking_list > 0)
-               pd->deletions_waiting = EINA_TRUE;
-             else
-               _eo_callback_remove(pd, cb);
-
-             efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)array);
+             _efl_object_event_callback_clean(obj, pd, array, cb);
              return EINA_TRUE;
           }
      }
