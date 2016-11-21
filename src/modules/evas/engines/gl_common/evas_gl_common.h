@@ -207,6 +207,7 @@ struct _Evas_GL_Shared
    // persp map
    int foc, z0, px, py;
    int ax, ay;
+   int offx, offy;
    GLfloat proj[16];
 
    Eina_Bool needs_shaders_flush : 1;

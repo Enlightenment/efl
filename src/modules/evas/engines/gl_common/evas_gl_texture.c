@@ -1131,7 +1131,7 @@ evas_gl_common_texture_render_noscale_new(Evas_Engine_GL_Context *gc, unsigned i
                                    *matching_format[lformat].format,
                                    &u, &v, &tex->apt,
                                    // XXX: should this be another atlas size?
-                                   gc->shared->info.tune.atlas.max_alloc_size,
+                                   gc->shared->info.tune.atlas.max_alloc_size * 8,
                                    EINA_FALSE);
    if (!tex->pt)
      {

@@ -587,6 +587,7 @@ static void
 _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
 {
    int w = 1, h = 1, m = 1, rot = 1, foc = 0;
+   int offx = 0, offy = 0;
    Evas_GL_Program *prog;
    Eina_Iterator *it;
 
@@ -606,17 +607,21 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
         h = gc->pipe[0].shader.surface->h;
         rot = 0;
         m = -1;
+        offx = gc->pipe[0].shader.surface->tex->x;
+        offy = gc->pipe[0].shader.surface->tex->y;
      }
 
 #ifdef GL_GLES
    if (gc->shared->eglctxt == gc->eglctxt)
-#endif     
+#endif
      {
-        if ((!gc->change.size) ||
-            (
+        if (((offx == gc->shared->offx) && (offy == gc->shared->offy)) &&
+            ((!gc->change.size) ||
+             (
                 (gc->shared->w == w) && (gc->shared->h == h) &&
                 (gc->shared->rot == rot) && (gc->shared->foc == gc->foc) &&
                 (gc->shared->mflip == m)
+             )
             )
            )
           return;
@@ -624,7 +629,7 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
 #ifdef GL_GLES
    gc->shared->eglctxt = gc->eglctxt;
 #endif
-   
+
    gc->shared->w = w;
    gc->shared->h = h;
    gc->shared->rot = rot;
@@ -634,13 +639,15 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    gc->shared->px = gc->px;
    gc->shared->py = gc->py;
    gc->change.size = 0;
+   gc->shared->offx = offx;
+   gc->shared->offy = offy;
 
    if (foc == 0)
      {
         if ((rot == 0) || (rot == 180))
-           glViewport(0, 0, w, h);
+           glViewport(offx, offy, w, h);
         else
-           glViewport(0, 0, h, w);
+           glViewport(offx, offy, h, w);
         // std matrix
         if (m == 1)
            matrix_ortho(gc->shared->proj,
@@ -702,16 +709,18 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
         if (m == -1) ay = vy * 2;
 
         if ((rot == 0) || (rot == 180))
-           glViewport(-2 * vx, -2 * vy, vw, vh);
+           glViewport(offx + (-2 * vx), offy + (-2 * vy), vw, vh);
         else
-           glViewport(-2 * vy, -2 * vx, vh, vw);
+           glViewport(offx + (-2 * vy), offy + (-2 * vx), vh, vw);
         if (m == 1)
-           matrix_ortho(gc->shared->proj, 0, vw, 0, vh,
+           matrix_ortho(gc->shared->proj,
+                        0, vw, 0, vh,
                         -1000000.0, 1000000.0,
                         rot, vw, vh,
                         foc, 0.0);
         else
-           matrix_ortho(gc->shared->proj, 0, vw, vh, 0,
+           matrix_ortho(gc->shared->proj,
+                        0, vw, vh, 0,
                         -1000000.0, 1000000.0,
                         rot, vw, vh,
                         foc, 0.0);
@@ -2998,7 +3007,7 @@ start_tiling(Evas_Engine_GL_Context *gc EINA_UNUSED,
 static void
 shader_array_flush(Evas_Engine_GL_Context *gc)
 {
-   int i, gw, gh;
+   int i, gw, gh, offx = 0, offy = 0;
    unsigned int pipe_done = 0;  //count pipe iteration for debugging
    Eina_Bool setclip;
    Eina_Bool fbo = EINA_FALSE;
@@ -3012,6 +3021,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gw = gc->pipe[0].shader.surface->w;
         gh = gc->pipe[0].shader.surface->h;
         fbo = EINA_TRUE;
+        offx = gc->pipe[0].shader.surface->tex->x;
+        offy = gc->pipe[0].shader.surface->tex->y;
      }
    for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
      {
@@ -3148,7 +3159,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (gc->pipe[i].shader.clip != gc->state.current.clip)
           {
              int cx, cy, cw, ch;
-             
+
              cx = gc->pipe[i].shader.cx;
              cy = gc->pipe[i].shader.cy;
              cw = gc->pipe[i].shader.cw;
@@ -3178,17 +3189,17 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                        if (!fbo)
                          {
                             start_tiling(gc, gc->rot, gw, gh,
-                                         gc->master_clip.x,
-                                         gh - gc->master_clip.y - gc->master_clip.h,
+                                         gc->master_clip.x + offx,
+                                         gh - gc->master_clip.y - offy - gc->master_clip.h,
                                          gc->master_clip.w, gc->master_clip.h,
                                          gc->preserve_bit);
-
                             if (!gc->preserve_bit)
                               gc->preserve_bit = GL_COLOR_BUFFER_BIT0_QCOM;
                          }
                        else
                          start_tiling(gc, 0, gw, gh,
-                                      gc->master_clip.x, gc->master_clip.y,
+                                      gc->master_clip.x + offx,
+                                      gc->master_clip.y + offy,
                                       gc->master_clip.w, gc->master_clip.h, 0);
                        gc->master_clip.used = EINA_TRUE;
                     }
@@ -3198,9 +3209,12 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                {
                   glEnable(GL_SCISSOR_TEST);
                   if (!fbo)
-                    scissor_rot(gc, gc->rot, gw, gh, cx, gh - cy - ch, cw, ch);
+                    scissor_rot(gc, gc->rot, gw, gh,
+                                cx + offx,
+                                gh - cy - offy - ch,
+                                cw, ch);
                   else
-                     glScissor(cx, cy, cw, ch);
+                     glScissor(cx + offx, cy + offy, cw, ch);
                   setclip = EINA_TRUE;
                   gc->state.current.cx = cx;
                   gc->state.current.cy = cy;
@@ -3221,7 +3235,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
             ((gc->master_clip.enabled) && (!fbo)))
           {
              int cx, cy, cw, ch;
-             
+
              cx = gc->pipe[i].shader.cx;
              cy = gc->pipe[i].shader.cy;
              cw = gc->pipe[i].shader.cw;
@@ -3248,7 +3262,10 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                  (ch != gc->state.current.ch))
                {
                   if (!fbo)
-                    scissor_rot(gc, gc->rot, gw, gh, cx, gh - cy - ch, cw, ch);
+                    scissor_rot(gc, gc->rot, gw, gh,
+                                cx + offx,
+                                gh - cy - offy - ch,
+                                cw, ch);
                   else
                     glScissor(cx, cy, cw, ch);
                   gc->state.current.cx = cx;
