@@ -63,6 +63,15 @@ struct _Async_Open_Data
 };
 
 static void
+_prev_img_del(Efl_Ui_Image_Data *sd)
+{
+   elm_widget_sub_object_del(sd->self, sd->prev_img);
+   evas_object_smart_member_del(sd->prev_img);
+   evas_object_del(sd->prev_img);
+   sd->prev_img = NULL;
+}
+
+static void
 _on_image_preloaded(void *data,
                     Evas *e EINA_UNUSED,
                     Evas_Object *obj,
@@ -73,7 +82,7 @@ _on_image_preloaded(void *data,
 
    sd->preload_status = EFL_UI_IMAGE_PRELOADED;
    if (sd->show) evas_object_show(obj);
-   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+   _prev_img_del(sd);
    err = evas_object_image_load_error_get(obj);
    if (!err) evas_object_smart_callback_call(sd->self, SIG_LOAD_READY, NULL);
    else evas_object_smart_callback_call(sd->self, SIG_LOAD_ERROR, NULL);
@@ -432,7 +441,7 @@ _efl_ui_image_edje_file_set(Evas_Object *obj,
 
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
-   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+   _prev_img_del(sd);
 
    if (!sd->edje)
      {
@@ -551,7 +560,7 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    ecore_timer_del(sd->anim_timer);
    evas_object_del(sd->img);
-   evas_object_del(sd->prev_img);
+   _prev_img_del(sd);
    if (sd->remote) _elm_url_cancel(sd->remote);
    free(sd->remote_data);
    eina_stringshare_del(sd->key);
@@ -602,7 +611,7 @@ _efl_ui_image_show(Eo *obj, Efl_Ui_Image_Data *sd)
 
    if (sd->preload_status == EFL_UI_IMAGE_PRELOADING) return;
    efl_gfx_visible_set(sd->img, EINA_TRUE);
-   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+   _prev_img_del(sd);
 }
 
 static void
@@ -611,7 +620,7 @@ _efl_ui_image_hide(Eo *obj, Efl_Ui_Image_Data *sd)
    sd->show = EINA_FALSE;
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
    efl_gfx_visible_set(sd->img, EINA_FALSE);
-   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+   _prev_img_del(sd);
 }
 
 EOLIAN static void
@@ -1745,7 +1754,7 @@ elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
           {
              evas_object_image_preload(sd->img, disable);
              if (sd->show) evas_object_show(sd->img);
-             ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+             _prev_img_del(sd);
           }
         sd->preload_status = EFL_UI_IMAGE_PRELOAD_DISABLED;
      }
