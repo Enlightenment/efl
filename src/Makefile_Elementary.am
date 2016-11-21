@@ -90,6 +90,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_popup_item.eo \
 	lib/elementary/efl_ui_box.eo \
 	lib/elementary/efl_ui_box_flow.eo \
+	lib/elementary/efl_ui_box_stack.eo \
 	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_grid_static.eo \
 	lib/elementary/efl_ui_layout_internal_box.eo \
@@ -653,6 +654,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elu_ews_wm.c \
 	lib/elementary/efl_ui_box.c \
 	lib/elementary/efl_ui_box_flow.c \
+	lib/elementary/efl_ui_box_stack.c \
 	lib/elementary/efl_ui_box_layout.c \
 	lib/elementary/efl_ui_box_private.h \
 	lib/elementary/efl_ui_grid.c \

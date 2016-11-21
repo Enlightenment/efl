@@ -1,0 +1,12 @@
+class Efl.Ui.Box.Stack (Efl.Ui.Box, Efl.Pack.Layout)
+{
+   [[A custom layout engine for @Efl.Ui.Box that stacks items.
+
+     Items will be stacked on top of each other (in the Z direction).
+   ]]
+   data: null;
+   implements {
+      Efl.Object.constructor;
+      Efl.Pack.Layout.layout_do;
+   }
+}

@@ -857,6 +857,7 @@ _align_box_add(Evas_Object *bx_out, Box_Align_Data *bdata)
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 }
+
 void
 test_box_align(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                void *event_info EINA_UNUSED)
@@ -879,4 +880,56 @@ test_box_align(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    evas_object_resize(win, 300, 400);
    evas_object_show(win);
+}
+
+void
+test_box_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *o;
+   char buf[PATH_MAX];
+
+   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+                 efl_text_set(efl_added, "Efl.Ui.Box.Stack"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+
+   efl_gfx_color_set(efl_part(win, "background"), 24, 24, 64, 255);
+
+   /* stacked box, with items in the center-bottom */
+   bx = efl_add(EFL_UI_BOX_STACK_CLASS, win,
+                efl_pack_align_set(efl_added, 0.5, 1.0));
+   efl_content_set(win, bx);
+
+   /* stretched rectangle */
+   o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win,
+               efl_gfx_color_set(efl_added, 0, 64, 128, 255),
+               efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
+               efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
+               efl_gfx_visible_set(efl_added, EINA_TRUE));
+   efl_pack(bx, o);
+
+   /* rectangle with a max size */
+   o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win,
+               efl_gfx_color_set(efl_added, 64, 128, 64, 255),
+               efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
+               efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
+               efl_gfx_size_hint_max_set(efl_added, 128, 20),
+               efl_gfx_visible_set(efl_added, EINA_TRUE));
+   efl_pack(bx, o);
+
+   /* image with a forced min size */
+   snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
+   o = efl_add(EFL_UI_IMAGE_CLASS, win,
+               efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
+               efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
+               efl_gfx_size_hint_min_set(efl_added, 64, 64),
+               efl_file_set(efl_added, buf, NULL),
+               efl_gfx_visible_set(efl_added, EINA_TRUE));
+   efl_pack(bx, o);
+
+   /* make window resizable: add a weight to its content */
+   efl_gfx_size_hint_weight_set(bx, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
+
+   efl_gfx_size_set(win, 300, 300);
+   efl_gfx_visible_set(win, EINA_TRUE);
 }
