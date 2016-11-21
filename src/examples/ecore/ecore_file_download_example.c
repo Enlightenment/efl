@@ -74,7 +74,7 @@ main(void)
         printf("Download started successfully:\n  URL: %s\n  DEST: %s\n", URL, DST_MIME);
         ecore_main_loop_begin();
         printf("\nTime elapsed: %f seconds\n", ecore_time_get() - start);
-        printf("Downloaded %lld bytes\n", ecore_file_size(DST));
+        printf("Downloaded %lld bytes\n", ecore_file_size(DST_MIME));
      }
    else
      {
