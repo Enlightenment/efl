@@ -2,6 +2,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
                         Elm.Interface.Atspi_Widget_Action,
                         Efl.Ui.Selectable)
 {
+   [[Elementary flipselector class]]
    legacy_prefix: elm_flipselector;
    eo_prefix: elm_obj_flipselector;
    event_prefix: elm_flipselector;
@@ -22,7 +23,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
               items list is changed. It should be fetched again with another
               call to this function when changes happen.
             ]]
-            return: const(list<Elm.Widget.Item>);
+            return: const(list<Elm.Widget.Item>); [[List of items]]
          }
       }
       @property first_item {
@@ -74,7 +75,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
            determined by the widget's theme. Strings larger than
            that value are going to be truncated.
          ]]
-         return: Elm.Widget.Item;
+         return: Elm.Widget.Item; [[New widget item]]
          params {
             @in label: string; [[The (text) label of the new item.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience callback function to take place when
@@ -105,7 +106,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
            determined by the widget's theme. Strings larger than
            that value are going to be truncated.
          ]]
-         return: Elm.Widget.Item;
+         return: Elm.Widget.Item; [[New widget item]]
          params {
             @in label: string; [[The (text) label of the new item.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience callback function to take place when
@@ -140,8 +141,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      underflowed;
-      overflowed;
+      underflowed; [[Called when flipselector is underflowed]]
+      overflowed; [[Called when flipselector is overflowed]]
    }
-
 }
