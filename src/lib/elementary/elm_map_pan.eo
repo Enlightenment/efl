@@ -1,5 +1,6 @@
 class Elm.Map.Pan (Elm.Pan)
 {
+   [[Elementary map pan class]]
    legacy_prefix: elm_map_pan;
    eo_prefix: elm_obj_map_pan;
    event_prefix: elm_map_pan;
@@ -15,18 +16,17 @@ class Elm.Map.Pan (Elm.Pan)
       Elm.Pan.pos_max.get;
    }
    events {
-      loaded;
-      tile,load;
-      tile,loaded;
-      tile,loaded,fail;
-      route,load;
-      route,loaded;
-      route,loaded,fail;
-      name,load;
-      name,loaded;
-      name,loaded,fail;
-      overlay,clicked;
-      overlay,del;
+      loaded; [[Called when map loaded]]
+      tile,load; [[Called when map tile loading started]]
+      tile,loaded; [[Called when map tile loading finished]]
+      tile,loaded,fail; [[Called when map tile loading failed]]
+      route,load; [[Called when route loiding started]]
+      route,loaded; [[Called when route loading finsihed]]
+      route,loaded,fail; [[Called when route loading failed]]
+      name,load; [[Called when name loading started]]
+      name,loaded; [[Called when name loading finished]]
+      name,loaded,fail; [[Called when name loading failed]]
+      overlay,clicked; [[Called when overlay was clicked]]
+      overlay,del; [[Called when overlay was deleted]]
    }
-
 }

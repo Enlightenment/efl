@@ -73,6 +73,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
                Elm.Interface.Atspi_Widget_Action,
                Efl.Ui.Clickable)
 {
+   [[Elementary map class]]
    legacy_prefix: elm_map;
    eo_prefix: elm_obj_map;
    event_prefix: elm_map;
@@ -637,20 +638,19 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      press;
-      zoom,change;
-      loaded;
-      tile,load;
-      tile,loaded;
-      tile,loaded,fail;
-      route,load;
-      route,loaded;
-      route,loaded,fail;
-      name,load;
-      name,loaded;
-      name,loaded,fail;
-      overlay,clicked;
-      overlay,del;
+      press; [[Called when map was pressed]]
+      zoom,change; [[Called when map zoom changed]]
+      loaded; [[Called when map loaded]]
+      tile,load; [[Called when title load started]]
+      tile,loaded; [[Called when title load finished]]
+      tile,loaded,fail; [[Called when title load failed]]
+      route,load; [[Called when route load started]]
+      route,loaded; [[Called when route load finished]]
+      route,loaded,fail; [[Called when route load failed]]
+      name,load; [[Called when name load started]]
+      name,loaded; [[Called when name load finished]]
+      name,loaded,fail; [[Called when name load failed]]
+      overlay,clicked; [[Called when overlay was clicked]]
+      overlay,del; [[Called when overlay was deleted]]
    }
-
 }
