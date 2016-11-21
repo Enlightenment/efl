@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
 
 # include "Ecore_Con.h"
 
@@ -17,28 +18,16 @@ struct _Ecore_File_Download_Job
 {
    ECORE_MAGIC;
 
-   Ecore_Con_Url        *url_con;
-   FILE                 *file;
-
-   char                 *dst;
+   Eo                   *input;
+   Eo                   *output;
+   Eo                   *copier;
 
    Ecore_File_Download_Completion_Cb completion_cb;
    Ecore_File_Download_Progress_Cb progress_cb;
+   const void *data;
 };
 
-Ecore_File_Download_Job *_ecore_file_download_curl(const char *url, const char *dst,
-                                                   Ecore_File_Download_Completion_Cb completion_cb,
-                                                   Ecore_File_Download_Progress_Cb progress_cb,
-                                                   void *data,
-                                                   Eina_Hash *headers);
-
-static Eina_Bool _ecore_file_download_url_complete_cb(void *data, int type, void *event);
-static Eina_Bool _ecore_file_download_url_progress_cb(void *data, int type, void *event);
-
-static Ecore_Event_Handler *_url_complete_handler = NULL;
-static Ecore_Event_Handler *_url_progress_download = NULL;
 static Eina_List           *_job_list;
-
 static int download_init = 0;
 
 int
@@ -46,15 +35,18 @@ ecore_file_download_init(void)
 {
    download_init++;
    if (download_init > 1) return 1;
-   if (!ecore_con_init()) return 0;
+   if (!ecore_con_init())
+     {
+        download_init--;
+        return 0;
+     }
    if (!ecore_con_url_init())
      {
         ecore_con_shutdown();
+        download_init--;
         return 0;
      }
-   _url_complete_handler = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _ecore_file_download_url_complete_cb, NULL);
-   _url_progress_download = ecore_event_handler_add(ECORE_CON_EVENT_URL_PROGRESS, _ecore_file_download_url_progress_cb, NULL);
-   return 1;
+   return download_init;
 }
 
 void
@@ -62,100 +54,123 @@ ecore_file_download_shutdown(void)
 {
    download_init--;
    if (download_init > 0) return;
-   if (_url_complete_handler)
-     ecore_event_handler_del(_url_complete_handler);
-   if (_url_progress_download)
-     ecore_event_handler_del(_url_progress_download);
-   _url_complete_handler = NULL;
-   _url_progress_download = NULL;
    ecore_file_download_abort_all();
    ecore_con_url_shutdown();
    ecore_con_shutdown();
 }
 
+static void
+_ecore_file_download_copier_done(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Ecore_File_Download_Job *job = data;
+   Efl_Net_Http_Status status = efl_net_dialer_http_response_status_get(job->input);
+   const char *file;
+
+   efl_file_get(job->output, &file, NULL);
+
+   DBG("Finished downloading %s (status=%d) -> %s",
+       efl_net_dialer_address_dial_get(job->input),
+       status,
+       file);
+
+   if (job->completion_cb)
+     {
+        Ecore_File_Download_Completion_Cb cb = job->completion_cb;
+        job->completion_cb = NULL;
+        cb((void *)job->data, file, status);
+     }
+
+   efl_del(job->copier);
+}
+
+static void
+_ecore_file_download_copier_error(void *data, const Efl_Event *event)
+{
+   Ecore_File_Download_Job *job = data;
+   Efl_Net_Http_Status status = efl_net_dialer_http_response_status_get(job->input);
+   Eina_Error *perr = event->info;
+   const char *file;
+
+   efl_file_get(job->output, &file, NULL);
+
+   WRN("Failed downloading %s (status=%d) -> %s: %s",
+       efl_net_dialer_address_dial_get(job->input),
+       efl_net_dialer_http_response_status_get(job->input),
+       file,
+       eina_error_msg_get(*perr));
+
+   if (job->completion_cb)
+     {
+        Ecore_File_Download_Completion_Cb cb = job->completion_cb;
+        job->completion_cb = NULL;
+
+        if ((status < 500) || ((int)status > 599))
+          {
+             /* not an HTTP error, likely copier or output, use 500 */
+             status = 500;
+          }
+
+        cb((void *)job->data, file, status);
+     }
+
+   efl_del(job->copier);
+}
+
+static void
+_ecore_file_download_copier_progress(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Ecore_File_Download_Job *job = data;
+   Ecore_File_Progress_Return ret;
+   uint64_t dn, dt, un, ut;
+   const char *file;
+
+   if (!job->progress_cb) return;
+
+   efl_file_get(job->output, &file, NULL);
+   efl_net_dialer_http_progress_download_get(job->input, &dn, &dt);
+   efl_net_dialer_http_progress_upload_get(job->input, &un, &ut);
+   ret = job->progress_cb((void *)job->data, file, dt, dn, ut, un);
+
+   if (ret == ECORE_FILE_PROGRESS_CONTINUE) return;
+
+   ecore_file_download_abort(job);
+}
+
+static void
+_ecore_file_download_copier_del(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Ecore_File_Download_Job *job = data;
+
+   ECORE_MAGIC_SET(job, ECORE_MAGIC_NONE);
+
+   efl_del(job->input);
+   job->input = NULL;
+
+   efl_del(job->output);
+   job->output = NULL;
+
+   job->completion_cb = NULL;
+   job->progress_cb = NULL;
+   job->data = NULL;
+
+   _job_list = eina_list_remove(_job_list, job);
+   free(job);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(ecore_file_download_copier_cbs,
+                           { EFL_IO_COPIER_EVENT_DONE, _ecore_file_download_copier_done },
+                           { EFL_IO_COPIER_EVENT_ERROR, _ecore_file_download_copier_error },
+                           { EFL_IO_COPIER_EVENT_PROGRESS, _ecore_file_download_copier_progress },
+                           { EFL_EVENT_DEL, _ecore_file_download_copier_del });
+
 static Eina_Bool
 _ecore_file_download_headers_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
 {
    Ecore_File_Download_Job *job = fdata;
-   ecore_con_url_additional_header_add(job->url_con, key, data);
+
+   efl_net_dialer_http_request_header_add(job->input, key, data);
 
    return EINA_TRUE;
-}
-
-static Eina_Bool
-_ecore_file_download(const char *url,
-                     const char *dst,
-                     Ecore_File_Download_Completion_Cb completion_cb,
-                     Ecore_File_Download_Progress_Cb progress_cb,
-                     void *data,
-                     Ecore_File_Download_Job **job_ret,
-                     Eina_Hash *headers)
-{
-   if (!url)
-     {
-        CRI("Download URL is null");
-        return EINA_FALSE;
-     }
-
-   char *dir = ecore_file_dir_get(dst);
-
-   if (!ecore_file_is_dir(dir))
-     {
-        ERR("%s is not a directory", dir);
-        free(dir);
-        return EINA_FALSE;
-     }
-   free(dir);
-   if (ecore_file_exists(dst))
-     {
-        WRN("%s already exists", dst);
-        return EINA_FALSE;
-     }
-
-   if (!strncmp(url, "file://", 7))
-     {
-        /* FIXME: Maybe fork? Might take a while to copy.
-         * Check filesize? */
-        /* Just copy it */
-
-        url += 7;
-        /* skip hostname */
-        if ((url = strchr(url, '/')))
-          return ecore_file_cp(url, dst);
-        else
-          return EINA_FALSE;
-     }
-   else if ((!strncmp(url, "http://", 7)) || (!strncmp(url, "https://", 8)) ||
-            (!strncmp(url, "ftp://", 6)))
-     {
-        /* download */
-        Ecore_File_Download_Job *job;
-
-        job = _ecore_file_download_curl(url, dst, completion_cb, progress_cb, data, headers);
-        if(job_ret) *job_ret = job;
-        if(job)
-          return EINA_TRUE;
-        else
-          {
-             ERR("no job returned\n");
-             return EINA_FALSE;
-          }
-     }
-   else
-     {
-        return EINA_FALSE;
-     }
-}
-
-EAPI Eina_Bool
-ecore_file_download(const char *url,
-                    const char *dst,
-                    Ecore_File_Download_Completion_Cb completion_cb,
-                    Ecore_File_Download_Progress_Cb progress_cb,
-                    void *data,
-                    Ecore_File_Download_Job **job_ret)
-{
-   return _ecore_file_download(url, dst, completion_cb, progress_cb, data, job_ret, NULL);
 }
 
 EAPI Eina_Bool
@@ -167,7 +182,100 @@ ecore_file_download_full(const char *url,
                          Ecore_File_Download_Job **job_ret,
                          Eina_Hash *headers)
 {
-   return _ecore_file_download(url, dst, completion_cb, progress_cb, data, job_ret, headers);
+   Ecore_File_Download_Job *job;
+   Eina_Error err;
+   Eo *loop;
+   char *dir;
+
+   if (job_ret) *job_ret = NULL;
+   if (!url)
+     {
+        CRI("Download URL is null");
+        return EINA_FALSE;
+     }
+
+   dir = ecore_file_dir_get(dst);
+   if (!ecore_file_is_dir(dir))
+     {
+        ERR("%s is not a directory", dir);
+        free(dir);
+        return EINA_FALSE;
+     }
+   free(dir);
+   if (ecore_file_exists(dst))
+     {
+        ERR("%s already exists", dst);
+        return EINA_FALSE;
+     }
+
+   loop = ecore_main_loop_get();
+   EINA_SAFETY_ON_NULL_RETURN_VAL(loop, EINA_FALSE);
+
+   job = calloc(1, sizeof(Ecore_File_Download_Job));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(job, EINA_FALSE);
+   ECORE_MAGIC_SET(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB);
+
+   job->input = efl_add(EFL_NET_DIALER_HTTP_CLASS, loop,
+                        efl_net_dialer_http_allow_redirects_set(efl_added, EINA_TRUE));
+   EINA_SAFETY_ON_NULL_GOTO(job->input, error_input);
+
+   job->output = efl_add(EFL_IO_FILE_CLASS, loop,
+                         efl_file_set(efl_added, dst, NULL),
+                         efl_io_file_flags_set(efl_added, O_WRONLY | O_CREAT),
+                         efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE),
+                         efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                         efl_io_file_mode_set(efl_added, 0644));
+   EINA_SAFETY_ON_NULL_GOTO(job->output, error_output);
+
+   job->copier = efl_add(EFL_IO_COPIER_CLASS, loop,
+                         efl_io_copier_source_set(efl_added, job->input),
+                         efl_io_copier_destination_set(efl_added, job->output),
+                         efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                         efl_event_callback_array_add(efl_added, ecore_file_download_copier_cbs(), job));
+   EINA_SAFETY_ON_NULL_GOTO(job->copier, error_copier);
+
+   _job_list = eina_list_append(_job_list, job);
+
+   if (headers)
+     eina_hash_foreach(headers, _ecore_file_download_headers_foreach_cb, job);
+
+   job->completion_cb = completion_cb;
+   job->progress_cb = progress_cb;
+   job->data = data;
+
+   err = efl_net_dialer_dial(job->input, url);
+   if (err)
+     {
+        ERR("Could not download %s: %s", url, eina_error_msg_get(err));
+        goto error_dial;
+     }
+
+   if (job_ret) *job_ret = job;
+   return EINA_TRUE;
+
+ error_dial:
+   efl_del(job->copier);
+   return EINA_FALSE; /* copier's "del" event will delete everything else */
+
+ error_copier:
+   efl_del(job->output);
+ error_output:
+   efl_del(job->input);
+ error_input:
+   ECORE_MAGIC_SET(job, ECORE_MAGIC_NONE);
+   free(job);
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ecore_file_download(const char *url,
+                    const char *dst,
+                    Ecore_File_Download_Completion_Cb completion_cb,
+                    Ecore_File_Download_Progress_Cb progress_cb,
+                    void *data,
+                    Ecore_File_Download_Job **job_ret)
+{
+   return ecore_file_download_full(url, dst, completion_cb, progress_cb, data, job_ret, NULL);
 }
 
 EAPI Eina_Bool
@@ -175,119 +283,10 @@ ecore_file_download_protocol_available(const char *protocol)
 {
    if (!strncmp(protocol, "file://", 7)) return EINA_TRUE;
    else if (!strncmp(protocol, "http://", 7)) return EINA_TRUE;
+   else if (!strncmp(protocol, "https://", 8)) return EINA_TRUE;
    else if (!strncmp(protocol, "ftp://", 6)) return EINA_TRUE;
 
    return EINA_FALSE;
-}
-
-static int
-_ecore_file_download_url_compare_job(const void *data1, const void *data2)
-{
-   const Ecore_File_Download_Job *job = data1;
-   const Ecore_Con_Url           *url = data2;
-
-   if (job->url_con == url) return 0;
-   return -1;
-}
-
-static Eina_Bool
-_ecore_file_download_url_complete_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Con_Event_Url_Complete *ev = event;
-   Ecore_File_Download_Job      *job;
-
-   job = eina_list_search_unsorted(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
-   if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return ECORE_CALLBACK_PASS_ON;
-
-   fclose(job->file);
-   if (job->completion_cb)
-     job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, ev->status);
-
-   _job_list = eina_list_remove(_job_list, job);
-   free(job->dst);
-   ecore_con_url_free(job->url_con);
-   free(job);
-
-   return ECORE_CALLBACK_DONE;
-}
-
-static Eina_Bool
-_ecore_file_download_url_progress_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-/* this reports the downloads progress. if we return 0, then download
- * continues, if we return anything else, then the download stops */
-   Ecore_Con_Event_Url_Progress *ev = event;
-   Ecore_File_Download_Job      *job;
-
-   job = eina_list_search_unsorted(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
-   if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return ECORE_CALLBACK_PASS_ON;
-
-   if (job->progress_cb)
-     if (job->progress_cb(ecore_con_url_data_get(job->url_con), job->dst,
-                          (long int) ev->down.total, (long int) ev->down.now,
-                          (long int) ev->up.total, (long int) ev->up.now) != 0)
-       {
-          _job_list = eina_list_remove(_job_list, job);
-          fclose(job->file);
-          free(job->dst);
-          free(job);
-
-          return ECORE_CALLBACK_PASS_ON;
-       }
-
-   return ECORE_CALLBACK_DONE;
-}
-
-Ecore_File_Download_Job *
-_ecore_file_download_curl(const char *url, const char *dst,
-                          Ecore_File_Download_Completion_Cb completion_cb,
-                          Ecore_File_Download_Progress_Cb progress_cb,
-                          void *data,
-                          Eina_Hash *headers)
-{
-   Ecore_File_Download_Job *job;
-
-   job = calloc(1, sizeof(Ecore_File_Download_Job));
-   if (!job) return NULL;
-
-   ECORE_MAGIC_SET(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB);
-
-   job->file = fopen(dst, "wb");
-   if (!job->file)
-     {
-        free(job);
-        return NULL;
-     }
-   job->url_con = ecore_con_url_new(url);
-   if (!job->url_con)
-     {
-        fclose(job->file);
-        free(job);
-        return NULL;
-     }
-
-   if (headers) eina_hash_foreach(headers, _ecore_file_download_headers_foreach_cb, job);
-   ecore_con_url_fd_set(job->url_con, fileno(job->file));
-   ecore_con_url_data_set(job->url_con, data);
-
-   job->dst = strdup(dst);
-
-   job->completion_cb = completion_cb;
-   job->progress_cb = progress_cb;
-   _job_list = eina_list_append(_job_list, job);
-
-   if (!ecore_con_url_get(job->url_con))
-     {
-        ecore_con_url_free(job->url_con);
-        _job_list = eina_list_remove(_job_list, job);
-        fclose(job->file);
-        ecore_file_remove(job->dst);
-        free(job->dst);
-        free(job);
-        return NULL;
-     }
-
-   return job;
 }
 
 EAPI void
@@ -295,14 +294,21 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
    if (!job)
      return;
+   if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB))
+     {
+        ECORE_MAGIC_FAIL(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB, __FUNCTION__);
+        return;
+     }
 
-   if (job->completion_cb)
-     job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, 1);
-   ecore_con_url_free(job->url_con);
-   _job_list = eina_list_remove(_job_list, job);
-   fclose(job->file);
-   free(job->dst);
-   free(job);
+   /* don't call it from _ecore_file_download_copier_done() */
+   if (job->completion_cb) job->completion_cb = NULL;
+
+   /* efl_io_closer_close()
+    *  -> _ecore_file_download_copier_done()
+    *       -> efl_del()
+    *           -> _ecore_file_download_copier_del()
+    */
+   efl_io_closer_close(job->copier);
 }
 
 EAPI void
