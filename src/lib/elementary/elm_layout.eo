@@ -19,6 +19,7 @@ struct Elm.Layout_Part_Alias_Description
 
 class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
 {
+   [[Elementary layout class]]
    legacy_prefix: elm_layout;
    eo_prefix: elm_obj_layout;
    event_prefix: elm_layout;
@@ -55,7 +56,7 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
               Note that $style will be the new style of $obj too, as in an
               \@ref elm_object_style_set call.
             ]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          values {
             klass: string; [[The class of the group.]]
@@ -64,19 +65,21 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
          }
       }
       @property text_aliases @protected {
+      	 [[Text aliases property]]
          get {
             legacy: null;
          }
          values {
-            aliases: ptr(const(Elm.Layout_Part_Alias_Description));
+            aliases: ptr(const(Elm.Layout_Part_Alias_Description)); [[Text aliases]]
          }
       }
       @property content_aliases @protected {
+      	 [[Content aliases property]]
          get {
             legacy: null;
          }
          values {
-            aliases: ptr(const(Elm.Layout_Part_Alias_Description));
+            aliases: ptr(const(Elm.Layout_Part_Alias_Description)); [[Content aliases]]
          }
       }
       @property edje {
@@ -134,8 +137,9 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
          return: int; [[The frozen state or 0 on error.]]
       }
       theme_enable {
+      	 [[Enable theme]]
          legacy: null;
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       sizing_eval {
          [[Eval sizing.
@@ -174,7 +178,7 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
       }
       part_cursor_style_set {
          [[Sets a specific cursor style for an edje part.]]
-         return: bool; [[True on success or false on failure, that may be
+         return: bool; [[$true on success or $false on failure, that may be
                          part not exists or it did not had a cursor set.]]
          params {
             @in part_name: string; [[A part from loaded edje group.]]
@@ -194,7 +198,7 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
       @property text {
          set {
             [[Set the text of the given part.]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Get the text set in the given part.]]
@@ -234,14 +238,15 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
       }
       part_cursor_get @const {
          [[Get the cursor to be shown when mouse is over an edje part.]]
-         return: string;
+         return: string; [[Cursor name]]
          params {
             @in part_name: string; [[A part from loaded edje group.]]
          }
       }
       sub_object_add_enable {
+      	 [[Enable sub object add]]
          legacy: null;
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       data_get @const {
          [[Get the edje data from the given layout.
@@ -317,7 +322,7 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
       }
       part_cursor_unset {
          [[Unsets a cursor previously set with @.part_cursor_set.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in part_name: string; [[A part from loaded edje group,
                                            that had a cursor set wit
@@ -355,7 +360,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
       Efl.Part.part;
    }
    events {
-      theme,changed;
+      theme,changed; [[Called when theme changed]]
    }
-
 }
