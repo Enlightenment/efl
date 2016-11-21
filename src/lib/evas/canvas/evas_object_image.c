@@ -114,11 +114,11 @@ Eina_Cow *evas_object_image_pixels_cow = NULL;
 Eina_Cow *evas_object_image_state_cow = NULL;
 
 static void
-evas_object_image_render_prepare(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool do_async EINA_UNUSED)
+evas_object_image_render_prepare(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
 {
+#if 0
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
 
-#if 0
    // if image data not loaded or in texture then upload
    if ((o->cur->u.file) || (o->written) || (o->cur->frame != 0))
      {
