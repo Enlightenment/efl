@@ -124,6 +124,9 @@ evas_object_image_render_prepare(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
      {
         if (o->engine_data) ENFN->image_prepare(ENDT, o->engine_data);
      }
+#endif
+#if 0
+   // is it visible? ... rgba 0 0 0 0? not mapped and in viewport?
    if (
        ((o->cur->border.l != 0) || (o->cur->border.r != 0) ||
         (o->cur->border.t != 0) || (o->cur->border.b != 0)) &&
@@ -131,30 +134,29 @@ evas_object_image_render_prepare(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
       )
      {
         void *ctx, *prep = NULL;
-        int x, y, w, h;
 
         if (!o->engine_data_prep)
           {
              prep = ENFN->image_surface_noscale_new
                (ENDT, obj->cur->geometry.w, obj->cur->geometry.h,
                 o->cur->has_alpha);
-             ENFN->image_surface_noscale_region_get(ENDT, prep,
-                                                    &x, &y, &w, &h);
              ctx = ENFN->context_new(ENDT);
-             ENFN->context_clip_set(ENDT, ctx, x, y, w, h);
-             ENFN->context_render_op_set(ENDT, ctx, EVAS_RENDER_COPY);
+             ENFN->context_clip_set(ENDT, ctx, 0, 0,
+                                    obj->cur->geometry.w,
+                                    obj->cur->geometry.h);
              if (o->cur->has_alpha)
                {
-                  ENFN->context_color_set(ENDT, ctx, 128, 64, 0, 128);
-                  ENFN->rectangle_draw(ENDT, ctx, prep, x, y, w, h, do_async);
+                  ENFN->context_render_op_set(ENDT, ctx, EVAS_RENDER_COPY);
+                  ENFN->context_color_set(ENDT, ctx, 0, 0, 0, 0);
+                  ENFN->rectangle_draw(ENDT, ctx, prep, 0, 0,
+                                       obj->cur->geometry.w,
+                                       obj->cur->geometry.h, do_async);
                }
-             printf("REND image, region %i %i %ix%i = %i %i\n",
-                    x, y, w, h,
-                    x - obj->cur->geometry.x, y - obj->cur->geometry.y);
+             ENFN->context_render_op_set(ENDT, ctx, EVAS_RENDER_BLEND);
              evas_object_image_render(eo_obj, obj, obj->private_data, ENDT,
                                       ctx, prep,
-                                      x - obj->cur->geometry.x,
-                                      y - obj->cur->geometry.y,
+                                      -obj->cur->geometry.x,
+                                      -obj->cur->geometry.y,
                                       do_async);
              ENFN->context_free(ENDT, ctx);
              o->engine_data_prep = prep;
@@ -1789,6 +1791,8 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
 
    if (o->engine_data_prep)
      {
+        ENFN->context_multiplier_unset(output, context);
+        ENFN->context_render_op_set(ENDT, context, obj->cur->render_op);
         ENFN->image_draw(output, context, surface, o->engine_data_prep,
                          0, 0, obj->cur->geometry.w, obj->cur->geometry.h,
                          obj->cur->geometry.x + x, obj->cur->geometry.y + y,
@@ -2599,6 +2603,8 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                                                 w, h);
         changed_prep = EINA_FALSE;
      }
+   else
+     changed_prep = EINA_FALSE;
    done:
    evas_object_render_pre_effect_updates(&e->clip_changes, eo_obj, is_v, was_v);
    if (o->pixels->pixel_updates)
