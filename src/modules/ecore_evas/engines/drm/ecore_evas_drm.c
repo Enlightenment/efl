@@ -674,7 +674,11 @@ _drm_evas_changed(Ecore_Evas *ee, Eina_Bool changed)
    if (changed) return;
 
    edata = ee->engine.data;
-   if (edata->ticking && !edata->pending) ecore_drm2_fb_flip(NULL, edata->output);
+   if (edata->ticking && !edata->pending)
+     {
+        edata->pending = EINA_TRUE;
+        ecore_drm2_fb_flip(NULL, edata->output);
+     }
 }
 
 static void
@@ -684,8 +688,11 @@ _drm_animator_register(Ecore_Evas *ee)
 
    edata = ee->engine.data;
    edata->ticking = EINA_TRUE;
-   if (!edata->pending && !ee->in_async_render) ecore_drm2_fb_flip(NULL, edata->output);
-   edata->pending = EINA_TRUE;
+   if (!edata->pending && !ee->in_async_render)
+     {
+        edata->pending = EINA_TRUE;
+        ecore_drm2_fb_flip(NULL, edata->output);
+     }
 }
 
 static void
