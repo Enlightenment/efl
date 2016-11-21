@@ -2326,19 +2326,12 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
              goto done;
           }
-        if (o->dirty_pixels && ENFN->image_native_get)
+        if (o->dirty_pixels && !o->pixels->pixel_updates)
           {
-             /* Evas GL surfaces have historically required only the dirty
-              * pixel to trigger a redraw (call to pixels_get). Other kinds
-              * of surfaces must add data update regions. */
-             Evas_Native_Surface *ns;
-             ns = ENFN->image_native_get(ENDT, o->engine_data);
-             if (ns && ((ns->type == EVAS_NATIVE_SURFACE_EVASGL) ||
-                        (ns->type == EVAS_NATIVE_SURFACE_TBM)))
-               {
-                  evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-                  goto done;
-               }
+             /* Legacy compatibility (invalid behaviour): dirty_set() used to
+              * trigger full image redraw, even though this was not correct. */
+             evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
+             goto done;
           }
         if (o->cur->frame != o->prev->frame)
           {
