@@ -1,5 +1,6 @@
 class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
 {
+   [[Elementary fileselector button class]]
    event_prefix: elm_fileselector_button;
    implements {
       Efl.Object.constructor;
@@ -23,5 +24,4 @@ class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
    events {
       file,chosen; [[Called when a file was chosen in the fileselector]]
    }
-
 }

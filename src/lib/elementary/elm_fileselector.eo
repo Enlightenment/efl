@@ -2,6 +2,7 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
                         Elm.Interface.Atspi_Widget_Action,
                         Efl.Ui.Clickable, Efl.Ui.Selectable)
 {
+   [[Elementary fileselector class]]
    legacy_prefix: elm_fileselector;
    eo_prefix: elm_obj_fileselector;
    event_prefix: elm_fileselector;
@@ -68,5 +69,4 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
       selected,invalid; [[Called when fileselector was selected]]
       directory,open; [[Called when a directory was opened]]
    }
-
 }

@@ -1,7 +1,7 @@
 class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
                               Efl.Ui.Clickable, Efl.Ui.Selectable)
 {
-   [[Not an EO API.]]
+   [[Elementary fileselector entry class]]
    event_prefix: elm_fileselector_entry;
    implements {
       class.constructor;
@@ -28,7 +28,6 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
       changed; [[Called when the entry changed]]
       activated; [[Called when the entry was activated]]
       file,chosen; [[Called when a file was chosen in the fileselector]]
-      press;
+      press; [[Called when entry was pressed]]
    }
-
 }
