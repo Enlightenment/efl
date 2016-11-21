@@ -165,6 +165,7 @@ struct _Ecore_Evas_Engine_Func
 
    void (*fn_callback_device_mouse_in_set) (Ecore_Evas *ee, Ecore_Evas_Mouse_IO_Cb func);
    void (*fn_callback_device_mouse_out_set) (Ecore_Evas *ee, Ecore_Evas_Mouse_IO_Cb func);
+   void (*fn_pointer_device_xy_get)(const Ecore_Evas *ee, const Efl_Input_Device *pointer, Evas_Coord *x, Evas_Coord *y);
 };
 
 struct _Ecore_Evas_Interface

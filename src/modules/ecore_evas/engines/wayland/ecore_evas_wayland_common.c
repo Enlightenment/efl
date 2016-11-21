@@ -90,6 +90,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, //fn_callback_focus_device_out_set
    NULL, //fn_callback_device_mouse_in_set
    NULL, //fn_callback_device_mouse_out_set
+   NULL, //fn_pointer_device_xy_get
 };
 
 #define _smart_frame_type "ecore_evas_wl_frame"

@@ -719,6 +719,7 @@ static const Ecore_Evas_Engine_Func _ecore_ews_engine_func =
      NULL, //fn_callback_focus_device_out_set
      NULL, //fn_callback_device_mouse_in_set
      NULL, //fn_callback_device_mouse_out_set
+     NULL, //fn_pointer_device_xy_get
 };
 
 void

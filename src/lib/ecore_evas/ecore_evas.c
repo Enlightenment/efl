@@ -2381,6 +2381,23 @@ ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
    return EINA_FALSE;
 }
 
+EAPI void
+ecore_evas_pointer_device_xy_get(const Ecore_Evas *ee,
+                                 const Efl_Input_Device *pointer, Evas_Coord *x,
+                                 Evas_Coord *y)
+{
+   if (!pointer || pointer == evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE))
+     ecore_evas_pointer_xy_get(ee, x, y);
+   else
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        ECORE_EVAS_CHECK(ee);
+        if (ee->engine.func->fn_pointer_device_xy_get)
+          ee->engine.func->fn_pointer_device_xy_get(ee, pointer, x, y);
+     }
+}
+
 EAPI void *
 ecore_evas_pixmap_visual_get(const Ecore_Evas *ee)
 {

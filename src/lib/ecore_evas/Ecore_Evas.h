@@ -2917,12 +2917,13 @@ EAPI Evas_Object *ecore_evas_extn_plug_new(Ecore_Evas *ee_target);
 EAPI Eina_Bool ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
 
 /**
- * @brief Retrieve the coordinates of the mouse pointer
+ * @brief Retrieve the coordinates of the default mouse pointer
  *
  * @param ee The Ecore_Evas containing the pointer
  * @param x Pointer to integer to store horizontal coordinate. May be @c NULL.
  * @param y Pointer to integer to store vertical coordinate. May be @c NULL.
  *
+ * @see ecore_evas_pointer_device_xy_get
  * @since 1.8
  */
 EAPI void ecore_evas_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
@@ -2939,6 +2940,17 @@ EAPI void ecore_evas_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Co
  * @since 1.8
  */
 EAPI Eina_Bool ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
+
+/**
+ * @brief Retrieve the coordinates of the mouse pointer
+ *
+ * @param ee The Ecore_Evas containing the pointer
+ * @param pointer The pointer device, use @c NULL for the default pointer.
+ * @param x Pointer to integer to store horizontal coordinate. May be @c NULL.
+ * @param y Pointer to integer to store vertical coordinate. May be @c NULL.
+ * @since 1.19
+ */
+EAPI void ecore_evas_pointer_device_xy_get(const Ecore_Evas *ee, const Efl_Input_Device *pointer, Evas_Coord *x, Evas_Coord *y);
 
 /**
  * @brief Retrieve the Visual used for pixmap creation
