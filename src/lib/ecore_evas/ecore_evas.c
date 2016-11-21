@@ -2393,7 +2393,19 @@ ecore_evas_pointer_device_xy_get(const Ecore_Evas *ee,
         if (x) *x = 0;
         if (y) *y = 0;
         ECORE_EVAS_CHECK(ee);
-        if (ee->engine.func->fn_pointer_device_xy_get)
+        if (ee->vnc_server)
+          {
+             Eina_Module *mod;
+             void (*pointer_xy_get)(const void *, const Efl_Input_Device *, Evas_Coord *, Evas_Coord *y);
+
+             mod = _ecore_evas_vnc_server_module_load();
+             EINA_SAFETY_ON_NULL_RETURN(mod);
+
+             pointer_xy_get = eina_module_symbol_get(mod, "ecore_evas_vnc_server_pointer_xy_get");
+             EINA_SAFETY_ON_NULL_RETURN(pointer_xy_get);
+             pointer_xy_get(ee->vnc_server, pointer, x, y);
+          }
+        else if (ee->engine.func->fn_pointer_device_xy_get)
           ee->engine.func->fn_pointer_device_xy_get(ee, pointer, x, y);
      }
 }
