@@ -5,7 +5,6 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
-#include "Ecore_Con.h"
 
 #include <string.h>
 #include <stdlib.h>
