@@ -37,7 +37,7 @@
 #define DLT_R1     14
 #define DLT_R2     15
 
-int _ecore_ipc_log_dom = -1;
+static int _ecore_ipc_log_dom = -1;
 
 /****** This swap function are around just for backward compatibility do not remove *******/
 EAPI unsigned short

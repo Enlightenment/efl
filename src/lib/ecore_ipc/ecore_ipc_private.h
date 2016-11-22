@@ -1,9 +1,6 @@
 #ifndef _ECORE_IPC_PRIVATE_H
 #define _ECORE_IPC_PRIVATE_H
 
-
-extern int _ecore_ipc_log_dom;
-
 #ifdef ECORE_IPC_DEFAULT_LOG_COLOR
 # undef ECORE_IPC_DEFAULT_LOG_COLOR
 #endif
