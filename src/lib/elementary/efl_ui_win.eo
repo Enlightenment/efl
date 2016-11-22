@@ -200,8 +200,8 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             legacy: null;
          }
          values {
-            enabled: bool; [[If true, the indicator is enabled,
-                             If false, the indicator is disabled.]]
+            enabled: bool; [[If $true, the indicator is enabled,
+                             If $false, the indicator is disabled.]]
          }
       }
       @property indicator_type {
@@ -258,7 +258,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                rotations: ptr(int); [[The array of rotation value.]]
                count: uint; [[The size of the rotations array.]]
             }
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
       }
       @property screen_constrain {
@@ -356,7 +356,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       @property focus {
          get {
             [[Get whether a window has focus.]]
-            return: bool;
+            return: bool; [[$true if window has focus, $false otherwise]]
          }
       }
       @property autodel {
@@ -381,7 +381,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             [[Get the window's autodel state.]]
          }
          values {
-            autodel: bool; [[If true, the window will automatically delete
+            autodel: bool; [[If $true, the window will automatically delete
                              itself when closed.]]
          }
       }
@@ -405,7 +405,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          get {
          }
          values {
-            autohide: bool; [[If true, the window will automatically hide
+            autohide: bool; [[If $true, the window will automatically hide
                               itself when closed.]]
          }
       }
@@ -454,7 +454,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             [[Get the iconified state of a window.]]
          }
          values {
-            iconified: bool; [[If true, the window is iconified.]]
+            iconified: bool; [[If $true, the window is iconified.]]
          }
       }
       @property maximized {
@@ -465,7 +465,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             [[Get the maximized state of a window.]]
          }
          values {
-            maximized: bool; [[If true, the window is maximized.]]
+            maximized: bool; [[If $true, the window is maximized.]]
          }
       }
       @property fullscreen {
@@ -492,7 +492,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             [[Get the sticky state of the window.]]
          }
          values {
-            sticky: bool; [[If true, the window's sticky state is enabled.]]
+            sticky: bool; [[If $true, the window's sticky state is enabled.]]
          }
       }
       @property urgent {
@@ -544,7 +544,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             ]]
          }
          values {
-            noblank: bool; [[If true, the window is set to noblank.]]
+            noblank: bool; [[If $true, the window is set to noblank.]]
          }
       }
       @property borderless {
@@ -559,7 +559,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             [[Get the borderless state of a window.]]
          }
          values {
-            borderless: bool; [[If true, the window is borderless.]]
+            borderless: bool; [[If $true, the window is borderless.]]
          }
       }
       @property role {
@@ -594,7 +594,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          }
          get { [[ @since 1.18 ]] }
          values {
-            name: string @nullable;
+            name: string @nullable; [[Window name]]
          }
       }
       @property type {
@@ -615,7 +615,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             [[If the object is not window object, return #ELM_WIN_UNKNOWN.]]
          }
          values {
-            type: Efl.Ui.Win.Type(Efl.Ui.Win.Type.unknown);
+            type: Efl.Ui.Win.Type(Efl.Ui.Win.Type.unknown); [[Window type]]
          }
       }
       @property accel_preference {
@@ -664,7 +664,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
            @since 1.18
          ]]
          values {
-            accel: string;
+            accel: string; [[Acceleration]]
          }
          set {
             legacy: null;
@@ -700,7 +700,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                profiles: terminated_array<ptr(char)>; [[The string array of available profiles.]]
                count: uint; [[The number of members in profiles.]]
             }
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
       }
       @property alpha {
@@ -730,7 +730,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       }
       socket_listen {
          [[Create a socket to provide the service for Plug widget.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in svcname: string; [[The name of the service to be advertised.
                                          Eensure that it is unique (when combined with
@@ -771,8 +771,8 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          ]]
 
          params {
-            @in h: bool; [[If true, center horizontally. If false, do not change horizontal location.]]
-            @in v: bool; [[If true, center vertically. If false, do not change vertical location.]]
+            @in h: bool; [[If $true, center horizontally. If $false, do not change horizontal location.]]
+            @in v: bool; [[If $true, center vertically. If $false, do not change vertical location.]]
          }
       }
       keygrab_set {
@@ -781,7 +781,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
            This function grabs the $key of window using $grab_mode.
          ]]
 
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in key: string; [[This string is the keyname to grab.]]
             @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
@@ -795,7 +795,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
 
            This function unset keygrab value. Ungrab $key of window.
          ]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
             @in key: string; [[This string is the keyname to grab.]]
             @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
@@ -942,22 +942,22 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       .accel_preference;
    }
    events {
-      delete,request;
-      withdrawn;
-      iconified;
-      normal;
-      stick;
-      unstick;
-      fullscreen;
-      unfullscreen;
-      maximized;
-      unmaximized;
-      ioerr;
-      indicator,prop,changed;
-      rotation,changed;
-      profile,changed;
-      wm,rotation,changed;
-      theme,changed;
-      elm,action,block_menu;
+      delete,request; [[Called when the window got a delete request]]
+      withdrawn; [[Called when window was withdrawn]]
+      iconified; [[Called when window was iconified]]
+      normal; [[Called when window got into normal state]]
+      stick; [[Called when window was set sticky]]
+      unstick; [[Called when window is no  longer set sticky]]
+      fullscreen; [[Called when window was set fullscreen]]
+      unfullscreen; [[Called when window is no longer set fullscreen]]
+      maximized; [[Called when window is set maximized]]
+      unmaximized; [[Called when window is no longer set maximized]]
+      ioerr; [[Called on input output error]] /*FIXME Better explanation needed */
+      indicator,prop,changed; [[Called when indicator property changed]]
+      rotation,changed; [[Called when window rotation changed]]
+      profile,changed; [[Called when profile changed]]
+      wm,rotation,changed; [[Called when window manager rotation changed]]
+      theme,changed; [[Called when theme changed]]
+      elm,action,block_menu; [[Called when elementary block menu action happened]]
    }
 }
