@@ -47,4 +47,8 @@ EAPI const char *eina_environment_home_get(void);
  */
 EAPI const char *eina_environment_tmp_get(void);
 
+/**
+ * @}
+ */
+
 #endif

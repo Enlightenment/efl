@@ -653,7 +653,7 @@ EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
  */
 
 /**
- * @addtogroup Ecore_Con_Events_Group Ecore_Con_Lib_Group
+ * @addtogroup Ecore_Con_Lib_Group
  * @ingroup Ecore_Con_Group
  *
  * @{

@@ -154,97 +154,97 @@
  */
 
 /**
- * @defgroup Eo
+ * @defgroup Eo Eo
  *
  * @brief Generic object system.
  */
 
 /**
- * @defgroup Evas
+ * @defgroup Evas Evas
  *
  * @brief Drawing canvas.
  */
 
 /**
- * @defgroup Eet
+ * @defgroup Eet Eet
  *
  * @brief Binary data parser and serializer.
  */
 
 /**
- * @defgroup Eina
+ * @defgroup Eina Eina
  *
  * @brief Data types and low-level/basic abstractions.
  */
 
 /**
- * @defgroup Embryo
+ * @defgroup Embryo Embryo
  *
  * @brief Embedded script language.
  */
 
 /**
- * @defgroup Evil
+ * @defgroup Evil Evil
  *
  * @brief Microsoft Windows portability layer.
  */
 
 /**
- * @defgroup Escape
+ * @defgroup Escape Escape
  *
  * @brief PlayStation3 portability layer.
  */
 
 /**
- * @defgroup Ecore
+ * @defgroup Ecore Ecore
  *
  * @brief Operating System Abstraction and Integration.
  */
 
 /**
- * @defgroup Eio
+ * @defgroup Eio Eio
  *
  * @brief Asynchronous input/output and file manipulation.
  */
 
 /**
- * @defgroup Eldbus
+ * @defgroup Eldbus Eldbus
  *
  * @brief D-Bus integration with EFL (Ecore).
  */
 
 /**
- * @defgroup Efreet
+ * @defgroup Efreet Efreet
  *
  * @brief FreeDesktop.Org (XDG) menu and desktop integration.
  */
 
 /**
- * @defgroup Eeze
+ * @defgroup Eeze Eeze
  *
  * @brief Hardware device manipulation and notification, wraps UDev and similar.
  */
 
 /**
- * @defgroup Edje
+ * @defgroup Edje Edje
  *
  * @brief Layout and theme library with super-powers.
  */
 
 /**
- * @defgroup Emotion
+ * @defgroup Emotion Emotion
  *
  * @brief Plays music and videos.
  */
 
 /**
- * @defgroup Ethumb
+ * @defgroup Ethumb Ethumb
  *
  * @brief Generates thumbnail images of files.
  */
 
  /**
- * @defgroup EPhysics
+ * @defgroup EPhysics EPhysics
  *
  * @brief Physics simulation integration and visual effects.
  */
