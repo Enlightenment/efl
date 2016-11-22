@@ -11628,6 +11628,8 @@ _edje_program_afters_get(Evas_Object *obj, Edje_Program *epr)
      {
         Edje_Program *p = NULL;
 
+        if (a->id < 0) continue;
+
         p = ed->collection->patterns.table_programs[a->id % ed->collection->patterns.table_programs_size];
         if (p && p->name)
           {
