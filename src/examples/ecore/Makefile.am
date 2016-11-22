@@ -14,6 +14,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_imf \
 -I$(top_srcdir)/src/lib/ecore_imf_evas \
 -I$(top_srcdir)/src/lib/ecore_con \
+-I$(top_srcdir)/src/lib/ecore_ipc \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/lib/ecore_audio \
 -I$(top_builddir)/src/lib/eina \
@@ -29,6 +30,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_imf \
 -I$(top_builddir)/src/lib/ecore_imf_evas \
 -I$(top_builddir)/src/lib/ecore_con \
+-I$(top_builddir)/src/lib/ecore_ipc \
 -I$(top_builddir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore_audio \
 -DPACKAGE_EXAMPLES_DIR=\".\" \
@@ -90,7 +92,9 @@ efl_net_dialer_udp_example \
 efl_net_socket_ssl_dialer_example \
 efl_net_socket_ssl_server_example \
 efl_net_session_example \
-efl_net_control_example
+efl_net_control_example \
+ecore_ipc_server_example \
+ecore_ipc_client_example
 
 
 ECORE_COMMON_LDADD = \
@@ -128,6 +132,10 @@ $(ECORE_COMMON_LDADD)
 ECORE_CON_COMMON_LDADD = \
 $(top_builddir)/src/lib/ecore_con/libecore_con.la \
 $(ECORE_COMMON_LDADD)
+
+ECORE_IPC_COMMON_LDADD = \
+$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
+$(ECORE_CON_COMMON_LDADD)
 
 ecore_animator_example_SOURCES = ecore_animator_example.c
 ecore_animator_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
@@ -342,6 +350,12 @@ efl_net_session_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 efl_net_control_example_SOURCES = efl_net_control_example.c
 efl_net_control_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
+ecore_ipc_server_example_SOURCES = ecore_ipc_server_example.c
+ecore_ipc_server_example_LDADD = $(ECORE_IPC_COMMON_LDADD)
+
+ecore_ipc_client_example_SOURCES = ecore_ipc_client_example.c
+ecore_ipc_client_example_LDADD = $(ECORE_IPC_COMMON_LDADD)
+
 SRCS = \
 ecore_animator_example.c \
 ecore_buffer_example.c \
@@ -401,7 +415,9 @@ efl_net_dialer_udp_example.c \
 efl_net_socket_ssl_dialer_example.c \
 efl_net_socket_ssl_server_example.c \
 efl_net_session_example.c \
-efl_net_control_example.c
+efl_net_control_example.c \
+ecore_ipc_server_example.c \
+ecore_ipc_client_example.c
 
 %.pem:
 	echo -e "US\nOR\nPortland\nXPTO Ltd\n\nlocalhost\nroot@localhost\n" | openssl req -new -x509 -days 30 -nodes -out $@ -keyout $@
