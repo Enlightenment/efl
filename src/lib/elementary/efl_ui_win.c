@@ -260,6 +260,8 @@ struct _Efl_Ui_Win_Data
    struct {
       Evas_Object *box, *edje;
       Eina_Bool    forbidden : 1; /**< Marks some legacy APIs as not allowed. */
+      Eina_Bool    bg_must_swallow : 1; /**< Legacy theme compatibility (elm_bg for standard window) */
+      Eina_Bool    bg_must_swallow_init : 1;
    } legacy;
 
    Eina_Bool    urgent : 1;
@@ -6223,6 +6225,35 @@ _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
    return EINA_TRUE;
 }
 
+/* Legacy theme compatibility */
+static Eina_Bool
+_elm_win_bg_must_swallow(Efl_Ui_Win_Data *sd)
+{
+   if (EINA_UNLIKELY(!sd->legacy.bg_must_swallow_init))
+     {
+        /* Overkill: check which theme version the standard elm_bg uses */
+        Elm_Widget_Smart_Data *wd;
+        const char *version;
+        Eo *bg;
+        int v;
+
+        sd->legacy.bg_must_swallow = 1;
+        sd->legacy.bg_must_swallow_init = 1;
+
+        bg = elm_bg_add(sd->obj);
+        wd = efl_data_scope_get(bg, ELM_WIDGET_CLASS);
+        if (wd)
+          {
+             version = edje_object_data_get(wd->resize_obj, "elm_bg_version");
+             v = version ? atoi(version) : 0;
+             if (v >= 119) sd->legacy.bg_must_swallow = 0;
+          }
+        evas_object_del(bg);
+     }
+
+   return sd->legacy.bg_must_swallow;
+}
+
 void
 _elm_win_standard_init(Eo *obj)
 {
@@ -6230,9 +6261,19 @@ _elm_win_standard_init(Eo *obj)
    Efl_Ui_Win_Data *sd = efl_data_scope_get(obj, MY_CLASS);
 
    ELM_SAFE_DEL(sd->bg);
-   sd->csd.need_bg_solid = EINA_TRUE;
 
-   /* FIXME: We should swallow a legacy elm_bg if not using the default theme */
+   if (!_elm_win_bg_must_swallow(sd))
+     {
+        sd->csd.need_bg_solid = EINA_TRUE;
+     }
+   else
+     {
+        /* Legacy theme compatibility */
+        DBG("Detected legacy theme used for elm_bg. Swallowing object.");
+        sd->csd.need_bg_solid = EINA_FALSE;
+        _elm_win_bg_set(sd, efl_add(ELM_BG_CLASS, obj));
+     }
+
    _elm_win_frame_style_update(sd, 0, 1);
 }
 
