@@ -13,6 +13,7 @@ enum Elm.Sys_Notify.Urgency
 
 interface Elm.Sys_Notify_Interface
 {
+   [[Elementary system notify interface]]
    eo_prefix: elm_obj_sys_notify_interface;
    legacy_prefix: elm_sys_notify_interface;
 
@@ -65,4 +66,3 @@ interface Elm.Sys_Notify_Interface
       }
    }
 }
-

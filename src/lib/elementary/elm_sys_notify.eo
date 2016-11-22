@@ -43,6 +43,7 @@ struct Elm.Sys_Notify.Action_Invoked
 
 class Elm.Sys_Notify (Efl.Object, Elm.Sys_Notify_Interface)
 {
+   [[Elementary system notification class]]
    legacy_prefix: elm_sys_notify;
    eo_prefix: elm_obj_sys_notify;
 
@@ -93,4 +94,3 @@ class Elm.Sys_Notify (Efl.Object, Elm.Sys_Notify_Interface)
       Elm.Sys_Notify_Interface.close;
    }
 }
-
