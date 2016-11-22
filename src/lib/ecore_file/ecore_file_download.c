@@ -194,6 +194,12 @@ ecore_file_download_full(const char *url,
         return EINA_FALSE;
      }
 
+   if (!strstr(url, "://"))
+     {
+        ERR("'%s' is not an URL, missing protocol://", url);
+        return EINA_FALSE;
+     }
+
    dir = ecore_file_dir_get(dst);
    if (!ecore_file_is_dir(dir))
      {
