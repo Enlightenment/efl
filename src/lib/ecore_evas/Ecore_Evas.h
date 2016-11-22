@@ -2143,7 +2143,7 @@ EAPI void        ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h);
 EAPI void        ecore_evas_size_step_get(const Ecore_Evas *ee, int *w, int *h);
 
 /**
- * @brief Set the cursor of an Ecore_Evas.
+ * @brief Set the cursor for the default pointer device.
  *
  * @param ee The Ecore_Evas
  * @param file  The path to an image file for the cursor.
@@ -2166,9 +2166,9 @@ EAPI void        ecore_evas_size_step_get(const Ecore_Evas *ee, int *w, int *h);
  */
 EAPI void        ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y);
 /**
- * @brief Get information about an Ecore_Evas' cursor
+ * @brief Get information about an Ecore_Evas' default pointer device.
  *
- * @param ee The Ecore_Evas to set
+ * @param ee The Ecore_Evas to get
  * @param obj A pointer to an Evas_Object to place the cursor Evas_Object.
  * @param layer A pointer to an int to place the cursor's layer in.
  * @param hot_x A pointer to an int to place the cursor's hot_x coordinate in.
@@ -2183,10 +2183,9 @@ EAPI void        ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int lay
 EAPI void        ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, int *layer, int *hot_x, int *hot_y);
 
 /**
- * @brief Set the cursor of an Ecore_Evas
+ * @brief Set the cursor for the default pointer device.
  *
  * @param ee The Ecore_Evas
- *
  * @param obj The Evas_Object which will be the cursor.
  * @param layer The layer in which the cursor will appear.
  * @param hot_x The x coordinate of the cursor's hot spot.
@@ -2202,7 +2201,7 @@ EAPI void        ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, 
 EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
 
 /**
- * @brief Unset the Ecore_Evas cursor
+ * @brief Unset the cursor of the default pointer device.
  *
  * @param ee The Ecore_Evas to unset the cursor.
  *
@@ -2216,6 +2215,45 @@ EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, 
  * @since 1.11
  */
 EAPI Evas_Object*        ecore_evas_cursor_unset(Ecore_Evas *ee);
+
+/**
+ * @brief Set the cursor of an Ecore_Evas specified pointer device.
+ *
+ * @param ee The Ecore_Evas
+ * @param pointer A pointer device to set the cursor. Use @c NULL for the default.
+ * @param obj The Evas_Object which will be the cursor.
+ * @param layer The layer in which the cursor will appear.
+ * @param hot_x The x coordinate of the cursor's hot spot.
+ * @param hot_y The y coordinate of the cursor's hot spot.
+ *
+ * This function makes the mouse cursor over @p ee be the object specified by
+ * @p obj. The actual point within the object that the mouse is at is specified
+ * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
+ * corner of the cursor object. Cursor object will be delete with the Ecore_Evas.
+ *
+ * @since 1.19
+ */
+EAPI void ecore_evas_object_cursor_device_set(Ecore_Evas *ee, Efl_Input_Device *pointer,
+                                              Evas_Object *obj, int layer,
+                                              int hot_x, int hot_y);
+/**
+ * @brief Get information about an Ecore_Evas' specified pointer device.
+ *
+ * @param ee The Ecore_Evas
+ * @param pointer A pointer device to set the cursor. Use @c NULL for the default.
+ * @param obj A pointer to an Evas_Object to place the cursor Evas_Object.
+ * @param layer A pointer to an int to place the cursor's layer in.
+ * @param hot_x A pointer to an int to place the cursor's hot_x coordinate in.
+ * @param hot_y A pointer to an int to place the cursor's hot_y coordinate in.
+ *
+ * This function queries information about an Ecore_Evas' cursor.
+ *
+ * @see ecore_evas_cursor_device_set()
+ * @since 1.19
+ */
+EAPI Eina_Bool ecore_evas_cursor_device_get(const Ecore_Evas *ee, Efl_Input_Device *pointer,
+                                            Evas_Object **obj, int *layer,
+                                            int *hot_x, int *hot_y);
 
 /**
  * @brief Tell the WM whether or not to ignore an Ecore_Evas' window

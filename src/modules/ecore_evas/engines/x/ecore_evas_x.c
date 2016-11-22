@@ -1315,7 +1315,7 @@ _fake_out(void *data)
    _feed_cancel_out(e, (e->mode == ECORE_X_EVENT_MODE_GRAB));
 
    _ecore_evas_mouse_inout_set(ee, NULL, EINA_FALSE, EINA_TRUE);
-   if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+   _ecore_evas_default_cursor_hide(ee);
    return EINA_FALSE;
 }
 
@@ -1480,7 +1480,7 @@ _ecore_evas_x_event_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void
         _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
         _ecore_evas_mouse_inout_set(ee, NULL, EINA_FALSE, EINA_FALSE);
         _feed_cancel_out(e, (e->mode == ECORE_X_EVENT_MODE_GRAB));
-        if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+        _ecore_evas_default_cursor_hide(ee);
      }
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1800,7 +1800,7 @@ _ecore_evas_x_event_window_hide(void *data EINA_UNUSED, int type EINA_UNUSED, vo
         };
         _feed_cancel_out(&out, EINA_TRUE);
         _ecore_evas_mouse_inout_set(ee, NULL, EINA_FALSE, EINA_FALSE);
-        if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+        _ecore_evas_default_cursor_hide(ee);
      }
    if (ee->prop.override)
      {
@@ -3153,65 +3153,18 @@ _ecore_evas_x_size_step_set(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj,
+                                int layer EINA_UNUSED, int hot_x EINA_UNUSED,
+                                int hot_y EINA_UNUSED)
 {
-   Ecore_Evas *ee;
-
-   ee = data;
-   if (ee) ee->prop.cursor.object = NULL;
+   if (obj != _ecore_evas_default_cursor_image_get(ee))
+     ecore_x_window_cursor_show(ee->prop.window, 0);
 }
 
 static void
-_ecore_evas_x_object_cursor_unset(Ecore_Evas *ee)
+_ecore_evas_x_object_cursor_unset(Ecore_Evas *ee EINA_UNUSED)
 {
-   evas_object_event_callback_del_full(ee->prop.cursor.object, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
-}
-
-static void
-_ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
-{
-   int x = 0, y = 0;
-   Evas_Object *old;
-
-   old = ee->prop.cursor.object;
-   if (!obj)
-     {
-        ee->prop.cursor.object = NULL;
-        ee->prop.cursor.layer = 0;
-        ee->prop.cursor.hot.x = 0;
-        ee->prop.cursor.hot.y = 0;
-        ecore_x_window_cursor_show(ee->prop.window, 1);
-        goto end;
-     }
-
-   ee->prop.cursor.object = obj;
-   ee->prop.cursor.layer = layer;
-   ee->prop.cursor.hot.x = hot_x;
-   ee->prop.cursor.hot.y = hot_y;
-
-   evas_pointer_output_xy_get(ee->evas, &x, &y);
-
-   if (obj != old)
-     {
-        ecore_x_window_cursor_show(ee->prop.window, 0);
-        evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
-        evas_object_pass_events_set(ee->prop.cursor.object, 1);
-        if (evas_pointer_inside_get(ee->evas))
-          evas_object_show(ee->prop.cursor.object);
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
-                                       _ecore_evas_object_cursor_del, ee);
-     }
-
-   evas_object_move(ee->prop.cursor.object, x - ee->prop.cursor.hot.x,
-                    y - ee->prop.cursor.hot.y);
-
-end:
-   if ((old) && (obj != old))
-     {
-        evas_object_event_callback_del_full
-          (old, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
-        evas_object_del(old);
-     }
+   ecore_x_window_cursor_show(ee->prop.window, 1);
 }
 
 /*

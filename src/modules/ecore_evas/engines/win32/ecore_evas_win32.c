@@ -220,7 +220,7 @@ _ecore_evas_win32_event_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, 
         if (evas_event_down_count_get(ee->evas) > 0) return ECORE_CALLBACK_PASS_ON;
         evas_event_feed_mouse_out(ee->evas, e->timestamp, NULL);
         _ecore_evas_mouse_inout_set(ee, NULL, EINA_FALSE, EINA_FALSE);
-        if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+        _ecore_evas_default_cursor_hide(ee);
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -835,67 +835,6 @@ _ecore_evas_win32_size_step_set(Ecore_Evas *ee, int width, int height)
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Ecore_Evas *ee;
-   
-   ee = data;
-   if (ee) ee->prop.cursor.object = NULL;
-}
-
-static void
-_ecore_evas_win32_cursor_unset(Ecore_Evas *ee)
-{
-   evas_object_event_callback_del_full(ee->prop.cursor.object, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
-}
-
-static void
-_ecore_evas_win32_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
-{
-   int x, y;
-   Evas_Object *old;
-
-   old = ee->prop.cursor.object;
-   if (obj == NULL)
-     {
-        ee->prop.cursor.object = NULL;
-        ee->prop.cursor.layer = 0;
-        ee->prop.cursor.hot.x = 0;
-        ee->prop.cursor.hot.y = 0;
-        goto end;
-     }
-
-   ee->prop.cursor.object = obj;
-   ee->prop.cursor.layer = layer;
-   ee->prop.cursor.hot.x = hot_x;
-   ee->prop.cursor.hot.y = hot_y;
-
-   evas_pointer_output_xy_get(ee->evas, &x, &y);
-
-   if (obj != old)
-     {
-//        ecore_win32_window_cursor_show(ee->prop.window, 0);
-        evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
-        evas_object_pass_events_set(ee->prop.cursor.object, 1);
-        if (evas_pointer_inside_get(ee->evas))
-          evas_object_show(ee->prop.cursor.object);
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
-                                       _ecore_evas_object_cursor_del, ee);
-     }
-
-   evas_object_move(ee->prop.cursor.object, x - ee->prop.cursor.hot.x,
-                    y - ee->prop.cursor.hot.y);
-
-end:
-   if ((old) && (obj != old))
-     {
-        evas_object_event_callback_del_full
-          (old, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
-        evas_object_del(old);
-     }
-}
-
-static void
 _ecore_evas_win32_focus_set(Ecore_Evas *ee, Eina_Bool on EINA_UNUSED)
 {
    ecore_win32_window_focus((struct _Ecore_Win32_Window *)ee->prop.window);
@@ -1157,8 +1096,8 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      _ecore_evas_win32_size_max_set,
      _ecore_evas_win32_size_base_set,
      _ecore_evas_win32_size_step_set,
-     _ecore_evas_win32_cursor_set,
-     _ecore_evas_win32_cursor_unset,
+     NULL,
+     NULL,
      NULL, /* _ecore_evas_x_layer_set */
      _ecore_evas_win32_focus_set,
      _ecore_evas_win32_iconified_set,

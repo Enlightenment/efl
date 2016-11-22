@@ -721,6 +721,11 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ERR("Could not init the Ecore Evas cursors");
+        ecore_evas_free(ee);
+     }
    evas_event_feed_mouse_in(ee->evas, 0, NULL);
 
    _ecore_evas_register(ee);
