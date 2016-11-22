@@ -5114,37 +5114,6 @@ _efl_ui_win_noblank_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
    return pd->noblank;
 }
 
-EAPI Evas_Object *
-elm_win_util_standard_add(const char *name, const char *title)
-{
-   return efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
-                  efl_text_set(efl_added, title),
-                  efl_ui_win_name_set(efl_added, name)
-                  );
-}
-
-EAPI Evas_Object *
-elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title)
-{
-   Evas_Object *win, *bg;
-
-   win = elm_win_add(parent, name, ELM_WIN_DIALOG_BASIC);
-   if (!win) return NULL;
-
-   elm_win_title_set(win, title);
-   bg = elm_bg_add(win);
-   if (!bg)
-     {
-        evas_object_del(win);
-        return NULL;
-     }
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
-
-   return win;
-}
-
 EOLIAN static void
 _efl_ui_win_role_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *role)
 {
@@ -7582,6 +7551,29 @@ elm_win_aspect_get(const Eo *obj)
 }
 
 /* legacy APIs */
+
+EAPI Evas_Object *
+elm_win_util_standard_add(const char *name, const char *title)
+{
+   return efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
+                  efl_text_set(efl_added, title),
+                  efl_ui_win_name_set(efl_added, name));
+}
+
+EAPI Evas_Object *
+elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title)
+{
+   Evas_Object *win;
+
+   win = efl_add(EFL_UI_WIN_CLASS, parent,
+                 efl_text_set(efl_added, title),
+                 efl_ui_win_name_set(efl_added, name),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC));
+   if (!win) return NULL;
+
+   _elm_win_standard_init(win);
+   return win;
+}
 
 /**
   * @internal
