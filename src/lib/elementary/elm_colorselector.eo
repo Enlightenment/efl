@@ -15,6 +15,7 @@ enum Elm.Colorselector.Mode
 class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
                          Efl.Ui.Clickable)
 {
+   [[Elementary colorselector class]]
    legacy_prefix: elm_colorselector;
    eo_prefix: elm_obj_colorselector;
    event_prefix: elm_colorselector;
@@ -28,10 +29,10 @@ class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
             [[Get current color from colorselector.]]
          }
          values {
-            r: int; [[r-value of color]]
-            g: int; [[g-value of color]]
-            b: int; [[b-value of color]]
-            a: int; [[a-value of color]]
+            r: int; [[Red value of color]]
+            g: int; [[Green value of color]]
+            b: int; [[Blue value of color]]
+            a: int; [[Alpha value of color]]
          }
       }
       @property palette_name {
@@ -77,7 +78,7 @@ class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
 
               @since 1.9
             ]]
-            return: const(list<Elm.Widget.Item>);[[The list of color palette items.]]
+            return: const(list<Elm.Widget.Item>); [[The list of color palette items.]]
          }
       }
       @property palette_selected_item {
@@ -86,19 +87,18 @@ class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
 
               @since 1.9]]
 
-            return: Elm.Widget.Item;[[The selected item, or $null if none
-selected.]]
+            return: Elm.Widget.Item; [[The selected item, or $null if none selected.]]
          }
       }
       palette_color_add {
          [[Add a new color item to palette.]]
 
-         return: Elm.Widget.Item;[[A new color palette Item.]]
+         return: Elm.Widget.Item; [[A new color palette Item.]]
          params {
-            @in r: int; [[r-value of color]]
-            @in g: int; [[g-value of color]]
-            @in b: int; [[b-value of color]]
-            @in a: int; [[a-value of color]]
+            @in r: int; [[Red value of color]]
+            @in g: int; [[Green value of color]]
+            @in b: int; [[Blue value of color]]
+            @in a: int; [[Alpha value of color]]
          }
       }
       palette_clear {
@@ -121,10 +121,9 @@ selected.]]
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      color,item,selected;
-      color,item,longpressed;
-      changed;
-      changed,user;
+      color,item,selected; [[Called when color item was selected]]
+      color,item,longpressed; [[Called when color item got a long press]]
+      changed; [[Called when colorselector changed]]
+      changed,user; [[Called when the object changed due to user interaction]]
    }
-
 }
