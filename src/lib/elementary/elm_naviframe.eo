@@ -1,5 +1,6 @@
 class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
+   [[Elementary naviframe class]]
    legacy_prefix: elm_naviframe;
    eo_prefix: elm_obj_naviframe;
    event_prefix: elm_naviframe;
@@ -116,7 +117,7 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
          [[Simple version of item_promote.]]
 
          params {
-            @in content: Efl.Canvas.Object;
+            @in content: Efl.Canvas.Object; [[Item to promote]]
          }
       }
       item_insert_after {
@@ -161,10 +162,9 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Efl.Part.part;
    }
    events {
-      transition,finished;
-      title,transition,finished;
-      title,clicked;
-      item,activated;
+      transition,finished; [[Called when naviframe transition finished]]
+      title,transition,finished; [[Called when naviframe title transaction finished]]
+      title,clicked; [[Called when naviframe title was clicked]]
+      item,activated; [[Called when naviframe item was activated]]
    }
-
 }
