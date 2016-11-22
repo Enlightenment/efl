@@ -1805,7 +1805,7 @@ _config_load(void)
    _elm_config->week_start = 1; /* monday */
    _elm_config->weekend_start = 6; /* saturday */
    _elm_config->weekend_len = 2;
-   _elm_config->year_min = 2;
+   _elm_config->year_min = 70;
    _elm_config->year_max = 137;
    _elm_config->softcursor_mode = 0; /* 0 = auto, 1 = on, 2 = off */
    _elm_config->color_palette = NULL;
