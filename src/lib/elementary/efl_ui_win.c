@@ -4113,13 +4113,20 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
 
    if (!sd->frame_obj)
      {
-        if ((sd->type == ELM_WIN_FAKE) ||
-            (sd->type == ELM_WIN_INLINED_IMAGE) ||
-            (sd->type == ELM_WIN_SOCKET_IMAGE)) return;
+        if (sd->type == ELM_WIN_FAKE) return;
         CRI("no frame object!");
         abort(); // FIXME remove this
      }
+
    _elm_win_need_frame_adjust(sd, ecore_evas_engine_name_get(sd->ee));
+   if ((sd->type == ELM_WIN_INLINED_IMAGE) ||
+       (sd->type == ELM_WIN_SOCKET_IMAGE))
+     {
+        sd->csd.need_shadow = EINA_FALSE;
+        sd->csd.need_borderless = EINA_TRUE;
+        sd->csd.need_unresizable = EINA_TRUE;
+        sd->csd.need_menu = EINA_FALSE;
+     }
 
    borderless = sd->csd.need_borderless || (!sd->csd.need) || sd->fullscreen;
    maximized = sd->maximized;
@@ -4304,9 +4311,7 @@ _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine)
    /* this is for debug only - don't keep forever, it's not an api! */
    s = getenv("EFL_WIN_FRAME_MODE");
 
-   if ((sd->type == ELM_WIN_FAKE) ||
-       (sd->type == ELM_WIN_INLINED_IMAGE) ||
-       (sd->type == ELM_WIN_SOCKET_IMAGE))
+   if (sd->type == ELM_WIN_FAKE)
      sd->csd.need = EINA_FALSE;
    else if (eina_streq(s, "on"))
      sd->csd.need = EINA_TRUE;
