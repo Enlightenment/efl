@@ -5320,10 +5320,10 @@ _efl_ui_win_fullscreen_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 static inline Eo *
 _main_menu_swallow_get(Efl_Ui_Win_Data *sd)
 {
-   if (sd->frame_obj)
+   if (edje_object_part_exists(sd->legacy.edje, "elm.swallow.menu"))
      {
-        if (edje_object_part_exists(sd->frame_obj, "elm.swallow.menu"))
-          return sd->frame_obj;
+        DBG("Detected legacy theme, using legacy swallows.");
+        return sd->legacy.edje;
      }
    return sd->legacy.edje;
 }
