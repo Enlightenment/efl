@@ -32,6 +32,7 @@ _client_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    Ecore_Ipc_Event_Client_Del *ev = event;
 
    printf("INFO: client deleted %p: %s\n", ev->client, ecore_ipc_client_ip_get(ev->client));
+   ecore_ipc_client_del(ev->client);
    return ECORE_CALLBACK_RENEW;
 }
 
