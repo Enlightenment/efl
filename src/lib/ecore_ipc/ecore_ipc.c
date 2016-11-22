@@ -5,14 +5,6 @@
 #include <string.h>
 #include <sys/types.h>
 
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
-#ifdef HAVE_WINSOCK2_H
-# include <winsock2.h>
-#endif
-
 #include <Ecore.h>
 #include <ecore_private.h>
 #include <Ecore_Con.h>
