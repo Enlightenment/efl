@@ -5893,7 +5893,7 @@ static Elm_Theme_Apply
 _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE, prev_alpha;
    const char *s;
 
    int_ret = _elm_theme_object_set(obj, sd->legacy.edje, "win", "base",
@@ -5909,27 +5909,11 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 
    if (!ret) int_ret = ELM_THEME_APPLY_FAILED;
 
+   prev_alpha = sd->theme_alpha;
    s = edje_object_data_get(sd->legacy.edje, "alpha");
-   if (!sd->theme_alpha)
-     {
-        if (s)
-          {
-             if (!strcmp(s, "1") ||
-                 !strcmp(s, "true"))
-               {
-                  sd->theme_alpha = 1;
-                  _elm_win_apply_alpha(obj, sd);
-               }
-          }
-     }
-   else
-     {
-        if (!s || ((strcmp(s, "1") != 0) && (strcmp(s, "false") != 0)))
-          {
-             sd->theme_alpha = 0;
-             _elm_win_apply_alpha(obj, sd);
-          }
-     }
+   sd->theme_alpha = (eina_streq(s, "1") || eina_streq(s, "true"));
+   if (sd->theme_alpha != prev_alpha)
+     _elm_win_apply_alpha(obj, sd);
 
    return int_ret;
 }
