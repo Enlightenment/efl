@@ -15,8 +15,6 @@ _server_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    puts("INFO: start typing some lines of text to send to server...");
 
-   server = ev->server;
-
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -27,6 +25,7 @@ _server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    printf("INFO: server deleted %p: %s\n", ev->server, ecore_ipc_server_ip_get(ev->server));
 
+   ecore_ipc_server_del(server);
    server = NULL;
    ecore_main_loop_quit();
    return ECORE_CALLBACK_RENEW;
@@ -150,7 +149,6 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE /* sentinel */
    };
    int args;
-   Ecore_Ipc_Server *server;
    Ecore_Event_Handler *handlers[3];
 
    ecore_init();
@@ -209,8 +207,11 @@ main(int argc, char **argv)
 
    ecore_main_loop_begin();
 
-   ecore_ipc_server_del(server);
-   server = NULL;
+   if (server)
+     {
+        ecore_ipc_server_del(server);
+        server = NULL;
+     }
 
    ecore_event_handler_del(handlers[0]);
    ecore_event_handler_del(handlers[1]);
