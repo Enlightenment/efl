@@ -114,6 +114,7 @@ group { name: "elm/border/base/default";
             fixed: 0 1;
          }
       }
+
       /* application contents - spacer and clipper (without main menu) */
       spacer { "client_spacer";
          desc { "default";
@@ -129,6 +130,7 @@ group { name: "elm/border/base/default";
             rel.to: "client_spacer";
          }
       }
+
       /* application contents */
       swallow { "elm.swallow.client";
          clip: "client_clip";
@@ -136,6 +138,26 @@ group { name: "elm/border/base/default";
             rel.to: "client_spacer";
          }
       }
+
+      /* modal window blocker */
+      rect { "elm.rect.blocker";
+         required;
+         desc { "default";
+            rel1.to: "top_clip";
+            rel1.relative: 0.0 1.0;
+            rel2.to: "bottom_clip";
+            rel2.relative: 1.0 0.0;
+            color: 0 0 0 0;
+            hid;
+         }
+         desc { "visible";
+            inherit: "default";
+            color_class: "elm/win/blocker";
+            color: 255 255 255 255;
+            vis;
+         }
+      }
+
       /* top title bar - spacer and clipper */
       rect { "top_clip"; //nomouse;
          desc { "default";
@@ -791,6 +813,20 @@ group { name: "elm/border/base/default";
          signal: "elm,action,hide"; source: "elm";
          action: STATE_SET "default";
          target: "elm.swallow.menu";
+      }
+
+      /* modal windows */
+      program { name: "hide_blocker";
+         signal: "elm,action,hide_blocker"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.rect.blocker";
+         transition: DECELERATE 0.2;
+      }
+      program { name: "show_blocker";
+         signal: "elm,action,show_blocker"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.rect.blocker";
+         transition: DECELERATE 0.2;
       }
 
       /* minimize, maximize & close buttons */

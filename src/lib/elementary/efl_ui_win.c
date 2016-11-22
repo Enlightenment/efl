@@ -56,38 +56,6 @@ static const Elm_Win_Trap *trap = NULL;
   if (!obj || !efl_isa(obj, MY_CLASS)) \
     return
 
-#define DECREMENT_MODALITY()                                    \
-  EINA_LIST_FOREACH(_elm_win_list, l, current)                  \
-    {                                                           \
-       ELM_WIN_DATA_GET_OR_RETURN(current, cursd);              \
-       if ((obj != current) && (cursd->modal_count > 0))        \
-         {                                                      \
-            cursd->modal_count--;                               \
-         }                                                      \
-       if (cursd->modal_count == 0)                             \
-         {                                                      \
-            edje_object_signal_emit(cursd->legacy.edje, \
-                        "elm,action,hide_blocker", "elm");      \
-            efl_event_callback_legacy_call(cursd->main_menu, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, NULL); \
-         }                                                      \
-    }
-
-#define INCREMENT_MODALITY()                                    \
-  EINA_LIST_FOREACH(_elm_win_list, l, current)                  \
-    {                                                           \
-       ELM_WIN_DATA_GET_OR_RETURN(current, cursd);              \
-       if (obj != current)                                      \
-         {                                                      \
-            cursd->modal_count++;                               \
-         }                                                      \
-       if (cursd->modal_count > 0)                              \
-         {                                                      \
-            edje_object_signal_emit(cursd->legacy.edje, \
-                             "elm,action,show_blocker", "elm"); \
-            efl_event_callback_legacy_call(cursd->main_menu, EFL_UI_WIN_EVENT_ELM_ACTION_BLOCK_MENU, NULL); \
-         }                                                      \
-    }
-
 #define ENGINE_GET() (_elm_preferred_engine ? _elm_preferred_engine : _elm_config->engine)
 
 typedef struct _Efl_Ui_Win_Data Efl_Ui_Win_Data;
@@ -2140,6 +2108,64 @@ _deferred_ecore_evas_free(void *data)
    _elm_win_deferred_free--;
 }
 
+static inline Edje_Object *
+_elm_win_modal_blocker_edje_get(Efl_Ui_Win_Data *sd)
+{
+   /* Legacy theme compatibility */
+   const char *version = edje_object_data_get(sd->legacy.edje, "elm_win_version");
+   int v = version ? atoi(version) : 0;
+   if (v < 119)
+     {
+        DBG("Detected legacy theme (<1.19) for modal window blocker.");
+        return sd->legacy.edje;
+     }
+   return sd->frame_obj;
+}
+
+static void
+_elm_win_modality_increment(Efl_Ui_Win_Data *modalsd)
+{
+   Efl_Ui_Win *current;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(_elm_win_list, l, current)
+     {
+        ELM_WIN_DATA_GET_OR_RETURN(current, cursd);
+        if (modalsd != cursd)
+          cursd->modal_count++;
+        if (cursd->modal_count > 0)
+          {
+             Edje_Object *ed = _elm_win_modal_blocker_edje_get(cursd);
+             edje_object_signal_emit(ed, "elm,action,show_blocker", "elm");
+             efl_event_callback_legacy_call
+                   (cursd->main_menu, EFL_UI_WIN_EVENT_ELM_ACTION_BLOCK_MENU, NULL);
+             _elm_win_frame_style_update(cursd, 0, 1);
+          }
+     }
+}
+
+static void
+_elm_win_modality_decrement(Efl_Ui_Win_Data *modalsd)
+{
+   Efl_Ui_Win *current;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(_elm_win_list, l, current)
+     {
+        ELM_WIN_DATA_GET_OR_RETURN(current, cursd);
+        if ((modalsd != cursd) && (cursd->modal_count > 0))
+          cursd->modal_count--;
+        if (cursd->modal_count == 0)
+          {
+             Edje_Object *ed = _elm_win_modal_blocker_edje_get(cursd);
+             edje_object_signal_emit(ed, "elm,action,hide_blocker", "elm");
+             efl_event_callback_legacy_call
+                   (cursd->main_menu, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, NULL);
+             _elm_win_frame_style_update(cursd, 0, 1);
+          }
+     }
+}
+
 static void
 _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
 {
@@ -2156,11 +2182,7 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
      }
 
    if ((sd->modal) && (!evas_object_visible_get(obj)))
-     {
-        const Eina_List *l;
-        Evas_Object *current;
-        INCREMENT_MODALITY()
-     }
+     _elm_win_modality_increment(sd);
 
    if (!evas_object_visible_get(obj)) do_eval = EINA_TRUE;
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
@@ -2208,11 +2230,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
    _elm_win_state_eval_queue();
 
    if ((sd->modal) && (evas_object_visible_get(obj)))
-     {
-        const Eina_List *l;
-        Evas_Object *current;
-        DECREMENT_MODALITY()
-     }
+     _elm_win_modality_decrement(sd);
 
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
    TRAP(sd, hide);
@@ -2654,13 +2672,8 @@ _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj)
 EOLIAN static void
 _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   const Eina_List *l;
-   Evas_Object *current;
-
    if ((sd->modal) && (evas_object_visible_get(obj)))
-     {
-       DECREMENT_MODALITY()
-     }
+     _elm_win_modality_decrement(sd);
 
    if ((sd->modal) && (sd->modal_count > 0)) 
      ERR("Deleted modal win was blocked by another modal win which was created after creation of that win.");
@@ -5482,17 +5495,10 @@ _efl_ui_win_modal_set(Eo *obj, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Modal_Mode modal)
 
    if (sd->modal_count) return;
 
-   const Eina_List *l;
-   Evas_Object *current;
-
    if ((modal_tmp) && (!sd->modal) && (evas_object_visible_get(obj)))
-     {
-       INCREMENT_MODALITY()
-     }
+     _elm_win_modality_increment(sd);
    else if ((!modal_tmp) && (sd->modal) && (evas_object_visible_get(obj)))
-     {
-       DECREMENT_MODALITY()
-     }
+     _elm_win_modality_decrement(sd);
 
    sd->modal = modal_tmp;
    TRAP(sd, modal_set, modal_tmp);

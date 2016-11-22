@@ -390,6 +390,10 @@ color_classes {
       color: 64 64 64 255;
       desc: "Background color of a standard window";
    }
+   color_class { "elm/win/blocker";
+      color: 32 32 32 128;
+      desc: "Overlay color for windows with modal children (blocked)";
+   }
    
 // modules
    color_class { name: "module_label";
