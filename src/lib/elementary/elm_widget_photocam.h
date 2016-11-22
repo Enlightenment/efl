@@ -87,8 +87,11 @@ struct _Elm_Photocam_Data
    const char     *file;
    Eina_File      *f;
 
-   Elm_Url        *remote;
-   void           *remote_data;
+   struct
+   {
+      Eo *copier;
+      Eina_Binbuf *binbuf;
+   } remote;
 
    Ecore_Job      *calc_job;
    Ecore_Timer    *scr_timer;

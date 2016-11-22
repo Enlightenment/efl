@@ -85,6 +85,7 @@ static Eina_Error PHOTO_FILE_LOAD_ERROR_UNKNOWN_FORMAT;
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_zoom(Evas_Object *obj, const char *params);
+static void _elm_photocam_remote_copier_cancel(Eo *obj, Elm_Photocam_Data *sd);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -1461,14 +1462,15 @@ _elm_photocam_efl_canvas_group_group_del(Eo *obj, Elm_Photocam_Data *sd)
 
    EINA_LIST_FREE(sd->grids, g)
      {
+        _grid_clear(obj, g);
         free(g->grid);
         free(g);
      }
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
 
    if (sd->f) eina_file_close(sd->f);
-   free(sd->remote_data);
-   if (sd->remote) _elm_url_cancel(sd->remote);
+   if (sd->remote.copier) _elm_photocam_remote_copier_cancel(obj, sd);
+   if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
    eina_stringshare_del(sd->file);
    ecore_job_del(sd->calc_job);
    ecore_timer_del(sd->scr_timer);
@@ -1596,29 +1598,62 @@ _internal_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file, Eina_File *
 }
 
 static void
-_elm_photocam_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf *download)
+_elm_photocam_remote_copier_del(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Eo *dialer = efl_io_copier_source_get(event->object);
+   efl_del(dialer);
+}
+
+static void
+_elm_photocam_remote_copier_cancel(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
+{
+   Eo *copier = sd->remote.copier;
+
+   if (!copier) return;
+   /* copier is flagged as close_on_destructor, thus:
+    * efl_del()
+    *  -> efl_io_closer_close()
+    *      -> "done" event
+    *          -> _elm_photocam_remote_copier_done()
+    *
+    * flag sd->remote.copier = NULL so _elm_photocam_remote_copier_done()
+    * knows about it.
+    */
+   sd->remote.copier = NULL;
+   efl_del(copier);
+}
+
+static void
+_elm_photocam_remote_copier_done(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *obj = data;
    Elm_Photocam_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Eina_File *f;
-   size_t length;
+   Eo *dialer;
+   const char *url;
    Evas_Load_Error ret = EVAS_LOAD_ERROR_NONE;
 
-   free(sd->remote_data);
-   length = eina_binbuf_length_get(download);
-   sd->remote_data = eina_binbuf_string_steal(download);
-   f = eina_file_virtualize(_elm_url_get(url),
-                            sd->remote_data, length,
+   /* we're called from _elm_photocam_remote_copier_cancel() */
+   if (!sd->remote.copier) return;
+
+   if (sd->remote.binbuf) eina_binbuf_free(sd->remote.binbuf);
+   sd->remote.binbuf = efl_io_copier_binbuf_steal(sd->remote.copier);
+
+   dialer = efl_io_copier_source_get(sd->remote.copier);
+   url = efl_net_dialer_address_dial_get(dialer);
+   f = eina_file_virtualize(url,
+                            eina_binbuf_string_get(sd->remote.binbuf),
+                            eina_binbuf_length_get(sd->remote.binbuf),
                             EINA_FALSE);
-   _internal_file_set(obj, sd, _elm_url_get(url), f, &ret);
+
+   _internal_file_set(obj, sd, url, f, &ret);
    eina_file_close(f);
 
    if (ret != EVAS_LOAD_ERROR_NONE)
      {
         Elm_Photocam_Error err = { 0, EINA_TRUE };
 
-        free(sd->remote_data);
-        sd->remote_data = NULL;
+        ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
         efl_event_callback_legacy_call
           (obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_ERROR, &err);
      }
@@ -1628,26 +1663,29 @@ _elm_photocam_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf *d
           (obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_DONE, NULL);
      }
 
-   sd->remote = NULL;
+   ELM_SAFE_FREE(sd->remote.copier, efl_del);
 }
 
 static void
-_elm_photocam_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int error)
+_elm_photocam_remote_copier_error(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
    Elm_Photocam_Data *sd = efl_data_scope_get(obj, MY_CLASS);
-   Elm_Photocam_Error err = { error, EINA_FALSE };
+   Eina_Error *perr = event->info;
+   Elm_Photocam_Error err = { *perr, EINA_FALSE };
 
    efl_event_callback_legacy_call(obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_ERROR, &err);
-
-   sd->remote = NULL;
+   _elm_photocam_remote_copier_cancel(obj, sd);
 }
 
 static void
-_elm_photocam_download_progress(void *data, Elm_Url *url EINA_UNUSED, double now, double total)
+_elm_photocam_remote_copier_progress(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
    Elm_Photocam_Progress progress;
+   uint64_t now, total;
+
+   efl_io_copier_progress_get(event->object, &now, NULL, &total);
 
    progress.now = now;
    progress.total = total;
@@ -1655,15 +1693,75 @@ _elm_photocam_download_progress(void *data, Elm_Url *url EINA_UNUSED, double now
      (obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_PROGRESS, &progress);
 }
 
-static const char *remote_uri[] = {
-  "http://", "https://", "ftp://"
+EFL_CALLBACKS_ARRAY_DEFINE(_elm_photocam_remote_copier_cbs,
+                           { EFL_EVENT_DEL, _elm_photocam_remote_copier_del },
+                           { EFL_IO_COPIER_EVENT_DONE, _elm_photocam_remote_copier_done },
+                           { EFL_IO_COPIER_EVENT_ERROR, _elm_photocam_remote_copier_error },
+                           { EFL_IO_COPIER_EVENT_PROGRESS, _elm_photocam_remote_copier_progress });
+
+static Eina_Bool
+_elm_photocam_download(Eo *obj, Elm_Photocam_Data *sd, const char *url)
+{
+   Eo *dialer;
+   Elm_Photocam_Error img_err = { ENOSYS, EINA_FALSE };
+   Eina_Error err;
+
+   dialer = efl_add(EFL_NET_DIALER_HTTP_CLASS, obj,
+                    efl_net_dialer_http_allow_redirects_set(efl_added, EINA_TRUE));
+   EINA_SAFETY_ON_NULL_GOTO(dialer, error_dialer);
+
+   sd->remote.copier = efl_add(EFL_IO_COPIER_CLASS, obj,
+                               efl_io_copier_source_set(efl_added, dialer),
+                               efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                               efl_event_callback_array_add(efl_added, _elm_photocam_remote_copier_cbs(), obj));
+   EINA_SAFETY_ON_NULL_GOTO(sd->remote.copier, error_copier);
+
+   err = efl_net_dialer_dial(dialer, url);
+   if (err)
+     {
+        img_err.status = err;
+        ERR("Could not download %s: %s", url, eina_error_msg_get(err));
+        evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &img_err);
+        goto error_dial;
+     }
+   return EINA_TRUE;
+
+ error_dial:
+   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &img_err);
+   _elm_photocam_remote_copier_cancel(obj, sd);
+   return EINA_FALSE;
+
+ error_copier:
+   efl_del(dialer);
+ error_dialer:
+   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &img_err);
+   return EINA_FALSE;
+}
+
+static const Eina_Slice remote_uri[] = {
+  EINA_SLICE_STR_LITERAL("http://"),
+  EINA_SLICE_STR_LITERAL("https://"),
+  EINA_SLICE_STR_LITERAL("ftp://"),
+  { }
 };
+
+static inline Eina_Bool
+_elm_photocam_is_remote(const char *file)
+{
+   Eina_Slice s = EINA_SLICE_STR(file);
+   const Eina_Slice *itr;
+
+   for (itr = remote_uri; itr->mem; itr++)
+     if (eina_slice_startswith(s, *itr))
+       return EINA_TRUE;
+
+   return EINA_FALSE;
+}
 
 static Evas_Load_Error
 _elm_photocam_file_set_internal(Eo *obj, Elm_Photocam_Data *sd, const char *file)
 {
    Evas_Load_Error ret = EVAS_LOAD_ERROR_NONE;
-   unsigned int i;
 
    _grid_clear_all(obj);
    _elm_photocam_zoom_reset(obj, sd);
@@ -1676,28 +1774,20 @@ _elm_photocam_file_set_internal(Eo *obj, Elm_Photocam_Data *sd, const char *file
    if (sd->f) eina_file_close(sd->f);
    sd->f = NULL;
 
-   free(sd->remote_data);
-   if (sd->remote) _elm_url_cancel(sd->remote);
-   sd->remote = NULL;
+   if (sd->remote.copier) _elm_photocam_remote_copier_cancel(obj, sd);
+   if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
+
    sd->preload_num = 0;
 
-   for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
-     if (!strncmp(remote_uri[i], file, strlen(remote_uri[i])))
-       {
-          // Found a remote target !
-          sd->remote = _elm_url_download(file,
-                                        _elm_photocam_download_done,
-                                        _elm_photocam_download_cancel,
-                                        _elm_photocam_download_progress,
-                                        obj);
-          if (sd->remote)
-            {
-               efl_event_callback_legacy_call
-                 (obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_START, NULL);
-               return ret;
-            }
-          break;
-       }
+   if (_elm_photocam_is_remote(file))
+     {
+        if (_elm_photocam_download(obj, sd, file))
+          {
+             efl_event_callback_legacy_call
+               (obj, ELM_PHOTOCAM_EVENT_DOWNLOAD_START, NULL);
+             return ret;
+          }
+     }
 
    _internal_file_set(obj, sd, file, NULL, &ret);
 

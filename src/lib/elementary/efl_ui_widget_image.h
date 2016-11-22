@@ -48,9 +48,12 @@ struct _Efl_Ui_Image_Data
    Evas_Object          *prev_img;
    Ecore_Timer          *anim_timer;
 
-   Elm_Url              *remote;
-   const char           *key;
-   void                 *remote_data;
+
+   struct {
+      Eo                *copier;
+      Eina_Binbuf       *binbuf;
+      const char        *key;
+   } remote;
 
    double                scale;
    double                frame_duration;

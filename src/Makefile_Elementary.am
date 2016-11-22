@@ -638,7 +638,6 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_toolbar.c \
 	lib/elementary/elm_transit.c \
 	lib/elementary/elm_util.c \
-	lib/elementary/elm_url.c \
 	lib/elementary/efl_ui_video.c \
 	lib/elementary/elm_view_list.c \
 	lib/elementary/elm_view_form.c \

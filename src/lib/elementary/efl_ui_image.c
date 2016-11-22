@@ -46,6 +46,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static Eina_Bool _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file, const Eina_File *f, const char *key);
+static void _efl_ui_image_remote_copier_cancel(Eo *obj, Efl_Ui_Image_Data *sd);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -561,10 +562,10 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
    ecore_timer_del(sd->anim_timer);
    evas_object_del(sd->img);
    _prev_img_del(sd);
-   if (sd->remote) _elm_url_cancel(sd->remote);
-   free(sd->remote_data);
-   eina_stringshare_del(sd->key);
    _async_cancel(sd);
+   if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
+   if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
+   ELM_SAFE_FREE(sd->remote.key, eina_stringshare_del);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
@@ -832,10 +833,14 @@ _efl_ui_image_efl_file_mmap_set(Eo *obj, Efl_Ui_Image_Data *sd,
 {
    Eina_Bool ret = EINA_FALSE;
 
-   if (sd->remote) _elm_url_cancel(sd->remote);
-   sd->remote = NULL;
-
    _async_cancel(sd);
+
+   /* stop preloading as it may hit to-be-freed memory */
+   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+     evas_object_image_preload(sd->img, EINA_TRUE);
+
+   if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
+   if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
 
    if (!sd->async_enable)
      ret = _efl_ui_image_smart_internal_file_set(obj, sd, eina_file_filename_get(file), file, key);
@@ -895,30 +900,66 @@ _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
 }
 
 static void
-_efl_ui_image_smart_download_done(void *data, Elm_Url *url, Eina_Binbuf *download)
+_efl_ui_image_remote_copier_del(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Eo *dialer = efl_io_copier_source_get(event->object);
+   efl_del(dialer);
+}
+
+static void
+_efl_ui_image_remote_copier_cancel(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   Eo *copier = sd->remote.copier;
+
+   if (!copier) return;
+   /* copier is flagged as close_on_destructor, thus:
+    * efl_del()
+    *  -> efl_io_closer_close()
+    *      -> "done" event
+    *          -> _efl_ui_image_remote_copier_done()
+    *
+    * flag sd->remote.copier = NULL so _efl_ui_image_remote_copier_done()
+    * knows about it.
+    */
+   sd->remote.copier = NULL;
+   efl_del(copier);
+}
+
+static void
+_efl_ui_image_remote_copier_done(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *obj = data;
    Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Eina_File *f;
-   size_t length;
+   Eo *dialer;
+   const char *url;
    Eina_Bool ret = EINA_FALSE;
 
-   free(sd->remote_data);
-   length = eina_binbuf_length_get(download);
-   sd->remote_data = eina_binbuf_string_steal(download);
-   f = eina_file_virtualize(_elm_url_get(url),
-                            sd->remote_data, length,
+   /* we're called from _efl_ui_image_remote_copier_cancel() */
+   if (!sd->remote.copier) return;
+
+   /* stop preloading as it may hit to-be-freed memory */
+   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+     evas_object_image_preload(sd->img, EINA_TRUE);
+
+   if (sd->remote.binbuf) eina_binbuf_free(sd->remote.binbuf);
+   sd->remote.binbuf = efl_io_copier_binbuf_steal(sd->remote.copier);
+
+   dialer = efl_io_copier_source_get(sd->remote.copier);
+   url = efl_net_dialer_address_dial_get(dialer);
+   f = eina_file_virtualize(url,
+                            eina_binbuf_string_get(sd->remote.binbuf),
+                            eina_binbuf_length_get(sd->remote.binbuf),
                             EINA_FALSE);
-   ret = _efl_ui_image_smart_internal_file_set(obj, sd, _elm_url_get(url), f, sd->key);
+
+   ret = _efl_ui_image_smart_internal_file_set(obj, sd, url, f, sd->remote.key);
    eina_file_close(f);
 
-   sd->remote = NULL;
    if (!ret)
      {
         Efl_Ui_Image_Error err = { 0, EINA_TRUE };
 
-        free(sd->remote_data);
-        sd->remote_data = NULL;
+        ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
         evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
      }
    else
@@ -931,45 +972,117 @@ _efl_ui_image_smart_download_done(void *data, Elm_Url *url, Eina_Binbuf *downloa
         evas_object_smart_callback_call(obj, SIG_DOWNLOAD_DONE, NULL);
      }
 
-   ELM_SAFE_FREE(sd->key, eina_stringshare_del);
+   ELM_SAFE_FREE(sd->remote.key, eina_stringshare_del);
+   ELM_SAFE_FREE(sd->remote.copier, efl_del);
 }
 
 static void
-_efl_ui_image_smart_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int error)
+_efl_ui_image_remote_copier_error(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
    Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
-   Efl_Ui_Image_Error err = { error, EINA_FALSE };
+   Eina_Error *perr = event->info;
+   Efl_Ui_Image_Error err = { *perr, EINA_FALSE };
 
    evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
 
-   sd->remote = NULL;
-   ELM_SAFE_FREE(sd->key, eina_stringshare_del);
+   _efl_ui_image_remote_copier_cancel(obj, sd);
+   ELM_SAFE_FREE(sd->remote.key, eina_stringshare_del);
 }
 
 static void
-_efl_ui_image_smart_download_progress(void *data, Elm_Url *url EINA_UNUSED, double now, double total)
+_efl_ui_image_remote_copier_progress(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
    Efl_Ui_Image_Progress progress;
+   uint64_t now, total;
+
+   efl_io_copier_progress_get(event->object, &now, NULL, &total);
 
    progress.now = now;
    progress.total = total;
    evas_object_smart_callback_call(obj, SIG_DOWNLOAD_PROGRESS, &progress);
 }
 
-static const char *remote_uri[] = {
-  "http://", "https://", "ftp://"
+EFL_CALLBACKS_ARRAY_DEFINE(_efl_ui_image_remote_copier_cbs,
+                           { EFL_EVENT_DEL, _efl_ui_image_remote_copier_del },
+                           { EFL_IO_COPIER_EVENT_DONE, _efl_ui_image_remote_copier_done },
+                           { EFL_IO_COPIER_EVENT_ERROR, _efl_ui_image_remote_copier_error },
+                           { EFL_IO_COPIER_EVENT_PROGRESS, _efl_ui_image_remote_copier_progress });
+
+static Eina_Bool
+_efl_ui_image_download(Eo *obj, Efl_Ui_Image_Data *sd, const char *url, const char *key)
+{
+   Eo *dialer;
+   Efl_Ui_Image_Error img_err = { ENOSYS, EINA_FALSE };
+   Eina_Error err;
+
+   dialer = efl_add(EFL_NET_DIALER_HTTP_CLASS, obj,
+                    efl_net_dialer_http_allow_redirects_set(efl_added, EINA_TRUE));
+   EINA_SAFETY_ON_NULL_GOTO(dialer, error_dialer);
+
+   sd->remote.copier = efl_add(EFL_IO_COPIER_CLASS, obj,
+                               efl_io_copier_source_set(efl_added, dialer),
+                               efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                               efl_event_callback_array_add(efl_added, _efl_ui_image_remote_copier_cbs(), obj));
+   EINA_SAFETY_ON_NULL_GOTO(sd->remote.copier, error_copier);
+   eina_stringshare_replace(&sd->remote.key, key);
+
+   err = efl_net_dialer_dial(dialer, url);
+   if (err)
+     {
+        img_err.status = err;
+        ERR("Could not download %s: %s", url, eina_error_msg_get(err));
+        evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &img_err);
+        goto error_dial;
+     }
+   return EINA_TRUE;
+
+ error_dial:
+   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &img_err);
+   _efl_ui_image_remote_copier_cancel(obj, sd);
+   return EINA_FALSE;
+
+ error_copier:
+   efl_del(dialer);
+ error_dialer:
+   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &img_err);
+   return EINA_FALSE;
+}
+
+static const Eina_Slice remote_uri[] = {
+  EINA_SLICE_STR_LITERAL("http://"),
+  EINA_SLICE_STR_LITERAL("https://"),
+  EINA_SLICE_STR_LITERAL("ftp://"),
+  { }
 };
+
+static inline Eina_Bool
+_efl_ui_image_is_remote(const char *file)
+{
+   Eina_Slice s = EINA_SLICE_STR(file);
+   const Eina_Slice *itr;
+
+   for (itr = remote_uri; itr->mem; itr++)
+     if (eina_slice_startswith(s, *itr))
+       return EINA_TRUE;
+
+   return EINA_FALSE;
+}
 
 EOLIAN static Eina_Bool
 _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file, const char *key)
 {
    Eina_Bool ret = EINA_FALSE;
-   unsigned int i;
 
-   if (sd->remote) _elm_url_cancel(sd->remote);
-   sd->remote = NULL;
+   _async_cancel(sd);
+
+   /* stop preloading as it may hit to-be-freed memory */
+   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+     evas_object_image_preload(sd->img, EINA_TRUE);
+
+   if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
+   if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
 
    if (sd->anim)
      {
@@ -978,26 +1091,15 @@ _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file
         sd->anim = EINA_FALSE;
      }
 
-   for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
-     if (file && !strncmp(remote_uri[i], file, strlen(remote_uri[i])))
-       {
-          // Found a remote target !
-          evas_object_hide(sd->img);
-          sd->remote = _elm_url_download(file,
-                                        _efl_ui_image_smart_download_done,
-                                        _efl_ui_image_smart_download_cancel,
-                                        _efl_ui_image_smart_download_progress,
-                                        obj);
-          if (sd->remote)
-            {
-               evas_object_smart_callback_call(obj, SIG_DOWNLOAD_START, NULL);
-               eina_stringshare_replace(&sd->key, key);
-               return EINA_TRUE;
-            }
-          break;
-       }
-
-   _async_cancel(sd);
+   if (_efl_ui_image_is_remote(file))
+     {
+        evas_object_hide(sd->img);
+        if (_efl_ui_image_download(obj, sd, file, key))
+          {
+             evas_object_smart_callback_call(obj, SIG_DOWNLOAD_START, NULL);
+             return EINA_TRUE;
+          }
+     }
 
    if (!sd->async_enable)
      ret = _efl_ui_image_smart_internal_file_set(obj, sd, file, NULL, key);
