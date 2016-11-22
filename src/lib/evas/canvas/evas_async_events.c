@@ -236,7 +236,7 @@ evas_async_events_process(void)
 {
    int nr, count = 0;
 
-   if (_fd_read == -1) return 0;
+   if (_fd_read == -1) return -1;
 
    _evas_async_events_fork_handle();
 
@@ -370,7 +370,7 @@ _evas_thread_main_loop_lock(void *target EINA_UNUSED,
    eina_condition_free(&call->c);
    eina_lock_free(&call->m);
    free(call);
-}                           
+}
 
 EAPI int
 evas_thread_main_loop_begin(void)

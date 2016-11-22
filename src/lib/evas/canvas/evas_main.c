@@ -36,7 +36,7 @@ evas_init(void)
          lockmax = atoi(getenv("EVAS_LOCK_DEBUG"));
       }
 #endif
-   
+
 #ifdef HAVE_EVIL
    if (!evil_init())
      return --_evas_init_count;
@@ -66,16 +66,22 @@ evas_init(void)
    if (!evas_async_events_init())
      goto shutdown_module;
 #ifdef EVAS_CSERVE2
+   int cs2 = 0;
    {
       const char *env;
       env = getenv("EVAS_CSERVE2");
-      if (env && atoi(env)) evas_cserve2_init();
+      if (env && atoi(env))
+        {
+           cs2 = evas_cserve2_init();
+           if (!cs2) goto shutdown_async_events;
+        }
    }
 #endif
    _evas_preload_thread_init();
    evas_filter_init();
 
-   evas_thread_init();
+   if (!evas_thread_init())
+     goto shutdown_filter;
 
    eina_log_timing(_evas_log_dom_global,
 		   EINA_LOG_STATE_STOP,
@@ -83,8 +89,20 @@ evas_init(void)
 
    return _evas_init_count;
 
+ shutdown_filter:
+   evas_filter_shutdown();
+   _evas_preload_thread_shutdown();
+#ifdef EVAS_CSERVE2
+   if (cs2) evas_cserve2_shutdown();
+ shutdown_async_events:
+#endif
+   evas_async_events_shutdown();
  shutdown_module:
    evas_module_shutdown();
+#ifdef BUILD_LOADER_EET
+   eet_shutdown();
+#endif
+   efl_object_shutdown();
    eina_log_domain_unregister(_evas_log_dom_global);
  shutdown_eet:
    eet_shutdown();
@@ -450,7 +468,7 @@ EAPI void
 evas_render_method_list_free(Eina_List *list)
 {
    const char *s;
-   
+
    EINA_LIST_FREE(list, s) eina_stringshare_del(s);
 }
 

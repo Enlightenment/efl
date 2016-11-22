@@ -566,7 +566,7 @@ struct _Image_Entry_Flags
    Eina_Bool alpha_sparse  : 1;
    Eina_Bool preload_done  : 1;
    Eina_Bool delete_me     : 1;
-   
+
    Eina_Bool pending       : 1;
    Eina_Bool rotated       : 1;
    Eina_Bool unload_cancel : 1;
@@ -675,7 +675,7 @@ struct _Image_Entry
    /* Reference to the file */
    Eina_File             *f;
    void                  *loader_data;
-  
+
    Image_Entry_Flags      flags;
    Evas_Image_Scale_Hint  scale_hint;
    void                  *data1, *data2;
@@ -1315,8 +1315,8 @@ EAPI int          evas_async_events_process_blocking(void);
 void	          evas_render_rendering_wait(Evas_Public_Data *evas);
 void              evas_all_sync(void);
 
-void              evas_thread_init(void);
-void              evas_thread_shutdown(void);
+int               evas_thread_init(void);
+int               evas_thread_shutdown(void);
 EAPI void         evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data);
 EAPI void         evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data);
 

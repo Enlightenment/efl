@@ -1653,7 +1653,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                           /* We aren't sure this object will be rendered by
                              normal(not proxy) drawing after, we reset this
                              only in case of normal drawing. For optmizing,
-                             push this object in an array then reset them 
+                             push this object in an array then reset them
                              in the end of the rendering.*/
                           if (!proxy_render_data)
                             evas_object_change_reset(obj2->object);
@@ -2541,7 +2541,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    context,
                                                    x, y, w, h);
-                    
+
                   /* Clipper masks */
                   if (_evas_render_object_is_mask(obj->cur->clipper))
                     mask = obj->cur->clipper; // main object clipped by this mask
@@ -2770,8 +2770,8 @@ evas_render_updates_internal(Evas *eo_e,
    if (e->framespace.changed)
      {
         /* NB: If the framespace changes, we need to add a redraw rectangle
-         * which covers the Whole viewport. This is because 'framespace' is 
-         * defined as "the space IN the viewport which is Occupied by the 
+         * which covers the Whole viewport. This is because 'framespace' is
+         * defined as "the space IN the viewport which is Occupied by the
          * window frame" */
         e->engine.func->output_redraws_rect_add(e->engine.data.output,
                                                 e->viewport.x, e->viewport.y,
@@ -3080,7 +3080,7 @@ evas_render_updates_internal(Evas *eo_e,
         OBJS_ARRAY_CLEAN(&e->snapshot_objects);
         eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
         eina_array_clean(&e->clip_changes);
-/* we should flush here and have a mempool system for this        
+/* we should flush here and have a mempool system for this
         eina_array_flush(&e->active_objects);
         eina_array_flush(&e->render_objects);
         eina_array_flush(&e->restack_objects);
@@ -3104,7 +3104,7 @@ evas_render_updates_internal(Evas *eo_e,
     * efficiency */
    if ((e->delete_objects.count == 0) || (e->delete_objects.count > 1024))
      eina_array_flush(&e->delete_objects);
-     
+
    evas_module_clean();
 
    if (!do_async)
