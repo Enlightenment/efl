@@ -1,5 +1,6 @@
 class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Elm.Interface.Atspi.Selection)
 {
+   [[Elementary menu class]]
    legacy_prefix: elm_menu;
    eo_prefix: elm_obj_menu;
    event_prefix: elm_menu;
@@ -13,19 +14,19 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Elm.Interface.Atspi.Selection)
       @property items {
          get {
             [[Returns a list of the item's items.]]
-            return: const(list<Elm.Widget.Item>);
+            return: const(list<Elm.Widget.Item>); [[List of menu items]]
          }
       }
       @property first_item {
          get {
             [[Get the first item in the menu.]]
-            return: Elm.Widget.Item;
+            return: Elm.Widget.Item; [[First item in menu]]
          }
       }
       @property last_item {
          get {
             [[Get the last item in the menu.]]
-            return: Elm.Widget.Item;
+            return: Elm.Widget.Item; [[Last item in menu]]
          }
       }
       move {
@@ -36,8 +37,8 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Elm.Interface.Atspi.Selection)
            Note: $x and $y coordinates are relative to parent.
          ]]
          params {
-            @in x: Evas.Coord; [[The new position.]]
-            @in y: Evas.Coord; [[The new position.]]
+            @in x: Evas.Coord; [[The new X coordinate]]
+            @in y: Evas.Coord; [[The new Y coordinate]]
          }
       }
       item_add {
@@ -83,9 +84,8 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Elm.Interface.Atspi.Selection)
       Elm.Interface.Atspi.Selection.selected_child.get;
    }
    events {
-      dismissed;
-      elm,action,block_menu;
-      elm,action,unblock_menu;
+      dismissed; [[Called when menu widget was dismissed]]
+      elm,action,block_menu; [[Called when menu blocking have been enabled]]
+      elm,action,unblock_menu; [[Called when menu blocking has been disabled]]
    }
-
 }
