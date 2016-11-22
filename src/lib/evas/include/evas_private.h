@@ -1126,7 +1126,7 @@ struct _Evas_Object_Protected_Data
    Evas_Callback_Type          last_event_type;
 
    struct {
-        int                      in_move, in_resize;
+      int                      in_move, in_resize;
    } doing;
 
    unsigned int                ref;
@@ -1135,6 +1135,40 @@ struct _Evas_Object_Protected_Data
    uint64_t                    callback_mask;
 
    unsigned char               delete_me;
+
+   Eina_Bool                   render_pre : 1;
+   Eina_Bool                   rect_del : 1;
+   Eina_Bool                   is_active : 1;
+   Eina_Bool                   changed : 1;
+   Eina_Bool                   restack : 1;
+   Eina_Bool                   is_smart : 1;
+   Eina_Bool                   pass_events : 1;
+   Eina_Bool                   store : 1;
+
+   Eina_Bool                   changed_move : 1;
+   Eina_Bool                   changed_color : 1;
+   Eina_Bool                   changed_map : 1;
+   Eina_Bool                   changed_pchange : 1;
+   Eina_Bool                   changed_src_visible : 1;
+   Eina_Bool                   freeze_events : 1;
+   Eina_Bool                   repeat_events : 1;
+   Eina_Bool                   no_propagate : 1;
+
+   Eina_Bool                   del_ref : 1;
+   Eina_Bool                   need_surface_clear : 1;
+   Eina_Bool                   pre_render_done : 1;
+   Eina_Bool                   precise_is_inside : 1;
+   Eina_Bool                   is_static_clip : 1;
+   Eina_Bool                   mouse_in : 1;
+   Evas_Object_Pointer_Mode    pointer_mode : 2;
+
+   Eina_Bool                   in_layer : 1;
+   Eina_Bool                   is_frame : 1;
+   Eina_Bool                   is_frame_top : 1; // this is the frame edje
+   Eina_Bool                   child_has_map : 1;
+   Eina_Bool                   efl_del_called : 1;
+   Eina_Bool                   no_render : 1; // since 1.15
+   Eina_Bool                   legacy : 1; // used legacy constructor
 
    struct  {
       Eina_Bool                pass_events : 1;
@@ -1145,39 +1179,6 @@ struct _Evas_Object_Protected_Data
       Eina_Bool                src_invisible_valid : 1;
    } parent_cache;
 
-   Evas_Object_Pointer_Mode    pointer_mode : 2;
-   Eina_Bool                   store : 1;
-   Eina_Bool                   pass_events : 1;
-   Eina_Bool                   freeze_events : 1;
-   Eina_Bool                   repeat_events : 1;
-   Eina_Bool                   restack : 1;
-   Eina_Bool                   is_active : 1;
-
-   Eina_Bool                   precise_is_inside : 1;
-   Eina_Bool                   is_static_clip : 1;
-   Eina_Bool                   render_pre : 1;
-   Eina_Bool                   rect_del : 1;
-   Eina_Bool                   mouse_in : 1;
-   Eina_Bool                   pre_render_done : 1;
-   Eina_Bool                   in_layer : 1;
-
-   Eina_Bool                   no_propagate : 1;
-   Eina_Bool                   changed : 1;
-   Eina_Bool                   changed_move : 1;
-   Eina_Bool                   changed_color : 1;
-   Eina_Bool                   changed_map : 1;
-   Eina_Bool                   changed_pchange : 1;
-   Eina_Bool                   changed_src_visible : 1;
-   Eina_Bool                   need_surface_clear : 1;
-   Eina_Bool                   del_ref : 1;
-
-   Eina_Bool                   is_frame : 1;
-   Eina_Bool                   is_frame_top : 1; // this is the frame edje
-   Eina_Bool                   child_has_map : 1;
-   Eina_Bool                   efl_del_called : 1;
-   Eina_Bool                   is_smart : 1;
-   Eina_Bool                   no_render : 1; // since 1.15
-   Eina_Bool                   legacy : 1; // used legacy constructor
 };
 
 struct _Evas_Data_Node
