@@ -987,8 +987,6 @@ _cursor_geometry_recalc(Evas_Object *obj)
 {
    ELM_ENTRY_DATA_GET(obj, sd);
 
-   efl_event_callback_legacy_call(obj, ELM_ENTRY_EVENT_CURSOR_CHANGED, NULL);
-
    if (!sd->deferred_recalc_job)
      {
         Evas_Coord cx, cy, cw, ch;
@@ -2393,6 +2391,9 @@ _entry_cursor_changed_signal_cb(void *data,
    if (elm_widget_focus_get(data))
      edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
    _cursor_geometry_recalc(data);
+
+   efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_CURSOR_CHANGED, NULL);
+
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
