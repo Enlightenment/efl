@@ -382,7 +382,6 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
                          "ecore_ipc_server_del");
         return NULL;
      }
-   if (svr->delete_me) return NULL;
 
    data = svr->data;
    svr->data = NULL;
