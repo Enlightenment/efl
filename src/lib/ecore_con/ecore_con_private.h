@@ -22,6 +22,8 @@
 #include <sys/un.h>
 #endif
 
+#include <inttypes.h>
+
 #define READBUFSIZ 65536
 
 extern int _ecore_con_log_dom;
@@ -399,7 +401,7 @@ void ecore_con_mempool_shutdown(void);
 #define SOCKET int
 #define SOCKET_FMT "%d"
 #else
-#define SOCKET_FMT "%lu"
+#define SOCKET_FMT "%"PRIuPTR
 #endif
 
 
