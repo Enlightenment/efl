@@ -2155,15 +2155,15 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
         return;
      }
 
-   if (!evas_object_visible_get(obj)) do_eval = EINA_TRUE;
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
-
    if ((sd->modal) && (!evas_object_visible_get(obj)))
      {
         const Eina_List *l;
         Evas_Object *current;
         INCREMENT_MODALITY()
      }
+
+   if (!evas_object_visible_get(obj)) do_eval = EINA_TRUE;
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
 
    if (sd->deferred_resize_job)
      _elm_win_resize_job(sd->obj);
@@ -7268,37 +7268,19 @@ elm_win_demand_attention_get(const Evas_Object *obj)
 EAPI void
 elm_win_modal_set(Evas_Object *obj, Eina_Bool modal)
 {
-   ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   Efl_Ui_Win_Modal_Mode modality;
 
-   if (sd->modal_count) return;
-
-   const Eina_List *l;
-   Evas_Object *current;
-
-   if ((modal) && (!sd->modal) && (evas_object_visible_get(obj)))
-     {
-       INCREMENT_MODALITY()
-     }
-   else if ((!modal) && (sd->modal) && (evas_object_visible_get(obj)))
-     {
-       DECREMENT_MODALITY()
-     }
-
-   sd->modal = modal;
-   TRAP(sd, modal_set, modal);
-#ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
-#endif
+   modality = modal ? EFL_UI_WIN_MODAL_MODAL : EFL_UI_WIN_MODAL_NONE;
+   efl_ui_win_modal_set(obj, modality);
 }
 
 EAPI Eina_Bool
 elm_win_modal_get(const Evas_Object *obj)
 {
-   ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+   Efl_Ui_Win_Modal_Mode modality;
 
-   return sd->modal;
+   modality = efl_ui_win_modal_get(obj);
+   return (modality != EFL_UI_WIN_MODAL_NONE);
 }
 
 EAPI void

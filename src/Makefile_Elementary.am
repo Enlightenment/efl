@@ -836,6 +836,7 @@ bin/elementary/test_win_plug.c \
 bin/elementary/test_win_state.c \
 bin/elementary/test_win_wm_rotation.c \
 bin/elementary/test_win_dialog.c \
+bin/elementary/test_win_modal.c \
 bin/elementary/test.h
 
 bin_elementary_elementary_test_LDADD = @USE_ELEMENTARY_LIBS@
