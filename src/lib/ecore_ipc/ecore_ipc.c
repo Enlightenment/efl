@@ -667,6 +667,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
        efl_class_name_get(efl_class_get(svr->dialer.dialer)),
        address);
 
+   svr->max_buf_size = -1;
    svr->data = (void *)data;
    servers = eina_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_IPC_SERVER);
