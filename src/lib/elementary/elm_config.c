@@ -4325,6 +4325,7 @@ _elm_config_shutdown(void)
    ELM_SAFE_FREE(_elm_config, _config_free);
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
+   ELM_SAFE_FREE(_elm_cache_flush_poller, ecore_poller_del);
    ELM_SAFE_FREE(_elm_profile, free);
    _elm_font_overlays_del_free();
 
