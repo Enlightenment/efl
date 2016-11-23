@@ -160,6 +160,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          }
       }
       @property max_descent {
+      	 [[Maximal descent property]]
          get {
             return: Evas.Coord; [[Evas coordinate]]
          }
@@ -184,31 +185,37 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          }
       }
       @property ascent {
+      	 [[Ascent property]]
          get {
             return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property horiz_advance {
+      	 [[Horizontal advance property]]
          get {
             return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property inset {
+      	 [[Inset property]]
          get {
             return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property max_ascent {
+      	 [[Maximal ascent property]]
          get {
             return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property vert_advance {
+      	 [[Vertical advance property]]
          get {
             return: Evas.Coord; [[Evas coordinate]]
          }
       }
       @property descent {
+      	 [[descent property]]
          get {
             return: Evas.Coord; [[Evas coordinate]]
          }
@@ -222,6 +229,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          }
       }
       char_coords_get @const {
+      	 [[Get character coordinates]]
          return: int; [[Logical poistion of char]]
          params {
             @in x: Evas.Coord; [[X coordinate]]

@@ -7,6 +7,7 @@ interface Evas.Ector.Buffer
    [[Evas ector buffer interface]]
    methods {
       @property engine_image {
+      	 [[Engine image property]]
          get {}
          set { [[This Buffer will hold a reference to the evas image struct.]] }
          values {
