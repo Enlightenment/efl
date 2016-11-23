@@ -236,7 +236,7 @@ EAPI int            ecore_file_mkdirs       (const char **dirs);
 EAPI int            ecore_file_mksubdirs    (const char *base, const char **subdirs);
 
 /**
- * @brief Delete the given directory.
+ * @brief Delete the given empty directory.
  *
  * @param  dir The name of the directory to delete.
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
