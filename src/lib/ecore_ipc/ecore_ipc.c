@@ -380,19 +380,19 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, cons
    switch (type)
      {
       case ECORE_IPC_LOCAL_USER:
-        svr->server = ecore_con_server_add(ECORE_CON_LOCAL_USER | extra, name, port, svr);
+        svr->legacy_server = ecore_con_server_add(ECORE_CON_LOCAL_USER | extra, name, port, svr);
         break;
       case ECORE_IPC_LOCAL_SYSTEM:
-        svr->server = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM | extra, name, port, svr);
+        svr->legacy_server = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM | extra, name, port, svr);
         break;
       case ECORE_IPC_REMOTE_SYSTEM:
-        svr->server = ecore_con_server_add(ECORE_CON_REMOTE_SYSTEM | extra, name, port, svr);
+        svr->legacy_server = ecore_con_server_add(ECORE_CON_REMOTE_SYSTEM | extra, name, port, svr);
         break;
       default:
         free(svr);
         return NULL;
      }
-   if (!svr->server)
+   if (!svr->legacy_server)
      {
         free(svr);
         return NULL;
@@ -533,19 +533,19 @@ ecore_ipc_server_connect_legacy(Ecore_Ipc_Type compl_type, char *name, int port,
    switch (type)
      {
       case ECORE_IPC_LOCAL_USER:
-        svr->server = ecore_con_server_connect(ECORE_CON_LOCAL_USER | extra, name, port, svr);
+        svr->legacy_server = ecore_con_server_connect(ECORE_CON_LOCAL_USER | extra, name, port, svr);
         break;
       case ECORE_IPC_LOCAL_SYSTEM:
-        svr->server = ecore_con_server_connect(ECORE_CON_LOCAL_SYSTEM | extra, name, port, svr);
+        svr->legacy_server = ecore_con_server_connect(ECORE_CON_LOCAL_SYSTEM | extra, name, port, svr);
         break;
       case ECORE_IPC_REMOTE_SYSTEM:
-        svr->server = ecore_con_server_connect(ECORE_CON_REMOTE_SYSTEM | extra, name, port, svr);
+        svr->legacy_server = ecore_con_server_connect(ECORE_CON_REMOTE_SYSTEM | extra, name, port, svr);
         break;
       default:
         free(svr);
         return NULL;
      }
-   if (!svr->server)
+   if (!svr->legacy_server)
      {
         free(svr);
         return NULL;
@@ -711,7 +711,7 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
           }
 
         if (svr->dialer.dialer) _ecore_ipc_dialer_del(svr);
-        if (svr->server) ecore_con_server_del(svr->server);
+        if (svr->legacy_server) ecore_con_server_del(svr->legacy_server);
         servers = eina_list_remove(servers, svr);
 
         if (svr->buf) free(svr->buf);
@@ -747,9 +747,9 @@ ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
 
    if (svr->dialer.dialer)
      return efl_net_dialer_connected_get(svr->dialer.dialer);
-   else if (!svr->server) return EINA_FALSE;
+   else if (!svr->legacy_server) return EINA_FALSE;
 
-   return ecore_con_server_connected_get(svr->server);
+   return ecore_con_server_connected_get(svr->legacy_server);
 }
 
 EAPI Eina_List *
@@ -874,10 +874,10 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
 
         return s + size;
      }
-   else if (!svr->server) return 0;
+   else if (!svr->legacy_server) return 0;
 
-   ret = ecore_con_server_send(svr->server, dat, s);
-   if (size > 0) ret += ecore_con_server_send(svr->server, data, size);
+   ret = ecore_con_server_send(svr->legacy_server, dat, s);
+   if (size > 0) ret += ecore_con_server_send(svr->legacy_server, data, size);
    return ret;
 }
 
@@ -890,7 +890,7 @@ ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char 
                          "ecore_ipc_server_client_limit_set");
         return;
      }
-   ecore_con_server_client_limit_set(svr->server, client_limit, reject_excess_clients);
+   ecore_con_server_client_limit_set(svr->legacy_server, client_limit, reject_excess_clients);
 }
 
 EAPI void
@@ -935,9 +935,9 @@ ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr)
         /* original IPC just returned IP for remote connections */
         return NULL;
      }
-   else if (!svr->server) return NULL;
+   else if (!svr->legacy_server) return NULL;
 
-   return ecore_con_server_ip_get(svr->server);
+   return ecore_con_server_ip_get(svr->legacy_server);
 }
 
 EAPI void
@@ -955,9 +955,9 @@ ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
           efl_io_copier_flush(svr->dialer.send_copier);
         return;
      }
-   else if (!svr->server) return;
+   else if (!svr->legacy_server) return;
 
-   ecore_con_server_flush(svr->server);
+   ecore_con_server_flush(svr->legacy_server);
 }
 
 #define CLENC(_member) \
@@ -1233,7 +1233,7 @@ _ecore_ipc_event_server_del(void *data EINA_UNUSED, int ev_type EINA_UNUSED, voi
         Ecore_Ipc_Server *svr;
 
         svr = ecore_con_server_data_get(e->server);
-        svr->server = NULL;
+        svr->legacy_server = NULL;
 
         ecore_ipc_post_event_server_del(svr);
      }

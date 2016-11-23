@@ -93,7 +93,7 @@ struct _Ecore_Ipc_Server
       Eo *send_copier;
    } dialer;
 
-   Ecore_Con_Server *server;
+   Ecore_Con_Server *legacy_server;
    Eina_List        *clients;
    void              *data;
    unsigned char     *buf;
