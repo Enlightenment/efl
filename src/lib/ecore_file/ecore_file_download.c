@@ -77,6 +77,7 @@ _ecore_file_download_copier_done(void *data, const Efl_Event *event EINA_UNUSED)
      {
         Ecore_File_Download_Completion_Cb cb = job->completion_cb;
         job->completion_cb = NULL;
+        ECORE_MAGIC_SET(job, ECORE_MAGIC_NONE);
         cb((void *)job->data, file, status);
      }
 
@@ -298,6 +299,8 @@ ecore_file_download_protocol_available(const char *protocol)
 EAPI void
 ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
+   const char *file;
+
    if (!job)
      return;
    if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB))
@@ -306,8 +309,19 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
         return;
      }
 
-   /* don't call it from _ecore_file_download_copier_done() */
-   if (job->completion_cb) job->completion_cb = NULL;
+   efl_file_get(job->output, &file, NULL);
+   DBG("Aborting download %s -> %s",
+       efl_net_dialer_address_dial_get(job->input),
+       file);
+
+   /* abort should have status = 1 */
+   if (job->completion_cb)
+     {
+        Ecore_File_Download_Completion_Cb cb = job->completion_cb;
+        job->completion_cb = NULL;
+        ECORE_MAGIC_SET(job, ECORE_MAGIC_NONE);
+        cb((void *)job->data, file, 1);
+     }
 
    /* efl_io_closer_close()
     *  -> _ecore_file_download_copier_done()
