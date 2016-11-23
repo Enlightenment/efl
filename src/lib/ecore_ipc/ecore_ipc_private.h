@@ -66,6 +66,14 @@ struct _Ecore_Ipc_Msg_Head
 struct _Ecore_Ipc_Client
 {
    ECORE_MAGIC;
+
+   struct {
+      Eo *input;
+      Eo *socket;
+      Eo *recv_copier;
+      Eo *send_copier;
+   } socket;
+
    Ecore_Con_Client  *client;
    Ecore_Ipc_Server  *svr;
    void              *data;
@@ -92,6 +100,8 @@ struct _Ecore_Ipc_Server
       Eo *recv_copier;
       Eo *send_copier;
    } dialer;
+
+   Eo *server;
 
    Ecore_Con_Server *legacy_server;
    Eina_List        *clients;
