@@ -296,7 +296,11 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
 EAPI Eina_Bool
 ecore_file_rmdir(const char *dir)
 {
+#ifdef _WIN32
+   if (RemoveDirectory(dir) < 0) return EINA_FALSE;
+#else
    if (rmdir(dir) < 0) return EINA_FALSE;
+#endif /* _WIN32 */
    return EINA_TRUE;
 }
 
