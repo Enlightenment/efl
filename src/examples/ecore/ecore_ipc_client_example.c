@@ -5,6 +5,7 @@
 static int retval = EXIT_SUCCESS;
 static Ecore_Ipc_Server *server = NULL;
 static Eina_Bool do_flush = EINA_FALSE;
+static Eina_Bool single_message = EINA_FALSE;
 
 static Eina_Bool
 _server_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
@@ -72,6 +73,12 @@ _on_stdin(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh EINA_UNUSED)
         ecore_ipc_server_send(server, 1, 2, 0, 0, 0, line, r);
         printf("INFO: sent %zd bytes to server.\n", r);
         if (do_flush) ecore_ipc_server_flush(server);
+        if (single_message)
+          {
+             ecore_ipc_server_del(server);
+             server = NULL;
+             ecore_main_loop_quit();
+          }
      }
 
    free(line);
@@ -103,6 +110,7 @@ static const Ecore_Getopt options = {
     ECORE_GETOPT_STORE_INT('s', "max-size", "Maximum size (in bytes) for messages."),
 
     ECORE_GETOPT_STORE_TRUE('f', "flush", "Force a flush after every send call."),
+    ECORE_GETOPT_STORE_TRUE('m', "single-message", "Send a single message and delete the server."),
 
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
@@ -135,6 +143,7 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_INT(max_size),
 
      ECORE_GETOPT_VALUE_BOOL(do_flush),
+     ECORE_GETOPT_VALUE_BOOL(single_message),
 
      /* standard block to provide version, copyright, license and help */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -V/--version quits */
