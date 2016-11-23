@@ -331,7 +331,8 @@ ecore_file_recursive_rm(const char *dir)
 
    if (readlink(dir, buf, sizeof(buf) - 1) > 0)
      return ecore_file_unlink(dir);
-   if (!_ecore_file_stat(buf, NULL, NULL, NULL, &is_dir, NULL))
+
+   if (!_ecore_file_stat(dir, NULL, NULL, NULL, &is_dir, NULL))
      return EINA_FALSE;
 #else
    if (lstat(dir, &st) == -1)
