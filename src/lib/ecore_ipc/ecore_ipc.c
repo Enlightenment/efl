@@ -681,6 +681,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
    return NULL; /* dialer will trigger all cleanup on its own callbacks */
 
  error_dialer:
+   free(address);
    free(svr);
    return NULL;
 }
