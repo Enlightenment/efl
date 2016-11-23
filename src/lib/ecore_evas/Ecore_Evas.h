@@ -2308,6 +2308,15 @@ EAPI void        ecore_evas_draw_frame_set(Ecore_Evas *ee, Eina_Bool draw_frame)
 EAPI Eina_Bool   ecore_evas_draw_frame_get(const Ecore_Evas *ee) EINA_DEPRECATED;
 
 /**
+ * @brief Set shadow geometry for client-side decorations
+ *
+ * Note that the framespace contains both a shadow or glow around the window,
+ * and the window borders (title bar, etc...).
+ */
+EAPI void        ecore_evas_shadow_geometry_set(Ecore_Evas *ee, int x, int y, int w, int h);
+EAPI void        ecore_evas_shadow_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
+
+/**
  * @brief Associate the given object to this ecore evas.
  *
  * @param ee The Ecore_Evas to associate to @a obj

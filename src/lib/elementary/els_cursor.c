@@ -543,10 +543,7 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
           }
      }
 
-   Evas_Coord x, y, w, h, px, py;
-   evas_object_geometry_get(cur->eventarea, &x, &y, &w, &h);
-   evas_pointer_canvas_xy_get(cur->evas, &px, &py);
-   if (IS_INSIDE(px, py, x, y, w, h))
+   if (efl_canvas_object_pointer_in_get(cur->eventarea))
      _elm_cursor_set(cur);
 }
 

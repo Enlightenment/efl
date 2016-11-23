@@ -90,6 +90,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_popup_item.eo \
 	lib/elementary/efl_ui_box.eo \
 	lib/elementary/efl_ui_box_flow.eo \
+	lib/elementary/efl_ui_box_stack.eo \
 	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_grid_static.eo \
 	lib/elementary/efl_ui_layout_internal_box.eo \
@@ -121,6 +122,7 @@ elm_public_eolian_files = \
 # Private classes (not exposed or shipped)
 elm_private_eolian_files = \
 	lib/elementary/efl_ui_internal_text_interactive.eo \
+	lib/elementary/efl_ui_win_internal_part.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -652,6 +654,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elu_ews_wm.c \
 	lib/elementary/efl_ui_box.c \
 	lib/elementary/efl_ui_box_flow.c \
+	lib/elementary/efl_ui_box_stack.c \
 	lib/elementary/efl_ui_box_layout.c \
 	lib/elementary/efl_ui_box_private.h \
 	lib/elementary/efl_ui_grid.c \
@@ -833,6 +836,7 @@ bin/elementary/test_win_plug.c \
 bin/elementary/test_win_state.c \
 bin/elementary/test_win_wm_rotation.c \
 bin/elementary/test_win_dialog.c \
+bin/elementary/test_win_modal.c \
 bin/elementary/test.h
 
 bin_elementary_elementary_test_LDADD = @USE_ELEMENTARY_LIBS@

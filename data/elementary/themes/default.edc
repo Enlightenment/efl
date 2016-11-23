@@ -4,7 +4,7 @@ externals.external: "elm";
 
 // theme api version. from 1.10 on we will check version to avoid
 // compat issues
-data.item: "version" "110";
+data.item: "version" "119";
 
 collections {
 #include "fonts.edc"
@@ -73,6 +73,7 @@ collections {
 #include "edc/elm/hover.edc"
 #include "edc/elm/cursor.edc"
 #include "edc/elm/code.edc"
+#include "edc/elm/ews.edc"
 
 // desktop in general
 #include "edc/wallpaper.edc"

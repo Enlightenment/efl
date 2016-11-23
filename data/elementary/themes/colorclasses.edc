@@ -386,6 +386,14 @@ color_classes {
       color: FN_COL_DISABLE;
       desc: "Text of a disabled multibuttonentry item";
    }
+   color_class { "elm/win/background";
+      color: 64 64 64 255;
+      desc: "Background color of a standard window";
+   }
+   color_class { "elm/win/blocker";
+      color: 32 32 32 128;
+      desc: "Overlay color for windows with modal children (blocked)";
+   }
    
 // modules
    color_class { name: "module_label";

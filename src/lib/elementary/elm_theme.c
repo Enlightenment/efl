@@ -33,6 +33,14 @@ _elm_theme_item_finalize(Elm_Theme_Files *files,
                          Eina_Bool prepend,
                          Eina_Bool istheme)
 {
+   /* Theme version history:
+    * <110: legacy, had no version tag
+    *  110: first supported version
+    *  119: switched windows to always use border
+    *       win group has no menu, no blocker
+    *       border group has all required swallows (conformant, bg, win)
+    *       data: "elm_bg_version" matches "version" ("119")
+    */
    if (!f) return;
    if (istheme)
      {

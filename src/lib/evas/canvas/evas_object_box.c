@@ -1632,6 +1632,11 @@ _evas_box_layout_stack(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Data *
 
         if ((new_w != child_w) || (new_h != child_h))
           evas_object_resize(child, new_w, new_h);
+
+        if (priv->align.h >= 0.0)
+          off_x += (ow - new_w) * priv->align.h;
+        if (priv->align.v >= 0.0)
+          off_y += (oh - new_h) * priv->align.v;
         evas_object_move(child, ox + off_x, oy + off_y);
 
         if (old_child)

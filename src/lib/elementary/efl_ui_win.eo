@@ -172,9 +172,10 @@ enum Efl.Ui.Win.Move_Resize_Mode
 }
 
 class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
-               Elm.Interface.Atspi_Widget_Action, Efl.Pack,
+               Elm.Interface.Atspi_Widget_Action, Efl.Container,
                Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-               Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global)
+               Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global,
+               Efl.Part)
 {
    [[Efl UI window class]]
    legacy_prefix: elm_win;
@@ -908,11 +909,6 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Elm.Interface.Atspi_Accessible.state_set.get;
       Elm.Interface.Atspi_Accessible.name.get;
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
-      Efl.Container.content_remove;
-      Efl.Container.content_iterate;
-      Efl.Container.content_count;
-      Efl.Pack.unpack;
-      Efl.Pack.pack;
       Efl.Input.State.modifier_enabled.get;
       Efl.Input.State.lock_enabled.get;
       Efl.Screen.screen_dpi.get;
@@ -935,6 +931,10 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Efl.Canvas.object_top_at_xy_get;
       Efl.Canvas.objects_in_rectangle_get;
       Efl.Canvas.object_top_in_rectangle_get;
+      Efl.Container.content.set;
+      Efl.Container.content.get;
+      Efl.Container.content_unset;
+      Efl.Part.part;
    }
    constructors {
       .name;

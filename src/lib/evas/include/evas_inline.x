@@ -13,6 +13,8 @@
    if (EINA_UNLIKELY(!EVAS_OBJECT_DATA_VALID(o))) return __VA_ARGS__; } while (0)
 #define EVAS_OBJECT_DATA_ALIVE_CHECK(o, ...) do { \
    if (EINA_UNLIKELY(!EVAS_OBJECT_DATA_ALIVE(o))) return __VA_ARGS__; } while (0)
+#define EVAS_OBJECT_DATA_GET(eo_o) \
+   efl_data_scope_get((eo_o), EFL_CANVAS_OBJECT_CLASS)
 #define EVAS_OBJECT_DATA_SAFE_GET(eo_o) \
    (((eo_o) && efl_isa((eo_o), EFL_CANVAS_OBJECT_CLASS)) ? efl_data_scope_get((eo_o), EFL_CANVAS_OBJECT_CLASS) : NULL)
 

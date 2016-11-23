@@ -2236,6 +2236,33 @@ ecore_evas_draw_frame_get(const Ecore_Evas *ee EINA_UNUSED)
    return EINA_FALSE;
 }
 
+EAPI void
+ecore_evas_shadow_geometry_set(Ecore_Evas *ee, int l, int r, int t, int b)
+{
+   ECORE_EVAS_CHECK(ee);
+   if ((ee->shadow.l == l) && (ee->shadow.r == r) &&
+       (ee->shadow.t == t) && (ee->shadow.b == b)) return;
+   ee->shadow.l = l;
+   ee->shadow.r = r;
+   ee->shadow.t = t;
+   ee->shadow.b = b;
+   ee->shadow.changed = EINA_TRUE;
+}
+
+EAPI void
+ecore_evas_shadow_geometry_get(const Ecore_Evas *ee, int *l, int *r, int *t, int *b)
+{
+   if (l) *l = 0;
+   if (r) *r = 0;
+   if (t) *t = 0;
+   if (b) *b = 0;
+   ECORE_EVAS_CHECK(ee);
+   if (l) *l = ee->shadow.l;
+   if (r) *r = ee->shadow.r;
+   if (t) *t = ee->shadow.t;
+   if (b) *b = ee->shadow.b;
+}
+
 EAPI void 
 ecore_evas_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {

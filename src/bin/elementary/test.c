@@ -16,6 +16,7 @@ void test_access3(void *data, Evas_Object *obj, void *event_info);
 void test_bg_plain(void *data, Evas_Object *obj, void *event_info);
 void test_bg_image(void *data, Evas_Object *obj, void *event_info);
 void test_bg_options(void *data, Evas_Object *obj, void *event_info);
+void test_bg_window(void *data, Evas_Object *obj, void *event_info);
 void test_icon(void *data, Evas_Object *obj, void *event_info);
 void test_icon_transparent(void *data, Evas_Object *obj, void *event_info);
 void test_icon_standard(void *data, Evas_Object *obj, void *event_info);
@@ -26,6 +27,7 @@ void test_box_horiz(void *data, Evas_Object *obj, void *event_info);
 void test_box_homo(void *data, Evas_Object *obj, void *event_info);
 void test_box_transition(void *data, Evas_Object *obj, void *event_info);
 void test_box_align(void *data, Evas_Object *obj, void *event_info);
+void test_box_stack(void *data, Evas_Object *obj, void *event_info);
 void test_ui_box(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
 void test_cnp(void *data, Evas_Object *obj, void *event_info);
@@ -281,6 +283,7 @@ void test_dnd_multi_features(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_types(void *data, Evas_Object *obj, void *event_info);
 void test_task_switcher(void *data, Evas_Object *obj, void *event_info);
 void test_win_dialog(void *data, Evas_Object *obj, void *event_info);
+void test_win_modal(void *data, Evas_Object *obj, void *event_info);
 void test_box_disable(void *data, Evas_Object *obj, void *event_info);
 void test_layout_disable(void *data, Evas_Object *obj, void *event_info);
 
@@ -629,6 +632,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Bg Plain", test_bg_plain);
    ADD_TEST(NULL, "Window / Background", "Bg Image", test_bg_image);
    ADD_TEST(NULL, "Window / Background", "Bg Options", test_bg_options);
+   ADD_TEST(NULL, "Window / Background", "Bg EOAPI (Efl.Ui.Win)", test_bg_window);
    ADD_TEST(NULL, "Window / Background", "Window States", test_win_state);
    ADD_TEST(NULL, "Window / Background", "Window States 2", test_win_state2);
    ADD_TEST(NULL, "Window / Background", "Inwin", test_inwin);
@@ -639,6 +643,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Window WM Rotation", test_win_wm_rotation);
    ADD_TEST(NULL, "Window / Background", "Window Standard/Dialog", test_win_dialog);
    ADD_TEST(NULL, "Window / Background", "Window Keygrab Set", test_win_keygrab);
+   ADD_TEST(NULL, "Window / Background", "Window Modal", test_win_modal);
 
    //------------------------------//
    ADD_TEST(NULL, "Images", "Icon", test_icon);
@@ -664,6 +669,7 @@ add_tests:
    ADD_TEST(NULL, "Containers", "Box Homogeneous", test_box_homo);
    ADD_TEST(NULL, "Containers", "Box Transition", test_box_transition);
    ADD_TEST(NULL, "Containers", "Box Align", test_box_align);
+   ADD_TEST(NULL, "Containers", "Box Stack", test_box_stack);
    ADD_TEST(NULL, "Containers", "Table", test_table);
    ADD_TEST(NULL, "Containers", "Table Homogeneous", test_table2);
    ADD_TEST(NULL, "Containers", "Table 3", test_table3);

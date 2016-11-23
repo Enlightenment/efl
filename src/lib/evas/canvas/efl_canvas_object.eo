@@ -42,6 +42,20 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             pointer_mode: Efl.Input.Object_Pointer_Mode; [[Input pointer mode]]
          }
       }
+      @property pointer_in {
+         [[Read-only value indicating whether the main pointer is in the object.
+
+           This shall be true between pointer,in and pointer,out events (coming
+           in matching numbers). Note that group objects may receive multiple
+           pointer,in in a row.
+
+           @since 1.19
+         ]]
+         get{}
+         values {
+            in: bool; [[If $true the main pointer has entered this object.]]
+         }
+      }
       @property render_op {
          [[Render mode to be used for compositing the Evas object.
 
