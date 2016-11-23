@@ -25,6 +25,7 @@ struct Elm.Toolbar.Item.State
 
 class Elm.Toolbar.Item(Elm.Widget.Item)
 {
+      [[Elementary toolbar item class]]
       legacy_prefix: elm_toolbar_item;
       eo_prefix: elm_obj_toolbar_item;
       methods {
@@ -150,7 +151,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     separator: bool;
+                     separator: bool; [[$true if the item is a separator, $false otherwise]]
                 }
            }
            @property menu {
@@ -176,10 +177,10 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                        default item's icon and label will be used. It's the
                        behavior as \@ref elm_toolbar_item_state_unset.
                      ]]
-                     return: bool;
+                     return: bool; [[$true on success, $false otherwise]]
                 }
                 values {
-                     state: ptr(Elm.Toolbar.Item.State) @nullable;
+                     state: ptr(Elm.Toolbar.Item.State) @nullable; [[Item state]]
                 }
            }
            /*      init { FIXME
@@ -200,7 +201,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      @in format: string; [[Optional format of $img to pass to the image loader.]]
                      @in key: string; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
                 }
-                return: bool;
+                return: bool; [[$true on success, $false otherwise]]
            }
            icon_file_set {
                 [[Set the icon associated with $item to an image in a binary buffer.
@@ -212,7 +213,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      @in file: string; [[The file that contains the image.]]
                      @in key: string; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
                 }
-                return: bool;
+                return: bool; [[$true on success, $false otherwise]]
            }
            state_add {
                 [[Add a new state to $item.

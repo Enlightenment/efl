@@ -28,6 +28,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
                    Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
                    Efl.Ui.Clickable, Efl.Ui.Selectable)
 {
+   [[Elementary toolbar class]]
    legacy_prefix: elm_toolbar;
    eo_prefix: elm_obj_toolbar;
    event_prefix: elm_toolbar;
@@ -374,8 +375,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
       Elm.Interface.Atspi.Selection.clear;
    }
    events {
-      item,focused;
-      item,unfocused;
+      item,focused; [[Called when toolbar item got focus]]
+      item,unfocused; [[Called when toolbar item lost focus]]
    }
-
 }
