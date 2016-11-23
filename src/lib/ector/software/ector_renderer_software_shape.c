@@ -520,7 +520,7 @@ _update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
    Efl_Gfx_Fill_Rule fill_rule;
    Outline *outline, *dash_outline;
 
-   efl_gfx_shape_path_get(obj, &cmds, &pts);
+   efl_gfx_path_get(obj, &cmds, &pts);
    fill_rule = efl_gfx_shape_fill_rule_get(obj);
    if (cmds && (_generate_stroke_data(pd) || _generate_shape_data(pd)))
      {
@@ -666,17 +666,17 @@ _ector_renderer_software_shape_ector_renderer_software_fill(Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_renderer_software_shape_efl_gfx_shape_path_set(Eo *obj,
-                                                      Ector_Renderer_Software_Shape_Data *pd,
-                                                      const Efl_Gfx_Path_Command *op,
-                                                      const double *points)
+_ector_renderer_software_shape_efl_gfx_path_path_set(Eo *obj,
+                                                     Ector_Renderer_Software_Shape_Data *pd,
+                                                     const Efl_Gfx_Path_Command *op,
+                                                     const double *points)
 {
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
    if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
    pd->shape_data = NULL;
    pd->outline_data = NULL;
 
-   efl_gfx_shape_path_set(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS), op, points);
+   efl_gfx_path_set(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS), op, points);
 }
 
 
@@ -711,7 +711,7 @@ _ector_renderer_software_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Sof
 {
    //FIXME, As base class  destructor can't call destructor of mixin class.
    // call explicit API to free shape data.
-   efl_gfx_shape_reset(obj);
+   efl_gfx_path_reset(obj);
 
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
    if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);

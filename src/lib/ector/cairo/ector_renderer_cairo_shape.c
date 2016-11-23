@@ -108,7 +108,7 @@ _ector_renderer_cairo_shape_ector_renderer_prepare(Eo *obj, Ector_Renderer_Cairo
         pd->parent = efl_data_xref(base->surface, ECTOR_CAIRO_SURFACE_CLASS, obj);
      }
 
-   efl_gfx_shape_path_get(obj, &cmds, &pts);
+   efl_gfx_path_get(obj, &cmds, &pts);
    if (!pd->path && cmds)
      {
         cairo_new_path(pd->parent->cairo);
@@ -232,13 +232,13 @@ _ector_renderer_cairo_shape_ector_renderer_cairo_fill(Eo *obj EINA_UNUSED,
 
 static void
 _ector_renderer_cairo_shape_ector_renderer_bounds_get(Eo *obj,
-                                                                   Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED,
-                                                                   Eina_Rectangle *r)
+                                                      Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED,
+                                                      Eina_Rectangle *r)
 {
    Ector_Renderer_Cairo_Data *bd;
 
    // FIXME: It should be possible to actually ask cairo about that
-   efl_gfx_shape_bounds_get(obj, r);
+   efl_gfx_path_bounds_get(obj, r);
 
    bd = efl_data_scope_get(obj, ECTOR_RENDERER_CAIRO_CLASS);
    r->x += bd->generic->origin.x;
@@ -297,7 +297,7 @@ _ector_renderer_cairo_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Cairo_
 
    //FIXME, As base class  destructor can't call destructor of mixin class.
    // call explicit API to free shape data.
-   efl_gfx_shape_reset(obj);
+   efl_gfx_path_reset(obj);
 
    base = efl_data_scope_get(obj, ECTOR_RENDERER_CLASS);
    efl_data_xunref(base->surface, pd->parent, obj);

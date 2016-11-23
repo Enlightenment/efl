@@ -107,7 +107,7 @@ _ector_renderer_gl_shape_ector_renderer_gl_fill(Eo *obj EINA_UNUSED,
 static void
 _ector_renderer_gl_shape_ector_renderer_bounds_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Eina_Rectangle *r)
 {
-   efl_gfx_shape_bounds_get(obj, r);
+   efl_gfx_path_bounds_get(obj, r);
 
    r->x += pd->base->origin.x;
    r->y += pd->base->origin.y;

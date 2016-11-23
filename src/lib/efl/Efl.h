@@ -108,6 +108,7 @@ EAPI extern const Efl_Event_Description _EFL_GFX_PATH_CHANGED;
 #include "interfaces/efl_gfx_stack.eo.h"
 #include "interfaces/efl_gfx_fill.eo.h"
 #include "interfaces/efl_gfx_view.eo.h"
+#include "interfaces/efl_gfx_path.eo.h"
 #include "interfaces/efl_gfx_shape.eo.h"
 #include "interfaces/efl_gfx_gradient.eo.h"
 #include "interfaces/efl_gfx_gradient_linear.eo.h"

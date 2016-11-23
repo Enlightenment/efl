@@ -20,6 +20,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_stack.eo \
       lib/efl/interfaces/efl_gfx_view.eo \
       lib/efl/interfaces/efl_gfx_buffer.eo \
+      lib/efl/interfaces/efl_gfx_path.eo \
       lib/efl/interfaces/efl_gfx_shape.eo \
       lib/efl/interfaces/efl_gfx_gradient.eo \
       lib/efl/interfaces/efl_gfx_gradient_linear.eo \
@@ -88,6 +89,7 @@ lib_LTLIBRARIES += lib/efl/libefl.la
 lib_efl_libefl_la_SOURCES = \
 lib/efl/interfaces/efl_interfaces_main.c \
 lib/efl/interfaces/efl_model_common.c \
+lib/efl/interfaces/efl_gfx_path.c \
 lib/efl/interfaces/efl_gfx_shape.c \
 lib/efl/interfaces/efl_vpath_file.c \
 lib/efl/interfaces/efl_vpath_manager.c \
