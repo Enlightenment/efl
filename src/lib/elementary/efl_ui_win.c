@@ -112,7 +112,6 @@ struct _Efl_Ui_Win_Data
       int          repeat_count;
       int          shot_counter;
    } shot;
-   int                            resize_location;
    int                           *autodel_clear, rot;
    struct
    {
@@ -3603,88 +3602,81 @@ _elm_win_focus_highlight_init(Efl_Ui_Win_Data *sd)
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 }
 
-static void
-_elm_win_frame_cb_move_start(void *data,
-                             Evas_Object *obj EINA_UNUSED,
-                             const char *sig EINA_UNUSED,
-                             const char *source EINA_UNUSED)
-{
-   ELM_WIN_DATA_GET_OR_RETURN(data, sd);
-
-#ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win)
-     {
-        int ox, oy;
-
-        ecore_wl2_window_pointer_set(sd->wl.win, NULL,
-                                     sd->pointer.hot_x, sd->pointer.hot_y);
-
-        /* NB: Wayland handles moving surfaces by itself so we cannot
-    * specify a specific x/y we want. Instead, we will pass in the
-    * existing x/y values so they can be recorded as 'previous'
-    * position. The new position will get updated automatically when
-    * the move is finished */
-
-        edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
-                                      &ox, &oy, NULL, NULL);
-        ecore_evas_wayland_move(sd->ee, ox, oy);
-     }
-#endif
-
+typedef struct _resize_info {
+   const char *source;
+   const char *cursor;
+   Efl_Ui_Win_Move_Resize_Mode mode;
+   int wl_location;
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->x.xwin)
+#define XDIR(d) , ECORE_X_NETWM_DIRECTION_##d
+   Ecore_X_Netwm_Direction x_dir;
+#endif
+} resize_info;
+
+static const resize_info _resize_infos[8] = {
+   { "elm.event.resize.t",  ELM_CURSOR_TOP_SIDE, EFL_UI_WIN_MOVE_RESIZE_TOP, 1 XDIR(SIZE_T) },
+   { "elm.event.resize.b",  ELM_CURSOR_BOTTOM_SIDE, EFL_UI_WIN_MOVE_RESIZE_BOTTOM, 2 XDIR(SIZE_B) },
+   { "elm.event.resize.l",  ELM_CURSOR_LEFT_SIDE, EFL_UI_WIN_MOVE_RESIZE_LEFT, 4 XDIR(SIZE_L) },
+   { "elm.event.resize.r",  ELM_CURSOR_RIGHT_SIDE, EFL_UI_WIN_MOVE_RESIZE_RIGHT, 8 XDIR(SIZE_R) },
+   { "elm.event.resize.tl", ELM_CURSOR_TOP_LEFT_CORNER, EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_LEFT, 5 XDIR(SIZE_TL) },
+   { "elm.event.resize.bl", ELM_CURSOR_BOTTOM_LEFT_CORNER, EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_LEFT, 6 XDIR(SIZE_BL) },
+   { "elm.event.resize.br", ELM_CURSOR_BOTTOM_RIGHT_CORNER, EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_RIGHT, 10 XDIR(SIZE_BR) },
+   { "elm.event.resize.tr", ELM_CURSOR_TOP_RIGHT_CORNER, EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_RIGHT, 9 XDIR(SIZE_TR) },
+};
+
+static inline Efl_Ui_Win_Move_Resize_Mode
+_move_resize_mode_rotate(int rotation, Efl_Ui_Win_Move_Resize_Mode mode)
+{
+   const Efl_Ui_Win_Move_Resize_Mode edges[4] = {
+      EFL_UI_WIN_MOVE_RESIZE_TOP,    EFL_UI_WIN_MOVE_RESIZE_LEFT,
+      EFL_UI_WIN_MOVE_RESIZE_BOTTOM, EFL_UI_WIN_MOVE_RESIZE_RIGHT
+   };
+
+   const Efl_Ui_Win_Move_Resize_Mode corners[4] = {
+      EFL_UI_WIN_MOVE_RESIZE_TOP    | EFL_UI_WIN_MOVE_RESIZE_LEFT,
+      EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_LEFT,
+      EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_RIGHT,
+      EFL_UI_WIN_MOVE_RESIZE_TOP    | EFL_UI_WIN_MOVE_RESIZE_RIGHT,
+   };
+
+   const int i = rotation / 90;
+   int k;
+
+   for (k = 0; k < 4; k++)
+     if (mode == edges[k])
+       return edges[(k + i) % 4];
+
+   for (k = 0; k < 4; k++)
+     if (mode == corners[k])
+       return corners[(k + i) % 4];
+
+   return EFL_UI_WIN_MOVE_RESIZE_MOVE;
+}
+
+static const resize_info *
+_resize_info_get(int rotation, Efl_Ui_Win_Move_Resize_Mode mode)
+{
+   if (rotation)
+     return _resize_info_get(0, _move_resize_mode_rotate(rotation, mode));
+
+   for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(_resize_infos); k++)
      {
-        int x, y;
-
-        sd->resizing = EINA_TRUE;
-        ecore_x_pointer_ungrab();
-        ecore_x_pointer_root_xy_get(&x, &y);
-        ecore_x_netwm_moveresize_request_send(sd->x.xwin, x, y,
-                                              ECORE_X_NETWM_DIRECTION_MOVE, 1);
+        if (_resize_infos[k].mode == mode)
+          return &_resize_infos[k];
      }
-#endif
+
+   return NULL;
 }
 
-static void
-_elm_win_frame_cb_move_stop(void *data,
-                            Evas_Object *obj EINA_UNUSED,
-                            const char *sig EINA_UNUSED,
-                            const char *source EINA_UNUSED)
+static Efl_Ui_Win_Move_Resize_Mode
+_move_resize_mode_get(const char *source)
 {
-   ELM_WIN_DATA_GET_OR_RETURN(data, sd);
+   for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(_resize_infos); k++)
+     if (!strcmp(source, _resize_infos[k].source))
+       return _resize_infos[k].mode;
 
-#ifdef HAVE_ELEMENTARY_WL2
-   if (sd->pointer.obj)
-     _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                           "pointer", "base", "default");
-
-   if ((sd->wl.win) && (sd->pointer.surf))
-     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
-                                  sd->pointer.hot_x, sd->pointer.hot_y);
-#endif
+   return EFL_UI_WIN_MOVE_RESIZE_MOVE;
 }
-
-struct _resize_info
-{
-   const char *name;
-   int location;
-};
-
-static struct _resize_info _border_side[4] =
-{
-     { ELM_CURSOR_TOP_SIDE, 1 },
-     { ELM_CURSOR_LEFT_SIDE, 4 },
-     { ELM_CURSOR_BOTTOM_SIDE, 2 },
-     { ELM_CURSOR_RIGHT_SIDE, 8 },
-};
-
-static struct _resize_info _border_corner[4] =
-{
-     { ELM_CURSOR_TOP_LEFT_CORNER, 5 },
-     { ELM_CURSOR_BOTTOM_LEFT_CORNER, 6 },
-     { ELM_CURSOR_BOTTOM_RIGHT_CORNER, 10 },
-     { ELM_CURSOR_TOP_RIGHT_CORNER, 9 },
-};
 
 static void
 _elm_win_frame_obj_move(void *data,
@@ -3728,44 +3720,9 @@ _elm_win_frame_cb_resize_show(void *data,
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->pointer.obj)
      {
-        int i;
-
-        i = sd->rot / 90;
-        if (!strcmp(source, "elm.event.resize.t"))
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base",
-                                _border_side[(0 + i) % 4].name);
-        else if (!strcmp(source, "elm.event.resize.b"))
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base",
-                                _border_side[(2 + i) % 4].name);
-        else if (!strcmp(source, "elm.event.resize.l"))
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base",
-                                _border_side[(1 + i) % 4].name);
-        else if (!strcmp(source, "elm.event.resize.r"))
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base",
-                                _border_side[(3 + i) % 4].name);
-        else if (!strcmp(source, "elm.event.resize.tl"))
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base",
-                                _border_corner[(0 + i) % 4].name);
-        else if (!strcmp(source, "elm.event.resize.tr"))
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base",
-                                _border_corner[(3 + i) % 4].name);
-        else if (!strcmp(source, "elm.event.resize.bl"))
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base",
-                                _border_corner[(1 + i) % 4].name);
-        else if (!strcmp(source, "elm.event.resize.br"))
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base",
-                                _border_corner[(2 + i) % 4].name);
-        else
-          _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                                "pointer", "base", "default");
+        Efl_Ui_Win_Move_Resize_Mode mode = _move_resize_mode_get(source);
+        const resize_info *ri = _resize_info_get(sd->rot, mode);
+        if (ri) _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", ri->cursor);
      }
 
    if ((sd->wl.win) && (sd->pointer.surf))
@@ -3798,73 +3755,136 @@ _elm_win_frame_cb_resize_hide(void *data,
 #endif
 }
 
-static void
-_elm_win_frame_cb_resize_start(void *data,
-                               Evas_Object *obj EINA_UNUSED,
-                               const char *sig EINA_UNUSED,
-                               const char *source)
+static inline Eina_Bool
+_win_move_start(Efl_Ui_Win_Data *sd)
 {
-   ELM_WIN_DATA_GET(data, sd);
-   int i;
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     {
+        ecore_wl2_window_pointer_set(sd->wl.win, NULL,
+                                     sd->pointer.hot_x, sd->pointer.hot_y);
 
-   if (!sd) return;
-   if (sd->resizing) return;
+        /* Note: Not passing any X,Y position as those don't make sense, only
+         * the compositor can really handle the window & pointer position. */
+        ecore_evas_wayland_move(sd->ee, 0, 0);
+        return EINA_TRUE;
+     }
+#endif
+
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        int x, y;
+
+        sd->resizing = EINA_TRUE;
+        ecore_x_pointer_ungrab();
+        ecore_x_pointer_root_xy_get(&x, &y);
+        ecore_x_netwm_moveresize_request_send(sd->x.xwin, x, y,
+                                              ECORE_X_NETWM_DIRECTION_MOVE, 1);
+        return EINA_TRUE;
+     }
+#endif
+
+   INF("Window move request not supported for this window!");
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_win_move_resize_start(Efl_Ui_Win_Data *sd, Efl_Ui_Win_Move_Resize_Mode mode)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
+   const resize_info *ri;
+
+   // 1. move_resize can only be started after mouse down event
+   if (evas_event_down_count_get(sd->evas) <= 0)
+     {
+        ERR("move_resize_start can only be called when a pointer is pressed.");
+        return EINA_FALSE;
+     }
+
+   // 2. check move_resize already started
+   if (sd->resizing)
+     {
+        ERR("Window is already being resized.");
+        return EINA_FALSE;
+     }
+
+   if (mode == EFL_UI_WIN_MOVE_RESIZE_MOVE)
+     return _win_move_start(sd);
+
+   ri = _resize_info_get(sd->rot, mode);
+   if (!ri)
+     {
+        ERR("Unsupported move_resize mode %#x", (int) mode);
+        return EINA_FALSE;
+     }
 
    sd->resizing = EINA_TRUE;
-   i = sd->rot / 90;
-   if (!strcmp(source, "elm.event.resize.t"))
-     sd->resize_location = _border_side[(0 + i) % 4].location;
-   else if (!strcmp(source, "elm.event.resize.b"))
-     sd->resize_location = _border_side[(2 + i) % 4].location;
-   else if (!strcmp(source, "elm.event.resize.l"))
-     sd->resize_location = _border_side[(1 + i) % 4].location;
-   else if (!strcmp(source, "elm.event.resize.r"))
-     sd->resize_location = _border_side[(3 + i) % 4].location;
-   else if (!strcmp(source, "elm.event.resize.tl"))
-     sd->resize_location = _border_corner[(0 + i) % 4].location;
-   else if (!strcmp(source, "elm.event.resize.tr"))
-     sd->resize_location = _border_corner[(3 + i) % 4].location;
-   else if (!strcmp(source, "elm.event.resize.bl"))
-     sd->resize_location = _border_corner[(1 + i) % 4].location;
-   else if (!strcmp(source, "elm.event.resize.br"))
-     sd->resize_location = _border_corner[(2 + i) % 4].location;
-   else
-     sd->resize_location = 0;
 
-   if (sd->resize_location > 0)
-     {
 #ifdef HAVE_ELEMENTARY_WL2
-        if (sd->wl.win)
-          {
-             ecore_evas_wayland_resize(sd->ee, sd->resize_location);
-          }
-#endif
-#ifdef HAVE_ELEMENTARY_X
-        if (sd->x.xwin)
-          {
-             int x, y;
-
-             const Ecore_X_Netwm_Direction loc2dir[11] = {
-                ECORE_X_NETWM_DIRECTION_CANCEL, // loc 0
-                ECORE_X_NETWM_DIRECTION_SIZE_T,
-                ECORE_X_NETWM_DIRECTION_SIZE_B,
-                ECORE_X_NETWM_DIRECTION_CANCEL, // no loc 3
-                ECORE_X_NETWM_DIRECTION_SIZE_L,
-                ECORE_X_NETWM_DIRECTION_SIZE_TL,
-                ECORE_X_NETWM_DIRECTION_SIZE_BL,
-                ECORE_X_NETWM_DIRECTION_CANCEL, // no loc 7
-                ECORE_X_NETWM_DIRECTION_SIZE_R,
-                ECORE_X_NETWM_DIRECTION_SIZE_TR,
-                ECORE_X_NETWM_DIRECTION_SIZE_BR
-             };
-
-             ecore_x_pointer_ungrab();
-             ecore_x_pointer_root_xy_get(&x, &y);
-             ecore_x_netwm_moveresize_request_send
-                   (sd->x.xwin, x, y, loc2dir[sd->resize_location], 1);
-          }
-#endif
+   if (sd->wl.win)
+     {
+        ecore_evas_wayland_resize(sd->ee, ri->wl_location);
+        return EINA_TRUE;
      }
+#endif
+
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        int x, y;
+        ecore_x_pointer_ungrab();
+        ecore_x_pointer_root_xy_get(&x, &y);
+        ecore_x_netwm_moveresize_request_send(sd->x.xwin, x, y, ri->x_dir, 1);
+        return EINA_TRUE;
+     }
+#endif
+
+   INF("Window resize request not supported for this window!");
+   return EINA_FALSE;
+}
+
+static void
+_elm_win_frame_cb_move_start(void *data,
+                             Evas_Object *obj EINA_UNUSED,
+                             const char *sig EINA_UNUSED,
+                             const char *source EINA_UNUSED)
+{
+   ELM_WIN_DATA_GET_OR_RETURN(data, sd);
+
+   _win_move_resize_start(sd, EFL_UI_WIN_MOVE_RESIZE_MOVE);
+}
+
+static void
+_elm_win_frame_cb_move_stop(void *data,
+                            Evas_Object *obj EINA_UNUSED,
+                            const char *sig EINA_UNUSED,
+                            const char *source EINA_UNUSED)
+{
+   ELM_WIN_DATA_GET_OR_RETURN(data, sd);
+
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->pointer.obj)
+     _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                           "pointer", "base", "default");
+
+   if ((sd->wl.win) && (sd->pointer.surf))
+     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
+                                  sd->pointer.hot_x, sd->pointer.hot_y);
+#endif
+}
+
+static void
+_elm_win_frame_cb_resize_start(void *data, Evas_Object *obj EINA_UNUSED,
+                               const char *sig EINA_UNUSED, const char *source)
+{
+   ELM_WIN_DATA_GET_OR_RETURN(data, sd);
+   Efl_Ui_Win_Move_Resize_Mode mode;
+
+   mode = _move_resize_mode_get(source);
+   if (mode == EFL_UI_WIN_MOVE_RESIZE_MOVE) return;
+
+   _win_move_resize_start(sd, mode);
 }
 
 static void
@@ -4084,23 +4104,11 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
 
    if (!sd->pointer.obj)
      {
-        int i = sd->rot / 90;
-        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.t",
-                                    _border_side[(0 + i) % 4].name);
-        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.b",
-                                    _border_side[(2 + i) % 4].name);
-        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.l",
-                                    _border_side[(1 + i) % 4].name);
-        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.r",
-                                    _border_side[(3 + i) % 4].name);
-        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.tl",
-                                    _border_corner[(0 + i) % 4].name);
-        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.tr",
-                                    _border_corner[(3 + i) % 4].name);
-        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.bl",
-                                    _border_corner[(1 + i) % 4].name);
-        _elm_object_part_cursor_set(obj, sd->frame_obj, "elm.event.resize.br",
-                                    _border_corner[(2 + i) % 4].name);
+        for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(_resize_infos); k++)
+          {
+             const resize_info *ri = &_resize_infos[k];
+             _elm_object_part_cursor_set(obj, sd->frame_obj, ri->source, ri->cursor);
+          }
      }
 
    if (sd->title)
@@ -6541,60 +6549,7 @@ _efl_ui_win_teamwork_uri_open(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const ch
 EOLIAN static Eina_Bool
 _efl_ui_win_move_resize_start(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Move_Resize_Mode mode)
 {
-   Eina_Bool res = EINA_FALSE;
-
-#ifdef HAVE_ELEMENTARY_WL2
-   if (!sd->wl.win) return res;
-
-   int i = 0;
-   //1. move_resize can be start after mouse down event
-   i = evas_event_down_count_get(sd->evas);
-
-   if (i <= 0) return res;
-
-   //2. check move_resize start already .
-   if (sd->resizing) return res;
-
-   i = sd->rot / 90;
-   if (mode == EFL_UI_WIN_MOVE_RESIZE_MOVE)
-     {
-         int ox, oy;
-         sd->resizing = EINA_TRUE;
-         edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
-                                       &ox, &oy, NULL, NULL);
-         ecore_evas_wayland_move(sd->ee, ox, oy);
-         res = EINA_TRUE;
-     }
-   else
-     {
-        if(mode == EFL_UI_WIN_MOVE_RESIZE_TOP)
-           sd->resize_location = _border_side[(0 + i) % 4].location;
-        else if (mode == EFL_UI_WIN_MOVE_RESIZE_BOTTOM)
-           sd->resize_location = _border_side[(2 + i) % 4].location;
-        else if (mode == EFL_UI_WIN_MOVE_RESIZE_LEFT)
-           sd->resize_location = _border_side[(1 + i) % 4].location;
-        else if (mode == EFL_UI_WIN_MOVE_RESIZE_RIGHT)
-           sd->resize_location = _border_side[(3 + i) % 4].location;
-        else if (mode == (EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_LEFT))
-           sd->resize_location = _border_corner[(0 + i) % 4].location;
-        else if (mode == (EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_RIGHT))
-           sd->resize_location = _border_corner[(3 + i) % 4].location;
-        else if (mode == (EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_LEFT))
-           sd->resize_location = _border_corner[(1 + i) % 4].location;
-        else if (mode == (EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_RIGHT))
-           sd->resize_location = _border_corner[(2 + i) % 4].location;
-        else
-           sd->resize_location = 0;
-
-        if (sd->resize_location > 0)
-          {
-             sd->resizing = EINA_TRUE;
-             ecore_evas_wayland_resize(sd->ee, sd->resize_location);
-             res = EINA_TRUE;
-          }
-     }
-#endif
-   return res;
+   return _win_move_resize_start(sd, mode);
 }
 
 /* windowing specific calls - shall we do this differently? */
