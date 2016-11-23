@@ -6,6 +6,7 @@ static int retval = EXIT_SUCCESS;
 static int max_size = -1;
 static Eina_Bool echo = EINA_FALSE;
 static Eina_Bool do_flush = EINA_FALSE;
+static Eina_Bool single_message = EINA_FALSE;
 
 static Eina_Bool
 _client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
@@ -21,6 +22,7 @@ _client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         ecore_ipc_client_send(ev->client, 1, 2, 3, 0, EINA_TRUE,
                               "Hello World!", strlen("Hello World!"));
         if (do_flush) ecore_ipc_client_flush(ev->client);
+        if (single_message) ecore_ipc_client_del(ev->client);
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -60,6 +62,7 @@ _client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
                               ev->ref + 1,
                               ev->ref, 0, ev->data, ev->size);
         if (do_flush) ecore_ipc_client_flush(ev->client);
+        if (single_message) ecore_ipc_client_del(ev->client);
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -95,6 +98,7 @@ static const Ecore_Getopt options = {
     ECORE_GETOPT_STORE_TRUE('e', "echo",
                             "Behave as 'echo' server, send back to client all the data receive"),
     ECORE_GETOPT_STORE_TRUE('f', "flush", "Force a flush after every send call."),
+    ECORE_GETOPT_STORE_TRUE('m', "single-message", "Send a single message and delete the client."),
 
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
@@ -130,6 +134,7 @@ main(int argc, char **argv)
 
      ECORE_GETOPT_VALUE_BOOL(echo),
      ECORE_GETOPT_VALUE_BOOL(do_flush),
+     ECORE_GETOPT_VALUE_BOOL(single_message),
 
      /* standard block to provide version, copyright, license and help */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -V/--version quits */
