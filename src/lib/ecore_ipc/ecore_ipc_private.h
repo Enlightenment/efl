@@ -84,6 +84,15 @@ struct _Ecore_Ipc_Client
 struct _Ecore_Ipc_Server
 {
    ECORE_MAGIC;
+
+   /* when used as dialer: ecore_ipc_server_connect() */
+   struct {
+      Eo *input;
+      Eo *dialer;
+      Eo *recv_copier;
+      Eo *send_copier;
+   } dialer;
+
    Ecore_Con_Server *server;
    Eina_List        *clients;
    void              *data;
