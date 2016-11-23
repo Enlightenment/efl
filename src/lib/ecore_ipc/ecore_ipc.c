@@ -889,6 +889,7 @@ _ecore_ipc_event_client_del(void *data EINA_UNUSED, int ev_type EINA_UNUSED, voi
         Ecore_Ipc_Client *cl;
 
         cl = ecore_con_client_data_get(e->client);
+        if (!eina_list_data_find(svr->clients, cl)) return ECORE_CALLBACK_RENEW;
         cl->client = NULL;
 
         ecore_ipc_post_event_client_del(cl);
