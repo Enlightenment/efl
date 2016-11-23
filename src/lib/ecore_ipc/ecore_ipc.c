@@ -1353,7 +1353,7 @@ _ecore_ipc_event_server_add_free(void *data EINA_UNUSED, void *ev)
 static void
 _ecore_ipc_event_server_del_free(void *data EINA_UNUSED, void *ev)
 {
-   Ecore_Ipc_Event_Server_Add *e;
+   Ecore_Ipc_Event_Server_Del *e;
 
    e = ev;
    e->server->event_count--;
