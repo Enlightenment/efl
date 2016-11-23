@@ -184,5 +184,8 @@ _efl_add_fallback_shutdown(void)
         _eo_call_stack_key = 0;
      }
 
+   _eo_call_stack_free(main_loop_stack);
+   main_loop_stack = NULL;
+
    return EINA_TRUE;
 }
