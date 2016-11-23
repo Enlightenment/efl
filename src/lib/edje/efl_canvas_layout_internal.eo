@@ -4,6 +4,7 @@ interface Efl.Canvas.Layout_Internal ()
    eo_prefix: _edje;
    methods {
       @property real_part @protected {
+         [[Real part property]]
          set {}
          values {
             ed: void_ptr; [[Edje object]]

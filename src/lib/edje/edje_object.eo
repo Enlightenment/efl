@@ -1719,7 +1719,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             [[Get the specific data of the current active input panel.
 
               @since 1.2.0]]
-            return: void;
+            return: void; [[FIXME: void needed here?]]
             keys {
                part: string; [[The part name]]
                data: void_ptr; [[The specific data to be set to the input panel.]]
