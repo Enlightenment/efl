@@ -1225,7 +1225,7 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    _eo_callbacks_sorted_insert(pd, cb);
 #ifdef EFL_EVENT_SPECIAL_SKIP
    for (it = cb->items.item_array; it->func; it++)
-     _special_event_count_dec(pd, it);
+     _special_event_count_inc(pd, it);
 #endif
 
    efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)array);
