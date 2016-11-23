@@ -226,8 +226,9 @@ timeout_shutdown:
 
     evas_thread_worker = 0;
 
-    eina_inarray_flush(&evas_thread_queue);
     free(evas_thread_queue_cache);
+    evas_thread_queue_cache = NULL;
+    eina_inarray_flush(&evas_thread_queue);
 
     eina_threads_shutdown();
 

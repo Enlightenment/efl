@@ -98,8 +98,8 @@ evas_async_events_init(void)
 {
    int filedes[2];
 
-   _init_evas_event++;
-   if (_init_evas_event > 1) return _init_evas_event;
+   if (_init_evas_event++)
+     return _init_evas_event;
 
    _fd_pid = getpid();
 
@@ -136,8 +136,8 @@ evas_async_events_init(void)
 int
 evas_async_events_shutdown(void)
 {
-   _init_evas_event--;
-   if (_init_evas_event > 0) return _init_evas_event;
+   if (--_init_evas_event)
+     return _init_evas_event;
 
    eina_condition_free(&_thread_cond);
    eina_lock_free(&_thread_mutex);
@@ -145,9 +145,11 @@ evas_async_events_shutdown(void)
    eina_lock_free(&_thread_feedback_mutex);
    eina_spinlock_free(&_thread_id_lock);
 
+   free(async_queue_cache);
+   async_queue_cache = NULL;
+
    eina_spinlock_free(&async_lock);
    eina_inarray_flush(&async_queue);
-   free(async_queue_cache);
 
    pipe_close(_fd_read);
    pipe_close(_fd_write);

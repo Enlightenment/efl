@@ -160,7 +160,7 @@ evas_shutdown(void)
    evas_thread_shutdown();
    _evas_preload_thread_shutdown();
    evas_async_events_shutdown();
-   evas_common_shutdown();
+   //evas_common_shutdown();
    evas_module_shutdown();
 
 #ifdef BUILD_LOADER_EET
