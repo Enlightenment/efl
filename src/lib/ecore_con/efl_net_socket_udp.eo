@@ -109,7 +109,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
               The iterator is only valid until a new group is joined
               or left using @.multicast_join or @.multicast_leave.
             ]]
-            return: free(own(iterator<string>), eina_iterator_free);
+            return: free(own(iterator<string>), eina_iterator_free); [[Iterator to multicast groups]]
         }
 
         @property multicast_time_to_live {

@@ -49,7 +49,7 @@ interface Efl.Net.Server {
             params {
                 address: string @nonull; [[Address to run server on]]
             }
-            return: Eina.Error;
+            return: Eina.Error; [[0 on success, error code otherwise]]
         }
 
         @property address {
