@@ -2,6 +2,7 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
                     Elm.Interface.Atspi_Widget_Action,
                     Efl.Ui.Scrollable)
 {
+   [[Elementary scroller class]]
    legacy_prefix: elm_scroller;
    eo_prefix: elm_obj_scroller;
    event_prefix: elm_scroller;
@@ -30,8 +31,8 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
             [[Set custom theme elements for the scroller]]
          }
          values {
-            klass: string;
-            group: string;
+            klass: string; [[Klass name]]
+            group: string; [[Group name]]
          }
       }
       page_scroll_limit_set @const {
@@ -80,21 +81,20 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
       Efl.Part.part;
    }
    events {
-      scroll,page,changed;
-      hbar,unpress;
-      hbar,press;
-      hbar,drag;
-      vbar,unpress;
-      vbar,press;
-      vbar,drag;
-      scroll,left;
-      scroll,right;
-      scroll,up;
-      scroll,down;
-      edge,left;
-      edge,right;
-      edge,top;
-      edge,bottom;
+      scroll,page,changed; [[Called when scroll page changed]]
+      hbar,unpress; [[Called when horizontal bar is no longer pressed]]
+      hbar,press; [[Called when horizontal bar is pressed]]
+      hbar,drag; [[Called when horizontal bar is dragged]]
+      vbar,unpress; [[Called when vertical bar is no longer pressed]]
+      vbar,press; [[Called when vertical bar is pressed]]
+      vbar,drag; [[Called when vertical bar is dragged]]
+      scroll,left; [[Called when scrolling to left]]
+      scroll,right; [[Called when scrolling to right]]
+      scroll,up;  [[Called scrolled upwards]]
+      scroll,down; [[Called when scrolled downwards]]
+      edge,left; [[Called when hitting the left edge]]
+      edge,right; [[Called when hitting the right edge]]
+      edge,top; [[Called when hitting the top edge]]
+      edge,bottom; [[Called when hitting the bottom edge]]
    }
-
 }
