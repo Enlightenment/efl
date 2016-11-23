@@ -854,18 +854,20 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
    Eina_Bool map, hmap, can_map, map_not_can_map, obj_changed, is_active;
 
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   //Need pre render for the children of mapped object.
-   //But only when they have changed.
-   if (mapped_parent && (!obj->changed)) return EINA_FALSE;
 
    obj->rect_del = EINA_FALSE;
    obj->render_pre = EINA_FALSE;
 
-   if (obj->delete_me == 2)
-      OBJ_ARRAY_PUSH(p1ctx->delete_objects, obj);
+   if (obj->delete_me == 2) OBJ_ARRAY_PUSH(p1ctx->delete_objects, obj);
    else if (obj->delete_me != 0) obj->delete_me++;
    /* If the object will be removed, we should not cache anything during this run. */
    if (obj->delete_me != 0) clean_them = EINA_TRUE;
+
+   if (obj->is_static_clip) return clean_them;
+
+   //Need pre render for the children of mapped object.
+   //But only when they have changed.
+   if (mapped_parent && (!obj->changed)) return clean_them;
 
    /* build active object list */
    evas_object_clip_recalc(obj);
