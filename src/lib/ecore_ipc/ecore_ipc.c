@@ -975,28 +975,23 @@ _ecore_ipc_event_server_del(void *data EINA_UNUSED, int ev_type EINA_UNUSED, voi
    msg._member = _ecore_ipc_ddlt_int(d, cl->prev.i._member, md);
 
 static Eina_Bool
-_ecore_ipc_event_client_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
+ecore_ipc_client_data_process(Ecore_Ipc_Client *cl, void *data, int size, Eina_Bool *stolen)
 {
-   Ecore_Con_Event_Client_Data *e;
-   Ecore_Ipc_Server *svr;
-
-   e = ev;
-   svr = ecore_con_server_data_get(ecore_con_client_server_get(e->client));
-   if (!eina_list_data_find(servers, svr)) return ECORE_CALLBACK_RENEW;
-   /* handling code here */
-     {
-        Ecore_Ipc_Client *cl;
+   /* use e->data and e->size to reduce diff to original code */
+   struct { void *data; int size; } _e = { data, size }, *e = &_e;
+   Ecore_Ipc_Server *svr = ecore_ipc_client_server_get(cl);
+   *stolen = EINA_FALSE;
+   if (1)
+     { /* keep same identation as original code to help verification */
         Ecore_Ipc_Msg_Head msg;
         int offset = 0;
         unsigned char *buf;
-
-        cl = ecore_con_client_data_get(e->client);
 
         if (!cl->buf)
           {
              cl->buf_size = e->size;
              cl->buf = e->data;
-             e->data = NULL; /* take it out of the old event */
+             *stolen = EINA_TRUE;
           }
         else
           {
@@ -1124,6 +1119,33 @@ _ecore_ipc_event_client_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
              free(cl->buf);
              cl->buf = buf;
              cl->buf_size -= offset;
+          }
+     }
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
+_ecore_ipc_event_client_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
+{
+   Ecore_Con_Event_Client_Data *e;
+   Ecore_Ipc_Server *svr;
+
+   e = ev;
+   svr = ecore_con_server_data_get(ecore_con_client_server_get(e->client));
+   if (!eina_list_data_find(servers, svr)) return ECORE_CALLBACK_RENEW;
+   /* handling code here */
+     {
+        Ecore_Ipc_Client *cl;
+        Eina_Bool stolen;
+
+        cl = ecore_con_client_data_get(e->client);
+
+        ecore_ipc_client_data_process(cl, e->data, e->size, &stolen);
+        if (stolen)
+          {
+             e->data = NULL;
+             e->size = 0;
           }
      }
    return ECORE_CALLBACK_CANCEL;
