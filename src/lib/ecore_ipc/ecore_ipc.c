@@ -1171,27 +1171,22 @@ _ecore_ipc_event_client_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
    msg._member = _ecore_ipc_ddlt_int(d, svr->prev.i._member, md);
 
 static Eina_Bool
-_ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
+ecore_ipc_server_data_process(Ecore_Ipc_Server *svr, void *data, int size, Eina_Bool *stolen)
 {
-   Ecore_Con_Event_Server_Data *e;
-
-   e = ev;
-   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) 
-     return ECORE_CALLBACK_RENEW;
-   /* handling code here */
-     {
-        Ecore_Ipc_Server *svr;
+   /* use e->data and e->size to reduce diff to original code */
+   struct { void *data; int size; } _e = { data, size }, *e = &_e;
+   *stolen = EINA_FALSE;
+   if (1)
+     { /* keep same identation as original code to help verification */
         Ecore_Ipc_Msg_Head msg;
         int offset = 0;
         unsigned char *buf = NULL;
-
-        svr = ecore_con_server_data_get(e->server);
 
         if (!svr->buf)
           {
              svr->buf_size = e->size;
              svr->buf = e->data;
-             e->data = NULL; /* take it out of the old event */
+             *stolen = EINA_TRUE;
           }
         else
           {
@@ -1324,6 +1319,32 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
              free(svr->buf);
              svr->buf = buf;
              svr->buf_size -= offset;
+          }
+     }
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
+_ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
+{
+   Ecore_Con_Event_Server_Data *e;
+
+   e = ev;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) 
+     return ECORE_CALLBACK_RENEW;
+   /* handling code here */
+     {
+        Ecore_Ipc_Server *svr;
+        Eina_Bool stolen;
+
+        svr = ecore_con_server_data_get(e->server);
+
+        ecore_ipc_server_data_process(svr, e->data, e->size, &stolen);
+        if (stolen)
+          {
+             e->data = NULL;
+             e->size = 0;
           }
      }
    return ECORE_CALLBACK_CANCEL;
