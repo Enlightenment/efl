@@ -24,7 +24,6 @@
 
 typedef struct _Efl_Net_Server_Unix_Data
 {
-   Efl_Future *bind_job;
    Eina_Bool unlink_before_bind;
 } Efl_Net_Server_Unix_Data;
 
@@ -43,21 +42,15 @@ _efl_net_server_unix_efl_object_destructor(Eo *o, Efl_Net_Server_Unix_Data *pd E
    efl_destructor(efl_super(o, MY_CLASS));
 }
 
-static void
-_efl_net_server_unix_bind_job(void *data, const Efl_Event *event EINA_UNUSED)
+static Eina_Error
+_efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
 {
-   Eo *o = data;
-   Efl_Net_Server_Unix_Data *pd = efl_data_scope_get(o, MY_CLASS);
    const char *address = efl_net_server_address_get(o);
    struct sockaddr_un addr = { .sun_family = AF_UNIX };
    socklen_t addrlen;
    SOCKET fd;
    Eina_Error err = 0;
    int r;
-
-   pd->bind_job = NULL;
-
-   efl_ref(o); /* we're emitting callbacks then continuing the workflow */
 
    efl_net_server_fd_family_set(o, AF_UNIX);
 
@@ -158,8 +151,7 @@ _efl_net_server_unix_bind_job(void *data, const Efl_Event *event EINA_UNUSED)
         if (fd != INVALID_SOCKET) closesocket(fd);
         efl_loop_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
      }
-
-   efl_unref(o);
+   return err;
 }
 
 EOLIAN static Eina_Error
@@ -228,14 +220,7 @@ _efl_net_server_unix_efl_net_server_serve(Eo *o, Efl_Net_Server_Unix_Data *pd, c
 
    efl_net_server_address_set(o, address);
 
-   if (pd->bind_job)
-     efl_future_cancel(pd->bind_job);
-
-   efl_future_use(&pd->bind_job, efl_loop_job(efl_loop_get(o), o));
-   efl_future_then(pd->bind_job, _efl_net_server_unix_bind_job, NULL, NULL, o);
-   efl_future_link(o, pd->bind_job);
-
-   return 0;
+   return _efl_net_server_unix_bind(o, pd);
 }
 
 static Efl_Callback_Array_Item *_efl_net_server_unix_client_cbs(void);
