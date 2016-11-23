@@ -244,7 +244,7 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
    pd->progress.read += rw_slice.len;
    pd->done = EINA_FALSE;
 
-   if (!pd->destination)
+   if ((!pd->destination) && (eina_binbuf_length_get(pd->buf) > used))
      {
         /* Note: if there is a destination, dispatch data and line
          * from write since it will remove from binbuf and make it
@@ -303,6 +303,9 @@ _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd)
           efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
         return;
      }
+   if (ro_slice.len == 0)
+     return;
+
    pd->progress.written += ro_slice.len;
    pd->done = EINA_FALSE;
 
