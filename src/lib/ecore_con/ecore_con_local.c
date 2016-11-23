@@ -64,24 +64,15 @@ ecore_con_local_shutdown(void)
    return _ecore_con_local_init_count;
 }
 
-int
-ecore_con_local_connect(Ecore_Con_Server *obj,
-                        Eina_Bool (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler),
-                        void *data EINA_UNUSED)
+EAPI char *
+ecore_con_local_path_new(Eina_Bool is_system, const char *name, int port)
 {
-#ifndef HAVE_LOCAL_SOCKETS
-   return 0;
-#else
-   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    char buf[4096];
-   struct sockaddr_un socket_unix;
-   int curstate = 0;
    const char *homedir;
-   int socket_unix_len;
 
-   buf[0] = '\0';
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
-   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
+   if (!is_system)
      {
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
         if (getuid() == geteuid())
@@ -97,50 +88,78 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
           }
 #endif
 
-        if (svr->port < 0)
+        if (port < 0)
            snprintf(buf, sizeof(buf), "%s/.ecore/%s",
-                    homedir, svr->name);
+                    homedir, name);
         else
            snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i",
-                    homedir, svr->name, svr->port);
+                    homedir, name, port);
+        return strdup(buf);
      }
-   else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
+   else
      {
-        if (svr->port < 0)
+        if (port < 0)
           {
-             if (svr->name[0] == '/')
-               {
-                  strncpy(buf, svr->name, sizeof(buf) - 1);
-                  buf[sizeof(buf) - 1] = 0;
-               }
+             if (name[0] == '/')
+               return strdup(name);
              else
                {
                   homedir = eina_environment_tmp_get();
                   snprintf(buf, sizeof(buf), "%s/.ecore_service|%s",
-                           homedir, svr->name);
+                           homedir, name);
+                  return strdup(buf);
                }
           }
         else
           {
-             if (svr->name[0] == '/')
-               snprintf(buf, sizeof(buf), "%s|%i", svr->name, svr->port);
+             if (name[0] == '/')
+               snprintf(buf, sizeof(buf), "%s|%i", name, port);
              else
                {
                   homedir = eina_environment_tmp_get();
                   snprintf(buf, sizeof(buf), "%s/.ecore_service|%s|%i",
-                           homedir, svr->name, svr->port);
+                           homedir, name, port);
                }
+             return strdup(buf);
           }
+     }
+}
+
+int
+ecore_con_local_connect(Ecore_Con_Server *obj,
+                        Eina_Bool (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler),
+                        void *data EINA_UNUSED)
+{
+#ifndef HAVE_LOCAL_SOCKETS
+   return 0;
+#else
+   Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
+   char *buf = NULL;
+   struct sockaddr_un socket_unix;
+   int curstate = 0;
+   int socket_unix_len;
+
+   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
+     {
+        buf = ecore_con_local_path_new(EINA_FALSE, svr->name, svr->port);
+     }
+   else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
+     {
+        buf = ecore_con_local_path_new(EINA_TRUE, svr->name, svr->port);
      }
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
      {
-        strncpy(buf, svr->name, sizeof(buf) - 1);
-        buf[sizeof(buf) - 1] = 0;
+        buf = strdup(svr->name);
      }
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
 
    svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
    if (svr->fd < 0)
-     return 0;
+     {
+        free(buf);
+        return 0;
+     }
 
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
      goto error;
@@ -182,9 +201,8 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
         goto error;
      }
 
-   svr->path = strdup(buf);
-   if (!svr->path)
-     goto error;
+   svr->path = buf;
+   buf = NULL;
 
    if (svr->type & ECORE_CON_SSL)
      {
@@ -199,13 +217,64 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
 
    if (!svr->delete_me) ecore_con_event_server_add(obj);
 
+   free(buf);
+
    return 1;
 error:
    if (svr->fd) close(svr->fd);
    svr->fd = -1;
+   free(buf);
    return 0;
 #endif
 }
+
+#ifdef HAVE_LOCAL_SOCKETS
+static void
+_ecore_con_local_mkpath(const char *path, mode_t mode)
+{
+   char *s, *d, *itr;
+
+   if (!path) return;
+   EINA_SAFETY_ON_TRUE_RETURN(path[0] != '/');
+
+   s = strdup(path);
+   EINA_SAFETY_ON_NULL_RETURN(s);
+   d = dirname(s);
+   EINA_SAFETY_ON_NULL_RETURN(d);
+
+   for (itr = d + 1; *itr != '\0'; itr++)
+     {
+        if (*itr == '/')
+          {
+             *itr = '\0';
+             if (mkdir(d, mode) != 0)
+               {
+                  if (errno != EEXIST)
+                    {
+                       ERR("could not create parent directory '%s' of path '%s': %s", d, path, strerror(errno));
+                       goto end;
+                    }
+               }
+             *itr = '/';
+          }
+     }
+
+   if (mkdir(d, mode) != 0)
+     {
+        if (errno != EEXIST)
+          ERR("could not create parent directory '%s' of path '%s': %s", d, path, strerror(errno));
+        else
+          {
+             struct stat st;
+             if ((stat(d, &st) != 0) || (!S_ISDIR(st.st_mode)))
+               ERR("could not create parent directory '%s' of path '%s': exists but is not a directory", d, path);
+          }
+     }
+
+ end:
+   free(s);
+}
+#endif
 
 int
 ecore_con_local_listen(
@@ -219,11 +288,10 @@ ecore_con_local_listen(
 {
 #ifdef HAVE_LOCAL_SOCKETS
    Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
-   char buf[4096];
+   char *buf = NULL;
    struct sockaddr_un socket_unix;
    struct linger lin;
    mode_t pmode;
-   const char *homedir;
    mode_t mask;
    int socket_unix_len;
    Eina_Bool abstract_socket;
@@ -232,86 +300,24 @@ ecore_con_local_listen(
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
      {
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-        if (getuid() == geteuid())
-#endif
-          homedir = _ecore_con_local_path_get();
+        buf = ecore_con_local_path_new(EINA_FALSE, svr->name, svr->port);
 
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-        else
-          {
-             struct passwd *pw = getpwent();
-
-             if ((!pw) || (!pw->pw_dir)) homedir = "/tmp";
-             else homedir = pw->pw_dir;
-          }
-#endif
         mask = S_IRUSR | S_IWUSR | S_IXUSR;
-        snprintf(buf, sizeof(buf), "%s/.ecore", homedir);
-        if (mkdir(buf, mask) < 0)
-          {
-             if (errno != EEXIST)
-               {
-                  ERR("mkdir '%s' failed", buf);
-               }
-          }
-
-        snprintf(buf, sizeof(buf), "%s/.ecore/%s", homedir, svr->name);
-        if (mkdir(buf, mask) < 0)
-          {
-             if (errno != EEXIST)
-               {
-                  ERR("mkdir '%s' failed", buf);
-               }
-          }
-
-        if (svr->port < 0)
-           snprintf(buf, sizeof(buf), "%s/.ecore/%s",
-                    homedir, svr->name);
-        else
-           snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i",
-                    homedir, svr->name, svr->port);
+        _ecore_con_local_mkpath(buf, mask);
 
         mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
      }
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
      {
         mask = 0;
-        if (svr->port < 0)
-          {
-             if (svr->name[0] == '/')
-               {
-                  strncpy(buf, svr->name, sizeof(buf) - 1);
-                  buf[sizeof(buf) - 1] = 0;
-               }
-             else
-               {
-                  homedir = eina_environment_tmp_get();
-                  snprintf(buf, sizeof(buf), "%s/.ecore_service|%s",
-                           homedir, svr->name);
-               }
-          }
-        else
-          {
-             if (svr->name[0] == '/')
-               snprintf(buf, sizeof(buf), "%s|%i", svr->name, svr->port);
-             else
-               {
-                  homedir = eina_environment_tmp_get();
-                  snprintf(buf, sizeof(buf), "%s/.ecore_service|%s|%i",
-                           homedir, svr->name, svr->port);
-               }
-          }
+        buf = ecore_con_local_path_new(EINA_TRUE, svr->name, svr->port);
      }
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
      {
-        strncpy(buf, svr->name, sizeof(buf) - 1);
-        buf[sizeof(buf) - 1] = 0;
+        buf = strdup(svr->name);
      }
-   else
-     {
-        buf[0] = '\0';
-     }
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
 
    pmode = umask(mask);
 start:
@@ -408,9 +414,8 @@ start:
 #ifdef HAVE_SYSTEMD
 fd_ready:
 #endif
-   svr->path = strdup(buf);
-   if (!svr->path)
-     goto error_umask;
+   svr->path = buf;
+   buf = NULL;
 
    svr->fd_handler =
      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
@@ -418,6 +423,8 @@ fd_ready:
    umask(pmode);
    if (!svr->fd_handler)
      goto error;
+
+   free(buf);
 
    return 1;
 
@@ -427,6 +434,7 @@ error_fd:
 error_umask:
    umask(pmode);
 error:
+   free(buf);
 #endif /* HAVE_LOCAL_SOCKETS */
    return 0;
 }

@@ -1098,6 +1098,42 @@ EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
  */
 
 /**
+ * @brief Create a local path to connect the socket.
+ *
+ * In the old API, ecore_con_server_add() and
+ * ecore_con_server_connect() calculated a local path for connections
+ * using @c ECORE_CON_LOCAL_USER and @c ECORE_CON_LOCAL_SYSTEM, this
+ * function returns that path allocated so it can be used in
+ * applications that want to connect to that path without replicating
+ * its logic.
+ *
+ * @li If @a type is @c ECORE_CON_LOCAL_USER, the server will conect to
+ *     the Unix socket. The path to the socket is taken from XDG_RUNTIME_DIR,
+ *     if that is not set, then from HOME, even if this is not set, then from
+ *     TMPDIR. If none is set, then path would be /tmp. From this path the
+ *     function would connect to socket at "[path]/.ecore/[name]/[port]". If
+ *     port is negetive, then to socket at "[path]/.ecore/[name]".
+ * @li If @a type is @c ECORE_CON_LOCAL_SYSTEM, the server will connect to
+ *     Unix socket at "/tmp/.ecore_service|[name]|[port]". If port is negetive,
+ *     then to Unix socket at "/tmp/.ecore_service|[name]".
+ *
+ * @param  is_system  If #EINA_TRUE, will be a system wide socket
+ *                    similar to @c ECORE_CON_LOCAL_SYSTEM. If #EINA_FALSE,
+ *                    then it's similar to @c ECORE_CON_LOCAL_USER.
+ * @param  name       Name to associate with the socket.  It is used when
+ *                    generating the socket name of a Unix socket,
+ *                    @c NULL will not be accepted.
+ * @param  port       Number to identify socket.  When a Unix socket is used,
+ *                    it becomes part of the socket name.
+ *
+ * @return NULL on failure or newly allocated path string on success,
+ * remember to free() it after usage.
+ *
+ * @since 1.19
+ */
+EAPI char *ecore_con_local_path_new(Eina_Bool is_system, const char *name, int port) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(2);
+
+/**
  * @brief Create a server to listen for connections.
  *
  * @param  type The connection type.
@@ -1132,6 +1168,8 @@ EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
  *
  * The @p data parameter can be fetched later using ecore_con_server_data_get()
  * or changed with ecore_con_server_data_set().
+ *
+ * @see ecore_con_local_path_new()
  */
 EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
                                             const char *name, int port,
@@ -1182,6 +1220,8 @@ EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
  *
  * The @p data parameter can be fetched later using ecore_con_server_data_get()
  * or changed with ecore_con_server_data_set().
+ *
+ * @see ecore_con_local_path_new()
  */
 EAPI Ecore_Con_Server *ecore_con_server_connect(Ecore_Con_Type type,
                                                 const char *name, int port,

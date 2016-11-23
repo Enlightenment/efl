@@ -386,11 +386,29 @@ _ecore_con_local_win32_listening(void *data)
    return 0;
 }
 
+EAPI char *
+ecore_con_local_path_new(Eina_Bool is_system, const char *name, int port)
+{
+   char buf[256];
+
+   if (!is_system)
+     snprintf(buf, sizeof(buf), "\\\\.\\pipe\\%s%ld", name, GetProcessId(GetCurrentProcess()));
+   else
+     {
+        const char *computername;
+
+        computername = getenv("COMPUTERNAME");
+        snprintf(buf, sizeof(buf), "\\\\%s\\pipe\\%s%ld", computername, name, GetProcessId(GetCurrentProcess()));
+     }
+
+   return strdup(buf);
+   (void)port; // CHECK-ME: shouldn't we use port to be similar to UNIX?
+}
+
 Eina_Bool
 ecore_con_local_listen(Ecore_Con_Server *obj)
 {
    Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
-   char buf[256];
    HANDLE thread_listening;
    Ecore_Win32_Handler *handler;
 
@@ -401,16 +419,10 @@ ecore_con_local_listen(Ecore_Con_Server *obj)
      }
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
-     snprintf(buf, sizeof(buf), "\\\\.\\pipe\\%s%ld", svr->name, GetProcessId(GetCurrentProcess()));
+     svr->path = ecore_con_local_path_new(EINA_FALSE, svr->name, svr->port);
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
-     {
-        const char *computername;
+     svr->path = ecore_con_local_path_new(EINA_TRUE, svr->name, svr->port);
 
-        computername = getenv("COMPUTERNAME");
-        snprintf(buf, sizeof(buf), "\\\\%s\\pipe\\%s%ld", computername, svr->name, GetProcessId(GetCurrentProcess()));
-     }
-
-   svr->path = strdup(buf);
    if (!svr->path)
      {
         ERR("Allocation failed");
@@ -540,7 +552,7 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
 {
 #warning "I am pretty sure cb_done should be used."
    Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
-   char buf[256];
+   char buf = NULL;
    Ecore_Win32_Handler *handler_read;
    Ecore_Win32_Handler *handler_peek;
 
@@ -551,14 +563,11 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
      }
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
-     snprintf(buf, sizeof(buf), "\\\\.\\pipe\\%s", svr->name);
+     buf = ecore_con_local_path_new(EINA_FALSE, svr->name, svr->port);
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
-     {
-        const char *computername;
+     buf = ecore_con_local_path_new(EINA_TRUE, svr->name, svr->port);
 
-        computername = getenv("COMPUTERNAME");
-        snprintf(buf, sizeof(buf), "\\\\%s\\pipe\\%s", computername, svr->name);
-     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, EINA_FALSE);
 
    while (1)
      {
@@ -576,6 +585,7 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
         if (GetLastError() != ERROR_PIPE_BUSY)
           {
              DBG("Connection to a server failed");
+             free(buf);
              return EINA_FALSE;
           }
 
@@ -587,12 +597,8 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
           }
      }
 
-   svr->path = strdup(buf);
-   if (!svr->path)
-     {
-        ERR("Allocation failed");
-        goto close_pipe;
-     }
+   svr->path = buf;
+   buf = NULL;
 
    svr->event_read = CreateEvent(NULL, TRUE, FALSE, NULL);
    if (!svr->event_read)
@@ -636,6 +642,7 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
    if (!svr->delete_me) ecore_con_event_server_add(obj);
 
    ResumeThread(svr->thread_read);
+   free(buf);
 
    return EINA_TRUE;
 
@@ -652,6 +659,7 @@ free_path:
    svr->path = NULL;
 close_pipe:
    CloseHandle(svr->pipe);
+   free(buf);
 
    return EINA_FALSE;
 }
