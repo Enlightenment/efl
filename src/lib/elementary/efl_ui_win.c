@@ -222,6 +222,7 @@ struct _Efl_Ui_Win_Data
       Eina_Bool cur_bg_solid : 1;
       Eina_Bool cur_menu : 1;
       Eina_Bool cur_unresizable : 1;
+      Eina_Bool wayland : 1;
    } csd;
 
    struct {
@@ -4152,6 +4153,14 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         sd->csd.need_menu = EINA_FALSE;
      }
 
+   /* TEMPORARY HACK FOR E WAYLAND
+    * Hiding the shadows makes the input region (elm.spacer.opaque) have the
+    * same geometry as the surface itself. This fixes inputs in E Wayland
+    * internal windows. FIXME FIXME FIXME.
+    */
+   if (sd->csd.wayland)
+     sd->csd.need_shadow = EINA_FALSE;
+
    borderless = sd->csd.need_borderless || (!sd->csd.need) || sd->fullscreen;
    maximized = sd->maximized;
    shadow = sd->csd.need_shadow && (!sd->fullscreen) && (!sd->maximized);
@@ -4165,6 +4174,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
      { \
         const char *sig = state ? s1 : s2; \
         edje_object_signal_emit(sd->frame_obj, sig, "elm"); \
+        DBG("frame style emit: %p %s", sd->obj, sig); \
         sd->csd.cur_##state = state; \
         changed = EINA_TRUE; \
      } } while (0)
@@ -4335,6 +4345,9 @@ _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine)
    /* this is for debug only - don't keep forever, it's not an api! */
    s = getenv("EFL_WIN_FRAME_MODE");
 
+   sd->csd.wayland = (eina_streq(engine, ELM_WAYLAND_SHM) ||
+                      eina_streq(engine, ELM_WAYLAND_EGL));
+
    if (sd->type == ELM_WIN_FAKE)
      sd->csd.need = EINA_FALSE;
    else if (eina_streq(s, "on"))
@@ -4342,10 +4355,7 @@ _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine)
    else if (eina_streq(s, "off"))
      sd->csd.need = EINA_FALSE;
    else
-     {
-        sd->csd.need = (eina_streq(engine, ELM_WAYLAND_SHM) ||
-                          eina_streq(engine, ELM_WAYLAND_EGL));
-     }
+     sd->csd.need = sd->csd.wayland;
 
    /* for now CSD implies shadows as well */
    sd->csd.need_shadow = sd->csd.need && (!sd->maximized);
@@ -5230,10 +5240,18 @@ EOLIAN static void
 _efl_ui_win_borderless_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool borderless)
 {
    sd->csd.need_borderless = borderless ? 1 : 0;
+
+   /* TEMPORARY HACK FOR E WAYLAND
+    * E Wayland sets the borderless flag on its internal windows, even though
+    * it actually expects to "see" borders. Not sure who is supposed to create
+    * them (E comp or the window).
+    */
+   if (trap && trap->borderless_set && sd->csd.wayland)
+     sd->csd.need_borderless = 0;
+
    _elm_win_frame_style_update(sd, 0, 1);
 
-   if (!sd->csd.need)
-     TRAP(sd, borderless_set, borderless);
+   TRAP(sd, borderless_set, borderless);
    _elm_win_resize_objects_eval(obj);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
