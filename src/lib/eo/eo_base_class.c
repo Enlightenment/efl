@@ -1005,7 +1005,8 @@ _eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description **cb)
    _eo_callback_free(*cb);
 
    length = pd->callbacks_count - (cb - pd->callbacks);
-   if (length > 1) memmove(cb, cb + 1, (length - 1) * sizeof (Eo_Callback_Description*));
+   if (length > 1)
+     memmove(cb, cb + 1, (length - 1) * sizeof(Eo_Callback_Description *));
    pd->callbacks_count--;
 
    if (_eo_nostep_alloc) pd->callbacks = realloc(pd->callbacks, pd->callbacks_count * sizeof (Eo_Callback_Description*));
@@ -1039,22 +1040,18 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
 static void
 _eo_callbacks_clear(Efl_Object_Data *pd)
 {
+   Eo_Callback_Description **itr;
    unsigned int i = 0;
 
    /* If there are no deletions waiting. */
    if (!pd->deletions_waiting) return;
-
    /* Abort if we are currently walking the list. */
    if (pd->walking_list > 0) return;
 
    pd->deletions_waiting = EINA_FALSE;
-
    while (i < pd->callbacks_count)
      {
-        Eo_Callback_Description **itr;
-
         itr = pd->callbacks + i;
-
         if ((*itr)->delete_me) _eo_callback_remove(pd, itr);
         else i++;
      }
@@ -1067,20 +1064,20 @@ _eo_callback_search_sorted_near(const Efl_Object_Data *pd, const Eo_Callback_Des
    const Eo_Callback_Description *p;
    int cmp;
 
-   if (pd->callbacks_count == 0) return 0;
+   if      (pd->callbacks_count == 0) return 0;
    else if (pd->callbacks_count == 1) return 0;
 
    start = 0;
    last = pd->callbacks_count - 1;
    do
      {
-        middle = start + (last - start) / 2;
+        middle = start + ((last - start) / 2);
         p = pd->callbacks[middle];
 
         cmp = p->priority - look->priority;
-        if (cmp == 0) return middle;
-        else if (cmp > 0) start = middle + 1;
-        else if (middle > 0) last = middle - 1;
+        if      (cmp    == 0) return middle;
+        else if (cmp    >  0) start = middle + 1;
+        else if (middle >  0) last  = middle - 1;
         else break;
      }
    while (start <= last);
@@ -1095,12 +1092,9 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 
    // Do a dichotomic searh
    j = _eo_callback_search_sorted_near(pd, cb);
-
    // Adjust for both case of length == 0 and when priority is equal.
-   while (j < pd->callbacks_count &&
-          pd->callbacks[j]->priority >= cb->priority)
-     j++;
-
+   while ((j < pd->callbacks_count) &&
+          (pd->callbacks[j]->priority >= cb->priority)) j++;
 
    // Increase the callbacks storage by 16 entries at a time
    if (_eo_nostep_alloc == -1) _eo_nostep_alloc = !!getenv("EO_NOSTEP_ALLOC");
@@ -1112,18 +1106,18 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 
         if (_eo_nostep_alloc) new_len = pd->callbacks_count + 1;
 
-        tmp = realloc(pd->callbacks, new_len * sizeof (Eo_Callback_Description*));
-        if (!tmp) return ;
+        tmp = realloc(pd->callbacks,
+                      new_len * sizeof(Eo_Callback_Description *));
+        if (!tmp) return;
         pd->callbacks = tmp;
      }
 
    // FIXME: Potential improvement, merge single callback description of the same priority
    // into an array when possible
-
    itr = pd->callbacks + j;
    length = pd->callbacks_count - j;
-   if (length > 0) memmove(itr + 1, itr, length * sizeof (Eo_Callback_Description*));
-
+   if (length > 0) memmove(itr + 1, itr,
+                           length * sizeof(Eo_Callback_Description *));
    *itr = cb;
 
    pd->callbacks_count++;
@@ -1143,7 +1137,7 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    if (!cb || !desc || !func) goto err;
    cb->items.item.desc = desc;
    cb->items.item.func = func;
-   cb->func_data = (void *) user_data;
+   cb->func_data = (void *)user_data;
    cb->priority = priority;
    _eo_callbacks_sorted_insert(pd, cb);
 #ifdef EFL_EVENT_SPECIAL_SKIP
@@ -1176,9 +1170,9 @@ _efl_object_event_callback_clean(Eo *obj, Efl_Object_Data *pd,
 
 EOLIAN static Eina_Bool
 _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
-                    const Efl_Event_Description *desc,
-                    Efl_Event_Cb func,
-                    const void *user_data)
+                               const Efl_Event_Description *desc,
+                               Efl_Event_Cb func,
+                               const void *user_data)
 {
    Eo_Callback_Description **cb;
    unsigned int i;
