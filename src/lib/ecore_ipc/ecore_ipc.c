@@ -223,6 +223,84 @@ static int                  _ecore_ipc_init_count = 0;
 static Eina_List           *servers = NULL;
 static Ecore_Event_Handler *handler[6];
 
+static void
+ecore_ipc_post_event_server_add(Ecore_Ipc_Server *svr)
+{
+   Ecore_Ipc_Event_Server_Add *ev;
+
+   if (svr->delete_me) return;
+
+   ev = calloc(1, sizeof(Ecore_Ipc_Event_Server_Add));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
+   svr->event_count++;
+   ev->server = svr;
+   ecore_event_add(ECORE_IPC_EVENT_SERVER_ADD, ev,
+                   _ecore_ipc_event_server_add_free, NULL);
+}
+
+static void
+ecore_ipc_post_event_server_del(Ecore_Ipc_Server *svr)
+{
+   Ecore_Ipc_Event_Server_Del *ev;
+
+   if (svr->delete_me) return;
+
+   ev = calloc(1, sizeof(Ecore_Ipc_Event_Server_Del));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
+   svr->event_count++;
+   ev->server = svr;
+   ecore_event_add(ECORE_IPC_EVENT_SERVER_DEL, ev,
+                   _ecore_ipc_event_server_del_free, NULL);
+}
+
+static void
+ecore_ipc_post_event_client_add(Ecore_Ipc_Client *cl)
+{
+   Ecore_Ipc_Event_Client_Add *ev;
+
+   if (cl->delete_me) return;
+
+   ev = calloc(1, sizeof(Ecore_Ipc_Event_Client_Add));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
+   cl->event_count++;
+   ev->client = cl;
+   ecore_event_add(ECORE_IPC_EVENT_CLIENT_ADD, ev,
+                   _ecore_ipc_event_client_add_free, NULL);
+}
+
+static void
+ecore_ipc_post_event_client_del(Ecore_Ipc_Client *cl)
+{
+   Ecore_Ipc_Event_Client_Del *ev;
+
+   if (cl->delete_me) return;
+
+   ev = calloc(1, sizeof(Ecore_Ipc_Event_Client_Del));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
+   cl->event_count++;
+   ev->client = cl;
+   ecore_event_add(ECORE_IPC_EVENT_CLIENT_DEL, ev,
+                   _ecore_ipc_event_client_del_free, NULL);
+}
+
+static Ecore_Ipc_Client *
+ecore_ipc_client_add(Ecore_Ipc_Server *svr)
+{
+   Ecore_Ipc_Client *cl;
+
+   cl = calloc(1, sizeof(Ecore_Ipc_Client));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
+   cl->svr = svr;
+   ECORE_MAGIC_SET(cl, ECORE_MAGIC_IPC_CLIENT);
+   svr->clients = eina_list_append(svr->clients, cl);
+
+   return cl;
+}
+
 EAPI int
 ecore_ipc_init(void)
 {
@@ -784,29 +862,14 @@ _ecore_ipc_event_client_add(void *data EINA_UNUSED, int ev_type EINA_UNUSED, voi
    if (!eina_list_data_find(servers, svr)) return ECORE_CALLBACK_RENEW;
    /* handling code here */
      {
-        Ecore_Ipc_Client *cl;
+        Ecore_Ipc_Client *cl = ecore_ipc_client_add(svr);
 
-        cl = calloc(1, sizeof(Ecore_Ipc_Client));
         if (!cl) return ECORE_CALLBACK_CANCEL;
-        cl->svr = svr;
-        ECORE_MAGIC_SET(cl, ECORE_MAGIC_IPC_CLIENT);
         cl->client = e->client;
         cl->max_buf_size = 32 * 1024;
         ecore_con_client_data_set(cl->client, (void *)cl);
-        svr->clients = eina_list_append(svr->clients, cl);
-        if (!cl->delete_me)
-          {
-             Ecore_Ipc_Event_Client_Add *e2;
 
-             e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Add));
-             if (e2)
-               {
-                  cl->event_count++;
-                  e2->client = cl;
-                  ecore_event_add(ECORE_IPC_EVENT_CLIENT_ADD, e2,
-                                  _ecore_ipc_event_client_add_free, NULL);
-               }
-          }
+        ecore_ipc_post_event_client_add(cl);
      }
    return ECORE_CALLBACK_CANCEL;
 }
@@ -827,21 +890,8 @@ _ecore_ipc_event_client_del(void *data EINA_UNUSED, int ev_type EINA_UNUSED, voi
 
         cl = ecore_con_client_data_get(e->client);
         cl->client = NULL;
-          {
-             Ecore_Ipc_Event_Client_Del *e2;
 
-             if (!cl->delete_me)
-               {
-                  e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Del));
-                  if (e2)
-                    {
-                       cl->event_count++;
-                       e2->client = cl;
-                       ecore_event_add(ECORE_IPC_EVENT_CLIENT_DEL, e2,
-                                       _ecore_ipc_event_client_del_free, NULL);
-                    }
-               }
-          }
+        ecore_ipc_post_event_client_del(cl);
      }
    return ECORE_CALLBACK_CANCEL;
 }
@@ -858,19 +908,8 @@ _ecore_ipc_event_server_add(void *data EINA_UNUSED, int ev_type EINA_UNUSED, voi
         Ecore_Ipc_Server *svr;
 
         svr = ecore_con_server_data_get(e->server);
-        if (!svr->delete_me)
-          {
-             Ecore_Ipc_Event_Server_Add *e2;
 
-             e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Add));
-             if (e2)
-               {
-                  svr->event_count++;
-                  e2->server = svr;
-                  ecore_event_add(ECORE_IPC_EVENT_SERVER_ADD, e2,
-                                  _ecore_ipc_event_server_add_free, NULL);
-               }
-          }
+        ecore_ipc_post_event_server_add(svr);
      }
    return ECORE_CALLBACK_CANCEL;
 }
@@ -888,19 +927,8 @@ _ecore_ipc_event_server_del(void *data EINA_UNUSED, int ev_type EINA_UNUSED, voi
 
         svr = ecore_con_server_data_get(e->server);
         svr->server = NULL;
-        if (!svr->delete_me)
-          {
-             Ecore_Ipc_Event_Server_Del *e2;
 
-             e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Del));
-             if (e2)
-               {
-                  svr->event_count++;
-                  e2->server = svr;
-                  ecore_event_add(ECORE_IPC_EVENT_SERVER_DEL, e2,
-                                  _ecore_ipc_event_server_del_free, NULL);
-               }
-          }
+        ecore_ipc_post_event_server_del(svr);
      }
    return ECORE_CALLBACK_CANCEL;
 }
