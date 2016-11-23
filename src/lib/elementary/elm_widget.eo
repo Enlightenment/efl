@@ -38,6 +38,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
    data: Elm_Widget_Smart_Data;
    methods {
       @property focus {
+      	 [[Focus property]]
          values {
             focus: bool; [[$true if the widget has focus, $false otherwise]]
          }
@@ -160,8 +161,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property highlight_in_theme {
+      	 [[Highlight in theme property]]
          values {
-            highlight: bool;
+            highlight: bool; [[$true if widget gets hightlight, $false otherwise]]
          }
       }
       @property widget_parent @protected {
@@ -173,77 +175,86 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             legacy: elm_widget_parent_get; /* Needed because we don't do duplication removal for legacy names. */
          }
          values {
-            parent: Efl.Canvas.Object @nullable;
+            parent: Efl.Canvas.Object @nullable; [[Widget parent object]]
          }
       }
       @property access_info {
+      	 [[Accessibility information]]
          values {
-            txt: string @nullable;
+            txt: string @nullable; [[Accessibility text description]]
          }
       }
       @property drag_lock_x {
+      	 [[Drag lock on X axis]]
          values {
-            lock: bool;
+            lock: bool; [[$true if drag is locked on X axis, $false otherwise]]
          }
       }
       @property access_highlight_in_theme {
+         [[Accessibility highlight in theme]]
          values {
-            highlight: bool; [[highlight]]
+            highlight: bool; [[$true if highlighted, $false otherwise]]
          }
       }
       @property focus_region_show_mode {
          [[Control the focus_region_show mode.]]
          values {
-            mode: Elm.Focus.Region.Show_Mode;
+            mode: Elm.Focus.Region.Show_Mode; [[Focus region show mode]]
          }
       }
       @property parent_highlight {
+      	 [[Parent highlight property]]
          set {
          }
          values {
-            highlighted: bool;
+            highlighted: bool; [[$true if highlighted, $false otherwise]]
          }
       }
       @property theme_object {
+      	 [[Theme object property]]
          set {
-            return: Elm.Theme.Apply;
+            return: Elm.Theme.Apply; [[Theme apply]]
          }
          values {
-            edj: Efl.Canvas.Object;
-            wname: string;
-            welement: string;
-            wstyle: string;
+            edj: Efl.Canvas.Object; [[Edje object]]
+            wname: string; [[Widget name]]
+            welement: string; [[Widget element]]
+            wstyle: string; [[Widget style]]
          }
       }
       @property hover_object {
+      	 [[Hover object property]]
          set {
          }
          values {
-            sobj: Efl.Canvas.Object @nullable;
+            sobj: Efl.Canvas.Object @nullable; [[Hover sub object]]
          }
       }
       @property display_mode {
+      	 [[Display mode property]]
          set {
          }
          values {
-            dispmode: Efl.Gfx.Size.Hint.Mode;
+            dispmode: Efl.Gfx.Size.Hint.Mode; [[Display mode]]
          }
       }
       @property on_show_region_hook {
+      	 [[Region hook on show property]]
          set {
          }
          values {
-            func: region_hook_func_type @nullable;
-            data: void_ptr @optional;
+            func: region_hook_func_type @nullable; [[Region hook function]]
+            data: void_ptr @optional; [[Data pointer]]
          }
       }
       @property domain_part_text_translatable {
+      	 [[Translate domain text part property]]
          set {
          }
          values {
-            part: string;
-            domain: string;
-            translatable: bool;
+            part: string; [[Part name]]
+            domain: string; [[Domain]]
+            translatable: bool; [[$true if translatable, $false otherwise]]
          }
       }
       @property orientation {
@@ -255,59 +266,66 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property resize_object {
+      	 [[Resize object property]]
          set {
          }
          values {
-            sobj: Efl.Canvas.Object @nullable;
-            sub_obj: bool;
+            sobj: Efl.Canvas.Object @nullable; [[Object]]
+            sub_obj: bool; [[$true if sub object exists, $false otherwise]]
          }
       }
       @property domain_translatable_part_text {
+      	 [[Domain translatable text part property]]
          set {
          }
          values {
-            part: string;
-            domain: string;
-            label: string;
+            part: string; [[Part name]]
+            domain: string; [[Domain name]]
+            label: string; [[Label]]
          }
       }
       @property scrollable_children {
          get {
-            [[Function to operate on a given widget's scrollabe children when necessary.
+            [[Function to operate on a given widget's scrollable children when necessary.
 
               Warning: free the returned list with eina_list_free().]]
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused;
+            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[List of scrollable children]]
          }
       }
       @property scroll_hold {
+      	 [[Scroll hold property]]
          get {
-            return: int;
+            return: int; [[FIXME]]
          }
       }
       @property drag_child_locked_y {
+      	 [[Drag child locked Y axis property]]
          get {
-            return: int;
+            return: int; [[FIXME]]
          }
       }
       @property item_loop_enabled {
          [[Control item loop feature.]]
          values {
-            enable: bool;
+            enable: bool; [[$true if item loop is enabled, $false otherwise]]
          }
       }
       @property child_can_focus {
+      	 [[Child can focus property]]
          get {
-            return: bool;
+            return: bool; [[$true if child can focus, $false otherwise]]
          }
       }
       @property scroll_freeze {
+      	 [[Scroll freeze property]]
          get {
-            return: int;
+            return: int; [[FIXME]]
          }
       }
       @property focus_region {
+      	 [[Focus region property]]
          get {
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          values {
             x: Evas.Coord; [[X coordinate]]
@@ -317,48 +335,55 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property top {
+      	 [[Top widget property]]
          get {
-            return: Efl.Canvas.Object;
+            return: Efl.Canvas.Object; [[Top widget]]
          }
       }
       @property focus_order {
+      	 [[Focus order property]]
          get {
-            return: uint;
+            return: uint; [[FIXME]]
          }
       }
       @property drag_child_locked_x {
+      	 [[Drag child locked X axis]]
          get {
-            return: int;
+            return: int; [[FIXME]]
          }
       }
       @property can_focus_child_list {
+      	 [[Can focus children list]]
          get {
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused;
+            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[List of children which can focus]]
          }
       }
       @property focused_item {
          get {
             [[Get the focused widget item.]]
-            return: Elm.Widget.Item;
+            return: Elm.Widget.Item; [[Focused item]]
          }
       }
       @property parents_bounce {
+      	 [[Parents bounce property]]
          get {
          }
          values {
-            horiz: bool;
-            vert: bool;
+            horiz: bool; [[$true if parents bounce horizontally, $false otherwise]]
+            vert: bool; [[$true if parents bounce vertically, $false otherwise]]
          }
       }
       @property parent_widget {
+      	 [[Parent widget property]]
          get @virtual_pure {
-            return: Efl.Canvas.Object;
+            return: Efl.Canvas.Object; [[Parent widget]]
             legacy: null;
          }
       }
       @property highlight {
+      	 [[Highlight property]]
          get {
-            return: bool;
+            return: bool; [[$true if widget is highlight, $false otherwise]]
          }
       }
       @property focused_object {
@@ -368,30 +393,35 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       @property parent2 {
+      	 [[Second parent property]]
          values {
-            parent: Efl.Canvas.Object @nullable;
+            parent: Efl.Canvas.Object @nullable; [[Second parent]]
          }
       }
       @property part_text {
+      	 [[Part text property]]
          keys {
-            part: string;
+            part: string; [[Part name]]
          }
          values {
-            label: string;
+            label: string; [[Label]]
          }
       }
       newest_focus_order_get @const {
-         return: Efl.Canvas.Object;
+      	 [[Get newest focus in order]]
+         return: Efl.Canvas.Object; [[Handle to focused widget]]
          params {
-            @out newest_focus_order: uint;
-            @in can_focus_only: bool;
+            @out newest_focus_order: uint; [[Newest focus order]]
+            @in can_focus_only: bool; [[$true only us widgets which can focus, $false otherweise]]
          }
       }
       scroll_hold_push {
+         [[Push scroll hold]]
       }
       cursor_add {
+      	 [[Add cursor]]
          params {
-            @in cur: ptr(Elm.Cursor);
+            @in cur: ptr(Elm.Cursor); [[Cursor to be added]]
          }
       }
       focus_next_object_set {
@@ -431,6 +461,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       focus_tree_unfocusable_handle {
+         [[Handle focus tree unfocusable]]
       }
       focus_custom_chain_prepend {
          [[Prepend object to custom focus chain.
@@ -445,10 +476,11 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       part_text_translate {
-         return: string;
+      	 [[Translate part text]]
+         return: string; [[Translated text]]
          params {
-            @in part: string;
-            @in text: string;
+            @in part: string; [[Part name]]
+            @in text: string; [[Text]]
          }
       }
       focus_highlight_geometry_get @const {
@@ -463,61 +495,64 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       activate {
          [['Virtual' function to activate widget.]]
          params {
-            @in act: Elm.Activate;
+            @in act: Elm.Activate; [[Activate]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          legacy: null; /* the legacy API has not the same number of parameter to we don't generate it. */
       }
       sub_object_add {
          [['Virtual' function handling sub objects being added.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
-            @in sobj: Efl.Canvas.Object;
+            @in sobj: Efl.Canvas.Object; [[Sub object]]
          }
       }
       focus_direction_manager_is {
          [['Virtual' function which checks if handling of passing focus to sub-objects in given direction is supported by widget.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          legacy: null;
       }
       event {
          [['Virtual' function handling input events on the widget.]]
          params {
-            @in source: Efl.Canvas.Object;
-            @in type: Evas.Callback_Type;
-            @in event_info: void_ptr;
+            @in source: Efl.Canvas.Object; [[Source object]]
+            @in type: Evas.Callback_Type; [[Callback type]]
+            @in event_info: void_ptr; [[Event info]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       event_callback_add {
+      	 [[Add event callback]]
          params {
-            @in func: Elm_Event_Cb;
-            @in data: const(void_ptr) @optional;
+            @in func: Elm_Event_Cb; [[Callback function]]
+            @in data: const(void_ptr) @optional; [[Data pointer]]
          }
       }
       access {
          [['Virtual' function on the widget being set access.]]
          params {
-            @in acs: bool;
+            @in acs: bool; [[$true if access is set, $false otherwise]]
          }
          legacy: null;
       }
       cursor_del {
+      	 [[Delete cursor]]
          params {
-            @in cur: ptr(Elm.Cursor);
+            @in cur: ptr(Elm.Cursor); [[Cursor to be deleted]]
          }
       }
       event_callback_del {
-         return: void_ptr;
+      	 [[Delete event callback handler]]
+         return: void_ptr; [[Handle to deleted callback]]
          params {
-            @in func: Elm_Event_Cb;
-            @in data: const(void_ptr) @nullable;
+            @in func: Elm_Event_Cb; [[Callback handler]]
+            @in data: const(void_ptr) @nullable; [[data pointer]]
          }
       }
       on_focus {
          [['Virtual' function handling focus in/out events on the widget]]
          params {
-            @in item: Elm.Widget.Item @nullable;
+            @in item: Elm.Widget.Item @nullable; [[Widget]]
          }
          return: bool; [[$true if this widget can handle focus, $false otherwise]]
       }
@@ -529,7 +564,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             @out w: Evas.Coord; [[Width]]
             @out h: Evas.Coord; [[Height]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       focus_cycle {
          [[Give focus to next object with specific focus direction in
@@ -541,71 +576,79 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       focus_direction @virtual_pure {
          [['Virtual' function handling passing focus to sub-objects given a direction, in degrees.]]
          params {
-            @in base: const(Efl.Canvas.Object);
-            @in degree: double;
-            @out direction: Efl.Canvas.Object;
-            @out direction_item: Elm.Widget.Item;
-            @out weight: double;
+            @in base: const(Efl.Canvas.Object); [[Base object]]
+            @in degree: double; [[Degree]]
+            @out direction: Efl.Canvas.Object; [[Direction]]
+            @out direction_item: Elm.Widget.Item; [[Direction item]]
+            @out weight: double; [[Weight]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       event_propagate {
-         return: bool;
+      	 [[Propagate event]]
+         return: bool; [[$true on success, $false otherwise]]
          params {
-            @in type: Evas.Callback_Type;
-            @in event_info: void_ptr;
-            @in event_flags: ptr(Efl.Input.Flags);
+            @in type: Evas.Callback_Type; [[Event type]]
+            @in event_info: void_ptr; [[event info]]
+            @in event_flags: ptr(Efl.Input.Flags); [[Event flags]]
          }
       }
       signal_callback_add {
+      	 [[Add signal callback]]
          params {
-            @in emission: string;
-            @in source: string;
-            @in func: Edje.Signal_Cb;
-            @in data: void_ptr;
+            @in emission: string; [[Signal emission]]
+            @in source: string; [[Signal source]]
+            @in func: Edje.Signal_Cb; [[Signal callback]]
+            @in data: void_ptr; [[Data pointer]]
          }
       }
       focus_next_manager_is {
          [['Virtual' function which checks if handling of passing focus to sub-objects is supported by widget.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       name_find @const {
-         return: Efl.Canvas.Object;
+      	 [[Find widget by name]]
+         return: Efl.Canvas.Object; [[Widget]]
          params {
-            @in name: string;
-            @in recurse: int;
+            @in name: string; [[Widget name]]
+            @in recurse: int; [[Depth in the tree to search for the widget]]
          }
       }
       focus_list_direction_get @const {
-         return: bool;
+      	 [[Get focus list direction]]
+         return: bool; [[$true on success, $false otherwise]]
          params {
-            @in base: const(Efl.Canvas.Object);
-            @in items: const(list<Efl.Object>);
-            @in list_data_get: list_data_get_func_type;
-            @in degree: double;
-            @out direction: Efl.Canvas.Object;
-            @out direction_item: Elm.Widget.Item;
-            @out weight: double;
+            @in base: const(Efl.Canvas.Object); [[Base object]]
+            @in items: const(list<Efl.Object>); [[Item list]]
+            @in list_data_get: list_data_get_func_type; [[Data get function]]
+            @in degree: double; [[Degree]]
+            @out direction: Efl.Canvas.Object; [[Direction]]
+            @out direction_item: Elm.Widget.Item; [[Direction item]]
+            @out weight: double; [[Weight]]
          }
       }
       focused_object_clear {
+         [[Clear focused object]]
       }
       focus_direction_go {
-         return: bool;
+      	 [[Go in focus direction]]
+         return: bool; [[$true on success, $false otherwise]]
          params {
-            @in degree: double;
+            @in degree: double; [[Degree]]
          }
       }
       show_region_set {
+      	 [[Set show region]]
          params {
             @in x: Evas.Coord; [[X coordinate]]
             @in y: Evas.Coord; [[Y coordinate]]
             @in w: Evas.Coord; [[Width]]
             @in h: Evas.Coord; [[Height]]
-            @in forceshow: bool;
+            @in forceshow: bool; [[$true if show should be forced, $false otherwise]]
          }
       }
       show_region_get @const {
+      	 [[Get show region]]
          params {
             @out x: Evas.Coord @optional; [[X coordinate]]
             @out y: Evas.Coord @optional; [[Y coordinate]]
@@ -614,24 +657,28 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       scroll_freeze_pop {
+         [[Pop scroller freeze]]
       }
       tooltip_del {
+      	 [[Delet widget tooltip]]
          params {
-            @in tt: ptr(Elm.Tooltip);
+            @in tt: ptr(Elm.Tooltip); [[Tooltip to be deleted]]
          }
       }
       focus_next_get @const {
-         return: bool;
+      	 [[Get next focus item]]
+         return: bool; [[$true on success, $false otherwise]]
          params {
-            @in dir: Elm.Focus_Direction;
-            @out next: Efl.Canvas.Object;
-            @out next_item: Elm.Widget.Item;
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
+            @out next: Efl.Canvas.Object; [[Next object]]
+            @out next_item: Elm.Widget.Item; [[Next item]]
          }
       }
       translatable_part_text_get @const {
-         return: string;
+      	 [[Get translatable part text]]
+         return: string; [[Part text]]
          params {
-            @in part: string;
+            @in part: string; [[Part name]]
          }
       }
       focus_restore {
@@ -642,13 +689,15 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          focus state, this API will be helpful.]]
       }
       scroll_hold_pop {
+         [[Pop scroller hold]]
       }
       translate {
          [['Virtual' function handling language changes on Elementary.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          legacy: null;
       }
       scroll_freeze_push {
+         [[Push scroller freeze]]
       }
       focus_custom_chain_unset {
          [[Unset a custom focus chain on a given Elementary widget.
@@ -656,81 +705,91 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
            Any focus chain previously set is removed entirely after this call.]]
       }
       focus_steal {
+      	 [[Steal focus]]
          params {
-            @in item: Elm.Widget.Item @nullable;
+            @in item: Elm.Widget.Item @nullable; [[Widget to steal focus from]]
          }
       }
       focus_hide_handle {
+         [[Handle hide focus]]
       }
       focus_next @virtual_pure {
          [['Virtual' function handling passing focus to sub-objects.]]
          params {
-            @in dir: Elm.Focus_Direction;
-            @out next: Efl.Canvas.Object;
-            @out next_item: Elm.Widget.Item;
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
+            @out next: Efl.Canvas.Object; [[Next object]]
+            @out next_item: Elm.Widget.Item; [[Next item]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       focus_list_next_get @const {
-         return: bool;
+      	 [[Get next item in focus list]]
+         return: bool; [[$true on success, $false otherwise]]
          params {
-            @in items: const(list<Efl.Object>);
-            @in list_data_get: list_data_get_func_type;
-            @in dir: Elm.Focus_Direction;
-            @out next: Efl.Canvas.Object;
-            @out next_item: Elm.Widget.Item;
+            @in items: const(list<Efl.Object>); [[Item list]]
+            @in list_data_get: list_data_get_func_type; [[Function type]]
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
+            @out next: Efl.Canvas.Object; [[Next object]]
+            @out next_item: Elm.Widget.Item; [[Next item]]
          }
       }
       focus_mouse_up_handle {
+      	 [[Handle focus mouse up]]
          legacy: null;
       }
       theme_apply {
          [['Virtual' function on the widget being re-themed.]]
-         return: Elm.Theme.Apply;
+         return: Elm.Theme.Apply; [[Theme apply]]
       }
       focus_direction_get @const {
-         return: bool;
+      	 [[Get focus direction]]
+         return: bool; [[$true on success, $false otherwise]]
          params {
-            @in base: const(Efl.Canvas.Object);
-            @in degree: double;
-            @out direction: Efl.Canvas.Object;
-            @out direction_item: Elm.Widget.Item;
-            @out weight: double;
+            @in base: const(Efl.Canvas.Object); [[Base]]
+            @in degree: double; [[Degree]]
+            @out direction: Efl.Canvas.Object; [[Direction]]
+            @out direction_item: Elm.Widget.Item; [[Direction item]]
+            @out weight: double; [[Weight]]
          }
       }
       signal_callback_del {
-         return: void_ptr;
+      	  [[Delete signal callback]]
+         return: void_ptr; [[Handle to deleted callback]]
          params {
-            @in emission: string;
-            @in source: string;
-            @in func: Edje.Signal_Cb;
+            @in emission: string; [[Signal emission]]
+            @in source: string; [[Signal source]]
+            @in func: Edje.Signal_Cb; [[Callback function]]
          }
       }
       signal_emit {
+      	 [[Emit signal on widget]]
          params {
-            @in emission: string;
-            @in source: string;
+            @in emission: string; [[Signal string]]
+            @in source: string; [[Signal source]]
          }
       }
       disable {
          [['Virtual' function on the widget being disabled.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       sub_object_del {
          [['Virtual' function handling sub objects being removed.]]
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
-            @in sobj: Efl.Canvas.Object;
+            @in sobj: Efl.Canvas.Object; [[Object to be deleted]]
          }
       }
       tooltip_add {
+      	 [[Add tooltip to widget]]
          params {
-            @in tt: ptr(Elm.Tooltip);
+            @in tt: ptr(Elm.Tooltip); [[Tooltip]]
          }
       }
       focus_region_show @const {
+         [[Show focus region]]
       }
       focus_disabled_handle {
+         [[Handle disable widget focus]]
       }
       focus_custom_chain_append {
          [[Append object to custom focus chain.
@@ -747,10 +806,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       @property focus_move_policy {
          [[The widget's focus move policy.]]
          values {
-            policy: Efl.Ui.Focus.Move_Policy;
+            policy: Efl.Ui.Focus.Move_Policy; [[Focus move policy]]
          }
       }
-	  @property focus_move_policy_automatic {
+      @property focus_move_policy_automatic {
          [[Control the widget's focus_move_policy mode setting.
 
            @since 1.18]]
@@ -758,9 +817,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             automatic: bool; [[$true to follow system focus move policy change, $false otherwise]]
          }
       }
-	  focus_reconfigure {
-           [[@since 1.18]]
-
+      focus_reconfigure {
+         [[@since 1.18]]
       }
    }
    implements {

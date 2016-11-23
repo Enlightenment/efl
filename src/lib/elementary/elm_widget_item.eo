@@ -437,7 +437,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                   See: @.track_get
 
                   @since 1.8]]
-                return: int;
+                return: int; [[Track object reference count]]
            }
            track_cancel @protected {
                 [[Query track_cancel]]
@@ -486,9 +486,11 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                   @since 1.8]]
            }
            disable @protected {
+           	[[Disable widget item]]
                 legacy: null;
            }
            del_pre @protected {
+           	[[Delete pre widget item]]
                 legacy: null;
                 return: bool; [[$true on success, $false otherwise]]
            }
