@@ -4036,6 +4036,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
                   efreet_desktop_free(d);
                }
           }
+        elm_interface_atspi_accessible_type_set(sd->icon, ELM_ATSPI_TYPE_DISABLED);
      }
 
    edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon", sd->icon);
