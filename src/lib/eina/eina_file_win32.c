@@ -160,7 +160,10 @@ _eina_file_win32_first_file(const char *dir, WIN32_FIND_DATA *fd)
            ((fd->cFileName[1] == '.') && (fd->cFileName[2] == '\0'))))
      {
         if (!FindNextFile(h, fd))
-          return INVALID_HANDLE_VALUE;
+          {
+             FindClose(h);
+             return INVALID_HANDLE_VALUE;
+          }
      }
 
    return h;
