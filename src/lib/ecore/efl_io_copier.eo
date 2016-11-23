@@ -112,6 +112,31 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
            ]]
            return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused; [[Binbuf]]
         }
+
+        flush {
+            [[Forces reading from source and writing to destination.
+
+              This executes a single read->write cycle, if more data
+              could be read from source (ie: not EOS) or not all data
+              was written to destination, then $false is
+              returned. Then to forcefully drain source and write all
+              contents to destination, use in a loop until it returns
+              $true.
+
+              The return value matches "done" event, that is, when
+              $true is returned, the "done" event is emitted.
+
+              This function may also emit "progress" and "error"
+              events.
+
+              \@note this function may block the main loop execution
+              until operations complete! This is bad for usability, as
+              user interface or other operations may freeze. A better
+              approach is to operate asynchronously and wait for
+              "done" event.
+            ]]
+            return: bool(true);
+        }
     }
 
     events {

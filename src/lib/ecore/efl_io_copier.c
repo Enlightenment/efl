@@ -704,6 +704,43 @@ _efl_io_copier_inactivity_timeout_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
    return pd->inactivity_timeout;
 }
 
+EOLIAN static Eina_Bool
+_efl_io_copier_flush(Eo *o, Efl_Io_Copier_Data *pd)
+{
+   uint64_t old_read = pd->progress.read;
+   uint64_t old_written = pd->progress.written;
+   uint64_t old_total = pd->progress.total;
+
+   _COPIER_DBG(o, pd);
+
+   if (pd->source && !efl_io_reader_eos_get(pd->source))
+     _efl_io_copier_read(o, pd);
+
+   if (pd->destination)
+     _efl_io_copier_write(o, pd);
+
+   if ((old_read != pd->progress.read) ||
+       (old_written != pd->progress.written) ||
+       (old_total != pd->progress.total))
+     {
+        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_PROGRESS, NULL);
+        _efl_io_copier_inactivity_timeout_reschedule(o, pd);
+     }
+
+   if (!pd->source || efl_io_reader_eos_get(pd->source))
+     {
+        if ((!pd->done) &&
+            ((!pd->destination) || (eina_binbuf_length_get(pd->buf) == 0)))
+          {
+             pd->done = EINA_TRUE;
+             if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
+             efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
+          }
+     }
+
+   return pd->done;
+}
+
 EOLIAN static Eo *
 _efl_io_copier_efl_object_constructor(Eo *o, Efl_Io_Copier_Data *pd)
 {
