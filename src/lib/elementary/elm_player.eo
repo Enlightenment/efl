@@ -1,5 +1,6 @@
 class Elm.Player (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
+   [[Elementary player class]]
    legacy_prefix: elm_player;
    eo_prefix: elm_obj_player;
    event_prefix: elm_player;
@@ -15,17 +16,16 @@ class Elm.Player (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Efl.Part.part;
    }
    events {
-      forward,clicked;
-      info,clicked;
-      next,clicked;
-      pause,clicked;
-      play,clicked;
-      prev,clicked;
-      rewind,clicked;
-      quality,clicked;
-      eject,clicked;
-      volume,clicked;
-      mute,clicked;
+      forward,clicked; [[Called when forward was clicked]]
+      info,clicked; [[Called when info was clicked]]
+      next,clicked; [[Called when next was clicked]]
+      pause,clicked; [[Called when pause was clicked]]
+      play,clicked; [[Called when play was clicked]]
+      prev,clicked; [[Called when previous was clicked]]
+      rewind,clicked; [[Called when rewind was clicked]]
+      quality,clicked; [[Called when quality was clicked]]
+      eject,clicked; [[Called when eject was clicked]]
+      volume,clicked; [[Called when volume was clicked]]
+      mute,clicked; [[Called when mute was clicked]]
    }
-
 }
