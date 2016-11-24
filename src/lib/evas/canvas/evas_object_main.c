@@ -706,15 +706,7 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
         efl_event_callback_del(dev, EFL_EVENT_DEL,
                                _evas_focus_device_del_cb, obj);
         eina_hash_del_by_key(edata->focused_objects, &dev);
-        //default seat - legacy support.
-        if (dev == edata->default_seat)
-          {
-             evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_OUT,
-                                             NULL, _evas_object_event_new(),
-                                             EFL_CANVAS_OBJECT_EVENT_FOCUS_OUT);
-          }
-        efl_event_callback_call(eo_obj,
-                                EFL_CANVAS_OBJECT_EVENT_FOCUS_DEVICE_OUT, dev);
+        _evas_focus_dispatch_event(obj, dev, EINA_FALSE);
         if ((obj->layer) && (obj->layer->evas))
           _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
      }

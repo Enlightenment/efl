@@ -17,6 +17,7 @@ typedef struct _Efl_Input_Pointer_Data  Efl_Input_Pointer_Data;
 typedef struct _Efl_Input_Key_Data      Efl_Input_Key_Data;
 typedef struct _Efl_Input_Device_Data   Efl_Input_Device_Data;
 typedef struct _Efl_Input_Hold_Data     Efl_Input_Hold_Data;
+typedef struct _Efl_Input_Focus_Data    Efl_Input_Focus_Data;
 
 #ifndef _EVAS_TYPES_EOT_H_
 typedef struct _Evas_Modifier Evas_Modifier;
@@ -108,6 +109,14 @@ struct _Efl_Input_Hold_Data
    void             *legacy; /* DO NOT TOUCH THIS */
    Eina_Bool         hold : 1;
    Eina_Bool         evas_done : 1; /* set by evas */
+};
+
+struct _Efl_Input_Focus_Data
+{
+   Eo *eo;
+   Efl_Input_Device *device; //The seat
+   Eo *object; //The focused object - Efl.Canvas.Object or Efl.Canvas.
+   double timestamp;
 };
 
 static inline Eina_Bool

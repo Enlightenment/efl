@@ -1,5 +1,9 @@
+#define EFL_INTERNAL_UNSTABLE
+#define EFL_INPUT_EVENT_PROTECTED
+
 #include "evas_common_private.h"
 #include "evas_private.h"
+#include "interfaces/efl_common_internal.h"
 
 /* private calls */
 
@@ -59,26 +63,49 @@ _current_focus_get(Eo *evas_obj, Efl_Input_Device *key)
    return eina_hash_find(edata->focused_objects, &key);
 }
 
+void
+_evas_focus_dispatch_event(Evas_Object_Protected_Data *obj, Efl_Input_Device *seat, Eina_Bool in)
+{
+   Efl_Input_Focus_Data *ev_data;
+   Efl_Input_Focus *evt;
+   Evas_Callback_Type cb_evas, cb_obj_evas;
+   const Efl_Event_Description *efl_object_focus_event;
+
+   evt = efl_input_instance_get(EFL_INPUT_FOCUS_CLASS, NULL, (void **) &ev_data);
+   if (!evt) return;
+
+   ev_data->device = efl_ref(seat);
+   ev_data->object = obj->object;
+   ev_data->timestamp = time(NULL);
+
+   if (in)
+     {
+        cb_obj_evas = EVAS_CALLBACK_FOCUS_IN;
+        cb_evas = EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN;
+        efl_object_focus_event = EFL_EVENT_FOCUS_IN;
+     }
+   else
+     {
+        cb_obj_evas = EVAS_CALLBACK_FOCUS_OUT;
+        cb_evas = EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT;
+        efl_object_focus_event = EFL_EVENT_FOCUS_OUT;
+     }
+
+   evas_object_event_callback_call(obj->object, obj,
+                                   cb_obj_evas,
+                                   evt, _evas_object_event_new(),
+                                   efl_object_focus_event);
+   evas_event_callback_call(obj->layer->evas->evas, cb_evas, evt);
+   efl_del(evt);
+}
+
 static void
 _evas_object_unfocus(Evas_Object_Protected_Data *obj, Efl_Input_Device *seat)
 {
    obj->focused_by_seats = eina_list_remove(obj->focused_by_seats, seat);
    _evas_focus_set(obj->object, seat, EINA_FALSE);
 
-   //Legacy events...
-   if (seat == obj->layer->evas->default_seat)
-     {
-        evas_object_event_callback_call(obj->object, obj,
-                                        EVAS_CALLBACK_FOCUS_OUT,
-                                        NULL, _evas_object_event_new(),
-                                        EFL_CANVAS_OBJECT_EVENT_FOCUS_OUT);
-        evas_event_callback_call(obj->layer->evas->evas,
-                                 EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
-                                 obj->object);
-     }
-   efl_event_callback_call(obj->object,
-                           EFL_CANVAS_OBJECT_EVENT_FOCUS_DEVICE_OUT,
-                           seat);
+   _evas_focus_dispatch_event(obj, seat, EINA_FALSE);
    _evas_post_event_callback_call(obj->layer->evas->evas,
                                   obj->layer->evas);
 }
@@ -161,18 +188,7 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    obj->focused_by_seats = eina_list_append(obj->focused_by_seats, seat);
    _evas_focus_set(eo_obj, seat, EINA_TRUE);
 
-   //Legacy events...
-   if (seat == _default_seat_get(eo_obj))
-     {
-        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_IN,
-                                        NULL, _evas_object_event_new(),
-                                        EFL_CANVAS_OBJECT_EVENT_FOCUS_IN);
-        evas_event_callback_call(obj->layer->evas->evas,
-                                 EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN, eo_obj);
-     }
-
-   efl_event_callback_call(eo_obj,
-                           EFL_CANVAS_OBJECT_EVENT_FOCUS_DEVICE_IN, seat);
+   _evas_focus_dispatch_event(obj, seat, EINA_TRUE);
  end:
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
    return EINA_TRUE;
