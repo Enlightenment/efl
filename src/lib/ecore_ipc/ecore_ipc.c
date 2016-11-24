@@ -509,10 +509,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
         EINA_SAFETY_ON_NULL_GOTO(address, error_server);
 
         if (!_ecore_ipc_local_mkpath(address, S_IRUSR | S_IWUSR | S_IXUSR))
-          {
-             free(address);
-             goto error_server;
-          }
+          goto error_server;
 
         new_mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
 
