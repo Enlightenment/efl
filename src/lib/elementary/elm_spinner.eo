@@ -1,6 +1,7 @@
 class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
                    Elm.Interface.Atspi.Value, Elm.Interface.Atspi_Widget_Action)
 {
+   [[Elementary spinner class]]
    legacy_prefix: elm_spinner;
    eo_prefix: elm_obj_spinner;
    event_prefix: elm_spinner;
@@ -168,9 +169,9 @@ class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      changed;
-      delay,changed;
-      spinner,drag,start;
-      spinner,drag,stop;
+      changed; [[Called when spinner changed]]
+      delay,changed; [[Called when spinner delay changed]]
+      spinner,drag,start; [[Called when spinner drag started]]
+      spinner,drag,stop; [[Called when spinner drag stopped]]
    }
 }

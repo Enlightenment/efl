@@ -1,14 +1,15 @@
 class Elm.Route (Elm.Widget)
 {
+   [[Elementary route class]]
    legacy_prefix: elm_route;
    eo_prefix: elm_obj_route;
    methods {
       @property emap {
          set {
-            [[No description supplied by the EAPI.]]
+            [[Set map widget for this route]]
          }
          values {
-            emap: void_ptr;
+            emap: void_ptr; [[Elementary map widget]]
          }
       }
       @property longitude_min_max {
@@ -45,5 +46,4 @@ class Elm.Route (Elm.Widget)
       Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;
    }
-
 }

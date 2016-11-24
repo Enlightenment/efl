@@ -6,6 +6,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
                   Elm.Interface.Atspi.Value,
                   Elm.Interface.Atspi_Widget_Action)
 {
+   [[Elementary slider class]]
    legacy_prefix: elm_slider;
    eo_prefix: elm_obj_slider;
    event_prefix: elm_slider;
@@ -96,7 +97,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
             [[Get whether the indicator of the slider is set or not.]]
          }
          values {
-            flag: bool;
+            flag: bool; [[$true if indicator is shown on focus, $false otherwise]]
          }
       }
       @property step {
@@ -152,7 +153,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
          set { }
          get { }
          values {
-            enable: bool;
+            enable: bool; [[$true if two indicators are enabled, $false otherwise]]
          }
       }
       @property range {
@@ -163,8 +164,8 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
          set { }
          get { }
          values {
-            from: double; [[range minimum value]]
-            to: double; [[range maximum value]]
+            from: double; [[Range minimum value]]
+            to: double; [[Range maximum value]]
          }
       }
    }
@@ -194,10 +195,9 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      changed;
-      delay,changed;
-      slider,drag,start;
-      slider,drag,stop;
+      changed; [[Called when slider changed]]
+      delay,changed; [[Called when delay changed]]
+      slider,drag,start; [[Called when slider drag started]]
+      slider,drag,stop; [[Called when slider drag stopped]]
    }
-
 }

@@ -5,6 +5,7 @@ type Elm_Prefs_Reset_Mode: __undefined_type; [[Elementary preferences reset mode
 
 class Elm.Prefs (Elm.Widget, Efl.File)
 {
+   [[Elementary preferences class]]
    legacy_prefix: elm_prefs;
    eo_prefix: elm_obj_prefs;
    event_prefix: elm_prefs;
@@ -150,7 +151,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          return: bool; [[$true, on success, $false otherwise]]
          params {
-            @in name: string; [[the name of the SWALLOW item (as declared in the prefs collection)]]
+            @in name: string; [[The name of the SWALLOW item (as declared in the prefs collection)]]
             @in child: Efl.Canvas.Object; [[The object to occupy the item]]
          }
       }
@@ -184,7 +185,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          return: Efl.Canvas.Object; [[The unswallowed object, or NULL on errors]]
          params {
-            @in name: string; [[the name of the SWALLOW item (as declared in the prefs collection)]]
+            @in name: string; [[The name of the SWALLOW item (as declared in the prefs collection)]]
          }
       }
       item_visible_set {
@@ -221,12 +222,11 @@ class Elm.Prefs (Elm.Widget, Efl.File)
       Elm.Widget.focus_next;
    }
    events {
-      page,changed; [[s]]
-      page,saved; [[s]]
-      page,reset; [[s]]
-      page,loaded; [[s]]
-      item,changed; [[s]]
-      action; [[ss]]
+      page,changed; [[Called when page changed]]
+      page,saved; [[Called when page was saved]]
+      page,reset; [[Called when page was reset]]
+      page,loaded; [[Called when page got loaded]]
+      item,changed; [[Called when item changed]]
+      action; [[Called when action was done]]
    }
-
 }
