@@ -37,7 +37,7 @@ static void
 _efl_net_socket_fd_event_read(void *data EINA_UNUSED, const Efl_Event *event)
 {
    if (efl_io_closer_closed_get(event->object))
-     return; // TODO: unregister READ event
+     return;
    efl_io_reader_can_read_set(event->object, EINA_TRUE);
 }
 
@@ -45,7 +45,7 @@ static void
 _efl_net_socket_fd_event_write(void *data EINA_UNUSED, const Efl_Event *event)
 {
    if (efl_io_closer_closed_get(event->object))
-     return; // TODO: unregister WRITE event
+     return;
    efl_io_writer_can_write_set(event->object, EINA_TRUE);
 }
 
@@ -53,7 +53,7 @@ static void
 _efl_net_socket_fd_event_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    if (efl_io_closer_closed_get(event->object))
-     return; // TODO: unregister ERROR event
+     return;
    efl_io_writer_can_write_set(event->object, EINA_FALSE);
    efl_io_reader_can_read_set(event->object, EINA_FALSE);
    efl_io_reader_eos_set(event->object, EINA_TRUE);
@@ -65,8 +65,6 @@ _efl_net_socket_fd_efl_object_finalize(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
    o = efl_finalize(efl_super(o, MY_CLASS));
    if (!o) return NULL;
 
-   // TODO: only register "read" if "can_read" is being monitored?
-   // TODO: only register "write" if "can_write" is being monitored?
    efl_event_callback_add(o, EFL_LOOP_FD_EVENT_WRITE, _efl_net_socket_fd_event_write, NULL);
    efl_event_callback_add(o, EFL_LOOP_FD_EVENT_READ, _efl_net_socket_fd_event_read, NULL);
    efl_event_callback_add(o, EFL_LOOP_FD_EVENT_ERROR, _efl_net_socket_fd_event_error, NULL);
@@ -220,6 +218,26 @@ _efl_net_socket_fd_efl_io_reader_read(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNU
    return EINVAL;
 }
 
+EOLIAN static void
+_efl_net_socket_fd_efl_io_reader_can_read_set(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED, Eina_Bool value)
+{
+   Eina_Bool old = efl_io_reader_can_read_get(o);
+   if (old == value) return;
+
+   efl_io_reader_can_read_set(efl_super(o, MY_CLASS), value);
+
+   if (value)
+     {
+        /* stop monitoring the FD, we need to wait the user to read and clear the kernel flag */
+        efl_event_callback_del(o, EFL_LOOP_FD_EVENT_READ, _efl_net_socket_fd_event_read, NULL);
+     }
+   else
+     {
+        /* kernel flag is clear, resume monitoring the FD */
+        efl_event_callback_del(o, EFL_LOOP_FD_EVENT_READ, _efl_net_socket_fd_event_read, NULL);
+     }
+}
+
 EOLIAN static Eina_Error
 _efl_net_socket_fd_efl_io_writer_write(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED, Eina_Slice *ro_slice, Eina_Slice *remaining)
 {
@@ -262,6 +280,26 @@ _efl_net_socket_fd_efl_io_writer_write(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
    ro_slice->len = 0;
    ro_slice->mem = NULL;
    return EINVAL;
+}
+
+EOLIAN static void
+_efl_net_socket_fd_efl_io_writer_can_write_set(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED, Eina_Bool value)
+{
+   Eina_Bool old = efl_io_writer_can_write_get(o);
+   if (old == value) return;
+
+   efl_io_writer_can_write_set(efl_super(o, MY_CLASS), value);
+
+   if (value)
+     {
+        /* stop monitoring the FD, we need to wait the user to write and clear the kernel flag */
+        efl_event_callback_del(o, EFL_LOOP_FD_EVENT_WRITE, _efl_net_socket_fd_event_write, NULL);
+     }
+   else
+     {
+        /* kernel flag is clear, resume monitoring the FD */
+        efl_event_callback_del(o, EFL_LOOP_FD_EVENT_WRITE, _efl_net_socket_fd_event_write, NULL);
+     }
 }
 
 EOLIAN static void
