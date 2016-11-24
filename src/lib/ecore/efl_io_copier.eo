@@ -24,6 +24,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
 
     methods {
         @property source {
+           [[Copier source property]]
            get {
            }
            set {
@@ -35,6 +36,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
         }
 
         @property destination {
+           [[Copier destination property]]
            get {
            }
            set {
@@ -57,6 +59,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
         }
 
         @property buffer_limit {
+           [[Copier buffer limit property]]
            get {
            }
            set {
@@ -68,6 +71,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
         }
 
         @property read_chunk_size {
+           [[Copier read chunk size property]]
            get {
            }
            set {
@@ -135,7 +139,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
               approach is to operate asynchronously and wait for
               "done" event.
             ]]
-            return: bool(true);
+            return: bool(true); [[$true on success, $false otherwise]]
         }
     }
 
