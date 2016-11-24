@@ -25,7 +25,7 @@ class Efl.Config.Global (Efl.Object, Efl.Config)
          params {
             profile: string @optional; [[The profile name.]]
          }
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
       }
       @property profile {
          [[The profile for the running application.
@@ -41,7 +41,7 @@ class Efl.Config.Global (Efl.Object, Efl.Config)
            Elementary applications.
          ]]
          values {
-            profile: string;
+            profile: string; [[Profile name]]
          }
       }
       profile_iterate {
@@ -50,23 +50,23 @@ class Efl.Config.Global (Efl.Object, Efl.Config)
             hidden: bool @optional; [[If $true, gets the full list of profiles,
                                       including those stored in hidden files.]]
          }
-         return: free(own(iterator<string>), eina_iterator_free);
+         return: free(own(iterator<string>), eina_iterator_free); [[Iterator to profiles]]
       }
       profile_exists {
          [[Returns whether a profile exists or not.]]
          params {
-            profile: string;
+            profile: string; [[Profile name]]
          }
-         return: bool;
+         return: bool; [[$true if profile exists, $false otherwise]]
       }
       profile_dir_get {
          [[Returns the directory where a profile is stored.]]
          params {
-            profile: string;
+            profile: string; [[Profile name]]
             is_user: bool; [[$true to lookup for a user profile or $false for
                              a system one.]]
          }
-         return: own(stringshare);
+         return: own(stringshare); [[Directory of the profile]]
       }
       profile_derived_add @protected {
          [[Add a new profile of the given name to be derived from the current

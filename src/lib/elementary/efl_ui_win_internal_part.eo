@@ -1,5 +1,6 @@
 class Efl.Ui.Win.Internal.Part (Efl.Object, Efl.Container, Efl.Gfx, Efl.File)
 {
+   [[Efl UI window interal part class]]
    data: Elm_Part_Data;
    implements {
       Efl.Object.destructor;

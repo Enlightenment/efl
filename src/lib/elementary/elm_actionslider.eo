@@ -83,5 +83,4 @@ class Elm.Actionslider (Elm.Layout, Efl.Ui.Selectable)
    events {
       pos_changed; [[The position of the actionslider has changed]]
    }
-
 }
