@@ -74,7 +74,11 @@ struct _Ecore_Ipc_Client
       Eo *send_copier;
    } socket;
 
+#ifndef EFL_NET_SERVER_UNIX_CLASS
+   /* legacy until Windows and others have their local socket */
    Ecore_Con_Client  *client;
+#endif
+
    Ecore_Ipc_Server  *svr;
    void              *data;
    unsigned char     *buf;
@@ -103,7 +107,10 @@ struct _Ecore_Ipc_Server
 
    Eo *server;
 
+#ifndef EFL_NET_SERVER_UNIX_CLASS
    Ecore_Con_Server *legacy_server;
+#endif
+
    Eina_List        *clients;
    void              *data;
    unsigned char     *buf;
