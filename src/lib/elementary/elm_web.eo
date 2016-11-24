@@ -289,7 +289,7 @@ class Elm.Web (Elm.Widget)
             ]]
          }
          values {
-            func: Elm_Web_Dialog_Alert @nullable; [[callback function to be used.]]
+            func: Elm_Web_Dialog_Alert @nullable; [[Callback function to be used.]]
             data: void_ptr @optional; [[User data.]]
          }
       }

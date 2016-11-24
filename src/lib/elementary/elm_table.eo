@@ -1,5 +1,6 @@
 class Elm.Table (Elm.Widget)
 {
+   [[Elementary table class]]
    legacy_prefix: elm_table;
    eo_prefix: elm_obj_table;
    data: null;
@@ -46,7 +47,7 @@ class Elm.Table (Elm.Widget)
       clear {
          [[Faster way to remove all child objects from a table object.]]
          params {
-            @in clear: bool; [[If true, will delete children, else just remove from table.]]
+            @in clear: bool; [[If $true, will delete children, else just remove from table.]]
          }
       }
       child_get @const {
@@ -129,5 +130,4 @@ class Elm.Table (Elm.Widget)
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
    }
-
 }
