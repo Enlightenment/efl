@@ -297,6 +297,30 @@ _efl_io_queue_efl_io_reader_read(Eo *o, Efl_Io_Queue_Data *pd, Eina_Rw_Slice *rw
    return EINVAL;
 }
 
+EOLIAN static void
+_efl_io_queue_discard(Eo *o, Efl_Io_Queue_Data *pd, size_t amount)
+{
+   size_t available;
+
+   EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
+
+   available = pd->position_write - pd->position_read;
+   if (amount > available)
+     {
+        amount = available;
+        if (amount == 0)
+          return;
+     }
+
+   pd->position_read += amount;
+
+   efl_io_reader_can_read_set(o, pd->position_read < pd->position_write);
+   efl_event_callback_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
+
+   if ((pd->pending_eos) && (efl_io_queue_usage_get(o) == 0))
+     efl_io_reader_eos_set(o, EINA_TRUE);
+}
+
 EOLIAN static Eina_Bool
 _efl_io_queue_efl_io_reader_can_read_get(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
 {
