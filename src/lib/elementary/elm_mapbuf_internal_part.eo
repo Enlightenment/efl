@@ -1,5 +1,6 @@
 class Elm.Mapbuf.Internal.Part (Efl.Object, Efl.Container)
 {
+   [[Elementary mapbuf internal part class]]
    data: Elm_Part_Data;
    implements {
       Efl.Object.destructor;

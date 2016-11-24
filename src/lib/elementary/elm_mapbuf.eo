@@ -1,5 +1,6 @@
 class Elm.Mapbuf (Elm.Widget, Efl.Container, Efl.Part)
 {
+   [[Elementary mapbuf class]]
    legacy_prefix: elm_mapbuf;
    eo_prefix: elm_private_mapbuf;
    methods {
@@ -141,5 +142,4 @@ class Elm.Mapbuf (Elm.Widget, Efl.Container, Efl.Part)
       Efl.Container.content_unset;
       Efl.Part.part;
    }
-
 }
