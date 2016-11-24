@@ -211,7 +211,7 @@ struct klass
              << scope_tab << scope_tab << "for(int i = 0; i != " << function_count << "; ++i)\n"
              << scope_tab << scope_tab << "{\n"
              << scope_tab << scope_tab << scope_tab << "Marshal.StructureToPtr(descs[i], ptr, false);\n"
-             << scope_tab << scope_tab << scope_tab << "ptr = new IntPtr((long)ptr + Marshal.SizeOf(descs[0]));\n"
+             << scope_tab << scope_tab << scope_tab << "ptr = IntPtr.Add(ptr, Marshal.SizeOf(descs[0]));\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "Efl_Object_Ops ops;\n"
              << scope_tab << scope_tab << "ops.descs = descs_ptr;\n"
