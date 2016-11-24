@@ -3248,8 +3248,10 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
      ecore_evas_wm_rotation_preferred_rotation_set(sd->ee,
                                                    sd->wm_rot.preferred_rot);
 
-   if (sd->csd.need)
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->csd.need && sd->x.xwin)
      TRAP(sd, borderless_set, EINA_TRUE);
+#endif
 }
 
 #endif
@@ -4153,14 +4155,6 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         sd->csd.need_menu = EINA_FALSE;
      }
 
-   /* TEMPORARY HACK FOR E WAYLAND
-    * Hiding the shadows makes the input region (elm.spacer.opaque) have the
-    * same geometry as the surface itself. This fixes inputs in E Wayland
-    * internal windows. FIXME FIXME FIXME.
-    */
-   if (sd->csd.wayland)
-     sd->csd.need_shadow = EINA_FALSE;
-
    borderless = sd->csd.need_borderless || (!sd->csd.need) || sd->fullscreen;
    maximized = sd->maximized;
    shadow = sd->csd.need_shadow && (!sd->fullscreen) && (!sd->maximized);
@@ -4168,6 +4162,14 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    bg_solid = sd->csd.need_bg_solid;
    unresizable = sd->csd.need_unresizable;
    menu = sd->csd.need_menu;
+
+   /* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+    * At the moment, E Wayland uses SSD for its internal windows. Which means
+    * we must hide the shadow if the borderless flag is set. "trap" here means
+    * we are likely to be running inside E compositor.
+    * FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
+   if (trap && sd->csd.wayland && sd->csd.need_borderless)
+     shadow = 0;
 
 #define STATE_SET(state, s1, s2) do { \
    if (force_emit || (state != sd->csd.cur_##state)) \
@@ -5240,18 +5242,13 @@ EOLIAN static void
 _efl_ui_win_borderless_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool borderless)
 {
    sd->csd.need_borderless = borderless ? 1 : 0;
-
-   /* TEMPORARY HACK FOR E WAYLAND
-    * E Wayland sets the borderless flag on its internal windows, even though
-    * it actually expects to "see" borders. Not sure who is supposed to create
-    * them (E comp or the window).
-    */
-   if (trap && trap->borderless_set && sd->csd.wayland)
-     sd->csd.need_borderless = 0;
-
    _elm_win_frame_style_update(sd, 0, 1);
 
-   TRAP(sd, borderless_set, borderless);
+#ifdef HAVE_ELEMENTARY_X
+   if (!sd->x.xwin || !sd->csd.need)
+#endif
+     TRAP(sd, borderless_set, borderless);
+
    _elm_win_resize_objects_eval(obj);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
