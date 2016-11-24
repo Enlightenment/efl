@@ -1005,6 +1005,12 @@ _eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description **cb)
    length = pd->callbacks_count - (cb - pd->callbacks);
    if (length > 1) memmove(cb, cb + 1, (length - 1) * sizeof (Eo_Callback_Description*));
    pd->callbacks_count--;
+
+   if (pd->callbacks_count == 0)
+     {
+        free(pd->callbacks);
+        pd->callbacks = NULL;
+     }
 }
 
 /* Actually remove, doesn't care about walking list, or delete_me */
