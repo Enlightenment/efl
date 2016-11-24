@@ -234,7 +234,7 @@ _efl_net_socket_fd_efl_io_reader_can_read_set(Eo *o, Efl_Net_Socket_Fd_Data *pd 
    else
      {
         /* kernel flag is clear, resume monitoring the FD */
-        efl_event_callback_del(o, EFL_LOOP_FD_EVENT_READ, _efl_net_socket_fd_event_read, NULL);
+        efl_event_callback_add(o, EFL_LOOP_FD_EVENT_READ, _efl_net_socket_fd_event_read, NULL);
      }
 }
 
@@ -298,7 +298,7 @@ _efl_net_socket_fd_efl_io_writer_can_write_set(Eo *o, Efl_Net_Socket_Fd_Data *pd
    else
      {
         /* kernel flag is clear, resume monitoring the FD */
-        efl_event_callback_del(o, EFL_LOOP_FD_EVENT_WRITE, _efl_net_socket_fd_event_write, NULL);
+        efl_event_callback_add(o, EFL_LOOP_FD_EVENT_WRITE, _efl_net_socket_fd_event_write, NULL);
      }
 }
 
