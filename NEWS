@@ -1,6 +1,18 @@
 ==========
-EFL 1.18.2
+EFL 1.18.3
 ==========
+
+Changes since 1.18.2:
+---------------------
+
+Fixes:
+
+   * eocre animator - the anim thread is polled on shutdown use volatile
+   * ecore anim - actually fix by checking fd not thread handle
+   * ecore_cocoa: fix handling of some keys
+   * ecore audio - fix hang in wayland due to pulse audio connecting to x
+   * emotion gst1 module - disable subtitles by default as that should be (T4795)
+   * wl_drm and eayland_egl buffer age fix for gl when age changes
 
 Changes since 1.18.1:
 ---------------------
