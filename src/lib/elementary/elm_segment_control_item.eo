@@ -1,5 +1,6 @@
 class Elm.Segment_Control.Item(Elm.Widget.Item)
 {
+   [[Elementary segment control item class]]
    legacy_prefix: elm_segment_control_item;
    eo_prefix: elm_obj_segment_control_item;
    methods {

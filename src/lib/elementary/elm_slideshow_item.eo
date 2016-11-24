@@ -1,5 +1,6 @@
 class Elm.Slideshow.Item(Elm.Widget.Item)
 {
+   [[Elementary slideshow class]]
    legacy_prefix: elm_slideshow_item;
    eo_prefix: elm_obj_slideshow_item;
    event_prefix: elm_slideshow_item;
@@ -25,7 +26,7 @@ class Elm.Slideshow.Item(Elm.Widget.Item)
              lower level callbacks for events on that object. Do not delete
              this object under any circumstances.]]
 
-           return: Efl.Canvas.Object;
+           return: Efl.Canvas.Object; [[Real evas object]]
         }
    }
    implements {

@@ -2,6 +2,7 @@ type Elm_Slideshow_Item_Class: __undefined_type; [[Elementary slideshow item cla
 
 class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
+   [[Elementary slideshow class]]
    eo_prefix: elm_obj_slideshow;
    legacy_prefix: elm_slideshow;
    event_prefix: elm_slideshow;
@@ -312,8 +313,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      changed;
-      transition,end;
+      changed; [[Called when slideshow widget changed]]
+      transition,end; [[Called on transition end]]
    }
-
 }
