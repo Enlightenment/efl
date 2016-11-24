@@ -4135,14 +4135,15 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
 static void
 _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc)
 {
-   Eina_Bool borderless, maximized, shadow, focus, bg_solid, menu, unresizable;
+   Eina_Bool borderless, maximized, shadow, focus, bg_solid, menu, unresizable,
+         alpha;
    Eina_Bool changed = EINA_FALSE;
 
    if (!sd->frame_obj)
      {
-        if (sd->type == ELM_WIN_FAKE) return;
-        CRI("no frame object!");
-        abort(); // FIXME remove this
+        if (EINA_LIKELY(sd->type == ELM_WIN_FAKE)) return;
+        CRI("Window has no frame object!");
+        return;
      }
 
    _elm_win_need_frame_adjust(sd, ecore_evas_engine_name_get(sd->ee));
@@ -4155,9 +4156,11 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         sd->csd.need_menu = EINA_FALSE;
      }
 
+   alpha = sd->application_alpha || sd->theme_alpha;
    borderless = sd->csd.need_borderless || (!sd->csd.need) || sd->fullscreen;
    maximized = sd->maximized;
    shadow = sd->csd.need_shadow && (!sd->fullscreen) && (!sd->maximized);
+   if (alpha && borderless) shadow = 0;
    focus = ecore_evas_focus_get(sd->ee);
    bg_solid = sd->csd.need_bg_solid;
    unresizable = sd->csd.need_unresizable;
@@ -5268,6 +5271,7 @@ _efl_ui_win_alpha_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool enabled)
 {
    sd->application_alpha = enabled;
    _elm_win_apply_alpha(obj, sd);
+   _elm_win_frame_style_update(sd, 0, 1);
 }
 
 EOLIAN static Eina_Bool
