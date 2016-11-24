@@ -50,15 +50,31 @@ _efl_loop_fd_reset(Eo *obj, Efl_Loop_Fd_Data *pd)
 {
    int flags = 0;
 
-   if (pd->handler) ecore_main_fd_handler_del(pd->handler);
-   pd->handler = NULL;
-   if (pd->fd < 0) return ;
+   if (pd->fd < 0)
+     {
+        if (pd->handler)
+          {
+             ecore_main_fd_handler_del(pd->handler);
+             pd->handler = NULL;
+          }
+        return;
+     }
    flags |= pd->references.read > 0 ? ECORE_FD_READ : 0;
    flags |= pd->references.write > 0 ? ECORE_FD_WRITE : 0;
    flags |= pd->references.error > 0 ? ECORE_FD_ERROR : 0;
-   if (flags == 0) return ;
+   if (flags == 0)
+     {
+        if (pd->handler)
+          {
+             ecore_main_fd_handler_del(pd->handler);
+             pd->handler = NULL;
+          }
+        return;
+     }
 
-   if (pd->file)
+   if (pd->handler)
+     ecore_main_fd_handler_active_set(pd->handler, flags);
+   else if (pd->file)
      pd->handler = ecore_main_fd_handler_file_add(pd->fd, flags, _efl_loop_fd_read_cb, obj, NULL, NULL);
    else
      pd->handler = ecore_main_fd_handler_add(pd->fd, flags, _efl_loop_fd_read_cb, obj, NULL, NULL);
