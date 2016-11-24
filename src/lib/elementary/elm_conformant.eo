@@ -1,5 +1,6 @@
 class Elm.Conformant (Elm.Layout)
 {
+   [[Elementary conformant class]]
    legacy_prefix: elm_conformant;
    eo_prefix: elm_obj_conformant;
    event_prefix: elm_conformant;
@@ -13,10 +14,9 @@ class Elm.Conformant (Elm.Layout)
       Elm.Layout.content_aliases.get;
    }
    events {
-      virtualkeypad,state,on;
-      virtualkeypad,state,off;
-      clipboard,state,on;
-      clipboard,state,off;
+      virtualkeypad,state,on; [[Called when virtualkeypad was enabled]]
+      virtualkeypad,state,off; [[Called when virtualkeypad was disabled]]
+      clipboard,state,on; [[Called when clipboard was enabled]]
+      clipboard,state,off; [[Called when clipboard was disabled]]
    }
-
 }

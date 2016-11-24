@@ -2,6 +2,7 @@ class Elm.Combobox (Elm.Button, Efl.Ui.Selectable,
                     Elm.Interface.Atspi_Widget_Action,
                     Elm.Entry, Elm.Genlist, Elm.Hover)
 {
+   [[Elementary combobox class]]
    legacy_prefix: elm_combobox;
    eo_prefix: elm_obj_combobox;
    event_prefix: elm_combobox;
@@ -15,7 +16,7 @@ class Elm.Combobox (Elm.Button, Efl.Ui.Selectable,
 
               @since 1.17
             ]]
-            return: bool;
+            return: bool; [[$true if combobox is expenaded, $false otherwise]]
          }
       }
       hover_begin {
@@ -50,11 +51,11 @@ class Elm.Combobox (Elm.Button, Efl.Ui.Selectable,
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      dismissed;
-      expanded;
-      clicked;
-      item,selected;
-      item,pressed;
-      filter,done;
+      dismissed; [[Called when combobox was dismissed]]
+      expanded; [[Called when combobox was expanded]]
+      clicked; [[Called when combobox was clicked]]
+      item,selected; [[Called when combobox item was selected]]
+      item,pressed; [[Called when combobox item was pressed]]
+      filter,done; [[Called when combobox filter was done]]
    }
 }
