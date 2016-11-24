@@ -1,6 +1,7 @@
 class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
                        Efl.Orientation)
 {
+   [[Elementary progressbar class]]
    legacy_prefix: elm_progressbar;
    eo_prefix: elm_obj_progressbar;
    event_prefix: elm_progressbar;
@@ -80,7 +81,6 @@ class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
       Efl.Part.part;
    }
    events {
-      changed;
+      changed; [[Called when progressbar changed]]
    }
-
 }

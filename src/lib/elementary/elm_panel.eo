@@ -11,6 +11,7 @@ enum Elm.Panel.Orient
 class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
                  Elm.Interface.Atspi_Widget_Action)
 {
+   [[Elementary panel class]]
    legacy_prefix: elm_panel;
    eo_prefix: elm_obj_panel;
    event_prefix: elm_panel;
@@ -37,7 +38,7 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
             [[Get the state of the panel.]]
          }
          values {
-            hidden: bool; [[If true, the panel will run the animation to disappear.]]
+            hidden: bool; [[If $true, the panel will run the animation to disappear.]]
          }
       }
       @property scrollable {
@@ -59,7 +60,7 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
             [[Set the size of the scrollable panel.]]
          }
          values {
-            ratio: double;
+            ratio: double; [[Size ratio]]
          }
       }
       toggle {
@@ -86,7 +87,6 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
       Efl.Part.part;
    }
    events {
-      toggled;
+      toggled; [[Called when the hidden state was toggled]]
    }
-
 }

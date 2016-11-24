@@ -204,14 +204,14 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
       Efl.File.file.get;
    }
    events {
-      press;
-      load;
-      loaded;
-      load,detail;
-      loaded,detail;
-      download,start;
-      download,progress;
-      download,done;
-      download,error;
+      press; [[Called when photocam got pressed]]
+      load; [[Called when photocam loading started]]
+      loaded; [[Called when photocam loading finished]]
+      load,detail; [[Called when photocal detail loading started]]
+      loaded,detail; [[Called when photocam detail loading finished]]
+      download,start; [[Called when photocam download started]]
+      download,progress; [[Called when photocam download progress updated]]
+      download,done; [[Called when photocam download finished]]
+      download,error; [[Called when photocam download failed]]
    }
 }

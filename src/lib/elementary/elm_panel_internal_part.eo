@@ -1,5 +1,6 @@
 class Elm.Panel.Internal.Part (Efl.Object, Efl.Container)
 {
+   [[Elementary panel internal part class]]
    data: Elm_Part_Data;
    implements {
       Efl.Object.destructor;

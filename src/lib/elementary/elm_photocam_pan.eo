@@ -1,6 +1,6 @@
 class Elm.Photocam.Pan (Elm.Pan)
 {
-   [[Elementary photocom pan]]
+   [[Elementary photocom pan class]]
    legacy_prefix: elm_photocam_pan;
    eo_prefix: elm_obj_photocam_pan;
    event_prefix: elm_photocam_pan;
@@ -25,5 +25,4 @@ class Elm.Photocam.Pan (Elm.Pan)
       download,done; [[Called when download finished]]
       download,error; [[Called when download failed with an error]]
    }
-
 }
