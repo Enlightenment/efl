@@ -34,8 +34,9 @@ group { name: "elm/border/base/default";
       /* opaque region of the window, to inform the compositor */
       spacer { "elm.spacer.opaque";
          desc {
-            rel1.offset: 0 0;
-            rel2.offset: -1 -1;
+            rel1.to: "top_clip";
+            rel1.offset: 0 -1;
+            rel2.to: "bottom_clip";
          }
          desc { "max"; inherit: "default"; }
       }
