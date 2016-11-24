@@ -40,7 +40,6 @@ _efl_io_stdin_efl_object_finalize(Eo *o, void *pd EINA_UNUSED)
    o = efl_finalize(efl_super(o, MY_CLASS));
    if (!o) return NULL;
 
-   // TODO: only register "read" if "can_read" is being monitored?
    efl_event_callback_add(o, EFL_LOOP_FD_EVENT_READ, _efl_io_stdin_event_read, NULL);
    efl_event_callback_add(o, EFL_LOOP_FD_EVENT_ERROR, _efl_io_stdin_event_error, NULL);
    return o;
@@ -56,6 +55,26 @@ _efl_io_stdin_efl_io_reader_read(Eo *o, void *pd EINA_UNUSED, Eina_Rw_Slice *rw_
      efl_io_reader_can_read_set(o, EINA_FALSE); /* wait Efl.Loop.Fd "read" */
 
    return ret;
+}
+
+EOLIAN static void
+_efl_io_stdin_efl_io_reader_can_read_set(Eo *o, void *pd EINA_UNUSED, Eina_Bool value)
+{
+   Eina_Bool old = efl_io_reader_can_read_get(o);
+   if (old == value) return;
+
+   efl_io_reader_can_read_set(efl_super(o, MY_CLASS), value);
+
+   if (value)
+     {
+        /* stop monitoring the FD, we need to wait the user to read and clear the kernel flag */
+        efl_event_callback_del(o, EFL_LOOP_FD_EVENT_READ, _efl_io_stdin_event_read, NULL);
+     }
+   else
+     {
+        /* kernel flag is clear, resume monitoring the FD */
+        efl_event_callback_add(o, EFL_LOOP_FD_EVENT_READ, _efl_io_stdin_event_read, NULL);
+     }
 }
 
 #include "efl_io_stdin.eo.c"

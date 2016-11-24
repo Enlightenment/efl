@@ -10,5 +10,6 @@ class Efl.Io.Stdout (Efl.Loop.Fd, Efl.Io.Writer.Fd) {
         Efl.Object.finalize;
         Efl.Loop.Fd.fd.set;
         Efl.Io.Writer.write;
+        Efl.Io.Writer.can_write.set;
     }
 }
