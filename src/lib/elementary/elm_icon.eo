@@ -27,5 +27,4 @@ class Elm.Icon (Efl.Ui.Image)
       thumb,done; [[Called when thumb nailing is successfully done]]
       thumb,error; [[Called when thumb nailing failed]]
    }
-
 }

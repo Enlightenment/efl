@@ -3,6 +3,7 @@ import ecore_types;
 
 class Elm.Box (Elm.Widget)
 {
+   [[Elementary box class]]
    legacy_prefix: elm_box;
    eo_prefix: elm_obj_box;
    event_prefix: elm_box;
@@ -139,7 +140,7 @@ class Elm.Box (Elm.Widget)
               You must free this list with eina_list_free() once you are done with it.
 
             ]]
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused;
+            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[List of children]]
          }
       }
       pack_end {
@@ -296,8 +297,7 @@ class Elm.Box (Elm.Widget)
       Elm.Widget.sub_object_del;
    }
    events {
-      child,added;
-      child,removed;
+      child,added; [[Called when child was added]]
+      child,removed; [[Called when child was removed]]
    }
-
 }

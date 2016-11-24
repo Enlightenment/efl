@@ -10,6 +10,7 @@ enum Elm.Label.Slide_Mode
 
 class Elm.Label (Elm.Layout)
 {
+   [[Elementary label class]]
    legacy_prefix: elm_label;
    eo_prefix: elm_obj_label;
    event_prefix: elm_label;
@@ -132,7 +133,6 @@ class Elm.Label (Elm.Layout)
       Elm.Layout.sizing_eval;
    }
    events {
-      slide,end;
+      slide,end; [[Called when slide stopped]]
    }
-
 }

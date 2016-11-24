@@ -1,5 +1,6 @@
 class Elm.Grid (Elm.Widget)
 {
+   [[Elementary grid class]]
    legacy_prefix: elm_grid;
    eo_prefix: elm_obj_grid;
    data: null;
@@ -25,13 +26,13 @@ class Elm.Grid (Elm.Widget)
               It's possible to remove objects from the grid when walking this
               list, but these removals won't be reflected on it.
             ]]
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused;
+            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[List of children]]
          }
       }
       clear {
          [[Faster way to remove all child objects from a grid object.]]
          params {
-            @in clear: bool; [[If true, it will delete just removed children]]
+            @in clear: bool; [[If $true, it will delete just removed children]]
          }
       }
       unpack {
@@ -62,5 +63,4 @@ class Elm.Grid (Elm.Widget)
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
    }
-
 }
