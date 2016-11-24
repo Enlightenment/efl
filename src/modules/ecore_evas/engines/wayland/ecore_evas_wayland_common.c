@@ -555,13 +555,29 @@ _ecore_evas_wl_common_cb_global_added(void *d EINA_UNUSED, int t EINA_UNUSED, vo
 {
    Ecore_Wl2_Event_Global *ev = event;
    Ecore_Evas *ee;
-   Eina_List *l;
+   Eina_List *l, *ll;
+   EE_Wl_Device *device;
 
    if ((!ev->interface) || (strcmp(ev->interface, "wl_seat")))
        return ECORE_CALLBACK_PASS_ON;
 
    EINA_LIST_FOREACH(ee_list, l, ee)
      {
+        Eina_Bool already_present = EINA_FALSE;
+        Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+
+        EINA_LIST_FOREACH(wdata->devices_list, ll, device)
+          {
+             if (device->id == ev->id)
+               {
+                  already_present = EINA_TRUE;
+                  break;
+               }
+          }
+
+        if (already_present)
+          continue;
+
         if (!_ecore_evas_wl_common_seat_add(ee, ev->id))
           break;
      }
