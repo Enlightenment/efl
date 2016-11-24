@@ -3,6 +3,7 @@ class Elm.Hoversel (Elm.Button, Efl.Ui.Selectable,
                     Efl.Ui.Clickable,
                     Elm.Interface.Atspi_Widget_Action)
 {
+   [[Elementary hoversel class]]
    legacy_prefix: elm_hoversel;
    eo_prefix: elm_obj_hoversel;
    event_prefix: elm_hoversel;
@@ -42,7 +43,7 @@ class Elm.Hoversel (Elm.Button, Efl.Ui.Selectable,
       @property items {
          get {
             [[Get the list of items within the given hoversel.]]
-            return: const(list<Elm.Widget.Item>);
+            return: const(list<Elm.Widget.Item>); [[List of items]]
          }
       }
       @property auto_update {
@@ -103,10 +104,9 @@ class Elm.Hoversel (Elm.Button, Efl.Ui.Selectable,
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      dismissed;
-      expanded;
-      item,focused;
-      item,unfocused;
+      dismissed; [[Called when hoversel is dismissed]]
+      expanded; [[Called when hoversel is expanded]]
+      item,focused; [[Called when hoversel item got focus]]
+      item,unfocused; [[Called when hoversel item lost focus]]
    }
-
 }

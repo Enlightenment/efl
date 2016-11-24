@@ -1,5 +1,6 @@
 class Elm.Notify.Internal.Part (Efl.Object, Efl.Container)
 {
+   [[Elementary notification internel part class]]
    data: Elm_Part_Data;
    implements {
       Efl.Object.destructor;

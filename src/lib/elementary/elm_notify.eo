@@ -1,5 +1,6 @@
 class Elm.Notify (Elm.Widget, Efl.Container, Efl.Part)
 {
+   [[Elementary notification class]]
    legacy_prefix: elm_notify;
    eo_prefix: elm_obj_notify;
    event_prefix: elm_notify;
@@ -42,7 +43,7 @@ class Elm.Notify (Elm.Widget, Efl.Container, Efl.Part)
             [[Return true if events are allowed below the notify object.]]
          }
          values {
-            allow: bool; [[true if events are allowed, otherwise false]]
+            allow: bool; [[$true if events are allowed, $false otherwise]]
          }
       }
       @property timeout {
@@ -99,9 +100,8 @@ class Elm.Notify (Elm.Widget, Efl.Container, Efl.Part)
       Efl.Part.part;
    }
    events {
-      block,clicked;
-      timeout;
-      dismissed;
+      block,clicked; [[Called when block was clicked]]
+      timeout; [[Called when notify timed out]]
+      dismissed; [[Called when notify was dismissed]]
    }
-
 }

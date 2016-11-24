@@ -9,6 +9,7 @@ enum Elm.Hover.Axis
 
 class Elm.Hover (Elm.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action)
 {
+   [[Elementary hover class]]
    legacy_prefix: elm_hover;
    eo_prefix: elm_obj_hover;
    event_prefix: elm_hover;
@@ -47,7 +48,7 @@ class Elm.Hover (Elm.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action
 
            See also \@ref elm_object_part_content_set.
          ]]
-         return: string;
+         return: string; [[Swallow location]]
          params {
             @in pref_axis: Elm.Hover.Axis; [[The preferred orientation axis
                                              for the hover object to use]]
@@ -77,8 +78,7 @@ class Elm.Hover (Elm.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action
       Efl.Part.part;
    }
    events {
-      smart,changed;
-      dismissed;
+      smart,changed; [[Called when hover changed]]
+      dismissed; [[Called when hover was dismissed]]
    }
-
 }

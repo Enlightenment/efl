@@ -1,5 +1,6 @@
 class Elm.Hover.Internal.Part (Elm.Layout.Internal.Part)
 {
+   [[elementary hover internal part class]]
    data: null;
    implements {
       Efl.Container.content.set;
