@@ -1,5 +1,6 @@
 class Elm.Plug (Elm.Widget, Efl.Ui.Clickable)
 {
+   [[Elementary plug class]]
    legacy_prefix: elm_plug;
    eo_prefix: elm_obj_plug;
    event_prefix: elm_plug;
@@ -37,8 +38,7 @@ class Elm.Plug (Elm.Widget, Efl.Ui.Clickable)
       Elm.Widget.on_focus;
    }
    events {
-      image,deleted;
-      image,resized; [[ii]]
+      image,deleted; [[Called when image was deleted]]
+      image,resized; [[Called when image was resized]]
    }
-
 }

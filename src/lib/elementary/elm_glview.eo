@@ -82,6 +82,7 @@ enum Elm.GLView.Render.Policy
 
 class Elm.Glview (Elm.Widget, Efl.Gfx.View)
 {
+   [[Elementary GL view class]]
    legacy_prefix: elm_glview;
    eo_prefix: elm_obj_glview;
    event_prefix: elm_glview;
@@ -90,7 +91,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
          [[Constructor with context version number.]]
          legacy: null;
          params {
-            @in version: Evas_GL_Context_Version;
+            @in version: Evas_GL_Context_Version; [[GL context version]]
          }
       }
       @property resize_policy {
@@ -104,7 +105,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
               #ELM_GLVIEW_RESIZE_POLICY_SCALE, however, glview only
               scales the image object and not the underlying GL Surface.
             ]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          values {
             policy: Elm.GLView.Resize.Policy; [[The scaling policy.]]
@@ -122,7 +123,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
               redraws regardless of whether it is visible or needs
               redrawing.
             ]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          values {
             policy: Elm.GLView.Render.Policy; [[The render policy.]]
@@ -137,7 +138,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
               it falls back to rendering to an offscreen buffer before it
               gets composited to the window.
             ]]
-            return: bool;
+            return: bool; [[$true on success, $false otherwise]]
          }
          values {
             mode: Elm.GLView.Mode; [[The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct.]]
@@ -146,7 +147,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
       @property gl_api {
          get {
             [[Get the gl api struct for gl rendering.]]
-            return: ptr(Evas_GL_API);
+            return: ptr(Evas_GL_API); [[GL API]]
          }
       }
       @property evas_gl {
@@ -159,7 +160,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
 
               @since 1.12
             ]]
-            return: ptr(Evas_GL);
+            return: ptr(Evas_GL); [[Evas GL]]
          }
       }
       @property rotation {

@@ -1,6 +1,7 @@
 class Elm.Panes (Elm.Layout, Efl.Orientation,
                  Efl.Ui.Clickable)
 {
+   [[Elementary panes class]]
    legacy_prefix: elm_panes;
    eo_prefix: elm_obj_panes;
    event_prefix: elm_panes;
@@ -74,7 +75,7 @@ class Elm.Panes (Elm.Layout, Efl.Orientation,
          get {
          }
          values {
-            size: double; [[value between 0.0 and 1.0 representing size proportion of minimum size of left side.]]
+            size: double; [[Value between 0.0 and 1.0 representing size proportion of minimum size of left side.]]
          }
       }
       @property content_right_min_relative_size {
@@ -86,7 +87,7 @@ class Elm.Panes (Elm.Layout, Efl.Orientation,
          get {
          }
          values {
-            size: double; [[value between 0.0 and 1.0 representing size proportion of minimum size of right side.]]
+            size: double; [[Value between 0.0 and 1.0 representing size proportion of minimum size of right side.]]
          }
       }
       @property content_left_min_size {
@@ -98,7 +99,7 @@ class Elm.Panes (Elm.Layout, Efl.Orientation,
          get {
          }
          values {
-            size: Evas.Coord; [[value representing minimum size of left side in pixels.]]
+            size: Evas.Coord; [[Value representing minimum size of left side in pixels.]]
          }
       }
       @property content_right_min_size {
@@ -110,7 +111,7 @@ class Elm.Panes (Elm.Layout, Efl.Orientation,
          get {
          }
          values {
-            size: Evas.Coord; [[value representing minimum size of right side in pixels.]]
+            size: Evas.Coord; [[Value representing minimum size of right side in pixels.]]
          }
       }
    }
@@ -125,8 +126,7 @@ class Elm.Panes (Elm.Layout, Efl.Orientation,
       Efl.Orientation.orientation;
    }
    events {
-      press;
-      unpress;
+      press; [[Called when panes got pressed]]
+      unpress; [[Called when panes are no longer pressed]]
    }
-
 }

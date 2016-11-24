@@ -1,42 +1,47 @@
 class Elm.Pan (Efl.Canvas.Group.Clipped)
 {
+   [[Elementary pan class]]
    legacy_prefix: elm_pan;
    eo_prefix: elm_obj_pan;
    event_prefix: elm_pan;
    data: Elm_Pan_Smart_Data;
    methods {
       @property pos {
+      	 [[Position]]
          set {
          }
          get {
          }
          values {
-            x: Evas.Coord;
-            y: Evas.Coord;
+            x: Evas.Coord; [[X coordinate]]
+            y: Evas.Coord; [[Y coordinate]]
          }
       }
       @property content_size {
+      	 [[Content size]]
          get {
          }
          values {
-            w: Evas.Coord;
-            h: Evas.Coord;
+            w: Evas.Coord; [[Width]]
+            h: Evas.Coord; [[Height]]
          }
       }
       @property pos_min {
+      	 [[Minimal position]]
          get {
          }
          values {
-            x: Evas.Coord;
-            y: Evas.Coord;
+            x: Evas.Coord; [[X coordinate]]
+            y: Evas.Coord; [[Y coordinate]]
          }
       }
       @property pos_max {
+      	 [[Maximal position]]
          get {
          }
          values {
-            x: Evas.Coord;
-            y: Evas.Coord;
+            x: Evas.Coord; [[X coordinate]]
+            y: Evas.Coord; [[Y coordinate]]
          }
       }
    }
@@ -50,7 +55,6 @@ class Elm.Pan (Efl.Canvas.Group.Clipped)
       Efl.Canvas.Group.group_del;
    }
    events {
-      changed;
+      changed; [[Called when pan object changed]]
    }
-
 }
