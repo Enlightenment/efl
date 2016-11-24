@@ -139,6 +139,12 @@ _command_send(const char op[static 4], const void *data, unsigned int len)
 }
 
 static void
+_finished_sending(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+{
+   if (!waiting) ecore_main_loop_quit();
+}
+
+static void
 _dialer_eos(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    ecore_main_loop_quit();
@@ -243,7 +249,8 @@ main(int argc, char **argv)
    send_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
                          efl_io_copier_source_set(efl_added, input),
                          efl_io_copier_destination_set(efl_added, dialer),
-                         efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE));
+                         efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                         efl_event_callback_add(efl_added, EFL_IO_COPIER_EVENT_DONE, _finished_sending, NULL));
    if (!send_copier)
      {
         fprintf(stderr, "ERROR: could not create send copier\n");
