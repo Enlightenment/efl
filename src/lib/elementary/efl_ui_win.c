@@ -3613,6 +3613,8 @@ typedef struct _resize_info {
 #ifdef HAVE_ELEMENTARY_X
 #define XDIR(d) , ECORE_X_NETWM_DIRECTION_##d
    Ecore_X_Netwm_Direction x_dir;
+#else
+# define XDIR(d)
 #endif
 } resize_info;
 
