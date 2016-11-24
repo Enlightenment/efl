@@ -173,7 +173,7 @@ typedef struct
 {
    CURL *easy;
    Efl_Net_Dialer_Http_Curlm *cm;
-   Ecore_Fd_Handler *fdhandler;
+   Eo *fdhandler;
    Eina_Stringshare *address_dial;
    Eina_Stringshare *proxy;
    Eina_Stringshare *cookie_jar;
@@ -367,9 +367,6 @@ _efl_net_dialer_http_curlm_timer_schedule(CURLM *multi EINA_UNUSED, long timeout
    return 0;
 }
 
-#if 0
-// it seems the Eo_Loop_Fd isn't working properly when we change connections...
-// as it's still built on top of Ecore_Fd_Handler, then use it directly.
 static void
 _efl_net_dialer_http_curlm_event_fd_read(void *data, const Efl_Event *event)
 {
@@ -377,7 +374,6 @@ _efl_net_dialer_http_curlm_event_fd_read(void *data, const Efl_Event *event)
    SOCKET fd = efl_loop_fd_get(event->object);
    CURLMcode r;
 
-   ERR("XXX socket=" SOCKET_FMT " CURL_CSELECT_IN", fd);
    r = curl_multi_socket_action(cm->multi, fd, CURL_CSELECT_IN, &cm->running);
    if (r != CURLM_OK)
      ERR("socket action CURL_CSELECT_IN fd=" SOCKET_FMT " failed: %s", fd, curl_multi_strerror(r));
@@ -392,7 +388,6 @@ _efl_net_dialer_http_curlm_event_fd_write(void *data, const Efl_Event *event)
    SOCKET fd = efl_loop_fd_get(event->object);
    CURLMcode r;
 
-   ERR("XXX socket=" SOCKET_FMT " CURL_CSELECT_OUT", fd);
    r = curl_multi_socket_action(cm->multi, fd, CURL_CSELECT_OUT, &cm->running);
    if (r != CURLM_OK)
      ERR("socket action CURL_CSELECT_OUT fd=" SOCKET_FMT " failed: %s", fd, curl_multi_strerror(r));
@@ -430,7 +425,8 @@ _efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, vo
           flags = (intptr_t)efl_key_data_get(fdhandler, "curl_flags");
         else
           {
-             pd->fdhandler = fdhandler = efl_add(EFL_LOOP_FD_CLASS, cm->loop);
+             pd->fdhandler = fdhandler = efl_add(EFL_LOOP_FD_CLASS, cm->loop,
+                                                 efl_loop_fd_set(efl_added, fd));
              EINA_SAFETY_ON_NULL_RETURN_VAL(fdhandler, -1);
              curl_multi_assign(cm->multi, fd, fdhandler);
              flags = 0;
@@ -445,108 +441,29 @@ _efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, vo
         is_read = !!(what & CURL_POLL_IN);
         is_write = !!(what & CURL_POLL_OUT);
 
-        ERR("changed flags %#x -> %#x, read: %d/%d, write: %d/%d", flags, what, was_read, is_read, was_write, is_write);
-
         if (was_read && !is_read)
           {
-             //efl_event_callback_del(fdhandler, EFL_LOOP_FD_EVENT_READ, _efl_net_dialer_http_curlm_event_fd_read, cm);
-             ERR("XXX del %d read cb", fd);
+             efl_event_callback_del(fdhandler, EFL_LOOP_FD_EVENT_READ, _efl_net_dialer_http_curlm_event_fd_read, cm);
           }
         else if (!was_read && is_read)
           {
              efl_event_callback_add(fdhandler, EFL_LOOP_FD_EVENT_READ, _efl_net_dialer_http_curlm_event_fd_read, cm);
-             ERR("XXX add %d read cb", fd);
           }
 
         if (was_write && !is_write)
           {
-             //efl_event_callback_del(fdhandler, EFL_LOOP_FD_EVENT_WRITE, _efl_net_dialer_http_curlm_event_fd_write, cm);
-             ERR("XXX del %d write cb", fd);
+             efl_event_callback_del(fdhandler, EFL_LOOP_FD_EVENT_WRITE, _efl_net_dialer_http_curlm_event_fd_write, cm);
           }
         else if (!was_write && is_write)
           {
              efl_event_callback_add(fdhandler, EFL_LOOP_FD_EVENT_WRITE, _efl_net_dialer_http_curlm_event_fd_write, cm);
-             ERR("XXX add %d write cb", fd);
           }
 
         efl_key_data_set(fdhandler, "curl_flags", (void *)(intptr_t)what);
      }
 
-   ERR("XXX finished manage fd=" SOCKET_FMT ", what=%#x, cm=%p, fdhandler=%p", fd, what, cm, fdhandler);
-
    return 0;
 }
-#else
-// XXX BEGIN Legacy FD Handler:
-static Eina_Bool
-_efl_net_dialer_http_curlm_event_fd(void *data, Ecore_Fd_Handler *fdhandler)
-{
-   Efl_Net_Dialer_Http_Curlm *cm = data;
-   SOCKET fd;
-   int flags = 0;
-   CURLMcode r;
-
-   if (ecore_main_fd_handler_active_get(fdhandler, ECORE_FD_READ))
-     flags |= CURL_CSELECT_IN;
-   if (ecore_main_fd_handler_active_get(fdhandler, ECORE_FD_WRITE))
-     flags |= CURL_CSELECT_OUT;
-
-   fd = ecore_main_fd_handler_fd_get(fdhandler);
-   r = curl_multi_socket_action(cm->multi, fd, flags, &cm->running);
-   if (r != CURLM_OK)
-     ERR("socket action %#x fd=" SOCKET_FMT " failed: %s", flags, fd, curl_multi_strerror(r));
-
-   _efl_net_dialer_http_curlm_check(cm);
-
-   return EINA_TRUE;
-}
-
-static int
-_efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, void *cm_data, void *fdhandler_data)
-{
-   Efl_Net_Dialer_Http_Curlm *cm = cm_data;
-   Ecore_Fd_Handler *fdhandler = fdhandler_data;
-   Eo *dialer;
-   Efl_Net_Dialer_Http_Data *pd;
-   char *priv;
-   CURLcode re;
-
-   re = curl_easy_getinfo(e, CURLINFO_PRIVATE, &priv);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(re != CURLE_OK, -1);
-   if (!priv) return -1;
-   dialer = (Eo *)priv;
-   pd = efl_data_scope_get(dialer, MY_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, -1);
-
-   if (what == CURL_POLL_REMOVE)
-     {
-        pd->fdhandler = NULL;
-        ecore_main_fd_handler_del(fdhandler);
-     }
-   else
-     {
-        Ecore_Fd_Handler_Flags flags = 0;
-
-        if (what & CURL_POLL_IN) flags |= ECORE_FD_READ;
-        if (what & CURL_POLL_OUT) flags |= ECORE_FD_WRITE;
-
-        if (fdhandler)
-          ecore_main_fd_handler_active_set(fdhandler, flags);
-        else
-          {
-             pd->fdhandler = fdhandler = ecore_main_fd_handler_add(fd, flags, _efl_net_dialer_http_curlm_event_fd, cm, NULL, NULL);
-             EINA_SAFETY_ON_NULL_RETURN_VAL(fdhandler, -1);
-             curl_multi_assign(cm->multi, fd, fdhandler);
-          }
-     }
-
-   DBG("dialer=%p fdhandler=%p, fd=" SOCKET_FMT ", curl_easy=%p, flags=%#x",
-       dialer, pd->fdhandler, (SOCKET)fd, e, what);
-
-   return 0;
-}
-// XXX END Legacy FD Handler.
-#endif
 
 static Eina_Bool
 _efl_net_dialer_http_curlm_add(Efl_Net_Dialer_Http_Curlm *cm, Eo *o, CURL *handle)
@@ -1716,7 +1633,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    if (pd->fdhandler)
      {
         ERR("dialer=%p fdhandler=%p still alive!", o, pd->fdhandler);
-        ecore_main_fd_handler_del(pd->fdhandler);
+        efl_del(pd->fdhandler);
         pd->fdhandler = NULL;
      }
 
