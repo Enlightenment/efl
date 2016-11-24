@@ -18,7 +18,7 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
       }
       grid_contents_get {
          [[Returns all objects at a given position in this grid.]]
-         return: free(own(iterator<Efl.Gfx>), eina_iterator_free);
+         return: free(own(iterator<Efl.Gfx>), eina_iterator_free); [[Iterator to grid contents]]
          params {
             @in col: int; [[Column number]]
             @in row: int; [[Row number]]
@@ -56,6 +56,7 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
          }
       }
       @property grid_columns {
+      	 [[Gird columns property]]
          set { [[Specifies limit for linear adds - if direction is horizontal]] }
          get {}
          values {
@@ -63,6 +64,7 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
          }
       }
       @property grid_rows {
+      	 [[Grid rows property]]
          set { [[Specifies limit for linear adds - if direction is vertical]] }
          get {}
          values {
