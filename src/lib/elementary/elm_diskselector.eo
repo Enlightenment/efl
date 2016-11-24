@@ -3,6 +3,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
                         Efl.Ui.Clickable, Efl.Ui.Scrollable,
                         Efl.Ui.Selectable)
 {
+   [[Elementary diskselector class]]
    legacy_prefix: elm_diskselector;
    eo_prefix: elm_obj_diskselector;
    event_prefix: elm_diskselector;
@@ -176,7 +177,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
             * elm_diskselector_item_append(disk, "label", ic, NULL, NULL);
             * @endcode
             */
-         return: Elm.Widget.Item;
+         return: Elm.Widget.Item; [[New item]]
          params {
             @in label: string; [[The label of the diskselector item.]]
             @in icon: Efl.Canvas.Object @optional; [[The icon object to use at left side of the item. An
@@ -213,7 +214,4 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
       Elm.Interface_Scrollable.policy;
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
-   events {
-   }
-
 }

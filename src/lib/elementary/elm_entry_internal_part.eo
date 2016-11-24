@@ -1,5 +1,6 @@
 class Elm.Entry.Internal.Part (Elm.Layout.Internal.Part)
 {
+   [[Elementary entry internal part class]]
    data: null;
    implements {
       Efl.Container.content.set;

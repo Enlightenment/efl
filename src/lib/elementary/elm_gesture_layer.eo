@@ -33,6 +33,7 @@ enum Elm.Gesture.State
 
 class Elm.Gesture_Layer (Elm.Widget)
 {
+   [[Elementary gesture layer class]]
    legacy_prefix: elm_gesture_layer;
    eo_prefix: elm_obj_gesture_layer;
    methods {
@@ -80,7 +81,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             [[Get the repeat-events setting.]]
          }
          values {
-            hold_events: bool;
+            hold_events: bool; [[If $true get events only if gesture was not detected, $false otherwise]]
          }
       }
       @property rotate_step {
@@ -159,5 +160,4 @@ class Elm.Gesture_Layer (Elm.Widget)
       Efl.Canvas.Group.group_del;
       Elm.Widget.disable;
    }
-
 }
