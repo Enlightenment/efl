@@ -76,6 +76,8 @@ typedef struct
    unsigned int current;
 } Eo_Current_Callback_Description;
 
+static int _eo_nostep_alloc = -1;
+
 static inline void
 _efl_object_extension_free(Efl_Object_Extension *ext)
 {
@@ -1006,6 +1008,8 @@ _eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description **cb)
    if (length > 1) memmove(cb, cb + 1, (length - 1) * sizeof (Eo_Callback_Description*));
    pd->callbacks_count--;
 
+   if (_eo_nostep_alloc) pd->callbacks = realloc(pd->callbacks, pd->callbacks_count * sizeof (Eo_Callback_Description*));
+
    if (pd->callbacks_count == 0)
      {
         free(pd->callbacks);
@@ -1099,10 +1103,14 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 
 
    // Increase the callbacks storage by 16 entries at a time
-   if ((pd->callbacks_count & 0xF) == 0x0)
+   if (_eo_nostep_alloc == -1) _eo_nostep_alloc = !!getenv("EO_NOSTEP_ALLOC");
+
+   if (_eo_nostep_alloc || (pd->callbacks_count & 0xF) == 0x0)
      {
         Eo_Callback_Description **tmp;
         unsigned int new_len = (pd->callbacks_count | 0xF) + 1;
+
+        if (_eo_nostep_alloc) new_len = pd->callbacks_count + 1;
 
         tmp = realloc(pd->callbacks, new_len * sizeof (Eo_Callback_Description*));
         if (!tmp) return ;
