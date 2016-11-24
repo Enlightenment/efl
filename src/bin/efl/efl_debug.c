@@ -16,150 +16,360 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#define EFL_BETA_API_SUPPORT 1
+#define EFL_EO_API_SUPPORT 1
 #include "efl_debug_common.h"
 
-static unsigned char *buf;
-static unsigned int   buf_size;
+static Eo *dialer;
+static Eo *input;
+static Eo *output;
+static Eo *send_copier;
+static Eo *recv_copier;
 
-static int my_argc;
-static char **my_argv;
-static const char *expect = NULL;
+static Eina_List *waiting;
 
-static Ecore_Con_Server *svr;
+static int retval = EXIT_SUCCESS;
+
+static const char CLST[4] = "CLST";
 
 static void
-_do(char *op, unsigned char *d, int size)
+_process_reply(const char op[static 4], const Eina_Slice payload)
 {
-   if (!strcmp(op, "CLST"))
-     {
-        int i, n;
+#define IS_OP(x) memcmp(op, x, 4) == 0
 
-        n = (size) / sizeof(int);
-        if (n < 10000)
+   if (IS_OP(CLST))
+     {
+        int mypid = getpid();
+        size_t offset;
+
+        waiting = eina_list_remove(waiting, CLST);
+
+        for (offset = 0; offset + sizeof(int) <= payload.len; offset += sizeof(int))
           {
-             int *pids = malloc(n * sizeof(int));
-             if (pids)
-               {
-                  int mypid = getpid();
-                  memcpy(pids, d, n * sizeof(int));
-                  for (i = 0; i < n; i++)
-                    {
-                       if (pids[i] == mypid) continue;
-                       if (pids[i] > 0) printf("%i\n", pids[i]);
-                    }
-                  free(pids);
-               }
+             int p;
+
+             memcpy(&p, payload.bytes + offset, sizeof(int));
+
+             if (p == mypid) continue;
+             if (p > 0) printf("%i\n", p);
           }
      }
-   if ((expect) && (!strcmp(op, expect))) ecore_main_loop_quit();
-}
-
-Eina_Bool
-_server_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Add *ev EINA_UNUSED)
-{
-   int i;
-   for (i = 1; i < my_argc; i++)
+   else
      {
-        if (!strcmp(my_argv[i], "list"))
-          {
-             send_svr(svr, "LIST", NULL, 0);
-             expect = "CLST";
-          }
-        else if ((!strcmp(my_argv[i], "pon")) &&
-                 (i < (my_argc - 2)))
-          {
-             unsigned char tmp[8];
-             int pid = atoi(my_argv[i + 1]);
-             unsigned int freq = atoi(my_argv[i + 2]);
-             i += 2;
-             store_val(tmp, 0, pid);
-             store_val(tmp, 4, freq);
-             send_svr(svr, "PLON", tmp, sizeof(tmp));
-             ecore_main_loop_quit();
-          }
-        else if ((!strcmp(my_argv[i], "poff")) &&
-                 (i < (my_argc - 1)))
-          {
-             unsigned char tmp[4];
-             int pid = atoi(my_argv[i + 1]);
-             i++;
-             store_val(tmp, 0, pid);
-             send_svr(svr, "PLOF", tmp, sizeof(tmp));
-             ecore_main_loop_quit();
-          }
-        else if ((!strcmp(my_argv[i], "evlogon")) &&
-                 (i < (my_argc - 1)))
-          {
-             unsigned char tmp[4];
-             int pid = atoi(my_argv[i + 1]);
-             i++;
-             store_val(tmp, 0, pid);
-             send_svr(svr, "EVON", tmp, sizeof(tmp));
-             ecore_main_loop_quit();
-          }
-        else if ((!strcmp(my_argv[i], "evlogoff")) &&
-                 (i < (my_argc - 1)))
-          {
-             unsigned char tmp[4];
-             int pid = atoi(my_argv[i + 1]);
-             i++;
-             store_val(tmp, 0, pid);
-             send_svr(svr, "EVOF", tmp, sizeof(tmp));
-             ecore_main_loop_quit();
-          }
+        fprintf(stderr, "ERROR: unexpected server reply: %.4s\n", op);
+        retval = EXIT_FAILURE;
      }
-   return ECORE_CALLBACK_RENEW;
+
+   if (!waiting) ecore_main_loop_quit();
+
+#undef IS_OP
 }
 
-Eina_Bool
-_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Del *ev EINA_UNUSED)
+static void
+_on_data(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   ecore_main_loop_quit();
-   return ECORE_CALLBACK_RENEW;
+   Eina_Slice slice, payload;
+   Efl_Debug_Message_Header msgheader;
+
+   if (!efl_io_queue_slice_get(output, &slice))
+     return;
+
+   if (slice.len < sizeof(msgheader))
+     return;
+
+   memcpy(&msgheader, slice.mem, sizeof(msgheader));
+   if (msgheader.size < 4) /* must contain at last 4 byte opcode */
+     {
+        fprintf(stderr, "ERROR: invalid message header, size=%u\n", msgheader.size);
+        retval = EXIT_FAILURE;
+        ecore_main_loop_quit();
+        return;
+     }
+
+   if (msgheader.size + 4 > slice.len)
+     return;
+
+   payload.bytes = slice.bytes + sizeof(msgheader);
+   payload.len = msgheader.size - 4;
+
+   _process_reply(msgheader.op, payload);
+
+   efl_io_queue_discard(output, sizeof(msgheader) + payload.len);
 }
 
 static Eina_Bool
-_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Data *ev)
+_command_send(const char op[static 4], const void *data, unsigned int len)
 {
-   char op[5];
-   unsigned char *d = NULL;
-   int size;
+   Eina_Error err;
+   Efl_Debug_Message_Header msghdr = {
+     .size = 4 + len,
+   };
+   Eina_Slice s, r;
 
-   _protocol_collect(&(buf), &(buf_size), ev->data, ev->size);
-   while ((size = _proto_read(&(buf), &(buf_size), op, &d)) >= 0)
+   memcpy(msghdr.op, op, 4);
+
+   s.mem = &msghdr;
+   s.len = sizeof(msghdr);
+
+   err = efl_io_writer_write(input, &s, &r);
+   if (err || r.len) goto end;
+
+   if (!len) goto end;
+
+   s.mem = data;
+   s.len = len;
+   err = efl_io_writer_write(input, &s, &r);
+
+ end:
+   if (err)
      {
-        _do(op, d, size);
-        free(d);
-        d = NULL;
+        fprintf(stderr, "ERROR: could not queue message '%.4s': %s\n", op, eina_error_msg_get(err));
+        retval = EXIT_FAILURE;
+        return EINA_FALSE;
      }
-   return ECORE_CALLBACK_RENEW;
+
+   if (r.len)
+     {
+        fprintf(stderr, "ERROR: could not queue message '%.4s': out of memory\n", op);
+        retval = EXIT_FAILURE;
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static void
+_dialer_eos(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+}
+
+static void
+_dialer_error(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Eina_Error *perr = event->info;
+
+   fprintf(stderr, "ERROR: error communicating to %s: %s\n",
+           efl_net_dialer_address_dial_get(dialer),
+           eina_error_msg_get(*perr));
+   retval = EINA_TRUE;
+   ecore_main_loop_quit();
 }
 
 int
 main(int argc, char **argv)
 {
+   Eo *loop;
+   char *path;
+   Eina_Error err;
+   int i;
+
+   if (argc < 2)
+     {
+        fprintf(stderr, "ERROR: missing argument.\n");
+        return EXIT_FAILURE;
+     }
+   for (i = 1; i < argc; i++)
+     {
+        if ((strcmp(argv[i], "-h") != 0) &&
+            (strcmp(argv[i], "--help") != 0))
+          continue;
+
+        printf("Usage:\n"
+               "\n"
+               "\t%s <command> [arguments]\n"
+               "\n"
+               "where <command> is one of:\n"
+               "\tlist               list connected process (pid)\n"
+               "\tpon <pid> <freq>   enable profiling for <pid> at frequency <freq> in microseconds.\n"
+               "\tpoff <pid>         disable profiling for <pid>\n"
+               "\tevlogon <pid>      start logging events to ~/efl_debug_evlog-<pid>.log\n"
+               "\tevlogoff <pid>     stop logging events from <pid>\n",
+               argv[0]);
+
+        return EXIT_SUCCESS;
+     }
+
+   ecore_app_no_system_modules();
+
    eina_init();
    ecore_init();
    ecore_con_init();
 
-   my_argc = argc;
-   my_argv = argv;
-
-   svr = ecore_con_server_connect(ECORE_CON_LOCAL_USER, "efl_debug", 0, NULL);
-   if (!svr)
+   path = ecore_con_local_path_new(EINA_FALSE, "efl_debug", 0);
+   if (!path)
      {
-        fprintf(stderr, "ERROR: Cannot connect to debug daemon.\n");
-        return -1;
+        fprintf(stderr, "ERROR: could not get local communication path\n");
+        retval = EXIT_FAILURE;
+        goto end;
      }
 
-   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, (Ecore_Event_Handler_Cb)_server_add, NULL);
-   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL, (Ecore_Event_Handler_Cb)_server_del, NULL);
-   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA, (Ecore_Event_Handler_Cb)_server_data, NULL);
+   loop = ecore_main_loop_get();
+
+#ifdef EFL_NET_DIALER_UNIX_CLASS
+   dialer = efl_add(EFL_NET_DIALER_UNIX_CLASS, loop);
+#else
+   /* TODO: maybe start a TCP using locahost:12345?
+    * Right now eina_debug_monitor is only for AF_UNIX, so not an issue.
+    */
+   fprintf(stderr, "ERROR: your platform doesn't support Efl.Net.Dialer.Unix\n");
+#endif
+   if (!dialer)
+     {
+        fprintf(stderr, "ERROR: could not create communication dialer\n");
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+   efl_event_callback_add(dialer, EFL_NET_DIALER_EVENT_ERROR, _dialer_error, NULL);
+   efl_event_callback_add(dialer, EFL_IO_READER_EVENT_EOS, _dialer_eos, NULL);
+
+   input = efl_add(EFL_IO_QUEUE_CLASS, loop);
+   if (!input)
+     {
+        fprintf(stderr, "ERROR: could not create input queue\n");
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
+   output = efl_add(EFL_IO_QUEUE_CLASS, loop,
+                    efl_event_callback_add(efl_added, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, _on_data, NULL));
+   if (!output)
+     {
+        fprintf(stderr, "ERROR: could not create output queue\n");
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
+   send_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
+                         efl_io_copier_source_set(efl_added, input),
+                         efl_io_copier_destination_set(efl_added, dialer),
+                         efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE));
+   if (!send_copier)
+     {
+        fprintf(stderr, "ERROR: could not create send copier\n");
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
+   recv_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
+                         efl_io_copier_source_set(efl_added, dialer),
+                         efl_io_copier_destination_set(efl_added, output),
+                         efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE));
+   if (!recv_copier)
+     {
+        fprintf(stderr, "ERROR: could not create receive copier\n");
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
+   for (i = 1; i < argc; i++)
+     {
+        const char *cmd = argv[i];
+
+        if (strcmp(cmd, "list") == 0)
+          {
+             if (!_command_send("LIST", NULL, 0))
+               goto end;
+             waiting = eina_list_append(waiting, CLST);
+          }
+        else if (strcmp(cmd, "pon") == 0)
+          {
+             if (i + 2 >= argc)
+               {
+                  fprintf(stderr, "ERROR: missing argument: pon <pid> <freq>\n");
+                  retval = EXIT_FAILURE;
+                  goto end;
+               }
+             else
+               {
+                  int data[2] = {atoi(argv[i + 1]), atoi(argv[1 + 2])};
+                  if (!_command_send("PLON", data, sizeof(data)))
+                    goto end;
+                  i += 2;
+               }
+          }
+        else if (strcmp(cmd, "poff") == 0)
+          {
+             if (i + 1 >= argc)
+               {
+                  fprintf(stderr, "ERROR: missing argument: poff <pid>\n");
+                  retval = EXIT_FAILURE;
+                  goto end;
+               }
+             else
+               {
+                  int data[1] = {atoi(argv[i + 1])};
+                  if (!_command_send("PLOFF", data, sizeof(data)))
+                    goto end;
+                  i++;
+               }
+          }
+        else if (strcmp(cmd, "evlogon") == 0)
+          {
+             if (i + 1 >= argc)
+               {
+                  fprintf(stderr, "ERROR: missing argument: evlogon <pid>\n");
+                  retval = EXIT_FAILURE;
+                  goto end;
+               }
+             else
+               {
+                  int data[1] = {atoi(argv[i + 1])};
+                  if (!_command_send("EVON", data, sizeof(data)))
+                    goto end;
+                  i++;
+               }
+          }
+        else if (strcmp(cmd, "evlogoff") == 0)
+          {
+             if (i + 1 >= argc)
+               {
+                  fprintf(stderr, "ERROR: missing argument: evlogoff <pid>\n");
+                  retval = EXIT_FAILURE;
+                  goto end;
+               }
+             else
+               {
+                  int data[1] = {atoi(argv[i + 1])};
+                  if (!_command_send("EVOF", data, sizeof(data)))
+                    goto end;
+                  i++;
+               }
+          }
+        else
+          {
+             fprintf(stderr, "ERROR: unknown command: %s\n", argv[i]);
+             retval = EXIT_FAILURE;
+             goto end;
+          }
+     }
+   efl_io_queue_eos_mark(input);
+
+   err = efl_net_dialer_dial(dialer, path);
+   if (err)
+     {
+        fprintf(stderr, "ERROR: could not connect '%s': %s\n", path, eina_error_msg_get(err));
+        retval = EXIT_FAILURE;
+        goto end;
+     }
 
    ecore_main_loop_begin();
-   ecore_con_server_flush(svr);
+
+   while ((!efl_io_closer_closed_get(dialer)) &&
+          efl_io_queue_usage_get(input))
+     efl_io_copier_flush(send_copier);
+
+ end:
+   eina_list_free(waiting);
+   efl_del(input);
+   efl_del(output);
+   efl_del(dialer);
+   efl_del(send_copier);
+   efl_del(recv_copier);
+   free(path);
 
    ecore_con_shutdown();
    ecore_shutdown();
    eina_shutdown();
+   return retval;
 }
