@@ -130,17 +130,17 @@ _check_fd_event_catcher_del(void *data, const Efl_Event *event)
      {
         if (array[i].desc == EFL_LOOP_FD_EVENT_READ)
           {
-             if (fd->references.read-- > 0) continue;
+             if (fd->references.read-- > 1) continue;
              _efl_loop_fd_reset(event->object, fd);
           }
         else if (array[i].desc == EFL_LOOP_FD_EVENT_WRITE)
           {
-             if (fd->references.write-- > 0) continue;
+             if (fd->references.write-- > 1) continue;
              _efl_loop_fd_reset(event->object, fd);
           }
         if (array[i].desc == EFL_LOOP_FD_EVENT_ERROR)
           {
-             if (fd->references.error-- > 0) continue;
+             if (fd->references.error-- > 1) continue;
              _efl_loop_fd_reset(event->object, fd);
           }
      }
