@@ -30,6 +30,7 @@ typedef struct _Efl_Net_Server_Fd_Data
    unsigned int clients_count;
    unsigned int clients_limit;
    Eina_Bool clients_reject_excess;
+   Eina_Bool waiting_accept;
    Eina_Bool serving;
    Eina_Bool close_on_exec;
    Eina_Bool reuse_address;
@@ -82,12 +83,12 @@ _efl_net_server_fd_event_error(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 EOLIAN static Efl_Object *
-_efl_net_server_fd_efl_object_finalize(Eo *o, Efl_Net_Server_Fd_Data *pd EINA_UNUSED)
+_efl_net_server_fd_efl_object_finalize(Eo *o, Efl_Net_Server_Fd_Data *pd)
 {
    o = efl_finalize(efl_super(o, MY_CLASS));
    if (!o) return NULL;
 
-   // TODO: only register "read" if "can_read" is being monitored?
+   pd->waiting_accept = EINA_TRUE;
    efl_event_callback_add(o, EFL_LOOP_FD_EVENT_READ, _efl_net_server_fd_event_read, NULL);
    efl_event_callback_add(o, EFL_LOOP_FD_EVENT_ERROR, _efl_net_server_fd_event_error, NULL);
    return o;
@@ -164,6 +165,14 @@ EOLIAN static void
 _efl_net_server_fd_efl_net_server_clients_count_set(Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd, unsigned int count)
 {
    pd->clients_count = count;
+   if ((pd->clients_limit == 0) || (pd->clients_limit > count))
+     {
+        if (!pd->waiting_accept)
+          {
+             pd->waiting_accept = EINA_TRUE;
+             efl_event_callback_add(o, EFL_LOOP_FD_EVENT_READ, _efl_net_server_fd_event_read, NULL);
+          }
+     }
 }
 
 EOLIAN static void
@@ -449,7 +458,11 @@ _efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Server_Fd_Data *pd)
      {
         if (!pd->clients_reject_excess)
           {
-             // TODO: disconnect 'read' so stops calling?
+             if (pd->waiting_accept)
+               {
+                  pd->waiting_accept = EINA_FALSE;
+                  efl_event_callback_del(o, EFL_LOOP_FD_EVENT_READ, _efl_net_server_fd_event_read, NULL);
+               }
              return;
           }
         do_reject = EINA_TRUE;
