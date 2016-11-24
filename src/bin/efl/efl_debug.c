@@ -40,9 +40,11 @@ _do(char *op, unsigned char *d, int size)
              int *pids = malloc(n * sizeof(int));
              if (pids)
                {
+                  int mypid = getpid();
                   memcpy(pids, d, n * sizeof(int));
                   for (i = 0; i < n; i++)
                     {
+                       if (pids[i] == mypid) continue;
                        if (pids[i] > 0) printf("%i\n", pids[i]);
                     }
                   free(pids);
