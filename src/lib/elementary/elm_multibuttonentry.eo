@@ -3,6 +3,7 @@ type Elm_Multibuttonentry_Format_Cb: __undefined_type; [[Elementary multibuttone
 
 class Elm.Multibuttonentry (Elm.Layout)
 {
+   [[Elementary multibuttonentry class]]
    legacy_prefix: elm_multibuttonentry;
    eo_prefix: elm_obj_multibuttonentry;
    event_prefix: elm_multibuttonentry;
@@ -29,7 +30,8 @@ class Elm.Multibuttonentry (Elm.Layout)
          get {
          }
          values {
-            expanded: bool; [[the value of expanded state.  Set this to $true for expanded state.  Set this to false for single line state.]]
+            expanded: bool; [[The value of expanded state. Set this to $true for expanded state. Set
+            		     this to $false for single line state.]]
          }
       }
       @property format_function {
@@ -42,8 +44,8 @@ class Elm.Multibuttonentry (Elm.Layout)
               @since 1.9]]
          }
          values {
-            format_function: Elm_Multibuttonentry_Format_Cb @nullable; [[format_function The actual format function]]
-            data: const(void_ptr) @optional; [[data User data to passed to $format_function]]
+            format_function: Elm_Multibuttonentry_Format_Cb @nullable; [[Format_function The actual format function]]
+            data: const(void_ptr) @optional; [[Data User data to passed to $format_function]]
          }
       }
       @property items {
@@ -193,14 +195,13 @@ class Elm.Multibuttonentry (Elm.Layout)
       Elm.Interface.Atspi_Accessible.children.get;
    }
    events {
-      item,selected;
-      item,added;
-      item,deleted;
-      item,clicked;
-      item,longpressed;
-      expanded;
-      contracted;
-      expand,state,changed;
+      item,selected; [[Called when item was selected]]
+      item,added; [[Called when item was added]]
+      item,deleted; [[Called when item was deleted]]
+      item,clicked; [[Called when item was clicked]]
+      item,longpressed; [[Called when item got a longpress]]
+      expanded; [[Called when expanded]]
+      contracted; [[Called when contracted]]
+      expand,state,changed; [[Called when expanded state changed]]
    }
-
 }
