@@ -108,6 +108,8 @@ _key_action_move(Evas_Object *obj, const char *params)
    Evas_Coord f_y = 0;
    Evas_Coord f_w = 0;
    Evas_Coord f_h = 0;
+   Evas_Coord pagesize_h = 0, pagesize_v = 0;
+   Evas_Coord pagenumber_h = 0, pagenumber_v = 0;
 
    elm_interface_scrollable_content_pos_get(obj, &x, &y);
    elm_interface_scrollable_step_size_get(obj, &step_x, &step_y);
@@ -190,25 +192,52 @@ _key_action_move(Evas_Object *obj, const char *params)
 
    eina_list_free(can_focus_list);
 
+   elm_interface_scrollable_paging_get(obj, NULL, NULL, &pagesize_h, &pagesize_v);
+   elm_interface_scrollable_current_page_get(obj, &pagenumber_h, &pagenumber_v);
+
    if (!strcmp(dir, "left"))
      {
         if ((x <= 0) && (!sd->loop_h)) return EINA_FALSE;
-        x -= step_x;
+        if (pagesize_h)
+          {
+             elm_interface_scrollable_page_bring_in(obj, pagenumber_h - 1, pagenumber_v);
+             return EINA_TRUE;
+          }
+        else
+          x -= step_x;
      }
    else if (!strcmp(dir, "right"))
      {
         if ((x >= (max_x - v_w)) && (!sd->loop_h)) return EINA_FALSE;
-        x += step_x;
+        if (pagesize_h)
+          {
+             elm_interface_scrollable_page_bring_in(obj, pagenumber_h + 1, pagenumber_v);
+             return EINA_TRUE;
+          }
+        else
+          x += step_x;
      }
    else if (!strcmp(dir, "up"))
      {
         if ((y <= 0) && (!sd->loop_v)) return EINA_FALSE;
-        y -= step_y;
+        if (pagesize_v)
+          {
+             elm_interface_scrollable_page_bring_in(obj, pagenumber_h, pagenumber_v - 1);
+             return EINA_TRUE;
+          }
+        else
+          y -= step_y;
      }
    else if (!strcmp(dir, "down"))
      {
         if ((y >= (max_y - v_h)) && (!sd->loop_v)) return EINA_FALSE;
-        y += step_y;
+        if (pagesize_v)
+          {
+             elm_interface_scrollable_page_bring_in(obj, pagenumber_h, pagenumber_v + 1);
+             return EINA_TRUE;
+          }
+        else
+          y += step_y;
      }
    else if (!strcmp(dir, "first"))
      {
@@ -220,17 +249,33 @@ _key_action_move(Evas_Object *obj, const char *params)
      }
    else if (!strcmp(dir, "prior"))
      {
-        if (page_y < 0)
-          y -= -(page_y * v_h) / 100;
+        if (pagesize_v)
+          {
+             elm_interface_scrollable_page_bring_in(obj, pagenumber_h, pagenumber_v - 1);
+             return EINA_TRUE;
+          }
         else
-          y -= page_y;
+          {
+             if (page_y < 0)
+               y -= -(page_y * v_h) / 100;
+             else
+               y -= page_y;
+          }
      }
    else if (!strcmp(dir, "next"))
      {
-        if (page_y < 0)
-          y += -(page_y * v_h) / 100;
+        if (pagesize_v)
+          {
+             elm_interface_scrollable_page_bring_in(obj, pagenumber_h, pagenumber_v + 1);
+             return EINA_TRUE;
+          }
         else
-          y += page_y;
+          {
+             if (page_y < 0)
+               y += -(page_y * v_h) / 100;
+             else
+               y += page_y;
+          }
      }
    else return EINA_FALSE;
 
