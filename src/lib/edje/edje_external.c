@@ -124,7 +124,7 @@ _edje_object_part_external_param_type_get(Eo *obj, Edje *ed, const char *part, c
    Edje_External_Type *type;
    Edje_External_Param_Info *info;
 
-   if ((!ed) || (!part)) return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+   if ((!ed) || (!part) || (!param)) return EDJE_EXTERNAL_PARAM_TYPE_MAX;
 
    rp = _edje_real_part_recursive_get(&ed, (char *)part);
    if (!rp)
@@ -147,7 +147,7 @@ _edje_object_part_external_param_type_get(Eo *obj, Edje *ed, const char *part, c
         return EDJE_EXTERNAL_PARAM_TYPE_MAX;
      }
    for (info = type->parameters_info; info->name; info++)
-     if (strcmp(info->name, param) == 0) return info->type; ;
+     if (strcmp(info->name, param) == 0) return info->type;
 
    ERR("no parameter '%s' external type '%s'", param, type->module_name);
 
