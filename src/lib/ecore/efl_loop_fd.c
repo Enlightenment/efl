@@ -97,6 +97,7 @@ _check_fd_event_catcher_add(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
    Efl_Loop_Fd_Data *fd = data;
+   Eina_Bool need_reset = EINA_FALSE;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
@@ -104,19 +105,22 @@ _check_fd_event_catcher_add(void *data, const Efl_Event *event)
         if (array[i].desc == EFL_LOOP_FD_EVENT_READ)
           {
              if (fd->references.read++ > 0) continue;
-             _efl_loop_fd_reset(event->object, fd);
+             need_reset = EINA_TRUE;
           }
         else if (array[i].desc == EFL_LOOP_FD_EVENT_WRITE)
           {
              if (fd->references.write++ > 0) continue;
-             _efl_loop_fd_reset(event->object, fd);
+             need_reset = EINA_TRUE;
           }
         if (array[i].desc == EFL_LOOP_FD_EVENT_ERROR)
           {
              if (fd->references.error++ > 0) continue;
-             _efl_loop_fd_reset(event->object, fd);
+             need_reset = EINA_TRUE;
           }
      }
+
+   if (need_reset)
+     _efl_loop_fd_reset(event->object, fd);
 }
 
 static void
@@ -124,6 +128,7 @@ _check_fd_event_catcher_del(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
    Efl_Loop_Fd_Data *fd = data;
+   Eina_Bool need_reset = EINA_FALSE;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
@@ -131,19 +136,22 @@ _check_fd_event_catcher_del(void *data, const Efl_Event *event)
         if (array[i].desc == EFL_LOOP_FD_EVENT_READ)
           {
              if (fd->references.read-- > 1) continue;
-             _efl_loop_fd_reset(event->object, fd);
+             need_reset = EINA_TRUE;
           }
         else if (array[i].desc == EFL_LOOP_FD_EVENT_WRITE)
           {
              if (fd->references.write-- > 1) continue;
-             _efl_loop_fd_reset(event->object, fd);
+             need_reset = EINA_TRUE;
           }
         if (array[i].desc == EFL_LOOP_FD_EVENT_ERROR)
           {
              if (fd->references.error-- > 1) continue;
-             _efl_loop_fd_reset(event->object, fd);
+             need_reset = EINA_TRUE;
           }
      }
+
+   if (need_reset)
+     _efl_loop_fd_reset(event->object, fd);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(fd_watch,
