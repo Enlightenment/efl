@@ -758,7 +758,7 @@ _efl_gfx_t_for_arc_angle(double angle)
    if (angle < 0.00001) return 0;
    if (angle == 90.0) return 1;
 
-   //FIXME: radians??
+   radians = (angle/180) * M_PI;
 
    cos_angle = cos(radians);
    sin_angle = sin(radians);
