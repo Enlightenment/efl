@@ -41,6 +41,8 @@ _ecore_factorized_idle_process(void *data, const Efl_Event *event EINA_UNUSED)
      _ecore_factorized_idle_del(idler);
 }
 
+static Eina_Mempool *idler_mp = NULL;
+
 void *
 _ecore_factorized_idle_del(Ecore_Idler *idler)
 {
@@ -58,7 +60,7 @@ _ecore_factorized_idle_del(Ecore_Idler *idler)
    efl_event_callback_array_del(_mainloop_singleton, idler->desc, idler);
 
    data = idler->data;
-   free(idler);
+   eina_mempool_free(idler_mp, idler);
    return data;
 }
 
@@ -80,7 +82,13 @@ _ecore_factorized_idle_add(const Efl_Callback_Array_Item *desc,
         return NULL;
      }
 
-   ret = malloc(sizeof (Ecore_Idler));
+   if (!idler_mp)
+     {
+        idler_mp = eina_mempool_add("chained_mempool", "Ecore_Idle*", NULL, sizeof (Ecore_Factorized_Idle), 23);
+        if (!idler_mp) return NULL;
+     }
+
+   ret = eina_mempool_malloc(idler_mp, sizeof (Ecore_Factorized_Idle));
    if (!ret) return NULL;
 
    ret->func = func;
