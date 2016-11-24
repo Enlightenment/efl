@@ -1,5 +1,6 @@
 class Elm.Separator (Elm.Layout, Efl.Orientation)
 {
+   [[Elementary separator class]]
    legacy_prefix: elm_separator;
    eo_prefix: elm_obj_separator;
    implements {
@@ -12,5 +13,4 @@ class Elm.Separator (Elm.Layout, Efl.Orientation)
       Efl.Orientation.orientation;
       Elm.Layout.sizing_eval;
    }
-
 }

@@ -1,5 +1,6 @@
 class Elm.View.Form (Efl.Object)
 {
+    [[Elementary view form class]]
     methods {
         model_set {
              [[Set model
