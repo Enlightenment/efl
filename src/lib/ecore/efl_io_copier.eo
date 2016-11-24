@@ -12,6 +12,47 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
       the behavior changes to wait for such delimiter or a maximum
       buffer limit is reached (@.buffer_limit).
 
+      While a @.source is mandatory for the copier to operate
+      properly, the @.destination is optional: if it's not provided,
+      all read data is stored in an internal buffer that can be
+      retrieved using @.binbuf_steal, usually called when one of
+      "data", "line" or "done" events are emitted.
+
+      Most important events:
+
+        - The "data" event is general and notifies some data was
+          written to @.destination (if any, otherwise it will be
+          reported for data when it's read from @.source).
+
+        - The "line" event is only emitted when @.line_delimiter is
+          set and not empty. It's simiar to "data".
+
+        - The "done" event is emitted if @.source is
+          @Efl.Io.Reader.eos $true and all data was written to
+          @.destination (if any, otherwise it will be reported when
+          all data was read from @.source).
+
+        - The "error" event is reported if the @Efl.Io.Reader.read,
+          @Efl.Io.Writer.write or some other internal error happened,
+          like out of memory. Another common error is ETIMEDOUT if
+          @.inactivity_timeout is set.
+
+      A copier is handful to simplify common I/O use cases, such as:
+
+        - Read a file or download content to memory: provide only the
+          source and wait for "done" event, calling @.binbuf_steal
+          afterwards.
+
+        - Download content to disk: provide a network socket as source
+          and use @Efl.Io.File as destination, then wait for "done"
+          event.
+
+        - Link two I/O streams: provide both source and destination
+          streams, such as @Efl.Io.Stdin and @Efl.Io.Stdout, or some
+          network socket. As data is received from source it will be
+          copied to destination in an endless (asynchronous) loop. You
+          may monitor for "done" if the source may be closed.
+
       If @Efl.Io.Closer.close is called, then it will be called on
       @.source and @.destination if they implement those interfaces.
 
@@ -24,26 +65,123 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
 
     methods {
         @property source {
-           [[Copier source property]]
+           [[Copier source object.
+
+             The source object must implement the @Efl.Io.Reader
+             interface and will provide data to the copier, thus it
+             must be provided in order for the copier to work.
+
+             The copier will monitor @Efl.Io.Reader.can_read property
+             and "can_read,changed" event. When it's $true, then a
+             chunk up to @.read_chunk_size is read using
+             @Efl.Io.Reader.read into an intermediate storage buffer
+             that can grow up to @.buffer_limit.
+
+             If there is a @.destination, the read data is written
+             there and afterwards "data" and "line" events are
+             dispatched. If no destination, it's accumulated in the
+             internal storage and "data" and "line" events are
+             dispatched immediately.
+
+             If there is a @.line_delimiter set, then copier will use
+             that in order to attempt to write a full line at a time,
+             including the delimiter. Exceptions may be if the
+             @.source object emitted "eos" and there is no trailing
+             delimiter (ie: missing trailing newline in files), or the
+             @.buffer_limit was reached.
+
+             Once @Efl.Io.Reader.eos is $true or "eos" event happen,
+             then the read process is over. If there is no
+             @.destination set, then the process is over and "done"
+             event is called. If there is a @.destination, then all
+             data must be flushed to it, draining the internal
+             intermediate storage, before "done" event is emitted.
+
+             If the source object implements @Efl.Io.Sizer interface,
+             then the @.progress will report the total size. If the
+             destination object also implements @Efl.Io.Sizer, then it
+             will be resized to match the source size, providing the
+             hint that may enhance performance (like pre-allocating
+             the total amount and avoid dynamic resize).
+
+             If the source object implements @Efl.Io.Closer and it's
+             not closed, it will be closed when the copier itself
+             is. This may happen, for example, when the copier is
+             deleted and @Efl.Io.Closer.close_on_destructor is $true
+             (the default).
+
+             Common source classes are @Efl.Io.Buffer (if fixed data
+             exists in memory), @Efl.Io.Queue (used to stream
+             in-memory data) and @Efl.Io.File (data is present in the
+             file system). Networking classes are also common source
+             objects.
+           ]]
            get {
            }
            set {
                 [[Constructor-only property to set where to read data from]]
            }
            values {
-                source: Efl.Io.Reader; [[Reader source]]
+                source: Efl.Io.Reader; [[@Efl.Io.Reader source]]
            }
         }
 
         @property destination {
-           [[Copier destination property]]
+           [[Copier destination object.
+
+             If set it must implement @Efl.Io.Writer interface and
+             will receive read data once @Efl.Io.Writer.can_write
+             reports $true, this is monitored using
+             "can_write,changed" event.
+
+             The copier will attempt to write all internal
+             intermediate storage data at once, however the
+             destination object may consume less. The actual data
+             written is emitted in the "data" and "line" events.
+
+             If there is a @.line_delimiter set, then copier will use
+             that in order to attempt to write a full line at a time,
+             including the delimiter. Exceptions may be if the
+             @.source object emitted "eos" and there is no trailing
+             delimiter (ie: missing trailing newline in files), or the
+             @.buffer_limit was reached.
+
+             If @.source is flagged "eos" and all data was written to
+             destination, then "done" event is emitted.
+
+             If destination is not set (ie: NULL), then data is kept
+             in a internal @Eina.Binbuf, that can be stolen with
+             @.binbuf_steal once "data" or "line" events are
+             emitted. It is allowed as a shortcut to easily drain
+             readers and store all data in memory, not requiring an
+             @Efl.Io.Buffer or @Efl.Io.Copier to be used -- a source
+             and a copier are enough.
+
+             If both source and destination object implements
+             @Efl.Io.Sizer, then destination will be resized to match
+             the source size, providing the hint that may enhance
+             performance (like pre-allocating the total amount and
+             avoid dynamic resize).
+
+             If the destination object implements @Efl.Io.Closer and it's
+             not closed, it will be closed when the copier itself
+             is. This may happen, for example, when the copier is
+             deleted and @Efl.Io.Closer.close_on_destructor is $true
+             (the default).
+
+             Common destination classes are @Efl.Io.Buffer (better to
+             wait for all data in memory), @Efl.Io.Queue (to handle
+             streaming protocols) and @Efl.Io.File (stores data to
+             disk). Networking classes are also common destination
+             objects.
+           ]]
            get {
            }
            set {
                 [[Constructor-only property to set where to write data to]]
            }
            values {
-                destination: Efl.Io.Writer; [[Writer destination]]
+                destination: Efl.Io.Writer; [[@Efl.Io.Writer destination]]
            }
         }
 
@@ -59,7 +197,28 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
         }
 
         @property buffer_limit {
-           [[Copier buffer limit property]]
+           [[Copier buffer limit property, in bytes.
+
+             During the read-write cycle, an intermediate storage
+             buffer is used. By default it's zero -- unlimited, and
+             will grow as needed if @.source provides data and
+             @.destination do not consume it (or if there is no
+             @.destination).
+
+             However when reading data from untrusted sources, like
+             network, one can exhaust the system memory by flooding
+             the copier. In such cases, using a buffer limit is
+             recommended.
+
+             When the buffer limit is reached, the copier will pause
+             reading data from @.source until @.destination consumes
+             it. If there is no @.destination set, user should call
+             @.binbuf_steal to consume data and reset buffer usage.
+
+             Setting a buffer limit smaller than current
+             @.read_chunk_size will automatically change
+             @.read_chunk_size to the new buffer limit.
+           ]]
            get {
            }
            set {
@@ -71,7 +230,20 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
         }
 
         @property read_chunk_size {
-           [[Copier read chunk size property]]
+           [[Copier read chunk size property, in bytes.
+
+             When a @.source is flagged with @Efl.Io.Reader.can_read
+             $true, data will be read using @Efl.Io.Reader.read into
+             an intermediate buffer of this size.
+
+             Setting this value large enough may reduce number of
+             @Efl.Io.Reader.read, improving performance at the expense
+             of more memory consumption.
+
+             This value is bounded by @.buffer_limit if it's set.
+
+             By default it's 4096.
+           ]]
            get {
            }
            set {
@@ -83,7 +255,12 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
         }
 
         @property progress {
-            [[Progress for read or write]]
+            [[Progress for read and write.
+
+              Reports value read from @.source, written to
+              @.destination and the total, if the source implements
+              @Efl.Io.Sizer.
+            ]]
             get {
             }
             values {
@@ -113,6 +290,10 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
 
              The buffer is then owned by caller, which should call
              eina_binbuf_free() when it's done.
+
+             Usually call this method when no @.destination is set, in
+             this case you should wait for "done", "data" or "line"
+             events and then call it to retrieve (and own!) the data.
            ]]
            return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused; [[Binbuf]]
         }
