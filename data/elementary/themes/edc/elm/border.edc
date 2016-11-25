@@ -35,7 +35,6 @@ group { name: "elm/border/base/default";
       spacer { "elm.spacer.opaque";
          desc {
             rel1.to: "top_clip";
-            rel1.offset: 0 -1;
             rel2.to: "bottom_clip";
          }
          desc { "max"; inherit: "default"; }
@@ -165,13 +164,14 @@ group { name: "elm/border/base/default";
             rel1.to: "shadow_spacer";
             rel2.to_y: "title2";
             rel2.to_x: "shadow_spacer";
-            rel2.offset: -1 0;
             vis;
          }
          desc { "hidden";
             inherit: "default";
             rel1.relative: 0.0 0.0;
+            rel2.to: "shadow_spacer";
             rel2.relative: 1.0 0.0;
+            rel2.offset: -1 -1;
             max: -1 0;
             min: 0 0;
             fixed: 0 1;
@@ -279,6 +279,7 @@ group { name: "elm/border/base/default";
          }
       }
       swallow {  "elm.swallow.icon"; nomouse;
+         clip_to: "top_clip";
          desc { "default";
             rel1.to: "icon";
             rel1.relative: 0.15 0.15;
