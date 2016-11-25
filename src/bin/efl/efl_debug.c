@@ -21,10 +21,6 @@
 #include "efl_debug_common.h"
 
 static Eo *dialer;
-static Eo *input;
-static Eo *output;
-static Eo *send_copier;
-static Eo *recv_copier;
 
 static Eina_List *waiting;
 
@@ -71,7 +67,7 @@ _on_data(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
    Eina_Slice slice, payload;
    Efl_Debug_Message_Header msgheader;
 
-   if (!efl_io_queue_slice_get(output, &slice))
+   if (!efl_io_buffered_stream_slice_get(dialer, &slice))
      return;
 
    if (slice.len < sizeof(msgheader))
@@ -94,7 +90,7 @@ _on_data(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 
    _process_reply(msgheader.op, payload);
 
-   efl_io_queue_discard(output, sizeof(msgheader) + payload.len);
+   efl_io_buffered_stream_discard(dialer, sizeof(msgheader) + payload.len);
 }
 
 static Eina_Bool
@@ -111,14 +107,14 @@ _command_send(const char op[static 4], const void *data, unsigned int len)
    s.mem = &msghdr;
    s.len = sizeof(msghdr);
 
-   err = efl_io_writer_write(input, &s, &r);
+   err = efl_io_writer_write(dialer, &s, &r);
    if (err || r.len) goto end;
 
    if (!len) goto end;
 
    s.mem = data;
    s.len = len;
-   err = efl_io_writer_write(input, &s, &r);
+   err = efl_io_writer_write(dialer, &s, &r);
 
  end:
    if (err)
@@ -139,19 +135,19 @@ _command_send(const char op[static 4], const void *data, unsigned int len)
 }
 
 static void
-_finished_sending(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_write_finished(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    if (!waiting) ecore_main_loop_quit();
 }
 
 static void
-_dialer_eos(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_finished(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
 
 static void
-_dialer_error(void *data EINA_UNUSED, const Efl_Event *event)
+_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eina_Error *perr = event->info;
 
@@ -213,7 +209,8 @@ main(int argc, char **argv)
    loop = ecore_main_loop_get();
 
 #ifdef EFL_NET_DIALER_UNIX_CLASS
-   dialer = efl_add(EFL_NET_DIALER_UNIX_CLASS, loop);
+   dialer = efl_add(EFL_NET_DIALER_SIMPLE_CLASS, loop,
+                    efl_net_dialer_simple_inner_class_set(efl_added, EFL_NET_DIALER_UNIX_CLASS));
 #else
    /* TODO: maybe start a TCP using locahost:12345?
     * Right now eina_debug_monitor is only for AF_UNIX, so not an issue.
@@ -226,48 +223,10 @@ main(int argc, char **argv)
         retval = EXIT_FAILURE;
         goto end;
      }
-   efl_event_callback_add(dialer, EFL_NET_DIALER_EVENT_ERROR, _dialer_error, NULL);
-   efl_event_callback_add(dialer, EFL_IO_READER_EVENT_EOS, _dialer_eos, NULL);
-
-   input = efl_add(EFL_IO_QUEUE_CLASS, loop);
-   if (!input)
-     {
-        fprintf(stderr, "ERROR: could not create input queue\n");
-        retval = EXIT_FAILURE;
-        goto end;
-     }
-
-   output = efl_add(EFL_IO_QUEUE_CLASS, loop,
-                    efl_event_callback_add(efl_added, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, _on_data, NULL));
-   if (!output)
-     {
-        fprintf(stderr, "ERROR: could not create output queue\n");
-        retval = EXIT_FAILURE;
-        goto end;
-     }
-
-   send_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                         efl_io_copier_source_set(efl_added, input),
-                         efl_io_copier_destination_set(efl_added, dialer),
-                         efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
-                         efl_event_callback_add(efl_added, EFL_IO_COPIER_EVENT_DONE, _finished_sending, NULL));
-   if (!send_copier)
-     {
-        fprintf(stderr, "ERROR: could not create send copier\n");
-        retval = EXIT_FAILURE;
-        goto end;
-     }
-
-   recv_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                         efl_io_copier_source_set(efl_added, dialer),
-                         efl_io_copier_destination_set(efl_added, output),
-                         efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE));
-   if (!recv_copier)
-     {
-        fprintf(stderr, "ERROR: could not create receive copier\n");
-        retval = EXIT_FAILURE;
-        goto end;
-     }
+   efl_event_callback_add(dialer, EFL_IO_BUFFERED_STREAM_EVENT_ERROR, _error, NULL);
+   efl_event_callback_add(dialer, EFL_IO_BUFFERED_STREAM_EVENT_SLICE_CHANGED, _on_data, NULL);
+   efl_event_callback_add(dialer, EFL_IO_BUFFERED_STREAM_EVENT_WRITE_FINISHED, _write_finished, NULL);
+   efl_event_callback_add(dialer, EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, _finished, NULL);
 
    for (i = 1; i < argc; i++)
      {
@@ -350,7 +309,7 @@ main(int argc, char **argv)
              goto end;
           }
      }
-   efl_io_queue_eos_mark(input);
+   efl_io_buffered_stream_eos_mark(dialer);
 
    err = efl_net_dialer_dial(dialer, path);
    if (err)
@@ -362,17 +321,9 @@ main(int argc, char **argv)
 
    ecore_main_loop_begin();
 
-   while ((!efl_io_closer_closed_get(dialer)) &&
-          efl_io_queue_usage_get(input))
-     efl_io_copier_flush(send_copier, EINA_TRUE, EINA_TRUE);
-
  end:
    eina_list_free(waiting);
-   efl_del(input);
-   efl_del(output);
    efl_del(dialer);
-   efl_del(send_copier);
-   efl_del(recv_copier);
    free(path);
 
    ecore_con_shutdown();
