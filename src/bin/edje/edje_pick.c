@@ -529,6 +529,7 @@ _edje_pick_output_prepare(Edje_File *o, Edje_File *edf, char *name)
         o->version = edf->version;
         o->minor = edf->minor;
         o->feature_ver = edf->feature_ver;
+        o->base_scale = edf->base_scale;
         o->collection = eina_hash_string_small_new(NULL);
         o->data = eina_hash_string_small_new(NULL);
 
@@ -556,6 +557,12 @@ _edje_pick_output_prepare(Edje_File *o, Edje_File *edf, char *name)
              EINA_LOG_WARN("Warning: Merging files of various feature_ver.\n");
              if (o->feature_ver < edf->feature_ver)
                o->feature_ver = edf->feature_ver;
+          }
+        if (o->base_scale != edf->base_scale)
+          {
+             EINA_LOG_ERR("Error: Merging files of various base scale. Base scale of the files should be same.\n");
+             free(o);
+             return NULL;
           }
      }
 
@@ -1499,6 +1506,12 @@ main(int argc, char **argv)
         edf->ef = ef;
 
         out_file = _edje_pick_output_prepare(out_file, edf, output_filename);
+        if (!out_file)
+          {
+             _edje_cache_file_unref(edf);
+             eet_close(ef);
+             return _edje_pick_cleanup(inp_files, out_file, k);
+          }
 
         k = _edje_pick_header_make(out_file, edf, inp_files);
         if (k != EDJE_PICK_NO_ERROR)
