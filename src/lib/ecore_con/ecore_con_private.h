@@ -386,6 +386,8 @@ void ecore_con_mempool_shutdown(void);
 
 #undef GENERIC_ALLOC_FREE_HEADER
 
+void _ecore_con_local_mkpath(const char *path, mode_t mode);
+
 /* allow windows and posix to use the same error comparison */
 #ifndef SOCKET_ERROR
 #define SOCKET_ERROR -1

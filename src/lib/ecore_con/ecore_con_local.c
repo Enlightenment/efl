@@ -229,7 +229,7 @@ error:
 }
 
 #ifdef HAVE_LOCAL_SOCKETS
-static void
+void
 _ecore_con_local_mkpath(const char *path, mode_t mode)
 {
    char *s, *d, *itr;

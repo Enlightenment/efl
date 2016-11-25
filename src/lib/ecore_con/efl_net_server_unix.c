@@ -24,6 +24,8 @@
 
 typedef struct _Efl_Net_Server_Unix_Data
 {
+   unsigned int leading_directories_create_mode;
+   Eina_Bool leading_directories_create;
    Eina_Bool unlink_before_bind;
 } Efl_Net_Server_Unix_Data;
 
@@ -53,6 +55,9 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
    int r;
 
    efl_net_server_fd_family_set(o, AF_UNIX);
+
+   if (pd->leading_directories_create)
+     _ecore_con_local_mkpath(address, pd->leading_directories_create_mode);
 
    do
      {
@@ -270,6 +275,21 @@ static Eina_Bool
 _efl_net_server_unix_unlink_before_bind_get(Eo *o EINA_UNUSED, Efl_Net_Server_Unix_Data *pd)
 {
    return pd->unlink_before_bind;
+}
+
+
+static void
+_efl_net_server_unix_leading_directories_create_set(Eo *o EINA_UNUSED, Efl_Net_Server_Unix_Data *pd, Eina_Bool do_it, unsigned int mode)
+{
+   pd->leading_directories_create = do_it;
+   pd->leading_directories_create_mode = mode;
+}
+
+static void
+_efl_net_server_unix_leading_directories_create_get(Eo *o EINA_UNUSED, Efl_Net_Server_Unix_Data *pd, Eina_Bool *do_it, unsigned int *mode)
+{
+   if (do_it) *do_it = pd->leading_directories_create;
+   if (mode) *mode = pd->leading_directories_create_mode;
 }
 
 #include "efl_net_server_unix.eo.c"

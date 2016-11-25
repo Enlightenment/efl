@@ -23,6 +23,18 @@ class Efl.Net.Server.Unix (Efl.Net.Server.Fd) {
                 unlink_before_bind: bool; [[If $true, server will unlink() the path before bind() is called.]]
             }
         }
+
+        @property leading_directories_create {
+            [[If $true, all parent directories will be created with given mode.
+
+              This is only effective before @Efl.Net.Server.serve is
+              called as it is used from inside that method.
+            ]]
+            values {
+                leading_directories_create: bool; [[If $true, create missing parent directories. Do nothing if $false]]
+                mode: uint; [[The file system permissions to use (file mode)]]
+            }
+        }
     }
 
     implements {

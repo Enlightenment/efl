@@ -438,56 +438,6 @@ ecore_ipc_server_add_legacy(Ecore_Ipc_Type compl_type, const char *name, int por
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_IPC_SERVER);
    return svr;
 }
-#else
-static Eina_Bool
-_ecore_ipc_local_mkpath(const char *path, mode_t mode)
-{
-   Eina_Bool ret = EINA_FALSE;
-   char *s, *d, *itr;
-
-   if (!path) return EINA_FALSE;
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(path[0] != '/', EINA_FALSE);
-
-   s = strdup(path);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(s, EINA_FALSE);
-   d = dirname(s);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(d, EINA_FALSE);
-
-   for (itr = d + 1; *itr != '\0'; itr++)
-     {
-        if (*itr == '/')
-          {
-             *itr = '\0';
-             if (mkdir(d, mode) != 0)
-               {
-                  if (errno != EEXIST)
-                    {
-                       ERR("could not create parent directory '%s' of path '%s': %s", d, path, strerror(errno));
-                       goto end;
-                    }
-               }
-             *itr = '/';
-          }
-     }
-
-   if (mkdir(d, mode) != 0)
-     {
-        if (errno != EEXIST)
-          ERR("could not create parent directory '%s' of path '%s': %s", d, path, strerror(errno));
-        else
-          {
-             struct stat st;
-             if ((stat(d, &st) != 0) || (!S_ISDIR(st.st_mode)))
-               ERR("could not create parent directory '%s' of path '%s': exists but is not a directory", d, path);
-             else ret = EINA_TRUE;
-          }
-     }
-   else ret = EINA_TRUE;
-
- end:
-   free(s);
-   return ret;
-}
 #endif
 
 /* FIXME: need to add protocol type parameter */
@@ -523,12 +473,10 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
         address = ecore_con_local_path_new(EINA_FALSE, name, port);
         EINA_SAFETY_ON_NULL_GOTO(address, error_server);
 
-        if (!_ecore_ipc_local_mkpath(address, S_IRUSR | S_IWUSR | S_IXUSR))
-          goto error_server;
-
         new_mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
 
-        svr->server = efl_add(EFL_NET_SERVER_UNIX_CLASS, ecore_main_loop_get());
+        svr->server = efl_add(EFL_NET_SERVER_UNIX_CLASS, ecore_main_loop_get(),
+                              efl_net_server_unix_leading_directories_create_set(efl_added, EINA_TRUE, S_IRUSR | S_IWUSR | S_IXUSR));
         EINA_SAFETY_ON_NULL_GOTO(svr->server, error_server);
      }
    else if ((type & ECORE_IPC_TYPE) == ECORE_IPC_LOCAL_SYSTEM)
