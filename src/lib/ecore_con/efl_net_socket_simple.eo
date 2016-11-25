@@ -1,0 +1,45 @@
+class Efl.Net.Socket.Simple (Efl.Io.Buffered_Stream, Efl.Net.Socket) {
+    [[A wrapper socket offering an easy to use, buffered I/O.
+
+      The simple socket encapsulates an actual @Efl.Net.Socket, and
+      uses it with an @Efl.Io.Buffered_Stream, which creates an input
+      @Efl.Io.Queue, an output @Efl.Io.Queue and these are linked
+      using a receiver and a sender @Efl.Io.Copier.
+
+      The idea is that unlike traditional @Efl.Net.Socket that will
+      attempt to write directly to socket and thus may take less data
+      than requested, this one will keep the pending data in its own
+      buffer, feeding to the actual socket when it
+      @Efl.Io.Writer.can_write. That makes its operation much simpler
+      as @Efl.Io.Writer.write will always take the full data -- allows
+      "write and forget", if unlimited (see
+      @Efl.Io.Buffered_Stream.max_queue_size_output).
+
+      Reading is also much simpler since received data is kept in an
+      @Efl.Io.Queue, thus its size can be queried with
+      @Efl.Io.Buffered_Stream.pending_read and read with
+      @Efl.Io.Reader.read or peeked with
+      @Efl.Io.Buffered_Stream.slice_get, then discarded with
+      @Efl.Io.Buffered_Stream.discard or
+      @Efl.Io.Buffered_Stream.clear.
+
+      Then when waiting for a complete message, just peek at its
+      contents, if not complete do nothing, if complete then either
+      @Efl.Io.Reader.read to get a copy or manipulate a read-only
+      reference from @Efl.Io.Buffered_Stream.slice_get and then
+      @Efl.Io.Buffered_Stream.discard
+
+      The actual socket is set with the constructor method
+      @Efl.Io.Buffered_Stream.inner_io.set and can be retrieved with
+      @Efl.Io.Buffered_Stream.inner_io.get, which should be used with
+      care.
+
+      @since 1.19
+    ]]
+
+    implements {
+        Efl.Io.Buffered_Stream.inner_io.set;
+        Efl.Net.Socket.address_local.get;
+        Efl.Net.Socket.address_remote.get;
+    }
+}

@@ -86,10 +86,12 @@ efl_io_copier_simple_example \
 efl_io_queue_example \
 efl_io_buffered_stream_example \
 efl_net_server_example \
+efl_net_server_simple_example \
 efl_net_dialer_http_example \
 efl_net_dialer_websocket_example \
 efl_net_dialer_websocket_autobahntestee \
 efl_net_dialer_udp_example \
+efl_net_dialer_simple_example \
 efl_net_socket_ssl_dialer_example \
 efl_net_socket_ssl_server_example \
 efl_net_session_example \
@@ -324,6 +326,9 @@ efl_io_buffered_stream_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 efl_net_server_example_SOURCES = efl_net_server_example.c
 efl_net_server_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
+efl_net_server_simple_example_SOURCES = efl_net_server_simple_example.c
+efl_net_server_simple_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
 efl_net_dialer_http_example_SOURCES = efl_net_dialer_http_example.c
 efl_net_dialer_http_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
@@ -335,6 +340,9 @@ efl_net_dialer_websocket_autobahntestee_LDADD = $(ECORE_CON_COMMON_LDADD)
 
 efl_net_dialer_udp_example_SOURCES = efl_net_dialer_udp_example.c
 efl_net_dialer_udp_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
+efl_net_dialer_simple_example_SOURCES = efl_net_dialer_simple_example.c
+efl_net_dialer_simple_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
 if ! HAVE_WINDOWS
 EXTRA_PROGRAMS += efl_net_dialer_unix_example
@@ -413,10 +421,12 @@ efl_io_copier_simple_example.c \
 efl_io_queue_example.c \
 efl_io_buffered_stream_example.c \
 efl_net_server_example.c \
+efl_net_server_simple_example.c \
 efl_net_dialer_http_example.c \
 efl_net_dialer_websocket_example.c \
 efl_net_dialer_websocket_autobahntestee.c \
 efl_net_dialer_udp_example.c \
+efl_net_dialer_simple_example.c \
 efl_net_socket_ssl_dialer_example.c \
 efl_net_socket_ssl_server_example.c \
 efl_net_session_example.c \

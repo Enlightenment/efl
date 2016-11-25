@@ -7,15 +7,18 @@ ecore_con_eolian_files = \
 	lib/ecore_con/efl_network_server.eo \
 	lib/ecore_con/efl_network_connector.eo \
         lib/ecore_con/efl_net_socket.eo \
+        lib/ecore_con/efl_net_socket_simple.eo \
         lib/ecore_con/efl_net_socket_fd.eo \
         lib/ecore_con/efl_net_socket_tcp.eo \
         lib/ecore_con/efl_net_socket_udp.eo \
         lib/ecore_con/efl_net_dialer.eo \
+        lib/ecore_con/efl_net_dialer_simple.eo \
         lib/ecore_con/efl_net_dialer_tcp.eo \
         lib/ecore_con/efl_net_dialer_udp.eo \
         lib/ecore_con/efl_net_dialer_http.eo \
         lib/ecore_con/efl_net_dialer_websocket.eo \
         lib/ecore_con/efl_net_server.eo \
+        lib/ecore_con/efl_net_server_simple.eo \
         lib/ecore_con/efl_net_server_fd.eo \
         lib/ecore_con/efl_net_server_tcp.eo \
         lib/ecore_con/efl_net_server_udp.eo \
@@ -92,15 +95,18 @@ static_libs/http-parser/http_parser.h \
 lib/ecore_con/ecore_con_private.h \
 lib/ecore_con/ecore_con_info.c \
 lib/ecore_con/efl_net_socket.c \
+lib/ecore_con/efl_net_socket_simple.c \
 lib/ecore_con/efl_net_socket_fd.c \
 lib/ecore_con/efl_net_socket_tcp.c \
 lib/ecore_con/efl_net_socket_udp.c \
 lib/ecore_con/efl_net_dialer.c \
+lib/ecore_con/efl_net_dialer_simple.c \
 lib/ecore_con/efl_net_dialer_tcp.c \
 lib/ecore_con/efl_net_dialer_udp.c \
 lib/ecore_con/efl_net_dialer_http.c \
 lib/ecore_con/efl_net_dialer_websocket.c \
 lib/ecore_con/efl_net_server.c \
+lib/ecore_con/efl_net_server_simple.c \
 lib/ecore_con/efl_net_server_fd.c \
 lib/ecore_con/efl_net_server_tcp.c \
 lib/ecore_con/efl_net_server_udp.c \

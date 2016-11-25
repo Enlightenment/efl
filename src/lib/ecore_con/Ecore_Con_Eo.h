@@ -8,6 +8,10 @@
 #include "efl_net_dialer.eo.h"
 #include "efl_net_server.eo.h"
 
+#include "efl_net_socket_simple.eo.h"
+#include "efl_net_dialer_simple.eo.h"
+#include "efl_net_server_simple.eo.h"
+
 #include "efl_net_socket_fd.eo.h"
 #include "efl_net_server_fd.eo.h"
 
