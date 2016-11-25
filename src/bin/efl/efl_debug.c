@@ -16,8 +16,6 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
 #include "efl_debug_common.h"
 
 static Eo *dialer;
@@ -26,19 +24,15 @@ static Eina_List *waiting;
 
 static int retval = EXIT_SUCCESS;
 
-static const char CLST[4] = "CLST";
-
 static void
-_process_reply(const char op[static 4], const Eina_Slice payload)
+_process_reply(void *data EINA_UNUSED, const char op[static 4], const Eina_Slice payload)
 {
-#define IS_OP(x) memcmp(op, x, 4) == 0
-
    if (IS_OP(CLST))
      {
         int mypid = getpid();
         size_t offset;
 
-        waiting = eina_list_remove(waiting, CLST);
+        waiting = eina_list_remove(waiting, OP_CLST);
 
         for (offset = 0; offset + sizeof(int) <= payload.len; offset += sizeof(int))
           {
@@ -57,82 +51,31 @@ _process_reply(const char op[static 4], const Eina_Slice payload)
      }
 
    if (!waiting) ecore_main_loop_quit();
-
-#undef IS_OP
 }
 
 static void
 _on_data(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   Eina_Slice slice, payload;
-   Efl_Debug_Message_Header msgheader;
-
-   if (!efl_io_buffered_stream_slice_get(dialer, &slice))
-     return;
-
-   if (slice.len < sizeof(msgheader))
-     return;
-
-   memcpy(&msgheader, slice.mem, sizeof(msgheader));
-   if (msgheader.size < 4) /* must contain at last 4 byte opcode */
+   if (!received_data(dialer, _process_reply, NULL))
      {
-        fprintf(stderr, "ERROR: invalid message header, size=%u\n", msgheader.size);
         retval = EXIT_FAILURE;
         ecore_main_loop_quit();
-        return;
      }
-
-   if (msgheader.size + 4 > slice.len)
-     return;
-
-   payload.bytes = slice.bytes + sizeof(msgheader);
-   payload.len = msgheader.size - 4;
-
-   _process_reply(msgheader.op, payload);
-
-   efl_io_buffered_stream_discard(dialer, sizeof(msgheader) + payload.len);
 }
 
 static Eina_Bool
 _command_send(const char op[static 4], const void *data, unsigned int len)
 {
-   Eina_Error err;
-   Efl_Debug_Message_Header msghdr = {
-     .size = 4 + len,
-   };
-   Eina_Slice s, r;
-
-   memcpy(msghdr.op, op, 4);
-
-   s.mem = &msghdr;
-   s.len = sizeof(msghdr);
-
-   err = efl_io_writer_write(dialer, &s, &r);
-   if (err || r.len) goto end;
-
-   if (!len) goto end;
-
-   s.mem = data;
-   s.len = len;
-   err = efl_io_writer_write(dialer, &s, &r);
-
- end:
-   if (err)
+   if (!send_data(dialer, op, data, len))
      {
-        fprintf(stderr, "ERROR: could not queue message '%.4s': %s\n", op, eina_error_msg_get(err));
-        retval = EXIT_FAILURE;
-        return EINA_FALSE;
-     }
-
-   if (r.len)
-     {
-        fprintf(stderr, "ERROR: could not queue message '%.4s': out of memory\n", op);
         retval = EXIT_FAILURE;
         return EINA_FALSE;
      }
 
    return EINA_TRUE;
 }
+
+#define command_send(op, data, len) _command_send(OP_ ## op, data, len)
 
 static void
 _write_finished(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
@@ -234,9 +177,9 @@ main(int argc, char **argv)
 
         if (strcmp(cmd, "list") == 0)
           {
-             if (!_command_send("LIST", NULL, 0))
+             if (!command_send(LIST, NULL, 0))
                goto end;
-             waiting = eina_list_append(waiting, CLST);
+             waiting = eina_list_append(waiting, OP_CLST);
           }
         else if (strcmp(cmd, "pon") == 0)
           {
@@ -249,7 +192,7 @@ main(int argc, char **argv)
              else
                {
                   int data[2] = {atoi(argv[i + 1]), atoi(argv[1 + 2])};
-                  if (!_command_send("PLON", data, sizeof(data)))
+                  if (!command_send(PLON, data, sizeof(data)))
                     goto end;
                   i += 2;
                }
@@ -265,7 +208,7 @@ main(int argc, char **argv)
              else
                {
                   int data[1] = {atoi(argv[i + 1])};
-                  if (!_command_send("PLOFF", data, sizeof(data)))
+                  if (!command_send(PLOF, data, sizeof(data)))
                     goto end;
                   i++;
                }
@@ -281,7 +224,7 @@ main(int argc, char **argv)
              else
                {
                   int data[1] = {atoi(argv[i + 1])};
-                  if (!_command_send("EVON", data, sizeof(data)))
+                  if (!command_send(EVON, data, sizeof(data)))
                     goto end;
                   i++;
                }
@@ -297,7 +240,7 @@ main(int argc, char **argv)
              else
                {
                   int data[1] = {atoi(argv[i + 1])};
-                  if (!_command_send("EVOF", data, sizeof(data)))
+                  if (!command_send(EVOF, data, sizeof(data)))
                     goto end;
                   i++;
                }

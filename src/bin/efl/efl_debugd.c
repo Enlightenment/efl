@@ -22,7 +22,8 @@ typedef struct _Client Client;
 
 struct _Client
 {
-   Ecore_Con_Client *client;
+   Eo *client;
+
    unsigned char    *buf;
    unsigned int      buf_size;
 
@@ -34,8 +35,50 @@ struct _Client
    pid_t             pid;
 };
 
-static Ecore_Con_Server *svr = NULL;
+static Eo *server;
+
 static Eina_List *clients = NULL;
+
+static int retval;
+
+static int _log_dom = -1;
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
+
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
+
+#ifdef CRI
+# undef CRI
+#endif
+#define CRI(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
+
+
+#define send_cli(cl, op, data, len)                             \
+  do                                                            \
+    {                                                           \
+       if (!send_data(cl->client, OP_ ## op, data, len))        \
+         {                                                      \
+            if (!efl_io_closer_closed_get(cl->client))          \
+              efl_io_closer_close(cl->client);                  \
+         }                                                      \
+    }                                                           \
+  while (0)
 
 static Client *
 _client_pid_find(int pid)
@@ -48,6 +91,8 @@ _client_pid_find(int pid)
      {
         if (c->pid == pid) return c;
      }
+
+   WRN("no client pid=%d", pid);
    return NULL;
 }
 
@@ -55,27 +100,35 @@ static Eina_Bool
 _cb_evlog(void *data)
 {
    Client *c = data;
-   send_cli(c->client, "EVLG", NULL, 0);
+   send_cli(c, EVLG, NULL, 0);
    return EINA_TRUE;
 }
 
 static void
-_do(Client *c, char *op, unsigned char *d, int size)
+_process_command(void *data, const char op[static 4], const Eina_Slice payload)
 {
+   Client *c = data;
    Client *c2;
    Eina_List *l;
 
-   if ((!strcmp(op, "HELO")) && (size >= 8))
-     {
-        int version;
-        int pid;
+   DBG("client %p (%p) [pid:%d] op=%.4s payload=%zd", c, c->client, c->pid, op, payload.len);
 
-        fetch_val(version, d, 0);
-        fetch_val(pid, d, 4);
-        c->version = version;
-        c->pid = pid;
+   if (IS_OP(HELO))
+     {
+        if (payload.len < sizeof(int) * 2)
+          {
+             fprintf(stderr, "INFO: client %p [pid: %d] sent invalid HELO\n", c, (int)c->pid);
+             if (!efl_io_closer_closed_get(c->client))
+               efl_io_closer_close(c->client);
+          }
+        else
+          {
+             memcpy(&c->version, payload.bytes, sizeof(int));
+             memcpy(&c->pid, payload.bytes + sizeof(int), sizeof(int));
+             INF("client %p (%p) HELO version=%d, pid=%d", c, c->client, c->version, c->pid);
+          }
      }
-   else if (!strcmp(op, "LIST"))
+   else if (IS_OP(LIST))
      {
         int n = eina_list_count(clients);
         unsigned int *pids = malloc(n * sizeof(int));
@@ -85,177 +138,334 @@ _do(Client *c, char *op, unsigned char *d, int size)
 
              EINA_LIST_FOREACH(clients, l, c2)
                {
+                  if (c2->pid == 0) continue; /* no HELO yet */
                   pids[i] = c2->pid;
                   i++;
                }
-             send_cli(c->client, "CLST", pids, n * sizeof(int));
+             send_cli(c, CLST, pids, i * sizeof(int));
              free(pids);
           }
      }
-   else if ((!strcmp(op, "PLON")) && (size >= 8))
+   else if (IS_OP(PLON))
      {
-        int pid;
-        unsigned int freq = 1000;
-        fetch_val(pid, d, 0);
-        fetch_val(freq, d, 4);
-        if ((c2 = _client_pid_find(pid)))
+        if (payload.len < sizeof(int) * 2)
+          fprintf(stderr, "INFO: client %p [pid: %d] sent invalid PLON\n", c, (int)c->pid);
+        else
           {
-             unsigned char buf[4];
-             store_val(buf, 0, freq);
-             send_cli(c2->client, "PLON", buf, sizeof(buf));
-          }
-     }
-   else if (!strcmp(op, "PLOF"))
-     {
-        int pid;
-        fetch_val(pid, d, 0);
-        if ((c2 = _client_pid_find(pid)))
-          {
-             send_cli(c2->client, "PLOF", NULL, 0);
-          }
-     }
-   else if (!strcmp(op, "EVON"))
-     {
-        int pid;
-        fetch_val(pid, d, 0);
-        if ((c2 = _client_pid_find(pid)))
-          {
-             c2->evlog_on++;
-             if (c2->evlog_on == 1)
+             int pid;
+             unsigned int freq;
+             memcpy(&pid, payload.bytes, sizeof(int));
+             memcpy(&freq, payload.bytes + sizeof(int), sizeof(int));
+             c2 = _client_pid_find(pid);
+             if (!c2)
                {
-                  char buf[4096];
-
-                  send_cli(c2->client, "EVON", NULL, 0);
-                  c2->evlog_fetch_timer = ecore_timer_add(0.2, _cb_evlog, c2);
-                  snprintf(buf, sizeof(buf), "%s/efl_debug_evlog-%ld.log",
-                           getenv("HOME"), (long)c2->pid);
-                  c2->evlog_file = fopen(buf, "wb");
+                  fprintf(stderr, "INFO: client %p [pid: %d] sent PLON %d: no such client\n", c, (int)c->pid, pid);
+               }
+             else
+               {
+                  DBG("client %p (%p) [pid:%d] requested PLON on %p (%p) [pid:%d]",
+                      c, c->client, c->pid,
+                      c2, c2->client, c2->pid);
+                  send_cli(c2, PLON, &freq, sizeof(freq));
                }
           }
      }
-   else if (!strcmp(op, "EVOF"))
+   else if (IS_OP(PLOF))
      {
-        int pid;
-        fetch_val(pid, d, 0);
-        if ((c2 = _client_pid_find(pid)))
+        if (payload.len < sizeof(int))
+          fprintf(stderr, "INFO: client %p [pid: %d] sent invalid PLOF\n", c, (int)c->pid);
+        else
           {
-             c2->evlog_on--;
-             if (c2->evlog_on == 0)
+             int pid;
+             memcpy(&pid, payload.bytes, sizeof(int));
+             c2 = _client_pid_find(pid);
+             if (!c2)
                {
-                  send_cli(c2->client, "EVOF", NULL, 0);
-                  if (c2->evlog_fetch_timer)
-                    {
-                       ecore_timer_del(c2->evlog_fetch_timer);
-                       c2->evlog_fetch_timer = NULL;
-                    }
-                  if (c2->evlog_file)
-                    {
-                       fclose(c2->evlog_file);
-                       c2->evlog_file = NULL;
-                    }
+                  fprintf(stderr, "INFO: client %p [pid: %d] sent PLOF %d: no such client\n", c, (int)c->pid, pid);
                }
-             else if (c2->evlog_on < 0)
-               c2->evlog_on = 0;
+             else
+               {
+                  DBG("client %p (%p) [pid:%d] requested PLOF on %p (%p) [pid:%d]",
+                      c, c->client, c->pid,
+                      c2, c2->client, c2->pid);
+                  send_cli(c2, PLOF, NULL, 0);
+               }
           }
      }
-   else if (!strcmp(op, "EVLG"))
+   else if (IS_OP(EVON))
      {
-        unsigned int *overflow = (unsigned int *)(d + 0);
-        unsigned char *p = d + 4;
-        unsigned int blocksize = size - 4;
-
-        if ((c->evlog_file) && (blocksize > 0))
+        if (payload.len < sizeof(int))
+          fprintf(stderr, "INFO: client %p [pid: %d] sent invalid EVON\n", c, (int)c->pid);
+        else
           {
-             unsigned int header[3];
+             int pid;
+             memcpy(&pid, payload.bytes, sizeof(int));
+             c2 = _client_pid_find(pid);
+             if (!c2)
+               {
+                  fprintf(stderr, "INFO: client %p [pid: %d] sent EVON %d: no such client\n", c, (int)c->pid, pid);
+               }
+             else
+               {
+                  c2->evlog_on++;
+                  DBG("client %p (%p) [pid:%d] requested EVON (%d) on %p (%p) [pid:%d]",
+                      c, c->client, c->pid,
+                      c2->evlog_on,
+                      c2, c2->client, c2->pid);
+                  if (c2->evlog_on == 1)
+                    {
+                       char buf[4096];
 
-             header[0] = 0xffee211;
-             header[1] = blocksize;
-             header[2] = *overflow;
-             fwrite(header, 12, 1, c->evlog_file);
-             fwrite(p, blocksize, 1, c->evlog_file);
+                       send_cli(c2, EVON, NULL, 0);
+                       c2->evlog_fetch_timer = ecore_timer_add(0.2, _cb_evlog, c2);
+                       snprintf(buf, sizeof(buf), "%s/efl_debug_evlog-%d.log",
+                                getenv("HOME"), c2->pid);
+                       c2->evlog_file = fopen(buf, "wb");
+                       DBG("client %p (%p) [pid:%d] logging to %s [%p]",
+                           c2, c2->client, c2->pid, buf, c2->evlog_file);
+                    }
+               }
+          }
+     }
+   else if (IS_OP(EVOF))
+     {
+        if (payload.len < sizeof(int))
+          fprintf(stderr, "INFO: client %p [pid: %d] sent invalid EVOF\n", c, (int)c->pid);
+        else
+          {
+             int pid;
+             memcpy(&pid, payload.bytes, sizeof(int));
+             c2 = _client_pid_find(pid);
+             if (!c2)
+               {
+                  fprintf(stderr, "INFO: client %p [pid: %d] sent EVOF %d: no such client\n", c, (int)c->pid, pid);
+               }
+             else
+               {
+                  c2->evlog_on--;
+                  DBG("client %p (%p) [pid:%d] requested EVOF (%d) on %p (%p) [pid:%d]",
+                      c, c->client, c->pid,
+                      c2->evlog_on,
+                      c2, c2->client, c2->pid);
+                  if (c2->evlog_on == 0)
+                    {
+                       send_cli(c2, EVOF, NULL, 0);
+                       if (c2->evlog_fetch_timer)
+                         {
+                            ecore_timer_del(c2->evlog_fetch_timer);
+                            c2->evlog_fetch_timer = NULL;
+                         }
+                       if (c2->evlog_file)
+                         {
+                            DBG("client %p (%p) [pid:%d] finished logged to %p",
+                                c2, c2->client, c2->pid, c2->evlog_file);
+                            fclose(c2->evlog_file);
+                            c2->evlog_file = NULL;
+                         }
+                    }
+                  else if (c2->evlog_on < 0)
+                    c2->evlog_on = 0;
+               }
+          }
+     }
+   else if (IS_OP(EVLG))
+     {
+        if (payload.len < sizeof(int))
+          fprintf(stderr, "INFO: client %p [pid: %d] sent invalid EVLG\n", c, (int)c->pid);
+        else if (!c->evlog_file)
+          fprintf(stderr, "INFO: client %p [pid: %d] no matching EVON\n", c, (int)c->pid);
+        else
+          {
+             unsigned int blocksize = payload.len - sizeof(int);
+             if (blocksize > 0)
+               {
+                  unsigned int header[3];
+
+                  header[0] = 0xffee211;
+                  header[1] = blocksize;
+                  memcpy(header + 2, payload.mem, sizeof(int));
+
+                  fwrite(header, 12, 1, c->evlog_file);
+                  fwrite(payload.bytes + sizeof(int), blocksize, 1, c->evlog_file);
+               }
           }
      }
 }
 
-static Eina_Bool
-_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Add *ev)
+static void
+_client_data(void *data, const Efl_Event *event)
+{
+   Client *c = data;
+   if (!received_data(event->object, _process_command, c))
+     {
+        fprintf(stderr, "INFO: client %p [pid: %d] sent invalid data\n", c, (int)c->pid);
+        if (!efl_io_closer_closed_get(event->object))
+          efl_io_closer_close(event->object);
+        return;
+     }
+}
+
+static void
+_client_error(void *data, const Efl_Event *event)
+{
+   Client *c = data;
+   Eina_Error *perr = event->info;
+   WRN("client %p [pid: %d] error: %s",
+       c, (int)c->pid, eina_error_msg_get(*perr));
+   fprintf(stderr, "INFO: client %p [pid: %d] error: %s\n",
+           c, (int)c->pid, eina_error_msg_get(*perr));
+}
+
+static void
+_client_eos(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Client *c = data;
+   DBG("client %p (%p) [pid: %d] closed, pending read %zu, write %zu",
+       c, c->client, (int)c->pid,
+       efl_io_buffered_stream_pending_read_get(c->client),
+       efl_io_buffered_stream_pending_write_get(c->client));
+   efl_io_closer_close(c->client);
+}
+
+static void
+_client_write_finished(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Client *c = data;
+   DBG("client %p (%p) [pid: %d] finished writing, pending read %zu",
+       c, c->client, (int)c->pid, efl_io_buffered_stream_pending_read_get(c->client));
+}
+
+static void
+_client_read_finished(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Client *c = data;
+   DBG("client %p (%p) [pid: %d] finished reading, pending write %zu",
+       c, c->client, (int)c->pid, efl_io_buffered_stream_pending_write_get(c->client));
+}
+
+static Efl_Callback_Array_Item *_client_cbs(void);
+
+static void
+_client_finished(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Client *c = data;
+
+   clients = eina_list_remove(clients, c);
+   if (c->evlog_fetch_timer)
+     {
+        ecore_timer_del(c->evlog_fetch_timer);
+        c->evlog_fetch_timer = NULL;
+     }
+   if (c->evlog_file)
+     {
+        fclose(c->evlog_file);
+        c->evlog_file = NULL;
+     }
+   efl_event_callback_array_del(c->client, _client_cbs(), c);
+   INF("finished client %p (%p) [pid:%d]", c, c->client, c->pid);
+   efl_unref(c->client);
+   free(c);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(_client_cbs,
+                           { EFL_IO_READER_EVENT_EOS, _client_eos },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_ERROR, _client_error },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_READ_FINISHED, _client_read_finished },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_WRITE_FINISHED, _client_write_finished },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, _client_finished },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_SLICE_CHANGED, _client_data });
+
+static void
+_client_add(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Client *c = calloc(1, sizeof(Client));
-   if (c)
-     {
-        c->client = ev->client;
-        clients = eina_list_append(clients, c);
-        ecore_con_client_data_set(c->client, c);
-     }
-   return ECORE_CALLBACK_RENEW;
+
+   EINA_SAFETY_ON_NULL_RETURN(c);
+   c->client = efl_ref(event->info);
+   clients = eina_list_append(clients, c);
+   efl_event_callback_array_add(c->client, _client_cbs(), c);
+   INF("server %p new client %p (%p)", event->object, c, c->client);
 }
 
-static Eina_Bool
-_client_del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Del *ev)
+static void
+_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Client *c = ecore_con_client_data_get(ev->client);
-   if (c)
-     {
-        clients = eina_list_remove(clients, c);
-        if (c->evlog_fetch_timer)
-          {
-             ecore_timer_del(c->evlog_fetch_timer);
-             c->evlog_fetch_timer = NULL;
-          }
-        if (c->evlog_file)
-          {
-             fclose(c->evlog_file);
-             c->evlog_file = NULL;
-          }
-        free(c);
-     }
-   return ECORE_CALLBACK_RENEW;
-}
-
-static Eina_Bool
-_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Data *ev)
-{
-   Client *c = ecore_con_client_data_get(ev->client);
-   if (c)
-     {
-        char op[5];
-        unsigned char *d = NULL;
-        int size;
-
-        _protocol_collect(&(c->buf), &(c->buf_size), ev->data, ev->size);
-        while ((size = _proto_read(&(c->buf), &(c->buf_size), op, &d)) >= 0)
-          {
-             _do(c, op, d, size);
-             free(d);
-             d = NULL;
-          }
-     }
-   return ECORE_CALLBACK_RENEW;
+   Eina_Error *perr = event->info;
+   ERR("server %p error: %s", event->object, eina_error_msg_get(*perr));
+   fprintf(stderr, "ERROR: %s\n", eina_error_msg_get(*perr));
+   ecore_main_loop_quit();
+   retval = EXIT_FAILURE;
 }
 
 int
 main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
+   Eo *loop;
+   char *path;
+   Eina_Error err;
+
+   ecore_app_no_system_modules();
+
    eina_init();
    ecore_init();
    ecore_con_init();
 
-   svr = ecore_con_server_add(ECORE_CON_LOCAL_USER, "efl_debug", 0, NULL);
-   if (!svr)
+   _log_dom = eina_log_domain_register("efl_debugd", EINA_COLOR_CYAN);
+
+   path = ecore_con_local_path_new(EINA_FALSE, "efl_debug", 0);
+   if (!path)
      {
-        fprintf(stderr, "ERROR: Cannot create debug daemon.\n");
-        return -1;
+        fprintf(stderr, "ERROR: could not get local communication path\n");
+        retval = EXIT_FAILURE;
+        goto end;
      }
 
-   ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD, (Ecore_Event_Handler_Cb)_client_add, NULL);
-   ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL, (Ecore_Event_Handler_Cb)_client_del, NULL);
-   ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA, (Ecore_Event_Handler_Cb)_client_data, NULL);
+   loop = ecore_main_loop_get();
+
+#ifdef EFL_NET_SERVER_UNIX_CLASS
+   server = efl_add(EFL_NET_SERVER_SIMPLE_CLASS, loop,
+                    efl_net_server_simple_inner_class_set(efl_added, EFL_NET_SERVER_UNIX_CLASS));
+#else
+   /* TODO: maybe start a TCP using locahost:12345?
+    * Right now eina_debug_monitor is only for AF_UNIX, so not an issue.
+    */
+   fprintf(stderr, "ERROR: your platform doesn't support Efl.Net.Server.Unix\n");
+#endif
+   if (!server)
+     {
+        fprintf(stderr, "ERROR: could not create communication server\n");
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
+   efl_event_callback_add(server, EFL_NET_SERVER_EVENT_CLIENT_ADD, _client_add, NULL);
+   efl_event_callback_add(server, EFL_NET_SERVER_EVENT_ERROR, _error, NULL);
+
+#ifdef EFL_NET_SERVER_UNIX_CLASS
+   {
+      Eo *inner_server = efl_net_server_simple_inner_server_get(server);
+      efl_net_server_unix_unlink_before_bind_set(inner_server, EINA_TRUE);
+      efl_net_server_unix_leading_directories_create_set(inner_server, EINA_TRUE, 0700);
+   }
+#endif
+
+   err = efl_net_server_serve(server, path);
+   if (err)
+     {
+        fprintf(stderr, "ERROR: could not serve '%s': %s\n", path, eina_error_msg_get(err));
+        retval = EXIT_FAILURE;
+        goto end;
+     }
 
    ecore_main_loop_begin();
 
-   ecore_con_server_del(svr);
+ end:
+   efl_del(server);
+   free(path);
 
    ecore_con_shutdown();
    ecore_shutdown();
    eina_shutdown();
+
+   return retval;
 }
