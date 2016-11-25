@@ -51,6 +51,7 @@
 /efl_io_copier_example
 /efl_io_copier_simple_example
 /efl_io_queue_example
+/efl_io_buffered_stream_example
 /efl_net_server_example
 /efl_net_dialer_http_example
 /efl_net_dialer_websocket_example

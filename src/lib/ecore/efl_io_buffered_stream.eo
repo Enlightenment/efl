@@ -1,0 +1,251 @@
+class Efl.Io.Buffered_Stream (Efl.Loop_User, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
+    [[A wrapper object offering an easy to use, buffered streams over existing I/O class.
+
+      The buffered stream encapsulates an actual @Efl.Io.Reader or
+      @Efl.Io.Writer, an input @Efl.Io.Queue, an output @Efl.Io.Queue
+      and these are linked using a input and a output
+      @Efl.Io.Copier.
+
+      The idea is that unlike traditional @Efl.Io.Writer that will
+      attempt to write directly and thus may take less data than
+      requested, this one will keep the pending data in its own
+      buffer, feeding to the actual output when it
+      @Efl.Io.Writer.can_write. That makes its operation much simpler
+      as @Efl.Io.Writer.write will always take the full data -- allows
+      "write and forget", if unlimited (see
+      @.max_queue_size_output). When finished writing data, the
+      @.eos_mark and then wait for "write,finished" event to know when all data
+      was sent.
+
+      Reading is also much simpler since incoming data is kept in an
+      @Efl.Io.Queue, thus its size can be queried with @.pending_read
+      and read with @Efl.Io.Reader.read or peeked with @.slice_get,
+      then discarded with @.discard or @.clear.
+
+      Then when waiting for a complete message, just peek at its
+      contents, if not complete do nothing and wait, if complete then
+      either @Efl.Io.Reader.read to get a copy or manipulate a
+      read-only reference from @.slice_get and then @.discard
+
+      The actual I/O is set with the constructor method @.inner_io.set
+      and can be retrieved with @.inner_io.get, which should be used
+      with care -- calling @Efl.Io.Reader.read and
+      @Efl.Io.Writer.write on it may produce unexpected results.
+
+      @since 1.19
+    ]]
+
+    methods {
+        @property inner_io {
+            [[The inner I/O this wrapper operates on.]]
+            get {
+                [[The internal input/output used for actual operations, use with care!]]
+            }
+            set {
+                [[Constructor-only property to set the inner_io.]]
+            }
+            values {
+                io: Efl.Object; [[The input (@Efl.Io.Reader) or output (@Efl.Io.Writer) instance]]
+            }
+        }
+
+        @property max_queue_size_input {
+            [[Limit how big the input queue can grow, in bytes.
+
+              If limited and @.line_delimiter is set, "line" events
+              may be emitted with partial contents, without the
+              trailing delimiter.
+            ]]
+            get { }
+            set {
+                [[Constructor-only property to set buffer limit. 0 is unlimited]]
+            }
+            values {
+                max_queue_size_input: size; [[Defines a maximum buffer size for incoming data, or 0 to allow unlimited amount of bytes]]
+            }
+        }
+
+        @property max_queue_size_output {
+            [[Limit how big the output queue can grow, in bytes.
+
+
+              If limited, @Efl.Io.Writer.write will take less data than requested!
+            ]]
+            get { }
+            set {
+                [[Constructor-only property to set buffer limit. 0 is unlimited]]
+            }
+            values {
+                max_queue_size_output: size; [[Defines a maximum buffer size for output data, or 0 to allow unlimited amount of bytes. If limited, @Efl.Io.Writer.write will take less data than requested!]]
+            }
+        }
+
+        @property line_delimiter {
+            [[If set, incoming data will be checked for the delimiter and "line" events are The line may include the delimiter, unless it's end-of-stream on @.max_queue_size_input was reached.]]
+            get { }
+            set {
+               [[Change line delimiter to use. If NULL or empty, no delimiter is to be used]]
+            }
+            values {
+                slice: ptr(const(Eina.Slice)); [[The contents may contain \0 and will be copied]]
+            }
+        }
+
+        @property inactivity_timeout {
+            [[Error as ETIMEDOUT if it becomes inactive for some time.
+
+              If no activity, that is no read or write in the given
+              amount of seconds, then the object will emit "error"
+              event with ETIMEDOUT value.
+
+              This is specified in seconds and is only active for
+              greater-than zero. Defaults to inactive.
+            ]]
+            values {
+                seconds: double; [[Number inactive seconds to timeout this object. If zero or less, it will be disabled.]]
+            }
+        }
+
+        @property read_chunk_size {
+           [[Read chunk size property, in bytes.
+
+             When reading the @.inner_io for data to be placed in
+             input queue, use this as chunk size.
+
+             Setting this value large enough may reduce number of
+             @Efl.Io.Reader.read, improving performance at the expense
+             of more memory consumption.
+
+             This value is bounded by @.max_queue_size_input if it's set.
+
+             By default it's 4096.
+           ]]
+           get {
+           }
+           set {
+                [[Set chunk size for each basic @Efl.Io.Reader.read operation.]]
+           }
+           values {
+                size: size; [[This is the chunk size to use for read operations]]
+           }
+        }
+
+        @property pending_write {
+            [[How many bytes are pending write to @.inner_io]]
+            get { }
+            values {
+                usage: size; [[Bytes available to write]]
+            }
+        }
+
+        @property pending_read {
+            [[How many bytes are pending (available) for read]]
+            get { }
+            values {
+                usage: size; [[Bytes available to read]]
+            }
+        }
+
+        slice_get { // TODO: property and return of Eina.Slice (not pointer)
+            [[Get a temporary access to input queue's internal read memory.
+
+              The memory pointed by slice may be changed by other
+              methods of this class. The event "slice,changed" will be
+              called in those situations.
+            ]]
+            params {
+                @out slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full slice available for reading.]]
+            }
+            return: bool (false); [[$true on success, $false otherwise]]
+        }
+
+        discard {
+            [[Discard the given number of bytes.
+
+              This has the same effect as reading and discarding the
+              given amount of bytes, without executing the actual
+              copy.
+
+              It's often paired with @.slice_get, if users read the
+              information from the slice and once they're done, that
+              data must be discarded.
+
+              As an example, some protocols provide messages with a
+              "size" header, then @.slice_get is used to peek into the
+              available memory to see if there is a "size" and if the
+              rest of the slice is the full payload, in this case the
+              slice may be handled to some processing function. When
+              the function is done, that amount of data must be
+              discarded -- with this function.
+            ]]
+            params {
+                amount: size; [[Bytes to discard]]
+            }
+        }
+
+        clear {
+            [[Clear the incoming queue. Same as reading all data.
+
+              This is equivalent as calling @.discard with @.pending_read
+              amount of bytes.
+            ]]
+        }
+
+        eos_mark {
+            [[Mark this end-of-stream, signals nothing else will be written.
+
+              That will forbid any further writes.
+
+              Unlike @Efl.Io.Closer.close, this won't clear anything.
+
+              When all data is written, "write,finished" is emitted.
+            ]]
+        }
+
+        flush {
+            [[Forces writing all pending data to destination.
+
+              It will return $true if @.pending_read drops to zero, $false
+              otherwise and more calls to flush must be made.
+
+              If the @.inner_io is implements @Efl.Io.Closer and it
+              was closed, or the wrapper itself was closed, this
+              function will do nothing and returns $true.
+
+              \@note this function may block the main loop execution
+              until operations complete! This is bad for usability, as
+              user interface or other operations may freeze. A better
+              approach is to operate asynchronously and wait for
+              "write,finished" event.
+            ]]
+            params {
+                may_block: bool; [[If $true, then @Efl.Io.Reader.can_read and @Efl.Io.Writer.can_write are not checked and the call may block.]]
+                ignore_line_delimiter: bool; [[Force flush ignoring line delimiters]]
+            }
+            return: bool(true); [[$true if all data was sent, $false otherwise]]
+        }
+    }
+
+    events {
+        write,finished; [[@.eos_mark was called and all available data was sent to destination]]
+        read,finished; [[Same as @Efl.Io.Reader "eos", for consistency.]]
+        finished; [[Both read and write are finished.]]
+        error: Eina.Error; [[An error happened and the I/O stopped]]
+        slice,changed; [[The read-slice returned by @.slice_get may have changed.]]
+        line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified. Note that the line slice may not be inside @.slice_get, don't assume that!]]
+    }
+
+    implements {
+        Efl.Object.finalize;
+        Efl.Object.destructor;
+        Efl.Io.Closer.close;
+        Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.close_on_exec;
+        Efl.Io.Closer.close_on_destructor;
+        Efl.Io.Reader.read;
+        Efl.Io.Reader.can_read;
+        Efl.Io.Reader.eos;
+        Efl.Io.Writer.write;
+        Efl.Io.Writer.can_write;
+    }
+}

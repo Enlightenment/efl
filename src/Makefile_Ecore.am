@@ -19,7 +19,9 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_io_stdout.eo \
 	lib/ecore/efl_io_stderr.eo \
 	lib/ecore/efl_io_file.eo \
-        lib/ecore/efl_io_copier.eo
+        lib/ecore/efl_io_copier.eo \
+        lib/ecore/efl_io_buffered_stream.eo
+
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_public) \
@@ -82,6 +84,7 @@ lib/ecore/efl_io_stdout.c \
 lib/ecore/efl_io_stderr.c \
 lib/ecore/efl_io_file.c \
 lib/ecore/efl_io_copier.c \
+lib/ecore/efl_io_buffered_stream.c \
 lib/ecore/efl_promise.c \
 lib/ecore/ecore_pipe.c \
 lib/ecore/ecore_poller.c \

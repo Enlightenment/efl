@@ -110,6 +110,7 @@ EAPI Efl_Future *efl_future_iterator_race(Eina_Iterator *it);
 #include "efl_io_stderr.eo.h"
 #include "efl_io_file.eo.h"
 #include "efl_io_copier.eo.h"
+#include "efl_io_buffered_stream.eo.h"
 
 /**
  * @}
