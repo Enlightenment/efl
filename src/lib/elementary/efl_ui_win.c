@@ -4151,7 +4151,6 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         return;
      }
 
-   _elm_win_need_frame_adjust(sd, ecore_evas_engine_name_get(sd->ee));
    if ((sd->type == ELM_WIN_INLINED_IMAGE) ||
        (sd->type == ELM_WIN_SOCKET_IMAGE))
      {
@@ -4159,6 +4158,10 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         sd->csd.need_borderless = EINA_TRUE;
         sd->csd.need_unresizable = EINA_TRUE;
         sd->csd.need_menu = EINA_FALSE;
+     }
+   else
+     {
+        sd->csd.need_shadow = sd->csd.need && (!sd->maximized);
      }
 
    alpha = sd->application_alpha || sd->theme_alpha;
@@ -4354,7 +4357,6 @@ _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine)
 
    /* this is for debug only - don't keep forever, it's not an api! */
    s = getenv("EFL_WIN_FRAME_MODE");
-
    sd->csd.wayland = (eina_streq(engine, ELM_WAYLAND_SHM) ||
                       eina_streq(engine, ELM_WAYLAND_EGL));
 
@@ -4366,9 +4368,6 @@ _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine)
      sd->csd.need = EINA_FALSE;
    else
      sd->csd.need = sd->csd.wayland;
-
-   /* for now CSD implies shadows as well */
-   sd->csd.need_shadow = sd->csd.need && (!sd->maximized);
 }
 
 static Eo *
