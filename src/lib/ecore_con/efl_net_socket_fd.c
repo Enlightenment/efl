@@ -238,6 +238,21 @@ _efl_net_socket_fd_efl_io_reader_can_read_set(Eo *o, Efl_Net_Socket_Fd_Data *pd 
      }
 }
 
+EOLIAN static void
+_efl_net_socket_fd_efl_io_reader_eos_set(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED, Eina_Bool value)
+{
+   Eina_Bool old = efl_io_reader_eos_get(o);
+   if (old == value) return;
+
+   efl_io_reader_eos_set(efl_super(o, MY_CLASS), value);
+
+   if (!value) return;
+
+   /* stop monitoring the FD, it's closed */
+   efl_event_callback_del(o, EFL_LOOP_FD_EVENT_READ, _efl_net_socket_fd_event_read, NULL);
+   efl_event_callback_del(o, EFL_LOOP_FD_EVENT_WRITE, _efl_net_socket_fd_event_write, NULL);
+}
+
 EOLIAN static Eina_Error
 _efl_net_socket_fd_efl_io_writer_write(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED, Eina_Slice *ro_slice, Eina_Slice *remaining)
 {
