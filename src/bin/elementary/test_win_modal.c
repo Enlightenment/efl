@@ -15,7 +15,7 @@ _parent_win_get(Evas_Object *obj)
 }
 
 static void
-_close(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_close_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
 
@@ -66,7 +66,7 @@ test_win_modal(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    elm_object_text_set(bt, "Close");
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0);
-   evas_object_smart_callback_add(bt, "clicked", _close, win);
+   evas_object_smart_callback_add(bt, "clicked", _close_cb, win);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
