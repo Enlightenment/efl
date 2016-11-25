@@ -8562,7 +8562,7 @@ EAPI Eina_Bool
 edje_edit_font_add(Evas_Object *obj, const char *path, const char *alias)
 {
    char entry[PATH_MAX];
-   char *new_path;
+   const char *new_path;
    struct stat st;
    Edje_Font_Directory_Entry *fnt;
 
@@ -8578,14 +8578,12 @@ edje_edit_font_add(Evas_Object *obj, const char *path, const char *alias)
    /* Alias */
    if (alias)
      {
-        if ((new_path = strrchr(path, '/'))) new_path++;
-        else new_path = (char *)path;
+        new_path = ecore_file_file_get(path);
      }
    else
      {
-        if ((alias = strrchr(path, '/'))) alias++;
-        else alias = (char *)path;
-        new_path = (char *)alias;
+        alias = ecore_file_file_get(path);
+        new_path = alias;
      }
    snprintf(entry, sizeof(entry), "edje/fonts/%s", alias);
 
@@ -9641,7 +9639,7 @@ edje_edit_image_add(Evas_Object *obj, const char *path)
    Edje_Image_Directory_Entry *de;
    unsigned int i;
    int free_id = -1;
-   char *name;
+   const char *name;
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
@@ -9657,8 +9655,7 @@ edje_edit_image_add(Evas_Object *obj, const char *path)
      }
 
    /* Image name */
-   if ((name = strrchr(path, '/'))) name++;
-   else name = (char *)path;
+   name = ecore_file_file_get(path);
 
    /* Loop trough image directory to find if image exist */
    for (i = 0; i < ed->file->image_dir->entries_count; ++i)
