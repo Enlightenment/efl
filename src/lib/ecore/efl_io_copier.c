@@ -1,3 +1,5 @@
+#define EFL_IO_COPIER_PROTECTED 1
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -120,11 +122,7 @@ _efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
      {
         if ((!pd->done) &&
             ((!pd->destination) || (eina_binbuf_length_get(pd->buf) == 0)))
-          {
-             pd->done = EINA_TRUE;
-             if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
-             efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
-          }
+          efl_io_copier_done_set(o, EINA_TRUE);
      }
 
    efl_unref(o);
@@ -242,7 +240,7 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
      }
 
    pd->progress.read += rw_slice.len;
-   pd->done = EINA_FALSE;
+   efl_io_copier_done_set(o, EINA_FALSE);
 
    if ((!pd->destination) && (eina_binbuf_length_get(pd->buf) > used))
      {
@@ -307,7 +305,7 @@ _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd)
      return;
 
    pd->progress.written += ro_slice.len;
-   pd->done = EINA_FALSE;
+   efl_io_copier_done_set(o, EINA_FALSE);
 
    /* Note: dispatch data and line from write since it will remove
     * from binbuf and make it simple to not repeat data that was
@@ -465,11 +463,7 @@ _efl_io_copier_destination_closed(void *data, const Efl_Event *event EINA_UNUSED
    if (eina_binbuf_length_get(pd->buf) == 0)
      {
         if (!pd->done)
-          {
-             pd->done = EINA_TRUE;
-             if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
-             efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
-          }
+          efl_io_copier_done_set(o, EINA_TRUE);
      }
    else
      {
@@ -617,10 +611,7 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
      efl_future_cancel(pd->inactivity_timer);
 
    if (!pd->done)
-     {
-        pd->done = EINA_TRUE;
-        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
-     }
+     efl_io_copier_done_set(o, EINA_TRUE);
 
    if (pd->source)
      {
@@ -734,15 +725,28 @@ _efl_io_copier_flush(Eo *o, Efl_Io_Copier_Data *pd)
      {
         if ((!pd->done) &&
             ((!pd->destination) || (eina_binbuf_length_get(pd->buf) == 0)))
-          {
-             pd->done = EINA_TRUE;
-             if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
-             efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
-          }
+          efl_io_copier_done_set(o, EINA_TRUE);
      }
 
    return pd->done;
 }
+
+EOLIAN static Eina_Bool
+_efl_io_copier_done_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+{
+   return pd->done;
+}
+
+EOLIAN static void
+_efl_io_copier_done_set(Eo *o, Efl_Io_Copier_Data *pd, Eina_Bool value)
+{
+   if (pd->done == value) return;
+   pd->done = value;
+   if (!value) return;
+   if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
+   efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
+}
+
 
 EOLIAN static Eo *
 _efl_io_copier_efl_object_constructor(Eo *o, Efl_Io_Copier_Data *pd)

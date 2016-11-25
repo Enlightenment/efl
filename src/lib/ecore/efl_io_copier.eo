@@ -285,6 +285,21 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
             }
         }
 
+        @property done {
+            [[Reports if copier is done.
+
+              A copier is done if source reached "eos" and all data
+              was written to "destination".
+
+              The copier is also done when it's @Efl.Io.Closer.closed.
+            ]]
+            get { }
+            set @protected { }
+            values {
+                done: bool; [[If $true, source is "eos" and all data was written to "destination". If $false, it's still pending some more copies]]
+            }
+        }
+
         binbuf_steal {
            [[Steals the internal binbuf and return it to caller.
 
