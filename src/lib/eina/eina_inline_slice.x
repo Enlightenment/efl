@@ -192,7 +192,7 @@ eina_slice_startswith(const Eina_Slice slice, const Eina_Slice prefix)
 static inline Eina_Bool
 eina_slice_endswith(const Eina_Slice slice, const Eina_Slice suffix)
 {
-   if ((suffix.len != 0) && (slice.len > suffix.len))
+   if ((suffix.len != 0) && (slice.len >= suffix.len))
      return memcmp(slice.bytes + slice.len - suffix.len,
                    suffix.mem, suffix.len) == 0;
    return EINA_FALSE;
