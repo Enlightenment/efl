@@ -335,6 +335,10 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
               approach is to operate asynchronously and wait for
               "done" event.
             ]]
+            params {
+                may_block: bool; [[If $true, then @Efl.Io.Reader.can_read and @Efl.Io.Writer.can_write are not checked and the call may block.]]
+                ignore_line_delimiter: bool; [[Force flush ignoring line delimiters]]
+            }
             return: bool(true); [[$true on success, $false otherwise]]
         }
     }

@@ -364,7 +364,7 @@ main(int argc, char **argv)
 
    while ((!efl_io_closer_closed_get(dialer)) &&
           efl_io_queue_usage_get(input))
-     efl_io_copier_flush(send_copier);
+     efl_io_copier_flush(send_copier, EINA_TRUE, EINA_TRUE);
 
  end:
    eina_list_free(waiting);

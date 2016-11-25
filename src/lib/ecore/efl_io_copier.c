@@ -27,6 +27,7 @@ typedef struct _Efl_Io_Copier_Data
    double inactivity_timeout;
    Eina_Bool closed;
    Eina_Bool done;
+   Eina_Bool force_dispatch;
    Eina_Bool close_on_exec;
    Eina_Bool close_on_destructor;
 } Efl_Io_Copier_Data;
@@ -281,7 +282,7 @@ _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd)
         return;
      }
 
-   if ((pd->line_delimiter.len > 0) &&
+   if ((pd->line_delimiter.len > 0) && (!pd->force_dispatch) &&
        (pd->source && !efl_io_reader_eos_get(pd->source)))
      {
         const uint8_t *p = eina_slice_find(ro_slice, pd->line_delimiter);
@@ -469,6 +470,8 @@ _efl_io_copier_destination_closed(void *data, const Efl_Event *event EINA_UNUSED
      {
         Eina_Error err = EBADF;
         if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
+        WRN("copier %p destination %p closed with %zd bytes pending...",
+            o, pd->destination, eina_binbuf_length_get(pd->buf));
         efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
      }
 }
@@ -604,6 +607,34 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
 
    _COPIER_DBG(o, pd);
 
+   while (pd->buf)
+     {
+        size_t pending = eina_binbuf_length_get(pd->buf);
+        if (pending == 0) break;
+        else if (pd->destination && efl_io_writer_can_write_get(pd->destination))
+          {
+             DBG("copier %p destination %p closed with %zd bytes pending, do final write...",
+                 o, pd->destination, pending);
+             pd->force_dispatch = EINA_TRUE;
+             _efl_io_copier_write(o, pd);
+             pd->force_dispatch = EINA_FALSE;
+          }
+        else if (!pd->destination)
+          {
+             Eina_Slice binbuf_slice = eina_binbuf_slice_get(pd->buf);
+             DBG("copier %p destination %p closed with %zd bytes pending, dispatch events...",
+                 o, pd->destination, pending);
+             _efl_io_copier_dispatch_data_events(o, pd, binbuf_slice);
+             break;
+          }
+        else
+          {
+             DBG("copier %p destination %p closed with %zd bytes pending...",
+                 o, pd->destination, pending);
+             break;
+          }
+     }
+
    if (pd->job)
      efl_future_cancel(pd->job);
 
@@ -699,7 +730,7 @@ _efl_io_copier_inactivity_timeout_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_io_copier_flush(Eo *o, Efl_Io_Copier_Data *pd)
+_efl_io_copier_flush(Eo *o, Efl_Io_Copier_Data *pd, Eina_Bool may_block, Eina_Bool ignore_line_delimiter)
 {
    uint64_t old_read = pd->progress.read;
    uint64_t old_written = pd->progress.written;
@@ -708,10 +739,29 @@ _efl_io_copier_flush(Eo *o, Efl_Io_Copier_Data *pd)
    _COPIER_DBG(o, pd);
 
    if (pd->source && !efl_io_reader_eos_get(pd->source))
-     _efl_io_copier_read(o, pd);
+     {
+        if (may_block || efl_io_reader_can_read_get(pd->source))
+          _efl_io_copier_read(o, pd);
+     }
 
    if (pd->destination)
-     _efl_io_copier_write(o, pd);
+     {
+        if (may_block || efl_io_writer_can_write_get(pd->source))
+          {
+             pd->force_dispatch = ignore_line_delimiter;
+             _efl_io_copier_write(o, pd);
+             pd->force_dispatch = EINA_FALSE;
+          }
+     }
+   else if (ignore_line_delimiter && pd->buf)
+     {
+        size_t pending = eina_binbuf_length_get(pd->buf);
+        if (pending)
+          {
+             Eina_Slice binbuf_slice = eina_binbuf_slice_get(pd->buf);
+             _efl_io_copier_dispatch_data_events(o, pd, binbuf_slice);
+          }
+     }
 
    if ((old_read != pd->progress.read) ||
        (old_written != pd->progress.written) ||

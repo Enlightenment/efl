@@ -1210,7 +1210,7 @@ ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
    if (svr->dialer.input)
      {
         while (efl_io_queue_usage_get(svr->dialer.input) > 0)
-          efl_io_copier_flush(svr->dialer.send_copier);
+          efl_io_copier_flush(svr->dialer.send_copier, EINA_TRUE, EINA_TRUE);
         return;
      }
    else if (svr->server)
@@ -1627,7 +1627,7 @@ ecore_ipc_client_flush(Ecore_Ipc_Client *cl)
    if (cl->socket.input)
      {
         while (efl_io_queue_usage_get(cl->socket.input) > 0)
-          efl_io_copier_flush(cl->socket.send_copier);
+          efl_io_copier_flush(cl->socket.send_copier, EINA_TRUE, EINA_TRUE);
         return;
      }
 #ifndef EFL_NET_SERVER_UNIX_CLASS
