@@ -487,4 +487,65 @@ _efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Server_Fd_Data *pd)
      efl_net_server_fd_client_add(o, client);
 }
 
+static void
+_efl_net_server_fd_client_event_closed(void *data, const Efl_Event *event)
+{
+   Eo *server = data;
+   Eo *client = event->object;
+
+   efl_event_callback_del(client, EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_server_fd_client_event_closed, server);
+   if (efl_parent_get(client) == server)
+     efl_parent_set(client, NULL);
+
+   efl_net_server_clients_count_set(server, efl_net_server_clients_count_get(server) - 1);
+}
+
+static Eina_Bool
+_efl_net_server_fd_efl_net_server_client_announce(Eo *o, Efl_Net_Server_Fd_Data *pd EINA_UNUSED, Eo *client)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(client, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_GOTO(efl_isa(client, EFL_NET_SOCKET_INTERFACE), wrong_type);
+   EINA_SAFETY_ON_FALSE_GOTO(efl_parent_get(client) == o, wrong_parent);
+
+   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_CLIENT_ADD, client);
+
+   if (efl_parent_get(client) != o)
+     {
+        DBG("client %s was reparented! Ignoring it...",
+            efl_net_socket_address_remote_get(client));
+        return EINA_TRUE;
+     }
+
+   if (efl_ref_get(client) == 1) /* users must take a reference themselves */
+     {
+        DBG("client %s was not handled, closing it...",
+            efl_net_socket_address_remote_get(client));
+        efl_del(client);
+        return EINA_FALSE;
+     }
+   else if (efl_io_closer_closed_get(client))
+     {
+        DBG("client %s was closed from 'client,add', delete it...",
+            efl_net_socket_address_remote_get(client));
+        efl_del(client);
+        return EINA_FALSE;
+     }
+
+   efl_net_server_clients_count_set(o, efl_net_server_clients_count_get(o) + 1);
+   efl_event_callback_add(client, EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_server_fd_client_event_closed, o);
+   return EINA_TRUE;
+
+ wrong_type:
+   ERR("%p client %p (%s) doesn't implement Efl.Net.Socket interface, deleting it.", o, client, efl_class_name_get(efl_class_get(client)));
+   efl_io_closer_close(client);
+   efl_del(client);
+   return EINA_FALSE;
+
+ wrong_parent:
+   ERR("%p client %p (%s) parent=%p is not our child, deleting it.", o, client, efl_class_name_get(efl_class_get(client)), efl_parent_get(client));
+   efl_io_closer_close(client);
+   efl_del(client);
+   return EINA_FALSE;
+}
+
 #include "efl_net_server_fd.eo.c"

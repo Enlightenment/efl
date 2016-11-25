@@ -278,8 +278,6 @@ _efl_net_server_udp_efl_net_server_serve(Eo *o, Efl_Net_Server_Udp_Data *pd, con
    return 0;
 }
 
-static Efl_Callback_Array_Item *_efl_net_server_udp_client_cbs(void);
-
 static void
 _efl_net_server_udp_client_event_closed(void *data, const Efl_Event *event)
 {
@@ -287,16 +285,9 @@ _efl_net_server_udp_client_event_closed(void *data, const Efl_Event *event)
    Eo *client = event->object;
    Efl_Net_Server_Udp_Data *pd = efl_data_scope_get(server, MY_CLASS);
 
-   efl_event_callback_array_del(client, _efl_net_server_udp_client_cbs(), server);
-   efl_net_server_clients_count_set(server, efl_net_server_clients_count_get(server) - 1);
-
+   efl_event_callback_del(client, EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_server_udp_client_event_closed, server);
    eina_hash_del(pd->clients, efl_net_socket_address_remote_get(client), client);
-   if (efl_parent_get(client) == server)
-     efl_parent_set(client, NULL);
 }
-
-EFL_CALLBACKS_ARRAY_DEFINE(_efl_net_server_udp_client_cbs,
-                           { EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_server_udp_client_event_closed });
 
 EOLIAN static void
 _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Server_Udp_Data *pd)
@@ -356,7 +347,6 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
      }
 
    client = efl_add(EFL_NET_SERVER_UDP_CLIENT_CLASS, o,
-                    efl_event_callback_array_add(efl_added, _efl_net_server_udp_client_cbs(), o),
                     efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
 
                     efl_net_socket_address_local_set(efl_added, efl_net_server_address_get(o)),
@@ -378,18 +368,10 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
         efl_event_callback_call(o, EFL_NET_SERVER_EVENT_CLIENT_REJECTED, str);
         return;
      }
+   efl_event_callback_add(client, EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_server_udp_client_event_closed, o);
 
-   efl_net_server_clients_count_set(o, efl_net_server_clients_count_get(o) + 1);
-   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_CLIENT_ADD, client);
-
-   if (efl_ref_get(client) == 1) /* users must take a reference themselves */
-     {
-        DBG("client %s was not handled, closing it...",
-            efl_net_socket_address_remote_get(client));
-        free(buf);
-        efl_del(client);
-        return;
-     }
+   if (!efl_net_server_client_announce(o, client))
+     return;
 
    _efl_net_server_udp_client_feed(client, slice);
 }

@@ -242,29 +242,10 @@ _efl_net_server_tcp_efl_net_server_serve(Eo *o, Efl_Net_Server_Tcp_Data *pd, con
    return 0;
 }
 
-static Efl_Callback_Array_Item *_efl_net_server_tcp_client_cbs(void);
-
-static void
-_efl_net_server_tcp_client_event_closed(void *data, const Efl_Event *event)
-{
-   Eo *server = data;
-   Eo *client = event->object;
-
-   efl_event_callback_array_del(client, _efl_net_server_tcp_client_cbs(), server);
-   if (efl_parent_get(client) == server)
-     efl_parent_set(client, NULL);
-
-   efl_net_server_clients_count_set(server, efl_net_server_clients_count_get(server) - 1);
-}
-
-EFL_CALLBACKS_ARRAY_DEFINE(_efl_net_server_tcp_client_cbs,
-                           { EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_server_tcp_client_event_closed });
-
 static void
 _efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, Efl_Net_Server_Tcp_Data *pd EINA_UNUSED, int client_fd)
 {
    Eo *client = efl_add(EFL_NET_SOCKET_TCP_CLASS, o,
-                        efl_event_callback_array_add(efl_added, _efl_net_server_tcp_client_cbs(), o),
                         efl_io_closer_close_on_exec_set(efl_added, efl_net_server_fd_close_on_exec_get(o)),
                         efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
                         efl_loop_fd_set(efl_added, client_fd));
@@ -275,15 +256,7 @@ _efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, Efl_Net_Server_Tcp_Data 
         return;
      }
 
-   efl_net_server_clients_count_set(o, efl_net_server_clients_count_get(o) + 1);
-   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_CLIENT_ADD, client);
-
-   if (efl_ref_get(client) == 1) /* users must take a reference themselves */
-     {
-        DBG("client %s was not handled, closing it...",
-            efl_net_socket_address_remote_get(client));
-        efl_del(client);
-     }
+   efl_net_server_client_announce(o, client);
 }
 
 static void

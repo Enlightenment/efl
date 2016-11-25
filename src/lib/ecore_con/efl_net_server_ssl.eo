@@ -138,6 +138,7 @@ class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
         Efl.Object.constructor;
         Efl.Object.destructor;
         Efl.Net.Server.serve;
+        Efl.Net.Server.client_announce;
         Efl.Net.Server.address.get;
         Efl.Net.Server.clients_count.get;
         Efl.Net.Server.clients_limit;

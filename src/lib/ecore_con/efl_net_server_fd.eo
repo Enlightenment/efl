@@ -161,5 +161,6 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
         Efl.Net.Server.clients_limit;
         Efl.Net.Server.serving;
         Efl.Net.Server.serve;
+        Efl.Net.Server.client_announce;
     }
 }

@@ -99,6 +99,45 @@ interface Efl.Net.Server {
             }
         }
 
+        client_announce @protected {
+            [[Implementions should call this method to announce new clients.
+
+              This method will account the new client in
+              @.clients_count as well as emit the event "client,add".
+
+              After this call, the client ownership will be
+              managed. If no event handler references the object, it
+              will be deleted.
+
+              Most implementions will do the sequence:
+
+               - emit "client,add"
+
+               - check if client was referenced
+
+               - if we're not the parent anymore, ignore (do not
+                 change @.clients_count) and return $true.
+
+               - if not referenced, delete it and return $false.
+
+               - if it's closed, delete it and return $false.
+
+               - if referenced, increment @.clients_count and monitor
+                 for client "closed" event and return $true.
+
+               - on client "closed", decrease @.clients_count and
+                 unset its parent (if we're still the parent).
+
+              Do not monitor "closed" before emitting
+              "client,add". Doing so may lead to double free if
+              callbacks close the client by themselves!
+            ]]
+            params {
+                client: Efl.Net.Socket; [[A socket representing the client.]]
+            }
+            return: bool(false); [[If $true, then client was handled. If $false, it was dropped and deleted.]]
+        }
+
         @property serving {
             [[Returns whenever the server is ready to accept clients or not.
 
