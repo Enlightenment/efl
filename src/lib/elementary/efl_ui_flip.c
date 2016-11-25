@@ -1897,8 +1897,6 @@ _efl_ui_flip_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Flip_Data *priv)
    priv->intmode = EFL_UI_FLIP_INTERACTION_NONE;
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
-
-   _sizing_eval(obj);
 }
 
 EOLIAN static void
