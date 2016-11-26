@@ -274,9 +274,8 @@ _evas_render_had_map(Evas_Object_Protected_Data *obj)
 }
 
 static Eina_Bool
-_evas_render_is_relevant(Evas_Object *eo_obj)
+_evas_render_is_relevant(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    return ((evas_object_is_visible(eo_obj, obj) && (!obj->cur->have_clipees)) ||
            (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees)));
 }
@@ -905,7 +904,7 @@ _evas_render_phase1_object_changed_normal(Phase1_Context *p1ctx,
 #endif
                                          )
 {
-   if ((!obj->clip.clipees) && _evas_render_is_relevant(eo_obj))
+   if ((!obj->clip.clipees) && _evas_render_is_relevant(eo_obj, obj))
      {
         if (EINA_LIKELY(is_active))
           {
