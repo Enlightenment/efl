@@ -787,6 +787,17 @@ struct _Evas_Post_Callback
    unsigned char              delete_me : 1;
 };
 
+// somehow this has bugs ... and i am not sure why...
+//#define INLINE_ACTIVE_GEOM 1
+
+typedef struct
+{
+#ifdef INLINE_ACTIVE_GEOM
+   Evas_Coord_Rectangle        rect;
+#endif
+   Evas_Object_Protected_Data *obj;
+} Evas_Active_Entry;
+
 struct _Evas_Public_Data
 {
    EINA_INLIST;
@@ -859,7 +870,7 @@ struct _Evas_Public_Data
    } render;
 
    Eina_Array     delete_objects;
-   Eina_Array     active_objects;
+   Eina_Inarray   active_objects;
    Eina_Array     restack_objects;
    Eina_Array     render_objects;
    Eina_Array     pending_objects;

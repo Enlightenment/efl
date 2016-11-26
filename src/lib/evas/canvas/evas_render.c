@@ -67,32 +67,9 @@ rend_dbg(const char *txt)
 #define IFRD(ifcase, xxx, args...)
 #endif
 
-#define OBJ_ARRAY_PUSH(array, obj)  \
-do                                  \
-{                                   \
-   eina_array_push(array, obj);     \
-   /*efl_data_ref(obj->object, NULL);*/  \
-} while (0)
-
-#define OBJS_ARRAY_CLEAN(array)                       \
-{                                                     \
-   /*Evas_Object_Protected_Data *item;*/                  \
-   /*Eina_Array_Iterator iterator;*/                      \
-   /*unsigned int idx;*/                                  \
-   /*EINA_ARRAY_ITER_NEXT(array, idx, item, iterator)*/   \
-      /*efl_data_unref(item->object, item);*/              \
-   eina_array_clean(array);                           \
-}
-
-#define OBJS_ARRAY_FLUSH(array)                       \
-{                                                     \
-   /*Evas_Object_Protected_Data *item;*/                  \
-   /*Eina_Array_Iterator iterator;*/                      \
-   /*unsigned int idx;*/                                  \
-   /*EINA_ARRAY_ITER_NEXT(array, idx, item, iterator)*/   \
-      /*efl_data_unref(item->object, item);*/              \
-   eina_array_flush(array);                           \
-}
+#define OBJ_ARRAY_PUSH(array, obj) eina_array_push(array, obj)
+#define OBJS_ARRAY_CLEAN(array) eina_array_clean(array)
+#define OBJS_ARRAY_FLUSH(array) eina_array_flush(array)
 
 /* save typing */
 #define ENFN evas->engine.func
@@ -410,7 +387,7 @@ _evas_render_object_is_mask(Evas_Object_Protected_Data *obj)
 
 static void
 _evas_render_phase1_direct(Evas_Public_Data *e,
-                           Eina_Array *active_objects,
+                           Eina_Inarray *active_objects,
                            Eina_Array *restack_objects EINA_UNUSED,
                            Eina_Array *delete_objects EINA_UNUSED,
                            Eina_Array *render_objects)
@@ -419,10 +396,10 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
    Evas_Object *eo_obj;
 
    RD(0, "  [--- PHASE 1 DIRECT\n");
-   for (i = 0; i < active_objects->count; i++)
+   for (i = 0; i < active_objects->len; i++)
      {
-        Evas_Object_Protected_Data *obj =
-           eina_array_data_get(active_objects, i);
+        Evas_Active_Entry *ent = eina_inarray_nth(active_objects, i);
+        Evas_Object_Protected_Data *obj = ent->obj;
 
         if (obj->changed) evas_object_clip_recalc(obj);
 
@@ -607,9 +584,9 @@ _evas_render_object_map_change_update(Evas_Public_Data *e, Evas_Object *eo_obj E
 
 typedef struct
 {
-   Eina_Array *active_objects;
-   Eina_Array *render_objects;
-   Eina_Array *snapshot_objects;
+   Eina_Inarray *active_objects;
+   Eina_Array   *render_objects;
+   Eina_Array   *snapshot_objects;
 
    Eina_Inarray *update_del;
 } Render_Cache;
@@ -639,10 +616,7 @@ evas_render_object_render_cache_free(Evas_Object *eo_obj EINA_UNUSED,
 
    if (!data) return;
    rc = data;
-   OBJS_ARRAY_CLEAN(rc->active_objects);
-   OBJS_ARRAY_CLEAN(rc->render_objects);
-   OBJS_ARRAY_CLEAN(rc->snapshot_objects);
-   eina_array_free(rc->active_objects);
+   eina_inarray_free(rc->active_objects);
    eina_array_free(rc->render_objects);
    eina_array_free(rc->snapshot_objects);
    free(rc);
@@ -654,7 +628,7 @@ _evas_render_phase1_object_render_cache_new(void)
    Render_Cache *rc;
 
    rc = malloc(sizeof(Render_Cache));
-   rc->active_objects   = eina_array_new(32);
+   rc->active_objects   = eina_inarray_new(sizeof(Evas_Active_Entry), 32);
    rc->render_objects   = eina_array_new(32);
    rc->snapshot_objects = eina_array_new(32);
    rc->update_del       = eina_inarray_new(sizeof(Eina_Rectangle), 16);
@@ -664,7 +638,7 @@ _evas_render_phase1_object_render_cache_new(void)
 typedef struct
 {
    Evas_Public_Data *e;
-   Eina_Array       *active_objects;
+   Eina_Inarray     *active_objects;
    Eina_Array       *render_objects;
    Eina_Array       *snapshot_objects;
    Eina_Array       *restack_objects;
@@ -688,6 +662,7 @@ _evas_render_phase1_object_ctx_render_cache_append(Phase1_Context *ctx,
    void *obj;
    unsigned int i, c;
    Eina_Rectangle *r;
+   Evas_Active_Entry *ent;
 
 #define ARR_APPEND(x) \
    if (rc->x != ctx->x) { \
@@ -696,13 +671,18 @@ _evas_render_phase1_object_ctx_render_cache_append(Phase1_Context *ctx,
          for (i = 0; i < c; i++) { \
             obj = eina_array_data_get(rc->x, i); \
             eina_array_push(ctx->x, obj); \
-            /*efl_data_ref(obj, NULL);*/ \
          } \
       } while (0); \
    }
-   ARR_APPEND(active_objects);
    ARR_APPEND(render_objects);
    ARR_APPEND(snapshot_objects);
+
+   c = eina_inarray_count(rc->active_objects);
+   for (i = 0; i < c; i++)
+     {
+        ent = eina_inarray_nth(rc->active_objects, i);
+        eina_inarray_push(ctx->active_objects, ent);
+     }
 
    c = eina_inarray_count(rc->update_del);
    for (i = 0; i < c; i++)
@@ -1081,7 +1061,23 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
    if ((!mapped_parent) &&
        ((is_active) || (obj->delete_me != 0)) &&
        (!obj->no_render))
-      OBJ_ARRAY_PUSH(p1ctx->active_objects, obj);
+     {
+        Evas_Active_Entry ent;
+
+#ifdef INLINE_ACTIVE_GEOM
+        if (obj->is_smart)
+          evas_object_smart_bounding_box_get(eo_obj, &(ent.rect), NULL);
+        else
+          {
+             ent.rect.x = obj->cur->cache.clip.x;
+             ent.rect.y = obj->cur->cache.clip.y;
+             ent.rect.w = obj->cur->cache.clip.w;
+             ent.rect.h = obj->cur->cache.clip.h;
+          }
+#endif
+        ent.obj = obj;
+        eina_inarray_push(p1ctx->active_objects, &ent);
+     }
    if (is_active && obj->cur->snapshot && !obj->delete_me &&
        evas_object_is_visible(eo_obj, obj))
      OBJ_ARRAY_PUSH(p1ctx->snapshot_objects, obj);
@@ -1269,7 +1265,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
 clean_stuff:
         if (!ok)
           {
-             OBJS_ARRAY_CLEAN(&e->active_objects);
+             eina_inarray_flush(&e->active_objects);
              OBJS_ARRAY_CLEAN(&e->render_objects);
              OBJS_ARRAY_CLEAN(&e->restack_objects);
              OBJS_ARRAY_CLEAN(&e->delete_objects);
@@ -1413,17 +1409,17 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
                       obj->cur->cache.clip.w,
                       obj->cur->cache.clip.h);
 
-   for (i = e->active_objects.count - 1; i > 0; i--)
+   for (i = e->active_objects.len - 1; i > 0; i--)
      {
         Eina_Rectangle self;
         Eina_Rectangle *match;
         Evas_Object *eo_current;
         Eina_List *l;
         int xm1, ym1, xm2, ym2;
+        Evas_Active_Entry *ent = eina_inarray_nth(&e->active_objects, i);
+        Evas_Object_Protected_Data *current = ent->obj;
 
-        Evas_Object_Protected_Data *current = eina_array_data_get(&e->active_objects, i);
         eo_current = current->object;
-
         /* Did we find the video object in the stack ? */
         if (eo_current == video_parent || eo_current == eo_obj)
           break;
@@ -2665,6 +2661,7 @@ _cb_always_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
    for (i = 0; i < freeze_num; i++) efl_event_freeze(eo_e);
 }
 
+#ifndef INLINE_ACTIVE_GEOM
 static inline Eina_Bool
 _is_obj_in_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                 int x, int y, int w, int h)
@@ -2684,6 +2681,7 @@ _is_obj_in_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
      }
    return EINA_FALSE;
 }
+#endif
 
 static Eina_Bool
 evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
@@ -2749,9 +2747,11 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
 
    eina_evlog("+render_objects", eo_e, 0.0, NULL);
    /* render all object that intersect with rect */
-   for (i = 0; i < e->active_objects.count; ++i)
+   for (i = 0; i < e->active_objects.len; i++)
      {
-        obj = eina_array_data_get(&e->active_objects, i);
+        Evas_Active_Entry *ent = eina_inarray_nth(&e->active_objects, i);
+
+        obj = ent->obj;
         eo_obj = obj->object;
 
         if (obj == top) break;
@@ -2760,12 +2760,18 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
         RD(level, "    OBJ: [%p", eo_obj);
         IFRD(obj->name, 0, " '%s'", obj->name);
         RD(level, "] '%s' %i %i %ix%i\n", obj->type, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
-        if ((_is_obj_in_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh)) &&
+        if (
             (!obj->clip.clipees) &&
             (obj->cur->visible) &&
-            (!obj->delete_me) &&
             (obj->cur->cache.clip.visible) &&
-            // (!obj->is_smart) &&
+#ifdef INLINE_ACTIVE_GEOM
+            RECTS_INTERSECT(ux - fx, uy - fy, uw, uh,
+                            ent->rect.x, ent->rect.y,
+                            ent->rect.w, ent->rect.h) &&
+#else
+            (_is_obj_in_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh)) &&
+#endif
+            (!obj->delete_me) &&
             ((obj->cur->color.a > 0 || obj->cur->render_op != EVAS_RENDER_BLEND)))
           {
              int x, y, w, h;
@@ -3082,9 +3088,11 @@ evas_render_updates_internal(Evas *eo_e,
    /* build obscure objects list of active objects that obscure as well
     * as objects that may need data (image data loads, texture updates,
     * pre-render buffers/fbo's etc.) that are not up to date yet */
-   for (i = 0; i < e->active_objects.count; ++i)
+   for (i = 0; i < e->active_objects.len; i++)
      {
-        obj = eina_array_data_get(&e->active_objects, i);
+        Evas_Active_Entry *ent = eina_inarray_nth(&e->active_objects, i);
+
+        obj = ent->obj;
         eo_obj = obj->object;
         if (UNLIKELY((evas_object_is_opaque(eo_obj, obj) ||
                       ((obj->func->has_opaque_rect) &&
@@ -3254,10 +3262,12 @@ evas_render_updates_internal(Evas *eo_e,
 
    /* and do a post render pass */
    eina_evlog("+render_post", eo_e, 0.0, NULL);
-   IFRD(e->active_objects.count, 0, "  [--- POST RENDER\n");
-   for (i = 0; i < e->active_objects.count; ++i)
+   IFRD(e->active_objects.len, 0, "  [--- POST RENDER\n");
+   for (i = 0; i < e->active_objects.len; i++)
      {
-        obj = eina_array_data_get(&e->active_objects, i);
+        Evas_Active_Entry *ent = eina_inarray_nth(&e->active_objects, i);
+
+        obj = ent->obj;
         eo_obj = obj->object;
         obj->pre_render_done = EINA_FALSE;
         RD(0, "    OBJ [%p", obj);
@@ -3281,7 +3291,7 @@ evas_render_updates_internal(Evas *eo_e,
          */
      }
    eina_evlog("-render_post", eo_e, 0.0, NULL);
-   IFRD(e->active_objects.count, 0, "  ---]\n");
+   IFRD(e->active_objects.len, 0, "  ---]\n");
 
    /* free our obscuring object list */
    OBJS_ARRAY_CLEAN(&e->obscuring_objects);
@@ -3333,7 +3343,7 @@ evas_render_updates_internal(Evas *eo_e,
     * it's useless to keep the render object list around. */
    if (clean_them)
      {
-        OBJS_ARRAY_CLEAN(&e->active_objects);
+        eina_inarray_flush(&e->active_objects);
         OBJS_ARRAY_CLEAN(&e->render_objects);
         OBJS_ARRAY_CLEAN(&e->restack_objects);
         OBJS_ARRAY_CLEAN(&e->temporary_objects);
@@ -3341,7 +3351,7 @@ evas_render_updates_internal(Evas *eo_e,
         eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
         eina_array_clean(&e->clip_changes);
 /* we should flush here and have a mempool system for this
-        eina_array_flush(&e->active_objects);
+        eina_inarray_flush(&e->active_objects);
         eina_array_flush(&e->render_objects);
         eina_array_flush(&e->restack_objects);
         eina_array_flush(&e->delete_objects);
@@ -3658,7 +3668,7 @@ _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
             (e->engine.data.output))
           e->engine.func->output_idle_flush(e->engine.data.output);
 
-        OBJS_ARRAY_FLUSH(&e->active_objects);
+        eina_inarray_flush(&e->active_objects);
         OBJS_ARRAY_FLUSH(&e->render_objects);
         OBJS_ARRAY_FLUSH(&e->restack_objects);
         OBJS_ARRAY_FLUSH(&e->delete_objects);
@@ -3770,7 +3780,7 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
             (e->engine.data.output))
           e->engine.func->output_idle_flush(e->engine.data.output);
 
-        OBJS_ARRAY_FLUSH(&e->active_objects);
+        eina_inarray_flush(&e->active_objects);
         OBJS_ARRAY_FLUSH(&e->render_objects);
         OBJS_ARRAY_FLUSH(&e->restack_objects);
         OBJS_ARRAY_FLUSH(&e->delete_objects);
@@ -3795,7 +3805,7 @@ evas_render_invalidate(Evas *eo_e)
    MAGIC_CHECK_END();
    e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
-   OBJS_ARRAY_CLEAN(&e->active_objects);
+   eina_inarray_flush(&e->active_objects);
    OBJS_ARRAY_CLEAN(&e->render_objects);
 
    OBJS_ARRAY_FLUSH(&e->restack_objects);

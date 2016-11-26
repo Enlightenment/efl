@@ -214,7 +214,6 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
                        ((1024 * sizeof (void*)) - sizeof (E->Array)) / sizeof (void*));
 
    EVAS_ARRAY_SET(e, delete_objects);
-   EVAS_ARRAY_SET(e, active_objects);
    EVAS_ARRAY_SET(e, restack_objects);
    EVAS_ARRAY_SET(e, render_objects);
    EVAS_ARRAY_SET(e, pending_objects);
@@ -226,6 +225,12 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    EVAS_ARRAY_SET(e, image_unref_queue);
    EVAS_ARRAY_SET(e, glyph_unref_queue);
    EVAS_ARRAY_SET(e, texts_unref_queue);
+
+   e->active_objects.version = EINA_ARRAY_VERSION;
+   eina_inarray_step_set(&e->active_objects,
+                         sizeof(Eina_Inarray),
+                         sizeof(Evas_Active_Entry),
+                         256);
 
 #undef EVAS_ARRAY_SET
    eina_lock_new(&(e->lock_objects));
@@ -353,7 +358,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    if (e->engine.module) evas_module_unref(e->engine.module);
 
    eina_array_flush(&e->delete_objects);
-   eina_array_flush(&e->active_objects);
+   eina_inarray_flush(&e->active_objects);
    eina_array_flush(&e->restack_objects);
    eina_array_flush(&e->render_objects);
    eina_array_flush(&e->pending_objects);
