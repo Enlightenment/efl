@@ -29,6 +29,7 @@ struct _Evas_Smart_Data
    Eina_Inlist      *callbacks;
    Eina_Inlist      *contained; /** list of smart member objects */
 
+   void             *render_cache;
   /* ptr array + data blob holding all interfaces private data for
    * this object */
    void            **interface_privates;
@@ -481,6 +482,32 @@ evas_object_smart_members_get(const Evas_Object *eo_obj)
    return members;
 }
 
+void
+evas_object_smart_render_cache_clear(Evas_Object *eo_obj)
+{
+   Evas_Smart_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   if (!o) return;
+   if (!o->render_cache) return;
+   evas_render_object_render_cache_free(eo_obj, o->render_cache);
+   o->render_cache = NULL;
+}
+
+void *
+evas_object_smart_render_cache_get(const Evas_Object *eo_obj)
+{
+   Evas_Smart_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   if (!o) return NULL;
+   return o->render_cache;
+}
+
+void
+evas_object_smart_render_cache_set(Evas_Object *eo_obj, void *data)
+{
+   Evas_Smart_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   if (!o) return;
+   o->render_cache = data;
+}
+
 const Eina_Inlist *
 evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
 {
@@ -489,6 +516,7 @@ evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
    MAGIC_CHECK_END();
    if (!efl_isa(eo_obj, MY_CLASS)) return NULL;
    Evas_Smart_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   if (!o) return NULL;
    return o->contained;
 }
 
@@ -1271,6 +1299,12 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
              efl_event_callback_del(eo_obj, info->event, _eo_evas_smart_cb, info);
              o->callbacks = eina_inlist_remove(o->callbacks, EINA_INLIST_GET(info));
              free(info);
+          }
+
+        if (o->render_cache)
+          {
+             evas_render_object_render_cache_free(eo_obj, o->render_cache);
+             o->render_cache = NULL;
           }
 
         evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);

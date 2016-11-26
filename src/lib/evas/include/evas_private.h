@@ -886,6 +886,8 @@ struct _Evas_Public_Data
 
    Eina_List     *font_path;
 
+   Eina_Inarray  *update_del_redirect_array;
+
    int            in_smart_calc;
    int            smart_calc_count;
 
@@ -1134,6 +1136,7 @@ struct _Evas_Object_Protected_Data
    unsigned int                animator_ref;
    uint64_t                    callback_mask;
 
+   unsigned char               no_change_render;
    unsigned char               delete_me;
 
    Eina_Bool                   render_pre : 1;
@@ -1593,6 +1596,9 @@ void evas_debug_magic_null(void);
 void evas_debug_magic_wrong(DATA32 expected, DATA32 supplied);
 void evas_debug_generic(const char *str);
 const char *evas_debug_magic_string_get(DATA32 magic);
+void evas_render_update_del(Evas_Public_Data *e, int x, int y, int w, int h);
+void evas_render_object_render_cache_free(Evas_Object *eo_obj, void *data);
+   
 void evas_object_smart_use(Evas_Smart *s);
 void evas_object_smart_unuse(Evas_Smart *s);
 void evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a) EINA_ARG_NONNULL(1);
@@ -1617,6 +1623,10 @@ void evas_object_smart_member_raise(Evas_Object *member);
 void evas_object_smart_member_lower(Evas_Object *member);
 void evas_object_smart_member_stack_above(Evas_Object *member, Evas_Object *other);
 void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *other);
+void evas_object_smart_render_cache_clear(Evas_Object *eo_obj);
+void *evas_object_smart_render_cache_get(const Evas_Object *eo_obj);
+void evas_object_smart_render_cache_set(Evas_Object *eo_obj, void *data);
+
 const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void _efl_canvas_group_group_members_all_del(Evas_Object *obj);
 void _evas_object_smart_xy_update(Eo *eo_obj, Evas_Coord *px, Evas_Coord *py, Evas_Coord x, Evas_Coord y);

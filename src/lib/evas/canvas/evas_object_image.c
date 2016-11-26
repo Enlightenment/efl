@@ -2412,10 +2412,10 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                               }
                          }
                        if ((w > 0) && (h > 0))
-                         e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                                 x + e->framespace.x,
-                                                                 y + e->framespace.y,
-                                                                 w, h);
+                         evas_render_update_del(e,
+                                                x + e->framespace.x,
+                                                y + e->framespace.y,
+                                                w, h);
                     }
                   EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
                     {
@@ -2504,10 +2504,10 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                                    }
                               }
                             if ((w > 0) && (h > 0))
-                              e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                                      x + e->framespace.x,
-                                                                      y + e->framespace.y,
-                                                                      w, h);
+                              evas_render_update_del(e,
+                                                     x + e->framespace.x,
+                                                     y + e->framespace.y,
+                                                     w, h);
                          }
                        else if ((o->cur->border.fill == EVAS_BORDER_FILL_SOLID) &&
                                 (obj->cur->color.a == 255))
@@ -2532,10 +2532,10 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                                    }
                               }
                             if ((w > 0) && (h > 0))
-                              e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                                      x + e->framespace.x,
-                                                                      y + e->framespace.y,
-                                                                      w, h);
+                              evas_render_update_del(e,
+                                                     x + e->framespace.x,
+                                                     y + e->framespace.y,
+                                                     w, h);
                          }
                        EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
                          {
@@ -2597,10 +2597,10 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                                 obj->cur->clipper->cur->cache.clip.w,
                                 obj->cur->clipper->cur->cache.clip.h);
           }
-        e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                x + e->framespace.x,
-                                                y + e->framespace.y,
-                                                w, h);
+        evas_render_update_del(e,
+                               x + e->framespace.x,
+                               y + e->framespace.y,
+                               w, h);
         changed_prep = EINA_FALSE;
      }
    else

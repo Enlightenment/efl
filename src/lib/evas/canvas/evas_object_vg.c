@@ -346,11 +346,10 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
                                 obj->cur->clipper->cur->cache.clip.w,
                                 obj->cur->clipper->cur->cache.clip.h);
           }
-        obj->layer->evas->engine.func->output_redraws_rect_del
-        (obj->layer->evas->engine.data.output,
-         x + obj->layer->evas->framespace.x,
-         y + obj->layer->evas->framespace.y,
-         w, h);
+        evas_render_update_del(obj->layer->evas,
+                               x + obj->layer->evas->framespace.x,
+                               y + obj->layer->evas->framespace.y,
+                               w, h);
      }
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);

@@ -211,8 +211,7 @@ _evas_render2_stage_explicit_updates(Evas_Public_Data *e)
      }
    // remove obscures from rendering - we keep them around
    EINA_LIST_FOREACH(e->obscures, l, r)
-     e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                             r->x, r->y, r->w, r->h);
+     evas_render_update_del(e, r->x, r->y, r->w, r->h);
 }
 
 static void
