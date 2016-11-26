@@ -2571,7 +2571,7 @@ _evas_render_cutout_add(Evas_Public_Data *e, void *context, Evas_Object_Protecte
              Evas_Object_Protected_Data *oo;
 
              eo_oo = obj->object;
-             oo = efl_data_scope_get(eo_oo, EFL_CANVAS_OBJECT_CLASS);
+             oo = obj;
              while (oo->cur->clipper)
                {
                   if ((oo->cur->clipper->map->cur.map_parent
