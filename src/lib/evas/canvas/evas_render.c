@@ -2567,10 +2567,8 @@ _evas_render_cutout_add(Evas_Public_Data *e, void *context, Evas_Object_Protecte
         coh = obj->cur->cache.clip.h;
         if ((obj->map->cur.map) && (obj->map->cur.usemap))
           {
-             Evas_Object *eo_oo;
              Evas_Object_Protected_Data *oo;
 
-             eo_oo = obj->object;
              oo = obj;
              while (oo->cur->clipper)
                {
@@ -2583,7 +2581,6 @@ _evas_render_cutout_add(Evas_Public_Data *e, void *context, Evas_Object_Protecte
                                      oo->cur->geometry.y,
                                      oo->cur->geometry.w,
                                      oo->cur->geometry.h);
-                  eo_oo = oo->cur->clipper->object;
                   oo = oo->cur->clipper;
                }
           }
@@ -3298,7 +3295,6 @@ evas_render_updates_internal(Evas *eo_e,
    for (i = 0; i < e->pending_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->pending_objects, i);
-        eo_obj = obj->object;
         if (obj->smart.parent)
           {
              Evas_Object_Protected_Data *smart_parent;
