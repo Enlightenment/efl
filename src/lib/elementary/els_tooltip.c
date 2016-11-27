@@ -949,11 +949,14 @@ elm_object_tooltip_hide(Evas_Object *obj)
 EAPI void
 elm_object_tooltip_text_set(Evas_Object *obj, const char *text)
 {
+   Elm_Tooltip *tt;
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
    if (!text)
      {
-        elm_object_tooltip_unset(obj);
+        tt = evas_object_data_get((obj), _tooltip_key);
+        if (tt)
+          elm_object_tooltip_unset(obj);
 	return;
      }
 
