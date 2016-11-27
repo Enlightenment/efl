@@ -16,269 +16,250 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#define DECLARE_OPS
-#include "efl_debug_common.h"
+#include <Eina.h>
+#include <Ecore.h>
 
-static Eo *dialer;
+# ifdef HAVE_CONFIG_H
+#  include "config.h"
+# endif
 
-static Eina_List *waiting;
+#define EXTRACT(_buf, pval, sz) \
+{ \
+   memcpy(pval, _buf, sz); \
+   _buf += sz; \
+}
+#define _EVLOG_INTERVAL 0.2
 
-static int retval = EXIT_SUCCESS;
+static int               _evlog_max_times = 0;
+static Ecore_Timer      *_evlog_fetch_timer = NULL;
+static FILE             *_evlog_file = NULL;
 
-static void
-_process_reply(void *data EINA_UNUSED, const char op[static 4], const Eina_Slice payload)
+static int _cl_stat_reg_opcode = EINA_DEBUG_OPCODE_INVALID;
+static int _cid_from_pid_opcode = EINA_DEBUG_OPCODE_INVALID;
+static int _prof_on_opcode = EINA_DEBUG_OPCODE_INVALID;
+static int _prof_off_opcode = EINA_DEBUG_OPCODE_INVALID;
+static int _cpufreq_on_opcode = EINA_DEBUG_OPCODE_INVALID;
+static int _cpufreq_off_opcode = EINA_DEBUG_OPCODE_INVALID;
+static int _evlog_get_opcode = EINA_DEBUG_OPCODE_INVALID;
+
+static Eina_Debug_Session *_session = NULL;
+
+static int _cid = 0;
+
+static int my_argc = 0;
+static char **my_argv = NULL;
+
+static Eina_Debug_Error
+_evlog_get_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_UNUSED, void *buffer, int size)
 {
-   if (IS_OP(CLST))
+   static int received_times = 0;
+   unsigned char *d = buffer;
+   unsigned int *overflow = (unsigned int *)(d + 0);
+   unsigned char *p = d + 4;
+   unsigned int blocksize = size - 4;
+
+   if(++received_times <= _evlog_max_times)
      {
-        int mypid = getpid();
-        size_t offset;
-
-        waiting = eina_list_remove(waiting, OP_CLST);
-
-        for (offset = 0; offset + sizeof(int) <= payload.len; offset += sizeof(int))
+        if ((_evlog_file) && (blocksize > 0))
           {
-             int p;
+             unsigned int header[3];
 
-             memcpy(&p, payload.bytes + offset, sizeof(int));
-
-             if (p == mypid) continue;
-             if (p > 0) printf("%i\n", p);
+             header[0] = 0xffee211;
+             header[1] = blocksize;
+             header[2] = *overflow;
+             if (fwrite(header, 1, 12, _evlog_file) < 12 ||
+                   fwrite(p, 1, blocksize, _evlog_file) < blocksize)
+                printf("Error writing bytes to evlog file\n");
           }
      }
-   else
-     {
-        fprintf(stderr, "ERROR: unexpected server reply: %.4s\n", op);
-        retval = EXIT_FAILURE;
-     }
 
-   if (!waiting) ecore_main_loop_quit();
-}
-
-static void
-_on_data(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-   if (!received_data(dialer, _process_reply, NULL))
+   if(received_times == _evlog_max_times)
      {
-        retval = EXIT_FAILURE;
+        printf("Received last evlog response\n");
+        if (_evlog_file) fclose(_evlog_file);
+        _evlog_file = NULL;
         ecore_main_loop_quit();
      }
+
+   return EINA_DEBUG_OK;
 }
 
 static Eina_Bool
-_command_send(const char op[static 4], const void *data, unsigned int len)
+_cb_evlog(void *data EINA_UNUSED)
 {
-   if (!send_data(dialer, op, data, len))
+   static int sent_times = 0;
+   Eina_Bool ret = ECORE_CALLBACK_RENEW;
+   if(++sent_times <= _evlog_max_times)
+         eina_debug_session_send(_session, _cid, _evlog_get_opcode, NULL, 0);
+
+   if(sent_times == _evlog_max_times)
      {
-        retval = EXIT_FAILURE;
-        return EINA_FALSE;
+        eina_debug_session_send(_session, _cid, _cpufreq_off_opcode, NULL, 0);
+        ecore_timer_del(_evlog_fetch_timer);
+        _evlog_fetch_timer = NULL;
+        ret = ECORE_CALLBACK_CANCEL;
      }
 
-   return EINA_TRUE;
+   return ret;
 }
 
-#define command_send(op, data, len) _command_send(OP_ ## op, data, len)
-
-static void
-_write_finished(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+static Eina_Debug_Error
+_cid_get_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
 {
-   if (!waiting) ecore_main_loop_quit();
+   _cid = *(int *)buffer;
+
+   const char *op_str = my_argv[1];
+   Eina_Bool quit = EINA_TRUE;
+
+   if ((!strcmp(op_str, "pon")) && (3 <= (my_argc - 1)))
+     {
+        int freq = atoi(my_argv[3]);
+        eina_debug_session_send(_session, _cid, _prof_on_opcode, &freq, sizeof(int));
+     }
+   else if (!strcmp(op_str, "poff"))
+      eina_debug_session_send(_session, _cid, _prof_off_opcode,  NULL, 0);
+   else if (!strcmp(op_str, "evlogon") && (3 <= (my_argc - 1)))
+     {
+        double max_time;
+        sscanf(my_argv[3], "%lf", &max_time);
+        _evlog_max_times = max_time > 0 ? (max_time/_EVLOG_INTERVAL+1) : 1;
+        eina_debug_session_send(_session, 0, _cl_stat_reg_opcode, NULL, 0);
+        printf("Evlog request will be sent %d times\n", _evlog_max_times);
+        eina_debug_session_send(_session, _cid, _cpufreq_on_opcode,  NULL, 0);
+
+        /* Creating the evlog file and setting the timer */
+        char path[4096];
+        int pid = atoi(my_argv[2]);
+        snprintf(path, sizeof(path), "%s/efl_debug_evlog-%ld.log",
+              getenv("HOME"), (long)pid);
+        _evlog_file = fopen(path, "wb");
+        _evlog_fetch_timer = ecore_timer_add(_EVLOG_INTERVAL, _cb_evlog, NULL);
+
+        quit = EINA_FALSE;
+     }
+   else if (!strcmp(op_str, "evlogoff"))
+        eina_debug_session_send(_session, _cid, _cpufreq_off_opcode,  NULL, 0);
+
+   if(quit)
+        ecore_main_loop_quit();
+
+   return EINA_DEBUG_OK;
 }
 
-static void
-_finished(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+static Eina_Debug_Error
+_clients_info_added_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_UNUSED, void *buffer, int size)
 {
-   ecore_main_loop_quit();
+   char *buf = buffer;
+   while(size)
+     {
+        int cid, pid, len;
+        EXTRACT(buf, &cid, sizeof(int));
+        EXTRACT(buf, &pid, sizeof(int));
+        /* We dont need client notifications on evlog */
+        if(!_evlog_fetch_timer)
+           printf("Added: CID: %d - PID: %d - Name: %s\n", cid, pid, buf);
+        len = strlen(buf) + 1;
+        buf += len;
+        size -= (2 * sizeof(int) + len);
+     }
+   return EINA_DEBUG_OK;
 }
 
-static void
-_error(void *data EINA_UNUSED, const Efl_Event *event)
+static Eina_Debug_Error
+_clients_info_deleted_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_UNUSED, void *buffer, int size)
 {
-   Eina_Error *perr = event->info;
-
-   fprintf(stderr, "ERROR: error communicating to %s: %s\n",
-           efl_net_dialer_address_dial_get(dialer),
-           eina_error_msg_get(*perr));
-   retval = EXIT_FAILURE;
-   ecore_main_loop_quit();
-}
-
-int
-main(int argc, char **argv)
-{
-   Eo *loop;
-   char *path;
-   Eina_Error err;
-   int i;
-
-   if (argc < 2)
+   char *buf = buffer;
+   while(size)
      {
-        fprintf(stderr, "ERROR: missing argument.\n");
-        return EXIT_FAILURE;
-     }
-   for (i = 1; i < argc; i++)
-     {
-        if ((strcmp(argv[i], "-h") != 0) &&
-            (strcmp(argv[i], "--help") != 0))
-          continue;
+        int cid;
+        EXTRACT(buf, &cid, sizeof(int));
+        size -= sizeof(int);
 
-        printf("Usage:\n"
-               "\n"
-               "\t%s <command> [arguments]\n"
-               "\n"
-               "where <command> is one of:\n"
-               "\tlist               list connected process (pid)\n"
-               "\tpon <pid> <freq>   enable profiling for <pid> at frequency <freq> in microseconds.\n"
-               "\tpoff <pid>         disable profiling for <pid>\n"
-               "\tevlogon <pid>      start logging events to ~/efl_debug_evlog-<pid>.log\n"
-               "\tevlogoff <pid>     stop logging events from <pid>\n",
-               argv[0]);
-
-        return EXIT_SUCCESS;
-     }
-
-   ecore_app_no_system_modules();
-
-   eina_init();
-   ecore_init();
-   ecore_con_init();
-
-   path = ecore_con_local_path_new(EINA_FALSE, "efl_debug", 0);
-   if (!path)
-     {
-        fprintf(stderr, "ERROR: could not get local communication path\n");
-        retval = EXIT_FAILURE;
-        goto end;
-     }
-
-   loop = ecore_main_loop_get();
-
-#ifdef EFL_NET_DIALER_UNIX_CLASS
-   dialer = efl_add(EFL_NET_DIALER_SIMPLE_CLASS, loop,
-                    efl_net_dialer_simple_inner_class_set(efl_added, EFL_NET_DIALER_UNIX_CLASS));
-#elif defined(EFL_NET_DIALER_WINDOWS_CLASS)
-   dialer = efl_add(EFL_NET_DIALER_SIMPLE_CLASS, loop,
-                    efl_net_dialer_simple_inner_class_set(efl_added, EFL_NET_DIALER_WINDOWS_CLASS));
-#else
-   /* TODO: maybe start a TCP using locahost:12345?
-    * Right now eina_debug_monitor is only for AF_UNIX, so not an issue.
-    */
-   fprintf(stderr, "ERROR: your platform doesn't support Efl.Net.Dialer.*\n");
-#endif
-   if (!dialer)
-     {
-        fprintf(stderr, "ERROR: could not create communication dialer\n");
-        retval = EXIT_FAILURE;
-        goto end;
-     }
-   efl_event_callback_add(dialer, EFL_IO_BUFFERED_STREAM_EVENT_ERROR, _error, NULL);
-   efl_event_callback_add(dialer, EFL_IO_BUFFERED_STREAM_EVENT_SLICE_CHANGED, _on_data, NULL);
-   efl_event_callback_add(dialer, EFL_IO_BUFFERED_STREAM_EVENT_WRITE_FINISHED, _write_finished, NULL);
-   efl_event_callback_add(dialer, EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, _finished, NULL);
-
-   for (i = 1; i < argc; i++)
-     {
-        const char *cmd = argv[i];
-
-        if (strcmp(cmd, "list") == 0)
+        /* If client deleted dont send anymore evlog requests */
+        if(_evlog_fetch_timer)
           {
-             if (!command_send(LIST, NULL, 0))
-               goto end;
-             waiting = eina_list_append(waiting, OP_CLST);
-          }
-        else if (strcmp(cmd, "pon") == 0)
-          {
-             if (i + 2 >= argc)
+             if(_cid == cid)
                {
-                  fprintf(stderr, "ERROR: missing argument: pon <pid> <freq>\n");
-                  retval = EXIT_FAILURE;
-                  goto end;
-               }
-             else
-               {
-                  int data[2] = {atoi(argv[i + 1]), atoi(argv[1 + 2])};
-                  if (!command_send(PLON, data, sizeof(data)))
-                    goto end;
-                  i += 2;
-               }
-          }
-        else if (strcmp(cmd, "poff") == 0)
-          {
-             if (i + 1 >= argc)
-               {
-                  fprintf(stderr, "ERROR: missing argument: poff <pid>\n");
-                  retval = EXIT_FAILURE;
-                  goto end;
-               }
-             else
-               {
-                  int data[1] = {atoi(argv[i + 1])};
-                  if (!command_send(PLOF, data, sizeof(data)))
-                    goto end;
-                  i++;
-               }
-          }
-        else if (strcmp(cmd, "evlogon") == 0)
-          {
-             if (i + 1 >= argc)
-               {
-                  fprintf(stderr, "ERROR: missing argument: evlogon <pid>\n");
-                  retval = EXIT_FAILURE;
-                  goto end;
-               }
-             else
-               {
-                  int data[1] = {atoi(argv[i + 1])};
-                  if (!command_send(EVON, data, sizeof(data)))
-                    goto end;
-                  i++;
-               }
-          }
-        else if (strcmp(cmd, "evlogoff") == 0)
-          {
-             if (i + 1 >= argc)
-               {
-                  fprintf(stderr, "ERROR: missing argument: evlogoff <pid>\n");
-                  retval = EXIT_FAILURE;
-                  goto end;
-               }
-             else
-               {
-                  int data[1] = {atoi(argv[i + 1])};
-                  if (!command_send(EVOF, data, sizeof(data)))
-                    goto end;
-                  i++;
+                  printf("Evlog debugged App closed (CID: %d), stopping evlog\n", cid);
+                  ecore_timer_del(_evlog_fetch_timer);
+                  _evlog_fetch_timer = NULL;
+                  fclose(_evlog_file);
+                  _evlog_file = NULL;
+                  ecore_main_loop_quit();
                }
           }
         else
-          {
-             fprintf(stderr, "ERROR: unknown command: %s\n", argv[i]);
-             retval = EXIT_FAILURE;
-             goto end;
-          }
+           printf("Deleted: CID: %d\n", cid);
      }
-   efl_io_buffered_stream_eos_mark(dialer);
+   return EINA_DEBUG_OK;
+}
 
-   err = efl_net_dialer_dial(dialer, path);
-   if (err)
+static void
+_ecore_thread_dispatcher(void *data)
+{
+   eina_debug_dispatch(_session, data);
+}
+
+Eina_Debug_Error
+_disp_cb(Eina_Debug_Session *session EINA_UNUSED, void *buffer)
+{
+   ecore_main_loop_thread_safe_call_async(_ecore_thread_dispatcher, buffer);
+   return EINA_DEBUG_OK;
+}
+
+static void
+_args_handle(Eina_Bool flag)
+{
+   if (!flag) exit(0);
+   eina_debug_session_dispatch_override(_session, _disp_cb);;
+
+   const char *op_str = my_argv[1];
+   if (op_str && !strcmp(op_str, "list"))
      {
-        fprintf(stderr, "ERROR: could not connect '%s': %s\n", path, eina_error_msg_get(err));
-        retval = EXIT_FAILURE;
-        goto end;
+        eina_debug_session_send(_session, 0, _cl_stat_reg_opcode, NULL, 0);
      }
+   else if (2 <= my_argc - 1)
+     {
+        int pid = atoi(my_argv[2]);
+        eina_debug_session_send(_session, 0, _cid_from_pid_opcode, &pid, sizeof(int));
+     }
+}
+
+static const Eina_Debug_Opcode ops[] =
+{
+     {"daemon/observer/client/register", &_cl_stat_reg_opcode,   NULL},
+     {"daemon/observer/slave_added",   NULL,                  &_clients_info_added_cb},
+     {"daemon/observer/slave_deleted", NULL,                  &_clients_info_deleted_cb},
+     {"daemon/info/cid_from_pid",      &_cid_from_pid_opcode,  &_cid_get_cb},
+     {"profiler/on",                   &_prof_on_opcode,       NULL},
+     {"profiler/off",                  &_prof_off_opcode,      NULL},
+     {"cpufreq/on",                    &_cpufreq_on_opcode,      NULL},
+     {"cpufreq/off",                   &_cpufreq_off_opcode,     NULL},
+     {"evlog/get",                     &_evlog_get_opcode,     _evlog_get_cb},
+     {NULL, NULL, NULL}
+};
+
+int
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
+{
+   eina_init();
+   ecore_init();
+
+   my_argc = argc;
+   my_argv = argv;
+
+   _session = eina_debug_local_connect(EINA_TRUE);
+   if (!_session)
+     {
+        fprintf(stderr, "ERROR: Cannot connect to debug daemon.\n");
+        return -1;
+     }
+   eina_debug_opcodes_register(_session, ops, _args_handle);
 
    ecore_main_loop_begin();
 
- end:
-   eina_list_free(waiting);
-   efl_del(dialer);
-   free(path);
-
-   ecore_con_shutdown();
    ecore_shutdown();
    eina_shutdown();
 
-   (void) OP_HELO;
-   (void) OP_EVLG;
-
-   return retval;
+   return 0;
 }

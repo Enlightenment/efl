@@ -17,8 +17,7 @@
  */
 
 #include "eina_debug.h"
-
-#ifdef EINA_HAVE_DEBUG
+#include "eina_debug_private.h"
 
 // a really simple store of currently known active threads. the mainloop is
 // special and inittied at debug init time - assuming eina inits in the
@@ -32,6 +31,7 @@ Eina_Debug_Thread    *_eina_debug_thread_active = NULL;
 int                   _eina_debug_thread_active_num = 0;
 
 static int            _thread_active_size = 0;
+static int            _thread_id_counter = 1;
 
 // add a thread id to our tracking array - very simple. add to end, and
 // if array to small, reallocate it to be bigger by 16 slots AND double that
@@ -62,6 +62,7 @@ _eina_debug_thread_add(void *th)
    _eina_debug_thread_active[_eina_debug_thread_active_num].clok.tv_nsec = 0;
    _eina_debug_thread_active[_eina_debug_thread_active_num].val = -1;
 #endif
+   _eina_debug_thread_active[_eina_debug_thread_active_num].thread_id = _thread_id_counter++;
    _eina_debug_thread_active_num++;
    // release our lock cleanly
    eina_spinlock_release(&_eina_debug_thread_lock);
@@ -101,4 +102,17 @@ _eina_debug_thread_mainloop_set(void *th)
    pthread_t *pth = th;
    _eina_debug_thread_mainloop = *pth;
 }
-#endif
+
+EAPI int
+eina_debug_thread_id_get(void)
+{
+   pthread_t self = pthread_self();
+   int i;
+
+   for (i = 0; i < _eina_debug_thread_active_num; i++)
+     {
+        if (self == _eina_debug_thread_active[i].thread)
+           return _eina_debug_thread_active[i].thread_id;
+     }
+   return -1;
+}

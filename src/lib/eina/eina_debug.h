@@ -19,103 +19,236 @@
 #ifndef EINA_DEBUG_H_
 # define EINA_DEBUG_H_
 
-# ifdef HAVE_CONFIG_H
-#  include "config.h"
-# endif
+# include "eina_config.h"
+# include "eina_list.h"
 
-# include <stdio.h>
-# include <string.h>
-# include <stdlib.h>
-# include <unistd.h>
-# if defined(HAVE_EXECINFO_H) && defined(HAVE_BACKTRACE) && defined(HAVE_DLADDR) && defined(HAVE_UNWIND)
-#  include <execinfo.h>
-#  ifndef _GNU_SOURCE
-#   define _GNU_SOURCE 1
-#  endif
-#  include <errno.h>
-#  include <stdio.h>
-#  include <string.h>
-#  include <unistd.h>
-#  include <dlfcn.h>
-#  include <sys/select.h>
-#  include <sys/time.h>
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  include <pthread.h>
-#  include <signal.h>
-#  include <time.h>
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  include <sys/socket.h>
-#  include <sys/un.h>
-#  include <fcntl.h>
-#  include <libunwind.h>
+/**
+ * @page eina_debug_main Eina Debug
+ *
+ * @date 2015 (created)
+ */
 
-#  include "eina_config.h"
-#  include "eina_private.h"
-#  include "eina_inlist.h"
-#  include "eina_lock.h"
-#  include "eina_thread.h"
-#  include "eina_convert.h"
-#  include "eina_strbuf.h"
-#  include "eina_safety_checks.h"
-#  include "eina_log.h"
-#  include "eina_inline_private.h"
+/**
+ * @addtogroup Eina_Debug
+ * @{
+ */
 
-#  define EINA_HAVE_DEBUG 1
+#define SERVER_PATH ".edebug"
+#define SERVER_NAME "efl_debug"
+#define SERVER_MASTER_PORT 0
+#define SERVER_SLAVE_PORT 1
 
-#  define EINA_MAX_BT 256
-
-typedef struct _Eina_Debug_Thread Eina_Debug_Thread;
-
-struct _Eina_Debug_Thread
+typedef enum
 {
-   pthread_t thread;
-#if defined(__clockid_t_defined)
-   struct timespec clok;
-#endif
-   int val;
+   EINA_DEBUG_OK,
+   EINA_DEBUG_ERROR,
+   EINA_DEBUG_AGAIN
+} Eina_Debug_Error;
+
+enum
+{
+   EINA_DEBUG_OPCODE_INVALID = -1, /**< Invalid opcode value */
+   EINA_DEBUG_OPCODE_REGISTER = 0, /**< Opcode used to register other opcodes */
+   EINA_DEBUG_OPCODE_HELLO = 1 /**< Opcode used to send greetings to the daemon */
 };
 
-extern Eina_Spinlock                _eina_debug_lock;
-extern Eina_Spinlock                _eina_debug_thread_lock;
-extern pthread_t                    _eina_debug_thread_mainloop;
-extern Eina_Debug_Thread           *_eina_debug_thread_active;
-extern int                          _eina_debug_thread_active_num;
-extern Eina_Semaphore               _eina_debug_monitor_return_sem;
-extern int                          _eina_debug_monitor_service_fd;
+/**
+ * @typedef Eina_Debug_Session
+ *
+ * A handle used to interact with the debug daemon.
+ * It contains all the information related to this connection and needed
+ * to send/receive/dispatch/...
+ */
+typedef struct _Eina_Debug_Session Eina_Debug_Session;
 
-void _eina_debug_thread_add(void *th);
-void _eina_debug_thread_del(void *th);
-void _eina_debug_thread_mainloop_set(void *th);
+/**
+ * @typedef Eina_Debug_Cb
+ *
+ * A callback invoked when a specific packet is received.
+ *
+ * @param session the session
+ * @param srcid the source id
+ * @param buffer the packet payload data. It doesn't contain any transport information.
+ * @param size the packet payload size
+ */
+typedef Eina_Debug_Error (*Eina_Debug_Cb)(Eina_Debug_Session *session, int srcid, void *buffer, int size);
 
-void *_eina_debug_chunk_push(int size);
-void *_eina_debug_chunk_realloc(int size);
-char *_eina_debug_chunk_strdup(const char *str);
-void *_eina_debug_chunk_tmp_push(int size);
-void  _eina_debug_chunk_tmp_reset(void);
+/**
+ * @typedef Eina_Debug_Opcode_Status_Cb
+ *
+ * When the opcodes ids are retrieved, this callback is invoked with a true
+ * status.
+ * When a disconnection to the daemon is happening, the opcodes ids are set
+ * as invalid and this callback is invoked with a false status. The upper
+ * layer should not try to send more requests until a new connection is
+ * established.
+ *
+ * @param status EINA_TRUE if opcodes have been received from the daemon, EINA_FALSE otherwise.
+ */
+typedef void (*Eina_Debug_Opcode_Status_Cb)(Eina_Bool status);
 
-const char *_eina_debug_file_get(const char *fname);
+/**
+ * @typedef Eina_Debug_Dispatch_Cb
+ *
+ * Dispatcher callback prototype used to override the default dispatcher of a
+ * session.
+ *
+ * @param session the session
+ * @param buffer the packet received
+ *
+ * The given packet is the entire data received, including the header.
+ */
+typedef Eina_Debug_Error (*Eina_Debug_Dispatch_Cb)(Eina_Debug_Session *session, void *buffer);
 
-void _eina_debug_dump_fhandle_bt(FILE *f, void **bt, int btlen);
+/**
+ * @typedef Eina_Debug_Timer_Cb
+ *
+ * A callback for a timer
+ */
+typedef Eina_Bool (*Eina_Debug_Timer_Cb)(void *);
 
-void _eina_debug_monitor_thread_start(void);
-void _eina_debug_monitor_signal_init(void);
-void _eina_debug_monitor_service_connect(void);
+/**
+ * @typedef Eina_Debug_Packet_Header
+ *
+ * Header of Eina Debug packet
+ */
+typedef struct
+{
+   int size; /**< Packet size after this element */
+   /**<
+    * During sending, it corresponds to the id of the destination. During reception, it is the id of the source
+    * The daemon is in charge of swapping the id before forwarding the packet to the destination.
+    */
+   int cid;
+   int thread_id;
+   int opcode; /**< Opcode of the packet */
+} Eina_Debug_Packet_Header;
 
-int  _eina_debug_monitor_service_send(int fd, const char op[4],
-                                      unsigned char *data, int size);
-void _eina_debug_monitor_service_greet(void);
-int  _eina_debug_monitor_service_read(char *op, unsigned char **data);
+/**
+ * @typedef Eina_Debug_Opcode
+ *
+ * Structure to describe information for an opcode. It is used to register new
+ * opcodes.
+ */
+typedef struct
+{
+   char *opcode_name; /**< Opcode string. On registration, the daemon uses it to calculate an opcode id */
+   int *opcode_id; /**< A pointer to store the opcode id received from the daemon */
+   Eina_Debug_Cb cb; /**< Callback to call when a packet corresponding to the opcode is received */
+} Eina_Debug_Opcode;
 
-#  define EINA_BT(file) \
-   do { \
-      void *bt[EINA_MAX_BT]; \
-      int btlen = backtrace((void **)bt, EINA_MAX_BT); \
-      _eina_debug_dump_fhandle_bt(file, bt, btlen); \
-   } while (0)
-# else
-#  define EINA_BT(file) do { } while (0)
-# endif
+/**
+ * @brief Disable debugging
+ *
+ * Useful for applications that don't want debugging. The debug daemon is one
+ * of them.
+ * Need to be invoked before eina_init. Otherwise it can't have any effect.
+ */
+EAPI void eina_debug_disable(void);
 
+/**
+ * @brief Connect to the local daemon
+ *
+ * @param is_master true if the application is a debugger. EINA_FALSE otherwise.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ */
+EAPI Eina_Debug_Session *eina_debug_local_connect(Eina_Bool is_master);
+
+/**
+ * @brief Terminate the session
+ *
+ * @param session the session to terminate
+ *
+ */
+EAPI void eina_debug_session_terminate(Eina_Debug_Session *session);
+
+/**
+ * @brief Override the dispatcher of a specific session
+ *
+ * For example, it can be used to forward a packet to the main thread and to
+ * use the default dispatcher there.
+ * All the packets received in this session will use this dispatcher.
+ *
+ * @param session the session
+ * @disp_cb the new dispatcher for the given session
+ */
+EAPI void eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina_Debug_Dispatch_Cb disp_cb);
+
+/**
+ * @brief Dispatch a given packet according to its header.
+ *
+ * This function checks the header contained into the packet and invokes
+ * the correct callback according to the opcode.
+ * This is the default dispatcher.
+ *
+ * @param session the session
+ * @param buffer the packet
+ *
+ * @return EINA_DEBUG_OK on success, EINA_DEBUG_ERROR if the packet is not as expected.
+ */
+EAPI Eina_Debug_Error eina_debug_dispatch(Eina_Debug_Session *session, void *buffer);
+
+/**
+ * @brief Register opcodes to a session
+ *
+ * This function registers opcodes for the given session. If the session is not
+ * connected, the request is not sent to the daemon. Otherwise, the request for
+ * the opcodes ids is sent.
+ * On the reception from the daemon, status_cb function is invoked to inform
+ * the requester that the opcodes can now be used.
+ */
+EAPI void eina_debug_opcodes_register(Eina_Debug_Session *session,
+      const Eina_Debug_Opcode ops[], Eina_Debug_Opcode_Status_Cb status_cb);
+
+/**
+ * @brief Send a packet to the given destination
+ *
+ * The packet will be treated by the debug thread itself.
+ *
+ * @param session the session to use to send the packet
+ * @param dest_id the destination id to send the packet to
+ * @param op the opcode for this packet
+ * @param data payload to send
+ * @param size payload size
+ *
+ * @return the number of sent bytes
+ */
+EAPI int eina_debug_session_send(Eina_Debug_Session *session, int dest_id, int op, void *data, int size);
+
+/**
+ * @brief Send a packet to the given thread of the given destination
+ *
+ * If the thread is 0x0, the packet will be treated by the debug thread itself.
+ * If the thread is 0xFF..FF, the packet will be broadcasted to all the threads.
+ * Otherwise, the packet will be treated by the specific thread.
+ *
+ * @param session the session to use to send the packet
+ * @param dest_id the destination id to send the packet to
+ * @param thread_id the thread to send the packet to.
+ * @param op the opcode for this packet
+ * @param data payload to send
+ * @param size payload size
+ *
+ * @return the number of sent bytes
+ */
+EAPI int eina_debug_session_send_to_thread(Eina_Debug_Session *session, int dest_id, int thread_id, int op, void *data, int size);
+
+/**
+ * @brief Add a timer
+ *
+ * Needed for polling debug
+ *
+ * @param timeout_ms timeout in ms
+ * @param cb callback to call when the timeout is reached
+ * @param data user data
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ */
+EAPI Eina_Bool eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data);
+
+EAPI int eina_debug_thread_id_get(void);
 #endif
+/**
+ * @}
+ */

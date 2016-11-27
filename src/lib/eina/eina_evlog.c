@@ -24,8 +24,6 @@
 #include "eina_evlog.h"
 #include "eina_debug.h"
 
-#ifdef EINA_HAVE_DEBUG
-
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -35,6 +33,7 @@
 #endif
 
 #include <time.h>
+#include <unistd.h>
 
 # ifdef HAVE_MMAP
 #  include <sys/mman.h>
@@ -53,6 +52,8 @@ static clockid_t _eina_evlog_time_clock_id = -1;
 #elif defined(__APPLE__) && defined(__MACH__)
 static double _eina_evlog_time_clock_conversion = 1e-9;
 #endif
+
+static int _evlog_get_opcode = EINA_DEBUG_OPCODE_INVALID;
 
 static inline double
 get_time(void)
@@ -211,6 +212,50 @@ eina_evlog_stop(void)
    eina_spinlock_release(&_evlog_lock);
 }
 
+// get evlog
+static Eina_Debug_Error
+_get_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buffer EINA_UNUSED, int size EINA_UNUSED)
+{
+   Eina_Evlog_Buf *evlog = eina_evlog_steal();
+   int resp_size = 0;
+   unsigned char *resp_buf = NULL;
+
+   if ((evlog) && (evlog->buf))
+     {
+        resp_size = evlog->top + sizeof(evlog->overflow);
+        resp_buf = alloca(resp_size);
+        memcpy(resp_buf, &(evlog->overflow), sizeof(evlog->overflow));
+        memcpy(resp_buf + sizeof(evlog->overflow), evlog->buf, evlog->top);
+     }
+   printf("send evlog size %d\n", resp_size);
+   eina_debug_session_send(session, cid, _evlog_get_opcode, resp_buf, resp_size);
+
+   return EINA_DEBUG_OK;
+}
+
+// enable evlog
+static Eina_Debug_Error
+_start_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buffer EINA_UNUSED, int size EINA_UNUSED)
+{
+   eina_evlog_start();
+   return EINA_DEBUG_OK;
+}
+
+// stop evlog
+static Eina_Debug_Error
+_stop_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buffer EINA_UNUSED, int size EINA_UNUSED)
+{
+   eina_evlog_stop();
+   return EINA_DEBUG_OK;
+}
+
+static const Eina_Debug_Opcode _EINA_DEBUG_EVLOG_OPS[] = {
+       {"evlog/on", NULL, &_start_cb},
+       {"evlog/off", NULL, &_stop_cb},
+       {"evlog/get", &_evlog_get_opcode, &_get_cb},
+       {NULL, NULL, NULL}
+};
+
 Eina_Bool
 eina_evlog_init(void)
 {
@@ -227,6 +272,7 @@ eina_evlog_init(void)
      }
 #endif
    eina_evlog("+eina_init", NULL, 0.0, NULL);
+   eina_debug_opcodes_register(NULL, _EINA_DEBUG_EVLOG_OPS, NULL);
    return EINA_TRUE;
 }
 
@@ -237,37 +283,3 @@ eina_evlog_shutdown(void)
    eina_spinlock_free(&_evlog_lock);
    return EINA_TRUE;
 }
-#else
-EAPI void
-eina_evlog(const char *event EINA_UNUSED, void *obj EINA_UNUSED, double srctime EINA_UNUSED, const char *detail EINA_UNUSED)
-{
-}
-
-EAPI Eina_Evlog_Buf *
-eina_evlog_steal(void)
-{
-   return NULL;
-}
-
-EAPI void
-eina_evlog_start(void)
-{
-}
-
-EAPI void
-eina_evlog_stop(void)
-{
-}
-
-Eina_Bool
-eina_evlog_init(void)
-{
-   return EINA_TRUE;
-}
-
-Eina_Bool
-eina_evlog_shutdown(void)
-{
-   return EINA_TRUE;
-}
-#endif
