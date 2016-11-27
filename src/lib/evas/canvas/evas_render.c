@@ -401,6 +401,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
         Evas_Active_Entry *ent = eina_inarray_nth(active_objects, i);
         Evas_Object_Protected_Data *obj = ent->obj;
 
+        EINA_PREFETCH(&(obj->cur->clipper));
         if (obj->changed) evas_object_clip_recalc(obj);
 
         if (obj->proxy->proxies || obj->proxy->proxy_textures)
@@ -419,7 +420,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
    for (i = 0; i < render_objects->count; i++)
      {
         Evas_Object_Protected_Data *obj =
-           eina_array_data_get(render_objects, i);
+          eina_array_data_get(render_objects, i);
         eo_obj = obj->object;
 
         RD(0, "    OBJ [%p", obj);
@@ -1024,6 +1025,8 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
    Eina_Bool map, hmap, can_map, map_not_can_map, obj_changed, is_active;
    Evas_Object *eo_obj = obj->object;
 
+   EINA_PREFETCH(&(obj->cur->clipper));
+
    obj->rect_del = EINA_FALSE;
    obj->render_pre = EINA_FALSE;
 
@@ -1213,9 +1216,13 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
 
         if (!obj->layer) goto clean_stuff;
 
-       //If the children are in active objects, They should be cleaned up.
-       if (obj->changed_map && _evas_render_has_map(obj) && !_evas_render_can_map(obj))
-         goto clean_stuff;
+        EINA_PREFETCH(&(obj->cur->clipper));
+        EINA_PREFETCH(&(obj->cur->cache.clip));
+        //If the children are in active objects, They should be cleaned up.
+        if (EINA_UNLIKELY((obj->changed_map) &&
+                          (_evas_render_has_map(obj)) &&
+                          (!_evas_render_can_map(obj))))
+          goto clean_stuff;
 
         evas_object_clip_recalc(obj);
         is_active = evas_object_is_active(eo_obj, obj);
@@ -1680,7 +1687,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    evas_object_clip_recalc(obj);
 
    /* leave early if clipper is not visible */
-   if (obj->cur->clipper && !obj->cur->clipper->cur->visible)
+   if ((obj->cur->clipper) && (!obj->cur->clipper->cur->visible))
      return clean_them;
 
    eina_evlog("+render_object", eo_obj, 0.0, NULL);

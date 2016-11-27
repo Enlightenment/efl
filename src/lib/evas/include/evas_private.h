@@ -1562,6 +1562,7 @@ extern "C" {
 
 Evas_Object *evas_object_new(Evas *e);
 void evas_object_change_reset(Evas_Object *obj);
+void evas_object_clip_recalc(Evas_Object_Protected_Data *obj);
 void evas_object_cur_prev(Evas_Object *obj);
 void evas_object_free(Evas_Object *obj, int clean_layer);
 void evas_object_update_bounding_box(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Smart_Data *s);
