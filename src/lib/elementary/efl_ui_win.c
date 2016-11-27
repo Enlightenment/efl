@@ -3127,42 +3127,45 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
      {
         void *data;
 
-        data = evas_object_image_data_get(sd->icon, EINA_FALSE);
-        if (data)
+        if (efl_isa(sd->icon, EFL_CANVAS_IMAGE_CLASS))
           {
-             Ecore_X_Icon ic;
-             int w = 0, h = 0, stride, x, y;
-             unsigned char *p;
-             unsigned int *p2;
-
-             evas_object_image_size_get(sd->icon, &w, &h);
-             stride = evas_object_image_stride_get(sd->icon);
-             if ((w > 0) && (h > 0) &&
-                 (stride >= (int)(w * sizeof(unsigned int))))
+             data = evas_object_image_data_get(sd->icon, EINA_FALSE);
+             if (data)
                {
-                  ic.width = w;
-                  ic.height = h;
-                  ic.data = malloc(w * h * sizeof(unsigned int));
+                  Ecore_X_Icon ic;
+                  int w = 0, h = 0, stride, x, y;
+                  unsigned char *p;
+                  unsigned int *p2;
 
-                  if (ic.data)
+                  evas_object_image_size_get(sd->icon, &w, &h);
+                  stride = evas_object_image_stride_get(sd->icon);
+                  if ((w > 0) && (h > 0) &&
+                      (stride >= (int)(w * sizeof(unsigned int))))
                     {
-                       p = (unsigned char *)data;
-                       p2 = (unsigned int *)ic.data;
-                       for (y = 0; y < h; y++)
+                       ic.width = w;
+                       ic.height = h;
+                       ic.data = malloc(w * h * sizeof(unsigned int));
+
+                       if (ic.data)
                          {
-                            for (x = 0; x < w; x++)
+                            p = (unsigned char *)data;
+                            p2 = (unsigned int *)ic.data;
+                            for (y = 0; y < h; y++)
                               {
-                                 *p2 = *((unsigned int *)p);
-                                 p += sizeof(unsigned int);
-                                 p2++;
+                                 for (x = 0; x < w; x++)
+                                   {
+                                      *p2 = *((unsigned int *)p);
+                                      p += sizeof(unsigned int);
+                                      p2++;
+                                   }
+                                 p += (stride - (w * sizeof(unsigned int)));
                               }
-                            p += (stride - (w * sizeof(unsigned int)));
+                            ecore_x_netwm_icons_set(sd->x.xwin, &ic, 1);
+                            free(ic.data);
                          }
-                       ecore_x_netwm_icons_set(sd->x.xwin, &ic, 1);
-                       free(ic.data);
                     }
+                  evas_object_image_data_set(sd->icon, data);
                }
-             evas_object_image_data_set(sd->icon, data);
           }
      }
 
