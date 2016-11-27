@@ -3055,16 +3055,19 @@ evas_render_updates_internal(Evas *eo_e,
 
    // FIXME: don't add redraw rect for snapshot with no filter applied on
    // Also damage the filter object that use a snapshot.
-   for (i = 0; i < e->snapshot_objects.count; i++)
+   if (!redraw_all)
      {
-        obj = (Evas_Object_Protected_Data *)eina_array_data_get(&e->snapshot_objects, i);
+        for (i = 0; i < e->snapshot_objects.count; i++)
+          {
+             obj = (Evas_Object_Protected_Data *)eina_array_data_get(&e->snapshot_objects, i);
 
-        if (evas_object_is_visible(obj->object, obj))
-          e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                  obj->cur->geometry.x,
-                                                  obj->cur->geometry.y,
-                                                  obj->cur->geometry.w,
-                                                  obj->cur->geometry.h);
+             if (evas_object_is_visible(obj->object, obj))
+               e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                       obj->cur->geometry.x,
+                                                       obj->cur->geometry.y,
+                                                       obj->cur->geometry.w,
+                                                       obj->cur->geometry.h);
+          }
      }
    eina_evlog("-render_phase4", eo_e, 0.0, NULL);
 
@@ -3089,17 +3092,15 @@ evas_render_updates_internal(Evas *eo_e,
         ent = eina_inarray_nth(&e->active_objects, i);
         obj = ent->obj;
         eo_obj = obj->object;
-        if (UNLIKELY((evas_object_is_opaque(eo_obj, obj) ||
+        if (UNLIKELY(
+                     (!obj->is_smart) &&
+                     (!obj->clip.clipees) &&
+                     (evas_object_is_opaque(eo_obj, obj) ||
                       ((obj->func->has_opaque_rect) &&
                        (obj->func->has_opaque_rect(eo_obj, obj, obj->private_data)))) &&
-                     (!obj->mask->is_mask) && (!obj->clip.mask) &&
                      evas_object_is_visible(eo_obj, obj) &&
-                     (!obj->clip.clipees) &&
-                     (obj->cur->visible) &&
-                     (!obj->delete_me) &&
-                     (obj->cur->cache.clip.visible) &&
-                     (!obj->is_smart)))
-          /*	  obscuring_objects = eina_list_append(obscuring_objects, obj); */
+                     (!obj->mask->is_mask) && (!obj->clip.mask) &&
+                     (!obj->delete_me)))
           OBJ_ARRAY_PUSH(&e->obscuring_objects, obj);
         if (prepare)
           {
