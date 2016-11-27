@@ -6,6 +6,7 @@
 #include "elm_code_common.h"
 #include "elm_code_line.h"
 #include "elm_code_text.h"
+#include "elm_code_indent.h"
 #include "elm_code_file.h"
 #include "elm_code_parse.h"
 #include "elm_code_widget.eo.h"

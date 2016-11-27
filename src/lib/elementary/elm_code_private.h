@@ -24,6 +24,8 @@ extern int _elm_code_lib_log_dom;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_elm_code_lib_log_dom, __VA_ARGS__)
 
+Eina_Bool _elm_code_text_char_is_whitespace(char c);
+
 /* Private parser callbacks */
 
 void _elm_code_parse_setup();

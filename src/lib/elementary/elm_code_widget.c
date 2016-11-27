@@ -1289,8 +1289,8 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    Elm_Code *code;
    Elm_Code_Line *line;
    Elm_Code_Widget_Change_Info *change;
-   unsigned int row, col, position, oldlen, leading, width, indent;
-   char *oldtext;
+   unsigned int row, col, position, oldlen, width, indent;
+   char *oldtext, *leading;
 
    _elm_code_widget_delete_selection(widget);
    code = elm_obj_code_widget_code_get(widget);
@@ -1310,12 +1310,13 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    width = elm_code_widget_line_text_column_width_get(widget, line);
 
    line = elm_code_file_line_get(code->file, row + 1);
-   leading = elm_code_text_leading_whitespace_length(oldtext, oldlen);
+   leading = elm_code_line_indent_get(oldtext, oldlen);
    elm_code_line_text_leading_whitespace_strip(line);
-   elm_code_line_text_insert(line, 0, oldtext, leading);
+   elm_code_line_text_insert(line, 0, leading, strlen(leading));
    free(oldtext);
 
-   indent = elm_obj_code_widget_line_text_column_width_to_position(widget, line, leading);
+   indent = elm_obj_code_widget_line_text_column_width_to_position(widget, line,
+     strlen(leading));
    elm_obj_code_widget_cursor_position_set(widget, indent, row + 1);
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 

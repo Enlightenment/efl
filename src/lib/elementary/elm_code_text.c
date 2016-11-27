@@ -210,18 +210,55 @@ elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length
    elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
 }
 
+Eina_Bool
+_elm_code_text_char_is_whitespace(char c)
+{
+   return c == ' ' || c == '\t';
+}
+
+static unsigned int
+_elm_code_text_trailing_whitespace_length(const char *text, unsigned int length)
+{
+   unsigned int count = 0;
+   char *ptr;
+
+   if (length == 0)
+     return 0;
+
+   ptr = (char *)text + length - 1;
+   while (count < length)
+     {
+        if (!_elm_code_text_char_is_whitespace(*ptr))
+          break;
+
+        count++;
+        ptr--;
+     }
+
+   return count;
+}
+
 EAPI void elm_code_line_text_leading_whitespace_strip(Elm_Code_Line *line)
 {
-   unsigned int length = 0;
-   unsigned int leading;
+   unsigned int length, count = 0;
    const char *content;
+   char *ptr;
 
    content = elm_code_line_text_get(line, &length);
-   leading = elm_code_text_leading_whitespace_length(content, length);
-   if (leading == 0)
+   if (length == 0)
      return;
 
-   elm_code_line_text_remove(line, 0, leading);
+   ptr = (char *)content;
+   while (count < length)
+     {
+        if (!_elm_code_text_char_is_whitespace(*ptr))
+          break;
+
+        count++;
+        ptr++;
+     }
+
+   elm_code_line_text_remove(line, 0, count);
 }
 
 EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line)
@@ -231,7 +268,7 @@ EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line)
    const char *content;
 
    content = elm_code_line_text_get(line, &length);
-   trailing = elm_code_text_trailing_whitespace_length(content, length);
+   trailing = _elm_code_text_trailing_whitespace_length(content, length);
    if (trailing == 0)
      return;
 
@@ -269,58 +306,12 @@ elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen)
    return crpos;
 }
 
-static Eina_Bool
-_elm_code_text_char_is_whitespace(char c)
-{
-   return c == ' ' || c == '\t';
-}
-
-EAPI unsigned int
-elm_code_text_leading_whitespace_length(const char *text, unsigned int length)
-{
-   unsigned int count = 0;
-   char *ptr = (char *)text;
-
-   while (count < length)
-     {
-        if (!_elm_code_text_char_is_whitespace(*ptr))
-          break;
-
-        count++;
-        ptr++;
-     }
-
-   return count;
-}
-
-EAPI unsigned int
-elm_code_text_trailing_whitespace_length(const char *text, unsigned int length)
-{
-   unsigned int count = 0;
-   char *ptr;
-
-   if (length == 0)
-     return 0;
-
-   ptr = (char *)text + length - 1;
-   while (count < length)
-     {
-        if (!_elm_code_text_char_is_whitespace(*ptr))
-          break;
-
-        count++;
-        ptr--;
-     }
-
-   return count;
-}
-
 EAPI unsigned int
 elm_code_text_is_whitespace(const char *text, unsigned int length)
 {
    unsigned int leading;
 
-   leading = elm_code_text_trailing_whitespace_length(text, length);
+   leading = _elm_code_text_trailing_whitespace_length(text, length);
 
    return leading == length;
 }

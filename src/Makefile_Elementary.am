@@ -276,6 +276,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_code_common.h \
 	lib/elementary/elm_code_line.h \
 	lib/elementary/elm_code_text.h \
+	lib/elementary/elm_code_indent.h \
 	lib/elementary/elm_code_file.h \
 	lib/elementary/elm_code_parse.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
@@ -553,6 +554,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_cnp.c \
 	lib/elementary/elm_code_line.c \
 	lib/elementary/elm_code_text.c \
+	lib/elementary/elm_code_indent.c \
 	lib/elementary/elm_code_file.c \
 	lib/elementary/elm_code_parse.c \
 	lib/elementary/elm_code_widget_selection.c \
