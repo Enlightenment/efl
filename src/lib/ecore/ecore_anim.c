@@ -9,6 +9,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#if defined(HAVE_SYS_EPOLL_H) && defined(HAVE_SYS_TIMERFD_H)
+# define HAVE_EPOLL   1
+# include <sys/epoll.h>
+# include <sys/timerfd.h>
+#endif
+
 #ifdef _WIN32
 
 # include <winsock2.h>
@@ -58,7 +64,7 @@ static Eina_Bool _ecore_animator_run(void *data);
 
 static int animators_delete_me = 0;
 static Ecore_Animator *animators = NULL;
-static double animators_frametime = 1.0 / 30.0;
+static volatile double animators_frametime = 1.0 / 60.0;
 static unsigned int animators_suspended = 0;
 
 static Ecore_Animator_Source src = ECORE_ANIMATOR_SOURCE_TIMER;
@@ -105,55 +111,207 @@ _timer_send_time(double t)
 static void
 _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
+#ifdef HAVE_EPOLL
+   int pollfd = -1, timerfd = -1;
+   struct epoll_event pollev = { 0 };
+   struct epoll_event pollincoming[2];
+   uint64_t timerfdbuf;
+   int i;
+   unsigned int t_ft;
+   double pframetime = -1.0;
+   struct itimerspec tspec_new;
+   struct itimerspec tspec_old;
+#endif
    fd_set rfds, wfds, exfds;
    struct timeval tv;
+   Eina_Bool data_control;
+   Eina_Bool data_timeout;
    unsigned int t;
    signed char tick = 0;
-   double t0, d;
+   double t0, d, ft;
    int ret;
 
    eina_thread_name_set(eina_thread_self(), "Eanimator-timer");
 #ifdef HAVE_PRCTL
    prctl(PR_SET_TIMERSLACK, 1, 0, 0, 0);
 #endif
-   while (!ecore_thread_check(thread))
-     {
-        DBG("------- timer_event_is_busy=%i", timer_event_is_busy);
-        FD_ZERO(&rfds);
-        FD_ZERO(&wfds);
-        FD_ZERO(&exfds);
-        FD_SET(timer_fd_read, &rfds);
 
-        t0 = ecore_time_get();
-        d = fmod(t0, animators_frametime);
-        if (tick)
+#ifdef HAVE_EPOLL
+   pollfd = epoll_create(1);
+   if (pollfd >= 0) _ecore_fd_close_on_exec(pollfd);
+
+#if defined(TFD_NONBLOCK) && defined(TFD_CLOEXEC)
+   timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
+#endif
+   if (timerfd < 0)
+     {
+        timerfd = timerfd_create(CLOCK_MONOTONIC, 0);
+        if (timerfd >= 0) _ecore_fd_close_on_exec(timerfd);
+     }
+   if (timerfd < 0)
+     {
+        close(pollfd);
+        pollfd = -1;
+     }
+
+#define INPUT_TIMER_CONTROL ((void *) ((unsigned long) 0x11))
+#define INPUT_TIMER_TIMERFD ((void *) ((unsigned long) 0x22))
+
+   if (pollfd >= 0)
+     {
+        pollev.data.ptr = INPUT_TIMER_CONTROL;
+        pollev.events = EPOLLIN;
+        if (epoll_ctl(pollfd, EPOLL_CTL_ADD, timer_fd_read, &pollev) != 0)
           {
-             DBG("sleep...");
-             t = (animators_frametime - d) * 1000000.0;
-             tv.tv_sec = t / 1000000;
-             tv.tv_usec = t % 1000000;
-             ret = select(timer_fd_read + 1, &rfds, &wfds, &exfds, &tv);
+             close(timerfd);
+             timerfd = -1;
+             close(pollfd);
+             pollfd = -1;
           }
-        else
+        if (pollfd >= 0)
           {
-             DBG("wait...");
-             ret = select(timer_fd_read + 1, &rfds, &wfds, &exfds, NULL);
-          }
-        if ((ret == 1) && (FD_ISSET(timer_fd_read, &rfds)))
-          {
-             if (pipe_read(timer_fd_read, &tick, sizeof(tick)) != 1)
+             pollev.data.ptr = INPUT_TIMER_TIMERFD;
+             pollev.events = EPOLLIN;
+             if (epoll_ctl(pollfd, EPOLL_CTL_ADD, timerfd, &pollev) != 0)
                {
-                  ERR("Cannot read from animator control fd");
+                  close(timerfd);
+                  timerfd = -1;
+                  close(pollfd);
+                  pollfd = -1;
                }
-             DBG("tick = %i", tick);
-             if (tick == -1) goto done;
           }
-        else
+     }
+
+   if (pollfd >= 0)
+     {
+        while (!ecore_thread_check(thread))
           {
-             if (tick) _timer_send_time(t0 - d + animators_frametime);
+             data_control = EINA_FALSE;
+             data_timeout = EINA_FALSE;
+             ft = animators_frametime;
+
+             DBG("------- timer_event_is_busy=%i", timer_event_is_busy);
+
+             t0 = ecore_time_get();
+             d = fmod(t0, ft);
+             if (tick)
+               {
+                  if (pframetime != ft)
+                    {
+                       t = (ft - d) * 1000000000.0;
+                       t_ft = ft * 1000000000.0;
+                       tspec_new.it_value.tv_sec = t / 1000000000;
+                       tspec_new.it_value.tv_nsec = t % 1000000000;
+                       tspec_new.it_interval.tv_sec = t_ft / 1000000000;
+                       tspec_new.it_interval.tv_nsec = t_ft % 1000000000;
+                       timerfd_settime(timerfd, 0, &tspec_new, &tspec_old);
+                       pframetime = ft;
+                    }
+                  DBG("sleep...");
+                  ret = epoll_wait(pollfd, pollincoming, 2, -1);
+               }
+             else
+               {
+                  tspec_new.it_value.tv_sec = 0;
+                  tspec_new.it_value.tv_nsec = 0;
+                  tspec_new.it_interval.tv_sec = 0;
+                  tspec_new.it_interval.tv_nsec = 0;
+                  pframetime = -1.0;
+                  timerfd_settime(timerfd, 0, &tspec_new, &tspec_old);
+                  DBG("wait...");
+                  ret = epoll_wait(pollfd, pollincoming, 2, -1);
+               }
+
+             for (i = 0; i < ret; i++)
+               {
+                  if (pollincoming[i].events & EPOLLIN)
+                    {
+                       if (pollincoming[i].data.ptr == INPUT_TIMER_TIMERFD)
+                         {
+                            read(timerfd, &timerfdbuf, sizeof(timerfdbuf));
+                            data_timeout = EINA_TRUE;
+                         }
+                       else if (pollincoming[i].data.ptr == INPUT_TIMER_CONTROL)
+                         data_control = EINA_TRUE;
+                    }
+               }
+             if (data_control)
+               {
+                  if (pipe_read(timer_fd_read, &tick, sizeof(tick)) != 1)
+                    {
+                       ERR("Cannot read from animator control fd");
+                    }
+                  DBG("tick = %i", tick);
+                  if (tick == -1) goto done;
+               }
+             else if (data_timeout)
+               {
+                  if (tick) _timer_send_time(t0 - d + ft);
+               }
+          }
+     }
+   else
+#endif
+     {
+        while (!ecore_thread_check(thread))
+          {
+             data_control = EINA_FALSE;
+             data_timeout = EINA_FALSE;
+             ft = animators_frametime;
+
+             DBG("------- timer_event_is_busy=%i", timer_event_is_busy);
+             FD_ZERO(&rfds);
+             FD_ZERO(&wfds);
+             FD_ZERO(&exfds);
+             FD_SET(timer_fd_read, &rfds);
+
+             t0 = ecore_time_get();
+             d = fmod(t0, ft);
+             if (tick)
+               {
+                  DBG("sleep...");
+                  t = (animators_frametime - d) * 1000000.0;
+                  tv.tv_sec = t / 1000000;
+                  tv.tv_usec = t % 1000000;
+                  ret = select(timer_fd_read + 1, &rfds, &wfds, &exfds, &tv);
+               }
+             else
+               {
+                  DBG("wait...");
+                  ret = select(timer_fd_read + 1, &rfds, &wfds, &exfds, NULL);
+               }
+             if ((ret == 1) && (FD_ISSET(timer_fd_read, &rfds)))
+               data_control = EINA_TRUE;
+             else if (ret == 0)
+               data_timeout = EINA_TRUE;
+             if (data_control)
+               {
+                  if (pipe_read(timer_fd_read, &tick, sizeof(tick)) != 1)
+                    {
+                       ERR("Cannot read from animator control fd");
+                    }
+                  DBG("tick = %i", tick);
+                  if (tick == -1) goto done;
+               }
+             else if (data_timeout)
+               {
+                  if (tick) _timer_send_time(t0 - d + ft);
+               }
           }
      }
 done:
+#ifdef HAVE_EPOLL
+   if (pollfd >= 0)
+     {
+        close(pollfd);
+        pollfd = -1;
+     }
+   if (timerfd >= 0)
+     {
+        close(timerfd);
+        timerfd = -1;
+     }
+#endif
    pipe_close(timer_fd_read);
    timer_fd_read = -1;
    pipe_close(timer_fd_write);
