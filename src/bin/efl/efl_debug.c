@@ -97,7 +97,7 @@ _error(void *data EINA_UNUSED, const Efl_Event *event)
    fprintf(stderr, "ERROR: error communicating to %s: %s\n",
            efl_net_dialer_address_dial_get(dialer),
            eina_error_msg_get(*perr));
-   retval = EINA_TRUE;
+   retval = EXIT_FAILURE;
    ecore_main_loop_quit();
 }
 
