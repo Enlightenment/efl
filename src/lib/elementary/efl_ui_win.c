@@ -212,12 +212,14 @@ struct _Efl_Ui_Win_Data
       Eina_Bool need_shadow : 1; /**< if true, application draws its csd and shadow */
       Eina_Bool need_borderless : 1;
       Eina_Bool need_bg_solid : 1;
+      Eina_Bool need_menu : 1;
       Eina_Bool need_unresizable : 1;
       Eina_Bool cur_borderless : 1;
       Eina_Bool cur_shadow : 1;
       Eina_Bool cur_focus : 1;
       Eina_Bool cur_maximized : 1;
       Eina_Bool cur_bg_solid : 1;
+      Eina_Bool cur_menu : 1;
       Eina_Bool cur_unresizable : 1;
       Eina_Bool wayland : 1;
    } csd;
@@ -4136,7 +4138,8 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
 static void
 _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc)
 {
-   Eina_Bool borderless, maximized, shadow, focus, bg_solid, unresizable, alpha;
+   Eina_Bool borderless, maximized, shadow, focus, bg_solid, menu, unresizable,
+         alpha;
    Eina_Bool changed = EINA_FALSE;
 
    if (!sd->frame_obj)
@@ -4152,6 +4155,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         sd->csd.need_shadow = EINA_FALSE;
         sd->csd.need_borderless = EINA_TRUE;
         sd->csd.need_unresizable = EINA_TRUE;
+        sd->csd.need_menu = EINA_FALSE;
      }
    else
      {
@@ -4166,6 +4170,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    focus = ecore_evas_focus_get(sd->ee);
    bg_solid = sd->csd.need_bg_solid;
    unresizable = sd->csd.need_unresizable;
+   menu = sd->csd.need_menu;
 
    /* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
     * At the moment, E Wayland uses SSD for its internal windows. Which means
@@ -4191,6 +4196,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    STATE_SET(focus, "elm,action,focus", "elm,action,unfocus");
    STATE_SET(bg_solid, "elm,state,background,solid,on", "elm,state,background,solid,off");
    STATE_SET(unresizable, "elm,state,unresizable,on", "elm,state,unresizable,off");
+   STATE_SET(menu, "elm,action,show_menu", "elm,action,hide_menu");
 
 #undef STATE_SET
 
@@ -5325,25 +5331,38 @@ _efl_ui_win_fullscreen_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
    return sd->fullscreen;
 }
 
+static inline Eo *
+_main_menu_swallow_get(Efl_Ui_Win_Data *sd)
+{
+   if (edje_object_part_exists(sd->legacy.edje, "elm.swallow.menu"))
+     {
+        DBG("Detected legacy theme, using legacy swallows.");
+        return sd->legacy.edje;
+     }
+   return sd->legacy.edje;
+}
+
 static void
 _dbus_menu_set(Eina_Bool dbus_connect, void *data)
 {
    ELM_WIN_DATA_GET_OR_RETURN(data, sd);
+   Eo *swallow = _main_menu_swallow_get(sd);
 
    if (dbus_connect)
      {
         DBG("Setting menu to D-Bus");
-        edje_object_part_unswallow(sd->legacy.edje, sd->main_menu);
-        edje_object_signal_emit(sd->legacy.edje, "elm,action,hide", "elm");
+        edje_object_part_unswallow(swallow, sd->main_menu);
+        sd->csd.need_menu = EINA_FALSE;
         _elm_menu_menu_bar_hide(sd->main_menu);
      }
    else
      {
         DBG("Setting menu to local mode");
-        edje_object_part_swallow(sd->legacy.edje, "elm.swallow.menu", sd->main_menu);
-        edje_object_signal_emit(sd->legacy.edje, "elm,action,show_menu", "elm");
+        edje_object_part_swallow(swallow, "elm.swallow.menu", sd->main_menu);
+        sd->csd.need_menu = EINA_TRUE;
         evas_object_show(sd->main_menu);
      }
+   _elm_win_frame_style_update(sd, 0, 1);
 }
 
 EOLIAN static void
