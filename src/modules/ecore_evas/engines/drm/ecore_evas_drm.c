@@ -255,6 +255,15 @@ _drm_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
 }
 
 static void
+_drm_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
+{
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   edata = ee->engine.data;
+   ecore_drm2_output_dpi_get(edata->output, xdpi, ydpi);
+}
+
+static void
 _drm_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {
    Ecore_Evas_Engine_Drm_Data *edata;
@@ -766,7 +775,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _drm_render,
 
    _drm_screen_geometry_get,
-   NULL, //void (*fn_screen_dpi_get) (const Ecore_Evas *ee, int *xdpi, int *ydpi);
+   _drm_screen_dpi_get,
    NULL, //void (*fn_msg_parent_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
    NULL, //void (*fn_msg_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
 
