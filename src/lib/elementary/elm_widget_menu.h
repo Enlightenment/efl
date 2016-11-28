@@ -26,7 +26,7 @@
 typedef struct _Elm_Menu_Data Elm_Menu_Data;
 struct _Elm_Menu_Data
 {
-   Evas_Object          *hv, *bx, *location, *parent;
+   Evas_Object          *hv, *bx, *location, *parent, *obj;
 
    Eina_List            *items;
    Evas_Coord            xloc, yloc;

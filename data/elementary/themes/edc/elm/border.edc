@@ -39,11 +39,11 @@ group { name: "elm/border/base/default";
          }
          desc { "max"; inherit: "default"; }
       }
-      /* covers the entire client contents, including the main menu */
+      /* covers the entire client contents, excluding the main menu */
       spacer { "elm.spacer.content";
          required; // since 1.19
          desc {
-            rel1.to: "top_clip";
+            rel1.to: "elm.swallow.menu";
             rel1.relative: 0.0 1.0;
             rel2.to: "bottom_clip";
             rel2.relative: 1.0 0.0;
@@ -104,7 +104,6 @@ group { name: "elm/border/base/default";
          desc { "default";
             rel.to: "top_clip";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 -1;
             visible: 0;
             align: 0.5 0.0;
             fixed: 1 1;

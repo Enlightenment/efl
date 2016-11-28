@@ -833,6 +833,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       Efl.Gfx.size.set;
       Efl.Canvas.Object.clip.set;
       Efl.Canvas.Object.no_render.set;
+      Efl.Canvas.Object.is_frame_object.set;
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_member_del;
       Efl.Canvas.Group.group_add;

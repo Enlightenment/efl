@@ -602,6 +602,21 @@ _elm_widget_efl_canvas_object_no_render_set(Eo *obj, Elm_Widget_Smart_Data *_pd 
 }
 
 EOLIAN static void
+_elm_widget_efl_canvas_object_is_frame_object_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool frame)
+{
+   Evas_Object *o;
+   Eina_List *li;
+
+   frame = !!frame;
+   efl_canvas_object_is_frame_object_set(efl_super(obj, MY_CLASS), frame);
+   EINA_LIST_FOREACH(pd->subobjs, li, o)
+     {
+       if (evas_object_data_get(o, "_elm_leaveme")) continue;
+       efl_canvas_object_is_frame_object_set(o, frame);
+     }
+}
+
+EOLIAN static void
 _elm_widget_efl_canvas_object_clip_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *clip)
 {
    Eina_Iterator *it;

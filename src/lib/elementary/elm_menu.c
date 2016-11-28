@@ -96,6 +96,22 @@ _elm_menu_item_elm_widget_item_signal_emit(Eo *eo_item EINA_UNUSED, Elm_Menu_Ite
    elm_layout_signal_emit(VIEW(item), emission, source);
 }
 
+static inline void
+_parent_geometry_get(Elm_Menu_Data *sd, int *x, int *y, int *w, int *h)
+{
+   evas_object_geometry_get(sd->parent, x, y, w, h);
+   if (efl_isa(sd->parent, EFL_UI_WIN_CLASS))
+     {
+        if (sd->menu_bar && efl_canvas_object_is_frame_object_get(sd->obj))
+          efl_gfx_position_get(sd->obj, x, y);
+        else
+          {
+             if (x) *x = 0;
+             if (y) *y = 0;
+          }
+     }
+}
+
 static void
 _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
 {
@@ -118,12 +134,8 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
      (parent_it->submenu.location, &x_p, &y_p, &w_p, &h_p);
    evas_object_geometry_get(VIEW(parent_it), &x2, &y2, &w2, &h2);
    evas_object_geometry_get(parent_it->submenu.bx, &bx, &by, &bw, &bh);
-   evas_object_geometry_get(sd->parent, &px, &py, &pw, &ph);
-   if (efl_isa(sd->parent, EFL_UI_WIN_CLASS))
-     {
-        px = 0;
-        py = 0;
-     }
+   _parent_geometry_get(sd, &px, &py, &pw, &ph);
+   ERR("elm_menu parent geom %d,%d %dx%d", px, py, pw, ph);
    
    if (sd->menu_bar && !parent_it->parent)
      {
@@ -151,6 +163,9 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
 
    if (y_p + bh > py + ph)
      y_p -= y_p + bh - (py + ph);
+
+   if (sd->menu_bar && (y_p < py))
+     y_p = py;
 
    evas_object_move(parent_it->submenu.location, x_p, y_p);
    evas_object_resize(parent_it->submenu.location, bw, h_p);
@@ -184,12 +199,7 @@ _sizing_eval(Evas_Object *obj)
      }
 
    evas_object_geometry_get(sd->location, NULL, NULL, &w_p, &h_p);
-   evas_object_geometry_get(sd->parent, &x2, &y2, &w2, &h2);
-   if (efl_isa(sd->parent, EFL_UI_WIN_CLASS))
-     {
-        x2 = 0;
-        y2 = 0;
-     }
+   _parent_geometry_get(sd, &x2, &y2, &w2, &h2);
    evas_object_geometry_get(sd->bx, NULL, NULL, &bw, &bh);
 
    x_p = sd->xloc;
@@ -203,8 +213,7 @@ _sizing_eval(Evas_Object *obj)
    if (y_p + h_p + bh > y2 + h2) y_p -= y_p + h_p + bh - (y2 + h2);
    if (y_p < y2) y_p = y2;
 
-   evas_object_move(sd->location, x_p, y_p);
-   evas_object_resize(sd->location, bw, h_p);
+   efl_gfx_geometry_set(sd->location, x_p, y_p, bw, h_p);
    evas_object_size_hint_min_set(sd->location, bw, h_p);
    evas_object_size_hint_max_set(sd->location, bw, h_p);
    elm_hover_target_set(sd->hv, sd->location);
@@ -808,6 +817,7 @@ _elm_menu_efl_object_constructor(Eo *obj, Elm_Menu_Data *sd)
    efl_event_callback_add
      (obj, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, _unblock_menu, sd);
 
+   sd->obj = obj;
    return obj;
 }
 
@@ -1033,6 +1043,8 @@ _elm_menu_item_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent, const ch
    it->content = icon_obj;
 
    _item_obj_create(it);
+   efl_canvas_object_is_frame_object_set(VIEW(it), efl_canvas_object_is_frame_object_get(obj));
+   efl_canvas_object_is_frame_object_set(icon_obj, efl_canvas_object_is_frame_object_get(obj));
    elm_object_item_text_set(eo_item, label);
 
    elm_layout_content_set(VIEW(it), "elm.swallow.content",

@@ -332,6 +332,7 @@ static Elm_Theme_Apply _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
 static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style);
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
+static void _elm_win_resize_objects_eval(Evas_Object *obj);
 
 #ifdef HAVE_ELEMENTARY_X
 static void _elm_win_xwin_update(Efl_Ui_Win_Data *sd);
@@ -874,6 +875,15 @@ _elm_win_resize_job(void *data)
         evas_object_move(sd->frame_obj, -fx, -fy);
         evas_object_resize(sd->frame_obj, w + fw, h + fh);
      }
+
+   if (sd->main_menu)
+     {
+        int mx, my;
+
+        efl_gfx_position_get(sd->main_menu, &mx, &my);
+        elm_menu_move(sd->main_menu, mx, my);
+     }
+
    sd->response++;
    evas_object_resize(sd->obj, w, h);
    evas_object_resize(sd->legacy.edje, w, h);
@@ -1394,16 +1404,9 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
    int fx, fy, fw, fh;
    int ox, oy, ow, oh;
 
+   if (!sd->frame_obj) return;
    _elm_win_opaque_dirty(sd);
    _elm_win_frame_geometry_adjust(sd);
-   if (sd->fullscreen || !sd->csd.need)
-     {
-        _elm_win_opaque_update(sd);
-        evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
-        return;
-     }
-
-   if (!sd->frame_obj) return;
    evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.content", &ox, &oy, &ow, &oh);
    evas_output_framespace_set(sd->evas, ox, oy, fw - ow, fh - oh);
@@ -5339,7 +5342,15 @@ _main_menu_swallow_get(Efl_Ui_Win_Data *sd)
         DBG("Detected legacy theme, using legacy swallows.");
         return sd->legacy.edje;
      }
-   return sd->legacy.edje;
+   return sd->frame_obj;
+}
+
+static void
+_main_menu_resize_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   // After resize, the framespace size has changed, so update the win geometry
+   _elm_win_resize_objects_eval(ev->object);
+   efl_event_callback_del(ev->object, EFL_GFX_EVENT_RESIZE, _main_menu_resize_cb, NULL);
 }
 
 static void
@@ -5354,15 +5365,18 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
         edje_object_part_unswallow(swallow, sd->main_menu);
         sd->csd.need_menu = EINA_FALSE;
         _elm_menu_menu_bar_hide(sd->main_menu);
+        _elm_win_resize_objects_eval(sd->obj);
      }
    else
      {
         DBG("Setting menu to local mode");
+        efl_event_callback_add(sd->obj, EFL_GFX_EVENT_RESIZE, _main_menu_resize_cb, NULL);
         edje_object_part_swallow(swallow, "elm.swallow.menu", sd->main_menu);
+        efl_canvas_object_is_frame_object_set(sd->main_menu, (swallow == sd->frame_obj));
         sd->csd.need_menu = EINA_TRUE;
-        evas_object_show(sd->main_menu);
      }
    _elm_win_frame_style_update(sd, 0, 1);
+   sd->deferred_resize_job = EINA_TRUE;
 }
 
 EOLIAN static void

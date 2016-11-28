@@ -320,14 +320,22 @@ _elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
         evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
         if (efl_isa(sd->parent, EFL_UI_WIN_CLASS))
           {
-             x = 0;
-             y = 0;
+             if (efl_canvas_object_is_frame_object_get(obj))
+               efl_gfx_position_get(obj, &x, &y);
+             else
+               {
+                  x = 0;
+                  y = 0;
+               }
           }
      }
    evas_object_geometry_get(obj, &x2, &y2, &w2, &h2);
 
    if (elm_widget_mirrored_get(obj)) ofs_x = w - (x2 - x) - w2;
    else ofs_x = x2 - x;
+
+   if (y < 0)
+     h += (-y);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_size_hint_min_set(sd->offset, ofs_x, y2 - y);
