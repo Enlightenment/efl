@@ -1062,25 +1062,78 @@ _cursor_geometry_recalc(Evas_Object *obj)
 EOLIAN static void
 _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
 {
-   Evas_Coord vw = 0, vh = 0;
-   Evas_Coord minw, minh;
-   Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   Evas_Coord minw, minh, resw, resh;
+
+   evas_object_geometry_get(obj, NULL, NULL, &resw, &resh);
+
+
+   if (!sd->changed && (sd->last_w == resw))
+     {
+        if (sd->scroll)
+          {
+             Evas_Coord vw = 0, vh = 0, h = 0;
+
+             // Called for line wrapping + scrolling; use the viewport
+             // width and the formatted height as proper constraints.
+             elm_interface_scrollable_content_viewport_geometry_get
+                (obj, NULL, NULL, &vw, &vh);
+
+             efl_canvas_text_size_formatted_get(obj, NULL, &h);
+             if (vh > h) h = vh;
+
+             evas_object_resize(sd->entry_edje, vw, h);
+          }
+        return;
+     }
 
    evas_event_freeze(evas_object_evas_get(obj));
-   /* Only implement single-line */
-   if (sd->scr_edje)
+   sd->changed = EINA_FALSE;
+   sd->last_w = resw;
+   if (sd->scroll)
      {
-        elm_interface_scrollable_content_viewport_geometry_get
-              (obj, NULL, NULL, &vw, &vh);
-        //evas_object_geometry_get(sd->scr_edje, NULL, NULL, &resw, &resh);
-        //evas_object_resize(sd->entry_edje, resw, resh);
-        evas_object_resize(sw, vw, vh);
-        efl_canvas_text_size_formatted_get(sw, &minw, &minh);
-        evas_object_size_hint_min_set(sw, minw, vh);
-        edje_object_size_min_restricted_calc(sd->entry_edje, &minw, &minh, vw, 0);
+        Evas_Coord vw = 0, vh = 0, vmw = 0, vmh = 0, w = -1, h = -1;
 
-        evas_object_resize(sd->entry_edje, minw, minh);
+        // XXX: no need for the following line. It's been commented out.
+        // sd->scr_edje is the resize_object of this widget. It's already
+        // resized when gfx_size_set was called on this widget.
+        //evas_object_resize(sd->scr_edje, resw, resh);
+
+        edje_object_size_min_calc(sd->scr_edje, &vmw, &vmh);
+        elm_interface_scrollable_content_viewport_geometry_get
+           (obj, NULL, NULL, &vw, &vh);
+        edje_object_size_min_restricted_calc
+           (sd->entry_edje, &minw, &minh, vw, 0);
+        elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+
+        /* This is a hack to workaround the way min size hints
+         * are treated.  If the minimum width is smaller than the
+         * restricted width, it means the minimum doesn't
+         * matter. */
+        if (minw <= vw)
+          {
+             Evas_Coord ominw = -1;
+
+             efl_gfx_size_hint_combined_min_get(sd->entry_edje, &ominw, NULL);
+             minw = ominw;
+          }
+        sd->ent_mw = minw;
+        sd->ent_mh = minh;
+
+        if ((minw > 0) && (vw < minw)) vw = minw;
+        if (minh > vh) vh = minh;
+
+        if (sd->single_line) h = vmh + minh;
+        else h = vmh;
+
+        evas_object_resize(sd->entry_edje, vw, vh);
+        evas_object_size_hint_min_set(obj, w, h);
+
+        if (sd->single_line)
+           evas_object_size_hint_max_set(obj, -1, h);
+        else
+           evas_object_size_hint_max_set(obj, -1, -1);
      }
+
    _cursor_geometry_recalc(obj);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
