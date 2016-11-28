@@ -10,8 +10,6 @@
 # include <config.h>
 #endif
 
-#define EFL_NET_DIALER_HTTP_BUFFER_RECEIVE_SIZE (1U << 14) /* 16Kb to receive */
-
 #include "Ecore.h"
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
@@ -2191,6 +2189,14 @@ EOLIAN static const char *
 _efl_net_dialer_http_cookie_jar_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->cookie_jar;
+}
+
+CURL *
+efl_net_dialer_http_curl_get(const Eo *o)
+{
+   Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
+   return pd->easy;
 }
 
 #include "efl_net_dialer_http.eo.c"

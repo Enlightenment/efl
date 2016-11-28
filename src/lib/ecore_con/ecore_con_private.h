@@ -740,4 +740,6 @@ size_t efl_net_udp_datagram_size_query(SOCKET fd);
 /* SSL abstraction API */
 extern void *efl_net_ssl_context_connection_new(Efl_Net_Ssl_Context *context);
 
+#define EFL_NET_DIALER_HTTP_BUFFER_RECEIVE_SIZE (1U << 14) /* 16Kb to receive */
+
 #endif
