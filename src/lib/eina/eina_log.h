@@ -861,7 +861,7 @@ EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d,
                                    int                    line,
                                    const char            *fmt,
                                    void                  *data,
-                                   va_list                args);
+                                   va_list                args) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Default logging method, this will output to standard error stream.
@@ -904,7 +904,7 @@ EAPI void eina_log_print_cb_stderr(const Eina_Log_Domain *d,
                                    int                    line,
                                    const char            *fmt,
                                    void                  *data,
-                                   va_list                args);
+                                   va_list                args) EINA_ARG_NONNULL(1);
 
 /**
  * Alternative logging method, this will output to given file stream.
@@ -931,7 +931,7 @@ EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
                                  int                    line,
                                  const char            *fmt,
                                  void                  *data,
-                                 va_list                args);
+                                 va_list                args) EINA_ARG_NONNULL(1);
 
 
 /**
@@ -960,7 +960,7 @@ EAPI void eina_log_print_cb_journald(const Eina_Log_Domain *d,
 				     int line,
 				     const char *fmt,
 				     void *data,
-				     va_list args);
+				     va_list args) EINA_ARG_NONNULL(1);
 
 /**
  * Configure console color of given file.
