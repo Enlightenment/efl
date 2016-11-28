@@ -99,7 +99,6 @@ struct _Efl_Ui_Win_Data
    Eina_Stringshare *teamwork_uri;
 
    Eina_Bool                     deferred_resize_job;
-   Ecore_Job                     *deferred_child_eval_job;
 
    Efl_Ui_Win_Type                   type;
    Efl_Ui_Win_Keyboard_Mode          kbdmode;
@@ -2718,7 +2717,6 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
         ecore_evas_callback_resize_set(sd->ee, NULL);
      }
 
-   ecore_job_del(sd->deferred_child_eval_job);
    eina_stringshare_del(sd->shot.info);
    ecore_timer_del(sd->shot.timer);
    eina_stringshare_replace(&sd->teamwork_uri, NULL);
