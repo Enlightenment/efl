@@ -232,7 +232,7 @@ _key_generic_get(const Eo *obj, Efl_Object_Data *pd, const char *key, Eo_Generic
    if (!ext) return NULL;
    EINA_INLIST_FOREACH(ext->generic_data, node)
      {
-        if (!strcmp(node->key, key))
+        if (node->key && !strcmp(node->key, key))
           {
              if (node->d_type == d_type)
                {
