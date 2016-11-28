@@ -25,9 +25,9 @@
 #endif
 
 static int es_log_dom = -1;
-static Ecore_Con_Server *svr = NULL;
+static int retval = EXIT_SUCCESS;
 static Eet_Data_Descriptor *es_edd = NULL;
-static Eina_Hash *clients = NULL;
+static Eina_List *clients = NULL;
 
 static Eina_List *storage_devices = NULL;
 static Eina_List *storage_cdrom = NULL;
@@ -39,29 +39,27 @@ static void
 event_send(const char *device, Eeze_Scanner_Event_Type type, Eina_Bool volume)
 {
    Eeze_Scanner_Event ev;
-   const Eina_List *l;
-   Ecore_Con_Client *cl;
+   Eet_Connection *ec;
+   const Eina_List *n;
+
 
    ev.device = device;
    ev.type = type;
    ev.volume = volume;
-   EINA_LIST_FOREACH(ecore_con_server_clients_get(svr), l, cl)
+   EINA_LIST_FOREACH(clients, n, ec)
      {
-        Eet_Connection *ec;
-
-        ec = eina_hash_find(clients, &cl);
-        if (!ec) continue;
-        INF("Serializing event...");
+        const char *ts;
+        const char *vol = volume ? " (volume)" : "";
+        switch (type)
+          {
+           case EEZE_SCANNER_EVENT_TYPE_ADD: ts = "ADD"; break;
+           case EEZE_SCANNER_EVENT_TYPE_REMOVE: ts = "REMOVE"; break;
+           case EEZE_SCANNER_EVENT_TYPE_CHANGE: ts = "CHANGE"; break;
+           default: ts = "?";
+          }
+        INF("Serializing event %s '%s'%s for client %p...", ts, device, vol, ec);
         eet_connection_send(ec, es_edd, &ev, NULL);
      }
-}
-
-static Eina_Bool
-event_write(const void *data, size_t size, Ecore_Con_Client *cl)
-{
-   INF("Event sent!");
-   ecore_con_client_send(cl, data, size);
-   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -83,14 +81,14 @@ disk_mount(void *data EINA_UNUSED, int type EINA_UNUSED, Eeze_Disk *disk)
 }
 
 static void
-cl_setup(Ecore_Con_Client *cl EINA_UNUSED, Eet_Connection *ec)
+cl_setup(Eo *cl, Eet_Connection *ec)
 {
    Eina_List *l;
    Eeze_Scanner_Device *dev;
    Eeze_Scanner_Event ev;
    const char *sys;
 
-   INF("Sending initial events to new client");
+   INF("Sending initial events to new client %p (ec=%p)", cl, ec);
    EINA_LIST_FOREACH(storage_devices, l, sys)
      {
         ev.device = sys;
@@ -122,47 +120,95 @@ cl_setup(Ecore_Con_Client *cl EINA_UNUSED, Eet_Connection *ec)
 }
 
 static Eina_Bool
-es_read(const void *eet_data EINA_UNUSED, size_t size EINA_UNUSED, void *user_data EINA_UNUSED)
+ec_write(const void *data, size_t size, void *user_data)
 {
+   Eo *client = user_data;
+   Eina_Slice slice = { .mem = data, .len = size };
+   Eina_Error err;
+   DBG("Write " EINA_SLICE_FMT " to %p", EINA_SLICE_PRINT(slice), client);
+   err = efl_io_writer_write(client, &slice, NULL);
+   if (err)
+     {
+        DBG("Failed write " EINA_SLICE_FMT " to %p: %s", EINA_SLICE_PRINT(slice), client, eina_error_msg_get(err));
+        if (!efl_io_closer_closed_get(client))
+          efl_io_closer_close(client);
+        return EINA_FALSE;
+     }
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cl_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Add *ev)
+ec_read(const void *eet_data EINA_UNUSED, size_t size EINA_UNUSED, void *user_data EINA_UNUSED)
 {
-   Eet_Connection *ec;
-   INF("Added client");
-
-   ec = eet_connection_new(es_read, (Eet_Write_Cb*)event_write, ev->client);
-   if (!ec)
-     {
-        ERR("Could not create eet serializer! Lost client!");
-        ecore_con_client_del(ev->client);
-        return ECORE_CALLBACK_RENEW;
-     }
-
-   eina_hash_add(clients, &ev->client, ec);
-   cl_setup(ev->client, ec);
-   return ECORE_CALLBACK_RENEW;
-}
-
-static Eina_Bool
-cl_del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Del *ev)
-{
-   Eet_Connection *ec;
-   Eina_Bool d;
-   INF("Removed client");
-   ec = eina_hash_find(clients, &ev->client);
-   if (ec)
-     {
-        eina_hash_del_by_data(clients, &ec);
-        eet_connection_close(ec, &d);
-     }
-
-   return ECORE_CALLBACK_RENEW;
+   return EINA_TRUE;
 }
 
 static void
+cl_finished(void *data, const Efl_Event *event)
+{
+   Eo *client = event->object;
+   Eet_Connection *ec = data;
+
+   DBG("Finished %p (ec=%p)", client, ec);
+
+   if (!efl_io_closer_closed_get(client))
+     efl_io_closer_close(client);
+}
+
+static void
+cl_error(void *data, const Efl_Event *event)
+{
+   Eo *client = event->object;
+   Eina_Error *perr = event->info;
+   Eet_Connection *ec = data;
+
+   WRN("client %p (ec=%p) error: %s", client, ec, eina_error_msg_get(*perr));
+
+   if (!efl_io_closer_closed_get(client))
+     efl_io_closer_close(client);
+}
+
+static Efl_Callback_Array_Item *cl_cbs(void);
+
+static void
+cl_closed(void *data, const Efl_Event *event)
+{
+   Eo *client = event->object;
+   Eet_Connection *ec = data;
+
+   INF("Removed client %p (ec=%p)", client, ec);
+   clients = eina_list_remove(clients, ec);
+   efl_event_callback_array_del(client, cl_cbs(), ec);
+   efl_unref(client);
+   eet_connection_close(ec, NULL);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(cl_cbs,
+                           { EFL_IO_BUFFERED_STREAM_EVENT_READ_FINISHED, cl_finished },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_ERROR, cl_error },
+                           { EFL_IO_CLOSER_EVENT_CLOSED, cl_closed });
+
+static void
+cl_add(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Eo *client = event->info;
+   Eet_Connection *ec;
+
+   INF("Added client %p", client);
+   ec = eet_connection_new(ec_read, ec_write, client);
+   if (!ec)
+     {
+        ERR("Could not create eet serializer! Lost client %p!", client);
+        return;
+     }
+
+   efl_ref(client);
+   efl_event_callback_array_add(client, cl_cbs(), ec);
+   clients = eina_list_append(clients, ec);
+   cl_setup(client, ec);
+}
+
+static Eina_Bool
 eet_setup(void)
 {
    Eet_Data_Descriptor_Class eddc;
@@ -170,7 +216,7 @@ eet_setup(void)
    if (!eet_eina_stream_data_descriptor_class_set(&eddc, sizeof(eddc), "eeze_scanner_event", sizeof(Eeze_Scanner_Event)))
      {
         CRI("Could not create eet data descriptor!");
-        exit(1);
+        return EINA_FALSE;
      }
 
    es_edd = eet_data_descriptor_stream_new(&eddc);
@@ -179,6 +225,7 @@ eet_setup(void)
    DAT(type, UINT);
    DAT(volume, UCHAR);
 #undef DAT
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -220,7 +267,7 @@ cdrom_timer(Eeze_Scanner_Device *dev)
    return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 storage_setup(void)
 {
    Eina_List *l, *ll;
@@ -230,15 +277,12 @@ storage_setup(void)
    if (!storage_devices)
      {
         ERR("No storage devices found! This is not supposed to happen!");
-        exit(1);
+        return EINA_FALSE;
      }
-   EINA_LIST_FOREACH(storage_devices, l, sys)
-     event_send(sys, EEZE_SCANNER_EVENT_TYPE_ADD, EINA_FALSE);
 
    ll = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_REMOVABLE, NULL);
    EINA_LIST_FREE(ll, sys)
      {
-        event_send(sys, EEZE_SCANNER_EVENT_TYPE_ADD, EINA_FALSE);
         storage_devices = eina_list_append(storage_devices, sys);
      }
 
@@ -266,7 +310,6 @@ storage_setup(void)
         dev->device = sys;
         dev->mounted = eeze_disk_mounted_get(disk);
         eeze_disk_free(disk);
-        event_send(sys, EEZE_SCANNER_EVENT_TYPE_ADD, EINA_FALSE);
         dev->poller = ecore_poller_add(ECORE_POLLER_CORE, 32, (Ecore_Task_Cb)cdrom_timer, dev);
         storage_cdrom = eina_list_append(storage_cdrom, dev);
      }
@@ -282,13 +325,12 @@ storage_setup(void)
                eina_stringshare_del(sys);
                volume_devices = eina_list_remove_list(volume_devices, l);
                volume_cdrom = eina_list_append(volume_cdrom, dev);
-               event_send(sys, EEZE_SCANNER_EVENT_TYPE_ADD, EINA_TRUE);
                l = NULL;
                break;
             }
-        if (!l) continue;
-        event_send(sys, EEZE_SCANNER_EVENT_TYPE_ADD, EINA_TRUE);
      }
+
+   return EINA_TRUE;
 }
 
 static void
@@ -392,72 +434,121 @@ cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data EINA_UNUSED, Eeze
 }
 
 static void
-es_exit(int sig)
+server_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   ecore_con_server_del(svr);
-   exit(sig);   
-}
+   Eina_Error *perr = event->info;
 
-static void
-sigs_setup(void)
-{
-   sigset_t sigs = {{0}};
-   struct sigaction s;
-
-   memset(&s, 0, sizeof(s));
-
-   sigfillset(&sigs);
-   sigdelset(&sigs, SIGSEGV);
-   sigdelset(&sigs, SIGTERM);
-   sigdelset(&sigs, SIGINT);
-   sigdelset(&sigs, SIGQUIT);
-
-   s.sa_handler = es_exit;
-   s.sa_flags = 0;
-   sigaction(SIGTERM, &s, NULL);
-   sigaction(SIGSEGV, &s, NULL);
-   sigaction(SIGINT, &s, NULL);
+   ERR("server error: %s", eina_error_msg_get(*perr));
+   retval = EXIT_FAILURE;
+   ecore_main_loop_quit();
 }
 
 int
 main(void)
 {
-   int ret;
+   Eo *server, *loop;
+   char *path = NULL;
+   Ecore_Event_Handler *eh;
+   Eina_List *ehl = NULL;
+   Eeze_Udev_Watch *uw;
+   Eina_List *uwl = NULL;
+   Eina_Error err;
+
+   ecore_app_no_system_modules();
+
    eina_init();
    ecore_init();
+   eet_init();
    ecore_con_init();
    eeze_init();
    eeze_disk_function();
    eeze_mount_tabs_watch();
 
-   sigs_setup();
    es_log_dom = eina_log_domain_register("eeze_scanner", EINA_COLOR_CYAN);
 
-   eet_setup();
-   clients = eina_hash_pointer_new(NULL);
-   ret = 1;
-   EINA_SAFETY_ON_NULL_GOTO(clients, error);
+   if (!eet_setup())
+     goto error_setup;
 
-   ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD, (Ecore_Event_Handler_Cb)cl_add, NULL);
-   ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL, (Ecore_Event_Handler_Cb)cl_del, NULL);
-   ecore_event_handler_add(EEZE_EVENT_DISK_UNMOUNT, (Ecore_Event_Handler_Cb)disk_mount, NULL);
-   ecore_event_handler_add(EEZE_EVENT_DISK_MOUNT, (Ecore_Event_Handler_Cb)disk_mount, NULL);
+   if (!storage_setup())
+     goto error_setup;
 
-   eeze_udev_watch_add(EEZE_UDEV_TYPE_DRIVE_INTERNAL, EEZE_UDEV_EVENT_NONE, cb_stor_chg, NULL);
-   eeze_udev_watch_add(EEZE_UDEV_TYPE_DRIVE_REMOVABLE, EEZE_UDEV_EVENT_NONE, cb_stor_chg, NULL);
-   eeze_udev_watch_add(EEZE_UDEV_TYPE_DRIVE_CDROM, EEZE_UDEV_EVENT_NONE, cb_stor_chg, NULL);
-   eeze_udev_watch_add(EEZE_UDEV_TYPE_DRIVE_MOUNTABLE, EEZE_UDEV_EVENT_NONE, cb_vol_chg, NULL);
+#define ADD_HANDLER(type, cb) \
+   ehl = eina_list_append(ehl, ecore_event_handler_add(type, (Ecore_Event_Handler_Cb)cb, NULL))
+   ADD_HANDLER(EEZE_EVENT_DISK_UNMOUNT, disk_mount);
+   ADD_HANDLER(EEZE_EVENT_DISK_MOUNT, disk_mount);
+#undef ADD_HANDLER
 
-   svr = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM, "eeze_scanner", 0, NULL);
-   ret = 2;
-   EINA_SAFETY_ON_NULL_GOTO(svr, error);
-   
-   storage_setup();
+#define ADD_WATCH(type, cb) \
+   uwl = eina_list_append(uwl, eeze_udev_watch_add(type, EEZE_UDEV_EVENT_NONE, cb, NULL))
+   ADD_WATCH(EEZE_UDEV_TYPE_DRIVE_INTERNAL, cb_stor_chg);
+   ADD_WATCH(EEZE_UDEV_TYPE_DRIVE_REMOVABLE, cb_stor_chg);
+   ADD_WATCH(EEZE_UDEV_TYPE_DRIVE_CDROM, cb_stor_chg);
+   ADD_WATCH(EEZE_UDEV_TYPE_DRIVE_MOUNTABLE, cb_vol_chg);
+#undef ADD_WATCH
+
+   path = ecore_con_local_path_new(EINA_TRUE, "eeze_scanner", 0);
+   if (!path)
+     {
+        fprintf(stderr, "ERROR: could not get local communication path\n");
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
+   loop = ecore_main_loop_get();
+
+#ifdef EFL_NET_SERVER_UNIX_CLASS
+   server = efl_add(EFL_NET_SERVER_SIMPLE_CLASS, loop,
+                    efl_net_server_simple_inner_class_set(efl_added, EFL_NET_SERVER_UNIX_CLASS));
+#else
+   /* TODO: maybe start a TCP using locahost:12345?
+    * Right now eina_debug_monitor is only for AF_UNIX, so not an issue.
+    */
+   fprintf(stderr, "ERROR: your platform doesn't support Efl.Net.Server.Unix\n");
+#endif
+   if (!server)
+     {
+        fprintf(stderr, "ERROR: could not create communication server\n");
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
+   efl_event_callback_add(server, EFL_NET_SERVER_EVENT_CLIENT_ADD, cl_add, NULL);
+   efl_event_callback_add(server, EFL_NET_SERVER_EVENT_ERROR, server_error, NULL);
+
+#ifdef EFL_NET_SERVER_UNIX_CLASS
+   {
+      Eo *inner_server = efl_net_server_simple_inner_server_get(server);
+      efl_net_server_unix_unlink_before_bind_set(inner_server, EINA_TRUE);
+      efl_net_server_unix_leading_directories_create_set(inner_server, EINA_TRUE, 0700);
+   }
+#endif
+
+   err = efl_net_server_serve(server, path);
+   if (err)
+     {
+        fprintf(stderr, "ERROR: could not serve '%s': %s\n", path, eina_error_msg_get(err));
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
    ecore_main_loop_begin();
 
-   ecore_con_server_del(svr);
-   return 0;
-error:
-   ERR("Could not start up!");
-   exit(ret);
+ end:
+   efl_del(server);
+   server = NULL;
+
+   free(path);
+   path = NULL;
+
+   EINA_LIST_FREE(ehl, eh) ecore_event_handler_del(eh);
+   EINA_LIST_FREE(uwl, uw) eeze_udev_watch_del(uw);
+
+ error_setup:
+   eeze_shutdown();
+   ecore_con_shutdown();
+   eet_shutdown();
+   ecore_shutdown();
+   eina_shutdown();
+
+   return retval;
 }
