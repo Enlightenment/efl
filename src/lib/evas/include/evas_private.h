@@ -903,6 +903,7 @@ struct _Evas_Public_Data
    int            smart_calc_count;
 
    Eina_Hash     *focused_objects; //Key - seat; value - the focused object
+   Eina_List     *focused_by; //Which seat has the canvas focus
    void          *attach_data;
    Evas_Modifier  modifiers;
    Evas_Lock      locks;
@@ -926,7 +927,6 @@ struct _Evas_Public_Data
    unsigned char  delete_me : 1;
    unsigned char  invalidate : 1;
    unsigned char  cleanup : 1;
-   unsigned char  focus : 1;
    Eina_Bool      is_frozen : 1;
    Eina_Bool      rendering : 1;
    Eina_Bool      render2 : 1;

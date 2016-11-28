@@ -101,6 +101,10 @@ typedef struct _Ecore_Evas_Vnc_Server_Client_Data {
 #define VNC_SAMPLES_PER_PIXEL (3)
 #define VNC_BYTES_PER_PIXEL (4)
 
+
+static void _ecore_evas_vnc_server_ecore_event_generic_free(void *user_data,
+                                                            void *func_data);
+
 static void
 _ecore_evas_vnc_server_update_clients(rfbScreenInfoPtr vnc_screen)
 {
@@ -152,15 +156,33 @@ _ecore_evas_vnc_server_socket_listen_activity(void *data,
 }
 
 static void
+_ecore_evas_vnc_server_mouse_inout_emit(Ecore_Evas_Vnc_Server *server,
+                                        Evas_Device *dev, int event_type)
+{
+   Ecore_Event_Mouse_IO *io = calloc(1, sizeof(Ecore_Event_Mouse_IO));
+   EINA_SAFETY_ON_NULL_RETURN(io);
+   io->timestamp = time(NULL);
+   io->dev = efl_ref(dev);
+   io->event_window = io->window = server->ee->prop.window;
+   ecore_event_add(event_type, io,
+                   _ecore_evas_vnc_server_ecore_event_generic_free, dev);
+}
+
+static void
 _ecore_evas_vnc_server_client_gone(rfbClientRec *client)
 {
-   Ecore_Evas_Vnc_Server_Client_Data *cdata = client->clientData;
    Ecore_Evas_Vnc_Server *server = client->screen->screenData;
+   Ecore_Evas_Vnc_Server_Client_Data *cdata = client->clientData;
 
    DBG("VNC client on seat '%s' gone", evas_device_name_get(cdata->seat));
 
    if (server->disc_cb)
      server->disc_cb(server->cb_data, server->ee, client->host);
+   _ecore_evas_vnc_server_mouse_inout_emit(server, cdata->mouse,
+                                           ECORE_EVENT_MOUSE_OUT);
+   _ecore_evas_mouse_inout_set(server->ee, cdata->mouse, EINA_FALSE,
+                               EINA_FALSE);
+   ecore_evas_focus_device_set(server->ee, cdata->seat, EINA_FALSE);
    ecore_main_fd_handler_del(cdata->handler);
    evas_device_del(cdata->keyboard);
    evas_device_del(cdata->mouse);
@@ -240,7 +262,11 @@ _ecore_evas_vnc_server_client_connection_new(rfbClientRec *client)
 
    DBG("New VNC client on seat '%u'", _available_seat);
    _available_seat++;
-
+   _ecore_evas_vnc_server_mouse_inout_emit(server, cdata->mouse,
+                                           ECORE_EVENT_MOUSE_IN);
+   _ecore_evas_mouse_inout_set(server->ee, cdata->mouse, EINA_TRUE,
+                               EINA_FALSE);
+   ecore_evas_focus_device_set(server->ee, cdata->seat, EINA_TRUE);
    return RFB_CLIENT_ACCEPT;
 
  err_mouse:

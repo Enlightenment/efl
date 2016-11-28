@@ -105,12 +105,10 @@ _ecore_evas_show(Ecore_Evas *ee)
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
 
    if (bdata->image) return;
-   if (ee->prop.focused) return;
-   ee->prop.focused = EINA_TRUE;
+   if (ecore_evas_focus_device_get(ee, NULL)) return;
    ee->prop.withdrawn = EINA_FALSE;
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
-   evas_focus_in(ee->evas);
-   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
 }
 
 static int
@@ -413,9 +411,7 @@ _ecore_evas_buffer_cb_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    Ecore_Evas *ee;
 
    ee = data;
-   ee->prop.focused = EINA_TRUE;
-   evas_focus_in(ee->evas);
-   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
 }
 
 static void
@@ -424,9 +420,7 @@ _ecore_evas_buffer_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
    Ecore_Evas *ee;
 
    ee = data;
-   ee->prop.focused = EINA_FALSE;
-   evas_focus_out(ee->evas);
-   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
+   _ecore_evas_focus_device_set(ee, NULL, EINA_FALSE);
 }
 
 static void
@@ -608,6 +602,11 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL, // fn_animator_unregister
 
      NULL, // fn_evas_changed
+     NULL, //fn_focus_device_set
+     NULL, //fn_callback_focus_device_in_set
+     NULL, //fn_callback_focus_device_out_set
+     NULL, //fn_callback_device_mouse_in_set
+     NULL, //fn_callback_device_mouse_out_set
 };
 
 static void *
@@ -672,7 +671,6 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = EINA_TRUE;
    ee->prop.borderless = EINA_TRUE;
    ee->prop.override = EINA_TRUE;
    ee->prop.maximized = EINA_TRUE;
@@ -727,7 +725,8 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    _ecore_evas_register(ee);
 
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-   
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
+
    return ee;
 }
 
@@ -811,7 +810,6 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = EINA_FALSE;
    ee->prop.borderless = EINA_TRUE;
    ee->prop.override = EINA_TRUE;
    ee->prop.maximized = EINA_FALSE;

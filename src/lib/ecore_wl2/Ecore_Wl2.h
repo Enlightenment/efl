@@ -86,12 +86,14 @@ typedef struct _Ecore_Wl2_Event_Focus_In
 {
    unsigned int window;
    unsigned int timestamp;
+   Eo *dev; //The seat device
 } Ecore_Wl2_Event_Focus_In;
 
 typedef struct _Ecore_Wl2_Event_Focus_Out
 {
    unsigned int window;
    unsigned int timestamp;
+   Eo *dev; //The seat device
 } Ecore_Wl2_Event_Focus_Out;
 
 typedef struct _Ecore_Wl2_Event_Dnd_Enter

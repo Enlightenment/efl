@@ -67,10 +67,7 @@ _ecore_evas_psl1ght_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED
 
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
-   ee->prop.focused = EINA_TRUE;
-   evas_focus_in(ee->evas);
-   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
-
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -83,10 +80,7 @@ _ecore_evas_psl1ght_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSE
 
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
-   evas_focus_out(ee->evas);
-   ee->prop.focused = EINA_FALSE;
-   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
-
+   _ecore_evas_focus_device_set(ee, NULL, EINA_FALSE);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -313,10 +307,8 @@ _ecore_evas_show(Ecore_Evas *ee)
 {
    ee->prop.withdrawn = EINA_FALSE;
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
-   if (ee->prop.focused) return;
-   ee->prop.focused = EINA_TRUE;
-   evas_focus_in(ee->evas);
-   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   if (ecore_evas_focus_device_get(ee, NULL)) return;
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
 }
 
 static void
@@ -466,6 +458,11 @@ static Ecore_Evas_Engine_Func _ecore_psl1ght_engine_func =
    NULL, // fn_animator_unregister
 
    NULL, // fn_evas_changed
+   NULL, //fn_focus_device_set
+   NULL, //fn_callback_focus_device_in_set
+   NULL, //fn_callback_focus_device_out_set
+   NULL, //fn_callback_device_mouse_in_set
+   NULL, //fn_callback_device_mouse_out_set
 };
 
 EAPI Ecore_Evas *
@@ -496,7 +493,6 @@ ecore_evas_psl1ght_new_internal(const char *name, int w, int h)
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = EINA_TRUE;
    ee->prop.borderless = EINA_TRUE;
    ee->prop.override = EINA_TRUE;
    ee->prop.maximized = EINA_TRUE;
@@ -558,6 +554,7 @@ ecore_evas_psl1ght_new_internal(const char *name, int w, int h)
    if (getenv("ECORE_EVAS_PSL1GHT_CURSOR_PATH"))
      ecore_evas_cursor_set(ee, getenv("ECORE_EVAS_PSL1GHT_CURSOR_PATH"), EVAS_LAYER_MAX, 0, 0);
 
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    
    return ee;

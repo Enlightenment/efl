@@ -314,7 +314,7 @@ EAPI void        ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, i
  */
 EAPI void        ecore_evas_request_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 /**
- * @brief Set the focus of an Ecore_Evas' window.
+ * @brief Set the Ecore_Evas window focus for the default seat.
  *
  * @param ee The Ecore_Evas
  * @param on @c EINA_TRUE for focus, @c EINA_FALSE to defocus.
@@ -323,17 +323,47 @@ EAPI void        ecore_evas_request_geometry_get(const Ecore_Evas *ee, int *x, i
  * @p on is @c EINA_FALSE.
  *
  * @warning Support for this depends on the underlying windowing system.
+ * @see ecore_evas_focus_device_set()
  */
 EAPI void        ecore_evas_focus_set(Ecore_Evas *ee, Eina_Bool on);
 /**
- * @brief Query whether an Ecore_Evas' window is focused or not.
+ * @brief Query whether the default seat has the Ecore_Evas focus.
  *
  * @param ee The Ecore_Evas to set
  * @return @c EINA_TRUE if @p ee if focused, @c EINA_FALSE if not.
  *
  * @see ecore_evas_focus_set()
+ * @see ecore_evas_focus_device_get()
  */
 EAPI Eina_Bool   ecore_evas_focus_get(const Ecore_Evas *ee);
+
+/**
+ * @brief Set the Ecore_Evas windows focus for a given seat.
+ *
+ * @param ee The Ecore_Evas
+ * @param seat An Efl_Input_Device that represents the seat or @c NULL for the default seat.
+ * @param on @c EINA_TRUE for focus, @c EINA_FALSE to defocus.
+ *
+ * This function focuses @p ee if @p on is @c EINA_TRUE, or unfocuses @p ee if
+ * @p on is @c EINA_FALSE.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @see ecore_evas_focus_device_get()
+ * @since 1.19
+ */
+EAPI void        ecore_evas_focus_device_set(Ecore_Evas *ee, Eo *seat,
+                                             Eina_Bool on);
+/**
+ * @brief Query whether an Ecore_Evas' window is focused or not.
+ *
+ * @param ee The Ecore_Evas to set
+ * @param seat An Efl_Input_Device that represents the seat or @c NULL for the default seat.
+ * @return @c EINA_TRUE if @p ee if focused, @c EINA_FALSE if not.
+ *
+ * @see ecore_evas_focus_device_set()
+ * @since 1.19
+ */
+EAPI Eina_Bool   ecore_evas_focus_device_get(const Ecore_Evas *ee, Eo *seat);
 /**
  * @brief Iconify or uniconify an Ecore_Evas' window.
  *
@@ -1751,6 +1781,8 @@ EAPI void        ecore_evas_callback_destroy_set(Ecore_Evas *ee, Ecore_Evas_Even
  *
  * @warning If and when this function is called depends on the underlying
  * windowing system.
+ * @note This function only reports focus in events for the default seat!
+ * @see ecore_evas_callback_focus_device_in_set()
  */
 EAPI void        ecore_evas_callback_focus_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
@@ -1763,8 +1795,38 @@ EAPI void        ecore_evas_callback_focus_in_set(Ecore_Evas *ee, Ecore_Evas_Eve
  *
  * @warning If and when this function is called depends on the underlying
  * windowing system.
+ * @note This function only reports focus in events for the default seat!
+ * @see ecore_evas_callback_focus_device_out_set()
  */
 EAPI void        ecore_evas_callback_focus_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+/**
+ * @brief Set a callback for Ecore_Evas focus in events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee gets focus.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ * @see ecore_evas_callback_focus_device_out_set()
+ * @since 1.19
+ */
+EAPI void        ecore_evas_callback_focus_device_in_set(Ecore_Evas *ee, Ecore_Evas_Focus_Device_Event_Cb func);
+/**
+ * @brief Set a callback for Ecore_Evas focus out events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee loses focus.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ * @see ecore_evas_callback_focus_device_in_set()
+ * @since 1.19
+ */
+EAPI void        ecore_evas_callback_focus_device_out_set(Ecore_Evas *ee, Ecore_Evas_Focus_Device_Event_Cb func);
 /**
  * @brief Set a callback for Ecore_Evas sticky events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1799,8 +1861,9 @@ EAPI void        ecore_evas_callback_unsticky_set(Ecore_Evas *ee, Ecore_Evas_Eve
  *
  * @warning If and when this function is called depends on the underlying
  * windowing system.
+ * @since 1.19
  */
-EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+EAPI void        ecore_evas_callback_device_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Mouse_IO_Cb func);
 /**
  * @brief Set a callback for Ecore_Evas mouse out events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1811,6 +1874,35 @@ EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Eve
  *
  * @warning If and when this function is called depends on the underlying
  * windowing system.
+ * @since 1.19
+ */
+EAPI void        ecore_evas_callback_device_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Mouse_IO_Cb func);
+/**
+ * @brief Set a callback for Ecore_Evas mouse in events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever the mouse enters @p ee.
+ *
+ * @note the @p func will only report events for the default mouse.
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ * @see ecore_evas_callback_device_mouse_in_set
+ */
+EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+/**
+ * @brief Set a callback for Ecore_Evas mouse out events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever the mouse leaves @p ee.
+ *
+ * @note the @p func will only report events for the default mouse.
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ * @see ecore_evas_callback_device_mouse_out_set
  */
 EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**

@@ -23,6 +23,7 @@ typedef struct _Ecore_Wl2_Input_Devices
    Eo *pointer_dev;
    Eo *keyboard_dev;
    Eo *touch_dev;
+   Eo *seat_dev;
    int window_id;
 } Ecore_Wl2_Input_Devices;
 
@@ -88,6 +89,18 @@ _ecore_wl2_mouse_dev_get(Ecore_Wl2_Input *input, int window_id)
    devices = _ecore_wl2_devices_get(input, window_id);
    if (devices && devices->pointer_dev)
      return efl_ref(devices->pointer_dev);
+
+   return NULL;
+}
+
+static Eo *
+_ecore_wl2_seat_dev_get(Ecore_Wl2_Input *input, int window_id)
+{
+   Ecore_Wl2_Input_Devices *devices;
+
+   devices = _ecore_wl2_devices_get(input, window_id);
+   if (devices)
+     return efl_ref(devices->seat_dev);
 
    return NULL;
 }
@@ -389,7 +402,9 @@ _ecore_wl2_input_focus_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
 
    ev->timestamp = input->timestamp;
    ev->window = window->id;
-   ecore_event_add(ECORE_WL2_EVENT_FOCUS_IN, ev, NULL, NULL);
+   ev->dev = _ecore_wl2_seat_dev_get(input, window->id);
+   ecore_event_add(ECORE_WL2_EVENT_FOCUS_IN, ev, _input_event_cb_free,
+                   ev->dev);
 }
 
 static void
@@ -402,7 +417,9 @@ _ecore_wl2_input_focus_out_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window
 
    ev->timestamp = input->timestamp;
    ev->window = window->id;
-   ecore_event_add(ECORE_WL2_EVENT_FOCUS_OUT, ev, NULL, NULL);
+   ev->dev = _ecore_wl2_seat_dev_get(input, window->id);
+   ecore_event_add(ECORE_WL2_EVENT_FOCUS_OUT, ev, _input_event_cb_free,
+                   ev->dev);
 }
 
 static int
@@ -1331,6 +1348,8 @@ _ecore_wl2_input_cursor_update(void *data)
 static void
 _ecore_wl2_devices_free(Ecore_Wl2_Input_Devices *devices)
 {
+   if (devices->seat_dev)
+     efl_unref(devices->seat_dev);
    if (devices->pointer_dev)
      efl_unref(devices->pointer_dev);
    if (devices->keyboard_dev)
@@ -1378,6 +1397,8 @@ _ecore_evas_wl_common_cb_device_event(void *data, int type, void *event)
           devices->keyboard_dev = efl_ref(ev->dev);
         else if (ev->type == ECORE_WL2_DEVICE_TYPE_TOUCH)
           devices->touch_dev = efl_ref(ev->dev);
+        else if (ev->type == ECORE_WL2_DEVICE_TYPE_SEAT)
+          devices->seat_dev = efl_ref(ev->dev);
 
         return ECORE_CALLBACK_PASS_ON;
      }
