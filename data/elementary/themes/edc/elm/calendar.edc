@@ -200,6 +200,21 @@
          visible: 1; \
       } \
    } \
+   part { name: "cit_"#_pos".glow"; mouse_events: 0; \
+      description { state: "default" 0.0; \
+         rel1.to: "cit_"#_pos".rect"; \
+         rel2.to: "cit_"#_pos".rect"; \
+         image.normal: "box_glow.png"; \
+         image.border: 12 12 12 12; \
+         image.middle: 0; \
+         fill.smooth: 0; \
+         visible: 0; \
+      } \
+      description { state: "focused" 0.0; \
+         inherit: "default" 0.0; \
+         visible: 1; \
+      } \
+   } \
    part { name: "cit_"#_pos".text"; type: TEXTBLOCK; mouse_events: 0; \
       scale: 1; \
       description { state: "default" 0.0; \
@@ -278,6 +293,26 @@
          action:  STATE_SET "default" 0.0; \
          target:  "cit_"#_pos".pat"; \
          target:  "cit_"#_pos".selected"; \
+      } \
+      program { \
+         name:    "cit_"#_pos".focus_highlighted"; \
+         signal:  "cit_"#_pos",focused"; \
+         source:  "elm"; \
+         script { \
+            set_int(item_focus_enabled, 1); \
+            set_int(last_focused_item, _pos); \
+            if (get_int(win_focus_enabled) == 1) \
+               set_state(PART:"cit_"#_pos".glow", "focused", 0.0); \
+         } \
+      } \
+      program { \
+         name:    "cit_"#_pos".focus_unhighlighed"; \
+         signal:  "cit_"#_pos",unfocused"; \
+         source:  "elm"; \
+         script { \
+            set_int(item_focus_enabled, 0); \
+            set_state(PART:"cit_"#_pos".glow", "default", 0.0); \
+         } \
       } \
       program { \
          name:    "cit_"#_pos".is_today"; \
@@ -413,9 +448,14 @@ group { name: "elm/calendar/base/default";
    images.image: "sym_right_glow_normal.png" COMP;
    images.image: "icon_border_remember.png" COMP;
    images.image: "outline_glow.png" COMP;
+   images.image: "box_glow.png" COMP;
    images.image: "diagonal_stripes.png" COMP;
+   data.item: "focus_highlight" "on";
    script {
       public rtl;
+      public win_focus_enabled;
+      public item_focus_enabled;
+      public last_focused_item;
    }
    styles {
       CIT_STYLES
@@ -493,6 +533,28 @@ group { name: "elm/calendar/base/default";
       CIT(21) CIT(22) CIT(23) CIT(24) CIT(25) CIT(26) CIT(27)
       CIT(28) CIT(29) CIT(30) CIT(31) CIT(32) CIT(33) CIT(34)
       CIT(35) CIT(36) CIT(37) CIT(38) CIT(39) CIT(40) CIT(41)
+
+   }
+   programs {
+      program {
+         signal: "elm,action,focus_highlight,show";
+         source: "elm";
+         script {
+            set_int(win_focus_enabled, 1);
+            if (get_int(item_focus_enabled) == 1) {
+               new value[32];
+               snprintf(value, 32, "cit_%d,focused", get_int(last_focused_item));
+               emit(value, "elm");
+            }
+         }
+      }
+      program {
+         signal: "elm,action,focus_highlight,hide";
+         source: "elm";
+         script {
+            set_int(win_focus_enabled, 0);
+         }
+      }
    }
 }
 
