@@ -108,6 +108,12 @@ static_libs/rg_etc/rg_etc2.c \
 static_libs/rg_etc/rg_etc1.h \
 static_libs/rg_etc/etc2_encoder.c
 
+# Triangulator static lib
+triangulator_sources = \
+static_libs/triangulator/triangulator_stroker.c \
+static_libs/triangulator/triangulator_simple.c \
+$(NULL)
+
 # And the default software backend
 lib_ector_libector_la_SOURCES += \
 lib/ector/software/ector_renderer_software_gradient_linear.c \
@@ -120,7 +126,8 @@ lib/ector/software/ector_software_surface.c \
 lib/ector/software/ector_software_buffer.c \
 static_libs/freetype/sw_ft_math.c \
 static_libs/freetype/sw_ft_raster.c \
-static_libs/freetype/sw_ft_stroker.c
+static_libs/freetype/sw_ft_stroker.c \
+$(triangulator_sources)
 
 # And now the gl backend
 lib_ector_libector_la_SOURCES += \
@@ -152,6 +159,7 @@ lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ector/gl \
 -I$(top_srcdir)/src/static_libs/freetype \
 -I$(top_srcdir)/src/static_libs/draw \
+-I$(top_srcdir)/src/static_libs/triangulator \
 @ECTOR_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -204,3 +212,4 @@ static_libs/freetype/sw_ft_types.h \
 static_libs/draw/draw.h \
 static_libs/draw/draw_private.h \
 $(ECTOR_GL_SHADERS_GEN)
+
