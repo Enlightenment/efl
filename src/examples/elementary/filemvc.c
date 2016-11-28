@@ -51,18 +51,20 @@ _list_selected_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
    Eo *child = event->info;
-//   ethumb_client_file_free(elm_thumb_ethumb_client_get());
+  ethumb_client_file_free(elm_thumb_ethumb_client_get());
 
    printf("LIST selected model\n");
    elm_view_form_model_set(priv->formview, child);
 }
 
 static void
-_promise_then(void *data, void *value)
+_promise_then(void *data, const Efl_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
    char *path;
    Eo *model;
+   Efl_Future_Event_Success* info = event->info;
+   Eina_Value* value = info->value;
 
    eina_value_get(value, &path);
    model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, path));
@@ -70,7 +72,7 @@ _promise_then(void *data, void *value)
 }
 
 static void
-_promise_error(void *data, const Eina_Error err)
+_promise_error(void *data, const Efl_Event* err)
 {
 }
 
