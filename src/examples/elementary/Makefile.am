@@ -60,7 +60,8 @@ $(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
 $(top_builddir)/src/lib/ecore_imf_evas/libecore_imf_evas.la \
 $(top_builddir)/src/lib/embryo/libembryo.la \
 $(top_builddir)/src/lib/edje/libedje.la \
-$(top_builddir)/src/lib/elementary/libelementary.la
+$(top_builddir)/src/lib/elementary/libelementary.la \
+$(top_builddir)/src/lib/ethumb_client/libethumb_client.la
 
 SRCS = \
 actionslider_example_01.c \
