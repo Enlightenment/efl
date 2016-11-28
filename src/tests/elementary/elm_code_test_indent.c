@@ -31,8 +31,16 @@ START_TEST (elm_code_indent_comments_test)
    ck_assert_str_eq("  * ", str);
    str = elm_code_line_indent_get("  * ", 4);
    ck_assert_str_eq("  * ", str);
+   str = elm_code_line_indent_get("  */", 4);
+   ck_assert_str_eq(" ", str);
    str = elm_code_line_indent_get("\t//", 3);
    ck_assert_str_eq("\t//", str);
+
+   // test these are not comments
+   str = elm_code_line_indent_get(" / ", 3);
+   ck_assert_str_eq(" ", str);
+   str = elm_code_line_indent_get(" hi//", 5);
+   ck_assert_str_eq(" ", str);
 }
 END_TEST
 
