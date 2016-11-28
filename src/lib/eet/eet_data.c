@@ -2397,6 +2397,7 @@ eet_data_write_cipher(Eet_File            *ef,
    int val;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(edd, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
 
    ed = eet_dictionary_get(ef);
 
