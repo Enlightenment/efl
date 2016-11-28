@@ -126,7 +126,8 @@ bin_PROGRAMS += \
 bin/eeze/eeze_mount \
 bin/eeze/eeze_umount \
 bin/eeze/eeze_disk_ls \
-bin/eeze/eeze_scanner
+bin/eeze/eeze_scanner \
+bin/eeze/eeze_scanner_monitor
 
 bin_eeze_eeze_mount_SOURCES = bin/eeze/eeze_mount.c
 bin_eeze_eeze_mount_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
@@ -149,6 +150,13 @@ bin/eeze/eeze_scanner.h
 bin_eeze_eeze_scanner_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
 bin_eeze_eeze_scanner_LDADD = @USE_EEZE_LIBS@
 bin_eeze_eeze_scanner_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
+
+bin_eeze_eeze_scanner_monitor_SOURCES = \
+bin/eeze/eeze_scanner_monitor.c \
+bin/eeze/eeze_scanner_monitor.h
+bin_eeze_eeze_scanner_monitor_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
+bin_eeze_eeze_scanner_monitor_LDADD = @USE_EEZE_LIBS@
+bin_eeze_eeze_scanner_monitor_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
 setuid_root_mode = a=rx,u+xs
 
