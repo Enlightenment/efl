@@ -1,10 +1,12 @@
 /* Window client-side decorations and extra slots
  * Includes swallows for:
  *  - app content
- *  - main menu
  *  - indicator
  *  - soft key
  *  - virtual keyboard
+ *
+ * Not included:
+ *  - main menu (sizing issues - needs rework of the menu itself)
  */
 
 group { name: "elm/border/base/default";
@@ -91,34 +93,11 @@ group { name: "elm/border/base/default";
          required; // @since 1.19
          clip: "client_clip";
       }
-      /* main menu */
-      rect { "menu_bg";
-         desc { "default";
-            color: 64 64 64 255; // FIXME: color_class
-            align: 0.5 0.0;
-            rel.to: "elm.swallow.menu";
-         }
-      }
-      swallow { "elm.swallow.menu";
-         required: 1; // since 1.19
-         desc { "default";
-            rel.to: "top_clip";
-            rel1.relative: 0.0 1.0;
-            rel1.offset: 0 -1;
-            visible: 0;
-            align: 0.5 0.0;
-            fixed: 1 1;
-         }
-         desc { "visible"; inherit: "default";
-            visible: 1;
-            fixed: 0 1;
-         }
-      }
 
-      /* application contents - spacer and clipper (without main menu) */
+      /* application contents - spacer and clipper */
       spacer { "client_spacer";
          desc { "default";
-            rel1.to: "elm.swallow.menu";
+            rel1.to: "top_clip";
             rel1.relative: 0.0 1.0;
             rel2.to: "bottom_clip";
             rel2.relative: 1.0 0.0;
@@ -803,18 +782,6 @@ group { name: "elm/border/base/default";
       program {
          signal: "elm,state,unmaximize*"; source: "elm";
          UNSET_MODE(MAXIMIZED);
-      }
-
-      /* application desktop menu */
-      program { name: "show_menu";
-         signal: "elm,action,show_menu"; source: "elm";
-         action: STATE_SET "visible";
-         target: "elm.swallow.menu";
-      }
-      program { name: "hide_menu";
-         signal: "elm,action,hide"; source: "elm";
-         action: STATE_SET "default";
-         target: "elm.swallow.menu";
       }
 
       /* modal windows */
