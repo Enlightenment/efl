@@ -1,9 +1,9 @@
 class Efl.Input.Focus(Efl.Object, Efl.Input.Event)
 {
-   [[Reprents a focus event. @since 1.19]]
+   [[Represents a focus event. @since 1.19]]
    methods {
       @property object {
-      	 [[The focused object]]
+         [[The focused object]]
          values {
             object: Efl.Object; [[The focused object.
                                   In case this represents a canvas
