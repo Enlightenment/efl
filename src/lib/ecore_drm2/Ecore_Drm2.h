@@ -461,6 +461,18 @@ EAPI Ecore_Drm2_Output *ecore_drm2_output_find(Ecore_Drm2_Device *device, int x,
 EAPI void ecore_drm2_output_geometry_get(Ecore_Drm2_Output *output, int *x, int *y, int *w, int *h);
 
 /**
+ * Get the dpi of a given output
+ *
+ * @param output
+ * @param xdpi
+ * @param ydpi
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.19
+ */
+EAPI void ecore_drm2_output_dpi_get(Ecore_Drm2_Output *output, int *xdpi, int *ydpi);
+
+/**
  * Get the id of the crtc that an output is using
  *
  * @param output

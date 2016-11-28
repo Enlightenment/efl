@@ -1114,6 +1114,19 @@ ecore_drm2_output_geometry_get(Ecore_Drm2_Output *output, int *x, int *y, int *w
    if (h) *h = output->current_mode->height;
 }
 
+EAPI void
+ecore_drm2_output_dpi_get(Ecore_Drm2_Output *output, int *xdpi, int *ydpi)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_TRUE_RETURN(!output->enabled);
+
+   if (xdpi)
+     *xdpi = ((25.4 * (output->current_mode->width)) / output->pw);
+
+   if (ydpi)
+     *ydpi = ((25.4 * (output->current_mode->height)) / output->ph);
+}
+
 EAPI unsigned int
 ecore_drm2_output_crtc_get(Ecore_Drm2_Output *output)
 {
