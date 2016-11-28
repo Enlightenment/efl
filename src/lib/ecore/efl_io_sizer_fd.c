@@ -29,7 +29,7 @@ _efl_io_sizer_fd_sizer_fd_get(Eo *o EINA_UNUSED, Efl_Io_Sizer_Fd_Data *pd)
 EOLIAN static Eina_Error
 _efl_io_sizer_fd_efl_io_sizer_resize(Eo *o, Efl_Io_Sizer_Fd_Data *pd EINA_UNUSED, uint64_t size)
 {
-   int fd = efl_io_sizer_fd_sizer_fd_get(o);
+   int fd = efl_io_sizer_fd_get(o);
    if (ftruncate(fd, size) < 0) return errno;
    efl_event_callback_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
    return 0;
@@ -38,7 +38,7 @@ _efl_io_sizer_fd_efl_io_sizer_resize(Eo *o, Efl_Io_Sizer_Fd_Data *pd EINA_UNUSED
 EOLIAN static uint64_t
 _efl_io_sizer_fd_efl_io_sizer_size_get(Eo *o, Efl_Io_Sizer_Fd_Data *pd EINA_UNUSED)
 {
-   int fd = efl_io_sizer_fd_sizer_fd_get(o);
+   int fd = efl_io_sizer_fd_get(o);
    struct stat st;
    int r;
 

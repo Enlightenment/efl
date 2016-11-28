@@ -41,7 +41,7 @@ _efl_io_positioner_whence_convert(Efl_Io_Positioner_Whence whence)
 EOLIAN static Eina_Error
 _efl_io_positioner_fd_efl_io_positioner_seek(Eo *o, Efl_Io_Positioner_Fd_Data *pd EINA_UNUSED, int64_t offset, Efl_Io_Positioner_Whence whence)
 {
-   int fd = efl_io_positioner_fd_positioner_fd_get(o);
+   int fd = efl_io_positioner_fd_get(o);
    if (lseek(fd, (off_t)offset, _efl_io_positioner_whence_convert(whence)) < 0)
      return errno;
    efl_event_callback_call(o, EFL_IO_POSITIONER_EVENT_POSITION_CHANGED, NULL);
@@ -51,7 +51,7 @@ _efl_io_positioner_fd_efl_io_positioner_seek(Eo *o, Efl_Io_Positioner_Fd_Data *p
 EOLIAN static uint64_t
 _efl_io_positioner_fd_efl_io_positioner_position_get(Eo *o, Efl_Io_Positioner_Fd_Data *pd EINA_UNUSED)
 {
-   int fd = efl_io_positioner_fd_positioner_fd_get(o);
+   int fd = efl_io_positioner_fd_get(o);
    off_t offset;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(fd < 0, 0);

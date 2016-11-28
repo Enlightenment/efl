@@ -31,7 +31,7 @@ _efl_io_writer_fd_writer_fd_get(Eo *o EINA_UNUSED, Efl_Io_Writer_Fd_Data *pd)
 EOLIAN static Eina_Error
 _efl_io_writer_fd_efl_io_writer_write(Eo *o, Efl_Io_Writer_Fd_Data *pd EINA_UNUSED, Eina_Slice *ro_slice, Eina_Slice *remaining)
 {
-   int fd = efl_io_writer_fd_writer_fd_get(o);
+   int fd = efl_io_writer_fd_get(o);
    ssize_t r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ro_slice, EINVAL);
@@ -79,7 +79,7 @@ _efl_io_writer_fd_efl_io_writer_can_write_get(Eo *o EINA_UNUSED, Efl_Io_Writer_F
 EOLIAN static void
 _efl_io_writer_fd_efl_io_writer_can_write_set(Eo *o, Efl_Io_Writer_Fd_Data *pd, Eina_Bool can_write)
 {
-   EINA_SAFETY_ON_TRUE_RETURN(efl_io_writer_fd_writer_fd_get(o) < 0);
+   EINA_SAFETY_ON_TRUE_RETURN(efl_io_writer_fd_get(o) < 0);
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
    efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);

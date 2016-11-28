@@ -508,7 +508,7 @@ _efl_net_socket_udp_efl_object_destructor(Eo *o, Efl_Net_Socket_Udp_Data *pd)
 EOLIAN static Eina_Error
 _efl_net_socket_udp_efl_io_reader_read(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Rw_Slice *rw_slice)
 {
-   SOCKET fd = efl_io_reader_fd_reader_fd_get(o);
+   SOCKET fd = efl_io_reader_fd_get(o);
    ssize_t r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(rw_slice, EINVAL);
@@ -587,7 +587,7 @@ _efl_net_socket_udp_efl_io_reader_read(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_
 EOLIAN static Eina_Error
 _efl_net_socket_udp_efl_io_writer_write(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Slice *ro_slice, Eina_Slice *remaining)
 {
-   SOCKET fd = efl_io_writer_fd_writer_fd_get(o);
+   SOCKET fd = efl_io_writer_fd_get(o);
    ssize_t r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ro_slice, EINVAL);

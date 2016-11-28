@@ -45,6 +45,39 @@ _get_eo_prefix(const Eolian_Function *foo_id, char *buf, Eina_Bool use_legacy)
     return buf;
 }
 
+static char *
+_get_abbreviated_name(const char *prefix, const char *fname)
+{
+   Eina_Strbuf *buf = eina_strbuf_new();
+
+   const char *last_p = strrchr(prefix, '_');
+   last_p = (last_p) ? (last_p + 1) : prefix;
+
+   const char *tmp = strstr(fname, last_p);
+   int len = strlen(last_p);
+
+   if ((tmp) &&
+       ((tmp == fname) || (*(tmp - 1) == '_')) &&
+       ((*(tmp + len) == '\0') || (*(tmp + len) == '_')))
+     {
+        int plen = strlen(prefix);
+        len += (tmp - fname);
+
+        if ((plen >= len) && !strncmp(prefix + plen - len, fname, len))
+          {
+             eina_strbuf_append_n(buf, prefix, plen - len);
+          }
+     }
+
+   if (eina_strbuf_length_get(buf) == 0)
+     eina_strbuf_append_printf(buf, "%s_", prefix);
+   eina_strbuf_append(buf, fname);
+
+   char *ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 EAPI Eina_Stringshare *
 eolian_function_full_c_name_get(const Eolian_Function *foo_id,
                                 Eolian_Function_Type ftype,
@@ -80,18 +113,10 @@ eolian_function_full_c_name_get(const Eolian_Function *foo_id,
      return NULL;
 
    const char  *funcn = eolian_function_name_get(foo_id);
-   const char  *last_p = strrchr(prefix, '_');
-   const char  *func_p = strchr(funcn, '_');
    Eina_Strbuf *buf = eina_strbuf_new();
    Eina_Stringshare *ret;
-   int   len;
 
-   if (!last_p) last_p = prefix;
-   else last_p++;
-   if (!func_p) len = strlen(funcn);
-   else len = func_p - funcn;
-
-   if (use_legacy || (int)strlen(last_p) != len || strncmp(last_p, funcn, len))
+   if (use_legacy)
      {
         eina_strbuf_append(buf, prefix);
         eina_strbuf_append_char(buf, '_');
@@ -107,10 +132,9 @@ eolian_function_full_c_name_get(const Eolian_Function *foo_id,
         return ret;
      }
 
-   if (last_p != prefix)
-      eina_strbuf_append_n(buf, prefix, last_p - prefix); /* includes _ */
-
-   eina_strbuf_append(buf, funcn);
+   char *abbr = _get_abbreviated_name(prefix, funcn);
+   eina_strbuf_append(buf, abbr);
+   free(abbr);
 
    if ((ftype == EOLIAN_PROP_GET) || (ftype == EOLIAN_PROPERTY))
      eina_strbuf_append(buf, "_get");

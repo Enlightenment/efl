@@ -63,11 +63,11 @@ EOLIAN static void
 _efl_io_file_efl_loop_fd_fd_file_set(Eo *o, Efl_Io_File_Data *pd, int fd)
 {
    efl_loop_fd_file_set(efl_super(o, MY_CLASS), fd);
-   efl_io_positioner_fd_positioner_fd_set(o, fd);
-   efl_io_sizer_fd_sizer_fd_set(o, fd);
-   efl_io_reader_fd_reader_fd_set(o, fd);
-   efl_io_writer_fd_writer_fd_set(o, fd);
-   efl_io_closer_fd_closer_fd_set(o, fd);
+   efl_io_positioner_fd_set(o, fd);
+   efl_io_sizer_fd_set(o, fd);
+   efl_io_reader_fd_set(o, fd);
+   efl_io_writer_fd_set(o, fd);
+   efl_io_closer_fd_set(o, fd);
    if (fd >= 0) _efl_io_file_state_update(o, pd);
 }
 

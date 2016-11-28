@@ -32,12 +32,12 @@ _efl_io_closer_fd_closer_fd_get(Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd)
 EOLIAN static Eina_Error
 _efl_io_closer_fd_efl_io_closer_close(Eo *o, Efl_Io_Closer_Fd_Data *pd EINA_UNUSED)
 {
-   int fd = efl_io_closer_fd_closer_fd_get(o);
+   int fd = efl_io_closer_fd_get(o);
    Eina_Error err = 0;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(fd < 0, EBADF);
 
-   efl_io_closer_fd_closer_fd_set(o, -1);
+   efl_io_closer_fd_set(o, -1);
    if (close(fd) < 0) err = errno;
    efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
    return err;
@@ -46,7 +46,7 @@ _efl_io_closer_fd_efl_io_closer_close(Eo *o, Efl_Io_Closer_Fd_Data *pd EINA_UNUS
 EOLIAN static Eina_Bool
 _efl_io_closer_fd_efl_io_closer_closed_get(Eo *o, Efl_Io_Closer_Fd_Data *pd EINA_UNUSED)
 {
-   return efl_io_closer_fd_closer_fd_get(o) < 0;
+   return efl_io_closer_fd_get(o) < 0;
 }
 
 EOLIAN static Eina_Bool
@@ -62,7 +62,7 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_set(Eo *o, Efl_Io_Closer_Fd_Data *
 
    pd->close_on_exec = close_on_exec;
 
-   fd = efl_io_closer_fd_closer_fd_get(o);
+   fd = efl_io_closer_fd_get(o);
    if (fd < 0) return EINA_TRUE; /* postpone until fd_set(), users
                                   * must apply MANUALLY if it's not
                                   * already set!
@@ -98,7 +98,7 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_get(Eo *o, Efl_Io_Closer_Fd_Data *
 #else
    int flags, fd;
 
-   fd = efl_io_closer_fd_closer_fd_get(o);
+   fd = efl_io_closer_fd_get(o);
    if (fd < 0) return pd->close_on_exec;
 
    /* if there is a fd, always query it directly as it may be modified

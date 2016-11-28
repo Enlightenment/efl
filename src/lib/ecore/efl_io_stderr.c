@@ -26,7 +26,7 @@ EOLIAN static void
 _efl_io_stderr_efl_loop_fd_fd_set(Eo *o, void *pd EINA_UNUSED, int fd)
 {
    efl_loop_fd_file_set(efl_super(o, MY_CLASS), fd);
-   efl_io_writer_fd_writer_fd_set(o, fd);
+   efl_io_writer_fd_set(o, fd);
 }
 
 EOLIAN static Efl_Object *
