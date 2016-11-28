@@ -2576,6 +2576,7 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item_Data *item)
    Eina_List *l;
 
    _elm_widget_sub_object_redirect_to_top(WIDGET(item), old_icon);
+   elm_layout_content_unset(VIEW(item), "elm.swallow.icon");
    elm_layout_content_set(VIEW(item), "elm.swallow.icon", item->icon);
    if (item->icon)
        elm_layout_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
@@ -2597,8 +2598,6 @@ _elm_toolbar_item_icon_set_cb(void *data,
                               const char *source)
 {
    Elm_Toolbar_Item_Data *item = data;
-
-   elm_layout_content_unset(VIEW(item), "elm.swallow.icon");
    _elm_toolbar_item_icon_update(item);
    elm_layout_signal_callback_del
      (obj, emission, source, _elm_toolbar_item_icon_set_cb);
@@ -2623,19 +2622,6 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj,
      {
         eina_stringshare_del(item->icon_str);
         item->icon_str = NULL;
-     }
-   if (item->icon)
-     {
-        Elm_Toolbar_Item_State *it_state;
-        Eina_List *l;
-        Eina_Bool found = EINA_FALSE;
-        EINA_LIST_FOREACH(item->states, l, it_state)
-          {
-             found |= (it_state->icon == item->icon);
-          }
-        if (!found) evas_object_del(item->icon);
-        else evas_object_hide(item->icon);
-        elm_layout_content_unset(VIEW(item), "elm.swallow.icon");
      }
    item->icon = icon_obj;
 
