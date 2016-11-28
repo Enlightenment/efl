@@ -24,18 +24,18 @@ class Efl.Io.Manager (Efl.Loop_User)
       [[Lists entries in a given path with more information.]]
       params {
         @in path: string;[[Path we want to list entries for]]
-	@in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
+        @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
       }
-      return: future<uint64, const(array<Eina_File_Direct_Info>)>; [[List of entries in path]]
+      return: future<uint64, const(array<Eina.File.Direct.Info>)>; [[List of entries in path]]
     }
 
     stat_ls {
       [[Lists entries in a given path with stat information.]]
       params {
         @in path: string;[[Path we want to list entries for]]
-	@in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
+        @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
       }
-      return: future<uint64, const(array<Eina_File_Direct_Info>)>; [[List of entries in path]]
+      return: future<uint64, const(array<Eina.File.Direct.Info>)>; [[List of entries in path]]
     }
 
     // Extended attributes
@@ -52,7 +52,7 @@ class Efl.Io.Manager (Efl.Loop_User)
       params {
         @in path: string; [[Path we want to get stat information for]]
       }
-      return: future<Eina_Stat>; [[Stat information]]
+      return: future<Eina.Stat>; [[Stat information]]
     }
 
     // FIXME: Add helper for Eina.Value to Xattr
@@ -60,7 +60,7 @@ class Efl.Io.Manager (Efl.Loop_User)
       [[Retrieves or sets information of a given extended attribute.]]
       set {
          values {
-            data: ptr(Eina.Binbuf); [[Data to set as information]] 
+            data: ptr(Eina.Binbuf); [[Data to set as information]]
             flags: Eina.Xattr.Flags; [[Extended attributes flags]]
          }
          return: future<uint64>; [[Future for asynchronous set operation]]
@@ -70,7 +70,7 @@ class Efl.Io.Manager (Efl.Loop_User)
       }
       keys {
          path: string; [[File path]]
-	 attribute: string; [[Attribute name]]
+         attribute: string; [[Attribute name]]
       }
     }
 
