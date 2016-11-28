@@ -1034,14 +1034,12 @@ _box_resize_cb(void *data,
                }
           }
      }
-   if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK &&
-       !elm_object_focus_get(data) && !evas_object_visible_get(sd->entry))
-     {
-        _shrink_mode_set(data, EINA_TRUE);
-     }
 
    sd->w_box = w;
    sd->h_box = h;
+
+   if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK)
+     _shrink_mode_set(data, EINA_TRUE);
 }
 
 static void
