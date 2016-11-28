@@ -115,46 +115,6 @@ START_TEST (elm_code_text_newline_position_test)
 }
 END_TEST
 
-START_TEST (elm_code_text_leading_whitespace_test)
-{
-   const char *text;
-
-   elm_init(1, NULL);
-   text = "testing";
-   ck_assert_int_eq(0, elm_code_text_leading_whitespace_length(text, strlen(text)));
-
-   text = "  spaces";
-   ck_assert_int_eq(2, elm_code_text_leading_whitespace_length(text, strlen(text)));
-
-   text = "\t\ttabs";
-   ck_assert_int_eq(2, elm_code_text_leading_whitespace_length(text, strlen(text)));
-
-   text = " \t mix";
-   ck_assert_int_eq(3, elm_code_text_leading_whitespace_length(text, strlen(text)));
-   elm_shutdown();
-}
-END_TEST
-
-START_TEST (elm_code_text_trailing_whitespace_test)
-{
-   const char *text;
-
-   elm_init(1, NULL);
-   text = "testing";
-   ck_assert_int_eq(0, elm_code_text_trailing_whitespace_length(text, strlen(text)));
-
-   text = "spaces  ";
-   ck_assert_int_eq(2, elm_code_text_trailing_whitespace_length(text, strlen(text)));
-
-   text = "tabs\t\t";
-   ck_assert_int_eq(2, elm_code_text_trailing_whitespace_length(text, strlen(text)));
-
-   text = "mix \t ";
-   ck_assert_int_eq(3, elm_code_text_trailing_whitespace_length(text, strlen(text)));
-   elm_shutdown();
-}
-END_TEST
-
 START_TEST (elm_code_text_is_whitespace_test)
 {
    const char *text;
@@ -179,7 +139,5 @@ void elm_code_test_text(TCase *tc)
    tcase_add_test(tc, elm_code_text_contains_test);
    tcase_add_test(tc, elm_code_text_strpos_test);
    tcase_add_test(tc, elm_code_text_newline_position_test);
-   tcase_add_test(tc, elm_code_text_leading_whitespace_test);
-   tcase_add_test(tc, elm_code_text_trailing_whitespace_test);
    tcase_add_test(tc, elm_code_text_is_whitespace_test);
 }

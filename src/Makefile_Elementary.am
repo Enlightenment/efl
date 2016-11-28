@@ -1318,6 +1318,7 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_code_test_line.c \
 	tests/elementary/elm_code_test_parse.c \
 	tests/elementary/elm_code_test_text.c \
+	tests/elementary/elm_code_test_indent.c \
 	tests/elementary/elm_code_test_widget.c \
 	tests/elementary/elm_code_test_widget_text.c \
 	tests/elementary/elm_code_test_widget_selection.c \
