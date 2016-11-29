@@ -83,17 +83,56 @@ _final_type_and_type_type_get(Eolian_Type const* tp_in, Eolian_Type const*& tp_o
 }
 
 std::string
-_eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller_class_prefix, std::set<std::string>& need_name_getter)
+_eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller_class_prefix, std::set<std::string>& need_name_getter, bool in_pointer = false)
 {
   const auto is_const = eolian_type_is_const(tp);
 
+  std::string result;
+
+   if(!in_pointer && (eolian_type_is_ptr(tp) || eolian_type_type_get(tp) == EOLIAN_TYPE_TERMINATED_ARRAY
+                      || eolian_type_type_get(tp) == EOLIAN_TYPE_STATIC_ARRAY))
+   // else if (tpt == EOLIAN_TYPE_POINTER)
+     {
+        // auto btp = eolian_type_base_type_get(tp);
+        auto btp = eolian_type_type_get(tp) == EOLIAN_TYPE_TERMINATED_ARRAY
+          || eolian_type_type_get(tp) == EOLIAN_TYPE_STATIC_ARRAY
+          ? eolian_type_base_type_get(tp)
+          : tp;
+        result += _eolian_type_cpp_type_named_get(btp, caller_class_prefix, need_name_getter
+                                                  , eolian_type_is_ptr(tp));
+        const auto base_is_const = eolian_type_is_const(btp);
+
+        Eolian_Type_Type btpt = EOLIAN_TYPE_UNKNOWN_TYPE;
+        _final_type_and_type_type_get(btp, btp, btpt);
+        auto btpd = eolian_type_typedecl_get(btp);
+
+        if (btpd && eolian_typedecl_type_get(btpd) == EOLIAN_TYPEDECL_STRUCT)
+          {
+             std::string f = "::make_struct_tag";
+             auto p = result.find(f);
+             if (p == std::string::npos)
+               throw std::runtime_error("missing struct type tag");
+             result.replace(p, f.size(), "::make_struct_ptr_tag");
+             result.pop_back();
+             result += " *";
+             if (is_const) result += " const";
+             result += ">";
+          }
+        else
+          {
+             // if (btpt != EOLIAN_TYPE_POINTER || base_is_const)
+             //    result += ' ';
+             result += '*';
+             if (is_const) result += " const";
+          }
+     }
+   else
+     {
   Eolian_Type_Type tpt = EOLIAN_TYPE_UNKNOWN_TYPE;
   _final_type_and_type_type_get(tp, tp, tpt);
 
   if (tpt == EOLIAN_TYPE_UNKNOWN_TYPE || tpt == EOLIAN_TYPE_UNDEFINED)
     return "error";
-
-  std::string result;
 
    if ((tpt == EOLIAN_TYPE_VOID
      || tpt == EOLIAN_TYPE_REGULAR
@@ -207,40 +246,19 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
      }
    else if (tpt == EOLIAN_TYPE_VOID)
      result += "void";
-   else if (tpt == EOLIAN_TYPE_POINTER)
-     {
-        auto btp = eolian_type_base_type_get(tp);
-        result += _eolian_type_cpp_type_named_get(btp, caller_class_prefix, need_name_getter);
-        const auto base_is_const = eolian_type_is_const(btp);
-
-        Eolian_Type_Type btpt = EOLIAN_TYPE_UNKNOWN_TYPE;
-        _final_type_and_type_type_get(btp, btp, btpt);
-        auto btpd = eolian_type_typedecl_get(btp);
-
-        if (btpd && eolian_typedecl_type_get(btpd) == EOLIAN_TYPEDECL_STRUCT)
-          {
-             std::string f = "::make_struct_tag";
-             auto p = result.find(f);
-             if (p == std::string::npos)
-               throw std::runtime_error("missing struct type tag");
-             result.replace(p, f.size(), "::make_struct_ptr_tag");
-             result.pop_back();
-             result += " *";
-             if (is_const) result += " const";
-             result += ">";
-          }
-        else
-          {
-             if (btpt != EOLIAN_TYPE_POINTER || base_is_const)
-                result += ' ';
-             result += '*';
-             if (is_const) result += " const";
-          }
+   // else if(tpt == EOLIAN_TYPE_STATIC_ARRAY)
+   //   {
+   //     result += "void";
+   //   }
+   // else if(tpt == EOLIAN_TYPE_TERMINATED_ARRAY)
+   //   {
+   //     result += "void";
+   //   }
      }
-   else
-     {
-        throw std::runtime_error("unhandled Eolian_Type_Type value");
-     }
+   // else
+   //   {
+   //      throw std::runtime_error("unhandled Eolian_Type_Type value");
+   //   }
 
    /*if (!name.empty())
      {

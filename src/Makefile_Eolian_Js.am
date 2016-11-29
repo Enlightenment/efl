@@ -13,6 +13,9 @@ bin_eolian_js_eolian_js_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/bindings/js/eo_js \
 @EOLIAN_JS_CFLAGS@ \
 @EINA_CXX_CFLAGS@ \
+@EO_CXX_CFLAGS@ \
+@EFL_CFLAGS@ \
+@ECORE_CXX_CFLAGS@ \
 @EOLIAN_CXX_CFLAGS@
 
 bin_eolian_js_eolian_js_LDADD = @USE_EO_LIBS@ @USE_EOLIAN_LIBS@

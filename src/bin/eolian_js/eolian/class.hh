@@ -1,6 +1,7 @@
 #ifndef EOLIAN_KLASS_HH
 #define EOLIAN_KLASS_HH
 
+#include <Eo.hh>
 #include <Eina.hh>
 
 #include <eolian/js/domain.hh>
@@ -38,11 +39,6 @@ inline std::string type_class_name(Eolian_Type const* tp)
    if (tp)
      {
         Eolian_Type_Type tpt = ::eolian_type_type_get(tp);
-        if (tpt == EOLIAN_TYPE_POINTER)
-          {
-             return type_class_name(::eolian_type_base_type_get(tp));
-          }
-        else
           {
              tp = ::eolian_type_aliased_base_get(tp);
              tpt = ::eolian_type_type_get(tp);

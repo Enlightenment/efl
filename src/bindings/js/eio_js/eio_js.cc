@@ -79,7 +79,6 @@ static v8::Local<v8::Object> wrap_eina_file(Eina_File *file,
     using v8::ObjectTemplate;
     using v8::Object;
     using v8::FunctionTemplate;
-    using v8::WeakCallbackData;
 
     auto obj_tpl = compatibility_new<ObjectTemplate>(isolate);
     obj_tpl->SetInternalFieldCount(1);

@@ -129,7 +129,7 @@ bindings/cxx/ecore_cxx/Ecore_Manual.hh
 nodist_installed_ecorecxxheaders_DATA = $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl_hh) \
 lib/ecore/Ecore.eo.hh
 
-lib/ecore/Ecore.eo.hh: $(ecore_eolian_cxx_hh) $(eo_eolian_cxx_hh)
+lib/ecore/Ecore.eo.hh: $(ecore_eolian_cxx_hh) $(eo_eolian_cxx_hh) $(efl_eolian_cxx_hh)
 	@echo @ECHO_E@ "#ifndef EFL_CXX_ECORE_HH\n#define EFL_CXX_ECORE_HH\n" > $(top_builddir)/src/lib/ecore/Ecore.eo.hh
 	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
 	@for i in $(ecore_eolian_cxx_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh; done

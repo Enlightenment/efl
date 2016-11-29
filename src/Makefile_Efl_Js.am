@@ -204,6 +204,7 @@ SUITE_RUNNER_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efl_js\" \
 @CHECK_CFLAGS@ \
 @EFL_JS_CFLAGS@ \
+@EFL_CFLAGS@ \
 @EINA_CXX_CFLAGS@ \
 @EO_CXX_CFLAGS@ \
 @EO_CFLAGS@ \
