@@ -672,6 +672,25 @@ _sel_clear(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_U
      }
 }
 
+static Evas_Object *
+_entry_source_load(Edje *ed, Evas_Object *o, Evas_Object *clip, const char *group)
+{
+   Evas_Object *obj_source;
+
+   obj_source = edje_object_add(ed->base->evas);
+   if (eet_mode_get(ed->file->ef) == EET_FILE_MODE_READ)
+     edje_object_file_set(obj_source, ed->path, group);
+   else
+     edje_object_mmap_set(obj_source, ed->file->f, group);
+   evas_object_stack_below(obj_source, o);
+   evas_object_clip_set(obj_source, clip);
+   evas_object_pass_events_set(obj_source, EINA_TRUE);
+   evas_object_show(obj_source);
+
+   return obj_source;
+}
+
+
 static void
 _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
 {
@@ -699,8 +718,6 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
           {
              if (!l)
                {
-                  Evas_Object *ob;
-
                   sel = calloc(1, sizeof(Sel));
                   if (!sel)
                     {
@@ -710,27 +727,15 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
                   en->sel = eina_list_append(en->sel, sel);
                   if (en->rp->part->source)
                     {
-                       ob = edje_object_add(ed->base->evas);
-                       edje_object_file_set(ob, ed->path, en->rp->part->source);
-                       evas_object_smart_member_add(ob, smart);
-                       evas_object_stack_below(ob, o);
-                       evas_object_clip_set(ob, clip);
-                       evas_object_pass_events_set(ob, EINA_TRUE);
-                       evas_object_show(ob);
-                       sel->obj_bg = ob;
+                       sel->obj_bg = _entry_source_load(ed, o, clip, en->rp->part->source);
+                       evas_object_smart_member_add(sel->obj_bg, smart);
                        _edje_subobj_register(ed, sel->obj_bg);
                     }
 
                   if (en->rp->part->source2)
                     {
-                       ob = edje_object_add(ed->base->evas);
-                       edje_object_file_set(ob, ed->path, en->rp->part->source2);
-                       evas_object_smart_member_add(ob, smart);
-                       evas_object_stack_above(ob, o);
-                       evas_object_clip_set(ob, clip);
-                       evas_object_pass_events_set(ob, EINA_TRUE);
-                       evas_object_show(ob);
-                       sel->obj_fg = ob;
+                       sel->obj_fg = _entry_source_load(ed, o, clip, en->rp->part->source2);
+                       evas_object_smart_member_add(sel->obj_fg, smart);
                        _edje_subobj_register(ed, sel->obj_fg);
                     }
                }
@@ -1214,25 +1219,15 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                        an->sel = eina_list_append(an->sel, sel);
                        if (en->rp->part->source5)
                          {
-                            ob = edje_object_add(ed->base->evas);
-                            edje_object_file_set(ob, ed->path, en->rp->part->source5);
-                            evas_object_smart_member_add(ob, smart);
-                            evas_object_stack_below(ob, o);
-                            evas_object_clip_set(ob, clip);
-                            evas_object_pass_events_set(ob, EINA_TRUE);
-                            sel->obj_bg = ob;
+                            sel->obj_bg = _entry_source_load(ed, o, clip, en->rp->part->source5);
+                            evas_object_smart_member_add(sel->obj_bg, smart);
                             _edje_subobj_register(ed, sel->obj_bg);
                          }
 
                        if (en->rp->part->source6)
                          {
-                            ob = edje_object_add(ed->base->evas);
-                            edje_object_file_set(ob, ed->path, en->rp->part->source6);
-                            evas_object_smart_member_add(ob, smart);
-                            evas_object_stack_above(ob, o);
-                            evas_object_clip_set(ob, clip);
-                            evas_object_pass_events_set(ob, EINA_TRUE);
-                            sel->obj_fg = ob;
+                            sel->obj_fg = _entry_source_load(ed, o, clip, en->rp->part->source6);
+                            evas_object_smart_member_add(sel->obj_fg, smart);
                             _edje_subobj_register(ed, sel->obj_fg);
                          }
 
@@ -2903,22 +2898,14 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
 
    if (rp->part->source3)
      {
-        en->cursor_bg = edje_object_add(ed->base->evas);
-        edje_object_file_set(en->cursor_bg, ed->path, rp->part->source3);
+        en->cursor_bg = _entry_source_load(ed, rp->object, evas_object_clip_get(rp->object), rp->part->source3);
         evas_object_smart_member_add(en->cursor_bg, ed->obj);
-        evas_object_stack_below(en->cursor_bg, rp->object);
-        evas_object_clip_set(en->cursor_bg, evas_object_clip_get(rp->object));
-        evas_object_pass_events_set(en->cursor_bg, EINA_TRUE);
         _edje_subobj_register(ed, en->cursor_bg);
      }
    if (rp->part->source4)
      {
-        en->cursor_fg = edje_object_add(ed->base->evas);
-        edje_object_file_set(en->cursor_fg, ed->path, rp->part->source4);
+        en->cursor_fg = _entry_source_load(ed, rp->object, evas_object_clip_get(rp->object), rp->part->source4);
         evas_object_smart_member_add(en->cursor_fg, ed->obj);
-        evas_object_stack_above(en->cursor_fg, rp->object);
-        evas_object_clip_set(en->cursor_fg, evas_object_clip_get(rp->object));
-        evas_object_pass_events_set(en->cursor_fg, EINA_TRUE);
         _edje_subobj_register(ed, en->cursor_fg);
      }
    /* A proxy to the main cursor. */
