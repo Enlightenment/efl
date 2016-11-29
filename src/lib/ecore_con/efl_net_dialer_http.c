@@ -1806,7 +1806,8 @@ _efl_net_dialer_http_efl_io_sizer_resize(Eo *o, Efl_Net_Dialer_Http_Data *pd, ui
    EINA_SAFETY_ON_TRUE_RETURN_VAL(size > INT64_MAX, ERANGE);
 
    pm = _efl_net_dialer_http_primary_mode_effective_get(pd);
-   if (pm == EFL_NET_DIALER_HTTP_PRIMARY_MODE_UPLOAD)
+   if ((pm == EFL_NET_DIALER_HTTP_PRIMARY_MODE_UPLOAD) ||
+       (strcmp(pd->method, "POST") == 0))
      {
         efl_net_dialer_http_request_content_length_set(o, size);
         return 0;
