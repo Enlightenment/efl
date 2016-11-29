@@ -725,6 +725,7 @@ struct _Ecore_Drm2_Output
    uint32_t subpixel;
    uint32_t crtc_id, conn_id, conn_type;
    uint32_t scale;
+   uint16_t gamma;
 
    struct
      {
@@ -845,5 +846,6 @@ extern int (*sym_drmModeAddFB)(int fd, uint32_t width, uint32_t height, uint8_t 
 extern int (*sym_drmModeRmFB)(int fd, uint32_t bufferId);
 extern int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, void *user_data);
 extern int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips);
+extern int (*sym_drmModeCrtcSetGamma)(int fd, uint32_t crtc_id, uint32_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
 
 #endif
