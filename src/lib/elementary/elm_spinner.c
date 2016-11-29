@@ -51,6 +51,8 @@ _inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event);
 static void
 _text_button_focused_cb(void *data, const Efl_Event *event);
 static void
+_button_focused_cb(void *data, const Efl_Event *event);
+static void
 _entry_unfocused_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
@@ -606,8 +608,12 @@ _toggle_entry(Evas_Object *obj)
              elm_entry_markup_filter_append(sd->ent, _invalid_input_validity_filter, NULL);
              if (_elm_config->spinner_min_max_filter_enable)
                elm_entry_markup_filter_append(sd->ent, _min_max_validity_filter, obj);
-             efl_event_callback_add
-                (sd->ent, ELM_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
+             if (sd->inc_button)
+               efl_event_callback_add
+                  (sd->inc_button, ELM_WIDGET_EVENT_FOCUSED, _button_focused_cb, obj);
+             if (sd->dec_button)
+               efl_event_callback_add
+                  (sd->dec_button, ELM_WIDGET_EVENT_FOCUSED, _button_focused_cb, obj);
              efl_event_callback_add
                 (sd->ent, ELM_ENTRY_EVENT_ACTIVATED, _entry_unfocused_cb, obj);
           }
@@ -847,6 +853,15 @@ _text_button_focused_cb(void *data, const Efl_Event *event EINA_UNUSED)
    ELM_SPINNER_DATA_GET(data, sd);
 
    sd->entry_visible = EINA_FALSE;
+   _toggle_entry(data);
+}
+
+static void
+_button_focused_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   sd->entry_visible = EINA_TRUE;
    _toggle_entry(data);
 }
 
