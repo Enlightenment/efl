@@ -549,6 +549,12 @@ _update_selection_handler(Eo *obj)
    Evas_Coord ex, ey, eh;
    Evas_Coord ent_x, ent_y;
 
+   if (!sd->have_selection)
+     {
+        _hide_selection_handler(obj);
+        return;
+     }
+
    if (!sd->sel_handler_disabled)
      {
         Eina_Rectangle *rect;
@@ -3555,10 +3561,7 @@ _efl_ui_text_efl_gfx_visible_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED, Eina
      return;
 
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
-   if (vis)
-     _update_selection_handler(obj);
-   else if (sd->have_selection)
-     _hide_selection_handler(obj);
+   if (vis) _update_selection_handler(obj);
 }
 
 EOLIAN static void
