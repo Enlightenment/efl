@@ -754,7 +754,7 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    _output_backlight_init(output, conn->connector_type);
 
-   /* TODO: gamma */
+   output->gamma = output->ocrtc->gamma_size;
 
    _output_modes_create(dev, output, conn);
 
@@ -1500,4 +1500,17 @@ ecore_drm2_output_release_handler_set(Ecore_Drm2_Output *o, Ecore_Drm2_Release_H
 
    o->release_data = data;
    o->release_cb = cb;
+}
+
+EAPI void
+ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, uint16_t *red, uint16_t *green, uint16_t *blue)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_TRUE_RETURN(output->fd < 0);
+
+   if (output->gamma != size) return;
+
+   if (sym_drmModeCrtcSetGamma(output->fd, output->crtc_id, size,
+                               red, green, blue) < 0)
+     ERR("Failed to set gamma for Output %s: %m", output->name);
 }

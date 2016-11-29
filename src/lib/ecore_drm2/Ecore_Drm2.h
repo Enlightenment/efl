@@ -705,6 +705,22 @@ EAPI void ecore_drm2_output_resolution_get(Ecore_Drm2_Output *output, int *w, in
 EAPI Eina_Bool ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, unsigned int crtc);
 
 /**
+ * Set the gamma level of an Ecore_Drm_Output
+ *
+ * This function will set the gamma of an Ecore_Drm2_Output
+ *
+ * @param output The Ecore_Drm2_Output to set the gamma level on
+ * @param size The gamma table size to set
+ * @param red The amount to scale the red channel
+ * @param green The amount to scale the green channel
+ * @param blue The amount to scale the blue channel
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.19
+ */
+EAPI void ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
