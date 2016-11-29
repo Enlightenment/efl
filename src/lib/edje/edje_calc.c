@@ -2266,7 +2266,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
      }
 
    *minw = mnw;
-   if (ep->part->scale) *minw = TO_INT(SCALE(sc, *minw));
+   if (ep->part->scale) *minw = TO_INT_ROUND(SCALE(sc, *minw));
    if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
        (ep->typedata.swallow))
      {
@@ -2293,7 +2293,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
              *maxw = mxw;
              if (*maxw > 0)
                {
-                  if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
+                  if (ep->part->scale) *maxw = TO_INT_ROUND(SCALE(sc, *maxw));
                   if (*maxw < 1) *maxw = 1;
                }
           }
@@ -2306,7 +2306,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
                   *maxw = mxw;
                   if (*maxw > 0)
                     {
-                       if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
+                       if (ep->part->scale) *maxw = TO_INT_ROUND(SCALE(sc, *maxw));
                        if (*maxw < 1) *maxw = 1;
                     }
                   if (ep->typedata.swallow->swallow_params.max.w < *maxw)
@@ -2319,7 +2319,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
         *maxw = mxw;
         if (*maxw > 0)
           {
-             if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
+             if (ep->part->scale) *maxw = TO_INT_ROUND(SCALE(sc, *maxw));
              if (*maxw < 1) *maxw = 1;
           }
      }
@@ -2331,7 +2331,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
      }
 
    *minh = mnh;
-   if (ep->part->scale) *minh = TO_INT(SCALE(sc, *minh));
+   if (ep->part->scale) *minh = TO_INT_ROUND(SCALE(sc, *minh));
    if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
        (ep->typedata.swallow))
      {
@@ -2358,7 +2358,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
              *maxh = mxh;
              if (*maxh > 0)
                {
-                  if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
+                  if (ep->part->scale) *maxh = TO_INT_ROUND(SCALE(sc, *maxh));
                   if (*maxh < 1) *maxh = 1;
                }
           }
@@ -2371,7 +2371,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
                   *maxh = mxh;
                   if (*maxh > 0)
                     {
-                       if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
+                       if (ep->part->scale) *maxh = TO_INT_ROUND(SCALE(sc, *maxh));
                        if (*maxh < 1) *maxh = 1;
                     }
                   if (ep->typedata.swallow->swallow_params.max.h < *maxh)
@@ -2384,7 +2384,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
         *maxh = mxh;
         if (*maxh > 0)
           {
-             if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
+             if (ep->part->scale) *maxh = TO_INT_ROUND(SCALE(sc, *maxh));
              if (*maxh < 1) *maxh = 1;
           }
      }
