@@ -33,8 +33,7 @@ ecore_con_eolian_files = \
         lib/ecore_con/efl_net_session.eo \
 	lib/ecore_con/ecore_con_eet_base.eo \
 	lib/ecore_con/ecore_con_eet_server_obj.eo \
-	lib/ecore_con/ecore_con_eet_client_obj.eo \
-	lib/ecore_con/efl_network_url.eo
+	lib/ecore_con/ecore_con_eet_client_obj.eo
 
 if HAVE_WINDOWS
 else
@@ -133,8 +132,6 @@ lib/ecore_con/efl_net_control_technology-none.c \
 lib/ecore_con/efl_net_control-none.c \
 lib/ecore_con/efl_net_session-none.c
 endif
-
-EXTRA_DIST2 += lib/ecore_con/ecore_con_legacy.c
 
 # these are included rather than compiled out
 # so the structures can be embedded into the
