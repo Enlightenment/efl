@@ -42,12 +42,12 @@ int
 main(int argc, const char *argv[])
 {
    Ecore_Con_Url *ec_url = NULL;
-   const char *type;
+   const char *type, *post_data = "";
    Eina_Bool r;
 
    if (argc < 3)
      {
-        printf("need at least two parameters: < POST|GET >  <url1>\n");
+        printf("need at least two parameters: < POST|GET >  <url1> [post-data]\n");
         return -1;
      }
 
@@ -58,6 +58,8 @@ main(int argc, const char *argv[])
         printf("only POST or GET are supported by this example.\n");
         return -1;
      }
+
+   if (argc > 3) post_data = argv[3];
 
    ecore_init();
    ecore_con_init();
@@ -87,7 +89,7 @@ main(int argc, const char *argv[])
    if (!strcmp(type, "GET"))
      r = ecore_con_url_get(ec_url);
    else
-     r = ecore_con_url_post(ec_url, NULL, 0, NULL);
+     r = ecore_con_url_post(ec_url, post_data, strlen(post_data), NULL);
 
    if (!r)
      {
