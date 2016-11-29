@@ -7656,6 +7656,10 @@ elm_win_resize_object_add(Eo *obj, Evas_Object *subobj)
    ret  = elm_widget_sub_object_add(obj, subobj);
    ret &= (evas_object_box_append(sd->legacy.box, subobj) != NULL);
 
+   // Little hack for E (edje object set as resize object... but never updated)
+   if (efl_isa(subobj, EDJE_OBJECT_CLASS))
+     edje_object_update_hints_set(subobj, 1);
+
    if (!ret)
      ERR("could not add sub object %p to window %p", subobj, obj);
 }
