@@ -552,7 +552,7 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
 {
 #warning "I am pretty sure cb_done should be used."
    Efl_Network_Server_Data *svr = efl_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
-   char buf = NULL;
+   char *buf = NULL;
    Ecore_Win32_Handler *handler_read;
    Ecore_Win32_Handler *handler_peek;
 
