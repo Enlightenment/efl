@@ -54,6 +54,7 @@
 /evas_map_utils
 /evas_map_utils_eo
 /evas_multi_touch
+/evas_multiseat_events
 /evas_object_manipulation
 /evas_object_manipulation-eo
 /evas_smart_interface

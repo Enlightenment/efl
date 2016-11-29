@@ -119,6 +119,11 @@ evas_events_SOURCES = evas-events.c
 evas_events_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_events_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_multiseat_events
+evas_multiseat_events_SOURCES = evas-multiseat-events.c
+evas_multiseat_events_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_multiseat_events_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_object_manipulation
 evas_object_manipulation_SOURCES = evas-object-manipulation.c
 evas_object_manipulation_LDADD = $(ECORE_EVAS_COMMON_LDADD)
