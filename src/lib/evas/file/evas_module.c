@@ -38,7 +38,6 @@ static Eina_Hash *evas_modules[6] = {
   NULL
 };
 
-static Eina_List *eina_evas_modules = NULL;
 static Eina_List *evas_module_paths = NULL;
 static Eina_Array *evas_engines = NULL;
 
@@ -527,7 +526,6 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
         em = eina_hash_find(evas_modules[type], name);
         if (em)
           {
-             eina_evas_modules = eina_list_append(eina_evas_modules, en);
              return em;
           }
 
@@ -670,23 +668,11 @@ _cb_mod_close(const Eina_Hash *hash EINA_UNUSED,
 void
 evas_module_shutdown(void)
 {
-   Eina_Module *en;
    char *path;
    int i;
 
    for (i = 0; evas_static_module[i].shutdown; ++i)
      evas_static_module[i].shutdown();
-
-   EINA_LIST_FREE(eina_evas_modules, en)
-     {
-// yes - looks zstupid. just to keep compilers from complaining with warnings
-        if (!en) continue;
-// NEVER FREE MODULES - they MAY be needed after shutdown - eg indirect func
-// symbols from gl for example to shut down extensions. so yes - you may
-// think this is a leak. technically it is, but it's needed to keep things
-// running, so ignore this one
-//        eina_module_free(en);
-     }
 
    eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_ENGINE], _cb_mod_close, NULL);
    eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_IMAGE_LOADER], _cb_mod_close, NULL);
