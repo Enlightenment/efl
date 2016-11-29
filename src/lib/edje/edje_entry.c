@@ -3037,7 +3037,7 @@ _edje_entry_real_part_shutdown(Edje *ed, Edje_Real_Part *rp)
         en->pw_timer = NULL;
      }
 
-   evas_event_callback_del(ed->base->evas, EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, _canvas_viewport_resize_cb);
+   evas_event_callback_del_full(ed->base->evas, EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, _canvas_viewport_resize_cb, rp);
 
 #ifdef HAVE_ECORE_IMF
    if (rp->part->entry_mode >= EDJE_ENTRY_EDIT_MODE_EDITABLE)
