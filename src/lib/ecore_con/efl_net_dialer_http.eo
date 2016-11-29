@@ -335,6 +335,34 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             }
         }
 
+        @property ssl_verify {
+            [[If remote peer's SSL certificate should be verified.
+
+              Defaults to both peer and hostname verification (all $true).
+            ]]
+            values {
+                peer: bool; [[If $true, SSL certificate will be verified. If $false, untrusted certificates (including self signed) will be accepted.]]
+                hostname: bool; [[If $true, in addition to SSL certificate validation, the server name will be matched to certificate DNS entries]]
+            }
+        }
+
+        @property ssl_certificate_authority {
+            [[Overrides the CA (Certificate Authority) path or directory.
+
+              Defaults to system setup.
+            ]]
+            values {
+                path: string; [[Directory or file path to use for Certificate Authority]]
+            }
+        }
+
+        @property ssl_certificate_revogation_list {
+            [[Defines a CRL (Certificate Revogation List) path to use.]]
+            values {
+                file: string; [[File path to use for CRL]]
+            }
+        }
+
         date_parse @class {
             [[Parse the given string as time in seconds since 1/1/1970.
 

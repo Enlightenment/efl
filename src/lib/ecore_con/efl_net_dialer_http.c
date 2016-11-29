@@ -201,6 +201,12 @@ typedef struct
       Efl_Net_Http_Authentication_Method method;
       Eina_Bool restricted;
    } authentication;
+   struct {
+      Eina_Stringshare *ca;
+      Eina_Stringshare *crl;
+      Eina_Bool verify_peer;
+      Eina_Bool verify_hostname;
+   } ssl;
    Efl_Future *pending_close;
    unsigned int in_curl_callback;
    SOCKET fd;
@@ -1084,6 +1090,7 @@ _efl_net_dialer_http_efl_object_constructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    efl_net_dialer_http_method_set(o, "GET");
    efl_net_dialer_http_version_set(o, EFL_NET_HTTP_VERSION_V1_1);
    efl_net_dialer_http_allow_redirects_set(o, EINA_TRUE);
+   efl_net_dialer_http_ssl_verify_set(o, EINA_TRUE, EINA_TRUE);
    efl_net_dialer_timeout_dial_set(o, 30.0);
    return o;
 }
@@ -1163,6 +1170,8 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    eina_stringshare_replace(&pd->response.content_type, NULL);
    eina_stringshare_replace(&pd->authentication.username, NULL);
    _secure_free(&pd->authentication.password);
+   eina_stringshare_replace(&pd->ssl.ca, NULL);
+   eina_stringshare_replace(&pd->ssl.crl, NULL);
 }
 
 static void
@@ -2263,6 +2272,78 @@ EOLIAN static const char *
 _efl_net_dialer_http_cookie_jar_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->cookie_jar;
+}
+
+EOLIAN static void
+_efl_net_dialer_http_ssl_verify_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, Eina_Bool peer, Eina_Bool hostname)
+{
+   CURLcode r;
+
+   r = curl_easy_setopt(pd->easy, CURLOPT_SSL_VERIFYPEER, (long)peer);
+   if (r != CURLE_OK)
+     ERR("dialer=%p could not set SSL verify peer %d: %s",
+         o, peer, curl_easy_strerror(r));
+
+   /* VERIFYHOST used to take 1 as debug,
+    * it requires 2 to really enable it.
+    */
+   r = curl_easy_setopt(pd->easy, CURLOPT_SSL_VERIFYHOST, (long)hostname * 2);
+   if (r != CURLE_OK)
+     ERR("dialer=%p could not set SSL verify hostname %d: %s",
+         o, hostname, curl_easy_strerror(r));
+
+   pd->ssl.verify_peer = peer;
+   pd->ssl.verify_hostname = hostname;
+}
+
+EOLIAN static void
+_efl_net_dialer_http_ssl_verify_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, Eina_Bool *peer, Eina_Bool *hostname)
+{
+   if (peer) *peer = pd->ssl.verify_peer;
+   if (hostname) *hostname = pd->ssl.verify_hostname;
+}
+
+EOLIAN static void
+_efl_net_dialer_http_ssl_certificate_authority_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, const char *path)
+{
+   CURLcode r;
+   struct stat st;
+
+   if (path && (stat(path, &st) == 0) && (S_ISDIR(st.st_mode)))
+     r = curl_easy_setopt(pd->easy, CURLOPT_CAPATH, path);
+   else
+     r = curl_easy_setopt(pd->easy, CURLOPT_CAINFO, path);
+
+   if (r != CURLE_OK)
+     ERR("dialer=%p could not set SSL CA '%s': %s",
+         o, path, curl_easy_strerror(r));
+
+   eina_stringshare_replace(&pd->ssl.ca, path);
+}
+
+EOLIAN static const char *
+_efl_net_dialer_http_ssl_certificate_authority_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+{
+   return pd->ssl.ca;
+}
+
+EOLIAN static void
+_efl_net_dialer_http_ssl_certificate_revogation_list_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, const char *path)
+{
+   CURLcode r;
+
+   r = curl_easy_setopt(pd->easy, CURLOPT_CRLFILE, path);
+   if (r != CURLE_OK)
+     ERR("dialer=%p could not set SSL CRL '%s': %s",
+         o, path, curl_easy_strerror(r));
+
+   eina_stringshare_replace(&pd->ssl.crl, path);
+}
+
+EOLIAN static const char *
+_efl_net_dialer_http_ssl_certificate_revogation_list_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+{
+   return pd->ssl.crl;
 }
 
 EOLIAN static long
