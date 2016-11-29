@@ -13,6 +13,7 @@ static const Efl_Test_Case etc[] = {
   { "Eo call errors", eo_test_call_errors },
   { "Eo eina value", eo_test_value },
   { "Eo threaded eo calls", eo_test_threaded_calls },
+  { "Eo event calls", eo_test_event},
   { NULL, NULL }
 };
 

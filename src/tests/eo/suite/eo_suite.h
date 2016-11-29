@@ -10,5 +10,6 @@ void eo_test_class_behaviour_errors(TCase *tc);
 void eo_test_call_errors(TCase *tc);
 void eo_test_value(TCase *tc);
 void eo_test_threaded_calls(TCase *tc);
+void eo_test_event(TCase *tc);
 
 #endif /* _EO_SUITE_H */
