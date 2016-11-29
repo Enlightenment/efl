@@ -29,6 +29,7 @@
 #define curl_easy_init(...) _c->curl_easy_init(__VA_ARGS__)
 #define curl_easy_cleanup(...) _c->curl_easy_cleanup(__VA_ARGS__)
 #define curl_easy_pause(...) _c->curl_easy_pause(__VA_ARGS__)
+#define curl_getdate(s, unused) _c->curl_getdate(s, unused)
 
 #ifdef curl_easy_setopt
 #undef curl_easy_setopt
@@ -1260,6 +1261,7 @@ _efl_net_dialer_http_libproxy_cancel(void *data, Ecore_Thread *thread EINA_UNUSE
 EOLIAN static Eina_Error
 _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, const char *address)
 {
+   struct curl_slist *sl_it;
    CURLcode r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
@@ -1278,6 +1280,77 @@ _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, co
         ERR("dialer=%p could not set HTTP headers: %s",
             o, curl_easy_strerror(r));
         return EINVAL;
+     }
+   for (sl_it = pd->request.headers; sl_it != NULL; sl_it = sl_it->next)
+     {
+#define IS_HEADER(x) (strncasecmp(sl_it->data, x ":", strlen(x ":")) == 0)
+        if (IS_HEADER("Accept-Encoding"))
+          {
+             const char *value = strchr(sl_it->data, ':') + 1;
+             while (*value && isspace(*value))
+               value++;
+             r = curl_easy_setopt(pd->easy, CURLOPT_ENCODING, value);
+             if (r != CURLE_OK)
+               {
+                  ERR("dialer=%p could not set HTTP Accept-Encoding '%s': %s",
+                      o, value, curl_easy_strerror(r));
+                  return EINVAL;
+               }
+             DBG("Using Accept-Encoding: %s", value);
+          }
+        else if (IS_HEADER("If-Modified-Since"))
+          {
+             const char *value = strchr(sl_it->data, ':') + 1;
+             long t;
+
+             r = curl_easy_setopt(pd->easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
+             if (r != CURLE_OK)
+               {
+                  ERR("dialer=%p could not set HTTP If-Modified-Since condition: %s",
+                      o, curl_easy_strerror(r));
+                  return EINVAL;
+               }
+
+             while (*value && isspace(*value))
+               value++;
+             t = curl_getdate(value, NULL);
+
+             r = curl_easy_setopt(pd->easy, CURLOPT_TIMEVALUE, t);
+             if (r != CURLE_OK)
+               {
+                  ERR("dialer=%p could not set HTTP If-Modified-Since value=%ld: %s",
+                      o, t, curl_easy_strerror(r));
+                  return EINVAL;
+               }
+             DBG("Using If-Modified-Since: %s [t=%ld]", value, t);
+          }
+        else if (IS_HEADER("If-Unmodified-Since"))
+          {
+             const char *value = strchr(sl_it->data, ':') + 1;
+             long t;
+
+             r = curl_easy_setopt(pd->easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFUNMODSINCE);
+             if (r != CURLE_OK)
+               {
+                  ERR("dialer=%p could not set HTTP If-Unmodified-Since condition: %s",
+                      o, curl_easy_strerror(r));
+                  return EINVAL;
+               }
+
+             while (*value && isspace(*value))
+               value++;
+             t = curl_getdate(value, NULL);
+
+             r = curl_easy_setopt(pd->easy, CURLOPT_TIMEVALUE, t);
+             if (r != CURLE_OK)
+               {
+                  ERR("dialer=%p could not set HTTP If-Unmodified-Since value=%ld: %s",
+                      o, t, curl_easy_strerror(r));
+                  return EINVAL;
+               }
+             DBG("Using If-Unmodified-Since: %s [t=%ld]", value, t);
+          }
+#undef IS_HEADER
      }
 
    if ((!pd->proxy) && (ecore_con_libproxy_init()))
@@ -2190,6 +2263,36 @@ EOLIAN static const char *
 _efl_net_dialer_http_cookie_jar_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->cookie_jar;
+}
+
+EOLIAN static long
+_efl_net_dialer_http_date_parse(Efl_Class *cls EINA_UNUSED, void *cd EINA_UNUSED, const char *str)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, 0);
+   return curl_getdate(str, NULL);
+}
+
+EOLIAN static char *
+_efl_net_dialer_http_date_serialize(Efl_Class *cls EINA_UNUSED, void *cd EINA_UNUSED, long t)
+{
+   static const char *const wkday[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+   static const char * const month[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+   char buf[128];
+   struct tm *tm, storage;
+
+   tm = gmtime_r(&t, &storage);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tm, NULL);
+
+   snprintf(buf, sizeof(buf),
+            "%s, %02d %s %4d %02d:%02d:%02d GMT",
+            wkday[tm->tm_wday],
+            tm->tm_mday,
+            month[tm->tm_mon],
+            tm->tm_year + 1900,
+            tm->tm_hour,
+            tm->tm_min,
+            tm->tm_sec);
+   return strdup(buf);
 }
 
 CURL *

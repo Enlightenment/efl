@@ -334,6 +334,29 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
                 path: string; [[Path to cookie jar]]
             }
         }
+
+        date_parse @class {
+            [[Parse the given string as time in seconds since 1/1/1970.
+
+              This method is useful to parse header values such as
+              "Last-Modified".
+            ]]
+            params {
+                str: string; [[String in HTTP text format: Tue, 15 Nov 1994 12:45:26 GMT]]
+            }
+            return: long; [[Seconds since 1/1/1970]]
+        }
+
+        date_serialize @class {
+            [[Serialize the given GMT time in seconds since 1/1/1970.
+
+              The timezone must be GMT (ie: gmtime()).
+            ]]
+            params {
+                epochtime: long; [[UNIX Epoch time - seconds since 1/1/1970]]
+            }
+            return: free(own(ptr(char)), free) @warn_unused; [[Newly allocated null-terminated string on success or NULL on errors]]
+        }
     }
 
     events {

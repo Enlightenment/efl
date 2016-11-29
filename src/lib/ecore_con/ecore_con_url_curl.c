@@ -312,6 +312,7 @@ _c_init(void)
    SYM(curl_slist_free_all);
    SYM(curl_slist_append);
    SYM(curl_version_info);
+   SYM(curl_getdate);
 
    _c_init_errors();
 

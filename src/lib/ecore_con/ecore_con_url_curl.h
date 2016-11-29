@@ -446,6 +446,7 @@ struct _Ecore_Con_Curl
    void                    (*curl_slist_free_all)(struct curl_slist *);
    struct curl_slist      *(*curl_slist_append)(struct curl_slist *list,
                                                 const char *string);
+   time_t                  (*curl_getdate)(const char *p, const time_t *unused);
    curl_version_info_data *(*curl_version_info)(CURLversion);
 };
 
@@ -459,5 +460,9 @@ Eina_Bool _c_init(void);
 void _c_shutdown(void);
 Eina_Error _curlcode_to_eina_error(const CURLcode code);
 Eina_Error _curlmcode_to_eina_error(const CURLMcode code);
+
+
+/* only for legacy support to implement behavior that we're not exposing anymore */
+CURL *efl_net_dialer_http_curl_get(const Eo *o);
 
 #endif
