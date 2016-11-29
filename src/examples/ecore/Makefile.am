@@ -53,6 +53,7 @@ ecore_con_server_simple_example \
 ecore_con_url_cookies_example \
 ecore_con_url_download_example \
 ecore_con_url_headers_example \
+ecore_con_url_ftp_example \
 ecore_evas_basics_example \
 ecore_evas_buffer_example_01 \
 ecore_evas_buffer_example_02 \
@@ -194,6 +195,9 @@ ecore_con_url_download_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
 ecore_con_url_headers_example_SOURCES = ecore_con_url_headers_example.c
 ecore_con_url_headers_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
+ecore_con_url_ftp_example_SOURCES = ecore_con_url_ftp_example.c
+ecore_con_url_ftp_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
 ecore_evas_basics_example_SOURCES = ecore_evas_basics_example.c
 ecore_evas_basics_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
@@ -384,6 +388,7 @@ ecore_con_server_simple_example.c \
 ecore_con_url_cookies_example.c \
 ecore_con_url_download_example.c \
 ecore_con_url_headers_example.c \
+ecore_con_url_ftp_example.c \
 ecore_evas_basics_example.c \
 ecore_evas_buffer_example_01.c \
 ecore_evas_buffer_example_02.c \
