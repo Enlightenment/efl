@@ -205,7 +205,7 @@ _evas_image_load_file_header(void *map, size_t fsize, size_t *position, int *ima
            if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
            //important_colors = tmp2; // number of important colors - 0 if all
            if (*image_size == 0) *image_size = fsize - header->offset;
-           if ((header->comp == 0) && (header->bit_count == 32)) header->hasa = 1; // GIMP seems to store it this way
+           if ((header->comp == 6) && (header->bit_count == 32)) header->hasa = 1;
            break;
         }
       case 108: // Windows 95/NT4 + (v4)
