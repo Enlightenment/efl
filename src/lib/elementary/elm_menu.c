@@ -501,13 +501,20 @@ _menu_item_activate_cb(void *data,
      }
    else
      {
+        Eina_Bool was_open = EINA_FALSE;
         ELM_MENU_DATA_GET(WIDGET(item), sd);
         EINA_LIST_FOREACH(sd->items, l, eo_item2)
           {
              if (eo_item2 != EO_OBJ(item))
-               elm_menu_item_selected_set(eo_item2, 0);
+               {
+                  ELM_MENU_ITEM_DATA_GET(eo_item2, item2);
+                  was_open |= item2->submenu.open;
+                  elm_menu_item_selected_set(eo_item2, 0);
+               }
           }
         elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, WIDGET(item), ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, NULL);
+        if (sd->menu_bar && was_open)
+          _menu_item_select_cb(item, NULL, NULL, NULL);
      }
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(item), ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
