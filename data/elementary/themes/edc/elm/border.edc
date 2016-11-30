@@ -91,6 +91,23 @@ group { name: "elm/border/base/default";
          required; // @since 1.19
          clip: "client_clip";
       }
+      image { "background_bevel";
+         desc { "default";
+            image {
+               normal: "bevel_dark_out.png";
+               border: 1 1 1 1;
+               middle: 0;
+            }
+            fill.smooth: 0;
+            rel.to: "elm.spacer.content";
+            visible: 0;
+         }
+         desc { "visible";
+            inherit: "default";
+            visible: 1;
+         }
+      }
+
       /* main menu */
       rect { "menu_bg";
          desc { "default";
@@ -706,6 +723,16 @@ group { name: "elm/border/base/default";
          signal: "elm,state,background,solid,off"; source: "elm";
          action: STATE_SET "default";
          target: "elm.rect.background";
+      }
+      program {
+         signal: "elm,state,background,standard,on"; source: "elm";
+         action: STATE_SET "visible";
+         target: "background_bevel";
+      }
+      program {
+         signal: "elm,state,background,standard,off"; source: "elm";
+         action: STATE_SET "default";
+         target: "background_bevel";
       }
       program {
          signal: "elm,action,focus"; source: "elm";

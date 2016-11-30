@@ -214,6 +214,7 @@ struct _Efl_Ui_Win_Data
       Eina_Bool need_shadow : 1; /**< if true, application draws its csd and shadow */
       Eina_Bool need_borderless : 1;
       Eina_Bool need_bg_solid : 1;
+      Eina_Bool need_bg_standard : 1;
       Eina_Bool need_menu : 1;
       Eina_Bool need_unresizable : 1;
       Eina_Bool cur_borderless : 1;
@@ -221,6 +222,7 @@ struct _Efl_Ui_Win_Data
       Eina_Bool cur_focus : 1;
       Eina_Bool cur_maximized : 1;
       Eina_Bool cur_bg_solid : 1;
+      Eina_Bool cur_bg_standard : 1;
       Eina_Bool cur_menu : 1;
       Eina_Bool cur_unresizable : 1;
       Eina_Bool wayland : 1;
@@ -4156,7 +4158,7 @@ static void
 _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc)
 {
    Eina_Bool borderless, maximized, shadow, focus, bg_solid, menu, unresizable,
-         alpha;
+         alpha, bg_standard;
    Eina_Bool changed = EINA_FALSE;
 
    if (!sd->frame_obj)
@@ -4186,6 +4188,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    if (alpha && borderless) shadow = 0;
    focus = ecore_evas_focus_get(sd->ee);
    bg_solid = sd->csd.need_bg_solid;
+   bg_standard = sd->csd.need_bg_standard;
    unresizable = sd->csd.need_unresizable;
    menu = sd->csd.need_menu;
 
@@ -4212,6 +4215,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    STATE_SET(maximized, "elm,state,maximized", "elm,state,unmaximized");
    STATE_SET(focus, "elm,action,focus", "elm,action,unfocus");
    STATE_SET(bg_solid, "elm,state,background,solid,on", "elm,state,background,solid,off");
+   STATE_SET(bg_standard, "elm,state,background,standard,on", "elm,state,background,standard,off");
    STATE_SET(unresizable, "elm,state,unresizable,on", "elm,state,unresizable,off");
    STATE_SET(menu, "elm,action,show_menu", "elm,action,hide_menu");
 
@@ -6296,6 +6300,7 @@ _elm_win_standard_init(Eo *obj)
 
    ELM_SAFE_DEL(sd->bg);
 
+   sd->csd.need_bg_standard = 1;
    if (!_elm_win_bg_must_swallow(sd))
      {
         sd->csd.need_bg_solid = EINA_TRUE;
@@ -6332,6 +6337,7 @@ _efl_ui_win_content_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, Eo *cont
      }
    else if (eina_streq(part, "background"))
      {
+        sd->csd.need_bg_standard = 0;
         if (sd->bg == content) return EINA_TRUE;
         if (!_elm_win_bg_set(sd, content))
           goto err;
