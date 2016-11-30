@@ -571,6 +571,7 @@ _elm_menu_efl_gfx_visible_set(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd, Eina_Bool 
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
    if (vis) efl_gfx_visible_set(sd->hv, EINA_TRUE);
 }
 
