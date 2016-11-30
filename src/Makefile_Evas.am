@@ -864,7 +864,9 @@ lib_evas_libevas_la_LIBADD += @evas_engine_gl_common_libs@
 else
 noinst_LTLIBRARIES += modules/evas/engines/gl_common/libevas_engine_gl_common.la
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_SOURCES = $(GL_COMMON_SOURCES)
-modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS = \
+-DEVAS_GL_RENDER_THREAD_COMPILE_FOR_GL_GENERIC \
+-I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@
