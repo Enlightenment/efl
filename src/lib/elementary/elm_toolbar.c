@@ -3254,7 +3254,7 @@ _elm_toolbar_efl_ui_menu_last_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd
 EOLIAN static Eina_Iterator*
 _elm_toolbar_efl_ui_menu_items_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
-   return eina_list_iterator_new(sd->items);
+   return eina_inlist_iterator_new(sd->items);
 }
 
 EOLIAN static Elm_Object_Item *

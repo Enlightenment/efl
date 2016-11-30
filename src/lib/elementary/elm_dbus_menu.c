@@ -333,9 +333,8 @@ _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
 {
    char *property;
    Eldbus_Message_Iter *layout, *array, *pair, *variant;
-   const Eina_List *ret = NULL;
-   Eina_List *items;
    Eina_List *l;
+   Eina_Iterator *it = NULL;
    Elm_Object_Item *obj_item;
 
    layout = eldbus_message_iter_container_new(iter, 'r', NULL);
@@ -361,9 +360,8 @@ _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
 
    if (recursion_depth > 0)
      {
-        ret = efl_ui_menu_items_get(dbus_menu->menu);
-        items = (Eina_List *)ret;
-        EINA_LIST_FOREACH (items, l, obj_item)
+        it = efl_ui_menu_items_get(dbus_menu->menu);
+        EINA_ITERATOR_FOREACH (it, obj_item)
           {
              variant = eldbus_message_iter_container_new(array, 'v',
                                                          "(ia{sv}av)");
@@ -372,6 +370,7 @@ _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
                                      recursion_depth - 1, variant);
              eldbus_message_iter_container_close(array, variant);
           }
+        eina_iterator_free(it);
      }
 
    eldbus_message_iter_container_close(layout, array);
