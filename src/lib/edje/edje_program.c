@@ -177,6 +177,18 @@ _edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src,
 *                                   API                                      *
 *============================================================================*/
 
+EOLIAN Eina_Stringshare*
+_edje_object_seat_name_get(Eo *obj EINA_UNUSED, Edje *ed, Efl_Input_Device *device)
+{
+   return _edje_seat_name_get(ed, device);
+}
+
+EOLIAN Efl_Input_Device *
+_edje_object_seat_get(Eo *obj EINA_UNUSED, Edje *ed, Eina_Stringshare *name)
+{
+   return _edje_seat_get(ed, name);
+}
+
 EAPI void
 edje_frametime_set(double t)
 {
@@ -959,19 +971,22 @@ low_mem_current:
       case EDJE_ACTION_TYPE_FOCUS_SET:
       {
          Edje_Real_Part *focused_part;
-         const char *seat_name;
+         Eina_Stringshare *seat_name;
+         Eina_Bool unref_name = EINA_FALSE;
 
-         /* TODO : use edje custom seat naming */
          if (pr->seat)
-           seat_name = pr->seat;
-         else
+           {
+              seat_name = eina_stringshare_add(pr->seat);
+              unref_name = EINA_TRUE;
+           }
+         else /* Use default seat name */
            {
               Efl_Input_Device *seat;
               Evas *e;
 
               e = evas_object_evas_get(ed->obj);
               seat = evas_canvas_default_device_get(e, EFL_INPUT_DEVICE_CLASS_SEAT);
-              seat_name = evas_device_name_get(seat);
+              seat_name = _edje_seat_name_get(ed, seat);
               if (!seat_name)
                 break;
            }
@@ -1010,6 +1025,9 @@ low_mem_current:
                     }
                }
           }
+
+        if (unref_name)
+          eina_stringshare_del(seat_name);
       }
       break;
 
@@ -1264,7 +1282,7 @@ _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *sr
    seat = efl_input_device_seat_get(dev);
    if (!seat) return;
 
-   snprintf(buf, sizeof(buf), "%s,%s", sig, efl_input_device_name_get(seat));
+   snprintf(buf, sizeof(buf), "%s,%s", sig, _edje_seat_name_get(ed, seat));
    _edje_emit_full(ed, buf, src, NULL, NULL);
 }
 
@@ -1307,44 +1325,71 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
 }
 
 void
-_edje_focused_part_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp)
+_edje_focused_part_set(Edje *ed, Eina_Stringshare *seat_name, Edje_Real_Part *rp)
 {
-   Edje_Focused_Part *focused_part;
+   Edje_Seat *seat;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(ed->focused_parts, l, focused_part)
+   EINA_LIST_FOREACH(ed->seats, l, seat)
      {
-        if (!strcmp(seat_name, focused_part->seat))
+        if (seat_name == seat->name)
           {
-             focused_part->part = rp;
+             seat->focused_part = rp;
              return;
           }
      }
 
-   focused_part = calloc(1, sizeof(Edje_Focused_Part));
-   EINA_SAFETY_ON_NULL_RETURN(focused_part);
+   /* A part to be set for a seat not yet announced by Evas */
+   seat = calloc(1, sizeof(Edje_Seat));
+   EINA_SAFETY_ON_NULL_RETURN(seat);
 
-   focused_part->seat = strdup(seat_name);
-   if (!focused_part->seat)
-     {
-        free(focused_part);
-        return;
-     }
+   seat->name = eina_stringshare_ref(seat_name);
+   seat->focused_part = rp;
+   ed->seats = eina_list_append(ed->seats, seat);
 
-   focused_part->part = rp;
-   ed->focused_parts = eina_list_append(ed->focused_parts, focused_part);
+   return;
 }
 
 Edje_Real_Part *
-_edje_focused_part_get(Edje *ed, const char *seat_name)
+_edje_focused_part_get(Edje *ed, Eina_Stringshare *seat_name)
 {
-   Edje_Focused_Part *focused_part;
+   Edje_Seat *seat;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(ed->focused_parts, l, focused_part)
+   EINA_LIST_FOREACH(ed->seats, l, seat)
      {
-        if (!strcmp(seat_name, focused_part->seat))
-          return focused_part->part;
+        if (seat_name == seat->name)
+          return seat->focused_part;
+     }
+
+   return NULL;
+}
+
+Eina_Stringshare*
+_edje_seat_name_get(Edje *ed, Efl_Input_Device *device)
+{
+   Edje_Seat *seat;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ed->seats, l, seat)
+     {
+        if (seat->device == device)
+          return seat->name;
+     }
+
+   return NULL;
+}
+
+Efl_Input_Device *
+_edje_seat_get(Edje *ed, Eina_Stringshare *name)
+{
+   Edje_Seat *seat;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ed->seats, l, seat)
+     {
+        if (seat->name == name)
+          return seat->device;
      }
 
    return NULL;

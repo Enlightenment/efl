@@ -1661,7 +1661,7 @@ struct _Edje
    Edje_Var_Pool        *var_pool;
    /* for faster lookups to avoid nth list walks */
    Edje_Real_Part      **table_parts;
-   Eina_List            *focused_parts;
+   Eina_List            *seats;
    Eina_List            *subobjs;
    Eina_List            *text_insert_filter_callbacks;
    Eina_List            *markup_filter_callbacks;
@@ -1718,6 +1718,8 @@ struct _Edje
 
    unsigned short        block;
    unsigned short        state;
+
+   unsigned short        seats_count;
 
    unsigned char         load_error;
 
@@ -2275,11 +2277,12 @@ struct _Edje_Font
    char *file;
 };
 
-typedef struct _Edje_Focused_Part Edje_Focused_Part;
-struct _Edje_Focused_Part
+typedef struct _Edje_Seat Edje_Seat;
+struct _Edje_Seat
 {
-   Edje_Real_Part *part;
-   char *seat;
+   Edje_Real_Part *focused_part;
+   Efl_Input_Device *device;
+   Eina_Stringshare *name;
 };
 
 Edje_Patterns   *edje_match_collection_dir_init(const Eina_List *lst);
@@ -2483,6 +2486,9 @@ void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
 
 void _edje_focused_part_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp);
 Edje_Real_Part *_edje_focused_part_get(Edje *ed, const char *seat_name);
+
+Eina_Stringshare *_edje_seat_name_get(Edje *ed, Efl_Input_Device *device);
+Efl_Input_Device *_edje_seat_get(Edje *ed, Eina_Stringshare *name);
 
 const Edje_Signals_Sources_Patterns *_edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp);
 void _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp);

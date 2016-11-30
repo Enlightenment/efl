@@ -507,6 +507,102 @@ _edje_physics_world_update_cb(void *data, EPhysics_World *world EINA_UNUSED, voi
 }
 #endif
 
+static void
+_edje_device_add(Edje *ed, Efl_Input_Device *dev)
+{
+   Edje_Seat *s, *seat = NULL;
+   Eina_Stringshare *name;
+   char sig[256];
+   Eina_List *l;
+
+   ed->seats_count++;
+   name = eina_stringshare_printf("seat%i", ed->seats_count);
+   EINA_SAFETY_ON_NULL_RETURN(name);
+
+   EINA_LIST_FOREACH(ed->seats, l, s)
+     {
+        if (s->name != name)
+          continue;
+        seat = s;
+        break;
+     }
+
+   if (!seat)
+     {
+        seat = calloc(1, sizeof(Edje_Seat));
+        EINA_SAFETY_ON_NULL_GOTO(seat, seat_err);
+        ed->seats = eina_list_append(ed->seats, seat);
+        seat->name = eina_stringshare_ref(name);
+     }
+
+   seat->device = dev;
+   snprintf(sig, sizeof(sig), "seat,added,%s,%s", seat->name,
+            efl_input_device_name_get(dev));
+   _edje_emit(ed, sig, "");
+
+seat_err:
+   eina_stringshare_del(name);
+}
+
+static void
+_edje_device_added_cb(void *data, const Efl_Event *event)
+{
+   Efl_Input_Device *dev = event->info;
+   Edje *ed = data;
+
+   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
+     return;
+
+   _edje_device_add(ed, dev);
+}
+
+static void
+_edje_device_removed_cb(void *data, const Efl_Event *event)
+{
+   Efl_Input_Device *dev = event->info;
+   Edje_Seat *s, *seat = NULL;
+   Edje *ed = data;
+   char sig[256];
+   Eina_List *l;
+
+   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
+     return;
+
+   EINA_LIST_FOREACH(ed->seats, l, s)
+     {
+        if (s->device != dev)
+          continue;
+        seat = s;
+        break;
+     }
+
+   /* It shouldn't happen. New seats are always registered. */
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+
+   seat->device = NULL;
+   snprintf(sig, sizeof(sig), "seat,removed,%s", seat->name);
+   _edje_emit(ed, sig, "");
+}
+
+static void
+_edje_devices_add(Edje *ed, Evas *tev)
+{
+   const Eina_List *devices, *l;
+   Efl_Input_Device *dev;
+
+   devices = evas_device_list(tev, NULL);
+   EINA_LIST_FOREACH(devices, l, dev)
+     {
+        if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)
+          _edje_device_add(ed, dev);
+     }
+
+   efl_event_callback_add(tev, EFL_CANVAS_EVENT_DEVICE_ADDED,
+                          _edje_device_added_cb, ed);
+   efl_event_callback_add(tev, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+                          _edje_device_removed_cb, ed);
+}
+
 int
 _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
 {
@@ -626,6 +722,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 #else
                ERR("Edje compiled without support to physics.");
 #endif
+
+             /* handle multiseat stuff */
+             _edje_devices_add(ed, tev);
 
              /* colorclass stuff */
              for (i = 0; i < ed->collection->parts_count; ++i)
@@ -1599,7 +1698,15 @@ _edje_file_del(Edje *ed)
 
    ed->groups = eina_list_free(ed->groups);
 
-   if (tev) evas_event_freeze(tev);
+   if (tev)
+     {
+        efl_event_callback_del(tev, EFL_CANVAS_EVENT_DEVICE_ADDED,
+                               _edje_device_added_cb, ed);
+        efl_event_callback_del(tev, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+                               _edje_device_removed_cb, ed);
+        evas_event_freeze(tev);
+     }
+
    if (ed->freeze_calc)
      {
         _edje_util_freeze_calc_list = eina_list_remove(_edje_util_freeze_calc_list, ed);
@@ -1809,14 +1916,14 @@ _edje_file_del(Edje *ed)
           }
      }
 
-   if (ed->focused_parts)
+   if (ed->seats)
      {
-        Edje_Focused_Part *focused_part;
+        Edje_Seat *seat;
 
-        EINA_LIST_FREE(ed->focused_parts, focused_part)
+        EINA_LIST_FREE(ed->seats, seat)
           {
-             free(focused_part->seat);
-             free(focused_part);
+             eina_stringshare_del(seat->name);
+             free(seat);
           }
      }
 
