@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_INPUT_EVENT_PROTECTED
+#define EFL_GFX_SIZE_HINT_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -180,6 +181,7 @@ struct _Efl_Ui_Win_Data
    int          aspect_w, aspect_h; /* used for the get API */
    int          size_base_w, size_base_h;
    int          size_step_w, size_step_h;
+   int          max_w, max_h;
    int          norender;
    int          modal_count;
    int          response;
@@ -248,6 +250,7 @@ struct _Efl_Ui_Win_Data
    Eina_Bool    noblank : 1;
    Eina_Bool    theme_alpha : 1; /**< alpha value fetched by a theme. this has higher priority than application_alpha */
    Eina_Bool    application_alpha : 1; /**< alpha value set by an elm_win_alpha_set() api. this has lower priority than theme_alpha */
+   Eina_Bool    tmp_updating_hints : 1;
 };
 
 struct _Input_Pointer_Iterator
@@ -1534,8 +1537,8 @@ _elm_win_state_change(Ecore_Evas *ee)
      }
    if (ch_wm_rotation)
      {
-        evas_object_size_hint_min_set(obj, -1, -1);
-        evas_object_size_hint_max_set(obj, -1, -1);
+        efl_gfx_size_hint_restricted_min_set(obj, -1, -1);
+        efl_gfx_size_hint_max_set(obj, -1, -1);
 #ifdef HAVE_ELEMENTARY_X
         _elm_win_xwin_update(sd);
 #endif
@@ -3276,7 +3279,7 @@ static void
 _elm_win_resize_objects_eval(Evas_Object *obj)
 {
    ELM_WIN_DATA_GET(obj, sd);
-   Evas_Coord w, h, minw, minh, maxw, maxh;
+   Evas_Coord w, h, minw, minh, maxw, maxh, ow, oh;
    Eina_Bool unresizable;
    double wx, wy;
 
@@ -3284,11 +3287,17 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if (minw < 1) minw = 1;
    if (minh < 1) minh = 1;
 
-   evas_object_size_hint_weight_get(sd->legacy.edje, &wx, &wy);
+   efl_gfx_size_hint_weight_get(sd->legacy.edje, &wx, &wy);
+   maxw = sd->max_w;
+   maxh = sd->max_h;
    if (!wx) maxw = minw;
-   else maxw = 32767;
+   else if (maxw < 1) maxw = 32767;
    if (!wy) maxh = minh;
-   else maxh = 32767;
+   else if (maxh < 1) maxh = 32767;
+   if (maxw < minw) maxw = minw;
+   if (maxh < minh) maxh = minh;
+   if (maxw > 32767) maxw = 32767;
+   if (maxh > 32767) maxh = 32767;
 
    unresizable = ((minw == maxw) && (minh == maxh));
    if (sd->csd.need_unresizable != unresizable)
@@ -3308,14 +3317,19 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
         maxh += fh;
      }
 
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
+   sd->tmp_updating_hints = 1;
+   efl_gfx_size_hint_restricted_min_set(obj, minw, minh);
+   efl_gfx_size_hint_max_set(obj, maxw, maxh);
+   sd->tmp_updating_hints = 0;
 
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
+   w = ow;
+   h = oh;
    if (w < minw) w = minw;
    if (h < minh) h = minh;
    if (w > maxw) w = maxw;
    if (h > maxh) h = maxh;
+   if ((w == ow) && (h == oh)) return;
    if (sd->img_obj) evas_object_resize(obj, w, h);
    else
      {
@@ -5592,6 +5606,23 @@ _efl_ui_win_efl_gfx_size_hint_hint_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data
 }
 
 EOLIAN static void
+_efl_ui_win_efl_gfx_size_hint_hint_max_set(Eo *obj, Efl_Ui_Win_Data *sd, int w, int h)
+{
+   if (sd->tmp_updating_hints)
+     {
+        efl_gfx_size_hint_max_set(efl_super(obj, MY_CLASS), w, h);
+     }
+   else
+     {
+        if (w < 1) w = -1;
+        if (h < 1) h = -1;
+        sd->max_w = w;
+        sd->max_h = h;
+        _elm_win_resize_objects_eval(obj);
+     }
+}
+
+EOLIAN static void
 _efl_ui_win_efl_gfx_size_hint_hint_step_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *w, int *h)
 {
    if (w) *w = sd->size_step_w;
@@ -5659,8 +5690,8 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    sd->rot = rotation;
    if (resize) TRAP(sd, rotation_with_resize_set, rotation);
    else TRAP(sd, rotation_set, rotation);
-   evas_object_size_hint_min_set(obj, -1, -1);
-   evas_object_size_hint_max_set(obj, -1, -1);
+   efl_gfx_size_hint_restricted_min_set(obj, -1, -1);
+   efl_gfx_size_hint_max_set(obj, -1, -1);
    _elm_win_resize_objects_eval(obj);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
@@ -7592,7 +7623,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
    EINA_LIST_FOREACH(p->children, l, opt)
      {
         child = opt->obj;
-        evas_object_size_hint_weight_get(child, &wx, &wy);
+        efl_gfx_size_hint_weight_get(child, &wx, &wy);
         if (wx == 0.0) weight_x = 0;
         if (wy == 0.0) weight_y = 0;
 
@@ -7601,7 +7632,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
         if (h > minh) minh = h;
      }
 
-   evas_object_size_hint_min_set(o, minw, minh);
+   efl_gfx_size_hint_restricted_min_set(o, minw, minh);
    evas_object_geometry_get(o, &x, &y, &w, &h);
    if (w < minw) w = minw;
    if (h < minh) h = minh;
@@ -7615,7 +7646,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
      }
 
    ELM_WIN_DATA_GET(data, sd);
-   evas_object_size_hint_weight_set(sd->legacy.edje, weight_x, weight_y);
+   efl_gfx_size_hint_weight_set(sd->legacy.edje, weight_x, weight_y);
    evas_object_smart_changed(sd->legacy.edje);
 }
 

@@ -920,6 +920,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Efl.Gfx.Size.Hint.hint_step.get;
       Efl.Gfx.Size.Hint.hint_aspect.set;
       Efl.Gfx.Size.Hint.hint_aspect.get;
+      Efl.Gfx.Size.Hint.hint_max.set;
       Efl.Text.text.set;
       Efl.Text.text.get;
       Efl.Input.Interface.pointer_xy.get;
