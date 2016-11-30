@@ -1550,7 +1550,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                        //Otherwise, give focus to dec_btn_month.
                        if (sd->focused_it > (ELM_DAY_LAST / 2))
                          //Double spinner case.
-                         if (edje_object_part_exists(wd->resize_obj, ELM_CALENDAR_BUTTON_YEAR_RIGHT))
+                         if (double_spinner)
                            elm_object_focus_set(sd->inc_btn_year, EINA_TRUE);
                          else
                            elm_object_focus_set(sd->inc_btn_month, EINA_TRUE);
@@ -1571,7 +1571,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                          {
                             if (sd->focused_it > (ELM_DAY_LAST + (ELM_DAY_LAST / 2)))
                               //Double spinner case.
-                              if (edje_object_part_exists(wd->resize_obj, ELM_CALENDAR_BUTTON_YEAR_RIGHT))
+                              if (double_spinner)
                                 elm_object_focus_set(sd->inc_btn_year, EINA_TRUE);
                               else
                                 elm_object_focus_set(sd->inc_btn_month, EINA_TRUE);
