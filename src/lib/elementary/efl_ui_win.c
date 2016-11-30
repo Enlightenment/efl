@@ -414,10 +414,10 @@ _elm_win_apply_alpha(Eo *obj, Efl_Ui_Win_Data *sd)
      }
    else
      {
-        enabled |= (sd->csd.need && !sd->fullscreen);
 #ifdef HAVE_ELEMENTARY_X
         if (sd->x.xwin)
           {
+             enabled |= (sd->csd.need && !sd->fullscreen);
              if (enabled)
                {
                   if (!ecore_x_screen_is_composited(0))
