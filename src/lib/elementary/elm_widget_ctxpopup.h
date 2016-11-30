@@ -38,6 +38,8 @@ struct _Elm_Ctxpopup_Item_Data
         const void    *org_data;
         Evas_Object   *cobj;
      } wcb;
+
+   Eina_Bool      selected : 1;
 };
 
 struct _Elm_Ctxpopup_Data

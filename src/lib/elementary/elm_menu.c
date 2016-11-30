@@ -890,6 +890,64 @@ elm_menu_parent_get(const Evas_Object *obj)
    return elm_obj_widget_parent_get(obj);
 }
 
+EAPI Elm_Widget_Item *
+elm_menu_selected_item_get(const Evas_Object *obj)
+{
+   return efl_ui_menu_selected_item_get(obj);
+}
+
+EAPI const Eina_List *
+elm_menu_items_get(const Evas_Object *obj)
+{
+   Eina_List *lst = NULL;
+   Eina_Iterator *it;
+   void *item_data;
+
+   it = efl_ui_menu_items_get(obj);
+   EINA_ITERATOR_FOREACH(it, item_data)
+     {
+        lst = eina_list_append(lst, item_data);
+     }
+   eina_iterator_free(it);
+   return lst;
+}
+
+EAPI Elm_Widget_Item *
+elm_menu_first_item_get(const Evas_Object *obj)
+{
+   return efl_ui_menu_first_item_get(obj);
+}
+
+EAPI Elm_Widget_Item *
+elm_menu_last_item_get(const Evas_Object *obj)
+{
+   return efl_ui_menu_last_item_get(obj);
+}
+
+EAPI void
+elm_menu_item_selected_set(Evas_Object *obj, Eina_Bool selected)
+{
+   efl_ui_item_selected_set(obj, selected);
+}
+
+EAPI Eina_Bool
+elm_menu_item_selected_get(const Evas_Object *obj)
+{
+   return efl_ui_item_selected_get(obj);
+}
+
+EAPI Elm_Widget_Item *
+elm_menu_item_prev_get(const Evas_Object *obj)
+{
+   return efl_ui_item_prev_get(obj);
+}
+
+EAPI Elm_Widget_Item *
+elm_menu_item_next_get(const Evas_Object *obj)
+{
+   return efl_ui_item_next_get(obj);
+}
+
 EOLIAN static Evas_Object*
 _elm_menu_elm_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
@@ -1175,14 +1233,14 @@ _elm_menu_item_subitems_clear(Eo *eo_item EINA_UNUSED, Elm_Menu_Item_Data *it)
      elm_wdg_item_del(sub_it);
 }
 
-EOLIAN static const Eina_List*
-_elm_menu_items_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+EOLIAN static Eina_Iterator*
+_elm_menu_efl_ui_menu_items_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
-   return sd->items;
+   return eina_list_iterator_new(sd->items);
 }
 
 EOLIAN static void
-_elm_menu_item_selected_set(Eo *eo_item EINA_UNUSED,
+_elm_menu_item_efl_ui_item_selected_set(Eo *eo_item EINA_UNUSED,
                             Elm_Menu_Item_Data *item,
                             Eina_Bool selected)
 {
@@ -1202,13 +1260,13 @@ _elm_menu_item_selected_set(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_menu_item_selected_get(Eo *eo_item EINA_UNUSED, Elm_Menu_Item_Data *item)
+_elm_menu_item_efl_ui_item_selected_get(Eo *eo_item EINA_UNUSED, Elm_Menu_Item_Data *item)
 {
    return item->selected;
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_menu_item_prev_get(const Eo *eo_item, Elm_Menu_Item_Data *item)
+_elm_menu_item_efl_ui_item_prev_get(Eo *eo_item, Elm_Menu_Item_Data *item)
 {
    if (item->parent)
      {
@@ -1232,7 +1290,7 @@ _elm_menu_item_prev_get(const Eo *eo_item, Elm_Menu_Item_Data *item)
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_menu_item_next_get(const Eo *eo_item, Elm_Menu_Item_Data *item)
+_elm_menu_item_efl_ui_item_next_get(Eo *eo_item, Elm_Menu_Item_Data *item)
 {
    if (item->parent)
      {
@@ -1256,20 +1314,20 @@ _elm_menu_item_next_get(const Eo *eo_item, Elm_Menu_Item_Data *item)
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_menu_first_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_efl_ui_menu_first_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    return (sd->items ? sd->items->data : NULL);
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_menu_last_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_efl_ui_menu_last_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    Eina_List *l = eina_list_last(sd->items);
    return (l ? l->data : NULL);
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_menu_selected_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_efl_ui_menu_selected_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    Eina_List *l;
    Elm_Object_Item *eo_item;

@@ -1,0 +1,29 @@
+interface Efl.Ui.Menu {
+   legacy_prefix: null;
+   methods {
+      @property selected_item {
+         get {
+            [[Get the selected item in the widget.]]
+            return: Efl.Ui.Item; [[The selected item or $null.]]
+         }
+      }
+      @property first_item {
+         get {
+            [[Get the first item in the widget.]]
+            return: Efl.Ui.Item;
+         }
+      }
+      @property last_item {
+         get {
+            [[Get the last item in the widget.]]
+            return: Efl.Ui.Item;
+         }
+      }
+      @property items {
+         get {
+            [[Returns a list of the widget item.]]
+            return: free(own(iterator<Efl.Ui.Item>), eina_iterator_free) @warn_unused;
+         }
+      }
+   }
+}

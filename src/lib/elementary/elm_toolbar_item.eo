@@ -23,36 +23,12 @@ struct Elm.Toolbar.Item.State
    data: const(void_ptr); [[Item data]]
 }
 
-class Elm.Toolbar.Item(Elm.Widget.Item)
+class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item)
 {
       [[Elementary toolbar item class]]
       legacy_prefix: elm_toolbar_item;
       eo_prefix: elm_obj_toolbar_item;
       methods {
-           @property prev {
-                get {
-                     [[Get the item before $item in toolbar.
-
-                       Note: If it is the first item, $null will be returned.
-                     ]]
-                }
-                values {
-                     item: Elm.Widget.Item; [[The item before $item, or $null
-                                                if none or on failure.]]
-                }
-           }
-           @property next {
-                get {
-                     [[Get the item after $item in toolbar.
-
-                       Note: If it is the last item, $null will be returned.
-                     ]]
-                }
-                values {
-                     item: Elm.Widget.Item; [[The item after $item, or $null
-                                                if none or on failure.]]
-                }
-           }
            @property priority {
                 get {
                      [[Get the priority of a toolbar item.]]
@@ -72,27 +48,6 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                 values {
                      priority: int; [[The $item priority. The default is zero
                                       for set and 0 is returned on failure.]]
-                }
-           }
-           @property selected {
-                get {
-                     [[Get whether the $item is selected or not.]]
-                }
-                set {
-                     [[Set the selected state of an item.
-
-                       This sets the selected state of the given item $it.
-                       $true for selected, $false for not selected.
-
-                       If a new item is selected the previously selected will
-                       be unselected. Previously selected item can be get with
-                       function @Elm.Toolbar.selected_item.get.
-
-                       Selected items will be highlighted.
-                     ]]
-                }
-                values {
-                     selected: bool; [[The selected state.]]
                 }
            }
            @property icon {
@@ -321,5 +276,8 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
            Elm.Widget.Item.part_content_unset;
            Elm.Interface.Atspi_Accessible.name.get;
            Elm.Interface.Atspi_Accessible.state_set.get;
+           Efl.Ui.Item.selected;
+           Efl.Ui.Item.prev.get;
+           Efl.Ui.Item.next.get;
       }
 }

@@ -1,0 +1,49 @@
+interface Efl.Ui.Item {
+   legacy_prefix: null;
+   methods {
+      @property prev {
+         get {
+            [[Get the item before $ it in the widget's internal list of
+              items.
+
+              See also \@ref efl_ui_item_next_get.
+            ]]
+         }
+         values {
+              item: Efl.Ui.Item; [[The item before the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
+         }
+      }
+      @property next {
+         get {
+            [[Get the item after $ it in the widget's
+              internal list of items.
+
+              See also \@ref efl_ui_item_prev_get.
+            ]]
+         }
+         values {
+              item: Efl.Ui.Item; [[The item after the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
+         }
+      }
+      @property selected {
+         get {
+             [[Get the selected state of $item.]]
+         }
+         set {
+             [[Set the selected state of $item.
+               This sets the selected state of the given item $it.
+               $true for selected, $false for not selected.
+
+               If a new item is selected the previously selected will
+               be unselected. Previously selected item can be get with
+               function @Efl.Ui.Menu.selected_item.get.
+
+               Selected items will be highlighted.
+             ]]
+         }
+         values {
+              selected: bool; [[The selection state.]]
+         }
+      }
+   }
+}

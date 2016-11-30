@@ -1,37 +1,9 @@
-class Elm.Ctxpopup.Item(Elm.Widget.Item)
+class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Ui.Item)
 {
    [[Elementary context popup item class]]
    legacy_prefix: elm_ctxpopup_item;
    eo_prefix: elm_obj_ctxpopup_item;
    methods {
-      @property prev {
-         get {
-            [[Get the item before $ it in a ctxpopup widget's internal list of
-              items.
-
-              See also \@ref elm_ctxpopup_item_next_get.
-
-              @since 1.11
-            ]]
-         }
-         values {
-              item: Elm.Widget.Item; [[The item before the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
-         }
-      }
-      @property next {
-         get {
-            [[Get the item after $ it in a ctxpopup widget's
-              internal list of items.
-
-              See also \@ref elm_ctxpopup_item_prev_get.
-
-              @since 1.11
-            ]]
-         }
-         values {
-              item: Elm.Widget.Item; [[The item after the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
-         }
-      }
       init {
       	 [[Init context popup item]]
          params {
@@ -51,5 +23,8 @@ class Elm.Ctxpopup.Item(Elm.Widget.Item)
         Elm.Widget.Item.part_content.set;
         Elm.Widget.Item.focus.set;
         Elm.Widget.Item.focus.get;
+        Efl.Ui.Item.selected;
+        Efl.Ui.Item.prev.get;
+        Efl.Ui.Item.next.get;
    }
 }

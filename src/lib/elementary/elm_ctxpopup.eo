@@ -8,7 +8,8 @@ enum Elm.Ctxpopup.Direction
    unknown [[Ctxpopup does not determine it's direction yet.]]
 }
 
-class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientation)
+class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
+                    Efl.Orientation, Efl.Ui.Menu)
 {
    [[Elementary context popup class]]
    legacy_prefix: elm_ctxpopup;
@@ -101,57 +102,6 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
             return: Elm.Ctxpopup.Direction(Elm.Ctxpopup.Direction.unknown); [[Direction]]
          }
       }
-      @property items {
-         get {
-            [[Get the internal list of items in a given ctxpopup widget.
-
-              This list is not to be modified in any way and must not be
-              freed. Use the list members with functions like
-              \@ref elm_object_item_text_set,
-              \@ref elm_object_item_text_get,
-              \@ref elm_object_item_del.
-
-              Warning: This list is only valid until $obj object's internal
-              items list is changed. It should be fetched again with another
-              call to this function when changes happen.
-
-              @since 1.11
-            ]]
-            return: const(list<Elm.Widget.Item>); [[The list of items or
-            $null on errors.]]
-
-         }
-      }
-      @property first_item {
-         get {
-            [[Get the first item in the given ctxpopup widget's list of
-              items.
-
-              See also  @.item_append,
-              @.last_item.get.
-
-              @since 1.11
-            ]]
-            return: Elm.Widget.Item; [[The first item or $null, if it has no items (and on
-              errors).]]
-
-         }
-      }
-      @property last_item {
-         get {
-            [[Get the last item in the given ctxpopup widget's list of
-              items.
-
-              See also @.item_prepend,
-              @.first_item.get.
-
-              @since 1.1
-            ]]
-            return: Elm.Widget.Item; [[The last item or $null, if it has no items (and on
-              errors).]]
-
-         }
-      }
       dismiss {
          [[Dismiss a ctxpopup object
 
@@ -215,6 +165,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
       Elm.Widget.translate;
       Elm.Widget.theme_apply;
       Elm.Widget.event;
+      Efl.Ui.Menu.selected_item.get;
+      Efl.Ui.Menu.first_item.get;
+      Efl.Ui.Menu.last_item.get;
+      Efl.Ui.Menu.items.get;
       Elm.Layout.sub_object_add_enable;
       Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;

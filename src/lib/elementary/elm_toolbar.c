@@ -3233,7 +3233,7 @@ _elm_toolbar_item_insert_after(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *e
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_toolbar_first_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+_elm_toolbar_efl_ui_menu_first_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
    if (!sd->items) return NULL;
    Elm_Toolbar_Item_Data *it = ELM_TOOLBAR_ITEM_FROM_INLIST(sd->items);
@@ -3242,7 +3242,7 @@ _elm_toolbar_first_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_toolbar_last_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+_elm_toolbar_efl_ui_menu_last_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
    if (!sd->items) return NULL;
 
@@ -3251,8 +3251,14 @@ _elm_toolbar_last_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
    return NULL;
 }
 
+EOLIAN static Eina_Iterator*
+_elm_toolbar_efl_ui_menu_items_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+{
+   return eina_list_iterator_new(sd->items);
+}
+
 EOLIAN static Elm_Object_Item *
-_elm_toolbar_item_next_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *it)
+_elm_toolbar_item_efl_ui_item_next_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *it)
 {
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it, NULL);
 
@@ -3263,7 +3269,7 @@ _elm_toolbar_item_next_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *it)
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_toolbar_item_prev_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *it)
+_elm_toolbar_item_efl_ui_item_prev_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *it)
 {
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it, NULL);
 
@@ -3301,7 +3307,7 @@ _elm_toolbar_item_find_by_label(const Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd,
 }
 
 EOLIAN static void
-_elm_toolbar_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item, Eina_Bool selected)
+_elm_toolbar_item_efl_ui_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item, Eina_Bool selected)
 {
    if (item->selected == selected) return;
    if (selected) _item_select(item);
@@ -3309,13 +3315,13 @@ _elm_toolbar_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *i
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_item_selected_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item)
+_elm_toolbar_item_efl_ui_item_selected_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item)
 {
    return item->selected;
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_toolbar_selected_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+_elm_toolbar_efl_ui_menu_selected_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
    return sd->selected_item;
 }
@@ -3546,6 +3552,48 @@ elm_toolbar_transverse_expanded_get(const Evas_Object *obj)
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
    return sd->transverse_expanded;
+}
+
+EAPI Elm_Widget_Item *
+elm_toolbar_selected_item_get(const Evas_Object *obj)
+{
+   return efl_ui_menu_selected_item_get(obj);
+}
+
+EAPI Elm_Widget_Item *
+elm_toolbar_first_item_get(const Evas_Object *obj)
+{
+   return efl_ui_menu_first_item_get(obj);
+}
+
+EAPI Elm_Widget_Item *
+elm_toolbar_last_item_get(const Evas_Object *obj)
+{
+   return efl_ui_menu_last_item_get(obj);
+}
+
+EAPI void
+elm_toolbar_item_selected_set(Evas_Object *obj, Eina_Bool selected)
+{
+   efl_ui_item_selected_set(obj, selected);
+}
+
+EAPI Eina_Bool
+elm_toolbar_item_selected_get(const Evas_Object *obj)
+{
+   return efl_ui_item_selected_get(obj);
+}
+
+EAPI Elm_Widget_Item *
+elm_toolbar_item_prev_get(const Evas_Object *obj)
+{
+   return efl_ui_item_prev_get(obj);
+}
+
+EAPI Elm_Widget_Item *
+elm_toolbar_item_next_get(const Evas_Object *obj)
+{
+   return efl_ui_item_next_get(obj);
 }
 
 EOLIAN static void
@@ -3969,7 +4017,7 @@ _elm_toolbar_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_To
 
    ret = elm_interface_atspi_accessible_state_set_get(efl_super(eo_it, ELM_TOOLBAR_ITEM_CLASS));
 
-   sel = elm_obj_toolbar_item_selected_get(eo_it);
+   sel = efl_ui_item_selected_get(eo_it);
 
    STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTABLE);
 

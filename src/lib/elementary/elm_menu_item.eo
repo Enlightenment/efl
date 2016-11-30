@@ -1,4 +1,5 @@
-class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
+class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection,
+                    Efl.Ui.Item)
 {
    [[Elementary menu item class]]
    legacy_prefix: elm_menu_item;
@@ -23,25 +24,6 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
              values {
                  icon: string; [[The name of icon object.]]
              }
-        }
-        @property selected {
-             get {
-                [[Get the selected state of $item.]]
-             }
-             set {
-                [[Set the selected state of $item.]]
-             }
-             values {
-                 selected: bool; [[The selection state.]]
-             }
-        }
-      prev_get @const {
-            [[Get the previous item in the menu.]]
-            return: Elm.Widget.Item; [[Item object]]
-        }
-      next_get @const {
-             [[Get the next item in the menu.]]
-             return: Elm.Widget.Item; [[Item object]]
         }
       index_get @const {
              [[Get the item index]]
@@ -90,5 +72,8 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
         Elm.Interface.Atspi_Accessible.state_set.get;
         Elm.Interface.Atspi.Selection.selected_children_count.get;
         Elm.Interface.Atspi.Selection.selected_child.get;
+        Efl.Ui.Item.selected;
+        Efl.Ui.Item.prev.get;
+        Efl.Ui.Item.next.get;
    }
 }
