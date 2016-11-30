@@ -756,8 +756,11 @@ _pointer_cb_frame(void *data, struct wl_callback *callback, unsigned int timesta
    if ((!input->cursor.frame_cb) && (input->cursor.surface))
      {
         input->cursor.frame_cb = wl_surface_frame(input->cursor.surface);
-        wl_callback_add_listener(input->cursor.frame_cb,
-                                 &_pointer_surface_listener, input);
+        if (input->cursor.frame_cb)
+          wl_callback_add_listener(input->cursor.frame_cb,
+                                   &_pointer_surface_listener, input);
+        else
+          WRN("Failed to create surface frame callback for cursor surface");
      }
 }
 
