@@ -2605,7 +2605,7 @@ fi
 # OpenGL common
 evas_engine_gl_common_cflags=""
 if test "x${have_egl}" = "xyes"; then
-   evas_engine_gl_common_libs="-lEGL"
+   evas_engine_gl_common_libs="-lEGL -lGLESv2"
 else
    evas_engine_gl_common_libs="-lGL"
 fi
