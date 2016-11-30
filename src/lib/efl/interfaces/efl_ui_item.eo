@@ -1,4 +1,5 @@
 interface Efl.Ui.Item {
+   [[Efl UI item interface]]
    legacy_prefix: null;
    methods {
       @property prev {

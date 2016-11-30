@@ -1,4 +1,5 @@
 interface Efl.Ui.Menu {
+   [[Efl UI menu interface]]
    legacy_prefix: null;
    methods {
       @property selected_item {
@@ -28,7 +29,7 @@ interface Efl.Ui.Menu {
       @property items {
          get {
             [[Returns a list of the widget item.]]
-            return: free(own(iterator<Efl.Ui.Item>), eina_iterator_free) @warn_unused;
+            return: free(own(iterator<Efl.Ui.Item>), eina_iterator_free) @warn_unused; [[Iterator to widget items]]
          }
       }
    }
