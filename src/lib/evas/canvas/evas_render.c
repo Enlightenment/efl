@@ -398,11 +398,10 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
    RD(0, "  [--- PHASE 1 DIRECT\n");
    for (i = 0; i < active_objects->len; i++)
      {
-        Evas_Active_Entry *ent;
-        Evas_Object_Protected_Data *obj;
+        Evas_Active_Entry *ent = eina_inarray_nth(active_objects, i);
+        Evas_Object_Protected_Data *obj = ent->obj;
 
-        ent = eina_inarray_nth(active_objects, i);
-        obj = ent->obj;
+        EINA_PREFETCH(&(obj->cur->clipper));
         if (obj->changed) evas_object_clip_recalc(obj);
 
         if (obj->proxy->proxies || obj->proxy->proxy_textures)
@@ -1026,6 +1025,8 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
    Eina_Bool map, hmap, can_map, map_not_can_map, obj_changed, is_active;
    Evas_Object *eo_obj = obj->object;
 
+   EINA_PREFETCH(&(obj->cur->clipper));
+
    obj->rect_del = EINA_FALSE;
    obj->render_pre = EINA_FALSE;
 
@@ -1207,15 +1208,16 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
    for (i = 0; i < pending_objects->count; ++i)
      {
         Evas_Object *eo_obj;
-        Evas_Object_Protected_Data *obj;
         int is_active;
         Eina_Bool ok = EINA_FALSE;
 
-        obj = eina_array_data_get(pending_objects, i);
+        Evas_Object_Protected_Data *obj = eina_array_data_get(pending_objects, i);
         eo_obj = obj->object;
 
         if (!obj->layer) goto clean_stuff;
 
+        EINA_PREFETCH(&(obj->cur->clipper));
+        EINA_PREFETCH(&(obj->cur->cache.clip));
         //If the children are in active objects, They should be cleaned up.
         if (EINA_UNLIKELY((obj->changed_map) &&
                           (_evas_render_has_map(obj)) &&
@@ -1682,6 +1684,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    else
      proxy_src_clip = proxy_render_data->source_clip;
 
+   evas_object_clip_recalc(obj);
+
    /* leave early if clipper is not visible */
    if ((obj->cur->clipper) && (!obj->cur->clipper->cur->visible))
      return clean_them;
@@ -1973,6 +1977,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
              if (obj->cur->clipper)
                {
+                  evas_object_clip_recalc(obj);
+
                   if (obj->is_smart)
                     {
                        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -2050,6 +2056,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                        // This path can be hit when we're multiplying masks on top of each other...
                        Evas_Object_Protected_Data *mask = obj->cur->clipper;
 
+                       evas_object_clip_recalc(obj);
+
                        RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p\n",
                           mask, mask->name?":":"", mask->name?mask->name:"",
                           mask->mask->redraw, mask->mask->surface);
@@ -2115,6 +2123,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                          {
                             if (proxy_src_clip)
                               {
+                                 if ((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
+                                     _evas_render_object_is_mask(obj->cur->clipper))
+                                   evas_object_clip_recalc(obj);
                                  _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
                                                                       proxy_render_data,
                                                                       off_x, off_y);
@@ -2179,6 +2190,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
                   if (proxy_src_clip)
                     {
+                       if ((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
+                           _evas_render_object_is_mask(obj->cur->clipper))
+                         evas_object_clip_recalc(obj);
                        x = obj->cur->cache.clip.x;
                        y = obj->cur->cache.clip.y;
                        w = obj->cur->cache.clip.w;
@@ -2742,9 +2756,8 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
    /* render all object that intersect with rect */
    for (i = 0; i < e->active_objects.len; i++)
      {
-        Evas_Active_Entry *ent;
+        Evas_Active_Entry *ent = eina_inarray_nth(&e->active_objects, i);
 
-        ent = eina_inarray_nth(&e->active_objects, i);
         obj = ent->obj;
         eo_obj = obj->object;
 
@@ -3087,9 +3100,8 @@ evas_render_updates_internal(Evas *eo_e,
     * pre-render buffers/fbo's etc.) that are not up to date yet */
    for (i = 0; i < e->active_objects.len; i++)
      {
-        Evas_Active_Entry *ent;
+        Evas_Active_Entry *ent = eina_inarray_nth(&e->active_objects, i);
 
-        ent = eina_inarray_nth(&e->active_objects, i);
         obj = ent->obj;
         eo_obj = obj->object;
         if (UNLIKELY(
