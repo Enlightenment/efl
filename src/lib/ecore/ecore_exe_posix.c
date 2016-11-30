@@ -884,29 +884,32 @@ _ecore_exe_make_sure_its_dead(void *data)
 
    dead = data;
    if (dead)
-   {
-      Ecore_Exe *obj = NULL;
+     {
+        Ecore_Exe *obj = NULL;
 
-      if ((obj = _ecore_exe_is_it_alive(dead->pid)))
-      {
-         Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
-         if (dead->cmd)
-           INF("Sending KILL signal to allegedly dead %s (%d).",
-               dead->cmd, dead->pid);
-         else
-           INF("Sending KILL signal to allegedly dead PID %d.",
-               dead->pid);
-         exe->doomsday_clock =
-           ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead,
-                           dead);
-         kill(dead->pid, SIGKILL);
-      }
-      else
-      {
-         IF_FREE(dead->cmd);
-         free(dead);
-      }
-   }
+        if ((obj = _ecore_exe_is_it_alive(dead->pid)))
+          {
+             Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+             if (exe)
+               {
+                  if (dead->cmd)
+                    INF("Sending KILL signal to allegedly dead %s (%d).",
+                        dead->cmd, dead->pid);
+                  else
+                    INF("Sending KILL signal to allegedly dead PID %d.",
+                        dead->pid);
+                  exe->doomsday_clock =
+                    ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead,
+                                    dead);
+                  kill(dead->pid, SIGKILL);
+               }
+          }
+        else
+          {
+             IF_FREE(dead->cmd);
+             free(dead);
+          }
+     }
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -917,22 +920,26 @@ _ecore_exe_make_sure_its_really_dead(void *data)
 
    dead = data;
    if (dead)
-   {
-      Ecore_Exe *obj = NULL;
+     {
+        Ecore_Exe *obj = NULL;
 
-      if ((obj = _ecore_exe_is_it_alive(dead->pid)))
-      {
-         Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
-         ERR("RUN!  The zombie wants to eat your brains!  And your CPU!");
-         if (dead->cmd)
-           INF("%s (%d) is not really dead.", dead->cmd, dead->pid);
-         else
-           INF("PID %d is not really dead.", dead->pid);
-         exe->doomsday_clock = NULL;
-      }
-      IF_FREE(dead->cmd);
-      free(dead);
-   }
+        if ((obj = _ecore_exe_is_it_alive(dead->pid)))
+          {
+             Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+
+             if (exe)
+               {
+                  ERR("RUN!  The zombie wants to eat your brains!  And your CPU!");
+                  if (dead->cmd)
+                    INF("%s (%d) is not really dead.", dead->cmd, dead->pid);
+                  else
+                    INF("PID %d is not really dead.", dead->pid);
+                  exe->doomsday_clock = NULL;
+               }
+             IF_FREE(dead->cmd);
+             free(dead);
+          }
+     }
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -940,6 +947,7 @@ Ecore_Timer *
 _ecore_exe_doomsday_clock_get(Ecore_Exe *obj)
 {
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!exe) return NULL;
    return exe->doomsday_clock;
 }
 
@@ -948,6 +956,7 @@ _ecore_exe_doomsday_clock_set(Ecore_Exe   *obj,
                               Ecore_Timer *dc)
 {
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!exe) return;
    exe->doomsday_clock = dc;
 }
 
@@ -1071,6 +1080,7 @@ _ecore_exe_data_generic_handler(void             *data,
    const Efl_Event_Description *eo_event = NULL;
 
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
+   if (!exe) return EINA_FALSE;
 
    /* Sort out what sort of handler we are. */
    if (flags & ECORE_EXE_PIPE_READ)
@@ -1225,26 +1235,28 @@ _ecore_exe_data_write_handler(void             *data,
    Ecore_Exe *obj = data;
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
 
+   if (!exe) return EINA_FALSE;
+
    if ((exe->write_fd_handler) &&
        (ecore_main_fd_handler_active_get
-          (exe->write_fd_handler, ECORE_FD_WRITE)))
+        (exe->write_fd_handler, ECORE_FD_WRITE)))
      _ecore_exe_flush(obj);
 
    /* If we have sent all there is to send, and we need to close the pipe, then close it. */
-   if ((exe->close_stdin == 1)
-       && (exe->write_data_size == exe->write_data_offset))
-   {
-      int ok = 0;
-      int result;
+   if ((exe->close_stdin == 1) &&
+       (exe->write_data_size == exe->write_data_offset))
+     {
+        int ok = 0;
+        int result;
 
-      INF("Closing stdin for %s", exe->cmd);
-      /* if (exe->child_fd_write != -1)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);   This a) doesn't work, and b) isn't needed. */
-      IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
-      if (exe->child_fd_write != -1)
-        E_NO_ERRNO(result, close(exe->child_fd_write), ok);
-      exe->child_fd_write = -1;
-      IF_FREE(exe->write_data_buf);
-   }
+        INF("Closing stdin for %s", exe->cmd);
+        /* if (exe->child_fd_write != -1)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);   This a) doesn't work, and b) isn't needed. */
+        IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
+        if (exe->child_fd_write != -1)
+          E_NO_ERRNO(result, close(exe->child_fd_write), ok);
+        exe->child_fd_write = -1;
+        IF_FREE(exe->write_data_buf);
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -1255,36 +1267,35 @@ _ecore_exe_flush(Ecore_Exe *obj)
    int count;
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
 
+   if (!exe) return;
    /* check whether we need to write anything at all. */
-   if ((exe->child_fd_write == -1) || (!exe->write_data_buf))
-     return;
-   if (exe->write_data_size == exe->write_data_offset)
-     return;
+   if ((exe->child_fd_write == -1) || (!exe->write_data_buf)) return;
+   if (exe->write_data_size == exe->write_data_offset) return;
 
    count = write(exe->child_fd_write,
                  (char *)exe->write_data_buf + exe->write_data_offset,
                  exe->write_data_size - exe->write_data_offset);
    if (count < 1)
-   {
-      if (errno == EIO || errno == EBADF || errno == EPIPE || errno == EINVAL || errno == ENOSPC) /* we lost our exe! */
-      {
-         ecore_exe_terminate(obj);
-         if (exe->write_fd_handler)
-           ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
-      }
-   }
+     {
+        if (errno == EIO || errno == EBADF || errno == EPIPE || errno == EINVAL || errno == ENOSPC) /* we lost our exe! */
+          {
+             ecore_exe_terminate(obj);
+             if (exe->write_fd_handler)
+               ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
+          }
+     }
    else
-   {
-      exe->write_data_offset += count;
-      if (exe->write_data_offset >= exe->write_data_size) /* Nothing left to write, clean up. */
-      {
-         exe->write_data_size = 0;
-         exe->write_data_offset = 0;
-         IF_FREE(exe->write_data_buf);
-         if (exe->write_fd_handler)
-           ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
-      }
-   }
+     {
+        exe->write_data_offset += count;
+        if (exe->write_data_offset >= exe->write_data_size) /* Nothing left to write, clean up. */
+          {
+             exe->write_data_size = 0;
+             exe->write_data_offset = 0;
+             IF_FREE(exe->write_data_buf);
+             if (exe->write_fd_handler)
+               ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
+          }
+     }
 }
 
 static void
@@ -1293,15 +1304,16 @@ _ecore_exe_dead_attach(Ecore_Exe *obj)
    struct _ecore_exe_dead_exe *dead;
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
 
+   if (!exe) return;
    if (exe->doomsday_clock_dead) return;
    dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));
    if (dead)
-   {
-      dead->pid = exe->pid;
-      if (exe->cmd) dead->cmd = strdup(exe->cmd);
-      IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
-      exe->doomsday_clock =
-        ecore_timer_add(10.0, _ecore_exe_make_sure_its_dead, dead);
-      exe->doomsday_clock_dead = dead;
-   }
+     {
+        dead->pid = exe->pid;
+        if (exe->cmd) dead->cmd = strdup(exe->cmd);
+        IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
+        exe->doomsday_clock =
+          ecore_timer_add(10.0, _ecore_exe_make_sure_its_dead, dead);
+        exe->doomsday_clock_dead = dead;
+     }
 }

@@ -43,6 +43,7 @@ _ecore_exe_threads_terminate(Ecore_Exe *obj)
    HANDLE threads[2] = { NULL, NULL };
    int i = 0;
 
+   if (!exe) return;
    if (exe->pipe_read.thread)
      {
         threads[i] = exe->pipe_read.thread;
@@ -71,6 +72,7 @@ _ecore_exe_close_cb(void *data,
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
    DWORD exit_code = 0;
 
+   if (!exe) return 0;
    _ecore_exe_threads_terminate(obj);
 
    e = calloc(1, sizeof(Ecore_Exe_Event_Del));
@@ -112,6 +114,7 @@ _ecore_exe_pipe_read_thread_cb(void *data)
    DWORD current_size = 0;
    BOOL res;
 
+   if (!exe) return 0;
    while (1)
      {
         res = PeekNamedPipe(exe->pipe_read.child_pipe,
@@ -182,6 +185,7 @@ _ecore_exe_pipe_error_thread_cb(void *data)
    DWORD current_size = 0;
    BOOL res;
 
+   if (!exe) return 0;
    while (1)
      {
         res = PeekNamedPipe(exe->pipe_error.child_pipe,
@@ -256,6 +260,7 @@ _ecore_exe_enum_windows_procedure(HWND window,
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
    DWORD thread_id;
 
+   if (!exe) return EINA_FALSE;
    thread_id = GetWindowThreadProcessId(window, NULL);
 
    if (thread_id == exe->thread_id)
