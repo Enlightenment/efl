@@ -152,8 +152,7 @@ bin_eeze_eeze_scanner_LDADD = @USE_EEZE_LIBS@
 bin_eeze_eeze_scanner_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
 bin_eeze_eeze_scanner_monitor_SOURCES = \
-bin/eeze/eeze_scanner_monitor.c \
-bin/eeze/eeze_scanner_monitor.h
+bin/eeze/eeze_scanner_monitor.c
 bin_eeze_eeze_scanner_monitor_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
 bin_eeze_eeze_scanner_monitor_LDADD = @USE_EEZE_LIBS@
 bin_eeze_eeze_scanner_monitor_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
