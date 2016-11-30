@@ -1,0 +1,1068 @@
+################################################################################
+# GL API Data for generate wrapper API
+################################################################################
+# API definition data file format: (Requires at lease 8 columns)
+# 1.| {EVAS |EVAS GL |EVAS GL API} | : Wrapper API types
+# 2.| {return type} |
+# 3.| {api name} |
+# 4.| {paramter1, 2,..} | : parameter type and name (NOTE: it will be used as defined)
+# 5.| {enqueue|flush|finish} | : queue operation
+# 6.| {ext|noext} | : extension API or not
+# 7.| {memory pool name, size, value | ""} | : if you need to copy variable
+# 8.| {GL| GLES} | ""} | : GL types
+# 9.| { "NeedMacro" | "" } | : generate macro at each code block.
+#                              if you need own code, descript the code at macro.
+#							   (NOTE: flush and enquene only)
+################################################################################
+####################################################
+#
+# EVAS
+#
+####################################################
+# Errors
+| EVAS | GLenum | glGetError | void | finish | noext | | | | |
+
+# Vertex Arrays
+## Vertex Array
+| EVAS | void | glVertexAttribPointer | GLuint index,GLint size,GLenum type,GLboolean normalized,GLsizei stride,const void *pointer | finish | noext | | | | |
+| EVAS | void | glEnableVertexAttribArray | GLuint index | enqueue | noext | | | | |
+| EVAS | void | glDisableVertexAttribArray | GLuint index | enqueue | noext | | | | |
+
+## Drawing
+| EVAS | void | glDrawArrays | GLenum mode,GLint first,GLsizei count | finish | noext | | | |
+| EVAS | void | glDrawElements | GLenum mode,GLsizei count,GLenum type,const void *indices | finish | noext | | | |
+
+# Buffer Objects
+| EVAS | void | glGenBuffers | GLsizei n,GLuint *buffers | finish | noext | | | |
+| EVAS | void | glDeleteBuffers | GLsizei n,const GLuint *buffers | flush | noext | _mp_delete_object, n * sizeof(GLuint), buffers | | |
+| EVAS | void | glBindBuffer | GLenum target,GLuint buffer | flush | noext | | | NeedMacro |
+| EVAS | void | glBufferData | GLenum target,GLsizeiptr size,const void *data,GLenum usage | finish | noext | | | |
+| EVAS | void * | glMapBuffer | GLenum target,GLenum access | finish | ext | | | |
+| EVAS | GLboolean | glUnmapBuffer | GLenum target | finish | ext | | | |
+
+# Vertex Shaders
+## Shader Objects
+| EVAS | GLuint | glCreateShader | GLenum type | finish | noext | | | |
+| EVAS | void | glShaderSource | GLuint shader,GLsizei count,const GLchar **string,const GLint *length | flush | noext | | | NeedMacro |
+| EVAS | void | glCompileShader | GLuint shader | flush | noext | | | |
+| EVAS | void | glReleaseShaderCompiler | void | flush | ext | | | |
+| EVAS | void | glDeleteShader | GLuint shader | flush | noext | | | |
+
+## Program Objects
+| EVAS | GLuint | glCreateProgram | void | finish | noext | | | |
+| EVAS | void | glAttachShader | GLuint program,GLuint shader | flush | noext | | | |
+| EVAS | void | glDetachShader | GLuint program,GLuint shader | flush | noext | | | |
+| EVAS | void | glLinkProgram | GLuint program | flush | noext | | | |
+| EVAS | void | glUseProgram | GLuint program | flush | noext | | | |
+| EVAS | void | glProgramParameteri | GLuint program,GLenum pname,GLint value | flush | ext | | | |
+| EVAS | void | glDeleteProgram | GLuint program | flush | noext | | | |
+
+## Program Binaries
+| EVAS | void | glGetProgramBinary | GLuint program,GLsizei bufSize,GLsizei *length,GLenum *binaryFormat,void *binary | finish | ext | | | |
+| EVAS | void | glProgramBinary | GLuint program,GLenum binaryFormat,const void *binary,GLint length | flush | ext | _mp_default, length, binary | | |
+
+## Vertex Attributes
+| EVAS | void | glGetActiveAttrib | GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name | finish | noext | | | |
+| EVAS | GLint | glGetAttribLocation | GLuint program,const GLchar *name | finish | noext | | | |
+| EVAS | void | glBindAttribLocation | GLuint program,GLuint index,const GLchar *name | finish | noext | _mp_default, strlen(name), name | | |
+
+
+## Uniform Variables
+| EVAS | GLint | glGetUniformLocation | GLuint program,const GLchar *name | finish | noext | | | |
+| EVAS | void | glUniform1f | GLint location,GLfloat v0 | flush | noext | | | |
+| EVAS | void | glUniform1i | GLint location,GLint v0 | flush | noext | | | |
+| EVAS | void | glUniform2f | GLint location,GLfloat v0, GLfloat v1 | flush | noext | | | |
+| EVAS | void | glUniform2i | GLint location,GLint v0, GLint v1 | flush | noext | | | |
+| EVAS | void | glUniform3f | GLint location,GLfloat v0,GLfloat v1,GLfloat v2 | flush | noext | | | |
+| EVAS | void | glUniform3i | GLint location,GLint v0, GLint v1, GLint v2 | flush | noext | | | |
+| EVAS | void | glUniform4f | GLint location,GLfloat v0,GLfloat v1,GLfloat v2,GLfloat v3 | flush | noext | | | |
+| EVAS | void | glUniform4i | GLint location,GLint v0, GLint v1, GLint v2, GLint v3 | flush | noext | | | |
+| EVAS | void | glUniform1fv | GLint location,GLsizei count, const GLfloat *value | flush | noext | _mp_uniform, 1 * count * sizeof(GLfloat), value | | |
+| EVAS | void | glUniform1iv | GLint location,GLsizei count, const GLint *value | flush | noext | _mp_uniform, 1 * count * sizeof(GLint), value | | |
+| EVAS | void | glUniform2fv | GLint location,GLsizei count,const GLfloat *value | flush | noext | _mp_uniform, 2 * count * sizeof(GLfloat), value | | |
+| EVAS | void | glUniform2iv | GLint location,GLsizei count, const GLint *value | flush | noext | _mp_uniform, 2 * count * sizeof(GLint), value | | |
+| EVAS | void | glUniform3fv | GLint location,GLsizei count, const GLfloat *value | flush | noext | _mp_uniform, 3 * count * sizeof(GLfloat), value | | |
+| EVAS | void | glUniform3iv | GLint location,GLsizei count, const GLint *value | flush | noext | _mp_uniform, 3 * count * sizeof(GLint), value | | |
+| EVAS | void | glUniform4fv | GLint location,GLsizei count,const GLfloat *value | flush | noext | _mp_uniform, 4 * count * sizeof(GLfloat), value | | |
+| EVAS | void | glUniform4iv | GLint location,GLsizei count, const GLint *value | flush | noext | _mp_uniform, 4 * count * sizeof(GLint), value | | |
+| EVAS | void | glUniformMatrix2fv | GLint location,GLsizei count,GLboolean transpose,const GLfloat *value | flush | noext | _mp_uniform, 4 * count * sizeof(GLfloat), value | | |
+| EVAS | void | glUniformMatrix3fv | GLint location,GLsizei count,GLboolean transpose,const GLfloat *value | flush | noext | _mp_uniform, 9 * count * sizeof(GLfloat), value | | |
+| EVAS | void | glUniformMatrix4fv | GLint location,GLsizei count,GLboolean transpose,const GLfloat *value | flush | noext | _mp_uniform, 16 * count * sizeof(GLfloat),value | | |
+
+
+# Viewport
+| EVAS | void | glViewport | GLint x,GLint y,GLsizei width,GLsizei height | flush | noext | | | |
+
+# Enable/Disable
+| EVAS | void | glEnable | GLenum cap | enqueue | noext | | | |
+| EVAS | void | glDisable | GLenum cap | enqueue | noext | | | |
+
+# Line segments
+| EVAS | void | glLineWidth | GLfloat width | flush | noext | | | |
+
+# Polygon
+| EVAS | void | glPolygonOffset | GLfloat factor,GLfloat units | flush | noext | | | |
+
+# Pixel Rectangles
+| EVAS | void | glPixelStorei | GLenum pname,GLint param | flush | noext | | | NeedMacro |
+
+
+# Texturing
+| EVAS | void | glActiveTexture | GLenum texture | flush | noext | | | |
+
+# Texture Objects
+| EVAS | void | glGenTextures | GLsizei n,GLuint *textures | finish | noext | | | |
+| EVAS | void | glBindTexture | GLenum target,GLuint texture | flush | noext | | | |
+| EVAS | void | glDeleteTextures | GLsizei n,const GLuint *textures | flush | noext | _mp_delete_object, n * sizeof(GLuint), textures | | |
+
+
+# Texture Image Specification
+| EVAS | void | glTexImage2D | GLenum target,GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels | flush | noext | | | NeedMacro |
+| EVAS | void | glTexSubImage2D | GLenum target,GLint level,GLint xoffset,GLint yoffset,GLsizei width,GLsizei height,GLenum format,GLenum type,const void *pixels | flush | noext | | | NeedMacro |
+
+# Compressed Texture Images
+| EVAS | void | glCompressedTexImage2D | GLenum target,GLint level,GLenum internalformat,GLsizei width,GLsizei height,GLint border,GLsizei imageSize,const void *data | flush | noext | | | NeedMacro |
+| EVAS | void | glCompressedTexSubImage2D | GLenum target,GLint level,GLint xoffset,GLint yoffset,GLsizei width,GLsizei height,GLenum format,GLsizei imageSize,const void *data | flush | noext | | | NeedMacro |
+
+
+# Texture parameters
+| EVAS | void | glTexParameterf | GLenum target,GLenum pname,GLfloat param | flush | noext | | | |
+| EVAS | void | glTexParameterfv | GLenum target, GLenum pname, const GLfloat *params | flush | noext | _mp_default, sizeof(GLfloat), params | | |
+| EVAS | void | glTexParameteri | GLenum target,GLenum pname,GLint param | flush | noext | | | |
+| EVAS | void | glTexParameteriv | GLenum target, GLenum pname, const GLint *params | flush | noext | _mp_default, sizeof(GLint), params | | |
+
+# Scissor Test
+| EVAS | void | glScissor | GLint x,GLint y,GLsizei width,GLsizei height | flush | noext | | | |
+
+## Blending
+| EVAS | void | glBlendFunc | GLenum sfactor,GLenum dfactor | flush | noext | | | |
+| EVAS | void | glBlendColor | GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha | flush | noext | | | |
+
+
+# Fine Control of Buffer Updates
+| EVAS | void | glDepthMask | GLboolean flag | flush | noext | | | |
+
+# Clearing the Buffers
+| EVAS | void | glClear | GLbitfield mask | flush | noext | | | |
+| EVAS | void | glClearColor | GLfloat red,GLfloat green,GLfloat blue,GLfloat alpha | flush | noext | | | |
+
+# Reading and Copying Pixels
+| EVAS | void | glReadPixels | GLint x,GLint y,GLsizei width,GLsizei height,GLenum format,GLenum type,void *pixels | finish | noext | | | |
+
+# Binding & Managing Framebuffer Objects
+| EVAS | void | glGenFramebuffers | GLsizei n,GLuint *framebuffers | finish | ext | | | |
+| EVAS | void | glBindFramebuffer | GLenum target,GLuint framebuffer | flush | ext | | | |
+| EVAS | void | glDeleteFramebuffers | GLsizei n,const GLuint *framebuffers | flush | ext | _mp_delete_object, n * sizeof(GLuint), framebuffers | | |
+
+# Renderbuffer Objects
+| EVAS | void | glGenRenderbuffers | GLsizei n,GLuint *renderbuffers | finish | noext | | | |
+| EVAS | void | glBindRenderbuffer | GLenum target,GLuint renderbuffer | flush | noext | | | |
+| EVAS | void | glDeleteRenderbuffers | GLsizei n,const GLuint *renderbuffers | flush | noext | _mp_delete_object, n * sizeof(GLuint), renderbuffers | | |
+| EVAS | void | glRenderbufferStorage | GLenum target,GLenum internalformat,GLsizei width,GLsizei height | flush | noext | | | |
+
+# Attaching Renderbuffer Images to Framebuffer
+| EVAS | void | glFramebufferRenderbuffer | GLenum target,GLenum attachment,GLenum renderbuffertarget,GLuint renderbuffer | flush | noext | | | |
+
+# Attaching Texture Images to a Framebuffer
+| EVAS | void | glFramebufferTexture2D | GLenum target,GLenum attachment,GLenum textarget,GLuint texture,GLint level | flush | ext | | | |
+| EVAS | void | glFramebufferTexture2DMultisample | GLenum target,GLenum attachment,GLenum textarget,GLuint texture,GLint level,GLsizei samples | flush | ext | | | |
+
+# Framebuffer Completeness
+| EVAS | GLenum | glCheckFramebufferStatus | GLenum target | finish | noext | | | |
+
+
+# Special Functions
+| EVAS | void | glFlush | void | finish | noext | | | |
+| EVAS | void | glFinish | void | finish | noext | | | |
+| EVAS | void | glHint | GLenum target,GLenum mode | flush | noext | | | |
+
+
+# State and State Requests
+| EVAS | const GLubyte * | glGetString | GLenum name | finish | noext | | | |
+| EVAS | void | glGetBooleanv | GLenum pname,GLboolean *data | finish | noext | | | |
+| EVAS | void | glGetFloatv | GLenum pname,GLfloat *data | finish | noext | | | |
+| EVAS | void | glGetIntegerv | GLenum pname,GLint *data | finish | noext | | | |
+
+# Buffer Queries
+| EVAS | GLboolean | glIsBuffer | GLint buffer | finish | noext | | | |
+| EVAS | void | glGetBufferParameteriv | GLenum target, GLenum pname, GLint *params | finish | noext | | | |
+
+# Shader and Program Queries
+| EVAS | GLboolean | glIsShader | GLuint shader | finish | noext | | | |
+| EVAS | void | glGetShaderiv | GLuint shader,GLenum pname,GLint *params | finish | noext | | | |
+| EVAS | void | glGetAttachedShaders | GLuint program, GLsizei maxCount, GLsizei *count, GLuint *shaders | finish | noext | | | |
+| EVAS | void | glGetShaderInfoLog | GLuint shader,GLsizei bufSize,GLsizei *length,GLchar *infoLog | finish | noext | | | |
+| EVAS | void | glGetShaderSource | GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *source | finish | noext | | | |
+| EVAS | void | glGetShaderPrecisionFormat | GLenum shadertype, GLenum precisiontype, GLint *range, GLint *precision | finish | noext | | | |
+| EVAS | void | glGetVertexAttribfv | GLuint index, GLenum pname, GLfloat *params | finish | noext | | | |
+| EVAS | void | glGetVertexAttribiv | GLuint index, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS | GLboolean | glIsProgram | GLuint program | finish | noext | | | |
+| EVAS | void | glGetProgramInfoLog | GLuint program,GLsizei bufSize,GLsizei *length,GLchar *infoLog | finish | noext | | | |
+| EVAS | void | glGetProgramiv | GLuint program,GLenum pname,GLint *params | finish | noext | | | |
+
+
+# Framebuffer Objects Queries
+| EVAS | GLboolean | glIsFramebuffer | GLint framebuffer | finish | noext | | | |
+| EVAS | void | glGetFramebufferParameteriv | GLenum target, GLenum pname, GLint *params | finish | ext | | | |
+
+# Renderbuffer Object Queries
+| EVAS | GLboolean | glIsRenderbuffer | GLint renderbuffer | finish | noext | | | |
+| EVAS | void | glGetRenderbufferParameteriv | GLenum target, GLenum pname, GLint *params | finish | noext | | | |
+
+# Texture Queries
+| EVAS | GLboolean | glIsTexture | GLint texture | finish | noext | | | |
+
+# Tiling
+| EVAS | void | glStartTiling | GLuint a,GLuint b,GLuint c,GLuint d,GLuint e | flush | ext | | | |
+| EVAS | void | glEndTiling | GLuint a | flush | ext | | | |
+| EVAS | void | glActivateTile | GLuint a,GLuint b,GLuint c,GLuint d,GLuint e | flush | ext | | | |
+
+# EGLImage
+| EVAS | void | glEGLImageTargetTexture2DOES | GLenum target,void *image | finish | ext | | | |
+
+# GL
+| EVAS | void | glAlphaFunc | GLenum func,GLclampf ref | flush | noext | | GL |
+| EVAS | void | glGetTexLevelParameteriv | GLenum target,GLint level,GLenum pname,GLint *params | finish | noext | | GL |
+| EVAS | void | glRenderbufferStorageMultisample | GLenum target,GLsizei samples,GLenum internalformat,GLsizei width,GLsizei height | finish | ext | | GL |
+
+# GLES3
+| EVAS | const GLubyte * | glGetStringi | GLenum name,GLuint index | finish | ext | | | |
+
+####################################################
+#
+# EVAS GL
+#
+####################################################
+# Errors
+| EVAS GL | GLenum | glGetError | void | finish | noext | | | | |
+
+# Vertex Arrays
+## Vertex Array
+| EVAS GL | void | glVertexAttribPointer | GLuint index,GLint size,GLenum type,GLboolean normalized,GLsizei stride,const void *pointer | finish | noext | | | |
+| EVAS GL | void | glEnableVertexAttribArray | GLuint index | flush | noext | | | |
+| EVAS GL | void | glDisableVertexAttribArray | GLuint index | flush | noext | | | |
+
+## Drawing
+| EVAS GL | void | glDrawArrays | GLenum mode,GLint first,GLsizei count | finish | noext | | | |
+| EVAS GL | void | glDrawElements | GLenum mode,GLsizei count,GLenum type,const void *indices | finish | noext | | | |
+
+# Buffer Objects
+| EVAS GL | void | glGenBuffers | GLsizei n,GLuint *buffers | finish | noext | | | |
+| EVAS GL | void | glDeleteBuffers | GLsizei n,const GLuint *buffers | flush | noext | _mp_delete_object, n * sizeof(GLuint), buffers | | |
+| EVAS GL | void | glBindBuffer | GLenum target,GLuint buffer | flush | noext | | | |
+| EVAS GL | void | glBufferData | GLenum target,GLsizeiptr size,const void *data,GLenum usage | finish | noext | | | |
+
+# Vertex Shaders
+## Shader Objects
+| EVAS GL | GLuint | glCreateShader | GLenum type | finish | noext | | | |
+| EVAS GL | void | glShaderSource | GLuint shader,GLsizei count,const GLchar **string,const GLint *length | flush | noext | | | NeedMacro |
+| EVAS GL | void | glCompileShader | GLuint shader | flush | noext | | | |
+| EVAS GL | void | glDeleteShader | GLuint shader | flush | noext | | | |
+
+## Program Objects
+| EVAS GL | GLuint | glCreateProgram | void | finish | noext | | | |
+| EVAS GL | void | glAttachShader | GLuint program,GLuint shader | flush | noext | | | |
+| EVAS GL | void | glDetachShader | GLuint program,GLuint shader | flush | noext | | | |
+| EVAS GL | void | glLinkProgram | GLuint program | flush | noext | | | |
+| EVAS GL | void | glUseProgram | GLuint program | flush | noext | | | |
+| EVAS GL | void | glDeleteProgram | GLuint program | flush | noext | | | |
+
+## Program Binaries
+| EVAS GL | void | glGetProgramBinary | GLuint program,GLsizei bufSize,GLsizei *length,GLenum *binaryFormat,void *binary | finish | ext | | | |
+| EVAS GL | void | glProgramBinary | GLuint program,GLenum binaryFormat,const void *binary,GLint length | flush | ext | _mp_default, length, binary | | |
+
+## Vertex Attributes
+| EVAS GL | void | glGetActiveAttrib | GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name | finish | noext | | | |
+| EVAS GL | GLint | glGetAttribLocation | GLuint program,const GLchar *name | finish | noext | | | |
+| EVAS GL | void | glBindAttribLocation | GLuint program,GLuint index,const GLchar *name | finish | noext | _mp_default, strlen(name), name | | |
+
+
+## Uniform Variables
+| EVAS GL | GLint | glGetUniformLocation | GLuint program,const GLchar *name | finish | noext | | | |
+| EVAS GL | void | glUniform1f | GLint location,GLfloat v0 | flush | noext | | | |
+| EVAS GL | void | glUniform1i | GLint location,GLint v0 | flush | noext | | | |
+| EVAS GL | void | glUniform2f | GLint location,GLfloat v0, GLfloat v1 | flush | noext | | | |
+| EVAS GL | void | glUniform2i | GLint location,GLint v0, GLint v1 | flush | noext | | | |
+| EVAS GL | void | glUniform3f | GLint location,GLfloat v0,GLfloat v1,GLfloat v2 | flush | noext | | | |
+| EVAS GL | void | glUniform3i | GLint location,GLint v0, GLint v1, GLint v2 | flush | noext | | | |
+| EVAS GL | void | glUniform4f | GLint location,GLfloat v0,GLfloat v1,GLfloat v2,GLfloat v3 | flush | noext | | | |
+| EVAS GL | void | glUniform4i | GLint location,GLint v0, GLint v1, GLint v2, GLint v3 | flush | noext | | | |
+| EVAS GL | void | glUniform1fv | GLint location,GLsizei count, const GLfloat *value | flush | noext | _mp_uniform, 1 * count * sizeof(GLfloat), value | | |
+| EVAS GL | void | glUniform1iv | GLint location,GLsizei count, const GLint *value | flush | noext | _mp_uniform, 1 * count * sizeof(GLint), value | | |
+| EVAS GL | void | glUniform2fv | GLint location,GLsizei count,const GLfloat *value | flush | noext | _mp_uniform, 2 * count * sizeof(GLfloat), value | | |
+| EVAS GL | void | glUniform2iv | GLint location,GLsizei count, const GLint *value | flush | noext | _mp_uniform, 2 * count * sizeof(GLint), value | | |
+| EVAS GL | void | glUniform3fv | GLint location,GLsizei count, const GLfloat *value | flush | noext | _mp_uniform, 3 * count * sizeof(GLfloat), value | | |
+| EVAS GL | void | glUniform3iv | GLint location,GLsizei count, const GLint *value | flush | noext | _mp_uniform, 3 * count * sizeof(GLint), value | | |
+| EVAS GL | void | glUniform4fv | GLint location,GLsizei count,const GLfloat *value | flush | noext | _mp_uniform, 4 * count * sizeof(GLfloat), value | | |
+| EVAS GL | void | glUniform4iv | GLint location,GLsizei count, const GLint *value | flush | noext | _mp_uniform, 4 * count * sizeof(GLint), value | | |
+| EVAS GL | void | glUniformMatrix2fv | GLint location,GLsizei count,GLboolean transpose,const GLfloat *value | flush | noext | _mp_uniform, 4 * count * sizeof(GLfloat), value | | |
+| EVAS GL | void | glUniformMatrix3fv | GLint location,GLsizei count,GLboolean transpose,const GLfloat *value | flush | noext | _mp_uniform, 9 * count * sizeof(GLfloat), value | | |
+| EVAS GL | void | glUniformMatrix4fv | GLint location,GLsizei count,GLboolean transpose,const GLfloat *value | flush | noext | _mp_uniform, 16 * count * sizeof(GLfloat),value | | |
+
+
+# Viewport
+| EVAS GL | void | glViewport | GLint x,GLint y,GLsizei width,GLsizei height | flush | noext | | | |
+
+# Enable/Disable
+| EVAS GL | void | glEnable | GLenum cap | flush | noext | | | |
+| EVAS GL | void | glDisable | GLenum cap | flush | noext | | | |
+
+# Line segments
+| EVAS GL | void | glLineWidth | GLfloat width | flush | noext | | | |
+
+# Polygon
+| EVAS GL | void | glPolygonOffset | GLfloat factor,GLfloat units | flush | noext | | | |
+
+# Pixel Rectangles
+| EVAS GL | void | glPixelStorei | GLenum pname,GLint param | flush | noext | | | |
+
+
+# Texturing
+| EVAS GL | void | glActiveTexture | GLenum texture | flush | noext | | | |
+
+# Texture Objects
+| EVAS GL | void | glGenTextures | GLsizei n,GLuint *textures | finish | noext | | | |
+| EVAS GL | void | glBindTexture | GLenum target,GLuint texture | flush | noext | | | |
+| EVAS GL | void | glDeleteTextures | GLsizei n,const GLuint *textures | flush | noext | _mp_delete_object, n * sizeof(GLuint), textures | | |
+
+
+# Texture Image Specification
+| EVAS GL | void | glTexImage2D | GLenum target,GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels | flush | noext | | | NeedMacro |
+| EVAS GL | void | glTexSubImage2D | GLenum target,GLint level,GLint xoffset,GLint yoffset,GLsizei width,GLsizei height,GLenum format,GLenum type,const void *pixels | flush | noext | | | NeedMacro |
+
+# Compressed Texture Images
+| EVAS GL | void | glCompressedTexImage2D | GLenum target,GLint level,GLenum internalformat,GLsizei width,GLsizei height,GLint border,GLsizei imageSize,const void *data | flush | noext | | | NeedMacro |
+| EVAS GL | void | glCompressedTexSubImage2D | GLenum target,GLint level,GLint xoffset,GLint yoffset,GLsizei width,GLsizei height,GLenum format,GLsizei imageSize,const void *data | flush | noext | | | NeedMacro |
+
+
+# Texture parameters
+| EVAS GL | void | glTexParameterf | GLenum target,GLenum pname,GLfloat param | flush | noext | | | |
+| EVAS GL | void | glTexParameterfv | GLenum target, GLenum pname, const GLfloat *params | flush | noext | _mp_default, sizeof(GLfloat), params | | |
+| EVAS GL | void | glTexParameteri | GLenum target,GLenum pname,GLint param | flush | noext | | | |
+| EVAS GL | void | glTexParameteriv | GLenum target, GLenum pname, const GLint *params | flush | noext | _mp_default, sizeof(GLint), params | | |
+
+# Scissor Test
+| EVAS GL | void | glScissor | GLint x,GLint y,GLsizei width,GLsizei height | flush | noext | | | |
+
+## Blending
+| EVAS GL | void | glBlendFunc | GLenum sfactor,GLenum dfactor | flush | noext | | | |
+| EVAS GL | void | glBlendColor | GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha | flush | noext | | | |
+
+
+# Fine Control of Buffer Updates
+| EVAS GL | void | glDepthMask | GLboolean flag | flush | noext | | | |
+
+# Clearing the Buffers
+| EVAS GL | void | glClear | GLbitfield mask | flush | noext | | | |
+| EVAS GL | void | glClearColor | GLfloat red,GLfloat green,GLfloat blue,GLfloat alpha | flush | noext | | | |
+
+# Reading and Copying Pixels
+| EVAS GL | void | glReadPixels | GLint x,GLint y,GLsizei width,GLsizei height,GLenum format,GLenum type,void *pixels | finish | noext | | | |
+
+# Binding & Managing Framebuffer Objects (GLES2_XX)
+| EVAS GL | void | glGenFramebuffers | GLsizei n,GLuint *framebuffers | finish | noext | | | |
+| EVAS GL | void | glBindFramebuffer | GLenum target,GLuint framebuffer | flush | noext | | | |
+| EVAS GL | void | glDeleteFramebuffers | GLsizei n,const GLuint *framebuffers | flush | noext | _mp_delete_object, n * sizeof(GLuint), framebuffers | | |
+
+# Renderbuffer Objects
+| EVAS GL | void | glGenRenderbuffers | GLsizei n,GLuint *renderbuffers | finish | noext | | | |
+| EVAS GL | void | glBindRenderbuffer | GLenum target,GLuint renderbuffer | flush | noext | | | |
+| EVAS GL | void | glDeleteRenderbuffers | GLsizei n,const GLuint *renderbuffers | flush | noext | _mp_delete_object, n * sizeof(GLuint), renderbuffers | | |
+| EVAS GL | void | glRenderbufferStorage | GLenum target,GLenum internalformat,GLsizei width,GLsizei height | flush | noext | | | |
+
+# Attaching Renderbuffer Images to Framebuffer
+| EVAS GL | void | glFramebufferRenderbuffer | GLenum target,GLenum attachment,GLenum renderbuffertarget,GLuint renderbuffer | flush | noext | | | |
+
+# Attaching Texture Images to a Framebuffer (GLES2_XX)
+| EVAS GL | void | glFramebufferTexture2D | GLenum target,GLenum attachment,GLenum textarget,GLuint texture,GLint level | flush | noext | | | |
+# Framebuffer Completeness (GLES2_XX)
+| EVAS GL | GLenum | glCheckFramebufferStatus | GLenum target | finish | noext | | | |
+
+
+# Special Functions
+| EVAS GL | void | glFlush | void | finish | noext | | | |
+| EVAS GL | void | glFinish | void | finish | noext | | | |
+| EVAS GL | void | glHint | GLenum target,GLenum mode | flush | noext | | | |
+
+
+# State and State Requests
+| EVAS GL | const GLubyte * | glGetString | GLenum name | finish | noext | | | |
+| EVAS GL | void | glGetBooleanv | GLenum pname,GLboolean *data | finish | noext | | | |
+| EVAS GL | void | glGetFloatv | GLenum pname,GLfloat *data | finish | noext | | | |
+| EVAS GL | void | glGetIntegerv | GLenum pname,GLint *data | finish | noext | | | |
+
+# Buffer Queries
+| EVAS GL | GLboolean | glIsBuffer | GLint buffer | finish | noext | | | |
+| EVAS GL | void | glGetBufferParameteriv | GLenum target, GLenum pname, GLint *params | finish | noext | | | |
+
+# Shader and Program Queries
+| EVAS GL | GLboolean | glIsShader | GLuint shader | finish | noext | | | |
+| EVAS GL | void | glGetShaderiv | GLuint shader,GLenum pname,GLint *params | finish | noext | | | |
+| EVAS GL | void | glGetAttachedShaders | GLuint program, GLsizei maxCount, GLsizei *count, GLuint *shaders | finish | noext | | | |
+| EVAS GL | void | glGetShaderInfoLog | GLuint shader,GLsizei bufSize,GLsizei *length,GLchar *infoLog | finish | noext | | | |
+| EVAS GL | void | glGetShaderSource | GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *source | finish | noext | | | |
+| EVAS GL | void | glGetShaderPrecisionFormat | GLenum shadertype, GLenum precisiontype, GLint *range, GLint *precision | finish | noext | | | |
+| EVAS GL | void | glGetVertexAttribfv | GLuint index, GLenum pname, GLfloat *params | finish | noext | | | |
+| EVAS GL | void | glGetVertexAttribiv | GLuint index, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS GL | GLboolean | glIsProgram | GLuint program | finish | noext | | | |
+| EVAS GL | void | glGetProgramInfoLog | GLuint program,GLsizei bufSize,GLsizei *length,GLchar *infoLog | finish | noext | | | |
+| EVAS GL | void | glGetProgramiv | GLuint program,GLenum pname,GLint *params | finish | noext | | | |
+
+
+# Framebuffer Objects Queries
+| EVAS GL | GLboolean | glIsFramebuffer | GLint framebuffer | finish | noext | | | |
+
+# Renderbuffer Object Queries
+| EVAS GL | GLboolean | glIsRenderbuffer | GLint renderbuffer | finish | noext | | | |
+| EVAS GL | void | glGetRenderbufferParameteriv | GLenum target, GLenum pname, GLint *params | finish | noext | | | |
+
+# Texture Queries
+| EVAS GL | GLboolean | glIsTexture | GLint texture | finish | noext | | | |
+
+| EVAS GL | void | glClearDepthf | GLclampf depth | finish | noext | | | |
+| EVAS GL | void | glDepthRangef | GLclampf zNear, GLclampf zFar | finish | noext | | | |
+| EVAS GL | void | glClearDepth | GLclampf depth | finish | noext | | | |
+| EVAS GL | void | glDepthRange | GLclampf zNear, GLclampf zFar | finish | noext | | | |
+| EVAS GL | void | glGetFramebufferAttachmentParameteriv | GLenum target, GLenum attachment, GLenum pname, GLint* params | finish | noext | | | |
+
+
+##################################################
+#
+# Evas GL APIs
+#
+##################################################
+# OpenGL-ES 2.0
+| EVAS GL API | void | glActiveTexture | GLenum texture | finish | noext | | | |
+| EVAS GL API | void | glAttachShader | GLuint program, GLuint shader | flush | noext | | | |
+| EVAS GL API | void | glBindAttribLocation | GLuint program, GLuint index, const char* name | finish | noext | _mp_default, strlen(name), name | | |
+| EVAS GL API | void | glBindBuffer | GLenum target, GLuint buffer | flush | noext | | | |
+| EVAS GL API | void | glBindFramebuffer | GLenum target, GLuint framebuffer | flush | noext | | | |
+| EVAS GL API | void | glBindRenderbuffer | GLenum target, GLuint renderbuffer | flush | noext | | | |
+| EVAS GL API | void | glBindTexture | GLenum target, GLuint texture | flush | noext | | | |
+| EVAS GL API | void | glBlendColor | GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha | flush | noext | | | |
+| EVAS GL API | void | glBlendEquation |  GLenum mode  | flush | noext | | | |
+| EVAS GL API | void | glBlendEquationSeparate | GLenum modeRGB, GLenum modeAlpha | flush | noext | | | |
+| EVAS GL API | void | glBlendFunc | GLenum sfactor, GLenum dfactor | flush | noext | | | |
+| EVAS GL API | void | glBlendFuncSeparate | GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha | flush | noext | | | |
+| EVAS GL API | void | glBufferData | GLenum target, GLsizeiptr size, const void* data, GLenum usage | finish | noext | | | |
+| EVAS GL API | void | glBufferSubData | GLenum target, GLintptr offset, GLsizeiptr size, const void* data | finish | noext | | | |
+| EVAS GL API | GLenum | glCheckFramebufferStatus | GLenum target | finish | noext | | | |
+| EVAS GL API | void | glClear | GLbitfield mask | finish | noext | | | |
+| EVAS GL API | void | glClearColor | GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha | finish | noext | | | |
+| EVAS GL API | void | glClearDepthf | GLclampf depth | finish | noext | | | |
+| EVAS GL API | void | glClearStencil | GLint s | finish | noext | | | |
+| EVAS GL API | void | glColorMask | GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha | finish | noext | | | |
+| EVAS GL API | void | glCompileShader | GLuint shader | flush | noext | | | |
+| EVAS GL API | void | glCompressedTexImage2D | GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void* data | flush | noext | | | NeedMacro |
+| EVAS GL API | void | glCompressedTexSubImage2D | GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void* data | flush | noext | | | NeedMacro |
+| EVAS GL API | void | glCopyTexImage2D | GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border | finish | noext | | | |
+| EVAS GL API | void | glCopyTexSubImage2D | GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height | finish | noext | | | |
+| EVAS GL API | GLuint | glCreateProgram | void | finish | noext | | | |
+| EVAS GL API | GLuint | glCreateShader | GLenum type | finish | noext | | | |
+| EVAS GL API | void | glCullFace | GLenum mode | finish | noext | | | |
+| EVAS GL API | void | glDeleteBuffers | GLsizei n, const GLuint* buffers | flush | noext | _mp_delete_object, n * sizeof(GLuint), buffers | | |
+| EVAS GL API | void | glDeleteFramebuffers | GLsizei n, const GLuint* framebuffers | flush | noext | _mp_delete_object, n * sizeof(GLuint), framebuffers | | |
+| EVAS GL API | void | glDeleteProgram | GLuint program | finish | noext | | | |
+| EVAS GL API | void | glDeleteRenderbuffers | GLsizei n, const GLuint* renderbuffers | flush | noext | _mp_delete_object, n * sizeof(GLuint), renderbuffers | | |
+| EVAS GL API | void | glDeleteShader | GLuint shader | flush | noext | | | |
+| EVAS GL API | void | glDeleteTextures | GLsizei n, const GLuint* textures | flush | noext | _mp_delete_object, n * sizeof(GLuint), textures | | |
+| EVAS GL API | void | glDepthFunc | GLenum func | finish | noext | | | |
+| EVAS GL API | void | glDepthMask | GLboolean flag | flush | noext | | | |
+| EVAS GL API | void | glDepthRangef | GLclampf zNear, GLclampf zFar | finish | noext | | | |
+| EVAS GL API | void | glDetachShader | GLuint program, GLuint shader | flush | noext | | | |
+| EVAS GL API | void | glDisable | GLenum cap | flush | noext | | | |
+| EVAS GL API | void | glDisableVertexAttribArray | GLuint index | flush | noext | | | |
+| EVAS GL API | void | glDrawArrays | GLenum mode, GLint first, GLsizei count | finish | noext | | | |
+| EVAS GL API | void | glDrawElements | GLenum mode, GLsizei count, GLenum type, const void* indices | finish | noext | | | |
+| EVAS GL API | void | glEnable | GLenum cap | flush | noext | | | |
+| EVAS GL API | void | glEnableVertexAttribArray | GLuint index | flush | noext | | | |
+| EVAS GL API | void | glFinish | void | finish | noext | | | |
+| EVAS GL API | void | glFlush | void | finish | noext | | | |
+| EVAS GL API | void | glFramebufferRenderbuffer | GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer | flush | noext | | | |
+| EVAS GL API | void | glFramebufferTexture2D | GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level | flush | noext | | | |
+| EVAS GL API | void | glFrontFace | GLenum mode | finish | noext | | | |
+| EVAS GL API | void | glGenBuffers | GLsizei n, GLuint* buffers | finish | noext | | | |
+| EVAS GL API | void | glGenerateMipmap | GLenum target | finish | noext | | | |
+| EVAS GL API | void | glGenFramebuffers | GLsizei n, GLuint* framebuffers | finish | noext | | | |
+| EVAS GL API | void | glGenRenderbuffers | GLsizei n, GLuint* renderbuffers | finish | noext | | | |
+| EVAS GL API | void | glGenTextures | GLsizei n, GLuint* textures | finish | noext | | | |
+| EVAS GL API | void | glGetActiveAttrib | GLuint program, GLuint index, GLsizei bufsize, GLsizei* length, GLint* size, GLenum* type, char* name | finish | noext | | | |
+| EVAS GL API | void | glGetActiveUniform | GLuint program, GLuint index, GLsizei bufsize, GLsizei* length, GLint* size, GLenum* type, char* name | finish | noext | | | |
+| EVAS GL API | void | glGetAttachedShaders | GLuint program, GLsizei maxcount, GLsizei* count, GLuint* shaders | finish | noext | | | |
+| EVAS GL API | int  | glGetAttribLocation | GLuint program, const char* name | finish | noext | | | |
+| EVAS GL API | void | glGetBooleanv | GLenum pname, GLboolean* params | finish | noext | | | |
+| EVAS GL API | void | glGetBufferParameteriv | GLenum target, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | GLenum | glGetError | void | finish | noext | | | |
+| EVAS GL API | void | glGetFloatv | GLenum pname, GLfloat* params | finish | noext | | | |
+| EVAS GL API | void | glGetFramebufferAttachmentParameteriv | GLenum target, GLenum attachment, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | void | glGetIntegerv | GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | void | glGetProgramiv | GLuint program, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | void | glGetProgramInfoLog | GLuint program, GLsizei bufsize, GLsizei* length, char* infolog | finish | noext | | | |
+| EVAS GL API | void | glGetRenderbufferParameteriv | GLenum target, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | void | glGetShaderiv | GLuint shader, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | void | glGetShaderInfoLog | GLuint shader, GLsizei bufsize, GLsizei* length, char* infolog | finish | noext | | | |
+| EVAS GL API | void | glGetShaderPrecisionFormat | GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision | finish | noext | | | |
+| EVAS GL API | void | glGetShaderSource | GLuint shader, GLsizei bufsize, GLsizei* length, char* source | finish | noext | | | |
+| EVAS GL API | const GLubyte* | glGetString | GLenum name | finish | noext | | | |
+| EVAS GL API | void | glGetTexParameterfv | GLenum target, GLenum pname, GLfloat* params | finish | noext | | | |
+| EVAS GL API | void | glGetTexParameteriv | GLenum target, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | void | glGetUniformfv | GLuint program, GLint location, GLfloat* params | finish | noext | | | |
+| EVAS GL API | void | glGetUniformiv | GLuint program, GLint location, GLint* params | finish | noext | | | |
+| EVAS GL API | int | glGetUniformLocation | GLuint program, const char* name | finish | noext | | | |
+| EVAS GL API | void | glGetVertexAttribfv | GLuint index, GLenum pname, GLfloat* params | finish | noext | | | |
+| EVAS GL API | void | glGetVertexAttribiv | GLuint index, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | void | glGetVertexAttribPointerv | GLuint index, GLenum pname, void** pointer | finish | noext | | | |
+| EVAS GL API | void | glHint | GLenum target, GLenum mode | flush | noext | | | |
+| EVAS GL API | GLboolean | glIsBuffer | GLuint buffer | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsEnabled | GLenum cap | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsFramebuffer | GLuint framebuffer | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsProgram | GLuint program | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsRenderbuffer | GLuint renderbuffer | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsShader | GLuint shader | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsTexture | GLuint texture | finish | noext | | | |
+| EVAS GL API | void | glLineWidth | GLfloat width | flush | noext | | | |
+| EVAS GL API | void | glLinkProgram | GLuint program | flush | noext | | | |
+| EVAS GL API | void | glPixelStorei | GLenum pname, GLint param | flush | noext | | | |
+| EVAS GL API | void | glPolygonOffset | GLfloat factor, GLfloat units | flush | noext | | | |
+| EVAS GL API | void | glReadPixels | GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels | finish | noext | | | |
+| EVAS GL API | void | glReleaseShaderCompiler | void | flush | noext | | | |
+| EVAS GL API | void | glRenderbufferStorage | GLenum target, GLenum internalformat, GLsizei width, GLsizei height | flush | noext | | | |
+| EVAS GL API | void | glSampleCoverage | GLclampf value, GLboolean invert | finish | noext | | | |
+| EVAS GL API | void | glScissor | GLint x, GLint y, GLsizei width, GLsizei height | flush | noext | | | |
+| EVAS GL API | void | glShaderBinary | GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length | finish | noext | | | |
+| EVAS GL API | void | glShaderSource | GLuint shader, GLsizei count, const char* const * string, const GLint* length | flush | noext | | | NeedMacro |
+| EVAS GL API | void | glStencilFunc | GLenum func, GLint ref, GLuint mask | finish | noext | | | |
+| EVAS GL API | void | glStencilFuncSeparate | GLenum face, GLenum func, GLint ref, GLuint mask | finish | noext | | | |
+| EVAS GL API | void | glStencilMask | GLuint mask | finish | noext | | | |
+| EVAS GL API | void | glStencilMaskSeparate | GLenum face, GLuint mask | finish | noext | | | |
+| EVAS GL API | void | glStencilOp | GLenum fail, GLenum zfail, GLenum zpass | finish | noext | | | |
+| EVAS GL API | void | glStencilOpSeparate | GLenum face, GLenum fail, GLenum zfail, GLenum zpass | finish | noext | | | |
+| EVAS GL API | void | glTexImage2D | GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void* pixels | flush | noext | | | NeedMacro |
+| EVAS GL API | void | glTexParameterf | GLenum target, GLenum pname, GLfloat param | flush | noext | | | |
+| EVAS GL API | void | glTexParameterfv | GLenum target, GLenum pname, const GLfloat* params | flush | noext | _mp_default, sizeof(GLfloat), params | | |
+| EVAS GL API | void | glTexParameteri | GLenum target, GLenum pname, GLint param | flush | noext | | | |
+| EVAS GL API | void | glTexParameteriv | GLenum target, GLenum pname, const GLint* params | flush | noext | _mp_default, sizeof(GLint), params | | |
+| EVAS GL API | void | glTexSubImage2D | GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void* pixels | flush | noext | | | NeedMacro |
+| EVAS GL API | void | glUniform1f | GLint location, GLfloat x | flush | noext | | | |
+| EVAS GL API | void | glUniform1fv | GLint location, GLsizei count, const GLfloat* v | flush | noext | _mp_uniform, 1 * count * sizeof(GLfloat), v | | |
+| EVAS GL API | void | glUniform1i | GLint location, GLint x | flush | noext | | | |
+| EVAS GL API | void | glUniform1iv | GLint location, GLsizei count, const GLint* v | flush | noext | _mp_uniform, 1 * count * sizeof(GLint), v | | |
+| EVAS GL API | void | glUniform2f | GLint location, GLfloat x, GLfloat y | flush | noext | | | |
+| EVAS GL API | void | glUniform2fv | GLint location, GLsizei count, const GLfloat* v | flush | noext |_mp_uniform, 2 * count * sizeof(GLfloat), v  | | |
+| EVAS GL API | void | glUniform2i | GLint location, GLint x, GLint y | flush | noext | | | |
+| EVAS GL API | void | glUniform2iv | GLint location, GLsizei count, const GLint* v | flush | noext | _mp_uniform, 2 * count * sizeof(GLint), v | | |
+| EVAS GL API | void | glUniform3f | GLint location, GLfloat x, GLfloat y, GLfloat z | flush | noext | | | |
+| EVAS GL API | void | glUniform3fv | GLint location, GLsizei count, const GLfloat* v | flush | noext |_mp_uniform, 3 * count * sizeof(GLfloat), v  | | |
+| EVAS GL API | void | glUniform3i | GLint location, GLint x, GLint y, GLint z | flush | noext | | | |
+| EVAS GL API | void | glUniform3iv | GLint location, GLsizei count, const GLint* v | flush | noext | _mp_uniform, 3 * count * sizeof(GLint), v | | |
+| EVAS GL API | void | glUniform4f | GLint location, GLfloat x, GLfloat y, GLfloat z, GLfloat w | flush | noext | | | |
+| EVAS GL API | void | glUniform4fv | GLint location, GLsizei count, const GLfloat* v | flush | noext | _mp_uniform, 4 * count * sizeof(GLfloat), v | | |
+| EVAS GL API | void | glUniform4i | GLint location, GLint x, GLint y, GLint z, GLint w | flush | noext | | | |
+| EVAS GL API | void | glUniform4iv | GLint location, GLsizei count, const GLint* v | flush | noext | _mp_uniform, 4 * count * sizeof(GLint), v | | |
+| EVAS GL API | void | glUniformMatrix2fv | GLint location, GLsizei count, GLboolean transpose, const GLfloat* value | flush | noext | _mp_uniform, 4 * count * sizeof(GLfloat), value | | |
+| EVAS GL API | void | glUniformMatrix3fv | GLint location, GLsizei count, GLboolean transpose, const GLfloat* value | flush | noext |  _mp_uniform, 9 * count * sizeof(GLfloat), value| | |
+| EVAS GL API | void | glUniformMatrix4fv | GLint location, GLsizei count, GLboolean transpose, const GLfloat* value | flush | noext |  _mp_uniform, 16 * count * sizeof(GLfloat), value| | |
+| EVAS GL API | void | glUseProgram | GLuint program | flush | noext | | | |
+| EVAS GL API | void | glValidateProgram | GLuint program | finish | noext | | | |
+| EVAS GL API | void | glVertexAttrib1f | GLuint indx, GLfloat x | finish | noext | | | |
+| EVAS GL API | void | glVertexAttrib1fv | GLuint indx, const GLfloat* values | finish | noext | | | |
+| EVAS GL API | void | glVertexAttrib2f | GLuint indx, GLfloat x, GLfloat y | finish | noext | | | |
+| EVAS GL API | void | glVertexAttrib2fv | GLuint indx, const GLfloat* values | finish | noext | | | |
+| EVAS GL API | void | glVertexAttrib3f | GLuint indx, GLfloat x, GLfloat y, GLfloat z | finish | noext | | | |
+| EVAS GL API | void | glVertexAttrib3fv | GLuint indx, const GLfloat* values | finish | noext | | | |
+| EVAS GL API | void | glVertexAttrib4f | GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w | finish | noext | | | |
+| EVAS GL API | void | glVertexAttrib4fv | GLuint indx, const GLfloat* values | finish | noext | | | |
+| EVAS GL API | void | glVertexAttribPointer | GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* ptr | finish | noext | | | |
+| EVAS GL API | void | glViewport | GLint x, GLint y, GLsizei width, GLsizei height | flush | noext | | | |
+# OpenGL-ES 2.0 extensions
+/* GL_OES_EGL_image */
+| EVAS GL API | void | glEvasGLImageTargetTexture2DOES | GLenum target, EvasGLImage image | finish | noext | | | |
+| EVAS GL API | void | glEvasGLImageTargetRenderbufferStorageOES | GLenum target, EvasGLImage image | finish | noext | | | |
+/* GL_OES_get_program_binary */
+| EVAS GL API | void | glGetProgramBinaryOES | GLuint program, GLsizei bufSize, GLsizei *length, GLenum *binaryFormat, void *binary | finish | noext | | | |
+| EVAS GL API | void | glProgramBinaryOES | GLuint program, GLenum binaryFormat, const void *binary, GLint length | flush | noext | _mp_default, length, binary | | |
+/* GL_OES_mapbuffer */
+| EVAS GL API | void * | glMapBufferOES | GLenum target, GLenum access | finish | noext | | | |
+| EVAS GL API | GLboolean | glUnmapBufferOES | GLenum target | finish | noext | | | |
+| EVAS GL API | void | glGetBufferPointervOES | GLenum target, GLenum pname, void** params | finish | noext | | | |
+/* GL_OES_texture_3D */
+| EVAS GL API | void | glTexImage3DOES | GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void* pixels | finish | noext | | | |
+| EVAS GL API | void | glTexSubImage3DOES | GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void* pixels | finish | noext | | | |
+| EVAS GL API | void | glCopyTexSubImage3DOES | GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height | finish | noext | | | |
+| EVAS GL API | void | glCompressedTexImage3DOES | GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void* data | finish | noext | | | |
+| EVAS GL API | void | glCompressedTexSubImage3DOES | GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void* data | finish | noext | | | |
+| EVAS GL API | void | glFramebufferTexture3DOES | GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset | finish | noext | | | |
+/* AMD_performance_monitor */
+| EVAS GL API | void | glGetPerfMonitorGroupsAMD | GLint* numGroups, GLsizei groupsSize, GLuint* groups | finish | noext | | | |
+| EVAS GL API | void | glGetPerfMonitorCountersAMD | GLuint group, GLint* numCounters, GLint* maxActiveCounters, GLsizei counterSize, GLuint* counters | finish | noext | | | |
+| EVAS GL API | void | glGetPerfMonitorGroupStringAMD | GLuint group, GLsizei bufSize, GLsizei* length, char* groupString | finish | noext | | | |
+| EVAS GL API | void | glGetPerfMonitorCounterStringAMD | GLuint group, GLuint counter, GLsizei bufSize, GLsizei* length, char* counterString | finish | noext | | | |
+| EVAS GL API | void | glGetPerfMonitorCounterInfoAMD | GLuint group, GLuint counter, GLenum pname, void* data | finish | noext | | | |
+| EVAS GL API | void | glGenPerfMonitorsAMD | GLsizei n, GLuint* monitors | finish | noext | | | |
+| EVAS GL API | void | glDeletePerfMonitorsAMD | GLsizei n, GLuint* monitors | finish | noext | | | |
+| EVAS GL API | void | glSelectPerfMonitorCountersAMD | GLuint monitor, GLboolean enable, GLuint group, GLint numCounters, GLuint* countersList | finish | noext | | | |
+| EVAS GL API | void | glBeginPerfMonitorAMD | GLuint monitor | finish | noext | | | |
+| EVAS GL API | void | glEndPerfMonitorAMD | GLuint monitor | finish | noext | | | |
+| EVAS GL API | void | glGetPerfMonitorCounterDataAMD | GLuint monitor, GLenum pname, GLsizei dataSize, GLuint* data, GLint* bytesWritten | finish | noext | | | |
+/* GL_EXT_discard_framebuffer */
+| EVAS GL API | void | glDiscardFramebuffer | GLenum target, GLsizei numAttachments, const GLenum* attachments | finish | noext | | | |
+| EVAS GL API | void | glDiscardFramebufferEXT | GLenum target, GLsizei numAttachments, const GLenum* attachments | finish | noext | | | |
+/* GL_EXT_multi_draw_arrays */
+| EVAS GL API | void | glMultiDrawArrays | GLenum mode, GLint* first, GLsizei* count, GLsizei primcount | finish | noext | | | |
+| EVAS GL API | void | glMultiDrawArraysEXT | GLenum mode, GLint* first, GLsizei* count, GLsizei primcount | finish | noext | | | |
+| EVAS GL API | void | glMultiDrawElements | GLenum mode, const GLsizei* count, GLenum type, const GLvoid** indices, GLsizei primcount | finish | noext | | | |
+| EVAS GL API | void | glMultiDrawElementsEXT | GLenum mode, const GLsizei* count, GLenum type, const GLvoid** indices, GLsizei primcount | finish | noext | | | |
+/* GL_NV_fence */
+| EVAS GL API | void | glDeleteFencesNV | GLsizei n, const GLuint* fences | finish | noext | | | |
+| EVAS GL API | void | glGenFencesNV | GLsizei n, GLuint* fences | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsFenceNV | GLuint fence | finish | noext | | | |
+| EVAS GL API | GLboolean | glTestFenceNV | GLuint fence | finish | noext | | | |
+| EVAS GL API | void | glGetFenceivNV | GLuint fence, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | void | glFinishFenceNV | GLuint fence | finish | noext | | | |
+| EVAS GL API | void | glSetFenceNV | GLuint a, GLenum b | finish | noext | | | |
+/* GL_QCOM_driver_control */
+| EVAS GL API | void | glGetDriverControlsQCOM | GLint* num, GLsizei size, GLuint* driverControls | finish | noext | | | |
+| EVAS GL API | void | glGetDriverControlStringQCOM | GLuint driverControl, GLsizei bufSize, GLsizei* length, char* driverControlString | finish | noext | | | |
+| EVAS GL API | void | glEnableDriverControlQCOM | GLuint driverControl | finish | noext | | | |
+| EVAS GL API | void | glDisableDriverControlQCOM | GLuint driverControl | finish | noext | | | |
+/* GL_QCOM_extended_get */
+| EVAS GL API | void | glExtGetTexturesQCOM | GLuint* textures, GLint maxTextures, GLint* numTextures | finish | noext | | | |
+| EVAS GL API | void | glExtGetBuffersQCOM | GLuint* buffers, GLint maxBuffers, GLint* numBuffers | finish | noext | | | |
+| EVAS GL API | void | glExtGetRenderbuffersQCOM | GLuint* renderbuffers, GLint maxRenderbuffers, GLint* numRenderbuffers | finish | noext | | | |
+| EVAS GL API | void | glExtGetFramebuffersQCOM | GLuint* framebuffers, GLint maxFramebuffers, GLint* numFramebuffers | finish | noext | | | |
+| EVAS GL API | void | glExtGetTexLevelParameterivQCOM | GLuint texture, GLenum face, GLint level, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | void | glExtTexObjectStateOverrideiQCOM | GLenum target, GLenum pname, GLint param | finish | noext | | | |
+| EVAS GL API | void | glExtGetTexSubImageQCOM | GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, void* texels | finish | noext | | | |
+| EVAS GL API | void | glExtGetBufferPointervQCOM | GLenum target, void** params | finish | noext | | | |
+/* GL_QCOM_extended_get2 */
+| EVAS GL API | void | glExtGetShadersQCOM | GLuint* shaders, GLint maxShaders, GLint* numShaders | finish | noext | | | |
+| EVAS GL API | void | glExtGetProgramsQCOM | GLuint* programs, GLint maxPrograms, GLint* numPrograms | finish | noext | | | |
+| EVAS GL API | GLboolean | glExtIsProgramBinaryQCOM | GLuint program | finish | noext | | | |
+| EVAS GL API | void | glExtGetProgramBinarySourceQCOM | GLuint program, GLenum shadertype, char* source, GLint* length | finish | noext | | | |
+# OpenGL-ES 1.1
+/* Available only in Common profile */
+| EVAS GL API | void | glAlphaFunc | GLenum func, GLclampf ref | finish | noext | | | |
+| EVAS GL API | void | glClipPlanef | GLenum plane, const GLfloat *equation | finish | noext | | | |
+| EVAS GL API | void | glColor4f | GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha | finish | noext | | | |
+| EVAS GL API | void | glFogf | GLenum pname, GLfloat param | finish | noext | | | |
+| EVAS GL API | void | glFogfv | GLenum pname, const GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glFrustumf | GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar | finish | noext | | | |
+| EVAS GL API | void | glGetClipPlanef | GLenum pname, GLfloat eqn[4] | finish | noext | | | |
+| EVAS GL API | void | glGetLightfv | GLenum light, GLenum pname, GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glGetMaterialfv | GLenum face, GLenum pname, GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glGetTexEnvfv | GLenum env, GLenum pname, GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glLightModelf | GLenum pname, GLfloat param | finish | noext | | | |
+| EVAS GL API | void | glLightModelfv | GLenum pname, const GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glLightf | GLenum light, GLenum pname, GLfloat param | finish | noext | | | |
+| EVAS GL API | void | glLightfv | GLenum light, GLenum pname, const GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glLoadMatrixf | const GLfloat *m | finish | noext | | | |
+| EVAS GL API | void | glMaterialf | GLenum face, GLenum pname, GLfloat param | finish | noext | | | |
+| EVAS GL API | void | glMaterialfv | GLenum face, GLenum pname, const GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glMultMatrixf | const GLfloat *m | finish | noext | | | |
+| EVAS GL API | void | glMultiTexCoord4f | GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q | finish | noext | | | |
+| EVAS GL API | void | glNormal3f | GLfloat nx, GLfloat ny, GLfloat nz | finish | noext | | | |
+| EVAS GL API | void | glOrthof | GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar | finish | noext | | | |
+| EVAS GL API | void | glPointParameterf | GLenum pname, GLfloat param | finish | noext | | | |
+| EVAS GL API | void | glPointParameterfv | GLenum pname, const GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glPointSize | GLfloat size | finish | noext | | | |
+| EVAS GL API | void | glPointSizePointerOES | GLenum type, GLsizei stride, const GLvoid * pointer | finish | noext | | | |
+| EVAS GL API | void | glRotatef | GLfloat angle, GLfloat x, GLfloat y, GLfloat z | finish | noext | | | |
+| EVAS GL API | void | glScalef | GLfloat x, GLfloat y, GLfloat z | finish | noext | | | |
+| EVAS GL API | void | glTexEnvf | GLenum target, GLenum pname, GLfloat param | finish | noext | | | |
+| EVAS GL API | void | glTexEnvfv | GLenum target, GLenum pname, const GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glTranslatef | GLfloat x, GLfloat y, GLfloat z | finish | noext | | | |
+/* Available in both Common and Common-Lite profiles */
+| EVAS GL API | void | glAlphaFuncx | GLenum func, GLclampx ref | finish | noext | | | |
+| EVAS GL API | void | glClearColorx | GLclampx red, GLclampx green, GLclampx blue, GLclampx alpha | finish | noext | | | |
+| EVAS GL API | void | glClearDepthx | GLclampx depth | finish | noext | | | |
+| EVAS GL API | void | glClientActiveTexture | GLenum texture | finish | noext | | | |
+| EVAS GL API | void | glClipPlanex | GLenum plane, const GLfixed *equation | finish | noext | | | |
+| EVAS GL API | void | glColor4ub | GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha | finish | noext | | | |
+| EVAS GL API | void | glColor4x | GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha | finish | noext | | | |
+| EVAS GL API | void | glColorPointer | GLint size, GLenum type, GLsizei stride, const GLvoid *pointer | finish | noext | | | |
+| EVAS GL API | void | glDepthRangex | GLclampx zNear, GLclampx zFar | finish | noext | | | |
+| EVAS GL API | void | glDisableClientState | GLenum array | finish | noext | | | |
+| EVAS GL API | void | glEnableClientState | GLenum array | finish | noext | | | |
+| EVAS GL API | void | glFogx | GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glFogxv | GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glFrustumx | GLfixed left, GLfixed right, GLfixed bottom, GLfixed top, GLfixed zNear, GLfixed zFar | finish | noext | | | |
+| EVAS GL API | void | glGetClipPlanex | GLenum pname, GLfixed eqn[4] | finish | noext | | | |
+| EVAS GL API | void | glGetFixedv | GLenum pname, GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glGetLightxv | GLenum light, GLenum pname, GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glGetMaterialxv | GLenum face, GLenum pname, GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glGetPointerv | GLenum pname, GLvoid **params | finish | noext | | | |
+| EVAS GL API | void | glGetTexEnviv | GLenum env, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS GL API | void | glGetTexEnvxv | GLenum env, GLenum pname, GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glGetTexParameterxv | GLenum target, GLenum pname, GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glLightModelx | GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glLightModelxv | GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glLightx | GLenum light, GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glLightxv | GLenum light, GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glLineWidthx | GLfixed width | finish | noext | | | |
+| EVAS GL API | void | glLoadIdentity | void | finish | noext | | | |
+| EVAS GL API | void | glLoadMatrixx | const GLfixed *m | finish | noext | | | |
+| EVAS GL API | void | glLogicOp | GLenum opcode | finish | noext | | | |
+| EVAS GL API | void | glMaterialx | GLenum face, GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glMaterialxv | GLenum face, GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glMatrixMode | GLenum mode | finish | noext | | | |
+| EVAS GL API | void | glMultMatrixx | const GLfixed *m | finish | noext | | | |
+| EVAS GL API | void | glMultiTexCoord4x | GLenum target, GLfixed s, GLfixed t, GLfixed r, GLfixed q | finish | noext | | | |
+| EVAS GL API | void | glNormal3x | GLfixed nx, GLfixed ny, GLfixed nz | finish | noext | | | |
+| EVAS GL API | void | glNormalPointer | GLenum type, GLsizei stride, const GLvoid *pointer | finish | noext | | | |
+| EVAS GL API | void | glOrthox | GLfixed left, GLfixed right, GLfixed bottom, GLfixed top, GLfixed zNear, GLfixed zFar | finish | noext | | | |
+| EVAS GL API | void | glPointParameterx | GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glPointParameterxv | GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glPointSizex | GLfixed size | finish | noext | | | |
+| EVAS GL API | void | glPolygonOffsetx | GLfixed factor, GLfixed units | finish | noext | | | |
+| EVAS GL API | void | glPopMatrix | void | finish | noext | | | |
+| EVAS GL API | void | glPushMatrix | void | finish | noext | | | |
+| EVAS GL API | void | glRotatex | GLfixed angle, GLfixed x, GLfixed y, GLfixed z | finish | noext | | | |
+| EVAS GL API | void | glSampleCoveragex | GLclampx value, GLboolean invert | finish | noext | | | |
+| EVAS GL API | void | glScalex | GLfixed x, GLfixed y, GLfixed z | finish | noext | | | |
+| EVAS GL API | void | glShadeModel | GLenum mode | finish | noext | | | |
+| EVAS GL API | void | glTexCoordPointer | GLint size, GLenum type, GLsizei stride, const GLvoid *pointer | finish | noext | | | |
+| EVAS GL API | void | glTexEnvi | GLenum target, GLenum pname, GLint param | finish | noext | | | |
+| EVAS GL API | void | glTexEnvx | GLenum target, GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glTexEnviv | GLenum target, GLenum pname, const GLint *params | finish | noext | | | |
+| EVAS GL API | void | glTexEnvxv | GLenum target, GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glTexParameterx | GLenum target, GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glTexParameterxv | GLenum target, GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glTranslatex | GLfixed x, GLfixed y, GLfixed z | finish | noext | | | |
+| EVAS GL API | void | glVertexPointer | GLint size, GLenum type, GLsizei stride, const GLvoid *pointer | finish | noext | | | |
+# OpenGL-ES 1.0
+/* GL_OES_blend_equation_separate */
+| EVAS GL API | void | glBlendEquationSeparateOES | GLenum modeRGB, GLenum modeAlpha | finish | noext | | | |
+/* GL_OES_blend_func_separate */
+| EVAS GL API | void | glBlendFuncSeparateOES | GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha | finish | noext | | | |
+/* GL_OES_blend_subtract */
+| EVAS GL API | void | glBlendEquationOES | GLenum mode | finish | noext | | | |
+/* GL_OES_draw_texture */
+| EVAS GL API | void | glDrawTexsOES | GLshort x, GLshort y, GLshort z, GLshort width, GLshort height | finish | noext | | | |
+| EVAS GL API | void | glDrawTexiOES | GLint x, GLint y, GLint z, GLint width, GLint height | finish | noext | | | |
+| EVAS GL API | void | glDrawTexxOES | GLfixed x, GLfixed y, GLfixed z, GLfixed width, GLfixed height | finish | noext | | | |
+| EVAS GL API | void | glDrawTexsvOES | const GLshort *coords | finish | noext | | | |
+| EVAS GL API | void | glDrawTexivOES | const GLint *coords | finish | noext | | | |
+| EVAS GL API | void | glDrawTexxvOES | const GLfixed *coords | finish | noext | | | |
+| EVAS GL API | void | glDrawTexfOES | GLfloat x, GLfloat y, GLfloat z, GLfloat width, GLfloat height | finish | noext | | | |
+| EVAS GL API | void | glDrawTexfvOES | const GLfloat *coords | finish | noext | | | |
+/* GL_OES_fixed_point */
+| EVAS GL API | void | glAlphaFuncxOES | GLenum func, GLclampx ref | finish | noext | | | |
+| EVAS GL API | void | glClearColorxOES | GLclampx red, GLclampx green, GLclampx blue, GLclampx alpha | finish | noext | | | |
+| EVAS GL API | void | glClearDepthxOES | GLclampx depth | finish | noext | | | |
+| EVAS GL API | void | glClipPlanexOES | GLenum plane, const GLfixed *equation | finish | noext | | | |
+| EVAS GL API | void | glColor4xOES | GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha | finish | noext | | | |
+| EVAS GL API | void | glDepthRangexOES | GLclampx zNear, GLclampx zFar | finish | noext | | | |
+| EVAS GL API | void | glFogxOES | GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glFogxvOES | GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glFrustumxOES | GLfixed left, GLfixed right, GLfixed bottom, GLfixed top, GLfixed zNear, GLfixed zFar | finish | noext | | | |
+| EVAS GL API | void | glGetClipPlanexOES | GLenum pname, GLfixed eqn[4] | finish | noext | | | |
+| EVAS GL API | void | glGetFixedvOES | GLenum pname, GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glGetLightxvOES | GLenum light, GLenum pname, GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glGetMaterialxvOES | GLenum face, GLenum pname, GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glGetTexEnvxvOES | GLenum env, GLenum pname, GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glGetTexParameterxvOES | GLenum target, GLenum pname, GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glLightModelxOES | GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glLightModelxvOES | GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glLightxOES | GLenum light, GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glLightxvOES | GLenum light, GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glLineWidthxOES | GLfixed width | finish | noext | | | |
+| EVAS GL API | void | glLoadMatrixxOES | const GLfixed *m | finish | noext | | | |
+| EVAS GL API | void | glMaterialxOES | GLenum face, GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glMaterialxvOES | GLenum face, GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glMultMatrixxOES | const GLfixed *m | finish | noext | | | |
+| EVAS GL API | void | glMultiTexCoord4xOES | GLenum target, GLfixed s, GLfixed t, GLfixed r, GLfixed q | finish | noext | | | |
+| EVAS GL API | void | glNormal3xOES | GLfixed nx, GLfixed ny, GLfixed nz | finish | noext | | | |
+| EVAS GL API | void | glOrthoxOES | GLfixed left, GLfixed right, GLfixed bottom, GLfixed top, GLfixed zNear, GLfixed zFar | finish | noext | | | |
+| EVAS GL API | void | glPointParameterxOES | GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glPointParameterxvOES | GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glPointSizexOES | GLfixed size | finish | noext | | | |
+| EVAS GL API | void | glPolygonOffsetxOES | GLfixed factor, GLfixed units | finish | noext | | | |
+| EVAS GL API | void | glRotatexOES | GLfixed angle, GLfixed x, GLfixed y, GLfixed z | finish | noext | | | |
+| EVAS GL API | void | glSampleCoveragexOES | GLclampx value, GLboolean invert | finish | noext | | | |
+| EVAS GL API | void | glScalexOES | GLfixed x, GLfixed y, GLfixed z | finish | noext | | | |
+| EVAS GL API | void | glTexEnvxOES | GLenum target, GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glTexEnvxvOES | GLenum target, GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glTexParameterxOES | GLenum target, GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glTexParameterxvOES | GLenum target, GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glTranslatexOES | GLfixed x, GLfixed y, GLfixed z | finish | noext | | | |
+/* GL_OES_framebuffer_object */
+| EVAS GL API | GLboolean | glIsRenderbufferOES | GLuint renderbuffer | finish | noext | | | |
+| EVAS GL API | void | glBindRenderbufferOES | GLenum target, GLuint renderbuffer | flush | noext | | | |
+| EVAS GL API | void | glDeleteRenderbuffersOES | GLsizei n, const GLuint* renderbuffers | flush | noext | _mp_delete_object, n * sizeof(GLuint), renderbuffers | | |
+| EVAS GL API | void | glGenRenderbuffersOES | GLsizei n, GLuint* renderbuffers | finish | noext | | | |
+| EVAS GL API | void | glRenderbufferStorageOES | GLenum target, GLenum internalformat, GLsizei width, GLsizei height | flush | noext | | | |
+| EVAS GL API | void | glGetRenderbufferParameterivOES | GLenum target, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsFramebufferOES | GLuint framebuffer | finish | noext | | | |
+| EVAS GL API | void | glBindFramebufferOES | GLenum target, GLuint framebuffer | flush | noext | | | |
+| EVAS GL API | void | glDeleteFramebuffersOES | GLsizei n, const GLuint* framebuffers | flush | noext |  _mp_delete_object, n * sizeof(GLuint), framebuffers| | |
+| EVAS GL API | void | glGenFramebuffersOES | GLsizei n, GLuint* framebuffers | finish | noext | | | |
+| EVAS GL API | GLenum | glCheckFramebufferStatusOES | GLenum target | finish | noext | | | |
+| EVAS GL API | void | glFramebufferRenderbufferOES | GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer | flush | noext | | | |
+| EVAS GL API | void | glFramebufferTexture2DOES | GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level | flush | noext | | | |
+| EVAS GL API | void | glGetFramebufferAttachmentParameterivOES | GLenum target, GLenum attachment, GLenum pname, GLint* params | finish | noext | | | |
+| EVAS GL API | void | glGenerateMipmapOES | GLenum target | finish | noext | | | |
+/* GL_OES_matrix_palette */
+| EVAS GL API | void | glCurrentPaletteMatrixOES | GLuint matrixpaletteindex | finish | noext | | | |
+| EVAS GL API | void | glLoadPaletteFromModelViewMatrixOES | void | finish | noext | | | |
+| EVAS GL API | void | glMatrixIndexPointerOES | GLint size, GLenum type, GLsizei stride, const GLvoid *pointer | finish | noext | | | |
+| EVAS GL API | void | glWeightPointerOES | GLint size, GLenum type, GLsizei stride, const GLvoid *pointer | finish | noext | | | |
+/* GL_OES_query_matrix */
+| EVAS GL API | GLbitfield | glQueryMatrixxOES | GLfixed mantissa[16], GLint exponent[16] | finish | noext | | | |
+/* GL_OES_single_precision */
+| EVAS GL API | void | glDepthRangefOES | GLclampf zNear, GLclampf zFar | finish | noext | | | |
+| EVAS GL API | void | glFrustumfOES | GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar | finish | noext | | | |
+| EVAS GL API | void | glOrthofOES | GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar | finish | noext | | | |
+| EVAS GL API | void | glClipPlanefOES | GLenum plane, const GLfloat *equation | finish | noext | | | |
+| EVAS GL API | void | glGetClipPlanefOES | GLenum pname, GLfloat eqn[4] | finish | noext | | | |
+| EVAS GL API | void | glClearDepthfOES | GLclampf depth | finish | noext | | | |
+/* GL_OES_texture_cube_map */
+| EVAS GL API | void | glTexGenfOES | GLenum coord, GLenum pname, GLfloat param | finish | noext | | | |
+| EVAS GL API | void | glTexGenfvOES | GLenum coord, GLenum pname, const GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glTexGeniOES | GLenum coord, GLenum pname, GLint param | finish | noext | | | |
+| EVAS GL API | void | glTexGenivOES | GLenum coord, GLenum pname, const GLint *params | finish | noext | | | |
+| EVAS GL API | void | glTexGenxOES | GLenum coord, GLenum pname, GLfixed param | finish | noext | | | |
+| EVAS GL API | void | glTexGenxvOES | GLenum coord, GLenum pname, const GLfixed *params | finish | noext | | | |
+| EVAS GL API | void | glGetTexGenfvOES | GLenum coord, GLenum pname, GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glGetTexGenivOES | GLenum coord, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS GL API | void | glGetTexGenxvOES | GLenum coord, GLenum pname, GLfixed *params | finish | noext | | | |
+/* GL_OES_vertex_array_object */
+| EVAS GL API | void | glBindVertexArrayOES | GLuint array | finish | noext | | | |
+| EVAS GL API | void | glDeleteVertexArraysOES | GLsizei n, const GLuint *arrays | finish | noext | | | |
+| EVAS GL API | void | glGenVertexArraysOES | GLsizei n, GLuint *arrays | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsVertexArrayOES | GLuint array | finish | noext | | | |
+/* GL_APPLE_copy_texture_levels */
+| EVAS GL API | void | glCopyTextureLevelsAPPLE | GLuint destinationTexture, GLuint sourceTexture, GLint sourceBaseLevel, GLsizei sourceLevelCount | finish | noext | | | |
+| EVAS GL API | void | glRenderbufferStorageMultisampleAPPLE | GLenum a, GLsizei b, GLenum c, GLsizei d, GLsizei e | finish | noext | | | |
+| EVAS GL API | void | glResolveMultisampleFramebufferAPPLE | void | finish | noext | | | |
+| EVAS GL API | GLsync | glFenceSyncAPPLE | GLenum condition, GLbitfield flags | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsSyncAPPLE | GLsync sync | finish | noext | | | |
+| EVAS GL API | void | glDeleteSyncAPPLE | GLsync sync | finish | noext | | | |
+| EVAS GL API | GLenum | glClientWaitSyncAPPLE | GLsync sync, GLbitfield flags, EvasGLuint64 timeout | finish | noext | | | |
+| EVAS GL API | void | glWaitSyncAPPLE | GLsync sync, GLbitfield flags, EvasGLuint64 timeout | finish | noext | | | |
+| EVAS GL API | void | glGetInteger64vAPPLE | GLenum pname, EvasGLint64 *params | finish | noext | | | |
+| EVAS GL API | void | glGetSyncivAPPLE | GLsync sync, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values | finish | noext | | | |
+/* GL_EXT_map_buffer_range */
+| EVAS GL API | void * | glMapBufferRangeEXT | GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access | finish | noext | | | |
+| EVAS GL API | void | glFlushMappedBufferRangeEXT | GLenum target, GLintptr offset, GLsizeiptr length | finish | noext | | | |
+/* GL_EXT_multisampled_render_to_texture */
+| EVAS GL API | void | glRenderbufferStorageMultisampleEXT | GLenum a, GLsizei b, GLenum c, GLsizei d, GLsizei e| finish | noext | | | |
+| EVAS GL API | void | glFramebufferTexture2DMultisample | GLenum a, GLenum b, GLenum c, GLuint d, GLint e, GLsizei f | flush | noext | | | |
+| EVAS GL API | void | glFramebufferTexture2DMultisampleEXT | GLenum a, GLenum b, GLenum c, GLuint d, GLint e, GLsizei f | flush | noext | | | |
+/* GL_EXT_robustness */
+| EVAS GL API | GLenum | glGetGraphicsResetStatus | void | finish | noext | | | |
+| EVAS GL API | GLenum | glGetGraphicsResetStatusEXT | void | finish | noext | | | |
+| EVAS GL API | void | glReadnPixels | GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void *data | finish | noext | | | |
+| EVAS GL API | void | glReadnPixelsEXT | GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void *data | finish | noext | | | |
+| EVAS GL API | void | glGetnUniformfv | GLuint program, GLint location, GLsizei bufSize, float *params | finish | noext | | | |
+| EVAS GL API | void | glGetnUniformfvEXT | GLuint program, GLint location, GLsizei bufSize, float *params | finish | noext | | | |
+| EVAS GL API | void | glGetnUniformiv | GLuint program, GLint location, GLsizei bufSize, GLint *params | finish | noext | | | |
+| EVAS GL API | void | glGetnUniformivEXT | GLuint program, GLint location, GLsizei bufSize, GLint *params | finish | noext | | | |
+/* GL_EXT_texture_storage */
+| EVAS GL API | void | glTexStorage1DEXT | GLenum target, GLsizei levels, GLenum internalformat, GLsizei width | finish | noext | | | |
+| EVAS GL API | void | glTexStorage2DEXT | GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height | finish | noext | | | |
+| EVAS GL API | void | glTexStorage3DEXT | GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth | finish | noext | | | |
+| EVAS GL API | void | glTextureStorage1DEXT | GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width | finish | noext | | | |
+| EVAS GL API | void | glTextureStorage2DEXT | GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height | finish | noext | | | |
+| EVAS GL API | void | glTextureStorage3DEXT | GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth | finish | noext | | | |
+/* GL_IMG_user_clip_plane */
+| EVAS GL API | void | glClipPlanefIMG | GLenum a, const GLfloat * b | finish | noext | | | |
+| EVAS GL API | void | glClipPlanexIMG | GLenum a, const GLfixed * b | finish | noext | | | |
+/* GL_IMG_multisampled_render_to_texture */
+| EVAS GL API | void | glRenderbufferStorageMultisampleIMG | GLenum a, GLsizei b, GLenum c, GLsizei d, GLsizei e | flush | noext | | | |
+| EVAS GL API | void | glFramebufferTexture2DMultisampleIMG | GLenum a, GLenum b, GLenum c, GLuint d, GLint e, GLsizei f | flush | noext | | | |
+/* GL_QCOM_tiled_rendering */
+| EVAS GL API | void | glStartTilingQCOM | GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield preserveMask | flush | noext | | | |
+| EVAS GL API | void | glEndTilingQCOM | GLbitfield preserveMask | flush | noext | | | |
+# OpenGL-ES 3.0
+| EVAS GL API | void | glBeginQuery | GLenum target, GLuint id | finish | noext | | | |
+| EVAS GL API | void | glBeginTransformFeedback | GLenum primitiveMode | finish | noext | | | |
+| EVAS GL API | void | glBindBufferBase | GLenum target, GLuint index, GLuint buffer | finish | noext | | | |
+| EVAS GL API | void | glBindBufferRange | GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size | finish | noext | | | |
+| EVAS GL API | void | glBindSampler | GLuint unit, GLuint sampler | finish | noext | | | |
+| EVAS GL API | void | glBindTransformFeedback | GLenum target, GLuint id | finish | noext | | | |
+| EVAS GL API | void | glBindVertexArray | GLuint array | finish | noext | | | |
+| EVAS GL API | void | glBlitFramebuffer | GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter | finish | noext | | | |
+| EVAS GL API | void | glClearBufferfi | GLenum buffer, GLint drawBuffer, GLfloat depth, GLint stencil | finish | noext | | | |
+| EVAS GL API | void | glClearBufferfv | GLenum buffer, GLint drawBuffer, const GLfloat * value | finish | noext | | | |
+| EVAS GL API | void | glClearBufferiv | GLenum buffer, GLint drawBuffer, const GLint * value | finish | noext | | | |
+| EVAS GL API | void | glClearBufferuiv | GLenum buffer, GLint drawBuffer, const GLuint * value | finish | noext | | | |
+| EVAS GL API | GLenum | glClientWaitSync | GLsync sync, GLbitfield flags, EvasGLuint64 timeout | finish | noext | | | |
+| EVAS GL API | void | glCompressedTexImage3D | GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid * data | finish | noext | | | |
+| EVAS GL API | void | glCompressedTexSubImage3D | GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid * data | finish | noext | | | |
+| EVAS GL API | void | glCopyBufferSubData | GLenum readtarget, GLenum writetarget, GLintptr readoffset, GLintptr writeoffset, GLsizeiptr size | finish | noext | | | |
+| EVAS GL API | void | glCopyTexSubImage3D | GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height | finish | noext | | | |
+| EVAS GL API | void | glDeleteQueries | GLsizei n, const GLuint * ids | finish | noext | | | |
+| EVAS GL API | void | glDeleteSamplers | GLsizei n, const GLuint * samplers | finish | noext | | | |
+| EVAS GL API | void | glDeleteSync | GLsync sync | finish | noext | | | |
+| EVAS GL API | void | glDeleteTransformFeedbacks | GLsizei n, const GLuint *ids | finish | noext | | | |
+| EVAS GL API | void | glDeleteVertexArrays | GLsizei n, const GLuint *arrays | finish | noext | | | |
+| EVAS GL API | void | glDrawArraysInstanced | GLenum mode, GLint first, GLsizei count, GLsizei primcount | finish | noext | | | |
+| EVAS GL API | void | glDrawBuffers | GLsizei n, const GLenum *bufs | finish | noext | | | |
+| EVAS GL API | void | glDrawElementsInstanced | GLenum mode, GLsizei count, GLenum type, const void * indices, GLsizei primcount | finish | noext | | | |
+| EVAS GL API | void | glDrawRangeElements | GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid * indices | finish | noext | | | |
+| EVAS GL API | void | glEndQuery | GLenum target | finish | noext | | | |
+| EVAS GL API | void | glEndTransformFeedback | void | finish | noext | | | |
+| EVAS GL API | GLsync | glFenceSync | GLenum condition, GLbitfield flags | finish | noext | | | |
+| EVAS GL API | GLsync | glFlushMappedBufferRange | GLenum target, GLintptr offset, GLsizeiptr length | finish | noext | | | |
+| EVAS GL API | void | glFramebufferTextureLayer | GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer | finish | noext | | | |
+| EVAS GL API | void | glGenQueries | GLsizei n, GLuint * ids | finish | noext | | | |
+| EVAS GL API | void | glGenSamplers | GLsizei n, GLuint *samplers | finish | noext | | | |
+| EVAS GL API | void | glGenTransformFeedbacks | GLsizei n, GLuint *ids | finish | noext | | | |
+| EVAS GL API | void | glGenVertexArrays | GLsizei n, GLuint *arrays | finish | noext | | | |
+| EVAS GL API | void | glGetActiveUniformBlockiv | GLuint program, GLuint uniformBlockIndex, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS GL API | void | glGetActiveUniformBlockName | GLuint program, GLuint uniformBlockIndex, GLsizei bufSize, GLsizei *length, GLchar *uniformBlockName | finish | noext | | | |
+| EVAS GL API | void | glGetActiveUniformsiv | GLuint program, GLsizei uniformCount, const GLuint *uniformIndices, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS GL API | void | glGetBufferParameteri64v | GLenum target, GLenum value, EvasGLint64 * data | finish | noext | | | |
+| EVAS GL API | void | glGetBufferPointerv | GLenum target, GLenum pname, GLvoid ** params | finish | noext | | | |
+| EVAS GL API | GLint | glGetFragDataLocation | GLuint program, const char * name | finish | noext | | | |
+| EVAS GL API | void | glGetInteger64i_v | GLenum target, GLuint index, EvasGLint64 * data | finish | noext | | | |
+| EVAS GL API | void | glGetInteger64v | GLenum pname, EvasGLint64 * data | finish | noext | | | |
+| EVAS GL API | void | glGetIntegeri_v | GLenum target, GLuint index, GLint * data | finish | noext | | | |
+| EVAS GL API | void | glGetInternalformativ | GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint *params | finish | noext | | | |
+| EVAS GL API | void | glGetProgramBinary | GLuint program, GLsizei bufsize, GLsizei *length, GLenum *binaryFormat, void *binary | finish | noext | | | |
+| EVAS GL API | void | glGetQueryiv | GLenum target, GLenum pname, GLint * params | finish | noext | | | |
+| EVAS GL API | void | glGetQueryObjectuiv | GLuint id, GLenum pname, GLuint * params | finish | noext | | | |
+| EVAS GL API | void | glGetSamplerParameterfv | GLuint sampler, GLenum pname, GLfloat * params | finish | noext | | | |
+| EVAS GL API | void | glGetSamplerParameteriv | GLuint sampler, GLenum pname, GLint * params | finish | noext | | | |
+| EVAS GL API | const GLubyte * | glGetStringi | GLenum name, GLuint index | finish | noext | | | |
+| EVAS GL API | void | glGetSynciv | GLsync sync, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values | finish | noext | | | |
+| EVAS GL API | void | glGetTransformFeedbackVarying | GLuint program, GLuint index, GLsizei bufSize, GLsizei * length, GLsizei * size, GLenum * type, char * name | finish | noext | | | |
+| EVAS GL API | GLuint | glGetUniformBlockIndex | GLuint program, const GLchar *uniformBlockName | finish | noext | | | |
+| EVAS GL API | void | glGetUniformIndices | GLuint program, GLsizei uniformCount, const GLchar *const*uniformNames, GLuint *uniformIndices | finish | noext | | | |
+| EVAS GL API | void | glGetUniformuiv | GLuint program, GLint location, GLuint* params | finish | noext | | | |
+| EVAS GL API | void | glGetVertexAttribIiv | GLuint index, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS GL API | void | glGetVertexAttribIuiv | GLuint index, GLenum pname, GLuint *params | finish | noext | | | |
+| EVAS GL API | void | glInvalidateFramebuffer | GLenum target, GLsizei numAttachments, const GLenum *attachments | finish | noext | | | |
+| EVAS GL API | void | glInvalidateSubFramebuffer | GLenum target, GLsizei numAttachments, const GLenum *attachments, GLint x, GLint y, GLsizei width, GLsizei height | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsQuery | GLuint id | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsSampler | GLuint id | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsSync | GLsync sync | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsTransformFeedback | GLuint id | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsVertexArray | GLuint array | finish | noext | | | |
+| EVAS GL API | void * | glMapBufferRange | GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access | finish | noext | | | |
+| EVAS GL API | void | glPauseTransformFeedback | void | finish | noext | | | |
+| EVAS GL API | void | glProgramBinary | GLuint program, GLenum binaryFormat, const void *binary, GLsizei length | flush | noext | _mp_default, length, binary | | |
+| EVAS GL API | void | glProgramParameteri | GLuint program, GLenum pname, GLint value | finish | noext | | | |
+| EVAS GL API | void | glReadBuffer | GLenum src | finish | noext | | | |
+| EVAS GL API | void | glRenderbufferStorageMultisample | GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height | finish | noext | | | |
+| EVAS GL API | void | glResumeTransformFeedback | void | finish | noext | | | |
+| EVAS GL API | void | glSamplerParameterf | GLuint sampler, GLenum pname, GLfloat param | finish | noext | | | |
+| EVAS GL API | void | glSamplerParameterfv | GLuint sampler, GLenum pname, const GLfloat * params | finish | noext | | | |
+| EVAS GL API | void | glSamplerParameteri | GLuint sampler, GLenum pname, GLint param | finish | noext | | | |
+| EVAS GL API | void | glSamplerParameteriv | GLuint sampler, GLenum pname, const GLint * params | finish | noext | | | |
+| EVAS GL API | void | glTexImage3D | GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data | finish | noext | | | |
+| EVAS GL API | void | glTexStorage2D | GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height | finish | noext | | | |
+| EVAS GL API | void | glTexStorage3D | GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth | finish | noext | | | |
+| EVAS GL API | void | glTexSubImage3D | GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid * data | finish | noext | | | |
+| EVAS GL API | void | glTransformFeedbackVaryings | GLuint program, GLsizei count, const GLchar *const* varyings, GLenum bufferMode | finish | noext | | | |
+| EVAS GL API | void | glUniform1ui | GLint location, GLuint v0 | finish | noext | | | |
+| EVAS GL API | void | glUniform1uiv | GLint location, GLsizei count, const GLuint *value | finish | noext | | | |
+| EVAS GL API | void | glUniform2ui | GLint location, GLuint v0, GLuint v1 | finish | noext | | | |
+| EVAS GL API | void | glUniform2uiv | GLint location, GLsizei count, const GLuint *value | finish | noext | | | |
+| EVAS GL API | void | glUniform3ui | GLint location, GLuint v0, GLuint v1, GLuint v2 | finish | noext | | | |
+| EVAS GL API | void | glUniform3uiv | GLint location, GLsizei count, const GLuint *value | finish | noext | | | |
+| EVAS GL API | void | glUniform4ui | GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3 | finish | noext | | | |
+| EVAS GL API | void | glUniform4uiv | GLint location, GLsizei count, const GLuint *value | finish | noext | | | |
+| EVAS GL API | void | glUniformBlockBinding | GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding | finish | noext | | | |
+| EVAS GL API | void | glUniformMatrix2x3fv | GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glUniformMatrix3x2fv | GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glUniformMatrix2x4fv | GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glUniformMatrix4x2fv | GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glUniformMatrix3x4fv | GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glUniformMatrix4x3fv | GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | GLboolean | glUnmapBuffer | GLenum target | finish | noext | | | |
+| EVAS GL API | void | glVertexAttribDivisor | GLuint index, GLuint divisor | finish | noext | | | |
+| EVAS GL API | void | glVertexAttribI4i | GLuint index, GLint v0, GLint v1, GLint v2, GLint v3 | finish | noext | | | |
+| EVAS GL API | void | glVertexAttribI4iv | GLuint index, const GLint *v | finish | noext | | | |
+| EVAS GL API | void | glVertexAttribI4ui | GLuint index, GLuint v0, GLuint v1, GLuint v2, GLuint v3 | finish | noext | | | |
+| EVAS GL API | void | glVertexAttribI4uiv | GLuint index, const GLuint *v | finish | noext | | | |
+| EVAS GL API | void | glVertexAttribIPointer | GLuint index, GLint size, GLenum type, GLsizei stride, const GLvoid *pointer | finish | noext | | | |
+| EVAS GL API | void | glWaitSync | GLsync sync, GLbitfield flags, EvasGLuint64 timeout | finish | noext | | | |
+# OpenGL-ES 3.1
+| EVAS GL API | void | glDispatchCompute | GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z | finish | noext | | | |
+| EVAS GL API | void | glDispatchComputeIndirect | GLintptr indirect | finish | noext | | | |
+| EVAS GL API | void | glDrawArraysIndirect | GLenum mode, const void *indirect | finish | noext | | | |
+| EVAS GL API | void | glDrawElementsIndirect | GLenum mode, GLenum type, const void *indirect | finish | noext | | | |
+| EVAS GL API | void | glFramebufferParameteri | GLenum target, GLenum pname, GLint param | finish | noext | | | |
+| EVAS GL API | void | glGetFramebufferParameteriv | GLenum target, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS GL API | void | glGetProgramInterfaceiv | GLuint program, GLenum programInterface, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS GL API | GLuint | glGetProgramResourceIndex | GLuint program, GLenum programInterface, const GLchar *name | finish | noext | | | |
+| EVAS GL API | void | glGetProgramResourceName | GLuint program, GLenum programInterface, GLuint index, GLsizei bufSize, GLsizei *length, GLchar *name | finish | noext | | | |
+| EVAS GL API | void | glGetProgramResourceiv | GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum *props, GLsizei bufSize, GLsizei *length, GLint *params | finish | noext | | | |
+| EVAS GL API | GLint |glGetProgramResourceLocation | GLuint program, GLenum programInterface, const GLchar *name | finish | noext | | | |
+| EVAS GL API | void | glUseProgramStages | GLuint pipeline, GLbitfield stages, GLuint program | finish | noext | | | |
+| EVAS GL API | void | glActiveShaderProgram | GLuint pipeline, GLuint program | finish | noext | | | |
+| EVAS GL API | GLuint | glCreateShaderProgramv | GLenum type, GLsizei count, const GLchar *const*strings | finish | noext | | | |
+| EVAS GL API | void | glBindProgramPipeline | GLuint pipeline | finish | noext | | | |
+| EVAS GL API | void | glDeleteProgramPipelines | GLsizei n, const GLuint *pipelines | finish | noext | | | |
+| EVAS GL API | void | glGenProgramPipelines | GLsizei n, GLuint *pipelines | finish | noext | | | |
+| EVAS GL API | GLboolean | glIsProgramPipeline | GLuint pipeline | finish | noext | | | |
+| EVAS GL API | void | glGetProgramPipelineiv | GLuint pipeline, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform1i | GLuint program, GLint location, GLint v0 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform2i | GLuint program, GLint location, GLint v0, GLint v1 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform3i | GLuint program, GLint location, GLint v0, GLint v1, GLint v2 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform4i | GLuint program, GLint location, GLint v0, GLint v1, GLint v2, GLint v3 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform1ui | GLuint program, GLint location, GLuint v0 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform2ui | GLuint program, GLint location, GLuint v0, GLuint v1 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform3ui | GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform4ui | GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform1f | GLuint program, GLint location, GLfloat v0 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform2f | GLuint program, GLint location, GLfloat v0, GLfloat v1 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform3f | GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform4f | GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3 | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform1iv | GLuint program, GLint location, GLsizei count, const GLint *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform2iv | GLuint program, GLint location, GLsizei count, const GLint *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform3iv | GLuint program, GLint location, GLsizei count, const GLint *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform4iv | GLuint program, GLint location, GLsizei count, const GLint *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform1uiv | GLuint program, GLint location, GLsizei count, const GLuint *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform2uiv | GLuint program, GLint location, GLsizei count, const GLuint *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform3uiv | GLuint program, GLint location, GLsizei count, const GLuint *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform4uiv | GLuint program, GLint location, GLsizei count, const GLuint *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform1fv | GLuint program, GLint location, GLsizei count, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform2fv | GLuint program, GLint location, GLsizei count, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform3fv | GLuint program, GLint location, GLsizei count, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniform4fv | GLuint program, GLint location, GLsizei count, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniformMatrix2fv | GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniformMatrix3fv | GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniformMatrix4fv | GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniformMatrix2x3fv | GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniformMatrix3x2fv | GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniformMatrix2x4fv | GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniformMatrix4x2fv | GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniformMatrix3x4fv | GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glProgramUniformMatrix4x3fv | GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value | finish | noext | | | |
+| EVAS GL API | void | glValidateProgramPipeline | GLuint pipeline | finish | noext | | | |
+| EVAS GL API | void | glGetProgramPipelineInfoLog | GLuint pipeline, GLsizei bufSize, GLsizei *length, GLchar *infoLog | finish | noext | | | |
+| EVAS GL API | void | glBindImageTexture | GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format | finish | noext | | | |
+| EVAS GL API | void | glGetBooleani_v | GLenum target, GLuint index, GLboolean *data | finish | noext | | | |
+| EVAS GL API | void | glMemoryBarrier | GLbitfield barriers | finish | noext | | | |
+| EVAS GL API | void | glMemoryBarrierByRegion | GLbitfield barriers | finish | noext | | | |
+| EVAS GL API | void | glTexStorage2DMultisample | GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations | finish | noext | | | |
+| EVAS GL API | void | glGetMultisamplefv | GLenum pname, GLuint index, GLfloat *val | finish | noext | | | |
+| EVAS GL API | void | glSampleMaski | GLuint maskNumber, GLbitfield mask | finish | noext | | | |
+| EVAS GL API | void | glGetTexLevelParameteriv | GLenum target, GLint level, GLenum pname, GLint *params | finish | noext | | | |
+| EVAS GL API | void | glGetTexLevelParameterfv | GLenum target, GLint level, GLenum pname, GLfloat *params | finish | noext | | | |
+| EVAS GL API | void | glBindVertexBuffer | GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride | finish | noext | | | |
+| EVAS GL API | void | glVertexAttribFormat | GLuint attribindex, GLint size, GLenum type, GLboolean normalized, GLuint relativeoffset | finish | noext | | | |
+| EVAS GL API | void | glVertexAttribIFormat | GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset | finish | noext | | | |
+| EVAS GL API | void | glVertexAttribBinding | GLuint attribindex, GLuint bindingindex | finish | noext | | | |
+| EVAS GL API | void | glVertexBindingDivisor | GLuint bindingindex, GLuint divisor | finish | noext | | | |
+###
+| EVAS GL API | void | glEGLImageTargetTexture2DOES | GLenum target,void *image | finish | ext | | | |
+| EVAS GL API | void | glEGLImageTargetRenderbufferStorageOES | GLenum target, void *image | flush | ext | | | |
+### Evas GL
+| EVAS GL API | void | _evgl_glDiscardFramebufferEXT | GLenum target, GLsizei numAttachments, const GLenum* attachments | finish | ext | | | |
+| EVAS GL API | void | _evgl_glEvasGLImageTargetTexture2D | GLenum target, EvasGLImage image | finish | ext | | | |
+| EVAS GL API | void | _evgl_glEvasGLImageTargetRenderbufferStorage | GLenum target, EvasGLImage image | finish | ext | | | |
+| EVAS GL API | EvasGLImage | _evgl_evasglCreateImage | int target, void* buffer, const int *attrib_list | finish | ext | | | |
+| EVAS GL API | void | _evgl_evasglDestroyImage | EvasGLImage image | finish | ext | | | |
+| EVAS GL API | EvasGLImage | _evgl_evasglCreateImageForContext | Evas_GL *evas_gl, Evas_GL_Context *ctx, int target, void* buffer, const int *attrib_list | finish | ext | | | |
+| EVAS GL API | EvasGLSync | _evgl_evasglCreateSync | Evas_GL *evas_gl, unsigned int type, const int *attrib_list | finish | ext | | | |
+| EVAS GL API | Eina_Bool | _evgl_evasglDestroySync | Evas_GL *evas_gl, EvasGLSync sync | finish | ext | | | |
+| EVAS GL API | int | _evgl_evasglClientWaitSync | Evas_GL *evas_gl, EvasGLSync sync | finish | ext | | | |
+| EVAS GL API | Eina_Bool | _evgl_evasglGetSyncAttrib | Evas_GL *evas_gl, EvasGLSync sync, int attribute, int *value | finish | ext | | | |
+| EVAS GL API | Eina_Bool | _evgl_evasglSignalSync | Evas_GL *evas_gl, EvasGLSync sync, unsigned mode | finish | ext | | | |
+| EVAS GL API | int | _evgl_evasglWaitSync | Evas_GL *evas_gl, EvasGLSync sync, int flags | finish | ext | | | |
+| EVAS GL API | Eina_Bool | _evgl_evasglBindWaylandDisplay | Evas_GL *evas_gl, void *wl_display | finish | ext | | | |
+| EVAS GL API | Eina_Bool | _evgl_evasglUnbindWaylandDisplay | Evas_GL *evas_gl, void *wl_display | finish | ext | | | |
+| EVAS GL API | Eina_Bool | _evgl_evasglQueryWaylandBuffer | Evas_GL *evas_gl, void *buffer, int attribute, int *value | finish | ext | | | |
