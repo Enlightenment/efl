@@ -15,6 +15,12 @@ static int event_freeze_count = 0;
 
 typedef struct _Eo_Callback_Description Eo_Callback_Description;
 
+typedef struct {
+   EINA_INLIST;
+   unsigned int idx;
+   unsigned int inserted_before;
+} Efl_Event_Callback_Frame;
+
 typedef struct
 {
    const char                *name;
@@ -37,7 +43,8 @@ typedef struct
    Eo_Callback_Description  **callbacks;
    unsigned int               callbacks_count;
 
-   unsigned short             walking_list;
+   Eina_Inlist                *event_frame;
+
    unsigned short             event_freeze_count;
 #ifdef EFL_EVENT_SPECIAL_SKIP
    unsigned short             event_cb_efl_event_callback_add_count;
@@ -75,6 +82,9 @@ typedef struct
    const Efl_Event_Description *desc;
    unsigned int current;
 } Eo_Current_Callback_Description;
+
+#define EVENT_STACK_PUSH(pd, fr) pd->event_frame = eina_inlist_prepend(pd->event_frame , EINA_INLIST_GET(fr));
+#define EVENT_STACK_POP(pd) pd->event_frame = eina_inlist_remove(pd->event_frame, pd->event_frame);
 
 static int _eo_nostep_alloc = -1;
 
@@ -1046,7 +1056,7 @@ _eo_callbacks_clear(Efl_Object_Data *pd)
    /* If there are no deletions waiting. */
    if (!pd->deletions_waiting) return;
    /* Abort if we are currently walking the list. */
-   if (pd->walking_list > 0) return;
+   if (pd->event_frame) return;
 
    pd->deletions_waiting = EINA_FALSE;
    while (i < pd->callbacks_count)
@@ -1121,6 +1131,17 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
    *itr = cb;
 
    pd->callbacks_count++;
+
+   //update possible event emissions
+   {
+      Efl_Event_Callback_Frame *frame;
+
+      EINA_INLIST_FOREACH(pd->event_frame , frame)
+        {
+           if (itr-pd->callbacks < frame->idx)
+             frame->inserted_before ++;
+        }
+   }
 }
 
 EOLIAN static Eina_Bool
@@ -1160,7 +1181,7 @@ _efl_object_event_callback_clean(Eo *obj, Efl_Object_Data *pd,
                                  Eo_Callback_Description **cb)
 {
    (*cb)->delete_me = EINA_TRUE;
-   if (pd->walking_list > 0)
+   if (pd->event_frame)
      pd->deletions_waiting = EINA_TRUE;
    else
      _eo_callback_remove(pd, cb);
@@ -1291,6 +1312,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    Efl_Event ev;
    unsigned int idx;
    Eina_Bool callback_already_stopped, ret;
+   Efl_Event_Callback_Frame frame;
 
    if (pd->callbacks_count == 0) return EINA_FALSE;
 #ifdef EFL_EVENT_SPECIAL_SKIP
@@ -1302,6 +1324,10 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
             (pd->event_cb_efl_event_del_count == 0)) return EINA_FALSE;
 #endif
 
+   memset(&frame, 0, sizeof(Efl_Event_Callback_Frame));
+
+   EVENT_STACK_PUSH(pd, &frame);
+
    lookup = NULL;
    callback_already_stopped = pd->callback_stopped;
    ret = EINA_TRUE;
@@ -1309,8 +1335,6 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    ev.object = obj_id;
    ev.desc = desc;
    ev.info = event_info;
-
-   pd->walking_list++;
 
    // Handle event that require to restart where we were in the nested list walking
    // relatively unlikely so improve l1 instr cache by using goto
@@ -1320,6 +1344,7 @@ restart_back:
 
    for (; idx > 0; idx--)
      {
+        frame.idx = idx;
         cb = pd->callbacks + idx - 1;
         if (!(*cb)->delete_me)
           {
@@ -1377,6 +1402,8 @@ restart_back:
                     goto end;
                }
           }
+        idx += frame.inserted_before;
+        frame.inserted_before = 0;
      }
 
 end:
@@ -1387,7 +1414,8 @@ end:
         pd->current = eina_inlist_remove(pd->current, EINA_INLIST_GET(lookup));
      }
 
-   pd->walking_list--;
+   EVENT_STACK_POP(pd);
+
    _eo_callbacks_clear(pd);
 
    pd->callback_stopped = callback_already_stopped;
