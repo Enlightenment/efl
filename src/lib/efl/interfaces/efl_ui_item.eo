@@ -3,46 +3,50 @@ interface Efl.Ui.Item {
    methods {
       @property prev {
          get {
-            [[Get the item before $ it in the widget's internal list of
-              items.
+            [[Get the item before this one in the widget's list of items.
 
-              See also \@ref efl_ui_item_next_get.
+              See also @.next.
             ]]
          }
          values {
-              item: Efl.Ui.Item; [[The item before the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
+            item: Efl.Ui.Item; [[The item before the object in its parent's
+                                list. If there is no previous item or in case
+                                of error, $null is returned.]]
          }
       }
       @property next {
          get {
-            [[Get the item after $ it in the widget's
-              internal list of items.
+            [[Get the item after this one in the widget's list of items.
 
-              See also \@ref efl_ui_item_prev_get.
+              See also @.prev.
             ]]
          }
          values {
-              item: Efl.Ui.Item; [[The item after the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
+            item: Efl.Ui.Item; [[The item after the object in its parent's
+                                list. If there is no next item or in case
+                                of error, $null is returned.]]
          }
       }
       @property selected {
+         [[Indicates whether this item is currently selected.]]
          get {
-             [[Get the selected state of $item.]]
+            [[Get the selected state of this item.]]
          }
          set {
              [[Set the selected state of $item.
+
                This sets the selected state of the given item $it.
                $true for selected, $false for not selected.
 
                If a new item is selected the previously selected will
-               be unselected. Previously selected item can be get with
-               function @Efl.Ui.Menu.selected_item.get.
+               be unselected. Previously selected item can be retrieved
+               with @Efl.Ui.Menu.selected_item.get.
 
                Selected items will be highlighted.
              ]]
          }
          values {
-              selected: bool; [[The selection state.]]
+            selected: bool; [[The selection state.]]
          }
       }
    }

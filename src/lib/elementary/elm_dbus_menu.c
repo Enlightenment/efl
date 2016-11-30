@@ -423,9 +423,8 @@ static Elm_DBus_Menu *
 _elm_dbus_menu_add(Eo *menu)
 {
    Elm_DBus_Menu *dbus_menu;
-   const Eina_List *ret = NULL;
-   Eina_List *items, *l;
    Elm_Object_Item *obj_item;
+   Eina_Iterator *it = NULL;
 
    ELM_MENU_CHECK(menu) NULL;
 
@@ -445,9 +444,8 @@ _elm_dbus_menu_add(Eo *menu)
 
    dbus_menu->menu = menu;
 
-   ret = efl_ui_menu_items_get(menu);
-   items = (Eina_List *)ret;
-   EINA_LIST_FOREACH (items, l, obj_item)
+   it = efl_ui_menu_items_get(menu);
+   EINA_ITERATOR_FOREACH(it, obj_item)
      {
         ELM_MENU_ITEM_DATA_GET(obj_item, item);
         if (!_menu_add_recursive(dbus_menu, item))
@@ -456,10 +454,12 @@ _elm_dbus_menu_add(Eo *menu)
              goto error_hash;
           }
      }
+   eina_iterator_free(it);
 
    return dbus_menu;
 
 error_hash:
+   eina_iterator_free(it);
    eina_hash_free(dbus_menu->elements);
 error_menu:
    free(dbus_menu);
