@@ -302,6 +302,20 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 }
 
 static void
+_mouse_move_dispatch(Ecore_Evas *ee)
+{
+   Ecore_Evas_Cursor *cursor;
+   Eina_Iterator *itr = eina_hash_iterator_data_new(ee->prop.cursors);
+
+   EINA_SAFETY_ON_NULL_RETURN(itr);
+
+   EINA_ITERATOR_FOREACH(itr, cursor)
+     _ecore_evas_mouse_move_process(ee, cursor->pos_x, cursor->pos_y,
+                                    ecore_loop_time_get());
+   eina_iterator_free(itr);
+}
+
+static void
 _rotation_do(Ecore_Evas *ee, int rotation, int resize)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -422,8 +436,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
          * Yes, it's required to update the mouse position, relatively to
          * widgets. After a rotation change, e.g., the mouse might not be over
          * a button anymore. */
-        _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-                                       ecore_loop_time_get());
+        _mouse_move_dispatch(ee);
      }
    else
      {
@@ -437,8 +450,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
          *
          * NB: Is This Really Needed ? Yes, it's required to update the mouse
          * position, relatively to widgets. */
-        _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-                                       ecore_loop_time_get());
+        _mouse_move_dispatch(ee);
 
         /* call the ecore_evas' resize function */
         if (ee->func.fn_resize) ee->func.fn_resize(ee);

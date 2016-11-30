@@ -60,14 +60,13 @@ _ecore_evas_mouse_move_process_fb(Ecore_Evas *ee, int x, int y)
    Ecore_Evas_Cursor *cursor;
    int fbw, fbh;
 
-   ee->mouse.x = x;
-   ee->mouse.y = y;
    ecore_fb_size_get(&fbw, &fbh);
 
    pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
    EINA_SAFETY_ON_NULL_RETURN(cursor);
-
+   cursor->pos_x = x;
+   cursor->pos_y = y;
    if (cursor->object)
      {
         evas_object_show(cursor->object);
@@ -361,8 +360,14 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, in
 static void
 _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
 {
+   Evas_Device *pointer;
+   Ecore_Evas_Cursor *cursor;
    Evas_Engine_Info_FB *einfo;
    int rot_dif;
+
+   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   cursor = eina_hash_find(ee->prop.cursors, &pointer);
+   EINA_SAFETY_ON_NULL_RETURN(cursor);
 
    if (ee->rotation == rotation) return;
    einfo = (Evas_Engine_Info_FB *)evas_engine_info_get(ee->evas);
@@ -416,7 +421,7 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
    else
      evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
 
-   _ecore_evas_mouse_move_process_fb(ee, ee->mouse.x, ee->mouse.y);
+   _ecore_evas_mouse_move_process_fb(ee, cursor->pos_x, cursor->pos_y);
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 

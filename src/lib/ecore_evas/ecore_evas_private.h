@@ -194,6 +194,8 @@ struct _Ecore_Evas_Cursor {
    struct {
       int       x, y;
    } hot;
+   int pos_x;
+   int pos_y;
 };
 
 struct _Ecore_Evas
@@ -226,10 +228,6 @@ struct _Ecore_Evas
       int      l, r, t, b;
       int      changed : 1;
    } shadow;
-
-   struct {
-      int      x, y;
-   } mouse;
 
    struct {
       int      w, h;

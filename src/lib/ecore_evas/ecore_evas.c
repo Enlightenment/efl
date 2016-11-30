@@ -3140,8 +3140,6 @@ _ecore_evas_mouse_move_process_internal(Ecore_Evas *ee,
    Eina_Bool send_event = EINA_TRUE;
    Ecore_Evas_Cursor *cursor;
    int fx, fy, fw, fh, evt_x, evt_y;
-   ee->mouse.x = x;
-   ee->mouse.y = y;
 
    evas_output_framespace_get(ee->evas, &fx, &fy, &fw, &fh);
 
@@ -3149,6 +3147,8 @@ _ecore_evas_mouse_move_process_internal(Ecore_Evas *ee,
      pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
    EINA_SAFETY_ON_NULL_RETURN(cursor);
+   cursor->pos_x = x;
+   cursor->pos_y = y;
    if (cursor->object)
      {
         evas_object_show(cursor->object);
