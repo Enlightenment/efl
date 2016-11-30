@@ -11,7 +11,7 @@ elm_code_line_indent_get(const char *prevtext, unsigned int prevlength)
 {
    unsigned int count = 0;
    char *buf, *ptr = (char *)prevtext;
-   char next;
+   char next, last;
 
    buf = malloc((prevlength + 3) * sizeof(char));
    while (count < prevlength)
@@ -28,6 +28,9 @@ elm_code_line_indent_get(const char *prevtext, unsigned int prevlength)
    if (count < prevlength)
      {
         next = *ptr;
+        last = prevtext[prevlength - 1];
+
+        // comment handling
         // TODO this should all be based on comment SCOPE not text matching
         if (next == '/')
           {
@@ -50,6 +53,18 @@ elm_code_line_indent_get(const char *prevtext, unsigned int prevlength)
                }
              else
                strcpy(buf + count, "*");
+          }
+        // VERY simple handling of braces
+        else if (last == '{')
+          {
+             strcpy(buf + count, "   ");
+          }
+        else if (last == '}')
+          {
+             if (count >= 2)
+               buf[count-2] = '\0';
+             else if (count >= 1)
+               buf[count-1] = '\0';
           }
      }
    return buf;
