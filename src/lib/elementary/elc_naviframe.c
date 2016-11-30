@@ -1807,11 +1807,12 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
 
         /* these 2 signals MUST take place simultaneously */
         elm_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
-        evas_object_show(VIEW(prev_it));
         elm_object_signal_emit(VIEW(prev_it), "elm,state,prev,popped", "elm");
-
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
+
+        //Show hidden previous view when pop transition begins.
+        evas_object_show(VIEW(prev_it));
 
         if (!nfo) goto on_error;
 
