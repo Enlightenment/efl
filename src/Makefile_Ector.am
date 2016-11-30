@@ -111,7 +111,9 @@ static_libs/rg_etc/etc2_encoder.c
 # Triangulator static lib
 triangulator_sources = \
 static_libs/triangulator/triangulator_stroker.c \
+static_libs/triangulator/triangulator_stroker.h \
 static_libs/triangulator/triangulator_simple.c \
+static_libs/triangulator/triangulator_simple.h \
 $(NULL)
 
 # And the default software backend
