@@ -81,7 +81,6 @@
  * @li @ref Eina_Tiler_Group split, merge and navigates into 2D tiled regions.
  * @li @ref Eina_Trash_Group container of unused but allocated data.
  * @li @ref Eina_Value_Group container for generic value storage and access.
- * @li @ref Eina_Model_Group container for data with user defined hierarchy/structure.
  *
  * The tools that are available are (see @ref Eina_Tools_Group):
  * @li @ref Eina_Benchmark_Group helper to write benchmarks.

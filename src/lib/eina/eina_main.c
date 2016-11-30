@@ -69,9 +69,6 @@
 #include "eina_value.h"
 #include "eina_evlog.h"
 #include "eina_freeq.h"
-/* no model for now
-#include "eina_model.h"
- */
 
 /*============================================================================*
 *                                  Local                                     *
@@ -156,9 +153,6 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(rbtree);
    S(file);
    S(safepointer);
-/* no model for now
-   S(model);
- */
 #undef S
 
 struct eina_desc_setup
@@ -204,9 +198,6 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(rbtree),
    S(file),
    S(safepointer),
-/* no model for now
-   S(model)
- */
 #undef S
 };
 static const size_t _eina_desc_setup_len = sizeof(_eina_desc_setup) /

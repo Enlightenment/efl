@@ -2873,51 +2873,6 @@ START_TEST(eina_value_test_optional_struct_members)
 }
 END_TEST
 
-#if 0
-START_TEST(eina_value_test_model)
-{
-   Eina_Value *value, inv;
-   Eina_Model *model, *m;
-   char *str;
-
-   eina_init();
-
-   value = eina_value_new(EINA_VALUE_TYPE_MODEL);
-   fail_unless(value != NULL);
-
-   model = eina_model_new(EINA_MODEL_TYPE_GENERIC);
-   fail_unless(model != NULL);
-
-   fail_unless(eina_value_setup(&inv, EINA_VALUE_TYPE_INT));
-   fail_unless(eina_value_set(&inv, 1234));
-   fail_unless(eina_model_property_set(model, "i", &inv));
-   eina_value_flush(&inv);
-
-   fail_unless(eina_value_set(value, model));
-   fail_unless(eina_model_refcount(model) == 2);
-
-   fail_unless(eina_value_get(value, &m));
-   fail_unless(m == model);
-   fail_unless(eina_model_refcount(m) == 2);
-
-   fail_unless(eina_value_pset(value, &model));
-   fail_unless(eina_model_refcount(model) == 2);
-
-   str = eina_value_to_string(value);
-   fail_unless(str != NULL);
-   ck_assert_str_eq(str, "Eina_Model_Type_Generic({i: 1234}, [])");
-   free(str);
-
-   eina_value_free(value);
-
-   fail_unless(eina_model_refcount(model) == 1);
-   eina_model_unref(model);
-
-   eina_shutdown();
-}
-END_TEST
-#endif
-
 void
 eina_test_value(TCase *tc)
 {
@@ -2946,7 +2901,4 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_optional_int);
    tcase_add_test(tc, eina_value_test_optional_string);
    tcase_add_test(tc, eina_value_test_optional_struct_members);
-#if 0
-   tcase_add_test(tc, eina_value_test_model);
-#endif
 }

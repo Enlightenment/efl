@@ -39,9 +39,6 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_value.h"
-/* no model for now
-#include "eina_model.h" // uses eina_value.h
- */
 
 /*============================================================================*
 *                                  Local                                     *
@@ -4572,128 +4569,6 @@ EAPI const Eina_Value_Type _EINA_VALUE_TYPE_OPTIONAL = {
   _eina_value_type_optional_pget
 };
 
-/* no model for now
-static Eina_Bool
-_eina_value_type_model_setup(const Eina_Value_Type *type EINA_UNUSED, void *mem)
-{
-   Eina_Model **tmem = mem;
-   *tmem = NULL;
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_eina_value_type_model_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem)
-{
-   Eina_Model **tmem = mem;
-   if (*tmem)
-     {
-        eina_model_unref(*tmem);
-        *tmem = NULL;
-     }
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_eina_value_type_model_copy(const Eina_Value_Type *type EINA_UNUSED, const void *src, void *dst)
-{
-   const Eina_Model * const *s = src;
-   Eina_Model **d = dst;
-   if (*s)
-     *d = eina_model_copy(*s); // is it better to deep-copy?
-   else
-     *d = NULL;
-   return EINA_TRUE;
-}
-
-static int
-_eina_value_type_model_compare(const Eina_Value_Type *type EINA_UNUSED, const void *a, const void *b)
-{
-   const Eina_Model * const *ta = a;
-   const Eina_Model * const *tb = b;
-
-   if ((!*ta) && (!*tb)) return 0;
-   else if (!*ta) return 1;
-   else if (!*tb) return -1;
-   else return eina_model_compare(*ta, *tb);
-}
-
-static Eina_Bool
-_eina_value_type_model_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
-{
-   const Eina_Model *v = *(const Eina_Model **)type_mem;
-
-   if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
-       convert == EINA_VALUE_TYPE_STRING)
-     {
-        char *other_mem = v ? eina_model_to_string(v) : NULL;
-        Eina_Bool ret = eina_value_type_pset(convert, convert_mem, &other_mem);
-        free(other_mem);
-        return ret;
-     }
-   else
-     {
-        return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_eina_value_type_model_vset(const Eina_Value_Type *type EINA_UNUSED, void *mem, va_list args)
-{
-   Eina_Model **tmem = mem, *tmp;
-
-   tmp = va_arg(args, Eina_Model *);
-
-   if (tmp) eina_model_ref(tmp);
-   if (*tmem) eina_model_unref(*tmem);
-
-   *tmem = tmp;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_eina_value_type_model_pset(const Eina_Value_Type *type EINA_UNUSED, void *mem, const void *ptr)
-{
-   Eina_Model **tmem = mem;
-   Eina_Model **p = (Eina_Model **)ptr;
-
-   if (*tmem == *p) return EINA_TRUE;
-
-   if (*p) eina_model_ref(*p);
-   if (*tmem) eina_model_unref(*tmem);
-
-   *tmem = *p;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_eina_value_type_model_pget(const Eina_Value_Type *type EINA_UNUSED, const void *mem, void *ptr)
-{
-   Eina_Model **tmem = (Eina_Model **)mem;
-   Eina_Model **p = ptr;
-   *p = *tmem;
-   return EINA_TRUE;
-}
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_MODEL = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(Eina_Model *),
-  "Eina_Model",
-  _eina_value_type_model_setup,
-  _eina_value_type_model_flush,
-  _eina_value_type_model_copy,
-  _eina_value_type_model_compare,
-  _eina_value_type_model_convert_to,
-  NULL, // no convert from
-  _eina_value_type_model_vset,
-  _eina_value_type_model_pset,
-  _eina_value_type_model_pget
-};
-*/
-
 /* keep all basic types inlined in an array so we can compare if it's
  * a basic type using pointer arithmetic.
  *
@@ -5130,10 +5005,7 @@ eina_value_init(void)
    EINA_VALUE_TYPE_TIMEVAL = &_EINA_VALUE_TYPE_TIMEVAL;
    EINA_VALUE_TYPE_BLOB = &_EINA_VALUE_TYPE_BLOB;
    EINA_VALUE_TYPE_STRUCT = &_EINA_VALUE_TYPE_STRUCT;
-/* no model for now
-   EINA_VALUE_TYPE_MODEL = &_EINA_VALUE_TYPE_MODEL;
- */
-   
+
    EINA_VALUE_TYPE_OPTIONAL       = &_EINA_VALUE_TYPE_OPTIONAL;
 
    EINA_VALUE_BLOB_OPERATIONS_MALLOC = &_EINA_VALUE_BLOB_OPERATIONS_MALLOC;
@@ -5217,9 +5089,6 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_HASH = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_BLOB = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT = NULL;
-/* no model for now
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_MODEL = NULL;
- */
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL = NULL;
 
 

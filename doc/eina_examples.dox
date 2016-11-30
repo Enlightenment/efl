@@ -30,15 +30,6 @@
  * @li @ref eina_log_02.c
  * @li @ref eina_log_03.c
  * @li @ref eina_magic_01.c
- * @li @ref eina_model_01.c
- * @li @ref eina_model_02.c
- * @li @ref eina_model_03.c
- * @li @ref eina_model_04_animal.c
- * @li @ref eina_model_04_child.c
- * @li @ref eina_model_04_human.c
- * @li @ref eina_model_04_main.c
- * @li @ref eina_model_04_parrot.c
- * @li @ref eina_model_04_whistler.c
  * @li @ref eina_simple_xml_parser_01.c
  * @li @ref eina_str_01.c
  * @li @ref eina_strbuf_01.c
@@ -87,15 +78,6 @@
  * @example eina_log_02.c
  * @example eina_log_03.c
  * @example eina_magic_01.c
- * @example eina_model_01.c
- * @example eina_model_02.c
- * @example eina_model_03.c
- * @example eina_model_04_animal.c
- * @example eina_model_04_child.c
- * @example eina_model_04_human.c
- * @example eina_model_04_main.c
- * @example eina_model_04_parrot.c
- * @example eina_model_04_whistler.c
  * @example eina_simple_xml_parser_01.c
  * @example eina_str_01.c
  * @example eina_strbuf_01.c

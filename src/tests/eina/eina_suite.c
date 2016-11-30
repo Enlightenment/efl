@@ -62,8 +62,6 @@ static const Efl_Test_Case etc[] = {
    { "Simple Xml Parser", eina_test_simple_xml_parser},
    { "Value", eina_test_value },
    { "COW", eina_test_cow },
-   // Disabling Eina_Model test
-   //   { "Model", eina_test_model },
    { "Barrier", eina_test_barrier },
    { "Tmp String", eina_test_tmpstr },
    { "Locking", eina_test_locking },

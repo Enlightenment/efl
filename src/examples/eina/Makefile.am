@@ -58,10 +58,6 @@ eina_magic_01.c \
 eina_xattr_01.c \
 eina_xattr_02.c
 
-#eina_model_01.c \
-#eina_model_02.c \
-#eina_model_03.c
-
 EXTRA_PROGRAMS = \
 eina_accessor_01 \
 eina_array_01 \
@@ -102,24 +98,6 @@ eina_inarray_02 \
 eina_inarray_03 \
 eina_xattr_01 \
 eina_xattr_02
-
-#eina_model_01 \
-#eina_model_02 \
-#eina_model_03 \
-#eina_model_04
-
-#eina_model_04_SOURCES = \
-#eina_model_04_animal.c \
-#eina_model_04_child.c \
-#eina_model_04_human.c \
-#eina_model_04_main.c \
-#eina_model_04_parrot.c \
-#eina_model_04_whistler.c \
-#eina_model_04_animal.h \
-#eina_model_04_child.h \
-#eina_model_04_human.h \
-#eina_model_04_parrot.h \
-#eina_model_04_whistler.h
 
 EXTRA_PROGRAMS += eina_tiler_01
 
