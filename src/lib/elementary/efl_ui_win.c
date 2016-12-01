@@ -338,6 +338,7 @@ static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style);
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
 static void _elm_win_resize_objects_eval(Evas_Object *obj);
+static void _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha);
 
 #ifdef HAVE_ELEMENTARY_X
 static void _elm_win_xwin_update(Efl_Ui_Win_Data *sd);
@@ -412,6 +413,7 @@ _elm_win_apply_alpha(Eo *obj, Efl_Ui_Win_Data *sd)
    if (!sd->ee) return;
 
    enabled = sd->theme_alpha | sd->application_alpha;
+   _elm_win_opaque_update(sd, EINA_TRUE);
    if (sd->img_obj)
      {
         evas_object_image_alpha_set(sd->img_obj, enabled);
@@ -1341,7 +1343,7 @@ _elm_win_opaque_dirty(Efl_Ui_Win_Data *sd)
 }
 
 static void
-_elm_win_opaque_update(Efl_Ui_Win_Data *sd)
+_elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
 {
 #ifdef HAVE_ELEMENTARY_WL2
    int ox, oy, ow, oh;
@@ -1350,7 +1352,7 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd)
 
    if (!sd->wl.win) return;
    wdata = sd->ee->engine.data;
-   alpha = ecore_evas_alpha_get(sd->ee);
+   alpha = ecore_evas_alpha_get(sd->ee) || force_alpha;
    if (sd->fullscreen || !sd->frame_obj)
      {
         ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
@@ -4019,7 +4021,7 @@ _elm_win_frame_pre_render(void *data, Evas *e EINA_UNUSED, void *ev EINA_UNUSED)
    Efl_Ui_Win_Data *sd = data;
 
    if (sd->wl.opaque_dirty)
-     _elm_win_opaque_update(sd);
+     _elm_win_opaque_update(sd, EINA_FALSE);
    sd->wl.opaque_dirty = 0;
 }
 #endif
@@ -4227,8 +4229,8 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
           edje_object_message_signal_process(sd->frame_obj);
         if (calc)
           evas_object_smart_calculate(sd->frame_obj);
-        _elm_win_opaque_update(sd);
         _elm_win_frame_obj_update(sd);
+        _elm_win_opaque_update(sd, EINA_FALSE);
      }
 }
 
