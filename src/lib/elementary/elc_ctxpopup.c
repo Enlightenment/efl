@@ -1281,14 +1281,14 @@ static void
 _item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Ctxpopup_Item_Data *item = data;
+   Elm_Object_Item *eo_item2;
    Eina_List *l;
-   Elm_Object_Item *eo_item;
 
    ELM_CTXPOPUP_DATA_GET_OR_RETURN(item->wcb.cobj, sd);
-   EINA_LIST_FOREACH(sd->items, l, eo_item)
+   EINA_LIST_FOREACH(sd->items, l, eo_item2)
      {
-        ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);
-        item->selected = EINA_FALSE;
+        ELM_CTXPOPUP_ITEM_DATA_GET(eo_item2, item2);
+        item2->selected = EINA_FALSE;
      }
    item->selected = EINA_TRUE;
 
@@ -1465,21 +1465,21 @@ _elm_ctxpopup_item_efl_ui_item_next_get(Eo *eo_item EINA_UNUSED, Elm_Ctxpopup_It
 
 EOLIAN static void
 _elm_ctxpopup_item_efl_ui_item_selected_set(Eo *eo_item EINA_UNUSED,
-                            Elm_Ctxpopup_Item_Data *item,
-                            Eina_Bool selected)
+                                            Elm_Ctxpopup_Item_Data *item,
+                                            Eina_Bool selected)
 {
+   Elm_Object_Item *eo_item2;
    Eina_List *l;
-   Elm_Object_Item *temp_item;
 
    if (selected == item->selected) return;
 
    if (selected)
      {
         ELM_CTXPOPUP_DATA_GET_OR_RETURN(item->wcb.cobj, sd);
-        EINA_LIST_FOREACH(sd->items, l, temp_item)
+        EINA_LIST_FOREACH(sd->items, l, eo_item2)
           {
-             ELM_CTXPOPUP_ITEM_DATA_GET(temp_item, item);
-             item->selected = EINA_FALSE;
+             ELM_CTXPOPUP_ITEM_DATA_GET(eo_item2, item2);
+             item2->selected = EINA_FALSE;
           }
      }
    elm_list_item_selected_set(item->list_item, selected);
