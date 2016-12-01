@@ -60,13 +60,18 @@ START_TEST(eo_event)
    efl_object_init();
    Eo *obj;
 
-   memset(&data, 0, sizeof(Test_Data));
-
    obj = efl_add(efl_test_event_class_get(), NULL);
    efl_event_callback_priority_add(obj, EFL_TEST_EVENT_EVENT_TESTER, EFL_CALLBACK_PRIORITY_BEFORE, _cb2, &data);
    efl_event_callback_priority_add(obj, EFL_TEST_EVENT_EVENT_TESTER, EFL_CALLBACK_PRIORITY_BEFORE, _cb1, &data);
-   efl_event_callback_call(obj, EFL_TEST_EVENT_EVENT_TESTER, NULL);
 
+   memset(&data, 0, sizeof(Test_Data));
+   efl_event_callback_call(obj, EFL_TEST_EVENT_EVENT_TESTER, NULL);
+   ck_assert_int_ne(data.event1, 0);
+   ck_assert_int_ne(data.event2, 0);
+   ck_assert_int_eq(data.event3, 0);
+
+   memset(&data, 0, sizeof(Test_Data));
+   efl_event_callback_call(obj, EFL_TEST_EVENT_EVENT_TESTER, NULL);
    ck_assert_int_ne(data.event1, 0);
    ck_assert_int_ne(data.event2, 0);
    ck_assert_int_ne(data.event3, 0);

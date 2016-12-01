@@ -19,6 +19,7 @@ typedef struct {
    EINA_INLIST;
    unsigned int idx;
    unsigned int inserted_before;
+   unsigned char generation;
 } Efl_Event_Callback_Frame;
 
 typedef struct
@@ -51,8 +52,8 @@ typedef struct
    unsigned short             event_cb_efl_event_callback_del_count;
    unsigned short             event_cb_efl_event_del_count;
 #endif
-   Eina_Bool                  deletions_waiting : 1;
    Eina_Bool                  callback_stopped : 1;
+   Eina_Bool                  need_cleaning : 1;
    Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
 } Efl_Object_Data;
 
@@ -920,6 +921,8 @@ struct _Eo_Callback_Description
    void *func_data;
    Efl_Callback_Priority priority;
 
+   unsigned char generation;
+
    Eina_Bool delete_me : 1;
    Eina_Bool func_array : 1;
 };
@@ -1054,16 +1057,20 @@ _eo_callbacks_clear(Efl_Object_Data *pd)
    unsigned int i = 0;
 
    /* If there are no deletions waiting. */
-   if (!pd->deletions_waiting) return;
+   if (!pd->need_cleaning) return;
    /* Abort if we are currently walking the list. */
    if (pd->event_frame) return;
 
-   pd->deletions_waiting = EINA_FALSE;
+   pd->need_cleaning = EINA_FALSE;
    while (i < pd->callbacks_count)
      {
         itr = pd->callbacks + i;
         if ((*itr)->delete_me) _eo_callback_remove(pd, itr);
-        else i++;
+        else
+          {
+             (*itr)->generation = 0;
+             i++;
+          }
      }
 }
 
@@ -1144,6 +1151,14 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
    }
 }
 
+static unsigned char
+_efl_event_generation(Efl_Object_Data *pd)
+{
+   if (!pd->event_frame) return 0;
+
+   return ((Efl_Event_Callback_Frame*)pd->event_frame)->generation;
+}
+
 EOLIAN static Eina_Bool
 _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
                                         const Efl_Event_Description *desc,
@@ -1160,6 +1175,9 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    cb->items.item.func = func;
    cb->func_data = (void *)user_data;
    cb->priority = priority;
+   cb->generation = _efl_event_generation(pd);
+   if (!!cb->generation) pd->need_cleaning = EINA_TRUE;
+
    _eo_callbacks_sorted_insert(pd, cb);
 #ifdef EFL_EVENT_SPECIAL_SKIP
    _special_event_count_inc(pd, &(cb->items.item));
@@ -1182,7 +1200,7 @@ _efl_object_event_callback_clean(Eo *obj, Efl_Object_Data *pd,
 {
    (*cb)->delete_me = EINA_TRUE;
    if (pd->event_frame)
-     pd->deletions_waiting = EINA_TRUE;
+     pd->need_cleaning = EINA_TRUE;
    else
      _eo_callback_remove(pd, cb);
 
@@ -1251,6 +1269,9 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    cb->priority = priority;
    cb->items.item_array = array;
    cb->func_array = EINA_TRUE;
+   cb->generation = _efl_event_generation(pd);
+   if (!!cb->generation) pd->need_cleaning = EINA_TRUE;
+
    _eo_callbacks_sorted_insert(pd, cb);
 #ifdef EFL_EVENT_SPECIAL_SKIP
    for (it = cb->items.item_array; it->func; it++)
@@ -1325,7 +1346,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
 #endif
 
    memset(&frame, 0, sizeof(Efl_Event_Callback_Frame));
-
+   frame.generation = _efl_event_generation(pd) + 1;
    EVENT_STACK_PUSH(pd, &frame);
 
    lookup = NULL;
@@ -1348,6 +1369,9 @@ restart_back:
         cb = pd->callbacks + idx - 1;
         if (!(*cb)->delete_me)
           {
+             if ((*cb)->generation >= frame.generation)
+               continue;
+
              if ((*cb)->func_array)
                {
                   const Efl_Callback_Array_Item *it;
