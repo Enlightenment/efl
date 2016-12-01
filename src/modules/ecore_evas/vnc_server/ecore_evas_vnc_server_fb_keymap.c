@@ -4,7 +4,7 @@
 #include <limits.h>
 #include <Ecore_Input.h>
 
-static const char *_ecore_fb_li_kbd_syms[128 * 7] =
+static const char *_ecore_fb_li_kbd_syms[144 * 7] =
 {
 #include <ecore_fb_keytable.h>
 };
