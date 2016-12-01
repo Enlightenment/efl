@@ -135,7 +135,6 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
    evas_object_geometry_get(VIEW(parent_it), &x2, &y2, &w2, &h2);
    evas_object_geometry_get(parent_it->submenu.bx, &bx, &by, &bw, &bh);
    _parent_geometry_get(sd, &px, &py, &pw, &ph);
-   ERR("elm_menu parent geom %d,%d %dx%d", px, py, pw, ph);
    
    if (sd->menu_bar && !parent_it->parent)
      {
