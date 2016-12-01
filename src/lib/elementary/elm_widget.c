@@ -4738,16 +4738,18 @@ EAPI Eina_Bool
 _elm_widget_onscreen_is(Evas_Object *widget)
 {
    Evas_Object *parent = widget;
-   Evas_Coord x, y, w, h, wx, wy, ww, wh;
+   Eina_Rectangle r1, r2;
 
    Evas *evas = evas_object_evas_get(widget);
    if (!evas) return EINA_FALSE;
 
+   evas_object_geometry_get(widget, &r1.x, &r1.y, &r1.w, &r1.h);
+   if (eina_rectangle_is_empty(&r1))
+     return EINA_FALSE;
+
    // check if on canvas
-   evas_output_viewport_get(evas, &x, &y, &w, &h);
-   evas_object_geometry_get(widget, &wx, &wy, &ww, &wh);
-   if (((wx < x) && (wx + ww < x)) || ((wx > x + w) && (wx + ww > x + w)) ||
-       ((wy < y) && (wy + wh < y)) || ((wy > y+ h) && (wy + wh > y + h)))
+   evas_output_viewport_get(evas, &r2.x, &r2.y, &r2.w, &r2.h);
+   if (!eina_rectangles_intersect(&r1, &r2))
      return EINA_FALSE;
 
    // check if inside scrollable parent viewport
@@ -4757,9 +4759,8 @@ _elm_widget_onscreen_is(Evas_Object *widget)
         return EINA_FALSE;
       if (parent && efl_isa(parent, ELM_INTERFACE_SCROLLABLE_MIXIN))
         {
-           evas_object_geometry_get(parent, &x, &y, &w, &h);
-           if (((wx < x) && (wx + ww < x)) || ((wx > x + w) && (wx + ww > x + w)) ||
-               ((wy < y) && (wy + wh < y)) || ((wy > y+ h) && (wy + wh > y + h)))
+           evas_object_geometry_get(parent, &r2.x, &r2.y, &r2.w, &r2.h);
+           if (!eina_rectangles_intersect(&r1, &r2))
              return EINA_FALSE;
         }
    } while (parent && (parent != elm_widget_top_get(widget)));
@@ -4770,7 +4771,7 @@ _elm_widget_onscreen_is(Evas_Object *widget)
 EAPI Eina_Bool
 _elm_widget_item_onscreen_is(Elm_Object_Item *item)
 {
-   Evas_Coord x, y, w, h, wx, wy, ww, wh;
+   Eina_Rectangle r1, r2;
    Elm_Widget_Item_Data *id = efl_data_scope_get(item, ELM_WIDGET_ITEM_CLASS);
    if (!id || !id->view) return EINA_FALSE;
 
@@ -4780,10 +4781,12 @@ _elm_widget_item_onscreen_is(Elm_Object_Item *item)
    if (!_elm_widget_onscreen_is(id->widget))
      return EINA_FALSE;
 
-   evas_object_geometry_get(id->view, &x, &y, &w, &h);
-   evas_object_geometry_get(id->widget, &wx, &wy, &ww, &wh);
-   if (((wx < x) && (wx + ww < x)) || ((wx > x + w) && (wx + ww > x + w)) ||
-       ((wy < y) && (wy + wh < y)) || ((wy > y+ h) && (wy + wh > y + h)))
+   evas_object_geometry_get(id->view, &r1.x, &r1.y, &r1.w, &r1.h);
+   if (eina_rectangle_is_empty(&r1))
+     return EINA_FALSE;
+
+   evas_object_geometry_get(id->widget, &r2.x, &r2.y, &r2.w, &r2.h);
+   if (!eina_rectangles_intersect(&r1, &r2))
      return EINA_FALSE;
 
    return EINA_TRUE;
