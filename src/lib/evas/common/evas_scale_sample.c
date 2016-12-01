@@ -868,6 +868,11 @@ evas_common_scale_sample_init(void)
 {
    if (eina_cpu_count() <= 2) return ;
 
+//Eina_Thread_Queue doesn't work on WIN32.
+#ifdef _WIN32
+   return;
+#endif
+
    thread_queue = eina_thread_queue_new();
    if (EINA_UNLIKELY(!thread_queue))
      {
