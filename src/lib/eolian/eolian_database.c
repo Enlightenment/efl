@@ -267,12 +267,6 @@ _get_ref_token(const char *doc, const char **doc_end)
    if (is_event)
      ++doc;
 
-   if ((doc[0] == '.') && (doc[1] != '_') && !isalpha(doc[1]))
-     return EOLIAN_DOC_TOKEN_UNKNOWN;
-
-   if (doc[0] == '.')
-     ++doc;
-
    if (_skip_ref_word(&doc))
      {
         while (doc[0] == '.')
@@ -294,6 +288,8 @@ _get_ref_token(const char *doc, const char **doc_end)
                }
           }
      }
+   else
+     return EOLIAN_DOC_TOKEN_UNKNOWN;
 
    if (is_event)
      {

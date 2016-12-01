@@ -1199,7 +1199,7 @@ START_TEST(eolian_docs)
    EINA_LIST_FREE(sdoc, dpar)
      free(dpar);
 
-   const char *tdoc = "Note: This is $something, see @Blah, @.bleh, "
+   const char *tdoc = "Note: This is $something, see @Blah, "
                       "@Foo.Bar.baz, \\@ref foo and @[Things.Stuffs.foo,bar].";
 
    Eolian_Doc_Token tok;
@@ -1229,16 +1229,6 @@ START_TEST(eolian_docs)
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
    txt = eolian_doc_token_text_get(&tok);
    fail_if(strcmp(txt, "Blah"));
-   free(txt);
-   tdoc = eolian_documentation_tokenize(tdoc, &tok);
-   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
-   txt = eolian_doc_token_text_get(&tok);
-   fail_if(strcmp(txt, ", "));
-   free(txt);
-   tdoc = eolian_documentation_tokenize(tdoc, &tok);
-   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
-   txt = eolian_doc_token_text_get(&tok);
-   fail_if(strcmp(txt, ".bleh"));
    free(txt);
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
