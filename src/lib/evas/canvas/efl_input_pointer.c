@@ -36,6 +36,7 @@ _del_hook(Eo *evt)
           }
         efl_reuse(evt);
         s_cached_event = evt;
+        efl_input_reset(s_cached_event);
      }
    else
      {
@@ -55,7 +56,6 @@ _efl_input_pointer_efl_input_event_instance_get(Eo *klass EINA_UNUSED, void *_pd
      {
         evt = s_cached_event;
         s_cached_event = NULL;
-        efl_input_reset(evt);
         efl_parent_set(evt, owner);
      }
    else
