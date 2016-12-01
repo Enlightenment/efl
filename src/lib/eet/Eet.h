@@ -3268,7 +3268,7 @@ eet_data_text_dump(const void *data_in,
 EAPI void *
 eet_data_text_undump(const char *text,
                      int textlen,
-                     int *size_ret);
+                     int *size_ret) EINA_ARG_NONNULL(3);
 
 /**
  * Dump an eet encoded data structure from an eet file into ascii text
@@ -4101,7 +4101,7 @@ EAPI void *
 eet_data_text_undump_cipher(const char *text,
                             const char *cipher_key,
                             int textlen,
-                            int *size_ret);
+                            int *size_ret) EINA_ARG_NONNULL(4);
 
 /**
  * Dump an eet encoded data structure from an eet file into ascii
