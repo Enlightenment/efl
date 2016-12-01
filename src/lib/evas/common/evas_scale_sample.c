@@ -817,7 +817,7 @@ _evas_common_scale_sample_thread(void *data EINA_UNUSED,
    Evas_Scale_Msg *msg;
    Evas_Scale_Thread *todo = NULL;
 
-   eina_thread_name_set(eina_thread_self(), "Eevas-scale-sam");
+   eina_thread_name_set(eina_thread_self(), "Evas-scale-sam");
    do
      {
         void *ref;
