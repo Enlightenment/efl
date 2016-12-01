@@ -336,6 +336,25 @@ typedef enum
    EOLIAN_DECL_VAR
 } Eolian_Declaration_Type;
 
+typedef enum
+{
+   EOLIAN_DOC_TOKEN_UNKNOWN = -1,
+   EOLIAN_DOC_TOKEN_TEXT,
+   EOLIAN_DOC_TOKEN_REF,
+   EOLIAN_DOC_TOKEN_REF_EVENT,
+   EOLIAN_DOC_TOKEN_MARK_NOTE,
+   EOLIAN_DOC_TOKEN_MARK_WARNING,
+   EOLIAN_DOC_TOKEN_MARK_REMARK,
+   EOLIAN_DOC_TOKEN_MARK_TODO,
+   EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE
+} Eolian_Doc_Token_Type;
+
+typedef struct _Eolian_Doc_Token
+{
+   Eolian_Doc_Token_Type type;
+   const char *text, *text_end;
+} Eolian_Doc_Token;
+
 /*
  * @brief Parse the given .eo or .eot file and fill the database.
  *
@@ -2292,6 +2311,72 @@ EAPI Eina_Stringshare *eolian_documentation_description_get(const Eolian_Documen
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_documentation_since_get(const Eolian_Documentation *doc);
+
+/*
+ * @brief Split a documentation string into individual paragraphs.
+ *
+ * The items of the resulting list are strings that are fred with free().
+ *
+ * @param[in] doc the documentation string
+ * @return a list of allocated strings containing paragraphs
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_List *eolian_documentation_string_split(const char *doc);
+
+/*
+ * @brief Tokenize a documentation paragraph.
+ *
+ * This gradually splits the string into pieces (text, references, paragraph
+ * separators etc.) so that it can be more easily turned into a representation
+ * you want. On failure, token is initialized with EOLIAN_DOC_TOKEN_UNKNOWN.
+ *
+ * The function never allocates any memory and doesn't hold any state, instead
+ * the returned continuation has to be passed as first param on next iteration
+ * and you have to make sure the input data stays valid until you're completely
+ * done.
+ *
+ * The input string is assumed to be a single paragraph with all unnecessary
+ * whitespace already trimmed.
+ *
+ * If the given token is NULL, it will still tokenize, but without saving anything.
+ *
+ * @param[in] doc the documentation string
+ * @param[out] ret the token
+ * @return a continuation of the input string
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_documentation_tokenize(const char *doc, Eolian_Doc_Token *ret);
+
+/*
+ * @brief Initialize a documentation token into an empty state.
+ *
+ * @param[in] tok the token
+ * @return the token type
+ */
+EAPI void eolian_doc_token_init(Eolian_Doc_Token *tok);
+
+/*
+ * @brief Get the type of a documentation token.
+ *
+ * @param[in] tok the token
+ * @return the token type
+ */
+EAPI Eolian_Doc_Token_Type eolian_doc_token_type_get(const Eolian_Doc_Token *tok);
+
+/*
+ * @brief Get the text of a documentation token.
+ *
+ * Works on every token type, but for unknown tokens it returns NULL.
+ * You need to free the text once you're done using normal free().
+ * This makes sure all escapes in the original doc comments are properly
+ * removed so you can use the string as-is.
+ *
+ * @param[in] tok the token
+ * @return the token text
+ */
+EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
 
 #endif
 

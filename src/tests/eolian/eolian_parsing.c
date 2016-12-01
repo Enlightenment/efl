@@ -1188,6 +1188,88 @@ START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_since_get(doc),
                   "1.66"));
 
+   const char *sdesc = eolian_documentation_description_get(doc);
+   Eina_List *sdoc = eolian_documentation_string_split(sdesc);
+
+   char *dpar = eina_list_data_get(sdoc);
+   fail_if(strcmp(dpar, "Note: This is a note."));
+   sdoc = eina_list_remove_list(sdoc, sdoc);
+   dpar = eina_list_data_get(sdoc);
+   fail_if(strcmp(dpar, "This is a longer description for struct Foo."));
+   EINA_LIST_FREE(sdoc, dpar)
+     free(dpar);
+
+   const char *tdoc = "Note: This is $something, see @Blah, @.bleh, "
+                      "@Foo.Bar.baz, \\@ref foo and @[Things.Stuffs.foo,bar].";
+
+   Eolian_Doc_Token tok;
+   eolian_doc_token_init(&tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_UNKNOWN);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_MARK_NOTE);
+   char *txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, "Note: "));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, "This is "));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, "something"));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, ", see "));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, "Blah"));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, ", "));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, ".bleh"));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, ", "));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, "Foo.Bar.baz"));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, ", @ref foo and "));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF_EVENT);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, "[Things.Stuffs.foo,bar]"));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(tdoc[0] != '\0');
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
+   txt = eolian_doc_token_text_get(&tok);
+   fail_if(strcmp(txt, "."));
+   free(txt);
+   tdoc = eolian_documentation_tokenize(tdoc, &tok);
+   fail_if(tdoc != NULL);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_UNKNOWN);
+
    fail_if(!(sfl = eolian_typedecl_struct_field_get(tdl, "field1")));
    fail_if(!(doc = eolian_typedecl_struct_field_documentation_get(sfl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),

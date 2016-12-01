@@ -2,6 +2,7 @@
 # include "config.h"
 #endif
 
+#include <ctype.h>
 #include <libgen.h>
 #include <Eina.h>
 #include "eo_parser.h"
@@ -209,6 +210,246 @@ eolian_documentation_since_get(const Eolian_Documentation *doc)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
    return doc->since;
+}
+
+EAPI Eina_List *
+eolian_documentation_string_split(const char *doc)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
+   const char *sep = strstr(doc, "\n\n");
+   Eina_List *ret = NULL;
+   while (doc)
+     {
+        Eina_Strbuf *buf = eina_strbuf_new();
+        if (sep)
+          eina_strbuf_append_length(buf, doc, sep - doc);
+        else
+          eina_strbuf_append(buf, doc);
+        eina_strbuf_trim(buf);
+        if (eina_strbuf_length_get(buf))
+          ret = eina_list_append(ret, eina_strbuf_string_steal(buf));
+        eina_strbuf_free(buf);
+        if (!sep)
+          break;
+        doc = sep + 2;
+        sep = strstr(doc, "\n\n");
+     }
+   return ret;
+}
+
+static Eina_Bool
+_skip_ref_word(const char **doc)
+{
+   if (((*doc)[0] != '_') && !isalpha((*doc)[0]))
+     return EINA_FALSE;
+
+   while (((*doc)[0] == '_') || isalnum((*doc)[0]))
+     ++*doc;
+
+   return EINA_TRUE;
+}
+
+/* this make sure the format is correct at least, it cannot verify the
+ * correctness of the reference itself (but Eolian will do it in its
+ * lexer, so there is nothing to worry about; all references are guaranteed
+ * to be right
+ */
+static Eolian_Doc_Token_Type
+_get_ref_token(const char *doc, const char **doc_end)
+{
+   /* not a ref at all, for convenience */
+   if (doc[0] != '@')
+     return EOLIAN_DOC_TOKEN_UNKNOWN;
+
+   ++doc;
+
+   Eina_Bool is_event = (doc[0] == '[');
+   if (is_event)
+     ++doc;
+
+   if ((doc[0] == '.') && (doc[1] != '_') && !isalpha(doc[1]))
+     return EOLIAN_DOC_TOKEN_UNKNOWN;
+
+   if (doc[0] == '.')
+     ++doc;
+
+   if (_skip_ref_word(&doc))
+     {
+        while (doc[0] == '.')
+          {
+             ++doc;
+             if (!_skip_ref_word(&doc))
+               {
+                  --doc;
+                  break;
+               }
+          }
+        if (is_event) while (doc[0] == ',')
+          {
+             ++doc;
+             if (!_skip_ref_word(&doc))
+               {
+                  --doc;
+                  break;
+               }
+          }
+     }
+
+   if (is_event)
+     {
+        if (doc[0] != ']')
+          return EOLIAN_DOC_TOKEN_UNKNOWN;
+        ++doc;
+     }
+
+   if (doc_end)
+     *doc_end = doc;
+
+   /* got a reference */
+   return is_event ? EOLIAN_DOC_TOKEN_REF_EVENT : EOLIAN_DOC_TOKEN_REF;
+}
+
+EAPI const char *
+eolian_documentation_tokenize(const char *doc, Eolian_Doc_Token *ret)
+{
+   /* token is used for statekeeping, so force it */
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   /* we've reached the end or invalid input */
+   if (!doc || !doc[0])
+     {
+        ret->text = ret->text_end = NULL;
+        ret->type = EOLIAN_DOC_TOKEN_UNKNOWN;
+        return NULL;
+     }
+
+   Eina_Bool cont = (ret->type != EOLIAN_DOC_TOKEN_UNKNOWN);
+
+   /* we can only check notes etc at beginning of parsing */
+   if (cont)
+     goto mloop;
+
+#define CMP_MARK_NOTE(doc, note) !strncmp(doc, note ": ", sizeof(note) + 1)
+
+   /* different types of notes */
+   if (CMP_MARK_NOTE(doc, "Note"))
+     {
+        ret->text = doc;
+        ret->text_end = doc + sizeof("Note:");
+        ret->type = EOLIAN_DOC_TOKEN_MARK_NOTE;
+        return ret->text_end;
+     }
+   else if (CMP_MARK_NOTE(doc, "Warning"))
+     {
+        ret->text = doc;
+        ret->text_end = doc + sizeof("Warning:");
+        ret->type = EOLIAN_DOC_TOKEN_MARK_WARNING;
+        return ret->text_end;
+     }
+   else if (CMP_MARK_NOTE(doc, "Remark"))
+     {
+        ret->text = doc;
+        ret->text_end = doc + sizeof("Remark:");
+        ret->type = EOLIAN_DOC_TOKEN_MARK_REMARK;
+        return ret->text_end;
+     }
+   else if (CMP_MARK_NOTE(doc, "TODO"))
+     {
+        ret->text = doc;
+        ret->text_end = doc + sizeof("TODO:");
+        ret->type = EOLIAN_DOC_TOKEN_MARK_TODO;
+        return ret->text_end;
+     }
+
+#undef CMP_MARK_NOTE
+
+mloop:
+
+   /* monospace markup ($foo) */
+   if ((doc[0] == '$') && ((doc[1] == '_') || isalpha(doc[1])))
+     {
+        ret->text = ++doc;
+        ret->text_end = ret->text;
+        while ((ret->text_end[0] == '_') || isalnum(ret->text_end[0]))
+          ++ret->text_end;
+        ret->type = EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE;
+        return ret->text_end;
+     }
+
+   /* references */
+   Eolian_Doc_Token_Type rtp = _get_ref_token(doc, &ret->text_end);
+   if (rtp != EOLIAN_DOC_TOKEN_UNKNOWN)
+     {
+        ret->text = doc + 1;
+        ret->type = rtp;
+        return ret->text_end;
+     }
+
+   const char *schr = doc, *pschr = NULL;
+   /* keep finding potential tokens until a suitable one is found
+    * terminate text token there (it also means next token can directly
+    * be tested for event/monospace)
+    */
+   while ((schr = strpbrk(schr, "@$")))
+     {
+        /* escape sequences */
+        if ((schr != doc) && (schr[-1] == '\\'))
+          {
+             schr += 1;
+             continue;
+          }
+        /* monospace markup */
+        if ((schr[0] == '$') && ((schr[1] == '_') || isalpha(schr[1])))
+          {
+             pschr = schr;
+             break;
+          }
+        /* references */
+        if (_get_ref_token(schr, NULL) != EOLIAN_DOC_TOKEN_UNKNOWN)
+          {
+             pschr = schr;
+             break;
+          }
+        /* nothing, keep matching text from next char on */
+        schr += 1;
+     }
+
+   /* figure out where we actually end */
+   ret->text = doc;
+   ret->text_end = pschr ? pschr : (doc + strlen(doc));
+   ret->type = EOLIAN_DOC_TOKEN_TEXT;
+   return ret->text_end;
+}
+
+EAPI void eolian_doc_token_init(Eolian_Doc_Token *tok)
+{
+   if (!tok)
+     return;
+   tok->type = EOLIAN_DOC_TOKEN_UNKNOWN;
+   tok->text = tok->text_end = NULL;
+}
+
+EAPI Eolian_Doc_Token_Type
+eolian_doc_token_type_get(const Eolian_Doc_Token *tok)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tok, EOLIAN_DOC_TOKEN_UNKNOWN);
+   return tok->type;
+}
+
+EAPI char *
+eolian_doc_token_text_get(const Eolian_Doc_Token *tok)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tok, NULL);
+   if (tok->type == EOLIAN_DOC_TOKEN_UNKNOWN)
+     return NULL;
+   Eina_Strbuf *buf = eina_strbuf_new();
+   for (const char *p = tok->text; p != tok->text_end; ++p)
+     {
+        if (*p == '\\') ++p;
+        if (p != tok->text_end)
+          eina_strbuf_append_char(buf, *p);
+     }
+   return eina_strbuf_string_steal(buf);
 }
 
 #define EO_SUFFIX ".eo"
