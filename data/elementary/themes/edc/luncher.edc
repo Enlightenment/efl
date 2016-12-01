@@ -76,50 +76,40 @@ group { name: "e/gadget/luncher/icon";
             get_str(style, s, sizeof(s));
 
             if (!strcmp(s, "default")) {
-               if ((pos == 0) || (pos == 2)) {
-                  if ((ypos >= y) && (ypos <= (y+h))) {
-                     set_state_anim(PART:"background", "default", 0.0, LINEAR, 1.0);
-                  }
-                  else {
-                     set_state_anim(PART:"background", "default", 0.0, LINEAR, 1.0);
-                  }
+               if ((ypos >= y) && (ypos <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
+                  set_state_anim(PART:"background", "visible", 0.0, LINEAR, 1.0);
                }
-               else if ((pos == 1) || (pos == 3)) {
-                  if ((xpos >= x) && (xpos <= (x+w))) {
-                     set_state_anim(PART:"background", "visible", 0.0, LINEAR, 1.0);
-                  }
-                  else {
-                     set_state_anim(PART:"background", "default", 0.0, LINEAR, 1.0);
-                  }
+               else {
+                  set_state_anim(PART:"background", "default", 0.0, LINEAR, 1.0);
                }
             }
             else if (!strcmp(s, "engage")) {
                if (pos == 0) {
-                  if ((ypos >= y) && (ypos <= (y+h))) {
+                  if ((ypos >= y) && (ypos <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, 0.0, -0.5);
                      set_state_val(PART:"sizer", STATE_REL2, 2.0, 1.5);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((ypos-h) >= y) && ((ypos-h) <= (y+h))) {
+                  else if (((ypos-h) >= y) && ((ypos-h) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, 0.0, -0.3);
                      set_state_val(PART:"sizer", STATE_REL2, 1.6, 1.3);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((ypos+h) >= y) && ((ypos+h) <= (y+h))) {
+                  else if (((ypos+h) >= y) && ((ypos+h) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, 0.0, -0.3);
                      set_state_val(PART:"sizer", STATE_REL2, 1.6, 1.3);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((ypos-(h*2)) >= y) && ((ypos-(h*2)) <= (y+h))) {
+                  else if (((ypos-(h*2)) >= y) && ((ypos-(h*2)) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, 0.0, -0.2);
                      set_state_val(PART:"sizer", STATE_REL2, 1.4, 1.2);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((ypos+(h*2)) >= y) && ((ypos+(h*2)) <= (y+h))) {
+                  else if (((ypos+(h*2)) >= y) && ((ypos+(h*2)) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, 0.0, -0.2);
                      set_state_val(PART:"sizer", STATE_REL2, 1.4, 1.2);
@@ -130,31 +120,31 @@ group { name: "e/gadget/luncher/icon";
                   }
                }
                else if (pos == 1) {
-                  if ((xpos >= x) && (xpos <= (x+w))) {
+                  if ((xpos >= x) && (xpos <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.5, 0.0);
                      set_state_val(PART:"sizer", STATE_REL2, 1.5, 2.0);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((xpos-w) >= x) && ((xpos-w) <= (x+w))) {
+                  else if (((xpos-w) >= x) && ((xpos-w) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.3, 0.0);
                      set_state_val(PART:"sizer", STATE_REL2, 1.3, 1.6);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((xpos+w) >= x) && ((xpos+w) <= (x+w))) {
+                  else if (((xpos+w) >= x) && ((xpos+w) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.3, 0.0);
                      set_state_val(PART:"sizer", STATE_REL2, 1.3, 1.6);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((xpos-(w*2)) >= x) && ((xpos-(w*2)) <= (x+w))) {
+                  else if (((xpos-(w*2)) >= x) && ((xpos-(w*2)) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.2, 0.0);
                      set_state_val(PART:"sizer", STATE_REL2, 1.2, 1.4);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((xpos+(w*2)) >= x) && ((xpos+(w*2)) <= (x+w))) {
+                  else if (((xpos+(w*2)) >= x) && ((xpos+(w*2)) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.2, 0.0);
                      set_state_val(PART:"sizer", STATE_REL2, 1.2, 1.4);
@@ -165,31 +155,31 @@ group { name: "e/gadget/luncher/icon";
                   }
                }
                else if (pos == 2) {
-                  if ((ypos >= y) && (ypos <= (y+h))) {
+                  if ((ypos >= y) && (ypos <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -1.0, -0.5);
                      set_state_val(PART:"sizer", STATE_REL2, 1.0, 1.5);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((ypos-h) >= y) && ((ypos-h) <= (y+h))) {
+                  else if (((ypos-h) >= y) && ((ypos-h) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.6, -0.3);
                      set_state_val(PART:"sizer", STATE_REL2, 1.0, 1.3);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((ypos+h) >= y) && ((ypos+h) <= (y+h))) {
+                  else if (((ypos+h) >= y) && ((ypos+h) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.6, -0.3);
                      set_state_val(PART:"sizer", STATE_REL2, 1.0, 1.3);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((ypos-(h*2)) >= y) && ((ypos-(h*2)) <= (y+h))) {
+                  else if (((ypos-(h*2)) >= y) && ((ypos-(h*2)) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.4, -0.2);
                      set_state_val(PART:"sizer", STATE_REL2, 1.0, 1.2);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((ypos+(h*2)) >= y) && ((ypos+(h*2)) <= (y+h))) {
+                  else if (((ypos+(h*2)) >= y) && ((ypos+(h*2)) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.4, -0.2);
                      set_state_val(PART:"sizer", STATE_REL2, 1.0, 1.2);
@@ -200,31 +190,31 @@ group { name: "e/gadget/luncher/icon";
                   }
                }
                else if (pos == 3) {    
-                  if ((xpos >= x) && (xpos <= (x+w))) {
+                  if ((xpos >= x) && (xpos <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.5, -1.0);
                      set_state_val(PART:"sizer", STATE_REL2, 1.5, 1.0);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((xpos-w) >= x) && ((xpos-w) <= (x+w))) {
+                  else if (((xpos-w) >= x) && ((xpos-w) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.3, -0.6);
                      set_state_val(PART:"sizer", STATE_REL2, 1.3, 1.0);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((xpos+w) >= x) && ((xpos+w) <= (x+w))) {
+                  else if (((xpos+w) >= x) && ((xpos+w) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.3, -0.6);
                      set_state_val(PART:"sizer", STATE_REL2, 1.3, 1.0);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((xpos-(w*2)) >= x) && ((xpos-(w*2)) <= (x+w))) {
+                  else if (((xpos-(w*2)) >= x) && ((xpos-(w*2)) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.2, -0.4);
                      set_state_val(PART:"sizer", STATE_REL2, 1.2, 1.0);
                      set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                   }
-                  else if (((xpos+(w*2)) >= x) && ((xpos+(w*2)) <= (x+w))) {
+                  else if (((xpos+(w*2)) >= x) && ((xpos+(w*2)) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
                      custom_state(PART:"sizer", "default", 0.0);
                      set_state_val(PART:"sizer", STATE_REL1, -0.2, -0.4);
                      set_state_val(PART:"sizer", STATE_REL2, 1.2, 1.0);
