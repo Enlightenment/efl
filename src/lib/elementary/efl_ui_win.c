@@ -253,6 +253,7 @@ struct _Efl_Ui_Win_Data
    Eina_Bool    theme_alpha : 1; /**< alpha value fetched by a theme. this has higher priority than application_alpha */
    Eina_Bool    application_alpha : 1; /**< alpha value set by an elm_win_alpha_set() api. this has lower priority than theme_alpha */
    Eina_Bool    tmp_updating_hints : 1;
+   Eina_Bool    single_edje_content: 1; /* hack for E */
 };
 
 struct _Input_Pointer_Iterator
@@ -3282,7 +3283,7 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
 static void
 _elm_win_resize_objects_eval(Evas_Object *obj)
 {
-   ELM_WIN_DATA_GET(obj, sd);
+   Efl_Ui_Win_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Evas_Coord w, h, minw, minh, maxw, maxh, ow, oh;
    Eina_Bool unresizable;
    double wx, wy;
@@ -3291,9 +3292,17 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if (minw < 1) minw = 1;
    if (minh < 1) minh = 1;
 
+   // If content has a weight, make resizable
    efl_gfx_size_hint_weight_get(sd->legacy.edje, &wx, &wy);
+
+   // Content max hint is ignored
    maxw = sd->max_w;
    maxh = sd->max_h;
+
+   // Compatibility hack (for E)
+   if (sd->single_edje_content && !wx && !wy)
+     wx = wy = 1;
+
    if (!wx) maxw = minw;
    else if (maxw < 1) maxw = 32767;
    if (!wy) maxh = minh;
@@ -7692,12 +7701,14 @@ elm_win_resize_object_add(Eo *obj, Evas_Object *subobj)
         return;
      }
 
+   // Little hack for E
+   if (evas_obj_box_count(sd->legacy.box) > 0)
+     sd->single_edje_content = 0;
+   else if (efl_isa(subobj, EDJE_OBJECT_CLASS))
+     sd->single_edje_content = 1;
+
    ret  = elm_widget_sub_object_add(obj, subobj);
    ret &= (evas_object_box_append(sd->legacy.box, subobj) != NULL);
-
-   // Little hack for E (edje object set as resize object... but never updated)
-   if (efl_isa(subobj, EDJE_OBJECT_CLASS))
-     edje_object_update_hints_set(subobj, 1);
 
    if (!ret)
      ERR("could not add sub object %p to window %p", subobj, obj);
