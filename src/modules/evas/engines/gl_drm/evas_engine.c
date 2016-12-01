@@ -193,13 +193,9 @@ gl_symbols(void)
    glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress);
 
    FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageEXT", glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageARB", glsym_func_void_ptr);
    FINDSYM(glsym_eglCreateImage, "eglCreateImage", glsym_func_void_ptr);
 
    FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageEXT", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageARB", glsym_func_void);
    FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", glsym_func_void);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES,
