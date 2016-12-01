@@ -47,6 +47,7 @@ struct _Ecore_Input_Last
 {
    Ecore_Event_Mouse_Button *ev;
    Ecore_Timer *timer;
+   Evas_Device *evas_device;
 
    unsigned int device;
    unsigned int buttons;
@@ -122,14 +123,16 @@ _ecore_event_last_check(Ecore_Event_Last *eel, Ecore_Event_Press press)
 }
 
 static Ecore_Event_Last *
-_ecore_event_evas_lookup(unsigned int device, unsigned int buttons, Ecore_Window win, Eina_Bool create_new)
+_ecore_event_evas_lookup(Evas_Device *evas_device, unsigned int device,
+                         unsigned int buttons, Ecore_Window win,
+                         Eina_Bool create_new)
 {
    Ecore_Event_Last *eel;
    Eina_List *l;
 
    //the number of last event is small, simple check is ok.
    EINA_LIST_FOREACH(_last_events, l, eel)
-     if ((eel->device == device) && (eel->buttons == buttons))
+     if ((eel->device == device) && (eel->buttons == buttons) && (eel->evas_device == evas_device))
        return eel;
    if (!create_new) return NULL;
    eel = malloc(sizeof (Ecore_Event_Last));
@@ -142,6 +145,7 @@ _ecore_event_evas_lookup(unsigned int device, unsigned int buttons, Ecore_Window
    eel->state = ECORE_INPUT_NONE;
    eel->faked = EINA_FALSE;
    eel->win = win;
+   eel->evas_device = evas_device;
 
    _last_events = eina_list_append(_last_events, eel);
    return eel;
@@ -182,7 +186,7 @@ _ecore_event_evas_push_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Pre
    Ecore_Input_Action action = ECORE_INPUT_CONTINUE;
 
    //_ecore_event_evas_mouse_button already check press or cancel without history
-   eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, e->window, EINA_TRUE);
+   eel = _ecore_event_evas_lookup(e->dev, e->multi.device, e->buttons, e->window, EINA_TRUE);
    if (!eel) return EINA_FALSE;
    INF("dev(%d), button(%d), last_press(%d), press(%d)", e->multi.device, e->buttons, eel->state, press);
 
@@ -491,7 +495,7 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
    if (press != ECORE_DOWN)
      {
         //ECORE_UP or ECORE_CANCEL
-        eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, e->window, EINA_FALSE);
+        eel = _ecore_event_evas_lookup(e->dev, e->multi.device, e->buttons, e->window, EINA_FALSE);
         if (!eel)
           {
              WRN("ButtonEvent has no history.");
