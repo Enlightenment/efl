@@ -254,7 +254,7 @@ struct _Mod_Api
 static void _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd, const char *file);
 static void _magnifier_move(void *data);
 static void _update_decorations(Eo *obj);
-static void _create_text_cursors(Efl_Ui_Text_Data *sd);
+static void _create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd);
 static void _efl_ui_text_changed_cb(void *data EINA_UNUSED, const Efl_Event *event);
 static void _efl_ui_text_selection_changed_cb(void *data EINA_UNUSED, const Efl_Event *event);
 static void _efl_ui_text_cursor_changed_cb(void *data EINA_UNUSED, const Efl_Event *event);
@@ -2210,7 +2210,13 @@ _entry_cursor_changed_signal_cb(void *data,
        (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
    sd->cur_changed = EINA_TRUE;
    if (elm_widget_focus_get(data))
-     edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
+     {
+        edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
+     }
+   else
+     {
+        edje_object_signal_emit(sd->entry_edje, "elm,action,hide,cursor", "elm");
+     }
    _cursor_geometry_recalc(data);
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
@@ -3408,7 +3414,7 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
    if (_elm_config->desktop_entry)
      priv->sel_handler_disabled = EINA_TRUE;
 
-   _create_text_cursors(priv);
+   _create_text_cursors(obj, priv);
 }
 
 static void
@@ -3732,6 +3738,16 @@ _efl_ui_text_efl_ui_text_interactive_editable_set(Eo *obj, Efl_Ui_Text_Data *sd,
                             _dnd_leave_cb, NULL,
                             _dnd_pos_cb, NULL,
                             _dnd_drop_cb, NULL);
+        if (sd->cursor)
+          {
+             evas_object_show(sd->cursor);
+             evas_object_show(sd->cursor_bidi);
+          }
+     }
+   if (!editable && sd->cursor)
+     {
+        evas_object_hide(sd->cursor);
+        evas_object_hide(sd->cursor_bidi);
      }
 }
 
@@ -4916,16 +4932,20 @@ _decoration_create(Efl_Ui_Text_Data *sd, const char *file,
  */
 
 static void
-_create_text_cursors(Efl_Ui_Text_Data *sd)
+_create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    const char *file;
    efl_file_get(sd->entry_edje, &file, NULL);
    sd->cursor = _decoration_create(sd, file, "elm/entry/cursor/default", EINA_TRUE);
    sd->cursor_bidi = _decoration_create(sd, file, "elm/entry/cursor/default", EINA_TRUE);
-   evas_object_show(sd->cursor);
-   evas_object_show(sd->cursor_bidi);
    edje_object_signal_emit(sd->cursor, "elm,action,focus", "elm");
    edje_object_signal_emit(sd->cursor_bidi, "elm,action,focus", "elm");
+
+   if (!efl_ui_text_interactive_editable_get(obj))
+     {
+        evas_object_hide(sd->cursor);
+        evas_object_hide(sd->cursor_bidi);
+     }
 }
 
 static void

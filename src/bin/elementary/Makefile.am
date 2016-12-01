@@ -136,7 +136,6 @@ test_win_plug.c \
 test_win_state.c \
 test_win_wm_rotation.c \
 test_win_dialog.c \
-test_efl_ui_text.c \
 test.h
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
