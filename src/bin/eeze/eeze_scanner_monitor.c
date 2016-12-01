@@ -152,7 +152,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
      {
         fprintf(stderr, "ERROR: could not get local communication path\n");
         retval = EXIT_FAILURE;
-        goto end;
+        goto error_path;
      }
 
    loop = ecore_main_loop_get();
@@ -207,7 +207,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    free(path);
    path = NULL;
-
+ error_path:
    eet_data_descriptor_free(edd);
    edd = NULL;
 
