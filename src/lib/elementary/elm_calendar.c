@@ -1648,7 +1648,7 @@ _elm_calendar_elm_widget_on_focus(Eo *obj, Elm_Calendar_Data *sd, Elm_Object_Ite
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj))
-     sd->focused_it = sd->selected_it;
+     _update_focused_it(obj, sd->selected_it);
    else
      _update_unfocused_it(obj, sd->focused_it);
 
