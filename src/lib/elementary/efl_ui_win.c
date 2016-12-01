@@ -825,18 +825,27 @@ _elm_win_obj_intercept_layer_set(void *data, Evas_Object *obj EINA_UNUSED, int l
 /* Event Callbacks */
 
 static void
-_elm_win_obj_callback_changed_size_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_elm_win_size_hints_update(Efl_Ui_Win *win, Efl_Ui_Win_Data *sd)
 {
-   ELM_WIN_DATA_GET(data, sd);
    Evas_Coord minw, minh, maxw, maxh;
 
-   efl_gfx_size_hint_combined_min_get(obj, &minw, &minh);
-   efl_gfx_size_hint_max_get(obj, &maxw, &maxh);
+   efl_gfx_size_hint_combined_min_get(win, &minw, &minh);
+   efl_gfx_size_hint_max_get(win, &maxw, &maxh);
    if (maxw < 1) maxw = -1;
    if (maxh < 1) maxh = -1;
 
    TRAP(sd, size_min_set, minw, minh);
    TRAP(sd, size_max_set, maxw, maxh);
+}
+
+static void
+_elm_win_obj_callback_changed_size_hints(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                                         Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   ELM_WIN_DATA_GET(obj, sd);
+
+   if (sd->tmp_updating_hints) return;
+   _elm_win_size_hints_update(obj, sd);
 }
 /* end of elm-win specific associate */
 
@@ -3334,6 +3343,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    efl_gfx_size_hint_restricted_min_set(obj, minw, minh);
    efl_gfx_size_hint_max_set(obj, maxw, maxh);
    sd->tmp_updating_hints = 0;
+   _elm_win_size_hints_update(obj, sd);
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    w = ow;
@@ -4871,7 +4881,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    if (type != ELM_WIN_FAKE)
      {
         evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-           _elm_win_obj_callback_changed_size_hints, obj);
+           _elm_win_obj_callback_changed_size_hints, NULL);
         evas_object_intercept_raise_callback_add
           (obj, _elm_win_obj_intercept_raise, obj);
         evas_object_intercept_lower_callback_add
