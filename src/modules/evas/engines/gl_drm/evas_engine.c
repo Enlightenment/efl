@@ -67,7 +67,8 @@ glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
 
 /* dynamic loaded local egl function pointers */
 _eng_fn (*glsym_eglGetProcAddress)(const char *a) = NULL;
-void *(*glsym_eglCreateImage)(EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
+EGLImage (*glsym_eglCreateImage) (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
+EGLImage (*glsym_eglCreateImageKHR) (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, EGLint *e) = NULL;
 void (*glsym_eglDestroyImage)(EGLDisplay a, void *b) = NULL;
 void (*glsym_glEGLImageTargetTexture2DOES)(int a, void *b) = NULL;
 unsigned int (*glsym_eglSwapBuffersWithDamage)(EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
@@ -143,6 +144,29 @@ eng_gbm_shutdown(Evas_Engine_Info_GL_Drm *info)
    return EINA_TRUE;
 }
 
+static EGLImage
+_eflCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list)
+{
+   if (glsym_eglCreateImage)
+     return glsym_eglCreateImage(dpy, ctx, target, buffer, attrib_list);
+   if (glsym_eglCreateImageKHR)
+     {
+        int count, i;
+        EGLint *ints = NULL;
+
+        if (attrib_list)
+          {
+             for (count = 0; attrib_list[count] != EGL_NONE; count += 2);
+             count++;
+             ints = alloca(count * sizeof(EGLint));
+             for (i = 0; i < count; i++)
+               ints[i] = attrib_list[i];
+          }
+        return glsym_eglCreateImageKHR(dpy, ctx, target, buffer, ints);
+    }
+   return NULL;
+}
+
 /* local functions */
 static void
 gl_symbols(void)
@@ -192,7 +216,7 @@ gl_symbols(void)
 
    glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress);
 
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImageKHR, "eglCreateImageKHR", glsym_func_void_ptr);
    FINDSYM(glsym_eglCreateImage, "eglCreateImage", glsym_func_void_ptr);
 
    FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
@@ -600,8 +624,10 @@ _re_winfree(Render_Engine *re)
 static EGLImageKHR
 import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes)
 {
-   EGLint attribs[30];
+   EGLAttrib attribs[30];
    int atti = 0;
+
+   if (!glsym_eglCreateImage && !glsym_eglCreateImageKHR) return NULL;
 
    /* This requires the Mesa commit in
     * Mesa 10.3 (08264e5dad4df448e7718e782ad9077902089a07) or
@@ -651,9 +677,9 @@ import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes)
 
    attribs[atti++] = EGL_NONE;
 
-   return glsym_eglCreateImage(display, EGL_NO_CONTEXT,
-                               EGL_LINUX_DMA_BUF_EXT,
-                               NULL, attribs);
+   return _eflCreateImage(display, EGL_NO_CONTEXT,
+                          EGL_LINUX_DMA_BUF_EXT,
+                          NULL, attribs);
 }
 
 static void
@@ -673,6 +699,7 @@ _native_cb_bind(void *image)
         if (n->ns_data.wl_surface_dmabuf.image)
           glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
         v = import_simple_dmabuf(img->native.disp, &n->ns_data.wl_surface_dmabuf.attr);
+        if (!v) return;
         glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, v);
         n->ns_data.wl_surface_dmabuf.image = v;
      }
@@ -1304,7 +1331,7 @@ eng_image_native_set(void *data, void *image, void *native)
           {
              if ((n = calloc(1, sizeof(Native))))
                {
-                  EGLint attribs[3];
+                  EGLAttrib attribs[3];
                   int format, yinvert = 1;
 
                   glsym_eglQueryWaylandBufferWL(ob->egl.disp, wl_buf,
@@ -1337,8 +1364,8 @@ eng_image_native_set(void *data, void *image, void *native)
                                 &wlid, img);
 
                   n->ns_data.wl_surface.wl_buf = wl_buf;
-                  if (glsym_eglCreateImage)
-                    n->ns_data.wl_surface.surface = glsym_eglCreateImage(ob->egl.disp,
+                  if (glsym_eglCreateImage || glsym_eglCreateImageKHR)
+                    n->ns_data.wl_surface.surface = _eflCreateImage(ob->egl.disp,
                                                           NULL,
                                                           EGL_WAYLAND_BUFFER_WL,
                                                           wl_buf, attribs);
