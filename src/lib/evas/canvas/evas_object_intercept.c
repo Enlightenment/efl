@@ -132,11 +132,8 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
       case EVAS_OBJECT_INTERCEPT_CB_RESIZE:
         i = va_arg(args, int);
         j = va_arg(args, int);
-        if (!internal)
-          {
-             if (_efl_canvas_object_efl_gfx_size_set_block(eo_obj, obj, i, j))
-               goto end_block;
-          }
+        if (_efl_canvas_object_efl_gfx_size_set_block(eo_obj, obj, i, j, internal))
+          goto end_block;
         if (!obj->interceptors) goto end_noblock;
         blocked = evas_object_intercept_call_resize(eo_obj, obj, i, j);
         break;

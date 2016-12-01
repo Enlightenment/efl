@@ -1030,9 +1030,9 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 
 Eina_Bool
 _efl_canvas_object_efl_gfx_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj,
-                                          Evas_Coord w, Evas_Coord h)
+                                          Evas_Coord w, Evas_Coord h, Eina_Bool internal)
 {
-   if (obj->doing.in_resize > 0)
+   if (!internal && (obj->doing.in_resize > 0))
      {
         WRN("evas_object_resize() called on object %p (%s) when in the middle "
             "of resizing the same object", eo_obj, efl_class_name_get(eo_obj));

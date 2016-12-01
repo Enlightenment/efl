@@ -1707,7 +1707,7 @@ void _efl_canvas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bo
 
 Eina_Bool _efl_canvas_object_clip_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip, Evas_Object_Protected_Data *clip);
 Eina_Bool _efl_canvas_object_clip_unset_block(Eo *eo_obj, Evas_Object_Protected_Data *obj);
-Eina_Bool _efl_canvas_object_efl_gfx_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h);
+Eina_Bool _efl_canvas_object_efl_gfx_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h, Eina_Bool internal);
 
 void _canvas_event_default_flags_set(Eo *e, void *_pd, va_list *list);
 void _canvas_event_default_flags_get(Eo *e, void *_pd, va_list *list);
