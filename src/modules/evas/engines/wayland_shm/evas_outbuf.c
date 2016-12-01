@@ -12,7 +12,7 @@
 Eina_Bool
 _evas_surface_init(Surface *s, int w, int h, int num_buf)
 {
-   if (getenv("EVAS_WAYLAND_SHM_USE_DMABUF"))
+   if (!getenv("EVAS_WAYLAND_SHM_DISABLE_DMABUF"))
      if (_evas_dmabuf_surface_create(s, w, h, num_buf)) return EINA_TRUE;
 
    if (_evas_shm_surface_create(s, w, h, num_buf)) return EINA_TRUE;
