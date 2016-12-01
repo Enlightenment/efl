@@ -83,7 +83,7 @@ _efl_input_focus_efl_input_event_device_set(Eo *obj EINA_UNUSED,
                                             Efl_Input_Focus_Data *pd,
                                             Efl_Input_Device *device)
 {
-   pd->device = efl_ref(device);
+   efl_replace(&pd->device, device);
 }
 
 EOLIAN static Efl_Input_Device *
