@@ -27,9 +27,8 @@ typedef struct {
    int not_empty;
 } Efl_Test_Event_Data;
 
-
 static void
-_cb3(void *data, const Efl_Event *event)
+_cb3(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Test_Data *d = data;
 
@@ -37,7 +36,7 @@ _cb3(void *data, const Efl_Event *event)
 }
 
 static void
-_cb2(void *data, const Efl_Event *event)
+_cb2(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Test_Data *d = data;
 
@@ -80,9 +79,62 @@ START_TEST(eo_event)
 }
 END_TEST
 
+static void
+_cb_rec_3(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Test_Data *d = event->info;
+   ck_assert_int_eq(d->event3, 0);
+   d->event3 = EINA_TRUE;
+}
+
+static void
+_cb_rec_2(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Test_Data *d = event->info;
+   ck_assert_int_eq(d->event2, 0);
+   d->event2 = EINA_TRUE;
+}
+
+static void
+_cb_rec_1(void *data, const Efl_Event *event)
+{
+   Test_Data *d = event->info;
+
+   if (event->info)
+     {
+        ck_assert_int_eq(d->event1, 0);
+        d->event1 = EINA_TRUE;
+     }
+   else
+     {
+        efl_event_callback_add(event->object , EFL_TEST_EVENT_EVENT_TESTER, _cb_rec_2, NULL);
+        efl_event_callback_add(event->object , EFL_TEST_EVENT_EVENT_TESTER, _cb_rec_3, NULL);
+        efl_event_callback_call(event->object, EFL_TEST_EVENT_EVENT_TESTER, data);
+     }
+}
+
+START_TEST(eo_event_call_in_call)
+{
+   Test_Data data;
+   efl_object_init();
+   Eo *obj;
+
+   obj = efl_add(efl_test_event_class_get(), NULL);
+   efl_event_callback_priority_add(obj, EFL_TEST_EVENT_EVENT_TESTER, EFL_CALLBACK_PRIORITY_BEFORE, _cb_rec_1, &data);
+
+   memset(&data, 0, sizeof(Test_Data));
+   efl_event_callback_call(obj, EFL_TEST_EVENT_EVENT_TESTER, NULL);
+   ck_assert_int_ne(data.event1, 0);
+   ck_assert_int_ne(data.event2, 0);
+   ck_assert_int_ne(data.event3, 0);
+
+   efl_object_shutdown();
+}
+END_TEST
 void eo_test_event(TCase *tc)
 {
    tcase_add_test(tc, eo_event);
+   tcase_add_test(tc, eo_event_call_in_call);
 }
 
 //class implementation
