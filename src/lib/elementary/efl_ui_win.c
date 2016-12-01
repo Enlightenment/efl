@@ -5401,8 +5401,12 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
         DBG("Setting menu to local mode");
         efl_event_callback_add(sd->obj, EFL_GFX_EVENT_RESIZE, _main_menu_resize_cb, NULL);
         edje_object_part_swallow(swallow, "elm.swallow.menu", sd->main_menu);
-        efl_canvas_object_is_frame_object_set(sd->main_menu, (swallow == sd->frame_obj));
-        sd->csd.need_menu = EINA_TRUE;
+        evas_object_show(sd->main_menu);
+        if (swallow == sd->frame_obj)
+          {
+             efl_canvas_object_is_frame_object_set(sd->main_menu, EINA_TRUE);
+             sd->csd.need_menu = EINA_TRUE;
+          }
      }
    _elm_win_frame_style_update(sd, 0, 1);
    sd->deferred_resize_job = EINA_TRUE;
