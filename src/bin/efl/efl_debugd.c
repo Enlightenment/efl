@@ -285,8 +285,21 @@ _process_command(void *data, const char op[static 4], const Eina_Slice payload)
                   header[1] = blocksize;
                   memcpy(header + 2, payload.mem, sizeof(int));
 
-                  fwrite(header, 12, 1, c->evlog_file);
-                  fwrite(payload.bytes + sizeof(int), blocksize, 1, c->evlog_file);
+                  if ((fwrite(header, 12, 1, c->evlog_file) != 1) ||
+                      (fwrite(payload.bytes + sizeof(int), blocksize, 1, c->evlog_file) != 1))
+                    {
+                       fprintf(stderr, "INFO: failed to write log file for client %p [pid: %d]\n", c, (int)c->pid);
+                       fclose(c->evlog_file);
+                       c->evlog_file = NULL;
+                       c->evlog_on = 0;
+
+                       send_cli(c, EVOF, NULL, 0);
+                       if (c->evlog_fetch_timer)
+                         {
+                            ecore_timer_del(c->evlog_fetch_timer);
+                            c->evlog_fetch_timer = NULL;
+                         }
+                    }
                }
           }
      }
