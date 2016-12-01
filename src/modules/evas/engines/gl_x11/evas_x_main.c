@@ -149,6 +149,32 @@ _visuals_hash_index_get_from_info(Evas_Engine_Info_GL_X11 *info)
                                   info->msaa_bits);
 }
 
+#ifdef GL_GLES
+
+#ifndef EGL_PLATFORM_X11_KHR
+# define EGL_PLATFORM_X11_KHR 0x31D5
+#endif
+
+static EGLDisplay *
+_x11_eglGetDisplay(Display *x11_display)
+{
+   EGLDisplay (*eglsym_eglGetPlatformDisplay)
+         (EGLenum platform, void *native_display, const EGLAttrib *attrib_list) = NULL;
+   EGLDisplay *egldisp = EGL_NO_DISPLAY;
+
+   eglsym_eglGetPlatformDisplay = dlsym(RTLD_DEFAULT, "eglGetPlatformDisplay");
+   if (eglsym_eglGetPlatformDisplay)
+     {
+        egldisp = eglsym_eglGetPlatformDisplay(EGL_PLATFORM_X11_KHR,
+                                               (EGLNativeDisplayType) x11_display, NULL);
+        if (egldisp) return egldisp;
+     }
+
+   return eglGetDisplay((EGLNativeDisplayType) x11_display);
+}
+
+#endif
+
 Outbuf *
 eng_window_new(Evas_Engine_Info_GL_X11 *info,
                Evas *e,
@@ -220,7 +246,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 // EGL / GLES
 #ifdef GL_GLES
    gw->gles3 = gles3_supported;
-   gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)(gw->disp));
+   gw->egl_disp = _x11_eglGetDisplay(gw->disp);
    if (!gw->egl_disp)
      {
         ERR("eglGetDisplay() fail. code=%#x", eglGetError());
@@ -861,7 +887,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
    const char *eglexts, *s;
    int depth = DefaultDepth(einfo->info.display, einfo->info.screen);
 
-   egl_disp = eglGetDisplay((EGLNativeDisplayType)(einfo->info.display));
+   egl_disp = _x11_eglGetDisplay(einfo->info.display);
    if (!egl_disp)
      {
         free(evis);
