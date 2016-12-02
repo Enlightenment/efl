@@ -19,7 +19,7 @@ typedef struct {
    EINA_INLIST;
    unsigned int idx;
    unsigned int inserted_before;
-   unsigned char generation;
+   unsigned short generation;
 } Efl_Event_Callback_Frame;
 
 typedef struct
@@ -42,9 +42,8 @@ typedef struct
    Eina_Inlist               *current;
 
    Eo_Callback_Description  **callbacks;
-   unsigned int               callbacks_count;
-
    Eina_Inlist                *event_frame;
+   unsigned int               callbacks_count;
 
    unsigned short             event_freeze_count;
 #ifdef EFL_EVENT_SPECIAL_SKIP
@@ -921,7 +920,7 @@ struct _Eo_Callback_Description
    void *func_data;
    Efl_Callback_Priority priority;
 
-   unsigned char generation;
+   unsigned short generation;
 
    Eina_Bool delete_me : 1;
    Eina_Bool func_array : 1;
