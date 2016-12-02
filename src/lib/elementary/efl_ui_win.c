@@ -2272,11 +2272,9 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
    if (sd->pointer.ee)
      {
         ecore_evas_hide(sd->pointer.ee);
-#ifdef HAVE_ELEMENTARY_WL2
         sd->pointer.surf = NULL;
         ecore_wl2_window_pointer_set(sd->wl.win, NULL,
                                      sd->pointer.hot_x, sd->pointer.hot_y);
-#endif
      }
 #endif
 
