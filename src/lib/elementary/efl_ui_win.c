@@ -1393,6 +1393,7 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
    ecore_wl2_window_input_region_set(sd->wl.win, ox, oy, ow, oh);
 #else
    (void)sd;
+   (void)force_alpha;
 #endif
 }
 
