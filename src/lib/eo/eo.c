@@ -1923,19 +1923,19 @@ efl_object_init(void)
 
    if (!eina_lock_recursive_new(&_efl_class_creation_lock))
      {
-        EINA_LOG_ERR("Could not init lock.");
+        ERR("Could not init lock.");
         return EINA_FALSE;
      }
 
    if (!eina_spinlock_new(&_ops_storage_lock))
      {
-        EINA_LOG_ERR("Could not init lock.");
+        ERR("Could not init lock.");
         return EINA_FALSE;
      }
 
    if (!eina_spinlock_new(&_super_class_lock))
      {
-        EINA_LOG_ERR("Could not init lock.");
+        ERR("Could not init lock.");
         return EINA_FALSE;
      }
 
@@ -1955,7 +1955,7 @@ efl_object_init(void)
    _eo_table_data_shared = _eo_table_data_new(EFL_ID_DOMAIN_SHARED);
    if (!_eo_table_data_shared)
      {
-        EINA_LOG_ERR("Could not allocate shared table data");
+        ERR("Could not allocate shared table data");
         return EINA_FALSE;
      }
    _eo_table_data_shared_data = _eo_table_data_shared->tables[EFL_ID_DOMAIN_SHARED];
@@ -1965,12 +1965,12 @@ efl_object_init(void)
    _eo_gdb_main_domain = data;
    if (!data)
      {
-        EINA_LOG_ERR("Could not allocate main table data");
+        ERR("Could not allocate main table data");
         return EINA_FALSE;
      }
    if (!eina_tls_cb_new(&_eo_table_data, _eo_table_del_cb))
      {
-        EINA_LOG_ERR("Could not allocate TLS for eo domain data");
+        ERR("Could not allocate TLS for eo domain data");
         _eo_table_del_cb(data);
         return EINA_FALSE;
      }
