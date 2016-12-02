@@ -2174,12 +2174,12 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    Eina_Bool changed = EINA_FALSE;
-   int fw = 0, fh = 0;
+   int fw = 0, fh = 0, vw = w, vh = h;
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-   if (ECORE_EVAS_PORTRAIT(ee)) SWAP_INT(fw, fh);
-   w -= fw;
-   h -= fh;
+   if (!ECORE_EVAS_PORTRAIT(ee)) SWAP_INT(fw, fh);
+   vw += fw;
+   vh += fh;
 
    if ((ee->req.w != w) || (ee->req.h != h))
      {
@@ -2194,7 +2194,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
    if (!ee->prop.window)
      {
         /* the ecore_evas was resized. we need to free the back pixmap */
-        if ((edata->pixmap.w != w) || (edata->pixmap.h != h))
+        if ((edata->pixmap.w != vw) || (edata->pixmap.h != vh))
           {
              /* free the backing pixmap */
              if (edata->pixmap.back) 
@@ -2210,16 +2210,16 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
         ee->w = w;
         ee->h = h;
         if (changed) edata->configure_reqs++;
-        if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
+        if (ee->prop.window) ecore_x_window_resize(ee->prop.window, vw, vh);
         if (ECORE_EVAS_PORTRAIT(ee))
           {
-             evas_output_size_set(ee->evas, ee->w, ee->h);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+             evas_output_size_set(ee->evas, vw, vh);
+             evas_output_viewport_set(ee->evas, 0, 0, vw, vh);
           }
         else
           {
-             evas_output_size_set(ee->evas, ee->h, ee->w);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+             evas_output_size_set(ee->evas, vh, vw);
+             evas_output_viewport_set(ee->evas, 0, 0, vh, vw);
           }
         if (ee->prop.avoid_damage)
           {
@@ -2237,7 +2237,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
      {
         edata->configure_coming = 1;
         if (changed) edata->configure_reqs++;
-        if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w + fw, h + fh);
+        if (ee->prop.window) ecore_x_window_resize(ee->prop.window, vw, vh);
      }
 }
 
@@ -2246,6 +2246,13 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    Eina_Bool changed = EINA_FALSE;
+   int fx = 0, fy = 0, fw = 0, fh = 0, vw = w, vh = h;
+
+   // vw,vh is viewport/output size
+   evas_output_framespace_get(ee->evas, &fx, &fy, &fw, &fh);
+   if (ECORE_EVAS_PORTRAIT(ee)) SWAP_INT(fw, fh);
+   vw += fw;
+   vh += fh;
 
    if ((ee->req.x != x) || (ee->req.y != y) ||
        (ee->req.w != w) || (ee->req.h != h))
@@ -2269,7 +2276,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
                   if ((x != ee->x) || (y != ee->y)) change_pos = 1;
                }
              if (changed) edata->configure_reqs++;
-             ecore_x_window_move_resize(ee->prop.window, x, y, w, h);
+             ecore_x_window_move_resize(ee->prop.window, x, y, vw, vh);
              if (!edata->managed)
                {
                   ee->x = x;
@@ -2279,13 +2286,13 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
              ee->h = h;
              if (ECORE_EVAS_PORTRAIT(ee))
                {
-                  evas_output_size_set(ee->evas, ee->w, ee->h);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+                  evas_output_size_set(ee->evas, vw, vh);
+                  evas_output_viewport_set(ee->evas, 0, 0, vw, vh);
                }
              else
                {
-                  evas_output_size_set(ee->evas, ee->h, ee->w);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+                  evas_output_size_set(ee->evas, vh, vw);
+                  evas_output_viewport_set(ee->evas, 0, 0, vh, vw);
                }
              if (ee->prop.avoid_damage)
                {
@@ -2313,7 +2320,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
           {
              edata->configure_coming = 1;
              if (changed) edata->configure_reqs++;
-             ecore_x_window_move_resize(ee->prop.window, x, y, w, h);
+             ecore_x_window_move_resize(ee->prop.window, x, y, vw, vh);
              if (!edata->managed)
                {
                   ee->x = x;
@@ -2324,7 +2331,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
           {
              edata->configure_coming = 1;
              if (changed) edata->configure_reqs++;
-             if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
+             if (ee->prop.window) ecore_x_window_resize(ee->prop.window, vw, vh);
           }
      }
 }
@@ -2341,9 +2348,6 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
    if (rot_dif < 0) rot_dif = -rot_dif;
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-
-   if (!PORTRAIT_CHECK(rotation))
-     SWAP_INT(fw, fh);
 
    if (rot_dif != 180)
      {
@@ -2373,16 +2377,15 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
                   ecore_x_window_resize(ee->prop.window, h, w);
                   if (PORTRAIT_CHECK(rotation))
                     {
-                       evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->req.w, ee->req.h);
+                       evas_output_size_set(ee->evas, ee->req.w + fw, ee->req.h + fh);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->req.w + fw, ee->req.h + fh);
                     }
                   else
                     {
-                       evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->req.h, ee->req.w);
+                       evas_output_size_set(ee->evas, ee->req.h + fw, ee->req.w + fh);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->req.h + fw, ee->req.w + fh);
                     }
                   if (ee->func.fn_resize) ee->func.fn_resize(ee);
-                  fw = fh = 0;
                }
              if (PORTRAIT_CHECK(rotation))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w + fw, ee->req.h + fh);
@@ -2396,19 +2399,19 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
              /* ecore_x_window_size_get(ee->prop.window, &w, &h); */
              if (PORTRAIT_CHECK(rotation))
                {
-                  evas_output_size_set(ee->evas, ee->w, ee->h);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+                  evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
                }
              else
                {
-                  evas_output_size_set(ee->evas, ee->h, ee->w);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+                  evas_output_size_set(ee->evas, ee->h + fw, ee->w + fh);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->h + fw, ee->w + fh);
                }
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
              if (PORTRAIT_CHECK(rotation))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
              else
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h + fw, ee->w + fh);
           }
         ecore_evas_size_min_get(ee, &minw, &minh);
         ecore_evas_size_max_get(ee, &maxw, &maxh);
@@ -3808,6 +3811,8 @@ _ecore_evas_x_render_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
     * create a new one at the proper size */
    if ((edata->pixmap.w != ee->w) || (edata->pixmap.h != ee->h))
      {
+        int fw = 0, fh = 0;
+
         /* free the backing pixmap */
         if (edata->pixmap.back) 
           ecore_x_pixmap_free(edata->pixmap.back);
@@ -3816,8 +3821,9 @@ _ecore_evas_x_render_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
           ecore_x_pixmap_new(edata->win_root, ee->w, ee->h, 
                              edata->pixmap.depth);
 
-        edata->pixmap.w = ee->w;
-        edata->pixmap.h = ee->h;
+        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+        edata->pixmap.w = ee->w + fw;
+        edata->pixmap.h = ee->h + fh;
 
         if (!strcmp(ee->driver, "software_x11"))
           {
