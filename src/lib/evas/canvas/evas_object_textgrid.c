@@ -1054,10 +1054,10 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
                                             Evas_Font_Size font_size)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Eina_Bool is, was = EINA_FALSE;
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
    Evas_Font_Description *fdesc;
+   Eina_List *was = NULL;
 
    if ((!font_name) || (!*font_name) || (font_size <= 0))
      return;
@@ -1090,10 +1090,8 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
         freeze = evas_event_freezes_through(eo_obj, obj);
         source_invisible = evas_object_is_source_invisible(eo_obj, obj);
         if ((!pass) && (!freeze) && (!source_invisible))
-          was = evas_object_is_in_output_rect(eo_obj, obj,
-                                              obj->layer->evas->pointer.x,
-                                              obj->layer->evas->pointer.y,
-                                              1, 1);
+          was = _evas_pointer_list_in_rect_get(obj->layer->evas, eo_obj, obj,
+                                               1, 1);
      }
 
    if (o->font_normal)
@@ -1229,22 +1227,9 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
-   if (!(obj->layer->evas->is_frozen))
-     {
-        if ((!pass) && (!freeze))
-          {
-             is = evas_object_is_in_output_rect(eo_obj, obj,
-                                                obj->layer->evas->pointer.x,
-                                                obj->layer->evas->pointer.y,
-                                                1, 1);
-             if ((is ^ was) && obj->cur->visible)
-               evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                          obj->layer->evas->pointer.x,
-                                          obj->layer->evas->pointer.y,
-                                          obj->layer->evas->last_timestamp,
-                                          NULL);
-          }
-     }
+   if (!obj->layer->evas->is_frozen && !pass && !freeze && obj->cur->visible)
+     _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_TRUE, NULL);
+   eina_list_free(was);
    evas_object_inform_call_resize(eo_obj);
    o->changed = 1;
    o->core_change = 1;

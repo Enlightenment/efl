@@ -396,14 +396,11 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
    if ((!obj->is_smart) &&
        (!((obj->map->cur.map) && (obj->map->cur.usemap))))
      {
-        if (evas_object_is_in_output_rect(eo_obj, obj,
-                                          obj->layer->evas->pointer.x,
-                                          obj->layer->evas->pointer.y, 1, 1))
-          evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                     obj->layer->evas->pointer.x,
-                                     obj->layer->evas->pointer.y,
-                                     obj->layer->evas->last_timestamp,
-                                     NULL);
+        _evas_canvas_event_pointer_in_rect_mouse_move_feed(obj->layer->evas,
+                                                           eo_obj,
+                                                           obj, 1, 1,
+                                                           EINA_FALSE,
+                                                           NULL);
      }
    evas_object_clip_across_check(eo_obj, obj);
 }
@@ -447,14 +444,11 @@ _clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    if ((!obj->is_smart) &&
        (!((obj->map->cur.map) && (obj->map->cur.usemap))))
      {
-        if (evas_object_is_in_output_rect(eo_obj, obj,
-                                          obj->layer->evas->pointer.x,
-                                          obj->layer->evas->pointer.y, 1, 1))
-          evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                     obj->layer->evas->pointer.x,
-                                     obj->layer->evas->pointer.y,
-                                     obj->layer->evas->last_timestamp,
-                                     NULL);
+        _evas_canvas_event_pointer_in_rect_mouse_move_feed(obj->layer->evas,
+                                                           eo_obj,
+                                                           obj, 1, 1,
+                                                           EINA_FALSE,
+                                                           NULL);
      }
    evas_object_clip_across_check(eo_obj, obj);
 }

@@ -29,8 +29,9 @@ _is_pointer(Evas_Device_Class clas)
 {
    if (clas == EVAS_DEVICE_CLASS_MOUSE ||
        clas == EVAS_DEVICE_CLASS_TOUCH ||
-       clas == EVAS_DEVICE_CLASS_WAND ||
-       clas == EVAS_DEVICE_CLASS_PEN)
+       clas == EVAS_DEVICE_CLASS_PEN ||
+       clas == EVAS_DEVICE_CLASS_POINTER ||
+       clas == EVAS_DEVICE_CLASS_WAND)
      return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -86,6 +87,9 @@ _del_cb(void *data, const Efl_Event *ev)
    else if (e->default_keyboard == ev->object)
      e->default_keyboard = _new_default_device_find(e, ev->object);
 
+   _evas_pointer_data_remove(e, ev->object);
+   eina_hash_del_by_key(e->locks.masks, &ev->object);
+   eina_hash_del_by_key(e->modifiers.masks, &ev->object);
    efl_event_callback_call(e->evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,
                            ev->object);
 }
@@ -128,8 +132,17 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
      e->default_seat = dev;
    else if (!e->default_keyboard && clas == EVAS_DEVICE_CLASS_KEYBOARD)
      e->default_keyboard = dev;
-   else if (!e->default_mouse && _is_pointer(clas))
-     e->default_mouse = dev;
+   else if (_is_pointer(clas))
+     {
+        if (!_evas_pointer_data_add(e, dev))
+          {
+             efl_del(dev);
+             return NULL;
+          }
+
+        if (!e->default_mouse)
+          e->default_mouse = dev;
+     }
 
    e->devices = eina_list_append(e->devices, dev);
    efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
@@ -255,8 +268,19 @@ evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
    Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   Evas_Public_Data *edata = efl_data_scope_get(d->evas, EVAS_CANVAS_CLASS);
+
+   if (d->klass == clas)
+     return;
+
+   if (_is_pointer(d->klass))
+     _evas_pointer_data_remove(edata, dev);
 
    efl_input_device_type_set(dev, clas);
+
+   if (_is_pointer(clas))
+     _evas_pointer_data_add(edata, dev);
+
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 

@@ -43,38 +43,55 @@ _evas_canvas_key_lock_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
    return &(e->locks);
 }
 
-EAPI Eina_Bool
-evas_key_modifier_is_set(const Evas_Modifier *m, const char *keyname)
+static Eina_Bool
+_key_is_set(int n, Eina_Hash *masks, const Evas_Device *seat)
 {
-   Evas_Modifier_Mask num;
-   int n;
+   Evas_Modifier_Mask num, *seat_mask;
 
-   if (!m) return 0;
-   if (!keyname) return 0;
-   n = evas_key_modifier_number(m, keyname);
    if (n < 0) return 0;
    else if (n >= 64) return 0;
    num = (Evas_Modifier_Mask)n;
    num = 1ULL << num;
-   if (m->mask & num) return 1;
+   seat_mask = eina_hash_find(masks, &seat);
+   if (!seat_mask) return 0;
+   if (*seat_mask & num) return 1;
    return 0;
+}
+
+EAPI Eina_Bool
+evas_seat_key_modifier_is_set(const Evas_Modifier *m, const char *keyname,
+                              const Evas_Device *seat)
+{
+   if (!seat)
+     seat = m->e->default_seat;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, 0);
+   if (!m) return 0;
+   if (!keyname) return 0;
+   return _key_is_set(evas_key_modifier_number(m, keyname), m->masks, seat);
+}
+
+EAPI Eina_Bool
+evas_key_modifier_is_set(const Evas_Modifier *m, const char *keyname)
+{
+   return evas_seat_key_modifier_is_set(m, keyname, NULL);
 }
 
 EAPI Eina_Bool
 evas_key_lock_is_set(const Evas_Lock *l, const char *keyname)
 {
-   Evas_Modifier_Mask num;
-   int n;
+   return evas_seat_key_lock_is_set(l, keyname, NULL);
+}
 
+EAPI Eina_Bool
+evas_seat_key_lock_is_set(const Evas_Lock *l, const char *keyname,
+                          const Evas_Device *seat)
+{
+   if (!seat)
+     seat = l->e->default_seat;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, 0);
    if (!l) return 0;
    if (!keyname) return 0;
-   n = evas_key_lock_number(l, keyname);
-   if (n < 0) return 0;
-   else if (n >= 64) return 0;
-   num = (Evas_Modifier_Mask)n;
-   num = 1ULL << num;
-   if (l->mask & num) return 1;
-   return 0;
+   return _key_is_set(evas_key_lock_number(l, keyname), l->masks, seat);
 }
 
 EOLIAN void
@@ -86,7 +103,7 @@ _evas_canvas_key_modifier_add(Eo *eo_e, Evas_Public_Data *e, const char *keyname
    e->modifiers.mod.count++;
    e->modifiers.mod.list = realloc(e->modifiers.mod.list, e->modifiers.mod.count * sizeof(char *));
    e->modifiers.mod.list[e->modifiers.mod.count - 1] = strdup(keyname);
-   e->modifiers.mask = 0;
+   eina_hash_free_buckets(e->modifiers.masks);
 }
 
 EOLIAN void
@@ -105,7 +122,7 @@ _evas_canvas_key_modifier_del(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const c
 	     e->modifiers.mod.count--;
 	     for (j = i; j < e->modifiers.mod.count; j++)
 	       e->modifiers.mod.list[j] = e->modifiers.mod.list[j + 1];
-	     e->modifiers.mask = 0;
+             eina_hash_free_buckets(e->modifiers.masks);
 	     return;
 	  }
      }
@@ -120,7 +137,7 @@ _evas_canvas_key_lock_add(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
    e->locks.lock.count++;
    e->locks.lock.list = realloc(e->locks.lock.list, e->locks.lock.count * sizeof(char *));
    e->locks.lock.list[e->locks.lock.count - 1] = strdup(keyname);
-   e->locks.mask = 0;
+   eina_hash_free_buckets(e->locks.masks);
 }
 
 EOLIAN void
@@ -128,7 +145,6 @@ _evas_canvas_key_lock_del(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char 
 {
    int i;
    if (!keyname) return;
-   e->locks.mask = 0;
    for (i = 0; i < e->locks.lock.count; i++)
      {
 	if (!strcmp(e->locks.lock.list[i], keyname))
@@ -139,58 +155,110 @@ _evas_canvas_key_lock_del(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char 
 	     e->locks.lock.count--;
 	     for (j = i; j < e->locks.lock.count; j++)
 	       e->locks.lock.list[j] = e->locks.lock.list[j + 1];
-	     e->locks.mask = 0;
+             eina_hash_free_buckets(e->locks.masks);
 	     return;
 	  }
      }
 }
 
-EOLIAN void
-_evas_canvas_key_modifier_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+static void
+_mask_set(int n, Eina_Hash *masks, Efl_Input_Device *seat, Eina_Bool add)
 {
+   Evas_Modifier_Mask *current_mask;
    Evas_Modifier_Mask num;
-   int n;
 
-   n = (Evas_Modifier_Mask)evas_key_modifier_number(&(e->modifiers), keyname);
    if (n < 0 || n > 63) return;
    num = 1ULL << n;
-   e->modifiers.mask |= num;
+
+   current_mask = eina_hash_find(masks, &seat);
+   if (add)
+     {
+        if (!current_mask)
+          {
+             current_mask = calloc(1, sizeof(Evas_Modifier_Mask));
+             EINA_SAFETY_ON_NULL_RETURN(current_mask);
+             eina_hash_add(masks, &seat, current_mask);
+          }
+        *current_mask |= num;
+     }
+   else
+     {
+        if (!current_mask) return;
+        *current_mask &= ~num;
+        if (!(*current_mask))
+          eina_hash_del_by_key(masks, &seat);
+     }
 }
 
 EOLIAN void
-_evas_canvas_key_modifier_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_seat_key_modifier_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
+                                  const char *keyname, Efl_Input_Device *seat)
 {
-   Evas_Modifier_Mask num;
-   int n;
-
-   n = evas_key_modifier_number(&(e->modifiers), keyname);
-   if (n < 0 || n > 63) return;
-   num = 1ULL << n;
-   e->modifiers.mask &= ~num;
+   if (!seat)
+     seat = e->default_seat;
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   _mask_set(evas_key_modifier_number(&(e->modifiers), keyname),
+             e->modifiers.masks, seat, EINA_TRUE);
 }
 
 EOLIAN void
-_evas_canvas_key_lock_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_seat_key_modifier_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
+                                   const char *keyname, Efl_Input_Device *seat)
 {
-   Evas_Modifier_Mask num;
-   int n;
-
-   n = evas_key_lock_number(&(e->locks), keyname);
-   if (n < 0 || n > 63) return;
-   num = 1ULL << n;
-   e->locks.mask |= num;
+   if (!seat)
+     seat = e->default_seat;
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+   _mask_set(evas_key_modifier_number(&(e->modifiers), keyname),
+             e->modifiers.masks, seat, EINA_FALSE);
 }
 
 EOLIAN void
-_evas_canvas_key_lock_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_key_modifier_on(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
 {
-   Evas_Modifier_Mask num;
-   int n;
+   _evas_canvas_seat_key_modifier_on(eo_e, e, keyname, NULL);
+}
 
-   n = evas_key_lock_number(&(e->locks), keyname);
-   if (n < 0 || n > 63) return;
-   num = 1ULL << n;
-   e->locks.mask &= ~num;
+EOLIAN void
+_evas_canvas_key_modifier_off(Eo *eo_e, Evas_Public_Data *e,
+                              const char *keyname)
+{
+   _evas_canvas_seat_key_modifier_off(eo_e, e, keyname, NULL);
+}
+
+EOLIAN void
+_evas_canvas_seat_key_lock_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
+                              const char *keyname, Efl_Input_Device *seat)
+{
+   if (!seat)
+     seat = e->default_seat;
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   _mask_set(evas_key_lock_number(&(e->locks), keyname), e->locks.masks,
+             seat, EINA_TRUE);
+}
+
+EOLIAN void
+_evas_canvas_seat_key_lock_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
+                               const char *keyname, Efl_Input_Device *seat)
+{
+   if (!seat)
+     seat = e->default_seat;
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+   _mask_set(evas_key_lock_number(&(e->locks), keyname), e->locks.masks,
+             seat, EINA_FALSE);
+}
+
+EOLIAN void
+_evas_canvas_key_lock_on(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
+{
+   _evas_canvas_seat_key_lock_on(eo_e, e, keyname, NULL);
+}
+
+EOLIAN void
+_evas_canvas_key_lock_off(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
+{
+   _evas_canvas_seat_key_lock_off(eo_e, e, keyname, NULL);
 }
 
 /* errr need to add key grabbing/ungrabbing calls - missing modifier stuff. */

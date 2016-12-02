@@ -21,6 +21,18 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             type: string; [[The type of the object.]]
          }
       }
+      @property pointer_mode_by_device {
+         [[Low-level pointer behaviour by device.
+           See @.pointer_mode.get and @.pointer_mode.set for more explanation.
+           @since 1.19
+         ]]
+         keys {
+            dev: Efl.Input.Device; [[The pointer device to set/get the mode. Use $null for the default pointer.]]
+         }
+         values {
+             pointer_mode: Efl.Input.Object_Pointer_Mode; [[The pointer mode]]
+         }
+      }
       @property pointer_mode {
          [[Low-level pointer behaviour.
 
@@ -37,6 +49,8 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
            will be emitted just when inside this object area.
 
            The default value is @Efl.Input.Object_Pointer_Mode.auto_grab.
+           See also: @.pointer_mode_by_device.get and @.pointer_mode_by_device.set
+           Note: This function will only set/get the mode for the default pointer.
          ]]
          values {
             pointer_mode: Efl.Input.Object_Pointer_Mode; [[Input pointer mode]]
@@ -47,13 +61,30 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
 
            This shall be true between pointer,in and pointer,out events (coming
            in matching numbers). Note that group objects may receive multiple
-           pointer,in in a row.
+           pointer,in in a row. See algo @.pointer_device_in.get
 
            @since 1.19
          ]]
          get{}
          values {
             in: bool; [[If $true the main pointer has entered this object.]]
+         }
+      }
+      @property pointer_device_in {
+         [[Read-only value indicating whether a pointer is in the object.
+
+           This shall be true between pointer,in and pointer,out events (coming
+           in matching numbers). Note that group objects may receive multiple
+           pointer,in in a row.
+
+           @since 1.19
+         ]]
+         get {}
+         keys {
+            pointer: Efl.Input.Device; [[The pointer. Use $null for the defaul pointer]]
+         }
+         values {
+            in: bool; [[If $true the pointer has entered this object.]]
          }
       }
       @property render_op {

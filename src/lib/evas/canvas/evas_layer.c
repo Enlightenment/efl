@@ -248,18 +248,11 @@ _efl_canvas_object_efl_gfx_stack_layer_set(Eo *eo_obj,
         return;
      }
    evas_object_change(eo_obj, obj);
-   if (!obj->is_smart)
+   if (!obj->is_smart && obj->cur->visible)
      {
-        if (evas_object_is_in_output_rect(eo_obj, obj,
-                                          obj->layer->evas->pointer.x,
-                                          obj->layer->evas->pointer.y, 1, 1) &&
-            obj->cur->visible)
-          if (eina_list_data_find(obj->layer->evas->pointer.object.in, obj))
-            evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                       obj->layer->evas->pointer.x,
-                                       obj->layer->evas->pointer.y,
-                                       obj->layer->evas->last_timestamp,
-                                       NULL);
+        _evas_canvas_event_pointer_in_rect_mouse_move_feed(obj->layer->evas, eo_obj, obj,
+                                                           1, 1, EINA_TRUE,
+                                                           NULL);
      }
    else
      {

@@ -47,6 +47,7 @@ struct _Ecore_Input_Last
 {
    Ecore_Event_Mouse_Button *ev;
    Ecore_Timer *timer;
+   Evas_Device *evas_device;
 
    unsigned int device;
    unsigned int buttons;
@@ -122,14 +123,16 @@ _ecore_event_last_check(Ecore_Event_Last *eel, Ecore_Event_Press press)
 }
 
 static Ecore_Event_Last *
-_ecore_event_evas_lookup(unsigned int device, unsigned int buttons, Ecore_Window win, Eina_Bool create_new)
+_ecore_event_evas_lookup(Evas_Device *evas_device, unsigned int device,
+                         unsigned int buttons, Ecore_Window win,
+                         Eina_Bool create_new)
 {
    Ecore_Event_Last *eel;
    Eina_List *l;
 
    //the number of last event is small, simple check is ok.
    EINA_LIST_FOREACH(_last_events, l, eel)
-     if ((eel->device == device) && (eel->buttons == buttons))
+     if ((eel->device == device) && (eel->buttons == buttons) && (eel->evas_device == evas_device))
        return eel;
    if (!create_new) return NULL;
    eel = malloc(sizeof (Ecore_Event_Last));
@@ -142,6 +145,7 @@ _ecore_event_evas_lookup(unsigned int device, unsigned int buttons, Ecore_Window
    eel->state = ECORE_INPUT_NONE;
    eel->faked = EINA_FALSE;
    eel->win = win;
+   eel->evas_device = evas_device;
 
    _last_events = eina_list_append(_last_events, eel);
    return eel;
@@ -182,7 +186,7 @@ _ecore_event_evas_push_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Pre
    Ecore_Input_Action action = ECORE_INPUT_CONTINUE;
 
    //_ecore_event_evas_mouse_button already check press or cancel without history
-   eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, e->window, EINA_TRUE);
+   eel = _ecore_event_evas_lookup(e->dev, e->multi.device, e->buttons, e->window, EINA_TRUE);
    if (!eel) return EINA_FALSE;
    INF("dev(%d), button(%d), last_press(%d), press(%d)", e->multi.device, e->buttons, eel->state, press);
 
@@ -274,50 +278,57 @@ _ecore_event_evas_push_mouse_move(Ecore_Event_Mouse_Move *e)
 }
 
 EAPI void
-ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
+ecore_event_evas_seat_modifier_lock_update(Evas *e, unsigned int modifiers,
+                                           Evas_Device *seat)
 {
    if (modifiers & ECORE_EVENT_MODIFIER_SHIFT)
-     evas_key_modifier_on(e, "Shift");
-   else evas_key_modifier_off(e, "Shift");
+     evas_seat_key_modifier_on(e, "Shift", seat);
+   else evas_seat_key_modifier_off(e, "Shift", seat);
 
    if (modifiers & ECORE_EVENT_MODIFIER_CTRL)
-     evas_key_modifier_on(e, "Control");
-   else evas_key_modifier_off(e, "Control");
+     evas_seat_key_modifier_on(e, "Control", seat);
+   else evas_seat_key_modifier_off(e, "Control", seat);
 
    if (modifiers & ECORE_EVENT_MODIFIER_ALT)
-     evas_key_modifier_on(e, "Alt");
-   else evas_key_modifier_off(e, "Alt");
+     evas_seat_key_modifier_on(e, "Alt", seat);
+   else evas_seat_key_modifier_off(e, "Alt", seat);
 
    if (modifiers & ECORE_EVENT_MODIFIER_WIN)
      {
-        evas_key_modifier_on(e, "Super");
-        evas_key_modifier_on(e, "Hyper");
+        evas_seat_key_modifier_on(e, "Super", seat);
+        evas_seat_key_modifier_on(e, "Hyper", seat);
      }
    else
      {
-        evas_key_modifier_off(e, "Super");
-        evas_key_modifier_off(e, "Hyper");
+        evas_seat_key_modifier_off(e, "Super", seat);
+        evas_seat_key_modifier_off(e, "Hyper", seat);
      }
 
    if (modifiers & ECORE_EVENT_MODIFIER_ALTGR)
-     evas_key_modifier_on(e, "AltGr");
-   else evas_key_modifier_off(e, "AltGr");
+     evas_seat_key_modifier_on(e, "AltGr", seat);
+   else evas_seat_key_modifier_off(e, "AltGr", seat);
 
    if (modifiers & ECORE_EVENT_LOCK_SCROLL)
-     evas_key_lock_on(e, "Scroll_Lock");
-   else evas_key_lock_off(e, "Scroll_Lock");
+     evas_seat_key_lock_on(e, "Scroll_Lock", seat);
+   else evas_seat_key_lock_off(e, "Scroll_Lock", seat);
 
    if (modifiers & ECORE_EVENT_LOCK_NUM)
-     evas_key_lock_on(e, "Num_Lock");
-   else evas_key_lock_off(e, "Num_Lock");
+     evas_seat_key_lock_on(e, "Num_Lock", seat);
+   else evas_seat_key_lock_off(e, "Num_Lock", seat);
 
    if (modifiers & ECORE_EVENT_LOCK_CAPS)
-     evas_key_lock_on(e, "Caps_Lock");
-   else evas_key_lock_off(e, "Caps_Lock");
+     evas_seat_key_lock_on(e, "Caps_Lock", seat);
+   else evas_seat_key_lock_off(e, "Caps_Lock", seat);
 
    if (modifiers & ECORE_EVENT_LOCK_SHIFT)
-     evas_key_lock_on(e, "Shift_Lock");
-   else evas_key_lock_off(e, "Shift_Lock");
+     evas_seat_key_lock_on(e, "Shift_Lock", seat);
+   else evas_seat_key_lock_off(e, "Shift_Lock", seat);
+}
+
+EAPI void
+ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
+{
+   ecore_event_evas_seat_modifier_lock_update(e, modifiers, NULL);
 }
 
 EAPI void
@@ -408,7 +419,9 @@ _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
 
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
+   ecore_event_evas_seat_modifier_lock_update(lookup->evas,
+                                              e->modifiers,
+                                              efl_input_device_seat_get(e->dev));
    if (press == ECORE_DOWN)
      {
         if (!lookup->direct ||
@@ -491,7 +504,7 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
    if (press != ECORE_DOWN)
      {
         //ECORE_UP or ECORE_CANCEL
-        eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, e->window, EINA_FALSE);
+        eel = _ecore_event_evas_lookup(e->dev, e->multi.device, e->buttons, e->window, EINA_FALSE);
         if (!eel)
           {
              WRN("ButtonEvent has no history.");
@@ -517,7 +530,9 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
 
    if (e->multi.device == 0)
      {
-        ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
+        ecore_event_evas_seat_modifier_lock_update(lookup->evas,
+                                                   e->modifiers,
+                                                   efl_input_device_seat_get(e->dev));
         if (press == ECORE_DOWN)
           {
              if (!lookup->direct ||
@@ -597,7 +612,9 @@ ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *
    if (e->multi.device == 0)
      {
         _ecore_event_evas_push_mouse_move(e);
-        ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
+        ecore_event_evas_seat_modifier_lock_update(lookup->evas,
+                                                   e->modifiers,
+                                                   efl_input_device_seat_get(e->dev));
         if (!lookup->direct ||
             !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_MOVE, e))
           {
@@ -656,7 +673,9 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
 
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
+   ecore_event_evas_seat_modifier_lock_update(lookup->evas,
+                                              e->modifiers,
+                                              efl_input_device_seat_get(e->dev));
    switch (io)
      {
       case ECORE_IN:
@@ -702,7 +721,8 @@ ecore_event_evas_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    e = event;
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
+   ecore_event_evas_seat_modifier_lock_update(lookup->evas, e->modifiers,
+                                              efl_input_device_seat_get(e->dev));
    if (!lookup->direct ||
        !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_WHEEL, e))
      {

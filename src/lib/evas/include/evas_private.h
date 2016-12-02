@@ -84,6 +84,7 @@ typedef struct _Evas_Object_Map_Data        Evas_Object_Map_Data;
 typedef struct _Evas_Proxy_Render_Data      Evas_Proxy_Render_Data;
 typedef struct _Evas_Object_3D_Data         Evas_Object_3D_Data;
 typedef struct _Evas_Object_Mask_Data       Evas_Object_Mask_Data;
+typedef struct _Evas_Object_Pointer_Data            Evas_Object_Pointer_Data;
 
 typedef struct _Evas_Smart_Data             Evas_Smart_Data;
 
@@ -93,6 +94,7 @@ typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
 typedef struct _Evas_Filter_Program         Evas_Filter_Program;
 typedef struct _Evas_Object_Filter_Data     Evas_Object_Filter_Data;
 typedef struct _Evas_Filter_Data_Binding    Evas_Filter_Data_Binding;
+typedef struct _Evas_Pointer_Data           Evas_Pointer_Data;
 
 // 3D stuff
 
@@ -767,7 +769,8 @@ struct _Evas_Modifier
       int       count;
       char    **list;
    } mod;
-   Evas_Modifier_Mask mask; /* ok we have a max of 64 modifiers */
+   Eina_Hash *masks; /* we have a max of 64 modifiers per seat */
+   Evas_Public_Data *e;
 };
 
 struct _Evas_Lock
@@ -776,7 +779,8 @@ struct _Evas_Lock
       int       count;
       char    **list;
    } lock;
-   Evas_Modifier_Mask mask; /* we have a max of 64 locks */
+   Eina_Hash *masks; /* we have a max of 64 locks per seat */
+   Evas_Public_Data *e;
 };
 
 struct _Evas_Post_Callback
@@ -798,6 +802,21 @@ typedef struct
    Evas_Object_Protected_Data *obj;
 } Evas_Active_Entry;
 
+struct _Evas_Pointer_Data
+{
+   Evas_Device    *pointer;
+   struct {
+      Eina_List *in;
+   } object;
+   DATA32         button;
+   Evas_Coord     x, y;
+   Evas_Point     prev;
+   int            mouse_grabbed;
+   int            downs;
+   int            nogrep;
+   unsigned char  inside : 1;
+};
+
 struct _Evas_Public_Data
 {
    EINA_INLIST;
@@ -805,18 +824,7 @@ struct _Evas_Public_Data
    DATA32            magic;
    Evas              *evas;
 
-   struct {
-      unsigned char  inside : 1;
-      int            mouse_grabbed;
-      int            downs;
-      DATA32         button;
-      Evas_Coord     x, y;
-      Evas_Point     prev;
-      int            nogrep;
-      struct {
-          Eina_List *in;
-      } object;
-   } pointer;
+   Eina_List         *pointers;
 
    struct  {
       Evas_Coord     x, y, w, h;
@@ -1083,6 +1091,14 @@ struct _Evas_Object_Protected_State
    Eina_Bool             snapshot : 1;
 };
 
+struct _Evas_Object_Pointer_Data {
+   Evas_Object_Protected_Data *obj;
+   Evas_Pointer_Data *evas_pdata;
+   Evas_Object_Pointer_Mode pointer_mode;
+   int mouse_grabbed;
+   Eina_Bool mouse_in;
+};
+
 struct _Evas_Object_Protected_Data
 {
    EINA_INLIST;
@@ -1123,6 +1139,7 @@ struct _Evas_Object_Protected_Data
    const Evas_Object_3D_Data  *data_3d;
    const Evas_Object_Mask_Data *mask;
    Eina_List                  *focused_by_seats;
+   Eina_Hash                  *pointer_grabs;
 
    // Pointer to the Evas_Object itself
    Evas_Object                *object;
@@ -1131,7 +1148,6 @@ struct _Evas_Object_Protected_Data
 
    int                         last_mouse_down_counter;
    int                         last_mouse_up_counter;
-   int                         mouse_grabbed;
 
    // Daniel: Added because the destructor can't take parameters, at least for the moment
    int                         clean_layer;
@@ -1152,6 +1168,7 @@ struct _Evas_Object_Protected_Data
 
    Eina_Bool                   render_pre : 1;
    Eina_Bool                   rect_del : 1;
+
    Eina_Bool                   is_active : 1;
    Eina_Bool                   changed : 1;
    Eina_Bool                   restack : 1;
@@ -1173,8 +1190,6 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   pre_render_done : 1;
    Eina_Bool                   precise_is_inside : 1;
    Eina_Bool                   is_static_clip : 1;
-   Eina_Bool                   mouse_in : 1;
-   Evas_Object_Pointer_Mode    pointer_mode : 2;
 
    Eina_Bool                   in_layer : 1;
    Eina_Bool                   is_frame : 1;
@@ -1576,6 +1591,7 @@ void evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *obj);
 void evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v);
 void evas_rects_return_difference_rects(Eina_Array *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh);
+Evas_Object_Pointer_Data *_evas_object_pointer_data_get(Evas_Pointer_Data *evas_pdata, Evas_Object_Protected_Data *obj, Efl_Input_Device *pointer);
 
 void evas_object_clip_dirty(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_recalc_clippees(Evas_Object_Protected_Data *pd);
@@ -1904,7 +1920,22 @@ struct _Evas_Proxy_Render_Data
 
 void _evas_canvas_event_init(Evas *eo_e, Evas_Public_Data *e);
 void _evas_canvas_event_shutdown(Evas *eo_e, Evas_Public_Data *e);
-
+void _evas_canvas_event_pointer_in_rect_mouse_move_feed(Evas_Public_Data *edata,
+                                                        Evas_Object *obj,
+                                                        Evas_Object_Protected_Data *obj_data,
+                                                        int w, int h,
+                                                        Eina_Bool in_objects_list,
+                                                        void *data);
+void _evas_canvas_event_pointer_in_list_mouse_move_feed(Evas_Public_Data *edata,
+                                                        Eina_List *was,
+                                                        Evas_Object *obj,
+                                                        Evas_Object_Protected_Data *obj_data,
+                                                        int w, int h,
+                                                        Eina_Bool xor_rule,
+                                                        void *data);
+void _evas_canvas_event_pointer_move_event_dispatch(Evas_Public_Data *edata,
+                                                    Evas_Pointer_Data *pdata,
+                                                    void *data);
 int evas_async_events_init(void);
 int evas_async_events_shutdown(void);
 int evas_async_target_del(const void *target);
@@ -1969,6 +2000,13 @@ Eina_Bool _evas_image_proxy_source_clip_get(const Eo *eo_obj);
 
 void _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj,
                                 Efl_Input_Device *seat, Eina_Bool in);
+Evas_Pointer_Data *_evas_pointer_data_by_device_get(Evas_Public_Data *edata, Efl_Input_Device *pointer);
+Eina_Bool _evas_pointer_data_add(Evas_Public_Data *edata, Efl_Input_Device *pointer);
+void _evas_pointer_data_remove(Evas_Public_Data *edata, Efl_Input_Device *pointer);
+Eina_List *_evas_pointer_list_in_rect_get(Evas_Public_Data *edata,
+                                         Evas_Object *obj,
+                                         Evas_Object_Protected_Data *obj_data,
+                                         int w, int h);
 
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;
