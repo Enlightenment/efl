@@ -1465,10 +1465,11 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
    Eo_Id_Table_Data *tdata;
    Eina_Bool isa = EINA_FALSE;
 
+   if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
    domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
    data = _eo_table_data_get();
    tdata = _eo_table_data_table_get(data, domain);
-   if (!tdata) return EINA_FALSE;
+   if (EINA_UNLIKELY(!tdata)) goto err;
 
    if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED))
      {
@@ -1531,6 +1532,16 @@ err_shared_obj:
 err_class:
    _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id);
 err_obj:
+   return EINA_FALSE;
+
+err:
+   if (!data) return EINA_FALSE;
+   ERR("Object %p is not a valid object in this context: object domain: %d, "
+       "current domain: %d, local domain: %d, available domains: [%s %s %s %s]",
+       eo_id, (int)domain,
+       (int)data->domain_stack[data->stack_top], (int)data->local_domain,
+       (data->tables[0]) ? "0" : " ", (data->tables[1]) ? "1" : " ",
+       (data->tables[2]) ? "2" : " ", (data->tables[3]) ? "3" : " ");
    return EINA_FALSE;
 }
 
