@@ -29,7 +29,7 @@
  * FIXME :
  *
  * [ ] child program with ecore main loop does not exit and nothing is sent
- * [ ] ecore_exe_send fails (race condition ? same problem as above ?)
+ * [X] ecore_exe_send fails (race condition ? same problem as above ?)
  */
 
 #define ECORE_EXE_WIN32_TIMEOUT 3000
@@ -569,7 +569,7 @@ _impl_ecore_exe_send(Ecore_Exe  *obj,
    memcpy((char *)exe->pipe_write.data_buf + exe->pipe_write.data_size, data, size);
    exe->pipe_write.data_size += size;
 
-   res = WriteFile(exe->pipe_write.child_pipe_x, buf, READBUFSIZ, &num_exe, NULL);
+   res = WriteFile(exe->pipe_write.child_pipe_x, buf, exe->pipe_write.data_size, &num_exe, NULL);
    printf(" ** res : %d\n", res);
    if (!res || num_exe == 0)
      {
