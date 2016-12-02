@@ -449,7 +449,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
    char *address = NULL;
    Eina_Error err;
 #ifdef EFL_NET_SERVER_UNIX_CLASS
-   mode_t old_mask, new_mask = 0;
+   mode_t old_mask = 0, new_mask = 0;
 #endif
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
