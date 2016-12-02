@@ -328,7 +328,6 @@ eng_setup(Evas *eo_e, void *in)
    if (!e->engine.data.output)
      {
         /* if we haven't initialized - init (automatic abort if already done) */
-        evas_common_init();
 
         if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
           {
@@ -455,8 +454,6 @@ eng_output_free(void *data)
         _output_egl_shutdown(re);
         free(re);
      }
-
-   evas_common_shutdown();
 }
 
 static Eina_Bool

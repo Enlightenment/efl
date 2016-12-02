@@ -33,9 +33,6 @@ _output_setup(int  width,
    if (!re)
      return NULL;
 
-   /* if we haven't initialized - init (automatic abort if already done) */
-   evas_common_init();
-
    evas_software_ddraw_outbuf_init();
 
    ob = evas_software_ddraw_outbuf_setup(width, height, rot,
@@ -144,8 +141,6 @@ eng_output_free(void *data)
    re = (Render_Engine *)data;
    evas_render_engine_software_generic_clean(&re->generic);
    free(re);
-
-   evas_common_shutdown();
 }
 
 static Eina_Bool

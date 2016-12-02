@@ -107,9 +107,6 @@ _output_setup(int w, int h)
 
    flipBuffer(re->context, MAX_BUFFERS - 1);
 
-   /* if we haven't initialized - init (automatic abort if already done) */
-   evas_common_init();
-
    re->tb = evas_common_tilebuf_new(w, h);
 
    /* in preliminary tests 16x16 gave highest framerates */
@@ -201,8 +198,6 @@ eng_output_free(void *data)
      evas_common_tilebuf_free_render_rects(re->rects);
 
    free(re);
-
-   evas_common_shutdown();
 }
 
 static void

@@ -98,8 +98,6 @@ _output_setup(Evas *eo_e, int w, int h, int rot, int vt, int dev, int refresh,
    re = calloc(1, sizeof(Render_Engine));
    if (!re)
      return NULL;
-   /* if we haven't initialized - init (automatic abort if already done) */
-   evas_common_init();
 
    evas_fb_outbuf_fb_init();
 
@@ -133,7 +131,6 @@ _output_setup(Evas *eo_e, int w, int h, int rot, int vt, int dev, int refresh,
  on_error:
    if (ob) evas_fb_outbuf_fb_free(ob);
    free(re);
-   evas_common_shutdown();
    return NULL;
 }
 
@@ -190,8 +187,6 @@ eng_output_free(void *data)
         evas_render_engine_software_generic_clean(&re->generic);
         free(re);
      }
-
-   evas_common_shutdown();
 }
 
 static Eina_Bool

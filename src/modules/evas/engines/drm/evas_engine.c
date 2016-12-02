@@ -88,7 +88,6 @@ eng_setup(Evas *evas, void *einfo)
    re = epd->engine.data.output;
    if (!re)
      {
-        evas_common_init();
 
         re = _render_engine_setup(info, epd->output.w, epd->output.h);
         if (!re) return 0;
@@ -127,8 +126,6 @@ eng_output_free(void *data)
         evas_render_engine_software_generic_clean(&re->generic);
         free(re);
      }
-
-   evas_common_shutdown();
 }
 
 static int

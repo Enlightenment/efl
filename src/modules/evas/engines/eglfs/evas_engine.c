@@ -766,7 +766,6 @@ eng_setup(Evas *evas, void *in)
 
         if (!initted)
           {
-             evas_common_init();
              glsym_evas_gl_preload_init();
           }
 
@@ -934,7 +933,6 @@ eng_output_free(void *data)
    if ((initted == EINA_TRUE) && (gl_wins == 0))
      {
         glsym_evas_gl_preload_shutdown();
-        evas_common_shutdown();
         initted = EINA_FALSE;
      }
 }

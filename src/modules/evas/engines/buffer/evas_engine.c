@@ -56,10 +56,7 @@ _output_setup(int w,
    DATA32 color_key = 0;
 
    re = calloc(1, sizeof(Render_Engine));
-   if (!re)
-     return NULL;
-   /* if we haven't initialized - init (automatic abort if already done) */
-   evas_common_init();
+   if (!re) return NULL;
 
    evas_buffer_outbuf_buf_init();
 
@@ -176,8 +173,6 @@ eng_output_free(void *data)
         evas_render_engine_software_generic_clean(&re->generic);
         free(re);
      }
-
-   evas_common_shutdown();
 }
 
 static Eina_Bool

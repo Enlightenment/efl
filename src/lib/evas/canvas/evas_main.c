@@ -131,8 +131,8 @@ evas_shutdown(void)
      return _evas_init_count;
 
    eina_log_timing(_evas_log_dom_global,
-		   EINA_LOG_STATE_START,
-		   EINA_LOG_STATE_SHUTDOWN);
+                   EINA_LOG_STATE_START,
+                   EINA_LOG_STATE_SHUTDOWN);
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
@@ -163,7 +163,6 @@ evas_shutdown(void)
    evas_thread_shutdown();
    _evas_preload_thread_shutdown();
    evas_async_events_shutdown();
-   //evas_common_shutdown();
    evas_module_shutdown();
 
 #ifdef BUILD_LOADER_EET
@@ -354,6 +353,8 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
                                      e->engine.data.context);
         e->engine.func->output_free(e->engine.data.output);
         e->engine.func->info_free(eo_e, e->engine.info);
+
+        evas_common_shutdown();
      }
 
    for (i = 0; i < e->modifiers.mod.count; i++)
@@ -425,7 +426,9 @@ _evas_canvas_engine_info_set(Eo *eo_e, Evas_Public_Data *e, Evas_Engine_Info *in
    if (info->magic != e->engine.info_magic) return EINA_FALSE;
 
    evas_canvas_async_block(e);
+   evas_common_init();
    res = e->engine.func->setup(eo_e, info);
+   if (!res) evas_common_shutdown();
    return res;
 }
 

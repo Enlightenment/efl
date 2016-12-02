@@ -1713,7 +1713,6 @@ eng_setup(Evas *eo_e, void *in)
 
         if (!initted)
           {
-             evas_common_init();
              glsym_evas_gl_preload_init();
           }
 
@@ -1938,7 +1937,6 @@ eng_output_free(void *data)
    if ((initted == 1) && (gl_wins == 0))
      {
         glsym_evas_gl_preload_shutdown();
-        evas_common_shutdown();
         initted = 0;
      }
 }

@@ -153,7 +153,6 @@ eng_setup(Evas *eo_evas, void *info)
    if (!(re = epd->engine.data.output))
      {
         /* if we have no engine data, assume we have not initialized yet */
-        evas_common_init();
 
         re = _render_engine_swapbuf_setup(epd->output.w, epd->output.h, einfo);
 
@@ -188,11 +187,10 @@ eng_setup(Evas *eo_evas, void *info)
    return 1;
 
 err:
-   evas_common_shutdown();
    return 0;
 }
 
-static void 
+static void
 eng_output_free(void *data)
 {
    Render_Engine *re;
@@ -202,8 +200,6 @@ eng_output_free(void *data)
         evas_render_engine_software_generic_clean(&re->generic);
         free(re);
      }
-
-   evas_common_shutdown();
 }
 
 static void 

@@ -305,7 +305,6 @@ eng_setup(Evas *eo_e, void *in)
    re = calloc(1, sizeof (Render_Engine));
    if (!re) goto on_error;
 
-
    if (!evas_render_engine_gl_generic_init(&re->generic, ob, NULL,
                                            _outbuf_get_rot,
                                            _outbuf_reconfigure,
@@ -334,7 +333,6 @@ eng_setup(Evas *eo_e, void *in)
    e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
 
    /* if we haven't initialized - init (automatic abort if already done) */
-   evas_common_init();
 
    return 1;
 
