@@ -1249,6 +1249,8 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
         while (extn_id)
           {
              extn = _eo_class_pointer_get((Efl_Class *)extn_id, __FUNCTION__, __FILE__, __LINE__);
+             if (!extn) /* did not validate */
+               continue;
              switch (extn->desc->type)
                {
                 case EFL_CLASS_TYPE_REGULAR_NO_INSTANT:
@@ -1412,6 +1414,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
      }
 
    /* Mark which classes we implement */
+   if (klass->vtable.size)
      {
         const _Efl_Class **extn_itr;
 
