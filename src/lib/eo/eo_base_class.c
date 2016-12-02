@@ -13,14 +13,16 @@
 
 static int event_freeze_count = 0;
 
-typedef struct _Eo_Callback_Description Eo_Callback_Description;
+typedef struct _Eo_Callback_Description  Eo_Callback_Description;
+typedef struct _Efl_Event_Callback_Frame Efl_Event_Callback_Frame;
 
-typedef struct {
-   EINA_INLIST;
-   unsigned int idx;
-   unsigned int inserted_before;
-   unsigned short generation;
-} Efl_Event_Callback_Frame;
+struct _Efl_Event_Callback_Frame
+{
+   Efl_Event_Callback_Frame *next;
+   unsigned int              idx;
+   unsigned int              inserted_before;
+   unsigned short            generation;
+};
 
 typedef struct
 {
@@ -41,8 +43,8 @@ typedef struct
 
    Eina_Inlist               *current;
 
+   Efl_Event_Callback_Frame  *event_frame;
    Eo_Callback_Description  **callbacks;
-   Eina_Inlist                *event_frame;
    unsigned int               callbacks_count;
 
    unsigned short             event_freeze_count;
@@ -56,11 +58,12 @@ typedef struct
    Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
 } Efl_Object_Data;
 
-typedef enum {
-     DATA_PTR,
-     DATA_OBJ,
-     DATA_OBJ_WEAK,
-     DATA_VAL
+typedef enum
+{
+   DATA_PTR,
+   DATA_OBJ,
+   DATA_OBJ_WEAK,
+   DATA_VAL
 } Eo_Generic_Data_Node_Type;
 
 typedef struct
@@ -83,8 +86,13 @@ typedef struct
    unsigned int current;
 } Eo_Current_Callback_Description;
 
-#define EVENT_STACK_PUSH(pd, fr) pd->event_frame = eina_inlist_prepend(pd->event_frame , EINA_INLIST_GET(fr));
-#define EVENT_STACK_POP(pd) pd->event_frame = eina_inlist_remove(pd->event_frame, pd->event_frame);
+#define EVENT_STACK_PUSH(pd, fr) do { \
+   (fr)->next = (pd)->event_frame; \
+   (pd)->event_frame = (fr); \
+} while (0)
+#define EVENT_STACK_POP(pd) do { \
+   if ((pd)->event_frame) (pd)->event_frame = (pd)->event_frame->next; \
+} while (0)
 
 static int _eo_nostep_alloc = -1;
 
@@ -1105,6 +1113,7 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 {
    Eo_Callback_Description **itr;
    unsigned int length, j;
+   Efl_Event_Callback_Frame *frame;
 
    // Do a dichotomic searh
    j = _eo_callback_search_sorted_near(pd, cb);
@@ -1138,16 +1147,11 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 
    pd->callbacks_count++;
 
-   //update possible event emissions
-   {
-      Efl_Event_Callback_Frame *frame;
-
-      EINA_INLIST_FOREACH(pd->event_frame , frame)
-        {
-           if (itr-pd->callbacks < frame->idx)
-             frame->inserted_before ++;
-        }
-   }
+   // Update possible event emissions
+   for (frame = pd->event_frame; frame; frame = frame->next)
+     {
+        if (itr-pd->callbacks < frame->idx) frame->inserted_before++;
+     }
 }
 
 static unsigned char
