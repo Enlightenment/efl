@@ -196,6 +196,9 @@ typedef struct
    int line;
 } Eo_Xref_Node;
 
+/* provide valgrind-like tracking of object allocationg and deletion */
+void _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const char *file, int line);
+
 void _efl_object_parent_sink_set(Eo *obj, Eina_Bool sink);
 
 static inline
@@ -270,38 +273,7 @@ _obj_is_override(_Eo_Object *obj)
    return (obj->vtable != &obj->klass->vtable);
 }
 
-static inline void
-_eo_free(_Eo_Object *obj)
-{
-   _Efl_Class *klass = (_Efl_Class*) obj->klass;
-
-#ifdef EO_DEBUG
-   if (obj->datarefcount)
-     {
-        ERR("Object %p data still referenced %d time(s).", obj, obj->datarefcount);
-     }
-#endif
-   if (_obj_is_override(obj))
-     {
-        _vtable_func_clean_all(obj->vtable);
-        eina_freeq_ptr_main_add(obj->vtable, free, 0);
-        obj->vtable = &klass->vtable;
-     }
-
-   _eo_id_release((Eo_Id) _eo_obj_id_get(obj));
-
-   eina_spinlock_take(&klass->objects.trash_lock);
-   if (klass->objects.trash_count <= 8)
-     {
-        eina_trash_push(&klass->objects.trash, obj);
-        klass->objects.trash_count++;
-     }
-   else
-     {
-        eina_freeq_ptr_main_add(obj, free, klass->obj_size);
-     }
-   eina_spinlock_release(&klass->objects.trash_lock);
-}
+void _eo_free(_Eo_Object *obj);
 
 static inline _Eo_Object *
 _efl_ref(_Eo_Object *obj)

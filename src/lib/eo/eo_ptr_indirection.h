@@ -6,10 +6,10 @@
 
 /* Macro used to obtain the object pointer and return if fails. */
 
-void _eo_pointer_error(const char *func_name, const char *file, int line, const char *fmt, ...);
+void _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file, int line, const char *fmt, ...);
 
-#define _EO_POINTER_ERR(fmt, ...) \
-  _eo_pointer_error(__FUNCTION__, __FILE__, __LINE__, fmt, __VA_ARGS__)
+#define _EO_POINTER_ERR(obj_id, fmt, ...) \
+  _eo_pointer_error(obj_id, __FUNCTION__, __FILE__, __LINE__, fmt, __VA_ARGS__)
 
 #define EO_OBJ_POINTER(obj_id, obj) \
    _Eo_Object *obj; \
@@ -83,7 +83,7 @@ void _eo_pointer_error(const char *func_name, const char *file, int line, const 
    do { \
       klass = _eo_class_pointer_get(klass_id, __FUNCTION__, __FILE__, __LINE__); \
       if (!klass) { \
-         _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id); \
+         _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id); \
          return ret; \
       } \
    } while (0)
@@ -93,7 +93,7 @@ void _eo_pointer_error(const char *func_name, const char *file, int line, const 
    do { \
       klass = _eo_class_pointer_get(klass_id, func_name, file, line); \
       if (!klass) { \
-         _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id); \
+         _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id); \
          return ret; \
       } \
    } while (0)
@@ -103,7 +103,7 @@ void _eo_pointer_error(const char *func_name, const char *file, int line, const 
    do { \
       klass = _eo_class_pointer_get(klass_id, __FUNCTION__, __FILE__, __LINE__); \
       if (!klass) { \
-         _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id); \
+         _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id); \
          return; \
       } \
    } while (0)
@@ -113,7 +113,7 @@ void _eo_pointer_error(const char *func_name, const char *file, int line, const 
    do { \
       klass = _eo_class_pointer_get(klass_id, func_name, file, line); \
       if (!klass) { \
-         _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id); \
+         _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id); \
          return; \
       } \
    } while (0)

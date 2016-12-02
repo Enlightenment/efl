@@ -14,6 +14,9 @@
 #include "eo_add_fallback.h"
 
 #include "efl_object_override.eo.c"
+#ifdef HAVE_EXECINFO_H
+#include <execinfo.h>
+#endif
 
 #define EO_CLASS_IDS_FIRST 1
 #define EFL_OBJECT_OP_IDS_FIRST 1
@@ -23,6 +26,27 @@ EAPI Eina_Lock _efl_class_creation_lock;
 EAPI unsigned int _efl_object_init_generation = 1;
 int _eo_log_dom = -1;
 Eina_Thread _efl_object_main_thread;
+
+static inline void _eo_log_obj_init(void);
+static inline void _eo_log_obj_shutdown(void);
+static inline void _eo_log_obj_new(const _Eo_Object *obj);
+static inline void _eo_log_obj_free(const _Eo_Object *obj);
+#ifdef EO_DEBUG
+static int _eo_log_objs_dom = -1;
+static Eina_Bool _eo_log_objs_enabled = EINA_FALSE;
+static Eina_Inarray _eo_log_objs_debug;
+static Eina_Inarray _eo_log_objs_no_debug;
+static double _eo_log_time_start;
+#ifdef HAVE_BACKTRACE
+static Eina_Array _eo_log_objs;
+#endif
+#else
+static inline void _eo_log_obj_init(void) { }
+static inline void _eo_log_obj_shutdown(void) { }
+static inline void _eo_log_obj_new(const _Eo_Object *obj EINA_UNUSED) { }
+static inline void _eo_log_obj_free(const _Eo_Object *obj EINA_UNUSED) { }
+void _eo_log_obj_report(const Eo_Id id EINA_UNUSED, int log_level EINA_UNUSED, const char *func_name EINA_UNUSED, const char *file EINA_UNUSED, int line EINA_UNUSED) { }
+#endif
 
 static _Efl_Class **_eo_classes = NULL;
 static Eo_Id _eo_classes_last_id = 0;
@@ -346,14 +370,14 @@ efl_super(const Eo *obj, const Efl_Class *cur_klass)
 
    return (Eo *) ((Eo_Id) obj | MASK_SUPER_TAG);
 err:
-   _EO_POINTER_ERR("Class (%p) is an invalid ref.", cur_klass);
+   _EO_POINTER_ERR(cur_klass, "Class (%p) is an invalid ref.", cur_klass);
    return NULL;
 err_obj:
-   _EO_POINTER_ERR("Object (%p) is an invalid ref, class=%p (%s).", obj, cur_klass, efl_class_name_get(cur_klass));
+   _EO_POINTER_ERR(obj, "Object (%p) is an invalid ref, class=%p (%s).", obj, cur_klass, efl_class_name_get(cur_klass));
    return NULL;
 #ifdef EO_DEBUG
 err_obj_hierarchy:
-   _EO_POINTER_ERR("Object (%p) class=%p (%s) is not an instance of class=%p (%s).", obj, efl_class_get(obj), efl_class_name_get(obj), cur_klass, efl_class_name_get(cur_klass));
+   _EO_POINTER_ERR(obj, "Object (%p) class=%p (%s) is not an instance of class=%p (%s).", obj, efl_class_get(obj), efl_class_name_get(obj), cur_klass, efl_class_name_get(cur_klass));
 #endif
    return NULL;
 }
@@ -569,7 +593,7 @@ ok_klass:
    goto ok_klass_back;
 
 err_klass:
-   _EO_POINTER_ERR("in %s:%d: func '%s': obj_id=%p is an invalid ref.", file, line, func_name, eo_id);
+   _EO_POINTER_ERR(eo_id, "in %s:%d: func '%s': obj_id=%p is an invalid ref.", file, line, func_name, eo_id);
    return EINA_FALSE;
 }
 
@@ -738,7 +762,7 @@ err_funcs:
    ERR("Class %s already had its functions set..", klass->desc->name);
    return EINA_FALSE;
 err_klass:
-   _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id);
+   _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id);
    return EINA_FALSE;
 }
 
@@ -785,6 +809,8 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    obj->header.id = _eo_id_allocate(obj, parent_id);
    Eo *eo_id = _eo_obj_id_get(obj);
 
+   _eo_log_obj_new(obj);
+
    _eo_condtor_reset(obj);
 
    efl_ref(eo_id);
@@ -829,7 +855,7 @@ err_noreg:
    return NULL;
 
 err_klass:
-   _EO_POINTER_ERR("in %s:%d: Class (%p) is an invalid ref.", file, line, klass_id);
+   _EO_POINTER_ERR(klass_id, "in %s:%d: Class (%p) is an invalid ref.", file, line, klass_id);
 err_parent:
    return NULL;
 }
@@ -905,6 +931,42 @@ efl_reuse(const Eo *_obj)
    efl_object_override(obj, NULL);
    _efl_object_parent_sink_set(obj, EINA_FALSE);
 }
+
+
+void
+_eo_free(_Eo_Object *obj)
+{
+   _Efl_Class *klass = (_Efl_Class*) obj->klass;
+
+   _eo_log_obj_free(obj);
+
+#ifdef EO_DEBUG
+   if (obj->datarefcount)
+     {
+        ERR("Object %p data still referenced %d time(s).", obj, obj->datarefcount);
+     }
+#endif
+   if (_obj_is_override(obj))
+     {
+        _vtable_func_clean_all(obj->vtable);
+        eina_freeq_ptr_main_add(obj->vtable, free, 0);
+        obj->vtable = &klass->vtable;
+     }
+
+   _eo_id_release((Eo_Id) _eo_obj_id_get(obj));
+
+   eina_spinlock_take(&klass->objects.trash_lock);
+   if (klass->objects.trash_count <= 8)
+     {
+        eina_trash_push(&klass->objects.trash, obj);
+        klass->objects.trash_count++;
+     }
+   else
+     {
+        eina_freeq_ptr_main_add(obj, free, klass->obj_size);
+     }
+   eina_spinlock_release(&klass->objects.trash_lock);
+}
 /*****************************************************************************/
 
 EAPI const Efl_Class *
@@ -924,7 +986,7 @@ efl_class_get(const Eo *eo_id)
    return klass;
 
 err_klass:
-   _EO_POINTER_ERR("Class (%p) is an invalid ref.", eo_id);
+   _EO_POINTER_ERR(eo_id, "Class (%p) is an invalid ref.", eo_id);
 err_obj:
    return NULL;
 }
@@ -948,7 +1010,7 @@ efl_class_name_get(const Efl_Class *eo_id)
    return klass->desc->name;
 
 err_klass:
-   _EO_POINTER_ERR("Class (%p) is an invalid ref.", eo_id);
+   _EO_POINTER_ERR(eo_id, "Class (%p) is an invalid ref.", eo_id);
 err_obj:
    return NULL;
 }
@@ -1557,13 +1619,13 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
    return isa;
 
 err_shared_class:
-   _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id);
+   _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id);
 err_shared_obj:
    eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
    return EINA_FALSE;
 
 err_class:
-   _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id);
+   _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id);
 err_obj:
    return EINA_FALSE;
 
@@ -1974,6 +2036,8 @@ efl_object_init(void)
         return EINA_FALSE;
      }
 
+   _eo_log_obj_init();
+
    eina_magic_string_static_set(EO_EINA_MAGIC, EO_EINA_MAGIC_STR);
    eina_magic_string_static_set(EO_FREED_EINA_MAGIC,
                                 EO_FREED_EINA_MAGIC_STR);
@@ -2071,6 +2135,8 @@ efl_object_shutdown(void)
         _eo_table_data_shared = NULL;
         _eo_table_data_shared_data = NULL;
      }
+
+   _eo_log_obj_shutdown();
 
    eina_log_domain_unregister(_eo_log_dom);
    _eo_log_dom = -1;
@@ -2280,3 +2346,465 @@ efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_Array_Ite
    else if (a->desc > b->desc) return 1;
    else return -1;
 }
+
+#ifdef EO_DEBUG
+#ifdef HAVE_BACKTRACE
+typedef struct _Eo_Log_Obj_Entry {
+   Eo_Id id;
+   const _Eo_Object *obj;
+   const _Efl_Class *klass;
+   double timestamp;
+   Eina_Bool is_free;
+   uint8_t bt_size;
+   void *bt[];
+} Eo_Log_Obj_Entry;
+
+static void
+_eo_log_obj_find(const Eo_Id id, const Eo_Log_Obj_Entry **added, const Eo_Log_Obj_Entry **deleted)
+{
+   const Eo_Log_Obj_Entry *entry;
+   Eina_Array_Iterator it;
+   unsigned int idx;
+
+   *added = NULL;
+   *deleted = NULL;
+
+   EINA_ARRAY_ITER_NEXT(&_eo_log_objs, idx, entry, it)
+     {
+        if (EINA_UNLIKELY(id == entry->id))
+          {
+             if (entry->is_free)
+               *deleted = entry;
+             else
+               {
+                  *added = entry;
+                  *deleted = NULL; /* forget previous add, if any */
+               }
+          }
+     }
+}
+
+/* NOTE: cannot use ecore_time_get()! */
+static inline double
+_eo_log_time_now(void)
+{
+#ifdef HAVE_EVIL
+   return evil_time_get();
+#elif defined(__APPLE__) && defined(__MACH__)
+   static double clk_conv = -1.0;
+
+   if (EINA_UNLIKELY(clk_conv < 0))
+     {
+        mach_timebase_info_data_t info;
+        kern_return_t err = mach_timebase_info(&info);
+        if (err == 0)
+          clk_conv = 1e-9 * (double)info.numer / (double)info.denom;
+        else
+          clk_conv = 1e-9;
+     }
+
+   return clk_conv * mach_absolute_time();
+#else
+#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
+   struct timespec t;
+   static int clk_id = -1;
+
+   if (EINA_UNLIKELY(clk_id == -2)) goto try_gettimeofday;
+   if (EINA_UNLIKELY(clk_id == -1))
+     {
+     retry_clk_id:
+        clk_id = CLOCK_MONOTONIC;
+        if (EINA_UNLIKELY(clock_gettime(clk_id, &t)))
+          {
+             WRN("CLOCK_MONOTONIC failed!");
+             clk_id = CLOCK_REALTIME;
+             if (EINA_UNLIKELY(clock_gettime(clk_id, &t)))
+               {
+                  WRN("CLOCK_REALTIME failed!");
+                  clk_id = -2;
+                  goto try_gettimeofday;
+               }
+          }
+     }
+   else
+     {
+        if (EINA_UNLIKELY(clock_gettime(clk_id, &t)))
+          {
+             WRN("clk_id=%d previously ok, now failed... retry", clk_id);
+             goto retry_clk_id;
+          }
+     }
+   return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
+
+ try_gettimeofday:
+#endif
+   {
+      struct timeval timev;
+
+      gettimeofday(&timev, NULL);
+      return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+   }
+#endif
+}
+
+static void
+_eo_log_obj_entry_show(const Eo_Log_Obj_Entry *entry, int log_level, const char *func_name, const char *file, int line, double now)
+{
+   uint8_t i;
+
+   eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
+                  "obj_id=%p %s obj=%p, class=%p (%s) [%0.4fs, %0.4f ago]:",
+                  (void *)entry->id,
+                  entry->is_free ? "deleted" : "created",
+                  entry->obj,
+                  entry->klass,
+                  entry->klass->desc->name,
+                  entry->timestamp - _eo_log_time_start, now - entry->timestamp);
+
+   for (i = 0; i < entry->bt_size; i++)
+     {
+#ifdef HAVE_DLADDR
+        Dl_info info;
+
+        if (dladdr(entry->bt[i], &info))
+          {
+             if (info.dli_sname)
+               {
+                  eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
+                                 "   %#016" PRIx64 ": %s+%#" PRIx64 " (in %s %#" PRIx64 ")",
+                                 (uint64_t)entry->bt[i],
+                                 info.dli_sname,
+                                 (char *)entry->bt[i] - (char *)info.dli_saddr,
+                                 info.dli_fname ? info.dli_fname : "??",
+                                 (uint64_t)info.dli_fbase);
+                  continue;
+               }
+             else if (info.dli_fname)
+               {
+                  const char *fname;
+
+#ifdef HAVE_EVIL
+                  fname = strrchr(info.dli_fname, '\\');
+#else
+                  fname = strrchr(info.dli_fname, '/');
+#endif
+                  if (!fname) fname = info.dli_fname;
+                  else fname++;
+
+                  eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
+                                 "   %#016" PRIx64 ": %s+%#" PRIx64 " (in %s %#" PRIx64 ")",
+                                 (uint64_t)entry->bt[i],
+                                 fname,
+                                 (char *)entry->bt[i] - (char *)info.dli_fbase,
+                                 info.dli_fname,
+                                 (uint64_t)info.dli_fbase);
+                  continue;
+               }
+          }
+#endif
+
+        eina_log_print(_eo_log_objs_dom, log_level, func_name, file, line,
+                       "   %#016" PRIx64, (uint64_t)entry->bt[i]);
+     }
+}
+#endif
+
+inline void
+_eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const char *file, int line)
+{
+#ifdef HAVE_BACKTRACE
+   const Eo_Log_Obj_Entry *added, *deleted;
+   double now;
+
+   if (EINA_LIKELY(!_eo_log_objs_enabled)) return;
+
+   _eo_log_obj_find(id, &added, &deleted);
+
+   if ((!added) && (!deleted))
+     {
+        if ((!_eo_log_objs_debug.len) && (!_eo_log_objs_no_debug.len))
+          {
+             eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
+                            "obj_id=%p was neither created or deleted.", (void *)id);
+          }
+        else if ((_eo_log_objs_debug.len) && (_eo_log_objs_no_debug.len))
+          {
+             eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
+                            "obj_id=%p was neither created or deleted (EO_LIFECYCLE_DEBUG='%s', EO_LIFECYCLE_NO_DEBUG='%s').",
+                            (void *)id, getenv("EO_LIFECYCLE_DEBUG"), getenv("EO_LIFECYCLE_NO_DEBUG"));
+          }
+        else if (_eo_log_objs_debug.len)
+          {
+             eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
+                            "obj_id=%p was neither created or deleted (EO_LIFECYCLE_DEBUG='%s').",
+                            (void *)id, getenv("EO_LIFECYCLE_DEBUG"));
+          }
+        else
+          {
+             eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
+                            "obj_id=%p was neither created or deleted (EO_LIFECYCLE_NO_DEBUG='%s').",
+                            (void *)id, getenv("EO_LIFECYCLE_NO_DEBUG"));
+          }
+        return;
+     }
+
+   now = _eo_log_time_now();
+
+   if (added)
+     _eo_log_obj_entry_show(added, log_level, func_name, file, line, now);
+
+   if (deleted)
+     {
+        _eo_log_obj_entry_show(deleted, log_level, func_name, file, line, now);
+        eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
+                       "obj_id=%p was already deleted %0.4f seconds ago!",
+                       (void *)id, now - deleted->timestamp);
+     }
+
+#else
+   (void)id;
+   (void)log_level;
+   (void)func_name;
+   (void)file;
+   (void)line;
+#endif
+}
+
+#ifdef HAVE_BACKTRACE
+static Eo_Log_Obj_Entry *
+_eo_log_obj_entry_new_and_add(const _Eo_Object *obj, Eina_Bool is_free, uint8_t size, void *const *bt)
+{
+   Eo_Log_Obj_Entry *entry;
+
+   entry = malloc(sizeof(Eo_Log_Obj_Entry) + size * sizeof(void *));
+   if (EINA_UNLIKELY(!entry)) return NULL;
+
+   entry->id = (Eo_Id)_eo_obj_id_get(obj);
+   entry->timestamp = _eo_log_time_now();
+   entry->obj = obj;
+   entry->klass = obj->klass;
+   entry->is_free = is_free;
+   entry->bt_size = size;
+   memcpy(entry->bt, bt, size * sizeof(void *));
+
+   if (EINA_UNLIKELY(!entry)) return NULL;
+   if (!eina_array_push(&_eo_log_objs, entry))
+     {
+        free(entry);
+        return NULL;
+     }
+
+   return entry;
+}
+
+static inline void
+_eo_log_obj_entry_free(Eo_Log_Obj_Entry *entry)
+{
+   free(entry);
+}
+#endif
+
+static int
+_eo_class_name_slice_cmp(const void *pa, const void *pb)
+{
+   const Eina_Slice *a = pa;
+   const Eina_Slice *b = pb;
+
+   if (a->len < b->len) return -1;
+   if (a->len > b->len) return 1;
+   return memcmp(a->mem, b->mem, a->len);
+}
+
+static Eina_Bool
+_eo_log_obj_desired(const _Eo_Object *obj)
+{
+   Eina_Slice cls_name;
+
+   if (EINA_LIKELY((_eo_log_objs_debug.len == 0) &&
+                   (_eo_log_objs_no_debug.len == 0)))
+     return EINA_TRUE;
+
+   cls_name.mem = obj->klass->desc->name;
+   cls_name.len = strlen(cls_name.mem);
+
+   if (_eo_log_objs_no_debug.len)
+     {
+        if (eina_inarray_search_sorted(&_eo_log_objs_no_debug, &cls_name, _eo_class_name_slice_cmp) >= 0)
+          return EINA_FALSE;
+     }
+
+   if (!_eo_log_objs_debug.len)
+     return EINA_TRUE;
+
+   if (eina_inarray_search_sorted(&_eo_log_objs_debug, &cls_name, _eo_class_name_slice_cmp) >= 0)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+static inline void
+_eo_log_obj_new(const _Eo_Object *obj)
+{
+#ifdef HAVE_BACKTRACE
+   void *bt[64];
+   int size;
+#endif
+
+   if (EINA_LIKELY(!_eo_log_objs_enabled)) return;
+   if (EINA_LIKELY(!_eo_log_obj_desired(obj))) return;
+
+#ifdef HAVE_BACKTRACE
+   size = backtrace(bt, sizeof(bt)/sizeof(bt[0]));
+   if (EINA_UNLIKELY(size < 1)) return;
+
+   _eo_log_obj_entry_new_and_add(obj, EINA_FALSE, size, bt);
+#endif
+   EINA_LOG_DOM_DBG(_eo_log_objs_dom,
+                    "new obj=%p obj_id=%p class=%p (%s) [%0.4f]",
+                    obj, _eo_obj_id_get(obj), obj->klass, obj->klass->desc->name,
+                    _eo_log_time_now() - _eo_log_time_start);
+}
+
+static inline void
+_eo_log_obj_free(const _Eo_Object *obj)
+{
+#ifdef HAVE_BACKTRACE
+   void *bt[64];
+   int size;
+#endif
+
+   if (EINA_LIKELY(!_eo_log_objs_enabled)) return;
+   if (EINA_LIKELY(!_eo_log_obj_desired(obj))) return;
+
+#ifdef HAVE_BACKTRACE
+   size = backtrace(bt, sizeof(bt)/sizeof(bt[0]));
+   if (EINA_UNLIKELY(size < 1)) return;
+
+   _eo_log_obj_entry_new_and_add(obj, EINA_TRUE, size, bt);
+#endif
+   EINA_LOG_DOM_DBG(_eo_log_objs_dom,
+                    "free obj=%p obj_id=%p class=%p (%s) [%0.4f]",
+                    obj, _eo_obj_id_get(obj), obj->klass, obj->klass->desc->name,
+                    _eo_log_time_now() - _eo_log_time_start);
+}
+
+static inline void
+_eo_log_obj_init(void)
+{
+   const char *s;
+
+   _eo_log_objs_dom = eina_log_domain_register("eo_lifecycle", EINA_COLOR_BLUE);
+   _eo_log_time_start = _eo_log_time_now();
+
+#ifdef HAVE_BACKTRACE
+   eina_array_step_set(&_eo_log_objs, sizeof(Eina_Array), 4096);
+#endif
+   eina_inarray_step_set(&_eo_log_objs_debug, sizeof(Eina_Inarray), sizeof(Eina_Slice), 0);
+   eina_inarray_step_set(&_eo_log_objs_no_debug, sizeof(Eina_Inarray), sizeof(Eina_Slice), 0);
+
+   s = getenv("EO_LIFECYCLE_DEBUG");
+   if ((s) && (s[0] != '\0'))
+     {
+        _eo_log_objs_enabled = EINA_TRUE;
+        if ((strcmp(s, "*") == 0) || (strcmp(s, "1") == 0))
+          {
+             EINA_LOG_DOM_DBG(_eo_log_objs_dom,
+                              "will log all object allocation and free");
+          }
+        else
+          {
+             Eina_Slice slice;
+             const Eina_Slice *itr;
+             do
+               {
+                  char *p = strchr(s, ',');
+                  slice.mem = s;
+                  if (p)
+                    {
+                       slice.len = p - s;
+                       s = p + 1;
+                    }
+                  else
+                    {
+                       slice.len = strlen(s);
+                       s = NULL;
+                    }
+                  eina_inarray_push(&_eo_log_objs_debug, &slice);
+               }
+             while (s);
+             eina_inarray_sort(&_eo_log_objs_debug, _eo_class_name_slice_cmp);
+
+             EINA_INARRAY_FOREACH(&_eo_log_objs_debug, itr)
+               {
+                  EINA_LOG_DOM_DBG(_eo_log_objs_dom,
+                                "will log class '" EINA_SLICE_STR_FMT "'",
+                                   EINA_SLICE_STR_PRINT(*itr));
+               }
+          }
+#ifndef HAVE_BACKTRACE
+        WRN("EO_LIFECYCLE_DEBUG='%s' but your system has no backtrace()!", s);
+#endif
+     }
+
+   if (EINA_LIKELY(!_eo_log_objs_enabled)) return;
+
+   DBG("logging object allocation and free, use EINA_LOG_LEVELS=eo_lifecycle:4");
+
+   s = getenv("EO_LIFECYCLE_NO_DEBUG");
+   if ((s) && (s[0] != '\0'))
+     {
+        if ((strcmp(s, "*") == 0) || (strcmp(s, "1") == 0))
+          {
+             EINA_LOG_DOM_ERR(_eo_log_objs_dom,
+                              "expected class names to not log allocation and free, got '%s'", s);
+          }
+        else
+          {
+             Eina_Slice slice;
+             const Eina_Slice *itr;
+             do
+               {
+                  char *p = strchr(s, ',');
+                  slice.mem = s;
+                  if (p)
+                    {
+                       slice.len = p - s;
+                       s = p + 1;
+                    }
+                  else
+                    {
+                       slice.len = strlen(s);
+                       s = NULL;
+                    }
+                  eina_inarray_push(&_eo_log_objs_no_debug, &slice);
+               }
+             while (s);
+             eina_inarray_sort(&_eo_log_objs_no_debug, _eo_class_name_slice_cmp);
+
+             EINA_INARRAY_FOREACH(&_eo_log_objs_no_debug, itr)
+               {
+                  EINA_LOG_DOM_DBG(_eo_log_objs_dom,
+                                   "will NOT log class '" EINA_SLICE_STR_FMT "'",
+                                   EINA_SLICE_STR_PRINT(*itr));
+               }
+          }
+     }
+}
+
+static inline void
+_eo_log_obj_shutdown(void)
+{
+#ifdef HAVE_BACKTRACE
+   Eo_Log_Obj_Entry *entry;
+   Eina_Array_Iterator it;
+   unsigned int idx;
+
+   EINA_ARRAY_ITER_NEXT(&_eo_log_objs, idx, entry, it)
+     _eo_log_obj_entry_free(entry);
+   eina_array_flush(&_eo_log_objs);
+#endif
+
+   eina_inarray_flush(&_eo_log_objs_debug);
+   eina_inarray_flush(&_eo_log_objs_no_debug);
+}
+#endif

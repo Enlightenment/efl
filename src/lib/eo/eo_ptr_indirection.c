@@ -15,13 +15,14 @@ Eo_Id_Table_Data *_eo_table_data_shared_data = NULL;
 //////////////////////////////////////////////////////////////////////////
 
 void
-_eo_pointer_error(const char *func_name, const char *file, int line, const char *fmt, ...)
+_eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file, int line, const char *fmt, ...)
 {
    /* NOTE: this function exists to allow easy breakpoint on pointer errors */
    va_list args;
    va_start(args, fmt);
    eina_log_vprint(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line, fmt, args);
    va_end(args);
+   _eo_log_obj_report((Eo_Id)obj_id, EINA_LOG_LEVEL_ERR, func_name, file, line);
 }
 
 #ifdef HAVE_EO_ID
@@ -66,6 +67,7 @@ _eo_obj_pointer_invalid(const Eo_Id obj_id,
        (data->tables[2]) ? "2" : " ",
        (data->tables[3]) ? "3" : " "
       );
+   _eo_log_obj_report(obj_id, EINA_LOG_LEVEL_ERR, func_name, file, line);
 }
 #endif
 
@@ -195,6 +197,7 @@ err:
    if (EINA_UNLIKELY(!EINA_MAGIC_CHECK(obj, EO_EINA_MAGIC)))
      {
         eina_magic_fail(obj, obj->__magic, EO_EINA_MAGIC, file, func_name, line);
+        _eo_log_obj_report(obj_id, EINA_LOG_LEVEL_ERR, func_name, file, line);
         return NULL;
      }
    return (_Eo_Object *) obj_id;

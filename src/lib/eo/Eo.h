@@ -50,6 +50,7 @@ extern "C" {
  * @li @ref eo_main_compiling
  * @li @ref eo_main_next_steps
  * @li @ref eo_main_intro_example
+ * @li @ref eo_lifecycle_debug
  *
  * @section eo_main_intro Introduction
  *
@@ -88,6 +89,66 @@ extern "C" {
  * @li @ref Efl_Class
  * @li @ref Efl_Events
  * @li @ref Eo_Composite_Objects
+ *
+ * @section eo_lifecycle_debug Debug Object Lifecycle
+ *
+ * When dealing with objects it's important to investigate the object
+ * lifecycle: when it was created, when it was deleted. This is not
+ * that trivial since objects can have extra references added with
+ * efl_ref() as well as removed with efl_unref(), efl_parent_set() to
+ * NULL or efl_del().
+ *
+ * To aid development process and debug memory leaks and invalid
+ * access, we provide eo_debug script helper that will preload
+ * libeo_dbg.so, run as:
+ *
+ * @verbatim
+   export EO_LIFECYCLE_DEBUG=1
+   export EINA_LOG_LEVELS=eo_lifecycle:4
+   eo_debug my_app
+ * @endverbatim
+ *
+ * This will print out all the objects that were created and deleted,
+ * as well as keep the stack trace that originated those, if a double
+ * free or user-after-free occurs it will print out the backtrace
+ * where the object was created and where it was deleted. If only
+ * errors should be displayed, decrease the log level to 2:
+ *
+ * @verbatim
+   export EO_LIFECYCLE_DEBUG=1
+   export EINA_LOG_LEVELS=eo_lifecycle:2  # just critical, error and warning
+   eo_debug my_app
+ * @endverbatim
+ *
+ * Keep in mind that the log will consume memory for all objects and
+ * that main loop primitives such as timers, jobs, promises and
+ * futures are all objects, being created in large numbers, thus
+ * consuming lots of memory.
+ *
+ * To address that log pollution and memory consumption, one can
+ * select just handful classes to be logged using @c
+ * EO_LIFECYCLE_DEBUG with a list of comma-separated class names. If
+ * @c EO_LIFECYCLE_DEBUG=1 or @c EO_LIFECYCLE_DEBUG=*, then all
+ * classes are logged, otherwise just the classes listed will be
+ * (whitelist).
+ *
+ * @verbatim
+   # Log only 2 classes: Efl_Loop and Efl_Net_Dialer_Tcp
+   export EO_LIFECYCLE_DEBUG=Efl_Loop,Efl_Net_Dialer_Tcp
+   export EINA_LOG_LEVELS=eo_lifecycle:4
+   eo_debug my_app
+ * @endverbatim
+ *
+ * Another approach is to log all but few classes, also known as
+ * blacklist. This is done with another environment variable @c
+ * EO_LIFECYCLE_NO_DEBUG=class1,class2.
+ *
+ * @verbatim
+   # Log all but Efl_Future, Efl_Promise and Efl_Loop_Timer
+   export EO_LIFECYCLE_NO_DEBUG=Efl_Future,Efl_Promise,Efl_Loop_Timer
+   export EINA_LOG_LEVELS=eo_lifecycle:4
+   eo_debug my_app
+ * @endverbatim
  *
  * @section eo_main_intro_example Introductory Example
  *
