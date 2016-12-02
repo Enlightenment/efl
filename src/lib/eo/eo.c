@@ -318,6 +318,11 @@ efl_super(const Eo *obj, const Efl_Class *cur_klass)
 {
    EO_CLASS_POINTER_GOTO(cur_klass, klass, err);
 
+   if (EINA_UNLIKELY(!_eo_is_a_obj(obj))) goto err_obj;
+#ifdef EO_DEBUG
+   if (EINA_UNLIKELY(!efl_isa(obj, cur_klass))) goto err_obj_hierarchy;
+#endif
+
    /* FIXME: Switch to atomic operations intead of lock. */
    eina_spinlock_take(&_super_class_lock);
    _super_class = klass;
@@ -325,6 +330,14 @@ efl_super(const Eo *obj, const Efl_Class *cur_klass)
    return (Eo *) ((Eo_Id) obj | MASK_SUPER_TAG);
 err:
    _EO_POINTER_ERR("Class (%p) is an invalid ref.", cur_klass);
+   return NULL;
+err_obj:
+   _EO_POINTER_ERR("Object (%p) is an invalid ref, class=%p (%s).", obj, cur_klass, efl_class_name_get(cur_klass));
+   return NULL;
+#ifdef EO_DEBUG
+err_obj_hierarchy:
+   _EO_POINTER_ERR("Object (%p) class=%p (%s) is not an instance of class=%p (%s).", obj, efl_class_get(obj), efl_class_name_get(obj), cur_klass, efl_class_name_get(cur_klass));
+#endif
    return NULL;
 }
 
