@@ -1756,12 +1756,13 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
 
              surf = ecore_wl2_window_surface_get(wdata->win);
              if ((!einfo->info.wl_surface) || (einfo->info.wl_surface != surf))
-               {
-                  einfo->info.wl_surface = surf;
-                  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-                    ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
-                  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
-               }
+               einfo->info.wl_surface = surf;
+
+             einfo->info.hidden = EINA_FALSE;
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
+             evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
+
              einfo->www_avail = !!wdata->win->www_surface;
              einfo->just_mapped = EINA_TRUE;
           }
@@ -1793,7 +1794,7 @@ _ecore_evas_wl_common_hide(Ecore_Evas *ee)
    einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
-        einfo->info.wl_surface = NULL;
+        einfo->info.hidden = EINA_TRUE;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
