@@ -209,7 +209,7 @@ Eo *_eo_header_id_get(const Eo_Header *header)
 }
 
 /* Retrieves the pointer to the object from the id */
-_Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id);
+_Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file, int line);
 void _eo_obj_pointer_done(const Eo_Id obj_id);
 
 static inline
@@ -231,7 +231,7 @@ _eo_condtor_reset(_Eo_Object *obj)
 }
 
 static inline void
-_efl_del_internal(const char *file, int line, _Eo_Object *obj)
+_efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int line)
 {
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
@@ -246,8 +246,8 @@ _efl_del_internal(const char *file, int line, _Eo_Object *obj)
 
    if (!obj->condtor_done)
      {
-        ERR("in %s:%d: Object of class '%s' - Not all of the object destructors have been executed.",
-            file, line, klass->desc->name);
+        ERR("in %s:%d: func '%s' Object of class '%s' - Not all of the object destructors have been executed.",
+            file, line, func_name, klass->desc->name);
      }
    /*FIXME: add eo_class_unref(klass) ? - just to clear the caches. */
 
@@ -310,27 +310,28 @@ _efl_ref(_Eo_Object *obj)
    return obj;
 }
 
+#define _efl_unref(obj) _efl_unref_internal(obj, __FUNCTION__, __FILE__, __LINE__)
 static inline void
-_efl_unref(_Eo_Object *obj)
+_efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, int line)
 {
    --(obj->refcount);
    if (EINA_UNLIKELY(obj->refcount <= 0))
      {
         if (obj->refcount < 0)
           {
-             ERR("Obj:%p. Refcount (%d) < 0. Too many unrefs.", obj, obj->refcount);
+             ERR("in %s:%d: func '%s' Obj:%p. Refcount (%d) < 0. Too many unrefs.", file, line, func_name, obj, obj->refcount);
              return;
           }
 
         if (obj->destructed)
           {
-             ERR("Object %p already destructed.", _eo_obj_id_get(obj));
+             ERR("in %s:%d: func '%s' Object %p already destructed.", file, line, func_name, _eo_obj_id_get(obj));
              return;
           }
 
         if (obj->del_triggered)
           {
-             ERR("Object %p deletion already triggered. You wrongly call efl_unref() within a destructor.", _eo_obj_id_get(obj));
+             ERR("in %s:%d: func '%s' Object %p deletion already triggered. You wrongly call efl_unref() within a destructor.", file, line, func_name, _eo_obj_id_get(obj));
              return;
           }
 
@@ -344,12 +345,12 @@ _efl_unref(_Eo_Object *obj)
 
         obj->del_triggered = EINA_TRUE;
 
-        _efl_del_internal(__FILE__, __LINE__, obj);
+        _efl_del_internal(obj, func_name, file, line);
 #ifdef EO_DEBUG
         /* If for some reason it's not empty, clear it. */
         while (obj->xrefs)
           {
-             ERR("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
+             ERR("in %s:%d: func '%s' obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.", file, line, func_name);
              Eina_Inlist *nitr = obj->xrefs->next;
              eina_freeq_ptr_main_add(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Xref_Node), free, 0);
              obj->xrefs = nitr;
@@ -358,7 +359,7 @@ _efl_unref(_Eo_Object *obj)
           {
              Eina_Inlist *nitr = obj->data_xrefs->next;
              Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
-             ERR("Data of object 0x%lx is still referenced by object %p", (unsigned long) _eo_obj_id_get(obj), xref->ref_obj);
+             ERR("in %s:%d: func '%s' Data of object 0x%lx is still referenced by object %p", file, line, func_name, (unsigned long) _eo_obj_id_get(obj), xref->ref_obj);
 
              eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
              obj->data_xrefs = nitr;

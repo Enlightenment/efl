@@ -249,11 +249,28 @@ _eo_is_a_class(const Eo *eo_id)
 }
 
 static inline _Efl_Class *
-_eo_class_pointer_get(const Efl_Class *klass_id)
+_eo_class_pointer_get(const Efl_Class *klass_id, const char *func_name, const char *file, int line)
 {
 #ifdef HAVE_EO_ID
    return ID_CLASS_GET((Eo_Id)klass_id);
+   (void)func_name;
+   (void)file;
+   (void)line;
 #else
+   Eo_Header *klass = (Eo_Header *)klass_id;
+   if (EINA_UNLIKELY(!klass))
+     {
+        eina_log_print(_eo_log_dom,
+                       EINA_LOG_LEVEL_DBG,
+                       file, func_name, line,
+                       "klass_id is NULL. Possibly unintended access?");
+        return NULL;
+     }
+   if (EINA_UNLIKELY(!EINA_MAGIC_CHECK(klass, EO_CLASS_EINA_MAGIC)))
+     {
+        eina_magic_fail(klass, klass->__magic, EO_CLASS_EINA_MAGIC, file, func_name, line);
+        return NULL;
+     }
    return (_Efl_Class *) klass_id;
 #endif
 }
@@ -369,7 +386,7 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
 
    if (is_obj)
      {
-        EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
+        EO_OBJ_POINTER_RETURN_VAL_PROXY(eo_id, _obj, EINA_FALSE);
 
         obj = _obj;
         klass = _obj->klass;
@@ -479,7 +496,7 @@ end:
         Eo *emb_obj_id;
         EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj_id)
           {
-             EO_OBJ_POINTER(emb_obj_id, emb_obj);
+             EO_OBJ_POINTER_PROXY(emb_obj_id, emb_obj);
              if (EINA_UNLIKELY(!emb_obj)) continue;
 
              func = _vtable_func_get(emb_obj->vtable, cache->op);
@@ -543,7 +560,7 @@ ok_cur_klass:
 
 ok_klass:
      {
-        EO_CLASS_POINTER_GOTO(eo_id, _klass, err_klass);
+        EO_CLASS_POINTER_GOTO_PROXY(eo_id, _klass, err_klass);
         klass = _klass;
         vtable = &klass->vtable;
         call->obj = NULL;
@@ -728,16 +745,17 @@ err_klass:
 EAPI Eo *
 _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref EINA_UNUSED, Eina_Bool is_fallback)
 {
+   const char *func_name = __FUNCTION__;
    _Eo_Object *obj;
    Eo_Stack_Frame *fptr = NULL;
 
    if (is_fallback) fptr = _efl_add_fallback_stack_push(NULL);
 
-   EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
+   EO_CLASS_POINTER_GOTO_PROXY(klass_id, klass, err_klass);
 
    if (parent_id)
      {
-        EO_OBJ_POINTER_GOTO(parent_id, parent, err_parent);
+        EO_OBJ_POINTER_GOTO_PROXY(parent_id, parent, err_parent);
      }
 
    // not likely so use goto to alleviate l1 instruction cache of rare code
@@ -787,7 +805,7 @@ ok_nomatch_back:
 
 ok_nomatch:
      {
-        EO_OBJ_POINTER_GOTO(eo_id, new_obj, err_newid);
+        EO_OBJ_POINTER_GOTO_PROXY(eo_id, new_obj, err_newid);
         /* We have two refs at this point. */
         _efl_unref(obj);
         efl_del((Eo *)obj->header.id);
@@ -1171,18 +1189,17 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    va_list p_list;
    size_t extn_sz, mro_sz, mixins_sz;
    Eina_List *extn_list, *mro, *mixins;
+   _Efl_Class *parent = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
 
-   _Efl_Class *parent = _eo_class_pointer_get(parent_id);
-#ifndef HAVE_EO_ID
-   if (parent && !EINA_MAGIC_CHECK((Eo_Header *) parent, EO_CLASS_EINA_MAGIC))
+   if (parent_id)
      {
-        EINA_MAGIC_FAIL((Eo_Header *) parent, EO_CLASS_EINA_MAGIC);
-        return NULL;
+        parent = _eo_class_pointer_get(parent_id, __FUNCTION__, __FILE__, __LINE__);
+        if (!parent)
+          return NULL;
      }
-#endif
 
    /* Check restrictions on Interface types. */
    if (desc->type == EFL_CLASS_TYPE_INTERFACE)
@@ -1231,7 +1248,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
         extn_id = va_arg(p_list, Eo_Id *);
         while (extn_id)
           {
-             extn = _eo_class_pointer_get((Efl_Class *)extn_id);
+             extn = _eo_class_pointer_get((Efl_Class *)extn_id, __FUNCTION__, __FILE__, __LINE__);
              switch (extn->desc->type)
                {
                 case EFL_CLASS_TYPE_REGULAR_NO_INSTANT:
@@ -1564,7 +1581,8 @@ efl_xref_internal(const char *file, int line, Eo *obj_id, const Eo *ref_obj_id)
    efl_ref(obj_id);
 
 #ifdef EO_DEBUG
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, obj_id);
+   const char *func_name = __FUNCTION__;
+   EO_OBJ_POINTER_RETURN_VAL_PROXY(obj_id, obj, obj_id);
 
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
    xref->ref_obj = ref_obj_id;
@@ -1848,13 +1866,14 @@ efl_data_xref_internal(const char *file, int line, const Eo *obj_id, const Efl_C
 {
    void *ret = NULL;
    _Efl_Class *klass = NULL;
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
-   EO_OBJ_POINTER(ref_obj_id, ref_obj);
+   const char *func_name = __FUNCTION__;
+   EO_OBJ_POINTER_RETURN_VAL_PROXY(obj_id, obj, NULL);
+   EO_OBJ_POINTER_PROXY(ref_obj_id, ref_obj);
    if (ref_obj)
      {
         if (klass_id)
           {
-             EO_CLASS_POINTER_GOTO(klass_id, klass2, err_klass);
+             EO_CLASS_POINTER_GOTO_PROXY(klass_id, klass2, err_klass);
              klass = klass2;
 #ifdef EO_DEBUG
              // rare to use goto to keep instruction cache cleaner

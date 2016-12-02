@@ -28,7 +28,10 @@ _eo_pointer_error(const char *func_name, const char *file, int line, const char 
 static void
 _eo_obj_pointer_invalid(const Eo_Id obj_id,
                         Eo_Id_Data *data,
-                        unsigned char domain)
+                        unsigned char domain,
+                        const char *func_name,
+                        const char *file,
+                        int line)
 {
    Eina_Thread thread = eina_thread_self();
    const char *tself = "main";
@@ -40,13 +43,14 @@ _eo_obj_pointer_invalid(const Eo_Id obj_id,
         snprintf(tbuf, sizeof(tbuf), "%p", (void *)thread);
         tself = tbuf;
      }
-   ERR("EOID %p is not a valid %s. "
+   eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR,
+       file, func_name, line,
+       "EOID %p is not a valid %s. "
        "EOID domain=%i, current_domain=%i, local_domain=%i. "
        "EOID generation=%lx, id=%lx, ref=%i, super=%i. "
        "Thread self=%s. "
        "Available domains [%s %s %s %s]. "
        "Maybe it has been deleted or does not belong to your thread?",
-
        (void *)obj_id,
        type,
        (int)domain,
@@ -66,7 +70,7 @@ _eo_obj_pointer_invalid(const Eo_Id obj_id,
 #endif
 
 _Eo_Object *
-_eo_obj_pointer_get(const Eo_Id obj_id)
+_eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file, int line)
 {
 #ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry;
@@ -168,14 +172,31 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
 err_shared_null:
    eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
 err_null:
-   DBG("obj_id is NULL. Possibly unintended access?");
+   eina_log_print(_eo_log_dom,
+                  EINA_LOG_LEVEL_DBG,
+                  file, func_name, line,
+                  "obj_id is NULL. Possibly unintended access?");
    return NULL;
 err_shared:
    eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
 err:
-   _eo_obj_pointer_invalid(obj_id, data, domain);
+   _eo_obj_pointer_invalid(obj_id, data, domain, func_name, file, line);
    return NULL;
 #else
+   Eo_Header *obj = (Eo_Header *)obj_id;
+   if (EINA_UNLIKELY(!obj))
+     {
+        eina_log_print(_eo_log_dom,
+                       EINA_LOG_LEVEL_DBG,
+                       file, func_name, line,
+                       "obj_id is NULL. Possibly unintended access?");
+        return NULL;
+     }
+   if (EINA_UNLIKELY(!EINA_MAGIC_CHECK(obj, EO_EINA_MAGIC)))
+     {
+        eina_magic_fail(obj, obj->__magic, EO_EINA_MAGIC, file, func_name, line);
+        return NULL;
+     }
    return (_Eo_Object *) obj_id;
 #endif
 }
@@ -188,4 +209,5 @@ _eo_obj_pointer_done(const Eo_Id obj_id)
    if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED)) return;
    eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
 #endif
+   (void)obj_id;
 }

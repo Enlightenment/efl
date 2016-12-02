@@ -557,6 +557,7 @@ shared_err:
    return id;
 #else
    (void) obj;
+   (void) parent_id;
    return MASK_OBJ_TAG;
 #endif
 }
