@@ -14092,6 +14092,7 @@ st_collections_group_programs_program_in(void)
         @li DRAG_VAL_STEP 1.0 0.0
         @li DRAG_VAL_PAGE 0.0 0.0
         @li FOCUS_SET
+        @li FOCUS_OBJECT
         @li PARAM_COPY "src_part" "src_param" "dst_part" "dst_param"
         @li PARAM_SET "part" "param" "value"
         @li PLAY_SAMPLE "sample name" speed (channel)
