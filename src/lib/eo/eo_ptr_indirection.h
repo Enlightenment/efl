@@ -8,10 +8,10 @@
 
 #ifdef HAVE_EO_ID
 
-void _eo_pointer_error(const char *msg);
+void _eo_pointer_error(const char *func_name, const char *file, int line, const char *fmt, ...);
 
-#define _EO_POINTER_ERR(fmt, ptr) \
-   do { char buf[256]; sprintf(buf, fmt, ptr); _eo_pointer_error(buf); } while (0)
+#define _EO_POINTER_ERR(fmt, ...) \
+  _eo_pointer_error(__FUNCTION__, __FILE__, __LINE__, fmt, __VA_ARGS__)
 
 #define EO_OBJ_POINTER(obj_id, obj) \
    _Eo_Object *obj; \

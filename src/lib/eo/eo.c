@@ -539,7 +539,7 @@ ok_klass:
    goto ok_klass_back;
 
 err_klass:
-   _EO_POINTER_ERR("Class (%p) is an invalid ref.", eo_id);
+   _EO_POINTER_ERR("in %s:%d: func '%s': obj_id=%p is an invalid ref.", file, line, func_name, eo_id);
    return EINA_FALSE;
 }
 
@@ -784,8 +784,8 @@ ok_nomatch:
    goto ok_nomatch_back;
 
 err_noid:
-   ERR("Object of class '%s' - Error while constructing object",
-       klass->desc->name);
+   ERR("in %s:%d: Object of class '%s' - Error while constructing object",
+       file, line, klass->desc->name);
    /* We have two refs at this point. */
    _efl_unref(obj);
    efl_del((Eo *) obj->header.id);
@@ -798,7 +798,7 @@ err_noreg:
    return NULL;
 
 err_klass:
-   _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id);
+   _EO_POINTER_ERR("in %s:%d: Class (%p) is an invalid ref.", file, line, klass_id);
 err_parent:
    return NULL;
 }
@@ -2145,18 +2145,18 @@ efl_domain_data_adopt(Efl_Domain_Data *data_in)
 
    if (!data_foreign)
      {
-        ERR("Trying to adopt NULL domain data");
+        ERR("Trying to adopt NULL domain data [data=%p in=%p]", data, data_in);
         return EFL_ID_DOMAIN_INVALID;
      }
    if (data_foreign->local_domain == data->local_domain)
      {
-        ERR("Trying to adopt EO ID domain %i, is the same as the local %i",
-            data_foreign->local_domain, data->local_domain);
+        ERR("Trying to adopt EO ID domain %i, is the same as the local %i [data=%p in=%p foreign=%p]",
+            data_foreign->local_domain, data->local_domain, data, data_in, data_foreign);
         return EFL_ID_DOMAIN_INVALID;
      }
    if (data->tables[data_foreign->local_domain])
      {
-        ERR("Trying to adopt an already adopted domain");
+        ERR("Trying to adopt an already adopted domain [data=%p in=%p foreign=%p]", data, data_in, data_foreign);
         return EFL_ID_DOMAIN_INVALID;
      }
    data->tables[data_foreign->local_domain] =
@@ -2177,7 +2177,7 @@ efl_domain_data_return(Efl_Id_Domain domain)
      }
    if (domain == data->local_domain)
      {
-        ERR("Cannot return the local domain back to its owner");
+        ERR("Cannot return the local domain %i back to its owner [data=%p]", domain, data);
         return EINA_FALSE;
      }
    data->tables[domain] = NULL;

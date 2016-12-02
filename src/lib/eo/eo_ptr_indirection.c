@@ -15,9 +15,13 @@ Eo_Id_Table_Data *_eo_table_data_shared_data = NULL;
 //////////////////////////////////////////////////////////////////////////
 
 void
-_eo_pointer_error(const char *msg)
+_eo_pointer_error(const char *func_name, const char *file, int line, const char *fmt, ...)
 {
-   ERR("%s", msg);
+   /* NOTE: this function exists to allow easy breakpoint on pointer errors */
+   va_list args;
+   va_start(args, fmt);
+   eina_log_vprint(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line, fmt, args);
+   va_end(args);
 }
 
 #ifdef HAVE_EO_ID
