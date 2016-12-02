@@ -26,7 +26,7 @@ _efl_input_hold_hold_get(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 EOLIAN static void
 _efl_input_hold_efl_input_event_device_set(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd, Efl_Input_Device *dev)
 {
-   pd->device = efl_ref(dev);
+   efl_replace(&pd->device, dev);
 }
 
 EOLIAN static Efl_Input_Device *

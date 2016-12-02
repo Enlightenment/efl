@@ -25,6 +25,7 @@ _del_hook(Eo *evt)
           }
         efl_reuse(evt);
         s_cached_event = evt;
+        efl_input_reset(s_cached_event);
      }
    else
      {
@@ -44,7 +45,6 @@ _efl_input_key_efl_input_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EIN
      {
         evt = s_cached_event;
         s_cached_event = NULL;
-        efl_input_reset(evt);
         efl_parent_set(evt, owner);
      }
    else
@@ -230,7 +230,7 @@ _efl_input_key_efl_input_event_event_flags_get(Eo *obj EINA_UNUSED, Efl_Input_Ke
 EOLIAN static void
 _efl_input_key_efl_input_event_device_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, Efl_Input_Device *dev)
 {
-   pd->device = efl_ref(dev);
+   efl_replace(&pd->device, dev);
 }
 
 EOLIAN static Efl_Input_Device *

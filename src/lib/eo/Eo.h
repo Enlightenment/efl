@@ -1334,6 +1334,28 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
          EFL_CALLBACK_PRIORITY_DEFAULT, data)
 
 /**
+ * @def Replace the previously Eo pointer with new content.
+ *
+ * @param storage The object to replace the old reference. It can not be @c NULL.
+ * @param new_obj The new object. It may be @c NULL.
+ *
+ * The string pointed by @c storage must be previously an Eo or
+ * @c NULL and it will be efl_unref(). The @a new_obj will be passed
+ * to efl_ref() and then assigned to @c *storage.
+ *
+ * @see efl_ref()
+ * @see efl_unref()
+ */
+static inline void
+efl_replace(Eo **storage, Eo *new_obj)
+{
+   if (!storage || *storage == new_obj) return;
+   efl_ref(new_obj);
+   efl_unref(*storage);
+   *storage = new_obj;
+}
+
+/**
  * @}
  */
 

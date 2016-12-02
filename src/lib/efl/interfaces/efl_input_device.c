@@ -28,7 +28,11 @@ _efl_input_device_efl_object_destructor(Eo *obj, Efl_Input_Device_Data *pd)
      {
         Efl_Input_Device_Data *child = efl_data_scope_get(eo_child, EFL_INPUT_DEVICE_CLASS);
         child->parent = NULL;
-        efl_unref(eo_child);
+     }
+   if (pd->parent)
+     {
+        Efl_Input_Device_Data *p = efl_data_scope_get(pd->parent, EFL_INPUT_DEVICE_CLASS);
+        p->children = eina_list_remove(p->children, obj);
      }
    efl_unref(pd->source);
 
@@ -128,14 +132,12 @@ _efl_input_device_parent_set(Eo *obj, Efl_Input_Device_Data *pd, Efl_Input_Devic
      {
         Efl_Input_Device_Data *p = efl_data_scope_get(pd->parent, EFL_INPUT_DEVICE_CLASS);
         p->children = eina_list_remove(p->children, obj);
-        efl_unref(obj);
      }
    pd->parent = parent;
    if (parent)
      {
         Efl_Input_Device_Data *p = efl_data_scope_get(parent, EFL_INPUT_DEVICE_CLASS);
         p->children = eina_list_append(p->children, obj);
-        efl_ref(obj);
      }
 }
 
