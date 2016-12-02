@@ -446,7 +446,7 @@ server_error(void *data EINA_UNUSED, const Efl_Event *event)
 int
 main(void)
 {
-   Eo *server, *loop;
+   Eo *server = NULL, *loop;
    char *path = NULL;
    Ecore_Event_Handler *eh;
    Eina_List *ehl = NULL;
