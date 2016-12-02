@@ -40,27 +40,11 @@ static void
 _ecore_exe_threads_terminate(Ecore_Exe *obj)
 {
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
-   HANDLE threads[2] = { NULL, NULL };
-   int i = 0;
 
    if (!exe) return;
-   if (exe->pipe_read.thread)
-     {
-        threads[i] = exe->pipe_read.thread;
-        i++;
-     }
-   if (exe->pipe_error.thread)
-     {
-        threads[i] = exe->pipe_error.thread;
-        i++;
-     }
-   if (i > 0)
-     {
-        exe->close_threads = 1;
-        WaitForMultipleObjects(i, threads, TRUE, INFINITE);
-	IF_FN_DEL(CloseHandle, exe->pipe_error.thread);
-	IF_FN_DEL(CloseHandle, exe->pipe_read.thread);
-     }
+   if (!exe->th) return;
+   ecore_thread_cancel(exe->th);
+   ecore_thread_wait(exe->th, 0.3);
 }
 
 static Eina_Bool
@@ -81,10 +65,8 @@ _ecore_exe_close_cb(void *data,
    /* FIXME : manage the STILL_ACTIVE returned error */
    if (!GetExitCodeProcess(exe->process, &exit_code))
      {
-        char *msg;
-
-        msg = evil_last_error_get();
-        printf("%s\n", msg);
+        char *msg = evil_last_error_get();
+        DBG("%s", msg);
         free(msg);
      }
 
@@ -94,154 +76,182 @@ _ecore_exe_close_cb(void *data,
    e->exe = obj;
    exe->h_close = NULL; // It's going to get deleted in the next callback.
 
-   ecore_event_add(ECORE_EXE_EVENT_DEL, e,
-                   _ecore_exe_event_del_free, NULL);
+   ecore_event_add(ECORE_EXE_EVENT_DEL, e, _ecore_exe_event_del_free, NULL);
 
    DBG("Exiting process %s with exit code %d\n", exe->cmd, e->exit_code);
-
    return 0;
 }
 
-static unsigned int __stdcall
-_ecore_exe_pipe_read_thread_cb(void *data)
+typedef struct
 {
-   char buf[64];
-   Ecore_Exe *obj = data;
-   Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
-   Ecore_Exe_Event_Data *event_data;
-   char *current_buf = NULL;
-   DWORD size;
-   DWORD current_size = 0;
+   Ecore_Exe  *obj;
+   HANDLE      read_pipe;
+   HANDLE      error_pipe;
+   Eina_Bool   read : 1;
+   Eina_Bool   error : 1;
+} Threaddata;
+
+typedef struct
+{
+   Ecore_Exe     *obj;
+   unsigned char *buf;
+   int            buf_size;
+   Eina_Bool      read : 1;
+   Eina_Bool      error : 1;
+} Threadreply;
+
+static void
+_ecore_exe_win32_io_poll_thread(void *data, Ecore_Thread *th)
+{
+   Threaddata *tdat = data;
+   Threadreply *trep;
+   Eina_Bool data_read, data_write;
+   char buf[4096];
+   DWORD size, current_size;
    BOOL res;
 
-   if (!exe) return 0;
-   while (1)
+   while (EINA_TRUE)
      {
-        res = PeekNamedPipe(exe->pipe_read.child_pipe,
-                            buf, sizeof(buf) - 1, &size, &current_size, NULL);
-        if (!res || (size == 0))
+        data_read = EINA_FALSE;
+        data_write = EINA_FALSE;
+
+        if (tdat->read)
           {
-             if (exe->close_threads)
-               break;
-
-             Sleep(100);
-             continue;
+             res = PeekNamedPipe(tdat->read_pipe, buf, sizeof(buf),
+                                 &size, &current_size, NULL);
+             if (res && (size != 0))
+               {
+                  trep = calloc(1, sizeof(Threadreply));
+                  if (trep)
+                    {
+                       trep->obj = tdat->obj;
+                       trep->buf = malloc(current_size);
+                       if (trep->buf)
+                         {
+                            res = ReadFile(tdat->read_pipe, trep->buf,
+                                           current_size, &size, NULL);
+                            if (!res || (size == 0))
+                              {
+                                 free(trep->buf);
+                                 free(trep);
+                              }
+                            trep->buf_size = size;
+                            trep->read = EINA_TRUE;
+                            ecore_thread_feedback(th, trep);
+                            data_read = EINA_TRUE;
+                         }
+                    }
+               }
           }
-
-        current_buf = (char *)malloc(current_size);
-        if (!current_buf)
-          continue;
-
-        res = ReadFile(exe->pipe_read.child_pipe, current_buf, current_size, &size, NULL);
-        if (!res || (size == 0))
+        if (tdat->error)
           {
-             free(current_buf);
-             current_buf = NULL;
-             continue;
+             res = PeekNamedPipe(tdat->error_pipe, buf, sizeof(buf),
+                                 &size, &current_size, NULL);
+             if (res && (size != 0))
+               {
+                  trep = calloc(1, sizeof(Threadreply));
+                  if (trep)
+                    {
+                       trep->obj = tdat->obj;
+                       trep->buf = malloc(current_size);
+                       if (trep->buf)
+                         {
+                            res = ReadFile(tdat->error_pipe, trep->buf,
+                                           current_size, &size, NULL);
+                            if (!res || (size == 0))
+                              {
+                                 free(trep->buf);
+                                 free(trep);
+                              }
+                            trep->buf_size = size;
+                            trep->error = EINA_TRUE;
+                            ecore_thread_feedback(th, trep);
+                            //data_error = EINA_TRUE;
+                         }
+                    }
+               }
           }
-
-        current_size = size;
-
-        if (!exe->pipe_read.data_buf)
-          {
-             exe->pipe_read.data_buf = current_buf;
-             exe->pipe_read.data_size = current_size;
-          }
-        else
-          {
-             exe->pipe_read.data_buf = realloc(exe->pipe_read.data_buf, exe->pipe_read.data_size + current_size);
-             memcpy((unsigned char *)exe->pipe_read.data_buf + exe->pipe_read.data_size, current_buf, current_size);
-             exe->pipe_read.data_size += current_size;
-             free(current_buf);
-          }
-
-        event_data = ecore_exe_event_data_get(obj, ECORE_EXE_PIPE_READ);
-        if (event_data)
-          {
-             ecore_event_add(ECORE_EXE_EVENT_DATA, event_data,
-                             _ecore_exe_event_exe_data_free,
-                             NULL);
-             efl_event_callback_call(obj, ECORE_EXE_EVENT_DATA_GET, event_data);
-          }
-
-        current_buf = NULL;
-        current_size = 0;
+        if (ecore_thread_check(th)) break;
+        if (!(data_read || data_write)) Sleep(100);
+        else if (ecore_thread_check(th)) break;
      }
-
-   _endthreadex(0);
-
-   return 0;
+   free(tdat);
 }
 
-static unsigned int __stdcall
-_ecore_exe_pipe_error_thread_cb(void *data)
+static void
+_ecore_exe_win32_io_poll_notify(void *data EINA_UNUSED,
+                                Ecore_Thread *th EINA_UNUSED, void *msg)
 {
-   char buf[64];
-   Ecore_Exe *obj = data;
+   Threadreply *trep = msg;
+   Ecore_Exe *obj = trep->obj;
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
-   Ecore_Exe_Event_Data *event_data;
-   char *current_buf = NULL;
-   DWORD size;
-   DWORD current_size = 0;
-   BOOL res;
+   unsigned char *b;
 
-   if (!exe) return 0;
-   while (1)
+   if (exe)
      {
-        res = PeekNamedPipe(exe->pipe_error.child_pipe,
-                            buf, sizeof(buf) - 1, &size, &current_size, NULL);
-        if (!res || (size == 0))
+        Ecore_Exe_Event_Data *event_data;
+
+        if (trep->read)
           {
-             if (exe->close_threads)
-               break;
-
-             Sleep(100);
-             continue;
+             if (!exe->pipe_read.data_buf)
+               {
+                  exe->pipe_read.data_buf = trep->buf;
+                  exe->pipe_read.data_size = trep->buf_size;
+                  trep->buf = NULL;
+               }
+             else
+               {
+                  b = realloc(exe->pipe_read.data_buf,
+                              exe->pipe_read.data_size + trep->buf_size);
+                  if (b)
+                    {
+                       memcpy(b + exe->pipe_read.data_size,
+                              trep->buf, trep->buf_size);
+                       exe->pipe_read.data_buf = b;
+                       exe->pipe_read.data_size += trep->buf_size;
+                    }
+               }
+             event_data = ecore_exe_event_data_get(obj, ECORE_EXE_PIPE_READ);
+             if (event_data)
+               {
+                  ecore_event_add(ECORE_EXE_EVENT_DATA, event_data,
+                                  _ecore_exe_event_exe_data_free, NULL);
+                  efl_event_callback_call(obj, ECORE_EXE_EVENT_DATA_GET,
+                                          event_data);
+               }
           }
-
-        current_buf = (char *)malloc(current_size);
-        if (!current_buf)
-          continue;
-
-        res = ReadFile(exe->pipe_error.child_pipe, current_buf, current_size, &size, NULL);
-        if (!res || (size == 0))
+        else if (trep->error)
           {
-             free(current_buf);
-             current_buf = NULL;
-             continue;
+             if (!exe->pipe_error.data_buf)
+               {
+                  exe->pipe_error.data_buf = trep->buf;
+                  exe->pipe_error.data_size = trep->buf_size;
+                  trep->buf = NULL;
+               }
+             else
+               {
+                  b = realloc(exe->pipe_error.data_buf,
+                              exe->pipe_error.data_size + trep->buf_size);
+                  if (b)
+                    {
+                       memcpy(b + exe->pipe_error.data_size,
+                              trep->buf, trep->buf_size);
+                       exe->pipe_error.data_buf = b;
+                       exe->pipe_error.data_size += trep->buf_size;
+                    }
+               }
+             event_data = ecore_exe_event_data_get(obj, ECORE_EXE_PIPE_ERROR);
+             if (event_data)
+               {
+                  ecore_event_add(ECORE_EXE_EVENT_ERROR, event_data,
+                                  _ecore_exe_event_exe_data_free, NULL);
+                  efl_event_callback_call(obj, ECORE_EXE_EVENT_DATA_ERROR,
+                                          event_data);
+               }
           }
-
-        current_size = size;
-
-        if (!exe->pipe_error.data_buf)
-          {
-             exe->pipe_error.data_buf = current_buf;
-             exe->pipe_error.data_size = current_size;
-          }
-        else
-          {
-             exe->pipe_error.data_buf = realloc(exe->pipe_error.data_buf, exe->pipe_error.data_size + current_size);
-             memcpy((unsigned char *)exe->pipe_error.data_buf + exe->pipe_error.data_size, current_buf, current_size);
-             exe->pipe_error.data_size += current_size;
-             free(current_buf);
-          }
-
-        event_data = ecore_exe_event_data_get(obj, ECORE_EXE_PIPE_ERROR);
-        if (event_data)
-          {
-             ecore_event_add(ECORE_EXE_EVENT_ERROR, event_data,
-                             _ecore_exe_event_exe_data_free,
-                             NULL);
-             efl_event_callback_call(obj, ECORE_EXE_EVENT_DATA_ERROR, event_data);
-          }
-
-        current_buf = NULL;
-        current_size = 0;
      }
-
-   _endthreadex(0);
-
-   return 0;
+   free(trep->buf);
+   free(trep);
 }
 
 static DWORD WINAPI
@@ -269,54 +279,34 @@ _ecore_exe_enum_windows_procedure(HWND window,
         if (CreateRemoteThread(exe->process, NULL, 0,
                                (LPTHREAD_START_ROUTINE)_ecore_exe_thread_procedure, NULL,
                                 0, NULL))
-          {
-             printf ("remote thread\n");
-             return EINA_FALSE;
-          }
+          return EINA_FALSE;
 
         if ((exe->sig == ECORE_EXE_WIN32_SIGINT) ||
             (exe->sig == ECORE_EXE_WIN32_SIGQUIT))
-          {
-             printf ("int or quit\n");
-             return EINA_FALSE;
-          }
+          return EINA_FALSE;
 
         /* WM_CLOSE message */
         PostMessage(window, WM_CLOSE, 0, 0);
         if (WaitForSingleObject(exe->process, ECORE_EXE_WIN32_TIMEOUT) == WAIT_OBJECT_0)
-          {
-             printf ("CLOSE\n");
-             return EINA_FALSE;
-          }
+          return EINA_FALSE;
 
         /* WM_QUIT message */
         PostMessage(window, WM_QUIT, 0, 0);
         if (WaitForSingleObject(exe->process, ECORE_EXE_WIN32_TIMEOUT) == WAIT_OBJECT_0)
-          {
-             printf ("QUIT\n");
-             return EINA_FALSE;
-          }
+          return EINA_FALSE;
 
         /* Exit process */
         if (CreateRemoteThread(exe->process, NULL, 0,
                                (LPTHREAD_START_ROUTINE)ExitProcess, NULL,
                                0, NULL))
-          {
-             printf ("remote thread 2\n");
-             return EINA_FALSE;
-          }
+          return EINA_FALSE;
 
         if (exe->sig == ECORE_EXE_WIN32_SIGTERM)
-          {
-             printf ("term\n");
-             return EINA_FALSE;
-          }
+          return EINA_FALSE;
 
         TerminateProcess(exe->process, 0);
-
         return EINA_FALSE;
      }
-
    return EINA_TRUE;
 }
 
@@ -400,20 +390,16 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    flags = exe->flags;
-
    DBG("Creating process %s with flags %d", exe->cmd, flags);
-
    if (!exe->cmd) goto error;
 
-   if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
-       && (!(flags & ECORE_EXE_PIPE_READ)))
+   if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR)) &&
+       (!(flags & ECORE_EXE_PIPE_READ)))
      /* We need something to auto pipe. */
      flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;
 
-   if ((flags & ECORE_EXE_USE_SH))
-     use_sh = EINA_TRUE;
-   else
-     use_sh = eina_str_has_extension(exe->cmd, ".bat");
+   if ((flags & ECORE_EXE_USE_SH)) use_sh = EINA_TRUE;
+   else use_sh = eina_str_has_extension(exe->cmd, ".bat");
 
    if (use_sh)
      {
@@ -435,45 +421,63 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
      }
 
    /* stdout, stderr and stdin pipes */
-
    sa.nLength = sizeof(SECURITY_ATTRIBUTES);
    sa.bInheritHandle = EINA_TRUE;
    sa.lpSecurityDescriptor = NULL;
 
-   /* stdout pipe */
-   if (exe->flags & ECORE_EXE_PIPE_READ)
+   if ((exe->flags & ECORE_EXE_PIPE_READ) ||
+       (exe->flags & ECORE_EXE_PIPE_ERROR))
      {
-        if (!CreatePipe(&exe->pipe_read.child_pipe, &child_pipe_read, &sa, 0))
-          goto error;
-        if (!SetHandleInformation(exe->pipe_read.child_pipe, HANDLE_FLAG_INHERIT, 0))
-          goto error;
-        exe->pipe_read.thread = (HANDLE)_beginthreadex(NULL, 0,
-                                                       _ecore_exe_pipe_read_thread_cb,
-                                                       obj, 0, NULL);
-        if (!exe->pipe_read.thread)
-          goto error;
-     }
+        Threaddata *tdat;
 
-   /* stderr pipe */
-   if (exe->flags & ECORE_EXE_PIPE_ERROR)
-     {
-        if (!CreatePipe(&exe->pipe_error.child_pipe, &child_pipe_error, &sa, 0))
-          goto error;
-        if (!SetHandleInformation(exe->pipe_error.child_pipe, HANDLE_FLAG_INHERIT, 0))
-          goto error;
-        exe->pipe_error.thread = (HANDLE)_beginthreadex(NULL, 0,
-                                                        _ecore_exe_pipe_error_thread_cb,
-                                                        obj, 0, NULL);
-        if (!exe->pipe_error.thread)
-          goto error;
+        tdat = calloc(1, sizeof(Threaddata));
+        if (tdat)
+          {
+             tdat->obj = obj;
+             /* stdout pipe */
+             if (exe->flags & ECORE_EXE_PIPE_READ)
+               {
+                  if (!CreatePipe(&exe->pipe_read.child_pipe,
+                                  &child_pipe_read, &sa, 0))
+                    goto error;
+                  if (!SetHandleInformation(exe->pipe_read.child_pipe,
+                                            HANDLE_FLAG_INHERIT, 0))
+                    goto error;
+                  tdat->read = EINA_TRUE;
+                  tdat->read_pipe = exe->pipe_read.child_pipe;
+               }
+             /* stderr pipe */
+             if (exe->flags & ECORE_EXE_PIPE_ERROR)
+               {
+                  if (!CreatePipe(&exe->pipe_error.child_pipe,
+                                  &child_pipe_error, &sa, 0))
+                    goto error;
+                  if (!SetHandleInformation(exe->pipe_error.child_pipe,
+                                            HANDLE_FLAG_INHERIT, 0))
+                    goto error;
+                  tdat->error = EINA_TRUE;
+                  tdat->error_pipe = exe->pipe_error.child_pipe;
+               }
+             exe->th = ecore_thread_feedback_run
+               (_ecore_exe_win32_io_poll_thread,
+                _ecore_exe_win32_io_poll_notify,
+                NULL, NULL, tdat, EINA_TRUE);
+             if (!exe->th)
+               {
+                  free(tdat);
+                  goto error;
+               }
+          }
      }
 
    /* stdin pipe */
    if (exe->flags & ECORE_EXE_PIPE_WRITE)
      {
-        if (!CreatePipe(&exe->pipe_write.child_pipe, &exe->pipe_write.child_pipe_x, &sa, 0))
+        if (!CreatePipe(&exe->pipe_write.child_pipe,
+                        &exe->pipe_write.child_pipe_x, &sa, 0))
           goto error;
-        if (!SetHandleInformation(exe->pipe_write.child_pipe_x, HANDLE_FLAG_INHERIT, 0))
+        if (!SetHandleInformation(exe->pipe_write.child_pipe_x,
+                                  HANDLE_FLAG_INHERIT, 0))
           goto error;
      }
 
@@ -494,14 +498,14 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
      {
         char *msg;
 
-	msg = evil_last_error_get();
-	if (msg)
-	  {
-	     WRN("Failed to create process %s: %s", exe_cmd_buf, msg);
-	     free(msg);
-	  }
-	else
-	  WRN("Failed to create process %s: %ld", exe_cmd_buf, GetLastError());
+        msg = evil_last_error_get();
+        if (msg)
+          {
+             WRN("Failed to create process %s: %s", exe_cmd_buf, msg);
+             free(msg);
+          }
+        else
+          WRN("Failed to create process %s: %ld", exe_cmd_buf, GetLastError());
         goto error;
      }
 
@@ -519,7 +523,6 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
    /* FIXME: This does not work if the child is an EFL-based app */
    /* if (WaitForInputIdle(pi.hProcess, INFINITE) == WAIT_FAILED) */
    /*   goto error; */
-
    exe->process = pi.hProcess;
    exe->process_thread = pi.hThread;
    exe->pid = pi.dwProcessId;
@@ -527,8 +530,7 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 
    exe->h_close = ecore_main_win32_handler_add(exe->process,
                                                _ecore_exe_close_cb, obj);
-   if (!exe->h_close)
-     goto error;
+   if (!exe->h_close) goto error;
 
    if (ResumeThread(exe->process_thread) == ((DWORD)-1))
      {
@@ -538,14 +540,10 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 
    _ecore_exe_exes = eina_list_append(_ecore_exe_exes, obj);
 
-   e = (Ecore_Exe_Event_Add *)calloc(1, sizeof(Ecore_Exe_Event_Add));
+   e = calloc(1, sizeof(Ecore_Exe_Event_Add));
    if (!e) goto error;
-
    e->exe = obj;
-
-   ecore_event_add(ECORE_EXE_EVENT_ADD, e,
-                   _ecore_exe_event_add_free, NULL);
-
+   ecore_event_add(ECORE_EXE_EVENT_ADD, e, _ecore_exe_event_add_free, NULL);
    return obj;
 
 error:
@@ -554,9 +552,9 @@ error:
 
 Eina_Bool
 _impl_ecore_exe_send(Ecore_Exe  *obj,
-               Ecore_Exe_Data *exe,
-               const void *data,
-               int         size)
+                     Ecore_Exe_Data *exe,
+                     const void *data,
+                     int         size)
 {
    void *buf = NULL;
    DWORD num_exe;
@@ -570,7 +568,6 @@ _impl_ecore_exe_send(Ecore_Exe  *obj,
    exe->pipe_write.data_size += size;
 
    res = WriteFile(exe->pipe_write.child_pipe_x, buf, exe->pipe_write.data_size, &num_exe, NULL);
-   printf(" ** res : %d\n", res);
    if (!res || num_exe == 0)
      {
         ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",
@@ -583,8 +580,8 @@ _impl_ecore_exe_send(Ecore_Exe  *obj,
 
 Ecore_Exe_Event_Data *
 _impl_ecore_exe_event_data_get(Ecore_Exe      *obj,
-                         Ecore_Exe_Data *exe,
-                         Ecore_Exe_Flags flags)
+                               Ecore_Exe_Data *exe,
+                               Ecore_Exe_Flags flags)
 {
    Ecore_Exe_Event_Data *e = NULL;
    unsigned char *inbuf;
@@ -593,103 +590,102 @@ _impl_ecore_exe_event_data_get(Ecore_Exe      *obj,
 
    /* Sort out what sort of event we are. */
    if (flags & ECORE_EXE_PIPE_READ)
-   {
-      flags = ECORE_EXE_PIPE_READ;
-      if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
-        is_buffered = EINA_TRUE;
-   }
+     {
+        flags = ECORE_EXE_PIPE_READ;
+        if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
+          is_buffered = EINA_TRUE;
+     }
    else
-   {
-      flags = ECORE_EXE_PIPE_ERROR;
-      if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
-        is_buffered = EINA_TRUE;
-   }
+     {
+        flags = ECORE_EXE_PIPE_ERROR;
+        if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
+          is_buffered = EINA_TRUE;
+     }
 
    /* Get the data. */
    if (flags & ECORE_EXE_PIPE_READ)
-   {
-      inbuf = exe->pipe_read.data_buf;
-      inbuf_num = exe->pipe_read.data_size;
-      exe->pipe_read.data_buf = NULL;
-      exe->pipe_read.data_size = 0;
-   }
+     {
+        inbuf = exe->pipe_read.data_buf;
+        inbuf_num = exe->pipe_read.data_size;
+        exe->pipe_read.data_buf = NULL;
+        exe->pipe_read.data_size = 0;
+     }
    else
-   {
-      inbuf = exe->pipe_error.data_buf;
-      inbuf_num = exe->pipe_error.data_size;
-      exe->pipe_error.data_buf = NULL;
-      exe->pipe_error.data_size = 0;
-   }
+     {
+        inbuf = exe->pipe_error.data_buf;
+        inbuf_num = exe->pipe_error.data_size;
+        exe->pipe_error.data_buf = NULL;
+        exe->pipe_error.data_size = 0;
+     }
 
    e = calloc(1, sizeof(Ecore_Exe_Event_Data));
    if (e)
-   {
-      e->exe = obj;
-      e->data = inbuf;
-      e->size = inbuf_num;
+     {
+        e->exe = obj;
+        e->data = inbuf;
+        e->size = inbuf_num;
 
-      if (is_buffered) /* Deal with line buffering. */
-      {
-         char *c;
-         DWORD i;
-         DWORD max = 0;
-         DWORD count = 0;
-         DWORD last = 0;
+        if (is_buffered) /* Deal with line buffering. */
+          {
+             char *c;
+             DWORD i;
+             DWORD max = 0;
+             DWORD count = 0;
+             DWORD last = 0;
 
-         c = (char *)inbuf;
-         for (i = 0; i < inbuf_num; i++)
-           {
-              if (inbuf[i] == '\n')
-                {
-                   int end;
+             c = (char *)inbuf;
+             for (i = 0; i < inbuf_num; i++)
+               {
+                  if (inbuf[i] == '\n')
+                    {
+                       int end;
 
-                   if (count >= max)
-                     {
-                        max += 10;
-                        e->lines = realloc(e->lines, sizeof(Ecore_Exe_Event_Data_Line) * (max + 1));
-                     }
+                       if (count >= max)
+                         {
+                            max += 10;
+                            e->lines = realloc
+                              (e->lines,
+                               sizeof(Ecore_Exe_Event_Data_Line) * (max + 1));
+                         }
 
-                   if ((i >= 1) && (inbuf[i - 1] == '\r'))
-                     end = i - 1;
-                   else
-                     end = i;
-                   inbuf[end] = '\0';
-                   e->lines[count].line = c;
-                   e->lines[count].size = end - last;
-                   last = i + 1;
-                   c = (char *)&inbuf[last];
-                   count++;
-                }
-           }
-         if (i > last) /* Partial line left over, save it for next time. */
-           {
-              if (count != 0) e->size = last;
-              if (flags & ECORE_EXE_PIPE_READ)
-                {
-                   exe->pipe_read.data_size = i - last;
-                   exe->pipe_read.data_buf = malloc(exe->pipe_read.data_size);
-                   memcpy(exe->pipe_read.data_buf, c, exe->pipe_read.data_size);
-                }
-              else
-                {
-                  exe->pipe_error.data_size = i - last;
-                  exe->pipe_error.data_buf = malloc(exe->pipe_error.data_size);
-                  memcpy(exe->pipe_error.data_buf, c, exe->pipe_error.data_size);
-                }
-           }
-         if (count == 0) /* No lines to send, cancel the event. */
-           {
-               _ecore_exe_event_exe_data_free(NULL, e);
-               e = NULL;
-           }
-         else /* NULL terminate the array, so that people know where the end is. */
-           {
-              e->lines[count].line = NULL;
-              e->lines[count].size = 0;
-           }
-      }
-   }
-
+                       if ((i >= 1) && (inbuf[i - 1] == '\r')) end = i - 1;
+                       else end = i;
+                       inbuf[end] = '\0';
+                       e->lines[count].line = c;
+                       e->lines[count].size = end - last;
+                       last = i + 1;
+                       c = (char *)&inbuf[last];
+                       count++;
+                    }
+               }
+             if (i > last) /* Partial line left over, save it for next time. */
+               {
+                  if (count != 0) e->size = last;
+                  if (flags & ECORE_EXE_PIPE_READ)
+                    {
+                       exe->pipe_read.data_size = i - last;
+                       exe->pipe_read.data_buf = malloc(exe->pipe_read.data_size);
+                       memcpy(exe->pipe_read.data_buf, c, exe->pipe_read.data_size);
+                    }
+                  else
+                    {
+                       exe->pipe_error.data_size = i - last;
+                       exe->pipe_error.data_buf = malloc(exe->pipe_error.data_size);
+                       memcpy(exe->pipe_error.data_buf, c, exe->pipe_error.data_size);
+                    }
+               }
+             if (count == 0) /* No lines to send, cancel the event. */
+               {
+                  _ecore_exe_event_exe_data_free(NULL, e);
+                  e = NULL;
+               }
+             else /* NULL terminate the array, so that people know where the end is. */
+               {
+                  e->lines[count].line = NULL;
+                  e->lines[count].size = 0;
+               }
+          }
+     }
    return e;
 }
 
@@ -701,8 +697,7 @@ _impl_ecore_exe_efl_object_destructor(Eo *obj, Ecore_Exe_Data *exe)
    _ecore_exe_threads_terminate(obj);
 
    data = exe->data;
-   if (exe->pre_free_cb)
-     exe->pre_free_cb(data, obj);
+   if (exe->pre_free_cb) exe->pre_free_cb(data, obj);
 
    IF_FN_DEL(ecore_main_win32_handler_del, exe->h_close);
 
@@ -722,21 +717,15 @@ _impl_ecore_exe_efl_object_destructor(Eo *obj, Ecore_Exe_Data *exe)
 void
 _impl_ecore_exe_pause(Ecore_Exe *obj EINA_UNUSED, Ecore_Exe_Data *exe)
 {
-   if (exe->is_suspended)
-     return;
-
-   if (SuspendThread(exe->process_thread) != (DWORD)-1)
-     exe->is_suspended = 1;
+   if (exe->is_suspended) return;
+   if (SuspendThread(exe->process_thread) != (DWORD)-1) exe->is_suspended = 1;
 }
 
 void
 _impl_ecore_exe_continue(Ecore_Exe *obj EINA_UNUSED, Ecore_Exe_Data *exe)
 {
-   if (!exe->is_suspended)
-     return;
-
-   if (ResumeThread(exe->process_thread) != (DWORD)-1)
-     exe->is_suspended = 0;
+   if (!exe->is_suspended) return;
+   if (ResumeThread(exe->process_thread) != (DWORD)-1) exe->is_suspended = 0;
 }
 
 void
@@ -768,7 +757,7 @@ _impl_ecore_exe_terminate(Ecore_Exe *obj, Ecore_Exe_Data *exe)
    CloseHandle(exe->process);
    exe->process = NULL;
    exe->sig = ECORE_EXE_WIN32_SIGTERM;
-   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
+   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj));
 }
 
 void
@@ -779,31 +768,31 @@ _impl_ecore_exe_kill(Ecore_Exe *obj, Ecore_Exe_Data *exe)
    CloseHandle(exe->process);
    exe->process = NULL;
    exe->sig = ECORE_EXE_WIN32_SIGKILL;
-   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
+   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj));
 }
 
 void
 _impl_ecore_exe_auto_limits_set(Ecore_Exe *obj EINA_UNUSED,
-                          Ecore_Exe_Data *exe EINA_UNUSED,
-                          int        start_bytes EINA_UNUSED,
-                          int        end_bytes EINA_UNUSED,
-                          int        start_lines EINA_UNUSED,
-                          int        end_lines EINA_UNUSED)
+                                Ecore_Exe_Data *exe EINA_UNUSED,
+                                int        start_bytes EINA_UNUSED,
+                                int        end_bytes EINA_UNUSED,
+                                int        start_lines EINA_UNUSED,
+                                int        end_lines EINA_UNUSED)
 {
    ERR("Not implemented on windows!");
 }
 
 void
 _impl_ecore_exe_signal(Ecore_Exe *obj EINA_UNUSED,
-                          Ecore_Exe_Data *exe EINA_UNUSED,
-                          int num EINA_UNUSED)
+                       Ecore_Exe_Data *exe EINA_UNUSED,
+                       int num EINA_UNUSED)
 {
    ERR("Not implemented on windows!");
 }
 
 void
 _impl_ecore_exe_hup(Ecore_Exe *obj EINA_UNUSED,
-                          Ecore_Exe_Data *exe EINA_UNUSED)
+                    Ecore_Exe_Data *exe EINA_UNUSED)
 {
    ERR("Not implemented on windows!");
 }
