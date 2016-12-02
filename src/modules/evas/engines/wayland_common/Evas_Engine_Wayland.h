@@ -20,6 +20,7 @@ struct _Evas_Engine_Info_Wayland
         int depth, rotation, edges;
         int compositor_version;
         Eina_Bool destination_alpha : 1;
+        Eina_Bool hidden : 1;
      } info;
 
    /* non-blocking or blocking mode */

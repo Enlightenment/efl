@@ -543,9 +543,8 @@ _evas_shm_surface_data_get(Surface *s, int *w, int *h)
 }
 
 void
-_evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
+_evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Eina_Bool hidden)
 {
-   /* struct wl_callback *frame_cb; */
    Shm_Surface *surf;
    Shm_Leaf *leaf;
 
@@ -557,12 +556,15 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 
    if (!surf->surface) return;
 
-   wl_surface_attach(surf->surface, leaf->data->buffer, 0, 0);
+   if (!hidden)
+     {
+        wl_surface_attach(surf->surface, leaf->data->buffer, 0, 0);
 
-   _evas_surface_damage(surf->surface, surf->compositor_version,
-                        leaf->w, leaf->h, rects, count);
-   /* frame_cb = wl_surface_frame(surface->surface); */
-   /* wl_callback_add_listener(frame_cb, &_shm_frame_listener, surface); */
+        _evas_surface_damage(surf->surface, surf->compositor_version,
+                             leaf->w, leaf->h, rects, count);
+     }
+   else
+     wl_surface_attach(surf->surface, NULL, 0, 0);
 
    wl_surface_commit(surf->surface);
 

@@ -338,24 +338,25 @@ surf_err:
 static void
 _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
 {
-   if (window->surface) return;
-
    EINA_SAFETY_ON_NULL_RETURN(window->display->wl.compositor);
 
-   window->surface =
-     wl_compositor_create_surface(window->display->wl.compositor);
    if (!window->surface)
      {
-        ERR("Failed to create surface for window");
-        return;
+        window->surface =
+          wl_compositor_create_surface(window->display->wl.compositor);
+        if (!window->surface)
+          {
+             ERR("Failed to create surface for window");
+             return;
+          }
+
+        window->surface_id =
+          wl_proxy_get_id((struct wl_proxy *)window->surface);
+
+        if (window->display->wl.session_recovery)
+          zwp_e_session_recovery_add_listener(window->display->wl.session_recovery,
+                                              &_session_listener, window);
      }
-
-   window->surface_id =
-     wl_proxy_get_id((struct wl_proxy *)window->surface);
-
-   if (window->display->wl.session_recovery)
-     zwp_e_session_recovery_add_listener(window->display->wl.session_recovery,
-                                         &_session_listener, window);
 }
 
 EAPI Ecore_Wl2_Window *
@@ -443,36 +444,14 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Subsurface *subsurf;
    Eina_Inlist *tmp;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
-
-   if (window->xdg_surface) xdg_surface_destroy(window->xdg_surface);
-   window->xdg_surface = NULL;
-
-   if (window->xdg_popup) xdg_popup_destroy(window->xdg_popup);
-   window->xdg_popup = NULL;
-
-   if (window->wl_shell_surface)
-     wl_shell_surface_destroy(window->wl_shell_surface);
-   window->wl_shell_surface = NULL;
-
-   if (window->www_surface)
-     www_surface_destroy(window->www_surface);
-   window->www_surface = NULL;
 
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_unmap(subsurf);
 
-   if (window->uuid && window->surface && window->display->wl.session_recovery)
-     zwp_e_session_recovery_destroy_uuid(window->display->wl.session_recovery,
-       window->surface, window->uuid);
-
-   if (window->surface) wl_surface_destroy(window->surface);
-   window->surface = NULL;
-
    window->configure_serial = 0;
    window->configure_ack = NULL;
-
-   window->surface_id = -1;
 }
 
 EAPI void
@@ -493,7 +472,30 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_free(subsurf);
 
+   if (window->xdg_surface) xdg_surface_destroy(window->xdg_surface);
+   window->xdg_surface = NULL;
+
+   if (window->xdg_popup) xdg_popup_destroy(window->xdg_popup);
+   window->xdg_popup = NULL;
+
+   if (window->wl_shell_surface)
+     wl_shell_surface_destroy(window->wl_shell_surface);
+   window->wl_shell_surface = NULL;
+
+   if (window->www_surface)
+     www_surface_destroy(window->www_surface);
+   window->www_surface = NULL;
+
    ecore_wl2_window_hide(window);
+
+   if (window->uuid && window->surface && window->display->wl.session_recovery)
+     zwp_e_session_recovery_destroy_uuid(window->display->wl.session_recovery,
+       window->surface, window->uuid);
+
+   if (window->surface) wl_surface_destroy(window->surface);
+   window->surface = NULL;
+   window->surface_id = -1;
+
    eina_stringshare_replace(&window->uuid, NULL);
 
    if (window->title) eina_stringshare_del(window->title);

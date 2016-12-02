@@ -99,7 +99,7 @@ struct _Surface
         void (*reconfigure)(Surface *surface, int w, int h, uint32_t flags);
         void *(*data_get)(Surface *surface, int *w, int *h);
         int  (*assign)(Surface *surface);
-        void (*post)(Surface *surface, Eina_Rectangle *rects, unsigned int count);
+        void (*post)(Surface *surface, Eina_Rectangle *rects, unsigned int count, Eina_Bool hidden);
      } funcs;
 };
 
@@ -133,6 +133,8 @@ struct _Outbuf
         /* Eina_Bool redraw : 1; */
         Eina_Bool destination_alpha : 1;
      } priv;
+
+   Eina_Bool hidden : 1;
 };
 
 Eina_Bool _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff);

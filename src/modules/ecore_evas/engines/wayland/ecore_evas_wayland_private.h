@@ -1,34 +1,35 @@
 #ifndef _ECORE_EVAS_WAYLAND_PRIVATE_H_
-#define _ECORE_EVAS_WAYLAND_PRIVATE_H_
+# define _ECORE_EVAS_WAYLAND_PRIVATE_H_
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+# ifdef HAVE_CONFIG_H
+#  include "config.h"
+# endif
 
-#define ECORE_EVAS_INTERNAL
+# define ECORE_EVAS_INTERNAL
 
-#ifndef ELEMENTARY_H
+# ifndef ELEMENTARY_H
 //#define LOGFNS 1
-#ifdef LOGFNS
-# include <stdio.h>
-# define LOGFN(fl, ln, fn) \
+#  ifdef LOGFNS
+#   include <stdio.h>
+#   define LOGFN(fl, ln, fn) \
    printf("-ECORE_EVAS-WL: %25s: %5i - %s\n", fl, ln, fn);
-#else
-# define LOGFN(fl, ln, fn)
-#endif
+#  else
+#   define LOGFN(fl, ln, fn)
+#  endif
 
-#include <Eina.h>
-#include <Ecore.h>
-#include <Ecore_Input.h>
-#include <Ecore_Input_Evas.h>
-#include <Ecore_Wl2.h>
+#  include <Eina.h>
+#  include <Ecore.h>
+#  include <Ecore_Input.h>
+#  include <Ecore_Input_Evas.h>
+#  include <Ecore_Wl2.h>
 
-#include <Ecore_Evas.h>
-#endif
-#include "ecore_wl2_private.h"
-#include "ecore_private.h"
-#include "ecore_evas_private.h"
-#include "ecore_evas_wayland.h"
+#  include <Ecore_Evas.h>
+# endif
+
+# include "ecore_wl2_private.h"
+# include "ecore_private.h"
+# include "ecore_evas_private.h"
+# include "ecore_evas_wayland.h"
 
 typedef struct _Ecore_Evas_Engine_Wl_Data Ecore_Evas_Engine_Wl_Data;
 
