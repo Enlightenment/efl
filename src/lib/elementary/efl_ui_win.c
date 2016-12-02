@@ -3352,7 +3352,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if (h < minh) h = minh;
    if (w > maxw) w = maxw;
    if (h > maxh) h = maxh;
-   if ((w == ow) && (h == oh)) return;
+   //if ((w == ow) && (h == oh)) return;
    if (sd->img_obj) evas_object_resize(obj, w, h);
    else
      {
