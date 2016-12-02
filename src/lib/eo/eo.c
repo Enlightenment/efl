@@ -638,6 +638,7 @@ _efl_object_api_op_id_get_internal(const void *api_func)
    return op;
 }
 
+/* LEGACY, should be removed before next release */
 EAPI Efl_Object_Op
 _efl_object_api_op_id_get(const void *api_func)
 {
@@ -646,6 +647,21 @@ _efl_object_api_op_id_get(const void *api_func)
    if (op == EFL_NOOP)
      {
         ERR("Unable to resolve op for api func %p", api_func);
+     }
+
+   return op;
+}
+
+EAPI Efl_Object_Op
+_efl_object_op_api_id_get(const void *api_func, const Eo *obj, const char *api_func_name, const char *file, int line)
+{
+   Efl_Object_Op op = _efl_object_api_op_id_get_internal(api_func);
+
+   if (op == EFL_NOOP)
+     {
+        eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR,
+                       file, api_func_name, line,
+                       "Unable to resolve op for api func %p for obj=%p (%s)", api_func, obj, efl_class_name_get(obj));
      }
 
    return op;

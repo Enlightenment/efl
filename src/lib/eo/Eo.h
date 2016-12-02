@@ -827,7 +827,7 @@ typedef struct _Efl_Object_Call_Cache
 // hits.
 #define EFL_FUNC_COMMON_OP_END(Obj, Name, DefRet) \
 __##Name##_op_create: \
-   ___cache.op = _efl_object_api_op_id_get(EFL_FUNC_COMMON_OP_FUNC(Name)); \
+   ___cache.op = _efl_object_op_api_id_get(EFL_FUNC_COMMON_OP_FUNC(Name), Obj, #Name, __FILE__, __LINE__); \
    if (___cache.op == EFL_NOOP) return DefRet; \
    ___cache.generation = _efl_object_init_generation; \
    goto __##Name##_op_create_done;
@@ -914,7 +914,8 @@ __##Name##_op_create: \
 #define EFL_OBJECT_OP_FUNC(_api, _private) { _EFL_OBJECT_OP_API_ENTRY(_api), (void*)_private }
 
 // returns the OP id corresponding to the given api_func
-EAPI Efl_Object_Op _efl_object_api_op_id_get(const void *api_func);
+EAPI Efl_Object_Op _efl_object_api_op_id_get(const void *api_func) EINA_DEPRECATED;
+EAPI Efl_Object_Op _efl_object_op_api_id_get(const void *api_func, const Eo *obj, const char *api_func_name, const char *file, int line) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT;
 
 // gets the real function pointer and the object data
 EAPI Eina_Bool _efl_object_call_resolve(Eo *obj, const char *func_name, Efl_Object_Op_Call_Data *call, Efl_Object_Call_Cache *callcache, const char *file, int line);
