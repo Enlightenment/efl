@@ -85,8 +85,6 @@ struct _Outbuf
    Evas_Engine_Info_GL_Drm *info;
    Evas_Engine_GL_Context *gl_context;
 
-   Evas *evas; // used for pre_swap, post_swap
-
    int fd, w, h, bpp;
    unsigned int rotation, depth, format;
    int prev_age;

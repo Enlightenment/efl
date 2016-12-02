@@ -1614,16 +1614,11 @@ _re_winfree(Render_Engine *re)
    eng_window_unsurf(eng_get_ob(re));
 }
 
-static int
-eng_setup(Evas *eo_e, void *in)
+static Render_Engine_Swap_Mode
+_eng_swap_mode_get(Evas_Engine_Info_GL_X11_Swap_Mode info_swap_mode)
 {
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Render_Engine *re;
-   Evas_Engine_Info_GL_X11 *info;
    Render_Engine_Swap_Mode swap_mode = MODE_FULL;
    const char *s;
-
-   info = (Evas_Engine_Info_GL_X11 *)in;
 
    if ((s = getenv("EVAS_GL_SWAP_MODE")))
      {
@@ -1660,7 +1655,7 @@ eng_setup(Evas *eo_e, void *in)
 //        re->mode = MODE_TRIPLE;
 // XXX: note - the above seems to break on some older intel chipsets and
 // drivers. it seems we CANT depend on backbuffer staying around. bugger!
-        switch (info->swap_mode)
+        switch (info_swap_mode)
           {
            case EVAS_ENGINE_GL_X11_SWAP_MODE_FULL:
              swap_mode = MODE_FULL;
@@ -1682,6 +1677,21 @@ eng_setup(Evas *eo_e, void *in)
              break;
           }
      }
+
+   return swap_mode;
+}
+
+static void *
+eng_setup(void *in, unsigned int w, unsigned int h)
+{
+   Evas_Engine_Info_GL_X11 *info = in;
+   Render_Engine *re = NULL;
+   Outbuf *ob = NULL;
+   Render_Engine_Merge_Mode merge_mode = MERGE_SMART;
+   Render_Engine_Swap_Mode swap_mode;
+   const char *s;
+
+   swap_mode = _eng_swap_mode_get(info->swap_mode);
 
    // Set this env var to dump files every frame
    // Or set the global var in gdb to 1|0 to turn it on and off
@@ -1706,189 +1716,170 @@ eng_setup(Evas *eo_e, void *in)
      }
 
 
-   if (!e->engine.data.output)
+   if (!initted)
      {
-        Outbuf *ob;
-        Render_Engine_Merge_Mode merge_mode = MERGE_SMART;
-
-        if (!initted)
-          {
-             glsym_evas_gl_preload_init();
-          }
+        glsym_evas_gl_preload_init();
+     }
 
 #ifdef GL_GLES
 #else
-        int eb, evb;
+   int eb, evb;
 
-        if (!glXQueryExtension(info->info.display, &eb, &evb)) return 0;
+   if (!glXQueryExtension(info->info.display, &eb, &evb)) return 0;
 #endif
-        re = calloc(1, sizeof(Render_Engine));
-        if (!re) return 0;
-        ob = eng_window_new(info, eo_e,
-                            info->info.display,
-                            info->info.drawable,
-                            info->info.screen,
-                            info->info.visual,
-                            info->info.colormap,
-                            info->info.depth,
-                            e->output.w, e->output.h,
-                            info->indirect,
-                            info->info.destination_alpha,
-                            info->info.rotation,
-                            swap_mode,
-                            info->depth_bits,
-                            info->stencil_bits,
-                            info->msaa_bits);
-        if (!ob)
-          {
-             free(re);
-             return 0;
-          }
+   re = calloc(1, sizeof(Render_Engine));
+   if (!re) return NULL;
 
-        if (!evas_render_engine_gl_generic_init(&re->generic, ob,
-                                                eng_outbuf_swap_mode,
-                                                eng_outbuf_get_rot,
-                                                eng_outbuf_reconfigure,
-                                                eng_outbuf_region_first_rect,
+   ob = eng_window_new(info,
+                       info->info.display,
+                       info->info.drawable,
+                       info->info.screen,
+                       info->info.visual,
+                       info->info.colormap,
+                       info->info.depth,
+                       w, h,
+                       info->indirect,
+                       info->info.destination_alpha,
+                       info->info.rotation,
+                       swap_mode,
+                       info->depth_bits,
+                       info->stencil_bits,
+                       info->msaa_bits);
+   if (!ob) goto on_error;
+
+   if (!evas_render_engine_gl_generic_init(&re->generic, ob,
+                                           eng_outbuf_swap_mode,
+                                           eng_outbuf_get_rot,
+                                           eng_outbuf_reconfigure,
+                                           eng_outbuf_region_first_rect,
 #ifdef GL_GLES
-                                                eng_outbuf_damage_region_set,
+                                           eng_outbuf_damage_region_set,
 #else
-                                                NULL,
+                                           NULL,
 #endif
-                                                eng_outbuf_new_region_for_update,
-                                                eng_outbuf_push_updated_region,
-                                                eng_outbuf_push_free_region_for_update,
-                                                eng_outbuf_idle_flush,
-                                                eng_outbuf_flush,
-                                                NULL,
-                                                eng_window_free,
-                                                eng_window_use,
-                                                eng_outbuf_gl_context_get,
-                                                eng_outbuf_egl_display_get,
-                                                eng_gl_context_new,
-                                                eng_gl_context_use,
-                                                &evgl_funcs,
-                                                e->output.w, e->output.h))
-          {
-             eng_window_free(ob);
-             free(re);
-             return 0;
-          }
+                                           eng_outbuf_new_region_for_update,
+                                           eng_outbuf_push_updated_region,
+                                           eng_outbuf_push_free_region_for_update,
+                                           eng_outbuf_idle_flush,
+                                           eng_outbuf_flush,
+                                           NULL,
+                                           eng_window_free,
+                                           eng_window_use,
+                                           eng_outbuf_gl_context_get,
+                                           eng_outbuf_egl_display_get,
+                                           eng_gl_context_new,
+                                           eng_gl_context_use,
+                                           &evgl_funcs,
+                                           w, h))
+     goto on_error;
 
-        e->engine.data.output = re;
-        gl_wins++;
+   gl_wins++;
 
-        if ((s = getenv("EVAS_GL_PARTIAL_MERGE")))
-          {
-             if ((!strcmp(s, "bounding")) ||
-                 (!strcmp(s, "b")))
-               merge_mode = MERGE_BOUNDING;
-             else if ((!strcmp(s, "full")) ||
-                      (!strcmp(s, "f")))
-               merge_mode = MERGE_FULL;
-             else if ((!strcmp(s, "smart")) ||
-                      (!strcmp(s, "s")))
-               merge_mode = MERGE_SMART;
-          }
-
-        evas_render_engine_software_generic_merge_mode_set(&re->generic.software, merge_mode);
-
-        if (!initted)
-          {
-             gl_extn_veto(re);
-//             evgl_engine_init(re, &evgl_funcs);
-             initted = 1;
-          }
-
-     }
-   else
+   if ((s = getenv("EVAS_GL_PARTIAL_MERGE")))
      {
-        re = e->engine.data.output;
-        if (eng_get_ob(re) && _re_wincheck(eng_get_ob(re)))
-          {
-             if ((info->info.display != eng_get_ob(re)->disp) ||
-                 (info->info.drawable != eng_get_ob(re)->win) ||
-                 (info->info.screen != eng_get_ob(re)->screen) ||
-                 (info->info.visual != eng_get_ob(re)->visual) ||
-                 (info->info.colormap != eng_get_ob(re)->colormap) ||
-                 (info->info.depth != eng_get_ob(re)->depth) ||
-                 (info->depth_bits != eng_get_ob(re)->depth_bits) ||
-                 (info->stencil_bits != eng_get_ob(re)->stencil_bits) ||
-                 (info->msaa_bits != eng_get_ob(re)->msaa_bits) ||
-                 (info->info.destination_alpha != eng_get_ob(re)->alpha))
-               {
-                  Outbuf *ob, *ob_old;
-
-                  ob_old = re->generic.software.ob;
-                  re->generic.software.ob = NULL;
-                  gl_wins--;
-
-                  ob = eng_window_new(info, eo_e,
-                                      info->info.display,
-                                      info->info.drawable,
-                                      info->info.screen,
-                                      info->info.visual,
-                                      info->info.colormap,
-                                      info->info.depth,
-                                      e->output.w, e->output.h,
-                                      info->indirect,
-                                      info->info.destination_alpha,
-                                      info->info.rotation,
-                                      swap_mode,
-                                      info->depth_bits,
-                                      info->stencil_bits,
-                                      info->msaa_bits);
-                  if (!ob)
-                    {
-                       if (ob_old) eng_window_free(ob_old);
-                       free(re);
-                       return 0;
-                    }
-                  eng_window_use(ob);
-                  if (ob_old) eng_window_free(ob_old);
-                  evas_render_engine_software_generic_update(&re->generic.software, ob,
-                                                             e->output.w, e->output.h);
-
-                  gl_wins++;
-               }
-             else if ((eng_get_ob(re)->w != e->output.w) ||
-                      (eng_get_ob(re)->h != e->output.h) ||
-                      (eng_get_ob(re)->info->info.rotation != eng_get_ob(re)->rot))
-               {
-                  eng_outbuf_reconfigure(eng_get_ob(re), e->output.w, e->output.h, eng_get_ob(re)->info->info.rotation, 0);
-                  if (re->generic.software.tb)
-                    evas_common_tilebuf_free(re->generic.software.tb);
-                  re->generic.software.tb = evas_common_tilebuf_new(e->output.w, e->output.h);
-                  if (re->generic.software.tb)
-                    evas_common_tilebuf_set_tile_size(re->generic.software.tb,
-                                                      TILESIZE, TILESIZE);
-               }
-          }
-     }
-   if (!eng_get_ob(re))
-     {
-        free(re);
-        return 0;
+        if ((!strcmp(s, "bounding")) ||
+            (!strcmp(s, "b")))
+          merge_mode = MERGE_BOUNDING;
+        else if ((!strcmp(s, "full")) ||
+                 (!strcmp(s, "f")))
+          merge_mode = MERGE_FULL;
+        else if ((!strcmp(s, "smart")) ||
+                 (!strcmp(s, "s")))
+          merge_mode = MERGE_SMART;
      }
 
-   if (!e->engine.data.output)
+   evas_render_engine_software_generic_merge_mode_set(&re->generic.software, merge_mode);
+
+   if (!initted)
      {
-        if (eng_get_ob(re))
-          {
-             eng_window_free(eng_get_ob(re));
-             gl_wins--;
-          }
-        free(re);
-        return 0;
+        gl_extn_veto(re);
+        //             evgl_engine_init(re, &evgl_funcs);
+        initted = 1;
      }
 
    if (re->generic.software.tb)
      evas_render_engine_software_generic_tile_strict_set
        (&re->generic.software, EINA_TRUE);
 
-   if (!e->engine.data.context)
-     e->engine.data.context =
-     e->engine.func->context_new(e->engine.data.output);
+   eng_window_use(eng_get_ob(re));
+
+   return re;
+
+ on_error:
+   if (ob) eng_window_free(ob);
+   free(re);
+   return NULL;
+}
+
+static int
+eng_update(void *data, void *in, unsigned int w, unsigned int h)
+{
+   Evas_Engine_Info_GL_X11 *info = in;
+   Render_Engine *re = data;
+   Render_Engine_Swap_Mode swap_mode;
+
+   swap_mode = _eng_swap_mode_get(info->swap_mode);
+
+   if (eng_get_ob(re) && _re_wincheck(eng_get_ob(re)))
+     {
+        if ((info->info.display != eng_get_ob(re)->disp) ||
+            (info->info.drawable != eng_get_ob(re)->win) ||
+            (info->info.screen != eng_get_ob(re)->screen) ||
+            (info->info.visual != eng_get_ob(re)->visual) ||
+            (info->info.colormap != eng_get_ob(re)->colormap) ||
+            (info->info.depth != eng_get_ob(re)->depth) ||
+            (info->depth_bits != eng_get_ob(re)->depth_bits) ||
+            (info->stencil_bits != eng_get_ob(re)->stencil_bits) ||
+            (info->msaa_bits != eng_get_ob(re)->msaa_bits) ||
+            (info->info.destination_alpha != eng_get_ob(re)->alpha))
+          {
+             Outbuf *ob, *ob_old;
+
+             ob_old = re->generic.software.ob;
+             re->generic.software.ob = NULL;
+             gl_wins--;
+
+             ob = eng_window_new(info,
+                                 info->info.display,
+                                 info->info.drawable,
+                                 info->info.screen,
+                                 info->info.visual,
+                                 info->info.colormap,
+                                 info->info.depth,
+                                 w, h,
+                                 info->indirect,
+                                 info->info.destination_alpha,
+                                 info->info.rotation,
+                                 swap_mode,
+                                 info->depth_bits,
+                                 info->stencil_bits,
+                                 info->msaa_bits);
+             if (!ob)
+               {
+                  if (ob_old) eng_window_free(ob_old);
+                  return 0;
+               }
+
+             eng_window_use(ob);
+             if (ob_old) eng_window_free(ob_old);
+             evas_render_engine_software_generic_update(&re->generic.software, ob,
+                                                        w, h);
+             gl_wins++;
+          }
+        else if ((eng_get_ob(re)->w != w) ||
+                 (eng_get_ob(re)->h != h) ||
+                 (eng_get_ob(re)->info->info.rotation != eng_get_ob(re)->rot))
+          {
+             eng_outbuf_reconfigure(eng_get_ob(re), w, h, eng_get_ob(re)->info->info.rotation, 0);
+             if (re->generic.software.tb)
+               evas_common_tilebuf_free(re->generic.software.tb);
+             re->generic.software.tb = evas_common_tilebuf_new(w, h);
+             if (re->generic.software.tb)
+               evas_common_tilebuf_set_tile_size(re->generic.software.tb,
+                                                 TILESIZE, TILESIZE);
+          }
+     }
+
    eng_window_use(eng_get_ob(re));
 
    return 1;
@@ -3160,6 +3151,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(update);
    ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_dump);

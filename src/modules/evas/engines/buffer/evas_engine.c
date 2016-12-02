@@ -29,7 +29,6 @@ static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_
 
 static void *eng_info(Evas *eo_e EINA_UNUSED);
 static void eng_info_free(Evas *eo_e EINA_UNUSED, void *info);
-static int eng_setup(Evas *eo_e, void *info);
 static void eng_output_free(void *data);
 
 /* internal engine routines */
@@ -132,35 +131,25 @@ eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
    free(in);
 }
 
-static int
-eng_setup(Evas *eo_e, void *in)
+static void *
+eng_setup(void *in, unsigned int w, unsigned int h)
 {
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Render_Engine *re;
-   Evas_Engine_Info_Buffer *info;
+   Evas_Engine_Info_Buffer *info = in;
 
-   info = (Evas_Engine_Info_Buffer *)in;
-   re = _output_setup(e->output.w,
-		      e->output.h,
-		      info->info.dest_buffer,
-		      info->info.dest_buffer_row_bytes,
-		      info->info.depth_type,
-		      info->info.use_color_key,
-		      info->info.alpha_threshold,
-		      info->info.color_key_r,
-		      info->info.color_key_g,
-		      info->info.color_key_b,
-		      info->info.func.new_update_region,
-		      info->info.func.free_update_region,
-                      info->info.func.switch_buffer,
-                      info->info.switch_data);
-   if (e->engine.data.output)
-     eng_output_free(e->engine.data.output);
-   e->engine.data.output = re;
-   if (!e->engine.data.output) return 0;
-   if (!e->engine.data.context)
-     e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
-   return 1;
+   return _output_setup(w,
+                        h,
+                        info->info.dest_buffer,
+                        info->info.dest_buffer_row_bytes,
+                        info->info.depth_type,
+                        info->info.use_color_key,
+                        info->info.alpha_threshold,
+                        info->info.color_key_r,
+                        info->info.color_key_g,
+                        info->info.color_key_b,
+                        info->info.func.new_update_region,
+                        info->info.func.free_update_region,
+                        info->info.func.switch_buffer,
+                        info->info.switch_data);
 }
 
 static void

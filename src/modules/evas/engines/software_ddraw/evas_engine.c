@@ -87,48 +87,16 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
    free(in);
 }
 
-static int
-eng_setup(Evas *eo_e, void *in)
+static void *
+eng_setup(void *in, unsigned int w, unsigned int h)
 {
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Render_Engine *re;
-   Evas_Engine_Info_Software_DDraw *info;
+   Evas_Engine_Info_Software_DDraw *info = in;
 
-   info = (Evas_Engine_Info_Software_DDraw *)in;
-   if (!e->engine.data.output)
-     e->engine.data.output = _output_setup(e->output.w,
-                                           e->output.h,
-                                           info->info.rotation,
-                                           info->info.window,
-                                           info->info.depth,
-                                           info->info.fullscreen);
-   else
-     {
-        Outbuf *ob;
-        int ponebuf = 0;
-
-        re = e->engine.data.output;
-        ponebuf = re->generic.ob->onebuf;
-
-        ob = evas_software_ddraw_outbuf_setup(e->output.w,
-                                              e->output.h,
-                                              info->info.rotation,
-                                              OUTBUF_DEPTH_INHERIT,
-                                              info->info.window,
-                                              info->info.depth,
-                                              info->info.fullscreen);
-        if (!ob) return 0;
-        evas_render_engine_software_generic_update(&re->generic, ob, e->output.w, e->output.h);
-
-        re->generic.ob->onebuf = ponebuf;
-     }
-   if (!e->engine.data.output) return 0;
-   if (!e->engine.data.context)
-     e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
-
-   re = e->engine.data.output;
-
-   return 1;
+   return _output_setup(w, h,
+                        info->info.rotation,
+                        info->info.window,
+                        info->info.depth,
+                        info->info.fullscreen);
 }
 
 static void

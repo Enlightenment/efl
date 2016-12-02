@@ -37,7 +37,6 @@ static void *_output_setup(Evas *eo_e, int w, int h, int rot, int vt, int dev, i
 
 static void *eng_info(Evas *eo_e);
 static void eng_info_free(Evas *eo_e, void *info);
-static int eng_setup(Evas *eo_e, void *info);
 static void eng_output_free(void *data);
 
 static void
@@ -154,25 +153,18 @@ eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
    free(in);
 }
 
-static int
-eng_setup(Evas *eo_e, void *in)
+static void *
+eng_setup(void *in, unsigned int w, unsigned int h)
 {
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Render_Engine *re;
-   Evas_Engine_Info_FB *info;
+   Evas_Engine_Info_FB *info = in;
 
-   info = (Evas_Engine_Info_FB *)in;
-   re = _output_setup(eo_e, e->output.w,
-		      e->output.h,
-		      info->info.rotation,
-		      info->info.virtual_terminal,
-		      info->info.device_number,
-		      info->info.refresh, info->func.region_push_hook);
-   e->engine.data.output = re;
-   if (!e->engine.data.output) return 0;
-   e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
-
-   return 1;
+   return _output_setup(w,
+                        h,
+                        info->info.rotation,
+                        info->info.virtual_terminal,
+                        info->info.device_number,
+                        info->info.refresh,
+                        info->func.region_push_hook);
 }
 
 static void

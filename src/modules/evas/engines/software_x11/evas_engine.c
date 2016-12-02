@@ -65,7 +65,6 @@ static int _best_depth_get(int backend, void *connection, int screen);
 
 static void *eng_info(Evas *eo_e);
 static void eng_info_free(Evas *eo_e, void *info);
-static int eng_setup(Evas *eo_e, void *info);
 static void eng_output_free(void *data);
 
 static Eina_List *_outbufs = NULL;
@@ -317,127 +316,115 @@ eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
    free(in);
 }
 
-static int
-eng_setup(Evas *eo_e, void *in)
+static void *
+eng_setup(void *in, unsigned int w, unsigned int h)
 {
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Evas_Engine_Info_Software_X11 *info;
+   Evas_Engine_Info_Software_X11 *info = in;
    Render_Engine *re = NULL;
+   static int try_swapbuf = -1;
+   char* s;
 
-   info = (Evas_Engine_Info_Software_X11 *)in;
-   if (!e->engine.data.output)
+   if (info->info.backend != EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
+     return NULL;
+
+   if (try_swapbuf == -1)
      {
-        /* if we haven't initialized - init (automatic abort if already done) */
-
-        if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
+        if ((s = getenv("EVAS_NO_DRI_SWAPBUF")) != NULL)
           {
-             static int try_swapbuf = -1;
-             char* s;
-
-             if (try_swapbuf == -1)
-               {
-                  if ((s = getenv("EVAS_NO_DRI_SWAPBUF")) != NULL)
-                    {
-                       if (atoi(s) == 1) try_swapbuf = 0;
-                       else try_swapbuf = 1;
-                    }
-                  else try_swapbuf = 1;
-               }
-             if (try_swapbuf)
-               re = _output_swapbuf_setup(e->output.w, e->output.h,
-                                          info->info.rotation, info->info.connection,
-                                          info->info.drawable, info->info.visual,
-                                          info->info.colormap,
-                                          info->info.depth, info->info.debug,
-                                          info->info.alloc_grayscale,
-                                          info->info.alloc_colors_max,
-                                          info->info.mask, info->info.shape_dither,
-                                          info->info.destination_alpha);
-             if (re) re->outbuf_alpha_get = evas_software_xlib_swapbuf_alpha_get;
-             else
-               {
-                  re = _output_xlib_setup(e->output.w, e->output.h,
-                                          info->info.rotation, info->info.connection,
-                                          info->info.drawable, info->info.visual,
-                                          info->info.colormap,
-                                          info->info.depth, info->info.debug,
-                                          info->info.alloc_grayscale,
-                                          info->info.alloc_colors_max,
-                                          info->info.mask, info->info.shape_dither,
-                                          info->info.destination_alpha);
-                  re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
-               }
-             re->generic.ob->region_push_hook.cb = info->func.region_push_hook;
-             re->generic.ob->region_push_hook.evas = eo_e;
+             if (atoi(s) == 1) try_swapbuf = 0;
+             else try_swapbuf = 1;
           }
-        e->engine.data.output = re;
+        else try_swapbuf = 1;
+     }
+
+   if (try_swapbuf)
+     re = _output_swapbuf_setup(w, h,
+                                info->info.rotation, info->info.connection,
+                                info->info.drawable, info->info.visual,
+                                info->info.colormap,
+                                info->info.depth, info->info.debug,
+                                info->info.alloc_grayscale,
+                                info->info.alloc_colors_max,
+                                info->info.mask, info->info.shape_dither,
+                                info->info.destination_alpha);
+   if (re) re->outbuf_alpha_get = evas_software_xlib_swapbuf_alpha_get;
+   else
+     {
+        re = _output_xlib_setup(w, h,
+                                info->info.rotation, info->info.connection,
+                                info->info.drawable, info->info.visual,
+                                info->info.colormap,
+                                info->info.depth, info->info.debug,
+                                info->info.alloc_grayscale,
+                                info->info.alloc_colors_max,
+                                info->info.mask, info->info.shape_dither,
+                                info->info.destination_alpha);
+        re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
+     }
+   re->generic.ob->region_push_hook.cb = info->func.region_push_hook;
+   re->generic.ob->region_push_hook.evas = eo_e;
+
+   _outbufs =  eina_list_append(_outbufs, re->generic.ob);
+
+   return re;
+}
+
+static int
+eng_update(void *data, void *in, unsigned int w, unsigned int h)
+{
+   Evas_Engine_Info_Software_X11 *info = in;
+   Render_Engine *re = data;
+   Outbuf *ob = NULL;
+
+   if (info->info.backend != EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
+     return 0;
+
+   _outbufs = eina_list_remove(_outbufs, re->generic.ob);
+
+   if (re->generic.outbuf_free == evas_software_xlib_swapbuf_free)
+     {
+        ob =
+          evas_software_xlib_swapbuf_setup_x(w, h,
+                                             info->info.rotation,
+                                             OUTBUF_DEPTH_INHERIT,
+                                             info->info.connection,
+                                             info->info.drawable,
+                                             info->info.visual,
+                                             info->info.colormap,
+                                             info->info.depth,
+                                             info->info.alloc_grayscale,
+                                             info->info.alloc_colors_max,
+                                             info->info.mask,
+                                             info->info.shape_dither,
+                                             info->info.destination_alpha);
      }
    else
      {
-        Outbuf *ob = NULL;
-        /* int ponebuf = 0; */
-
-        re = e->engine.data.output;
-        /* if ((re) && (re->ob)) ponebuf = re->ob->onebuf; */
-
-        _outbufs = eina_list_remove(_outbufs, re->generic.ob);
-
-        if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
-          {
-             if (re->generic.outbuf_free == evas_software_xlib_swapbuf_free)
-               {
-                  ob =
-                    evas_software_xlib_swapbuf_setup_x(e->output.w, e->output.h,
-                                                       info->info.rotation,
-                                                       OUTBUF_DEPTH_INHERIT,
-                                                       info->info.connection,
-                                                       info->info.drawable,
-                                                       info->info.visual,
-                                                       info->info.colormap,
-                                                       info->info.depth,
-                                                       info->info.alloc_grayscale,
-                                                       info->info.alloc_colors_max,
-                                                       info->info.mask,
-                                                       info->info.shape_dither,
-                                                       info->info.destination_alpha);
-               }
-             else
-               {
-                  ob =
-                    evas_software_xlib_outbuf_setup_x(e->output.w, e->output.h,
-                                                      info->info.rotation,
-                                                      OUTBUF_DEPTH_INHERIT,
-                                                      info->info.connection,
-                                                      info->info.drawable,
-                                                      info->info.visual,
-                                                      info->info.colormap,
-                                                      info->info.depth,
-                                                      info->info.alloc_grayscale,
-                                                      info->info.alloc_colors_max,
-                                                      info->info.mask,
-                                                      info->info.shape_dither,
-                                                      info->info.destination_alpha);
-                  if (ob)
-                    evas_software_xlib_outbuf_debug_set(ob, info->info.debug);
-               }
-          }
+        ob =
+          evas_software_xlib_outbuf_setup_x(w, h,
+                                            info->info.rotation,
+                                            OUTBUF_DEPTH_INHERIT,
+                                            info->info.connection,
+                                            info->info.drawable,
+                                            info->info.visual,
+                                            info->info.colormap,
+                                            info->info.depth,
+                                            info->info.alloc_grayscale,
+                                            info->info.alloc_colors_max,
+                                            info->info.mask,
+                                            info->info.shape_dither,
+                                            info->info.destination_alpha);
         if (ob)
-          {
-             evas_render_engine_software_generic_update(&re->generic, ob, e->output.w, e->output.h);
-             ob->region_push_hook.cb = info->func.region_push_hook;
-             ob->region_push_hook.evas = eo_e;
-          }
-
-        /* if ((re) && (re->ob)) re->ob->onebuf = ponebuf; */
+          evas_software_xlib_outbuf_debug_set(ob, info->info.debug);
      }
-   if (!e->engine.data.output) return 0;
-   if (!e->engine.data.context)
+
+   if (ob)
      {
-        e->engine.data.context =
-          e->engine.func->context_new(e->engine.data.output);
+        evas_render_engine_software_generic_update(&re->generic, ob, w, h);
+        ob->region_push_hook.cb = info->func.region_push_hook;
+        ob->region_push_hook.evas = eo_e;
      }
 
-   re = e->engine.data.output;
    _outbufs =  eina_list_append(_outbufs, re->generic.ob);
 
    return 1;
@@ -664,6 +651,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(update);
    ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(image_native_init);

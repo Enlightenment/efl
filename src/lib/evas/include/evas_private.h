@@ -1339,7 +1339,8 @@ struct _Evas_Func
 {
    void *(*info)                           (Evas *e);
    void (*info_free)                       (Evas *e, void *info);
-   int  (*setup)                           (Evas *e, void *info);
+   void *(*setup)                          (void *info, unsigned int w, unsigned int h);
+   int  (*update)                          (void *data, void *info, unsigned int w, unsigned int h);
 
    void (*output_free)                     (void *data);
    void (*output_resize)                   (void *data, int w, int h);

@@ -148,101 +148,79 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
    free(in);
 }
 
-static int
-eng_setup(Evas *evas, void *in)
+static void *
+eng_setup(void *in, unsigned int w, unsinged int h)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, 0);
-
    Evas_Engine_Info_GL_Cocoa *const info = in;
-   Evas_Public_Data *e;
-   Render_Engine *re = NULL;
+   Render_Engine *re;
    Outbuf *ob;
    Eina_Bool chk;
 
-   e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
-   if (EINA_UNLIKELY(!e))
+   // TODO SWAP MODE
+
+   if (!_initted)
      {
-        CRI("Failed to get evas public data");
+        glsym_evas_gl_preload_init();
+        _initted = EINA_TRUE;
+     }
+
+   re = calloc(1, sizeof(*re));
+   if (EINA_UNLIKELY(!re))
+     {
+        CRI("Failed to allocate memory");
         goto err;
      }
 
-   // TODO SWAP MODE
-
-   if (!e->engine.data.output)
+   ob = evas_outbuf_new(info, w, h);
+   if (EINA_UNLIKELY(!ob))
      {
-        if (!_initted)
-          {
-             glsym_evas_gl_preload_init();
-             _initted = EINA_TRUE;
-          }
-
-	re = calloc(1, sizeof(*re));
-	if (EINA_UNLIKELY(!re))
-          {
-             CRI("Failed to allocate memory");
-             goto err;
-          }
-
-        ob = evas_outbuf_new(info,
-                             e->output.w,
-                             e->output.h);
-	if (EINA_UNLIKELY(!ob))
-	  {
-             CRI("Failed to create outbuf");
-	     goto err;
-	  }
-
-        ob->evas = evas;
-	info->view = ob->ns_gl_view;
-
-        chk = evas_render_engine_gl_generic_init(&re->generic, ob,
-                                                evas_outbuf_buffer_state_get,
-                                                evas_outbuf_rot_get,
-                                                evas_outbuf_reconfigure,
-                                                evas_outbuf_update_region_first_rect,
-                                                NULL,
-                                                evas_outbuf_update_region_new,
-                                                evas_outbuf_update_region_push,
-                                                evas_outbuf_update_region_free,
-                                                NULL,
-                                                evas_outbuf_flush,
-                                                NULL,
-                                                evas_outbuf_free,
-                                                evas_outbuf_use,
-                                                evas_outbuf_gl_context_get,
-                                                evas_outbuf_egl_display_get,
-                                                evas_outbuf_gl_context_new,
-                                                evas_outbuf_gl_context_use,
-                                                &evgl_funcs, ob->w, ob->h);
-        if (EINA_UNLIKELY(!ob))
-          {
-             CRI("Failed to initialize gl_generic");
-             evas_outbuf_free(re->win);
-             goto err;
-          }
-        re->win = ob;
-        e->engine.data.output = re;
-        _gl_wins++;
-     }
-   else
-     {
-        CRI("ALREADY A DATA OUTPUT. THIS PART IS NOT IMPLEMENTED YET. PLEASE REPORT.");
-        return 0;
-     }
-   if (EINA_UNLIKELY(!e->engine.data.output))
-     {
-        CRI("Failed to create a data output");
-        return 0;
+        CRI("Failed to create outbuf");
+        goto err;
      }
 
-   if (!e->engine.data.context)
-     e->engine.data.context =
-       e->engine.func->context_new(e->engine.data.output);
+   ob->evas = evas;
+   info->view = ob->ns_gl_view;
+
+   chk = evas_render_engine_gl_generic_init(&re->generic, ob,
+                                            evas_outbuf_buffer_state_get,
+                                            evas_outbuf_rot_get,
+                                            evas_outbuf_reconfigure,
+                                            evas_outbuf_update_region_first_rect,
+                                            NULL,
+                                            evas_outbuf_update_region_new,
+                                            evas_outbuf_update_region_push,
+                                            evas_outbuf_update_region_free,
+                                            NULL,
+                                            evas_outbuf_flush,
+                                            NULL,
+                                            evas_outbuf_free,
+                                            evas_outbuf_use,
+                                            evas_outbuf_gl_context_get,
+                                            evas_outbuf_egl_display_get,
+                                            evas_outbuf_gl_context_new,
+                                            evas_outbuf_gl_context_use,
+                                            &evgl_funcs, ob->w, ob->h);
+   if (EINA_UNLIKELY(!ob))
+     {
+        CRI("Failed to initialize gl_generic");
+        evas_outbuf_free(re->win);
+        goto err;
+     }
+   re->win = ob;
+   _gl_wins++;
+
    evas_outbuf_use(re->win);
 
-   return 1;
-err:
-   free(re);
+   return NULL;
+}
+
+static int
+eng_update(void *data, void *info, unsigned int w, unsigned int h)
+{
+   Evas_Engine_Info_GL_Cocoa *const info = in;
+   Render_Engine *re = data;
+
+   CRI("ALREADY A DATA OUTPUT. THIS PART IS NOT IMPLEMENTED YET. PLEASE REPORT.");
    return 0;
 }
 
@@ -325,6 +303,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(update);
    ORD(canvas_alpha_get);
    ORD(output_free);
 

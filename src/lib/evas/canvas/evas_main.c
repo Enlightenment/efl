@@ -420,22 +420,44 @@ _evas_canvas_engine_info_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_engine_info_set(Eo *eo_e, Evas_Public_Data *e, Evas_Engine_Info *info)
+_evas_canvas_engine_info_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Engine_Info *info)
 {
-   Eina_Bool res;
-
    if (!info) return EINA_FALSE;
    if (info != e->engine.info) return EINA_FALSE;
    if (info->magic != e->engine.info_magic) return EINA_FALSE;
 
    evas_canvas_async_block(e);
-   if (!e->common_init)
+
+   if (e->engine.data.output)
      {
-        e->common_init = 1;
-        evas_common_init();
+        if (e->engine.func->update)
+          {
+             e->engine.func->update(e->engine.data.output, info, e->output.w, e->output.h);
+          }
+        else
+          {
+             // For engine who do not provide an update function
+             e->engine.func->output_free(e->engine.data.output);
+
+             goto setup;
+          }
      }
-   res = e->engine.func->setup(eo_e, info);
-   return res;
+   else
+     {
+        if (!e->common_init)
+          {
+             e->common_init = 1;
+             evas_common_init();
+          }
+
+     setup:
+        e->engine.data.output = e->engine.func->setup(info, e->output.w, e->output.h);
+     }
+
+   if (!e->engine.data.context)
+     e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
+
+   return !!e->engine.data.output;
 }
 
 EOLIAN static Evas_Coord

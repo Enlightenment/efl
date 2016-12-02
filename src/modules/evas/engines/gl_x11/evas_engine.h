@@ -93,7 +93,7 @@ struct _Outbuf
    Render_Engine_Swap_Mode swap_mode;
    Colormap         colormap;
    Window           win;
-   int              w, h;
+   unsigned int     w, h;
    int              screen;
    int              depth;
    int              alpha;
@@ -164,10 +164,10 @@ extern int      (*glsym_glXWaitVideoSync)   (int a, int b, unsigned int *c);
 
 #endif
 
-Outbuf *eng_window_new(Evas_Engine_Info_GL_X11 *info, Evas *e,
+Outbuf *eng_window_new(Evas_Engine_Info_GL_X11 *info,
                        Display *disp, Window win, int screen,
                        Visual *vis, Colormap cmap,
-                       int depth, int w, int h, int indirect,
+                       int depth, unsigned int w, unsigned int h, int indirect,
                        int alpha, int rot,
                        Render_Engine_Swap_Mode swap_mode,
                        int depth_bits, int stencil_bits, int msaa_bits);

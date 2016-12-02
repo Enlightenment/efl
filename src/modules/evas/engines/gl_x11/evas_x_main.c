@@ -181,15 +181,14 @@ _x11_eglGetDisplay(Display *x11_display)
 
 Outbuf *
 eng_window_new(Evas_Engine_Info_GL_X11 *info,
-               Evas *e,
                Display *disp,
                Window   win,
                int      screen,
                Visual  *vis,
                Colormap cmap,
                int      depth,
-               int      w,
-               int      h,
+               unsigned int w,
+               unsigned int h,
                int      indirect EINA_UNUSED,
                int      alpha,
                int      rot,
@@ -241,7 +240,6 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    gw->rot = rot;
    gw->swap_mode = swap_mode;
    gw->info = info;
-   gw->evas = e;
    gw->depth_bits = depth_bits;
    gw->stencil_bits = stencil_bits;
    gw->msaa_bits = msaa_bits;
@@ -1549,7 +1547,7 @@ eng_outbuf_new_region_for_update(Outbuf *ob,
                                  int *cx EINA_UNUSED, int *cy EINA_UNUSED,
                                  int *cw EINA_UNUSED, int *ch EINA_UNUSED)
 {
-   if (w == ob->w && h == ob->h)
+   if (w == (int) ob->w && h == (int) ob->h)
      {
         ob->gl_context->master_clip.enabled = EINA_FALSE;
      }
@@ -1621,10 +1619,6 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
         else eglSwapInterval(ob->egl_disp, 0);
         ob->vsync = 1;
      }
-   if (ob->info->callback.pre_swap)
-     {
-        ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
-     }
    if ((glsym_eglSwapBuffersWithDamage) && (rects) &&
        (ob->swap_mode != MODE_FULL))
      {
@@ -1650,10 +1644,6 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
      eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
 
 //xx   if (!safe_native) eglWaitGL();
-   if (ob->info->callback.post_swap)
-     {
-        ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
-     }
 //   if (eglGetError() != EGL_SUCCESS)
 //     {
 //        printf("Error:  eglSwapBuffers() fail.\n");
@@ -1693,18 +1683,10 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
           }
      }
 #endif
-   if (ob->info->callback.pre_swap)
-     {
-        ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
-     }
    // XXX: if partial swaps can be done use re->rects
 //   measure(0, "swap");
    glXSwapBuffers(ob->disp, ob->glxwin);
 //   measure(1, "swap");
-   if (ob->info->callback.post_swap)
-     {
-        ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
-     }
 #endif
    // clear out rects after swap as we may use them during swap
 

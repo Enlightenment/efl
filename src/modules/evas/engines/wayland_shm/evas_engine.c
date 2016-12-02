@@ -75,6 +75,8 @@ _render_engine_swapbuf_setup(int w, int h, Evas_Engine_Info_Wayland *einfo)
 
    evas_render_engine_software_generic_merge_mode_set(&re->generic, merge_mode);
 
+   re->generic.ob->info = einfo;
+
    /* return allocated render engine */
    return re;
 
@@ -134,61 +136,34 @@ eng_info_free(Evas *eo_evas EINA_UNUSED, void *info)
      free(einfo);
 }
 
-static int 
-eng_setup(Evas *eo_evas, void *info)
+static void *
+eng_setup(void *info, unsigned int w, unsigned int h)
 {
-   Evas_Engine_Info_Wayland *einfo;
-   Evas_Public_Data *epd;
+   Evas_Engine_Info_Wayland *einfo = info;
    Render_Engine *re = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* try to cast to our engine info */
-   if (!(einfo = (Evas_Engine_Info_Wayland *)info))
-     return 0;
+   return _render_engine_swapbuf_setup(w, h, einfo);
+}
 
-   /* try to get evas public data */
-   if (!(epd = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS)))
-     return 0;
+static int
+eng_update(void *data, void *info, unsigned int w, unsigned int h)
+{
+   Evas_Engine_Info_Wayland *einfo = info;
+   Render_Engine *re = data;
+   Outbuf *ob;
 
-   /* test for valid engine output */
-   if (!(re = epd->engine.data.output))
-     {
-        /* if we have no engine data, assume we have not initialized yet */
+   if (!einfo->info.wl_surface) return 0;
+   if (!einfo->info.hidden) return 1;
 
-        re = _render_engine_swapbuf_setup(epd->output.w, epd->output.h, einfo);
+   eng_output_resize(re, w, h);
+   if (!ob) return 0;
 
-        if (re) 
-          re->generic.ob->info = einfo;
-        else
-          goto err;
-     }
-   else if ((einfo->info.wl_surface) && (!einfo->info.hidden))
-     {
-        eng_output_resize(re, epd->output.w, epd->output.h);
-        evas_render_engine_software_generic_update(&re->generic,
-                                                   re->generic.ob,
-                                                   epd->output.w,
-                                                   epd->output.h);
-     }
-
-   epd->engine.data.output = re;
-   if (!epd->engine.data.output)
-     {
-        ERR("Failed to create Render Engine");
-        goto err;
-     }
-
-   if (!epd->engine.data.context)
-     {
-        epd->engine.data.context = 
-          epd->engine.func->context_new(epd->engine.data.output);
-     }
+   evas_render_engine_software_generic_update(&re->generic, ob,
+                                              w, h);
 
    return 1;
-
-err:
-   return 0;
 }
 
 static void
@@ -393,6 +368,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(update);
    ORD(output_free);
    ORD(output_resize);
    ORD(image_native_set);

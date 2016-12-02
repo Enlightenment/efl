@@ -72,45 +72,28 @@ eng_info_free(Evas *evas EINA_UNUSED, void *einfo)
    free(info);
 }
 
-static int
-eng_setup(Evas *evas, void *einfo)
+static void *
+eng_setup(void *einfo, unsigned int w, unsigned int h)
 {
    Render_Engine *re;
-   Evas_Public_Data *epd;
-   Evas_Engine_Info_Drm *info;
+   Evas_Engine_Info_Drm *info = einfo;
 
-   info = (Evas_Engine_Info_Drm *)einfo;
-   if (!info) return 0;
+   return _render_engine_setup(info, w, h);
+}
 
-   epd = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
-   if (!epd) return 0;
+static int
+eng_update(void *data, void *einfo, unsigned int w, unsigned int h)
+{
+   Evas_Engine_Info_Drm *info = einfo;
+   Render_Engine *re = data;
+   Outbuf *ob;
 
-   re = epd->engine.data.output;
-   if (!re)
-     {
+   _outbuf_reconfigure(re->generic.ob, w, h,
+                       info->info.rotation, info->info.depth);
+   if (!ob) return 0;
 
-        re = _render_engine_setup(info, epd->output.w, epd->output.h);
-        if (!re) return 0;
-     }
-   else
-     {
-        _outbuf_reconfigure(re->generic.ob, epd->output.w, epd->output.h,
-                            info->info.rotation, info->info.depth);
-
-        evas_render_engine_software_generic_update(&re->generic,
-                                                   re->generic.ob,
-                                                   epd->output.w,
-                                                   epd->output.h);
-     }
-
-   epd->engine.data.output = re;
-   if (!epd->engine.data.output) return 0;
-
-   if (!epd->engine.data.context)
-     {
-        epd->engine.data.context =
-          epd->engine.func->context_new(epd->engine.data.output);
-     }
+   evas_render_engine_software_generic_update(&re->generic, ob,
+                                              ob->w, ob->h);
 
    return 1;
 }
@@ -157,6 +140,7 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(info, &func, eng_);
    EVAS_API_OVERRIDE(info_free, &func, eng_);
    EVAS_API_OVERRIDE(setup, &func, eng_);
+   EVAS_API_OVERRIDE(update, &func, eng_);
    EVAS_API_OVERRIDE(output_free, &func, eng_);
 
    /* advertise our engine functions */

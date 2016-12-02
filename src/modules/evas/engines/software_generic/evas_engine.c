@@ -4613,9 +4613,10 @@ eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *
 
 static Evas_Func func =
 {
-   NULL, // eng_info
+     NULL, // eng_info
      NULL, // eng_info_free
      NULL, // eng_setup
+     NULL, // eng_update
      NULL, // eng_output_free
      eng_output_resize,
      eng_output_tile_size_set,

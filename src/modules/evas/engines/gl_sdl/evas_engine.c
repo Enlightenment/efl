@@ -286,17 +286,14 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
    free(in);
 }
 
-static int
-eng_setup(Evas *eo_e, void *in)
+static void *
+eng_setup(void *in, unsigned int w, unsigned int h)
 {
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Render_Engine *re = NULL;
    Outbuf *ob = NULL;
-   Evas_Engine_Info_GL_SDL *info;
+   Evas_Engine_Info_GL_SDL *info = in;
 
-   info = (Evas_Engine_Info_GL_SDL *)in;
-
-   ob = _sdl_output_setup(e->output.w, e->output.h,
+   ob = _sdl_output_setup(w, h,
                           info->flags.fullscreen,
                           info->flags.noframe,
                           info);
@@ -323,24 +320,16 @@ eng_setup(Evas *eo_e, void *in)
                                            _window_gl_context_new,
                                            _window_gl_context_use,
                                            &evgl_funcs,
-                                           e->output.w, e->output.h))
+                                           w, h))
      goto on_error;
 
-   e->engine.data.output = re;
-   if (!e->engine.data.output)
-     return 0;
-   e->engine.func = &func;
-   e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
-
-   /* if we haven't initialized - init (automatic abort if already done) */
-
-   return 1;
+   return re;
 
  on_error:
    if (ob) _outbuf_free(ob);
    free(ob);
    free(re);
-   return 0;
+   return NULL;
 }
 
 static void
