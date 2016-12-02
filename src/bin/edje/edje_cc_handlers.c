@@ -14094,7 +14094,7 @@ st_collections_group_programs_program_in(void)
         @li DRAG_VAL_STEP 1.0 0.0
         @li DRAG_VAL_PAGE 0.0 0.0
         @li FOCUS_SET ("seat")
-        @li FOCUS_OBJECT
+        @li FOCUS_OBJECT ("seat")
         @li PARAM_COPY "src_part" "src_param" "dst_part" "dst_param"
         @li PARAM_SET "part" "param" "value"
         @li PLAY_SAMPLE "sample name" speed (channel)
@@ -14111,7 +14111,7 @@ st_collections_group_programs_program_in(void)
         @li PHYSICS_ROT_SET 0.707 0 0 0.707
 
         Only one action can be specified per program.
-        
+
         PLAY_SAMPLE (optional) channel can be one of:
         @li EFFECT/FX
         @li BACKGROUND/BG
@@ -14169,9 +14169,10 @@ st_collections_group_programs_program_action(void)
 	else
 	  ep->value = parse_float_range(2, 0.0, 1.0);
      }
-   else if (ep->action == EDJE_ACTION_TYPE_FOCUS_SET)
+   else if ((ep->action == EDJE_ACTION_TYPE_FOCUS_SET) ||
+            (ep->action == EDJE_ACTION_TYPE_FOCUS_OBJECT))
      {
-	if (get_arg_count() == 1)
+        if (get_arg_count() == 1)
           ep->seat = NULL;
         else
           ep->seat = parse_str(1);
@@ -14317,7 +14318,6 @@ st_collections_group_programs_program_action(void)
 	 * completeness */
 	break;
       case EDJE_ACTION_TYPE_ACTION_STOP:
-      case EDJE_ACTION_TYPE_FOCUS_OBJECT:
       case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
       case EDJE_ACTION_TYPE_PHYSICS_STOP:
         check_arg_count(1);
@@ -14342,6 +14342,7 @@ st_collections_group_programs_program_action(void)
         check_min_arg_count(2);
         break;
       case EDJE_ACTION_TYPE_FOCUS_SET:
+      case EDJE_ACTION_TYPE_FOCUS_OBJECT:
         check_min_arg_count(1);
         break;
       default:

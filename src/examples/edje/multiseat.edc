@@ -247,7 +247,7 @@ collections {
             mouse_events: 1;
             description {
                state: "default" 0.0;
-               rel1.relative: 0.3 0.65;
+               rel1.relative: 0.45 0.65;
                rel2.relative: 0.9 0.9;
                color: 200 200 200 255;
             }
@@ -305,7 +305,7 @@ collections {
                rel2.to: "button_left_over";
                text {
                   text: "Seat 1 over";
-                  size: 12;
+                  size: 10;
                   font: "sans";
                   min: 1 1;
                }
@@ -346,7 +346,7 @@ collections {
                rel2.to: "button_left_focus";
                text {
                   text: "Seat 1 focus";
-                  size: 12;
+                  size: 10;
                   font: "sans";
                   min: 1 1;
                }
@@ -387,7 +387,7 @@ collections {
                rel2.to: "button_right_over";
                text {
                   text: "Seat 2 over";
-                  size: 12;
+                  size: 10;
                   font: "sans";
                   min: 1 1;
                }
@@ -428,10 +428,32 @@ collections {
                rel2.to: "button_right_focus";
                text {
                   text: "Seat 2 focus";
-                  size: 12;
+                  size: 10;
                   font: "sans";
                   min: 1 1;
                }
+            }
+         }
+
+         part {
+            name: "unfocus_area";
+            type: RECT;
+            mouse_events: 1;
+            repeat_events: 1;
+            description {
+               state: "default" 0.0;
+               color: 255 255 255 0;
+            }
+         }
+
+         part {
+            name: "example/swallow";
+            type: SWALLOW;
+            mouse_events: 1;
+            description {
+               state: "default" 0.0;
+               rel1.relative: 0.3 0.65;
+               rel2.relative: 0.4 0.9;
             }
          }
       }
@@ -667,6 +689,36 @@ collections {
             source: "example/knob2";
             action: STATE_SET "default" 0.0;
             target: "example/knob2";
+         }
+
+         program {
+            name: "rect,focus,s1";
+            signal: "mouse,clicked,1,seat1";
+            source: "example/swallow";
+            action: FOCUS_OBJECT "seat1";
+            target: "example/swallow";
+         }
+
+         program {
+            name: "rect,unfocus,s1";
+            signal: "mouse,clicked,1,seat1";
+            source: "unfocus_area";
+            action: FOCUS_OBJECT "seat1";
+         }
+
+         program {
+            name: "rect,focus,s2";
+            signal: "mouse,clicked,1,seat2";
+            source: "example/swallow";
+            action: FOCUS_OBJECT "seat2";
+            target: "example/swallow";
+         }
+
+         program {
+            name: "rect,unfocus,s2";
+            signal: "mouse,clicked,1,seat2";
+            source: "unfocus_area";
+            action: FOCUS_OBJECT "seat2";
          }
       }
    }

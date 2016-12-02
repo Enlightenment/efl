@@ -1032,11 +1032,29 @@ low_mem_current:
       break;
 
       case EDJE_ACTION_TYPE_FOCUS_OBJECT:
+      {
+         Efl_Input_Device *seat = NULL;
+
+         if (pr->seat)
+           {
+              Eina_Stringshare *seat_name;
+
+              seat_name = eina_stringshare_add(pr->seat);
+              seat = _edje_seat_get(ed, seat_name);
+              eina_stringshare_del(seat_name);
+           }
+         if (!seat)
+           {
+              Evas *e;
+
+              e = evas_object_evas_get(ed->obj);
+              seat = evas_canvas_default_device_get(e, EFL_INPUT_DEVICE_CLASS_SEAT);
+           }
         if (!pr->targets)
           {
              Evas_Object *focused;
 
-             focused = evas_focus_get(evas_object_evas_get(ed->obj));
+             focused = evas_seat_focus_get(evas_object_evas_get(ed->obj), seat);
              if (focused)
                {
                   unsigned int i;
@@ -1050,7 +1068,7 @@ low_mem_current:
                             (rp->typedata.swallow)) &&
                            (rp->typedata.swallow->swallowed_object == focused))
                          {
-                            evas_object_focus_set(focused, EINA_FALSE);
+                            evas_object_seat_focus_del(focused, seat);
                             break;
                          }
                     }
@@ -1067,11 +1085,13 @@ low_mem_current:
                            ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
                             (rp->typedata.swallow)) &&
                            (rp->typedata.swallow->swallowed_object))
-                         evas_object_focus_set(rp->typedata.swallow->swallowed_object, EINA_TRUE);
+                         evas_object_seat_focus_add(
+                            rp->typedata.swallow->swallowed_object, seat);
                     }
                }
           }
-        break;
+      }
+      break;
 
       case EDJE_ACTION_TYPE_SOUND_SAMPLE:
         if (_edje_block_break(ed))

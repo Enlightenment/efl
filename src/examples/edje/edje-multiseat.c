@@ -54,6 +54,52 @@ _on_canvas_resize(Ecore_Evas *ee)
 }
 
 static void
+_on_rect_focus_in(void *data, const Efl_Event *event)
+{
+   Evas_Object *rect, *edje_obj;
+   Efl_Input_Device *seat;
+   Eina_Stringshare *name;
+   Efl_Input_Focus *ev;
+
+   edje_obj = data;
+   rect = event->object;
+   ev = event->info;
+   seat = efl_input_device_get(ev);
+   name = edje_obj_seat_name_get(edje_obj, seat);
+
+   printf("Seat %s (%s) focused the rect object\n",
+          efl_input_device_name_get(seat), name);
+
+   if (!strcmp(name, "seat1"))
+     evas_object_color_set(rect, 200, 0, 0, 255);
+   else if (!strcmp(name, "seat2"))
+     evas_object_color_set(rect, 0, 200, 0, 255);
+   else
+     printf("Unexpected seat %s - no color change\n", name);
+}
+
+static void
+_on_rect_focus_out(void *data, const Efl_Event *event)
+{
+   Evas_Object *rect, *edje_obj;
+   Efl_Input_Device *seat;
+   Eina_Stringshare *name;
+   Efl_Input_Focus *ev;
+
+   edje_obj = data;
+   rect = event->object;
+   ev = event->info;
+   seat = efl_input_device_get(ev);
+   name = edje_obj_seat_name_get(edje_obj, seat);
+
+   printf("Seat %s (%s) unfocused the rect object\n",
+          efl_input_device_name_get(seat), name);
+   evas_object_color_set(rect, 200, 200, 200, 255);
+
+   efl_canvas_object_seat_focus_add(edje_obj, seat);
+}
+
+static void
 _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
@@ -127,7 +173,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
    const char *edje_file = PACKAGE_DATA_DIR"/multiseat.edj";
    const Eina_List *devices, *l;
-   Evas_Object *edje_obj, *bg;
+   Evas_Object *edje_obj, *bg, *rect;
    Efl_Input_Device *dev;
    Ecore_Evas *ee;
    Evas *evas;
@@ -173,6 +219,14 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    edje_object_part_text_set(edje_obj, "example/text2", "Or maybe here : ");
    edje_object_part_text_cursor_end_set(edje_obj, "example/text2",
                                         EDJE_CURSOR_MAIN);
+
+   rect = evas_object_rectangle_add(evas);
+   evas_object_color_set(rect, 200, 200, 200, 255);
+   edje_object_part_swallow(edje_obj, "example/swallow", rect);
+   efl_event_callback_add(rect, EFL_EVENT_FOCUS_IN,
+                          _on_rect_focus_in, edje_obj);
+   efl_event_callback_add(rect, EFL_EVENT_FOCUS_OUT,
+                          _on_rect_focus_out, edje_obj);
 
    devices = evas_device_list(evas, NULL);
    EINA_LIST_FOREACH(devices, l, dev)
