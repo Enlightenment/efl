@@ -390,7 +390,7 @@ _fallback(Dmabuf_Surface *s, int w, int h)
    new_data = surf->funcs.data_get(surf, NULL, NULL);
    for (y = 0; y < h; y++)
      memcpy(new_data + y * w * 4, old_data + y * b->stride, w * 4);
-   surf->funcs.post(surf, NULL, 0);
+   surf->funcs.post(surf, NULL, 0, EINA_FALSE);
    buffer_manager->unmap(b);
 
 out:
@@ -600,7 +600,7 @@ _evas_dmabuf_surface_assign(Surface *s)
 }
 
 static void
-_evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
+_evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Eina_Bool hidden)
 {
    Dmabuf_Surface *surface;
    Dmabuf_Buffer *b;
@@ -626,9 +626,16 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
         return;
      }
    surface->pre = NULL;
-   wl_surface_attach(surface->wl_surface, b->wl_buffer, 0, 0);
-   _evas_surface_damage(surface->wl_surface, surface->compositor_version,
-                        b->w, b->h, rects, count);
+
+   if (!hidden)
+     {
+        wl_surface_attach(surface->wl_surface, b->wl_buffer, 0, 0);
+        _evas_surface_damage(surface->wl_surface, surface->compositor_version,
+                             b->w, b->h, rects, count);
+     }
+   else
+     wl_surface_attach(surface->wl_surface, NULL, 0, 0);
+
    wl_surface_commit(surface->wl_surface);
 }
 

@@ -55,6 +55,7 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
    ob->rotation = info->info.rotation;
    ob->depth = info->info.depth;
    ob->priv.destination_alpha = info->info.destination_alpha;
+   ob->hidden = info->info.hidden;
 
    /* default to triple buffer */
    ob->num_buff = 3;
@@ -82,7 +83,8 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
         sw = h;
         sh = w;
      }
-   else goto unhandled_rotation;
+   else
+     goto unhandled_rotation;
 
    ob->surface = _evas_surface_create(info, sw, sh, ob->num_buff);
    if (!ob->surface) goto surf_err;
@@ -202,6 +204,8 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
    unsigned int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (ob->hidden) return;
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
@@ -358,6 +362,8 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
    ob->rotation = rot;
    ob->depth = depth;
    ob->priv.destination_alpha = alpha;
+
+   if (ob->hidden) return;
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
@@ -626,7 +632,7 @@ _evas_outbuf_redraws_clear(Outbuf *ob)
 {
    if (!ob->priv.rect_count) return;
    if (ob->info->info.wl_surface)
-     ob->surface->funcs.post(ob->surface, ob->priv.rects, ob->priv.rect_count);
+     ob->surface->funcs.post(ob->surface, ob->priv.rects, ob->priv.rect_count, ob->hidden);
    free(ob->priv.rects);
    ob->priv.rect_count = 0;
 }
