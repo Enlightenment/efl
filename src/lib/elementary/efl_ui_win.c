@@ -956,7 +956,6 @@ _elm_win_mouse_out(Ecore_Evas *ee)
    if ((sd->wl.win) && (sd->pointer.ee))
      {
         ecore_evas_hide(sd->pointer.ee);
-        sd->pointer.surf = NULL;
         ecore_wl2_window_pointer_set(sd->wl.win, NULL,
                                      sd->pointer.hot_x, sd->pointer.hot_y);
      }
@@ -2272,7 +2271,6 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
    if (sd->pointer.ee)
      {
         ecore_evas_hide(sd->pointer.ee);
-        sd->pointer.surf = NULL;
         ecore_wl2_window_pointer_set(sd->wl.win, NULL,
                                      sd->pointer.hot_x, sd->pointer.hot_y);
      }
