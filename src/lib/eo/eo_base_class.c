@@ -1346,7 +1346,10 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
 #endif
 
    memset(&frame, 0, sizeof(Efl_Event_Callback_Frame));
-   frame.generation = _efl_event_generation(pd) + 1;
+   frame.generation = 1;
+   if (pd->event_frame)
+     frame.generation = ((Efl_Event_Callback_Frame*)pd->event_frame)->generation + 1;
+
    EVENT_STACK_PUSH(pd, &frame);
 
    lookup = NULL;
