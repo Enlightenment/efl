@@ -75,6 +75,7 @@ static Translate_Func _translate = NULL;
 static const char *_prog = NULL;
 static Eina_Bool color = EINA_TRUE;
 static Eina_Bool show_comments = EINA_TRUE;
+static Eina_Bool show_compact = EINA_FALSE;
 
 static void
 path_split(const char *path, char **dir, char **file)
@@ -230,13 +231,58 @@ end:
 }
 #endif
 
+static const char *
+bt_input_translate(const char *line, char **comment)
+{
+   static char local[PATH_MAX + sizeof(" 0x1234567890123456789 0x1234567890123456789\n")];
+   const char *addrstart, *addrend, *filestart, *fileend, *basestart, *baseend;
+
+   /* new bt format is more human readable, but needs some cleanup before we bt_append()
+    *
+    * Example:
+    *   ERR<23314>:eo_lifecycle ../src/lib/eo/efl_object.eo.c:78 efl_del()    0x00000005c7c291: __libc_start_main+0xf1 (in /usr/lib/libc.so.6 0x5c5c000)
+    *   ERR<23314>:eo_lifecycle ../src/lib/eo/efl_object.eo.c:78 efl_del()    0x00000004e409aa: libeo_dbg.so+0x99aa (in src/lib/eo/.libs/libeo_dbg.so 0x4e37000)
+    */
+   *comment = NULL;
+
+   addrstart = strstr(line, "0x");
+   if (!addrstart) return NULL;
+
+   addrend = strchr(addrstart, ':');
+   if (!addrend) return NULL;
+
+   filestart = strstr(addrend, "(in ");
+   if (!filestart) return NULL;
+
+   filestart += strlen("(in ");
+   basestart = strstr(filestart, " 0x");
+   if (!basestart) return NULL;
+   fileend = basestart;
+   basestart += strlen(" ");
+   baseend = strchr(basestart, ')');
+   if (!baseend) return NULL;
+
+   snprintf(local, sizeof(local), "%.*s %.*s %.*s\n",
+            (int)(fileend - filestart), filestart,
+            (int)(addrend - addrstart), addrstart,
+            (int)(baseend - basestart), basestart);
+   *comment = strndup(line, addrstart - line);
+   return local;
+}
+
 static Eina_List *
 bt_append(Eina_List *btl, const char *btline)
 {
    Bt *bt = calloc(1, sizeof(Bt));
    if (!bt) return btl;
+   const char *translation;
+   char *comment = NULL;
    char *bin = strdup(btline);
    unsigned long long offset = 0, base = 0;
+
+   translation = bt_input_translate(btline, &comment);
+   if (translation)
+     btline = translation;
 
    // parse:
    // /usr/local/lib/libeina.so.1 0x1ec88
@@ -263,53 +309,18 @@ bt_append(Eina_List *btl, const char *btline)
                   bt->func_name = strdup("");
                }
           }
+        bt->comment = comment;
         btl = eina_list_append(btl, bt);
      }
    else
      {
+        free(comment);
         bt->comment = strdup(btline);
         btl = eina_list_append(btl, bt);
      }
    free(bin);
 
    return btl;
-}
-
-static const char *
-bt_input_translate(char *line)
-{
-   static char local[PATH_MAX + sizeof(" 0x1234567890123456789 0x1234567890123456789\n")];
-   const char *addrstart, *addrend, *filestart, *fileend, *basestart, *baseend;
-
-   /* new bt format is more human readable, but needs some cleanup before we bt_append()
-    *
-    * Example:
-    *   ERR<23314>:eo_lifecycle ../src/lib/eo/efl_object.eo.c:78 efl_del()    0x00000005c7c291: __libc_start_main+0xf1 (in /usr/lib/libc.so.6 0x5c5c000)
-    *   ERR<23314>:eo_lifecycle ../src/lib/eo/efl_object.eo.c:78 efl_del()    0x00000004e409aa: libeo_dbg.so+0x99aa (in src/lib/eo/.libs/libeo_dbg.so 0x4e37000)
-    */
-
-   addrstart = strstr(line, "0x");
-   if (!addrstart) return line;
-
-   addrend = strchr(addrstart, ':');
-   if (!addrend) return line;
-
-   filestart = strstr(addrend, "(in ");
-   if (!filestart) return line;
-
-   filestart += strlen("(in ");
-   basestart = strstr(filestart, " 0x");
-   if (!basestart) return line;
-   fileend = basestart;
-   basestart += strlen(" ");
-   baseend = strchr(basestart, ')');
-   if (!baseend) return line;
-
-   snprintf(local, sizeof(local), "%.*s %.*s %.*s\n",
-            (int)(fileend - filestart), filestart,
-            (int)(addrend - addrstart), addrstart,
-            (int)(baseend - basestart), basestart);
-   return local;
 }
 
 static Eina_Bool
@@ -345,6 +356,12 @@ main(int argc, char **argv)
    char buf[4096];
    Bt *bt;
    int cols[6] = { 0 }, len, i;
+   const char *func_color = "";
+   const char *dir_color = "";
+   const char *sep_color = "";
+   const char *file_color = "";
+   const char *line_color = "";
+   const char *reset_color = "";
    const Translation_Desc desc[] = {
 #ifdef ATOS_COMPATIBLE
         { /* Mac OS X */
@@ -383,7 +400,8 @@ main(int argc, char **argv)
           {
              printf("Usage: eina_btlog [-n]\n"
                     "  -n   Do not use color escape codes\n"
-                    "  -C   Do not show comments (non-bt lines)\n"
+                    "  -C   Do not show comments (non-bt fragments)\n"
+                    "  -c   Show compact output format\n"
                     "\n"
                     "Provide addresses logged from EFL applications to stdin.\n"
                     "Example:\n\n"
@@ -394,6 +412,17 @@ main(int argc, char **argv)
           }
         else if (!strcmp(argv[i], "-n")) color = EINA_FALSE;
         else if (!strcmp(argv[i], "-C")) show_comments = EINA_FALSE;
+        else if (!strcmp(argv[i], "-c")) show_compact = EINA_TRUE;
+     }
+
+   if (color)
+     {
+        func_color = EINA_COLOR_GREEN;
+        dir_color = EINA_COLOR_BLUE;
+        sep_color = EINA_COLOR_CYAN;
+        file_color = EINA_COLOR_WHITE;
+        line_color = EINA_COLOR_YELLOW;
+        reset_color = EINA_COLOR_RESET;
      }
 
    if (!_translation_function_detect(desc))
@@ -405,7 +434,7 @@ main(int argc, char **argv)
 
    while (fgets(buf, sizeof(buf) - 1, stdin))
      {
-        btl = bt_append(btl, bt_input_translate(buf));
+        btl = bt_append(btl, buf);
      }
    EINA_LIST_FOREACH(btl, l, bt)
      {
@@ -432,42 +461,39 @@ main(int argc, char **argv)
         if (bt->comment && show_comments)
           fputs(bt->comment, stdout);
         if (!bt->bin_dir) continue;
-        len = strlen(bt->bin_dir);
-        for (i = 0; i < (cols[0] - len); i++) printf(" ");
-        if (color)
-          printf("    \033[34m%s\033[01m\033[36m/\033[37m%s\033[0m",
-                 bt->bin_dir, bt->bin_name);
-        else
-          printf("    %s/%s",
-                 bt->bin_dir, bt->bin_name);
-        len = strlen(bt->bin_name);
-        for (i = 0; i < (cols[1] - len); i++) printf(" ");
-        printf(" | ");
-        len = strlen(bt->file_dir);
-        for (i = 0; i < (cols[2] - len); i++) printf(" ");
-        if (color)
-          printf("\033[34m%s\033[01m\033[36m/\033[37m%s\033[0m",
-                 bt->file_dir, bt->file_name);
-        else
-          printf("%s/%s",
-                 bt->file_dir, bt->file_name);
-        len = strlen(bt->file_name);
-        for (i = 0; i < (cols[3] - len); i++) printf(" ");
 
-        printf(" : ");
-        snprintf(buf, sizeof(buf), "%i", bt->line);
-        len = strlen(buf);
-        for (i = 0; i < (cols[4] - len); i++) printf(" ");
-        if (color)
+        if (show_compact)
           {
-             printf("\033[01m\033[33m%s\033[0m @ \033[32m%s\033[36m()", buf, bt->func_name);
-             printf("\033[0m\n");
+             printf("%s%s%s (in %s%s%s:%s%d%s)\n",
+                    func_color, bt->func_name, reset_color,
+                    file_color, bt->file_name, reset_color,
+                    line_color, bt->line, reset_color);
+             continue;
           }
-        else
-          {
-             printf("%s @ %s()", buf, bt->func_name);
-             printf("\n");
-         }
+
+        printf("    "
+               "%s%*s%s/%s%-*s%s" /* bin info */
+               "| "
+               "%s%*s%s/%s%-*s%s" /* file info */
+               ": "
+               "%s%*i%s" /* line info */
+               " @ "
+               "%s%s%s()%s\n", /* func info */
+               /* bin info */
+               dir_color, cols[0], bt->bin_dir, sep_color,
+               file_color, cols[1], bt->bin_name,
+               reset_color,
+               /* file info */
+               dir_color, cols[2], bt->file_dir, sep_color,
+               file_color, cols[3], bt->file_name,
+               reset_color,
+               /* line info */
+               line_color, cols[4], bt->line,
+               reset_color,
+               /* func info */
+               func_color, bt->func_name,
+               sep_color,
+               reset_color);
      }
    return 0;
 }
