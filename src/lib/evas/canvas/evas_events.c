@@ -2506,7 +2506,7 @@ _canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
      {
         Evas_Object_Pointer_Data *obj_pdata;
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-        if (!obj->delete_me) continue;
+        if (obj->delete_me) continue;
         obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
         if (!obj_pdata)
           {
