@@ -48,6 +48,7 @@ struct _Bt
    char *file_dir;
    char *file_name;
    char *func_name;
+   char *comment;
    int line;
 };
 
@@ -73,6 +74,7 @@ struct _Translation_Desc
 static Translate_Func _translate = NULL;
 static const char *_prog = NULL;
 static Eina_Bool color = EINA_TRUE;
+static Eina_Bool show_comments = EINA_TRUE;
 
 static void
 path_split(const char *path, char **dir, char **file)
@@ -263,8 +265,13 @@ bt_append(Eina_List *btl, const char *btline)
           }
         btl = eina_list_append(btl, bt);
      }
-   else free(bt);
+   else
+     {
+        bt->comment = strdup(btline);
+        btl = eina_list_append(btl, bt);
+     }
    free(bin);
+
    return btl;
 }
 
@@ -376,6 +383,7 @@ main(int argc, char **argv)
           {
              printf("Usage: eina_btlog [-n]\n"
                     "  -n   Do not use color escape codes\n"
+                    "  -C   Do not show comments (non-bt lines)\n"
                     "\n"
                     "Provide addresses logged from EFL applications to stdin.\n"
                     "Example:\n\n"
@@ -385,6 +393,7 @@ main(int argc, char **argv)
              return 0;
           }
         else if (!strcmp(argv[i], "-n")) color = EINA_FALSE;
+        else if (!strcmp(argv[i], "-C")) show_comments = EINA_FALSE;
      }
 
    if (!_translation_function_detect(desc))
@@ -400,6 +409,7 @@ main(int argc, char **argv)
      }
    EINA_LIST_FOREACH(btl, l, bt)
      {
+        if (!bt->bin_dir) continue;
         len = strlen(bt->bin_dir);
         if (len > cols[0]) cols[0] = len;
         len = strlen(bt->bin_name);
@@ -419,6 +429,9 @@ main(int argc, char **argv)
      }
    EINA_LIST_FOREACH(btl, l, bt)
      {
+        if (bt->comment && show_comments)
+          fputs(bt->comment, stdout);
+        if (!bt->bin_dir) continue;
         len = strlen(bt->bin_dir);
         for (i = 0; i < (cols[0] - len); i++) printf(" ");
         if (color)
