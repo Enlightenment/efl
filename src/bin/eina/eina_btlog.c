@@ -268,6 +268,43 @@ bt_append(Eina_List *btl, const char *btline)
    return btl;
 }
 
+static const char *
+bt_input_translate(char *line)
+{
+   static char local[PATH_MAX + sizeof(" 0x1234567890123456789 0x1234567890123456789\n")];
+   const char *addrstart, *addrend, *filestart, *fileend, *basestart, *baseend;
+
+   /* new bt format is more human readable, but needs some cleanup before we bt_append()
+    *
+    * Example:
+    *   ERR<23314>:eo_lifecycle ../src/lib/eo/efl_object.eo.c:78 efl_del()    0x00000005c7c291: __libc_start_main+0xf1 (in /usr/lib/libc.so.6 0x5c5c000)
+    *   ERR<23314>:eo_lifecycle ../src/lib/eo/efl_object.eo.c:78 efl_del()    0x00000004e409aa: libeo_dbg.so+0x99aa (in src/lib/eo/.libs/libeo_dbg.so 0x4e37000)
+    */
+
+   addrstart = strstr(line, "0x");
+   if (!addrstart) return line;
+
+   addrend = strchr(addrstart, ':');
+   if (!addrend) return line;
+
+   filestart = strstr(addrend, "(in ");
+   if (!filestart) return line;
+
+   filestart += strlen("(in ");
+   basestart = strstr(filestart, " 0x");
+   if (!basestart) return line;
+   fileend = basestart;
+   basestart += strlen(" ");
+   baseend = strchr(basestart, ')');
+   if (!baseend) return line;
+
+   snprintf(local, sizeof(local), "%.*s %.*s %.*s\n",
+            (int)(fileend - filestart), filestart,
+            (int)(addrend - addrstart), addrstart,
+            (int)(baseend - basestart), basestart);
+   return local;
+}
+
 static Eina_Bool
 _translation_function_detect(const Translation_Desc *desc)
 {
@@ -359,7 +396,7 @@ main(int argc, char **argv)
 
    while (fgets(buf, sizeof(buf) - 1, stdin))
      {
-        btl = bt_append(btl, buf);
+        btl = bt_append(btl, bt_input_translate(buf));
      }
    EINA_LIST_FOREACH(btl, l, bt)
      {
