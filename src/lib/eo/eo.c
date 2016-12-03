@@ -8,6 +8,10 @@
 
 #include <Eina.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #if defined(__APPLE__) && defined(__MACH__)
 # include <mach/mach_time.h>
 #endif
