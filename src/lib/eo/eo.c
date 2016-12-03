@@ -2372,42 +2372,6 @@ efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_Array_Ite
 }
 
 #ifdef EO_DEBUG
-#ifdef HAVE_BACKTRACE
-typedef struct _Eo_Log_Obj_Entry {
-   Eo_Id id;
-   const _Eo_Object *obj;
-   const _Efl_Class *klass;
-   double timestamp;
-   Eina_Bool is_free;
-   uint8_t bt_size;
-   void *bt[];
-} Eo_Log_Obj_Entry;
-
-static void
-_eo_log_obj_find(const Eo_Id id, const Eo_Log_Obj_Entry **added, const Eo_Log_Obj_Entry **deleted)
-{
-   const Eo_Log_Obj_Entry *entry;
-   Eina_Array_Iterator it;
-   unsigned int idx;
-
-   *added = NULL;
-   *deleted = NULL;
-
-   EINA_ARRAY_ITER_NEXT(&_eo_log_objs, idx, entry, it)
-     {
-        if (EINA_UNLIKELY(id == entry->id))
-          {
-             if (entry->is_free)
-               *deleted = entry;
-             else
-               {
-                  *added = entry;
-                  *deleted = NULL; /* forget previous add, if any */
-               }
-          }
-     }
-}
-
 /* NOTE: cannot use ecore_time_get()! */
 static inline double
 _eo_log_time_now(void)
@@ -2469,6 +2433,42 @@ _eo_log_time_now(void)
       return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
    }
 #endif
+}
+
+#ifdef HAVE_BACKTRACE
+typedef struct _Eo_Log_Obj_Entry {
+   Eo_Id id;
+   const _Eo_Object *obj;
+   const _Efl_Class *klass;
+   double timestamp;
+   Eina_Bool is_free;
+   uint8_t bt_size;
+   void *bt[];
+} Eo_Log_Obj_Entry;
+
+static void
+_eo_log_obj_find(const Eo_Id id, const Eo_Log_Obj_Entry **added, const Eo_Log_Obj_Entry **deleted)
+{
+   const Eo_Log_Obj_Entry *entry;
+   Eina_Array_Iterator it;
+   unsigned int idx;
+
+   *added = NULL;
+   *deleted = NULL;
+
+   EINA_ARRAY_ITER_NEXT(&_eo_log_objs, idx, entry, it)
+     {
+        if (EINA_UNLIKELY(id == entry->id))
+          {
+             if (entry->is_free)
+               *deleted = entry;
+             else
+               {
+                  *added = entry;
+                  *deleted = NULL; /* forget previous add, if any */
+               }
+          }
+     }
 }
 
 static void
