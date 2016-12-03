@@ -338,7 +338,12 @@ main(int argc, char **argv)
         if (!strcmp(argv[i], "-h"))
           {
              printf("Usage: eina_btlog [-n]\n"
-                    "  -n   Do not use color escape codes\n");
+                    "  -n   Do not use color escape codes\n"
+                    "\n"
+                    "Provide addresses logged from EFL applications to stdin.\n"
+                    "Example:\n\n"
+                    "\tcat log.txt | eina_btlog\n"
+                    "\n");
              eina_shutdown();
              return 0;
           }
