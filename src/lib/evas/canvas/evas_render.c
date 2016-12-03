@@ -620,6 +620,7 @@ evas_render_object_render_cache_free(Evas_Object *eo_obj EINA_UNUSED,
    eina_inarray_free(rc->active_objects);
    eina_array_free(rc->render_objects);
    eina_array_free(rc->snapshot_objects);
+   eina_inarray_free(rc->update_del);
    free(rc);
 }
 
