@@ -26,6 +26,12 @@
 #include <execinfo.h>
 #endif
 
+#ifdef HAVE_VALGRIND
+# include <valgrind.h>
+# include <memcheck.h>
+#endif
+static Eina_Bool _eo_trash_bypass = EINA_FALSE;
+
 #define EO_CLASS_IDS_FIRST 1
 #define EFL_OBJECT_OP_IDS_FIRST 1
 
@@ -980,7 +986,7 @@ _eo_free(_Eo_Object *obj)
    _eo_id_release((Eo_Id) _eo_obj_id_get(obj));
 
    eina_spinlock_take(&klass->objects.trash_lock);
-   if (klass->objects.trash_count <= 8)
+   if ((klass->objects.trash_count <= 8) && (EINA_LIKELY(!_eo_trash_bypass)))
      {
         eina_trash_push(&klass->objects.trash, obj);
         klass->objects.trash_count++;
@@ -2026,6 +2032,10 @@ efl_object_init(void)
      return EINA_TRUE;
 
    eina_init();
+
+#if HAVE_VALGRIND
+   _eo_trash_bypass = RUNNING_ON_VALGRIND;
+#endif
 
    _efl_object_main_thread = eina_thread_self();
 
