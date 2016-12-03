@@ -7,12 +7,21 @@
 #include "elm_code_private.h"
 
 EAPI char *
-elm_code_line_indent_get(const char *prevtext, unsigned int prevlength)
+elm_code_line_indent_get(Elm_Code_Line *line)
 {
-   unsigned int count = 0;
-   char *buf, *ptr = (char *)prevtext;
+   Elm_Code_Line *prevline;
+   const char *prevtext;
+   unsigned int prevlength, count = 0;
+   char *buf, *ptr;
    char next, last;
 
+   if (line->number <= 1)
+     return strdup("");
+
+   prevline = elm_code_file_line_get(line->file, line->number - 1);
+   prevtext = elm_code_line_text_get(prevline, &prevlength);
+
+   ptr = (char *)prevtext;
    buf = malloc((prevlength + 3) * sizeof(char));
    while (count < prevlength)
      {

@@ -1237,8 +1237,8 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
         count = 0;
         while (count < curlen)
           {
-             if (!_elm_code_text_char_is_whitespace(*curtext))
-             break;
+             if (*curtext != ' ' && *curtext != '\t')
+               break;
 
              count++;
              curtext++;
@@ -1338,7 +1338,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    width = elm_code_widget_line_text_column_width_get(widget, line);
 
    line = elm_code_file_line_get(code->file, row + 1);
-   leading = elm_code_line_indent_get(oldtext, oldlen);
+   leading = elm_code_line_indent_get(line);
    elm_code_line_text_leading_whitespace_strip(line);
    elm_code_line_text_insert(line, 0, leading, strlen(leading));
    free(oldtext);

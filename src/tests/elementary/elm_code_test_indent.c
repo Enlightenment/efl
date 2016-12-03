@@ -8,55 +8,80 @@
 #include "Elementary.h"
 #include "elm_code_indent.h"
 
+static void
+_indent_check(Elm_Code_File *file, const char *prev, const char *expected)
+{
+   Elm_Code_Line *line;
+   char *str;
+
+   elm_code_file_clear(file);
+
+   elm_code_file_line_append(file, prev, strlen(prev), NULL);
+   elm_code_file_line_append(file, "", 0, NULL);
+   line = elm_code_file_line_get(file, 2);
+
+   str = elm_code_line_indent_get(line);
+   ck_assert_str_eq(expected, str);
+
+   free(str);
+}
+
 START_TEST (elm_code_indent_whitespace_test)
 {
-   const char *str;
+   Elm_Code *code;
+   Elm_Code_File *file;
 
-   str = elm_code_line_indent_get("", 0);
-   ck_assert_str_eq("", str);
-   str = elm_code_line_indent_get("  ", 2);
-   ck_assert_str_eq("  ", str);
-   str = elm_code_line_indent_get("\t", 1);
-   ck_assert_str_eq("\t", str);
-   str = elm_code_line_indent_get("\t  ", 3);
-   ck_assert_str_eq("\t  ", str);
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+
+   _indent_check(file, "", "");
+   _indent_check(file, "  ", "  ");
+   _indent_check(file, "\t", "\t");
+   _indent_check(file, "\t  ", "\t  ");
+
+   elm_shutdown();
 }
 END_TEST
 
 START_TEST (elm_code_indent_comments_test)
 {
-   const char *str;
+   Elm_Code *code;
+   Elm_Code_File *file;
 
-   str = elm_code_line_indent_get(" /**", 4);
-   ck_assert_str_eq("  * ", str);
-   str = elm_code_line_indent_get("  * ", 4);
-   ck_assert_str_eq("  * ", str);
-   str = elm_code_line_indent_get("  */", 4);
-   ck_assert_str_eq(" ", str);
-   str = elm_code_line_indent_get("\t//", 3);
-   ck_assert_str_eq("\t//", str);
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+
+   _indent_check(file, " /**", "  * ");
+   _indent_check(file, "  * ", "  * ");
+   _indent_check(file, "  */", " ");
+   _indent_check(file, "\t//", "\t//");
 
    // test these are not comments
-   str = elm_code_line_indent_get(" / ", 3);
-   ck_assert_str_eq(" ", str);
-   str = elm_code_line_indent_get(" hi//", 5);
-   ck_assert_str_eq(" ", str);
+   _indent_check(file, " / ", " ");
+   _indent_check(file, " hi//", " ");
+
+   elm_shutdown();
 }
 END_TEST
 
 START_TEST (elm_code_indent_simple_braces)
 {
-   const char *str;
+   Elm_Code *code;
+   Elm_Code_File *file;
 
-   str = elm_code_line_indent_get("if() {", 6);
-   ck_assert_str_eq("   ", str);
-   str = elm_code_line_indent_get("}", 1);
-   ck_assert_str_eq("", str);
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
 
-   str = elm_code_line_indent_get("  {", 3);
-   ck_assert_str_eq("     ", str);
-   str = elm_code_line_indent_get("  }", 3);
-   ck_assert_str_eq("", str);
+   _indent_check(file, "if() {", "   ");
+   _indent_check(file, "}", "");
+
+   _indent_check(file, "  {", "     ");
+   _indent_check(file, "  }", "");
+
+   elm_shutdown();
 }
 END_TEST
 
