@@ -70,3 +70,43 @@ elm_code_line_indent_get(const char *prevtext, unsigned int prevlength)
    return buf;
 }
 
+EAPI char *
+elm_code_line_indent_matching_braces_get(Elm_Code_Line *line)
+{
+   Elm_Code_File *file;
+   int stack, row;
+   unsigned int length, count = 0;
+   const char *content;
+   char *buf, *ptr;
+
+   file = line->file;
+   stack = 0;
+   row = line->number - 1;
+   while (row > 0)
+     {
+        line = elm_code_file_line_get(file, row);
+        content = elm_code_line_text_get(line, &length);
+        if (memchr(content, '{', length)) stack--;
+        else if (memchr(content, '}', length)) stack++;
+
+        if (stack < 0)
+          {
+             if (length == 0) return strdup("");
+             ptr = (char *)content;
+             while (count < length)
+               {
+                  if (!_elm_code_text_char_is_whitespace(*ptr))
+                    break;
+
+                  count++;
+                  ptr++;
+               }
+             buf = malloc(sizeof(char) * (count + 1));
+             memset(buf, ' ', count);
+             buf[count] = '\0';
+             return buf;
+          }
+        row--;
+     }
+   return strdup("");
+}

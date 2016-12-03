@@ -60,9 +60,47 @@ START_TEST (elm_code_indent_simple_braces)
 }
 END_TEST
 
+START_TEST (elm_code_indent_matching_braces)
+{
+   Elm_Code_File *file;
+   Elm_Code_Line *line;
+   Elm_Code *code;
+   const char *str;
+   unsigned int row;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+
+   line = elm_code_file_line_append(file, "   if ()", 8, NULL);
+   str = elm_code_line_indent_matching_braces_get(line);
+   ck_assert_str_eq("", str);
+
+   line = elm_code_file_line_append(file, "     {", 6, NULL);
+   str = elm_code_line_indent_matching_braces_get(line);
+   ck_assert_str_eq("     ", str);
+
+   line = elm_code_file_line_append(file, "        if (){", 14, NULL);
+   str = elm_code_line_indent_matching_braces_get(line;
+   ck_assert_str_eq("        ", str);
+
+   line = elm_code_file_line_append(file, "        }", 9, NULL);
+   str = elm_code_line_indent_matching_braces_get(line);
+   ck_assert_str_eq("     ", str);
+
+   line = elm_code_file_line_append(file, "     }", 6, NULL);
+   str = elm_code_line_indent_matching_braces_get(line);
+   ck_assert_str_eq("", str);
+
+   elm_code_free(code);
+   elm_shutdown();
+}
+END_TEST
+
 void elm_code_test_indent(TCase *tc)
 {
    tcase_add_test(tc, elm_code_indent_whitespace_test);
    tcase_add_test(tc, elm_code_indent_comments_test);
    tcase_add_test(tc, elm_code_indent_simple_braces);
+   tcase_add_test(tc, elm_code_indent_matching_braces);
 }

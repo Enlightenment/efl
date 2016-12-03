@@ -22,6 +22,8 @@ extern "C" {
 
 EAPI char *elm_code_line_indent_get(const char *prevtext, unsigned int prevlength);
 
+EAPI char *elm_code_line_indent_matching_braces_get(Elm_Code_Line *line);
+
 /**
  * @}
  */
