@@ -8,6 +8,10 @@
 
 #include <Eina.h>
 
+#if defined(__APPLE__) && defined(__MACH__)
+# include <mach/mach_time.h>
+#endif
+
 #include "Eo.h"
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
