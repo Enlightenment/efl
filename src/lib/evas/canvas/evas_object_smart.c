@@ -1258,6 +1258,12 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
         if (o->calc_entry.next)
           eina_clist_remove(&o->calc_entry);
 
+        if (o->render_cache)
+          {
+             evas_render_object_render_cache_free(eo_obj, o->render_cache);
+             o->render_cache = NULL;
+          }
+
         while (o->contained)
           {
              Evas_Object_Protected_Data *contained =
