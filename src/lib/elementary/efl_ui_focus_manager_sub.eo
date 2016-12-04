@@ -1,4 +1,4 @@
-abstract Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Ui.Focus.Object, Efl.Ui.Focus.User)
+class Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Object)
 {
     [[A abstract class to have a sub manager
 
@@ -9,19 +9,10 @@ abstract Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Ui.Focus.Object, Ef
       You can filter the border elements by overriding the border_elements property of the manager.
     ]]
     methods {
-        @property parent {
-            [[The logical parent which is used to register the object itself in the parent manager]]
-            values {
-                node : Efl.Ui.Focus.Object; [[object to use]]
-            }
-        }
+
     }
     implements {
-        @empty Efl.Ui.Focus.Object.geometry_get;
-        @empty Efl.Ui.Focus.Object.focus.get;
-        @empty Efl.Ui.Focus.User.manager.get;
         Efl.Object.constructor;
         Efl.Object.destructor;
-        Efl.Object.finalize;
     }
 }

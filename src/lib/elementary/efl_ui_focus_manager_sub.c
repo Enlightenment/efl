@@ -8,10 +8,9 @@
 #define MY_CLASS EFL_UI_FOCUS_MANAGER_SUB_CLASS
 #define MY_DATA(o, p) Efl_Ui_Focus_Manager_Sub_Data *pd = efl_data_scope_get(o, MY_CLASS);
 typedef struct {
-    Efl_Ui_Focus_Manager *manager;
-    Efl_Ui_Focus_Manager *parent;
     Eina_Bool self_dirty;
-    Eina_List *current_border;
+    Eina_List *current_border; //the current set of widgets which is registered as borders
+    Efl_Ui_Focus_Manager *manager;//the manager where current_border is currently registered
 } Efl_Ui_Focus_Manager_Sub_Data;
 
 static Eina_List*
@@ -60,7 +59,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 
    EINA_LIST_FREE(tmp, node)
      {
-        efl_ui_focus_manager_register(pd->manager, node, obj, obj);
+        efl_ui_focus_manager_register(pd->manager, node, efl_ui_focus_user_parent_get(obj), obj);
      }
 
    eina_list_free(pd->current_border);
@@ -95,42 +94,6 @@ EFL_CALLBACKS_ARRAY_DEFINE(parent_manager,
 );
 
 static void
-_parent_set(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd, Efl_Ui_Focus_Manager *manager)
-{
-    if (pd->manager)
-      {
-         //remove ourself from the manager
-         efl_ui_focus_manager_unregister(pd->manager, obj);
-
-
-         efl_event_callback_array_del(pd->manager, parent_manager(), obj);
-         _border_unregister(obj, pd);
-      }
-
-    pd->manager = manager;
-
-    if (pd->manager)
-      {
-         //register our own root in the upper manager as logical
-         efl_ui_focus_manager_register_logical(pd->manager, obj, pd->parent);
-
-         //listen to the manager
-         efl_event_callback_array_add(pd->manager, parent_manager(), obj);
-         _border_flush(obj, pd);
-      }
-}
-
-static void
-_self_parent_change(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-    MY_DATA(ev->object , pd);
-
-    if (pd->manager == ev->info) return;
-
-    _parent_set(ev->object, pd, ev->info);
-}
-
-static void
 _self_manager_dirty(void *data EINA_UNUSED, const Efl_Event *ev)
 {
     MY_DATA(ev->object , pd);
@@ -138,25 +101,47 @@ _self_manager_dirty(void *data EINA_UNUSED, const Efl_Event *ev)
     pd->self_dirty = EINA_TRUE;
 }
 
+static void
+_logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   MY_DATA(ev->object, pd);
+   Eina_List *n;
+   Efl_Ui_Focus_User *b;
+
+   EINA_LIST_FOREACH(pd->current_border , n, b)
+     {
+        efl_ui_focus_manager_update_parent(pd->manager , b, ev->info);
+     }
+}
+
+static void
+_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   MY_DATA(ev->object, pd);
+   Eina_List *n;
+   Efl_Ui_Focus_User *b;
+   Efl_Ui_Focus_Manager *manager;
+
+   manager = efl_ui_focus_user_manager_get(ev->info);
+
+   //unregister from the old
+   efl_event_callback_array_del(pd->manager, parent_manager(), ev->object);
+   efl_event_callback_array_add(manager, parent_manager(), ev->object);
+
+   EINA_LIST_FOREACH(pd->current_border , n, b)
+     {
+        efl_ui_focus_manager_unregister(pd->manager, b);
+        efl_ui_focus_manager_register(manager, b, efl_ui_focus_user_parent_get(ev->object), ev->object);
+     }
+   //unregister the old manager, use the new
+   pd->manager = manager;
+}
+
 EFL_CALLBACKS_ARRAY_DEFINE(self_manager,
-    {EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _self_parent_change},
     {EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, _self_manager_dirty},
+    {EFL_UI_FOCUS_USER_EVENT_LOGICAL_CHANGED, _logical_manager_change},
+    {EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_change}
 );
-EOLIAN static void
-_efl_ui_focus_manager_sub_parent_set(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd, Efl_Ui_Focus_Object *node)
-{
-   if (node == pd->parent) return;
-
-   pd->parent = node;
-
-   efl_ui_focus_manager_update_parent(pd->manager, obj, node);
-}
-
-EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_sub_parent_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Sub_Data *pd EINA_UNUSED)
-{
-   return pd->parent;
-}
 
 EOLIAN static Efl_Object*
 _efl_ui_focus_manager_sub_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd EINA_UNUSED)
@@ -171,23 +156,10 @@ _efl_ui_focus_manager_sub_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Su
 {
    efl_event_callback_array_del(obj, self_manager(), NULL);
 
-   _parent_set(obj, pd, NULL);
+   _border_unregister(obj, pd);
 
    return efl_destructor(efl_super(obj, MY_CLASS));
 }
-
-EOLIAN static Efl_Object*
-_efl_ui_focus_manager_sub_efl_object_finalize(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
-{
-   Efl_Ui_Focus_Manager *manager;
-
-   manager = efl_ui_focus_user_manager_get(obj);
-
-   _parent_set(obj, pd, manager);
-
-   return efl_finalize(efl_super(obj, MY_CLASS));
-}
-
 
 
 #include "efl_ui_focus_manager_sub.eo.c"
