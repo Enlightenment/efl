@@ -551,9 +551,10 @@ _on_item_focused(void *data,
                  void *event_info EINA_UNUSED)
 {
    Elm_Multibuttonentry_Item_Data *it = data;
+   if (!it) return;
+
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(WIDGET(it), sd);
 
-   if (!it) return;
    sd->selected_it = it;
 }
 
@@ -563,9 +564,10 @@ _on_item_unfocused(void *data,
                    void *event_info EINA_UNUSED)
 {
    Elm_Multibuttonentry_Item_Data *it = data;
+   if (!it) return;
+
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(WIDGET(it), sd);
 
-   if (!it) return;
    sd->selected_it = NULL;
    elm_layout_signal_emit(VIEW(it), "elm,state,unfocused", "elm");
 }
