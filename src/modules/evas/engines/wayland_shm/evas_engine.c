@@ -162,7 +162,7 @@ eng_setup(Evas *eo_evas, void *info)
         else
           goto err;
      }
-   else if (einfo->info.wl_surface)
+   else if ((einfo->info.wl_surface) && (!einfo->info.hidden))
      {
         Outbuf *ob;
 
