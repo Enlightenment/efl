@@ -13187,13 +13187,25 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
 
       case EDJE_ACTION_TYPE_FOCUS_SET:
       {
-         BUF_APPEND(I4 "action: FOCUS_SET;\n");
+         if (epr->seat)
+           {
+              BUF_APPEND(I4 "action: FOCUS_SET ");
+              BUF_APPENDF("\"%s\";\n", epr->seat);
+           }
+         else
+           BUF_APPEND(I4 "action: FOCUS_SET;\n");
          break;
       }
 
       case EDJE_ACTION_TYPE_FOCUS_OBJECT:
       {
-         BUF_APPEND(I4 "action: FOCUS_OBJECT;\n");
+         if (epr->seat)
+           {
+              BUF_APPEND(I4 "action: FOCUS_OBJECT ");
+              BUF_APPENDF("\"%s\";\n", epr->seat);
+           }
+         else
+           BUF_APPEND(I4 "action: FOCUS_OBJECT;\n");
          break;
       }
 
