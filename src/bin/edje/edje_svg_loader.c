@@ -680,10 +680,12 @@ _attr_parse_svg_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "viewBox"))
      {
-        if (_parse_number(&value, &doc->vx))
-          if (_parse_number(&value, &doc->vy))
-            if (_parse_number(&value, &doc->vw))
-              _parse_number(&value, &doc->vh);
+
+        if (!_parse_number(&value, &doc->vx) && !_parse_number(&value, &doc->vy) &&
+            !_parse_number(&value, &doc->vw) && !_parse_number(&value, &doc->vh))
+          {
+             return EINA_FALSE;
+	  }
      }
    else if (!strcmp(key, "style"))
      {
