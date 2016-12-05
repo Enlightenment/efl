@@ -1341,18 +1341,18 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
         while (extn_id)
           {
              extn = _eo_class_pointer_get((Efl_Class *)extn_id, __FUNCTION__, __FILE__, __LINE__);
-             if (!extn) /* did not validate */
-               continue;
-             switch (extn->desc->type)
+             if (EINA_LIKELY(extn != NULL))
                {
-                case EFL_CLASS_TYPE_REGULAR_NO_INSTANT:
-                case EFL_CLASS_TYPE_REGULAR:
-                case EFL_CLASS_TYPE_INTERFACE:
-                case EFL_CLASS_TYPE_MIXIN:
-                   extn_list = eina_list_append(extn_list, extn);
-                   break;
+                  switch (extn->desc->type)
+                    {
+                     case EFL_CLASS_TYPE_REGULAR_NO_INSTANT:
+                     case EFL_CLASS_TYPE_REGULAR:
+                     case EFL_CLASS_TYPE_INTERFACE:
+                     case EFL_CLASS_TYPE_MIXIN:
+                       extn_list = eina_list_append(extn_list, extn);
+                       break;
+                    }
                }
-
              extn_id = va_arg(p_list, Eo_Id *);
           }
 
