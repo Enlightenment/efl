@@ -1662,7 +1662,8 @@ err_obj:
 err:
    if (!data) return EINA_FALSE;
    ERR("Object %p is not a valid object in this context: object domain: %d, "
-       "current domain: %d, local domain: %d, available domains: [%s %s %s %s]",
+       "current domain: %d, local domain: %d, available domains: [%s %s %s %s]."
+       " Are you trying to access this object from another thread?",
        eo_id, (int)domain,
        (int)data->domain_stack[data->stack_top], (int)data->local_domain,
        (data->tables[0]) ? "0" : " ", (data->tables[1]) ? "1" : " ",
