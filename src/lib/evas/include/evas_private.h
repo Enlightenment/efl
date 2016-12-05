@@ -1093,7 +1093,8 @@ struct _Evas_Object_Protected_State
 };
 
 struct _Evas_Object_Pointer_Data {
-   Evas_Object_Protected_Data *obj;
+   EINA_INLIST;
+
    Evas_Pointer_Data *evas_pdata;
    Evas_Object_Pointer_Mode pointer_mode;
    int mouse_grabbed;
@@ -1146,7 +1147,7 @@ struct _Evas_Object_Protected_Data
    const Evas_Object_3D_Data  *data_3d;
    const Evas_Object_Mask_Data *mask;
    Eina_List                  *focused_by_seats;
-   Eina_Hash                  *pointer_grabs;
+   Eina_Inlist                *pointer_grabs;
 
    // Pointer to the Evas_Object itself
    Evas_Object                *object;

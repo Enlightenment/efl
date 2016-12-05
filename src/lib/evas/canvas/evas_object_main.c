@@ -81,24 +81,47 @@ _init_cow(void)
    return EINA_TRUE;
 }
 
+static Evas_Object_Pointer_Data *
+_evas_object_pointer_data_find(Evas_Object_Protected_Data *obj,
+                               Efl_Input_Device *pointer)
+{
+   Evas_Object_Pointer_Data *pdata;
+
+   EINA_INLIST_FOREACH(obj->pointer_grabs, pdata)
+     {
+        if (pdata->evas_pdata->pointer == pointer)
+          return pdata;
+     }
+   return NULL;
+}
+
+static void
+_evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj, Evas_Object_Pointer_Data *pdata);
+
 static void
 _evas_device_del_cb(void *data, const Efl_Event *ev)
 {
    Evas_Object_Protected_Data *obj = data;
+   Evas_Object_Pointer_Data *pdata = _evas_object_pointer_data_find(obj,
+                                                                    ev->object);
 
-   eina_hash_del_by_key(obj->pointer_grabs, &ev->object);
+   if (!pdata) return;
+   _evas_object_pointer_grab_del(obj, pdata);
 }
 
 static void
-_evas_object_pointer_grab_del(Evas_Object_Pointer_Data *pdata)
+_evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
+                              Evas_Object_Pointer_Data *pdata)
 {
-   if ((pdata->mouse_grabbed > 0) && (pdata->obj->layer) && (pdata->obj->layer->evas))
+   if ((pdata->mouse_grabbed > 0) && (obj->layer) && (obj->layer->evas))
      pdata->evas_pdata->mouse_grabbed -= pdata->mouse_grabbed;
    if (((pdata->mouse_in) || (pdata->mouse_grabbed > 0)) &&
-       (pdata->obj->layer) && (pdata->obj->layer->evas))
-     pdata->evas_pdata->object.in = eina_list_remove(pdata->evas_pdata->object.in, pdata->obj->object);
+       (obj->layer) && (obj->layer->evas))
+     pdata->evas_pdata->object.in = eina_list_remove(pdata->evas_pdata->object.in, obj->object);
    efl_event_callback_del(pdata->evas_pdata->pointer, EFL_EVENT_DEL,
-                          _evas_device_del_cb, pdata->obj);
+                          _evas_device_del_cb, obj);
+   obj->pointer_grabs = eina_inlist_remove(obj->pointer_grabs,
+                                           EINA_INLIST_GET(pdata));
    free(pdata);
 }
 
@@ -112,12 +135,12 @@ _evas_object_pointer_data_add(Evas_Pointer_Data *evas_pdata,
    pdata = calloc(1, sizeof(Evas_Object_Pointer_Data));
    EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
    pdata->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
-   pdata->obj = obj;
    pdata->evas_pdata = evas_pdata;
+   obj->pointer_grabs = eina_inlist_append(obj->pointer_grabs,
+                                           EINA_INLIST_GET(pdata));
    efl_event_callback_priority_add(pointer, EFL_EVENT_DEL,
                                    EFL_CALLBACK_PRIORITY_BEFORE,
                                    _evas_device_del_cb, obj);
-   eina_hash_add(obj->pointer_grabs, &pointer, pdata);
    return pdata;
 }
 
@@ -128,7 +151,8 @@ _evas_object_pointer_data_get(Evas_Pointer_Data *evas_pdata,
 {
    Evas_Object_Pointer_Data *pdata;
 
-   pdata = eina_hash_find(obj->pointer_grabs, &pointer);
+   pdata = _evas_object_pointer_data_find(obj, evas_pdata->pointer);
+
    //The pointer does not exist yet - create one.
    if (!pdata)
      return _evas_object_pointer_data_add(evas_pdata, obj, pointer);
@@ -162,7 +186,6 @@ _efl_canvas_object_efl_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data
    obj->prev = eina_cow_alloc(evas_object_state_cow);
    obj->data_3d = eina_cow_alloc(evas_object_3d_cow);
    obj->mask = eina_cow_alloc(evas_object_mask_cow);
-   obj->pointer_grabs = eina_hash_pointer_new(EINA_FREE_CB(_evas_object_pointer_grab_del));
 
    evas_object_inject(eo_obj, obj, evas);
    evas_object_callback_init(eo_obj, obj);
@@ -993,6 +1016,7 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
    Evas_Canvas3D_Texture *texture;
    Efl_Input_Device *dev;
    Evas_Public_Data *edata;
+   Evas_Object_Pointer_Data *pdata;
 
    edata = efl_data_scope_get(evas_object_evas_get(eo_obj), EVAS_CANVAS_CLASS);
    evas_object_hide(eo_obj);
@@ -1005,7 +1029,8 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
         if ((obj->layer) && (obj->layer->evas))
           _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
      }
-   eina_hash_free(obj->pointer_grabs);
+   EINA_INLIST_FREE(obj->pointer_grabs, pdata)
+     _evas_object_pointer_grab_del(obj, pdata);
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, _evas_object_event_new(), NULL);
    if ((obj->layer) && (obj->layer->evas))
      _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
@@ -1671,9 +1696,9 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
              if ((!obj->is_smart) ||
                  ((obj->map->cur.map) && (obj->map->cur.map->count == 4) && (obj->map->cur.usemap)))
                {
-                  Eina_Iterator *itr = eina_hash_iterator_data_new(obj->pointer_grabs);
                   Evas_Object_Pointer_Data *obj_pdata;
-                  EINA_ITERATOR_FOREACH(itr, obj_pdata)
+
+                  EINA_INLIST_FOREACH(obj->pointer_grabs, obj_pdata)
                     {
                        if (!obj_pdata->mouse_grabbed &&
                            evas_object_is_in_output_rect(eo_obj, obj, obj_pdata->evas_pdata->x,
@@ -1681,7 +1706,6 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
                                                          1, 1))
                          _evas_canvas_event_pointer_move_event_dispatch(obj->layer->evas, obj_pdata->evas_pdata, NULL);
                     }
-                  eina_iterator_free(itr);
 /* this is at odds to handling events when an obj is moved out of the mouse
  * ore resized out or clipped out. if mouse is grabbed - regardless of
  * visibility, mouse move events should keep happening and mouse up.
