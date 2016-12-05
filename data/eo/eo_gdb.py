@@ -7,15 +7,6 @@ change. Need to make sure this is always in sync.
 
 ptr_size = int(gdb.parse_and_eval('sizeof(void *)'))
 
-SHIFT_MID_TABLE_ID = 0x30
-MASK_MID_TABLE_ID = 0x7ff
-SHIFT_TABLE_ID = 0x25
-MASK_TABLE_ID = 0x7ff
-SHIFT_ENTRY_ID = 0x1a
-MASK_ENTRY_ID = 0x7ff
-MASK_GENERATIONS = 0x3ffffff
-MASK_OBJ_TAG = 0x4000000000000000
-
 if ptr_size == 4:
     # 32 bits
     BITS_MID_TABLE_ID = 5
