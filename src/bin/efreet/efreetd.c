@@ -72,6 +72,10 @@ main(int argc, char *argv[])
    else
      {
         fd = open("/dev/null", O_WRONLY);
+        if (fd < 0)
+          {
+             goto tmp_error;
+          }
      }
    log = fdopen(fd, "wb");
    if (!log) goto tmp_error;
