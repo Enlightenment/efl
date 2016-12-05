@@ -492,8 +492,6 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
      www_surface_destroy(window->www_surface);
    window->www_surface = NULL;
 
-   ecore_wl2_window_hide(window);
-
    if (window->uuid && window->surface && window->display->wl.session_recovery)
      zwp_e_session_recovery_destroy_uuid(window->display->wl.session_recovery,
        window->surface, window->uuid);
