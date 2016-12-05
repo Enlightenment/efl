@@ -438,7 +438,7 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
         Evas_Object_Pointer_Data *obj_pdata;
 
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -467,7 +467,7 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
 
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
         ev->cur = point;
-        obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -527,7 +527,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
         EINA_LIST_FOREACH(copy, l, eo_child)
           {
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-             obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, child);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -561,7 +561,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
           {
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
              if (child->delete_me) continue;
-             obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, child);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -603,7 +603,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
           {
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
 
-             obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, child);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -647,7 +647,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
         EINA_LIST_FOREACH(ins, l, eo_child)
           {
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-             obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, child);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -724,7 +724,7 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
 
         if (src->delete_me) break;
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -815,7 +815,7 @@ _evas_event_source_wheel_events(Evas_Object *eo_obj, Evas *eo_e,
 
         if (src->delete_me) return;
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -865,7 +865,7 @@ _evas_event_source_multi_down_events(Evas_Object_Protected_Data *obj, Evas_Publi
    EINA_LIST_FOREACH(src->proxy->src_event_in, l, eo_child)
      {
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -883,7 +883,7 @@ _evas_event_source_multi_down_events(Evas_Object_Protected_Data *obj, Evas_Publi
    EINA_LIST_FOREACH(copy, l, eo_child)
      {
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -933,7 +933,7 @@ _evas_event_source_multi_up_events(Evas_Object_Protected_Data *obj, Evas_Public_
 
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
 
-        obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -995,7 +995,7 @@ _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Publi
         EINA_LIST_FOREACH(copy, l, eo_child)
           {
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-             obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, child);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -1036,7 +1036,7 @@ _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Publi
           {
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
              ev->cur = point;
-             obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, child);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -1122,7 +1122,7 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,
         Evas_Object_Pointer_Data *obj_pdata;
 
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -1186,7 +1186,7 @@ _evas_event_source_mouse_out_events(Evas_Object *eo_obj, Evas *eo_e,
      {
         Evas_Object_Pointer_Data *obj_pdata;
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, child, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -1428,7 +1428,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    EINA_LIST_FOREACH(copy, l, eo_obj)
      {
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, obj);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -1453,7 +1453,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         Evas_Object_Pointer_Mode pointer_mode;
         if (obj->delete_me) continue;
-        obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, obj);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -1514,7 +1514,7 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         if ((!eina_list_data_find(ins, eo_obj)) || (!pdata->inside))
           {
-             obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, obj);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -1552,7 +1552,7 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
              Evas_Object_Protected_Data *obj_itr = efl_data_scope_get(eo_obj_itr, EFL_CANVAS_OBJECT_CLASS);
              if (!eina_list_data_find(pdata->object.in, eo_obj_itr))
                {
-                  obj_pdata = _evas_object_pointer_data_get(pdata, obj_itr, ev->device);
+                  obj_pdata = _evas_object_pointer_data_get(pdata, obj_itr);
                   if (!obj_pdata)
                     {
                        ERR("Could not find the object pointer data for device %p",
@@ -1659,7 +1659,7 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
         if (obj->delete_me) continue;
-        obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, obj);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -1895,7 +1895,7 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         if (!evas_event_freezes_through(eo_obj, obj))
           {
-             obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, obj);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -2015,7 +2015,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
         EINA_LIST_FOREACH(copy, l, eo_obj)
           {
              obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-             obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, obj);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -2065,7 +2065,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
         EINA_LIST_FREE(outs, eo_obj)
           {
              obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-             obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, obj);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -2102,7 +2102,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
           {
              obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
              if (!obj) continue;
-             obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, obj);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -2166,7 +2166,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
              /* if its not in the old list of ins send an enter event */
              if (!eina_list_data_find(pdata->object.in, eo_obj))
                {
-                  obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+                  obj_pdata = _evas_object_pointer_data_get(pdata, obj);
                   if (!obj_pdata)
                     {
                        ERR("Could not find the object pointer data for device %p",
@@ -2247,7 +2247,7 @@ nogrep:
         EINA_LIST_FOREACH(lst, l, eo_obj)
           {
              obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-             obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, obj);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -2310,7 +2310,7 @@ nogrep:
              /* if its not in the old list of ins send an enter event */
              if (!eina_list_data_find(pdata->object.in, eo_obj))
                {
-                  obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+                  obj_pdata = _evas_object_pointer_data_get(pdata, obj);
                   if (!obj_pdata)
                     {
                        ERR("Could not find the object pointer data for device %p",
@@ -2430,7 +2430,7 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         if (!eina_list_data_find(pdata->object.in, eo_obj))
           {
-             obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, obj);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -2507,7 +2507,7 @@ _canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
         Evas_Object_Pointer_Data *obj_pdata;
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         if (obj->delete_me) continue;
-        obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, obj);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -2626,7 +2626,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    EINA_LIST_FOREACH(copy, l, eo_obj)
      {
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, obj);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -2642,7 +2642,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    EINA_LIST_FOREACH(copy, l, eo_obj)
      {
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, obj);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -2715,7 +2715,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
      {
         Evas_Object_Pointer_Data *obj_pdata;
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-        obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+        obj_pdata = _evas_object_pointer_data_get(pdata, obj);
         if (!obj_pdata)
           {
              ERR("Could not find the object pointer data for device %p",
@@ -2892,7 +2892,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
         EINA_LIST_FOREACH(copy, l, eo_obj)
           {
              Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-             obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, obj);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -2931,7 +2931,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
         EINA_LIST_FOREACH(copy, l, eo_obj)
           {
              Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-             obj_pdata = _evas_object_pointer_data_get(pdata, obj, ev->device);
+             obj_pdata = _evas_object_pointer_data_get(pdata, obj);
              if (!obj_pdata)
                {
                   ERR("Could not find the object pointer data for device %p",
@@ -3598,7 +3598,7 @@ _efl_canvas_object_pointer_mode_by_device_set(Eo *eo_obj, Evas_Object_Protected_
    pdata = _evas_pointer_data_by_device_get(obj->layer->evas, dev);
    if (!pdata) return;
 
-   obj_pdata = _evas_object_pointer_data_get(pdata, obj, pdata->pointer);
+   obj_pdata = _evas_object_pointer_data_get(pdata, obj);
    EINA_SAFETY_ON_NULL_RETURN(obj_pdata);
 
    /* ignore no-ops */
@@ -3647,8 +3647,7 @@ _efl_canvas_object_pointer_mode_by_device_set(Eo *eo_obj, Evas_Object_Protected_
                {
                   Evas_Object_Pointer_Data *cobj_pdata;
                   cobj_data = efl_data_scope_get(cobj, EFL_CANVAS_OBJECT_CLASS);
-
-                  cobj_pdata = _evas_object_pointer_data_get(pdata, cobj_data, dev);
+                  cobj_pdata = _evas_object_pointer_data_get(pdata, cobj_data);
                   if (!cobj_pdata) continue;
                   if (!cobj_pdata->mouse_grabbed) continue;
                   cobj_pdata->mouse_grabbed -= addgrab;
@@ -3679,7 +3678,7 @@ _efl_canvas_object_pointer_mode_by_device_get(Eo *eo_obj EINA_UNUSED,
    pdata = _evas_pointer_data_by_device_get(obj->layer->evas, dev);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, EVAS_OBJECT_POINTER_MODE_AUTOGRAB);
 
-   obj_pdata = _evas_object_pointer_data_get(pdata, obj, pdata->pointer);
+   obj_pdata = _evas_object_pointer_data_get(pdata, obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj_pdata, EVAS_OBJECT_POINTER_MODE_AUTOGRAB);
    return obj_pdata->pointer_mode;
 }
@@ -3718,7 +3717,7 @@ _efl_canvas_object_pointer_device_in_get(Eo *eo_obj,
 
    pdata = _evas_pointer_data_by_device_get(obj->layer->evas, pointer);
    if (!pdata) return EINA_FALSE;
-   obj_pdata = _evas_object_pointer_data_get(pdata, obj, pointer);
+   obj_pdata = _evas_object_pointer_data_get(pdata, obj);
    if (!obj_pdata) return EINA_FALSE;
    if (!obj->is_smart)
      return obj_pdata->mouse_in;

@@ -1600,7 +1600,7 @@ void evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *obj);
 void evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v);
 void evas_rects_return_difference_rects(Eina_Array *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh);
-Evas_Object_Pointer_Data *_evas_object_pointer_data_get(Evas_Pointer_Data *evas_pdata, Evas_Object_Protected_Data *obj, Efl_Input_Device *pointer);
+Evas_Object_Pointer_Data *_evas_object_pointer_data_get(Evas_Pointer_Data *evas_pdata, Evas_Object_Protected_Data *obj);
 
 void evas_object_clip_dirty(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_recalc_clippees(Evas_Object_Protected_Data *pd);

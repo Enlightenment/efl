@@ -127,8 +127,7 @@ _evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
 
 static Evas_Object_Pointer_Data *
 _evas_object_pointer_data_add(Evas_Pointer_Data *evas_pdata,
-                              Evas_Object_Protected_Data *obj,
-                              Efl_Input_Device *pointer)
+                              Evas_Object_Protected_Data *obj)
 {
    Evas_Object_Pointer_Data *pdata;
 
@@ -138,7 +137,7 @@ _evas_object_pointer_data_add(Evas_Pointer_Data *evas_pdata,
    pdata->evas_pdata = evas_pdata;
    obj->pointer_grabs = eina_inlist_append(obj->pointer_grabs,
                                            EINA_INLIST_GET(pdata));
-   efl_event_callback_priority_add(pointer, EFL_EVENT_DEL,
+   efl_event_callback_priority_add(evas_pdata->pointer, EFL_EVENT_DEL,
                                    EFL_CALLBACK_PRIORITY_BEFORE,
                                    _evas_device_del_cb, obj);
    return pdata;
@@ -146,8 +145,7 @@ _evas_object_pointer_data_add(Evas_Pointer_Data *evas_pdata,
 
 Evas_Object_Pointer_Data *
 _evas_object_pointer_data_get(Evas_Pointer_Data *evas_pdata,
-                              Evas_Object_Protected_Data *obj,
-                              Efl_Input_Device *pointer)
+                              Evas_Object_Protected_Data *obj)
 {
    Evas_Object_Pointer_Data *pdata;
 
@@ -155,7 +153,7 @@ _evas_object_pointer_data_get(Evas_Pointer_Data *evas_pdata,
 
    //The pointer does not exist yet - create one.
    if (!pdata)
-     return _evas_object_pointer_data_add(evas_pdata, obj, pointer);
+     return _evas_object_pointer_data_add(evas_pdata, obj);
    return pdata;
 }
 
