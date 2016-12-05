@@ -23,6 +23,7 @@ box_example.edc \
 codegen.edc \
 color-class.edc \
 drag.edc \
+dynamic_multiseat.edc \
 edje-group.edc \
 edje-nested.edc \
 edje-threshold.edc \
@@ -139,6 +140,7 @@ edje-box2.c \
 edje-codegen-example.c \
 edje-color-class.c \
 edje-drag.c \
+edje-dynamic-multiseat.c \
 edje-edit-part-box.c \
 edje-entry.c \
 edje-multiseat.c \
@@ -212,7 +214,8 @@ edje-box \
 edje-box2 \
 edje-codegen-example \
 edje-color-class \
-edje-drag\
+edje-drag \
+edje-dynamic-multiseat \
 edje-edit-part-box \
 edje-entry \
 edje-multiseat \
