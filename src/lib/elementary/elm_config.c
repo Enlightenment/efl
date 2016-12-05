@@ -4348,8 +4348,7 @@ _eina_value_to_int(const Eina_Value *val, int *i)
 
    if (eina_value_type_get(val) == EINA_VALUE_TYPE_INT)
      {
-        eina_value_get(val, i);
-        return EINA_TRUE;
+        return eina_value_get(val, i);
      }
 
    ival = eina_value_new(EINA_VALUE_TYPE_INT);
