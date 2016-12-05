@@ -38,7 +38,7 @@ START_TEST(eo_api_not_implemented_call)
    Eo *obj = efl_add(SIMPLE_CLASS, NULL);
    fail_if(!obj);
 
-   TEST_EO_ERROR("_efl_object_api_op_id_get", "Unable to resolve op for api func %p");
+   TEST_EO_ERROR("simple_no_implementation", "Unable to resolve op for api func %p for obj=%p (%s)");
    simple_no_implementation(obj);
    fail_unless(ctx.did);
 
