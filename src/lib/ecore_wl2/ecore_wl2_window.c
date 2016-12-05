@@ -450,6 +450,12 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_unmap(subsurf);
 
+   if (window->surface)
+     {
+        wl_surface_attach(window->surface, NULL, 0, 0);
+        wl_surface_commit(window->surface);
+     }
+
    window->configure_serial = 0;
    window->configure_ack = NULL;
 }
