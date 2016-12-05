@@ -12754,11 +12754,12 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
        {0, 1, 2, 1, 0}
      };
 
-   /* [FIXME!!!] rare case when relayout was not called: cache.clip made
-    * the object not visible (eg. clipped out), but it is actually visible
-    * in this context (eg. inside a proxy) - UGLY DIRTY FIX */
-   if (obj->layer->evas->is_frozen &&
-       (o->changed || o->content_changed || o->format_changed || o->obstacle_changed))
+   /* FIXME: rare case when relayout was not called: cache.clip made
+      the object not visible (eg. clipped out), but it is actually visible
+      in this context (eg. inside a proxy).
+      Plus, one more scenario is that the object isn't visible but actually is visible
+      by evas_map. */
+   if (o->changed || o->content_changed || o->format_changed || o->obstacle_changed)
        _relayout_if_needed(eo_obj, o);
 
    /* If there are no paragraphs and thus there are no lines,
