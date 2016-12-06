@@ -751,7 +751,8 @@ _on_mouse_move(void *data,
       case ELM_PANEL_ORIENT_TOP:
          if (sd->timer && ((cur_y - sd->down_y) > finger_size))
            {
-              elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
+              elm_interface_scrollable_movement_block_set
+                 (obj, ELM_SCROLLER_MOVEMENT_NO_BLOCK);
               sd->freeze = EINA_FALSE;
               elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
            }
@@ -759,7 +760,8 @@ _on_mouse_move(void *data,
       case ELM_PANEL_ORIENT_BOTTOM:
          if (sd->timer && ((sd->down_y - cur_y) > finger_size))
            {
-              elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
+              elm_interface_scrollable_movement_block_set
+                 (obj, ELM_SCROLLER_MOVEMENT_NO_BLOCK);
               sd->freeze = EINA_FALSE;
               elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
            }
@@ -768,7 +770,8 @@ _on_mouse_move(void *data,
          if ((!is_mirrored && (sd->timer) && ((cur_x - sd->down_x) > finger_size)) ||
               ((is_mirrored) && (sd->timer) && ((sd->down_x - cur_x) > finger_size)))
            {
-              elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
+              elm_interface_scrollable_movement_block_set
+                 (obj, ELM_SCROLLER_MOVEMENT_NO_BLOCK);
               sd->freeze = EINA_FALSE;
               elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
            }
@@ -777,7 +780,8 @@ _on_mouse_move(void *data,
          if ((is_mirrored && (sd->timer) && ((cur_x - sd->down_x) > finger_size)) ||
               (!is_mirrored && (sd->timer) && ((sd->down_x - cur_x) > finger_size)))
            {
-              elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
+              elm_interface_scrollable_movement_block_set
+                 (obj, ELM_SCROLLER_MOVEMENT_NO_BLOCK);
               sd->freeze = EINA_FALSE;
               elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
            }
