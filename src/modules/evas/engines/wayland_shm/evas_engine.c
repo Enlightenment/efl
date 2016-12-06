@@ -164,7 +164,13 @@ eng_setup(Evas *eo_evas, void *info)
           goto err;
      }
    else if ((einfo->info.wl_surface) && (!einfo->info.hidden))
-     eng_output_resize(re, epd->output.w, epd->output.h);
+     {
+        eng_output_resize(re, epd->output.w, epd->output.h);
+        evas_render_engine_software_generic_update(&re->generic,
+                                                   re->generic.ob,
+                                                   epd->output.w,
+                                                   epd->output.h);
+     }
 
    epd->engine.data.output = re;
    if (!epd->engine.data.output)
