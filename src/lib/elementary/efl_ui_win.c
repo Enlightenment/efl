@@ -99,8 +99,6 @@ struct _Efl_Ui_Win_Data
 #endif
    Eina_Stringshare *teamwork_uri;
 
-   Eina_Bool                     deferred_resize_job;
-
    Efl_Ui_Win_Type                   type;
    Efl_Ui_Win_Keyboard_Mode          kbdmode;
    Elm_Win_Indicator_Mode         indmode;
@@ -235,6 +233,8 @@ struct _Efl_Ui_Win_Data
       Eina_Bool    bg_must_swallow_init : 1;
    } legacy;
 
+   Eina_Bool    first_draw : 1;
+   Eina_Bool    deferred_resize_job : 1;
    Eina_Bool    urgent : 1;
    Eina_Bool    modal : 1;
    Eina_Bool    demand_attention : 1;
@@ -340,6 +340,7 @@ static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emi
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
 static void _elm_win_resize_objects_eval(Evas_Object *obj);
 static void _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha);
+static void _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd);
 
 #ifdef HAVE_ELEMENTARY_X
 static void _elm_win_xwin_update(Efl_Ui_Win_Data *sd);
@@ -914,6 +915,11 @@ _elm_win_pre_render(Ecore_Evas *ee)
    if (!sd) return;
 
    _elm_win_throttle_ok = EINA_TRUE;
+   if (!sd->first_draw)
+     {
+        sd->first_draw = EINA_TRUE;
+        _elm_win_frame_obj_update(sd);
+     }
    if (sd->deferred_resize_job)
      _elm_win_resize_job(sd->obj);
 }
@@ -1415,18 +1421,34 @@ _elm_win_frame_geometry_adjust(Efl_Ui_Win_Data *sd)
    ecore_evas_shadow_geometry_set(sd->ee, l, r, t, b);
 }
 
+static inline Eina_Bool
+_elm_win_framespace_set(Efl_Ui_Win_Data *sd, int x, int y, int w, int h)
+{
+   int fx, fy, fw, fh;
+
+   evas_output_framespace_get(sd->evas, &fx, &fy, &fw, &fh);
+   evas_output_framespace_set(sd->evas, x, y, w, h);
+
+   // return true if framespace geometry changed
+   return ((fx != x) || (fy != y) || (fw != w) || (fh != h));
+}
+
 static void
 _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
 {
-   int fx, fy, fw, fh;
    int ox, oy, ow, oh;
+   int cx, cy, cw, ch;
 
    if (!sd->frame_obj) return;
    _elm_win_opaque_dirty(sd);
    _elm_win_frame_geometry_adjust(sd);
-   evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
-   edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.content", &ox, &oy, &ow, &oh);
-   evas_output_framespace_set(sd->evas, ox, oy, fw - ow, fh - oh);
+   evas_object_geometry_get(sd->frame_obj, &ox, &oy, &ow, &oh);
+   edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.content", &cx, &cy, &cw, &ch);
+   if (_elm_win_framespace_set(sd, cx, cy, ow - cw, oh - ch))
+     {
+        _elm_win_resize_objects_eval(sd->obj);
+        sd->deferred_resize_job = EINA_TRUE;
+     }
 }
 
 static void
