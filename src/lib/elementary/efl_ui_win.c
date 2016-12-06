@@ -1445,10 +1445,7 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
    evas_object_geometry_get(sd->frame_obj, &ox, &oy, &ow, &oh);
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.content", &cx, &cy, &cw, &ch);
    if (_elm_win_framespace_set(sd, cx, cy, ow - cw, oh - ch))
-     {
-        _elm_win_resize_objects_eval(sd->obj);
-        sd->deferred_resize_job = EINA_TRUE;
-     }
+     _elm_win_resize_objects_eval(sd->obj);
 }
 
 static void
