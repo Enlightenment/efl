@@ -495,5 +495,18 @@ main(int argc, char **argv)
                sep_color,
                reset_color);
      }
+   EINA_LIST_FREE(btl, bt)
+     {
+        free(bt->bin_dir);
+        free(bt->bin_name);
+        free(bt->file_dir);
+        free(bt->file_name);
+        free(bt->func_name);
+        free(bt->comment);
+        free(bt);
+     }
+
+   eina_shutdown();
+
    return 0;
 }
