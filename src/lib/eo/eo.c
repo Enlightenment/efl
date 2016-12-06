@@ -373,8 +373,8 @@ efl_super(const Eo *obj, const Efl_Class *cur_klass)
 {
    EO_CLASS_POINTER_GOTO(cur_klass, klass, err);
 
-   if (EINA_UNLIKELY(!_eo_is_a_obj(obj) && !_eo_is_a_class(obj))) goto err_obj;
 #ifdef EO_DEBUG
+   if (EINA_UNLIKELY(!_eo_is_a_obj(obj) && !_eo_is_a_class(obj))) goto err_obj;
    if (EINA_UNLIKELY(!efl_isa(obj, cur_klass))) goto err_obj_hierarchy;
 #endif
 
@@ -386,10 +386,10 @@ efl_super(const Eo *obj, const Efl_Class *cur_klass)
 err:
    _EO_POINTER_ERR(cur_klass, "Class (%p) is an invalid ref.", cur_klass);
    return NULL;
+#ifdef EO_DEBUG
 err_obj:
    _EO_POINTER_ERR(obj, "Object (%p) is an invalid ref, class=%p (%s).", obj, cur_klass, efl_class_name_get(cur_klass));
    return NULL;
-#ifdef EO_DEBUG
 err_obj_hierarchy:
    _EO_POINTER_ERR(obj, "Object (%p) class=%p (%s) is not an instance of class=%p (%s).", obj, efl_class_get(obj), efl_class_name_get(obj), cur_klass, efl_class_name_get(cur_klass));
 #endif
