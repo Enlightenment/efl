@@ -11,135 +11,87 @@
 #include "evas_private.h"
 #include "Evas.h"
 
-static int _threads_max = 0;
+#include "Ecore.h"
 
-typedef struct _Evas_Preload_Pthread_Worker Evas_Preload_Pthread_Worker;
-typedef struct _Evas_Preload_Pthread_Data Evas_Preload_Pthread_Data;
-
+typedef struct _Evas_Preload_Pthread Evas_Preload_Pthread;
 typedef void (*_evas_preload_pthread_func)(void *data);
 
-struct _Evas_Preload_Pthread_Worker
+struct _Evas_Preload_Pthread
 {
    EINA_INLIST;
+
+   Ecore_Thread *thread;
 
    _evas_preload_pthread_func func_heavy;
    _evas_preload_pthread_func func_end;
    _evas_preload_pthread_func func_cancel;
    void *data;
-   Eina_Bool cancel : 1;
 };
 
-struct _Evas_Preload_Pthread_Data
-{
-   Eina_Thread thread;
-};
-
-static int _threads_count = 0;
-static Evas_Preload_Pthread_Worker *_workers = NULL;
-
-static LK(_mutex);
+static Eina_Inlist *works = NULL;
 
 static void
-_evas_preload_thread_end(void *data)
+_evas_preload_thread_work_free(Evas_Preload_Pthread *work)
 {
-   Evas_Preload_Pthread_Data *pth = data;
-   Evas_Preload_Pthread_Data *p = NULL;
-
-   if ((p = eina_thread_join(pth->thread))) free(p);
-   else return;
-   eina_threads_shutdown();
-}
-
-static void
-_evas_preload_thread_done(void *target EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info)
-{
-   Evas_Preload_Pthread_Worker *work = event_info;
-   if (work->cancel)
-     {
-        if (work->func_cancel) work->func_cancel(work->data);
-     }
-   else
-      work->func_end(work->data);
+   works = eina_inlist_remove(works, EINA_INLIST_GET(work));
 
    free(work);
 }
 
-static void *
-_evas_preload_thread_worker(void *data, Eina_Thread thread EINA_UNUSED)
+static void
+_evas_preload_thread_success(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
-   Evas_Preload_Pthread_Data *pth = data;
-   Evas_Preload_Pthread_Worker *work;
+   Evas_Preload_Pthread *work = data;
 
-   eina_thread_name_set(eina_thread_self(), "Eevas-preload");
-on_error:
-   for (;;)
-     {
-        LKL(_mutex);
-        if (!_workers)
-          {
-             LKU(_mutex);
-             break;
-          }
+   work->func_end(work->data);
 
-        work = _workers;
-        _workers = EINA_INLIST_CONTAINER_GET(eina_inlist_remove(EINA_INLIST_GET(_workers), EINA_INLIST_GET(_workers)), Evas_Preload_Pthread_Worker);
-        LKU(_mutex);
+    _evas_preload_thread_work_free(work);
+}
 
-        if (work->func_heavy) work->func_heavy(work->data);
-        evas_async_events_put(pth, 0, work, _evas_preload_thread_done);
-     }
+static void
+_evas_preload_thread_fail(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Evas_Preload_Pthread *work = data;
 
-   LKL(_mutex);
-   if (_workers)
-     {
-        LKU(_mutex);
-        goto on_error;
-     }
-   _threads_count--;
-   LKU(_mutex);
+   if (work->func_cancel) work->func_cancel(work->data);
 
-   // dummy worker to wake things up
-   work = malloc(sizeof(Evas_Preload_Pthread_Worker));
-   if (!work) return NULL;
+   _evas_preload_thread_work_free(work);
+}
 
-   work->data = pth;
-   work->func_heavy = NULL;
-   work->func_end = (_evas_preload_pthread_func) _evas_preload_thread_end;
-   work->func_cancel = NULL;
-   work->cancel = EINA_FALSE;
+static void
+_evas_preload_thread_worker(void *data, Ecore_Thread *thread)
+{
+   Evas_Preload_Pthread *work = data;
 
-   evas_async_events_put(pth, 0, work, _evas_preload_thread_done);
-   return pth;
+   work->thread = thread;
+
+   work->func_heavy(work->data);
 }
 
 void
 _evas_preload_thread_init(void)
 {
-   _threads_max = eina_cpu_count();
-   if (_threads_max < 1) _threads_max = 1;
-
-   LKI(_mutex);
+   ecore_init();
 }
 
 void
 _evas_preload_thread_shutdown(void)
 {
-   /* FIXME: If function are still running in the background, should we kill them ? */
-   Evas_Preload_Pthread_Worker *work;
+   Evas_Preload_Pthread *work;
 
-   /* Force processing of async events. */
-   evas_async_events_process();
-   LKL(_mutex);
-   while (_workers)
+   EINA_INLIST_FOREACH(works, work)
+     ecore_thread_cancel(work->thread);
+
+   while (works)
      {
-        work = _workers;
-        _workers = EINA_INLIST_CONTAINER_GET(eina_inlist_remove(EINA_INLIST_GET(_workers), EINA_INLIST_GET(_workers)), Evas_Preload_Pthread_Worker);
-        if (work->func_cancel) work->func_cancel(work->data);
-        free(work);
+        work = (Evas_Preload_Pthread*) works;
+        if (!ecore_thread_wait(work->thread, 1))
+          {
+             ERR("Can not wait any longer on Evas thread to be done during shutdown. This might lead to a crash.");
+             works = eina_inlist_remove(works, works);
+          }
      }
-   LKU(_mutex);
-
-   LKD(_mutex);
+   ecore_shutdown();
 }
 
 Evas_Preload_Pthread *
@@ -148,10 +100,9 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
                         void (*func_cancel) (void *data),
                         const void *data)
 {
-   Evas_Preload_Pthread_Worker *work;
-   Evas_Preload_Pthread_Data *pth;
+   Evas_Preload_Pthread *work;
 
-   work = malloc(sizeof(Evas_Preload_Pthread_Worker));
+   work = malloc(sizeof(Evas_Preload_Pthread));
    if (!work)
      {
         func_cancel((void *)data);
@@ -161,70 +112,22 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
    work->func_heavy = func_heavy;
    work->func_end = func_end;
    work->func_cancel = func_cancel;
-   work->cancel = EINA_FALSE;
    work->data = (void *)data;
 
-   LKL(_mutex);
-   _workers = (Evas_Preload_Pthread_Worker *)eina_inlist_append(EINA_INLIST_GET(_workers), EINA_INLIST_GET(work));
-   if (_threads_count == _threads_max)
-     {
-        LKU(_mutex);
-        return (Evas_Preload_Pthread *)work;
-     }
-   LKU(_mutex);
+   work->thread = ecore_thread_run(_evas_preload_thread_worker,
+                                   _evas_preload_thread_success,
+                                   _evas_preload_thread_fail,
+                                   work);
+   if (!work->thread)
+     return NULL;
 
-   /* One more thread could be created. */
-   pth = malloc(sizeof(Evas_Preload_Pthread_Data));
-   if (!pth) goto on_error;
+   works = eina_inlist_prepend(works, EINA_INLIST_GET(work));
 
-   eina_threads_init();
-
-   if (eina_thread_create(&pth->thread, EINA_THREAD_BACKGROUND, -1, _evas_preload_thread_worker, pth))
-     {
-        LKL(_mutex);
-        _threads_count++;
-        LKU(_mutex);
-        return (Evas_Preload_Pthread*)work;
-     }
-
-   eina_threads_shutdown();
-
-on_error:
-   LKL(_mutex);
-   if (_threads_count == 0)
-     {
-        _workers = EINA_INLIST_CONTAINER_GET(eina_inlist_remove(EINA_INLIST_GET(_workers), EINA_INLIST_GET(work)), Evas_Preload_Pthread_Worker);
-        LKU(_mutex);
-        if (work->func_cancel) work->func_cancel(work->data);
-        free(work);
-        return NULL;
-     }
-   LKU(_mutex);
-   return NULL;
+   return work;
 }
 
 Eina_Bool
-evas_preload_thread_cancel(Evas_Preload_Pthread *thread)
+evas_preload_thread_cancel(Evas_Preload_Pthread *work)
 {
-   Evas_Preload_Pthread_Worker *work;
-
-   if (!thread) return EINA_TRUE;
-   LKL(_mutex);
-   EINA_INLIST_FOREACH(_workers, work)
-     {
-        if (work == (Evas_Preload_Pthread_Worker *)thread)
-          {
-             _workers = EINA_INLIST_CONTAINER_GET(eina_inlist_remove(EINA_INLIST_GET(_workers), EINA_INLIST_GET(work)), Evas_Preload_Pthread_Worker);
-             LKU(_mutex);
-             if (work->func_cancel) work->func_cancel(work->data);
-             free(work);
-             return EINA_TRUE;
-          }
-     }
-   LKU(_mutex);
-
-   /* Delay the destruction */
-   work = (Evas_Preload_Pthread_Worker *)thread;
-   work->cancel = EINA_TRUE;
-   return EINA_FALSE;
+   return ecore_thread_cancel(work->thread);
 }
