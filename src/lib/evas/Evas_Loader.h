@@ -134,6 +134,7 @@ typedef Efl_Image_Load_Error Evas_Load_Error;
 #define EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED EFL_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED
 #define EVAS_LOAD_ERROR_CORRUPT_FILE EFL_IMAGE_LOAD_ERROR_CORRUPT_FILE
 #define EVAS_LOAD_ERROR_UNKNOWN_FORMAT EFL_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT
+#define EVAS_LOAD_ERROR_CANCELLED EFL_IMAGE_LOAD_ERROR_CANCELLED
 
 typedef Emile_Image_Animated_Loop_Hint Evas_Image_Animated_Loop_Hint;
 
@@ -198,6 +199,22 @@ struct _Evas_Image_Load_Func
 
 EAPI Eina_Bool    evas_module_register   (const Evas_Module_Api *module, Evas_Module_Type type);
 EAPI Eina_Bool    evas_module_unregister (const Evas_Module_Api *module, Evas_Module_Type type);
+
+EAPI Eina_Bool    evas_module_task_cancelled (void);
+
+#define EVAS_MODULE_TASK_CHECK(Count, Mask, Error, Error_Handler)       \
+  do {                                                                  \
+     Count++;                                                           \
+     if ((Count & Mask) == Mask)                                        \
+       {                                                                \
+          Count = 0;                                                    \
+          if (evas_module_task_cancelled())                             \
+            {                                                           \
+               *Error = EFL_IMAGE_LOAD_ERROR_CANCELLED;                 \
+               goto Error_Handler;                                      \
+            }                                                           \
+       }                                                                \
+  } while (0)
 
 #define EVAS_MODULE_DEFINE(Type, Tn, Name)		\
   Eina_Bool evas_##Tn##_##Name##_init(void)		\

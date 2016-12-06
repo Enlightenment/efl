@@ -1956,6 +1956,9 @@ Eina_Bool evas_preload_thread_cancelled_is(Evas_Preload_Pthread *thread);
 void _evas_walk(Evas_Public_Data *e_pd);
 void _evas_unwalk(Evas_Public_Data *e_pd);
 
+EAPI void evas_module_task_register(Eina_Bool (*cancelled)(void *data), void *data);
+EAPI void evas_module_task_unregister(void);
+
 // expose for use in engines
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 EAPI const char *_evas_module_libdir_get(void);

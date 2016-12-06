@@ -28,6 +28,51 @@
 #define EVAS_MODULE_NO_VG_SAVERS 0
 #endif
 
+typedef struct _Evas_Module_Task Evas_Module_Task;
+struct _Evas_Module_Task
+{
+   Eina_Bool (*cancelled)(void *data);
+   void *data;
+};
+
+static Eina_TLS task = 0;
+
+EAPI Eina_Bool
+evas_module_task_cancelled(void)
+{
+   Evas_Module_Task *t;
+
+   t = eina_tls_get(task);
+   if (!t) return EINA_FALSE;
+
+   return t->cancelled(t->data);
+}
+
+EAPI void
+evas_module_task_register(Eina_Bool (*cancelled)(void *data), void *data)
+{
+   Evas_Module_Task *t;
+
+   t = malloc(sizeof (Evas_Module_Task));
+   if (!t) return ;
+
+   t->cancelled = cancelled;
+   t->data = data;
+
+   eina_tls_set(task, t);
+}
+
+EAPI void
+evas_module_task_unregister(void)
+{
+    Evas_Module_Task *t;
+
+    t = eina_tls_get(task);
+    if (!t) return ;
+
+    eina_tls_set(task, NULL);
+    free(t);
+}
 
 static Eina_Hash *evas_modules[6] = {
   NULL,
@@ -317,6 +362,8 @@ evas_module_init(void)
    evas_modules[EVAS_MODULE_TYPE_VG_SAVER] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
 
    evas_engines = eina_array_new(4);
+
+   eina_tls_cb_new(&task, (Eina_TLS_Delete_Cb) evas_module_task_unregister);
 
    for (i = 0; evas_static_module[i].init; ++i)
      evas_static_module[i].init();
@@ -693,6 +740,8 @@ evas_module_shutdown(void)
    evas_modules[EVAS_MODULE_TYPE_VG_LOADER] = NULL;
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_VG_SAVER]);
    evas_modules[EVAS_MODULE_TYPE_VG_SAVER] = NULL;
+
+   eina_tls_free(task);
 
    EINA_LIST_FREE(evas_module_paths, path)
      free(path);
