@@ -119,6 +119,11 @@ evas_events_SOURCES = evas-events.c
 evas_events_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_events_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_event_filter
+evas_event_filter_SOURCES = evas-event-filter.c
+evas_event_filter_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_event_filter_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_multiseat_events
 evas_multiseat_events_SOURCES = evas-multiseat-events.c
 evas_multiseat_events_LDADD = $(ECORE_EVAS_COMMON_LDADD)
@@ -369,6 +374,7 @@ evas-aspect-hints.c \
 evas-box.c \
 evas-buffer-simple.c \
 evas-events.c \
+evas-event-filter.c \
 evas-hints.c \
 evas-images.c \
 evas-images2.c \
