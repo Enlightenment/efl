@@ -3649,7 +3649,7 @@ _efl_canvas_object_pointer_mode_by_device_set(Eo *eo_obj, Evas_Object_Protected_
                   cobj_data = efl_data_scope_get(cobj, EFL_CANVAS_OBJECT_CLASS);
 
                   cobj_pdata = _evas_object_pointer_data_get(pdata, cobj_data, dev);
-                  if (cobj_pdata) continue;
+                  if (!cobj_pdata) continue;
                   if (!cobj_pdata->mouse_grabbed) continue;
                   cobj_pdata->mouse_grabbed -= addgrab;
                   pdata->mouse_grabbed -= addgrab;
