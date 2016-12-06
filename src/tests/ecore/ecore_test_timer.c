@@ -34,6 +34,22 @@ struct _timers           // timer struct
    double precision[3];
 };
 
+static int
+_efl_test_jenkins_run(void)
+{
+   char *jenkins_url = NULL;
+
+   jenkins_url = getenv("JENKINS_URL");
+
+   if (!jenkins_url)
+     return 0;
+
+   if (strcmp(jenkins_url, "https://build.enlightenment.org/") == 0)
+     return 1;
+   else
+     return 0;
+}
+
 static Eina_Bool
 _timer1_cb(void *data)
 {
@@ -182,8 +198,12 @@ _ecore_promise_quit(void *data, const Efl_Event *ev)
    Eina_Bool *bob = data;
    double *start = success->value;
    double delta = ecore_loop_time_get() - *start;
+   double offset = 0.01;
 
-   ck_assert_msg(delta - 0.2 <= 0.02, "Ecore promise timeout took %f (should be <= 0.02)\n", delta - 0.2);
+   if (_efl_test_jenkins_run())
+     offset *= 5;
+
+   ck_assert_msg(delta - 0.2 <= offset, "Ecore promise timeout took %f (should be <= %f)\n", delta - 0.2, offset);
 
    *bob = EINA_TRUE;
    ecore_main_loop_quit();
