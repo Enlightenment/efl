@@ -1116,6 +1116,12 @@ struct _Evas_Object_Protected_Data
    Eina_List                  *grabs;
 
    Eina_Inlist                *callbacks;
+   /*
+      The list below contain the seats (Efl.Input.Devices) which this
+      object allows events to be reported (Mouse, Keybord and focus events).
+      If this list is empty, this object will allow events from any seat.
+    */
+   Eina_List                  *events_whitelist;
 
    struct {
       Eina_List               *clipees;

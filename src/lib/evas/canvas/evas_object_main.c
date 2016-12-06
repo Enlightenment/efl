@@ -887,6 +887,52 @@ evas_object_del(Evas_Object *eo_obj)
    efl_del(eo_obj);
 }
 
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_input_interface_seat_event_filter_get(Eo *eo_obj EINA_UNUSED,
+                                                             Evas_Object_Protected_Data *obj,
+                                                             Efl_Input_Device *seat)
+{
+   //If the list is empty this object accept events from any seat.
+   if (!obj->events_whitelist)
+     return EINA_TRUE;
+   return eina_list_data_find(obj->events_whitelist, seat) ?
+     EINA_TRUE : EINA_FALSE;
+}
+
+static void
+_whitelist_events_device_remove_cb(void *data, const Efl_Event *event)
+{
+   Evas_Object_Protected_Data *obj = data;
+   obj->events_whitelist = eina_list_remove(obj->events_whitelist,
+                                            event->object);
+}
+
+EOLIAN static void
+_efl_canvas_object_efl_input_interface_seat_event_filter_set(Eo *eo_obj,
+                                                             Evas_Object_Protected_Data *obj,
+                                                             Efl_Input_Device *seat,
+                                                             Eina_Bool add)
+{
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+
+   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   if (add)
+     {
+        if (eina_list_data_find(obj->events_whitelist, seat)) return;
+        if (efl_canvas_object_seat_focus_check(eo_obj, seat))
+          efl_canvas_object_seat_focus_del(eo_obj, seat);
+        obj->events_whitelist = eina_list_append(obj->events_whitelist, seat);
+        efl_event_callback_add(seat, EFL_EVENT_DEL,
+                               _whitelist_events_device_remove_cb, obj);
+     }
+   else
+     {
+        obj->events_whitelist = eina_list_remove(obj->events_whitelist, seat);
+        efl_event_callback_del(seat, EFL_EVENT_DEL,
+                               _whitelist_events_device_remove_cb, obj);
+     }
+}
+
 EOLIAN static void
 _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
@@ -914,6 +960,8 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, _evas_object_event_new(), NULL);
    if ((obj->layer) && (obj->layer->evas))
      _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
+   EINA_LIST_FREE(obj->events_whitelist, dev)
+     efl_event_callback_del(dev, EFL_EVENT_DEL, _whitelist_events_device_remove_cb, obj);
    if (obj->name) evas_object_name_set(eo_obj, NULL);
    if (!obj->layer)
      {
