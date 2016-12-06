@@ -262,6 +262,7 @@ static void st_collections_group_broadcast_signal(void);
 static void st_collections_group_data_item(void);
 static void st_collections_group_orientation(void);
 static void st_collections_group_mouse_events(void);
+static void st_collections_group_use_custom_seat_names(void);
 
 static void st_collections_group_limits_vertical(void);
 static void st_collections_group_limits_horizontal(void);
@@ -716,6 +717,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.program_source", st_collections_group_program_source},
      {"collections.group.inherit", st_collections_group_inherit},
      {"collections.group.inherit_only", st_collections_group_inherit_only},
+     {"collections.group.use_custom_seat_names", st_collections_group_use_custom_seat_names},
      {"collections.group.target_group", st_collections_group_target_group}, /* dup */
      {"collections.group.part_remove", st_collections_group_part_remove},
      {"collections.group.program_remove", st_collections_group_program_remove},
@@ -4517,6 +4519,43 @@ st_collections_group_inherit_only(void)
 /**
     @page edcref
     @property
+        use_custom_seat_names
+    @parameters
+        [1 or 0]
+    @effect
+        This flags a group as designed to listen for multiseat signals
+        following a custom naming instead of default Edje naming.
+        Seats are named on Edje as "seat1", "seat2", etc, in an incremental
+        way and never are changed.
+
+        But on Evas, names may be set on different places
+        (Evas, Ecore Evas backends, the application itself)
+        and name changes are allowed.
+        So custom names come from system at first, but can be overriden with
+        evas_device_name_set().
+        Also Evas seat names don't need to follow any pattern.
+
+        It's useful for cases where there is control of the
+        system, as seat names, or when the application
+        sets the devices names to guarantee they'll match
+        seat names on EDC.
+    @since 1.19
+    @endproperty
+*/
+static void
+st_collections_group_use_custom_seat_names(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->use_custom_seat_names = parse_bool(0);
+}
+
+/**
+    @page edcref
+    @property
         target_group
     @parameters
         [name] [part or program] (part or program) (part or program) ...
@@ -4692,6 +4731,7 @@ st_collections_group_inherit(void)
    pc->prop.orientation = pc2->prop.orientation;
 
    pc->lua_script_only = pc2->lua_script_only;
+   pc->use_custom_seat_names = pc2->use_custom_seat_names;
 
    pcp = (Edje_Part_Collection_Parser *)pc;
    pcp2 = (Edje_Part_Collection_Parser *)pc2;

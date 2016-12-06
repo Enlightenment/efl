@@ -15616,6 +15616,9 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    /* Limits */
    _edje_limits_source_generate(ed, buf, &ret);
 
+   if (pc->use_custom_seat_names)
+     BUF_APPENDF(I2 "use_custom_seat_names: 1;\n");
+
    /* Data */
    if (pc->data)
      {

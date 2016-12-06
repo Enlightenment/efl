@@ -515,8 +515,13 @@ _edje_device_add(Edje *ed, Efl_Input_Device *dev)
    char sig[256];
    Eina_List *l;
 
-   ed->seats_count++;
-   name = eina_stringshare_printf("seat%i", ed->seats_count);
+   if (ed->collection && ed->collection->use_custom_seat_names)
+     name = eina_stringshare_add(efl_input_device_name_get(dev));
+   else
+     {
+        ed->seats_count++;
+        name = eina_stringshare_printf("seat%i", ed->seats_count);
+     }
    EINA_SAFETY_ON_NULL_RETURN(name);
 
    EINA_LIST_FOREACH(ed->seats, l, s)
@@ -585,6 +590,71 @@ _edje_device_removed_cb(void *data, const Efl_Event *event)
 }
 
 static void
+_edje_device_changed_cb(void *data, const Efl_Event *event)
+{
+   Efl_Input_Device *dev = event->info;
+   Edje_Seat *s, *seat = NULL;
+   Eina_Stringshare *name;
+   Edje *ed = data;
+   char sig[256];
+   Eina_List *l;
+
+   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
+     return;
+
+   EINA_LIST_FOREACH(ed->seats, l, s)
+     {
+        if (s->device != dev)
+          continue;
+        seat = s;
+        break;
+     }
+
+   /* not registered seat */
+   if (!seat)
+     return;
+
+   name = efl_input_device_name_get(dev);
+   if (!name)
+     return;
+
+   /* no name changes */
+   if (eina_streq(seat->name, name))
+     return;
+
+   /* check if device name was changed to match name used on EDC */
+   EINA_LIST_FOREACH(ed->seats, l, s)
+     {
+        if (eina_streq(s->name, name))
+          {
+             if (s->device == dev)
+               continue;
+             if (s->device)
+               {
+                  WRN("Two seats were detected with the same name: %s.\n"
+                      "Fix it or focus will misbehave", name);
+                  break;
+               }
+
+             /* merge seats */
+             s->device = dev;
+             if (seat->focused_part)
+               s->focused_part = seat->focused_part;
+
+             ed->seats = eina_list_remove(ed->seats, seat);
+             eina_stringshare_del(seat->name);
+             free(seat);
+
+             return;
+          }
+     }
+
+   snprintf(sig, sizeof(sig), "seat,renamed,%s,%s", seat->name, name);
+   eina_stringshare_replace(&seat->name, name);
+   _edje_emit(ed, sig, "");
+}
+
+static void
 _edje_devices_add(Edje *ed, Evas *tev)
 {
    const Eina_List *devices, *l;
@@ -601,6 +671,10 @@ _edje_devices_add(Edje *ed, Evas *tev)
                           _edje_device_added_cb, ed);
    efl_event_callback_add(tev, EFL_CANVAS_EVENT_DEVICE_REMOVED,
                           _edje_device_removed_cb, ed);
+
+   if (ed->collection && ed->collection->use_custom_seat_names)
+     efl_event_callback_add(tev, EFL_CANVAS_EVENT_DEVICE_CHANGED,
+                            _edje_device_changed_cb, ed);
 }
 
 int
@@ -1704,6 +1778,10 @@ _edje_file_del(Edje *ed)
                                _edje_device_added_cb, ed);
         efl_event_callback_del(tev, EFL_CANVAS_EVENT_DEVICE_REMOVED,
                                _edje_device_removed_cb, ed);
+        if (ed->collection && ed->collection->use_custom_seat_names)
+          efl_event_callback_del(tev, EFL_CANVAS_EVENT_DEVICE_CHANGED,
+                                 _edje_device_changed_cb, ed);
+
         evas_event_freeze(tev);
      }
 

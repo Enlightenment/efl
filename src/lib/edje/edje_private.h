@@ -1137,6 +1137,7 @@ struct _Edje_Part_Collection
    unsigned char    broadcast_signal;
    unsigned char    physics_enabled; /* will be 1 if a body is declared */
    unsigned char    script_recursion; /* permits unsafe Embryo->EDC->Embryo scripting */
+   unsigned char    use_custom_seat_names;
    unsigned char    checked : 1;
 };
 
