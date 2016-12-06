@@ -1177,6 +1177,23 @@ eng_image_native_set(void *data, void *image, void *native)
                                                         NULL, 1,
                                                         EVAS_COLORSPACE_ARGB8888);
           }
+        else if ((ns) && (ns->type == EVAS_NATIVE_SURFACE_WL_DMABUF))
+          {
+             if (!ns->data.wl_dmabuf.resource)
+               {
+                  struct dmabuf_attributes *attr;
+                  void *v;
+
+                  attr = ns->data.wl_dmabuf.attr;
+                  v = import_simple_dmabuf(ob->egl.disp, attr);
+                  if (!v) {
+                       ns->data.wl_dmabuf.attr = NULL;
+                       return NULL;
+                    }
+                  glsym_eglDestroyImage(ob->egl.disp, v);
+                  return NULL;
+               }
+          }
         else
           return NULL;
      }
