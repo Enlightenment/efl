@@ -179,8 +179,9 @@ _key_down_cb(void *data EINA_UNUSED, const Efl_Event *event)
            evas_object_name_get(event->object),
            efl_input_device_name_get(seat));
 
-   // FIXME use evas_seat_key_modifier_is_set() after PR is merged
-   (void) mods;
+   if (evas_seat_key_modifier_is_set(mods, "Control", seat))
+     fprintf(stdout, "Ctrl is pressed by seat %s\n",
+             efl_input_device_name_get(seat));
 }
 
 static void
