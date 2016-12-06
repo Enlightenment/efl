@@ -22,7 +22,7 @@ static const char EFL_MODEL_ERROR_PERMISSION_DENIED_STR[] = "Permission denied";
 static const char EFL_MODEL_ERROR_INCORRECT_VALUE_STR[]   = "Incorrect value";
 
 EAPI int
-efl_model_init()
+efl_model_init(void)
 {
    EFL_MODEL_ERROR_INCORRECT_VALUE = eina_error_msg_static_register(
                    EFL_MODEL_ERROR_INCORRECT_VALUE_STR);

@@ -1622,14 +1622,14 @@ static int init_cnt = 0;
 int _evas_filter_log_dom = 0;
 
 void
-evas_filter_init()
+evas_filter_init(void)
 {
    if ((init_cnt++) > 0) return;
    _evas_filter_log_dom = eina_log_domain_register("evas_filter", EVAS_FILTER_LOG_COLOR);
 }
 
 void
-evas_filter_shutdown()
+evas_filter_shutdown(void)
 {
    if ((--init_cnt) > 0) return;
    evas_filter_parser_shutdown();

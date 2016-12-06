@@ -26,7 +26,7 @@
 
 /* create new header */
 Evas_Model_Load_Save_Header
-evas_model_load_save_header_new()
+evas_model_load_save_header_new(void)
 {
    Evas_Model_Load_Save_Header header;
 

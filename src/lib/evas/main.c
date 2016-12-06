@@ -50,7 +50,7 @@ evas_mem_calloc(int size)
 }
 
 static void
-_evas_debug_init_from_env()
+_evas_debug_init_from_env(void)
 {
    const char *tmp = getenv("EVAS_DEBUG_SHOW");
    if (tmp)

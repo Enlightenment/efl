@@ -306,7 +306,7 @@ _shared_index_close(Shared_Index *si)
 }
 
 static void
-_shared_index_close_all()
+_shared_index_close_all(void)
 {
    DBG("Closing all index files");
    if (_index.strings_entries.f)
@@ -325,7 +325,7 @@ _shared_index_close_all()
 }
 
 static Eina_Bool
-_server_reconnect()
+_server_reconnect(void)
 {
    _shared_index_close_all();
 

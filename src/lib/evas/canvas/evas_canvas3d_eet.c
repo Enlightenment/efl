@@ -27,7 +27,7 @@ _evas_canvas3d_eet_file_new(void)
 }
 
 Eet_Data_Descriptor*
-_evas_canvas3d_eet_file_get()
+_evas_canvas3d_eet_file_get(void)
 {
    if(_file_descriptor == NULL)
      _evas_canvas3d_eet_file_init();
@@ -35,7 +35,7 @@ _evas_canvas3d_eet_file_get()
    return _file_descriptor;
 }
 void
-_evas_canvas3d_eet_file_init()
+_evas_canvas3d_eet_file_init(void)
 {
 /* initialization of bonding between structure units in eet file */
    Eet_Data_Descriptor_Class eddc;
@@ -158,7 +158,7 @@ _evas_canvas3d_eet_file_init()
 }
 
 void
-_evas_canvas3d_eet_descriptor_shutdown()
+_evas_canvas3d_eet_descriptor_shutdown(void)
 {
    eet_data_descriptor_free(_geometry_descriptor);
    _geometry_descriptor = NULL;

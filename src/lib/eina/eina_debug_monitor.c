@@ -648,7 +648,7 @@ _eina_debug_monitor_signal_init(void)
 }
 
 static const char *
-_socket_home_get()
+_socket_home_get(void)
 {
    // get possible debug daemon socket directory base
    const char *dir = getenv("XDG_RUNTIME_DIR");

@@ -64,7 +64,7 @@ _eo_call_stack_mem_free(void *ptr, size_t size)
 }
 
 static Efl_Object_Call_Stack *
-_eo_call_stack_create()
+_eo_call_stack_create(void)
 {
    Efl_Object_Call_Stack *stack;
 

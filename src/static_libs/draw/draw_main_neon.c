@@ -214,7 +214,7 @@ comp_func_source_over_sse2(uint32_t * __restrict dest, const uint32_t * __restri
 #endif
 
 void
-efl_draw_neon_init()
+efl_draw_neon_init(void)
 {
 #ifdef BUILD_NEON
    if (eina_cpu_features_get() & EINA_CPU_NEON)

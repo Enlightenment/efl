@@ -48,7 +48,7 @@ struct _OBJ_Counts
 
 /* create new counter */
 static inline OBJ_Counts
-_new_count_elements()
+_new_count_elements(void)
 {
    OBJ_Counts counts;
 

@@ -196,7 +196,7 @@ evas_gl_free(Evas_GL *evas_gl)
 }
 
 EAPI Evas_GL_Config *
-evas_gl_config_new()
+evas_gl_config_new(void)
 {
    Evas_GL_Config *cfg;
 
