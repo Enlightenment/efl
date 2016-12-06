@@ -4355,14 +4355,14 @@ _elm_interface_scrollable_last_page_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smar
    if (pagenumber_h)
      {
         if ((sid->pagesize_h > 0) && (cw > sid->pagesize_h))
-          *pagenumber_h = cw / sid->pagesize_h - 1;
+          *pagenumber_h = ceil((double)cw / (double)sid->pagesize_h) - 1;
         else
           *pagenumber_h = 0;
      }
    if (pagenumber_v)
      {
         if ((sid->pagesize_v > 0) && (ch > sid->pagesize_v))
-          *pagenumber_v = ch / sid->pagesize_v - 1;
+          *pagenumber_v = ceil((double)ch / (double)sid->pagesize_v) - 1;
         else
           *pagenumber_v = 0;
      }
