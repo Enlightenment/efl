@@ -19,9 +19,10 @@ _native_bind_cb(void *image, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UN
    struct dmabuf_attributes *a;
    int size;
    RGBA_Image *im = image;
-   Native *n = im->native.data;
 
-   if (!im || !n) return;
+   if (!im) return;
+   Native *n = im->native.data;
+   if (!n) return;
    if (n->ns.type != EVAS_NATIVE_SURFACE_WL_DMABUF)
      return;
 
@@ -44,9 +45,10 @@ static void
 _native_unbind_cb(void *image)
 {
    RGBA_Image *im = image;
-   Native *n = im->native.data;
 
-   if (!im || !n) return;
+   if (!im) return;
+   Native *n = im->native.data;
+   if (!n) return;
    if (n->ns.type != EVAS_NATIVE_SURFACE_WL_DMABUF)
      return;
 }
@@ -55,9 +57,9 @@ static void
 _native_free_cb(void *image)
 {
    RGBA_Image *im = image;
-   Native *n = im->native.data;
 
    if (!im) return;
+   Native *n = im->native.data;
 
    if (im->image.data)
      munmap(n->ns_data.wl_surface_dmabuf.ptr,
