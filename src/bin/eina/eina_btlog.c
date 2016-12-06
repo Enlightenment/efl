@@ -432,10 +432,17 @@ main(int argc, char **argv)
         return 1;
      }
 
+ repeat:
    while (fgets(buf, sizeof(buf) - 1, stdin))
      {
         btl = bt_append(btl, buf);
+        if (show_compact) goto do_show;
+        bt = eina_list_last_data_get(btl);
+        if (bt && !bt->bin_dir) break; /* flush once first non-bt is found */
      }
+
+   /* compute columns for expanded display */
+   for (i = 0; i < 6; i++) cols[i] = 0;
    EINA_LIST_FOREACH(btl, l, bt)
      {
         if (!bt->bin_dir) continue;
@@ -456,6 +463,8 @@ main(int argc, char **argv)
         len = strlen(bt->func_name);
         if (len > cols[5]) cols[5] = len;
      }
+
+ do_show:
    EINA_LIST_FOREACH(btl, l, bt)
      {
         if (bt->comment && show_comments)
@@ -505,6 +514,8 @@ main(int argc, char **argv)
         free(bt->comment);
         free(bt);
      }
+   /* if not EOF, then we just flushed due non-bt line, try again */
+   if (!feof(stdin)) goto repeat;
 
    eina_shutdown();
 
