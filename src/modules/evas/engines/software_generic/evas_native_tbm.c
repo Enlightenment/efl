@@ -210,11 +210,12 @@ static void
 _native_bind_cb(void *image, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    RGBA_Image *im = image;
-   Native *n = im->native.data;
    tbm_surface_info_s info;
    tbm_surface_h tbm_surf;
 
-   if (!im || !n) return;
+   if (!im) return;
+   Native *n = im->native.data;
+   if (!n) return;
    if (n->ns.type != EVAS_NATIVE_SURFACE_TBM)
      return;
 
@@ -229,10 +230,11 @@ static void
 _native_unbind_cb(void *image)
 {
    RGBA_Image *im = image;
-   Native *n = im->native.data;
    tbm_surface_h tbm_surf;
 
-   if (!im || !n) return;
+   if (!im) return;
+   Native *n = im->native.data;
+   if (!n) return;
    if (n->ns.type != EVAS_NATIVE_SURFACE_TBM)
      return;
 
@@ -244,9 +246,9 @@ static void
 _native_free_cb(void *image)
 {
    RGBA_Image *im = image;
-   Native *n = im->native.data;
 
    if (!im) return;
+   Native *n = im->native.data;
 
    im->native.data        = NULL;
    im->native.func.bind   = NULL;
