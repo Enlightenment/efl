@@ -192,7 +192,7 @@ cpp_hash_cleanup(cpp_reader * pfile EINA_UNUSED)
 
    for (i = HASHSIZE; --i >= 0;)
      {
-	while (hashtab[i])
-	   delete_macro(hashtab[i]);
+        if (hashtab[i])
+          delete_macro(hashtab[i]);
      }
 }
