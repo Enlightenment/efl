@@ -341,13 +341,26 @@ typedef enum
    EOLIAN_DOC_TOKEN_UNKNOWN = -1,
    EOLIAN_DOC_TOKEN_TEXT,
    EOLIAN_DOC_TOKEN_REF,
-   EOLIAN_DOC_TOKEN_REF_EVENT,
    EOLIAN_DOC_TOKEN_MARK_NOTE,
    EOLIAN_DOC_TOKEN_MARK_WARNING,
    EOLIAN_DOC_TOKEN_MARK_REMARK,
    EOLIAN_DOC_TOKEN_MARK_TODO,
    EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE
 } Eolian_Doc_Token_Type;
+
+typedef enum
+{
+   EOLIAN_DOC_REF_INVALID = 0,
+   EOLIAN_DOC_REF_CLASS,
+   EOLIAN_DOC_REF_FUNC,
+   EOLIAN_DOC_REF_EVENT,
+   EOLIAN_DOC_REF_ALIAS,
+   EOLIAN_DOC_REF_STRUCT,
+   EOLIAN_DOC_REF_STRUCT_FIELD,
+   EOLIAN_DOC_REF_ENUM,
+   EOLIAN_DOC_REF_ENUM_FIELD,
+   EOLIAN_DOC_REF_VAR
+} Eolian_Doc_Ref_Type;
 
 typedef struct _Eolian_Doc_Token
 {
@@ -2377,6 +2390,25 @@ EAPI Eolian_Doc_Token_Type eolian_doc_token_type_get(const Eolian_Doc_Token *tok
  * @return the token text
  */
 EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
+
+/*
+ * @brief Get the thing that a reference token references.
+ *
+ * Returns EOLIAN_DOC_REF_INVALID on failure (when not ref token or
+ * invalid ref, but invalid refs don't happen when database is validated).
+ *
+ * When the reference is a class, alias, struct, enum or var, the first data arg
+ * is filled. When it's a func, the first data is class and second data is
+ * the respective Eolian_Implement, when it's an event the first data is class
+ * and the second data is the event, when it's a struct field or enum field
+ * the first data is is the struct/enum and the second data is the field.
+ *
+ * @param[in] tok the token
+ * @param[out] data the primary data
+ * @param[out] data2 the secondary data
+ * @return the kind of reference this is
+ */
+EAPI Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data, const void **data2);
 
 #endif
 

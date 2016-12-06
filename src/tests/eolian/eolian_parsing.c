@@ -1199,8 +1199,8 @@ START_TEST(eolian_docs)
    EINA_LIST_FREE(sdoc, dpar)
      free(dpar);
 
-   const char *tdoc = "Note: This is $something, see @Blah, "
-                      "@Foo.Bar.baz, \\@ref foo and @[Things.Stuffs.foo,bar].";
+   const char *tdoc = "Note: This is $something, see @pants, "
+                      "@Docs.meth, \\@ref foo and @[Things.Stuffs.foo,bar].";
 
    Eolian_Doc_Token tok;
    eolian_doc_token_init(&tok);
@@ -1228,7 +1228,8 @@ START_TEST(eolian_docs)
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
    txt = eolian_doc_token_text_get(&tok);
-   fail_if(strcmp(txt, "Blah"));
+   fail_if(strcmp(txt, "pants"));
+   fail_if(eolian_doc_token_ref_get(&tok, NULL, NULL) != EOLIAN_DOC_REF_VAR);
    free(txt);
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
@@ -1238,7 +1239,8 @@ START_TEST(eolian_docs)
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
    txt = eolian_doc_token_text_get(&tok);
-   fail_if(strcmp(txt, "Foo.Bar.baz"));
+   fail_if(strcmp(txt, "Docs.meth"));
+   fail_if(eolian_doc_token_ref_get(&tok, NULL, NULL) != EOLIAN_DOC_REF_FUNC);
    free(txt);
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
@@ -1246,7 +1248,7 @@ START_TEST(eolian_docs)
    fail_if(strcmp(txt, ", @ref foo and "));
    free(txt);
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
-   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF_EVENT);
+   fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
    txt = eolian_doc_token_text_get(&tok);
    fail_if(strcmp(txt, "[Things.Stuffs.foo,bar]"));
    free(txt);

@@ -302,7 +302,7 @@ _get_ref_token(const char *doc, const char **doc_end)
      *doc_end = doc;
 
    /* got a reference */
-   return is_event ? EOLIAN_DOC_TOKEN_REF_EVENT : EOLIAN_DOC_TOKEN_REF;
+   return EOLIAN_DOC_TOKEN_REF;
 }
 
 EAPI const char *
@@ -417,7 +417,8 @@ mloop:
    return ret->text_end;
 }
 
-EAPI void eolian_doc_token_init(Eolian_Doc_Token *tok)
+EAPI void
+eolian_doc_token_init(Eolian_Doc_Token *tok)
 {
    if (!tok)
      return;
@@ -446,6 +447,146 @@ eolian_doc_token_text_get(const Eolian_Doc_Token *tok)
           eina_strbuf_append_char(buf, *p);
      }
    return eina_strbuf_string_steal(buf);
+}
+
+static Eolian_Doc_Ref_Type
+_resolve_event(char *name, const void **data, const void **data2)
+{
+   /* never trust the user */
+   if (name[0] == ',')
+     return EOLIAN_DOC_REF_INVALID;
+
+   char *evname = strrchr(name, '.');
+   if (!evname)
+     return EOLIAN_DOC_REF_INVALID;
+
+   *evname++ = '\0';
+   const Eolian_Class *cl = eolian_class_get_by_name(name);
+   if (!cl)
+     return EOLIAN_DOC_REF_INVALID;
+
+   const Eolian_Event *ev = eolian_class_event_get_by_name(cl, evname);
+   if (!ev)
+     return EOLIAN_DOC_REF_INVALID;
+
+   if (data) *data = cl;
+   if (data2) *data2 = ev;
+   return EOLIAN_DOC_REF_EVENT;
+}
+
+EAPI Eolian_Doc_Ref_Type
+eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
+                         const void **data2)
+{
+   if (tok->type != EOLIAN_DOC_TOKEN_REF)
+     return EOLIAN_DOC_REF_INVALID;
+
+   size_t nlen = tok->text_end - tok->text;
+
+   /* events are handled separately */
+   if (tok->text[0] == '[')
+     {
+        /* strip brackets */
+        size_t elen = nlen - 2;
+        char *ename = alloca(elen + 1);
+        memcpy(ename, tok->text + 1, elen);
+        ename[elen] = '\0';
+        return _resolve_event(ename, data, data2);
+     }
+
+   char *name = alloca(nlen + 1);
+   memcpy(name, tok->text, nlen);
+   name[nlen] = '\0';
+
+   const Eolian_Declaration *decl = eolian_declaration_get_by_name(name);
+   if (decl) switch (eolian_declaration_type_get(decl))
+     {
+      case EOLIAN_DECL_CLASS:
+        if (data) *data = eolian_declaration_class_get(decl);
+        return EOLIAN_DOC_REF_CLASS;
+      case EOLIAN_DECL_ALIAS:
+        if (data) *data = eolian_declaration_data_type_get(decl);
+        return EOLIAN_DOC_REF_ALIAS;
+      case EOLIAN_DECL_STRUCT:
+        if (data) *data = eolian_declaration_data_type_get(decl);
+        return EOLIAN_DOC_REF_STRUCT;
+      case EOLIAN_DECL_ENUM:
+        if (data) *data = eolian_declaration_data_type_get(decl);
+        return EOLIAN_DOC_REF_ENUM;
+      case EOLIAN_DECL_VAR:
+        if (data) *data = eolian_declaration_variable_get(decl);
+        return EOLIAN_DOC_REF_VAR;
+      default:
+        /* this will not happen but silence static analyzers */
+        return EOLIAN_DOC_REF_INVALID;
+     }
+
+   /* from here it can only be a function, a struct field or an enum field */
+
+   char *suffix = strrchr(name, '.');
+   /* no suffix, therefore invalid */
+   if (!suffix)
+     return EOLIAN_DOC_REF_INVALID;
+
+   /* name will terminate before suffix, suffix will be standalone */
+   *suffix++ = '\0';
+
+   /* try a struct field */
+   const Eolian_Typedecl *tpd = eolian_typedecl_struct_get_by_name(name);
+   if (tpd)
+     {
+        const Eolian_Struct_Type_Field *fld = eolian_typedecl_struct_field_get(tpd, suffix);
+        /* field itself is invalid */
+        if (!fld)
+          return EOLIAN_DOC_REF_INVALID;
+        if (data) *data = tpd;
+        if (data2) *data2 = fld;
+        return EOLIAN_DOC_REF_STRUCT_FIELD;
+     }
+
+   /* try an enum field */
+   tpd = eolian_typedecl_enum_get_by_name(name);
+   if (tpd)
+     {
+        const Eolian_Enum_Type_Field *fld = eolian_typedecl_enum_field_get(tpd, suffix);
+        /* field itself is invalid */
+        if (!fld)
+          return EOLIAN_DOC_REF_INVALID;
+        if (data) *data = tpd;
+        if (data2) *data2 = fld;
+        return EOLIAN_DOC_REF_ENUM_FIELD;
+     }
+
+   /* now it can only be a function or invalid */
+
+   Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
+   if (!strcmp(suffix, "get"))
+     ftype = EOLIAN_PROP_GET;
+   else if (!strcmp(suffix, "set"))
+     ftype = EOLIAN_PROP_SET;
+
+   if (ftype != EOLIAN_UNRESOLVED)
+     {
+        suffix = strrchr(name, '.');
+        /* wrong suffix, therefore invalid */
+        if (!suffix)
+          return EOLIAN_DOC_REF_INVALID;
+        /* re-terminate */
+        *suffix++ = '\0';
+     }
+
+   const Eolian_Class *cl = eolian_class_get_by_name(name);
+   if (!cl)
+     return EOLIAN_DOC_REF_INVALID;
+
+   const Eolian_Function *fid = eolian_class_function_get_by_name(cl, suffix, ftype);
+   if (!fid)
+     return EOLIAN_DOC_REF_INVALID;
+
+   /* got a func */
+   if (data) *data = cl;
+   if (data2) *data2 = fid;
+   return EOLIAN_DOC_REF_FUNC;
 }
 
 #define EO_SUFFIX ".eo"
