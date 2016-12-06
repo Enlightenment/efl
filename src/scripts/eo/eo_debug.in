@@ -1,9 +1,98 @@
 #!/bin/sh
 prefix="@prefix@"
 exec_prefix="@exec_prefix@"
+
+check_args=1
+while [ $# -ge 1 -a $check_args -eq 1 ]; do
+    case "$1" in
+        -l*|--lifecycle-debug*)
+            ARG="$1"
+            shift
+            CLASSES=`echo "$ARG" | cut -d= -f2`
+            if [ "$CLASSES" = "$ARG" -o -z "$CLASSES" ]; then
+                CLASSES=1
+            fi
+            export EO_LIFECYCLE_DEBUG=$CLASSES
+            ;;
+
+        -L*|--lifecycle-no-debug*)
+            ARG="$1"
+            shift
+            CLASSES=`echo "$ARG" | cut -d= -f2`
+            if [ "$CLASSES" = "$ARG" -o -z "$CLASSES" ]; then
+                echo "ERROR: missing option parameter (Classes to avoid lifecycle debug)" >&2
+                exit 1
+            fi
+            export EO_LIFECYCLE_NO_DEBUG=$CLASSES
+            ;;
+
+        -h|--help)
+            echo "Usage:"
+            echo
+            echo "    $0 [options] <executable> [executable parameters]"
+            echo
+            echo "Options:"
+            echo "    -l, --lifecycle-debug[=class1,class2]   Turn on debug for object "
+            echo "                                            lifecycle, optionally provides "
+            echo "                                            a whitelist of classes to be allowed."
+            echo "    -L, --lifecycle-no-debug=class1,class2  Disable lifecycle for the"
+            echo "                                            selected classes."
+            echo "    -h, --help                              This message."
+            exit 0
+            ;;
+
+        *)
+            check_args=0
+            break
+    esac
+done
+
 if [ $# -lt 1 ]
 then
-   echo "Usage: $0 <executable> [executable parameters]"
-else
-   LD_PRELOAD="@libdir@/libeo_dbg.so" "$@"
+    echo "Usage: $0 [options] <executable> [executable parameters]" >&2
+    exit 1
 fi
+
+if [ -z "${EFL_RUN_IN_TREE}" ]; then
+    export LD_PRELOAD="@libdir@/libeo_dbg.so"
+    btlog_bin=eina_btlog
+else
+    bd=$PWD
+    while [ ! -d "${bd}/src/lib/eo/.libs" ]; do
+        bd=`dirname "$bd"`
+        if [ $bd = / ]; then
+            echo "ERROR: EFL_RUN_IN_TREE must be used from inside EFL build tree" >&2
+            exit 1
+        fi
+    done
+    export LD_PRELOAD="$bd/src/lib/eo/.libs/libeo_dbg.so"
+    btlog_bin="$bd/src/bin/eina/eina_btlog"
+fi
+
+if [ "${EINA_LOG_COLOR_DISABLE}" = 1 ]; then
+    btlog_opts="-n"
+elif [ ! -t 1 ]; then
+    btlog_opts="-n"
+else
+    btlog_opts=""
+    # force color otherwise it will be disabled
+    # since we're using a pipe to eina_btlog
+    export EINA_LOG_COLOR_DISABLE=0
+fi
+
+if [ ! -z "$EO_LIFECYCLE_DEBUG" ]; then
+    if ! echo "$EINA_LOG_LEVELS" | grep "eo_lifecycle:" >/dev/null 2>/dev/null; then
+        export EINA_LOG_LEVELS="eo_lifecycle:4,$EINA_LOG_LEVELS"
+    fi
+fi
+
+# 3>&1 1>&2 2>&3: swaps stdout and stderr
+#
+# we need it since eina_btlog reads from stdin and that's the result
+# of command's stdout.
+#
+# at the end we need it again, since eina_btlog outputs to stdout, and
+# that is supposed to be stderr... while stderr was actually the
+# original command's ($@) stdout!
+
+("$@" 3>&1 1>&2 2>&3 | ${btlog_bin} ${btlog_opts} -c) 3>&1 1>&2 2>&3
