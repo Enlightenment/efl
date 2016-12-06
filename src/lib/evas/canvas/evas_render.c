@@ -1845,12 +1845,12 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                  (obj->map->surface_h != sh))
                {
                   RD(level, "  new surf: %ix%i\n", sw, sh);
-		  EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
-		    {
-                      ENFN->image_free(ENDT, map_write->surface);
-		      map_write->surface = NULL;
-		    }
-		  EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
+                  EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+                    {
+                       ENFN->image_free(ENDT, map_write->surface);
+                       map_write->surface = NULL;
+                    }
+                  EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
                }
           }
         if (!obj->map->surface)
@@ -2011,22 +2011,22 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                          }
                     }
                }
-          }
-        ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
 
-        if (obj->cur->cache.clip.visible || !proxy_src_clip)
-          {
-             ENFN->context_multiplier_unset(ENDT, ctx);
-             ENFN->context_render_op_set(ENDT, ctx, obj->cur->render_op);
+             if (obj->cur->cache.clip.visible || !proxy_src_clip)
+               {
+                  ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
+                  ENFN->context_multiplier_unset(ENDT, ctx);
+                  ENFN->context_render_op_set(ENDT, ctx, obj->cur->render_op);
 #ifdef REND_DBG
-             int _c, _cx, _cy, _cw, _ch;
-             _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
-             RD(level, "  draw image map(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
+                  int _c, _cx, _cy, _cw, _ch;
+                  _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
+                  RD(level, "  draw image map(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
 #endif
-             evas_draw_image_map_async_check
-               (obj, ENDT, ctx, surface,
-                obj->map->surface, obj->map->spans,
-                obj->map->cur.map->smooth, 0, do_async);
+                  evas_draw_image_map_async_check
+                     (obj, ENDT, ctx, surface,
+                      obj->map->surface, obj->map->spans,
+                      obj->map->cur.map->smooth, 0, do_async);
+               }
           }
 
         ENFN->context_free(ENDT, ctx);
