@@ -148,7 +148,7 @@ eina_counter_free(Eina_Counter *counter)
         free(clk);
      }
 
-        free(counter);
+   free(counter);
 }
 
 EAPI void
