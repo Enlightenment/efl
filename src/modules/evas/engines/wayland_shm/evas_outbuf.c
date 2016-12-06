@@ -344,7 +344,7 @@ _evas_outbuf_rotation_get(Outbuf *ob)
 }
 
 void 
-_evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize)
+_evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize, Eina_Bool hidden)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -362,6 +362,7 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
    ob->rotation = rot;
    ob->depth = depth;
    ob->priv.destination_alpha = alpha;
+   ob->hidden = hidden;
 
    if (ob->hidden) return;
 

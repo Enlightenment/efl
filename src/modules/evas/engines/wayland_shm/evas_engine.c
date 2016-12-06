@@ -20,6 +20,8 @@ static Evas_Func func, pfunc;
 Evas_Native_Tbm_Surface_Image_Set_Call  glsym__evas_native_tbm_surface_image_set = NULL;
 Evas_Native_Tbm_Surface_Stride_Get_Call  glsym__evas_native_tbm_surface_stride_get = NULL;
 
+static void eng_output_resize(void *data, int w, int h);
+
 /* engine structure data */
 typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
@@ -162,14 +164,7 @@ eng_setup(Evas *eo_evas, void *info)
           goto err;
      }
    else if ((einfo->info.wl_surface) && (!einfo->info.hidden))
-     {
-        Outbuf *ob;
-
-        ob = _evas_outbuf_setup(epd->output.w, epd->output.h, einfo);
-        if (ob)  evas_render_engine_software_generic_update(&re->generic, ob,
-                                                            epd->output.w,
-                                                            epd->output.h);
-     }
+     eng_output_resize(re, epd->output.w, epd->output.h);
 
    epd->engine.data.output = re;
    if (!epd->engine.data.output)
@@ -218,7 +213,8 @@ eng_output_resize(void *data, int w, int h)
 
    _evas_outbuf_reconfigure(re->generic.ob, w, h,
                             einfo->info.rotation, einfo->info.depth,
-                            einfo->info.destination_alpha, resize);
+                            einfo->info.destination_alpha, resize,
+                            einfo->info.hidden);
 
    evas_common_tilebuf_free(re->generic.tb);
    if ((re->generic.tb = evas_common_tilebuf_new(w, h)))
