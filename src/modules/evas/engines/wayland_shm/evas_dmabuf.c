@@ -620,6 +620,7 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count,
     * most recently filled unassigned buffer and make sure it gets
     * displayed.
     */
+   if (surface->pre) surface->pre->busy = EINA_FALSE;
    if (!b->wl_buffer)
      {
         surface->pre = b;
