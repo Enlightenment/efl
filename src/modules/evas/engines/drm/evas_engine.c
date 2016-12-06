@@ -96,6 +96,11 @@ eng_setup(Evas *evas, void *einfo)
      {
         _outbuf_reconfigure(re->generic.ob, epd->output.w, epd->output.h,
                             info->info.rotation, info->info.depth);
+
+        evas_render_engine_software_generic_update(&re->generic,
+                                                   re->generic.ob,
+                                                   epd->output.w,
+                                                   epd->output.h);
      }
 
    epd->engine.data.output = re;
