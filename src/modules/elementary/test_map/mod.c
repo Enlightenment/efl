@@ -87,6 +87,12 @@ map_module_tile_scale_get(const Evas_Object *obj EINA_UNUSED, double lon EINA_UN
    return 0;
 }
 
+EAPI Evas_Object *
+map_module_tile_copyright_get(Evas_Object *obj EINA_UNUSED)
+{
+   return NULL;
+}
+
 static Eina_Bool
 _module_init(void)
 {

@@ -264,14 +264,27 @@ _scale_cb(const Evas_Object *obj EINA_UNUSED,
    return _osm_scale_meter[zoom] * cos(lat * ELM_PI / 180.0);
 }
 
+static Evas_Object *
+_osm_copyright_cb(Evas_Object *obj)
+{
+   Evas_Object *label;
+
+   label = elm_label_add(obj);
+   elm_object_text_set(label, "<color=#000000FF><backing=on><backing_color=#FCFCFBFF><shadow_color=#00000000>"
+                       "openstreetmap.org opendatacommons.org creativecommons.org"
+                       "</shadow_color></backing_color></backing></color>");
+
+   return label;
+}
+
 static const Source_Tile src_tiles[] =
 {
-   {"Mapnik", 0, 18, _mapnik_url_cb, NULL, NULL, _scale_cb},
-   {"Osmarender", 0, 17, _osmarender_url_cb, NULL, NULL, _scale_cb},
-   {"CycleMap", 0, 16, _cyclemap_url_cb, NULL, NULL, _scale_cb},
-   {"MapQuest", 0, 18, _mapquest_url_cb, NULL, NULL, _scale_cb},
+   {"Mapnik", 0, 18, _mapnik_url_cb, NULL, NULL, _scale_cb, _osm_copyright_cb},
+   {"Osmarender", 0, 17, _osmarender_url_cb, NULL, NULL, _scale_cb, _osm_copyright_cb},
+   {"CycleMap", 0, 16, _cyclemap_url_cb, NULL, NULL, _scale_cb, _osm_copyright_cb},
+   {"MapQuest", 0, 18, _mapquest_url_cb, NULL, NULL, _scale_cb, _osm_copyright_cb},
    {"MapQuest Open Aerial", 0, 11, _mapquest_aerial_url_cb, NULL, NULL,
-    _scale_cb}
+    _scale_cb, _osm_copyright_cb}
 };
 
 static void _kml_parse(Elm_Map_Route *r);
@@ -2651,6 +2664,18 @@ _overlay_show(Elm_Map_Overlay *overlay)
 }
 
 static void
+_copyright_place(Elm_Map_Data *sd)
+{
+   Evas_Coord w, h;
+   Evas_Coord vw, vx, vy, vh;
+
+   _viewport_coord_get(sd, &vx, &vy, &vw, &vh);
+   _coord_to_canvas_no_rotation(sd, vx, vy, &vx, &vy);
+   evas_object_size_hint_min_get(sd->copyright, &w, &h);
+   _obj_place(sd->copyright, vx + vw - w, vy + vh - h, w, h);
+}
+
+static void
 _overlay_place(Elm_Map_Data *sd)
 {
    Eina_List *l, *ll;
@@ -3406,6 +3431,17 @@ _source_tile_set(Elm_Map_Data *sd,
    if (sd->src_tile->zoom_min > sd->zoom_min)
      sd->zoom_min = sd->src_tile->zoom_min;
 
+   ELM_SAFE_FREE(sd->copyright, evas_object_del);
+   if (sd->src_tile->copyright_cb)
+     {
+        sd->copyright = sd->src_tile->copyright_cb(sd->obj);
+        if (sd->copyright)
+          {
+             evas_object_smart_member_add(sd->copyright, sd->pan_obj);
+             evas_object_stack_above(sd->copyright, sd->sep_maps_overlays);
+          }
+     }
+
    _grid_all_clear(sd);
    _grid_all_create(sd);
    _zoom_do(sd, sd->zoom);
@@ -3477,6 +3513,7 @@ _source_mod_cb(Eina_Module *m,
    Elm_Map_Module_Source_Name_Func name_cb;
    Elm_Map_Module_Tile_Url_Func tile_url_cb;
    Elm_Map_Module_Tile_Scale_Func scale_cb;
+   Elm_Map_Module_Tile_Copyright_Func copyright_cb;
    Elm_Map_Module_Tile_Zoom_Min_Func zoom_min;
    Elm_Map_Module_Tile_Zoom_Max_Func zoom_max;
    Elm_Map_Module_Tile_Geo_to_Coord_Func geo_to_coord;
@@ -3503,7 +3540,6 @@ _source_mod_cb(Eina_Module *m,
         return EINA_FALSE;
      }
    free(dir);
-
    if (!eina_module_load(m)) return EINA_FALSE;
 
    name_cb = eina_module_symbol_get(m, "map_module_source_name_get");
@@ -3520,6 +3556,7 @@ _source_mod_cb(Eina_Module *m,
    geo_to_coord = eina_module_symbol_get(m, "map_module_tile_geo_to_coord");
    coord_to_geo = eina_module_symbol_get(m, "map_module_tile_coord_to_geo");
    scale_cb = eina_module_symbol_get(m, "map_module_tile_scale_get");
+   copyright_cb = eina_module_symbol_get(m, "map_module_tile_copyright_get");
    if (tile_url_cb && zoom_min && zoom_max && geo_to_coord && coord_to_geo &&
        scale_cb)
      {
@@ -3533,6 +3570,7 @@ _source_mod_cb(Eina_Module *m,
         s->geo_to_coord = geo_to_coord;
         s->coord_to_geo = coord_to_geo;
         s->scale_cb = scale_cb;
+        s->copyright_cb = copyright_cb;
         sd->src_tiles = eina_list_append(sd->src_tiles, s);
      }
 
@@ -3629,6 +3667,7 @@ _source_all_load(Elm_Map_Data *sd)
         src_tile->geo_to_coord = src_tiles[idx].geo_to_coord;
         src_tile->coord_to_geo = src_tiles[idx].coord_to_geo;
         src_tile->scale_cb = src_tiles[idx].scale_cb;
+        src_tile->copyright_cb = src_tiles[idx].copyright_cb;
         sd->src_tiles = eina_list_append(sd->src_tiles, src_tile);
      }
    // Load hard coded ROUTE source
@@ -3885,6 +3924,8 @@ _elm_map_pan_efl_canvas_group_group_calculate(Eo *obj, Elm_Map_Pan_Data *psd)
    if (w <= 0 || h <= 0) return;
 
    _grid_place(psd->wsd);
+   if (psd->wsd->copyright)
+     _copyright_place(psd->wsd);
    _overlay_place(psd->wsd);
    _track_place(psd->wsd);
    _calc_job(psd->wsd);
@@ -4150,6 +4191,16 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
 
    if (!ecore_file_download_protocol_available("http://"))
      ERR("Ecore must be built with curl support for the map widget!");
+
+   if (priv->src_tile->copyright_cb)
+     {
+        priv->copyright = priv->src_tile->copyright_cb(obj);
+        if (priv->copyright)
+          {
+             evas_object_smart_member_add(priv->copyright, priv->pan_obj);
+             evas_object_stack_above(priv->copyright, priv->sep_maps_overlays);
+          }
+     }
 }
 
 EOLIAN static void
@@ -4209,6 +4260,7 @@ _elm_map_efl_canvas_group_group_del(Eo *obj, Elm_Map_Data *sd)
    evas_object_del(sd->pan_obj);
    sd->pan_obj = NULL;
 
+   ELM_SAFE_FREE(sd->copyright, evas_object_del);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 

@@ -51,6 +51,7 @@ typedef double (*Elm_Map_Module_Tile_Scale_Func)(const Evas_Object *,
                                                  double,
                                                  double,
                                                  int);
+typedef Evas_Object *(*Elm_Map_Module_Tile_Copyright_Func)(Evas_Object *);
 typedef char *(*Elm_Map_Module_Route_Url_Func)(const Evas_Object *,
                                                const char *,
                                                int,
@@ -79,6 +80,7 @@ struct _Source_Tile
    Elm_Map_Module_Tile_Geo_to_Coord_Func geo_to_coord;
    Elm_Map_Module_Tile_Coord_to_Geo_Func coord_to_geo;
    Elm_Map_Module_Tile_Scale_Func        scale_cb;
+   Elm_Map_Module_Tile_Copyright_Func    copyright_cb;
 };
 
 typedef struct _Source_Route           Source_Route;
@@ -490,6 +492,7 @@ struct _Elm_Map_Data
    Eina_Bool                             zoom_animator : 1;
 
    Calc_Job                               calc_job;
+   Evas_Object                          *copyright;
 };
 
 typedef struct _Elm_Map_Pan_Data Elm_Map_Pan_Data;
