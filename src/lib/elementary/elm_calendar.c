@@ -1410,7 +1410,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    const char *dir = params;
    Eina_Bool ret, double_spinner = EINA_FALSE;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_TRUE);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "prior"))
