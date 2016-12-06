@@ -417,7 +417,8 @@ eng_setup(Evas *eo_e, void *in)
                                                       info->info.mask,
                                                       info->info.shape_dither,
                                                       info->info.destination_alpha);
-                  evas_software_xlib_outbuf_debug_set(ob, info->info.debug);
+                  if (ob)
+                    evas_software_xlib_outbuf_debug_set(ob, info->info.debug);
                }
           }
         if (ob)
