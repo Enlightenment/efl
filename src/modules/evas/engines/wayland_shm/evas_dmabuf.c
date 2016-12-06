@@ -42,6 +42,8 @@ struct _Buffer_Manager
    void (*manager_destroy)(void);
    void *priv;
    void *dl_handle;
+   int refcount;
+   Eina_Bool destroyed;
 };
 
 Buffer_Manager *buffer_manager = NULL;
@@ -316,6 +318,7 @@ _buffer_manager_get(void)
    if (!success) goto err_bm;
 
    drm_fd = fd;
+   buffer_manager->refcount = 1;
    return buffer_manager;
 
 err_bm:
@@ -328,14 +331,65 @@ err_alloc:
 }
 
 static void
-_buffer_manager_destroy(void)
+_buffer_manager_ref(void)
 {
-   if (!buffer_manager) return;
+   buffer_manager->refcount++;
+}
+
+static void
+_buffer_manager_deref(void)
+{
+   buffer_manager->refcount--;
+   if (buffer_manager->refcount || !buffer_manager->destroyed) return;
 
    if (buffer_manager->manager_destroy) buffer_manager->manager_destroy();
    free(buffer_manager);
    buffer_manager = NULL;
    close(drm_fd);
+}
+
+static void
+_buffer_manager_destroy(void)
+{
+   if (buffer_manager->destroyed) return;
+   buffer_manager->destroyed = EINA_TRUE;
+   _buffer_manager_deref();
+}
+
+
+static Buffer_Handle *
+_buffer_manager_alloc(const char *name, int w, int h, unsigned long *stride, int32_t *fd)
+{
+   Buffer_Handle *out;
+
+   _buffer_manager_ref();
+   out = buffer_manager->alloc(buffer_manager, name, w, h, stride, fd);
+   if (!out) _buffer_manager_deref();
+   return out;
+}
+
+static void *
+_buffer_manager_map(Dmabuf_Buffer *buf)
+{
+   void *out;
+
+   _buffer_manager_ref();
+   out = buffer_manager->map(buf);
+   if (!out) _buffer_manager_deref();
+   return out;
+}
+
+static void
+_buffer_manager_unmap(Dmabuf_Buffer *buf)
+{
+   buffer_manager->unmap(buf);
+   _buffer_manager_deref();
+}
+static void
+_buffer_manager_discard(Dmabuf_Buffer *buf)
+{
+   buffer_manager->discard(buf);
+   _buffer_manager_deref();
 }
 
 static void
@@ -379,7 +433,7 @@ _fallback(Dmabuf_Surface *s, int w, int h)
    if (!b) b = s->current;
    if (!b) goto out;
 
-   if (!b->mapping) b->mapping = buffer_manager->map(b);
+   if (!b->mapping) b->mapping = _buffer_manager_map(b);
 
    b->busy = EINA_FALSE;
 
@@ -394,7 +448,7 @@ _fallback(Dmabuf_Surface *s, int w, int h)
    for (y = 0; y < h; y++)
      memcpy(new_data + y * w * 4, old_data + y * b->stride, w * 4);
    surf->funcs.post(surf, NULL, 0, EINA_FALSE);
-   buffer_manager->unmap(b);
+   _buffer_manager_unmap(b);
 
 out:
    _internal_evas_dmabuf_surface_destroy(s);
@@ -471,7 +525,7 @@ static const struct zwp_linux_buffer_params_v1_listener params_listener =
 static void
 _evas_dmabuf_buffer_unlock(Dmabuf_Buffer *b)
 {
-   buffer_manager->unmap(b);
+   _buffer_manager_unmap(b);
    b->mapping = NULL;
    b->locked = EINA_FALSE;
 }
@@ -488,9 +542,7 @@ _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
         return;
      }
    if (b->fd != -1) close(b->fd);
-   /* The buffer manager may have been destroyed already if we're
-    * doing fallback */
-   if (buffer_manager) buffer_manager->discard(b);
+   _buffer_manager_discard(b);
    if (b->wl_buffer) wl_buffer_destroy(b->wl_buffer);
    b->wl_buffer = NULL;
    free(b);
@@ -545,7 +597,7 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
    if (h) *h = b->h;
    if (b->locked) return b->mapping;
 
-   ptr = buffer_manager->map(b);
+   ptr = _buffer_manager_map(b);
    if (!ptr)
      return NULL;
 
@@ -648,17 +700,16 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
 {
    Dmabuf_Buffer *out;
    struct zwp_linux_buffer_params_v1 *dp;
-   Buffer_Manager *bm = _buffer_manager_get();
    uint32_t flags = 0;
 
-   if (!bm) return NULL;
+   if (!_buffer_manager_get()) return NULL;
 
    out = calloc(1, sizeof(Dmabuf_Buffer));
    if (!out) return NULL;
 
    out->fd = -1;
    out->surface = s;
-   out->bh = bm->alloc(bm, "name", w, h, &out->stride, &out->fd);
+   out->bh = _buffer_manager_alloc("name", w, h, &out->stride, &out->fd);
    if (!out->bh)
      {
         free(out);
