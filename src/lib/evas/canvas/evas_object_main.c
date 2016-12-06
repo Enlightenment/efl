@@ -933,6 +933,55 @@ _efl_canvas_object_efl_input_interface_seat_event_filter_set(Eo *eo_obj,
      }
 }
 
+static Eina_Bool
+_is_event_blocked(Eo *eo_obj, const Efl_Event_Description *desc,
+                  void *event_info)
+{
+   if ((desc == EFL_EVENT_FOCUS_IN) ||
+       (desc == EFL_EVENT_FOCUS_OUT) ||
+       (desc == EFL_EVENT_KEY_DOWN) ||
+       (desc == EFL_EVENT_KEY_UP) ||
+       (desc == EFL_EVENT_HOLD) ||
+       (desc == EFL_EVENT_POINTER_IN) ||
+       (desc == EFL_EVENT_POINTER_OUT) ||
+       (desc == EFL_EVENT_POINTER_DOWN) ||
+       (desc == EFL_EVENT_POINTER_UP) ||
+       (desc == EFL_EVENT_POINTER_MOVE) ||
+       (desc == EFL_EVENT_POINTER_WHEEL) ||
+       (desc == EFL_EVENT_POINTER_CANCEL) ||
+       (desc == EFL_EVENT_POINTER_AXIS) ||
+       (desc == EFL_EVENT_FINGER_MOVE) ||
+       (desc == EFL_EVENT_FINGER_DOWN) ||
+       (desc == EFL_EVENT_FINGER_UP))
+     {
+        Efl_Input_Device *seat = efl_input_device_seat_get(efl_input_device_get(event_info));
+        return !efl_input_seat_event_filter_get(eo_obj, seat);
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_call(Eo *eo_obj,
+                                                  Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                                  const Efl_Event_Description *desc,
+                                                  void *event_info)
+{
+   if (_is_event_blocked(eo_obj, desc, event_info)) return EINA_FALSE;
+   return efl_event_callback_call(efl_super(eo_obj, MY_CLASS),
+                                  desc, event_info);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_legacy_call(Eo *eo_obj,
+                                                         Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                                         const Efl_Event_Description *desc,
+                                                         void *event_info)
+{
+   if (_is_event_blocked(eo_obj, desc, event_info)) return EINA_FALSE;
+   return efl_event_callback_legacy_call(efl_super(eo_obj, MY_CLASS),
+                                         desc, event_info);
+}
+
 EOLIAN static void
 _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {

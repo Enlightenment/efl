@@ -624,6 +624,8 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.dbg_info_get;
+      Efl.Object.event_callback_legacy_call;
+      Efl.Object.event_callback_call;
       Efl.Object.provider_find;
       Efl.Gfx.visible.set;
       Efl.Gfx.visible.get;
