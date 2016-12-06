@@ -4,7 +4,7 @@
  * Line breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2008-2015 Wu Yongwei <wuyongwei at gmail dot com>
+ * Copyright (C) 2008-2016 Wu Yongwei <wuyongwei at gmail dot com>
  * Copyright (C) 2013 Petr Filipsky <philodej at gmail dot com>
  *
  * This software is provided 'as-is', without any express or implied
@@ -31,9 +31,9 @@
  * Unicode 5.0.0:
  *      <URL:http://www.unicode.org/reports/tr14/tr14-19.html>
  *
- * This library has been updated according to Revision 35, for
- * Unicode 8.0.0:
- *      <URL:http://www.unicode.org/reports/tr14/tr14-35.html>
+ * This library has been updated according to Revision 37, for
+ * Unicode 9.0.0:
+ *      <URL:http://www.unicode.org/reports/tr14/tr14-37.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -45,7 +45,7 @@
  * Implementation of the line breaking algorithm as described in Unicode
  * Standard Annex 14.
  *
- * @version 3.0, 2015/05/10
+ * @version 3.2, 2016/12/04
  * @author  Wu Yongwei
  * @author  Petr Filipsky
  */
@@ -81,183 +81,207 @@ enum BreakAction
 
 /**
  * Break action pair table.  This is a direct mapping of Table 2 of
- * Unicode Standard Annex 14, Revision 30.
+ * Unicode Standard Annex 14, Revision 37.
  */
-static enum BreakAction baTable[LBP_RI][LBP_RI] = {
+static enum BreakAction baTable[LBP_CB][LBP_CB] = {
     {   /* OP */
         PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK,
         CMP_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK,
-        PRH_BRK },
+        PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK, PRH_BRK },
     {   /* CL */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, PRH_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* CP */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, PRH_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* QU */
         PRH_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
         IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
-        IND_BRK },
+        IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK },
     {   /* GL */
         IND_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
         IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
-        IND_BRK },
+        IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK },
     {   /* NS */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* EX */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK, PRH_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
+        DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* SY */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
-        PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK, PRH_BRK,
+        PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK, IND_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* IS */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, IND_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* PR */
         IND_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, IND_BRK,
         IND_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
-        DIR_BRK },
+        DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK },
     {   /* PO */
         IND_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, IND_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* NU */
         IND_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* AL */
         IND_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
-        PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, IND_BRK,
+        PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* HL */
         IND_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
-        PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, IND_BRK,
+        PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* ID */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, IND_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* IN */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* HY */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, DIR_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* BA */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, DIR_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* BB */
         IND_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
         IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
-        IND_BRK },
+        IND_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK },
     {   /* B2 */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, PRH_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* ZW */
         DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK },
     {   /* CM */
         IND_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
-        PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, IND_BRK,
+        PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* WJ */
         IND_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
         IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
-        IND_BRK },
+        IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK },
     {   /* H2 */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, IND_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, IND_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* H3 */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, IND_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* JL */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, IND_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* JV */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, IND_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, IND_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* JT */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, IND_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK,
-        DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* RI */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        IND_BRK },
+        IND_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
+    {   /* EB */
+        DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
+        PRH_BRK, PRH_BRK, DIR_BRK, IND_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
+        DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
+        CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
+        DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK },
+    {   /* EM */
+        DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
+        PRH_BRK, PRH_BRK, DIR_BRK, IND_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
+        DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
+        CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
+    {   /* ZWJ */
+        DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
+        PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
+        IND_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
+        CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
+        DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK },
+    {   /* CB */
+        DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, DIR_BRK, PRH_BRK,
+        PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
+        DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
+        CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
+        DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK },
 };
 
 /**
@@ -265,7 +289,7 @@ static enum BreakAction baTable[LBP_RI][LBP_RI] = {
  */
 struct LineBreakPropertiesIndex
 {
-    utf32_t end;                    /**< End coding point */
+    utf32_t end;                          /**< End coding point */
     const struct LineBreakProperties *lbp;/**< Pointer to line breaking properties */
 };
 
@@ -276,6 +300,36 @@ static struct LineBreakPropertiesIndex lb_prop_index[LINEBREAK_INDEX_SIZE] =
 {
     { 0xFFFFFFFF, lb_prop_default }
 };
+
+/**
+ * Checks whether the \a str ends with \a suffix, which has length
+ * \a suffix_len.
+ *
+ * @param str        string whose ending is to be checked
+ * @param suffix     string to check
+ * @param suffixLen  length of \a suffix
+ * @return           non-zero if true; zero otherwise
+ */
+static __inline int ends_with(const char *str, const char *suffix,
+                              unsigned suffixLen)
+{
+    if (str == NULL)
+    {
+        return 0;
+    }
+    unsigned len = strlen(str);
+    if (len >= suffixLen &&
+        memcmp(str + len - suffixLen, suffix, suffixLen) == 0)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+#define ENDS_WITH(str, suffix) ends_with((str), (suffix), sizeof(suffix) - 1)
 
 /**
  * Initializes the second-level index to the line breaking properties.
@@ -425,10 +479,17 @@ static enum LineBreakClass resolve_lb_class(
             return LBP_AL;
         }
     case LBP_CJ:
-        /* Simplified for `normal' line breaking.  See
-         * <url:http://www.unicode.org/reports/tr14/tr14-30.html#CJ>
+        /* `Strict' and `normal' line breaking.  See
+         * <url:http://www.unicode.org/reports/tr14/#CJ>
          * for details. */
-        return LBP_ID;
+        if (ENDS_WITH(lang, "-strict"))
+        {
+            return LBP_NS;
+        }
+        else
+        {
+            return LBP_ID;
+        }
     case LBP_SA:
     case LBP_SG:
     case LBP_XX:
@@ -454,14 +515,9 @@ static void treat_first_char(
     case LBP_NL:
         lbpCtx->lbcCur = LBP_BK;        /* Rule LB5 */
         break;
-    case LBP_CB:
-        lbpCtx->lbcCur = LBP_BA;        /* Rule LB20 */
-        break;
     case LBP_SP:
         lbpCtx->lbcCur = LBP_WJ;        /* Leading space treated as WJ */
         break;
-    case LBP_HL:
-        lbpCtx->fLb21aHebrew = 1;       /* Rule LB21a */
     default:
         break;
     }
@@ -502,9 +558,6 @@ static int get_lb_result_simple(
     case LBP_CR:
         lbpCtx->lbcCur = LBP_CR;
         return LINEBREAK_NOBREAK;       /* Rule LB6 */
-    case LBP_CB:
-        lbpCtx->lbcCur = LBP_B2;
-        return LINEBREAK_ALLOWBREAK;    /* Rule LB20 */
     default:
         return LINEBREAK_UNDEFINED;     /* Table lookup is needed */
     }
@@ -529,18 +582,25 @@ static int get_lb_result_lookup(
 {
     int brk = LINEBREAK_UNDEFINED;
 
-    assert(lbpCtx->lbcCur <= LBP_RI);
-    assert(lbpCtx->lbcNew <= LBP_RI);
+    assert(lbpCtx->lbcCur <= LBP_CB);
+    assert(lbpCtx->lbcNew <= LBP_CB);
     switch (baTable[lbpCtx->lbcCur - 1][lbpCtx->lbcNew - 1])
     {
     case DIR_BRK:
         brk = LINEBREAK_ALLOWBREAK;
         break;
-    case CMI_BRK:
     case IND_BRK:
         brk = (lbpCtx->lbcLast == LBP_SP)
             ? LINEBREAK_ALLOWBREAK
             : LINEBREAK_NOBREAK;
+        break;
+    case CMI_BRK:
+        brk = LINEBREAK_ALLOWBREAK;
+        if (lbpCtx->lbcLast != LBP_SP)
+        {
+            brk = LINEBREAK_NOBREAK;
+            return brk;                 /* Do not update lbcCur */
+        }
         break;
     case CMP_BRK:
         brk = LINEBREAK_NOBREAK;
@@ -559,9 +619,24 @@ static int get_lb_result_lookup(
         brk = LINEBREAK_NOBREAK;
         lbpCtx->fLb21aHebrew = 0;
     }
-    else if (!(lbpCtx->lbcNew == LBP_HY || lbpCtx->lbcNew == LBP_BA))
+    else
     {
-        lbpCtx->fLb21aHebrew = (lbpCtx->lbcNew == LBP_HL);
+        lbpCtx->fLb21aHebrew = (lbpCtx->lbcCur == LBP_HL);
+    }
+
+    /* Special processing due to rule LB30a */
+    if (lbpCtx->lbcCur == LBP_RI)
+    {
+        lbpCtx->cLb30aRI++;
+        if (lbpCtx->cLb30aRI == 2 && lbpCtx->lbcNew == LBP_RI)
+        {
+            brk = LINEBREAK_ALLOWBREAK;
+            lbpCtx->cLb30aRI = 0;
+        }
+    }
+    else
+    {
+        lbpCtx->cLb30aRI = 0;
     }
 
     lbpCtx->lbcCur = lbpCtx->lbcNew;
@@ -589,6 +664,7 @@ void lb_init_break_context(
                         get_char_lb_class_lang(ch, lbpCtx->lbpLang),
                         lbpCtx->lang);
     lbpCtx->fLb21aHebrew = 0;
+    lbpCtx->cLb30aRI = 0;
     treat_first_char(lbpCtx);
 }
 

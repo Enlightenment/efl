@@ -1,3 +1,168 @@
+2016-12-04  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Simpify implementation about RI pairing.
+	* src/linebreak.c (treat_first_char): Get rid of the special
+	processing in the first character.
+	(get_lb_result_lookup): Refactor implementation.
+
+2016-12-03  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* tools/test.txt: Make a statement more precise.
+
+2016-12-03  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.c (get_lb_result_lookup): Simplify code and fix a
+	corner case about LB21a.
+	(treat_first_char): There is no need to treat first character of
+	Hebrew specially now.
+
+2016-12-03  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreakdef.h (struct LineBreakContext): Add new field
+	cLb30aRI.
+	* src/linebreak.c (lb_init_break_context): Initialize cLb30aRI.
+	(treat_first_char): Deal with leading RI.
+	(get_lb_result_lookup): Count RI characters and allow breaking
+	between each pair occurrence.
+
+2016-12-03  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.c (baTable): Fix a few missing entries.
+
+2016-12-03  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Fix test failure regarding Object Replacement Character (U+FFFC).
+	* src/linebreakdef.h (enum LineBreakClass): Move LBP_CB so that it
+	can be included in the pair table.
+	* src/linebreak.c (baTable): Add break action about LBP_CB.
+	(treat_first_char): Remove customization about LBP_CB.
+	(get_lb_result_simple): Ditto.
+	(get_lb_result_lookup): Change assertion about the maximum valid
+	baTable index.
+
+2016-11-29  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.c (ends_with): New static function.
+	(ENDS_WITH): New macro.
+	(resolve_lb_class): Use ENDS_WITH to make the code cleaner.
+
+2016-11-28  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.c (resolve_lb_class): Resolve LBP_CJ to LBP_NS if
+	lang ends with "-strict".
+	* src/tests.c: Use "-strict" in line breaking test.
+
+2016-11-26  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* .clang-format: `Modernize' the clang-format configuration with
+	Clang 3.8.
+
+2016-11-26  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.c (get_lb_result_lookup): Fix an issue that
+	combining marks are not correctly dealt with.
+
+2016-11-23  Tom Hacohen  <tom@stosb.com>
+
+	* src/wordbreak.c (set_wordbreaks): Fix to pass the test suite.
+
+2016-11-22  Andreas Röver  <roever@users.sf.net>
+
+	Add grapheme breaking support.
+	* AUTHORS: Add `Andreas Röver'.
+	* src/Makefile.am (include_HEADERS): Add header files for grapheme
+	breaking.
+	(libunibreak_la_SOURCES): Add source files for grapheme breaking.
+	(distclean-local): Clean also `GraphemeBreakData.txt'.
+	(GraphemeBreakProperty.txt): New target.
+	(graphemebreakdata): New target.
+	* src/graphemebreak.c: New file.
+	* src/graphemebreak.h: New file.
+	* src/graphemebreakdef.h: New file.
+	* src/graphemebreakdata.c: New file.
+	* src/graphemebreakdata1.tmpl: New file.
+	* src/graphemebreakdata2.tmpl: New file.
+	* tools/graphemebreak_test.c: New file.
+
+2016-11-22  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/tests.c: Adjust code style.
+
+2016-11-22  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* .clang-format: New file.
+
+2016-11-22  Tom Hacohen  <tom@stosb.com>
+
+	* src/tests.c: Add a test suite (make check).
+	* Makefile.am: Ditto.
+	* src/Makefile.am: Ditto.
+
+2016-11-17  Tom Hacohen  <tom@stosb.com>
+
+	* src/wordbreak.c: Update to Unicode 9.0.0.
+	* src/wordbreakdata.c: Ditto.
+	* src/wordbreakdef.h: Ditto.
+
+2016-11-16  Tom Hacohen  <tom@stosb.com>
+
+	* src/wordbreak.c (set_wordbreaks): Fix handling of regional
+	indicators with utf-8/16.
+
+2016-11-03  Mikhail Polubisok  <m_polubisok@wargaming.net>
+
+	* src/linebreak.c (get_lb_result_lookup): Fix assertion test of max
+	available indices.
+
+2016-09-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Update to Unicode 9.0.0.
+	* src/linebreak.c (baTable): Update according to Unicode 9.0.0.
+	* src/linebreakdef.h (enum LineBreakClass): Ditto.
+	* src/linebreakdata.c: Regenerate from LineBreak-9.0.0.txt.
+	* src/linebreak.h: Update comments.
+	* src/linebreakdef.c: Ditto.
+
+2016-08-24  Tom Hacohen  <tom@stosb.com>
+
+	Make many structures const.
+
+	These structures should never be changed on runtime so they should
+	be marked as constant. This means the compiler can now warn us if we
+	make the mistake of trying to change any of them, but more
+	importantly, it gives the compiler more information about the nature
+	of these and therefor lets the linker map these structures to
+	read-only memory instead of read-write, which should improve page
+	deduplication in many cases and reduce overall system memory usage.
+
+	This has reduced the number of dirty memory pages from 10 to 2,
+	which translates to 32KiB of memory saved per process linking to
+	libunibreak starting from the second process.
+	* src/linebreak.c (struct LineBreakPropertiesIndex): Mark member
+	variable lbp as const pointer.
+	(get_lb_prop_lang): Mark return value as const pointer.
+	(get_char_lb_class): Mark second parameter as const pointer.
+	(get_char_lb_class_lang): Ditto.
+	* src/linebreakdata.c (lb_prop_default): Mark as const.
+	* src/linebreakdata2.tmpl (lb_prop_default): Ditto.
+	* src/linebreakdef.c (lb_prop_English): Ditto.
+	(lb_prop_German): Ditto.
+	(lb_prop_Spanish): Ditto.
+	(lb_prop_French): Ditto.
+	(lb_prop_Russian): Ditto.
+	(lb_prop_Chinese): Ditto.
+	(lb_prop_lang_map): Ditto.
+	* src/linebreakdef.h (struct LineBreakPropertiesLang): Mark member
+	variable lbp as const pointer.
+	(struct LineBreakContext): Mark member variable lbpLang as const
+	pointer.
+	(lb_prop_default): Declare as const.
+	(lb_prop_lang_map): Ditto.
+	* src/wordbreak.c (get_char_wb_class): Mark second parameter as
+	const pointer.
+	* src/wordbreakdata.c (wb_prop_default): Mark as const.
+	* src/wordbreakdata1.tmpl (wb_prop_default): Ditto.
+
 2015-12-20  Wu Yongwei  <wuyongwei@gmail.com>
 
 	Fix the issue that U+FFFC (Object Replacement Character) does not
