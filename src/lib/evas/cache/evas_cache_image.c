@@ -324,6 +324,14 @@ _evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
    SLKU(engine_lock);
 }
 
+static Eina_Bool
+evas_cache_image_cancelled(void *data)
+{
+   Image_Entry *current = data;
+
+   return evas_preload_thread_cancelled_is(current->preload);
+}
+
 static void
 _evas_cache_image_async_heavy(void *data)
 {
@@ -343,7 +351,10 @@ _evas_cache_image_async_heavy(void *data)
    if ((!current->flags.loaded) &&
        current->info.loader->threadable)
      {
+        evas_module_task_register(evas_cache_image_cancelled, current);
         error = cache->func.load(current);
+        evas_module_task_unregister();
+
         if (cache->func.debug) cache->func.debug("load", current);
         current->load_error = error;
         if (error != EVAS_LOAD_ERROR_NONE)

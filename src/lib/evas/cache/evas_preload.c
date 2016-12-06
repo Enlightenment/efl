@@ -135,5 +135,6 @@ evas_preload_thread_cancel(Evas_Preload_Pthread *work)
 Eina_Bool
 evas_preload_thread_cancelled_is(Evas_Preload_Pthread *work)
 {
+   if (!work) return EINA_FALSE;
    return ecore_thread_check(work->thread);
 }
