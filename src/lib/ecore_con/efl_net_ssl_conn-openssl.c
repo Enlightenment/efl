@@ -13,6 +13,22 @@
 # include <arpa/inet.h>
 #endif
 
+#if defined HAVE_DLOPEN && ! defined _WIN32
+# include <dlfcn.h>
+#endif
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
+#ifdef HAVE_ESCAPE
+# include <Escape.h>
+#endif
+
+#ifdef HAVE_EXOTIC
+# include <Exotic.h>
+#endif
+
 /* OpenSSL's BIO is the abstraction for I/O, provide one for Efl.Io.* */
 static int
 efl_net_socket_bio_create(BIO *b)
@@ -390,33 +406,44 @@ efl_net_ssl_conn_read(Efl_Net_Ssl_Conn *conn, Eina_Rw_Slice *slice)
    return 0;
 }
 
-#ifndef X509_CHECK_FLAG_ALWAYS_CHECK_SUBJECT
 /* OpenSSL 1.0.2 introduced X509_check_host() and X509_check_ip_asc()
  * and with them the X509_CHECK_FLAG_ALWAYS_CHECK_SUBJECT define.
  */
 static int
-X509_check_host(X509 *x, const char *chk, size_t chklen, unsigned int flags, char **peername)
+_replace_X509_check_host(X509 *x EINA_UNUSED,
+                         const char *chk EINA_UNUSED,
+                         size_t chklen EINA_UNUSED,
+                         unsigned int flags EINA_UNUSED,
+                         char **peername EINA_UNUSED)
 {
    ERR("your OpenSSL do not support X509_check_ip_asc() - no verification can be done");
    return 0;
-   (void)x;
-   (void)chk;
-   (void)chklen;
-   (void)flags;
-   (void)peername;
 }
 
 static int
-X509_check_ip_asc(X509 *x, const char *ipasc, unsigned int flags)
+_replace_X509_check_ip_asc(X509 *x EINA_UNUSED,
+                           const char *ipasc EINA_UNUSED,
+                           unsigned int flags EINA_UNUSED)
 {
    ERR("your OpenSSL do not support X509_check_ip_asc() - no verification can be done");
    return 0;
-   (void)x;
-   (void)ipasc;
-   (void)flags;
 }
-#endif
 
+static int (*_sym_X509_check_host)   (X509 *x, const char *chk, size_t chklen, unsigned int flags, char **peername) = NULL;
+static int (*_sym_X509_check_ip_asc) (X509 *x, const char *ipasc, unsigned int flags) = NULL;
+
+static inline void
+_X509_check_init(void)
+{
+   if (_sym_X509_check_host) return;
+#ifdef HAVE_DLOPEN
+   _sym_X509_check_host =  dlsym(NULL, "X509_check_host");
+   _sym_X509_check_ip_asc = dlsym(NULL, "_X509_check_ip_asc");
+   if (_sym_X509_check_host && _sym_X509_check_ip_asc) return;
+#endif
+   _sym_X509_check_host = _replace_X509_check_host;
+   _sym_X509_check_ip_asc = _replace_X509_check_ip_asc;
+}
 
 static Eina_Error
 _efl_net_ssl_conn_hostname_verify(Efl_Net_Ssl_Conn *conn)
@@ -440,16 +467,18 @@ _efl_net_ssl_conn_hostname_verify(Efl_Net_Ssl_Conn *conn)
         return EFL_NET_SOCKET_SSL_ERROR_HANDSHAKE;
      }
 
+   _X509_check_init();
+
    if (strchr(conn->hostname, ':')) family = AF_INET6;
    if (inet_pton(family, conn->hostname, &addr) == 1)
      {
         label = "IP address";
-        r = X509_check_ip_asc(x509, conn->hostname, 0);
+        r = _sym_X509_check_ip_asc(x509, conn->hostname, 0);
      }
    else
      {
         label = "hostname";
-        r = X509_check_host(x509, conn->hostname, 0, 0, NULL);
+        r = _sym_X509_check_host(x509, conn->hostname, 0, 0, NULL);
      }
 
    if (r != 1)
