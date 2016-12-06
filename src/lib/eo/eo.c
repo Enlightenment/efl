@@ -373,7 +373,7 @@ efl_super(const Eo *obj, const Efl_Class *cur_klass)
 {
    EO_CLASS_POINTER_GOTO(cur_klass, klass, err);
 
-   if (EINA_UNLIKELY(!_eo_is_a_obj(obj))) goto err_obj;
+   if (EINA_UNLIKELY(!_eo_is_a_obj(obj) && !_eo_is_a_class(obj))) goto err_obj;
 #ifdef EO_DEBUG
    if (EINA_UNLIKELY(!efl_isa(obj, cur_klass))) goto err_obj_hierarchy;
 #endif
