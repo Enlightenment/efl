@@ -156,23 +156,23 @@ move_to(Triangulator_Stroker *stroker, const double *pts)
                  ptr1 = eina_inarray_nth(stroker->arc_pts, 0);
                  ptr = eina_inarray_nth(stroker->vertices, 0);
                  i = pts_count;
-              }
-            while (front != end)
-              {
-                 ptr[--i] = ptr1[2 * end - 1];
-                 ptr[--i] = ptr1[2 * end - 2];
-                 --end;
-                 if (front == end)
-                   break;
-                 ptr[--i] = ptr1[2 * front + 1];
-                 ptr[--i] = ptr1[2 * front + 0];
-                 ++front;
-              }
 
-            if (jump)
-              {
-                 ptr[i - 1] = ptr[i + 1];
-                 ptr[i - 2] = ptr[i + 0];
+                 while (front != end)
+                   {
+                      ptr[--i] = ptr1[2 * end - 1];
+                      ptr[--i] = ptr1[2 * end - 2];
+                      --end;
+                      if (front == end)
+                        break;
+                      ptr[--i] = ptr1[2 * front + 1];
+                      ptr[--i] = ptr1[2 * front + 0];
+                      ++front;
+                   }
+                 if (jump)
+                   {
+                      ptr[i - 1] = ptr[i + 1];
+                      ptr[i - 2] = ptr[i + 0];
+                   }
               }
             break;
          }
