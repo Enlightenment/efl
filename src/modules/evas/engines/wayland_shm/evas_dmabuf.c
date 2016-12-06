@@ -449,6 +449,7 @@ _fallback(Dmabuf_Surface *s, int w, int h)
      memcpy(new_data + y * w * 4, old_data + y * b->stride, w * 4);
    surf->funcs.post(surf, NULL, 0, EINA_FALSE);
    _buffer_manager_unmap(b);
+   b->mapping = NULL;
 
 out:
    _internal_evas_dmabuf_surface_destroy(s);
@@ -542,6 +543,7 @@ _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
         return;
      }
    if (b->fd != -1) close(b->fd);
+   if (b->mapping) _buffer_manager_unmap(b);
    _buffer_manager_discard(b);
    if (b->wl_buffer) wl_buffer_destroy(b->wl_buffer);
    b->wl_buffer = NULL;
