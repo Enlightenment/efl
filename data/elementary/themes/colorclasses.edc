@@ -92,27 +92,27 @@ color_classes {
 // widgets
    color_class { name: "button_bg";
       color: 255 255 255 255;
-      desc: "Text of a button";
+      desc: "Background of a button";
    }
    color_class { name: "button_bg_pressed";
       color: 255 255 255 255;
-      desc: "Text of a button";
+      desc: "Background of a pressed button";
    }
    color_class { name: "button_bg_disabled";
       color: 255 255 255 255;
-      desc: "Text of a button";
+      desc: "Background of a disabled button";
    }
    color_class { name: "button_icon";
       color: 255 255 255 255;
-      desc: "Text of a button";
+      desc: "Icon of a button";
    }
    color_class { name: "button_icon_pressed";
       color: 255 255 255 255;
-      desc: "Text of a button";
+      desc: "Icon of a pressed button";
    }
    color_class { name: "button_icon_disabled";
       color: 255 255 255 64;
-      desc: "Text of a button";
+      desc: "Icon of a disabled button";
    }
    color_class { name: "button_text";
       color: FN_COL_DEFAULT;
@@ -120,7 +120,7 @@ color_classes {
    }
    color_class { name: "button_text_pressed";
       color: FN_COL_DEFAULT;
-      desc: "Text of a button";
+      desc: "Text of a pressed button";
    }
    color_class { name: "button_text_disabled";
       color: FN_COL_DISABLE;
