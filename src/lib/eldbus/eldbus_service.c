@@ -784,7 +784,7 @@ _object_manager_changes_process(void *data)
    Eldbus_Service_Object *obj = data;
    Eldbus_Service_Object *parent = _object_manager_parent_find(obj);
 
-   obj->idler_iface_changed = NULL;
+   obj->idle_enterer_iface_changed = NULL;
 
    if (!parent)
      {
@@ -823,8 +823,8 @@ _eldbus_service_interface_add(Eldbus_Service_Object *obj, const char *interface)
    iface->obj = obj;
    eina_hash_add(obj->interfaces, iface->name, iface);
 
-   if (!obj->idler_iface_changed)
-     obj->idler_iface_changed = ecore_idler_add(_object_manager_changes_process,
+   if (!obj->idle_enterer_iface_changed)
+     obj->idle_enterer_iface_changed = ecore_idle_enterer_add(_object_manager_changes_process,
                                                 obj);
    obj->iface_added = eina_list_append(obj->iface_added, iface);
 
@@ -1016,7 +1016,7 @@ eldbus_service_interface_fallback_register2(Eldbus_Connection *conn, const char 
 }
 
 static Eina_Bool
-_idler_propschanged(void *data)
+_idle_enterer_propschanged(void *data)
 {
    Eldbus_Service_Interface *iface = data;
    Eldbus_Message *msg;
@@ -1024,7 +1024,7 @@ _idler_propschanged(void *data)
    Eina_Hash *added = NULL;
    Property *prop;
 
-   iface->idler_propschanged = NULL;
+   iface->idle_enterer_propschanged = NULL;
 
    added = eina_hash_string_small_new(NULL);
    msg = eldbus_message_signal_new(iface->obj->path, properties_iface->name,
@@ -1128,10 +1128,10 @@ _interface_free(Eldbus_Service_Interface *interface)
    /**
     * flush props changes before remove interface
     */
-   if (interface->idler_propschanged)
+   if (interface->idle_enterer_propschanged)
      {
-        ecore_idler_del(interface->idler_propschanged);
-        _idler_propschanged(interface);
+        ecore_idle_enterer_del(interface->idle_enterer_propschanged);
+        _idle_enterer_propschanged(interface);
      }
 
    eina_hash_free(interface->methods);
@@ -1151,17 +1151,17 @@ _interface_free(Eldbus_Service_Interface *interface)
         /* Adding and removing the interface in the same main loop iteration.
          * Let's not send any signal */
         obj->iface_added = eina_list_remove_list(obj->iface_added, l);
-        if (!obj->iface_added && !obj->iface_removed && obj->idler_iface_changed)
+        if (!obj->iface_added && !obj->iface_removed && obj->idle_enterer_iface_changed)
           {
-             ecore_idler_del(obj->idler_iface_changed);
-             obj->idler_iface_changed = NULL;
+             ecore_idle_enterer_del(obj->idle_enterer_iface_changed);
+             obj->idle_enterer_iface_changed = NULL;
           }
      }
    else
      {
-        if (!obj->idler_iface_changed)
+        if (!obj->idle_enterer_iface_changed)
           {
-             obj->idler_iface_changed = ecore_idler_add(
+             obj->idle_enterer_iface_changed = ecore_idle_enterer_add(
                 _object_manager_changes_process, obj);
           }
 
@@ -1188,9 +1188,9 @@ static void _children_ifaces_add_removed_flush(Eldbus_Service_Object *obj)
           _children_ifaces_add_removed_flush(children);
      }
 
-   if (obj->idler_iface_changed)
+   if (obj->idle_enterer_iface_changed)
      {
-        ecore_idler_del(obj->idler_iface_changed);
+        ecore_idle_enterer_del(obj->idle_enterer_iface_changed);
         _object_manager_changes_process(obj);
      }
 }
@@ -1221,9 +1221,9 @@ _object_free(Eldbus_Service_Object *obj)
     * Flush our iface_add/removed if this object are
     * children of some other path with ObjectManager
     */
-   if (obj->idler_iface_changed)
+   if (obj->idle_enterer_iface_changed)
      {
-        ecore_idler_del(obj->idler_iface_changed);
+        ecore_idle_enterer_del(obj->idle_enterer_iface_changed);
         _object_manager_changes_process(obj);
      }
 
@@ -1482,8 +1482,8 @@ eldbus_service_property_changed(const Eldbus_Service_Interface *interface, const
    prop = eina_hash_find(iface->properties, name);
    EINA_SAFETY_ON_NULL_RETURN_VAL(prop, EINA_FALSE);
 
-   if (!iface->idler_propschanged)
-     iface->idler_propschanged = ecore_idler_add(_idler_propschanged, iface);
+   if (!iface->idle_enterer_propschanged)
+     iface->idle_enterer_propschanged = ecore_idle_enterer_add(_idle_enterer_propschanged, iface);
    if (!iface->props_changed)
      iface->props_changed = eina_array_new(1);
 
@@ -1507,8 +1507,8 @@ eldbus_service_property_invalidate_set(const Eldbus_Service_Interface *interface
 
    prop->is_invalidate = is_invalidate;
 
-   if (!iface->idler_propschanged)
-     iface->idler_propschanged = ecore_idler_add(_idler_propschanged, iface);
+   if (!iface->idle_enterer_propschanged)
+     iface->idle_enterer_propschanged = ecore_idle_enterer_add(_idle_enterer_propschanged, iface);
 
    if (is_invalidate)
      {
@@ -1546,8 +1546,8 @@ eldbus_service_object_manager_attach(Eldbus_Service_Interface *iface)
     * with path equal to our path rather than from the previous
     * ObjectManager
     */
-   if (obj->idler_iface_changed)
-     ecore_idler_del(obj->idler_iface_changed);
+   if (obj->idle_enterer_iface_changed)
+     ecore_idle_enterer_del(obj->idle_enterer_iface_changed);
    _object_manager_changes_process(obj);
 
    obj->objmanager = objmanager;

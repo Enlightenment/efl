@@ -54,7 +54,7 @@ struct _Eldbus_Connection
    Eina_Inlist                   *pendings;
    Eina_Inlist                   *fd_handlers;
    Eina_Inlist                   *timeouts;
-   Ecore_Idler                   *idler;
+   Ecore_Idle_Enterer            *idle_enterer;
    Eldbus_Connection_Context_Event event_handlers[ELDBUS_CONNECTION_EVENT_LAST];
    Eina_Inlist                   *root_objs;//service_object
    Eldbus_Proxy                   *fdo_proxy;
@@ -153,7 +153,7 @@ struct _Eldbus_Service_Object
    Eldbus_Service_Interface *objmanager;
    Eina_List *iface_added;
    Eina_List *iface_removed;
-   Ecore_Idler *idler_iface_changed;
+   Ecore_Idle_Enterer *idle_enterer_iface_changed;
 };
 
 struct _Eldbus_Service_Interface
@@ -167,7 +167,7 @@ struct _Eldbus_Service_Interface
    Eina_Hash *properties;
    Eldbus_Property_Set_Cb set_func;
    Eldbus_Property_Get_Cb get_func;
-   Ecore_Idler *idler_propschanged;
+   Ecore_Idle_Enterer *idle_enterer_propschanged;
    Eina_Array *props_changed;
    Eina_Array *prop_invalidated;
 };
