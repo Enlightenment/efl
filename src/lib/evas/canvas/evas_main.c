@@ -353,7 +353,10 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
                                      e->engine.data.context);
         e->engine.func->output_free(e->engine.data.output);
         e->engine.func->info_free(eo_e, e->engine.info);
-
+     }
+   if (e->common_init)
+     {
+        e->common_init = 0;
         evas_common_shutdown();
      }
 
@@ -426,9 +429,12 @@ _evas_canvas_engine_info_set(Eo *eo_e, Evas_Public_Data *e, Evas_Engine_Info *in
    if (info->magic != e->engine.info_magic) return EINA_FALSE;
 
    evas_canvas_async_block(e);
-   evas_common_init();
+   if (!e->common_init)
+     {
+        e->common_init = 1;
+        evas_common_init();
+     }
    res = e->engine.func->setup(eo_e, info);
-   if (!res) evas_common_shutdown();
    return res;
 }
 
