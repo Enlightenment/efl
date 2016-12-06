@@ -2,17 +2,19 @@ class Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Object)
 {
     [[A abstract class to have a sub manager
 
-      This submanager will register its border elements on the parent manager. The parent manager is found with the Efl.Ui.Focus.User interface.
+      This submanager will register its border elements on the parent manager. The parent manager is found with the Efl.Ui.Focus.User interface of the eo parent.
 
       Each submanager also has to be a focus object, the object itself will be registered into the parent manager. It will be used as logical parent while registering the border elements.
 
       You can filter the border elements by overriding the border_elements property of the manager.
+
+      This class is only working as composite object to a Efl.Ui.Focus.User and Efl.Ui.Focus.Object.
     ]]
     methods {
-
     }
     implements {
         Efl.Object.constructor;
         Efl.Object.destructor;
+        Efl.Object.parent.set;
     }
 }
