@@ -53,6 +53,7 @@ static Eina_Inarray _eo_log_objs_no_debug;
 static double _eo_log_time_start;
 #ifdef HAVE_BACKTRACE
 static Eina_Array _eo_log_objs;
+static Eina_Spinlock _eo_log_objs_lock;
 #endif
 #else
 static inline void _eo_log_obj_init(void) { }
@@ -2467,6 +2468,7 @@ _eo_log_obj_find(const Eo_Id id, const Eo_Log_Obj_Entry **added, const Eo_Log_Ob
    *added = NULL;
    *deleted = NULL;
 
+   eina_spinlock_take(&_eo_log_objs_lock);
    EINA_ARRAY_ITER_NEXT(&_eo_log_objs, idx, entry, it)
      {
         if (EINA_UNLIKELY(id == entry->id))
@@ -2480,6 +2482,7 @@ _eo_log_obj_find(const Eo_Id id, const Eo_Log_Obj_Entry **added, const Eo_Log_Ob
                }
           }
      }
+   eina_spinlock_release(&_eo_log_objs_lock);
 }
 
 static void
@@ -2610,6 +2613,7 @@ static Eo_Log_Obj_Entry *
 _eo_log_obj_entry_new_and_add(const _Eo_Object *obj, Eina_Bool is_free, uint8_t size, void *const *bt)
 {
    Eo_Log_Obj_Entry *entry;
+   Eina_Bool ret;
 
    entry = malloc(sizeof(Eo_Log_Obj_Entry) + size * sizeof(void *));
    if (EINA_UNLIKELY(!entry)) return NULL;
@@ -2623,7 +2627,10 @@ _eo_log_obj_entry_new_and_add(const _Eo_Object *obj, Eina_Bool is_free, uint8_t 
    memcpy(entry->bt, bt, size * sizeof(void *));
 
    if (EINA_UNLIKELY(!entry)) return NULL;
-   if (!eina_array_push(&_eo_log_objs, entry))
+   eina_spinlock_take(&_eo_log_objs_lock);
+   ret = eina_array_push(&_eo_log_objs, entry);
+   eina_spinlock_release(&_eo_log_objs_lock);
+   if (!ret)
      {
         free(entry);
         return NULL;
@@ -2733,6 +2740,7 @@ _eo_log_obj_init(void)
 
 #ifdef HAVE_BACKTRACE
    eina_array_step_set(&_eo_log_objs, sizeof(Eina_Array), 4096);
+   eina_spinlock_new(&_eo_log_objs_lock);
 #endif
    eina_inarray_step_set(&_eo_log_objs_debug, sizeof(Eina_Inarray), sizeof(Eina_Slice), 0);
    eina_inarray_step_set(&_eo_log_objs_no_debug, sizeof(Eina_Inarray), sizeof(Eina_Slice), 0);
@@ -2834,9 +2842,12 @@ _eo_log_obj_shutdown(void)
    Eina_Array_Iterator it;
    unsigned int idx;
 
+   eina_spinlock_take(&_eo_log_objs_lock);
    EINA_ARRAY_ITER_NEXT(&_eo_log_objs, idx, entry, it)
      _eo_log_obj_entry_free(entry);
    eina_array_flush(&_eo_log_objs);
+   eina_spinlock_release(&_eo_log_objs_lock);
+   eina_spinlock_free(&_eo_log_objs_lock);
 #endif
 
    eina_inarray_flush(&_eo_log_objs_debug);
