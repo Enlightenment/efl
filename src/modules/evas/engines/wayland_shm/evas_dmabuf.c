@@ -380,6 +380,9 @@ _fallback(Dmabuf_Surface *s, int w, int h)
    if (!b) goto out;
 
    if (!b->mapping) b->mapping = buffer_manager->map(b);
+
+   b->busy = EINA_FALSE;
+
    if (!b->mapping) goto out;
 
    epd = efl_data_scope_get(surf->info->evas, EVAS_CANVAS_CLASS);
