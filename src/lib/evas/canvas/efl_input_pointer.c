@@ -491,7 +491,6 @@ _efl_input_pointer_value_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Ef
       case EFL_INPUT_VALUE_SLIDER:
         return EINA_FALSE; // TODO
 
-      case EFL_INPUT_VALUE_NONE:
       default:
         return EINA_FALSE;
      }
