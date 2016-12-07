@@ -890,7 +890,7 @@ inline v8::Handle<v8::Function> get_class_constructor(std::string const& class_n
 {
   auto it = constructors_map_.find(class_name);
   if (it == constructors_map_.end())
-    throw std::runtime_error("Class not found");
+    throw std::runtime_error("Class not found: " + class_name);
   return it->second;
 }
 

@@ -142,34 +142,65 @@ get_value_from_c(T object, v8::Isolate* isolate, const char* class_name
 inline v8::Local<v8::Value>
 get_value_from_c(Eo* v, v8::Isolate* isolate, const char* class_name)
 {
-  auto ctor = ::efl::eina::js::get_class_constructor(class_name);
-  auto obj = new_v8_external_instance(ctor, ::efl_ref(v), isolate);
-  efl::eina::js::make_weak(isolate, obj, [v]{ ::efl_unref(v); });
-  return obj;
+  try
+    {
+       auto ctor = ::efl::eina::js::get_class_constructor(class_name);
+       auto obj = new_v8_external_instance(ctor, ::efl_ref(v), isolate);
+       efl::eina::js::make_weak(isolate, obj, [v]{ ::efl_unref(v); });
+       return obj;
+    }
+  catch (std::runtime_error const& error)
+    {
+       eina::js::compatibility_throw
+            (isolate, v8::Exception::TypeError
+             (eina::js::compatibility_new<v8::String>(isolate, error.what())));
+      return v8::Null(isolate);
+    }
 }
 
 inline v8::Local<v8::Value>
 get_value_from_c(const Eo* v, v8::Isolate* isolate, const char* class_name)
 {
   // TODO: implement const objects?
-  auto ctor = ::efl::eina::js::get_class_constructor(class_name);
-  auto obj = new_v8_external_instance(ctor, ::efl_ref(v), isolate);
-  efl::eina::js::make_weak(isolate, obj, [v]{ ::efl_unref(v); });
-  return obj;
+  try
+    {
+       auto ctor = ::efl::eina::js::get_class_constructor(class_name);
+       auto obj = new_v8_external_instance(ctor, ::efl_ref(v), isolate);
+       efl::eina::js::make_weak(isolate, obj, [v]{ ::efl_unref(v); });
+       return obj;
+    }
+  catch (std::runtime_error const& error)
+    {
+       eina::js::compatibility_throw
+            (isolate, v8::Exception::TypeError
+             (eina::js::compatibility_new<v8::String>(isolate, error.what())));
+      return v8::Null(isolate);
+    }
 }
 
 template <typename T>
 inline v8::Local<v8::Value>
 get_value_from_c(struct_ptr_tag<T*> v, v8::Isolate* isolate, const char* class_name)
 {
-  using nonconst_type = typename std::remove_const<T>::type;
-  bool own = false; // TODO: handle ownership
-  auto ptr = const_cast<nonconst_type*>(v.value);
-  auto ctor = ::efl::eina::js::get_class_constructor(class_name);
-  auto obj = new_v8_external_instance(ctor, ptr, isolate);
-  if (own)
-    efl::eina::js::make_weak(isolate, obj, [ptr]{ free(ptr); });
-  return obj;
+  try
+    {
+       using nonconst_type = typename std::remove_const<T>::type;
+       bool own = false; // TODO: handle ownership
+       auto ptr = const_cast<nonconst_type*>(v.value);
+       auto ctor = ::efl::eina::js::get_class_constructor(class_name);
+       auto obj = new_v8_external_instance(ctor, ptr, isolate);
+       if (own)
+          efl::eina::js::make_weak(isolate, obj, [ptr]{ free(ptr); });
+       return obj;
+    }
+  catch (std::runtime_error const& error)
+    {
+       eina::js::compatibility_throw
+            (isolate, v8::Exception::TypeError
+             (eina::js::compatibility_new<v8::String>(isolate, error.what())));
+      return v8::Null(isolate);
+    }
+
 }
 
 template <typename T>
