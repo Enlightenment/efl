@@ -45,12 +45,14 @@ _elm_theme_item_finalize(Elm_Theme_Files *files,
    if (istheme)
      {
         char *version;
+        int v;
 
         if (!(version = edje_mmap_data_get(f, "version"))) return;
-        if (atoi(version) < 110) // bump this version number when we need to
+        v = atoi(version);
+        if (v < 110) // bump this version number when we need to
           {
+             WRN("Selected theme is too old (version = %d, needs >= 110)", v);
              free(version);
-             return;
           }
         free(version);
      }
@@ -321,7 +323,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
         eina_hash_add(th->cache_style_load_failed, buf2, (void *)1);
      }
 
-   //Use the elementary default theme.
+   // Use the elementary default style.
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/default", clas, group);
    if (!eina_hash_find(th->cache_style_load_failed, buf2))
      {
@@ -385,7 +387,7 @@ _elm_theme_icon_set(Elm_Theme *th,
    return w > 0;
 }
 
-Eina_Bool
+void
 _elm_theme_parse(Elm_Theme *th, const char *theme)
 {
    Eina_List *names = NULL;
@@ -459,7 +461,6 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
 
    EINA_LIST_FREE(names, p)
      _elm_theme_file_item_add(&th->themes, p, EINA_FALSE, EINA_TRUE);
-   return EINA_TRUE;
 }
 
 void

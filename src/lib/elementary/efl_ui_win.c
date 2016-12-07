@@ -28,6 +28,8 @@
 #define MY_CLASS_NAME "Efl.Ui.Win"
 #define MY_CLASS_NAME_LEGACY "elm_win"
 
+#define FRAME_OBJ_THEME_MIN_VERSION 119
+
 static const Elm_Win_Trap *trap = NULL;
 
 #define TRAP(sd, name, ...)                                             \
@@ -2150,9 +2152,9 @@ static inline Edje_Object *
 _elm_win_modal_blocker_edje_get(Efl_Ui_Win_Data *sd)
 {
    /* Legacy theme compatibility */
-   const char *version = edje_object_data_get(sd->legacy.edje, "elm_win_version");
+   const char *version = edje_object_data_get(sd->legacy.edje, "version");
    int v = version ? atoi(version) : 0;
-   if (v < 119)
+   if (v < FRAME_OBJ_THEME_MIN_VERSION)
      {
         DBG("Detected legacy theme (<1.19) for modal window blocker.");
         return sd->legacy.edje;
@@ -4071,22 +4073,79 @@ _elm_object_part_cursor_set(Evas_Object *obj, Evas_Object *edj,
    elm_object_sub_cursor_set(sub, obj, cursor);
 }
 
+static char *
+_efl_system_theme_path_get(void)
+{
+   // Find the default theme from EFL install. Quite ugly.
+   const char *sysdir;
+   char *version;
+   char path[PATH_MAX];
+   int v;
+
+   sysdir = elm_theme_system_dir_get();
+   if (!sysdir) return NULL;
+
+   eina_file_path_join(path, PATH_MAX, sysdir, "default.edj");
+   version = edje_file_data_get(path, "version");
+   v = version ? atoi(version) : 0;
+   free(version);
+   if (v < FRAME_OBJ_THEME_MIN_VERSION)
+     {
+        ERR("Default system theme is too old, something is wrong with your installation of EFL.");
+        return NULL;
+     }
+
+   return strdup(path);
+}
+
 static void
 _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
 {
    Evas_Object *obj = sd->obj;
-   int w, h, mw, mh;
-   /* short layer; */
+   int w, h, mw, mh, v;
+   const char *version;
 
    if (sd->frame_obj) return;
+
    sd->frame_obj = edje_object_add(sd->evas);
-   /* layer = evas_object_layer_get(obj); */
-   /* evas_object_layer_set(sd->frame_obj, layer + 1); */
-   if (!elm_widget_theme_object_set
-       (sd->obj, sd->frame_obj, "border", "base", style))
+
+   // Verify theme version. Border requires an exact theme API.
+   version = elm_theme_data_get(elm_widget_theme_get(sd->obj), "version");
+   v = version ? atoi(version) : 0;
+   if (EINA_LIKELY(v >= FRAME_OBJ_THEME_MIN_VERSION))
      {
-        ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
-        return;
+        if (!elm_widget_theme_object_set
+            (sd->obj, sd->frame_obj, "border", "base", style))
+          {
+             ERR("Failed to set main border theme for the window.");
+             ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
+             return;
+          }
+
+        // Verify border.edc version as well
+        version = edje_object_data_get(sd->frame_obj, "version");
+        v = version ? atoi(version) : 0;
+     }
+
+   if (v < FRAME_OBJ_THEME_MIN_VERSION)
+     {
+        // Theme compatibility
+        const char *key = "elm/border/base/default"; // FIXME?
+        char *sys_theme;
+
+        WRN("Selected theme does not support the required border theme API "
+            "(version = %d, requires >= %d).",
+            v, FRAME_OBJ_THEME_MIN_VERSION);
+        sys_theme = _efl_system_theme_path_get();
+        if (!sys_theme ||
+            !edje_object_file_set(sd->frame_obj, sys_theme, key))
+          {
+             ERR("Failed to set main border theme for the window.");
+             ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
+             free(sys_theme);
+             return;
+          }
+        free(sys_theme);
      }
 
    /* Small hack: The special value 2 means this is the top frame object.
@@ -6318,9 +6377,10 @@ _elm_win_bg_must_swallow(Efl_Ui_Win_Data *sd)
         wd = efl_data_scope_get(bg, ELM_WIDGET_CLASS);
         if (wd)
           {
-             version = edje_object_data_get(wd->resize_obj, "elm_bg_version");
+             version = edje_object_data_get(wd->resize_obj, "version");
              v = version ? atoi(version) : 0;
-             if (v >= 119) sd->legacy.bg_must_swallow = 0;
+             if (v >= FRAME_OBJ_THEME_MIN_VERSION)
+               sd->legacy.bg_must_swallow = 0;
           }
         evas_object_del(bg);
      }

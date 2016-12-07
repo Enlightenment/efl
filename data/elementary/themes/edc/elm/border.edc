@@ -30,6 +30,7 @@ group { name: "elm/border/base/default";
    images.image: "screen_circular_shadow.png" COMP;
    images.image: "win_shadow.png" COMP;
    data.item: "shadow" "1";
+   data.item: "version" "119";
    parts {
       /* opaque region of the window, to inform the compositor */
       spacer { "elm.spacer.opaque";

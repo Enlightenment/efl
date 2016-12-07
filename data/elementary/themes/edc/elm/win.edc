@@ -1,5 +1,5 @@
 group { name: "elm/win/base/default";
-   data.item: "elm_win_version" "119";
+   data.item: "version" "119";
    parts {
       rect { "client_clip"; nomouse;
          desc { "default";
