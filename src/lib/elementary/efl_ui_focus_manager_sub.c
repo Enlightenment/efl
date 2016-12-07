@@ -167,9 +167,18 @@ EFL_CALLBACKS_ARRAY_DEFINE(self_manager,
 EOLIAN static void
 _efl_ui_focus_manager_sub_efl_object_parent_set(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd EINA_UNUSED, Efl_Object *parent)
 {
-   efl_event_callback_array_del(efl_parent_get(obj), self_manager(), obj);
+   Eo *old_parent, *new_parent;
+
+   old_parent = efl_parent_get(obj);
+
+   efl_event_callback_forwarder_del(obj, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, old_parent);
+   efl_event_callback_array_del(old_parent, self_manager(), obj);
+
    efl_parent_set(efl_super(obj, MY_CLASS), parent);
-   efl_event_callback_array_add(efl_parent_get(obj), self_manager(), obj);
+
+   new_parent = efl_parent_get(obj);
+   efl_event_callback_forwarder_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, new_parent);
+   efl_event_callback_array_add(new_parent, self_manager(), obj);
 }
 
 EOLIAN static Efl_Object*

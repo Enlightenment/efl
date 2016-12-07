@@ -9,6 +9,8 @@ class Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Object)
       You can filter the border elements by overriding the border_elements property of the manager.
 
       This class is only working as composite object to a Efl.Ui.Focus.User and Efl.Ui.Focus.Object.
+
+      The object itself does redirect the managers settings to the object where this object is attached
     ]]
     methods {
     }
