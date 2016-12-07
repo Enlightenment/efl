@@ -37,6 +37,8 @@ Eet_Data_Descriptor *_edje_edd_edje_pack_element = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_pack_element_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_allowed_seat = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_allowed_seat_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_variant = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_rectangle = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_snapshot = NULL;
@@ -690,6 +692,8 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_pack_element_pointer);
    FREED(_edje_edd_edje_part);
    FREED(_edje_edd_edje_part_pointer);
+   FREED(_edje_edd_edje_part_allowed_seat);
+   FREED(_edje_edd_edje_part_allowed_seat_pointer);
    FREED(_edje_edd_edje_part_description_variant);
    FREED(_edje_edd_edje_part_description_rectangle);
    FREED(_edje_edd_edje_part_description_snapshot);
@@ -945,6 +949,11 @@ _edje_edd_init(void)
      eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_style_tag, Edje_Style_Tag, "key", key, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_style_tag, Edje_Style_Tag, "value", value, EET_T_STRING);
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Allowed_Seat);
+   _edje_edd_edje_part_allowed_seat =
+     eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_allowed_seat, Edje_Part_Allowed_Seat, "name", name, EET_T_STRING);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Style);
    _edje_edd_edje_style =
@@ -1765,6 +1774,10 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "api.description", api.description, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "nested_children_count", nested_children_count, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "required", required, EET_T_UCHAR);
+
+   EDJE_DEFINE_POINTER_TYPE(Part_Allowed_Seat, part_allowed_seat);
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_part, Edje_Part, "allowed_seats", allowed_seats, _edje_edd_edje_part_allowed_seat_pointer);
+
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Limit);
    _edje_edd_edje_part_limit = eet_data_descriptor_file_new(&eddc);

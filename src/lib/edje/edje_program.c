@@ -662,6 +662,10 @@ _edje_part_focus_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp)
 
    if (focused_part != rp)
      {
+        if ((rp->part->allowed_seats) &&
+            (!_edje_part_allowed_seat_find(rp, sname)))
+          goto not_allowed;
+
         if (focused_part)
           _edje_seat_name_emit(ed, sname, "focus,part,out",
                                focused_part->part->name);
@@ -670,6 +674,7 @@ _edje_part_focus_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp)
           _edje_seat_name_emit(ed, sname, "focus,part,in", rp->part->name);
      }
 
+not_allowed:
    eina_stringshare_del(sname);
 }
 

@@ -313,6 +313,7 @@ static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
 static void st_collections_group_parts_part_dragable_threshold(void);
 static void st_collections_group_parts_part_dragable_events(void);
+static void st_collections_group_parts_part_allowed_seats(void);
 
 /* box and table items share these */
 static void ob_collections_group_parts_part_box_items_item(void);
@@ -789,6 +790,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.cursor_mode", st_collections_group_parts_part_cursor_mode},
      {"collections.group.parts.part.multiline", st_collections_group_parts_part_multiline},
      {"collections.group.parts.part.access", st_collections_group_parts_part_access},
+     {"collections.group.parts.part.allowed_seats", st_collections_group_parts_part_allowed_seats},
      IMAGE_SET_STATEMENTS("collections.group.parts.part")
      IMAGE_STATEMENTS("collections.group.parts.part.")
      {"collections.group.parts.part.font", st_fonts_font}, /* dup */
@@ -4418,6 +4420,36 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
    ep->dragable.count_y = ep2->dragable.count_y;
    ep->nested_children_count = ep2->nested_children_count;
 
+   if (ep2->allowed_seats)
+     {
+        Edje_Part_Allowed_Seat *seat;
+        unsigned int s;
+
+        ep->allowed_seats_count = ep2->allowed_seats_count;
+        ep->allowed_seats = calloc(ep2->allowed_seats_count,
+                                   sizeof(Edje_Part_Allowed_Seat *));
+        if (!ep->allowed_seats)
+          {
+             ERR("Not enough memory.");
+             exit(-1);
+          }
+
+        for (s = 0; s < ep->allowed_seats_count; s++)
+          {
+             seat = mem_alloc(SZ(Edje_Part_Allowed_Seat));
+             if (ep2->allowed_seats[s]->name)
+               {
+                  seat->name = strdup(ep2->allowed_seats[s]->name);
+                  if (!seat->name)
+                    {
+                       ERR("Not enough memory.");
+                       exit(-1);
+                    }
+               }
+             ep->allowed_seats[s] = seat;
+          }
+     }
+
    data_queue_copied_part_lookup(pc, &(ep2->dragable.confine_id), &(ep->dragable.confine_id));
    data_queue_copied_part_lookup(pc, &(ep2->dragable.threshold_id), &(ep->dragable.threshold_id));
    data_queue_copied_part_lookup(pc, &(ep2->dragable.event_id), &(ep->dragable.event_id));
@@ -5827,6 +5859,9 @@ edje_cc_handlers_part_make(int id)
    ep->items = NULL;
    ep->nested_children_count = 0;
 
+   ep->allowed_seats = NULL;
+   ep->allowed_seats_count = 0;
+
    epp = (Edje_Part_Parser *)ep;
    epp->reorder.insert_before = NULL;
    epp->reorder.insert_after = NULL;
@@ -6021,6 +6056,13 @@ _part_free(Edje_Part_Collection *pc, Edje_Part *ep)
    for (j = 0 ; j < ep->items_count ; j++)
      free(ep->items[j]);
    free(ep->items);
+
+   for (j = 0 ; j < ep->allowed_seats_count; j++)
+     {
+        free((void*)(ep->allowed_seats[j]->name));
+        free(ep->allowed_seats[j]);
+     }
+   free(ep->allowed_seats);
 
    free((void*)ep->name);
    free((void*)ep->source);
@@ -7396,6 +7438,53 @@ st_collections_group_parts_part_dragable_events(void)
 	data_queue_part_lookup(pc, name, &(current_part->dragable.event_id));
 	free(name);
      }
+}
+
+/**
+    @page edcref
+    @property
+        allowed_seats
+    @parameters
+        [seat1] [seat2] [seat3] ...
+    @effect
+        List of seat names allowed to interact with the part.
+
+        If no list is defined all seats are allowed. It's the
+        default behaviour.
+
+        If a seat isn't allowed, no signals will be emitted
+        related to its actions, as mouse and focus events.
+        Also it won't be able to focus this part.
+    @since 1.19
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_allowed_seats(void)
+{
+   Edje_Part_Allowed_Seat *seat;
+   Edje_Part *ep;
+   int n, argc;
+
+   check_min_arg_count(1);
+
+   ep = current_part;
+   argc = get_arg_count();
+
+   ep->allowed_seats = calloc(argc, sizeof(Edje_Part_Allowed_Seat *));
+   if (!ep->allowed_seats)
+     {
+        ERR("Not enough memory.");
+        exit(-1);
+     }
+
+   for (n = 0; n < argc; n++)
+     {
+        seat = mem_alloc(SZ(Edje_Part_Allowed_Seat));
+        seat->name = parse_str(n);
+        ep->allowed_seats[n] = seat;
+     }
+
+   ep->allowed_seats_count = argc;
 }
 
 /** @edcsubsection{collections_group_parts_items,

@@ -507,6 +507,60 @@ _edje_physics_world_update_cb(void *data, EPhysics_World *world EINA_UNUSED, voi
 }
 #endif
 
+Eina_Bool
+_edje_part_allowed_seat_find(Edje_Real_Part *rp, const char *seat_name)
+{
+   const char *name;
+   unsigned int i;
+
+   for (i = 0; i < rp->part->allowed_seats_count; i++)
+     {
+        name = rp->part->allowed_seats[i]->name;
+        if (!strcmp(seat_name, name))
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+/* It goes throught the list of registered seats and
+ * set event filters for each of these seats. */
+static void
+_edje_part_seat_filter_apply(Edje *ed, Edje_Real_Part *rp)
+{
+   Edje_Seat *seat;
+   Eina_List *l;
+   Eina_Bool found;
+
+   EINA_LIST_FOREACH(ed->seats, l, seat)
+     {
+        found = _edje_part_allowed_seat_find(rp, seat->name);
+        efl_input_seat_event_filter_set(rp->object, seat->device, found);
+     }
+}
+
+/* It goes throught the list of all edje parts and
+ * set event filters for each of these parts. Should be called when
+ * a new seat is added.
+ */
+static void
+_edje_seat_event_filter_apply(Edje *ed, Edje_Seat *seat)
+{
+   Edje_Real_Part *rp;
+   unsigned short i;
+   Eina_Bool found;
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        rp = ed->table_parts[i];
+        if (!rp->part->allowed_seats)
+          continue;
+
+        found = _edje_part_allowed_seat_find(rp, seat->name);
+        efl_input_seat_event_filter_set(rp->object, seat->device, found);
+     }
+}
+
 static void
 _edje_device_add(Edje *ed, Efl_Input_Device *dev)
 {
@@ -544,6 +598,7 @@ _edje_device_add(Edje *ed, Efl_Input_Device *dev)
    snprintf(sig, sizeof(sig), "seat,added,%s,%s", seat->name,
             efl_input_device_name_get(dev));
    _edje_emit(ed, sig, "");
+   _edje_seat_event_filter_apply(ed, seat);
 
 seat_err:
    eina_stringshare_del(name);
@@ -645,6 +700,8 @@ _edje_device_changed_cb(void *data, const Efl_Event *event)
              eina_stringshare_del(seat->name);
              free(seat);
 
+             _edje_seat_event_filter_apply(ed, s);
+
              return;
           }
      }
@@ -652,6 +709,7 @@ _edje_device_changed_cb(void *data, const Efl_Event *event)
    snprintf(sig, sizeof(sig), "seat,renamed,%s,%s", seat->name, name);
    eina_stringshare_replace(&seat->name, name);
    _edje_emit(ed, sig, "");
+   _edje_seat_event_filter_apply(ed, seat);
 }
 
 static void
@@ -1092,6 +1150,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                             rp->nested_smart = nested_smart;
                             nested_smart = NULL;
                          }
+
+                       if (ep->allowed_seats)
+                         _edje_part_seat_filter_apply(ed, rp);
 
                        if (ep->no_render)
                          efl_canvas_object_no_render_set(rp->object, 1);
@@ -2228,6 +2289,14 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
         for (j = 0; j < ep->items_count; ++j)
           free(ep->items[j]);
         free(ep->items);
+
+        for (j = 0; j < ep->allowed_seats_count; ++j)
+          {
+             if (edf->free_strings)
+               eina_stringshare_del(ep->allowed_seats[j]->name);
+             free(ep->allowed_seats[j]);
+          }
+        free(ep->allowed_seats);
         // technically need this - but we ASSUME we use "one_big" so everything gets
         // freed in one go lower down when we del the mempool... but what if pool goes
         // "over"?

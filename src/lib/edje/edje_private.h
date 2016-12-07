@@ -377,6 +377,7 @@ typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
 typedef struct _Edje_Part_Limit                      Edje_Part_Limit;
 typedef struct _Edje_Part_Description_Vector         Edje_Part_Description_Vector;
 typedef struct _Edje_Part_Description_Spec_Svg       Edje_Part_Description_Spec_Svg;
+typedef struct _Edje_Part_Allowed_Seat               Edje_Part_Allowed_Seat;
 typedef struct _Edje_Real_Part_Vector                Edje_Real_Part_Vector;
 typedef struct _Edje_Vector_Data                     Edje_Vector_Data;
 
@@ -1195,6 +1196,8 @@ struct _Edje_Part
    unsigned int           items_count;
    Edje_3D_Vec            scale_3d;
    Edje_Part_Api          api;
+   Edje_Part_Allowed_Seat **allowed_seats;
+   unsigned int           allowed_seats_count;
    unsigned char          type; /* what type (image, rect, text) */
 #ifdef HAVE_EPHYSICS
    unsigned char          physics_body; /* body (none, rigid box, soft circle, ...) */
@@ -1627,6 +1630,12 @@ struct _Edje_Part_Description_Vector
    Edje_Part_Description_Common common;
    Edje_Part_Description_Spec_Svg vg;
 };
+
+struct _Edje_Part_Allowed_Seat
+{
+   const char *name;
+};
+
 
 /*----------*/
 
@@ -2495,6 +2504,7 @@ void _edje_part_focus_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp);
 
 Eina_Stringshare *_edje_seat_name_get(Edje *ed, Efl_Input_Device *device);
 Efl_Input_Device *_edje_seat_get(Edje *ed, Eina_Stringshare *name);
+Eina_Bool _edje_part_allowed_seat_find(Edje_Real_Part *rp, const char *seat_name);
 
 const Edje_Signals_Sources_Patterns *_edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp);
 void _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp);
