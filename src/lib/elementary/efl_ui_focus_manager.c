@@ -466,15 +466,7 @@ _focus_in_cb(void *data, const Efl_Event *event)
    efl_ui_focus_manager_focus(data, event->object);
 }
 
-static void
-_child_del(void *data, const Efl_Event *event)
-{
-   WRN("The manager itself catched a deletion of a child. BAD");
-   efl_ui_focus_manager_unregister(data, event->object);
-}
-
 EFL_CALLBACKS_ARRAY_DEFINE(focusable_node,
-    {EFL_EVENT_DEL, _child_del},
     {EFL_GFX_EVENT_RESIZE, _node_new_geometery_cb},
     {EFL_GFX_EVENT_MOVE, _node_new_geometery_cb},
     //FIXME this is not correctly NOOOO ELM WIDGETS EVENTS HERE
@@ -681,15 +673,17 @@ _efl_ui_focus_manager_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data 
 EOLIAN static void
 _efl_ui_focus_manager_redirect_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Manager *redirect)
 {
+   printf("Now redirect %p\n", redirect);
+
    if (pd->redirect == redirect) return;
 
    if (pd->redirect)
-     efl_unref(pd->redirect);
+     efl_wref_del(pd->redirect, &pd->redirect);
 
    pd->redirect = redirect;
 
    if (pd->redirect)
-     efl_ref(pd->redirect);
+     efl_wref_add(pd->redirect, &pd->redirect);
 }
 
 EOLIAN static Efl_Ui_Focus_Manager *
@@ -758,7 +752,8 @@ _iterator_next(Border_Elements_Iterator *it, void **data)
      {
         for(int i = 0 ;i < NODE_DIRECTIONS_COUNT; i++)
           {
-             if (!node->graph.directions[i].partners)
+             if (node->type != NODE_TYPE_ONLY_LOGICAL &&
+                 !node->graph.directions[i].partners)
                {
                   *data = node->focusable;
                   return EINA_TRUE;
@@ -1033,9 +1028,12 @@ _efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, E
 
    if (pd->redirect)
      {
-        return efl_ui_focus_manager_move(pd->redirect, direction);
+        candidate =  efl_ui_focus_manager_move(pd->redirect, direction);
+        if (!candidate)
+          efl_ui_focus_manager_redirect_set(obj, NULL);
      }
-   else
+
+   if (!pd->redirect)
      {
         candidate = efl_ui_focus_manager_request_move(obj, direction);
         if (candidate)
