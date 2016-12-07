@@ -7,7 +7,7 @@ win.setSize(480, 240);
 
 bx = new efl.Efl.Ui.Box(win);
 bx.setHintWeight(1.0, 1.0);
-win.pack(bx);
+win.setContent(bx);
 bx.setVisible(true);
 bx.setOrientation(efl.Efl.Orient.VERTICAL);
 

@@ -5,7 +5,7 @@ win.setText("Menu");
 win.setAutohide(true);
 
 rect = new efl.Efl.Canvas.Rectangle(win);
-win.pack(rect);
+win.setContent(rect);
 rect.setHintMin( 0, 0);
 rect.setColor( 0, 0, 0, 0);
 rect.setVisible(true);

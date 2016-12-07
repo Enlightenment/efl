@@ -35,7 +35,7 @@ _btn_cursors_move = function(_btn) {
    console.log ("cursor move: ", size[0], size[1]);
 
    if (!icon_still) {
-       var icon = new efl.Elm.Icon(mid);
+       var icon = new efl.Efl.Ui.Image(mid);
        var icon_still_p = mid.contentUnset("icon");
        if (icon_still_p) {
            icon_still_p.setVisible(false);
@@ -68,7 +68,7 @@ win = new efl.Efl.Ui.Win.Standard(null);
 win.setText("Button example");
 win.setAutohide(true);
 
-icon_still = new efl.Elm.Icon(win);
+icon_still = new efl.Efl.Ui.Image(win);
 mid = new efl.Elm.Button(win);
 up = new efl.Elm.Button(win);
 down = new efl.Elm.Button(win);
@@ -85,7 +85,7 @@ _btn_cursors_release = function() {
 
 box = new efl.Efl.Ui.Box(win);
 box.setHintWeight(1.0, 1.0);
-win.pack(box);
+win.setContent(box);
 box.setVisible(true);
 
 box_initial = new efl.Efl.Ui.Box(win);
@@ -146,7 +146,7 @@ box.packEnd(up);
 up.setVisible(true);
 up.on('repeated', _btn_cursors_move)
 up.on('unpressed', _btn_cursors_release);
-icon_up = new efl.Elm.Icon(win);
+icon_up = new efl.Efl.Ui.Image(win);
 icon_up.setIcon("arrow_up");
 setIcon(up, icon_up);
 
@@ -167,7 +167,7 @@ left.setVisible(true);
 left.on('repeated', _btn_cursors_move)
 left.on('unpressed', _btn_cursors_release);
 
-icon_left = new efl.Elm.Icon(win);
+icon_left = new efl.Efl.Ui.Image(win);
 icon_left.setIcon("arrow_left");
 setIcon(left, icon_left);
 
@@ -175,7 +175,7 @@ mid.setHintWeight(1.0, 1.0);
 box_inferior.packEnd(mid);
 mid.setVisible(true);
 
-icon_mid = new efl.Elm.Icon(win);
+icon_mid = new efl.Efl.Ui.Image(win);
 icon_mid.setIcon("close");
 setIcon(mid, icon_mid);
 
@@ -189,7 +189,7 @@ right.setVisible(true);
 right.on('repeated', _btn_cursors_move);
 right.on('unpressed', _btn_cursors_release);
 
-icon_right = new efl.Elm.Icon(win);
+icon_right = new efl.Efl.Ui.Image(win);
 icon_right.setIcon("arrow_right");
 setIcon(right, icon_right);
 
@@ -203,7 +203,7 @@ down.setVisible(true);
 down.on('repeated', _btn_cursors_move);
 down.on('unpressed', _btn_cursors_release);
 
-icon_down = new efl.Elm.Icon(win);
+icon_down = new efl.Efl.Ui.Image(win);
 icon_down.setIcon("arrow_down");
 setIcon(down, icon_down);
 

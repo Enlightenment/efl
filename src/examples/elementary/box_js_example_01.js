@@ -7,12 +7,12 @@ win.setAutohide(true);
 
 bg = new efl.Elm.Bg(win);
 bg.setHintWeight(1.0, 1.0);
-win.pack(bg);
+win.setContent(bg);
 bg.setVisible(true);
 
 bx = new efl.Efl.Ui.Box(win);
 bx.setHintWeight(1.0, 1.0);
-win.pack(bx);
+win.setContent(bx);
 
 entry = new efl.Elm.Label(win);
 entry.setSize(100, 100);

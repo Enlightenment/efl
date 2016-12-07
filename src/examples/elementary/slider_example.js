@@ -8,7 +8,7 @@ win.setAutohide(true);
 bx = new efl.Efl.Ui.Box(win);
 bx.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
 bx.setHintWeight(1.0, 1.0);
-win.pack(bx);
+win.setContent(bx);
 bx.setVisible(true);
 
 sl = new efl.Elm.Slider(win);
@@ -21,12 +21,12 @@ sl.setVisible(true);
 sl = new efl.Elm.Slider(win);
 sl.setText("elm.text", "Counter");
 
-ic = new efl.Elm.Icon(win);
+ic = new efl.Efl.Ui.Image(win);
 ic.setIcon("home");
 // ic.setResizable(false, false);
 sl.part("icon").cast("Efl.Container").setContent(ic);
 
-ic = new efl.Elm.Icon(win);
+ic = new efl.Efl.Ui.Image(win);
 ic.setIcon("folder");
 // ic.setResizable(false, false);
 sl.part("end").cast("Efl.Container").setContent(ic);

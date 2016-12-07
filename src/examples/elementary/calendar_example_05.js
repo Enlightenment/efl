@@ -21,7 +21,7 @@ win.setAutohide(true);
 
 cal = new efl.Elm.Calendar(win);
 cal.setHintWeight(1.0, 1.0);
-win.pack(cal);
+win.setContent(cal);
 win.setSize(240, 240);
 
 cal.on('changed', _print_cal_info_cb);

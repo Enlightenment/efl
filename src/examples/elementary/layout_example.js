@@ -9,7 +9,7 @@ win.setAutohide(true);
 
 box = new efl.Efl.Ui.Box(win);
 box.setHintWeight(1.0, 1.0);
-win.pack(box);
+win.setContent(box);
 box.setVisible(true);
 
 ly = new Elm.Layout(box);
@@ -25,7 +25,7 @@ ly.setHintAlign(1.0, 1.0);
 box.packEnd(ly);
 ly.setVisible(true);
 
-bt = new Elm.Icon(ly);
+bt = new efl.Efl.Ui.Image(ly);
 bt.setIcon('chat');
 bt.setHintMin(20, 20);
 // elm_layout_icon_set(ly, bt);
@@ -33,7 +33,7 @@ icon_container = ly.part('elm.swallow.icon').cast('Efl.Container');
 icon_container.setContent(bt);
 ly.emitSignal('elm,state,icon,visible', 'elm');
 
-bt = new Elm.Icon(ly);
+bt = new efl.Efl.Ui.Image(ly);
 bt.setIcon('close');
 bt.setHintMin(20, 20);
 // elm_layout_end_set(ly, bt);

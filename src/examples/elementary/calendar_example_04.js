@@ -7,14 +7,13 @@ win.setAutohide(true);
 
 box = new efl.Efl.Ui.Box(win);
 box.setHintWeight(1.0, 1.0);
-win.pack(box);
+win.setContent(box);
 box.setVisible(true);
 
 cal = new efl.Elm.Calendar(win);
 cal.setHintWeight(1.0, 1.0);
 cal.setHintAlign(-1.0, -1.0);
 cal.setSelectMode(efl.Elm.Calendar.Select.Mode.NONE);
-win.pack(cal);
 cal.setVisible(true);
 box.packEnd(cal);
 

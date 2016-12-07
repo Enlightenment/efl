@@ -21,14 +21,9 @@ win = new efl.Efl.Ui.Win.Standard(null);
 win.setText("Box example");
 win.setAutohide(true);
 
-bg = new efl.Elm.Bg(win);
-bg.setHintWeight(1.0, 1.0);
-win.pack(bg);
-bg.setVisible(true);
-
 bigbox = new efl.Efl.Ui.Box(win)
 bigbox.setHintWeight(1.0, 1.0);
-win.pack(bigbox);
+win.setContent(bigbox);
 
 bx = new efl.Efl.Ui.Box(win);
 bx.setHintWeight(1.0, 1.0);
