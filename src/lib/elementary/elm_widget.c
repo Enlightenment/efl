@@ -205,7 +205,7 @@ _tree_unfocusable(Eo *obj)
    Elm_Widget *wid = obj;
 
    do {
-     ELM_WIDGET_DATA_GET(obj, wid_pd);
+     ELM_WIDGET_DATA_GET(wid, wid_pd);
 
      if (wid_pd->tree_unfocusable) return EINA_TRUE;
    } while((wid = elm_widget_parent_widget_get(wid)));
@@ -213,33 +213,70 @@ _tree_unfocusable(Eo *obj)
    return EINA_FALSE;
 }
 
+
+static void _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd);
+
 static void
+_manager_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET(data, pd);
+
+   _full_eval(data, pd);
+}
+
+static Efl_Ui_Focus_Object*
 _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
-   Evas_Object *parent = obj;
-   Efl_Ui_Focus_Manager *new = NULL;
+   Evas_Object *provider = NULL;
+   Evas_Object *parent;
+   Efl_Ui_Focus_Manager *new = NULL, *old = NULL;
 
-   do
+   parent = elm_widget_parent_get(obj);
+   if (efl_isa(parent, EFL_UI_FOCUS_MANAGER_CLASS))
      {
-        if (efl_isa(parent, EFL_UI_FOCUS_MANAGER_CLASS))
-         new = parent;
+        new = parent;
      }
-   while(!new && (parent = elm_widget_parent_get(parent)));
+   else
+     {
+        new = efl_ui_focus_user_manager_get(parent);
+        provider = parent;
+     }
 
-   if (new != pd->focus.chained_manager)
+   if (new != pd->manager.manager )
      {
-        efl_event_callback_call(obj, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, new);
-        pd->focus.chained_manager = new;
+        old = pd->manager.manager;
+
+        if (pd->manager.provider)
+          efl_event_callback_del(pd->manager.provider, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
+
+        pd->manager.manager = new;
+        pd->manager.provider = provider;
+
+        if (pd->manager.provider)
+          efl_event_callback_add(pd->manager.provider, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
      }
-   if (!new)
-     ERR("Failed to find manager object");
+
+   return old;
 }
+
+EOLIAN static void
+_elm_widget_focus_register(Eo *obj, Elm_Widget_Smart_Data *pd,
+  Efl_Ui_Focus_Manager *manager,
+  Efl_Ui_Focus_Object *logical, Eina_Bool full)
+{
+   if (full)
+     efl_ui_focus_manager_register(manager, obj, logical, NULL);
+   else
+     efl_ui_focus_manager_register_logical(manager, obj, logical);
+}
+
 
 static void
 _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
    Eina_Bool should = EINA_FALSE;
    Eina_Bool want_full = EINA_FALSE;
+   Efl_Ui_Focus_Manager *manager = efl_ui_focus_user_manager_get(obj);
 
    //there are two reasons to be registered, the child count is bigger than 0, or the widget is flagged to be able to handle focus
    if (pd->can_focus)
@@ -257,18 +294,27 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
    if (pd->logical.child_count > 0)
      should = EINA_TRUE;
 
+   if (!manager ||
+        //check if we have changed the manager
+        (pd->focus.manager != manager && should) ||
+        //check if we are already registered but in a different state
+        (pd->focus.manager && should && want_full == pd->focus.logical)
+      )
+     {
+        efl_ui_focus_manager_unregister(pd->focus.manager, obj);
+        pd->focus.manager = NULL;
+     }
+
    //now register in the manager
    if (should && !pd->focus.manager)
      {
-        pd->focus.manager = efl_ui_focus_user_manager_get(obj);
-        pd->focus.logical = !want_full;
-
-        if (pd->focus.manager != obj)
+        if (manager != obj)
           {
-             if (want_full)
-               efl_ui_focus_manager_register(pd->focus.manager, obj, pd->logical.parent, NULL);
-             else
-               efl_ui_focus_manager_register_logical(pd->focus.manager, obj, pd->logical.parent);
+             pd->focus.manager = manager;
+
+             elm_obj_widget_focus_register(obj, pd->focus.manager, pd->logical.parent, want_full);
+
+             pd->focus.logical = !want_full;
           }
      }
    else if (!should && pd->focus.manager)
@@ -276,49 +322,85 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
         efl_ui_focus_manager_unregister(pd->focus.manager, obj);
         pd->focus.manager = NULL;
      }
-   else if (should && pd->focus.manager && pd->focus.logical && want_full)
-     {
-        //the case when we before registered as logical, but now wanted to be a normal node
-        efl_ui_focus_manager_unregister(pd->focus.manager, obj);
-        efl_ui_focus_manager_register(pd->focus.manager, obj, pd->focus.manager, NULL);
-     }
 }
 
-static void
-_event_cb_focus_state_eval(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   ELM_WIDGET_DATA_GET(event->object, pd);
-
-   _focus_state_eval(event->object, pd);
-}
-
-static void
-_logical_parent_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
+static Efl_Ui_Focus_Object*
+_logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
    Elm_Widget *parent;
    parent = pd->parent_obj;
    if (pd->logical.parent != parent)
      {
+        Efl_Ui_Focus_Object *old = NULL;
+
         //update old logical parent;
         if (pd->logical.parent)
           {
              ELM_WIDGET_DATA_GET(pd->logical.parent, logical_wd);
+             if (!logical_wd)
+               {
+                  ERR("Widget parent has the wrong type!");
+                  return NULL;
+               }
              logical_wd->logical.child_count --;
-             _focus_state_eval(pd->logical.parent, logical_wd);
+             old = pd->logical.parent;
              pd->logical.parent = NULL;
           }
-         efl_event_callback_call(obj,
-             EFL_UI_FOCUS_USER_EVENT_LOGICAL_CHANGED, parent);
-         if (parent)
+        if (parent)
           {
              ELM_WIDGET_DATA_GET(parent, logical_wd);
+             if (!logical_wd)
+               {
+                  ERR("Widget parent has the wrong type!");
+                  return NULL;
+               }
              logical_wd->logical.child_count ++;
-             _focus_state_eval(parent, logical_wd);
              pd->logical.parent = parent;
              efl_weak_ref(&pd->logical.parent);
           }
+        return old;
      }
+   return NULL;
 }
+
+static void
+_full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
+{
+   Efl_Ui_Focus_Object *old_parent, *old_manager;
+
+   old_parent = _logical_parent_eval(obj, pd);
+   old_manager = _focus_manager_eval(obj, pd);
+
+   if (old_parent)
+     {
+        //emit signal and focus eval old and new
+        ELM_WIDGET_DATA_GET(old_parent, old_pd);
+        _focus_state_eval(old_parent, old_pd);
+
+     }
+
+   if (pd->logical.parent)
+     {
+        ELM_WIDGET_DATA_GET(pd->logical.parent, new_pd);
+        _focus_state_eval(pd->logical.parent, new_pd);
+     }
+
+   if (old_parent != pd->logical.parent)
+     {
+        efl_event_callback_call(obj,
+             EFL_UI_FOCUS_USER_EVENT_LOGICAL_CHANGED, old_parent);
+     }
+
+   if (old_manager != pd->manager.manager)
+     {
+        //emit signal
+        efl_event_callback_call(obj,
+             EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, old_manager);
+     }
+
+   _focus_state_eval(obj, pd);
+}
+
 /**
  * @internal
  *
@@ -934,7 +1016,7 @@ _elm_widget_focus_region_show(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNU
              Evas_Coord sx, sy;
              elm_interface_scrollable_content_region_get(o, &sx, &sy, NULL, NULL);
 
-             // Get the object's on_focus_region position relative to the scroller. 
+             // Get the object's on_focus_region position relative to the scroller.
              Evas_Coord rx, ry;
              rx = ox + x - px + sx;
              ry = oy + y - py + sy;
@@ -1287,8 +1369,7 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
           }
         sdc->parent_obj = obj;
 
-        _logical_parent_eval(sobj, sdc);
-        _focus_manager_eval(sobj, sdc);
+        _full_eval(sobj, sdc);
 
         if (!sdc->on_create)
           elm_obj_widget_orientation_set(sobj, sd->orient_mode);
@@ -1456,8 +1537,7 @@ _elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
         ELM_WIDGET_DATA_GET(sobj, sdc);
         sdc->parent_obj = NULL;
 
-        _logical_parent_eval(sobj, sdc);
-        _focus_manager_eval(sobj, sdc);
+        _full_eval(sobj, sdc);
      }
 
    if (sd->resize_obj == sobj) sd->resize_obj = NULL;
@@ -6015,9 +6095,6 @@ _elm_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSE
 
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_UNKNOWN);
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_USER_EVENT_LOGICAL_CHANGED, _event_cb_focus_state_eval, NULL);
-   efl_event_callback_add(obj, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED , _event_cb_focus_state_eval, NULL);
-
    return obj;
 }
 
@@ -6040,6 +6117,10 @@ _elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED
    sd->on_destroy = EINA_TRUE;
    efl_destructor(efl_super(obj, ELM_WIDGET_CLASS));
    sd->on_destroy = EINA_FALSE;
+
+   if (sd->manager.provider)
+     efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
+   sd->manager.provider = NULL;
 
    elm_interface_atspi_accessible_removed(obj);
 }
@@ -6308,7 +6389,7 @@ _elm_widget_efl_ui_focus_user_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_D
 EOLIAN static Efl_Ui_Focus_Manager*
 _elm_widget_efl_ui_focus_user_manager_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   return pd->focus.chained_manager;
+   return pd->manager.manager;
 }
 
 EOLIAN static void
@@ -6318,6 +6399,14 @@ _elm_widget_efl_ui_focus_object_geometry_get(Eo *obj, Elm_Widget_Smart_Data *pd 
 
    return efl_gfx_geometry_get(obj, &rect->x , &rect->y, &rect->w, &rect->h);
 }
+
+EOLIAN static void
+_elm_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool focus)
+{
+   pd->focused = focus;
+   elm_obj_widget_on_focus(obj, NULL);
+}
+
 
 #include "elm_widget_item.eo.c"
 #include "elm_widget.eo.c"

@@ -824,6 +824,13 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       focus_reconfigure {
          [[@since 1.18]]
       }
+      focus_register {
+         params {
+            manager : Efl.Ui.Focus.Manager;
+            logical : Efl.Ui.Focus.Object;
+            full : bool;
+         }
+      }
    }
    implements {
       class.constructor;
@@ -853,6 +860,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       Efl.Ui.Focus.User.manager.get;
       Efl.Ui.Focus.User.parent.get;
       Efl.Ui.Focus.Object.geometry_get;
+      Efl.Ui.Focus.Object.focus.set;
    }
    events {
       moved; [[Called when widget moved]]
