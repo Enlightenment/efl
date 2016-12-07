@@ -84,6 +84,14 @@ evas_image_load_file_head_jpeg(void *loader_data,
    return ret;
 }
 
+static Eina_Bool
+_evas_image_load_jpeg_cancelled(void *data EINA_UNUSED,
+                                Emile_Image *image EINA_UNUSED,
+                                Emile_Action action EINA_UNUSED)
+{
+   return evas_module_task_cancelled();
+}
+
 Eina_Bool
 evas_image_load_file_data_jpeg(void *loader_data,
                               Evas_Image_Property *prop,
@@ -94,6 +102,9 @@ evas_image_load_file_data_jpeg(void *loader_data,
    Emile_Image_Load_Error image_error;
    Eina_Bool ret;
 
+   emile_image_register(loader->image,
+                        _evas_image_load_jpeg_cancelled,
+                        EMILE_ACTION_CANCELLED, NULL);
    ret = emile_image_data(loader->image,
                           prop, sizeof (*prop),
                           pixels,
@@ -142,4 +153,3 @@ EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_LOADER, image_loader, jpeg);
 #ifndef EVAS_STATIC_BUILD_JPEG
 EVAS_EINA_MODULE_DEFINE(image_loader, jpeg);
 #endif
-
