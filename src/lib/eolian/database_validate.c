@@ -7,107 +7,32 @@
 #include "eo_lexer.h"
 
 static Eina_Bool
-_validate_ref(const char *ref, const Eolian_Object *info)
-{
-   if (eolian_declaration_get_by_name(ref))
-     return EINA_TRUE;
-
-   const char *suffix = strrchr(ref, '.');
-   if (!suffix) goto failed;
-
-   Eina_Stringshare *base = eina_stringshare_add_length(ref, suffix - ref);
-
-   const Eolian_Typedecl *tpd = eolian_typedecl_struct_get_by_name(base);
-   if (tpd)
-     {
-        eina_stringshare_del(base);
-        if (!eolian_typedecl_struct_field_get(tpd, suffix + 1))
-          goto failed;
-        return EINA_TRUE;
-     }
-
-   tpd = eolian_typedecl_enum_get_by_name(base);
-   if (tpd)
-     {
-        eina_stringshare_del(base);
-        if (!eolian_typedecl_enum_field_get(tpd, suffix + 1))
-          goto failed;
-        return EINA_TRUE;
-     }
-
-   const Eolian_Class *cl = eolian_class_get_by_name(base);
-   if (cl)
-     {
-        eina_stringshare_del(base);
-        if (!eolian_class_function_get_by_name(cl, suffix + 1, EOLIAN_UNRESOLVED))
-          goto failed;
-        return EINA_TRUE;
-     }
-
-   Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
-   if (!strcmp(suffix, ".get"))
-     ftype = EOLIAN_PROP_GET;
-   else if (!strcmp(suffix, ".set"))
-     ftype = EOLIAN_PROP_SET;
-
-   const char *meth;
-   if (ftype != EOLIAN_UNRESOLVED)
-     {
-        eina_stringshare_del(base);
-        meth = suffix - 1;
-        while ((meth != ref) && (*meth != '.')) --meth;
-        if (meth == ref) goto failed;
-        base = eina_stringshare_add_length(ref, meth - ref);
-        cl = eolian_class_get_by_name(base);
-        eina_stringshare_del(base);
-     }
-
-   if (!cl) goto failed;
-
-   char *ameth = strndup(meth + 1, suffix - meth - 1);
-   const Eolian_Function *fn = eolian_class_function_get_by_name(cl, ameth, ftype);
-   free(ameth);
-
-   if (!fn) goto failed;
-   return EINA_TRUE;
-
-failed:
-   fprintf(stderr, "eolian:%s:%d:%d: failed validating reference '%s'\n",
-           info->file, info->line, info->column, ref);
-   return EINA_FALSE;
-}
-
-static Eina_Bool
 _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info)
 {
-   if (!str) return EINA_TRUE;
+   if (!str || !str[0]) return EINA_TRUE;
 
-   const char *p;
-   for (p = strchr(str, '@'); p; p = strchr(p, '@'))
+   Eina_Bool ret = EINA_TRUE;
+   Eina_List *pl = eolian_documentation_string_split(str);
+   char *par;
+   EINA_LIST_FREE(pl, par)
      {
-        ++p;
-        /* escaped refs */
-        if ((p > (str + 1)) && (*(p - 2) == '\\'))
-          continue;
-        /* are we starting a reference? */
-        const char *ref = p;
-        if (!isalpha(*p) && (*p != '_'))
-          continue;
-        ++p;
-        /* check the rest of the reference */
-        while (isalnum(*p) || (*p == '.') || (*p == '_'))
-          ++p;
-        if (*(p - 1) == '.') --p;
-        Eina_Stringshare *refs = eina_stringshare_add_length(ref, (p - ref));
-        if (!_validate_ref(refs, info))
-          {
-             eina_stringshare_del(refs);
-             return EINA_FALSE;
-          }
-        eina_stringshare_del(refs);
+        const char *doc = par;
+        Eolian_Doc_Token tok;
+        eolian_doc_token_init(&tok);
+        while (ret && (doc = eolian_documentation_tokenize(doc, &tok)))
+          if (eolian_doc_token_type_get(&tok) == EOLIAN_DOC_TOKEN_REF)
+            if (eolian_doc_token_ref_get(&tok, NULL, NULL) == EOLIAN_DOC_REF_INVALID)
+              {
+                 char *refn = eolian_doc_token_text_get(&tok);
+                 fprintf(stderr, "eolian:%s:%d:%d: failed validating reference '%s'\n",
+                         info->file, info->line, info->column, refn);
+                 free(refn);
+                 ret = EINA_FALSE;
+                 break;
+              }
      }
 
-   return EINA_TRUE;
+   return ret;
 }
 
 static Eina_Bool
