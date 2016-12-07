@@ -1018,6 +1018,10 @@ eng_setup(Evas *evas, void *in)
                                           epd->output.w, epd->output.h,
                                           info->info.rotation,
                                           info->info.depth);
+                  evas_render_engine_software_generic_update(&re->generic.software,
+                                                             re->generic.software.ob,
+                                                             epd->output.w,
+                                                             epd->output.h);
                }
           }
      }

@@ -540,18 +540,7 @@ evas_outbuf_unsurf(Outbuf *ob)
 void
 evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 {
-   Evas_Public_Data *epd;
-   Render_Engine *re;
-
    if (depth == OUTBUF_DEPTH_INHERIT) depth = ob->depth;
-
-   epd = efl_data_scope_get(ob->evas, EVAS_CANVAS_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN(epd);
-
-   re = epd->engine.data.output;
-   EINA_SAFETY_ON_NULL_RETURN(re);
-
-   re->generic.software.ob->gl_context->references++;
 
    while (ecore_drm2_fb_release(ob->priv.output, EINA_TRUE));
 
@@ -561,10 +550,6 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      _evas_outbuf_gbm_surface_create(ob, h, w);
    _evas_outbuf_egl_setup(ob);
-
-   evas_render_engine_software_generic_update(&re->generic.software, ob, w, h);
-
-   re->generic.software.ob->gl_context->references--;
 
    glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
 }
