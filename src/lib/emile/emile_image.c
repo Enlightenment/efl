@@ -1860,10 +1860,11 @@ _emile_jpeg_data(Emile_Image *image,
    else
      {
         ptr2 = pixels;
+        ptrag = pixels;
         ptrg = pixels;
      }
 
-   if (!ptr2 && !ptrg)
+   if (!ptr2 && !ptrag && !ptrg)
      {
         *error = EMILE_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         goto on_error;
