@@ -477,6 +477,7 @@ main(int argc, char **argv)
                     func_color, bt->func_name, reset_color,
                     file_color, bt->file_name, reset_color,
                     line_color, bt->line, reset_color);
+             fflush(stdout);
              continue;
           }
 
@@ -504,6 +505,7 @@ main(int argc, char **argv)
                sep_color,
                reset_color);
      }
+   fflush(stdout);
    EINA_LIST_FREE(btl, bt)
      {
         free(bt->bin_dir);
