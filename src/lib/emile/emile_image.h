@@ -102,7 +102,8 @@ typedef enum _Emile_Image_Load_Error
   EMILE_IMAGE_LOAD_ERROR_PERMISSION_DENIED = 3,	 /**< Permission denied to an existing file (or path) */
   EMILE_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4,  /**< Allocation of resources failure prevented load */
   EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE = 5,  /**< File corrupt (but was detected as a known format) */
-  EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT = 6  /**< File is not a known format */
+  EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT = 6,  /**< File is not a known format */
+  EMILE_IMAGE_LOAD_ERROR_CANCELLED = 7 /**< File loading has been cancelled */
 } Emile_Image_Load_Error; /**< Emile image load error codes one can get - see emile_load_error_str() too. */
 
 /**
@@ -140,6 +141,25 @@ typedef struct _Emile_Image_Animated Emile_Image_Animated;
  * @since 1.14
  */
 typedef struct _Emile_Image_Property Emile_Image_Property;
+
+/**
+ * @enum _Emile_Action
+ * @typedef Emile_Action
+ * What action emile is refering to.
+ * @since 1.19
+ */
+typedef enum _Emile_Action
+{
+  EMILE_ACTION_NONE = 0,
+  EMILE_ACTION_CANCELLED = 1
+} Emile_Action;
+
+/**
+ * @typedef Emile_Action_Cb
+ * A callback triggered by emile to learn what to do about a specific action.
+ * @since 1.19
+ */
+typedef Eina_Bool (*Emile_Action_Cb)(void *data, Emile_Image *image, Emile_Action action);
 
 struct _Emile_Image_Property
 {
@@ -284,6 +304,16 @@ EAPI Eina_Bool emile_image_head(Emile_Image * image, Emile_Image_Property * prop
  * @since 1.14
  */
 EAPI Eina_Bool emile_image_data(Emile_Image * image, Emile_Image_Property * prop, unsigned int property_size, void *pixels, Emile_Image_Load_Error * error);
+
+/**
+ * Register a callback for emile to ask what to do during the processing of an image
+ *
+ * @param image The Emile_Image handler to register on.
+ * @param callback The callback to use
+ * @param action The action this callback is triggered on.
+ * @since 1.19
+ */
+EAPI void emile_image_register(Emile_Image *image, Emile_Action_Cb callback, Emile_Action action, const void *data);
 
 /**
  * Close an opened image handler.

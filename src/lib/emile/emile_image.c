@@ -125,6 +125,9 @@ struct _Emile_Image
    Eina_Bool             (*data)(Emile_Image *image, Emile_Image_Property *prop, unsigned int property_size, void *pixels, Emile_Image_Load_Error *error);
    void                  (*close)(Emile_Image *image);
 
+   Emile_Action_Cb       cancelled;
+   const void           *cancelled_data;
+
    Emile_Colorspace      cspace;
 
    Eina_Bool             bin_source : 1;
@@ -135,6 +138,27 @@ struct _Emile_Image
    Eina_Bool             blockless : 1;
    Eina_Bool             load_opts : 1;
 };
+
+static inline Eina_Bool
+_emile_image_cancelled_is(Emile_Image *image)
+{
+   if (!image->cancelled) return EINA_FALSE;
+   return image->cancelled((void*) image->cancelled_data, image, EMILE_ACTION_CANCELLED);
+}
+
+#define EMILE_IMAGE_TASK_CHECK(Image, Count, Mask, Error, Error_Handler) \
+  do {                                                                  \
+     Count++;                                                           \
+     if ((Count & Mask) == Mask)                                        \
+       {                                                                \
+          Count = 0;                                                    \
+          if (_emile_image_cancelled_is(Image))                         \
+            {                                                           \
+               *Error = EMILE_IMAGE_LOAD_ERROR_CANCELLED;               \
+               goto Error_Handler;                                      \
+            }                                                           \
+       }                                                                \
+  } while (0);
 
 static const unsigned char *
 _emile_image_file_source_map(Emile_Image *image, unsigned int *length)
@@ -1629,6 +1653,7 @@ _emile_jpeg_data(Emile_Image *image,
    Eina_Bool ptrag_free = EINA_FALSE;
    Eina_Bool r = EINA_FALSE;
    unsigned int length;
+   unsigned short count = 0;
 
    if (sizeof(Emile_Image_Property) != property_size)
      return EINA_FALSE;
@@ -1852,6 +1877,9 @@ _emile_jpeg_data(Emile_Image *image,
           line[i] = data + (i * w * 4);
         for (l = 0; l < h; l += cinfo.rec_outbuf_height)
           {
+             // Check for continuing every 16 scanlines fetch
+             EMILE_IMAGE_TASK_CHECK(image, count, 0xF, error, on_error);
+
              jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
              scans = cinfo.rec_outbuf_height;
              if ((h - l) < scans)
@@ -1998,6 +2026,9 @@ _emile_jpeg_data(Emile_Image *image,
           line[i] = data + (i * w * 3);
         for (l = 0; l < h; l += cinfo.rec_outbuf_height)
           {
+             // Check for continuing every 16 scanlines fetch
+             EMILE_IMAGE_TASK_CHECK(image, count, 0xF, error, on_error);
+
              jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
              scans = cinfo.rec_outbuf_height;
              if ((h - l) < scans)
@@ -2060,6 +2091,9 @@ _emile_jpeg_data(Emile_Image *image,
           line[i] = data + (i * w);
         for (l = 0; l < h; l += cinfo.rec_outbuf_height)
           {
+             // Check for continuing every 16 scanlines fetch
+             EMILE_IMAGE_TASK_CHECK(image, count, 0xF, error, on_error);
+
              jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
              scans = cinfo.rec_outbuf_height;
              if ((h - l) < scans)
@@ -2411,6 +2445,17 @@ emile_image_jpeg_file_open(Eina_File *source,
 }
 
 EAPI void
+emile_image_register(Emile_Image *image, Emile_Action_Cb callback, Emile_Action action, const void *data)
+{
+   if (!image) return ;
+   // We only handle one type of callback for now
+   if (action != EMILE_ACTION_CANCELLED) return ;
+
+   image->cancelled_data = data;
+   image->cancelled = callback;
+}
+
+EAPI void
 emile_image_close(Emile_Image *image)
 {
    if (!image)
@@ -2476,6 +2521,9 @@ emile_load_error_str(Emile_Image *source EINA_UNUSED,
 
       case EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT:
         return "Unexpected file format.";
+
+      case EMILE_IMAGE_LOAD_ERROR_CANCELLED:
+        return "Loading was stopped by an external request.";
      }
    return NULL;
 }
