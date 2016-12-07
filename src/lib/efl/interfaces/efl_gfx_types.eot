@@ -190,7 +190,8 @@ enum Efl.Image.Load.Error
    permission_denied = 3,          [[Permission denied to an existing file (or path)]]
    resource_allocation_failed = 4, [[Allocation of resources failure prevented load]]
    corrupt_file = 5,               [[File corrupt (but was detected as a known format)]]
-   unknown_format = 6              [[File is not a known format]]
+   unknown_format = 6,             [[File is not a known format]]
+   cancelled = 7                   [[Reading operation has been cancelled during decoding]]
 }
 
 enum Efl.Gfx.Size.Hint.Mode {
