@@ -35,6 +35,9 @@ main(int argc, char *argv[])
    sum = interface2_ab_sum_get2(obj);
    fail_if(sum != a + b + 1);
 
+   fail_if(!efl_isa(obj, INTERFACE_CLASS));
+   fail_if(!efl_isa(obj, INTERFACE2_CLASS));
+
    efl_unref(obj);
    efl_object_shutdown();
    return 0;

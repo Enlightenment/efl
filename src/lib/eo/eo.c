@@ -228,14 +228,14 @@ _eo_op_class_get(Efl_Object_Op op)
 }
 
 static inline Eina_Bool
-_vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass, Efl_Object_Op op, Eo_Op_Func_Type func)
+_vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass, Efl_Object_Op op, Eo_Op_Func_Type func, Eina_Bool allow_same_override)
 {
    op_type_funcs *fsrc;
    size_t idx1 = DICH_CHAIN1(op);
    Dich_Chain1 *chain1 = &vtable->chain[idx1];
    _vtable_chain_write_prepare(chain1);
    fsrc = &chain1->chain2->funcs[DICH_CHAIN_LAST(op)];
-   if (fsrc->src == klass)
+   if (!allow_same_override && (fsrc->src == klass))
      {
         const _Efl_Class *op_kls = _eo_op_class_get(op);
         ERR("Class '%s': Overriding already set func %p for op %d (%s) with %p.",
@@ -746,7 +746,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
 
         DBG("%p->%p '%s'", op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
 
-        if (!_vtable_func_set(vtable, klass, op, op_desc->func))
+        if (!_vtable_func_set(vtable, klass, op, op_desc->func, EINA_FALSE))
           return EINA_FALSE;
 
         last_api_func = op_desc->api_func;
@@ -1224,6 +1224,25 @@ _eo_class_isa_func(Eo *eo_id EINA_UNUSED, void *class_data EINA_UNUSED)
    /* Do nonthing. */
 }
 
+static void
+_eo_class_isa_recursive_set(_Efl_Class *klass, const _Efl_Class *cur)
+{
+   const _Efl_Class **extn_itr;
+
+   _vtable_func_set(&klass->vtable, klass, cur->base_id + cur->ops_count,
+         _eo_class_isa_func, EINA_TRUE);
+
+   for (extn_itr = cur->extensions ; *extn_itr ; extn_itr++)
+     {
+        _eo_class_isa_recursive_set(klass, *extn_itr);
+     }
+
+   if (cur->parent)
+     {
+        _eo_class_isa_recursive_set(klass, cur->parent);
+     }
+}
+
 static inline void
 _eo_classes_release(void)
 {
@@ -1509,25 +1528,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    /* Mark which classes we implement */
    if (klass->vtable.size)
      {
-        const _Efl_Class **extn_itr;
-
-        for (extn_itr = klass->extensions ; *extn_itr ; extn_itr++)
-          {
-             const _Efl_Class *extn = *extn_itr;
-             /* Set it in the dich. */
-             _vtable_func_set(&klass->vtable, klass, extn->base_id +
-                   extn->ops_count, _eo_class_isa_func);
-          }
-
-        _vtable_func_set(&klass->vtable, klass, klass->base_id + klass->ops_count,
-              _eo_class_isa_func);
-
-        if (klass->parent)
-          {
-             _vtable_func_set(&klass->vtable, klass,
-                   klass->parent->base_id + klass->parent->ops_count,
-                   _eo_class_isa_func);
-          }
+        _eo_class_isa_recursive_set(klass, klass);
      }
 
    _eo_class_constructor(klass);
