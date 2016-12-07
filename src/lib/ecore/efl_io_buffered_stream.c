@@ -21,6 +21,7 @@ typedef struct
    Eina_Bool can_read;
    Eina_Bool can_write;
    Eina_Bool is_closer;
+   Eina_Bool is_finished;
 } Efl_Io_Buffered_Stream_Data;
 
 #define MY_CLASS EFL_IO_BUFFERED_STREAM_CLASS
@@ -98,11 +99,21 @@ _efl_io_buffered_stream_sender_done(void *data, const Efl_Event *event EINA_UNUS
 {
    Eo *o = data;
    Efl_Io_Buffered_Stream_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   size_t pending = pd->receiver ? efl_io_copier_pending_size_get(pd->receiver) : 0;
+
    efl_ref(o);
    efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_PROGRESS, NULL);
    efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_WRITE_FINISHED, NULL);
-   if (efl_io_copier_done_get(pd->receiver))
-     efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, NULL);
+   if ((pending == 0) || efl_io_copier_done_get(pd->receiver))
+     {
+        if (!pd->is_finished)
+          {
+             pd->is_finished = EINA_TRUE;
+             efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, NULL);
+          }
+     }
+   else
+     DBG("%p sender done, waiting for receiver to process %zd to call it 'finished'", o, pending);
    efl_unref(o);
 }
 
@@ -269,6 +280,8 @@ _efl_io_buffered_stream_efl_io_reader_eos_get(Eo *o EINA_UNUSED, Efl_Io_Buffered
 EOLIAN static void
 _efl_io_buffered_stream_efl_io_reader_eos_set(Eo *o, Efl_Io_Buffered_Stream_Data *pd, Eina_Bool is_eos)
 {
+   size_t pending = pd->sender ? efl_io_copier_pending_size_get(pd->sender) : 0;
+
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->eos == is_eos) return;
    pd->eos = is_eos;
@@ -278,8 +291,16 @@ _efl_io_buffered_stream_efl_io_reader_eos_set(Eo *o, Efl_Io_Buffered_Stream_Data
    efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_PROGRESS, NULL);
    efl_event_callback_call(o, EFL_IO_READER_EVENT_EOS, NULL);
    efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_READ_FINISHED, NULL);
-   if (efl_io_copier_done_get(pd->sender))
-     efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, NULL);
+   if ((pending == 0) || efl_io_copier_done_get(pd->sender))
+     {
+        if (!pd->is_finished)
+          {
+             pd->is_finished = EINA_TRUE;
+             efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, NULL);
+          }
+     }
+   else
+     DBG("%p eos, waiting for sender process %zd to call 'finished'", o, pending);
    efl_unref(o);
 }
 
