@@ -604,8 +604,8 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    _funcs_params_init = eina_hash_pointer_new(NULL);
 
-   char *cname = NULL, *cnamel = NULL;
-   eo_gen_class_names_get(cl, &cname, NULL, &cnamel);
+   char *cnamel = NULL;
+   eo_gen_class_names_get(cl, NULL, NULL, &cnamel);
 
    /* event section, they come first */
    {
@@ -662,7 +662,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    eina_strbuf_append(buf, cnamel);
    eina_strbuf_append(buf, "_class_desc = {\n"
                            "   EO_VERSION,\n");
-   eina_strbuf_append_printf(buf, "   \"%s\",\n", cname);
+   eina_strbuf_append_printf(buf, "   \"%s\",\n", eolian_class_full_name_get(cl));
 
    switch (eolian_class_type_get(cl))
      {
@@ -739,7 +739,6 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    eina_strbuf_free(lbuf);
 
    /* and we're done */
-   free(cname);
    free(cnamel);
    eina_hash_free(_funcs_params_init);
 }
