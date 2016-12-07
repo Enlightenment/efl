@@ -461,10 +461,13 @@ _focus_in_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 {
 #ifdef HAVE_ECORE_IMF
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Canvas_Text_Cursor *cur;
+
    if (!en->imf_context) return;
 
+   cur = efl_canvas_text_cursor_get(obj);
    ecore_imf_context_focus_in(en->imf_context);
-   _entry_imf_cursor_info_set(obj, en);
+   _entry_imf_cursor_info_set(cur, en);
 #endif
 }
 
