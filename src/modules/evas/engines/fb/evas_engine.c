@@ -87,9 +87,10 @@ evas_fb_region_push_hook_call(Outbuf *buf, int x, int y, int w, int h,
 
 /* internal engine routines */
 static void *
-_output_setup(Evas *eo_e, int w, int h, int rot, int vt, int dev, int refresh,
+_output_setup(int w, int h, int rot, int vt, int dev, int refresh,
               void (*region_push_hook)(Evas *e, int x, int y, int w, int h,
-                                       const void *pixels))
+                                       const void *pixels),
+              Evas *push_to)
 {
    Render_Engine *re;
    Outbuf *ob;
@@ -105,7 +106,7 @@ _output_setup(Evas *eo_e, int w, int h, int rot, int vt, int dev, int refresh,
    if (!ob) goto on_error;
 
    ob->region_push_hook.cb = region_push_hook;
-   ob->region_push_hook.evas = eo_e;
+   ob->region_push_hook.evas = push_to;
    if (!evas_render_engine_software_generic_init(&re->generic, ob, NULL,
                                                  evas_fb_outbuf_fb_get_rot,
                                                  evas_fb_outbuf_fb_reconfigure,
@@ -164,7 +165,8 @@ eng_setup(void *in, unsigned int w, unsigned int h)
                         info->info.virtual_terminal,
                         info->info.device_number,
                         info->info.refresh,
-                        info->func.region_push_hook);
+                        info->func.region_push_hook,
+                        info->push_to);
 }
 
 static void

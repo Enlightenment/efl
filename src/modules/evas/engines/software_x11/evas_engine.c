@@ -362,7 +362,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
         re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
      }
    re->generic.ob->region_push_hook.cb = info->func.region_push_hook;
-   re->generic.ob->region_push_hook.evas = eo_e;
+   re->generic.ob->region_push_hook.evas = info->push_to;
 
    _outbufs =  eina_list_append(_outbufs, re->generic.ob);
 
@@ -422,7 +422,7 @@ eng_update(void *data, void *in, unsigned int w, unsigned int h)
      {
         evas_render_engine_software_generic_update(&re->generic, ob, w, h);
         ob->region_push_hook.cb = info->func.region_push_hook;
-        ob->region_push_hook.evas = eo_e;
+        ob->region_push_hook.evas = info->push_to;
      }
 
    _outbufs =  eina_list_append(_outbufs, re->generic.ob);

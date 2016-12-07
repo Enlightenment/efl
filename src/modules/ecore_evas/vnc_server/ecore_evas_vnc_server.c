@@ -745,6 +745,7 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
 
         x11_engine = (Evas_Engine_Info_Software_X11 *)engine;
         x11_engine->func.region_push_hook = _ecore_evas_vnc_server_draw;
+        x11_engine->push_to = ee->evas;
         engine_set = EINA_TRUE;
         key_info_get_func = _ecore_evas_vnc_server_x11_key_info_get;
      }
@@ -757,6 +758,7 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
 
         fb_engine = (Evas_Engine_Info_FB *)engine;
         fb_engine->func.region_push_hook = _ecore_evas_vnc_server_draw;
+        fb_engine->push_to = ee->evas;
         engine_set = EINA_TRUE;
         key_info_get_func = _ecore_evas_vnc_server_fb_key_info_get;
      }
@@ -864,6 +866,7 @@ ecore_evas_vnc_server_del(Ecore_Evas_Vnc_Server *server)
 
         x11_engine = (Evas_Engine_Info_Software_X11 *)engine;
         x11_engine->func.region_push_hook = NULL;
+        x11_engine->push_to = NULL;
      }
 #endif
 #ifdef BUILD_ENGINE_FB
@@ -873,6 +876,7 @@ ecore_evas_vnc_server_del(Ecore_Evas_Vnc_Server *server)
 
         fb_engine = (Evas_Engine_Info_FB *)engine;
         fb_engine->func.region_push_hook = NULL;
+        fb_engine->push_to = NULL;
      }
 #endif
 

@@ -35,13 +35,15 @@ struct _Evas_Engine_Info_Software_X11
      } info;
 
    /* engine specific function calls to query stuff about the destination */
-   struct 
+   struct
      {
         void *(*best_visual_get) (int backend, void *connection, int screen);
         unsigned int (*best_colormap_get) (int backend, void *connection, int screen);
         int (*best_depth_get) (int backend, void *connection, int screen);
-        void (*region_push_hook)(Evas *e, int x, int y, int w, int h, const void *pixels);
+        void (*region_push_hook)(Evas *push_to, int x, int y, int w, int h, const void *pixels);
      } func;
+
+   Evas *push_to;
 
    unsigned char mask_changed : 1;
 

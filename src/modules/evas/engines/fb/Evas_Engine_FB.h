@@ -21,9 +21,9 @@ struct _Evas_Engine_Info_FB
    Evas_Engine_Render_Mode render_mode;
 
    struct {
-      void (*region_push_hook)(Evas *e, int x, int y, int w, int h, const void *pixels);
+      void (*region_push_hook)(Evas *push_to, int x, int y, int w, int h, const void *pixels);
    } func;
+
+   Evas *push_to;
 };
 #endif
-
-
