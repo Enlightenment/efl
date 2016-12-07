@@ -81,3 +81,52 @@ class Eo_resolve(gdb.Function):
 
 
 Eo_resolve()
+
+
+class Eo_data_get(gdb.Function):
+    def __init__(self):
+        gdb.Function.__init__(self, 'eo_data_get')
+
+    def invoke(self, ptr, kls_name):
+        ptr = ptr.cast(null_ptr.type)  # Make sure it's the right type
+
+        if int(ptr) == 0:
+            gdb.write('Object is not a valid pointer (NULL).\n')
+            return null_ptr
+
+        kls_name = kls_name.string()
+        extns = ptr['klass']['mro']
+        kls = None
+
+        i = 0
+        while int(extns[i]) != 0:
+            if extns[i]['desc']['name'].string() == kls_name:
+                kls = extns[i]
+            i += 1
+
+        if kls is None:
+            gdb.write('Class "{}" not found in the object mro.\n'
+                      .format(kls_name))
+            return null_ptr
+
+        # Check if not mixin
+        if int(kls['desc']['type']) != 3:
+            return gdb.parse_and_eval('(void *) (((char *) {}) + {})'
+                                      .format(ptr, kls['data_offset']))
+        else:
+            extn_off = ptr['klass']['extn_data_off']
+            if int(extn_off) == 0:
+                return null_ptr
+
+            i = 0
+            while int(extn_off[i]['klass']) != 0:
+                kls = extn_off[i]['klass']
+                if kls['desc']['name'].string() == kls_name:
+                    return gdb.parse_and_eval('(void *) (((char *) {}) + {})'
+                                              .format(ptr, kls['data_offset']))
+                i += 1
+
+        return null_ptr
+
+
+Eo_data_get()
