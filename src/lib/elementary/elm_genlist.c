@@ -6979,10 +6979,15 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
      {
         if ((it->item->queued) || (!it->item->mincalcd) || (sd->queue))
           {
+             sd->check_scroll = EINA_TRUE;
              sd->show_item = it;
              sd->bring_in = bring_in;
              sd->scroll_to_type = type;
              it->item->show_me = EINA_TRUE;
+
+             ecore_job_del(sd->calc_job);
+             sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+
              return EINA_FALSE;
           }
      }
