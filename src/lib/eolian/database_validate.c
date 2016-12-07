@@ -30,6 +30,7 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info)
                  ret = EINA_FALSE;
                  break;
               }
+        free(par);
      }
 
    return ret;
