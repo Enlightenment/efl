@@ -56,7 +56,9 @@ MASK_GENERATIONS = (MAX_GENERATIONS - 1)
 MASK_OBJ_TAG = (1 << (REF_TAG_SHIFT))
 
 
-null_ptr = gdb.parse_and_eval('(_Eo_Object *) 0')
+null_void_ptr = gdb.parse_and_eval('(_Eo_Object *) 0')
+null_eo_object_ptr = gdb.parse_and_eval('(_Eo_Object *) 0')
+zero_uintptr_t = gdb.parse_and_eval('(uintptr_t) 0')
 
 
 class Eo_resolve(gdb.Function):
@@ -64,7 +66,7 @@ class Eo_resolve(gdb.Function):
         gdb.Function.__init__(self, 'eo_resolve')
 
     def invoke(self, arg):
-        obj_id = int(arg)
+        obj_id = int(arg.cast(zero_uintptr_t.type))
 
         mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID
         table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID
@@ -74,20 +76,20 @@ class Eo_resolve(gdb.Function):
 
         if (obj_id == 0) or (tag_bit == 0):
             gdb.write('Pointer is NULL or not a valid object.\n')
-            return null_ptr
+            return null_eo_object_ptr
 
         entries = gdb.parse_and_eval('_eo_gdb_main_domain->tables[0]->' +
                                      'eo_ids_tables[{0}]'.format(mid_table_id))
 
         if int(entries) == 0:
             gdb.write('Pointer is not a valid object.\n')
-            return null_ptr
+            return null_eo_object_ptr
 
         entry = entries[table_id]['entries'][entry_id]
 
         if (not entry['active']) or (int(entry['generation']) != generation):
             gdb.write('Pointer is no longer active.\n')
-            return null_ptr
+            return null_eo_object_ptr
 
         return entry['ptr']
 
@@ -100,11 +102,11 @@ class Eo_data_get(gdb.Function):
         gdb.Function.__init__(self, 'eo_data_get')
 
     def invoke(self, ptr, kls_name):
-        ptr = ptr.cast(null_ptr.type)  # Make sure it's the right type
+        ptr = ptr.cast(null_eo_object_ptr.type)  # Cast to correct type
 
         if int(ptr) == 0:
             gdb.write('Object is not a valid pointer (NULL).\n')
-            return null_ptr
+            return null_void_ptr
 
         kls_name = kls_name.string()
         extns = ptr['klass']['mro']
@@ -119,7 +121,7 @@ class Eo_data_get(gdb.Function):
         if kls is None:
             gdb.write('Class "{}" not found in the object mro.\n'
                       .format(kls_name))
-            return null_ptr
+            return null_void_ptr
 
         # Check if not mixin
         if int(kls['desc']['type']) != 3:
@@ -128,7 +130,7 @@ class Eo_data_get(gdb.Function):
         else:
             extn_off = ptr['klass']['extn_data_off']
             if int(extn_off) == 0:
-                return null_ptr
+                return null_void_ptr
 
             i = 0
             while int(extn_off[i]['klass']) != 0:
@@ -138,7 +140,7 @@ class Eo_data_get(gdb.Function):
                                               .format(ptr, kls['data_offset']))
                 i += 1
 
-        return null_ptr
+        return null_void_ptr
 
 
 Eo_data_get()
