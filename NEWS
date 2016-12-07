@@ -1,6 +1,15 @@
 ==========
-EFL 1.18.3
+EFL 1.18.4
 ==========
+
+Changes since 1.18.3:
+---------------------
+
+Fixes:
+
+   * evas/x11: Fix EGL engine for recent nvidia binary
+   * gl drm/x11: Fix compilation for EGL < 1.5
+   * ecore_x: Early check image bpp based on depth (T4389)
 
 Changes since 1.18.2:
 ---------------------
