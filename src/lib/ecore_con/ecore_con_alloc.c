@@ -35,7 +35,9 @@ GENERIC_ALLOC_FREE(Ecore_Con_Event_Client_Del, ecore_con_event_client_del);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Client_Write, ecore_con_event_client_write);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Client_Data, ecore_con_event_client_data);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Server_Error, ecore_con_event_server_error);
+GENERIC_ALLOC_FREE(Ecore_Con_Event_Server_Upgrade, ecore_con_event_server_upgrade);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Client_Error, ecore_con_event_client_error);
+GENERIC_ALLOC_FREE(Ecore_Con_Event_Client_Upgrade, ecore_con_event_client_upgrade);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Server_Add, ecore_con_event_server_add);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Server_Del, ecore_con_event_server_del);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Server_Write, ecore_con_event_server_write);
@@ -48,7 +50,9 @@ static Ecore_Con_Mempool *mempool_array[] = {
    &ecore_con_event_client_write_mp,
    &ecore_con_event_client_data_mp,
    &ecore_con_event_server_error_mp,
+   &ecore_con_event_server_upgrade_mp,
    &ecore_con_event_client_error_mp,
+   &ecore_con_event_client_upgrade_mp,
    &ecore_con_event_server_add_mp,
    &ecore_con_event_server_del_mp,
    &ecore_con_event_server_write_mp,

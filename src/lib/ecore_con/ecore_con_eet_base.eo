@@ -1,5 +1,4 @@
-import efl_network_server;
-
+struct @extern Ecore_Con_Server;
 type @extern Ecore_Con_Eet_Data_Cb: __undefined_type; [[Ecore connection eet data callback type]] /* FIXME: function pointers not supported. */
 type @extern Ecore_Con_Eet_Raw_Data_Cb: __undefined_type; [[Ecore connection eet raw data callback type]]/* FIXME: function pointers not supported. */
 
@@ -19,7 +18,7 @@ class Ecore.Con.Eet.Base (Efl.Object) {
          get {
          }
          values {
-            data: Efl.Network.Server; [[Server object]]
+            data: ptr(Ecore_Con_Server); [[Server object]]
          }
       }
       @property data_callback {

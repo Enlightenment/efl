@@ -17,6 +17,9 @@
 
 #include <Eina.h>
 
+#include "Ecore.h"
+#include "Ecore_Con.h"
+#include "ecore_con_private.h"
 #include "Ecore_Con_Eet.h"
 
 #define ECORE_CON_EET_RAW_MAGIC 0xDEAD007
@@ -699,7 +702,7 @@ _ecore_con_eet_base_efl_object_finalize(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 EOLIAN static void
 _ecore_con_eet_base_server_set(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Server *data)
 {
-   if (!efl_isa(data, EFL_NETWORK_SERVER_CLASS))
+   if (!ecore_con_server_check(data))
      return;
 
    pd->server = data;
