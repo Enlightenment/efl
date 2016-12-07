@@ -30,6 +30,7 @@ int _extn_have_buffer_age = 1;
 
 /* local variables */
 static Eina_Bool initted = EINA_FALSE;
+static Eina_Bool dmabuf_present = EINA_FALSE;
 static int gl_wins = 0;
 
 /* local function prototype types */
@@ -269,6 +270,8 @@ gl_extn_veto(Render_Engine *re)
 
         if (!strstr(str, "EGL_EXT_swap_buffers_with_damage"))
           glsym_eglSwapBuffersWithDamage = NULL;
+        if (strstr(str, "EGL_MESA_image_dma_buf_export"))
+          dmabuf_present = EINA_TRUE;
      }
    else
      {
@@ -624,6 +627,7 @@ import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes)
    EGLAttrib attribs[30];
    int atti = 0;
 
+   if (!dmabuf_present) return NULL;
    if (!glsym_eglCreateImage && !glsym_eglCreateImageKHR) return NULL;
 
    /* This requires the Mesa commit in
