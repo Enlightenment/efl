@@ -107,6 +107,7 @@ evas_image_load_file_data_pmaps(void *loader_data,
    Pmaps_Buffer b;
    int size;
    DATA32 *ptr;
+   unsigned short count = 0;
    Eina_Bool r = EINA_FALSE;
 
    if (!pmaps_buffer_open(&b, f, EINA_FALSE, error))
@@ -123,11 +124,13 @@ evas_image_load_file_data_pmaps(void *loader_data,
    ptr = pixels;
    if (b.type[1] != '4')
      {
-	while (size > 0 && b.color_get(&b, ptr))
-	  {
-	     size--;
-	     ptr++;
-	  }
+        while (size > 0 && b.color_get(&b, ptr))
+          {
+             size--;
+             ptr++;
+
+             EVAS_MODULE_TASK_CHECK(count, 0x3FF, error, on_error);
+          }
      }
    else
      {
@@ -145,8 +148,10 @@ evas_image_load_file_data_pmaps(void *loader_data,
 		  ptr++;
 		  size--;
 	       }
-	     b.current++;
-	  }
+             b.current++;
+
+             EVAS_MODULE_TASK_CHECK(count, 0x3FF, error, on_error);
+          }
      }
 
    /* if there are some pix missing, give them a proper default */
