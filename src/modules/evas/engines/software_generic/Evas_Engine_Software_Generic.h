@@ -177,8 +177,11 @@ evas_render_engine_software_generic_update(Render_Engine_Software_Generic *re,
                                            Outbuf *ob,
                                            int w, int h)
 {
-   if (re->ob) re->outbuf_free(re->ob);
-   re->ob = ob;
+   if ((re->ob) && (re->ob != ob))
+     {
+        re->outbuf_free(re->ob);
+        re->ob = ob;
+     }
 
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
