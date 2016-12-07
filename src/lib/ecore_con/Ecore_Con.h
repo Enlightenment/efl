@@ -227,7 +227,41 @@ extern "C" {
 #define ECORE_CON_USE_SSL ECORE_CON_USE_SSL2
 #define ECORE_CON_REMOTE_SYSTEM ECORE_CON_REMOTE_TCP
 
-typedef Eo Ecore_Con;
+/** Types for an ecore_con client/server object.  A correct way to set this
+ * type is with an ECORE_CON_$TYPE, optionally OR'ed with an ECORE_CON_$USE if
+ * encryption is desired, and LOAD_CERT if the previously loaded certificate
+ * should be used.
+ *
+ * @ingroup Ecore_Con
+ */
+typedef enum
+{
+  ECORE_CON_LOCAL_USER = 0, /** Socket in "~/.ecore" */
+  ECORE_CON_LOCAL_SYSTEM = 1, /** Socket in /tmp */
+  ECORE_CON_LOCAL_ABSTRACT = 2, /** Abstract socket */
+  ECORE_CON_REMOTE_TCP = 3, /** Remote server using TCP */
+  ECORE_CON_REMOTE_MCAST = 4, /** Remote multicast UDP server (ecore_con_server_add() only) */
+  ECORE_CON_REMOTE_UDP = 5, /** Remote server using UDP */
+  ECORE_CON_REMOTE_BROADCAST = 6, /** Remote broadcast using UDP (ecore_con_server_connect() only) */
+  ECORE_CON_REMOTE_NODELAY = 7, /** Remote TCP connection sending packets
+                                 * immediately */
+  ECORE_CON_REMOTE_CORK = 8, /** Remote TCP connection sending data in large chunks
+                              * Note: Only available on Linux
+                              *
+                              * @since 1.2 */
+  ECORE_CON_USE_SSL2 = 16 /* 1 << 4 */, /** Use SSL2: UNSUPPORTED. */
+  ECORE_CON_USE_SSL3 = 32 /* 1 << 5 */, /** Use SSL3: UNSUPPORTED. */
+  ECORE_CON_USE_TLS = 64 /* 1 << 6 */, /** Use TLS */
+  ECORE_CON_USE_MIXED = 96 /* Ecore.Con.Type.use_tls | Ecore.Con.Type.use_ssl3 */, /** Use both TLS and SSL3 */
+  ECORE_CON_LOAD_CERT = 128 /* 1 << 7 */, /** Attempt to use the loaded
+                                           * certificate */
+  ECORE_CON_NO_PROXY = 256 /* 1 << 8 */, /** Disable all types of proxy on the
+                                          * server Note: Only functional for
+                                          * clients
+                                          *
+                                          * @since 1.2 */
+  ECORE_CON_SOCKET_ACTIVATE = 512 /* 1 << 9 */
+} Ecore_Con_Type;
 
 /**
  * @typedef Ecore_Con_Socks
@@ -265,12 +299,37 @@ typedef void (*Ecore_Con_Dns_Cb)(const char *canonname,
 
 /** @} */
 
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "Ecore_Con_Legacy.h"
-#endif
 #ifdef EFL_BETA_API_SUPPORT
 #include "Ecore_Con_Eo.h"
 #endif
+
+/**
+ * @struct _Ecore_Con_Server
+ * Used to provide legacy ABI/ABI compatibility with non-Eo applications.
+ * @ingroup Ecore_Con_Server_Group
+ */
+struct _Ecore_Con_Server;
+
+/**
+ * @typedef Ecore_Con_Server
+ * Used to provide legacy API/ABI compatibility with non-Eo applications.
+ * @ingroup Ecore_Con_Server_Group
+ */
+typedef struct _Ecore_Con_Server Ecore_Con_Server;
+
+/**
+ * @struct _Ecore_Con_Client
+ * Used to provide legacy ABI/ABI compatibility with non-Eo applications.
+ * @ingroup Ecore_Con_Client_Group
+ */
+struct _Ecore_Con_Client;
+
+/**
+ * @typedef Ecore_Con_Client
+ * Used to provide legacy API/ABI compatibility with non-Eo applications.
+ * @ingroup Ecore_Con_Client_Group
+ */
+typedef struct _Ecore_Con_Client Ecore_Con_Client;
 
 
 /**
@@ -649,6 +708,26 @@ EAPI int               ecore_con_init(void);
  * need to call it explicitly unless you called ecore_init() explicitly too.
  */
 EAPI int               ecore_con_shutdown(void);
+
+/**
+ * @brief Do an asynchronous DNS lookup.
+ *
+ * This function performs a DNS lookup on the hostname specified by name, then
+ * calls done_cb with the result and the data given as parameter. The result
+ * will be given to the done_cb as follows:
+ *
+ * canonname - the canonical name of the address, ip - the resolved ip address,
+ * addr - a pointer to the socket address, addrlen - the length of the socket
+ * address, in bytes, data - the data pointer given as parameter.
+ *
+ * @param[in] name IP address or server name to translate.
+ * @param[in] done_cb Callback to notify when done.
+ * @param[in] data User data to be given to done_cb.
+ *
+ * @return @c true if the request did not fail to be set up, @c false
+ * otherwise.
+ */
+EAPI Eina_Bool ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, const void *data) EINA_ARG_NONNULL(1);
 
 /**
  * @}
@@ -1142,6 +1221,10 @@ EAPI char *ecore_con_local_path_new(Eina_Bool is_system, const char *name, int p
  * or changed with ecore_con_server_data_set().
  *
  * @see ecore_con_local_path_new()
+ *
+ * @note This API is deprecated and new code should use
+ *       #EFL_NET_SERVER_SIMPLE_CLASS.
+ *       See @li @ref efl_net_server_simple_example.c
  */
 EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
                                             const char *name, int port,
@@ -1194,6 +1277,10 @@ EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
  * or changed with ecore_con_server_data_set().
  *
  * @see ecore_con_local_path_new()
+ *
+ * @note This API is deprecated and new code should use
+ *       #EFL_NET_DIALER_SIMPLE_CLASS.
+ *       See @li @ref efl_net_dialer_simple_example.c
  */
 EAPI Ecore_Con_Server *ecore_con_server_connect(Ecore_Con_Type type,
                                                 const char *name, int port,
@@ -1209,6 +1296,18 @@ EAPI Ecore_Con_Server *ecore_con_server_connect(Ecore_Con_Type type,
  * @see ecore_con_server_add, ecore_con_server_connect
  */
 EAPI void *            ecore_con_server_del(Ecore_Con_Server *svr);
+
+/**
+ * @brief Retrieves the name of server.
+ *
+ * The name returned is the name used to connect on this server.
+ *
+ * @param svr The given server.
+ * @return The name of the server.
+ *
+ * @ingroup Efl_Network_Server
+ */
+EAPI const char *ecore_con_server_name_get(const Ecore_Con_Server *svr);
 
 /**
  * @brief Retrieve the data associated with the given server.
@@ -1304,6 +1403,21 @@ EAPI int               ecore_con_server_send(Ecore_Con_Server *svr,
 EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
                                                          int client_limit,
                                                          char reject_excess_clients);
+
+/**
+ * @brief Retrieves the current list of clients.
+ *
+ * Each node in the returned list points to an @ref Efl_Network_Client. This
+ * list cannot be modified or freed. It can also change if new clients are
+ * connected or disconnected, and will become invalid when the server is
+ * deleted/freed.
+ *
+ * @param svr The given server.
+ * @return The list of clients on this server.
+ *
+ */
+EAPI const Eina_List *ecore_con_server_clients_get(const Ecore_Con_Server *svr);
+
 /**
  * @brief Get the IP address of a server that has been connected to.
  *
@@ -1532,7 +1646,13 @@ EAPI Eina_Bool         ecore_con_client_connected_get(const Ecore_Con_Client *cl
  */
 EAPI int               ecore_con_client_port_get(const Ecore_Con_Client *cl);
 
-
+/**
+ * @brief The server the client is connected to.
+ *
+ * @param cl The client
+ * @return The server the client is connected to.
+ */
+EAPI Ecore_Con_Server *ecore_con_client_server_get(const Ecore_Con_Client *cl);
 
 /**
  * @}

@@ -1,8 +1,3 @@
-#include "efl_network.eo.h"
-#include "efl_network_server.eo.h"
-#include "efl_network_connector.eo.h"
-#include "efl_network_client.eo.h"
-
 #include "efl_net_socket.eo.h"
 #include "efl_net_dialer.eo.h"
 #include "efl_net_server.eo.h"
