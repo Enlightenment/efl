@@ -206,17 +206,10 @@ gl_symbols(void)
    LINK2GENERIC(evgl_engine_shutdown);
    LINK2GENERIC(evas_gl_symbols);
 
-#define FINDSYM(dst, sym, typ) \
-   if (glsym_eglGetProcAddress) { \
-      if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
-   } else { \
-      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
-   }
+   LINK2GENERIC(eglGetProcAddress);
 
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
+#define FINDSYM(dst, sym, typ) \
+   if (!dst) dst = (typ)glsym_eglGetProcAddress(sym);
 
    glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress);
 
