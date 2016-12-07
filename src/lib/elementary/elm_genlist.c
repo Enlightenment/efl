@@ -6973,25 +6973,17 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
    Evas_Coord gith = 0;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if ((sd->queue) ||
-       (!((sd->homogeneous) &&
-          (sd->mode == ELM_LIST_COMPRESS))))
+   Eina_Bool deferred_show = EINA_FALSE;
+
+   //Can't goto the item right now. Reserve it instead.
+   if (sd->queue || !(sd->homogeneous && (sd->mode == ELM_LIST_COMPRESS)))
      {
         if ((it->item->queued) || (!it->item->mincalcd) || (sd->queue))
-          {
-             sd->check_scroll = EINA_TRUE;
-             sd->show_item = it;
-             sd->bring_in = bring_in;
-             sd->scroll_to_type = type;
-             it->item->show_me = EINA_TRUE;
-
-             ecore_job_del(sd->calc_job);
-             sd->calc_job = ecore_job_add(_calc_job, sd->obj);
-
-             return EINA_FALSE;
-          }
+          deferred_show = EINA_TRUE;
      }
-   if (it->item->block->w < 1)
+   else if (it->item->block->w < 1) deferred_show = EINA_TRUE;
+
+   if (deferred_show)
      {
         sd->check_scroll = EINA_TRUE;
         sd->show_item = it;
@@ -7004,6 +6996,7 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
 
         return EINA_FALSE;
      }
+
    if (sd->show_item)
      {
         sd->show_item->item->show_me = EINA_FALSE;
