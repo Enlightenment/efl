@@ -1952,6 +1952,7 @@ Evas_Preload_Pthread *evas_preload_thread_run(void (*func_heavy)(void *data),
                                               const void *data);
 Eina_Bool evas_preload_thread_cancel(Evas_Preload_Pthread *thread);
 Eina_Bool evas_preload_thread_cancelled_is(Evas_Preload_Pthread *thread);
+Eina_Bool evas_preload_pthread_wait(Evas_Preload_Pthread *work, double wait);
 
 void _evas_walk(Evas_Public_Data *e_pd);
 void _evas_unwalk(Evas_Public_Data *e_pd);

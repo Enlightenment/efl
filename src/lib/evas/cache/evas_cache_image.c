@@ -1197,13 +1197,15 @@ evas_cache_image_load_data(Image_Entry *im)
              evas_preload_thread_cancel(im->preload);
           }
         evas_async_events_process();
-        
+        evas_preload_pthread_wait(im->preload, 0.01);
+
         LKL(wakeup);
         while (im->flags.preload_pending)
           {
              eina_condition_wait(&cond_wakeup);
              LKU(wakeup);
              evas_async_events_process();
+             evas_preload_pthread_wait(im->preload, 0.01);
              LKL(wakeup);
           }
         LKU(wakeup);
