@@ -313,6 +313,23 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
            return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused; [[Binbuf]]
         }
 
+        @property pending_size {
+            [[Returns the size of the pending buffer.
+
+              The pending buffer is an intermediate buffer where data
+              is read from @.source before it's written to
+              @.destination, if any.
+
+              This is the equivalent of the size of returned by
+              @.binbuf_steal, however it doesn't steal or modify the
+              buffer at all, just query its internal size.
+            ]]
+            get { }
+            values {
+                size: size; [[The pending buffer size, in bytes.]]
+            }
+        }
+
         flush {
             [[Forces reading from source and writing to destination.
 

@@ -781,9 +781,26 @@ _efl_io_copier_flush(Eo *o, Efl_Io_Copier_Data *pd, Eina_Bool may_block, Eina_Bo
    return pd->done;
 }
 
-EOLIAN static Eina_Bool
-_efl_io_copier_done_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+EOLIAN static size_t
+_efl_io_copier_pending_size_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
+   return pd->buf ? eina_binbuf_length_get(pd->buf) : 0;
+}
+
+EOLIAN static Eina_Bool
+_efl_io_copier_done_get(Eo *o, Efl_Io_Copier_Data *pd)
+{
+   DBG("%p done=%d pending=%zd source={%p %s, eos=%d, closed=%d}, destination={%p %s, closed=%d}",
+       o, pd->done,
+       pd->buf ? eina_binbuf_length_get(pd->buf) : 0,
+       pd->source,
+       pd->source ? efl_class_name_get(pd->source) : "",
+       pd->source ? efl_io_reader_eos_get(pd->source) : 1,
+       pd->source ? (efl_isa(pd->source, EFL_IO_CLOSER_MIXIN) ? efl_io_closer_closed_get(pd->source) : 0) : 1,
+       pd->destination,
+       pd->destination ? efl_class_name_get(pd->destination) : "",
+       pd->destination ? (efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN) ? efl_io_closer_closed_get(pd->destination) : 0) : 1);
+
    return pd->done;
 }
 
