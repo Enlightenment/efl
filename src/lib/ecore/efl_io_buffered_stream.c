@@ -35,6 +35,13 @@ _efl_io_buffered_stream_error(void *data, const Efl_Event *event)
 }
 
 static void
+_efl_io_buffered_stream_copier_progress(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Eo *o = data;
+   efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_PROGRESS, NULL);
+}
+
+static void
 _efl_io_buffered_stream_incoming_can_read_changed(void *data, const Efl_Event *event)
 {
    Eo *o = data;
@@ -69,6 +76,7 @@ _efl_io_buffered_stream_receiver_done(void *data, const Efl_Event *event EINA_UN
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_efl_io_buffered_stream_receiver_cbs,
+                           { EFL_IO_COPIER_EVENT_PROGRESS, _efl_io_buffered_stream_copier_progress },
                            { EFL_IO_COPIER_EVENT_DONE, _efl_io_buffered_stream_receiver_done },
                            { EFL_IO_COPIER_EVENT_LINE, _efl_io_buffered_stream_receiver_line },
                            { EFL_IO_COPIER_EVENT_ERROR, _efl_io_buffered_stream_error });
@@ -90,12 +98,16 @@ _efl_io_buffered_stream_sender_done(void *data, const Efl_Event *event EINA_UNUS
 {
    Eo *o = data;
    Efl_Io_Buffered_Stream_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   efl_ref(o);
+   efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_PROGRESS, NULL);
    efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_WRITE_FINISHED, NULL);
    if (efl_io_copier_done_get(pd->receiver))
      efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, NULL);
+   efl_unref(o);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_efl_io_buffered_stream_sender_cbs,
+                           { EFL_IO_COPIER_EVENT_PROGRESS, _efl_io_buffered_stream_copier_progress },
                            { EFL_IO_COPIER_EVENT_DONE, _efl_io_buffered_stream_sender_done },
                            { EFL_IO_COPIER_EVENT_ERROR, _efl_io_buffered_stream_error });
 
@@ -262,10 +274,13 @@ _efl_io_buffered_stream_efl_io_reader_eos_set(Eo *o, Efl_Io_Buffered_Stream_Data
    pd->eos = is_eos;
    if (!is_eos) return;
 
+   efl_ref(o);
+   efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_PROGRESS, NULL);
    efl_event_callback_call(o, EFL_IO_READER_EVENT_EOS, NULL);
    efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_READ_FINISHED, NULL);
    if (efl_io_copier_done_get(pd->sender))
      efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, NULL);
+   efl_unref(o);
 }
 
 EOLIAN static Eina_Error
@@ -480,6 +495,18 @@ _efl_io_buffered_stream_pending_read_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stre
 {
    if (!pd->incoming) return 0;
    return efl_io_queue_usage_get(pd->incoming);
+}
+
+EOLIAN static void
+_efl_io_buffered_stream_progress_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd, size_t *pr, size_t *pw)
+{
+   size_t r = 0, w = 0;
+
+   if (pd->sender) efl_io_copier_progress_get(pd->sender, NULL, &w, NULL);
+   if (pd->receiver) efl_io_copier_progress_get(pd->receiver, &r, NULL, NULL);
+
+   if (pr) *pr = r;
+   if (pw) *pw = w;
 }
 
 EOLIAN static Eina_Bool

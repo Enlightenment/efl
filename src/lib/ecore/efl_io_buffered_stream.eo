@@ -146,6 +146,15 @@ class Efl.Io.Buffered_Stream (Efl.Loop_User, Efl.Io.Reader, Efl.Io.Writer, Efl.I
             }
         }
 
+        @property progress {
+            [[How many bytes were written and read.]]
+            get { }
+            values {
+                read_bytes: size; [[Bytes that were read until now]]
+                written_bytes: size; [[Bytes that were written until now]]
+            }
+        }
+
         slice_get { // TODO: property and return of Eina.Slice (not pointer)
             [[Get a temporary access to input queue's internal read memory.
 
@@ -231,6 +240,7 @@ class Efl.Io.Buffered_Stream (Efl.Loop_User, Efl.Io.Reader, Efl.Io.Writer, Efl.I
         read,finished; [[Same as @Efl.Io.Reader "eos", for consistency.]]
         finished; [[Both read and write are finished.]]
         error: Eina.Error; [[An error happened and the I/O stopped]]
+        progress; [[Property @.progress changed]]
         slice,changed; [[The read-slice returned by @.slice_get may have changed.]]
         line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified. Note that the line slice may not be inside @.slice_get, don't assume that!]]
     }
