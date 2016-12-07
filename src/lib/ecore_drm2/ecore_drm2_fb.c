@@ -455,20 +455,24 @@ ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy)
    fb->busy = busy;
 }
 
-EAPI void
+EAPI Eina_Bool
 ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic)
 {
-   EINA_SAFETY_ON_NULL_RETURN(o);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(o, EINA_FALSE);
 
    if (o->next)
      {
         _release_buffer(o, o->next);
         o->next = NULL;
-        return;
+        return EINA_TRUE;
      }
-   if (!panic) return;
+   if (!panic) return EINA_FALSE;
 
-   WRN("Buffer release request when no next buffer");
+   /* This has been demoted to DBG from WRN because we
+    * call this function to reclaim all buffers on a
+    * surface resize.
+    */
+   DBG("Buffer release request when no next buffer");
    /* If we have to release these we're going to see tearing.
     * Try to reclaim in decreasing order of visual awfulness
     */
@@ -476,15 +480,17 @@ ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic)
      {
         _release_buffer(o, o->current);
         o->current = NULL;
-        return;
+        return EINA_TRUE;
      }
 
    if (o->pending)
      {
         _release_buffer(o, o->pending);
         o->pending = NULL;
-        return;
+        return EINA_TRUE;
      }
+
+   return EINA_FALSE;
 }
 
 EAPI void *

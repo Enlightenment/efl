@@ -866,10 +866,13 @@ EAPI void ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy);
  *
  * @param output The output to force release
  * @param panic Try to release even buffers committed to scanout
+ *
+ * @return EINA_TRUE if a buffer was released
+ *
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.19
  */
-EAPI void ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic);
+EAPI Eina_Bool ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic);
 
 /**
  * Set the user data for the output's page flip handler
