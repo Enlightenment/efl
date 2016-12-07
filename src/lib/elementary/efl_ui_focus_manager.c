@@ -942,6 +942,37 @@ _logical_movement(Efl_Ui_Focus_Manager_Data *pd EINA_UNUSED, Node *upper, Efl_Ui
    return result;
 }
 
+static Efl_Ui_Focus_Object*
+_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Direction direction, Node *upper)
+{
+   Node *dir = NULL;
+
+   upper = eina_list_last_data_get(pd->focus_stack);
+
+   if (!upper)
+     {
+        upper = _no_history_element(pd->node_hash);
+        if (upper)
+          return upper->focusable;
+        return NULL;
+
+     }
+#ifdef DEBUG
+   _debug_node(upper);
+#endif
+   if (direction == EFL_UI_FOCUS_DIRECTION_PREV
+    || direction == EFL_UI_FOCUS_DIRECTION_NEXT)
+      dir = _logical_movement(pd, upper, direction);
+   else
+      dir = _coords_movement(pd, upper, direction);
+
+   //return the widget
+   if (dir)
+     return dir->focusable;
+   else
+     return NULL;
+}
+
 EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Direction direction)
 {
@@ -953,32 +984,19 @@ _efl_ui_focus_manager_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Dat
      return efl_ui_focus_manager_request_move(pd->redirect, direction);
    else
      {
-         Node *upper = NULL, *dir = NULL;
+        Node *upper = NULL;
 
-         upper = eina_list_last_data_get(pd->focus_stack);
+        upper = eina_list_last_data_get(pd->focus_stack);
 
-         if (!upper)
-           {
-              upper = _no_history_element(pd->node_hash);
-              if (upper)
-                return upper->focusable;
-              return NULL;
+        if (!upper)
+          {
+             upper = _no_history_element(pd->node_hash);
+             if (upper)
+               return upper->focusable;
+             return NULL;
+          }
 
-           }
-#ifdef DEBUG
-         _debug_node(upper);
-#endif
-         if (direction == EFL_UI_FOCUS_DIRECTION_PREV
-          || direction == EFL_UI_FOCUS_DIRECTION_NEXT)
-            dir = _logical_movement(pd, upper, direction);
-         else
-            dir = _coords_movement(pd, upper, direction);
-
-         //return the widget
-         if (dir)
-           return dir->focusable;
-         else
-           return NULL;
+        return _request_move(obj, pd, direction, upper);
      }
 }
 
@@ -1022,23 +1040,45 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
 EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Direction direction)
 {
-   Efl_Ui_Focus_Object *candidate;
+   Efl_Ui_Focus_Object *candidate = NULL;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_CHECK(direction), NULL);
 
    if (pd->redirect)
      {
-        candidate =  efl_ui_focus_manager_move(pd->redirect, direction);
-        if (!candidate)
-          efl_ui_focus_manager_redirect_set(obj, NULL);
-     }
+        Efl_Ui_Focus_Object *old_candidate = NULL;
+        candidate = efl_ui_focus_manager_move(pd->redirect, direction);
+        old_candidate = efl_ui_focus_manager_focused(pd->redirect);
 
-   if (!pd->redirect)
+        if (!candidate)
+          {
+             Efl_Ui_Focus_Object *new_candidate = NULL;
+             Node *n;
+
+             //there is no candidate check if we have something for that direction
+             new_candidate = NULL;
+             n = eina_hash_find(pd->node_hash, &old_candidate);
+
+             if (n)
+               new_candidate = _request_move(obj, pd, direction, n);
+
+             if (new_candidate)
+               {
+                  //redirect does not have smth. but we do have.
+                  efl_ui_focus_manager_redirect_set(obj, NULL);
+                  efl_ui_focus_manager_focus(obj, new_candidate);
+               }
+          }
+
+     }
+   else
      {
         candidate = efl_ui_focus_manager_request_move(obj, direction);
+
         if (candidate)
           efl_ui_focus_manager_focus(obj, candidate);
      }
+
 
 #ifdef DEBUG
    printf("Focus, MOVE %s %s\n", DEBUG_TUPLE(candidate));
@@ -1058,9 +1098,7 @@ _efl_ui_focus_manager_root_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *p
      }
 
    node = _register(obj, pd, root, NULL);
-
-   //listen to changes
-   efl_event_callback_array_add(node->focusable, focusable_node(), obj);
+   node->type = NODE_TYPE_ONLY_LOGICAL;
 
    pd->root = node;
 }
@@ -1099,6 +1137,18 @@ _convert(Eina_List *node_list)
      par = eina_list_append(par, node->focusable);
 
    return par;
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_efl_ui_focus_manager_focused(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd)
+{
+   Node *upper = NULL;
+
+   upper = eina_list_last_data_get(pd->focus_stack);
+
+   if (!upper)
+     return NULL;
+   return upper->focusable;
 }
 
 EOLIAN static Efl_Ui_Focus_Relations*

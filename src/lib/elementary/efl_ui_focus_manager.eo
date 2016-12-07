@@ -111,6 +111,10 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
                   focus : Efl.Ui.Focus.Object @nonull;
               }
         }
+        focused {
+            [[Return the current focused element of this manager]]
+            return : Efl.Ui.Focus.Object;
+        }
         @property redirect {
             [[Add a another manager to serve the move requests.
 
