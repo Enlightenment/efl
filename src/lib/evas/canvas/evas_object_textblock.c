@@ -6719,6 +6719,7 @@ end:
    o->format_changed = EINA_TRUE;
    _evas_textblock_invalidate_all(o);
    _evas_textblock_changed(o, eo_obj);
+   efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
 }
 
 EAPI Evas_Textblock_Style *
