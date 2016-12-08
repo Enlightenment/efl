@@ -55,7 +55,7 @@ class Eo_resolve(gdb.Function):
         gdb.Function.__init__(self, 'eo_resolve')
 
     def invoke(self, arg):
-        obj_id = int(arg.cast(zero_uintptr_t.type))
+        obj_id = int(str(arg.cast(zero_uintptr_t.type)), 0)
 
         mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID
         table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID
@@ -112,7 +112,7 @@ class Eo_data_get(gdb.Function):
             return null_void_ptr
 
         # Check if not mixin
-        if int(kls['desc']['type']) != 3:
+        if int(kls['desc']['type'].cast(zero_uintptr_t.type)) != 3:
             return gdb.parse_and_eval('(void *) (((char *) {}) + {})'
                                       .format(ptr, kls['data_offset']))
         else:
