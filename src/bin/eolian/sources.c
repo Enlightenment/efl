@@ -115,7 +115,6 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
    Eina_Strbuf *params_full_imp = eina_strbuf_new(); /* as above, for impl */
    Eina_Strbuf *params_init = eina_strbuf_new(); /* default value inits */
 
-   Eina_Bool has_promise = EINA_FALSE;
    Eina_Stringshare *promise_param_name = NULL;
    Eina_Stringshare *promise_param_type = NULL;
 
@@ -401,13 +400,6 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
           }
 
         eina_strbuf_append(buf, ");\n");
-
-        if (has_promise)
-          {
-             eina_strbuf_append(buf, "\n#undef _EFL_OBJECT_API_BEFORE_HOOK\n#undef _EFL_OBJECT_API_AFTER_HOOK\n#undef _EFL_OBJECT_API_CALL_HOOK\n"
-                                     "#define _EFL_OBJECT_API_BEFORE_HOOK\n#define _EFL_OBJECT_API_AFTER_HOOK\n"
-                                     "#define _EFL_OBJECT_API_CALL_HOOK(x) x\n");
-          }
 
         /* now try legacy */
         Eina_Stringshare *lfn = eolian_function_full_c_name_get(fid, ftype, EINA_TRUE);
