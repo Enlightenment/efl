@@ -5116,6 +5116,18 @@ _elm_entry_input_panel_layout_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_I
    edje_object_part_text_input_panel_layout_set
      (sd->entry_edje, "elm.text", (Edje_Input_Panel_Layout)layout);
 
+   switch (layout)
+     {
+      case ELM_INPUT_PANEL_LAYOUT_URL:
+      case ELM_INPUT_PANEL_LAYOUT_EMAIL:
+      case ELM_INPUT_PANEL_LAYOUT_PASSWORD:
+         elm_entry_autocapital_type_set(obj, ELM_AUTOCAPITAL_TYPE_NONE);
+         break;
+      default:
+         elm_entry_autocapital_type_set(obj, ELM_AUTOCAPITAL_TYPE_SENTENCE);
+         break;
+     }
+
    if (layout == ELM_INPUT_PANEL_LAYOUT_PASSWORD)
      elm_entry_input_hint_set(obj, ((sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE) | ELM_INPUT_HINT_SENSITIVE_DATA));
    else if (layout == ELM_INPUT_PANEL_LAYOUT_TERMINAL)
@@ -5135,6 +5147,10 @@ _elm_entry_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Elm_Entry_Data 
 
    edje_object_part_text_input_panel_layout_variation_set
      (sd->entry_edje, "elm.text", variation);
+
+   if (sd->input_panel_layout == ELM_INPUT_PANEL_LAYOUT_NORMAL &&
+       variation == ELM_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_PERSON_NAME)
+     elm_entry_autocapital_type_set(obj, ELM_AUTOCAPITAL_TYPE_WORD);
 }
 
 EOLIAN static int
