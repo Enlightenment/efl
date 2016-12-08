@@ -269,6 +269,7 @@ void eo_gen_types_source_gen(const char *eof, Eina_Strbuf *buf)
         Eina_Stringshare *ct = eolian_type_c_type_get(vt);
         eina_strbuf_append_printf(buf, "EWAPI %s %s = ", ct, fn);
         eina_stringshare_del(ct);
+        free(fn);
 
         Eolian_Value val = eolian_expression_eval_type(vv, vt);
         Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
