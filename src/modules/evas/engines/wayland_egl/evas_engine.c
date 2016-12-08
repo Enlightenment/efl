@@ -608,7 +608,7 @@ eng_setup(void *info, unsigned int w, unsigned int h)
         glsym_evas_gl_preload_init();
      }
 
-   ob = eng_window_new(evas, inf, w, h, swap_mode);
+   ob = eng_window_new(inf, w, h, swap_mode);
    if (!ob) goto ob_err;
 
    if (!evas_render_engine_gl_generic_init(&re->generic, ob,
@@ -633,8 +633,7 @@ eng_setup(void *info, unsigned int w, unsigned int h)
                                            w, h))
      {
         eng_window_free(ob);
-        free(re);
-        return NULL;
+        goto ob_err;
      }
 
    gl_wins++;
@@ -662,6 +661,10 @@ eng_setup(void *info, unsigned int w, unsigned int h)
    eng_window_use(eng_get_ob(re));
 
    return re;
+
+ob_err:
+   free(re);
+   return NULL;
 }
 
 static int
@@ -695,6 +698,8 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
             (ob->info->info.depth != ob->depth) ||
             (ob->info->info.destination_alpha != ob->alpha))
           {
+             Render_Engine_Swap_Mode swap_mode = MODE_AUTO;
+
              gl_wins--;
              if (!ob->info->info.wl_display)
                {
@@ -703,16 +708,17 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
                   goto ob_err;
                }
 
-             ob = eng_window_new(evas, inf, w, h, swap_mode);
+             swap_mode = _eng_swap_mode_get();
+             ob = eng_window_new(inf, w, h, swap_mode);
              if (!ob) goto ob_err;
 
              eng_window_use(ob);
 
-             evas_render_engine_software_generic_update(&re->generic.software, ob,
-                                                        w, h);
+             evas_render_engine_software_generic_update(&re->generic.software,
+                                                        ob, w, h);
              gl_wins++;
           }
-        else if ((ob->w != w) || (ob->h != h) ||
+        else if ((ob->w != (int)w) || (ob->h != (int)h) ||
                  (ob->info->info.rotation != ob->rot))
           {
              eng_outbuf_reconfigure(ob, w, h,

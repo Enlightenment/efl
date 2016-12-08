@@ -9,7 +9,7 @@ static struct wl_display *display = NULL;
 static int win_count = 0;
 
 Outbuf *
-eng_window_new(Evas *evas, Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode)
+eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode)
 {
    Outbuf *gw;
    int context_attrs[3];
@@ -25,7 +25,6 @@ eng_window_new(Evas *evas, Evas_Engine_Info_Wayland *einfo, int w, int h, Render
 
    win_count++;
    gw->info = einfo;
-   gw->evas = evas;
    gw->w = w;
    gw->h = h;
    gw->swap_mode = swap_mode;
