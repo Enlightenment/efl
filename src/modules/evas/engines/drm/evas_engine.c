@@ -75,7 +75,6 @@ eng_info_free(Evas *evas EINA_UNUSED, void *einfo)
 static void *
 eng_setup(void *einfo, unsigned int w, unsigned int h)
 {
-   Render_Engine *re;
    Evas_Engine_Info_Drm *info = einfo;
 
    return _render_engine_setup(info, w, h);
@@ -86,14 +85,12 @@ eng_update(void *data, void *einfo, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Drm *info = einfo;
    Render_Engine *re = data;
-   Outbuf *ob;
 
    _outbuf_reconfigure(re->generic.ob, w, h,
                        info->info.rotation, info->info.depth);
-   if (!ob) return 0;
 
-   evas_render_engine_software_generic_update(&re->generic, ob,
-                                              ob->w, ob->h);
+   evas_render_engine_software_generic_update(&re->generic,
+                                              re->generic.ob, w, h);
 
    return 1;
 }
