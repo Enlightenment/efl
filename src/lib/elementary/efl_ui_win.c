@@ -895,6 +895,8 @@ _elm_win_resize_job(void *data)
         evas_object_move(sd->frame_obj, -fx, -fy);
         evas_object_resize(sd->frame_obj, w + fw, h + fh);
      }
+   else
+     _elm_win_opaque_update(sd, 0);
 
    if (sd->main_menu)
      {
