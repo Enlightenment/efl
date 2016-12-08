@@ -33,6 +33,17 @@ class Efl.Net.Socket.Ssl (Efl.Loop_User, Efl.Net.Socket) {
             }
         }
 
+        @property adopted @protected {
+            [[Return the adopted object, if any. Be careful!]]
+            get {
+                return: bool(false); [[$true if adopted, $false otherwise]]
+            }
+            values {
+                efl_net_socket: Efl.Net.Socket; [[The adopted object, if any, otherwise NULL]]
+                ctx: Efl.Net.Ssl.Context; [[The SSL context used when adopting the socket, if any, otherwise NULL]]
+            }
+        }
+
         @property verify_mode {
             [[How to verify the remote peer.]]
             values {

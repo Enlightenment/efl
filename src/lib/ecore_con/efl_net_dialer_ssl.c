@@ -1,4 +1,5 @@
 #define EFL_NET_DIALER_SSL_PROTECTED 1
+#define EFL_NET_SOCKET_SSL_PROTECTED 1
 #define EFL_NET_DIALER_PROTECTED 1
 #define EFL_NET_SOCKET_PROTECTED 1
 #define EFL_IO_READER_PROTECTED 1
@@ -73,10 +74,22 @@ _efl_net_dialer_ssl_efl_object_constructor(Eo *o, Efl_Net_Dialer_Ssl_Data *pd)
 EOLIAN static Eo*
 _efl_net_dialer_ssl_efl_object_finalize(Eo *o, Efl_Net_Dialer_Ssl_Data *pd)
 {
-   if (!pd->ssl_ctx)
-     pd->ssl_ctx = efl_ref(efl_net_ssl_context_default_dialer_get(EFL_NET_SSL_CONTEXT_CLASS));
+   Eo *a_sock, *a_ctx;
 
-   efl_net_socket_ssl_adopt(o, pd->sock, pd->ssl_ctx);
+   if (efl_net_socket_ssl_adopted_get(o, &a_sock, &a_ctx))
+     {
+        efl_del(pd->sock); /* stub TCP we created */
+        pd->sock = a_sock;
+        pd->ssl_ctx = a_ctx;
+     }
+   else
+     {
+        if (!pd->ssl_ctx)
+          pd->ssl_ctx = efl_ref(efl_net_ssl_context_default_dialer_get(EFL_NET_SSL_CONTEXT_CLASS));
+
+        efl_net_socket_ssl_adopt(o, pd->sock, pd->ssl_ctx);
+     }
+
    return efl_finalize(efl_super(o, MY_CLASS));
 }
 

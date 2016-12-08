@@ -319,6 +319,14 @@ _efl_net_socket_ssl_adopt(Eo *o, Efl_Net_Socket_Ssl_Data *pd, Efl_Net_Socket *so
      efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
 }
 
+EOLIAN static Eina_Bool
+_efl_net_socket_ssl_adopted_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd, Efl_Net_Socket **sock, Efl_Net_Ssl_Context **context)
+{
+   if (sock) *sock = pd->sock;
+   if (context) *context = pd->context;
+   return !!pd->sock;
+}
+
 static Efl_Net_Ssl_Verify_Mode
 _efl_net_socket_ssl_verify_mode_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
