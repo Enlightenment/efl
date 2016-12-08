@@ -504,6 +504,7 @@ main(int argc, char **argv)
     {
         eina_hash_free(old_file_ids->hash);
         free(old_file_ids);
+        old_file_ids = NULL;
     }
 
     eina_hash_free(file_ids);
