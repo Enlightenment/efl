@@ -161,12 +161,14 @@ static void
 _access_init(void)
 {
    Elm_Module *m;
-   initted++;
-   if (initted > 1) return;
+
+   if (initted > 0) return;
    if (!(m = _elm_module_find_as("access/api"))) return;
+   if (m->init_func(m) < 0) return;
+   initted++;
+
    m->api = malloc(sizeof(Mod_Api));
    if (!m->api) return;
-   m->init_func(m);
    ((Mod_Api *)(m->api)      )->out_read = // called to read out some text
       _elm_module_symbol_get(m, "out_read");
    ((Mod_Api *)(m->api)      )->out_read_done = // called to set a done marker so when it is reached the done callback is called
