@@ -1472,12 +1472,13 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
                                             input->wl.seat);
    wl_data_device_add_listener(input->data.device, &_data_listener, input);
 
-   input->dev_add_handler = ecore_event_handler_add(
-      ECORE_WL2_EVENT_DEVICE_ADDED, _ecore_evas_wl_common_cb_device_event,
-      input);
-   input->dev_remove_handler = ecore_event_handler_add(
-      ECORE_WL2_EVENT_DEVICE_REMOVED, _ecore_evas_wl_common_cb_device_event,
-      input);
+   input->dev_add_handler =
+     ecore_event_handler_add(ECORE_WL2_EVENT_DEVICE_ADDED,
+                             _ecore_evas_wl_common_cb_device_event, input);
+
+   input->dev_remove_handler =
+     ecore_event_handler_add(ECORE_WL2_EVENT_DEVICE_REMOVED,
+                             _ecore_evas_wl_common_cb_device_event, input);
 }
 
 void
