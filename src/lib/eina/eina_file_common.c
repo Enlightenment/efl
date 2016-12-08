@@ -1051,6 +1051,7 @@ eina_file_init(void)
      }
 
    eina_lock_new(&_eina_file_lock_cache);
+   eina_magic_string_set(EINA_FILE_MAGIC, "Eina_File");
 
    return EINA_TRUE;
 }
