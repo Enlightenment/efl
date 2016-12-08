@@ -558,19 +558,10 @@ _impl_ecore_exe_send(Ecore_Exe  *obj,
                const void *data,
                int         size)
 {
-   void *buf = NULL;
    DWORD num_exe;
    BOOL res;
 
-   buf = realloc(exe->pipe_write.data_buf, exe->pipe_write.data_size + size);
-   if (!buf) return EINA_FALSE;
-
-   exe->pipe_write.data_buf = buf;
-   memcpy((char *)exe->pipe_write.data_buf + exe->pipe_write.data_size, data, size);
-   exe->pipe_write.data_size += size;
-
-   res = WriteFile(exe->pipe_write.child_pipe_x, buf, exe->pipe_write.data_size, &num_exe, NULL);
-   printf(" ** res : %d\n", res);
+   res = WriteFile(exe->pipe_write.child_pipe_x, data, size, &num_exe, NULL);
    if (!res || num_exe == 0)
      {
         ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",

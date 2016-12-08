@@ -92,8 +92,6 @@ struct _Ecore_Exe_Data
    {
       HANDLE child_pipe;
       HANDLE child_pipe_x;
-      void *data_buf;
-      int data_size;
    } pipe_write;
 
    struct
