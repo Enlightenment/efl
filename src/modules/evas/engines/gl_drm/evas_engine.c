@@ -920,8 +920,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
    Render_Engine_Merge_Mode merge_mode;
 
    swap_mode = _eng_swap_mode_get(info->info.swap_mode);
-   merge_mode = _eng_merge_mode_get(void);
-
+   merge_mode = _eng_merge_mode_get();
 
    if (!initted)
      {
@@ -946,8 +945,6 @@ eng_setup(void *in, unsigned int w, unsigned int h)
         free(re);
         return NULL;
      }
-
-   ob->evas = evas;
 
    if (!evas_render_engine_gl_generic_init(&re->generic, ob,
                                            evas_outbuf_buffer_state_get,
@@ -1002,9 +999,9 @@ eng_setup(void *in, unsigned int w, unsigned int h)
 }
 
 static int
-eng_update(void *data, void *info, unsigned int w, unsigned int h)
+eng_update(void *data, void *in, unsigned int w, unsigned int h)
 {
-   Evas_Engine_Info_GL_Drm *info = in;
+   Evas_Engine_Info_GL_Drm *info = (Evas_Engine_Info_GL_Drm *)in;
    Render_Engine *re = data;
 
    if (eng_get_ob(re) && _re_wincheck(eng_get_ob(re)))
@@ -1013,6 +1010,7 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
             (info->info.destination_alpha != eng_get_ob(re)->destination_alpha))
           {
              Outbuf *ob, *ob_old;
+             Render_Engine_Swap_Mode swap_mode = MODE_AUTO;
 
              ob_old = re->generic.software.ob;
              re->generic.software.ob = NULL;
@@ -1020,6 +1018,7 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
 
              if (ob_old) evas_outbuf_free(ob_old);
 
+             swap_mode = _eng_swap_mode_get(info->info.swap_mode);
              ob = evas_outbuf_new(info, w, h, swap_mode);
              if (!ob)
                {
@@ -1029,25 +1028,20 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
 
              evas_outbuf_use(ob);
 
-             ob->evas = evas;
-
-             evas_render_engine_software_generic_update(&re->generic.software, ob,
-                                                        w, h);
+             evas_render_engine_software_generic_update(&re->generic.software,
+                                                        ob, w, h);
 
              gl_wins++;
           }
-        else if ((eng_get_ob(re)->w != w) ||
-                 (eng_get_ob(re)->h != h) ||
+        else if ((eng_get_ob(re)->w != (int)w) ||
+                 (eng_get_ob(re)->h != (int)h) ||
                  (info->info.rotation != eng_get_ob(re)->rotation))
           {
-             evas_outbuf_reconfigure(eng_get_ob(re),
-                                     w, h,
-                                     info->info.rotation,
-                                     info->info.depth);
+             evas_outbuf_reconfigure(eng_get_ob(re), w, h,
+                                     info->info.rotation, info->info.depth);
              evas_render_engine_software_generic_update(&re->generic.software,
                                                         re->generic.software.ob,
-                                                        w,
-                                                        h);
+                                                        w, h);
           }
      }
 
@@ -1496,6 +1490,7 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(info, &func, eng_);
    EVAS_API_OVERRIDE(info_free, &func, eng_);
    EVAS_API_OVERRIDE(setup, &func, eng_);
+   EVAS_API_OVERRIDE(update, &func, eng_);
    EVAS_API_OVERRIDE(canvas_alpha_get, &func, eng_);
    EVAS_API_OVERRIDE(output_free, &func, eng_);
    EVAS_API_OVERRIDE(output_dump, &func, eng_);

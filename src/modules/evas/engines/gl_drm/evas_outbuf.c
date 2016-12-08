@@ -729,8 +729,8 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer
         ob->vsync = 1;
      }
 
-   if (ob->info->callback.pre_swap)
-     ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
+   /* if (ob->info->callback.pre_swap) */
+   /*   ob->info->callback.pre_swap(ob->info->callback.data, ob->evas); */
 
    if ((glsym_eglSwapBuffersWithDamage) && (surface_damage) &&
        (ob->swap_mode != MODE_FULL))
@@ -755,8 +755,8 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer
    else
       eglSwapBuffers(ob->egl.disp, ob->egl.surface[0]);
 
-   if (ob->info->callback.post_swap)
-     ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
+   /* if (ob->info->callback.post_swap) */
+   /*   ob->info->callback.post_swap(ob->info->callback.data, ob->evas); */
 
    _evas_outbuf_buffer_swap(ob);
 
