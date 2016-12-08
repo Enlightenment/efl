@@ -149,7 +149,7 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
 }
 
 static void *
-eng_setup(void *in, unsigned int w, unsinged int h)
+eng_setup(void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_Cocoa *const info = in;
    Render_Engine *re;
@@ -178,7 +178,6 @@ eng_setup(void *in, unsigned int w, unsinged int h)
         goto err;
      }
 
-   ob->evas = evas;
    info->view = ob->ns_gl_view;
 
    chk = evas_render_engine_gl_generic_init(&re->generic, ob,
@@ -210,15 +209,21 @@ eng_setup(void *in, unsigned int w, unsinged int h)
    _gl_wins++;
 
    evas_outbuf_use(re->win);
+   return re;
 
+err:
+   free(re);
    return NULL;
 }
 
 static int
-eng_update(void *data, void *info, unsigned int w, unsigned int h)
+eng_update(void         *data EINA_UNUSED,
+           void         *info EINA_UNUSED,
+           unsigned int  w    EINA_UNUSED,
+           unsigned int  h    EINA_UNUSED)
 {
-   Evas_Engine_Info_GL_Cocoa *const info = in;
-   Render_Engine *re = data;
+   //Evas_Engine_Info_GL_Cocoa *const info = info;
+   //Render_Engine *re = data;
 
    CRI("ALREADY A DATA OUTPUT. THIS PART IS NOT IMPLEMENTED YET. PLEASE REPORT.");
    return 0;

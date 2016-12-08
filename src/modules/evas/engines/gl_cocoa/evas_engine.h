@@ -58,7 +58,6 @@ struct _Outbuf
 {
    Evas_Engine_Info_GL_Cocoa *info;
    Evas_Engine_GL_Context *gl_context;
-   Evas *evas;
 
    void *ns_gl_view; // NSOpenGLView*
    void *ns_window;  // NSWindow*
