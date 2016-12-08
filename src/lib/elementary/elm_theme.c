@@ -242,7 +242,7 @@ _elm_theme_find_data_try(Elm_Theme *th, const Eina_File *f, const char *key)
    free(data);
    if (t)
      {
-        eina_hash_add(th->cache, key, t);
+        eina_hash_add(th->cache_data, key, t);
         return t;
      }
    return NULL;
