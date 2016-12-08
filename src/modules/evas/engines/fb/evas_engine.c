@@ -31,9 +31,10 @@ typedef struct _Region_Push_Hook_Ctx {
 } Region_Push_Hook_Ctx;
 
 /* prototypes we will use here */
-static void *_output_setup(Evas *eo_e, int w, int h, int rot, int vt, int dev, int refresh,
+static void *_output_setup(int w, int h, int rot, int vt, int dev, int refresh,
                            void (*region_push_hook)(Evas *e, int x, int y, int w, int h,
-                                                    const void *pixels));
+                                                    const void *pixels),
+                           Evas *push_to);
 
 static void *eng_info(Evas *eo_e);
 static void eng_info_free(Evas *eo_e, void *info);
