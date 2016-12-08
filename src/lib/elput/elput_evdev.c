@@ -1239,13 +1239,15 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
    edev->seat = seat;
    edev->device = device;
 
-   if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_KEYBOARD))
+   if ((libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_KEYBOARD)) &&
+       (libinput_device_keyboard_has_key(device, KEY_ENTER)))
      {
         _keyboard_init(seat, seat->manager->cached.keymap);
         edev->caps |= EVDEV_SEAT_KEYBOARD;
      }
  
-   if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER))
+   if ((libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER) &&
+       (libinput_device_pointer_has_button(device, BTN_LEFT))))
      {
         _pointer_init(seat);
         edev->caps |= EVDEV_SEAT_POINTER;
