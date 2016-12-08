@@ -2078,9 +2078,7 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
         ret = elm_interface_atspi_accessible_name_get(obj);
         if (!ret)
           ret = "";
-        char *plain_text = evas_textblock_text_markup_to_utf8(NULL, ret);
         eldbus_message_iter_basic_append(iter, 's', ret);
-        free(plain_text);
         return EINA_TRUE;
      }
    else if (!strcmp(property, "Description"))
