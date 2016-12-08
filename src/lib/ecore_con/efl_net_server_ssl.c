@@ -150,6 +150,14 @@ _efl_net_server_ssl_efl_object_constructor(Eo *o, Efl_Net_Server_Ssl_Data *pd)
    return o;
 }
 
+static void
+_efl_net_server_ssl_ctx_del(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Eo *o = data;
+   Efl_Net_Server_Ssl_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   pd->ssl_ctx = NULL;
+}
+
 EOLIAN void
 _efl_net_server_ssl_efl_object_destructor(Eo *o, Efl_Net_Server_Ssl_Data *pd)
 {
@@ -157,6 +165,13 @@ _efl_net_server_ssl_efl_object_destructor(Eo *o, Efl_Net_Server_Ssl_Data *pd)
      {
         efl_del(pd->server);
         pd->server = NULL;
+     }
+
+   if (pd->ssl_ctx)
+     {
+        efl_event_callback_del(pd->ssl_ctx, EFL_EVENT_DEL, _efl_net_server_ssl_ctx_del, o);
+        efl_unref(pd->ssl_ctx);
+        pd->ssl_ctx = NULL;
      }
 
    efl_destructor(efl_super(o, MY_CLASS));
@@ -170,6 +185,8 @@ _efl_net_server_ssl_ssl_context_set(Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *
    if (pd->ssl_ctx == ssl_ctx) return;
    efl_unref(pd->ssl_ctx);
    pd->ssl_ctx = efl_ref(ssl_ctx);
+   if (ssl_ctx)
+     efl_event_callback_add(ssl_ctx, EFL_EVENT_DEL, _efl_net_server_ssl_ctx_del, o);
 }
 
 EOLIAN static Eo *
