@@ -92,6 +92,13 @@ _write(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Writ
    return ECORE_CALLBACK_RENEW;
 }
 
+Eina_Bool
+_error(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Error *ev)
+{
+   printf("Server Error: %s\n", ev->error);
+   return ECORE_CALLBACK_RENEW;
+}
+
 static const char *types_strs[] = {
   "tcp",
   "udp",
@@ -117,6 +124,9 @@ static const Ecore_Getopt options = {
     ECORE_GETOPT_STORE_TRUE('f', "flush", "Force a flush after every send call."),
     ECORE_GETOPT_STORE_TRUE('m', "single-message", "Send a single message and delete the server."),
 
+    ECORE_GETOPT_STORE_FALSE(0, "no-verify", "Do not verify server's certificate"),
+    ECORE_GETOPT_STORE_FALSE(0, "no-hostname-verify", "Do not Verify server's hostname based on its certificate."),
+
     ECORE_GETOPT_VERSION('V', "version"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_LICENSE('L', "license"),
@@ -138,12 +148,17 @@ main(int argc, char *argv[])
    int port = -1;
    Eina_Bool no_proxy = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
+   Eina_Bool verify = EINA_TRUE;
+   Eina_Bool hostname_verify = EINA_TRUE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(type_choice),
      ECORE_GETOPT_VALUE_BOOL(no_proxy),
 
      ECORE_GETOPT_VALUE_BOOL(do_flush),
      ECORE_GETOPT_VALUE_BOOL(single_message),
+
+     ECORE_GETOPT_VALUE_BOOL(verify),
+     ECORE_GETOPT_VALUE_BOOL(hostname_verify),
 
      /* standard block to provide version, copyright, license and help */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -V/--version quits */
@@ -224,7 +239,10 @@ main(int argc, char *argv[])
           }
 
         eina_iterator_free(it);
-        ecore_con_ssl_server_verify(svr);
+        if (verify)
+          ecore_con_ssl_server_verify(svr);
+        if (hostname_verify)
+          ecore_con_ssl_server_verify_basic(svr);
      }
 
 /* set event handler for server connect */
@@ -235,6 +253,8 @@ main(int argc, char *argv[])
    ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA, (Ecore_Event_Handler_Cb)_data, NULL);
 /* set event handler that notifies of sent data */
    ecore_event_handler_add(ECORE_CON_EVENT_SERVER_WRITE, (Ecore_Event_Handler_Cb)_write, NULL);
+/* set event handler that notifies of errors */
+   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ERROR, (Ecore_Event_Handler_Cb)_error, NULL);
 
    ecore_main_fd_handler_add(STDIN_FILENO, ECORE_FD_READ, _on_stdin, NULL, NULL, NULL);
 
