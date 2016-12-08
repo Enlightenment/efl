@@ -219,19 +219,19 @@ _efl_net_dialer_ssl_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Ssl_Data *pd EINA_
 EOLIAN static Eina_Bool
 _efl_net_dialer_ssl_keep_alive_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd, Eina_Bool keep_alive)
 {
-   return efl_net_dialer_ssl_keep_alive_set(pd->sock, keep_alive);
+   return efl_net_socket_tcp_keep_alive_set(pd->sock, keep_alive);
 }
 
 EOLIAN static Eina_Bool
 _efl_net_dialer_ssl_keep_alive_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
 {
-   return efl_net_dialer_ssl_keep_alive_get(pd->sock);
+   return efl_net_socket_tcp_keep_alive_get(pd->sock);
 }
 
 EOLIAN static Eina_Bool
 _efl_net_dialer_ssl_no_delay_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd, Eina_Bool no_delay)
 {
-   return efl_net_dialer_ssl_no_delay_set(pd->sock, no_delay);
+   return efl_net_socket_tcp_no_delay_set(pd->sock, no_delay);
 }
 
 EOLIAN static Eina_Bool
