@@ -60,6 +60,23 @@
 Eina_Hash *_eina_file_cache = NULL;
 Eina_Lock _eina_file_lock_cache;
 
+#if defined(EINA_SAFETY_CHECKS) && defined(EINA_MAGIC_DEBUG)
+# define EINA_FILE_MAGIC_CHECK(f, ...) do { \
+   if (EINA_UNLIKELY((f) == NULL)) \
+     { \
+       EINA_SAFETY_ERROR("safety check failed: " # f " == NULL"); \
+       return __VA_ARGS__; \
+     } \
+   if (EINA_UNLIKELY((f)->__magic != EINA_FILE_MAGIC)) \
+     { \
+        EINA_MAGIC_FAIL(f, EINA_FILE_MAGIC); \
+        return __VA_ARGS__; \
+     } \
+   } while (0)
+#else
+# define EINA_FILE_MAGIC_CHECK(f, ...) do {} while(0)
+#endif
+
 static char *
 _eina_file_escape(char *path, size_t len)
 {
@@ -446,8 +463,9 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
 EAPI Eina_Bool
 eina_file_virtual(Eina_File *file)
 {
-   if (file) return file->virtual;
-   return EINA_FALSE;
+   if (!file) return EINA_FALSE;
+   EINA_FILE_MAGIC_CHECK(file, EINA_FALSE);
+   return file->virtual;
 }
 
 EAPI Eina_File *
@@ -457,6 +475,7 @@ eina_file_dup(const Eina_File *f)
 
    if (file)
      {
+        EINA_FILE_MAGIC_CHECK(f, NULL);
         eina_lock_take(&file->lock);
         file->refcount++;
         eina_lock_release(&file->lock);
@@ -486,7 +505,7 @@ eina_file_close(Eina_File *file)
    unsigned int length;
    unsigned int key;
 
-   EINA_SAFETY_ON_NULL_RETURN(file);
+   EINA_FILE_MAGIC_CHECK(file);
 
    eina_lock_take(&_eina_file_lock_cache);
 
@@ -513,21 +532,21 @@ eina_file_close(Eina_File *file)
 EAPI size_t
 eina_file_size_get(const Eina_File *file)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, 0);
+   EINA_FILE_MAGIC_CHECK(file, 0);
    return file->length;
 }
 
 EAPI time_t
 eina_file_mtime_get(const Eina_File *file)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, 0);
+   EINA_FILE_MAGIC_CHECK(file, 0);
    return file->mtime;
 }
 
 EAPI const char *
 eina_file_filename_get(const Eina_File *file)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+   EINA_FILE_MAGIC_CHECK(file, NULL);
    return file->filename;
 }
 
@@ -622,7 +641,7 @@ eina_file_map_lines(Eina_File *file)
 {
    Eina_Lines_Iterator *it;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+   EINA_FILE_MAGIC_CHECK(file, NULL);
 
    if (file->length == 0) return NULL;
 
