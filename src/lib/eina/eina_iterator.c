@@ -235,6 +235,7 @@ typedef struct {
    void *data;
    Eina_Iterator *original;
    Eina_Each_Cb cb;
+   Eina_Free_Cb free;
 } Eina_Iterator_Filter;
 
 static Eina_Bool
@@ -259,12 +260,14 @@ eina_iterator_filter_get_container(Eina_Iterator_Filter *it)
 static void
 eina_iterator_filter_free(Eina_Iterator_Filter *it)
 {
+   if (it->free)
+     it->free(it->data);
    eina_iterator_free(it->original);
    free(it);
 }
 
 EAPI Eina_Iterator*
-eina_iterator_filter_new(Eina_Iterator *iterator, Eina_Each_Cb filter, void *data)
+eina_iterator_filter_new(Eina_Iterator *iterator, Eina_Each_Cb filter, Eina_Free_Cb free_cb, void *data)
 {
    Eina_Iterator_Filter *it;
 
@@ -276,6 +279,7 @@ eina_iterator_filter_new(Eina_Iterator *iterator, Eina_Each_Cb filter, void *dat
    it->original = iterator;
    it->data = data;
    it->cb = filter;
+   it->free = free_cb;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 

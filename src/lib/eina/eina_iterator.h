@@ -305,6 +305,7 @@ EAPI Eina_Iterator* eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) E
  *
  * @param original the iterator the use as original set
  * @param filter if the callback returns true the element from the original set is taken into the the new set.
+ * @param free_cb when the iterator is gone this callback will be called with data as argument
  * @param data the data which is passed to the filter callback
  *
  * The iterator is filtered while it is beeing iterated.
@@ -312,7 +313,7 @@ EAPI Eina_Iterator* eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) E
  *
  * @since 1.19
  */
-EAPI Eina_Iterator* eina_iterator_filter_new(Eina_Iterator *original, Eina_Each_Cb filter, void *data) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator* eina_iterator_filter_new(Eina_Iterator *original, Eina_Each_Cb filter, Eina_Free_Cb free_cb, void *data) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @def EINA_ITERATOR_FOREACH
