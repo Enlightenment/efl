@@ -1379,6 +1379,13 @@ typedef enum _Ecore_X_Illume_Window_State
    ECORE_X_ILLUME_WINDOW_STATE_FLOATING
 } Ecore_X_Illume_Window_State;
 
+typedef enum _Ecore_X_Stack_Type
+{
+   ECORE_X_STACK_NONE = 0,
+   ECORE_X_STACK_STANDARD = 1,
+   ECORE_X_STACK_LAST
+} Ecore_X_Stack_Type;
+
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW  2
 #define ECORE_X_WINDOW_LAYER_NORMAL 4
@@ -2738,6 +2745,9 @@ EAPI Eina_Bool                             ecore_x_window_keygrab_unset(Ecore_X_
 //this API for keyrouter protocol
 EAPI void                                  ecore_x_e_keyrouter_set(Ecore_X_Window root, Eina_Bool on); /**< @since 1.15 */ //Key router set keyrouter flag using this
 EAPI Eina_Bool                             ecore_x_e_keyrouter_get(Ecore_X_Window root); /**< @since 1.15 */ //Client check the existance of keyrouter using this
+
+EAPI void                                  ecore_x_e_stack_type_set(Ecore_X_Window win, Ecore_X_Stack_Type stack_type);
+EAPI Ecore_X_Stack_Type                    ecore_x_e_stack_type_get(Ecore_X_Window win);
 
 #include <Ecore_X_Atoms.h>
 #include <Ecore_X_Cursor.h>

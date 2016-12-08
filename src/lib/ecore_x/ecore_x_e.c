@@ -2399,3 +2399,34 @@ ecore_x_e_keyrouter_get(Ecore_X_Window win EINA_UNUSED)
 
    return val == 1 ? EINA_TRUE : EINA_FALSE;
 }
+
+EAPI void
+ecore_x_e_stack_type_set(Ecore_X_Window win,
+                         Ecore_X_Stack_Type stack_type)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
+   if (stack_type == ECORE_X_STACK_NONE)
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_STACK_TYPE);
+   else
+     ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_STACK_TYPE,
+                                    &stack_type, 1);
+}
+
+EAPI Ecore_X_Stack_Type
+ecore_x_e_stack_type_get(Ecore_X_Window win)
+{
+   int ret;
+   unsigned int val;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, ECORE_X_STACK_NONE);
+
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_STACK_TYPE,
+                                        &val, 1);
+   if (ret != 1) return ECORE_X_STACK_NONE;
+   if (val >= ECORE_X_STACK_LAST) val = ECORE_X_STACK_STANDARD;
+   return (Ecore_X_Stack_Type)val;
+}
