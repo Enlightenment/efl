@@ -61,7 +61,6 @@ struct _Outbuf
    int w, h;
    int depth, screen, rot, alpha;
 
-   Evas *evas;
    Evas_Engine_Info_Wayland *info;
    Evas_Engine_GL_Context *gl_context;
 
