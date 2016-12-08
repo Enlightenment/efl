@@ -13965,11 +13965,14 @@ _efl_canvas_text_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
       Efl_Canvas_Text_Cursor *start_obj, Efl_Canvas_Text_Cursor *end_obj,
       const char *format)
 {
+   Efl_Canvas_Text_Annotation *ret;
    Efl_Canvas_Text_Cursor_Data *start = efl_data_scope_get(start_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    Efl_Canvas_Text_Cursor_Data *end = efl_data_scope_get(end_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
 
-   return _textblock_annotation_insert(eo_obj, o, start, end, format,
+   ret = _textblock_annotation_insert(eo_obj, o, start, end, format,
          EINA_FALSE);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   return ret;
 }
 
 EOLIAN static Eina_Iterator *
