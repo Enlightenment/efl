@@ -270,7 +270,7 @@ gl_extn_veto(Render_Engine *re)
 
         if (!strstr(str, "EGL_EXT_swap_buffers_with_damage"))
           glsym_eglSwapBuffersWithDamage = NULL;
-        if (strstr(str, "EGL_MESA_image_dma_buf_export"))
+        if (strstr(str, "EGL_EXT_image_dma_buf_import"))
           dmabuf_present = EINA_TRUE;
      }
    else
