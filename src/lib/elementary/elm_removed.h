@@ -6443,5 +6443,59 @@ EINA_DEPRECATED EAPI void               elm_genlist_edit_mode_set(Evas_Object *o
 EINA_DEPRECATED EAPI Eina_Bool          elm_genlist_edit_mode_get(const Evas_Object *obj);
 
 /**
+ * @brief Notify the compositor that a uri should be preloaded
+ *
+ * @param[in] uri This is the uri to notify with
+ *
+ * @since 1.18
+ *
+ * @ingroup Efl_Ui_Win
+ * @deprecated This is a possibly security issue and is non-portable outside enlightenment and there is no code to detect if it exists and even works, so better not to have this
+ */
+EINA_DEPRECATED EAPI void elm_win_teamwork_uri_preload(Efl_Ui_Win *obj, const char *uri);
+
+/**
+ * @brief Notify the compositor that a uri should be displayed
+ *
+ * Sends the current mouse coordinates as a hint for displaying the related uri
+ * in the compositor.
+ *
+ * @param[in] uri This is the uri to notify with
+ *
+ * @since 1.18
+ *
+ * @ingroup Efl_Ui_Win
+ * @deprecated This is a possibly security issue and is non-portable outside enlightenment and there is no code to detect if it exists and even works, so better not to have this
+ */
+EINA_DEPRECATED EAPI void elm_win_teamwork_uri_show(Efl_Ui_Win *obj, const char *uri);
+
+/**
+ * @brief Notify the compositor that a uri should be hidden
+ *
+ * Hides any uri-related media displayed in the compositor through previous
+ * @ref elm_win_teamwork_uri_show request
+ *
+ * @since 1.18
+ *
+ * @ingroup Efl_Ui_Win
+ * @deprecated This is a possibly security issue and is non-portable outside enlightenment and there is no code to detect if it exists and even works, so better not to have this
+ */
+EINA_DEPRECATED EAPI void elm_win_teamwork_uri_hide(Efl_Ui_Win *obj);
+
+/**
+ * @brief Notify the compositor that a uri should be opened
+ *
+ * Use the compositor's default application to open a uri
+ *
+ * @param[in] uri This is the uri to open
+ *
+ * @since 1.18
+ *
+ * @ingroup Efl_Ui_Win
+ * @deprecated This is a possibly security issue and is non-portable outside enlightenment and there is no code to detect if it exists and even works, so better not to have this
+ */
+EINA_DEPRECATED EAPI void elm_win_teamwork_uri_open(Efl_Ui_Win *obj, const char *uri);
+
+/**
  * @}
  */
