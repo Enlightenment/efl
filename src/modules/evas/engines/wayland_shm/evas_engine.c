@@ -140,7 +140,6 @@ static void *
 eng_setup(void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *einfo = info;
-   Render_Engine *re = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -152,15 +151,13 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *einfo = info;
    Render_Engine *re = data;
-   Outbuf *ob;
 
    if (!einfo->info.wl_surface) return 0;
    if (!einfo->info.hidden) return 1;
 
    eng_output_resize(re, w, h);
-   if (!ob) return 0;
 
-   evas_render_engine_software_generic_update(&re->generic, ob,
+   evas_render_engine_software_generic_update(&re->generic, re->generic.ob,
                                               w, h);
 
    return 1;
