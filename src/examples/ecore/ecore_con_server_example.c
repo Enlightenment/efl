@@ -79,6 +79,14 @@ _write(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_RENEW;
 }
 
+Eina_Bool
+_error(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Con_Event_Client_Error *ev = event;
+   printf("Client %s Error: %s\n", ecore_con_client_ip_get(ev->client), ev->error);
+   return ECORE_CALLBACK_RENEW;
+}
+
 static const char *types_strs[] = {
   "tcp",
   "udp",
@@ -226,6 +234,8 @@ main(int argc, char **argv)
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA, (Ecore_Event_Handler_Cb)_data, NULL);
 /* set event handler that notifies of sent data */
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_WRITE, (Ecore_Event_Handler_Cb)_write, NULL);
+/* set event handler that notifies of errors */
+   ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ERROR, (Ecore_Event_Handler_Cb)_error, NULL);
 
 /* start server */
    ecore_main_loop_begin();
