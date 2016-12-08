@@ -2844,6 +2844,42 @@ _eo_log_obj_shutdown(void)
    unsigned int idx;
 
    eina_spinlock_take(&_eo_log_objs_lock);
+   if (eina_log_domain_level_check(_eo_log_objs_dom, EINA_LOG_LEVEL_INFO))
+     {
+        void * const *itr = _eo_log_objs.data;
+        void * const *itr_end = itr + _eo_log_objs.count;
+        double now = _eo_log_time_now();
+        size_t leaks = 0;
+
+        for (; itr < itr_end; itr++)
+          {
+             const Eo_Log_Obj_Entry *entry = *itr;
+             void * const *cur;
+             if (entry->is_free) continue;
+             for (cur = itr + 1; cur < itr_end; cur++)
+               {
+                  const Eo_Log_Obj_Entry *cur_entry = *cur;
+                  if (EINA_UNLIKELY((cur_entry->id == entry->id) && (cur_entry->is_free)))
+                    break;
+               }
+             if (EINA_UNLIKELY(cur == itr_end))
+               {
+                  EINA_LOG_DOM_INFO(_eo_log_objs_dom,
+                                    "leaking obj_id=%p obj=%p class=%p (%s) [%0.4fs, %0.4f ago]",
+                                    (void *)entry->id,
+                                    entry->obj,
+                                    entry->klass,
+                                    entry->klass->desc->name,
+                                    entry->timestamp - _eo_log_time_start, now - entry->timestamp);
+                  _eo_log_obj_entry_show(entry, EINA_LOG_LEVEL_DBG, __FUNCTION__, __FILE__, __LINE__, now);
+                  leaks++;
+               }
+          }
+        if (leaks)
+          EINA_LOG_DOM_WARN(_eo_log_objs_dom, "Leaked %zd objects! Check details with EINA_LOG_LEVELS=eo_lifecycle:4", leaks);
+        else
+          EINA_LOG_DOM_INFO(_eo_log_objs_dom, "No leaked objects!");
+     }
    EINA_ARRAY_ITER_NEXT(&_eo_log_objs, idx, entry, it)
      _eo_log_obj_entry_free(entry);
    eina_array_flush(&_eo_log_objs);
