@@ -155,6 +155,8 @@ struct _Efl_Ui_Win_Data
    const char  *title;
    const char  *icon_name;
    const char  *role;
+   const char  *stack_id;
+   const char  *stack_master_id;
    Eina_Stringshare *name;
    Eina_Stringshare *accel_pref;
 
@@ -256,6 +258,7 @@ struct _Efl_Ui_Win_Data
    Eina_Bool    application_alpha : 1; /**< alpha value set by an elm_win_alpha_set() api. this has lower priority than theme_alpha */
    Eina_Bool    tmp_updating_hints : 1;
    Eina_Bool    single_edje_content: 1; /* hack for E */
+   Eina_Bool    shown : 1;
 };
 
 struct _Input_Pointer_Iterator
@@ -2213,6 +2216,7 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
 {
    Eina_Bool do_eval = EINA_FALSE;
 
+   sd->shown = EINA_TRUE;
    if (sd->modal_count)
      {
         /* FIXME FIXME FIXME
@@ -2794,6 +2798,8 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    eina_stringshare_del(sd->role);
    eina_stringshare_del(sd->name);
    eina_stringshare_del(sd->accel_pref);
+   eina_stringshare_del(sd->stack_id);
+   eina_stringshare_del(sd->stack_master_id);
    evas_object_del(sd->icon);
    evas_object_del(sd->main_menu);
 
@@ -3138,17 +3144,23 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
 
    if (sd->type == ELM_WIN_FAKE) return;
    _internal_elm_win_xwindow_get(sd);
-   if (sd->parent)
-     {
-        ELM_WIN_DATA_GET(sd->parent, sdp);
-        if (sdp)
-          {
-             if (sd->x.xwin)
-               ecore_x_icccm_transient_for_set(sd->x.xwin, sdp->x.xwin);
-          }
-     }
 
    if (!sd->x.xwin) return;  /* nothing more to do */
+
+   if (sd->stack_master_id)
+     {
+        Ecore_X_Window win = atoi(sd->stack_master_id);
+        if (win) ecore_x_icccm_transient_for_set(sd->x.xwin, win);
+        // XXX: set property saying we are a stack window
+     }
+   else
+     {
+        if (sd->parent)
+          {
+             ELM_WIN_DATA_GET(sd->parent, sdp);
+             if (sdp) ecore_x_icccm_transient_for_set(sd->x.xwin, sdp->x.xwin);
+          }
+     }
 
    s = sd->title;
    if (!s) s = _elm_appname;
@@ -6115,6 +6127,40 @@ EOLIAN static Eina_Bool
 _efl_ui_win_focus_highlight_animate_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->focus_highlight.animate;
+}
+
+EOLIAN static const char *
+_efl_ui_win_stack_id_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return sd->stack_id;
+}
+
+EOLIAN static void
+_efl_ui_win_stack_master_id_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *id)
+{
+   if (sd->shown) return;
+   eina_stringshare_replace(&(sd->stack_master_id), id);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+}
+
+EOLIAN static const char *
+_efl_ui_win_stack_master_id_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return sd->stack_master_id;
+}
+
+EOLIAN static void
+_efl_ui_win_stack_pop_to_id(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED, const char *id EINA_UNUSED)
+{
+   // if in e (x11+wl), ask e to nuke all windows in stack above this
+   //   or
+   // in x11 - find all windows in the window tree with a transient
+   // for that have the SAME stack master as this one and that are
+   // stacked above this window, and delete them from bottom to top
+   // 
+   // win32/osx ?
 }
 
 EOLIAN static Eina_Bool

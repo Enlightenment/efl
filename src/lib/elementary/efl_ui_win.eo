@@ -729,6 +729,65 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                            $false otherwise.]]
          }
       }
+      @property stack_id {
+         get {
+            [[Get the stack ID string of the window as an opaque string.
+
+              This ID is immutable and can never be modified. It will be
+              an opaque string that has no specific desfined format or
+              content other than it being a string (no character with a
+              value of 0).
+
+              This string is intended for use as a stack master ID to be
+              use by other windows to make this window part of a stack
+              of windows to be placed on top of eachother as if they are
+              a series of dialogs or questions one after the other and
+              that you may go back through history.
+
+              @since 1.19]]
+         }
+         values {
+            id: string; [[An opaque string that has no specific format,
+                          but identified a specific unique window on the
+                          display.]]
+         }
+      }
+      @property stack_master_id {
+         set {
+            [[Set the window stack ID to use as the master top-level.
+
+              This sets the ID string to be used as the master top-level
+              window as the base of a stack of windows. This must be set
+              before the first time the window is shown and should never
+              be changed after that point in time ever again.
+
+              @since 1.19]]
+         }
+         get {
+            [[Get the stack master Id that has been set.]]
+         }
+         values {
+            id: string; [[An opaque string that has no specific format,
+                          but identified a specific unique window on the
+                          display.]]
+         }
+      }
+      stack_pop_to_id {
+         [[Pop (delete) all windows in the stack above this window.
+
+           This will try and delete all the windows in the stack that
+           are above the window with the given stack ID given as the
+           ID string to ensure that this window is visible on top of
+           this stack and would be the active (focused) window if
+           the stack was active/focused.
+
+           @since 1.19]]
+         params {
+            @in id: string; [[An opaque string that has no specific format,
+                              but identified a specific unique window on the
+                              display.]]
+         }
+      }
       socket_listen {
          [[Create a socket to provide the service for Plug widget.]]
          return: bool; [[$true on success, $false otherwise]]
