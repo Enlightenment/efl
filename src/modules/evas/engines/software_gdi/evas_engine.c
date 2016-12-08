@@ -94,7 +94,6 @@ static void *
 eng_setup(void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Software_Gdi *info;
-   Render_Engine *re;
 
    info = (Evas_Engine_Info_Software_Gdi *)in;
    return _output_setup(w,
@@ -110,10 +109,12 @@ eng_setup(void *in, unsigned int w, unsigned int h)
 static int
 eng_update(void *data, void *in, unsigned int w, unsigned int h)
 {
+   Evas_Engine_Info_Software_Gdi *info;
    Render_Engine *re = data;
    Outbuf *ob;
    int ponebuf = 0;
 
+   info = (Evas_Engine_Info_Software_Gdi *)in;
    ponebuf = re->generic.ob->onebuf;
 
    ob = evas_software_gdi_outbuf_setup(w,
