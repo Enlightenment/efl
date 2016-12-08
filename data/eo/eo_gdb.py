@@ -113,8 +113,9 @@ class Eo_data_get(gdb.Function):
 
         # Check if not mixin
         if int(kls['desc']['type'].cast(zero_uintptr_t.type)) != 3:
-            return gdb.parse_and_eval('(void *) (((char *) {}) + {})'
-                                      .format(ptr, kls['data_offset']))
+            return gdb.parse_and_eval(
+                '(void *) (((char *) {}) + _eo_sz + {})'
+                .format(ptr, kls['data_offset']))
         else:
             extn_off = ptr['klass']['extn_data_off']
             if int(extn_off) == 0:
@@ -124,8 +125,9 @@ class Eo_data_get(gdb.Function):
             while int(extn_off[i]['klass']) != 0:
                 kls = extn_off[i]['klass']
                 if kls['desc']['name'].string() == kls_name:
-                    return gdb.parse_and_eval('(void *) (((char *) {}) + {})'
-                                              .format(ptr, kls['data_offset']))
+                    return gdb.parse_and_eval(
+                        '(void *) (((char *) {}) + _eo_sz + {})'
+                        .format(ptr, kls['data_offset']))
                 i += 1
 
         return null_void_ptr
