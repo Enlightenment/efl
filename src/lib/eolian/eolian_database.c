@@ -216,9 +216,11 @@ EAPI Eina_List *
 eolian_documentation_string_split(const char *doc)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
+   if (!doc[0])
+     return NULL;
    const char *sep = strstr(doc, "\n\n");
    Eina_List *ret = NULL;
-   while (doc)
+   for (;;)
      {
         Eina_Strbuf *buf = eina_strbuf_new();
         if (sep)
