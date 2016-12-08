@@ -164,7 +164,8 @@ _efl_net_socket_fd_efl_io_closer_close(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
    efl_loop_fd_set(efl_super(o, MY_CLASS), SOCKET_TO_LOOP_FD(INVALID_SOCKET));
 
    efl_io_closer_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
-   if (closesocket(fd) != 0) ret = efl_net_socket_error_get();
+   if (!((pd->family == AF_UNSPEC) && (fd == 0))) /* if nothing is set, fds are all zero, avoid closing STDOUT */
+     if (closesocket(fd) != 0) ret = efl_net_socket_error_get();
    efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
 
    /* do the cleanup our _efl_net_socket_fd_efl_loop_fd_fd_set() would do */
