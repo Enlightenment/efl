@@ -6,6 +6,7 @@ local bit = require("bit")
 
 ffi.cdef [[
     void eina_stringshare_del(const char *str);
+    void free(void *ptr);
 ]]
 
 ffi.cdef [[
@@ -184,6 +185,35 @@ ffi.cdef [[
         EOLIAN_DECL_VAR
     } Eolian_Declaration_Type;
 
+    typedef enum {
+        EOLIAN_DOC_TOKEN_UNKNOWN = -1,
+        EOLIAN_DOC_TOKEN_TEXT,
+        EOLIAN_DOC_TOKEN_REF,
+        EOLIAN_DOC_TOKEN_MARK_NOTE,
+        EOLIAN_DOC_TOKEN_MARK_WARNING,
+        EOLIAN_DOC_TOKEN_MARK_REMARK,
+        EOLIAN_DOC_TOKEN_MARK_TODO,
+        EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE
+    } Eolian_Doc_Token_Type;
+
+    typedef enum {
+        EOLIAN_DOC_REF_INVALID = 0,
+        EOLIAN_DOC_REF_CLASS,
+        EOLIAN_DOC_REF_FUNC,
+        EOLIAN_DOC_REF_EVENT,
+        EOLIAN_DOC_REF_ALIAS,
+        EOLIAN_DOC_REF_STRUCT,
+        EOLIAN_DOC_REF_STRUCT_FIELD,
+        EOLIAN_DOC_REF_ENUM,
+        EOLIAN_DOC_REF_ENUM_FIELD,
+        EOLIAN_DOC_REF_VAR
+    } Eolian_Doc_Ref_Type;
+
+    typedef struct _Eolian_Doc_Token {
+        Eolian_Doc_Token_Type type;
+        const char *text, *text_end;
+    } Eolian_Doc_Token;
+
     Eina_Bool eolian_file_parse(const char *filepath);
     Eina_Iterator *eolian_all_eo_file_paths_get(void);
     Eina_Iterator *eolian_all_eot_file_paths_get(void);
@@ -361,6 +391,12 @@ ffi.cdef [[
     const char *eolian_documentation_summary_get(const Eolian_Documentation *doc);
     const char *eolian_documentation_description_get(const Eolian_Documentation *doc);
     const char *eolian_documentation_since_get(const Eolian_Documentation *doc);
+
+    const char *eolian_documentation_tokenize(const char *doc, Eolian_Doc_Token *ret);
+    void eolian_doc_token_init(Eolian_Doc_Token *tok);
+    Eolian_Doc_Token_Type eolian_doc_token_type_get(const Eolian_Doc_Token *tok);
+    char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
+    Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data, const void **data2);
 ]]
 
 local cutil = require("cutil")
@@ -1480,6 +1516,113 @@ M.Documentation = ffi.metatype("Eolian_Documentation", {
             local v = eolian.eolian_documentation_since_get(self)
             if v == nil then return nil end
             return ffi.string(v)
+        end
+    }
+})
+
+M.doc_token_type = {
+    UNKNOWN          = -1,
+    TEXT             =  0,
+    REF              =  1,
+    MARK_NOTE        =  2,
+    MARK_WARNING     =  3,
+    MARK_REMARK      =  4,
+    MARK_TODO        =  5,
+    MARKUP_MONOSPACE =  6
+}
+
+M.doc_ref_type = {
+    INVALID      = 0,
+    CLASS        = 1,
+    FUNC         = 2,
+    EVENT        = 3,
+    ALIAS        = 4,
+    STRUCT       = 5,
+    STRUCT_FIELD = 6,
+    ENUM         = 7,
+    ENUM_FIELD   = 8,
+    VAR          = 9
+}
+
+M.documentation_string_split = function(str)
+    if not str then
+        return {}
+    end
+    local sep = str:find("\n\n", 1, true)
+    local ret = {}
+    while true do
+        local pstr = (sep and str:sub(1, sep - 1) or pstr):match("^%s*(.-)%s*$")
+        if #pstr > 0 then
+            ret[#ret + 1] = pstr
+        end
+        if not sep then
+            break
+        end
+        str = str:sub(sep + 2)
+        sep = str:find("\n\n", 1, true)
+    end
+    return ret
+end
+
+M.documentation_tokenize = function(doc, ret)
+    local ret = eolian.eolian_documentation_tokenize(doc, ret)
+    if ret == nil then
+        return nil
+    end
+    return ffi.string(ret)
+end
+
+M.doc_token_init = function()
+    local ret = ffi.new("Eolian_Doc_Token")
+    eolian.eolian_doc_token_init(ret)
+    return ret
+end
+
+M.Eolian_Doc_Token = ffi.metatype("Eolian_Doc_Token", {
+    __index = {
+        type_get = function(self)
+            return tonumber(eolian.eolian_doc_token_type_get(self))
+        end,
+
+        text_get = function(self)
+            local str = eolian.eolian_doc_token_text_get(self)
+            if str == nil then
+                return nil
+            end
+            local ret = ffi.string(str)
+            ffi.C.free(str)
+            return ret
+        end,
+
+        ref_get = function(self)
+            local stor = ffi.new("const void *[2]")
+            local tp = tonumber(eolian.eolian_doc_token_ref_get(self, stor, stor + 1))
+            local reft = M.doc_ref_type
+            if tp == reft.CLASS then
+                return tp, ffi.cast("const Eolian_Class *", stor[0])
+            elseif tp == reft.FUNC then
+                return tp, ffi.cast("const Eolian_Class *", stor[0]),
+                           ffi.cast("const Eolian_Function *", stor[1])
+            elseif tp == reft.EVENT then
+                return tp, ffi.cast("const Eolian_Class *", stor[0]),
+                           ffi.cast("const Eolian_Event *", stor[1])
+            elseif tp == reft.ALIAS then
+                return tp, ffi.cast("const Eolian_Typedecl *", stor[0])
+            elseif tp == reft.STRUCT then
+                return tp, ffi.cast("const Eolian_Typedecl *", stor[0])
+            elseif tp == reft.STRUCT_FIELD then
+                return tp, ffi.cast("const Eolian_Typedecl *", stor[0]),
+                           ffi.cast("const Eolian_Struct_Type_Field *", stor[1])
+            elseif tp == reft.ENUM then
+                return tp, ffi.cast("const Eolian_Typedecl *", stor[0])
+            elseif tp == reft.ENUM_FIELD then
+                return tp, ffi.cast("const Eolian_Typedecl *", stor[0]),
+                           ffi.cast("const Eolian_Enum_Type_Field *", stor[1])
+            elseif tp == reft.VAR then
+                return tp, ffi.cast("const Eolian_Variable *", stor[0])
+            else
+                return reft.INVALID
+            end
         end
     }
 })
