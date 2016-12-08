@@ -159,6 +159,7 @@ _efl_net_ssl_context_certificates_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Dat
 static void
 _efl_net_ssl_context_certificates_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd, Eina_Iterator *it)
 {
+   EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(o));
    _efl_net_ssl_context_string_list_free(&pd->certificates);
    pd->certificates = _efl_net_ssl_context_string_iter_to_list(it);
 }
@@ -172,6 +173,7 @@ _efl_net_ssl_context_private_keys_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Dat
 static void
 _efl_net_ssl_context_private_keys_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd, Eina_Iterator *it)
 {
+   EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(o));
    _efl_net_ssl_context_string_list_free(&pd->private_keys);
    pd->private_keys = _efl_net_ssl_context_string_iter_to_list(it);
 }
@@ -185,6 +187,7 @@ _efl_net_ssl_context_certificate_revogation_lists_get(Eo *o EINA_UNUSED, Efl_Net
 static void
 _efl_net_ssl_context_certificate_revogation_lists_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd, Eina_Iterator *it)
 {
+   EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(o));
    _efl_net_ssl_context_string_list_free(&pd->certificate_revogation_lists);
    pd->certificate_revogation_lists = _efl_net_ssl_context_string_iter_to_list(it);
 }
@@ -198,6 +201,7 @@ _efl_net_ssl_context_certificate_authorities_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_
 static void
 _efl_net_ssl_context_certificate_authorities_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd, Eina_Iterator *it)
 {
+   EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(o));
    _efl_net_ssl_context_string_list_free(&pd->certificate_authorities);
    pd->certificate_authorities = _efl_net_ssl_context_string_iter_to_list(it);
 }
@@ -211,6 +215,7 @@ _efl_net_ssl_context_default_paths_load_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Conte
 static void
 _efl_net_ssl_context_default_paths_load_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd, Eina_Bool load_defaults)
 {
+   EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(o));
    pd->load_defaults = load_defaults;
 }
 

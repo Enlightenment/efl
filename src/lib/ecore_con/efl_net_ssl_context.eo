@@ -43,35 +43,50 @@ class Efl.Net.Ssl.Context (Efl.Object) {
         }
 
         @property certificates {
-            [[The list of paths to certificates to use.]]
+            [[The list of paths to certificates to use.
+
+              Can only be set during object construction!
+            ]]
             values {
                 paths: free(own(iterator<string>), eina_iterator_free); [[Path list for certificates]]
             }
         }
 
         @property private_keys {
-            [[The list of paths to private keys to use.]]
+            [[The list of paths to private keys to use.
+
+              Can only be set during object construction!
+            ]]
             values {
                 paths: free(own(iterator<string>), eina_iterator_free); [[Path list for private keys]]
             }
         }
 
         @property certificate_revogation_lists {
-            [[The list of paths to CRL (certificate revogation list) to use.]]
+            [[The list of paths to CRL (certificate revogation list) to use.
+
+              Can only be set during object construction!
+            ]]
             values {
                 paths: free(own(iterator<string>), eina_iterator_free); [[Path list for CRL's]]
             }
         }
 
         @property certificate_authorities {
-            [[The list of paths to CA (certificate authoritie) to use.]]
+            [[The list of paths to CA (certificate authoritie) to use.
+
+              Can only be set during object construction!
+            ]]
             values {
                 paths: free(own(iterator<string>), eina_iterator_free); [[Path list for CA's]]
             }
         }
 
         @property default_paths_load {
-            [[If $true, will use system's default certificate storage]]
+            [[If $true, will use system's default certificate storage
+
+              Can only be set during object construction!
+            ]]
             values {
                 default_paths_load: bool; [[$if true use system default paths for loading, $false otherwise]]
             }
