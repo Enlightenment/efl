@@ -1614,73 +1614,6 @@ _re_winfree(Render_Engine *re)
    eng_window_unsurf(eng_get_ob(re));
 }
 
-static Render_Engine_Swap_Mode
-_eng_swap_mode_get(Evas_Engine_Info_GL_X11_Swap_Mode info_swap_mode)
-{
-   Render_Engine_Swap_Mode swap_mode = MODE_FULL;
-   const char *s;
-
-   if ((s = getenv("EVAS_GL_SWAP_MODE")))
-     {
-        if ((!strcasecmp(s, "full")) ||
-            (!strcasecmp(s, "f")))
-          swap_mode = MODE_FULL;
-        else if ((!strcasecmp(s, "copy")) ||
-                 (!strcasecmp(s, "c")))
-          swap_mode = MODE_COPY;
-        else if ((!strcasecmp(s, "double")) ||
-                 (!strcasecmp(s, "d")) ||
-                 (!strcasecmp(s, "2")))
-          swap_mode = MODE_DOUBLE;
-        else if ((!strcasecmp(s, "triple")) ||
-                 (!strcasecmp(s, "t")) ||
-                 (!strcasecmp(s, "3")))
-          swap_mode = MODE_TRIPLE;
-        else if ((!strcasecmp(s, "quadruple")) ||
-                 (!strcasecmp(s, "q")) ||
-                 (!strcasecmp(s, "4")))
-          swap_mode = MODE_QUADRUPLE;
-     }
-   else
-     {
-// in most gl implementations - egl and glx here that we care about the TEND
-// to either swap or copy backbuffer and front buffer, but strictly that is
-// not true. technically backbuffer content is totally undefined after a swap
-// and thus you MUST re-render all of it, thus MODE_FULL
-        swap_mode = MODE_FULL;
-// BUT... reality is that lmost every implementation copies or swaps so
-// triple buffer mode can be used as it is a superset of double buffer and
-// copy (though using those explicitly is more efficient). so let's play with
-// triple buffer mdoe as a default and see.
-//        re->mode = MODE_TRIPLE;
-// XXX: note - the above seems to break on some older intel chipsets and
-// drivers. it seems we CANT depend on backbuffer staying around. bugger!
-        switch (info_swap_mode)
-          {
-           case EVAS_ENGINE_GL_X11_SWAP_MODE_FULL:
-             swap_mode = MODE_FULL;
-             break;
-           case EVAS_ENGINE_GL_X11_SWAP_MODE_COPY:
-             swap_mode = MODE_COPY;
-             break;
-           case EVAS_ENGINE_GL_X11_SWAP_MODE_DOUBLE:
-             swap_mode = MODE_DOUBLE;
-             break;
-           case EVAS_ENGINE_GL_X11_SWAP_MODE_TRIPLE:
-             swap_mode = MODE_TRIPLE;
-             break;
-           case EVAS_ENGINE_GL_X11_SWAP_MODE_QUADRUPLE:
-             swap_mode = MODE_QUADRUPLE;
-             break;
-           default:
-             swap_mode = MODE_AUTO;
-             break;
-          }
-     }
-
-   return swap_mode;
-}
-
 static void *
 eng_setup(void *in, unsigned int w, unsigned int h)
 {
@@ -1691,7 +1624,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
    Render_Engine_Swap_Mode swap_mode;
    const char *s;
 
-   swap_mode = _eng_swap_mode_get(info->swap_mode);
+   swap_mode = evas_render_engine_gl_swap_mode_get(info->swap_mode);
 
    // Set this env var to dump files every frame
    // Or set the global var in gdb to 1|0 to turn it on and off
@@ -1818,7 +1751,7 @@ eng_update(void *data, void *in, unsigned int w, unsigned int h)
    Render_Engine *re = data;
    Render_Engine_Swap_Mode swap_mode;
 
-   swap_mode = _eng_swap_mode_get(info->swap_mode);
+   swap_mode = evas_render_engine_gl_swap_mode_get(info->swap_mode);
 
    if (eng_get_ob(re) && _re_wincheck(eng_get_ob(re)))
      {

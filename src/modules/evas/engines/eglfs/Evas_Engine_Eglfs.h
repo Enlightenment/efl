@@ -1,15 +1,7 @@
 #ifndef _EVAS_ENGINE_EGLFS_H
 # define _EVAS_ENGINE_EGLFS_H
 
-typedef enum _Evas_Engine_Info_Eglfs_Swap_Mode
-{
-   EVAS_ENGINE_EGLFS_SWAP_MODE_AUTO = 0,
-   EVAS_ENGINE_EGLFS_SWAP_MODE_FULL = 1,
-   EVAS_ENGINE_EGLFS_SWAP_MODE_COPY = 2,
-   EVAS_ENGINE_EGLFS_SWAP_MODE_DOUBLE = 3,
-   EVAS_ENGINE_EGLFS_SWAP_MODE_TRIPLE = 4,
-   EVAS_ENGINE_EGLFS_SWAP_MODE_QUADRUPLE = 5
-} Evas_Engine_Info_Eglfs_Swap_Mode;
+#include "../gl_generic/Evas_Engine_GL_Shared.h"
 
 typedef struct _Evas_Engine_Info_Eglfs Evas_Engine_Info_Eglfs;
 
@@ -28,7 +20,7 @@ struct _Evas_Engine_Info_Eglfs
         Eina_Bool destination_alpha : 1;
         Eina_Bool vsync : 1;
         Eina_Bool indirect : 1;
-        unsigned char swap_mode : 4;
+        Evas_Engine_Info_Gl_Swap_Mode swap_mode : 4;
      } info;
 
    struct

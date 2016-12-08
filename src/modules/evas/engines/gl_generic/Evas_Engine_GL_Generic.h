@@ -2,6 +2,8 @@
 # define EVAS_ENGINE_GL_GENERIC_H__
 
 #include "../software_generic/Evas_Engine_Software_Generic.h"
+#include "Evas_Engine_GL_Shared.h"
+
 #include "../gl_common/evas_gl_common.h"
 #include "../gl_common/evas_gl_core.h"
 #include "../gl_common/evas_gl_core_private.h"

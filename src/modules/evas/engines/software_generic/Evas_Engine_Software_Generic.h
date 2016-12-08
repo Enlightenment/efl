@@ -1,6 +1,8 @@
 #ifndef EVAS_ENGINE_SOFTWARE_GENERIC_H_
 # define EVAS_ENGINE_SOFTWARE_GENERIC_H_
 
+#include "Evas_Engine_Software_Shared.h"
+
 typedef enum _Outbuf_Depth
 {
    OUTBUF_DEPTH_NONE,
@@ -22,16 +24,6 @@ typedef enum _Outbuf_Depth
 
    OUTBUF_DEPTH_LAST
 } Outbuf_Depth;
-
-typedef enum 
-{
-   MODE_FULL,
-   MODE_COPY,
-   MODE_DOUBLE,
-   MODE_TRIPLE,
-   MODE_QUADRUPLE,
-   MODE_AUTO
-} Render_Engine_Swap_Mode;
 
 typedef enum 
 {
