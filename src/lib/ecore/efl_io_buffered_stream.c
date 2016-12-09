@@ -175,7 +175,10 @@ _efl_io_buffered_stream_efl_object_destructor(Eo *o, Efl_Io_Buffered_Stream_Data
    if (pd->inner_io)
      {
         efl_event_callback_array_del(pd->inner_io, _efl_io_buffered_stream_inner_io_cbs(), o);
-        efl_unref(pd->inner_io); /* do not del, just take our ref */
+        if (efl_parent_get(pd->inner_io) == o)
+          efl_parent_set(pd->inner_io, NULL);
+        else
+          efl_unref(pd->inner_io); /* do not del, just take our ref */
         pd->inner_io = NULL;
      }
 
