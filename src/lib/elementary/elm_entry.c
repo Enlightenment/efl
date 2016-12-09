@@ -3220,6 +3220,8 @@ _elm_entry_elm_layout_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, co
      }
 
    /* Need to clear the entry first */
+   sd->cursor_pos = edje_object_part_text_cursor_pos_get
+       (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
    edje_object_part_text_set(sd->entry_edje, "elm.text", "");
    _entry_text_append(obj, entry, EINA_TRUE);
 
