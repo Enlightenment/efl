@@ -103,9 +103,45 @@ START_TEST (elm_code_widget_construct_nocode)
 }
 END_TEST
 
+START_TEST (elm_code_widget_position)
+{
+   Elm_Code *code;
+   Elm_Code_Widget *widget;
+   Evas_Object *win;
+   Evas_Coord x, y, w, h, x2, y2, w2, h2;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   widget = elm_code_widget_add(win, code);
+   evas_object_show(widget);
+   evas_object_resize(widget, 100, 100);
+
+   elm_code_file_line_append(code->file, "some content", 12, NULL);
+   elm_code_file_line_append(code->file, "more", 4, NULL);
+
+   elm_code_widget_geometry_for_position_get(widget, 1, 1, &x, &y, &w, &h);
+   elm_code_widget_geometry_for_position_get(widget, 1, 2, &x2, &y2, &w2, &h2);
+   ck_assert(x2 > x);
+   ck_assert(y2 == y);
+   ck_assert(w2 == w);
+   ck_assert(h2 == h);
+
+   elm_code_widget_geometry_for_position_get(widget, 2, 1, &x2, &y2, &w2, &h2);
+   ck_assert(x2 == x);
+   ck_assert(w2 == w);
+   ck_assert(h2 == h);
+
+   elm_code_free(code);
+   elm_shutdown();
+}
+END_TEST
+
 void elm_code_test_widget(TCase *tc)
 {
    tcase_add_test(tc, elm_code_widget_token_render_simple_test);
    tcase_add_test(tc, elm_code_widget_construct);
    tcase_add_test(tc, elm_code_widget_construct_nocode);
+   tcase_add_test(tc, elm_code_widget_position);
 }

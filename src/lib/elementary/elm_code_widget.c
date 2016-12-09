@@ -18,7 +18,6 @@ typedef enum {
    ELM_CODE_WIDGET_COLOR_GUTTER_BG = ELM_CODE_TOKEN_TYPE_COUNT,
    ELM_CODE_WIDGET_COLOR_GUTTER_FG,
    ELM_CODE_WIDGET_COLOR_WHITESPACE,
-   ELM_CODE_WIDGET_COLOR_CURSOR,
    ELM_CODE_WIDGET_COLOR_SELECTION,
 
    ELM_CODE_WIDGET_COLOR_COUNT
@@ -267,17 +266,31 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character
 }
 
 static void
-_elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number,
-                             Evas_Textgrid_Cell *cells, int gutter, int w)
+_elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int gutter, int w)
 {
    Elm_Code_Widget_Data *pd;
+   Evas_Coord cx, cy, cw, ch;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (pd->editable && pd->focussed && pd->cursor_line == number)
      {
-        if (pd->cursor_col + gutter - 1 < (unsigned int) w)
-          cells[pd->cursor_col + gutter - 1].bg = ELM_CODE_WIDGET_COLOR_CURSOR;
+        if (pd->cursor_col + gutter - 1 >= (unsigned int) w)
+          return;
+
+        elm_code_widget_geometry_for_position_get(widget, pd->cursor_line, pd->cursor_col, &cx, &cy, &cw, &ch);
+
+        if (!pd->cursor_rect)
+          {
+             pd->cursor_rect = evas_object_rectangle_add(widget);
+
+             evas_object_color_set(pd->cursor_rect, 205, 205, 54, 192);
+
+             evas_object_resize(pd->cursor_rect, cw, ch);
+             evas_object_show(pd->cursor_rect);
+          }
+
+        evas_object_move(pd->cursor_rect, cx, cy);
      }
 }
 
@@ -364,7 +377,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
      }
 
    _elm_code_widget_fill_selection(widget, line, cells, gutter, w);
-   _elm_code_widget_fill_cursor(widget, line->number, cells, gutter, w);
+   _elm_code_widget_fill_cursor(widget, line->number, gutter, w);
    if (line->number < elm_code_file_lines_get(line->file))
      _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
@@ -639,6 +652,34 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
 
    line = elm_code_file_line_get(pd->code->file, number);
    return !!line;
+}
+
+EOLIAN static Eina_Bool
+_elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, unsigned int row, int col,
+                                           Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   Elm_Code_Line *line;
+   Evas_Object *grid;
+   Evas_Coord cellw;
+   unsigned int length;
+   int gutter;
+
+   line = elm_code_file_line_get(pd->code->file, row);
+   if (!line)
+     return EINA_FALSE;
+
+   elm_code_line_text_get(line, &length);
+   _elm_code_widget_cell_size_get(widget, &cellw, h);
+   gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
+
+   grid = eina_list_nth(pd->grids, row - 1);
+   evas_object_geometry_get(grid, x, y, NULL, NULL);
+   if (x)
+     *x = (col - 1 + gutter) * cellw;
+   if (w)
+     *w = cellw;
+
+   return !!line && col <= (int) length;
 }
 
 static void
@@ -1694,8 +1735,6 @@ _elm_code_widget_setup_palette(Evas_Object *o)
                                     54, 54, 255, 255);
 
    // other styles that the widget uses
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_CURSOR,
-                                    205, 205, 54, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_SELECTION,
                                     51, 153, 255, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_BG,

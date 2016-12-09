@@ -22,6 +22,8 @@ typedef struct
    double gravity_x, gravity_y;
 
    unsigned int cursor_line, cursor_col;
+   Evas_Object *cursor_rect;
+
    Eina_Bool editable, focussed;
    Eina_Bool show_line_numbers;
    unsigned int line_width_marker, tabstop;

@@ -199,6 +199,18 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
          }
          return: bool; [[$true if a line exists at these coordinates]]
       }
+      geometry_for_position_get {
+         [[Get the geometry for the cell at the specified position.]]
+         params {
+            row: uint; [[The row for the requested position]]
+            col: int; [[The column for the requested position]]
+            x: ptr(Evas.Coord); [[The x coordinate of the cell at specified position]]
+            y: ptr(Evas.Coord); [[The y coordinate of the cell at specified position]]
+            w: ptr(Evas.Coord); [[The width of the cell at specified position]]
+            h: ptr(Evas.Coord); [[The height of the cell at specified position]]
+         }
+         return: bool; [[$true if a cell exists at the specified position]]
+      }
 
       text_left_gutter_width_get {
       	 [[Get the column width of the gutter]]
