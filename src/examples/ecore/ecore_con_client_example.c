@@ -18,6 +18,41 @@ static Ecore_Con_Server *svr;
 static int retval = EXIT_SUCCESS;
 static Eina_Bool do_flush = EINA_FALSE;
 static Eina_Bool single_message = EINA_FALSE;
+static Eina_Bool verify = EINA_TRUE;
+static Eina_Bool hostname_verify = EINA_TRUE;
+static Eina_Bool do_ssl_upgrade = EINA_FALSE;
+static char *starttls_local_command = NULL;
+
+static Eina_Bool
+_setup_ssl(void)
+{
+   Eina_Iterator *it;
+   const char *ca;
+
+   if (!(it = eina_file_ls("/etc/ssl/certs")))
+     {
+        retval = EXIT_FAILURE;
+        return EINA_FALSE;
+     }
+
+   /* add all the CAs */
+   EINA_ITERATOR_FOREACH(it, ca)
+     {
+        if (!ecore_con_ssl_server_cafile_add(svr, ca))
+          fprintf(stderr, "WARNING: could not load CA: %s!\n", ca);
+        eina_stringshare_del(ca);
+     }
+
+   eina_iterator_free(it);
+
+   if (verify)
+     ecore_con_ssl_server_verify(svr);
+
+   if (hostname_verify)
+     ecore_con_ssl_server_verify_basic(svr);
+
+   return EINA_TRUE;
+}
 
 static Eina_Bool
 _on_stdin(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh EINA_UNUSED)
@@ -36,6 +71,38 @@ _on_stdin(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh EINA_UNUSED)
      fputs("WARNING: not connected to server, ignored input.\n", stderr);
    else
      {
+        size_t clen = strlen(starttls_local_command);
+        if (do_ssl_upgrade && ((size_t)r > clen) &&
+            (strncmp(line, starttls_local_command, clen) == 0) &&
+            (line[clen] == '\n' || line[clen] == '\r'))
+          {
+             printf("INFO: starting SSL communication...\n");
+
+             if (!ecore_con_ssl_server_upgrade(svr, ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT))
+               {
+                  printf("ERROR: failed to upgrade to SSL!\n");
+                  retval = EXIT_FAILURE;
+                  ecore_con_server_del(svr);
+                  ecore_main_loop_quit();
+               }
+
+#if 1
+             /* This just works since EFL v 1.19.  Prior to this,
+              * upgrade couldn't get any extra setup, such as
+              * certificate or verification mode as OpenSSL would
+              * complain.
+              */
+             else if (!_setup_ssl())
+               {
+                  retval = EXIT_FAILURE;
+                  ecore_con_server_del(svr);
+                  ecore_main_loop_quit();
+               }
+#endif
+
+             svr = NULL; /* it's considered dead until ECORE_CON_EVENT_SERVER_UPGRADE */
+             goto end;
+          }
         ecore_con_server_send(svr, line, r);
         printf("INFO: sent %zd bytes to server.\n", r);
         if (do_flush) ecore_con_server_flush(svr);
@@ -47,6 +114,7 @@ _on_stdin(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh EINA_UNUSED)
           }
      }
 
+ end:
    free(line);
 
    return ECORE_CALLBACK_RENEW;
@@ -56,7 +124,10 @@ Eina_Bool
 _add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Add *ev)
 {
    printf("Server with ip %s connected!\n", ecore_con_server_ip_get(ev->server));
-   ecore_con_server_send(ev->server, "hello!", strlen("hello!"));
+   if (do_ssl_upgrade)
+     printf("INFO: Not sending 'hello!' in tcp+ssl mode. Use: %s to upgrade the connection\n", starttls_local_command);
+   else
+     ecore_con_server_send(ev->server, "hello!", strlen("hello!"));
    if (do_flush) ecore_con_server_flush(ev->server);
 
    return ECORE_CALLBACK_RENEW;
@@ -99,10 +170,19 @@ _error(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Erro
    return ECORE_CALLBACK_RENEW;
 }
 
+Eina_Bool
+_upgrade(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Upgrade *ev)
+{
+   printf("Server upgraded to SSL %p %s\n", ev->server, ecore_con_server_ip_get(ev->server));
+   svr = ev->server;
+   return ECORE_CALLBACK_RENEW;
+}
+
 static const char *types_strs[] = {
   "tcp",
   "udp",
   "ssl",
+  "tcp+ssl",
   "local-user",
   "local-system",
   NULL
@@ -123,6 +203,8 @@ static const Ecore_Getopt options = {
 
     ECORE_GETOPT_STORE_TRUE('f', "flush", "Force a flush after every send call."),
     ECORE_GETOPT_STORE_TRUE('m', "single-message", "Send a single message and delete the server."),
+
+    ECORE_GETOPT_STORE_STR('c', "starttls-local-command", "The string to use as a local command (it's NOT sent to remote peer) to upgrade connections when -t/--type=tcp+ssl. Defaults to STARTTLS, however if you need to send that to the server, change the string with this option."),
 
     ECORE_GETOPT_STORE_FALSE(0, "no-verify", "Do not verify server's certificate"),
     ECORE_GETOPT_STORE_FALSE(0, "no-hostname-verify", "Do not Verify server's hostname based on its certificate."),
@@ -148,14 +230,14 @@ main(int argc, char *argv[])
    int port = -1;
    Eina_Bool no_proxy = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
-   Eina_Bool verify = EINA_TRUE;
-   Eina_Bool hostname_verify = EINA_TRUE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(type_choice),
      ECORE_GETOPT_VALUE_BOOL(no_proxy),
 
      ECORE_GETOPT_VALUE_BOOL(do_flush),
      ECORE_GETOPT_VALUE_BOOL(single_message),
+
+     ECORE_GETOPT_VALUE_STR(starttls_local_command),
 
      ECORE_GETOPT_VALUE_BOOL(verify),
      ECORE_GETOPT_VALUE_BOOL(hostname_verify),
@@ -204,6 +286,11 @@ main(int argc, char *argv[])
      type = ECORE_CON_REMOTE_UDP;
    else if (strcmp(type_choice, "ssl") == 0)
      type = ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT;
+   else if (strcmp(type_choice, "tcp+ssl") == 0)
+     {
+        type = ECORE_CON_REMOTE_TCP;
+        do_ssl_upgrade = EINA_TRUE;
+     }
    else if (strcmp(type_choice, "local-user") == 0)
      type = ECORE_CON_LOCAL_USER;
    else if (strcmp(type_choice, "system") == 0)
@@ -215,6 +302,9 @@ main(int argc, char *argv[])
         goto end;
      }
 
+   if ((!starttls_local_command) || (starttls_local_command[0] == '\0'))
+     starttls_local_command = "STARTTLS";
+
    if (no_proxy) type |= ECORE_CON_NO_PROXY;
 
    svr = ecore_con_server_connect(type, name, port, NULL);
@@ -222,27 +312,8 @@ main(int argc, char *argv[])
 
    if (strcmp(type_choice, "ssl") == 0)
      {
-        Eina_Iterator *it;
-        const char *ca;
-        if (!(it = eina_file_ls("/etc/ssl/certs")))
-          {
-             retval = EXIT_FAILURE;
-             goto no_mainloop;
-          }
-
-        /* add all the CAs */
-        EINA_ITERATOR_FOREACH(it, ca)
-          {
-             if (!ecore_con_ssl_server_cafile_add(svr, ca))
-               fprintf(stderr, "WARNING: could not load CA: %s!\n", ca);
-             eina_stringshare_del(ca);
-          }
-
-        eina_iterator_free(it);
-        if (verify)
-          ecore_con_ssl_server_verify(svr);
-        if (hostname_verify)
-          ecore_con_ssl_server_verify_basic(svr);
+        if (!_setup_ssl())
+          goto no_mainloop;
      }
 
 /* set event handler for server connect */
@@ -255,6 +326,8 @@ main(int argc, char *argv[])
    ecore_event_handler_add(ECORE_CON_EVENT_SERVER_WRITE, (Ecore_Event_Handler_Cb)_write, NULL);
 /* set event handler that notifies of errors */
    ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ERROR, (Ecore_Event_Handler_Cb)_error, NULL);
+/* set event handler that notifies of upgrades */
+   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_UPGRADE, (Ecore_Event_Handler_Cb)_upgrade, NULL);
 
    ecore_main_fd_handler_add(STDIN_FILENO, ECORE_FD_READ, _on_stdin, NULL, NULL, NULL);
 
