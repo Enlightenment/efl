@@ -1235,13 +1235,12 @@ _item_new(Evas_Object *obj,
 
    //item base layout
    VIEW(it) = elm_layout_add(obj);
+   elm_interface_atspi_accessible_role_set(VIEW(it), ELM_ATSPI_ROLE_PAGE_TAB);
+   elm_interface_atspi_accessible_name_set(VIEW(it), (char*)title_label);
    evas_object_smart_member_add(VIEW(it), obj);
 
    if (!elm_widget_sub_object_add(obj, VIEW(it)))
      ERR("could not add %p as sub object of %p", VIEW(it), obj);
-
-   elm_interface_atspi_accessible_role_set(VIEW(it), ELM_ATSPI_ROLE_PAGE_TAB);
-   elm_interface_atspi_accessible_name_set(VIEW(it), (char*)title_label);
 
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_CHANGED_SIZE_HINTS,
