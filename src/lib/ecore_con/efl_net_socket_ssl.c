@@ -114,6 +114,7 @@ typedef struct _Efl_Net_Socket_Ssl_Data
    Efl_Net_Ssl_Verify_Mode verify_mode;
    Eina_Bool hostname_verify;
    Eina_Bool did_handshake;
+   Eina_Bool torndown;
    Eina_Bool can_read;
    Eina_Bool eos;
    Eina_Bool can_write;
@@ -130,6 +131,8 @@ static void
 efl_net_socket_ssl_handshake_try(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
 {
    Eina_Error err;
+
+   if (pd->torndown) return;
 
    DBG("SSL=%p handshake...", o);
 
@@ -209,6 +212,7 @@ efl_net_socket_ssl_sock_del(void *data, const Efl_Event *event EINA_UNUSED)
    Eo *o = data;
    Efl_Net_Socket_Ssl_Data *pd = efl_data_scope_get(o, MY_CLASS);
    pd->sock = NULL;
+   pd->torndown = EINA_TRUE;
    efl_net_ssl_conn_teardown(&pd->ssl_conn);
 }
 
@@ -226,6 +230,7 @@ efl_net_socket_ssl_sock_connected(void *data, const Efl_Event *event EINA_UNUSED
    Efl_Net_Socket_Ssl_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eina_Error err;
 
+   if (pd->torndown) return;
 
    efl_ref(o); /* we're emitting callbacks then continuing the workflow */
 
@@ -325,6 +330,7 @@ _efl_net_socket_ssl_verify_mode_set(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *
 {
    pd->verify_mode = verify_mode;
    if (!efl_finalized_get(o)) return;
+   EINA_SAFETY_ON_TRUE_RETURN(pd->torndown);
 
    efl_net_ssl_conn_verify_mode_set(&pd->ssl_conn, pd->verify_mode);
 }
@@ -340,6 +346,7 @@ _efl_net_socket_ssl_hostname_verify_set(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Da
 {
    pd->hostname_verify = hostname_verify;
    if (!efl_finalized_get(o)) return;
+   EINA_SAFETY_ON_TRUE_RETURN(pd->torndown);
 
    efl_net_ssl_conn_hostname_verify_set(&pd->ssl_conn, pd->hostname_verify);
 }
@@ -357,6 +364,10 @@ _efl_net_socket_ssl_hostname_override_set(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_
    const char *hostname;
 
    eina_stringshare_replace(&pd->hostname_override, hostname_override);
+
+   if (!efl_finalized_get(o)) return;
+   EINA_SAFETY_ON_TRUE_RETURN(pd->torndown);
+
    hostname = pd->hostname_override;
    if (!hostname)
      {
@@ -425,6 +436,7 @@ _efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
 
    efl_destructor(efl_super(o, MY_CLASS));
 
+   pd->torndown = EINA_TRUE;
    efl_net_ssl_conn_teardown(&pd->ssl_conn);
    if (pd->sock)
      {
@@ -454,6 +466,7 @@ _efl_net_socket_ssl_efl_io_closer_close(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
 
    efl_io_reader_can_read_set(o, EINA_FALSE);
    efl_io_reader_eos_set(o, EINA_TRUE);
+   pd->torndown = EINA_TRUE;
    efl_net_ssl_conn_teardown(&pd->ssl_conn);
    if (efl_io_closer_closed_get(pd->sock))
      return 0;
@@ -472,6 +485,7 @@ _efl_net_socket_ssl_efl_io_reader_read(Eo *o, Efl_Net_Socket_Ssl_Data *pd, Eina_
    Eina_Error err;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(rw_slice, EINVAL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->torndown, EBADF);
 
    if (!pd->did_handshake)
      {
@@ -529,6 +543,7 @@ _efl_net_socket_ssl_efl_io_writer_write(Eo *o, Efl_Net_Socket_Ssl_Data *pd, Eina
    Eina_Error err;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ro_slice, EINVAL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->torndown, EBADF);
 
    if (!pd->did_handshake)
      {

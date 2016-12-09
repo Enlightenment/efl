@@ -373,7 +373,11 @@ efl_net_ssl_conn_teardown(Efl_Net_Ssl_Conn *conn)
 static Eina_Error
 efl_net_ssl_conn_write(Efl_Net_Ssl_Conn *conn, Eina_Slice *slice)
 {
-   int r = SSL_write(conn->ssl, slice->mem, slice->len);
+   int r;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn->ssl, EINVAL);
+
+   r = SSL_write(conn->ssl, slice->mem, slice->len);
    if (r < 0)
      {
         int ssl_err = SSL_get_error(conn->ssl, r);
@@ -391,7 +395,11 @@ efl_net_ssl_conn_write(Efl_Net_Ssl_Conn *conn, Eina_Slice *slice)
 static Eina_Error
 efl_net_ssl_conn_read(Efl_Net_Ssl_Conn *conn, Eina_Rw_Slice *slice)
 {
-   int r = SSL_read(conn->ssl, slice->mem, slice->len);
+   int r;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn->ssl, EINVAL);
+
+   r = SSL_read(conn->ssl, slice->mem, slice->len);
    if (r < 0)
      {
         int ssl_err = SSL_get_error(conn->ssl, r);
@@ -454,6 +462,8 @@ _efl_net_ssl_conn_hostname_verify(Efl_Net_Ssl_Conn *conn)
    int family = AF_INET;
    int r;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn->ssl, EINVAL);
+
    if ((!conn->hostname) || (conn->hostname[0] == '\0'))
      {
         ERR("ssl_conn=%p no hostname, cannot verify", conn);
@@ -496,14 +506,16 @@ _efl_net_ssl_conn_hostname_verify(Efl_Net_Ssl_Conn *conn)
 static Eina_Error
 efl_net_ssl_conn_handshake(Efl_Net_Ssl_Conn *conn, Eina_Bool *done)
 {
-   int r = SSL_do_handshake(conn->ssl);
    long err_ssl;
    const char *err_file;
    const char *err_data;
-   int err_line, err_flags;
+   int r, err_line, err_flags;
 
    *done = EINA_FALSE;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn->ssl, EINVAL);
+
+   r = SSL_do_handshake(conn->ssl);
    if (r == 1)
      {
         _efl_net_ssl_conn_session_debug(conn);
@@ -560,6 +572,8 @@ static Eina_Error
 efl_net_ssl_conn_verify_mode_set(Efl_Net_Ssl_Conn *conn, Efl_Net_Ssl_Verify_Mode verify_mode)
 {
    int ssl_mode;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn->ssl, EINVAL);
 
    switch (verify_mode)
      {
