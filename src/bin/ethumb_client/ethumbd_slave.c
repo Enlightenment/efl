@@ -47,7 +47,12 @@ static int _log_domain = -1;
 
 struct _Ethumbd_Child
 {
+#ifndef _WIN32
    Ecore_Fd_Handler *fd_handler;
+#else
+   Ecore_Win32_Handler *fd_handler;
+#endif
+
    Ethumb *ethumbt[NETHUMBS];
 };
 
@@ -171,7 +176,13 @@ _ec_free(struct _Ethumbd_Child *ec)
    int i;
 
    if (ec->fd_handler)
+     {
+#ifndef _WIN32
      ecore_main_fd_handler_del(ec->fd_handler);
+#else
+     ecore_main_win32_handler_del(ec->fd_handler);
+#endif
+     }
 
    for (i = 0; i < NETHUMBS; i++)
      {
@@ -694,13 +705,19 @@ _ec_op_setup(struct _Ethumbd_Child *ec)
    return 1;
 }
 
+#ifndef _WIN32
 static Eina_Bool
 _ec_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
+#else
+static Eina_Bool
+_ec_fd_handler(void *data, Ecore_Win32_Handler *fd_handler EINA_UNUSED)
+#endif
 {
    struct _Ethumbd_Child *ec = data;
    int op_id;
    int r;
 
+#ifndef _WIN32
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
      {
 	ERR("error on pipein! child exiting...");
@@ -708,6 +725,7 @@ _ec_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	ecore_main_loop_quit();
 	return 0;
      }
+#endif
 
    r = _ec_read_safe(STDIN_FILENO, &op_id, sizeof(op_id));
    if (!r)
@@ -752,9 +770,15 @@ _ec_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 static void
 _ec_setup(struct _Ethumbd_Child *ec)
 {
+#ifndef _WIN32
    ec->fd_handler = ecore_main_fd_handler_add(
       STDIN_FILENO, ECORE_FD_READ | ECORE_FD_ERROR,
       _ec_fd_handler, ec, NULL, NULL);
+#else
+   ec->fd_handler = ecore_main_win32_handler_add(
+      GetStdHandle(STD_INPUT_HANDLE),
+      _ec_fd_handler, ec);
+#endif
 }
 
 int
