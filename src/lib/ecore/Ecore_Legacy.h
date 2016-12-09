@@ -259,7 +259,7 @@ EAPI void ecore_timer_thaw(Ecore_Timer *timer);
  * long as it returns @c 1 (or ECORE_CALLBACK_RENEW). A return of @c 0
  * (or ECORE_CALLBACK_CANCEL) deletes the idler.
  *
- * Idlers are useful for progressively prossessing data without blocking.
+ * Idlers are useful for progressively processing data without blocking.
  */
 EAPI Ecore_Idler *ecore_idler_add(Ecore_Task_Cb func, const void *data);
 
