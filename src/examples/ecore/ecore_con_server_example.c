@@ -139,6 +139,8 @@ static const Ecore_Getopt options = {
   EINA_FALSE,
   {
     ECORE_GETOPT_CHOICE('t', "type", "Server type to use, defaults to 'tcp'", types_strs),
+    ECORE_GETOPT_STORE_TRUE(0, "socket-activated",
+                            "Try to use $LISTEN_FDS from systemd, if not do a regular serve"),
 
     ECORE_GETOPT_STORE_INT('l', "clients-limit",
                             "If set will limit number of clients to accept"),
@@ -170,10 +172,12 @@ main(int argc, char **argv)
    char *type_choice = NULL;
    int clients_limit = -1;
    int port = -1;
+   Eina_Bool socket_activated = EINA_FALSE;
    Eina_Bool clients_reject_excess = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(type_choice),
+     ECORE_GETOPT_VALUE_BOOL(socket_activated),
 
      ECORE_GETOPT_VALUE_INT(clients_limit),
      ECORE_GETOPT_VALUE_BOOL(clients_reject_excess),
@@ -244,6 +248,8 @@ main(int argc, char **argv)
         retval = EXIT_FAILURE;
         goto end;
      }
+
+   if (socket_activated) type |= ECORE_CON_SOCKET_ACTIVATE;
 
    svr = ecore_con_server_add(type, name, port, NULL);
    if (!svr) goto end;
