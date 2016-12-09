@@ -42,26 +42,6 @@ M.rm_root = function()
     cutil.file_rmrf(M.path_join(doc_root, "auto"))
 end
 
-M.str_split = function(str, delim)
-    if not str then
-        return nil
-    end
-    local s, e = str:find(delim, 1, true)
-    if not s then
-        return { str }
-    end
-    local t = {}
-    while s do
-        t[#t + 1] = str:sub(1, s - 1)
-        str = str:sub(e + 1)
-        s, e = str:find(delim, 1, true)
-        if not s then
-            t[#t + 1] = str
-        end
-    end
-    return t
-end
-
 M.init = function(root, rns)
     doc_root = root:gsub(rep_sep, path_sep)
     root_ns = rns

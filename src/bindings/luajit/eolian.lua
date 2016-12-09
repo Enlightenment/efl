@@ -1551,7 +1551,7 @@ M.documentation_string_split = function(str)
     local sep = str:find("\n\n", 1, true)
     local ret = {}
     while true do
-        local pstr = (sep and str:sub(1, sep - 1) or pstr):match("^%s*(.-)%s*$")
+        local pstr = (sep and str:sub(1, sep - 1) or str):match("^%s*(.-)%s*$")
         if #pstr > 0 then
             ret[#ret + 1] = pstr
         end

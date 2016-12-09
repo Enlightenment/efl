@@ -359,93 +359,50 @@ M.Writer = util.Object:clone {
         return self
     end,
 
-    write_par_markup = function(self, str)
-        self:write_raw("%%")
-        local f = str:gmatch(".")
-        local c = f()
-        while c do
-            if c == "\\" then
-                c = f()
-                if c ~= "@" and c ~= "$" then
-                    self:write_raw("\\")
-                end
-                self:write_raw(c)
-                c = f()
-            elseif c == "$" then
-                c = f()
-                if c and c:match("[a-zA-Z_]") then
-                    local wbuf = { c }
-                    c = f()
-                    while c and c:match("[a-zA-Z0-9_]") do
-                        wbuf[#wbuf + 1] = c
-                        c = f()
-                    end
-                    self:write_raw("%%''" .. table.concat(wbuf) .. "''%%")
-                else
-                    self:write_raw("$")
-                end
-            elseif c == "@" then
-                c = f()
-                if c and c:match("[a-zA-Z_]") then
-                    local rbuf = { c }
-                    c = f()
-                    while c and c:match("[a-zA-Z0-9_.]") do
-                        rbuf[#rbuf + 1] = c
-                        c = f()
-                    end
-                    local ldot = false
-                    if rbuf[#rbuf] == "." then
-                        ldot = true
-                        rbuf[#rbuf] = nil
-                    end
-                    local title = table.concat(rbuf)
-                    self:write_raw("%%")
-                    self:write_link(dtree.ref_get(title, true), title)
-                    self:write_raw("%%")
-                    if ldot then
-                        self:write_raw(".")
-                    end
-                else
-                    self:write_raw("@")
-                end
-            elseif c == "%" then
-                c = f()
-                if c == "%" then
-                    c = f()
-                    self:write_raw("%%<nowiki>%%</nowiki>%%")
-                else
-                    self:write_raw("%")
-                end
-            else
-                self:write_raw(c)
-                c = f()
-            end
-        end
-        self:write_raw("%%")
-        return self
-    end,
-
     write_par = function(self, str)
+        local tokp = dtree.DocTokenizer(str)
         local notetypes = M.has_feature("notes") and {
-            ["Note: "] = "<note>\n",
-            ["Warning: "] = "<note warning>\n",
-            ["Remark: "] = "<note tip>\n",
-            ["TODO: "] = "<note>\n**TODO:** "
+            [tokp.MARK_NOTE] = "<note>\n",
+            [tokp.MARK_WARNING] = "<note warning>\n",
+            [tokp.MARK_REMARK] = "<note tip>\n",
+            [tokp.MARK_TODO] = "<note>\n**TODO:** "
         } or {}
-        local tag
-        for k, v in pairs(notetypes) do
-            if str:match("^" .. k) then
-                tag = v
-                str = str:sub(#k + 1)
-                break
+        local hasraw, hasnote = false, false
+        while tokp:tokenize() do
+            local tp = tokp:type_get()
+            if notetypes[tp] then
+                self:write_raw(tag)
+                hasnote = true
+            else
+                if not hasraw then
+                    self:write_raw("%%")
+                    hasraw = true
+                end
+                if tp == tokp.REF then
+                    local reft = tokp:ref_get(true)
+                    local str = tokp:text_get()
+                    if str:sub(1, 1) == "[" then
+                        str = str:sub(2, #str - 1)
+                    end
+                    self:write_raw("%%")
+                    self:write_link(reft, str)
+                    self:write_raw("%%")
+                else
+                    local str = tokp:text_get()
+                    assert(str, "internal tokenizer error")
+                    -- replace possible %% chars
+                    str = str:gsub("%%%%", "%%%%<nowiki>%%%%</nowiki>%%%%")
+                    if tp == tokp.MARKUP_MONOSPACE then
+                        self:write_raw("%%''" .. str .. "''%%")
+                    else
+                        self:write_raw(str)
+                    end
+                end
             end
         end
-        if tag then
-            self:write_raw(tag)
-            self:write_par_markup(str)
+        self:write_raw("%%")
+        if hasnote then
             self:write_raw("\n</note>")
-        else
-            self:write_par_markup(str)
         end
         return self
     end,

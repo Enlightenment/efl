@@ -43,7 +43,7 @@ local gen_doc_refd = function(str)
     if not str then
         return nil
     end
-    local pars = dutil.str_split(str, "\n\n")
+    local pars = eolian.documentation_string_split(str)
     for i = 1, #pars do
         pars[i] = writer.Buffer():write_par(pars[i]):finish()
     end
@@ -1269,94 +1269,76 @@ M.Expression = Node:clone {
     end
 }
 
-local decl_to_nspace = function(decl)
-    local dt = eolian.declaration_type
-    local decltypes = {
-        [dt.ALIAS] = "alias",
-        [dt.STRUCT] = "struct",
-        [dt.ENUM] = "enum",
-        [dt.VAR] = "var"
-    }
-    local ns = decltypes[decl:type_get()]
-    if ns then
-        return ns
-    elseif decl:type_get() == dt.CLASS then
-        local ret = M.Class(decl:class_get()):type_str_get()
-        if not ret then
-            error("unknown class type for class '" .. decl:name_get() .. "'")
+M.DocTokenizer = Node:clone {
+    UNKNOWN          = eolian.doc_token_type.UNKNOWN,
+    TEXT             = eolian.doc_token_type.TEXT,
+    REF              = eolian.doc_token_type.REF,
+    MARK_NOTE        = eolian.doc_token_type.MARK_NOTE,
+    MARK_WARNING     = eolian.doc_token_type.MARK_WARNING,
+    MARK_REMARK      = eolian.doc_token_type.MARK_REMARK,
+    MARK_TODO        = eolian.doc_token_type.MARK_TODO,
+    MARKUP_MONOSPACE = eolian.doc_token_type.MARKUP_MONOSPACE,
+
+    __ctor = function(self, str)
+        self.tok = eolian.doc_token_init()
+        self.str = str
+        assert(self.str)
+        assert(self.tok)
+    end,
+
+    tokenize = function(self)
+       self.str = eolian.documentation_tokenize(self.str, self.tok)
+       return not not self.str
+    end,
+
+    text_get = function(self)
+        return self.tok:text_get()
+    end,
+
+    type_get = function(self)
+        return self.tok:type_get()
+    end,
+
+    ref_get = function(self, root)
+        local tp, d1, d2 = self.tok:ref_get()
+        local reft = eolian.doc_ref_type
+        local ret
+        if tp == reft.CLASS or tp == reft.FUNC or tp == reft.EVENT then
+            ret = { M.Class(d1):type_str_get() }
+            if not ret[1] then
+                error("unknown class type for class '"
+                      .. d1:full_name_get() .. "'")
+            end
+        elseif tp == reft.ALIAS then
+            ret = { "alias" }
+        elseif tp == reft.STRUCT or tp == reft.STRUCT_FIELD then
+            -- TODO: point to field
+            ret = { "struct" }
+        elseif tp == reft.ENUM or tp == reft.ENUM_FIELD  then
+            -- TODO: point to field
+            ret = { "enum" }
+        elseif tp == reft.VAR then
+            ret = { "var" }
+        else
+            error("invalid reference '" .. self:text_get() .. "'")
+        end
+        for tok in d1:full_name_get():gmatch("[^%.]+") do
+            ret[#ret + 1] = tok:lower()
+        end
+        if tp == reft.FUNC then
+            local fid = M.Function(d2)
+            ret[#ret + 1] = fid:type_str_get()
+            ret[#ret + 1] = fid:name_get():lower()
+        elseif tp == reft.EVENT then
+            ret[#ret + 1] = "event"
+            ret[#ret + 1] = d2:name_get():lower()
+        end
+        if root ~= nil then
+            ret[#ret + 1] = not not root
         end
         return ret
-    else
-        error("unknown declaration type for declaration '"
-            .. decl:name_get() .. "'")
     end
-end
-
-M.ref_get = function(str, root)
-    local decl = eolian.declaration_get_by_name(str)
-    if decl then
-        local t = { decl_to_nspace(decl) }
-        for tok in str:gmatch("[^%.]+") do
-            t[#t + 1] = tok:lower()
-        end
-        if root ~= nil then t[#t + 1] = not not root end
-        return t
-    end
-
-    -- field or func
-    local bstr = str:match("(.+)%.[^.]+")
-    if not bstr then
-        error("invalid reference '" .. str .. "'")
-    end
-
-    local sfx = str:sub(#bstr + 1)
-
-    decl = eolian.declaration_get_by_name(bstr)
-    if decl then
-        local dt = eolian.declaration_type
-        local tp = decl:type_get()
-        if tp == dt.STRUCT or tp == dt.ENUM then
-            -- TODO: point to the actual item
-            return M.ref_get(bstr, root)
-        end
-    end
-
-    local cl = M.Class.by_name_get(bstr)
-    local fn
-    local ftype = M.Function.UNRESOLVED
-    if not cl then
-        if sfx == ".get" then
-            ftype = M.Function.PROP_GET
-        elseif sfx == ".set" then
-            ftype = M.Function.PROP_SET
-        end
-        local mname
-        if ftype ~= M.Function.UNRESOLVED then
-            mname = bstr:match(".+%.([^.]+)")
-            if not mname then
-                error("invalid reference '" .. str .. "'")
-            end
-            bstr = bstr:match("(.+)%.[^.]+")
-            cl = M.Class.by_name_get(bstr)
-            if cl then
-                fn = cl:function_get_by_name(mname, ftype)
-            end
-        end
-    else
-        fn = cl:function_get_by_name(sfx:sub(2), ftype)
-        if fn then ftype = fn:type_get() end
-    end
-
-    if not fn or not fn:type_str_get() then
-        error("invalid reference '" .. str .. "'")
-    end
-
-    local ret = M.ref_get(bstr)
-    ret[#ret + 1] = fn:type_str_get()
-    ret[#ret + 1] = fn:name_get():lower()
-    if root ~= nil then ret[#ret + 1] = not not root end
-    return ret
-end
+}
 
 M.scan_directory = function(dir)
     if not dir then
