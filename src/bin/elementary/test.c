@@ -161,6 +161,7 @@ void test_gengrid_disabled_item_focus(void *data, Evas_Object *obj, void *event_
 void test_gengrid_item_custom_size(void *data, Evas_Object *obj, void *event_info);
 void test_win_state(void *data, Evas_Object *obj, void *event_info);
 void test_win_state2(void *data, Evas_Object *obj, void *event_info);
+void test_win_stack(void *data, Evas_Object *obj, void *event_info);
 void test_progressbar(void *data, Evas_Object *obj, void *event_info);
 void test_progressbar2(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector(void *data, Evas_Object *obj, void *event_info);
@@ -647,6 +648,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Window Standard/Dialog", test_win_dialog);
    ADD_TEST(NULL, "Window / Background", "Window Keygrab Set", test_win_keygrab);
    ADD_TEST(NULL, "Window / Background", "Window Modal", test_win_modal);
+   ADD_TEST(NULL, "Window / Background", "Window Stack", test_win_stack);
 
    //------------------------------//
    ADD_TEST(NULL, "Images", "Icon", test_icon);
