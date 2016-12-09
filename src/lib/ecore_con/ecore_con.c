@@ -3867,7 +3867,14 @@ _efl_net_ip_resolve_and_connect(const char *host, const char *port, int type, in
                }
           }
         if (ret != 0)
-          ret = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
+          {
+             if (results)
+               {
+                  memcpy(addr, results->ai_addr, results->ai_addrlen);
+                  *p_addrlen = results->ai_addrlen;
+               }
+             ret = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
+          }
         EINA_THREAD_CLEANUP_POP(EINA_TRUE);
      }
    return ret;

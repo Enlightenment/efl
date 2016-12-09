@@ -198,14 +198,24 @@ _efl_net_dialer_udp_resolved(void *data, const char *host EINA_UNUSED, const cha
         err = _efl_net_dialer_udp_resolved_bind(o, pd, addr);
         if (err == 0) break;
      }
-   freeaddrinfo(result);
 
  end:
    if (err)
      {
+        if (result)
+          {
+             char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
+             if (efl_net_ip_port_fmt(buf, sizeof(buf), result->ai_addr))
+               {
+                  efl_net_socket_address_remote_set(o, buf);
+                  efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+               }
+          }
+
         efl_io_reader_eos_set(o, EINA_TRUE);
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
      }
+   freeaddrinfo(result);
 
    efl_unref(o);
 }

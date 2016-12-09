@@ -120,6 +120,15 @@ _efl_net_dialer_tcp_connected(void *data, const struct sockaddr *addr, socklen_t
  error:
    if (err)
      {
+        if (addr && addr->sa_family)
+          {
+             char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
+             if (efl_net_ip_port_fmt(buf, sizeof(buf), addr))
+               {
+                  efl_net_socket_address_remote_set(o, buf);
+                  efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+               }
+          }
         efl_io_reader_eos_set(o, EINA_TRUE);
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
      }
