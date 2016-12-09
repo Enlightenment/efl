@@ -1376,10 +1376,11 @@ static int
 _edje_pick_collection_process(Edje_Part_Collection *edc, Edje_File *edf, Edje_File *o)
 {
    /* Update all IDs, NAMES in current collection */
-   static int current_collection_id = 0;
+   Edje_Part_Collection_Directory_Entry *ce;
 
-   edc->id = current_collection_id;
-   current_collection_id++;
+   ce = eina_hash_find(o->collection, edc->part);
+   edc->id = ce->id;
+
    _edje_pick_images_process(edc, edf, o);
    _edje_pick_programs_process(edc);
 
