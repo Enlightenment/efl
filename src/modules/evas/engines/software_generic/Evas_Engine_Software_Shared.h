@@ -1,0 +1,15 @@
+#ifndef EVAS_ENGINE_SOFTWARE_SHARED_H
+#define EVAS_ENGINE_SOFTWARE_SHARED_H
+
+typedef enum
+{
+   MODE_FULL,
+   MODE_COPY,
+   MODE_DOUBLE,
+   MODE_TRIPLE,
+   MODE_QUADRUPLE,
+   MODE_AUTO
+} Render_Engine_Swap_Mode;
+
+#endif
+

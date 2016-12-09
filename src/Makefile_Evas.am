@@ -636,6 +636,7 @@ if EVAS_STATIC_BUILD_SOFTWARE_GENERIC
 lib_evas_libevas_la_SOURCES += \
 modules/evas/engines/software_generic/evas_engine.c \
 modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h \
+modules/evas/engines/software_generic/Evas_Engine_Software_Shared.h \
 modules/evas/engines/software_generic/evas_native_tbm.c \
 modules/evas/engines/software_generic/evas_native_dmabuf.c \
 modules/evas/engines/software_generic/evas_ector_software_buffer.c \
@@ -654,6 +655,7 @@ $(install_enginesoftwaregenericpkgLTLIBRARIES): install-libLTLIBRARIES
 modules_evas_engines_software_generic_module_la_SOURCES = \
 modules/evas/engines/software_generic/evas_engine.c \
 modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h \
+modules/evas/engines/software_generic/Evas_Engine_Software_Shared.h \
 modules/evas/engines/software_generic/evas_native_tbm.c \
 modules/evas/engines/software_generic/evas_native_dmabuf.c \
 modules/evas/engines/software_generic/evas_ector_software_buffer.c \
@@ -827,6 +829,7 @@ modules/evas/engines/gl_common/evas_gl_3d_shader.c: modules/evas/engines/gl_comm
 GL_GENERIC_SOURCES = \
 modules/evas/engines/gl_generic/evas_engine.c \
 modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h \
+modules/evas/engines/gl_generic/Evas_Engine_GL_Shared.h \
 modules/evas/engines/gl_generic/evas_ector_gl_buffer.c \
 modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.c \
 modules/evas/engines/gl_generic/evas_ector_gl_rgbaimage_buffer.c \
