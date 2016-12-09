@@ -142,6 +142,7 @@ _efl_io_queue_update_cans(Eo *o, Efl_Io_Queue_Data *pd)
    size_t limit;
 
    efl_io_reader_can_read_set(o, used > 0);
+   if (pd->closed) return; /* may be closed from "can_read,changed" */
 
    limit = efl_io_queue_limit_get(o);
    if (pd->pending_eos)
@@ -181,6 +182,7 @@ _efl_io_queue_limit_set(Eo *o, Efl_Io_Queue_Data *pd, size_t limit)
 
    _efl_io_queue_adjust_and_realloc_if_needed(o, pd);
    efl_event_callback_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
+   if (pd->closed) return;
 
  end:
    _efl_io_queue_update_cans(o, pd);
@@ -217,6 +219,7 @@ _efl_io_queue_clear(Eo *o, Efl_Io_Queue_Data *pd)
    pd->position_write = 0;
    efl_io_reader_can_read_set(o, EINA_FALSE);
    efl_event_callback_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
+   if (pd->closed) return;
    if (pd->pending_eos)
      efl_io_reader_eos_set(o, EINA_TRUE);
 }
@@ -286,6 +289,7 @@ _efl_io_queue_efl_io_reader_read(Eo *o, Efl_Io_Queue_Data *pd, Eina_Rw_Slice *rw
 
    efl_io_reader_can_read_set(o, pd->position_read < pd->position_write);
    efl_event_callback_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
+   if (pd->closed) return 0;
 
    if ((pd->pending_eos) && (efl_io_queue_usage_get(o) == 0))
      efl_io_reader_eos_set(o, EINA_TRUE);
@@ -316,6 +320,7 @@ _efl_io_queue_discard(Eo *o, Efl_Io_Queue_Data *pd, size_t amount)
 
    efl_io_reader_can_read_set(o, pd->position_read < pd->position_write);
    efl_event_callback_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
+   if (pd->closed) return;
 
    if ((pd->pending_eos) && (efl_io_queue_usage_get(o) == 0))
      efl_io_reader_eos_set(o, EINA_TRUE);
@@ -409,6 +414,7 @@ _efl_io_queue_efl_io_writer_write(Eo *o, Efl_Io_Queue_Data *pd, Eina_Slice *slic
 
    _efl_io_queue_adjust_and_realloc_if_needed(o, pd);
    efl_event_callback_call(o, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, NULL);
+   if (pd->closed) return 0;
    _efl_io_queue_update_cans(o, pd);
 
    return 0;
