@@ -116,6 +116,7 @@ _efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
        (old_total != pd->progress.total))
      {
         efl_event_callback_call(o, EFL_IO_COPIER_EVENT_PROGRESS, NULL);
+        if (pd->closed) return; /* cb may call close */
         _efl_io_copier_inactivity_timeout_reschedule(o, pd);
      }
 
@@ -162,6 +163,8 @@ _efl_io_copier_dispatch_data_events(Eo *o, Efl_Io_Copier_Data *pd, Eina_Slice sl
    offset = slice_of_binbuf.bytes - tmp.bytes;
 
    efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DATA, &slice_of_binbuf);
+   if (pd->closed) return (Eina_Slice){.mem = NULL, .len = 0}; /* cb may call close */
+
    /* user may have modified pd->buf, like calling
     * efl_io_copier_buffer_limit_set()
     */
@@ -178,6 +181,8 @@ _efl_io_copier_dispatch_data_events(Eo *o, Efl_Io_Copier_Data *pd, Eina_Slice sl
    if (pd->line_delimiter.len > 0)
      {
         efl_event_callback_call(o, EFL_IO_COPIER_EVENT_LINE, &slice_of_binbuf);
+        if (pd->closed) return (Eina_Slice){.mem = NULL, .len = 0}; /* cb may call close */
+
         /* user may have modified pd->buf, like calling
          * efl_io_copier_buffer_limit_set()
          */
@@ -232,6 +237,8 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
         return;
      }
 
+   if (pd->closed) return; /* read(source) triggers cb, may call close */
+
    ro_slice = eina_rw_slice_slice_get(rw_slice);
    if (!eina_binbuf_append_slice(pd->buf, ro_slice))
      {
@@ -271,11 +278,13 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
 static void
 _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd)
 {
-   Eina_Slice ro_slice = eina_binbuf_slice_get(pd->buf);
+   Eina_Slice ro_slice;
    Eina_Error err;
 
    EINA_SAFETY_ON_TRUE_RETURN(pd->closed);
+   EINA_SAFETY_ON_NULL_RETURN(pd->buf);
 
+   ro_slice = eina_binbuf_slice_get(pd->buf);
    if (ro_slice.len == 0)
      {
         // TODO: disconnect 'write' so stops calling?
@@ -306,6 +315,9 @@ _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd)
      return;
 
    pd->progress.written += ro_slice.len;
+
+   if (pd->closed) return; /* write(destination) triggers cb, may call close */
+
    efl_io_copier_done_set(o, EINA_FALSE);
 
    /* Note: dispatch data and line from write since it will remove
@@ -768,6 +780,7 @@ _efl_io_copier_flush(Eo *o, Efl_Io_Copier_Data *pd, Eina_Bool may_block, Eina_Bo
        (old_total != pd->progress.total))
      {
         efl_event_callback_call(o, EFL_IO_COPIER_EVENT_PROGRESS, NULL);
+        if (pd->closed) return EINA_TRUE; /* cb may call close */
         _efl_io_copier_inactivity_timeout_reschedule(o, pd);
      }
 
