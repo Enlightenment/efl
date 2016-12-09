@@ -149,6 +149,7 @@ _efl_net_server_simple_efl_object_finalize(Eo *o, Efl_Net_Server_Simple_Data *pd
         DBG("created new inner server %p (%s)", server, efl_class_name_get(efl_class_get(server)));
 
         efl_net_server_simple_inner_server_set(o, server);
+        efl_unref(server);
      }
 
  end:
