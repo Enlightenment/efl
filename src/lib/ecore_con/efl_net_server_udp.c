@@ -415,7 +415,7 @@ _efl_net_server_udp_ipv6_only_set(Eo *o, Efl_Net_Server_Udp_Data *pd, Eina_Bool 
 
    if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (const char *)&value, sizeof(value)) != 0)
      {
-        ERR("could not set socket=" SOCKET_FMT " IPV6_V6ONLY=%d: %s", fd, value, eina_error_msg_get(efl_net_socket_error_get()));
+        ERR("could not set socket=" SOCKET_FMT " IPV6_V6ONLY=%d: %s", fd, (int)value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->ipv6_only = old;
      }
 #endif

@@ -105,7 +105,7 @@ _efl_net_socket_tcp_keep_alive_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool
    if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (const char *)&value, sizeof(value)) != 0)
      {
         ERR("setsockopt(" SOCKET_FMT ", SOL_SOCKET, SO_KEEPALIVE, %d): %s",
-            fd, value, eina_error_msg_get(efl_net_socket_error_get()));
+            fd, (int)value, eina_error_msg_get(efl_net_socket_error_get()));
         pd->keep_alive = old;
         return EINA_FALSE;
      }

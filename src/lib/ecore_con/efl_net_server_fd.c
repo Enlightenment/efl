@@ -54,7 +54,7 @@ efl_net_accept4(SOCKET fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool 
         if (fcntl(client, F_SETFD, FD_CLOEXEC) < 0)
           {
              int errno_bkp = errno;
-             ERR("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", client, strerror(errno));
+             ERR("fcntl(" SOCKET_FMT ", F_SETFD, FD_CLOEXEC): %s", client, strerror(errno));
              closesocket(client);
              errno = errno_bkp;
              return INVALID_SOCKET;
