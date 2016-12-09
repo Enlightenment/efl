@@ -690,73 +690,16 @@ ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, c
      }
 }
 
-static const char *
-_ethumb_build_absolute_path(const char *path, char buf[PATH_MAX])
-{
-   char *p;
-   int len;
-
-   if (!path)
-     return NULL;
-
-   p = buf;
-
-   if (path[0] == '/')
-     {
-        strncpy(p, path, PATH_MAX - 1);
-        p[PATH_MAX - 1] = 0;
-     }
-   else if (path[0] == '~')
-     {
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-        if (getuid() == geteuid())
-#endif
-          {
-             const char *home = eina_environment_home_get();
-             if (!home) return NULL;
-             strncpy(p, home, PATH_MAX - 1);
-             p[PATH_MAX - 1] = 0;
-          }
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-        else
-          {
-             struct passwd *pw = getpwent();
-
-             if ((!pw) || (!pw->pw_dir)) return NULL;
-             strncpy(p, pw->pw_dir, PATH_MAX - 1);
-             p[PATH_MAX - 1] = 0;
-          }
-#endif
-        len = strlen(p);
-        p += len;
-        p[0] = '/';
-        p++;
-        strcpy(p, path + 2);
-     }
-   else
-     {
-        if (!getcwd(p, PATH_MAX))
-          return NULL;
-        len = strlen(p);
-        p += len;
-        p[0] = '/';
-        p++;
-        strncpy(p, path, PATH_MAX - 1 - len - 1);
-        p[PATH_MAX - 1 - len - 1] = 0;
-     }
-
-   return buf;
-}
-
 EAPI void
 ethumb_thumb_dir_path_set(Ethumb *e, const char *path)
 {
-   char buf[PATH_MAX];
+   char *sanitized_path;
    EINA_SAFETY_ON_NULL_RETURN(e);
 
    DBG("ethumb=%p, path=%s", e, path ? path : "");
-   path = _ethumb_build_absolute_path(path, buf);
-   eina_stringshare_replace(&e->thumb_dir, path);
+   sanitized_path = eina_file_path_sanitize(path);
+   eina_stringshare_replace(&e->thumb_dir, sanitized_path);
+   free(sanitized_path);
 }
 
 EAPI const char *
@@ -893,19 +836,20 @@ ethumb_document_page_get(const Ethumb *e)
 EAPI Eina_Bool
 ethumb_file_set(Ethumb *e, const char *path, const char *key)
 {
-   char buf[PATH_MAX];
+   char *sanitized_path;
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
 
    eina_stringshare_replace(&e->thumb_path, NULL);
    eina_stringshare_replace(&e->thumb_key, NULL);
 
-   DBG("ethumb=%p, path=%s, key=%s", e, path ? path : "", key ? key : "");
-   if (path && access(path, R_OK)) return EINA_FALSE;
+   sanitized_path = eina_file_path_sanitize(path);
+   DBG("ethumb=%p, path=%s, key=%s", e, sanitized_path ? sanitized_path : "", key ? key : "");
+   if (sanitized_path && access(sanitized_path, R_OK)) return EINA_FALSE;
 
-   path = _ethumb_build_absolute_path(path, buf);
    eina_stringshare_replace(&e->src_hash, NULL);
-   eina_stringshare_replace(&e->src_path, path);
+   eina_stringshare_replace(&e->src_path, sanitized_path);
    eina_stringshare_replace(&e->src_key, key);
+   free(sanitized_path);
 
    return EINA_TRUE;
 }
@@ -1141,7 +1085,7 @@ ethumb_file_free(Ethumb *e)
 EAPI void
 ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
 {
-   char buf[PATH_MAX];
+   char *sanitized_path;
 
    EINA_SAFETY_ON_NULL_RETURN(e);
    DBG("ethumb=%p, path=%s, key=%s", e, path ? path : "", key ? key : "");
@@ -1153,9 +1097,11 @@ ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
      }
    else
      {
-        path = _ethumb_build_absolute_path(path, buf);
-        eina_stringshare_replace(&e->thumb_path, path);
+        sanitized_path = eina_file_path_sanitize(path);
+        path = eina_file_path_sanitize(path);
+        eina_stringshare_replace(&e->thumb_path, sanitized_path);
         eina_stringshare_replace(&e->thumb_key, key);
+        free(sanitized_path);
      }
 }
 
