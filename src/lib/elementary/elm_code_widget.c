@@ -282,15 +282,16 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int g
 
         if (!pd->cursor_rect)
           {
-             pd->cursor_rect = evas_object_rectangle_add(widget);
+             pd->cursor_rect = elm_layout_add(widget);
 
-             evas_object_color_set(pd->cursor_rect, 205, 205, 54, 192);
+             elm_layout_theme_set(pd->cursor_rect, "entry", "cursor", elm_widget_style_get(widget));
+             elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
 
-             evas_object_resize(pd->cursor_rect, cw, ch);
+             evas_object_resize(pd->cursor_rect, cw/8, ch);
              evas_object_show(pd->cursor_rect);
           }
 
-        evas_object_move(pd->cursor_rect, cx, cy);
+        evas_object_move(pd->cursor_rect, cx - (cw/16), cy);
      }
 }
 
@@ -605,7 +606,9 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
           _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, oldrow));
      }
    _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, pd->cursor_line));
+   elm_layout_signal_emit(pd->cursor_rect, "elm,action,show,cursor", "elm");
 }
+
 
 EOLIAN static Eina_Bool
 _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
@@ -1606,6 +1609,7 @@ _elm_code_widget_focused_event_cb(void *data, Evas_Object *obj,
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    pd->focussed = EINA_TRUE;
+   elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
 
    _elm_code_widget_update_focus_directions(widget);
    _elm_code_widget_refresh(obj, NULL);
@@ -1622,7 +1626,9 @@ _elm_code_widget_unfocused_event_cb(void *data, Evas_Object *obj,
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    pd->focussed = EINA_FALSE;
-   _elm_code_widget_refresh(obj, NULL);
+   elm_layout_signal_emit(pd->cursor_rect, "elm,action,unfocus", "elm");
+
+  _elm_code_widget_refresh(obj, NULL);
 }
 
 static void
@@ -2068,7 +2074,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
 
-   if (!elm_layout_theme_set(obj, "code", "layout", "default"))
+   if (!elm_layout_theme_set(obj, "code", "layout", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
    scroller = elm_scroller_add(obj);
