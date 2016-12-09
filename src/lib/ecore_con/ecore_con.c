@@ -3085,6 +3085,69 @@ efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct sockaddr_un *
 }
 #endif
 
+/* The reverse of efl_net_ip_port_fmt().
+ *
+ * If was parsed, then returns EINA_TRUE, otherwise use getaddrinfo()
+ * or efl_net_ip_resolve_async_new().
+ */
+Eina_Bool
+efl_net_ip_port_parse(const char *address, struct sockaddr_storage *storage)
+{
+   char *str;
+   const char *host, *port;
+   Eina_Bool ret;
+
+   str = strdup(address);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
+   if (!efl_net_ip_port_split(str, &host, &port))
+     {
+        ERR("invalid IP:PORT address: %s", address);
+        ret = EINA_FALSE;
+     }
+   else
+     ret = efl_net_ip_port_parse_split(host, port, storage);
+
+   free(str);
+   return ret;
+}
+
+Eina_Bool
+efl_net_ip_port_parse_split(const char *host, const char *port, struct sockaddr_storage *storage)
+{
+   int x;
+   char *endptr;
+   unsigned long p;
+
+   if (!port) port = "0";
+
+   if (strchr(host, ':')) storage->ss_family = AF_INET6;
+   else storage->ss_family = AF_INET;
+
+   errno = 0;
+   p = strtoul(port, &endptr, 10);
+   if ((errno) || (endptr == port) || (*endptr != '\0')) return EINA_FALSE;
+   else if (p > UINT16_MAX)
+     {
+        ERR("invalid port number %lu (out of range)", p);
+        return EINA_FALSE;
+     }
+
+   if (storage->ss_family == AF_INET6)
+     {
+        struct sockaddr_in6 *a = (struct sockaddr_in6 *)storage;
+        a->sin6_port = htons(p);
+        x = inet_pton(AF_INET6, host, &a->sin6_addr);
+     }
+   else
+     {
+        struct sockaddr_in *a = (struct sockaddr_in *)storage;
+        a->sin_port = htons(p);
+        x = inet_pton(AF_INET, host, &a->sin_addr);
+     }
+
+   return x == 1;
+}
+
 Eina_Bool
 efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr)
 {
@@ -3262,62 +3325,20 @@ efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina
           }
         if (!port) port = "0";
 
-        if ((family == AF_UNSPEC) && (strchr(host, ':'))) family = AF_INET6;
-
-        if (family == AF_INET6)
+        if (efl_net_ip_port_parse_split(host, port, &want_addr))
           {
-             struct sockaddr_in6 *a = (struct sockaddr_in6 *)&want_addr;
-             x = inet_pton(AF_INET6, host, &a->sin6_addr);
-          }
-        else
-          {
-             struct sockaddr_in *a = (struct sockaddr_in *)&want_addr;
-             x = inet_pton(AF_INET, host, &a->sin_addr);
-          }
-
-        /* FAST PATH: numbers were provided */
-        if (x == 1)
-          {
-             char *endptr;
-             unsigned long p;
              Eina_Bool matches;
 
-             want_addr.ss_family = family;
              if (want_addr.ss_family != sock_addr.ss_family)
                {
                   ERR("socket " SOCKET_FMT " family=%d differs from wanted %d", fd, sock_addr.ss_family, want_addr.ss_family);
                   free(str);
                   return EINVAL;
                }
-
-             errno = 0;
-             p = strtoul(port, &endptr, 10);
-             if ((errno) || (endptr == port) || (*endptr != '\0'))
-               {
-                  ERR("invalid port number '%s'", port);
-                  free(str);
-                  return EINVAL;
-               }
-             else if (p > UINT16_MAX)
-               {
-                  ERR("invalid port number %lu (out of range)", p);
-                  free(str);
-                  return ERANGE;
-               }
-
-             if (family == AF_INET6)
-               {
-                  struct sockaddr_in6 *a = (struct sockaddr_in6 *)&want_addr;
-                  a->sin6_port = htons(p);
-                  matches = memcmp(a, &sock_addr, sizeof(*a)) == 0;
-               }
+             else if (want_addr.ss_family == AF_INET6)
+               matches = memcmp(&want_addr, &sock_addr, sizeof(struct sockaddr_in6)) == 0;
              else
-               {
-                  struct sockaddr_in *a = (struct sockaddr_in *)&want_addr;
-                  x = inet_pton(AF_INET, host, &a->sin_addr);
-                  a->sin_port = htons(p);
-                  matches = memcmp(a, &sock_addr, sizeof(*a)) == 0;
-               }
+               matches = memcmp(&want_addr, &sock_addr, sizeof(struct sockaddr_in)) == 0;
 
              if (!matches)
                {

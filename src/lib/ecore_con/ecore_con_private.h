@@ -447,6 +447,8 @@ void _efl_net_socket_udp_init(Eo *o, const struct sockaddr *addr, socklen_t addr
 #ifndef _WIN32
 Eina_Bool efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct sockaddr_un *addr, socklen_t addrlen);
 #endif
+Eina_Bool efl_net_ip_port_parse(const char *address, struct sockaddr_storage *storage);
+Eina_Bool efl_net_ip_port_parse_split(const char *host, const char *port, struct sockaddr_storage *storage);
 Eina_Bool efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr);
 
 #ifdef HAVE_SYSTEMD

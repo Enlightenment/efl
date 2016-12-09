@@ -259,6 +259,8 @@ _efl_net_server_udp_efl_net_server_serve(Eo *o, Efl_Net_Server_Udp_Data *pd, con
      .ai_family = AF_UNSPEC,
      .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED,
    };
+   struct sockaddr_storage ss;
+   Eina_Error err;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
 
@@ -271,11 +273,27 @@ _efl_net_server_udp_efl_net_server_serve(Eo *o, Efl_Net_Server_Udp_Data *pd, con
    if (!port) port = "0";
    if (strchr(host, ':')) hints.ai_family = AF_INET6;
 
-   pd->resolver = efl_net_ip_resolve_async_new(host, port, &hints,
-                                               _efl_net_server_udp_resolved, o);
-   free(str);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->resolver, EINVAL);
-   return 0;
+   if (efl_net_ip_port_parse_split(host, port, &ss))
+     {
+        struct addrinfo ai = hints;
+
+        ai.ai_family = ss.ss_family;
+        ai.ai_addr = (struct sockaddr *)&ss;
+        ai.ai_addrlen = ss.ss_family == AF_INET ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6);
+
+        err = _efl_net_server_udp_resolved_bind(o, pd, &ai);
+        free(str);
+     }
+   else
+     {
+        pd->resolver = efl_net_ip_resolve_async_new(host, port, &hints,
+                                                    _efl_net_server_udp_resolved, o);
+        free(str);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(pd->resolver, EINVAL);
+        err = 0;
+     }
+
+   return err;
 }
 
 static void
