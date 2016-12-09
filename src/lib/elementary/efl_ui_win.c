@@ -3147,9 +3147,12 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
 
    if (sd->stack_master_id)
      {
-        Ecore_X_Window win = atoi(sd->stack_master_id);
-        if (win) ecore_x_icccm_transient_for_set(sd->x.xwin, win);
-        // XXX: set property saying we are a stack window
+        Ecore_X_Window win = strtol(sd->stack_master_id, NULL, 16);
+        if (win)
+          {
+             ecore_x_icccm_transient_for_set(sd->x.xwin, win);
+             ecore_x_e_stack_type_set(sd->x.xwin, ECORE_X_STACK_STANDARD);
+          }
      }
    else
      {
@@ -4911,7 +4914,11 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      {
+        char buf[128];
+
         ecore_x_io_error_handler_set(_elm_x_io_err, NULL);
+        snprintf(buf, sizeof(buf), "%x", sd->x.xwin);
+        sd->stack_id = eina_stringshare_add(buf);
      }
 #endif
 
