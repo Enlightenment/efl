@@ -56,6 +56,7 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_set(Eo *o, Efl_Io_Closer_Fd_Data *
    DBG("close on exec is not supported on windows");
    pd->close_on_exec = close_on_exec;
    return EINA_FALSE;
+   (void)o;
 #else
    int flags, fd;
    Eina_Bool old = pd->close_on_exec;
@@ -95,6 +96,7 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_get(Eo *o, Efl_Io_Closer_Fd_Data *
 {
 #ifdef _WIN32
    return pd->close_on_exec;
+   (void)o;
 #else
    int flags, fd;
 
