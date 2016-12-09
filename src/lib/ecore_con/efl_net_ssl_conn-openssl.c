@@ -438,7 +438,7 @@ _X509_check_init(void)
    if (_sym_X509_check_host) return;
 #ifdef HAVE_DLOPEN
    _sym_X509_check_host =  dlsym(NULL, "X509_check_host");
-   _sym_X509_check_ip_asc = dlsym(NULL, "_X509_check_ip_asc");
+   _sym_X509_check_ip_asc = dlsym(NULL, "X509_check_ip_asc");
    if (_sym_X509_check_host && _sym_X509_check_ip_asc) return;
 #endif
    _sym_X509_check_host = _replace_X509_check_host;
