@@ -1,12 +1,3 @@
-enum Elm.Icon.Type
-{
-   [[Elementary icon types]]
-   legacy: elm_icon;
-   none, [[Icon has no type set]]
-   file, [[Icon is of type file]]
-   standard [[Icon is of type standard]]
-}
-
 class Elm.Icon (Efl.Ui.Image)
 {
    [[Elementary Icon Class]]

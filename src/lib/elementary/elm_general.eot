@@ -277,3 +277,12 @@ enum Efl.Ui.Softcursor_Mode
    on,   [[Always use a softcursor.]]
    off   [[Never use a softcursor.]]
 }
+
+enum Elm.Icon.Type
+{
+   [[Elementary icon types]]
+   legacy: elm_icon;
+   none, [[Icon has no type set]]
+   file, [[Icon is of type file]]
+   standard [[Icon is of type standard]]
+}

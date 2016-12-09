@@ -1,5 +1,4 @@
 import elm_general;
-import elm_icon;
 
 enum Elm.Toolbar.Shrink_Mode
 {

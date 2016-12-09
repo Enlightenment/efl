@@ -1,5 +1,4 @@
 import elm_general;
-import elm_icon;
 import elm_entry;
 
 struct Efl.Ui.Text.Anchor_Info
