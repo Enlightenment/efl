@@ -56,7 +56,8 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
 
    efl_net_server_fd_family_set(o, AF_UNIX);
 
-   if (pd->leading_directories_create)
+   if ((pd->leading_directories_create) &&
+       (strncmp(address, "abstract:", strlen("abstract:")) != 0))
      _ecore_con_local_mkpath(address, pd->leading_directories_create_mode);
 
    do
