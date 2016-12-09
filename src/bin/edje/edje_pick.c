@@ -578,8 +578,9 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Eina_L
    Edje_Part *part;
    Edje_Part_Collection_Directory_Entry *ce_cor, *ce_out;
    unsigned int i, j;
+   Eina_Iterator *is;
    Edje_Pack_Element *item;
-   Eina_List *dep_list = NULL;
+   Eina_List *dep_list = NULL, *dep_list_inner = NULL;
 
    edje_cache_emp_alloc(ce);
 
@@ -596,12 +597,34 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Eina_L
      { \
         if (eina_list_search_unsorted(groups, (void *)strcmp, NAME)) goto exit; \
         ce_cor = eina_hash_find(edf->collection, NAME); \
+        if (!eina_hash_find(out_file->collection, ce_cor->entry)) \
+          { \
+             dep_list_inner = _edje_pick_header_dependencies_check(out_file, edf, groups, ce_cor, current_id); \
+             dep_list = eina_list_merge(dep_list, dep_list_inner); \
+          } \
         if ((ce_cor) && (!eina_hash_find(out_file->collection, NAME))) \
           { \
              ce_out = malloc(sizeof(*ce_out)); \
              memcpy(ce_out, ce_cor, sizeof(*ce_out)); \
+                  if (ce_out->group_alias) \
+                    { \
+                       Edje_Part_Collection_Directory_Entry *ce_cor, *ce_new; \
+                       is = eina_hash_iterator_data_new(edf->collection); \
+                       EINA_ITERATOR_FOREACH(is, ce_cor) \
+                         { \
+                            if (ce_out->id == ce_cor->id) \
+                              { \
+                                 ce_new = malloc(sizeof(*ce_new)); \
+                                 memcpy(ce_new, ce_cor, sizeof(*ce_new)); \
+                                 ce_new->id = (*current_id); \
+                                 if (!eina_hash_find(out_file->collection, ce_new->entry)) \
+                                 eina_hash_direct_add(out_file->collection, ce_new->entry, \
+                                                      ce_new); \
+                              } \
+                         } \
+                       eina_iterator_free(is); \
+                    } \
              ce_out->id = *current_id; \
-             ce_out->group_alias = EINA_FALSE; \
              EINA_LOG_INFO("Changing ID of group <%d> to <%d>\n", ce->id, ce_out->id); \
              eina_hash_direct_add(out_file->collection, ce_out->entry, ce_out); \
              (*current_id)++; \
@@ -658,11 +681,11 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
    Eina_List *l, *alist = NULL;
    char *name1 = NULL;
    Eina_List *deps = NULL, *dep_list = NULL;
+   Eina_Iterator *i;
 
    /* Build file header */
    if (context.current_file->append)
      {
-        Eina_Iterator *i;
         i = eina_hash_iterator_key_new(edf->collection);
         EINA_ITERATOR_FOREACH(i, name1)  /* Run through all keys */
           {
@@ -733,10 +756,25 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
                   ce_out = malloc(sizeof(*ce_out));
 
                   memcpy(ce_out, ce, sizeof(*ce_out));
-                  /* reset flag alias */
-                  ce_out->group_alias = EINA_FALSE;
-
                   ce_out->id = current_group_id;
+                  if (ce_out->group_alias)
+                    {
+                       Edje_Part_Collection_Directory_Entry *ce_cor, *ce_new;
+                       i = eina_hash_iterator_data_new(edf->collection);
+                       EINA_ITERATOR_FOREACH(i, ce_cor)
+                         {
+                            if (ce->id == ce_cor->id)
+                              {
+                                 ce_new = malloc(sizeof(*ce_new));
+                                 memcpy(ce_new, ce_cor, sizeof(*ce_new));
+                                 ce_new->id = current_group_id;
+                                 eina_hash_direct_add(out_file->collection, ce_new->entry,
+                                                      ce_new);
+                              }
+                         }
+                       eina_iterator_free(i);
+                    }
+
                   EINA_LOG_INFO("Changing ID of group <%d> to <%d>\n",
                         ce->id, ce_out->id);
                   current_group_id++;
