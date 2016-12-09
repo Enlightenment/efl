@@ -372,7 +372,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             params {
                 str: string; [[String in HTTP text format: Tue, 15 Nov 1994 12:45:26 GMT]]
             }
-            return: long; [[Seconds since 1/1/1970]]
+            return: int64; [[Seconds since 1/1/1970]]
         }
 
         date_serialize @class {
@@ -381,7 +381,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
               The timezone must be GMT (ie: gmtime()).
             ]]
             params {
-                epochtime: long; [[UNIX Epoch time - seconds since 1/1/1970]]
+                epochtime: int64; [[UNIX Epoch time - seconds since 1/1/1970]]
             }
             return: free(own(ptr(char)), free) @warn_unused; [[Newly allocated null-terminated string on success or NULL on errors]]
         }

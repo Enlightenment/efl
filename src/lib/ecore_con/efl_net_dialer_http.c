@@ -2347,7 +2347,7 @@ _efl_net_dialer_http_ssl_certificate_revogation_list_get(Eo *o EINA_UNUSED, Efl_
    return pd->ssl.crl;
 }
 
-EOLIAN static long
+EOLIAN static int64_t
 _efl_net_dialer_http_date_parse(Efl_Class *cls EINA_UNUSED, void *cd EINA_UNUSED, const char *str)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, 0);
@@ -2355,14 +2355,20 @@ _efl_net_dialer_http_date_parse(Efl_Class *cls EINA_UNUSED, void *cd EINA_UNUSED
 }
 
 EOLIAN static char *
-_efl_net_dialer_http_date_serialize(Efl_Class *cls EINA_UNUSED, void *cd EINA_UNUSED, long t)
+_efl_net_dialer_http_date_serialize(Efl_Class *cls EINA_UNUSED, void *cd EINA_UNUSED, int64_t ts)
 {
    static const char *const wkday[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
    static const char * const month[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
    char buf[128];
-   struct tm *tm, storage;
-
+   time_t t = ts;
+   struct tm *tm;
+#ifdef HAVE_GMTIME_R
+   struct tm storage;
    tm = gmtime_r(&t, &storage);
+#else
+   tm = gmtime(&t);
+#endif
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(tm, NULL);
 
    snprintf(buf, sizeof(buf),

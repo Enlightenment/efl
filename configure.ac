@@ -669,6 +669,7 @@ strlcpy \
 geteuid \
 getuid \
 pause \
+gmtime_r \
 ])
 
 AC_FUNC_ALLOCA
