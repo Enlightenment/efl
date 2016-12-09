@@ -18,6 +18,7 @@ static int retval = EXIT_SUCCESS;
 static Eina_Bool echo = EINA_FALSE;
 static Eina_Bool do_flush = EINA_FALSE;
 static Eina_Bool single_message = EINA_FALSE;
+static Eina_Bool do_ssl_upgrade = EINA_FALSE;
 
 Eina_Bool
 _add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
@@ -31,6 +32,12 @@ _add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         ecore_con_client_send(ev->client, "Hello World!", strlen("Hello World!"));
         if (do_flush) ecore_con_client_flush(ev->client);
         if (single_message) ecore_con_client_del(ev->client);
+        else if (do_ssl_upgrade)
+          {
+             const char upgrade_msg[] = "\nSend \"Upgrade: SSL\" followed by newline (\\n) to do it.\n";
+             ecore_con_client_send(ev->client, upgrade_msg, strlen(upgrade_msg));
+             if (do_flush) ecore_con_client_flush(ev->client);
+          }
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -50,6 +57,7 @@ Eina_Bool
 _data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Con_Event_Client_Data *ev = event;
+   const char upgrade_ssl[] = "Upgrade: SSL\n";
 
    printf("INFO: client data %p: %s\n"
           "INFO:  - size: %d\n"
@@ -59,6 +67,20 @@ _data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    fwrite(ev->data, ev->size, 1, stdout);
    puts("-- END DATA --");
+
+   if (do_ssl_upgrade && ((size_t)ev->size == strlen(upgrade_ssl)) &&
+       (memcmp(ev->data, upgrade_ssl, ev->size) == 0))
+     {
+        if (!ecore_con_ssl_client_upgrade(ev->client, ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT))
+          {
+             printf("ERROR: Failed to upgrade client=%p %s to SSL!\n", ev->client, ecore_con_client_ip_get(ev->client));
+             ecore_con_client_del(ev->client);
+          }
+        else
+          printf("INFO: upgrading client=%p %s to SSL!\n", ev->client, ecore_con_client_ip_get(ev->client));
+
+        return ECORE_CALLBACK_RENEW;
+     }
 
    if (echo)
      {
@@ -87,10 +109,19 @@ _error(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_RENEW;
 }
 
+Eina_Bool
+_upgrade(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Con_Event_Client_Upgrade *ev = event;
+   printf("Client %s Upgraded to SSL.\n", ecore_con_client_ip_get(ev->client));
+   return ECORE_CALLBACK_RENEW;
+}
+
 static const char *types_strs[] = {
   "tcp",
   "udp",
   "ssl",
+  "tcp+ssl",
   "mcast",
   "local-user",
   "local-system",
@@ -196,6 +227,11 @@ main(int argc, char **argv)
      type = ECORE_CON_REMOTE_UDP;
    else if (strcmp(type_choice, "ssl") == 0)
      type = ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT;
+   else if (strcmp(type_choice, "tcp+ssl") == 0)
+     {
+        type = ECORE_CON_REMOTE_TCP;
+        do_ssl_upgrade = EINA_TRUE;
+     }
    else if (strcmp(type_choice, "local-user") == 0)
      type = ECORE_CON_LOCAL_USER;
    else if (strcmp(type_choice, "system") == 0)
@@ -212,7 +248,22 @@ main(int argc, char **argv)
    svr = ecore_con_server_add(type, name, port, NULL);
    if (!svr) goto end;
 
-   if (strcmp(type_choice, "ssl") == 0)
+   if ((strcmp(type_choice, "ssl") == 0)
+#if 1
+       /* This just works since EFL v 1.19.  Prior to this, loading a
+        * certificate would put the whole server in SSL mode, which is
+        * unexpected.
+        *
+        * There are no ecore_con_ssl_client_cert_add() to report a new
+        * certificate to clients (and it shouldn't, as it would be too
+        * expensive to setup for each client, this should be shared).
+        *
+        * With EFL v1.19 this can be done, but the whole setup should
+        * be done at most once before returning to the main loop.
+        */
+       || (strcmp(type_choice, "tcp+ssl") == 0)
+#endif
+       )
      {
         if (!ecore_con_ssl_server_cert_add(svr, "server.pem"))
           {
@@ -236,6 +287,8 @@ main(int argc, char **argv)
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_WRITE, (Ecore_Event_Handler_Cb)_write, NULL);
 /* set event handler that notifies of errors */
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ERROR, (Ecore_Event_Handler_Cb)_error, NULL);
+/* set event handler that notifies of upgrades */
+   ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_UPGRADE, (Ecore_Event_Handler_Cb)_upgrade, NULL);
 
 /* start server */
    ecore_main_loop_begin();
