@@ -451,10 +451,11 @@ _ecore_con_url_dialer_headers_done(void *data, const Efl_Event *event EINA_UNUSE
    Eina_Iterator *it;
    Efl_Net_Http_Header *header;
    size_t len;
+   int status = efl_net_dialer_http_response_status_get(url_con->dialer);
    char *str;
 
    DBG("HTTP headers done, status=%d url='%s'",
-       efl_net_dialer_http_response_status_get(url_con->dialer),
+       status,
        efl_net_dialer_address_dial_get(url_con->dialer));
 
    _ecore_con_url_response_headers_free(url_con);
@@ -497,7 +498,7 @@ _ecore_con_url_dialer_headers_done(void *data, const Efl_Event *event EINA_UNUSE
  end:
    eina_iterator_free(it);
 
-   if (url_con->only_head)
+   if (url_con->only_head && ((status >= 200) && (status < 300)))
      _ecore_con_url_dialer_close(url_con);
 }
 
