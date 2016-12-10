@@ -818,12 +818,43 @@ _efl_net_dialer_http_curl_safe_end(Eo *o, Efl_Net_Dialer_Http_Data *pd, CURL *ea
    int refs;
 
    refs = efl_ref_get(o);
-   efl_unref(o);
-   if (refs > 1)
+   if (refs > 2)
      {
         pd->in_curl_callback--;
+        efl_unref(o);
         return;
      }
+
+   if (pd->pending_close)
+     efl_future_cancel(pd->pending_close);
+
+   if (!pd->easy)
+     {
+        efl_unref(o);
+        return;
+     }
+
+   pd->easy = NULL;
+   efl_unref(o);
+
+   curl_easy_setopt(easy, CURLOPT_PRIVATE, NULL);
+   curl_easy_setopt(easy, CURLOPT_DEBUGFUNCTION, NULL);
+   curl_easy_setopt(easy, CURLOPT_DEBUGDATA, NULL);
+   curl_easy_setopt(easy, CURLOPT_XFERINFOFUNCTION, NULL);
+   curl_easy_setopt(easy, CURLOPT_XFERINFODATA, NULL);
+
+   curl_easy_setopt(easy, CURLOPT_HEADERFUNCTION, NULL);
+   curl_easy_setopt(easy, CURLOPT_HEADERDATA, NULL);
+   curl_easy_setopt(easy, CURLOPT_WRITEFUNCTION, NULL);
+   curl_easy_setopt(easy, CURLOPT_WRITEDATA, NULL);
+   curl_easy_setopt(easy, CURLOPT_READFUNCTION, NULL);
+   curl_easy_setopt(easy, CURLOPT_READDATA, NULL);
+
+   curl_easy_setopt(easy, CURLOPT_OPENSOCKETFUNCTION, NULL);
+   curl_easy_setopt(easy, CURLOPT_OPENSOCKETDATA, NULL);
+
+   curl_easy_setopt(easy, CURLOPT_NOPROGRESS, 1L);
+   curl_easy_setopt(easy, CURLOPT_VERBOSE, 0L);
 
    /* object deleted from CURL callback, CURL* easy was
     * dissociated and we must delete it ourselves.
@@ -1106,27 +1137,8 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 
    if (pd->in_curl_callback)
      {
-        DBG("deleting HTTP dialer=%p from CURL callback.", o);
-        curl_easy_setopt(pd->easy, CURLOPT_PRIVATE, NULL);
-        curl_easy_setopt(pd->easy, CURLOPT_DEBUGFUNCTION, NULL);
-        curl_easy_setopt(pd->easy, CURLOPT_DEBUGDATA, NULL);
-        curl_easy_setopt(pd->easy, CURLOPT_XFERINFOFUNCTION, NULL);
-        curl_easy_setopt(pd->easy, CURLOPT_XFERINFODATA, NULL);
-
-        curl_easy_setopt(pd->easy, CURLOPT_HEADERFUNCTION, NULL);
-        curl_easy_setopt(pd->easy, CURLOPT_HEADERDATA, NULL);
-        curl_easy_setopt(pd->easy, CURLOPT_WRITEFUNCTION, NULL);
-        curl_easy_setopt(pd->easy, CURLOPT_WRITEDATA, NULL);
-        curl_easy_setopt(pd->easy, CURLOPT_READFUNCTION, NULL);
-        curl_easy_setopt(pd->easy, CURLOPT_READDATA, NULL);
-
-        curl_easy_setopt(pd->easy, CURLOPT_OPENSOCKETFUNCTION, NULL);
-        curl_easy_setopt(pd->easy, CURLOPT_OPENSOCKETDATA, NULL);
-
-        curl_easy_setopt(pd->easy, CURLOPT_NOPROGRESS, 1L);
-        curl_easy_setopt(pd->easy, CURLOPT_VERBOSE, 0L);
-
-        pd->easy = NULL;
+        EINA_SAFETY_ON_TRUE_RETURN(pd->easy != NULL);
+        EINA_SAFETY_ON_TRUE_RETURN(pd->pending_close != NULL);
      }
    else if (pd->pending_close)
      {
@@ -1694,7 +1706,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 
    if (pd->in_curl_callback)
      {
-        if (!pd->pending_close)
+        if ((!pd->pending_close) && (pd->easy))
           {
              efl_future_use(&pd->pending_close, efl_loop_job(efl_loop_get(o), o));
              efl_future_then(pd->pending_close, _efl_net_dialer_http_pending_close, NULL, NULL, o);
@@ -1734,6 +1746,7 @@ _efl_net_dialer_http_pending_close(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *o = data;
    Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
+   pd->pending_close = NULL; /* XXX TODO this should be NULL-ified by efl_promise before calling this function */
    _efl_net_dialer_http_efl_io_closer_close(o, pd);
 }
 
