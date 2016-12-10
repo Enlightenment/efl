@@ -291,7 +291,7 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int g
              evas_object_show(pd->cursor_rect);
           }
 
-        evas_object_move(pd->cursor_rect, cx - (cw/16), cy);
+        evas_object_move(pd->cursor_rect, cx, cy);
      }
 }
 
@@ -678,7 +678,7 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
    grid = eina_list_nth(pd->grids, row - 1);
    evas_object_geometry_get(grid, x, y, NULL, NULL);
    if (x)
-     *x = (col - 1 + gutter) * cellw;
+     *x += (col - 1 + gutter) * cellw;
    if (w)
      *w = cellw;
 
