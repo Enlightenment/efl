@@ -2342,7 +2342,7 @@ _efl_net_dialer_http_ssl_certificate_authority_get(Eo *o EINA_UNUSED, Efl_Net_Di
 }
 
 EOLIAN static void
-_efl_net_dialer_http_ssl_certificate_revogation_list_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, const char *path)
+_efl_net_dialer_http_ssl_certificate_revocation_list_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, const char *path)
 {
    CURLcode r;
 
@@ -2355,7 +2355,7 @@ _efl_net_dialer_http_ssl_certificate_revogation_list_set(Eo *o EINA_UNUSED, Efl_
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_ssl_certificate_revogation_list_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_ssl_certificate_revocation_list_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->ssl.crl;
 }

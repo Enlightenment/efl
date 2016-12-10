@@ -13,7 +13,7 @@ _efl_net_ssl_ctx_load_lists(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
    const char *path;
    unsigned certificates_count = eina_list_count(*cfg.certificates);
    unsigned private_keys_count = eina_list_count(*cfg.private_keys);
-   unsigned certificate_revogation_lists_count = eina_list_count(*cfg.certificate_revogation_lists);
+   unsigned certificate_revocation_lists_count = eina_list_count(*cfg.certificate_revocation_lists);
    unsigned certificate_authorities_count = eina_list_count(*cfg.certificate_authorities);
    int r;
 
@@ -98,23 +98,23 @@ _efl_net_ssl_ctx_load_lists(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
         while (pk_node->next);
      }
 
-   EINA_LIST_FOREACH_SAFE(*cfg.certificate_revogation_lists, n, n_next, path)
+   EINA_LIST_FOREACH_SAFE(*cfg.certificate_revocation_lists, n, n_next, path)
      {
         r = gnutls_certificate_set_x509_crl_file(ctx->x509_cred, path, GNUTLS_X509_FMT_PEM);
         if (r < 0)
           {
-             ERR("ssl_ctx=%p could not use certificate revogation lists from %s: %s",
+             ERR("ssl_ctx=%p could not use certificate revocation lists from %s: %s",
                  ctx, path, gnutls_strerror(r));
              eina_stringshare_del(path);
-             *cfg.certificate_revogation_lists = eina_list_remove_list(*cfg.certificate_revogation_lists, n);
+             *cfg.certificate_revocation_lists = eina_list_remove_list(*cfg.certificate_revocation_lists, n);
              continue;
           }
 
-        DBG("ssl_ctx=%p loaded certificate revogation lists '%s'", ctx, path);
+        DBG("ssl_ctx=%p loaded certificate revocation lists '%s'", ctx, path);
      }
-   if (certificate_revogation_lists_count && !*cfg.certificate_revogation_lists)
+   if (certificate_revocation_lists_count && !*cfg.certificate_revocation_lists)
      {
-        ERR("ssl_ctx=%p none of the required certificate revogation lists were loaded!", ctx);
+        ERR("ssl_ctx=%p none of the required certificate revocation lists were loaded!", ctx);
         return EINVAL;
      }
 

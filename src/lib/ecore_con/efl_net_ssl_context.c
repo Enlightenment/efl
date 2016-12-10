@@ -29,7 +29,7 @@ typedef struct _Efl_Net_Ssl_Ctx_Config {
    Eina_Bool load_defaults;
    Eina_List **certificates;
    Eina_List **private_keys;
-   Eina_List **certificate_revogation_lists;
+   Eina_List **certificate_revocation_lists;
    Eina_List **certificate_authorities;
 } Efl_Net_Ssl_Ctx_Config;
 
@@ -95,7 +95,7 @@ typedef struct _Efl_Net_Ssl_Context_Data
    Efl_Net_Ssl_Ctx ssl_ctx;
    Eina_List *certificates;
    Eina_List *private_keys;
-   Eina_List *certificate_revogation_lists;
+   Eina_List *certificate_revocation_lists;
    Eina_List *certificate_authorities;
    const char *hostname;
    Efl_Net_Ssl_Cipher cipher;
@@ -179,17 +179,17 @@ _efl_net_ssl_context_private_keys_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Dat
 }
 
 static Eina_Iterator *
-_efl_net_ssl_context_certificate_revogation_lists_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
+_efl_net_ssl_context_certificate_revocation_lists_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
 {
-   return eina_list_iterator_new(pd->certificate_revogation_lists);
+   return eina_list_iterator_new(pd->certificate_revocation_lists);
 }
 
 static void
-_efl_net_ssl_context_certificate_revogation_lists_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd, Eina_Iterator *it)
+_efl_net_ssl_context_certificate_revocation_lists_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd, Eina_Iterator *it)
 {
    EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(o));
-   _efl_net_ssl_context_string_list_free(&pd->certificate_revogation_lists);
-   pd->certificate_revogation_lists = _efl_net_ssl_context_string_iter_to_list(it);
+   _efl_net_ssl_context_string_list_free(&pd->certificate_revocation_lists);
+   pd->certificate_revocation_lists = _efl_net_ssl_context_string_iter_to_list(it);
 }
 
 static Eina_Iterator *
@@ -304,7 +304,7 @@ _efl_net_ssl_context_efl_object_finalize(Eo *o, Efl_Net_Ssl_Context_Data *pd)
    cfg.load_defaults = pd->load_defaults;
    cfg.certificates = &pd->certificates;
    cfg.private_keys = &pd->private_keys;
-   cfg.certificate_revogation_lists = &pd->certificate_revogation_lists;
+   cfg.certificate_revocation_lists = &pd->certificate_revocation_lists;
    cfg.certificate_authorities = &pd->certificate_authorities;
    cfg.load_defaults = pd->load_defaults;
 
@@ -343,7 +343,7 @@ _efl_net_ssl_context_efl_object_destructor(Eo *o, Efl_Net_Ssl_Context_Data *pd)
 
    _efl_net_ssl_context_string_list_free(&pd->certificates);
    _efl_net_ssl_context_string_list_free(&pd->private_keys);
-   _efl_net_ssl_context_string_list_free(&pd->certificate_revogation_lists);
+   _efl_net_ssl_context_string_list_free(&pd->certificate_revocation_lists);
    _efl_net_ssl_context_string_list_free(&pd->certificate_authorities);
 
    eina_stringshare_replace(&pd->hostname, NULL);

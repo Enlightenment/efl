@@ -533,7 +533,7 @@ static const Ecore_Getopt options = {
     ECORE_GETOPT_CHOICE('c', "ssl-cipher", "Cipher to use, defaults to 'auto'", ciphers_strs),
     ECORE_GETOPT_APPEND(0, "ssl-certificate", "certificate path to use.", ECORE_GETOPT_TYPE_STR),
     ECORE_GETOPT_APPEND(0, "ssl-private-key", "private key path to use.", ECORE_GETOPT_TYPE_STR),
-    ECORE_GETOPT_APPEND(0, "ssl-crl", "certificate revogation list to use.", ECORE_GETOPT_TYPE_STR),
+    ECORE_GETOPT_APPEND(0, "ssl-crl", "certificate revocation list to use.", ECORE_GETOPT_TYPE_STR),
     ECORE_GETOPT_APPEND(0, "ssl-ca", "certificate authorities path to use.", ECORE_GETOPT_TYPE_STR),
 
     ECORE_GETOPT_CHOICE_METAVAR(0, NULL, "The server protocol.", "protocol",
@@ -706,7 +706,7 @@ main(int argc, char **argv)
         ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                           efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(certificates)),
                           efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(private_keys)),
-                          efl_net_ssl_context_certificate_revogation_lists_set(efl_added, eina_list_iterator_new(crls)),
+                          efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(crls)),
                           efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(cas)),
                           efl_net_ssl_context_setup(efl_added, cipher, EINA_FALSE /* a server! */));
 

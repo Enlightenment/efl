@@ -1530,7 +1530,7 @@ _ecore_con_server_ssl_ctx_create(const Ecore_Con_Server *svr)
    return efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                   efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
                   efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
-                  efl_net_ssl_context_certificate_revogation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
+                  efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
                   efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
                   efl_net_ssl_context_default_paths_load_set(efl_added, EINA_FALSE), /* old API didn't load default paths */
                   efl_net_ssl_context_setup(efl_added, cipher, EINA_FALSE));
@@ -1878,7 +1878,7 @@ _ecore_con_server_dialer_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
    ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
-                     efl_net_ssl_context_certificate_revogation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
+                     efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
                      efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
                      efl_net_ssl_context_verify_mode_set(efl_added, verify_mode),
                      efl_net_ssl_context_hostname_set(efl_added, svr->ssl.verify_name ? svr->ssl.verify_name : svr->name),
@@ -1955,7 +1955,7 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Efl_Event *event EINA
    ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
-                     efl_net_ssl_context_certificate_revogation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
+                     efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
                      efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
                      efl_net_ssl_context_verify_mode_set(efl_added, verify_mode),
                      efl_net_ssl_context_hostname_set(efl_added, svr->ssl.verify_name ? svr->ssl.verify_name : svr->name),

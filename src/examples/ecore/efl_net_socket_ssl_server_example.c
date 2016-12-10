@@ -184,7 +184,7 @@ static const Ecore_Getopt options = {
 
     ECORE_GETOPT_APPEND(0, "certificate", "certificate path to use.", ECORE_GETOPT_TYPE_STR),
     ECORE_GETOPT_APPEND(0, "private-key", "private key path to use.", ECORE_GETOPT_TYPE_STR),
-    ECORE_GETOPT_APPEND(0, "crl", "certificate revogation list to use.", ECORE_GETOPT_TYPE_STR),
+    ECORE_GETOPT_APPEND(0, "crl", "certificate revocation list to use.", ECORE_GETOPT_TYPE_STR),
     ECORE_GETOPT_APPEND(0, "ca", "certificate authorities path to use.", ECORE_GETOPT_TYPE_STR),
 
     ECORE_GETOPT_VERSION('V', "version"),
@@ -275,7 +275,7 @@ main(int argc, char **argv)
    ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(certificates)),
                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(private_keys)),
-                     efl_net_ssl_context_certificate_revogation_lists_set(efl_added, eina_list_iterator_new(crls)),
+                     efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(crls)),
                      efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(cas)),
                      efl_net_ssl_context_setup(efl_added, cipher, EINA_FALSE /* a server! */));
 
@@ -298,8 +298,8 @@ main(int argc, char **argv)
      fprintf(stderr, "INFO:     * %s\n", str);
    eina_iterator_free(it);
 
-   fprintf(stderr, "INFO:  - certificate revogation lists in use:\n");
-   it = efl_net_ssl_context_certificate_revogation_lists_get(ssl_ctx);
+   fprintf(stderr, "INFO:  - certificate revocation lists in use:\n");
+   it = efl_net_ssl_context_certificate_revocation_lists_get(ssl_ctx);
    EINA_ITERATOR_FOREACH(it, str)
      fprintf(stderr, "INFO:     * %s\n", str);
    eina_iterator_free(it);

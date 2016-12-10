@@ -42,7 +42,7 @@ _efl_net_ssl_ctx_load_lists(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
    const char *path;
    unsigned certificates_count = eina_list_count(*cfg.certificates);
    unsigned private_keys_count = eina_list_count(*cfg.private_keys);
-   unsigned certificate_revogation_lists_count = eina_list_count(*cfg.certificate_revogation_lists);
+   unsigned certificate_revocation_lists_count = eina_list_count(*cfg.certificate_revocation_lists);
    unsigned certificate_authorities_count = eina_list_count(*cfg.certificate_authorities);
    long err_ssl;
    const char *err_file;
@@ -155,7 +155,7 @@ _efl_net_ssl_ctx_check_errors();
         return ENOSYS;
      }
 
-   EINA_LIST_FOREACH_SAFE(*cfg.certificate_revogation_lists, n, n_next, path)
+   EINA_LIST_FOREACH_SAFE(*cfg.certificate_revocation_lists, n, n_next, path)
      {
         if ((X509_load_crl_file(x509_lookup, path, X509_FILETYPE_PEM) != 1) &&
             (X509_load_crl_file(x509_lookup, path, X509_FILETYPE_ASN1) != 1))
@@ -163,23 +163,23 @@ _efl_net_ssl_ctx_check_errors();
              err_ssl = ERR_peek_error_line_data(&err_file, &err_line, &err_data, &err_flags);
              _efl_net_ssl_ctx_check_errors();
 
-             ERR("ssl_ctx=%p could not use certificate revogation lists from %s [%s:%d%s%s '%s']",
+             ERR("ssl_ctx=%p could not use certificate revocation lists from %s [%s:%d%s%s '%s']",
                  ctx, path,
                  err_file, err_line,
                  (err_flags & ERR_TXT_STRING) ? " " : "",
                  (err_flags & ERR_TXT_STRING) ? err_data : "",
                  ERR_reason_error_string(err_ssl));
              eina_stringshare_del(path);
-             *cfg.certificate_revogation_lists = eina_list_remove_list(*cfg.certificate_revogation_lists, n);
+             *cfg.certificate_revocation_lists = eina_list_remove_list(*cfg.certificate_revocation_lists, n);
              continue;
           }
 
-        DBG("ssl_ctx=%p loaded certificate revogation lists '%s'", ctx, path);
+        DBG("ssl_ctx=%p loaded certificate revocation lists '%s'", ctx, path);
         x509_store_flags |= X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL;
      }
-   if (certificate_revogation_lists_count && !*cfg.certificate_revogation_lists)
+   if (certificate_revocation_lists_count && !*cfg.certificate_revocation_lists)
      {
-        ERR("ssl_ctx=%p none of the required certificate revogation lists were loaded!", ctx);
+        ERR("ssl_ctx=%p none of the required certificate revocation lists were loaded!", ctx);
         return EINVAL;
      }
    X509_STORE_set_flags(x509_store, x509_store_flags);
