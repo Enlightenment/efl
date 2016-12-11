@@ -76,7 +76,7 @@ class Efl.Net.Dialer.Simple (Efl.Net.Socket.Simple, Efl.Net.Dialer) {
         Efl.Net.Dialer.connected.get;
         Efl.Net.Dialer.proxy;
         Efl.Net.Dialer.timeout_dial;
-        Efl.Io.Buffered_Stream.inactivity_timeout;
+        Efl.Io.Buffered_Stream.timeout_inactivity;
         Efl.Io.Buffered_Stream.max_queue_size_input;
         Efl.Io.Buffered_Stream.max_queue_size_output;
         Efl.Io.Buffered_Stream.read_chunk_size;

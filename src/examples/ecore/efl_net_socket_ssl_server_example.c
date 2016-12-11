@@ -131,7 +131,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
    echo_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(ssl),
                          efl_io_copier_source_set(efl_added, ssl),
                          efl_io_copier_destination_set(efl_added, ssl),
-                         efl_io_copier_inactivity_timeout_set(efl_added, timeout),
+                         efl_io_copier_timeout_inactivity_set(efl_added, timeout),
                          efl_event_callback_array_add(efl_added, echo_copier_cbs(), ssl),
                          efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
                          );

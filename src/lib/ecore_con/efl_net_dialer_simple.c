@@ -11,7 +11,7 @@ typedef struct
    const Efl_Class *inner_class;
    Eina_Stringshare *proxy_url;
    double dial_timeout;
-   double inactivity_timeout;
+   double timeout_inactivity;
    size_t max_queue_size_input;
    size_t max_queue_size_output;
    size_t read_chunk_size;
@@ -19,7 +19,7 @@ typedef struct
    struct {
       Eina_Bool proxy_url;
       Eina_Bool dial_timeout;
-      Eina_Bool inactivity_timeout;
+      Eina_Bool timeout_inactivity;
       Eina_Bool max_queue_size_input;
       Eina_Bool max_queue_size_output;
       Eina_Bool read_chunk_size;
@@ -132,10 +132,10 @@ _efl_net_dialer_simple_efl_io_buffered_stream_inner_io_set(Eo *o, Efl_Net_Dialer
      }
 
    /* apply pending io buffered stream (own) values */
-   if (pd->pending.inactivity_timeout)
+   if (pd->pending.timeout_inactivity)
      {
-        pd->pending.inactivity_timeout = EINA_FALSE;
-        efl_io_buffered_stream_inactivity_timeout_set(o, pd->inactivity_timeout);
+        pd->pending.timeout_inactivity = EINA_FALSE;
+        efl_io_buffered_stream_timeout_inactivity_set(o, pd->timeout_inactivity);
      }
    if (pd->pending.max_queue_size_input)
      {
@@ -224,25 +224,25 @@ _efl_net_dialer_simple_efl_net_dialer_timeout_dial_get(Eo *o, Efl_Net_Dialer_Sim
 }
 
 EOLIAN static void
-_efl_net_dialer_simple_efl_io_buffered_stream_inactivity_timeout_set(Eo *o, Efl_Net_Dialer_Simple_Data *pd, double seconds)
+_efl_net_dialer_simple_efl_io_buffered_stream_timeout_inactivity_set(Eo *o, Efl_Net_Dialer_Simple_Data *pd, double seconds)
 {
    Eo *inner_io = efl_io_buffered_stream_inner_io_get(o);
 
    if (!inner_io)
      {
-        pd->inactivity_timeout = seconds;
-        pd->pending.inactivity_timeout = EINA_TRUE;
+        pd->timeout_inactivity = seconds;
+        pd->pending.timeout_inactivity = EINA_TRUE;
         return;
      }
-   efl_io_buffered_stream_inactivity_timeout_set(efl_super(o, MY_CLASS), seconds);
+   efl_io_buffered_stream_timeout_inactivity_set(efl_super(o, MY_CLASS), seconds);
 }
 
 EOLIAN static double
-_efl_net_dialer_simple_efl_io_buffered_stream_inactivity_timeout_get(Eo *o, Efl_Net_Dialer_Simple_Data *pd)
+_efl_net_dialer_simple_efl_io_buffered_stream_timeout_inactivity_get(Eo *o, Efl_Net_Dialer_Simple_Data *pd)
 {
    Eo *inner_io = efl_io_buffered_stream_inner_io_get(o);
-   if (!inner_io) return pd->inactivity_timeout;
-   return efl_io_buffered_stream_inactivity_timeout_get(efl_super(o, MY_CLASS));
+   if (!inner_io) return pd->timeout_inactivity;
+   return efl_io_buffered_stream_timeout_inactivity_get(efl_super(o, MY_CLASS));
 }
 
 EOLIAN static void

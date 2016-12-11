@@ -91,7 +91,7 @@ class Efl.Io.Buffered_Stream (Efl.Loop_User, Efl.Io.Reader, Efl.Io.Writer, Efl.I
             }
         }
 
-        @property inactivity_timeout {
+        @property timeout_inactivity {
             [[Error as ETIMEDOUT if it becomes inactive for some time.
 
               If no activity, that is no read or write in the given

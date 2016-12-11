@@ -893,7 +893,7 @@ main(int argc, char **argv)
                     efl_io_copier_line_delimiter_set(efl_added, &line_delm_slice), /* optional */
                     efl_io_copier_buffer_limit_set(efl_added, buffer_limit), /* optional, defaults to unlimited */
                     efl_io_copier_read_chunk_size_set(efl_added, read_chunk_size), /* optional, defaults to 4096 */
-                    efl_io_copier_inactivity_timeout_set(efl_added, timeout), /* optional, defaults to 0.0 (disabled) */
+                    efl_io_copier_timeout_inactivity_set(efl_added, timeout), /* optional, defaults to 0.0 (disabled) */
                     efl_event_callback_array_add(efl_added, copier_cbs(), NULL) /* recommended, at least EFL_IO_COPIER_EVENT_DONE. */
                     );
    if (!copier)

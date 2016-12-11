@@ -159,7 +159,7 @@ _send_copier_done(void *data, const Efl_Event *event)
    if (d->recv_copier)
      {
         /* only start the reader inactivity timeout once the sender is done */
-        efl_io_copier_inactivity_timeout_set(d->recv_copier, efl_io_copier_inactivity_timeout_get(copier));
+        efl_io_copier_timeout_inactivity_set(d->recv_copier, efl_io_copier_timeout_inactivity_get(copier));
      }
 
    fprintf(stderr, "INFO: send copier done, check if should close %p\n", copier);
@@ -335,7 +335,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
         Eo *echo_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
                                   efl_io_copier_source_set(efl_added, client),
                                   efl_io_copier_destination_set(efl_added, client),
-                                  efl_io_copier_inactivity_timeout_set(efl_added, timeout),
+                                  efl_io_copier_timeout_inactivity_set(efl_added, timeout),
                                   efl_event_callback_array_add(efl_added, echo_copier_cbs(), client),
                                   efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
                                   );
@@ -378,7 +378,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
         d->send_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
                                  efl_io_copier_source_set(efl_added, send_buffer),
                                  efl_io_copier_destination_set(efl_added, client),
-                                 efl_io_copier_inactivity_timeout_set(efl_added, timeout),
+                                 efl_io_copier_timeout_inactivity_set(efl_added, timeout),
                                  efl_event_callback_array_add(efl_added, send_copier_cbs(), d),
                                  efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
                                  );
@@ -395,7 +395,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
         d->recv_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
                                  efl_io_copier_source_set(efl_added, client),
                                  efl_io_copier_destination_set(efl_added, recv_buffer),
-                                 efl_io_copier_inactivity_timeout_set(efl_added, 0.0), /* we'll only set an inactivity timeout once the sender is done */
+                                 efl_io_copier_timeout_inactivity_set(efl_added, 0.0), /* we'll only set an inactivity timeout once the sender is done */
                                  efl_event_callback_array_add(efl_added, recv_copier_cbs(), d),
                                  efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
                                  );

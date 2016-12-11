@@ -288,7 +288,7 @@ main(int argc, char **argv)
    char *protocol = NULL;
    unsigned long buffer_limit = 0;
    unsigned long read_chunk_size = 0;
-   double inactivity_timeout = 0.0;
+   double timeout_inactivity = 0.0;
    double connect_timeout = 0.0;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
@@ -299,7 +299,7 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_STR(line_delimiter_str),
      ECORE_GETOPT_VALUE_ULONG(buffer_limit),
      ECORE_GETOPT_VALUE_ULONG(read_chunk_size),
-     ECORE_GETOPT_VALUE_DOUBLE(inactivity_timeout),
+     ECORE_GETOPT_VALUE_DOUBLE(timeout_inactivity),
      ECORE_GETOPT_VALUE_DOUBLE(connect_timeout),
 
      /* standard block to provide version, copyright, license and help */
@@ -379,7 +379,7 @@ main(int argc, char **argv)
                     efl_io_buffered_stream_max_queue_size_input_set(efl_added, buffer_limit), /* optional, defaults to unlimited */
                     efl_io_buffered_stream_max_queue_size_output_set(efl_added, buffer_limit), /* optional, defaults to unlimited */
                     efl_io_buffered_stream_read_chunk_size_set(efl_added, read_chunk_size), /* optional, defaults to 4096 */
-                    efl_io_buffered_stream_inactivity_timeout_set(efl_added, inactivity_timeout), /* optional, defaults to 0.0 (disabled) */
+                    efl_io_buffered_stream_timeout_inactivity_set(efl_added, timeout_inactivity), /* optional, defaults to 0.0 (disabled) */
                     efl_net_dialer_timeout_dial_set(efl_added, connect_timeout), /* optional, defaults to 0.0 (disabled) */
                     efl_event_callback_array_add(efl_added, dialer_cbs(), NULL));
 

@@ -35,7 +35,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
         - The "error" event is reported if the @Efl.Io.Reader.read,
           @Efl.Io.Writer.write or some other internal error happened,
           like out of memory. Another common error is ETIMEDOUT if
-          @.inactivity_timeout is set.
+          @.timeout_inactivity is set.
 
       A copier is handful to simplify common I/O use cases, such as:
 
@@ -270,7 +270,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
            }
         }
 
-        @property inactivity_timeout {
+        @property timeout_inactivity {
             [[Terminate the copier with ETIMEDOUT if it becomes inactive for some time.
 
               If the copier cannot do any read or write in the given

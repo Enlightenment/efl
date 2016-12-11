@@ -466,21 +466,21 @@ _efl_io_buffered_stream_line_delimiter_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_St
 }
 
 EOLIAN static void
-_efl_io_buffered_stream_inactivity_timeout_set(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd, double seconds)
+_efl_io_buffered_stream_timeout_inactivity_set(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd, double seconds)
 {
    if (pd->receiver)
-     efl_io_copier_inactivity_timeout_set(pd->receiver, seconds);
+     efl_io_copier_timeout_inactivity_set(pd->receiver, seconds);
    if (pd->sender)
-     efl_io_copier_inactivity_timeout_set(pd->sender, seconds);
+     efl_io_copier_timeout_inactivity_set(pd->sender, seconds);
 }
 
 EOLIAN static double
-_efl_io_buffered_stream_inactivity_timeout_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd)
+_efl_io_buffered_stream_timeout_inactivity_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd)
 {
    if (pd->receiver)
-     return efl_io_copier_inactivity_timeout_get(pd->receiver);
+     return efl_io_copier_timeout_inactivity_get(pd->receiver);
    if (pd->sender)
-     return efl_io_copier_inactivity_timeout_get(pd->sender);
+     return efl_io_copier_timeout_inactivity_get(pd->sender);
    return 0.0;
 }
 

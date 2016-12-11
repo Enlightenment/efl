@@ -656,14 +656,14 @@ EAPI void
 ecore_con_client_timeout_set(Ecore_Con_Client *cl, double timeout)
 {
    ECORE_CON_CLIENT_CHECK_RETURN(cl);
-   efl_io_buffered_stream_inactivity_timeout_set(cl->socket, timeout);
+   efl_io_buffered_stream_timeout_inactivity_set(cl->socket, timeout);
 }
 
 EAPI double
 ecore_con_client_timeout_get(const Ecore_Con_Client *cl)
 {
    ECORE_CON_CLIENT_CHECK_RETURN(cl, -1.0);
-   return efl_io_buffered_stream_inactivity_timeout_get(cl->socket);
+   return efl_io_buffered_stream_timeout_inactivity_get(cl->socket);
 }
 
 EAPI void *
@@ -1775,7 +1775,7 @@ _ecore_con_server_dialer_set(Ecore_Con_Server *svr, Eo *dialer)
    svr->dialer = dialer;
    efl_io_closer_close_on_exec_set(dialer, EINA_TRUE);
    efl_io_closer_close_on_destructor_set(dialer, EINA_TRUE);
-   efl_io_buffered_stream_inactivity_timeout_set(dialer, svr->timeout);
+   efl_io_buffered_stream_timeout_inactivity_set(dialer, svr->timeout);
    efl_event_callback_array_add(dialer, _ecore_con_server_dialer_cbs(), svr);
 
    if (efl_isa(inner_dialer, EFL_NET_DIALER_TCP_CLASS))
@@ -2138,7 +2138,7 @@ ecore_con_server_timeout_set(Ecore_Con_Server *svr, double timeout)
    svr->timeout = timeout; /* used for new clients */
 
    if (!svr->dialer) return;
-   efl_io_buffered_stream_inactivity_timeout_set(svr->dialer, timeout);
+   efl_io_buffered_stream_timeout_inactivity_set(svr->dialer, timeout);
 }
 
 EAPI double

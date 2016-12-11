@@ -166,7 +166,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
     */
    efl_event_callback_array_add(client, client_cbs(), NULL);
 
-   efl_io_buffered_stream_inactivity_timeout_set(client, timeout);
+   efl_io_buffered_stream_timeout_inactivity_set(client, timeout);
 
    /*
     * Since sockets are reader/writer/closer objects, we can use the
