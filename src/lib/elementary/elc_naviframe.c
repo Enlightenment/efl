@@ -460,7 +460,7 @@ _access_obj_process(Elm_Naviframe_Item_Data *it, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_elm_naviframe_item_elm_widget_item_part_text_set(Eo *eo_it EINA_UNUSED,
+_elm_naviframe_item_elm_widget_item_part_text_set(Eo *eo_it,
                                                   Elm_Naviframe_Item_Data *it,
                                                   const char *part,
                                                   const char *label)
@@ -526,7 +526,7 @@ _elm_naviframe_item_elm_widget_item_part_text_set(Eo *eo_it EINA_UNUSED,
         if (nit->title_label) strncat(buf, " ", 1);
         strncat(buf, nit->subtitle_label, sizeof(buf) - strlen(buf) - 2);
      }
-   elm_interface_atspi_accessible_name_set(VIEW(it), buf);
+   elm_interface_atspi_accessible_name_set(eo_it, buf);
 
    elm_layout_sizing_eval(WIDGET(nit));
 }
@@ -1224,6 +1224,8 @@ _item_new(Evas_Object *obj,
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
    eo_item = efl_add(ELM_NAVIFRAME_ITEM_CLASS, obj);
+   elm_interface_atspi_accessible_role_set(eo_item, ELM_ATSPI_ROLE_PAGE_TAB);
+   elm_interface_atspi_accessible_name_set(eo_item, (char*)title_label);
 
    if (!eo_item)
      {
@@ -1235,8 +1237,6 @@ _item_new(Evas_Object *obj,
 
    //item base layout
    VIEW(it) = elm_layout_add(obj);
-   elm_interface_atspi_accessible_role_set(VIEW(it), ELM_ATSPI_ROLE_PAGE_TAB);
-   elm_interface_atspi_accessible_name_set(VIEW(it), (char*)title_label);
    evas_object_smart_member_add(VIEW(it), obj);
 
    if (!elm_widget_sub_object_add(obj, VIEW(it)))
@@ -1984,6 +1984,15 @@ _elm_naviframe_item_pop_cb_set(Eo *eo_item EINA_UNUSED,
 {
    nit->pop_cb = func;
    nit->pop_data = data;
+}
+
+EOLIAN static Eina_List*
+_elm_naviframe_item_elm_interface_atspi_accessible_children_get(Eo *eo_item EINA_UNUSED, Elm_Naviframe_Item_Data *nit)
+{
+   Eina_List *ret = NULL;
+
+   ret = eina_list_append(ret, VIEW(nit));
+   return ret;
 }
 
 EOLIAN static void

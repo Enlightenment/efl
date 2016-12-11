@@ -84,5 +84,6 @@ class Elm.Naviframe.Item(Elm.Widget.Item)
         Elm.Widget.Item.part_content.get;
         Elm.Widget.Item.part_content.set;
         Elm.Widget.Item.part_content_unset;
+        Elm.Interface.Atspi_Accessible.children.get;
    }
 }
