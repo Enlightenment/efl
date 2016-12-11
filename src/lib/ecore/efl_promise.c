@@ -500,7 +500,7 @@ _efl_loop_future_class_initializer(Efl_Class *klass)
 
 static const Efl_Class_Description _efl_loop_future_class_desc = {
   EO_VERSION,
-  "Efl_Future",
+  "Efl.Future",
   EFL_CLASS_TYPE_REGULAR,
   sizeof (Efl_Loop_Future_Data),
   _efl_loop_future_class_initializer,

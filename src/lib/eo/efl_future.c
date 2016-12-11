@@ -28,7 +28,7 @@ _efl_future_class_initializer(Efl_Class *klass)
 
 static const Efl_Class_Description _efl_future_class_desc = {
   EO_VERSION,
-  "Efl_Future",
+  "Efl.Future",
   EFL_CLASS_TYPE_REGULAR_NO_INSTANT,
   0,
   _efl_future_class_initializer,
