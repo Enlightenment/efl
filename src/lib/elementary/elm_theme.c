@@ -52,7 +52,6 @@ _elm_theme_item_finalize(Elm_Theme_Files *files,
         if (v < 110) // bump this version number when we need to
           {
              WRN("Selected theme is too old (version = %d, needs >= 110)", v);
-             free(version);
           }
         free(version);
      }
