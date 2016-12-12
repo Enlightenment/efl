@@ -128,7 +128,7 @@ class Efl.Net.Ip.Address (Efl.Object) {
             ]]
             get { }
             values {
-                str: string @nonull;
+                str: string @nonull; [[Numeric address as string]]
             }
         }
 
@@ -162,7 +162,7 @@ class Efl.Net.Ip.Address (Efl.Object) {
               Must be set after @.family.
             ]]
             values {
-                address: const(ptr(Eina.Slice)) @nonull;
+                address: const(ptr(Eina.Slice)) @nonull; [[Address]]
             }
         }
 
@@ -172,7 +172,7 @@ class Efl.Net.Ip.Address (Efl.Object) {
               May only be set once, afterwards the object is not changing.
             ]]
             values {
-                sockaddr: const(void_ptr) @nonull;
+                sockaddr: const(void_ptr) @nonull; [[Sockaddr struct]]
             }
         }
 
