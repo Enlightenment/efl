@@ -1034,7 +1034,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_parse_fail)
 }
 END_TEST
 
-static Eina_Bool
+static const char *
 _ipv6_localhost_check(void)
 {
 #ifndef ETC_HOSTS
@@ -1045,15 +1045,17 @@ _ipv6_localhost_check(void)
 #endif
 #endif
    Eina_File *f;
-   Eina_Bool has = EINA_FALSE;
    Eina_Iterator *it;
    Eina_File_Line *line;
+   static const char localhost[] = "localhost";
+   static const char localhost6[] = "localhost6";
+   const char *found = NULL;
 
    f = eina_file_open(ETC_HOSTS, EINA_FALSE);
    if (!f)
      {
         fprintf(stderr, "WARNING: your system misses %s: %s\n", ETC_HOSTS, eina_error_msg_get(eina_error_get() ? : errno));
-        return EINA_FALSE;
+        return NULL;
      }
 
    it = eina_file_map_lines(f);
@@ -1104,37 +1106,41 @@ _ipv6_localhost_check(void)
              if (e > p)
                {
                   size_t len = e - p;
-                  if ((len == strlen("localhost")) && (memcmp(p, "localhost", strlen("localhost")) == 0))
-                    has = EINA_TRUE;
+                  if ((len == strlen(localhost)) && (memcmp(p, localhost, strlen(localhost)) == 0))
+                    found = localhost;
+                  else if ((len == strlen(localhost6)) && (memcmp(p, localhost6, strlen(localhost6)) == 0))
+                    found = localhost6;
                }
              p = e;
           }
-        if (has) break;
+        if (found) break;
      }
    eina_iterator_free(it);
 
  end:
-   if (!has) fprintf(stderr, "WARNING: your system miss '::1 localhost' in %s\n", ETC_HOSTS);
+   if (!found) fprintf(stderr, "WARNING: your system miss '::1 localhost' or '::1 localhost6' in %s\n", ETC_HOSTS);
    eina_file_close(f);
-   return has;
+   return found;
 }
 
 START_TEST(ecore_test_efl_net_ip_address_ipv6_resolve_ok)
 {
    struct resolve_ctx ctx = { };
-   Eina_Bool has_localhost_ipv6;
+   char buf[4096];
+   const char *localhost_str;
 
    ecore_con_init();
 
-   has_localhost_ipv6 = _ipv6_localhost_check();
+   localhost_str = _ipv6_localhost_check();
 
-   if (has_localhost_ipv6)
+   if (localhost_str)
      {
-        _resolve(&ctx, "localhost:http", 0, 0);
+        snprintf(buf, sizeof(buf), "%s:http", localhost_str);
+        _resolve(&ctx, buf, 0, 0);
         _assert_found(&ctx, "[::1]:80", EINA_TRUE, 0);
         _resolve_cleanup(&ctx);
 
-        _resolve(&ctx, "localhost", 0, 0);
+        _resolve(&ctx, localhost_str, 0, 0);
         _assert_found(&ctx, "[::1]", EINA_TRUE, 0);
         _resolve_cleanup(&ctx);
      }
@@ -1157,13 +1163,15 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_resolve_ok)
    _assert_found(&ctx, "[::1]:80", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 
-   if (has_localhost_ipv6)
+   if (localhost_str)
      {
-        _resolve(&ctx, "localhost:80", 0, 0);
+        snprintf(buf, sizeof(buf), "%s:80", localhost_str);
+        _resolve(&ctx, buf, 0, 0);
         _assert_found(&ctx, "[::1]:80", EINA_TRUE, 0);
         _resolve_cleanup(&ctx);
 
-        _resolve(&ctx, "localhost:http", AF_INET6, 0);
+        snprintf(buf, sizeof(buf), "%s:http", localhost_str);
+        _resolve(&ctx, buf, AF_INET6, 0);
         _assert_found(&ctx, "127.0.0.1:80", EINA_FALSE, 0);
         _resolve_cleanup(&ctx);
      }
