@@ -1058,6 +1058,12 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
         return;
      }
 
+   if (pd->redirect)
+     {
+        //first unset the redirect
+        efl_ui_focus_manager_redirect_set(obj, NULL);
+     }
+
    //check if this is already the focused object
    old_focus = eina_list_last_data_get(pd->focus_stack);
 
@@ -1111,7 +1117,6 @@ _efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, E
              if (new_candidate)
                {
                   //redirect does not have smth. but we do have.
-                  efl_ui_focus_manager_redirect_set(obj, NULL);
                   efl_ui_focus_manager_focus(obj, new_candidate);
                }
           }
