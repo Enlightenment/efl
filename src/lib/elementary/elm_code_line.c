@@ -224,7 +224,7 @@ elm_code_line_contains_widget_cursor(Elm_Code_Line *line)
 
    EINA_LIST_FOREACH(code->widgets, item, widget)
      {
-        elm_code_widget_cursor_position_get(widget, &col, &number);
+        elm_code_widget_cursor_position_get(widget, &number, &col);
 
         if (number == line->number)
           return EINA_TRUE;

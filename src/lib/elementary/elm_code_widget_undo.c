@@ -45,7 +45,7 @@ _elm_code_widget_undo_change(Evas_Object *widget,
      }
    else
      {
-        elm_code_widget_cursor_position_set(widget, info->start_col, info->start_line);
+        elm_code_widget_cursor_position_set(widget, info->start_line, info->start_col);
         _elm_code_widget_text_at_cursor_insert_no_undo(widget, info->content, info->length);
      }
 }

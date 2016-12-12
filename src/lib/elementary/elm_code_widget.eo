@@ -168,8 +168,8 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
             [[Get the current x and y position of the widget's cursor.]]
          }
          values {
+            row: uint; [[The vertical position ov the cursur - the fist row is 1]]
             col: uint; [[The horizontal position of the cursor, starting from column 1]]
-            line: uint; [[The vertical position of the cursor - the top row is 1]]
          }
       }
       line_refresh {
