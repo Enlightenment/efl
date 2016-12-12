@@ -5,6 +5,10 @@
 #include <string.h>
 #include <sys/types.h>
 
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
+
 #include <Ecore.h>
 #include <ecore_private.h>
 #include <Ecore_Con.h>
