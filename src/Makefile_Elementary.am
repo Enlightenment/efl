@@ -757,8 +757,8 @@ bin/elementary/test_eio.c \
 bin/elementary/test_entry.c \
 bin/elementary/test_entry_anchor.c \
 bin/elementary/test_entry_anchor2.c \
-bin/elementary/test_external.c \
 bin/elementary/test_events.c \
+bin/elementary/test_external.c \
 bin/elementary/test_fileselector_button.c \
 bin/elementary/test_fileselector.c \
 bin/elementary/test_fileselector_entry.c \
@@ -775,6 +775,7 @@ bin/elementary/test_genlist.c \
 bin/elementary/test_gesture_layer.c \
 bin/elementary/test_gesture_layer2.c \
 bin/elementary/test_gesture_layer3.c \
+bin/elementary/test_gfx_filters.c \
 bin/elementary/test_glview_simple.c \
 bin/elementary/test_glview.c \
 bin/elementary/test_glview_manygears.c \

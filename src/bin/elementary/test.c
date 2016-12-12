@@ -298,6 +298,7 @@ void test_code_diff_inline(void *data, Evas_Object *obj, void *event_info);
 
 void test_efl_ui_text(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_label(void *data, Evas_Object *obj, void *event_info);
+void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
 
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
@@ -995,6 +996,7 @@ add_tests:
    ADD_TEST(NULL, "Miscellaneous", "Accessibility2", test_access2);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility3", test_access3);
    ADD_TEST(NULL, "Miscellaneous", "Font overlay", test_config_font_overlay);
+   ADD_TEST(NULL, "Miscellaneous", "Gfx Filters", test_gfx_filters);
 
    //------------------------------//
    ADD_TEST(NULL, "Widgets Disable/Enable", "Box", test_box_disable);
