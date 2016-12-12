@@ -406,7 +406,38 @@ convert_border_set(Efl_Ui_Focus_Manager_Data *pd, Node *node, Eina_List *focusab
 }
 
 static void
-dirty_flush(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Data *pd)
+dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Node *node)
+{
+   Eina_List *x_partners_pos, *x_partners_neg;
+   Eina_List *y_partners_pos, *y_partners_neg;
+
+   _calculate_node(pd, node->focusable, DIMENSION_X, &x_partners_pos, &x_partners_neg);
+   _calculate_node(pd, node->focusable, DIMENSION_Y, &y_partners_pos, &y_partners_neg);
+
+   convert_border_set(pd, node, x_partners_pos, EFL_UI_FOCUS_DIRECTION_RIGHT);
+   convert_border_set(pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT);
+   convert_border_set(pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP);
+   convert_border_set(pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN);
+
+#ifdef DEBUG
+   _debug_node(node);
+#endif
+}
+
+static void
+dirty_flush(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Data *pd, Node *node)
+{
+   if (!eina_list_data_find(pd->dirty, node)) return;
+
+   efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, NULL);
+
+   pd->dirty = eina_list_remove(pd->dirty, node);
+
+   dirty_flush_node(obj, pd, node);
+}
+
+static void
+dirty_flush_all(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Data *pd)
 {
    Node *node;
 
@@ -414,22 +445,10 @@ dirty_flush(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Data *pd)
 
    EINA_LIST_FREE(pd->dirty, node)
      {
-        Eina_List *x_partners_pos, *x_partners_neg;
-        Eina_List *y_partners_pos, *y_partners_neg;
-
-        _calculate_node(pd, node->focusable, DIMENSION_X, &x_partners_pos, &x_partners_neg);
-        _calculate_node(pd, node->focusable, DIMENSION_Y, &y_partners_pos, &y_partners_neg);
-
-        convert_border_set(pd, node, x_partners_pos, EFL_UI_FOCUS_DIRECTION_RIGHT);
-        convert_border_set(pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT);
-        convert_border_set(pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP);
-        convert_border_set(pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN);
-
-#ifdef DEBUG
-        _debug_node(node);
-#endif
+        dirty_flush_node(obj, pd, node);
      }
 }
+
 static void
 dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Node *dirty)
 {
@@ -781,7 +800,7 @@ _efl_ui_focus_manager_border_elements_get(Eo *obj, Efl_Ui_Focus_Manager_Data *pd
 {
    Border_Elements_Iterator *it;
 
-   dirty_flush(obj, pd);
+   dirty_flush_all(obj, pd);
 
    it = calloc(1, sizeof(Border_Elements_Iterator));
 
@@ -957,6 +976,9 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_D
         return NULL;
 
      }
+
+   dirty_flush(obj, pd, upper);
+
 #ifdef DEBUG
    _debug_node(upper);
 #endif
@@ -976,8 +998,6 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_D
 EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Direction direction)
 {
-   dirty_flush(obj, pd);
-
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_CHECK(direction), NULL);
 
    if (pd->redirect)
@@ -1163,7 +1183,7 @@ _efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
 
    res = calloc(1, sizeof(Efl_Ui_Focus_Relations));
 
-   dirty_flush(obj, pd);
+   dirty_flush(obj, pd, n);
 
 #define DIR_CLONE(dir) _convert(G(n).directions[dir].partners);
 
