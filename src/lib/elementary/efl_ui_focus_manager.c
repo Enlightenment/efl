@@ -749,6 +749,8 @@ _efl_ui_focus_manager_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Data *
 
    eina_hash_free(pd->node_hash);
 
+   efl_ui_focus_manager_redirect_set(obj, NULL);
+
    if (pd->root)
      node_item_free(pd->root);
    pd->root = NULL;
