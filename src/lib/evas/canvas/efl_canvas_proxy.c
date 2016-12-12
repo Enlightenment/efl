@@ -207,7 +207,7 @@ _evas_image_proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *cur_prox
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
 
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, cur_source->proxy, Evas_Object_Proxy_Data, proxy_write)
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, cur_proxy->proxy, Evas_Object_Proxy_Data, proxy_write)
      proxy_write->is_proxy = EINA_FALSE;
    EINA_COW_WRITE_END(evas_object_proxy_cow, cur_proxy->proxy, proxy_write);
 }
