@@ -35,16 +35,6 @@ typedef struct _Efl_Debug_Message_Header {
    char op[4];
 } Efl_Debug_Message_Header;
 
-void _protocol_collect(unsigned char **buf, unsigned int *buf_size,
-                       void *data, int size);
-int _proto_read(unsigned char **buf, unsigned int *buf_size,
-                char *op, unsigned char **data);
-
-#define fetch_val(dst, buf, off) \
-   memcpy(&dst, ((unsigned char *)buf) + off, sizeof(dst))
-#define store_val(buf, off, src) \
-   memcpy(buf + off, &src, sizeof(src))
-
 #define IS_OP(x) memcmp(op, OP_ ## x, 4) == 0
 
 #define DECLARE_OP(x) static char OP_ ## x[4] = #x
