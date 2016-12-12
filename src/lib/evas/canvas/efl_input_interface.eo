@@ -79,6 +79,22 @@ interface Efl.Input.Interface ()
          }
          return: iterator<const(Efl.Input.Pointer)>; [[Iterator to pointer positions]]
       }
+      @property seat_event_filter {
+          set {
+             [[Add or remove a given seat to the filter list. If the filter list is empty this object
+               will report mouse, keyboard and focus events from any seat, otherwise those events will
+               only be reported if the event comes from a seat that is in the list.]]
+          }
+          get {
+             [[Check if input events from a given seat is enabled.]]
+          }
+          keys {
+             seat: Efl.Input.Device; [[The seat to act on.]]
+          }
+          values {
+             enable: bool; [[$true to enable events for a seat or $false otherwise.]]
+          }
+      }
    }
    events {
       pointer,move: Efl.Input.Pointer;   [[Main pointer move (current and previous positions are known).]]

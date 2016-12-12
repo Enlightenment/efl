@@ -19,6 +19,7 @@
 /evas_aspect_hints
 /evas_box
 /evas_buffer_simple
+/evas_event_filter
 /evas_canvas3d_aabb
 /evas_canvas3d_blending
 /evas_canvas3d_colorpick

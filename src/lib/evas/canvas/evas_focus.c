@@ -167,6 +167,9 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT)
      return EINA_FALSE;
 
+   if (!efl_input_seat_event_filter_get(eo_obj, seat))
+     return EINA_FALSE;
+
    if (_already_focused(obj->focused_by_seats, seat))
      goto end;
 

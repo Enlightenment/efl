@@ -887,6 +887,101 @@ evas_object_del(Evas_Object *eo_obj)
    efl_del(eo_obj);
 }
 
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_input_interface_seat_event_filter_get(Eo *eo_obj EINA_UNUSED,
+                                                             Evas_Object_Protected_Data *obj,
+                                                             Efl_Input_Device *seat)
+{
+   //If the list is empty this object accept events from any seat.
+   if (!obj->events_whitelist)
+     return EINA_TRUE;
+   return eina_list_data_find(obj->events_whitelist, seat) ?
+     EINA_TRUE : EINA_FALSE;
+}
+
+static void
+_whitelist_events_device_remove_cb(void *data, const Efl_Event *event)
+{
+   Evas_Object_Protected_Data *obj = data;
+   obj->events_whitelist = eina_list_remove(obj->events_whitelist,
+                                            event->object);
+}
+
+EOLIAN static void
+_efl_canvas_object_efl_input_interface_seat_event_filter_set(Eo *eo_obj,
+                                                             Evas_Object_Protected_Data *obj,
+                                                             Efl_Input_Device *seat,
+                                                             Eina_Bool add)
+{
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+
+   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   if (add)
+     {
+        if (eina_list_data_find(obj->events_whitelist, seat)) return;
+        if (efl_canvas_object_seat_focus_check(eo_obj, seat))
+          efl_canvas_object_seat_focus_del(eo_obj, seat);
+        obj->events_whitelist = eina_list_append(obj->events_whitelist, seat);
+        efl_event_callback_add(seat, EFL_EVENT_DEL,
+                               _whitelist_events_device_remove_cb, obj);
+     }
+   else
+     {
+        obj->events_whitelist = eina_list_remove(obj->events_whitelist, seat);
+        efl_event_callback_del(seat, EFL_EVENT_DEL,
+                               _whitelist_events_device_remove_cb, obj);
+     }
+}
+
+static Eina_Bool
+_is_event_blocked(Eo *eo_obj, const Efl_Event_Description *desc,
+                  void *event_info)
+{
+   if ((desc == EFL_EVENT_FOCUS_IN) ||
+       (desc == EFL_EVENT_FOCUS_OUT) ||
+       (desc == EFL_EVENT_KEY_DOWN) ||
+       (desc == EFL_EVENT_KEY_UP) ||
+       (desc == EFL_EVENT_HOLD) ||
+       (desc == EFL_EVENT_POINTER_IN) ||
+       (desc == EFL_EVENT_POINTER_OUT) ||
+       (desc == EFL_EVENT_POINTER_DOWN) ||
+       (desc == EFL_EVENT_POINTER_UP) ||
+       (desc == EFL_EVENT_POINTER_MOVE) ||
+       (desc == EFL_EVENT_POINTER_WHEEL) ||
+       (desc == EFL_EVENT_POINTER_CANCEL) ||
+       (desc == EFL_EVENT_POINTER_AXIS) ||
+       (desc == EFL_EVENT_FINGER_MOVE) ||
+       (desc == EFL_EVENT_FINGER_DOWN) ||
+       (desc == EFL_EVENT_FINGER_UP))
+     {
+        Efl_Input_Device *seat = efl_input_device_seat_get(efl_input_device_get(event_info));
+        return !efl_input_seat_event_filter_get(eo_obj, seat);
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_call(Eo *eo_obj,
+                                                  Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                                  const Efl_Event_Description *desc,
+                                                  void *event_info)
+{
+   if (_is_event_blocked(eo_obj, desc, event_info)) return EINA_FALSE;
+   return efl_event_callback_call(efl_super(eo_obj, MY_CLASS),
+                                  desc, event_info);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_legacy_call(Eo *eo_obj,
+                                                         Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                                         const Efl_Event_Description *desc,
+                                                         void *event_info)
+{
+   if (_is_event_blocked(eo_obj, desc, event_info)) return EINA_FALSE;
+   return efl_event_callback_legacy_call(efl_super(eo_obj, MY_CLASS),
+                                         desc, event_info);
+}
+
 EOLIAN static void
 _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
@@ -914,6 +1009,8 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, _evas_object_event_new(), NULL);
    if ((obj->layer) && (obj->layer->evas))
      _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
+   EINA_LIST_FREE(obj->events_whitelist, dev)
+     efl_event_callback_del(dev, EFL_EVENT_DEL, _whitelist_events_device_remove_cb, obj);
    if (obj->name) evas_object_name_set(eo_obj, NULL);
    if (!obj->layer)
      {
