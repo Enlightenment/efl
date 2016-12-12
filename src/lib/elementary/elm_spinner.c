@@ -51,9 +51,9 @@ _inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event);
 static void
 _text_button_focused_cb(void *data, const Efl_Event *event);
 static void
-_button_focused_cb(void *data, const Efl_Event *event);
-static void
 _entry_unfocused_cb(void *data, const Efl_Event *event);
+static void
+_entry_activated_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
    { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
@@ -377,13 +377,16 @@ _entry_hide(Evas_Object *obj)
 
    if (sd->button_layout)
      {
-        elm_layout_signal_emit(obj, "elm,state,entry,inactive", "elm");
-        evas_object_hide(sd->ent);
         elm_layout_signal_emit(obj, "elm,state,button,active", "elm");
         evas_object_show(sd->text_button);
+        elm_layout_signal_emit(obj, "elm,state,entry,inactive", "elm");
+        evas_object_hide(sd->ent);
      }
    else
      elm_layout_signal_emit(obj, "elm,state,inactive", "elm");
+
+   if (sd->entry_visible && !evas_focus_state_get(evas_object_evas_get(obj)))
+     sd->entry_reactivate = EINA_TRUE;
 
    sd->entry_visible = EINA_FALSE;
 }
@@ -399,6 +402,8 @@ _entry_value_apply(Evas_Object *obj)
 
    if (!sd->entry_visible) return;
 
+   efl_event_callback_del
+    (sd->ent, ELM_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
    _entry_hide(obj);
    str = elm_object_text_get(sd->ent);
    if (!str) return;
@@ -608,14 +613,8 @@ _toggle_entry(Evas_Object *obj)
              elm_entry_markup_filter_append(sd->ent, _invalid_input_validity_filter, NULL);
              if (_elm_config->spinner_min_max_filter_enable)
                elm_entry_markup_filter_append(sd->ent, _min_max_validity_filter, obj);
-             if (sd->inc_button)
-               efl_event_callback_add
-                  (sd->inc_button, ELM_WIDGET_EVENT_FOCUSED, _button_focused_cb, obj);
-             if (sd->dec_button)
-               efl_event_callback_add
-                  (sd->dec_button, ELM_WIDGET_EVENT_FOCUSED, _button_focused_cb, obj);
              efl_event_callback_add
-                (sd->ent, ELM_ENTRY_EVENT_ACTIVATED, _entry_unfocused_cb, obj);
+                (sd->ent, ELM_ENTRY_EVENT_ACTIVATED, _entry_activated_cb, obj);
           }
         if (!sd->button_layout)
           {
@@ -625,6 +624,10 @@ _toggle_entry(Evas_Object *obj)
              elm_widget_focus_set(sd->ent, EINA_TRUE);
              sd->entry_visible = EINA_TRUE;
           }
+
+        efl_event_callback_add
+           (sd->ent, ELM_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
+        sd->entry_visible = EINA_TRUE;
         elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
         evas_object_show(sd->ent);
      }
@@ -811,7 +814,6 @@ _inc_dec_button_clicked_cb(void *data, const Efl_Event *event)
    sd->spin_speed = sd->inc_btn_activated ? sd->step : -sd->step;
    _spin_value(data);
 
-   if (sd->entry_visible) _entry_value_apply(data);
    if (_elm_config->access_mode)
      _access_increment_decrement_info_say(data, EINA_TRUE);
 }
@@ -828,9 +830,6 @@ _inc_dec_button_pressed_cb(void *data, const Efl_Event *event)
    sd->longpress_timer = ecore_timer_add
                            (_elm_config->longpress_timeout,
                             _val_inc_dec_start, data);
-
-   if (sd->entry_visible) _entry_value_apply(data);
-   if (sd->entry_reactivate) sd->entry_reactivate = EINA_FALSE;
 }
 
 static void
@@ -850,27 +849,19 @@ _inc_dec_button_unpressed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 static void
 _text_button_focused_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   ELM_SPINNER_DATA_GET(data, sd);
-
-   sd->entry_visible = EINA_FALSE;
    _toggle_entry(data);
 }
 
 static void
-_button_focused_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_entry_activated_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   ELM_SPINNER_DATA_GET(data, sd);
-
-   sd->entry_visible = EINA_TRUE;
    _toggle_entry(data);
 }
+
 
 static void
 _entry_unfocused_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   ELM_SPINNER_DATA_GET(data, sd);
-
-   sd->entry_visible = EINA_TRUE;
    _toggle_entry(data);
 }
 
@@ -922,10 +913,6 @@ _elm_spinner_elm_widget_on_focus(Eo *obj, Elm_Spinner_Data *sd, Elm_Object_Item 
      {
         ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
         ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
-
-        if (sd->entry_visible) sd->entry_reactivate = EINA_TRUE;
-
-        _entry_value_apply(obj);
      }
    else
      {
@@ -1348,10 +1335,7 @@ _elm_spinner_elm_widget_focus_direction(Eo *obj, Elm_Spinner_Data *_pd, const Ev
    list_data_get = eina_list_data_get;
 
    items = eina_list_append(items, _pd->inc_button);
-   if (_pd->entry_visible)
-     items = eina_list_append(items, _pd->ent);
-   else
-     items = eina_list_append(items, _pd->text_button);
+   items = eina_list_append(items, _pd->text_button);
    items = eina_list_append(items, _pd->dec_button);
 
    ret = elm_widget_focus_list_direction_get
@@ -1390,14 +1374,7 @@ _elm_spinner_elm_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd, Elm_Focus_Dir
    if (!elm_widget_disabled_get(obj))
      {
         items = eina_list_append(items, _pd->dec_button);
-        if (_pd->entry_visible)
-          items = eina_list_append(items, _pd->ent);
-        else
-          {
-             if (_pd->entry_reactivate) _pd->entry_reactivate = EINA_FALSE;
-
-             items = eina_list_append(items, _pd->text_button);
-          }
+        items = eina_list_append(items, _pd->text_button);
         items = eina_list_append(items, _pd->inc_button);
      }
    return elm_widget_focus_list_next_get
