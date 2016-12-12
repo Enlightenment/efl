@@ -2471,7 +2471,6 @@ _item_new(Evas_Object *obj,
    VIEW(it) = elm_layout_add(obj);
    elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
    evas_object_data_set(VIEW(it), "item", it);
-   elm_interface_atspi_accessible_type_set(VIEW(it), ELM_ATSPI_TYPE_DISABLED);
 
    icon_obj = elm_icon_add(VIEW(it));
 
@@ -2859,7 +2858,6 @@ _elm_toolbar_efl_canvas_group_group_add(Eo *obj, Elm_Toolbar_Data *priv)
    else
      elm_object_signal_emit(priv->more, "elm,orient,horizontal", "elm");
 
-   elm_interface_atspi_accessible_type_set(priv->more, ELM_ATSPI_TYPE_DISABLED);
    elm_widget_sub_object_add(obj, priv->more);
    evas_object_show(priv->more);
 

@@ -432,7 +432,6 @@ elm_box_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_box_efl_object_constructor(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 {
-   elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_SKIPPED);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);

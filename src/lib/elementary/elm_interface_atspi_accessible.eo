@@ -1,14 +1,6 @@
 /* FIXME: This definitely shouldn't be here. */
 type Efl_Event_Cb: __undefined_type; [[Efl event callback type]]
 
-enum Elm.Atspi.Type
-{
-   [[Type of accessibility object]]
-   regular, [[default accessibile object]]
-   disabled, [[skip object and its children in accessibility hierarchy]]
-   skipped [[skip object in accessibility hierarchy]]
-}
-
 enum Elm.Atspi.Role
 {
    [[Describes the role of an object visible to AT-SPI Clients.]]
@@ -380,16 +372,6 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          values {
             domain: string; [[Translation domain]]
          }
-      }
-      @property type {
-           [[Type of accessibility object]]
-           get {
-           }
-           set {
-           }
-           values {
-               type: Elm.Atspi.Type; [[Object type]]
-           }
       }
       relationship_append {
          [[Defines the relationship between two accessible objects.
