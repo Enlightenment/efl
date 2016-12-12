@@ -19,6 +19,8 @@
 # include <Evil.h>
 #endif
 
+#include <ctype.h>
+
 #include "ecore_con_suite.h"
 
 struct log_ctx {
@@ -155,7 +157,7 @@ _resolve_found(const struct resolve_ctx *ctx, const char *string)
    unsigned int i;
    const Efl_Net_Ip_Address *o;
 
-   mark_point();
+   ck_assert_ptr_ne(ctx->results, NULL);
 
    EINA_ARRAY_ITER_NEXT(ctx->results, i, o, it)
      {
@@ -164,6 +166,41 @@ _resolve_found(const struct resolve_ctx *ctx, const char *string)
      }
 
    return EINA_FALSE;
+}
+
+#define _assert_found(...) _assert_found_internal(__FILE__, __LINE__, __VA_ARGS__)
+static void
+_assert_found_internal(const char *file, int line, const struct resolve_ctx *ctx, const char *string, Eina_Bool expected, Eina_Error err)
+{
+   Eina_Bool found;
+   Eina_Array_Iterator it;
+   unsigned int i;
+   const Efl_Net_Ip_Address *o;
+
+   if (ctx->err != err)
+     _ck_assert_failed(file, line, "Failed",
+                       "Expected error=%d (%s), got %d (%s) resolving=%s",
+                       err, err ? eina_error_msg_get(err) : "success",
+                       ctx->err, ctx->err ? eina_error_msg_get(ctx->err) : "success",
+                       string,
+                       NULL);
+
+   if (err) return;
+
+   found = _resolve_found(ctx, string);
+   if (found == expected) return;
+
+   fprintf(stderr, "ERROR: did%s expect '%s' in results:\n",
+           expected ? "" : " NOT", string);
+
+   EINA_ARRAY_ITER_NEXT(ctx->results, i, o, it)
+     fprintf(stderr, "result %u: %s\n", i, efl_net_ip_address_string_get(o));
+
+     _ck_assert_failed(file, line, "Failed",
+                       "Expected found=%hhu, got %hhu resolving=%s",
+                       expected, found,
+                       string,
+                       NULL);
 }
 
 static void
@@ -214,7 +251,7 @@ _resolve(struct resolve_ctx *ctx, const char *address, int family, int flags)
    ck_assert_ptr_ne(ctx->future, NULL);
    efl_future_then(ctx->future, _resolve_done, _resolve_failed, NULL, ctx);
 
-   LOOP_WITH_TIMEOUT(5);
+   LOOP_WITH_TIMEOUT(10);
 }
 
 /* IPv4 *****************************************************************/
@@ -560,38 +597,31 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_resolve_ok)
    ecore_con_init();
 
    _resolve(&ctx, "localhost:http", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "127.0.0.1:80"), EINA_TRUE);
+   _assert_found(&ctx, "127.0.0.1:80", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 
    _resolve(&ctx, "localhost", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "127.0.0.1"), EINA_TRUE);
+   _assert_found(&ctx, "127.0.0.1", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 
    _resolve(&ctx, "127.0.0.1", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "127.0.0.1"), EINA_TRUE);
+   _assert_found(&ctx, "127.0.0.1", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 
    _resolve(&ctx, "127.0.0.1:http", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "127.0.0.1:80"), EINA_TRUE);
+   _assert_found(&ctx, "127.0.0.1:80", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 
    _resolve(&ctx, "127.0.0.1:80", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "127.0.0.1:80"), EINA_TRUE);
+   _assert_found(&ctx, "127.0.0.1:80", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 
    _resolve(&ctx, "localhost:80", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "127.0.0.1:80"), EINA_TRUE);
+   _assert_found(&ctx, "127.0.0.1:80", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 
    _resolve(&ctx, "localhost:http", AF_INET, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "[::1]:80"), EINA_FALSE);
+   _assert_found(&ctx, "[::1]:80", EINA_FALSE, 0);
    _resolve_cleanup(&ctx);
 
    ecore_con_shutdown();
@@ -617,11 +647,11 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_resolve_fail)
    TRAP_ERRORS_FINISH(1);
 
    _resolve(&ctx, "xxlocalhost:xxhttp", 0, 0);
-   ck_assert_int_eq(ctx.err, EFL_NET_ERROR_COULDNT_RESOLVE_HOST);
+   _assert_found(&ctx, "xxlocalhost:xxhttp", EINA_FALSE, EFL_NET_ERROR_COULDNT_RESOLVE_HOST);
    _resolve_cleanup(&ctx);
 
    _resolve(&ctx, "[::1]:http", AF_INET, 0);
-   ck_assert_int_eq(ctx.err, EFL_NET_ERROR_COULDNT_RESOLVE_HOST);
+   _assert_found(&ctx, "[::1]:http", EINA_FALSE, EFL_NET_ERROR_COULDNT_RESOLVE_HOST);
    _resolve_cleanup(&ctx);
 
    ecore_con_shutdown();
@@ -1004,53 +1034,139 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_parse_fail)
 }
 END_TEST
 
+static Eina_Bool
+_ipv6_localhost_check(void)
+{
+#ifndef ETC_HOSTS
+#ifdef _WIN32
+#define ETC_HOSTS "C:\\Windows\\System32\\Drivers\\etc\\hosts"
+#else
+#define ETC_HOSTS "/etc/hosts"
+#endif
+#endif
+   Eina_File *f;
+   Eina_Bool has = EINA_FALSE;
+   Eina_Iterator *it;
+   Eina_File_Line *line;
+
+   f = eina_file_open(ETC_HOSTS, EINA_FALSE);
+   if (!f)
+     {
+        fprintf(stderr, "WARNING: your system misses %s: %s\n", ETC_HOSTS, eina_error_msg_get(eina_error_get() ? : errno));
+        return EINA_FALSE;
+     }
+
+   it = eina_file_map_lines(f);
+   if (!it)
+     {
+        fprintf(stderr, "ERROR: could not map lines of %s\n", ETC_HOSTS);
+        goto end;
+     }
+   EINA_ITERATOR_FOREACH(it, line)
+     {
+        const char *p;
+
+        if (line->length < strlen("::1 localhost")) continue;
+
+        for (p = line->start; p < line->end; p++)
+          if (!isspace(p[0])) break;
+
+        if (p >= line->end) continue;
+        if (p[0] == '#') continue;
+        if ((size_t)(line->end - p) < strlen("::1 localhost")) continue;
+        if (memcmp(p, "::1", strlen("::1")) != 0) continue;
+
+        p += strlen("::1");
+
+        while (p < line->end)
+          {
+             const char *e;
+
+             if (!isspace(p[0]))
+               {
+                  p = line->end;
+                  break;
+               }
+             p++;
+
+             for (; p < line->end; p++)
+               if (!isspace(p[0])) break;
+             if (p >= line->end) break;
+             if (p[0] == '#')
+               {
+                  p = line->end;
+                  break;
+               }
+
+             for (e = p; e < line->end; e++)
+               if (isspace(e[0])) break;
+
+             if (e > p)
+               {
+                  size_t len = e - p;
+                  if ((len == strlen("localhost")) && (memcmp(p, "localhost", strlen("localhost")) == 0))
+                    has = EINA_TRUE;
+               }
+             p = e;
+          }
+        if (has) break;
+     }
+   eina_iterator_free(it);
+
+ end:
+   if (!has) fprintf(stderr, "WARNING: your system miss '::1 localhost' in %s\n", ETC_HOSTS);
+   eina_file_close(f);
+   return has;
+}
+
 START_TEST(ecore_test_efl_net_ip_address_ipv6_resolve_ok)
 {
    struct resolve_ctx ctx = { };
+   Eina_Bool has_localhost_ipv6;
 
    ecore_con_init();
 
-   _resolve(&ctx, "localhost:http", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "[::1]:80"), EINA_TRUE);
-   _resolve_cleanup(&ctx);
+   has_localhost_ipv6 = _ipv6_localhost_check();
 
-   _resolve(&ctx, "localhost", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "[::1]"), EINA_TRUE);
-   _resolve_cleanup(&ctx);
+   if (has_localhost_ipv6)
+     {
+        _resolve(&ctx, "localhost:http", 0, 0);
+        _assert_found(&ctx, "[::1]:80", EINA_TRUE, 0);
+        _resolve_cleanup(&ctx);
+
+        _resolve(&ctx, "localhost", 0, 0);
+        _assert_found(&ctx, "[::1]", EINA_TRUE, 0);
+        _resolve_cleanup(&ctx);
+     }
 
    _resolve(&ctx, "::1", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "[::1]"), EINA_TRUE);
+   _assert_found(&ctx, "[::1]", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 
 #if defined(AI_V4MAPPED) && (AI_V4MAPPED > 0)
    _resolve(&ctx, "127.0.0.1", AF_INET6, AI_V4MAPPED);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "[::ffff:127.0.0.1]"), EINA_TRUE);
+   _assert_found(&ctx, "[::ffff:127.0.0.1]", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 #endif
 
    _resolve(&ctx, "[::1]:http", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "[::1]:80"), EINA_TRUE);
+   _assert_found(&ctx, "[::1]:80", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 
    _resolve(&ctx, "[::1]:80", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "[::1]:80"), EINA_TRUE);
+   _assert_found(&ctx, "[::1]:80", EINA_TRUE, 0);
    _resolve_cleanup(&ctx);
 
-   _resolve(&ctx, "localhost:80", 0, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "[::1]:80"), EINA_TRUE);
-   _resolve_cleanup(&ctx);
+   if (has_localhost_ipv6)
+     {
+        _resolve(&ctx, "localhost:80", 0, 0);
+        _assert_found(&ctx, "[::1]:80", EINA_TRUE, 0);
+        _resolve_cleanup(&ctx);
 
-   _resolve(&ctx, "localhost:http", AF_INET6, 0);
-   ck_assert_int_eq(ctx.err, 0);
-   ck_assert_int_eq(_resolve_found(&ctx, "127.0.0.1:80"), EINA_FALSE);
-   _resolve_cleanup(&ctx);
+        _resolve(&ctx, "localhost:http", AF_INET6, 0);
+        _assert_found(&ctx, "127.0.0.1:80", EINA_FALSE, 0);
+        _resolve_cleanup(&ctx);
+     }
 
    ecore_con_shutdown();
 }
@@ -1066,7 +1182,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_resolve_fail)
 
 #if defined(AI_V4MAPPED) && (AI_V4MAPPED > 0)
    _resolve(&ctx, "127.0.0.1:http", AF_INET6, AI_CANONNAME); /* do NOT set V4MAPPED, but use non-zero */
-   ck_assert_int_eq(ctx.err, EFL_NET_ERROR_COULDNT_RESOLVE_HOST);
+   _assert_found(&ctx, "127.0.0.1:http", EINA_FALSE, EFL_NET_ERROR_COULDNT_RESOLVE_HOST);
    _resolve_cleanup(&ctx);
 #endif
 
