@@ -40,6 +40,7 @@ ecore_con_eolian_files += \
 endif
 
 ecore_con_eolian_type_files = \
+	lib/ecore_con/efl_net_types.eot \
         lib/ecore_con/efl_net_http_types.eot \
 	lib/ecore_con/efl_net_ssl_types.eot
 

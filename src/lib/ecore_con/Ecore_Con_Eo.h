@@ -1,3 +1,5 @@
+#include "efl_net_types.eot.h"
+
 #include "efl_net_socket.eo.h"
 #include "efl_net_dialer.eo.h"
 #include "efl_net_server.eo.h"

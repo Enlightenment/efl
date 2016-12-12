@@ -189,7 +189,7 @@ _efl_net_dialer_udp_resolved(void *data, const char *host EINA_UNUSED, const cha
 
    if (gai_error)
      {
-        err = EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST;
+        err = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
         goto end;
      }
 

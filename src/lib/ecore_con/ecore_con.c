@@ -56,12 +56,11 @@ int sd_fd_index = 0;
 int sd_fd_max = 0;
 #endif
 
+EWAPI Eina_Error EFL_NET_ERROR_COULDNT_RESOLVE_HOST = 0;
+
 EWAPI Eina_Error EFL_NET_DIALER_ERROR_COULDNT_CONNECT = 0;
 EWAPI Eina_Error EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_PROXY = 0;
-EWAPI Eina_Error EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST = 0;
 EWAPI Eina_Error EFL_NET_DIALER_ERROR_PROXY_AUTHENTICATION_FAILED = 0;
-
-EWAPI Eina_Error EFL_NET_SERVER_ERROR_COULDNT_RESOLVE_HOST = 0;
 
 EWAPI Eina_Error EFL_NET_SOCKET_SSL_ERROR_HANDSHAKE = 0;
 EWAPI Eina_Error EFL_NET_SOCKET_SSL_ERROR_CERTIFICATE_VERIFY_FAILED = 0;
@@ -101,12 +100,11 @@ ecore_con_init(void)
    ecore_con_mempool_init();
    ecore_con_legacy_init();
 
+   EFL_NET_ERROR_COULDNT_RESOLVE_HOST = eina_error_msg_static_register("Couldn't resolve host name");
+
    EFL_NET_DIALER_ERROR_COULDNT_CONNECT = eina_error_msg_static_register("Couldn't connect to server");
    EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_PROXY = eina_error_msg_static_register("Couldn't resolve proxy name");
-   EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST = eina_error_msg_static_register("Couldn't resolve host name");
    EFL_NET_DIALER_ERROR_PROXY_AUTHENTICATION_FAILED = eina_error_msg_static_register("Proxy authentication failed");
-
-   EFL_NET_SERVER_ERROR_COULDNT_RESOLVE_HOST = eina_error_msg_static_register("Couldn't resolve host name");
 
    EFL_NET_SOCKET_SSL_ERROR_HANDSHAKE = eina_error_msg_static_register("Failed SSL handshake");
    EFL_NET_SOCKET_SSL_ERROR_CERTIFICATE_VERIFY_FAILED = eina_error_msg_static_register("Failed to verify peer's certificate");
@@ -1000,7 +998,7 @@ _efl_net_ip_resolve_and_connect(const char *host, const char *port, int type, in
      {
         DBG("couldn't resolve host='%s', port='%s': %s",
             host, port, gai_strerror(r));
-        ret = EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST;
+        ret = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
         *sockfd = INVALID_SOCKET;
      }
    else
@@ -1218,7 +1216,7 @@ _efl_net_ip_connect_async_run_socks4(Efl_Net_Ip_Connect_Async_Data *d, const cha
      {
         DBG("couldn't resolve host='%s', port='%s': %s",
             host, port, gai_strerror(r));
-        d->error = EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST;
+        d->error = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
      }
    else
      {
@@ -1317,7 +1315,7 @@ _efl_net_ip_connect_async_run_socks4a(Efl_Net_Ip_Connect_Async_Data *d, const ch
    if (r != 0)
      {
         DBG("couldn't resolve port='%s': %s", port, gai_strerror(r));
-        d->error = EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST;
+        d->error = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
      }
    else
      {
@@ -1806,7 +1804,7 @@ _efl_net_ip_connect_async_run_socks5(Efl_Net_Ip_Connect_Async_Data *d, const cha
      {
         DBG("couldn't resolve host='%s', port='%s': %s",
             host, port, gai_strerror(r));
-        d->error = EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST;
+        d->error = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
      }
    else
      {
@@ -1928,7 +1926,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
                        if (r != 0)
                          {
                             DBG("couldn't resolve port='%s': %s", port, gai_strerror(r));
-                            d->error = EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_HOST;
+                            d->error = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
                          }
                        else
                          {

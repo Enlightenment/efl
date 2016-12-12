@@ -77,7 +77,7 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
              if (strlen(path) + 2 > sizeof(addr.sun_path))
                {
                   ERR("abstract path is too long: %s", path);
-                  err = EFL_NET_SERVER_ERROR_COULDNT_RESOLVE_HOST;
+                  err = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
                }
              addr.sun_path[0] = '\0';
              memcpy(addr.sun_path + 1, path, strlen(path) + 1);
@@ -89,7 +89,7 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
              if (strlen(path) + 1 > sizeof(addr.sun_path))
                {
                   ERR("path is too long: %s", path);
-                  err = EFL_NET_SERVER_ERROR_COULDNT_RESOLVE_HOST;
+                  err = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
                }
              memcpy(addr.sun_path, path, strlen(path) + 1);
              addrlen = strlen(path) + 1 + offsetof(struct sockaddr_un, sun_path);

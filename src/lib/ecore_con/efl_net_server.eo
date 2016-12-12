@@ -1,5 +1,3 @@
-var Efl.Net.Server.Error.COULDNT_RESOLVE_HOST: Eina.Error; [[The server could not resolve the given host name or port given as address.]]
-
 interface Efl.Net.Server {
     [[The basic server interface.
 

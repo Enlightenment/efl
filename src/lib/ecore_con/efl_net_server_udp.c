@@ -184,7 +184,7 @@ _efl_net_server_udp_resolved(void *data, const char *host EINA_UNUSED, const cha
 
    if (gai_error)
      {
-        err = EFL_NET_SERVER_ERROR_COULDNT_RESOLVE_HOST;
+        err = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
         goto end;
      }
 
