@@ -1098,7 +1098,6 @@ ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
    else
      {
         sanitized_path = eina_file_path_sanitize(path);
-        path = eina_file_path_sanitize(path);
         eina_stringshare_replace(&e->thumb_path, sanitized_path);
         eina_stringshare_replace(&e->thumb_key, key);
         free(sanitized_path);
