@@ -512,6 +512,7 @@ _efl_net_ip_address_resolve(Eo *cls EINA_UNUSED, void *pd EINA_UNUSED, const cha
    Efl_Net_Ip_Address_Resolve_Context *ctx;
    struct addrinfo hints = { };
    const char *host = NULL, *port = NULL;
+   Eina_Bool r;
    char *str;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, NULL);
@@ -526,8 +527,8 @@ _efl_net_ip_address_resolve(Eo *cls EINA_UNUSED, void *pd EINA_UNUSED, const cha
    str = strdup(address);
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, NULL);
 
-   efl_net_ip_port_split(str, &host, &port);
-   if ((!host) || (host[0] == '\0'))
+   r = efl_net_ip_port_split(str, &host, &port);
+   if ((!r) || (!host) || (host[0] == '\0'))
      {
         host = address;
         port = "0";
