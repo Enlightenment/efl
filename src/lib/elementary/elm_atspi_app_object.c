@@ -33,11 +33,7 @@ _elm_atspi_app_object_elm_interface_atspi_accessible_children_get(Eo *obj EINA_U
 
    EINA_LIST_FOREACH(_elm_win_list, l, win)
      {
-        Elm_Atspi_Type type;
-        if (!efl_isa(win, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-          continue;
-        type = elm_interface_atspi_accessible_type_get(win);
-        if (type == ELM_ATSPI_TYPE_REGULAR)
+        if (efl_isa(win, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
           accs = eina_list_append(accs, win);
      }
 

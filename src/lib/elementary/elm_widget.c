@@ -6318,22 +6318,12 @@ _elm_widget_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm
 {
    Eina_List *l, *accs = NULL;
    Evas_Object *widget;
-   Elm_Atspi_Type type;
 
    EINA_LIST_FOREACH(pd->subobjs, l, widget)
      {
         if (!elm_object_widget_check(widget)) continue;
         if (!efl_isa(widget, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN)) continue;
-        type = elm_interface_atspi_accessible_type_get(widget);
-        if (type == ELM_ATSPI_TYPE_DISABLED) continue;
-        if (type == ELM_ATSPI_TYPE_SKIPPED)
-          {
-             Eina_List *children;
-             children = elm_interface_atspi_accessible_children_get(widget);
-             accs = eina_list_merge(accs, children);
-             continue;
-          }
-        accs = eina_list_append(accs, widget);
+          accs = eina_list_append(accs, widget);
      }
    return accs;
 }
@@ -6341,15 +6331,7 @@ _elm_widget_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm
 EOLIAN static Eo*
 _elm_widget_elm_interface_atspi_accessible_parent_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   Elm_Atspi_Type type;
    Elm_Interface_Atspi_Accessible *parent = obj;
-
-   do {
-        ELM_WIDGET_DATA_GET_OR_RETURN(parent, wd, NULL);
-        parent = wd->parent_obj;
-        type = elm_interface_atspi_accessible_type_get(parent);
-   } while (parent && (type == ELM_ATSPI_TYPE_SKIPPED));
-
    return efl_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? parent : NULL;
 }
 
