@@ -97,6 +97,7 @@ efl_net_socket_ssl_dialer_example \
 efl_net_socket_ssl_server_example \
 efl_net_session_example \
 efl_net_control_example \
+efl_net_ip_address_example \
 ecore_ipc_server_example \
 ecore_ipc_client_example
 
@@ -365,6 +366,9 @@ efl_net_session_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
 efl_net_control_example_SOURCES = efl_net_control_example.c
 efl_net_control_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
+efl_net_ip_address_example_SOURCES = efl_net_ip_address_example.c
+efl_net_ip_address_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
 ecore_ipc_server_example_SOURCES = ecore_ipc_server_example.c
 ecore_ipc_server_example_LDADD = $(ECORE_IPC_COMMON_LDADD)

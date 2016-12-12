@@ -43,3 +43,5 @@
 #include "efl_net_control_access_point.eo.h"
 #include "efl_net_control.eo.h"
 #include "efl_net_session.eo.h"
+
+#include "efl_net_ip_address.eo.h"

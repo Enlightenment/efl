@@ -66,5 +66,6 @@
 /*.pem
 /efl_net_session_example
 /efl_net_control_example
+/efl_net_ip_address_example
 /ecore_ipc_server_example
 /ecore_ipc_client_example

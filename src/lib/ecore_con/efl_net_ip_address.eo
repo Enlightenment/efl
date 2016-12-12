@@ -1,0 +1,246 @@
+import eina_types;
+
+struct Efl.Net.Ip.Address.Resolve_Results {
+    [[The results of @Efl.Net.Ip.Address.resolve call.
+
+      This structure is created by @Efl.Net.Ip.Address.resolve.
+      XXX should be destroyed manually?
+
+      @since 1.19
+    ]]
+    request_address: string; [[The 'address' argument given to Efl.Net.Ip.Address.resolve]]
+    canonical_name: string; [[The canonical name, if it was requested in flags]]
+    results: array<Efl.Net.Ip.Address>; [[The resolved objects. Do not modify this array, but you can keep reference to elements using efl_ref() and efl_unref()]]
+}
+
+class Efl.Net.Ip.Address (Efl.Object) {
+    [[An Internet Protocol (IP) Address.
+
+      This class is a set of helpers to translate to and from address
+      strings used in Efl.Net. For IP they take the formats:
+
+        - IPv4 complete: 127.0.0.1:1234
+        - IPv4 no port: 127.0.0.1
+        - IPv6 complete: [::1]:1234
+        - IPv6 no port: [::1]
+        - IPv6 no braces (implies no port): ::1
+
+      However in other libraries one may use the address numbers or
+      even a 'struct sockaddr' handle and translating by yourself may
+      be too much work. To convert to a string, just create an
+      instance with @.create or @.create_sockaddr and then query
+      @.string. To convert from numeric string to sockaddr, create an
+      instance with @.parse and then query @.sockaddr.
+
+      To resolve a host and port name to numbers use @.resolve, this
+      will asynchronously resolve and return the results in a promise.
+
+      The result of @.string can be passed to @Efl.Net.Dialer.dial and
+      @Efl.Net.Server.serve
+
+      @since 1.19
+    ]]
+
+    methods {
+        create @class {
+            [[Create an object given family, port and address.
+
+              This is a convenience to create an object in a single
+              call. To create based on 'struct sockaddr', see
+              @.create_sockaddr. To create from string, see @.parse.
+            ]]
+            params {
+                port: uint16; [[Port number in Host/Native endianess]]
+                address: const(Eina.Slice); [[Address bytes. If 4 bytes, AF_INET will be used. If 16 bytes, AF_INET6 will be used. All other sizes will result in failure.]]
+            }
+            return: own(Efl.Net.Ip.Address); [[newly created object or $NULL if parameters were invalid.]]
+        }
+
+        create_sockaddr @class {
+            [[Create an object given sockaddr
+
+              This is a convenience to create an object in a single call.
+              To create based on native port and address bytes,
+              use @.create, to create from string use @.parse.
+            ]]
+            params {
+                sockaddr: const(void_ptr) @nonull; [[The pointer to struct sockaddr-compatible handle as per <netinet/in.h>.]]
+            }
+            return: own(Efl.Net.Ip.Address); [[newly created object or $NULL if parameter was invalid.]]
+        }
+
+        parse @class {
+            [[Parse a numeric address and return an object representing it.
+
+              This parses a numeric IPv4 or IPv6 address and optional
+              port, returning an object representing it on success or
+              $NULL on failure.
+
+              The address may be in the formats:
+
+               - IPv4 complete: 127.0.0.1:1234
+               - IPv4 no port: 127.0.0.1
+               - IPv6 complete: [::1]:1234
+               - IPv6 no port: [::1]
+               - IPv6 no braces (implies no port): ::1
+
+              If you want to translate address and port to numbers use
+              @.resolve.
+            ]]
+            params {
+                numeric_address: string; [[The numeric address to parse, such as '127.0.0.1:1234' or '[::1]:1234']]
+            }
+            return: own(Efl.Net.Ip.Address); [[The new IP address object or NULL if it failed to parse]]
+        }
+
+        resolve @class {
+            [[Asynchronously resolve host and port names.
+
+              This will resolve the host and port names, returning the
+              results asynchronously in a Future.
+
+              It's based on getaddrinfo() and will receive extra flags
+              to change its behavior.
+
+              Ports can also be named, for example http resolves to
+              80. Your system database is used (see getaddrinfo()).
+
+              You may try @.parse if you have numeric values for host
+              and port.
+            ]]
+            params {
+                address: string @nonull; [[The address such as enlightenment.org:http or enlightenment.org (port=0)]]
+                family: int @optional; [[Preferred family. AF_UNSPEC or 0 for both, otherwise one of AF_INET or AF_INET6]]
+                flags: int @optional; [[Flags to use with getaddrinfo(). If 0, default flags are used (AI_V4MAPPED | AI_ADDRCONFIG, if these exist in your system).]]
+            }
+            return: future<const(Efl.Net.Ip.Address.Resolve_Results)>; [[The resolve results. It contains a list of Efl.Net.Ip.Address, they will be automatically deleted unless you keep a reference to it.]]
+        }
+
+        @property string {
+            [[Returns the numeric address formatted as a string.
+
+              The format will be:
+
+               - IPv4 with port > 0: 127.0.0.1:1234
+               - IPv4 with port == 0: 127.0.0.1
+               - IPv6 with port > 0: [::1]:1234
+               - IPv6 with port == 0: [::1]
+            ]]
+            get { }
+            values {
+                str: string @nonull;
+            }
+        }
+
+        @property family {
+            [[The address family, one of AF_INET6 or AF_INET.
+
+              May only be set once, afterwards the object is not changing.
+            ]]
+            values {
+                family: int; [[AF_INET or AF_INET6]]
+            }
+        }
+
+        @property port {
+            [[The address port in Host/Native endianess.
+
+              May only be set once, afterwards the object is not changing.
+
+              Must be set after @.family.
+            ]]
+            values {
+                port: uint16; [[Port number in Host/Native endianess]]
+            }
+        }
+
+        @property address {
+            [[The bytes representing the address.
+
+              May only be set once, afterwards the object is not changing.
+
+              Must be set after @.family.
+            ]]
+            values {
+                address: const(ptr(Eina.Slice)) @nonull;
+            }
+        }
+
+        @property sockaddr {
+            [[The <netinet/in.h>-compatible 'struct sockaddr'.
+
+              May only be set once, afterwards the object is not changing.
+            ]]
+            values {
+                sockaddr: const(void_ptr) @nonull;
+            }
+        }
+
+        ipv4_class_a_check @const {
+            [[Check if IPv4 and is CLASS-A]]
+            return: bool(false); [[$true if is a CLASS-A IPv4 address]]
+        }
+
+        ipv4_class_b_check @const {
+            [[Check if IPv4 and is CLASS-B]]
+            return: bool(false); [[$true if is a CLASS-B IPv4 address]]
+        }
+
+        ipv4_class_c_check @const {
+            [[Check if IPv4 and is CLASS-C]]
+            return: bool(false); [[$true if is a CLASS-C IPv4 address]]
+        }
+
+        ipv4_class_d_check @const {
+            [[Check if IPv4 and is CLASS-D]]
+            return: bool(false); [[$true if is a CLASS-D IPv4 address]]
+        }
+
+        ipv6_v4mapped_check @const {
+            [[Check if IPv6 is mapping an IPv4.
+
+              If the IPv6 server is not IPv6-only, then it will take
+              IPv4 addresses and map them inside IPv6. This checks if
+              the given address is an IPv4 mapped inside IPv6.
+            ]]
+            return: bool(false); [[$true if is the IPv6 is IPv4 mapped inside IPv6 address]]
+        }
+
+        ipv6_v4compat_check @const {
+            [[Check if IPv6 is compatible with IPv4.
+
+              This happens if the first 12 bytes of IPv6 are 0.
+            ]]
+            return: bool(false); [[$true if is a IPv6 address is IPv4 compatible.]]
+        }
+
+        ipv6_local_link_check @const {
+            [[Check if IPv6 is link-local.]]
+            return: bool(false); [[$true if is a IPv6 address is link-local]]
+        }
+
+        ipv6_local_site_check @const {
+            [[Check if IPv6 is site-local.]]
+            return: bool(false); [[$true if is a IPv6 address is site-local]]
+        }
+
+        multicast_check @const {
+            [[Check if multicast]]
+            return: bool(false); [[$true if is a multicast address]]
+        }
+
+        loopback_check @const {
+            [[Check if loopback "127.0.0.1" (IPv4) or "::1" (IPv6)]]
+            return: bool(false); [[$true if is a multicast address]]
+        }
+
+        any_check @const {
+            [[Check if "0.0.0.0" (IPv4) or "::" (IPv6)]]
+            return: bool(false); [[$true if address means "any"]]
+        }
+    }
+
+    implements {
+        Efl.Object.finalize;
+    }
+}

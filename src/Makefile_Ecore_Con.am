@@ -27,6 +27,7 @@ ecore_con_eolian_files = \
         lib/ecore_con/efl_net_control_technology.eo \
         lib/ecore_con/efl_net_control.eo \
         lib/ecore_con/efl_net_session.eo \
+        lib/ecore_con/efl_net_ip_address.eo \
 	lib/ecore_con/ecore_con_eet_base.eo \
 	lib/ecore_con/ecore_con_eet_server_obj.eo \
 	lib/ecore_con/ecore_con_eet_client_obj.eo
@@ -109,7 +110,8 @@ lib/ecore_con/efl_net_socket_ssl.c \
 lib/ecore_con/efl_net_ssl_context.c \
 lib/ecore_con/efl_net_dialer_ssl.c \
 lib/ecore_con/efl_net_server_ssl.c \
-lib/ecore_con/ecore_con_local.c
+lib/ecore_con/ecore_con_local.c \
+lib/ecore_con/efl_net_ip_address.c
 
 if EFL_NET_CONTROL_BACKEND_CONNMAN
 lib_ecore_con_libecore_con_la_SOURCES += \
@@ -179,6 +181,7 @@ tests/ecore_con/ecore_con_suite.c \
 tests/ecore_con/ecore_con_test_ecore_con.c \
 tests/ecore_con/ecore_con_test_ecore_con_url.c \
 tests/ecore_con/ecore_con_test_ecore_con_eet.c \
+tests/ecore_con/ecore_con_test_efl_net_ip_address.c \
 tests/ecore_con/ecore_con_suite.h
 
 tests_ecore_con_ecore_con_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
