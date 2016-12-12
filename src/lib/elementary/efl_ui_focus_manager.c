@@ -479,17 +479,9 @@ _node_new_geometery_cb(void *data, const Efl_Event *event)
    return;
 }
 
-static void
-_focus_in_cb(void *data, const Efl_Event *event)
-{
-   efl_ui_focus_manager_focus(data, event->object);
-}
-
 EFL_CALLBACKS_ARRAY_DEFINE(focusable_node,
     {EFL_GFX_EVENT_RESIZE, _node_new_geometery_cb},
     {EFL_GFX_EVENT_MOVE, _node_new_geometery_cb},
-    //FIXME this is not correctly NOOOO ELM WIDGETS EVENTS HERE
-    {ELM_WIDGET_EVENT_FOCUSED, _focus_in_cb}
 );
 
 //=============================
