@@ -1,4 +1,4 @@
-struct @extern Ecore_Con_Server;
+struct @extern Ecore_Con_Server; [[Ecore connection server structure]]
 type @extern Ecore_Con_Eet_Data_Cb: __undefined_type; [[Ecore connection eet data callback type]] /* FIXME: function pointers not supported. */
 type @extern Ecore_Con_Eet_Raw_Data_Cb: __undefined_type; [[Ecore connection eet raw data callback type]]/* FIXME: function pointers not supported. */
 
