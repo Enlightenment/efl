@@ -949,6 +949,8 @@ _logical_movement(Efl_Ui_Focus_Manager_Data *pd EINA_UNUSED, Node *upper, Efl_Ui
 {
    Node* (*deliver)(Node *n);
    Node *result;
+   Eina_List *stack = NULL;
+
    if (direction == EFL_UI_FOCUS_DIRECTION_NEXT)
      deliver = _next;
    else
@@ -956,9 +958,25 @@ _logical_movement(Efl_Ui_Focus_Manager_Data *pd EINA_UNUSED, Node *upper, Efl_Ui
 
    //search as long as we have a none logical parent
    result = upper;
-   do {
-     result = deliver(result);
-   } while(result && result->type == NODE_TYPE_ONLY_LOGICAL);
+   do
+     {
+        //give up, if we have already been here
+        if (!!eina_list_data_find(stack, result))
+          {
+             eina_list_free(stack);
+             ERR("Warning cycle detected\n");
+             return NULL;
+          }
+
+        stack = eina_list_append(stack, result);
+
+        result = deliver(result);
+   } while(result && result->type != NODE_TYPE_NORMAL);
+
+   if (result->type != NODE_TYPE_NORMAL)
+     abort();
+
+   eina_list_free(stack);
 
    return result;
 }
@@ -1033,6 +1051,12 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
    //check if node is part of this manager object
    node = node_get(pd, focus);
    if (!node) return;
+
+   if (node->type == NODE_TYPE_ONLY_LOGICAL)
+     {
+        ERR("Logical node cannot be focused");
+        return;
+     }
 
    //check if this is already the focused object
    old_focus = eina_list_last_data_get(pd->focus_stack);
