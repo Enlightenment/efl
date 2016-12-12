@@ -342,7 +342,7 @@ _ecore_con_free_event_client_del(void *data EINA_UNUSED, void *event)
    _ecore_con_event_count--;
 }
 
-static void
+static Eina_Bool
 _ecore_con_post_event_client_del(Ecore_Con_Client *cl)
 {
    Ecore_Con_Event_Client_Del *ev = ecore_con_event_client_del_alloc();
@@ -356,10 +356,11 @@ _ecore_con_post_event_client_del(Ecore_Con_Client *cl)
 
    ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, ev, _ecore_con_free_event_client_del, NULL);
    _ecore_con_event_count++;
-   return;
+   return EINA_TRUE;
 
  error:
    _ecore_con_client_free(cl);
+   return EINA_FALSE;
 }
 
 static void
@@ -445,7 +446,7 @@ _ecore_con_free_event_client_error(void *data EINA_UNUSED, void *event)
    _ecore_con_event_count--;
 }
 
-static void
+static Eina_Bool
 _ecore_con_post_event_client_error(Ecore_Con_Client *cl, const char *err)
 {
    Ecore_Con_Event_Client_Error *ev = ecore_con_event_client_error_alloc();
@@ -459,10 +460,11 @@ _ecore_con_post_event_client_error(Ecore_Con_Client *cl, const char *err)
 
    ecore_event_add(ECORE_CON_EVENT_CLIENT_ERROR, ev, _ecore_con_free_event_client_error, NULL);
    _ecore_con_event_count++;
-   return;
+   return EINA_TRUE;
 
  error:
    _ecore_con_client_free(cl);
+   return EINA_FALSE;
 }
 
 static void
@@ -558,8 +560,8 @@ _ecore_con_client_socket_error(void *data, const Efl_Event *event)
 
    WRN("error client %s: %s", efl_net_socket_address_remote_get(cl->socket), eina_error_msg_get(*perr));
 
-   _ecore_con_post_event_client_error(cl, eina_error_msg_get(*perr));
    _ecore_con_client_socket_close(cl);
+   _ecore_con_post_event_client_error(cl, eina_error_msg_get(*perr));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_ecore_con_client_socket_cbs,
@@ -774,8 +776,8 @@ _ecore_con_client_socket_ssl_error(void *data, const Efl_Event *event)
 
    WRN("SSL error client %s: %s", efl_net_socket_address_remote_get(cl->socket), eina_error_msg_get(*perr));
 
-   _ecore_con_post_event_client_error(cl, eina_error_msg_get(*perr));
    _ecore_con_client_socket_close(cl);
+   _ecore_con_post_event_client_error(cl, eina_error_msg_get(*perr));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_ecore_con_client_socket_ssl_cbs,
@@ -827,8 +829,8 @@ _ecore_con_client_ssl_upgrade_job(void *data, const Efl_Event *event EINA_UNUSED
    efl_del(inner_socket);
  error_inner_socket:
    cl->socket = tcp_socket; /* put it back */
-   _ecore_con_post_event_client_error(cl, "Couldn't finish SSL setup");
-   _ecore_con_post_event_client_del(cl);
+   if (_ecore_con_post_event_client_error(cl, "Couldn't finish SSL setup"))
+     _ecore_con_post_event_client_del(cl);
 }
 
 static Eo * _ecore_con_server_ssl_ctx_create(const Ecore_Con_Server *svr);
@@ -986,7 +988,7 @@ _ecore_con_free_event_server_del(void *data EINA_UNUSED, void *event)
    _ecore_con_event_count--;
 }
 
-static void
+static Eina_Bool
 _ecore_con_post_event_server_del(Ecore_Con_Server *svr)
 {
    Ecore_Con_Event_Server_Del *ev = ecore_con_event_server_del_alloc();
@@ -1002,7 +1004,7 @@ _ecore_con_post_event_server_del(Ecore_Con_Server *svr)
    if (svr->connecting)
      {
         DBG("svr=%p was still connecting to %s (%s), ignore ECORE_CON_EVENT_SERVER_DEL", svr, efl_net_dialer_address_dial_get(svr->dialer), efl_net_socket_address_remote_get(svr->dialer));
-        return;
+        return EINA_TRUE;
      }
 
    ev->server = svr;
@@ -1010,10 +1012,11 @@ _ecore_con_post_event_server_del(Ecore_Con_Server *svr)
 
    ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, ev, _ecore_con_free_event_server_del, NULL);
    _ecore_con_event_count++;
-   return;
+   return EINA_TRUE;
 
  error:
    _ecore_con_server_free(svr);
+   return EINA_FALSE;
 }
 
 static void
@@ -1033,7 +1036,7 @@ _ecore_con_free_event_server_error(void *data EINA_UNUSED, void *event)
    _ecore_con_event_count--;
 }
 
-static void
+static Eina_Bool
 _ecore_con_post_event_server_error(Ecore_Con_Server *svr, const char *err)
 {
    Ecore_Con_Event_Server_Error *ev = ecore_con_event_server_error_alloc();
@@ -1052,10 +1055,11 @@ _ecore_con_post_event_server_error(Ecore_Con_Server *svr, const char *err)
 
    ecore_event_add(ECORE_CON_EVENT_SERVER_ERROR, ev, _ecore_con_free_event_server_error, NULL);
    _ecore_con_event_count++;
-   return;
+   return EINA_TRUE;
 
  error:
    _ecore_con_server_free(svr);
+   return EINA_FALSE;
 }
 
 /* END: post of shared Ecore_Event  ***********************************/
@@ -1254,8 +1258,8 @@ _ecore_con_server_dialer_error(void *data, const Efl_Event *event)
 
    WRN("error reaching server %s: %s", efl_net_dialer_address_dial_get(svr->dialer), eina_error_msg_get(*perr));
 
-   _ecore_con_post_event_server_error(svr, eina_error_msg_get(*perr));
    _ecore_con_server_dialer_close(svr);
+   _ecore_con_post_event_server_error(svr, eina_error_msg_get(*perr));
 }
 
 static void
@@ -1572,8 +1576,8 @@ _ecore_con_server_server_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
    return;
 
  error_serve:
-   _ecore_con_post_event_server_error(svr, "Couldn't serve using SSL");
-   _ecore_con_post_event_server_del(svr);
+   if (_ecore_con_post_event_server_error(svr, "Couldn't serve using SSL"))
+     _ecore_con_post_event_server_del(svr);
    return;
 
  error_server:
@@ -1581,8 +1585,8 @@ _ecore_con_server_server_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
  error_inner_server:
    efl_del(ssl_ctx);
  error_ssl_ctx:
-   _ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup");
-   _ecore_con_post_event_server_del(svr);
+   if (_ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup"))
+     _ecore_con_post_event_server_del(svr);
 }
 
 /**
@@ -1911,8 +1915,8 @@ _ecore_con_server_dialer_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
    return;
 
  error_dial:
-   _ecore_con_post_event_server_error(svr, "Couldn't dial using SSL");
-   _ecore_con_post_event_server_del(svr);
+   if (_ecore_con_post_event_server_error(svr, "Couldn't dial using SSL"))
+     _ecore_con_post_event_server_del(svr);
    return;
 
  error_dialer:
@@ -1920,8 +1924,8 @@ _ecore_con_server_dialer_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
  error_inner_dialer:
    efl_del(ssl_ctx);
  error_ssl_ctx:
-   _ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup");
-   _ecore_con_post_event_server_del(svr);
+   if (_ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup"))
+     _ecore_con_post_event_server_del(svr);
 }
 
 static void
@@ -2001,8 +2005,8 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Efl_Event *event EINA
    svr->dialer = tcp_dialer; /* put it back */
    efl_del(ssl_ctx);
  error_ssl_ctx:
-   _ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup");
-   _ecore_con_post_event_server_del(svr);
+   if (_ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup"))
+     _ecore_con_post_event_server_del(svr);
 }
 
 /**
