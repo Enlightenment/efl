@@ -281,18 +281,6 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             enabled: bool; [[If $enabled is $true, the return key is automatically disabled when the entry has no text.]]
          }
       }
-      @property imf_context {
-         get {
-            [[Returns the input method context of the entry.
-
-              This function exposes the internal input method context.
-
-              IMPORTANT: Many functions may change (i.e delete and create a new one)
-              the internal input method context. Do NOT cache the returned object.
-            ]]
-            return: void_ptr; [[Input method context]]
-         }
-      }
       item_provider_prepend {
          [[This prepends a custom item provider to the list for that entry
 
@@ -307,13 +295,6 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
 
            Note that input panel is shown or hidden automatically according to the focus state of entry widget.
            This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false).
-         ]]
-      }
-      imf_context_reset {
-         [[Reset the input method context of the entry if needed.
-
-           This can be necessary in the case where modifying the buffer would confuse on-going input method behavior.
-           This will typically cause the Input Method Context to clear the preedit state.
          ]]
       }
       selection_copy {

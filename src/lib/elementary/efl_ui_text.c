@@ -1181,8 +1181,7 @@ _efl_ui_text_elm_widget_on_focus(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item 
         if (sd->scroll)
           edje_object_signal_emit(sd->scr_edje, "elm,action,focus", "elm");
 
-        if (top && top_is_win && sd->input_panel_enable && !sd->input_panel_show_on_demand &&
-            !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
+        if (top && top_is_win && sd->input_panel_enable && !sd->input_panel_show_on_demand)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
         efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_FOCUSED, NULL);
         if (_elm_config->atspi_mode)
@@ -1199,8 +1198,7 @@ _efl_ui_text_elm_widget_on_focus(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item 
           edje_object_signal_emit(sd->scr_edje, "elm,action,unfocus", "elm");
         evas_object_focus_set(sw, EINA_FALSE);
 
-        if (top && top_is_win && sd->input_panel_enable &&
-            !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
+        if (top && top_is_win && sd->input_panel_enable)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
         efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
         if (_elm_config->atspi_mode)
@@ -2002,8 +2000,7 @@ _mouse_up_cb(void *data,
                   if (efl_isa(top, EFL_UI_WIN_CLASS))
                     top_is_win = EINA_TRUE;
 
-                  if (top_is_win && sd->input_panel_enable && sd->input_panel_show_on_demand &&
-                      !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
+                  if (top_is_win && sd->input_panel_enable && sd->input_panel_show_on_demand)
                     elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
                }
           }
@@ -4142,12 +4139,6 @@ _efl_ui_text_input_hint_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_imf_context_reset(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
-{
-   edje_object_part_text_imf_context_reset(sd->entry_edje, "elm.text");
-}
-
-EOLIAN static void
 _efl_ui_text_input_panel_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Eina_Bool enabled)
 {
    sd->input_panel_enable = enabled;
@@ -4259,14 +4250,6 @@ EOLIAN static Eina_Bool
 _efl_ui_text_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_show_on_demand;
-}
-
-EOLIAN static void*
-_efl_ui_text_imf_context_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
-{
-   if (!sd) return NULL;
-
-   return edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text");
 }
 
 /* START - ANCHOR HOVER */
