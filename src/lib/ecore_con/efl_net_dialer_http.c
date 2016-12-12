@@ -1879,6 +1879,8 @@ _efl_net_dialer_http_request_apply(Eo *o, Efl_Net_Dialer_Http_Data *pd, const ch
           r = curl_easy_setopt(pd->easy, CURLOPT_HTTPGET, 1L);
         else if (strcasecmp(method, "POST") == 0)
           r = curl_easy_setopt(pd->easy, CURLOPT_POST, 1L);
+        else if (strcasecmp(method, "HEAD") == 0)
+          r = curl_easy_setopt(pd->easy, CURLOPT_NOBODY, 1L);
         else if (strcasecmp(method, "PUT") == 0)
           {
              if (primary_mode == EFL_NET_DIALER_HTTP_PRIMARY_MODE_AUTO)

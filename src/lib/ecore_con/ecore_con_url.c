@@ -143,7 +143,6 @@ struct _Ecore_Con_Url
    int status;
    int write_fd;
    Efl_Net_Http_Version http_version;
-   Eina_Bool only_head;
    Eina_Bool ssl_verify_peer;
    Eina_Bool verbose;
    Eina_Bool ftp_use_epsv;
@@ -497,9 +496,6 @@ _ecore_con_url_dialer_headers_done(void *data, const Efl_Event *event EINA_UNUSE
 
  end:
    eina_iterator_free(it);
-
-   if (url_con->only_head && ((status >= 200) && (status < 300)))
-     _ecore_con_url_dialer_close(url_con);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(ecore_con_url_dialer_cbs,
@@ -725,8 +721,6 @@ _ecore_con_url_request_prepare(Ecore_Con_Url *url_con, const char *method)
      }
 
    _c->curl_easy_setopt(curl_easy, CURLOPT_FTP_USE_EPSV, (long)url_con->ftp_use_epsv);
-
-   url_con->only_head = strcmp(method, "HEAD") == 0;
 
    /* previously always set encoding to gzip,deflate */
    efl_net_dialer_http_request_header_add(url_con->dialer, "Accept-Encoding", "gzip,deflate");
