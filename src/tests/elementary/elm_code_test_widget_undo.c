@@ -35,7 +35,7 @@ START_TEST (elm_code_test_widget_undo_text_insert)
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("test", content, length);
 
-   elm_code_widget_cursor_position_set(widget, 3, 1);
+   elm_code_widget_cursor_position_set(widget, 1, 3);
    _elm_code_widget_text_at_cursor_insert(widget, "r", 1);
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("terst", content, length);
@@ -44,7 +44,7 @@ START_TEST (elm_code_test_widget_undo_text_insert)
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("test", content, length);
 
-   elm_code_widget_cursor_position_set(widget, 4, 1);
+   elm_code_widget_cursor_position_set(widget, 1, 4);
    _elm_code_widget_text_at_cursor_insert(widget, "\t", 1);
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("tes\tt", content, length);
@@ -113,7 +113,7 @@ START_TEST (elm_code_test_widget_undo_newline)
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
-   elm_code_widget_cursor_position_set(widget, 5, 1);
+   elm_code_widget_cursor_position_set(widget, 1, 5);
    _elm_code_widget_newline(widget);
    ck_assert_int_eq(2, elm_code_file_lines_get(file));
    line = elm_code_file_line_get(file, 1);
@@ -150,7 +150,7 @@ START_TEST (elm_code_test_widget_undo_delete)
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
-   elm_code_widget_cursor_position_set(widget, 4, 1);
+   elm_code_widget_cursor_position_set(widget, 1, 4);
    _elm_code_widget_backspace(widget);
 
    line = elm_code_file_line_get(file, 1);
@@ -161,7 +161,7 @@ START_TEST (elm_code_test_widget_undo_delete)
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("test", content, length);
 
-   elm_code_widget_cursor_position_set(widget, 2, 1);
+   elm_code_widget_cursor_position_set(widget, 1, 2);
    _elm_code_widget_delete(widget);
 
    line = elm_code_file_line_get(file, 1);
@@ -172,7 +172,7 @@ START_TEST (elm_code_test_widget_undo_delete)
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("test", content, length);
 
-   elm_code_widget_cursor_position_set(widget, 4, 1);
+   elm_code_widget_cursor_position_set(widget, 1, 4);
    _elm_code_widget_text_at_cursor_insert(widget, "\t", 1);
    _elm_code_widget_backspace(widget);
    content = elm_code_line_text_get(line, &length);
@@ -181,7 +181,7 @@ START_TEST (elm_code_test_widget_undo_delete)
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("tes\tt", content, length);
 
-   elm_code_widget_cursor_position_set(widget, 4, 1);
+   elm_code_widget_cursor_position_set(widget, 1, 4);
    _elm_code_widget_delete(widget);
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("test", content, length);
@@ -212,7 +212,7 @@ START_TEST (elm_code_test_widget_undo_delete_multiple)
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
-   elm_code_widget_cursor_position_set(widget, 4, 1);
+   elm_code_widget_cursor_position_set(widget, 1, 4);
    _elm_code_widget_backspace(widget);
    _elm_code_widget_backspace(widget);
 

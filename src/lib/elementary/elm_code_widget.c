@@ -2056,7 +2056,7 @@ _elm_code_widget_tab_inserts_spaces_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Dat
 EOLIAN static void
 _elm_code_widget_cursor_position_set(Eo *obj, Elm_Code_Widget_Data *pd, unsigned int row, unsigned int col)
 {
-   _elm_code_widget_cursor_move(obj, pd, row, col, EINA_FALSE);
+   _elm_code_widget_cursor_move(obj, pd, col, row, EINA_FALSE);
 }
 
 EOLIAN static void
