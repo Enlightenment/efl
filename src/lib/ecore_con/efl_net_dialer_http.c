@@ -818,7 +818,7 @@ _efl_net_dialer_http_curl_safe_end(Eo *o, Efl_Net_Dialer_Http_Data *pd, CURL *ea
    int refs;
 
    refs = efl_ref_get(o);
-   if (refs > 2)
+   if (refs >= 2)
      {
         pd->in_curl_callback--;
         efl_unref(o);
