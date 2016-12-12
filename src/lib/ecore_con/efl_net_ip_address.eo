@@ -4,7 +4,6 @@ struct Efl.Net.Ip.Address.Resolve_Results {
     [[The results of @Efl.Net.Ip.Address.resolve call.
 
       This structure is created by @Efl.Net.Ip.Address.resolve.
-      XXX should be destroyed manually?
 
       @since 1.19
     ]]
@@ -162,7 +161,7 @@ class Efl.Net.Ip.Address (Efl.Object) {
               Must be set after @.family.
             ]]
             values {
-                address: const(ptr(Eina.Slice)) @nonull; [[Address]]
+                address: const(ptr(Eina.Slice)) @nonull; [[Address bytes. If AF_INET it's 4 bytes. If AF_INET6, it's 16 bytes. This matches exactly what is in struct sockaddr_in::sin_addr or struct sockaddr_in6:sin6_addr, see @.sockaddr]]
             }
         }
 
@@ -172,7 +171,7 @@ class Efl.Net.Ip.Address (Efl.Object) {
               May only be set once, afterwards the object is not changing.
             ]]
             values {
-                sockaddr: const(void_ptr) @nonull; [[Sockaddr struct]]
+                sockaddr: const(void_ptr) @nonull; [[Sockaddr struct. As usual with struct sockaddr, the first field, struct sockaddr::sa_family, defines the rest of the structure and how the whole structure must be interpreted. If AF_INET is struct sockaddr_in, AF_INET6 is struct sockaddr_in6.]]
             }
         }
 
