@@ -66,6 +66,7 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
             params {
                 child : Efl.Ui.Focus.Object @nonull;
                 parent : Efl.Ui.Focus.Object @nonull;
+                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set once this child is focused can be NULL for no redirect]]
             }
             return : bool; [[$true if it was successfull $false if not]]
         }

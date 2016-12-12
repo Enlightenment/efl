@@ -35,7 +35,6 @@ struct _Border {
 
 typedef enum {
   NODE_TYPE_NORMAL = 0,
-  NODE_TYPE_LISTENER = 1,
   NODE_TYPE_ONLY_LOGICAL = 2,
 } Node_Type;
 
@@ -44,15 +43,7 @@ struct _Node{
 
   Efl_Ui_Focus_Object *focusable;
   Efl_Ui_Focus_Manager *manager;
-
-  union {
-    struct {
-      Efl_Ui_Focus_Manager *manager;
-    } listener;
-    struct {
-
-    } normal;
-  } data;
+  Efl_Ui_Focus_Manager *redirect_manager;
 
   struct _Tree_Node{
     Node *parent; //the parent in the tree
@@ -509,7 +500,7 @@ _register(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *child, No
    return node;
 }
 EOLIAN static Eina_Bool
-_efl_ui_focus_manager_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent)
+_efl_ui_focus_manager_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent,  Efl_Ui_Focus_Manager *redirect)
 {
    Node *node = NULL;
    Node *pnode = NULL;
@@ -524,7 +515,7 @@ _efl_ui_focus_manager_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, E
    if (!node) return EINA_FALSE;
 
    node->type = NODE_TYPE_ONLY_LOGICAL;
-
+   node->redirect_manager = redirect;
 
    return EINA_TRUE;
 }
@@ -548,15 +539,8 @@ _efl_ui_focus_manager_register(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Fo
    //listen to changes
    efl_event_callback_array_add(child, focusable_node(), obj);
 
-   if (!redirect)
-     {
-        node->type = NODE_TYPE_NORMAL;
-     }
-   else
-     {
-        node->type = NODE_TYPE_LISTENER;
-        node->data.listener.manager = redirect;
-     }
+   node->type = NODE_TYPE_NORMAL;
+   node->redirect_manager = redirect;
 
    //mark dirty
    dirty_add(obj, pd, node);
@@ -570,9 +554,8 @@ _efl_ui_focus_manager_update_redirect(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
    Node *node = node_get(pd, child);
 
    if (!node) return EINA_FALSE;
-   if (node->type != NODE_TYPE_LISTENER) return EINA_FALSE;
 
-   node->data.listener.manager = redirect;
+   node->redirect_manager = redirect;
 
    return EINA_TRUE;
 }
@@ -1071,11 +1054,11 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
    efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
 
    //now check if this is also a listener object
-   if (node->type == NODE_TYPE_LISTENER)
+   if (node->redirect_manager)
      {
         Efl_Ui_Focus_Manager *redirect;
 
-        redirect = node->data.listener.manager;
+        redirect = node->redirect_manager;
 
         efl_ui_focus_manager_redirect_set(obj, redirect);
      }
@@ -1218,9 +1201,6 @@ _efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
    res->prev = _prev(n)->focusable;
    switch(n->type)
      {
-        case NODE_TYPE_LISTENER:
-          res->type = "listener";
-        break;
         case NODE_TYPE_ONLY_LOGICAL:
           res->type = "logical";
         break;
@@ -1229,7 +1209,7 @@ _efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
         break;
      }
    res->parent = T(n).parent->focusable;
-   res->redirect = n->type == NODE_TYPE_LISTENER ? n->data.listener.manager : NULL;
+   res->redirect = n->redirect_manager;
 #undef DIR_CLONE
 
    return res;

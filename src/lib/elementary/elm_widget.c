@@ -267,7 +267,7 @@ _elm_widget_focus_register(Eo *obj, Elm_Widget_Smart_Data *pd,
    if (full)
      efl_ui_focus_manager_register(manager, obj, logical, NULL);
    else
-     efl_ui_focus_manager_register_logical(manager, obj, logical);
+     efl_ui_focus_manager_register_logical(manager, obj, logical, NULL);
 }
 
 
