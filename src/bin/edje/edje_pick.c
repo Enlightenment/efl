@@ -576,7 +576,6 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Eina_L
    char buf[1024];
    Edje_Part_Collection *edc;
    Edje_Part *part;
-   Edje_Part_Collection_Directory_Entry *ce_cor, *ce_out;
    unsigned int i, j;
    Eina_Iterator *is;
    Edje_Pack_Element *item;
@@ -595,6 +594,7 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Eina_L
 #define GROUP_CHECK_AND_ADD(NAME) \
    if (NAME) \
      { \
+        Edje_Part_Collection_Directory_Entry *ce_cor; \
         if (eina_list_search_unsorted(groups, (void *)strcmp, NAME)) goto exit; \
         ce_cor = eina_hash_find(edf->collection, NAME); \
         if (!eina_hash_find(out_file->collection, ce_cor->entry)) \
@@ -604,26 +604,27 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Eina_L
           } \
         if ((ce_cor) && (!eina_hash_find(out_file->collection, NAME))) \
           { \
+             Edje_Part_Collection_Directory_Entry *ce_out; \
              ce_out = malloc(sizeof(*ce_out)); \
              memcpy(ce_out, ce_cor, sizeof(*ce_out)); \
-                  if (ce_out->group_alias) \
+             if (ce_out->group_alias) \
+               { \
+                  Edje_Part_Collection_Directory_Entry *ce_new; \
+                  is = eina_hash_iterator_data_new(edf->collection); \
+                  EINA_ITERATOR_FOREACH(is, ce_cor) \
                     { \
-                       Edje_Part_Collection_Directory_Entry *ce_cor, *ce_new; \
-                       is = eina_hash_iterator_data_new(edf->collection); \
-                       EINA_ITERATOR_FOREACH(is, ce_cor) \
+                       if (ce_out->id == ce_cor->id) \
                          { \
-                            if (ce_out->id == ce_cor->id) \
-                              { \
-                                 ce_new = malloc(sizeof(*ce_new)); \
-                                 memcpy(ce_new, ce_cor, sizeof(*ce_new)); \
-                                 ce_new->id = (*current_id); \
-                                 if (!eina_hash_find(out_file->collection, ce_new->entry)) \
-                                 eina_hash_direct_add(out_file->collection, ce_new->entry, \
-                                                      ce_new); \
-                              } \
+                            ce_new = malloc(sizeof(*ce_new)); \
+                            memcpy(ce_new, ce_cor, sizeof(*ce_new)); \
+                            ce_new->id = (*current_id); \
+                            if (!eina_hash_find(out_file->collection, ce_new->entry)) \
+                            eina_hash_direct_add(out_file->collection, ce_new->entry, \
+                                  ce_new); \
                          } \
-                       eina_iterator_free(is); \
                     } \
+                  eina_iterator_free(is); \
+               } \
              ce_out->id = *current_id; \
              EINA_LOG_INFO("Changing ID of group <%d> to <%d>\n", ce->id, ce_out->id); \
              eina_hash_direct_add(out_file->collection, ce_out->entry, ce_out); \
