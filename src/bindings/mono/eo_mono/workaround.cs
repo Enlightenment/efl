@@ -45,16 +45,56 @@ public struct Slice {}
 
 }
 
-namespace efl { namespace kw_event {
-
-public struct Description {};
-        
+namespace ld {
+    public class Globals
+    {
+        public const int RTLD_NOW = 2;
+    }
 }
 
-public struct Callback_Priority {};
+namespace efl { namespace kw_event {
+
+    // FIXME Placeholder for generated functions using Description. Remove it and
+    // the generated functions...
+public struct Description {};
+
+}
+
+
+[StructLayout(LayoutKind.Sequential)]
+public struct Description {
+    IntPtr pointer; // Opaque type, just pass the pointer?
+
+
+    [DllImport("dl")]
+    public static extern IntPtr dlopen(String name, int flags);
+
+    [DllImport("dl")]
+    public static extern IntPtr dlsym(IntPtr library, String Symbol);
+
+    public Description(string name)
+    {
+        // FIXME Other libraries....
+        Console.WriteLine($"Loading {name}");
+        IntPtr library = dlopen("/opt/efl-mono/lib/libecore.so", ld.Globals.RTLD_NOW);
+        Console.WriteLine($"Got library handle: {library}");
+        IntPtr data = dlsym(library, name);
+        Console.WriteLine($"Got data handle: {data}");
+        this.pointer = data;
+    }
+};
+
+
 public struct Event_Cb {};
 public struct Callback_Array_Item {};
 public struct Dbg_Info {};
+
+delegate void Efl_Event_Callback_Delegate(System.IntPtr data, efl.Event evt);
+
+public struct Event {
+
+
+};
 
 }
 

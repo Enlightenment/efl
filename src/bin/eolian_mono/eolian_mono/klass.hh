@@ -15,6 +15,7 @@
 #include "function_registration.hh"
 #include "function_declaration.hh"
 #include "grammar/string.hpp"
+#include "grammar/attribute_replace.hpp"
 #include "grammar/integral.hpp"
 #include "grammar/case.hpp"
 #include "using_decl.hh"
@@ -71,6 +72,17 @@ struct klass
      if(!as_generator(*(scope_tab << function_declaration))
         .generate(sink, cls.functions, context)) return false;
 
+     // FIXME Move the event generator into another generator like function?
+     for (auto &&e : cls.events)
+       {
+         //FIXME Add a way to generate camelcase names
+         if (!as_generator(
+                     scope_tab << "event EventHandler "
+                     << grammar::string_replace(',', '_') << ";\n"
+                     ).generate(sink, e.name, add_upper_case_context(context)))
+             return false;
+       }
+
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
 
      auto class_get_name = *(lower_case[string] << "_") << lower_case[string] << "_class_get";
@@ -105,9 +117,13 @@ struct klass
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "handle = raw;\n"
              << scope_tab << "}\n"
+             /* << scope_tab << "public delegate void EflEventHandler(object sender, EventArgs e);\n" */
             )
             .generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name), context))
            return false;
+
+         if (!generate_events(sink, cls, context))
+             return false;
      
          if(!as_generator(*(function_definition))
             .generate(sink, cls.functions, context)) return false;
@@ -152,6 +168,9 @@ struct klass
             )
             .generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name), context))
            return false;
+
+         if (!generate_events(sink, cls, context))
+             return false;
      
          if(!as_generator(*(function_definition(true)))
             .generate(sink, cls.functions, context)) return false;
@@ -244,6 +263,47 @@ struct klass
      auto close_namespace = *(lit("} ")) << "\n";
      if(!as_generator(close_namespace).generate(sink, namespaces, context)) return false;
      
+     return true;
+   }
+
+   template <typename OutputIterator, typename Context>
+   bool generate_events(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
+   {
+     // Self events
+     for (auto&& e : cls.events)
+       {
+          if(!as_generator(scope_tab
+                << "event EventHandler " << string << ".")
+                  .generate(sink, cls.cxx_name, context))
+              return false;
+          if (!as_generator(grammar::string_replace(',', '_') << " {\n"
+                << scope_tab << scope_tab << "add {} \n"
+                << scope_tab << scope_tab << "remove {}\n"
+                << scope_tab << "}\n")
+            .generate(sink, e.name, add_upper_case_context(context)))
+              return false;
+       }
+
+     // Inherited events
+     for (auto&& c : cls.inherits)
+       {
+          attributes::klass_def klass(get_klass(c));
+
+          for (auto&& e : klass.events)
+            {
+               if(!as_generator(scope_tab
+                     << "event EventHandler " << *(lower_case[string] << ".")
+                     << string << ".")
+                       .generate(sink, std::make_tuple(escape_namespace(klass.namespaces), klass.cxx_name), context))
+                   return false;
+               if (!as_generator(grammar::string_replace(',', '_') << " {\n"
+                     << scope_tab << scope_tab << "add {} \n"
+                     << scope_tab << scope_tab << "remove {}\n"
+                     << scope_tab << "}\n")
+                 .generate(sink, e.name, add_upper_case_context(context)))
+                   return false;
+            }
+       }
      return true;
    }
 };

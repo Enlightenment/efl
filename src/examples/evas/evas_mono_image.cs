@@ -11,10 +11,17 @@ class TestMain
     static int WIDTH = 320;
     static int HEIGHT = 240;
 
+    evas.Image image;
+
 
     static string ImagePath([CallerFilePath] string folder="")
     {
         return System.IO.Path.GetDirectoryName(folder);
+    }
+
+    public TestMain(evas.Image image)
+    {
+        this.image = image;
     }
 
     static void Main(string[] args)
@@ -57,6 +64,9 @@ class TestMain
         w += 100;
         image.fill_set(x, y, w, h);
 
+        TestMain listener = new TestMain(image);
+
+        bg.KEY_DOWN += new EventHandler(listener.on_key_down);
         // TODO handle key events in order to alter the image like the C
         // example. Meanwhile, just set some w fill
         /* EventListener callback = new EventListener(); */
@@ -67,6 +77,11 @@ class TestMain
         /*         callback, null); */
 
         loop.begin();
+    }
+
+    public void on_key_down(object sender, EventArgs e)
+    {
+        Console.WriteLine("on_key_down called");
     }
 }
 
