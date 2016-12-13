@@ -3,6 +3,18 @@
 
 #define MY_CLASS EFL_CANVAS_PROXY_CLASS
 
+EOLIAN static Efl_Object *
+_efl_canvas_proxy_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Proxy_Data *pd EINA_UNUSED)
+{
+   Evas_Image_Data *o;
+
+   eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
+   o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (o) o->efl_canvas_proxy = EINA_TRUE;
+
+   return eo_obj;
+}
+
 Eina_Bool
 _evas_image_proxy_source_set(Eo *eo_obj, Evas_Object *eo_src)
 {
@@ -57,7 +69,7 @@ _evas_image_proxy_source_set(Eo *eo_obj, Evas_Object *eo_src)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_proxy_source_set(Eo *eo_obj, void *_pd EINA_UNUSED, Evas_Object *eo_src)
+_efl_canvas_proxy_source_set(Eo *eo_obj, Efl_Canvas_Proxy_Data *pd EINA_UNUSED, Evas_Object *eo_src)
 {
    return _evas_image_proxy_source_set(eo_obj, eo_src);
 }
@@ -70,7 +82,7 @@ _evas_image_proxy_source_get(const Eo *eo_obj)
 }
 
 EOLIAN static Evas_Object *
-_efl_canvas_proxy_source_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_proxy_source_get(Eo *eo_obj, Efl_Canvas_Proxy_Data *pd EINA_UNUSED)
 {
    return _evas_image_proxy_source_get(eo_obj);
 }
@@ -94,7 +106,7 @@ _evas_image_proxy_source_clip_set(Eo *eo_obj, Eina_Bool source_clip)
 }
 
 EOLIAN static void
-_efl_canvas_proxy_source_clip_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool source_clip)
+_efl_canvas_proxy_source_clip_set(Eo *eo_obj, Efl_Canvas_Proxy_Data *pd EINA_UNUSED, Eina_Bool source_clip)
 {
    return _evas_image_proxy_source_clip_set(eo_obj, source_clip);
 }
@@ -107,7 +119,7 @@ _evas_image_proxy_source_clip_get(const Eo *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_proxy_source_clip_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_proxy_source_clip_get(Eo *eo_obj, Efl_Canvas_Proxy_Data *pd EINA_UNUSED)
 {
    return _evas_image_proxy_source_clip_get(eo_obj);
 }
@@ -131,7 +143,7 @@ _evas_image_proxy_source_events_set(Eo *eo_obj, Eina_Bool source_events)
 }
 
 EOLIAN static void
-_efl_canvas_proxy_source_events_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool repeat)
+_efl_canvas_proxy_source_events_set(Eo *eo_obj, Efl_Canvas_Proxy_Data *pd EINA_UNUSED, Eina_Bool repeat)
 {
    return _evas_image_proxy_source_events_set(eo_obj, repeat);
 }
@@ -144,7 +156,7 @@ _evas_image_proxy_source_events_get(const Eo *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_proxy_source_events_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_proxy_source_events_get(Eo *eo_obj, Efl_Canvas_Proxy_Data *pd EINA_UNUSED)
 {
    return _evas_image_proxy_source_events_get(eo_obj);
 }
@@ -260,7 +272,7 @@ _proxy_image_get(Evas_Image_Data *o)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
+_efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, Efl_Canvas_Proxy_Data *pd EINA_UNUSED,
                                             Eina_Rw_Slice *slice,
                                             Efl_Gfx_Buffer_Access_Mode mode,
                                             int x, int y, int w, int h,
@@ -329,7 +341,7 @@ end:
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_proxy_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
+_efl_canvas_proxy_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, Efl_Canvas_Proxy_Data *pd EINA_UNUSED,
                                               const Eina_Rw_Slice *slice)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -342,6 +354,29 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
      return EINA_FALSE;
 
    return EINA_TRUE;
+}
+
+EOLIAN static void
+_efl_canvas_proxy_source_region_set(Eo *eo_obj, Efl_Canvas_Proxy_Data *pd,
+                                    int x, int y, int w, int h)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+
+   pd->region.x = x;
+   pd->region.y = y;
+   pd->region.w = w;
+   pd->region.h = h;
+   evas_object_change(eo_obj, obj);
+}
+
+EOLIAN static void
+_efl_canvas_proxy_source_region_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Proxy_Data *pd,
+                                    int *x, int *y, int *w, int *h)
+{
+   if (x) *x = pd->region.x;
+   if (y) *y = pd->region.y;
+   if (w) *w = pd->region.w;
+   if (h) *h = pd->region.h;
 }
 
 /* Some moron just set a proxy on a proxy.

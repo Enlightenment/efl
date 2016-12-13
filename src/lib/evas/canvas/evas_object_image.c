@@ -917,9 +917,10 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
      }
    else
      {
+        Eina_Rectangle region = { 0, 0, 0, 0 };
         o->proxyrendering = EINA_TRUE;
         evas_render_proxy_subrender(obj->layer->evas->evas, o->cur->source,
-                                    (Eo *) eo_obj, obj, EINA_FALSE);
+                                    (Eo *) eo_obj, obj, region, EINA_FALSE);
         pixels = source->proxy->surface;
         imagew = source->proxy->w;
         imageh = source->proxy->h;
@@ -1926,9 +1927,15 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
      }
    else
      {
+        Eina_Rectangle region = { 0, 0, 0, 0 };
+        if (o->efl_canvas_proxy)
+          {
+             Efl_Canvas_Proxy_Data *ppd = efl_data_scope_get(eo_obj, EFL_CANVAS_PROXY_CLASS);
+             region = ppd->region;
+          }
         o->proxyrendering = EINA_TRUE;
         evas_render_proxy_subrender(obj->layer->evas->evas, o->cur->source,
-                                    eo_obj, obj, EINA_FALSE);
+                                    eo_obj, obj, region, EINA_FALSE);
         pixels = source->proxy->surface;
         imagew = source->proxy->w;
         imageh = source->proxy->h;
@@ -2955,9 +2962,15 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
      }
    else
      {
+        Eina_Rectangle region = { 0, 0, 0, 0 };
+        if (o->efl_canvas_proxy)
+          {
+             Efl_Canvas_Proxy_Data *ppd = efl_data_scope_get(eo_obj, EFL_CANVAS_PROXY_CLASS);
+             region = ppd->region;
+          }
         o->proxyrendering = EINA_TRUE;
         evas_render_proxy_subrender(obj->layer->evas->evas, o->cur->source,
-                                    eo_obj, obj, EINA_FALSE);
+                                    eo_obj, obj, region, EINA_FALSE);
         pixels = source->proxy->surface;
         imagew = source->proxy->w;
         imageh = source->proxy->h;

@@ -2254,14 +2254,15 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
  */
 void
 evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
-                            Evas_Object_Protected_Data *proxy_obj, Eina_Bool do_async)
+                            Evas_Object_Protected_Data *proxy_obj, Eina_Rectangle region,
+                            Eina_Bool do_async)
 {
    Evas_Public_Data *evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Object_Protected_Data *source;
    Eina_Bool source_clip = EINA_FALSE;
    int level = 1;
    void *ctx;
-   int w, h;
+   int x, y, w, h, W, H;
 
 #ifdef REND_DBG
    level = __RD_level;
@@ -2271,10 +2272,22 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
    eina_evlog("+proxy_subrender", eo_proxy, 0.0, NULL);
    source = efl_data_scope_get(eo_source, EFL_CANVAS_OBJECT_CLASS);
 
-   w = source->cur->geometry.w;
-   h = source->cur->geometry.h;
+   W = source->cur->geometry.w;
+   H = source->cur->geometry.h;
+   x = region.x;
+   y = region.y;
+   if(x >= W) x = W - 1;
+   if(x >= H) x = H - 1;
+   if(x < 0) x = 0;
+   if(y < 0) y = 0;
+   w = (region.w > 0) ? region.w : W;
+   h = (region.h > 0) ? region.h : H;
+   if((x + w) > W) w = W - x;
+   if((y + h) > H) h = H - y;
+   if(w < 0) w = 0;
+   if(h < 0) h = 0;
 
-   RD(level, "  proxy_subrender(source: %p, proxy: %p, %dx%d)\n", source, proxy_obj, w, h);
+   RD(level, "  proxy_subrender(source: %p, proxy: %p, region: %d,%d %dx%d)\n", eo_source, eo_proxy, x, y, w, h);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy,
                         Evas_Object_Proxy_Data, proxy_write)
@@ -2318,6 +2331,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
              .proxy_obj = proxy_obj,
              .eo_src = eo_source,
              .src_obj = source,
+             .region = (Eina_Rectangle) { x, y, w, h },
              .source_clip = source_clip
         };
 
@@ -2326,8 +2340,8 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
 
         ctx = ENFN->context_new(ENDT);
         evas_render_mapped(evas, eo_source, source, ctx, proxy_write->surface,
-                           -source->cur->geometry.x,
-                           -source->cur->geometry.y,
+                           x - source->cur->geometry.x,
+                           y - source->cur->geometry.y,
                            level + 1, 0, 0, evas->output.w, evas->output.h,
                            &proxy_render_data, level + 1, EINA_TRUE, do_async);
         ENFN->context_free(ENDT, ctx);
