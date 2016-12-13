@@ -2293,6 +2293,7 @@ eng_image_orient_set(void *data EINA_UNUSED, void *image, Evas_Image_Orient orie
               break;
            default:
               ERR("Wrong orient value");
+              free(pixels_tmp);
               goto on_error;
           }
 
