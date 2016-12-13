@@ -709,7 +709,7 @@ EOLIAN static Eina_Bool
 _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
-   Evas_Event_Mouse_Wheel *mev;
+   Evas_Event_Mouse_Wheel *mev = event_info;
 
    if (type == EVAS_CALLBACK_KEY_DOWN)
      {
@@ -727,8 +727,7 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
      }
    else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
      {
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-        mev = event_info;
+        if (mev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
         sd->interval = sd->first_interval;
         if (mev->z < 0)
           {
