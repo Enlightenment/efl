@@ -619,8 +619,10 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Eina_L
                             memcpy(ce_new, ce_cor, sizeof(*ce_new)); \
                             ce_new->id = (*current_id); \
                             if (!eina_hash_find(out_file->collection, ce_new->entry)) \
-                            eina_hash_direct_add(out_file->collection, ce_new->entry, \
-                                  ce_new); \
+                              eina_hash_direct_add(out_file->collection, ce_new->entry, \
+                                                   ce_new); \
+                            else \
+                              free(ce_new); \
                          } \
                     } \
                   eina_iterator_free(is); \
