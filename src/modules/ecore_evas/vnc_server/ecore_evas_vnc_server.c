@@ -809,7 +809,7 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
                                                                _ecore_evas_vnc_server_socket_listen_activity,
                                                                server->vnc_screen,
                                                                NULL, NULL);
-        EINA_SAFETY_ON_NULL_GOTO(server->vnc_listen_handler, err_addr);
+        EINA_SAFETY_ON_NULL_GOTO(server->vnc_listen_handler, err_listen);
         can_listen = EINA_TRUE;
      }
 
@@ -820,12 +820,12 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
                                                                 _ecore_evas_vnc_server_socket_listen_activity,
                                                                 server->vnc_screen,
                                                                 NULL, NULL);
-        EINA_SAFETY_ON_NULL_GOTO(server->vnc_listen6_handler, err_listen);
+        EINA_SAFETY_ON_NULL_GOTO(server->vnc_listen6_handler, err_listen6);
         can_listen = EINA_TRUE;
      }
 
    //rfbInitServer() failed and could not setup the sockets.
-   EINA_SAFETY_ON_FALSE_GOTO(can_listen, err_addr);
+   EINA_SAFETY_ON_FALSE_GOTO(can_listen, err_listen);
 
    err = evas_engine_info_set(ee->evas, (Evas_Engine_Info *)engine);
    EINA_SAFETY_ON_FALSE_GOTO(err, err_engine);
@@ -840,8 +840,10 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
 
  err_engine:
    ecore_main_fd_handler_del(server->vnc_listen6_handler);
- err_listen:
+ err_listen6:
    ecore_main_fd_handler_del(server->vnc_listen_handler);
+ err_listen:
+   rfbShutdownServer(server->vnc_screen, TRUE);
  err_addr:
    rfbScreenCleanup(server->vnc_screen);
  err_screen:
@@ -885,6 +887,7 @@ ecore_evas_vnc_server_del(Ecore_Evas_Vnc_Server *server)
      WRN("Could not unset the region push hook callback");
    ecore_main_fd_handler_del(server->vnc_listen6_handler);
    ecore_main_fd_handler_del(server->vnc_listen_handler);
+   rfbShutdownServer(server->vnc_screen, TRUE);
    free(server->frame_buffer);
    rfbScreenCleanup(server->vnc_screen);
    free(server);
