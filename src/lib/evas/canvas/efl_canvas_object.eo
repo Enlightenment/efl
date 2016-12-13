@@ -3,7 +3,7 @@ import efl_text_types;
 
 abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size.Hint,
-                            Efl.Gfx.Map)
+                            Efl.Gfx.Map, Efl.Loop_User)
 {
    [[Efl canvas object abstract class]]
    legacy_prefix: evas_object;
@@ -670,5 +670,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Gfx.Map.map_enable.get;
       Efl.Input.Interface.seat_event_filter.set;
       Efl.Input.Interface.seat_event_filter.get;
+      Efl.Loop_User.loop.get;
    }
 }

@@ -4,6 +4,7 @@
 
 #include "evas_common_private.h"
 #include "evas_private.h"
+#include <Ecore.h>
 
 EVAS_MEMPOOL(_mp_sh);
 
@@ -2118,7 +2119,15 @@ _efl_canvas_object_efl_object_provider_find(Eo *eo_obj EINA_UNUSED, Evas_Object_
         if ((obj->delete_me) || (!obj->layer)) return NULL;
         return obj->layer->evas->evas;
      }
+   else if (klass == EFL_LOOP_CLASS)
+     return ecore_main_loop_get();
    return efl_provider_find(efl_super(eo_obj, MY_CLASS), klass);
+}
+
+EOLIAN static Efl_Loop *
+_efl_canvas_object_efl_loop_user_loop_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+{
+   return ecore_main_loop_get();
 }
 
 EOLIAN Evas_Object*

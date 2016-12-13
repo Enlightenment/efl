@@ -811,6 +811,12 @@ _evas_canvas_efl_object_provider_find(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED,
    return efl_provider_find(efl_super(eo_e, MY_CLASS), klass);
 }
 
+EOLIAN static Efl_Loop *
+_evas_canvas_efl_loop_user_loop_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e EINA_UNUSED)
+{
+   return ecore_main_loop_get();
+}
+
 Ector_Surface *
 evas_ector_get(Evas_Public_Data *e)
 {

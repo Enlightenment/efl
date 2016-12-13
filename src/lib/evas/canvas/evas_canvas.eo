@@ -1,7 +1,8 @@
 import evas_types;
 import efl_input_types;
 
-class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
+class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
+                   Efl.Loop_User)
 {
    [[Evas canvas class]]
    legacy_prefix: evas;
@@ -1317,6 +1318,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
       Efl.Object.event_thaw;
       Efl.Object.event_freeze;
       Efl.Object.provider_find;
+      Efl.Loop_User.loop.get;
    }
    events {
       render,flush,pre @beta; [[Called on render flush pre phase]]
