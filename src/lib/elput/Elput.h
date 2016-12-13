@@ -460,6 +460,34 @@ EAPI Eina_Bool elput_touch_drag_enabled_set(Elput_Device *device, Eina_Bool enab
  */
 EAPI Eina_Bool elput_touch_drag_enabled_get(Elput_Device *device);
 
+/**
+ * Enable or disable drag-lock during tapping on a device. When enabled,
+ * a finger may be lifted and put back on the touchpad within a timeout and
+ * the drag process continues. When disabled, lifting the finger during a
+ * tap-and-drag will immediately stop the drag.
+ *
+ * @param device
+ * @param enable
+ *
+ * @return EINA_TRUE on sucess, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Touch_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool elput_touch_drag_lock_enabled_set(Elput_Device *device, Eina_Bool enabled);
+
+/**
+ * Get if drag-lock is enabled on this device
+ *
+ * @param device
+ *
+ * @return EINA_TRUE if enabled, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Touch_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool elput_touch_drag_lock_enabled_get(Elput_Device *device);
+
 # endif
 
 # undef EAPI
