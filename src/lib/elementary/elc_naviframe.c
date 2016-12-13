@@ -1458,12 +1458,15 @@ _elm_naviframe_efl_canvas_group_group_del(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item_Data *it;
    Elm_Naviframe_Op *nfo;
+   Eina_Inlist *l = NULL;
 
    sd->on_deletion = EINA_TRUE;
+   if (sd->stack) l = sd->stack->last;
 
-   while (sd->stack)
+   while (l)
      {
-        it = EINA_INLIST_CONTAINER_GET(sd->stack, Elm_Naviframe_Item_Data);
+        it = EINA_INLIST_CONTAINER_GET(l, Elm_Naviframe_Item_Data);
+        l = l->prev;
         elm_wdg_item_del(EO_OBJ(it));
      }
 
