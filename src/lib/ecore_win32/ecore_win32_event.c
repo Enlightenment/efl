@@ -1180,7 +1180,11 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
            else if (res == 0)
              {
                 INF("No translatable character found, skipping");
-                return NULL;
+                if (msg->window_param >= 0x30 && msg->window_param <= 0x39)
+                  {
+                     buf[0] = msg->window_param;
+                  }
+                else  return NULL;
              }
            else if (res >= 2)
              {
@@ -1224,7 +1228,11 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
            else if (res == 0)
              {
                 INF("No translatable character found, skipping");
-                return NULL;
+                if (msg->window_param >= 0x30 && msg->window_param <= 0x39)
+                  {
+                     buf[0] = msg->window_param;
+                  }
+                else  return NULL;
              }
            else if (res >= 2)
              {
@@ -1291,7 +1299,11 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
            else if (res == 0)
              {
                 INF("No translatable character found, skipping");
-                return NULL;
+                if (msg->window_param >= 0x30 && msg->window_param <= 0x39)
+                  {
+                     buf[0] = msg->window_param;
+                  }
+                else  return NULL;
              }
            else if (res >= 2)
              {
