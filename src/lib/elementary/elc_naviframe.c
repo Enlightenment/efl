@@ -1132,8 +1132,16 @@ _on_item_pop_finished(void *data,
                       const char *source EINA_UNUSED)
 {
    Elm_Naviframe_Item_Data *it = data;
+   Elm_Naviframe_Item_Data *prev_it = NULL;
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
+
+   if (sd->stack && sd->stack->last)
+     {
+        prev_it = EINA_INLIST_CONTAINER_GET
+           (sd->stack->last, Elm_Naviframe_Item_Data);
+        _resize_object_reset(WIDGET(it), prev_it);
+     }
 
    if (sd->preserve)
      elm_widget_tree_unfocusable_set(VIEW(it), EINA_FALSE);
@@ -1804,8 +1812,6 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
              evas_object_freeze_events_set(VIEW(it), EINA_TRUE);
              evas_object_freeze_events_set(VIEW(prev_it), EINA_TRUE);
           }
-
-        _resize_object_reset(obj, prev_it);
 
         /* these 2 signals MUST take place simultaneously */
         elm_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
