@@ -1776,7 +1776,8 @@ EAPI const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Type *tp);
  * using eolian_type_typedecl_get and if the retrieved base is an alias, returns
  * a call of eolian_typedecl_aliased_base_get function on it. Otherwise it
  * returns the given type. This is useful in order to retrieve what an aliased
- * type actually is while still having convenience.
+ * type actually is while still having convenience. Keep in mind that this stops
+ * if the found type is actually a pointer (has a ptr() on it).
  *
  * @param[in] tp the type.
  * @return the lowest alias base or the given type.

@@ -288,7 +288,7 @@ eolian_typedecl_base_type_get(const Eolian_Typedecl *tp)
 EAPI const Eolian_Type *
 eolian_type_aliased_base_get(const Eolian_Type *tp)
 {
-   if (!tp || tp->type != EOLIAN_TYPE_REGULAR)
+   if (!tp || tp->type != EOLIAN_TYPE_REGULAR || tp->is_ptr)
      return tp;
    const Eolian_Typedecl *btp = eolian_type_typedecl_get(tp);
    if (btp && (btp->type == EOLIAN_TYPEDECL_ALIAS))
