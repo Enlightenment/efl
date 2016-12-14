@@ -1,9 +1,17 @@
 #include "elput_private.h"
 
+static inline Eina_Bool
+_check_status(int ret)
+{
+   if (ret == LIBINPUT_CONFIG_STATUS_SUCCESS)
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 EAPI Eina_Bool
 elput_touch_drag_enabled_set(Elput_Device *device, Eina_Bool enabled)
 {
-   Eina_Bool ret = EINA_FALSE;
+   int ret = -1;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
 
@@ -20,7 +28,7 @@ elput_touch_drag_enabled_set(Elput_Device *device, Eina_Bool enabled)
                                                       LIBINPUT_CONFIG_DRAG_DISABLED);
      }
 
-   return ret;
+   return _check_status(ret);
 }
 
 EAPI Eina_Bool
@@ -34,7 +42,7 @@ elput_touch_drag_enabled_get(Elput_Device *device)
 EAPI Eina_Bool
 elput_touch_drag_lock_enabled_set(Elput_Device *device, Eina_Bool enabled)
 {
-   Eina_Bool ret = EINA_FALSE;
+   int ret = -1;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
 
@@ -51,7 +59,7 @@ elput_touch_drag_lock_enabled_set(Elput_Device *device, Eina_Bool enabled)
                                                            LIBINPUT_CONFIG_DRAG_LOCK_DISABLED);
      }
 
-   return ret;
+   return _check_status(ret);
 }
 
 EAPI Eina_Bool
@@ -65,7 +73,7 @@ elput_touch_drag_lock_enabled_get(Elput_Device *device)
 EAPI Eina_Bool
 elput_touch_dwt_enabled_set(Elput_Device *device, Eina_Bool enabled)
 {
-   Eina_Bool ret = EINA_FALSE;
+   int ret = -1;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
 
@@ -85,7 +93,7 @@ elput_touch_dwt_enabled_set(Elput_Device *device, Eina_Bool enabled)
                                                  LIBINPUT_CONFIG_DWT_DISABLED);
      }
 
-   return ret;
+   return _check_status(ret);
 }
 
 EAPI Eina_Bool
@@ -142,7 +150,7 @@ elput_touch_click_method_get(Elput_Device *device)
 EAPI Eina_Bool
 elput_touch_tap_enabled_set(Elput_Device *device, Eina_Bool enabled)
 {
-   Eina_Bool ret = EINA_FALSE;
+   int ret = -1;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
 
@@ -159,7 +167,7 @@ elput_touch_tap_enabled_set(Elput_Device *device, Eina_Bool enabled)
                                                  LIBINPUT_CONFIG_TAP_DISABLED);
      }
 
-   return ret;
+   return _check_status(ret);
 }
 
 EAPI Eina_Bool
