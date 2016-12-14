@@ -429,7 +429,7 @@ EAPI void elput_input_pointer_accel_profile_set(Elput_Manager *manager, const ch
 /**
  * @defgroup Elput_Touch_Group Configuration of touch devices
  *
- * Functions related to configuration of touch devic 
+ * Functions related to configuration of touch devices
  */
 
 /**
@@ -467,7 +467,7 @@ EAPI Eina_Bool elput_touch_drag_enabled_get(Elput_Device *device);
  * tap-and-drag will immediately stop the drag.
  *
  * @param device
- * @param enable
+ * @param enabled
  *
  * @return EINA_TRUE on sucess, EINA_FALSE otherwise
  *
@@ -487,6 +487,32 @@ EAPI Eina_Bool elput_touch_drag_lock_enabled_set(Elput_Device *device, Eina_Bool
  * @since 1.19
  */
 EAPI Eina_Bool elput_touch_drag_lock_enabled_get(Elput_Device *device);
+
+/**
+ * Enable or disable touchpad dwt (disable-while-typing) feature. When enabled, the
+ * device will be disabled while typing and for a short period after.
+ *
+ * @param device
+ * @param enabled
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Touch_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool elput_touch_dwt_enabled_set(Elput_Device *device, Eina_Bool enabled);
+
+/**
+ * Get if touchpad dwt (disable-while-typing) is enabled.
+ *
+ * @param device
+ *
+ * @return EINA_TRUE if enabled, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Touch_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool elput_touch_dwt_enabled_get(Elput_Device *device);
 
 # endif
 
