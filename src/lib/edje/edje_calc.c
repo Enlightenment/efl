@@ -1235,23 +1235,23 @@ _edje_part_recalc_single_aspect(Edje *ed,
            case EDJE_ASPECT_PREFER_NONE:
              /* keep both dimensions in check */
              /* adjust for min aspect (width / height) */
-             if ((amin > ZERO) && (aspect < amin))
+             if (aspect < amin)
                {
                   new_h = DIV(params->eval.w, amin);
                   new_w = MUL(amin, params->eval.h);
                }
              /* adjust for max aspect (width / height) */
-             if ((amax > ZERO) && (aspect > amax))
+             if (aspect > amax)
                {
                   new_h = DIV(params->eval.w, amax);
                   new_w = MUL(amax, params->eval.h);
                }
-             if ((amax > ZERO) && (new_w < params->eval.w))
+             if (new_w < params->eval.w)
                {
                   new_w = params->eval.w;
                   new_h = DIV(params->eval.w, amax);
                }
-             if ((amax > ZERO) && (new_h < params->eval.h))
+             if (new_h < params->eval.h)
                {
                   new_w = MUL(amax, params->eval.h);
                   new_h = params->eval.h;
@@ -1262,10 +1262,10 @@ _edje_part_recalc_single_aspect(Edje *ed,
            case  EDJE_ASPECT_PREFER_VERTICAL:
              /* keep both dimensions in check */
              /* adjust for max aspect (width / height) */
-             if ((amax > ZERO) && (aspect > amax))
+             if (aspect > amax)
                new_w = MUL(amax, params->eval.h);
              /* adjust for min aspect (width / height) */
-             if ((amin > ZERO) && (aspect < amin))
+             if (aspect < amin)
                new_w = MUL(amin, params->eval.h);
              break;
 
@@ -1273,10 +1273,10 @@ _edje_part_recalc_single_aspect(Edje *ed,
            case EDJE_ASPECT_PREFER_HORIZONTAL:
              /* keep both dimensions in check */
              /* adjust for max aspect (width / height) */
-             if ((amax > ZERO) && (aspect > amax))
+             if (aspect > amax)
                new_h = DIV(params->eval.w, amax);
              /* adjust for min aspect (width / height) */
-             if ((amin > ZERO) && (aspect < amin))
+             if (aspect < amin)
                new_h = DIV(params->eval.w, amin);
              break;
 
@@ -1284,13 +1284,13 @@ _edje_part_recalc_single_aspect(Edje *ed,
            case EDJE_ASPECT_PREFER_BOTH:
              /* keep both dimensions in check */
              /* adjust for max aspect (width / height) */
-             if ((amax > ZERO) && (aspect > amax))
+             if (aspect > amax)
                {
                   new_w = MUL(amax, params->eval.h);
                   new_h = DIV(params->eval.w, amax);
                }
              /* adjust for min aspect (width / height) */
-             if ((amin > ZERO) && (aspect < amin))
+             if (aspect < amin)
                {
                   new_w = MUL(amin, params->eval.h);
                   new_h = DIV(params->eval.w, amin);
@@ -1301,8 +1301,7 @@ _edje_part_recalc_single_aspect(Edje *ed,
              break;
           }
 
-        if (!((amin > ZERO) && (amax > ZERO) &&
-              (apref == EDJE_ASPECT_PREFER_NONE)))
+        if (apref != EDJE_ASPECT_PREFER_NONE)
           {
              if ((*maxw >= 0) && (new_w > FROM_INT(*maxw)))
                new_w = FROM_INT(*maxw);
@@ -1318,38 +1317,34 @@ _edje_part_recalc_single_aspect(Edje *ed,
         /* do real adjustment */
         if (apref == EDJE_ASPECT_PREFER_BOTH)
           {
-             if (amin == ZERO) amin = amax;
-             if (amin != ZERO)
+             /* fix h and vary w */
+             if (new_w > params->eval.w)
                {
-                  /* fix h and vary w */
-                  if (new_w > params->eval.w)
+                  //		  params->w = new_w;
+                  // EXCEEDS BOUNDS in W
+                  new_h = DIV(params->eval.w, amin);
+                  new_w = params->eval.w;
+                  if (new_h > params->eval.h)
                     {
-                       //		  params->w = new_w;
-                       // EXCEEDS BOUNDS in W
-                       new_h = DIV(params->eval.w, amin);
-                       new_w = params->eval.w;
-                       if (new_h > params->eval.h)
-                         {
-                            new_h = params->eval.h;
-                            new_w = MUL(amin, params->eval.h);
-                         }
-                    }
-                  /* fix w and vary h */
-                  else
-                    {
-                       //		  params->h = new_h;
-                       // EXCEEDS BOUNDS in H
                        new_h = params->eval.h;
                        new_w = MUL(amin, params->eval.h);
-                       if (new_w > params->eval.w)
-                         {
-                            new_h = DIV(params->eval.w, amin);
-                            new_w = params->eval.w;
-                         }
                     }
-                  params->eval.w = new_w;
-                  params->eval.h = new_h;
                }
+             /* fix w and vary h */
+             else
+               {
+                  //		  params->h = new_h;
+                  // EXCEEDS BOUNDS in H
+                  new_h = params->eval.h;
+                  new_w = MUL(amin, params->eval.h);
+                  if (new_w > params->eval.w)
+                    {
+                       new_h = DIV(params->eval.w, amin);
+                       new_w = params->eval.w;
+                    }
+               }
+             params->eval.w = new_w;
+             params->eval.h = new_h;
           }
      }
    if (apref != EDJE_ASPECT_PREFER_BOTH)
