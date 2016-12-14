@@ -514,6 +514,33 @@ EAPI Eina_Bool elput_touch_dwt_enabled_set(Elput_Device *device, Eina_Bool enabl
  */
 EAPI Eina_Bool elput_touch_dwt_enabled_get(Elput_Device *device);
 
+/**
+ * Set the scroll method used for this device. The scroll method defines when
+ * to generate scroll axis events instead of pointer motion events.
+ *
+ * @param device
+ * @param method
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Touch_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool elput_touch_scroll_method_set(Elput_Device *device, int method);
+
+/**
+ * Get the current scroll method set on a device
+ *
+ * @param device
+ *
+ * @return The current scroll method
+ *
+ * @ingroup Elput_Touch_Group
+ * @since 1.19
+ */
+EAPI int elput_touch_scroll_method_get(Elput_Device *device);
+
+
 # endif
 
 # undef EAPI
