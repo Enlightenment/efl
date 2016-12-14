@@ -68,6 +68,52 @@ _type_exists(const char *tname, Eina_Strbuf *buf)
 }
 
 static void
+_append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp,
+               const Eolian_Type *tp)
+{
+   if (exp)
+     {
+        Eolian_Value val = eolian_expression_eval_type(exp, tp);
+        Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
+        if (lit)
+          {
+             eina_strbuf_append(buf, lit);
+             Eina_Stringshare *exps = eolian_expression_serialize(exp);
+             if (exps && strcmp(lit, exps))
+               eina_strbuf_append_printf(buf, " /* %s */", exps);
+             eina_stringshare_del(exps);
+             eina_stringshare_del(lit);
+             return;
+          }
+        else WRN("evaluation of default value failed");
+     }
+   /* default value or fallback */
+   const Eolian_Type *btp = eolian_type_aliased_base_get(tp);
+   if (eolian_type_is_ptr(btp))
+     {
+        eina_strbuf_append(buf, "NULL");
+        return;
+     }
+   const Eolian_Typedecl *tdcl = eolian_type_typedecl_get(btp);
+   if (tdcl && (eolian_typedecl_type_get(tdcl) == EOLIAN_TYPEDECL_STRUCT))
+     {
+        char *sn = eo_gen_c_full_name_get(eolian_typedecl_full_name_get(tdcl));
+        eina_strbuf_append_printf(buf, "((%s){0})", sn);
+        free(sn);
+        return;
+     }
+   Eina_Stringshare *ctp = eolian_type_c_type_get(btp);
+   if (strchr(ctp, '*'))
+     {
+        eina_strbuf_append(buf, "NULL");
+        return;
+     }
+   eina_stringshare_del(ctp);
+   /* enums and remaining regulars... 0 should do */
+   eina_strbuf_append(buf, "0");
+}
+
+static void
 _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
           Eolian_Function_Type ftype, Eina_Strbuf *buf,
           const Eolian_Implement *impl, Eina_Strbuf *lbuf)
@@ -308,15 +354,9 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
           {
              if (rtp)
                {
-                  const char *vals = NULL;
-                  if (def_ret)
-                    {
-                       Eolian_Value val = eolian_expression_eval(def_ret, EOLIAN_MASK_ALL);
-                       if (val.type)
-                         vals = eolian_expression_value_to_literal(&val);
-                    }
-                  eina_strbuf_append_printf(buf, "   return %s;\n", vals ? vals : "0");
-                  eina_stringshare_del(vals);
+                  eina_strbuf_append(buf, "   return ");
+                  _append_defval(buf, def_ret, rtp);
+                  eina_strbuf_append(buf, ";\n");
                }
              eina_strbuf_append(buf, "}\n\n");
           }
@@ -375,21 +415,8 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
 
         if (strcmp(rtpn, "void"))
           {
-             const char *vals = NULL;
-             if (def_ret)
-               {
-                  Eolian_Value val = eolian_expression_eval(def_ret, EOLIAN_MASK_ALL);
-                  if (val.type)
-                    vals = eolian_expression_value_to_literal(&val);
-               }
-             eina_strbuf_append_printf(buf, ", %s, %s", rtpn, vals ? vals : "0");
-             if (vals && (eolian_expression_type_get(def_ret) == EOLIAN_EXPR_NAME))
-               {
-                  Eina_Stringshare *valn = eolian_expression_serialize(def_ret);
-                  eina_strbuf_append_printf(buf, " /* %s */", valn);
-                  eina_stringshare_del(valn);
-               }
-             eina_stringshare_del(vals);
+             eina_strbuf_append_printf(buf, ", %s, ", rtpn);
+             _append_defval(buf, def_ret, rtp);
           }
         if (has_params)
           {
