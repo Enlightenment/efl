@@ -42,6 +42,7 @@ external_elm_button.edc \
 external_elm_check.edc \
 external_elm_panes.edc \
 external_emotion_elm.edc \
+focus.edc \
 lua_script.edc \
 messages_echo.edc \
 multiseat.edc \
@@ -143,6 +144,7 @@ edje-drag.c \
 edje-dynamic-multiseat.c \
 edje-edit-part-box.c \
 edje-entry.c \
+edje-focus.c \
 edje-multiseat.c \
 edje-multisense.c \
 edje-perspective.c \
@@ -218,6 +220,7 @@ edje-drag \
 edje-dynamic-multiseat \
 edje-edit-part-box \
 edje-entry \
+edje-focus \
 edje-multiseat \
 edje-perspective \
 edje-signals-messages \
