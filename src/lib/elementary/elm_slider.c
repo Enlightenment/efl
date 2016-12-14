@@ -1641,8 +1641,8 @@ _elm_slider_elm_interface_atspi_value_value_and_text_set(Eo *obj, Elm_Slider_Dat
 {
    double oldval = sd->val;
 
-   if (sd->val_min > value) return EINA_FALSE;
-   if (sd->val_max < value) return EINA_FALSE;
+   if (value < sd->val_min) value = sd->val_min;
+   if (value > sd->val_max) value = sd->val_max; 
 
    efl_event_callback_legacy_call(obj, ELM_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
    sd->val = value;
