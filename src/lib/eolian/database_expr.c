@@ -50,7 +50,7 @@ mask_to_str(int mask, char *buf)
 }
 
 static Eina_Bool
-expr_type_error(const Eolian_Expression *expr, int mask, int type)
+expr_type_error(const Eolian_Expression *expr, int type, int mask)
 {
    char buf[512];
    char ebuf[256];
@@ -153,9 +153,9 @@ promote(Eolian_Expression *a, Eolian_Expression *b)
    assert(a->type && b->type);
    /* not a number */
    if (a->type >= EOLIAN_EXPR_STRING)
-     return expr_type_error(a, EOLIAN_MASK_NUMBER, expr_type_to_mask(a));
+     return expr_type_error(a, expr_type_to_mask(a), EOLIAN_MASK_NUMBER);
    if (b->type >= EOLIAN_EXPR_STRING)
-     return expr_type_error(b, EOLIAN_MASK_NUMBER, expr_type_to_mask(b));
+     return expr_type_error(b, expr_type_to_mask(b), EOLIAN_MASK_NUMBER);
    /* no need for promotion */
    if (a->type == b->type) return EINA_TRUE;
    /* if either operand is floating point, everything has to be */

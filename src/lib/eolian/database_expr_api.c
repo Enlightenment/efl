@@ -29,6 +29,8 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type)
       case EOLIAN_TYPE_REGULAR:
         {
            int  kw = eo_lexer_keyword_str_to_id(type->name);
+           if (type->is_ptr)
+             return database_expr_eval(expr, EOLIAN_MASK_NULL);
            if (!kw || kw < KW_byte || kw >= KW_void)
              {
                 const Eolian_Typedecl *base = eolian_type_typedecl_get(type);

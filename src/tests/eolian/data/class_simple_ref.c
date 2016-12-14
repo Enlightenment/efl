@@ -2,7 +2,7 @@ EWAPI float BAR = 10.300000f;
 
 Eina_Bool _class_simple_a_set(Eo *obj, Evas_Simple_Data *pd, int value);
 
-EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_a_set, Eina_Bool, EINA_TRUE, EFL_FUNC_CALL(value), int value);
+EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_a_set, Eina_Bool, EINA_TRUE /* true */, EFL_FUNC_CALL(value), int value);
 
 int _class_simple_a_get(Eo *obj, Evas_Simple_Data *pd);
 
@@ -20,11 +20,11 @@ static char *__eolian_class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, cha
    return _class_simple_foo(obj, pd, a, b, c, d);
 }
 
-EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_foo, char *, NULL, EFL_FUNC_CALL(a, b, c, d), int a, char *b, double *c, int *d);
+EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_foo, char *, NULL /* null */, EFL_FUNC_CALL(a, b, c, d), int a, char *b, double *c, int *d);
 
 int *_class_simple_bar(Eo *obj, Evas_Simple_Data *pd, int x);
 
-EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_bar, int *, 0, EFL_FUNC_CALL(x), int x);
+EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_bar, int *, NULL, EFL_FUNC_CALL(x), int x);
 
 static Eina_Bool
 _class_simple_class_initializer(Efl_Class *klass)
