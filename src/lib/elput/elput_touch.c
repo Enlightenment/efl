@@ -118,3 +118,23 @@ elput_touch_scroll_method_get(Elput_Device *device)
 
    return libinput_device_config_scroll_get_method(device->device);
 }
+
+EAPI Eina_Bool
+elput_touch_click_method_set(Elput_Device *device, int method)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
+
+   if (libinput_device_config_click_set_method(device->device, method) ==
+       LIBINPUT_CONFIG_STATUS_SUCCESS)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+EAPI int
+elput_touch_click_method_get(Elput_Device *device)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, -1);
+
+   return libinput_device_config_click_get_method(device->device);
+}

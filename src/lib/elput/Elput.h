@@ -540,6 +540,31 @@ EAPI Eina_Bool elput_touch_scroll_method_set(Elput_Device *device, int method);
  */
 EAPI int elput_touch_scroll_method_get(Elput_Device *device);
 
+/**
+ * Set the button click method for a device. The button click method defines
+ * when to generate software emulated buttons
+ *
+ * @param device
+ * @param method
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Touch_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool elput_touch_click_method_set(Elput_Device *device, int method);
+
+/**
+ * Get the current button click method for a device
+ *
+ * @param device
+ *
+ * @return The current button click method
+ *
+ * @ingroup Elput_Touch_Group
+ * @since 1.19
+ */
+EAPI int elput_touch_click_method_get(Elput_Device *device);
 
 # endif
 
