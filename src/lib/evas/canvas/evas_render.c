@@ -2255,11 +2255,10 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 void
 evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
                             Evas_Object_Protected_Data *proxy_obj, Eina_Rectangle region,
-                            Eina_Bool do_async)
+                            Eina_Bool source_clip, Eina_Bool do_async)
 {
    Evas_Public_Data *evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Object_Protected_Data *source;
-   Eina_Bool source_clip = EINA_FALSE;
    int level = 1;
    void *ctx;
    int x, y, w, h, W, H;
@@ -2322,9 +2321,6 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         ENFN->rectangle_draw(ENDT, ctx, proxy_write->surface, 0, 0, w, h, do_async);
         ENFN->context_free(ENDT, ctx);
         eina_evlog("-proxy_fill", eo_proxy, 0.0, NULL);
-
-        if (efl_isa(eo_proxy, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
-          source_clip = _evas_image_proxy_source_clip_get(eo_proxy);
 
         Evas_Proxy_Render_Data proxy_render_data = {
              .eo_proxy = eo_proxy,

@@ -920,7 +920,7 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
         Eina_Rectangle region = { 0, 0, 0, 0 };
         o->proxyrendering = EINA_TRUE;
         evas_render_proxy_subrender(obj->layer->evas->evas, o->cur->source,
-                                    (Eo *) eo_obj, obj, region, EINA_FALSE);
+                                    (Eo *) eo_obj, obj, region, o->proxy_src_clip, EINA_FALSE);
         pixels = source->proxy->surface;
         imagew = source->proxy->w;
         imageh = source->proxy->h;
@@ -1935,7 +1935,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
           }
         o->proxyrendering = EINA_TRUE;
         evas_render_proxy_subrender(obj->layer->evas->evas, o->cur->source,
-                                    eo_obj, obj, region, EINA_FALSE);
+                                    eo_obj, obj, region, o->proxy_src_clip, EINA_FALSE);
         pixels = source->proxy->surface;
         imagew = source->proxy->w;
         imageh = source->proxy->h;
@@ -2970,7 +2970,7 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
           }
         o->proxyrendering = EINA_TRUE;
         evas_render_proxy_subrender(obj->layer->evas->evas, o->cur->source,
-                                    eo_obj, obj, region, EINA_FALSE);
+                                    eo_obj, obj, region, o->proxy_src_clip, EINA_FALSE);
         pixels = source->proxy->surface;
         imagew = source->proxy->w;
         imageh = source->proxy->h;
