@@ -4,6 +4,14 @@
 
 #include <stdio.h>
 
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#else
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
+#endif
+
 #include <Ecore.h>
 #include <Ecore_Con.h>
 
