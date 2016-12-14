@@ -296,7 +296,15 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
      _ecore_wl2_output_del(output);
 
    EINA_INLIST_FOREACH_SAFE(ewd->windows, tmp, window)
-     ecore_wl2_window_hide(window);
+     {
+        Ecore_Wl2_Subsurface *subsurf;
+
+        EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
+          _ecore_wl2_subsurf_unmap(subsurf);
+        _ecore_wl_window_semi_free(window);
+        window->configure_serial = 0;
+        window->configure_ack = NULL;
+     }
 
    ewd->recovery_timer =
      ecore_timer_add(0.5, (Ecore_Task_Cb)_recovery_timer, ewd);

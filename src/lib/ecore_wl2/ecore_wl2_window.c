@@ -4,6 +4,28 @@
 
 #include "ecore_wl2_private.h"
 
+void
+_ecore_wl_window_semi_free(Ecore_Wl2_Window *window)
+{
+   if (window->xdg_surface) xdg_surface_destroy(window->xdg_surface);
+   window->xdg_surface = NULL;
+
+   if (window->xdg_popup) xdg_popup_destroy(window->xdg_popup);
+   window->xdg_popup = NULL;
+
+   if (window->wl_shell_surface)
+     wl_shell_surface_destroy(window->wl_shell_surface);
+   window->wl_shell_surface = NULL;
+
+   if (window->www_surface)
+     www_surface_destroy(window->www_surface);
+   window->www_surface = NULL;
+
+   if (window->surface) wl_surface_destroy(window->surface);
+   window->surface = NULL;
+   window->surface_id = -1;
+}
+
 static void
 _session_recovery_create_uuid(void *data, struct zwp_e_session_recovery *session_recovery EINA_UNUSED, struct wl_surface *surface EINA_UNUSED, const char *uuid)
 {
@@ -478,27 +500,11 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_free(subsurf);
 
-   if (window->xdg_surface) xdg_surface_destroy(window->xdg_surface);
-   window->xdg_surface = NULL;
-
-   if (window->xdg_popup) xdg_popup_destroy(window->xdg_popup);
-   window->xdg_popup = NULL;
-
-   if (window->wl_shell_surface)
-     wl_shell_surface_destroy(window->wl_shell_surface);
-   window->wl_shell_surface = NULL;
-
-   if (window->www_surface)
-     www_surface_destroy(window->www_surface);
-   window->www_surface = NULL;
-
    if (window->uuid && window->surface && window->display->wl.session_recovery)
      zwp_e_session_recovery_destroy_uuid(window->display->wl.session_recovery,
        window->surface, window->uuid);
 
-   if (window->surface) wl_surface_destroy(window->surface);
-   window->surface = NULL;
-   window->surface_id = -1;
+   _ecore_wl_window_semi_free(window);
 
    eina_stringshare_replace(&window->uuid, NULL);
 
