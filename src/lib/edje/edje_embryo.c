@@ -193,8 +193,6 @@
  * get_ignore_flags(part_id)
  * set_mask_flags(part_id, flags)
  * get_mask_flags(part_id)
- * set_clip(part_id, clip_part_id)
- * get_clip(part_id)
  *
  * set_focus(part_id, seat_name[])
  * unset_focus(seat_name[])
