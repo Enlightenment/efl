@@ -19,7 +19,7 @@ class Efl.Loop.Timer (Efl.Loop_User)
          get {
          }
          values {
-            in: double(-1); [[The new interval in seconds]]
+            in: double(-1.0); [[The new interval in seconds]]
          }
       }
       @property pending {

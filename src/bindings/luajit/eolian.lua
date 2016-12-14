@@ -109,6 +109,7 @@ ffi.cdef [[
         EOLIAN_MASK_STRING = 1 << 4,
         EOLIAN_MASK_CHAR   = 1 << 5,
         EOLIAN_MASK_NULL   = 1 << 6,
+        EOLIAN_MASK_SIGNED = EOLIAN_MASK_SINT   | EOLIAN_MASK_FLOAT,
         EOLIAN_MASK_NUMBER = EOLIAN_MASK_INT    | EOLIAN_MASK_FLOAT,
         EOLIAN_MASK_ALL    = EOLIAN_MASK_NUMBER | EOLIAN_MASK_BOOL
                            | EOLIAN_MASK_STRING | EOLIAN_MASK_CHAR
@@ -1222,6 +1223,7 @@ M.expression_mask = {
 local emask = M.expression_mask
 
 emask.INT    = bit.bor(emask.SINT  , emask.UINT )
+emask.SIGNED = bit.bor(emask.SINT  , emask.FLOAT)
 emask.NUMBER = bit.bor(emask.INT   , emask.FLOAT)
 emask.ALL    = bit.bor(emask.NUMBER, emask.BOOL,
                        emask.STRING, emask.CHAR, emask.NULL)

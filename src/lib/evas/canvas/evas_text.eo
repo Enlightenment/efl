@@ -51,7 +51,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          get {
          }
          values {
-            ellipsis: double(-1); [[The ellipsis. Allowed values: -1.0 or 0.0-1.0]]
+            ellipsis: double(-1.0); [[The ellipsis. Allowed values: -1.0 or 0.0-1.0]]
          }
       }
       @property bidi_delimiters {
