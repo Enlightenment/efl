@@ -2491,6 +2491,7 @@ void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
 
 void _edje_focused_part_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp);
 Edje_Real_Part *_edje_focused_part_get(Edje *ed, const char *seat_name);
+void _edje_part_focus_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp);
 
 Eina_Stringshare *_edje_seat_name_get(Edje *ed, Efl_Input_Device *device);
 Efl_Input_Device *_edje_seat_get(Edje *ed, Eina_Stringshare *name);

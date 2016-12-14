@@ -196,6 +196,9 @@
  * set_clip(part_id, clip_part_id)
  * get_clip(part_id)
  *
+ * set_focus(part_id, seat_name[])
+ * unset_focus(seat_name[])
+ *
  * part_swallow(part_id, group_name)
  *
  * external_param_get_int(id, param_name[])
@@ -3771,6 +3774,59 @@ _edje_embryo_fn_part_swallow(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+/* set_focus(part_id, seat_name[]) */
+static Embryo_Cell
+_edje_embryo_fn_set_focus(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id;
+   Edje_Real_Part *rp;
+   char *seat_name = NULL;
+
+   if (!(HASNPARAMS(1) || HASNPARAMS(2))) return -1;
+   ed = embryo_program_data_get(ep);
+
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (!rp) return 0;
+
+   /* if no seat name is passed, that's fine. it means
+      it should be applied to default seat */
+   if (HASNPARAMS(2))
+     {
+        GETSTR(seat_name, params[2]);
+        if (!seat_name) return 0;
+     }
+
+   _edje_part_focus_set(ed, seat_name, rp);
+
+   return 0;
+}
+
+/* unset_focus(seat_name[]) */
+static Embryo_Cell
+_edje_embryo_fn_unset_focus(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *seat_name = NULL;
+
+   if (!(HASNPARAMS(0) || HASNPARAMS(1))) return -1;
+   ed = embryo_program_data_get(ep);
+
+   /* seat name is optional. no seat means
+      it should be applied to default seat */
+   if (HASNPARAMS(1))
+     {
+        GETSTR(seat_name, params[1]);
+        if (!seat_name) return 0;
+     }
+
+   _edje_part_focus_set(ed, seat_name, NULL);
+
+   return 0;
+}
+
 /* external_param_get_int(id, param_name[]) */
 static Embryo_Cell
 _edje_embryo_fn_external_param_get_int(Embryo_Program *ep, Embryo_Cell *params)
@@ -4509,6 +4565,9 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
    embryo_program_native_call_add(ep, "get_ignore_flags", _edje_embryo_fn_get_ignore_flags);
    embryo_program_native_call_add(ep, "set_mask_flags", _edje_embryo_fn_set_mask_flags);
    embryo_program_native_call_add(ep, "get_mask_flags", _edje_embryo_fn_get_mask_flags);
+
+   embryo_program_native_call_add(ep, "set_focus", _edje_embryo_fn_set_focus);
+   embryo_program_native_call_add(ep, "unset_focus", _edje_embryo_fn_unset_focus);
 
    embryo_program_native_call_add(ep, "part_swallow", _edje_embryo_fn_part_swallow);
 

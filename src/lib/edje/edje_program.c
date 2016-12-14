@@ -641,7 +641,7 @@ _edje_seat_name_emit(Edje *ed, const char *name, const char *sig, const char *sr
    _edje_emit_full(ed, buf, src, NULL, NULL);
 }
 
-static void
+void
 _edje_part_focus_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp)
 {
    Edje_Real_Part *focused_part;
