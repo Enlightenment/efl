@@ -566,6 +566,31 @@ EAPI Eina_Bool elput_touch_click_method_set(Elput_Device *device, int method);
  */
 EAPI int elput_touch_click_method_get(Elput_Device *device);
 
+/**
+ * Enable or disable tap-to-click on a given device
+ *
+ * @param device
+ * @param enabled
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Touch_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool elput_touch_tap_enabled_set(Elput_Device *device, Eina_Bool enabled);
+
+/**
+ * Get if tap-to-click is enabled on a given device
+ *
+ * @param device
+ *
+ * @return EINA_TRUE if enabled, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Touch_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool elput_touch_tap_enabled_get(Elput_Device *device);
+
 # endif
 
 # undef EAPI
