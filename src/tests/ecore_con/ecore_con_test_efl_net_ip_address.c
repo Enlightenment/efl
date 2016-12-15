@@ -204,11 +204,11 @@ _assert_found_internal(const char *file, int line, const struct resolve_ctx *ctx
    EINA_ARRAY_ITER_NEXT(ctx->results, i, o, it)
      fprintf(stderr, "result %u: %s\n", i, efl_net_ip_address_string_get(o));
 
-     _ck_assert_failed(file, line, "Failed",
-                       "Expected found=%hhu, got %hhu resolving=%s",
-                       expected, found,
-                       string,
-                       NULL);
+   _ck_assert_failed(file, line, "Failed",
+                     "Expected found=%hhu, got %hhu resolving=%s",
+                     expected, found,
+                     string,
+                     NULL);
 }
 
 static void
