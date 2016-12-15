@@ -80,7 +80,7 @@ _eet_data_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply, const char *protoco
 }
 
 static Eina_Bool
-_eet_svr_cnct_cb(void *data, Ecore_Con_Reply *reply, Ecore_Con_Client *conn EINA_UNUSED)
+_eet_svr_cnct_cb(void *data, Ecore_Con_Reply *reply, Ecore_Con_Server *conn EINA_UNUSED)
 {
    int *i = data;
    ECE_Test toSend = {1, CLI_MSG};
@@ -172,7 +172,7 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
 END_TEST
 
 static Eina_Bool
-_eet_svr_discnct_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply EINA_UNUSED, Ecore_Con_Client *conn EINA_UNUSED)
+_eet_svr_discnct_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply EINA_UNUSED, Ecore_Con_Server *conn EINA_UNUSED)
 {
    ecore_main_loop_quit();
    return EINA_FALSE;
