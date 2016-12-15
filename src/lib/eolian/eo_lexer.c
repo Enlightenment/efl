@@ -1109,13 +1109,14 @@ eo_lexer_free(Eo_Lexer *ls)
 Eo_Lexer *
 eo_lexer_new(const char *source)
 {
-   Eo_Lexer   *ls = calloc(1, sizeof(Eo_Lexer));
-   if (!setjmp(ls->err_jmp))
+   volatile Eo_Lexer *ls = calloc(1, sizeof(Eo_Lexer));
+
+   if (!setjmp(((Eo_Lexer *)(ls))->err_jmp))
      {
-        eo_lexer_set_input(ls, source);
-        return ls;
+        eo_lexer_set_input((Eo_Lexer *) ls, source);
+        return (Eo_Lexer *) ls;
      }
-   eo_lexer_free(ls);
+   eo_lexer_free((Eo_Lexer *) ls);
    return NULL;
 }
 
