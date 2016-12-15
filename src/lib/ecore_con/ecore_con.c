@@ -939,7 +939,7 @@ static Eina_Error
 _efl_net_ip_connect(const struct addrinfo *addr, SOCKET *sockfd)
 {
    SOCKET fd = INVALID_SOCKET;
-   Eina_Error ret = 0;
+   volatile Eina_Error ret = 0;
 
    /* always close-on-exec since it's not a point to pass an
     * under construction socket to a child process.
@@ -985,7 +985,7 @@ _efl_net_ip_resolve_and_connect(const char *host, const char *port, int type, in
      .ai_family = AF_UNSPEC,
      .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED,
    };
-   Eina_Error ret = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
+   volatile Eina_Error ret = EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
    int r;
 
    if (strchr(host, ':')) hints.ai_family = AF_INET6;
@@ -1108,7 +1108,7 @@ _efl_net_ip_connect_async_run_socks4_try(Efl_Net_Ip_Connect_Async_Data *d, const
    socklen_t proxy_addrlen;
    SOCKET fd;
    Eina_Error err;
-   Eina_Bool ret = EINA_FALSE;
+   volatile Eina_Bool ret = EINA_FALSE;
    ssize_t s;
 
    err = _efl_net_ip_resolve_and_connect(proxy_host, proxy_port, SOCK_STREAM, IPPROTO_TCP, &fd, (struct sockaddr *)&proxy_addr, &proxy_addrlen);
@@ -1565,7 +1565,7 @@ _efl_net_ip_connect_async_run_socks5_auth_user_pass(SOCKET fd, const char *user,
    uint8_t pass_len = pass ? strlen(pass) : 0;
    size_t len = 1 + 1 + user_len + 1 + pass_len;
    char *msg;
-   Eina_Bool ret = EINA_FALSE;
+   volatile Eina_Bool ret = EINA_FALSE;
    ssize_t s;
 
    msg = malloc(len);
@@ -1630,7 +1630,7 @@ _efl_net_ip_connect_async_run_socks5_try(Efl_Net_Ip_Connect_Async_Data *d, const
    socklen_t proxy_addrlen;
    SOCKET fd;
    Eina_Error err;
-   Eina_Bool ret = EINA_FALSE;
+   volatile Eina_Bool ret = EINA_FALSE;
    ssize_t s;
 
    err = _efl_net_ip_resolve_and_connect(proxy_host, proxy_port, SOCK_STREAM, IPPROTO_TCP, &fd, (struct sockaddr *)&proxy_addr, &proxy_addrlen);
@@ -2053,8 +2053,8 @@ _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
    const char *host, *port, *proxy;
    char *addrcopy;
    char **proxies = NULL;
-   int proxies_idx = 0;
-   Eina_Bool is_libproxy = EINA_FALSE;
+   volatile int proxies_idx = 0;
+   volatile Eina_Bool is_libproxy = EINA_FALSE;
 
    addrcopy = strdup(d->address);
    if (!addrcopy)
