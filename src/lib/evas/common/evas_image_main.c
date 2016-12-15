@@ -184,7 +184,7 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
 EAPI Eina_Bool
 _evas_common_rgba_image_plane_get(const RGBA_Image *im, int plane, Eina_Slice *slice)
 {
-   unsigned char **csdata;
+   unsigned char **csdata = NULL;
    Evas_Colorspace cs;
    int w, h;
 
