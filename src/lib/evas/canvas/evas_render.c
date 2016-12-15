@@ -74,6 +74,7 @@ rend_dbg(const char *txt)
 /* save typing */
 #define ENFN evas->engine.func
 #define ENDT evas->engine.data.output
+#define ENCTX evas->engine.data.context
 
 typedef struct _Render_Updates Render_Updates;
 struct _Render_Updates
@@ -265,18 +266,18 @@ _evas_render_can_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static void
-_evas_render_prev_cur_clip_cache_add(Evas_Public_Data *e, Evas_Object_Protected_Data *obj)
+_evas_render_prev_cur_clip_cache_add(Evas_Public_Data *evas, Evas_Object_Protected_Data *obj)
 {
-   e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                           obj->prev->cache.clip.x + e->framespace.x,
-                                           obj->prev->cache.clip.y + e->framespace.y,
-                                           obj->prev->cache.clip.w,
-                                           obj->prev->cache.clip.h);
-   e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                           obj->cur->cache.clip.x + e->framespace.x,
-                                           obj->cur->cache.clip.y + e->framespace.y,
-                                           obj->cur->cache.clip.w,
-                                           obj->cur->cache.clip.h);
+   ENFN->output_redraws_rect_add(ENDT,
+                                 obj->prev->cache.clip.x + evas->framespace.x,
+                                 obj->prev->cache.clip.y + evas->framespace.y,
+                                 obj->prev->cache.clip.w,
+                                 obj->prev->cache.clip.h);
+   ENFN->output_redraws_rect_add(ENDT,
+                                 obj->cur->cache.clip.x + evas->framespace.x,
+                                 obj->cur->cache.clip.y + evas->framespace.y,
+                                 obj->cur->cache.clip.w,
+                                 obj->cur->cache.clip.h);
 }
 
 static void
@@ -488,90 +489,81 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
 }
 
 static void
-_evas_render_object_map_change_update(Evas_Public_Data *e, Evas_Object *eo_obj EINA_UNUSED,
+_evas_render_object_map_change_update(Evas_Public_Data *evas,
                                       Evas_Object_Protected_Data *obj,
                                       Eina_Bool map, Eina_Bool hmap,
                                       int *redraw_all)
 {
+   Evas_Coord x = 0, y = 0, w = 0, h = 0;
+   const int fx = evas->framespace.x;
+   const int fy = evas->framespace.y;
+
    if (map == hmap) return;
 
-   if (obj->map)
+   if (!obj->map)
      {
-        Evas_Coord x = 0, y = 0, w = 0, h = 0;
-
-        if (map)
-          {
-             x = obj->prev->cache.clip.x;
-             y = obj->prev->cache.clip.y;
-             w = obj->prev->cache.clip.w;
-             h = obj->prev->cache.clip.h;
-             if (obj->prev->clipper)
-               {
-                  RECTS_CLIP_TO_RECT(x, y, w, h,
-                                     obj->prev->clipper->prev->cache.clip.x,
-                                     obj->prev->clipper->prev->cache.clip.y,
-                                     obj->prev->clipper->prev->cache.clip.w,
-                                     obj->prev->clipper->prev->cache.clip.h);
-               }
-             e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                     x + e->framespace.x,
-                                                     y + e->framespace.y,
-                                                     w, h);
-             x = obj->map->cur.map->normal_geometry.x;
-             y = obj->map->cur.map->normal_geometry.y;
-             w = obj->map->cur.map->normal_geometry.w;
-             h = obj->map->cur.map->normal_geometry.h;
-             if (obj->cur->clipper)
-               {
-                  RECTS_CLIP_TO_RECT(x, y, w, h,
-                                     obj->cur->clipper->cur->cache.clip.x,
-                                     obj->cur->clipper->cur->cache.clip.y,
-                                     obj->cur->clipper->cur->cache.clip.w,
-                                     obj->cur->clipper->cur->cache.clip.h);
-               }
-             e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                     x + e->framespace.x,
-                                                     y + e->framespace.y,
-                                                     w, h);
-          }
-        else if (hmap)
-          {
-             x = obj->map->prev.map->normal_geometry.x;
-             y = obj->map->prev.map->normal_geometry.y;
-             w = obj->map->prev.map->normal_geometry.w;
-             h = obj->map->prev.map->normal_geometry.h;
-             if (obj->prev->clipper)
-               {
-                  RECTS_CLIP_TO_RECT(x, y, w, h,
-                                     obj->prev->clipper->prev->cache.clip.x,
-                                     obj->prev->clipper->prev->cache.clip.y,
-                                     obj->prev->clipper->prev->cache.clip.w,
-                                     obj->prev->clipper->prev->cache.clip.h);
-               }
-             e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                     x + e->framespace.x,
-                                                     y + e->framespace.y,
-                                                     w, h);
-             x = obj->cur->cache.clip.x;
-             y = obj->cur->cache.clip.y;
-             w = obj->cur->cache.clip.w;
-             h = obj->cur->cache.clip.h;
-             if (obj->cur->clipper)
-               {
-                  RECTS_CLIP_TO_RECT(x, y, w, h,
-                                     obj->cur->clipper->cur->cache.clip.x,
-                                     obj->cur->clipper->cur->cache.clip.y,
-                                     obj->cur->clipper->cur->cache.clip.w,
-                                     obj->cur->clipper->cur->cache.clip.h);
-               }
-             e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                     x + e->framespace.x,
-                                                     y + e->framespace.y,
-                                                     w, h);
-          }
+        *redraw_all = 1;
         return;
      }
-   *redraw_all = 1;
+
+   if (map)
+     {
+        x = obj->prev->cache.clip.x;
+        y = obj->prev->cache.clip.y;
+        w = obj->prev->cache.clip.w;
+        h = obj->prev->cache.clip.h;
+        if (obj->prev->clipper)
+          {
+             RECTS_CLIP_TO_RECT(x, y, w, h,
+                                obj->prev->clipper->prev->cache.clip.x,
+                                obj->prev->clipper->prev->cache.clip.y,
+                                obj->prev->clipper->prev->cache.clip.w,
+                                obj->prev->clipper->prev->cache.clip.h);
+          }
+        ENFN->output_redraws_rect_add(ENDT, x + fx, y + fy, w, h);
+        x = obj->map->cur.map->normal_geometry.x;
+        y = obj->map->cur.map->normal_geometry.y;
+        w = obj->map->cur.map->normal_geometry.w;
+        h = obj->map->cur.map->normal_geometry.h;
+        if (obj->cur->clipper)
+          {
+             RECTS_CLIP_TO_RECT(x, y, w, h,
+                                obj->cur->clipper->cur->cache.clip.x,
+                                obj->cur->clipper->cur->cache.clip.y,
+                                obj->cur->clipper->cur->cache.clip.w,
+                                obj->cur->clipper->cur->cache.clip.h);
+          }
+        ENFN->output_redraws_rect_add(ENDT, x + fx, y + fy, w, h);
+     }
+   else if (hmap)
+     {
+        x = obj->map->prev.map->normal_geometry.x;
+        y = obj->map->prev.map->normal_geometry.y;
+        w = obj->map->prev.map->normal_geometry.w;
+        h = obj->map->prev.map->normal_geometry.h;
+        if (obj->prev->clipper)
+          {
+             RECTS_CLIP_TO_RECT(x, y, w, h,
+                                obj->prev->clipper->prev->cache.clip.x,
+                                obj->prev->clipper->prev->cache.clip.y,
+                                obj->prev->clipper->prev->cache.clip.w,
+                                obj->prev->clipper->prev->cache.clip.h);
+          }
+        ENFN->output_redraws_rect_add(ENDT, x + fx, y + fy, w, h);
+        x = obj->cur->cache.clip.x;
+        y = obj->cur->cache.clip.y;
+        w = obj->cur->cache.clip.w;
+        h = obj->cur->cache.clip.h;
+        if (obj->cur->clipper)
+          {
+             RECTS_CLIP_TO_RECT(x, y, w, h,
+                                obj->cur->clipper->cur->cache.clip.x,
+                                obj->cur->clipper->cur->cache.clip.y,
+                                obj->cur->clipper->cur->cache.clip.w,
+                                obj->cur->clipper->cur->cache.clip.h);
+          }
+        ENFN->output_redraws_rect_add(ENDT, x + fx, y + fy, w, h);
+     }
 }
 
 
@@ -593,19 +585,18 @@ typedef struct
 } Render_Cache;
 
 void
-evas_render_update_del(Evas_Public_Data *e, int x, int y, int w, int h)
+evas_render_update_del(Evas_Public_Data *evas, int x, int y, int w, int h)
 {
-   if (EINA_LIKELY((e->update_del_redirect_array == NULL)))
+   if (EINA_LIKELY((evas->update_del_redirect_array == NULL)))
      {
-        e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                x, y, w, h);
+        ENFN->output_redraws_rect_del(ENDT, x, y, w, h);
      }
    else
      {
         Eina_Rectangle r;
 
         r.x = x; r.y = y; r.w = w; r.h = h;
-        eina_inarray_push(e->update_del_redirect_array, &r);
+        eina_inarray_push(evas->update_del_redirect_array, &r);
      }
 }
 
@@ -743,9 +734,7 @@ _evas_render_phase1_object_mapped(Phase1_Context *p1ctx,
      _evas_render_phase1_object_map_clipper_fix(eo_obj, obj);
    if (!obj_changed) return;
 
-   _evas_render_object_map_change_update(p1ctx->e, eo_obj, obj,
-                                         EINA_TRUE, hmap,
-                                         &(p1ctx->redraw_all));
+   _evas_render_object_map_change_update(p1ctx->e, obj, EINA_TRUE, hmap, &(p1ctx->redraw_all));
    if (!((is_active) &&
          (!obj->clip.clipees) &&
          ((evas_object_is_visible(eo_obj, obj) &&
@@ -782,9 +771,7 @@ _evas_render_phase1_object_mapped_had_restack(Phase1_Context *p1ctx,
              if ((obj->map->cur.map) && (obj->map->cur.usemap))
                map = EINA_TRUE;
           }
-        _evas_render_object_map_change_update(p1ctx->e, eo_obj, obj,
-                                              map, EINA_TRUE,
-                                              &(p1ctx->redraw_all));
+        _evas_render_object_map_change_update(p1ctx->e, obj, map, EINA_TRUE, &(p1ctx->redraw_all));
      }
    if (!(!map && obj->cur->clipper)) return;
    // Fix some bad clipping issues after an evas_map animation finishes
@@ -2568,7 +2555,7 @@ end:
 }
 
 static void
-_evas_render_cutout_add(Evas_Public_Data *e, void *context, Evas_Object_Protected_Data *obj, int off_x, int off_y)
+_evas_render_cutout_add(Evas_Public_Data *evas, void *context, Evas_Object_Protected_Data *obj, int off_x, int off_y)
 {
    if (evas_object_is_source_invisible(obj->object, obj)) return;
    if (evas_object_is_opaque(obj->object, obj))
@@ -2598,9 +2585,7 @@ _evas_render_cutout_add(Evas_Public_Data *e, void *context, Evas_Object_Protecte
                   oo = oo->cur->clipper;
                }
           }
-        e->engine.func->context_cutout_add
-          (e->engine.data.output, context,
-              cox + off_x, coy + off_y, cow, coh);
+        ENFN->context_cutout_add(ENDT, context, cox + off_x, coy + off_y, cow, coh);
      }
    else
      {
@@ -2618,9 +2603,7 @@ _evas_render_cutout_add(Evas_Public_Data *e, void *context, Evas_Object_Protecte
                                      obj->cur->cache.clip.y + off_y,
                                      obj->cur->cache.clip.w,
                                      obj->cur->cache.clip.h);
-                  e->engine.func->context_cutout_add
-                    (e->engine.data.output, context,
-                        obx, oby, obw, obh);
+                  ENFN->context_cutout_add(ENDT, context, obx, oby, obw, obh);
                }
           }
      }
@@ -2702,7 +2685,7 @@ _is_obj_in_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
 #endif
 
 static Eina_Bool
-evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
+evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                                   void *surface, void *context,
                                   Evas_Object_Protected_Data *top,
                                   int ux, int uy, int uw, int uh,
@@ -2726,48 +2709,39 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
    /* build obscuring objects list (in order from bottom to top) */
    if (alpha)
      {
-        e->engine.func->context_clip_set(e->engine.data.output,
-                                         context,
-                                         ux + off_x, uy + off_y, uw, uh);
+        ENFN->context_clip_set(ENDT, context, ux + off_x, uy + off_y, uw, uh);
      }
-   for (i = 0; i < e->obscuring_objects.count; ++i)
+   for (i = 0; i < evas->obscuring_objects.count; ++i)
      {
         obj = (Evas_Object_Protected_Data *)eina_array_data_get
-          (&e->obscuring_objects, i);
+          (&evas->obscuring_objects, i);
         if (evas_object_is_in_output_rect(obj->object, obj, ux - fx, uy - fy, uw, uh))
           {
-             OBJ_ARRAY_PUSH(&e->temporary_objects, obj);
+             OBJ_ARRAY_PUSH(&evas->temporary_objects, obj);
 
              if (obj == top) break;
 
              /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
              if (alpha)
-               _evas_render_cutout_add(e, context, obj, off_x + fx, off_y + fy);
+               _evas_render_cutout_add(evas, context, obj, off_x + fx, off_y + fy);
           }
      }
    if (alpha)
      {
-        e->engine.func->context_color_set(e->engine.data.output,
-                                          context,
-                                          0, 0, 0, 0);
-        e->engine.func->context_multiplier_unset
-          (e->engine.data.output, e->engine.data.context);
-        e->engine.func->context_render_op_set(e->engine.data.output,
-                                              context,
-                                              EVAS_RENDER_COPY);
-        e->engine.func->rectangle_draw(e->engine.data.output,
-                                       context, surface,
-                                       cx, cy, cw, ch, do_async);
-        e->engine.func->context_cutout_clear(e->engine.data.output, context);
-        e->engine.func->context_clip_unset(e->engine.data.output, context);
+        ENFN->context_color_set(ENDT, context, 0, 0, 0, 0);
+        ENFN->context_multiplier_unset(ENDT, ENCTX); // XXX: Why not 'context'???
+        ENFN->context_render_op_set(ENDT, context, EVAS_RENDER_COPY);
+        ENFN->rectangle_draw(ENDT, context, surface, cx, cy, cw, ch, do_async);
+        ENFN->context_cutout_clear(ENDT, context);
+        ENFN->context_clip_unset(ENDT, context);
      }
    eina_evlog("-render_setup", eo_e, 0.0, NULL);
 
    eina_evlog("+render_objects", eo_e, 0.0, NULL);
    /* render all object that intersect with rect */
-   for (i = 0; i < e->active_objects.len; i++)
+   for (i = 0; i < evas->active_objects.len; i++)
      {
-        Evas_Active_Entry *ent = eina_inarray_nth(&e->active_objects, i);
+        Evas_Active_Entry *ent = eina_inarray_nth(&evas->active_objects, i);
 
         obj = ent->obj;
         eo_obj = obj->object;
@@ -2795,8 +2769,8 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
              int x, y, w, h;
 
              RD(level, "      DRAW (vis: %i, a: %i, clipees: %p)\n", obj->cur->visible, obj->cur->color.a, obj->clip.clipees);
-             if ((e->temporary_objects.count > *offset) &&
-                 (eina_array_data_get(&e->temporary_objects, *offset) == obj))
+             if ((evas->temporary_objects.count > *offset) &&
+                 (eina_array_data_get(&evas->temporary_objects, *offset) == obj))
                (*offset)++;
              x = cx; y = cy; w = cw; h = ch;
              if (((w > 0) && (h > 0)) || (obj->is_smart))
@@ -2822,9 +2796,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                                           obj->cur->cache.clip.h);
                     }
 
-                  e->engine.func->context_clip_set(e->engine.data.output,
-                                                   context,
-                                                   x, y, w, h);
+                  ENFN->context_clip_set(ENDT, context, x, y, w, h);
 
                   /* Clipper masks */
                   if (_evas_render_object_is_mask(obj->cur->clipper))
@@ -2840,24 +2812,22 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
 
                        if (mask->mask->surface)
                          {
-                            e->engine.func->context_clip_image_set
-                              (e->engine.data.output,
-                               context,
-                               mask->mask->surface,
-                               mask->cur->geometry.x + off_x,
-                               mask->cur->geometry.y + off_y,
-                               e, do_async);
+                            ENFN->context_clip_image_set(ENDT, context,
+                                                         mask->mask->surface,
+                                                         mask->cur->geometry.x + off_x,
+                                                         mask->cur->geometry.y + off_y,
+                                                         evas, do_async);
                          }
                     }
 
                   eina_evlog("+cutouts_add", obj->object, 0.0, NULL);
 #if 1 /* FIXME: this can slow things down... figure out optimum... coverage */
-                  for (j = *offset; j < e->temporary_objects.count; ++j)
+                  for (j = *offset; j < evas->temporary_objects.count; ++j)
                     {
                        Evas_Object_Protected_Data *obj2;
 
                        obj2 = (Evas_Object_Protected_Data *)eina_array_data_get
-                         (&e->temporary_objects, j);
+                         (&evas->temporary_objects, j);
                        if (obj2 == top) break;
 #if 1
                        if (
@@ -2872,32 +2842,27 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                             ux, uy, uw, uh)
                           )
 #endif
-                         _evas_render_cutout_add(e, context, obj2, off_x + fx, off_y + fy);
+                         _evas_render_cutout_add(evas, context, obj2, off_x + fx, off_y + fy);
                     }
 #endif
                   eina_evlog("-cutouts_add", obj->object, 0.0, NULL);
-                  clean_them |= evas_render_mapped(e, eo_obj, obj, context,
+                  clean_them |= evas_render_mapped(evas, eo_obj, obj, context,
                                                    surface, off_x + fx,
                                                    off_y + fy, 0,
                                                    cx, cy, cw, ch,
                                                    NULL, level + 3,
                                                    EINA_FALSE,
                                                    do_async);
-                  e->engine.func->context_cutout_clear(e->engine.data.output,
-                                                       context);
+                  ENFN->context_cutout_clear(ENDT, context);
 
-                  if (mask)
-                    {
-                       e->engine.func->context_clip_image_unset
-                         (e->engine.data.output, context);
-                    }
+                  if (mask) ENFN->context_clip_image_unset(ENDT, context);
                }
           }
      }
 
    eina_evlog("-render_objects", eo_e, 0.0, NULL);
    /* free obscuring objects list */
-   OBJS_ARRAY_CLEAN(&e->temporary_objects);
+   OBJS_ARRAY_CLEAN(&evas->temporary_objects);
 
 #ifdef REND_DBG
    if (top) RD(level, "   ---] SNAPSHOT [obj:%p sfc:%p]\n", top, surface);
@@ -2917,7 +2882,7 @@ evas_render_updates_internal(Evas *eo_e,
 {
    Evas_Object *eo_obj;
    Evas_Object_Protected_Data *obj;
-   Evas_Public_Data *e;
+   Evas_Public_Data *evas, *e;
    Eina_List *ll;
    Eina_Bool clean_them = EINA_FALSE;
    Eina_Bool rendering = EINA_FALSE;
@@ -2934,7 +2899,7 @@ evas_render_updates_internal(Evas *eo_e,
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   e = evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e->changed) return EINA_FALSE;
 
    if (e->rendering)
@@ -2994,8 +2959,7 @@ evas_render_updates_internal(Evas *eo_e,
      }
 
    /* phase 1.5. check if the video should be inlined or stay in their overlay */
-   alpha = e->engine.func->canvas_alpha_get(e->engine.data.output,
-                                            e->engine.data.context);
+   alpha = ENFN->canvas_alpha_get(ENDT, ENCTX);
 
    EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
      {
@@ -3028,8 +2992,7 @@ evas_render_updates_internal(Evas *eo_e,
    eina_evlog("+render_phase3", eo_e, 0.0, NULL);
    EINA_LIST_FREE(e->damages, r)
      {
-        e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                r->x, r->y, r->w, r->h);
+        ENFN->output_redraws_rect_add(ENDT, r->x, r->y, r->w, r->h);
         eina_rectangle_free(r);
      }
    eina_evlog("-render_phase3", eo_e, 0.0, NULL);
@@ -3038,17 +3001,12 @@ evas_render_updates_internal(Evas *eo_e,
    eina_evlog("+render_phase4", eo_e, 0.0, NULL);
    if (e->viewport.changed)
      {
-        e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                0, 0,
-                                                e->output.w, e->output.h);
+        ENFN->output_redraws_rect_add(ENDT, 0, 0, e->output.w, e->output.h);
      }
    if (e->output.changed)
      {
-        e->engine.func->output_resize(e->engine.data.output,
-                                      e->output.w, e->output.h);
-        e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                0, 0,
-                                                e->output.w, e->output.h);
+        ENFN->output_resize(ENDT, e->output.w, e->output.h);
+        ENFN->output_redraws_rect_add(ENDT, 0, 0, e->output.w, e->output.h);
      }
    if ((e->output.w != e->viewport.w) || (e->output.h != e->viewport.h))
      {
@@ -3061,15 +3019,14 @@ evas_render_updates_internal(Evas *eo_e,
          * which covers the Whole viewport. This is because 'framespace' is
          * defined as "the space IN the viewport which is Occupied by the
          * window frame" */
-        e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                e->viewport.x, e->viewport.y,
-                                                e->viewport.w, e->viewport.h);
+        ENFN->output_redraws_rect_add(ENDT,
+                                      e->viewport.x, e->viewport.y,
+                                      e->viewport.w, e->viewport.h);
      }
 
    if (redraw_all)
      {
-        e->engine.func->output_redraws_rect_add(e->engine.data.output, 0, 0,
-                                                e->output.w, e->output.h);
+        ENFN->output_redraws_rect_add(ENDT, 0, 0, e->output.w, e->output.h);
      }
 
    // Add redraw for all snapshot object due to potential use of pixels outside
@@ -3086,11 +3043,9 @@ evas_render_updates_internal(Evas *eo_e,
              obj = (Evas_Object_Protected_Data *)eina_array_data_get(&e->snapshot_objects, i);
 
              if (evas_object_is_visible(obj->object, obj))
-               e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                       obj->cur->geometry.x,
-                                                       obj->cur->geometry.y,
-                                                       obj->cur->geometry.w,
-                                                       obj->cur->geometry.h);
+               ENFN->output_redraws_rect_add(ENDT,
+                                             obj->cur->geometry.x, obj->cur->geometry.y,
+                                             obj->cur->geometry.w, obj->cur->geometry.h);
           }
      }
    eina_evlog("-render_phase4", eo_e, 0.0, NULL);
@@ -3153,8 +3108,8 @@ evas_render_updates_internal(Evas *eo_e,
         if (do_async) _evas_render_busy_begin();
         eina_evlog("+render_surface", eo_e, 0.0, NULL);
         while ((surface =
-                e->engine.func->output_redraws_next_update_get
-                (e->engine.data.output,
+                ENFN->output_redraws_next_update_get
+                (ENDT,
                  &ux, &uy, &uw, &uh,
                  &cx, &cy, &cw, &ch)))
           {
@@ -3189,7 +3144,7 @@ evas_render_updates_internal(Evas *eo_e,
                        pseudo_canvas = _evas_object_image_surface_get(obj->object, obj);
 
                        RD(0, "  SNAPSHOT [obj:%p sfc:%p ur:%d,%d %dx%d]\n", obj, pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
-                       ctx = e->engine.func->context_new(e->engine.data.output);
+                       ctx = ENFN->context_new(ENDT);
                        clean_them |= evas_render_updates_internal_loop(eo_e, e, pseudo_canvas, ctx,
                                                                        obj,
                                                                        ur.x, ur.y, ur.w, ur.h,
@@ -3197,7 +3152,7 @@ evas_render_updates_internal(Evas *eo_e,
                                                                        fx, fy, alpha,
                                                                        do_async,
                                                                        &offset, 1);
-                       e->engine.func->context_free(e->engine.data.output, ctx);
+                       ENFN->context_free(ENDT, ctx);
 
                        // Force the object has changed for filter to take it into
                        // account. It won't be in the pending object array.
@@ -3221,7 +3176,7 @@ evas_render_updates_internal(Evas *eo_e,
                   eina_spinlock_release(&(e->render.lock));
                }
 
-             clean_them |= evas_render_updates_internal_loop(eo_e, e, surface, e->engine.data.context,
+             clean_them |= evas_render_updates_internal_loop(eo_e, e, surface, ENCTX,
                                                              NULL,
                                                              ux, uy, uw, uh,
                                                              cx, cy, cw, ch,
@@ -3232,10 +3187,7 @@ evas_render_updates_internal(Evas *eo_e,
              if (!do_async)
                {
                   eina_evlog("+render_push", eo_e, 0.0, NULL);
-                  e->engine.func->output_redraws_next_update_push(e->engine.data.output,
-                                                                  surface,
-                                                                  ux, uy, uw, uh,
-                                                                  render_mode);
+                  ENFN->output_redraws_next_update_push(ENDT, surface, ux, uy, uw, uh, render_mode);
                   eina_evlog("-render_push", eo_e, 0.0, NULL);
                }
           }
@@ -3260,8 +3212,7 @@ evas_render_updates_internal(Evas *eo_e,
                        _evas_object_image_video_overlay_do(eo_obj);
                     }
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-                  e->engine.func->output_flush(e->engine.data.output,
-                                               EVAS_RENDER_MODE_SYNC);
+                  ENFN->output_flush(ENDT, EVAS_RENDER_MODE_SYNC);
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
                   eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
                }
@@ -3275,7 +3226,7 @@ evas_render_updates_internal(Evas *eo_e,
    if (!do_async && rendering)
      {
         /* clear redraws */
-        e->engine.func->output_redraws_clear(e->engine.data.output);
+        ENFN->output_redraws_clear(ENDT);
      }
    eina_evlog("-render_clear", eo_e, 0.0, NULL);
 
@@ -3448,24 +3399,26 @@ evas_render_wakeup(Evas *eo_e)
    Render_Updates *ru;
    Eina_Bool haveup = EINA_FALSE;
    Eina_List *ret_updates = NULL;
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *evas;
+
+   evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    eina_evlog("+render_wakeup", eo_e, 0.0, NULL);
-   eina_spinlock_take(&(e->render.lock));
-   EINA_LIST_FREE(e->render.updates, ru)
+   eina_spinlock_take(&(evas->render.lock));
+   EINA_LIST_FREE(evas->render.updates, ru)
      {
         ret_updates = eina_list_append(ret_updates, ru->area);
         free(ru);
         haveup = EINA_TRUE;
      }
-   eina_spinlock_release(&(e->render.lock));
+   eina_spinlock_release(&(evas->render.lock));
 
    /* flush redraws */
    if (haveup)
      {
         Eina_List *ll;
         Evas_Object *eo_obj;
-        EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
+        EINA_LIST_FOREACH(evas->video_objects, ll, eo_obj)
           {
              _evas_object_image_video_overlay_do(eo_obj);
           }
@@ -3473,25 +3426,25 @@ evas_render_wakeup(Evas *eo_e)
      }
 
    /* clear redraws */
-   e->engine.func->output_redraws_clear(e->engine.data.output);
+   ENFN->output_redraws_clear(ENDT);
 
    /* unref queues */
-   eina_array_foreach(&e->scie_unref_queue, _drop_scie_ref, NULL);
-   eina_array_clean(&e->scie_unref_queue);
+   eina_array_foreach(&evas->scie_unref_queue, _drop_scie_ref, NULL);
+   eina_array_clean(&evas->scie_unref_queue);
    evas_common_rgba_image_scalecache_prune();
 
-   eina_array_foreach(&e->image_unref_queue, _drop_image_cache_ref, NULL);
-   eina_array_clean(&e->image_unref_queue);
+   eina_array_foreach(&evas->image_unref_queue, _drop_image_cache_ref, NULL);
+   eina_array_clean(&evas->image_unref_queue);
 
-   eina_array_foreach(&e->glyph_unref_queue, _drop_glyph_ref, NULL);
-   eina_array_clean(&e->glyph_unref_queue);
+   eina_array_foreach(&evas->glyph_unref_queue, _drop_glyph_ref, NULL);
+   eina_array_clean(&evas->glyph_unref_queue);
 
-   eina_array_foreach(&e->texts_unref_queue, _drop_texts_ref, NULL);
-   eina_array_clean(&e->texts_unref_queue);
+   eina_array_foreach(&evas->texts_unref_queue, _drop_texts_ref, NULL);
+   eina_array_clean(&evas->texts_unref_queue);
 
    /* post rendering */
-   _rendering_evases = eina_list_remove(_rendering_evases, e);
-   e->rendering = EINA_FALSE;
+   _rendering_evases = eina_list_remove(_rendering_evases, evas);
+   evas->rendering = EINA_FALSE;
 
    post.updated_area = ret_updates;
    _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
@@ -3519,28 +3472,26 @@ evas_render_pipe_wakeup(void *data)
 {
    Eina_List *l;
    Render_Updates *ru;
-   Evas_Public_Data *e = data;
+   Evas_Public_Data *evas = data;
 
-   eina_evlog("+render_pipe_wakeup", e->evas, 0.0, NULL);
-   eina_spinlock_take(&(e->render.lock));
-   EINA_LIST_FOREACH(e->render.updates, l, ru)
+   eina_evlog("+render_pipe_wakeup", evas->evas, 0.0, NULL);
+   eina_spinlock_take(&(evas->render.lock));
+   EINA_LIST_FOREACH(evas->render.updates, l, ru)
      {
-        eina_evlog("+render_push", e->evas, 0.0, NULL);
-        e->engine.func->output_redraws_next_update_push
-          (e->engine.data.output, ru->surface,
-           ru->area->x, ru->area->y, ru->area->w, ru->area->h,
-           EVAS_RENDER_MODE_ASYNC_END);
-        eina_evlog("-render_push", e->evas, 0.0, NULL);
+        eina_evlog("+render_push", evas->evas, 0.0, NULL);
+        ENFN->output_redraws_next_update_push
+              (ENDT, ru->surface, ru->area->x, ru->area->y, ru->area->w, ru->area->h,
+               EVAS_RENDER_MODE_ASYNC_END);
+        eina_evlog("-render_push", evas->evas, 0.0, NULL);
         //XXX: need a way to unref render output surfaces
         ru->surface = NULL;
      }
-   eina_evlog("+render_output_flush", e->evas, 0.0, NULL);
-   eina_spinlock_release(&(e->render.lock));
-   e->engine.func->output_flush(e->engine.data.output,
-                                EVAS_RENDER_MODE_ASYNC_END);
-   eina_evlog("-render_output_flush", e->evas, 0.0, NULL);
+   eina_evlog("+render_output_flush", evas->evas, 0.0, NULL);
+   eina_spinlock_release(&(evas->render.lock));
+   ENFN->output_flush(ENDT, EVAS_RENDER_MODE_ASYNC_END);
+   eina_evlog("-render_output_flush", evas->evas, 0.0, NULL);
    evas_async_events_put(data, 0, NULL, evas_render_async_wakeup);
-   eina_evlog("-render_pipe_wakeup", e->evas, 0.0, NULL);
+   eina_evlog("-render_pipe_wakeup", evas->evas, 0.0, NULL);
 }
 
 EAPI void
@@ -3671,32 +3622,31 @@ _evas_canvas_norender(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN void
-_evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *evas)
 {
    eina_evlog("+idle_flush", eo_e, 0.0, NULL);
-   if (e->render2) _evas_render2_idle_flush(eo_e, e);
+   if (evas->render2) _evas_render2_idle_flush(eo_e, evas);
    else
      {
-        evas_canvas_async_block(e);
+        evas_canvas_async_block(evas);
 
-        evas_render_rendering_wait(e);
+        evas_render_rendering_wait(evas);
 
         evas_fonts_zero_pressure(eo_e);
 
-        if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
-            (e->engine.data.output))
-          e->engine.func->output_idle_flush(e->engine.data.output);
+        if (ENFN && ENFN->output_idle_flush && ENDT)
+          ENFN->output_idle_flush(ENDT);
 
-        eina_inarray_flush(&e->active_objects);
-        OBJS_ARRAY_FLUSH(&e->render_objects);
-        OBJS_ARRAY_FLUSH(&e->restack_objects);
-        OBJS_ARRAY_FLUSH(&e->delete_objects);
-        OBJS_ARRAY_FLUSH(&e->obscuring_objects);
-        OBJS_ARRAY_FLUSH(&e->temporary_objects);
-        eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
-        eina_array_clean(&e->clip_changes);
+        eina_inarray_flush(&evas->active_objects);
+        OBJS_ARRAY_FLUSH(&evas->render_objects);
+        OBJS_ARRAY_FLUSH(&evas->restack_objects);
+        OBJS_ARRAY_FLUSH(&evas->delete_objects);
+        OBJS_ARRAY_FLUSH(&evas->obscuring_objects);
+        OBJS_ARRAY_FLUSH(&evas->temporary_objects);
+        eina_array_foreach(&evas->clip_changes, _evas_clip_changes_free, NULL);
+        eina_array_clean(&evas->clip_changes);
 
-        e->invalidate = EINA_TRUE;
+        evas->invalidate = EINA_TRUE;
      }
    eina_evlog("-idle_flush", eo_e, 0.0, NULL);
 }
@@ -3720,8 +3670,8 @@ _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if ((obj->map->cur.map) && obj->map->surface)
      {
-        obj->layer->evas->engine.func->image_free
-           (obj->layer->evas->engine.data.output, obj->map->surface);
+        Evas_Public_Data *evas = obj->layer->evas;
+        ENFN->image_free(ENDT, obj->map->surface);
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
           map_write->surface = NULL;
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
@@ -3737,19 +3687,19 @@ _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
 }
 
 EOLIAN void
-_evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *evas)
 {
-   if (e->render2) _evas_render2_dump(eo_e, e);
+   if (evas->render2) _evas_render2_dump(eo_e, evas);
    else
      {
         Evas_Layer *lay;
 
-        evas_canvas_async_block(e);
+        evas_canvas_async_block(evas);
 
         evas_all_sync();
         evas_cache_async_freeze();
 
-        EINA_INLIST_FOREACH(e->layers, lay)
+        EINA_INLIST_FOREACH(evas->layers, lay)
           {
              Evas_Object_Protected_Data *obj;
 
@@ -3760,7 +3710,7 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
                     {
                        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
                          {
-                            e->engine.func->image_free(e->engine.data.output, proxy_write->surface);
+                            ENFN->image_free(ENDT, proxy_write->surface);
                             proxy_write->surface = NULL;
                          }
                        EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
@@ -3769,7 +3719,7 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
                     {
                        EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask, Evas_Object_Mask_Data, mdata)
                          {
-                            e->engine.func->image_free(e->engine.data.output, mdata->surface);
+                            ENFN->image_free(ENDT, mdata->surface);
                             mdata->surface = NULL;
                          }
                        EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mdata);
@@ -3781,9 +3731,8 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
              lay->walking_objects--;
              _evas_layer_flush_removes(lay);
           }
-        if ((e->engine.func) && (e->engine.func->output_dump) &&
-            (e->engine.data.output))
-          e->engine.func->output_dump(e->engine.data.output);
+        if (ENFN && ENFN->output_dump && ENDT)
+          ENFN->output_dump(ENDT);
 
 #define GC_ALL(Cow) \
   if (Cow) while (eina_cow_gc(Cow))
@@ -3795,20 +3744,19 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
 
         evas_fonts_zero_pressure(eo_e);
 
-        if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
-            (e->engine.data.output))
-          e->engine.func->output_idle_flush(e->engine.data.output);
+        if (ENFN && ENFN->output_idle_flush && ENDT)
+          ENFN->output_idle_flush(ENDT);
 
-        eina_inarray_flush(&e->active_objects);
-        OBJS_ARRAY_FLUSH(&e->render_objects);
-        OBJS_ARRAY_FLUSH(&e->restack_objects);
-        OBJS_ARRAY_FLUSH(&e->delete_objects);
-        OBJS_ARRAY_FLUSH(&e->obscuring_objects);
-        OBJS_ARRAY_FLUSH(&e->temporary_objects);
-        eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
-        eina_array_clean(&e->clip_changes);
+        eina_inarray_flush(&evas->active_objects);
+        OBJS_ARRAY_FLUSH(&evas->render_objects);
+        OBJS_ARRAY_FLUSH(&evas->restack_objects);
+        OBJS_ARRAY_FLUSH(&evas->delete_objects);
+        OBJS_ARRAY_FLUSH(&evas->obscuring_objects);
+        OBJS_ARRAY_FLUSH(&evas->temporary_objects);
+        eina_array_foreach(&evas->clip_changes, _evas_clip_changes_free, NULL);
+        eina_array_clean(&evas->clip_changes);
 
-        e->invalidate = EINA_TRUE;
+        evas->invalidate = EINA_TRUE;
 
         evas_cache_async_thaw();
      }
