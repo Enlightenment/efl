@@ -38,17 +38,24 @@ int total_attributes = sizeof(attribute)/sizeof(attribute[0]);
 static void
 _main_cb(void *data, const Efl_Event *ev)
 {
-   Efl_Future_Event_Success *success = ev->info;
-   const char* attr = success->value;
+   Efl_Future_Event_Progress *progress = ev->info;
+   const Eina_Array *attrs = progress->progress;
+   const char* attr;
    int *num_of_attr = (int *)data;
-   unsigned int i;
+   unsigned int i, j;
+   Eina_Array_Iterator it;
 
-   for (i = 0; i < sizeof (attribute) / sizeof (attribute[0]); ++i)
-     if (strcmp(attr, attribute[i]) == 0)
-       {
-          (*num_of_attr)++;
-          break;
-       }
+   EINA_ARRAY_ITER_NEXT(attrs, j, attr, it)
+     {
+        for (i = 0; i < sizeof (attribute) / sizeof (attribute[0]); ++i)
+          {
+             if (strcmp(attr, attribute[i]) == 0)
+               {
+                  (*num_of_attr)++;
+                  break;
+               }
+          }
+     }
 }
 
 static void
@@ -75,8 +82,6 @@ _done_get_cb(void *data EINA_UNUSED, const Efl_Event *ev)
         fail_if(!buf);
         fail_if(strcmp((const char*) eina_binbuf_string_get(buf),
                        attr_data[i]) != 0);
-
-        i++;
      }
 
    fail_if(i != total_attributes);
