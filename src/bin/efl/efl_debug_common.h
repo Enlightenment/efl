@@ -48,6 +48,7 @@ int _proto_read(unsigned char **buf, unsigned int *buf_size,
 #define IS_OP(x) memcmp(op, OP_ ## x, 4) == 0
 
 #define DECLARE_OP(x) static char OP_ ## x[4] = #x
+#ifdef DECLARE_OPS
 DECLARE_OP(LIST);
 DECLARE_OP(CLST);
 DECLARE_OP(PLON);
@@ -56,6 +57,7 @@ DECLARE_OP(EVON);
 DECLARE_OP(EVOF);
 DECLARE_OP(EVLG);
 DECLARE_OP(HELO);
+#endif
 
 Eina_Bool send_data(Eo *sock, const char op[static 4], const void *data, unsigned int len);
 Eina_Bool received_data(Eo *sock, void (*handle)(void *data, const char op[static 4], const Eina_Slice payload), const void *data);

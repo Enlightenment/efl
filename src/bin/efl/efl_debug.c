@@ -16,6 +16,7 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#define DECLARE_OPS
 #include "efl_debug_common.h"
 
 static Eo *dialer;
@@ -272,5 +273,9 @@ main(int argc, char **argv)
    ecore_con_shutdown();
    ecore_shutdown();
    eina_shutdown();
+
+   (void) OP_HELO;
+   (void) OP_EVLG;
+
    return retval;
 }

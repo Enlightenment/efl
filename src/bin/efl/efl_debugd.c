@@ -16,6 +16,7 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#define DECLARE_OPS
 #include "efl_debug_common.h"
 
 typedef struct _Client Client;
