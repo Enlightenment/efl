@@ -453,7 +453,7 @@ lcov-baseline:
 	$(MKDIR_P) $(abs_top_builddir)/coverage
 	lcov --capture --initial --compat-libtool --no-external --output-file $(abs_top_builddir)/coverage/coverage-baseline.info --directory $(abs_top_builddir) --config-file .lcov-config
 
-lcov-report:
+lcov-report: lcov-baseline
 	lcov --capture --compat-libtool --no-external --output-file $(abs_top_builddir)/coverage/coverage-check.info --directory $(abs_top_builddir) --config-file .lcov-config
 	lcov --no-external --compat-libtool --add-tracefile $(abs_top_builddir)/coverage/coverage-baseline.info --add-tracefile $(abs_top_builddir)/coverage/coverage-check.info --output-file $(abs_top_builddir)/coverage/coverage.info --config-file .lcov-config
 	lcov --no-external --compat-libtool --remove $(abs_top_builddir)/coverage/coverage.info '*.h' --output-file $(abs_top_builddir)/coverage/coverage.cleaned.info --config-file .lcov-config
