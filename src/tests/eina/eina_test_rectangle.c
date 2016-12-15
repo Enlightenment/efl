@@ -73,6 +73,53 @@ START_TEST(eina_rectangle_pool)
 }
 END_TEST
 
+START_TEST(eina_rectangle_pool_skyline)
+{
+   Eina_Rectangle_Pool *pool;
+   Eina_Rectangle *rects[8][8];
+   int x;
+   int y;
+   int w;
+   int h;
+
+   fail_if(!eina_init());
+
+   pool = eina_rectangle_pool_new(256, 256);
+   fail_if(pool == NULL);
+
+   eina_rectangle_pool_packing_set(pool, Eina_Packing_Bottom_Left_Skyline_Improved);
+
+   eina_rectangle_pool_data_set(pool, rects);
+   fail_if(eina_rectangle_pool_data_get(pool) != rects);
+
+   fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
+
+   for (x = 0; x < 8; x++)
+      for (y = 0; y < 8; y++)
+        {
+           rects[x][y] = eina_rectangle_pool_request(pool, 32, 32);
+           fail_if(rects[x][y] == NULL);
+        }
+
+   fail_if(eina_rectangle_pool_count(pool) != 64);
+
+   fail_if(eina_rectangle_pool_get(rects[0][0]) != pool);
+
+   fail_if(eina_rectangle_pool_geometry_get(pool, &w, &h) != EINA_TRUE);
+   fail_if(w != 256 || h != 256);
+
+   fail_if(eina_rectangle_pool_request(pool, 32, 32) != NULL);
+   fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
+
+   for (x = 0; x < 8; x++)
+     eina_rectangle_pool_release(rects[0][x]);
+
+   eina_rectangle_pool_free(pool);
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(eina_rectangle_union_intersect)
 {
    Eina_Rectangle r1, r2, r3, r4, r5, r6, r7, r8, rd;
@@ -153,6 +200,6 @@ void
 eina_test_rectangle(TCase *tc)
 {
    tcase_add_test(tc, eina_rectangle_pool);
+   tcase_add_test(tc, eina_rectangle_pool_skyline);
    tcase_add_test(tc, eina_rectangle_union_intersect);
 }
-
