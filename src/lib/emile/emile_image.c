@@ -1380,7 +1380,7 @@ _emile_jpeg_head(Emile_Image *image,
                  unsigned int property_size,
                  Emile_Image_Load_Error *error)
 {
-   Emile_Image_Load_Opts *opts = NULL;
+   volatile Emile_Image_Load_Opts *opts = (image->load_opts) ? &image->opts : NULL;
    const unsigned char *m;
    unsigned int scalew, scaleh;
    struct jpeg_decompress_struct cinfo;
@@ -1388,9 +1388,9 @@ _emile_jpeg_head(Emile_Image *image,
    unsigned int length;
 
    /* for rotation decoding */
-   int degree = 0;
-   Eina_Bool change_wh = EINA_FALSE;
-   unsigned int load_opts_w = 0, load_opts_h = 0;
+   volatile int degree = 0;
+   volatile Eina_Bool change_wh = EINA_FALSE;
+   volatile unsigned int load_opts_w = 0, load_opts_h = 0;
 
    if (sizeof(Emile_Image_Property) != property_size)
      return EINA_FALSE;
@@ -1398,9 +1398,6 @@ _emile_jpeg_head(Emile_Image *image,
    m = _emile_image_file_source_map(image, &length);
    if (!m)
      return EINA_FALSE;
-
-   if (image->load_opts)
-     opts = &image->opts;
 
    memset(&cinfo, 0, sizeof(cinfo));
    cinfo.err = jpeg_std_error(&(jerr.pub));
@@ -1629,17 +1626,18 @@ _emile_jpeg_data(Emile_Image *image,
                  Emile_Image_Load_Error *error)
 {
    /* Handle RGB, ARGB, GRY and AGRY */
-   Emile_Image_Load_Opts *opts = NULL;
+   volatile Emile_Image_Load_Opts *opts = (image->load_opts) ? &image->opts : NULL;
    unsigned int w, h;
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
    const unsigned char *m = NULL;
    uint8_t *ptr, *line[16], *data;
-   uint32_t *ptr2 = NULL, *ptr_rotate = NULL;
+   volatile uint32_t *ptr2 = NULL;
+   uint32_t *ptr_rotate = NULL;
    uint16_t *ptrag = NULL, *ptrag_rotate = NULL;
    uint8_t *ptrg = NULL, *ptrg_rotate = NULL;
    unsigned int x, y, l, i, scans;
-   int region = 0;
+   volatile int region = 0;
    /* rotation setting */
    unsigned int ie_w = 0, ie_h = 0;
    struct
@@ -1648,12 +1646,12 @@ _emile_jpeg_data(Emile_Image *image,
    } opts_region = {0, 0, 0, 0};
    volatile int degree = 0;
    volatile Eina_Bool change_wh = EINA_FALSE;
-   Eina_Bool line_done = EINA_FALSE;
-   Eina_Bool ptrg_free = EINA_FALSE;
-   Eina_Bool ptrag_free = EINA_FALSE;
-   Eina_Bool r = EINA_FALSE;
+   volatile Eina_Bool line_done = EINA_FALSE;
+   volatile Eina_Bool ptrg_free = EINA_FALSE;
+   volatile Eina_Bool ptrag_free = EINA_FALSE;
+   volatile Eina_Bool r = EINA_FALSE;
    unsigned int length;
-   unsigned short count = 0;
+   volatile unsigned short count = 0;
 
    if (sizeof(Emile_Image_Property) != property_size)
      return EINA_FALSE;
@@ -1661,9 +1659,6 @@ _emile_jpeg_data(Emile_Image *image,
    m = _emile_image_file_source_map(image, &length);
    if (!m)
      return EINA_FALSE;
-
-   if (image->load_opts)
-     opts = &image->opts;
 
    memset(&cinfo, 0, sizeof(cinfo));
    if (prop->rotated)
@@ -1854,7 +1849,7 @@ _emile_jpeg_data(Emile_Image *image,
         else
           {
              ptr2 = malloc(w * h * sizeof(uint32_t));
-             ptr_rotate = ptr2;
+             ptr_rotate = (uint32_t*) ptr2;
           }
      }
    else
