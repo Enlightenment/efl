@@ -696,7 +696,7 @@ START_TEST(evas_object_image_map_unmap)
    fail_if(!slice.len || !slice.mem);
    fail_if(!stride);
    data32 = slice.mem;
-   for (int k = 0; (k < slice.len) && (all_white || all_transparent); k++)
+   for (unsigned int k = 0; (k < slice.len) && (all_white || all_transparent); k++)
      {
         if (data32[k])
           all_transparent = 0;
