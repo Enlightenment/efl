@@ -1142,6 +1142,15 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
         else
            evas_object_size_hint_max_set(obj, -1, -1);
      }
+   else
+     {
+        Evas_Coord ominw, ominh;
+        Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+        efl_canvas_text_size_native_get(sw, &resw, &resh);
+        evas_object_size_hint_min_set(sw, resw, resh);
+        edje_object_size_min_calc(sd->entry_edje, &ominw, &ominh);
+        evas_object_size_hint_min_set(obj, ominw, ominh);
+     }
 
    _cursor_geometry_recalc(obj);
    evas_event_thaw(evas_object_evas_get(obj));
