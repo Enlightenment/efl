@@ -94,6 +94,7 @@ START_TEST(eet_test_file_simple_write)
 
    fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
 
+   fail_if(strcmp(eet_alias_get(ef, "keys/alias"), "keys/tests"));
    test = eet_read(ef, "keys/alias2", &size);
    fail_if(!test);
    fail_if(size != (int)strlen(buffer) + 1);
