@@ -156,7 +156,6 @@ _validate_type(const Eolian_Type *tp)
         {
            if (!eolian_type_class_get(tp))
              {
-                /* for now only warn */
                 char buf[256];
                 snprintf(buf, sizeof(buf), "undefined class %s "
                          "(likely wrong namespacing)", tp->full_name);
@@ -175,17 +174,10 @@ _validate_expr(const Eolian_Expression *expr,
                const Eolian_Type *tp, Eolian_Expression_Mask msk)
 {
    Eolian_Value val;
-   /* TODO: enable later, for now we can't (unfinished interfaces */
    if (tp)
-     {
-#if 0
-        val = eolian_expression_eval_type(expr, tp);
-#else
-        return EINA_TRUE;
-#endif
-     }
+     val = eolian_expression_eval_type(expr, tp);
    else
-      val = eolian_expression_eval(expr, msk);
+     val = eolian_expression_eval(expr, msk);
    return (val.type != EOLIAN_EXPR_UNKNOWN);
 }
 
