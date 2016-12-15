@@ -14,9 +14,13 @@
 START_TEST(eet_test_file_simple_write)
 {
    const char *buffer = "Here is a string of data to save !";
+   Eina_Iterator *it;
+   Eina_File *f;
+   Eet_Entry *entry;
    Eet_File *ef;
    char *test;
    char *file;
+   void *m;
    int size;
    int tmpfd;
 
@@ -42,6 +46,43 @@ START_TEST(eet_test_file_simple_write)
    fail_if(eet_num_entries(ef) != -1);
 
    eet_close(ef);
+
+   /* Test read from buffer */
+   f = eina_file_open(file, EINA_FALSE);
+   fail_if(!f);
+
+   m = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   fail_if(!m);
+
+   ef = eet_memopen_read(m, eina_file_size_get(f));
+   fail_if(!ef);
+
+   test = eet_read(ef, "keys/tests", &size);
+   fail_if(!test);
+   fail_if(size != (int)strlen(buffer) + 1);
+
+   fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
+
+   test = eet_read(ef, "keys/alias2", &size);
+   fail_if(!test);
+   fail_if(size != (int)strlen(buffer) + 1);
+
+   fail_if(eet_read_direct(ef, "key/alias2", &size));
+
+   fail_if(eet_mode_get(ef) != EET_FILE_MODE_READ);
+   fail_if(eet_num_entries(ef) != 3);
+
+   it = eet_list_entries(ef);
+   fail_if(!it);
+   EINA_ITERATOR_FOREACH(it, entry)
+     fail_if(strcmp(entry->name, "keys/tests") &&
+             strcmp(entry->name, "keys/alias") &&
+             strcmp(entry->name, "keys/alias2"));
+
+   eet_close(ef);
+
+   eina_file_map_free(f, m);
+   eina_file_close(f);
 
    /* Test read of simple file */
    ef = eet_open(file, EET_FILE_MODE_READ);
