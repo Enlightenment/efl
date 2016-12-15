@@ -66,6 +66,41 @@ START_TEST(eina_stringshare_simple)
 }
 END_TEST
 
+START_TEST(eina_stringshare_simple_refplace)
+{
+   const char *t0;
+   const char *t1;
+   Eina_Slice slice;
+
+   eina_init();
+
+   t0 = eina_stringshare_add(TEST0);
+   t1 = eina_stringshare_add(TEST1);
+
+   fail_if(t0 == NULL);
+   fail_if(t1 == NULL);
+   fail_if(strcmp(t0, TEST0) != 0);
+   fail_if(strcmp(t1, TEST1) != 0);
+   fail_if((int)strlen(TEST0) != eina_stringshare_strlen(t0));
+   fail_if((int)strlen(TEST1) != eina_stringshare_strlen(t1));
+
+   fail_if(eina_stringshare_refplace(&t0, t0));
+   fail_if(t0 == NULL);
+   fail_if((int)strlen(TEST0) != eina_stringshare_strlen(t0));
+
+   slice = eina_stringshare_slice_get(t0);
+   fail_if(slice.mem != t0);
+   fail_if(slice.len != strlen(TEST0));
+
+   fail_if(!eina_stringshare_refplace(&t1, t0));
+
+   eina_stringshare_del(t0);
+   eina_stringshare_del(t1);
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(eina_stringshare_small)
 {
    char buf[4];
@@ -245,6 +280,7 @@ void
 eina_test_stringshare(TCase *tc)
 {
    tcase_add_test(tc, eina_stringshare_simple);
+   tcase_add_test(tc, eina_stringshare_simple_refplace);
    tcase_add_test(tc, eina_stringshare_small);
    tcase_add_test(tc, eina_stringshare_test_share);
    tcase_add_test(tc, eina_stringshare_collision);
