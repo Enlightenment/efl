@@ -1662,7 +1662,6 @@ err_obj:
    return EINA_FALSE;
 
 err:
-   if (!data) return EINA_FALSE;
    ERR("Object %p is not a valid object in this context: object domain: %d, "
        "current domain: %d, local domain: %d, available domains: [%s %s %s %s]."
        " Are you trying to access this object from another thread?",
