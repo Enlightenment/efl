@@ -276,6 +276,7 @@ static void _ecore_main_win32_handlers_cleanup(void);
 int in_main_loop = 0;
 
 static Eina_List *_pending_futures = NULL;
+static Eina_List *_pending_promises = NULL;
 static unsigned char _ecore_exit_code = 0;
 static int do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
@@ -1598,6 +1599,7 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler      *fd_handler,
 void
 _ecore_main_shutdown(void)
 {
+   Efl_Promise *promise;
    Efl_Future *future;
 
    if (in_main_loop)
@@ -1610,6 +1612,9 @@ _ecore_main_shutdown(void)
 
    EINA_LIST_FREE(_pending_futures, future)
      efl_del(future);
+
+   EINA_LIST_FREE(_pending_promises, promise)
+     ecore_loop_promise_fulfill(promise);
 
    while (fd_handlers)
      {
@@ -2235,13 +2240,17 @@ static void
 _ecore_main_loop_iterate_internal(int once_only)
 {
    double next_time = -1.0;
-   Eo *f;
+   Eo *f, *p;
 
    in_main_loop++;
 
    /* destroy all optional futures */
    EINA_LIST_FREE(_pending_futures, f)
      efl_del(f);
+
+   /* and propagate all promise value */
+   EINA_LIST_FREE(_pending_promises, p)
+     ecore_loop_promise_fulfill(p);
 
    /* expire any timers */
    _efl_loop_timer_expired_timers_call(_ecore_time_loop_time);
@@ -2933,6 +2942,17 @@ ecore_loop_future_unregister(Efl_Loop *l EINA_UNUSED, Efl_Future *f)
    _pending_futures = eina_list_remove(_pending_futures, f);
 }
 
+void
+ecore_loop_promise_register(Efl_Loop *l EINA_UNUSED, Efl_Promise *p)
+{
+   _pending_promises = eina_list_append(_pending_promises, p);
+}
+
+void
+ecore_loop_promise_unregister(Efl_Loop *l EINA_UNUSED, Efl_Promise *p)
+{
+   _pending_promises = eina_list_remove(_pending_promises, p);
+}
 
 EFL_CALLBACKS_ARRAY_DEFINE(timeout,
                           { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },

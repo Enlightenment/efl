@@ -35,6 +35,8 @@ struct _Efl_Promise_Data
    } set;
 
    Eina_Bool optional : 1;
+   Eina_Bool propagated : 1;
+   Eina_Bool nodelay : 1;
 };
 
 static void
@@ -525,8 +527,9 @@ _efl_promise_future_get(Eo *obj, Efl_Promise_Data *pd EINA_UNUSED)
    fd->promise = efl_data_xref(obj, EFL_PROMISE_CLASS, f);
    fd->promise->futures = eina_list_append(fd->promise->futures, fd);
 
-   // The promise has already been fullfilled, prepare the propagation
-   if (fd->promise->message)
+   // The promise has already been fulfilled, prepare the propagation
+   if (fd->promise->message &&
+       fd->promise->propagated)
      {
         fd->message = fd->promise->message;
         EINA_REFCOUNT_REF(fd->message);
@@ -557,6 +560,8 @@ _efl_promise_propagate(Eo *obj, Efl_Promise_Data *pd)
    Efl_Loop_Future_Data *f;
    Eina_List *l, *ln;
 
+   pd->propagated = EINA_TRUE;
+
    // By triggering this message, we are likely going to kill all future
    // And a user of the promise may want to attach an event handler on the promise
    // and destroy it, so delay that to after the loop is done.
@@ -576,6 +581,14 @@ _efl_promise_propagate(Eo *obj, Efl_Promise_Data *pd)
 
    // Now, we may die.
    efl_unref(obj);
+}
+
+void
+ecore_loop_promise_fulfill(Eo *obj)
+{
+   Efl_Promise_Data *pd = efl_data_scope_get(obj, EFL_PROMISE_CLASS);
+
+   _efl_promise_propagate(obj, pd);
 }
 
 static void
@@ -599,7 +612,10 @@ _efl_promise_value_set(Eo *obj, Efl_Promise_Data *pd, void *v, Eina_Free_Cb free
    EINA_REFCOUNT_INIT(message);
    pd->message = message;
 
-   _efl_promise_propagate(obj, pd);
+   if (pd->nodelay)
+     _efl_promise_propagate(obj, pd);
+   else
+     ecore_loop_promise_register(efl_provider_find(obj, EFL_LOOP_CLASS), obj);
 }
 
 static void
@@ -621,7 +637,10 @@ _efl_promise_failed_set(Eo *obj, Efl_Promise_Data *pd, Eina_Error err)
    EINA_REFCOUNT_INIT(message);
    pd->message = message;
 
-   _efl_promise_propagate(obj, pd);
+   if (pd->nodelay)
+     _efl_promise_propagate(obj, pd);
+   else
+     ecore_loop_promise_register(efl_provider_find(obj, EFL_LOOP_CLASS), obj);
 }
 
 static void
@@ -665,11 +684,20 @@ _efl_promise_efl_object_constructor(Eo *obj, Efl_Promise_Data *pd)
 static void
 _efl_promise_efl_object_destructor(Eo *obj, Efl_Promise_Data *pd)
 {
+   pd->nodelay = EINA_TRUE;
+
    // Unref refcounted structure
    if (!pd->message && pd->futures)
      {
         if (!pd->optional) ERR("This promise has not been fulfilled. Forcefully cancelling %p.", obj);
         efl_promise_failed_set(obj, EINA_ERROR_FUTURE_CANCEL);
+     }
+
+   if (pd->message &&
+       !pd->propagated)
+     {
+        ecore_loop_promise_unregister(efl_provider_find(obj, EFL_LOOP_CLASS), obj);
+        _efl_promise_propagate(obj, pd);
      }
 
    if (pd->message)
