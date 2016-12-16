@@ -442,6 +442,49 @@ START_TEST(efl_test_promise_future_multi_success)
 }
 END_TEST
 
+START_TEST(efl_test_promise_future_multi_success_noref)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo2 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   f = efl_promise_future_get(p);
+   fail_if(!f);
+
+   efl_event_callback_add(f, EFL_EVENT_DEL, _death, &deadf);
+   efl_event_callback_add(p, EFL_EVENT_DEL, _death, &deadp);
+
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo1));
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo2));
+
+   fail_if(deadp || deadf);
+
+   efl_promise_progress_set(p, &progress);
+   efl_promise_value_set(p, &value, NULL);
+
+   ecore_main_loop_iterate();
+
+   fail_if(!fo1.then || fo1.cancel || !fo1.progress);
+   fail_if(!fo2.then || fo2.cancel || !fo2.progress);
+   fail_if(!deadf || deadp);
+
+   efl_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
 START_TEST(efl_test_promise_future_multi_cancel)
 {
    Efl_Promise *p;
@@ -533,6 +576,47 @@ START_TEST(efl_test_promise_before_future_multi_success)
 }
 END_TEST
 
+START_TEST(efl_test_promise_before_future_multi_success_noref)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo2 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   f = efl_promise_future_get(p);
+   fail_if(!f);
+
+   efl_event_callback_add(f, EFL_EVENT_DEL, _death, &deadf);
+   efl_event_callback_add(p, EFL_EVENT_DEL, _death, &deadp);
+
+   efl_promise_progress_set(p, &progress);
+   efl_promise_value_set(p, &value, NULL);
+
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo1));
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo2));
+
+   ecore_main_loop_iterate();
+
+   fail_if(deadp || !deadf);
+   fail_if(!fo1.then || fo1.cancel || fo1.progress);
+   fail_if(!fo2.then || fo2.cancel || fo2.progress);
+
+   efl_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
 START_TEST(efl_test_promise_before_future_multi_cancel)
 {
    Efl_Promise *p;
@@ -563,6 +647,58 @@ START_TEST(efl_test_promise_before_future_multi_cancel)
    fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo1));
    fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo2));
    efl_unref(f);
+
+   fail_if(efl_future_then(f, _then, _cancel, _progress, &fo3));
+
+   fail_if(deadp || !deadf);
+
+   efl_promise_value_set(p, &value, NULL);
+
+   ecore_main_loop_iterate();
+
+   fail_if(fo1.then || !fo1.cancel || fo1.progress);
+   fail_if(fo2.then || !fo2.cancel || fo2.progress);
+   fail_if(fo3.then || fo3.cancel || fo3.progress);
+   fail_if(!none);
+
+   efl_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(efl_test_promise_before_future_multi_cancel_noref)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo2 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo3 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   efl_future_use(&f, efl_promise_future_get(p));
+   fail_if(!f);
+
+   efl_event_callback_add(f, EFL_EVENT_DEL, _death, &deadf);
+   efl_event_callback_add(p, EFL_EVENT_DEL, _death, &deadp);
+   efl_event_callback_add(p, EFL_PROMISE_EVENT_FUTURE_NONE, _death, &none);
+
+   efl_promise_progress_set(p, &progress);
+
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo1));
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo2));
+
+   // efl_future_cancel is not delayed, only operation on promise are.
+   efl_future_cancel(f);
 
    fail_if(efl_future_then(f, _then, _cancel, _progress, &fo3));
 
@@ -902,9 +1038,13 @@ void ecore_test_ecore_promise(TCase *tc)
    tcase_add_test(tc, efl_test_promise_before_future_success);
    tcase_add_test(tc, efl_test_promise_before_future_cancel);
    tcase_add_test(tc, efl_test_promise_future_multi_success);
+   tcase_add_test(tc, efl_test_promise_future_multi_success_noref);
    tcase_add_test(tc, efl_test_promise_future_multi_cancel);
    tcase_add_test(tc, efl_test_promise_before_future_multi_success);
+   tcase_add_test(tc, efl_test_promise_before_future_multi_success_noref);
    tcase_add_test(tc, efl_test_promise_before_future_multi_cancel);
+   tcase_add_test(tc, efl_test_promise_before_future_multi_success_noref);
+   tcase_add_test(tc, efl_test_promise_before_future_multi_cancel_noref);
    tcase_add_test(tc, efl_test_promise_future_optional_success);
    tcase_add_test(tc, efl_test_promise_future_optional_cancel);
    tcase_add_test(tc, efl_test_promise_all);
