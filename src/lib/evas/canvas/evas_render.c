@@ -894,10 +894,8 @@ _evas_render_phase1_object_changed_normal(Phase1_Context *p1ctx,
              RD(level, "  skip - not smart, not active or clippees or not relevant\n");
           }
      }
-   else if (is_active &&
-            _evas_render_object_is_mask(obj) &&
-            (evas_object_is_visible(eo_obj, obj) ||
-             evas_object_was_visible(eo_obj, obj)))
+   else if (is_active && _evas_render_object_is_mask(obj) &&
+            (obj->cur->visible || obj->prev->visible))
      {
         if (EINA_UNLIKELY(obj->restack))
           OBJ_ARRAY_PUSH(p1ctx->restack_objects, obj);
@@ -1137,7 +1135,7 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
           }
         else if (EINA_UNLIKELY(is_active &&
                                _evas_render_object_is_mask(obj) &&
-                               evas_object_is_visible(eo_obj, obj)))
+                               obj->cur->visible))
           {
              RD(level, "  visible clipper image\n");
              OBJ_ARRAY_PUSH(p1ctx->render_objects, obj);
@@ -2812,8 +2810,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
              x = cx; y = cy; w = cw; h = ch;
              if (((w > 0) && (h > 0)) || (obj->is_smart))
                {
-                  Evas_Object_Protected_Data *prev_mask = NULL;
-                  Evas_Object_Protected_Data *mask = NULL;
+                  Evas_Object_Protected_Data *mask;
 
                   if (!obj->is_smart)
                     {
@@ -2835,15 +2832,11 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
 
                   ENFN->context_clip_set(ENDT, context, x, y, w, h);
 
-                  /* Clipper masks */
-                  if (_evas_render_object_is_mask(obj->cur->clipper))
-                    mask = obj->cur->clipper; // main object clipped by this mask
-                  else if (obj->clip.mask)
-                    mask = obj->clip.mask; // propagated clip
-                  prev_mask = obj->clip.prev_mask;
-
+                  mask = obj->clip.mask;
                   if (mask)
                     {
+                       Evas_Object_Protected_Data *prev_mask = obj->clip.prev_mask;
+
                        if (mask->mask->redraw || !mask->mask->surface)
                          evas_render_mask_subrender(obj->layer->evas, mask, prev_mask, 4, do_async);
 

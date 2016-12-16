@@ -245,6 +245,8 @@ evas_object_is_active(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
       need to be smarter and only do that when really needed. */
    if (obj->proxy->proxies && obj->changed)
      return 1;
+   if (obj->mask->is_mask && obj->clip.clipees)
+     return 1;
    return 0;
 }
 

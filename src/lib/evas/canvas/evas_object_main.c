@@ -298,6 +298,7 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
                {
                   Evas_Object_Protected_Data *parent =
                     efl_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
+                  evas_object_clip_recalc(parent);
                   if (parent->clip.mask)
                     {
                        if (parent->clip.mask != obj->clip.mask)
