@@ -1270,6 +1270,7 @@ _elm_layout_efl_container_content_count(Eo *eo_obj EINA_UNUSED, Elm_Layout_Smart
    return eina_list_count(sd->subs);
 }
 
+// FIXME: Remove from EO file, remove EOLIAN tag
 EOLIAN static Eina_Bool
 _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const char *text)
 {
@@ -1326,7 +1327,7 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
    return EINA_TRUE;
 }
 
-EOLIAN static const char*
+EOLIAN static const char *
 _elm_layout_text_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
@@ -1335,6 +1336,18 @@ _elm_layout_text_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
      return NULL;
 
    return edje_object_part_text_get(wd->resize_obj, part);
+}
+
+EOLIAN static void
+_elm_layout_efl_text_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *text)
+{
+   _elm_layout_text_set(obj, sd, NULL, text);
+}
+
+EOLIAN static const char *
+_elm_layout_efl_text_text_get(Eo *obj, Elm_Layout_Smart_Data *sd)
+{
+   return _elm_layout_text_get(obj, sd, NULL);
 }
 
 static void
@@ -2046,6 +2059,18 @@ _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd,
      }
 
    return proxy;
+}
+
+EOLIAN static void
+_elm_layout_internal_part_efl_text_text_set(Eo *obj, Elm_Part_Data *pd, const char *text)
+{
+   ELM_PART_CALL(_elm_layout_text_set(pd->obj, pd->sd, pd->part, text));
+}
+
+EOLIAN static const char *
+_elm_layout_internal_part_efl_text_text_get(Eo *obj, Elm_Part_Data *pd)
+{
+   ELM_PART_RETURN_VAL(_elm_layout_text_get(pd->obj, pd->sd, pd->part));
 }
 
 ELM_PART_IMPLEMENT_DESTRUCTOR(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
