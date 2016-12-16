@@ -349,8 +349,6 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
      {
         e->engine.func->ector_destroy(e->engine.data.output,
                                       e->engine.ector);
-        e->engine.func->context_free(e->engine.data.output,
-                                     e->engine.data.context);
         e->engine.func->output_free(e->engine.data.output);
         e->engine.func->info_free(eo_e, e->engine.info);
      }
@@ -453,9 +451,6 @@ _evas_canvas_engine_info_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Eng
      setup:
         e->engine.data.output = e->engine.func->setup(info, e->output.w, e->output.h);
      }
-
-   if (!e->engine.data.context)
-     e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
 
    return !!e->engine.data.output;
 }

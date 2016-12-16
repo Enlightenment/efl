@@ -864,8 +864,6 @@ struct _Evas_Public_Data
       Ector_Surface *ector;
       struct {
          void *output;
-
-         void *context;
       } data;
 
       void *info;

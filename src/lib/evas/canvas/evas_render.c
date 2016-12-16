@@ -74,7 +74,6 @@ rend_dbg(const char *txt)
 /* save typing */
 #define ENFN evas->engine.func
 #define ENDT evas->engine.data.output
-#define ENCTX evas->engine.data.context
 
 typedef struct _Render_Updates Render_Updates;
 struct _Render_Updates
@@ -2729,7 +2728,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
    if (alpha)
      {
         ENFN->context_color_set(ENDT, context, 0, 0, 0, 0);
-        ENFN->context_multiplier_unset(ENDT, ENCTX); // XXX: Why not 'context'???
+        ENFN->context_multiplier_unset(ENDT, context);
         ENFN->context_render_op_set(ENDT, context, EVAS_RENDER_COPY);
         ENFN->rectangle_draw(ENDT, context, surface, cx, cy, cw, ch, do_async);
         ENFN->context_cutout_clear(ENDT, context);
@@ -3113,6 +3112,8 @@ evas_render_updates_internal(Evas *eo_e,
                  &ux, &uy, &uw, &uh,
                  &cx, &cy, &cw, &ch)))
           {
+             void *ctx;
+
              haveup = EINA_TRUE;
 
              /* phase 6.1 render every snapshot that needs to be updated
@@ -3133,7 +3134,6 @@ evas_render_updates_internal(Evas *eo_e,
 
                   if (eina_rectangle_intersection(&ur, &output))
                     {
-                       void *ctx;
                        void *pseudo_canvas;
                        unsigned int restore_offset = offset;
 
@@ -3176,13 +3176,16 @@ evas_render_updates_internal(Evas *eo_e,
                   eina_spinlock_release(&(e->render.lock));
                }
 
-             clean_them |= evas_render_updates_internal_loop(eo_e, e, surface, ENCTX,
-                                                             NULL,
+             ctx = ENFN->context_new(ENDT);
+             clean_them |= evas_render_updates_internal_loop(eo_e, e, surface,
+                                                             ctx, NULL,
                                                              ux, uy, uw, uh,
                                                              cx, cy, cw, ch,
                                                              fx, fy, alpha,
                                                              do_async,
                                                              &offset, 0);
+             ENFN->context_free(ENDT, ctx);
+
              eina_evlog("-render_update", eo_e, 0.0, NULL);
              if (!do_async)
                {
