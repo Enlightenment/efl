@@ -82,6 +82,8 @@ START_TEST(efl_test_promise_future_success)
    efl_promise_progress_set(p, &progress);
    efl_promise_value_set(p, &value, NULL);
 
+   ecore_main_loop_iterate();
+
    fail_if(!fo.then || fo.cancel || !fo.progress);
    fail_if(!deadf || deadp);
 
@@ -118,6 +120,8 @@ START_TEST(efl_test_promise_future_success_before_get)
    fail_if(deadp || deadf);
 
    fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo));
+
+   ecore_main_loop_iterate();
 
    fail_if(f);
    fail_if(!fo.then || fo.cancel || fo.progress);
@@ -161,6 +165,8 @@ START_TEST(efl_test_promise_future_cancel)
 
    efl_promise_value_set(p, &value, NULL);
 
+   ecore_main_loop_iterate();
+
    fail_if(fo.then || !fo.cancel || !fo.progress);
    fail_if(!deadf || deadp);
    fail_if(!none);
@@ -198,6 +204,8 @@ START_TEST(efl_test_promise_before_future_success)
    efl_promise_value_set(p, &value, NULL);
 
    fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo));
+
+   ecore_main_loop_iterate();
 
    fail_if(deadp || !deadf);
    fail_if(!fo.then || fo.cancel || fo.progress);
@@ -239,6 +247,8 @@ START_TEST(efl_test_promise_before_future_cancel)
    fail_if(deadp || !deadf);
 
    efl_promise_value_set(p, &value, NULL);
+
+   ecore_main_loop_iterate();
 
    fail_if(fo.then || !fo.cancel || fo.progress);
    fail_if(!none);
@@ -321,6 +331,8 @@ START_TEST(efl_test_promise_future_chain_success)
    efl_promise_progress_set(p, &progress);
    efl_promise_value_set(p, &value, NULL);
 
+   ecore_main_loop_iterate();
+
    fail_if(!fo1.then || fo1.cancel || !fo1.progress);
    fail_if(!fo2.then || fo2.cancel || !fo2.progress);
    fail_if(!deadf1 || !deadf2 || deadp);
@@ -369,6 +381,8 @@ START_TEST(efl_test_promise_future_chain_cancel)
 
    efl_promise_value_set(p, &value, NULL);
 
+   ecore_main_loop_iterate();
+
    fail_if(fo1.then || !fo1.cancel || !fo1.progress);
    fail_if(fo2.then || !fo2.cancel || !fo2.progress);
    fail_if(!deadf1 || !deadf2 || deadp);
@@ -414,6 +428,8 @@ START_TEST(efl_test_promise_future_multi_success)
    efl_promise_progress_set(p, &progress);
    efl_promise_value_set(p, &value, NULL);
 
+   ecore_main_loop_iterate();
+
    fail_if(!fo1.then || fo1.cancel || !fo1.progress);
    fail_if(!fo2.then || fo2.cancel || !fo2.progress);
    fail_if(!deadf || deadp);
@@ -458,6 +474,8 @@ START_TEST(efl_test_promise_future_multi_cancel)
 
    efl_promise_value_set(p, &value, NULL);
 
+   ecore_main_loop_iterate();
+
    fail_if(fo1.then || !fo1.cancel || !fo1.progress);
    fail_if(fo2.then || !fo2.cancel || !fo2.progress);
    fail_if(!deadf || deadp);
@@ -500,6 +518,8 @@ START_TEST(efl_test_promise_before_future_multi_success)
    fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo1));
    fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo2));
    efl_unref(f);
+
+   ecore_main_loop_iterate();
 
    fail_if(deadp || !deadf);
    fail_if(!fo1.then || fo1.cancel || fo1.progress);
@@ -549,6 +569,8 @@ START_TEST(efl_test_promise_before_future_multi_cancel)
    fail_if(deadp || !deadf);
 
    efl_promise_value_set(p, &value, NULL);
+
+   ecore_main_loop_iterate();
 
    fail_if(fo1.then || !fo1.cancel || fo1.progress);
    fail_if(fo2.then || !fo2.cancel || fo2.progress);
@@ -699,11 +721,16 @@ START_TEST(efl_test_promise_all)
    fail_if(!all);
 
    efl_promise_value_set(p1, &value[0], NULL);
+
+   ecore_main_loop_iterate();
+
    fail_if(!donep1.then || donep1.cancel || donep1.progress);
    fail_if(donea.then || donea.cancel || donea.progress);
 
    efl_promise_value_set(p2, &value[1], NULL);
    efl_promise_value_set(p3, &value[2], NULL);
+
+   ecore_main_loop_iterate();
 
    fail_if(!donea.then || donea.cancel || donea.progress);
    fail_if(all);
@@ -742,6 +769,8 @@ START_TEST(efl_test_promise_all_after_value_set)
    fail_if(!all);
 
    fail_if(!efl_future_then(all, _then_all, _cancel, _progress, &donea));
+
+   ecore_main_loop_iterate();
 
    fail_if(!donea.then || donea.cancel || donea.progress);
 
@@ -791,6 +820,9 @@ START_TEST(efl_test_promise_race)
    fail_if(!race);
 
    efl_promise_value_set(p2, &value[0], NULL);
+
+   ecore_main_loop_iterate();
+
    fail_if(donep1.then || !donep1.cancel || donep1.progress);
    fail_if(!donea.then || donea.cancel || donea.progress);
 
@@ -842,20 +874,22 @@ _then_cleanup(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
 START_TEST(efl_test_recursive_mess)
 {
-    Efl_Promise *p;
-    Future_Ok done = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Efl_Promise *p;
+   Future_Ok done = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
 
-    ecore_init();
+   ecore_init();
 
-    p = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
-    efl_future_use(&recursive_future, efl_promise_future_get(p));
-    efl_future_then(recursive_future, _then_cleanup, _cancel, NULL, &done);
+   p = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   efl_future_use(&recursive_future, efl_promise_future_get(p));
+   efl_future_then(recursive_future, _then_cleanup, _cancel, NULL, &done);
 
-    efl_promise_value_set(p, &value[0], NULL);
+   efl_promise_value_set(p, &value[0], NULL);
 
-    efl_del(p);
+   ecore_main_loop_iterate();
 
-    ecore_shutdown();
+   efl_del(p);
+
+   ecore_shutdown();
 }
 END_TEST
 
