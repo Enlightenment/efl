@@ -26,6 +26,29 @@ _then(void *data, const Efl_Event *ev)
 }
 
 static void
+_time_then(void *data, const Efl_Event *ev)
+{
+   Efl_Future_Event_Success *s = ev->info;
+   Future_Ok *value = s->value;
+   Future_Ok *fo = data;
+
+   fail_if(value != fo);
+   fo->then = EINA_TRUE;
+
+   ecore_main_loop_quit();
+}
+
+static void
+_connected_then(void *data, const Efl_Event *ev)
+{
+   Efl_Future_Event_Success *s = ev->info;
+   Efl_Future *f;
+
+   f = efl_loop_timeout(efl_provider_find(ev->object, EFL_LOOP_CLASS), 0.01, data);
+   efl_promise_connect(s->next, f);
+}
+
+static void
 _cancel(void *data, const Efl_Event *ev)
 {
    Efl_Future_Event_Failure *f = ev->info;
@@ -81,6 +104,52 @@ START_TEST(efl_test_promise_future_success)
 
    efl_promise_progress_set(p, &progress);
    efl_promise_value_set(p, &value, NULL);
+
+   ecore_main_loop_iterate();
+
+   fail_if(!fo.then || fo.cancel || !fo.progress);
+   fail_if(!deadf || deadp);
+
+   efl_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+// Test value set after then
+START_TEST(efl_test_promise_future_connected)
+{
+   Efl_Promise *p;
+   Efl_Future *chain;
+   Efl_Future *f;
+   Future_Ok fo = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   f = efl_promise_future_get(p);
+   fail_if(!f);
+
+   efl_event_callback_add(f, EFL_EVENT_DEL, _death, &deadf);
+   efl_event_callback_add(p, EFL_EVENT_DEL, _death, &deadp);
+
+   chain = efl_future_then(f, _connected_then, _cancel, _progress, &fo);
+   fail_if(!chain);
+   fail_if(!efl_future_then(chain, _time_then, _cancel, NULL, &fo));
+
+   fail_if(deadp || deadf);
+
+   efl_promise_progress_set(p, &progress);
+   efl_promise_value_set(p, &value, NULL);
+
+   ecore_main_loop_begin();
 
    ecore_main_loop_iterate();
 
@@ -1033,6 +1102,7 @@ void ecore_test_ecore_promise(TCase *tc)
 {
    tcase_add_test(tc, efl_test_promise_future_success);
    tcase_add_test(tc, efl_test_promise_future_cancel);
+   tcase_add_test(tc, efl_test_promise_future_connected);
    tcase_add_test(tc, efl_test_promise_future_chain_success);
    tcase_add_test(tc, efl_test_promise_future_chain_cancel);
    tcase_add_test(tc, efl_test_promise_before_future_success);
