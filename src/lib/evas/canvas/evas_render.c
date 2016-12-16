@@ -2516,6 +2516,11 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                                             prev_mask->cur->geometry.x - x,
                                             prev_mask->cur->geometry.y - y,
                                             evas, do_async);
+               ENFN->context_clip_set(ENDT, ctx,
+                                      prev_mask->cur->geometry.x - x,
+                                      prev_mask->cur->geometry.y - y,
+                                      prev_mask->cur->geometry.w,
+                                      prev_mask->cur->geometry.h);
             }
 
           if (EINA_LIKELY(!mask->is_smart))
