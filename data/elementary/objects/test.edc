@@ -749,73 +749,73 @@ collections {
          }
       }
    }
-group { name: "page_layout";
-   parts {
-      part { name: "bg";
-         type: RECT;
-         scale: 1;
-         description { state: "default" 0.0;
-           min: 400 500;
-           max: 400 500;
-           color: 0 0 0 0;
-        }
-      }
-      part { name: "page";
-         type: SWALLOW;
-         scale: 1;
-         description { state: "default" 0.0;
-           rel1.relative: 0.1 0.1;
-           rel1.to:"bg";
-           rel2.relative: 0.9 0.9;
-           rel2.to:"bg";
-         }
-      }
-      part { name: "text";
-         type: TEXT;
-         scale: 1;
-         description { state: "default" 0.0;
-           fixed: 1 1;
-           rel1.relative: 0.5 0.5;
-           rel2.relative: 0.5 0.5;
-           text {
-              min: 1 1;
-              size: 50;
-              ellipsis: -1;
+   group { name: "page_layout";
+      parts {
+         part { name: "bg";
+            type: RECT;
+            scale: 1;
+            description { state: "default" 0.0;
+              min: 400 500;
+              max: 400 500;
+              color: 0 0 0 0;
            }
          }
-      }
-      part { name: "element1";
-         type: SWALLOW;
-         scale: 1;
-         description { state: "default" 0.0;
-           rel1.relative: 0.4 0.2;
-           rel1.to:"bg";
-           rel2.relative: 0.6 0.4;
-           rel2.to:"bg";
+         part { name: "page";
+            type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+              rel1.relative: 0.1 0.1;
+              rel1.to:"bg";
+              rel2.relative: 0.9 0.9;
+              rel2.to:"bg";
+            }
          }
-      }
-      part { name: "element2";
-         type: SWALLOW;
-         scale: 1;
-         description { state: "default" 0.0;
-           rel1.relative: 0.4 0.6;
-           rel1.to:"bg";
-           rel2.relative: 0.6 0.7;
-           rel2.to:"bg";
+         part { name: "text";
+            type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+              fixed: 1 1;
+              rel1.relative: 0.5 0.5;
+              rel2.relative: 0.5 0.5;
+              text {
+                 min: 1 1;
+                 size: 50;
+                 ellipsis: -1;
+              }
+            }
          }
-      }
-      part { name: "element3";
-         type: SWALLOW;
-         scale: 1;
-         description { state: "default" 0.0;
-           rel1.relative: 0.4 0.7;
-           rel1.to:"bg";
-           rel2.relative: 0.6 0.8;
-           rel2.to:"bg";
+         part { name: "element1";
+            type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+              rel1.relative: 0.4 0.2;
+              rel1.to:"bg";
+              rel2.relative: 0.6 0.4;
+              rel2.to:"bg";
+            }
+         }
+         part { name: "element2";
+            type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+              rel1.relative: 0.4 0.6;
+              rel1.to:"bg";
+              rel2.relative: 0.6 0.7;
+              rel2.to:"bg";
+            }
+         }
+         part { name: "element3";
+            type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+              rel1.relative: 0.4 0.7;
+              rel1.to:"bg";
+              rel2.relative: 0.6 0.8;
+              rel2.to:"bg";
+            }
          }
       }
    }
-}
    group { "layout_edje";
       parts {
          rect { "red";
