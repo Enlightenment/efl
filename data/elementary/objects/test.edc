@@ -860,4 +860,25 @@ collections {
          }
       }
    }
+   group { name: "layout3";
+      parts {
+         part { name: "bg";
+            type: RECT;
+            scale: 1;
+            description { state: "default" 0.0;
+               min: 4000 4000;
+               color: 0 255 0 100;
+            }
+         }
+         part { name: "swallow";
+            type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               min: 100 100;
+               rel1.relative: 0.3 0.3;
+               rel2.relative: 0.325 0.325;
+            }
+         }
+      }
+   }
 }

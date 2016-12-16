@@ -900,3 +900,68 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(win);
 }
 
+static void
+btn_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *bt = data;
+   elm_object_focus_set(bt, EINA_FALSE);
+   elm_object_focus_set(bt, EINA_TRUE);
+}
+
+static Eina_Bool toggle = EINA_FALSE;
+static void
+btn_clicked2(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *bt = data;
+   toggle = !toggle;
+   if (toggle)
+     evas_object_size_hint_min_set(bt, 500, 500);
+   else
+     evas_object_size_hint_min_set(bt, 100, 100);
+}
+
+void
+test_focus4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *box, *sc, *btn, *ly, *btn2;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("focus4", "Focus 5");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   sc = elm_scroller_add(box);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, 0.9);
+   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end (box, sc);
+   evas_object_show(sc);
+
+   btn = elm_button_add(box);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, 0.1);
+   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, btn);
+   elm_object_text_set(btn, "Focus to Button");
+   evas_object_show(btn);
+
+   ly = elm_layout_add(sc);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "layout3");
+   elm_object_content_set(sc, ly);
+   evas_object_show(ly);
+
+   btn2 = elm_button_add(ly);
+   elm_object_text_set(btn2, "Button Resize");
+   elm_object_part_content_set(ly, "swallow", btn2);
+   evas_object_show(btn2);
+
+   evas_object_smart_callback_add(btn, "clicked", btn_clicked, btn2);
+   evas_object_smart_callback_add(btn2, "clicked", btn_clicked2, btn2);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
+}
+

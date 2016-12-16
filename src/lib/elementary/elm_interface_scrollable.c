@@ -1702,27 +1702,30 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
                                          Evas_Coord w,
                                          Evas_Coord h)
 {
-   Evas_Coord mx = 0, my = 0, cw = 0, ch = 0, px = 0, py = 0, nx, ny,
+   Evas_Coord cw = 0, ch = 0, px = 0, py = 0, nx, ny,
               minx = 0, miny = 0, pw = 0, ph = 0, x = *_x, y = *_y;
 
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(obj, sid, EINA_FALSE);
 
    if (!sid->pan_obj) return EINA_FALSE;
 
-   elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
    elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
    elm_obj_pan_content_size_get(sid->pan_obj, &cw, &ch);
    elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
    evas_object_geometry_get(sid->pan_obj, NULL, NULL, &pw, &ph);
 
-   nx = px;
-   if ((x < px) && ((x + w) < (px + (cw - mx)))) nx = x;
-   else if ((x > px) && ((x + w) > (px + (cw - mx))))
-     nx = x + w - (cw - mx);
-   ny = py;
-   if ((y < py) && ((y + h) < (py + (ch - my)))) ny = y;
-   else if ((y > py) && ((y + h) > (py + (ch - my))))
-     ny = y + h - (ch - my);
+   nx = x;
+   if ((x > px) && (w < pw))
+     {
+        if ((px + pw) < (x + w)) nx = x - pw + w;
+        else nx = px;
+     }
+   ny = y;
+   if ((y > py) && (h < ph))
+     {
+        if ((py + ph) < (y + h)) ny = y - ph + h;
+        else ny = py;
+     }
 
    if ((sid->down.bounce_x_animator) || (sid->down.bounce_y_animator) ||
        (sid->scrollto.x.animator) || (sid->scrollto.y.animator))
