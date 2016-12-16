@@ -403,15 +403,14 @@ _eio_model_efl_model_property_get(Eo *obj, Eio_Model_Data *priv, const char *pro
  */
 static Efl_Future*
 _eio_model_efl_model_property_set(Eo *obj EINA_UNUSED,
-                                                Eio_Model_Data *priv,
-                                                const char * property,
+                                  Eio_Model_Data *priv,
+                                  const char * property,
                                   const Eina_Value *value)
 {
-   char *dest;
-
    Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
    Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, loop);
    Efl_Future* future = efl_promise_future_get(promise);
+   char *dest;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(property, future);
 
@@ -421,7 +420,12 @@ _eio_model_efl_model_property_set(Eo *obj EINA_UNUSED,
         return future;
      }
 
-   eina_value_get(value, &dest);
+   if (!eina_value_get(value, &dest))
+     {
+        efl_promise_failed_set(promise, EFL_MODEL_ERROR_UNKNOWN);
+        return future;
+     }
+
    if (priv->path == NULL || !ecore_file_exists(priv->path))
      {
         eina_stringshare_replace(&priv->path, dest);
