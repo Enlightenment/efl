@@ -757,9 +757,11 @@ static void
 _evas_render_phase1_object_mapped_had_restack(Phase1_Context *p1ctx,
                                               Evas_Object_Protected_Data *obj,
                                               Eina_Bool map,
-                                              Eina_Bool obj_changed)
+                                              Eina_Bool obj_changed,
+                                              int level)
 {
    Evas_Object *eo_obj = obj->object;
+   (void) level;
 
    RD(level, "  had map - restack objs\n");
    _evas_render_prev_cur_clip_cache_add(p1ctx->e, obj);
@@ -1099,7 +1101,7 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
      }
    else if (EINA_UNLIKELY(hmap && !can_map))
      _evas_render_phase1_object_mapped_had_restack(p1ctx, obj, map,
-                                                   obj_changed);
+                                                   obj_changed, level);
 
    /* handle normal rendering. this object knows how to handle maps */
    if (obj_changed)
@@ -2370,16 +2372,11 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                            Evas_Object_Protected_Data *prev_mask,
                            int level, Eina_Bool do_async)
 {
-   int x, y, w, h, r, g, b, a;
-   Eina_Bool is_image, done = EINA_FALSE;
+   int x, y, w, h, r, g, b, a, cr, cg, cb, ca;
+   Eina_Bool is_image, done = EINA_FALSE, restore_state = EINA_FALSE;
    void *ctx;
 
    if (!mask) return;
-   if (!mask->mask->redraw && mask->mask->surface)
-     {
-        DBG("Requested mask redraw but the redraw flag is off.");
-        return;
-     }
 
    eina_evlog("+mask_subrender", mask->object, 0.0, NULL);
    RD(level, "evas_render_mask_subrender(%p, prev: %p, %s)\n",
@@ -2396,14 +2393,24 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
    g = mask->cur->color.g;
    b = mask->cur->color.b;
    a = mask->cur->color.a;
-   if ((r != 255) || (g != 255) || (b != 255) || (a != 255))
+   cr = mask->cur->cache.clip.r;
+   cg = mask->cur->cache.clip.g;
+   cb = mask->cur->cache.clip.b;
+   ca = mask->cur->cache.clip.a;
+   if ((r != 255) || (g != 255) || (b != 255) || (a != 255) ||
+       (cr != 255) || (cg != 255) || (cb != 255) || (ca != 255))
      {
+        restore_state = EINA_TRUE;
         EINA_COW_STATE_WRITE_BEGIN(mask, state_write, cur)
           {
              state_write->color.r = 255;
              state_write->color.g = 255;
              state_write->color.b = 255;
              state_write->color.a = 255;
+             state_write->cache.clip.r = 255;
+             state_write->cache.clip.g = 255;
+             state_write->cache.clip.b = 255;
+             state_write->cache.clip.a = 255;
         }
         EINA_COW_STATE_WRITE_END(mask, state_write, cur);
      }
@@ -2580,7 +2587,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
 end:
    EINA_COW_WRITE_END(evas_object_mask_cow, mask->mask, mdata);
 
-   if ((r != 255) || (g != 255) || (b != 255) || (a != 255))
+   if (restore_state)
      {
         EINA_COW_STATE_WRITE_BEGIN(mask, state_write, cur)
           {
@@ -2588,6 +2595,10 @@ end:
              state_write->color.g = g;
              state_write->color.b = b;
              state_write->color.a = a;
+             state_write->cache.clip.r = cr;
+             state_write->cache.clip.g = cg;
+             state_write->cache.clip.b = cb;
+             state_write->cache.clip.a = ca;
           }
         EINA_COW_STATE_WRITE_END(mask, state_write, cur);
      }

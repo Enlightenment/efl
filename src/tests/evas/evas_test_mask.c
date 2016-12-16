@@ -147,20 +147,20 @@ START_TEST(evas_mask_test_compare_clip)
    evas_object_image_size_set(obj, 4, 4);
    evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_ARGB8888);
    evas_object_image_data_copy_set(obj, ref_data[0]);
+   evas_object_image_data_update_add(obj, 0, 0, 4, 4);
    evas_object_geometry_set(obj, 0, 0, W, H);
    evas_object_show(obj);
-   AUTODEL(obj);
 
    ecore_evas_manual_render(ee);
    refdata[0] = calloc(W * H, 4);
    memcpy(refdata[0], ecore_evas_buffer_pixels_get(ee), W * H * 4);
 
    evas_object_image_data_copy_set(obj, ref_data[1]);
+   evas_object_image_data_update_add(obj, 0, 0, 4, 4);
    ecore_evas_manual_render(ee);
    refdata[1] = calloc(W * H, 4);
    memcpy(refdata[1], ecore_evas_buffer_pixels_get(ee), W * H * 4);
-
-   evas_object_hide(obj);
+   evas_object_del(obj);
 
    // Green background
    bg = evas_object_rectangle_add(e);
@@ -182,6 +182,7 @@ START_TEST(evas_mask_test_compare_clip)
    evas_object_image_size_set(mask, 4, 4);
    evas_object_image_colorspace_set(mask, EVAS_COLORSPACE_ARGB8888);
    evas_object_image_data_copy_set(mask, mask_data);
+   evas_object_image_data_update_add(mask, 0, 0, 4, 4);
    evas_object_geometry_set(mask, 0, 0, W, H);
    evas_object_clip_set(rect, mask);
    evas_object_show(mask);
@@ -197,12 +198,6 @@ START_TEST(evas_mask_test_compare_clip)
    evas_object_color_set(mask, 0x80, 0x80, 0x80, 0x80);
    ecore_evas_manual_render(ee);
    memcpy(data, ecore_evas_buffer_pixels_get(ee), W * H * 4);
-
-   evas_object_image_data_copy_set(obj, ref_data[1]);
-   evas_object_show(obj);
-   ecore_evas_manual_render(ee);
-   refdata[1] = calloc(W * H, 4);
-   memcpy(refdata[1], ecore_evas_buffer_pixels_get(ee), W * H * 4);
    fail_if(_bgra_compare(data, refdata[1], W, H) != 0);
 
    // Now try again with a clip instead - this verifies clip == mask
@@ -318,6 +313,7 @@ START_TEST(evas_mask_test_mask_of_mask)
    evas_object_image_size_set(mask0, 4, 4);
    evas_object_image_colorspace_set(mask0, EVAS_COLORSPACE_ARGB8888);
    evas_object_image_data_copy_set(mask0, mask_data[0]);
+   evas_object_image_data_update_add(mask0, 0, 0, 4, 4);
    evas_object_geometry_set(mask0, 0, 0, W, H);
    evas_object_show(mask0);
    AUTODEL(mask0);
@@ -339,6 +335,7 @@ START_TEST(evas_mask_test_mask_of_mask)
    evas_object_image_size_set(mask1, 4, 4);
    evas_object_image_colorspace_set(mask1, EVAS_COLORSPACE_ARGB8888);
    evas_object_image_data_copy_set(mask1, mask_data[1]);
+   evas_object_image_data_update_add(mask1, 0, 0, 4, 4);
    evas_object_show(mask1);
 
    evas_object_size_hint_expand_set(mask1, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -362,6 +359,7 @@ START_TEST(evas_mask_test_mask_of_mask)
    evas_object_image_size_set(obj, 4, 4);
    evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_ARGB8888);
    evas_object_image_data_copy_set(obj, mask_data[2]);
+   evas_object_image_data_update_add(obj, 0, 0, 4, 4);
    evas_object_geometry_set(obj, 0, 0, W, H);
    evas_object_show(obj);
    AUTODEL(obj);
