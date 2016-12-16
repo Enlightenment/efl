@@ -1390,8 +1390,8 @@ struct _Evas_Func
 
    void (*line_draw)                       (void *data, void *context, void *surface, int x1, int y1, int x2, int y2, Eina_Bool do_async);
 
-   void *(*polygon_point_add)              (void *data, void *context, void *polygon, int x, int y);
-   void *(*polygon_points_clear)           (void *data, void *context, void *polygon);
+   void *(*polygon_point_add)              (void *data, void *polygon, int x, int y);
+   void *(*polygon_points_clear)           (void *data, void *polygon);
    void (*polygon_draw)                    (void *data, void *context, void *surface, void *polygon, int x, int y, Eina_Bool do_async);
 
    void *(*image_load)                     (void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);

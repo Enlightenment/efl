@@ -864,13 +864,13 @@ eng_line_draw(void *data EINA_UNUSED, void *context, void *surface, int x1, int 
 }
 
 static void *
-eng_polygon_point_add(void *data EINA_UNUSED, void *context EINA_UNUSED, void *polygon, int x, int y)
+eng_polygon_point_add(void *data EINA_UNUSED, void *polygon, int x, int y)
 {
    return evas_common_polygon_point_add(polygon, x, y);
 }
 
 static void *
-eng_polygon_points_clear(void *data EINA_UNUSED, void *context EINA_UNUSED, void *polygon)
+eng_polygon_points_clear(void *data EINA_UNUSED, void *polygon)
 {
    return evas_common_polygon_points_clear(polygon);
 }

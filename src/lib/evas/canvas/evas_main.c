@@ -856,7 +856,6 @@ _image_data_unset(Evas_Object_Protected_Data *obj, Eina_List **list)
    else CHECK(EFL_CANVAS_POLYGON_CLASS, Efl_Canvas_Polygon_Data,
         data->engine_data =
           obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
-                                                              obj->layer->evas->engine.data.context,
                                                               data->engine_data))
    else CHECK(EVAS_CANVAS3D_TEXTURE_CLASS, Evas_Canvas3D_Texture_Data,
         if (obj->layer->evas->engine.func->texture_free)

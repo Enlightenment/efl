@@ -263,7 +263,6 @@ evas_object_polygon_free(Evas_Object *eo_obj EINA_UNUSED,
         free(list_data);
      }
    o->engine_data = obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
-                                                                        obj->layer->evas->engine.data.context,
                                                                         o->engine_data);
 }
 
@@ -291,14 +290,12 @@ evas_object_polygon_render(Evas_Object *eo_obj EINA_UNUSED,
    if (o->changed)
      {
         o->engine_data = obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
-                                                                             obj->layer->evas->engine.data.context,
                                                                              o->engine_data);
         EINA_LIST_FOREACH(o->points, l, p)
           {
              //px = evas_coord_world_x_to_screen(obj->layer->evas, p->x);
              //py = evas_coord_world_y_to_screen(obj->layer->evas, p->y);
              o->engine_data = obj->layer->evas->engine.func->polygon_point_add(obj->layer->evas->engine.data.output,
-                                                                               obj->layer->evas->engine.data.context,
                                                                                o->engine_data,
                                                                                p->x, p->y);
           }
