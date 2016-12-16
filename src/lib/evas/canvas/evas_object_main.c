@@ -942,14 +942,28 @@ _efl_canvas_object_efl_input_interface_seat_event_filter_set(Eo *eo_obj,
    if (add)
      {
         if (eina_list_data_find(obj->events_whitelist, seat)) return;
-        if (efl_canvas_object_seat_focus_check(eo_obj, seat))
-          efl_canvas_object_seat_focus_del(eo_obj, seat);
+        /* remove all previously focused seats, if any - it may happen
+           since there wasn't a whitelist in place (no restrictions) */
+        if ((!obj->events_whitelist) && (obj->layer) && (obj->layer->evas))
+          {
+             const Eina_List *devices, *l;
+             Efl_Input_Device *dev;
+
+             devices = obj->layer->evas->devices;
+             EINA_LIST_FOREACH(devices, l, dev)
+               {
+                  if ((efl_input_device_type_get(dev) ==
+                       EFL_INPUT_DEVICE_CLASS_SEAT) && (dev != seat))
+                    efl_canvas_object_seat_focus_del(eo_obj, dev);
+               }
+          }
         obj->events_whitelist = eina_list_append(obj->events_whitelist, seat);
         efl_event_callback_add(seat, EFL_EVENT_DEL,
                                _whitelist_events_device_remove_cb, obj);
      }
    else
      {
+        efl_canvas_object_seat_focus_del(eo_obj, seat);
         obj->events_whitelist = eina_list_remove(obj->events_whitelist, seat);
         efl_event_callback_del(seat, EFL_EVENT_DEL,
                                _whitelist_events_device_remove_cb, obj);
