@@ -1618,6 +1618,129 @@ _emile_jpeg_head(Emile_Image *image,
    return EINA_TRUE;
 }
 
+static inline void
+_jpeg_convert_copy(volatile uint32_t **dst, uint8_t **src, unsigned int w, Eina_Bool adobe_marker)
+{
+   uint32_t *ptr2 = (uint32_t*) *dst;
+   uint8_t *ptr = *src;
+   unsigned int x;
+
+   if (adobe_marker)
+     {
+        for (x = 0; x < w; x++)
+          {
+             /* According to libjpeg doc, Photoshop inverse the values of C, M, Y and K, */
+             /* that is C is replaces by 255 - C, etc... */
+             /* See the comment below for the computation of RGB values from CMYK ones. */
+             *ptr2 = (0xff000000) |
+               ((ptr[0] * ptr[3] / 255) << 16) |
+               ((ptr[1] * ptr[3] / 255) << 8) |
+               ((ptr[2] * ptr[3] / 255));
+             ptr += 4;
+             ptr2++;
+          }
+     }
+   else
+     {
+        for (x = 0; x < w; x++)
+          {
+             /* Conversion from CMYK to RGB is done in 2 steps: */
+             /* CMYK => CMY => RGB (see http://www.easyrgb.com/index.php?X=MATH) */
+             /* after computation, if C, M, Y and K are between 0 and 1, we have: */
+             /* R = (1 - C) * (1 - K) * 255 */
+             /* G = (1 - M) * (1 - K) * 255 */
+             /* B = (1 - Y) * (1 - K) * 255 */
+             /* libjpeg stores CMYK values between 0 and 255, */
+             /* so we replace C by C * 255 / 255, etc... and we obtain: */
+             /* R = (255 - C) * (255 - K) / 255 */
+             /* G = (255 - M) * (255 - K) / 255 */
+             /* B = (255 - Y) * (255 - K) / 255 */
+             /* with C, M, Y and K between 0 and 255. */
+             *ptr2 = (0xff000000) |
+               (((255 - ptr[0]) * (255 - ptr[3]) / 255) << 16) |
+               (((255 - ptr[1]) * (255 - ptr[3]) / 255) << 8) |
+               (((255 - ptr[2]) * (255 - ptr[3]) / 255));
+             ptr += 4;
+             ptr2++;
+          }
+     }
+
+   *dst = ptr2;
+   *src = ptr;
+}
+
+static inline void
+_jpeg_gry8_convert_copy(uint8_t **dst, uint8_t **src, unsigned int w)
+{
+   uint8_t *ptrg = (uint8_t*) *dst;
+   uint8_t *ptr = *src;
+   unsigned int x;
+
+   for (x = 0; x < w; x++)
+     {
+        *ptrg = ptr[0];
+        ptrg++;
+        ptr++;
+     }
+
+   *dst = ptrg;
+   *src = ptr;
+}
+
+static inline void
+_jpeg_agry88_convert_copy(uint16_t **dst, uint8_t **src, unsigned int w)
+{
+   uint16_t *ptrag = (uint16_t*) *dst;
+   uint8_t *ptr = *src;
+   unsigned int x;
+
+   for (x = 0; x < w; x++)
+     {
+        *ptrag = 0xFF00 | ptr[0];
+        ptrag++;
+        ptr++;
+     }
+
+   *dst = ptrag;
+   *src = ptr;
+}
+
+static inline void
+_jpeg_argb8888_convert_copy(volatile uint32_t **dst, uint8_t **src, unsigned int w)
+{
+   uint32_t *ptr2 = (uint32_t*) *dst;
+   uint8_t *ptr = *src;
+   unsigned int x;
+
+   for (x = 0; x < w; x++)
+     {
+        *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
+        ptr2++;
+        ptr++;
+     }
+
+   *dst = ptr2;
+   *src = ptr;
+}
+
+static inline void
+_jpeg_copy(volatile uint32_t **dst, uint8_t **src, unsigned int w)
+{
+   uint32_t *ptr2 = (uint32_t*) *dst;
+   uint8_t *ptr = *src;
+   unsigned int x;
+
+   for (x = 0; x < w; x++)
+     {
+        *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[1], ptr[2]);
+        ptr += 3;
+        ptr2++;
+     }
+
+   *dst = ptr2;
+   *src = ptr;
+}
+
 static Eina_Bool
 _emile_jpeg_data(Emile_Image *image,
                  Emile_Image_Property *prop,
@@ -1636,7 +1759,7 @@ _emile_jpeg_data(Emile_Image *image,
    uint32_t *ptr_rotate = NULL;
    uint16_t *ptrag = NULL, *ptrag_rotate = NULL;
    uint8_t *ptrg = NULL, *ptrg_rotate = NULL;
-   unsigned int x, y, l, i, scans;
+   unsigned int y, l, i, scans;
    volatile int region = 0;
    /* rotation setting */
    unsigned int ie_w = 0, ie_h = 0;
@@ -1885,47 +2008,7 @@ _emile_jpeg_data(Emile_Image *image,
                {
                   for (y = 0; y < scans; y++)
                     {
-                       if (cinfo.saw_Adobe_marker)
-                         {
-                            for (x = 0; x < w; x++)
-                              {
-                                 /* According to libjpeg doc, Photoshop inverse the values of C, M, Y and K, */
-                                 /* that is C is replaces by 255 - C, etc... */
-                                 /* See the comment below for the computation of RGB values from CMYK ones. */
-                                 *ptr2 =
-                                   (0xff000000) |
-                                   ((ptr[0] * ptr[3] / 255) << 16) |
-                                   ((ptr[1] * ptr[3] / 255) << 8) |
-                                   ((ptr[2] * ptr[3] / 255));
-                                 ptr += 4;
-                                 ptr2++;
-                              }
-                         }
-                       else
-                         {
-                            for (x = 0; x < w; x++)
-                              {
-                                 /* Conversion from CMYK to RGB is done in 2 steps: */
-                                 /* CMYK => CMY => RGB (see http://www.easyrgb.com/index.php?X=MATH) */
-                                 /* after computation, if C, M, Y and K are between 0 and 1, we have: */
-                                 /* R = (1 - C) * (1 - K) * 255 */
-                                 /* G = (1 - M) * (1 - K) * 255 */
-                                 /* B = (1 - Y) * (1 - K) * 255 */
-                                 /* libjpeg stores CMYK values between 0 and 255, */
-                                 /* so we replace C by C * 255 / 255, etc... and we obtain: */
-                                 /* R = (255 - C) * (255 - K) / 255 */
-                                 /* G = (255 - M) * (255 - K) / 255 */
-                                 /* B = (255 - Y) * (255 - K) / 255 */
-                                 /* with C, M, Y and K between 0 and 255. */
-                                 *ptr2 =
-                                   (0xff000000) |
-                                   (((255 - ptr[0]) * (255 - ptr[3]) / 255) << 16) |
-                                   (((255 - ptr[1]) * (255 - ptr[3]) / 255) << 8) |
-                                   (((255 - ptr[2]) * (255 - ptr[3]) / 255));
-                                 ptr += 4;
-                                 ptr2++;
-                              }
-                         }
+                       _jpeg_convert_copy(&ptr2, &ptr, w, cinfo.saw_Adobe_marker);
                     }
                }
              else
@@ -1949,47 +2032,7 @@ _emile_jpeg_data(Emile_Image *image,
                             if (((y + l) >= opts_region.y) && ((y + l) < (opts_region.y + opts_region.h)))
                               {
                                  ptr += opts_region.x;
-                                 if (cinfo.saw_Adobe_marker)
-                                   {
-                                      for (x = 0; x < opts_region.w; x++)
-                                        {
-                                           /* According to libjpeg doc, Photoshop inverse the values of C, M, Y and K, */
-                                           /* that is C is replaces by 255 - C, etc... */
-                                           /* See the comment below for the computation of RGB values from CMYK ones. */
-                                           *ptr2 =
-                                             (0xff000000) |
-                                             ((ptr[0] * ptr[3] / 255) << 16) |
-                                             ((ptr[1] * ptr[3] / 255) << 8) |
-                                             ((ptr[2] * ptr[3] / 255));
-                                           ptr += 4;
-                                           ptr2++;
-                                        }
-                                   }
-                                 else
-                                   {
-                                      for (x = 0; x < opts_region.w; x++)
-                                        {
-                                           /* Conversion from CMYK to RGB is done in 2 steps: */
-                                           /* CMYK => CMY => RGB (see http://www.easyrgb.com/index.php?X=MATH) */
-                                           /* after computation, if C, M, Y and K are between 0 and 1, we have: */
-                                           /* R = (1 - C) * (1 - K) * 255 */
-                                           /* G = (1 - M) * (1 - K) * 255 */
-                                           /* B = (1 - Y) * (1 - K) * 255 */
-                                           /* libjpeg stores CMYK values between 0 and 255, */
-                                           /* so we replace C by C * 255 / 255, etc... and we obtain: */
-                                           /* R = (255 - C) * (255 - K) / 255 */
-                                           /* G = (255 - M) * (255 - K) / 255 */
-                                           /* B = (255 - Y) * (255 - K) / 255 */
-                                           /* with C, M, Y and K between 0 and 255. */
-                                           *ptr2 =
-                                             (0xff000000) |
-                                             (((255 - ptr[0]) * (255 - ptr[3]) / 255) << 16) |
-                                             (((255 - ptr[1]) * (255 - ptr[3]) / 255) << 8) |
-                                             (((255 - ptr[2]) * (255 - ptr[3]) / 255));
-                                           ptr += 4;
-                                           ptr2++;
-                                        }
-                                   }
+                                 _jpeg_convert_copy(&ptr2, &ptr, opts_region.w, cinfo.saw_Adobe_marker);
                                  ptr += (4 * (w - (opts_region.x + opts_region.w)));
                               }
                             else
@@ -2034,12 +2077,7 @@ _emile_jpeg_data(Emile_Image *image,
                {
                   for (y = 0; y < scans; y++)
                     {
-                       for (x = 0; x < w; x++)
-                         {
-                            *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[1], ptr[2]);
-                            ptr += 3;
-                            ptr2++;
-                         }
+                       _jpeg_copy(&ptr2, &ptr, w);
                     }
                }
              else
@@ -2061,12 +2099,7 @@ _emile_jpeg_data(Emile_Image *image,
                                 ((y + l) < (opts_region.y + opts_region.h)))
                               {
                                  ptr += (3 * opts_region.x);
-                                 for (x = 0; x < opts_region.w; x++)
-                                   {
-                                      *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[1], ptr[2]);
-                                      ptr += 3;
-                                      ptr2++;
-                                   }
+                                 _jpeg_copy(&ptr2, &ptr, opts_region.w);
                                  ptr += (3 * (w - (opts_region.x + opts_region.w)));
                               }
                             else
@@ -2099,24 +2132,17 @@ _emile_jpeg_data(Emile_Image *image,
                {
                   for (y = 0; y < scans; y++)
                     {
-                       for (x = 0; x < w; x++)
+                       switch (prop->cspace)
                          {
-                            if (prop->cspace == EMILE_COLORSPACE_GRY8)
-                              {
-                                 *ptrg = ptr[0];
-                                 ptrg++;
-                              }
-                            else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
-                              {
-                                 *ptrag = 0xFF00 | ptr[0];
-                                 ptrag++;
-                              }
-                            else
-                              {
-                                 *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
-                                 ptr2++;
-                              }
-                            ptr++;
+                          case EMILE_COLORSPACE_GRY8:
+                             _jpeg_gry8_convert_copy(&ptrg, &ptr, w);
+                             break;
+                          case EMILE_COLORSPACE_AGRY88:
+                             _jpeg_agry88_convert_copy(&ptrag, &ptr, w);
+                             break;
+                          default:
+                             _jpeg_argb8888_convert_copy(&ptr2, &ptr, w);
+                             break;
                          }
                     }
                }
@@ -2142,24 +2168,17 @@ _emile_jpeg_data(Emile_Image *image,
                                 ((y + l) < (opts_region.y + opts_region.h)))
                               {
                                  ptr += opts_region.x;
-                                 for (x = 0; x < opts_region.w; x++)
+                                 switch (prop->cspace)
                                    {
-                                      if (prop->cspace == EMILE_COLORSPACE_GRY8)
-                                        {
-                                           *ptrg = ptr[0];
-                                           ptrg++;
-                                        }
-                                      else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
-                                        {
-                                           *ptrag = 0xFF00 | ptr[0];
-                                           ptrag++;
-                                        }
-                                      else
-                                        {
-                                           *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
-                                           ptr2++;
-                                        }
-                                      ptr++;
+                                    case EMILE_COLORSPACE_GRY8:
+                                       _jpeg_gry8_convert_copy(&ptrg, &ptr, opts_region.w);
+                                       break;
+                                    case EMILE_COLORSPACE_AGRY88:
+                                       _jpeg_agry88_convert_copy(&ptrag, &ptr, opts_region.w);
+                                       break;
+                                    default:
+                                       _jpeg_argb8888_convert_copy(&ptr2, &ptr, opts_region.w);
+                                       break;
                                    }
                                  ptr += w - (opts_region.x + opts_region.w);
                               }
