@@ -865,7 +865,7 @@ _edje_pick_images_copy(Edje_File *edf, Edje_File *o)
 {
    int old_id;
    Eina_Bool status = EDJE_PICK_NO_ERROR;
-   Eina_List *l;
+   Eina_List *l, *l1;
    Edje_Pick_Data *image, *set;
 
    if (edf->image_dir)
@@ -932,7 +932,7 @@ _edje_pick_images_copy(Edje_File *edf, Edje_File *o)
                               sizeof(Edje_Image_Directory_Set));
                        o->image_dir->sets[o->image_dir->sets_count - 1].id = set->id.new_id;
 
-                       EINA_LIST_FOREACH(o->image_dir->sets[o->image_dir->sets_count - 1].entries, l, e)
+                       EINA_LIST_FOREACH(o->image_dir->sets[o->image_dir->sets_count - 1].entries, l1, e)
                          e->id = _edje_pick_image_new_id_get(
                            context.current_file->imagelist,
                            e->id);
