@@ -145,7 +145,7 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
                                 -source->cur->geometry.x,
                                 -source->cur->geometry.y,
                                 2, 0, 0, e->output.w, e->output.h,
-                                &proxy_render_data, 1, EINA_FALSE, EINA_FALSE);
+                                &proxy_render_data, 1, EINA_FALSE);
           }
 
         e->engine.func->context_free(e->engine.data.output, ctx);
