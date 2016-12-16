@@ -1608,6 +1608,22 @@ _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *p
                               -proxy_render_data->src_obj->cur->geometry.y);
 }
 
+static Eina_Bool
+_mask_apply_inside_proxy(Evas_Proxy_Render_Data *proxy_render_data,
+                         Evas_Object_Protected_Data *mask)
+{
+   // Trying to find out if the mask should be applied inside the proxy or not.
+   if (!proxy_render_data || proxy_render_data->source_clip) return EINA_TRUE;
+   if (!proxy_render_data->src_obj->cur->clipper) return EINA_FALSE;
+   if (!mask) return EINA_FALSE;
+
+   // FIXME: Need to implement a logic similar to _proxy_context_clip
+   return EINA_FALSE;
+
+   //if (mask == proxy_render_data->src_obj->cur->clipper) return EINA_TRUE;
+   //return _mask_apply_inside_proxy(proxy_render_data, mask->cur->clipper);
+}
+
 static void
 _evas_render_mapped_context_clip_set(Evas_Public_Data *evas, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *ctx, Evas_Proxy_Render_Data *proxy_render_data, int off_x, int off_y)
 {
@@ -1952,6 +1968,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
           }
 
         /* duplicate context and reset clip */
+        // FIXME: Shouldn't we use a new, clean context?
         ctx = ENFN->context_dup(ENDT, context);
         ENFN->context_clip_unset(ENDT, ctx);
         //ENFN->context_multiplier_unset(ENDT, ctx); // this probably should be here, too
@@ -1980,11 +1997,20 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   if (mask)
                     {
                        // This path can be hit when we're multiplying masks on top of each other...
-                       RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p\n",
-                          mask, mask->name?":":"", mask->name?mask->name:"",
-                          mask->mask->redraw, mask->mask->surface);
-                       if (mask->mask->redraw || !mask->mask->surface)
-                         evas_render_mask_subrender(evas, mask, obj->clip.prev_mask, level + 1, do_async);
+                       Evas_Object_Protected_Data *prev_mask = obj->clip.prev_mask;
+                       Eina_Bool redraw = mask->mask->redraw || !mask->mask->surface;
+
+                       RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p prev_mask:%p\n",
+                          mask->object, mask->name?":":"", mask->name?mask->name:"",
+                          mask->mask->redraw, mask->mask->surface, prev_mask);
+                       if (prev_mask && !_mask_apply_inside_proxy(proxy_render_data, prev_mask))
+                         {
+                            RD(level, "  discard prev mask and redraw (guessed outside proxy)\n");
+                            prev_mask = NULL;
+                            redraw = EINA_TRUE;
+                         }
+                       if (redraw)
+                         evas_render_mask_subrender(evas, mask, prev_mask, level + 1, do_async);
 
                        if (mask->mask->surface)
                          {
@@ -2023,11 +2049,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
      }
    else // not "has map"
      {
+        ctx = ENFN->context_dup(ENDT, context);
         if (mapped)
           {
              RD(level, "  child of mapped obj\n");
 
-             ctx = ENFN->context_dup(ENDT, context);
              if (obj->is_smart)
                {
                   /* Clipper masks */
@@ -2036,14 +2062,20 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                     {
                        // This path can be hit when we're multiplying masks on top of each other...
                        Evas_Object_Protected_Data *mask = obj->cur->clipper;
+                       Evas_Object_Protected_Data *prev_mask = obj->clip.prev_mask;
+                       Eina_Bool redraw = mask->mask->redraw || !mask->mask->surface;
 
-                       evas_object_clip_recalc(obj);
-
-                       RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p\n",
-                          mask, mask->name?":":"", mask->name?mask->name:"",
-                          mask->mask->redraw, mask->mask->surface);
-                       if (mask->mask->redraw || !mask->mask->surface)
-                         evas_render_mask_subrender(evas, mask, obj->clip.prev_mask, level + 1, do_async);
+                       RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p prev_mask:%p\n",
+                          mask->object, mask->name?":":"", mask->name?mask->name:"",
+                          mask->mask->redraw, mask->mask->surface, prev_mask);
+                       if (prev_mask && !_mask_apply_inside_proxy(proxy_render_data, prev_mask))
+                         {
+                            RD(level, "  discard prev mask and redraw (guessed outside proxy)\n");
+                            prev_mask = NULL;
+                            redraw = EINA_TRUE;
+                         }
+                       if (redraw)
+                         evas_render_mask_subrender(evas, mask, prev_mask, level + 1, do_async);
 
                        if (mask->mask->surface)
                          {
@@ -2057,10 +2089,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   else if (!proxy_src_clip)
                     {
                        if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
-                         {
-                            eina_evlog("-render_object", eo_obj, 0.0, NULL);
-                            return clean_them;
-                         }
+                         goto on_empty_clip;
                     }
 
 #ifdef REND_DBG
@@ -2111,10 +2140,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                             else
                               {
                                  if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
-                                   {
-                                      eina_evlog("-render_object", eo_obj, 0.0, NULL);
-                                      return clean_them;
-                                   }
+                                   goto on_empty_clip;
                               }
                          }
                        else
@@ -2129,11 +2155,20 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                        if (mask)
                          {
                             // This path can be hit when we're multiplying masks on top of each other...
-                            RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p\n",
-                               mask, mask->name?":":"", mask->name?mask->name:"",
-                               mask->mask->redraw, mask->mask->surface);
-                            if (mask->mask->redraw || !mask->mask->surface)
-                              evas_render_mask_subrender(evas, mask, obj->clip.prev_mask, level + 1, do_async);
+                            Evas_Object_Protected_Data *prev_mask = obj->clip.prev_mask;
+                            Eina_Bool redraw = mask->mask->redraw || !mask->mask->surface;
+
+                            RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p prev_mask:%p\n",
+                               mask->object, mask->name?":":"", mask->name?mask->name:"",
+                               mask->mask->redraw, mask->mask->surface, prev_mask);
+                            if (prev_mask && !_mask_apply_inside_proxy(proxy_render_data, prev_mask))
+                              {
+                                 RD(level, "  discard prev mask and redraw (guessed outside proxy)\n");
+                                 prev_mask = NULL;
+                                 redraw = EINA_TRUE;
+                              }
+                            if (redraw)
+                              evas_render_mask_subrender(evas, mask, prev_mask, level + 1, do_async);
 
                             if (mask->mask->surface)
                               {
@@ -2155,12 +2190,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   obj->func->render(eo_obj, obj, obj->private_data,
                                     ENDT, ctx, surface, off_x, off_y, EINA_FALSE);
                }
-
-             ENFN->context_free(ENDT, ctx);
           }
         else if (!obj->is_smart)
           {
-             ctx = ENFN->context_dup(ENDT, context);
              if (obj->cur->clipper)
                {
                   Evas_Object_Protected_Data *clipper = obj->cur->clipper;
@@ -2192,10 +2224,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   else
                     {
                        if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
-                         {
-                            eina_evlog("-render_object", eo_obj, 0.0, NULL);
-                            return clean_them;
-                         }
+                         goto on_empty_clip;
                     }
                }
              else if (!_is_obj_in_framespace(obj, evas))
@@ -2213,9 +2242,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
              obj->func->render(eo_obj, obj, obj->private_data,
                                ENDT, ctx, surface,
                                off_x, off_y, do_async);
-             ENFN->context_free(ENDT, ctx);
           }
         if (obj->changed_map) clean_them = EINA_TRUE;
+
+on_empty_clip:
+        ENFN->context_free(ENDT, ctx);
      }
    RD(level, "}\n");
 
