@@ -282,7 +282,7 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
 
    if (sd->horizontal)
      {
-        if (xx < obj_x)
+        if (!strcmp(sd->last_location, "left"))
           {
              xx = x;
              if ((xx + ww) > obj_x)
@@ -300,7 +300,7 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
      }
    else
      {
-        if (yy < obj_y)
+        if (!strcmp(sd->last_location, "top"))
           {
              yy = y;
              if ((yy + hh) > obj_y)
@@ -328,6 +328,7 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
                }
           }
      }
+   if (ww < obj_w) ww = obj_w;
    evas_object_size_hint_min_set(sd->spacer, ww, hh);
 }
 
