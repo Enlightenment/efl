@@ -552,39 +552,22 @@ _efl_promise_message_new(Efl_Promise_Data *pd)
 }
 
 static void
-_efl_promise_value_set(Eo *obj, Efl_Promise_Data *pd, void *v, Eina_Free_Cb free_cb)
+_efl_promise_propagate(Eo *obj, Efl_Promise_Data *pd)
 {
-   Efl_Promise_Msg *message;
    Efl_Loop_Future_Data *f;
    Eina_List *l, *ln;
-
-   if (pd->message)
-     {
-        ERR("This promise has already been fulfilled. You can can't set a value twice nor can you set a value after it has been cancelled.");
-        return ;
-     }
 
    // By triggering this message, we are likely going to kill all future
    // And a user of the promise may want to attach an event handler on the promise
    // and destroy it, so delay that to after the loop is done.
    efl_ref(obj);
 
-   // Create a refcounted structure where refcount == number of future + one
-   message = _efl_promise_message_new(pd);
-   if (!message) return ;
-
-   message->value = v;
-   message->free_cb = free_cb;
-
-   EINA_REFCOUNT_INIT(message);
-   pd->message = message;
-
    // Send it to all futures
    pd->propagating++;
    EINA_LIST_FOREACH_SAFE(pd->futures, l, ln, f)
      {
-        EINA_REFCOUNT_REF(message);
-        f->message = message;
+        EINA_REFCOUNT_REF(pd->message);
+        f->message = pd->message;
 
         // Trigger the callback
         _efl_loop_future_propagate(f->self, f);
@@ -596,11 +579,9 @@ _efl_promise_value_set(Eo *obj, Efl_Promise_Data *pd, void *v, Eina_Free_Cb free
 }
 
 static void
-_efl_promise_failed_set(Eo *obj, Efl_Promise_Data *pd, Eina_Error err)
+_efl_promise_value_set(Eo *obj, Efl_Promise_Data *pd, void *v, Eina_Free_Cb free_cb)
 {
    Efl_Promise_Msg *message;
-   Efl_Loop_Future_Data *f;
-   Eina_List *l, *ln;
 
    if (pd->message)
      {
@@ -608,11 +589,29 @@ _efl_promise_failed_set(Eo *obj, Efl_Promise_Data *pd, Eina_Error err)
         return ;
      }
 
-   // By triggering this message, we are likely going to kill all future
-   // And a user of the promise may want to attach an event handler on the promise
-   // and destroy it, so delay that to after the loop is done.
-   efl_ref(obj);
+   // Create a refcounted structure where refcount == number of future + one
+   message = _efl_promise_message_new(pd);
+   if (!message) return ;
 
+   message->value = v;
+   message->free_cb = free_cb;
+
+   EINA_REFCOUNT_INIT(message);
+   pd->message = message;
+
+   _efl_promise_propagate(obj, pd);
+}
+
+static void
+_efl_promise_failed_set(Eo *obj, Efl_Promise_Data *pd, Eina_Error err)
+{
+   Efl_Promise_Msg *message;
+
+   if (pd->message)
+     {
+        ERR("This promise has already been fulfilled. You can can't set a value twice nor can you set a value after it has been cancelled.");
+        return ;
+     }
    // Create a refcounted structure where refcount == number of future + one
    message = _efl_promise_message_new(pd);
    if (!message) return ;
@@ -622,20 +621,7 @@ _efl_promise_failed_set(Eo *obj, Efl_Promise_Data *pd, Eina_Error err)
    EINA_REFCOUNT_INIT(message);
    pd->message = message;
 
-   // Send it to each future
-   pd->propagating++;
-   EINA_LIST_FOREACH_SAFE(pd->futures, l, ln, f)
-     {
-        EINA_REFCOUNT_REF(message);
-        f->message = message;
-
-        // Trigger the callback
-        _efl_loop_future_propagate(f->self, f);
-     }
-   pd->propagating--;
-
-   // Now, we may die.
-   efl_unref(obj);
+   _efl_promise_propagate(obj, pd);
 }
 
 static void
