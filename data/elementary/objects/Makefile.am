@@ -3,6 +3,7 @@ EDJE_CC_FLAGS += -id $(top_srcdir)/data/elementary/objects -fd $(top_srcdir)/dat
 EXTRA_DIST += \
 elementary/objects/test.edc \
 elementary/objects/test_external.edc \
+elementary/objects/test_masking.edc \
 elementary/objects/test_prefs.edc \
 elementary/objects/test_prefs.epc \
 elementary/objects/multip.edc \
@@ -21,4 +22,5 @@ elementary/objects/border2.png \
 elementary/objects/border3.png \
 elementary/objects/border4.png \
 elementary/objects/border5.png \
-elementary/objects/border6.png
+elementary/objects/border6.png \
+elementary/objects/roundedrect.png

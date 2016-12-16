@@ -1,0 +1,70 @@
+collections {
+   images {
+      image: "roundedrect.png" COMP;
+   }
+   filters {
+      filter { name: "aura";
+         script {
+            padding_set { 5 }
+            fill { color = '#2228' }
+            blur { 5, color = 'red' }
+            blur { 2, color = 'orange' }
+            blend {}
+         }
+      }
+   }
+   group { "masking";
+      parts {
+         rect { "clip"; norender; }
+         image { "mask";
+            norender;
+            desc { "default";
+               image {
+                  normal: "roundedrect.png";
+                  border: 22 22 22 22;
+               }
+            }
+         }
+         swallow { "content";
+            desc { "default";
+               clip_to: "mask";
+            }
+            desc { "unclipped";
+               clip_to: "clip";
+            }
+         }
+      }
+      programs {
+         program {
+            signal: "unclip";
+            source: "*";
+            action: STATE_SET "unclipped";
+            target: "content";
+         }
+         program {
+            signal: "clip";
+            source: "*";
+            action: STATE_SET "default";
+            target: "content";
+         }
+      }
+   }
+   group { "text";
+      parts {
+         text { "text";
+            desc { "default";
+               text {
+                  font: "Sans";
+                  size: 32;
+                  text: "HELLO";
+                  ellipsis: -1;
+               }
+               fixed: 1 1;
+               filter.code: "aura";
+               rel1.offset: -5 -5;
+               rel2.offset: 4 4;
+            }
+         }
+      }
+   }
+}

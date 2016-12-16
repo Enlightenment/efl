@@ -758,6 +758,7 @@ bin/elementary/test_entry.c \
 bin/elementary/test_entry_anchor.c \
 bin/elementary/test_entry_anchor2.c \
 bin/elementary/test_events.c \
+bin/elementary/test_evas_mask.c \
 bin/elementary/test_external.c \
 bin/elementary/test_fileselector_button.c \
 bin/elementary/test_fileselector.c \

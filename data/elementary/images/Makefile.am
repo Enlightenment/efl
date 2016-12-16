@@ -46,6 +46,7 @@ elementary_images_files = \
 	elementary/images/mystrale.jpg \
 	elementary/images/mystrale_2.jpg \
 	elementary/images/twofish.jpg \
+	elementary/images/pm_fill.png \
 	elementary/images/pt.png \
 	elementary/images/earth_normal.png \
 	elementary/images/space.png

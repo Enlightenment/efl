@@ -210,6 +210,7 @@ elementaryobjectsdir = $(datadir)/elementary/objects
 elementaryobjects_DATA = \
 elementary/objects/test.edj \
 elementary/objects/test_external.edj \
+elementary/objects/test_masking.edj \
 elementary/objects/multip.edj \
 elementary/objects/cursors.edj \
 elementary/objects/font_preview.edj \
@@ -228,6 +229,11 @@ elementary/objects/test.edj: elementary/objects/test.edc
 	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
 
 elementary/objects/test_external.edj: elementary/objects/test_external.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+elementary/objects/test_masking.edj: elementary/objects/test_masking.edc
 	$(AM_V_EDJ) \
 	$(MKDIR_P) elementary/objects/; \
 	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
