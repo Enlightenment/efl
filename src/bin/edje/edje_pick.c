@@ -1262,6 +1262,8 @@ static int
 _edje_pick_image_set_add(int id, Edje_File *edf, Edje_File *o)
 {
    static int current_set_id = -1;
+   Edje_Image_Directory_Set_Entry *ent;
+   Eina_List *l;
 
    int new_id = _edje_pick_image_new_id_get(context.current_file->imagesetlist, id);
    if (new_id >= 0) return new_id;
@@ -1282,6 +1284,10 @@ _edje_pick_image_set_add(int id, Edje_File *edf, Edje_File *o)
              /* Save IDs in set-list, used in Desc update later */
              context.current_file->imagesetlist = eina_list_append(
                context.current_file->imagesetlist, set);
+             EINA_LIST_FOREACH(edf->image_dir->sets[id].entries, l, ent)
+               {
+                  _edje_pick_image_entry_add(ent->id, edf, o);
+               }
           }
      }
 
