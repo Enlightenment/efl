@@ -418,6 +418,7 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    free(backend);
  fallback:
    INF("falling back to poll monitoring");
+   _eio_monitor_win32_native = EINA_FALSE;
    eio_monitor_fallback_add(monitor);
 }
 
