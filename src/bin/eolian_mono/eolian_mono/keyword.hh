@@ -16,7 +16,8 @@ inline std::string escape_keyword(std::string const& name)
      || is_iequal(name,  "register")
      || is_iequal(name, "do")
      || is_iequal(name,  "lock")
-     || is_iequal(name, "event"))
+     || is_iequal(name, "event")
+     || is_iequal(name, "in"))
     return "kw_" + name;
   return name;
 }

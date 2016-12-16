@@ -7,6 +7,7 @@
 #include "marshall_type.hh"
 #include "type.hh"
 #include "using_decl.hh"
+#include "keyword.hh"
 
 namespace eolian_mono {
 
@@ -17,7 +18,7 @@ struct parameter_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     return as_generator(type << " " << string).generate(sink, std::make_tuple(param, param.param_name), context);
+     return as_generator(type << " " << string).generate(sink, std::make_tuple(param, escape_keyword(param.param_name)), context);
    }
 } const parameter {};
 
@@ -26,7 +27,7 @@ struct marshall_parameter_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     return as_generator(marshall_type << " " << string).generate(sink, std::make_tuple(param, param.param_name), context);
+     return as_generator(marshall_type << " " << string).generate(sink, std::make_tuple(param, escape_keyword(param.param_name)), context);
    }
 } const marshall_parameter {};
   
@@ -36,7 +37,7 @@ struct argument_generator
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
      return as_generator((param.direction != attributes::parameter_direction::in ? " out " : "")
-       << param.param_name).generate(sink, attributes::unused, context);
+       << escape_keyword(param.param_name)).generate(sink, attributes::unused, context);
    }
 
 } const argument {};
