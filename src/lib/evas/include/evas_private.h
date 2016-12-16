@@ -1154,10 +1154,7 @@ struct _Evas_Object_Protected_Data
 
    int                         last_mouse_down_counter;
    int                         last_mouse_up_counter;
-
-   // Daniel: Added because the destructor can't take parameters, at least for the moment
-   int                         clean_layer;
-   int                         last_event;
+   int                         last_event_id;
    Evas_Callback_Type          last_event_type;
 
    struct {
@@ -1204,6 +1201,7 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   efl_del_called : 1;
    Eina_Bool                   no_render : 1; // since 1.15
    Eina_Bool                   legacy : 1; // used legacy constructor
+   Eina_Bool                   clean_layer : 1; // destructor option
 
    struct  {
       Eina_Bool                pass_events : 1;
@@ -1586,7 +1584,7 @@ Evas_Object *evas_object_new(Evas *e);
 void evas_object_change_reset(Evas_Object *obj);
 void evas_object_clip_recalc(Evas_Object_Protected_Data *obj);
 void evas_object_cur_prev(Evas_Object *obj);
-void evas_object_free(Evas_Object *obj, int clean_layer);
+void evas_object_free(Evas_Object *obj, Eina_Bool clean_layer);
 void evas_object_update_bounding_box(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Smart_Data *s);
 void evas_object_inject(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas *e);
 void evas_object_release(Evas_Object *obj, Evas_Object_Protected_Data *pd, int clean_layer);

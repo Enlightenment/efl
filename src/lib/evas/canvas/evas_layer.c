@@ -116,7 +116,7 @@ evas_layer_free_objects(Evas_Layer *lay)
 
    EINA_INLIST_FREE(lay->objects, obj)
      {
-        evas_object_free(obj->object, 0);
+        evas_object_free(obj->object, EINA_FALSE);
      }
 }
 

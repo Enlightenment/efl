@@ -324,9 +324,9 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
    if (!obj) return;
    if ((obj->delete_me) || (!obj->layer)) return;
-   if ((obj->last_event == event_id) &&
+   if ((obj->last_event_id == event_id) &&
        (obj->last_event_type == type)) return;
-   if (obj->last_event > event_id)
+   if (obj->last_event_id > event_id)
      {
         if ((obj->last_event_type == EVAS_CALLBACK_MOUSE_OUT) &&
             ((type >= EVAS_CALLBACK_MOUSE_DOWN) &&
@@ -335,7 +335,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
              return;
           }
      }
-   obj->last_event = event_id;
+   obj->last_event_id = event_id;
    obj->last_event_type = type;
    if (!(e = obj->layer->evas)) return;
 

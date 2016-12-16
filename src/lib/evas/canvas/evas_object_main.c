@@ -404,11 +404,11 @@ evas_object_cur_prev(Evas_Object *eo_obj)
 }
 
 void
-evas_object_free(Evas_Object *eo_obj, int clean_layer)
+evas_object_free(Evas_Object *eo_obj, Eina_Bool clean_layer)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return;
-   obj->clean_layer = clean_layer;
+   obj->clean_layer = !!clean_layer;
 
    int was_smart_child = 0;
 
