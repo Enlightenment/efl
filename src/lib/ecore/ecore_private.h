@@ -368,8 +368,8 @@ GENERIC_ALLOC_FREE_HEADER(Ecore_Win32_Handler, ecore_win32_handler);
 extern Eo *_mainloop_singleton;
 extern Efl_Version _app_efl_version;
 
-void ecore_loop_future_register(Efl_Loop *l EINA_UNUSED, Efl_Future *f);
-void ecore_loop_future_unregister(Efl_Loop *l EINA_UNUSED, Efl_Future *f);
+void ecore_loop_future_register(Efl_Loop *l, Efl_Future *f);
+void ecore_loop_future_unregister(Efl_Loop *l, Efl_Future *f);
 
 // access to direct input cb
 #define ECORE_EVAS_INTERNAL
