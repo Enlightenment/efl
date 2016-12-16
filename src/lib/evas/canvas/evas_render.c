@@ -2491,9 +2491,19 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                                             prev_mask->cur->geometry.y - y,
                                             evas, EINA_FALSE);
             }
-          evas_render_mapped(evas, mask->object, mask, ctx, mdata->surface,
-                             -x, -y, 2, 0, 0, evas->output.w, evas->output.h,
-                             NULL, level, EINA_TRUE, EINA_FALSE);
+
+          if (EINA_LIKELY(!mask->is_smart))
+            {
+               mask->func->render(mask->object, mask, mask->private_data,
+                                  ENDT, ctx, mdata->surface, -x, -y, EINA_FALSE);
+            }
+          else
+            {
+               // Unreachable code until we implement support for smart masks
+               evas_render_mapped(evas, mask->object, mask, ctx, mdata->surface,
+                                  -x, -y, 2, 0, 0, evas->output.w, evas->output.h,
+                                  NULL, level, EINA_TRUE, EINA_FALSE);
+            }
           ENFN->context_free(ENDT, ctx);
 
           /* BEGIN HACK */
