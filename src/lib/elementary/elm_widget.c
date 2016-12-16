@@ -867,11 +867,8 @@ _elm_widget_focus_region_show(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNU
                    break;
                }
 
-             if (!elm_widget_focus_region_get(o, &x, &y, &w, &h))
-               {
-                  o = elm_widget_parent_get(o);
-                  continue;
-               }
+             elm_widget_focus_region_get(o, &x, &y, &w, &h);
+             evas_object_geometry_get(o, &ox, &oy, NULL, NULL);
           }
         else
           {
