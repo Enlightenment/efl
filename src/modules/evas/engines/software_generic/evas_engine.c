@@ -3442,7 +3442,7 @@ eng_font_hinting_can_hint(void *data EINA_UNUSED, int hinting)
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data EINA_UNUSED, void *info EINA_UNUSED)
+eng_canvas_alpha_get(void *data EINA_UNUSED)
 {
    return EINA_TRUE;
 }

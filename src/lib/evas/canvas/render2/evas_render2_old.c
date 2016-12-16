@@ -274,8 +274,7 @@ _evas_render2_stage_render_do(Evas_Public_Data *e, Eina_Bool do_async EINA_UNUSE
    // XXX: actually render now (either in thread or in mainloop)
    // XXX:
    printf(" _evas_render2_stage_render_do %p\n", e);
-   alpha = e->engine.func->canvas_alpha_get(e->engine.data.output,
-                                            e->engine.data.context);
+   alpha = e->engine.func->canvas_alpha_get(e->engine.data.output);
    while ((uinf.surface =
            e->engine.func->output_redraws_next_update_get
            (e->engine.data.output,

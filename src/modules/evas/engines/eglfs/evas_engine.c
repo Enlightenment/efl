@@ -864,7 +864,7 @@ eng_output_free(void *data)
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data, void *info EINA_UNUSED)
+eng_canvas_alpha_get(void *data)
 {
    Render_Engine *re;
 

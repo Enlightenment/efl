@@ -2959,7 +2959,7 @@ evas_render_updates_internal(Evas *eo_e,
      }
 
    /* phase 1.5. check if the video should be inlined or stay in their overlay */
-   alpha = ENFN->canvas_alpha_get(ENDT, ENCTX);
+   alpha = ENFN->canvas_alpha_get(ENDT);
 
    EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
      {

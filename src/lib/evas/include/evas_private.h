@@ -1363,7 +1363,7 @@ struct _Evas_Func
 
    void *(*context_new)                    (void *data);
    void *(*context_dup)                    (void *data, void *context);
-   Eina_Bool (*canvas_alpha_get)           (void *data, void *context);
+   Eina_Bool (*canvas_alpha_get)           (void *data);
    void (*context_free)                    (void *data, void *context);
    void (*context_clip_set)                (void *data, void *context, int x, int y, int w, int h);
    void (*context_clip_image_set)          (void *data, void *context, void *surface, int x, int y, Evas_Public_Data *evas, Eina_Bool do_async);

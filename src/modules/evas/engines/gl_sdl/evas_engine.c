@@ -352,7 +352,7 @@ eng_output_dump(void *data)
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data EINA_UNUSED, void *info EINA_UNUSED)
+eng_canvas_alpha_get(void *data EINA_UNUSED)
 {
    return 0;
 }
