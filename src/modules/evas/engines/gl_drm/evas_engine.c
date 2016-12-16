@@ -311,7 +311,7 @@ evgl_eng_evas_surface_get(void *data)
      }
 
    if (eng_get_ob(re))
-     return (void *)eng_get_ob(re)->egl.surface[0];
+     return (void *)eng_get_ob(re)->egl.surface;
    else
      return NULL;
 }
@@ -511,7 +511,7 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
      {
         context = eglCreateContext(eng_get_ob(re)->egl.disp,
                                    eng_get_ob(re)->egl.config,
-                                   eng_get_ob(re)->egl.context[0], // Evas' GL Context
+                                   eng_get_ob(re)->egl.context, // Evas' GL Context
                                    context_attrs);
      }
 
@@ -597,8 +597,8 @@ eng_preload_make_current(void *data, void *doit)
 
    if (doit)
      {
-        if (!eglMakeCurrent(ob->egl.disp, ob->egl.surface[0],
-                            ob->egl.surface[0], ob->egl.context[0]))
+        if (!eglMakeCurrent(ob->egl.disp, ob->egl.surface,
+                            ob->egl.surface, ob->egl.context))
           return EINA_FALSE;
      }
    else

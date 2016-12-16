@@ -94,8 +94,8 @@ struct _Outbuf
 
    struct 
      {
-        EGLContext context[1];
-        EGLSurface surface[1];
+        EGLContext context;
+        EGLSurface surface;
         EGLConfig config;
         EGLDisplay disp;
      } egl;

@@ -74,8 +74,8 @@ struct _Outbuf
         Eina_Bool drew : 1;
      } draw;
 
-   EGLContext egl_context[1];
-   EGLSurface egl_surface[1];
+   EGLContext egl_context;
+   EGLSurface egl_surface;
    EGLConfig egl_config;
    EGLDisplay egl_disp;
 

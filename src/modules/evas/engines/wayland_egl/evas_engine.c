@@ -270,7 +270,7 @@ evgl_eng_evas_surface_get(void *data)
 
    if (!(re = (Render_Engine *)data)) return NULL;
    if (!(ob = eng_get_ob(re))) return NULL;
-   return (void *)ob->egl_surface[0];
+   return (void *)ob->egl_surface;
 }
 
 static void *
@@ -372,7 +372,7 @@ evgl_eng_context_create(void *data, void *ctxt, Evas_GL_Context_Version version)
      {
         context =
           eglCreateContext(ob->egl_disp, ob->egl_config,
-                           ob->egl_context[0], attrs);
+                           ob->egl_context, attrs);
      }
 
    if (!context)
@@ -676,12 +676,12 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
 
    ob = eng_get_ob(re);
 
-   if (!inf->info.wl_surface && (ob->egl_surface[0] != EGL_NO_SURFACE))
+   if (!inf->info.wl_surface && (ob->egl_surface != EGL_NO_SURFACE))
      {
-        eglDestroySurface(ob->egl_disp, ob->egl_surface[0]);
+        eglDestroySurface(ob->egl_disp, ob->egl_surface);
         eglMakeCurrent(ob->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE,
                        EGL_NO_CONTEXT);
-        ob->egl_surface[0] = EGL_NO_SURFACE;
+        ob->egl_surface = EGL_NO_SURFACE;
         return 1;
      }
 
@@ -1385,8 +1385,8 @@ eng_preload_make_current(void *data, void *doit)
 
    if (doit)
      {
-        if (!eglMakeCurrent(ob->egl_disp, ob->egl_surface[0],
-                            ob->egl_surface[0], ob->egl_context[0]))
+        if (!eglMakeCurrent(ob->egl_disp, ob->egl_surface,
+                            ob->egl_surface, ob->egl_context))
           return EINA_FALSE;
      }
    else

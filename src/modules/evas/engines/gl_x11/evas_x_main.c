@@ -270,10 +270,10 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 
    gw->egl_config = evis->config;
 
-   gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
+   gw->egl_surface = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                                                (EGLNativeWindowType)gw->win,
                                                NULL);
-   if (gw->egl_surface[0] == EGL_NO_SURFACE)
+   if (gw->egl_surface == EGL_NO_SURFACE)
      {
         int err = eglGetError();
         printf("surf creat fail! %x\n", err);
@@ -289,9 +289,9 @@ try_gles2:
    context_attrs[2] = EGL_NONE;
 
    context = _tls_context_get();
-   gw->egl_context[0] = eglCreateContext
+   gw->egl_context = eglCreateContext
      (gw->egl_disp, gw->egl_config, context, context_attrs);
-   if (gw->egl_context[0] == EGL_NO_CONTEXT)
+   if (gw->egl_context == EGL_NO_CONTEXT)
      {
         ERR("eglCreateContext() fail. code=%#x", eglGetError());
         if (gw->gles3)
@@ -305,13 +305,13 @@ try_gles2:
         return NULL;
      }
    if (context == EGL_NO_CONTEXT)
-     _tls_context_set(gw->egl_context[0]);
+     _tls_context_set(gw->egl_context);
    
    SET_RESTORE_CONTEXT();
    if (evas_eglMakeCurrent(gw->egl_disp,
-                      gw->egl_surface[0],
-                      gw->egl_surface[0],
-                      gw->egl_context[0]) == EGL_FALSE)
+                      gw->egl_surface,
+                      gw->egl_surface,
+                      gw->egl_context) == EGL_FALSE)
      {
         ERR("evas_eglMakeCurrent() fail. code=%#x", eglGetError());
         eng_window_free(gw);
@@ -595,7 +595,7 @@ try_gles2:
      }
 #ifdef GL_GLES
    gw->gl_context->egldisp = gw->egl_disp;
-   gw->gl_context->eglctxt = gw->egl_context[0];
+   gw->gl_context->eglctxt = gw->egl_context;
 #else
    glXGetFBConfigAttrib(gw->disp, evis->config, GLX_FBCONFIG_ID, &gw->gl_context->glxcfg_rgb);
    glXGetFBConfigAttrib(gw->disp, evis2->config, GLX_FBCONFIG_ID, &gw->gl_context->glxcfg_rgba);
@@ -629,12 +629,10 @@ eng_window_free(Outbuf *gw)
 #ifdef GL_GLES
    SET_RESTORE_CONTEXT();
    evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-   if (gw->egl_surface[0] != EGL_NO_SURFACE)
-      eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
-   if (gw->egl_surface[1] != EGL_NO_SURFACE)
-      eglDestroySurface(gw->egl_disp, gw->egl_surface[1]);
-   if (gw->egl_context[0] != context)
-     eglDestroyContext(gw->egl_disp, gw->egl_context[0]);
+   if (gw->egl_surface != EGL_NO_SURFACE)
+      eglDestroySurface(gw->egl_disp, gw->egl_surface);
+   if (gw->egl_context != context)
+     eglDestroyContext(gw->egl_disp, gw->egl_context);
    if (ref == 0)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
@@ -669,7 +667,7 @@ eng_window_make_current(void *data, void *doit)
    SET_RESTORE_CONTEXT();
    if (doit)
      {
-        if (!evas_eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], gw->egl_surface[0], gw->egl_context[0]))
+        if (!evas_eglMakeCurrent(gw->egl_disp, gw->egl_surface, gw->egl_surface, gw->egl_context))
           return EINA_FALSE;
      }
    else
@@ -710,15 +708,7 @@ eng_window_use(Outbuf *gw)
    if (xwin)
      {
         if ((evas_eglGetCurrentDisplay() != xwin->egl_disp) ||
-            (evas_eglGetCurrentContext() != xwin->egl_context[0])
-#if 0
-            // FIXME: Figure out what that offscreen thing was about...
-            || (evas_eglGetCurrentSurface(EGL_READ) !=
-                xwin->egl_surface[xwin->offscreen])
-            || (evas_eglGetCurrentSurface(EGL_DRAW) !=
-                xwin->egl_surface[xwin->offscreen])
-#endif
-            )
+            (evas_eglGetCurrentContext() != xwin->egl_context))
           force_use = EINA_TRUE;
      }
 #else
@@ -740,13 +730,13 @@ eng_window_use(Outbuf *gw)
           {
 // EGL / GLES
 #ifdef GL_GLES
-             if (gw->egl_surface[0] != EGL_NO_SURFACE)
+             if (gw->egl_surface != EGL_NO_SURFACE)
                {
                   SET_RESTORE_CONTEXT();
                   if (evas_eglMakeCurrent(gw->egl_disp,
-                                     gw->egl_surface[0],
-                                     gw->egl_surface[0],
-                                     gw->egl_context[0]) == EGL_FALSE)
+                                     gw->egl_surface,
+                                     gw->egl_surface,
+                                     gw->egl_context) == EGL_FALSE)
                     {
                        ERR("evas_eglMakeCurrent() failed!");
                     }
@@ -780,12 +770,9 @@ eng_window_unsurf(Outbuf *gw)
      {
         SET_RESTORE_CONTEXT();
         evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-        if (gw->egl_surface[0] != EGL_NO_SURFACE)
-           eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
-        gw->egl_surface[0] = EGL_NO_SURFACE;
-        if (gw->egl_surface[1] != EGL_NO_SURFACE)
-           eglDestroySurface(gw->egl_disp, gw->egl_surface[1]);
-        gw->egl_surface[1] = EGL_NO_SURFACE;
+        if (gw->egl_surface != EGL_NO_SURFACE)
+           eglDestroySurface(gw->egl_disp, gw->egl_surface);
+        gw->egl_surface = EGL_NO_SURFACE;
         _tls_outbuf_set(NULL);
      }
 #else
@@ -804,10 +791,10 @@ eng_window_resurf(Outbuf *gw)
    if (gw->surf) return;
    if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", gw);
 #ifdef GL_GLES
-   gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
+   gw->egl_surface = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                                                (EGLNativeWindowType)gw->win,
                                                NULL);
-   if (gw->egl_surface[0] == EGL_NO_SURFACE)
+   if (gw->egl_surface == EGL_NO_SURFACE)
      {
         ERR("eglCreateWindowSurface() fail for %#x. code=%#x",
             (unsigned int)gw->win, eglGetError());
@@ -815,9 +802,9 @@ eng_window_resurf(Outbuf *gw)
      }
    SET_RESTORE_CONTEXT();
    if (evas_eglMakeCurrent(gw->egl_disp,
-                      gw->egl_surface[0],
-                      gw->egl_surface[0],
-                      gw->egl_context[0]) == EGL_FALSE)
+                      gw->egl_surface,
+                      gw->egl_surface,
+                      gw->egl_context) == EGL_FALSE)
      {
         ERR("evas_eglMakeCurrent() failed!");
      }
@@ -1323,7 +1310,7 @@ eng_gl_context_new(Outbuf *win)
    if (win->gles3)
      context_attrs[1] = 3;
    ctx->context = eglCreateContext(win->egl_disp, win->egl_config,
-                                   win->egl_context[0], context_attrs);
+                                   win->egl_context, context_attrs);
 
    if (!ctx->context)
      {
@@ -1332,7 +1319,7 @@ eng_gl_context_new(Outbuf *win)
      }
 
    ctx->display = win->egl_disp;
-   ctx->surface = win->egl_surface[0];
+   ctx->surface = win->egl_surface;
 #else
    ctx->context = glXCreateContext(win->disp, win->visualinfo, win->context, 1);
 
@@ -1412,7 +1399,7 @@ eng_outbuf_swap_mode(Outbuf *ob)
 #ifdef GL_GLES
         EGLint age = 0;
 
-        if (!eglQuerySurface(ob->egl_disp, ob->egl_surface[0],
+        if (!eglQuerySurface(ob->egl_disp, ob->egl_surface,
                              EGL_BUFFER_AGE_EXT, &age))
           age = 0;
 #else
@@ -1536,7 +1523,7 @@ eng_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage)
              _convert_to_glcoords(rect, ob, tr->x, tr->y, tr->w, tr->h);
              rect += 4;
           }
-        glsym_eglSetDamageRegionKHR(ob->egl_disp, ob->egl_surface[0], rects, count);
+        glsym_eglSetDamageRegionKHR(ob->egl_disp, ob->egl_surface, rects, count);
      }
 }
 #endif
@@ -1636,12 +1623,12 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
                   i += 4;
                }
              glsym_eglSwapBuffersWithDamage(ob->egl_disp,
-                                            ob->egl_surface[0],
+                                            ob->egl_surface,
                                             result, num);
           }
      }
    else
-     eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
+     eglSwapBuffers(ob->egl_disp, ob->egl_surface);
 
 //xx   if (!safe_native) eglWaitGL();
 //   if (eglGetError() != EGL_SUCCESS)

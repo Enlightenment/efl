@@ -61,8 +61,8 @@ extern int _evas_engine_GL_X11_log_dom ;
 struct _Outbuf
 {
 #ifdef GL_GLES
-   EGLContext       egl_context[2];
-   EGLSurface       egl_surface[2];
+   EGLContext       egl_context;
+   EGLSurface       egl_surface;
    EGLConfig        egl_config;
    EGLDisplay       egl_disp;
    Eina_Bool        gles3 : 1;

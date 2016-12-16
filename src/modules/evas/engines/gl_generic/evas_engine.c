@@ -1946,7 +1946,7 @@ eng_gl_surface_query(void *data, void *surface, int attr, void *value)
            /*
            case EVAS_GL_MIPMAP_TEXTURE:
            case EVAS_GL_MIPMAP_LEVEL:
-             return eglQuerySurface(re->win->egl_disp, re->win->egl_surface[0],
+             return eglQuerySurface(re->win->egl_disp, re->win->egl_surface,
                                     attr, (int *) value);
              */
            default: break;

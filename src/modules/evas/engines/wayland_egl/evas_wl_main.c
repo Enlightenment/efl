@@ -106,10 +106,10 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
    else if ((gw->rot == 90) || (gw->rot == 270))
      gw->win = wl_egl_window_create(gw->surface, gw->h, gw->w);
 
-   gw->egl_surface[0] = 
+   gw->egl_surface =
      eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                             (EGLNativeWindowType)gw->win, NULL);
-   if (gw->egl_surface[0] == EGL_NO_SURFACE)
+   if (gw->egl_surface == EGL_NO_SURFACE)
      {
         ERR("eglCreateWindowSurface() fail for %p. code=%#x", 
             gw->win, eglGetError());
@@ -117,19 +117,19 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
         return NULL;
      }
 
-   gw->egl_context[0] = 
+   gw->egl_context =
      eglCreateContext(gw->egl_disp, gw->egl_config, context, context_attrs);
-   if (gw->egl_context[0] == EGL_NO_CONTEXT)
+   if (gw->egl_context == EGL_NO_CONTEXT)
      {
         ERR("eglCreateContext() fail. code=%#x", eglGetError());
         eng_window_free(gw);
         return NULL;
      }
 
-   if (context == EGL_NO_CONTEXT) context = gw->egl_context[0];
+   if (context == EGL_NO_CONTEXT) context = gw->egl_context;
 
-   if (eglMakeCurrent(gw->egl_disp, gw->egl_surface[0],
-                      gw->egl_surface[0], gw->egl_context[0]) == EGL_FALSE)
+   if (eglMakeCurrent(gw->egl_disp, gw->egl_surface,
+                      gw->egl_surface, gw->egl_context) == EGL_FALSE)
      {
         ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
         eng_window_free(gw);
@@ -175,7 +175,7 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
      }
 
    gw->gl_context->egldisp = gw->egl_disp;
-   gw->gl_context->eglctxt = gw->egl_context[0];
+   gw->gl_context->eglctxt = gw->egl_context;
 
    eng_window_use(gw);
    glsym_evas_gl_common_context_resize(gw->gl_context, w, h, gw->rot);
@@ -205,11 +205,11 @@ eng_window_free(Outbuf *gw)
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, 
                   EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
-   if (gw->egl_context[0] != context)
-     eglDestroyContext(gw->egl_disp, gw->egl_context[0]);
+   if (gw->egl_context != context)
+     eglDestroyContext(gw->egl_disp, gw->egl_context);
 
-   if (gw->egl_surface[0] != EGL_NO_SURFACE)
-     eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
+   if (gw->egl_surface != EGL_NO_SURFACE)
+     eglDestroySurface(gw->egl_disp, gw->egl_surface);
 
    if (gw->win) wl_egl_window_destroy(gw->win);
 
@@ -234,7 +234,7 @@ eng_window_use(Outbuf *gw)
 
    if (_evas_gl_wl_window)
      {
-        if (eglGetCurrentContext() != _evas_gl_wl_window->egl_context[0])
+        if (eglGetCurrentContext() != _evas_gl_wl_window->egl_context)
           force = EINA_TRUE;
      }
 
@@ -250,11 +250,11 @@ eng_window_use(Outbuf *gw)
 
         if (gw)
           {
-             if (gw->egl_surface[0] != EGL_NO_SURFACE)
+             if (gw->egl_surface != EGL_NO_SURFACE)
                {
-                  if (eglMakeCurrent(gw->egl_disp, gw->egl_surface[0],
-                                     gw->egl_surface[0],
-                                     gw->egl_context[0]) == EGL_FALSE)
+                  if (eglMakeCurrent(gw->egl_disp, gw->egl_surface,
+                                     gw->egl_surface,
+                                     gw->egl_context) == EGL_FALSE)
                     ERR("eglMakeCurrent() failed!");
                }
           }
@@ -281,9 +281,9 @@ eng_window_unsurf(Outbuf *gw)
      {
         eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, 
                        EGL_NO_SURFACE, EGL_NO_CONTEXT);
-        if (gw->egl_surface[0] != EGL_NO_SURFACE)
-          eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
-        gw->egl_surface[0] = EGL_NO_SURFACE;
+        if (gw->egl_surface != EGL_NO_SURFACE)
+          eglDestroySurface(gw->egl_disp, gw->egl_surface);
+        gw->egl_surface = EGL_NO_SURFACE;
 
         _evas_gl_wl_window = NULL;
      }
@@ -297,19 +297,19 @@ eng_window_resurf(Outbuf *gw)
    if (gw->surf) return;
    if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", gw);
 
-   gw->egl_surface[0] = 
+   gw->egl_surface =
      eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                             (EGLNativeWindowType)gw->win, NULL);
 
-   if (gw->egl_surface[0] == EGL_NO_SURFACE)
+   if (gw->egl_surface == EGL_NO_SURFACE)
      {
         ERR("eglCreateWindowSurface() fail for %p. code=%#x",
             gw->win, eglGetError());
         return;
      }
 
-   if (eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], gw->egl_surface[0],
-                      gw->egl_context[0]) == EGL_FALSE)
+   if (eglMakeCurrent(gw->egl_disp, gw->egl_surface, gw->egl_surface,
+                      gw->egl_context) == EGL_FALSE)
      ERR("eglMakeCurrent() failed!");
 
    gw->surf = EINA_TRUE;
@@ -371,7 +371,7 @@ eng_outbuf_swap_mode_get(Outbuf *ob)
         EGLint age = 0;
 
         eina_evlog("+gl_query_surf_swap_mode", ob, 0.0, NULL);
-        if (!eglQuerySurface(ob->egl_disp, ob->egl_surface[0], 
+        if (!eglQuerySurface(ob->egl_disp, ob->egl_surface,
                              EGL_BUFFER_AGE_EXT, &age))
           age = 0;
 
@@ -469,7 +469,7 @@ eng_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage)
              _convert_glcoords(rect, ob, tr->x, tr->y, tr->w, tr->h);
              rect += 4;
           }
-        glsym_eglSetDamageRegionKHR(ob->egl_disp, ob->egl_surface[0], rects, count);
+        glsym_eglSetDamageRegionKHR(ob->egl_disp, ob->egl_surface, rects, count);
      }
 }
 
@@ -539,12 +539,12 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_
                   _convert_glcoords(&result[i], ob, r->x, r->y, r->w, r->h);
                   i += 4;
                }
-             glsym_eglSwapBuffersWithDamage(ob->egl_disp, ob->egl_surface[0],
+             glsym_eglSwapBuffersWithDamage(ob->egl_disp, ob->egl_surface,
                                             result, num);
           }
      }
    else
-      eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
+      eglSwapBuffers(ob->egl_disp, ob->egl_surface);
 
    ob->frame_cnt++;
 
@@ -579,7 +579,7 @@ eng_gl_context_new(Outbuf *ob)
    if (!(ctx = calloc(1, sizeof(Context_3D)))) return NULL;
 
    ctx->context = 
-     eglCreateContext(ob->egl_disp, ob->egl_config, ob->egl_context[0], attrs);
+     eglCreateContext(ob->egl_disp, ob->egl_config, ob->egl_context, attrs);
    if (!ctx->context)
      {
         ERR("Could not create egl context %#x", eglGetError());
@@ -587,7 +587,7 @@ eng_gl_context_new(Outbuf *ob)
      }
 
    ctx->display = ob->egl_disp;
-   ctx->surface = ob->egl_surface[0];
+   ctx->surface = ob->egl_surface;
 
    return ctx;
 

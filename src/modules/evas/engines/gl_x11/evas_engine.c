@@ -155,7 +155,7 @@ evgl_eng_evas_surface_get(void *data)
 
 #ifdef GL_GLES
    if (eng_get_ob(re))
-      return (void*)eng_get_ob(re)->egl_surface[0];
+      return (void*)eng_get_ob(re)->egl_surface;
 #else
    if (eng_get_ob(re))
       return (void*)eng_get_ob(re)->win;
@@ -525,7 +525,7 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
      {
         context = eglCreateContext(eng_get_ob(re)->egl_disp,
                                    eng_get_ob(re)->egl_config,
-                                   eng_get_ob(re)->egl_context[0], // Evas' GL Context
+                                   eng_get_ob(re)->egl_context, // Evas' GL Context
                                    context_attrs);
      }
 
@@ -1876,7 +1876,7 @@ eng_preload_make_current(void *data, void *doit)
    if (doit)
      {
 #ifdef GL_GLES
-        if (!evas_eglMakeCurrent(ob->egl_disp, ob->egl_surface[0], ob->egl_surface[0], ob->egl_context[0]))
+        if (!evas_eglMakeCurrent(ob->egl_disp, ob->egl_surface, ob->egl_surface, ob->egl_context))
           return EINA_FALSE;
 #else
         if (!__glXMakeContextCurrent(ob->info->info.display, ob->glxwin, ob->context))
