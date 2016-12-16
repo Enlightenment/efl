@@ -53,6 +53,17 @@ class Efl.Promise (Efl.Loop_User)
 	    err: Eina.Error; [[The reason for failure of this promise.]]
          }
       }
+      connect {
+         [[Connect a future output to this promise.
+
+           This helper will automatically trigger #value.set or #failed.set when the future
+           succeed or fail respectively with the value provided by the future.
+	 ]]
+	 params {
+	    @in f: future<void_ptr, void_ptr>; [[The future to connect this promise to.]]
+	 }
+	 return: bool; [[Return false if unable to setup the connection.]]
+      }
    }
    events {
       future,set: future<void_ptr>; [[This event is triggered whenever a future is fully set to receive all events and that the user of it do not hold any more reference on it.]]

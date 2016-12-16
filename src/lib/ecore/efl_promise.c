@@ -297,7 +297,7 @@ _efl_loop_future_internal_then(Efl_Future *f,
 
    efl_unref(f);
 
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static void
@@ -708,6 +708,42 @@ _efl_promise_efl_object_destructor(Eo *obj, Efl_Promise_Data *pd)
      }
 
    efl_destructor(efl_super(obj, EFL_PROMISE_CLASS));
+}
+
+static void
+_efl_promise_connect_then(void *data, const Efl_Event *ev)
+{
+   Efl_Future_Event_Success *success = ev->info;
+   Efl_Promise_Data *pd = data;
+   // This is a trick due to the fact we are using internal function call to register this functions
+   Efl_Promise_Msg *d = success->value;
+
+   EINA_REFCOUNT_REF(d);
+   pd->message = d;
+
+   _efl_promise_propagate(pd->promise, pd);
+
+   efl_unref(pd->promise);
+}
+
+static void
+_efl_promise_connect_fail(void *data, const Efl_Event *ev)
+{
+   Efl_Future_Event_Failure *fail = ev->info;
+   Efl_Promise_Data *pd = data;
+
+   efl_promise_failed_set(pd->promise, fail->error);
+
+   efl_unref(pd->promise);
+}
+
+static Eina_Bool
+_efl_promise_connect(Eo *obj, Efl_Promise_Data *pd, Efl_Future *f)
+{
+   // We have to keep a reference on the promise to avoid it dying before the future
+   efl_ref(obj);
+
+   return _efl_loop_future_internal_then(f, _efl_promise_connect_then, _efl_promise_connect_fail, NULL, pd);
 }
 
 typedef struct _Efl_Promise_Composite Efl_Promise_All;
