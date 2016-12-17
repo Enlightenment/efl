@@ -89,7 +89,7 @@ run(options_type const& opts)
          }
      }()};
 
-   as_generator("using System;\nusing System.Runtime.InteropServices;\n")
+   as_generator("using System;\nusing System.Runtime.InteropServices;\nusing System.Collections.Generic;\n")
      .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null());
    
    if (klass)
