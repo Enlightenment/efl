@@ -20,6 +20,9 @@
 #include "grammar/case.hpp"
 #include "using_decl.hh"
 
+#include <string>
+#include <algorithm>
+
 namespace eolian_mono {
 
 struct klass
@@ -93,6 +96,7 @@ struct klass
             (
              "public class " << string << "Concrete : " << string << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
+             << scope_tab << "Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
              << scope_tab << "}\n"
@@ -111,6 +115,7 @@ struct klass
              << scope_tab << scope_tab << scope_tab << "parent_ptr = parent.raw_handle;\n"
              << scope_tab << scope_tab << "System.IntPtr eo = efl.eo.Globals._efl_add_internal_start(\"file\", 0, klass, parent_ptr, 0, 0);\n"
              << scope_tab << scope_tab << "handle = efl.eo.Globals._efl_add_end(eo, 0, 0);\n"
+             << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << "}\n"
              << (class_type == "class" ? "" : "*/")
              << scope_tab << "public " << string << "Concrete(System.IntPtr raw)\n"
@@ -123,6 +128,9 @@ struct klass
            return false;
 
          if (!generate_events(sink, cls, context))
+             return false;
+
+         if (!generate_events_registration(sink, cls, context))
              return false;
      
          if(!as_generator(*(function_definition))
@@ -148,6 +156,7 @@ struct klass
             (
              "public " << class_type << " " << string << "Inherit : " << string << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
+             << scope_tab << "Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n"
              << scope_tab << "public static System.IntPtr klass;\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
@@ -267,20 +276,195 @@ struct klass
    }
 
    template <typename OutputIterator, typename Context>
+   bool generate_events_registration(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
+   {
+     // Event proxy registration
+     if (!as_generator(
+            scope_tab << "private void register_event_proxies()\n"
+            << scope_tab << "{\n"
+         )
+         .generate(sink, NULL, context))
+         return false;
+
+     // Generate event registrations here
+
+     // Assigning the delegates
+     for (auto&& e : cls.events)
+       {
+           if (!as_generator(scope_tab << scope_tab << "evt_" << grammar::string_replace(',', '_') << "_delegate = "
+                       << "new efl.Event_Cb(on" << grammar::string_replace(',', '_') << "Callback);\n")
+                   .generate(sink, std::make_tuple(e.name, e.name), context))
+                return false;
+       }
+     
+
+     if (!as_generator(
+            scope_tab << "}\n"
+                 ).generate(sink, NULL, context))
+         return false;
+
+     return true;
+   }
+
+   // Helper method to avoid multipler as_generator calls when mixing case strings
+   static std::string to_uppercase(std::string s)
+   {
+       std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+       return s;
+   }
+
+   template <typename OutputIterator, typename Context>
    bool generate_events(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
+     // Callback registration functions
+     if (!as_generator(
+            scope_tab << "private bool add_cpp_event_handler(string key, efl.Event_Cb evt_delegate) {\n"
+            << scope_tab << scope_tab << "int event_count = 0;\n"
+            << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
+            << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
+            << scope_tab << scope_tab << "if (event_count == 0) {\n"
+            << scope_tab << scope_tab << scope_tab << "efl.kw_event.Description desc = new efl.kw_event.Description(key);\n"
+            << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evt_delegate, System.IntPtr.Zero);\n"
+            << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Failed to add event proxy for event ${key}\");\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
+            << scope_tab << scope_tab << scope_tab << "}\n"
+            << scope_tab << scope_tab << "} \n"
+            << scope_tab << scope_tab << "event_cb_count[key]++;\n"
+            << scope_tab << scope_tab << "return true;\n"
+            << scope_tab << "}\n"
+            << scope_tab << "private bool remove_cpp_event_handler(string key, efl.Event_Cb evt_delegate) {\n"
+            << scope_tab << scope_tab << "int event_count = 0;\n"
+            << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
+            << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
+            << scope_tab << scope_tab << "if (event_count == 1) {\n"
+            << scope_tab << scope_tab << scope_tab << "efl.kw_event.Description desc = new efl.kw_event.Description(key);\n"
+            << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_del(handle, desc, evt_delegate, System.IntPtr.Zero);\n"
+            << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Failed to remove event proxy for event ${key}\");\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
+            << scope_tab << scope_tab << scope_tab << "}\n"
+            << scope_tab << scope_tab << "} else if (event_count == 0) {\n"
+            << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Trying to remove proxy for event ${key} when there is nothing registered.\");\n"
+            << scope_tab << scope_tab << scope_tab << "return false;\n"
+            << scope_tab << scope_tab << "} \n"
+            << scope_tab << scope_tab << "event_cb_count[key]--;\n"
+            << scope_tab << scope_tab << "return true;\n"
+            << scope_tab << "}\n"
+            )
+             .generate(sink, NULL, context))
+         return false;
+
      // Self events
      for (auto&& e : cls.events)
        {
+           std::string upper_name = to_uppercase(e.name);
+           std::string name = e.name;
+           /* name[0] = toupper(name[0]); */
+
+           // Wrapper event declaration
+          if(!as_generator(
+                scope_tab << "protected event EventHandler " << grammar::string_replace(',', '_') << ";\n"
+                << scope_tab << "protected void On" << grammar::string_replace(',', '_') << "(EventArgs e)\n"
+                << scope_tab << "{\n"
+                << scope_tab << scope_tab << "EventHandler evt = " << grammar::string_replace(',', '_') << ";\n"
+                << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
+                << scope_tab << "}\n")
+                  .generate(sink, std::make_tuple(upper_name, name, upper_name), context))
+              return false;
+
+          // Eo Event callback
+          if(!as_generator(
+                scope_tab << "public void on" << grammar::string_replace(',', '_') << "Callback(System.IntPtr data, System.IntPtr evt)\n"
+                << scope_tab << "{\n"
+                << scope_tab << scope_tab << "On" << grammar::string_replace(',', '_') << "(EventArgs.Empty);\n"
+                << scope_tab << "}\n")
+                  .generate(sink, std::make_tuple(name, name, name), context))
+              return false;
+
+
+          // FIXME Maybe allow contexts mixing cases instead of these successive as_generator?
+          if(!as_generator(scope_tab
+                << "efl.Event_Cb evt_" << grammar::string_replace(',', '_') << "_delegate;\n").generate(sink, e.name, context))
+              return false;
           if(!as_generator(scope_tab
                 << "event EventHandler " << string << ".")
                   .generate(sink, cls.cxx_name, context))
               return false;
+
+          // Open add block body
+          // FIXME Add locking
           if (!as_generator(grammar::string_replace(',', '_') << " {\n"
-                << scope_tab << scope_tab << "add {} \n"
-                << scope_tab << scope_tab << "remove {}\n"
+                << scope_tab << scope_tab << "add {\n")
+                  .generate(sink, e.name, add_upper_case_context(context)))
+              return false;
+
+          // Add block body
+          if (!as_generator(
+                      scope_tab << scope_tab << scope_tab
+                      << "string key = \"_" << string << "\";\n")
+                  .generate(sink, e.c_name, add_upper_case_context(context)))
+              return false;
+
+          if (!as_generator(
+                      scope_tab << scope_tab << scope_tab
+                      << "if (add_cpp_event_handler(key, this.evt_"
+                      << grammar::string_replace(',', '_') << "_delegate))\n")
+                  .generate(sink, e.name, context))
+              return false;
+
+          if (!as_generator(
+                      scope_tab << scope_tab << scope_tab << scope_tab
+                      << grammar::string_replace(',', '_') << " += value;\n")
+                  .generate(sink, e.name, add_upper_case_context(context)))
+              return false;
+
+          if (!as_generator(
+                      scope_tab << scope_tab << scope_tab
+                      << "else\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab
+                      << "Console.WriteLine(\"Error adding proxy for event ${key}\");\n")
+                  .generate(sink, NULL, context))
+              return false;
+
+          // Close add block and open remove block
+          if (!as_generator(scope_tab << scope_tab << "}\n"
+                << scope_tab << scope_tab << "remove {\n")
+                  .generate(sink, NULL, context))
+              return false;
+
+          // Remove block body
+          if (!as_generator(
+                      scope_tab << scope_tab << scope_tab
+                      << "string key = \"_" << string << "\";\n")
+                  .generate(sink, e.c_name, add_upper_case_context(context)))
+              return false;
+
+          if (!as_generator(
+                      scope_tab << scope_tab << scope_tab
+                      << "if (remove_cpp_event_handler(key, this.evt_"
+                      << grammar::string_replace(',', '_') << "_delegate))\n")
+                  .generate(sink, e.name, context))
+              return false;
+
+          if (!as_generator(
+                      scope_tab << scope_tab << scope_tab << scope_tab
+                      << grammar::string_replace(',', '_') << " -= value;\n")
+                  .generate(sink, e.name, add_upper_case_context(context)))
+              return false;
+
+          if (!as_generator(
+                      scope_tab << scope_tab << scope_tab
+                      << "else\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab
+                      << "Console.WriteLine(\"Error removing proxy for event ${key}\");\n")
+                  .generate(sink, NULL, context))
+              return false;
+
+          // Close the remove block
+          if (!as_generator(scope_tab << scope_tab << "}\n"
                 << scope_tab << "}\n")
-            .generate(sink, e.name, add_upper_case_context(context)))
+                .generate(sink, NULL, context))
               return false;
        }
 
@@ -289,6 +473,7 @@ struct klass
        {
           attributes::klass_def klass(get_klass(c));
 
+          // FIXME Enable inherited events registration. Beware of conflicting events
           for (auto&& e : klass.events)
             {
                if(!as_generator(scope_tab
