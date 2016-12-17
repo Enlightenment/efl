@@ -18,12 +18,6 @@ _focus_test_sub_efl_ui_focus_object_focus_get(Eo *obj EINA_UNUSED, Focus_Test_Su
    return EINA_FALSE;
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
-_focus_test_sub_efl_ui_focus_user_manager_get(Eo *obj, Focus_Test_Sub_Data *pd EINA_UNUSED)
-{
-   return efl_parent_get(obj);
-}
-
 static Eina_List *registered;
 static Eina_List *unregistered;
 
@@ -51,11 +45,11 @@ _set_equal(Eina_List *a, Eina_List *b)
    Eina_List *n;
    void *d;
 
-   if (eina_list_count(a) != eina_list_count(b)) return EINA_FALSE;
+   ck_assert_int_eq(eina_list_count(a), eina_list_count(b));
 
    EINA_LIST_FOREACH(a, n, d)
      {
-        if (!eina_list_data_find(b, d)) return EINA_FALSE;
+        ck_assert_ptr_ne(eina_list_data_find(b, d), NULL);
      }
    return EINA_TRUE;
 }
@@ -85,7 +79,6 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
    efl_object_override(manager, &manager_tracker);
 
    Efl_Ui_Focus_Manager_Sub *subm = efl_add(FOCUS_TEST_SUB_CLASS, manager,
-    efl_ui_focus_manager_sub_parent_set(efl_added, root_manager),
     efl_ui_focus_manager_root_set(efl_added, root)
    );
 
@@ -110,7 +103,7 @@ START_TEST(correct_register)
    TEST_OBJ_NEW(child3, 0, 10, 10, 10);
 
    set1 = eina_list_append(set1, sub);
-   set1 = eina_list_append(set1, root);
+   //set1 = eina_list_append(set1, root);
    set1 = eina_list_append(set1, child1);
    set1 = eina_list_append(set1, child2);
    set1 = eina_list_append(set1, child3);

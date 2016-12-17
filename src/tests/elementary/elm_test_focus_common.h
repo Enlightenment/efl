@@ -25,4 +25,5 @@ void elm_focus_test_setup_cross(Efl_Ui_Focus_Object **middle,
                                 Efl_Ui_Focus_Object **east,
                                 Efl_Ui_Focus_Object **west);
 
+Efl_Ui_Focus_Manager *elm_focus_test_manager_new(Efl_Ui_Focus_Object **middle);
 #endif

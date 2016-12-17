@@ -48,20 +48,18 @@ END_TEST
 START_TEST(pos_check)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *middle, *east, *west, *north, *south;
+   Efl_Ui_Focus_Object *middle, *east, *west, *north, *south, *root;
 
    elm_init(1, NULL);
 
    elm_focus_test_setup_cross(&middle, &south, &north, &east, &west);
 
-   m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
-    efl_ui_focus_manager_root_set(efl_added, middle)
-   );
-
-   efl_ui_focus_manager_register(m, north, middle, NULL);
-   efl_ui_focus_manager_register(m, south, middle, NULL);
-   efl_ui_focus_manager_register(m, west, middle, NULL);
-   efl_ui_focus_manager_register(m, east, middle, NULL);
+   m = elm_focus_test_manager_new(&root);
+   efl_ui_focus_manager_register(m, middle, root, NULL);
+   efl_ui_focus_manager_register(m, north, root, NULL);
+   efl_ui_focus_manager_register(m, south, root, NULL);
+   efl_ui_focus_manager_register(m, west, root, NULL);
+   efl_ui_focus_manager_register(m, east, root, NULL);
 
 #define CHECK(obj, r,l,u,d) \
    efl_ui_focus_manager_focus(m, obj); \
@@ -120,7 +118,7 @@ END_TEST
 START_TEST(border_check)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *middle, *east, *west, *north, *south;
+   Efl_Ui_Focus_Object *middle, *east, *west, *north, *south, *root;
    Eina_List *list = NULL;
    Eina_Iterator *iter;
    Efl_Ui_Focus_Object *obj;
@@ -129,13 +127,12 @@ START_TEST(border_check)
 
    elm_focus_test_setup_cross(&middle, &south, &north, &east, &west);
 
-   m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
-      efl_ui_focus_manager_root_set(efl_added, middle)
-    );
-   efl_ui_focus_manager_register(m, south, middle, NULL);
-   efl_ui_focus_manager_register(m, north, middle, NULL);
-   efl_ui_focus_manager_register(m, east, middle, NULL);
-   efl_ui_focus_manager_register(m, west, middle, NULL);
+   m = elm_focus_test_manager_new(&root);
+   efl_ui_focus_manager_register(m, middle, root, NULL);
+   efl_ui_focus_manager_register(m, south, root, NULL);
+   efl_ui_focus_manager_register(m, north, root, NULL);
+   efl_ui_focus_manager_register(m, east, root, NULL);
+   efl_ui_focus_manager_register(m, west, root, NULL);
 
    iter = efl_ui_focus_manager_border_elements_get(m);
 
@@ -160,18 +157,16 @@ END_TEST
 START_TEST(logical_chain)
 {
    Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Object *lroot;
    int i = 0;
 
    elm_init(1, NULL);
 
    TEST_OBJ_NEW(root, 0, 0, 20, 20);
 
-   m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
-    efl_ui_focus_manager_root_set(efl_added, root)
-   );
-   fail_if(!m);
+   m = elm_focus_test_manager_new(&lroot);
 
-   efl_ui_focus_manager_focus(m, root);
+   fail_if(!m);
 
    i++;
    TEST_OBJ_NEW(child1, 0, i*20, 20, 20);
@@ -195,15 +190,18 @@ START_TEST(logical_chain)
    TEST_OBJ_NEW(subchild23, 0, i*20, 20, 20);
 
    //register everything
+   efl_ui_focus_manager_register(m, root, lroot, NULL);
    efl_ui_focus_manager_register(m, child1, root, NULL);
    efl_ui_focus_manager_register(m, child2, root, NULL);
-   efl_ui_focus_manager_register_logical(m, child3, root);
+   efl_ui_focus_manager_register_logical(m, child3, root, NULL);
    efl_ui_focus_manager_register(m, subchild11, child1, NULL);
    efl_ui_focus_manager_register(m, subchild12, child1, NULL);
    efl_ui_focus_manager_register(m, subchild13, child1, NULL);
    efl_ui_focus_manager_register(m, subchild21, child3, NULL);
    efl_ui_focus_manager_register(m, subchild22, child3, NULL);
    efl_ui_focus_manager_register(m, subchild23, child3, NULL);
+
+   efl_ui_focus_manager_focus(m, root);
 
    Efl_Object *logical_chain[] = {
     child1, subchild11, subchild12, subchild13,

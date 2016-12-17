@@ -38,6 +38,23 @@ elm_focus_test_setup_cross(Efl_Ui_Focus_Object **middle,
    *west = elm_focus_test_object_new("west", 0, 40, 20, 20);
 }
 
+
+Efl_Ui_Focus_Manager*
+elm_focus_test_manager_new(Efl_Ui_Focus_Object **middle)
+{
+   Efl_Ui_Focus_Object *root;
+   Efl_Ui_Focus_Manager *m;
+
+   root = elm_focus_test_object_new("middle", 40, 40, 20, 20);
+   m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+     efl_ui_focus_manager_root_set(efl_added, root)
+   );
+   if (middle)
+     *middle = root;
+
+   return m;
+}
+
 //Test class implementation
 
 typedef struct {
