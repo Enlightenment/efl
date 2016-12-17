@@ -30,6 +30,39 @@ _set_a_without_b(Eina_List *a, Eina_List *b)
 }
 
 static void
+_focus_changed(void *data, const Efl_Event *event)
+{
+   Efl_Ui_Focus_Manager_Sub *m = data;
+   Efl_Ui_Focus_Manager *manager;
+   Elm_Widget *elem;
+
+   elem = efl_parent_get(m);
+   manager = efl_ui_focus_user_manager_get(elem);
+
+   //only do this when we are getting focus
+   if (!event->info) return;
+
+   //if there is already the redirect, ignore this focus request
+   if (efl_ui_focus_manager_redirect_get(manager)) return;
+
+   efl_ui_focus_manager_focus(m, event->object);
+}
+
+static void
+_register(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node, Efl_Ui_Focus_Object *logical)
+{
+   efl_ui_focus_manager_register(par_m, node, logical, obj);
+   efl_event_callback_add(node, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed, obj);
+}
+
+static void
+_unregister(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node)
+{
+   efl_ui_focus_manager_unregister(par_m, node);
+   efl_event_callback_del(node, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed, obj);
+}
+
+static void
 _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 {
    Eina_Iterator *borders;
@@ -57,7 +90,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    EINA_LIST_FREE(tmp, node)
      {
         if (node == elem) continue;
-        efl_ui_focus_manager_unregister(manager, node);
+        _unregister(obj, manager, node);
      }
 
    //set of the elements which are new without those which are currently registered
@@ -67,7 +100,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    EINA_LIST_FREE(tmp, node)
      {
         if (node == elem) continue;
-        efl_ui_focus_manager_register(manager, node, logical, elem);
+        _register(obj, manager, node, logical);
      }
 
    eina_list_free(pd->current_border);
@@ -87,7 +120,7 @@ _border_unregister(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    EINA_LIST_FREE(pd->current_border, node)
      {
         if (node == elem) continue;
-        efl_ui_focus_manager_unregister(manager, node);
+        _unregister(obj, manager, node);
      }
 
    pd->current_border = NULL;
@@ -151,8 +184,9 @@ _manager_change(void *data, const Efl_Event *ev)
    EINA_LIST_FOREACH(pd->current_border , n, b)
      {
         if (b == ev->object) continue;
-        efl_ui_focus_manager_unregister(pd->manager, b);
-        efl_ui_focus_manager_register(manager, b, logical, ev->object);
+
+        _unregister(data, manager, b);
+        _register(data, manager, b, logical);
      }
    //unregister the old manager, use the new
    pd->manager = manager;
