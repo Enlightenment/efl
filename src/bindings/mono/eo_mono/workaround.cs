@@ -1,6 +1,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 public struct ClassDescription
@@ -45,51 +46,35 @@ public struct Slice {}
 
 }
 
-namespace ld {
-    public class Globals
-    {
-        public const int RTLD_NOW = 2;
-    }
-}
-
 namespace efl { namespace kw_event {
-
-    // FIXME Placeholder for generated functions using Description. Remove it and
-    // the generated functions...
-public struct Description {};
-
-}
-
 
 [StructLayout(LayoutKind.Sequential)]
 public struct Description {
-    IntPtr pointer; // Opaque type, just pass the pointer?
+    IntPtr pointer; // Opaque type, just pass the pointer. What about hot/freeze/etc?
 
-
-    [DllImport("dl")]
-    public static extern IntPtr dlopen(String name, int flags);
-
-    [DllImport("dl")]
-    public static extern IntPtr dlsym(IntPtr library, String Symbol);
+    private static Dictionary<string, IntPtr> descriptions = new Dictionary<string, IntPtr>();
 
     public Description(string name)
     {
-        // FIXME Other libraries....
-        Console.WriteLine($"Loading {name}");
-        IntPtr library = dlopen("/opt/efl-mono/lib/libecore.so", ld.Globals.RTLD_NOW);
-        Console.WriteLine($"Got library handle: {library}");
-        IntPtr data = dlsym(library, name);
-        Console.WriteLine($"Got data handle: {data}");
-        this.pointer = data;
+        if (!descriptions.ContainsKey(name))
+        {
+            // FIXME Other libraries....
+            Console.WriteLine($"Loading {name}");
+            IntPtr library = efl.eo.Globals.dlopen("/opt/efl-mono/lib/libecore.so", efl.eo.Globals.RTLD_NOW);
+            IntPtr data = efl.eo.Globals.dlsym(library, name);
+            descriptions.Add(name, data);
+        }
+
+        this.pointer = descriptions[name];
     }
 };
 
+}
 
-public struct Event_Cb {};
+
+public delegate void Event_Cb(System.IntPtr data, System.IntPtr evt);
 public struct Callback_Array_Item {};
 public struct Dbg_Info {};
-
-delegate void Efl_Event_Callback_Delegate(System.IntPtr data, efl.Event evt);
 
 public struct Event {
 
