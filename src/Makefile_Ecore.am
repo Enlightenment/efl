@@ -2,12 +2,13 @@
 ### Library
 
 ecore_eolian_files_legacy = \
-	lib/ecore/ecore_exe.eo \
-	lib/ecore/efl_loop_timer.eo
+	lib/ecore/ecore_exe.eo
 
+# Moved efl_loop_timer to public to allow building it in mono
 ecore_eolian_files_public = \
 	lib/ecore/efl_loop.eo \
 	lib/ecore/efl_loop_user.eo \
+	lib/ecore/efl_loop_timer.eo \
 	lib/ecore/efl_loop_fd.eo \
 	lib/ecore/efl_io_closer_fd.eo \
 	lib/ecore/efl_io_positioner_fd.eo \
