@@ -161,6 +161,8 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
         }
     }
     implements {
+        class.constructor;
+        class.destructor;
         Efl.Object.constructor;
         Efl.Object.finalize;
         Efl.Object.provider_find;

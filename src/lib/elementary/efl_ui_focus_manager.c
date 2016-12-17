@@ -13,8 +13,16 @@
 
 #define DIRECTION_CHECK(dir) (dir >= 0 && dir < EFL_UI_FOCUS_DIRECTION_LAST)
 
-//#define DEBUG
+//#define CALC_DEBUG
 #define DEBUG_TUPLE(obj) efl_name_get(obj), efl_class_name_get(obj)
+
+static int _focus_log_domain = -1;
+
+#define F_CRI(...) EINA_LOG_DOM_CRIT(_focus_log_domain, __VA_ARGS__)
+#define F_ERR(...) EINA_LOG_DOM_ERR(_focus_log_domain, __VA_ARGS__)
+#define F_WRN(...) EINA_LOG_DOM_WARN(_focus_log_domain, __VA_ARGS__)
+#define F_INF(...) EINA_LOG_DOM_INFO(_focus_log_domain, __VA_ARGS__)
+#define F_DBG(...) EINA_LOG_DOM_DBG(_focus_log_domain, __VA_ARGS__)
 
 typedef struct {
     Eina_Bool positive;
@@ -290,7 +298,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *node, Dimens
                     || cur_neg_min == 0) //init case
                     {
                        //nuke the old and add
-#ifdef DEBUG
+#ifdef CALC_DEBUG
                        printf("CORRECTION FOR %s-%s\n found anchor %s-%s in distance %d\n (%d,%d,%d,%d)\n (%d,%d,%d,%d)\n\n", DEBUG_TUPLE(node), DEBUG_TUPLE(op),
                          tmp_dis,
                          op_rect.x, op_rect.y, op_rect.w, op_rect.h,
@@ -312,7 +320,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *node, Dimens
                     || cur_pos_min == 0) //init case
                     {
                        //nuke the old and add
-#ifdef DEBUG
+#ifdef CALC_DEBUG
                        printf("CORRECTION FOR %s-%s\n found anchor %s-%s in distance %d\n (%d,%d,%d,%d)\n (%d,%d,%d,%d)\n\n", DEBUG_TUPLE(node), DEBUG_TUPLE(op),
                          tmp_dis,
                          op_rect.x, op_rect.y, op_rect.w, op_rect.h,
@@ -343,7 +351,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *node, Dimens
      }
 }
 
-#ifdef DEBUG
+#ifdef CALC_DEBUG
 static void
 _debug_node(Node *node)
 {
@@ -410,7 +418,7 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Dat
    convert_border_set(pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP);
    convert_border_set(pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN);
 
-#ifdef DEBUG
+#ifdef CALC_DEBUG
    _debug_node(node);
 #endif
 }
@@ -665,11 +673,13 @@ _efl_ui_focus_manager_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data 
 }
 
 EOLIAN static void
-_efl_ui_focus_manager_redirect_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Manager *redirect)
+_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Manager *redirect)
 {
    printf("Now redirect %p\n", redirect);
 
    if (pd->redirect == redirect) return;
+
+   F_DBG("Manager: %p setting redirect from %p to %p", obj, pd->redirect, redirect);
 
    if (pd->redirect)
      efl_wref_del(pd->redirect, &pd->redirect);
@@ -974,9 +984,6 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_D
 
    dirty_flush(obj, pd, upper);
 
-#ifdef DEBUG
-   _debug_node(upper);
-#endif
    if (direction == EFL_UI_FOCUS_DIRECTION_PREV
     || direction == EFL_UI_FOCUS_DIRECTION_NEXT)
       dir = _logical_movement(pd, upper, direction);
@@ -1027,9 +1034,11 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
    node = node_get(pd, focus);
    if (!node) return;
 
+   F_DBG("Manager: %p focusing object %p %s", obj, focus, efl_class_name_get(focus));
+
    if (node->type == NODE_TYPE_ONLY_LOGICAL)
      {
-        ERR("Logical node cannot be focused");
+        ERR(" %p is logical, cannot be focused", obj);
         return;
      }
 
@@ -1071,6 +1080,8 @@ _efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, E
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_CHECK(direction), NULL);
 
+   F_DBG("Manager: %p move to %d", obj, direction);
+
    if (pd->redirect)
      {
         Efl_Ui_Focus_Object *old_candidate = NULL;
@@ -1105,10 +1116,8 @@ _efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, E
           efl_ui_focus_manager_focus(obj, candidate);
      }
 
+   F_DBG("Manager: %p moved to %s %s", obj, DEBUG_TUPLE(candidate));
 
-#ifdef DEBUG
-   printf("Focus, MOVE %s %s\n", DEBUG_TUPLE(candidate));
-#endif
    return candidate;
 }
 
@@ -1215,5 +1224,17 @@ _efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
    return res;
 }
 
+EOLIAN static void
+_efl_ui_focus_manager_class_constructor(Efl_Class *c EINA_UNUSED)
+{
+   _focus_log_domain = eina_log_domain_register("elementary-focus", EINA_COLOR_CYAN);
+}
+
+EOLIAN static void
+_efl_ui_focus_manager_class_destructor(Efl_Class *c EINA_UNUSED)
+{
+   eina_log_domain_unregister(_focus_log_domain);
+   _focus_log_domain = -1;
+}
 
 #include "efl_ui_focus_manager.eo.c"
