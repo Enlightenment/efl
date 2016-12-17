@@ -32,6 +32,24 @@ public class Globals {
     [DllImport("eo")] public static extern IntPtr efl_class_get(IntPtr obj);
     [DllImport("dl")] public static extern IntPtr dlsym
        (IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] String name);
+    [DllImport("dl")] public static extern IntPtr dlopen(String name, int flags);
+
+   [DllImport("eo")] public static extern bool efl_event_callback_priority_add(
+              System.IntPtr obj,
+              // FIXME commented to allow passing null stuff during test
+              /* ref efl.kw_event.Description desc, */
+              efl.kw_event.Description desc,
+              short priority,
+              efl.Event_Cb cb,
+              System.IntPtr data);
+   [DllImport("eo")] public static extern bool efl_event_callback_del(
+              System.IntPtr obj,
+              efl.kw_event.Description desc,
+              efl.Event_Cb cb,
+              System.IntPtr data);
+
+
+    public const int RTLD_NOW = 2;
 
     public delegate byte class_initializer(IntPtr klass);
     
