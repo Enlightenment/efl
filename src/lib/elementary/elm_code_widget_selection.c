@@ -365,6 +365,9 @@ elm_code_widget_selection_cut(Evas_Object *widget)
    free(text);
 
    elm_code_widget_selection_delete(widget);
+
+   // TODO construct and pass a change object for cut and paste
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
 EAPI void
@@ -447,6 +450,8 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
    else
      _selection_paste_multi(widget, code, col, row, ev->data, ev->len - 1);
 
+   // TODO construct and pass a change object for cut and paste
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
    return EINA_TRUE;
 }
 

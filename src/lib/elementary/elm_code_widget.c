@@ -1529,9 +1529,6 @@ _elm_code_widget_control_key_down_cb(Elm_Code_Widget *widget, const char *key)
      elm_code_widget_selection_cut(widget);
    else if (!strcmp("z", key))
      elm_code_widget_undo(widget);
-
-   // TODO construct and pass a change object for cut and paste
-         efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
 static void
