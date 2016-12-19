@@ -218,7 +218,6 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
      {
         if (pd->buffer_limit <= used)
           {
-             // TODO: disconnect 'read' so stops calling?
              return;
           }
         else if (pd->buffer_limit > used)
@@ -287,7 +286,6 @@ _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd)
    ro_slice = eina_binbuf_slice_get(pd->buf);
    if (ro_slice.len == 0)
      {
-        // TODO: disconnect 'write' so stops calling?
         return;
      }
 
@@ -299,7 +297,6 @@ _efl_io_copier_write(Eo *o, Efl_Io_Copier_Data *pd)
           ro_slice.len = p - ro_slice.bytes + pd->line_delimiter.len;
         else if ((pd->buffer_limit == 0) || (ro_slice.len < pd->buffer_limit))
           {
-             // TODO: disconnect 'write' so stops calling?
              return;
           }
      }
