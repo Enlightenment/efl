@@ -1,3 +1,5 @@
+import efl_net_ip_address;
+
 class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
     [[A base UDP socket.
 
@@ -160,6 +162,13 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
             }
             values {
                 address: string @nonull; [[Address to bind to]]
+            }
+        }
+
+        init @protected {
+            [[Initialize the socket to communicate with given IP address]]
+            params {
+                remote_address: Efl.Net.Ip.Address; [[The remote address this socket will communicate with]]
             }
         }
     }

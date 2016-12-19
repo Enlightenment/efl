@@ -1,5 +1,6 @@
 #define EFL_NET_DIALER_UDP_PROTECTED 1
 #define EFL_NET_DIALER_PROTECTED 1
+#define EFL_NET_SOCKET_UDP_PROTECTED 1
 #define EFL_NET_SOCKET_FD_PROTECTED 1
 #define EFL_NET_SOCKET_PROTECTED 1
 #define EFL_IO_READER_PROTECTED 1
@@ -93,6 +94,7 @@ static Eina_Error
 _efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED, struct addrinfo *addr)
 {
    Eina_Error err = 0;
+   Eo *remote_address;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
    SOCKET fd;
    int family = addr->ai_family;
@@ -160,10 +162,12 @@ _efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED
           }
      }
 
-   if (efl_net_ip_port_fmt(buf, sizeof(buf), addr->ai_addr))
+   remote_address = efl_net_ip_address_create_sockaddr(EFL_NET_IP_ADDRESS_CLASS, addr->ai_addr);
+   if (remote_address)
      {
-        _efl_net_socket_udp_init(o, addr->ai_addr, addr->ai_addrlen, buf);
+        efl_net_socket_udp_init(o, remote_address);
         efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+        efl_del(remote_address);
      }
    efl_net_dialer_connected_set(o, EINA_TRUE);
    return 0;

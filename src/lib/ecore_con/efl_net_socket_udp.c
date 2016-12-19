@@ -53,17 +53,22 @@ typedef struct _Efl_Net_Socket_Udp_Data
    Eina_Bool reuse_port;
 } Efl_Net_Socket_Udp_Data;
 
-// TODO: once we have Efl_Net_Ip_Address, make this protected and declared in .eo
 void
-_efl_net_socket_udp_init(Eo *o, const struct sockaddr *addr, socklen_t addrlen, const char *str)
+_efl_net_socket_udp_init(Eo *o, Efl_Net_Socket_Udp_Data *pd, Efl_Net_Ip_Address *remote_address)
 {
-   Efl_Net_Socket_Udp_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   const struct sockaddr *addr = efl_net_ip_address_sockaddr_get(remote_address);
+   socklen_t addrlen;
+
+   EINA_SAFETY_ON_NULL_RETURN(addr);
+
+   if (addr->sa_family == AF_INET) addrlen = sizeof(struct sockaddr_in);
+   else addrlen = sizeof(struct sockaddr_in6);
 
    pd->addr_remote = malloc(addrlen);
    EINA_SAFETY_ON_NULL_RETURN(pd->addr_remote);
    memcpy(pd->addr_remote, addr, addrlen);
    pd->addr_remote_len = addrlen;
-   efl_net_socket_address_remote_set(o, str);
+   efl_net_socket_address_remote_set(o, efl_net_ip_address_string_get(remote_address));
 }
 
 static Eina_Error
