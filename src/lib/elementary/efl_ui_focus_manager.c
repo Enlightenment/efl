@@ -674,7 +674,7 @@ _efl_ui_focus_manager_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data 
 EOLIAN static void
 _efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Manager *redirect)
 {
-   printf("Now redirect %p\n", redirect);
+   Efl_Ui_Focus_Manager *old_manager;
 
    if (pd->redirect == redirect) return;
 
@@ -683,10 +683,13 @@ _efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_U
    if (pd->redirect)
      efl_wref_del(pd->redirect, &pd->redirect);
 
+   old_manager = pd->redirect;
    pd->redirect = redirect;
 
    if (pd->redirect)
      efl_wref_add(pd->redirect, &pd->redirect);
+
+   efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED , old_manager);
 }
 
 EOLIAN static Efl_Ui_Focus_Manager *
