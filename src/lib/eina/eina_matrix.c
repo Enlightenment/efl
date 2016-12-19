@@ -30,6 +30,7 @@
 #include "eina_rectangle.h"
 #include "eina_quad.h"
 #include "eina_matrix.h"
+#include "eina_util.h"
 
 #define MATRIX_XX(m) (m)->xx
 #define MATRIX_XY(m) (m)->xy
@@ -105,12 +106,18 @@ _cos(double x)
 EAPI Eina_Matrix_Type
 eina_matrix3_type_get(const Eina_Matrix3 *m)
 {
-   if ((MATRIX_ZX(m) != 0) || (MATRIX_ZY(m) != 0) || (MATRIX_ZZ(m) != 1))
+   if (!EINA_DBL_CMP(MATRIX_ZX(m), 0.0) ||
+       !EINA_DBL_CMP(MATRIX_ZY(m), 0.0) ||
+       !EINA_DBL_CMP(MATRIX_ZZ(m), 1.0))
      return EINA_MATRIX_TYPE_PROJECTIVE;
    else
      {
-        if ((MATRIX_XX(m) == 1) && (MATRIX_XY(m) == 0) && (MATRIX_XZ(m) == 0) &&
-            (MATRIX_YX(m) == 0) && (MATRIX_YY(m) == 1) && (MATRIX_YZ(m) == 0))
+        if (EINA_DBL_CMP(MATRIX_XX(m), 1.0) &&
+            EINA_DBL_CMP(MATRIX_XY(m), 0.0) &&
+            EINA_DBL_CMP(MATRIX_XZ(m), 0.0) &&
+            EINA_DBL_CMP(MATRIX_YX(m), 0.0) &&
+            EINA_DBL_CMP(MATRIX_YY(m), 1.0) &&
+            EINA_DBL_CMP(MATRIX_YZ(m), 0.0))
           return EINA_MATRIX_TYPE_IDENTITY;
         else
           return EINA_MATRIX_TYPE_AFFINE;
@@ -120,10 +127,22 @@ eina_matrix3_type_get(const Eina_Matrix3 *m)
 EAPI Eina_Matrix_Type
 eina_matrix4_type_get(const Eina_Matrix4 *m)
 {
-   if ((MATRIX_XX(m) == 1) && (MATRIX_XY(m) == 0) && (MATRIX_XZ(m) == 0) && (MATRIX_XW(m) == 0) &&
-       (MATRIX_YX(m) == 0) && (MATRIX_YY(m) == 1) && (MATRIX_YZ(m) == 0) && (MATRIX_YW(m) == 0) &&
-       (MATRIX_ZX(m) == 0) && (MATRIX_ZY(m) == 0) && (MATRIX_ZZ(m) == 1) && (MATRIX_ZW(m) == 0) &&
-       (MATRIX_WX(m) == 0) && (MATRIX_WY(m) == 0) && (MATRIX_WZ(m) == 0) && (MATRIX_WW(m) == 1))
+   if (EINA_DBL_CMP(MATRIX_XX(m), 1.0) &&
+       EINA_DBL_CMP(MATRIX_XY(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_XZ(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_XW(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_YX(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_YY(m), 1.0) &&
+       EINA_DBL_CMP(MATRIX_YZ(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_YW(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_ZX(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_ZY(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_ZZ(m), 1.0) &&
+       EINA_DBL_CMP(MATRIX_ZW(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_WX(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_WY(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_WZ(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_WW(m), 1.0))
      return EINA_MATRIX_TYPE_IDENTITY;
    return EINA_MATRIX_TYPE_AFFINE;
 }
@@ -261,7 +280,8 @@ eina_matrix3_point_transform(const Eina_Matrix3 *m,
 {
    double xrr, yrr;
 
-   if (!MATRIX_ZX(m) && !MATRIX_ZY(m))
+   if (!EINA_DBL_CMP(MATRIX_ZX(m), 0.0) &&
+       !EINA_DBL_CMP(MATRIX_ZY(m), 0.0))
      {
         xrr = (x * MATRIX_XX(m) + y * MATRIX_XY(m) + MATRIX_XZ(m));
         yrr = (x * MATRIX_YX(m) + y * MATRIX_YY(m) + MATRIX_YZ(m));
@@ -381,7 +401,7 @@ eina_matrix3_inverse(const Eina_Matrix3 *m, Eina_Matrix3 *m2)
 
    /* determinant */
    scalar = eina_matrix3_determinant(m);
-   if (!scalar)
+   if (EINA_DBL_CMP(scalar, 0.0))
      {
         eina_matrix3_identity(m2);
         return;
@@ -425,15 +445,15 @@ eina_matrix3_compose(const Eina_Matrix3 *m1,
 EAPI Eina_Bool
 eina_matrix3_equal(const Eina_Matrix3 *m1, const Eina_Matrix3 *m2)
 {
-   if (m1->xx != m2->xx ||
-       m1->xy != m2->xy ||
-       m1->xz != m2->xz ||
-       m1->yx != m2->yx ||
-       m1->yy != m2->yy ||
-       m1->yz != m2->yz ||
-       m1->zx != m2->zx ||
-       m1->zy != m2->zy ||
-       m1->zz != m2->zz)
+   if (!EINA_DBL_CMP(m1->xx, m2->xx) ||
+       !EINA_DBL_CMP(m1->xy, m2->xy) ||
+       !EINA_DBL_CMP(m1->xz, m2->xz) ||
+       !EINA_DBL_CMP(m1->yx, m2->yx) ||
+       !EINA_DBL_CMP(m1->yy, m2->yy) ||
+       !EINA_DBL_CMP(m1->yz, m2->yz) ||
+       !EINA_DBL_CMP(m1->zx, m2->zx) ||
+       !EINA_DBL_CMP(m1->zy, m2->zy) ||
+       !EINA_DBL_CMP(m1->zz, m2->zz))
      return EINA_FALSE;
    return EINA_TRUE;
 }
@@ -582,7 +602,7 @@ eina_matrix3_square_quad_map(Eina_Matrix3 *m, const Eina_Quad *q)
    double ey = QUAD_Y0(q) - QUAD_Y1(q) + QUAD_Y2(q) - QUAD_Y3(q);
 
    /* paralellogram */
-   if (!ex && !ey)
+   if (EINA_DBL_CMP(ex, 0.0) && EINA_DBL_CMP(ey, 0.0))
      {
         /* create the affine matrix */
         MATRIX_XX(m) = QUAD_X1(q) - QUAD_X0(q);
@@ -607,7 +627,7 @@ eina_matrix3_square_quad_map(Eina_Matrix3 *m, const Eina_Quad *q)
         double dy2 = QUAD_Y3(q) - QUAD_Y2(q); // y3 - y2
         double den = (dx1 * dy2) - (dx2 * dy1);
 
-        if (!den)
+        if (EINA_DBL_CMP(den, 0.0))
           return EINA_FALSE;
 
         MATRIX_ZX(m) = ((ex * dy2) - (dx2 * ey)) / den;
@@ -636,7 +656,7 @@ eina_matrix3_quad_square_map(Eina_Matrix3 *m,
 
    eina_matrix3_inverse(&tmp, m);
    /* make the projective matrix3 always have 1 on zz */
-   if (MATRIX_ZZ(m) != 1)
+   if (!EINA_DBL_CMP(MATRIX_ZZ(m), 1.0))
      {
         eina_matrix3_divide(m, MATRIX_ZZ(m));
      }
@@ -969,8 +989,10 @@ eina_matrix4_identity(Eina_Matrix4 *out)
 EAPI Eina_Matrix_Type
 eina_matrix2_type_get(const Eina_Matrix2 *m)
 {
-   if ((MATRIX_XX(m) == 1) && (MATRIX_XY(m) == 0) &&
-       (MATRIX_YX(m) == 0) && (MATRIX_YY(m) == 1))
+   if (EINA_DBL_CMP(MATRIX_XX(m), 1.0) &&
+       EINA_DBL_CMP(MATRIX_XY(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_YX(m), 0.0) &&
+       EINA_DBL_CMP(MATRIX_YY(m), 1.0))
      return EINA_MATRIX_TYPE_IDENTITY;
    return EINA_MATRIX_TYPE_AFFINE;
 }
@@ -1216,7 +1238,7 @@ eina_matrix2_inverse(Eina_Matrix2 *out, const Eina_Matrix2 *mat)
 
    det = MATRIX_XX(mat) * MATRIX_YY(mat) - MATRIX_YX(mat) * MATRIX_XY(mat);
 
-   if (det == 0.0)
+   if (EINA_DBL_CMP(det, 0.0))
      return;
 
    det = 1.0 / det;
