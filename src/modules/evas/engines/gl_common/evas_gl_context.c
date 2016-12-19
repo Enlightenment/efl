@@ -268,16 +268,16 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
 // stuff. this is generic zero-copy textures for gl
 
    FINDSYM(secsym_eglCreateImage, "eglCreateImage", NULL, secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", "EGL_KHR_image", secsym_func_void_ptr);
    FINDSYM(secsym_eglCreateImage, "eglCreateImageOES", "GL_OES_EGL_image_base", secsym_func_void_ptr);
    FINDSYM(secsym_eglCreateImage, "eglCreateImageOES", "GL_OES_EGL_image", secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", "GL_EGL_KHR_image_base", secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", "GL_EGL_KHR_image", secsym_func_void_ptr);
 
    FINDSYM(secsym_eglDestroyImage, "eglDestroyImage", NULL, secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image", secsym_func_uint);
    FINDSYM(secsym_eglDestroyImage, "eglDestroyImageOES", "GL_OES_EGL_image_base", secsym_func_uint);
    FINDSYM(secsym_eglDestroyImage, "eglDestroyImageOES", "GL_OES_EGL_image", secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", "GL_EGL_KHR_image_base", secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", "GL_EGL_KHR_image", secsym_func_uint);
 
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_geometry_shader4", glsym_func_void);
