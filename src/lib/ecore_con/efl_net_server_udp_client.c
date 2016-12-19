@@ -75,7 +75,11 @@ _efl_net_server_udp_client_efl_object_destructor(Eo *o, Efl_Net_Server_Udp_Clien
 {
    if (efl_io_closer_close_on_destructor_get(o) &&
        (!efl_io_closer_closed_get(o)))
-     efl_io_closer_close(o);
+     {
+        efl_event_freeze(o);
+        efl_io_closer_close(o);
+        efl_event_thaw(o);
+     }
 
    efl_destructor(efl_super(o, MY_CLASS));
 

@@ -252,7 +252,11 @@ EOLIAN static void
 _efl_io_queue_efl_object_destructor(Eo *o, Efl_Io_Queue_Data *pd)
 {
    if (!efl_io_closer_closed_get(o))
-     efl_io_closer_close(o);
+     {
+        efl_event_freeze(o);
+        efl_io_closer_close(o);
+        efl_event_thaw(o);
+     }
 
    efl_destructor(efl_super(o, MY_CLASS));
 

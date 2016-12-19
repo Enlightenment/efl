@@ -58,7 +58,11 @@ _efl_net_dialer_udp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Udp_Data *pd)
 {
    if (efl_io_closer_close_on_destructor_get(o) &&
        (!efl_io_closer_closed_get(o)))
-     efl_io_closer_close(o);
+     {
+        efl_event_freeze(o);
+        efl_io_closer_close(o);
+        efl_event_thaw(o);
+     }
 
    if (pd->resolver.thread)
      {
