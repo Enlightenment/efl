@@ -17,7 +17,6 @@ typedef struct _Efl_Io_Copier_Data
    Efl_Future *inactivity_timer;
    Efl_Future *job;
    Eina_Binbuf *buf;
-   uint8_t *read_chunk; /* TODO: method to grow Eina_Binbuf so we can expand it and read directly to that */
    Eina_Slice line_delimiter;
    size_t buffer_limit;
    size_t read_chunk_size;
@@ -204,15 +203,12 @@ static void
 _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
 {
    Eina_Rw_Slice rw_slice;
-   Eina_Slice ro_slice;
    Eina_Error err;
-   size_t used;
+   size_t used, expand_size;
 
    EINA_SAFETY_ON_TRUE_RETURN(pd->closed);
 
-   rw_slice.mem = pd->read_chunk;
-   rw_slice.len = pd->read_chunk_size;
-
+   expand_size = pd->read_chunk_size;
    used = eina_binbuf_length_get(pd->buf);
    if (pd->buffer_limit > 0)
      {
@@ -223,9 +219,17 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
         else if (pd->buffer_limit > used)
           {
              size_t available = pd->buffer_limit - used;
-             if (rw_slice.len > available)
-               rw_slice.len = available;
+             if (expand_size > available)
+               expand_size = available;
           }
+     }
+
+   rw_slice = eina_binbuf_expand(pd->buf, expand_size);
+   if (rw_slice.len == 0)
+     {
+        err = ENOMEM;
+        efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
+        return;
      }
 
    err = efl_io_reader_read(pd->source, &rw_slice);
@@ -238,8 +242,7 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
 
    if (pd->closed) return; /* read(source) triggers cb, may call close */
 
-   ro_slice = eina_rw_slice_slice_get(rw_slice);
-   if (!eina_binbuf_append_slice(pd->buf, ro_slice))
+   if (!eina_binbuf_use(pd->buf, rw_slice.len))
      {
         err = ENOMEM;
         efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
@@ -257,18 +260,8 @@ _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd)
          *
          * however, if there is no destination, then emit the event
          * here.
-         *
-         * Remember to get the actual binbuf memory, rw_slice/ro_slice
-         * contains the pointer to pd->read_chunk and
-         * _efl_io_copier_dispatch_data_events() needs a slice to
-         * internal binbuf.
          */
-        Eina_Slice binbuf_slice = eina_binbuf_slice_get(pd->buf);
-        Eina_Slice ev_slice = {
-          .mem = binbuf_slice.bytes + used,
-          .len = binbuf_slice.len - used,
-        };
-        _efl_io_copier_dispatch_data_events(o, pd, ev_slice);
+        _efl_io_copier_dispatch_data_events(o, pd, eina_rw_slice_slice_get(rw_slice));
      }
 
    _efl_io_copier_job_schedule(o, pd);
@@ -586,17 +579,9 @@ _efl_io_copier_line_delimiter_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 EOLIAN static void
 _efl_io_copier_read_chunk_size_set(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd, size_t size)
 {
-   void *tmp;
-
    EINA_SAFETY_ON_TRUE_RETURN(pd->closed);
 
    if (size == 0) size = DEF_READ_CHUNK_SIZE;
-   if ((pd->read_chunk_size == size) && pd->read_chunk) return;
-
-   tmp = realloc(pd->read_chunk, size);
-   EINA_SAFETY_ON_NULL_RETURN(tmp);
-
-   pd->read_chunk = tmp;
    pd->read_chunk_size = size;
 }
 
@@ -690,13 +675,6 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
      {
         eina_binbuf_free(pd->buf);
         pd->buf = NULL;
-     }
-
-   if (pd->read_chunk)
-     {
-        free(pd->read_chunk);
-        pd->read_chunk = NULL;
-        pd->read_chunk_size = 0;
      }
 
    return err;
@@ -882,13 +860,6 @@ _efl_io_copier_efl_object_destructor(Eo *o, Efl_Io_Copier_Data *pd)
      {
         eina_binbuf_free(pd->buf);
         pd->buf = NULL;
-     }
-
-   if (pd->read_chunk)
-     {
-        free(pd->read_chunk);
-        pd->read_chunk = NULL;
-        pd->read_chunk_size = 0;
      }
 
    if (pd->line_delimiter.mem)
