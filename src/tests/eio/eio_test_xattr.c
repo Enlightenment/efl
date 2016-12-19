@@ -115,7 +115,7 @@ _done_int_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int xattr_in
 static void
 _done_double_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, double xattr_double)
 {
-   fail_if(xattr_double != double_data);
+   fail_if(!EINA_DBL_CMP(xattr_double, double_data));
 
    ecore_main_loop_quit();
 }
