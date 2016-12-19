@@ -20,6 +20,10 @@
 
 #include "common.h"
 
+#include <float.h>
+
+#define EINA_FLT_CMP(a, b) (fabsf((float)a - (float)b) <= FLT_EPSILON)
+
 #define RS R_VAL(src + s_idx)
 #define GS G_VAL(src + s_idx)
 #define BS B_VAL(src + s_idx)
@@ -128,7 +132,7 @@ hls_to_rgb (DATA8 *hue, DATA8 *lightness, DATA8 *saturation)
   l = *lightness;
   s = *saturation;
 
-  if (s == 0)
+  if (EINA_FLT_CMP(s, 0))
     {
       /*  achromatic case  */
       *hue        = l;
@@ -138,9 +142,9 @@ hls_to_rgb (DATA8 *hue, DATA8 *lightness, DATA8 *saturation)
   else
     {
       if (l < 128)
-	m2 = (l * (255 + s)) / 65025.0;
+        m2 = (l * (255 + s)) / 65025.0;
       else
-	m2 = (l + s - (l * s) / 255.0) / 255.0;
+        m2 = (l + s - (l * s) / 255.0) / 255.0;
 
       m1 = (l / 127.5) - m2;
 
@@ -184,23 +188,23 @@ rgb_to_hsv (DATA8 *red, DATA8 *green, DATA8 *blue)
   else
     s = 0;
 
-  if (s == 0)
+  if (EINA_FLT_CMP(s, 0))
     h = 0;
   else
     {
       delta = max - min;
       if (r == max)
-	h = (g - b) / (double) delta;
+        h = (g - b) / (double) delta;
       else if (g == max)
-	h = 2 + (b - r) / (double) delta;
+        h = 2 + (b - r) / (double) delta;
       else if (b == max)
-	h = 4 + (r - g) / (double) delta;
+        h = 4 + (r - g) / (double) delta;
       h *= 42.5;
 
       if (h < 0)
-	h += 255;
+        h += 255;
       if (h > 255)
-	h -= 255;
+        h -= 255;
     }
 
   *red   = h;
