@@ -343,7 +343,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
          * One can change these to Efl_Io_File or event pipe to something
          * else like Efl_Io_Stdin, Efl_Io_Stdout and it would just work.
          */
-        Eina_Slice slice;
+        static const Eina_Slice hello_world_slice = EINA_SLICE_STR_LITERAL("Hello World!");
         Send_Recv_Data *d;
         Eo *send_buffer, *recv_buffer;
 
@@ -354,10 +354,8 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
              return;
           }
 
-        // TODO buffer constructor taking RO string
-        send_buffer = efl_add(EFL_IO_BUFFER_CLASS, NULL);
-        slice = (Eina_Slice)EINA_SLICE_STR("Hello World!");
-        efl_io_writer_write(send_buffer, &slice, NULL);
+        send_buffer = efl_add(EFL_IO_BUFFER_CLASS, NULL,
+                              efl_io_buffer_adopt_readonly(efl_added, hello_world_slice));
 
         /* Unlimited buffer to store the received data. */
         recv_buffer = efl_add(EFL_IO_BUFFER_CLASS, NULL);

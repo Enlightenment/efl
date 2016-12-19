@@ -22,6 +22,39 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
             }
         }
 
+        adopt_readonly {
+            [[Adopt a read-only slice as buffer's backing store.
+
+              The slice memory will not be copied and must remain
+              alive during buffer's lifetime. Usually this is
+              guaranteed by some global static-const memory or some
+              parent object and this buffer being a view of that -- be
+              aware of parent memory remaining alive, such as
+              "slice,changed" events.
+            ]]
+            params {
+                @in slice: const(Eina.Slice); [[Slice to adopt as read-only]]
+            }
+        }
+
+        adopt_readwrite {
+            [[Adopt a read-write slice as buffer's backing store.
+
+              The slice memory will not be copied and must remain
+              alive during buffer's lifetime. Usually this is
+              guaranteed by some global static memory or some
+              parent object and this buffer being a view of that -- be
+              aware of parent memory remaining alive, such as
+              "slice,changed" events.
+
+              The memory will be disposed using free() and reallocated
+              using realloc().
+            ]]
+            params {
+                @in slice: Eina.Rw_Slice; [[Slice to adopt as read-write]]
+            }
+        }
+
         @property limit {
             [[Limit how big the buffer can grow.
 
@@ -95,6 +128,9 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
             [[Steals the internal buffer memory and returns it as a binbuf.
 
               The returned memory must be freed with eina_binbuf_free().
+
+              On failure, for example a read-only backing store was
+              adopted with @.adopt_readonly, NULL is returned.
             ]]
             return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused; [[Binbuf]]
         }

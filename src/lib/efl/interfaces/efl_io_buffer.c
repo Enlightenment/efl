@@ -17,6 +17,7 @@ typedef struct _Efl_Io_Buffer_Data
    Eina_Bool closed;
    Eina_Bool can_read;
    Eina_Bool can_write;
+   Eina_Bool readonly;
 } Efl_Io_Buffer_Data;
 
 static Eina_Bool
@@ -24,6 +25,8 @@ _efl_io_buffer_realloc(Eo *o, Efl_Io_Buffer_Data *pd, size_t size)
 {
    void *tmp;
    size_t limit = efl_io_buffer_limit_get(o);
+
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->readonly, EINA_FALSE);
 
    if ((limit > 0) && (size > limit))
      size = limit;
@@ -77,6 +80,7 @@ _efl_io_buffer_realloc_rounded(Eo *o, Efl_Io_Buffer_Data *pd, size_t size)
 EOLIAN static void
 _efl_io_buffer_preallocate(Eo *o, Efl_Io_Buffer_Data *pd, size_t size)
 {
+   EINA_SAFETY_ON_TRUE_RETURN(pd->readonly);
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->allocated < size)
      _efl_io_buffer_realloc_rounded(o, pd, size);
@@ -85,6 +89,7 @@ _efl_io_buffer_preallocate(Eo *o, Efl_Io_Buffer_Data *pd, size_t size)
 EOLIAN static void
 _efl_io_buffer_limit_set(Eo *o, Efl_Io_Buffer_Data *pd, size_t limit)
 {
+   EINA_SAFETY_ON_TRUE_RETURN(pd->readonly);
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
 
    if (pd->limit == limit) return;
@@ -125,6 +130,7 @@ EOLIAN static Eina_Binbuf *
 _efl_io_buffer_binbuf_steal(Eo *o, Efl_Io_Buffer_Data *pd)
 {
    Eina_Binbuf *ret;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->readonly, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), NULL);
 
    ret = eina_binbuf_manage_new(pd->bytes, efl_io_sizer_size_get(o), EINA_FALSE);
@@ -166,7 +172,7 @@ _efl_io_buffer_efl_object_destructor(Eo *o, Efl_Io_Buffer_Data *pd)
 
    if (pd->bytes)
      {
-        free(pd->bytes);
+        if (!pd->readonly) free(pd->bytes);
         pd->bytes = NULL;
         pd->allocated = 0;
         pd->used = 0;
@@ -244,6 +250,7 @@ _efl_io_buffer_efl_io_writer_write(Eo *o, Efl_Io_Buffer_Data *pd, Eina_Slice *sl
    size_t available, todo, write_pos, limit;
    int err = EINVAL;
 
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->readonly, EPERM);
    EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINVAL);
    EINA_SAFETY_ON_TRUE_GOTO(efl_io_closer_closed_get(o), error);
 
@@ -362,6 +369,13 @@ _efl_io_buffer_efl_io_sizer_resize(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t size)
 
    if (efl_io_sizer_size_get(o) == size) return 0;
 
+   if (pd->readonly)
+     {
+        EINA_SAFETY_ON_TRUE_RETURN_VAL(size > pd->used, EPERM);
+        pd->used = size;
+        goto end;
+     }
+
    old_size = pd->used;
    pd->used = size;
 
@@ -378,6 +392,7 @@ _efl_io_buffer_efl_io_sizer_resize(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t size)
    if (old_size < size)
      memset(pd->bytes + old_size, 0, size - old_size);
 
+ end:
    pos_read = efl_io_buffer_position_read_get(o);
    if (pos_read > size)
      efl_io_buffer_position_read_set(o, size);
@@ -500,6 +515,8 @@ _efl_io_buffer_position_write_set(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t positi
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EINA_FALSE);
 
    size = efl_io_sizer_size_get(o);
+   if (position < size)
+     EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->readonly, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(position > size, EINA_FALSE);
 
    if (pd->position_write == position) return EINA_TRUE;
@@ -522,6 +539,81 @@ EOLIAN static uint64_t
 _efl_io_buffer_position_write_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
 {
    return pd->position_write;
+}
+
+EOLIAN static void
+_efl_io_buffer_adopt_readonly(Eo *o, Efl_Io_Buffer_Data *pd, const Eina_Slice slice)
+{
+   Eina_Bool changed_size;
+
+   EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
+
+   if (!pd->readonly) free(pd->bytes);
+   pd->readonly = EINA_TRUE;
+   pd->bytes = (uint8_t *)slice.bytes;
+   pd->allocated = slice.len;
+
+   changed_size = (pd->used != slice.len);
+   pd->used = slice.len;
+   efl_io_writer_can_write_set(o, EINA_FALSE);
+   if (pd->closed) return;
+
+   if (efl_io_buffer_position_read_get(o) > slice.len)
+     {
+        efl_io_buffer_position_read_set(o, slice.len);
+        if (pd->closed) return;
+     }
+
+   efl_io_buffer_position_write_set(o, slice.len);
+   if (pd->closed) return;
+
+   if (changed_size)
+     {
+        efl_event_callback_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
+        if (pd->closed) return;
+     }
+
+   efl_event_callback_call(o, EFL_IO_BUFFER_EVENT_REALLOCATED, NULL);
+}
+
+EOLIAN static void
+_efl_io_buffer_adopt_readwrite(Eo *o, Efl_Io_Buffer_Data *pd, Eina_Rw_Slice slice)
+{
+   Eina_Bool changed_size;
+
+   EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
+
+   if (!pd->readonly) free(pd->bytes);
+   pd->readonly = EINA_FALSE;
+   pd->bytes = slice.bytes;
+   pd->allocated = slice.len;
+
+   changed_size = (pd->used != slice.len);
+   pd->used = slice.len;
+
+   efl_io_writer_can_write_set(o, (pd->limit == 0) ||
+                               (efl_io_buffer_position_write_get(o) < pd->limit));
+   if (pd->closed) return;
+
+   if (efl_io_buffer_position_read_get(o) > slice.len)
+     {
+        efl_io_buffer_position_read_set(o, slice.len);
+        if (pd->closed) return;
+     }
+
+   if (efl_io_buffer_position_write_get(o) > slice.len)
+     {
+        efl_io_buffer_position_write_set(o, slice.len);
+        if (pd->closed) return;
+     }
+
+   if (changed_size)
+     {
+        efl_event_callback_call(o, EFL_IO_SIZER_EVENT_SIZE_CHANGED, NULL);
+        if (pd->closed) return;
+     }
+
+   efl_event_callback_call(o, EFL_IO_BUFFER_EVENT_REALLOCATED, NULL);
 }
 
 #include "interfaces/efl_io_buffer.eo.c"
