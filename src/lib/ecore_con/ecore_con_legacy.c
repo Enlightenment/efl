@@ -1807,6 +1807,8 @@ _ecore_con_server_dialer_set(Ecore_Con_Server *svr, Eo *dialer)
             (type == ECORE_CON_LOCAL_SYSTEM))
      {
         char *path = ecore_con_local_path_new(type == ECORE_CON_LOCAL_SYSTEM, svr->name, svr->port);
+        struct stat st;
+
         if (!path)
           {
              ERR("could not create local path for name='%s', port=%d", svr->name, svr->port);
@@ -1816,6 +1818,16 @@ _ecore_con_server_dialer_set(Ecore_Con_Server *svr, Eo *dialer)
           {
              eina_strlcpy(address, path, sizeof(address));
              free(path);
+          }
+
+        if ((stat(address, &st) != 0)
+#ifdef S_ISSOCK
+            || (!S_ISSOCK(st.st_mode))
+#endif
+            )
+          {
+             DBG("%s is not a socket", address);
+             return EINA_FALSE;
           }
      }
 

@@ -4,6 +4,7 @@
 
 #include <string.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
@@ -761,8 +762,20 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
 #ifdef EFL_NET_DIALER_UNIX_CLASS
    if ((type & ECORE_IPC_TYPE) == ECORE_IPC_LOCAL_USER)
      {
+        struct stat st;
+
         address = ecore_con_local_path_new(EINA_FALSE, name, port);
         EINA_SAFETY_ON_NULL_GOTO(address, error_dialer);
+
+        if ((stat(address, &st) != 0)
+#ifdef S_ISSOCK
+            || (!S_ISSOCK(st.st_mode))
+#endif
+            )
+          {
+             DBG("%s is not a socket", address);
+             goto error_dialer;
+          }
 
         svr->dialer.dialer = efl_add(EFL_NET_DIALER_UNIX_CLASS, ecore_main_loop_get());
         EINA_SAFETY_ON_NULL_GOTO(svr->dialer.dialer, error_dialer);
