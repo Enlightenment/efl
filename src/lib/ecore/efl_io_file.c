@@ -113,6 +113,11 @@ _efl_io_file_efl_object_constructor(Eo *o, Efl_Io_File_Data *pd)
 
    efl_io_closer_close_on_exec_set(o, EINA_TRUE);
    efl_io_closer_close_on_destructor_set(o, EINA_TRUE);
+   efl_io_positioner_fd_set(o, -1);
+   efl_io_sizer_fd_set(o, -1);
+   efl_io_reader_fd_set(o, -1);
+   efl_io_writer_fd_set(o, -1);
+   efl_io_closer_fd_set(o, -1);
 
    return o;
 }
