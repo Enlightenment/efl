@@ -53,18 +53,20 @@ _read_ply_header(char *map, Evas_Model_Load_Save_Header *header)
 
    if (helping_pointer == NULL)
      {
-        ERR("File have not kayword vertex. It is necessary.");
+        ERR("PLY file doesn't contain the required keyword 'vertex'");
         return EINA_FALSE;
      }
 
    sscanf(helping_pointer[1], "%d", &header->vertices_count);
 
+   free(helping_pointer[0]);
    free(helping_pointer);
+
    helping_pointer = eina_str_split(map, "end_header\n", 0);
 
    if (helping_pointer == NULL)
      {
-        ERR("File have not kayword end_header. It is necessary.");
+        ERR("PLY file doesn't contain the required keyword 'end_header'");
         return EINA_FALSE;
      }
 
@@ -98,14 +100,26 @@ _read_ply_header(char *map, Evas_Model_Load_Save_Header *header)
 
    header->indices_count = 3 * triangles;
 
+   free(helping_pointer[0]);
+   free(helping_pointer);
+
       /* analyse flags used when file was saved in blender */
    helping_pointer = eina_str_split(map, "property float ", 0);
+
+   if (helping_pointer == NULL)
+     return EINA_FALSE;
 
    if ((helping_pointer[1] != NULL) && (*helping_pointer[1] == 'x') &&
        (helping_pointer[2] != NULL) && (*helping_pointer[2] == 'y') &&
        (helping_pointer[3] != NULL) && (*helping_pointer[3] == 'z'))
      header->existence_of_positions = EINA_TRUE;
-   else return EINA_FALSE;
+   else
+     {
+        ERR("PLY file doesn't start with x,y,z float fields, they are required.");
+        free(helping_pointer[0]);
+        free(helping_pointer);
+        return EINA_FALSE;
+     }
 
    if ((helping_pointer[4] != NULL) && (*helping_pointer[4] == 'n') &&
        (helping_pointer[5] != NULL) && (*helping_pointer[5] == 'n') &&
@@ -120,20 +134,22 @@ _read_ply_header(char *map, Evas_Model_Load_Save_Header *header)
        (helping_pointer[5] != NULL) && (*helping_pointer[5] == 't'))))
      header->existence_of_tex_coords = EINA_TRUE;
 
+   free(helping_pointer[0]);
+   free(helping_pointer);
+
    helping_pointer = eina_str_split(map, "property uchar ", 0);
+
+   if (helping_pointer == NULL)
+     return EINA_FALSE;
 
    if ((helping_pointer[1] != NULL) && (*helping_pointer[1] == 'r') &&
        (helping_pointer[2] != NULL) && (*helping_pointer[2] == 'g') &&
        (helping_pointer[3] != NULL) && (*helping_pointer[3] == 'b'))
      header->existence_of_colors = EINA_TRUE;
 
-   if (!header->existence_of_positions)
-     {
-        ERR("File have not x, y, or z field as the first 3 float fields. They are necessary.");
-        return EINA_FALSE;
-     }
-
+   free(helping_pointer[0]);
    free(helping_pointer);
+
    return EINA_TRUE;
 }
 
