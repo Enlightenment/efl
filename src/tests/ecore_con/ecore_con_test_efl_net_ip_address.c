@@ -30,6 +30,7 @@
 #include <ctype.h>
 
 #include "ecore_con_suite.h"
+#include "ecore_con_private.h"
 
 struct log_ctx {
    const char *dom;
@@ -720,6 +721,34 @@ END_TEST
 
 /* IPv6 *****************************************************************/
 
+static Eina_Bool
+_ipv6_enabled(void)
+{
+   SOCKET fd;
+   struct sockaddr_in6 addr = {
+     .sin6_family = AF_INET6,
+   };
+   int r;
+
+   fd = socket(AF_INET6, SOCK_STREAM, 0);
+   if (fd == INVALID_SOCKET)
+     {
+        Eina_Error err = efl_net_socket_error_get();
+        fprintf(stderr, "WARNING: failed socket(AF_INET6, SOCK_STREAM, 0): %s\n", eina_error_msg_get(err));
+        return EINA_FALSE;
+     }
+
+   r = bind(fd, &addr, sizeof(addr));
+   if (r != 0)
+     {
+        Eina_Error err = efl_net_socket_error_get();
+        fprintf(stderr, "WARNING: failed bind(" SOCKET_FMT ", {.sin6_family=AF_INET6, .sin6_addr={0}, .sin6_port=0}, sizeof(struct sockaddr_in6)): %s\n", fd, eina_error_msg_get(err));
+     }
+
+   closesocket(fd);
+   return r == 0;
+}
+
 static void
 _ipv6_check(Eo *o, const struct sockaddr_in6 *addr)
 {
@@ -1268,6 +1297,13 @@ void ecore_con_test_efl_net_ip_address(TCase *tc)
    tcase_add_test(tc, ecore_test_efl_net_ip_address_ipv4_resolve_ok);
    tcase_add_test(tc, ecore_test_efl_net_ip_address_ipv4_resolve_fail);
    tcase_add_test(tc, ecore_test_efl_net_ip_address_ipv4_checks);
+
+   if (!_ipv6_enabled())
+     {
+        fputs("\nWARNING: your system has IPv6 disabled. Skipping IPv6 tests!\n\n", stderr);
+        return;
+     }
+
    tcase_add_test(tc, ecore_test_efl_net_ip_address_ipv6_manual_ok);
    tcase_add_test(tc, ecore_test_efl_net_ip_address_ipv6_manual_fail);
    tcase_add_test(tc, ecore_test_efl_net_ip_address_ipv6_create_ok);
