@@ -1382,7 +1382,8 @@ typedef enum _Ecore_X_Illume_Window_State
 typedef enum _Ecore_X_Stack_Type
 {
    ECORE_X_STACK_NONE = 0,
-   ECORE_X_STACK_STANDARD = 1,
+   ECORE_X_STACK_BASE = 1,
+   ECORE_X_STACK_STANDARD,
    ECORE_X_STACK_LAST
 } Ecore_X_Stack_Type;
 

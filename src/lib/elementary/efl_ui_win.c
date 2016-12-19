@@ -258,6 +258,7 @@ struct _Efl_Ui_Win_Data
    Eina_Bool    tmp_updating_hints : 1;
    Eina_Bool    single_edje_content: 1; /* hack for E */
    Eina_Bool    shown : 1;
+   Eina_Bool    stack_base : 1;
 };
 
 struct _Input_Pointer_Iterator
@@ -3151,7 +3152,10 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
         if (win)
           {
              ecore_x_icccm_transient_for_set(sd->x.xwin, win);
-             ecore_x_e_stack_type_set(sd->x.xwin, ECORE_X_STACK_STANDARD);
+             if (sd->stack_base)
+               ecore_x_e_stack_type_set(sd->x.xwin, ECORE_X_STACK_BASE);
+             else
+               ecore_x_e_stack_type_set(sd->x.xwin, ECORE_X_STACK_STANDARD);
           }
      }
    else
@@ -6154,6 +6158,19 @@ EOLIAN static const char *
 _efl_ui_win_stack_master_id_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->stack_master_id;
+}
+
+EOLIAN static void
+_efl_ui_win_stack_base_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool base)
+{
+   if (sd->shown) return;
+   sd->stack_base = !!base;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_win_stack_base_get(Eo *obj, Efl_Ui_Win_Data *sd)
+{
+   return sd->stack_base;
 }
 
 EOLIAN static void

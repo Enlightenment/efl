@@ -67,6 +67,7 @@ test_win_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    Evas_Object *bg, *bx, *bt, *lb, *win;
 
    win = elm_win_add(NULL, "window-stack", ELM_WIN_BASIC);
+   elm_win_stack_base_set(win, EINA_TRUE);
    elm_win_title_set(win, "Window Stack");
    elm_win_autodel_set(win, EINA_TRUE);
 
