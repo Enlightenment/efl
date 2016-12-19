@@ -1240,6 +1240,22 @@ EAPI void evas_device_pop(Evas *e);
 EAPI const Eina_List *evas_device_list(Evas *e, const Evas_Device *dev);
 
 /**
+ * Get a device by its name
+ *
+ * @param e The canvas to create the device node for.
+ * @param name The name of the device.
+ *
+ * Gets the first ocurrence of a device named as @p name
+ * on Evas @p e list of devices.
+ *
+ * @return the device or NULL if an error occurred, no name was provided,
+ * or no device with a matching name was found.
+ *
+ * @since 1.19
+ */
+EAPI Evas_Device *evas_device_get(Evas *e, const char *name);
+
+/**
  * Set the name of a device as a string
  *
  * @p dev The device to set the name of

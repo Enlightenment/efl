@@ -10693,6 +10693,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    epr->in.from = 0.0;
    epr->in.range = 0.0;
    epr->action = 0;
+   epr->seat = NULL;
    epr->state = NULL;
    epr->value = 0.0;
    epr->state2 = NULL;
@@ -10788,6 +10789,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    _edje_if_string_free(ed, &epr->source);
    _edje_if_string_free(ed, &epr->filter.part);
    _edje_if_string_free(ed, &epr->filter.state);
+   _edje_if_string_free(ed, &epr->seat);
    _edje_if_string_free(ed, &epr->state);
    _edje_if_string_free(ed, &epr->state2);
    _edje_if_string_free(ed, &epr->sample_name);
@@ -13185,13 +13187,25 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
 
       case EDJE_ACTION_TYPE_FOCUS_SET:
       {
-         BUF_APPEND(I4 "action: FOCUS_SET;\n");
+         if (epr->seat)
+           {
+              BUF_APPEND(I4 "action: FOCUS_SET ");
+              BUF_APPENDF("\"%s\";\n", epr->seat);
+           }
+         else
+           BUF_APPEND(I4 "action: FOCUS_SET;\n");
          break;
       }
 
       case EDJE_ACTION_TYPE_FOCUS_OBJECT:
       {
-         BUF_APPEND(I4 "action: FOCUS_OBJECT;\n");
+         if (epr->seat)
+           {
+              BUF_APPEND(I4 "action: FOCUS_OBJECT ");
+              BUF_APPENDF("\"%s\";\n", epr->seat);
+           }
+         else
+           BUF_APPEND(I4 "action: FOCUS_OBJECT;\n");
          break;
       }
 
@@ -15601,6 +15615,9 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
 
    /* Limits */
    _edje_limits_source_generate(ed, buf, &ret);
+
+   if (pc->use_custom_seat_names)
+     BUF_APPENDF(I2 "use_custom_seat_names: 1;\n");
 
    /* Data */
    if (pc->data)

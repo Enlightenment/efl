@@ -2066,6 +2066,40 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             part: string; [[The part name]]
          }
       }
+      @property seat {
+         get {
+            [[Return the seat device given its Edje's name.
+
+              Edje references seats by a name that differs from Evas.
+              Edje naming follows a incrementional convention: first
+              registered name is "seat1", second is "seat2", differently
+              from Evas.
+
+              @since 1.19]]
+
+            return: Efl.Input.Device; [[The seat device or $null if not found.]]
+         }
+         keys {
+            name: stringshare; [[The name's character string.]]
+         }
+      }
+      @property seat_name {
+         get {
+            [[Get the name given to a set by Edje.
+
+              Edje references seats by a name that differs from Evas.
+              Edje naming follows a incrementional convention: first
+              registered name is "seat1", second is "seat2", differently
+              from Evas.
+
+              @since 1.19]]
+
+            return: stringshare; [[The name's character string or $null if not found.]]
+         }
+         keys {
+            device: Efl.Input.Device; [[The seat device]]
+         }
+      }
    }
    implements {
       Efl.Gfx.visible.set;

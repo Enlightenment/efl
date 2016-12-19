@@ -9,8 +9,12 @@
 /edje-codegen-example
 /edje-color-class
 /edje-drag
+/edje-dynamic-multiseat
 /edje-edit-part-box
 /edje-entry
+/edje-focus
+/edje-multiseat
+/edje-multiseat-custom-names
 /edje-multisense
 /edje-perspective
 /edje-signals-messages

@@ -23,6 +23,7 @@ box_example.edc \
 codegen.edc \
 color-class.edc \
 drag.edc \
+dynamic_multiseat.edc \
 edje-group.edc \
 edje-nested.edc \
 edje-threshold.edc \
@@ -41,8 +42,11 @@ external_elm_button.edc \
 external_elm_check.edc \
 external_elm_panes.edc \
 external_emotion_elm.edc \
+focus.edc \
 lua_script.edc \
 messages_echo.edc \
+multiseat.edc \
+multiseat_custom_names.edc \
 perspective.edc \
 signals-messages.edc \
 signalsBubble.edc \
@@ -138,8 +142,12 @@ edje-box2.c \
 edje-codegen-example.c \
 edje-color-class.c \
 edje-drag.c \
+edje-dynamic-multiseat.c \
 edje-edit-part-box.c \
 edje-entry.c \
+edje-focus.c \
+edje-multiseat.c \
+edje-multiseat-custom-names.c \
 edje-multisense.c \
 edje-perspective.c \
 edje-signals-messages.c \
@@ -210,9 +218,13 @@ edje-box \
 edje-box2 \
 edje-codegen-example \
 edje-color-class \
-edje-drag\
+edje-drag \
+edje-dynamic-multiseat \
 edje-edit-part-box \
 edje-entry \
+edje-focus \
+edje-multiseat \
+edje-multiseat-custom-names \
 edje-perspective \
 edje-signals-messages \
 edje-swallow \

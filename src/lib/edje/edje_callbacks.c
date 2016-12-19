@@ -15,37 +15,45 @@ _edje_hold_signal_cb(void *data, const Efl_Event *event)
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
    if (efl_input_hold_get(ev))
-     _edje_emit(ed, "hold,on", rp->part->name);
+     _edje_seat_emit(ed, efl_input_device_get(ev),
+                     "hold,on", rp->part->name);
    else
-     _edje_emit(ed, "hold,off", rp->part->name);
+     _edje_seat_emit(ed, efl_input_device_get(ev),
+                     "hold,off", rp->part->name);
 }
 
 static void
 _edje_focus_in_signal_cb(void *data, const Efl_Event *event)
 {
+   Efl_Input_Focus *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if ((!rp) || (!ed))
      return;
 
-   _edje_emit(ed, "focus,part,in", rp->part->name);
+   _edje_seat_emit(ed, efl_input_device_get(ev),
+                   "focus,part,in", rp->part->name);
 }
 
 static void
 _edje_focus_out_signal_cb(void *data, const Efl_Event *event)
 {
+   Efl_Input_Focus *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if ((!rp) || (!ed))
      return;
 
-   _edje_emit(ed, "focus,part,out", rp->part->name);
+   _edje_seat_emit(ed, efl_input_device_get(ev),
+                   "focus,part,out", rp->part->name);
 }
 
 static void
@@ -61,7 +69,7 @@ _edje_mouse_in_signal_cb(void *data, const Efl_Event *event)
    if (rp)
      {
         if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
-          _edje_emit(ed, "mouse,in", rp->part->name);
+            _edje_seat_emit(ed, ev->device, "mouse,in", rp->part->name);
 
         ev->event_flags |= rp->part->mask_flags;
      }
@@ -80,7 +88,7 @@ _edje_mouse_out_signal_cb(void *data, const Efl_Event *event)
    if (rp)
      {
         if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
-          _edje_emit(ed, "mouse,out", rp->part->name);
+          _edje_seat_emit(ed, ev->device, "mouse,out", rp->part->name);
 
         ev->event_flags |= rp->part->mask_flags;
      }
@@ -113,7 +121,7 @@ _edje_mouse_down_signal_cb(void *data, const Efl_Event *event)
           snprintf(buf, sizeof(buf), "mouse,down,%i,double", ev->button);
         else
           snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
-        _edje_emit(ed, buf, rp->part->name);
+        _edje_seat_emit(ed, ev->device, buf, rp->part->name);
      }
 
    if (rp->part->dragable.event_id >= 0)
@@ -122,7 +130,7 @@ _edje_mouse_down_signal_cb(void *data, const Efl_Event *event)
         if (!ignored)
           {
              snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
-             _edje_emit(ed, buf, rp->part->name);
+             _edje_seat_emit(ed, ev->device, buf, rp->part->name);
           }
      }
 
@@ -177,7 +185,7 @@ _edje_mouse_up_signal_cb(void *data, const Efl_Event *event)
    if ((!ev->event_flags) || (!ignored))
      {
         snprintf(buf, sizeof(buf), "mouse,up,%i", ev->button);
-        _edje_emit(ed, buf, rp->part->name);
+        _edje_seat_emit(ed, ev->device, buf, rp->part->name);
      }
 
    if (rp->part->dragable.event_id >= 0)
@@ -186,7 +194,7 @@ _edje_mouse_up_signal_cb(void *data, const Efl_Event *event)
         if (!ignored)
           {
              snprintf(buf, sizeof(buf), "mouse,up,%i", ev->button);
-             _edje_emit(ed, buf, rp->part->name);
+             _edje_seat_emit(ed, ev->device, buf, rp->part->name);
           }
      }
 
@@ -206,7 +214,8 @@ _edje_mouse_up_signal_cb(void *data, const Efl_Event *event)
                   rp->invalidate = EINA_TRUE;
 #endif
                   if (!ignored && rp->drag->started)
-                    _edje_emit(ed, "drag,stop", rp->part->name);
+                    _edje_seat_emit(ed, ev->device, "drag,stop",
+                                    rp->part->name);
                   rp->drag->started = EINA_FALSE;
                   _edje_recalc_do(ed);
                }
@@ -216,7 +225,7 @@ _edje_mouse_up_signal_cb(void *data, const Efl_Event *event)
    if ((rp->still_in) && (rp->clicked_button == ev->button) && (!ev->event_flags))
      {
         snprintf(buf, sizeof(buf), "mouse,clicked,%i", ev->button);
-        _edje_emit(ed, buf, rp->part->name);
+        _edje_seat_emit(ed, ev->device, buf, rp->part->name);
      }
    rp->clicked_button = 0;
    rp->still_in = EINA_FALSE;
@@ -249,7 +258,7 @@ _edje_mouse_move_signal_cb(void *data, const Efl_Event *event)
 
    _edje_ref(ed);
    if ((!ev->event_flags) || (!ignored))
-     _edje_emit(ed, "mouse,move", rp->part->name);
+     _edje_seat_emit(ed, ev->device, "mouse,move", rp->part->name);
 
    if (rp->still_in)
      {
@@ -264,7 +273,8 @@ _edje_mouse_move_signal_cb(void *data, const Efl_Event *event)
                  (ev->cur.x >= (x + w)) || (ev->cur.y >= (y + h)))
                {
                   if ((ev->pressed_buttons) && ((!ev->event_flags) || (!ignored)))
-                    _edje_emit(ed, "mouse,pressed,out", rp->part->name);
+                    _edje_seat_emit(ed, ev->device, "mouse,pressed,out",
+                                    rp->part->name);
 
                   rp->still_in = EINA_FALSE;
                }
@@ -281,7 +291,8 @@ _edje_mouse_move_signal_cb(void *data, const Efl_Event *event)
                  (ev->cur.x < (x + w)) && (ev->cur.y < (y + h)))
                {
                   if ((ev->pressed_buttons) && ((!ev->event_flags) || (!ignored)))
-                    _edje_emit(ed, "mouse,pressed,in", rp->part->name);
+                    _edje_seat_emit(ed, ev->device, "mouse,pressed,in",
+                                    rp->part->name);
 
                   rp->still_in = EINA_TRUE;
                }
@@ -316,8 +327,9 @@ _edje_mouse_move_signal_cb(void *data, const Efl_Event *event)
                   if (!ignored)
                     {
                        if (!rp->drag->started)
-                         _edje_emit(ed, "drag,start", rp->part->name);
-                       _edje_emit(ed, "drag", rp->part->name);
+                         _edje_seat_emit(ed, ev->device, "drag,start",
+                                         rp->part->name);
+                       _edje_seat_emit(ed, ev->device, "drag", rp->part->name);
                        rp->drag->started = EINA_TRUE;
                     }
                   ed->recalc_call = EINA_TRUE;
@@ -353,7 +365,7 @@ _edje_mouse_wheel_signal_cb(void *data, const Efl_Event *event)
              snprintf(buf, sizeof(buf), "mouse,wheel,%i,%i",
                       ev->wheel.dir == EFL_ORIENT_HORIZONTAL ? 1 : 0,
                       (ev->wheel.z < 0) ? (-1) : (1));
-             _edje_emit(ed, buf, rp->part->name);
+             _edje_seat_emit(ed, ev->device, buf, rp->part->name);
           }
 
         ev->event_flags |= rp->part->mask_flags;
