@@ -1150,6 +1150,7 @@ _efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, E
                  n = T(n).parent;
                  new_candidate = _request_move(obj, pd, direction, n);
                  efl_ui_focus_manager_focus(obj, new_candidate);
+                 candidate = new_candidate;
                }
              else
                {
@@ -1162,6 +1163,7 @@ _efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, E
                        //redirect does not have smth. but we do have.
                        efl_ui_focus_manager_focus(obj, new_candidate);
                     }
+                 candidate = new_candidate;
                }
 
           }
