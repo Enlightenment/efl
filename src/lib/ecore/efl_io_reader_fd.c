@@ -46,7 +46,7 @@ _efl_io_reader_fd_efl_io_reader_read(Eo *o, Efl_Io_Reader_Fd_Data *pd EINA_UNUSE
 
              rw_slice->len = 0;
              rw_slice->mem = NULL;
-             if (errno == EAGAIN) efl_io_reader_can_read_set(o, EINA_FALSE);
+             efl_io_reader_can_read_set(o, EINA_FALSE);
              return errno;
           }
      }
@@ -63,6 +63,7 @@ _efl_io_reader_fd_efl_io_reader_read(Eo *o, Efl_Io_Reader_Fd_Data *pd EINA_UNUSE
  error:
    rw_slice->len = 0;
    rw_slice->mem = NULL;
+   efl_io_reader_can_read_set(o, EINA_FALSE);
    return EINVAL;
 }
 

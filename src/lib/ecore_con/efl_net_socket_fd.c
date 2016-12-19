@@ -204,7 +204,7 @@ _efl_net_socket_fd_efl_io_reader_read(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNU
              rw_slice->len = 0;
              rw_slice->mem = NULL;
 
-             if (err == EAGAIN) efl_io_reader_can_read_set(o, EINA_FALSE);
+             efl_io_reader_can_read_set(o, EINA_FALSE);
              return err;
           }
      }
@@ -220,6 +220,7 @@ _efl_net_socket_fd_efl_io_reader_read(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNU
  error:
    rw_slice->len = 0;
    rw_slice->mem = NULL;
+   efl_io_reader_can_read_set(o, EINA_FALSE);
    return EINVAL;
 }
 
@@ -279,7 +280,7 @@ _efl_net_socket_fd_efl_io_writer_write(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
              if (remaining) *remaining = *ro_slice;
              ro_slice->len = 0;
              ro_slice->mem = NULL;
-             if (err == EAGAIN) efl_io_writer_can_write_set(o, EINA_FALSE);
+             efl_io_writer_can_write_set(o, EINA_FALSE);
              return err;
           }
      }
@@ -299,6 +300,7 @@ _efl_net_socket_fd_efl_io_writer_write(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
    if (remaining) *remaining = *ro_slice;
    ro_slice->len = 0;
    ro_slice->mem = NULL;
+   efl_io_writer_can_write_set(o, EINA_FALSE);
    return EINVAL;
 }
 

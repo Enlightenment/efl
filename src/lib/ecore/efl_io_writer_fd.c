@@ -47,7 +47,7 @@ _efl_io_writer_fd_efl_io_writer_write(Eo *o, Efl_Io_Writer_Fd_Data *pd EINA_UNUS
              if (remaining) *remaining = *ro_slice;
              ro_slice->len = 0;
              ro_slice->mem = NULL;
-             if (errno == EAGAIN) efl_io_writer_can_write_set(o, EINA_FALSE);
+             efl_io_writer_can_write_set(o, EINA_FALSE);
              return errno;
           }
      }
@@ -66,6 +66,7 @@ _efl_io_writer_fd_efl_io_writer_write(Eo *o, Efl_Io_Writer_Fd_Data *pd EINA_UNUS
    if (remaining) *remaining = *ro_slice;
    ro_slice->len = 0;
    ro_slice->mem = NULL;
+   efl_io_writer_can_write_set(o, EINA_FALSE);
    return EINVAL;
 
 }

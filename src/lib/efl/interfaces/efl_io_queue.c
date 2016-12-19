@@ -300,6 +300,8 @@ _efl_io_queue_efl_io_reader_read(Eo *o, Efl_Io_Queue_Data *pd, Eina_Rw_Slice *rw
 
  error:
    rw_slice->len = 0;
+   rw_slice->mem = NULL;
+   efl_io_reader_can_read_set(o, EINA_FALSE);
    return EINVAL;
 }
 
@@ -424,6 +426,8 @@ _efl_io_queue_efl_io_writer_write(Eo *o, Efl_Io_Queue_Data *pd, Eina_Slice *slic
  error:
    if (remaining) *remaining = *slice;
    slice->len = 0;
+   slice->mem = NULL;
+   efl_io_writer_can_write_set(o, EINA_FALSE);
    return err;
 }
 

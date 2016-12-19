@@ -170,7 +170,7 @@ _efl_net_server_udp_client_efl_io_reader_read(Eo *o, Efl_Net_Server_Udp_Client_D
 }
 
 EOLIAN static Eina_Error
-_efl_net_server_udp_client_efl_io_writer_write(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd, Eina_Slice *ro_slice, Eina_Slice *remaining)
+_efl_net_server_udp_client_efl_io_writer_write(Eo *o, Efl_Net_Server_Udp_Client_Data *pd, Eina_Slice *ro_slice, Eina_Slice *remaining)
 {
    ssize_t r;
 
@@ -189,6 +189,7 @@ _efl_net_server_udp_client_efl_io_writer_write(Eo *o EINA_UNUSED, Efl_Net_Server
              if (remaining) *remaining = *ro_slice;
              ro_slice->len = 0;
              ro_slice->mem = NULL;
+             efl_io_writer_can_write_set(o, EINA_FALSE);
              return err;
           }
      }
@@ -207,6 +208,7 @@ _efl_net_server_udp_client_efl_io_writer_write(Eo *o EINA_UNUSED, Efl_Net_Server
    if (remaining) *remaining = *ro_slice;
    ro_slice->len = 0;
    ro_slice->mem = NULL;
+   efl_io_writer_can_write_set(o, EINA_FALSE);
    return EINVAL;
 }
 
