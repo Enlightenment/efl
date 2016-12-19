@@ -136,7 +136,7 @@ node_new(Efl_Ui_Focus_Object *focusable, Efl_Ui_Focus_Manager *manager)
 }
 
 static Node*
-node_get(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *focusable)
+node_get(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *focusable)
 {
    Node *ret;
 
@@ -144,7 +144,7 @@ node_get(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *focusable)
 
    if (ret) return ret;
 
-   ERR("Focusable %p not registered in manager", focusable);
+   ERR("Focusable %p (%s) not registered in manager %p", focusable, efl_class_name_get(focusable), obj);
 
    return NULL;
 }
@@ -383,16 +383,16 @@ _debug_node(Node *node)
 #endif
 
 static void
-convert_border_set(Efl_Ui_Focus_Manager_Data *pd, Node *node, Eina_List *focusable_list, Efl_Ui_Focus_Direction dir)
+convert_border_set(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Data *pd, Node *node, Eina_List *focusable_list, Efl_Ui_Focus_Direction dir)
 {
    Eina_List *partners = NULL;
-   Efl_Ui_Focus_Object *obj;
+   Efl_Ui_Focus_Object *fobj;
 
-   EINA_LIST_FREE(focusable_list, obj)
+   EINA_LIST_FREE(focusable_list, fobj)
      {
         Node *entry;
 
-        entry = node_get(pd, obj);
+        entry = node_get(obj, pd, fobj);
         if (!entry)
           {
              CRI("Found a obj in graph without node-entry!");
@@ -413,10 +413,10 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Dat
    _calculate_node(pd, node->focusable, DIMENSION_X, &x_partners_pos, &x_partners_neg);
    _calculate_node(pd, node->focusable, DIMENSION_Y, &y_partners_pos, &y_partners_neg);
 
-   convert_border_set(pd, node, x_partners_pos, EFL_UI_FOCUS_DIRECTION_RIGHT);
-   convert_border_set(pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT);
-   convert_border_set(pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP);
-   convert_border_set(pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN);
+   convert_border_set(obj, pd, node, x_partners_pos, EFL_UI_FOCUS_DIRECTION_RIGHT);
+   convert_border_set(obj, pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT);
+   convert_border_set(obj, pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP);
+   convert_border_set(obj, pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN);
 
 #ifdef CALC_DEBUG
    _debug_node(node);
@@ -471,7 +471,7 @@ _node_new_geometery_cb(void *data, const Efl_Event *event)
    Node *node;
    FOCUS_DATA(data)
 
-   node = node_get(pd, event->object);
+   node = node_get(data, pd, event->object);
 
    dirty_add(data, pd, node);
 
@@ -516,7 +516,7 @@ _efl_ui_focus_manager_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, E
    EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, EINA_FALSE);
 
-   pnode = node_get(pd, parent);
+   pnode = node_get(obj, pd, parent);
    if (!pnode) return EINA_FALSE;
 
    node = _register(obj, pd, child, pnode);
@@ -538,7 +538,7 @@ _efl_ui_focus_manager_register(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Fo
    EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, EINA_FALSE);
 
-   pnode = node_get(pd, parent);
+   pnode = node_get(obj, pd, parent);
    if (!pnode) return EINA_FALSE;
 
    node = _register(obj, pd, child, pnode);
@@ -557,10 +557,9 @@ _efl_ui_focus_manager_register(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Fo
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_manager_update_redirect(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Manager *redirect)
+_efl_ui_focus_manager_update_redirect(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Manager *redirect)
 {
-   Node *node = node_get(pd, child);
-
+   Node *node = node_get(obj, pd, child);
    if (!node) return EINA_FALSE;
 
    node->redirect_manager = redirect;
@@ -577,8 +576,8 @@ _efl_ui_focus_manager_update_parent(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Da
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent_obj, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
 
-   node = node_get(pd, child);
-   parent = node_get(pd, parent_obj);
+   node = node_get(obj, pd, child);
+   parent = node_get(obj, pd, parent_obj);
 
    if (!node || !parent) return EINA_FALSE;
 
@@ -623,7 +622,7 @@ _efl_ui_focus_manager_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
 {
    Node *pnode;
 
-   pnode = node_get(pd, parent);
+   pnode = node_get(obj, pd, parent);
 
    if (!pnode)
      return EINA_FALSE;
@@ -644,7 +643,7 @@ _efl_ui_focus_manager_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data 
 {
    Node *node;
 
-   node = node_get(pd, child);
+   node = eina_hash_find(pd->node_hash, &child);
 
    if (!node) return;
 
@@ -1190,9 +1189,9 @@ EOLIAN static Efl_Ui_Focus_Relations*
 _efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *child)
 {
    Efl_Ui_Focus_Relations *res;
-   Node *n;
+   Node *n, *tmp;
 
-   n = node_get(pd, child);
+   n = node_get(obj, pd, child);
 
    if (!n) return NULL;
 
