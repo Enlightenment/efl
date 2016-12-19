@@ -516,6 +516,11 @@ _efl_ui_focus_manager_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, E
    EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, EINA_FALSE);
 
+   if (redirect)
+     EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(redirect, MY_CLASS), EINA_FALSE);
+
+   F_DBG("Manager: %p register %p %p %p", obj, child, parent, redirect);
+
    pnode = node_get(obj, pd, parent);
    if (!pnode) return EINA_FALSE;
 
@@ -537,6 +542,11 @@ _efl_ui_focus_manager_register(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Fo
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, EINA_FALSE);
+
+   if (redirect)
+     EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(redirect, MY_CLASS), EINA_FALSE);
+
+   F_DBG("Manager: %p register %p %p %p", obj, child, parent, redirect);
 
    pnode = node_get(obj, pd, parent);
    if (!pnode) return EINA_FALSE;
@@ -561,6 +571,9 @@ _efl_ui_focus_manager_update_redirect(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Ef
 {
    Node *node = node_get(obj, pd, child);
    if (!node) return EINA_FALSE;
+
+   if (redirect)
+     EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(redirect, MY_CLASS), EINA_FALSE);
 
    node->redirect_manager = redirect;
 
@@ -646,6 +659,9 @@ _efl_ui_focus_manager_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data 
    node = eina_hash_find(pd->node_hash, &child);
 
    if (!node) return;
+
+   F_DBG("Manager: %p unregister %p", obj, child);
+
 
    //remove the object from the stack if it hasnt dont that until now
    //after this its not at the top anymore
