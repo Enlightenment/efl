@@ -43,13 +43,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(output_cbs,
 static void
 _output_buffer_reallocated(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Eina_Slice slice;
-
-   if (!efl_io_buffer_slice_get(event->object, &slice))
-     {
-        fprintf(stderr, "ERROR: could not get buffer slice\n");
-        return;
-     }
+   Eina_Slice slice = efl_io_buffer_slice_get(event->object);
 
    fprintf(stderr, "INFO: output buffer reallocated=" EINA_SLICE_FMT "\n",
            EINA_SLICE_PRINT(slice));
@@ -196,17 +190,13 @@ _copier_done(void *data EINA_UNUSED, const Efl_Event *event)
          *   an Eina_Binbuf, you own the ownership and must call
          *   eina_binbuf_free() to release it.
          */
-        Eina_Slice slice;
-
-        if (!efl_io_buffer_slice_get(destination, &slice))
-          fprintf(stderr, "ERROR: could not get buffer slice\n");
-        else
-          fprintf(stderr,
-                  "INFO: :memory: resulted in slice=" EINA_SLICE_FMT ":"
-                  "\n--BEGIN DATA--\n"
-                  EINA_SLICE_STR_FMT
-                  "\n--END DATA--\n",
-                  EINA_SLICE_PRINT(slice), EINA_SLICE_STR_PRINT(slice));
+        Eina_Slice slice = efl_io_buffer_slice_get(destination);
+        fprintf(stderr,
+                "INFO: :memory: resulted in slice=" EINA_SLICE_FMT ":"
+                "\n--BEGIN DATA--\n"
+                EINA_SLICE_STR_FMT
+                "\n--END DATA--\n",
+                EINA_SLICE_PRINT(slice), EINA_SLICE_STR_PRINT(slice));
      }
 
    fprintf(stderr, "INFO: done\n");

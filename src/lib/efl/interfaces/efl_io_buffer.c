@@ -107,16 +107,18 @@ _efl_io_buffer_limit_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
    return pd->limit;
 }
 
-EOLIAN static Eina_Bool
-_efl_io_buffer_slice_get(Eo *o, Efl_Io_Buffer_Data *pd, Eina_Slice *slice)
+EOLIAN static Eina_Slice
+_efl_io_buffer_slice_get(Eo *o, Efl_Io_Buffer_Data *pd)
 {
-   if (slice)
+   Eina_Slice slice = { };
+
+   if (!efl_io_closer_closed_get(o))
      {
-        slice->mem = pd->bytes;
-        slice->len = efl_io_sizer_size_get(o);
+        slice.mem = pd->bytes;
+        slice.len = efl_io_sizer_size_get(o);
      }
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EINA_FALSE);
-   return EINA_TRUE;
+
+   return slice;
 }
 
 EOLIAN static Eina_Binbuf *

@@ -142,19 +142,16 @@ _send_copier_done(void *data, const Efl_Event *event)
    Eo *buffer = efl_io_copier_source_get(copier);
    Eo *client = efl_io_copier_destination_get(copier);
    Send_Recv_Data *d = data;
-   Eina_Slice slice;
+   Eina_Slice slice = efl_io_buffer_slice_get(buffer);
 
    /* show what we sent, just for debug */
-   if (!efl_io_buffer_slice_get(buffer, &slice))
-     fprintf(stderr, "ERROR: could not get buffer slice\n");
-   else
-     fprintf(stderr,
-             "INFO: sent to %s %zd bytes:"
-             "\n--BEGIN SENT DATA--\n"
-             EINA_SLICE_STR_FMT
-             "\n--END SENT DATA--\n",
-             efl_net_socket_address_remote_get(client),
-             slice.len, EINA_SLICE_STR_PRINT(slice));
+   fprintf(stderr,
+           "INFO: sent to %s %zd bytes:"
+           "\n--BEGIN SENT DATA--\n"
+           EINA_SLICE_STR_FMT
+           "\n--END SENT DATA--\n",
+           efl_net_socket_address_remote_get(client),
+           slice.len, EINA_SLICE_STR_PRINT(slice));
 
    if (d->recv_copier)
      {
@@ -175,7 +172,7 @@ _send_copier_error(void *data, const Efl_Event *event)
    const Eina_Error *perr = event->info;
    Send_Recv_Data *d = data;
    uint64_t offset;
-   Eina_Slice slice;
+   Eina_Slice slice, remaining;
 
    if (*perr == ETIMEDOUT)
      {
@@ -188,30 +185,26 @@ _send_copier_error(void *data, const Efl_Event *event)
    retval = EXIT_FAILURE;
 
    offset = efl_io_buffer_position_read_get(buffer);
-   if (!efl_io_buffer_slice_get(buffer, &slice))
-     fprintf(stderr, "ERROR: could not get buffer slice\n");
-   else
-     {
-        Eina_Slice remaining = slice;
+   slice = efl_io_buffer_slice_get(buffer);
 
-        remaining.bytes += offset;
-        remaining.len -= offset;
+   remaining = slice;
+   remaining.bytes += offset;
+   remaining.len -= offset;
 
-        slice.len = offset;
+   slice.len = offset;
 
-        fprintf(stderr,
-                "ERROR: sent to %s only %zd bytes:"
-                "\n--BEGIN SENT DATA--\n"
-                EINA_SLICE_STR_FMT
-                "\n--END SENT DATA--\n"
-                "Remaining %zd bytes:"
-                "\n--BEGIN REMAINING DATA--\n"
-                EINA_SLICE_STR_FMT
-                "\n--END REMAINING DATA--\n",
-                efl_net_socket_address_remote_get(client),
-                slice.len, EINA_SLICE_STR_PRINT(slice),
-                remaining.len, EINA_SLICE_STR_PRINT(remaining));
-     }
+   fprintf(stderr,
+           "ERROR: sent to %s only %zd bytes:"
+           "\n--BEGIN SENT DATA--\n"
+           EINA_SLICE_STR_FMT
+           "\n--END SENT DATA--\n"
+           "Remaining %zd bytes:"
+           "\n--BEGIN REMAINING DATA--\n"
+           EINA_SLICE_STR_FMT
+           "\n--END REMAINING DATA--\n",
+           efl_net_socket_address_remote_get(client),
+           slice.len, EINA_SLICE_STR_PRINT(slice),
+           remaining.len, EINA_SLICE_STR_PRINT(remaining));
 
    fprintf(stderr, "ERROR: send copier %p failed %d '%s', check if should close..\n",
            copier, *perr, eina_error_msg_get(*perr));
@@ -229,7 +222,7 @@ _recv_copier_done(void *data, const Efl_Event *event)
    Eo *client = efl_io_copier_source_get(copier);
    Eo *buffer = efl_io_copier_destination_get(copier);
    Send_Recv_Data *d = data;
-   Eina_Slice slice;
+   Eina_Slice slice = efl_io_buffer_slice_get(buffer);
 
    /* show case, you could use a copier to Efl_Io_Stdout, a
     * file... and get progressive processing.
@@ -240,16 +233,13 @@ _recv_copier_done(void *data, const Efl_Event *event)
     * You could also steal the binbuf with
     * efl_io_buffer_binbuf_steal()
     */
-   if (!efl_io_buffer_slice_get(buffer, &slice))
-     fprintf(stderr, "ERROR: could not get buffer slice\n");
-   else
-     fprintf(stderr,
-             "INFO: recv from %s %zd bytes:"
-             "\n--BEGIN RECV DATA--\n"
-             EINA_SLICE_STR_FMT "\n"
-             "\n--END RECV DATA--\n",
-             efl_net_socket_address_remote_get(client),
-             slice.len, EINA_SLICE_STR_PRINT(slice));
+   fprintf(stderr,
+           "INFO: recv from %s %zd bytes:"
+           "\n--BEGIN RECV DATA--\n"
+           EINA_SLICE_STR_FMT "\n"
+           "\n--END RECV DATA--\n",
+           efl_net_socket_address_remote_get(client),
+           slice.len, EINA_SLICE_STR_PRINT(slice));
 
    fprintf(stderr, "INFO: receive copier done, check if should close %p\n", copier);
    _send_recv_done(d, copier);
@@ -275,16 +265,14 @@ _recv_copier_error(void *data, const Efl_Event *event)
 
    retval = EXIT_FAILURE;
 
-   if (!efl_io_buffer_slice_get(buffer, &slice))
-     fprintf(stderr, "ERROR: could not get buffer slice\n");
-   else
-     fprintf(stderr,
-             "ERROR: recv to %s only %zd bytes:"
-             "\n--BEGIN RECV DATA--\n"
-             EINA_SLICE_STR_FMT "\n"
-             "\n--END RECV DATA--\n",
-             efl_net_socket_address_remote_get(client),
-             slice.len, EINA_SLICE_STR_PRINT(slice));
+   slice = efl_io_buffer_slice_get(buffer);
+   fprintf(stderr,
+           "ERROR: recv to %s only %zd bytes:"
+           "\n--BEGIN RECV DATA--\n"
+           EINA_SLICE_STR_FMT "\n"
+           "\n--END RECV DATA--\n",
+           efl_net_socket_address_remote_get(client),
+           slice.len, EINA_SLICE_STR_PRINT(slice));
 
    fprintf(stderr, "ERROR: receive copier %p failed %d '%s', check if should close..\n",
            copier, *perr, eina_error_msg_get(*perr));

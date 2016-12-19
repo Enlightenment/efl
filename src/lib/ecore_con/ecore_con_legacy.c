@@ -530,7 +530,7 @@ _ecore_con_client_socket_slice_changed(void *data, const Efl_Event *event EINA_U
    if (cl->delete_me) return;
    if (cl->ssl.upgrading) return;
 
-   if (!efl_io_buffered_stream_slice_get(cl->socket, &ro_slice)) return;
+   ro_slice = efl_io_buffered_stream_slice_get(cl->socket);
    if (ro_slice.len == 0) return;
 
    rw_slice = eina_slice_dup(ro_slice);
@@ -1211,7 +1211,7 @@ _ecore_con_server_dialer_slice_changed(void *data, const Efl_Event *event EINA_U
    if (svr->delete_me) return;
    if (svr->ssl.upgrading) return;
 
-   if (!efl_io_buffered_stream_slice_get(svr->dialer, &ro_slice)) return;
+   ro_slice = efl_io_buffered_stream_slice_get(svr->dialer);
    if (ro_slice.len == 0) return;
 
    rw_slice = eina_slice_dup(ro_slice);

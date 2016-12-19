@@ -39,9 +39,7 @@ _command_next(void)
 static void
 _receiver_data(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Eina_Slice slice;
-
-   if (!efl_io_queue_slice_get(event->object, &slice)) return;
+   Eina_Slice slice = efl_io_queue_slice_get(event->object);
 
    /* this will happen when we're called when we issue our own
     * efl_io_queue_clear() below.

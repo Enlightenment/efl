@@ -533,19 +533,15 @@ _efl_io_buffered_stream_progress_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_D
    if (pw) *pw = w;
 }
 
-EOLIAN static Eina_Bool
-_efl_io_buffered_stream_slice_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd, Eina_Slice *slice)
+EOLIAN static Eina_Slice
+_efl_io_buffered_stream_slice_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd)
 {
-   if (!pd->incoming)
-     {
-        if (slice)
-          {
-             slice->mem = NULL;
-             slice->len = 0;
-          }
-        return EINA_FALSE;
-     }
-   return efl_io_queue_slice_get(pd->incoming, slice);
+   Eina_Slice slice = { };
+
+   if (pd->incoming)
+     slice = efl_io_queue_slice_get(pd->incoming);
+
+   return slice;
 }
 
 EOLIAN static void

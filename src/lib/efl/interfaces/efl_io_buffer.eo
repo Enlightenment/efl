@@ -6,7 +6,7 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
       use different offsets/position internally.
 
       One can get temporary direct access to internal buffer with
-      @.slice_get or steal the buffer with @.binbuf_steal.
+      @.slice or steal the buffer with @.binbuf_steal.
 
       A fixed sized buffer can be implemented by setting @.limit
       followed by @.preallocate
@@ -78,17 +78,17 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
             }
         }
 
-        slice_get { // TODO: property and return of Eina.Slice (not pointer)
+        @property slice {
             [[Get a temporary access to buffer's internal memory.
 
               The memory pointed by slice may be changed by other
               methods of this class. The event "reallocated" will be
               called in those situations.
             ]]
-            params {
-                @out slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Sizer.resize are called. It is the full slice, not a partial one starting at current position.]]
+            get { }
+            values {
+                slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Sizer.resize are called. It is the full slice, not a partial one starting at current position.]]
             }
-            return: bool (false); [[$true on success, $false otherwise]]
         }
 
         binbuf_steal {
@@ -103,7 +103,7 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
     events {
        position_read,changed; [[Notifies @.position_read changed]]
        position_write,changed; [[Notifies @.position_write changed]]
-       reallocated; [[Notifies the internal buffer was reallocated, thus whatever was returned by @.slice_get becomes invalid]]
+       reallocated; [[Notifies the internal buffer was reallocated, thus whatever was returned by @.slice becomes invalid]]
     }
 
     implements {

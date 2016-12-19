@@ -200,16 +200,18 @@ _efl_io_queue_usage_get(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
    return pd->position_write - pd->position_read;
 }
 
-EOLIAN static Eina_Bool
-_efl_io_queue_slice_get(Eo *o, Efl_Io_Queue_Data *pd, Eina_Slice *slice)
+EOLIAN static Eina_Slice
+_efl_io_queue_slice_get(Eo *o, Efl_Io_Queue_Data *pd)
 {
-   if (slice)
+   Eina_Slice slice = { };
+
+   if (!efl_io_closer_closed_get(o))
      {
-        slice->mem = pd->bytes + pd->position_read;
-        slice->len = efl_io_queue_usage_get(o);
+        slice.mem = pd->bytes + pd->position_read;
+        slice.len = efl_io_queue_usage_get(o);
      }
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EINA_FALSE);
-   return EINA_TRUE;
+
+   return slice;
 }
 
 EOLIAN static void

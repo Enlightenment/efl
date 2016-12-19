@@ -24,9 +24,7 @@ received_data(Eo *sock, void (*handle)(void *data, const char op[static 4], cons
    Eina_Slice slice, payload;
    Efl_Debug_Message_Header msgheader;
 
-   if (!efl_io_buffered_stream_slice_get(sock, &slice))
-     return EINA_TRUE;
-
+   slice = efl_io_buffered_stream_slice_get(sock);
    if (slice.len < sizeof(msgheader))
      return EINA_TRUE;
 

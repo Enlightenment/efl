@@ -45,17 +45,17 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
             }
         }
 
-        slice_get { // TODO: property and return of Eina.Slice (not pointer)
+        @property slice {
             [[Get a temporary access to queue's internal read memory.
 
               The memory pointed by slice may be changed by other
               methods of this class. The event "slice,changed" will be
               called in those situations.
             ]]
-            params {
-                @out slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full slice available for reading.]]
+            get { }
+            values {
+                slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full slice available for reading.]]
             }
-            return: bool (false); [[$true on success, $false otherwise]]
         }
 
         discard {
@@ -65,12 +65,12 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
               given amount of bytes, without executing the actual
               copy.
 
-              It's often paired with @.slice_get, if users read the
+              It's often paired with @.slice, if users read the
               information from the slice and once they're done, that
               data must be discarded.
 
               As an example, some protocols provide messages with a
-              "size" header, then @.slice_get is used to peek into the
+              "size" header, then @.slice is used to peek into the
               available memory to see if there is a "size" and if the
               rest of the slice is the full payload, in this case the
               slice may be handled to some processing function. When
@@ -102,7 +102,7 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
     }
 
     events {
-        slice,changed; [[The read-slice returned by @.slice_get may have changed.]]
+        slice,changed; [[The read-slice returned by @.slice may have changed.]]
     }
 
     implements {

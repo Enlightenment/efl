@@ -19,13 +19,13 @@ class Efl.Io.Buffered_Stream (Efl.Loop_User, Efl.Io.Reader, Efl.Io.Writer, Efl.I
 
       Reading is also much simpler since incoming data is kept in an
       @Efl.Io.Queue, thus its size can be queried with @.pending_read
-      and read with @Efl.Io.Reader.read or peeked with @.slice_get,
+      and read with @Efl.Io.Reader.read or peeked with @.slice,
       then discarded with @.discard or @.clear.
 
       Then when waiting for a complete message, just peek at its
       contents, if not complete do nothing and wait, if complete then
       either @Efl.Io.Reader.read to get a copy or manipulate a
-      read-only reference from @.slice_get and then @.discard
+      read-only reference from @.slice and then @.discard
 
       The actual I/O is set with the constructor method @.inner_io.set
       and can be retrieved with @.inner_io.get, which should be used
@@ -155,17 +155,17 @@ class Efl.Io.Buffered_Stream (Efl.Loop_User, Efl.Io.Reader, Efl.Io.Writer, Efl.I
             }
         }
 
-        slice_get { // TODO: property and return of Eina.Slice (not pointer)
+        @property slice {
             [[Get a temporary access to input queue's internal read memory.
 
               The memory pointed by slice may be changed by other
               methods of this class. The event "slice,changed" will be
               called in those situations.
             ]]
-            params {
-                @out slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full slice available for reading.]]
+            get { }
+            values {
+                slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full slice available for reading.]]
             }
-            return: bool (false); [[$true on success, $false otherwise]]
         }
 
         discard {
@@ -175,12 +175,12 @@ class Efl.Io.Buffered_Stream (Efl.Loop_User, Efl.Io.Reader, Efl.Io.Writer, Efl.I
               given amount of bytes, without executing the actual
               copy.
 
-              It's often paired with @.slice_get, if users read the
+              It's often paired with @.slice, if users read the
               information from the slice and once they're done, that
               data must be discarded.
 
               As an example, some protocols provide messages with a
-              "size" header, then @.slice_get is used to peek into the
+              "size" header, then @.slice is used to peek into the
               available memory to see if there is a "size" and if the
               rest of the slice is the full payload, in this case the
               slice may be handled to some processing function. When
@@ -241,8 +241,8 @@ class Efl.Io.Buffered_Stream (Efl.Loop_User, Efl.Io.Reader, Efl.Io.Writer, Efl.I
         finished; [[Both read and write are finished.]]
         error: Eina.Error; [[An error happened and the I/O stopped]]
         progress; [[Property @.progress changed]]
-        slice,changed; [[The read-slice returned by @.slice_get may have changed.]]
-        line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified. Note that the line slice may not be inside @.slice_get, don't assume that!]]
+        slice,changed; [[The read-slice returned by @.slice may have changed.]]
+        line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified. Note that the line slice may not be inside @.slice, don't assume that!]]
     }
 
     implements {

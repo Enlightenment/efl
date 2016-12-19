@@ -37,22 +37,17 @@ _client_eos(void *data EINA_UNUSED, const Efl_Event *event)
 static void
 _client_read_finished(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Eina_Slice s;
-
    /* on _error() we close it, then do not read as it has nothing */
    if (efl_io_closer_closed_get(event->object))
      return;
 
    if (echo) return;
 
-   if (efl_io_buffered_stream_slice_get(event->object, &s))
-     {
-        fprintf(stderr,
-                "-- BEGIN RECEIVED DATA --\n"
-                EINA_SLICE_STR_FMT
-                "-- END RECEIVED DATA--\n",
-                EINA_SLICE_STR_PRINT(s));
-     }
+   fprintf(stderr,
+           "-- BEGIN RECEIVED DATA --\n"
+           EINA_SLICE_STR_FMT
+           "-- END RECEIVED DATA--\n",
+           EINA_SLICE_STR_PRINT(efl_io_buffered_stream_slice_get(event->object)));
 }
 
 static void

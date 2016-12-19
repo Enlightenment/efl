@@ -20,14 +20,14 @@ class Efl.Net.Dialer.Simple (Efl.Net.Socket.Simple, Efl.Net.Dialer) {
       @Efl.Io.Queue, thus its size can be queried with
       @Efl.Io.Buffered_Stream.pending_read and read with
       @Efl.Io.Reader.read or peeked with
-      @Efl.Io.Buffered_Stream.slice_get, then discarded with
+      @Efl.Io.Buffered_Stream.slice, then discarded with
       @Efl.Io.Buffered_Stream.discard or
       @Efl.Io.Buffered_Stream.clear.
 
       Then when waiting for a complete message, just peek at its
       contents, if not complete do nothing, if complete then either
       @Efl.Io.Reader.read to get a copy or manipulate a read-only
-      reference from @Efl.Io.Buffered_Stream.slice_get and then
+      reference from @Efl.Io.Buffered_Stream.slice and then
       @Efl.Io.Buffered_Stream.discard
 
       The actual dialer is created using the class given as the

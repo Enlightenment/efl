@@ -70,11 +70,7 @@ _on_data(void *data, const Efl_Event *event)
    Eo *dialer = event->object;
    Eina_Slice slice;
 
-   if (!efl_io_buffered_stream_slice_get(dialer, &slice))
-     {
-        fprintf(stderr, "ERROR: could not get buffered stream slice\n");
-        goto error;
-     }
+   slice = efl_io_buffered_stream_slice_get(dialer);
    if (slice.len == 0) return;
 
    if (eet_connection_received(ec, slice.mem, slice.len) != 0)
