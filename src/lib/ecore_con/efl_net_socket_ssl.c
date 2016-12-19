@@ -162,10 +162,7 @@ efl_net_socket_ssl_sock_can_read_changed(void *data, const Efl_Event *event EINA
    efl_ref(o); /* we're emitting callbacks then continuing the workflow */
 
    if (!efl_io_reader_can_read_get(pd->sock))
-     {
-        // TODO: stop jobs?
-        goto end;
-     }
+     goto end;
 
    if (pd->did_handshake)
      efl_io_reader_can_read_set(o, EINA_TRUE);
@@ -185,10 +182,7 @@ efl_net_socket_ssl_sock_can_write_changed(void *data, const Efl_Event *event EIN
    efl_ref(o); /* we're emitting callbacks then continuing the workflow */
 
    if (!efl_io_writer_can_write_get(pd->sock))
-     {
-        // TODO: stop jobs?
-        goto end;
-     }
+     goto end;
 
    if (pd->did_handshake)
      efl_io_writer_can_write_set(o, EINA_TRUE);
