@@ -233,6 +233,7 @@ _logind_control_take(Elput_Manager *em)
    if (eldbus_message_error_get(reply, &errname, &errmsg))
      {
         ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        eldbus_message_unref(reply);
         return EINA_FALSE;
      }
 
