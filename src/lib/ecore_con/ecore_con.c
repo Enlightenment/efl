@@ -529,7 +529,7 @@ efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina
                {
                   x = getaddrinfo(host, port, &hints, &results);
                }
-             while ((r == EAI_AGAIN) || ((r == EAI_SYSTEM) && (errno == EINTR)));
+             while ((x == EAI_AGAIN) || ((x == EAI_SYSTEM) && (errno == EINTR)));
 
              if (x != 0)
                {
