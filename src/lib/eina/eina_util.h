@@ -19,6 +19,8 @@
 #ifndef EINA_UTIL_H_
 #define EINA_UTIL_H_
 
+#include <float.h>
+
 /**
  * @addtogroup Eina_Tools_Group Tools
  *
@@ -46,6 +48,24 @@ EAPI const char *eina_environment_home_get(void);
  * @since 1.15
  */
 EAPI const char *eina_environment_tmp_get(void);
+
+/**
+ * @brief Safe comparison of float
+ * @param a First member to compar
+ * @param b Second member to compar
+ *
+ * @return @c true if two floats match
+ */
+#define EINA_FLT_CMP(a, b) (fabsf((float)a - (float)b) <= FLT_EPSILON)
+
+/**
+ * @brief Safe comparison of double
+ * @param a First member to compar
+ * @param b Second member to compar
+ *
+ * @return @c true if two double match
+ */
+#define EINA_DBL_CMP(a, b) (fabs((double)a - (double)b) <= DBL_EPSILON)
 
 /**
  * @}
