@@ -12,7 +12,7 @@ static Eina_List *resolving = NULL;
 static void
 _print_ip_addr_info(const Eo *o)
 {
-   const Eina_Slice *addr;
+   Eina_Slice addr;
    const struct sockaddr *sa;
    char buf[INET6_ADDRSTRLEN] = "?";
    uint16_t port;
@@ -23,9 +23,9 @@ _print_ip_addr_info(const Eo *o)
    printf("INFO:   - port: %hu\n", efl_net_ip_address_port_get(o));
 
    addr = efl_net_ip_address_get(o);
-   printf("INFO:   - address %zd bytes:", addr->len);
-   for (i = 0; i < addr->len; i++)
-     printf(" %#hhx", addr->bytes[i]);
+   printf("INFO:   - address %zd bytes:", addr.len);
+   for (i = 0; i < addr.len; i++)
+     printf(" %#hhx", addr.bytes[i]);
    putchar('\n');
 
    sa = efl_net_ip_address_sockaddr_get(o);

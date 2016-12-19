@@ -189,10 +189,11 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
             [[If there is a line delimiter, the reads will buffer/queue up to the line delimiter before calling @Efl.Io.Writer.write on the @.destination and the event line is emitted with current line. The line may include the delimiter, unless it's end-of-stream on @.source or @.buffer_limit was reached.]]
             get { }
             set {
-               [[Change line delimiter to use. If NULL or empty, no delimiter is to be used]]
+               [[Change line delimiter to use. If empty, no delimiter is to be used]]
             }
             values {
-                slice: ptr(const(Eina.Slice)); [[The contents may contain \0 and will be copied]]
+                // TODO: eolian generates wrong type for getter with const(Eina.Slice)
+                slice: Eina.Slice; [[The contents may contain \0 and will be copied]]
             }
         }
 

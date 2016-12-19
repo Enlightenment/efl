@@ -268,7 +268,7 @@ static void
 _ipv4_check(Eo *o, const struct sockaddr_in *addr)
 {
    Eina_Slice slice = { .mem = &addr->sin_addr, .len = sizeof(addr->sin_addr) };
-   const Eina_Slice *rs;
+   Eina_Slice rs;
    char buf[INET_ADDRSTRLEN + sizeof(":65536")] = "";
 
    ck_assert_ptr_ne(o, NULL);
@@ -277,8 +277,7 @@ _ipv4_check(Eo *o, const struct sockaddr_in *addr)
    ck_assert_int_eq(efl_net_ip_address_port_get(o), ntohs(addr->sin_port));
 
    rs = efl_net_ip_address_get(o);
-   ck_assert_ptr_ne(rs, NULL);
-   ck_assert_int_eq(eina_slice_compare(*rs, slice), 0);
+   ck_assert_int_eq(eina_slice_compare(rs, slice), 0);
 
    inet_ntop(AF_INET, slice.mem, buf, INET_ADDRSTRLEN);
 
@@ -306,7 +305,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_ok)
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin_port)),
-               efl_net_ip_address_set(efl_added, &slice));
+               efl_net_ip_address_set(efl_added, slice));
    _ipv4_check(o, &addr);
    efl_del(o);
 
@@ -315,7 +314,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_ok)
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin_port)),
-               efl_net_ip_address_set(efl_added, &slice));
+               efl_net_ip_address_set(efl_added, slice));
    _ipv4_check(o, &addr);
    efl_del(o);
 
@@ -323,7 +322,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_ok)
    addr.sin_addr.s_addr = htonl(0x12345678);
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET),
-               efl_net_ip_address_set(efl_added, &slice));
+               efl_net_ip_address_set(efl_added, slice));
    _ipv4_check(o, &addr);
    efl_del(o);
 
@@ -356,7 +355,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_fail)
 
    TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: pd->addr.sa_family == 0 is true");
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
-               efl_net_ip_address_set(efl_added, &wrong_slice));
+               efl_net_ip_address_set(efl_added, wrong_slice));
    ck_assert_ptr_eq(o, NULL);
    TRAP_ERRORS_FINISH(2);
 
@@ -369,14 +368,14 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_fail)
    TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: pd->addr.sa_family == 0 is true");
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_port_set(efl_added, 1234),
-               efl_net_ip_address_set(efl_added, &wrong_slice));
+               efl_net_ip_address_set(efl_added, wrong_slice));
    ck_assert_ptr_eq(o, NULL);
    TRAP_ERRORS_FINISH(3);
 
-   TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: rw_slice.len != address->len is true");
+   TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: rw_slice.len != address.len is true");
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET),
-               efl_net_ip_address_set(efl_added, &wrong_slice));
+               efl_net_ip_address_set(efl_added, wrong_slice));
    _ipv4_check(o, &addr);
    efl_del(o);
    TRAP_ERRORS_FINISH(1);
@@ -386,7 +385,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_fail)
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin_port)),
-               efl_net_ip_address_set(efl_added, &slice));
+               efl_net_ip_address_set(efl_added, slice));
    _ipv4_check(o, &addr);
 
    TRAP_ERRORS_BEGIN(ecore_con, ERR, "port already set to %hu, new %hu");
@@ -397,24 +396,20 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_fail)
    efl_net_ip_address_port_set(o, 999);
    TRAP_ERRORS_FINISH(1);
 
-   TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: address == NULL");
-   efl_net_ip_address_set(o, NULL);
-   TRAP_ERRORS_FINISH(1);
-
-   TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: rw_slice.len != address->len is true");
+   TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: rw_slice.len != address.len is true");
    slice.len = 1;
-   efl_net_ip_address_set(o, &slice);
+   efl_net_ip_address_set(o, slice);
    TRAP_ERRORS_FINISH(1);
 
    TRAP_ERRORS_BEGIN(ecore_con, ERR, "address already set to %s, new %s");
    slice.len = sizeof(addr.sin_addr.s_addr);
-   efl_net_ip_address_set(o, &slice);
+   efl_net_ip_address_set(o, slice);
    TRAP_ERRORS_FINISH(0);
 
    TRAP_ERRORS_BEGIN(ecore_con, ERR, "address already set to %s, new %s");
    addr.sin_addr.s_addr = htonl(0x12345678);
    slice.len = sizeof(addr.sin_addr.s_addr);
-   efl_net_ip_address_set(o, &slice);
+   efl_net_ip_address_set(o, slice);
    TRAP_ERRORS_FINISH(1);
 
    efl_del(o);
@@ -729,7 +724,7 @@ static void
 _ipv6_check(Eo *o, const struct sockaddr_in6 *addr)
 {
    Eina_Slice slice = { .mem = &addr->sin6_addr, .len = sizeof(addr->sin6_addr) };
-   const Eina_Slice *rs;
+   Eina_Slice rs;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")] = "";
 
    ck_assert_ptr_ne(o, NULL);
@@ -738,8 +733,7 @@ _ipv6_check(Eo *o, const struct sockaddr_in6 *addr)
    ck_assert_int_eq(efl_net_ip_address_port_get(o), ntohs(addr->sin6_port));
 
    rs = efl_net_ip_address_get(o);
-   ck_assert_ptr_ne(rs, NULL);
-   ck_assert_int_eq(eina_slice_compare(*rs, slice), 0);
+   ck_assert_int_eq(eina_slice_compare(rs, slice), 0);
 
    buf[0] = '[';
    inet_ntop(AF_INET6, slice.mem, buf + 1, INET6_ADDRSTRLEN);
@@ -777,7 +771,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_ok)
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET6),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin6_port)),
-               efl_net_ip_address_set(efl_added, &slice));
+               efl_net_ip_address_set(efl_added, slice));
    _ipv6_check(o, &addr);
    efl_del(o);
 
@@ -786,7 +780,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_ok)
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET6),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin6_port)),
-               efl_net_ip_address_set(efl_added, &slice));
+               efl_net_ip_address_set(efl_added, slice));
    _ipv6_check(o, &addr);
    efl_del(o);
 
@@ -808,10 +802,10 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_fail)
 
    /* generic errors checked at ecore_test_efl_net_ip_address_ipv4_manual_fail */
 
-   TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: rw_slice.len != address->len is true");
+   TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: rw_slice.len != address.len is true");
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET6),
-               efl_net_ip_address_set(efl_added, &wrong_slice));
+               efl_net_ip_address_set(efl_added, wrong_slice));
    _ipv6_check(o, &addr);
    efl_del(o);
    TRAP_ERRORS_FINISH(1);
@@ -821,7 +815,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_fail)
    o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET6),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin6_port)),
-               efl_net_ip_address_set(efl_added, &slice));
+               efl_net_ip_address_set(efl_added, slice));
    _ipv6_check(o, &addr);
 
    TRAP_ERRORS_BEGIN(ecore_con, ERR, "port already set to %hu, new %hu");
@@ -832,20 +826,20 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_fail)
    efl_net_ip_address_port_set(o, 999);
    TRAP_ERRORS_FINISH(1);
 
-   TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: rw_slice.len != address->len is true");
+   TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: rw_slice.len != address.len is true");
    slice.len = 1;
-   efl_net_ip_address_set(o, &slice);
+   efl_net_ip_address_set(o, slice);
    TRAP_ERRORS_FINISH(1);
 
    TRAP_ERRORS_BEGIN(ecore_con, ERR, "address already set to %s, new %s");
    slice.len = sizeof(addr.sin6_addr);
-   efl_net_ip_address_set(o, &slice);
+   efl_net_ip_address_set(o, slice);
    TRAP_ERRORS_FINISH(0);
 
    TRAP_ERRORS_BEGIN(ecore_con, ERR, "address already set to %s, new %s");
    _ipv6_set(&addr, 1, 2, 3, 4, 5, 6, 7, 8);
    slice.len = sizeof(addr.sin6_addr);
-   efl_net_ip_address_set(o, &slice);
+   efl_net_ip_address_set(o, slice);
    TRAP_ERRORS_FINISH(1);
 
    efl_del(o);

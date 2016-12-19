@@ -301,7 +301,7 @@ main(int argc, char **argv)
    /* sender: send_queue->network */
    sender = efl_add(EFL_IO_COPIER_CLASS, loop,
                     efl_name_set(efl_added, "sender"),
-                    efl_io_copier_line_delimiter_set(efl_added, &line_delimiter),
+                    efl_io_copier_line_delimiter_set(efl_added, line_delimiter),
                     efl_io_copier_source_set(efl_added, send_queue),
                     efl_io_copier_destination_set(efl_added, dialer),
                     efl_event_callback_array_add(efl_added, copier_cbs(), NULL));
@@ -315,7 +315,7 @@ main(int argc, char **argv)
    /* receiver: network->receive_queue */
    receiver = efl_add(EFL_IO_COPIER_CLASS, loop,
                       efl_name_set(efl_added, "receiver"),
-                      efl_io_copier_line_delimiter_set(efl_added, &line_delimiter),
+                      efl_io_copier_line_delimiter_set(efl_added, line_delimiter),
                       efl_io_copier_source_set(efl_added, dialer),
                       efl_io_copier_destination_set(efl_added, receive_queue),
                       efl_event_callback_array_add(efl_added, copier_cbs(), NULL));

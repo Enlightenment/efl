@@ -155,7 +155,7 @@ _efl_net_dialer_simple_efl_io_buffered_stream_inner_io_set(Eo *o, Efl_Net_Dialer
    if (pd->pending.line_delimiter)
      {
         pd->pending.line_delimiter = EINA_FALSE;
-        efl_io_buffered_stream_line_delimiter_set(o, &pd->line_delimiter);
+        efl_io_buffered_stream_line_delimiter_set(o, pd->line_delimiter);
         free((void *)pd->line_delimiter.mem);
         pd->line_delimiter.mem = NULL;
      }
@@ -313,14 +313,14 @@ _efl_net_dialer_simple_efl_io_buffered_stream_read_chunk_size_get(Eo *o, Efl_Net
 
 
 EOLIAN static void
-_efl_net_dialer_simple_efl_io_buffered_stream_line_delimiter_set(Eo *o, Efl_Net_Dialer_Simple_Data *pd, const Eina_Slice *slice)
+_efl_net_dialer_simple_efl_io_buffered_stream_line_delimiter_set(Eo *o, Efl_Net_Dialer_Simple_Data *pd, Eina_Slice slice)
 {
    Eo *inner_io = efl_io_buffered_stream_inner_io_get(o);
 
    if (!inner_io)
      {
         free((void *)pd->line_delimiter.mem);
-        if ((!slice) || (!slice->len))
+        if (!slice.len)
           {
              pd->line_delimiter.mem = NULL;
              pd->line_delimiter.len = 0;
@@ -328,11 +328,11 @@ _efl_net_dialer_simple_efl_io_buffered_stream_line_delimiter_set(Eo *o, Efl_Net_
         else
           {
              char *mem;
-             pd->line_delimiter.mem = mem = malloc(slice->len + 1);
+             pd->line_delimiter.mem = mem = malloc(slice.len + 1);
              EINA_SAFETY_ON_NULL_RETURN(pd->line_delimiter.mem);
-             memcpy(mem, slice->mem, slice->len);
-             mem[slice->len] = '\0';
-             pd->line_delimiter.len = slice->len;
+             memcpy(mem, slice.mem, slice.len);
+             mem[slice.len] = '\0';
+             pd->line_delimiter.len = slice.len;
           }
 
         pd->pending.line_delimiter = EINA_TRUE;
@@ -341,11 +341,11 @@ _efl_net_dialer_simple_efl_io_buffered_stream_line_delimiter_set(Eo *o, Efl_Net_
    efl_io_buffered_stream_line_delimiter_set(efl_super(o, MY_CLASS), slice);
 }
 
-EOLIAN static const Eina_Slice *
+EOLIAN static Eina_Slice
 _efl_net_dialer_simple_efl_io_buffered_stream_line_delimiter_get(Eo *o, Efl_Net_Dialer_Simple_Data *pd)
 {
    Eo *inner_io = efl_io_buffered_stream_inner_io_get(o);
-   if (!inner_io) return &pd->line_delimiter;
+   if (!inner_io) return pd->line_delimiter;
    return efl_io_buffered_stream_line_delimiter_get(efl_super(o, MY_CLASS));
 }
 

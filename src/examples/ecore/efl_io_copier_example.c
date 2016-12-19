@@ -880,7 +880,7 @@ main(int argc, char **argv)
    copier = efl_add(EFL_IO_COPIER_CLASS, ecore_main_loop_get(),
                     efl_io_copier_source_set(efl_added, input), /* mandatory */
                     efl_io_copier_destination_set(efl_added, output), /* optional, see :none: */
-                    efl_io_copier_line_delimiter_set(efl_added, &line_delm_slice), /* optional */
+                    efl_io_copier_line_delimiter_set(efl_added, line_delm_slice), /* optional */
                     efl_io_copier_buffer_limit_set(efl_added, buffer_limit), /* optional, defaults to unlimited */
                     efl_io_copier_read_chunk_size_set(efl_added, read_chunk_size), /* optional, defaults to 4096 */
                     efl_io_copier_timeout_inactivity_set(efl_added, timeout), /* optional, defaults to 0.0 (disabled) */

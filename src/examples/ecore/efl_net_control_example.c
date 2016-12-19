@@ -1416,7 +1416,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    input = efl_add(EFL_IO_STDIN_CLASS, ecore_main_loop_get());
    copier = efl_add(EFL_IO_COPIER_CLASS, ecore_main_loop_get(),
                     efl_io_copier_source_set(efl_added, input),
-                    efl_io_copier_line_delimiter_set(efl_added, &line_delimiter),
+                    efl_io_copier_line_delimiter_set(efl_added, line_delimiter),
                     efl_io_copier_buffer_limit_set(efl_added, 8192),
                     efl_io_copier_read_chunk_size_set(efl_added, 8192),
                     efl_event_callback_add(efl_added, EFL_IO_COPIER_EVENT_LINE, _cmd_line, ctl));

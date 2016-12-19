@@ -126,20 +126,19 @@ _efl_net_ip_address_port_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_ip_address_address_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, const Eina_Slice *address)
+_efl_net_ip_address_address_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, Eina_Slice address)
 {
    Eina_Rw_Slice rw_slice;
    size_t i;
 
    EINA_SAFETY_ON_TRUE_RETURN(pd->addr.sa_family == 0);
-   EINA_SAFETY_ON_NULL_RETURN(address);
 
    rw_slice.mem = (void *)pd->addr_slice.mem;
    rw_slice.len = pd->addr_slice.len;
 
-   EINA_SAFETY_ON_TRUE_RETURN(rw_slice.len != address->len);
+   EINA_SAFETY_ON_TRUE_RETURN(rw_slice.len != address.len);
 
-   if (eina_slice_compare(eina_rw_slice_slice_get(rw_slice), *address) == 0)
+   if (eina_slice_compare(eina_rw_slice_slice_get(rw_slice), address) == 0)
      return;
 
    for (i = 0; i < rw_slice.len; i++)
@@ -154,7 +153,7 @@ _efl_net_ip_address_address_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, 
                   old_str[0] = '?';
                   old_str[1] = '\0';
                }
-             if (!inet_ntop(pd->addr.sa_family, address->mem, new_str, sizeof(new_str)))
+             if (!inet_ntop(pd->addr.sa_family, address.mem, new_str, sizeof(new_str)))
                {
                   new_str[0] = '?';
                   new_str[1] = '\0';
@@ -164,13 +163,13 @@ _efl_net_ip_address_address_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, 
           }
      }
 
-   eina_rw_slice_copy(rw_slice, *address);
+   eina_rw_slice_copy(rw_slice, address);
 }
 
-EOLIAN static const Eina_Slice *
+EOLIAN static Eina_Slice
 _efl_net_ip_address_address_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
-   return &pd->addr_slice;
+   return pd->addr_slice;
 }
 
 EOLIAN static void
@@ -304,7 +303,7 @@ _efl_net_ip_address_create(Eo *cls, void *pd EINA_UNUSED, uint16_t port, const E
    return efl_add(cls, NULL,
                   efl_net_ip_address_family_set(efl_added, family),
                   efl_net_ip_address_port_set(efl_added, port),
-                  efl_net_ip_address_set(efl_added, &address));
+                  efl_net_ip_address_set(efl_added, address));
 }
 
 EOLIAN static Efl_Net_Ip_Address *

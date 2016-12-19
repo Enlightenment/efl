@@ -558,32 +558,31 @@ _efl_io_copier_buffer_limit_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 }
 
 EOLIAN static void
-_efl_io_copier_line_delimiter_set(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd, const Eina_Slice *slice)
+_efl_io_copier_line_delimiter_set(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd, Eina_Slice slice)
 {
-   EINA_SAFETY_ON_NULL_RETURN(slice);
-   if (pd->line_delimiter.mem == slice->mem)
+   if (pd->line_delimiter.mem == slice.mem)
      {
-        pd->line_delimiter.len = slice->len;
+        pd->line_delimiter.len = slice.len;
         return;
      }
 
    free((void *)pd->line_delimiter.mem);
-   if (slice->len == 0)
+   if (slice.len == 0)
      {
         pd->line_delimiter.mem = NULL;
         pd->line_delimiter.len = 0;
      }
    else
      {
-        Eina_Rw_Slice rw_slice = eina_slice_dup(*slice);
+        Eina_Rw_Slice rw_slice = eina_slice_dup(slice);
         pd->line_delimiter = eina_rw_slice_slice_get(rw_slice);
      }
 }
 
-EOLIAN static const Eina_Slice *
+EOLIAN static Eina_Slice
 _efl_io_copier_line_delimiter_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
-   return &pd->line_delimiter;
+   return pd->line_delimiter;
 }
 
 

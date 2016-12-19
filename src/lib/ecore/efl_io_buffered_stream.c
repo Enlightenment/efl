@@ -448,20 +448,20 @@ _efl_io_buffered_stream_max_queue_size_output_get(Eo *o EINA_UNUSED, Efl_Io_Buff
 }
 
 EOLIAN static void
-_efl_io_buffered_stream_line_delimiter_set(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd, const Eina_Slice *slice)
+_efl_io_buffered_stream_line_delimiter_set(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd, Eina_Slice slice)
 {
    if (!pd->receiver)
      {
-        DBG("%p inner_io=%p (%s) is not Efl.Io.Reader, slice=%p ignored", o, pd->inner_io, efl_class_name_get(efl_class_get(pd->inner_io)), slice);
+        DBG("%p inner_io=%p (%s) is not Efl.Io.Reader, slice=" EINA_SLICE_FMT " ignored", o, pd->inner_io, efl_class_name_get(efl_class_get(pd->inner_io)), EINA_SLICE_PRINT(slice));
         return;
      }
    efl_io_copier_line_delimiter_set(pd->receiver, slice);
 }
 
-EOLIAN static const Eina_Slice *
+EOLIAN static Eina_Slice
 _efl_io_buffered_stream_line_delimiter_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd)
 {
-   if (!pd->receiver) return NULL;
+   if (!pd->receiver) return (Eina_Slice){};
    return efl_io_copier_line_delimiter_get(pd->receiver);
 }
 

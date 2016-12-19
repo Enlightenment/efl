@@ -161,7 +161,8 @@ class Efl.Net.Ip.Address (Efl.Object) {
               Must be set after @.family.
             ]]
             values {
-                address: const(ptr(Eina.Slice)) @nonull; [[Address bytes. If AF_INET it's 4 bytes. If AF_INET6, it's 16 bytes. This matches exactly what is in struct sockaddr_in::sin_addr or struct sockaddr_in6:sin6_addr, see @.sockaddr]]
+                // TODO: eolian generates wrong type for getter with const(Eina.Slice)
+                address: Eina.Slice; [[Address bytes. If AF_INET it's 4 bytes. If AF_INET6, it's 16 bytes. This matches exactly what is in struct sockaddr_in::sin_addr or struct sockaddr_in6:sin6_addr, see @.sockaddr]]
             }
         }
 

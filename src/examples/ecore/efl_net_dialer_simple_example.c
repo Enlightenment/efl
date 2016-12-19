@@ -370,7 +370,7 @@ main(int argc, char **argv)
    dialer = efl_add(EFL_NET_DIALER_SIMPLE_CLASS, loop,
                     efl_name_set(efl_added, "dialer"),
                     efl_net_dialer_simple_inner_class_set(efl_added, cls), /* alternatively you could create the inner dialer and set with efl_io_buffered_stream_inner_io_set() */
-                    efl_io_buffered_stream_line_delimiter_set(efl_added, &line_delm_slice), /* optional */
+                    efl_io_buffered_stream_line_delimiter_set(efl_added, line_delm_slice), /* optional */
                     efl_io_buffered_stream_max_queue_size_input_set(efl_added, buffer_limit), /* optional, defaults to unlimited */
                     efl_io_buffered_stream_max_queue_size_output_set(efl_added, buffer_limit), /* optional, defaults to unlimited */
                     efl_io_buffered_stream_read_chunk_size_set(efl_added, read_chunk_size), /* optional, defaults to 4096 */

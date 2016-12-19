@@ -266,7 +266,7 @@ main(int argc, char **argv)
    stream = efl_add(EFL_IO_BUFFERED_STREAM_CLASS, loop,
                     efl_name_set(efl_added, "stream"),
                     efl_io_buffered_stream_inner_io_set(efl_added, dialer), /* mandatory! */
-                    efl_io_buffered_stream_line_delimiter_set(efl_added, &line_delimiter),
+                    efl_io_buffered_stream_line_delimiter_set(efl_added, line_delimiter),
                     efl_io_buffered_stream_max_queue_size_input_set(efl_added, buffer_limit),
                     efl_io_buffered_stream_max_queue_size_output_set(efl_added, buffer_limit),
                     efl_event_callback_array_add(efl_added, stream_cbs(), NULL));
