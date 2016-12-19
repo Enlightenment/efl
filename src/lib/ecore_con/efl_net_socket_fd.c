@@ -79,6 +79,9 @@ _efl_net_socket_fd_efl_object_constructor(Eo *o, Efl_Net_Socket_Fd_Data *pd)
 
    efl_io_closer_close_on_exec_set(o, EINA_TRUE);
    efl_io_closer_close_on_destructor_set(o, EINA_TRUE);
+   efl_io_reader_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
+   efl_io_writer_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
+   efl_io_closer_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
 
    return o;
 }
@@ -175,8 +178,9 @@ _efl_net_socket_fd_efl_io_closer_close(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_fd_efl_io_closer_closed_get(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED)
+_efl_net_socket_fd_efl_io_closer_closed_get(Eo *o, Efl_Net_Socket_Fd_Data *pd)
 {
+   if (pd->family == AF_UNSPEC) return EINA_FALSE;
    return (SOCKET)efl_io_closer_fd_get(o) == INVALID_SOCKET;
 }
 
