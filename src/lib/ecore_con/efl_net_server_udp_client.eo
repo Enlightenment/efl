@@ -30,6 +30,7 @@ class Efl.Net.Server.Udp.Client (Efl.Object, Efl.Net.Socket) {
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed.get;
         Efl.Io.Closer.close_on_destructor;
+        Efl.Io.Closer.close_on_exec;
         Efl.Io.Reader.can_read;
         Efl.Io.Reader.eos;
         Efl.Io.Reader.read;

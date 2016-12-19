@@ -274,6 +274,24 @@ _efl_net_server_udp_client_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUS
    return pd->close_on_destructor;
 }
 
+EOLIAN static Eina_Bool
+_efl_net_server_udp_client_efl_io_closer_close_on_exec_set(Eo *o, Efl_Net_Server_Udp_Client_Data *pd EINA_UNUSED, Eina_Bool close_on_exec)
+{
+   if (efl_net_server_fd_close_on_exec_get(efl_parent_get(o)) != close_on_exec)
+     {
+        ERR("Efl.Net.Server.Udp.Client close-on-exec must be the same as the server setting, no file descriptor is created for each client!");
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_net_server_udp_client_efl_io_closer_close_on_exec_get(Eo *o, Efl_Net_Server_Udp_Client_Data *pd EINA_UNUSED)
+{
+   return efl_net_server_fd_close_on_exec_get(efl_parent_get(o));
+}
+
 EOLIAN static void
 _efl_net_server_udp_client_efl_net_socket_address_local_set(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd, const char *address)
 {
