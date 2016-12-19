@@ -80,7 +80,7 @@ _efl_io_writer_fd_efl_io_writer_can_write_get(Eo *o EINA_UNUSED, Efl_Io_Writer_F
 EOLIAN static void
 _efl_io_writer_fd_efl_io_writer_can_write_set(Eo *o, Efl_Io_Writer_Fd_Data *pd, Eina_Bool can_write)
 {
-   EINA_SAFETY_ON_TRUE_RETURN(efl_io_writer_fd_get(o) < 0);
+   EINA_SAFETY_ON_TRUE_RETURN(efl_io_writer_fd_get(o) < 0 && can_write);
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
    efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);

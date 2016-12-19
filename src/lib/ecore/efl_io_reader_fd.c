@@ -76,7 +76,7 @@ _efl_io_reader_fd_efl_io_reader_can_read_get(Eo *o EINA_UNUSED, Efl_Io_Reader_Fd
 EOLIAN static void
 _efl_io_reader_fd_efl_io_reader_can_read_set(Eo *o, Efl_Io_Reader_Fd_Data *pd, Eina_Bool can_read)
 {
-   EINA_SAFETY_ON_TRUE_RETURN(efl_io_reader_fd_get(o) < 0);
+   EINA_SAFETY_ON_TRUE_RETURN(efl_io_reader_fd_get(o) < 0 && can_read);
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
    efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
@@ -91,7 +91,7 @@ _efl_io_reader_fd_efl_io_reader_eos_get(Eo *o EINA_UNUSED, Efl_Io_Reader_Fd_Data
 EOLIAN static void
 _efl_io_reader_fd_efl_io_reader_eos_set(Eo *o, Efl_Io_Reader_Fd_Data *pd, Eina_Bool is_eos)
 {
-   EINA_SAFETY_ON_TRUE_RETURN(efl_io_reader_fd_get(o) < 0);
+   EINA_SAFETY_ON_TRUE_RETURN(efl_io_reader_fd_get(o) < 0 && !is_eos);
    if (pd->eos == is_eos) return;
    pd->eos = is_eos;
    if (is_eos)
