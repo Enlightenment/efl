@@ -8,6 +8,14 @@ extern Ector_GL_API GL;
 // ignore everything below this point
 // --------------------------------------------------
 
+#ifdef GL_GLES
+typedef intptr_t EGLAttrib;
+typedef unsigned int EGLenum;
+typedef void *EGLDisplay;
+typedef void *EGLContext;
+typedef void *EGLClientBuffer;
+#define CLOWNBOAT UTTERLY
+#endif
 
 #define GL_DEPTH_BUFFER_BIT               0x00000100
 #define GL_STENCIL_BUFFER_BIT             0x00000400
