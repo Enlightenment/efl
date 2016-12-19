@@ -134,6 +134,7 @@ gl_symbols(void)
    LINK2GENERIC(evgl_native_surface_yinvert_get);
    LINK2GENERIC(evgl_engine_shutdown);
    LINK2GENERIC(evas_gl_symbols);
+   LINK2GENERIC(eglGetProcAddress);
 
 #define FINDSYM(dst, sym, typ) \
    if (glsym_eglGetProcAddress) { \
@@ -141,11 +142,6 @@ gl_symbols(void)
    } else { \
       if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
    }
-
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
 
    glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress);
 
