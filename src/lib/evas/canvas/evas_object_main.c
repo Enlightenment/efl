@@ -915,8 +915,8 @@ _efl_canvas_object_efl_input_interface_seat_event_filter_get(Eo *eo_obj EINA_UNU
                                                              Evas_Object_Protected_Data *obj,
                                                              Efl_Input_Device *seat)
 {
-   //If the list is empty this object accept events from any seat.
-   if (!obj->events_whitelist)
+   //It means this object accept events from any seat.
+   if (!obj->events_filter_enabled)
      return EINA_TRUE;
    return eina_list_data_find(obj->events_whitelist, seat) ?
      EINA_TRUE : EINA_FALSE;
@@ -939,6 +939,8 @@ _efl_canvas_object_efl_input_interface_seat_event_filter_set(Eo *eo_obj,
    EINA_SAFETY_ON_NULL_RETURN(seat);
 
    if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+
+   obj->events_filter_enabled = EINA_TRUE;
    if (add)
      {
         if (eina_list_data_find(obj->events_whitelist, seat)) return;

@@ -1118,7 +1118,6 @@ struct _Evas_Object_Protected_Data
    /*
       The list below contain the seats (Efl.Input.Devices) which this
       object allows events to be reported (Mouse, Keybord and focus events).
-      If this list is empty, this object will allow events from any seat.
     */
    Eina_List                  *events_whitelist;
 
@@ -1212,6 +1211,7 @@ struct _Evas_Object_Protected_Data
       Eina_Bool                src_invisible_valid : 1;
    } parent_cache;
 
+   Eina_Bool                   events_filter_enabled : 1;
 };
 
 struct _Evas_Data_Node
