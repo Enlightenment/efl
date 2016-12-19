@@ -104,7 +104,7 @@ _efl_io_buffered_stream_sender_done(void *data, const Efl_Event *event EINA_UNUS
    efl_ref(o);
    efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_PROGRESS, NULL);
    efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_WRITE_FINISHED, NULL);
-   if ((pending == 0) || efl_io_copier_done_get(pd->receiver))
+   if ((!pd->receiver) || efl_io_copier_done_get(pd->receiver))
      {
         if (!pd->is_finished)
           {
@@ -294,7 +294,7 @@ _efl_io_buffered_stream_efl_io_reader_eos_set(Eo *o, Efl_Io_Buffered_Stream_Data
    efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_PROGRESS, NULL);
    efl_event_callback_call(o, EFL_IO_READER_EVENT_EOS, NULL);
    efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_READ_FINISHED, NULL);
-   if ((pending == 0) || efl_io_copier_done_get(pd->sender))
+   if ((!pd->sender) || efl_io_copier_done_get(pd->sender))
      {
         if (!pd->is_finished)
           {
