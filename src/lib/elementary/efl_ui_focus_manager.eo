@@ -159,6 +159,9 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
 
             return : own(ptr(Efl.Ui.Focus.Relations));
         }
+        logical_end {
+            return : Efl.Ui.Focus.Object;
+        }
     }
     implements {
         class.constructor;
@@ -169,6 +172,7 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
         Efl.Object.destructor;
     }
     events {
+        redirect,changed : Efl.Ui.Focus.Manager; [[Emitted when the redirect object has changed, the old manager is passed as event info]]
         pre,flush; [[Emitted once the graph calculationg will be performed]]
         coords,dirty; [[Emitted once the graph is dirty, this means there are potential changes in border_elements you want to know about]]
     }
