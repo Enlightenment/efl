@@ -865,18 +865,14 @@ _coords_movement(Efl_Ui_Focus_Manager_Data *pd, Node *upper, Efl_Ui_Focus_Direct
 
 
 static Node*
-_parent_item(Node *node, Eina_Bool next)
+_prev_item(Node *node)
 {
    Node *parent;
    Eina_List *lnode;
 
    parent = T(node).parent;
    lnode = eina_list_data_find_list(T(parent).children, node);
-
-   if (next)
-     lnode = eina_list_next(lnode);
-   else
-     lnode = eina_list_prev(lnode);
+   lnode = eina_list_prev(lnode);
 
    if (lnode)
      return eina_list_data_get(lnode);
@@ -933,17 +929,24 @@ _prev(Node *node)
    if (!T(node).parent)
      return NULL;
 
-   n =_parent_item(node, EINA_FALSE);
+   n =_prev_item(node);
    //case 1 there is a item in the parent previous to node, which has children
    if (n && T(n).children)
-     return eina_list_last_data_get(T(n).children);
+     {
+        do
+          {
+              n = eina_list_last_data_get(T(n).children);
+          }
+        while (T(n).children);
+
+        return n;
+     }
 
    //case 2 there is a item in the parent preivous to node, which has no children
    if (n)
      return n;
 
    //case 3 there is a no item in the parent provious to this one
-   //if (!n)
    return T(node).parent;
 }
 
@@ -1300,26 +1303,15 @@ _efl_ui_focus_manager_class_destructor(Efl_Class *c EINA_UNUSED)
 EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_logical_end(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd)
 {
-   //we need to return the most lower right element
    Node *child = pd->root;
-   Efl_Ui_Focus_Object *last_normal = NULL;
+   //we need to return the most lower right element
+
    while(T(child).children)
-     {
-        Efl_Ui_Focus_Object *tmp_last_normal;
+     child = eina_list_last_data_get(T(child).children);
+   while (child->type != NODE_TYPE_NORMAL)
+     child = _prev(child);
 
-        tmp_last_normal = _find_normal_node(child);
-        if (tmp_last_normal)
-          last_normal = tmp_last_normal;
-
-        child = eina_list_last_data_get(T(child).children);
-     }
-
-   if (last_normal)
-     return last_normal;
-   else
-     return NULL;
-
-  return NULL;
+  return child ? child->focusable : NULL;
 }
 
 #include "efl_ui_focus_manager.eo.c"
