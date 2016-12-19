@@ -391,7 +391,9 @@ _menu_create(const char *option_str)
    _clear_menu();
    EINA_LIST_FOREACH(tests, l, t)
      {
-        if (option_str && !strcasestr(t->name, option_str)) continue;
+        if (option_str &&
+            !(strcasestr(t->name, option_str) || strcasestr(t->category, option_str)))
+          continue;
         if ((!pcat) || (strcmp(pcat, t->category)))
           {
              if (t->frame)
