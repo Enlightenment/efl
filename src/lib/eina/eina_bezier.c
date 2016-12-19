@@ -79,13 +79,15 @@ _eina_bezier_split(const Eina_Bezier *b,
    first->end.y = second->start.y = (first->ctrl_end.y + second->ctrl_start.y) * 0.5;
 }
 
-static void
-_eina_bezier_length_helper(const Eina_Bezier *b,
-                           double *length)
+#include <stdio.h>
+
+static float
+_eina_bezier_length_helper(const Eina_Bezier *b)
 {
    Eina_Bezier left, right; /* bez poly splits */
-   double len = 0.0; /* arc length */
-   double chord; /* chord length */
+   float len = 0.0; /* arc length */
+   float chord; /* chord length */
+   float length;
 
    len = len + _line_length(b->start.x, b->start.y, b->ctrl_start.x, b->ctrl_start.y);
    len = len + _line_length(b->ctrl_start.x, b->ctrl_start.y, b->ctrl_end.x, b->ctrl_end.y);
@@ -93,16 +95,16 @@ _eina_bezier_length_helper(const Eina_Bezier *b,
 
    chord = _line_length(b->start.x, b->start.y, b->end.x, b->end.y);
 
-   if (!EINA_DBL_CMP(len, chord)) {
+   if (fabsf(len - chord) > FLT_MIN) {
       _eina_bezier_split(b, &left, &right);       /* split in two */
-      _eina_bezier_length_helper(&left, length);  /* try left side */
-      _eina_bezier_length_helper(&right, length); /* try right side */
-      return;
+      length =
+        _eina_bezier_length_helper(&left) +  /* try left side */
+        _eina_bezier_length_helper(&right); /* try right side */
+
+      return length;
    }
 
-   *length = *length + len;
-
-   return;
+   return len;
 }
 
 EAPI void
@@ -185,11 +187,7 @@ eina_bezier_angle_at(const Eina_Bezier *b, double t)
 EAPI double
 eina_bezier_length_get(const Eina_Bezier *b)
 {
-   double length = 0.0;
-
-   _eina_bezier_length_helper(b, &length);
-
-   return length;
+   return _eina_bezier_length_helper(b);
 }
 
 static void
@@ -228,7 +226,7 @@ eina_bezier_t_at(const Eina_Bezier *b, double l)
    double biggest = 1.0;
    double t = 1.0;
 
-   if (l > len || (EINA_DBL_CMP(len, l)))
+   if (l >= len)// || (EINA_DBL_CMP(len, l)))
      return t;
 
    t *= 0.5;
