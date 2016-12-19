@@ -15,13 +15,12 @@
  * License along with this library;
  * if not, see <http://www.gnu.org/licenses/>.
  */
-#include "eina_private.h"
-#include "eina_bezier.h"
-
 #include <math.h>
 #include <float.h>
 
-#define FLOAT_CMP(a, b) (fabs(a - b) <= 0.01/* DBL_MIN */)
+#include "eina_private.h"
+#include "eina_bezier.h"
+#include "eina_util.h"
 
 static void
 _eina_bezier_1st_derivative(const Eina_Bezier *bz,
@@ -94,7 +93,7 @@ _eina_bezier_length_helper(const Eina_Bezier *b,
 
    chord = _line_length(b->start.x, b->start.y, b->end.x, b->end.y);
 
-   if (!FLOAT_CMP(len, chord)) {
+   if (!EINA_DBL_CMP(len, chord)) {
       _eina_bezier_split(b, &left, &right);       /* split in two */
       _eina_bezier_length_helper(&left, length);  /* try left side */
       _eina_bezier_length_helper(&right, length); /* try right side */
@@ -229,7 +228,7 @@ eina_bezier_t_at(const Eina_Bezier *b, double l)
    double biggest = 1.0;
    double t = 1.0;
 
-   if (l > len || (FLOAT_CMP(len, l)))
+   if (l > len || (EINA_DBL_CMP(len, l)))
      return t;
 
    t *= 0.5;
@@ -243,7 +242,7 @@ eina_bezier_t_at(const Eina_Bezier *b, double l)
         _eina_bezier_split_left(&right, t, &left);
         ll = eina_bezier_length_get(&left);
 
-        if (FLOAT_CMP(ll, l))
+        if (EINA_DBL_CMP(ll, l))
           break;
 
         if (ll < l)
@@ -320,7 +319,8 @@ eina_bezier_on_interval(Eina_Bezier *b, double t0, double t1, Eina_Bezier *resul
    Eina_Bezier bezier;
    double t;
 
-   if (t0 == 0 && t1 == 1)
+   if (EINA_DBL_CMP(t0, 0.0) &&
+       EINA_DBL_CMP(t1, 1.0))
      {
         *result = *b;
         return;
