@@ -849,10 +849,10 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
                                                            buffer_format);
         if (!pt->dyn.buffer) goto error;
 
-        pt->dyn.img = secsym_eglCreateImage(egldisplay,
-                                            EGL_NO_CONTEXT,
-                                            EGL_NATIVE_SURFACE_TIZEN,
-                                            pt->dyn.buffer, NULL);
+        pt->dyn.img = evas_gl_common_eglCreateImage(egldisplay,
+                                                    EGL_NO_CONTEXT,
+                                                    EGL_NATIVE_SURFACE_TIZEN,
+                                                    pt->dyn.buffer, NULL);
         if (!pt->dyn.img)
           {
              secsym_tbm_surface_destroy(pt->dyn.buffer);
@@ -867,7 +867,7 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
      {
         int fmt; // EGL_MAP_GL_TEXTURE_RGBA_SEC or EGL_MAP_GL_TEXTURE_RGB_SEC or bust
         int pixtype; // EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC or bust
-        int attr[] =
+        EGLAttrib attr[] =
           {
              EGL_MAP_GL_TEXTURE_WIDTH_SEC, 32,
              EGL_MAP_GL_TEXTURE_HEIGHT_SEC, 32,
@@ -894,10 +894,10 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
 
         // FIXME: seems a bit slower than i'd like - maybe too many flushes?
         // FIXME: YCbCr no support as yet
-        pt->dyn.img = secsym_eglCreateImage(egldisplay,
-                                            EGL_NO_CONTEXT,
-                                            EGL_MAP_GL_TEXTURE_2D_SEC,
-                                            0, attr);
+        pt->dyn.img = evas_gl_common_eglCreateImage(egldisplay,
+                                                    EGL_NO_CONTEXT,
+                                                    EGL_MAP_GL_TEXTURE_2D_SEC,
+                                                    0, attr);
         if (!pt->dyn.img) goto error;
 
         if (secsym_eglGetImageAttribSEC(egldisplay,

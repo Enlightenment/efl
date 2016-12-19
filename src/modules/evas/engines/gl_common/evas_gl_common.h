@@ -32,6 +32,7 @@
 #  endif
 # else
 #  ifdef GL_GLES
+#   include <EGL/egl.h>
 #   include <GLES2/gl2.h>
 #   include <GLES2/gl2ext.h>
 #  else
@@ -713,7 +714,7 @@ extern void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b);
 extern GLboolean  (*glsym_glUnmapBuffer)          (GLenum a);
 
 #ifdef GL_GLES
-extern void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
+EAPI void *           evas_gl_common_eglCreateImage          (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list);
 extern unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b);
 extern void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
 extern void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, int d);
@@ -873,7 +874,8 @@ __evas_gl_errdyn(int err, const char *file, const char *func, int line, const ch
 #  define glsym_glReleaseShaderCompiler(...) GL_ERROR_TRACE(glsym_glReleaseShaderCompiler, #__VA_ARGS__, __VA_ARGS__)
 #  define glsym_glMapBuffer(...) GL_ERROR_TRACE_RET(void *, glsym_glMapBuffer, #__VA_ARGS__, __VA_ARGS__)
 #  define glsym_glUnmapBuffer(...) GL_ERROR_TRACE_RET(unsigned int, glsym_glUnmapBuffer, #__VA_ARGS__, __VA_ARGS__)
-#  define secsym_eglCreateImage(...) GL_ERROR_TRACE_RET(void *, secsym_eglCreateImage, #__VA_ARGS__, __VA_ARGS__)
+#  define eglsym_eglCreateImage(...) GL_ERROR_TRACE_RET(void *, eglsym_eglCreateImage, #__VA_ARGS__, __VA_ARGS__)
+#  define eglsym_eglCreateImageKHR(...) GL_ERROR_TRACE_RET(void *, eglsym_eglCreateImageKHR, #__VA_ARGS__, __VA_ARGS__)
 #  define secsym_eglDestroyImage(...) GL_ERROR_TRACE_RET(unsigned int, secsym_eglDestroyImage, #__VA_ARGS__, __VA_ARGS__)
 #  define secsym_glEGLImageTargetTexture2DOES(...) GL_ERROR_TRACE(secsym_glEGLImageTargetTexture2DOES, #__VA_ARGS__, __VA_ARGS__)
 #  define secsym_eglMapImageSEC(...) GL_ERROR_TRACE_RET(void *, secsym_eglMapImageSEC, #__VA_ARGS__, __VA_ARGS__)

@@ -49,12 +49,17 @@ typedef int  (*secsym_func_int) ();
 typedef unsigned int  (*secsym_func_uint) ();
 typedef void         *(*secsym_func_void_ptr) ();
 
-void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e) = NULL;
 unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b) = NULL;
 void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b) = NULL;
 void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, int d) = NULL;
 unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b, int c) = NULL;
 unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d) = NULL;
+
+
+/* This one is now a local wrapper to avoid type mixups */
+void *        evas_gl_common_eglCreateImage           (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list);
+static void * (*eglsym_eglCreateImage)                (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list) = NULL;
+static void * (*eglsym_eglCreateImageKHR)             (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLint *e) = NULL;
 
 ////////////////////////////////////
 //libtbm.so.1
@@ -113,6 +118,32 @@ _has_ext(const char *ext, const char **pexts, int *pnum)
         return strstr(exts, ext) != NULL;
      }
 }
+
+#ifdef GL_GLES
+void *
+evas_gl_common_eglCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list)
+{
+   if (eglsym_eglCreateImage)
+     return eglsym_eglCreateImage(dpy, ctx, target, buffer, attrib_list);
+   if (eglsym_eglCreateImageKHR)
+     {
+        int count, i;
+        EGLint *ints = NULL;
+
+        if (attrib_list)
+          {
+             for (count = 0; attrib_list[count] != EGL_NONE; count += 2);
+             count++;
+             ints = alloca(count * sizeof(EGLint));
+             for (i = 0; i < count; i++)
+               ints[i] = attrib_list[i];
+          }
+        return eglsym_eglCreateImageKHR(dpy, ctx, target, buffer, ints);
+     }
+   return NULL;
+}
+
+#endif
 
 /* FIXME: return error if a required symbol was not found */
 EAPI void
@@ -267,11 +298,11 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
 // wrong as this is not x11 (output) layer specific like the native surface
 // stuff. this is generic zero-copy textures for gl
 
-   FINDSYM(secsym_eglCreateImage, "eglCreateImage", NULL, secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", "EGL_KHR_image", secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageOES", "GL_OES_EGL_image_base", secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageOES", "GL_OES_EGL_image", secsym_func_void_ptr);
+   FINDSYM(eglsym_eglCreateImage, "eglCreateImage", NULL, secsym_func_void_ptr);
+   FINDSYM(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
+   FINDSYM(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image", secsym_func_void_ptr);
+   FINDSYM(eglsym_eglCreateImageKHR, "eglCreateImageOES", "GL_OES_EGL_image_base", secsym_func_void_ptr);
+   FINDSYM(eglsym_eglCreateImageKHR, "eglCreateImageOES", "GL_OES_EGL_image", secsym_func_void_ptr);
 
    FINDSYM(secsym_eglDestroyImage, "eglDestroyImage", NULL, secsym_func_uint);
    FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
@@ -842,8 +873,7 @@ evas_gl_common_context_new(void)
                {
                   // test for all needed symbols - be "conservative" and
                   // need all of it
-                  if ((secsym_eglCreateImage) &&
-                      (secsym_eglDestroyImage) &&
+                  if ((secsym_eglDestroyImage) &&
                       (secsym_glEGLImageTargetTexture2DOES) &&
                       (secsym_eglMapImageSEC) &&
                       (secsym_eglUnmapImageSEC) &&
