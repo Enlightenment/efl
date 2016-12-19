@@ -130,6 +130,58 @@ EAPI void eina_binbuf_free(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 EAPI void eina_binbuf_reset(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Expand a buffer, making room for at least @a minimum_unused_space.
+ *
+ * One of the properties of the buffer is that it may overallocate
+ * space, thus it may have more than eina_binbuf_length_get() bytes
+ * allocated. How much depends on buffer growing logic, but this
+ * function allows one to request a minimum amount of bytes to be
+ * allocated at the end of the buffer.
+ *
+ * This is particularly useful to write directly to buffer's memory
+ * (ie: a call to read(2)). After the bytes are used call
+ * eina_binbuf_use() to mark them as such, so eina_binbuf_length_get()
+ * will consider the new bytes.
+ *
+ * @param buf The Buffer to expand.
+ * @param minimum_unused_space The minimum unused allocated space, in
+ *        bytes, at the end of the buffer. Zero can be used to query
+ *        the available slice of unused bytes.
+ *
+ * @return The slice of unused bytes. The slice length may be zero if
+ *         @a minimum_unused_space couldn't be allocated, otherwise it
+ *         will be at least @a minimum_unused_space. After bytes are used,
+ *         mark them as such using eina_binbuf_use().
+ *
+ * @see eina_binbuf_rw_slice_get()
+ * @see eina_binbuf_use()
+ *
+ * @since 1.19
+ */
+EAPI Eina_Rw_Slice eina_binbuf_expand(Eina_Binbuf *buf, size_t minimum_unused_space) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Mark more bytes as used.
+ *
+ * This function should be used after eina_binbuf_expand(), marking
+ * the extra bytes returned there as used, then they will be
+ * considered in all other functions, such as eina_binbuf_length_get().
+ *
+ * @param buf The buffer to mark extra bytes as used.
+ * @param extra_bytes the number of bytes to be considered used, must
+ *        be between zero and the length of the slice returned by
+ *        eina_binbuf_expand().
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure, such as @a
+ *         extra_bytes is too big or @a buf is NULL.
+ *
+ * @see eina_binbuf_expand()
+ *
+ * @since 1.19
+ */
+EAPI Eina_Bool eina_binbuf_use(Eina_Binbuf *buf, size_t extra_bytes) EINA_ARG_NONNULL(1);
+
+/**
  * @brief Append a string of exact length to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
@@ -330,6 +382,10 @@ EAPI Eina_Slice eina_binbuf_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_R
  * @return a read-write slice for the current contents. It may become
  *         invalid as soon as the @a buf is changed with calls such as
  *         eina_binbuf_append(), eina_binbuf_remove()
+ *
+ * @see eina_binbuf_expand()
+ *
+ * @since 1.19
  */
 EAPI Eina_Rw_Slice eina_binbuf_rw_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 

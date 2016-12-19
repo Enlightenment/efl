@@ -380,6 +380,88 @@ eina_strbuf_common_reset(size_t csize, Eina_Strbuf *buf)
 
 /**
  * @internal
+ * @brief Expand a buffer, making room for at least @a minimum_unused_space.
+ *
+ * One of the properties of the buffer is that it may overallocate
+ * space, thus it may have more than eina_strbuf_common_length_get() bytes
+ * allocated. How much depends on buffer growing logic, but this
+ * function allows one to request a minimum amount of bytes to be
+ * allocated at the end of the buffer.
+ *
+ * This is particularly useful to write directly to buffer's memory
+ * (ie: a call to read(2)). After the bytes are used call
+ * eina_strbuf_common_use() to mark them as such, so
+ * eina_strbuf_common_length_get() will consider the new bytes.
+ *
+ * @param csize the character size
+ * @param buf The Buffer to expand.
+ * @param minimum_unused_space The minimum unused allocated space, in
+ *        bytes, at the end of the buffer. Zero can be used to query
+ *        the available slice of unused bytes.
+ *
+ * @return The slice of unused bytes. The slice length may be zero if
+ *         @a minimum_unused_space couldn't be allocated, otherwise it
+ *         will be at least @a minimum_unused_space. After bytes are used,
+ *         mark them as such using eina_strbuf_common_use().
+ *
+ * @see eina_strbuf_common_rw_slice_get()
+ * @see eina_strbuf_common_use()
+ *
+ * @since 1.19
+ */
+Eina_Rw_Slice
+eina_strbuf_common_expand(size_t csize,
+                          Eina_Strbuf *buf,
+                          size_t minimum_unused_space)
+{
+   Eina_Rw_Slice ret = { .mem = NULL, .len = 0 };
+
+   if (EINA_LIKELY(buf->len + minimum_unused_space < buf->size)) goto end;
+
+   if (EINA_UNLIKELY(!_eina_strbuf_common_grow(csize, buf, buf->len + minimum_unused_space)))
+      return ret;
+
+ end:
+   ret.mem = (unsigned char *)buf->buf + (buf->len * csize);
+   ret.len = buf->size - buf->len - 1;
+   return ret;
+}
+
+/**
+ * @internal
+ * @brief Mark more bytes as used.
+ *
+ * This function should be used after eina_strbuf_common_expand(),
+ * marking the extra bytes returned there as used, then they will be
+ * considered in all other functions, such as
+ * eina_strbuf_common_length_get().
+ *
+ * @param csize the character size
+ * @param buf The buffer to mark extra bytes as used.
+ * @param extra_bytes the number of bytes to be considered used, must
+ *        be between zero and the length of the slice returned by
+ *        eina_strbuf_common_expand().
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure, such as @a
+ *         extra_bytes is too big or @a buf is NULL.
+ *
+ * @see eina_strbuf_common_expand()
+ *
+ * @since 1.19
+ */
+Eina_Bool
+eina_strbuf_common_use(Eina_Strbuf *buf,
+                       size_t extra_bytes)
+{
+   if (EINA_UNLIKELY(buf->size < buf->len + extra_bytes + 1))
+     return EINA_FALSE;
+
+   buf->len += extra_bytes;
+   return EINA_TRUE;
+}
+
+/**
+ * @internal
  * @brief Append a string to a buffer, reallocating as necessary.
  *
  * @param csize the character size

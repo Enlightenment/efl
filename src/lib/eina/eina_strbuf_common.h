@@ -52,6 +52,15 @@ void
 eina_strbuf_common_free(Eina_Strbuf *buf);
 void
 eina_strbuf_common_reset(size_t csize, Eina_Strbuf *buf);
+
+Eina_Rw_Slice
+eina_strbuf_common_expand(size_t csize,
+                          Eina_Strbuf *buf,
+                          size_t minimum_unused_space);
+Eina_Bool
+eina_strbuf_common_use(Eina_Strbuf *buf,
+                       size_t extra_bytes);
+
 Eina_Bool
 eina_strbuf_common_append(size_t csize,
                           Eina_Strbuf *buf,

@@ -100,6 +100,21 @@ _FUNC_EXPAND(reset)(_STRBUF_STRUCT_NAME *buf)
    eina_strbuf_common_reset(_STRBUF_CSIZE, buf);
 }
 
+EAPI Eina_Rw_Slice
+_FUNC_EXPAND(expand)(_STRBUF_STRUCT_NAME *buf, size_t minimum_unused_space)
+{
+   Eina_Rw_Slice ret = {.len = 0, .mem = NULL};
+   EINA_MAGIC_CHECK_STRBUF(buf, ret);
+   return eina_strbuf_common_expand(_STRBUF_CSIZE, buf, minimum_unused_space);
+}
+
+EAPI Eina_Bool
+_FUNC_EXPAND(use)(_STRBUF_STRUCT_NAME *buf, size_t extra_bytes)
+{
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
+   return eina_strbuf_common_use(buf, extra_bytes);
+}
+
 EAPI Eina_Bool
 _FUNC_EXPAND(append_length)(_STRBUF_STRUCT_NAME *buf, const _STRBUF_DATA_TYPE *str, size_t length)
 {

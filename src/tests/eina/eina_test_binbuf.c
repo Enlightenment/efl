@@ -306,6 +306,74 @@ START_TEST(binbuf_realloc)
 }
 END_TEST
 
+START_TEST(binbuf_expand)
+{
+   Eina_Binbuf *buf;
+   Eina_Rw_Slice rw_slice;
+   Eina_Slice ro_slice;
+   Eina_Slice hello_world = EINA_SLICE_STR_LITERAL("Hello World");
+   Eina_Slice hi_there = EINA_SLICE_STR_LITERAL("Hi There");
+   size_t i;
+   Eina_Bool r;
+
+   eina_init();
+
+   buf = eina_binbuf_new();
+   fail_if(!buf);
+
+   rw_slice = eina_binbuf_rw_slice_get(buf);
+   ck_assert_int_eq(rw_slice.len, 0);
+
+   /* force it to grow to 'Hello World' */
+   r = eina_binbuf_append_slice(buf, hello_world);
+   ck_assert_int_eq(r, EINA_TRUE);
+
+   ro_slice = eina_binbuf_slice_get(buf);
+   ck_assert_int_eq(ro_slice.len, hello_world.len);
+   ck_assert_int_eq(eina_slice_compare(ro_slice, hello_world), 0);
+
+   /* reset doesn't change allocated size, 'Hi there' will fit */
+   eina_binbuf_reset(buf);
+   rw_slice = eina_binbuf_expand(buf, hi_there.len);
+   ck_assert_int_ge(rw_slice.len, hi_there.len);
+   /* access bytes directly */
+   rw_slice = eina_rw_slice_copy(rw_slice, hi_there);
+   r = eina_binbuf_use(buf, rw_slice.len);
+   ck_assert_int_eq(r, EINA_TRUE);
+   ck_assert_int_eq(eina_slice_compare(eina_binbuf_slice_get(buf), hi_there), 0);
+
+   /* start with 'Hello World */
+   eina_binbuf_reset(buf);
+   r = eina_binbuf_append_slice(buf, hello_world);
+   ck_assert_int_eq(r, EINA_TRUE);
+
+   /* force it to realloc */
+   rw_slice = eina_binbuf_expand(buf, 8192);
+   ck_assert_int_ge(rw_slice.len, 8192);
+   ck_assert_ptr_ne(rw_slice.mem, NULL);
+
+   memset(rw_slice.mem, 0xfe, rw_slice.len);
+
+   r = eina_binbuf_use(buf, rw_slice.len);
+   ck_assert_int_eq(r, EINA_TRUE);
+
+   r = eina_binbuf_use(buf, 1); /* would go too much */
+   ck_assert_int_eq(r, EINA_FALSE);
+
+   ro_slice = eina_binbuf_slice_get(buf);
+   ck_assert_int_eq(ro_slice.len, hello_world.len + rw_slice.len);
+   ck_assert_int_eq(memcmp(ro_slice.mem, hello_world.mem, hello_world.len), 0);
+
+   for (i = hello_world.len; i < ro_slice.len; i++)
+     ck_assert_int_eq(ro_slice.bytes[i], 0xfe);
+
+   eina_binbuf_free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
+
 void
 eina_test_binbuf(TCase *tc)
 {
@@ -315,4 +383,5 @@ eina_test_binbuf(TCase *tc)
    tcase_add_test(tc, binbuf_realloc);
    tcase_add_test(tc, binbuf_manage_simple);
    tcase_add_test(tc, binbuf_manage_read_only_simple);
+   tcase_add_test(tc, binbuf_expand);
 }
