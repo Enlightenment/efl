@@ -323,13 +323,18 @@ ecore_ipc_init(void)
 
    if (++_ecore_ipc_init_count != 1)
      return _ecore_ipc_init_count;
-   _ecore_ipc_log_dom = eina_log_domain_register
-     ("ecore_ipc", ECORE_IPC_DEFAULT_LOG_COLOR);
-   if(_ecore_ipc_log_dom < 0)
+
+   if (_ecore_ipc_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for the Ecore IPC module.");
-       return --_ecore_ipc_init_count;
+        _ecore_ipc_log_dom = eina_log_domain_register
+          ("ecore_ipc", ECORE_IPC_DEFAULT_LOG_COLOR);
+        if(_ecore_ipc_log_dom < 0)
+          {
+             EINA_LOG_ERR("Impossible to create a log domain for the Ecore IPC module.");
+             return --_ecore_ipc_init_count;
+          }
      }
+
    if (!ecore_con_init())
      return --_ecore_ipc_init_count;
 
@@ -378,8 +383,11 @@ ecore_ipc_shutdown(void)
 #endif
 
    ecore_con_shutdown();
-   eina_log_domain_unregister(_ecore_ipc_log_dom);
-   _ecore_ipc_log_dom = -1;
+
+   /* do not unregister log domain as ecore_ipc_servers may be pending deletion
+    * due Ecore_Event.
+    */
+
    return _ecore_ipc_init_count;
 }
 

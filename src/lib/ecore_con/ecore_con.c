@@ -92,10 +92,13 @@ ecore_con_init(void)
    if (!ecore_init())
      goto ecore_err;
 
-   _ecore_con_log_dom = eina_log_domain_register
-       ("ecore_con", ECORE_CON_DEFAULT_LOG_COLOR);
    if (_ecore_con_log_dom < 0)
-     goto ecore_con_log_error;
+     {
+        _ecore_con_log_dom = eina_log_domain_register
+          ("ecore_con", ECORE_CON_DEFAULT_LOG_COLOR);
+        if (_ecore_con_log_dom < 0)
+          goto ecore_con_log_error;
+     }
 
    ecore_con_mempool_init();
    ecore_con_legacy_init();
@@ -159,8 +162,10 @@ ecore_con_shutdown(void)
 
    ecore_con_legacy_shutdown();
 
-   eina_log_domain_unregister(_ecore_con_log_dom);
-   _ecore_con_log_dom = -1;
+   /* do not unregister log domain as ecore_con_servers may be pending deletion
+    * due Ecore_Event.
+    */
+
    ecore_shutdown();
 #ifdef HAVE_EVIL
    evil_shutdown();
