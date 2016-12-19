@@ -732,7 +732,7 @@ _efl_io_copier_flush(Eo *o, Efl_Io_Copier_Data *pd, Eina_Bool may_block, Eina_Bo
 
    if (pd->destination)
      {
-        if (may_block || efl_io_writer_can_write_get(pd->source))
+        if (may_block || efl_io_writer_can_write_get(pd->destination))
           {
              pd->force_dispatch = ignore_line_delimiter;
              _efl_io_copier_write(o, pd);
