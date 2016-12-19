@@ -1182,6 +1182,9 @@ ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
      }
    if (svr->dialer.input)
      {
+        while (!efl_io_closer_closed_get(svr->dialer.dialer) &&
+               !efl_net_dialer_connected_get(svr->dialer.dialer))
+          ecore_main_loop_iterate();
         while (efl_io_queue_usage_get(svr->dialer.input) > 0)
           efl_io_copier_flush(svr->dialer.send_copier, EINA_TRUE, EINA_TRUE);
         return;

@@ -2262,6 +2262,10 @@ ecore_con_server_flush(Ecore_Con_Server *svr)
 
    if (!svr->dialer) return;
 
+   while (!efl_io_closer_closed_get(svr->dialer) &&
+          !efl_net_dialer_connected_get(svr->dialer))
+     ecore_main_loop_iterate();
+
    efl_io_buffered_stream_flush(svr->dialer, EINA_FALSE, EINA_TRUE);
 
    inner_dialer = efl_io_buffered_stream_inner_io_get(svr->dialer);
