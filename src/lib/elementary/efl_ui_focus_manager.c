@@ -1176,7 +1176,7 @@ _efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, E
           efl_ui_focus_manager_focus(obj, candidate);
      }
 
-   F_DBG("Manager: %p moved to %s %s in direction %d", obj, DEBUG_TUPLE(candidate), direction);
+   F_DBG("Manager: %p moved to %p %s in direction %d", obj, candidate, efl_class_name_get(candidate), direction);
 
    return candidate;
 }
