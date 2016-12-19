@@ -283,7 +283,7 @@ START_TEST(eina_test_xattr_types)
    fail_if(ret != EINA_TRUE);
    ret = eina_xattr_double_get(test_file_path, double_attr, &double_ret);
    fail_if(ret != EINA_TRUE);
-   fail_if(double_data != double_ret);
+   fail_if(!EINA_DBL_CMP(double_data, double_ret));
 
    close(fd);
    unlink(test_file_path);
