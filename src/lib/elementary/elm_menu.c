@@ -806,6 +806,16 @@ _elm_menu_efl_object_constructor(Eo *obj, Elm_Menu_Data *sd)
 {
    Eo *parent = NULL;
 
+   {
+      Efl_Ui_Focus_Manager *manager;
+
+      manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+        efl_ui_focus_manager_root_set(efl_added, obj)
+      );
+
+      efl_composite_attach(obj, manager);
+   }
+
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);

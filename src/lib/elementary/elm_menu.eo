@@ -1,5 +1,5 @@
 class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
-                Elm.Interface.Atspi.Selection)
+                Elm.Interface.Atspi.Selection, Efl.Ui.Focus.Manager)
 {
    [[Elementary menu class]]
    legacy_prefix: elm_menu;
