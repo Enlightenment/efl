@@ -611,7 +611,7 @@ _drm_transparent_set(Ecore_Evas *ee, int transparent)
 static void
 _drm_aspect_set(Ecore_Evas *ee, double aspect)
 {
-   if (ee->prop.aspect == aspect) return;
+   if (EINA_FLT_CMP(ee->prop.aspect, aspect)) return;
    ee->prop.aspect = aspect;
 }
 
