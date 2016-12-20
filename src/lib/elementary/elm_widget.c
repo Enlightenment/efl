@@ -259,15 +259,18 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
    return old;
 }
 
-EOLIAN static void
-_elm_widget_focus_register(Eo *obj, Elm_Widget_Smart_Data *pd,
+EOLIAN static Eina_Bool
+_elm_widget_focus_register(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
   Efl_Ui_Focus_Manager *manager,
   Efl_Ui_Focus_Object *logical, Eina_Bool full)
 {
+
    if (full)
      efl_ui_focus_manager_register(manager, obj, logical, NULL);
    else
      efl_ui_focus_manager_register_logical(manager, obj, logical, NULL);
+
+   return full;
 }
 
 
@@ -282,20 +285,24 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
    if (pd->can_focus)
      {
         should = EINA_TRUE;
-        want_full = EINA_TRUE;
         //can focus can be overridden by the following properties
         if (pd->disabled)
           should = EINA_FALSE;
 
         if (_tree_unfocusable(obj))
           should = EINA_FALSE;
+
+        if (!evas_object_visible_get(obj))
+          should = EINA_FALSE;
+
+        if (should)
+          want_full = EINA_TRUE;
      }
 
-   if (pd->logical.child_count > 0)
+   if (!should && pd->logical.child_count > 0)
      should = EINA_TRUE;
 
-   if (!manager ||
-        //check if we have changed the manager
+   if ( //check if we have changed the manager
         (pd->focus.manager != manager && should) ||
         //check if we are already registered but in a different state
         (pd->focus.manager && should && want_full == pd->focus.logical)
@@ -312,9 +319,10 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
           {
              pd->focus.manager = manager;
 
-             elm_obj_widget_focus_register(obj, pd->focus.manager, pd->logical.parent, want_full);
+             if (!pd->logical.parent) return;
 
-             pd->focus.logical = !want_full;
+             pd->focus.logical =
+                !elm_obj_widget_focus_register(obj, pd->focus.manager, pd->logical.parent, want_full);
           }
      }
    else if (!should && pd->focus.manager)
@@ -743,6 +751,8 @@ _elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vi
      return;
 
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+
+   _focus_state_eval(obj, pd);
 
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)
@@ -4125,10 +4135,12 @@ _elm_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EINA_
      {
         focus = EFL_DBG_INFO_LIST_APPEND(group, "Focus");
 
+        EFL_DBG_INFO_APPEND(focus, "type", EINA_VALUE_TYPE_STRING, rel->type);
         EFL_DBG_INFO_APPEND(focus, "manager", EINA_VALUE_TYPE_UINT64, _pd->focus.manager);
-
+        EFL_DBG_INFO_APPEND(focus, "parent", EINA_VALUE_TYPE_UINT64, rel->parent);
         EFL_DBG_INFO_APPEND(focus, "next", EINA_VALUE_TYPE_UINT64 , rel->next);
         EFL_DBG_INFO_APPEND(focus, "prev", EINA_VALUE_TYPE_UINT64 , rel->prev);
+
         EFL_DBG_INFO_APPEND(focus, "redirect", EINA_VALUE_TYPE_UINT64 , rel->redirect);
 
 #define ADD_PTR_LIST(name) \
@@ -4319,12 +4331,56 @@ elm_widget_focus_mouse_up_handle(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_widget_focus_mouse_up_handle(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+_elm_widget_focus_mouse_up_handle(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
    if (!obj) return;
    if (!_is_focusable(obj)) return;
 
    elm_widget_focus_steal(obj, NULL);
+
+   if (pd->focus.manager && !pd->focus.logical)
+     {
+        Efl_Ui_Focus_Manager *m, *m2 = obj, *old = NULL;
+
+        /*
+         * The object we have clicked could be registered in a submanager.
+         * This means we need to look as long as possible to higher redirect managers.
+         * And set them to the redirect manager.
+         */
+
+        m = elm_widget_top_get(obj);
+        m2 = efl_ui_focus_user_manager_get(obj);
+
+        if (m2 != m)
+          {
+            //first unset all redirect properties
+            old = m;
+            do
+              {
+                 Efl_Ui_Focus_Manager *tmp;
+                 tmp = efl_ui_focus_manager_redirect_get(old);
+                 if (tmp)
+                   efl_ui_focus_manager_redirect_set(old, NULL);
+                 old = tmp;
+              }
+            while(old);
+            //now set the redirect path to the new object
+            do
+              {
+                Efl_Ui_Focus_Manager *new_manager;;
+
+                new_manager = efl_ui_focus_user_manager_get(m2);
+                //new manager is in a higher hirarchy than m2
+                //so we set m2 as redirect in new_manager
+                efl_ui_focus_manager_redirect_set(new_manager, m2);
+                m2 = new_manager;
+              }
+            while(m && m2 && m != m2);
+          }
+
+
+        efl_ui_focus_manager_focus(pd->focus.manager, obj);
+     }
 }
 
 EOLIAN static void
@@ -6405,6 +6461,8 @@ _elm_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Ei
 {
    pd->focused = focus;
    elm_obj_widget_on_focus(obj, NULL);
+
+   efl_ui_focus_object_focus_set(efl_super(obj, MY_CLASS), focus);
 }
 
 

@@ -826,10 +826,11 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       focus_register {
          params {
-            manager : Efl.Ui.Focus.Manager;
-            logical : Efl.Ui.Focus.Object;
-            full : bool;
+            manager : Efl.Ui.Focus.Manager; [[The manager to register against]]
+            logical : Efl.Ui.Focus.Object; [[The logical parent to use]]
+            full : bool; [[flag if this should register full or just logical]]
          }
+         return : bool; [[return if it registered fully or not]]
       }
    }
    implements {
