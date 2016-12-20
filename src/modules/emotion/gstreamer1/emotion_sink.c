@@ -345,7 +345,7 @@ _update_emotion_fps(EmotionVideoSinkPrivate *priv)
    tim = ecore_time_get();
    priv->frames++;
 
-   if (priv->rlapse == 0.0)
+   if (EINA_DBL_CMP(priv->rlapse, 0.0))
      {
         priv->rlapse = tim;
         priv->flapse = priv->frames;
