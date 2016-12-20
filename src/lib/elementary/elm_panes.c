@@ -100,8 +100,8 @@ _elm_panes_elm_widget_focus_next(Eo *obj, Elm_Panes_Data *sd, Elm_Focus_Directio
    left = elm_layout_content_get(obj, "left");
    right = elm_layout_content_get(obj, "right");
 
-   if (((sd->orientation == EFL_ORIENT_HORIZONTAL) && (h == 0.0)) ||
-       ((sd->orientation == EFL_ORIENT_VERTICAL) && (w == 0.0)))
+   if (((sd->orientation == EFL_ORIENT_HORIZONTAL) && (EINA_DBL_CMP(h, 0.0))) ||
+       ((sd->orientation == EFL_ORIENT_VERTICAL) && (EINA_DBL_CMP(w, 0.0))))
      {
        return elm_widget_focus_next_get(right, dir, next, next_item);
      }
