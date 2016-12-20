@@ -701,7 +701,7 @@ _evas_box_layout_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_D
            (opt->obj, &padding_l, &padding_r, NULL, NULL);
         req_w += padding_l + padding_r;
 
-        if (!weight_x)
+        if (EINA_DBL_CMP(weight_x, 0.0))
           {
              int child_w;
 
@@ -865,7 +865,7 @@ _evas_box_layout_vertical(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Dat
            (opt->obj, NULL, NULL, &padding_t, &padding_b);
         req_h += padding_t + padding_b;
 
-        if (!weight_y)
+        if (EINA_DBL_CMP(weight_y, 0.0))
           {
              int child_h;
 
@@ -1650,7 +1650,8 @@ _evas_box_layout_stack(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Data *
 EOLIAN static void
 _evas_box_align_set(Eo *o, Evas_Object_Box_Data *priv, double horizontal, double vertical)
 {
-   if (priv->align.h == horizontal && priv->align.v == vertical)
+   if ((EINA_DBL_CMP(priv->align.h, horizontal)) &&
+       (EINA_DBL_CMP(priv->align.v, vertical)))
      return;
    priv->align.h = horizontal;
    priv->align.v = vertical;
