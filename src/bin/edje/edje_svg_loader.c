@@ -1233,8 +1233,8 @@ _attr_parse_rect_node(void *data, const char *key, const char *value)
         _parse_style_attr(node, key, value);
      }
 
-   if (rect->rx != 0 && rect->ry == 0) rect->ry = rect->rx;
-   if (rect->ry != 0 && rect->rx == 0) rect->rx = rect->ry;
+   if (!EINA_DBL_CMP(rect->rx, 0) && EINA_DBL_CMP(rect->ry, 0)) rect->ry = rect->rx;
+   if (!EINA_DBL_CMP(rect->ry, 0) && EINA_DBL_CMP(rect->rx, 0)) rect->rx = rect->ry;
 
    return EINA_TRUE;
 }
