@@ -34,9 +34,9 @@ _generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_Canvas3D_
 
    GET_NEXT_COLOR
    /*Get another color if color equal with background color*/
-   if ((bg_color->r == (double)red) &&
-       (bg_color->g == (double)green) &&
-       (bg_color->b == (double)blue))
+   if ((EINA_DBL_CMP(bg_color->r, (double)red)) &&
+       (EINA_DBL_CMP(bg_color->g, (double)green)) &&
+       (EINA_DBL_CMP(bg_color->b, (double)blue)))
      {
         GET_NEXT_COLOR
      }
