@@ -427,26 +427,26 @@ _ecore_pipe_wait(Ecore_Pipe *p,
         if (wait >= 0.0)
           {
              /* finite() tests for NaN, too big, too small, and infinity.  */
-              if ((!ECORE_FINITE(timeout)) || (timeout == 0.0))
-                {
-                   tv.tv_sec = 0;
-                   tv.tv_usec = 0;
-                }
-              else if (timeout > 0.0)
-                {
-                   int sec, usec;
+             if ((!ECORE_FINITE(timeout)) || (EINA_FLT_CMP(timeout, 0.0)))
+               {
+                  tv.tv_sec = 0;
+                  tv.tv_usec = 0;
+               }
+             else if (timeout > 0.0)
+               {
+                  int sec, usec;
 #ifdef FIX_HZ
-                   timeout += (0.5 / HZ);
-                   sec = (int)timeout;
-                   usec = (int)((timeout - (double)sec) * 1000000);
+                  timeout += (0.5 / HZ);
+                  sec = (int)timeout;
+                  usec = (int)((timeout - (double)sec) * 1000000);
 #else
-                   sec = (int)timeout;
-                   usec = (int)((timeout - (double)sec) * 1000000);
+                  sec = (int)timeout;
+                  usec = (int)((timeout - (double)sec) * 1000000);
 #endif
-                   tv.tv_sec = sec;
-                   tv.tv_usec = usec;
-                }
-              t = &tv;
+                  tv.tv_sec = sec;
+                  tv.tv_usec = usec;
+               }
+             t = &tv;
           }
         else
           {
