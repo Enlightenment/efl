@@ -382,7 +382,7 @@ _elm_button_autorepeat_initial_timeout_set(Eo *obj, Elm_Button_Data *sd, double 
         return;
      }
 
-   if (sd->ar_initial_timeout == t) return;
+   if (EINA_DBL_CMP(sd->ar_initial_timeout, t)) return;
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->ar_initial_timeout = t;
 }
@@ -405,7 +405,7 @@ _elm_button_autorepeat_gap_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
         return;
      }
 
-   if (sd->ar_gap_timeout == t) return;
+   if (EINA_DBL_CMP(sd->ar_gap_timeout, t)) return;
 
    sd->ar_gap_timeout = t;
    if ((sd->repeating) && (sd->timer)) ecore_timer_interval_set(sd->timer, t);
