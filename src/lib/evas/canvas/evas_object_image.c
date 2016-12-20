@@ -2753,10 +2753,10 @@ evas_object_image_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
                   (EINA_DBL_CMP(m->points[1].x, m->points[2].x)) &&
                   (EINA_DBL_CMP(m->points[0].y, m->points[1].y)) &&
                   (EINA_DBL_CMP(m->points[2].y, m->points[3].y))) ||
-                 (EINA_DBL_CMP(m->points[0].x, m->points[1].x)) &&
-                 (EINA_DBL_CMP(m->points[2].x, m->points[3].x)) &&
-                 (EINA_DBL_CMP(m->points[0].y, m->points[3].y)) &&
-                 (EINA_DBL_CMP(m->points[1].y, m->points[2].y)))
+                 ((EINA_DBL_CMP(m->points[0].x, m->points[1].x)) &&
+                  (EINA_DBL_CMP(m->points[2].x, m->points[3].x)) &&
+                  (EINA_DBL_CMP(m->points[0].y, m->points[3].y)) &&
+                  (EINA_DBL_CMP(m->points[1].y, m->points[2].y))))
                {
                   if ((EINA_DBL_CMP(m->points[0].x, obj->cur->geometry.x)) &&
                       (EINA_DBL_CMP(m->points[0].y, obj->cur->geometry.y)) &&
@@ -2849,10 +2849,10 @@ evas_object_image_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
                   (EINA_DBL_CMP(m->points[1].x, m->points[2].x)) &&
                   (EINA_DBL_CMP(m->points[0].y, m->points[1].y)) &&
                   (EINA_DBL_CMP(m->points[2].y, m->points[3].y))) ||
-                 (EINA_DBL_CMP(m->points[0].x, m->points[1].x)) &&
-                 (EINA_DBL_CMP(m->points[2].x, m->points[3].x)) &&
-                 (EINA_DBL_CMP(m->points[0].y, m->points[3].y)) &&
-                 (EINA_DBL_CMP(m->points[1].y, m->points[2].y)))
+                 ((EINA_DBL_CMP(m->points[0].x, m->points[1].x)) &&
+                  (EINA_DBL_CMP(m->points[2].x, m->points[3].x)) &&
+                  (EINA_DBL_CMP(m->points[0].y, m->points[3].y)) &&
+                  (EINA_DBL_CMP(m->points[1].y, m->points[2].y))))
                {
                   if ((EINA_DBL_CMP(m->points[0].x, obj->prev->geometry.x)) &&
                       (EINA_DBL_CMP(m->points[0].y, obj->prev->geometry.y)) &&
