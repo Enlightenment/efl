@@ -197,7 +197,7 @@ _evas_image_load_dpi_set(Eo *eo_obj, double dpi)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
-   if (dpi == o->load_opts->dpi) return;
+   if (EINA_DBL_CMP(dpi, o->load_opts->dpi)) return;
    evas_object_async_block(obj);
    EINA_COW_LOAD_OPTS_WRITE_BEGIN(o, low)
      low->dpi = dpi;
