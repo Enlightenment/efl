@@ -6,6 +6,7 @@ class Efl.Canvas.Proxy (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer)
      object attached to it. It can be used to apply some sort of image
      transformation to any object (eg. filters, map or zoom).
    ]]
+   data: null;
    methods {
       @property source {
          [[The source object for this proxy.
@@ -69,32 +70,8 @@ class Efl.Canvas.Proxy (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer)
                             ($false) to its source.]]
          }
       }
-      @property source_region {
-         [[Region in the source object that should be used as source of pixels.
-
-           If this property is enabled (ie. the region is not empty), then the
-           proxy will be an image object of the size of this region, and only
-           include the pixels from the source object starting at the relative
-           position $x,$y.
-
-           The region ($x,$y,$w,$h) should fit inside the source object
-           relative geometry. Invalid values lead to undefined behaviour.
-           (0,0,0,0) can be used to reset the region to the entire object.
-
-           @since 1.19
-         ]]
-         values {
-            x: int; [[Relative X position inside the source object.]]
-            y: int; [[Relative Y position inside the source object.]]
-            w: int; [[Width of the region inside the source object, or 0
-                      for the entire object width.]]
-            h: int; [[Height of the region inside the source object, or 0
-                      for the entire object height.]]
-         }
-      }
    }
    implements {
-      Efl.Object.constructor;
       Efl.Gfx.Buffer.buffer_map;
       Efl.Gfx.Buffer.buffer_unmap;
    }

@@ -121,11 +121,10 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
             }
           else
             {
-               Eina_Rectangle region = { 0, 0, 0, 0 };
                XDBG("Source needs to be rendered: '%s' of type '%s' (%s)",
                    fb->source_name, efl_class_name_get(efl_class_get(fb->source)),
                    source->proxy->redraw ? "redraw" : "no surface");
-               evas_render_proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, region, EINA_FALSE, do_async);
+               evas_render_proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, EINA_FALSE, do_async);
             }
           _filter_buffer_backing_free(fb);
           XDBG("Source #%d '%s' has dimensions %dx%d", fb->id, fb->source_name, fb->w, fb->h);

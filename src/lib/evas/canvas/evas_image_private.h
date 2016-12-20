@@ -133,7 +133,6 @@ struct _Evas_Image_Data
    Eina_Bool         direct_render : 1;
    Eina_Bool         has_filter : 1;
    Eina_Bool         buffer_data_set : 1;
-   Eina_Bool         efl_canvas_proxy : 1;
    struct
    {
       Eina_Bool      video_move : 1;
@@ -143,11 +142,6 @@ struct _Evas_Image_Data
    } delayed;
    Eina_Bool         legacy_type : 1;
 };
-
-typedef struct _Efl_Canvas_Proxy_Data
-{
-   Eina_Rectangle region;
-} Efl_Canvas_Proxy_Data;
 
 /* shared functions between legacy and new eo classes */
 void _evas_image_init_set(const Eina_File *f, const char *file, const char *key, Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Image_Load_Opts *lo);
