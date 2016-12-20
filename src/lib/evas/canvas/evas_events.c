@@ -358,9 +358,9 @@ _transform_to_src_space_f(Evas_Object_Protected_Data *obj, Evas_Object_Protected
    tmp_x -= obj->cur->geometry.x;
    tmp_y -= obj->cur->geometry.y;
 
-   if (obj_w != src_w)
+   if (!EINA_DBL_CMP(obj_w, src_w))
      tmp_x = (tmp_x * (src_w / obj_w));
-   if (obj_h != src_h)
+   if (!EINA_DBL_CMP(obj_h, src_h))
      tmp_y = (tmp_y * (src_h / obj_h));
 
    tmp_x += src->cur->geometry.x;
@@ -2763,8 +2763,8 @@ _canvas_event_feed_multi_internal(Evas *eo_e, Evas_Public_Data *e,
    evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!e || !ev) return;
 
-   if (!fx) fx = x;
-   if (!fy) fy = y;
+   if (EINA_DBL_CMP(fx, 0.0)) fx = x;
+   if (EINA_DBL_CMP(fy, 0.0)) fy = y;
 
    ev->action = action;
    ev->tool = d;
