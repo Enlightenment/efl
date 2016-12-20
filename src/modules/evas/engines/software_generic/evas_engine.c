@@ -1071,7 +1071,9 @@ eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
 }
 
 static Eina_Bool
-eng_image_data_direct_get(void *data EINA_UNUSED, void *image, int plane, Eina_Slice *slice, Evas_Colorspace *cspace)
+eng_image_data_direct_get(void *data EINA_UNUSED, void *image, int plane,
+                          Eina_Slice *slice, Evas_Colorspace *cspace,
+                          Eina_Bool load)
 {
    RGBA_Image *im = image;
 
@@ -1079,6 +1081,11 @@ eng_image_data_direct_get(void *data EINA_UNUSED, void *image, int plane, Eina_S
      return EINA_FALSE;
 
    if (cspace) *cspace = im->cache_entry.space;
+   if (load)
+     {
+        if (evas_cache_image_load_data(&im->cache_entry) != 0)
+          return EINA_FALSE;
+     }
    return _evas_common_rgba_image_plane_get(im, plane, slice);
 }
 

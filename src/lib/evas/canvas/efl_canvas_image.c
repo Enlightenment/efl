@@ -739,7 +739,7 @@ _efl_canvas_image_efl_gfx_buffer_buffer_managed_get(Eo *eo_obj, void *_pd EINA_U
    if (!o->buffer_data_set || !o->engine_data || !ENFN->image_data_direct_get)
      return EINA_FALSE;
 
-   return ENFN->image_data_direct_get(ENDT, o->engine_data, plane, slice, &cspace);
+   return ENFN->image_data_direct_get(ENDT, o->engine_data, plane, slice, &cspace, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool

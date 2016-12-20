@@ -246,7 +246,8 @@ eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
 
 static Eina_Bool
 eng_image_data_direct_get(void *data EINA_UNUSED, void *image, int plane,
-                          Eina_Slice *slice, Evas_Colorspace *cspace)
+                          Eina_Slice *slice, Evas_Colorspace *cspace,
+                          Eina_Bool load)
 {
    Evas_GL_Image *im = image;
 
@@ -254,6 +255,11 @@ eng_image_data_direct_get(void *data EINA_UNUSED, void *image, int plane,
      return EINA_FALSE;
 
    if (cspace) *cspace = im->im->cache_entry.space;
+   if (load)
+     {
+        if (evas_cache_image_load_data(&im->im->cache_entry) != 0)
+          return EINA_FALSE;
+     }
    return _evas_common_rgba_image_plane_get(im->im, plane, slice);
 }
 
@@ -733,21 +739,8 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    if (im->native.data)
      return im;
 
-   if (im->im &&
-       im->orient != EVAS_IMAGE_ORIENT_NONE)
-     {
-        im_new = _rotate_image_data(data, image);
-        if (!im_new)
-          {
-             if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-             ERR("Rotation failed.");
-             return im;
-          }
-        evas_gl_common_image_free(im);
-
-        *image_data = im_new->im->image.data;
-        return im_new;
-     }
+   if ((tofree != NULL) && im->im && (im->orient != EVAS_IMAGE_ORIENT_NONE))
+     goto rotate_image;
 
 #ifdef GL_GLES
    re->window_use(re->software.ob);
@@ -863,10 +856,14 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 
    if (!im->im)
      {
-        // FIXME: Should we create an FBO and draw the texture there, to then read it back?
-        ERR("GL image has no source data, failed to get pixel data");
-        if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        return NULL;
+        if (tofree)
+          goto rotate_image;
+        else
+          {
+             ERR("GL image has no source data, failed to get pixel data");
+             if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+             return NULL;
+          }
      }
 
 #ifdef EVAS_CSERVE2
@@ -875,6 +872,19 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    else
 #endif
      error = evas_cache_image_load_data(&im->im->cache_entry);
+
+   if (error != EVAS_LOAD_ERROR_NONE)
+     {
+        if (tofree)
+          goto rotate_image;
+        else
+          {
+             ERR("Failed to reload pixels of this GL image.");
+             if (err) *err = error;
+             return NULL;
+          }
+     }
+
    evas_gl_common_image_alloc_ensure(im);
    switch (im->cs.space)
      {
@@ -924,6 +934,19 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
      }
    if (err) *err = error;
    return im;
+
+rotate_image:
+   // rotate data for image save
+   im_new = _rotate_image_data(data, image);
+   if (!im_new)
+     {
+        if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        ERR("Image rotation failed.");
+        return im;
+     }
+   *tofree = EINA_TRUE;
+   *image_data = im_new->im->image.data;
+   return im_new;
 }
 
 static void *
