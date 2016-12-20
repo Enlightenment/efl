@@ -47,13 +47,13 @@ _cb_color_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    double val = 0.0;
 
    val = elm_spinner_value_get(obj);
-   if (val == 1.0)
+   if (EINA_DBL_CMP(val, 1.0))
      elm_bg_color_set(o_bg, 255, 255, 255);
-   else if (val == 2.0)
+   else if (EINA_DBL_CMP(val, 2.0))
      elm_bg_color_set(o_bg, 255, 0, 0);
-   else if (val == 3.0)
+   else if (EINA_DBL_CMP(val, 3.0))
      elm_bg_color_set(o_bg, 0, 0, 255);
-   else if (val == 4.0)
+   else if (EINA_DBL_CMP(val, 4.0))
      elm_bg_color_set(o_bg, 0, 255, 0);
 }
 
