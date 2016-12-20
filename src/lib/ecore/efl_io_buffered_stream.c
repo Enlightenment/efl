@@ -192,6 +192,12 @@ _efl_io_buffered_stream_efl_io_closer_close(Eo *o, Efl_Io_Buffered_Stream_Data *
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->closed, EINVAL);
 
+   if (pd->outgoing)
+     {
+        efl_io_queue_eos_mark(pd->outgoing);
+        efl_io_copier_flush(pd->sender, EINA_FALSE, EINA_TRUE);
+     }
+
    /* line delimiters may be holding a last chunk of data */
    if (pd->receiver) efl_io_copier_flush(pd->receiver, EINA_FALSE, EINA_TRUE);
 
@@ -561,7 +567,7 @@ _efl_io_buffered_stream_clear(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd
 EOLIAN static void
 _efl_io_buffered_stream_eos_mark(Eo *o, Efl_Io_Buffered_Stream_Data *pd)
 {
-   if (!pd->incoming) return;
+   if (!pd->outgoing) return;
    DBG("%p mark eos", o);
    efl_io_queue_eos_mark(pd->outgoing);
 }
