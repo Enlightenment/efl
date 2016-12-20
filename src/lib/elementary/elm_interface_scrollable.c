@@ -4623,6 +4623,7 @@ _elm_interface_scrollable_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_SCROLLABLE_INTERFACE_NAME_LEGACY, klass);
 }
 
+
 /* Legacy ABI compatibility - APIs never worked and were hidden behind
  * EFL_EO_API_SUPPORT (from elm_interface.h) or inside internal headers.
  * Removed between 1.18 and 1.19. The symbols are kept purely for ABI
@@ -4630,6 +4631,58 @@ _elm_interface_scrollable_class_constructor(Efl_Class *klass)
  */
 EAPI void elm_pan_gravity_set(Elm_Pan *obj EINA_UNUSED, double x EINA_UNUSED, double y EINA_UNUSED) {}
 EAPI void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNUSED, double *y EINA_UNUSED) {}
+
+EOLIAN static Efl_Object*
+_elm_interface_scrollable_efl_object_constructor(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
+{
+   pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_SUB_CLASS, obj,
+    efl_ui_focus_manager_root_set(efl_added, obj));
+
+   efl_composite_attach(obj, pd->manager);
+
+   return efl_constructor(efl_super(obj, MY_SCROLLABLE_INTERFACE));
+}
+
+static Eina_Bool
+_filter_cb(const void *iterator EINA_UNUSED, void *data, void *fdata)
+{
+   Eina_Rectangle geom;
+
+   evas_object_geometry_get(data, &geom.x, &geom.y, &geom.w, &geom.h);
+
+   return eina_rectangles_intersect(&geom, fdata);
+}
+
+EOLIAN static Eina_Iterator*
+_elm_interface_scrollable_efl_ui_focus_manager_border_elements_get(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
+{
+   Eina_Iterator *border_elements;
+   Eina_Rectangle *rect = calloc(1, sizeof(Eina_Rectangle));
+
+   border_elements = efl_ui_focus_manager_border_elements_get(efl_super(obj, MY_SCROLLABLE_INTERFACE));
+   elm_interface_scrollable_content_viewport_geometry_get(obj, &rect->x, &rect->y, &rect->w, &rect->h);
+
+   return eina_iterator_filter_new(border_elements, _filter_cb, free, rect);
+}
+
+EOLIAN static void
+_elm_interface_scrollable_efl_ui_focus_manager_focus(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *focus)
+{
+   Eina_Rectangle geom;
+   Eina_Rectangle obj_geom;
+
+   efl_ui_focus_manager_focus(efl_super(obj, MY_SCROLLABLE_INTERFACE), focus);
+
+   if (!focus) return;
+
+   evas_object_geometry_get(focus, &geom.x, &geom.y, &geom.w, &geom.h);
+   evas_object_geometry_get(pd->content, &obj_geom.x, &obj_geom.y, &obj_geom.w, &obj_geom.h);
+
+   geom.x = geom.x - obj_geom.x;
+   geom.y = geom.y - obj_geom.y;
+
+   elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
+}
 
 #include "elm_interface_scrollable.eo.c"
 #include "elm_pan.eo.c"

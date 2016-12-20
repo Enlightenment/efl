@@ -42,7 +42,7 @@ enum Elm.Scroller.Movement_Block
 }
 
 
-mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
+mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus.Manager)
 {
    [[Elm scrollable mixin]]
    eo_prefix: elm_interface_scrollable;
@@ -679,8 +679,11 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
    }
    implements {
       class.constructor;
+      Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
+      Efl.Ui.Focus.Manager.border_elements.get;
+      Efl.Ui.Focus.Manager.focus;
    }
    events {
       changed; [[Called when content changed]]

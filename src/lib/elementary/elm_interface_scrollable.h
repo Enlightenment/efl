@@ -237,6 +237,8 @@ struct _Elm_Scrollable_Smart_Interface_Data
    Eina_Bool  go_down : 1;
    Eina_Bool  loop_h : 1;
    Eina_Bool  loop_v : 1;
+
+   Efl_Ui_Focus_Manager *manager;
 };
 
 #define ELM_SCROLLABLE_CHECK(obj, ...)                                       \
