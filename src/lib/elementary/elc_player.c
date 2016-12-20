@@ -253,7 +253,7 @@ _update_slider(void *data, const Efl_Event *event EINA_UNUSED)
    elm_object_disabled_set(sd->slider,
                            (!seekable) | elm_widget_disabled_get(data));
    elm_slider_min_max_set(sd->slider, 0, length);
-   if ((elm_slider_value_get(sd->slider) != pos) &&
+   if ((!EINA_DBL_CMP(elm_slider_value_get(sd->slider), pos)) &&
        (!sd->dragging))
      elm_slider_value_set(sd->slider, pos);
 }
@@ -273,7 +273,7 @@ _update_position(void *data, const Efl_Event *event EINA_UNUSED)
    ELM_PLAYER_DATA_GET(data, sd);
 
    pos = elm_slider_value_get(sd->slider);
-   if (pos != elm_video_play_position_get(sd->video))
+   if (!EINA_FLT_CMP(pos, elm_video_play_position_get(sd->video)))
      elm_video_play_position_set(sd->video, pos);
 }
 
@@ -298,7 +298,7 @@ _update_volume(void *data, const Efl_Event *event EINA_UNUSED)
    ELM_PLAYER_DATA_GET(data, sd);
 
    vol = elm_slider_value_get(sd->vslider) / 100.0;
-   if (vol != elm_video_audio_level_get(sd->video))
+   if (!EINA_DBL_CMP(vol, elm_video_audio_level_get(sd->video)))
      elm_video_audio_level_set(sd->video, vol);
 }
 
