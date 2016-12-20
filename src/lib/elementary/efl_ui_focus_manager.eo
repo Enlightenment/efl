@@ -96,6 +96,7 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
             params {
                 parent : Efl.Ui.Focus.Object @nonull; [[the parent to update]]
                 children : list<Efl.Ui.Focus.Object>; [[the list with the new order]]
+                subset : bool; [[$false to make sure childrenlist is the same size as the real logical children, $true to just add this order to the beginning of the children]]
             }
             return : bool;
         }

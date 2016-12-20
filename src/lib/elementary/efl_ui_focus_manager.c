@@ -613,6 +613,22 @@ _efl_ui_focus_manager_update_parent(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Da
    return EINA_TRUE;
 }
 
+static Eina_List*
+_set_a_without_b(Eina_List *a, Eina_List *b)
+{
+   Eina_List *a_out = NULL, *node;
+   void *data;
+
+   a_out = eina_list_clone(a);
+
+   EINA_LIST_FOREACH(b, node, data)
+     {
+        a_out = eina_list_remove(a_out, data);
+     }
+
+   return a_out;
+}
+
 static Eina_Bool
 _equal_set(Eina_List *none_nodes, Eina_List *nodes)
 {
@@ -631,7 +647,7 @@ _equal_set(Eina_List *none_nodes, Eina_List *nodes)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_manager_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *parent, Eina_List *order)
+_efl_ui_focus_manager_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *parent, Eina_List *order, Eina_Bool subset)
 {
    Node *pnode;
 
@@ -640,13 +656,24 @@ _efl_ui_focus_manager_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
    if (!pnode)
      return EINA_FALSE;
 
-   if (!_equal_set(order, T(pnode).children))
+   if (!subset)
      {
-        ERR("Set of children is not equal");
-        return EINA_FALSE;
+        if (!_equal_set(order, T(pnode).children))
+          {
+             ERR("Set of children is not equal");
+             return EINA_FALSE;
+          }
+        T(pnode).children = order;
      }
+   else
+     {
+        Eina_List *not_ordered;
 
-   T(pnode).children = order;
+        not_ordered = _set_a_without_b(T(pnode).children, order);
+
+        eina_list_free(T(pnode).children);
+        T(pnode).children = eina_list_merge(order, not_ordered);
+     }
 
    return EINA_TRUE;
 }
