@@ -22,6 +22,16 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static void
+_focus_order_flush(Eo *obj, Elm_Box_Data *pd EINA_UNUSED)
+{
+   Elm_Widget_Smart_Data *wpd;
+   Eina_List *order = evas_object_box_children_get(obj);
+   wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
+
+   efl_ui_focus_manager_update_children(wpd->focus.manager, obj, order, EINA_TRUE);
+}
+
 static void *
 _elm_box_list_data_get(const Eina_List *list)
 {
@@ -463,25 +473,27 @@ _elm_box_homogeneous_get(Eo *obj EINA_UNUSED, Elm_Box_Data *sd)
 }
 
 EOLIAN static void
-_elm_box_pack_start(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *subobj)
+_elm_box_pack_start(Eo *obj, Elm_Box_Data *pd, Evas_Object *subobj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_prepend(wd->resize_obj, subobj);
+   _focus_order_flush(obj, pd);
 }
 
 EOLIAN static void
-_elm_box_pack_end(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *subobj)
+_elm_box_pack_end(Eo *obj, Elm_Box_Data *pd, Evas_Object *subobj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_append(wd->resize_obj, subobj);
+   _focus_order_flush(obj, pd);
 }
 
 EOLIAN static void
-_elm_box_pack_before(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *subobj, Evas_Object *before)
+_elm_box_pack_before(Eo *obj, Elm_Box_Data *pd, Evas_Object *subobj, Evas_Object *before)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -489,33 +501,37 @@ _elm_box_pack_before(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *subobj
 
    evas_object_box_insert_before
      (wd->resize_obj, subobj, before);
+   _focus_order_flush(obj, pd);
 }
 
 EOLIAN static void
-_elm_box_pack_after(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *subobj, Evas_Object *after)
+_elm_box_pack_after(Eo *obj, Elm_Box_Data *pd, Evas_Object *subobj, Evas_Object *after)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_insert_after
      (wd->resize_obj, subobj, after);
+   _focus_order_flush(obj, pd);
 }
 
 EOLIAN static void
-_elm_box_clear(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
+_elm_box_clear(Eo *obj, Elm_Box_Data *pd)
 {
    /* EINA_TRUE means to delete objects as well */
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_box_remove_all(wd->resize_obj, EINA_TRUE);
+   _focus_order_flush(obj, pd);
 }
 
 EOLIAN static void
-_elm_box_unpack(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *subobj)
+_elm_box_unpack(Eo *obj, Elm_Box_Data *pd, Evas_Object *subobj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (evas_object_box_remove(wd->resize_obj, subobj))
      _elm_widget_sub_object_redirect_to_top(obj, subobj);
+   _focus_order_flush(obj, pd);
 }
 
 EOLIAN static void
@@ -537,6 +553,7 @@ _elm_box_unpack_all(Eo *obj, Elm_Box_Data *pd)
    evas_object_box_remove_all(wd->resize_obj, EINA_FALSE);
    /* update size hints */
    _sizing_eval(obj);
+   _focus_order_flush(obj, pd);
 }
 
 EOLIAN static void
