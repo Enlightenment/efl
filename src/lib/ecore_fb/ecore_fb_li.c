@@ -699,7 +699,8 @@ EAPI void
 ecore_fb_input_device_threshold_click_set(Ecore_Fb_Input_Device *dev, double threshold)
 {
    if (!dev) return;
-   if ((threshold == dev->mouse.threshold) || (threshold == 0)) return;
+   if ((EINA_DBL_CMP(threshold, dev->mouse.threshold)) ||
+       (EINA_DBL_CMP(threshold, 0.0))) return;
    dev->mouse.threshold = threshold;
 }
 
