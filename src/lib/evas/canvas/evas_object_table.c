@@ -1015,7 +1015,8 @@ _evas_table_homogeneous_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 EOLIAN static void
 _evas_table_align_set(Eo *o, Evas_Table_Data *priv, double horizontal, double vertical)
 {
-   if (priv->align.h == horizontal && priv->align.v == vertical)
+   if ((EINA_DBL_CMP(priv->align.h, horizontal)) &&
+       (EINA_DBL_CMP(priv->align.v, vertical)))
      return;
    priv->align.h = horizontal;
    priv->align.v = vertical;
