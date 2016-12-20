@@ -241,7 +241,7 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T 
         break;
      }
 #endif
-   if (npos == ep->description_pos) return;
+   if (EQ(npos, ep->description_pos)) return;
 
    ep->description_pos = npos;
 
@@ -468,7 +468,7 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *state_name
                   sizeof (Edje_Part_Description_Common *));
      }
 
-   if (!strcmp(state_name, "default") && state_val == 0.0)
+   if (!strcmp(state_name, "default") && EQ(state_val, ZERO))
      return _edje_get_description_by_orientation(ed,
                                                  ep->default_desc, &ep->default_desc_rtl, ep->type);
 
@@ -495,7 +495,7 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *state_name
           {
              if (!approximate)
                {
-                  if (d->state.value == state_val)
+                  if (EQ(d->state.value, state_val))
                     return _edje_get_description_by_orientation(ed, d,
                                                                 &ep->other.desc_rtl[i], ep->type);
                   else
@@ -1042,12 +1042,12 @@ _edje_part_dragable_calc(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, FLOAT_T *x, F
 
              dx = FROM_INT(ep->x - ep->drag->confine_to->x);
              dw = FROM_INT(ep->drag->confine_to->w - ep->w);
-             if (dw != ZERO) dx = DIV(dx, dw);
+             if (NEQ(dw, ZERO)) dx = DIV(dx, dw);
              else dx = ZERO;
 
              dy = FROM_INT(ep->y - ep->drag->confine_to->y);
              dh = FROM_INT(ep->drag->confine_to->h - ep->h);
-             if (dh != ZERO) dy = DIV(dy, dh);
+             if (NEQ(dh, ZERO)) dy = DIV(dy, dh);
              else dy = ZERO;
 
              if (x) *x = tx ? ep->drag->x : dx;
@@ -1078,7 +1078,7 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
     * value we would set foo to, because it would depend on the
     * size of the dragable...
     */
-   if (ep->drag->x != x || ep->drag->tmp.x)
+   if (NEQ(ep->drag->x, x) || ep->drag->tmp.x)
      {
         ep->drag->x = x;
         ep->drag->tmp.x = 0;
@@ -1087,7 +1087,7 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
         ed->recalc_call = EINA_TRUE;
      }
 
-   if (ep->drag->y != y || ep->drag->tmp.y)
+   if (NEQ(ep->drag->y, y) || ep->drag->tmp.y)
      {
         ep->drag->y = y;
         ep->drag->tmp.y = 0;
@@ -1566,7 +1566,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                      double tmp_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, s * 0.95);
 
                      /* Break if we are not making any progress. */
-                     if (tmp_s == s)
+                     if (EQ(tmp_s, s))
                        break;
                      s = tmp_s;
 
@@ -1657,7 +1657,7 @@ _edje_textblock_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    /* FIXME: this is just an hack. */
    FLOAT_T sc;
    sc = DIV(ed->scale, ed->file->base_scale);
-   if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
+   if (EQ(sc, ZERO)) sc = DIV(_edje_scale, ed->file->base_scale);
    if (chosen_desc->text.fit_x || chosen_desc->text.fit_y)
      {
         _edje_part_recalc_single_textblock(sc, ed, ep, chosen_desc, params,
@@ -1944,8 +1944,8 @@ _edje_part_recalc_single_min(Edje_Part_Description_Common *desc,
    FLOAT_T w;
    FLOAT_T h;
 
-   w = params->eval.w ? params->eval.w : FROM_INT(99999);
-   h = params->eval.h ? params->eval.h : FROM_INT(99999);
+   w = NEQ(params->eval.w, ZERO) ? params->eval.w : FROM_INT(99999);
+   h = NEQ(params->eval.h, ZERO) ? params->eval.h : FROM_INT(99999);
 
    switch (aspect)
      {
@@ -2014,8 +2014,8 @@ _edje_part_recalc_single_max(Edje_Part_Description_Common *desc,
    FLOAT_T w;
    FLOAT_T h;
 
-   w = params->eval.w ? params->eval.w : FROM_INT(99999);
-   h = params->eval.h ? params->eval.h : FROM_INT(99999);
+   w = NEQ(params->eval.w, 0) ? params->eval.w : FROM_INT(99999);
+   h = NEQ(params->eval.h, 0) ? params->eval.h : FROM_INT(99999);
 
    switch (aspect)
      {
@@ -2274,7 +2274,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
         if (desc->minmul.have)
           {
              FLOAT_T mmw = desc->minmul.w;
-             if (mmw != FROM_INT(1)) *minw = TO_INT(SCALE(mmw, *minw));
+             if (NEQ(mmw, FROM_INT(1))) *minw = TO_INT(SCALE(mmw, *minw));
           }
      }
 
@@ -2319,7 +2319,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
           }
      }
    if ((ed->calc_only) && (desc->minmul.have) &&
-       (desc->minmul.w != FROM_INT(1))) *maxw = *minw;
+       (NEQ(desc->minmul.w, FROM_INT(1)))) *maxw = *minw;
    if (*maxw >= 0)
      {
         if (*maxw < *minw) *maxw = *minw;
@@ -2339,7 +2339,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
         if (desc->minmul.have)
           {
              FLOAT_T mmh = desc->minmul.h;
-             if (mmh != FROM_INT(1)) *minh = TO_INT(SCALE(mmh, *minh));
+             if (NEQ(mmh, FROM_INT(1))) *minh = TO_INT(SCALE(mmh, *minh));
           }
      }
 
@@ -2384,7 +2384,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
           }
      }
    if ((ed->calc_only) && (desc->minmul.have) &&
-       (desc->minmul.h != FROM_INT(1))) *maxh = *minh;
+       (NEQ(desc->minmul.h, FROM_INT(1)))) *maxh = *minh;
    if (*maxh >= 0)
      {
         if (*maxh < *minh) *maxh = *minh;
@@ -2441,7 +2441,7 @@ _edje_part_recalc_single_map(Edje *ed,
            light_desc2 = light->param2 ? light->param2->description : NULL;
 
            /* take into account CURRENT state also */
-           if (pos != ZERO && light_desc2)
+           if (NEQ(pos, ZERO) && light_desc2)
              {
                 params_write->light.z = light->param1.description->persp.zplane +
                   TO_INT(SCALE(pos, light_desc2->persp.zplane - light->param1.description->persp.zplane));
@@ -2479,7 +2479,7 @@ _edje_part_recalc_single_map(Edje *ed,
 
            pos = persp->description_pos;
 
-           if (pos != 0 && persp->param2)
+           if (NEQ(pos, ZERO) && persp->param2)
              {
                 params_write->persp.z = persp->param1.description->persp.zplane +
                   TO_INT(SCALE(pos, persp->param2->description->persp.zplane -
@@ -2813,7 +2813,7 @@ _edje_part_recalc_single(Edje *ed,
    FLOAT_T sc;
 
    sc = DIV(ed->scale, ed->file->base_scale);
-   if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
+   if (EQ(sc, ZERO)) sc = DIV(_edje_scale, ed->file->base_scale);
    _edje_part_recalc_single_min_max(sc, ed, ep, desc, &minw, &minh, &maxw, &maxh);
    if (minw < mmw) minw = mmw;
    if (minh < mmh) minh = mmh;
@@ -2829,7 +2829,7 @@ _edje_part_recalc_single(Edje *ed,
 
    /* check whether this part has fixed value or not*/
    if ((rel1_to_x == rel2_to_x) &&
-       (desc->rel1.relative_x == desc->rel2.relative_x) &&
+       (EQ(desc->rel1.relative_x, desc->rel2.relative_x)) &&
        (!chosen_desc->fixed.w))
      {
         chosen_desc->fixed.w = 1;
@@ -2837,7 +2837,7 @@ _edje_part_recalc_single(Edje *ed,
      }
 
    if ((rel1_to_y == rel2_to_y) &&
-       (desc->rel1.relative_y == desc->rel2.relative_y) &&
+       (EQ(desc->rel1.relative_y, desc->rel2.relative_y)) &&
        (!chosen_desc->fixed.h))
      {
         chosen_desc->fixed.h = 1;
@@ -2923,7 +2923,8 @@ _edje_part_recalc_single(Edje *ed,
               SET_BORDER_DEFINED(params->type.common->spec.image.t, set->entry->border.t);
               SET_BORDER_DEFINED(params->type.common->spec.image.b, set->entry->border.b);
 
-              SET_BORDER_DEFINED(params->type.common->spec.image.border_scale_by, set->entry->border.scale_by);
+              params->type.common->spec.image.border_scale_by = NEQ(set->entry->border.scale_by, ZERO) ?
+                set->entry->border.scale_by : params->type.common->spec.image.border_scale_by;
            }
 
          break;
@@ -3259,7 +3260,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    Edje_Real_Part_Set *set;
 
    sc = DIV(ed->scale, ed->file->base_scale);
-   if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
+   if (EQ(sc, ZERO)) sc = DIV(_edje_scale, ed->file->base_scale);
 
    _edje_real_part_image_set(ed, ep, &set, pos);
 
@@ -3281,7 +3282,8 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
         SET_BORDER_DEFINED(p3->type.common->spec.image.t, set->entry->border.t);
         SET_BORDER_DEFINED(p3->type.common->spec.image.b, set->entry->border.b);
 
-        SET_BORDER_DEFINED(p3->type.common->spec.image.border_scale_by, set->entry->border.scale_by);
+        p3->type.common->spec.image.border_scale_by = NEQ(set->entry->border.scale_by, ZERO) ?
+          set->entry->border.scale_by : p3->type.common->spec.image.border_scale_by;
      }
 
    efl_gfx_fill_set(ep->object, p3->type.common->fill.x, p3->type.common->fill.y, p3->type.common->fill.w, p3->type.common->fill.h);
@@ -3455,7 +3457,7 @@ _edje_physics_body_props_update(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *
         EPH_CALL(ephysics_body_material_set)(ep->body, pf->ext->physics->material);
         if (!pf->ext->physics->material)
           {
-             if (pf->ext->physics->density)
+             if (NEQ(pf->ext->physics->density, ZERO))
                EPH_CALL(ephysics_body_density_set)(ep->body, pf->ext->physics->density);
              else
                EPH_CALL(ephysics_body_mass_set)(ep->body, pf->ext->physics->mass);
@@ -3596,14 +3598,14 @@ _edje_physics_body_add(Edje *ed, Edje_Real_Part *rp, EPhysics_World *world)
 
 #endif
 
-#define FINTP(_x1, _x2, _p) \
-  (((_x1) == (_x2))         \
-   ? FROM_INT((_x1))        \
-   : ADD(FROM_INT(_x1),     \
+#define FINTP(_x1, _x2, _p)                     \
+  ((((int)_x1) == ((int)_x2))                   \
+   ? FROM_INT((_x1))                            \
+   : ADD(FROM_INT(_x1),                         \
          SCALE((_p), (_x2) - (_x1))))
 
 #define FFP(_x1, _x2, _p) \
-  (((_x1) == (_x2))       \
+  (EQ((_x1), (_x2))       \
    ? (_x1)                \
    : ADD(_x1, MUL(_p, SUB(_x2, _x1))));
 
@@ -4395,14 +4397,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
         /* visible is special */
         if ((p1->visible) && (!p2->visible))
-          p3->visible = (pos != FROM_INT(1));
+          p3->visible = NEQ(pos, FROM_INT(1));
         else if ((!p1->visible) && (p2->visible))
-          p3->visible = (pos != ZERO);
+          p3->visible = NEQ(pos, ZERO);
         else
           p3->visible = p1->visible;
 
         /* clip_to will behave a bit like visible */
-        if (pos == ZERO)
+        if (EQ(pos, ZERO))
           {
              if ((p1->ext) && (p1->ext->clip_to))
                {
@@ -4410,7 +4412,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   p3->ext->clip_to = p1->ext->clip_to;
                }
           }
-        else if (pos == FROM_INT(1))
+        else if (EQ(pos, FROM_INT(1)))
           {
              if ((p2->ext) && (p2->ext->clip_to))
                {
@@ -4446,12 +4448,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         /* and no_render as well */
         if ((p1->no_render) && (!p2->no_render))
           {
-             p3->no_render = (pos == FROM_INT(1));
+             p3->no_render = EQ(pos, FROM_INT(1));
              p3->no_render_apply = 1;
           }
         else if ((!p1->no_render) && (p2->no_render))
           {
-             p3->no_render = (pos == ZERO);
+             p3->no_render = EQ(pos, ZERO);
              p3->no_render_apply = 1;
           }
         else if (p1->no_render != ep->part->no_render)
@@ -4507,27 +4509,35 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              _edje_calc_params_need_ext(p2);
              EINA_COW_CALC_PHYSICS_BEGIN(p3, p3_write)
              {
-                p3_write->mass = TO_DOUBLE(FINTP(p1->ext->physics->mass, p2->ext->physics->mass,
-                                                 pos));
-                p3_write->restitution = TO_DOUBLE(FINTP(p1->ext->physics->restitution,
-                                                        p2->ext->physics->restitution,
-                                                        pos));
-                p3_write->friction = TO_DOUBLE(FINTP(p1->ext->physics->friction,
-                                                     p2->ext->physics->friction, pos));
-                p3_write->density = TO_DOUBLE(FINTP(p1->ext->physics->density,
-                                                    p2->ext->physics->density, pos));
-                p3_write->hardness = TO_DOUBLE(FINTP(p1->ext->physics->hardness,
-                                                     p2->ext->physics->hardness, pos));
+                p3_write->mass = FFP(p1->ext->physics->mass,
+                                     p2->ext->physics->mass,
+                                     pos);
+                p3_write->restitution = FFP(p1->ext->physics->restitution,
+                                            p2->ext->physics->restitution,
+                                            pos);
+                p3_write->friction = FFP(p1->ext->physics->friction,
+                                         p2->ext->physics->friction,
+                                         pos);
+                p3_write->density = FFP(p1->ext->physics->density,
+                                        p2->ext->physics->density,
+                                        pos);
+                p3_write->hardness = FFP(p1->ext->physics->hardness,
+                                         p2->ext->physics->hardness,
+                                         pos);
 
-                p3_write->damping.linear = TO_DOUBLE(FINTP(p1->ext->physics->damping.linear,
-                                                           p2->ext->physics->damping.linear, pos));
-                p3_write->damping.angular = TO_DOUBLE(FINTP(p1->ext->physics->damping.angular,
-                                                            p2->ext->physics->damping.angular, pos));
+                p3_write->damping.linear = FFP(p1->ext->physics->damping.linear,
+                                               p2->ext->physics->damping.linear,
+                                               pos);
+                p3_write->damping.angular = FFP(p1->ext->physics->damping.angular,
+                                                p2->ext->physics->damping.angular,
+                                                pos);
 
-                p3_write->sleep.linear = TO_DOUBLE(FINTP(p1->ext->physics->sleep.linear,
-                                                         p2->ext->physics->sleep.linear, pos));
-                p3_write->sleep.angular = TO_DOUBLE(FINTP(p1->ext->physics->sleep.angular,
-                                                          p2->ext->physics->sleep.angular, pos));
+                p3_write->sleep.linear = FFP(p1->ext->physics->sleep.linear,
+                                             p2->ext->physics->sleep.linear,
+                                             pos);
+                p3_write->sleep.angular = FFP(p1->ext->physics->sleep.angular,
+                                              p2->ext->physics->sleep.angular,
+                                              pos);
 
                 p3_write->z = INTP(p1->ext->physics->z, p2->ext->physics->z, pos);
                 p3_write->depth = INTP(p1->ext->physics->depth, p2->ext->physics->depth, pos);
@@ -4632,9 +4642,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
         /* mapped is a special case like visible */
         if ((p1->mapped) && (!p2->mapped))
-          p3->mapped = (pos != FROM_INT(1));
+          p3->mapped = NEQ(pos, FROM_INT(1));
         else if ((!p1->mapped) && (p2->mapped))
-          p3->mapped = (pos != ZERO);
+          p3->mapped = NEQ(pos, ZERO);
         else
           p3->mapped = p1->mapped;
 
