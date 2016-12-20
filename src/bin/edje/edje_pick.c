@@ -558,7 +558,7 @@ _edje_pick_output_prepare(Edje_File *o, Edje_File *edf, char *name)
              if (o->feature_ver < edf->feature_ver)
                o->feature_ver = edf->feature_ver;
           }
-        if (o->base_scale != edf->base_scale)
+        if (NEQ(o->base_scale, edf->base_scale))
           {
              EINA_LOG_ERR("Error: Merging files of various base scale. Base scale of the files should be same.\n");
              free(o);
