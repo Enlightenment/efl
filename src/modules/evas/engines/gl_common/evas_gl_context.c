@@ -3114,7 +3114,6 @@ _orig_shader_array_flush(Evas_Engine_GL_Context *gc)
    Eina_Bool setclip;
    Eina_Bool fbo = EINA_FALSE;
 
-   if (!gc->havestuff) return;
    gw = gc->w;
    gh = gc->h;
    if (!((gc->pipe[0].shader.surface == gc->def_surface) ||
@@ -3822,6 +3821,8 @@ _gl_thread_shader_array_flush(void *data)
 static void
 shader_array_flush(Evas_Engine_GL_Context *gc)
 {
+   if (!gc->havestuff) return;
+
    if (!evas_gl_thread_enabled())
      {
         _orig_shader_array_flush(gc);
