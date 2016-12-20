@@ -370,7 +370,7 @@ EOLIAN static Eina_Error
 _efl_io_buffer_efl_io_sizer_resize(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t size)
 {
    Eina_Error ret = 0;
-   Eina_Bool reallocated;
+   Eina_Bool reallocated = EINA_FALSE;
    size_t old_size, pos_read, pos_write;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EINVAL);
