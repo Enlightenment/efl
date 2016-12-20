@@ -832,7 +832,8 @@ EOLIAN static void
 _evas_canvas3d_mesh_alpha_func_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Evas_Canvas3D_Comparison comparison,
                                     Evas_Real ref_value)
 {
-   if (pd->alpha_comparison == comparison && pd->alpha_ref_value == ref_value)
+   if (pd->alpha_comparison == comparison &&
+       (EINA_DBL_CMP(pd->alpha_ref_value, ref_value)))
      return;
    pd->alpha_comparison = comparison;
    pd->alpha_ref_value = ref_value;
@@ -933,7 +934,7 @@ evas_canvas3d_mesh_interpolate_position_get(Eina_Vector3 *out, const Evas_Canvas
      {
         float *ptr;
 
-        if (pos0->stride != 0.0)
+        if (!EINA_FLT_CMP(pos0->stride, 0.0))
           ptr = (float *)((char *)pos0->data + pos0->stride * index);
         else
           ptr = (float *)pos0->data + 3 * index;
@@ -946,12 +947,12 @@ evas_canvas3d_mesh_interpolate_position_get(Eina_Vector3 *out, const Evas_Canvas
      {
         float *ptr0, *ptr1;
 
-        if (pos0->stride != 0.0)
+        if (!EINA_FLT_CMP(pos0->stride, 0.0))
           ptr0 = (float *)((char *)pos0->data + pos0->stride * index);
         else
           ptr0 = (float *)pos0->data + 3 * index;
 
-        if (pos1->stride != 0.0)
+        if (!EINA_FLT_CMP(pos1->stride, 0.0))
           ptr1 = (float *)((char *)pos1->data + pos1->stride * index);
         else
           ptr1 = (float *)pos1->data + 3 * index;
@@ -1115,7 +1116,7 @@ EOLIAN static void
 _evas_canvas3d_mesh_shadows_constant_bias_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
                                          Evas_Real bias)
 {
-   if (pd->shadows_constant_bias != bias)
+   if (!EINA_DBL_CMP(pd->shadows_constant_bias, bias))
      {
         pd->shadows_constant_bias = bias;
         evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_MESH_SHADOWS_CONSTANT_BIAS, NULL);
