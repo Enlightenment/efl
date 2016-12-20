@@ -679,12 +679,12 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key,
    /* use local var to copy default load options to the image entry */
    if ((!lo) ||
        (lo &&
-        (lo->scale_down_by == 0) &&
-        (lo->dpi == 0.0) &&
-        ((lo->w == 0) || (lo->h == 0)) &&
-        ((lo->region.w == 0) || (lo->region.h == 0)) &&
-        ((lo->scale_load.dst_w == 0) || (lo->scale_load.dst_h == 0)) &&
-        (lo->orientation == 0)
+           (lo->scale_down_by == 0) &&
+           (EINA_DBL_CMP(lo->dpi, 0.0)) &&
+           ((lo->w == 0) || (lo->h == 0)) &&
+           ((lo->region.w == 0) || (lo->region.h == 0)) &&
+           ((lo->scale_load.dst_w == 0) || (lo->scale_load.dst_h == 0)) &&
+           (lo->orientation == 0)
        ))
      {
         lo = &prevent;
