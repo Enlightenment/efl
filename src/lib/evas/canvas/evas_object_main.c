@@ -1539,7 +1539,9 @@ _efl_canvas_object_efl_gfx_size_hint_hint_align_set(Eo *eo_obj, Evas_Object_Prot
      return;
    evas_object_async_block(obj);
    _evas_object_size_hint_alloc(eo_obj, obj);
-   if ((obj->size_hints->align.x == x) && (obj->size_hints->align.y == y)) return;
+   if ((EINA_DBL_CMP(obj->size_hints->align.x, x)) &&
+       (EINA_DBL_CMP(obj->size_hints->align.y, y)))
+     return;
    obj->size_hints->align.x = x;
    obj->size_hints->align.y = y;
 
@@ -1566,7 +1568,9 @@ _efl_canvas_object_efl_gfx_size_hint_hint_weight_set(Eo *eo_obj, Evas_Object_Pro
      return;
    evas_object_async_block(obj);
    _evas_object_size_hint_alloc(eo_obj, obj);
-   if ((obj->size_hints->weight.x == x) && (obj->size_hints->weight.y == y)) return;
+   if ((EINA_DBL_CMP(obj->size_hints->weight.x, x)) &&
+       (EINA_DBL_CMP(obj->size_hints->weight.y, y)))
+     return;
    obj->size_hints->weight.x = x;
    obj->size_hints->weight.y = y;
 
@@ -1918,7 +1922,7 @@ EOLIAN static void
 _efl_canvas_object_scale_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double scale)
 {
    if (obj->delete_me) return;
-   if (obj->cur->scale == scale) return;
+   if (EINA_DBL_CMP(obj->cur->scale, scale)) return;
 
    evas_object_async_block(obj);
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
