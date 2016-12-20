@@ -1859,7 +1859,7 @@ _elm_photocam_zoom_set(Eo *obj, Elm_Photocam_Data *sd, double zoom)
    Eina_Bool an = EINA_FALSE;
 
    if (zoom <= (1.0 / 256.0)) zoom = (1.0 / 256.0);
-   if (zoom == sd->zoom) return;
+   if (EINA_DBL_CMP(zoom, sd->zoom)) return;
 
    sd->zoom = zoom;
    sd->size.ow = sd->size.w;
@@ -1897,7 +1897,7 @@ _elm_photocam_zoom_set(Eo *obj, Elm_Photocam_Data *sd, double zoom)
                z = (double)sd->size.imw / pw;
              else
                z = (double)sd->size.imh / ph;
-             if (z != sd->zoom)
+             if (!EINA_DBL_CMP(z, sd->zoom))
                zoom_changed = 1;
              sd->zoom = z;
              sd->size.nw = pw;
@@ -1943,7 +1943,7 @@ _elm_photocam_zoom_set(Eo *obj, Elm_Photocam_Data *sd, double zoom)
           }
         else if ((sd->size.imw < rw) && (sd->size.imh < rh))
           {
-             if (1 != sd->zoom) zoom_changed = 1;
+             if (!EINA_DBL_CMP(sd->zoom, 1)) zoom_changed = 1;
              sd->zoom = 1;
              sd->size.nw = sd->size.imw;
              sd->size.nh = sd->size.imh;
@@ -1962,7 +1962,7 @@ _elm_photocam_zoom_set(Eo *obj, Elm_Photocam_Data *sd, double zoom)
                z = (double)sd->size.imw / pw;
              else
                z = (double)sd->size.imh / ph;
-             if (z != sd->zoom)
+             if (EINA_DBL_CMP(z, sd->zoom))
                zoom_changed = 1;
              sd->zoom = z;
              sd->size.nw = pw;
