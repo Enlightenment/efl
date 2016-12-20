@@ -358,7 +358,7 @@ _thumb_start(Elm_Thumb_Data *sd)
      ethumb_client_orientation_set(_elm_ethumb_client, sd->thumb.orient);
    if (sd->thumb.tw && sd->thumb.th)
      ethumb_client_size_set(_elm_ethumb_client, sd->thumb.tw, sd->thumb.th);
-   if (sd->thumb.cropx && sd->thumb.cropy)
+   if (!EINA_DBL_CMP(sd->thumb.cropx, 0) && !EINA_DBL_CMP(sd->thumb.cropy, 0))
      ethumb_client_crop_align_set(_elm_ethumb_client, sd->thumb.cropx, sd->thumb.cropy);
    if (sd->thumb.quality)
      ethumb_client_quality_set(_elm_ethumb_client, sd->thumb.quality);
