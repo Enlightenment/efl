@@ -316,7 +316,7 @@ struct parameter_def
   std::string c_type;
 
   parameter_def(parameter_direction direction, type_def type, std::string param_name, std::string c_type)
-    : direction(direction), type(type), param_name(param_name), c_type(c_type) {}
+    : direction(std::move(direction)), type(std::move(type)), param_name(std::move(param_name)), c_type(std::move(c_type)) {}
   parameter_def(Eolian_Function_Parameter const* param)
     : type( ::eolian_parameter_type_get(param))
     , param_name( ::eolian_parameter_name_get(param))
