@@ -99,7 +99,7 @@ struct copy_visitor
       new (buffer) T(other);
    }
 };
-
+    
 struct move_visitor
 {
    typedef void result_type;
@@ -111,7 +111,7 @@ struct move_visitor
       new (buffer) type(std::move(other));
    }
 };
-        
+
 struct assign_visitor
 {
    typedef void result_type;
@@ -125,6 +125,19 @@ struct assign_visitor
    }
 };
 
+struct move_assign_visitor
+{
+   typedef void result_type;
+   void* buffer;
+   template <typename T>
+   void operator()(T& other) const
+   {
+      typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type type;
+      type* assigned = static_cast<type*>(buffer);
+      *assigned = std::move(other);
+   }
+};
+    
 struct destroy_visitor
 {
    typedef void result_type;
@@ -184,6 +197,27 @@ struct variant
            destroy_unsafe();
          type = other.type;
          other.visit(copy_visitor{static_cast<void*>(&buffer)});
+       }
+     return *this;
+   }
+   variant(variant&& other)
+     : type(other.type)
+   {
+     if(other.type != -1)
+       other.visit(move_visitor{static_cast<void*>(&buffer)});
+   }
+   variant& operator=(variant&& other)
+   {
+     if(type == other.type && type != -1)
+       {
+         other.visit(move_assign_visitor{static_cast<void*>(&buffer)});
+       }
+     else if(type != other.type)
+       {
+         if(type != -1)
+           destroy_unsafe();
+         type = other.type;
+         other.visit(move_visitor{static_cast<void*>(&buffer)});
        }
      return *this;
    }
