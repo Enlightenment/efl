@@ -138,7 +138,7 @@ evas_common_convert_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, 
    float f;
 
    v *= 255;
-   if (s == 0)
+   if (EINA_FLT_CMP(s, 0.0))
      {
        if (r) *r = v;
        if (g) *g = v;
