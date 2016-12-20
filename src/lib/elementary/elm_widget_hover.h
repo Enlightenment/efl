@@ -46,6 +46,8 @@ struct _Elm_Hover_Data
                               sizeof(_content_aliases[0]) - 1];
 
    Eina_Bool             on_del : 1;
+   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager *redirected;
 };
 
 /**

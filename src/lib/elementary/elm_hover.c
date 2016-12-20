@@ -646,14 +646,20 @@ _elm_hover_efl_gfx_size_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord
 }
 
 EOLIAN static void
-_elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Eina_Bool vis)
+_elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *pd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
 
-   if (vis) _hov_show_do(obj);
+   if (vis)
+     {
+        _hov_show_do(obj);
+        //we just set ourself as redirect in the next upper manager
+        pd->redirected = efl_ui_focus_user_manager_get(pd->target);
+        efl_ui_focus_manager_redirect_set(pd->redirected, obj);
+     }
    else
      {
         // for backward compatibility
@@ -661,6 +667,9 @@ _elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Eina_Bo
 
         if (!eina_streq(dismissstr, "on"))
           _hide_signals_emit(obj);
+
+        efl_ui_focus_manager_redirect_set(pd->redirected, NULL);
+        pd->redirected = NULL;
      }
 }
 
@@ -679,12 +688,18 @@ elm_hover_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
+_elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_POPUP_MENU);
+
+   pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+    efl_ui_focus_manager_root_set(efl_added, obj)
+   );
+
+   efl_composite_attach(obj, pd->manager);
 
    return obj;
 }
@@ -716,8 +731,8 @@ _elm_hover_target_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *target)
         elm_widget_hover_object_set(target, obj);
         elm_layout_sizing_eval(obj);
      }
-}
 
+}
 EAPI void
 elm_hover_parent_set(Evas_Object *obj,
                      Evas_Object *parent)
