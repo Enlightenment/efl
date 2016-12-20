@@ -922,7 +922,7 @@ _evas_image_load_opts_empty(Evas_Image_Load_Opts *lo)
    if (!lo) return EINA_TRUE;
 
    return ((lo->scale_down_by == 0)
-           && (lo->dpi == 0.0)
+           && (EINA_DBL_CMP(lo->dpi, 0.0))
            && (lo->w == 0) && (lo->h == 0)
            && (lo->region.x == 0) && (lo->region.y == 0)
            && (lo->region.w == 0) && (lo->region.h == 0)
@@ -943,7 +943,7 @@ _evas_image_load_opts_equal(const Evas_Image_Load_Opts *lo1,
                             const Evas_Image_Load_Opts *lo2)
 {
    return ((lo1->scale_down_by == lo2->scale_down_by)
-       && (lo1->dpi == lo2->dpi)
+       && (EINA_DBL_CMP(lo1->dpi, lo2->dpi))
        && (lo1->w == lo2->w)
        && (lo1->h == lo2->h)
        && (lo1->region.x == lo2->region.x)
