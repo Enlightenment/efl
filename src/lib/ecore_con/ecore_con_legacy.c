@@ -539,6 +539,17 @@ _ecore_con_client_socket_slice_changed(void *data, const Efl_Event *event EINA_U
 }
 
 static void
+_ecore_con_client_socket_read_finished(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Ecore_Con_Client *cl = data;
+
+   DBG("client %p socket %p read finished, queue EOS", cl, cl->socket);
+
+   if (!efl_io_closer_closed_get(cl->socket))
+     efl_io_buffered_stream_eos_mark(cl->socket);
+}
+
+static void
 _ecore_con_client_socket_finished(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Ecore_Con_Client *cl = data;
@@ -567,6 +578,7 @@ _ecore_con_client_socket_error(void *data, const Efl_Event *event)
 EFL_CALLBACKS_ARRAY_DEFINE(_ecore_con_client_socket_cbs,
                            { EFL_IO_BUFFERED_STREAM_EVENT_PROGRESS, _ecore_con_client_socket_progress },
                            { EFL_IO_BUFFERED_STREAM_EVENT_SLICE_CHANGED, _ecore_con_client_socket_slice_changed },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_READ_FINISHED, _ecore_con_client_socket_read_finished },
                            { EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, _ecore_con_client_socket_finished },
                            { EFL_IO_BUFFERED_STREAM_EVENT_ERROR, _ecore_con_client_socket_error });
 
@@ -1239,6 +1251,17 @@ _ecore_con_server_dialer_progress(void *data, const Efl_Event *event EINA_UNUSED
 }
 
 static void
+_ecore_con_server_dialer_read_finished(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Ecore_Con_Server *svr = data;
+
+   if (svr->delete_me) return;
+
+   if (!efl_io_closer_closed_get(svr->dialer))
+     efl_io_buffered_stream_eos_mark(svr->dialer);
+}
+
+static void
 _ecore_con_server_dialer_finished(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Ecore_Con_Server *svr = data;
@@ -1316,6 +1339,7 @@ _ecore_con_server_dialer_connected(void *data, const Efl_Event *event EINA_UNUSE
 EFL_CALLBACKS_ARRAY_DEFINE(_ecore_con_server_dialer_cbs,
                            { EFL_IO_BUFFERED_STREAM_EVENT_PROGRESS, _ecore_con_server_dialer_progress },
                            { EFL_IO_BUFFERED_STREAM_EVENT_SLICE_CHANGED, _ecore_con_server_dialer_slice_changed },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_READ_FINISHED, _ecore_con_server_dialer_read_finished },
                            { EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, _ecore_con_server_dialer_finished },
                            { EFL_NET_DIALER_EVENT_ERROR, _ecore_con_server_dialer_error },
                            { EFL_NET_DIALER_EVENT_RESOLVED, _ecore_con_server_dialer_resolved },
