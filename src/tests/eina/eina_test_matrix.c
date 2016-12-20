@@ -49,10 +49,10 @@ START_TEST(eina_matrix2)
                            &xx, &xy,
                            &yx, &yy);
 
-   fail_if(xx != yy ||
-           yy != 1);
-   fail_if(xy != yx ||
-           xy != 0);
+   fail_if(!EINA_DBL_CMP(xx, yy) ||
+           !EINA_DBL_CMP(yy, 1));
+   fail_if(!EINA_DBL_CMP(xy, yx) ||
+           !EINA_DBL_CMP(xy, 0));
 
    eina_shutdown();
 }
@@ -78,26 +78,26 @@ START_TEST(eina_matrix2_operation)
    eina_matrix2_values_get(&m1,
                            &xx, &xy,
                            &yx, &yy);
-   fail_if(xx != yy ||
-           yy != 1 ||
-           xy != yx ||
-           xy != 0);
+   fail_if(!EINA_DBL_CMP(xx, yy) ||
+           !EINA_DBL_CMP(yy, 1));
+   fail_if(!EINA_DBL_CMP(xy, yx) ||
+           !EINA_DBL_CMP(xy, 0));
 
    eina_matrix2_array_set(&m1, arr);
    eina_matrix2_values_get(&m1,
                            &xx, &xy,
                            &yx, &yy);
-   fail_if(xx != yy ||
-           yx != xy ||
-           xy != 1);
+   fail_if(!EINA_DBL_CMP(xx, yy) ||
+           !EINA_DBL_CMP(yx, xy) ||
+           !EINA_DBL_CMP(xy, 1));
 
    eina_matrix2_copy(&m2, &m1);
    eina_matrix2_values_get(&m2,
                            &xx, &xy,
                            &yx, &yy);
-   fail_if(xx != yy ||
-           yx != xy ||
-           xy != 1);
+   fail_if(!EINA_DBL_CMP(xx, yy) ||
+           !EINA_DBL_CMP(yx, xy) ||
+           !EINA_DBL_CMP(xy, 1));
 
    eina_matrix2_values_set(&m1,
                            2, 3,
@@ -106,17 +106,17 @@ START_TEST(eina_matrix2_operation)
    eina_matrix2_values_get(&m3,
                            &xx, &xy,
                            &yx, &yy);
-   fail_if(xx != yy ||
-           yx != xy ||
-           xy != 5);
+   fail_if(!EINA_DBL_CMP(xx, yy) ||
+           !EINA_DBL_CMP(yx, xy) ||
+           !EINA_DBL_CMP(xy, 5));
 
    eina_matrix2_multiply(&m3, &m1, &m2);
    eina_matrix2_values_get(&m3,
                            &xx, &xy,
                            &yx, &yy);
-   fail_if(xx != yy ||
-           yx != xy ||
-           xy != 5);
+   fail_if(!EINA_DBL_CMP(xx, yy) ||
+           !EINA_DBL_CMP(yx, xy) ||
+           !EINA_DBL_CMP(xy, 5));
 
 }
 END_TEST
@@ -151,22 +151,22 @@ START_TEST(eina_matrix4)
                            &zx, &zy, &zz, &zw,
                            &wx, &wy, &wz, &ww);
 
-   fail_if(xx != yy ||
-           yy != zz ||
-           zz != ww ||
-           ww != 1);
-   fail_if(xy != xz ||
-           xz != xw ||
-           xw != yx ||
-           yx != yz ||
-           yz != yw ||
-           yw != zx ||
-           zx != zy ||
-           zy != zw ||
-           zw != wx ||
-           wx != wy ||
-           wy != wz ||
-           wz != 0);
+   fail_if(!EINA_DBL_CMP(xx, yy) ||
+           !EINA_DBL_CMP(yy, zz) ||
+           !EINA_DBL_CMP(zz, ww) ||
+           !EINA_DBL_CMP(ww, 1));
+   fail_if(!EINA_DBL_CMP(xy, xz) ||
+           !EINA_DBL_CMP(xz, xw) ||
+           !EINA_DBL_CMP(xw, yx) ||
+           !EINA_DBL_CMP(yx, yz) ||
+           !EINA_DBL_CMP(yz, yw) ||
+           !EINA_DBL_CMP(yw, zx) ||
+           !EINA_DBL_CMP(zx, zy) ||
+           !EINA_DBL_CMP(zy, zw) ||
+           !EINA_DBL_CMP(zw, wx) ||
+           !EINA_DBL_CMP(wx, wy) ||
+           !EINA_DBL_CMP(wy, wz) ||
+           !EINA_DBL_CMP(wz, 0));
 
    eina_matrix4_values_set(&m,
                            1, 2, 3, 4,
@@ -175,10 +175,22 @@ START_TEST(eina_matrix4)
                            13, 14, 15, 16);
 
    eina_matrix4_transpose(&n, &m);
-   fail_if(n.xx != 1 || n.xy != 5 || n.xz != 9 || n.xw != 13 ||
-           n.yx != 2 || n.yy != 6 || n.yz != 10 || n.yw != 14 ||
-           n.zx != 3 || n.zy != 7 || n.zz != 11 || n.zw != 15 ||
-           n.wx != 4 || n.wy != 8 || n.wz != 12 || n.ww != 16);
+   fail_if(!EINA_DBL_CMP(n.xx, 1) ||
+           !EINA_DBL_CMP(n.xy, 5) ||
+           !EINA_DBL_CMP(n.xz, 9) ||
+           !EINA_DBL_CMP(n.xw, 13) ||
+           !EINA_DBL_CMP(n.yx, 2) ||
+           !EINA_DBL_CMP(n.yy, 6) ||
+           !EINA_DBL_CMP(n.yz, 10) ||
+           !EINA_DBL_CMP(n.yw, 14) ||
+           !EINA_DBL_CMP(n.zx, 3) ||
+           !EINA_DBL_CMP(n.zy, 7) ||
+           !EINA_DBL_CMP(n.zz, 11) ||
+           !EINA_DBL_CMP(n.zw, 15) ||
+           !EINA_DBL_CMP(n.wx, 4) ||
+           !EINA_DBL_CMP(n.wy, 8) ||
+           !EINA_DBL_CMP(n.wz, 12) ||
+           !EINA_DBL_CMP(n.ww, 16));
 
    eina_shutdown();
 }
@@ -201,7 +213,7 @@ START_TEST(eina_matrix4_operation)
                            0, 0, 0, 2,
                            0, 2, 0, 0);
    det = eina_matrix4_determinant(&m);
-   fail_if(det != -16);
+   fail_if(!EINA_DBL_CMP(det, -16));
 
    eina_matrix4_inverse(&m1, &m);
    eina_matrix4_values_get(&m1,
@@ -209,10 +221,10 @@ START_TEST(eina_matrix4_operation)
                            &yx, &yy, &yz, &yw,
                            &zx, &zy, &zz, &zw,
                            &wx, &wy, &wz, &ww);
-   fail_if (xy != 0.5 ||
-            yw != xy ||
-            zx != yw ||
-            wz != zx);
+   fail_if (!EINA_DBL_CMP(xy, 0.5) ||
+            !EINA_DBL_CMP(yw, xy) ||
+            !EINA_DBL_CMP(zx, yw) ||
+            !EINA_DBL_CMP(wz, zx));
 
    eina_matrix4_identity(&m1);
    eina_matrix4_values_get(&m1,
@@ -220,10 +232,10 @@ START_TEST(eina_matrix4_operation)
                            &yx, &yy, &yz, &yw,
                            &zx, &zy, &zz, &zw,
                            &wx, &wy, &wz, &ww);
-   fail_if (xx != 1 ||
-            yy != xx ||
-            zz != yy ||
-            ww != zz);
+   fail_if (!EINA_DBL_CMP(xx, 1) ||
+            !EINA_DBL_CMP(yy, xx) ||
+            !EINA_DBL_CMP(zz, yy) ||
+            !EINA_DBL_CMP(ww, zz));
 
    eina_matrix4_values_set(&m1,
                            0, 2, 2, 0,
@@ -236,14 +248,14 @@ START_TEST(eina_matrix4_operation)
                            &yx, &yy, &yz, &yw,
                            &zx, &zy, &zz, &zw,
                            &wx, &wy, &wz, &ww);
-   fail_if (xx != 4 ||
-            xw != xx ||
-            yy != xw ||
-            yz != yy ||
-            zy != yz ||
-            zz != yy ||
-            wx != xx ||
-            ww != zy);
+   fail_if (!EINA_DBL_CMP(xx, 4) ||
+            !EINA_DBL_CMP(xw, xx) ||
+            !EINA_DBL_CMP(yy, xw) ||
+            !EINA_DBL_CMP(yz, yy) ||
+            !EINA_DBL_CMP(zy, yz) ||
+            !EINA_DBL_CMP(zz, yy) ||
+            !EINA_DBL_CMP(wx, xx) ||
+            !EINA_DBL_CMP(ww, zy));
 
    eina_matrix4_multiply(&m2, &m1, &m);
    eina_matrix4_values_get(&m2,
@@ -251,14 +263,14 @@ START_TEST(eina_matrix4_operation)
                            &yx, &yy, &yz, &yw,
                            &zx, &zy, &zz, &zw,
                            &wx, &wy, &wz, &ww);
-   fail_if (xx != 4 ||
-            xw != xx ||
-            yy != xw ||
-            yz != yy ||
-            zy != yz ||
-            zz != yy ||
-            wx != xx ||
-            ww != zy);
+   fail_if (!EINA_DBL_CMP(xx, 4) ||
+            !EINA_DBL_CMP(xw, xx) ||
+            !EINA_DBL_CMP(yy, xw) ||
+            !EINA_DBL_CMP(yz, yy) ||
+            !EINA_DBL_CMP(zy, yz) ||
+            !EINA_DBL_CMP(zz, yy) ||
+            !EINA_DBL_CMP(wx, xx) ||
+            !EINA_DBL_CMP(ww, zy));
 
    eina_matrix4_array_set(&m1, arr);
    eina_matrix4_values_get(&m1,
@@ -266,14 +278,14 @@ START_TEST(eina_matrix4_operation)
                            &yx, &yy, &yz, &yw,
                            &zx, &zy, &zz, &zw,
                            &wx, &wy, &wz, &ww);
-   fail_if (xx != 1 ||
-            xw != xx ||
-            yy != xw ||
-            yz != yy ||
-            zy != yz ||
-            zz != yy ||
-            wx != xx ||
-            ww != zy);
+   fail_if (!EINA_DBL_CMP(xx, 1) ||
+            !EINA_DBL_CMP(xw, xx) ||
+            !EINA_DBL_CMP(yy, xw) ||
+            !EINA_DBL_CMP(yz, yy) ||
+            !EINA_DBL_CMP(zy, yz) ||
+            !EINA_DBL_CMP(zz, yy) ||
+            !EINA_DBL_CMP(wx, xx) ||
+            !EINA_DBL_CMP(ww, zy));
 
    eina_matrix4_copy(&m, &m1);
    eina_matrix4_values_get(&m1,
@@ -281,14 +293,14 @@ START_TEST(eina_matrix4_operation)
                            &yx, &yy, &yz, &yw,
                            &zx, &zy, &zz, &zw,
                            &wx, &wy, &wz, &ww);
-   fail_if (xx != 1 ||
-            xw != xx ||
-            yy != xw ||
-            yz != yy ||
-            zy != yz ||
-            zz != yy ||
-            wx != xx ||
-            ww != zy);
+   fail_if (!EINA_DBL_CMP(xx, 1) ||
+            !EINA_DBL_CMP(xw, xx) ||
+            !EINA_DBL_CMP(yy, xw) ||
+            !EINA_DBL_CMP(yz, yy) ||
+            !EINA_DBL_CMP(zy, yz) ||
+            !EINA_DBL_CMP(zz, yy) ||
+            !EINA_DBL_CMP(wx, xx) ||
+            !EINA_DBL_CMP(ww, zy));
 
    eina_matrix4_ortho_set(&m, l, r, b, t, dn, df);
    eina_matrix4_values_get(&m,
@@ -296,13 +308,13 @@ START_TEST(eina_matrix4_operation)
                            &yx, &yy, &yz, &yw,
                            &zx, &zy, &zz, &zw,
                            &wx, &wy, &wz, &ww);
-   fail_if (xx != -2 ||
-            yy != -2 ||
-            zz != 2 ||
-            wx != 9 ||
-            wy != 7 ||
-            wz != 5 ||
-            ww != 1);
+   fail_if (!EINA_DBL_CMP(xx, -2) ||
+            !EINA_DBL_CMP(yy, -2) ||
+            !EINA_DBL_CMP(zz, 2) ||
+            !EINA_DBL_CMP(wx, 9) ||
+            !EINA_DBL_CMP(wy, 7) ||
+            !EINA_DBL_CMP(wz, 5) ||
+            !EINA_DBL_CMP(ww, 1));
 }
 END_TEST
 
@@ -358,14 +370,14 @@ START_TEST(eina_matrix3)
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
 
-   fail_if(xx != yy ||
-           yy != zz ||
-           zz != 1);
+   fail_if(!EINA_DBL_CMP(xx, yy) ||
+           !EINA_DBL_CMP(yy, zz) ||
+           !EINA_DBL_CMP(zz, 1));
 
-   fail_if(xy != xz ||
-           yx != yz ||
-           zx != zy ||
-           zy != 0);
+   fail_if(!EINA_DBL_CMP(xy, xz) ||
+           !EINA_DBL_CMP(yx, yz) ||
+           !EINA_DBL_CMP(zx, zy) ||
+           !EINA_DBL_CMP(zy, 0));
 
    ret = eina_matrix3_equal(&m, &m1);
    fail_if(ret != EINA_TRUE);
@@ -376,6 +388,17 @@ START_TEST(eina_matrix3)
    eina_shutdown();
 }
 END_TEST
+
+#define MATRIX3_CMP(XX, XY, XZ, YX, YY, YZ, ZX, ZY, ZZ, AXX, AXY, AXZ, AYX, AYY, AYZ, AZX, AZY, AZZ) \
+  (EINA_DBL_CMP(XX, AXX) && \
+   EINA_DBL_CMP(XY, AXY) && \
+   EINA_DBL_CMP(XZ, AXZ) && \
+   EINA_DBL_CMP(YX, AYX) && \
+   EINA_DBL_CMP(YY, AYY) && \
+   EINA_DBL_CMP(YZ, AYZ) && \
+   EINA_DBL_CMP(ZX, AZX) && \
+   EINA_DBL_CMP(ZY, AZY) && \
+   EINA_DBL_CMP(ZZ, AZZ))
 
 START_TEST(eina_matrix3_operations)
 {
@@ -402,22 +425,25 @@ START_TEST(eina_matrix3_operations)
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != xy ||
-            xy != xz ||
-            yx != yy ||
-            yy != yz ||
-            zx != zy ||
-            zy != zz ||
-            zz != 1);
+   fail_if (!EINA_DBL_CMP(xx, xy) ||
+            !EINA_DBL_CMP(xy, xz) ||
+            !EINA_DBL_CMP(yx, yy) ||
+            !EINA_DBL_CMP(yy, yz) ||
+            !EINA_DBL_CMP(zx, zy) ||
+            !EINA_DBL_CMP(zy, zz) ||
+            !EINA_DBL_CMP(zz, 1));
 
    eina_matrix3_translate(&m1, tx, ty);
    eina_matrix3_values_get(&m1,
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != 1 || xy != 0 || xz != tx ||
-            yx != 0 || yy != 1 || yz != ty ||
-            zx != 0 || zy != 0 || zz != 1);
+   fail_if(!MATRIX3_CMP(xx, xy, xz,
+                        yx, yy, yz,
+                        zx, zy, zz,
+                        1, 0, tx,
+                        0, 1, ty,
+                        0, 0, 1));
 
    eina_matrix3_values_set(&m1,
                            1, 0, 0,
@@ -429,9 +455,12 @@ START_TEST(eina_matrix3_operations)
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != tx || xy != 0 || xz != 0 ||
-            yx != 0 || yy != ty || yz != 0 ||
-            zx != 0 || zy != 0 || zz != 1);
+   fail_if(!MATRIX3_CMP(xx, xy, xz,
+                       yx, yy, yz,
+                       zx, zy, zz,
+                       tx, 0, 0,
+                       0, ty, 0,
+                       0, 0, 1));
 
    eina_matrix3_values_set(&m1,
                            1, 0, 0,
@@ -439,11 +468,12 @@ START_TEST(eina_matrix3_operations)
                            0, 0, 1);
    eina_matrix3_rotate(&m1, M_PI/2);
 
-   fail_if (round(m1.xx) != 0 || round(m1.xy) != -1 ||
-            round(m1.xz) != 0 || round(m1.yx) != 1 ||
-            round(m1.yy) != 0 || round(m1.yz) !=0 ||
-            round(m1.zx) != 0 || round(m1.zy) != 0||
-            round(m1.zz) != 1);
+   fail_if (!MATRIX3_CMP(round(m1.xx), round(m1.xy), round(m1.xz),
+                         round(m1.yx), round(m1.yy), round(m1.yz),
+                         round(m1.zx), round(m1.zy), round(m1.zz),
+                         0, -1, 0,
+                         1, 0, 0,
+                         0, 0, 1));
 
    eina_matrix3_values_set(&m1,
                            1, 1, 1,
@@ -454,22 +484,21 @@ START_TEST(eina_matrix3_operations)
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if(xx != yy ||
-           yy != zz ||
-           zz != 1);
+   fail_if(!EINA_DBL_CMP(xx, yy) ||
+           !EINA_DBL_CMP(yy, zz) ||
+           !EINA_DBL_CMP(zz, 1));
 
-   fail_if(xy != xz ||
-           yx != yz ||
-           zx != zy ||
-           zy != 0);
-
+   fail_if(!EINA_DBL_CMP(xy, xz) ||
+           !EINA_DBL_CMP(yx, yz) ||
+           !EINA_DBL_CMP(zx, zy) ||
+           !EINA_DBL_CMP(zy, 0));
 
    eina_matrix3_values_set(&m1,
                            1, 2, 1,
                            2, 1, 1,
                            1, 2, 2);
    ret = eina_matrix3_determinant(&m1);
-   fail_if(ret != -3);
+   fail_if(!EINA_DBL_CMP(ret, -3));
 
    eina_matrix3_values_set(&m1,
                            3, 3, 3,
@@ -480,13 +509,13 @@ START_TEST(eina_matrix3_operations)
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != xy ||
-            xy != xz ||
-            yx != yy ||
-            yy != yz ||
-            zx != zy ||
-            zy != zz ||
-            zz != 1.5);
+   fail_if (!EINA_DBL_CMP(xx, xy) ||
+            !EINA_DBL_CMP(xy, xz) ||
+            !EINA_DBL_CMP(yx, yy) ||
+            !EINA_DBL_CMP(yy, yz) ||
+            !EINA_DBL_CMP(zx, zy) ||
+            !EINA_DBL_CMP(zy, zz) ||
+            !EINA_DBL_CMP(zz, 1.5));
 
    eina_matrix3_values_set(&m1,
                            0, 2, 0,
@@ -497,9 +526,12 @@ START_TEST(eina_matrix3_operations)
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != -0.5 || xy != 0.5 || xz != 0 ||
-            yx != 0.5 || yy != 0 || yz != 0 ||
-            zx != 0.25 || zy != -0.5 || zz != 0.5);
+   fail_if(!MATRIX3_CMP(xx, xy, xz,
+                        yx, yy, yz,
+                        zx, zy, zz,
+                        -0.5, 0.5, 0.0,
+                        0.5, 0.0, 0.0,
+                        0.25, -0.5, 0.5));
 
    eina_matrix3_values_set(&m1,
                            1, 2, 3,
@@ -510,9 +542,12 @@ START_TEST(eina_matrix3_operations)
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != 1 || xy != 4 || xz != 7 ||
-            yx != 2 || yy != 5 || yz != 8 ||
-            zx != 3 || zy != 6 || zz != 9);
+   fail_if(!MATRIX3_CMP(xx, xy, xz,
+                        yx, yy, yz,
+                        zx, zy, zz,
+                        1, 4, 7,
+                        2, 5, 8,
+                        3, 6, 9));
 
    eina_matrix3_values_set(&m1,
                            1, 2, 3,
@@ -523,18 +558,24 @@ START_TEST(eina_matrix3_operations)
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != 24 || xy != 5 || xz != -4 ||
-            yx != -12 || yy != 3 || yz != 2 ||
-            zx != -2 || zy != -5 || zz != 4);
+   fail_if(!MATRIX3_CMP(xx, xy, xz,
+                        yx, yy, yz,
+                        zx, zy, zz,
+                        24, 5, -4,
+                        -12, 3, 2,
+                        -2, -5, 4));
 
    eina_matrix3_adjoint(&m1, &m2);
    eina_matrix3_values_get(&m2,
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != 24 || xy != -12 || xz != -2 ||
-            yx != 5 || yy != 3 || yz != -5 ||
-            zx != -4 || zy != 2 || zz != 4);
+   fail_if(!MATRIX3_CMP(xx, xy, xz,
+                        yx, yy, yz,
+                        zx, zy, zz,
+                        24, -12, -2,
+                        5, 3, -5,
+                        -4, 2, 4));
 
    eina_matrix3_values_set(&m2,
                            2, 2, 2,
@@ -549,9 +590,12 @@ START_TEST(eina_matrix3_operations)
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != 12 || xy != 12 || xz != 12 ||
-            yx != 6 || yy != 6 || yz != 6 ||
-            zx != 18 || zy != 18 || zz != 18);
+   fail_if(!MATRIX3_CMP(xx, xy, xz,
+                        yx, yy, yz,
+                        zx, zy, zz,
+                        12, 12, 12,
+                        6, 6, 6,
+                        18, 18, 18));
 
    eina_matrix3_values_set(&m2,
                            2, 2, 2,
@@ -562,41 +606,52 @@ START_TEST(eina_matrix3_operations)
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != 12 || xy != 12 || xz != 12 ||
-            yx != 6 || yy != 6 || yz != 6 ||
-            zx != 0 || zy != 0 || zz != 0);
+   fail_if(!MATRIX3_CMP(xx, xy, xz,
+                        yx, yy, yz,
+                        zx, zy, zz,
+                        12, 12, 12,
+                        6, 6, 6,
+                        0, 0, 0));
 
    eina_matrix3_copy(&m1, &m2);
    eina_matrix3_values_get(&m1,
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != 2 || xy != 2 || xz != 2 ||
-            yx != 1 || yy != 1 || yz != 1 ||
-            zx != 0 || zy != 0 || zz != 0);
+   fail_if(!MATRIX3_CMP(xx, xy, xz,
+                        yx, yy, yz,
+                        zx, zy, zz,
+                        2, 2, 2,
+                        1, 1, 1,
+                        0, 0, 0));
 
    eina_matrix3_array_set(&m1, arr);
    eina_matrix3_values_get(&m1,
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != 1 || xy != 1 || xz != 1 ||
-            yx != 1 || yy != 1 || yz != 1 ||
-            zx != 1 || zy != 1 || zz != 1);
+   fail_if(!MATRIX3_CMP(xx, xy, xz,
+                        yx, yy, yz,
+                        zx, zy, zz,
+                        1, 1, 1,
+                        1, 1, 1,
+                        1, 1, 1));
 
    eina_matrix3_position_transform_set(&m3, 5, 3);
    eina_matrix3_values_get(&m3,
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xz != 5 || yz != 3);
+   fail_if (!EINA_DBL_CMP(xz, 5) ||
+            !EINA_DBL_CMP(yz, 3));
 
    eina_matrix3_scale_transform_set(&m2, 6, 7);
    eina_matrix3_values_get(&m2,
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
                            &zx, &zy, &zz);
-   fail_if (xx != 6 || yy != 7);
+   fail_if (!EINA_DBL_CMP(xx, 6) ||
+            !EINA_DBL_CMP(yy, 7));
 }
 END_TEST
 
@@ -682,15 +737,20 @@ START_TEST(eina_matrix3_map_transform)
    eina_matrix3_point_transform(&m,
                                 x, y,
                                 &x1, &y1);
-   fail_if(x1 != 3 || y1 != 2);
+   fail_if(!EINA_DBL_CMP(x1, 3) ||
+           !EINA_DBL_CMP(y1, 2));
 
    EINA_RECTANGLE_SET(&r, 0, 0, 3, 4);
    eina_matrix3_rectangle_transform(&m, &r, &q);
 
-   fail_if(q.x0 != 0 || q.y0 != 0 ||
-           q.x1 != 0 || q.y1 != 3 ||
-           q.x2 != 4 || q.y2 != 3 ||
-           q.x3 != 4 || q.y3 != 0);
+   fail_if(!EINA_DBL_CMP(q.x0, 0) ||
+           !EINA_DBL_CMP(q.y0, 0) ||
+           !EINA_DBL_CMP(q.x1, 0) ||
+           !EINA_DBL_CMP(q.y1, 3) ||
+           !EINA_DBL_CMP(q.x2, 4) ||
+           !EINA_DBL_CMP(q.y2, 3) ||
+           !EINA_DBL_CMP(q.x3, 4) ||
+           !EINA_DBL_CMP(q.y3, 0));
 
    eina_quad_coords_set(&q,
                         0.0, 0.0,
@@ -700,17 +760,24 @@ START_TEST(eina_matrix3_map_transform)
    ret = eina_matrix3_square_quad_map(&m, &q);
    fail_if(ret != EINA_TRUE);
 
-   fail_if(m.xx != 3 || m.xy != 0 || m.xz != 0 ||
-           m.yx != 0 || m.yy != 3 || m.yz != 0 ||
-           m.zx != 0 || m.zy != 0 || m.zz != 1);
+   fail_if(MATRIX3_CMP(m.xx, m.xy, m.xz,
+                       m.yx, m.yy, m.yz,
+                       m.zx, m.zy, m.zz,
+                       3, 0, 0,
+                       0, 3, 0,
+                       0, 0, 1));
 
    ret = eina_matrix3_quad_square_map(&m, &q);
    fail_if(ret != EINA_TRUE);
 
-   fail_if(q.x0 != 0 || q.y0 != 0 ||
-           q.x1 != 3 || q.y1 != 0 ||
-           q.x2 != 3 || q.y2 != 3 ||
-           q.x3 != 0 || q.y3 != 3);
+   fail_if(!EINA_DBL_CMP(q.x0, 0) ||
+           !EINA_DBL_CMP(q.y0, 0) ||
+           !EINA_DBL_CMP(q.x1, 3) ||
+           !EINA_DBL_CMP(q.y1, 0) ||
+           !EINA_DBL_CMP(q.x2, 3) ||
+           !EINA_DBL_CMP(q.y2, 3) ||
+           !EINA_DBL_CMP(q.x3, 0) ||
+           !EINA_DBL_CMP(q.y3, 3));
 
    eina_shutdown();
 }
