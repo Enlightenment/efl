@@ -136,8 +136,8 @@ struct class_definition_generator
                 << scope_tab << scope_tab << "static Efl_Event_Description const* description()\n"
                 << scope_tab << scope_tab << "{ return " << string << "; }\n"
                 << scope_tab << scope_tab << "typedef "
-                << (attribute_conditional([] (eina::optional<attributes::type_def> t) { return !!t; })
-                    [attribute_replace([] (eina::optional<attributes::type_def> t) { return *t; }) [type]]
+                << (attribute_conditional([] (eina::optional<attributes::type_def> const& t) { return !!t; })
+                    [attribute_replace([] (eina::optional<attributes::type_def> const& t) { return *t; }) [type]]
                     | "void")
                 << " parameter_type;\n"
                 << scope_tab << "} const " << string_replace(',', '_') << "_event;\n"
