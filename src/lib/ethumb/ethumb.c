@@ -1151,7 +1151,7 @@ ethumb_calculate_aspect_from_ratio(Ethumb *e, float ia, int *w, int *h)
    *w = e->tw;
    *h = e->th;
 
-   if (ia == 0)
+   if (EINA_FLT_CMP(ia, 0))
      return;
 
    a = e->tw / (float)e->th;
@@ -1190,7 +1190,7 @@ ethumb_calculate_fill_from_ratio(Ethumb *e, float ia, int *fx, int *fy, int *fw,
    *fx = 0;
    *fy = 0;
 
-   if (ia == 0)
+   if (EINA_FLT_CMP(ia, 0))
      return;
 
    a = e->tw / (float)e->th;
@@ -1738,10 +1738,19 @@ ethumb_dup(const Ethumb *e)
 #define CHECK_DELTA(Param)                      \
   if (e1->Param != e2->Param)                   \
     return EINA_TRUE;
+#define CHECK_FLT_DELTA(Param)                  \
+  if (!EINA_FLT_CMP(e1->Param, e2->Param))      \
+    return EINA_TRUE;
 
 EAPI Eina_Bool
 ethumb_cmp(const Ethumb *e1, const Ethumb *e2)
 {
+   CHECK_FLT_DELTA(crop_x);
+   CHECK_FLT_DELTA(crop_y);
+   CHECK_FLT_DELTA(video.start);
+   CHECK_FLT_DELTA(video.time);
+   CHECK_FLT_DELTA(video.interval);
+
    CHECK_DELTA(thumb_dir);
    CHECK_DELTA(category);
    CHECK_DELTA(tw);
@@ -1749,15 +1758,10 @@ ethumb_cmp(const Ethumb *e1, const Ethumb *e2)
    CHECK_DELTA(format);
    CHECK_DELTA(aspect);
    CHECK_DELTA(orientation);
-   CHECK_DELTA(crop_x);
-   CHECK_DELTA(crop_y);
    CHECK_DELTA(quality);
    CHECK_DELTA(compress);
    CHECK_DELTA(rw);
    CHECK_DELTA(rh);
-   CHECK_DELTA(video.start);
-   CHECK_DELTA(video.time);
-   CHECK_DELTA(video.interval);
    CHECK_DELTA(video.ntimes);
    CHECK_DELTA(video.fps);
    CHECK_DELTA(document.page);
@@ -1771,8 +1775,12 @@ ethumb_length(EINA_UNUSED const void *key)
    return sizeof (Ethumb);
 }
 
-#define CMP_PARAM(Param)			\
-  if (e1->Param != e2->Param)			\
+#define CMP_PARAM(Param)                        \
+  if (e1->Param != e2->Param)                   \
+    return e1->Param - e2->Param;
+
+#define CMP_FLT_PARAM(Param)                    \
+  if (!EINA_FLT_CMP(e1->Param, e2->Param))      \
     return e1->Param - e2->Param;
 
 EAPI int
@@ -1782,6 +1790,12 @@ ethumb_key_cmp(const void *key1, EINA_UNUSED int key1_length,
    const Ethumb *e1 = key1;
    const Ethumb *e2 = key2;
 
+   CMP_FLT_PARAM(crop_x);
+   CMP_FLT_PARAM(crop_y);
+   CMP_FLT_PARAM(video.start);
+   CMP_FLT_PARAM(video.time);
+   CMP_FLT_PARAM(video.interval);
+
    CMP_PARAM(thumb_dir);
    CMP_PARAM(category);
    CMP_PARAM(tw);
@@ -1789,15 +1803,10 @@ ethumb_key_cmp(const void *key1, EINA_UNUSED int key1_length,
    CMP_PARAM(format);
    CMP_PARAM(aspect);
    CMP_PARAM(orientation);
-   CMP_PARAM(crop_x);
-   CMP_PARAM(crop_y);
    CMP_PARAM(quality);
    CMP_PARAM(compress);
    CMP_PARAM(rw);
    CMP_PARAM(rh);
-   CMP_PARAM(video.start);
-   CMP_PARAM(video.time);
-   CMP_PARAM(video.interval);
    CMP_PARAM(video.ntimes);
    CMP_PARAM(video.fps);
    CMP_PARAM(document.page);
