@@ -386,7 +386,7 @@ fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int lengt
    uint32_t *end;
    int t_fixed, inc_fixed;
 
-   if (g_data->linear.l == 0)
+   if (EINA_DBL_CMP(g_data->linear.l, 0.0))
      {
         t = inc = 0;
      }

@@ -26,12 +26,12 @@ _ector_renderer_software_gradient_radial_ector_renderer_prepare(Eo *obj, Ector_R
    pd->radial.cy = pd->grd->radial.y;
    pd->radial.cradius = pd->grd->radius;
 
-   if (!pd->grd->focal.x)
+   if (EINA_DBL_CMP(pd->grd->focal.x, 0.0))
      pd->radial.fx = pd->grd->radial.x;
    else
      pd->radial.fx = pd->grd->focal.x;
 
-   if (!pd->grd->focal.y)
+   if (EINA_DBL_CMP(pd->grd->focal.y, 0.0))
      pd->radial.fy = pd->grd->radial.y;
    else
      pd->radial.fy = pd->grd->focal.y;
