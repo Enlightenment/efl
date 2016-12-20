@@ -4632,6 +4632,28 @@ _elm_interface_scrollable_class_constructor(Efl_Class *klass)
 EAPI void elm_pan_gravity_set(Elm_Pan *obj EINA_UNUSED, double x EINA_UNUSED, double y EINA_UNUSED) {}
 EAPI void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNUSED, double *y EINA_UNUSED) {}
 
+static void
+_focused_element(void *data, const Efl_Event *event)
+{
+   Eina_Rectangle geom;
+   Eina_Rectangle obj_geom;
+   Efl_Ui_Focus_Object *obj = data;
+   Efl_Ui_Focus_Object *focus = event->info;
+   Elm_Scrollable_Smart_Interface_Data *pd;
+
+   pd = efl_data_scope_get(obj, MY_SCROLLABLE_INTERFACE);
+
+   if (!focus) return;
+
+   evas_object_geometry_get(focus, &geom.x, &geom.y, &geom.w, &geom.h);
+   evas_object_geometry_get(pd->content, &obj_geom.x, &obj_geom.y, &obj_geom.w, &obj_geom.h);
+
+   geom.x = geom.x - obj_geom.x;
+   geom.y = geom.y - obj_geom.y;
+
+   elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
+}
+
 EOLIAN static Efl_Object*
 _elm_interface_scrollable_efl_object_constructor(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
 {
@@ -4639,6 +4661,12 @@ _elm_interface_scrollable_efl_object_constructor(Eo *obj, Elm_Scrollable_Smart_I
     efl_ui_focus_manager_root_set(efl_added, obj));
 
    efl_composite_attach(obj, pd->manager);
+
+   efl_event_callback_forwarder_add(pd->manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
+   efl_event_callback_forwarder_add(pd->manager, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH , obj);
+   efl_event_callback_forwarder_add(pd->manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY , obj);
+   efl_event_callback_forwarder_add(pd->manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, obj);
+   efl_event_callback_add(pd->manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _focused_element, obj);
 
    return efl_constructor(efl_super(obj, MY_SCROLLABLE_INTERFACE));
 }

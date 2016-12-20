@@ -1132,6 +1132,7 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
         //populate the new change
         if (old_focus) efl_ui_focus_object_focus_set(old_focus->focusable, EINA_FALSE);
         efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
+        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, node->focusable);
      }
    else if (node->redirect_manager)
      {
