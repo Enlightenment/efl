@@ -20,10 +20,6 @@
 
 #define EVAS_GL_UPDATE_TILE_SIZE 16
 
-#ifndef EGL_VERSION_1_5
-typedef intptr_t EGLAttrib;
-#endif
-
 /* external variables */
 int _evas_engine_gl_drm_log_dom = -1;
 int _extn_have_buffer_age = 1;

@@ -282,6 +282,9 @@ Much of it is from Mesa, so their copyright is included as well.
 #ifndef EGL_WAYLAND_Y_INVERTED_WL
 # define EGL_WAYLAND_Y_INVERTED_WL 0x31DB
 #endif
+#ifndef EGL_PLATFORM_X11_KHR
+# define EGL_PLATFORM_X11_KHR 0x31D5
+#endif
 // Evas_3d require GL_BGR, but that's an extention and will not be necessary once we move to Evas_GL_Image
 #ifndef GL_BGR
 #define GL_BGR 0x80E0
@@ -327,6 +330,10 @@ Much of it is from Mesa, so their copyright is included as well.
 #define GL_COLOR_EXT   0x1800
 #define GL_DEPTH_EXT   0x1801
 #define GL_STENCIL_EXT 0x1802
+#endif
+
+#if defined(GL_GLES) && !defined(EGL_VERSION_1_5)
+typedef intptr_t EGLAttrib;
 #endif
 
 #endif

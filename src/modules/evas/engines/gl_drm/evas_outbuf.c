@@ -1,5 +1,4 @@
 #include "evas_engine.h"
-#include "../gl_common/evas_gl_define.h"
 
 /* local variables */
 static Outbuf *_evas_gl_drm_window = NULL;

@@ -55,7 +55,6 @@ void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, 
 unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b, int c) = NULL;
 unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d) = NULL;
 
-
 /* This one is now a local wrapper to avoid type mixups */
 void *        evas_gl_common_eglCreateImage           (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list);
 static void * (*eglsym_eglCreateImage)                (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list) = NULL;

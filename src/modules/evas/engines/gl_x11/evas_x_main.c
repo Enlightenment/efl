@@ -151,14 +151,6 @@ _visuals_hash_index_get_from_info(Evas_Engine_Info_GL_X11 *info)
 
 #ifdef GL_GLES
 
-#ifndef EGL_PLATFORM_X11_KHR
-# define EGL_PLATFORM_X11_KHR 0x31D5
-#endif
-
-#ifndef EGL_VERSION_1_5
-typedef intptr_t EGLAttrib;
-#endif
-
 static EGLDisplay *
 _x11_eglGetDisplay(Display *x11_display)
 {

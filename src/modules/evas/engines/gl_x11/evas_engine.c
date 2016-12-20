@@ -79,10 +79,6 @@ glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
 
 #ifdef GL_GLES
 
-#if !defined(EGL_KHR_cl_event2) && !defined(EGL_VERSION_1_5)
-typedef intptr_t EGLAttribKHR;
-#endif
-
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 EGLImageKHR (*glsym_evas_gl_common_eglCreateImage)(EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
@@ -2938,7 +2934,7 @@ eng_image_native_set(void *data, void *image, void *native)
           {
              if ((n = calloc(1, sizeof(Native))))
                {
-                  EGLAttribKHR attribs[3];
+                  EGLAttrib attribs[3];
                   int format, yinvert = 1;
 
                   glsym_eglQueryWaylandBufferWL(eng_get_ob(re)->egl_disp, wl_buf,
