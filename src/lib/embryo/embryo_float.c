@@ -217,7 +217,7 @@ _embryo_fp_cmp(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
    ff = EMBRYO_CELL_TO_FLOAT(params[2]);
-   if (EINA_FLT_CMP(F, FF)) return 0;
+   if (EINA_FLT_CMP(f, ff)) return 0;
    else if (f > ff)
      return 1;
    return -1;
