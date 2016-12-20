@@ -394,6 +394,7 @@ _evas_cache_image_async_heavy(void *data)
 
    LKL(wakeup);
    current->flags.preload_pending = 0;
+   eina_condition_broadcast(&cond_wakeup);
    LKU(wakeup);
 }
 
