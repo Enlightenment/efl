@@ -756,7 +756,7 @@ _efl_gfx_t_for_arc_angle(double angle)
    double radians, cos_angle, sin_angle, tc, ts, t;
 
    if (angle < 0.00001) return 0;
-   if (angle == 90.0) return 1;
+   if (EINA_FLT_CMP(angle, 90.0)) return 1;
 
    radians = (angle/180) * M_PI;
 
@@ -799,7 +799,7 @@ _find_ellipse_coords(double x, double y, double w, double h, double angle,
    double angles[2] = { angle, angle + length };
    Point *points[2];
 
-   if (!w || !h)
+   if (!EINA_FLT_CMP(w, 0.0) || !EINA_FLT_CMP(h, 0.0))
      {
         if (start_point)
           {
@@ -900,15 +900,15 @@ _curves_for_arc(double x, double y, double w, double h,
    else if (sweep_length < -360) sweep_length = -360;
 
    // Special case fast paths
-   if (start_angle == 0)
+   if (EINA_FLT_CMP(start_angle, 0))
      {
-        if (sweep_length == 360)
+        if (EINA_FLT_CMP(sweep_length, 360))
           {
              for (i = 11; i >= 0; --i)
                curves[(*point_count)++] = points[i];
              return points[12];
           }
-        else if (sweep_length == -360)
+        else if (EINA_FLT_CMP(sweep_length, -360))
           {
              for (i = 1; i <= 12; ++i)
                curves[(*point_count)++] = points[i];
@@ -930,14 +930,14 @@ _curves_for_arc(double x, double y, double w, double h,
      }
 
    // avoid empty start segment
-   if (start_t == 1.0)
+   if (EINA_FLT_CMP(start_t, 1.0))
      {
         start_t = 0;
         start_segment += delta;
      }
 
    // avoid empty end segment
-   if (end_t == 0)
+   if (EINA_FLT_CMP(end_t, 0.0))
      {
         end_t = 1;
         end_segment -= delta;
@@ -979,7 +979,7 @@ _curves_for_arc(double x, double y, double w, double h,
                                  points[j + 3].x, points[j + 3].y);
 
         // empty arc?
-        if (start_segment == end_segment && (start_t == end_t))
+        if (start_segment == end_segment && (EINA_FLT_CMP(start_t, end_t)))
             return start_point;
 
         res = b;
