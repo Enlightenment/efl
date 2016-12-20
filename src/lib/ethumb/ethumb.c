@@ -1151,8 +1151,7 @@ ethumb_calculate_aspect_from_ratio(Ethumb *e, float ia, int *w, int *h)
    *w = e->tw;
    *h = e->th;
 
-   if (ia == 0)
-     return;
+   if (EINA_DBL_CMP(ia, 0.0)) return;
 
    a = e->tw / (float)e->th;
 
@@ -1190,8 +1189,7 @@ ethumb_calculate_fill_from_ratio(Ethumb *e, float ia, int *fx, int *fy, int *fw,
    *fx = 0;
    *fy = 0;
 
-   if (ia == 0)
-     return;
+   if (EINA_DBL_CMP(ia, 0.0)) return;
 
    a = e->tw / (float)e->th;
 
@@ -1736,7 +1734,7 @@ ethumb_dup(const Ethumb *e)
 }
 
 #define CHECK_DELTA(Param)                      \
-  if (e1->Param != e2->Param)                   \
+  if (!EINA_DBL_CMP(e1->Param, e2->Param))      \
     return EINA_TRUE;
 
 EAPI Eina_Bool
