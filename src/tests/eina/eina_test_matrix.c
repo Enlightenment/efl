@@ -760,12 +760,12 @@ START_TEST(eina_matrix3_map_transform)
    ret = eina_matrix3_square_quad_map(&m, &q);
    fail_if(ret != EINA_TRUE);
 
-   fail_if(MATRIX3_CMP(m.xx, m.xy, m.xz,
-                       m.yx, m.yy, m.yz,
-                       m.zx, m.zy, m.zz,
-                       3, 0, 0,
-                       0, 3, 0,
-                       0, 0, 1));
+   fail_if(!MATRIX3_CMP(m.xx, m.xy, m.xz,
+                        m.yx, m.yy, m.yz,
+                        m.zx, m.zy, m.zz,
+                        3, 0, 0,
+                        0, 3, 0,
+                        0, 0, 1));
 
    ret = eina_matrix3_quad_square_map(&m, &q);
    fail_if(ret != EINA_TRUE);
