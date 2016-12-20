@@ -217,7 +217,7 @@ _embryo_fp_cmp(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
    ff = EMBRYO_CELL_TO_FLOAT(params[2]);
-   if (EINA_FLT_cmp(F, FF)) return 0;
+   if (EINA_FLT_CMP(F, FF)) return 0;
    else if (f > ff)
      return 1;
    return -1;
@@ -269,7 +269,7 @@ _embryo_fp_log(Embryo_Program *ep, Embryo_Cell *params)
         embryo_program_error_set(ep, EMBRYO_ERROR_DOMAIN);
         return 0;
      }
-   if (EINA_FLT_cmp(ff, 10.0))
+   if (EINA_FLT_CMP(ff, 10.0))
      f = log10f(f);
    else if (EINA_FLT_CMP(ff, 2.0))
      f = log2f(f);
