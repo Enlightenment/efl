@@ -485,7 +485,10 @@ _efl_input_pointer_value_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Ef
         return EINA_FALSE; // TODO
 
       case EFL_INPUT_VALUE_WHEEL_DIRECTION:
-        pd->wheel.dir = val ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL;
+        if (EINA_DBL_CMP(val, 0.0))
+          pd->wheel.dir = EFL_ORIENT_VERTICAL;
+        else
+          pd->wheel.dir = EFL_ORIENT_HORIZONTAL;
         break;
 
       case EFL_INPUT_VALUE_SLIDER:
