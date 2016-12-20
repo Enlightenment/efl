@@ -425,7 +425,7 @@ _elm_progressbar_efl_ui_progress_span_size_get(Eo *obj EINA_UNUSED, Elm_Progress
 EOLIAN static void
 _elm_progressbar_efl_ui_progress_progress_value_set(Eo *obj, Elm_Progressbar_Data *sd, double val)
 {
-   if (sd->val == val) return;
+   if (EINA_DBL_CMP(sd->val, val)) return;
 
    elm_progressbar_part_value_set(obj, "elm.cur.progressbar", val);
 }
