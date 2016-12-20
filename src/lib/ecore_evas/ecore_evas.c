@@ -51,6 +51,13 @@
         return __VA_ARGS__; \
      }
 
+#define ECORE_EVAS_CHECK_GOTO(_ee, _label) \
+  if (!ECORE_MAGIC_CHECK(_ee, ECORE_MAGIC_EVAS)) \
+    { \
+       ECORE_MAGIC_FAIL(_ee, ECORE_MAGIC_EVAS, __FUNCTION__); \
+       goto _label; \
+    }
+
 EAPI Eina_Bool _ecore_evas_app_comp_sync = EINA_FALSE;
 EAPI int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
@@ -61,6 +68,8 @@ static Ecore_Idle_Exiter *ecore_evas_idle_exiter = NULL;
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 static Ecore_Evas *ecore_evases = NULL;
 static int _ecore_evas_fps_debug = 0;
+
+static const Efl_Event_Description *_event_description_get(Efl_Pointer_Action action);
 
 //RENDER_SYNC
 static int _ecore_evas_render_sync = 1;
@@ -244,6 +253,87 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
           _ecore_evas_fps_debug_rendertime_add(t2 - t1);
      }
    return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED,
+                              Evas_Object *obj EINA_UNUSED,
+                              void *event_info EINA_UNUSED)
+{
+   Ecore_Evas_Cursor *cursor = data;
+   cursor->object = NULL;
+}
+
+static void
+_ecore_evas_cursor_element_del(Ecore_Evas_Cursor *cursor)
+{
+   if (cursor->object)
+     {
+        evas_object_event_callback_del_full(cursor->object, EVAS_CALLBACK_DEL,
+                                            _ecore_evas_object_cursor_del,
+                                            cursor);
+        evas_object_del(cursor->object);
+     }
+   free(cursor);
+}
+
+static void
+_ecore_evas_cursor_add(Ecore_Evas *ee, Efl_Input_Device *dev)
+{
+   Ecore_Evas_Cursor *cursor = calloc(1, sizeof(Ecore_Evas_Cursor));
+   EINA_SAFETY_ON_NULL_RETURN(cursor);
+   eina_hash_add(ee->prop.cursors, &dev, cursor);
+   if (ee->prop.cursor_cache.object)
+     {
+        ecore_evas_object_cursor_device_set(ee, dev,
+                                            ee->prop.cursor_cache.object,
+                                            ee->prop.cursor_cache.layer,
+                                            ee->prop.cursor_cache.hot.x,
+                                            ee->prop.cursor_cache.hot.y);
+        memset(&ee->prop.cursor_cache, 0, sizeof(Ecore_Evas_Cursor));
+     }
+}
+
+static void
+_ecore_evas_dev_added_or_removed(void *data, const Efl_Event *event)
+{
+   Ecore_Evas *ee = data;
+
+   if (efl_input_device_type_get(event->info) != EFL_INPUT_DEVICE_CLASS_MOUSE)
+     return;
+
+   if (event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED)
+     _ecore_evas_cursor_add(ee, event->info);
+   else
+     eina_hash_del_by_key(ee->prop.cursors, &event->info);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(_ecore_evas_device_cbs,
+                           { EFL_CANVAS_EVENT_DEVICE_ADDED, _ecore_evas_dev_added_or_removed },
+                           { EFL_CANVAS_EVENT_DEVICE_REMOVED, _ecore_evas_dev_added_or_removed });
+Eina_Bool
+_ecore_evas_cursors_init(Ecore_Evas *ee)
+{
+   const Eina_List *devs, *l;
+   Efl_Input_Device *dev;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
+   ee->prop.cursors = eina_hash_pointer_new(EINA_FREE_CB(_ecore_evas_cursor_element_del));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee->prop.cursors, EINA_FALSE);
+
+   devs = evas_device_list(ee->evas, NULL);
+
+   EINA_LIST_FOREACH(devs, l, dev)
+     {
+        if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_MOUSE)
+          continue;
+        _ecore_evas_cursor_add(ee, dev);
+     }
+
+   efl_event_callback_array_priority_add(ee->evas, _ecore_evas_device_cbs(),
+                                         EFL_CALLBACK_PRIORITY_BEFORE, ee);
+
+   return EINA_TRUE;
 }
 
 EAPI Ecore_Evas_Interface *
@@ -1534,13 +1624,106 @@ ecore_evas_size_step_get(const Ecore_Evas *ee, int *w, int *h)
      }
 }
 
-EAPI void
-ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y)
+EAPI Evas_Object *
+_ecore_evas_default_cursor_image_get(Ecore_Evas *ee)
 {
-   Evas_Object  *obj = NULL;
+   Efl_Input_Device *pointer;
+   Ecore_Evas_Cursor *cursor;
+
+   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   cursor = eina_hash_find(ee->prop.cursors, &pointer);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cursor, NULL);
+   return cursor->object;
+}
+
+EAPI void
+_ecore_evas_default_cursor_hide(Ecore_Evas *ee)
+{
+   Efl_Input_Device *pointer;
+   Ecore_Evas_Cursor *cursor;
+
+   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   cursor = eina_hash_find(ee->prop.cursors, &pointer);
+   EINA_SAFETY_ON_NULL_RETURN(cursor);
+   if (cursor->object)
+     evas_object_hide(cursor->object);
+}
+
+static void
+_ecore_evas_object_cursor_device_set(Ecore_Evas *ee, Efl_Input_Device *pointer,
+                                     Evas_Object *obj, int layer,
+                                     int hot_x, int hot_y)
+{
+   Ecore_Evas_Cursor *cursor;
+   int x, y;
+   Evas_Object *old;
 
    ECORE_EVAS_CHECK(ee);
 
+   if (!pointer)
+     {
+        pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+        if (!pointer)
+          {
+             ee->prop.cursor_cache.object = obj;
+             ee->prop.cursor_cache.layer = layer;
+             ee->prop.cursor_cache.hot.x = hot_x;
+             ee->prop.cursor_cache.hot.y = hot_y;
+             return;
+          }
+     }
+
+   if (obj && ee->engine.func->fn_object_cursor_set)
+     ee->engine.func->fn_object_cursor_set(ee, obj, layer, hot_x, hot_y);
+   else if (!obj && ee->engine.func->fn_object_cursor_unset)
+     ee->engine.func->fn_object_cursor_unset(ee);
+
+   cursor = eina_hash_find(ee->prop.cursors, &pointer);
+   EINA_SAFETY_ON_NULL_RETURN(cursor);
+   old = cursor->object;
+   if (!obj)
+     {
+        cursor->object = NULL;
+        cursor->layer = 0;
+        cursor->hot.x = 0;
+        cursor->hot.y = 0;
+        goto end;
+     }
+
+   cursor->object = obj;
+   cursor->layer = layer;
+   cursor->hot.x = hot_x;
+   cursor->hot.y = hot_y;
+
+   evas_pointer_output_xy_get(ee->evas, &x, &y);
+
+   if (obj != old)
+     {
+        evas_object_layer_set(cursor->object, cursor->layer);
+        evas_object_pass_events_set(cursor->object, 1);
+        if (evas_pointer_inside_get(ee->evas))
+          evas_object_show(cursor->object);
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                       _ecore_evas_object_cursor_del, cursor);
+     }
+
+   evas_object_move(cursor->object, x - cursor->hot.x,
+                    y - cursor->hot.y);
+
+end:
+   if ((old) && (obj != old))
+     {
+        evas_object_event_callback_del_full
+          (old, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, cursor);
+        evas_object_del(old);
+     }
+}
+
+EAPI void
+ecore_evas_cursor_set(Ecore_Evas *ee, const char *file,
+                      int layer, int hot_x, int hot_y)
+{
+   Evas_Object *obj = NULL;
    if (file)
      {
         int x, y;
@@ -1552,41 +1735,82 @@ ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, in
         evas_object_image_fill_set(obj, 0, 0, x, y);
      }
 
-   IFC(ee, fn_object_cursor_set) (ee, obj, layer, hot_x, hot_y);
-   IFE;
+   _ecore_evas_object_cursor_device_set(ee, NULL, obj, layer, hot_x, hot_y);
 }
 
 EAPI void
-ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
+ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj,
+                             int layer, int hot_x, int hot_y)
 {
-   ECORE_EVAS_CHECK(ee);
-   IFC(ee, fn_object_cursor_set) (ee, obj, layer, hot_x, hot_y);
-   IFE;
+   _ecore_evas_object_cursor_device_set(ee, NULL, obj, layer, hot_x, hot_y);
+}
+
+EAPI void
+ecore_evas_object_cursor_device_set(Ecore_Evas *ee, Efl_Input_Device *pointer,
+                                    Evas_Object *obj, int layer,
+                                    int hot_x, int hot_y)
+{
+   _ecore_evas_object_cursor_device_set(ee, pointer, obj, layer, hot_x, hot_y);
+}
+
+EAPI Eina_Bool
+ecore_evas_cursor_device_get(const Ecore_Evas *ee, Efl_Input_Device *pointer,
+                             Evas_Object **obj, int *layer,
+                             int *hot_x, int *hot_y)
+{
+   Ecore_Evas_Cursor *cursor;
+
+   ECORE_EVAS_CHECK_GOTO(ee, err);
+
+   if (!pointer)
+     pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   if (pointer)
+     {
+        cursor = eina_hash_find(ee->prop.cursors, &pointer);
+        if (cursor)
+          {
+             if (obj) *obj = cursor->object;
+             if (layer) *layer = cursor->layer;
+             if (hot_x) *hot_x = cursor->hot.x;
+             if (hot_y) *hot_y = cursor->hot.y;
+             return EINA_TRUE;
+          }
+     }
+
+ err:
+   if (obj) *obj = NULL;
+   if (layer) *layer = 0;
+   if (hot_x) *hot_x = 0;
+   if (hot_y) *hot_y = 0;
+   return EINA_FALSE;
 }
 
 EAPI void
 ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, int *layer, int *hot_x, int *hot_y)
 {
-   ECORE_EVAS_CHECK(ee);
-   if (obj) *obj = ee->prop.cursor.object;
-   if (layer) *layer = ee->prop.cursor.layer;
-   if (hot_x) *hot_x = ee->prop.cursor.hot.x;
-   if (hot_y) *hot_y = ee->prop.cursor.hot.y;
+   ecore_evas_cursor_device_get(ee, NULL, obj, layer, hot_x, hot_y);
 }
 
 EAPI Evas_Object *
 ecore_evas_cursor_unset(Ecore_Evas *ee)
 {
+   Ecore_Evas_Cursor *cursor;
+   Efl_Input_Device *pointer;
    Evas_Object *obj;
 
    ECORE_EVAS_CHECK(ee, NULL);
 
-   obj = ee->prop.cursor.object;
-   IFC(ee, fn_object_cursor_unset) (ee);
+   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   cursor = eina_hash_find(ee->prop.cursors, &pointer);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cursor, NULL);
+   obj = cursor->object;
+   if (ee->engine.func->fn_object_cursor_unset)
+     ee->engine.func->fn_object_cursor_unset(ee);
    evas_object_hide(obj);
-   ee->prop.cursor.object = NULL;
-   }
-
+   cursor->object = NULL;
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                       _ecore_evas_object_cursor_del,
+                                       cursor);
    return obj;
 }
 
@@ -2381,6 +2605,36 @@ ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
    return EINA_FALSE;
 }
 
+EAPI void
+ecore_evas_pointer_device_xy_get(const Ecore_Evas *ee,
+                                 const Efl_Input_Device *pointer, Evas_Coord *x,
+                                 Evas_Coord *y)
+{
+   if ((!pointer) ||
+       (pointer == evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE)))
+     ecore_evas_pointer_xy_get(ee, x, y);
+   else
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        ECORE_EVAS_CHECK(ee);
+        if (ee->vnc_server)
+          {
+             Eina_Module *mod;
+             void (*pointer_xy_get)(const void *, const Efl_Input_Device *, Evas_Coord *, Evas_Coord *y);
+
+             mod = _ecore_evas_vnc_server_module_load();
+             EINA_SAFETY_ON_NULL_RETURN(mod);
+
+             pointer_xy_get = eina_module_symbol_get(mod, "ecore_evas_vnc_server_pointer_xy_get");
+             EINA_SAFETY_ON_NULL_RETURN(pointer_xy_get);
+             pointer_xy_get(ee->vnc_server, pointer, x, y);
+          }
+        else if (ee->engine.func->fn_pointer_device_xy_get)
+          ee->engine.func->fn_pointer_device_xy_get(ee, pointer, x, y);
+     }
+}
+
 EAPI void *
 ecore_evas_pixmap_visual_get(const Ecore_Evas *ee)
 {
@@ -2824,8 +3078,9 @@ _ecore_evas_free(Ecore_Evas *ee)
      ecore_timer_del(ee->prop.wm_rot.manual_mode.timer);
    _ecore_evas_aux_hint_free(ee);
    ee->prop.wm_rot.manual_mode.timer = NULL;
-   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
-   ee->prop.cursor.object = NULL;
+   efl_event_callback_array_del(ee->evas, _ecore_evas_device_cbs(), ee);
+   eina_hash_free(ee->prop.cursors);
+   ee->prop.cursors = NULL;
    if (ee->evas) evas_free(ee->evas);
    ee->evas = NULL;
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
@@ -2875,49 +3130,98 @@ _ecore_evas_idle_timeout_update(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_mouse_move_process_internal(Ecore_Evas *ee, int x, int y, unsigned int timestamp, Eina_Bool feed)
+_ecore_evas_mouse_move_process_internal(Ecore_Evas *ee,
+                                        Efl_Input_Device *pointer,
+                                        int x, int y, unsigned int timestamp,
+                                        Eina_Bool feed)
 {
-   int fx, fy, fw, fh;
-   ee->mouse.x = x;
-   ee->mouse.y = y;
+   Efl_Input_Pointer_Data *ev;
+   Efl_Input_Pointer *evt;
+   Eina_Bool send_event = EINA_TRUE;
+   Ecore_Evas_Cursor *cursor;
+   int fx, fy, fw, fh, evt_x, evt_y;
 
    evas_output_framespace_get(ee->evas, &fx, &fy, &fw, &fh);
 
-   if (ee->prop.cursor.object)
+   if (!pointer)
+     pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   cursor = eina_hash_find(ee->prop.cursors, &pointer);
+   EINA_SAFETY_ON_NULL_RETURN(cursor);
+   cursor->pos_x = x;
+   cursor->pos_y = y;
+   if (cursor->object)
      {
-        evas_object_show(ee->prop.cursor.object);
+        evas_object_show(cursor->object);
         if (ee->rotation == 0)
-          evas_object_move(ee->prop.cursor.object,
-                           x - fx - ee->prop.cursor.hot.x,
-                           y - fy - ee->prop.cursor.hot.y);
+          evas_object_move(cursor->object,
+                           x - fx - cursor->hot.x,
+                           y - fy - cursor->hot.y);
         else if (ee->rotation == 90)
-          evas_object_move(ee->prop.cursor.object,
-                           ee->h + fw - y - fx - 1 - ee->prop.cursor.hot.x,
-                           x - fy - ee->prop.cursor.hot.y);
+          evas_object_move(cursor->object,
+                           ee->h + fw - y - fx - 1 - cursor->hot.x,
+                           x - fy - cursor->hot.y);
         else if (ee->rotation == 180)
-          evas_object_move(ee->prop.cursor.object,
-                           ee->w + fw - x - fx - 1 - ee->prop.cursor.hot.x,
-                           ee->h + fh - y - fy - 1 - ee->prop.cursor.hot.y);
+          evas_object_move(cursor->object,
+                           ee->w + fw - x - fx - 1 - cursor->hot.x,
+                           ee->h + fh - y - fy - 1 - cursor->hot.y);
         else if (ee->rotation == 270)
-          evas_object_move(ee->prop.cursor.object,
-                           y - fx - ee->prop.cursor.hot.x,
-                           ee->w + fh - x - fy - 1 - ee->prop.cursor.hot.y);
+          evas_object_move(cursor->object,
+                           y - fx - cursor->hot.x,
+                           ee->w + fh - x - fy - 1 - cursor->hot.y);
      }
+
    if (!feed) return;
    if (ee->rotation == 0)
-     evas_event_input_mouse_move(ee->evas, x, y, timestamp, NULL);
+     {
+        evt_x = x;
+        evt_y = y;
+     }
    else if (ee->rotation == 90)
-     evas_event_input_mouse_move(ee->evas, ee->h + fw - y - 1, x, timestamp, NULL);
+     {
+        evt_x = ee->h + fw - y - 1;
+        evt_y = x;
+     }
    else if (ee->rotation == 180)
-     evas_event_input_mouse_move(ee->evas, ee->w + fw - x - 1, ee->h + fh - y - 1, timestamp, NULL);
+     {
+        evt_x = ee->w + fw - x - 1;
+        evt_y = ee->h + fh - y - 1;
+     }
    else if (ee->rotation == 270)
-     evas_event_input_mouse_move(ee->evas, y, ee->w + fh - x - 1, timestamp, NULL);
+     {
+        evt_x = y;
+        evt_y = ee->w + fh - x - 1;
+     }
+   else
+     send_event = EINA_FALSE;
+
+   if (!send_event) return;
+
+   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, ee->evas, (void **) &ev);
+   if (!evt) return;
+
+   ev->action = EFL_POINTER_ACTION_MOVE;
+   ev->device = efl_ref(pointer);
+   ev->timestamp = timestamp;
+   ev->cur.x = evt_x;
+   ev->cur.y = evt_y;
+   efl_event_callback_legacy_call(ee->evas,
+                                  _event_description_get(ev->action), evt);
+   efl_del(evt);
 }
 
 EAPI void
 _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
 {
-   _ecore_evas_mouse_move_process_internal(ee, x, y, timestamp, EINA_TRUE);
+   _ecore_evas_mouse_move_process_internal(ee, NULL, x, y, timestamp,
+                                           EINA_TRUE);
+}
+
+EAPI void
+_ecore_evas_mouse_device_move_process(Ecore_Evas *ee, Efl_Input_Device *pointer,
+                                      int x, int y, unsigned int timestamp)
+{
+   _ecore_evas_mouse_move_process_internal(ee, pointer, x, y, timestamp,
+                                           EINA_TRUE);
 }
 
 EAPI void
@@ -3174,6 +3478,7 @@ _ecore_evas_aux_hint_free(Ecore_Evas *ee)
 EAPI Ecore_Evas *
 ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("fb");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3181,12 +3486,19 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    new = eina_module_symbol_get(m, "ecore_evas_fb_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(disp_name, rotation, w, h);
+   ee = new(disp_name, rotation, w, h);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI Ecore_Evas *
 ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, Ecore_X_Window, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("x");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3194,7 +3506,13 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent, int x,
    new = eina_module_symbol_get(m, "ecore_evas_software_x11_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(disp_name, parent, x, y, w, h);
+   ee = new(disp_name, parent, x, y, w, h);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI Ecore_X_Window
@@ -3240,6 +3558,7 @@ ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window wi
 EAPI Ecore_Evas *
 ecore_evas_software_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, Ecore_X_Window, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("x");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3247,7 +3566,14 @@ ecore_evas_software_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent,
    new = eina_module_symbol_get(m, "ecore_evas_software_x11_pixmap_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(disp_name, parent, x, y, w, h);
+   ee = new(disp_name, parent, x, y, w, h);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
+
 }
 
 EAPI Ecore_X_Pixmap 
@@ -3266,6 +3592,7 @@ ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee)
 EAPI Ecore_Evas *
 ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, Ecore_X_Window, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("x");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3273,12 +3600,20 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y
    new = eina_module_symbol_get(m, "ecore_evas_gl_x11_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(disp_name, parent, x, y, w, h);
+   ee = new(disp_name, parent, x, y, w, h);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
+
 }
 
 EAPI Ecore_Evas *
 ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h, const int *opt)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, Ecore_X_Window, int, int, int, int, const int*);
    Eina_Module *m = _ecore_evas_engine_load("x");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3286,12 +3621,19 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent, int 
    new = eina_module_symbol_get(m, "ecore_evas_gl_x11_options_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(disp_name, parent, x, y, w, h, opt);
+   ee = new(disp_name, parent, x, y, w, h, opt);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI Ecore_Evas *
 ecore_evas_gl_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, Ecore_X_Window, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("x");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3299,7 +3641,14 @@ ecore_evas_gl_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x
    new = eina_module_symbol_get(m, "ecore_evas_gl_x11_pixmap_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(disp_name, parent, x, y, w, h);
+   ee = new(disp_name, parent, x, y, w, h);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
+
 }
 
 EAPI Ecore_X_Pixmap 
@@ -3495,6 +3844,7 @@ ecore_evas_vnc_stop(Ecore_Evas *ee)
 EAPI Ecore_Evas *
 ecore_evas_extn_socket_new(int w, int h)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(int, int);
    Eina_Module *m = _ecore_evas_engine_load("extn");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3502,7 +3852,14 @@ ecore_evas_extn_socket_new(int w, int h)
    new = eina_module_symbol_get(m, "ecore_evas_extn_socket_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(w, h);
+   ee = new(w, h);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
+
 }
 
 EAPI Eina_Bool
@@ -3605,6 +3962,7 @@ EAPI Ecore_Evas *
 ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen,
 		   int hwsurface, int noframe, int alpha)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, int, int, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("sdl");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3612,13 +3970,20 @@ ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen,
    new = eina_module_symbol_get(m, "ecore_evas_sdl_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(name, w, h, fullscreen, hwsurface, noframe, alpha);
+   ee = new(name, w, h, fullscreen, hwsurface, noframe, alpha);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI Ecore_Evas *
 ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen,
 		     int hwsurface, int noframe, int alpha)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, int, int, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("sdl");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3626,12 +3991,19 @@ ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen,
    new = eina_module_symbol_get(m, "ecore_evas_sdl16_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(name, w, h, fullscreen, hwsurface, noframe, alpha);
+   ee = new(name, w, h, fullscreen, hwsurface, noframe, alpha);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI Ecore_Evas *
 ecore_evas_gl_sdl_new(const char* name, int w, int h, int fullscreen, int noframe)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("sdl");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3639,13 +4011,20 @@ ecore_evas_gl_sdl_new(const char* name, int w, int h, int fullscreen, int nofram
    new = eina_module_symbol_get(m, "ecore_evas_gl_sdl_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(name, w, h, fullscreen, noframe);
+   ee = new(name, w, h, fullscreen, noframe);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI Ecore_Evas *
 ecore_evas_wayland_shm_new(const char *disp_name, unsigned int parent,
 			   int x, int y, int w, int h, Eina_Bool frame)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, unsigned int, int, int, int, int, Eina_Bool);
    Eina_Module *m = _ecore_evas_engine_load("wayland");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3653,13 +4032,20 @@ ecore_evas_wayland_shm_new(const char *disp_name, unsigned int parent,
    new = eina_module_symbol_get(m, "ecore_evas_wayland_shm_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(disp_name, parent, x, y, w, h, frame);
+   ee = new(disp_name, parent, x, y, w, h, frame);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI Ecore_Evas *
 ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent,
 			   int x, int y, int w, int h, Eina_Bool frame)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, unsigned int, int, int, int, int, Eina_Bool);
    Eina_Module *m = _ecore_evas_engine_load("wayland");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3667,7 +4053,13 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent,
    new = eina_module_symbol_get(m, "ecore_evas_wayland_egl_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(disp_name, parent, x, y, w, h, frame);
+   ee = new(disp_name, parent, x, y, w, h, frame);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI void
@@ -3743,6 +4135,7 @@ EAPI Ecore_Evas *
 ecore_evas_drm_new(const char *disp_name, unsigned int parent,
                    int x, int y, int w, int h)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, unsigned int, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("drm");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3750,13 +4143,20 @@ ecore_evas_drm_new(const char *disp_name, unsigned int parent,
    new = eina_module_symbol_get(m, "ecore_evas_drm_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(disp_name, parent, x, y, w, h);
+   ee = new(disp_name, parent, x, y, w, h);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI Ecore_Evas *
 ecore_evas_gl_drm_new(const char *disp_name, unsigned int parent,
                           int x, int y, int w, int h)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char *, unsigned int, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("drm");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3764,7 +4164,14 @@ ecore_evas_gl_drm_new(const char *disp_name, unsigned int parent,
    new = eina_module_symbol_get(m, "ecore_evas_gl_drm_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(disp_name, parent, x, y, w, h);
+   ee = new(disp_name, parent, x, y, w, h);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
+
 }
 
 EAPI Ecore_Evas *
@@ -3774,6 +4181,7 @@ ecore_evas_software_gdi_new(Ecore_Win32_Window *parent,
 			    int                 width,
 			    int                 height)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(Ecore_Win32_Window *, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("win32");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3781,7 +4189,14 @@ ecore_evas_software_gdi_new(Ecore_Win32_Window *parent,
    new = eina_module_symbol_get(m, "ecore_evas_software_gdi_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(parent, x, y, width, height);
+   ee = new(parent, x, y, width, height);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
+
 }
 
 EAPI Ecore_Evas *
@@ -3791,6 +4206,7 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
 			      int                 width,
 			      int                 height)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(Ecore_Win32_Window *, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("win32");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3798,7 +4214,13 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
    new = eina_module_symbol_get(m, "ecore_evas_software_ddraw_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(parent, x, y, width, height);
+   ee = new(parent, x, y, width, height);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI Ecore_Win32_Window *
@@ -3814,6 +4236,7 @@ ecore_evas_win32_window_get(const Ecore_Evas *ee)
 EAPI Ecore_Evas *
 ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent, int x, int y, int w, int h)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(Ecore_Cocoa_Window *, int, int, int, int);
    Eina_Module *m = _ecore_evas_engine_load("cocoa");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3821,12 +4244,19 @@ ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent, int x, int y, int w, int h)
    new = eina_module_symbol_get(m, "ecore_evas_cocoa_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(parent, x, y, w, h);
+   ee = new(parent, x, y, w, h);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 EAPI Ecore_Evas *
 ecore_evas_psl1ght_new(const char* name, int w, int h)
 {
+   Ecore_Evas *ee;
    Ecore_Evas *(*new)(const char*, int, int);
    Eina_Module *m = _ecore_evas_engine_load("psl1ght");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -3834,7 +4264,13 @@ ecore_evas_psl1ght_new(const char* name, int w, int h)
    new = eina_module_symbol_get(m, "ecore_evas_psl1ght_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
-   return new(name, w, h);
+   ee = new(name, w, h);
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   return ee;
 }
 
 
@@ -3966,7 +4402,8 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
    Evas *e = ee->evas;
    Eina_Bool processed;
 
-   _ecore_evas_mouse_move_process_internal(ee, info->x, info->y, info->timestamp, EINA_FALSE);
+   _ecore_evas_mouse_move_process_internal(ee, info->dev, info->x, info->y,
+                                           info->timestamp, EINA_FALSE);
 
    /* Unused information:
     * same_screen

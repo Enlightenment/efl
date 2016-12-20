@@ -837,9 +837,22 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
  * @param y where to return the vertical position. May be NULL. Returns 0 on error.
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @see ecore_wl2_window_pointer_device_xy_get
  * @since 1.17
  */
 EAPI void ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y);
+
+/**
+ * Retrieves the mouse position of the current window.
+ *
+ * @param window The window on which to retrieve the mouse position.
+ * @param pointer The Efl.Input.Pointer device to fetch the position.
+ * @param x where to return the horizontal position. May be NULL. Returns 0 on error.
+ * @param y where to return the vertical position. May be NULL. Returns 0 on error.
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.19
+ */
+EAPI void ecore_wl2_window_pointer_device_xy_get(Ecore_Wl2_Window *window, const Eo *pointer, int *x, int *y);
 
 /**
  * Set a given wl_surface to use as the pointer on a window

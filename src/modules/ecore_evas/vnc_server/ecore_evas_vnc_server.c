@@ -893,5 +893,38 @@ ecore_evas_vnc_server_del(Ecore_Evas_Vnc_Server *server)
    free(server);
 }
 
+EAPI void
+ecore_evas_vnc_server_pointer_xy_get(const Ecore_Evas_Vnc_Server *server,
+                                     const Evas_Device *pointer,
+                                     Evas_Coord *x, Evas_Coord *y)
+{
+   Evas_Coord sx, sy;
+   rfbClientIteratorPtr itr;
+   rfbClientRec *client;
+   Ecore_Evas_Vnc_Server_Client_Data *cdata;
+
+   EINA_SAFETY_ON_NULL_RETURN(server);
+   EINA_SAFETY_ON_NULL_RETURN(pointer);
+
+   sx = sy = 0;
+   itr = rfbGetClientIterator(server->vnc_screen);
+
+   while ((client = rfbClientIteratorNext(itr)))
+     {
+        cdata = client->clientData;
+
+        if (cdata->mouse == pointer)
+          {
+             sx = client->lastPtrX;
+             sy = client->lastPtrY;
+             break;
+          }
+     }
+
+   rfbReleaseClientIterator(itr);
+   if (x) *x = sx;
+   if (y) *y = sy;
+}
+
 EINA_MODULE_INIT(_ecore_evas_vnc_server_init);
 EINA_MODULE_SHUTDOWN(_ecore_evas_vnc_server_shutdown);

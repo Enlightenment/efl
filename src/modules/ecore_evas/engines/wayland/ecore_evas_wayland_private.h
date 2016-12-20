@@ -103,6 +103,8 @@ void _ecore_evas_wl_common_transparent_set(Ecore_Evas *ee, int transparent);
 void _ecore_evas_wl_common_frame_callback_clean(Ecore_Evas *ee);
 void _ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
 
+void _ecore_evas_wl_common_pointer_device_xy_get(const Ecore_Evas *ee, const Efl_Input_Device *pointer, Evas_Coord *x, Evas_Coord *y);
+
 Ecore_Evas *_ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name);
 
 extern Eina_List *ee_list;

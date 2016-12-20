@@ -18,15 +18,6 @@
 #include <sys/mman.h>
 #include "ecore_wl2_private.h"
 
-typedef struct _Ecore_Wl2_Input_Devices
-{
-   Eo *pointer_dev;
-   Eo *keyboard_dev;
-   Eo *touch_dev;
-   Eo *seat_dev;
-   int window_id;
-} Ecore_Wl2_Input_Devices;
-
 typedef struct _Ecore_Wl2_Mouse_Down_Info
 {
    EINA_INLIST;

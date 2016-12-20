@@ -220,7 +220,7 @@ _ecore_evas_win32_event_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, 
         if (evas_event_down_count_get(ee->evas) > 0) return ECORE_CALLBACK_PASS_ON;
         evas_event_feed_mouse_out(ee->evas, e->timestamp, NULL);
         _ecore_evas_mouse_inout_set(ee, NULL, EINA_FALSE, EINA_FALSE);
-        if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+        _ecore_evas_default_cursor_hide(ee);
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -371,8 +371,11 @@ _ecore_evas_win32_event_window_hide(void *data EINA_UNUSED, int type EINA_UNUSED
 static Eina_Bool
 _ecore_evas_win32_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
+   Evas_Device *pointer;
+   Ecore_Evas_Cursor *cursor;
    Ecore_Evas                         *ee;
    Ecore_Win32_Event_Window_Configure *e;
+
 
    INF("window configure");
 
@@ -380,6 +383,10 @@ _ecore_evas_win32_event_window_configure(void *data EINA_UNUSED, int type EINA_U
    ee = ecore_event_window_match((Ecore_Window)e->window);
    if (!ee) return 1; /* pass on event */
    if ((Ecore_Window)e->window != ee->prop.window) return 1;
+
+   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   cursor = eina_hash_find(ee->prop.cursors, &pointer);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cursor, 1);
 
    if (ee->prop.override)
      {
@@ -426,7 +433,7 @@ _ecore_evas_win32_event_window_configure(void *data EINA_UNUSED, int type EINA_U
           {
              if ((ee->expecting_resize.w == ee->w) &&
                  (ee->expecting_resize.h == ee->h))
-               _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
+               _ecore_evas_mouse_move_process(ee, cursor->pos_x, cursor->pos_y,
                                               ecore_win32_current_time_get());
              ee->expecting_resize.w = 0;
              ee->expecting_resize.h = 0;
@@ -588,10 +595,16 @@ _ecore_evas_win32_move_resize(Ecore_Evas *ee, int x, int y, int width, int heigh
 static void
 _ecore_evas_win32_rotation_set_internal(Ecore_Evas *ee, int rotation)
 {
+   Evas_Device *pointer;
+   Ecore_Evas_Cursor *cursor;
    int rot_dif;
 
    rot_dif = ee->rotation - rotation;
    if (rot_dif < 0) rot_dif = -rot_dif;
+
+   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   cursor = eina_hash_find(ee->prop.cursors, &pointer);
+   EINA_SAFETY_ON_NULL_RETURN(cursor);
 
    if (rot_dif != 180)
      {
@@ -633,13 +646,13 @@ _ecore_evas_win32_rotation_set_internal(Ecore_Evas *ee, int rotation)
         ecore_evas_size_max_set(ee, maxh, maxw);
         ecore_evas_size_base_set(ee, baseh, basew);
         ecore_evas_size_step_set(ee, steph, stepw);
-        _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
+        _ecore_evas_mouse_move_process(ee, cursor->pos_x, cursor->pos_y,
                                        ecore_win32_current_time_get());
      }
    else
      {
         ee->rotation = rotation;
-        _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
+        _ecore_evas_mouse_move_process(ee, cursor->pos_x, cursor->pos_y,
                                        ecore_win32_current_time_get());
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
@@ -832,67 +845,6 @@ _ecore_evas_win32_size_step_set(Ecore_Evas *ee, int width, int height)
    ee->prop.step.h = height;
    ecore_win32_window_size_step_set((struct _Ecore_Win32_Window *)ee->prop.window,
                                     width, height);
-}
-
-static void
-_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Ecore_Evas *ee;
-   
-   ee = data;
-   if (ee) ee->prop.cursor.object = NULL;
-}
-
-static void
-_ecore_evas_win32_cursor_unset(Ecore_Evas *ee)
-{
-   evas_object_event_callback_del_full(ee->prop.cursor.object, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
-}
-
-static void
-_ecore_evas_win32_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
-{
-   int x, y;
-   Evas_Object *old;
-
-   old = ee->prop.cursor.object;
-   if (obj == NULL)
-     {
-        ee->prop.cursor.object = NULL;
-        ee->prop.cursor.layer = 0;
-        ee->prop.cursor.hot.x = 0;
-        ee->prop.cursor.hot.y = 0;
-        goto end;
-     }
-
-   ee->prop.cursor.object = obj;
-   ee->prop.cursor.layer = layer;
-   ee->prop.cursor.hot.x = hot_x;
-   ee->prop.cursor.hot.y = hot_y;
-
-   evas_pointer_output_xy_get(ee->evas, &x, &y);
-
-   if (obj != old)
-     {
-//        ecore_win32_window_cursor_show(ee->prop.window, 0);
-        evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
-        evas_object_pass_events_set(ee->prop.cursor.object, 1);
-        if (evas_pointer_inside_get(ee->evas))
-          evas_object_show(ee->prop.cursor.object);
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
-                                       _ecore_evas_object_cursor_del, ee);
-     }
-
-   evas_object_move(ee->prop.cursor.object, x - ee->prop.cursor.hot.x,
-                    y - ee->prop.cursor.hot.y);
-
-end:
-   if ((old) && (obj != old))
-     {
-        evas_object_event_callback_del_full
-          (old, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
-        evas_object_del(old);
-     }
 }
 
 static void
@@ -1157,8 +1109,8 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      _ecore_evas_win32_size_max_set,
      _ecore_evas_win32_size_base_set,
      _ecore_evas_win32_size_step_set,
-     _ecore_evas_win32_cursor_set,
-     _ecore_evas_win32_cursor_unset,
+     NULL,
+     NULL,
      NULL, /* _ecore_evas_x_layer_set */
      _ecore_evas_win32_focus_set,
      _ecore_evas_win32_iconified_set,
@@ -1207,6 +1159,7 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      NULL, //fn_callback_focus_device_out_set
      NULL, //fn_callback_device_mouse_in_set
      NULL, //fn_callback_device_mouse_out_set
+     NULL, //fn_pointer_device_xy_get
 };
 
 #endif /* BUILD_ECORE_EVAS_WIN32 */

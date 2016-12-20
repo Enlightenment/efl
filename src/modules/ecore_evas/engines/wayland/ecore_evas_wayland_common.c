@@ -43,7 +43,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_common_size_base_set,
    _ecore_evas_wl_common_size_step_set,
    _ecore_evas_wl_common_object_cursor_set,
-   _ecore_evas_wl_common_object_cursor_unset,
+   NULL,
    _ecore_evas_wl_common_layer_set,
    NULL, // focus set
    _ecore_evas_wl_common_iconified_set,
@@ -90,6 +90,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, //fn_callback_focus_device_out_set
    NULL, //fn_callback_device_mouse_in_set
    NULL, //fn_callback_device_mouse_out_set
+   _ecore_evas_wl_common_pointer_device_xy_get,
 };
 
 #define _smart_frame_type "ecore_evas_wl_frame"
@@ -170,7 +171,7 @@ _ecore_evas_wl_common_cb_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, 
    _ecore_evas_mouse_inout_set(ee, ev->dev, EINA_TRUE, EINA_FALSE);
    ecore_event_evas_seat_modifier_lock_update(ee->evas, ev->modifiers, ev->dev);
    evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
-   _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
+   _ecore_evas_mouse_device_move_process(ee, ev->dev, ev->x, ev->y, ev->timestamp);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -190,10 +191,9 @@ _ecore_evas_wl_common_cb_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED,
 
    ecore_event_evas_seat_modifier_lock_update(ee->evas,
                                               ev->modifiers, ev->dev);
-   _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
+   _ecore_evas_mouse_device_move_process(ee, ev->dev, ev->x, ev->y, ev->timestamp);
    evas_event_feed_mouse_out(ee->evas, ev->timestamp, NULL);
    _ecore_evas_mouse_inout_set(ee, ev->dev, EINA_FALSE, EINA_FALSE);
-   if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -299,6 +299,20 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
      _ecore_evas_wl_common_resize(ee, nw, nh);
 
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_mouse_move_dispatch(Ecore_Evas *ee)
+{
+   Ecore_Evas_Cursor *cursor;
+   Eina_Iterator *itr = eina_hash_iterator_data_new(ee->prop.cursors);
+
+   EINA_SAFETY_ON_NULL_RETURN(itr);
+
+   EINA_ITERATOR_FOREACH(itr, cursor)
+     _ecore_evas_mouse_move_process(ee, cursor->pos_x, cursor->pos_y,
+                                    ecore_loop_time_get());
+   eina_iterator_free(itr);
 }
 
 static void
@@ -422,8 +436,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
          * Yes, it's required to update the mouse position, relatively to
          * widgets. After a rotation change, e.g., the mouse might not be over
          * a button anymore. */
-        _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-                                       ecore_loop_time_get());
+        _mouse_move_dispatch(ee);
      }
    else
      {
@@ -437,8 +450,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
          *
          * NB: Is This Really Needed ? Yes, it's required to update the mouse
          * position, relatively to widgets. */
-        _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-                                       ecore_loop_time_get());
+        _mouse_move_dispatch(ee);
 
         /* call the ecore_evas' resize function */
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
@@ -1133,6 +1145,19 @@ _ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_C
 }
 
 void
+_ecore_evas_wl_common_pointer_device_xy_get(const Ecore_Evas *ee,
+                                            const Efl_Input_Device *pointer,
+                                            Evas_Coord *x, Evas_Coord *y)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   wdata = ee->engine.data;
+   ecore_wl2_window_pointer_device_xy_get(wdata->win, pointer, x, y);
+}
+
+void
 _ecore_evas_wl_common_raise(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1251,72 +1276,17 @@ _ecore_evas_wl_common_aspect_set(Ecore_Evas *ee, double aspect)
    ee->prop.aspect = aspect;
 }
 
-static void
-_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Ecore_Evas *ee;
-
-   ee = data;
-   if (ee) ee->prop.cursor.object = NULL;
-}
-
 void
-_ecore_evas_wl_common_object_cursor_unset(Ecore_Evas *ee)
+_ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj,
+                                        int layer EINA_UNUSED,
+                                        int hot_x EINA_UNUSED,
+                                        int hot_y EINA_UNUSED)
 {
-   evas_object_event_callback_del_full(ee->prop.cursor.object,
-                                       EVAS_CALLBACK_DEL,
-                                       _ecore_evas_object_cursor_del, ee);
-}
-
-void
-_ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
-{
-   int x, y, fx, fy;
    Ecore_Evas_Engine_Wl_Data *wdata;
-   Evas_Object *old;
 
-   if (!ee) return;
    wdata = ee->engine.data;
-   old = ee->prop.cursor.object;
-   if (obj == NULL)
-     {
-        ecore_wl2_window_pointer_set(wdata->win, NULL, 0, 0);
-        ee->prop.cursor.object = NULL;
-        ee->prop.cursor.layer = 0;
-        ee->prop.cursor.hot.x = 0;
-        ee->prop.cursor.hot.y = 0;
-        goto end;
-     }
-
-   ee->prop.cursor.object = obj;
-   ee->prop.cursor.layer = layer;
-   ee->prop.cursor.hot.x = hot_x;
-   ee->prop.cursor.hot.y = hot_y;
-
-   evas_pointer_output_xy_get(ee->evas, &x, &y);
-
-   if (obj != old)
-     {
-        ecore_wl2_window_pointer_set(wdata->win, NULL, 0, 0);
-        evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
-        evas_object_pass_events_set(ee->prop.cursor.object, 1);
-        if (evas_pointer_inside_get(ee->evas))
-          evas_object_show(ee->prop.cursor.object);
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
-                                       _ecore_evas_object_cursor_del, ee);
-     }
-
-   evas_output_framespace_get(ee->evas, &fx, &fy, NULL, NULL);
-   evas_object_move(ee->prop.cursor.object, x - fx - ee->prop.cursor.hot.x,
-                    y - fy - ee->prop.cursor.hot.y);
-
-end:
-   if ((old) && (obj != old))
-     {
-        evas_object_event_callback_del_full
-          (old, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
-        evas_object_del(old);
-     }
+   if (obj != _ecore_evas_default_cursor_image_get(ee))
+     ecore_wl2_window_pointer_set(wdata->win, NULL, 0, 0);
 }
 
 void
