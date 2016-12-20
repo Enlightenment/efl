@@ -773,23 +773,24 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          }
       }
       @property stack_base {
-         set {
-            [[Set the stack base state of this window
+         [[The stack base state of this window
 
-              This is a boolean flag that determines if this window will
-              become the base of a stack at all. You must enable this
-              on a base (bottom of a window stack for things to work
-              correctly.
+           This is a boolean flag that determines if this window will
+           become the base of a stack at all. You must enable this
+           on a base (bottom of a window stack for things to work
+           correctly.
 
-              This state should be set before a window is shown for the
-              first time and never changed again after that.
+           This state should be set before a window is shown for the
+           first time and never changed again after that.
 
-              @since 1.19]]
-         }
+           @since 1.19
+         ]]
+
+         set {}
          get {}
          values {
-            base: bool; [[True if this is a stack base window, false
-                          false otherwise.]]
+            base: bool; [[$true if this is a stack base window, $false
+                          otherwise.]]
          }
       }
       stack_pop_to_id {
