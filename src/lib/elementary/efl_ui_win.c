@@ -1683,19 +1683,41 @@ _key_action_move(Evas_Object *obj, const char *params)
    const char *dir = params;
 
    _elm_widget_focus_auto_show(obj);
+
+   Efl_Ui_Focus_Direction focus_dir;
+   Efl_Ui_Focus_Object *o;
+
    if (!strcmp(dir, "previous"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
+     focus_dir = EFL_UI_FOCUS_DIRECTION_PREV;
    else if (!strcmp(dir, "next"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+     focus_dir = EFL_UI_FOCUS_DIRECTION_NEXT;
    else if (!strcmp(dir, "left"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_LEFT);
+     focus_dir = EFL_UI_FOCUS_DIRECTION_LEFT;
    else if (!strcmp(dir, "right"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_RIGHT);
+     focus_dir = EFL_UI_FOCUS_DIRECTION_RIGHT;
    else if (!strcmp(dir, "up"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_UP);
+     focus_dir = EFL_UI_FOCUS_DIRECTION_UP;
    else if (!strcmp(dir, "down"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_DOWN);
+     focus_dir = EFL_UI_FOCUS_DIRECTION_DOWN;
    else return EINA_FALSE;
+
+   o = efl_ui_focus_manager_move(obj, focus_dir);
+
+   if (!o && focus_dir == EFL_UI_FOCUS_DIRECTION_NEXT)
+     {
+        Efl_Ui_Focus_Object *root;
+
+        root = efl_ui_focus_manager_root_get(obj);
+        efl_ui_focus_manager_focus(obj, root);
+     }
+
+   if (!o && focus_dir == EFL_UI_FOCUS_DIRECTION_PREV)
+     {
+        Efl_Ui_Focus_Object *last;
+
+        last = efl_ui_focus_manager_logical_end(obj);
+        efl_ui_focus_manager_focus(obj, last);
+     }
 
    return EINA_TRUE;
 }
@@ -2714,7 +2736,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    if ((sd->modal) && (evas_object_visible_get(obj)))
      _elm_win_modality_decrement(sd);
 
-   if ((sd->modal) && (sd->modal_count > 0)) 
+   if ((sd->modal) && (sd->modal_count > 0))
      ERR("Deleted modal win was blocked by another modal win which was created after creation of that win.");
 
    evas_object_event_callback_del_full(sd->legacy.edje,
@@ -5221,12 +5243,14 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
    /* Do nothing. */
    /* XXX: We are calling the constructor chain from the finalizer. It's
     * really bad and hacky. Needs fixing. */
-   pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, obj,
     efl_ui_focus_manager_root_set(efl_added, obj)
    );
 
    efl_composite_attach(obj, pd->manager);
 
+   efl_event_callback_forwarder_add(pd->manager, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, obj);
+   efl_event_callback_forwarder_add(pd->manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
    return obj;
 }
 
@@ -5661,7 +5685,7 @@ _efl_ui_win_urgent_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Urge
    Eina_Bool urgent_tmp = !!urgent;
 
    if (sd->urgent == urgent_tmp) return;
-   
+
    sd->urgent = urgent_tmp;
    TRAP(sd, urgent_set, urgent_tmp);
 #ifdef HAVE_ELEMENTARY_X
