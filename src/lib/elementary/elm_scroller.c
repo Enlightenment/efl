@@ -471,28 +471,31 @@ _elm_scroller_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Scroller_Data *sd, 
        (elm_widget_child_can_focus_get(cur)))
      {
         Eina_Bool ret = EINA_FALSE;
-        Evas_Coord x = 0, y = 0;
-        Evas_Coord v_w = 0, v_h = 0;
-        Evas_Coord c_x = 0, c_y = 0;
-        Evas_Coord f_x = 0, f_y = 0, f_w = 0, f_h = 0;
-        Evas_Coord l_x = 0, l_y = 0, l_w = 0, l_h = 0;
-        Evas_Coord step_x = 0, step_y = 0;
 
         ret =  elm_widget_focus_next_get(cur, dir, next, next_item);
+        if (*next)
+          {
+             Evas_Coord x = 0, y = 0;
+             Evas_Coord v_w = 0, v_h = 0;
+             Evas_Coord c_x = 0, c_y = 0;
+             Evas_Coord f_x = 0, f_y = 0, f_w = 0, f_h = 0;
+             Evas_Coord l_x = 0, l_y = 0, l_w = 0, l_h = 0;
+             Evas_Coord step_x = 0, step_y = 0;
 
-        elm_interface_scrollable_content_pos_get(obj, &x, &y);
-        elm_interface_scrollable_step_size_get(obj, &step_x, &step_y);
-        elm_interface_scrollable_content_viewport_geometry_get
-              (obj, NULL, NULL, &v_w, &v_h);
-        evas_object_geometry_get(sd->content, &c_x, &c_y, NULL, NULL);
-        evas_object_geometry_get(*next, &f_x, &f_y, &f_w, &f_h);
-        l_x = f_x - c_x - step_x;
-        l_y = f_y - c_y - step_y;
-        l_w = f_w + (step_x * 2);
-        l_h = f_h + (step_y * 2);
+             elm_interface_scrollable_content_pos_get(obj, &x, &y);
+             elm_interface_scrollable_step_size_get(obj, &step_x, &step_y);
+             elm_interface_scrollable_content_viewport_geometry_get
+                (obj, NULL, NULL, &v_w, &v_h);
+             evas_object_geometry_get(sd->content, &c_x, &c_y, NULL, NULL);
+             evas_object_geometry_get(*next, &f_x, &f_y, &f_w, &f_h);
+             l_x = f_x - c_x - step_x;
+             l_y = f_y - c_y - step_y;
+             l_w = f_w + (step_x * 2);
+             l_h = f_h + (step_y * 2);
 
-        if (!ret || ELM_RECTS_INTERSECT(x, y, v_w, v_h, l_x, l_y, l_w, l_h))
-          return ret;
+             if (!ret || ELM_RECTS_INTERSECT(x, y, v_w, v_h, l_x, l_y, l_w, l_h))
+               return ret;
+          }
      }
 
    if (!(elm_widget_can_focus_get(obj)) &&
