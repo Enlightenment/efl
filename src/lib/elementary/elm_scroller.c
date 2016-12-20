@@ -148,7 +148,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                     cur_weight += ((f_x - c_x) - x) * ((f_x - c_x) - x);
                   if ((f_y - c_y) > y)
                     cur_weight += ((f_y - c_y) - y) * ((f_y - c_y) - y);
-                  if (cur_weight == 0.0)
+                  if (EINA_DBL_CMP(cur_weight, 0.0))
                     {
                        elm_widget_focus_steal(cur, NULL);
                        eina_list_free(can_focus_list);
