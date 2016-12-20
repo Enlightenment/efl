@@ -6161,14 +6161,14 @@ _efl_ui_win_stack_master_id_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_stack_base_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool base)
+_efl_ui_win_stack_base_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool base)
 {
    if (sd->shown) return;
    sd->stack_base = !!base;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_stack_base_get(Eo *obj, Efl_Ui_Win_Data *sd)
+_efl_ui_win_stack_base_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->stack_base;
 }
