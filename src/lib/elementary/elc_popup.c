@@ -467,9 +467,9 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
         elm_popup_align_get(obj, &horizontal, &vertical);
         evas_object_geometry_get(sd->parent, NULL, NULL, &w, &h);
 
-        if (horizontal == ELM_NOTIFY_ALIGN_FILL)
+        if (EINA_DBL_CMP(horizontal, ELM_NOTIFY_ALIGN_FILL))
           minw = w;
-        if (vertical == ELM_NOTIFY_ALIGN_FILL)
+        if (EINA_DBL_CMP(vertical, ELM_NOTIFY_ALIGN_FILL))
           minh = h;
         edje_object_size_min_restricted_calc(elm_layout_edje_get(sd->content_area),
                                              &minw, &minh, minw, minh);
@@ -1644,23 +1644,23 @@ _elm_notify_orient_get(const Evas_Object *obj)
 
    elm_notify_align_get(obj, &horizontal, &vertical);
 
-   if ((horizontal == 0.5) && (vertical == 0.0))
+   if ((EINA_DBL_CMP(horizontal, 0.5)) && (EINA_DBL_CMP(vertical, 0.0)))
      orient = ELM_NOTIFY_ORIENT_TOP;
-   else if ((horizontal == 0.5) && (vertical == 0.5))
+   else if ((EINA_DBL_CMP(horizontal, 0.5)) && (EINA_DBL_CMP(vertical, 0.5)))
      orient = ELM_NOTIFY_ORIENT_CENTER;
-   else if ((horizontal == 0.5) && (vertical == 1.0))
+   else if ((EINA_DBL_CMP(horizontal, 0.5)) && (EINA_DBL_CMP(vertical, 1.0)))
      orient = ELM_NOTIFY_ORIENT_BOTTOM;
-   else if ((horizontal == 0.0) && (vertical == 0.5))
+   else if ((EINA_DBL_CMP(horizontal, 0.0)) && (EINA_DBL_CMP(vertical, 0.5)))
      orient = ELM_NOTIFY_ORIENT_LEFT;
-   else if ((horizontal == 1.0) && (vertical == 0.5))
+   else if ((EINA_DBL_CMP(horizontal, 1.0)) && (EINA_DBL_CMP(vertical, 0.5)))
      orient = ELM_NOTIFY_ORIENT_RIGHT;
-   else if ((horizontal == 0.0) && (vertical == 0.0))
+   else if ((EINA_DBL_CMP(horizontal, 0.0)) && (EINA_DBL_CMP(vertical, 0.0)))
      orient = ELM_NOTIFY_ORIENT_TOP_LEFT;
-   else if ((horizontal == 1.0) && (vertical == 0.0))
+   else if ((EINA_DBL_CMP(horizontal, 1.0)) && (EINA_DBL_CMP(vertical, 0.0)))
      orient = ELM_NOTIFY_ORIENT_TOP_RIGHT;
-   else if ((horizontal == 0.0) && (vertical == 1.0))
+   else if ((EINA_DBL_CMP(horizontal, 0.0)) && (EINA_DBL_CMP(vertical, 1.0)))
      orient = ELM_NOTIFY_ORIENT_BOTTOM_LEFT;
-   else if ((horizontal == 1.0) && (vertical == 1.0))
+   else if ((EINA_DBL_CMP(horizontal, 1.0)) && (EINA_DBL_CMP(vertical, 1.0)))
      orient = ELM_NOTIFY_ORIENT_BOTTOM_RIGHT;
    else
      orient = ELM_NOTIFY_ORIENT_TOP;
