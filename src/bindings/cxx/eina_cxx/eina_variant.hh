@@ -142,7 +142,7 @@ struct destroy_visitor
 {
    typedef void result_type;
    template <typename T>
-   void operator()(T&& other) const
+   void operator()(T&& other) const noexcept
    {
       typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type type;
       other.~type();
@@ -229,13 +229,16 @@ struct variant
 
    void destroy()
    {
-     destroy_unsafe();
-     type = -1;
+     if(type != -1)
+       {
+         destroy_unsafe();
+         type = -1;
+       }
    }
 
    void destroy_unsafe()
    {
-     visit(destroy_visitor());
+     visit_unsafe(destroy_visitor());
    }
 
    bool empty() const
@@ -263,6 +266,18 @@ struct variant
         }
       else
         return call_visitor<0u, sizeof...(Args), std::tuple<Args...>>::call(type, static_cast<void*>(&buffer), f);
+   }
+
+   template <typename F>
+   typename F::result_type visit_unsafe(F f) const
+   {
+     return call_visitor<0u, sizeof...(Args), std::tuple<Args...>>::call(type, static_cast<const void*>(&buffer), f);
+   }
+
+   template <typename F>
+   typename F::result_type visit_unsafe(F f)
+   {
+     return call_visitor<0u, sizeof...(Args), std::tuple<Args...>>::call(type, static_cast<void*>(&buffer), f);
    }
   
 private:
