@@ -631,7 +631,7 @@ _efl_canvas_image_internal_efl_image_border_scale_set(Eo *eo_obj, Evas_Image_Dat
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   if (scale == o->cur->border.scale) return;
+   if (EINA_DBL_CMP(scale, o->cur->border.scale)) return;
    evas_object_async_block(obj);
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      state_write->border.scale = scale;
@@ -2059,7 +2059,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                       bb = imh - bt;
                                    }
                               }
-                            if (o->cur->border.scale != 1.0)
+                            if (!EINA_DBL_CMP(o->cur->border.scale, 1.0))
                               {
                                  bsl = ((double)bl * o->cur->border.scale);
                                  bsr = ((double)br * o->cur->border.scale);
@@ -2325,7 +2325,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
             (o->cur->border.t != o->prev->border.t) ||
             (o->cur->border.b != o->prev->border.b) ||
             (o->cur->border.fill != o->prev->border.fill) ||
-            (o->cur->border.scale != o->prev->border.scale))
+            (!EINA_DBL_CMP(o->cur->border.scale, o->prev->border.scale)))
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
              goto done;
@@ -2749,22 +2749,21 @@ evas_object_image_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
             (m->points[2].a == 255) &&
             (m->points[3].a == 255))
           {
-             if (
-                 ((m->points[0].x == m->points[3].x) &&
-                     (m->points[1].x == m->points[2].x) &&
-                     (m->points[0].y == m->points[1].y) &&
-                     (m->points[2].y == m->points[3].y))
-                 ||
-                 ((m->points[0].x == m->points[1].x) &&
-                     (m->points[2].x == m->points[3].x) &&
-                     (m->points[0].y == m->points[3].y) &&
-                     (m->points[1].y == m->points[2].y))
-                )
+             if (((EINA_DBL_CMP(m->points[0].x, m->points[3].x)) &&
+                  (EINA_DBL_CMP(m->points[1].x, m->points[2].x)) &&
+                  (EINA_DBL_CMP(m->points[0].y, m->points[1].y)) &&
+                  (EINA_DBL_CMP(m->points[2].y, m->points[3].y))) ||
+                 (EINA_DBL_CMP(m->points[0].x, m->points[1].x)) &&
+                 (EINA_DBL_CMP(m->points[2].x, m->points[3].x)) &&
+                 (EINA_DBL_CMP(m->points[0].y, m->points[3].y)) &&
+                 (EINA_DBL_CMP(m->points[1].y, m->points[2].y)))
                {
-                  if ((m->points[0].x == obj->cur->geometry.x) &&
-                      (m->points[0].y == obj->cur->geometry.y) &&
-                      (m->points[2].x == (obj->cur->geometry.x + obj->cur->geometry.w)) &&
-                      (m->points[2].y == (obj->cur->geometry.y + obj->cur->geometry.h)))
+                  if ((EINA_DBL_CMP(m->points[0].x, obj->cur->geometry.x)) &&
+                      (EINA_DBL_CMP(m->points[0].y, obj->cur->geometry.y)) &&
+                      (EINA_DBL_CMP(m->points[2].x,
+                                    obj->cur->geometry.x + obj->cur->geometry.w)) &&
+                      (EINA_DBL_CMP(m->points[2].y,
+                                    obj->cur->geometry.y + obj->cur->geometry.h)))
                     return o->cur->opaque;
                }
           }
@@ -2846,22 +2845,21 @@ evas_object_image_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
             (m->points[2].a == 255) &&
             (m->points[3].a == 255))
           {
-             if (
-                 ((m->points[0].x == m->points[3].x) &&
-                     (m->points[1].x == m->points[2].x) &&
-                     (m->points[0].y == m->points[1].y) &&
-                     (m->points[2].y == m->points[3].y))
-                 ||
-                 ((m->points[0].x == m->points[1].x) &&
-                     (m->points[2].x == m->points[3].x) &&
-                     (m->points[0].y == m->points[3].y) &&
-                     (m->points[1].y == m->points[2].y))
-                )
+             if (((EINA_DBL_CMP(m->points[0].x, m->points[3].x)) &&
+                  (EINA_DBL_CMP(m->points[1].x, m->points[2].x)) &&
+                  (EINA_DBL_CMP(m->points[0].y, m->points[1].y)) &&
+                  (EINA_DBL_CMP(m->points[2].y, m->points[3].y))) ||
+                 (EINA_DBL_CMP(m->points[0].x, m->points[1].x)) &&
+                 (EINA_DBL_CMP(m->points[2].x, m->points[3].x)) &&
+                 (EINA_DBL_CMP(m->points[0].y, m->points[3].y)) &&
+                 (EINA_DBL_CMP(m->points[1].y, m->points[2].y)))
                {
-                  if ((m->points[0].x == obj->prev->geometry.x) &&
-                      (m->points[0].y == obj->prev->geometry.y) &&
-                      (m->points[2].x == (obj->prev->geometry.x + obj->prev->geometry.w)) &&
-                      (m->points[2].y == (obj->prev->geometry.y + obj->prev->geometry.h)))
+                  if ((EINA_DBL_CMP(m->points[0].x, obj->prev->geometry.x)) &&
+                      (EINA_DBL_CMP(m->points[0].y, obj->prev->geometry.y)) &&
+                      (EINA_DBL_CMP(m->points[2].x,
+                                    obj->prev->geometry.x + obj->prev->geometry.w)) &&
+                      (EINA_DBL_CMP(m->points[2].y,
+                                    obj->prev->geometry.y + obj->prev->geometry.h)))
                     return o->prev->opaque;
                }
           }
@@ -3085,7 +3083,7 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
                                  bt = imh / 2;
                                  bb = imh - bt;
                               }
-                            if (o->cur->border.scale != 1.0)
+                            if (!EINA_DBL_CMP(o->cur->border.scale, 1.0))
                               {
                                  bsl = ((double)bl * o->cur->border.scale);
                                  bsr = ((double)br * o->cur->border.scale);
