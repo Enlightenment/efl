@@ -80,6 +80,27 @@ _elm_scroller_proxy_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *pr
    evas_object_image_source_set(proxy, content);
    evas_object_show(proxy);
 }
+//describe position of rect2 relative to rect1
+// 1 = top outside
+// 2 = left outside
+// 4 = bottom outside
+// 8 = right outside
+static char
+_intersect_direction(Eina_Rectangle *rect1, Eina_Rectangle *rect2)
+{
+   char ret = 0;
+
+   if (rect1->y > rect2->y)
+     ret |= 1;
+   if (rect1->x > rect2->x)
+     ret |= 2;
+   if (rect1->y + rect1->h < rect2->y + rect2->h)
+     ret |= 4;
+   if (rect1->x + rect1->w < rect2->x + rect2->w)
+     ret |= 8;
+
+   return ret;
+}
 
 static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
@@ -88,8 +109,6 @@ _key_action_move(Evas_Object *obj, const char *params)
    const char *dir = params;
    Evas_Coord x = 0;
    Evas_Coord y = 0;
-   Evas_Coord c_x = 0;
-   Evas_Coord c_y = 0;
    Evas_Coord v_x = 0;
    Evas_Coord v_y = 0;
    Evas_Coord v_w = 0;
@@ -98,16 +117,9 @@ _key_action_move(Evas_Object *obj, const char *params)
    Evas_Coord max_y = 0;
    Evas_Coord page_x = 0;
    Evas_Coord page_y = 0;
+
    Evas_Coord step_x = 0;
    Evas_Coord step_y = 0;
-   Evas_Object *current_focus = NULL;
-   Eina_List *can_focus_list = NULL;
-   Evas_Object *new_focus = NULL;
-   Elm_Object_Item *new_focus_item = NULL;
-   Evas_Coord f_x = 0;
-   Evas_Coord f_y = 0;
-   Evas_Coord f_w = 0;
-   Evas_Coord f_h = 0;
    Evas_Coord pagesize_h = 0, pagesize_v = 0;
    Evas_Coord pagenumber_h = 0, pagenumber_v = 0;
 
@@ -116,81 +128,45 @@ _key_action_move(Evas_Object *obj, const char *params)
    elm_interface_scrollable_page_size_get(obj, &page_x, &page_y);
    elm_interface_scrollable_content_viewport_geometry_get
          (obj, &v_x, &v_y, &v_w, &v_h);
-   evas_object_geometry_get(sd->content, &c_x, &c_y, &max_x, &max_y);
+   evas_object_geometry_get(sd->content, NULL, NULL, &max_x, &max_y);
 
-   _elm_widget_focus_auto_show(obj);
+   {
+      Efl_Ui_Focus_Object *focused;
+      Eina_Rectangle focused_geom, viewport;
 
-   current_focus = elm_widget_focused_object_get(obj);
-   evas_object_geometry_get(current_focus, &f_x, &f_y, &f_w, &f_h);
-   can_focus_list = elm_widget_can_focus_child_list_get(obj);
+      focused = efl_ui_focus_manager_focused(obj);
 
-   if ((current_focus == obj) ||
-       ((!ELM_RECTS_INTERSECT
-         (x, y, v_w, v_h, (f_x - c_x), (f_y - c_y), f_w, f_h)) &&
-        ((!strcmp(dir, "left") && (f_x > v_x)) ||
-        (!strcmp(dir, "right") && (f_x + f_w < v_x + v_w)) ||
-        (!strcmp(dir, "up") && (f_y > v_y)) ||
-        (!strcmp(dir, "down") && (f_y + f_h < v_y + v_h)))))
-     {
-        Eina_List *l;
-        Evas_Object *cur;
-        double weight = 0.0;
+      if (focused &&
+          (!strcmp(dir, "next") ||
+           !strcmp(dir, "prior")))
+        return EINA_FALSE;
 
-        EINA_LIST_FOREACH(can_focus_list, l, cur)
-          {
-             double cur_weight = 0.0;
+      if (focused &&
+          (!strcmp(dir, "left") ||
+           !strcmp(dir, "right") ||
+           !strcmp(dir, "up") ||
+           !strcmp(dir, "down")))
+        {
+           char relative;
 
-             evas_object_geometry_get(cur, &f_x, &f_y, &f_w, &f_h);
-             if (ELM_RECTS_INTERSECT
-                 (x, y, v_w, v_h, (f_x - c_x), (f_y - c_y), f_w, f_h))
-               {
-                  if ((f_x - c_x) > x)
-                    cur_weight += ((f_x - c_x) - x) * ((f_x - c_x) - x);
-                  if ((f_y - c_y) > y)
-                    cur_weight += ((f_y - c_y) - y) * ((f_y - c_y) - y);
-                  if (EINA_DBL_EQ(cur_weight, 0.0))
-                    {
-                       elm_widget_focus_steal(cur, NULL);
-                       eina_list_free(can_focus_list);
-                       return EINA_TRUE;
-                    }
-                  cur_weight = 1.0 / cur_weight;
-                  if (cur_weight > weight)
-                    {
-                       new_focus = cur;
-                       weight = cur_weight;
-                    }
-               }
-          }
-        if (new_focus)
-          {
-             elm_widget_focus_steal(new_focus, NULL);
-             eina_list_free(can_focus_list);
-             return EINA_TRUE;
-          }
-     }
-   else
-     {
-        Eina_Bool r = EINA_FALSE;
+           evas_object_geometry_get(focused,
+                 &focused_geom.x, &focused_geom.y, &focused_geom.w, &focused_geom.h);
+           elm_interface_scrollable_content_viewport_geometry_get(obj,
+                 &viewport.x, &viewport.y, &viewport.w, &viewport.h);
 
-        if (!strcmp(dir, "left"))
-          r = elm_widget_focus_next_get(obj, ELM_FOCUS_LEFT, &new_focus, &new_focus_item);
-        else if (!strcmp(dir, "right"))
-          r = elm_widget_focus_next_get(obj, ELM_FOCUS_RIGHT, &new_focus, &new_focus_item);
-        else if (!strcmp(dir, "up"))
-          r = elm_widget_focus_next_get(obj, ELM_FOCUS_UP, &new_focus, &new_focus_item);
-        else if (!strcmp(dir, "down"))
-          r = elm_widget_focus_next_get(obj, ELM_FOCUS_DOWN, &new_focus, &new_focus_item);
+           relative = _intersect_direction(&viewport, &focused_geom);
 
-        if (r && new_focus)
-          {
-             elm_widget_focus_steal(new_focus, new_focus_item);
-             eina_list_free(can_focus_list);
-             return EINA_TRUE;
-          }
-     }
-
-   eina_list_free(can_focus_list);
+           //now precisly check if the direction is also lapping out
+           if ((!strcmp(dir, "up") && !(relative & 1)) ||
+               (!strcmp(dir, "left") && !(relative & 2)) ||
+               (!strcmp(dir, "down") && !(relative & 4)) ||
+               (!strcmp(dir, "right") && !(relative & 8)))
+             {
+                //focus will handle that
+                return EINA_FALSE;
+             }
+        }
+   }
 
    elm_interface_scrollable_paging_get(obj, NULL, NULL, &pagesize_h, &pagesize_v);
    elm_interface_scrollable_current_page_get(obj, &pagenumber_h, &pagenumber_v);
@@ -280,6 +256,8 @@ _key_action_move(Evas_Object *obj, const char *params)
    else return EINA_FALSE;
 
    elm_interface_scrollable_content_pos_set(obj, x, y, EINA_TRUE);
+
+
    return EINA_TRUE;
 }
 
@@ -1455,6 +1433,16 @@ _elm_scroller_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+EOLIAN static Eina_Bool
+_elm_scroller_elm_widget_focus_register(Eo *obj, Elm_Scroller_Data *pd EINA_UNUSED, Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Object *logical, Eina_Bool full EINA_UNUSED)
+{
+   //undepended from logical or not we always reigster as full with ourself as redirect
+   efl_ui_focus_manager_register_logical(manager, obj, logical, obj);
+
+   return EINA_FALSE;
+}
+
 
 EOLIAN const Elm_Atspi_Action *
 _elm_scroller_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Scroller_Data *pd EINA_UNUSED)
