@@ -711,11 +711,11 @@ _evas_cache_image_loadopts_append(char *hkey, Evas_Image_Load_Opts **plo)
 
    if ((!lo) ||
        (lo &&
-        (lo->scale_down_by == 0) &&
-        (lo->dpi == 0.0) &&
-        ((lo->w == 0) || (lo->h == 0)) &&
-        ((lo->region.w == 0) || (lo->region.h == 0)) &&
-        (lo->orientation == 0)
+           (lo->scale_down_by == 0) &&
+           (EINA_DBL_CMP(lo->dpi, 0.0)) &&
+           ((lo->w == 0) || (lo->h == 0)) &&
+           ((lo->region.w == 0) || (lo->region.h == 0)) &&
+           (lo->orientation == 0)
        ))
      {
         *plo = (Evas_Image_Load_Opts*) &prevent;
