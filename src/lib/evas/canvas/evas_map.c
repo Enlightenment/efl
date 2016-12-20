@@ -1079,7 +1079,7 @@ _map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
         y = p->y - cy;
         z = p->z - cz;
 
-        if (rz != 0.0)
+        if (!EINA_DBL_CMP(rz, 0.0))
           {
              xx = x * cos(rz);
              yy = x * sin(rz);
@@ -1087,7 +1087,7 @@ _map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
              y = yy + (y * cos(rz));
           }
 
-        if (ry != 0.0)
+        if (!EINA_DBL_CMP(ry, 0.0))
           {
              xx = x * cos(ry);
              zz = x * sin(ry);
@@ -1095,7 +1095,7 @@ _map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
              z = zz + (z * cos(ry));
           }
 
-        if (rx != 0.0)
+        if (!EINA_DBL_CMP(rx, 0.0))
           {
              zz = z * cos(rx);
              yy = z * sin(rx);
@@ -1195,7 +1195,7 @@ _map_util_3d_lighting(Evas_Map *m,
         ln = (nx * nx) + (ny * ny) + (nz * nz);
         ln = sqrt(ln);
 
-        if (ln != 0.0)
+        if (!EINA_DBL_CMP(ln, 0.0))
           {
              nx /= ln;
              ny /= ln;
@@ -1210,7 +1210,7 @@ _map_util_3d_lighting(Evas_Map *m,
         ln = (x * x) + (y * y) + (z * z);
         ln = sqrt(ln);
 
-        if (ln != 0.0)
+        if (!EINA_DBL_CMP(ln, 0.0))
           {
              x /= ln;
              y /= ln;
