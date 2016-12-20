@@ -42,7 +42,7 @@ _read_data(float *array, int place, int count, char *current, float divider)
 }
 
 static inline Eina_Bool
-_read_ply_header(char *map, Evas_Model_Load_Save_Header *header)
+_read_ply_header(char *map, Evas_Model_Load_Save_Header *header, const char *filename)
 {
    Eina_Bool reading_vertices = EINA_TRUE, check_next_char = EINA_FALSE;
    int vertex_lines, triangles = 0, vertices_in_current_face = 0;
@@ -53,7 +53,7 @@ _read_ply_header(char *map, Evas_Model_Load_Save_Header *header)
 
    if (helping_pointer == NULL)
      {
-        ERR("PLY file doesn't contain the required keyword 'vertex'");
+        ERR("PLY file doesn't contain the required keyword 'vertex': %s", filename);
         return EINA_FALSE;
      }
 
@@ -66,7 +66,7 @@ _read_ply_header(char *map, Evas_Model_Load_Save_Header *header)
 
    if (helping_pointer == NULL)
      {
-        ERR("PLY file doesn't contain the required keyword 'end_header'");
+        ERR("PLY file doesn't contain the required keyword 'end_header': %s", filename);
         return EINA_FALSE;
      }
 
@@ -107,7 +107,10 @@ _read_ply_header(char *map, Evas_Model_Load_Save_Header *header)
    helping_pointer = eina_str_split(map, "property float ", 0);
 
    if (helping_pointer == NULL)
-     return EINA_FALSE;
+     {
+        ERR("PLY file doesn't contain any float properties: %s", filename);
+        return EINA_FALSE;
+     }
 
    if ((helping_pointer[1] != NULL) && (*helping_pointer[1] == 'x') &&
        (helping_pointer[2] != NULL) && (*helping_pointer[2] == 'y') &&
@@ -115,7 +118,7 @@ _read_ply_header(char *map, Evas_Model_Load_Save_Header *header)
      header->existence_of_positions = EINA_TRUE;
    else
      {
-        ERR("PLY file doesn't start with x,y,z float fields, they are required.");
+        ERR("PLY file doesn't start with x,y,z float fields, they are required: %s", filename);
         free(helping_pointer[0]);
         free(helping_pointer);
         return EINA_FALSE;
@@ -140,7 +143,10 @@ _read_ply_header(char *map, Evas_Model_Load_Save_Header *header)
    helping_pointer = eina_str_split(map, "property uchar ", 0);
 
    if (helping_pointer == NULL)
-     return EINA_FALSE;
+     {
+        ERR("PLY file doesn't contain any uchar properties: %s", filename);
+        return EINA_FALSE;
+     }
 
    if ((helping_pointer[1] != NULL) && (*helping_pointer[1] == 'r') &&
        (helping_pointer[2] != NULL) && (*helping_pointer[2] == 'g') &&
@@ -217,7 +223,7 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
      }
 
    header = evas_model_load_save_header_new();
-   if(!_read_ply_header(map, &header)) return;
+   if(!_read_ply_header(map, &header, eina_file_filename_get(file))) return;
 
    if (!evas_model_load_allocate_data_due_to_header(header, &data))
      {
