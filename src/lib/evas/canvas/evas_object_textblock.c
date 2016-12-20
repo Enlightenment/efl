@@ -5358,11 +5358,11 @@ _layout_par(Ctxt *c)
                   ellip_h_thresh = ascent + descent + maxasc + maxdesc;
                }
 
-             if ((it->format->ellipsis == 1.0) && (c->h >= 0) &&
-                   ((c->y + ellip_h_thresh >
-                     c->h - c->o->style_pad.t - c->o->style_pad.b) ||
-                    (!it->format->wrap_word && !it->format->wrap_char &&
-                     !it->format->wrap_mixed && !it->format->wrap_hyphenation)))
+             if ((EINA_DBL_CMP(it->format->ellipsis, 1.0)) && (c->h >= 0) &&
+                 ((c->y + ellip_h_thresh >
+                   c->h - c->o->style_pad.t - c->o->style_pad.b) ||
+                     (!it->format->wrap_word && !it->format->wrap_char &&
+                         !it->format->wrap_mixed && !it->format->wrap_hyphenation)))
                {
                   _layout_handle_ellipsis(c, it, i);
                   ret = 1;
@@ -5499,7 +5499,7 @@ _layout_par(Ctxt *c)
                          {
                             /* FIXME: Should redo the ellipsis handling.
                              * If we can do ellipsis, just cut here. */
-                            if (it->format->ellipsis == 1.0)
+                            if (EINA_DBL_CMP(it->format->ellipsis, 1.0))
                               {
                                  _layout_handle_ellipsis(c, it, i);
                                  ret = 1;
@@ -6825,7 +6825,7 @@ evas_object_textblock_valign_set(Efl_Canvas_Text *eo_obj, double align)
    evas_object_async_block(obj);
    if (align < 0.0) align = 0.0;
    else if (align > 1.0) align = 1.0;
-   if (o->valign == align) return;
+   if (EINA_DBL_CMP(o->valign, align)) return;
    o->valign = align;
    _evas_textblock_changed(o, eo_obj);
 }
@@ -12807,7 +12807,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                { \
                   Evas_Coord yoff; \
                   yoff = ln->baseline; \
-                  if (itr->format->valign != -1.0) \
+                  if (!EINA_DBL_CMP(itr->format->valign, -1.0)) \
                     { \
                        if (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) \
                          { \
@@ -13289,7 +13289,7 @@ evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
        // width changed thus we may have to re-wrap or change centering etc.
        (obj->cur->geometry.w != o->last_w) ||
        // if valign not top OR we have ellipsis, then if height changed we need to re-eval valign or ... spot
-       (((o->valign != 0.0) || (o->have_ellipsis)) &&
+       (((!EINA_DBL_CMP(o->valign, 0.0)) || (o->have_ellipsis)) &&
            (
                ((o->formatted.oneline_h == 0) &&
                    (obj->cur->geometry.h != o->last_h)) ||
