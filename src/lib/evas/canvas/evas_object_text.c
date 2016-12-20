@@ -215,7 +215,7 @@ _evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Text_Data *o
        (_color_same(&o->cur.glow, &o->prev.glow)) &&
        (_color_same(&o->cur.glow2, &o->prev.glow2)) &&
        (o->cur.style == o->prev.style) &&
-       (obj->cur->scale == obj->prev->scale))
+       (EINA_DBL_CMP(obj->cur->scale, obj->prev->scale)))
      {
         if ((o->last_computed.ellipsis_start) &&
             (o->last_computed.ellipsis_start == o->items))
@@ -696,7 +696,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
    if (o->items &&
        !memcmp(&o->cur, &o->prev, sizeof (o->cur)) &&
        o->cur.text == text &&
-       obj->cur->scale == obj->prev->scale &&
+       (EINA_DBL_CMP(obj->cur->scale, obj->prev->scale)) &&
        ((o->last_computed.advance <= obj->cur->geometry.w && !o->last_computed.ellipsis) ||
         (o->last_computed.w == obj->cur->geometry.w)) &&
        !o->changed_paragraph_direction)
@@ -835,7 +835,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
 
         /* Account of the ellipsis item width. As long as ellipsis != 0
          * we have a left ellipsis. And the same with 1 and right. */
-        if (o->cur.ellipsis != 0)
+        if (!EINA_DBL_CMP(o->cur.ellipsis, 0.0))
           {
              if (o->last_computed.ellipsis_start)
                {
@@ -850,7 +850,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
              o->last_computed.ellipsis_start = start_ellip_it;
              ellip_frame -= start_ellip_it->w;
           }
-        if (o->cur.ellipsis != 1)
+        if (!EINA_DBL_CMP(o->cur.ellipsis, 1.0))
           {
              /* FIXME: Should take the last item's font and style and etc. *//* weird it's a text, should always have the same style/font */
              if (o->last_computed.ellipsis_end)
@@ -1018,7 +1018,7 @@ _evas_text_ellipsis_set(Eo *eo_obj, Evas_Text_Data *o, double ellipsis)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   if (o->cur.ellipsis == ellipsis) return;
+   if (EINA_DBL_CMP(o->cur.ellipsis, ellipsis)) return;
 
    evas_object_async_block(obj);
    o->prev.ellipsis = o->cur.ellipsis;
@@ -2041,8 +2041,8 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
    if (((o->cur.ellipsis >= 0.0) &&
        ((obj->cur->geometry.w != o->last_computed.w) ||
        (obj->cur->geometry.h != o->last_computed.h))) ||
-       (o->cur.ellipsis != o->prev.ellipsis) ||
-       (obj->cur->scale != obj->prev->scale) ||
+       (!EINA_DBL_CMP(o->cur.ellipsis, o->prev.ellipsis)) ||
+       (!EINA_DBL_CMP(obj->cur->scale, obj->prev->scale)) ||
        (o->changed_paragraph_direction))
      {
         _evas_object_text_recalc(eo_obj, o->cur.text);
