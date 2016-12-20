@@ -489,7 +489,8 @@ _pick_data_mesh_add(Evas_Canvas3D_Pick_Data *data, const Evas_Ray3 *ray,
                }
           }
      }
-   else if (pdmesh->index_count == 0.0 && pdmesh->vertex_count != 0)
+   else if ((EINA_DBL_CMP(pdmesh->index_count, 0.0)) &&
+            pdmesh->vertex_count != 0)
      {
         if (pdmesh->assembly == EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES)
           {
