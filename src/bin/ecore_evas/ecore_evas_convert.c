@@ -12,6 +12,10 @@
 #include <Ecore_Getopt.h>
 #include <Ecore_Evas.h>
 
+#if defined(_WIN32) || defined(EXOTIC_NO_SIGNAL)
+# define NO_SIGNAL
+#endif
+
 #undef EINA_LOG_DOMAIN_DEFAULT
 #define EINA_LOG_DOMAIN_DEFAULT _log_dom
 static int _log_dom = -1;
@@ -36,53 +40,38 @@ const Ecore_Getopt optdesc = {
   }
 };
 
-struct Save_Job {
+typedef struct _Save_Job {
    const char *output;
    const char *flags;
-   Ecore_Thread *th;
    Evas_Object *im;
-   int ret, cancel;
-};
+   int ret;
+} Save_Job;
+
+static Save_Job job = { NULL, NULL, NULL, -1 };
 
 static void
-_save_do(void *data, Ecore_Thread *thread EINA_UNUSED)
+_save_do(void *data EINA_UNUSED)
 {
-   struct Save_Job *job = data;
-
-   job->ret = 0;
-   if (!evas_object_image_save(job->im, job->output, NULL, job->flags))
+   job.ret = 0;
+   if (!evas_object_image_save(job.im, job.output, NULL, job.flags))
      {
-        EINA_LOG_ERR("Could not convert file to '%s'.", job->output);
-        job->ret = 1;
+        EINA_LOG_ERR("Could not convert file to '%s'.", job.output);
+        job.ret = 1;
      }
-}
 
-static void
-_save_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
-{
    ecore_main_loop_quit();
 }
 
-static Eina_Bool
-exit_func(void *data, int ev_type EINA_UNUSED, void *ev)
+#ifndef NO_SIGNAL
+static void
+_sigint(int sig EINA_UNUSED)
 {
-   Ecore_Event_Signal_Exit *e = ev;
-   struct Save_Job *job = data;
-   if (!job->cancel && !e->quit && !e->terminate)
-     {
-        // this won't do anything, really...
-        fprintf(stderr, "Cancellation requested. Press Ctrl+C again to kill.\n");
-        fflush(stderr);
-        job->cancel = 1;
-        ecore_thread_cancel(job->th);
-     }
-   else
-     {
-        fprintf(stderr, "Terminated.");
-        exit(1);
-     }
-   return ECORE_CALLBACK_RENEW;
+   EINA_LOG_ERR("Image save interrupted by SIGINT: '%s'.", job.output);
+   // eina_file_unlink
+   unlink(job.output);
+   exit(-1);
 }
+#endif
 
 int
 main(int argc, char *argv[])
@@ -97,7 +86,6 @@ main(int argc, char *argv[])
    Eina_Bool compress = 1;
    Eina_Bool quit_option = EINA_FALSE;
    Eina_Strbuf *flags = NULL;
-   struct Save_Job job = { NULL, NULL, NULL, NULL, 0, 0 };
 
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_INT(quality),
@@ -156,15 +144,16 @@ main(int argc, char *argv[])
         goto end;
      }
 
-   // NOTE: DO NOT DO THIS AT HOME -- HACK for Ctrl+C
-   // This makes Ctrl+C work but the Evas Object may not be deleted cleanly
+#ifndef NO_SIGNAL
+   // Brutal way of
+   signal(SIGINT, _sigint);
+#endif
+
    job.output = argv[arg_index + 1];
    job.flags = eina_strbuf_string_get(flags);
    job.im = im;
-   job.th = ecore_thread_run(_save_do, _save_end, _save_end, &job);
-   ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, &job);
+   ecore_job_add(_save_do, NULL);
    ecore_main_loop_begin();
-
    r = job.ret;
 
  end:
