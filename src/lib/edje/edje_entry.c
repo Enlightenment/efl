@@ -2582,7 +2582,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
                        d = (r2->y + (r2->h / 2)) - cy;
                        d2 += d * d;
                        sc = DIV(en->ed->scale, en->ed->file->base_scale);
-                       if (sc == ZERO) sc = DIV(_edje_scale, en->ed->file->base_scale);
+                       if (EQ(sc, ZERO)) sc = DIV(_edje_scale, en->ed->file->base_scale);
                        d = (Evas_Coord)MUL(FROM_INT(20), sc); // FIXME: maxing number!
                        d = d * d;
                        if (d1 < d2)

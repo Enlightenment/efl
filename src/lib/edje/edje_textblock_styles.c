@@ -220,7 +220,7 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
              eina_strbuf_append(txt, "font_source=");
              eina_strbuf_append(txt, fontsource);
           }
-        if (tag->font_size != 0)
+        if (!EINA_DBL_CMP(tag->font_size, 0))
           {
              char font_size[32];
 

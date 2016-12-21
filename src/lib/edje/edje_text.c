@@ -125,7 +125,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    FLOAT_T sc;
 
    sc = DIV(ed->scale, ed->file->base_scale);
-   if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
+   if (EQ(sc, ZERO)) sc = DIV(_edje_scale, ed->file->base_scale);
 
    *free_text = 0;
    if (sw <= 1) return "";
@@ -217,7 +217,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if ((ep->type != EDJE_RP_TYPE_TEXT) ||
        (!ep->typedata.text)) return;
    sc = DIV(ed->scale, ed->file->base_scale);
-   if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
+   if (EQ(sc, ZERO)) sc = DIV(_edje_scale, ed->file->base_scale);
 
    if (chosen_desc->text.domain)
      {
@@ -310,9 +310,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        (ep->typedata.text->cache.in_h == sh) &&
        (ep->typedata.text->cache.in_str) &&
        same_text &&
-       (ep->typedata.text->cache.align_x == params->type.text->align.x) &&
-       (ep->typedata.text->cache.align_y == params->type.text->align.y) &&
-       (ep->typedata.text->cache.ellipsis == params->type.text->ellipsis) &&
+       (EQ(ep->typedata.text->cache.align_x, params->type.text->align.x)) &&
+       (EQ(ep->typedata.text->cache.align_y, params->type.text->align.y)) &&
+       (EQ(ep->typedata.text->cache.ellipsis, params->type.text->ellipsis)) &&
        (ep->typedata.text->cache.fit_x == chosen_desc->text.fit_x) &&
        (ep->typedata.text->cache.fit_y == chosen_desc->text.fit_y) &&
        (ep->typedata.text->cache.in_font == font))
