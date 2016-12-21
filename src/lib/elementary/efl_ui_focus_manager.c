@@ -1178,10 +1178,13 @@ _efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, E
              if (direction == EFL_UI_FOCUS_DIRECTION_NEXT ||
                  direction == EFL_UI_FOCUS_DIRECTION_PREV)
                {
-                 n = T(n).parent;
-                 new_candidate = _request_move(obj, pd, direction, n);
-                 efl_ui_focus_manager_focus(obj, new_candidate);
-                 candidate = new_candidate;
+                 if (n)
+                   {
+                      n = T(n).parent;
+                      new_candidate = _request_move(obj, pd, direction, n);
+                      efl_ui_focus_manager_focus(obj, new_candidate);
+                      candidate = new_candidate;
+                   }
                }
              else
                {
