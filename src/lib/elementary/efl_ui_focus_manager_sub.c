@@ -167,6 +167,8 @@ _logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
    Efl_Ui_Focus_Manager *manager;
    manager = efl_ui_focus_user_manager_get(ev->object);
 
+   if (!ev->info) return;
+
    EINA_LIST_FOREACH(pd->current_border, n, b)
      {
         if (b == ev->object) continue;
