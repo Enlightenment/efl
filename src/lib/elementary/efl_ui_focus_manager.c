@@ -1097,6 +1097,7 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
    if (focus == pd->root->focusable)
      {
         focus = _find_normal_node(pd->root);
+        if (!focus) return;
      }
 
    //check if node is part of this manager object
