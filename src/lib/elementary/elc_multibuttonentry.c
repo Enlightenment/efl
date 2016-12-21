@@ -1179,6 +1179,7 @@ _entry_key_up_cb(void *data,
    if (!sd->box) return;
 
    str = elm_object_text_get(sd->entry);
+   if (!str) return;
 
    if (strlen(str) &&
        (!strcmp(ev->key, "KP_Enter") || !strcmp(ev->key, "Return")))
