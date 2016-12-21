@@ -660,6 +660,31 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
      }
 }
 
+/* reset part counters for alias */
+static void
+_alias_clean(Edje_Part_Collection_Directory_Entry *ce)
+{
+   if (ce)
+     {
+         ce->count.RECTANGLE = 0;
+         ce->count.TEXT = 0;
+         ce->count.IMAGE = 0;
+         ce->count.SWALLOW = 0;
+         ce->count.TEXTBLOCK = 0;
+         ce->count.GROUP = 0;
+         ce->count.BOX = 0;
+         ce->count.TABLE = 0;
+         ce->count.EXTERNAL = 0;
+         ce->count.PROXY = 0;
+         ce->count.MESH_NODE = 0;
+         ce->count.LIGHT = 0;
+         ce->count.CAMERA = 0;
+         ce->count.SPACER = 0;
+         ce->count.VECTOR = 0;
+         ce->count.part = 0;
+     }
+}
+
 static void
 data_thread_head(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
@@ -699,6 +724,7 @@ data_thread_head(void *data, Ecore_Thread *thread EINA_UNUSED)
                        return;
                     }
 
+                  _alias_clean(ce);
 		  eina_hash_direct_add(edje_file->collection, ce->entry, ce);
 	       }
 	  }
