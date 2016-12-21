@@ -646,34 +646,79 @@ _equal_set(Eina_List *none_nodes, Eina_List *nodes)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_focus_manager_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *parent, Eina_List *order, Eina_Bool subset)
+EOLIAN static void
+_efl_ui_focus_manager_update_order(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *parent, Eina_List *order)
 {
    Node *pnode;
+   Efl_Ui_Focus_Object *o;
+   Eina_List *node_order = NULL, *not_ordered, *trash, *node_order_clean;
+
+   pnode = node_get(obj, pd, parent);
+
+   if (!pnode)
+     return;
+
+   //get all nodes from the subset
+   EINA_LIST_FREE(order, o)
+     {
+        Node *tmp;
+
+        tmp = eina_hash_find(pd->node_hash, &o);
+
+        if (!tmp) continue;
+
+        node_order = eina_list_append(node_order, tmp);
+     }
+
+   not_ordered = _set_a_without_b(T(pnode).children, node_order);
+   trash = _set_a_without_b(node_order, T(pnode).children);
+   node_order_clean = _set_a_without_b(node_order, trash);
+
+   eina_list_free(node_order);
+   eina_list_free(trash);
+
+   T(pnode).children = eina_list_merge(node_order_clean, not_ordered);
+
+   return;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_focus_manager_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *parent, Eina_List *order)
+{
+   Node *pnode;
+   Efl_Ui_Focus_Object *o;
+   Eina_Bool fail = EINA_FALSE;
+   Eina_List *node_order = NULL;
 
    pnode = node_get(obj, pd, parent);
 
    if (!pnode)
      return EINA_FALSE;
 
-   if (!subset)
+   //get all nodes from the subset
+   EINA_LIST_FREE(order, o)
      {
-        if (!_equal_set(order, T(pnode).children))
-          {
-             ERR("Set of children is not equal");
-             return EINA_FALSE;
-          }
-        T(pnode).children = order;
+        Node *tmp;
+
+        tmp = node_get(obj, pd, o);
+        if (!tmp)
+          fail = EINA_TRUE;
+        node_order = eina_list_append(node_order, tmp);
      }
-   else
+
+   if (fail)
      {
-        Eina_List *not_ordered;
-
-        not_ordered = _set_a_without_b(T(pnode).children, order);
-
-        eina_list_free(T(pnode).children);
-        T(pnode).children = eina_list_merge(order, not_ordered);
+        eina_list_free(node_order);
+        return EINA_FALSE;
      }
+
+   if (!_equal_set(node_order, T(pnode).children))
+     {
+        ERR("Set of children is not equal");
+        return EINA_FALSE;
+     }
+
+   T(pnode).children = node_order;
 
    return EINA_TRUE;
 }
@@ -1068,23 +1113,6 @@ _efl_ui_focus_manager_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Dat
      }
 }
 
-static Efl_Ui_Focus_Object*
-_find_normal_node(Node *n)
-{
-   Eina_List *l;
-   Node *n2;
-   if (n->type == NODE_TYPE_NORMAL) return n->focusable;
-
-   EINA_LIST_FOREACH(T(n).children , l, n2)
-     {
-        Efl_Ui_Focus_Object *r;
-
-        r = _find_normal_node(n2);
-        if (r) return r;
-     }
-   return NULL;
-}
-
 EOLIAN static void
 _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *focus)
 {
@@ -1096,7 +1124,11 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
    //if we want to focus the root then just spin to the first normal
    if (focus == pd->root->focusable)
      {
-        focus = _find_normal_node(pd->root);
+        Node *f = _logical_movement(pd, pd->root, EFL_UI_FOCUS_DIRECTION_NEXT);
+
+        if (f)
+          focus = f->focusable;
+
         if (!focus) return;
      }
 
