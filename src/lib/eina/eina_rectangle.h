@@ -62,7 +62,7 @@ typedef struct _Eina_Rectangle
 typedef struct _Eina_Rectangle_Pool Eina_Rectangle_Pool;
 
 /**
- * @typedef Eina_Rectangle_Pool_Type
+ * @typedef Eina_Rectangle_Packing
  * Type for an Eina Pool based on packing algorithm.
  * @since 1.11
  */

@@ -5041,8 +5041,7 @@ struct _Evas_GL_API
     * Evas GL will use the same EGLDisplay as used in the create function.
     */
    void         (*evasglDestroyImage) (EvasGLImage image);
-
-
+   /** @} */
 
    // ---------------------------------------------------------------------- //
    /* Evas_GL_API version 2: */
@@ -5347,7 +5346,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    /* GL_QCOM_tiled_rendering */
    void         (*glStartTilingQCOM) (GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield preserveMask);
    void         (*glEndTilingQCOM) (GLbitfield preserveMask);
-
+   /** @} */
 
    /*------- EvasGL / EGL-related functions -------*/
    /**
@@ -5453,8 +5452,6 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    int          (*evasglWaitSync) (Evas_GL *evas_gl, EvasGLSync sync, int flags);
    /** @} */
 
-
-
    // ---------------------------------------------------------------------- //
    /* Evas_GL_API version 3: */
 
@@ -5481,6 +5478,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
     */
    Eina_Bool    (*evasglQueryWaylandBuffer) (Evas_GL *evas_gl, void *buffer, int attribute, int *value);
    /** @} */
+
    // ---------------------------------------------------------------------- //
    /**
     * @anchor gles3
@@ -5684,6 +5682,9 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
     */
 };
 
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }
@@ -5693,6 +5694,3 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
 #define EAPI
 
 #endif
-/**
- * @}
- */

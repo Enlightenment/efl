@@ -393,7 +393,7 @@ typedef enum _Ecore_Export_Type Ecore_Export_Type;
  */
 typedef unsigned int Ecore_Buffer_Format;
 /**
- * @typedef Ecore_Buffer_Pixmap
+ * @typedef Ecore_Pixmap
  * An Id of Pixmap.
  * @since 1.15
  */

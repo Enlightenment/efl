@@ -478,7 +478,7 @@ typedef enum _Eet_File_Mode
 } Eet_File_Mode; /**< Modes that a file can be opened. */
 
 /**
- * @enum _Eet_Image_Encoding
+ * @enum Eet_Image_Encoding
  * Specify lossy encoding for image
  * @since 1.10
  */
@@ -524,7 +524,7 @@ typedef struct _Eet_File Eet_File;
 typedef struct _Eet_Dictionary Eet_Dictionary;
 
 /**
- * @typedef Eet_Entries
+ * @typedef Eet_Entry
  * Eet files may contains multiple Entries per file, this handle describe them. You can get that handle from an iterator given by eet_list_entries().
  *
  * @see eet_list_entries()

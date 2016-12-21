@@ -40,7 +40,8 @@
  */
 
 /**
- * @typedef Matrix3 types
+ * @typedef Eina_Matrix_Type
+ * Matrix3 types
  */
 typedef enum _Eina_Matrix_Type
   {
@@ -368,7 +369,7 @@ EAPI void eina_matrix3_scale(Eina_Matrix3 *t, double sx, double sy);
 
 /**
  * Set the matrix values for a rotation
- * @param[in] m The matrix to set the rotation values
+ * @param[in] t The matrix to set the rotation values
  * @param[in] rad The radius to rotate the matrix
  *
  * @since 1.14
@@ -500,8 +501,8 @@ EAPI void eina_matrix3_copy(Eina_Matrix3 *dst, const Eina_Matrix3 *src);
  * @brief Multiply two matrix
  *
  * @param out The resulting matrix
- * @param a The first member of the multiplication
- * @param b The second member of the multiplication
+ * @param mat_a The first member of the multiplication
+ * @param mat_b The second member of the multiplication
  *
  * @since 1.17
  */
@@ -512,8 +513,8 @@ EAPI void eina_matrix3_multiply(Eina_Matrix3 *out, const Eina_Matrix3 *mat_a,
  * @brief Multiply two matrix
  *
  * @param out The resulting matrix
- * @param a The first member of the multiplication
- * @param b The second member of the multiplication
+ * @param mat_a The first member of the multiplication
+ * @param mat_b The second member of the multiplication
  *
  * @since 1.17
  */

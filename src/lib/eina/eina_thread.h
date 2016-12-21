@@ -57,7 +57,7 @@ typedef uintptr_t Eina_Thread;
 typedef void *(*Eina_Thread_Cb)(void *data, Eina_Thread t);
 
 /**
- * @typedef Eina_Thead_Priority
+ * @typedef Eina_Thread_Priority
  * Type to enumerate different thread priorities
  */
 typedef enum _Eina_Thread_Priority
