@@ -543,6 +543,7 @@ static void _handle_vector_image(void);
 
 /*****/
 
+#define STRDUP(x) eina_strdup(x)
 
 #define IMAGE_STATEMENTS(PREFIX) \
      {PREFIX"images.image", st_images_image}, \
@@ -2023,7 +2024,6 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
-   #define STRDUP(x) x ? strdup(x) : NULL
    ep->name = STRDUP(ep2->name);
 
    _edje_program_remove(pc, current_program);
@@ -2109,8 +2109,6 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
 
    epp = (Edje_Program_Parser *)ep;
    epp->can_override = EINA_TRUE;
-
-   #undef STRDUP
 }
 
 /*****/
@@ -4341,7 +4339,6 @@ _edje_data_item_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key,
    return EINA_TRUE;
 }
 
-#define STRDUP(x) x ? strdup(x) : NULL
 static void
 _filter_copy(Edje_Part_Description_Spec_Filter *ed, const Edje_Part_Description_Spec_Filter *parent)
 {
@@ -4911,7 +4908,6 @@ st_collections_group_inherit(void)
      }
 
    free(parent_name);
-   #undef STRDUP
 }
 
 /**
@@ -8256,7 +8252,6 @@ st_collections_group_parts_part_description_inherit(void)
    /* make sure all the allocated memory is getting copied, not just
     * referenced
     */
-#define STRDUP(x) x ? strdup(x) : NULL
 
    ed->size_class = STRDUP(ed->size_class);
    ed->color_class = STRDUP(ed->color_class);
@@ -8431,8 +8426,6 @@ st_collections_group_parts_part_description_inherit(void)
               break;
            }
      }
-
-#undef STRDUP
 }
 
 /**
