@@ -13,6 +13,17 @@
 #define MY_CLASS_NAME "Elm_Grid"
 #define MY_CLASS_NAME_LEGACY "elm_grid"
 
+static void
+_focus_order_flush(Eo *obj)
+{
+   Elm_Widget_Smart_Data *wpd;
+   Eina_List *order = evas_object_grid_children_get(obj);
+   wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
+
+   efl_ui_focus_manager_update_children(wpd->focus.manager, obj, order, EINA_TRUE);
+}
+
+
 EOLIAN static Eina_Bool
 _elm_grid_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
@@ -198,6 +209,7 @@ _elm_grid_pack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj, Evas_Coord x
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_grid_pack(wd->resize_obj, subobj, x, y, w, h);
+   _focus_order_flush(obj);
 }
 
 EOLIAN static void
@@ -207,6 +219,7 @@ _elm_grid_unpack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj)
 
    _elm_widget_sub_object_redirect_to_top(obj, subobj);
    evas_object_grid_unpack(wd->resize_obj, subobj);
+   _focus_order_flush(obj);
 }
 
 EOLIAN static void
@@ -225,6 +238,7 @@ _elm_grid_clear(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool clear)
      }
 
    evas_object_grid_clear(wd->resize_obj, clear);
+   _focus_order_flush(obj);
 }
 
 EAPI void
@@ -240,6 +254,7 @@ elm_grid_pack_set(Evas_Object *subobj,
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_grid_pack(wd->resize_obj, subobj, x, y, w, h);
+   _focus_order_flush(obj);
 }
 
 EAPI void
