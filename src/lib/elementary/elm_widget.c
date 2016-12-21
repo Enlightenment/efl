@@ -1702,6 +1702,25 @@ _elm_widget_child_can_focus_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->child_can_focus;
 }
 
+static void
+_full_eval_children(Eo *obj, Elm_Widget_Smart_Data *sd)
+{
+   Eina_List *l;
+   Eo *child;
+
+   _full_eval(obj, sd);
+
+   EINA_LIST_FOREACH(sd->subobjs , l, child)
+     {
+        Elm_Widget_Smart_Data *sd_child;
+
+        if (!efl_isa(child, ELM_WIDGET_CLASS)) continue;
+
+        sd_child = efl_data_scope_get(child, ELM_WIDGET_CLASS);
+        _full_eval_children(child, sd_child);
+     }
+}
+
 /**
  * @internal
  *
@@ -1724,6 +1743,9 @@ _elm_widget_tree_unfocusable_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool t
    if (sd->tree_unfocusable == tree_unfocusable) return;
    sd->tree_unfocusable = tree_unfocusable;
    elm_widget_focus_tree_unfocusable_handle(obj);
+
+   //focus state eval on all children
+   _full_eval_children(obj, sd);
 }
 
 /**

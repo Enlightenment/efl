@@ -135,6 +135,7 @@ _on_frame_clicked(void *data,
         elm_layout_signal_emit(data, "elm,action,toggle", "elm");
         sd->collapsed++;
         sd->anim = EINA_TRUE;
+        elm_widget_tree_unfocusable_set(data, sd->collapsed);
      }
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_CLICKED, NULL);
@@ -234,6 +235,7 @@ _efl_ui_frame_collapse_set(Eo *obj, Efl_Ui_Frame_Data *sd, Eina_Bool collapse)
    sd->collapsed = !!collapse;
    sd->anim = EINA_FALSE;
 
+   elm_widget_tree_unfocusable_set(obj, sd->collapsed);
    _sizing_eval(obj, sd);
 }
 
@@ -249,6 +251,7 @@ _efl_ui_frame_collapse_go(Eo *obj, Efl_Ui_Frame_Data *sd, Eina_Bool collapse)
    efl_event_callback_legacy_call
      (wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, obj);
    sd->collapsed = collapse;
+   elm_widget_tree_unfocusable_set(obj, sd->collapsed);
    sd->anim = EINA_TRUE;
 }
 
