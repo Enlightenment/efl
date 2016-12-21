@@ -877,12 +877,6 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
      {
         if (tofree)
           goto rotate_image;
-        else
-          {
-             ERR("Failed to reload pixels of this GL image.");
-             if (err) *err = error;
-             return NULL;
-          }
      }
 
    evas_gl_common_image_alloc_ensure(im);
