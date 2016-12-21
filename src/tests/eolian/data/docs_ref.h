@@ -75,7 +75,7 @@ typedef struct _Opaque Opaque;
  *
  * More docs for class. Testing references now. @ref Foo @ref Bar @ref Alias
  * @ref pants @ref docs_meth @ref docs_prop_get @ref docs_prop_get
- * @ref docs_prop_set @ref Foo.field1 @ref Bar.BAR_FOO @ref Docs
+ * @ref docs_prop_set @ref Foo.field1 @ref BAR_FOO @ref Docs
  *
  * @since 1.18
  *
