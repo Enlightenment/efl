@@ -2551,6 +2551,15 @@ _ecore_main_win32_objects_wait(DWORD objects_nbr,
    return WAIT_FAILED;
 }
 
+static unsigned int
+_stdin_wait_thread(void *data EINA_UNUSED)
+{
+   int c = getc(stdin);
+   ungetc(c, stdin);
+
+   return 0;
+}
+
 static int
 _ecore_main_win32_select(int             nfds EINA_UNUSED,
                          fd_set         *readfds,
@@ -2559,6 +2568,9 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
                          struct timeval *tv)
 {
    HANDLE *objects;
+   static HANDLE stdin_wait_thread = INVALID_HANDLE_VALUE;
+   Eina_Bool stdin_thread_done = EINA_FALSE;
+   HANDLE stdin_handle;
    int *sockets;
    Ecore_Fd_Handler *fdh;
    Ecore_Win32_Handler *wh;
@@ -2616,11 +2628,25 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
              objects_nbr++;
           }
      }
-
+   stdin_handle = GetStdHandle(STD_INPUT_HANDLE);
    /* store the HANDLEs in the objects to wait for */
    EINA_INLIST_FOREACH(win32_handlers, wh)
      {
-        objects[objects_nbr] = wh->h;
+        if (wh->h == stdin_handle)
+          {
+             if (stdin_wait_thread == INVALID_HANDLE_VALUE)
+               stdin_wait_thread = (HANDLE)_beginthreadex(NULL,
+                                                          0,
+                                                          _stdin_wait_thread,
+                                                          NULL,
+                                                          0,
+                                                          NULL);
+             objects[objects_nbr] = stdin_wait_thread;
+          }
+        else
+          {
+             objects[objects_nbr] = wh->h;
+          }
         objects_nbr++;
      }
 
@@ -2709,11 +2735,15 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
               win32_handler_current = (Ecore_Win32_Handler *)EINA_INLIST_GET(win32_handler_current)->next;
           }
 
+        if (objects[result - WAIT_OBJECT_0] == stdin_wait_thread)
+          stdin_thread_done = EINA_TRUE;
+
         while (win32_handler_current)
           {
              wh = win32_handler_current;
 
-             if (objects[result - WAIT_OBJECT_0] == wh->h)
+             if (objects[result - WAIT_OBJECT_0] == wh->h ||
+                 (objects[result - WAIT_OBJECT_0] == stdin_wait_thread && wh->h == stdin_handle))
                {
                   if (!wh->delete_me)
                     {
@@ -2740,6 +2770,9 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
 err :
    /* Remove event objects again */
    for (i = 0; i < events_nbr; i++) WSACloseEvent(objects[i]);
+
+   if (stdin_thread_done)
+     stdin_wait_thread = INVALID_HANDLE_VALUE;
 
    free(objects);
    free(sockets);
