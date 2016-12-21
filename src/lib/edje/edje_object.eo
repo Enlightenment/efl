@@ -1098,8 +1098,8 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          get {
             [[Facility to query the type of the given parameter of the given part.]]
             return: Edje.External.Param_Type(Edje.External.Param_Type.max); [[
-               #EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value
-               from #Edje_External_Param_Type on success.
+               @Edje.External.Param_Type.max on errors, or another value
+               from @Edje.External.Param_Type on success.
             ]]
          }
          keys {
