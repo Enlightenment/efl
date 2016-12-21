@@ -149,12 +149,23 @@ eina_freeq_new(void)
    if (_eina_freeq_bypass == -1)
      {
         const char *s;
+        int v;
 
-        if (getenv("EINA_FREEQ_BYPASS")) _eina_freeq_bypass = 1;
+        s = getenv("EINA_FREEQ_BYPASS");
+        if (s)
+          {
+             v = atoi(s);
+             if (v == 0) _eina_freeq_bypass = 0;
+             else _eina_freeq_bypass = 1;
+          }
+        if (_eina_freeq_bypass == -1)
+          {
 #ifdef HAVE_VALGRIND
-        else if (RUNNING_ON_VALGRIND) _eina_freeq_bypass = 1;
+             if (RUNNING_ON_VALGRIND) _eina_freeq_bypass = 1;
+             else
 #endif
-        else _eina_freeq_bypass = 0;
+               _eina_freeq_bypass = 0;
+          }
         s = getenv("EINA_FREEQ_FILL_MAX");
         if (s) _eina_freeq_fillpat_max = atoi(s);
         s = getenv("EINA_FREEQ_TOTAL_MAX");
