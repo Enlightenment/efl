@@ -6192,7 +6192,7 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
 
              if (t->id == part_id &&
                  !strcmp(epr->state, pd->state.name) &&
-                 pd->state.value == epr->value)
+                 EQ(pd->state.value, epr->value))
                {
                   _edje_if_string_replace(ed, &epr->state, new_name);
                   epr->value = value;
@@ -6480,7 +6480,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
                        break;
 
                      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-                       if (pi->info.d.def != EDJE_EXTERNAL_DOUBLE_UNSET)
+                       if (NEQ(pi->info.d.def, EDJE_EXTERNAL_DOUBLE_UNSET))
                          p->d = pi->info.d.def;
                        break;
 
@@ -7577,7 +7577,7 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
       const char *sname;
       double svalue;
       sname = edje_edit_part_selected_state_get(obj, part, &svalue);
-      if (!strcmp(state, sname) && svalue == value)
+      if (!strcmp(state, sname) && EQ(svalue, value))
         if (!edje_object_part_external_param_set(obj, part, p))
           if ((type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE) ||
               (type == EDJE_EXTERNAL_PARAM_TYPE_STRING))
@@ -12412,7 +12412,7 @@ _edje_generate_image_set_source(Evas_Object *obj, const char *entry)
 
         double scale_by = 0;
         scale_by = edje_edit_image_set_image_border_scale_get(obj, entry, place);
-        if (scale_by != 0)
+        if (NEQ(scale_by, 0))
           BUF_APPENDF(I3 "border_scale_by: %.3f;\n", scale_by);
 
         BUF_APPEND(I2 "}\n");
@@ -13249,7 +13249,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    switch (tweenmode)
      {
       case EDJE_TWEEN_MODE_LINEAR:
-        if (db)
+        if (NEQ(db, ZERO))
           BUF_APPENDF(I4 "transition: LINEAR %.5f", db);
         else
           no_transition = EINA_TRUE;
@@ -13323,7 +13323,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    /* In */
    db = epr->in.from;
    db2 = epr->in.range;
-   if (db || db2)
+   if (NEQ(db, ZERO) || NEQ(db2, ZERO))
      BUF_APPENDF(I4 "in: %.5f %.5f;\n", db, db2);
 
    /* Targets */
@@ -13399,7 +13399,7 @@ _edje_source_with_double_values_append(const char *param_name, char val_num, dou
 
 #define INHERIT_CHECK(ATTRIBUTE) (pd->ATTRIBUTE != inherit_pd->ATTRIBUTE)
 
-#define INHERIT_CHECK_DOUBLE(ATTRIBUTE_1, ATTRIBUTE_2) ((pd->ATTRIBUTE_1 != inherit_pd->ATTRIBUTE_1) || (pd->ATTRIBUTE_2 != inherit_pd->ATTRIBUTE_2))
+#define INHERIT_CHECK_DOUBLE(ATTRIBUTE_1, ATTRIBUTE_2) ((NEQ(pd->ATTRIBUTE_1, inherit_pd->ATTRIBUTE_1)) || (NEQ(pd->ATTRIBUTE_2, inherit_pd->ATTRIBUTE_2)))
 
 #define INHERIT_CHECK_STRING(ATTRIBUTE_STR) (strcmp(inherit_pd->ATTRIBUTE_STR, pd->ATTRIBUTE_STR))
 
@@ -13453,7 +13453,7 @@ _edje_generate_source_state_relative(Edje *ed,
      }
    else
      {
-        relative = ((pd->rel1.relative_x == 0) && (pd->rel1.relative_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        relative = (EQ(pd->rel1.relative_x, ZERO) && EQ(pd->rel1.relative_y, ZERO)) ? EINA_FALSE : EINA_TRUE;
         offset = ((pd->rel1.offset_x == 0) && (pd->rel1.offset_y == 0)) ? EINA_FALSE : EINA_TRUE;
         if ((pd->rel1.id_x != -1) || (pd->rel1.id_y != -1))
           {
@@ -13574,7 +13574,7 @@ _edje_generate_source_state_relative(Edje *ed,
      }
    else
      {
-        relative = ((pd->rel2.relative_x == 1) && (pd->rel2.relative_y == 1)) ? EINA_FALSE : EINA_TRUE;
+        relative = (EQ(pd->rel2.relative_x, FROM_INT(1)) && EQ(pd->rel2.relative_y, FROM_INT(1))) ? EINA_FALSE : EINA_TRUE;
         offset = ((pd->rel2.offset_x == -1) && (pd->rel2.offset_y == -1)) ? EINA_FALSE : EINA_TRUE;
         if ((pd->rel2.id_x != -1) || (pd->rel2.id_y != -1))
           {
@@ -13692,9 +13692,9 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
                   (img->image.border.t == inherit_pd_img->image.border.t) &&
                   (img->image.border.b == inherit_pd_img->image.border.b)) ? EINA_FALSE : EINA_TRUE;
 
-        border_scale_by = (img->image.border.scale_by == inherit_pd_img->image.border.scale_by) ? EINA_FALSE : EINA_TRUE;
+        border_scale_by = EQ(img->image.border.scale_by, inherit_pd_img->image.border.scale_by) ? EINA_FALSE : EINA_TRUE;
 
-        scale_hint = (img->image.scale_hint == inherit_pd_img->image.scale_hint) ? EINA_FALSE : EINA_TRUE;
+        scale_hint = EQ(img->image.scale_hint, inherit_pd_img->image.scale_hint) ? EINA_FALSE : EINA_TRUE;
 
         border_no_fill = (img->image.border.no_fill == inherit_pd_img->image.border.no_fill) ? EINA_FALSE : EINA_TRUE;
 
@@ -13719,7 +13719,7 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
         name = (img->image.id == -1) ? EINA_FALSE : EINA_TRUE;
         border = (img->image.border.l == 0 && img->image.border.r == 0 &&
                   img->image.border.t == 0 && img->image.border.b == 0) ? EINA_FALSE : EINA_TRUE;
-        border_scale_by = (img->image.border.scale_by == 0) ? EINA_FALSE : EINA_TRUE;
+        border_scale_by = EQ(img->image.border.scale_by, ZERO) ? EINA_FALSE : EINA_TRUE;
         scale_hint = (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_NONE) ? EINA_FALSE : EINA_TRUE;
         border_no_fill = (img->image.border.no_fill == 0) ? EINA_FALSE : EINA_TRUE;
         border_scale = (img->image.border.scale == 0) ? EINA_FALSE : EINA_TRUE;
@@ -13814,13 +13814,13 @@ fill:
      {
         smooth = (inherit_pd_img->image.fill.smooth == img->image.fill.smooth) ? EINA_FALSE : EINA_TRUE;
         type = (inherit_pd_img->image.fill.type == img->image.fill.type) ? EINA_FALSE : EINA_TRUE;
-        orig_rel = ((inherit_pd_img->image.fill.pos_rel_x == img->image.fill.pos_rel_x) &&
-                    (inherit_pd_img->image.fill.pos_rel_y == img->image.fill.pos_rel_y)) ? EINA_FALSE : EINA_TRUE;
+        orig_rel = (EQ(inherit_pd_img->image.fill.pos_rel_x, img->image.fill.pos_rel_x) &&
+                    EQ(inherit_pd_img->image.fill.pos_rel_y, img->image.fill.pos_rel_y)) ? EINA_FALSE : EINA_TRUE;
         orig_abs = ((inherit_pd_img->image.fill.pos_abs_x == img->image.fill.pos_abs_x) &&
                     (inherit_pd_img->image.fill.pos_abs_y == img->image.fill.pos_abs_y)) ? EINA_FALSE : EINA_TRUE;
 
-        size_rel = ((inherit_pd_img->image.fill.rel_x == img->image.fill.rel_x) &&
-                    (inherit_pd_img->image.fill.rel_y == img->image.fill.rel_y)) ? EINA_FALSE : EINA_TRUE;
+        size_rel = (EQ(inherit_pd_img->image.fill.rel_x, img->image.fill.rel_x) &&
+                    EQ(inherit_pd_img->image.fill.rel_y, img->image.fill.rel_y)) ? EINA_FALSE : EINA_TRUE;
         size_abs = ((inherit_pd_img->image.fill.abs_x == img->image.fill.abs_x) &&
                     (inherit_pd_img->image.fill.abs_y == img->image.fill.abs_y)) ? EINA_FALSE : EINA_TRUE;
      }
@@ -13828,9 +13828,9 @@ fill:
      {
         smooth = (img->image.fill.smooth == 1) ? EINA_FALSE : EINA_TRUE;
         type = (img->image.fill.type == EDJE_FILL_TYPE_SCALE) ? EINA_FALSE : EINA_TRUE;
-        orig_rel = ((img->image.fill.pos_rel_x == 0) && (img->image.fill.pos_rel_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        orig_rel = (EQ(img->image.fill.pos_rel_x, ZERO) && EQ(img->image.fill.pos_rel_y, ZERO)) ? EINA_FALSE : EINA_TRUE;
         orig_abs = ((img->image.fill.pos_abs_x == 0) && (img->image.fill.pos_abs_y == 0)) ? EINA_FALSE : EINA_TRUE;
-        size_rel = ((TO_DOUBLE(img->image.fill.rel_x) == 1) && (TO_DOUBLE(img->image.fill.rel_y) == 1)) ? EINA_FALSE : EINA_TRUE;
+        size_rel = (EQ(img->image.fill.rel_x, FROM_INT(1)) && EQ(img->image.fill.rel_y, FROM_INT(1))) ? EINA_FALSE : EINA_TRUE;
         size_abs = ((img->image.fill.abs_x == 0) && (img->image.fill.abs_y == 0)) ? EINA_FALSE : EINA_TRUE;
      }
 
@@ -13958,9 +13958,9 @@ _edje_generate_source_state_map(Edje *ed,
         alpha = (inherit_pd->map.alpha == pd->map.alpha) ? EINA_FALSE : EINA_TRUE;
 
         center = (inherit_pd->map.rot.id_center == pd->map.rot.id_center) ? EINA_FALSE : EINA_TRUE;
-        x = (inherit_pd->map.rot.x == pd->map.rot.x) ? EINA_FALSE : EINA_TRUE;
-        y = (inherit_pd->map.rot.y == pd->map.rot.y) ? EINA_FALSE : EINA_TRUE;
-        z = (inherit_pd->map.rot.z == pd->map.rot.z) ? EINA_FALSE : EINA_TRUE;
+        x = EQ(inherit_pd->map.rot.x, pd->map.rot.x) ? EINA_FALSE : EINA_TRUE;
+        y = EQ(inherit_pd->map.rot.y, pd->map.rot.y) ? EINA_FALSE : EINA_TRUE;
+        z = EQ(inherit_pd->map.rot.z, pd->map.rot.z) ? EINA_FALSE : EINA_TRUE;
      }
    else
      {
@@ -13974,9 +13974,9 @@ _edje_generate_source_state_map(Edje *ed,
         alpha = (pd->map.alpha == EINA_TRUE) ? EINA_FALSE : EINA_TRUE;
 
         center = (pd->map.rot.id_center == -1) ? EINA_FALSE : EINA_TRUE;
-        x = (TO_DOUBLE(pd->map.rot.x == 0)) ? EINA_FALSE : EINA_TRUE;
-        y = (TO_DOUBLE(pd->map.rot.y == 0)) ? EINA_FALSE : EINA_TRUE;
-        z = (TO_DOUBLE(pd->map.rot.z == 0)) ? EINA_FALSE : EINA_TRUE;
+        x = EQ(pd->map.rot.x, ZERO) ? EINA_FALSE : EINA_TRUE;
+        y = EQ(pd->map.rot.y, ZERO) ? EINA_FALSE : EINA_TRUE;
+        z = EQ(pd->map.rot.z, ZERO) ? EINA_FALSE : EINA_TRUE;
      }
 
    attr_amount  = persp + light + colors_count + backcull + on + persp_on + smooth + alpha;
@@ -14160,13 +14160,13 @@ fill_proxy:
      {
         smooth = (inherit_pd_pro->proxy.fill.smooth == pro->proxy.fill.smooth) ? EINA_FALSE : EINA_TRUE;
         type = (inherit_pd_pro->proxy.fill.type == pro->proxy.fill.type) ? EINA_FALSE : EINA_TRUE;
-        orig_rel = ((inherit_pd_pro->proxy.fill.pos_rel_x == pro->proxy.fill.pos_rel_x) &&
-                    (inherit_pd_pro->proxy.fill.pos_rel_y == pro->proxy.fill.pos_rel_y)) ? EINA_FALSE : EINA_TRUE;
+        orig_rel = (EQ(inherit_pd_pro->proxy.fill.pos_rel_x, pro->proxy.fill.pos_rel_x) &&
+                    EQ(inherit_pd_pro->proxy.fill.pos_rel_y, pro->proxy.fill.pos_rel_y)) ? EINA_FALSE : EINA_TRUE;
         orig_abs = ((inherit_pd_pro->proxy.fill.pos_abs_x == pro->proxy.fill.pos_abs_x) &&
                     (inherit_pd_pro->proxy.fill.pos_abs_y == pro->proxy.fill.pos_abs_y)) ? EINA_FALSE : EINA_TRUE;
 
-        size_rel = ((inherit_pd_pro->proxy.fill.rel_x == pro->proxy.fill.rel_x) &&
-                    (inherit_pd_pro->proxy.fill.rel_y == pro->proxy.fill.rel_y)) ? EINA_FALSE : EINA_TRUE;
+        size_rel = (EQ(inherit_pd_pro->proxy.fill.rel_x, pro->proxy.fill.rel_x) &&
+                    EQ(inherit_pd_pro->proxy.fill.rel_y, pro->proxy.fill.rel_y)) ? EINA_FALSE : EINA_TRUE;
         size_abs = ((inherit_pd_pro->proxy.fill.abs_x == pro->proxy.fill.abs_x) &&
                     (inherit_pd_pro->proxy.fill.abs_y == pro->proxy.fill.abs_y)) ? EINA_FALSE : EINA_TRUE;
      }
@@ -14174,9 +14174,9 @@ fill_proxy:
      {
         smooth = (pro->proxy.fill.smooth == 1) ? EINA_FALSE : EINA_TRUE;
         type = (pro->proxy.fill.type == EDJE_FILL_TYPE_SCALE) ? EINA_FALSE : EINA_TRUE;
-        orig_rel = ((pro->proxy.fill.pos_rel_x == 0) && (pro->proxy.fill.pos_rel_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        orig_rel = (EQ(pro->proxy.fill.pos_rel_x, ZERO) && EQ(pro->proxy.fill.pos_rel_y, ZERO)) ? EINA_FALSE : EINA_TRUE;
         orig_abs = ((pro->proxy.fill.pos_abs_x == 0) && (pro->proxy.fill.pos_abs_y == 0)) ? EINA_FALSE : EINA_TRUE;
-        size_rel = ((TO_DOUBLE(pro->proxy.fill.rel_x) == 1) && (TO_DOUBLE(pro->proxy.fill.rel_y) == 1)) ? EINA_FALSE : EINA_TRUE;
+        size_rel = (EQ(pro->proxy.fill.rel_x, FROM_INT(1)) && EQ(pro->proxy.fill.rel_y, FROM_INT(1))) ? EINA_FALSE : EINA_TRUE;
         size_abs = ((pro->proxy.fill.abs_x == 0) && (pro->proxy.fill.abs_y == 0)) ? EINA_FALSE : EINA_TRUE;
      }
 
@@ -14291,8 +14291,8 @@ _edje_generate_source_state_table(Edje_Part_Description_Common *pd,
      {
         homogeneous = (inherit_pd_table->table.homogeneous == table->table.homogeneous) ? EINA_FALSE : EINA_TRUE;
 
-        align = ((inherit_pd_table->table.align.x == table->table.align.x) &&
-                 (inherit_pd_table->table.align.y == table->table.align.y)) ? EINA_FALSE : EINA_TRUE;
+        align = (EQ(inherit_pd_table->table.align.x, table->table.align.x) &&
+                 EQ(inherit_pd_table->table.align.y, table->table.align.y)) ? EINA_FALSE : EINA_TRUE;
 
         padding = ((inherit_pd_table->table.padding.x == table->table.padding.x) &&
                    (inherit_pd_table->table.padding.y == table->table.padding.y)) ? EINA_FALSE : EINA_TRUE;
@@ -14303,7 +14303,7 @@ _edje_generate_source_state_table(Edje_Part_Description_Common *pd,
    else
      {
         homogeneous = (table->table.homogeneous == EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE) ? EINA_FALSE : EINA_TRUE;
-        align = (table->table.align.x == 0.5 && table->table.align.y == 0.5) ? EINA_FALSE : EINA_TRUE;
+        align = (EQ(table->table.align.x, FROM_DOUBLE(0.5)) && EQ(table->table.align.y, FROM_DOUBLE(0.5))) ? EINA_FALSE : EINA_TRUE;
         padding = (table->table.padding.x == 0 && table->table.padding.y == 0) ? EINA_FALSE : EINA_TRUE;
         min = (table->table.min.h == 0 && table->table.min.v == 0) ? EINA_FALSE : EINA_TRUE;
      }
@@ -14389,8 +14389,8 @@ _edje_generate_source_state_box(Edje_Part_Description_Common *pd,
                       !strcmp(inherit_pd_box->box.alt_layout, box->box.alt_layout)) ||
                       (inherit_pd_box->box.alt_layout == NULL && box->box.alt_layout == NULL)) ? EINA_FALSE : EINA_TRUE;
 
-        align = ((inherit_pd_box->box.align.x == box->box.align.x) &&
-                 (inherit_pd_box->box.align.y == box->box.align.y)) ? EINA_FALSE : EINA_TRUE;
+        align = (EQ(inherit_pd_box->box.align.x, box->box.align.x) &&
+                 EQ(inherit_pd_box->box.align.y, box->box.align.y)) ? EINA_FALSE : EINA_TRUE;
 
         padding = ((inherit_pd_box->box.padding.x == box->box.padding.x) &&
                    (inherit_pd_box->box.padding.y == box->box.padding.y)) ? EINA_FALSE : EINA_TRUE;
@@ -14402,7 +14402,7 @@ _edje_generate_source_state_box(Edje_Part_Description_Common *pd,
      {
         layout = (box->box.layout == NULL) ? EINA_FALSE : EINA_TRUE;
         alt_layout = (box->box.alt_layout == NULL) ? EINA_FALSE : EINA_TRUE;
-        align = (box->box.align.x == 0.5 && box->box.align.y == 0.5) ? EINA_FALSE : EINA_TRUE;
+        align = EQ(box->box.align.x, FROM_DOUBLE(0.5)) && EQ(box->box.align.y, FROM_DOUBLE(0.5)) ? EINA_FALSE : EINA_TRUE;
         padding = (box->box.padding.x == 0 && box->box.padding.y == 0) ? EINA_FALSE : EINA_TRUE;
         min =  (box->box.min.h == 0 && box->box.min.v == 0) ? EINA_FALSE : EINA_TRUE;
      }
@@ -14519,15 +14519,15 @@ _edje_generate_source_state_text(Edje *ed, Edje_Part_Description_Common *pd,
         max = ((inherit_pd_txt->text.max_x == txt->text.max_x) &&
                (inherit_pd_txt->text.max_y == txt->text.max_y)) ? EINA_FALSE : EINA_TRUE;
 
-        align = ((inherit_pd_txt->text.align.x == txt->text.align.x) &&
-                 (inherit_pd_txt->text.align.y == txt->text.align.y)) ? EINA_FALSE : EINA_TRUE;
+        align = (EQ(inherit_pd_txt->text.align.x, txt->text.align.x) &&
+                 EQ(inherit_pd_txt->text.align.y, txt->text.align.y)) ? EINA_FALSE : EINA_TRUE;
 
         source = ((inherit_pd_txt->text.id_source == txt->text.id_source)) ? EINA_FALSE : EINA_TRUE;
 
         text_source = ((inherit_pd_txt->text.id_text_source == txt->text.id_text_source)) ? EINA_FALSE : EINA_TRUE;
 
 
-        ellipsis = ((inherit_pd_txt->text.ellipsis == txt->text.ellipsis)) ? EINA_FALSE : EINA_TRUE;
+        ellipsis = (EQ(inherit_pd_txt->text.ellipsis, txt->text.ellipsis)) ? EINA_FALSE : EINA_TRUE;
 
         style = (edje_string_id_get(&inherit_pd_txt->text.style) ==
                  edje_string_id_get(&txt->text.style)) ? EINA_FALSE : EINA_TRUE;
@@ -14550,10 +14550,10 @@ _edje_generate_source_state_text(Edje *ed, Edje_Part_Description_Common *pd,
         fit = ((txt->text.fit_x == 0) && (txt->text.fit_y == 0)) ? EINA_FALSE : EINA_TRUE;
         min = ((txt->text.min_x == 0) && (txt->text.min_y == 0)) ? EINA_FALSE : EINA_TRUE;
         max = ((txt->text.max_x == 0) && (txt->text.max_y == 0)) ? EINA_FALSE : EINA_TRUE;
-        align = ((txt->text.align.x == 0.5) && (txt->text.align.y == 0.5)) ? EINA_FALSE : EINA_TRUE;
+        align = (EQ(txt->text.align.x, FROM_DOUBLE(0.5)) && EQ(txt->text.align.y, FROM_DOUBLE(0.5))) ? EINA_FALSE : EINA_TRUE;
         source = (txt->text.id_source == -1) ? EINA_FALSE : EINA_TRUE;
         text_source = (txt->text.id_text_source == -1) ? EINA_FALSE : EINA_TRUE;
-        ellipsis = (txt->text.ellipsis == 0) ? EINA_FALSE : EINA_TRUE;
+        ellipsis = EQ(txt->text.ellipsis, ZERO) ? EINA_FALSE : EINA_TRUE;
         style = (edje_string_id_get(&txt->text.style) == 0) ? EINA_FALSE : EINA_TRUE;
         color_3 = ((txt->text.color3.r == 0) && (txt->text.color3.g == 0) &&
                    (txt->text.color3.b == 0) && (txt->text.color3.a == 128)) ? EINA_FALSE : EINA_TRUE;
@@ -14662,17 +14662,17 @@ _edje_common_desc_diff_calculate(Edje_Part_Description_Common *ed,
 {
    int diffs_amount= 0;
 
-   diffs_amount += ((ed->align.x != inherit_pd->align.x) || (ed->align.y != inherit_pd->align.y)) ? 1 : 0;
+   diffs_amount += (NEQ(ed->align.x, inherit_pd->align.x) || NEQ(ed->align.y, inherit_pd->align.y)) ? 1 : 0;
 
    diffs_amount += ((ed->minmul.have != inherit_pd->minmul.have) ||
-                    (ed->minmul.w != inherit_pd->minmul.w) ||
-                    (ed->minmul.h != inherit_pd->minmul.h)) ? 1 : 0;
+                    NEQ(ed->minmul.w, inherit_pd->minmul.w) ||
+                    NEQ(ed->minmul.h, inherit_pd->minmul.h)) ? 1 : 0;
    diffs_amount += ((ed->min.w != inherit_pd->min.w) ||
                     (ed->min.h != inherit_pd->min.h) ||
                     (ed->min.limit != inherit_pd->min.limit)) ? 1 : 0;
    diffs_amount += ((ed->step.x != inherit_pd->step.x) || (ed->step.y != inherit_pd->step.y)) ? 1 : 0;
-   diffs_amount += ((ed->aspect.min != inherit_pd->aspect.min) ||
-                    (ed->aspect.max != inherit_pd->aspect.max) ||
+   diffs_amount += (NEQ(ed->aspect.min, inherit_pd->aspect.min) ||
+                    NEQ(ed->aspect.max, inherit_pd->aspect.max) ||
                     (ed->aspect.prefer!= inherit_pd->aspect.prefer)) ? 1 : 0;
    diffs_amount += ((ed->color_class != NULL && inherit_pd->color_class == NULL) ||
                     (ed->color_class == NULL && inherit_pd->color_class != NULL) ||
@@ -14685,8 +14685,8 @@ _edje_common_desc_diff_calculate(Edje_Part_Description_Common *ed,
                      strcmp(ed->size_class, inherit_pd->size_class))) ? 1 : 0;
 
    /*Rel1 block*/
-   diffs_amount += ((ed->rel1.relative_x != inherit_pd->rel1.relative_x) ||
-                    (ed->rel1.relative_y != inherit_pd->rel1.relative_y)) ? 1 : 0;
+   diffs_amount += (NEQ(ed->rel1.relative_x, inherit_pd->rel1.relative_x) ||
+                    NEQ(ed->rel1.relative_y, inherit_pd->rel1.relative_y)) ? 1 : 0;
    diffs_amount += ((ed->rel1.offset_x != inherit_pd->rel1.offset_x) ||
                     (ed->rel1.offset_y != inherit_pd->rel1.offset_y)) ? 1 : 0;
    diffs_amount += (ed->rel1.id_x != inherit_pd->rel1.id_x) ? 1 : 0;
@@ -14694,8 +14694,8 @@ _edje_common_desc_diff_calculate(Edje_Part_Description_Common *ed,
    /*End of Rel1 block*/
 
    /*Rel2 block*/
-   diffs_amount += ((ed->rel2.relative_x != inherit_pd->rel2.relative_x) ||
-                    (ed->rel2.relative_y != inherit_pd->rel2.relative_y)) ? 1 : 0;
+   diffs_amount += (NEQ(ed->rel2.relative_x, inherit_pd->rel2.relative_x) ||
+                    NEQ(ed->rel2.relative_y, inherit_pd->rel2.relative_y)) ? 1 : 0;
    diffs_amount += ((ed->rel2.offset_x != inherit_pd->rel2.offset_x) ||
                     (ed->rel2.offset_y != inherit_pd->rel2.offset_y)) ? 1 : 0;
    diffs_amount += (ed->rel2.id_x != inherit_pd->rel2.id_x) ? 1 : 0;
@@ -14714,9 +14714,9 @@ _edje_common_desc_diff_calculate(Edje_Part_Description_Common *ed,
    diffs_amount += (inherit_pd->map.alpha == ed->map.alpha) ? EINA_FALSE : EINA_TRUE;
 
    diffs_amount += (inherit_pd->map.rot.id_center == ed->map.rot.id_center) ? EINA_FALSE : EINA_TRUE;
-   diffs_amount += (inherit_pd->map.rot.x == ed->map.rot.x) ? EINA_FALSE : EINA_TRUE;
-   diffs_amount += (inherit_pd->map.rot.y == ed->map.rot.y) ? EINA_FALSE : EINA_TRUE;
-   diffs_amount += (inherit_pd->map.rot.z == ed->map.rot.z) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += EQ(inherit_pd->map.rot.x, ed->map.rot.x) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += EQ(inherit_pd->map.rot.y, ed->map.rot.y) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += EQ(inherit_pd->map.rot.z, ed->map.rot.z) ? EINA_FALSE : EINA_TRUE;
 
    /*In case when colors are equal do not append points into diffs_amount*/
    diffs_amount += ((ed->color.r == inherit_pd->color.r) &&
@@ -14766,9 +14766,9 @@ _edje_text_desc_diff_calculate(Edje_Part_Description_Common *ed, Edje_Part_Descr
                     (ed_text->text.font.str != NULL && inherit_pd_text->text.font.str != NULL &&
                      strcmp(ed_text->text.font.str, inherit_pd_text->text.font.str))) ? 1 : 0;
 
-   diffs_amount += ((ed_text->text.align.x != inherit_pd_text->text.align.x) ||
-                    (ed_text->text.align.y != inherit_pd_text->text.align.y)) ? 1 : 0;
-   diffs_amount += (ed_text->text.ellipsis != inherit_pd_text->text.ellipsis) ? 1 : 0;
+   diffs_amount += (NEQ(ed_text->text.align.x, inherit_pd_text->text.align.x) ||
+                    NEQ(ed_text->text.align.y, inherit_pd_text->text.align.y)) ? 1 : 0;
+   diffs_amount += NEQ(ed_text->text.ellipsis, inherit_pd_text->text.ellipsis) ? 1 : 0;
    diffs_amount += (ed_text->text.size != inherit_pd_text->text.size) ? 1 : 0;
    diffs_amount += (ed_text->text.id_source != inherit_pd_text->text.id_source) ? 1 : 0;
    diffs_amount += (ed_text->text.id_text_source != inherit_pd_text->text.id_text_source) ? 1 : 0;
@@ -14808,7 +14808,7 @@ _edje_image_desc_diff_calculate(Edje_Edit *eed,
 
    diffs_amount += (image_pd->image.border.scale == inherit_pd_image->image.border.scale) ? EINA_FALSE : EINA_TRUE;
 
-   diffs_amount += (image_pd->image.border.scale_by == inherit_pd_image->image.border.scale_by) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += EQ(image_pd->image.border.scale_by, inherit_pd_image->image.border.scale_by) ? EINA_FALSE : EINA_TRUE;
 
    diffs_amount += (image_pd->image.scale_hint == inherit_pd_image->image.scale_hint) ? EINA_FALSE : EINA_TRUE;
 
@@ -14836,7 +14836,7 @@ _edje_generate_source_of_state_inherit(Edje_Edit *eed EINA_UNUSED, Edje_Part *ep
    Edje_Part_Description_Common *inherit = NULL;
    Edje_Part_Description_Common *desc = NULL;
 
-   if (pd->state.value == 0 && !strcmp(pd->state.name, "default"))
+   if (EQ(pd->state.value, ZERO) && !strcmp(pd->state.name, "default"))
      return NULL;
 
    /*calculate  metric of difference*/
@@ -14874,7 +14874,7 @@ _edje_generate_source_of_state_inherit(Edje_Edit *eed EINA_UNUSED, Edje_Part *ep
      {
         desc = ep->other.desc[i];
 
-        if (!strcmp(desc->state.name, pd->state.name) && (desc->state.value == pd->state.value))
+        if (!strcmp(desc->state.name, pd->state.name) && EQ(desc->state.value, pd->state.value))
           break;
 
         /*calculate  metric of difference*/
@@ -14949,8 +14949,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
                         (inherit_pd->color_class != NULL) &&
                         (!strcmp(pd->color_class, inherit_pd->color_class)))) ? EINA_FALSE : EINA_TRUE;
 
-        align = ((pd->align.x == inherit_pd->align.x) &&
-                 (pd->align.y == inherit_pd->align.y)) ? EINA_FALSE : EINA_TRUE;
+        align = (EQ(pd->align.x, inherit_pd->align.x) &&
+                 EQ(pd->align.y, inherit_pd->align.y)) ? EINA_FALSE : EINA_TRUE;
 
         fixed = ((pd->fixed.w == inherit_pd->fixed.w) &&
                  (pd->fixed.h == inherit_pd->fixed.h)) ? EINA_FALSE : EINA_TRUE;
@@ -14966,8 +14966,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         max_source = (pd->max.limit == inherit_pd->max.limit) ? EINA_FALSE : EINA_TRUE;
 
         minmul = ((pd->minmul.have == inherit_pd->minmul.have) &&
-                  (pd->minmul.w == inherit_pd->minmul.w) &&
-                  (pd->minmul.h == inherit_pd->minmul.h)) ? EINA_FALSE : EINA_TRUE;
+                  EQ(pd->minmul.w, inherit_pd->minmul.w) &&
+                  EQ(pd->minmul.h, inherit_pd->minmul.h)) ? EINA_FALSE : EINA_TRUE;
 
         size_class = ((pd->size_class == inherit_pd->size_class) ||
                       ((pd->size_class != NULL) && (inherit_pd->size_class != NULL) &&
@@ -14976,8 +14976,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         step = ((pd->step.x == inherit_pd->step.x) &&
                 (pd->step.y == inherit_pd->step.y)) ? EINA_FALSE : EINA_TRUE;
 
-        aspect = ((pd->aspect.min == inherit_pd->aspect.min) &&
-                  (pd->aspect.max == inherit_pd->aspect.max)) ? EINA_FALSE : EINA_TRUE;
+        aspect = (EQ(pd->aspect.min, inherit_pd->aspect.min) &&
+                  EQ(pd->aspect.max, inherit_pd->aspect.max)) ? EINA_FALSE : EINA_TRUE;
 
         aspect_prefer = (pd->aspect.prefer == inherit_pd->aspect.prefer) ? EINA_FALSE : EINA_TRUE;
 
@@ -14999,7 +14999,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
         color_class = (pd->color_class == NULL) ? EINA_FALSE : EINA_TRUE;
 
-        align = ((pd->align.x == 0.5) && (pd->align.y == 0.5)) ? EINA_FALSE : EINA_TRUE;
+        align = (EQ(pd->align.x, FROM_DOUBLE(0.5)) && EQ(pd->align.y, FROM_DOUBLE(0.5))) ? EINA_FALSE : EINA_TRUE;
 
         fixed = ((pd->fixed.w == 0) && (pd->fixed.h == 0)) ? EINA_FALSE : EINA_TRUE;
 
@@ -15010,13 +15010,13 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         max_source = pd->max.limit;
 
         minmul = ((pd->minmul.have == 0) ||
-                  ((pd->minmul.w == 1) && (pd->minmul.h == 1))) ? EINA_FALSE : EINA_TRUE;
+                  (EQ(pd->minmul.w, FROM_INT(1)) && EQ(pd->minmul.h, FROM_INT(1)))) ? EINA_FALSE : EINA_TRUE;
 
         size_class = (pd->size_class == NULL) ? EINA_FALSE : EINA_TRUE;
 
         step = ((pd->step.x == 0) && (pd->step.y == 0)) ? EINA_FALSE : EINA_TRUE;
 
-        aspect = ((pd->aspect.min == 0) && (pd->aspect.max == 0)) ? EINA_FALSE : EINA_TRUE;
+        aspect = (EQ(pd->aspect.min, ZERO) && EQ(pd->aspect.max, ZERO)) ? EINA_FALSE : EINA_TRUE;
 
         aspect_prefer = (pd->aspect.prefer == 0) ? EINA_FALSE : EINA_TRUE;
 
@@ -15357,12 +15357,12 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
                     BUF_APPENDF(I7 "padding: %d %d %d %d;\n",
                                 item->padding.l, item->padding.r,
                                 item->padding.t, item->padding.b);
-                  if ((item->weight.x != 0) || (item->weight.y != 0))
+                  if (NEQ(item->weight.x, ZERO) || NEQ(item->weight.y, ZERO))
                     _edje_source_with_double_values_append(I7 "weight", 2,
                                                            TO_DOUBLE(item->weight.x),
                                                            TO_DOUBLE(item->weight.y),
                                                            buf, &ret);
-                  if (TO_DOUBLE(item->align.x) != 0.5 || TO_DOUBLE(item->align.y) != 0.5)
+                  if (NEQ(item->align.x, FROM_DOUBLE(0.5)) || NEQ(item->align.y, FROM_DOUBLE(0.5)))
                     _edje_source_with_double_values_append(I7 "align", 2,
                                                            TO_DOUBLE(item->align.x),
                                                            TO_DOUBLE(item->align.y),
