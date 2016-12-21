@@ -4149,6 +4149,8 @@ _elm_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EINA_
          elm_widget_disabled_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Mirrored", EINA_VALUE_TYPE_CHAR,
          elm_widget_mirrored_get(eo_obj));
+   EFL_DBG_INFO_APPEND(group, "Tree Unfocusable", EINA_VALUE_TYPE_CHAR,
+         elm_widget_tree_unfocusable_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Automatic mirroring", EINA_VALUE_TYPE_CHAR,
          elm_widget_mirrored_automatic_get(eo_obj));
 
