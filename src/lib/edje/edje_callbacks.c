@@ -320,7 +320,7 @@ _edje_mouse_move_signal_cb(void *data, const Efl_Event *event)
              FLOAT_T dx, dy;
 
              _edje_part_dragable_calc(ed, rp, &dx, &dy);
-             if ((dx != rp->drag->val.x) || (dy != rp->drag->val.y))
+             if ((NEQ(dx, rp->drag->val.x)) || (NEQ(dy, rp->drag->val.y)))
                {
                   rp->drag->val.x = dx;
                   rp->drag->val.y = dy;
