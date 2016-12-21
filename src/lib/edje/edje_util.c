@@ -338,7 +338,7 @@ edje_scale_set(double scale)
 {
    Edje *ed;
 
-   if (_edje_scale == FROM_DOUBLE(scale)) return;
+   if (EQ(_edje_scale, FROM_DOUBLE(scale))) return;
    _edje_scale = FROM_DOUBLE(scale);
    EINA_INLIST_FOREACH(_edje_edjes, ed) edje_object_calc_force(ed->obj);
 }
@@ -359,7 +359,7 @@ edje_password_show_last_set(Eina_Bool password_show_last)
 EAPI void
 edje_password_show_last_timeout_set(double password_show_last_timeout)
 {
-   if (_edje_password_show_last_timeout == password_show_last_timeout) return;
+   if (EINA_DBL_CMP(_edje_password_show_last_timeout, password_show_last_timeout)) return;
    _edje_password_show_last_timeout = password_show_last_timeout;
 }
 
@@ -371,7 +371,7 @@ _edje_object_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
    Eina_List *l;
    unsigned short i;
 
-   if (ed->scale == scale) return EINA_TRUE;
+   if (EQ(ed->scale, FROM_DOUBLE(scale))) return EINA_TRUE;
    ed->scale = FROM_DOUBLE(scale);
    EINA_LIST_FOREACH(ed->groups, l, ged)
      edje_object_scale_set(ged->obj, scale);
@@ -4138,7 +4138,7 @@ _edje_object_part_drag_value_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part
      }
    if (rp->part->dragable.x < 0) dx = 1.0 - dx;
    if (rp->part->dragable.y < 0) dy = 1.0 - dy;
-   if ((rp->drag->val.x == FROM_DOUBLE(dx)) && (rp->drag->val.y == FROM_DOUBLE(dy)))
+   if (EQ(rp->drag->val.x, FROM_DOUBLE(dx)) && EQ(rp->drag->val.y, FROM_DOUBLE(dy)))
      {
         return EINA_TRUE;
      }
@@ -4222,7 +4222,7 @@ _edje_object_part_drag_size_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
    if (dh < 0.0) dh = 0.0;
    else if (dh > 1.0)
      dh = 1.0;
-   if ((rp->drag->size.x == FROM_DOUBLE(dw)) && (rp->drag->size.y == FROM_DOUBLE(dh)))
+   if (EQ(rp->drag->size.x, FROM_DOUBLE(dw)) && EQ(rp->drag->size.y, FROM_DOUBLE(dh)))
      {
         return EINA_TRUE;
      }
@@ -4449,7 +4449,7 @@ _edje_object_part_drag_step(Eo *obj EINA_UNUSED, Edje *ed, const char *part, dou
                                  MUL(rp->drag->step.y, rp->part->dragable.y)));
    rp->drag->val.x = CLAMP(rp->drag->val.x, ZERO, FROM_DOUBLE(1.0));
    rp->drag->val.y = CLAMP(rp->drag->val.y, ZERO, FROM_DOUBLE(1.0));
-   if ((px == rp->drag->val.x) && (py == rp->drag->val.y))
+   if (EQ(px, rp->drag->val.x) && EQ(py, rp->drag->val.y))
      {
         return EINA_TRUE;
      }
@@ -4499,7 +4499,7 @@ _edje_object_part_drag_page(Eo *obj EINA_UNUSED, Edje *ed, const char *part, dou
    rp->drag->val.y = ADD(py, MUL(FROM_DOUBLE(dy), MUL(rp->drag->page.y, rp->part->dragable.y)));
    rp->drag->val.x = CLAMP(rp->drag->val.x, ZERO, FROM_DOUBLE(1.0));
    rp->drag->val.y = CLAMP(rp->drag->val.y, ZERO, FROM_DOUBLE(1.0));
-   if ((px == rp->drag->val.x) && (py == rp->drag->val.y))
+   if (EQ(px, rp->drag->val.x) && EQ(py, rp->drag->val.y))
      {
         return EINA_TRUE;
      }
