@@ -23,7 +23,7 @@ struct Elm.Toolbar.Item.State
    data: const(void_ptr); [[Item data]]
 }
 
-class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item)
+class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
 {
       [[Elementary toolbar item class]]
       legacy_prefix: elm_toolbar_item;
@@ -266,11 +266,14 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item)
            Efl.Object.constructor;
            Efl.Object.destructor;
            Elm.Widget.Item.disable;
+           Elm.Widget.Item.disabled { set; }
            Elm.Widget.Item.focus { get; set; }
            Elm.Widget.Item.signal_emit;
            Elm.Widget.Item.part_text { get; set; }
            Elm.Widget.Item.part_content { get; set; }
            Elm.Widget.Item.part_content_unset;
+           Efl.Ui.Focus.Object.geometry_get;
+           Efl.Ui.Focus.Object.focus { set; }
            Elm.Interface.Atspi_Accessible.name { get; }
            Elm.Interface.Atspi_Accessible.state_set { get; }
            Efl.Ui.Item.selected { get; set; }

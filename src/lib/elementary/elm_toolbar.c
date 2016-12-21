@@ -54,16 +54,69 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
-static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static void _sizing_eval(Evas_Object *obj);
 
 static const Elm_Action key_actions[] = {
    {"select", _key_action_select},
-   {"move", _key_action_move},
    {NULL, NULL}
 };
 
 static void _item_select(Elm_Toolbar_Item_Data *it);
+
+static void
+_item_focus_eval(Elm_Toolbar_Item_Data *pd)
+{
+   Eina_Bool want = EINA_TRUE;
+   Efl_Ui_Focus_Object *widget;
+   Efl_Ui_Focus_Manager *manager;
+
+   if (elm_wdg_item_disabled_get(pd->base->eo_obj))
+     want = EINA_FALSE;
+
+   if (!evas_object_visible_get(VIEW(pd)))
+     want = EINA_FALSE;
+
+   if (!!pd->registered == !!want) return;
+
+   //grab manager from widget
+   widget = WIDGET(pd);
+   manager = efl_ui_focus_user_manager_get(widget);
+
+   if (want)
+     {
+        efl_ui_focus_manager_register(manager, EO_OBJ(pd), widget, NULL);
+        pd->registered = manager;
+     }
+   else
+     {
+        efl_ui_focus_manager_unregister(manager, EO_OBJ(pd));
+        pd->registered = NULL;
+     }
+
+}
+
+static void
+_item_focus_eval_all(Elm_Toolbar *obj, Elm_Toolbar_Data *pd)
+{
+   Elm_Toolbar_Item_Data *it;
+   Elm_Widget_Smart_Data *wpd;
+   Eina_List *order = NULL;
+
+   wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
+   EINA_INLIST_FOREACH(pd->items, it)
+     {
+        _item_focus_eval(it);
+        order = eina_list_append(order, EO_OBJ(it));
+     }
+
+   if (pd->more_item)
+     {
+        _item_focus_eval(pd->more_item);
+        order = eina_list_append(order, EO_OBJ(pd->more_item));
+     }
+
+   efl_ui_focus_manager_update_order(wpd->focus.manager, obj, order);
+}
 
 static int
 _toolbar_item_prio_compare_cb(const void *i1,
@@ -594,6 +647,8 @@ _resize_job(void *data)
    eina_list_free(list);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
+
+   _item_focus_eval_all(obj, sd);
 }
 
 static void
@@ -781,47 +836,6 @@ _elm_toolbar_elm_widget_on_focus(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item 
    return EINA_TRUE;
 }
 
-static Elm_Toolbar_Item_Data *
-_focus_next_item_get(Evas_Object *obj, Eina_Bool reverse)
-{
-   ELM_TOOLBAR_DATA_GET(obj, sd);
-   Eina_List *list = NULL, *children_list;
-   Elm_Toolbar_Item_Data *it = NULL;
-   Evas_Object *it_obj = NULL;
-
-   children_list = evas_object_box_children_get(sd->bx);
-   if (reverse)
-     children_list = eina_list_reverse(children_list);
-   list = children_list;
-   if (sd->focused_item)
-     {
-        ELM_TOOLBAR_ITEM_DATA_GET(sd->focused_item, focus_it);
-        list = eina_list_data_find_list(list, VIEW(focus_it));
-        if (list) list = eina_list_next(list);
-     }
-   it_obj = eina_list_data_get(list);
-   if (it_obj) it = evas_object_data_get(it_obj, "item");
-   else it = NULL;
-
-   while (it &&
-          (it->separator ||
-           elm_object_item_disabled_get(EO_OBJ(it))))
-     {
-        if (list) list = eina_list_next(list);
-        if (!list)
-          {
-             it = NULL;
-             break;
-          }
-        it_obj = eina_list_data_get(list);
-        if (it_obj) it = evas_object_data_get(it_obj, "item");
-        else it = NULL;
-     }
-   eina_list_free(children_list);
-
-   return it;
-}
-
 EOLIAN static void
 _elm_toolbar_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Data *it, Eina_Bool focused)
 {
@@ -872,28 +886,6 @@ _elm_toolbar_item_elm_widget_item_focus_get(Eo *eo_it, Elm_Toolbar_Item_Data *it
 }
 
 static Eina_Bool
-_item_focused_next( Evas_Object *obj,
-                   Eina_Bool reverse,
-                   Elm_Focus_Direction dir)
-{
-   ELM_TOOLBAR_DATA_GET(obj, sd);
-   Elm_Toolbar_Item_Data *next_focused_item;
-
-   next_focused_item = _focus_next_item_get(obj, reverse);
-   if (!next_focused_item)
-     return EINA_FALSE;
-
-   if ((sd->orientation == EFL_ORIENT_HORIZONTAL && (dir == ELM_FOCUS_LEFT || dir == ELM_FOCUS_RIGHT))
-         || (sd->orientation == EFL_ORIENT_VERTICAL && (dir == ELM_FOCUS_UP || dir == ELM_FOCUS_DOWN)))
-   {
-      elm_object_item_focus_set(EO_OBJ(next_focused_item), EINA_TRUE);
-      return EINA_TRUE;
-   }
-   _elm_widget_focus_highlight_start(obj);
-   return EINA_FALSE;
-}
-
-static Eina_Bool
 _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    ELM_TOOLBAR_DATA_GET(obj, sd);
@@ -905,38 +897,6 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
      }
 
    return EINA_TRUE;
-}
-
-static Eina_Bool
-_key_action_move(Evas_Object *obj, const char *params)
-{
-   const char *dir = params;
-
-   _elm_widget_focus_auto_show(obj);
-   if (!strcmp(dir, "left"))
-     {
-        if (!_item_focused_next(obj, EINA_TRUE, ELM_FOCUS_LEFT))
-          return EINA_FALSE;
-     }
-   else if (!strcmp(dir, "right"))
-     {
-        if (!_item_focused_next(obj, EINA_FALSE, ELM_FOCUS_RIGHT))
-          return EINA_FALSE;
-     }
-   else if (!strcmp(dir, "up"))
-     {
-        if (!_item_focused_next(obj, EINA_TRUE, ELM_FOCUS_UP))
-          return EINA_FALSE;
-     }
-   else if (!strcmp(dir, "down"))
-     {
-        if (!_item_focused_next(obj, EINA_FALSE, ELM_FOCUS_DOWN))
-          return EINA_FALSE;
-     }
-   else return EINA_FALSE;
-
-   return EINA_TRUE;
-
 }
 
 EOLIAN static Eina_Bool
@@ -995,6 +955,13 @@ _resize_cb(void *data,
            void *event_info EINA_UNUSED)
 {
    _resizing_eval(data);
+}
+
+EOLIAN static void
+_elm_toolbar_item_elm_widget_item_disabled_set(Eo *eo_id, Elm_Toolbar_Item_Data *sd, Eina_Bool disabled)
+{
+   elm_wdg_item_disabled_set(efl_super(eo_id, ELM_TOOLBAR_ITEM_CLASS), disabled);
+   _item_focus_eval(sd);
 }
 
 EOLIAN static void
@@ -2407,6 +2374,12 @@ _elm_toolbar_item_efl_object_destructor(Eo *eo_item, Elm_Toolbar_Item_Data *item
           }
      }
 
+   if (item->registered)
+     {
+        efl_ui_focus_manager_unregister(item->registered, eo_item);
+        item->registered = NULL;
+     }
+
    _item_del(item);
 
    if (item != sd->more_item)
@@ -2450,6 +2423,12 @@ _access_widget_item_register(Elm_Toolbar_Item_Data *it)
    _elm_access_activate_callback_set(ai, _access_activate_cb, NULL);
 }
 
+EOLIAN static void
+_elm_toolbar_item_efl_ui_focus_object_geometry_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Item_Data *pd, Eina_Rectangle *rect)
+{
+   evas_object_geometry_get(VIEW(pd), &rect->x, &rect->y, &rect->w, &rect->h);
+}
+
 EOLIAN static Eo *
 _elm_toolbar_item_efl_object_constructor(Eo *eo_it, Elm_Toolbar_Item_Data *it)
 {
@@ -2486,6 +2465,7 @@ _item_new(Evas_Object *obj,
    WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
 
    VIEW(it) = elm_layout_add(obj);
+   elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
    evas_object_data_set(VIEW(it), "item", it);
    elm_interface_atspi_accessible_type_set(VIEW(it), ELM_ATSPI_TYPE_DISABLED);
 
@@ -3071,6 +3051,13 @@ _elm_toolbar_coordinates_adjust(Elm_Toolbar_Item_Data *it,
 }
 
 EOLIAN static void
+_elm_toolbar_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Toolbar_Item_Data *pd EINA_UNUSED, Eina_Bool focus)
+{
+   efl_ui_focus_object_focus_set(efl_super(obj, ELM_TOOLBAR_ITEM_CLASS), focus);
+   elm_wdg_item_focus_set(obj, focus);
+}
+
+EOLIAN static void
 _elm_toolbar_elm_widget_focus_highlight_geometry_get(const Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    if (sd->focused_item)
@@ -3091,6 +3078,13 @@ elm_toolbar_add(Evas_Object *parent)
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Evas_Object *obj = efl_add(MY_CLASS, parent);
    return obj;
+}
+
+EOLIAN static Eina_Bool
+_elm_toolbar_elm_widget_focus_register(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Object *logical, Eina_Bool full EINA_UNUSED)
+{
+   efl_ui_focus_manager_register_logical(manager, obj, logical, NULL);
+   return EINA_FALSE;
 }
 
 EOLIAN static Eo *
@@ -4043,10 +4037,6 @@ _elm_toolbar_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
 {
    static Elm_Atspi_Action atspi_actions[] = {
           { "select", "select", NULL, _key_action_select},
-          { "move,left", "move", "left", _key_action_move},
-          { "move,right", "move", "right", _key_action_move},
-          { "move,up", "move", "up", _key_action_move},
-          { "move,down", "move", "down", _key_action_move},
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
