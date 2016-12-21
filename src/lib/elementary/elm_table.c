@@ -14,6 +14,16 @@
 #define MY_CLASS_NAME "Elm_Table"
 #define MY_CLASS_NAME_LEGACY "elm_table"
 
+static void
+_focus_order_flush(Eo *obj)
+{
+   Elm_Widget_Smart_Data *wpd;
+   Eina_List *order = evas_object_table_children_get(obj);
+   wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
+
+   efl_ui_focus_manager_update_children(wpd->focus.manager, obj, order, EINA_TRUE);
+}
+
 EOLIAN static Eina_Bool
 _elm_table_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
@@ -317,6 +327,7 @@ _elm_table_pack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj, int col, in
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
+   _focus_order_flush(obj);
 }
 
 EOLIAN static void
@@ -347,6 +358,7 @@ _elm_table_pack_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj, int col
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
+   _focus_order_flush(obj);
 }
 
 EAPI void
@@ -381,6 +393,7 @@ _elm_table_clear(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool clear)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_clear(wd->resize_obj, clear);
+   _focus_order_flush(obj);
 }
 
 EOLIAN static Evas_Object*
