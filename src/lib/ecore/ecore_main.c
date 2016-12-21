@@ -2317,6 +2317,16 @@ _ecore_main_loop_iterate_internal(int once_only)
 
    /* start of the sleeping or looping section */
 start_loop: /*-*************************************************************/
+   /* We could be looping here without exiting the function and we need to
+      process future and promise before the next waiting period. */
+   /* destroy all optional futures */
+   EINA_LIST_FREE(_pending_futures, f)
+     efl_del(f);
+
+   /* and propagate all promise value */
+   EINA_LIST_FREE(_pending_promises, p)
+     ecore_loop_promise_fulfill(p);
+
    /* any timers re-added as a result of these are allowed to go */
    _efl_loop_timer_enable_new();
    /* if we have been asked to quit the mainloop then exit at this point */
