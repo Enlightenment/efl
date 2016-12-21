@@ -678,7 +678,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
      {
         ERR("Programs recursing up to recursion limit of %i in '%s' with sig='%s', src='%s' from '%s', '%s'. Disabled.",
             64, pr->name, ssig, ssrc, ed->path, ed->group);
-        if (pr->action == EDJE_ACTION_TYPE_STATE_SET && ((pr->tween.time == ZERO) || (ed->no_anim)))
+        if (pr->action == EDJE_ACTION_TYPE_STATE_SET && (EQ(pr->tween.time, ZERO) || (ed->no_anim)))
           ERR("Possible solution: try adding transition time to prevent Schrödinger's part state");
         recursion_limit = 1;
         return;
@@ -1947,7 +1947,7 @@ _edje_param_native_set(Edje *ed, Edje_Real_Part *rp, const char *name, const Edj
                   if (rp->part->dragable.confine_id != -1)
                     d = CLAMP(d, 0.0, 1.0);
                   if (rp->part->dragable.x < 0) d = 1.0 - d;
-                  if (rp->drag->val.x == FROM_DOUBLE(d)) return EINA_TRUE;
+                  if (EQ(rp->drag->val.x, FROM_DOUBLE(d))) return EINA_TRUE;
                   rp->drag->val.x = FROM_DOUBLE(d);
 #ifdef EDJE_CALC_CACHE
                   rp->invalidate = EINA_TRUE;
@@ -1966,7 +1966,7 @@ _edje_param_native_set(Edje *ed, Edje_Real_Part *rp, const char *name, const Edj
                   if (rp->part->dragable.confine_id != -1)
                     d = CLAMP(d, 0.0, 1.0);
                   if (rp->part->dragable.y < 0) d = 1.0 - d;
-                  if (rp->drag->val.y == FROM_DOUBLE(d)) return EINA_TRUE;
+                  if (EQ(rp->drag->val.y, FROM_DOUBLE(d))) return EINA_TRUE;
                   rp->drag->val.y = FROM_DOUBLE(d);
 #ifdef EDJE_CALC_CACHE
                   rp->invalidate = EINA_TRUE;
@@ -2286,11 +2286,11 @@ _edje_param_validate(const Edje_External_Param *param, const Edje_External_Param
         return EINA_TRUE;
 
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-        if ((info->info.d.min != EDJE_EXTERNAL_DOUBLE_UNSET) &&
+        if (!EINA_DBL_CMP(info->info.d.min, EDJE_EXTERNAL_DOUBLE_UNSET) &&
             (info->info.d.min > param->d))
           return EINA_FALSE;
 
-        if ((info->info.d.max != EDJE_EXTERNAL_DOUBLE_UNSET) &&
+        if (!EINA_DBL_CMP(info->info.d.max, EDJE_EXTERNAL_DOUBLE_UNSET) &&
             (info->info.d.max < param->d))
           return EINA_FALSE;
 

@@ -134,7 +134,7 @@ _edje_var_anim_cb(void *data EINA_UNUSED)
                           embryo_program_vm_pop(ed->collection->script);
                           _edje_recalc(ed);
                        }
-                       if (v == 1.0) ea->delete_me = 1;
+                       if (EQ(v, FROM_INT(1))) ea->delete_me = 1;
                     }
                }
              tl2 = eina_list_remove(tl2, ea);
