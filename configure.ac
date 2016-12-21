@@ -504,7 +504,7 @@ AC_CHECK_TYPES([siginfo_t], [], [],
 
 AC_C_BIGENDIAN
 AC_C_INLINE
-EFL_CHECK_COMPILER_FLAGS([EFLALL], [-Wall -Wextra -Wpointer-arith -Wfloat-equal -Wno-missing-field-initializers -fvisibility=hidden -fdata-sections -ffunction-sections])
+EFL_CHECK_COMPILER_FLAGS([EFLALL], [-Wall -Wextra -Wpointer-arith -Wno-missing-field-initializers -fvisibility=hidden -fdata-sections -ffunction-sections])
 EFL_CHECK_LINKER_FLAGS([EFLALL], [-fvisibility=hidden -fdata-sections -ffunction-sections -Wl,--gc-sections -fno-strict-aliasing -Wl,--as-needed -Wl,--no-copy-dt-needed-entries])
 case "${build_profile}" in
    dev)
