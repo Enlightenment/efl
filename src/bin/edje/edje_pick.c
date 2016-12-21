@@ -570,6 +570,37 @@ _edje_pick_output_prepare(Edje_File *o, Edje_File *edf, char *name)
    return o;
 }
 
+static void
+_edje_pick_header_alias_parent_add(Edje_File *out_file, Edje_File *edf, Edje_Part_Collection_Directory_Entry *ce, Edje_Part_Collection_Directory_Entry *ce_out)
+{
+   Edje_Part_Collection_Directory_Entry *ce_cor, *ce_new, *ce_f;
+   Eina_Iterator *i;
+
+   if (!ce->group_alias) return;
+
+   i = eina_hash_iterator_data_new(edf->collection);
+   EINA_ITERATOR_FOREACH(i, ce_cor)
+     {
+        /* find the alias parent group */
+        if ((ce->id == ce_cor->id) && (!ce_cor->group_alias))
+          {
+             ce_f = eina_hash_find(out_file->collection, ce_cor->entry);
+             if (!ce_f)
+               {
+                  ce_new = malloc(sizeof(*ce_new));
+                  memcpy(ce_new, ce_cor, sizeof(*ce_new));
+                  ce_new->id = ce_out->id;
+                  eina_hash_direct_add(out_file->collection, ce_new->entry, ce_new);
+               }
+             else
+               {
+                  ce_out->id = ce_f->id;
+               }
+          }
+     }
+   eina_iterator_free(i);
+}
+
 static Eina_List *
 _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Eina_List *groups, Edje_Part_Collection_Directory_Entry *ce, int *current_id)
 {
@@ -577,7 +608,6 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Eina_L
    Edje_Part_Collection *edc;
    Edje_Part *part;
    unsigned int i, j;
-   Eina_Iterator *is;
    Edje_Pack_Element *item;
    Eina_List *dep_list = NULL, *dep_list_inner = NULL;
 
@@ -607,27 +637,9 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Eina_L
              Edje_Part_Collection_Directory_Entry *ce_out; \
              ce_out = malloc(sizeof(*ce_out)); \
              memcpy(ce_out, ce_cor, sizeof(*ce_out)); \
-             if (ce_out->group_alias) \
-               { \
-                  Edje_Part_Collection_Directory_Entry *ce_new; \
-                  is = eina_hash_iterator_data_new(edf->collection); \
-                  EINA_ITERATOR_FOREACH(is, ce_cor) \
-                    { \
-                       if (ce_out->id == ce_cor->id) \
-                         { \
-                            ce_new = malloc(sizeof(*ce_new)); \
-                            memcpy(ce_new, ce_cor, sizeof(*ce_new)); \
-                            ce_new->id = (*current_id); \
-                            if (!eina_hash_find(out_file->collection, ce_new->entry)) \
-                              eina_hash_direct_add(out_file->collection, ce_new->entry, \
-                                                   ce_new); \
-                            else \
-                              free(ce_new); \
-                         } \
-                    } \
-                  eina_iterator_free(is); \
-               } \
              ce_out->id = *current_id; \
+             if (ce_out->group_alias) \
+               _edje_pick_header_alias_parent_add(out_file, edf, ce, ce_out); \
              EINA_LOG_INFO("Changing ID of group <%d> to <%d>\n", ce->id, ce_out->id); \
              eina_hash_direct_add(out_file->collection, ce_out->entry, ce_out); \
              (*current_id)++; \
@@ -748,7 +760,7 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
              if (!ce)
                {
                   EINA_LOG_ERR("Group <%s> was not found in <%s> file.\n",
-                         name1, context.current_file->name);
+                               name1, context.current_file->name);
                   status = EDJE_PICK_GROUP_NOT_FOUND;
                }
              else
@@ -761,29 +773,12 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
                   memcpy(ce_out, ce, sizeof(*ce_out));
                   ce_out->id = current_group_id;
                   if (ce_out->group_alias)
-                    {
-                       Edje_Part_Collection_Directory_Entry *ce_cor, *ce_new;
-                       i = eina_hash_iterator_data_new(edf->collection);
-                       EINA_ITERATOR_FOREACH(i, ce_cor)
-                         {
-                            if (ce->id == ce_cor->id)
-                              {
-                                 ce_new = malloc(sizeof(*ce_new));
-                                 memcpy(ce_new, ce_cor, sizeof(*ce_new));
-                                 ce_new->id = current_group_id;
-                                 eina_hash_direct_add(out_file->collection, ce_new->entry,
-                                                      ce_new);
-                              }
-                         }
-                       eina_iterator_free(i);
-                    }
-
-                  EINA_LOG_INFO("Changing ID of group <%d> to <%d>\n",
-                        ce->id, ce_out->id);
+                    _edje_pick_header_alias_parent_add(out_file, edf, ce, ce_out);
+                  EINA_LOG_INFO("Changing ID of group <%d> to <%d>\n", ce->id, ce_out->id);
                   current_group_id++;
 
                   eina_hash_direct_add(out_file->collection,ce_out->entry,
-                        ce_out);
+                                       ce_out);
                   dep_list = _edje_pick_header_dependencies_check(out_file, edf, context.current_file->groups, ce, &current_group_id);
                   if (!deps) deps = dep_list;
                   else deps = eina_list_merge(deps, dep_list);
