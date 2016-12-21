@@ -44,7 +44,7 @@ static void
 _future_check_err(void *data EINA_UNUSED, Efl_Event const *value EINA_UNUSED)
 {
    ck_assert_msg(0, "Future Expected Error:\n");
-   
+
    ecore_main_loop_quit();
 }
 
@@ -53,12 +53,9 @@ _error_then_ok(void* data, Efl_Event const* event)
 {
    Efl_Future_Event_Failure* info = event->info;
    Eina_Error const** expected_error = (Eina_Error const**)data;
-   if (*expected_error != NULL)
-   {
-     ck_assert_int_eq(info->error, **expected_error);
-   }
 
-   *expected_error = NULL;
+   if (*expected_error)
+     ck_assert_int_eq(info->error, **expected_error);
    ecore_main_loop_quit();
 }
 
@@ -82,8 +79,7 @@ efl_model_future_then(Efl_Future *future)
 {
    void *data = NULL;
    efl_future_then(future, &_future_then_quit_cb, &_error_then_cb, NULL, &data);
-   if(data == NULL)
-     ecore_main_loop_begin();
+   ecore_main_loop_begin();
    return data;
 }
 
@@ -91,8 +87,7 @@ void
 check_efl_model_future_error(Efl_Future *future, Eina_Error *err)
 {
    efl_future_then(future, &_future_check_err, &_error_then_ok, NULL, &err);
-   if(err == NULL)
-     ecore_main_loop_begin();
+   ecore_main_loop_begin();
 }
 
 int
@@ -100,8 +95,7 @@ efl_model_future_then_u(Efl_Future *future)
 {
    unsigned i = -1;
    efl_future_then(future, &_future_then_quit_u_cb, &_error_then_cb, NULL, &i);
-   if(i == (unsigned)-1)
-     ecore_main_loop_begin();
+   ecore_main_loop_begin();
    return i;
 }
 
@@ -456,4 +450,3 @@ check_efl_model_property_int_set(Efl_Model *efl_model, const char *property, int
    ck_assert_int_eq(value, actual_value);
    eina_value_flush(&eina_value);
 }
-
