@@ -75,6 +75,19 @@ typedef enum {
 } Eina_Rectangle_Packing;
 
 /**
+ * @typedef Eina_Rectangle_Outside
+ * Enumeration gives the positions where a rectangle can be outside a other rectangle
+ * @since 1.19
+ */
+typedef enum {
+    EINA_RECTANGLE_OUTSIDE_TOP = 1,
+    EINA_RECTANGLE_OUTSIDE_LEFT = 2,
+    EINA_RECTANGLE_OUTSIDE_BOTTOM = 4,
+    EINA_RECTANGLE_OUTSIDE_RIGHT = 8
+} Eina_Rectangle_Outside;
+
+
+/**
  * @brief Check if the given spans intersect.
  *
  * @param c1 The column of the first span.
@@ -506,6 +519,17 @@ EAPI void            eina_rectangle_free(Eina_Rectangle *rect) EINA_ARG_NONNULL(
  * @since 1.11
  */
 EAPI void            eina_rectangle_pool_packing_set(Eina_Rectangle_Pool *pool,Eina_Rectangle_Packing type) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief calculate where rect2 is outside of rect1
+ *
+ * @param rect1 the rect to use as anchor
+ * @param rect2 the rect to look for outside positions
+ *
+ * @return A or'ed map of Eina_Rectangle_Outside values
+ * @since 1.19
+ */
+EAPI Eina_Rectangle_Outside eina_rectangle_outside_position(Eina_Rectangle *rect1, Eina_Rectangle *rect2);
 
 #include "eina_inline_rectangle.x"
 

@@ -894,3 +894,20 @@ eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h)
 
    return EINA_TRUE;
 }
+
+EAPI Eina_Rectangle_Outside
+eina_rectangle_outside_position(Eina_Rectangle *rect1, Eina_Rectangle *rect2)
+{
+   Eina_Rectangle_Outside ret = 0;
+
+   if (rect1->y > rect2->y)
+     ret |= EINA_RECTANGLE_OUTSIDE_TOP;
+   if (rect1->x > rect2->x)
+     ret |= EINA_RECTANGLE_OUTSIDE_LEFT;
+   if (rect1->y + rect1->h < rect2->y + rect2->h)
+     ret |= EINA_RECTANGLE_OUTSIDE_BOTTOM;
+   if (rect1->x + rect1->w < rect2->x + rect2->w)
+     ret |= EINA_RECTANGLE_OUTSIDE_RIGHT;
+
+   return ret;
+}

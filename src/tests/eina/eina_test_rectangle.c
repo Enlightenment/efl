@@ -196,10 +196,28 @@ START_TEST(eina_rectangle_union_intersect)
 }
 END_TEST
 
+START_TEST(eina_rectangle_position_test)
+{
+    Eina_Rectangle middle, top, down, right, left;
+    EINA_RECTANGLE_SET(&middle, -1, -1, 2.0, 2.0);
+    EINA_RECTANGLE_SET(&top,    -1, -2, 2.0, 2.0);
+    EINA_RECTANGLE_SET(&right,   0, -1, 2.0, 2.0);
+    EINA_RECTANGLE_SET(&left,   -2, -1, 2.0, 2.0);
+    EINA_RECTANGLE_SET(&down,   -1,  0, 2.0, 2.0);
+
+    ck_assert_int_eq(eina_rectangle_outside_position(&middle, &top), EINA_RECTANGLE_OUTSIDE_TOP) ;
+    ck_assert_int_eq(eina_rectangle_outside_position(&middle, &down), EINA_RECTANGLE_OUTSIDE_BOTTOM) ;
+    ck_assert_int_eq(eina_rectangle_outside_position(&middle, &right), EINA_RECTANGLE_OUTSIDE_RIGHT) ;
+    ck_assert_int_eq(eina_rectangle_outside_position(&middle, &left), EINA_RECTANGLE_OUTSIDE_LEFT) ;
+
+}
+END_TEST
+
 void
 eina_test_rectangle(TCase *tc)
 {
    tcase_add_test(tc, eina_rectangle_pool);
    tcase_add_test(tc, eina_rectangle_pool_skyline);
    tcase_add_test(tc, eina_rectangle_union_intersect);
+   tcase_add_test(tc, eina_rectangle_position_test);
 }
