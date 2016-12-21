@@ -153,6 +153,8 @@ EAPI extern int _edje_default_log_dom ;
 #define COS(a) eina_f32p32_cos(a)
 #define SIN(a) eina_f32p32_sin(a)
 #define PI EINA_F32P32_PI
+#define EQ(a, b) a == b
+#define NEQ(a, b) a != b
 
 #else
 
@@ -174,6 +176,8 @@ EAPI extern int _edje_default_log_dom ;
 #define COS(a) cos(a)
 #define SIN(a) sin(a)
 #define PI 3.14159265358979323846
+#define EQ(a, b) EINA_DBL_CMP(a, b)
+#define NEQ(a, b) !EINA_DBL_CMP(a, b)
 
 #endif
 
