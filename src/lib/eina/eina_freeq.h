@@ -17,10 +17,11 @@
  *
  * For debugging and tuning you may set the following envrionment variables:
  *
- * EINA_FREEQ_BYPASS=1
+ * EINA_FREEQ_BYPASS=1/0
  *
- * Set this environment variable to immediately bypass the free queue and
- * have all items submitted free with their free function immediately.
+ * Set this environment variable to 1 to immediately bypass the free queue and
+ * have all items submitted free with their free function immediately. Set
+ * it to 0 to force the free queue to work and delay freeing of items.
  * Note that you can override this by setting count or mem max by
  * eina_freeq_count_max_set() or eina_freeq_mem_max_set() which will
  * disable bypass for that specific free queue. once bypass is disabled
@@ -31,17 +32,35 @@
  * This sets the maximum number of bytes to N an item in the free queue may
  * be in size for the free queue to fill it with debugging values like
  * 0x55 in every byte, to ensure you can see what memory has been freed
- * or not when debugging in tools like gdb.
+ * or not when debugging in tools like gdb. Note that this value is
+ * actually one greater than the actual maximum, so if this is set to 100
+ * a memory blob of 100 bytes will not be filled but one of 99 bytes in
+ * size will be.
  *
  * EINA_FREEQ_TOTAL_MAX=N
  *
  * This sets the maximum number of items allowed to N on a free queue by
- * default before it starts emptying the free queue out tomake room.
+ * default before it starts emptying the free queue out to make room.
  *
  * EINA_FREEQ_MEM_MAX=N
  *
  * This sets the maximum total number of Kb (Kilobytes) of memory allowed
  * on a free queue by default to N Kb worth of data.
+ *
+ * EINA_FREEQ_FILL=N
+ *
+ * This sets the buyte value to write to every byte of an allocation that
+ * is added to the free queue when it is added to mark the data as invalid.
+ * The default value is 0x55 (85). Memory is only filled if the size of
+ * the allocation is less than the max that you can adjust with
+ * EINA_FREEQ_FILL_MAX.
+ *
+ * EINA_FREEQ_FILL_FREED=N
+ *
+ * Memory just before it is actually passed to the free function to be freed
+ * will be filled with this pattern value in every byte. The default value
+ * is 0x77 (119). Memory is only filled if the size of the allocation is
+ * less than the max that you can adjust with EINA_FREEQ_FILL_MAX.
  * 
  * @{
  *

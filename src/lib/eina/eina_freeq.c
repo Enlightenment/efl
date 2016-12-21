@@ -57,19 +57,27 @@ struct _Eina_FreeQ
 
 // ========================================================================= //
 
-static Eina_FreeQ    *_eina_freeq_main        = NULL;
-static int            _eina_freeq_bypass      = -1;
-static unsigned int   _eina_freeq_fillpat_max = ITEM_FILLPAT_MAX;
-static unsigned char  _eina_freeq_fillpat_val = 0x55;
-static int            _eina_freeq_total_max   = ITEM_TOTAL_MAX;
-static size_t         _eina_freeq_mem_max     = ITEM_MEM_MAX;
+static Eina_FreeQ    *_eina_freeq_main              = NULL;
+static int            _eina_freeq_bypass            = -1;
+static unsigned int   _eina_freeq_fillpat_max       = ITEM_FILLPAT_MAX;
+static unsigned char  _eina_freeq_fillpat_val       = 0x55;
+static unsigned char  _eina_freeq_fillpat_freed_val = 0x77;
+static int            _eina_freeq_total_max         = ITEM_TOTAL_MAX;
+static size_t         _eina_freeq_mem_max           = ITEM_MEM_MAX;
 
 // ========================================================================= //
 
-static void
+static inline void
 _eina_freeq_fill_do(void *ptr, size_t size)
 {
    if (ptr) memset(ptr, _eina_freeq_fillpat_val, size);
+}
+
+static inline void
+_eina_freeq_freed_fill_do(void *ptr, size_t size)
+{
+   if (_eina_freeq_fillpat_freed_val == 0) return;
+   if (ptr) memset(ptr, _eina_freeq_fillpat_freed_val, size);
 }
 
 static void
@@ -94,7 +102,10 @@ _eina_freeq_free_do(void *ptr,
                     size_t size EINA_UNUSED)
 {
    if ((size < _eina_freeq_fillpat_max) && (size > 0))
-     _eina_freeq_fill_check(ptr, free_func, size);
+     {
+        _eina_freeq_fill_check(ptr, free_func, size);
+        _eina_freeq_freed_fill_do(ptr, size);
+     }
    free_func(ptr);
    return;
 }
@@ -172,6 +183,10 @@ eina_freeq_new(void)
         if (s) _eina_freeq_total_max = atoi(s);
         s = getenv("EINA_FREEQ_MEM_MAX");
         if (s) _eina_freeq_mem_max = atoi(s) * 1024;
+        s = getenv("EINA_FREEQ_FILL");
+        if (s) _eina_freeq_fillpat_val = atoi(s);
+        s = getenv("EINA_FREEQ_FILL_FREED");
+        if (s) _eina_freeq_fillpat_freed_val = atoi(s);
      }
    fq = calloc(1, sizeof(Eina_FreeQ));
    if (!fq) return NULL;
