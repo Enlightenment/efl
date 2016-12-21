@@ -1792,6 +1792,8 @@ _flip_content_set(Evas_Object *obj,
         //evas_object_smart_member_add(content, obj);
         evas_object_clip_set
           (content, front ? sd->front.clip : sd->back.clip);
+        if (efl_isa(content, ELM_WIDGET_CLASS) && sd->state != front)
+          elm_widget_tree_unfocusable_set(content, EINA_TRUE);
      }
 
    // force calc to contents are the right size before transition
@@ -2012,6 +2014,13 @@ _internal_elm_flip_go_to(Evas_Object *obj,
         if (front) elm_object_focus_set(sd->front.content, EINA_TRUE);
         else elm_object_focus_set(sd->back.content, EINA_TRUE);
      }
+
+   if (sd->front.content && efl_isa(sd->front.content, ELM_WIDGET_CLASS))
+     elm_widget_tree_unfocusable_set(sd->front.content, !front);
+   if (sd->back.content && efl_isa(sd->back.content, ELM_WIDGET_CLASS))
+     elm_widget_tree_unfocusable_set(sd->back.content, front);
+
+
 }
 
 EOLIAN static void
