@@ -61,11 +61,8 @@ _generate_ref(const char *refn, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
              eina_stringshare_del(bname);
              goto noref;
           }
-        _generate_ref(bname, wbuf, use_legacy);
         Eina_Stringshare *str = eolian_typedecl_enum_field_c_name_get(efl);
-        eina_strbuf_append_char(wbuf, '.');
         eina_strbuf_append(wbuf, str);
-        eina_stringshare_del(str);
         eina_stringshare_del(bname);
         return;
      }
