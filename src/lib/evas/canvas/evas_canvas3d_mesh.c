@@ -934,7 +934,7 @@ evas_canvas3d_mesh_interpolate_position_get(Eina_Vector3 *out, const Evas_Canvas
      {
         float *ptr;
 
-        if (!EINA_FLT_CMP(pos0->stride, 0.0))
+        if (pos0->stride != 0)
           ptr = (float *)((char *)pos0->data + pos0->stride * index);
         else
           ptr = (float *)pos0->data + 3 * index;
@@ -947,12 +947,12 @@ evas_canvas3d_mesh_interpolate_position_get(Eina_Vector3 *out, const Evas_Canvas
      {
         float *ptr0, *ptr1;
 
-        if (!EINA_FLT_CMP(pos0->stride, 0.0))
+        if (pos0->stride != 0)
           ptr0 = (float *)((char *)pos0->data + pos0->stride * index);
         else
           ptr0 = (float *)pos0->data + 3 * index;
 
-        if (!EINA_FLT_CMP(pos1->stride, 0.0))
+        if (pos1->stride != 0)
           ptr1 = (float *)((char *)pos1->data + pos1->stride * index);
         else
           ptr1 = (float *)pos1->data + 3 * index;
