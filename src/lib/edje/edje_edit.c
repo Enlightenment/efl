@@ -1587,7 +1587,7 @@ edje_edit_sound_samplebuffer_get(Evas_Object *obj, const char *sample_name)
              if (!ef)
                return NULL;
              snprintf(snd_id_str, sizeof(snd_id_str), "edje/sounds/%i", sample->id);
-             data = eet_read_direct(ef, snd_id_str, &len);
+             data = eet_read(ef, snd_id_str, &len);
              if (len <= 0)
                {
                   ERR("Sample from edj file '%s' has 0 length", ed->path);
