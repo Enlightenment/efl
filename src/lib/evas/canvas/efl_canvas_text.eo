@@ -1,6 +1,6 @@
 struct Efl.Canvas.Text.Style; [[EFL text style data structure]]
 
-class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
+class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Canvas.Filter.Internal)
 {
    [[Efl canvas text class]]
    legacy_prefix: evas_object_textblock;
@@ -367,6 +367,10 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
       Efl.Object.dbg_info_get;
       Efl.Canvas.Object.paragraph_direction { get; set; }
       Efl.Text.text { get; set; }
+      Efl.Gfx.Filter.filter_program { get; set; }
+      Efl.Canvas.Filter.Internal.filter_dirty;
+      Efl.Canvas.Filter.Internal.filter_input_render;
+      Efl.Canvas.Filter.Internal.filter_state_prepare;
    }
    events {
       changed; [[Called when the content (text or annotations) changed.]]

@@ -199,6 +199,15 @@ _text_resize(void *data EINA_UNUSED, const Efl_Event *ev)
    efl_gfx_size_hint_min_set(ev->object, w, h);
 }
 
+static void
+_textblock_resize(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   int w = 0, h = 0;
+
+   evas_object_textblock_size_native_get(ev->object, &w, &h);
+   efl_gfx_size_hint_min_set(ev->object, w + 1, h + 1);
+}
+
 static Evas_Object *
 _img_tooltip(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
 {
@@ -245,7 +254,7 @@ _font_size_change(void *data, const Efl_Event *ev)
 void
 test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win, *box, *box2, *o, *text, *spinner, *code, *split;
+   Eo *win, *box, *box2, *o, *text = NULL, *spinner, *code, *split;
 
    win = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
                  efl_text_set(efl_added, "Gfx Filter Editor"),
@@ -342,6 +351,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_content_set(efl_part(split, "top"), box2);
 
       /* FIXME: No textblock support! TEXT is not part of EO public API. */
+      /*
       o = text = evas_object_text_add(evas_object_evas_get(win));
       efl_event_callback_add(o, EFL_GFX_EVENT_RESIZE, _text_resize, NULL);
       efl_text_properties_font_set(o, "Sans:style=Bold", default_font_size);
@@ -349,6 +359,27 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_text_set(o, "EFL");
       efl_gfx_visible_set(o, 1);
       efl_pack(box2, o);
+      // */
+
+      const char *tbtxt =
+            "Hey dude, "
+            "<gfx_filter='fill{color=\"#0033\"} padding_set{20} blur{3} blend{}'>hello</>"
+            " world!<br>"
+            "<gfx_filter='blur{15,color=\"red\"}blend{}'>Wanna dance?</><br>"
+            "What's going on here???";
+
+      /* EXPERIMENTAL TEXTBLOCK FILTER */
+      o = evas_object_textblock_add(evas_object_evas_get(win));
+      efl_event_callback_add(o, EFL_GFX_EVENT_RESIZE, _textblock_resize, NULL);
+      Evas_Textblock_Style *st = evas_textblock_style_new();
+      evas_textblock_style_set(st, "DEFAULT='font=Sans font_size=24 color=#FFF wrap=word'");
+      evas_object_textblock_style_set(o, st);
+      evas_object_textblock_text_markup_set(o, tbtxt);
+      efl_canvas_object_scale_set(o, elm_config_scale_get());
+      efl_pack(box2, o);
+      evas_object_resize(o, 1, 1);
+      efl_gfx_visible_set(o, 1);
+      // */
    }
 
    {

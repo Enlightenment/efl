@@ -63,6 +63,7 @@
  */
 
 #define EFL_CANVAS_OBJECT_BETA
+#define EFL_CANVAS_FILTER_INTERNAL_PROTECTED
 
 #include "evas_common_private.h"
 #include "evas_private.h"
@@ -76,6 +77,9 @@
 
 #include "linebreak.h"
 #include "wordbreak.h"
+
+#include "evas_filter.h"
+#include "efl_canvas_filter_internal.eo.h"
 
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
@@ -215,6 +219,18 @@ typedef struct _Evas_Textblock_Selection_Iterator Evas_Textblock_Selection_Itera
  * A textblock annotation iterator.
  */
 typedef struct _Efl_Canvas_Text_Annotation_Iterator Efl_Canvas_Text_Annotation_Iterator;
+/**
+ * @internal
+ * @typedef Evas_Object_Textblock_Filter
+ * A structure holding gfx filter information for a text item
+ */
+typedef struct _Evas_Object_Textblock_Filter Evas_Object_Textblock_Filter;
+/**
+ * @internal
+ * @typedef Evas_Object_Textblock_Filter_Post_Render
+ * Post-render data for async rendering of gfx filters
+ */
+typedef struct _Evas_Object_Textblock_Filter_Post_Render Evas_Object_Textblock_Filter_Post_Render;
 /**
  * @internal
  * @def IS_AT_END(ti, ind)
@@ -408,6 +424,7 @@ struct _Evas_Object_Textblock_Item
    Evas_Coord                           yoff;  /**< y offset. */
    Eina_Bool                            merge : 1; /**< Indicates whether this item should merge to the previous item or not */
    Eina_Bool                            visually_deleted : 1; /**< Indicates whether this item is used in the visual layout or not. */
+   Eina_Bool                            has_gfx_filter : 1; /**< True if this item should be rendered with a gfx filter */
 };
 
 struct _Evas_Object_Textblock_Text_Item
@@ -427,6 +444,30 @@ struct _Evas_Object_Textblock_Format_Item
    unsigned char                        vsize : 2;  /**< VSIZE_FULL or VSIZE_ASCENT */
    unsigned char                        size : 2;  /**< SIZE, SIZE_ABS or SIZE_REL*/
    Eina_Bool                            formatme : 1;  /**< EINA_TRUE if format required, else EINA_FALSE */
+};
+
+struct _Evas_Object_Textblock_Filter
+{
+   // FIXME: sources not handled! --> global to the textblock
+   // FIXME: data not handled! --> global to the textblock
+   // FIXME: filters need names! --> global to the textblock
+   Eina_Stringshare     *code; // only name! and reference to textblock's list of filters
+   Evas_Filter_Program  *pgm;
+   Evas_Filter_Context  *ctx;
+   Evas_Object          *eo_obj;
+   Evas_Public_Data     *evas;
+   void                 *dc; /* draw context */
+   struct {
+      int                l, r, t, b;
+   } pad;
+   Eina_Bool             invalid;
+   Eina_Bool             async;
+};
+
+struct _Evas_Object_Textblock_Filter_Post_Render
+{
+   Evas_Object_Textblock_Filter *filter;
+   Eina_Bool success;
 };
 
 struct _Evas_Object_Textblock_Format
@@ -449,6 +490,7 @@ struct _Evas_Object_Textblock_Format
    struct {
       int               l, r;
    } margin;  /**< Left and right margin width. */
+   Evas_Object_Textblock_Filter *gfx_filter; /**< Gfx Filter to apply to this node */
    int                  ref;  /**< Value of the ref. */
    int                  tabstops;  /**< Value of the size of the tab character. */
    int                  linesize;  /**< Value of the size of the line of the text. */
@@ -878,6 +920,13 @@ _format_unref_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
    if (fmt->ref > 0) return;
    if (fmt->font.fdesc) evas_font_desc_unref(fmt->font.fdesc);
    if (fmt->font.source) eina_stringshare_del(fmt->font.source);
+   if (fmt->gfx_filter)
+     {
+        eina_stringshare_del(fmt->gfx_filter->code);
+        if (fmt->gfx_filter->dc)
+          ENFN->context_free(ENDT, fmt->gfx_filter->dc);
+        free(fmt->gfx_filter);
+     }
    if ((obj->layer) && (obj->layer->evas))
      evas_font_free(obj->layer->evas->evas, fmt->font.font);
    free(fmt);
@@ -1202,6 +1251,7 @@ static const char *replacement_charstr = NULL;
 static const char *underline_dash_widthstr = NULL;
 static const char *underline_dash_gapstr = NULL;
 static const char *underline_heightstr = NULL;
+static const char *gfx_filter = NULL;
 
 /**
  * @page evas_textblock_style_page Evas Textblock Style Options
@@ -1307,6 +1357,7 @@ _format_command_init(void)
         underline_dash_widthstr = eina_stringshare_add("underline_dash_width");
         underline_dash_gapstr = eina_stringshare_add("underline_dash_gap");
         underline_heightstr = eina_stringshare_add("underline_height");
+        gfx_filter = eina_stringshare_add("gfx_filter"); // FIXME: bg, fg filters
      }
    format_refcount++;
 }
@@ -1361,6 +1412,7 @@ _format_command_shutdown(void)
    eina_stringshare_del(underline_dash_widthstr);
    eina_stringshare_del(underline_dash_gapstr);
    eina_stringshare_del(underline_heightstr);
+   eina_stringshare_del(gfx_filter);
 }
 
 /**
@@ -2449,6 +2501,22 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          */
         fmt->underline_height = atof(param);
         if (fmt->underline_height <= 0.0) fmt->underline_height = 1.0;
+     }
+   else if (cmd == gfx_filter)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_gfx_filter Gfx Filter
+         *
+         * Experimental filter, see efl_gfx_filter for more information.
+         * @code
+         * gfx_filter='lua code'
+         * @endcode
+         */
+        if (!fmt->gfx_filter)
+          fmt->gfx_filter = calloc(1, sizeof(Evas_Object_Textblock_Filter));
+        eina_stringshare_replace(&fmt->gfx_filter->code, param);
      }
 }
 
@@ -12728,6 +12796,43 @@ evas_object_textblock_free(Evas_Object *eo_obj)
 }
 
 static void
+_filter_sync_end(Evas_Object_Textblock_Filter *filter, Eina_Bool success)
+{
+   evas_filter_context_destroy(filter->ctx);
+   filter->invalid = !success;
+   filter->ctx = NULL;
+}
+
+static void
+_filter_post_render_cb(void *data)
+{
+   Evas_Object_Textblock_Filter_Post_Render *post_data = data;
+
+   _filter_sync_end(post_data->filter, post_data->success);
+   free(post_data);
+}
+
+static void
+_filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
+{
+   Evas_Object_Textblock_Filter_Post_Render *post_data;
+   Evas_Object_Textblock_Filter *filter = data;
+
+   EINA_SAFETY_ON_FALSE_RETURN(filter->ctx == ctx);
+
+   if (!filter->async)
+     {
+        _filter_sync_end(filter, success);
+        return;
+     }
+
+   post_data = calloc(1, sizeof(*post_data));
+   post_data->success = success;
+   post_data->filter = filter;
+   evas_post_render_job_add(filter->evas, _filter_post_render_cb, post_data);
+}
+
+static void
 evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 			     Evas_Object_Protected_Data *obj,
 			     void *type_private_data,
@@ -12741,6 +12846,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    Eina_List *shadows = NULL;
    Eina_List *glows = NULL;
    Eina_List *outlines = NULL;
+   Eina_List *gfx_filters = NULL, *li;
+   void *context_save = context;
    int strikethrough_thickness, underline_thickness, underline_position;
    int i, j;
    int cx, cy, cw, ch, clip;
@@ -12839,6 +12946,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
           } \
      } \
    do {} while(0)
+
 #define COLOR_SET(col)                                                  \
    nr = obj->cur->cache.clip.r * ti->parent.format->color.col.r;        \
    ng = obj->cur->cache.clip.g * ti->parent.format->color.col.g;        \
@@ -12850,6 +12958,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                                 nr / 255, ng / 255, nb / 255, na / 255); \
         cr = nr; cg = ng; cb = nb; ca = na;                             \
      }
+
 #define COLOR_SET_AMUL(col, amul)                                       \
    nr = obj->cur->cache.clip.r * ti->parent.format->color.col.r * (amul); \
    ng = obj->cur->cache.clip.g * ti->parent.format->color.col.g * (amul); \
@@ -12861,6 +12970,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                                 nr / 65025, ng / 65025, nb / 65025, na / 65025); \
         cr = nr; cg = ng; cb = nb; ca = na;                             \
      }
+/*
 #define DRAW_TEXT(ox, oy)                                               \
    if (ti->parent.format->font.font) {                                  \
       ENFN->context_cutout_target(output, context,                      \
@@ -12874,6 +12984,29 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h,         \
         &ti->text_props, do_async);                                     \
    }
+*/
+
+#define DRAW_TEXT_FILTER(gfx_f, ox, oy)                                 \
+   evas_filter_input_render(eo_obj, gfx_f->ctx, gfx_f->dc, ti,          \
+                            gfx_f->pad.l, gfx_f->pad.r,                 \
+                            gfx_f->pad.t, gfx_f->pad.b, do_async)
+
+#define DRAW_TEXT_NOFILTER(ox, oy) \
+   evas_font_draw_async_check(obj, output, context, surface,            \
+     ti->parent.format->font.font,                                      \
+     obj->cur->geometry.x + ln->x + ti->parent.x + x + (ox),            \
+     obj->cur->geometry.y + ln->par->y + ln->y + yoff + y + (oy),       \
+     ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h,            \
+     &ti->text_props, do_async)                                         \
+
+#define DRAW_TEXT(ox, oy) do {                                          \
+   if (ti->parent.format->font.font)                                    \
+     {                                                                  \
+        if (EINA_LIKELY(!itr->has_gfx_filter))                          \
+          DRAW_TEXT_NOFILTER(ox, oy);                                   \
+        else                                                            \
+          DRAW_TEXT_FILTER(ti->parent.format->gfx_filter, ox, oy);      \
+     } } while(0)
 
    /* backing */
 #define DRAW_RECT(ox, oy, ow, oh, or, og, ob, oa)                       \
@@ -12889,11 +13022,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                                      nr / 255, ng / 255, nb / 255, na / 255); \
              cr = nr; cg = ng; cb = nb; ca = na;                        \
           }                                                             \
-        ENFN->context_cutout_target(output, context,                    \
-                             obj->cur->geometry.x + ln->x + x + (ox),   \
-                             obj->cur->geometry.y + ln->par->y + ln->y + y + (oy), \
-                             (ow),                                      \
-                             (oh));                                     \
         ENFN->rectangle_draw(output,                                    \
                              context,                                   \
                              surface,                                   \
@@ -12971,33 +13099,37 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    ITEM_WALK()
      {
         /* Check which other pass are necessary to avoid useless WALK */
-        Evas_Object_Textblock_Text_Item *ti;
+      Evas_Object_Textblock_Text_Item *ti;
 
-        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
-        if (ti)
-          {
-             if (ti->parent.format->style & (EVAS_TEXT_STYLE_SHADOW |
-                                             EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW |
-                                             EVAS_TEXT_STYLE_OUTLINE_SHADOW |
-                                             EVAS_TEXT_STYLE_FAR_SHADOW |
-                                             EVAS_TEXT_STYLE_FAR_SOFT_SHADOW |
-                                             EVAS_TEXT_STYLE_SOFT_SHADOW))
-               {
-                  shadows = eina_list_append(shadows, itr);
-               }
-             if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) ==
-                 EVAS_TEXT_STYLE_GLOW)
-               {
-                  glows = eina_list_append(glows, itr);
-               }
-             if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
-                 ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
-                 ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW) ||
-                 (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE))
-               {
-                  outlines = eina_list_append(outlines, itr);
-               }
-          }
+      ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
+      if (ti)
+        {
+           if (ti->parent.format->style & (EVAS_TEXT_STYLE_SHADOW |
+                                           EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW |
+                                           EVAS_TEXT_STYLE_OUTLINE_SHADOW |
+                                           EVAS_TEXT_STYLE_FAR_SHADOW |
+                                           EVAS_TEXT_STYLE_FAR_SOFT_SHADOW |
+                                           EVAS_TEXT_STYLE_SOFT_SHADOW))
+             {
+                shadows = eina_list_append(shadows, itr);
+             }
+           if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) ==
+               EVAS_TEXT_STYLE_GLOW)
+             {
+                glows = eina_list_append(glows, itr);
+             }
+           if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
+               ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+               ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW) ||
+               (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE))
+             {
+                outlines = eina_list_append(outlines, itr);
+             }
+           if (ti->parent.format->gfx_filter)
+             {
+                gfx_filters = eina_list_append(gfx_filters, itr);
+             }
+        }
 
         /* Draw background */
         DRAW_FORMAT(backing, 0, ln->h);
@@ -13008,6 +13140,83 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
     * in "_text_item_update_sizes" should not modify one without the other. */
 
    /* prepare everything for text draw */
+
+   /* gfx filters preparation */
+   EINA_LIST_FOREACH(gfx_filters, li, itr)
+     {
+        Efl_Canvas_Filter_State state = EFL_CANVAS_FILTER_STATE_DEFAULT;
+        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(itr);
+        Evas_Object_Textblock_Filter *filter;
+        Evas_Filter_Program *pgm;
+        Evas_Filter_Context *ctx;
+        Eina_Bool ok;
+
+        filter = ti->parent.format->gfx_filter;
+        if (!filter->code || filter->invalid)
+          {
+             itr->has_gfx_filter = EINA_FALSE;
+             continue;
+          }
+
+        pgm = filter->pgm;
+        if (!pgm)
+          {
+             pgm = evas_filter_program_new(NULL, EINA_FALSE);
+             ok = evas_filter_program_parse(pgm, filter->code);
+             if (!ok)
+               {
+                  evas_filter_program_del(pgm);
+                  filter->invalid = EINA_TRUE;
+                  itr->has_gfx_filter = EINA_FALSE;
+                  continue;
+               }
+             filter->pgm = pgm;
+          }
+
+#ifdef DEBUG
+        if (filter->ctx) WRN("Previous filter context was not deleted");
+#endif
+
+        ctx = evas_filter_context_new(obj->layer->evas, do_async);
+        evas_filter_state_prepare(eo_obj, &state, ti);
+        evas_filter_program_state_set(pgm, &state);
+        ok = evas_filter_context_program_use(ctx, pgm);
+        if (!ok)
+          {
+             evas_filter_context_destroy(ctx);
+             evas_filter_program_del(pgm);
+             filter->pgm = NULL;
+             filter->invalid = EINA_TRUE;
+             itr->has_gfx_filter = EINA_FALSE;
+             continue;
+          }
+        filter->ctx = ctx;
+
+        ln = ti->parent.ln;
+        ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
+        ENFN->context_multiplier_set(ENDT, context,
+                                     obj->cur->cache.clip.r, obj->cur->cache.clip.g,
+                                     obj->cur->cache.clip.b, obj->cur->cache.clip.a);
+        evas_filter_program_padding_get(pgm,
+                                        &filter->pad.l, &filter->pad.r,
+                                        &filter->pad.t, &filter->pad.b);
+        evas_filter_context_buffers_allocate_all(ctx);
+        evas_filter_target_set(ctx, context, surface,
+                               obj->cur->geometry.x + ti->parent.x + x - filter->pad.l,
+                               obj->cur->geometry.y + ln->par->y + y - filter->pad.t);
+        if (!filter->dc)
+          {
+             filter->dc = ENFN->context_new(ENDT);
+             ENFN->context_color_set(ENDT, filter->dc, 255, 255, 255, 255);
+          }
+        filter->eo_obj = eo_obj;
+        filter->evas = obj->layer->evas;
+        filter->async = do_async;
+
+        itr->has_gfx_filter = EINA_TRUE;
+
+        ENFN->context_multiplier_unset(ENDT, context);
+     }
 
    /* shadows */
    EINA_LIST_FREE(shadows, itr)
@@ -13021,6 +13230,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 
         yoff = itr->yoff;
         ln = itr->ln;
+
+        if (EINA_UNLIKELY(itr->has_gfx_filter))
+          context = ti->parent.format->gfx_filter->dc;
 
         shad_dst = shad_sz = dx = dy = haveshad = 0;
         switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC)
@@ -13118,6 +13330,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                    break;
                }
           }
+
+        context = context_save;
      }
 
    /* glows */
@@ -13131,6 +13345,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 
         yoff = itr->yoff;
         ln = itr->ln;
+
+        if (EINA_UNLIKELY(itr->has_gfx_filter))
+          context = ti->parent.format->gfx_filter->dc;
 
         if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_GLOW)
           {
@@ -13151,6 +13368,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
              DRAW_TEXT(0, -1);
              DRAW_TEXT(0, 1);
           }
+
+        context = context_save;
      }
 
    /* outlines */
@@ -13164,6 +13383,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 
         yoff = itr->yoff;
         ln = itr->ln;
+
+        if (EINA_UNLIKELY(itr->has_gfx_filter))
+          context = ti->parent.format->gfx_filter->dc;
 
         if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
             ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
@@ -13189,6 +13411,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                     }
                }
           }
+
+        context = context_save;
      }
 
    /* normal text and lines */
@@ -13239,14 +13463,30 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
           }
 
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
+
         /* NORMAL TEXT */
         if (ti)
           {
              void *fi = _ITEM_TEXT(itr)->text_props.font_instance;
+
+             if (EINA_UNLIKELY(itr->has_gfx_filter))
+               context = ti->parent.format->gfx_filter->dc;
+
              COLOR_SET(normal);
              DRAW_TEXT(0, 0);
              strikethrough_thickness =
                 evas_common_font_instance_underline_thickness_get(fi);
+
+             context = context_save;
+
+             if (EINA_UNLIKELY(itr->has_gfx_filter))
+               {
+                  Evas_Object_Textblock_Filter *filter = ti->parent.format->gfx_filter;
+                  Evas_Filter_Context *ctx = filter->ctx;
+
+                  evas_filter_context_post_run_callback_set(ctx, _filter_cb, filter);
+                  evas_filter_run(ctx);
+               }
           }
 
         /* STRIKETHROUGH */
@@ -13268,6 +13508,49 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
      }
    ITEM_WALK_END();
    ENFN->context_multiplier_unset(output, context);
+}
+
+EOLIAN static void
+_efl_canvas_text_efl_canvas_filter_internal_filter_state_prepare(
+      Eo *eo_obj, Efl_Canvas_Text_Data *pd EINA_UNUSED, Efl_Canvas_Filter_State *state, void *data)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Textblock_Text_Item *ti = data;
+   int l, r, t, b;
+
+#define STATE_COLOR(dst, src) dst.r = src.r; dst.g = src.g; dst.b = src.b; dst.a = src.a
+   STATE_COLOR(state->color, ti->parent.format->color.normal);
+   STATE_COLOR(state->text.glow, ti->parent.format->color.glow);
+   STATE_COLOR(state->text.glow2, ti->parent.format->color.glow2);
+   STATE_COLOR(state->text.shadow, ti->parent.format->color.shadow);
+   STATE_COLOR(state->text.outline, ti->parent.format->color.outline);
+#undef STATE_COLOR
+
+   evas_filter_program_padding_get(ti->parent.format->gfx_filter->pgm, &l, &r, &t, &b);
+   state->w = ti->parent.w + l + r;
+   state->h = ti->parent.h + t + b;
+   state->scale = obj->cur->scale;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_text_efl_canvas_filter_internal_filter_input_render(
+      Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *pd EINA_UNUSED, void *filter, void *drawctx,
+      void *data, int l, int r EINA_UNUSED, int t, int b EINA_UNUSED, Eina_Bool do_async)
+{
+   Evas_Object_Textblock_Text_Item *ti = data;
+
+   return evas_filter_font_draw(filter, drawctx,
+                                EVAS_FILTER_BUFFER_INPUT_ID,
+                                ti->parent.format->font.font,
+                                l, t + ti->parent.ln->y + ti->parent.yoff,
+                                &ti->text_props, do_async);
+}
+
+EOLIAN static void
+_efl_canvas_text_efl_canvas_filter_internal_filter_dirty(
+      Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *pd EINA_UNUSED)
+{
+   WRN("Filter marked as dirty. NOT IMPLEMENTED!");
 }
 
 static void
