@@ -3,6 +3,7 @@
 
 
 EAPI DATA32 evas_common_convert_ag_premul                          (DATA16 *data, unsigned int len);
+EAPI void evas_common_convert_ag_unpremul                          (DATA16 *data, unsigned int len);
 EAPI DATA32 evas_common_convert_argb_premul                        (DATA32 *src, unsigned int len);
 EAPI void evas_common_convert_argb_unpremul                        (DATA32 *src, unsigned int len);
 EAPI void evas_common_convert_color_argb_premul                    (int a, int *r, int *g, int *b);

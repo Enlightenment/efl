@@ -88,7 +88,16 @@ save_image_png(RGBA_Image *im, const char *file, int do_compress, int interlace)
      {
         agry88 = EINA_TRUE;
         pixel_size = 2;
-        data = im->image.data8;
+        data = malloc(im->cache_entry.w * im->cache_entry.h * pixel_size);
+        if (!data)
+          {
+             png_destroy_write_struct(&png_ptr, (png_infopp) & info_ptr);
+             png_destroy_info_struct(png_ptr, (png_infopp) & info_ptr);
+             goto close_file;
+          }
+        free_data = EINA_TRUE;
+        memcpy(data, im->image.data, im->cache_entry.w * im->cache_entry.h * pixel_size);
+        evas_common_convert_ag_unpremul((DATA16 *) data, im->cache_entry.w * im->cache_entry.h);
         png_init_io(png_ptr, f);
         png_set_IHDR(png_ptr, info_ptr, im->cache_entry.w, im->cache_entry.h, 8,
                      PNG_COLOR_TYPE_GRAY_ALPHA, interlace,

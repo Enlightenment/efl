@@ -26,6 +26,34 @@ evas_common_convert_ag_premul(DATA16 *data, unsigned int len)
    return nas;
 }
 
+EAPI void
+evas_common_convert_ag_unpremul(DATA16 *data, unsigned int len)
+{
+   DATA16 *de = data + len;
+   DATA16 p_val = 0x0000, p_res = 0x0000;
+
+   while (data < de)
+     {
+        if (p_val == *data) *data = p_res;
+        else
+          {
+             DATA16 a = (*data >> 8);
+
+             p_val = *data;
+             if ((a > 0) && (a < 255))
+               {
+                  *data = ((a << 8) | (((*data & 0xff) * 0xff) / a));
+               }
+             else if (a == 0)
+               {
+                  *data = 0x0000;
+               }
+             p_res = *data;
+          }
+        data++;
+     }
+}
+
 EAPI DATA32
 evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
 {
