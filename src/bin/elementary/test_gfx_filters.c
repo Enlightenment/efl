@@ -361,18 +361,25 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_pack(box2, o);
       // */
 
-      const char *tbtxt =
-            "Hey dude, "
-            "<gfx_filter='fill{color=\"#0033\"} padding_set{20} blur{3} blend{}'>hello</>"
-            " world!<br>"
-            "<gfx_filter='blur{15,color=\"red\"}blend{}'>Wanna dance?</><br>"
-            "What's going on here???";
+      const char *codes[] = {
+         "fill{color='#0033'} padding_set{20} blur{3} blend{}",
+         "blur{15,color='red'} blend{}"
+      };
+      const char *names[] = {
+         "one",
+         "two"
+      };
+      const char *tbtxt = "Hey dude, <gfx_filter='one'>hello</> world!<br>"
+                          "<gfx_filter='two'>Wanna dance?<br>"
+                          "What's going on here???</>";
 
       /* EXPERIMENTAL TEXTBLOCK FILTER */
       o = evas_object_textblock_add(evas_object_evas_get(win));
       efl_event_callback_add(o, EFL_GFX_EVENT_RESIZE, _textblock_resize, NULL);
       Evas_Textblock_Style *st = evas_textblock_style_new();
       evas_textblock_style_set(st, "DEFAULT='font=Sans font_size=24 color=#FFF wrap=word'");
+      for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(codes); k++)
+        efl_gfx_filter_program_set(o, codes[k], names[k]);
       evas_object_textblock_style_set(o, st);
       evas_object_textblock_text_markup_set(o, tbtxt);
       efl_canvas_object_scale_set(o, elm_config_scale_get());
