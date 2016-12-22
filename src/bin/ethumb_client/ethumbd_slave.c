@@ -25,6 +25,7 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <limits.h>
 #include <string.h>
@@ -57,74 +58,49 @@ struct _Ethumbd_Child
 };
 
 
-int
-_ec_read_safe(int fd, void *buf, ssize_t size)
+static int
+_ec_read_safe(FILE* stream, void *buf, ssize_t size)
 {
    ssize_t todo;
-   char *p;
+   unsigned char *p;
+   int c;
 
    todo = size;
    p = buf;
 
    while (todo > 0)
      {
-	ssize_t r;
-
-	r = read(fd, p, todo);
-	if (r > 0)
-	  {
-	     todo -= r;
-	     p += r;
-	  }
-	else if (r == 0)
-	  return 0;
-	else
-	  {
-	     if (errno == EINTR || errno == EAGAIN)
-	       continue;
-	     else
-	       {
-		  ERR("could not read from fd %d: %s",
-		      fd, strerror(errno));
-		  return 0;
-	       }
-	  }
+        c = getc(stream);
+        if (c == EOF)
+          {
+             ERR("could not read from stream %p", stream);
+             return 0;
+          }
+        *p = c;
+        ++p;
+        --todo;
      }
-
    return 1;
 }
 
-int
-_ec_write_safe(int fd, const void *buf, ssize_t size)
+static int
+_ec_write_safe(FILE *stream, const void *buf, ssize_t size)
 {
    ssize_t todo;
-   const char *p;
+   const unsigned char *p;
 
    todo = size;
    p = buf;
 
    while (todo > 0)
      {
-	ssize_t r;
-
-	r = write(fd, p, todo);
-	if (r > 0)
-	  {
-	     todo -= r;
-	     p += r;
-	  }
-	else if (r == 0)
-	  return 0;
-	else
-	  {
-	     if (errno == EINTR || errno == EAGAIN)
-	       continue;
-	     else
-	       {
-		  ERR("could not write to fd %d: %s", fd, strerror(errno));
-		  return 0;
-	       }
-	  }
+        if (putc(*p, stream) == EOF)
+          {
+             ERR("could not write to stream %p", stream);
+             return 0;
+          }
+        ++p;
+        --todo;
      }
 
    return 1;
@@ -137,7 +113,7 @@ _ec_pipe_str_read(struct _Ethumbd_Child *ec EINA_UNUSED, char **str)
    int r;
    char buf[PATH_MAX] = { '\0' };
 
-   r = _ec_read_safe(STDIN_FILENO, &size, sizeof(size));
+   r = _ec_read_safe(stdin, &size, sizeof(size));
    if (!r)
      {
 	*str = NULL;
@@ -150,7 +126,7 @@ _ec_pipe_str_read(struct _Ethumbd_Child *ec EINA_UNUSED, char **str)
 	return 1;
      }
 
-   r = _ec_read_safe(STDIN_FILENO, buf, size);
+   r = _ec_read_safe(stdin, buf, size);
    if (!r)
      {
 	*str = NULL;
@@ -199,7 +175,7 @@ _ec_op_new(struct _Ethumbd_Child *ec)
    int r;
    int idx;
 
-   r = _ec_read_safe(STDIN_FILENO, &idx, sizeof(idx));
+   r = _ec_read_safe(stdin, &idx, sizeof(idx));
    if (!r)
      return 0;
 
@@ -215,7 +191,7 @@ _ec_op_del(struct _Ethumbd_Child *ec)
    int r;
    int idx;
 
-   r = _ec_read_safe(STDIN_FILENO, &idx, sizeof(idx));
+   r = _ec_read_safe(stdin, &idx, sizeof(idx));
    if (!r)
      return 0;
 
@@ -248,14 +224,15 @@ _ec_op_generated_cb(void *data EINA_UNUSED, Ethumb *e, Eina_Bool success)
    size_cmd = sizeof(success) + sizeof(size_path) + size_path +
       sizeof(size_key) + size_key;
 
-   _ec_write_safe(STDOUT_FILENO, &size_cmd, sizeof(size_cmd));
-   _ec_write_safe(STDOUT_FILENO, &success, sizeof(success));
+   _ec_write_safe(stdout, &size_cmd, sizeof(size_cmd));
+   _ec_write_safe(stdout, &success, sizeof(success));
 
-   _ec_write_safe(STDOUT_FILENO, &size_path, sizeof(size_path));
-   _ec_write_safe(STDOUT_FILENO, thumb_path, size_path);
+   _ec_write_safe(stdout, &size_path, sizeof(size_path));
+   _ec_write_safe(stdout, thumb_path, size_path);
 
-   _ec_write_safe(STDOUT_FILENO, &size_key, sizeof(size_key));
-   _ec_write_safe(STDOUT_FILENO, thumb_key, size_key);
+   _ec_write_safe(stdout, &size_key, sizeof(size_key));
+   _ec_write_safe(stdout, thumb_key, size_key);
+   fflush(stdout);
 }
 
 static int
@@ -265,7 +242,7 @@ _ec_op_generate(struct _Ethumbd_Child *ec)
    char *path, *key, *thumb_path, *thumb_key;
    int r;
 
-   r = _ec_read_safe(STDIN_FILENO, &idx, sizeof(idx));
+   r = _ec_read_safe(stdin, &idx, sizeof(idx));
    if (!r)
      return 0;
 
@@ -320,7 +297,7 @@ _ec_fdo_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    int value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_thumb_fdo_set(e, value);
@@ -336,13 +313,13 @@ _ec_size_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int w, h;
    int type;
 
-   r = _ec_read_safe(STDIN_FILENO, &w, sizeof(w));
+   r = _ec_read_safe(stdin, &w, sizeof(w));
    if (!r)
      return 0;
-   r = _ec_read_safe(STDIN_FILENO, &type, sizeof(type));
+   r = _ec_read_safe(stdin, &type, sizeof(type));
    if (!r)
      return 0;
-   r = _ec_read_safe(STDIN_FILENO, &h, sizeof(h));
+   r = _ec_read_safe(stdin, &h, sizeof(h));
    if (!r)
      return 0;
    ethumb_thumb_size_set(e, w, h);
@@ -357,7 +334,7 @@ _ec_format_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    int value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_thumb_format_set(e, value);
@@ -372,7 +349,7 @@ _ec_aspect_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    int value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_thumb_aspect_set(e, value);
@@ -387,7 +364,7 @@ _ec_orientation_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    int value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_thumb_orientation_set(e, value);
@@ -403,13 +380,13 @@ _ec_crop_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    float x, y;
    int type;
 
-   r = _ec_read_safe(STDIN_FILENO, &x, sizeof(x));
+   r = _ec_read_safe(stdin, &x, sizeof(x));
    if (!r)
      return 0;
-   r = _ec_read_safe(STDIN_FILENO, &type, sizeof(type));
+   r = _ec_read_safe(stdin, &type, sizeof(type));
    if (!r)
      return 0;
-   r = _ec_read_safe(STDIN_FILENO, &y, sizeof(y));
+   r = _ec_read_safe(stdin, &y, sizeof(y));
    if (!r)
      return 0;
    ethumb_thumb_crop_align_set(e, x, y);
@@ -424,7 +401,7 @@ _ec_quality_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    int value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_thumb_quality_set(e, value);
@@ -439,7 +416,7 @@ _ec_compress_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    int value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_thumb_compress_set(e, value);
@@ -458,7 +435,7 @@ _ec_frame_set(struct _Ethumbd_Child *ec, Ethumb *e)
    r = _ec_pipe_str_read(ec, &theme_file);
    if (!r)
      return 0;
-   r = _ec_read_safe(STDIN_FILENO, &type, sizeof(type));
+   r = _ec_read_safe(stdin, &type, sizeof(type));
    if (!r)
      {
         free(theme_file);
@@ -470,7 +447,7 @@ _ec_frame_set(struct _Ethumbd_Child *ec, Ethumb *e)
         free(theme_file);
         return 0;
      }
-   r = _ec_read_safe(STDIN_FILENO, &type, sizeof(type));
+   r = _ec_read_safe(stdin, &type, sizeof(type));
    if (!r)
      {
         free(theme_file);
@@ -531,7 +508,7 @@ _ec_video_time_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    float value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_video_time_set(e, value);
@@ -546,7 +523,7 @@ _ec_video_start_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    float value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_video_start_set(e, value);
@@ -561,7 +538,7 @@ _ec_video_interval_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    float value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_video_interval_set(e, value);
@@ -576,7 +553,7 @@ _ec_video_ntimes_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    int value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_video_ntimes_set(e, value);
@@ -591,7 +568,7 @@ _ec_video_fps_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    int value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_video_fps_set(e, value);
@@ -606,7 +583,7 @@ _ec_document_page_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
    int r;
    int value;
 
-   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   r = _ec_read_safe(stdin, &value, sizeof(value));
    if (!r)
      return 0;
    ethumb_document_page_set(e, value);
@@ -687,17 +664,17 @@ _ec_op_setup(struct _Ethumbd_Child *ec)
    int idx;
    int type;
 
-   r = _ec_read_safe(STDIN_FILENO, &idx, sizeof(idx));
+   r = _ec_read_safe(stdin, &idx, sizeof(idx));
    if (!r)
      return 0;
 
-   r = _ec_read_safe(STDIN_FILENO, &type, sizeof(type));
+   r = _ec_read_safe(stdin, &type, sizeof(type));
    if (!r)
      return 0;
    while (type != ETHUMBD_SETUP_FINISHED)
      {
 	_ec_setup_process(ec, idx, type);
-	r = _ec_read_safe(STDIN_FILENO, &type, sizeof(type));
+	r = _ec_read_safe(stdin, &type, sizeof(type));
 	if (!r)
 	  return 0;
      }
@@ -727,7 +704,7 @@ _ec_fd_handler(void *data, Ecore_Win32_Handler *fd_handler EINA_UNUSED)
      }
 #endif
 
-   r = _ec_read_safe(STDIN_FILENO, &op_id, sizeof(op_id));
+   r = _ec_read_safe(stdin, &op_id, sizeof(op_id));
    if (!r)
      {
 	DBG("ethumbd exited! child exiting...");
