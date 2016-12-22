@@ -126,6 +126,8 @@ ecore_exe_send(Ecore_Exe  *obj,
    if (!efl_isa(obj, MY_CLASS))
       return EINA_FALSE;
 
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(size == 0, EINA_TRUE);
+
    if (exe->close_stdin)
    {
       ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",
