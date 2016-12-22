@@ -29,15 +29,16 @@ _efl_test_option_disp(int argc, char **argv, const Efl_Test_Case *etc)
    for (i = 1; i < argc; i++)
      {
         if ((strcmp(argv[i], "-h") == 0) ||
-              (strcmp(argv[i], "--help") == 0))
+            (strcmp(argv[i], "--help") == 0))
           {
-             fprintf(stderr, "Usage:\n\t%s [test_case1 .. [test_caseN]]\n",
-                   argv[0]);
-             _efl_tests_list(etc);
+             fprintf(stderr, "Usage: %s [options] [test_case1 .. [test_caseN]]\n",
+                     argv[0]);
+             fprintf(stderr, " -l\t--list\t\tList all tests case.\n");
+             fprintf(stderr, "\nNote that CK_RUN_CASE=test_case does also filter which tests are run\n");
              return 0;
           }
         else if ((strcmp(argv[i], "-l") == 0) ||
-              (strcmp(argv[i], "--list") == 0))
+                 (strcmp(argv[i], "--list") == 0))
           {
              _efl_tests_list(etc);
              return 0;
