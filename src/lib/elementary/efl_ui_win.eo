@@ -793,21 +793,13 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                           otherwise.]]
          }
       }
-      stack_pop_to_id {
+      stack_pop_to {
          [[Pop (delete) all windows in the stack above this window.
 
            This will try and delete all the windows in the stack that
-           are above the window with the given stack ID given as the
-           ID string to ensure that this window is visible on top of
-           this stack and would be the active (focused) window if
-           the stack was active/focused.
+           are above the window.
 
            @since 1.19]]
-         params {
-            @in id: string; [[An opaque string that has no specific format,
-                              but identified a specific unique window on the
-                              display.]]
-         }
       }
       socket_listen {
          [[Create a socket to provide the service for Plug widget.]]

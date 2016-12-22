@@ -2404,6 +2404,7 @@ EAPI void
 ecore_x_e_stack_type_set(Ecore_X_Window win,
                          Ecore_X_Stack_Type stack_type)
 {
+   unsigned int val = stack_type;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
@@ -2412,7 +2413,7 @@ ecore_x_e_stack_type_set(Ecore_X_Window win,
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_STACK_TYPE);
    else
      ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_STACK_TYPE,
-                                    &stack_type, 1);
+                                    &val, 1);
 }
 
 EAPI Ecore_X_Stack_Type
@@ -2429,4 +2430,36 @@ ecore_x_e_stack_type_get(Ecore_X_Window win)
    if (ret != 1) return ECORE_X_STACK_NONE;
    if (val >= ECORE_X_STACK_LAST) val = ECORE_X_STACK_STANDARD;
    return (Ecore_X_Stack_Type)val;
+}
+
+EAPI void
+ecore_x_e_stack_position_set(Ecore_X_Window win,
+                             Ecore_X_Stack_Position stack_position)
+{
+   unsigned int val = stack_position;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
+   if (stack_position == ECORE_X_STACK_POSITION_NONE)
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_STACK_POSITION);
+   else
+     ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_STACK_POSITION,
+                                    &val, 1);
+}
+
+EAPI Ecore_X_Stack_Position
+ecore_x_e_stack_position_get(Ecore_X_Window win)
+{
+   int ret;
+   unsigned int val;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, ECORE_X_STACK_NONE);
+
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_STACK_POSITION,
+                                        &val, 1);
+   if (ret != 1) return ECORE_X_STACK_POSITION_NONE;
+   if (val >= ECORE_X_STACK_POSITION_LAST) val = ECORE_X_STACK_POSITION_BOTTOM;
+   return (Ecore_X_Stack_Position)val;
 }

@@ -6150,7 +6150,7 @@ _efl_ui_win_stack_master_id_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const 
    if (sd->shown) return;
    eina_stringshare_replace(&(sd->stack_master_id), id);
 #ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
+   if (sd->x.xwin) _elm_win_xwin_update(sd);
 #endif
 }
 
@@ -6173,15 +6173,70 @@ _efl_ui_win_stack_base_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
    return sd->stack_base;
 }
 
-EOLIAN static void
-_efl_ui_win_stack_pop_to_id(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED, const char *id EINA_UNUSED)
+#ifdef HAVE_ELEMENTARY_X
+// list transient from bottom to top by recursive walking
+static void
+_x_transients_for_list(Ecore_X_Window base, Ecore_X_Window transient,
+                       Ecore_X_Window **wins, int *num)
 {
-   // if in e (x11+wl), ask e to nuke all windows in stack above this
-   //   or
-   // in x11 - find all windows in the window tree with a transient
-   // for that have the SAME stack master as this one and that are
-   // stacked above this window, and delete them from bottom to top
-   // 
+   Ecore_X_Window t, *children, *w;
+   int n, i;
+
+   children = ecore_x_window_children_get(base, &n);
+   if (children)
+     {
+        for (i = 0; i < n; i++)
+          {
+             if (children[i] != transient)
+               {
+                  t = ecore_x_icccm_transient_for_get(children[i]);
+                  if (t == transient)
+                    {
+                       (*num)++;
+                       w = realloc(*wins, *num * sizeof(Ecore_X_Window));
+                       if (w)
+                         {
+                            *wins = w;
+                            (*wins)[*num - 1] = children[i];
+                         }
+                    }
+                  _x_transients_for_list(children[i], transient, wins, num);
+               }
+          }
+        free(children);
+     }
+}
+#endif
+
+EOLIAN static void
+_efl_ui_win_stack_pop_to(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   if (!sd->stack_master_id) return;
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        Ecore_X_Window *wins = NULL;
+        int i, num = 0;
+        Eina_Bool del = EINA_FALSE;
+
+        ecore_x_grab();
+        _x_transients_for_list
+          (ecore_x_window_root_get(sd->x.xwin),
+           ecore_x_icccm_transient_for_get(sd->x.xwin),
+           &wins, &num);
+        if (wins)
+          {
+             for (i = 0; i < num; i++)
+               {
+                  if (del) ecore_x_window_delete_request_send(wins[i]);
+                  if (wins[i] == sd->x.xwin) del = EINA_TRUE;
+               }
+             free(wins);
+          }
+        ecore_x_ungrab();
+     }
+#endif
+   // wayland - needs to be a special compositor request
    // win32/osx ?
 }
 

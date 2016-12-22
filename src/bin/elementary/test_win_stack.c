@@ -4,7 +4,9 @@
 #include <Elementary.h>
 
 static int level = 0;
+static Evas_Object *popto_win = NULL;
 
+static void _bt_popto(void *data, Evas_Object *obj, void *event_info);
 static void _bt_pressed(void *data, Evas_Object *obj, void *event_info);
 
 static Evas_Object *
@@ -18,6 +20,8 @@ _win_new(Evas_Object *stack_top, const char *title)
      win = elm_win_add(NULL, "window-stack", ELM_WIN_BASIC);
    elm_win_title_set(win, title);
    elm_win_autodel_set(win, EINA_TRUE);
+
+   if (level == 3) popto_win = win;
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -36,6 +40,17 @@ _win_new(Evas_Object *stack_top, const char *title)
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
+   if (level > 7)
+     {
+        bt = elm_button_add(win);
+        elm_object_text_set(bt, "Pop to level 3");
+        evas_object_smart_callback_add(bt, "clicked", _bt_popto, NULL);
+        evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+        elm_box_pack_end(bx, bt);
+        evas_object_show(bt);
+     }
+
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Push");
    evas_object_smart_callback_add(bt, "clicked", _bt_pressed, stack_top);
@@ -46,6 +61,12 @@ _win_new(Evas_Object *stack_top, const char *title)
 
    evas_object_resize(win, 280, 400);
    return win;
+}
+
+static void
+_bt_popto(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   elm_win_stack_pop_to(popto_win);
 }
 
 static void
