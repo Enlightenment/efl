@@ -2212,6 +2212,8 @@ st_externals_external(void)
         included inside other blocks, normally "collections", "group" and
         "part", easing maintenance of the file list when the theme is split
         among multiple files.
+        @note if svg file use as image, not vector, it will be converted to bitmap
+        and '.png' will be add to file name.
     @endblock
 
     @property
