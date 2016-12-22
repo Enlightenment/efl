@@ -642,6 +642,43 @@ _edje_seat_name_emit(Edje *ed, const char *name, const char *sig, const char *sr
 }
 
 void
+_edje_part_focus_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp)
+{
+   Edje_Real_Part *focused_part;
+   Eina_Stringshare *sname;
+   Efl_Input_Device *seat;
+   Evas *e;
+
+   if (seat_name)
+     sname = eina_stringshare_add(seat_name);
+   else /* Use default seat name */
+     {
+        e = evas_object_evas_get(ed->obj);
+        seat = evas_canvas_default_device_get(e, EFL_INPUT_DEVICE_CLASS_SEAT);
+        sname = eina_stringshare_ref(_edje_seat_name_get(ed, seat));
+     }
+
+   focused_part = _edje_focused_part_get(ed, sname);
+
+   if (focused_part != rp)
+     {
+        if ((rp->part->allowed_seats) &&
+            (!_edje_part_allowed_seat_find(rp, sname)))
+          goto not_allowed;
+
+        if (focused_part)
+          _edje_seat_name_emit(ed, sname, "focus,part,out",
+                               focused_part->part->name);
+        _edje_focused_part_set(ed, sname, rp);
+        if (rp)
+          _edje_seat_name_emit(ed, sname, "focus,part,in", rp->part->name);
+     }
+
+not_allowed:
+   eina_stringshare_del(sname);
+}
+
+void
 _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc)
 {
    Eina_List *l;
@@ -970,35 +1007,8 @@ low_mem_current:
 
       case EDJE_ACTION_TYPE_FOCUS_SET:
       {
-         Edje_Real_Part *focused_part;
-         Eina_Stringshare *seat_name;
-         Eina_Bool unref_name = EINA_FALSE;
-
-         if (pr->seat)
-           {
-              seat_name = eina_stringshare_add(pr->seat);
-              unref_name = EINA_TRUE;
-           }
-         else /* Use default seat name */
-           {
-              Efl_Input_Device *seat;
-              Evas *e;
-
-              e = evas_object_evas_get(ed->obj);
-              seat = evas_canvas_default_device_get(e, EFL_INPUT_DEVICE_CLASS_SEAT);
-              seat_name = _edje_seat_name_get(ed, seat);
-              if (!seat_name)
-                break;
-           }
-
         if (!pr->targets)
-          {
-             focused_part = _edje_focused_part_get(ed, seat_name);
-             if (focused_part)
-               _edje_seat_name_emit(ed, seat_name, "focus,part,out",
-                                    focused_part->part->name);
-             _edje_focused_part_set(ed, seat_name, NULL);
-          }
+          _edje_part_focus_set(ed, pr->seat, NULL);
         else
           {
              EINA_LIST_FOREACH(pr->targets, l, pt)
@@ -1007,27 +1017,10 @@ low_mem_current:
                     {
                        rp = ed->table_parts[pt->id % ed->table_parts_size];
                        if (rp)
-                         {
-                            focused_part = _edje_focused_part_get(ed,
-                                                                  seat_name);
-                            if (focused_part != rp)
-                              {
-                                 if (focused_part)
-                                   _edje_seat_name_emit(ed, seat_name,
-                                                        "focus,part,out",
-                                                        focused_part->part->name);
-                                 _edje_focused_part_set(ed, seat_name, rp);
-                                 _edje_seat_name_emit(ed, seat_name,
-                                                      "focus,part,in",
-                                                      rp->part->name);
-                              }
-                         }
+                         _edje_part_focus_set(ed, pr->seat, rp);
                     }
                }
           }
-
-        if (unref_name)
-          eina_stringshare_del(seat_name);
       }
       break;
 

@@ -141,6 +141,12 @@ native       set_mask_flags   (part_id, flags);
 native       get_mask_flags   (part_id);
 native       part_swallow     (part_id, GROUP:str[]);
 
+/* set_focus() and unset_focus() may receive an optional parameter
+   seat_name[], as set_focus(part_id, seat_name[]) and
+   unset_focus(seat_name[]) */
+native       set_focus        (part_id, ...);
+native       unset_focus      (...);
+
 native       external_param_get_int(id, param_name[]);
 native       external_param_set_int(id, param_name[], value);
 native Float:external_param_get_float(id, param_name[]);

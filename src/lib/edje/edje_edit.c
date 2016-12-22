@@ -15248,6 +15248,19 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
      BUF_APPEND(I4 "precise_is_inside: 1;\n");
    if (rp->part->access)
      BUF_APPEND(I4 "access: 1;\n");
+   if (rp->part->allowed_seats)
+     {
+        Edje_Part_Allowed_Seat *seat;
+        unsigned int i;
+
+        BUF_APPEND(I4 "allowed_seats:");
+        for (i = 0; i < rp->part->allowed_seats_count; i++)
+          {
+             seat = rp->part->allowed_seats[i];
+             BUF_APPENDF(" %s", seat->name);
+          }
+        BUF_APPEND(";\n");
+     }
 
    if ((str = _edje_part_clip_to_get(ed, rp)))
      {

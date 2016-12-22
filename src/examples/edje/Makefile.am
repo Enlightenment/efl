@@ -47,6 +47,7 @@ lua_script.edc \
 messages_echo.edc \
 multiseat.edc \
 multiseat_custom_names.edc \
+multiseat_filter.edc \
 perspective.edc \
 signals-messages.edc \
 signalsBubble.edc \
@@ -148,6 +149,7 @@ edje-entry.c \
 edje-focus.c \
 edje-multiseat.c \
 edje-multiseat-custom-names.c \
+edje-multiseat-filter.c \
 edje-multisense.c \
 edje-perspective.c \
 edje-signals-messages.c \
@@ -225,6 +227,7 @@ edje-entry \
 edje-focus \
 edje-multiseat \
 edje-multiseat-custom-names \
+edje-multiseat-filter \
 edje-perspective \
 edje-signals-messages \
 edje-swallow \
