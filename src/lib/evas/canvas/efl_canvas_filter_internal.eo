@@ -1,3 +1,43 @@
+// import efl_gfx_types -> need to add Efl.Gfx.Color
+
+/* Everything in this file is internal to Evas. It is not meant to be used
+   from outside EFL itself! */
+
+struct Efl.Gfx.Color32
+{
+   r: uint8;
+   g: uint8;
+   b: uint8;
+   a: uint8;
+}
+
+struct Efl.Canvas.Filter.State_Name
+{
+   name: string;
+   value: double;
+}
+
+struct Efl.Canvas.Filter.State_Text
+{
+   outline: Efl.Gfx.Color32;
+   shadow: Efl.Gfx.Color32;
+   glow: Efl.Gfx.Color32;
+   glow2: Efl.Gfx.Color32;
+}
+
+struct Efl.Canvas.Filter.State
+{
+   [[Internal structure representing the state of a Gfx Filter]]
+   text: Efl.Canvas.Filter.State_Text;
+   color: Efl.Gfx.Color32;
+   cur: Efl.Canvas.Filter.State_Name;
+   next: Efl.Canvas.Filter.State_Name;
+   w: int;
+   h: int;
+   scale: double;
+   pos: double;
+}
+
 mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
 {
    [[Evas internal implementation of filters.]]
@@ -26,14 +66,21 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
          [[Called by Efl.Canvas.Filter.Internal to determine whether the input is alpha or rgba.]]
          return: bool; [[$true on success, $false otherwise]]
       }
+      filter_state_prepare @protected @pure_virtual {
+         [[Called by Efl.Canvas.Filter.Internal to request the parent class
+           for state information (color, etc...).]]
+         params {
+            @out state: Efl.Canvas.Filter.State; [[State info to fill in]]
+            @in data: void_ptr; [[Private data for the class]]
+         }
+      }
       filter_input_render @protected @pure_virtual {
-         [[Called by Efl.Canvas.Filter.Internal when the parent class must render the input.
-         ;
-         ]]
+         [[Called by Efl.Canvas.Filter.Internal when the parent class must render the input.]]
          return: bool; [[Indicates success from the object render function.]]
          params {
-            filter: void_ptr; [[Evas_Filter_Context]]
-            drawctx: void_ptr; [[Draw context]]
+            filter: void_ptr; [[Current filter context]]
+            drawctx: void_ptr; [[Draw context (for evas engine)]]
+            data: void_ptr; [[Arbitrary private data]]
             l: int; [[Left]]
             r: int; [[Right]]
             t: int; [[Top]]

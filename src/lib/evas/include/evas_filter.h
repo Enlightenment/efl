@@ -4,6 +4,8 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#include "efl_canvas_filter_internal.eo.h"
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -35,7 +37,6 @@ typedef struct _Evas_Filter_Command Evas_Filter_Command;
 typedef struct _Evas_Filter_Instruction Evas_Filter_Instruction;
 typedef struct _Evas_Filter_Buffer Evas_Filter_Buffer;
 typedef struct _Evas_Filter_Proxy_Binding Evas_Filter_Proxy_Binding;
-typedef struct _Evas_Filter_Program_State  Evas_Filter_Program_State;
 typedef enum _Evas_Filter_Mode Evas_Filter_Mode;
 typedef enum _Evas_Filter_Blur_Type Evas_Filter_Blur_Type;
 typedef enum _Evas_Filter_Channel Evas_Filter_Channel;
@@ -124,9 +125,11 @@ enum _Evas_Filter_Transform_Flags
    EVAS_FILTER_TRANSFORM_VFLIP = 1
 };
 
+#define EFL_CANVAS_FILTER_STATE_DEFAULT { {}, { 255, 255, 255, 255 }, { "default", 0.0 }, {}, 0, 0, 1.0, 0.0 }
+
 /* Parser stuff (high level API) */
 EAPI Evas_Filter_Program *evas_filter_program_new(const char *name, Eina_Bool input_alpha);
-EAPI Eina_Bool           evas_filter_program_state_set(Evas_Filter_Program *pgm, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *cur_state, double cur_val, const char *next_state, double next_val, double pos);
+EAPI Eina_Bool           evas_filter_program_state_set(Evas_Filter_Program *pgm, const Efl_Canvas_Filter_State *state);
 EAPI Eina_Bool           evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
 EAPI void                evas_filter_program_del(Evas_Filter_Program *pgm);
 Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm);

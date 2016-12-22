@@ -316,30 +316,6 @@ struct _Evas_Filter_Instruction
    Eina_Bool valid : 1;
 };
 
-struct _Evas_Filter_Program_State
-{
-   struct {
-      struct { int a, r, g, b; } outline;
-      struct { int a, r, g, b; } shadow;
-      struct { int a, r, g, b; } glow;
-      struct { int a, r, g, b; } glow2;
-   } text;
-   struct {
-      int a, r, g, b;
-   } color;
-   struct {
-      const char *name;
-      double value;
-   } cur;
-   struct {
-      const char *name;
-      double value;
-   } next;
-   int w, h;
-   double scale;
-   double pos;
-};
-
 struct _Evas_Filter_Program
 {
    Eina_Stringshare *name; // Optional for now
@@ -350,7 +326,7 @@ struct _Evas_Filter_Program
       // Note: padding can't be in the state as it's calculated after running Lua
       int l, r, t, b;
    } pad;
-   Evas_Filter_Program_State state;
+   Efl_Canvas_Filter_State state;
    Eina_Inlist *data; // Evas_Filter_Data_Binding
    lua_State *L;
    int       lua_func;
@@ -2967,49 +2943,23 @@ evas_filter_program_new(const char *name, Eina_Bool input_alpha)
    if (!pgm) return NULL;
    pgm->name = eina_stringshare_add(name);
    pgm->input_alpha = input_alpha;
-   pgm->state.color.r = 255;
-   pgm->state.color.g = 255;
-   pgm->state.color.b = 255;
-   pgm->state.color.a = 255;
-   pgm->state.scale = 1.0;
+   pgm->state = (Efl_Canvas_Filter_State) EFL_CANVAS_FILTER_STATE_DEFAULT;
 
    return pgm;
 }
 
 EAPI Eina_Bool
-evas_filter_program_state_set(Evas_Filter_Program *pgm, Evas_Object *eo_obj,
-                              Evas_Object_Protected_Data *obj,
-                              const char *cur_state, double cur_val,
-                              const char *next_state, double next_val,
-                              double pos)
+evas_filter_program_state_set(Evas_Filter_Program *pgm,
+                              const Efl_Canvas_Filter_State *state)
 {
-   Evas_Filter_Program_State old_state;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(state, EINA_FALSE);
 
-   memcpy(&old_state, &pgm->state, sizeof(Evas_Filter_Program_State));
-
-   pgm->state.w = obj->cur->geometry.w;
-   pgm->state.h = obj->cur->geometry.h;
-   pgm->state.scale = obj->cur->scale;
-   pgm->state.pos = pos;
-   pgm->state.cur.name = cur_state;
-   pgm->state.cur.value = cur_val;
-   pgm->state.next.name = next_state;
-   pgm->state.next.value = next_val;
-
-   efl_gfx_color_get(eo_obj, &pgm->state.color.r, &pgm->state.color.g, &pgm->state.color.b, &pgm->state.color.a);
-
-   if (efl_isa(eo_obj, EVAS_TEXT_CLASS))
+   if (memcmp(&pgm->state, state, sizeof(Efl_Canvas_Filter_State)) != 0)
      {
-        evas_obj_text_shadow_color_get(eo_obj, &pgm->state.text.shadow.r, &pgm->state.text.shadow.g, &pgm->state.text.shadow.b, &pgm->state.text.shadow.a);
-        evas_obj_text_outline_color_get(eo_obj, &pgm->state.text.outline.r, &pgm->state.text.outline.g, &pgm->state.text.outline.b, &pgm->state.text.outline.a);
-        evas_obj_text_glow_color_get(eo_obj, &pgm->state.text.glow.r, &pgm->state.text.glow.g, &pgm->state.text.glow.b, &pgm->state.text.glow.a);
-        evas_obj_text_glow2_color_get(eo_obj, &pgm->state.text.glow2.r, &pgm->state.text.glow2.g, &pgm->state.text.glow2.b, &pgm->state.text.glow2.a);
+        pgm->changed = EINA_TRUE;
+        memcpy(&pgm->state, state, sizeof(Efl_Canvas_Filter_State));
      }
-
-   if (memcmp(&old_state, &pgm->state, sizeof(Evas_Filter_Program_State)) != 0)
-     pgm->changed = EINA_TRUE;
 
    if (pgm->changed)
      pgm->padding_calc = EINA_FALSE;

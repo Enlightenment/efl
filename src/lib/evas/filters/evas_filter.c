@@ -1314,17 +1314,13 @@ _filter_target_render(Evas_Filter_Context *ctx)
                                      ctx->target.r, ctx->target.g,
                                      ctx->target.b, ctx->target.a);
      }
-   else
-     {
-        ENFN->context_multiplier_unset(ENDT, drawctx);
-     }
 
    if (ctx->target.mask)
-     ENFN->context_clip_image_set(ENDT, drawctx,
-                                  ctx->target.mask, ctx->target.mask_x, ctx->target.mask_y,
-                                  ctx->evas, EINA_FALSE);
-   else
-     ENFN->context_clip_image_unset(ENDT, drawctx);
+     {
+        ENFN->context_clip_image_set(ENDT, drawctx, ctx->target.mask,
+                                     ctx->target.mask_x, ctx->target.mask_y,
+                                     ctx->evas, EINA_FALSE);
+     }
 
    ENFN->image_draw(ENDT, drawctx, surface, image,
                     0, 0, src->w, src->h,
@@ -1359,6 +1355,7 @@ evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
         evas_common_font_glyphs_ref(text_props->glyphs);
         evas_unref_queue_glyph_put(ctx->evas, text_props->glyphs);
      }
+   //evas_common_save_image_to_file(surface, "/tmp/input.png", 0, 100, 0 ,0);
 
    return EINA_TRUE;
 }

@@ -1698,11 +1698,31 @@ _evas_text_efl_canvas_filter_internal_filter_input_alpha(Eo *eo_obj EINA_UNUSED,
    return EINA_TRUE;
 }
 
+EOLIAN static void
+_evas_text_efl_canvas_filter_internal_filter_state_prepare(Eo *eo_obj, Evas_Text_Data *o,
+                                                           Efl_Canvas_Filter_State *state, void *data EINA_UNUSED)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+
+#define STATE_COLOR(dst, src) dst.r = src.r; dst.g = src.g; dst.b = src.b; dst.a = src.a
+   STATE_COLOR(state->color, obj->cur->color);
+   STATE_COLOR(state->text.glow, o->cur.glow);
+   STATE_COLOR(state->text.glow2, o->cur.glow2);
+   STATE_COLOR(state->text.shadow, o->cur.shadow);
+   STATE_COLOR(state->text.outline, o->cur.outline);
+#undef STATE_COLOR
+
+   state->w = obj->cur->geometry.w;
+   state->h = obj->cur->geometry.h;
+   state->scale = obj->cur->scale;
+}
+
 EOLIAN static Eina_Bool
 _evas_text_efl_canvas_filter_internal_filter_input_render(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o,
-                                           void *_filter, void *drawctx,
-                                           int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
-                                           Eina_Bool do_async)
+                                                          void *_filter, void *drawctx,
+                                                          void *data EINA_UNUSED,
+                                                          int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
+                                                          Eina_Bool do_async)
 {
    Evas_Filter_Context *filter = _filter;
    Evas_Object_Text_Item *it;

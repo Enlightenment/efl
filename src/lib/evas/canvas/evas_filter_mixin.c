@@ -150,6 +150,21 @@ _filter_source_hash_free_cb(void *data)
    free(pb);
 }
 
+static inline Eina_Bool
+_evas_filter_state_set_internal(Evas_Filter_Program *pgm, Evas_Filter_Data *pd)
+{
+   Efl_Canvas_Filter_State state = EFL_CANVAS_FILTER_STATE_DEFAULT;
+
+   evas_filter_state_prepare(pd->obj->object, &state, NULL);
+   state.cur.name = pd->data->state.cur.name;
+   state.cur.value = pd->data->state.cur.value;
+   state.next.name = pd->data->state.next.name;
+   state.next.value = pd->data->state.next.value;
+   state.pos = pd->data->state.pos;
+
+   return evas_filter_program_state_set(pgm, &state);
+}
+
 Eina_Bool
 evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                           void *output, void *context, void *surface,
@@ -196,13 +211,11 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         if (!pd->data->chain)
           {
              Evas_Filter_Program *pgm;
+
              pgm = evas_filter_program_new(pd->data->name, alpha);
              evas_filter_program_source_set_all(pgm, pd->data->sources);
              evas_filter_program_data_set_all(pgm, pd->data->data);
-             evas_filter_program_state_set(pgm, eo_obj, obj,
-                                           pd->data->state.cur.name, pd->data->state.cur.value,
-                                           pd->data->state.next.name, pd->data->state.next.value,
-                                           pd->data->state.pos);
+             _evas_filter_state_set_internal(pgm, pd);
              if (!evas_filter_program_parse(pgm, pd->data->code))
                {
                   ERR("Filter program parsing failed");
@@ -226,10 +239,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
           {
              Eina_Bool redraw;
 
-             redraw = evas_filter_program_state_set(pd->data->chain, eo_obj, obj,
-                                                    pd->data->state.cur.name, pd->data->state.cur.value,
-                                                    pd->data->state.next.name, pd->data->state.next.value,
-                                                    pd->data->state.pos);
+             redraw = _evas_filter_state_set_internal(pd->data->chain, pd);
              if (redraw)
                DBG("Filter redraw by state change!");
              else if (obj->changed)
@@ -280,10 +290,9 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                }
           }
         else
-           evas_filter_program_state_set(pd->data->chain, eo_obj, obj,
-                                         pd->data->state.cur.name, pd->data->state.cur.value,
-                                         pd->data->state.next.name, pd->data->state.next.value,
-                                         pd->data->state.pos);
+          {
+             _evas_filter_state_set_internal(pd->data->chain, pd);
+          }
 
         filter = evas_filter_context_new(obj->layer->evas, do_async);
 
@@ -316,7 +325,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         // Request rendering from the object itself (child class)
         evas_filter_program_padding_get(pd->data->chain, &l, &r, &t, &b);
-        ok = evas_filter_input_render(eo_obj, filter, drawctx, l, r, t, b, do_async);
+        ok = evas_filter_input_render(eo_obj, filter, drawctx, NULL, l, r, t, b, do_async);
         if (!ok) ERR("Filter input render failed.");
 
         ENFN->context_free(ENDT, drawctx);
@@ -377,10 +386,7 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_F
            pgm = evas_filter_program_new(fcow->name, alpha);
            evas_filter_program_source_set_all(pgm, fcow->sources);
            evas_filter_program_data_set_all(pgm, fcow->data);
-           evas_filter_program_state_set(pgm, eo_obj, obj,
-                                         fcow->state.cur.name, fcow->state.cur.value,
-                                         fcow->state.next.name, fcow->state.next.value,
-                                         fcow->state.pos);
+           _evas_filter_state_set_internal(pgm, pd);
            if (!evas_filter_program_parse(pgm, code))
              {
                 ERR("Parsing failed!");
@@ -523,10 +529,7 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_state_set(Eo *eo_obj, Evas_Fil
 
         if (pd->data->chain)
           {
-             evas_filter_program_state_set(pd->data->chain, eo_obj, obj,
-                                           pd->data->state.cur.name, pd->data->state.cur.value,
-                                           pd->data->state.next.name, pd->data->state.next.value,
-                                           pd->data->state.pos);
+             _evas_filter_state_set_internal(pd->data->chain, pd);
           }
 
         evas_filter_dirty(eo_obj);

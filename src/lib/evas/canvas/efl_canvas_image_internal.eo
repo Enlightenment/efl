@@ -28,8 +28,9 @@ abstract Efl.Canvas.Image.Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Interna
       Efl.Gfx.Fill.fill_auto { get; set; }
       Efl.Gfx.Filter.filter_program { set; }
       Efl.Gfx.View.view_size { get; }
+      Efl.Canvas.Filter.Internal.filter_dirty;
       Efl.Canvas.Filter.Internal.filter_input_alpha;
       Efl.Canvas.Filter.Internal.filter_input_render;
-      Efl.Canvas.Filter.Internal.filter_dirty;
+      Efl.Canvas.Filter.Internal.filter_state_prepare;
    }
 }
