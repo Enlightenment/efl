@@ -817,6 +817,13 @@ struct _Evas_Pointer_Data
    unsigned char  inside : 1;
 };
 
+typedef struct _Evas_Post_Render_Job
+{
+   EINA_INLIST;
+   void (*func)(void *);
+   void *data;
+} Evas_Post_Render_Job;
+
 struct _Evas_Public_Data
 {
    EINA_INLIST;
@@ -888,6 +895,11 @@ struct _Evas_Public_Data
    Eina_Array     image_unref_queue;
    Eina_Array     glyph_unref_queue;
    Eina_Array     texts_unref_queue;
+
+   struct {
+      Evas_Post_Render_Job *jobs;
+      Eina_Spinlock lock;
+   } post_render;
 
    Eina_Clist     calc_list;
    Eina_Clist     calc_done;
@@ -1714,6 +1726,7 @@ void _evas_object_textblock_rehint(Evas_Object *obj);
 void evas_unref_queue_image_put(Evas_Public_Data *pd, void *image);
 void evas_unref_queue_glyph_put(Evas_Public_Data *pd, void *glyph);
 void evas_unref_queue_texts_put(Evas_Public_Data *pd, void *glyph);
+void evas_post_render_job_add(Evas_Public_Data *pd, void (*func)(void *), void *data);
 
 void evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
                                      void *data, void *context, void *surface,

@@ -3440,7 +3440,9 @@ evas_render_wakeup(Evas *eo_e)
    Render_Updates *ru;
    Eina_Bool haveup = EINA_FALSE;
    Eina_List *ret_updates = NULL;
+   Evas_Post_Render_Job *job;
    Evas_Public_Data *evas;
+   Eina_Inlist *jobs_il;
 
    evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -3482,6 +3484,18 @@ evas_render_wakeup(Evas *eo_e)
 
    eina_array_foreach(&evas->texts_unref_queue, _drop_texts_ref, NULL);
    eina_array_clean(&evas->texts_unref_queue);
+
+   SLKL(evas->post_render.lock);
+   jobs_il = EINA_INLIST_GET(evas->post_render.jobs);
+   evas->post_render.jobs = NULL;
+   SLKU(evas->post_render.lock);
+   EINA_INLIST_FREE(jobs_il, job)
+     {
+        jobs_il = eina_inlist_remove(jobs_il, EINA_INLIST_GET(job));
+        if (job->func)
+          job->func(job->data);
+        free(job);
+     }
 
    /* post rendering */
    _rendering_evases = eina_list_remove(_rendering_evases, evas);
@@ -3862,6 +3876,24 @@ void
 evas_unref_queue_texts_put(Evas_Public_Data *pd, void *texts)
 {
    eina_array_push(&pd->texts_unref_queue, texts);
+}
+
+void
+evas_post_render_job_add(Evas_Public_Data *pd, void (*func)(void *), void *data)
+{
+   Evas_Post_Render_Job *job;
+
+   if (!pd || pd->delete_me) return;
+   if (!func) return;
+
+   job = malloc(sizeof(*job));
+   job->func = func;
+   job->data = data;
+
+   SLKL(pd->post_render.lock);
+   pd->post_render.jobs = (Evas_Post_Render_Job *)
+         eina_inlist_append(EINA_INLIST_GET(pd->post_render.jobs), EINA_INLIST_GET(job));
+   SLKU(pd->post_render.lock);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

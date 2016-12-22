@@ -240,6 +240,7 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
 #undef EVAS_ARRAY_SET
    eina_lock_new(&(e->lock_objects));
    eina_spinlock_new(&(e->render.lock));
+   eina_spinlock_new(&(e->post_render.lock));
 
    _evas_canvas_event_init(eo_obj, e);
 
@@ -266,6 +267,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 {
    Eina_Rectangle *r;
    Evas_Coord_Touch_Point *touch_point;
+   Evas_Post_Render_Job *job;
    Evas_Layer *lay;
    Evas_Out *evo;
    int i;
@@ -383,6 +385,13 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    eina_array_flush(&e->texts_unref_queue);
    eina_hash_free(e->focused_objects);
 
+   EINA_INLIST_FREE(e->post_render.jobs, job)
+     {
+        e->post_render.jobs = (Evas_Post_Render_Job *)
+              eina_inlist_remove(EINA_INLIST_GET(e->post_render.jobs), EINA_INLIST_GET(job));
+        free(job);
+     }
+
    EINA_LIST_FREE(e->touch_points, touch_point)
      free(touch_point);
 
@@ -397,6 +406,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 
    eina_lock_free(&(e->lock_objects));
    eina_spinlock_free(&(e->render.lock));
+   eina_spinlock_free(&(e->post_render.lock));
    eina_hash_free(e->locks.masks);
    eina_hash_free(e->modifiers.masks);
 
