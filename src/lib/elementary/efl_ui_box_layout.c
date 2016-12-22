@@ -156,7 +156,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
 
    if (extra < 0) extra = 0;
 
-   if (!EINA_DBL_CMP(weight[!horiz], 0))
+   if (EINA_DBL_CMP(weight[!horiz], 0))
      {
         if (box_fill[!horiz])
           {
