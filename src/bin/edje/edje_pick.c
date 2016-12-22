@@ -1174,28 +1174,6 @@ _edje_pick_lua_scripts_add(Edje_File *edf, int id, int new_id)
    return EDJE_PICK_NO_ERROR;
 }
 
-static void
-_edje_pick_styles_update(Edje_File *o, Edje_File *edf)
-{
-   /* Styles in Edje_File */
-   Eina_List *l;
-   Edje_Style *stl;
-
-   EINA_LIST_FOREACH(edf->styles, l, stl)
-     o->styles = eina_list_append(o->styles, stl);
-}
-
-static void
-_edje_pick_color_class_update(Edje_File *o, Edje_File *edf)
-{
-   /* Color Class in Edje_File */
-   Eina_List *l;
-   Edje_Color_Class *cc;
-
-   EINA_LIST_FOREACH(edf->color_classes, l, cc)
-     o->color_classes = eina_list_append(o->color_classes, cc);
-}
-
 static int
 _edje_pick_image_entry_add(int id, Edje_File *edf, Edje_File *o)
 {
@@ -1302,16 +1280,16 @@ _edje_pick_images_desc_update(Edje_Part_Description_Image *desc, Edje_File *edf,
      {
         unsigned int k;
         int new_id = (desc->image.set) ?
-           _edje_pick_image_set_add(desc->image.id, edf, o) :
-           _edje_pick_image_entry_add(desc->image.id, edf, o);
+          _edje_pick_image_set_add(desc->image.id, edf, o) :
+          _edje_pick_image_entry_add(desc->image.id, edf, o);
 
         desc->image.id = new_id;
 
         for (k = 0; k < desc->image.tweens_count; k++)
           {
              new_id = (desc->image.set) ?
-                _edje_pick_image_set_add(desc->image.tweens[k]->id, edf, o) :
-                _edje_pick_image_entry_add(desc->image.tweens[k]->id, edf, o);
+               _edje_pick_image_set_add(desc->image.tweens[k]->id, edf, o) :
+               _edje_pick_image_entry_add(desc->image.tweens[k]->id, edf, o);
 
              desc->image.tweens[k]->id = new_id;
           }
@@ -1319,25 +1297,78 @@ _edje_pick_images_desc_update(Edje_Part_Description_Image *desc, Edje_File *edf,
 }
 
 static void
-_edje_pick_images_process(Edje_Part_Collection *edc, Edje_File *edf, Edje_File *o)
+_edje_pick_styles_desc_update(Edje_Part_Description_Text *desc, Edje_File *edf, Edje_File *o)
 {
-   /* Find what images are used, update IDs, mark as USED */
-   unsigned int i;
+   Eina_List *l;
+   Edje_Style *stl;
+   const char *style;
+
+   if (desc)
+     {
+        style = desc->text.style.str;
+
+        if (style)
+          {
+             EINA_LIST_FOREACH(edf->styles, l, stl)
+               if ((stl->name) && (!strcmp(stl->name, style)))
+                 o->styles = eina_list_append(o->styles, stl);
+          }
+     }
+}
+
+static void
+_edje_pick_color_class_desc_update(Edje_Part_Description_Common *desc, Edje_File *edf, Edje_File *o)
+{
+   Eina_List *l;
+   Edje_Color_Class *cc;
+   const char *color_class;
+
+   if (desc)
+     {
+        color_class = desc->color_class;
+
+        if (color_class)
+          {
+             EINA_LIST_FOREACH(edf->color_classes, l, cc)
+               if ((cc->name) && (!strcmp(cc->name, color_class)))
+                 o->color_classes = eina_list_append(o->color_classes, cc);
+          }
+     }
+}
+
+static void
+_edje_pick_resources_process(Edje_Part_Collection *edc, Edje_File *edf, Edje_File *o)
+{
+   /* Find what imagees are used, update IDs, mark as USED */
+   /* Find what styles and color classes are used */
+   unsigned int i, k;
 
    for (i = 0; i < edc->parts_count; i++)
      {
-        /* Scan all parts, locate what images used */
+        /* Scan all parts, locate what resources used */
         Edje_Part *part = edc->parts[i];
+
+        /* Update all color class in ALL descs of this part */
+        _edje_pick_color_class_desc_update((Edje_Part_Description_Common *) part->default_desc, edf, o);
+
+        for (k = 0; k < part->other.desc_count; k++)
+          _edje_pick_color_class_desc_update((Edje_Part_Description_Common *) part->other.desc[k], edf, o);
 
         if (part->type == EDJE_PART_TYPE_IMAGE)
           {
              /* Update IDs of all images in ALL descs of this part */
-             unsigned int k;
-
              _edje_pick_images_desc_update((Edje_Part_Description_Image *) part->default_desc, edf, o);
 
              for (k = 0; k < part->other.desc_count; k++)
                _edje_pick_images_desc_update((Edje_Part_Description_Image *) part->other.desc[k], edf, o);
+          }
+        else if (part->type == EDJE_PART_TYPE_TEXT || part->type == EDJE_PART_TYPE_TEXTBLOCK)
+          {
+             /* Update all styles in ALL descs of this part */
+             _edje_pick_styles_desc_update((Edje_Part_Description_Text *) part->default_desc, edf, o);
+
+             for (k = 0; k < part->other.desc_count; k++)
+               _edje_pick_styles_desc_update((Edje_Part_Description_Text *) part->other.desc[k], edf, o);
           }
      }
 }
@@ -1428,7 +1459,7 @@ _edje_pick_collection_process(Edje_Part_Collection *edc, Edje_File *edf, Edje_Fi
    ce = eina_hash_find(o->collection, edc->part);
    edc->id = ce->id;
 
-   _edje_pick_images_process(edc, edf, o);
+   _edje_pick_resources_process(edc, edf, o);
    _edje_pick_programs_process(edc);
 
    return EDJE_PICK_NO_ERROR;
@@ -1574,10 +1605,7 @@ main(int argc, char **argv)
         _edje_pick_vibrations_add(edf);  /* Add Vibrations to samplelist  */
         _Edje_Pick_Fonts_add(edf);   /* Add fonts from file to fonts list */
 
-        /* Copy styles, color class */
         _edje_pick_data_update(out_file, edf);
-        _edje_pick_styles_update(out_file, edf);
-        _edje_pick_color_class_update(out_file, edf);
 
         /* Process Groups */
         EINA_LIST_FOREACH(context.current_file->groups, l , name1)
