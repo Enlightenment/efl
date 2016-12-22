@@ -300,7 +300,6 @@ tests/eina/eina_suite.c \
 tests/eina/eina_suite.h \
 tests/eina/eina_test_abi.c \
 tests/eina/eina_test_fp.c \
-tests/eina/eina_test_stringshare.c \
 tests/eina/eina_test_ustringshare.c \
 tests/eina/eina_test_ustr.c \
 tests/eina/eina_test_binshare.c \
@@ -384,5 +383,6 @@ lib/eina/eina_strbuf_template_c.x \
 lib/eina/eina_binbuf_template_c.x \
 lib/eina/eina_inline_private.h \
 tests/eina/sample.gpx \
+tests/eina/eina_suite.x \
 lib/eina/eina_config.h.in \
 $(bin_SCRIPTS)

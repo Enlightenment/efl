@@ -16,29 +16,29 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-
-#include <Eina.h>
-
-#include "eina_suite.h"
-
 #define TEST0 "test/0"
 #define TEST1 "test/1"
 
-START_TEST(eina_stringshare_simple)
+#ifdef EINA_TEST_CODE
+
+static const char*
+my_vprintf(const char *fmt, ...)
+{
+   const char *ret;
+   va_list ap;
+   va_start(ap, fmt);
+   ret = eina_stringshare_vprintf(fmt, ap);
+   va_end(ap);
+   return ret;
+}
+
+#endif
+
+EINA_TEST_START(eina_stringshare_simple)
 {
    const char *t0;
    const char *t1;
    Eina_Slice slice;
-
-   eina_init();
 
    t0 = eina_stringshare_add(TEST0);
    t1 = eina_stringshare_add(TEST1);
@@ -61,18 +61,14 @@ START_TEST(eina_stringshare_simple)
    eina_stringshare_del(t0);
    eina_stringshare_del(t0);
    eina_stringshare_del(t1);
-
-   eina_shutdown();
 }
-END_TEST
+EINA_TEST_END
 
-START_TEST(eina_stringshare_simple_refplace)
+EINA_TEST_START(eina_stringshare_simple_refplace)
 {
    const char *t0;
    const char *t1;
    Eina_Slice slice;
-
-   eina_init();
 
    t0 = eina_stringshare_add(TEST0);
    t1 = eina_stringshare_add(TEST1);
@@ -96,17 +92,13 @@ START_TEST(eina_stringshare_simple_refplace)
 
    eina_stringshare_del(t0);
    eina_stringshare_del(t1);
-
-   eina_shutdown();
 }
-END_TEST
+EINA_TEST_END
 
-START_TEST(eina_stringshare_small)
+EINA_TEST_START(eina_stringshare_small)
 {
    char buf[4];
    int i;
-
-   eina_init();
 
    for (i = 0; i < 3; i++)
      {
@@ -135,18 +127,14 @@ START_TEST(eina_stringshare_small)
         eina_stringshare_del(t0);
         eina_stringshare_del(t1);
      }
-
-        eina_shutdown();
 }
-END_TEST
+EINA_TEST_END
 
 
-START_TEST(eina_stringshare_test_share)
+EINA_TEST_START(eina_stringshare_test_share)
 {
    const char *t0;
    const char *t1;
-
-   eina_init();
 
    t0 = eina_stringshare_add(TEST0);
    t1 = eina_stringshare_add(TEST0);
@@ -160,17 +148,13 @@ START_TEST(eina_stringshare_test_share)
 
    eina_stringshare_del(t0);
    eina_stringshare_del(t1);
-
-   eina_shutdown();
 }
-END_TEST
+EINA_TEST_END
 
-START_TEST(eina_stringshare_putstuff)
+EINA_TEST_START(eina_stringshare_putstuff)
 {
    const char *tmp;
    int i;
-
-   eina_init();
 
    for (i = 10000; i > 0; --i)
      {
@@ -180,20 +164,16 @@ START_TEST(eina_stringshare_putstuff)
         tmp = eina_stringshare_add(build);
         fail_if(tmp != eina_stringshare_add(build));
      }
-
-   eina_shutdown();
 }
-END_TEST
+EINA_TEST_END
 
-START_TEST(eina_stringshare_collision)
+EINA_TEST_START(eina_stringshare_collision)
 {
    Eina_Array *ea;
    char buffer[50];
    int i;
 
    srand(time(NULL));
-
-   eina_init();
 
    ea = eina_array_new(256);
    fail_if(!ea);
@@ -227,24 +207,11 @@ START_TEST(eina_stringshare_collision)
    for (i = 0; i < 1000; ++i)
       eina_stringshare_del(eina_array_pop(ea));
 
-   eina_shutdown();
-
    eina_array_free(ea);
 }
-END_TEST
+EINA_TEST_END
 
-static const char*
-my_vprintf(const char *fmt, ...)
-{
-   const char *ret;
-   va_list ap;
-   va_start(ap, fmt);
-   ret = eina_stringshare_vprintf(fmt, ap);
-   va_end(ap);
-   return ret;
-}
-
-START_TEST(eina_stringshare_print)
+EINA_TEST_START(eina_stringshare_print)
 {
    const char *t1;
    const char *t2;
@@ -271,19 +238,5 @@ START_TEST(eina_stringshare_print)
    eina_stringshare_del(t1);
    eina_stringshare_del(t2);
    eina_stringshare_del(t3);
-
-
 }
-END_TEST
-
-void
-eina_test_stringshare(TCase *tc)
-{
-   tcase_add_test(tc, eina_stringshare_simple);
-   tcase_add_test(tc, eina_stringshare_simple_refplace);
-   tcase_add_test(tc, eina_stringshare_small);
-   tcase_add_test(tc, eina_stringshare_test_share);
-   tcase_add_test(tc, eina_stringshare_collision);
-   tcase_add_test(tc, eina_stringshare_putstuff);
-   tcase_add_test(tc, eina_stringshare_print);
-}
+EINA_TEST_END

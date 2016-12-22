@@ -20,9 +20,15 @@
 # include "config.h"
 #endif
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+
 #include <Eina.h>
 
 #include "eina_suite.h"
+#include "eina_suite.x"
 #include "../efl_check.h"
 
 static const Efl_Test_Case etc[] = {
