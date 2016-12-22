@@ -105,7 +105,7 @@ _ecore_exe_win32_io_poll_thread(void *data, Ecore_Thread *th)
 {
    Threaddata *tdat = data;
    Threadreply *trep;
-   Eina_Bool data_read, data_write;
+   Eina_Bool data_read, data_error;
    char buf[4096];
    DWORD size, current_size;
    BOOL res;
@@ -113,7 +113,7 @@ _ecore_exe_win32_io_poll_thread(void *data, Ecore_Thread *th)
    while (EINA_TRUE)
      {
         data_read = EINA_FALSE;
-        data_write = EINA_FALSE;
+        data_error = EINA_FALSE;
 
         if (tdat->read)
           {
@@ -166,13 +166,13 @@ _ecore_exe_win32_io_poll_thread(void *data, Ecore_Thread *th)
                             trep->buf_size = size;
                             trep->error = EINA_TRUE;
                             ecore_thread_feedback(th, trep);
-                            //data_error = EINA_TRUE;
+                            data_error = EINA_TRUE;
                          }
                     }
                }
           }
         if (ecore_thread_check(th)) break;
-        if (!(data_read || data_write)) Sleep(100);
+        if (!(data_read || data_error)) Sleep(100);
         else if (ecore_thread_check(th)) break;
      }
    free(tdat);
