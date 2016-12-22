@@ -1278,6 +1278,7 @@ struct _Evas_Font_Description
 
 struct _Evas_Object_Filter_Data
 {
+   Evas_Object_Protected_Data *obj;
    Eina_Stringshare    *name;
    Eina_Stringshare    *code;
    Evas_Filter_Program *chain;
