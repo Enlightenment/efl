@@ -560,7 +560,7 @@ _impl_ecore_exe_send(Ecore_Exe  *obj,
    BOOL res;
 
    res = WriteFile(exe->pipe_write.child_pipe_x, data, size, &num_exe, NULL);
-   if (!res || num_exe == 0)
+   if (size && !res || num_exe == 0)
      {
         ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",
             obj, size, data);
