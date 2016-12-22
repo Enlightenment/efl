@@ -1891,7 +1891,7 @@ _calcf(char op, double a, double b)
          a -= b;
          return a;
       case '/':
-         if (NEQ(b, 0)) a /= b;
+         if (b != 0) a /= b;
          else
            ERR("%s:%i divide by zero", file_in, line - 1);
          return a;
@@ -1899,7 +1899,7 @@ _calcf(char op, double a, double b)
          a *= b;
          return a;
       case '%':
-         if (NEQ(b, 0)) a = (double)((int)a % (int)b);
+         if (0 != b) a = (double)((int)a % (int)b);
          else
            ERR("%s:%i modula by zero", file_in, line - 1);
          return a;
