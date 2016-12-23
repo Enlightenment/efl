@@ -93,6 +93,7 @@ START_TEST(redirect)
    elm_init(1, NULL);
 
    TEST_OBJ_NEW(root, 0, 0, 20, 20);
+   TEST_OBJ_NEW(root2, 0, 0, 20, 20);
    TEST_OBJ_NEW(one, 0, 0, 20, 20);
    TEST_OBJ_NEW(two, 20, 0, 20, 20);
 
@@ -101,10 +102,11 @@ START_TEST(redirect)
    );
 
    Efl_Ui_Focus_Manager *m2 = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
-    efl_ui_focus_manager_root_set(efl_added, one)
+    efl_ui_focus_manager_root_set(efl_added, root2)
    );
 
-   efl_ui_focus_manager_register(m2, two, one, NULL);
+   efl_ui_focus_manager_register(m2, one, root2, NULL);
+   efl_ui_focus_manager_register(m2, two, root2, NULL);
 
    efl_ui_focus_manager_redirect_set(m, m2);
    efl_ui_focus_manager_focus(m2, one);
@@ -205,7 +207,7 @@ START_TEST(logical_chain)
 
    Efl_Object *logical_chain[] = {
     child1, subchild11, subchild12, subchild13,
-    child2, subchild21, subchild22, subchild23, root, NULL
+    child2, subchild21, subchild22, subchild23, NULL
    };
    for (i = 0; logical_chain[i]; ++i)
      {
@@ -319,7 +321,6 @@ START_TEST(order_check)
    order = eina_list_append(order, child1);
    ck_assert_int_eq(efl_ui_focus_manager_update_children(m, root, order), 1);
 
-   eina_list_free(order);
    order = NULL;
 
    //negativ check

@@ -175,31 +175,39 @@ _logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
 }
 
 static void
-_manager_change(void *data, const Efl_Event *ev)
+_flush_manager(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 {
-   MY_DATA(data, pd);
-
    Efl_Ui_Focus_Manager *manager;
-   Efl_Ui_Focus_Object *logical;
+   Efl_Ui_Focus_Object *logical, *real_object;
    Efl_Ui_Focus_User *b;
    Eina_List *n;
 
-   logical = efl_ui_focus_user_parent_get(ev->object);
-   manager = efl_ui_focus_user_manager_get(ev->object);
+   real_object = efl_parent_get(obj);
+
+   logical = efl_ui_focus_user_parent_get(real_object);
+   manager = efl_ui_focus_user_manager_get(real_object);
 
    //unregister from the old
-   efl_event_callback_array_del(pd->manager, parent_manager(), data);
-   efl_event_callback_array_add(manager, parent_manager(), data);
+   efl_event_callback_array_del(pd->manager, parent_manager(), obj);
+   efl_event_callback_array_add(manager, parent_manager(), obj);
 
    EINA_LIST_FOREACH(pd->current_border , n, b)
      {
-        if (b == ev->object) continue;
+        if (b == real_object) continue;
 
-        _unregister(data, manager, b);
-        _register(data, manager, b, logical);
+        _unregister(obj, manager, b);
+        _register(obj, manager, b, logical);
      }
    //unregister the old manager, use the new
    pd->manager = manager;
+}
+
+static void
+_manager_change(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   MY_DATA(data, pd);
+
+   _flush_manager(data, pd);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(self_manager,
@@ -223,6 +231,8 @@ _efl_ui_focus_manager_sub_efl_object_parent_set(Eo *obj, Efl_Ui_Focus_Manager_Su
    new_parent = efl_parent_get(obj);
    _efl_ui_focus_manager_redirect_events_add(obj, new_parent);
    efl_event_callback_array_add(new_parent, self_manager(), obj);
+
+   _flush_manager(obj, pd);
 }
 
 EOLIAN static Efl_Object*

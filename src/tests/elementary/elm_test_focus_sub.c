@@ -1,22 +1,29 @@
 #include "elm_test_focus_common.h"
-#include "focus_test_sub.eo.h"
+#include "focus_test_sub_main.eo.h"
 
 typedef struct {
 
-} Focus_Test_Sub_Data;
+} Focus_Test_Sub_Main_Data;
+
 
 EOLIAN static void
-_focus_test_sub_efl_ui_focus_object_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Sub_Data *pd EINA_UNUSED, Eina_Rectangle *rect EINA_UNUSED)
+_focus_test_sub_main_efl_ui_focus_object_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Sub_Main_Data *pd EINA_UNUSED, Eina_Rectangle *rect)
 {
-  rect->y = rect->x = 0;
-  rect->w = rect->h = 20;
+   EINA_RECTANGLE_SET(rect, 0, 0, 20, 20);
 }
 
-EOLIAN static Eina_Bool
-_focus_test_sub_efl_ui_focus_object_focus_get(Eo *obj EINA_UNUSED, Focus_Test_Sub_Data *pd EINA_UNUSED)
+EOLIAN static Efl_Ui_Focus_Manager*
+_focus_test_sub_main_efl_ui_focus_user_manager_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return efl_key_data_get(obj, "__user_manager");
 }
+
+EOLIAN static Efl_Ui_Focus_Object*
+_focus_test_sub_main_efl_ui_focus_user_parent_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+{
+   return efl_key_data_get(obj, "__user_parent");
+}
+
 
 static Eina_List *registered;
 static Eina_List *unregistered;
@@ -54,7 +61,7 @@ _set_equal(Eina_List *a, Eina_List *b)
    return EINA_TRUE;
 }
 
-#include "focus_test_sub.eo.c"
+#include "focus_test_sub_main.eo.c"
 
 static void
 _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Object **r)
@@ -78,13 +85,19 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
 
    efl_object_override(manager, &manager_tracker);
 
-   Efl_Ui_Focus_Manager_Sub *subm = efl_add(FOCUS_TEST_SUB_CLASS, manager,
+   Focus_Test_Sub_Main *main = efl_add(FOCUS_TEST_SUB_MAIN_CLASS, NULL);
+
+   efl_key_data_set(main, "__user_manager", manager);
+   efl_key_data_set(main, "__user_parent", root_manager);
+
+   Efl_Ui_Focus_Manager_Sub *subm = efl_add(EFL_UI_FOCUS_MANAGER_SUB_CLASS, main,
     efl_ui_focus_manager_root_set(efl_added, root)
    );
 
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, NULL);
+   efl_composite_attach(main, subm);
+   efl_ui_focus_manager_register_logical(manager, main, root_manager, subm);
 
-   *sub = subm;
+   *sub = main;
    *m = manager;
    *r = root;
 }
@@ -102,7 +115,7 @@ START_TEST(correct_register)
    TEST_OBJ_NEW(child2, 10, 0, 10, 10);
    TEST_OBJ_NEW(child3, 0, 10, 10, 10);
 
-   set1 = eina_list_append(set1, sub);
+   //set1 = eina_list_append(set1, sub);
    //set1 = eina_list_append(set1, root);
    set1 = eina_list_append(set1, child1);
    set1 = eina_list_append(set1, child2);
@@ -117,12 +130,14 @@ START_TEST(correct_register)
    ck_assert_ptr_eq(unregistered, NULL);
    fail_if(!_set_equal(registered, set1));
 
-   efl_del(sub);
-   efl_del(manager);
-   efl_del(root);
+   efl_ui_focus_manager_unregister(sub, child1);
+   efl_ui_focus_manager_unregister(sub, child2);
+   efl_ui_focus_manager_unregister(sub, child3);
    efl_del(child1);
    efl_del(child2);
    efl_del(child3);
+   efl_del(sub);
+   efl_del(manager);
    elm_shutdown();
 }
 END_TEST

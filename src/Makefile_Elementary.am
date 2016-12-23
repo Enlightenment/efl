@@ -1346,7 +1346,7 @@ tests_elementary_elm_suite_SOURCES = \
 
 tests/elementary/tests_elementary_elm_suite-elm_test_focus.$(OBJEXT): tests/elementary/focus_test.eo.c tests/elementary/focus_test.eo.h
 
-tests/elementary/tests_elementary_elm_suite-elm_test_focus_sub.$(OBJEXT): tests/elementary/focus_test_sub.eo.c tests/elementary/focus_test_sub.eo.h
+tests/elementary/tests_elementary_elm_suite-elm_test_focus_sub.$(OBJEXT): tests/elementary/focus_test_sub_main.eo.c tests/elementary/focus_test_sub_main.eo.h
 
 tests_elementary_elm_suite_CPPFLAGS = \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
