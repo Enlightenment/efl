@@ -31,7 +31,9 @@ eolian_implement_function_get(const Eolian_Implement *impl,
         if (!func_type)
           return impl->foo_id;
 
-        if (impl->is_prop_get)
+        if (impl->is_prop_get && impl->is_prop_set)
+          *func_type = EOLIAN_PROPERTY;
+        else if (impl->is_prop_get)
           *func_type = EOLIAN_PROP_GET;
         else if (impl->is_prop_set)
           *func_type = EOLIAN_PROP_SET;
@@ -49,6 +51,8 @@ eolian_implement_function_get(const Eolian_Implement *impl,
 
    Eolian_Function_Type tp = EOLIAN_UNRESOLVED;
 
+   if (impl->is_prop_get && impl->is_prop_set)
+     tp = EOLIAN_PROPERTY;
    if (impl->is_prop_get)
      tp = EOLIAN_PROP_GET;
    else if (impl->is_prop_set)
@@ -57,14 +61,6 @@ eolian_implement_function_get(const Eolian_Implement *impl,
    const Eolian_Function *fid = eolian_class_function_get_by_name(klass,
                                                                   func_name,
                                                                   tp);
-
-   if (fid && tp == EOLIAN_UNRESOLVED && (fid->type == EOLIAN_PROP_GET
-                                       || fid->type == EOLIAN_PROP_SET))
-     {
-        fprintf(stderr, "eolian:%s:%d:%d: both get and set required for property '%s'\n",
-                impl->base.file, impl->base.line, impl->base.column, func_name);
-        return NULL;
-     }
 
    if (func_type)
      {
