@@ -1584,10 +1584,20 @@ fullclass:
              eo_lexer_get(ls);
              goto end;
            case KW_get:
+             if (getenv("EOLIAN_WARN_PROP_IMPLEMENTS"))
+               {
+                  printf("eolian:%s:%d: old style getter implement syntax\n",
+                         ls->filename, ls->line_number);
+               }
              impl->is_prop_get = EINA_TRUE;
              eo_lexer_get(ls);
              goto end;
            case KW_set:
+             if (getenv("EOLIAN_WARN_PROP_IMPLEMENTS"))
+               {
+                  printf("eolian:%s:%d: old style setter implement syntax\n",
+                         ls->filename, ls->line_number);
+               }
              impl->is_prop_set = EINA_TRUE;
              eo_lexer_get(ls);
              goto end;
