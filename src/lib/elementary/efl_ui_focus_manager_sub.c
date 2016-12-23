@@ -122,8 +122,6 @@ _border_unregister(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
         if (node == elem) continue;
         _unregister(obj, manager, node);
      }
-
-   pd->current_border = NULL;
 }
 
 static void
@@ -137,7 +135,7 @@ _parent_manager_pre_flush(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_redirect_changed_cb(void *data, const Efl_Event *ev)
+_redirect_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    //if (efl_ui_focus_manager_redirect_get(ev->object) != data) return;
 

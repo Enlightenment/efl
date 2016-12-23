@@ -844,7 +844,7 @@ _iterator_next(Border_Elements_Iterator *it, void **data)
 {
    Node *node;
 
-   while(eina_iterator_next(it->real_iterator, (void**)&node))
+   EINA_ITERATOR_FOREACH(it->real_iterator, node)
      {
         for(int i = 0 ;i < NODE_DIRECTIONS_COUNT; i++)
           {
@@ -902,14 +902,16 @@ _no_history_element(Eina_Hash *node_hash)
 
    iter = eina_hash_iterator_data_new(node_hash);
 
-   do
+   EINA_ITERATOR_FOREACH(iter, upper)
      {
-        if (!eina_iterator_next(iter, (void**)&upper))
-          return NULL;
+        if (upper->type == NODE_TYPE_NORMAL)
+          break;
      }
-   while (upper->type != NODE_TYPE_NORMAL);
 
    eina_iterator_free(iter);
+
+   if (upper->type != NODE_TYPE_NORMAL)
+     return NULL;
 
    return upper;
 }
