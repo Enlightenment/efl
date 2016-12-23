@@ -244,7 +244,11 @@ _c_init(void)
 {
    long ms = 0;
 
-   if (_c) return EINA_TRUE;
+   if (_c)
+     {
+        _c->ref++;
+        return EINA_TRUE;
+     }
    if (_c_fail)
      {
         ERR("Cannot find libcurl at runtime!");
@@ -252,6 +256,7 @@ _c_init(void)
      }
    _c = calloc(1, sizeof(Ecore_Con_Curl));
    if (!_c) goto error;
+   _c->ref++;
 
 #define LOAD(x)                               \
   if (!_c->mod) {                             \
@@ -342,7 +347,7 @@ error:
 void
 _c_shutdown(void)
 {
-   if (!_c) return;
+   if (!_c || _c->ref--) return;
    if (_c->_curlm)
      {
         _c->curl_multi_cleanup(_c->_curlm);

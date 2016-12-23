@@ -451,6 +451,8 @@ struct _Ecore_Con_Curl
                                                 const char *string);
    time_t                  (*curl_getdate)(const char *p, const time_t *unused);
    curl_version_info_data *(*curl_version_info)(CURLversion);
+
+   int                     ref; /* Reference on the structure */
 };
 
 #define CURL_MIN_TIMEOUT 100
