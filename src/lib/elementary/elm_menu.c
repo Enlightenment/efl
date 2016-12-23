@@ -814,6 +814,7 @@ _elm_menu_efl_object_constructor(Eo *obj, Elm_Menu_Data *sd)
       );
 
       efl_composite_attach(obj, manager);
+      _efl_ui_focus_manager_redirect_events_add(manager, obj);
    }
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));

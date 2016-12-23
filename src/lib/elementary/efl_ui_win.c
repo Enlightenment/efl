@@ -5249,8 +5249,7 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
 
    efl_composite_attach(obj, pd->manager);
 
-   efl_event_callback_forwarder_add(pd->manager, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, obj);
-   efl_event_callback_forwarder_add(pd->manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
+   _efl_ui_focus_manager_redirect_events_add(pd->manager, obj);
    return obj;
 }
 

@@ -540,6 +540,9 @@ void                 _elm_menu_menu_bar_hide(Eo *obj);
 void                 _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor);
 #endif
 
+void _efl_ui_focus_manager_redirect_events_del(Efl_Ui_Focus_Manager *manager, Eo *obj);
+void _efl_ui_focus_manager_redirect_events_add(Efl_Ui_Focus_Manager *manager, Eo *obj);
+
 /* DEPRECATED, will be removed on next release */
 void                 _elm_icon_signal_emit(Evas_Object *obj,
                                            const char *emission,

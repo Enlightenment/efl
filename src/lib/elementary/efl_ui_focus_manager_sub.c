@@ -215,15 +215,13 @@ _efl_ui_focus_manager_sub_efl_object_parent_set(Eo *obj, Efl_Ui_Focus_Manager_Su
 
    old_parent = efl_parent_get(obj);
 
-   efl_event_callback_forwarder_del(obj, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, old_parent);
-   efl_event_callback_forwarder_del(obj, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, old_parent);
+   _efl_ui_focus_manager_redirect_events_del(obj, old_parent);
    efl_event_callback_array_del(old_parent, self_manager(), obj);
 
    efl_parent_set(efl_super(obj, MY_CLASS), parent);
 
    new_parent = efl_parent_get(obj);
-   efl_event_callback_forwarder_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, new_parent);
-   efl_event_callback_forwarder_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, new_parent);
+   _efl_ui_focus_manager_redirect_events_add(obj, new_parent);
    efl_event_callback_array_add(new_parent, self_manager(), obj);
 }
 
