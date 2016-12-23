@@ -1582,6 +1582,7 @@ fullclass:
              eina_strbuf_append_char(buf, '.');
              eina_strbuf_append(buf, eo_lexer_keyword_str_get(ls->t.kw));
              eo_lexer_get(ls);
+             check_next(ls, ';');
              goto end;
            case KW_get:
              if (getenv("EOLIAN_WARN_PROP_IMPLEMENTS"))
@@ -1591,6 +1592,7 @@ fullclass:
                }
              impl->is_prop_get = EINA_TRUE;
              eo_lexer_get(ls);
+             check_next(ls, ';');
              goto end;
            case KW_set:
              if (getenv("EOLIAN_WARN_PROP_IMPLEMENTS"))
@@ -1600,6 +1602,7 @@ fullclass:
                }
              impl->is_prop_set = EINA_TRUE;
              eo_lexer_get(ls);
+             check_next(ls, ';');
              goto end;
            default:
              break;
@@ -1611,8 +1614,31 @@ fullclass:
         if (ls->t.token != '.') break;
         eo_lexer_get(ls);
      }
+   if (ls->t.token == '{')
+     {
+        Eina_Bool has_get = EINA_FALSE, has_set = EINA_FALSE;
+        eo_lexer_get(ls);
+        for (;;) switch (ls->t.kw)
+          {
+           case KW_get:
+             CASE_LOCK(ls, get, "get specifier");
+             eo_lexer_get(ls);
+             impl->is_prop_get = EINA_TRUE;
+             break;
+           case KW_set:
+             CASE_LOCK(ls, set, "set specifier");
+             eo_lexer_get(ls);
+             impl->is_prop_set = EINA_TRUE;
+             break;
+           default:
+             goto propend;
+          }
+propend:
+        check_next(ls, '}');
+     }
+   else
+     check_next(ls, ';');
 end:
-   check_next(ls, ';');
    impl->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
 }
