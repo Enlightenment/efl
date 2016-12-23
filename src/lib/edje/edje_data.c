@@ -17,6 +17,7 @@ Eet_Data_Descriptor *_edje_edd_edje_image_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_image_directory_set = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_image_directory_set_entry = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_vector_directory_entry = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_model_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_model_directory_entry = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_limit = NULL;
@@ -670,6 +671,7 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_image_directory_entry);
    FREED(_edje_edd_edje_image_directory_set);
    FREED(_edje_edd_edje_image_directory_set_entry);
+   FREED(_edje_edd_edje_vector_directory_entry);
    FREED(_edje_edd_edje_model_directory);
    FREED(_edje_edd_edje_model_directory_entry);
    FREED(_edje_edd_edje_limit);
@@ -818,11 +820,19 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_image_directory_set, Edje_Image_Directory_Set, "id", id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_image_directory_set, Edje_Image_Directory_Set, "entries", entries, _edje_edd_edje_image_directory_set_entry);
 
+   /* vector directory */
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Vector_Directory_Entry);
+   _edje_edd_edje_vector_directory_entry =
+     eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_vector_directory_entry, Edje_Vector_Directory_Entry, "entry", entry, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_vector_directory_entry, Edje_Vector_Directory_Entry, "id", id, EET_T_INT);
+
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Image_Directory);
    _edje_edd_edje_image_directory =
      eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_image_directory, Edje_Image_Directory, "entries", entries, _edje_edd_edje_image_directory_entry);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_image_directory, Edje_Image_Directory, "sets", sets, _edje_edd_edje_image_directory_set);
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_image_directory, Edje_Image_Directory, "vectors", vectors, _edje_edd_edje_vector_directory_entry);
 
    /*MO*/
 
