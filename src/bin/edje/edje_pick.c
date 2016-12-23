@@ -64,6 +64,7 @@ struct _Edje_Pick_File_Params
    Eina_List *luascriptlist;
    Eina_List *imagelist;
    Eina_List *imagesetlist;  /* List of IDs (Edje_Pick_Data) for image sets */
+   Eina_List *vectorlist;
    Eina_List *samplelist;
    Eina_List *tonelist;
    Eina_List *vibrationlist;
@@ -237,6 +238,9 @@ _edje_pick_cleanup(Eina_List *ifs, Edje_File *out_file, Edje_Pick_Status s)
 
         _edje_pick_data_free(p->imagelist);
         p->imagelist = NULL;
+
+        _edje_pick_data_free(p->vectorlist);
+        p->vectorlist = NULL;
 
         _edje_pick_data_free(p->imagesetlist);
         p->imagesetlist = NULL;
@@ -861,7 +865,7 @@ _edje_pick_images_copy(Edje_File *edf, Edje_File *o)
    int old_id;
    Eina_Bool status = EDJE_PICK_NO_ERROR;
    Eina_List *l, *l1;
-   Edje_Pick_Data *image, *set;
+   Edje_Pick_Data *image, *set, *vector;
 
    if (edf->image_dir)
      {
@@ -931,6 +935,38 @@ _edje_pick_images_copy(Edje_File *edf, Edje_File *o)
                          e->id = _edje_pick_image_new_id_get(
                            context.current_file->imagelist,
                            e->id);
+                    }
+               }
+          }
+
+        if (edf->image_dir->vectors)
+          {  /* Copy vector dir entries of current file */
+             Edje_Vector_Directory_Entry *vectors = NULL;
+
+             EINA_LIST_FOREACH(context.current_file->vectorlist, l, vector)
+               {
+                  if (vector->id.used)
+                    {
+                       o->image_dir->vectors_count += 1;
+
+                       /* alloc mem first time  or  re-allocate again (bigger array) */
+                       vectors = realloc(o->image_dir->vectors,
+                                         o->image_dir->vectors_count *
+                                         sizeof(Edje_Vector_Directory_Entry));
+                       if (!vectors)
+                         {
+                            EINA_LOG_ERR("Out of memory in realloc()");
+                            return EDJE_PICK_IMAGE_NOT_FOUND;
+                         }
+                       o->image_dir->vectors = vectors;
+
+                       old_id = _edje_pick_image_old_id_get(
+                         context.current_file->vectorlist, o->image_dir->vectors_count - 1);
+                       /* Concatinate current file vectors to re-allocaed array */
+                       memcpy(&o->image_dir->vectors[o->image_dir->vectors_count - 1],
+                              &edf->image_dir->vectors[old_id],
+                              sizeof(Edje_Vector_Directory_Entry));
+                       o->image_dir->vectors[o->image_dir->vectors_count - 1].id = vector->id.new_id;
                     }
                }
           }
@@ -1267,6 +1303,68 @@ _edje_pick_image_set_add(int id, Edje_File *edf, Edje_File *o)
    return current_set_id;
 }
 
+static int
+_edje_pick_vector_entry_add(int id, Edje_File *edf, Edje_File *o)
+{
+   char buf[1024];
+   int size;
+   void *data;
+   static int current_vg_id = -1;
+
+   int new_id = _edje_pick_image_new_id_get(context.current_file->vectorlist, id);
+   if (new_id >= 0) return new_id;
+
+   if (edf->image_dir)
+     {
+        if (!o->image_dir)  /* First time only */
+          o->image_dir = calloc(1, sizeof(*(o->image_dir)));
+
+        if (edf->image_dir->vectors)
+          { /* Copy Vectors */
+             Edje_Vector_Directory_Entry *vg = &edf->image_dir->vectors[id];
+
+             snprintf(buf, sizeof(buf), "edje/vectors/%i", vg->id);
+             VERBOSE(EINA_LOG_INFO("Trying to read <%s>\n", vg->entry));
+             data = eet_read(edf->ef, buf, &size);
+             if (size)
+               {  /* Advance vector ID and register this in vectorlist */
+                  current_vg_id++;
+                  Edje_Pick_Data *vector = malloc(sizeof(*vector));
+
+                  vector->filename = eina_stringshare_add(vg->entry);
+                  vector->data = data;
+                  vector->size = size;
+                  vector->entry = (void *) vg;  /* for output file vector dir */
+                  vector->id.old_id = vg->id;
+                  vg->id = vector->id.new_id = current_vg_id;
+                  vector->id.used = EINA_TRUE;
+
+                  VERBOSE(EINA_LOG_INFO("Read vector <%s> data <%p> size <%d>, new_id : %d\n",
+                                        buf, vector->data, vector->size, vector->id.new_id));
+
+                  context.current_file->vectorlist = eina_list_append(
+                    context.current_file->vectorlist, vector);
+               }
+             else
+               {
+                  if (vg->entry)
+                    {
+                       EINA_LOG_ERR("Vector <%s> was not found in <%s> file.\n",
+                                    vg->entry , context.current_file->name);
+                    }
+                  else
+                    {
+                       EINA_LOG_ERR("Vector entry <%s> was not found in <%s> file.\n", buf , context.current_file->name);
+                    }
+                  /* Should that really be freed? Or is some other handling needed? */
+                  free(data);
+               }
+          }
+     }
+
+   return current_vg_id;
+}
+
 static void
 _edje_pick_images_desc_update(Edje_Part_Description_Image *desc, Edje_File *edf, Edje_File *o)
 {
@@ -1288,6 +1386,18 @@ _edje_pick_images_desc_update(Edje_Part_Description_Image *desc, Edje_File *edf,
 
              desc->image.tweens[k]->id = new_id;
           }
+     }
+}
+
+static void
+_edje_pick_vectors_desc_update(Edje_Part_Description_Vector *desc, Edje_File *edf, Edje_File *o)
+{
+   /* Update all IDs of vectors in descs */
+   if (desc)
+     {
+        int new_id = _edje_pick_vector_entry_add(desc->vg.id, edf, o);
+
+        desc->vg.id = new_id;
      }
 }
 
@@ -1356,6 +1466,14 @@ _edje_pick_resources_process(Edje_Part_Collection *edc, Edje_File *edf, Edje_Fil
 
              for (k = 0; k < part->other.desc_count; k++)
                _edje_pick_images_desc_update((Edje_Part_Description_Image *) part->other.desc[k], edf, o);
+          }
+        else if (part->type == EDJE_PART_TYPE_VECTOR)
+          {
+             /* Update IDs of all vectors in ALL descs of this part */
+             _edje_pick_vectors_desc_update((Edje_Part_Description_Vector *) part->default_desc, edf, o);
+
+             for (k = 0; k < part->other.desc_count; k++)
+               _edje_pick_vectors_desc_update((Edje_Part_Description_Vector *) part->other.desc[k], edf, o);
           }
         else if (part->type == EDJE_PART_TYPE_TEXT || part->type == EDJE_PART_TYPE_TEXTBLOCK)
           {
@@ -1694,6 +1812,16 @@ main(int argc, char **argv)
                   snprintf(buf, sizeof(buf), "edje/images/%i", s->id.new_id);
                   eet_write(out_file->ef, buf, s->data, s->size, EINA_TRUE);
                   VERBOSE(EINA_LOG_INFO("Wrote <%s> image data <%p> size <%d>\n", buf, s->data, s->size));
+               }
+          }
+
+        EINA_LIST_FOREACH(context.current_file->vectorlist, t, s)
+          {
+             if (context.current_file->append || s->id.used)
+               {
+                  snprintf(buf, sizeof(buf), "edje/vectors/%i", s->id.new_id);
+                  eet_write(out_file->ef, buf, s->data, s->size, EINA_TRUE);
+                  VERBOSE(EINA_LOG_INFO("Wrote <%s> vector data <%p> size <%d>\n", buf, s->data, s->size));
                }
           }
 
