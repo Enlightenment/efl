@@ -639,7 +639,7 @@ _equal_set(Eina_List *none_nodes, Eina_List *nodes)
 
    EINA_LIST_FOREACH(nodes, n, node)
      {
-        if (!eina_list_data_find(none_nodes, node->focusable))
+        if (!eina_list_data_find(none_nodes, node))
           return EINA_FALSE;
      }
 
