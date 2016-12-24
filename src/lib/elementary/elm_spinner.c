@@ -1540,7 +1540,6 @@ _elm_spinner_efl_ui_spin_value_set(Eo *obj, Elm_Spinner_Data *sd, double val)
 
    _val_set(obj);
    _label_write(obj);
-   efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static double
