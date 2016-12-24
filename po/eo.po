@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#: src/lib/elementary/elm_config.c:3766
+#: src/lib/elementary/elm_config.c:3770
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-11-01 22:10+0900\n"
+"POT-Creation-Date: 2016-12-22 19:29+0900\n"
 "PO-Revision-Date: 2013-11-05 18:59+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -252,7 +252,7 @@ msgid "Search"
 msgstr ""
 
 #: src/lib/elementary/elc_fileselector.c:2230
-#: src/lib/elementary/elm_entry.c:1704 src/lib/elementary/elm_entry.c:1729
+#: src/lib/elementary/elm_entry.c:1707 src/lib/elementary/elm_entry.c:1732
 msgid "Cancel"
 msgstr "Nuligi"
 
@@ -260,49 +260,49 @@ msgstr "Nuligi"
 msgid "OK"
 msgstr "Bone"
 
-#: src/lib/elementary/elc_hoversel.c:417 src/lib/elementary/elm_button.c:278
+#: src/lib/elementary/elc_hoversel.c:418 src/lib/elementary/elm_button.c:278
 #: src/lib/elementary/elm_check.c:212 src/lib/elementary/elm_gengrid.c:1440
 #: src/lib/elementary/elm_genlist.c:1726 src/lib/elementary/elm_list.c:2176
 #: src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:999 src/lib/elementary/elm_toolbar.c:2378
+#: src/lib/elementary/elm_spinner.c:1002 src/lib/elementary/elm_toolbar.c:2377
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
 
-#: src/lib/elementary/elc_hoversel.c:616
+#: src/lib/elementary/elc_hoversel.c:617
 msgid "Hoversel"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:697
+#: src/lib/elementary/elc_multibuttonentry.c:699
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:719
+#: src/lib/elementary/elc_multibuttonentry.c:721
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:1597
+#: src/lib/elementary/elc_multibuttonentry.c:1606
 msgid "multi button entry"
 msgstr ""
 
-#: src/lib/elementary/elc_naviframe.c:441
+#: src/lib/elementary/elc_naviframe.c:442
 msgid "Title"
 msgstr "Titolo"
 
-#: src/lib/elementary/elc_naviframe.c:992
-#: src/lib/elementary/elc_naviframe.c:1200
+#: src/lib/elementary/elc_naviframe.c:993
+#: src/lib/elementary/elc_naviframe.c:1209
 msgid "Back"
 msgstr "Reen"
 
-#: src/lib/elementary/elc_naviframe.c:1299
+#: src/lib/elementary/elc_naviframe.c:1307
 msgid "Next"
 msgstr "Antaŭen"
 
-#: src/lib/elementary/elc_popup.c:295 src/lib/elementary/elc_popup.c:953
+#: src/lib/elementary/elc_popup.c:298 src/lib/elementary/elc_popup.c:956
 msgid "Popup Title"
 msgstr "Titolo de spruĉfenestro"
 
-#: src/lib/elementary/elc_popup.c:305 src/lib/elementary/elc_popup.c:1029
+#: src/lib/elementary/elc_popup.c:308 src/lib/elementary/elc_popup.c:1032
 msgid "Popup Body Text"
 msgstr "Enhava teksto de spruĉfenestro"
 
@@ -318,43 +318,43 @@ msgstr "Alklakita"
 msgid "Button"
 msgstr "Butono"
 
-#: src/lib/elementary/elm_calendar.c:270
+#: src/lib/elementary/elm_calendar.c:272
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elementary/elm_calendar.c:276
+#: src/lib/elementary/elm_calendar.c:278
 msgid "%B"
 msgstr "%B"
 
-#: src/lib/elementary/elm_calendar.c:282
+#: src/lib/elementary/elm_calendar.c:284
 msgid "%Y"
 msgstr "%V"
 
-#: src/lib/elementary/elm_calendar.c:396
+#: src/lib/elementary/elm_calendar.c:409
 msgid "calendar item"
 msgstr "kalendarero"
 
-#: src/lib/elementary/elm_calendar.c:423
+#: src/lib/elementary/elm_calendar.c:436
 msgid "calendar decrement month button"
 msgstr "Dekrementa butono de monata kalendaro"
 
-#: src/lib/elementary/elm_calendar.c:429
+#: src/lib/elementary/elm_calendar.c:442
 msgid "calendar decrement year button"
 msgstr "Dekrementa butono de jara kalendaro"
 
-#: src/lib/elementary/elm_calendar.c:435
+#: src/lib/elementary/elm_calendar.c:448
 msgid "calendar increment month button"
 msgstr "Alkrementa butono de monata kalendaro"
 
-#: src/lib/elementary/elm_calendar.c:441
+#: src/lib/elementary/elm_calendar.c:454
 msgid "calendar increment year button"
 msgstr "Alkrementa butono de jara kalendaro"
 
-#: src/lib/elementary/elm_calendar.c:446
+#: src/lib/elementary/elm_calendar.c:459
 msgid "calendar month"
 msgstr "monato de kalendaro"
 
-#: src/lib/elementary/elm_calendar.c:451
+#: src/lib/elementary/elm_calendar.c:464
 msgid "calendar year"
 msgstr "jara kalendaro"
 
@@ -416,7 +416,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "ero de elektilo de kolorpaletro"
 
-#: src/lib/elementary/elm_config.c:3783
+#: src/lib/elementary/elm_config.c:3787
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -428,23 +428,23 @@ msgstr ""
 msgid "diskselector item"
 msgstr "ero de diskelektilo"
 
-#: src/lib/elementary/elm_entry.c:1694
+#: src/lib/elementary/elm_entry.c:1697
 msgid "Cut"
 msgstr "Eltondi"
 
-#: src/lib/elementary/elm_entry.c:1697
+#: src/lib/elementary/elm_entry.c:1700
 msgid "Copy"
 msgstr "Kopii"
 
-#: src/lib/elementary/elm_entry.c:1701 src/lib/elementary/elm_entry.c:1723
+#: src/lib/elementary/elm_entry.c:1704 src/lib/elementary/elm_entry.c:1726
 msgid "Paste"
 msgstr "Alglui"
 
-#: src/lib/elementary/elm_entry.c:1716
+#: src/lib/elementary/elm_entry.c:1719
 msgid "Select"
 msgstr "Elekti"
 
-#: src/lib/elementary/elm_entry.c:3796
+#: src/lib/elementary/elm_entry.c:3804
 msgid "Entry"
 msgstr "Ero"
 
@@ -493,7 +493,7 @@ msgid "Radio"
 msgstr "Radiobutono"
 
 #: src/lib/elementary/elm_segment_control.c:532
-#: src/lib/elementary/elm_toolbar.c:2380
+#: src/lib/elementary/elm_toolbar.c:2379
 msgid "State: Selected"
 msgstr "Stato: elektita"
 
@@ -509,47 +509,47 @@ msgstr ""
 msgid "slider"
 msgstr "ŝovilo"
 
-#: src/lib/elementary/elm_spinner.c:1029
+#: src/lib/elementary/elm_spinner.c:1032
 msgid "incremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1035
+#: src/lib/elementary/elm_spinner.c:1038
 msgid "decremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1068 src/lib/elementary/elm_spinner.c:1135
+#: src/lib/elementary/elm_spinner.c:1071 src/lib/elementary/elm_spinner.c:1138
 msgid "spinner"
 msgstr "sago-butono"
 
-#: src/lib/elementary/elm_spinner.c:1077 src/lib/elementary/elm_spinner.c:1118
+#: src/lib/elementary/elm_spinner.c:1080 src/lib/elementary/elm_spinner.c:1121
 msgid "spinner increment button"
 msgstr "alkrementa sago-butono"
 
-#: src/lib/elementary/elm_spinner.c:1080 src/lib/elementary/elm_spinner.c:1127
+#: src/lib/elementary/elm_spinner.c:1083 src/lib/elementary/elm_spinner.c:1130
 msgid "spinner decrement button"
 msgstr "dekrementa sago-butono"
 
-#: src/lib/elementary/elm_spinner.c:1082
+#: src/lib/elementary/elm_spinner.c:1085
 #, fuzzy
 msgid "spinner text"
 msgstr "sago-butono"
 
-#: src/lib/elementary/elm_toolbar.c:1835 src/lib/elementary/elm_toolbar.c:2436
+#: src/lib/elementary/elm_toolbar.c:1834 src/lib/elementary/elm_toolbar.c:2435
 msgid "Selected"
 msgstr "Elektita"
 
-#: src/lib/elementary/elm_toolbar.c:2376
+#: src/lib/elementary/elm_toolbar.c:2375
 msgid "Separator"
 msgstr "Disigilo"
 
-#: src/lib/elementary/elm_toolbar.c:2382
+#: src/lib/elementary/elm_toolbar.c:2381
 msgid "Has menu"
 msgstr "Ĝi havas menuo"
 
-#: src/lib/elementary/elm_toolbar.c:2431
+#: src/lib/elementary/elm_toolbar.c:2430
 msgid "Unselected"
 msgstr "Malelektita"
 
-#: src/lib/elementary/elm_toolbar.c:2448
+#: src/lib/elementary/elm_toolbar.c:2447
 msgid "Toolbar Item"
 msgstr "Ilobretero"
