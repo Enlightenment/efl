@@ -1,0 +1,8 @@
+class Cyclic2
+{
+   methods {
+      foo {
+         return: Cyclic1;
+      }
+   }
+}
