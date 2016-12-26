@@ -132,11 +132,13 @@ _cb_server_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_DONE;
 }
 
+static Ecore_Timer *reconnect_timer = NULL;
+
 static Eina_Bool
-_cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_cb_server_reconnect(void *data EINA_UNUSED)
 {
-   IPC_HEAD(Del);
-   ipc = NULL;
+   if (reconnect_timer) ecore_timer_del(reconnect_timer);
+   reconnect_timer = NULL;
    _ipc_launch();
    if (ipc)
      {
@@ -148,6 +150,25 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         ecore_ipc_server_send(ipc, 1, 0, 0, 0, 0, s, len);
         efreet_icon_extensions_refresh();
      }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   static double last_del = 0.0;
+   double t;
+   IPC_HEAD(Del);
+   ipc = NULL;
+   t = ecore_time_get();
+   if ((t - last_del) < 0.5)
+     {
+        if (reconnect_timer) ecore_timer_del(reconnect_timer);
+        reconnect_timer = ecore_timer_add(0.5, _cb_server_reconnect, NULL);
+     }
+   else
+     _cb_server_reconnect(NULL);
+   last_del = t;
    return ECORE_CALLBACK_DONE;
 }
 
