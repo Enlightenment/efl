@@ -1543,54 +1543,30 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         if (!impl->is_auto && !impl->is_empty)
           goto fullclass;
         check_next(ls, '.');
-        if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
+        if (ls->t.token != TOK_VALUE)
           eo_lexer_syntax_error(ls, "name expected");
         impl->full_name = eina_stringshare_printf(".%s", ls->t.value.s);
         eo_lexer_get(ls);
         goto propbeg;
      }
 fullclass:
-   if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
+   if (ls->t.token != TOK_VALUE)
      eo_lexer_syntax_error(ls, "class name expected");
    buf = push_strbuf(ls);
    eina_strbuf_append(buf, ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, '.');
-   if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
+   if (ls->t.token != TOK_VALUE)
      eo_lexer_syntax_error(ls, "name or constructor/destructor expected");
    for (;;)
      {
-        switch (ls->t.kw)
+        if ((ls->t.kw == KW_constructor) || (ls->t.kw == KW_destructor))
           {
-           case KW_constructor:
-           case KW_destructor:
              eina_strbuf_append_char(buf, '.');
              eina_strbuf_append(buf, eo_lexer_keyword_str_get(ls->t.kw));
              eo_lexer_get(ls);
              check_next(ls, ';');
              goto end;
-           case KW_get:
-             if (getenv("EOLIAN_WARN_PROP_IMPLEMENTS"))
-               {
-                  printf("eolian:%s:%d: old style getter implement syntax\n",
-                         ls->filename, ls->line_number);
-               }
-             impl->is_prop_get = EINA_TRUE;
-             eo_lexer_get(ls);
-             check_next(ls, ';');
-             goto end;
-           case KW_set:
-             if (getenv("EOLIAN_WARN_PROP_IMPLEMENTS"))
-               {
-                  printf("eolian:%s:%d: old style setter implement syntax\n",
-                         ls->filename, ls->line_number);
-               }
-             impl->is_prop_set = EINA_TRUE;
-             eo_lexer_get(ls);
-             check_next(ls, ';');
-             goto end;
-           default:
-             break;
           }
         eina_strbuf_append_char(buf, '.');
         check(ls, TOK_VALUE);
