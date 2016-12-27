@@ -537,6 +537,10 @@ _ecore_thread_worker_new(void)
        result = calloc(1, sizeof(Ecore_Pthread_Worker));
        _ecore_thread_worker_count++;
      }
+   else
+     {
+        memset(result, 0,  sizeof(Ecore_Pthread_Worker));
+     }
 
    SLKI(result->cancel_mutex);
    LKI(result->mutex);
