@@ -56,8 +56,6 @@ struct _Eio_Monitor_Backend
    Eio_Monitor_Win32_Watcher *watcher_parent;
 };
 
-static Eina_Bool _eio_monitor_win32_native = EINA_FALSE;
-
 static Eina_Bool
 _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh EINA_UNUSED)
 {
@@ -313,6 +311,7 @@ _eio_monitor_win32_watcher_free(Eio_Monitor_Win32_Watcher *w)
 {
    if (!w) return;
 
+   ecore_main_win32_handler_del(w->h);
    eina_stringshare_del(w->file);
    eina_stringshare_del(w->current);
    CloseHandle(w->event);
@@ -402,7 +401,7 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    if (!backend->watcher_parent)
      goto free_backend_dir;
 
-   _eio_monitor_win32_native = EINA_TRUE;
+   monitor->fallback = EINA_FALSE;
    monitor->backend = backend;
 
    eina_stringshare_del(current);
@@ -418,13 +417,13 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    free(backend);
  fallback:
    INF("falling back to poll monitoring");
-   _eio_monitor_win32_native = EINA_FALSE;
+   monitor->fallback = EINA_TRUE;
    eio_monitor_fallback_add(monitor);
 }
 
 void eio_monitor_backend_del(Eio_Monitor *monitor)
 {
-   if (!_eio_monitor_win32_native)
+   if (monitor->fallback)
      {
         eio_monitor_fallback_del(monitor);
         return;
