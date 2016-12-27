@@ -36,9 +36,9 @@ class Eio.Model (Efl.Object, Efl.Model)
     implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Object.parent.get;
+      Efl.Object.parent { get; }
       Efl.Object.provider_find;
-      Efl.Model.properties.get;
+      Efl.Model.properties { get; }
       Efl.Model.property_set;
       Efl.Model.property_get;
       Efl.Model.child_add;

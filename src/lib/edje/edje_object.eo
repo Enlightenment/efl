@@ -2104,23 +2104,21 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
    }
    implements {
-      Efl.Gfx.visible.set;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.dbg_info_get;
-      Efl.Canvas.Object.no_render.set;
-      Efl.Canvas.Object.paragraph_direction.set;
+      Efl.Canvas.Object.no_render { set; }
+      Efl.Canvas.Object.paragraph_direction { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_calculate;
-      Efl.File.file.set;
-      Efl.File.file.get;
-      Efl.File.mmap.set;
-      Efl.File.mmap.get;
+      Efl.File.file { get; set; }
+      Efl.File.mmap { get; set; }
       Efl.Container.content_remove;
-      Efl.Container.content_part_name.get;
+      Efl.Container.content_part_name { get; }
       Efl.Part.part;
       Efl.Observer.update;
    }

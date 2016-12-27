@@ -8,7 +8,7 @@ class Efl.Canvas.Layout_Internal.Table (Efl.Object, Efl.Canvas.Layout_Internal, 
    data: Edje_Table_Data;
    implements {
       Efl.Object.finalize;
-      Efl.Canvas.Layout_Internal.real_part.set;
+      Efl.Canvas.Layout_Internal.real_part { set; }
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;
@@ -18,9 +18,9 @@ class Efl.Canvas.Layout_Internal.Table (Efl.Object, Efl.Canvas.Layout_Internal, 
       Efl.Pack.Grid.pack_grid;
       Efl.Pack.Grid.grid_content_get;
       Efl.Pack.Grid.grid_contents_get;
-      Efl.Pack.Grid.grid_position.get;
-      Efl.Pack.Grid.grid_size.get;
-      Efl.Pack.Grid.grid_columns.get;
-      Efl.Pack.Grid.grid_rows.get;
+      Efl.Pack.Grid.grid_position { get; }
+      Efl.Pack.Grid.grid_size { get; }
+      Efl.Pack.Grid.grid_columns { get; }
+      Efl.Pack.Grid.grid_rows { get; }
    }
 }

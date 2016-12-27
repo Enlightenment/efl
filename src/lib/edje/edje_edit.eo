@@ -11,6 +11,6 @@ class Edje.Edit (Edje.Object)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Canvas.Group.group_del;
-      Efl.File.file.set;
+      Efl.File.file { set; }
    }
 }

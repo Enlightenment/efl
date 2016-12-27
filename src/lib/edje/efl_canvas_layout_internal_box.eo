@@ -9,7 +9,7 @@ class Efl.Canvas.Layout_Internal.Box (Efl.Object, Efl.Canvas.Layout_Internal, Ef
    data: Edje_Box_Data;
    implements {
       Efl.Object.finalize;
-      Efl.Canvas.Layout_Internal.real_part.set;
+      Efl.Canvas.Layout_Internal.real_part { set; }
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;
@@ -25,6 +25,6 @@ class Efl.Canvas.Layout_Internal.Box (Efl.Object, Efl.Canvas.Layout_Internal, Ef
       Efl.Pack.Linear.pack_content_get;
       Efl.Pack.Linear.pack_unpack_at;
       Efl.Pack.Linear.pack_index_get;
-      Efl.Orientation.orientation.get;
+      Efl.Orientation.orientation { get; }
    }
 }

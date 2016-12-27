@@ -8,9 +8,8 @@ class Efl.Canvas.Layout_Internal.Swallow (Efl.Object, Efl.Canvas.Layout_Internal
    data: Edje_Swallow_Data;
    implements {
       Efl.Object.finalize;
-      Efl.Canvas.Layout_Internal.real_part.set;
-      Efl.Container.content.get;
-      Efl.Container.content.set;
+      Efl.Canvas.Layout_Internal.real_part { set; }
+      Efl.Container.content { get; set; }
       Efl.Container.content_unset;
    }
 }
