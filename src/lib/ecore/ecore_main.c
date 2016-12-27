@@ -2598,6 +2598,9 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
    /* Create an event object per socket */
    EINA_INLIST_FOREACH(fd_handlers, fdh)
      {
+        if (fdh->delete_me)
+          continue;
+
         WSAEVENT event;
         long network_event;
 
@@ -2632,6 +2635,9 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
    /* store the HANDLEs in the objects to wait for */
    EINA_INLIST_FOREACH(win32_handlers, wh)
      {
+        if (wh->delete_me)
+          continue;
+
         if (wh->h == stdin_handle)
           {
              if (stdin_wait_thread == INVALID_HANDLE_VALUE)
