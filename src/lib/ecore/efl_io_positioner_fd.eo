@@ -17,6 +17,6 @@ mixin Efl.Io.Positioner.Fd (Efl.Io.Positioner) {
 
     implements {
         Efl.Io.Positioner.seek;
-        Efl.Io.Positioner.position.get;
+        Efl.Io.Positioner.position { get; }
     }
 }

@@ -67,7 +67,7 @@ class Ecore.Exe (Efl.Object, Efl.Control)
    implements {
         Efl.Object.destructor;
         Efl.Object.finalize;
-        Efl.Control.suspend.set;
+        Efl.Control.suspend { set; }
    }
    constructors {
       .command;

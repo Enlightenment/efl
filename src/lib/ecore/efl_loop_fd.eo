@@ -41,6 +41,6 @@ class Efl.Loop.Fd (Efl.Loop_User)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Object.parent.set;
+      Efl.Object.parent { set; }
    }
 }

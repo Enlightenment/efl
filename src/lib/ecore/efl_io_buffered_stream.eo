@@ -250,7 +250,7 @@ class Efl.Io.Buffered_Stream (Efl.Loop_User, Efl.Io.Reader, Efl.Io.Writer, Efl.I
         Efl.Object.finalize;
         Efl.Object.destructor;
         Efl.Io.Closer.close;
-        Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec;
         Efl.Io.Closer.close_on_destructor;
         Efl.Io.Reader.read;

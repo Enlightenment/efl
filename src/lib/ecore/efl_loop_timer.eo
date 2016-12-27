@@ -63,7 +63,7 @@ class Efl.Loop.Timer (Efl.Loop_User)
       Efl.Object.destructor;
       Efl.Object.finalize;
       Efl.Object.event_freeze;
-      Efl.Object.parent.set;
+      Efl.Object.parent { set; }
       /* XXX: can't document overridden methods
        * Pauses a running timer.
        *
@@ -78,7 +78,7 @@ class Efl.Loop.Timer (Efl.Loop_User)
        *
        * @see ecore_timer_thaw()
        */
-      Efl.Object.event_freeze_count.get;
+      Efl.Object.event_freeze_count { get; }
       Efl.Object.event_thaw;
       /* XXX: can't document overridden methods
        * Resumes a frozen (paused) timer.

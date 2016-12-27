@@ -17,7 +17,6 @@ mixin Efl.Io.Writer.Fd (Efl.Io.Writer) {
 
     implements {
         Efl.Io.Writer.write;
-        Efl.Io.Writer.can_write.get;
-        Efl.Io.Writer.can_write.set;
+        Efl.Io.Writer.can_write { get; set; }
     }
 }

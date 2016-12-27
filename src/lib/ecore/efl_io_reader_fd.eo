@@ -17,9 +17,7 @@ mixin Efl.Io.Reader.Fd (Efl.Io.Reader) {
 
     implements {
         Efl.Io.Reader.read;
-        Efl.Io.Reader.can_read.get;
-        Efl.Io.Reader.can_read.set;
-        Efl.Io.Reader.eos.get;
-        Efl.Io.Reader.eos.set;
+        Efl.Io.Reader.can_read { get; set; }
+        Efl.Io.Reader.eos { get; set; }
     }
 }

@@ -17,6 +17,6 @@ mixin Efl.Io.Sizer.Fd (Efl.Io.Sizer) {
 
     implements {
         Efl.Io.Sizer.resize;
-        Efl.Io.Sizer.size.get;
+        Efl.Io.Sizer.size { get; }
     }
 }

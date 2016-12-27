@@ -16,6 +16,6 @@ class Efl.Loop_User (Efl.Object)
       }
    }
    implements {
-      Efl.Object.parent.set;
+      Efl.Object.parent { set; }
    }
 }
