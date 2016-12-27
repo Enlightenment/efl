@@ -72,11 +72,17 @@ static void _elm_code_file_line_insert_data(Elm_Code_File *file, const char *con
 
 EAPI const char *elm_code_file_filename_get(Elm_Code_File *file)
 {
+   if (!file->file)
+     return NULL;
+
    return basename((char *)eina_file_filename_get(file->file));
 }
 
 EAPI const char *elm_code_file_path_get(Elm_Code_File *file)
 {
+   if (!file->file)
+     return NULL;
+
    return eina_file_filename_get(file->file);
 }
 
