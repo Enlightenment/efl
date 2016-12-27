@@ -28,7 +28,7 @@ class Efl.Net.Server.Udp.Client (Efl.Object, Efl.Net.Socket) {
         Efl.Object.finalize;
         Efl.Object.destructor;
         Efl.Io.Closer.close;
-        Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_destructor;
         Efl.Io.Closer.close_on_exec;
         Efl.Io.Reader.can_read;

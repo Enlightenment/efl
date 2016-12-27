@@ -43,6 +43,6 @@ class Efl.Net.Socket.Tcp (Efl.Net.Socket.Fd) {
     }
 
     implements {
-        Efl.Loop.Fd.fd.set;
+        Efl.Loop.Fd.fd { set; }
     }
 }

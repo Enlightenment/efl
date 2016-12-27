@@ -47,9 +47,9 @@ class Efl.Net.Server.Simple (Efl.Loop_User, Efl.Net.Server) {
         Efl.Object.destructor;
         Efl.Net.Server.serve;
         Efl.Net.Server.client_announce;
-        Efl.Net.Server.address.get;
-        Efl.Net.Server.clients_count.get;
+        Efl.Net.Server.address { get; }
+        Efl.Net.Server.clients_count { get; }
         Efl.Net.Server.clients_limit;
-        Efl.Net.Server.serving.get;
+        Efl.Net.Server.serving { get; }
     }
 }

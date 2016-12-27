@@ -69,7 +69,7 @@ class Efl.Net.Dialer.Ssl (Efl.Net.Socket.Ssl, Efl.Net.Dialer) {
         Efl.Object.destructor;
         Efl.Object.finalize;
         Efl.Net.Dialer.dial;
-        Efl.Net.Dialer.address_dial.get;
+        Efl.Net.Dialer.address_dial { get; }
         Efl.Net.Dialer.connected;
         Efl.Net.Dialer.proxy;
         Efl.Net.Dialer.timeout_dial;

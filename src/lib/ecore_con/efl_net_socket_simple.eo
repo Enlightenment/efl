@@ -38,8 +38,8 @@ class Efl.Net.Socket.Simple (Efl.Io.Buffered_Stream, Efl.Net.Socket) {
     ]]
 
     implements {
-        Efl.Io.Buffered_Stream.inner_io.set;
-        Efl.Net.Socket.address_local.get;
-        Efl.Net.Socket.address_remote.get;
+        Efl.Io.Buffered_Stream.inner_io { set; }
+        Efl.Net.Socket.address_local { get; }
+        Efl.Net.Socket.address_remote { get; }
     }
 }

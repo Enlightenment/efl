@@ -33,14 +33,14 @@ class Efl.Net.Socket.Fd (Efl.Loop.Fd, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io
         Efl.Object.finalize;
         Efl.Object.constructor;
         Efl.Object.destructor;
-        Efl.Loop.Fd.fd.set;
+        Efl.Loop.Fd.fd { set; }
         Efl.Io.Closer.close;
-        Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.closed { get; }
         Efl.Io.Reader.read;
-        Efl.Io.Reader.can_read.set;
-        Efl.Io.Reader.eos.set;
+        Efl.Io.Reader.can_read { set; }
+        Efl.Io.Reader.eos { set; }
         Efl.Io.Writer.write;
-        Efl.Io.Writer.can_write.set;
+        Efl.Io.Writer.can_write { set; }
         Efl.Net.Socket.address_local;
         Efl.Net.Socket.address_remote;
     }

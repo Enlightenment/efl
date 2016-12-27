@@ -320,17 +320,15 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         Efl.Net.Dialer.connected;
         Efl.Net.Dialer.proxy;
         Efl.Net.Dialer.timeout_dial;
-        Efl.Net.Socket.address_local.get;
+        Efl.Net.Socket.address_local { get; }
         Efl.Net.Socket.address_remote;
         Efl.Io.Reader.read;
-        Efl.Io.Reader.can_read.get;
-        Efl.Io.Reader.can_read.set;
-        Efl.Io.Reader.eos.get;
+        Efl.Io.Reader.can_read { get; set; }
+        Efl.Io.Reader.eos { get; }
         Efl.Io.Writer.write;
-        Efl.Io.Writer.can_write.get;
-        Efl.Io.Writer.can_write.set;
+        Efl.Io.Writer.can_write { get; set; }
         Efl.Io.Closer.close;
-        Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec;
         Efl.Io.Closer.close_on_destructor;
     }

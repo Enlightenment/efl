@@ -176,7 +176,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
     implements {
         Efl.Object.constructor;
         Efl.Object.destructor;
-        Efl.Loop.Fd.fd.set;
+        Efl.Loop.Fd.fd { set; }
         Efl.Io.Reader.read;
         Efl.Io.Writer.write;
     }

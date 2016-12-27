@@ -402,18 +402,15 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         Efl.Net.Socket.address_local;
         Efl.Net.Socket.address_remote;
         Efl.Io.Reader.read;
-        Efl.Io.Reader.can_read.get;
-        Efl.Io.Reader.can_read.set;
-        Efl.Io.Reader.eos.get;
-        Efl.Io.Reader.eos.set;
+        Efl.Io.Reader.can_read { get; set; }
+        Efl.Io.Reader.eos { get; set; }
         Efl.Io.Writer.write;
-        Efl.Io.Writer.can_write.get;
-        Efl.Io.Writer.can_write.set;
+        Efl.Io.Writer.can_write { get; set; }
         Efl.Io.Closer.close;
-        Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec;
         Efl.Io.Closer.close_on_destructor;
         Efl.Io.Sizer.resize;
-        Efl.Io.Sizer.size.get;
+        Efl.Io.Sizer.size { get; }
     }
 }

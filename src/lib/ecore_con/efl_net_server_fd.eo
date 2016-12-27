@@ -155,7 +155,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
         Efl.Object.finalize;
         Efl.Object.constructor;
         Efl.Object.destructor;
-        Efl.Loop.Fd.fd.set;
+        Efl.Loop.Fd.fd { set; }
         Efl.Net.Server.address;
         Efl.Net.Server.clients_count;
         Efl.Net.Server.clients_limit;

@@ -70,10 +70,10 @@ class Efl.Net.Dialer.Simple (Efl.Net.Socket.Simple, Efl.Net.Dialer) {
     implements {
         Efl.Object.finalize;
         Efl.Object.destructor;
-        Efl.Io.Buffered_Stream.inner_io.set;
+        Efl.Io.Buffered_Stream.inner_io { set; }
         Efl.Net.Dialer.dial;
-        Efl.Net.Dialer.address_dial.get;
-        Efl.Net.Dialer.connected.get;
+        Efl.Net.Dialer.address_dial { get; }
+        Efl.Net.Dialer.connected { get; }
         Efl.Net.Dialer.proxy;
         Efl.Net.Dialer.timeout_dial;
         Efl.Io.Buffered_Stream.timeout_inactivity;

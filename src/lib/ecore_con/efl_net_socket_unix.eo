@@ -8,6 +8,6 @@ class Efl.Net.Socket.Unix (Efl.Net.Socket.Fd) {
     ]]
 
     implements {
-        Efl.Loop.Fd.fd.set;
+        Efl.Loop.Fd.fd { set; }
     }
 }

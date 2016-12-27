@@ -87,7 +87,7 @@ class Efl.Net.Socket.Ssl (Efl.Loop_User, Efl.Net.Socket) {
         Efl.Object.destructor;
         Efl.Object.finalize;
         Efl.Io.Closer.close;
-        Efl.Io.Closer.closed.get;
+        Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec;
         Efl.Io.Closer.close_on_destructor;
         Efl.Io.Reader.read;
@@ -95,7 +95,7 @@ class Efl.Net.Socket.Ssl (Efl.Loop_User, Efl.Net.Socket) {
         Efl.Io.Reader.eos;
         Efl.Io.Writer.write;
         Efl.Io.Writer.can_write;
-        Efl.Net.Socket.address_remote.get;
-        Efl.Net.Socket.address_local.get;
+        Efl.Net.Socket.address_remote { get; }
+        Efl.Net.Socket.address_local { get; }
     }
 }
