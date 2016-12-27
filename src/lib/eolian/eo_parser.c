@@ -1624,11 +1624,13 @@ fullclass:
              CASE_LOCK(ls, get, "get specifier");
              eo_lexer_get(ls);
              impl->is_prop_get = EINA_TRUE;
+             check_next(ls, ';');
              break;
            case KW_set:
              CASE_LOCK(ls, set, "set specifier");
              eo_lexer_get(ls);
              impl->is_prop_set = EINA_TRUE;
+             check_next(ls, ';');
              break;
            default:
              goto propend;
