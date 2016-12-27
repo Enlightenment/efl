@@ -5,7 +5,8 @@
  * with __eolian during C generation. Needed when params have to
  * be initialized and for future features.
  */
-static Eina_Hash *_funcs_params_init = NULL;
+static Eina_Hash *_funcs_params_init_get = NULL;
+static Eina_Hash *_funcs_params_init_set = NULL;
 
 static const char *
 _get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir)
@@ -321,7 +322,10 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              /* we need to give the internal function name to Eo,
               * use this hash table as indication
               */
-             eina_hash_add(_funcs_params_init, &impl, impl);
+             if (ftype == EOLIAN_PROP_SET)
+               eina_hash_add(_funcs_params_init_set, &impl, impl);
+             else
+               eina_hash_add(_funcs_params_init_get, &impl, impl);
              /* generation of intermediate __eolian_... */
              eina_strbuf_append(buf, "static ");
              eina_strbuf_append(buf, rtpn);
@@ -553,7 +557,8 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
           eina_strbuf_append_printf(obuf, "   EFL_OPS_DEFINE(%s,\n",
                                     (obuf == ops) ? "ops" : "cops");
 
-        Eina_Bool found = !!eina_hash_find(_funcs_params_init, &imp);
+        Eina_Bool found_get = !!eina_hash_find(_funcs_params_init_get, &imp);
+        Eina_Bool found_set = !!eina_hash_find(_funcs_params_init_set, &imp);
         char *ocnamel = NULL;
         if (cl != icl)
           eo_gen_class_names_get(icl, NULL, NULL, &ocnamel);
@@ -561,17 +566,17 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
         switch (ftype)
           {
            case EOLIAN_PROP_GET:
-             _gen_opfunc(fid, EOLIAN_PROP_GET, obuf, found, cnamel, ocnamel);
+             _gen_opfunc(fid, EOLIAN_PROP_GET, obuf, found_get, cnamel, ocnamel);
              break;
            case EOLIAN_PROP_SET:
-             _gen_opfunc(fid, EOLIAN_PROP_SET, obuf, found, cnamel, ocnamel);
+             _gen_opfunc(fid, EOLIAN_PROP_SET, obuf, found_set, cnamel, ocnamel);
              break;
            case EOLIAN_PROPERTY:
-             _gen_opfunc(fid, EOLIAN_PROP_SET, obuf, found, cnamel, ocnamel);
-             _gen_opfunc(fid, EOLIAN_PROP_GET, obuf, found, cnamel, ocnamel);
+             _gen_opfunc(fid, EOLIAN_PROP_SET, obuf, found_set, cnamel, ocnamel);
+             _gen_opfunc(fid, EOLIAN_PROP_GET, obuf, found_get, cnamel, ocnamel);
              break;
            default:
-             _gen_opfunc(fid, EOLIAN_METHOD, obuf, found, cnamel, ocnamel);
+             _gen_opfunc(fid, EOLIAN_METHOD, obuf, found_get, cnamel, ocnamel);
              break;
           }
 
@@ -621,7 +626,8 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    if (!cl)
      return;
 
-   _funcs_params_init = eina_hash_pointer_new(NULL);
+   _funcs_params_init_get = eina_hash_pointer_new(NULL);
+   _funcs_params_init_set = eina_hash_pointer_new(NULL);
 
    char *cnamel = NULL;
    eo_gen_class_names_get(cl, NULL, NULL, &cnamel);
@@ -759,7 +765,8 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    /* and we're done */
    free(cnamel);
-   eina_hash_free(_funcs_params_init);
+   eina_hash_free(_funcs_params_init_get);
+   eina_hash_free(_funcs_params_init_set);
 }
 
 static void
