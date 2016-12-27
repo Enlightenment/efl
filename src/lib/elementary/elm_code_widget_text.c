@@ -36,8 +36,8 @@ _elm_code_widget_text_left_gutter_width_get(Eo *obj, Elm_Code_Widget_Data *pd)
 
 static char *
 _elm_code_widget_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
-                                unsigned int start_col, unsigned int start_line,
-                                unsigned int end_col, unsigned int end_line)
+                                unsigned int start_line, unsigned int start_col,
+                                unsigned int end_line, unsigned int end_col)
 {
    Elm_Code_Line *line;
    char *first, *last, *ret, *ptr;
@@ -89,7 +89,7 @@ _elm_code_widget_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *p
 
 static char *
 _elm_code_widget_text_single_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
-                                           unsigned int start_col, unsigned int start_line,
+                                           unsigned int start_line, unsigned int start_col,
                                            unsigned int end_col)
 {
    Elm_Code_Line *line;
@@ -104,13 +104,13 @@ _elm_code_widget_text_single_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *
 
 static char *
 _elm_code_widget_text_between_positions_get(Eo *widget, Elm_Code_Widget_Data *pd,
-                                            unsigned int start_col, unsigned int start_line,
-                                            unsigned int end_col, unsigned int end_line)
+                                            unsigned int start_line, unsigned int start_col,
+                                            unsigned int end_line, unsigned int end_col)
 {
    if (start_line == end_line)
-     return _elm_code_widget_text_single_get(widget, pd, start_col, start_line, end_col);
+     return _elm_code_widget_text_single_get(widget, pd, start_line, start_col, end_col);
    else
-     return _elm_code_widget_text_multi_get(widget, pd, start_col, start_line, end_col, end_line);
+     return _elm_code_widget_text_multi_get(widget, pd, start_line, start_col, end_line, end_col);
 }
 
 static unsigned int

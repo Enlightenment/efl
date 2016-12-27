@@ -223,10 +223,10 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       text_between_positions_get {
       	 [[Get text between given positions]]
          params {
-            start_col: uint; [[The widget column of the first character to get]]
             start_line: uint; [[The line of the first character to get]]
-            end_col: uint; [[The widget column of the last character to get]]
+            start_col: uint; [[The widget column of the first character to get]]
             end_line: uint; [[The line of the last character to get]]
+            end_col: uint; [[The widget column of the last character to get]]
          }
          return: ptr(char); [[The text content between start and end positions]]
       }

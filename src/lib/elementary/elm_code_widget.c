@@ -1459,7 +1459,7 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
       elm_code_widget_line_text_position_for_column_get(widget, line, col - 1));
    char_width = position - elm_code_widget_line_text_position_for_column_get(widget, line, start_col);
 
-   text = elm_code_widget_text_between_positions_get(widget, start_col, row, end_col, row);
+   text = elm_code_widget_text_between_positions_get(widget, row, start_col, row, end_col);
    elm_code_line_text_remove(line, position - char_width, char_width);
    elm_obj_code_widget_cursor_position_set(widget, row, start_col);
 
@@ -1501,7 +1501,7 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    start_col = elm_code_widget_line_text_column_width_to_position(widget, line, position);
    end_col = elm_code_widget_line_text_column_width_to_position(widget, line, position + char_width);
 
-   text = elm_code_widget_text_between_positions_get(widget, start_col, row, end_col, row);
+   text = elm_code_widget_text_between_positions_get(widget, row, start_col, row, end_col);
    elm_code_line_text_remove(line, position, char_width);
    elm_obj_code_widget_cursor_position_set(widget, row, start_col);
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);

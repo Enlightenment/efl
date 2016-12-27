@@ -337,8 +337,8 @@ elm_code_widget_selection_text_get(Evas_Object *widget)
    selection = elm_code_widget_selection_normalized_get(widget);
 
    text = elm_code_widget_text_between_positions_get(widget,
-                                                     selection->start_col, selection->start_line,
-                                                     selection->end_col, selection->end_line);
+                                                     selection->start_line, selection->start_col,
+                                                     selection->end_line, selection->end_col);
 
    free(selection);
    return text;
