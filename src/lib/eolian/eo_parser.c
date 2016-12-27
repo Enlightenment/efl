@@ -1547,22 +1547,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
           eo_lexer_syntax_error(ls, "name expected");
         impl->full_name = eina_stringshare_printf(".%s", ls->t.value.s);
         eo_lexer_get(ls);
-        if (ls->t.token == '.')
-          {
-             eo_lexer_get(ls);
-             if (ls->t.kw == KW_set)
-               {
-                  impl->is_prop_set = EINA_TRUE;
-                  eo_lexer_get(ls);
-               }
-             else
-               {
-                  check_kw_next(ls, KW_get);
-                  impl->is_prop_get = EINA_TRUE;
-               }
-          }
-        check_next(ls, ';');
-        return;
+        goto propbeg;
      }
 fullclass:
    if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
@@ -1614,6 +1599,7 @@ fullclass:
         if (ls->t.token != '.') break;
         eo_lexer_get(ls);
      }
+propbeg:
    if (ls->t.token == '{')
      {
         Eina_Bool has_get = EINA_FALSE, has_set = EINA_FALSE;
@@ -1641,8 +1627,11 @@ propend:
    else
      check_next(ls, ';');
 end:
-   impl->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));
-   pop_strbuf(ls);
+   if (buf)
+     {
+        impl->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));
+        pop_strbuf(ls);
+     }
 }
 
 static void

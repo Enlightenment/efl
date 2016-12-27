@@ -26,16 +26,19 @@ static int __eolian_override_c_get(Eo *obj EINA_UNUSED, Override_Data *pd EINA_U
 
 EOAPI EFL_FUNC_BODYV_CONST(override_c_get, int, 50, EFL_FUNC_CALL(idx), int idx);
 
+static void __eolian_override_base_z_set(Eo *obj EINA_UNUSED, Override_Data *pd, int a, char b, float c)
+{
+   a = pd->a;
+   b = pd->b;
+   c = pd->c;
+}
+
+
 static void __eolian_override_base_z_get(Eo *obj EINA_UNUSED, Override_Data *pd, int *a, char *b, float *c)
 {
    if (a) *a = pd->a;
    if (b) *b = pd->b;
    if (c) *c = pd->c;
-}
-
-
-static void __eolian_override_base_z_set(Eo *obj EINA_UNUSED, Override_Data *pd EINA_UNUSED, int a EINA_UNUSED, char b EINA_UNUSED, float c EINA_UNUSED)
-{
 }
 
 EOAPI EFL_VOID_FUNC_BODY(override_a_set);
@@ -61,8 +64,8 @@ _override_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(override_b_set, __eolian_override_b_set),
       EFL_OBJECT_OP_FUNC(override_bar, __eolian_override_bar),
       EFL_OBJECT_OP_FUNC(override_c_get, __eolian_override_c_get),
-      EFL_OBJECT_OP_FUNC(base_z_get, __eolian_override_base_z_get),
       EFL_OBJECT_OP_FUNC(base_z_set, __eolian_override_base_z_set),
+      EFL_OBJECT_OP_FUNC(base_z_get, __eolian_override_base_z_get),
       EFL_OBJECT_OP_FUNC(override_a_set, NULL),
       EFL_OBJECT_OP_FUNC(override_a_get, _override_a_get),
       EFL_OBJECT_OP_FUNC(override_b_get, _override_b_get),

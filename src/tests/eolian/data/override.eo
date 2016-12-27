@@ -44,10 +44,9 @@ class Override (Base) {
    }
    implements {
       Base.constructor;
-      @auto .b.set;
+      @auto .b { set; }
       @empty .bar;
-      @auto .c.get;
-      @auto Base.z.get;
-      @empty Base.z.set;
+      @auto .c { get; }
+      @auto Base.z { get; set; }
    }
 }
