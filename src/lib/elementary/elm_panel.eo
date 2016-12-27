@@ -70,8 +70,8 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_del;
@@ -83,7 +83,7 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Widget.event;
       Elm.Widget.on_focus_region;
       Elm.Layout.sizing_eval;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
    }
    events {

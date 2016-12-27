@@ -7,14 +7,14 @@ class Elm.Genlist.Pan (Elm.Pan)
    implements {
       class.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_del;
-      Elm.Pan.content_size.get;
+      Elm.Pan.content_size { get; }
       Elm.Pan.pos;
-      Elm.Pan.pos_min.get;
-      Elm.Pan.pos_max.get;
+      Elm.Pan.pos_min { get; }
+      Elm.Pan.pos_max { get; }
    }
    events {
       item,focused; [[Called when item got focus]]

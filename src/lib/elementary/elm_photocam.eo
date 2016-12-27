@@ -190,8 +190,8 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;
@@ -199,9 +199,8 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
       Elm.Widget.on_focus;
       Elm.Widget.event;
       Elm.Interface_Scrollable.region_bring_in;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
-      Efl.File.file.set;
-      Efl.File.file.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.File.file { get; set; }
    }
    events {
       press; [[Called when photocam got pressed]]

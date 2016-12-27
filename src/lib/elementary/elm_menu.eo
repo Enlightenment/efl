@@ -50,19 +50,19 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.visible.set;
+      Efl.Gfx.visible { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.widget_parent;
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
-      Elm.Interface.Atspi_Accessible.children.get;
-      Elm.Interface.Atspi.Selection.selected_children_count.get;
-      Elm.Interface.Atspi.Selection.selected_child.get;
-      Efl.Ui.Menu.selected_item.get;
-      Efl.Ui.Menu.first_item.get;
-      Efl.Ui.Menu.last_item.get;
-      Efl.Ui.Menu.items.get;
+      Elm.Interface.Atspi_Accessible.children { get; }
+      Elm.Interface.Atspi.Selection.selected_children_count { get; }
+      Elm.Interface.Atspi.Selection.selected_child { get; }
+      Efl.Ui.Menu.selected_item { get; }
+      Efl.Ui.Menu.first_item { get; }
+      Efl.Ui.Menu.last_item { get; }
+      Efl.Ui.Menu.items { get; }
    }
    events {
       dismissed; [[Called when menu widget was dismissed]]

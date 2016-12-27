@@ -17,14 +17,11 @@ class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Ui.Item)
         Efl.Object.destructor;
         Elm.Widget.Item.disable;
         Elm.Widget.Item.signal_emit;
-        Elm.Widget.Item.part_text.get;
-        Elm.Widget.Item.part_text.set;
-        Elm.Widget.Item.part_content.get;
-        Elm.Widget.Item.part_content.set;
-        Elm.Widget.Item.focus.set;
-        Elm.Widget.Item.focus.get;
+        Elm.Widget.Item.part_text { get; set; }
+        Elm.Widget.Item.part_content { get; set; }
+        Elm.Widget.Item.focus { get; set; }
         Efl.Ui.Item.selected;
-        Efl.Ui.Item.prev.get;
-        Efl.Ui.Item.next.get;
+        Efl.Ui.Item.prev { get; }
+        Efl.Ui.Item.next { get; }
    }
 }

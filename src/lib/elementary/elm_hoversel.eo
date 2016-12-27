@@ -94,15 +94,15 @@ class Elm.Hoversel (Elm.Button, Efl.Ui.Selectable,
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.visible.set;
+      Efl.Gfx.visible { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
-      Elm.Widget.widget_parent.set;
+      Elm.Widget.widget_parent { set; }
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
       Elm.Widget.event;
-      Elm.Button.admits_autorepeat.get;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Button.admits_autorepeat { get; }
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
       dismissed; [[Called when hoversel is dismissed]]

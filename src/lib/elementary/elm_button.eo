@@ -82,10 +82,10 @@ class Elm.Button (Elm.Layout, Efl.Ui.Clickable,
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
-      Elm.Layout.text_aliases.get;
-      Elm.Layout.content_aliases.get;
+      Elm.Layout.text_aliases { get; }
+      Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
    }
 }

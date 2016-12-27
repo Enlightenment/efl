@@ -13,8 +13,7 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
       Elm.Widget.focus_next;
       Elm.Widget.disable;
       Elm.Widget.focus_direction_manager_is;
-      Elm.Layout.text.set;
-      Elm.Layout.text.get;
+      Elm.Layout.text { get; set; }
       Elm.Layout.sizing_eval;
       Elm.Interface.Fileselector.selected_model_get;
       Elm.Interface.Fileselector.selected_model_set;

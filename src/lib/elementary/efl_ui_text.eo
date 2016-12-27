@@ -400,9 +400,9 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.visible.set;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
@@ -416,43 +416,41 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Widget.focus_next_manager_is;
       Elm.Layout.theme_enable;
       Elm.Layout.sizing_eval;
-      Elm.Layout.text.get;
+      Elm.Layout.text { get; }
       Elm.Layout.signal_callback_add;
       Elm.Layout.signal_callback_del;
       Elm.Layout.signal_emit;
-      Elm.Layout.text.set;
-      Elm.Layout.content_aliases.get;
-      Elm.Interface_Scrollable.policy.set;
-      Elm.Interface_Scrollable.bounce_allow.set;
-      Elm.Interface.Atspi_Accessible.state_set.get;
-      Elm.Interface.Atspi_Accessible.name.get;
-      Elm.Interface.Atspi.Text.text.get;
-      Elm.Interface.Atspi.Text.string.get;
-      Elm.Interface.Atspi.Text.attribute.get;
-      Elm.Interface.Atspi.Text.attributes.get;
-      Elm.Interface.Atspi.Text.default_attributes.get;
-      Elm.Interface.Atspi.Text.caret_offset.get;
-      Elm.Interface.Atspi.Text.caret_offset.set;
-      Elm.Interface.Atspi.Text.character.get;
-      Elm.Interface.Atspi.Text.character_extents.get;
-      Elm.Interface.Atspi.Text.character_count.get;
-      Elm.Interface.Atspi.Text.offset_at_point.get;
-      Elm.Interface.Atspi.Text.bounded_ranges.get;
-      Elm.Interface.Atspi.Text.range_extents.get;
-      Elm.Interface.Atspi.Text.selection.get;
-      Elm.Interface.Atspi.Text.selections_count.get;
+      Elm.Layout.text { set; }
+      Elm.Layout.content_aliases { get; }
+      Elm.Interface_Scrollable.policy { set; }
+      Elm.Interface_Scrollable.bounce_allow { set; }
+      Elm.Interface.Atspi_Accessible.state_set { get; }
+      Elm.Interface.Atspi_Accessible.name { get; }
+      Elm.Interface.Atspi.Text.text { get; }
+      Elm.Interface.Atspi.Text.string { get; }
+      Elm.Interface.Atspi.Text.attribute { get; }
+      Elm.Interface.Atspi.Text.attributes { get; }
+      Elm.Interface.Atspi.Text.default_attributes { get; }
+      Elm.Interface.Atspi.Text.caret_offset { get; set; }
+      Elm.Interface.Atspi.Text.character { get; }
+      Elm.Interface.Atspi.Text.character_extents { get; }
+      Elm.Interface.Atspi.Text.character_count { get; }
+      Elm.Interface.Atspi.Text.offset_at_point { get; }
+      Elm.Interface.Atspi.Text.bounded_ranges { get; }
+      Elm.Interface.Atspi.Text.range_extents { get; }
+      Elm.Interface.Atspi.Text.selection { get; }
+      Elm.Interface.Atspi.Text.selections_count { get; }
       Elm.Interface.Atspi.Text.selection_add;
       Elm.Interface.Atspi.Text.selection_remove;
-      Elm.Interface.Atspi.Text.selection.set;
-      Elm.Interface.Atspi.Text.Editable.content.set;
+      Elm.Interface.Atspi.Text.selection { set; }
+      Elm.Interface.Atspi.Text.Editable.content { set; }
       Elm.Interface.Atspi.Text.Editable.insert;
       Elm.Interface.Atspi.Text.Editable.copy;
       Elm.Interface.Atspi.Text.Editable.cut;
       Elm.Interface.Atspi.Text.Editable.delete;
       Elm.Interface.Atspi.Text.Editable.paste;
-      Efl.File.file.set;
-      Efl.File.file.get;
-      Efl.Ui.Text.Interactive.editable.set;
+      Efl.File.file { get; set; }
+      Efl.Ui.Text.Interactive.editable { set; }
    }
    events {
       activated; [[Called when entry got activated]]

@@ -10,6 +10,6 @@ class Elm.Access (Elm.Widget, Elm.Interface.Atspi_Widget_Action)
       Efl.Canvas.Group.group_add;
       Elm.Widget.activate;
       Elm.Widget.on_focus;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
 }

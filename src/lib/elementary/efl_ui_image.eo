@@ -120,40 +120,33 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.File.file.set;
-      Efl.File.file.get;
-      Efl.File.mmap.set;
-      Efl.Gfx.color.set;
-      Efl.Gfx.visible.set;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
-      Efl.Gfx.View.view_size.get;
-      Efl.Image.Load.load_size.set;
-      Efl.Image.Load.load_size.get;
-      Efl.Image.smooth_scale.set;
-      Efl.Image.smooth_scale.get;
-      Efl.Orientation.orientation.set;
-      Efl.Orientation.orientation.get;
-      Efl.Flipable.flip.set;
-      Efl.Flipable.flip.get;
-      Efl.Player.playable.get;
-      Efl.Player.play.set;
-      Efl.Player.play.get;
+      Efl.File.file { get; set; }
+      Efl.File.mmap { set; }
+      Efl.Gfx.color { set; }
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
+      Efl.Gfx.View.view_size { get; }
+      Efl.Image.Load.load_size { get; set; }
+      Efl.Image.smooth_scale { get; set; }
+      Efl.Orientation.orientation { get; set; }
+      Efl.Flipable.flip { get; set; }
+      Efl.Player.playable { get; }
+      Efl.Player.play { get; set; }
       Edje.Object.signal_emit;
-      Edje.Object.size_min.get;
-      Edje.Object.size_max.get;
+      Edje.Object.size_min { get; }
+      Edje.Object.size_max { get; }
       Edje.Object.size_min_calc;
       Edje.Object.calc_force;
-      Efl.Canvas.Object.clip.set;
+      Efl.Canvas.Object.clip { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;
-      Efl.Ui.Draggable.drag_target.set;
-      Efl.Ui.Draggable.drag_target.get;
+      Efl.Ui.Draggable.drag_target { get; set; }
       Elm.Widget.theme_apply;
       Elm.Widget.event;
-      Elm.Interface.Atspi_Image.extents.get;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Image.extents { get; }
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
       drop; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */

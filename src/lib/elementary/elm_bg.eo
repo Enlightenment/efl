@@ -97,9 +97,8 @@ class Elm.Bg (Elm.Layout, Efl.File)
       class.constructor;
       Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
-      Elm.Layout.content_aliases.get;
+      Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;
-      Efl.File.file.set;
-      Efl.File.file.get;
+      Efl.File.file { get; set; }
    }
 }

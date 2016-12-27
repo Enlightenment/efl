@@ -12,7 +12,7 @@ class Elm.Icon (Efl.Ui.Image)
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;
-      Efl.File.file.set;
+      Efl.File.file { set; }
    }
    events {
       thumb,done; [[Called when thumb nailing is successfully done]]

@@ -61,9 +61,9 @@ class Elm.Hover (Elm.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.visible.set;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_add;
       Elm.Widget.theme_apply;
@@ -73,8 +73,8 @@ class Elm.Hover (Elm.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.sub_object_del;
       Elm.Layout.sizing_eval;
-      Elm.Layout.content_aliases.get;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Layout.content_aliases { get; }
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
    }
    events {

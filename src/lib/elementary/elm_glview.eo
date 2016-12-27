@@ -189,12 +189,11 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
    implements {
       class.constructor;
       Efl.Object.finalize;
-      Efl.Gfx.size.set;
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.on_focus;
-      Efl.Gfx.View.view_size.get;
-      Efl.Gfx.View.view_size.set;
+      Efl.Gfx.View.view_size { get; set; }
    }
    events {
       created; [[Event dispatched when first render happens.

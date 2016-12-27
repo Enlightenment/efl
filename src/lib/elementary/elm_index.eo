@@ -230,7 +230,7 @@ class Elm.Index (Elm.Layout, Efl.Orientation,
       Elm.Widget.focus_next;
       Efl.Orientation.orientation;
       Elm.Layout.sizing_eval;
-      Elm.Interface.Atspi_Accessible.children.get;
+      Elm.Interface.Atspi_Accessible.children { get; }
    }
    events {
       changed; [[Called when index changed]]

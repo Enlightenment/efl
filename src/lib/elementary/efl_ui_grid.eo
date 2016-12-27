@@ -14,31 +14,24 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack.Grid, Efl.Pack.Layout,
       Elm.Widget.theme_apply;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Orientation.orientation.set;
-      Efl.Orientation.orientation.get;
+      Efl.Orientation.orientation { get; set; }
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
       Efl.Pack.pack;
-      Efl.Pack.pack_padding.get;
-      Efl.Pack.pack_padding.set;
+      Efl.Pack.pack_padding { get; set; }
       Efl.Pack.Grid.pack_grid;
       Efl.Pack.Grid.grid_content_get;
       Efl.Pack.Grid.grid_contents_get;
-      Efl.Pack.Grid.grid_position.get;
-      Efl.Pack.Grid.grid_size.set;
-      Efl.Pack.Grid.grid_size.get;
-      Efl.Pack.Grid.grid_columns.set;
-      Efl.Pack.Grid.grid_columns.get;
-      Efl.Pack.Grid.grid_rows.set;
-      Efl.Pack.Grid.grid_rows.get;
-      Efl.Pack.Grid.grid_orientation.set;
-      Efl.Pack.Grid.grid_orientation.get;
+      Efl.Pack.Grid.grid_position { get; }
+      Efl.Pack.Grid.grid_size { get; set; }
+      Efl.Pack.Grid.grid_columns { get; set; }
+      Efl.Pack.Grid.grid_rows { get; set; }
+      Efl.Pack.Grid.grid_orientation { get; set; }
       Efl.Pack.Linear.pack_end;
       Efl.Pack.Layout.layout_update;
       Efl.Pack.Layout.layout_request;
-      Efl.Pack.Layout.layout_engine.get;
-      Efl.Pack.Layout.layout_engine.set;
+      Efl.Pack.Layout.layout_engine { get; set; }
       Efl.Pack.Layout.layout_do;
    }
 }

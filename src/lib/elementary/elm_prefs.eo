@@ -215,8 +215,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.File.file.set;
-      Efl.File.file.get;
+      Efl.File.file { get; set; }
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_add;
       Elm.Widget.focus_next;

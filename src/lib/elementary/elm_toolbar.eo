@@ -316,8 +316,8 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
@@ -330,23 +330,23 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
       Elm.Widget.translate;
       Elm.Widget.event;
       Elm.Widget.focus_highlight_geometry_get;
-      Elm.Widget.focused_item.get;
+      Elm.Widget.focused_item { get; }
       Efl.Orientation.orientation;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
-      Elm.Interface.Atspi_Accessible.children.get;
-      Elm.Interface.Atspi_Accessible.state_set.get;
-      Elm.Interface.Atspi.Selection.selected_children_count.get;
-      Elm.Interface.Atspi.Selection.selected_child.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Elm.Interface.Atspi_Accessible.children { get; }
+      Elm.Interface.Atspi_Accessible.state_set { get; }
+      Elm.Interface.Atspi.Selection.selected_children_count { get; }
+      Elm.Interface.Atspi.Selection.selected_child { get; }
       Elm.Interface.Atspi.Selection.selected_child_deselect;
       Elm.Interface.Atspi.Selection.child_select;
       Elm.Interface.Atspi.Selection.child_deselect;
       Elm.Interface.Atspi.Selection.is_child_selected;
       Elm.Interface.Atspi.Selection.all_children_select;
       Elm.Interface.Atspi.Selection.clear;
-      Efl.Ui.Menu.selected_item.get;
-      Efl.Ui.Menu.first_item.get;
-      Efl.Ui.Menu.last_item.get;
-      Efl.Ui.Menu.items.get;
+      Efl.Ui.Menu.selected_item { get; }
+      Efl.Ui.Menu.first_item { get; }
+      Efl.Ui.Menu.last_item { get; }
+      Efl.Ui.Menu.items { get; }
    }
    events {
       item,focused; [[Called when toolbar item got focus]]

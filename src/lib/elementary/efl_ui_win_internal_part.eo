@@ -4,12 +4,9 @@ class Efl.Ui.Win.Internal.Part (Efl.Object, Efl.Container, Efl.Gfx, Efl.File)
    data: Elm_Part_Data;
    implements {
       Efl.Object.destructor;
-      Efl.Container.content.set;
-      Efl.Container.content.get;
+      Efl.Container.content { get; set; }
       Efl.Container.content_unset;
-      Efl.Gfx.color.set;
-      Efl.Gfx.color.get;
-      Efl.File.file.set;
-      Efl.File.file.get;
+      Efl.Gfx.color { get; set; }
+      Efl.File.file { get; set; }
    }
 }

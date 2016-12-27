@@ -22,7 +22,7 @@ class Efl.Ui.Layout_Internal.Box (Efl.Object, Efl.Pack.Linear,
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;
-      Efl.Orientation.orientation.get;
+      Efl.Orientation.orientation { get; }
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;

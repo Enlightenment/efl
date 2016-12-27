@@ -827,23 +827,23 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       Efl.Object.destructor;
       Efl.Object.dbg_info_get;
       Efl.Object.provider_find;
-      Efl.Gfx.color.set;
-      Efl.Gfx.visible.set;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
-      Efl.Canvas.Object.clip.set;
-      Efl.Canvas.Object.no_render.set;
-      Efl.Canvas.Object.is_frame_object.set;
+      Efl.Gfx.color { set; }
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
+      Efl.Canvas.Object.clip { set; }
+      Efl.Canvas.Object.no_render { set; }
+      Efl.Canvas.Object.is_frame_object { set; }
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_member_del;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;
-      Elm.Interface.Atspi_Accessible.name.get;
-      Elm.Interface.Atspi_Accessible.state_set.get;
-      Elm.Interface.Atspi_Accessible.children.get;
-      Elm.Interface.Atspi_Accessible.parent.get;
-      Elm.Interface.Atspi_Accessible.attributes.get;
+      Elm.Interface.Atspi_Accessible.name { get; }
+      Elm.Interface.Atspi_Accessible.state_set { get; }
+      Elm.Interface.Atspi_Accessible.children { get; }
+      Elm.Interface.Atspi_Accessible.parent { get; }
+      Elm.Interface.Atspi_Accessible.attributes { get; }
       Elm.Interface.Atspi_Component.focus_grab;
    }
    events {

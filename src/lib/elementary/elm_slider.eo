@@ -181,18 +181,17 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_focus;
       Elm.Widget.event;
-      Elm.Layout.text_aliases.get;
-      Elm.Layout.content_aliases.get;
+      Elm.Layout.text_aliases { get; }
+      Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;
       Efl.Ui.Progress.span_size;
       Efl.Ui.Progress.progress_value;
       Efl.Ui.Progress.unit_format;
       Efl.Orientation.orientation;
-      Elm.Interface.Atspi.Value.value_and_text.get;
-      Elm.Interface.Atspi.Value.value_and_text.set;
-      Elm.Interface.Atspi.Value.range.get;
-      Elm.Interface.Atspi.Value.increment.get;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi.Value.value_and_text { get; set; }
+      Elm.Interface.Atspi.Value.range { get; }
+      Elm.Interface.Atspi.Value.increment { get; }
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
       changed; [[Called when slider changed]]

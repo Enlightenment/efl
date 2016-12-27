@@ -310,7 +310,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.event;
       Elm.Layout.sizing_eval;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
       changed; [[Called when slideshow widget changed]]

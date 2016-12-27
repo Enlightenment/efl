@@ -138,7 +138,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
       Efl.Ui.Spin.step;
       Efl.Ui.Spin.value;
       Efl.Ui.Spin.interval;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
       underflowed; [[Called when flipselector is underflowed]]

@@ -26,11 +26,8 @@ class Elm.Hoversel.Item(Elm.Widget.Item)
         Efl.Object.destructor;
         Elm.Widget.Item.disable;
         Elm.Widget.Item.signal_emit;
-        Elm.Widget.Item.part_text.set;
-        Elm.Widget.Item.part_text.get;
-        Elm.Widget.Item.style.get;
-        Elm.Widget.Item.style.set;
-        Elm.Widget.Item.focus.set;
-        Elm.Widget.Item.focus.get;
+        Elm.Widget.Item.part_text { get; set; }
+        Elm.Widget.Item.style { get; set; }
+        Elm.Widget.Item.focus { get; set; }
    }
 }

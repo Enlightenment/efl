@@ -9,9 +9,9 @@ class Elm.Conformant (Elm.Layout)
       Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
-      Elm.Widget.widget_parent.set;
+      Elm.Widget.widget_parent { set; }
       Elm.Widget.theme_apply;
-      Elm.Layout.content_aliases.get;
+      Elm.Layout.content_aliases { get; }
    }
    events {
       virtualkeypad,state,on; [[Called when virtualkeypad was enabled]]

@@ -422,7 +422,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.on_focus;
       Elm.Widget.event;
       Elm.Layout.sizing_eval;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
       changed; [[Emitted when the date in the calendar is changed]]

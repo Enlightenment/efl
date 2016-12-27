@@ -156,7 +156,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
       Efl.Object.constructor;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_add;
-      Elm.Widget.widget_parent.set;
+      Elm.Widget.widget_parent { set; }
       Elm.Widget.focus_direction;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_next_manager_is;
@@ -165,14 +165,14 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
       Elm.Widget.translate;
       Elm.Widget.theme_apply;
       Elm.Widget.event;
-      Efl.Ui.Menu.selected_item.get;
-      Efl.Ui.Menu.first_item.get;
-      Efl.Ui.Menu.last_item.get;
-      Efl.Ui.Menu.items.get;
+      Efl.Ui.Menu.selected_item { get; }
+      Efl.Ui.Menu.first_item { get; }
+      Efl.Ui.Menu.last_item { get; }
+      Efl.Ui.Menu.items { get; }
       Elm.Layout.sub_object_add_enable;
       Elm.Layout.sizing_eval;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
-      Elm.Interface.Atspi_Accessible.state_set.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Elm.Interface.Atspi_Accessible.state_set { get; }
       Efl.Orientation.orientation;
       Efl.Part.part;
    }

@@ -7,8 +7,8 @@ class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;
-      Elm.Button.admits_autorepeat.get;
-      Elm.Interface.Fileselector.selected_models.get;
+      Elm.Button.admits_autorepeat { get; }
+      Elm.Interface.Fileselector.selected_models { get; }
       Elm.Interface.Fileselector.expandable;
       Elm.Interface.Fileselector.thumbnail_size;
       Elm.Interface.Fileselector.selected_model_get;

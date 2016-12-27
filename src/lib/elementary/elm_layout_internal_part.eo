@@ -4,10 +4,8 @@ class Elm.Layout.Internal.Part (Efl.Object, Efl.Container, Efl.Text)
    data: Elm_Part_Data;
    implements {
       Efl.Object.destructor;
-      Efl.Container.content.set;
-      Efl.Container.content.get;
+      Efl.Container.content { get; set; }
       Efl.Container.content_unset;
-      Efl.Text.text.set;
-      Efl.Text.text.get;
+      Efl.Text.text { get; set; }
    }
 }

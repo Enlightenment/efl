@@ -430,8 +430,8 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
@@ -446,15 +446,14 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Widget.translate;
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
-      Elm.Widget.focused_item.get;
-      Elm.Widget.item_loop_enabled.set;
-      Elm.Widget.item_loop_enabled.get;
+      Elm.Widget.focused_item { get; }
+      Elm.Widget.item_loop_enabled { get; set; }
       Elm.Layout.sizing_eval;
-      Elm.Interface_Scrollable.policy.set;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
-      Elm.Interface.Atspi_Accessible.children.get;
-      Elm.Interface.Atspi.Selection.selected_children_count.get;
-      Elm.Interface.Atspi.Selection.selected_child.get;
+      Elm.Interface_Scrollable.policy { set; }
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Elm.Interface.Atspi_Accessible.children { get; }
+      Elm.Interface.Atspi.Selection.selected_children_count { get; }
+      Elm.Interface.Atspi.Selection.selected_child { get; }
       Elm.Interface.Atspi.Selection.selected_child_deselect;
       Elm.Interface.Atspi.Selection.child_select;
       Elm.Interface.Atspi.Selection.child_deselect;

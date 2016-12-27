@@ -79,11 +79,9 @@ class Elm.Naviframe.Item(Elm.Widget.Item)
         Efl.Object.constructor;
         Efl.Object.destructor;
         Elm.Widget.Item.signal_emit;
-        Elm.Widget.Item.part_text.set;
-        Elm.Widget.Item.part_text.get;
-        Elm.Widget.Item.part_content.get;
-        Elm.Widget.Item.part_content.set;
+        Elm.Widget.Item.part_text { get; set; }
+        Elm.Widget.Item.part_content { get; set; }
         Elm.Widget.Item.part_content_unset;
-        Elm.Interface.Atspi_Accessible.children.get;
+        Elm.Interface.Atspi_Accessible.children { get; }
    }
 }

@@ -23,10 +23,10 @@ class Elm.Inwin (Elm.Layout)
       class.constructor;
       Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
-      Elm.Widget.widget_parent.set;
+      Elm.Widget.widget_parent { set; }
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
-      Elm.Layout.content_aliases.get;
+      Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;
    }
 }

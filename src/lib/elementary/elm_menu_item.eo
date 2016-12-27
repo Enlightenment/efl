@@ -61,19 +61,17 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection,
         Efl.Object.destructor;
         Elm.Widget.Item.disable;
         Elm.Widget.Item.signal_emit;
-        Elm.Widget.Item.part_text.get;
-        Elm.Widget.Item.part_text.set;
-        Elm.Widget.Item.part_content.get;
-        Elm.Widget.Item.part_content.set;
-        Elm.Interface.Atspi_Accessible.children.get;
-        Elm.Interface.Atspi_Accessible.parent.get;
-        Elm.Interface.Atspi_Accessible.role.get;
-        Elm.Interface.Atspi_Accessible.name.get;
-        Elm.Interface.Atspi_Accessible.state_set.get;
-        Elm.Interface.Atspi.Selection.selected_children_count.get;
-        Elm.Interface.Atspi.Selection.selected_child.get;
+        Elm.Widget.Item.part_text { get; set; }
+        Elm.Widget.Item.part_content { get; set; }
+        Elm.Interface.Atspi_Accessible.children { get; }
+        Elm.Interface.Atspi_Accessible.parent { get; }
+        Elm.Interface.Atspi_Accessible.role { get; }
+        Elm.Interface.Atspi_Accessible.name { get; }
+        Elm.Interface.Atspi_Accessible.state_set { get; }
+        Elm.Interface.Atspi.Selection.selected_children_count { get; }
+        Elm.Interface.Atspi.Selection.selected_child { get; }
         Efl.Ui.Item.selected;
-        Efl.Ui.Item.prev.get;
-        Efl.Ui.Item.next.get;
+        Efl.Ui.Item.prev { get; }
+        Efl.Ui.Item.next { get; }
    }
 }

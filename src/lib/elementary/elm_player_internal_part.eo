@@ -3,6 +3,6 @@ class Elm.Player.Internal.Part (Elm.Layout.Internal.Part)
    [[Elementary player internal part class]]
    data: null;
    implements {
-      Efl.Container.content.set;
+      Efl.Container.content { set; }
    }
 }

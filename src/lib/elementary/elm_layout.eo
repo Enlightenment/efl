@@ -334,10 +334,8 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File, Efl.Text)
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.dbg_info_get;
-      Efl.File.file.set;
-      Efl.File.file.get;
-      Efl.File.mmap.set;
-      Efl.File.mmap.get;
+      Efl.File.file { get; set; }
+      Efl.File.mmap { get; set; }
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_calculate;
@@ -350,16 +348,14 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File, Efl.Text)
       Elm.Widget.disable;
       Elm.Widget.sub_object_del;
       Elm.Widget.on_focus;
-      Efl.Container.content_part_name.get;
+      Efl.Container.content_part_name { get; }
       Efl.Container.content_count;
       Efl.Container.content_remove;
       Efl.Container.content_iterate;
-      Efl.Container.content.set;
-      Efl.Container.content.get;
+      Efl.Container.content { get; set; }
       Efl.Container.content_unset;
       Efl.Part.part;
-      Efl.Text.text.set;
-      Efl.Text.text.get;
+      Efl.Text.text { get; set; }
    }
    events {
       theme,changed; [[Called when theme changed]]

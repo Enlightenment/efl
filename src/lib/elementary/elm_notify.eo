@@ -80,9 +80,9 @@ class Elm.Notify (Elm.Widget, Efl.Container, Efl.Part)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.visible.set;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.focus_direction;
@@ -92,10 +92,8 @@ class Elm.Notify (Elm.Widget, Efl.Container, Efl.Part)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.sub_object_del;
-      Elm.Widget.part_text.set;
-      Elm.Widget.part_text.get;
-      Efl.Container.content.get;
-      Efl.Container.content.set;
+      Elm.Widget.part_text { get; set; }
+      Efl.Container.content { get; set; }
       Efl.Container.content_unset;
       Efl.Part.part;
    }

@@ -189,10 +189,9 @@ class Elm.Multibuttonentry (Elm.Layout)
       Elm.Widget.on_focus;
       Elm.Widget.translate;
       Elm.Widget.event;
-      Elm.Layout.text.set;
-      Elm.Layout.text.get;
+      Elm.Layout.text { get; set; }
       Elm.Layout.sizing_eval;
-      Elm.Interface.Atspi_Accessible.children.get;
+      Elm.Interface.Atspi_Accessible.children { get; }
    }
    events {
       item,selected; [[Called when item was selected]]

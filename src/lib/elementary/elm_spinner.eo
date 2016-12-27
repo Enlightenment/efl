@@ -161,12 +161,11 @@ class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
       Efl.Ui.Spin.step;
       Efl.Ui.Spin.value;
       Efl.Ui.Spin.interval;
-      Elm.Interface.Atspi_Accessible.name.get;
-      Elm.Interface.Atspi.Value.value_and_text.get;
-      Elm.Interface.Atspi.Value.value_and_text.set;
-      Elm.Interface.Atspi.Value.range.get;
-      Elm.Interface.Atspi.Value.increment.get;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Accessible.name { get; }
+      Elm.Interface.Atspi.Value.value_and_text { get; set; }
+      Elm.Interface.Atspi.Value.range { get; }
+      Elm.Interface.Atspi.Value.increment { get; }
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
       changed; [[Called when spinner changed]]

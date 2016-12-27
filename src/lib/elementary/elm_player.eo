@@ -12,7 +12,7 @@ class Elm.Player (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.theme_apply;
       Elm.Widget.event;
       Elm.Layout.sizing_eval;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
    }
    events {

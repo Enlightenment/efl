@@ -130,15 +130,14 @@ class Elm.Mapbuf (Elm.Widget, Efl.Container, Efl.Part)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.visible.set;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
-      Efl.Container.content.get;
-      Efl.Container.content.set;
+      Efl.Container.content { get; set; }
       Efl.Container.content_unset;
       Efl.Part.part;
    }

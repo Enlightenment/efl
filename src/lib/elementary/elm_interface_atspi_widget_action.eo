@@ -18,9 +18,8 @@ mixin Elm.Interface.Atspi_Widget_Action (Elm.Interface.Atspi_Action)
    implements {
       Elm.Interface.Atspi_Action.action_do;
       Elm.Interface.Atspi_Action.keybinding_get;
-      Elm.Interface.Atspi_Action.name.get;
-      Elm.Interface.Atspi_Action.description.set;
-      Elm.Interface.Atspi_Action.description.get;
-      Elm.Interface.Atspi_Action.actions.get;
+      Elm.Interface.Atspi_Action.name { get; }
+      Elm.Interface.Atspi_Action.description { get; set; }
+      Elm.Interface.Atspi_Action.actions { get; }
    }
 }

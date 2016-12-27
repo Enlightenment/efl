@@ -50,7 +50,6 @@ class Elm.Flipselector.Item(Elm.Widget.Item)
         Efl.Object.constructor;
         Efl.Object.destructor;
         Elm.Widget.Item.signal_emit;
-        Elm.Widget.Item.part_text.get;
-        Elm.Widget.Item.part_text.set;
+        Elm.Widget.Item.part_text { get; set; }
    }
 }

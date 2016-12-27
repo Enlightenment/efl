@@ -28,10 +28,9 @@ class Elm.Multibuttonentry.Item(Elm.Widget.Item,
         Efl.Object.constructor;
         Efl.Object.destructor;
         Elm.Widget.Item.signal_emit;
-        Elm.Widget.Item.part_text.get;
-        Elm.Widget.Item.part_text.set;
+        Elm.Widget.Item.part_text { get; set; }
         Elm.Widget.Item.disable;
-        Elm.Interface.Atspi_Accessible.name.get;
-        Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+        Elm.Interface.Atspi_Accessible.name { get; }
+        Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
 }

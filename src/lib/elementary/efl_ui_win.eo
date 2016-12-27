@@ -928,9 +928,9 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.finalize;
-      Efl.Gfx.visible.set;
-      Efl.Gfx.position.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.focus_direction;
@@ -940,35 +940,31 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
       Elm.Widget.event;
-      Elm.Interface.Atspi_Accessible.parent.get;
-      Elm.Interface.Atspi_Accessible.state_set.get;
-      Elm.Interface.Atspi_Accessible.name.get;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
-      Efl.Input.State.modifier_enabled.get;
-      Efl.Input.State.lock_enabled.get;
-      Efl.Screen.screen_dpi.get;
-      Efl.Screen.screen_rotation.get;
-      Efl.Screen.screen_size.get;
-      Efl.Gfx.Size.Hint.hint_base.set;
-      Efl.Gfx.Size.Hint.hint_base.get;
-      Efl.Gfx.Size.Hint.hint_step.set;
-      Efl.Gfx.Size.Hint.hint_step.get;
-      Efl.Gfx.Size.Hint.hint_aspect.set;
-      Efl.Gfx.Size.Hint.hint_aspect.get;
-      Efl.Gfx.Size.Hint.hint_max.set;
-      Efl.Text.text.set;
-      Efl.Text.text.get;
-      Efl.Input.Interface.pointer_xy.get;
-      Efl.Input.Interface.pointer_inside.get;
+      Elm.Interface.Atspi_Accessible.parent { get; }
+      Elm.Interface.Atspi_Accessible.state_set { get; }
+      Elm.Interface.Atspi_Accessible.name { get; }
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Input.State.modifier_enabled { get; }
+      Efl.Input.State.lock_enabled { get; }
+      Efl.Screen.screen_dpi { get; }
+      Efl.Screen.screen_rotation { get; }
+      Efl.Screen.screen_size { get; }
+      Efl.Gfx.Size.Hint.hint_base { get; set; }
+      Efl.Gfx.Size.Hint.hint_step { get; set; }
+      Efl.Gfx.Size.Hint.hint_aspect { get; set; }
+      Efl.Gfx.Size.Hint.hint_max { set; }
+      Efl.Text.text { get; set; }
+      Efl.Input.Interface.pointer_xy { get; }
+      Efl.Input.Interface.pointer_inside { get; }
       Efl.Input.Interface.pointer_iterate;
-      Efl.Canvas.image_max_size.get;
+      Efl.Canvas.image_max_size { get; }
       Efl.Canvas.smart_objects_calculate;
       Efl.Canvas.objects_at_xy_get;
       Efl.Canvas.object_top_at_xy_get;
       Efl.Canvas.objects_in_rectangle_get;
       Efl.Canvas.object_top_in_rectangle_get;
-      Efl.Container.content.set;
-      Efl.Container.content.get;
+      Efl.Container.content { set; }
+      Efl.Container.content { get; }
       Efl.Container.content_unset;
       Efl.Part.part;
    }

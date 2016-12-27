@@ -3,8 +3,7 @@ class Elm.Fileselector.Entry.Internal.Part (Elm.Layout.Internal.Part)
    [[Elementary fileselector entry internal part class]]
    data: null;
    implements {
-      Efl.Container.content.set;
-      Efl.Container.content.get;
+      Efl.Container.content { get; set; }
       Efl.Container.content_unset;
    }
 }

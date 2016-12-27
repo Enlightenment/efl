@@ -118,7 +118,7 @@ class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
       Elm.Widget.access;
       Elm.Widget.event;
       Elm.Layout.sizing_eval;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
       color,item,selected; [[Called when color item was selected]]

@@ -27,9 +27,9 @@ class Efl.Ui.Layout_Internal.Table (Efl.Object, Efl.Pack.Grid)
       Efl.Pack.Grid.pack_grid;
       Efl.Pack.Grid.grid_content_get;
       Efl.Pack.Grid.grid_contents_get;
-      Efl.Pack.Grid.grid_position.get;
-      Efl.Pack.Grid.grid_size.get;
-      Efl.Pack.Grid.grid_columns.get;
-      Efl.Pack.Grid.grid_rows.get;
+      Efl.Pack.Grid.grid_position { get; }
+      Efl.Pack.Grid.grid_size { get; }
+      Efl.Pack.Grid.grid_columns { get; }
+      Efl.Pack.Grid.grid_rows { get; }
    }
 }

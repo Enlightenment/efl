@@ -37,18 +37,17 @@ class Elm.Combobox (Elm.Button, Efl.Ui.Selectable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.visible.set;
-      Efl.Gfx.size.set;
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
-      Elm.Widget.part_text.set;
-      Elm.Widget.part_text.get;
+      Elm.Widget.part_text { get; set; }
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
       Elm.Widget.event;
-      Elm.Button.admits_autorepeat.get;
-      Elm.Genlist.filter.set;
-      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Button.admits_autorepeat { get; }
+      Elm.Genlist.filter { set; }
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
       dismissed; [[Called when combobox was dismissed]]

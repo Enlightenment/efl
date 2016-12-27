@@ -241,20 +241,17 @@ class Elm.Gengrid.Item(Elm.Widget.Item)
            Elm.Widget.Item.del_pre;
            Elm.Widget.Item.disable;
            Elm.Widget.Item.signal_emit;
-           Elm.Widget.Item.focus.set;
-           Elm.Widget.Item.focus.get;
-           Elm.Widget.Item.part_text.get;
-           Elm.Widget.Item.part_content.get;
+           Elm.Widget.Item.focus { get; set; }
+           Elm.Widget.Item.part_text { get; }
+           Elm.Widget.Item.part_content { get; }
            Elm.Widget.Item.tooltip_text_set;
-           Elm.Widget.Item.tooltip_style.get;
-           Elm.Widget.Item.tooltip_style.set;
-           Elm.Widget.Item.tooltip_window_mode.get;
-           Elm.Widget.Item.tooltip_window_mode.set;
+           Elm.Widget.Item.tooltip_style { get; set; }
+           Elm.Widget.Item.tooltip_window_mode { get; set; }
            Elm.Widget.Item.tooltip_content_cb_set;
            Elm.Widget.Item.tooltip_unset;
-           Elm.Widget.Item.cursor.set;
+           Elm.Widget.Item.cursor { set; }
            Elm.Widget.Item.cursor_unset;
-           Elm.Interface.Atspi_Accessible.name.get;
-           Elm.Interface.Atspi_Accessible.state_set.get;
+           Elm.Interface.Atspi_Accessible.name { get; }
+           Elm.Interface.Atspi_Accessible.state_set { get; }
       }
 }
