@@ -6,7 +6,7 @@ class Ecore.Audio.Out.Pulse (Ecore.Audio.Out)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Ecore.Audio.volume.set;
+      Ecore.Audio.volume { set; }
       Ecore.Audio.Out.input_attach;
       Ecore.Audio.Out.input_detach;
    }

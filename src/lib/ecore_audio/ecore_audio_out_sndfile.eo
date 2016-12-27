@@ -5,10 +5,8 @@ class Ecore.Audio.Out.Sndfile (Ecore.Audio.Out)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Ecore.Audio.source.get;
-      Ecore.Audio.source.set;
-      Ecore.Audio.format.get;
-      Ecore.Audio.format.set;
+      Ecore.Audio.source { get; set; }
+      Ecore.Audio.format { get; set; }
       Ecore.Audio.Out.input_attach;
    }
 }

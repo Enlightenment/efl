@@ -5,7 +5,7 @@ class Ecore.Audio.In.Tone (Ecore.Audio.In)
    implements {
       Efl.Object.constructor;
       Efl.Object.key_data;
-      Ecore.Audio.In.length.set;
+      Ecore.Audio.In.length { set; }
       Ecore.Audio.In.seek;
       Ecore.Audio.In.read_internal;
    }
