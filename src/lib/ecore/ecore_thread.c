@@ -863,7 +863,15 @@ ecore_thread_wait(Ecore_Thread *thread, double wait)
         if (wait <= 0) break;
      }
 
-   return (waiter.data == NULL) ? EINA_TRUE : EINA_FALSE;
+   if (!waiter.data)
+     {
+        return EINA_TRUE;
+     }
+   else
+     {
+        _ecore_thread_wait_reset(&waiter, worker);
+        return EINA_FALSE;
+     }
 }
 
 EAPI Eina_Bool
