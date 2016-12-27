@@ -679,12 +679,7 @@ static void
 _parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
 {
    if (eina_hash_find(_parsingeos, fname))
-     {
-        char buf[PATH_MAX];
-        eo_lexer_context_restore(ls);
-        snprintf(buf, sizeof(buf), "cyclic dependency '%s'", name);
-        eo_lexer_syntax_error(ls, buf);
-     }
+     return;
    if (!eo_parser_database_fill(fname, EINA_FALSE))
      {
         char buf[PATH_MAX];
