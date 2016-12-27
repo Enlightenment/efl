@@ -53,30 +53,24 @@ class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.I
    }
    implements {
         Efl.Object.constructor;
-        Efl.Gfx.color.set;
-        Efl.Gfx.visible.set;
-        Efl.Gfx.position.set;
-        Efl.Gfx.size.set;
-        Efl.Canvas.Object.clip.set;
+        Efl.Gfx.color { set; }
+        Efl.Gfx.visible { set; }
+        Efl.Gfx.position { set; }
+        Efl.Gfx.size { set; }
+        Efl.Canvas.Object.clip { set; }
         Efl.Canvas.Group.group_add;
         Efl.Canvas.Group.group_del;
-        Efl.File.file.set;
-        Efl.File.file.get;
-        Efl.Player.play.set;
-        Efl.Player.play.get;
-        Efl.Player.position.set;
-        Efl.Player.position.get;
-        Efl.Player.progress.get;
-        Efl.Player.volume.set;
-        Efl.Player.volume.get;
-        Efl.Player.mute.set;
-        Efl.Player.mute.get;
-        Efl.Player.length.get;
-        Efl.Player.seekable.get;
-        Efl.Image.Load.load_size.get;
-        Efl.Image.ratio.get;
-        Efl.Image.smooth_scale.set;
-        Efl.Image.smooth_scale.get;
+        Efl.File.file { get; set; }
+        Efl.Player.play { get; set; }
+        Efl.Player.position { get; set; }
+        Efl.Player.progress { get; }
+        Efl.Player.volume { get; set; }
+        Efl.Player.mute { get; set; }
+        Efl.Player.length { get; }
+        Efl.Player.seekable { get; }
+        Efl.Image.Load.load_size { get; }
+        Efl.Image.ratio { get; }
+        Efl.Image.smooth_scale { get; set; }
    }
    events {
         frame,decode; [[Called when the frame was decoded]]
