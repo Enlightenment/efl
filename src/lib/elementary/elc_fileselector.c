@@ -506,11 +506,11 @@ _filter_child(Elm_Fileselector_Data* sd,
      {
         strncpy(temp_path, path, sizeof(temp_path) - 1);
         temp_path[sizeof(temp_path) - 1] = 0;
-        pch = strchr(temp_path, '/');
+        pch = strchr(temp_path, EINA_PATH_SEP_C);
         while (pch != NULL)
           {
              temp = pch;
-             pch = strchr(pch + 1, '/');
+             pch = strchr(pch + 1, EINA_PATH_SEP_C);
           }
         temp++;
         if ((temp) && (sd->search_string) &&
