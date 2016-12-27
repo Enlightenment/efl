@@ -12,7 +12,6 @@ mixin Ector.Renderer.Buffer (Efl.Interface, Ector.Renderer, Efl.Gfx.Fill)
       }
    }
    implements {
-      Efl.Gfx.Fill.fill.get;
-      Efl.Gfx.Fill.fill.set;
+      Efl.Gfx.Fill.fill { get; set; }
    }
 }

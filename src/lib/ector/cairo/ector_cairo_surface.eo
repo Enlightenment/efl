@@ -28,7 +28,7 @@ class Ector.Cairo.Surface (Efl.Object, Ector.Surface)
    }
    implements {
       Ector.Surface.renderer_factory_new;
-      Ector.Surface.reference_point.set;
+      Ector.Surface.reference_point { set; }
       Efl.Object.destructor;
       Efl.Object.constructor;
    }

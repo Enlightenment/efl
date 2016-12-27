@@ -13,8 +13,7 @@ abstract Ector.Renderer.Cairo (Ector.Renderer)
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.color.set;
-      Ector.Renderer.color.get;
+      Ector.Renderer.color { get; set; }
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;

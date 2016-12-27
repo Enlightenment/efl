@@ -3,9 +3,7 @@ mixin Ector.Renderer.Gradient.Linear (Efl.Gfx.Gradient.Linear)
    [[Ector gradient linear renderer mixin]]
    eo_prefix: ector_renderer_gradient_linear;
    implements {
-      Efl.Gfx.Gradient.Linear.start.set;
-      Efl.Gfx.Gradient.Linear.start.get;
-      Efl.Gfx.Gradient.Linear.end.set;
-      Efl.Gfx.Gradient.Linear.end.get;
+      Efl.Gfx.Gradient.Linear.start { get; set; }
+      Efl.Gfx.Gradient.Linear.end { get; set; }
    }
 }
