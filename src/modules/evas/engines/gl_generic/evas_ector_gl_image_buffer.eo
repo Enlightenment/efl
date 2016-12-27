@@ -5,9 +5,8 @@ class Evas.Ector.GL.Image.Buffer (Evas.Ector.GL.Buffer, Evas.Ector.Buffer)
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Evas.Ector.Buffer.engine_image.set;
-      Evas.Ector.Buffer.engine_image.get;
-      Ector.Buffer.flags.get;
+      Evas.Ector.Buffer.engine_image { get; set; }
+      Ector.Buffer.flags { get; }
       Ector.Buffer.span_get;
       Ector.Buffer.span_free;
       Ector.Buffer.map;

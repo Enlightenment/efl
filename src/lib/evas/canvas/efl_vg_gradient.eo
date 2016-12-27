@@ -3,10 +3,8 @@ abstract Efl.VG.Gradient (Efl.VG, Efl.Gfx.Gradient)
    [[Efl vectopr graphics gradient abstract class]]
    legacy_prefix: evas_vg_gradient;
    implements {
-      Efl.Gfx.Gradient.stop.set;
-      Efl.Gfx.Gradient.stop.get;
-      Efl.Gfx.Gradient.spread.set;
-      Efl.Gfx.Gradient.spread.get;
+      Efl.Gfx.Gradient.stop { get; set; }
+      Efl.Gfx.Gradient.spread { get; set; }
       Efl.VG.interpolate;
       Efl.VG.dup;
    }

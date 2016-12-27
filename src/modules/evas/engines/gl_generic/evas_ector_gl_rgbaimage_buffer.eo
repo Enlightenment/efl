@@ -5,7 +5,6 @@ class Evas.Ector.GL.RGBAImage.Buffer (Ector.Software.Buffer, Evas.Ector.Buffer)
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Evas.Ector.Buffer.engine_image.get;
-      Evas.Ector.Buffer.engine_image.set;
+      Evas.Ector.Buffer.engine_image { get; set; }
    }
 }

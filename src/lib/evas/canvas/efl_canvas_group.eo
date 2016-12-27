@@ -109,8 +109,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
       class.constructor;
       class.destructor;
       Efl.Object.constructor;
-      Efl.Canvas.Object.no_render.set;
-      Efl.Canvas.Object.paragraph_direction.set;
-      Efl.Canvas.Object.paragraph_direction.get;
+      Efl.Canvas.Object.no_render { set; }
+      Efl.Canvas.Object.paragraph_direction { get; set; }
    }
 }

@@ -365,10 +365,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.dbg_info_get;
-      Efl.Canvas.Object.paragraph_direction.set;
-      Efl.Canvas.Object.paragraph_direction.get;
-      Efl.Text.text.set;
-      Efl.Text.text.get;
+      Efl.Canvas.Object.paragraph_direction { get; set; }
+      Efl.Text.text { get; set; }
    }
    events {
       changed; [[Called when the content (text or annotations) changed.]]

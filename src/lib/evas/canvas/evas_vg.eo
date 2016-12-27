@@ -23,9 +23,7 @@ class Evas.VG (Efl.Canvas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Efl.Gfx.Fill.fill.set;
-      Efl.Gfx.Fill.fill.get;
-      Efl.Gfx.View.view_size.set;
-      Efl.Gfx.View.view_size.get;
+      Efl.Gfx.Fill.fill { get; set; }
+      Efl.Gfx.View.view_size { get; set; }
    }
 }

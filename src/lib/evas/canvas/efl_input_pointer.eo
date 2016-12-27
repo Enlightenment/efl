@@ -167,14 +167,11 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
       Efl.Input.Event.instance_get;
       Efl.Input.Event.reset;
       Efl.Input.Event.dup;
-      Efl.Input.Event.timestamp.set;
-      Efl.Input.Event.timestamp.get;
-      Efl.Input.Event.fake.get;
-      Efl.Input.Event.event_flags.set;
-      Efl.Input.Event.event_flags.get;
-      Efl.Input.Event.device.set;
-      Efl.Input.Event.device.get;
-      Efl.Input.State.modifier_enabled.get;
-      Efl.Input.State.lock_enabled.get;
+      Efl.Input.Event.timestamp { get; set; }
+      Efl.Input.Event.fake { get; }
+      Efl.Input.Event.event_flags { get; set; }
+      Efl.Input.Event.device { get; set; }
+      Efl.Input.State.modifier_enabled { get; }
+      Efl.Input.State.lock_enabled { get; }
    }
 }

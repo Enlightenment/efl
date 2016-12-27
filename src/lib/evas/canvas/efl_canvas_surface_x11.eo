@@ -25,6 +25,6 @@ class Efl.Canvas.Surface.X11 (Efl.Object, Efl.Canvas.Surface)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Canvas.Surface.native_buffer.set;
+      Efl.Canvas.Surface.native_buffer { set; }
    }
 }

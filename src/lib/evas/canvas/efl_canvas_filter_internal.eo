@@ -62,14 +62,10 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.Filter.filter_program.set;
-      Efl.Gfx.Filter.filter_program.get;
-      Efl.Gfx.Filter.filter_state.get;
-      Efl.Gfx.Filter.filter_state.set;
-      Efl.Gfx.Filter.filter_padding.get;
-      Efl.Gfx.Filter.filter_source.set;
-      Efl.Gfx.Filter.filter_source.get;
-      Efl.Gfx.Filter.filter_data.get;
-      Efl.Gfx.Filter.filter_data.set;
+      Efl.Gfx.Filter.filter_program { get; set; }
+      Efl.Gfx.Filter.filter_state { get; set; }
+      Efl.Gfx.Filter.filter_padding { get; }
+      Efl.Gfx.Filter.filter_source { get; set; }
+      Efl.Gfx.Filter.filter_data { get; set; }
    }
 }

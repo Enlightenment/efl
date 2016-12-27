@@ -111,21 +111,17 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
       }
    }
    implements {
-      Efl.Object.parent.set;
+      Efl.Object.parent { set; }
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.visible.set;
-      Efl.Gfx.visible.get;
-      Efl.Gfx.color.set;
-      Efl.Gfx.color.get;
-      Efl.Gfx.color_part.set;
-      Efl.Gfx.color_part.get;
-      Efl.Gfx.size.get;
-      Efl.Gfx.position.set;
-      Efl.Gfx.position.get;
-      Efl.Gfx.geometry.get;
-      Efl.Gfx.Stack.below.get;
-      Efl.Gfx.Stack.above.get;
+      Efl.Gfx.visible { get; set; }
+      Efl.Gfx.color { get; set; }
+      Efl.Gfx.color_part { get; set; }
+      Efl.Gfx.size { get; }
+      Efl.Gfx.position { get; set; }
+      Efl.Gfx.geometry { get; }
+      Efl.Gfx.Stack.below { get; }
+      Efl.Gfx.Stack.above { get; }
       Efl.Gfx.Stack.stack_below;
       Efl.Gfx.Stack.stack_above;
       Efl.Gfx.Stack.raise;

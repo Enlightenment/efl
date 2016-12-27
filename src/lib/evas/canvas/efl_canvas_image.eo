@@ -13,34 +13,26 @@ class Efl.Canvas.Image (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer,
       Efl.Gfx.Buffer.buffer_managed_get;
       Efl.Gfx.Buffer.buffer_managed_set;
       Efl.Gfx.Buffer.buffer_copy_set;
-      Efl.Gfx.Buffer.buffer_size.get;
+      Efl.Gfx.Buffer.buffer_size { get; }
       Efl.Gfx.Buffer.buffer_map;
       Efl.Gfx.Buffer.buffer_unmap;
-      Efl.File.file.set;
-      Efl.File.file.get;
-      Efl.File.mmap.set;
-      Efl.File.mmap.get;
-      Efl.Image.Animated.animated.get;
-      Efl.Image.Animated.animated_frame.get;
-      Efl.Image.Animated.animated_frame.set;
-      Efl.Image.Animated.animated_frame_count.get;
-      Efl.Image.Animated.animated_loop_type.get;
-      Efl.Image.Animated.animated_loop_count.get;
-      Efl.Image.Animated.animated_frame_duration.get;
-      Efl.Image.Load.load_error.get;
+      Efl.File.file { get; set; }
+      Efl.File.mmap { get; set; }
+      Efl.Image.Animated.animated { get; }
+      Efl.Image.Animated.animated_frame { get; set; }
+      Efl.Image.Animated.animated_frame_count { get; }
+      Efl.Image.Animated.animated_loop_type { get; }
+      Efl.Image.Animated.animated_loop_count { get; }
+      Efl.Image.Animated.animated_frame_duration { get; }
+      Efl.Image.Load.load_error { get; }
       Efl.Image.Load.load_async_start;
       Efl.Image.Load.load_async_cancel;
-      Efl.Image.Load.load_dpi.get;
-      Efl.Image.Load.load_dpi.set;
-      Efl.Image.Load.load_size.set;
-      Efl.Image.Load.load_size.get;
-      Efl.Image.Load.load_orientation.get;
-      Efl.Image.Load.load_orientation.set;
-      Efl.Image.Load.load_scale_down.get;
-      Efl.Image.Load.load_scale_down.set;
-      Efl.Image.Load.load_region.get;
-      Efl.Image.Load.load_region.set;
-      Efl.Image.Load.load_region_support.get;
+      Efl.Image.Load.load_dpi { get; set; }
+      Efl.Image.Load.load_size { get; set; }
+      Efl.Image.Load.load_orientation { get; set; }
+      Efl.Image.Load.load_scale_down { get; set; }
+      Efl.Image.Load.load_region { get; set; }
+      Efl.Image.Load.load_region_support { get; }
       Efl.Object.dbg_info_get;
    }
 }

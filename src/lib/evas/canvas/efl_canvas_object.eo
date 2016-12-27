@@ -627,49 +627,31 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Object.event_callback_legacy_call;
       Efl.Object.event_callback_call;
       Efl.Object.provider_find;
-      Efl.Gfx.visible.set;
-      Efl.Gfx.visible.get;
-      Efl.Gfx.color.set;
-      Efl.Gfx.color.get;
-      Efl.Gfx.color_part.set;
-      Efl.Gfx.color_part.get;
-      Efl.Gfx.geometry.set;
-      Efl.Gfx.geometry.get;
-      Efl.Gfx.position.set;
-      Efl.Gfx.position.get;
-      Efl.Gfx.size.set;
-      Efl.Gfx.size.get;
-      Efl.Gfx.Stack.layer.set;
-      Efl.Gfx.Stack.layer.get;
-      Efl.Gfx.Stack.below.get;
-      Efl.Gfx.Stack.above.get;
+      Efl.Gfx.visible { get; set; }
+      Efl.Gfx.color { get; set; }
+      Efl.Gfx.color_part { get; set; }
+      Efl.Gfx.geometry { get; set; }
+      Efl.Gfx.position { get; set; }
+      Efl.Gfx.size { get; set; }
+      Efl.Gfx.Stack.layer { get; set; }
+      Efl.Gfx.Stack.below { get; }
+      Efl.Gfx.Stack.above { get; }
       Efl.Gfx.Stack.stack_below;
       Efl.Gfx.Stack.stack_above;
       Efl.Gfx.Stack.raise;
       Efl.Gfx.Stack.lower;
-      Efl.Gfx.Size.Hint.hint_aspect.set;
-      Efl.Gfx.Size.Hint.hint_aspect.get;
-      Efl.Gfx.Size.Hint.hint_align.set;
-      Efl.Gfx.Size.Hint.hint_align.get;
-      Efl.Gfx.Size.Hint.hint_combined_min.get;
-      Efl.Gfx.Size.Hint.hint_display_mode.set;
-      Efl.Gfx.Size.Hint.hint_display_mode.get;
-      Efl.Gfx.Size.Hint.hint_restricted_min.set;
-      Efl.Gfx.Size.Hint.hint_restricted_min.get;
-      Efl.Gfx.Size.Hint.hint_min.set;
-      Efl.Gfx.Size.Hint.hint_min.get;
-      Efl.Gfx.Size.Hint.hint_max.set;
-      Efl.Gfx.Size.Hint.hint_max.get;
-      Efl.Gfx.Size.Hint.hint_margin.set;
-      Efl.Gfx.Size.Hint.hint_margin.get;
-      Efl.Gfx.Size.Hint.hint_request.set;
-      Efl.Gfx.Size.Hint.hint_request.get;
-      Efl.Gfx.Size.Hint.hint_weight.set;
-      Efl.Gfx.Size.Hint.hint_weight.get;
-      Efl.Gfx.Map.map_enable.set;
-      Efl.Gfx.Map.map_enable.get;
-      Efl.Input.Interface.seat_event_filter.set;
-      Efl.Input.Interface.seat_event_filter.get;
-      Efl.Loop_User.loop.get;
+      Efl.Gfx.Size.Hint.hint_aspect { get; set; }
+      Efl.Gfx.Size.Hint.hint_align { get; set; }
+      Efl.Gfx.Size.Hint.hint_combined_min { get; }
+      Efl.Gfx.Size.Hint.hint_display_mode { get; set; }
+      Efl.Gfx.Size.Hint.hint_restricted_min { get; set; }
+      Efl.Gfx.Size.Hint.hint_min { get; set; }
+      Efl.Gfx.Size.Hint.hint_max { get; set; }
+      Efl.Gfx.Size.Hint.hint_margin { get; set; }
+      Efl.Gfx.Size.Hint.hint_request { get; set; }
+      Efl.Gfx.Size.Hint.hint_weight { get; set; }
+      Efl.Gfx.Map.map_enable { get; set; }
+      Efl.Input.Interface.seat_event_filter { get; set; }
+      Efl.Loop_User.loop { get; }
    }
 }

@@ -35,8 +35,7 @@ class Efl.VG.Shape (Efl.VG, Efl.Gfx.Shape)
       }
    }
    implements {
-      Efl.Gfx.color_part.set;
-      Efl.Gfx.color_part.get;
+      Efl.Gfx.color_part { get; set; }
       Efl.VG.bounds_get;
       Efl.VG.interpolate;
       Efl.VG.dup;

@@ -425,8 +425,8 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Efl.File)
       Efl.Object.destructor;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
-      Efl.File.file.set;
-      Efl.File.mmap.set;
+      Efl.File.file { set; }
+      Efl.File.mmap { set; }
       Efl.File.save;
    }
 
