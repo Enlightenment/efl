@@ -6,10 +6,10 @@ class Ector.Renderer.Cairo.Gradient.Radial (Ector.Renderer.Cairo, Ector.Renderer
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
       Ector.Renderer.bounds_get;
-      Ector.Renderer.crc.get;
+      Ector.Renderer.crc { get; }
       Ector.Renderer.Cairo.fill;
       Efl.Object.destructor;
       Efl.Object.finalize;
-      Efl.Gfx.Gradient.stop.set;
+      Efl.Gfx.Gradient.stop { set; }
    }
 }

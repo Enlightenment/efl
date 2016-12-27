@@ -6,7 +6,7 @@ class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo, Ector.Renderer.Shape)
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
       Ector.Renderer.bounds_get;
-      Ector.Renderer.crc.get;
+      Ector.Renderer.crc { get; }
       Ector.Renderer.Cairo.fill;
       Efl.Object.constructor;
       Efl.Object.finalize;

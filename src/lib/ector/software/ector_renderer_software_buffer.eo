@@ -13,7 +13,7 @@ class Ector.Renderer.Software.Buffer (Ector.Renderer.Software, Ector.Renderer.Bu
    }
    implements {
       Ector.Renderer.prepare;
-      Ector.Renderer.crc.get;
+      Ector.Renderer.crc { get; }
       Ector.Renderer.Software.fill;
       Efl.Object.destructor;
    }

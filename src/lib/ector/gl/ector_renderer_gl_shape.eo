@@ -6,7 +6,7 @@ class Ector.Renderer.GL.Shape (Ector.Renderer.GL, Ector.Renderer.Shape)
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
       Ector.Renderer.bounds_get;
-      Ector.Renderer.crc.get;
+      Ector.Renderer.crc { get; }
       Ector.Renderer.GL.fill;
       Efl.Object.constructor;
       Efl.Object.destructor;

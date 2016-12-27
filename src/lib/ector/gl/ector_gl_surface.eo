@@ -33,7 +33,7 @@ class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
    }
    implements {
       Ector.Surface.renderer_factory_new;
-      Ector.Surface.reference_point.set;
+      Ector.Surface.reference_point { set; }
       Efl.Object.destructor;
       Efl.Object.constructor;
    }

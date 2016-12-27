@@ -6,10 +6,10 @@ class Ector.Renderer.Software.Gradient.Radial (Ector.Renderer.Software, Ector.Re
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.crc.get;
+      Ector.Renderer.crc { get; }
       Ector.Renderer.Software.fill;
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.Gradient.stop.set;
+      Efl.Gfx.Gradient.stop { set; }
    }
 }
