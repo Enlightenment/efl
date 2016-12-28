@@ -584,7 +584,7 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
           }
      }
    if (ie->f && !ie->flags.given_mmap) eina_file_close(ie->f);
-   free(im);
+   eina_freeq_ptr_add(eina_freeq_main_get(), im, free, sizeof(*im));
 }
 
 static void

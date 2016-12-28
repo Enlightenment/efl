@@ -139,7 +139,7 @@ _evas_cache_engine_image_dealloc(Evas_Cache_Engine_Image *cache, Engine_Image_En
    else
      {
         memset(eim, 0, sizeof (Engine_Image_Entry));
-        free(eim);
+        eina_freeq_ptr_add(eina_freeq_main_get(), eim, free, sizeof(*eim));
      }
 }
 
