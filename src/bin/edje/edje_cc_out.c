@@ -1419,7 +1419,7 @@ data_write_images(Eet_File *ef, int *image_num)
                   char *tmp = malloc(size);
                   snprintf(tmp, size, "%s.png", img->entry);
                   INF("Vector '%s' used as image, convert to bitmap '%s'", img->entry, tmp);
-                  free(img->entry);
+                  free((void *)img->entry);
                   img->entry = tmp;
                }
           }
