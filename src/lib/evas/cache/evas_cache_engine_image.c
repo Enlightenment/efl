@@ -49,20 +49,20 @@ _evas_cache_engine_image_remove_activ(Evas_Cache_Engine_Image *cache,
    if (eim->flags.cached)
      {
         if (eim->flags.dirty)
-          {
-	     cache->dirty = eina_inlist_remove(cache->dirty, EINA_INLIST_GET(eim));
-          }
+          cache->dirty = eina_inlist_remove(cache->dirty,
+                                            EINA_INLIST_GET(eim));
         else
-          if (eim->flags.activ)
-            {
-	       eina_hash_del(cache->activ, eim->cache_key, eim);
-            }
-          else
-            {
-               cache->usage -= cache->func.mem_size_get(eim);
-	       eina_hash_del(cache->inactiv, eim->cache_key, eim);
-               cache->lru = eina_inlist_remove(cache->lru, EINA_INLIST_GET(eim));
-            }
+          {
+             if (eim->flags.activ)
+               eina_hash_del(cache->activ, eim->cache_key, eim);
+             else
+               {
+                  cache->usage -= cache->func.mem_size_get(eim);
+                  eina_hash_del(cache->inactiv, eim->cache_key, eim);
+                  cache->lru = eina_inlist_remove(cache->lru,
+                                                  EINA_INLIST_GET(eim));
+               }
+          }
         eim->flags.cached = 0;
         eim->flags.dirty = 0;
         eim->flags.activ = 0;
@@ -74,14 +74,12 @@ _evas_cache_engine_image_alloc(Evas_Cache_Engine_Image *cache,
                                Image_Entry *ie,
                                const char *hkey)
 {
-   Engine_Image_Entry   *eim;
+   Engine_Image_Entry *eim;
 
    assert(cache);
 
-   if (cache->func.alloc)
-     eim = cache->func.alloc();
-   else
-     eim = malloc(sizeof (Engine_Image_Entry));
+   if (cache->func.alloc) eim = cache->func.alloc();
+   else eim = malloc(sizeof (Engine_Image_Entry));
 
    if (!eim) goto on_error;
    memset(eim, 0, sizeof (Engine_Image_Entry));
@@ -106,23 +104,22 @@ _evas_cache_engine_image_alloc(Evas_Cache_Engine_Image *cache,
    eim->references = 0;
    eim->cache_key = hkey;
 
-   if (hkey)
-     _evas_cache_engine_image_make_active(cache, eim, hkey);
-   else
-     _evas_cache_engine_image_make_dirty(cache, eim);
+   if (hkey) _evas_cache_engine_image_make_active(cache, eim, hkey);
+   else _evas_cache_engine_image_make_dirty(cache, eim);
 
    return eim;
 
- on_error:
+on_error:
    eina_stringshare_del(hkey);
    if (ie) evas_cache_image_drop(ie);
    return NULL;
 }
 
 static void
-_evas_cache_engine_image_dealloc(Evas_Cache_Engine_Image *cache, Engine_Image_Entry *eim)
+_evas_cache_engine_image_dealloc(Evas_Cache_Engine_Image *cache,
+                                 Engine_Image_Entry *eim)
 {
-   Image_Entry   *im;
+   Image_Entry *im;
 
    if (cache->func.debug) cache->func.debug("delete", eim);
 
@@ -132,13 +129,10 @@ _evas_cache_engine_image_dealloc(Evas_Cache_Engine_Image *cache, Engine_Image_En
    cache->func.destructor(eim);
    if (im) evas_cache_image_drop(im);
 
-   if (cache->func.dealloc)
-     {
-        cache->func.dealloc(eim);
-     }
+   if (cache->func.dealloc) cache->func.dealloc(eim);
    else
      {
-        memset(eim, 0, sizeof (Engine_Image_Entry));
+        memset(eim, 0, sizeof(Engine_Image_Entry));
         eina_freeq_ptr_add(eina_freeq_main_get(), eim, free, sizeof(*eim));
      }
 }
@@ -147,7 +141,6 @@ EAPI int
 evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image *cache)
 {
    assert(cache != NULL);
-
    return cache->usage;
 }
 
@@ -155,7 +148,6 @@ EAPI int
 evas_cache_engine_image_get(Evas_Cache_Engine_Image *cache)
 {
    assert(cache != NULL);
-
    return cache->limit;
 }
 
@@ -163,18 +155,17 @@ EAPI void
 evas_cache_engine_image_set(Evas_Cache_Engine_Image *cache, int limit)
 {
    assert(cache != NULL);
-
    cache->limit = limit;
 }
 
 EAPI Evas_Cache_Engine_Image *
-evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_Image *parent)
+evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb,
+                             Evas_Cache_Image *parent)
 {
-   Evas_Cache_Engine_Image     *new;
+   Evas_Cache_Engine_Image *new;
 
    new = malloc(sizeof (Evas_Cache_Engine_Image));
-   if (!new)
-     return NULL;
+   if (!new) return NULL;
 
    new->func = *cb;
 
@@ -195,18 +186,17 @@ evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_
 }
 
 EAPI Evas_Cache_Engine_Image *
-evas_cache_engine_image_dup(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_Engine_Image *brother)
+evas_cache_engine_image_dup(const Evas_Cache_Engine_Image_Func *cb,
+                            Evas_Cache_Engine_Image *brother)
 {
-   Evas_Cache_Engine_Image     *new;
+   Evas_Cache_Engine_Image *new;
 
-   new = calloc(1, sizeof (Evas_Cache_Engine_Image));
-   if (!new)
-     return NULL;
+   new = calloc(1, sizeof(Evas_Cache_Engine_Image));
+   if (!new) return NULL;
 
    new->func = brother->func;
 
 #define ORD(Func) if (cb->Func) new->func.Func = cb->Func;
-
    ORD(key);
    ORD(constructor);
    ORD(destructor);
@@ -217,7 +207,6 @@ evas_cache_engine_image_dup(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_E
    ORD(load);
    ORD(mem_size_get);
    ORD(debug);
-
 #undef ORD
 
    new->limit = -1;
@@ -237,12 +226,13 @@ evas_cache_engine_image_dup(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_E
 }
 
 static Eina_Bool
-_evas_cache_engine_image_free_cb(EINA_UNUSED const Eina_Hash *hash, EINA_UNUSED const void *key, void *data, void *fdata)
+_evas_cache_engine_image_free_cb(EINA_UNUSED const Eina_Hash *hash,
+                                 EINA_UNUSED const void *key,
+                                 void *data, void *fdata)
 {
    Eina_List **delete_list = fdata;
 
    *delete_list = eina_list_prepend(*delete_list, data);
-
    return EINA_TRUE;
 }
 
@@ -253,9 +243,9 @@ evas_cache_engine_image_flush(Evas_Cache_Engine_Image *cache)
 
    while ((cache->lru) && (cache->limit < cache->usage))
      {
-        Engine_Image_Entry      *eim;
+        Engine_Image_Entry *eim;
 
-        eim = (Engine_Image_Entry *) cache->lru->last;
+        eim = (Engine_Image_Entry *)cache->lru->last;
         _evas_cache_engine_image_dealloc(cache, eim);
      }
 }
@@ -263,47 +253,50 @@ evas_cache_engine_image_flush(Evas_Cache_Engine_Image *cache)
 EAPI void
 evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
 {
-   Engine_Image_Entry   *eim;
+   Engine_Image_Entry *eim;
    Eina_List *delete_list = NULL;
 
    assert(cache != NULL);
 
    if (cache->func.debug) cache->func.debug("shutdown-engine", NULL);
 
-   eina_hash_foreach(cache->inactiv, _evas_cache_engine_image_free_cb, &delete_list);
-   eina_hash_foreach(cache->activ, _evas_cache_engine_image_free_cb, &delete_list);
+   eina_hash_foreach(cache->inactiv, _evas_cache_engine_image_free_cb,
+                     &delete_list);
+   eina_hash_foreach(cache->activ, _evas_cache_engine_image_free_cb,
+                     &delete_list);
 
    while (delete_list)
      {
-	_evas_cache_engine_image_dealloc(cache, eina_list_data_get(delete_list));
-	delete_list = eina_list_remove_list(delete_list, delete_list);
+        _evas_cache_engine_image_dealloc(cache,
+                                         eina_list_data_get(delete_list));
+        delete_list = eina_list_remove_list(delete_list, delete_list);
      }
 
    eina_hash_free(cache->inactiv);
    eina_hash_free(cache->activ);
 
-   /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
+   /* This is mad, I am about to destroy image still alive, but we need to
+    * prevent leak. */
    while (cache->dirty)
      {
-        eim = (Engine_Image_Entry *) cache->dirty;
+        eim = (Engine_Image_Entry *)cache->dirty;
         _evas_cache_engine_image_dealloc(cache, eim);
      }
 
-
    evas_cache_image_shutdown(cache->parent);
-   if (cache->brother)
-     evas_cache_engine_image_shutdown(cache->brother);
+   if (cache->brother) evas_cache_engine_image_shutdown(cache->brother);
    free(cache);
 }
 
 EAPI Engine_Image_Entry *
 evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
                                 const char *file, const char *key,
-                                Evas_Image_Load_Opts *lo, void *data, int *error)
+                                Evas_Image_Load_Opts *lo, void *data,
+                                int *error)
 {
-   Engine_Image_Entry   *eim;
-   Image_Entry          *im;
-   const char          *ekey;
+   Engine_Image_Entry *eim;
+   Image_Entry *im;
+   const char *ekey;
 
    assert(cache != NULL);
 
@@ -313,17 +306,14 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
    eim = NULL;
 
    im = evas_cache_image_request(cache->parent, file, key, lo, error);
-   if (!im)
-     goto on_error;
+   if (!im) goto on_error;
 
-   if (cache->func.key)
-     ekey = cache->func.key(im, file, key, lo, data);
-   else
-     ekey = eina_stringshare_add(im->cache_key);
+   if (cache->func.key) ekey = cache->func.key(im, file, key, lo, data);
+   else ekey = eina_stringshare_add(im->cache_key);
    if (!ekey)
      {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	goto on_error;
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto on_error;
      }
 
    eim = eina_hash_find(cache->activ, ekey);
@@ -345,28 +335,24 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
    eim = _evas_cache_engine_image_alloc(cache, im, ekey);
    if (!eim)
      {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	return NULL;
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
      }
 
    *error = cache->func.constructor(eim, data);
    if (*error != EVAS_LOAD_ERROR_NONE) goto on_error;
-   if (cache->func.debug)
-     cache->func.debug("constructor-engine", eim);
+   if (cache->func.debug) cache->func.debug("constructor-engine", eim);
 
-  on_ok:
+on_ok:
    eim->references++;
    return eim;
 
-  on_error:
+on_error:
    if (!eim)
      {
         if (im) evas_cache_image_drop(im);
      }
-   else
-     {
-        _evas_cache_engine_image_dealloc(cache, eim);
-     }
+   else _evas_cache_engine_image_dealloc(cache, eim);
 
    return NULL;
 }
@@ -374,7 +360,7 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
 EAPI void
 evas_cache_engine_image_drop(Engine_Image_Entry *eim)
 {
-   Evas_Cache_Engine_Image     *cache;
+   Evas_Cache_Engine_Image *cache;
 
    assert(eim);
    assert(eim->cache);
@@ -398,13 +384,15 @@ evas_cache_engine_image_drop(Engine_Image_Entry *eim)
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_dirty(Engine_Image_Entry *eim, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
+evas_cache_engine_image_dirty(Engine_Image_Entry *eim,
+                              unsigned int x, unsigned int y,
+                              unsigned int w, unsigned int h)
 {
-   Engine_Image_Entry           *eim_dirty = eim;
-   Image_Entry                  *im_dirty = NULL;
-   Image_Entry                  *im;
-   Evas_Cache_Engine_Image      *cache;
-   unsigned char                 alloc_eim;
+   Engine_Image_Entry *eim_dirty = eim;
+   Image_Entry *im_dirty = NULL;
+   Image_Entry *im;
+   Evas_Cache_Engine_Image *cache;
+   unsigned char alloc_eim;
 
    assert(eim);
    assert(eim->cache);
@@ -419,30 +407,28 @@ evas_cache_engine_image_dirty(Engine_Image_Entry *eim, unsigned int x, unsigned 
              im = eim->src;
              im_dirty = evas_cache_image_dirty(im, x, y, w, h);
 
-             /* If im == im_dirty, this meens that we have only one reference to the eim. */
+             /* If im == im_dirty, this meens that we have only one
+              * reference to the eim. */
              if (im != im_dirty)
                {
                   if (eim->references == 1)
                     {
                        _evas_cache_engine_image_remove_activ(cache, eim);
                        _evas_cache_engine_image_make_dirty(cache, eim);
-
                        eim->src = im_dirty;
                     }
-                  else
-                    alloc_eim = 1;
+                  else alloc_eim = 1;
                }
           }
         else
-          if (eim->references > 1)
-            {
-               alloc_eim = 1;
-            }
-          else
-            {
-               _evas_cache_engine_image_remove_activ(cache, eim_dirty);
-               _evas_cache_engine_image_make_dirty(cache, eim_dirty);
-            }
+          {
+             if (eim->references > 1) alloc_eim = 1;
+             else
+               {
+                  _evas_cache_engine_image_remove_activ(cache, eim_dirty);
+                  _evas_cache_engine_image_make_dirty(cache, eim_dirty);
+               }
+          }
 
         if (alloc_eim == 1)
           {
@@ -472,12 +458,10 @@ evas_cache_engine_image_dirty(Engine_Image_Entry *eim, unsigned int x, unsigned 
 
    return eim_dirty;
 
-  on_error:
+on_error:
    evas_cache_engine_image_drop(eim);
-   if (eim_dirty && eim_dirty != eim)
-     evas_cache_engine_image_drop(eim_dirty);
-   else
-     if (im_dirty) evas_cache_image_drop(im_dirty);
+   if (eim_dirty && eim_dirty != eim) evas_cache_engine_image_drop(eim_dirty);
+   else if (im_dirty) evas_cache_image_drop(im_dirty);
 
    return NULL;
 }
@@ -485,9 +469,8 @@ evas_cache_engine_image_dirty(Engine_Image_Entry *eim, unsigned int x, unsigned 
 EAPI Engine_Image_Entry *
 evas_cache_engine_image_alone(Engine_Image_Entry *eim, void *data)
 {
-   Evas_Cache_Engine_Image      *cache;
-   Image_Entry                  *im;
-
+   Evas_Cache_Engine_Image *cache;
+   Image_Entry *im;
 
    assert(eim);
    assert(eim->cache);
@@ -502,71 +485,74 @@ evas_cache_engine_image_alone(Engine_Image_Entry *eim, void *data)
         eim->references = 1;
 
         if (cache->func.constructor(eim, data) != EVAS_LOAD_ERROR_NONE)
-	  goto on_error;
+          goto on_error;
      }
    /* FIXME */
    return eim;
 
- on_error:
+on_error:
    evas_cache_image_drop(im);
    return NULL;
 }
 
 static Engine_Image_Entry *
-_evas_cache_engine_image_push_dirty(Evas_Cache_Engine_Image *cache, Image_Entry *im, void *engine_data)
+_evas_cache_engine_image_push_dirty(Evas_Cache_Engine_Image *cache,
+                                    Image_Entry *im, void *engine_data)
 {
-   Engine_Image_Entry    *eim;
-   int                  error;
+   Engine_Image_Entry *eim;
+   int error;
 
    eim = _evas_cache_engine_image_alloc(cache, im, NULL);
    if (!eim) goto on_error;
    eim->references = 1;
 
    error = cache->func.update_data(eim, engine_data);
-   if (cache->func.debug)
-     cache->func.debug("dirty-update_data-engine", eim);
+   if (cache->func.debug) cache->func.debug("dirty-update_data-engine", eim);
    if (error != 0) goto on_error;
 
    return eim;
 
-  on_error:
-   if (eim)
-     evas_cache_engine_image_drop(eim);
+on_error:
+   if (eim) evas_cache_engine_image_drop(eim);
    return NULL;
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace, void *engine_data)
+evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache,
+                                    unsigned int w, unsigned int h,
+                                    DATA32 *image_data, int alpha,
+                                    Evas_Colorspace cspace, void *engine_data)
 {
-   Image_Entry           *im;
+   Image_Entry *im;
 
    assert(cache);
-
-   im = evas_cache_image_copied_data(cache->parent, w, h, image_data, alpha, cspace);
-
+   im = evas_cache_image_copied_data(cache->parent, w, h, image_data,
+                                     alpha, cspace);
    return _evas_cache_engine_image_push_dirty(cache, im, engine_data);
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace, void *engine_data)
+evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache,
+                             unsigned int w, unsigned int h,
+                             DATA32 *image_data, int alpha,
+                             Evas_Colorspace cspace, void *engine_data)
 {
-   Image_Entry           *im;
+   Image_Entry *im;
 
    assert(cache);
-
    im = evas_cache_image_data(cache->parent, w, h, image_data, alpha, cspace);
-
    return _evas_cache_engine_image_push_dirty(cache, im, engine_data);
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_size_set(Engine_Image_Entry *eim, unsigned int w, unsigned int h)
+evas_cache_engine_image_size_set(Engine_Image_Entry *eim,
+                                 unsigned int w, unsigned int h)
 {
-   Evas_Cache_Engine_Image      *cache;
-   Engine_Image_Entry           *new;
-   Image_Entry                  *im;
-   const char                   *hkey;
-   int                           error;
+   Evas_Cache_Engine_Image *cache;
+   Engine_Image_Entry *new;
+   Image_Entry *im;
+   const char *hkey;
+   int error;
 
    assert(eim);
    assert(eim->cache);
@@ -579,9 +565,7 @@ evas_cache_engine_image_size_set(Engine_Image_Entry *eim, unsigned int w, unsign
      {
         assert(eim->src);
 
-        if (eim->src->w == w
-            && eim->src->h == h)
-          return eim;
+        if ((eim->src->w == w) && (eim->src->h == h)) return eim;
 
         im = evas_cache_image_size_set(eim->src, w, h);
         /* FIXME: Good idea to call update_data ? */
@@ -604,12 +588,9 @@ evas_cache_engine_image_size_set(Engine_Image_Entry *eim, unsigned int w, unsign
    evas_cache_engine_image_drop(eim);
    return new;
 
-  on_error:
-   if (new)
-     evas_cache_engine_image_drop(new);
-   else
-     if (im)
-       evas_cache_image_drop(im);
+on_error:
+   if (new) evas_cache_engine_image_drop(new);
+   else if (im) evas_cache_image_drop(im);
    evas_cache_engine_image_drop(eim);
 
    return NULL;
@@ -618,8 +599,8 @@ evas_cache_engine_image_size_set(Engine_Image_Entry *eim, unsigned int w, unsign
 EAPI void
 evas_cache_engine_image_load_data(Engine_Image_Entry *eim)
 {
-   Evas_Cache_Engine_Image     *cache;
-   int                          size = 0;
+   Evas_Cache_Engine_Image *cache;
+   int size = 0;
 
    assert(eim);
    assert(eim->src);
@@ -627,29 +608,26 @@ evas_cache_engine_image_load_data(Engine_Image_Entry *eim)
 
    if (eim->flags.loaded) return;
 
-   if (eim->src)
-     evas_cache_image_load_data(eim->src);
+   if (eim->src) evas_cache_image_load_data(eim->src);
 
    cache = eim->cache;
-   if (cache->func.debug)
-     cache->func.debug("load-engine", eim);
+   if (cache->func.debug) cache->func.debug("load-engine", eim);
 
-   if (eim->flags.dirty)
-     size = cache->func.mem_size_get(eim);
+   if (eim->flags.dirty) size = cache->func.mem_size_get(eim);
    cache = eim->cache;
    cache->func.load(eim, eim->src);
-   if (eim->flags.dirty)
-     cache->usage += cache->func.mem_size_get(eim) - size;
+   if (eim->flags.dirty) cache->usage += cache->func.mem_size_get(eim) - size;
 
    eim->flags.loaded = 1;
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache, void *engine_data)
+evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache,
+                               void *engine_data)
 {
-   Engine_Image_Entry   *eim;
-   Image_Entry          *ie;
-   int                   error;
+   Engine_Image_Entry *eim;
+   Image_Entry *ie;
+   int error;
 
    ie = evas_cache_image_empty(cache->parent);
    if (!ie) return NULL;
@@ -659,26 +637,24 @@ evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache, void *engine_data
    eim->references = 1;
 
    error = cache->func.update_data(eim, engine_data);
-   if (cache->func.debug)
-     cache->func.debug("update_data-engine", eim);
+   if (cache->func.debug) cache->func.debug("update_data-engine", eim);
 
    if (error != 0) goto on_error;
 
    return eim;
 
-  on_error:
-   if (!eim)
-     evas_cache_image_drop(ie);
-   else
-     evas_cache_engine_image_drop(eim);
+on_error:
+   if (!eim) evas_cache_image_drop(ie);
+   else evas_cache_engine_image_drop(eim);
 
    return NULL;
 }
 
 EAPI void
-evas_cache_engine_image_colorspace(Engine_Image_Entry *eim, Evas_Colorspace cspace, void *engine_data)
+evas_cache_engine_image_colorspace(Engine_Image_Entry *eim,
+                                   Evas_Colorspace cspace, void *engine_data)
 {
-   Evas_Cache_Engine_Image     *cache = eim->cache;
+   Evas_Cache_Engine_Image *cache = eim->cache;
 
    assert(cache);
 
