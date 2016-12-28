@@ -695,6 +695,7 @@ _method_event_group(const Eldbus_Service_Interface *iface,
 
    while (eldbus_message_iter_get_and_next(array, 'r', &tuple))
      {
+        id = 0;
         if (_event_handle(dbus_menu, tuple, &id))
           return_error = EINA_FALSE;
         else
