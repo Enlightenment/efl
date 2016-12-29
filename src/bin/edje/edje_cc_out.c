@@ -1424,6 +1424,22 @@ data_write_images(Eet_File *ef, int *image_num)
                }
           }
      }
+
+   for (i = 0; i < (int)edje_file->image_dir->sets_count; i++)
+     {
+        Edje_Image_Directory_Set *set;
+        Edje_Image_Directory_Set_Entry *set_entry;
+        Edje_Image_Directory_Entry *img;
+        Eina_List *ll = NULL;
+
+        set = edje_file->image_dir->sets + i;
+        if (!set->entries) continue;
+        EINA_LIST_FOREACH(set->entries, ll, set_entry)
+          {
+             img = &edje_file->image_dir->entries[set_entry->id];
+             set_entry->name = img->entry;
+          }
+     }
 }
 
 static void
