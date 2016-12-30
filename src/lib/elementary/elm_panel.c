@@ -520,9 +520,13 @@ _state_sync(Evas_Object *obj)
    Eina_Bool open = EINA_FALSE, horizontal = EINA_FALSE;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
 
+   if (!evas_object_visible_get(sd->bx)) return EINA_TRUE;
+
    switch (sd->orient)
      {
       case ELM_PANEL_ORIENT_TOP:
+         if (h <= 0) return EINA_TRUE;
+
          panel_size = h * sd->content_size_ratio;
          elm_interface_scrollable_content_pos_get(obj, NULL, &pos);
 
@@ -532,6 +536,8 @@ _state_sync(Evas_Object *obj)
          break;
 
       case ELM_PANEL_ORIENT_BOTTOM:
+         if (h <= 0) return EINA_TRUE;
+
          panel_size = h * sd->content_size_ratio;
          elm_interface_scrollable_content_pos_get(obj, NULL, &pos);
 
@@ -541,6 +547,8 @@ _state_sync(Evas_Object *obj)
          break;
 
       case ELM_PANEL_ORIENT_LEFT:
+         if (w <= 0) return EINA_TRUE;
+
          panel_size = w * sd->content_size_ratio;
          elm_interface_scrollable_content_pos_get(obj, &pos, NULL);
          horizontal = EINA_TRUE;
@@ -560,6 +568,8 @@ _state_sync(Evas_Object *obj)
          break;
 
       case ELM_PANEL_ORIENT_RIGHT:
+         if (w <= 0) return EINA_TRUE;
+
          panel_size = w * sd->content_size_ratio;
          elm_interface_scrollable_content_pos_get(obj, &pos, NULL);
          horizontal = EINA_TRUE;
