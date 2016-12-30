@@ -757,6 +757,9 @@ struct _RGBA_Draw_Context
    } clip;
    Cutout_Rects cutout;
    struct {
+      int x, y, w, h;
+   } cutout_target;
+   struct {
       Cutout_Rects *rects;
       int used;
    } cache;

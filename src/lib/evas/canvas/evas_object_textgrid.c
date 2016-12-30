@@ -531,6 +531,9 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
              ENFN->context_color_set(output, context,
                                      row->rects[xx].r, row->rects[xx].g,
                                      row->rects[xx].b, row->rects[xx].a);
+             ENFN->context_cutout_target(output, context,
+                                         xp + row->rects[xx].x, yp,
+                                         row->rects[xx].w, h);
              ENFN->rectangle_draw(output, context, surface,
                                   xp + row->rects[xx].x, yp,
                                   row->rects[xx].w, h,
@@ -600,6 +603,9 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                          }
                        while (font == current_font);
 
+                       ENFN->context_cutout_target(output, context,
+                                                   xp - w, yp + o->ascent - h,
+                                                   w * 3, h * 3);
                        async_unref =
                           ENFN->multi_font_draw(output, context, surface,
                                                 current_font,
@@ -639,6 +645,9 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                        ENFN->context_color_set(output, context,
                                                r, g, b, a);
                        font = _textgrid_font_get(o, text->bold, text->italic);
+                       ENFN->context_cutout_target(output, context,
+                                                   tx - w, ty - h,
+                                                   w * 3, h * 3);
                        evas_font_draw_async_check(obj, output, context, surface,
                                                   font, tx, ty, ww, hh,
                                                   ww, hh, props, do_async);
@@ -651,6 +660,9 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
              ENFN->context_color_set(output, context,
                                      row->lines[xx].r, row->lines[xx].g,
                                      row->lines[xx].b, row->lines[xx].a);
+             ENFN->context_cutout_target(output, context,
+                                         xp + row->lines[xx].x, yp + row->lines[xx].y,
+                                         row->lines[xx].w, 1);
              ENFN->rectangle_draw(output, context, surface,
                                   xp + row->lines[xx].x, yp + row->lines[xx].y,
                                   row->lines[xx].w, 1,

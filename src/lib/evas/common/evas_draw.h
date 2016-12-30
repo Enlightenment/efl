@@ -34,6 +34,6 @@ EAPI void               evas_common_draw_context_set_anti_alias          (RGBA_D
 EAPI void               evas_common_draw_context_set_color_interpolation (RGBA_Draw_Context *dc, int color_space);
 EAPI void               evas_common_draw_context_set_render_op           (RGBA_Draw_Context *dc, int op);
 EAPI void               evas_common_draw_context_set_sli                 (RGBA_Draw_Context *dc, int y, int h);
-
+EAPI void               evas_common_draw_context_target_set              (RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
 #endif /* _EVAS_DRAW_H */

@@ -2878,6 +2878,11 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                          _evas_render_cutout_add(evas, context, obj2, off_x + fx, off_y + fy);
                     }
 #endif
+                  ENFN->context_cutout_target(ENDT, context,
+                                              off_x + obj->cur->cache.clip.x,
+                                              off_y + obj->cur->cache.clip.y,
+                                              obj->cur->cache.clip.w,
+                                              obj->cur->cache.clip.h);
                   eina_evlog("-cutouts_add", obj->object, 0.0, NULL);
                   clean_them |= evas_render_mapped(evas, eo_obj, obj, context,
                                                    surface, off_x + fx,

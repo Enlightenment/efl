@@ -12862,13 +12862,18 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         cr = nr; cg = ng; cb = nb; ca = na;                             \
      }
 #define DRAW_TEXT(ox, oy)                                               \
-   if (ti->parent.format->font.font)                                    \
-     evas_font_draw_async_check(obj, output, context, surface,          \
+   if (ti->parent.format->font.font) {                                  \
+      ENFN->context_cutout_target(output, context,                      \
+                                  obj->cur->geometry.x + ln->x - (ln->h * 4) + ti->parent.x + x + (ox) - 100, \
+                                  obj->cur->geometry.y + ln->par->y + ln->y - ln->h + y + (oy), \
+                                  ti->parent.w + (ln->h * 8), ln->h * 3);       \
+      evas_font_draw_async_check(obj, output, context, surface,         \
         ti->parent.format->font.font,                                   \
-        obj->cur->geometry.x + ln->x + ti->parent.x + x + (ox),          \
-        obj->cur->geometry.y + ln->par->y + ln->y + yoff + y + (oy),     \
+        obj->cur->geometry.x + ln->x + ti->parent.x + x + (ox),         \
+        obj->cur->geometry.y + ln->par->y + ln->y + yoff + y + (oy),    \
         ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h,         \
-        &ti->text_props, do_async);
+        &ti->text_props, do_async);                                     \
+   }
 
    /* backing */
 #define DRAW_RECT(ox, oy, ow, oh, or, og, ob, oa)                       \
@@ -12884,6 +12889,11 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                                      nr / 255, ng / 255, nb / 255, na / 255); \
              cr = nr; cg = ng; cb = nb; ca = na;                        \
           }                                                             \
+        ENFN->context_cutout_target(output, context,                    \
+                             obj->cur->geometry.x + ln->x + x + (ox),   \
+                             obj->cur->geometry.y + ln->par->y + ln->y + y + (oy), \
+                             (ow),                                      \
+                             (oh));                                     \
         ENFN->rectangle_draw(output,                                    \
                              context,                                   \
                              surface,                                   \

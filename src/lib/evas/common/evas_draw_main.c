@@ -590,39 +590,66 @@ evas_common_draw_context_cutout_split(Cutout_Rects *res, int idx, Cutout_Rect *s
 #undef R_NEW
 }
 
+EAPI void
+evas_common_draw_context_target_set(RGBA_Draw_Context *dc, int x, int y, int w, int h)
+{
+   dc->cutout_target.x = x;
+   dc->cutout_target.y = y;
+   dc->cutout_target.w = w;
+   dc->cutout_target.h = h;
+}
+
+static int
+_srt_y(const void *d1, const void *d2)
+{
+   const Cutout_Rect *r1 = d1, *r2 = d2;
+   if (r1->y == r2->y) return r1->x - r2->x;
+   return r1->y - r2->y;
+}
+
+static int
+_srt_x(const void *d1, const void *d2)
+{
+   const Cutout_Rect *r1 = d1, *r2 = d2;
+   if (r1->x == r2->x) return r1->y - r2->y;
+   return r1->x - r2->x;
+}
+
 EAPI Cutout_Rects *
 evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc, Cutout_Rects *reuse)
 {
    Cutout_Rects        *res = NULL;
-   int                  i;
-   int                  j;
+   int                  i, j, active, found = 0;
 
    if (!dc->clip.use) return NULL;
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0)) return NULL;
 
-
-   if (!reuse)
-     {
-        res = evas_common_draw_context_cutouts_new();
-     }
+   if (!reuse) res = evas_common_draw_context_cutouts_new();
    else
      {
         evas_common_draw_context_cutouts_free(reuse);
         res = reuse;
      }
+   // this avoids a nasty case of O(n^2)/2 below with lots of rectangles
+   // to merge so only do this merging if the number of rects is small enough
+   // not to blow out into insanity
    evas_common_draw_context_cutouts_add(res, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
-
-   for (i = 0; i < dc->cutout.active; ++i)
+   for (i = 0; i < dc->cutout.active; i++)
      {
-        /* Don't loop on the element just added to the list as they are already correctly clipped. */
-        int active = res->active;
-
+        if ((dc->cutout_target.w != 0) &&
+            (!RECTS_INTERSECT(dc->cutout.rects[i].x, dc->cutout.rects[i].y,
+                              dc->cutout.rects[i].w, dc->cutout.rects[i].h,
+                              dc->cutout_target.x, dc->cutout_target.y,
+                              dc->cutout_target.w, dc->cutout_target.h)))
+          continue;
+        // Don't loop on the element just added to the list as they are
+        // already correctly clipped.
+        active = res->active;
         for (j = 0; j < active; )
           {
-             if (evas_common_draw_context_cutout_split(res, j, dc->cutout.rects + i))
-               ++j;
-             else
-               active--;
+             if (evas_common_draw_context_cutout_split
+                 (res, j, dc->cutout.rects + i)) j++;
+             else active--;
           }
      }
    /* merge rects */
@@ -630,66 +657,125 @@ evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc, Cutout_Rects *reus
 #define RJ res->rects[j]
    if (res->active > 1)
      {
-        int found = 1;
-
-        while (found)
+        if (res->active > 5)
           {
-             found = 0;
+             // fast path for larger numbers of rects to merge by using
+             // qsort to sort by y and x to limit the number of rects
+             // we have to walk as rects that have a different y cannot
+             // be merged anyway (or x).
+             qsort(res->rects, res->active, sizeof(res->rects[0]), _srt_y);
              for (i = 0; i < res->active; i++)
                {
+                  if (RI.w == 0) continue; // skip empty rect
                   for (j = i + 1; j < res->active; j++)
                     {
-                       /* skip empty rects we are removing */
-                       if (RJ.w == 0) continue;
-                       /* check if its same width, immediately above or below */
-                       if ((RJ.w == RI.w) && (RJ.x == RI.x))
+                       if (RJ.y != RI.y) break; // new line, sorted thus skip
+                       if (RJ.w == 0) continue; // skip empty rect
+                       // if J is the same height (could be merged)
+                       if (RJ.h == RI.h)
                          {
-                            if ((RJ.y + RJ.h) == RI.y) /* above */
+                            // if J is immediately to the right of I
+                            if (RJ.x == (RI.x + RI.w))
                               {
-                                 RI.y = RJ.y;
-                                 RI.h += RJ.h;
-                                 RJ.w = 0;
-                                 found = 1;
+                                 RI.w = (RJ.x + RJ.w) - RI.x; // expand RI
+                                 RJ.w = 0; // invalidate
+                                 found++;
                               }
-                            else if ((RI.y + RI.h) == RJ.y) /* below */
-                              {
-                                 RI.h += RJ.h;
-                                 RJ.w = 0;
-                                 found = 1;
-                              }
+                            // since we sort y and THEN x, if height matches
+                            // but it's not immediately adjacent, no more
+                            // rects exists that can be merged
+                            else break;
                          }
-                       /* check if its same height, immediately left or right */
-                       else if ((RJ.h == RI.h) && (RJ.y == RI.y))
+                    }
+               }
+             qsort(res->rects, res->active, sizeof(res->rects[0]), _srt_x);
+             for (i = 0; i < res->active; i++)
+               {
+                  if (RI.w == 0) continue; // skip empty rect
+                  for (j = i + 1; j < res->active; j++)
+                    {
+                       if (RJ.x != RI.x) break; // new line, sorted thus skip
+                       if (RJ.w == 0) continue; // skip empty rect
+                       // if J is the same height (could be merged)
+                       if (RJ.w == RI.w)
                          {
-                            if ((RJ.x + RJ.w) == RI.x) /* left */
+                            // if J is immediately to the right of I
+                            if (RJ.y == (RI.y + RI.h))
                               {
-                                 RI.x = RJ.x;
-                                 RI.w += RJ.w;
-                                 RJ.w = 0;
-                                 found = 1;
+                                 RI.h = (RJ.y + RJ.h) - RI.y; // expand RI
+                                 RJ.w = 0; // invalidate
+                                 found++;
                               }
-                            else if ((RI.x + RI.w) == RJ.x) /* right */
+                            // since we sort y and THEN x, if height matches
+                            // but it's not immediately adjacent, no more
+                            // rects exists that can be merged
+                            else break;
+                         }
+                    }
+               }
+          }
+        else
+          {
+             // for a small number of rects, keep things simple as the count
+             // is small and big-o complexity isnt a problem yet
+             found = 1;
+             while (found)
+               {
+                  found = 0;
+                  for (i = 0; i < res->active; i++)
+                    {
+                       for (j = i + 1; j < res->active; j++)
+                         {
+                            // skip empty rects we are removing
+                            if (RJ.w == 0) continue;
+                            // check if its same width, immediately above or below
+                            if ((RJ.w == RI.w) && (RJ.x == RI.x))
                               {
-                                 RI.w += RJ.w;
-                                 RJ.w = 0;
-                                 found = 1;
+                                 if ((RJ.y + RJ.h) == RI.y) // above
+                                   {
+                                      RI.y = RJ.y;
+                                      RI.h += RJ.h;
+                                      RJ.w = 0;
+                                      found++;
+                                   }
+                                 else if ((RI.y + RI.h) == RJ.y) // below
+                                   {
+                                      RI.h += RJ.h;
+                                      RJ.w = 0;
+                                      found++;
+                                   }
+                              }
+                            // check if its same height, immediately left or right
+                            else if ((RJ.h == RI.h) && (RJ.y == RI.y))
+                              {
+                                 if ((RJ.x + RJ.w) == RI.x) // left
+                                   {
+                                      RI.x = RJ.x;
+                                      RI.w += RJ.w;
+                                      RJ.w = 0;
+                                      found++;
+                                   }
+                                 else if ((RI.x + RI.w) == RJ.x) // right
+                                   {
+                                      RI.w += RJ.w;
+                                      RJ.w = 0;
+                                      found++;
+                                   }
                               }
                          }
                     }
                }
           }
 
-        /* Repack the cutout */
+        // Repack the cutout
         j = 0;
         for (i = 0; i < res->active; i++)
           {
              if (RI.w == 0) continue;
-             if (i != j)
-               RJ = RI;
+             if (i != j) RJ = RI;
              j++;
           }
         res->active = j;
-        return res;
      }
    return res;
 }

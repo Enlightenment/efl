@@ -1805,21 +1805,26 @@ evas_object_text_render(Evas_Object *eo_obj,
                 (((int)object->sub.col.b) * (amul)) / 255, \
                 (((int)object->sub.col.a) * (amul)) / 255);
 
-#define DRAW_TEXT(ox, oy)                                               \
-   if ((o->font) && (it->text_props.len > 0))                           \
-     evas_font_draw_async_check(obj, output,                            \
-                                context,                                \
-                                surface,                                \
-                                o->font,                                \
+#define DRAW_TEXT(ox, oy) \
+   if ((o->font) && (it->text_props.len > 0)) { \
+      ENFN->context_cutout_target(output, context, \
+                                  obj->cur->geometry.x + x + sl + ox + it->x, \
+                                  obj->cur->geometry.y + y + st + oy, \
+                                  it->w, it->h); \
+      evas_font_draw_async_check(obj, output, \
+                                context, \
+                                surface, \
+                                o->font, \
                                 obj->cur->geometry.x + x + sl + ox + it->x, \
-                                obj->cur->geometry.y + y + st + oy +     \
-                                (int) o->max_ascent,                    \
-                                obj->cur->geometry.w,                    \
-                                obj->cur->geometry.h,                    \
-                                obj->cur->geometry.w,                    \
-                                obj->cur->geometry.h,                    \
-                                &it->text_props,                        \
-                                do_async);
+                                obj->cur->geometry.y + y + st + oy + \
+                                (int)o->max_ascent, \
+                                obj->cur->geometry.w, \
+                                obj->cur->geometry.h, \
+                                obj->cur->geometry.w, \
+                                obj->cur->geometry.h, \
+                                &it->text_props, \
+                                do_async); \
+   }
 
    if (o->has_filter)
      {

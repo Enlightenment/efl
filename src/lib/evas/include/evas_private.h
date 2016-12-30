@@ -1375,6 +1375,7 @@ struct _Evas_Func
    int  (*context_multiplier_get)          (void *data, void *context, int *r, int *g, int *b, int *a);
    void (*context_cutout_add)              (void *data, void *context, int x, int y, int w, int h);
    void (*context_cutout_clear)            (void *data, void *context);
+   void (*context_cutout_target)           (void *data, void *context, int x, int y, int w, int h);
    void (*context_anti_alias_set)          (void *data, void *context, unsigned char aa);
    unsigned char (*context_anti_alias_get) (void *data, void *context);
    void (*context_color_interpolation_set) (void *data, void *context, int color_space);

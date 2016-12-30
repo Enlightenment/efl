@@ -645,7 +645,14 @@ eng_context_cutout_add(void *data EINA_UNUSED, void *context, int x, int y, int 
 static void
 eng_context_cutout_clear(void *data EINA_UNUSED, void *context)
 {
+   evas_common_draw_context_target_set(context, 0, 0, 0, 0);
    evas_common_draw_context_clear_cutouts(context);
+}
+
+static void
+eng_context_cutout_target(void *data EINA_UNUSED, void *context, int x, int y, int w, int h)
+{
+   evas_common_draw_context_target_set(context, x, y, w, h);
 }
 
 static void
@@ -4655,6 +4662,7 @@ static Evas_Func func =
      eng_context_multiplier_get,
      eng_context_cutout_add,
      eng_context_cutout_clear,
+     eng_context_cutout_target,
      eng_context_anti_alias_set,
      eng_context_anti_alias_get,
      eng_context_color_interpolation_set,
