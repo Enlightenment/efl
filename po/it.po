@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2016-12-22 19:29+0900\n"
-"PO-Revision-Date: 2015-06-11 14:19+0200\n"
+"PO-Revision-Date: 2017-01-01 16:29+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -270,7 +270,7 @@ msgstr "Stato: disabilitato"
 
 #: src/lib/elementary/elc_hoversel.c:617
 msgid "Hoversel"
-msgstr ""
+msgstr "Lista per bottone (hoversel)"
 
 #: src/lib/elementary/elc_multibuttonentry.c:699
 msgid "multi button entry label"
