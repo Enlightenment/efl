@@ -49,6 +49,7 @@
 
 #include "elm_widget.h"
 #include "elm_access.eo.h"
+#include "elm_code_private.h"
 
 #ifdef HAVE_LANGINFO_H
 # include <langinfo.h>

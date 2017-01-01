@@ -347,6 +347,7 @@ elm_init(int argc, char **argv)
      _elm_config->web_backend = "none";
    if (!_elm_web_init(_elm_config->web_backend))
      _elm_config->web_backend = "none";
+   _elm_code_parse_setup();
 
    return _elm_init_count;
 }

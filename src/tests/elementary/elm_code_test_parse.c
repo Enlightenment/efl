@@ -74,8 +74,6 @@ START_TEST (elm_code_parse_todo_test)
    Elm_Code_Line *line;
 
    elm_init(1, NULL);
-   elm_code_init();
-
    code = elm_code_create();
    elm_code_parser_standard_add(code, ELM_CODE_PARSER_STANDARD_TODO);
    file = elm_code_file_new(code);
@@ -89,7 +87,6 @@ START_TEST (elm_code_parse_todo_test)
 
    elm_code_line_text_set(line, "TOFIX", 5);
    ck_assert_int_eq(ELM_CODE_STATUS_TYPE_DEFAULT, line->status);
-   elm_code_shutdown();
    elm_shutdown();
 }
 END_TEST

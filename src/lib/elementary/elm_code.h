@@ -42,34 +42,6 @@ extern "C" {
  */
 
 /**
- * Initialize Elm Code.
- *
- * Initializes Elm Code, its dependencies and modules. Should be the first
- * function of Elm Code to be called.
- *
- * @return The init counter value.
- *
- * @see elm_code_shutdown().
- *
- * @ingroup Init
- */
-EAPI int elm_code_init(void);
-
-/**
- * Shutdown Elm Code
- *
- * Shutdown Elm Code. If init count reaches 0, all the internal structures will
- * be freed. Any Elm Code library call after this point will leads to an error.
- *
- * @return Elm Code's init counter value.
- *
- * @see elm_code_init()
- *
- * @ingroup Init
- */
-EAPI int elm_code_shutdown(void);
-
-/**
  * Create a new Elm Code instance
  *
  * This method creates a new Elm Code instance using an in-memory file for backing changes.
